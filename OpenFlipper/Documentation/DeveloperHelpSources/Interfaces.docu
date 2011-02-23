@@ -1,146 +1,150 @@
 /** \page interfaces Plugin Interfaces
- *
- * \section pluginInterfacesIntro Introduction
- *
- * OpenFlipper provides a flexible plugin interface. Plugins can implement various interfaces.\n
- *
- * Each interface provides special signals/slots or functions to communicate with the core or
- * to react on special events. The most important interface is the BaseInterface. This Interface
- * provides the core functionality for the plugin. E.g. loading the plugin, specifying its name
- * and basic communication regarding object changes or view updates ( See BaseInterface for further details).\n
- *
- * Additional functionality is provided by the other interfaces. For user interaction one typically uses the
- * MouseInterface or KeyInterface which will provide events based on mouse or keyboard interaction.\n
- *
- * The user interface of OpenFlipper can also be used by plugins. The MenubarInterface provides functions to
- * add additional icons to the menubar while the ToolboxInterface can add widgets to the toolbox on
- * the right of the OpenFlipper screen.
- *
- * \section pluginInterfacesUsage Usage of plugin interfaces
- *
- * To use functions from one of the interfaces you have to do the following steps:
- * <ul>
- * <li> Include the interface header file in your plugins header file
- * <li> derive your plugin from the Interface class defined in the interface header file
- * <li> add Q_INTERFACES( InterfaceName ) macro to your plugin class containing only the name of the interface to be used
- * <li> Add the signature of the signals you want to use to the signals of your class definition.
- * <li> Add the signature of a slot you want to implement to the \b private \b slots of your class definition.
- * </ul>
- * It is not necessary to implement all signals or slots from one of the interfaces (Except some functions from BaseInterface).
- * The core application will only use the slots you define in the plugins header file and ignore all other functions.\n
- *
- * If you recognize that an interface function of your plugin is not called, check if it is defined correctly in your plugin
- * class and the signature is the same as in the interface.\n
- * 
- * \section pluginInterfacesOverview Available Interfaces
- * 
- * This section gives an overview over the available interfaces in OpenFlipper.
- *
- * \subsection BasePlugin Base Interface
- * This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin
- * name and some important Signals and slots which will be called by the main application. See BaseInterface
- * for details.
- *
- * \subsection KeyPlugin Keyboard Interface
- * \image html keyInterface.png
- *  You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).\n
- *
- *
- * \subsection MousePlugin Mouse Interface
- * \image html mouseInterface.png
- * This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
- *
- *
- * \subsection LoadSavePlugin Load / Save Interface
- * \image html loadSaveInterface.png
- * Provides functions to handle mesh files and load / unload geometry
- * objects into the scene graph ( LoadSaveInterface ).
- *
- *
- * \subsection ToolbarPlugin Toolbar Interface
- * \image html ToolbarInterface.png
- * Provides a function to add toolbar buttons. ( ToolbarInterface )
- *
- *
- * \subsection ContextMenu Context Menu Interface
- * \image html ContextMenuInterface.png
- * Add context menu entries in your plugin. ( ContextMenuInterface )
- *
- *
- * \subpage menuInterfacePage
- * \image html MenuInterface.png
- * Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
- *
- *
- * \subpage toolboxInterfacePage
- * \image html ToolboxInterface.png
- * Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
- * \n
- *
- * \subpage loggingInterfacePage
- * \image html LoggingInterface.png
- * This is an Interface for Logging to the included log widget. You can log to different levels
- * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \ref loggingInterfacePage ).
- * \n
- *
- * \subsection TexturePlugin Texture Interface
- * \image html TextureInterface.png
- * Allows your plugin to provide a texture. ( TextureInterface )
- *
- *
- * \subsection PickingPlugin Mouse Picking / Pick Modes
- * \image html PickingInterface.png
- * Handle mouse picking in your plugin ( PickingInterface )
- *
- *
- * \subsection RPCPlugin RPC Interface
- * \image html RPCInterface.png
- * This interface is used to call functions across different plugins ( RPCInterface ).
- *
- *
- * \subsection FilePlugin File Interface
- * \image html FileInterface.png
- * Provides functions to read and write custom filetypes ( FileInterface )
- *
- *
- * \subsection TypePlugin Type Interface
- * \image html FileInterface.png
- * Allows plugins to specify custom data types and makes them available
- * to other plugins ( TypeInterface )
- *
- *
- * \subsection ViewModePlugin View Mode Interface
- * \image html FileInterface.png
- * Specify own view modes ( ViewModeInterface )
- *
- *
- * \subsection ViewPlugin View Interface
- * \image html ViewInterface.png
- * This interface is used to add additional view widgets ( ViewInterface ).
- *
- *
- * \subsection ScriptPlugin Script Interface
- * \image html ScriptInterface.png
- * For plugins who provide scriptable functions ( ScriptInterface )
- *
- *
- * \subsection StatusPlugin Status Bar Interface
- * \image html StatusbarInterface.png
- * This interface is used to display messages in the status bar ( StatusbarInterface )
- *
- *
- * \subsection OptionsPlugin Options Interface
- * \image html OptionsInterface.png
- * This Interface is used by plugins which will provide their own options by
- * integrating its own options widget into OpenFlipper's options window. ( OptionsInterface )
- *
- *
- * \subsection BackupPlugin Backup Interface
- * \image html BackupInterface.png
- * Use this interface to backup data ( BackupInterface )
- *
- *
- * \subsection INIPlugin Use Inifiles to store information
- * \image html INIInterface.png
- * Receive an event if an ini file is opened by the application. ( INIInterface )\n
- */
+
+\section pluginInterfacesIntro Introduction
+
+OpenFlipper provides a flexible plugin interface. Plugins can implement various interfaces.\n
+
+Each interface provides special signals/slots or functions to communicate with the core or
+to react on special events. The most important interface is the BaseInterface. This Interface
+provides the core functionality for the plugin. E.g. loading the plugin, specifying its name
+and basic communication regarding object changes or view updates ( See BaseInterface for further details).\n
+
+Additional functionality is provided by the other interfaces. For user interaction one typically uses the
+MouseInterface or KeyInterface which will provide events based on mouse or keyboard interaction.\n
+
+The user interface of OpenFlipper can also be used by plugins. The MenubarInterface provides functions to
+add additional icons to the menubar while the ToolboxInterface can add widgets to the toolbox on
+the right of the OpenFlipper screen.
+
+\section pluginInterfacesUsage Usage of plugin interfaces
+
+To use functions from one of the interfaces you have to do the following steps:
+<ul>
+<li> Include the interface header file in your plugins header file
+<li> derive your plugin from the Interface class defined in the interface header file
+<li> add Q_INTERFACES( InterfaceName ) macro to your plugin class containing only the name of the interface to be used
+<li> Add the signature of the signals you want to use to the signals of your class definition.
+<li> Add the signature of a slot you want to implement to the \b private \b slots of your class definition.
+</ul>
+It is not necessary to implement all signals or slots from one of the interfaces (Except some functions from BaseInterface).
+The core application will only use the slots you define in the plugins header file and ignore all other functions.\n
+
+If you recognize that an interface function of your plugin is not called, check if it is defined correctly in your plugin
+class and the signature is the same as in the interface.\n
+
+\section pluginInterfacesUIOverview Available Interfaces for controlling the User Interface
+
+This section gives an overview over the available interfaces which control OpenFlippers User interface.
+
+\subpage contextmenuInterfacePage 
+\image html ContextMenuInterface.png
+Add context menu entries in your plugin. ( \ref contextmenuInterfacePage )
+\n
+
+\subpage menuInterfacePage
+\image html MenuInterface.png
+Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
+\n 
+
+\subpage toolboxInterfacePage
+\image html ToolboxInterface.png
+Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
+\n
+
+\section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
+
+This section gives an overview over the available interfaces which control other parts of OpenFlipper.
+
+\subsection BasePlugin Base Interface
+This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin
+name and some important Signals and slots which will be called by the main application. See BaseInterface
+for details.
+
+\subsection KeyPlugin Keyboard Interface
+\image html keyInterface.png
+ You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).\n
+
+
+\subsection MousePlugin Mouse Interface
+\image html mouseInterface.png
+This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
+
+
+\subsection LoadSavePlugin Load / Save Interface
+\image html loadSaveInterface.png
+Provides functions to handle mesh files and load / unload geometry
+objects into the scene graph ( LoadSaveInterface ).
+
+
+\subsection ToolbarPlugin Toolbar Interface
+\image html ToolbarInterface.png
+Provides a function to add toolbar buttons. ( ToolbarInterface )
+
+
+\subpage loggingInterfacePage
+\image html LoggingInterface.png
+This is an Interface for Logging to the included log widget. You can log to different levels
+(LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \ref loggingInterfacePage ).
+\n
+
+\subsection TexturePlugin Texture Interface
+\image html TextureInterface.png
+Allows your plugin to provide a texture. ( TextureInterface )
+
+
+\subsection PickingPlugin Mouse Picking / Pick Modes
+\image html PickingInterface.png
+Handle mouse picking in your plugin ( PickingInterface )
+
+
+\subsection RPCPlugin RPC Interface
+\image html RPCInterface.png
+This interface is used to call functions across different plugins ( RPCInterface ).
+
+
+\subsection FilePlugin File Interface
+\image html FileInterface.png
+Provides functions to read and write custom filetypes ( FileInterface )
+
+
+\subsection TypePlugin Type Interface
+\image html FileInterface.png
+Allows plugins to specify custom data types and makes them available
+to other plugins ( TypeInterface )
+
+
+\subsection ViewModePlugin View Mode Interface
+\image html FileInterface.png
+Specify own view modes ( ViewModeInterface )
+
+
+\subsection ViewPlugin View Interface
+\image html ViewInterface.png
+This interface is used to add additional view widgets ( ViewInterface ).
+
+
+\subsection ScriptPlugin Script Interface
+\image html ScriptInterface.png
+For plugins who provide scriptable functions ( ScriptInterface )
+
+
+\subsection StatusPlugin Status Bar Interface
+\image html StatusbarInterface.png
+This interface is used to display messages in the status bar ( StatusbarInterface )
+
+
+\subsection OptionsPlugin Options Interface
+\image html OptionsInterface.png
+This Interface is used by plugins which will provide their own options by
+integrating its own options widget into OpenFlipper's options window. ( OptionsInterface )
+
+
+\subsection BackupPlugin Backup Interface
+\image html BackupInterface.png
+Use this interface to backup data ( BackupInterface )
+
+
+\subsection INIPlugin Use Inifiles to store information
+\image html INIInterface.png
+Receive an event if an ini file is opened by the application. ( INIInterface )\n
+*/
