@@ -43,11 +43,17 @@
 #ifndef BASEINTERFACE_HH
 #define BASEINTERFACE_HH
 
- #include <QtGui>
- #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
+#include <QtGui>
+#include <QMenuBar>
+#include <OpenFlipper/common/Types.hh>
 
- /** \brief Interface class from which all plugins have to be created.
+/** \file BaseInterface.hh
+*
+* OpenFlippers main plugin Interface \ref baseInterfacePage.
+*/
+ 
+
+/** \brief Interface class from which all plugins have to be created.
   *
   * You have to implement at least name and description for your plugin.
   * All other functions and signals are optional. If you want to implement or use
@@ -267,6 +273,14 @@ class BaseInterface {
     virtual ~BaseInterface() {};
 
 };
+
+
+/** \page baseInterfacePage Base Interface
+The BaseInterface has to be used by every plugin in OpenFlipper. As the minimum a plugin
+has to implement the BaseInterface::name() and BaseInterface::description() functions from this interface.
+
+
+*/
 
 Q_DECLARE_INTERFACE(BaseInterface,"OpenFlipper.BaseInterface/1.0")
 

@@ -32,6 +32,13 @@ The core application will only use the slots you define in the plugins header fi
 If you recognize that an interface function of your plugin is not called, check if it is defined correctly in your plugin
 class and the signature is the same as in the interface.\n
 
+\section pluginInterfacesBaseInterface OpenFlipper Base Interface
+
+\subpage baseInterfacePage
+
+All plugins in OpenFlipper have to implement some basic functions from BaseInterface. They are used to integrate and manage
+the plugins by the core application. See \ref baseInterfacePage for details.
+
 \section pluginInterfacesUIOverview Available Interfaces for controlling the User Interface
 
 This section gives an overview over the available interfaces which control OpenFlippers User interface.
