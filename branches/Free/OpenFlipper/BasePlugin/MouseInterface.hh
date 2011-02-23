@@ -41,18 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: Basic Interface for mouse events
-//
-// Description:
-//
-//
-// Author: Jan Moebius <moebius@informatik.rwth-aachen.de>, (C) 2007
-
-
-
 #ifndef MOUSEINTERFACE_HH
 #define MOUSEINTERFACE_HH
 

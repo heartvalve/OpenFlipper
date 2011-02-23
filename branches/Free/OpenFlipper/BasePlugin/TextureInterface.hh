@@ -41,17 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: TexturePlugin
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef TEXTUREINTERFACE_HH
 #define TEXTUREINTERFACE_HH
 

@@ -40,18 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: BasePlugin
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef VIEWINTERFACE_HH
 #define VIEWINTERFACE_HH
 

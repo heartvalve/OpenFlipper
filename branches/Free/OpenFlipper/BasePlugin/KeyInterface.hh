@@ -41,18 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: Basic Interface for keyboard events received from the examiner widget
-//
-// Description: 
-//
-//
-// Author: Jan Moebius <moebius@informatik.rwth-aachen.de>, (C) 2007
-
-
-
 #ifndef KEYINTERFACE_HH 
 #define KEYINTERFACE_HH 
 

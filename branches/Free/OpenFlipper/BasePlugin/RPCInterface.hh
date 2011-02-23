@@ -41,17 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: RPCInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef RPCINTERFACE_HH
 #define RPCINTERFACE_HH
 

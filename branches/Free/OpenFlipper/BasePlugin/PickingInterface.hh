@@ -40,18 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: PickingInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef PICKINGINTERFACE_HH
 #define PICKINGINTERFACE_HH
 

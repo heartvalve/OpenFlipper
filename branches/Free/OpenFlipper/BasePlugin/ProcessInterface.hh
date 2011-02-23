@@ -40,15 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-//
-// C++ Interface: ProcessInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef PROCESSINTERFACE_HH
 #define PROCESSINTERFACE_HH
 

@@ -40,15 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-//
-// C++ Interface: ToolbarInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef TOOLBARINTERFACE_HH
 #define TOOLBARINTERFACE_HH
 

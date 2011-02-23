@@ -40,18 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: SecurityInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef SECURITYINTERFACE_HH
 #define SECURITYINTERFACE_HH
 

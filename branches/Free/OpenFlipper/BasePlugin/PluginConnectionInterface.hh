@@ -41,16 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: PluginConnectionInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <moebius@cs.rwth-aachen.de>, (C) 2010
-//
 #ifndef PLUGINCONNECTIONINTERFACE_HH
 #define PLUGINCONNECTIONINTERFACE_HH
 
