@@ -40,18 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: Load/Save Interface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef LOADSAVEINTERFACE_HH
 #define LOADSAVEINTERFACE_HH
 

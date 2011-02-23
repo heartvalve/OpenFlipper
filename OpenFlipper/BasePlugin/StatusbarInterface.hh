@@ -40,15 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-//
-// C++ Interface: StatusBarInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef STATUSBARINTERFACE_HH
 #define STATUSBARINTERFACE_HH
 

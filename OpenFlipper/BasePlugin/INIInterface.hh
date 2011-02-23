@@ -41,17 +41,6 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: BasePlugin
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef INIINTERFACE_HH
 #define INIINTERFACE_HH
 
