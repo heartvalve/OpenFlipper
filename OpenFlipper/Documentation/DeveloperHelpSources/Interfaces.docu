@@ -67,21 +67,20 @@
  * Add context menu entries in your plugin. ( ContextMenuInterface )
  *
  *
- * \subsection MenubarPlugin Menubar Interface
- * \image html MenubarInterface.png
- * Provides a function to create an entry in the menubar ( MenuInterface ).
- *
+ * \subpage menuInterfacePage
+ * \image html MenuInterface.png
+ * Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
  *
  *
  * \subpage toolboxInterfacePage
  * \image html ToolboxInterface.png
- * Provides functions to create a separate widget in the toolbox on the right ( \subpage toolboxInterfacePage ).
+ * Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
  * \n
  *
  * \subpage loggingInterfacePage
  * \image html LoggingInterface.png
  * This is an Interface for Logging to the included log widget. You can log to different levels
- * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \subpage loggingInterfacePage ).
+ * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \ref loggingInterfacePage ).
  * \n
  *
  * \subsection TexturePlugin Texture Interface
