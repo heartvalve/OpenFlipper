@@ -62,60 +62,6 @@
 * Interface for adding per plugin toolboxes to OpenFlippers UI.\ref menuInterfacePage
 */
 
-/** \page menuInterfacePage Menu Interface
-\image html MenuInterface.png
-\n
-The MenuInterface can be used by plugins to add menu entries to OpenFlippers
-UI. The entries will be added to OpenFlippers menubar or submenus (See image). 
-
-To use the MenuInterface:
-<ul>
-<li> include MenuInterface.hh in your plugins header file
-<li> derive your plugin from the class MenuInterface
-<li> add Q_INTERFACES(MenuInterface) to your plugin class 
-<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
-</ul>
-
-Usually you should implement the initializePlugin() function from BaseInterface. In this function you can setup
-your menus.
-
-The following code shows a simple example to create a menu entry in the file menu.
-\code 
-void PrintPlugin::initializePlugin()
-{
-  // Create a submenu called printing
-  QMenu *printMenu = new QMenu(tr("&Printing"));
-  
-  // Set an icon for this submenu
-  printMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
-  
-  // Add the new submenu to OpenFlippers menus
-  emit addMenubarAction(printMenu->menuAction(), FILEMENU );
-  
-  // Create an action to be added to the submenu
-  QAction* AC_Print = new QAction(tr("&Print"), this);
-  
-  // Set statustip for this entry
-  AC_Print->setStatusTip(tr("Print the current view"));
-  
-  // Set icon for the entry
-  AC_Print->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
-  
-  // connnect the actions triggered slot to a local slot in this plugin.
-  connect(AC_Print, SIGNAL(triggered()), this, SLOT(printView()));
-  
-  // add the new action to the print submenu
-  printMenu->addAction(AC_Print);
-}
-\endcode
-
-
-Signals and slots of your menus (e.g. from an action inside it) can be directly connected to signals and slots in
-your plugin. Therefore the embedding of your menus into the OpenFlippers menu list is fully transparent.
-
-*/
-
-
 
 /** \brief Interface for all plugins which provide entries to the main menubar
   *
@@ -164,6 +110,62 @@ signals:
   */
   virtual void addMenubarAction(QAction* /*_action*/, QString /*_name*/ ) {};
 };
+
+
+
+
+/** \page menuInterfacePage Menu Interface
+\image html MenuInterface.png
+\n
+The MenuInterface can be used by plugins to add menu entries to OpenFlippers
+UI. The entries will be added to OpenFlippers menubar or submenus (See image). 
+
+To use the MenuInterface:
+<ul>
+<li> include MenuInterface.hh in your plugins header file
+<li> derive your plugin from the class MenuInterface
+<li> add Q_INTERFACES(MenuInterface) to your plugin class 
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+Usually you should implement the BaseInterface::initializePlugin() function from BaseInterface. In this function you can setup
+your menus.
+
+The following code shows a simple example to create a menu entry in the file menu.
+\code 
+void PrintPlugin::initializePlugin()
+{
+  // Create a submenu called printing
+  QMenu *printMenu = new QMenu(tr("&Printing"));
+  
+  // Set an icon for this submenu
+  printMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
+  
+  // Add the new submenu to OpenFlippers menus
+  emit addMenubarAction(printMenu->menuAction(), FILEMENU );
+  
+  // Create an action to be added to the submenu
+  QAction* AC_Print = new QAction(tr("&Print"), this);
+  
+  // Set statustip for this entry
+  AC_Print->setStatusTip(tr("Print the current view"));
+  
+  // Set icon for the entry
+  AC_Print->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
+  
+  // connnect the actions triggered slot to a local slot in this plugin.
+  connect(AC_Print, SIGNAL(triggered()), this, SLOT(printView()));
+  
+  // add the new action to the print submenu
+  printMenu->addAction(AC_Print);
+}
+\endcode
+
+
+Signals and slots of your menus (e.g. from an action inside it) can be directly connected to signals and slots in
+your plugin. Therefore the embedding of your menus into the OpenFlippers menu list is fully transparent.
+
+*/
 
 Q_DECLARE_INTERFACE(MenuInterface,"OpenFlipper.MenuInterface/1.0")
 

@@ -70,94 +70,6 @@ enum ContextMenuType {
 };
 
 
-/** \page contextmenuInterfacePage Context Menu Interface
-\image html ContextMenuInterface.png
-\n
-The ContextMenuInterface can be used by plugins to add menu entries to OpenFlippers
-UI. The entries will be added to OpenFlippers contextMenus in the glView (see image). 
-You can choose between context menus for objects, nodes or the background.\n
-
-The given context menu entries will be shown when the user right clicks on the corresponding
-primitive (node,object) in the gl viewer.
-
-To use the ContextMenuInterface:
-<ul>
-<li> include ContextMenuInterface.hh in your plugins header file
-<li> derive your plugin from the class ContextMenuInterface
-<li> add Q_INTERFACES(ContextMenuInterface) to your plugin class 
-<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
-</ul>
-
-
-Usually you should implement the initializePlugin() function from BaseInterface. In this function you can setup
-your menus.\n
-
-You have to create a QAction. The signals and slots of your actions have to be connected
-to your plugin. Just connect them as usual. Only visibility of the menu is handled
-by the core. You can also add submenus to the context menus. Just add the action for
-the menu ( menu->menuAction() )
-
-Before a menu of the requested type is shown, an update function for the specific type
-will be invoked by the core depending on your type of context menu 
-( slotUpdateContextMenu(), slotUpdateContextMenuNode(), slotUpdateContextMenuBackground() ). 
-In this function you can update entries based on the object that was clicked on. The id of the node
-or the object is provided by these update functions.
-
-
-The following code shows a simple example to create a menu entry in the context menu.
-\code 
-
-// Setup the menus in initialize plugins
-void ExamplePlugin::initializePlugin()
-{
-  // create a global QMenu in the plugin that contains our menu
-  // in the header is: 
-  // QMenu* contextMenu_
-  contextMenu_ = new QMenu(tr("Select"));
-  
-  // Create a menu action called all in the Selection context menu
-  // in the header is:   
-  // QAction* menuAction_
-  menuAction_ = contextMenu_->addAction( tr("All Mesh vertices") );
-  menuAction->setToolTip(tr("Select all"));
-
-  // Add the new menu to OpenFlippers context menu fot objects
-  // Show the context menu for triangle meshes
-  emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
-  
-  // Show the context menu for poly meshes meshes
-  emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
-}
-  
-  
-// Example function to update the context menu based on the given object id
-void ExamplePlugin::slotUpdateContextMenu( int _objectId ){
-  
-  // Get the corresponding object of the given id or return
-  BaseObjectData* object = 0;
-  if ( !PluginFunctions::getObject( _objectId, object ) ) {
-    return;
-  }
-  
-  // If its a triangle mesh, rename the to triangle mesh selection
-  if (object->dataType( DATA_TRIANGLE_MESH ) ) 
-    menuAction_->setText("All Triangle mesh vertices");
-  
-  // If its a triangle mesh, rename the to poly mesh selection
-  if ( object->dataType( DATA_POLY_MESH ) )  
-    menuAction_->setText("All Triangle mesh vertices");    
-  
-}
-
-
-}
-\endcode
-
-
-Signals and slots of your menus (e.g. from an action inside it) can be directly connected to signals and slots in
-your plugin. Therefore the embedding of your menus into the OpenFlippers context menu list is fully transparent.
-
-*/
 
 
 /** \brief Interface class for creating custom context menus
@@ -232,6 +144,96 @@ private slots:
   virtual void slotUpdateContextMenuBackground( ) {};
 
 };
+
+
+/** \page contextmenuInterfacePage Context Menu Interface
+\image html ContextMenuInterface.png
+\n
+The ContextMenuInterface can be used by plugins to add menu entries to OpenFlippers
+UI. The entries will be added to OpenFlippers contextMenus in the glView (see image). 
+You can choose between context menus for objects, nodes or the background.\n
+
+The given context menu entries will be shown when the user right clicks on the corresponding
+primitive (node,object) in the gl viewer.
+
+To use the ContextMenuInterface:
+<ul>
+<li> include ContextMenuInterface.hh in your plugins header file
+<li> derive your plugin from the class ContextMenuInterface
+<li> add Q_INTERFACES(ContextMenuInterface) to your plugin class 
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+
+Usually you should implement the BaseInterface::initializePlugin() function from BaseInterface. In this function you can setup
+your menus.\n
+
+You have to create a QAction. The signals and slots of your actions have to be connected
+to your plugin. Just connect them as usual. Only visibility of the menu is handled
+by the core. You can also add submenus to the context menus. Just add the action for
+the menu ( menu->menuAction() )
+
+Before a menu of the requested type is shown, an update function for the specific type
+will be invoked by the core depending on your type of context menu 
+( ContextMenuInterface::slotUpdateContextMenu(), ContextMenuInterface::slotUpdateContextMenuNode(), ContextMenuInterface::slotUpdateContextMenuBackground() ). 
+In this function you can update entries based on the object that was clicked on. The id of the node
+or the object is provided by these update functions.
+
+
+The following code shows a simple example to create a menu entry in the context menu.
+\code 
+
+// Setup the menus in initialize plugins
+void ExamplePlugin::initializePlugin()
+{
+  // create a global QMenu in the plugin that contains our menu
+  // in the header is: 
+  // QMenu* contextMenu_
+  contextMenu_ = new QMenu(tr("Select"));
+  
+  // Create a menu action called all in the Selection context menu
+  // in the header is:   
+  // QAction* menuAction_
+  menuAction_ = contextMenu_->addAction( tr("All Mesh vertices") );
+  menuAction->setToolTip(tr("Select all"));
+  
+  // Add the new menu to OpenFlippers context menu fot objects
+  // Show the context menu for triangle meshes
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+  
+  // Show the context menu for poly meshes meshes
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+  }
+  
+  
+// Example function to update the context menu based on the given object id
+void ExamplePlugin::slotUpdateContextMenu( int _objectId ){
+  
+  // Get the corresponding object of the given id or return
+  BaseObjectData* object = 0;
+  if ( !PluginFunctions::getObject( _objectId, object ) ) {
+    return;
+  }
+  
+  // If its a triangle mesh, rename the to triangle mesh selection
+  if (object->dataType( DATA_TRIANGLE_MESH ) ) 
+    menuAction_->setText("All Triangle mesh vertices");
+  
+  // If its a triangle mesh, rename the to poly mesh selection
+  if ( object->dataType( DATA_POLY_MESH ) )  
+    menuAction_->setText("All Triangle mesh vertices");    
+  
+}
+
+
+}
+\endcode
+
+
+Signals and slots of your menus (e.g. from an action inside it) can be directly connected to signals and slots in
+your plugin. Therefore the embedding of your menus into the OpenFlippers context menu list is fully transparent.
+
+*/
 
 Q_DECLARE_INTERFACE(ContextMenuInterface,"OpenFlipper.ContextMenuInterface/1.0")
 
