@@ -77,7 +77,7 @@ To use the MenuInterface:
 </ul>
 
 Usually you should implement the initializePlugin() function from BaseInterface. In this function you can setup
-your menus 
+your menus.
 
 The following code shows a simple example to create a menu entry in the file menu.
 \code 
