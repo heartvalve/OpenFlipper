@@ -279,6 +279,15 @@ class BaseInterface {
 The BaseInterface has to be used by every plugin in OpenFlipper. As the minimum a plugin
 has to implement the BaseInterface::name() and BaseInterface::description() functions from this interface.
 
+To use the BaseInterface:
+<ul>
+<li> include BaseInterface.hh in your plugins header file
+<li> derive your plugin from the class BaseInterface
+<li> add Q_INTERFACES(BaseInterface) to your plugin class 
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them except BaseInterface::description() and BaseInterface::name() )
+</ul>
+
+
 
 */
 
