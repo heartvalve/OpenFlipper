@@ -868,8 +868,23 @@ void MovePlugin::slotSetPosition() {
 
     BaseObjectData* object;
     if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-	if (  object->manipulatorNode()->visible() )
-	    object->manipulatorNode()->set_center( newpos );
+	if (  object->manipulatorNode()->visible() ) {
+        // Compute translation vector
+	    ACG::Vec3d translation = newpos;
+        translation -= object->manipulatorNode()->center();
+        object->manipulatorNode()->set_center(newpos);
+        // Stuff it into transformation matrix
+        ACG::GLMatrixd m;
+        m.identity();
+        m.translate(translation);
+        // ...and transform mesh
+        if(object->dataType() == DATA_TRIANGLE_MESH)
+            transformMesh(m, *PluginFunctions::triMesh(object));
+        else if(object->dataType() == DATA_POLY_MESH)
+            transformMesh(m, *PluginFunctions::polyMesh(object));
+        
+        emit updatedObject(object->id(), UPDATE_GEOMETRY);
+    }
 	updateManipulatorDialog();
 	emit updateView();
     }
