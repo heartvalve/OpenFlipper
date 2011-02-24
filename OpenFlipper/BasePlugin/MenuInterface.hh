@@ -90,7 +90,7 @@ signals:
     * @param _menu   The returned toplevel menu
     * @param _create Should a new menu be created if id doesn't exist
   */
-  virtual void getMenubarMenu (QString /*_name*/, QMenu *& /*_menu*/, bool /*_create*/) {};
+  virtual void getMenubarMenu (QString _name, QMenu *& _menu, bool _create) {};
 
   /**  \brief Adds an action to the menubar
     *
@@ -108,7 +108,7 @@ signals:
     * @param _action Pointer to the new action
     * @param _name   Name of the menu
   */
-  virtual void addMenubarAction(QAction* /*_action*/, QString /*_name*/ ) {};
+  virtual void addMenubarAction(QAction* _action, QString _name ) {};
 };
 
 

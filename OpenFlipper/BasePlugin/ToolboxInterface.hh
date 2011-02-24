@@ -54,9 +54,6 @@
 */
 
 
-
-
-
  /**
   * \brief Plugins can add its own toolbox to the main widget's toolbox area by using this interface.
   *
@@ -86,14 +83,21 @@ class ToolboxInterface {
       /** \brief Add a toolbox widget to the gui with the given name
        *
        * This signal adds a toolbox widget to the toolbar on the right.
+       *
+       * @param _name   Visible name of the toolbox
+       * @param _widget Pointer to the toolbox widget
        */
-      virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
+      virtual void addToolbox( QString  _name  , QWidget* _widget ) {};
 
       /** \brief Add a toolbox widget to the gui with the given name and an icon
        *
        * This signal adds a toolbox widget to the toolbar on the right. And sets an icon for it
+       *
+       * @param _name   Visible name of the toolbox
+       * @param _widget Pointer to the toolbox widget
+       * @param _icon   Icon for the toolbox
        */
-      virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/, QIcon* /*_icon*/) {};
+      virtual void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon) {};
 };
 
 
