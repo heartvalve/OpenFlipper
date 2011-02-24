@@ -293,7 +293,7 @@ To use the BaseInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them except BaseInterface::description() and BaseInterface::name() )
 </ul>
 
-\section Plugin Initialization
+\section baseInterfacePluginInitializatio Plugin Initialization
 BaseInterface provides two functions to initialize a plugin. The first function is BaseInterface::initializePlugin().
 This function is called immediatly after the plugin has been connected with OpenFlipper. When a plugin is
 loaded, all signals and slots from the used interfaces are connected to the core. After this, the
@@ -305,7 +305,7 @@ other plugins are now available and you can setup your userinterface components 
 The following graphic shows the initialization of a plugin.
 \image html startupProcess.jpg
 
-\section Object Update Notification
+\section baseInterfaceObjectUpdateNotification Object Update Notification
 The objects in OpenFlippers scene are stored and managed in OpenFlippers core. If a plugin changes one of the
 objects, it has to notify the core about that change. In turn OpenFlipper will then notify all other plugins about
 this change. This functionality is provided by the signals and slots for \ref BaseInterfaceUpdateSlots "update handling" .
@@ -342,7 +342,7 @@ Remarks:
 <li>Never emit the signal BaseInterface::updatedObject() inside the updated object slots as this causes endless loops!
 </ul>
 
-\section Scene Update Notifications
+\section baseInterfaceSceneUpdateNotification Scene Update Notifications
 
 OpenFlipper manages the scene updates in its core. If objects get updated the scene will be automatically redrawn. Nevertheless,
 you can force an update of the scene by emitting the signal BaseInterface::updateView().
@@ -350,7 +350,7 @@ you can force an update of the scene by emitting the signal BaseInterface::updat
 If the view (viewer pos /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
 change the view in this function or you get an endless loop!
 
-\section Management Functions
+\section baseInterfaceManagementFunctions Management Functions
 There are some basic functions for managing plugins. The BaseInterface::description() function can be used
 to provide a description for the plugin wich will be printed along with the plugin name. The BaseInterface::name()
 function has to return the name of the plugin. This name will also be used inside the scripting system.
