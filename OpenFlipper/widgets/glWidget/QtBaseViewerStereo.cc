@@ -396,6 +396,11 @@ void glViewer::drawScenePhilipsStereo() {
 void
 glViewer::updateColorTextureBuffer() {
   
+  if ( !ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ) {
+    std::cerr << "GL_ARB_texture_rectangle not supported! " << std::endl;
+    return;
+  }
+
   int vp_l, vp_b, vp_w, vp_h;
   glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
   
@@ -430,10 +435,10 @@ glViewer::updateColorTextureBuffer() {
     
     // Color texture
     pColorTexture_.bind();
-    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
                  GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
     
     colorTextureBufferWidth_  = glstate_->viewport_width();
     colorTextureBufferHeight_ = glstate_->viewport_height();
@@ -445,6 +450,11 @@ glViewer::updateColorTextureBuffer() {
 
 void 
 glViewer::updateDepthStencilTextureBuffer() {
+
+  if ( !ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ) {
+    std::cerr << "GL_ARB_texture_rectangle not supported! " << std::endl;
+    return;
+  }
   
   int vp_l, vp_b, vp_w, vp_h;
   glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
@@ -481,10 +491,10 @@ glViewer::updateDepthStencilTextureBuffer() {
     // Depth stencil texture
     pDepthStencilTexture_.bind();
     
-    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
                 GL_RGB, GL_UNSIGNED_BYTE, 0);
                 
-    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
     
     depthStencilTextureBufferWidth_  = glstate_->viewport_width();
     depthStencilTextureBufferHeight_ = glstate_->viewport_height();
@@ -600,6 +610,12 @@ glViewer::updateCustomAnaglyphStereo()
   if (!customAnaglyphSupported_)
     return;
 
+  if ( !ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ) {
+    std::cerr << "GL_ARB_texture_rectangle not supported! " << std::endl;
+    customAnaglyphSupported_ = false;
+    return;
+  }
+
   if (!agProgram_)
   {
     GLint errorPos;
@@ -634,13 +650,13 @@ glViewer::updateCustomAnaglyphStereo()
   if (glstate_->viewport_width () != agTexWidth_ ||
       glstate_->viewport_height () != agTexHeight_)
   {
-    glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[0]);
-    glTexImage2D (GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width (),
+    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+    glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width (),
                   glstate_->viewport_height (), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[1]);
-    glTexImage2D (GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width (),
+    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+    glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width (),
                   glstate_->viewport_height (), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
+    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
     agTexWidth_ = glstate_->viewport_width ();
     agTexHeight_ = glstate_->viewport_height ();
@@ -709,9 +725,9 @@ glViewer::drawScene_customAnaglyphStereo()
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[0]);
-  glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_NV, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+  glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
   // right eye
   glMatrixMode(GL_PROJECTION);
@@ -723,17 +739,17 @@ glViewer::drawScene_customAnaglyphStereo()
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[1]);
-  glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_NV, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+  glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
   glActiveTexture (GL_TEXTURE0);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[0]);
-  glEnable (GL_TEXTURE_RECTANGLE_NV);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
 
   glActiveTexture (GL_TEXTURE1);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, agTexture_[1]);
-  glEnable (GL_TEXTURE_RECTANGLE_NV);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
 
   glEnable (GL_FRAGMENT_PROGRAM_ARB);
   glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, agProgram_);
@@ -775,12 +791,12 @@ glViewer::drawScene_customAnaglyphStereo()
   glDisable (GL_FRAGMENT_PROGRAM_ARB);
 
   glActiveTexture (GL_TEXTURE1);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
-  glDisable (GL_TEXTURE_RECTANGLE_NV);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  glDisable (GL_TEXTURE_RECTANGLE_ARB);
 
   glActiveTexture (GL_TEXTURE0);
-  glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
-  glDisable (GL_TEXTURE_RECTANGLE_NV);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  glDisable (GL_TEXTURE_RECTANGLE_ARB);
 
 }
 

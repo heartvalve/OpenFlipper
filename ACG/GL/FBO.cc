@@ -33,8 +33,9 @@ void
 FBO::
 init()
 {
+
     // Create framebuffer object
-    if ( !GLEW_EXT_framebuffer_object )
+    if ( ! checkExtensionSupported("GL_EXT_framebuffer_object") )
     {
         std::cout << "Framebuffer object not supported! " << std::endl;
         exit( 1 );

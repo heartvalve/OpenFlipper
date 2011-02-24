@@ -464,6 +464,7 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================
   // glew Information
   // =====================================================================================
+  #ifndef __APPLE__
   aboutWidget_->OpenFlipperAbout->append("\n");
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("GLEW Specific Info:"));
@@ -471,6 +472,7 @@ void CoreWidget::showAboutWidget( ) {
   
   QString glewVersion = QString((const char *)glewGetString(GLEW_VERSION));
   aboutWidget_->OpenFlipperAbout->append(tr("GLEW Version:\t") + glewVersion);
+  #endif
   
   // =====================================================================================
   // Qt information

@@ -1144,10 +1144,10 @@ void glViewer::initializeGL()
   // unlock update (we started locked)
   properties_.unLockUpdate();
 
-  customAnaglyphSupported_ = glewIsSupported("GL_ARB_fragment_program") &&
-      (glewIsSupported("GL_ARB_texture_rectangle") ||
-       glewIsSupported("GL_EXT_texture_rectangle") ||
-       glewIsSupported("GL_NV_texture_rectangle"));
+  customAnaglyphSupported_ = ACG::checkExtensionSupported("GL_ARB_fragment_program") &&
+                            (ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ||
+                             ACG::checkExtensionSupported("GL_EXT_texture_rectangle") ||
+                             ACG::checkExtensionSupported("GL_NV_texture_rectangle"));
 
   initialized_ = true;
 

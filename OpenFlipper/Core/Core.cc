@@ -1655,6 +1655,7 @@ bool Core::checkOpenGLCapabilities()  {
     missing += tr("Your graphics card does not support the GL_ARB_vertex_buffer_object extension!\n");
   }
   
+
   if ( !ok ) {
     QString message = tr("Error! \nThe OpenGL capabilities of your current machine/driver are not sufficient!\n\n");
     message += tr("The following checks failed:\n\n");

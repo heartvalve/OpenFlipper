@@ -99,9 +99,9 @@ MeshNodeT(Mesh&        _mesh,
   perFaceTextureCoordsAvailable_(false),
   textureMap_(0)
 {
-  
+ 
   /// \todo : Handle vbo not supported
-  if ( ! GLEW_ARB_vertex_buffer_object ) {
+  if ( ! checkExtensionSupported("GL_ARB_vertex_buffer_object") ) {
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
   

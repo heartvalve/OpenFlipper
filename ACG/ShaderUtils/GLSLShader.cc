@@ -334,13 +334,13 @@ namespace GLSL {
     }
 
     int Program::getAttributeLocation(const char *name) {
-        int attributeLocation = glGetAttribLocationARB(this->m_programId, name);
+        int attributeLocation = glGetAttribLocation(this->m_programId, name);
         checkGLError2(name);
         return attributeLocation;
     }
 
     int Program::getUniformLocation(const char *name) {
-        int attributeLocation = glGetUniformLocationARB(this->m_programId, name);
+        int attributeLocation = glGetUniformLocation(this->m_programId, name);
         checkGLError2(name);
         return attributeLocation;
     }
