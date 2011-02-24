@@ -57,7 +57,6 @@
 
 #if defined(ARCH_DARWIN)
 
-  #include <GL/glew.h>
   #include <glut.h>
   #include <OpenGL/gl.h>
   #include <OpenGL/glu.h>
@@ -254,6 +253,14 @@ inline void glTexCoordPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
 
 
 //-----------------------------------------------------------------------------
+
+/** Check if the extension given by a std::string is supported by the current OpenGL extension
+*/
+inline bool checkExtensionSupported( std::string _extension )  {
+   std::string supported((const char*)glGetString(GL_EXTENSIONS));
+
+   return (supported.find(_extension) != std::string::npos);
+}
 
 
 /** Nice wrapper that outputs all current OpenGL errors to std::cerr.
