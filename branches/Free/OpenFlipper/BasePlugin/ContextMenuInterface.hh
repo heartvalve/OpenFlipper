@@ -165,7 +165,7 @@ To use the ContextMenuInterface:
 </ul>
 
 
-Usually you should implement the BaseInterface::initializePlugin() function from BaseInterface. In this function you can setup
+Usually you should implement the BaseInterface::pluginsInitialized() function from BaseInterface. In this function you can setup
 your menus.\n
 
 You have to create a QAction. The signals and slots of your actions have to be connected
@@ -184,7 +184,7 @@ The following code shows a simple example to create a menu entry in the context 
 \code 
 
 // Setup the menus in initialize plugins
-void ExamplePlugin::initializePlugin()
+void ExamplePlugin::pluginsInitialized()
 {
   // create a global QMenu in the plugin that contains our menu
   // in the header is: 

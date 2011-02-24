@@ -128,12 +128,12 @@ To use the MenuInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
 </ul>
 
-Usually you should implement the BaseInterface::initializePlugin() function from BaseInterface. In this function you can setup
+Usually you should implement the BaseInterface::pluginsInitialized() function from BaseInterface. In this function you can setup
 your menus.
 
 The following code shows a simple example to create a menu entry in the file menu.
 \code 
-void PrintPlugin::initializePlugin()
+void PrintPlugin::pluginsInitialized()
 {
   // Create a submenu called printing
   QMenu *printMenu = new QMenu(tr("&Printing"));

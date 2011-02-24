@@ -52,7 +52,7 @@
 
 void PrintPlugin::pluginsInitialized()
 {
-  // color menu
+  // Print menu
   QMenu *printMenu = new QMenu(tr("&Printing"));
 
   printMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
