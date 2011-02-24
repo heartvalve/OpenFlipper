@@ -114,13 +114,13 @@ To use the ToolboxInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
 </ul>
 
-Usually you should implement the BaseInterface::initializePlugin() function from BaseInterface. In this function you can setup
+Usually you should implement the BaseInterface::pluginsInitialized() function from BaseInterface. In this function you can setup
 your toolbox ( some kind of QWidget, can also be any widget created with qt-designer). Optionally you can also 
 add an icon to the toolbox. 
 
 The following code shows a simple example to create an empty toolbox.
 \code 
-void SmootherPlugin::initializePlugin()
+void SmootherPlugin::pluginsInitialized()
 {
   // Create the Toolbox Widget
   QWidget* toolBox = new QWidget();

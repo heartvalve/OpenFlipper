@@ -287,15 +287,17 @@ To use the BaseInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them except BaseInterface::description() and BaseInterface::name() )
 </ul>
 
-\section Plugin initialization
+\section Plugin Initialization
 BaseInterface provides two functions to initialize a plugin. The first function is BaseInterface::initializePlugin().
 This function is called immediatly after the plugin has been connected with OpenFlipper. When a plugin is
 loaded, all signals and slots from the used interfaces are connected to the core. After this, the
-BaseInterface::initializePlugin() slot is called. In this slot you can initialize your plugin and add
-user interface parts to OpenFlipper. The order how plugins are loaded is not fixed. So you should
-not rely or communicate with other plugins in this slot. \n
+BaseInterface::initializePlugin() slot is called. In this slot you can initialize your plugin.
+The order how plugins are loaded is not fixed. So you should not rely or communicate with other plugins
+in this slot. \n
 After all plugins are loaded, the slot  BaseInterface::pluginsInitialized() is called for each plugin. All
-other plugins are now available and the user interface is setup correctly.
+other plugins are now available and you can setup your userinterface components in this slot.
+The following graphic shows the initialization of a plugin.
+\image html startupProcess.jpg
 
 */
 
