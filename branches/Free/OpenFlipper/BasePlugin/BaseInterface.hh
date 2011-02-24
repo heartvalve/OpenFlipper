@@ -47,6 +47,7 @@
 #include <QMenuBar>
 #include <OpenFlipper/common/Types.hh>
 
+
 /** \file BaseInterface.hh
 *
 * OpenFlippers main plugin Interface \ref baseInterfacePage.
@@ -113,12 +114,13 @@ class BaseInterface {
       *
       *  Emit this Signal, if you updated any part of an object.\n
       *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
-      *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
+      *  Don't emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
+      *  For performance reasons try to always give the id and not -1!
       *
-      *  The parameter has to be the id of the object or -1 if refering to all or deleted objects.
+      *  @param _ objectId Id of the object or -1 if refering to all or deleted objects.
       */
-    virtual void updatedObject(int ) {};
+    virtual void updatedObject(int _objectId) {};
 
     /** \brief An object has been changed or added by this plugin
       *
@@ -126,11 +128,12 @@ class BaseInterface {
       *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
       *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
+      *  For performance reasons try to always give the id and not -1!
       *
       * @param _identifier id of the object or -1 if refering to all or deleted objects.
       * @param _type the type states which part of the object (topology, selection, ..) has to be updated
       */
-    virtual void updatedObject(int /*_identifier*/, const UpdateType /*_type*/) {};
+    virtual void updatedObject(int _identifier, const UpdateType _type) {};
     
     /** \brief A scenegraph node has been shown or hidden
       *
@@ -139,7 +142,7 @@ class BaseInterface {
       *  an optimal view. Use the id of the object the node is attached to or -1 if it is not connected to an object.
       *
       */
-    virtual void nodeVisibilityChanged( int /*_identifier*/ ) {};
+    virtual void nodeVisibilityChanged( int _identifier ) {};
    
   private slots:
 
@@ -153,7 +156,7 @@ class BaseInterface {
       *   You dont need to call updateView as the core triggers a redraw itself.
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
     */
-    virtual void slotObjectUpdated( int /*_identifier*/ ) {};
+    virtual void slotObjectUpdated( int _identifier ) {};
 
     /**  \brief An object has been updated by another plugin
       *
@@ -166,7 +169,7 @@ class BaseInterface {
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
       *  @param _type the type states which part of the object (topology, selection, ..) had been updated
     */
-    virtual void slotObjectUpdated( int /*_identifier*/, const UpdateType /*_type*/ ) {};
+    virtual void slotObjectUpdated( int _identifier, const UpdateType _type ) {};
 
     /**  \brief Called if the whole scene is cleared
       *
@@ -183,7 +186,7 @@ class BaseInterface {
       *   Addisionally you get the id of the object that has been changed or -1 if all objects
       *   have been modified.
     */
-    virtual void slotObjectSelectionChanged( int /*_identifier*/ ) {};
+    virtual void slotObjectSelectionChanged( int _identifier ) {};
 
     /** \brief An object has been shown or hidden
       *
@@ -192,7 +195,7 @@ class BaseInterface {
       *  If multiple or all objects have changed, the id will be -1.
       *
       */
-    virtual void slotVisibilityChanged( int /*_identifier*/ ) {};
+    virtual void slotVisibilityChanged( int _identifier ) {};
 
     /**  \brief Object properties have been changed
       *
@@ -201,7 +204,7 @@ class BaseInterface {
       *  If multiple or all objects have changed, the id will be -1.
       *
     */
-    virtual void slotObjectPropertiesChanged( int /*_identifier*/ ) {};
+    virtual void slotObjectPropertiesChanged( int _identifier ) {};
     
     /** \brief View has changed
       *
@@ -252,8 +255,8 @@ class BaseInterface {
        *   @param _parameters list of parameters
        *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
       */
-      virtual void setSlotDescription(QString     /*_slotName*/,   QString     /*_slotDescription*/,
-                                      QStringList /*_parameters*/, QStringList /*_descriptions*/) {};
+      virtual void setSlotDescription(QString     _slotName    ,   QString     _slotDescription,
+                                      QStringList _parameters  , QStringList _descriptions) {};
 
   /** @} */
 
@@ -310,12 +313,28 @@ this change. This functionality is provided by the signals and slots for \ref Ba
 \image html updateObject.jpg
 
 If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType).
+\n
 BaseInterface::updatedObject(int) forces an update of the whole object while BaseInterface::updatedObject(int,const UpdateType)
 can be restricted to a part of the object ( Geometry,Selection, ... ; see UpdateType ) and is therefore faster and should be preferred.
-Both signals get the id of the object that has been updated.
+
+Both signals get the id of the object that has been updated or -1 if all should be updated( you should not use -1 if you know what object changed!).
 
 If the signal is emitted, the core calls BaseInterface::slotObjectUpdated( int , const UpdateType ) of every plugin. You can
 implement this slot if you need to react on object changes.
+
+After all plugins have been informed, the scene will be redrawn.
+
+For more details about the UpdateType read the documentation about UpdateType and \ref DefaultUpdateTypes "predefined update types".
+A description for adding custom update types at runtime is available \ref UpdateTypeFunctions "here".
+
+It is also possible to insert custom nodes into the scenegraph. If you changed these nodes, you also have to inform the core.
+This is achieved by the BaseInterface::nodeVisibilityChanged() function. As nodes they are usually attached to objects in the scene,
+you should pass the id of the object to the function or -1 if its a global node (which should not be used!).
+
+If the complete scene gets cleared, the slot BaseInterface::slotAllCleared() will be executed after all objects have been removed from the scene.
+
+There are three additional slots that are called by the core, if the object selection(source/target BaseInterface::slotObjectSelectionChanged() ),
+the object visibility(Show/Hide BaseInterface::slotVisibilityChanged()) or other properties changed (e.g. name BaseInterface::slotObjectPropertiesChanged() )
 
 Remarks:
 <ul>
@@ -323,7 +342,29 @@ Remarks:
 <li>Never emit the signal BaseInterface::updatedObject() inside the updated object slots as this causes endless loops!
 </ul>
 
+\section Scene Update Notifications
 
+OpenFlipper manages the scene updates in its core. If objects get updated the scene will be automatically redrawn. Nevertheless,
+you can force an update of the scene by emitting the signal BaseInterface::updateView().
+
+If the view (viewer pos /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
+change the view in this function or you get an endless loop!
+
+\section Management Functions
+There are some basic functions for managing plugins. The BaseInterface::description() function can be used
+to provide a description for the plugin wich will be printed along with the plugin name. The BaseInterface::name()
+function has to return the name of the plugin. This name will also be used inside the scripting system.
+Additionally it is possible to provide a plugin version number with BaseInterface::version().
+
+OpenFlippers scripting system can use all public slots defined in your plugin. If it should also provide a
+small text description for your functions, you could set them with BaseInterface::setSlotDescription(). Even if
+you do not implement scripting functions in your plugin, the core will then be able to provide this information
+to the user.
+
+Along with the scripting, OpenFlipper provides a batch mode, running without any user interface. If your plugin
+will work without an user interface (e.g. only scripting functions), you can define a slot BaseInterface::noguiSupported().
+This empty slot is used to tell the core, that the plugin can work in batch mode. Otherwise it will not be loaded
+when running a batch file.
 
 */
 

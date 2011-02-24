@@ -103,7 +103,6 @@ bool UpdateType::contains( const UpdateType& _type ) const {
   
   // Catch the specialization of updates
   if ( _type == UPDATE_SELECTION ) {
-//     if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ )
     if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ ||  type_ == UPDATE_SELECTION_HALFEDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ || type_ == UPDATE_SELECTION_KNOTS.type_ )
       return true;
   }  
