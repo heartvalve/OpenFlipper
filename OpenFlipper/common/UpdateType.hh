@@ -49,7 +49,16 @@
 
 typedef std::bitset<64> UpdateTypeSet;
 
-// TYPE
+/** \brief Update type class
+ *
+ *
+ *  This class is used to specify the scope of updates. There are update types for
+ *  selection,geometry,topology,colors,... specified here: \ref DefaultUpdateTypes
+ *
+ *  You can also find functions to add custom update types at runtime at
+ *  \ref UpdateTypeFunctions
+ *
+ */
 class DLLEXPORT UpdateType {
   public:
     UpdateType(const UpdateType& _type);
@@ -74,14 +83,18 @@ class DLLEXPORT UpdateType {
     UpdateTypeSet type_;
 };
 
+/** \defgroup DefaultUpdateTypes Default update types
+ * The following update types are predefined for the general use cases
+ * @{
+ *
+ */
+
 /// Identifier for all updates
 const UpdateType UPDATE_ALL(              UpdateTypeSet(1)       );
 
 /// This is the update identifier for global Object visibility ( show/hide )
 const UpdateType UPDATE_VISIBILITY(       UpdateTypeSet(1) << 1  );
 
-
-/// The following update types are predefined for the general use cases
 
 /** \brief Geometry updated
 *
@@ -119,7 +132,7 @@ const UpdateType UPDATE_SELECTION_VERTICES( UpdateTypeSet(1) << 5 );
 const UpdateType UPDATE_SELECTION_EDGES( UpdateTypeSet(1) << 6 );
 
 
-/** \brief Edge selection has changed
+/** \brief Halfedge selection has changed
 *
 * This is a more fine grained selection update. UPDATE_SELECTION will also match this update type.
 */
@@ -146,9 +159,18 @@ const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 10 );
 /// marks the last used ID
 const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 11 );
 
+/**@}*/
+
 //=====================================================================================
 // FUNCTIONS
 //=====================================================================================
+
+
+/** \defgroup UpdateTypeFunctions Runtime Update Types
+ * Use these functions to add custom update types at runtime.
+ * @{
+ *
+ */
 
 /** Adds a datatype and returns the id for the new type
 *
@@ -178,5 +200,6 @@ QString updateTypeName(UpdateType _id);
 DLLEXPORT 
 uint updateTypeCount();
 
+/**@}*/
 
 #endif // UPDATETYPE_HH
