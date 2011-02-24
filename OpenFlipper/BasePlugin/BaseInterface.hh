@@ -94,7 +94,10 @@ class BaseInterface {
 
   //===========================================================================
   /** @name Object/View updates
-  * @{ */
+  * @{
+  * \anchor BaseInterfaceUpdateSlots
+  * */
+
   //===========================================================================
 
   signals :
@@ -249,7 +252,7 @@ class BaseInterface {
        *   @param _parameters list of parameters
        *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
       */
-      virtual void setSlotDescription(QString     /*_slotName*/,    QString     /*_slotDescription*/,
+      virtual void setSlotDescription(QString     /*_slotName*/,   QString     /*_slotDescription*/,
                                       QStringList /*_parameters*/, QStringList /*_descriptions*/) {};
 
   /** @} */
@@ -298,6 +301,29 @@ After all plugins are loaded, the slot  BaseInterface::pluginsInitialized() is c
 other plugins are now available and you can setup your userinterface components in this slot.
 The following graphic shows the initialization of a plugin.
 \image html startupProcess.jpg
+
+\section Object Update Notification
+The objects in OpenFlippers scene are stored and managed in OpenFlippers core. If a plugin changes one of the
+objects, it has to notify the core about that change. In turn OpenFlipper will then notify all other plugins about
+this change. This functionality is provided by the signals and slots for \ref BaseInterfaceUpdateSlots "update handling" .
+
+\image html updateObject.jpg
+
+If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType).
+BaseInterface::updatedObject(int) forces an update of the whole object while BaseInterface::updatedObject(int,const UpdateType)
+can be restricted to a part of the object ( Geometry,Selection, ... ; see UpdateType ) and is therefore faster and should be preferred.
+Both signals get the id of the object that has been updated.
+
+If the signal is emitted, the core calls BaseInterface::slotObjectUpdated( int , const UpdateType ) of every plugin. You can
+implement this slot if you need to react on object changes.
+
+Remarks:
+<ul>
+<li>If the object id passed to the functions is -1 all objects should be treated as updated.
+<li>Never emit the signal BaseInterface::updatedObject() inside the updated object slots as this causes endless loops!
+</ul>
+
+
 
 */
 
