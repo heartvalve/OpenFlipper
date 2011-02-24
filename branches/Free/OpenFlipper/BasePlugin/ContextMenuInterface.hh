@@ -101,9 +101,11 @@ signals:
     * This Action will be visible  when you rightclick in the viewer widget on an item
     * of the given context menu type. You can add a whole menu here by adding the action:
     * menu->menuAction() of your own menu.
+    *
     * @param _menu Pointer to the new Action
+    * @param _type Type context menu type
   */
-  virtual void addContextMenuItem(QAction* /*_action*/ , ContextMenuType /*_type*/) {};
+  virtual void addContextMenuItem(QAction* _action , ContextMenuType _type) {};
 
   /**  \brief Add an entry for a  context Menu
     *
@@ -117,29 +119,29 @@ signals:
     * @param _objectType Type of the picked object
    *  @param _type Type of the context Menu ( See ContextMenuType )
   */
-  virtual void addContextMenuItem(QAction* /*_action*/ ,DataType /*_objectType*/ , ContextMenuType /*_type*/ ) {};
+  virtual void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type ) {};
 
 private slots:
 
   /** When the main application requests a context menu, this slot is called before showing the window.
    * If an object is picked the id will be given in this call so you can change the contents of your menu
    * depending on the given object.
+   *
    * @param _objectId id of the object
    */
-  virtual void slotUpdateContextMenu( int /*_objectId*/ ) {};
+  virtual void slotUpdateContextMenu( int _objectId ) {};
 
   /** When the main application requests a context menu, this slot is called before showing the window.
    * This slot will be called indicating that a scenegraph node not belonging to an object
    * has been picked.
-   * The id of the node is given as a parameter
+   *
    * @param _node id of the picked node
    */
-  virtual void slotUpdateContextMenuNode( int /*_nodeId*/ ) {};
+  virtual void slotUpdateContextMenuNode( int _nodeId ) {};
 
   /** When the main application requests a context menu, this slot is called before showing the window.
-   * This slot will be called indicating thatthe background has been picked.
-   * The id of the node is given as a parameter
-   * @param _node id of the picked node
+   * This slot will be called indicating that the background has been picked.
+   *
    */
   virtual void slotUpdateContextMenuBackground( ) {};
 
