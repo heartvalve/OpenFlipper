@@ -166,6 +166,6 @@ To use the LoadSaveInterface:
 */
 
 
-Q_DECLARE_INTERFACE(LoadSaveInterface,"OpenFlipper.LoadSaveInterface/1.0")
+Q_DECLARE_INTERFACE(LoadSaveInterface,"OpenFlipper.LoadSaveInterface/1.1")
 
 #endif // LOADSAVEINTERFACE_HH
