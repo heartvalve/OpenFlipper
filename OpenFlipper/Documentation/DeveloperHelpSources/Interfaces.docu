@@ -63,6 +63,9 @@ Provides functions to create a separate widget in the toolbox on the right ( \re
 Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
 \n
 
+\subpage statusbarInterfacePage
+\image html StatusbarInterface.png
+This interface is used to display messages in the status bar or adding widgets to it ( \ref statusbarInterfacePage ).
 
 
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
@@ -136,10 +139,6 @@ This interface is used to add additional view widgets ( ViewInterface ).
 \image html ScriptInterface.png
 For plugins who provide scriptable functions ( ScriptInterface )
 
-
-\subsection StatusPlugin Status Bar Interface
-\image html StatusbarInterface.png
-This interface is used to display messages in the status bar ( StatusbarInterface )
 
 
 \subsection OptionsPlugin Options Interface
