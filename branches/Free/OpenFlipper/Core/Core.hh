@@ -424,7 +424,7 @@ signals:
       void slotLoad(QString _filename, int _pluginID);
       
       /// Called when a file has been opened
-      void slotObjectOpened ( int _id );
+      void slotFileOpened ( int _id );
 
       /// Called when an empty object has been Added
       void slotEmptyObjectAdded ( int _id );

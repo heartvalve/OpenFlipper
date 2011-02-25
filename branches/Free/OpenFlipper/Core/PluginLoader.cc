@@ -1572,7 +1572,7 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
 
     if ( checkSignal(plugin,"openedFile(int)" ) )
       connect(plugin , SIGNAL( openedFile( int ) ) ,
-              this   , SLOT( slotObjectOpened ( int ) ),Qt::DirectConnection);
+              this   , SLOT( slotFileOpened ( int ) ),Qt::DirectConnection);
   }
   
   //Check if it's a typePlugin
