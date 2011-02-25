@@ -66,13 +66,21 @@ class LoadSaveInterface {
       virtual ~LoadSaveInterface() {};
 
    signals :
-      /** Tries to load the file as a given type
+      /** \brief Save object to a file
+       *
+       * @param _id Object to Save
+       * @param _filename Filename to save it to (Leave as "" to automatically determine filename)
+      */
+      virtual void save(int /*_id*/ , QString /*_filename*/ ) {}
+
+      /** \brief Load object from file with a specific DataType
        *
        * @param _filename Filename of the File to load
        * @param _type Type to be loaded
        * @param _id Here the id of the loaded object is returned. id its -1 something went wrong
        */
       virtual void load(QString /*_filename*/, DataType /*_type*/, int& /*_id*/) {};
+
 
       /** Add an empty object of the given type
        *
@@ -88,17 +96,6 @@ class LoadSaveInterface {
        */
       virtual void copyObject( int /*_oldId*/, int& /*_newId*/) {};
 
-      /**
-       *
-       * @param _id Object to Save
-       * @param _filename Filename to save it to (Leave as "" to automatically determine filename)
-       */
-      virtual void save(int /*_id*/ , QString /*_filename*/ ) {};
-
-      /** \brief file has been opened
-       * @param _id Id of the opened object
-       */
-      virtual void openedFile( int /*_id*/ ) {};
 
       /** \brief Emit this signal if an empty object has been created
        * @param _id Id of the added object

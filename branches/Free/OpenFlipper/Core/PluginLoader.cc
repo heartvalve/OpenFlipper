@@ -1318,10 +1318,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(this   , SIGNAL( openedFile( int) ) ,
               plugin , SLOT( fileOpened( int ) ),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"openedFile(int)" ) )
-      connect(plugin , SIGNAL( openedFile( int ) ) ,
-              this   , SLOT( slotObjectOpened ( int ) ),Qt::DirectConnection);
-
     if ( checkSignal(plugin,"addEmptyObject(DataType,int&)" ) )
       connect(plugin , SIGNAL( addEmptyObject( DataType, int& )) ,
               this   , SLOT( slotAddEmptyObject( DataType, int&) ),Qt::DirectConnection);
@@ -1572,6 +1568,11 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
     
     supportedTypes_.push_back(ft);
+
+
+    if ( checkSignal(plugin,"openedFile(int)" ) )
+      connect(plugin , SIGNAL( openedFile( int ) ) ,
+              this   , SLOT( slotObjectOpened ( int ) ),Qt::DirectConnection);
   }
   
   //Check if it's a typePlugin
