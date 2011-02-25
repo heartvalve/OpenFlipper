@@ -39,43 +39,40 @@ class and the signature is the same as in the interface.\n
 All plugins in OpenFlipper have to implement some basic functions from BaseInterface. They are used to integrate and manage
 the plugins by the core application. See \ref baseInterfacePage for details.
 
-\section pluginInterfacesUIOverview Available Interfaces for controlling the User Interface
 
-This section gives an overview over the available interfaces which control OpenFlippers User interface.
+\section  pluginInterfacesGroups Interfaces
+The following groups of Interfaces are available:
 
-\subpage contextmenuInterfacePage 
-\image html ContextMenuInterface.png
-Add context menu entries in your plugin. ( \ref contextmenuInterfacePage )
-\n
+\subpage pluginInterfacesUIOverview
 
-\subpage menuInterfacePage
-\image html MenuInterface.png
-Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
-\n 
+\subpage pluginInterfacesDataHandling
 
-\subpage toolboxInterfacePage
-\image html ToolboxInterface.png
-Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
-\n
+\subpage pluginInterfacesInputDevices
 
-\subpage toolbarInterfacePage
-\image html ToolbarInterface.png
-Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
-\n
 
-\subpage statusbarInterfacePage
-\image html StatusbarInterface.png
-This interface is used to display messages in the status bar or adding widgets to it ( \ref statusbarInterfacePage ).
 
+\section todoInterfaces Interfaces todos for documentation:
+BackupInterface
+FileInterface
+IniInterface
+KeyInterface
+LoadSaveInterface
+MouseInterface
+OptionsInterface
+PickingInterface
+PluginConnectionInterface
+ProcessInterface
+RPCInterface
+ScriptInterface
+SecurityInterface
+TextureInterface
+TypeInterface
+ViewInterface
+ViewModeInterface
 
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
 
-This section gives an overview over the available interfaces which control other parts of OpenFlipper.
-
-\subsection BasePlugin Base Interface
-This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin
-name and some important Signals and slots which will be called by the main application. See BaseInterface
-for details.
+This page gives an overview over the available interfaces which control other parts of OpenFlipper.
 
 \subsection KeyPlugin Keyboard Interface
 \image html keyInterface.png
@@ -93,11 +90,6 @@ Provides functions to handle mesh files and load / unload geometry
 objects into the scene graph ( LoadSaveInterface ).
 
 
-\subpage loggingInterfacePage
-\image html LoggingInterface.png
-This is an Interface for Logging to the included log widget. You can log to different levels
-(LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \ref loggingInterfacePage ).
-\n
 
 \subsection TexturePlugin Texture Interface
 \image html TextureInterface.png
@@ -155,4 +147,60 @@ Use this interface to backup data ( BackupInterface )
 \subsection INIPlugin Use Inifiles to store information
 \image html INIInterface.png
 Receive an event if an ini file is opened by the application. ( INIInterface )\n
+
 */
+
+
+/** \page pluginInterfacesUIOverview User Interface control
+
+This page gives an overview over the available interfaces which control OpenFlippers User interface.
+
+\subpage contextmenuInterfacePage
+\image html ContextMenuInterface.png
+Add context menu entries in your plugin. ( \ref contextmenuInterfacePage )
+\n
+
+\subpage loggingInterfacePage
+\image html LoggingInterface.png
+This is an Interface for Logging to the included log widget. You can log to different levels
+(LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \ref loggingInterfacePage ).
+\n
+
+\subpage menuInterfacePage
+\image html MenuInterface.png
+Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
+\n
+
+\subpage statusbarInterfacePage
+\image html StatusbarInterface.png
+This interface is used to display messages in the status bar or adding widgets to it ( \ref statusbarInterfacePage ).
+\n
+
+\subpage toolboxInterfacePage
+\image html ToolboxInterface.png
+Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
+\n
+
+\subpage toolbarInterfacePage
+\image html ToolbarInterface.png
+Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
+\n
+
+*/
+
+/** \page pluginInterfacesDataHandling Object and Data Handling
+This page shows interfaces for controlling and adding Objects.
+
+*/
+
+
+/** \page pluginInterfacesInputDevices Input Devices
+This page shows interfaces which could be used to get data from input devices.
+
+*/
+
+
+
+
+
+

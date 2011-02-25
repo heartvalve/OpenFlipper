@@ -57,7 +57,7 @@ class SecurityInterface {
     /// Function starting the authentication process
     bool    authenticate();
     
-    /// If authenticate returns fals, this string will containe the license info
+    /// If authenticate returns fails, this string will contain the license info
     QString licenseError();
 
   private :
