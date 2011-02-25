@@ -1,9 +1,21 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.1 (  ? , 10914 )</b>
+ * - <b>OpenFlipper 1.0.1 (  ? , 11012 )</b>
+ *      - <b>Interface changes</b>
+ *          - <b>ACG</b>
+ *              - In ACG enter,enterPick,leave,leavePick,draw functions now get the draw mode as const reference. Please change your nodes accordingly
+ *          - <b>Interfaces</b>
+ *              - Remove getAllFilters from LoadSaveInterface as the right functions are in the file interface
+ *              - Moved openedFile signal from LoadSaveInterface to FileInterface
  *      - <b>ACG</b>
+ *          - General
+ *              - Remove glew on Mac
  *          - GLState
  *              - clearallbuffers fixed (cleared whole buffer instead of the viewport only( broke multiview of OpenFlipper ) 
+ *          - DrawModes
+ *              - Made isAtomic const
+ *          - Scenegraph
+ *              - enter,enterPick,leave,leavePick,draw functions now get the draw mode as const reference. Please change your nodes accordingly
  *      - <b>Core</b>
  *          - Log Window
  *              - Fixed log filter button staying pressed
@@ -13,14 +25,22 @@
  *              - Scripting function to move toolboxes to top or bottom
  *          - Interfaces
  *              - Make operator functions for == an != const in ObjectIterator
+ *              - Remove getAllFilters from LoadSaveInterface as the right functions are in the file interface
+ *              - Moved openedFile signal from LoadSaveInterface to FileInterface
  *          - Rendering
  *              - Added option to set minimal scene size
+ *          - Internals
+ *              - Renamed slotObjectOpened in core to slotFileOpened
  *      - <b>LicenseManager</b>
  *          - Use separate Hashes for each network interface
  *          - Use more reliable windows native code to get windows interfaces
  *          - Include product id on windows
  *          - Fixed wrong coreApp path on Mac
  *          - Get rid of extra message box when license files are not found
+ *      - <b>ObjectTypes</b>
+ *          - MeshObjects 
+ *              - Bugfixes
+ *                  - Fixed StatusNodeMod for handle and modeling regions to return correct information about handle/modeling areas.
  *      - <b>Plugins</b>
  *          - FileSkeleton
  *              - Removed ( Is now FileSKL)
@@ -28,7 +48,9 @@
  *              - Made most functions scriptable
  *              - Some minor bugfixes
  *          - Move
- *              -Fixed wrong update of normals
+ *              - Fixed wrong update of normals
+ *              - Transform skeletons correctly
+ *              - Corrected setPosition function to correctly transform mesh as desired.
  *          - ViewControl
  *              - Scripting function to set projection mode of coordinate system
  *          - VSI (Visual scripting interface)
@@ -40,12 +62,14 @@
  *              - Overview for datatypes
  *              - Document skeleton class
  *              - Document Mesh datatypes
+ *              - Documentation for Interfaces
  *          - User Documentation
  *      - <b>Build System</b>
  *          - Moved VERSION file to OpenFlipper subdir, as this represents more or less the core version
  *          - Be less verbose in doxygen configs
  *          - Updated doxygen macro
  *          - plugins can now provide user documentation in the userDoc subdir
+ *          - Fixed missing ACGDLL definition when building pluginlib
  *          - install documentation along with OpenFlipper
  * 
  * - <b>OpenFlipper 1.0 (  01.26.2011 , 10764 )</b>
