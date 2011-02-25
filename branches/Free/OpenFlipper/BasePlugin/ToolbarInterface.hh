@@ -49,10 +49,20 @@
  #include <OpenFlipper/common/Types.hh>
  #include <QToolBar>
 
- /**
+/** \file ToolbarInterface
+*
+* Interface for adding per plugin toolbars to OpenFlippers UI.\ref toolbarInterfacePage
+*/
+
+
+/**
+ *
+ * \ref toolbarInterfacePage "Detailed description"
+ * \n
+ *
  * This Interface should be used by plugins which will provide a toolbar.
- * Each Plugin can create own Toolbars. Emit
- */
+ * Each Plugin can create own toolbars.
+*/
 class ToolbarInterface {
 
    private slots :
@@ -69,14 +79,14 @@ class ToolbarInterface {
       * To create your own Toolbar, emit this signal with a pointer to your Toolbar.
       * @param _toolbar Your Toolbar
       */
-      virtual void addToolbar(QToolBar* /*_toolbar*/) {};
+      virtual void addToolbar(QToolBar* _toolbar) {};
 
 
       /** \brief Remove a Toolbar from the main widget
       *
       * @param _toolbar Toolbar to be removed
       */
-      virtual void removeToolbar(QToolBar* /*_toolbar*/) {};
+      virtual void removeToolbar(QToolBar* _toolbar) {};
 
 
       /** \brief Get a pointer to a Toolbar of the given name or 0 if it does not exist.
@@ -84,10 +94,59 @@ class ToolbarInterface {
       * @param _name Name of the Toolbar
       * @param _toolbar requested Toolbar or 0
       */
-      virtual void getToolBar( QString /*_name*/, QToolBar*& /*_toolbar*/ ) {};
+      virtual void getToolBar( QString _name, QToolBar*& _toolbar ) {};
 
 
 };
+
+
+
+/** \page toolbarInterfacePage Toolbar Interface
+\image html ToolbarInterface.png
+\n
+The ToolbarInterface can be used by plugins to add toolbars to OpenFlippers
+UI. The toolbars are located above the GL viewer (See image).
+
+
+To use the ToolbarInterface:
+<ul>
+<li> include ToolbarInterface in your plugins header file
+<li> derive your plugin from the class ToolbarInterface
+<li> add Q_INTERFACES(ToolbarInterface) to your plugin class
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+Usually you should implement the BaseInterface::pluginsInitialized() function from BaseInterface. In this function you can setup
+your toolbars.
+
+The following code shows a simple example to create a simple toolbar.
+\code
+void ExamplePlugin::pluginsInitialized()
+{
+
+  // Create your toolbar
+  QToolBar* toolbar = new QToolBar(tr("Example Toolbar"));
+
+  // Create an action for the toolbar
+  QAction* exampleAction = new QAction(tr("&Toolbar Button"), this);
+
+  // Create an icon which is shown for the action
+  exampleAction->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"exampleIcon.png"));
+
+  // Add the action to the toolbar
+  toolbar->addAction(exampleAction);
+
+  // Integrate the new toolbar into OpenFlipper
+  emit addToolbar( toolbar );
+}
+\endcode
+
+Signals and slots of your toolbar (e.g. from an action inside it) can be directly connected to signals and slots in
+your plugin. Therefore the embedding of the toolbar is fully transparent.
+
+*/
+
+
 
 Q_DECLARE_INTERFACE(ToolbarInterface,"OpenFlipper.ToolbarInterface/1.1")
 
