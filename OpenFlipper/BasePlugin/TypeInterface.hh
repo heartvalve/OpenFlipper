@@ -142,6 +142,6 @@ class TypeInterface {
     virtual DataType supportedType() = 0;
 };
 
-Q_DECLARE_INTERFACE(TypeInterface,"OpenFlipper.TypeInterface/1.0")
+Q_DECLARE_INTERFACE(TypeInterface,"OpenFlipper.TypeInterface/1.1")
 
 #endif // TYPEINTERFACE_HH
