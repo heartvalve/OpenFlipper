@@ -98,7 +98,7 @@ signals:
   /**  \brief Add an entry for a context Menu
     *
     * Create an Action (Can also be the action of a Menu) and register this menu as a context menu to the core.
-    * This Action will be visible  when you rightclick in the viewer widget on an item
+    * This Action will be visible  when you right click in the viewer widget on an item
     * of the given context menu type. You can add a whole menu here by adding the action:
     * menu->menuAction() of your own menu.
     *
@@ -110,7 +110,7 @@ signals:
   /**  \brief Add an entry for a  context Menu
     *
     * Create an action (Can also be the action of a Menu) and register this action as a context menu entry to the core.
-    * This Action will only be visible if the picked object is of the given datatype.
+    * This Action will only be visible if the picked object is of the given DataType.
     * To support multiple object types with your menu, you can emit this signal multiple
     * times with the same action but different DataTypes. You can add a whole Menu here by adding the action:
     * menu->menuAction()
@@ -156,7 +156,7 @@ UI. The entries will be added to OpenFlippers contextMenus in the glView (see im
 You can choose between context menus for objects, nodes or the background.\n
 
 The given context menu entries will be shown when the user right clicks on the corresponding
-primitive (node,object) in the gl viewer.
+primitive (node,object) in the GL viewer.
 
 To use the ContextMenuInterface:
 <ul>

@@ -61,7 +61,7 @@
   * \n
   *
   * This Interface can be used by plugins which will provide a toolbox widget.
-  * Each Plugin can create own Widgets in the Toolbox area. Just create your widget and then add it with \n
+  * Each Plugin can create own Widgets in the toolbox area. Just create your widget and then add it with \n
   * emit addToolbox( QString  _name  , QWidget* _widget ) \n
   * to the user interface. You can create extra signals and slots in your Plugin.
   * These can be connected between your toolbox and your plugin.\n
@@ -82,7 +82,7 @@ class ToolboxInterface {
 
       /** \brief Add a toolbox widget to the gui with the given name
        *
-       * This signal adds a toolbox widget to the toolbar on the right.
+       * This signal adds a toolbox widget to the toolbox area on the right.
        *
        * @param _name   Visible name of the toolbox
        * @param _widget Pointer to the toolbox widget
@@ -91,7 +91,7 @@ class ToolboxInterface {
 
       /** \brief Add a toolbox widget to the gui with the given name and an icon
        *
-       * This signal adds a toolbox widget to the toolbar on the right. And sets an icon for it
+       * This signal adds a toolbox widget to the toolbox area on the right. And sets an icon for it
        *
        * @param _name   Visible name of the toolbox
        * @param _widget Pointer to the toolbox widget
@@ -106,7 +106,7 @@ class ToolboxInterface {
 \image html ToolboxInterface.png
 
 The ToolboxInterface can be used by plugins to add widgets to the list of toolboxes in OpenFlippers
-UI. The toolboxes are located left or right of the gl viewer (See image). 
+UI. The toolboxes are located left or right of the GL viewer (See image).
 
 The list can be hidden by pressing Ctrl + t.
 
@@ -119,7 +119,7 @@ To use the ToolboxInterface:
 </ul>
 
 Usually you should implement the BaseInterface::pluginsInitialized() function from BaseInterface. In this function you can setup
-your toolbox ( some kind of QWidget, can also be any widget created with qt-designer). Optionally you can also 
+your toolbox ( some kind of QWidget, can also be any widget created with QT-designer). Optionally you can also
 add an icon to the toolbox. 
 
 The following code shows a simple example to create an empty toolbox.
