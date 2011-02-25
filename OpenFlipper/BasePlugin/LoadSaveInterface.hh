@@ -105,15 +105,6 @@ class LoadSaveInterface {
        */
       virtual void emptyObjectAdded( int /*_id*/ ) {};
 
-     /** \brief get a list of all Filters
-       *
-       *  request a list of all Filters
-       *
-       *  @param _list StringList where the filters should be put into
-       */
-      virtual void getAllFilters( QStringList& /*_list*/ ) {};
-
-
       /** \brief Delete an object
        *
        * @param _id Id of the object

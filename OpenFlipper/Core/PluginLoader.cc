@@ -1340,10 +1340,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(this ,   SIGNAL( emptyObjectAdded( int ) ) ,
               plugin   , SLOT( addedEmptyObject( int ) ),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"getAllFilters(QStringList&)" ) )
-      connect(plugin , SIGNAL( getAllFilters( QStringList& ) ) ,
-              this   , SLOT( slotGetAllFilters ( QStringList& ) ),Qt::DirectConnection);
-
     if ( checkSignal(plugin,"deleteObject(int)" ) )
       connect(plugin , SIGNAL( deleteObject( int ) ) ,
               this   , SLOT( slotDeleteObject( int ) ),Qt::DirectConnection);
