@@ -347,6 +347,8 @@ Remarks:
 OpenFlipper manages the scene updates in its core. If objects get updated the scene will be automatically redrawn. Nevertheless,
 you can force an update of the scene by emitting the signal BaseInterface::updateView().
 
+\image html updateView.jpg
+
 If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
 change the view in this function or you get an endless loop!
 

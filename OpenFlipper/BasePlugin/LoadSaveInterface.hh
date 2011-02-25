@@ -45,10 +45,18 @@
 
 #include <OpenFlipper/common/Types.hh>
 
-/** \brief Interface for all plugins which want to load or save files
+/** \file LoadSaveInterface.hh
+*
+* Interface for adding and removing objects.\ref loadSaveInterfacePage
+*/
+
+/** \brief Interface for all plugins which want to Load or Save files and create Objects
+  *
+  * \ref loadSaveInterfacePage "Detailed description"
+  * \n
   *
   * Using this interface you can instruct the core to open/save objects or
-  * create new empty objects.
+  * to create new empty objects.
  */
 class LoadSaveInterface {
 
@@ -135,11 +143,40 @@ class LoadSaveInterface {
 
     /** \brief An object was deleted
       *
-      * @param _id Id of the object
+      * This function is called bz the core if an object gets deleted. It is called immediatly
+      * before the object is removed from the scenegraph. So if this function is invoked, the object still
+      * exists. All plugins get informed via this slot.\
+      *
+      * After this function got called for all plugins, the object is removed from the scene with all
+      * nodes attached to it and all PerObjectData attached to it.
+      *
+      * @param _id Id of the object that is deleted.
       */
     virtual void objectDeleted( int /*_id*/ ){};
 
 };
+
+/** \page loadSaveInterfacePage Load/Save Interface
+ *
+The LoadSaveInterface can be used by plugins to add new objects to the scene either by creating empty objects
+or by loading them from files. The interface also triggers saving of existing objects to files.
+
+Additionally the interface informs plugins if new objects have been added to the scenes or if previous objects
+have been removed.
+
+To use the LoadSaveInterface:
+<ul>
+<li> include LoadSaveInterface in your plugins header file
+<li> derive your plugin from the class LoadSaveInterface
+<li> add Q_INTERFACES(LoadSaveInterface) to your plugin class
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+
+
+
+*/
+
 
 Q_DECLARE_INTERFACE(LoadSaveInterface,"OpenFlipper.LoadSaveInterface/1.0")
 
