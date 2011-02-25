@@ -40,24 +40,18 @@
  *                                                                           *
 \*===========================================================================*/
 
-/* Salt for security interface 
+/* Salt file for security interface 
 */
 
-#ifndef WIN32
-  #warning Using salt file for Plugin-X
-#else
-  #pragma message ( "Using salt file for Plugin-X" )
-#endif
-
-/** This Macro creates a salt for your plugin which is added to the 
-    license files. You have to keep this Salt 
+/** This Macro creates a salt (basicallz a key) for your plugin which is added to the 
+    license files. You have to keep this salt file
     !!!SECRET!!!, 
     otherwise everybody can create licenses for your Plugin. The special 
     form of this macro makes the salt string invisible inside the binary 
     of the plugin so that it is not easy to recover from it.
 
     Modify the Salts below to create your own plugin keys. Then
-    copy this file to any plugin which should use the license manager.
+    copy this file to your plugin directory and name it "salt.hh".
 
     Additionally add the option 
 
@@ -65,8 +59,16 @@
 
     to your CMakeLists generator (e.g.  openflipper_plugin (LICENSEMANAGER ) )
     
-    Additionally dont derive your Plugin from QObject but from LicenseManager
+    Additionally don't derive your Plugin from QObject but from LicenseManager
     which has to be the first one in your class definition.
+    
+    \code
+      // Before:
+      class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface, ToolbarInterface, StatusbarInterface
+      
+      // After:
+      class ColorPlugin : public LicenseManager, BaseInterface, MenuInterface, ScriptInterface, ToolbarInterface, StatusbarInterface
+    \endcode
 
     When the plugin is now build, an additional LicenseManager is generated which shows
     a widget on execution. Enter the information which is given by OpenFlipper when
