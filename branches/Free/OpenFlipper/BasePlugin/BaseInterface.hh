@@ -52,7 +52,7 @@
 *
 * OpenFlippers main plugin Interface \ref baseInterfacePage.
 */
- 
+
 
 /** \brief Interface class from which all plugins have to be created.
   *
@@ -77,7 +77,7 @@ class BaseInterface {
        *
        *   This slot is called if the plugin is loaded and has to be initialized. All initialization stuff
        *   in this slot has to stay inside the plugin, no external signals are allowed here (and will be ignored).
-       *   Don't create any objects via pluginfunctions here. Use the pluginsInitialized() slot for external
+       *   Don't create any objects via PluginFunctions here. Use the pluginsInitialized() slot for external
        *   initialization. After execution of this slot your plugin should be fully functional.
        *   Only gui elements may be uninitialized and should be created in pluginsInitialized().
       */
@@ -118,7 +118,7 @@ class BaseInterface {
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
       *  For performance reasons try to always give the id and not -1!
       *
-      *  @param _ objectId Id of the object or -1 if refering to all or deleted objects.
+      *  @param _ objectId Id of the object or -1 if referring to all or deleted objects.
       */
     virtual void updatedObject(int _objectId) {};
 
@@ -126,11 +126,11 @@ class BaseInterface {
       *
       *  Emit this Signal, if you updated any part of an object.\n
       *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
-      *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
+      *  Don't emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
       *  For performance reasons try to always give the id and not -1!
       *
-      * @param _identifier id of the object or -1 if refering to all or deleted objects.
+      * @param _identifier id of the object or -1 if referring to all or deleted objects.
       * @param _type the type states which part of the object (topology, selection, ..) has to be updated
       */
     virtual void updatedObject(int _identifier, const UpdateType _type) {};
@@ -148,24 +148,24 @@ class BaseInterface {
 
     /**  \brief An object has been updated by another plugin
       *
-      *   This slot is called by the main aplication if the number or status of existing objects changed or if
+      *   This slot is called by the main application if the number or status of existing objects changed or if
       *   an existing object has been changed. This could mean, that objects are added or deleted
       *   or that an existing object with the given id has been modified.
       *   If you store local information about one of these Objects, you should check if its still valid!\n
-      *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
-      *   You dont need to call updateView as the core triggers a redraw itself.
+      *  Don't emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
+      *   You don't need to call updateView as the core triggers a redraw itself.
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
     */
     virtual void slotObjectUpdated( int _identifier ) {};
 
     /**  \brief An object has been updated by another plugin
       *
-      *   This slot is called by the main aplication if the number or status of existing objects changed or if
+      *   This slot is called by the main application if the number or status of existing objects changed or if
       *   an existing object has been changed. This could mean, that objects are added or deleted
       *   or that an existing object with the given id has been modified.
       *   If you store local information about one of these Objects, you should check if its still valid!\n
-      *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
-      *   You dont need to call updateView as the core triggers a redraw itself.
+      *  Don't emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
+      *   You don't need to call updateView as the core triggers a redraw itself.
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
       *  @param _type the type states which part of the object (topology, selection, ..) had been updated
     */
@@ -181,16 +181,16 @@ class BaseInterface {
 
       /**  \brief The active object has changed
       *
-      *   This slot is called by the main aplication if the currentselection of an object has changed.\n
+      *   This slot is called by the main application if the current selection of an object has changed.\n
       *   This means that the selection of source / target objects has changed.
-      *   Addisionally you get the id of the object that has been changed or -1 if all objects
+      *   Additionally you get the id of the object that has been changed or -1 if all objects
       *   have been modified.
     */
     virtual void slotObjectSelectionChanged( int _identifier ) {};
 
     /** \brief An object has been shown or hidden
       *
-      *  This slot is called if an objecct is shown or hidden.
+      *  This slot is called if an object is shown or hidden.
       *  The id of the object is given as a parameter.
       *  If multiple or all objects have changed, the id will be -1.
       *
@@ -210,7 +210,7 @@ class BaseInterface {
       *
       * This slot is called when the view in one of the viewers changed
       * ( Viewing direction/viewer position )
-      * !! Be carefull to not change the view in this slot !!
+      * !! Be careful to not change the view in this slot !!
       * !! This will of course lead to an endless loop !!
     */
     virtual void slotViewChanged() {};
@@ -238,7 +238,7 @@ class BaseInterface {
   public slots:
       /** \brief Return a version string for your plugin
        *
-       * This function will be used to determin the current version of your plugin.
+       * This function will be used to determine the current version of your plugin.
        * Should have the form x.x.x ( you do not need to give that many subversions )
        */
       virtual QString version() { return QString("-1"); };
@@ -247,7 +247,7 @@ class BaseInterface {
 
       /**  \brief Set a description for a public slot
        *
-       *   public slots of each plugin are automaticly available for scripting. \n
+       *   public slots of each plugin are automatically available for scripting. \n
        *   Use this Signal to add a description for your slot so that everyone knows what it is used for. \n
        *
        *   @param _slotName the name of the slot
@@ -269,7 +269,7 @@ class BaseInterface {
 
     /** Using this function you can inform the core that your plugin can run without creating a widget.
       * If your plugin does not implement this function, it will not be loaded in scripting mode without gui.
-      * You dont have to do anything in this function.
+      * You don't have to do anything in this function.
       */
     virtual void noguiSupported( ) {} ;
 
@@ -293,15 +293,15 @@ To use the BaseInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them except BaseInterface::description() and BaseInterface::name() )
 </ul>
 
-\section baseInterfacePluginInitializatio Plugin Initialization
+\section baseInterfacePluginInitialization Plugin Initialization
 BaseInterface provides two functions to initialize a plugin. The first function is BaseInterface::initializePlugin().
-This function is called immediatly after the plugin has been connected with OpenFlipper. When a plugin is
+This function is called immediately after the plugin has been connected with OpenFlipper. When a plugin is
 loaded, all signals and slots from the used interfaces are connected to the core. After this, the
 BaseInterface::initializePlugin() slot is called. In this slot you can initialize your plugin.
 The order how plugins are loaded is not fixed. So you should not rely or communicate with other plugins
 in this slot. \n
 After all plugins are loaded, the slot  BaseInterface::pluginsInitialized() is called for each plugin. All
-other plugins are now available and you can setup your userinterface components in this slot.
+other plugins are now available and you can setup your user interface components in this slot.
 The following graphic shows the initialization of a plugin.
 \image html startupProcess.jpg
 
@@ -347,12 +347,12 @@ Remarks:
 OpenFlipper manages the scene updates in its core. If objects get updated the scene will be automatically redrawn. Nevertheless,
 you can force an update of the scene by emitting the signal BaseInterface::updateView().
 
-If the view (viewer pos /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
+If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
 change the view in this function or you get an endless loop!
 
 \section baseInterfaceManagementFunctions Management Functions
 There are some basic functions for managing plugins. The BaseInterface::description() function can be used
-to provide a description for the plugin wich will be printed along with the plugin name. The BaseInterface::name()
+to provide a description for the plugin which will be printed along with the plugin name. The BaseInterface::name()
 function has to return the name of the plugin. This name will also be used inside the scripting system.
 Additionally it is possible to provide a plugin version number with BaseInterface::version().
 

@@ -69,8 +69,8 @@
   * \n
   * \n
   * To add custom menus or actions to the menubar, you have to use this interface class. Create
-  * your own QMenu or QAction and emit addMenubarAction to add it to one of the menubar toplevel menus.
-  * You can also get a pointer to one existing toplevel menu or create a new one with the getMenubarMenu
+  * your own QMenu or QAction and emit addMenubarAction to add it to one of the menubar top level menus.
+  * You can also get a pointer to one existing top level menu or create a new one with the getMenubarMenu
   * function. You can connect the signals and slots for your menu or action inside the plugin.
  */
 class MenuInterface {
@@ -82,19 +82,19 @@ public :
 
 signals:
 
-   /**  \brief Get a existing toplevel menu pointer or create a new one
+   /**  \brief Get a existing top level menu pointer or create a new one
     *
-    *  Checks if a toplevel menu is present and creates one if needed \n
+    *  Checks if a top level menu is present and creates one if needed \n
     *
     * @param _name   Menu name (see FILEMENU/VIEWMENU/TOOLSMENU example defines or use other QStrings )
-    * @param _menu   The returned toplevel menu
+    * @param _menu   The returned top level menu
     * @param _create Should a new menu be created if id doesn't exist
   */
   virtual void getMenubarMenu (QString _name, QMenu *& _menu, bool _create) {};
 
   /**  \brief Adds an action to the menubar
     *
-    *  Add an action to one of the menubar toplevel menus \n
+    *  Add an action to one of the menubar top level menus \n
     * \n
     *   Example : \n
     * \code
@@ -147,13 +147,13 @@ void PrintPlugin::pluginsInitialized()
   // Create an action to be added to the submenu
   QAction* AC_Print = new QAction(tr("&Print"), this);
   
-  // Set statustip for this entry
+  // Set status tip for this entry
   AC_Print->setStatusTip(tr("Print the current view"));
   
   // Set icon for the entry
   AC_Print->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
   
-  // connnect the actions triggered slot to a local slot in this plugin.
+  // connect the actions triggered slot to a local slot in this plugin.
   connect(AC_Print, SIGNAL(triggered()), this, SLOT(printView()));
   
   // add the new action to the print submenu
