@@ -123,10 +123,13 @@ public:
 
 signals:
 
-  /** \brief file has been opened
-   * @param _id Id of the opened object
-   */
-  virtual void openedFile( int /*_id*/ ) {};
+      /** \brief This signal has to be emitted if an object has been loaded from a file.
+       *
+       * Every time a new object is added to the scene from a file, this signal has to be emitted.
+       *
+       * @param _id Id of the new object
+       */
+      virtual void openedFile( int /*_id*/ ) {};
 
 public slots:
 
@@ -138,7 +141,7 @@ public slots:
        * empty object of the given type. It can be assumed that there is only one type given at a time.
        */
       virtual int addEmpty() { return -1; };
-      
+
       /** \brief Load an object from the given file
        *
        * The Core will call this slot if you should load a file. The core will
@@ -146,7 +149,7 @@ public slots:
        * filters and dataTypes ( see supportedType and getLoadFilters )\n
        *
        * if you just opened a file and did not create any object, return 0 here,
-       * telling the core that it was successfully loaded but no new object 
+       * telling the core that it was successfully loaded but no new object
        * has been created!
        */
       virtual int loadObject(QString /*_filename*/) = 0;
@@ -158,7 +161,7 @@ public slots:
        * filters and dataTypes ( see supportedType and getLoadFilters )\n
        *
        * if you just opened a file and did not create any object, return 0 here,
-       * telling the core that it was successfully loaded but no new object 
+       * telling the core that it was successfully loaded but no new object
        * has been created!
        *
        * If the Plugin is able to open the file in different DataTypes
@@ -166,7 +169,7 @@ public slots:
        *
        */
       virtual int loadObject(QString /*_filename*/, DataType /*_type*/){ return -1;};
-      
+
       /** \brief Save an object from the given file
        *
        * The Core will call this slot if you should save an object to a file.
