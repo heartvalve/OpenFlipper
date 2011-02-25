@@ -62,6 +62,7 @@ class FileInterface {
 /** @name Widgets
 * @{ */
 //===========================================================================
+
   public:
 
     /// Destructor
@@ -119,6 +120,13 @@ public:
 /** @name Load Save Implementation
 * @{ */
 //===========================================================================
+
+signals:
+
+  /** \brief file has been opened
+   * @param _id Id of the opened object
+   */
+  virtual void openedFile( int /*_id*/ ) {};
 
 public slots:
 
