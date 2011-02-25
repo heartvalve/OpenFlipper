@@ -55,7 +55,7 @@
 */
 
 
-/**
+/** \brief Add a toolbox to OpenFlipper
  *
  * \ref toolbarInterfacePage "Detailed description"
  * \n
