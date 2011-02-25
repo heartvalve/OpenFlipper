@@ -58,6 +58,13 @@ Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
 Provides functions to create a separate widget in the toolbox on the right ( \ref toolboxInterfacePage ).
 \n
 
+\subpage toolbarInterfacePage
+\image html ToolbarInterface.png
+Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
+\n
+
+
+
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
 
 This section gives an overview over the available interfaces which control other parts of OpenFlipper.
@@ -81,11 +88,6 @@ This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
 \image html loadSaveInterface.png
 Provides functions to handle mesh files and load / unload geometry
 objects into the scene graph ( LoadSaveInterface ).
-
-
-\subsection ToolbarPlugin Toolbar Interface
-\image html ToolbarInterface.png
-Provides a function to add toolbar buttons. ( ToolbarInterface )
 
 
 \subpage loggingInterfacePage

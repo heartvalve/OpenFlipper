@@ -124,16 +124,16 @@ add an icon to the toolbox.
 
 The following code shows a simple example to create an empty toolbox.
 \code 
-void SmootherPlugin::pluginsInitialized()
+void ExamplePlugin::pluginsInitialized()
 {
   // Create the Toolbox Widget
   QWidget* toolBox = new QWidget();
   
   // Create an icon which is shown along with the toolbox
-  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother1.png");
+  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"exampleIcon.png");
   
   // Tell the core to include the new toolbox widget with the name Simple Smoother, a pointer to the widget and a pointer to the icon
-  emit addToolbox( tr("Simple Smoother") , toolBox, toolIcon );
+  emit addToolbox( tr("Example Plugin Toolbox") , toolBox, toolIcon );
 }
 \endcode
 
