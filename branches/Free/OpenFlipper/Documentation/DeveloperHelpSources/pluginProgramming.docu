@@ -37,8 +37,8 @@
  * See \ref baseInterfacePluginInitialization for an overview of OpenFlipper's startup and initialization calls.
  * 
  * After this interface of the plugin is successfully processed all other interfaces will be initialized
- * and connected to the core. For details about the individual interfaces see their documentation. 
- * \ref interfaces
+ * and connected to the core. For details about the individual interfaces see the
+ * \ref interfaces "Plugin Interfaces Documentation".
  *
  * \section geometryData Handling geometry data within a plugin
  *
