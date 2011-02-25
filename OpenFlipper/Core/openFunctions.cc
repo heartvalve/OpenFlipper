@@ -473,7 +473,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 }
 
 /// Slot gets called after a file-plugin has opened an object
-void Core::slotObjectOpened ( int _id ) {
+void Core::slotFileOpened ( int _id ) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
