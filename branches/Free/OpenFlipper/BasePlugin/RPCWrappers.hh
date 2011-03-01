@@ -40,19 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-//
-// C++ Interface: RPCInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 /**
  * \file RPCWrappers.hh
  * This file contains functions to call functions and procedures across plugins.
- * The Qt Scripting system is used to pass the calls between different plugins.
+ * The QT Scripting system is used to pass the calls between different plugins.
+ *
+ * Usage is described in \ref RPCInterfacePage
  */
 
 #ifndef RPCWRAPPERS_HH
@@ -62,22 +55,19 @@
 #include <vector>
 #include <OpenFlipper/common/Types.hh>
 
-/** Namespace containing RPC helper functions used to call functions across plugins
- */
 
-/**
- * Example code :
- * QString version = RPC::callFunctionValue< QString >("backup","version");
- * int count       = RPC::callFunctionValue< int >("info","vertexCount",2);
+/** Namespace containing RPC helper functions used to call functions across plugins
  *
+ * Usage is described in \ref RPCInterfacePage
  */
 namespace RPC {
 
-/** \brief get a pointer to the scripting engine
+//===========================================================================
+/** @name Call functions across plugins (simple calls)
  *
- */
-DLLEXPORT
-QScriptEngine* getScriptEngine();
+ * These functions can be used to call functions in other plugins.
+ * @{ */
+//===========================================================================
 
 /** \brief call a function provided by a plugin
  *
@@ -87,16 +77,32 @@ QScriptEngine* getScriptEngine();
 DLLEXPORT
 QScriptValue callFunction( QString _plugin, QString _functionName );
 
-/** \brief call a function provided by a plugin getting multiple parameters
+/** \brief Call a function provided by a plugin getting multiple parameters
  *
- * @param _plugin Plugin name ( Scripting name )
+ * This function gets the parameters which are converted to a QScriptValue on your own.
+ *
+ * @param _plugin Plugin name ( Scripting name of the plugin )
  * @param _functionName Name of the remote function
  * @param _parameters vector of scriptvalues containing the functions parameters in the right order
  */
 DLLEXPORT
 QScriptValue callFunction( QString _plugin, QString _functionName , std::vector< QScriptValue > _parameters );
 
+/** @} */
 
+//===========================================================================
+/** @name Call functions across plugins
+ *
+ * These templates can be used to call functions in other plugins.
+ * @{ */
+//===========================================================================
+
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter passed to the function
+ */
 template <typename T0>
 void callFunction( QString _plugin, QString _functionName, T0 _t0) {
   QScriptEngine* engine = getScriptEngine();
@@ -164,6 +170,22 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** @} */
+
+//===========================================================================
+/** @name Call functions across plugins which return a value
+ *
+ * These templates can be used to call functions that return a value.
+ * You have to pass the type of return value as the first template parameter.
+  * @{ */
+//===========================================================================
+
+/** \brief call a function in another plugin and get a return parameter
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @return value returned by the called function
+ */
 template <typename ReturnValue >
 ReturnValue callFunctionValue( QString _plugin, QString _functionName) {
   return qscriptvalue_cast< ReturnValue >( callFunction(_plugin,_functionName) );
@@ -207,6 +229,23 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
+/** @} */
+
+
+//===========================================================================
+/** @name Script Engine Controls
+ *
+ * Functions to get the scripting engine. Normally you don't need them. And
+ * RPC::setScriptEngine should never be used!
+ * @{ */
+//===========================================================================
+
+/** \brief get a pointer to OpenFlippers core scripting engine
+ *
+ */
+DLLEXPORT
+QScriptEngine* getScriptEngine();
+
 
 /** \brief DONT USE! (Function to set the internal reference to the script Engine)
  *
@@ -214,6 +253,8 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
  */
 DLLEXPORT
 void setScriptEngine( QScriptEngine* _engine );
+
+/** @} */
 
 }
 
