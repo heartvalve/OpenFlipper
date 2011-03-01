@@ -72,17 +72,39 @@ class ViewObjectMarker;
 
 namespace Viewer {
 
-  /// How to react on mouse events?
+  /** \brief Enum listing action modes of the viewers.
+   *
+   * These enums are used to control the reaction of the MouseInterface and the viewer on mouse events.
+   */
   enum ActionMode {
-    // examine geometry, get transformations from mouse events
+    /** \brief Examine or Move mode
+     *
+     *  In this mode no events are passed to the MouseInterface.
+     *  Only the viewer is active with mouse navigation.
+     */
     ExamineMode,
-    /** Picking mode. Actually no pick()ing is performed (!) but events are
-        forwarded to the application via signalMouseEvent().
-      */
+
+    /** \brief Picking Mode
+     *
+     * In this mode the MouseInterface::slotMouseEvent() function gets called.
+     *
+     * The picking itself has to be performed by the plugins e.g. when implementing
+     * \ref mouseInterfacePage
+     *
+     */
     PickingMode,
-    // same as picking, but emit signalMouseEventIdentify()
+
+    /** \brief Question Mode
+     *
+     * In this mode the MouseInterface::slotMouseEventIdentify() function gets called
+     *
+     */
     QuestionMode,
-    // Ligh rotation mode
+
+    /** \brief Light mode
+     *
+     * In this mode the MouseInterface::slotMouseEventLight() function is called
+     */
     LightMode
   };
 
