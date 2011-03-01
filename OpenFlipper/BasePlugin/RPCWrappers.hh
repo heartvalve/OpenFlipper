@@ -62,6 +62,32 @@
  */
 namespace RPC {
 
+
+//===========================================================================
+/** @name Script Engine Controls
+ *
+ * Functions to get the scripting engine. Normally you don't need them. And
+ * RPC::setScriptEngine should never be used!
+ * @{ */
+//===========================================================================
+
+/** \brief get a pointer to OpenFlippers core scripting engine
+ *
+ */
+DLLEXPORT
+QScriptEngine* getScriptEngine();
+
+
+/** \brief DONT USE! (Function to set the internal reference to the script Engine)
+ *
+ * Function to set the internal reference to the script engine from the core
+ */
+DLLEXPORT
+void setScriptEngine( QScriptEngine* _engine );
+
+/** @} */
+
+
 //===========================================================================
 /** @name Call functions across plugins (simple calls)
  *
@@ -231,30 +257,6 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
 
 /** @} */
 
-
-//===========================================================================
-/** @name Script Engine Controls
- *
- * Functions to get the scripting engine. Normally you don't need them. And
- * RPC::setScriptEngine should never be used!
- * @{ */
-//===========================================================================
-
-/** \brief get a pointer to OpenFlippers core scripting engine
- *
- */
-DLLEXPORT
-QScriptEngine* getScriptEngine();
-
-
-/** \brief DONT USE! (Function to set the internal reference to the script Engine)
- *
- * Function to set the internal reference to the script engine from the core
- */
-DLLEXPORT
-void setScriptEngine( QScriptEngine* _engine );
-
-/** @} */
 
 }
 
