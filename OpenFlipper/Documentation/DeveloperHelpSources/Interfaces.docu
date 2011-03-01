@@ -59,7 +59,6 @@ FileInterface
 IniInterface
 KeyInterface
 LoadSaveInterface
-MouseInterface
 OptionsInterface
 PickingInterface
 ProcessInterface
@@ -77,16 +76,10 @@ This page gives an overview over the available interfaces which control other pa
  You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).\n
 
 
-\subsection MousePlugin Mouse Interface
-\image html mouseInterface.png
-This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
-
-
 \subsection LoadSavePlugin Load / Save Interface
 \image html loadSaveInterface.png
 Provides functions to handle mesh files and load / unload geometry
 objects into the scene graph ( LoadSaveInterface ).
-
 
 
 \subsection TexturePlugin Texture Interface
@@ -181,6 +174,15 @@ to other plugins ( \ref typeInterfacePage ).
 
 /** \page pluginInterfacesInputDevices Input Devices
 This page shows interfaces which could be used to get data from input devices.
+
+
+\subpage mouseInterfacePage
+\n
+\image html mouseInterface.png
+\n
+This interface is used to deliver mouse events to a plugin ( \ref mouseInterfacePage ).\n
+\n
+
 */
 
 /** \page pluginInterfacesOtherInterfaces Other Interfaces
