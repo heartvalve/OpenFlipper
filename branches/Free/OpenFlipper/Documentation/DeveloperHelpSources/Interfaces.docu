@@ -62,7 +62,6 @@ LoadSaveInterface
 MouseInterface
 OptionsInterface
 PickingInterface
-PluginConnectionInterface
 ProcessInterface
 RPCInterface
 SecurityInterface
@@ -199,6 +198,10 @@ This page shows interfaces for other operations.
 \subpage scriptInterfacePage
 \image html ScriptInterface.png
 For plugins which provide scriptable functions ( \ref scriptInterfacePage  )
+
+\subpage pluginConnectionInterfacePage
+\image html PluginConnectionInterface.png
+Enables the developer to connect signals and slots across plugins. ( \ref pluginConnectionInterfacePage  )
 
 */
 
