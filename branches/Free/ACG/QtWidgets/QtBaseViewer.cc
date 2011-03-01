@@ -2346,7 +2346,7 @@ void QtBaseViewer::glMousePressEvent(QMouseEvent* _event)
         break;
 
       case LightMode:
-	lightMouseEvent(_event);
+	        lightMouseEvent(_event);
 	break;
 
       case PickingMode: // give event to application
