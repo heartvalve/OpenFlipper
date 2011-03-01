@@ -60,11 +60,10 @@ using namespace std;
  *
  * @param _other The animation to copy from
  */
-template<typename Scalar>
-InterpolationAnimationT<Scalar>::InterpolationAnimationT(const InterpolationAnimationT<Scalar> &_other) :
-	AnimationT<Scalar>(_other.name_),
-        hierarchy_(_other.hierarchy_),
-        reference_(_other.reference_),
+template<class PointT>
+InterpolationAnimationT<PointT>::InterpolationAnimationT(const InterpolationAnimationT<PointT> &_other) :
+        AnimationT<PointT>(_other.name_),
+        skeleton_(_other.skeleton_),
         matrixManipulator_(_other.matrixManipulator_),
         frames_(0)
 {
@@ -79,10 +78,9 @@ InterpolationAnimationT<Scalar>::InterpolationAnimationT(const InterpolationAnim
  * @param _hierarchy The skeleton that will hold this animation
  * @param _reference The skeletons reference pose
  */
-template<typename Scalar>
-InterpolationAnimationT<Scalar>::InterpolationAnimationT(SkeletonHierarchyI *_hierarchy, ReferencePose *_reference, MatrixManipulator *_matrixManipulator) :
-        hierarchy_(_hierarchy),
-        reference_(_reference),
+template<class PointT>
+InterpolationAnimationT<PointT>::InterpolationAnimationT(Skeleton* _skeleton, MatrixManipulator *_matrixManipulator) :
+        skeleton_(_skeleton),
         matrixManipulator_(_matrixManipulator),
         frames_(0)
 {
@@ -91,27 +89,25 @@ InterpolationAnimationT<Scalar>::InterpolationAnimationT(SkeletonHierarchyI *_hi
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-InterpolationAnimationT<Scalar>::~InterpolationAnimationT()
+template<class PointT>
+InterpolationAnimationT<PointT>::~InterpolationAnimationT()
 {
   clearPoseCache();
-  delete hierarchy_;
-  delete reference_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-AnimationT<Scalar>* InterpolationAnimationT<Scalar>::copy() {
-  return new InterpolationAnimationT<Scalar>(*this);
+template<class PointT>
+AnimationT<PointT>* InterpolationAnimationT<PointT>::copy() {
+  return new InterpolationAnimationT<PointT>(*this);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame)
+template<class PointT>
+PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame)
 {
-  return getPose(_iFrame, reference_);
+  return pose(_iFrame, skeleton_->referencePose());
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -122,8 +118,8 @@ PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame)
  * @param _iFrame The frame number for which the pose should be calculated.
  *                This is always from 0..#frames even if the animation starts with an input value other than 0.
  */
-template<typename Scalar>
-PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, Pose* _reference)
+template<class PointT>
+PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose* _reference)
 {
 //          std::cerr << "Frame " << _iFrame << ": ";
   
@@ -135,7 +131,7 @@ PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, P
           if (_iFrame == 0) {
             interpolatedPoses_.insert( make_pair(0, new Pose(*_reference)) );
 //             std::cerr << "Insert reference to posecache. &_reference: " << _reference << ", &cacheref: " << getPose(_iFrame, _reference) << std::endl;
-            return getPose(_iFrame, _reference);
+            return pose(_iFrame, _reference);
           } else {
             //Find the correct interpolator
             Interpolator* interpolator = NULL;
@@ -162,13 +158,13 @@ PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, P
             Pose *generatedPose = new Pose(*_reference);
             
             for (uint i=0; i<influencedJoints_.size(); ++i) {
-              ACG::GLMatrixT<Scalar> transformation(generatedPose->getGlobal(influencedJoints_[i]).raw());
+              ACG::GLMatrixT<Scalar> transformation(generatedPose->globalMatrix(influencedJoints_[i]).raw());
               //The frames for each interpolator are stored from 0..max, i.e. in "interpolator local time space".
               // So, they have to be mapped to the global space here.
               TargetType precalcVal = precalculations_[interpolator][_iFrame - min];
               
               matrixManipulator_->doManipulation(transformation, precalcVal);
-              generatedPose->setGlobal(influencedJoints_[i], transformation, false);
+              generatedPose->setGlobalMatrix(influencedJoints_[i], transformation, false);
             }
             
 //             std::cerr << std::endl;
@@ -186,8 +182,8 @@ PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, P
 /**
  * @brief Returns the number of frames stored in this pose
  */
-template<typename Scalar>
-unsigned long InterpolationAnimationT<Scalar>::getFrameCount()
+template<class PointT>
+unsigned int InterpolationAnimationT<PointT>::frameCount()
 {
   return frames_;
 }
@@ -202,8 +198,8 @@ unsigned long InterpolationAnimationT<Scalar>::getFrameCount()
  * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
  *                               SkeletonT::joints_.size as parameter.
  */
-template<typename Scalar>
-void InterpolationAnimationT<Scalar>::insert_at(unsigned long _index)
+template<class PointT>
+void InterpolationAnimationT<PointT>::insertJointAt(unsigned int _index)
 {
   //NOOP
 }
@@ -217,8 +213,8 @@ void InterpolationAnimationT<Scalar>::insert_at(unsigned long _index)
  *
  * @param _index The index of the joint that is being deleted.
  */
-template<typename Scalar>
-void InterpolationAnimationT<Scalar>::remove_at(unsigned long _index)
+template<class PointT>
+void InterpolationAnimationT<PointT>::removeJointAt(unsigned int _index)
 {
   //NOOP
 }
@@ -233,16 +229,16 @@ void InterpolationAnimationT<Scalar>::remove_at(unsigned long _index)
  *
  * @param _index The joints index
  */
-template<typename Scalar>
-void InterpolationAnimationT<Scalar>::UpdateFromGlobal(unsigned long _index)
+template<class PointT>
+void InterpolationAnimationT<PointT>::updateFromGlobal(unsigned int _index)
 {
   //NOOP
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-void InterpolationAnimationT<Scalar>::addInterpolator(InterpolationT<double> *_interpolator) {
+template<class PointT>
+void InterpolationAnimationT<PointT>::addInterpolator(InterpolationT<double> *_interpolator) {
   if (_interpolator == NULL)
     return;
   
@@ -271,9 +267,9 @@ void InterpolationAnimationT<Scalar>::addInterpolator(InterpolationT<double> *_i
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-InterpolationT<Scalar>*
-InterpolationAnimationT<Scalar>::interpolator(unsigned int _index)
+template<class PointT>
+InterpolationT<typename PointT::value_type>*
+InterpolationAnimationT<PointT>::interpolator(unsigned int _index)
 {
   if ( _index < interpolators_.size() )
     return interpolators_[ _index ];
@@ -283,8 +279,8 @@ InterpolationAnimationT<Scalar>::interpolator(unsigned int _index)
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-unsigned int  InterpolationAnimationT<Scalar>::interpolatorCount()
+template<class PointT>
+unsigned int InterpolationAnimationT<PointT>::interpolatorCount()
 {
   return interpolators_.size();
 }
@@ -294,8 +290,8 @@ unsigned int  InterpolationAnimationT<Scalar>::interpolatorCount()
 /**
 * \brief Calculates the last frame that interpolator _index is responsible for
 */
-template<typename Scalar>
-unsigned long InterpolationAnimationT<Scalar>::calcAbsoluteMaxForInterpolator(uint _index) {
+template<class PointT>
+unsigned int InterpolationAnimationT<PointT>::calcAbsoluteMaxForInterpolator(uint _index) {
   assert (_index < interpolators_.size());
   
   if (_index == 0) {
@@ -307,8 +303,8 @@ unsigned long InterpolationAnimationT<Scalar>::calcAbsoluteMaxForInterpolator(ui
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-bool InterpolationAnimationT<Scalar>::getMinInput(Scalar& _result) {
+template<class PointT>
+bool InterpolationAnimationT<PointT>::getMinInput(Scalar& _result) {
   if (interpolators_.size() == 0)
     return false;
   else
@@ -324,8 +320,8 @@ bool InterpolationAnimationT<Scalar>::getMinInput(Scalar& _result) {
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-bool InterpolationAnimationT<Scalar>::getMaxInput(Scalar& _result) {
+template<class PointT>
+bool InterpolationAnimationT<PointT>::getMaxInput(Scalar& _result) {
   if (interpolators_.size() == 0)
     return false;
   else
@@ -341,8 +337,8 @@ bool InterpolationAnimationT<Scalar>::getMaxInput(Scalar& _result) {
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-bool InterpolationAnimationT<Scalar>::isInfluenced(int _joint) {
+template<class PointT>
+bool InterpolationAnimationT<PointT>::isInfluenced(int _joint) {
   for (uint i=0; i<influencedJoints_.size(); ++i) 
     if ( influencedJoints_[i] == _joint )
       return true;
@@ -352,8 +348,8 @@ bool InterpolationAnimationT<Scalar>::isInfluenced(int _joint) {
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-std::vector<int>& InterpolationAnimationT<Scalar>::influencedJoints() {
+template<class PointT>
+std::vector<int>& InterpolationAnimationT<PointT>::influencedJoints() {
   return influencedJoints_;
 }
 

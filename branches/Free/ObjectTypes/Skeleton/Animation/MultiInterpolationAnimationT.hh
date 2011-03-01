@@ -45,7 +45,7 @@
 
 #include "InterpolationAnimationT.hh"
 
-template<typename PoinT>
+template<class PointT>
 class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
 {
   template<typename>
@@ -58,16 +58,16 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     typedef InterpolationMatrixManipulatorT<Scalar>         MatrixManipulator;
     typedef InterpolationT<Scalar>                          Interpolator;
     typedef std::vector<Scalar>                             TargetType;
-    typedef std::vector< InterpolationAnimationT<Scalar>* > InterpolationAnimations;
+    typedef std::vector< InterpolationAnimationT<ACG::Vec3d>* > InterpolationAnimations;
 
   public:
-    MultiInterpolationAnimationT(const MultiInterpolationAnimationT<Scalar> &_other);
-    MultiInterpolationAnimationT() : InterpolationAnimationT<Scalar>(NULL, NULL, NULL), interpolationAnimations_() {}
+    MultiInterpolationAnimationT(const MultiInterpolationAnimationT<PointT> &_other);
+    MultiInterpolationAnimationT() : InterpolationAnimationT<PointT>(NULL, NULL), interpolationAnimations_() {}
     MultiInterpolationAnimationT(const InterpolationAnimations& _interpolationAnimations) : interpolationAnimations_(_interpolationAnimations) {}
     
-    virtual AnimationT<Scalar>* copy();
+    virtual AnimationT<PointT>* copy();
     
-    virtual void UpdateFromGlobal(unsigned int _index) {/*NOOP*/};
+    virtual void updateFromGlobal(unsigned int _index) {/*NOOP*/};
     
     virtual bool getMinInput(Scalar& _result);
     virtual bool getMaxInput(Scalar& _result);
@@ -76,7 +76,7 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     InterpolationAnimations interpolationAnimations_;
 
   public:
-    using InterpolationAnimationT<Scalar>::FPS;
+    using InterpolationAnimationT<PointT>::FPS;
 
   public:
     /**
@@ -84,9 +84,9 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
       * There is one pose per frame.
       */
     //@{
-    virtual Pose *getPose(unsigned int _iFrame);
-    virtual Pose *getPose(unsigned int _iFrame, Pose* _reference);
-    virtual unsigned int getFrameCount();
+    virtual Pose *pose(unsigned int _iFrame);
+    virtual Pose *pose(unsigned int _iFrame, Pose* _reference);
+    virtual unsigned int frameCount();
     //@}
 
     /**
@@ -102,14 +102,14 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
       * @name Animations access
       */
     //@{
-    void addInterpolationAnimation(InterpolationAnimationT<Scalar> *_animation) {
+    void addInterpolationAnimation(InterpolationAnimationT<PointT> *_animation) {
       interpolationAnimations_.push_back(_animation);
     }
-    unsigned int getNumberOfAnimations() {
+    unsigned int animationCount() {
       return interpolationAnimations_.size();
     }
     
-    InterpolationAnimationT<Scalar>* getAnimation(unsigned int _index );
+    InterpolationAnimationT<PointT>* animation(unsigned int _index );
     
     //@}
     

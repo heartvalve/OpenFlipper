@@ -59,7 +59,7 @@ using namespace std;
  *
  * @param _pose This pose will make up the only frame in this new animation
  */
-template<typename PointT>
+template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(const PoseT<PointT> &_pose) :
   skeleton_(_pose.skeleton_)
 {
@@ -74,7 +74,7 @@ FrameAnimationT<PointT>::FrameAnimationT(const PoseT<PointT> &_pose) :
  * @param _hierarchy The skeleton that will hold this animation
  * @param _reference The skeletons reference pose
  */
-template<typename PointT>
+template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton) :
   skeleton_(_skeleton)
 {
@@ -92,7 +92,7 @@ FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton) :
  * @param _reference The skeletons reference pose
  * @param _iNumFrames The number of frames for this animation
  */
-template<typename PointT>
+template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton, unsigned int _iNumFrames) :
   skeleton_(_skeleton)
 {
@@ -110,7 +110,7 @@ FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton, unsigned int _iNum
  *
  * @param _other The animation to copy from
  */
-template<typename PointT>
+template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(const FrameAnimationT<PointT> &_other) :
   AnimationT<PointT>(),
   skeleton_(_other.skeleton_)
@@ -124,7 +124,7 @@ FrameAnimationT<PointT>::FrameAnimationT(const FrameAnimationT<PointT> &_other) 
 /**
  * @brief Destructor
  */
-template<typename PointT>
+template<class PointT>
 FrameAnimationT<PointT>::~FrameAnimationT()
 {
   for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
@@ -137,7 +137,7 @@ FrameAnimationT<PointT>::~FrameAnimationT()
 /**
  * @brief Copy Function
  */
-template<typename PointT>
+template<class PointT>
 AnimationT<PointT>* FrameAnimationT<PointT>::copy() {
   return new FrameAnimationT<PointT>(*this);
 }
@@ -149,7 +149,7 @@ AnimationT<PointT>* FrameAnimationT<PointT>::copy() {
  *
  * @param _iFrame The poses frame number
  */
-template<typename PointT>
+template<class PointT>
 typename FrameAnimationT<PointT>::Pose *FrameAnimationT<PointT>::pose(unsigned int _iFrame)
 {
   assert(_iFrame < poses_.size());
@@ -162,7 +162,7 @@ typename FrameAnimationT<PointT>::Pose *FrameAnimationT<PointT>::pose(unsigned i
 /**
  * @brief Returns the number of frames stored in this pose
  */
-template<typename PointT>
+template<class PointT>
 unsigned int FrameAnimationT<PointT>::frameCount()
 {
   return poses_.size();
@@ -170,7 +170,7 @@ unsigned int FrameAnimationT<PointT>::frameCount()
 
 //-----------------------------------------------------------------------------
 
-template<typename PointT>
+template<class PointT>
 void FrameAnimationT<PointT>::setFrameCount(unsigned int _frames)
 {
   //delete poses
@@ -195,7 +195,7 @@ void FrameAnimationT<PointT>::setFrameCount(unsigned int _frames)
  * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
  *                               SkeletonT::joints_.size as parameter.
  */
-template<typename PointT>
+template<class PointT>
 void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 {
   for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
@@ -211,7 +211,7 @@ void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
  *
  * @param _index The index of the joint that is being deleted.
  */
-template<typename PointT>
+template<class PointT>
 void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
 {
   for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
@@ -227,7 +227,7 @@ void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
  *
  * @param _index The joints index
  */
-template<typename PointT>
+template<class PointT>
 void FrameAnimationT<PointT>::updateFromGlobal(unsigned int _index)
 {
   for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)

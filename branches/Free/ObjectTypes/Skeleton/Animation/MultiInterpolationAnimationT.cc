@@ -52,25 +52,24 @@
  *
  * @param _other The animation to copy from
  */
-template<typename Scalar>
-MultiInterpolationAnimationT<Scalar>::MultiInterpolationAnimationT(const MultiInterpolationAnimationT<Scalar> &_other) :
-        InterpolationAnimationT<Scalar>(NULL, NULL, NULL),
+template<class PointT>
+MultiInterpolationAnimationT<PointT>::MultiInterpolationAnimationT(const MultiInterpolationAnimationT<PointT> &_other) :
+        InterpolationAnimationT<PointT>(NULL, NULL),
         interpolationAnimations_(_other.interpolationAnimations_)
 {
-        
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-AnimationT<Scalar>* MultiInterpolationAnimationT<Scalar>::copy() {
-  return new MultiInterpolationAnimationT<Scalar>(*this);
+template<class PointT>
+AnimationT<PointT>* MultiInterpolationAnimationT<PointT>::copy() {
+  return new MultiInterpolationAnimationT<PointT>(*this);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-bool MultiInterpolationAnimationT<Scalar>::getMinInput(Scalar& _result) {
+template<class PointT>
+bool MultiInterpolationAnimationT<PointT>::getMinInput(Scalar& _result) {
   if (interpolationAnimations_.size() == 0)
     return false;
   else
@@ -89,8 +88,8 @@ bool MultiInterpolationAnimationT<Scalar>::getMinInput(Scalar& _result) {
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-bool MultiInterpolationAnimationT<Scalar>::getMaxInput(Scalar& _result) {
+template<class PointT>
+bool MultiInterpolationAnimationT<PointT>::getMaxInput(Scalar& _result) {
   if (interpolationAnimations_.size() == 0)
     return false;
   else
@@ -113,8 +112,8 @@ bool MultiInterpolationAnimationT<Scalar>::getMaxInput(Scalar& _result) {
  * @brief Returns the number of frames that this animation can playback
  * Note that this is not simply the sum of all animations' frame counts, as they can (and most likely will) overlap.
  */
-template<typename Scalar>
-unsigned long MultiInterpolationAnimationT<Scalar>::getFrameCount()
+template<class PointT>
+unsigned int MultiInterpolationAnimationT<PointT>::frameCount()
 {
   Scalar minInput=0, maxInput=0;
   if (getMinInput(minInput) && getMaxInput(maxInput)) {
@@ -126,8 +125,8 @@ unsigned long MultiInterpolationAnimationT<Scalar>::getFrameCount()
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame) {
+template<class PointT>
+PoseT<PointT> * MultiInterpolationAnimationT<PointT>::pose(unsigned int _iFrame) {
   //Use the reference pose of the first (in terms of the input value, i.e. the time in most cases)
  
   if (interpolationAnimations_.size() == 0)
@@ -141,13 +140,13 @@ PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFr
     minInterpolationAnimationIndex = (minValueTmp < minValue) ? i : minInterpolationAnimationIndex;
   }
 
-  return getPose(_iFrame, interpolationAnimations_[minValue]->getReference());
+  return pose(_iFrame, interpolationAnimations_[minValue]->getReference());
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, Pose* _reference) {
+template<class PointT>
+PoseT<PointT> * MultiInterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose* _reference) {
   if (_iFrame == 0)
     return _reference;
   
@@ -158,8 +157,8 @@ PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFr
     Scalar minInput, maxInput;
     interpolationAnimations_[i]->getMinInput(minInput); interpolationAnimations_[i]->getMaxInput(maxInput);
     
-    unsigned long minFrame = (minInput * FPS);
-    unsigned long maxFrame = (maxInput * FPS);
+    unsigned int minFrame = (minInput * FPS);
+    unsigned int maxFrame = (maxInput * FPS);
     
     //Check, if the current animation is responsible for displaying this frame
     if (_iFrame < minFrame || _iFrame > maxFrame)
@@ -167,9 +166,9 @@ PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFr
     
     if (interpolationAnimations_[i]) {
       if (newPose == NULL)
-	newPose = interpolationAnimations_[i]->getPose(_iFrame - minFrame, referenceCopy);
+        newPose = interpolationAnimations_[i]->pose(_iFrame - minFrame, referenceCopy);
       else
-	newPose = interpolationAnimations_[i]->getPose(_iFrame - minFrame, newPose);
+        newPose = interpolationAnimations_[i]->pose(_iFrame - minFrame, newPose);
     }
   }
   
@@ -183,8 +182,8 @@ PoseT<Scalar> * MultiInterpolationAnimationT<Scalar>::getPose(unsigned long _iFr
 
 //-----------------------------------------------------------------------------------------------------
 
-template<typename Scalar>
-InterpolationAnimationT<Scalar>* MultiInterpolationAnimationT<Scalar>::getAnimation(unsigned int _index ) {
+template<class PointT>
+InterpolationAnimationT<PointT>* MultiInterpolationAnimationT<PointT>::animation(unsigned int _index ) {
   if ( _index < interpolationAnimations_.size() )
     return interpolationAnimations_[ _index ];
   else 

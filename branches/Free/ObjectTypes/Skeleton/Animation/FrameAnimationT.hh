@@ -45,7 +45,7 @@
 
 #include "AnimationT.hh"
 
-template<typename PointT>
+template<class PointT>
 class FrameAnimationT : public AnimationT<PointT>
 {
   template<typename>

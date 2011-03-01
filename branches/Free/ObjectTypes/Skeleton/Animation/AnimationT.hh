@@ -56,7 +56,7 @@
  * Both the reference pose and the skeleton hierarchy are not used by the animation class itself, but are
  * passed to the poses.
  */
-template<typename PointT>
+template<class PointT>
 class AnimationT
 {
   template<typename>
