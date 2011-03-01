@@ -236,7 +236,7 @@ To use the ScriptInterface:
 </ul>
 
 An easier interface to call functions is available by the \ref RPCInterfacePage "RPC Interface". Additionally it is
-possible to connect signals and slots across plugins via the  \ref PluginConnectionInterfacePage "Plugin Connection Interface"
+possible to connect signals and slots across plugins via the  \ref pluginConnectionInterfacePage "Plugin Connection Interface"
 
 */
 
