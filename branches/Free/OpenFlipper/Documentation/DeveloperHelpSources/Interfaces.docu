@@ -106,13 +106,13 @@ Provides functions to read and write custom filetypes ( FileInterface )
 
 
 \subsection TypePlugin Type Interface
-\image html FileInterface.png
+\image html TypeInterface.png
 Allows plugins to specify custom data types and makes them available
 to other plugins ( TypeInterface )
 
 
 \subsection ViewModePlugin View Mode Interface
-\image html FileInterface.png
+\image html ViewModeInterface.png
 Specify own view modes ( ViewModeInterface )
 
 
