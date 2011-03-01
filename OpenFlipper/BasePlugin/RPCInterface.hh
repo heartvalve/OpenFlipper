@@ -46,7 +46,7 @@
 
 #include <OpenFlipper/BasePlugin/RPCWrappers.hh>
 
-/** \file RPCInterfacePage.hh
+/** \file RPCInterface.hh
 *
 * Interface for calling functions across plugins. \ref RPCInterfacePage
 */
