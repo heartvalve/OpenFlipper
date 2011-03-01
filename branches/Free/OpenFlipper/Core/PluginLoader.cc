@@ -1516,6 +1516,11 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin      , SIGNAL(executeScript(QString)),
               this       , SLOT(slotExecuteScript(QString)));
 
+    // Plugins to Core
+    if ( checkSignal(plugin,"executeFileScript(QString)") )
+      connect(plugin      , SIGNAL(executeFileScript(QString)),
+              this       , SLOT(slotExecuteFileScript(QString)));
+
     // Core to plugins ( normally only one scripting plugin)
     if ( checkSlot(plugin,"slotExecuteScript(QString)") )
       connect(this      , SIGNAL(executeScript(QString)),
