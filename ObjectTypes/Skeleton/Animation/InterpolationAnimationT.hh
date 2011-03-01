@@ -50,7 +50,7 @@
 #include "InterpolationT.hh"
 #include "InterpolationMatrixManipulatorT.hh"
 
-template<typename PointT>
+template<class PointT>
 class InterpolationAnimationT : public AnimationT<PointT>
 { 
   template<typename>
@@ -77,54 +77,53 @@ class InterpolationAnimationT : public AnimationT<PointT>
     virtual bool getMaxInput(Scalar& _result);
 
   protected:
-        SkeletonHierarchyI *hierarchy_;                 ///< Stores a pointer to the skeleton hierarchy, is passed to new poses as they are created
-        Pose *reference_;                              ///< Stores the reference pose attached to the skeleton, the poses use it for some precalculations
 
-  
-        std::vector<int> influencedJoints_;
-        std::vector< Interpolator* > interpolators_;
-        //Hier muss es einen Mapper geben, der weiß, wie er auf die Matrix aus der Pose die Werte, die der Interpolator
-        //erzeugt, anwendet.
-        std::map < Interpolator*, std::vector < TargetType > > precalculations_;
-        MatrixManipulator* matrixManipulator_;
-        unsigned int frames_;
-        
-        std::map < unsigned int, Pose* > interpolatedPoses_;
-        
-        unsigned int calcAbsoluteMaxForInterpolator(uint _index);
+    Skeleton* skeleton_;
+
+    std::vector<int> influencedJoints_;
+    std::vector< Interpolator* > interpolators_;
+    //Hier muss es einen Mapper geben, der weiß, wie er auf die Matrix aus der Pose die Werte, die der Interpolator
+    //erzeugt, anwendet.
+    std::map < Interpolator*, std::vector < TargetType > > precalculations_;
+    MatrixManipulator* matrixManipulator_;
+    unsigned int frames_;
+
+    std::map < unsigned int, Pose* > interpolatedPoses_;
+
+    unsigned int calcAbsoluteMaxForInterpolator(uint _index);
   
   public:
-        static const int FPS = 60;
-  
-  public:
-        /**
-         * @name Frame access
-         * There is one pose per frame.
-         */
-        //@{
-        virtual Pose *getPose(unsigned int _iFrame);
-        virtual Pose *getPose(unsigned int _iFrame, Pose* _reference);
-        inline unsigned int getFrameCount();
-        //@}
+    static const int FPS = 60;
 
-        /**
-         * @name Synchronization
-         * Use these methods to keep the poses in sync with the number (and indices) of the joints.
-         */
-        //@{
-        virtual void insert_at(unsigned int _index);
-        virtual void remove_at(unsigned int _index);
-        //@}
-        
-        /**
-         * @name Interpolators access
-         */
-        //@{
-        // We use only interpolators with time as input.
-        void          addInterpolator(InterpolationT<double> *_interpolator);
-        Interpolator* interpolator(unsigned int _index);
-        unsigned int  interpolatorCount();
-        //@}
+  public:
+    /**
+      * @name Frame access
+      * There is one pose per frame.
+      */
+    //@{
+    virtual Pose* pose(unsigned int _iFrame);
+    virtual Pose* pose(unsigned int _iFrame, Pose* _reference);
+    inline unsigned int frameCount();
+    //@}
+
+    /**
+      * @name Synchronization
+      * Use these methods to keep the poses in sync with the number (and indices) of the joints.
+      */
+    //@{
+    virtual void insertJointAt(unsigned int _index);
+    virtual void removeJointAt(unsigned int _index);
+    //@}
+    
+    /**
+      * @name Interpolators access
+      */
+    //@{
+    // We use only interpolators with time as input.
+    void          addInterpolator(InterpolationT<double> *_interpolator);
+    Interpolator* interpolator(unsigned int _index);
+    unsigned int  interpolatorCount();
+    //@}
         
         /**
          * @name InfluencedJoints access
@@ -149,12 +148,10 @@ class InterpolationAnimationT : public AnimationT<PointT>
         }
         //@}
         
-        
-        
         Pose* getReference() {
-          return getPose(0);
+          return pose(0);
         }
-        
+
         virtual void clearPoseCache() {
           if (interpolatedPoses_.size() == 1 && interpolatedPoses_.find(0) != interpolatedPoses_.end())
             return;
