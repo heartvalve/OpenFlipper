@@ -139,7 +139,7 @@ A small icon can be controlled to indicate OpenFlippers status via StatusbarInte
 
 To use the StatusbarInterface:
 <ul>
-<li> include StatusbarInterface in your plugins header file
+<li> include StatusbarInterface.hh in your plugins header file
 <li> derive your plugin from the class StatusbarInterface
 <li> add Q_INTERFACES(StatusbarInterface) to your plugin class
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
