@@ -101,7 +101,7 @@ namespace Viewer {
   }
   
   void ViewerProperties::snapshotFileType(const QString& _type) {
-    snapshotFileType_  = _type;
+    snapshotFileType_  = _type.trimmed();
   }
 
   std::string ViewerProperties::pickMode(){
