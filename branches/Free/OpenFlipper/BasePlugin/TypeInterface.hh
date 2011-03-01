@@ -46,75 +46,32 @@
 
 #include <OpenFlipper/common/Types.hh>
 
+/** \file TypeInterface.hh
+*
+* Interface for registering types in OpenFlipper. \ref typeInterfacePage
+*/
+
+
  /** \brief Interface class for type definitions
-  *
-  * This interface is used to register new types in OpenFlipper. The type plugins are loaded before all other plugins.
-  * They have only the registerType function which registers the type to the core. The type itself has to be
-  * defined in the ObjectTypes subdirectory.
-  *
-  * \section TypeExample Example using custom data types
-  *
-  * Adding a custom data type to %OpenFlipper needs the following requirements in order to work:
-  *
-  * - The definition of the typeId constant, e.g.:
-  * \code
-  * #define DATA_MY_DATA typeId("MyDataType")
-  * \endcode
-  * Note: Your data type is then referenced as DATA_MY_DATA during runtime.
-  * - The specification of an object class for your object type that is derived from
-  *   BaseObjectData.
-  * - The specification of helper functions (usually within the PluginFunctions namespace)
-  *   allowing the casting from BaseObjectData to your object type class.
-  *
-  * See detailed examples for each of the three points for already existing data types in
-  * OpenFlipperRoot/ObjectTypes.
-  *
-  * Once the object class is specified, the type plugin will be responsible for its handling including
-  *
-  * - Adding new objects to the scenegraph
-  * - Setting the initial name of an object
-  * - Etc.
-  *
-  * So, type plugins usually consist of only few lines of code. Here an example of
-  * a type plugin handling an example object data type as mentioned above:
-  *
-  * \code
-  * bool MyDataTypePlugin::registerType() {
-  *
-  *     addDataType("MyDataType",tr("MyDataType"));
-  *     setTypeIcon( "MyDataType", "myDataType.png");
-  *
-  *     return true;
-  * }
-  *
-  * int MyDataTypePlugin::addEmpty() {
-  *
-  *     // Create new object
-  *     MyObject* object = new MyObject();
-  *
-  *     object->setName( QString("My Object %1.mob").arg(objectCount) );
-  *     object->update();
-  *     object->show();
-  *
-  *     // Tell core that an object has been added
-  *     emit emptyObjectAdded ( object->id() );
-  *
-  *     return object->id();
-  * }
-  * \endcode
-  *
-  * Now, each time a plugin emits addEmptyObject(DATA_MY_DATA), the addEmpty() function will
-  * add the object to the scenegraph and return the newly created object's id.
-  */
+ *
+ * \n
+ * \ref typeInterfacePage "Detailed description"
+ * \n
+ *
+ * This interface is used to register new types in OpenFlipper. The type plugins are loaded before all other plugins.
+ * They have only the registerType function which registers the type to the core and a function to add new
+ * objects at runtime.
+ */
 
 class TypeInterface {
 
   signals:
     
     /** \brief Emit this signal if an empty object has been created
-       * @param _id Id of the added object
-       */
-      virtual void emptyObjectAdded( int /*_id*/ ) {};
+     *
+     * @param _id Id of the added object
+     */
+    virtual void emptyObjectAdded( int _id ) {};
   
   public:
 
@@ -128,19 +85,95 @@ class TypeInterface {
     /** \brief Create an empty object
        *
        * When this slot is called you have to create an object of your supported type.
-       * @param _type Data type of object that will be created
        * @return Id of the new Object
        */
     virtual int addEmpty() = 0;
     
     /** \brief Return your supported object type( e.g. DATA_TRIANGLE_MESH )
     *
-    * If you support multiple datatypes you can use the bitwise or to combine them here.
-    * The function is used from addEmpty to check if your plugin can create an object of
-    * a given dataType.
+    * The function is used from addEmpty in the core to check if your plugin can create an object of
+    * a given dataType. If so, your addEmpty function will be invoked to create it.
     */
     virtual DataType supportedType() = 0;
 };
+
+
+/** \page typeInterfacePage Type Interface
+\n
+\image html TypeInterface.png
+\n
+
+This interface is used to register new types in OpenFlipper. The type plugins are loaded before all other plugins.
+They have only the registerType function which registers the type to the core and a function to create objects
+of the new type. The type itself has to be defined in the ObjectTypes subdirectory.
+
+ \section TypeExample Example using custom data types
+
+ Adding a custom data type to %OpenFlipper needs the following requirements in order to work:
+
+ - The definition of the typeId constant, e.g.:
+ \code
+ #define DATA_MY_DATA typeId("MyDataType")
+ \endcode
+ Note: Your data type is then referenced as DATA_MY_DATA during runtime.
+ - The specification of an object class for your object type that is derived from
+   BaseObjectData.
+ - The specification of helper functions (usually within the PluginFunctions namespace)
+   allowing the casting from BaseObjectData to your object type class.
+
+ See detailed examples for each of the three points for already existing data types in
+ OpenFlipperRoot/ObjectTypes.
+
+ Once the object class is specified, the type plugin will be responsible for its handling including
+
+ - Adding new objects to the scenegraph
+ - Setting the initial name of an object
+ - Etc.
+
+ So, type plugins usually consist of only few lines of code. Here an example of
+ a type plugin handling an example object data type as mentioned above:
+
+ \code
+ bool MyDataTypePlugin::registerType() {
+
+     addDataType("MyDataType",tr("MyDataType"));
+     setTypeIcon( "MyDataType", "myDataType.png");
+
+     return true;
+ }
+
+ int MyDataTypePlugin::addEmpty() {
+
+     // Create new object
+     MyObject* object = new MyObject();
+
+     object->setName( QString("My Object %1.mob").arg(objectCount) );
+     object->update();
+     object->show();
+
+     // Tell core that an object has been added
+     emit emptyObjectAdded ( object->id() );
+
+     return object->id();
+ }
+ \endcode
+
+ Now, each time a plugin emits addEmptyObject(DATA_MY_DATA), the addEmpty() function will
+ add the object to the scenegraph and return the newly created object's id.
+
+To use the TypeInterface:
+<ul>
+<li> include TypeInterface.hh in your plugins header file
+<li> derive your plugin from the class TypeInterface
+<li> add Q_INTERFACES(TypeInterface) to your plugin class
+<li> Implement all slots of this Interface
+</ul>
+
+*/
+
+
+
+
 
 Q_DECLARE_INTERFACE(TypeInterface,"OpenFlipper.TypeInterface/1.1")
 
