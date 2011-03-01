@@ -41,22 +41,14 @@
 \*===========================================================================*/
 
 
-
-
-//
-// C++ Interface: RPCInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #include <OpenFlipper/BasePlugin/RPCWrappers.hh>
 #include <iostream>
 
 namespace RPC {
 
+/** Internal pointer to the script engine. Don't use it directly!
+ *
+ */
 static QScriptEngine* engine_;
 
 QScriptValue callFunction( QString _plugin, QString _functionName , std::vector< QScriptValue > _parameters ) {
