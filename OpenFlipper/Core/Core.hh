@@ -1028,7 +1028,18 @@ private slots:
   private slots:
     void slotScriptInfo( QString _pluginName , QString _functionName  );
 
+
+    /** Core slot, executes the given script text via scripting plugin
+     *
+     * @param _script Script as QString
+     */
     void slotExecuteScript( QString _script );
+
+    /** Core slot, executes the given file as a script via scripting plugin
+     *
+     * @param _filename Filename of the script
+     */
+    void slotExecuteFileScript( QString _filename );
 
     void slotGetScriptingEngine( QScriptEngine*& _engine  );
 

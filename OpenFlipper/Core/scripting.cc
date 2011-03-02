@@ -68,6 +68,10 @@ void Core::slotExecuteScript( QString _script ) {
   emit executeScript( _script );
 }
 
+void Core::slotExecuteFileScript( QString _filename ) {
+  emit executeFileScript( _filename );
+}
+
 void Core::slotGetScriptingEngine( QScriptEngine*& _engine  ) {
   _engine = &scriptEngine_;
 }
