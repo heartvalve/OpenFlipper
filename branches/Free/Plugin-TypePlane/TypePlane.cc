@@ -51,7 +51,7 @@ TypePlanePlugin::TypePlanePlugin() {
 
 bool TypePlanePlugin::registerType() {
   addDataType("Plane",tr("Plane"));
-//   setTypeIcon( "Plane", "PlaneType.png");
+  setTypeIcon( "Plane", "PlaneType.png");
   return true;
 }
 
