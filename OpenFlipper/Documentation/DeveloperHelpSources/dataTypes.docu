@@ -19,5 +19,6 @@ The following datatypes are available in OpenFlipper:
   \image html type_SplineCurve_thumb.png
 - \subpage BSplineSurfaceType "BSplineSurfaces"
   \image html type_SplineSurface_thumb.png
-
+- \subpage coordsysType "Coordinate Systems"
+  \image html type_coordsys_thumb.png
 */
