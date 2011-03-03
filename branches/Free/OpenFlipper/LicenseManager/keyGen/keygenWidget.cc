@@ -85,7 +85,7 @@ void KeyGenWidget::slotAnalyze() {
   QString inputData = requestData->toPlainText();
   QStringList data = inputData.split('\n',QString::SkipEmptyParts);
   
-  // This is never avalid request!
+  // This is never a valid request!
   if ( data.size() < 6 ) {
     
     QPalette p = requestData->palette();
@@ -141,7 +141,8 @@ void KeyGenWidget::slotAnalyze() {
     signatureBox->setPalette(p);
     
     valid_ = false;
-    return;
+    if (! ignoreSigBox->isChecked() )
+      return;
     
   } else {
     QPalette p = signatureBox->palette();
@@ -171,7 +172,9 @@ void KeyGenWidget::slotAnalyze() {
   
   std::cerr << "Full license : \n" << license_.toStdString() << std::endl;
   
-  valid_ = true;
+  // Only set valid, if the the request and the signature boxes match
+  if ( requestSig == requestSigCheck )
+    valid_ = true;
   
   licenseFileName_ = name;
 }
@@ -194,11 +197,16 @@ KeyGenWidget::~KeyGenWidget() {
 
 }
 
+
 void KeyGenWidget::slotGenerateButton() {
 
-  if ( ! valid_ ) {
-    std::cerr << "Invalid! " << std::endl;
-    return;
+  if ( ! valid_  ) {
+    if (  ! ignoreSigBox->isChecked( ) ) {
+      std::cerr << "Invalid Request " << std::endl;
+      return;
+    } else {
+      std::cerr << "Invalid Request but overriding!!" << std::endl;
+    }
   }
   
   std::cerr << "Writing License file to output : " << licenseFileName_.toStdString() << std::endl;
