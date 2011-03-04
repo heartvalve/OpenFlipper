@@ -227,7 +227,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"addedEmptyObject: Unable to get Object for id " + QString::number(_id) );
+//     emit log(LOGERR,"addedEmptyObject: Unable to get Object for id " + QString::number(_id) );
     return;
   }
   
