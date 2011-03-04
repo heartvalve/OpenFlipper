@@ -433,7 +433,7 @@ int main(int argc, char **argv)
 
     #ifdef WIN32
       // Set additional plugin dir for windows qt plugins
-      app.addLibraryPath(OpenFlipper::Options::applicationDirStr);
+      app.addLibraryPath(OpenFlipper::Options::applicationDirStr());
     #endif
 
     return app.exec();
@@ -458,7 +458,7 @@ int main(int argc, char **argv)
 
     #ifdef WIN32
       // Set additional plugin dir for windows qt plugins
-      app.addLibraryPath(OpenFlipper::Options::applicationDirStr);
+      app.addLibraryPath(OpenFlipper::Options::applicationDirStr());
     #endif
 
     return app.exec();
