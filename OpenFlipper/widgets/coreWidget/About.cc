@@ -485,6 +485,11 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
   aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
   
+  aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:\t") + qVersion() );
+  QStringList libPaths = QCoreApplication::libraryPaths();
+  for(int i = 0 ; i < libPaths.size() ; ++i)
+    aboutWidget_->OpenFlipperAbout->append(libPaths[i]);
+
   // =====================================================================================
   // Compiler information
   // =====================================================================================    
