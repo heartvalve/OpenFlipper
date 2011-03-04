@@ -431,11 +431,6 @@ int main(int argc, char **argv)
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineOpen(args.File(i), openPolyMeshes);    
 
-    #ifdef WIN32
-      // Set additional plugin dir for windows qt plugins
-      app.addLibraryPath(OpenFlipper::Options::applicationDirStr());
-    #endif
-
     return app.exec();
 
   } else {
@@ -455,11 +450,6 @@ int main(int argc, char **argv)
 
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineScript(args.File(i));
-
-    #ifdef WIN32
-      // Set additional plugin dir for windows qt plugins
-      app.addLibraryPath(OpenFlipper::Options::applicationDirStr());
-    #endif
 
     return app.exec();
   }
