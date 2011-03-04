@@ -65,7 +65,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureAdded: Unable to get Object for id " + QString::number(_id) );
     return;
   }
 
@@ -77,7 +77,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   }
 
   if ( texData->textureExists(_textureName) ) {
-    emit log(LOGERR,"Trying to add already existing texture " + _textureName + " for object " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureAdded: Trying to add already existing texture " + _textureName + " for object " + QString::number(_id) );
     return;
   }
 
@@ -109,7 +109,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   // ================================================================================
 
   if (glName == 0) {
-    emit log(LOGERR,"Unable to bind texture!");
+    emit log(LOGERR,"slotTextureAdded: Unable to bind texture!");
     return;
   }
 
@@ -128,18 +128,18 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
     QImage textureImage;
 
     if ( !getImage(_filename,textureImage) )
-      emit log(LOGERR, "Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+      emit log(LOGERR, "slotTextureAdded: Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
 
     globalTextures_.texture(_textureName).textureImage = textureImage;
 
   } else {
-    emit log(LOGERR,"Trying to add already existing global texture " + _textureName );
+    emit log(LOGERR,"slotTextureAdded: Trying to add already existing global texture " + _textureName );
     return;
   }
 
   // Add a new entry to the global Texture menu
   QAction* new_texture = new QAction(_textureName, this);
-  new_texture->setStatusTip(tr("Switch all objects to this Texture ( if available )"));
+  new_texture->setStatusTip(tr("slotTextureAdded: Switch all objects to this Texture ( if available )"));
   new_texture->setCheckable(true);
   actionGroup_->addAction(new_texture);
   textureMenu_->addAction(new_texture);
@@ -152,12 +152,12 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
    // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotMultiTextureAdded: Unable to get Object for id " + QString::number(_id) );
   }
 
   // Check if we support this kind of data
   if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
-      emit log(LOGERR,"Trying to add textures to object failed because of unsupported object type");
+      emit log(LOGERR,"slotMultiTextureAdded: Trying to add textures to object failed because of unsupported object type");
       return;
   }
 
@@ -184,7 +184,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   QImage textureImage;
 
   if ( !getImage(_filename,textureImage) )
-    emit log(LOGERR, "Cannot load multiTexture '" + _textureGroup + "'. File not found '" + _filename + "'");
+    emit log(LOGERR, "slotMultiTextureAdded: Cannot load multiTexture '" + _textureGroup + "'. File not found '" + _filename + "'");
 
   texData->texture(_name).textureImage = textureImage;
 
@@ -192,7 +192,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   if ( _textureId != -1 ) {
     texData->texture(_textureGroup).multiTextureList << _name ;
   } else {
-    emit log(LOGERR,"Error when getting internal id of new multitexture!");
+    emit log(LOGERR,"slotMultiTextureAdded: Error when getting internal id of new multitexture!");
   }
 
 }
@@ -227,7 +227,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"addedEmptyObject: Unable to get Object for id " + QString::number(_id) );
     return;
   }
   
@@ -253,7 +253,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
     QImage textureImage;
     
     if ( !getImage(globalTextures_.textures()[i].filename(),textureImage) )
-      emit log(LOGERR, "Cannot load global texture '" + globalTextures_.textures()[i].name() +
+      emit log(LOGERR, "addedEmptyObject: Cannot load global texture '" + globalTextures_.textures()[i].name() +
       "'. File not found '" + globalTextures_.textures()[i].filename() + "'");
     
     // ================================================================================
@@ -276,7 +276,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
       texData->setImage(globalTextures_.textures()[i].name(),textureImage);
     }
     else {
-      emit log(LOGERR,"Unable to bind Texture");
+      emit log(LOGERR,"addedEmptyObject: Unable to bind Texture");
       continue;
     }
     
@@ -346,7 +346,7 @@ void TextureControlPlugin::fileOpened( int _id ) {
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"fileOpened: Unable to get Object for id " + QString::number(_id) );
     return;
   }
 
@@ -382,7 +382,7 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   // ================================================================================
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureChangeImage: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -391,7 +391,7 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
 
   if ( texData == 0 || ( !texData->textureExists(_textureName))  ) {
-    emit log(LOGERR,"Texture does not exist: " + _textureName + " (objectid=" + QString::number(_id) + ")");
+    emit log(LOGERR,"slotTextureChangeImage: Texture does not exist: " + _textureName + " (objectid=" + QString::number(_id) + ")");
     return;
   }
 
@@ -421,7 +421,7 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   // Update texture Image for global textures
   // ================================================================================
   if ( ! globalTextures_.textureExists(_textureName) ) {
-    emit log(LOGERR,"Global texture does not exist: " + _textureName);
+    emit log(LOGERR,"slotTextureChangeImage: Global texture does not exist: " + _textureName);
     return;
   }
 
@@ -459,7 +459,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureGetImage: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -475,7 +475,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
   // Check for requested Texture
   // ================================================================================
   if ( !texData->textureExists(_textureName) ) {
-    emit log(LOGERR, "Texture not available! " + _textureName );
+    emit log(LOGERR, "slotTextureGetImage: Texture not available! " + _textureName );
     return;
   }
 
@@ -485,10 +485,11 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
     _image = texData->texture(_textureName).textureImage;
 }
 
+
 void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _image ){
   
   if ( ! globalTextures_.textureExists(_textureName) ) {
-    emit log(LOGERR,"Global texture does not exist: " + _textureName);
+    emit log(LOGERR,"slotTextureGetImage: Global texture does not exist: " + _textureName);
     return;
   }
 
@@ -503,7 +504,7 @@ void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int&
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureIndex: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -519,7 +520,7 @@ void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int&
   // Check for requested Texture
   // ================================================================================
   if ( !texData->textureExists(_textureName) ) {
-    emit log(LOGERR, "Texture not available! " + _textureName );
+    emit log(LOGERR, "slotTextureIndex: Texture not available! " + _textureName );
     return;
   }
 
@@ -531,7 +532,7 @@ void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _prope
     // Get the object
     BaseObjectData* obj;
     if (! PluginFunctions::getObject(  _id , obj ) ) {
-        emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+        emit log(LOGERR,"slotTextureIndexPropertyName: Unable to get Object for id " + QString::number(_id) );
         return;
     }
     
@@ -541,7 +542,7 @@ void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _prope
     } else if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
         _propertyName = PluginFunctions::polyMeshObject(obj)->meshNode()->indexPropertyName().c_str();
     } else {
-        emit log(LOGERR,"Unable to access mesh for object with id " + QString::number(_id) );
+        emit log(LOGERR,"slotTextureIndexPropertyName: Unable to access mesh for object with id " + QString::number(_id) );
     }
 }
 
@@ -550,7 +551,7 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureName: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -568,7 +569,7 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
       return;
     }
 
-  emit log(LOGERR, "TextureIndex not available! (" + QString::number(_textureIndex) + ")" );
+  emit log(LOGERR, "slotTextureName: TextureIndex not available! (" + QString::number(_textureIndex) + ")" );
   _textureName = "NOT_FOUND";
   return;
 }
@@ -578,7 +579,7 @@ void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, Q
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotTextureFilename: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -586,7 +587,7 @@ void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, Q
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("slotTextureName: Object has no texture data! Object: %1").arg(_id) );
+    emit log(LOGERR, tr("slotTextureFilename: Object has no texture data! Object: %1").arg(_id) );
     return;
   }
 
@@ -621,7 +622,7 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotGetCurrentTexture: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -635,7 +636,7 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
       // Iterate over all per Object datas and output them
       QMap<QString, PerObjectData*>::const_iterator mapIter = obj->getPerObjectDataMap().begin();  
       while ( mapIter != obj->getPerObjectDataMap().end() ) {
-        std::cerr << "Available Texture Data: " << mapIter.key().toStdString() << std::endl;
+        std::cerr << "slotGetCurrentTexture: Available Texture Data: " << mapIter.key().toStdString() << std::endl;
         
         mapIter++;
       }
@@ -661,7 +662,7 @@ void TextureControlPlugin::slotGetSubTextures( int _id, QString _multiTextureNam
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotGetSubTextures: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -677,7 +678,7 @@ void TextureControlPlugin::slotGetSubTextures( int _id, QString _multiTextureNam
   // Check for requested Texture
   // ================================================================================
   if ( !texData->textureExists(_multiTextureName) ) {
-    emit log(LOGERR, "Texture not available! " + _multiTextureName );
+    emit log(LOGERR, "slotGetSubTextures: Texture not available! " + _multiTextureName );
     return;
   }
   
@@ -694,7 +695,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _identifier , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_identifier) );
+    emit log(LOGERR,"slotTextureUpdated: Unable to get Object for id " + QString::number(_identifier) );
     return;
   }
 
@@ -715,7 +716,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // Check if texture exists
   // ================================================================================
   if ( ! texData->textureExists(_textureName) ) {
-    emit log(LOGERR,"Texture " + _textureName + " not found on object " + QString::number(_identifier) );
+    emit log(LOGERR,"slotTextureUpdated: Texture " + _textureName + " not found on object " + QString::number(_identifier) );
     return;
   }
 
@@ -772,7 +773,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
       OpenMesh::HPropHandleT< double > texture;
       if ( ! _mesh.get_property_handle(texture, _texture.name().toStdString() ) ) {
-        emit log(LOGERR,tr("HALFEDGEBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
+        emit log(LOGERR,tr("doUpdateTexture: HALFEDGEBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
@@ -782,20 +783,20 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
       OpenMesh::HPropHandleT< OpenMesh::Vec2d > texture2D;
       if ( ! _mesh.get_property_handle( texture2D, _texture.name().toStdString() ) ) {
-        emit log(LOGERR,tr("HALFEDGEBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
+        emit log(LOGERR,tr("doUpdateTexture: HALFEDGEBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
       copyTexture( _texture, _mesh, texture2D);
 
     } else
-      emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
+      emit log(LOGERR, "doUpdateTexture: Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
   } else if ( _texture.type() == VERTEXBASED ) {
     if ( _texture.dimension() == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
       if ( ! _mesh.get_property_handle(texture,_texture.name().toStdString() ) ) {
-        emit log(LOGERR,tr("VERTEXBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
+        emit log(LOGERR,tr("doUpdateTexture: VERTEXBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
@@ -805,7 +806,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
         if ( ! _mesh.get_property_handle(texture2D,_texture.name().toStdString() ) ) {
-          emit log(LOGERR,tr("VERTEXBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
+          emit log(LOGERR,tr("doUpdateTexture: VERTEXBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
           return;
         }
 
@@ -822,10 +823,10 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
         copyTexture(_textureid, _mesh, scalarField3D);
 
       }*/ else
-        emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
+        emit log(LOGERR, "doUpdateTexture: Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
 
     } else
-      emit log(LOGERR, "Unsupported Texture type");
+      emit log(LOGERR, "doUpdateTexture: Unsupported Texture type");
 
 }
 
@@ -1025,10 +1026,10 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
           _texture.type( ENVIRONMENT );
           changed = true;
         } else {
-          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _texture.name() );
+          emit log(LOGERR,"parseMode: Unknown texture type : " + value + " for texture: " + _texture.name() );
         }
     } else
-      emit log(LOGERR,"Unknown texture mode : " + sectionName);
+      emit log(LOGERR,"parseMode: Unknown texture mode : " + sectionName);
 
     ++i;
     nextString = _mode.section(',',i,i);
@@ -1043,7 +1044,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   // Update texture settings for global textures
   // ================================================================================
   if ( ! globalTextures_.textureExists(_textureName) ) {
-    emit log(LOGERR,"Global texture does not exist: " + _textureName);
+    emit log(LOGERR,"slotSetTextureMode: Global texture does not exist: " + _textureName);
     return;
   }
 
@@ -1150,14 +1151,14 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"slotSetTextureMode: Unable to get Object for id " + QString::number(_id) );
   }
 
   // Get Texture data for this object
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
 
   if ( texData == 0 || ( !texData->textureExists(_textureName))  ) {
-    emit log(LOGERR,"Texture does not exist: " + _textureName + " (object=" + QString::number(_id) + ")");
+    emit log(LOGERR,"slotSetTextureMode: Texture does not exist: " + _textureName + " (object=" + QString::number(_id) + ")");
     return;
   }
 
@@ -1241,11 +1242,11 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
     // Get the object
     BaseObjectData* obj;
     if (! PluginFunctions::getObject(  _id , obj ) ) {
-      emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+      emit log(LOGERR,"applyDialogSettings: Unable to get Object for id " + QString::number(_id) );
     }
 
     if ( !_texData->textureExists(_textureName) ) {
-      emit log(LOGERR,"Texture does not exist in applyDialogSettings " + _textureName );
+      emit log(LOGERR,"applyDialogSettings: Texture does not exist in applyDialogSettings " + _textureName );
     }
 
     Texture& texture = _texData->texture(_textureName );
@@ -1343,7 +1344,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"doSwitchTexture: Unable to get Object for id " + QString::number(_id) );
   }
   
   // Ignore light sources: ( TODO: Maybe use better detetion if textures are usefull )
@@ -1363,7 +1364,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // Check for requested Texture
   // ================================================================================
   if ( !texData->textureExists(_textureName) ) {
-    emit log(LOGERR, "Texture not available! " + _textureName );
+    emit log(LOGERR, "doSwitchTexture: Texture not available! " + _textureName );
     return;
   }
 
@@ -1394,7 +1395,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     case VERTEXBASED:
       // Enable the texture
       if ( ! texData->enableTexture( _textureName , true ) )
-        emit log(LOGERR, "Failed to enabled VERTEXBASED or HALFEDGEBASED Texture " + _textureName );
+        emit log(LOGERR, "doSwitchTexture: Failed to enabled VERTEXBASED or HALFEDGEBASED Texture " + _textureName );
 
       // Check if dirty. If dirty, force plugin to update the texture otherwise we will copy it to our buffers and render it
       if ( texData->texture( _textureName).dirty() ) {
@@ -1407,7 +1408,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
         } else if( obj->dataType( DATA_POLY_MESH ) ) {
           doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
         } else {
-          emit log(LOGERR, "HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
+          emit log(LOGERR, "doSwitchTexture: HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
         }
       }
 
@@ -1415,12 +1416,12 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     // Environment textures are static for now so directly enable it without an update
     case ENVIRONMENT:
       if ( ! texData->enableTexture( _textureName , true ) ) {
-        emit log(LOGERR, "Failed to enabled ENVIRONMENT Texture " + _textureName );
+        emit log(LOGERR, "doSwitchTexture: Failed to enabled ENVIRONMENT Texture " + _textureName );
         return;
       }
       break;
     case UNSET:
-      emit log(LOGERR, "Texture Type is unset! This should never happen! " + _textureName );
+      emit log(LOGERR, "doSwitchTexture. Texture Type is unset! This should never happen! " + _textureName );
       break;
   }
 
@@ -1452,7 +1453,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
         PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
       
     } else {
-      emit log(LOGERR, "MultiTexture Error: Only supported on Tri or Poly Mesh for Texture: " + _textureName );
+      emit log(LOGERR, "doSwitchTexture: MultiTexture Error: Only supported on Tri or Poly Mesh for Texture: " + _textureName );
     }
   } else {
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
@@ -1485,7 +1486,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       }
       
     } else {
-      emit log(LOGERR, "Texture Error ( mesh required) for Texture: " + _textureName );
+      emit log(LOGERR, "doSwitchTexture: Texture Error ( mesh required) for Texture: " + _textureName );
     }
   }
 
@@ -1514,7 +1515,7 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED );
         break;
       case UNSET:
-        emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
+        emit log(LOGERR,"doSwitchTexture: Switching drawmode for unknonw Texture Type!");
         break;
     }
   }
@@ -1533,7 +1534,7 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED , PluginFunctions::ALL_VIEWERS);
         break;
       case UNSET:
-        emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
+        emit log(LOGERR,"doSwitchTexture: Switching drawmode for unknonw Texture Type!");
         break;
     }
   }
@@ -1630,7 +1631,7 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
 
     BaseObjectData* obj;
     if (! PluginFunctions::getObject(  id , obj ) ) {
-      emit log(LOGERR,"Unable to get Object for id " + QString::number(id) );
+      emit log(LOGERR,"slotTextureContextMenu: Unable to get Object for id " + QString::number(id) );
       return;
     }
 
@@ -1660,7 +1661,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    emit log(LOGERR,"getCoordinates1D: Unable to get Object for id " + QString::number(_id) );
   }
 
   // ================================================================================
@@ -1676,7 +1677,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
   // Check for requested Texture
   // ================================================================================
   if ( !texData->textureExists(_textureName) ) {
-    emit log(LOGERR, "Texture not available! " + _textureName );
+    emit log(LOGERR, "getCoordinates1D: Texture not available! " + _textureName );
     return;
   }
 
