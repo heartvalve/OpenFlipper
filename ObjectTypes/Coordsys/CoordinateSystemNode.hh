@@ -58,6 +58,7 @@
 
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <vector>
 
 //== NAMESPACES ===============================================================
@@ -74,7 +75,7 @@ namespace SceneGraph {
 
 **/
 
-class ACGDLLEXPORT CoordinateSystemNode : public BaseNode
+class DLLEXPORT CoordinateSystemNode : public BaseNode
 {
 
 public:
