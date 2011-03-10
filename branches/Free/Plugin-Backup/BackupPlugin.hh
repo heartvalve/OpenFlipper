@@ -248,6 +248,11 @@ private slots:
    /// Redo last operation
    void slotRedo();
 
+   
+public slots: // scripting
+
+  QString getBackupName(int _objectId, int _backupId);
+   
 
 private :
 
