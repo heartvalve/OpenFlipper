@@ -1055,6 +1055,7 @@ void SelectionPlugin::saveIniFile( INIFile& _ini , int _id) {
 
   _ini.add_entry(sectionName , "VertexSelection" , getVertexSelection( object->id()) );
   _ini.add_entry(sectionName , "EdgeSelection"   , getEdgeSelection  ( object->id()) );
+  _ini.add_entry(sectionName , "HalfedgeSelection"   , getHalfedgeSelection  ( object->id()) );
 
   if ( object->dataType( DATA_POLY_MESH ) || object->dataType( DATA_TRIANGLE_MESH )) {
     _ini.add_entry(sectionName , "FaceSelection"  , getFaceSelection   ( object->id() ) );
@@ -1178,6 +1179,21 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
     } else {
       clearEdgeSelection(object->id());
       selectEdges( object->id(),ids );
+    }
+
+    updated_selection = true;
+  }
+  
+  if ( _ini.get_entry( ids , sectionName , "HalfedgeSelection" )) {
+    invert = false;
+    _ini.get_entry( invert , sectionName , "InvertHalfedgeSelection" );
+
+    if ( invert ) {
+      selectAllHalfedges( object->id() );
+      unselectHalfedges( object->id(),ids );
+    } else {
+      clearHalfedgeSelection(object->id());
+      selectHalfedges( object->id(),ids );
     }
 
     updated_selection = true;
