@@ -189,6 +189,8 @@ int FileSKLPlugin::loadObject(QString _filename)
 
     //general stuff
     obj->source( PluginFunctions::objectCount() > 4 );
+    QFileInfo info(_filename);
+    obj->setName(info.fileName());
     emit updatedObject( obj->id(), UPDATE_ALL );
     emit openedFile( obj->id() );
     PluginFunctions::viewAll();
