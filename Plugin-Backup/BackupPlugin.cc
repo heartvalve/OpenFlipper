@@ -290,7 +290,7 @@ void BackupPlugin::update_menu( ) {
   backupMenu_->addAction(backupsEnabledAction_);
   backupsEnabledAction_->setChecked( OpenFlipper::Options::backupEnabled() );
   
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH|DATA_TRIANGLE_MESH) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_ALL) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
 
     std::vector<BackupT>* archive;
     if ( !backups_.get_pointer(o_it->id(),archive) ) {
@@ -513,6 +513,42 @@ bool BackupPlugin::getBackupData(int _objectId, int _backupId, BackupT*& _contai
   
   return true;
 }
+
+
+QString BackupPlugin::getBackupName(int _objectId, int _backupId)
+{
+  BaseObjectData * object = 0;
+  
+  // get the right object or fail
+  if ( ! PluginFunctions::getObject(_objectId, object) ) 
+  {
+    emit log(LOGERR, "[getBackupString] Unable to find object with id " + QString::number(_objectId));
+    return QString();
+  }
+  
+  // Get the backup vector of this object
+  std::vector<BackupT>* archive;
+  if ( !backups_.get_pointer(_objectId, archive) ) 
+  {
+    emit log(LOGERR, "[getBackupString] Unable to find backups for object with id " + QString::number(_objectId));
+    return QString();
+  }
+  
+  QString backupName;
+  
+  // otherwise use the given backup id  
+  for ( uint i = 0 ; i < archive->size() ; ++i ) 
+  {
+    if ( (*archive)[i].backupNumber == _backupId  ) 
+    {
+      backupName = (*archive)[i].backupName;
+      break;
+    }
+  }
+  
+  return backupName;
+}
+
 
 /// Restore an object
 void BackupPlugin::slotRestoreObject(int _objectid , int _internalId){  
