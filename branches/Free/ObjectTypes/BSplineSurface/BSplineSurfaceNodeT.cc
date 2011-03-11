@@ -633,6 +633,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 pick(GLState& _state, PickTarget _target)
 {
+  glDisable(GL_COLOR_MATERIAL);
+  
   switch (_target)
   {
     case PICK_VERTEX:
@@ -714,7 +716,17 @@ pick_spline( GLState& _state )
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
   glEnable(GL_TEXTURE_2D);
+  
+  glDisable(GL_COLOR_MATERIAL);
+  glDisable(GL_LIGHTING);
+  glShadeModel(GL_FLAT);
 
+  std::cout << "[BSplineSurface] pick_spline: \n"
+            << "pick_texture_baseidx_ = " << pick_texture_baseidx_
+            << ", _state.pick_current_index () = " << _state.pick_current_index ()
+            << ", pick_texture_idx_ = " << pick_texture_idx_
+            << std::endl;
+            
   if( _state.pick_current_index () != pick_texture_baseidx_)
   {
     pick_texture_baseidx_ = _state.pick_current_index();
@@ -814,8 +826,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 updateControlPointSelectionTexture(GLState& _state)
 {
-  if (bspline_selection_draw_mode_ == CONTROLPOINT)
-    create_cp_selection_texture(_state);
+  create_cp_selection_texture(_state);
+  controlPointSelectionTexture_valid_ = true;
 }
 
 //----------------------------------------------------------------------------
@@ -825,8 +837,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 updateKnotVectorSelectionTexture(GLState& _state)
 {
-  if (bspline_selection_draw_mode_ == KNOTVECTOR)
-    create_knot_selection_texture(_state);
+  create_knot_selection_texture(_state);
+  knotVectorSelectionTexture_valid_ = true;
 }
 
 //----------------------------------------------------------------------------
@@ -1055,14 +1067,17 @@ create_knot_selection_texture(GLState& _state)
       
       Vec4f color;
       if (selected_m && selected_n)
-        color = _state.base_color();
-//         color = surface_highlight_color_;
+//         color = _state.specular_color();
+//         color = _state.base_color();
+        color = surface_highlight_color_;
       else if ((selected_m && !selected_n) || (!selected_m && selected_n) )
-        color = _state.base_color() *0.5 + _state.specular_color() * 0.5;        
-//         color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
+//         color = _state.ambient_color() *0.5 + _state.specular_color() * 0.5;
+//         color = _state.base_color() *0.5 + _state.specular_color() * 0.5;        
+        color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
       else
-        color = _state.base_color() *0.5 + _state.diffuse_color() * 0.5;
-//         color = surface_color_;
+//         color = _state.ambient_color() *0.5 + _state.diffuse_color() * 0.5;
+//         color = _state.base_color() *0.5 + _state.diffuse_color() * 0.5;
+        color = surface_color_;
 
 
       // fill texture
@@ -1075,7 +1090,7 @@ create_knot_selection_texture(GLState& _state)
   } // end of u direction
   
   // debug, output image
-  b.save("surfaceKnotSelectionTexture.png", "PNG");
+//   b.save("surfaceKnotSelectionTexture.png", "PNG");
   
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -1093,6 +1108,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 pick_init_texturing( )
 {
+  std::cout << "[BSplineSurface] pick_init_texturing()" << std::endl;
+  
   pick_texture_res_     = 256;
   pick_texture_baseidx_ = 0;
 
@@ -1119,7 +1136,10 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 pick_create_texture( GLState& _state)
 {
+  std::cout << "[BSplineSurface] pick_create_texture()" << std::endl;
+  
   QImage b(pick_texture_res_, pick_texture_res_, QImage::Format_ARGB32);
+  QImage texture(pick_texture_res_, pick_texture_res_, QImage::Format_ARGB32);
     
   // fill with colors
   int cur_idx=0;
@@ -1129,6 +1149,9 @@ pick_create_texture( GLState& _state)
     {
       Vec4uc cur_col( _state.pick_get_name_color (cur_idx) );
       b.setPixel ( i,j, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
+      
+      Vec4f testcol = Vec4f((float)cur_col[0], (float)cur_col[1], (float)cur_col[2], (float)cur_col[3]);
+      texture.setPixel ( i,j, qRgba((int)(testcol[0]*255.0), (int)(testcol[1]*255.0), (int)(testcol[2]*255.0), 255));
       cur_idx++;
     }
   }
@@ -1162,6 +1185,7 @@ pick_create_texture( GLState& _state)
 
   // debug, output image
 //   b.save("surfacePickingTexture.png", "PNG");
+  texture.save("surfacePickingTexture.png", "PNG");
   
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -1272,7 +1296,7 @@ draw_textured_nurbs( GLState& /*_state*/)
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
-
+/*
   if( arb_texture_repeat_ && arb_texture_used_ ) {
     tcoords[0] = 0.0;
     tcoords[1] = 0.0;
@@ -1283,7 +1307,7 @@ draw_textured_nurbs( GLState& /*_state*/)
     tcoords[6] = arb_texture_repeat_u_*(maxu-minu);
     tcoords[7] = arb_texture_repeat_v_*(maxv-minv);
   }
-
+*/
   // knots of domain, over which tcoords shall be linearly interpolated
   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
   GLfloat   sknots[4] = {minv, minv, maxv, maxv};
