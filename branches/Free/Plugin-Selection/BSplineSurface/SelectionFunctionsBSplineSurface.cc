@@ -142,9 +142,14 @@ toggleBSplineSurfaceSelection(QMouseEvent* _event)
       
           ACG::Vec2d found_params(curu, curv); 
           
+          std::cout << "target_idx = " << target_idx << std::endl;
+          std::cout << "parameter: u = " << curu << ", v = " << curv << std::endl;
+          
           // knots closest to parameters of hitpoint on the surface
           int knotIdx_m = KnotvectorSelection::closestKnot(knotvec_u, curu);
           int knotIdx_n = KnotvectorSelection::closestKnot(knotvec_v, curv);
+          
+          std::cout << "closets knot indices: knotIdx_m = " << knotIdx_m << ", knotIdx_n = " << knotIdx_n << std::endl;
           
           if( bss->get_knotvector_m_ref()->selection( knotIdx_m ) == 0)
             bss->get_knotvector_m_ref()->selection( knotIdx_m ) = 1;
@@ -156,6 +161,16 @@ toggleBSplineSurfaceSelection(QMouseEvent* _event)
           else
             bss->get_knotvector_n_ref()->selection( knotIdx_n ) = 0;
         
+          std::cout << "selections m : " << std::flush;
+          for (unsigned int i = 0; i < bss->n_knots_m(); ++i)
+            std::cout << (int)bss->get_knotvector_m_ref()->selection(i) << ", " << std::flush;
+          std::cout << std::endl;
+          
+          std::cout << "selections n : " << std::flush;
+          for (unsigned int i = 0; i < bss->n_knots_n(); ++i)
+            std::cout << (int)bss->get_knotvector_n_ref()->selection(i) << ", " << std::flush;
+          std::cout << std::endl << std::endl;;
+          
         } // end of if selections available
       }
     }
