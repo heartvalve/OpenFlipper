@@ -46,16 +46,20 @@
 
 #include <QtGui>
 
- /**
- * This Interface should be used by plugins which will provide their own options.
- * For your options to show up in OpenFlippers Options window implement the initializeOptionsWidget() slot.
- * The widget you return with this slot will be integrated into the options window and when
- * the user hits the apply- or ok-button in the options window the slot applyOptions() is called and
- * thus enables you to store the changes in your options.
+
+/** \file OptionsInterface.hh
+*
+* Interface for adding a widget to OpenFlippers Options dialog .\ref optionsInterfacePage
+*/
+
+/** \brief Options Dialog interface
+ *
+ * \ref optionsInterfacePage "Detailed description"
+ * \n
+ *
+ * This interface can be used to by plugins to add their own widget to OpenFlippers Options Dialog.
  */
 class OptionsInterface {
-
-   private slots :
 
    public :
 
@@ -90,6 +94,58 @@ class OptionsInterface {
       virtual void applyOptions() = 0;
 
 };
+
+
+/** \page optionsInterfacePage Options Widget Interface
+\image html OptionsInterface.png
+\n
+The OptionsInterface can be used by plugins to add an own widget to OpenFlippers
+Options dialog.
+
+This Interface should be used by plugins which will provide their own options widget in OpenFlippers Options Dialog.
+For your options to show up in OpenFlippers Options window implement the initializeOptionsWidget() function.
+
+The widget you return with this slot will be integrated into the options window and when
+the user hits the apply- or ok-button in the options window the slot applyOptions() is called and
+thus enables you to store the changes in your options.
+
+To use the OptionsInterface:
+<ul>
+<li> include OptionsInterface in your plugins header file
+<li> derive your plugin from the class OptionsInterface
+<li> add Q_INTERFACES(OptionsInterface) to your plugin class
+<li> Implement all functions from this interface
+</ul>
+
+\code
+bool ExamplePlugin::initializeOptionsWidget(QWidget*& _widget){
+
+  // Global variable .. in header file: QWidget* optionswidget_;
+  optionsWidget_ = new QWidget();
+
+  // Setup widget here
+
+  //connect the signals
+  connect(optionsWidget_->setA,      SIGNAL( clicked() ), this, SLOT( slotSetA() ) );
+
+  _widget = optionsWidget_;
+
+  return true;
+}
+
+void ExamplePlugin::applyOptions(){
+
+  // Get some value from the widget
+  int value = optionsWidget_->getValue();
+
+  //
+  ...
+
+}
+
+\endcode
+
+*/
 
 Q_DECLARE_INTERFACE(OptionsInterface,"OpenFlipper.OptionsInterface/1.0")
 

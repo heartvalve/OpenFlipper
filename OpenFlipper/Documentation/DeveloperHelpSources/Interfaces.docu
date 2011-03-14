@@ -59,7 +59,6 @@ FileInterface
 IniInterface
 KeyInterface
 LoadSaveInterface
-OptionsInterface
 PickingInterface
 ProcessInterface
 SecurityInterface
@@ -107,12 +106,6 @@ Specify own view modes ( ViewModeInterface )
 \image html ViewInterface.png
 This interface is used to add additional view widgets ( ViewInterface ).
 
-\subsection OptionsPlugin Options Interface
-\image html OptionsInterface.png
-This Interface is used by plugins which will provide their own options by
-integrating its own options widget into OpenFlipper's options window. ( OptionsInterface )
-
-
 \subsection BackupPlugin Backup Interface
 \image html BackupInterface.png
 Use this interface to backup data ( BackupInterface )
@@ -144,6 +137,13 @@ This is an Interface for Logging to the included log widget. You can log to diff
 \image html MenuInterface.png
 Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
 \n
+
+\subpage optionsInterfacePage
+\image html OptionsInterface.png
+This Interface is used by plugins which will provide their own options by
+integrating an options widget into OpenFlipper's options window ( \ref optionsInterfacePage ).
+\n
+
 
 \subpage statusbarInterfacePage
 \image html StatusbarInterface.png
