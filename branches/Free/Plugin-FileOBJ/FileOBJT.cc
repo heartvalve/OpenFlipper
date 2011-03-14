@@ -110,7 +110,9 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
               // Use file path in target folder (relative)
               QFileInfo file(mat.map_Kd().c_str());
               if(optionCreateTexFolder) {
-                  matStream << "map_Kd textures" << QDir::separator().toAscii()
+                  QFileInfo materialFilename(_filename);
+
+                  matStream << "map_Kd " << materialFilename.baseName().toStdString() << "_textures" << QDir::separator().toAscii()
                       << file.fileName().toStdString() << std::endl;
               } else {
                   matStream << "map_Kd " << file.fileName().toStdString() << std::endl;
@@ -402,12 +404,12 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
               if(optionCreateTexFolder) {
                   // Create folder
                   QDir dir(fi.absolutePath());
-                  if(!testedOnce && dir.exists(fi.absolutePath() + QDir::separator() + "textures")) {
+                  if(!testedOnce && dir.exists(fi.absolutePath() + QDir::separator() + fi.baseName() + "_textures")) {
                       emit log(LOGERR, tr("The specified target folder already contains a subfolder called textures. Skipping!"));
                       continue;
                   } else {
-                      dir.mkdir("textures");
-                      img.save(fi.absolutePath() + QDir::separator() + "textures" + QDir::separator() + img_f.fileName());
+                      dir.mkdir(fi.baseName() + "_textures");
+                      img.save(fi.absolutePath() + QDir::separator() + fi.baseName() + "_textures" + QDir::separator() + img_f.fileName());
                       testedOnce = true;
                   }
                   
