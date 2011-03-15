@@ -69,8 +69,8 @@ class KeyInterface {
        *
        * @param _key the key that should be registered
        * @param _modifiers the keyboard modifiers
-       * @param _description a short description about the functionality
-       * @param _multiUse can the key additionally be registered by another plugin
+       * @param _description a short description about the functionality (Will be used in the Options Widget)
+       * @param _multiUse can the key additionally be registered by another plugin (You could make a key exclusive by this)
        */
       virtual void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false) {};
 
@@ -78,15 +78,15 @@ class KeyInterface {
       
       /**  \brief Key Event from Main App
        * 
-       * This slot is called if a key event occured in the Viewer 
-       * @param _event Keyevent
+       * This slot is called if a key event occurred in the Viewer
+       * @param _event Key event
       */
       virtual void slotKeyEvent( QKeyEvent* _event ) {};
       
       /**  \brief Key Release Event from Main App
        * 
-       * This slot is called if a key release event occured in the Viewer 
-       * @param _event Keyevent
+       * This slot is called if a key release event occurred in the Viewer
+       * @param _event Key event
       */
       virtual void slotKeyReleaseEvent( QKeyEvent* _event ) {};
       
