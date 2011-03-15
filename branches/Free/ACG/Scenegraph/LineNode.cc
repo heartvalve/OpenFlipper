@@ -124,13 +124,20 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
       ConstPointIter p_it=points_.begin(), p_end=points_.end();
       ConstColorIter c_it=colors_.begin();
 
+      Color c((char)255, (char)255, (char)255);
+      if(c_it != colors_.end()) {
+        c = *c_it;
+      }
+      
       int cnt = 0;
       for (; p_it!=p_end; ++p_it)
       {
-        if ((cnt > 0) && (cnt % 2 == 0))
+        if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors_.end()) {
           ++c_it;
-
-        glColor(*c_it);
+          c = *c_it;
+        }
+        
+        glColor(c);
         glVertex(*p_it);
 
         ++cnt;
