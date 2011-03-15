@@ -81,7 +81,7 @@ class OptionsInterface {
        * @param _widget Pointer to the new Widget
        * @return Return true if a widget has been created
       */
-      virtual bool initializeOptionsWidget(QWidget*& /*_widget*/) = 0;
+      virtual bool initializeOptionsWidget(QWidget*& _widget) = 0;
 
        /** \brief Apply changes to options
        *
@@ -111,7 +111,7 @@ thus enables you to store the changes in your options.
 
 To use the OptionsInterface:
 <ul>
-<li> include OptionsInterface in your plugins header file
+<li> include OptionsInterface.hh in your plugins header file
 <li> derive your plugin from the class OptionsInterface
 <li> add Q_INTERFACES(OptionsInterface) to your plugin class
 <li> Implement all functions from this interface

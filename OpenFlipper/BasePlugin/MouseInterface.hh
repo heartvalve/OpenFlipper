@@ -73,7 +73,7 @@ class MouseInterface {
       *  @param _event Mousevent
       *  @param _mode Name of the current Picking Mode.
     */
-    virtual void slotMouseWheelEvent(QWheelEvent * /*_event*/, const std::string & /*_mode*/) {};
+    virtual void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode) {};
 
     /**  \brief Mouse Event from Main App ( Picking Mode )
       *
@@ -84,7 +84,7 @@ class MouseInterface {
       *
       *  @param _event Mousevent
     */
-    virtual void slotMouseEvent( QMouseEvent* /*_event*/ ) {};
+    virtual void slotMouseEvent( QMouseEvent* _event ) {};
 
     /**  \brief Mouse Event from Main App ( Identify Mode )
       *
@@ -95,7 +95,7 @@ class MouseInterface {
       *
       *  @param _event Mousevent
     */
-    virtual void slotMouseEventIdentify( QMouseEvent* /*_event */) {};
+    virtual void slotMouseEventIdentify( QMouseEvent* _event ) {};
     
     /**  \brief Mouse Event from Main App ( Light Mode )
       *
@@ -106,7 +106,7 @@ class MouseInterface {
       *
       *  @param _event Mousevent
     */
-    virtual void slotMouseEventLight( QMouseEvent* /* _event */) {};
+    virtual void slotMouseEventLight( QMouseEvent*  _event ) {};
 
   public :
 
