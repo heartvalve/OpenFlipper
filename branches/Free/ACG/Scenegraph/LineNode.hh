@@ -153,6 +153,7 @@ public:
   
   /// Override material node's set color function in order to locally add color
   void set_color(const Vec4f& _c) {
+      clear_colors();
       add_color(ACG::Vec3uc((char)(((int)_c[0])*255),
                             (char)(((int)_c[1])*255),
                             (char)(((int)_c[2])*255)));
