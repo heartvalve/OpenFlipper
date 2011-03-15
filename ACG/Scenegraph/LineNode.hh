@@ -83,6 +83,7 @@ class ACGDLLEXPORT LineNode : public MaterialNode
 public:
 
   // typedefs
+  typedef ACG::Vec3uc                  Color;
   typedef std::vector<Vec3d>           PointVector;
   typedef PointVector::iterator        PointIter;
   typedef PointVector::const_iterator  ConstPointIter;
@@ -149,6 +150,14 @@ public:
   void clear_points() { points_.clear(); }
   /// clear colors
   void clear_colors() { colors_.clear(); }
+  
+  /// Override material node's set color function in order to locally add color
+  void set_color(const Vec4f& _c) {
+      add_color(ACG::Vec3uc((char)(((int)_c[0])*255),
+                            (char)(((int)_c[1])*255),
+                            (char)(((int)_c[2])*255)));
+      MaterialNode::set_color(_c);
+  }
 
 
   /// add point (for LineMode == PolygonMode)
