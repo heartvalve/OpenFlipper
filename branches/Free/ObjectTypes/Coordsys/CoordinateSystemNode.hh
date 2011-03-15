@@ -71,7 +71,7 @@ namespace SceneGraph {
 
 /** \class Node for displaying coordinate systems
 
-    CoordinateSystemNode renders A coordinate system.
+    CoordinateSystemNode renders a coordinate system.
 
 **/
 
@@ -85,7 +85,7 @@ public:
    * @param _name Name of this Node
    */
   CoordinateSystemNode( BaseNode*         _parent=0,
-	                       std::string  _name="<TextNode>")
+                        std::string  _name="<TextNode>")
             : BaseNode(_parent, _name),
               coordsysSize_(1.0)
              {};
@@ -111,22 +111,31 @@ public:
   /// set position of the coordsys
   void position(const Vec3d& _pos);
 
-  /// Get current position
+  /// Get current position of the coordinate system;
   Vec3d position();
+
+  /// Get current rotation of the coordinate system;
+  Matrix4x4d rotation();
+
+  /// Set the rotation of the coordinate system;
+  void rotation(const Matrix4x4d & _rotation);
 
   /// set size of the coordsys ( Size is length of one of the axis )
   void size(const double _size);
 
   /// Get current size
   double size();
-	
+
   private:
 
     void drawCoordsys(GLState&  _state);
     void drawCoordsysPick(GLState&  _state);
-	
+
     /// 3d position of the coordsys origin
     Vec3d  position_;
+    
+    /// Orientation of coordsys
+    Matrix4x4d rotation_;
 
     /// Size of the coordsys
     double coordsysSize_;
