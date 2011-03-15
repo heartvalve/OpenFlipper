@@ -102,8 +102,8 @@ signals:
     * of the given context menu type. You can add a whole menu here by adding the action:
     * menu->menuAction() of your own menu.
     *
-    * @param _menu Pointer to the new Action
-    * @param _type Type context menu type
+    * @param _action Pointer to the new Action
+    * @param _type   Type context menu type
   */
   virtual void addContextMenuItem(QAction* _action , ContextMenuType _type) {};
 

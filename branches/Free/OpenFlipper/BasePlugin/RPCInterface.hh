@@ -75,7 +75,7 @@ class RPCInterface {
        * @param _pluginName Name of the Plugin (has to be the clean version .. no Spaces etc)
        * @param _exists found or not
        */
-    virtual void pluginExists( QString /*_pluginName*/ , bool& /*_exists*/  ) {};
+    virtual void pluginExists( QString _pluginName , bool& _exists  ) {};
 
 
     /** Check if a plugin exists and provides the given function \n
@@ -83,7 +83,7 @@ class RPCInterface {
        * @param _functionName requested function
        * @param _exists found or not
        */
-    virtual void functionExists( QString /*_pluginName*/ , QString /*_functionName*/ , bool& /*_exists*/  ) {};
+    virtual void functionExists( QString _pluginName , QString _functionName , bool& _exists  ) {};
 
 };
 
