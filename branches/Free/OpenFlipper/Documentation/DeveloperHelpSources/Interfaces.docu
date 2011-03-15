@@ -57,7 +57,6 @@ The following groups of Interfaces are available:
 BackupInterface
 FileInterface
 IniInterface
-KeyInterface
 LoadSaveInterface
 PickingInterface
 ProcessInterface
@@ -69,10 +68,6 @@ ViewModeInterface
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
 
 This page gives an overview over the available interfaces which control other parts of OpenFlipper.
-
-\subsection KeyPlugin Keyboard Interface
-\image html keyInterface.png
- You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).\n
 
 
 \subsection LoadSavePlugin Load / Save Interface
@@ -94,7 +89,6 @@ Handle mouse picking in your plugin ( PickingInterface )
 \subsection FilePlugin File Interface
 \image html FileInterface.png
 Provides functions to read and write custom filetypes ( FileInterface )
-
 
 
 \subsection ViewModePlugin View Mode Interface
@@ -144,7 +138,6 @@ This Interface is used by plugins which will provide their own options by
 integrating an options widget into OpenFlipper's options window ( \ref optionsInterfacePage ).
 \n
 
-
 \subpage statusbarInterfacePage
 \image html StatusbarInterface.png
 This interface is used to display messages in the status bar or adding widgets to it ( \ref statusbarInterfacePage ).
@@ -182,6 +175,10 @@ This page shows interfaces which could be used to get data from input devices.
 \n
 This interface is used to deliver mouse events to a plugin ( \ref mouseInterfacePage ).\n
 \n
+
+\subpage keyInterfacePage
+\image html keyInterface.png
+You have to implement this interface if you want to get key events in your plugin ( \ref keyInterfacePage ).\n
 
 */
 
