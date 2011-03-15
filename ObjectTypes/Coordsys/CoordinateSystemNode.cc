@@ -56,6 +56,7 @@
 #include <iostream>
 
 
+
 //== NAMESPACES ===============================================================
 
 namespace ACG {
@@ -218,7 +219,6 @@ void
 CoordinateSystemNode::
 draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 {
-  
   // Push Modelview-Matrix
   _state.push_modelview_matrix();
 
@@ -228,9 +228,15 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
   glEnable(GL_COLOR_MATERIAL);
   glShadeModel(GL_SMOOTH);
 
+  // Translate to right position  
   _state.translate(position_);
 
-  // Koordinatensystem zeichnen
+  // Apply rotation matrix
+  GLMatrixd modelview = _state.modelview();	
+  modelview *= rotation_;
+  _state.set_modelview(modelview);
+
+  // Draw coordsys
   drawCoordsys(_state);
 
   glColor4fv(lastBaseColor.data());
@@ -253,6 +259,17 @@ CoordinateSystemNode::
 position() {
   return position_;
 }
+
+void CoordinateSystemNode::rotation(const Matrix4x4d & _rotation)
+{
+  rotation_ = _rotation;
+}
+
+Matrix4x4d CoordinateSystemNode::rotation()
+{
+  return rotation_;
+} 
+
 
 void
 CoordinateSystemNode::
@@ -280,8 +297,13 @@ CoordinateSystemNode::pick(GLState& _state, PickTarget _target)
     // Push Modelview-Matrix
     _state.push_modelview_matrix();
 
-    // Translate to current position of the coordsys
+    // Translate to right position  
     _state.translate(position_);
+
+    // Apply rotation matrix
+    GLMatrixd modelview = _state.modelview(); 
+    modelview *= rotation_;
+    _state.set_modelview(modelview);    
 
     // Koordinatensystem zeichnen
     drawCoordsysPick(_state);
