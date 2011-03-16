@@ -57,7 +57,6 @@ The following groups of Interfaces are available:
 BackupInterface
 FileInterface
 IniInterface
-PickingInterface
 ProcessInterface
 TextureInterface
 ViewInterface
@@ -70,12 +69,6 @@ This page gives an overview over the available interfaces which control other pa
 \subsection TexturePlugin Texture Interface
 \image html TextureInterface.png
 Allows your plugin to provide a texture. ( TextureInterface )
-
-
-\subsection PickingPlugin Mouse Picking / Pick Modes
-\image html PickingInterface.png
-Handle mouse picking in your plugin ( PickingInterface )
-
 
 \subsection FilePlugin File Interface
 \image html FileInterface.png
@@ -122,6 +115,13 @@ Provides a function to create entries in the menubar ( \ref menuInterfacePage ).
 \image html OptionsInterface.png
 This Interface is used by plugins which will provide their own options by
 integrating an options widget into OpenFlipper's options window ( \ref optionsInterfacePage ).
+\n
+
+\subpage pickingInterfacePage
+\n
+\image html PickingInterface.png
+\n
+Handle pick modes in your plugin ( \ref pickingInterfacePage )
 \n
 
 \subpage statusbarInterfacePage
@@ -175,9 +175,19 @@ This page shows interfaces which could be used to get data from input devices.
 This interface is used to deliver mouse events to a plugin ( \ref mouseInterfacePage ).\n
 \n
 
+\subpage pickingInterfacePage
+\n
+\image html PickingInterface.png
+\n
+Handle pick modes in your plugin ( \ref pickingInterfacePage )
+\n
+
 \subpage keyInterfacePage
+\n
 \image html keyInterface.png
+\n
 You have to implement this interface if you want to get key events in your plugin ( \ref keyInterfacePage ).\n
+\n
 
 */
 

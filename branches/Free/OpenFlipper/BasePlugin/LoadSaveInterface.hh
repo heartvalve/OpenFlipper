@@ -198,10 +198,10 @@ from the scenegraph. So if this function is invoked, the object still exists. Al
 
 If you want to know if the whole scene got cleared, use BaseInterface::slotAllCleared( ).
 
-\section Usage
+\section loadSaveInterface_usage Usage
 To use the LoadSaveInterface:
 <ul>
-<li> include LoadSaveInterface in your plugins header file
+<li> include LoadSaveInterface.hh in your plugins header file
 <li> derive your plugin from the class LoadSaveInterface
 <li> add Q_INTERFACES(LoadSaveInterface) to your plugin class
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
