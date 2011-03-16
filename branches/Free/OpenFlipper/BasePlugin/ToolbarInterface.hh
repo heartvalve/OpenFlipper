@@ -49,7 +49,7 @@
  #include <OpenFlipper/common/Types.hh>
  #include <QToolBar>
 
-/** \file ToolbarInterface
+/** \file ToolbarInterface.hh
 *
 * Interface for adding per plugin toolbars to OpenFlippers UI.\ref toolbarInterfacePage
 */
