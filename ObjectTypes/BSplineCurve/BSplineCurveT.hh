@@ -240,11 +240,36 @@ public :
 
 
   // property access ( no range or availability check! )
-        unsigned char& controlpoint_selection(unsigned int _i)       {return cpselections_[_i];}
-  const unsigned char& controlpoint_selection(unsigned int _i) const {return cpselections_[_i];}
+  unsigned char& controlpoint_selection(unsigned int _i){
+    assert(_i < n_control_points());
+    assert(controlpoint_selections_available());
+    return cpselections_[_i];
+  }
+  const unsigned char& controlpoint_selection(unsigned int _i) const {
+    assert(_i < n_control_points());
+    assert(controlpoint_selections_available());
+    return cpselections_[_i];
+  }
 
-        unsigned char& edge_selection(unsigned int _i)       {return eselections_[_i];}
-  const unsigned char& edge_selection(unsigned int _i) const {return eselections_[_i];}
+  unsigned char& edge_selection(unsigned int _i) {
+    assert(edge_selections_available());
+    return eselections_[_i];
+  }
+  const unsigned char& edge_selection(unsigned int _i) const {
+    assert(edge_selections_available());
+    return eselections_[_i];
+  }
+  
+  // Wrapper for selection functions
+  void select_controlpoint(unsigned int _pIdx) { controlpoint_selection(_pIdx) = 1; };
+  void deselect_controlpoint(unsigned int _pIdx) { controlpoint_selection(_pIdx) = 0; };
+  
+  bool controlpoint_selected(unsigned int _pIdx) const { return (controlpoint_selection(_pIdx) == 1); };
+  
+  void select_edge(unsigned int _pIdx) { edge_selection(_pIdx) = 1; };
+  void deselect_edge(unsigned int _pIdx) { edge_selection(_pIdx) = 0; };
+  
+  bool edge_selected(unsigned int _pIdx) const { return (edge_selection(_pIdx) == 1); };
 
 private:
 
