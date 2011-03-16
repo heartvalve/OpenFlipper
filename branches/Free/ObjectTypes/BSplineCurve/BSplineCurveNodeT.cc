@@ -118,6 +118,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if (    bspline_selection_draw_mode_ == CONTROLPOINT
        && controlPointSelectionTexture_valid_ == false)
     updateControlPointSelectionTexture(_state);
+  
   if (    bspline_selection_draw_mode_ == KNOTVECTOR
        && knotVectorSelectionTexture_valid_ == false)
     updateKnotVectorSelectionTexture(_state);
@@ -184,10 +185,12 @@ render(GLState& _state, bool /*_fill*/, DrawModes::DrawMode _drawMode)
     }
     else
     {
-      if (bspline_selection_draw_mode_ == CONTROLPOINT)
+      if (bspline_selection_draw_mode_ == CONTROLPOINT) {
         drawTexturedCurve(_state, cp_selection_texture_idx_);
-      else if (bspline_selection_draw_mode_ == KNOTVECTOR)
+      }
+      else if (bspline_selection_draw_mode_ == KNOTVECTOR) {
         drawTexturedCurve(_state, knot_selection_texture_idx_);
+      }
     }
   }
 }
@@ -459,12 +462,14 @@ template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
 drawTexturedCurve(GLState& _state, GLuint _texture_idx)
-{
+{   
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glEnable( GL_COLOR_MATERIAL );
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   
   glEnable(GL_TEXTURE_2D);
+  
+  glBindTexture( GL_TEXTURE_2D, _texture_idx);
   
   // blend colors (otherwise lighting does not affect the texture)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -473,10 +478,8 @@ drawTexturedCurve(GLState& _state, GLuint _texture_idx)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
   // GL_MODULATE to include lighting effects
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   
-  glBindTexture( GL_TEXTURE_2D, _texture_idx);
-
   float line_width_old = _state.line_width();
   draw_textured_nurbs( _state);
   glLineWidth(line_width_old);
@@ -777,7 +780,7 @@ selection_init_texturing(GLuint & _texture_idx)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
   // GL_MODULATE to include lighting effects
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // unbind current texture
   glBindTexture( GL_TEXTURE_2D, 0);
 }
@@ -791,7 +794,10 @@ create_cp_selection_texture(GLState& /*_state*/)
 {
   if (bsplineCurve_.n_knots() == 0)
     return;
- 
+  
+  if(cp_selection_texture_idx_ == 0)
+      selection_init_texturing(cp_selection_texture_idx_);
+  
   QImage b(cp_selection_texture_res_, 2, QImage::Format_ARGB32);
   
   int degree   = bsplineCurve_.degree();
@@ -827,7 +833,7 @@ create_cp_selection_texture(GLState& /*_state*/)
       int idx = span[0] + i;
     
       // basis functions sum up to 1. hence, we only have to sum up those with selected control point to get the blending weight
-      if (bsplineCurve_.controlpoint_selection(idx))
+      if (bsplineCurve_.controlpoint_selected(idx))
         alpha += bsplineCurve_.basisFunction(idx, degree, u);
     }
   
@@ -842,7 +848,7 @@ create_cp_selection_texture(GLState& /*_state*/)
   }
   
   // debug, output image
-  b.save("curveCPSelectionTexture.png", "PNG");
+  //b.save("curveCPSelectionTexture.png", "PNG");
   
   cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -863,6 +869,9 @@ create_knot_selection_texture(GLState& /*_state*/)
   if (bsplineCurve_.n_knots() == 0)
     return;
   
+  if(knot_selection_texture_idx_ == 0)
+      selection_init_texturing(knot_selection_texture_idx_);
+  
   QImage b(knot_selection_texture_res_, 2, QImage::Format_ARGB32);
 
   int degree   = bsplineCurve_.degree();
@@ -879,17 +888,8 @@ create_knot_selection_texture(GLState& /*_state*/)
   std::vector<bool> selectedKnotSpans(numKnots, false);  
   for (int i = 0; i < numKnots; ++i)
   {
-    if (bsplineCurve_.get_knotvector_ref()->selection(i))
-    {
-      // get the span and check which knots are selected
-      ACG::Vec2i span = bsplineCurve_.span(bsplineCurve_.get_knot(i));
-      // check for incomple spline 
-      if (span[0] < 0 || span[1] < 0) 
-        return; 
-    
-      for(int j = span[0]; j <= span[1]+degree; ++j)
-        selectedKnotSpans[j] = true;
-    }
+    if (bsplineCurve_.get_knotvector_ref()->selected(i))
+      selectedKnotSpans[i] = true;
   }
 
 //   Vec4f curveColor     = _state.base_color();
@@ -905,7 +905,7 @@ create_knot_selection_texture(GLState& /*_state*/)
     Vec4f color;
     Vec2i interval = bsplineCurve_.interval(u);
     // check if highlighted
-    if (selectedKnotSpans[interval[0]] && selectedKnotSpans[interval[1]])
+    if (selectedKnotSpans[interval[0]])
       color = highlightColor;
     else
       color = curveColor;
@@ -918,7 +918,7 @@ create_knot_selection_texture(GLState& /*_state*/)
   }
   
   // debug, output image
-  b.save("curveKnotSelectionTexture.png", "PNG");
+  //b.save("curveKnotSelectionTexture.png", "PNG");
   
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -962,6 +962,9 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 pick_create_texture( GLState& _state)
 {
+  if(pick_texture_idx_ == 0)
+    pick_init_texturing();
+    
   QImage b(pick_texture_res_, 2, QImage::Format_ARGB32);
     
   // fill with colors
@@ -1023,7 +1026,7 @@ draw_textured_nurbs( GLState& /*_state*/)
   const int numCPs = bsplineCurve_.n_control_points();
   int order        = bsplineCurve_.degree() + 1;
 
-  // get kntvector
+  // get knotvector
   GLfloat *knots = new GLfloat[numKnots];
   for (int i = 0; i < numKnots; ++i)
     knots[i] = bsplineCurve_.get_knot(i);
@@ -1082,10 +1085,10 @@ draw_textured_nurbs( GLState& /*_state*/)
   // knots of domain, over which tcoords shall be linearly interpolated
   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
   GLfloat   sknots[4] = {minv, minv, maxv, maxv};
-
+  
   // begin drawing nurbs
   gluBeginSurface(theNurb);
-
+  
   // first enable texture coordinate mapping
   gluNurbsSurface(theNurb, 4, tknots, 4, sknots, 2*2, 2, &tcoords[0], 2, 2, GL_MAP2_TEXTURE_COORD_2); 
 
