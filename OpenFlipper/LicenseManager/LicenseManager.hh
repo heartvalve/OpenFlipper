@@ -40,28 +40,31 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: SecurityInterface
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef LICENSEMANAGER_HH
 #define LICENSEMANAGER_HH
 
 #include <OpenFlipper/BasePlugin/SecurityInterface.hh>
 
-/** The salt file has to be provided for each plugin. It can be the same
+/* The salt file has to be provided for each plugin. It can be the same
   for all plugins. See example for details on how this file has to be setup
 */
 #include "salt.hh"
 
+
+/** \file LicenseManager.hh
+*
+* This interface is used to add copy protection to plugins. \ref securityInterfacePage
+*
+*/
+
+/** \brief License management base class
+ *
+ * See \ref securityInterfacePage for Details on how to use it.
+ *
+ * The class is used by plugins to integrate license management. It will check the license,
+ * generate license requests and prevent the plugin from loading if an invalid license or no license
+ * is found.
+ */
 class LicenseManager : public QObject, SecurityInterface  {
 
 Q_OBJECT
@@ -75,40 +78,40 @@ Q_INTERFACES(SecurityInterface)
   public :
 
     /** This function is overloaded and will not allow to unblock signals
-        if the plugin is not authenticated
+        if the plugin is not authenticated.
     */
     void blockSignals( bool _state);
     
-    /** Return if the plugin has successfully passed the authentication 
+    /** Return if the plugin has successfully passed the authentication.
     */
     bool authenticated();
 
   public slots:
     /** Call this function for plugin authentication. If it returns true,
-        the authentication has been successfull. Otherwise the core will 
+        the authentication has been successful. Otherwise the core will
         stop loading the plugin. Additionally the plugin will make itself
         unusable by not allowing any signal slot connections.
-        
-        @param _authstring String returned, containing hashed license request, if something went wrong or no valid license available.
+
     */
     bool authenticate();
     
-    /** if authenticate returns false, this string will containe the license information
+    /** if authenticate returns false, this string will contain the license information required
+     *  to generate a license request and the error that caused the failure.
     */
     QString licenseError();
 
   private:
     /** This is used to get the plugins Name from derived classes
-        The glugin name is the usual name of the glugin
+        The plugin name is the usual name of the plugin
     */
     virtual QString name() = 0;
 
     /** This function is special to the LicenseManager. It is used to
-        find the plugin when checking its hash value
+        find the plugin when checking its hash value.
     */
     virtual QString pluginFileName();
 
-    /// This flag is true if authentication was successfull
+    /// This flag is true if authentication was successful
     bool authenticated_;
     
     /// License information string
@@ -120,7 +123,7 @@ Q_INTERFACES(SecurityInterface)
         plugin is not authenticated, all connections will be automatically
         removed again.
     */
-    void connectNotify ( const char * /*signal*/ );
+    void connectNotify ( const char * signal );
 
 };
 
