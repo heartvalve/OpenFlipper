@@ -53,17 +53,9 @@ The following groups of Interfaces are available:
 
 
 
-\section todoInterfaces Interfaces todos for documentation:
-BackupInterface
-IniInterface
-ProcessInterface
-TextureInterface
-ViewInterface
+\section todoInterfaces Interfaces TODO for documentation:
 
-\section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
-
-This page gives an overview over the available interfaces which control other parts of OpenFlipper.
-
+\subsection  ProcessInterface Process Interface
 
 \subsection TexturePlugin Texture Interface
 \image html TextureInterface.png
