@@ -169,6 +169,11 @@ When the user selects "My Custom View Mode" out of the view modes menu, all
 toolboxes except for Data Control and Selection will disappear.
 This works analogously for toolbar elements via the signal ViewModeInterface::defineViewModeToolbars(QString, QStringList).
 
+\section Defaults
+The Main Toolbar and the Viewer Toolbar will always be included in the list of toolbars and will be the default when
+you define a View Mode with only toolboxes and context menus.
+If you do not define context menus for your View Mode, they will default to all.
+
 \section Icons
 Additionally, if we wanted the "My Custom View Mode" entry in the view modes menu
 to appear with a fancy icon, we just have to call ViewModeInterface::defineViewModeIcon(QString, QString):
