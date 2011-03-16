@@ -63,7 +63,6 @@ ProcessInterface
 SecurityInterface
 TextureInterface
 ViewInterface
-ViewModeInterface
 
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
 
@@ -89,11 +88,6 @@ Handle mouse picking in your plugin ( PickingInterface )
 \subsection FilePlugin File Interface
 \image html FileInterface.png
 Provides functions to read and write custom filetypes ( FileInterface )
-
-
-\subsection ViewModePlugin View Mode Interface
-\image html ViewModeInterface.png
-Specify own view modes ( ViewModeInterface )
 
 
 \subsection ViewPlugin View Interface
@@ -152,6 +146,12 @@ Provides functions to create a separate widget in the toolbox on the right ( \re
 \image html ToolbarInterface.png
 Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
 \n
+
+
+\subpage viewModeInterfacePage
+\image html ViewModeInterface.png
+Specify own view modes setting which toolboxes/toolbars/context menus will be visible( \ref viewModeInterfacePage )
+
 */
 
 /** \page pluginInterfacesDataHandling Object and Data Handling
