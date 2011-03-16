@@ -148,7 +148,10 @@ class LoadSaveInterface {
 };
 
 /** \page loadSaveInterfacePage Load/Save Interface
- *
+ * \n
+\image html loadSaveInterface.png
+\n
+
 The LoadSaveInterface can be used by plugins to add new objects to the scene either by creating empty objects
 or by loading them from files. The interface also triggers saving of existing objects to files.
 

@@ -55,7 +55,6 @@ The following groups of Interfaces are available:
 
 \section todoInterfaces Interfaces todos for documentation:
 BackupInterface
-FileInterface
 IniInterface
 ProcessInterface
 TextureInterface
@@ -69,11 +68,6 @@ This page gives an overview over the available interfaces which control other pa
 \subsection TexturePlugin Texture Interface
 \image html TextureInterface.png
 Allows your plugin to provide a texture. ( TextureInterface )
-
-\subsection FilePlugin File Interface
-\image html FileInterface.png
-Provides functions to read and write custom filetypes ( FileInterface )
-
 
 \subsection ViewPlugin View Interface
 \image html ViewInterface.png
@@ -148,6 +142,11 @@ Specify own view modes setting which toolboxes/toolbars/context menus will be vi
 
 /** \page pluginInterfacesDataHandling Object and Data Handling
 This page shows interfaces for controlling and adding Objects.
+
+
+\subpage fileInterfacePage
+\image html FileInterface.png
+Provides an interface to read and write file types. All load/save plugins need to implement this interface ( \ref fileInterfacePage )
 
 \subpage loadSaveInterfacePage
 \image html loadSaveInterface.png
