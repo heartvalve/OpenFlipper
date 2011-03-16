@@ -55,8 +55,6 @@ The following groups of Interfaces are available:
 
 \section todoInterfaces Interfaces TODO for documentation:
 
-\subsection  ProcessInterface Process Interface
-
 \subsection TexturePlugin Texture Interface
 \image html TextureInterface.png
 Allows your plugin to provide a texture. ( TextureInterface )
@@ -204,6 +202,13 @@ For plugins which provide scriptable functions ( \ref scriptInterfacePage  )
 \image html PluginConnectionInterface.png
 \n
 Enables the developer to connect signals and slots across plugins. ( \ref pluginConnectionInterfacePage  )
+\n
+
+\subpage processInterfacePage
+\n
+\image html ProcessInterface.png
+\n
+The ProcessInterface can be used to start arbitrary functions within threads. ( \ref processInterfacePage  )
 \n
 
 \subpage securityInterfacePage

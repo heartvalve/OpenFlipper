@@ -46,21 +46,20 @@
 #include <QtGui>
 #include <OpenFlipper/threads/OpenFlipperThread.hh>
 
- /** \brief Interface class controlling threadding in OpenFlipper
- *
- *
- * Example:\n
- * OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                     // Create your thread containing a unique id \n
- * connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));        // connect your threads state info to the global one \n
- * connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                 // connect your threads finish info to the global one ( you can do the same for a local one ) \n
- * connect(thread,SIGNAL( function()), this,SLOT(testFunctionThread()),Qt::DirectConnection);   // You can directly give a slot of your app that gets called \n
- * emit startJob( name() + "unique id", "Description" , 0 , 100 , false);                       // Tell the core about your thread
- * thread->start();                                                                             // start thread
- * thread->startProcessing();                                                                   // start processing
+/** \file ProcessInterface.hh
+*
+* Interface class for Thread and Process handling.\ref processInterfacePage
+*/
+
+/** \brief Interface class for Thread handling.
+  *
+  * \ref processInterfacePage "Detailed description"
+  * \n
+  *
+  * This Interface is used to handle threads in OpenFlipper. You can run arbitrary slots within
+  * separate threads.
  */
 class ProcessInterface {
-
-
 
    public :
 
@@ -124,6 +123,31 @@ class ProcessInterface {
         virtual void canceledJob (QString /*_job */) {};      
       
 };
+
+
+/** \page processInterfacePage Process Interface
+ * \n
+\image html ProcessInterface.png
+\n
+
+The Process interface can be used to run arbitrary slots of your plugin within a separate thread of OpenFlipper.
+OpenFlipper supports a process manager, visualizing currently running operations to the user. Process dialogs
+and user information can be provided via special signals.
+
+
+
+
+TODO : All!
+
+ Example:\n
+ OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                     // Create your thread containing a unique id \n
+ connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));        // connect your threads state info to the global one \n
+ connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                 // connect your threads finish info to the global one ( you can do the same for a local one ) \n
+ connect(thread,SIGNAL( function()), this,SLOT(testFunctionThread()),Qt::DirectConnection);   // You can directly give a slot of your app that gets called \n
+ emit startJob( name() + "unique id", "Description" , 0 , 100 , false);                       // Tell the core about your thread
+ thread->start();                                                                             // start thread
+ thread->startProcessing();                                                                   // start processing
+*/
 
 Q_DECLARE_INTERFACE(ProcessInterface,"OpenFlipper.ProcessInterface/1.0")
 
