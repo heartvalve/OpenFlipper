@@ -71,8 +71,6 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void save(int _id , QString _filename );
     void log(Logtype _type, QString _message);
     void log(QString _message);
-
-    void emptyObjectAdded( int _id );
     
     void updatedObject(int _id, const UpdateType _type);
 

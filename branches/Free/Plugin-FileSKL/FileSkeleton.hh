@@ -73,8 +73,6 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
-    void emptyObjectAdded( int _id );
-
   private slots:
 
     void fileOpened( int /*_id*/ ){};

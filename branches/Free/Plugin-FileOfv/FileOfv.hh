@@ -70,8 +70,6 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
     void save(int _id , QString _filename );
     void log(Logtype _type, QString _message);
     void log(QString _message);
-
-    void emptyObjectAdded( int _id );
     
     void updateView();
 
