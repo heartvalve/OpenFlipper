@@ -101,7 +101,6 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void log(QString _message);
     void updateView();
 
-    void emptyObjectAdded( int _id );
     void deleteObject( int _id );
     
     // StatusbarInterface
