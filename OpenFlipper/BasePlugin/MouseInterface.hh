@@ -134,9 +134,9 @@ inside the viewers.
 
 You can add handlers for these mouse events in your plugin. Remember that all plugins receive these signals.\n
 
-The picking mode is only a global mode which is devided into several other picking modes that can be managed
-through the PickingInterface. If you react on mouse events from picking mode, you should check if the current
-picking mode is yours.
+The picking action is only a global mode which is divided into several other picking modes that can be managed
+through the PickingInterface. If you react on mouse events, you should check if the current
+picking mode is yours and of course define such a mode for your plugin.
 \code
 void MousePlugin::slotMouseEvent(QMouseEvent* _event) {
 
