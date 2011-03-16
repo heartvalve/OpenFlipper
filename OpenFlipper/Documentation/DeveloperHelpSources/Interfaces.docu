@@ -57,7 +57,6 @@ The following groups of Interfaces are available:
 BackupInterface
 FileInterface
 IniInterface
-LoadSaveInterface
 PickingInterface
 ProcessInterface
 TextureInterface
@@ -66,12 +65,6 @@ ViewInterface
 \section pluginInterfacesOtherOverview Available Interfaces for controlling other functions
 
 This page gives an overview over the available interfaces which control other parts of OpenFlipper.
-
-
-\subsection LoadSavePlugin Load / Save Interface
-\image html loadSaveInterface.png
-Provides functions to handle mesh files and load / unload geometry
-objects into the scene graph ( LoadSaveInterface ).
 
 
 \subsection TexturePlugin Texture Interface
@@ -155,6 +148,13 @@ Specify own view modes setting which toolboxes/toolbars/context menus will be vi
 
 /** \page pluginInterfacesDataHandling Object and Data Handling
 This page shows interfaces for controlling and adding Objects.
+
+\subpage loadSaveInterfacePage
+\image html loadSaveInterface.png
+Provides functions to control loading/saving of files and generate new objects. Additionally
+this interface informs plugins, when objects get added or removed( \ref loadSaveInterfacePage ).
+
+
 
 \subpage typeInterfacePage
 \image html TypeInterface.png

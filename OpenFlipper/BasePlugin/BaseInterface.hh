@@ -58,7 +58,8 @@
   *
   * You have to implement at least name and description for your plugin.
   * All other functions and signals are optional. If you want to implement or use
-  * them just add them to your plugin header.
+  * them just add them to your plugin header. A detailed description of this interface
+  * can be found in the \ref baseInterfacePage .
   *
   * See \ref pluginProgramming for a tutorial on plugin programming.
   *
@@ -332,6 +333,7 @@ This is achieved by the BaseInterface::nodeVisibilityChanged() function. As node
 you should pass the id of the object to the function or -1 if its a global node (which should not be used!).
 
 If the complete scene gets cleared, the slot BaseInterface::slotAllCleared() will be executed after all objects have been removed from the scene.
+A more fine grained information about objects added or removed from the scene is available via the \ref loadSaveInterfacePage .
 
 There are three additional slots that are called by the core, if the object selection(source/target BaseInterface::slotObjectSelectionChanged() ),
 the object visibility(Show/Hide BaseInterface::slotVisibilityChanged()) or other properties changed (e.g. name BaseInterface::slotObjectPropertiesChanged() )
