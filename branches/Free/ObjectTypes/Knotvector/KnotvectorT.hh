@@ -155,8 +155,22 @@ public :  // selection handling
   bool selections_available() const {return bool(ref_count_selections_);}
 
   // property access ( no range or availability check! )
-        unsigned char& selection(unsigned int _i)       {return selections_[_i];}
-  const unsigned char& selection(unsigned int _i) const {return selections_[_i];}
+  unsigned char& selection(unsigned int _i) {
+    assert(_i < selections_.size());
+    assert(selections_available());
+    return selections_[_i];
+  }
+  const unsigned char& selection(unsigned int _i) const {
+    assert(_i < selections_.size());
+    assert(selections_available());
+    return selections_[_i];
+  }
+  
+  // Wrapper for selection functions
+  void select(unsigned int _pIdx) { selection(_pIdx) = 1; };
+  void deselect(unsigned int _pIdx) { selection(_pIdx) = 0; };
+  
+  bool selected(unsigned int _pIdx) const { return (selection(_pIdx) == 1); };
 
 
 private:
