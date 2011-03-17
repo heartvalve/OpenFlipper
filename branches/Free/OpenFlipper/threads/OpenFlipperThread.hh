@@ -49,8 +49,10 @@
 
 #include <OpenFlipper/common/GlobalDefines.hh>
 
-/**
-\class OpenFlipperThread
+
+class OpenFlipperJob;
+
+/** \brief Thread handling class for OpenFlipper
 
     Instantiate this class in order to provide a thread
     to a plugin. Unless you don't need a specialized
@@ -71,8 +73,6 @@
     It is not necessary to derive from this class for most operations,
     but you can.
 */
-class OpenFlipperJob;
-
 class DLLEXPORT OpenFlipperThread : public QThread
 {
   Q_OBJECT
@@ -140,7 +140,7 @@ class DLLEXPORT OpenFlipperThread : public QThread
     * You have connect one of your slot using
     * \code
     * connect( OpenFlipperThread ,SIGNAL(function()),YourPlugin,SLOT(YourSlot(),Qt::DirectConnection) );
-    * \code
+    * \endcode
     *
     * The default implementation will call your slot inside the new thread and the core will still respond.
     *
