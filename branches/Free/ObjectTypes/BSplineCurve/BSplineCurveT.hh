@@ -160,7 +160,7 @@ public:
   void insertKnot(double _u);
 
   /// Returns the number of control points
-  unsigned int n_control_points() {return control_polygon_.size();};
+  unsigned int n_control_points() const {return control_polygon_.size();};
 
   /// Returns the number of knots
   unsigned int n_knots() { return knotvector_.size(); };
