@@ -1,4 +1,4 @@
-/** \page ex5 Using threads from within a plugin
+/** \page tutorial_thread Using threads from within a plugin
 
 When developing plugins for %OpenFlipper it is possible to start certain functions
 in a new thread.
