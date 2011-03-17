@@ -52,7 +52,7 @@
 /**
 \class OpenFlipperThread
 
-    Instanciate this class in order to provide a thread
+    Instantiate this class in order to provide a thread
     to a plugin. Unless you don't need a specialized
     run() or cancel() function, it won't be necessary to
     reimplement this class. Just connect the signals
@@ -66,47 +66,11 @@
     of new objects and generally every function that
     produces logging messages.
 
-    The following code fragment shows a simple example
-    of how to use this class from within a plugin:
+    The class should be used along with \ref processInterfacePage
 
-\code
-void MyPlugin::launchThread() {
-
-    OpenFlipperThread* myThread = new OpenFlipperThread("MyPluginsThread");
-
-    // Connect the appropriate signals
-    connect(myThread, SIGNAL(function()), this, SLOT(myPluginsThreadFunction()), Qt::DirectConnection);
-
-    // Tell core about my thread
-    // Note: The last parameter determines whether the thread should be blocking
-    emit startJob( "MyPluginsThread", "Thread Description" , 0 , 100 , true);
-
-    // Start internal QThread
-    myThread->start();
-
-    // Start actual processing of job
-    myThread->startProcessing();
-
-}
-
-void MyPlugin::myPluginsThreadFunction() {
-   
-   emit setJobState("MyPluginsThread", 0);
-   
-   // Do something...
-   for(int i = 0; i < 100; ++i) {
-   
-       // Do something...
-       
-       // Update process' progress bar status
-       emit setJobState("MyPluginsThread", i);
-   }
-   
-   emit finishJob("MyPluginsThread");
-}
-\endcode
+    It is not necessary to derive from this class for most operations,
+    but you can.
 */
-
 class OpenFlipperJob;
 
 class DLLEXPORT OpenFlipperThread : public QThread
@@ -135,13 +99,16 @@ class DLLEXPORT OpenFlipperThread : public QThread
     * Reimplement this function to correctly terminate your job.
     * If your job is able to terminate correctly then you can reimplement this function
     * and stop your process.
+    *
     */
     virtual void cancel();   
     
   public slots:
-    /** Call this slot with the correct job id to abort processing
-    * This directly calls cancel()
-    * This is only usefull when you derived from this class, as other jobs might not react on this slot
+    /** \brief Cancel this job
+     *
+     * Call this slot with the correct job id to abort processing
+     * This directly calls cancel()
+     * This is only useful when you derived from this class, as other jobs might not react on this slot
     */
     void slotCancel( QString _jobId);
     
@@ -166,17 +133,16 @@ class DLLEXPORT OpenFlipperThread : public QThread
     *
     * If you do not specialize the OpenFlipperThread, The function connected to this 
     * signal will be used as the processing function for your thread. When you call
-    * OpenFlipper::startProcessing(); \n
-    *
-    * If you want to provide more feedback (% of runtime) or cancel the job,
-    * you have to derive from OpenFlipperThread and emit the right signals.
+    * \code
+    * OpenFlipper::startProcessing();
+    * \endcode
     * 
-    * You have connect one of your slot using \n
-    * connect( OpenFlipperThread ,SIGNAL(function()),YourPlugin,SLOT(YourSlot(),Qt::DirectConnection) );\n
-    * The default implementation will call your slot inside the given thread and the core will still respond.
-    * However you should only use this function if you Dont know how long your job takes. Or when
-    * you just want to keep the core responding.\n
-    * Otherwise you should reimplement the run(), and cancel() function of OpenFlipperThread and emit the state signal.
+    * You have connect one of your slot using
+    * \code
+    * connect( OpenFlipperThread ,SIGNAL(function()),YourPlugin,SLOT(YourSlot(),Qt::DirectConnection) );
+    * \code
+    *
+    * The default implementation will call your slot inside the new thread and the core will still respond.
     *
     * The optional parameter contains the job's id. In some cases the function that is to be called needs
     * the job's id for further processing (status updates, etc.)
@@ -195,7 +161,7 @@ class DLLEXPORT OpenFlipperThread : public QThread
   public slots:
     /** \brief start processing
     *
-    * This function will start the actuall processing of a job.
+    * This function will start the actual processing of a job.
     */
     void startProcessing();
     
@@ -255,12 +221,14 @@ class DLLEXPORT OpenFlipperThread : public QThread
 /** \brief Internal Job execution object
 *
 * This class is used to start a process within a thread. The thread object itself
-* lives in the event queue of the object that crreated the thread. So every signal
-* or slot within the qthread object will be dispatched in the core event loop and
+* lives in the event queue of the object that created the thread. So every signal
+* or slot within the QThread object will be dispatched in the core event loop and
 * therefore lock the gui. 
-* Objects created in the qthread will run in the threads event queue as well as their
-* signals and slots. So qthread uses this object to actually run arbitrary threads 
+* Objects created in the QThread will run in the threads event queue as well as their
+* signals and slots. So QThread uses this object to actually run arbitrary threads
 * inside the threads event queue.
+*
+* See \ref processInterfacePage for details.
 */
 class DLLEXPORT OpenFlipperJob : public QObject
 {

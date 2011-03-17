@@ -61,7 +61,7 @@ void OpenFlipperThread::run()
     job_ = new OpenFlipperJob( jobId_ );
 
     // Connect the slot which should run in this thread. This has to be a DirectConnection !
-    // Otherwisse the slot will run inside its owner context which will be the main loop!!
+    // Otherwise the slot will run inside its owner context which will be the main loop!!
     connect(job_, SIGNAL(process(QString)),this,SIGNAL(function(QString) ),Qt::DirectConnection);
     
     // Connect the jobs finished function
@@ -101,7 +101,6 @@ void OpenFlipperThread::slotJobFinished( ) {
   emit finished( jobId_ );
   
   quit();
-  
 }
 
 
