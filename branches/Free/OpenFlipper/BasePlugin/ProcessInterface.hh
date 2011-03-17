@@ -73,54 +73,69 @@ class ProcessInterface {
       * Use this function to announce a new job. The Job Id should be a unique id for your job.
       * Prepend your PluginName to your id to make it unique across plugins.
       *
-      * The description will be the string visible to the user.
+      * The range between _min and _max will be used to compute the progress percentage based on
+      * the ProcessInterface::setJobState() values provided by the thread. You could for example
+      * set it to the number of steps performed in your algorithm.
       *
-      * min and max define the range your status values will be in.
-      * 
-      * blocking will define, if user interaction with the core should still be possible
-      *
+      * @param _jobId       String which is used as the id of the thread
+      * @param _description The description will be the string visible to the user.
+      * @param _min         minimum of the status value range
+      * @param _max         maximum of the status range
+      * @param _blocking    If the thread is blocking, no other interaction will be allowed
       */
-      virtual void startJob( QString /*_jobId*/, QString /*_description */, int /*_min*/ , int /*_max*/ , bool /*_blocking */ = false) {};
+      virtual void startJob( QString _jobId, QString _description , int _min , int _max , bool _blocking  = false) {};
 
       /** \brief update job state
       *
       * Emit this signal to tell the core about your job status.
       *
-      * _value has to be in the range you defined!
+      * @param _jobId       String which is used as the id of the thread
+      * @param _value The status value has to be in the range you defined in ProcessInterface::startJob()
       */
-      virtual void setJobState(QString /*_jobId*/, int /*_value*/ ) {};
+      virtual void setJobState(QString _jobId, int _value ) {};
       
       /** \brief update job's name
       *
       * Emit this signal to tell the core to change a job's name.
       *
-      * _caption The new name of the job
+      * @param _jobId String which is used as the id of the thread
+      * @param _name  The new name of the job
       */
-      virtual void setJobName(QString /*_jobId*/, QString /*_name*/ ) {};
+      virtual void setJobName(QString _jobId, QString _name ) {};
       
       /** \brief update job's description text
       *
       * Emit this signal to tell the core to change a job's widget's description.
       *
-      * _text The text of the job's description
+      * @param _jobId String which is used as the id of the thread
+      * @param _text The text of the job's description
       */
       virtual void setJobDescription(QString /*_jobId*/, QString /*_text*/ ) {};
       
       /** \brief Cancel your job
+       *
+       * @param _jobId String which is used as the id of the thread
       */
-      virtual void cancelJob(QString /*_jobId*/ ) {};
+      virtual void cancelJob(QString _jobId ) {};
       
       /** \brief Finish your job
+       *
+       * This signal has to be emitted when your job has finished. You can
+       * directly connect the threads finished signal to this signal.
+       *
+       * @param _jobId String which is used as the id of the thread
       */
-      virtual void finishJob(QString /*_jobId*/ ) {};
+      virtual void finishJob(QString _jobId ) {};
       
       private slots :
         /** \brief A job has been canceled 
         *
         * This function is called when the user cancels a job. 
         * The returned name is the name of the job which has been canceled
+        *
+        * @param _jobId String which is used as the id of the thread
         */
-        virtual void canceledJob (QString /*_job */) {};      
+        virtual void canceledJob (QString _job ) {};
       
 };
 
@@ -134,19 +149,108 @@ The Process interface can be used to run arbitrary slots of your plugin within a
 OpenFlipper supports a process manager, visualizing currently running operations to the user. Process dialogs
 and user information can be provided via special signals.
 
+As in qt user interface operations are only allowed from within the main thread, you can not interact with the ui
+in your threads. Feedback like the progress or other messages need to be passed through the ProcessInterface.
+Additionally you have to make sure, that your operations can actually run in parallel to others. If not, you have
+to mark your thread as blocking, which would prevent the user from starting additional operations until your
+job gets finished.
 
+Using threads in OpenFlipper is quite simple. All necessary class definitions are already available to plugins.
+A tutorial for the thread interface is available:
+\ref tutorial_thread
 
+\section processInterface_setup Process Setup
+So the first thing we have to do is instantiate an OpenFlipperThread object and tell the core that we just
+created a thread via ProcessInterface::startJob().
 
-TODO : All!
+\code
+// Create job named "My Thread" .. Name will e visible in OpenFlippers process manager.
+OpenFlipperThread* thread = new OpenFlipperThread(name() + "My thread");
 
- Example:\n
- OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                     // Create your thread containing a unique id \n
- connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));        // connect your threads state info to the global one \n
- connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                 // connect your threads finish info to the global one ( you can do the same for a local one ) \n
- connect(thread,SIGNAL( function()), this,SLOT(testFunctionThread()),Qt::DirectConnection);   // You can directly give a slot of your app that gets called \n
- emit startJob( name() + "unique id", "Description" , 0 , 100 , false);                       // Tell the core about your thread
- thread->start();                                                                             // start thread
- thread->startProcessing();                                                                   // start processing
+// Tell OpenFlipper about the newly created job. In this case, it gets a description and
+// a span for its steps. This job has 100 steps from 0 to 100. These values are used
+// to display a progress bar.
+// The last parameter means that the job will be non-blocking, so the ui will still be available.
+emit startJob( name() + "My thread", "My thread's description" , 0 , 100 , false);
+\endcode
+
+Next thing to do is connecting the thread's signal to local signals/slots in order to keep track of
+updates concerning the processing of our thread.
+
+\code
+// Slot connection required to tell the core, that the thread has finished
+connect(thread, SIGNAL(finished(QString)),   this, SIGNAL(finishJob(QString)));
+
+// Slot connection required setting the function in your plugin that should run inside the thread.
+// It will get the job name which can be used to control the ui elements like progress.
+// If you don't want to show progress you can skip the jobId QString.
+connect(thread, SIGNAL(function(QString)),   this, SLOT(testFunctionThread(QString)), Qt::DirectConnection);
+\endcode
+
+\section processInterface_start Process Startup
+The function() signal needs to be connected to the function that will actually be processed in the thread.
+Once having connected these signals, we're about to start our thread:
+
+\code
+// Launch the thread
+thread->start();
+
+// Start processing of the function code (connected via signal OpenFlipperThread::function() )
+// This function is non-blocking and will return immediately.
+thread->startProcessing();
+\endcode
+
+\section processInterface_status Status Reports
+There are two signals that you can use to inform the user about your threads state. The first is
+ProcessInterface::setJobState(). It gets the jobId and an int. The int is the process status.
+It has to be in the values that have been given with ProcessInterface::startJob() before.
+OpenFlipper will calculate the percentage on its own and display a progress bar at the specific position.
+
+The second function is  ProcessInterface::setJobDescription() getting a desription, that can be changed
+wile the thread is running. The following example shows a simple thread slot,using these signals.
+\code
+
+// Useless example function which runs in a thread and updates the ui state.
+// The QString parameter is only necessary if you want to provide feedback.
+void testFunctionThread(QString _jobId) {
+
+    for (int i = 0 ; i < 1000000; ++i) {
+
+        // Emit new progress state
+        if(i % 10000 == 0)
+            emit setJobState(_jobId, (int)(i / 10000));
+
+        if(i == 500000) {
+            // When half of the processing is finished
+            // change the job's description
+            emit setJobDescription(_jobId, "Half way done");
+        }
+    }
+}
+\endcode
+
+\section processInterface_usage Usage
+
+To use the ProcessInterface:
+<ul>
+<li> include ProcessInterface.hh in your plugins header file
+<li> derive your plugin from the class ProcessInterface
+<li> add Q_INTERFACES(ProcessInterface) to your plugin class
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+\section processInterface_quickstart Quick example
+A quick example for stating a thread:
+
+\code
+ OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                                   // Create your thread containing a unique id
+ connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));                      // connect your threads state info to the global one
+ connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                               // connect your threads finish info to the global one ( you can do the same for a local one )
+ connect(thread,SIGNAL( function(QString)), this,SLOT(testFunctionThread(QString)),Qt::DirectConnection);   // You can directly give a slot of your app that gets called
+ emit startJob( name() + "unique id", "Description" , 0 , 100 , false);                                     // Tell the core about your thread
+ thread->start();                                                                                           // start thread
+ thread->startProcessing();                                                                                 // start processing
+\endcode
 */
 
 Q_DECLARE_INTERFACE(ProcessInterface,"OpenFlipper.ProcessInterface/1.0")
