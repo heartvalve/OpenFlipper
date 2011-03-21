@@ -16,11 +16,14 @@
  *              - Made isAtomic const
  *          - Scenegraph
  *              - enter,enterPick,leave,leavePick,draw functions now get the draw mode as const reference. Please change your nodes accordingly
+ *          - LineNode
+ *              - Fixed rendering of line node in LineSegments mode where wrong color was used
  *      - <b>Core</b>
  *          - Log Window
  *              - Fixed log filter button staying pressed
  *          - About widget
  *              - Added section about developers
+ *              - Show library paths in about dialog
  *          - User Interface
  *              - Scripting function to move toolboxes to top or bottom
  *          - Interfaces
@@ -29,6 +32,8 @@
  *              - Moved openedFile signal from LoadSaveInterface to FileInterface
  *          - Rendering
  *              - Added option to set minimal scene size
+ *          - Snapshot functions
+ *              - Trim snapshot filename (Fixes bug, where windows got confused when space was behind the filename which caused an inaccesible file )
  *          - Internals
  *              - Renamed slotObjectOpened in core to slotFileOpened
  *      - <b>LicenseManager</b>
@@ -37,11 +42,22 @@
  *          - Include product id on windows
  *          - Fixed wrong coreApp path on Mac
  *          - Get rid of extra message box when license files are not found
+ *          - Ovverride button to generate License without a request
  *      - <b>ObjectTypes</b>
+ *          - BSplineCurve
+ *              - Fixed some rendering errors
+ *          - Coordsys Object
+ *              - New Object type for visualizing coordinate systems
  *          - MeshObjects 
  *              - Bugfixes
  *                  - Fixed StatusNodeMod for handle and modeling regions to return correct information about handle/modeling areas.
+ *          - SkeletonObjects
+ *              - Update of Animation classes
  *      - <b>Plugins</b>
+ *          - Selection
+ *              - Store halfedge selections in ini file
+ *          - FileOBJ
+ *              - Store textures to texture dir with name prefix of file to avoid ambigouties
  *          - FileSkeleton
  *              - Removed ( Is now FileSKL)
  *          - MeshRepair
