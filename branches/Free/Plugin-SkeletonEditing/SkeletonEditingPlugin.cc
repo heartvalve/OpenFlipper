@@ -16,7 +16,7 @@ SkeletonEditingPlugin::SkeletonEditingPlugin()
  : currentSkeleton_(-1),
    currentJoint_(-1),
    jointPreview_(false),
-   transformChildJoints_(true),
+   transformChildJoints_(false),
    transformAllFrames_(true)
 {
     manip_size_          = 1.0;
