@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.1 (  ? , 11012 )</b>
+ * - <b>OpenFlipper 1.0.1 (  03.21.2011 , 11158 )</b>
  *      - <b>Interface changes</b>
  *          - <b>ACG</b>
  *              - In ACG enter,enterPick,leave,leavePick,draw functions now get the draw mode as const reference. Please change your nodes accordingly
