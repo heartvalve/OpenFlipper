@@ -61,6 +61,7 @@ add_definitions(-DOPENFLIPPERPLUGINLIB )
 
 if ( NOT DEFINED OPENFLIPPER_SETTINGS_DEBUG )
   set( OPENFLIPPER_SETTINGS_DEBUG false CACHE BOOL "Enable or disable debugging of OpenFlipperSettings" )
+  mark_as_advanced(OPENFLIPPER_SETTINGS_DEBUG)
 endif()
 
 if ( OPENFLIPPER_SETTINGS_DEBUG )
