@@ -43,7 +43,6 @@
 #include "PluginDialog.hh"
 #include <QtGui>
 #include <QMessageBox>
-#include <QFileDialog>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>

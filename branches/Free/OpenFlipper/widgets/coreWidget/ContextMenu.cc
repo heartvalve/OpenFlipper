@@ -637,10 +637,18 @@ void CoreWidget::slotSnapshotName() {
   QString fname = PluginFunctions::viewerProperties().snapshotName();
 
   fname.replace('%', '$');
-  fname = QFileDialog::getSaveFileName ( 0, tr("Save snapshot name") );
+  fname = QFileDialog::getSaveFileName ( 0,
+                                         tr("Save snapshot name"),
+                                         OpenFlipperSettings().value("Core/CurrentDir").toString());
+
   if (!fname.isEmpty())
   {
     fname.replace('$', '%');
+
+
+    // Get the chosen directory and remember it.
+    QFileInfo fileInfo(fname);
+    OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
 
     PluginFunctions::viewerProperties().snapshotBaseFileName(fname);
     QString msg=tr("next snapshot: ");
