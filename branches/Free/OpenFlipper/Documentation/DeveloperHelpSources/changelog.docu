@@ -1,7 +1,24 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11158 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11174 )</b>
+ *      - <b>Core</b>
+ *          - Load/Save
+ *              - Fixed handling of last directory to avoid jumps between dirs in file dialogs.
+ *      - <b>ObjectTypes</b>
+ *          - MeshObject
+ *              - Fixed functions to set/get selections which ignored vertex 0
+ *      - <b>Plugins</b>
+ *          - Selection
+ *              - Fixed bug where vertex selection was not saved properly
+ *          - Datacontrol
+ *              - Don' change source and target settings of objects when they get grouped
+ *              - Fixed warning, when groupobjects have been appended to their parent twice
+ *      - <b>Build System</b>
+ *          - Introduced option to debug OpenFlipperSettings (cerr read and write access to settings)
+ *          - Introduced mac option to provide a user defined Info.plist
+ *          - Added 512x512 Icon to OpenFlipper_Icon.icns 
+ * 
  *
  * - <b>OpenFlipper 1.0.1 (  03.21.2011 , 11158 )</b>
  *      - <b>Interface changes</b>
