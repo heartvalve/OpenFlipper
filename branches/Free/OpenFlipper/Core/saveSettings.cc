@@ -150,8 +150,8 @@ void Core::saveSettings(){
   }
 
   // Get the chosen directory and remember it.
-  QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
-  OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
+  QFileInfo fileInfo(complete_name);
+  OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
 
   // ========================================================================================
   // update status information
@@ -185,7 +185,7 @@ void Core::saveSettings(){
       if ( saveAllBox->isChecked() )
       {
         // Use path of settings file for all objects
-        filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
+        filename = fileInfo.absolutePath() + OpenFlipper::Options::dirSeparator() + o_it->name();
       }
       else
       {
@@ -194,8 +194,8 @@ void Core::saveSettings(){
 
         // handle the case that the object was created in current session and not loaded from disk
         if (o_it->path() == ".") {
-          filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
-          std::cerr << "newpath : " << newpath.toStdString() << std::endl;
+          filename = fileInfo.absolutePath() + OpenFlipper::Options::dirSeparator() + o_it->name();
+          std::cerr << "newpath : " << fileInfo.absolutePath().toStdString() << std::endl;
           std::cerr << "name  : " << o_it->name().toStdString() << std::endl;
         }
       }
