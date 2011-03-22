@@ -144,7 +144,8 @@ void FilenameWidget::toDefault()
 // Show file dialog
 void FilenameWidget::showDialog()
 {
-  QFileDialog d (this, tr("Select File"), QString (), filter_);
+
+  QFileDialog d (this, tr("Select File"), QString() , filter_);
   d.setAcceptMode (mode_);
   d.setDefaultSuffix (defaultSuffix_);
   if (dirOnly_)

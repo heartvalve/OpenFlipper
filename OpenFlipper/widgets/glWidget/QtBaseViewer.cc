@@ -75,7 +75,6 @@
 #include <QLabel>
 #include <QImage>
 #include <QColorDialog>
-#include <QFileDialog>
 #include <QToolTip>
 #include <QTextStream>
 #include <QDateTime>

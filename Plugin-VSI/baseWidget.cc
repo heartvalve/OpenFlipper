@@ -259,11 +259,17 @@ void VSI::BaseWidget::load()
   if (!saveIfChanged ())
     return;
 
-  QString filename = QFileDialog::getOpenFileName (this, tr("Load Visual Script"), QString (),
+  QString filename = QFileDialog::getOpenFileName (this,
+                                                   tr("Load Visual Script"),
+                                                   OpenFlipperSettings().value("Core/CurrentDir").toString(),
                                                    tr("Visual Script File (*.ofvs)"));
 
   if (filename.isEmpty ())
     return;
+
+  // Get the chosen directory and remember it.
+  QFileInfo fileInfo(filename);
+  OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
 
   QFile f (filename);
   if (!f.open (QFile::ReadOnly))
@@ -309,11 +315,13 @@ void VSI::BaseWidget::load()
 /// Save file
 bool BaseWidget::save(bool _newName)
 {
+
   QString filename;
 
   if (fileName_.isEmpty () || _newName)
   {
-    QFileDialog *d = new QFileDialog (this, tr("Save Visual Script"), QString (),
+    QFileDialog *d = new QFileDialog (this, tr("Save Visual Script"),
+                                            OpenFlipperSettings().value("Core/CurrentDir").toString(),
                                             tr("Visual Script File (*.ofvs)"));
 
     d->setAcceptMode (QFileDialog::AcceptSave);
@@ -327,6 +335,10 @@ bool BaseWidget::save(bool _newName)
 
   if (filename.isEmpty ())
     return false;
+
+  // Get the chosen directory and remember it.
+  QFileInfo fileInfo(filename);
+  OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
 
   QFile f (filename);
   if (!f.open (QFile::WriteOnly))
