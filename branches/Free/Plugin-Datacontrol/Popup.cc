@@ -206,7 +206,6 @@ void DataControlPlugin::slotGroup() {
     parent = PluginFunctions::objectRoot();
   GroupObject* groupItem = new GroupObject( tr("newGroup"), dynamic_cast< GroupObject* >(parent));
   groupItem->setName(tr("newGroup ") + QString::number(groupItem->id()));
-  parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
   groupItem->setParent( parent );
 
   emit emptyObjectAdded( groupItem->id() );
