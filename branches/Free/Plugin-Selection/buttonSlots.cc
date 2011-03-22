@@ -212,8 +212,10 @@ void SelectionPlugin::slotColorizeSelection() {
   */
 void SelectionPlugin::slotLoadSelection(){
 
-
-  QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),"", tr("Selections (*.ini *.sel)"));
+  QString fileName = QFileDialog::getOpenFileName(0,
+                                                  tr("Open File"),
+                                                  OpenFlipperSettings().value("Core/CurrentDir").toString(),
+                                                  tr("Selections (*.ini *.sel)"));
 
   if ( !fileName.isEmpty() ){
 
@@ -223,7 +225,7 @@ void SelectionPlugin::slotLoadSelection(){
     else
       restriction = PluginFunctions::TARGET_OBJECTS;
 
-    //first check if it's a Flipper Selection
+    //first check if it's an OpenFlipper Selection
     QFile file(fileName);
 
     if (file.open(QFile::ReadOnly)) {
@@ -255,6 +257,11 @@ void SelectionPlugin::slotLoadSelection(){
         loadIniFile(ini, o_it->id() );
 
     ini.disconnect();
+
+
+    // Get the chosen directory and remember it.
+    QFileInfo fileInfo(fileName);
+    OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
   }
 
 }
@@ -275,6 +282,7 @@ void SelectionPlugin::slotSaveSelection(){
   dialog.setAcceptMode(QFileDialog::AcceptSave);
   dialog.setNameFilters(filters);
   dialog.setDefaultSuffix("ini");
+  dialog.setDirectory( OpenFlipperSettings().value("Core/CurrentDir").toString() );
 
   if ( !dialog.exec() )
     return;
@@ -282,6 +290,10 @@ void SelectionPlugin::slotSaveSelection(){
   QString fileName = dialog.selectedFiles()[0];
 
   if ( !fileName.isEmpty() ){
+
+    // Get the chosen directory and remember it.
+    QFileInfo fileInfo(fileName);
+    OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
 
     //write OpenFlipper Selection
     if (dialog.selectedNameFilter() == filters[0] ){
