@@ -45,9 +45,24 @@
 
 QVariant OpenFlipperQSettings::value(const QString& key, const QVariant& defaultValue) const
 {
-    QVariant var = QSettings::value(key, defaultValue);
-    if (!var.isValid())
-	std::cerr << "Tried loading OpenFlipper settings value for " << key.toStdString() << ", but it was not found and no default value given!" << std::endl;
+  QVariant var = QSettings::value(key, defaultValue);
+  if (!var.isValid())
+    std::cerr << "Tried loading OpenFlipper settings value for " << key.toStdString() << ", but it was not found and no default value given!" << std::endl;
     
-    return var;
+
+  #ifdef OPENFLIPPER_SETTINGS_DEBUG
+    std::cerr << "Settings: Read key " << key.toStdString() << " with value " << var.toString().toStdString() << std::endl;
+  #endif
+
+  return var;
+}
+
+
+void OpenFlipperQSettings::setValue ( const QString & key, const QVariant & value ) {
+
+  #ifdef OPENFLIPPER_SETTINGS_DEBUG
+    std::cerr << "Settings: Set key " << key.toStdString() << " to value " << value.toString().toStdString() << std::endl;
+  #endif
+
+  QSettings::setValue(key,value);
 }

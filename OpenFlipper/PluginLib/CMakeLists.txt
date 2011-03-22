@@ -12,7 +12,7 @@ file (
   "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
 )
 
-# include all cmake files fouund for objecttypes here
+# include all cmake files found for objecttypes here
 foreach ( _buildInfo ${_plugin_buildinfos})
   include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
 endforeach ()
@@ -34,17 +34,9 @@ link_directories (
   ${ADDITIONAL_PLUGINLIB_LINK_DIRS}
 )
 
-# source code directories
-set (directories 
-  ../BasePlugin 
-  ../ACGHelper 
-  ../common 
-  ../threads
-  ../common/bsp  
-  ../INIFile 
-  ../widgets/glWidget
-  ../publicWidgets/objectSelectionWidget
-)
+#=======================================================
+# General defines
+#=======================================================
 
 # generate dllexport macros on windows
 if (WIN32)
@@ -63,6 +55,33 @@ add_definitions (
 # Mark this build part as building OpenFLippers Core
 add_definitions(-DOPENFLIPPERPLUGINLIB )
 
+#=======================================================
+# Add possibility to debug OpenFlipperSettings
+#=======================================================
+
+if ( NOT DEFINED OPENFLIPPER_SETTINGS_DEBUG )
+  set( OPENFLIPPER_SETTINGS_DEBUG false CACHE BOOL "Enable or disable debugging of OpenFlipperSettings" )
+endif()
+
+if ( OPENFLIPPER_SETTINGS_DEBUG )
+ add_definitions(-DOPENFLIPPER_SETTINGS_DEBUG ) 
+endif()
+
+#=======================================================
+# Collect files to compile
+#=======================================================
+
+# source code directories
+set (directories 
+  ../BasePlugin 
+  ../ACGHelper 
+  ../common 
+  ../threads
+  ../common/bsp  
+  ../INIFile 
+  ../widgets/glWidget
+  ../publicWidgets/objectSelectionWidget
+)
 
 # collect all header,source and ui files
 acg_append_files (headers "*.hh" ${directories})
@@ -74,13 +93,16 @@ acg_append_files_recursive (headers "*.hh" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_append_files_recursive (sources "*.cc" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_append_files_recursive (ui "*.ui" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 
-
 # remove template cc files from source file list
 acg_drop_templates (sources)
 
 # genereate uic and moc targets
 acg_qt4_autouic (uic_targets ${ui})
 acg_qt4_automoc (moc_targets ${headers})
+
+#=======================================================
+# Create library
+#=======================================================
 
 acg_add_library (PluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 if( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS )
@@ -89,11 +111,6 @@ if( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS )
     COMPILE_FLAGS ${ADDITIONAL_PLUGINLIB_COMPILER_FLAGS}
   )
 endif()
-
-set (trans_files ${sources})
-list (APPEND trans_files ${ui})
-list (APPEND trans_files ${headers})
-acg_add_translations (PluginLib "de_DE" "${trans_files}")
 
 target_link_libraries (PluginLib
   OpenMeshCore
@@ -106,3 +123,16 @@ target_link_libraries (PluginLib
   ${FTGL_LIBS}
   ${ADDITIONAL_PLUGINLIB_LIBS}
 )
+
+#=======================================================
+# Setup translation files for PluginLib
+#=======================================================
+
+set (trans_files ${sources})
+list (APPEND trans_files ${ui})
+list (APPEND trans_files ${headers})
+acg_add_translations (PluginLib "de_DE" "${trans_files}")
+
+
+
+
