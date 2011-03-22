@@ -73,7 +73,7 @@ void selectVertices(MeshT* _mesh, std::vector< int >& _vertices) {
   const int n_vertices = (int)_mesh->n_vertices();
 
   for ( uint i = 0 ; i < _vertices.size() ; ++i )
-    if ( (_vertices[i] > 0) && ( _vertices[i] < n_vertices ) )  {
+    if ( (_vertices[i] >= 0) && ( _vertices[i] < n_vertices ) )  {
       typename MeshT::VertexHandle vh(_vertices[i]);
       _mesh->status(vh).set_selected(true);
     }
@@ -87,7 +87,7 @@ void unselectVertices(MeshT* _mesh, std::vector< int >& _vertices) {
   const int n_vertices = (int)_mesh->n_vertices();
 
   for ( uint i = 0 ; i < _vertices.size() ; ++i )
-    if ( (_vertices[i] > 0) && ( _vertices[i] < n_vertices ) )  {
+    if ( (_vertices[i] >= 0) && ( _vertices[i] < n_vertices ) )  {
       typename MeshT::VertexHandle vh(_vertices[i]);
       _mesh->status(vh).set_selected(false);
     }
@@ -477,7 +477,7 @@ void selectEdges(MeshT* _mesh, std::vector< int >& _edges) {
   const int n_edges = (int)_mesh->n_edges();
 
   for ( uint i = 0 ; i < _edges.size() ; ++i )
-    if ( (_edges[i] > 0) && ( _edges[i] < n_edges ) )  {
+    if ( (_edges[i] >= 0) && ( _edges[i] < n_edges ) )  {
       typename MeshT::EdgeHandle eh(_edges[i]);
       _mesh->status(eh).set_selected(true);
     }
@@ -491,7 +491,7 @@ void unselectEdges(MeshT* _mesh, std::vector< int >& _edges) {
   const int n_edges = (int)_mesh->n_edges();
 
   for ( uint i = 0 ; i < _edges.size() ; ++i )
-    if ( (_edges[i] > 0) && ( _edges[i] < n_edges ) )  {
+    if ( (_edges[i] >= 0) && ( _edges[i] < n_edges ) )  {
       typename MeshT::EdgeHandle eh(_edges[i]);
       _mesh->status(eh).set_selected(false);
     }
@@ -691,7 +691,7 @@ void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
   const int n_halfedges = (int)_mesh->n_halfedges();
 
   for ( uint i = 0 ; i < _halfedges.size() ; ++i )
-    if ( (_halfedges[i] > 0) && ( _halfedges[i] < n_halfedges ) )  {
+    if ( (_halfedges[i] >= 0) && ( _halfedges[i] < n_halfedges ) )  {
       typename MeshT::HalfedgeHandle heh(_halfedges[i]);
       _mesh->status(heh).set_selected(true);
     }
@@ -705,7 +705,7 @@ void unselectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
   const int n_halfedges = (int)_mesh->n_halfedges();
 
   for ( uint i = 0 ; i < _halfedges.size() ; ++i )
-    if ( (_halfedges[i] > 0) && ( _halfedges[i] < n_halfedges ) )  {
+    if ( (_halfedges[i] >= 0) && ( _halfedges[i] < n_halfedges ) )  {
       typename MeshT::HalfedgeHandle heh(_halfedges[i]);
       _mesh->status(heh).set_selected(false);
     }
