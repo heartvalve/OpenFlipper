@@ -84,11 +84,7 @@ public:
    * @param _parent Define the parent Node this node gets attached to
    * @param _name Name of this Node
    */
-  CoordinateSystemNode( BaseNode*         _parent=0,
-                        std::string  _name="<TextNode>")
-            : BaseNode(_parent, _name),
-              coordsysSize_(1.0)
-             {};
+  CoordinateSystemNode( BaseNode* _parent=0, std::string  _name="<TextNode>");
 
   /// destructor
   ~CoordinateSystemNode() {};

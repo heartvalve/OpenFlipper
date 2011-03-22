@@ -66,6 +66,16 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
+CoordinateSystemNode::CoordinateSystemNode( BaseNode*    _parent,
+                                            std::string  _name)
+      : BaseNode(_parent, _name),
+        coordsysSize_(1.0)
+{
+  rotation_.identity();
+}
+
+//----------------------------------------------------------------------------
+
 void
 CoordinateSystemNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
