@@ -118,10 +118,21 @@ if (APPLE)
    )
 
  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+
     IF ( NOT APPLE_BUNDLE_ICON )
         # option to set the used Icon for OpenFlipper
         set ( APPLE_BUNDLE_ICON "${CMAKE_SOURCE_DIR}\\branding\\mac\\OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
-    ENDIF(NOT APPLE_BUNDLE_ICON )
+    ENDIF(NOT APPLE_BUNDLE_ICON )    
+
+    IF ( NOT APPLE_INFO_PLIST )
+      if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/mac/Info.plist )
+        # option to configure the custom Info.plist
+        set ( APPLE_INFO_PLIST "${CMAKE_SOURCE_DIR}\\branding\\mac\\Info.plist" CACHE FILEPATH "Path to the Info.plist file for Bundle" )
+      else( EXISTS ${CMAKE_SOURCE_DIR}/branding/Info.plist )
+        # option to configure a custum Info.plist but configure with default one
+        set ( APPLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../installer/mac/Info.plist" CACHE FILEPATH "Path to the Info.plist file for Bundle" )
+      endif( EXISTS ${CMAKE_SOURCE_DIR}/branding/Info.plist )
+    ENDIF(NOT APPLE_INFO_PLIST )
 
   else()
 
@@ -130,12 +141,28 @@ if (APPLE)
         set ( APPLE_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
     ENDIF(NOT APPLE_BUNDLE_ICON )
 
+    IF ( NOT APPLE_INFO_PLIST )
+        # option to configure a custum Info.plist but configure with default one
+        set ( APPLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../installer/mac/Info.plist" CACHE FILEPATH "Path to the Info.plist file for Bundle" )
+    ENDIF(NOT APPLE_INFO_PLIST )
+
   endif()
   
  
    add_custom_command(TARGET OpenFlipper POST_BUILD                                                              
      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${APPLE_BUNDLE_ICON}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"            
    )    
+
+   # create bundle in "Build" directory and set icon
+   # no install needed here, because the whole bundle will be installed in the
+   # toplevel CMakeLists.txt
+   set_target_properties (
+      OpenFlipper PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
+      MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
+      MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
+      MACOSX_BUNDLE_INFO_PLIST ${APPLE_INFO_PLIST}
+   )
 
    # Required for Snow leopard, and the latest qt. Then the resources have to be copied
    if ( EXISTS "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" )
