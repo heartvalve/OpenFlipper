@@ -263,20 +263,21 @@ void SkeletonEditingPlugin::transformJoint( int _objectId , int _jointId, Matrix
 
   SkeletonTransform transformer(*skeleton);
 
-  if ( handle.isValid() )
+  if ( handle.isValid() ){
     //we are in an animation pose -> only rotation allowed
     transformer.rotateJoint(joint, activePose, _matrix, transformAllFrames_);
-  else
+    
+    //update the skin
+    bool exists = false;
+
+    emit functionExists("skeletalanimation", "updateSkin()", exists);
+
+    if (exists)
+      RPC::callFunction("skeletalanimation", "updateSkin");
+
+  }else
     //we are in the refPose apply full transformation
     transformer.transformJoint(joint, _matrix, !recursiveJointTransformation);
-
-  //update the skin
-  bool exists = false;
-
-  emit functionExists("skeletalanimation", "updateSkin()", exists);
-  
-  if (exists)
-    RPC::callFunction("skeletalanimation", "updateSkin");
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
  
