@@ -50,17 +50,33 @@ class DLLEXPORT OpenFlipperQSettings : public QSettings
 {
 public:
     explicit OpenFlipperQSettings(const QString &organization,
-                       const QString &application = QString(), QObject *parent = 0) : QSettings(organization, application, parent) {};
-    OpenFlipperQSettings(QSettings::Scope scope, const QString &organization,
-              const QString &application = QString(), QObject *parent = 0) : QSettings(scope, organization, application, parent) {};
-    OpenFlipperQSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
-	      const QString &application = QString(), QObject *parent = 0) : QSettings (format, scope, organization, application, parent) {};
-    OpenFlipperQSettings(const QString &fileName, QSettings::Format format, QObject *parent = 0) : QSettings(fileName, format, parent) {};
+                                  const QString &application = QString(),
+                                  QObject *parent = 0) : QSettings(organization, application, parent) {};
+
+    OpenFlipperQSettings(QSettings::Scope scope,
+                         const QString &organization,
+                         const QString &application = QString(),
+                         QObject *parent = 0) : QSettings(scope, organization, application, parent) {};
+
+    OpenFlipperQSettings(QSettings::Format format,
+                         QSettings::Scope scope, const QString &organization,
+	                       const QString &application = QString(),
+	                       QObject *parent = 0) : QSettings (format, scope, organization, application, parent) {};
+
+    OpenFlipperQSettings(const QString &fileName,
+                         QSettings::Format format,
+                         QObject *parent = 0) : QSettings(fileName, format, parent) {};
+
     explicit OpenFlipperQSettings(QObject *parent = 0) : QSettings(parent) {};
     
     /// Wrapper function for QSettings::value() that outputs an error message to console if the key was not found and no default value given.
     /// This is supposed to prevent Plugin authors from forgetting to specify the defaultValue. ;)
+    /// Additionally it is possible to enable Debugging output with -DOPENFLIPPER_SETTINGS_DEBUG
     QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+
+    /// Wrapper function which makes it possible to enable Debugging output with -DOPENFLIPPER_SETTINGS_DEBUG
+    void setValue ( const QString & key, const QVariant & value );
+
 };
 
 #endif // OPENFLIPPERQSETTINGS_HH
