@@ -87,7 +87,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   setDirectory( OpenFlipperSettings().value("Core/CurrentDir").toString() );
 }
 
-/// Desctructor
+/// Destructor
 LoadWidget::~LoadWidget()
 {
 
@@ -331,6 +331,9 @@ int LoadWidget::showLoad(){
   loadMode_ = true;
 
   setFileMode(QFileDialog::ExistingFiles);
+
+  // Set directory to last Directory used for Opening Files
+  setDirectory(OpenFlipperSettings().value("Core/CurrentDir").toString() );
 
   slotSetLoadFilters();
 
