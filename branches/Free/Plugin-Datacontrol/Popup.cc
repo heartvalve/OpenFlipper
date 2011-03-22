@@ -183,10 +183,6 @@ void DataControlPlugin::slotGroup() {
     return;
   }
 
-  bool visible = obj0->visible();
-  bool target  = obj0->target();
-  bool source  = obj0->source();
-
   BaseObject* parent = obj0->parent();
 
   for ( int i = 1 ; i < indexList.size() ; ++i) {
@@ -203,10 +199,6 @@ void DataControlPlugin::slotGroup() {
       return;
     }
 
-    //remember if at least on child was target/source
-    visible |= item->visible();
-    target  |= item->target();
-    source  |= item->source();
   }
 
   //create new group
@@ -232,10 +224,6 @@ void DataControlPlugin::slotGroup() {
     item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
   }
 
-  //update target/source state
-  groupItem->visible(visible);
-  groupItem->target(target);
-  groupItem->source(source);
 }
 
 

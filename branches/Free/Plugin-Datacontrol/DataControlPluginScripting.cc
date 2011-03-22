@@ -289,13 +289,8 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
     return -1;
   }
 
-  //check if all objects have the same parent
-  //abort if the parents differ
-  bool visible = (objs[0])->visible();
-  bool target  = (objs[0])->target();
-  bool source  = (objs[0])->source();
-
   // Check if all objects have the same parent
+  // Abort if the parents differ
   BaseObject* parent = (objs[0])->parent();
   for ( int i = 1 ; i < objs.size() ; ++i){
     if ( parent != (objs[i])->parent() ){
@@ -303,9 +298,6 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
       return -1;
     }
 
-    visible |= (objs[i])->visible();
-    target  |= (objs[i])->target();
-    source  |= (objs[i])->source();
   }
 
   //create new group
@@ -327,11 +319,6 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
   for ( int i = 0 ; i < objs.size() ; ++i) {
     (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
   }
-
-  //update target/source state
-  groupItem->visible(visible);
-  groupItem->target(target);
-  groupItem->source(source);
   
   return groupItem->id();
 }
