@@ -224,14 +224,14 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the setting for the default Toolbox mode
     //============================================================================
-    QString viewmode = false;
+    QString viewmode = "";
     if ( _ini.get_entry( viewmode, "Options" , "CurrentViewMode") )
       OpenFlipper::Options::currentViewMode(viewmode);
 
     //============================================================================
     // Load the setting for the translation language
     //============================================================================
-    QString translation = false;
+    QString translation = "";
     if ( _ini.get_entry( translation, "Options" , "Translation") )
       OpenFlipper::Options::translation(translation);
 
