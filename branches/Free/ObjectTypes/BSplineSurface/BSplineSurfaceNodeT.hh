@@ -97,22 +97,20 @@ class BSplineSurfaceNodeT : public BaseNode
     adaptive_sampling_      = false;
 
     controlnet_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
-    controlnet_highlight_color_ = Vec4f(0,1,0,1);
+    controlnet_highlight_color_ = Vec4f(1.0, 1.0, 1.0, 1.0);
     surface_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
-    surface_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
+    surface_highlight_color_   = Vec4f(1.0, 1.0, 1.0, 1.0);
     
-    bspline_draw_mode_           = FANCY;
+    bspline_draw_mode_           = NORMAL;
     bspline_selection_draw_mode_ = NONE;
     
     cp_selection_texture_res_   = 256;
     knot_selection_texture_res_ = 256;
     
-    // init texturing for picking and knot and control point selection
-    pick_init_texturing();
-    selection_init_texturing(cp_selection_texture_idx_);
-    selection_init_texturing(knot_selection_texture_idx_);
-    selection_init_texturing(arb_texture_idx_);
-
+    cp_selection_texture_idx_ = 0;
+    knot_selection_texture_idx_ = 0;
+    pick_texture_idx_ = 0;  
+    arb_texture_idx_ = 0;
   }
 
   /// Destructor
