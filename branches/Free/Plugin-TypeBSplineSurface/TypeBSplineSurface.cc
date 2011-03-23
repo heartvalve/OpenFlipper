@@ -95,7 +95,7 @@ addEmpty()
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);
 
-  if (PluginFunctions::targetCount() == 1 )
+  if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
   QString name = "BSplineSurface_" + QString::number( object->id() ) + ".bss";
