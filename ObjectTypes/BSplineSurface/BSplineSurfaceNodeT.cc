@@ -273,7 +273,7 @@ render(GLState& _state, bool _fill)
       drawFancyControlNet(_state);
   }
   
-  // draw the spline curve itself, dependeing on the type of visualization
+  // draw the spline curve itself, depending on the type of visualization
   if (render_bspline_surface_)
   {
     if (bspline_selection_draw_mode_ == NONE)
@@ -400,7 +400,7 @@ drawTexturedSurface(GLState& _state, GLuint _texture_idx)
   }
 
   // GL_MODULATE to include lighting effects
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   
   glBindTexture( GL_TEXTURE_2D, _texture_idx);
 
@@ -429,7 +429,6 @@ drawControlNet(GLState& _state)
   glDisable( GL_CULL_FACE );
   glDisable(GL_LIGHTING);
   glShadeModel(GL_FLAT);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // draw points
   
@@ -571,6 +570,9 @@ drawFancyControlNet(GLState& _state)
   if( bsplineSurface_.controlpoint_selections_available())
   {
     // save old values
+    float point_size_old = _state.point_size();
+
+    // save old values
 //     glColor(controlnet_highlight_color_);
     glColor(generateHighlightColor(controlnet_color_));
 
@@ -583,6 +585,8 @@ drawFancyControlNet(GLState& _state)
           draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
       }
     }
+    
+    glPointSize(point_size_old);
   }
 
   // draw all points
@@ -633,6 +637,9 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 pick(GLState& _state, PickTarget _target)
 {
+  if(pick_texture_idx_ == 0)
+      pick_init_texturing();
+    
   glDisable(GL_COLOR_MATERIAL);
   
   switch (_target)
@@ -859,7 +866,7 @@ selection_init_texturing(GLuint & _texture_idx )
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
   // GL_MODULATE to include lighting effects
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // unbind current texture
   glBindTexture( GL_TEXTURE_2D, 0);
 }
@@ -873,6 +880,9 @@ create_cp_selection_texture(GLState& /*_state*/)
 {
   if (bsplineSurface_.n_knots_m() == 0 || bsplineSurface_.n_knots_n() == 0)
     return;
+  
+  if(cp_selection_texture_idx_ == 0)
+      selection_init_texturing(cp_selection_texture_idx_);
     
   QImage b(cp_selection_texture_res_, cp_selection_texture_res_, QImage::Format_ARGB32);
   
@@ -975,6 +985,9 @@ create_knot_selection_texture(GLState& _state)
 {
   if (bsplineSurface_.n_knots_m() == 0 ||bsplineSurface_.n_knots_n() == 0)
     return;
+  
+  if(knot_selection_texture_idx_ == 0)
+      selection_init_texturing(knot_selection_texture_idx_);
   
   QImage b(knot_selection_texture_res_, knot_selection_texture_res_, QImage::Format_ARGB32);
 
@@ -1203,6 +1216,9 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v_repeat )
 {
+  if(arb_texture_idx_ == 0)
+      selection_init_texturing(arb_texture_idx_);
+    
   glBindTexture( GL_TEXTURE_2D, 0);
 
   arb_texture_repeat_   = _repeat;

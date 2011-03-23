@@ -389,6 +389,12 @@ public :
 //         unsigned char& edge_selection(unsigned int _i, unsigned int _j)       {int idx = _i * dimn_ + _j; return eselections_[idx];}
 //   const unsigned char& edge_selection(unsigned int _i, unsigned int _j) const {int idx = _i * dimn_ + _j; return eselections_[idx];}
 
+  // Wrapper for selection functions
+  void select_controlpoint(unsigned int _iIdx, unsigned int _jIdx) { controlpoint_selection(_iIdx, _jIdx) = 1; };
+  void deselect_controlpoint(unsigned int _iIdx, unsigned int _jIdx) { controlpoint_selection(_iIdx, _jIdx) = 0; };
+  
+  bool controlpoint_selected(unsigned int _iIdx, unsigned int _jIdx) const { return (controlpoint_selection(_iIdx, _jIdx) == 1); };
+
 
 private:
 
