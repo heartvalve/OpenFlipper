@@ -146,7 +146,7 @@ ShaderNode::vertexShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
   
   if ( !_drawmode.isAtomic() ) {
     std::cerr << "vertexShaderName: Error, draw mode not atomic!" << std::endl;
-    return false;
+    return std::string("");
   }
   
   std::map<unsigned int,ShaderInfo>::iterator it;
@@ -173,7 +173,7 @@ ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
   
   if ( !_drawmode.isAtomic() ) {
     std::cerr << "fragmentShaderName: Error, draw mode not atomic!" << std::endl;
-    return false;
+    return std::string("");
   }
   
   std::map<unsigned int,ShaderInfo>::iterator it;
