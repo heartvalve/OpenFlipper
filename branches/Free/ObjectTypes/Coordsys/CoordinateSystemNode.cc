@@ -99,9 +99,7 @@ DrawModes::DrawMode
 CoordinateSystemNode::
 availableDrawModes() const
 {
-  return ( DrawModes::POINTS |
-	        DrawModes::POINTS_SHADED |
-	        DrawModes::POINTS_COLORED );
+  return ( DrawModes::SOLID_SMOOTH_SHADED );
 }
 
 
@@ -229,6 +227,8 @@ void
 CoordinateSystemNode::
 draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 {
+  glPushAttrib(GL_ENABLE_BIT);
+
   // Push Modelview-Matrix
   _state.push_modelview_matrix();
 
@@ -236,6 +236,7 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
   glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_LIGHTING);
   glShadeModel(GL_SMOOTH);
 
   // Translate to right position  
@@ -253,6 +254,8 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
   // Reload old configuration
   _state.pop_modelview_matrix();
+
+  glPopAttrib();
 }
 
 
