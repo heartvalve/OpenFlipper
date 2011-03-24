@@ -95,6 +95,7 @@
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
+#include "OpenFlipper/BasePlugin/SelectionInterface.hh" // -> for SelectionInterface::PrimitiveType
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 
 #include <OpenFlipper/widgets/coreWidget/CoreWidget.hh>
@@ -249,6 +250,91 @@ signals:
 
    /// get a multi-texture's sub textures
    void getSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
+   
+   /// SelectionInterface: This signal is emitted when a new toolbutton should be added
+   void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName);
+   
+   /// SelectionInterface: This signal is emitted when a data type should be registered for a selection mode
+   void registerType(QString _handleName, DataType _type);
+   
+   /// SelectionInterface: This signal is emitted when a selection plugin should handle a new primitive type
+   void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
+   
+   /// SelectionInterface: This signal is emitted when a custom selection mode is added
+   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                               SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+   
+   /// SelectionInterface: This signal is used to add non-interactive operations for a specific primitive type
+   void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type);
+   
+   /// SelectionInterface: This signal is emitted when a non-interactive operation has been performed
+   void selectionOperation(QString _operation);
+  
+   /// SelectionInterface: This signal is emitted when standard toggle selection is required
+   void showToggleSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard lasso selection is required
+   void showLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard volume lasso selection is required
+   void showVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard surface lasso selection is required
+   void showSurfaceLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard sphere selection is required
+   void showSphereSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard closest boundary selection is required
+   void showClosestBoundarySelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+   
+   /// SelectionInterface: This signal is emitted when standard flood fill selection is required
+   void showFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+  
+   /// SelectionInterface: This signal is emitted when standard toggle selection has been performed
+   void toggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard lasso selection has been performed
+   void lassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard volume lasso selection has been performed
+   void volumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard surface lasso selection has been performed
+   void surfaceLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard sphere selection has been performed
+   void sphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard closest boundary selection has been performed
+   void closestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when standard flood fill selection has been performed
+   void floodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   
+   /// SelectionInterface: This signal is emitted when a custom selection operation has been performed
+   void customSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
+  
+   /// SelectionInterface: This signal is emitted when the active (selected) data types should be fetched
+   void getActiveDataTypes(SelectionInterface::TypeList& _types);
+   
+   /// SelectionInterface: This signal is emitted when the active (selected) primitive type should be fetched
+   void getActivePrimitiveType(SelectionInterface::PrimitiveType& _type);
+   
+   /// SelectionInterface: This signal is emitted if the current target restriction state is requested
+   void targetObjectsOnly(bool& _targetsOnly);
+   
+   /// SelectionInterface: This signal is emitted when a selection should be loaded from a file
+   void loadSelection(const INIFile& _file);
+   
+   /// SelectionInterface: This signal is emitted when a selection should be written into a file
+   void saveSelection(INIFile& _file);
+   
+   /// SelectionInterface: This signal is emitted when a type selection plugin wants to listen to a key event
+   void registerKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers);
+   
+   /// SelectionInterface: This signal is emitted when a key shortcut has been pressed
+   void keyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier);
 
    /// If an ini File is opened, this signal is send to Plugins capable of handling ini files
    void iniLoad( INIFile&, int );
@@ -428,6 +514,91 @@ signals:
 
       /// Called when an empty object has been Added
       void slotEmptyObjectAdded ( int _id );
+  
+      /// SelectionInterface: Called when a new selection type button should be added to the toolbar
+      void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName);
+
+      /// SelectionInterface: Called when a data type is added for a specific selection type
+      void slotRegisterType(QString _handleName, DataType _type);
+
+      /// SelectionInterface: Called when a new, non-standard primitive type should be handled
+      void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
+
+      /// SelectionInterface: Add new selection mode for specified type
+      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+      
+      /// SelectionInterface: Called in order to add non-interactive operations for a specific primitive type
+      void slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type);
+       
+      /// SelectionInterface: Called when a non-interactive operation has been performed
+      void slotSelectionOperation(QString _operation);
+
+      /// SelectionInterface: Provide toggle selection operation for specific selection mode
+      void slotShowToggleSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Provide lasso selection operation for specific selection mode
+      void slotShowLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Provide volume lasso selection operation for specific selection mode
+      void slotShowVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+      
+      /// SelectionInterface: Provide surface lasso selection operation for specific selection mode
+      void slotShowSurfaceLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Provide sphere selection operation for specific selection mode
+      void slotShowSphereSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Provide closest boundary selection operation for specific selection mode
+      void slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Provide flood fill selection operation for specific selection mode
+      void slotShowFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+      /// SelectionInterface: Called when toggle selection operation has been performed
+      void slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when lasso selection operation has been performed
+      void slotLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when volume lasso selection operation has been performed
+      void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+      
+      /// SelectionInterface: Called when surface lasso selection operation has been performed
+      void slotSurfaceLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when sphere selection operation has been performed
+      void slotSphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when closest boundary selection operation has been performed
+      void slotClosestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when flood fill selection operation has been performed
+      void slotFloodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when custom selection operation has been performed
+      void slotCustomSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
+
+      /// SelectionInterface: Called when active (selected) data types should be fetched
+      void slotGetActiveDataTypes(SelectionInterface::TypeList& _types);
+
+      /// SelectionInterface: Called when active primitive type should be fetched
+      void slotGetActivePrimitiveType(SelectionInterface::PrimitiveType& _type);
+      
+      /// SelectionInterface: Called when target restriction state should be fetched
+      void slotTargetObjectsOnly(bool& _targetsOnly);
+      
+      /// SelectionInterface: Called when a selection should be loaded from a file
+      void slotLoadSelection(const INIFile& _file);
+      
+      /// SelectionInterface: Called when a selection should be stored into a file
+      void slotSaveSelection(INIFile& _file);
+      
+      /// SelectionInterface: Called when a key shortcut is to be registered
+      void slotRegisterKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers);
+      
+      /// SelectionInterface: Called when a key event occurred
+      void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers);
 
       /** \brief Called when a plugin requests a list of file-filters
       *

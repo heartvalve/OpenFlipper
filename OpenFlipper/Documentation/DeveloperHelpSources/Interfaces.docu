@@ -143,6 +143,10 @@ Provides an interface to read and write file types. All load/save plugins need t
 Provides functions to control loading/saving of files and generate new objects. Additionally
 this interface informs plugins, when objects get added or removed( \ref loadSaveInterfacePage ).
 
+\subpage selectionInterfacePage
+\image html SelectionInterface.png
+This interface provides functions which control OpenFlippers selection system. Selection plugins
+can use this interface to react on selection events and add selections for different primitives ( \ref selectionInterfacePage ).
 
 
 \subpage typeInterfacePage
