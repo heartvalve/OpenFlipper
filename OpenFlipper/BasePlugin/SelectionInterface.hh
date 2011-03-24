@@ -88,6 +88,52 @@ class SelectionInterface {
      * Each DataType can consist of different primitives (e.g. a mesh usually consists
      * of vertices edges and faces). Use addPrimitiveType() to register these
      * primitives and remember the handles you got.
+     *
+     * Here is a short example of how to add a new selection environment and
+     * register some data type and primitive type:
+     *
+     * So in our plugin we first want to add a new selection environment:
+     \code
+     
+     emit addSelectionEnvironment("Triangle Mesh Selection", "Select Triangle Mesh Primitives.",
+                                 QIcon(someIconPath + "triangle_selection.png"), environmentHandle_);
+     \endcode
+     * Now, our handle to the newly created environment is in environmentHandle_.
+     * We should now see a new tab widget in the selection base tool box
+     * displaying our selection environment:
+     *
+     * \image html selectionEnvironment.png
+     *
+     * We now want to register a specific data type for which we want to enable
+     * selection. Say DATA_TRIANGLE_MESH:
+     \code
+     
+     emit registerType(environmentHandle_, DATA_TRIANGLE_MESH);
+     
+     \endcode
+     *
+     * Repeat this for as many data types as you want to handle in your plugin.
+     * Since triangle meshes normally consist of vertex, edge and face primitives,
+     * we want to enable selection for the three of them:
+     \code
+     
+     emit addPrimitiveType(environmentHandle_, "Select Vertices", QIcon(iconPath + "vertexType.png"), vertexType_);
+     emit addPrimitiveType(environmentHandle_, "Select Edges",    QIcon(iconPath + "edgeType.png"),   edgeType_);
+     emit addPrimitiveType(environmentHandle_, "Select Faces",    QIcon(iconPath + "faceType.png"),   faceType_);
+     
+     \endcode
+     *
+     * The three variables of type SelectionInterface::PrimitiveType vertexType_, edgeType_ and faceType_
+     * now hold the handles to the newly added primitive types. We use these to reference the types
+     * later on. For each registered primitive type, we now see a button appearing in the recently
+     * created environment tab in selection base plugin's tool box:
+     *
+     * \image html selectionPrimitives.png
+     *
+     * The user can now chose which primitive type she wants to select via simply clicking one of these
+     * buttons (or more than one by holding the control key while clicking). We then go on with requesting
+     * the available selection metaphors in the next section.
+     *
      * @{ */
     //===========================================================================
 
@@ -150,6 +196,28 @@ class SelectionInterface {
      * given selection metaphors in your plugin.
      *
      * You can also add your custom seletion mode via addCustomSelectionMode().
+     *
+     * To continue the above example, we now want to make toggle, volume lasso as well
+     * a custom selection mode available for our data types:
+     \code
+     
+     emit showToggleSelectionMode(environmentHandle_,      true, vertexType_ | edgeType_ | faceType_);
+     emit showVolumeLassoSelectionMode(environmentHandle_, true, vertexType_ | edgeType_ | faceType_);
+     
+     emit addCustomSelectionMode(environmentHandle_, "My Custom Selection", "Description of my mode", QIcon(someIconFile), vertexType_ | edgeType_);
+     
+     \endcode
+     *
+     * In the last parameter we determine for which of the registered primitive types
+     * the selection metaphor will be available. Note that multiple primitive types
+     * have to be OR'ed. The selection metaphors as well as the available primitive
+     * types will be displayed in the selection pick tool bar:
+     *
+     * \image html selectionPickbar.png
+     *
+     * Now each time the user uses the toggle selection metaphor slotToggleSelection()
+     * is called. See below for code examples on this.
+     *
      * @{ */
     //===========================================================================
 
@@ -311,18 +379,106 @@ class SelectionInterface {
     //===========================================================================
      /** @name File Interaction
       *
+      * Store and load selection data in an INI file.
+      * In the above example we would want something like this
+      * in order to store the current selection:
+      \code
+      
+        void MySelectionPlugin::slotSaveSelection(INIFile& _file) {
+
+            // Iterate over all triangle meshes and save
+            // the selections for all entity types
+            for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_TRIANGLE_MESH)); 
+                 o_it != PluginFunctions::objectsEnd(); ++o_it) {
+                
+                // Create section for each object
+                // Append object name to section identifier
+                QString section = QString("TriangleMeshSelection") + "//" + o_it->name();
+                if(!_file.section_exists(section)) {
+                    _file.add_section(section);
+                } else {
+                    continue;
+                }
+                
+                // Store vertex selection
+                _file.add_entry(section, "VertexSelection", getVertexSelection(o_it->id()));
+                // Store edge selection
+                _file.add_entry(section, "EdgeSelection",   getEdgeSelection(o_it->id()));
+                // Store face selection
+                _file.add_entry(section, "FaceSelection",   getFaceSelection(o_it->id()));
+            }
+        }
+      
+      \endcode
+      *
+      * This works analogously for loading selections.
       * @{ */
     //===========================================================================
 
     private slots:
 
-      virtual void slotLoadSelection(const INIFile& _file) {};
-      virtual void slotSaveSelection(INIFile& _file) {};
+    /** \brief Load selection for specific objects in the scene
+    *
+    *  OpenFlipper allows for saving of selections in an INI file (implemented by the
+    *  different selection plugins by overriding function slotSaveSelection()).
+    *  So this slot is called each time such INI file is about to be loaded.
+    *
+    *  @param _file The file from which one can read the selection data
+    */ 
+    virtual void slotLoadSelection(const INIFile& _file) {};
+    
+    /** \brief Save selection for all objects in the scene
+    *
+    *  Override this slot in order to save selections for a specific data type.
+    *  These selections are then stored within an INI file and can be loaded
+    *  via slotLoadSelection().
+    *
+    *  @param _file The file into which one can store selection data
+    */
+    virtual void slotSaveSelection(INIFile& _file) {};
 
     /** @} */
 
     //===========================================================================
     /** @name Keyboard Interactions
+     *
+     * Register keyboard shortcuts for your selection plugin by emitting the registerKeyShortcut()
+     * slot. For example:
+     \code
+     
+     // Select (a)ll, Control + A keys
+     emit registerKeyShortcut(Qt::Key_A, Qt::ControlModifier);
+     // (C)lear selection, C key
+     emit registerKeyShortcut(Qt::Key_C,      Qt::NoModifier);
+     
+     \endcode
+     *
+     * Now if the user presses a key, we can handle this by overriding
+     * slotKeyShortcutEvent(). Don't forget to test whether at least one
+     * of the registered primitives is active and whether we want to restrict
+     * to target objects only:
+     \code
+     
+     void MySelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers) {
+         
+        SelectionInterface::PrimitiveType type = 0u;
+        emit getActivePrimitiveType(type);
+        
+        if((type & (vertexType_ | edgeType_ | faceType_)) == 0) {
+            // No supported type is active
+            return;
+        }
+        
+        bool targetsOnly = false;
+        emit targetObjectsOnly(targetsOnly);
+        
+        PluginFunctions::IteratorRestriction restriction =
+                (targetsOnly ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS);
+        
+        // And so on...
+     }
+     
+     \endcode
      *
      * @{ */
     //===========================================================================
@@ -346,12 +502,80 @@ class SelectionInterface {
 
     private slots:
 
-      virtual void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers) {};
+    /** \brief One of the previously registered keys has been pressed
+    *
+    *  This slot is called whenever the user has pressed one of the registered keys.
+    *  Note that this is actually handled by the selection base plugin since
+    *  the different plugins might want to register the same key multiple times.
+    *
+    *  @param _key       The pressed key
+    *  @param _modifiers Indicates whether mod-keys have been pressed synchronously
+    */  
+    virtual void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers) {};
 
     /** @} */
 
     //===========================================================================
     /** @name User Interface controls
+     *
+     * In many cases it is desired to offer selection operations such as "select all vertices"
+     * or "invert edge selection". For this purpose, use the addSelectionOperations() slot.
+     * In our example, we now add some of these functions using the following code:
+     \code
+     
+     QStringList vertexOperations;
+     vertexOperations.append("Select All Vertices");
+     vertexOperations.append("Invert Vertex Selection");
+     vertexOperations.append("Delete All Selected Vertices");
+    
+     emit addSelectionOperations(environmentHandle_, vertexOperations, "Vertex Operations");
+     
+     \endcode
+     *
+     * These operations will now appear in the selection environment tab of
+     * the selection base plugin:
+     *
+     * \image html selectionOperations.png
+     *
+     * The user can now perform these operations  by simply clicking the buttons.
+     * Each time one of the buttons has been pressed, slotSelectionOperation() is called.
+     * You will have to override this in order to provide such operations.
+     *
+     * An example would be:
+     \code
+     
+     void MySelectionPlugin::slotSelectionOperation(QString _operation) {
+    
+        SelectionInterface::PrimitiveType type = 0u;
+        emit getActivePrimitiveType(type);
+        
+        // If none of our primitives is currently active
+        if((type & (vertexType_ | edgeType_ | faceType_)) == 0)
+            return;
+        
+        // Test if operation should be applied to target objects only
+        bool targetsOnly = false;
+        emit targetObjectsOnly(targetsOnly);
+        PluginFunctions::IteratorRestriction restriction =
+                (targetsOnly ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS);
+
+        if(_operation == "Select All Vertices") {
+               
+               for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH)); 
+                    o_it != PluginFunctions::objectsEnd(); ++o_it) {
+               
+               if (o_it->visible()) {
+                  selectAllVertices(o_it->id());
+               }
+            
+              // Don't forget this in order to update the render buffers
+              emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+           }
+        }
+        // ...and so on...
+     }
+     
+     \endcode
      *
      * @{ */
     //===========================================================================
@@ -375,6 +599,13 @@ class SelectionInterface {
 
     private slots:
 
+    /** \brief A specific operation is requested
+    *
+    *  This slot is called each time the user has pressed one of the operations
+    *  buttons (for the various primitive types) offered in the tool box.
+    *
+    *  @param _operation The identifier of the operation just as registered via addSelectionOperations
+    */
     virtual void slotSelectionOperation(QString _operation) {};
 
 
@@ -386,6 +617,37 @@ class SelectionInterface {
      * \ref SelectionInterface_enable_metaphors_group "control functions" you will
      * have to implement the corresponding slots here. These will be
      * called when the events occur.
+     *
+     * Continuing the above example, we should now override the slots for the
+     * metaphors that we have already requested above. For instance, when
+     * using the toggle metaphor, we would want to handle a toggle operation only
+     * if the currently selected primitive type belongs to our plugin:
+     \code
+     
+     void MySelectionPlugin::slotToggleSelection(QPoint _mousePosition, PrimitiveType _currentType, bool _deselect) {
+
+        // Return if none of the currently active types is handled by this plugin
+        if((_currentType & (vertexType_ | edgeType_ | faceType_)) == 0) return;
+        
+        // Only toggle target objects if requested
+        bool targetsOnly = false;
+        emit targetObjectsOnly(targetsOnly);
+        
+        // Do the picking...
+        
+        // ...and the actual selection
+        if(_currentType & vertexType_) {
+            // Vertex selection
+        }
+        
+        if(_currentType & edgeType_) {
+            // Edge selection
+        }
+        
+        // ...and so on...
+     }
+     
+     \endcode
      *
      * @{ */
    //===========================================================================
