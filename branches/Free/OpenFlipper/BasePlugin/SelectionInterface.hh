@@ -95,8 +95,8 @@ class SelectionInterface {
      * So in our plugin we first want to add a new selection environment:
      \code
      
-     emit addSelectionEnvironment("Triangle Mesh Selection", "Select Triangle Mesh Primitives.",
-                                 QIcon(someIconPath + "triangle_selection.png"), environmentHandle_);
+     emit addSelectionEnvironment("Mesh Object Selections", "Select Triangle Mesh Primitives.",
+                                 QIcon(someIconPath + "mesh_selection.png"), environmentHandle_);
      \endcode
      * Now, our handle to the newly created environment is in environmentHandle_.
      * We should now see a new tab widget in the selection base tool box
