@@ -53,6 +53,7 @@
 //== INCLUDES =================================================================
 
 #include "CoreWidget.hh"
+#include <OpenFlipper/common/FileTypes.hh>
 
 #include <QGLFormat>
 
@@ -484,12 +485,10 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
   aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
-  aboutWidget_->OpenFlipperAbout->append("\n");
-  
-  aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:\n") );
+    aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:\n") );
   QStringList libPaths = QCoreApplication::libraryPaths();
   for(int i = 0 ; i < libPaths.size() ; ++i)
-    aboutWidget_->OpenFlipperAbout->append(libPaths[i]);
+    aboutWidget_->OpenFlipperAbout->append("\t" + libPaths[i]);
 
   // =====================================================================================
   // Compiler information
@@ -522,6 +521,23 @@ void CoreWidget::showAboutWidget( ) {
   }
   
   aboutWidget_->OpenFlipperAbout->append( types );
+
+  // =====================================================================================
+  // List The File Plugins with their filters
+  // =====================================================================================
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("Registered File Plugins:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
+
+  for ( uint i = 0 ; i < supportedTypes().size() ; ++i ) {
+    aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+    aboutWidget_->OpenFlipperAbout->append( "\t" + supportedTypes()[i].name );
+    aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
+    aboutWidget_->OpenFlipperAbout->append( "\t\t Load: " + supportedTypes()[i].loadFilters );
+    aboutWidget_->OpenFlipperAbout->append( "\t\t Save: " + supportedTypes()[i].saveFilters );
+  }
+
 
   aboutWidget_->show();
 
