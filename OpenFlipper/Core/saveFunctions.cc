@@ -49,6 +49,8 @@
 
 #include "OpenFlipper/widgets/loadWidget/loadWidget.hh"
 
+#include <OpenFlipper/common/DataTypes.hh>
+
 //========================================================================================
 // ===  Public Slots (called by CoreWidget's File-Menu / Scripting / Plugins)    =========
 //========================================================================================
@@ -62,9 +64,9 @@ bool Core::saveObject( int _id, QString _filename ) {
 
   QString file_extension = QFileInfo(_filename).suffix();
   
-  for (int i=0; i < (int)supportedTypes_.size(); i++) {
-    if ( supportedTypes_[i].type.contains(object->dataType()) &&
-       ( supportedTypes_[i].saveFilters.contains(file_extension) || file_extension.isEmpty() ) ) {
+  for (int i=0; i < (int)supportedTypes().size(); i++) {
+    if ( supportedTypes()[i].type.contains(object->dataType()) &&
+       ( supportedTypes()[i].saveFilters.contains(file_extension) || file_extension.isEmpty() ) ) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
@@ -74,14 +76,14 @@ bool Core::saveObject( int _id, QString _filename ) {
 
       //save object
       
-      bool ok = supportedTypes_[i].plugin->saveObject(_id,_filename);
+      bool ok = supportedTypes()[i].plugin->saveObject(_id,_filename);
     
       if ( OpenFlipper::Options::gui() ) {
         if (ok)
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... done"), 4000 );
         else{
           emit log(LOGERR, tr("Unable to save '%1'. Plugin failed. DataType %2").arg(_filename, dataTypeName(object->dataType()) )  );
-          emit log(LOGERR, tr("Plugin was: '%1'. File Extension was: %2").arg(supportedTypes_[i].name, file_extension )  );
+          emit log(LOGERR, tr("Plugin was: '%1'. File Extension was: %2").arg(supportedTypes()[i].name, file_extension )  );
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
         }
     
@@ -124,7 +126,7 @@ void Core::saveObject( int _id, QString _filename, int _pluginID ) {
   }
 
   //save object
-  bool ok = supportedTypes_[_pluginID].plugin->saveObject(_id,_filename);
+  bool ok = supportedTypes()[_pluginID].plugin->saveObject(_id,_filename);
 
   if ( OpenFlipper::Options::gui() ) {
     if (ok)
@@ -167,12 +169,12 @@ void Core::saveObjects( IdList _ids, QString _filename, int _pluginID ) {
   }
 
   //save objects
-  if ( !supportedTypes_[_pluginID].saveMultipleObjects){
+  if ( !supportedTypes()[_pluginID].saveMultipleObjects){
     emit log(LOGERR, tr("Unable to save objects. Plugin does not allow multiple objects."));
     return;
   }
   
-  bool ok = supportedTypes_[_pluginID].plugin->saveObjects(_ids,_filename);
+  bool ok = supportedTypes()[_pluginID].plugin->saveObjects(_ids,_filename);
 
   if ( OpenFlipper::Options::gui() ) {
     if (ok)
@@ -201,12 +203,12 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
   if ( OpenFlipper::Options::gui() ){
  
     //init widget
-    LoadWidget* widget = new LoadWidget(supportedTypes_);
+    LoadWidget* widget = new LoadWidget(supportedTypes());
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
     connect(widget,SIGNAL(save(int, QString, int)),this,SLOT(saveObject(int, QString, int)));
   
-    if (supportedTypes_.size() != 0)
+    if (supportedTypes().size() != 0)
       result = widget->showSave(_id,_filename);
     else
       emit log(LOGERR,tr("Could not show 'save objects' dialog. Missing file-plugins."));
@@ -229,12 +231,12 @@ bool Core::saveObjectsTo( IdList _ids, QString _filename ) {
   if ( OpenFlipper::Options::gui() ){
 
     //init widget
-    LoadWidget* widget = new LoadWidget(supportedTypes_);
+    LoadWidget* widget = new LoadWidget(supportedTypes());
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
     connect(widget,SIGNAL(save(IdList, QString, int)),this,SLOT(saveObjects(IdList, QString, int)));
   
-    if (supportedTypes_.size() != 0)
+    if (supportedTypes().size() != 0)
       result = widget->showSave(_ids,_filename);
     else
       emit log(LOGERR,tr("Could not show 'save objects' dialog. Missing file-plugins."));
@@ -254,8 +256,8 @@ void Core::saveAllObjects(){
   if ( OpenFlipper::Options::gui() ){
 
     //ensure that all options are on their default values
-    for (int i=0; i < (int)supportedTypes_.size(); i++)
-      supportedTypes_[i].plugin->saveOptionsWidget("");
+    for (int i=0; i < (int)supportedTypes().size(); i++)
+      supportedTypes()[i].plugin->saveOptionsWidget("");
   
     //iterate over all target objects
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
@@ -280,8 +282,8 @@ void Core::saveAllObjectsTo(){
   if ( OpenFlipper::Options::gui() ){
 
     //ensure that all options are on their default values
-    for (int i=0; i < (int)supportedTypes_.size(); i++)
-      supportedTypes_[i].plugin->saveOptionsWidget("");
+    for (int i=0; i < (int)supportedTypes().size(); i++)
+      supportedTypes()[i].plugin->saveOptionsWidget("");
   
     //get all dataTypes that want to be saved
     DataType types = DATA_UNKNOWN;
@@ -296,8 +298,8 @@ void Core::saveAllObjectsTo(){
     //check if a plugin can save all types to one file
     bool multiSave = false;
     
-    for (int i=0; i < (int)supportedTypes_.size(); i++)
-      if ( (supportedTypes_[i].saveMultipleObjects) && (supportedTypes_[i].type.contains(types)) )
+    for (int i=0; i < (int)supportedTypes().size(); i++)
+      if ( (supportedTypes()[i].saveMultipleObjects) && (supportedTypes()[i].type.contains(types)) )
         multiSave = true;
 
       

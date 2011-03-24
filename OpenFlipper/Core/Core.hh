@@ -111,17 +111,10 @@
 
 #include <OpenFlipper/threads/JobInfo.hh>
 
+#include <OpenFlipper/common/FileTypes.hh>
+
 //== CLASS DEFINITION =========================================================
 
-struct fileTypes {
-  QString name;
-  DataType type;
-  QString loadFilters;
-  QString saveFilters;
-  FileInterface* plugin;
-  QObject* object;
-  bool saveMultipleObjects;
-};
 
 struct dataTypes {
   QString name;
@@ -1375,9 +1368,6 @@ private slots:
 
   /// Logger interfaces between plugins and core logger
   std::vector<PluginLogger*> loggers_;
-
-  /// File-Plugins
-  std::vector<fileTypes> supportedTypes_;
   
   /// Type-Plugins
   std::vector<dataTypes> supportedDataTypes_;

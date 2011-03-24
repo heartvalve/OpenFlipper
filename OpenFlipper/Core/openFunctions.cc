@@ -58,7 +58,7 @@
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
-#include <time.h>
+#include <OpenFlipper/common/DataTypes.hh>
 
 void Core::resetScenegraph( bool _resetTrackBall  ) {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
@@ -87,10 +87,10 @@ void Core::slotGetAllFilters ( QStringList& _list){
 
   /// \todo check why the supported Type is used here!
   // Iterate over all types
-  for (int i=0; i < (int)supportedTypes_.size(); i++){
-    QString f = supportedTypes_[i].plugin->getLoadFilters();
+  for (int i=0; i < (int)supportedTypes().size(); i++){
+    QString f = supportedTypes()[i].plugin->getLoadFilters();
     f = f.section(")",0,0).section("(",1,1).trimmed();
-    _list << (QString::number(supportedTypes_[i].plugin->supportedType().value()) + " " + f);
+    _list << (QString::number(supportedTypes()[i].plugin->supportedType().value()) + " " + f);
   }
 }
 
@@ -203,9 +203,9 @@ int Core::loadObject ( QString _filename ) {
     
     QFileInfo fi(_filename);
 
-    for (int i=0; i < (int)supportedTypes_.size(); i++){
+    for (int i=0; i < (int)supportedTypes().size(); i++){
 
-      QString filters = supportedTypes_[i].plugin->getLoadFilters();
+      QString filters = supportedTypes()[i].plugin->getLoadFilters();
       //check extension
       if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
         if (  ! filters.contains( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
@@ -222,7 +222,7 @@ int Core::loadObject ( QString _filename ) {
       }
 
       //load file
-      int id = supportedTypes_[i].plugin->loadObject(_filename);
+      int id = supportedTypes()[i].plugin->loadObject(_filename);
 
       if ( OpenFlipper::Options::gui() ) {
         if ( id != -1 ) {
@@ -263,10 +263,10 @@ int Core::loadObject( DataType _type, QString _filename) {
 
   QFileInfo fi(_filename);
   
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type & _type || supportedTypes_[i].type == _type) {
+  for (int i=0; i < (int)supportedTypes().size(); i++)
+    if (supportedTypes()[i].type & _type || supportedTypes()[i].type == _type) {
 
-      QString filters = supportedTypes_[i].plugin->getLoadFilters();
+      QString filters = supportedTypes()[i].plugin->getLoadFilters();
       //check extension
       if ( ! filters.contains( "*." + fi.suffix() ,Qt::CaseInsensitive ) )
         continue;
@@ -281,10 +281,10 @@ int Core::loadObject( DataType _type, QString _filename) {
       int id = -1;
 
       //load file
-      if ( checkSlot( supportedTypes_[i].object , "loadObject(QString,DataType)" ) )
-        id = supportedTypes_[i].plugin->loadObject(_filename, _type);
+      if ( checkSlot( supportedTypes()[i].object , "loadObject(QString,DataType)" ) )
+        id = supportedTypes()[i].plugin->loadObject(_filename, _type);
       else
-        id = supportedTypes_[i].plugin->loadObject(_filename);
+        id = supportedTypes()[i].plugin->loadObject(_filename);
 
       if ( OpenFlipper::Options::gui() ) {
         if ( id != -1 ) {
@@ -328,10 +328,10 @@ int Core::addEmptyObject( DataType _type ) {
   if(retCode != -1) return retCode;
     
   // File plugins
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if ( supportedTypes_[i].type & _type ) {
+  for (int i=0; i < (int)supportedTypes().size(); i++)
+    if ( supportedTypes()[i].type & _type ) {
       emit log(LOGERR, tr("File Plugins are not allowed to create empty objects anymore! Use the addEmpty call instead!") );
-      retCode = supportedTypes_[i].plugin->addEmpty();
+      retCode = supportedTypes()[i].plugin->addEmpty();
     }
   
   return retCode; // -1 if no plugin found
@@ -408,7 +408,7 @@ void Core::slotLoad(QString _filename, int _pluginID) {
   }
 
   //load file
-  int id = supportedTypes_[_pluginID].plugin->loadObject(_filename);
+  int id = supportedTypes()[_pluginID].plugin->loadObject(_filename);
 
   if ( OpenFlipper::Options::gui() ) {
     if ( id != -1 )
@@ -619,10 +619,10 @@ void Core::slotAddEmptyObjectMenu() {
     }
     
     // filePlugin
-    for ( uint j = 0 ; j < supportedTypes_.size(); j++) {
+    for ( uint j = 0 ; j < supportedTypes().size(); j++) {
       
       // Check if a plugin supports the current Type
-      if ( supportedTypes_[j].type & currentType ) {
+      if ( supportedTypes()[j].type & currentType ) {
 	
 	// Avoid duplicates
 	bool duplicate = false;
@@ -649,7 +649,7 @@ void Core::slotAddEmptyObjectMenu() {
   
   static addEmptyWidget* widget = 0;
   
-  if (supportedTypes_.size() != 0) {
+  if (supportedTypes().size() != 0) {
     
     if ( !widget ){
       widget = new addEmptyWidget(types,typeNames);
@@ -673,8 +673,8 @@ void Core::loadObject() {
 
   if ( OpenFlipper::Options::gui() ){
 
-    if (supportedTypes_.size() != 0){
-      LoadWidget* widget = new LoadWidget(supportedTypes_);
+    if (supportedTypes().size() != 0){
+      LoadWidget* widget = new LoadWidget(supportedTypes());
       connect(widget,SIGNAL(load(QString, int)),this,SLOT(slotLoad(QString, int)));
       connect(widget,SIGNAL(save(int, QString, int)),this,SLOT(saveObject(int, QString, int)));
 

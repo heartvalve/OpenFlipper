@@ -1803,7 +1803,7 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     ft.object = plugin;
     ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
     
-    supportedTypes_.push_back(ft);
+    supportedTypes().push_back(ft);
 
 
     if ( checkSignal(plugin,"openedFile(int)" ) )
