@@ -84,6 +84,7 @@
 #include "OpenFlipper/BasePlugin/RPCInterface.hh"
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
 #include "OpenFlipper/BasePlugin/SecurityInterface.hh"
+#include "OpenFlipper/BasePlugin/SelectionInterface.hh"
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/PluginConnectionInterface.hh"
 
@@ -1014,6 +1015,236 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( checkSlot( plugin , "loadIniFileOptionsLast(INIFile&)" ) )
       connect(this    , SIGNAL(iniLoadOptionsLast( INIFile& )),
               plugin  , SLOT( loadIniFileOptionsLast( INIFile& ) ),Qt::DirectConnection);
+  }
+  
+  //Check if the plugin supports Selection-Interface
+  SelectionInterface* selectionPlugin = qobject_cast< SelectionInterface * >(plugin);
+  if ( selectionPlugin && OpenFlipper::Options::gui() ) {
+    supported = supported + "SelectionBase ";
+    
+    if ( checkSignal(plugin,"addSelectionEnvironment(QString,QString,QIcon,QString&)") )
+      connect(plugin , SIGNAL(addSelectionEnvironment(QString,QString,QIcon,QString&)),
+              this   , SLOT(slotAddSelectionEnvironment(QString,QString,QIcon,QString&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotAddSelectionEnvironment(QString,QString,QIcon,QString&)" ) )
+      connect(this   , SIGNAL(addSelectionEnvironment(QString,QString,QIcon,QString&)),
+              plugin , SLOT(slotAddSelectionEnvironment(QString,QString,QIcon,QString&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"registerType(QString,DataType)") )
+      connect(plugin , SIGNAL(registerType(QString,DataType)),
+              this   , SLOT(slotRegisterType(QString,DataType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotRegisterType(QString,DataType)" ) )
+      connect(this   , SIGNAL(registerType(QString,DataType)),
+              plugin , SLOT(slotRegisterType(QString,DataType)),Qt::DirectConnection);
+
+    if ( checkSignal(plugin,"addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)") )
+      connect(plugin , SIGNAL(addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),
+              this   , SLOT(slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)" ) )
+      connect(this   , SIGNAL(addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),
+              plugin , SLOT(slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)") )
+      connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
+              this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)" ) )
+      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
+              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotAddSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotAddSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotAddSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"selectionOperation(QString)") )
+      connect(plugin , SIGNAL(selectionOperation(QString)),
+              this   , SLOT(slotSelectionOperation(QString)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotSelectionOperation(QString)" ) )
+      connect(this   , SIGNAL(selectionOperation(QString)),
+              plugin , SLOT(slotSelectionOperation(QString)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowToggleSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowVolumeLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowSurfaceLassoSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowSphereSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowClosestBoundarySelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"showFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"lassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(lassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(lassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"volumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(volumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotVolumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotVolumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(volumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotVolumeLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"surfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(surfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotSurfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotSurfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(surfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotSurfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)") )
+      connect(plugin , SIGNAL(customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),
+              this   , SLOT(slotCustomSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotCustomSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)" ) )
+      connect(this   , SIGNAL(customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),
+              plugin , SLOT(slotCustomSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"getActiveDataTypes(SelectionInterface::TypeList&)") )
+      connect(plugin , SIGNAL(getActiveDataTypes(SelectionInterface::TypeList&)),
+              this   , SLOT(slotGetActiveDataTypes(SelectionInterface::TypeList&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotGetActiveDataTypes(SelectionInterface::TypeList&)" ) )
+      connect(this   , SIGNAL(getActiveDataTypes(SelectionInterface::TypeList&)),
+              plugin , SLOT(slotGetActiveDataTypes(SelectionInterface::TypeList&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"getActivePrimitiveType(SelectionInterface::PrimitiveType&)") )
+      connect(plugin , SIGNAL(getActivePrimitiveType(SelectionInterface::PrimitiveType&)),
+              this   , SLOT(slotGetActivePrimitiveType(SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotGetActivePrimitiveType(SelectionInterface::PrimitiveType&)" ) )
+      connect(this   , SIGNAL(getActivePrimitiveType(SelectionInterface::PrimitiveType&)),
+              plugin , SLOT(slotGetActivePrimitiveType(SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"targetObjectsOnly(bool&)") )
+      connect(plugin , SIGNAL(targetObjectsOnly(bool&)),
+              this   , SLOT(slotTargetObjectsOnly(bool&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotTargetObjectsOnly(bool&)" ) )
+      connect(this   , SIGNAL(targetObjectsOnly(bool&)),
+              plugin , SLOT(slotTargetObjectsOnly(bool&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"loadSelection(const INIFile&)") )
+      connect(plugin , SIGNAL(loadSelection(const INIFile&)),
+              this   , SLOT(slotLoadSelection(const INIFile&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotLoadSelection(const INIFile&)" ) )
+      connect(this   , SIGNAL(loadSelection(const INIFile&)),
+              plugin , SLOT(slotLoadSelection(const INIFile&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"saveSelection(INIFile&)") )
+      connect(plugin , SIGNAL(saveSelection(INIFile&)),
+              this   , SLOT(slotSaveSelection(INIFile&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotSaveSelection(INIFile&)" ) )
+      connect(this   , SIGNAL(saveSelection(INIFile&)),
+              plugin , SLOT(slotSaveSelection(INIFile&)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"registerKeyShortcut(int,Qt::KeyboardModifiers)") )
+      connect(plugin , SIGNAL(registerKeyShortcut(int,Qt::KeyboardModifiers)),
+              this   , SLOT(slotRegisterKeyShortcut(int,Qt::KeyboardModifiers)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotRegisterKeyShortcut(int,Qt::KeyboardModifiers)" ) )
+      connect(this   , SIGNAL(registerKeyShortcut(int,Qt::KeyboardModifiers)),
+              plugin , SLOT(slotRegisterKeyShortcut(int,Qt::KeyboardModifiers)),Qt::DirectConnection);
+              
+    if ( checkSignal(plugin,"keyShortcutEvent(int,Qt::KeyboardModifiers)") )
+      connect(plugin , SIGNAL(keyShortcutEvent(int,Qt::KeyboardModifiers)),
+              this   , SLOT(slotKeyShortcutEvent(int,Qt::KeyboardModifiers)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotKeyShortcutEvent(int,Qt::KeyboardModifiers)" ) )
+      connect(this   , SIGNAL(keyShortcutEvent(int,Qt::KeyboardModifiers)),
+              plugin , SLOT(slotKeyShortcutEvent(int,Qt::KeyboardModifiers)),Qt::DirectConnection);
   }
 
   //Check if the plugin supports Texture-Interface
