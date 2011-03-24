@@ -299,14 +299,23 @@ BSplineSurfaceT<PointT>::
 delete_vector_m(unsigned int _m)
 {
   assert(_m < dimm_);
+  
+  /// \TODO: Improve deletion routine for control points and knots!
 
-  control_net_.erase(control_net_.begin() + _m);
+  if(control_net_.begin() + _m < control_net_.end())
+      control_net_.erase(control_net_.begin() + _m);
 
   resize(dimm_-1, dimn_);
 
   // erase from properties
-  cpselections_.erase(cpselections_.begin() + _m);
-  eselections_.erase(eselections_.begin() + _m);
+  if(cpselections_.begin() + _m < cpselections_.end())
+      cpselections_.erase(cpselections_.begin() + _m);
+  
+  if(eselections_.begin() + _m < eselections_.end())
+      eselections_.erase(eselections_.begin() + _m);
+  
+  // Now rebuild knot vectors
+  createKnots();
 }
 
 //-----------------------------------------------------------------------------
@@ -317,18 +326,27 @@ BSplineSurfaceT<PointT>::
 delete_vector_n(unsigned int _n)
 {
   assert(_n < dimn_);
+  
+  /// \TODO: Improve deletion routine for control points and knots!
 
-  for (unsigned int i = 0; i < dimm_; ++i)
-    control_net_[i].erase(control_net_[i].begin() + _n);
+  for (unsigned int i = 0; i < control_net_.size(); ++i) {
+      if(control_net_[i].begin() + _n < control_net_[i].end())
+          control_net_[i].erase(control_net_[i].begin() + _n);
+  }
 
   resize(dimm_, dimn_-1);
 
   // erase from properties
-  for (unsigned int i = 0; i < dimm_; ++i)
-    cpselections_[i].erase(cpselections_[i].begin() + _n);
+  for (unsigned int i = 0; i < cpselections_.size(); ++i)
+      if(cpselections_[i].begin() + _n < cpselections_[i].end())
+          cpselections_[i].erase(cpselections_[i].begin() + _n);
 
-  for (unsigned int i = 0; i < dimm_; ++i)
-    eselections_[i].erase(eselections_[i].begin() + _n);
+  for (unsigned int i = 0; i < eselections_.size(); ++i)
+      if(eselections_[i].begin() + _n < eselections_[i].end())
+          eselections_[i].erase(eselections_[i].begin() + _n);
+      
+  // Now rebuild knot vectors
+  createKnots();
 }
 
 //-----------------------------------------------------------------------------
