@@ -120,7 +120,7 @@ class VertexBufferObject
 {
 public:
 
-  VertexBufferObject(GLenum _target) : target(_target), valid(false) {}
+  VertexBufferObject(GLenum _target) : target(_target), valid(false), vbo(0u) {}
   virtual ~VertexBufferObject() { del(); }
 
   void del() { if(valid) glDeleteBuffersARB(1, &vbo); valid = false; }
@@ -143,7 +143,7 @@ public:
 
 private:
 
-  void gen() { glGenBuffersARB(1, &vbo); }
+  void gen() { glGenBuffersARB(1, &vbo); if(vbo > 0u) valid = true; }
 
   GLenum target;
   bool   valid;
