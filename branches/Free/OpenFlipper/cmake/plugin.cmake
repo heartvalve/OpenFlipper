@@ -265,7 +265,7 @@ function (_build_openflipper_plugin plugin)
       set(plugin_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML/Plugin-${plugin}")
       set(plugin_qt_help_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
     
-      if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/userDoc/doxy.config.in)
+      if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/userDoc/doxy.config.in AND DOXYGEN_FOUND )
 
         # Create user documentation target from userDoc subdir of the plugin
         acg_create_doc_target( doc-User-${plugin} ${CMAKE_CURRENT_SOURCE_DIR}/userDoc )
