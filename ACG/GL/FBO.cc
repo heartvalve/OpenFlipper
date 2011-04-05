@@ -19,15 +19,15 @@ namespace ACG
 FBO::
 ~FBO()
 {
-  if(glIsFramebuffer(fbo_)) {
+  if(fbo_) {
    // delete framebuffer object
     glDeleteFramebuffersEXT( 1, &fbo_ );
   }
-  if(glIsRenderbuffer(depthbuffer_)) {
+  if(depthbuffer_) {
     // delete render buffer
     glDeleteRenderbuffersEXT(1, &depthbuffer_);
   }
-  if(glIsRenderbuffer(stencilbuffer_)) {
+  if(stencilbuffer_) {
     // delete stencil buffer
     glDeleteRenderbuffersEXT(1, &stencilbuffer_);
   }
@@ -46,7 +46,7 @@ init()
     }
 
     // test whether fbo hasn't been created before
-    if(!glIsFramebuffer(fbo_))
+    if(!fbo_)
       glGenFramebuffersEXT( 1, &fbo_ );
 
     // check status
