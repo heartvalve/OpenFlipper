@@ -121,6 +121,7 @@ class VertexBufferObject
 public:
 
   VertexBufferObject(GLenum _target) : target(_target), valid(false), vbo(0u) {}
+
   virtual ~VertexBufferObject() { del(); }
 
   void del() { if(valid) glDeleteBuffersARB(1, &vbo); valid = false; }
@@ -134,13 +135,17 @@ public:
     if(!valid) gen();
     glBufferDataARB(target, size, data, usage);
   }
+  
+  // Upload a subset of the buffer data
+  void uploadSubData(GLuint _offset, GLuint _size, const GLvoid* _data ) {
+    glBufferSubDataARB(target, _offset, _size, _data);
+  }
 
   char* offset(unsigned int _offset) const
   {
     return ((char*)NULL + _offset);
   }
-
-
+  
 private:
 
   void gen() { glGenBuffersARB(1, &vbo); if(vbo > 0u) valid = true; }
@@ -148,6 +153,7 @@ private:
   GLenum target;
   bool   valid;
   GLuint vbo;
+
 };
 
 
@@ -176,7 +182,7 @@ class Texture
 public:
 
   Texture(GLenum tgt, GLenum _unit=GL_NONE)
-    : target(tgt), unit(_unit), valid(false),texture(0)
+    : target(tgt), unit(_unit), valid(false), texture(0u)
   {}
 
   virtual ~Texture() { del(); }
@@ -187,7 +193,7 @@ public:
     activate();
     glBindTexture(target, texture);
   }
-
+  
   void activate()
   {
     if (unit != GL_NONE) glActiveTextureARB(unit);
@@ -235,11 +241,13 @@ public:
     valid = false;
   }
 
-  bool is_valid() const { return valid; }
+  void gen() { glGenTextures(1, &texture); valid = (texture > 0u ? true : valid); }
 
-  void gen() { glGenTextures(1, &texture); valid=true; }
+  bool is_valid() const { return valid; }
   
-  GLuint id() { return texture; }
+  GLuint id() const { return texture; }
+  
+  GLenum getUnit() const { return unit; }
 
 private:
 

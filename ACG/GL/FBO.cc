@@ -19,12 +19,18 @@ namespace ACG
 FBO::
 ~FBO()
 {
+  if(glIsFramebuffer(fbo_)) {
    // delete framebuffer object
     glDeleteFramebuffersEXT( 1, &fbo_ );
-
-    // delete renderbuffers
+  }
+  if(glIsRenderbuffer(depthbuffer_)) {
+    // delete render buffer
     glDeleteRenderbuffersEXT(1, &depthbuffer_);
-    glDeleteRenderbuffersEXT(1, &stencilbuffer_); 
+  }
+  if(glIsRenderbuffer(stencilbuffer_)) {
+    // delete stencil buffer
+    glDeleteRenderbuffersEXT(1, &stencilbuffer_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -33,15 +39,15 @@ void
 FBO::
 init()
 {
-
     // Create framebuffer object
-    if ( ! checkExtensionSupported("GL_EXT_framebuffer_object") )
-    {
-        std::cout << "Framebuffer object not supported! " << std::endl;
-        exit( 1 );
+    if (!checkExtensionSupported("GL_EXT_framebuffer_object")) {
+       std::cout << "Framebuffer object not supported! " << std::endl;
+       exit( 1 );
     }
 
-    glGenFramebuffersEXT( 1, &fbo_ );
+    // test whether fbo hasn't been created before
+    if(!glIsFramebuffer(fbo_))
+      glGenFramebuffersEXT( 1, &fbo_ );
 
     // check status
     checkFramebufferStatus();
