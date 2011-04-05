@@ -39,9 +39,10 @@ namespace ACG {
 class FBO
 {
 public:
-   
+  
+  // fbo_ braucht initialen Wert.
   /// Default constructor
-  FBO() {}
+  FBO() : fbo_(0), depthbuffer_(0), stencilbuffer_(0) {}
   
   /// Destructor
   ~FBO();
