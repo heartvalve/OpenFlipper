@@ -399,9 +399,11 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
         // Delete vertex selection
         for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL)); 
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
-            if (o_it->visible())
-                deleteSelection(o_it->id());
-            emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
+            if (o_it->visible()){
+              deleteSelection(o_it->id());
+              emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
+              emit createBackup(o_it->id(), "Delete Vertices", UPDATE_GEOMETRY);
+            }
         }
     } else if(_operation == V_COLORIZE) {
         // Colorize vertex selection
@@ -875,10 +877,11 @@ void MeshObjectSelectionPlugin::conversionRequested() {
         }
         
         emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        emit  createBackup(o_it->id(), "Selection Conversion", UPDATE_SELECTION);
     }
 }
 
-void MeshObjectSelectionPlugin::slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+void MeshObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
     
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
@@ -888,7 +891,7 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QPoint _position, SelectionI
 
     // First of all, pick anything to find all possible objects
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
-        _position, node_idx, target_idx, &hit_point)) {
+        _event->pos(), node_idx, target_idx, &hit_point)) {
 
         BaseObjectData* object(0);
         PluginFunctions::getPickedObject(node_idx, object);
@@ -896,7 +899,7 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QPoint _position, SelectionI
     
         if (object->dataType() == DATA_TRIANGLE_MESH) {
             // Pick triangle meshes
-            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position,node_idx, target_idx, &hit_point)) {
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_TRIANGLE_MESH)) {
                     toggleMeshSelection(PluginFunctions::triMesh(object), target_idx, hit_point, _currentType);
@@ -904,15 +907,15 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QPoint _position, SelectionI
             }
         } else if (object->dataType() == DATA_POLY_MESH) {
             // Pick poly meshes
-            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position,node_idx, target_idx, &hit_point)) {
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_POLY_MESH)) {
                     toggleMeshSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _currentType);
                 }
             }
         }
-        
         emit updatedObject(object->id(), UPDATE_SELECTION);
+        emit  createBackup(object->id(), "Toggle Selection", UPDATE_SELECTION);
     }
 }
 
@@ -974,7 +977,7 @@ void MeshObjectSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event, Pr
     }
 }
 
-void MeshObjectSelectionPlugin::slotSphereSelection(QPoint _position, double _radius, PrimitiveType _currentType, bool _deselect) {
+void MeshObjectSelectionPlugin::slotSphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {
     
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
@@ -982,7 +985,7 @@ void MeshObjectSelectionPlugin::slotSphereSelection(QPoint _position, double _ra
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position, node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
         
         BaseObjectData* object = 0;
 
@@ -993,13 +996,15 @@ void MeshObjectSelectionPlugin::slotSphereSelection(QPoint _position, double _ra
             } else if (object->picked(node_idx) && object->dataType(DATA_POLY_MESH)) {
                 paintSphereSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _radius, _currentType, _deselect);
             }
-            
+
             emit updatedObject(object->id(), UPDATE_SELECTION);
+            if ( _event->type() == QEvent::MouseButtonRelease )
+              emit  createBackup(object->id(), "Sphere Selection", UPDATE_SELECTION);
         }
     }
 }
 
-void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QPoint _position, PrimitiveType _currentType, bool _deselect) {
+void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {
     
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
@@ -1007,7 +1012,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QPoint _position, P
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
 
-    if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position ,node_idx, target_idx, &hit_point)) {
+    if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos() ,node_idx, target_idx, &hit_point)) {
        
         BaseObjectData* object = 0;
 
@@ -1021,6 +1026,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QPoint _position, P
                 closestBoundarySelection(m, vh.idx(), _currentType, _deselect);
 
                 emit updatedObject(object->id(), UPDATE_SELECTION);
+                emit  createBackup(object->id(), "Boundary Selection", UPDATE_SELECTION);
 
             } else if(object->dataType(DATA_POLY_MESH)) {
 
@@ -1030,6 +1036,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QPoint _position, P
                 closestBoundarySelection(m, vh.idx(), _currentType, _deselect);
 
                 emit updatedObject(object->id(), UPDATE_SELECTION);
+                emit  createBackup(object->id(), "Boundary Selection", UPDATE_SELECTION);
             }
             
             emit updateView();
@@ -1037,7 +1044,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QPoint _position, P
     }
 }
 
-void MeshObjectSelectionPlugin::slotFloodFillSelection(QPoint _position, double _maxAngle, PrimitiveType _currentType, bool _deselect) {
+void MeshObjectSelectionPlugin::slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {
     
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
@@ -1047,7 +1054,7 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QPoint _position, double 
 
     // pick Anything to find all possible objects
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
-                                        _position, node_idx, target_idx, &hit_point)) {
+                                        _event->pos(), node_idx, target_idx, &hit_point)) {
 
         BaseObjectData* object = 0;
         
@@ -1056,13 +1063,14 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QPoint _position, double 
             // TRIANGLE MESHES
             if(object->dataType() == DATA_TRIANGLE_MESH) {
 
-                if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position, node_idx, target_idx, &hit_point)) {
+                if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
 
                     if(PluginFunctions::getPickedObject(node_idx, object)) {
 
                         if(object->dataType(DATA_TRIANGLE_MESH)) {
                             floodFillSelection(PluginFunctions::triMesh(object), target_idx, _maxAngle, _currentType, _deselect);
                             emit updatedObject(object->id(), UPDATE_SELECTION);
+                            emit  createBackup(object->id(), "FloodFill Selection", UPDATE_SELECTION);
                         }
                     }
                 }
@@ -1070,13 +1078,14 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QPoint _position, double 
             // POLY MESHES
             } else if(object->dataType() == DATA_POLY_MESH) {
 
-                if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _position, node_idx, target_idx, &hit_point)) {
+                if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
 
                     if(PluginFunctions::getPickedObject(node_idx, object) ) {
 
                         if(object->dataType(DATA_POLY_MESH)) {
                             floodFillSelection(PluginFunctions::polyMesh(object), target_idx, _maxAngle, _currentType, _deselect);
                             emit updatedObject(object->id(), UPDATE_SELECTION);
+                            emit  createBackup(object->id(), "FloodFill Selection", UPDATE_SELECTION);
                         }
                     }
                 }
@@ -1205,6 +1214,9 @@ void MeshObjectSelectionPlugin::loadIniFile(INIFile& _ini, int _id) {
         emit updatedObject(object->id(), UPDATE_SELECTION);
         emit updateView();
     }
+
+    if ( updated_modeling_regions || updated_selection )
+      emit  createBackup(object->id(), "Load Selection", UPDATE_SELECTION);
 }
 
 void MeshObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
@@ -1275,6 +1287,7 @@ void MeshObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
         ids.clear();
         
         emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        emit  createBackup(o_it->id(), "Load Selection", UPDATE_SELECTION);
     }
 }
 
@@ -1339,6 +1352,7 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
                     selectAllFaces(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Select All", UPDATE_SELECTION);
         }
     } else if (_key == Qt::Key_C && _modifiers == Qt::NoModifier) {
         
@@ -1356,6 +1370,7 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
                     clearFaceSelection(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Clear Selection", UPDATE_SELECTION);
         }
     } else if(_key == Qt::Key_I && _modifiers == Qt::NoModifier) {
         
@@ -1373,6 +1388,7 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
                     invertFaceSelection(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Invert Selection", UPDATE_SELECTION);
         }
     } else if (_key == Qt::Key_Delete && _modifiers == Qt::NoModifier) {
         
@@ -1383,6 +1399,7 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
                 deleteSelection(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_TOPOLOGY);
+            emit  createBackup(o_it->id(), "Delete Selection", UPDATE_TOPOLOGY);
         }
     }
 }
@@ -1418,6 +1435,7 @@ void MeshObjectSelectionPlugin::lassoSelection(QRegion&      _region,
                 selectVertices(bod->id(), elements);
                 alreadySelectedObjects.insert(list[i].first);
                 emit updatedObject(bod->id(), UPDATE_SELECTION);
+                emit  createBackup(bod->id(), "Lasso Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -1445,6 +1463,7 @@ void MeshObjectSelectionPlugin::lassoSelection(QRegion&      _region,
                 selectEdges(bod->id(), elements);
                 alreadySelectedObjects.insert(list[i].first);
                 emit updatedObject(bod->id(), UPDATE_SELECTION);
+                emit  createBackup(bod->id(), "Lasso Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -1483,6 +1502,7 @@ void MeshObjectSelectionPlugin::lassoSelection(QRegion&      _region,
                 
                 alreadySelectedObjects.insert(list[i].first);
                 emit updatedObject(bod->id(), UPDATE_SELECTION);
+                emit  createBackup(bod->id(), "Lasso Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -1510,6 +1530,7 @@ void MeshObjectSelectionPlugin::lassoSelection(QRegion&      _region,
                 selectFaces(bod->id(), elements);
                 alreadySelectedObjects.insert(list[i].first);
                 emit updatedObject(bod->id(), UPDATE_SELECTION);
+                emit  createBackup(bod->id(), "Lasso Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -1533,8 +1554,10 @@ bool SelectVolumeAction::operator()(BaseNode* _node) {
             selected = plugin_->volumeSelection(m, state_, &region_, type_, deselection_);
         }
 
-        if (selected)
+        if (selected){
             emit plugin_->updatedObject(object->id(), UPDATE_SELECTION);
+            emit plugin_->createBackup( object->id(), "Lasso Selection", UPDATE_SELECTION);
+        }
     }
     return true;
 }

@@ -97,7 +97,7 @@ signals:
                             QStringList _parameters, QStringList _descriptions);
 
     // BackupInterface
-    void createBackup(int _id, QString _name);
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
 
     // LoggingInterface
     void log(Logtype _type, QString _message);
@@ -143,14 +143,14 @@ private slots:
 
     // SelectionInterface
     void slotSelectionOperation(QString _operation);
-    void slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
     void slotLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
-    void slotSphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-    void slotClosestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-    void slotFloodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotSphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotClosestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
     void slotLoadSelection(const INIFile& _file);
     void slotSaveSelection(INIFile& _file);
