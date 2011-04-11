@@ -101,7 +101,7 @@ signals:
   void setJobDescription(QString _jobId, QString _description);
   
   // BackupInterface
-  void createBackup( int _id , QString _name );
+  void createBackup( int _id , QString _name, UpdateType /*_type*/ = UPDATE_ALL );
   
   // ScriptInterface
   void scriptInfo(QString _functionName);
@@ -113,7 +113,7 @@ private slots:
   void pluginsInitialized(); // BaseInterface
 
 public :
-
+  IsotropicRemesherPlugin();
   ~IsotropicRemesherPlugin() {};
 
   QString name() { return (QString("IsotropicRemesher")); };
@@ -124,6 +124,8 @@ private :
   IsotropicRemesherToolBox* tool_;
   QIcon* toolIcon_;
   double edgeLength_;
+
+  OpenFlipperThread* thread_;
 
 private slots:
   void slotRemesh();
