@@ -202,8 +202,7 @@ slot_smooth()
       mesh->garbage_collection();
 
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
-    
-    emit createBackup(o_it->id(),jobDescription );
+    emit createBackup(o_it->id(), "Smoothing", UPDATE_GEOMETRY );
   }
 
   if ( !found )
@@ -312,7 +311,7 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
     emit updatedObject( object->id(), UPDATE_GEOMETRY );
 
     // Create backup
-    emit createBackup(object->id(),jobDescription );
+    emit createBackup(object->id(),"Smoothing", UPDATE_GEOMETRY );
     
     emit scriptInfo(tr("smooth(%1, %2, %3, %4, %5)").arg(QString::number(_objectId), QString::number(_iterations),
                                                     _direction, _continuity, QString::number(_maxDistance)));
