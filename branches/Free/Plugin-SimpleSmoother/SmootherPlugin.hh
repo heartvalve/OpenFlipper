@@ -80,7 +80,7 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
     void scriptInfo(QString _functionName);
     
     // BackupInterface
-    void createBackup( int _id , QString _name );
+    void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
   public:
 
