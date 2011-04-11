@@ -99,7 +99,7 @@ void OpenFlipperThread::slotCancel( QString _jobId) {
 
 void OpenFlipperThread::slotJobFinished( ) {
   emit finished( jobId_ );
-  
+  job_ = 0;
   quit();
 }
 
