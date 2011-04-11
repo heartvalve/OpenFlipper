@@ -97,6 +97,9 @@ signals:
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
+    // BackupInterface
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
+
     // ScriptInterface
     void scriptInfo(QString _functionName);
 
