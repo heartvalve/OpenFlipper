@@ -46,7 +46,7 @@
 
 //== INCLUDES =================================================================
 
-#include <Config/ACGDefines.hh>
+#include <ACG/Config/ACGDefines.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
