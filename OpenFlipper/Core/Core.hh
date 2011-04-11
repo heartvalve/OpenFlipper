@@ -285,7 +285,7 @@ signals:
    void showFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
   
    /// SelectionInterface: This signal is emitted when standard toggle selection has been performed
-   void toggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   void toggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
    /// SelectionInterface: This signal is emitted when standard lasso selection has been performed
    void lassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
@@ -297,13 +297,13 @@ signals:
    void surfaceLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
    /// SelectionInterface: This signal is emitted when standard sphere selection has been performed
-   void sphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   void sphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
    /// SelectionInterface: This signal is emitted when standard closest boundary selection has been performed
-   void closestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   void closestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
    /// SelectionInterface: This signal is emitted when standard flood fill selection has been performed
-   void floodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+   void floodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
    /// SelectionInterface: This signal is emitted when a custom selection operation has been performed
    void customSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
@@ -347,33 +347,25 @@ signals:
    /// This signal is emitted before the core deletes its data and exits
    void saveOnExit( INIFile& _ini );
 
-   /// Tell plugins to create a backup group
-   void createBackupGroup( QString _name , int _groupId);
+   /// Tell backup-plugin to create a backup
+   void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
+   void createBackup( IdList _objectids, QString _name, std::vector<UpdateType> _types);
+
+   /// Tell backup-plugin to undo/redo
+   void undo(int _objectid);
+   void redo(int _objectid);
+   void undo();
+   void redo();
+
+   /// Backup Plugin tells other Plugins that a restore will happen
+   void aboutToRestore(int _objectId, UpdateType _type);
    
-   /// Tell plugins to create a backup
-   void createBackup( int _objectId , QString _name , int _internalId, int groupId = -1);
+   /// Backup Plugin tells other Plugins that they should restore their own data
+   void restore(int _objectId, UpdateType _type);
    
-   /// Tell Plugins to make a backup persistent
-   void makeBackupPersistent(int _objectid, int _internalId);
-   
-   /// Tell Backup Plugin to restore a group with the given group id
-   void restoreGroup( int _groupId);
-   
-   /// Tell Backup Plugin to restore an object with the given backup id
-   void restoreObject( int _objectId, int _internalId);
-   
-   
-   /** \brief Backup Plugin tells other Plugins that a restore will happen
-   */
-   void aboutToRestore(int _objectId , int _internalId);
-   
-   /** \brief Backup Plugin tells other Plugins that they should restore their own data
-   */
-   void restore(int _objectId , int _internalId);
-   
-   /** \brief Backup Plugin tells other Plugins that a restore has happened
-   */
-   void restored( int _objectId , int _internalId);
+   /// Backup Plugin tells other Plugins that a restore has happened
+   void restored( int _objectId, UpdateType _type);
+
 
    /// Tell the plugins that a file has been opened ( -> Database)
    void openedFile( int _id );
@@ -481,21 +473,6 @@ signals:
       ///Called by plugins if a multi-texture's sub textures should be fetched
       void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
 
-      /// Called if a backup group is requested by the plugins
-      void slotBackupGroup(QString _name, int& _groupId );
-      
-      /// Called if a backup is requested by the plugins
-      void slotBackup( int _objectId, QString _name, int& _internalId, int _groupId = -1 );
-      
-      /// Called if a backup is requested by the plugins
-      void slotBackup( int _objectId, QString _name );
-
-      /// Called if a group restore is requested by the plugins
-      void slotRestoreGroup( int _groupId);
-      
-      /// Called if a backup is requested by the plugins
-      void slotRestore( int _objectId, int _internalId = -1 );
-
       /// A plugin wants to load a given file
       void slotLoad(QString _filename, DataType _type, int& _id);
 
@@ -549,7 +526,7 @@ signals:
       void slotShowFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
 
       /// SelectionInterface: Called when toggle selection operation has been performed
-      void slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+      void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when lasso selection operation has been performed
       void slotLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
@@ -561,13 +538,13 @@ signals:
       void slotSurfaceLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when sphere selection operation has been performed
-      void slotSphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+      void slotSphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when closest boundary selection operation has been performed
-      void slotClosestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+      void slotClosestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when flood fill selection operation has been performed
-      void slotFloodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+      void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when custom selection operation has been performed
       void slotCustomSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
@@ -932,6 +909,9 @@ private slots:
 
       /// Open Recent file
       void slotRecentOpen(QAction* _action);
+
+      /// Slot for generating type specific backups
+      void slotGenerateBackup( int _id, QString _name, UpdateType _type );
 
    public slots:
 
