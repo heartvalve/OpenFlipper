@@ -102,7 +102,7 @@ signals:
   void scriptInfo( QString _functionName );
   
   // BackupInterface
-  void createBackup( int _id , QString _name );
+  void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
 private slots:
     // BaseInterface
