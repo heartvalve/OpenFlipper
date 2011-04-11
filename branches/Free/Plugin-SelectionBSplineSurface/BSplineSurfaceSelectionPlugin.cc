@@ -201,7 +201,8 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
                 selectAllControlPoints(o_it->id());
             }
             
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Select All Controlpoints", UPDATE_SELECTION);
         }
     } else if (_operation == CP_DESELECT_ALL) {
         // Deselect all control points
@@ -212,6 +213,7 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
             }
             
             emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit  createBackup(o_it->id(), "Deselect All Controlpoints", UPDATE_SELECTION);
         }
     } else if (_operation == CP_INVERT) {
         // Invert control point selection
@@ -221,7 +223,8 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
                invertControlPointSelection(o_it->id());
             }
             
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Invert Controlpoint Selection", UPDATE_SELECTION);
         }
 //     } else if (_operation == CP_DELETE_U) {
 //         // Delete control point selection
@@ -251,7 +254,8 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
                 selectAllKnots(o_it->id());
             }
             
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Select All Knots", UPDATE_SELECTION);
         }
     } else if (_operation == K_DESELECT_ALL) {
         // Deselect all control points
@@ -261,7 +265,8 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
                deselectAllKnots(o_it->id());
             }
             
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Deselect All Knots", UPDATE_SELECTION);
         }
     } else if (_operation == K_INVERT) {
         // Invert knot selection
@@ -271,7 +276,8 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
                invertKnotSelection(o_it->id());
             }
             
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Invert Knot Selection", UPDATE_SELECTION);
         }
 //     } else if (_operation == K_DELETE_U) {
 //         // Delete knot selection
@@ -335,6 +341,7 @@ void BSplineSurfaceSelectionPlugin::slotToggleSelection(QPoint _position, Select
                 }
                 bsso->splineSurfaceNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineSurfaceNodeT<BSplineSurface>::CONTROLPOINT);
                 emit updatedObject(bsso->id(), UPDATE_SELECTION);
+                emit  createBackup(bsso->id(), "Toggle Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -405,6 +412,7 @@ void BSplineSurfaceSelectionPlugin::slotToggleSelection(QPoint _position, Select
                 
                 bsso->splineSurfaceNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineSurfaceNodeT<BSplineSurface>::KNOTVECTOR);
                 emit updatedObject(bsso->id(), UPDATE_SELECTION);
+                emit  createBackup(bsso->id(), "Toggle Selection", UPDATE_SELECTION);
             }
         }
     }
@@ -534,7 +542,8 @@ void BSplineSurfaceSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event
                 }
             }
         
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Lasso Selection", UPDATE_SELECTION);
         }
 
         // Clear lasso points
@@ -587,6 +596,7 @@ void BSplineSurfaceSelectionPlugin::slotLoadSelection(const INIFile& _file) {
         selectKnots(o_it->id(), ids_u, ids_v);
         
         emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        emit  createBackup(o_it->id(), "Load Selection", UPDATE_SELECTION);
     }
     
     setSelectionViewMode(CP);
@@ -643,7 +653,8 @@ void BSplineSurfaceSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardM
                 if(type & controlPointType_) selectAllControlPoints(o_it->id());
                 if(type & knotType_) selectAllKnots(o_it->id());
             }
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Select All", UPDATE_SELECTION);
         }
     } else if(_key == Qt::Key_C && _modifiers == Qt::NoModifier) {
         // Deselect all
@@ -654,6 +665,7 @@ void BSplineSurfaceSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardM
                 if(type & knotType_) deselectAllKnots(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit  createBackup(o_it->id(), "Clear Selection", UPDATE_SELECTION);
         }
     } else if(_key == Qt::Key_I && _modifiers == Qt::NoModifier) {
         // Invert selection
@@ -663,7 +675,8 @@ void BSplineSurfaceSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardM
                 if(type & controlPointType_) invertControlPointSelection(o_it->id());
                 if(type & knotType_) invertKnotSelection(o_it->id());
             }
-            emit updatedObject(o_it->id(), UPDATE_SELECTION);    
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+            emit  createBackup(o_it->id(), "Invert Selection", UPDATE_SELECTION);
         }
     }
 }
