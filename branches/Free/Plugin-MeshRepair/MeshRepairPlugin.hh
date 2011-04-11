@@ -85,7 +85,7 @@ signals:
     void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
 
     // Backup Interface
-    void createBackup( int _objectid, QString _name);
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
 
     // RPC Interface
     void pluginExists( QString _pluginName , bool& _exists  ) ;
