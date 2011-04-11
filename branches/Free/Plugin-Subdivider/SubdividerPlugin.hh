@@ -86,7 +86,7 @@ signals:
   void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
   
   // BackupInterface
-  void createBackup( int _id , QString _name );
+  void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
   
   // ScriptInterface
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
