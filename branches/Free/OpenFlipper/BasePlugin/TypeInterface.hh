@@ -66,18 +66,18 @@
 class TypeInterface {
 
   signals:
-    
+
     /** \brief Emit this signal if an empty object has been created
      *
      * @param _id Id of the added object
      */
     virtual void emptyObjectAdded( int _id ) {};
-  
+
   public:
 
     /// Destructor
     virtual ~TypeInterface() {};
-    
+
   public slots:
 
     virtual bool registerType() = 0;
@@ -95,6 +95,15 @@ class TypeInterface {
     * a given dataType. If so, your addEmpty function will be invoked to create it.
     */
     virtual DataType supportedType() = 0;
+
+    /** \brief This slot should be implemented in a TypePlugin to generate type specific backups
+     *
+     * @param _id Id of the added object
+     * @param _name name of the backup
+     * @param _type the type of backup that needs to be done
+     */
+    virtual void generateBackup( int _id, QString _name, UpdateType _type ){};
+
 };
 
 
