@@ -181,7 +181,7 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
       emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
       
       // Create backup
-      emit createBackup(o_it->id(), "Simple Smoothing");
+      emit createBackup(o_it->id(), "Simple Smoothing", UPDATE_GEOMETRY );
 
    } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
 
@@ -250,7 +250,7 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
       emit updatedObject( o_it->id() , UPDATE_GEOMETRY);
       
       // Create backup
-      emit createBackup(o_it->id(), "Simple Smoothing");
+      emit createBackup(o_it->id(), "Simple Smoothing", UPDATE_GEOMETRY);
 
     } else {
 
