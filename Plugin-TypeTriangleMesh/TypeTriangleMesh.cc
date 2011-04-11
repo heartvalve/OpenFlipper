@@ -43,17 +43,25 @@
 
 #include "TypeTriangleMesh.hh"
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/BackupData.hh>
+#include "TriMeshBackup.hh"
+
+//-----------------------------------------------------------------------------
 
 TypeTriangleMeshPlugin::TypeTriangleMeshPlugin() {
-  
+
 }
+
+//-----------------------------------------------------------------------------
 
 bool TypeTriangleMeshPlugin::registerType() {
   addDataType("TriangleMesh",tr("TriangleMesh"));
   setTypeIcon( "TriangleMesh", "TriangleType.png");
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 int TypeTriangleMeshPlugin::addEmpty(){
     
@@ -81,6 +89,8 @@ int TypeTriangleMeshPlugin::addEmpty(){
   return object->id();
 }
 
+//-----------------------------------------------------------------------------
+
 QString TypeTriangleMeshPlugin::get_unique_name(TriMeshObject* _object)
 {
   bool name_unique = false;
@@ -107,6 +117,37 @@ QString TypeTriangleMeshPlugin::get_unique_name(TriMeshObject* _object)
 
   return QString(tr("TriangleMesh %1.off").arg( cur_idx ));
 }
+
+//-----------------------------------------------------------------------------
+
+void TypeTriangleMeshPlugin::generateBackup( int _id, QString _name, UpdateType _type ){
+  
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_id, object);
+  
+  TriMeshObject* meshObj = PluginFunctions::triMeshObject(object);
+  
+  if ( meshObj != 0 ){
+
+    //get backup object data
+    BackupData* backupData = 0;
+
+    if ( object->hasObjectData( OBJECT_BACKUPS ) )
+      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+    else{
+      //add backup data
+      backupData = new BackupData(object);
+      object->setObjectData(OBJECT_BACKUPS, backupData);
+    }
+    
+    //store a new backup
+    TriMeshBackup* backup = new TriMeshBackup(meshObj, _name, _type);
+    
+    backupData->storeBackup( backup );
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( typetrianglemeshplugin , TypeTriangleMeshPlugin );
 
