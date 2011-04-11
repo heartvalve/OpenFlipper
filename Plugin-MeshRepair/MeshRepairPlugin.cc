@@ -141,13 +141,7 @@ void MeshRepairPlugin::selectEdgesLongerThan(int _objectId,double _length) {
 //-----------------------------------------------------------------------------
 
 void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _larger) {
-  
-  QString backupstring = tr("Selected Edges ");
-  if ( _larger ) 
-    backupstring += tr("larger than ") + QString::number(_length);
-  else
-    backupstring += tr("shorter than ") + QString::number(_length);
-      
+
   // get the target mesh
   TriMesh* triMesh = 0;
   
@@ -175,7 +169,7 @@ void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _
     }
     
     emit updatedObject(_objectId,UPDATE_SELECTION);
-    emit createBackup( _objectId, backupstring);
+    emit createBackup( _objectId, "Select Edges", UPDATE_SELECTION);
     
     return;
   }
@@ -206,7 +200,7 @@ void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _
     }
  
     emit updatedObject(_objectId,UPDATE_SELECTION);
-    emit createBackup( _objectId, backupstring);
+    emit createBackup( _objectId, "Select Edges", UPDATE_SELECTION);
     
     return;
   }
@@ -268,12 +262,12 @@ void MeshRepairPlugin::detectFlatTriangles(int _objectId, double _angle) {
         }
     }
     else {
-	emit log(LOGERR, "Cannot detect flat triangles on non-trimesh " + QString::number(_objectId) + ".");
+      emit log(LOGERR, "Cannot detect flat triangles on non-trimesh " + QString::number(_objectId) + ".");
     }
     
     if (count > 0) {
         emit updatedObject(_objectId, UPDATE_SELECTION);
-        emit createBackup(_objectId, "Select vertices with face angle difference smaller than " + QString::number(_angle));
+        emit createBackup(_objectId, "Select vertices", UPDATE_SELECTION);
     }
     emit log ("Selected " + QString::number(count) + " vertices on object " + QString::number(_objectId) + " with face angle difference smaller than " + QString::number(_angle) + ".");
     emit scriptInfo( "detectFlatTriangles(" + QString::number(_objectId) + ", " + QString::number(_angle) + ")" );
@@ -327,7 +321,7 @@ void MeshRepairPlugin::slotRemoveSelectedVal3Vertices() {
 
         if (count > 0) {
             emit updatedObject(o_it->id(), UPDATE_ALL);
-            emit createBackup(o_it->id(), "Delete/merge all " + QString::number(count) + " selected vertices.");
+            emit createBackup(o_it->id(), "Delete/merge selected vertices", UPDATE_ALL);
         }
         emit log ("Deleted " + QString::number(count) + " vertices on object " + QString::number(o_it->id()) + ".");
     }
@@ -379,7 +373,7 @@ void MeshRepairPlugin::removeSelectedEdges(int _objectId){
     
     
     emit updatedObject(_objectId,UPDATE_ALL);
-    emit createBackup( _objectId, "Removed selected Edges");
+    emit createBackup( _objectId, "Removed selected Edges", UPDATE_ALL);
     emit scriptInfo( "removeSelectedEdges(" + QString::number(_objectId) + ")" );
     
     return;
@@ -444,7 +438,7 @@ flipOrientation(int _objectId)
     triMesh->update_normals();
     
     emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Flipped Normals");
+    emit createBackup( _objectId, "Flipped Normals", UPDATE_ALL);
     emit scriptInfo( "flipOrientation(" + QString::number(_objectId) + ")" );
     
     return;
@@ -502,7 +496,7 @@ flipOrientation(int _objectId)
     polyMesh->update_normals();
     
     emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Flipped Normals");
+    emit createBackup( _objectId, "Flipped Normals", UPDATE_ALL);
     emit scriptInfo( "flipOrientation(" + QString::number(_objectId) + ")" );
     
     return;
@@ -574,10 +568,10 @@ void MeshRepairPlugin::detectSkinnyTriangleByAngle(int _objectId, double _angle,
     
     if ( _remove ) {
       emit updatedObject(_objectId, UPDATE_ALL);
-      emit createBackup( _objectId, tr("Removed cap edges with angle > %1 .").arg(angle) );
+      emit createBackup( _objectId, tr("Removed cap edges"), UPDATE_ALL );
     } else {
       emit updatedObject(_objectId, UPDATE_SELECTION);
-      emit createBackup( _objectId, tr("Selected cap edges with angle > %1 .").arg(angle) );
+      emit createBackup( _objectId, tr("Selected cap edges"), UPDATE_ALL );
     }
     emit scriptInfo( "detectSkinnyTriangleByAngle(" + QString::number(_objectId) + "," + QString::number(_angle) + "," + _remove + ")" );
     
@@ -687,7 +681,7 @@ void MeshRepairPlugin::slotDetectFoldover() {
         
         if (count > 0) {
             emit updatedObject(o_it->id(), UPDATE_SELECTION);
-            emit createBackup(o_it->id(), "Select edges with angle greater than " + QString::number(angle));
+            emit createBackup(o_it->id(), "Select edges", UPDATE_SELECTION);
         }
         emit log ("Selected " + QString::number(count) + " fold-overs on object " + QString::number(o_it->id()) + " with angle greater than " + QString::number(angle) + ".");
     }
@@ -740,7 +734,7 @@ void MeshRepairPlugin::slotDetectTriangleAspect() {
         }
         if (count > 0) {
             emit updatedObject(o_it->id(), UPDATE_SELECTION);
-            emit createBackup(o_it->id(), "Select triangles with aspect ratio greater than " + QString::number(aspect));
+            emit createBackup(o_it->id(), "Select triangles", UPDATE_SELECTION);
         }
         emit log ("Selected " + QString::number(count) + " triangles on object " + QString::number(o_it->id()) + " with aspect ratio greater than " + QString::number(aspect) + ".");
     }
