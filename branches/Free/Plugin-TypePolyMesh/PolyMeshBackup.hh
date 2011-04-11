@@ -34,75 +34,34 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-#ifndef TYPEPOLYMESHPLUGIN_HH
-#define TYPEPOLYMESHPLUGIN_HH
-
-#include <QObject>
-
-#include <OpenFlipper/common/Types.hh>
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
-#include <OpenFlipper/BasePlugin/TypeInterface.hh>
+#ifndef POLYMESHBACKUP_HH
+#define POLYMESHBACKUP_HH
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <OpenFlipper/common/BaseBackup.hh>
 
-class TypePolyMeshPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface
+/**
+ * @brief Class that encapsulates a backup
+ */
+class PolyMeshBackup : public BaseBackup
 {
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(LoadSaveInterface)
-   Q_INTERFACES(LoggingInterface)
-   Q_INTERFACES(TypeInterface)
 
-  signals:
-    // Logging interface
-    void log(Logtype _type, QString _message);
-    void log(QString _message);
-    
-    // LoadSave Interface
-    void emptyObjectAdded( int _id );
+  public:
+    PolyMeshBackup(PolyMeshObject* _meshObj, QString _name, UpdateType _type);
+    ~PolyMeshBackup();
 
-  private slots:
-
-    void noguiSupported( ) {} ;
-
-  public :
-
-     ~TypePolyMeshPlugin() {};
-     TypePolyMeshPlugin();
-
-     QString name() { return (QString("TypePolyMesh")); };
-     QString description( ) { return (QString(tr("Register PolyMesh type"))); };
-     
-     bool registerType();
-
-  public slots:
-
-    // Base Interface
-    QString version() { return QString("1.0"); };
-    
-    // Type Interface
-    int addEmpty();
-    DataType supportedType() { return DATA_POLY_MESH; }; 
-
-    // Type Interface
-    void generateBackup( int _id, QString _name, UpdateType _type );
+  public:
+    void apply();
 
   private:
-    
-    /// Return unique name for object
-    QString get_unique_name(PolyMeshObject* _object);
-
+    PolyMeshObject* meshObj_;
+    PolyMesh* meshBackup_;
 };
 
-#endif //TYPEPOLYMESHPLUGIN_HH
+#endif //POLYMESHBACKUP_HH
