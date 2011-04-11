@@ -1166,7 +1166,7 @@ void SelectionBasePlugin::slotToggleSelection(QMouseEvent* _event) {
         
         if (_event->button() == Qt::RightButton) return;
         
-        emit toggleSelection(_event->pos(), currentPrimitiveType_, deselection_);   
+        emit toggleSelection(_event, currentPrimitiveType_, deselection_);   
     }
 }
 
@@ -1333,9 +1333,11 @@ void SelectionBasePlugin::slotSphereSelection(QMouseEvent* _event) {
             sphere_node_->set_position(hit_point);
             sphere_node_->set_size(sphere_radius_);
             
-            if(_event->buttons() & Qt::LeftButton) {
+            if( (_event->buttons() & Qt::LeftButton) //left button
+              ||( (_event->buttons() == Qt::NoButton) && (_event->type() == QEvent::MouseButtonRelease)) // or release of left button
+              ) {
                 // Inform selection plugins about the performed action
-                emit sphereSelection(_event->pos(), sphere_radius_, currentPrimitiveType_, deselection_);
+                emit sphereSelection(_event, sphere_radius_, currentPrimitiveType_, deselection_);
             }
             
         }
@@ -1354,7 +1356,7 @@ void SelectionBasePlugin::slotBoundarySelection(QMouseEvent* _event) {
         
         if (_event->button() == Qt::RightButton) return;
         
-        emit closestBoundarySelection(_event->pos(), currentPrimitiveType_, deselection_);
+        emit closestBoundarySelection(_event, currentPrimitiveType_, deselection_);
     }
 }
 
@@ -1372,7 +1374,7 @@ void SelectionBasePlugin::slotFloodFillSelection(QMouseEvent* _event) {
         if(!OpenFlipper::Options::nogui())
             maxAngle = tool_->maxFloodFillAngle->value();
         
-        emit floodFillSelection(_event->pos(), maxAngle, currentPrimitiveType_, deselection_);
+        emit floodFillSelection(_event, maxAngle, currentPrimitiveType_, deselection_);
     }
 }
 
