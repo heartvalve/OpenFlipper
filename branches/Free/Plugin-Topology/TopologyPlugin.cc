@@ -316,7 +316,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
             clearAddFaceVertices();
 
             if ( fh.is_valid() )
-              emit createBackup(object->id(),"Add Face");
+              emit createBackup(object->id(),"Add Face", UPDATE_TOPOLOGY);
             else
               emit log(LOGERR,"Unable to add face!");
 
@@ -431,7 +431,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
             clearAddFaceVertices();
 
             if ( fh.is_valid() )
-              emit createBackup(object->id(),"Add Face");
+              emit createBackup(object->id(),"Add Face", UPDATE_TOPOLOGY);
             else
               emit log(LOGERR,"Unable to add face!");
 
@@ -473,7 +473,7 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
-            emit createBackup(object->id(),"Split Face");
+            emit createBackup(object->id(),"Split Face", UPDATE_TOPOLOGY);
          }
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
@@ -527,7 +527,7 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
 
          emit updatedObject(object->id(), UPDATE_TOPOLOGY);
          emit updateView();
-         emit createBackup(object->id(),"Delete Face");
+         emit createBackup(object->id(),"Delete Face", UPDATE_TOPOLOGY);
       } else return;
    }
 }
@@ -584,7 +584,7 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
-            emit createBackup(object->id(),"Edge Flip");
+            emit createBackup(object->id(),"Edge Flip", UPDATE_TOPOLOGY);
          }
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
@@ -655,7 +655,7 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
-            emit createBackup(object->id(),"Edge Collapse");
+            emit createBackup(object->id(),"Edge Collapse", UPDATE_TOPOLOGY);
          }
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
@@ -715,7 +715,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
-            emit createBackup(object->id(),"Edge Split");
+            emit createBackup(object->id(),"Edge Split", UPDATE_TOPOLOGY);
          }
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {

@@ -74,7 +74,7 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
     void addHiddenPickMode( const std::string _mode );
 
     // BackupInterface
-    void createBackup( int _id , QString _name );
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
 
     // LoggingInterface
     void log(Logtype _type, QString _message);
