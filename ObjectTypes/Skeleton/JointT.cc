@@ -72,7 +72,8 @@ template<typename PointT>
 JointT<PointT>::JointT(const Joint &_other) :
   id_(_other.id_),
   selected_(_other.selected_),
-  parent_(0)
+  parent_(0),
+  name_(_other.name_)
 {
 }
 

@@ -110,7 +110,10 @@ public:
   /// Default constructor
   SkeletonT();
   /// Copy constructor
-  SkeletonT(const SkeletonT<PointT> &_other);
+  SkeletonT(const SkeletonT<PointT>& _other);
+  /// Assignment operator
+  SkeletonT& operator= (const SkeletonT<PointT>& _other);
+
   /// Destructor
   ~SkeletonT();
 

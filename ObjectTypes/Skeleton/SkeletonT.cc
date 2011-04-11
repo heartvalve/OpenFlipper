@@ -332,6 +332,52 @@ SkeletonT<PointT>::SkeletonT(const SkeletonT<PointT> &_other) :
 //-----------------------------------------------------------------------------
 
 /**
+ * @brief Assignment operator - returns a copy of the skeleton
+ *
+ * The copy does not inherit properties. You have to copy them yourself if you need them in the clone.
+ */
+template<typename PointT>
+SkeletonT<PointT>& SkeletonT<PointT>::operator= (const SkeletonT<PointT>& _other){
+
+  if (this != &_other){ // protect against invalid self-assignment
+
+    // clear the current skeleton
+    clear();
+
+    // create a copy of the joints, not yet linked because they refer to each other using pointers
+    for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
+      joints_.push_back(new Joint(**it));
+      insert_property_at( (*it)->id() );
+    }
+
+    // construct the links
+    for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
+      Joint *pJoint = *it;
+
+      if(pJoint->parent() != 0)
+        joint(pJoint->id())->parent_ = joint(pJoint->parent()->id());
+      else
+        joint(pJoint->id())->parent_ = 0;
+
+      for(typename Joint::ChildIter it_ch = pJoint->begin(); it_ch != pJoint->end(); ++it_ch)
+        joint(pJoint->id())->children_.push_back( joint((*it_ch)->id()) );
+    }
+
+    names_.insert(_other.names_.begin(), _other.names_.end());
+
+    for(typename vector<Animation*>::const_iterator it = _other.animations_.begin(); it != _other.animations_.end(); ++it)
+      if (*it)
+        animations_.push_back((**it).copy());
+
+    referencePose_ = _other.referencePose_;
+  }
+
+  return *this;
+}
+
+//-----------------------------------------------------------------------------
+
+/**
  * @brief Destructor
  *
  */
@@ -471,6 +517,7 @@ inline void SkeletonT<PointT>::clear()
     delete *it;
 
   joints_.clear();
+  names_.clear();
 }
 
 //-----------------------------------------------------------------------------
