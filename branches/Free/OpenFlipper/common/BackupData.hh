@@ -47,6 +47,7 @@
 #include <OpenFlipper/common/perObjectData.hh>
 #include <OpenFlipper/common/UpdateType.hh>
 #include <OpenFlipper/common/BaseBackup.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 #define OBJECT_BACKUPS "Object Backups"
 
@@ -55,7 +56,7 @@
  *
  * The default implementation can only backup perObjectDatas
  */
-class BackupData : public PerObjectData
+class DLLEXPORT BackupData : public PerObjectData
 {
 
   public:
