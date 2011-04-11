@@ -93,6 +93,9 @@ signals:
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
 
+    // BackupInterface
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
+
     // LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
@@ -127,7 +130,7 @@ private slots:
 
     // SelectionInterface
     void slotSelectionOperation(QString _operation);
-    void slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
     void slotLoadSelection(const INIFile& _file);
