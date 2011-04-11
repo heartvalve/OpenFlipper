@@ -160,10 +160,10 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
   tmo->update();
 
   // Create backup
-  emit createBackup(object->id(), "Subdivider");
+  emit createBackup(object->id(), "Subdivider", UPDATE_TOPOLOGY);
   
   // Geometry and topology changed!
-  emit updatedObject(object->id(), UPDATE_ALL);
+  emit updatedObject(object->id(), UPDATE_TOPOLOGY);
 
 }
 
