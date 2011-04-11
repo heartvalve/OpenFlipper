@@ -34,91 +34,34 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+#ifndef SKELETONBACKUP_HH
+#define SKELETONBACKUP_HH
 
-
-
-#ifndef TYPESKELETONPLUGIN_HH
-#define TYPESKELETONPLUGIN_HH
-
-#include <QObject>
-
-#include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/Skeleton/Skeleton.hh>
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
-#include <OpenFlipper/BasePlugin/TypeInterface.hh>
-#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/common/BaseBackup.hh>
 
-class TypeSkeletonPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, ContextMenuInterface
+/**
+ * @brief Class that encapsulates a backup
+ */
+class SkeletonBackup : public BaseBackup
 {
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(LoadSaveInterface)
-   Q_INTERFACES(LoggingInterface)
-   Q_INTERFACES(TypeInterface)
-   Q_INTERFACES(ContextMenuInterface)
 
-  signals:
-    // Logging interface
-    void log(Logtype _type, QString _message);
-    void log(QString _message);
-    
-    // LoadSave Interface
-    void emptyObjectAdded( int _id );
+  public:
+    SkeletonBackup(SkeletonObject* _skelObj, QString _name, UpdateType _type);
+    ~SkeletonBackup();
 
-    // ContextMenuInterface
-    void addContextMenuItem(QAction* _action , ContextMenuType _type);
-    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
-    
-  private slots:
-    void pluginsInitialized();
-    void noguiSupported( ) {} ;
-    
-    void slotUpdateContextMenu( int _objectId );
-    
-    void slotShowIndices();
-    void slotShowCoordFrames();
-    void slotShowMotionPath();
+  public:
+    void apply();
 
   private:
-    QAction* showIndicesAction_;
-    QAction* showCoordFramesAction_;
-    QAction* showMotionAction_;
-    
-  public :
-
-     ~TypeSkeletonPlugin() {};
-     TypeSkeletonPlugin();
-
-     QString name() { return (QString("TypeSkeleton")); };
-     QString description( ) { return (QString(tr("Register Skeleton type"))); };
-     
-     bool registerType();
-
-  public slots:
-
-    // Base Interface
-    QString version() { return QString("1.0"); };
-    
-    // Type Interface
-    int addEmpty();
-    DataType supportedType() { return DATA_SKELETON; }; 
-    
-    // Type Interface
-    void generateBackup( int _id, QString _name, UpdateType _type );
-    
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(SkeletonObject* _object);
-
+    SkeletonObject* skelObj_;
+    Skeleton* skelBackup_;
 };
 
-#endif //TYPESKELETONPLUGIN_HH
+#endif //SKELETONBACKUP_HH

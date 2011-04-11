@@ -44,6 +44,8 @@
 #include "TypeSkeleton.hh"
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/common/BackupData.hh>
+#include "SkeletonBackup.hh"
 
 TypeSkeletonPlugin::TypeSkeletonPlugin()
   : showIndicesAction_(0),
@@ -232,6 +234,31 @@ QString TypeSkeletonPlugin::get_unique_name(SkeletonObject* _object)
   return QString(tr("Skeleton %1").arg( cur_idx ));
 }
 
+void TypeSkeletonPlugin::generateBackup( int _id, QString _name, UpdateType _type ){
+  
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_id, object);
+  
+  SkeletonObject* skelObj = PluginFunctions::skeletonObject(object);
+  
+  if ( skelObj != 0 ){
+
+    //get backup object data
+    BackupData* backupData = 0;
+
+    if ( object->hasObjectData( OBJECT_BACKUPS ) )
+      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+    else{
+      //add backup data
+      backupData = new BackupData(object);
+      object->setObjectData(OBJECT_BACKUPS, backupData);
+    }
+    
+    //store a new backup
+    SkeletonBackup* backup = new SkeletonBackup(skelObj, _name, _type);
+    backupData->storeBackup( backup );
+  }
+}
 
 Q_EXPORT_PLUGIN2( typeskeletonplugin , TypeSkeletonPlugin );
 
