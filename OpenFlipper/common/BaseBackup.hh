@@ -47,11 +47,12 @@
 #include <OpenFlipper/common/BaseObjectData.hh>
 #include <OpenFlipper/common/UpdateType.hh>
 #include <OpenFlipper/common/perObjectData.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 /**
  * @brief Class that encapsulates a backup
  */
-class BaseBackup
+class DLLEXPORT BaseBackup
 {
 
   public:
