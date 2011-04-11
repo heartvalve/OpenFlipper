@@ -787,11 +787,11 @@ class SelectionInterface {
     *  This connects to slotToggleSelection(QPoint,QString) which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
-    *  @param _position            The 2-D position of the mouse cursor in local screen coordinates
+    *  @param _event               The mouse event that currently is performed
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void toggleSelection(QPoint _position, PrimitiveType _currentType, bool _deselect) {};
+   virtual void toggleSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a lasso selection
     *
@@ -831,35 +831,35 @@ class SelectionInterface {
     *  This connects to slotSphereSelection(QPoint,QString) which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
-    *  @param _position            The 2-D position of the mouse cursor
+    *  @param _event               The mouse event that currently is performed
     *  @param _radius              The current radius of the selection sphere
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void sphereSelection(QPoint _position, double _radius, PrimitiveType _currentType, bool _deselect) {};
+   virtual void sphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a closest boundary selection
     *
     *  This connects to slotClosestBoundarySelection(QPoint,QString) which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
-    *  @param _position            The 2-D position of the mouse cursor in local screen coordinates
+    *  @param _event               The mouse event that currently is performed
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void closestBoundarySelection(QPoint _position, PrimitiveType _currentType, bool _deselect) {};
+   virtual void closestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a flood fill selection
     *
     *  This connects to slotFloodFillSelection(QPoint,QString) which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
-    *  @param _position            The 2-D position of the mouse cursor in local screen coordinates
+    *  @param _event               The mouse event that currently is performed
     *  @param _maxAngle            The maximum angle used for flood filling
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void floodFillSelection(QPoint _position, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
+   virtual void floodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a custom selection
     *
