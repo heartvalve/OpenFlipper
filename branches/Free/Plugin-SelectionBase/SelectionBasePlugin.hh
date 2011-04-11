@@ -110,13 +110,13 @@ Q_INTERFACES(SelectionInterface)
         void addToolbar(QToolBar* _toolbar);
         
         // SelectionInterface
-        void toggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+        void toggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void lassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void volumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void surfaceLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-        void sphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-        void closestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-        void floodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+        void sphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+        void closestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+        void floodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void customSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
         
         void selectionOperation(QString _operation);
