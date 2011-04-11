@@ -48,6 +48,7 @@ endfunction ()
 
 # print plugin statistics
 function (of_print_plugin_stats)
+
   acg_color_message ("\n${_escape}[4mPlugin configure check results:${_escape}[0m\n")
   file (
     GLOB _plugins_in
@@ -67,22 +68,86 @@ function (of_print_plugin_stats)
     endif ()
   endforeach ()
 
-  foreach (_plugin ${_plugins_in})
-      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
-      string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 25 _plugin_name)
 
-      if (DISABLE_PLUGIN_${_PLUGIN})
-          acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mDisabled${_escape}[0m")
+  # Sort plugins into lists depending on configure status:
+  set (PLUGINS_OK "")
+  set (PLUGINS_DISABLED "")
+  set (PLUGINS_DEPENDENCIES "")
+  set (PLUGINS_NO_CMAKE "")
+
+  foreach (_plugin ${_plugins_in})
+     string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+     string (TOUPPER ${_plugin_name} _PLUGIN)
+     acg_format_string (${_plugin_name} 25 _plugin_name)
+
+     if (DISABLE_PLUGIN_${_PLUGIN})
+          list( APPEND PLUGINS_DISABLED ${_plugin} )
       elseif (NOT EXISTS ${CMAKE_SOURCE_DIR}/${_plugin}/CMakeLists.txt)
-          acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mNo CMake build system${_escape}[0m")
+           list( APPEND PLUGINS_NO_CMAKE ${_plugin} )
       else ()
           if (OPENFLIPPER_${_PLUGIN}_BUILD)
-              acg_color_message ("  ${_plugin_name}: ${_escape}[1;32mYes${_escape}[0m")
+              list( APPEND PLUGINS_OK ${_plugin} )
           else ()
-              acg_color_message ("  ${_plugin_name}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
+              list( APPEND PLUGINS_DEPENDENCIES ${_plugin} )
           endif ()
       endif ()
   endforeach ()
+
+  message ("")
+
+  # Print all plugins, which have no cmake build system
+  if ( NOT PLUGINS_NO_CMAKE EQUAL "" )
+    acg_color_message ("\n${_escape}[4mPlugins without cmake build system:${_escape}[0m\n")
+    foreach (_plugin ${PLUGINS_NO_CMAKE})
+      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+      string (TOUPPER ${_plugin_name} _PLUGIN)
+      acg_format_string (${_plugin_name} 25 _plugin_name)
+ 
+      acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mNo CMake build system${_escape}[0m")
+    endforeach ()
+  endif()
+
+  message ("")
+ 
+  # Print all plugins, which are ok
+  if ( NOT PLUGINS_OK EQUAL "" )
+    acg_color_message ("\n${_escape}[4mPlugins configured successfully:${_escape}[0m\n")
+    foreach (_plugin ${PLUGINS_OK})
+      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+      string (TOUPPER ${_plugin_name} _PLUGIN)
+      acg_format_string (${_plugin_name} 25 _plugin_name)
+ 
+      acg_color_message ("  ${_plugin_name}: ${_escape}[1;32mYes${_escape}[0m")
+    endforeach ()
+  endif()
+
+  message ("")
+
+  # Print all plugins, which are disabled
+  if ( NOT PLUGINS_DISABLED EQUAL "" )
+    acg_color_message ("\n${_escape}[4mPlugins disabled:${_escape}[0m\n")
+    foreach (_plugin ${PLUGINS_DISABLED})
+      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+      string (TOUPPER ${_plugin_name} _PLUGIN)
+      acg_format_string (${_plugin_name} 25 _plugin_name)
+                                                                                       
+      acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mDisabled${_escape}[0m")
+    endforeach ()
+  endif()
+
+  message ("")
+
+  # Print all plugins, which have missing dependencies
+  if ( NOT PLUGINS_DEPENDENCIES EQUAL "" )
+    acg_color_message ("\n${_escape}[4mPlugins with missing dependencies:${_escape}[0m\n")
+    foreach (_plugin ${PLUGINS_DEPENDENCIES})
+      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+      string (TOUPPER ${_plugin_name} _PLUGIN)
+      acg_format_string (${_plugin_name} 25 _plugin_name)
+                                                                                       
+      acg_color_message ("  ${_plugin_name}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
+    endforeach ()
+  endif()
+
   message ("")
 endfunction ()
