@@ -161,6 +161,12 @@ public:
 private:
   StripProcessorT<Mesh> stripProcessor_;
 
+  std::vector<unsigned int> tris_; // tri list
+  std::vector<unsigned int> vertRemap_; // vertex remapping
+
+  GLuint indexBuffer_;
+  bool indexBufferInitialized_;
+
 /** @} */  
 
 //===========================================================================

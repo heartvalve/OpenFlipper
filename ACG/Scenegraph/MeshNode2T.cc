@@ -51,6 +51,8 @@
 
 #define ACG_MESHNODE_C
 
+#include <ACG/Geometry/GPUCacheOptimizer.hh>
+
 //== NAMESPACES ===============================================================
 
 
@@ -71,6 +73,8 @@ MeshNodeT(Mesh&        _mesh,
   BaseNode(_parent, _name),
   mesh_(_mesh),
   stripProcessor_(_mesh),
+  indexBuffer_(0),
+  indexBufferInitialized_(false),
   vertexBuffer_(0),
   vertexBufferInitialized_(false),
   enableNormals_(true),
@@ -129,6 +133,9 @@ MeshNodeT<Mesh>::
   
   if (lineIndexBuffer_)
     glDeleteBuffersARB(1, &lineIndexBuffer_);     
+
+  if (indexBuffer_)
+	  glDeleteBuffersARB(1, &indexBuffer_);     
   
   if (vertexPickingList_)
     glDeleteLists (vertexPickingList_, 1);
@@ -539,18 +546,13 @@ draw_faces(FaceMode _mode) {
   
   // If we have all properties per Vertex, we can render with index array from triangle strips!
   if (_mode == PER_VERTEX) {
-    
-    typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
-    typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
-    
-    
-    
-    for (; strip_it!=strip_last; ++strip_it) {
-      glDrawElements(GL_TRIANGLE_STRIP,
-                    strip_it->indexArray.size(),
-                    GL_UNSIGNED_INT,
-                      &(strip_it->indexArray)[0]  );
-    }
+   
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexBuffer_);
+
+    glDrawElements(GL_TRIANGLES, tris_.size(), GL_UNSIGNED_INT, 0);
+
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
   } else if ( _mode ==  PER_FACE ) {
     
     if ( stripProcessor_.perFaceTextureIndexAvailable()  && (textureMap_ != 0) ) {
@@ -1499,6 +1501,8 @@ update_topology() {
   // Set per halfedge arrays to invalid as they have to be regenerated
   stripProcessor_.invalidatePerHalfedgeBuffers();
   
+  stripProcessor_.stripify();
+
 //   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   
   // ==========================================================================
@@ -1527,9 +1531,76 @@ update_topology() {
                     &lineIndices_[0],
                     GL_STATIC_DRAW_ARB);
 
+    // Clear the vector
     std::vector< unsigned int >().swap(lineIndices_);
     
     lineIndexBufferInitialized_ = true;
+  }
+
+
+  // ====================================================
+  // Triangle List Index Buffer
+  // ====================================================
+
+  // first version: 
+  // simply convert from strips to tri list
+  {
+	  typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
+	  typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
+
+	  unsigned int numTris = 0;
+
+	  for (; strip_it!=strip_last; ++strip_it) numTris += strip_it->indexArray.size() - 2;
+
+	  tris_.resize(numTris * 3);
+
+	  unsigned int nOffset = 0;
+
+	  for (strip_it = stripProcessor_.begin(); strip_it != strip_last; ++strip_it)
+	  {
+		  const int iStripLen = strip_it->indexArray.size();
+		  if (iStripLen < 3) continue;
+
+		  for (int i = 0; i < iStripLen - 2; ++i)
+		  {
+			  if (i&1)
+			  {
+				  tris_[nOffset++] = strip_it->indexArray[i+1];
+				  tris_[nOffset++] = strip_it->indexArray[i];
+			  }
+			  else
+			  {
+				  tris_[nOffset++] = strip_it->indexArray[i];
+				  tris_[nOffset++] = strip_it->indexArray[i+1];
+			  }
+			  tris_[nOffset++] = strip_it->indexArray[i+2];
+
+			  // degenerate triangle check redundant ?
+			  // strips splitted instead of deg. tris
+		  }
+	  }
+
+	  if (tris_.size())
+	  {
+		  GPUCacheOptimizerTipsify Opt(24, tris_.size() / 3, mesh_.n_vertices(), 4, &tris_[0]);
+		  Opt.WriteIndexBuffer(4, &tris_[0]);
+	  }
+  }
+
+  // Allocate it if required
+  if (!indexBuffer_)  glGenBuffersARB(1,  (GLuint*) &indexBuffer_);
+
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexBuffer_);
+  indexBufferInitialized_ = false;
+
+  if ( !tris_.empty() ) {
+	  // Copy the buffer to the graphics card
+	  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
+		  tris_.size() * sizeof(unsigned int),
+		  &tris_[0],
+		  GL_STATIC_DRAW_ARB);
+
+	  indexBufferInitialized_ = true;
   }
  
   // Unbind the buffer after the work has been done
