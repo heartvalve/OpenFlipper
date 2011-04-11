@@ -78,7 +78,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     void deleteObject( int _id);
 
     // BackupInterface
-    void createBackup( int _objectid, QString _name);
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL );
 
   private slots :
 
@@ -216,6 +216,8 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
 
     // Object marker to dimm Objects during manipulator transformation
     SkeletonMarker objectMarker_;
+
+    ACG::Matrix4x4d accumMatrix_;
 
   private:
     /// Place and show the Manipulator

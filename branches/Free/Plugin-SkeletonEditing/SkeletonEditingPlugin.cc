@@ -440,6 +440,15 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
 
   transformJoint( objectId, _node->getData().toInt(), mat );
 
+  if (_event->type() == QEvent::MouseButtonPress)
+    accumMatrix_.identity();
+
+  accumMatrix_ *= mat;
+
+  //only backup on mouseRelease
+  if ( (_event->type() == QEvent::MouseButtonRelease) && !accumMatrix_.is_identity() )
+    emit createBackup(objectId, "Joint Transformation", UPDATE_GEOMETRY);
+
   BaseObjectData* object = 0;
   PluginFunctions::getObject(objectId, object);
   
@@ -590,6 +599,7 @@ void SkeletonEditingPlugin::deleteJoint(QMouseEvent* _event)
               skeleton->removeJoint(joint);
               PluginFunctions::skeletonObject(object)->updateIndices();
               emit updatedObject(object->id(), UPDATE_ALL);
+              emit createBackup(object->id(), "Delete Joint", UPDATE_TOPOLOGY);
             } else
               emit deleteObject( object->id() );
           }
@@ -717,6 +727,7 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
     // set joint position
     setJointPosition(PluginFunctions::skeletonObject(baseObject), rootJoint, lastHitPoint);
     emit updatedObject(baseObject->id(), UPDATE_ALL);
+    emit createBackup(baseObject->id(), "Add Joints", UPDATE_ALL);
 
     // add an additional joint which is moved on mousemove
     Skeleton::Joint* tmpJoint = new Skeleton::Joint(rootJoint);
@@ -948,6 +959,7 @@ void SkeletonEditingPlugin::cancelJointInsertion(){
     skeleton->removeJoint(joint);
 
   emit updatedObject(baseObject->id(), UPDATE_ALL);
+  emit createBackup(baseObject->id(), "Add Joints", UPDATE_ALL);
 }
 
 //--------------------------------------------------------------------------------

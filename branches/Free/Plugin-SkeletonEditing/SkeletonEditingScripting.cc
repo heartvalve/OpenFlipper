@@ -120,12 +120,12 @@ void SkeletonEditingPlugin::splitBone( int _objectId, int _tailJoint){
       }
     }
 
-  emit updatedObject(_objectId, UPDATE_ALL);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   emit scriptInfo("splitBone( ObjectId, " + QString::number(_tailJoint) + " )" );
 
   // Create backup
-  emit createBackup(_objectId, "Split Bone");
+  emit createBackup(_objectId, "Split Bone", UPDATE_TOPOLOGY);
 }
 
 //------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ void SkeletonEditingPlugin::addJoint( int _objectId , int _parent, Vector _posit
                                                                                   + QString::number(_position[2]) + ") )" );
 
   // Create backup
-  emit createBackup(_objectId, "Remove Joint");  
+  emit createBackup(_objectId, "Add Joint", UPDATE_TOPOLOGY);
 }
 
 //------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ void SkeletonEditingPlugin::deleteJoint( int _objectId , int _jointId ){
   emit scriptInfo("deleteJoint( ObjectId, " + QString::number(_jointId) + " )" );
 
   // Create backup
-  emit createBackup(_objectId, "Delete Joint");
+  emit createBackup(_objectId, "Delete Joint", UPDATE_TOPOLOGY);
   
   emit updatedObject(_objectId, UPDATE_ALL);
 }
@@ -290,8 +290,10 @@ void SkeletonEditingPlugin::transformJoint( int _objectId , int _jointId, Matrix
 
   emit scriptInfo( "transformJoint( ObjectId, " + QString::number(_jointId) + ", Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Joint Transformation");
+  // Create backup if there was a change
+  // the backup is only created when the slot is called via scripting (sender == 0)
+  if ( !_matrix.is_identity() && (sender() == 0) )
+    emit createBackup(_objectId, "Joint Transformation", UPDATE_GEOMETRY);
 }
 
 //------------------------------------------------------------------------------
@@ -662,7 +664,7 @@ void SkeletonEditingPlugin::addAnimation(int _objectId, QString _name, int _fram
   emit scriptInfo("addAnimation( ObjectId, " + _name + ", " + QString::number(_frames) + ")" );
 
   // Create backup
-  emit createBackup(_objectId, "Add Animation");
+  emit createBackup(_objectId, "Add Animation", UPDATE_ALL);
 }
 
 //------------------------------------------------------------------------------
