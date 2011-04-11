@@ -62,60 +62,19 @@
 // ===             Backup Communication                       ============================
 //========================================================================================
 
-void Core::slotBackupGroup(QString _name, int& _groupId ) {
-  if ( sender() != 0 ) {
-    if ( sender()->metaObject() != 0 ) {
-      _name = QString(sender()->metaObject()->className()) + ": " + _name;
-      
-      if ( OpenFlipper::Options::doSlotDebugging() ) 
-        emit log(LOGINFO,"slotBackupGroup( " + _name + " ) called by " + QString( sender()->metaObject()->className() ) );
-    }
-  }
+/// Slot for generating type specific backups
+void Core::slotGenerateBackup( int _id, QString _name, UpdateType _type ) {
   
-  _groupId = nextBackupGroupId_;
-  emit createBackupGroup( _name , nextBackupGroupId_);
-  ++nextBackupGroupId_;
-}
-
-/// Called if a backup is requested by the plugins
-void Core::slotBackup( int _objectId, QString _name, int& _internalId, int _groupId ) {
-  if ( sender() != 0 ) {
-    if ( sender()->metaObject() != 0 ) {
-      _name = QString(sender()->metaObject()->className()) + ": " + _name;
-      
-      if ( OpenFlipper::Options::doSlotDebugging() ) 
-        emit log(LOGINFO,"slotBackup( " + QString::number(_objectId) + ", " + _name + "," + QString::number(_internalId) + (" ) called by ") + QString( sender()->metaObject()->className() ) );
-      
-    }
-  }
+  BaseObjectData* obj = 0;
+  PluginFunctions::getObject(_id, obj);
   
-  _internalId = nextBackupId_;
-  emit createBackup(  _objectId , _name , nextBackupId_, _groupId);
-  ++nextBackupId_;
-}
-
-/// Called if a backup is requested by the plugins (convenience function without getting id of the object)
-void Core::slotBackup( int _objectId, QString _name ) {
-  if ( sender() != 0 ) {
-    if ( sender()->metaObject() != 0 ) {
-      _name = QString(sender()->metaObject()->className()) + ": " + _name;
-      
-      if ( OpenFlipper::Options::doSlotDebugging() ) 
-        emit log(LOGINFO,"slotBackup( " + QString::number(_objectId) + ", " + _name + tr(" ) called by ") + QString( sender()->metaObject()->className() ) );
-      
-    }
-  }
+  if (obj == 0)
+    return;
   
-  emit createBackup(  _objectId , _name , nextBackupId_);
-  ++nextBackupId_;
-}
-
-void Core::slotRestoreGroup( int _groupId) {
-  emit restoreGroup(_groupId);
-}
-
-void Core::slotRestore( int _objectId, int _internalId ) {
-  emit restoreObject(_objectId,_internalId);
+  // Type plugins
+  for (int i=0; i < (int)supportedDataTypes_.size(); i++)
+    if ( supportedDataTypes_[i].type & obj->dataType() )
+      supportedDataTypes_[i].plugin->generateBackup(_id, _name, _type);
 }
 
 //=============================================================================

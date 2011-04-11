@@ -530,8 +530,7 @@ void Core::slotFileOpened ( int _id ) {
   // ================================================================================
   // Create initial backup
   // ================================================================================
-  int backupId = 0;
-  slotBackup(_id,"Original Object",backupId);
+  emit createBackup(_id,"Original Object");
 
   // ================================================================================
   // Add the file to the recent files menu

@@ -1126,13 +1126,13 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(this   , SIGNAL(showFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
               plugin , SLOT(slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
               
-    if ( checkSignal(plugin,"toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)") )
-      connect(plugin , SIGNAL(toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),
-              this   , SLOT(slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"toggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(toggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotToggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
 
-    if ( checkSlot( plugin , "slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)" ) )
-      connect(this   , SIGNAL(toggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),
-              plugin , SLOT(slotToggleSelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotToggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(toggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotToggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
     if ( checkSignal(plugin,"lassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
       connect(plugin , SIGNAL(lassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
@@ -1158,29 +1158,29 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(this   , SIGNAL(surfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
               plugin , SLOT(slotSurfaceLassoSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
-    if ( checkSignal(plugin,"sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)") )
-      connect(plugin , SIGNAL(sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
-              this   , SLOT(slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"sphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(sphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotSphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
 
-    if ( checkSlot( plugin , "slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)" ) )
-      connect(this   , SIGNAL(sphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
-              plugin , SLOT(slotSphereSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotSphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(sphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotSphereSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
-    if ( checkSignal(plugin,"closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)") )
-      connect(plugin , SIGNAL(closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),
-              this   , SLOT(slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"closestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(closestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotClosestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
 
-    if ( checkSlot( plugin , "slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)" ) )
-      connect(this   , SIGNAL(closestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),
-              plugin , SLOT(slotClosestBoundarySelection(QPoint,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotClosestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(closestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotClosestBoundarySelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
-    if ( checkSignal(plugin,"floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)") )
-      connect(plugin , SIGNAL(floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
-              this   , SLOT(slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"floodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(floodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotFloodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
 
-    if ( checkSlot( plugin , "slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)" ) )
-      connect(this   , SIGNAL(floodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),
-              plugin , SLOT(slotFloodFillSelection(QPoint,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotFloodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(floodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotFloodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
     if ( checkSignal(plugin,"customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)") )
       connect(plugin , SIGNAL(customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),
@@ -1420,72 +1420,75 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
   if ( backupPlugin ) {
     supported = supported + "Backups ";
 
-    // Incoming Signal that a backup group should be created 
-    // send to local slot generating group id and delivers to all other plugins
-    if ( checkSignal( plugin , "createBackupGroup(QString,int&)" ) ) {
-      connect(plugin , SIGNAL(createBackupGroup(QString , int&)) ,
-              this   , SLOT(slotBackupGroup(QString , int&)),Qt::DirectConnection );
+    // Incoming Signal that a backup should be created 
+    if ( checkSignal( plugin , "createBackup(int,QString,UpdateType)" ) ) {
+      connect(plugin , SIGNAL(createBackup(int,QString,UpdateType)) ,
+              this   , SIGNAL(createBackup(int,QString,UpdateType)),Qt::DirectConnection );
     }
-    // Signal send from core to plugins that they should create a backup group
-    if ( checkSlot( plugin , "slotBackupGroup(QString,int)" ) ) {
-      connect(this   , SIGNAL(createBackupGroup(QString,int)) ,
-              plugin , SLOT( slotBackupGroup(QString,int) ),Qt::DirectConnection);
+    // Signal send from core to plugins that they should create a backup
+    if ( checkSlot( plugin , "slotCreateBackup(int,QString,UpdateType)" ) ) {
+      connect(this   , SIGNAL(createBackup(int,QString,UpdateType)),
+              plugin , SLOT( slotCreateBackup(int,QString,UpdateType) ),Qt::DirectConnection);
     }
     
     // Incoming Signal that a backup should be created 
-    // send to local slot generating backup id and delivers to all other plugins
-    if ( checkSignal( plugin , "createBackup(int,QString,int&,int)" ) ) {
-      connect(plugin , SIGNAL(createBackup( int , QString , int&, int)) ,
-              this   , SLOT(slotBackup( int , QString , int&, int)),Qt::DirectConnection );
+    if ( checkSignal( plugin , "createBackup(IdList,QString,std::vector<UpdateType>)" ) ) {
+      connect(plugin , SIGNAL(createBackup(IdList,QString,std::vector<UpdateType>)) ,
+              this   , SIGNAL(createBackup(IdList,QString,std::vector<UpdateType>)),Qt::DirectConnection );
     }
-    
-    // send to local slot generating backup id and delivers to all other plugins
-    if ( checkSignal( plugin , "createBackup(int,QString)" ) ) {
-      connect(plugin , SIGNAL(createBackup( int , QString)) ,
-              this   , SLOT(slotBackup( int , QString)),Qt::DirectConnection );
-    }
-    
     // Signal send from core to plugins that they should create a backup
-    if ( checkSlot( plugin , "slotBackup(int,QString,int,int)" ) ) {
-      connect(this   , SIGNAL(createBackup(int,QString,int,int)) ,
-              plugin , SLOT( slotBackup(int,QString,int,int) ),Qt::DirectConnection);
-    }
-    
-    // Signal send from plugin to core that a backup should be made persistent
-    if ( checkSignal( plugin , "makeBackupPersistent(int,int)" ) ) {
-      connect(plugin , SIGNAL(makeBackupPersistent(int,int)) ,
-              this , SIGNAL( makeBackupPersistent(int,int)) ,Qt::DirectConnection);
-    }
-    
-    // Signal send from core to Backup plugin that the given backup should be persistent
-    if ( checkSlot( plugin , "slotMakeBackupPersistent(int,int)" ) ) {
-      connect(this   , SIGNAL(makeBackupPersistent(int,int)) ,
-              plugin , SLOT( slotMakeBackupPersistent(int,int) ),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotCreateBackup(IdList,QString,std::vector<UpdateType>)" ) ) {
+      connect(this   , SIGNAL(createBackup(IdList,QString,std::vector<UpdateType>)),
+              plugin , SLOT( slotCreateBackup(IdList,QString,std::vector<UpdateType>) ),Qt::DirectConnection);
     }
 
+
     // Signal from plugin to restore an object with the given id
-    if ( checkSignal( plugin , "restoreObject(int,int)" ) ) {
-      connect(plugin , SIGNAL(restoreObject(int,int)) ,
-              this   , SLOT(slotRestore( int , int)),Qt::DirectConnection );
+    if ( checkSignal( plugin , "undo(int)" ) ) {
+      connect(plugin , SIGNAL(undo(int)) ,
+              this   , SIGNAL(undo(int)),Qt::DirectConnection );
     }
     
     // Signal send from core to backup plugin that it should restore the given object
-    if ( checkSlot( plugin , "slotRestoreObject(int,int)" ) ) {
-      connect(this   , SIGNAL(restoreObject(int,int)) ,
-              plugin , SLOT( slotRestoreObject(int,int) ),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotUndo(int)" ) ) {
+      connect(this   , SIGNAL(undo(int)),
+              plugin , SLOT( slotUndo(int) ),Qt::DirectConnection);
     }
 
-
-    // Signal from plugin to restore a group with the given id
-    if ( checkSignal( plugin , "restoreGroup(int)" ) ) {
-      connect(plugin , SIGNAL(restoreGroup(int)) ,
-              this   , SLOT(slotRestoreGroup(int)),Qt::DirectConnection );
+    // Signal from plugin to restore an object with the given id
+    if ( checkSignal( plugin , "redo(int)" ) ) {
+      connect(plugin , SIGNAL(redo(int)) ,
+              this   , SIGNAL(redo(int)),Qt::DirectConnection );
     }
     
-    // Signal send from core to backup plugin that it should restore the given group
-    if ( checkSlot( plugin , "slotRestoreGroup(int)" ) ) {
-      connect(this   , SIGNAL(restoreGroup(int)) ,
-              plugin , SLOT( slotRestoreGroup(int) ),Qt::DirectConnection);
+    // Signal send from core to backup plugin that it should restore the given object
+    if ( checkSlot( plugin , "slotRedo(int)" ) ) {
+      connect(this   , SIGNAL(redo(int)),
+              plugin , SLOT( slotRedo(int) ),Qt::DirectConnection);
+    }
+
+    // Signal from plugin to restore an object with the given id
+    if ( checkSignal( plugin , "undo()" ) ) {
+      connect(plugin , SIGNAL(undo()) ,
+              this   , SIGNAL(undo()),Qt::DirectConnection );
+    }
+    
+    // Signal send from core to backup plugin that it should restore the given object
+    if ( checkSlot( plugin , "slotUndo()" ) ) {
+      connect(this   , SIGNAL(undo()),
+              plugin , SLOT( slotUndo() ),Qt::DirectConnection);
+    }
+
+    // Signal from plugin to restore an object with the given id
+    if ( checkSignal( plugin , "redo()" ) ) {
+      connect(plugin , SIGNAL(redo()) ,
+              this   , SIGNAL(redo()),Qt::DirectConnection );
+    }
+    
+    // Signal send from core to backup plugin that it should restore the given object
+    if ( checkSlot( plugin , "slotRedo()" ) ) {
+      connect(this   , SIGNAL(redo()),
+              plugin , SLOT( slotRedo() ),Qt::DirectConnection);
     }
 
     //====================================================================================
@@ -1493,21 +1496,21 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     //====================================================================================
     
     // Stage one : restore will happen soon
-    if ( checkSignal( plugin , "aboutToRestore(int,int)" ) ) {
-      connect(plugin  , SIGNAL( aboutToRestore(int,int)) ,
-              this    , SIGNAL( aboutToRestore(int,int) ),Qt::DirectConnection);
+    if ( checkSignal( plugin , "aboutToRestore(int,UpdateType)" ) ) {
+      connect(plugin  , SIGNAL( aboutToRestore(int,UpdateType)) ,
+              this    , SIGNAL( aboutToRestore(int,UpdateType) ),Qt::DirectConnection);
     }
     
     // Stage two: Core restore done, plugins should restore
-    if ( checkSignal( plugin , "restore(int,int)" ) ) {
-      connect(plugin  , SIGNAL(restore(int,int)) ,
-              this    , SIGNAL( restore(int,int) ),Qt::DirectConnection);
+    if ( checkSignal( plugin , "restore(int,UpdateType)" ) ) {
+      connect(plugin  , SIGNAL(restore(int,UpdateType)) ,
+              this    , SIGNAL( restore(int,UpdateType) ),Qt::DirectConnection);
     }
     
     // Stage three: Restore complete
-    if ( checkSignal( plugin , "restored(int,int)" ) ) {
-      connect(plugin  , SIGNAL(restored(int,int)) ,
-              this    , SIGNAL( restored(int,int) ),Qt::DirectConnection);
+    if ( checkSignal( plugin , "restored(int,UpdateType)" ) ) {
+      connect(plugin  , SIGNAL(restored(int,UpdateType)) ,
+              this    , SIGNAL( restored(int,UpdateType) ),Qt::DirectConnection);
     }
     
     //====================================================================================
@@ -1515,23 +1518,28 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     //====================================================================================
      
      // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotAboutToRestore(int,int)" ) ) {
-       connect(this   , SIGNAL( aboutToRestore(int,int)) ,
-               plugin , SLOT( slotAboutToRestore(int,int) ),Qt::DirectConnection);
+     if ( checkSlot( plugin , "slotAboutToRestore(int,UpdateType)" ) ) {
+       connect(this   , SIGNAL( aboutToRestore(int,UpdateType)) ,
+               plugin , SLOT( slotAboutToRestore(int,UpdateType) ),Qt::DirectConnection);
      }
      
      // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotRestore(int,int)" ) ) {
-       connect(this   , SIGNAL( restore(int,int)) ,
-               plugin , SLOT( slotRestore(int,int) ),Qt::DirectConnection);
+     if ( checkSlot( plugin , "slotRestore(int,UpdateType)" ) ) {
+       connect(this   , SIGNAL( restore(int,UpdateType)) ,
+               plugin , SLOT( slotRestore(int,UpdateType) ),Qt::DirectConnection);
      }
      
      // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotRestored(int,int)" ) ) {
-       connect(this   , SIGNAL( restored(int,int)) ,
-               plugin , SLOT( slotRestored(int,int) ),Qt::DirectConnection);
+     if ( checkSlot( plugin , "slotRestored(int,UpdateType)" ) ) {
+       connect(this   , SIGNAL( restored(int,UpdateType)) ,
+               plugin , SLOT( slotRestored(int,UpdateType) ),Qt::DirectConnection);
      }
-
+     
+     // Signal from plugin to restore a group with the given id
+     if ( checkSignal( plugin , "generateBackup(int,QString,UpdateType)" ) ) {
+       connect(plugin ,  SIGNAL(generateBackup(int,QString,UpdateType)) ,
+              this   , SLOT(slotGenerateBackup(int,QString,UpdateType)),Qt::DirectConnection );
+     }
   }
 
   //Check if the plugin supports LoadSave-Interface

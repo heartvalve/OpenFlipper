@@ -110,8 +110,8 @@ void Core::slotShowFloodFillSelectionMode(QString _handleName, bool _show, Selec
     emit showFloodFillSelectionMode(_handleName, _show, _associatedTypes);
 }
 
-void Core::slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
-    emit toggleSelection(_position, _currentType, _deselect);
+void Core::slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+    emit toggleSelection(_event, _currentType, _deselect);
 }
 
 void Core::slotLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
@@ -126,16 +126,16 @@ void Core::slotSurfaceLassoSelection(QMouseEvent* _event, SelectionInterface::Pr
     emit surfaceLassoSelection(_event, _currentType, _deselect);
 }
 
-void Core::slotSphereSelection(QPoint _position, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
-    emit sphereSelection(_position, _radius, _currentType, _deselect);
+void Core::slotSphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+    emit sphereSelection(_event, _radius, _currentType, _deselect);
 }
 
-void Core::slotClosestBoundarySelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
-    emit closestBoundarySelection(_position, _currentType, _deselect);
+void Core::slotClosestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+    emit closestBoundarySelection(_event, _currentType, _deselect);
 }
 
-void Core::slotFloodFillSelection(QPoint _position, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
-    emit floodFillSelection(_position, _maxAngle, _currentType, _deselect);
+void Core::slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+    emit floodFillSelection(_event, _maxAngle, _currentType, _deselect);
 }
 
 void Core::slotCustomSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {
