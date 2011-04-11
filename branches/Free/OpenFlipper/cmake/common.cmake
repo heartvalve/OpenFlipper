@@ -149,5 +149,11 @@ function (of_print_plugin_stats)
     endforeach ()
   endif()
 
+  if ( NOT WIN32 )
+    message ("")
+    message("\n${_escape}[4mCurrent Build Type:${_escape}[0m ${_escape}[1;34m ${CMAKE_BUILD_TYPE} ${_escape}[0m")
+  endif()
   message ("")
+
+
 endfunction ()
