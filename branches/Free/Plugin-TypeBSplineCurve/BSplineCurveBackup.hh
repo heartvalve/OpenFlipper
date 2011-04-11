@@ -34,80 +34,34 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-//=============================================================================
-//
-//  CLASS Type BSpline Curve Plugin
-//
-//  Author:  Ellen Dekkers <dekkers@cs.rwth-aachen.de>
-//
-//  Date: 2009-12-14 19:18:48 +0100 (Mo, 14. Dez 2009)
-//
-//=============================================================================
-
-
-#ifndef TYPEBSPLINECURVEPLUGIN_HH
-#define TYPEBSPLINECURVEPLUGIN_HH
-
-#include <QObject>
-
-
-#include <OpenFlipper/common/Types.hh>
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/TypeInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
-#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#ifndef BSPLINECURVEBACKUP_HH
+#define BSPLINECURVEBACKUP_HH
 
 #include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
+#include <OpenFlipper/common/BaseBackup.hh>
 
-
-class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, LoggingInterface, LoadSaveInterface
+/**
+ * @brief Class that encapsulates a backup
+ */
+class BSplineCurveBackup : public BaseBackup
 {
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(TypeInterface)
-   Q_INTERFACES(LoggingInterface)
-   Q_INTERFACES(LoadSaveInterface)
 
-  signals:
+  public:
+    BSplineCurveBackup(BSplineCurveObject* _curveObj, QString _name, UpdateType _type);
+    ~BSplineCurveBackup();
 
-    void log(Logtype _type, QString _message);
-    void log(QString _message);
-    
-    // LoadSave Interface
-    void emptyObjectAdded( int _id );
+  public:
+    void apply();
 
-  private slots:
-
-    void noguiSupported( ) {} ;
-
-  public :
-
-     ~TypeBSplineCurvePlugin() {};
-     TypeBSplineCurvePlugin();
-
-     QString name() { return (QString("TypeBSplineCurve")); };
-     QString description( ) { return (QString(tr("Register BSpline Curve type "))); };
-     
-     bool registerType();
-     
-     DataType supportedType();
-     
-     int addEmpty( );
-
-  public slots:
-    // Type Interface
-    void generateBackup( int _id, QString _name, UpdateType _type );
- 
-  public slots:
-
-    QString version() { return QString("1.0"); };
-
+  private:
+    BSplineCurveObject* curveObj_;
+    BSplineCurve*    curveBackup_;
 };
 
-#endif //TYPEBSPLINECURVEPLUGIN_HH
+#endif //BSPLINECURVEBACKUP_HH
