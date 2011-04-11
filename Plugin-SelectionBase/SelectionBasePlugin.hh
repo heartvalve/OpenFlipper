@@ -135,7 +135,7 @@ Q_INTERFACES(SelectionInterface)
         void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
         
         // ToolboxInterface
-        void addToolbox(QString _name, QWidget* _widget); 
+        void addToolbox(QString _name, QWidget* _widget, QIcon* _icon); 
       
     private slots:
         
@@ -339,6 +339,8 @@ Q_INTERFACES(SelectionInterface)
         
         // List of points for line node
         std::vector<ACG::Vec3d> linePoints_;
+
+        QIcon* toolIcon_;
 };
 
 #endif // SELECTIONBASEPLUGIN_HH

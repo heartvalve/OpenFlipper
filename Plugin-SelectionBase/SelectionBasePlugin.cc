@@ -130,7 +130,8 @@ void SelectionBasePlugin::initializePlugin() {
     connect(tool_->saveSelection, SIGNAL(clicked()), this, SLOT(slotSaveSelection()));
     
     // Add toolbox to OpenFlipper main window
-    emit addToolbox("Selections", tool_);
+    toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"selection_base.png");
+    emit addToolbox("Selections", tool_, toolIcon_ );
     
     // Create toolbar that holds the selection environment buttons
     toolBar_ = new QToolBar(tr("Selection Base"));
