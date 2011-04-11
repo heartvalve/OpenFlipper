@@ -44,10 +44,16 @@
 #include "TypePolyMesh.hh"
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/common/BackupData.hh>
+#include "PolyMeshBackup.hh"
+
+//-----------------------------------------------------------------------------
 
 TypePolyMeshPlugin::TypePolyMeshPlugin() {
   
 }
+
+//-----------------------------------------------------------------------------
 
 bool TypePolyMeshPlugin::registerType() {
     
@@ -55,6 +61,8 @@ bool TypePolyMeshPlugin::registerType() {
   setTypeIcon( "PolyMesh", "PolyType.png");
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 int TypePolyMeshPlugin::addEmpty(){
     
@@ -82,6 +90,8 @@ int TypePolyMeshPlugin::addEmpty(){
   return object->id();
 }
 
+//-----------------------------------------------------------------------------
+
 QString TypePolyMeshPlugin::get_unique_name(PolyMeshObject* _object)
 {
   bool name_unique = false;
@@ -108,6 +118,37 @@ QString TypePolyMeshPlugin::get_unique_name(PolyMeshObject* _object)
 
   return QString(tr("PolyMesh %1.off").arg( cur_idx ));
 }
+
+//-----------------------------------------------------------------------------
+
+void TypePolyMeshPlugin::generateBackup( int _id, QString _name, UpdateType _type ){
+  
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_id, object);
+  
+  PolyMeshObject* meshObj = PluginFunctions::polyMeshObject(object);
+  
+  if ( meshObj != 0 ){
+
+    //get backup object data
+    BackupData* backupData = 0;
+
+    if ( object->hasObjectData( OBJECT_BACKUPS ) )
+      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+    else{
+      //add backup data
+      backupData = new BackupData(object);
+      object->setObjectData(OBJECT_BACKUPS, backupData);
+    }
+    
+    //store a new backup
+    PolyMeshBackup* backup = new PolyMeshBackup(meshObj, _name, _type);
+    
+    backupData->storeBackup( backup );
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( typepolymeshplugin , TypePolyMeshPlugin );
 
