@@ -107,7 +107,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
 
     // BackupInterface
-    void createBackup( int _id , QString _name );
+    void createBackup( int _objectid, QString _name, UpdateType _type = UPDATE_ALL);
 
     // LoggingInterface
     void log(Logtype _type, QString _message);
@@ -370,7 +370,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void moveObject(ACG::Matrix4x4d mat, int _id);
 
     /// Move selection on an object with given id
-    void moveSelection(ACG::Matrix4x4d mat, int _id);
+    void moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type);
 
     /// Object marker to dimm Objects during manipulator transformation
     MoveObjectMarker objectMarker_;

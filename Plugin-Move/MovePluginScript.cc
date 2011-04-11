@@ -573,9 +573,10 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformVertexSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
-  
+
   // Create backup if there was a change
-  if (!_matrix.is_identity())
+  // the backup is only created when the slot is called via scripting (sender == 0)
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Vertex Selection");
 }
 
@@ -683,7 +684,8 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
   emit scriptInfo( "transformFaceSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
   // Create backup if there was a change
-  if (!_matrix.is_identity())
+  // the backup is only created when the slot is called via scripting (sender == 0)
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Face Selection");
 }
 
@@ -807,7 +809,8 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   emit scriptInfo( "transformEdgeSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
   // Create backup if there was a change
-  if (!_matrix.is_identity())
+  // the backup is only created when the slot is called via scripting (sender == 0)
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Edge Selection");
 }
 

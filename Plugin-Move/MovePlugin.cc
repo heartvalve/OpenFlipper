@@ -441,6 +441,9 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   if ( ! PluginFunctions::getObject(_id,object) )
     return;
 
+  if ( mat.is_identity() )
+    return;
+
   if  ( object->dataType()  == DATA_TRIANGLE_MESH ) {
     transformMesh(mat , *PluginFunctions::triMesh(object) );
   } else  if  ( object->dataType()  == DATA_POLY_MESH ) {
@@ -466,7 +469,7 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   }
 
   emit updatedObject(_id, UPDATE_GEOMETRY);
-  emit createBackup(_id,"Move");
+  emit createBackup(_id, "Move Object", UPDATE_GEOMETRY);
 }
 
 
@@ -481,17 +484,22 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
  * @param mat
  * @param _id
  */
-void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
+void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type) {
 
-  if (selectionType_ == VERTEX)
-    transformVertexSelection( _id , mat );
-  else if (selectionType_ == FACE)
-    transformFaceSelection( _id , mat );
-  else if (selectionType_ == EDGE)
-    transformEdgeSelection( _id , mat );
+  if ( !mat.is_identity() ){
+    if (selectionType_ == VERTEX)
+      transformVertexSelection( _id , mat );
+    else if (selectionType_ == FACE)
+      transformFaceSelection( _id , mat );
+    else if (selectionType_ == EDGE)
+      transformEdgeSelection( _id , mat );
 
-  emit updatedObject(_id, UPDATE_GEOMETRY);
-//   emit createBackup(_id,"MoveSelection");
+    emit updatedObject(_id, UPDATE_GEOMETRY);
+  }
+
+  //only create backups on mouseRelease
+  if ( _type == QEvent::MouseButtonRelease )
+    emit createBackup(_id,"Move Selection", UPDATE_GEOMETRY);
 }
 
 //------------------------------------------------------------------------------
@@ -616,7 +624,7 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
     if (PluginFunctions::pickMode() == "Move")
       moveObject( mat, objectId );
     else if (PluginFunctions::pickMode() == "MoveSelection")
-      moveSelection( mat, objectId );
+      moveSelection( mat, objectId, _event->type() );
 
     // move all other targets without manipulator
     if(allTargets_) {
@@ -628,7 +636,7 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
           if (PluginFunctions::pickMode() == "Move")
             moveObject( mat, o_it->id() );
           else if (PluginFunctions::pickMode() == "MoveSelection")
-            moveSelection( mat, o_it->id() );
+            moveSelection( mat, o_it->id(), _event->type() );
         }
       }
     }
@@ -638,7 +646,6 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
   }
 
   OpenFlipper::Options::redrawDisabled( false );
-
 }
 
 
