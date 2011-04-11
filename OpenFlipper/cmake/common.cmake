@@ -55,6 +55,8 @@ function (of_print_plugin_stats)
     "${CMAKE_SOURCE_DIR}/Plugin-*"
   )
 
+  list (SORT _plugins_in)
+
   foreach (_plugin ${_plugins_in})
     string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
     string (TOUPPER ${_plugin_name} _PLUGIN)
@@ -68,7 +70,7 @@ function (of_print_plugin_stats)
   foreach (_plugin ${_plugins_in})
       string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
       string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 20 _plugin_name)
+      acg_format_string (${_plugin_name} 25 _plugin_name)
 
       if (DISABLE_PLUGIN_${_PLUGIN})
           acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mDisabled${_escape}[0m")
