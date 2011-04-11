@@ -48,6 +48,10 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+IsotropicRemesherPlugin::IsotropicRemesherPlugin() : thread_(0)
+{
+}
+
 /// init the Toolbox
 void IsotropicRemesherPlugin::initializePlugin() {
   tool_ = new IsotropicRemesherToolBox();
@@ -68,18 +72,18 @@ void IsotropicRemesherPlugin::initializePlugin() {
 void IsotropicRemesherPlugin::slotRemeshButtonClicked() {
   edgeLength_ = tool_->targetEdgeLength->value();
   
-  OpenFlipperThread* thread = new OpenFlipperThread(name() + "IsotropicRemesh");                         // Create your thread containing a unique id \n
-  
-  connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));                  // connect your threads state info to the global one \n
-  connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                           // connect your threads finish info to the global one ( you can do the same for a local one ) \n
-  connect(thread,SIGNAL( function() ), this,SLOT(slotRemesh()),Qt::DirectConnection);           // You can directly give a slot of your app that gets called \n
-  connect(this,SIGNAL( finishJob(QString)), this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
-  
-  emit startJob( name() + "IsotropicRemesh", "Isotropic remeshing" , 0 , 100 , true);  // As long as meshes cannot be locked, this thread has to be blocking. Otherwise, during operation the mesh could be deleted. We don't want that!
-  
-  thread->start();                                                                                       // start thread
-  thread->startProcessing();                                                                             // start processing
+  if ( thread_ == 0){
+    thread_ = new OpenFlipperThread(name() + "IsotropicRemesh");                         // Create your thread containing a unique id \n
+    connect(thread_,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));                  // connect your threads state info to the global one \n
+    connect(thread_,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                           // connect your threads finish info to the global one ( you can do the same for a local one ) \n
+    connect(thread_,SIGNAL( function() ), this,SLOT(slotRemesh()),Qt::DirectConnection);           // You can directly give a slot of your app that gets called \n
+    connect(this,SIGNAL( finishJob(QString)), this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
+  }
 
+  emit startJob( name() + "IsotropicRemesh", "Isotropic remeshing" , 0 , 100 , true);  // As long as meshes cannot be locked, this thread has to be blocking. Otherwise, during operation the mesh could be deleted. We don't want that!
+
+  thread_->start();                                                                                       // start thread
+  thread_->startProcessing();                                                                             // start processing
 }
 
 
@@ -109,12 +113,15 @@ void IsotropicRemesherPlugin::slotRemesh(){
 }
 
 void IsotropicRemesherPlugin::threadFinished(QString /*_jobId*/) {
+  
+  std::cerr << "threadFinished() called" << std::endl;
+  
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
       emit updatedObject( o_it->id(), UPDATE_ALL );
-  
-      emit createBackup(o_it->id(),"Isotropic Remeshing with Target length: " + QString::number(edgeLength_) );
+
+      emit createBackup(o_it->id(),"Isotropic Remeshing");
   
       emit updateView();
     
