@@ -151,7 +151,11 @@ class BSplineSurfaceNodeT : public BaseNode
 
   void render_control_net(bool _render) {render_control_net_ = _render;};
 
+  bool render_control_net() {return render_control_net_; };
+
   void render_bspline_surface(bool _render) {render_bspline_surface_ = _render;};
+
+  bool render_bspline_surface() { return render_bspline_surface_; };
 
   void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
   
