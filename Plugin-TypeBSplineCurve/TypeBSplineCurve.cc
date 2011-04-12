@@ -55,13 +55,120 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include <OpenFlipper/common/BackupData.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include "BSplineCurveBackup.hh"
 
 //-----------------------------------------------------------------------------
 
 TypeBSplineCurvePlugin::
-TypeBSplineCurvePlugin()
+TypeBSplineCurvePlugin():
+renderControlPolygonAction_(0),
+renderCurveAction_(0)
 {
+}
+
+
+//-----------------------------------------------------------------------------
+
+/** \brief Second initialization phase
+ *
+ */
+void TypeBSplineCurvePlugin::pluginsInitialized()
+{
+
+  if ( OpenFlipper::Options::gui() ){
+
+    QMenu* contextMenu = new QMenu("Options");
+
+    QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
+    // Render Control Net
+    renderControlPolygonAction_ = new QAction(tr("Render Control Polygon"), this);
+    renderControlPolygonAction_->setStatusTip(tr("Render Control Polygon"));
+//    renderControlPolygonAction_->setIcon( QIcon(iconPath + "showIndices.png") );
+    renderControlPolygonAction_->setCheckable(true);
+    renderControlPolygonAction_->setChecked(false);
+
+    // Render Surface
+    renderCurveAction_ = new QAction(tr("Render Curve"), this);
+    renderCurveAction_->setStatusTip(tr("Render Curve"));
+//    renderCurveAction_->setIcon( QIcon(iconPath + "coordsys.png") );
+    renderCurveAction_->setCheckable(true);
+    renderCurveAction_->setChecked(true);
+
+
+    connect(renderControlPolygonAction_, SIGNAL(triggered()), this, SLOT(slotRenderControlPolygon()) );
+    connect(renderCurveAction_,          SIGNAL(triggered()), this, SLOT(slotRenderCurve()) );
+
+    contextMenu->addAction(renderControlPolygonAction_);
+    contextMenu->addAction(renderCurveAction_);
+
+    emit addContextMenuItem(contextMenu->menuAction(), DATA_BSPLINE_CURVE, CONTEXTOBJECTMENU);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void
+TypeBSplineCurvePlugin::
+slotUpdateContextMenu( int _objectId ) {
+  if ( _objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(_objectId,object) )
+    return;
+
+  BSplineCurveObject* bsplineCurveObject = dynamic_cast<BSplineCurveObject*>(object);
+
+  if(bsplineCurveObject != 0){
+    renderControlPolygonAction_->setChecked( bsplineCurveObject->splineCurveNode()->render_control_polygon() );
+    renderCurveAction_->setChecked( bsplineCurveObject->splineCurveNode()->render_bspline_curve() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TypeBSplineCurvePlugin::slotRenderControlPolygon(){
+
+  QVariant contextObject = renderControlPolygonAction_->data();
+  int objectId = contextObject.toInt();
+
+  if ( objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(objectId,object) )
+    return;
+
+  BSplineCurveObject* bsplineCurveObject = dynamic_cast<BSplineCurveObject*>(object);
+
+  if(bsplineCurveObject != 0){
+    bsplineCurveObject->splineCurveNode()->render_control_polygon(renderControlPolygonAction_->isChecked());
+    emit updatedObject( objectId, UPDATE_ALL );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TypeBSplineCurvePlugin::slotRenderCurve(){
+
+  QVariant contextObject = renderCurveAction_->data();
+  int objectId = contextObject.toInt();
+
+  if ( objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(objectId,object) )
+    return;
+
+  BSplineCurveObject* bsplineCurveObject = dynamic_cast<BSplineCurveObject*>(object);
+
+  if(bsplineCurveObject != 0){
+    bsplineCurveObject->splineCurveNode()->render_bspline_curve(renderCurveAction_->isChecked());
+    emit updatedObject( objectId, UPDATE_ALL );
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -62,29 +62,49 @@
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 
 #include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
 
 
-class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, LoggingInterface, LoadSaveInterface
+class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, LoggingInterface, LoadSaveInterface, ContextMenuInterface
 {
    Q_OBJECT
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(TypeInterface)
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(LoadSaveInterface)
+   Q_INTERFACES(ContextMenuInterface)
 
   signals:
 
+    // Logging Interface
     void log(Logtype _type, QString _message);
     void log(QString _message);
     
     // LoadSave Interface
     void emptyObjectAdded( int _id );
 
+    // ContextMenuInterface
+    void addContextMenuItem(QAction* _action , ContextMenuType _type);
+    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
+
   private slots:
 
+    // BaseInterface
+    void pluginsInitialized();
     void noguiSupported( ) {} ;
+
+    // ContextMenuInterface
+    void slotUpdateContextMenu( int _objectId );
+
+  private slots:
+
+    /// Slot triggered from context menu, if the control polygon should be rendered
+    void slotRenderControlPolygon();
+
+    /// Slot triggered from context menu, if the curve should be rendered
+    void slotRenderCurve();
 
   public :
 
@@ -101,12 +121,20 @@ class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, Log
      int addEmpty( );
 
   public slots:
+
     // Type Interface
     void generateBackup( int _id, QString _name, UpdateType _type );
  
   public slots:
 
-    QString version() { return QString("1.0"); };
+    QString version() { return QString("1.1"); };
+
+  private:
+    /// Context menu action
+    QAction* renderControlPolygonAction_;
+
+    /// Context menu action
+    QAction* renderCurveAction_;
 
 };
 
