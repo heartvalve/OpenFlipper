@@ -1018,8 +1018,17 @@ create_knot_selection_texture(GLState& _state)
   std::vector<bool> selectedKnotSpans_m(numKnots_m, false);  
   for (int i = 0; i < numKnots_m; ++i)
   {
-    if (bsplineSurface_.get_knotvector_m_ref()->selected(i))
-      selectedKnotSpans_m[i] = true;
+    if (bsplineSurface_.get_knotvector_m_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineSurface_.spanm(bsplineSurface_.get_knot_m(i));
+      // check for incomple spline 
+      if (span[0] < 0 || span[1] < 0) 
+        return; 
+    
+      for(int j = span[0]; j <= span[1]+degree_m; ++j)
+        selectedKnotSpans_m[j] = true;
+    }
   }
 //   std::cout << "selectedKnotSpans_m: " << std::flush;
 //   for (unsigned int i = 0; i < selectedKnotSpans_m.size(); ++i)
@@ -1030,8 +1039,17 @@ create_knot_selection_texture(GLState& _state)
   std::vector<bool> selectedKnotSpans_n(numKnots_n, false);  
   for (int i = 0; i < numKnots_n; ++i)
   {
-    if (bsplineSurface_.get_knotvector_n_ref()->selected(i))
-      selectedKnotSpans_n[i] = true;
+    if (bsplineSurface_.get_knotvector_n_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineSurface_.spann(bsplineSurface_.get_knot_n(i));
+      // check for incomple spline 
+      if (span[0] < 0 || span[1] < 0) 
+        return; 
+    
+      for(int j = span[0]; j <= span[1]+degree_n; ++j)
+        selectedKnotSpans_n[j] = true;
+    }
   }
 //   std::cout << "selectedKnotSpans_n: " << std::flush;
 //   for (unsigned int i = 0; i < selectedKnotSpans_n.size(); ++i)
@@ -1057,8 +1075,8 @@ create_knot_selection_texture(GLState& _state)
       Vec2i interval_n = bsplineSurface_.interval_n(v);
       
       // check if highlighted
-      bool selected_m = (selectedKnotSpans_m[interval_m[0]]);
-      bool selected_n = (selectedKnotSpans_n[interval_n[0]]); 
+      bool selected_m = (selectedKnotSpans_m[interval_m[0]] && selectedKnotSpans_m[interval_m[1]]);
+      bool selected_n = (selectedKnotSpans_n[interval_n[0]] && selectedKnotSpans_n[interval_n[1]]); 
       
       Vec4f color;
       if (selected_m && selected_n)
