@@ -54,12 +54,118 @@
 #include "TypeBSplineSurface.hh"
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 //-----------------------------------------------------------------------------
 
 TypeBSplineSurfacePlugin::
-TypeBSplineSurfacePlugin()
+TypeBSplineSurfacePlugin() :
+renderControlNetAction_(0),
+renderSurfaceAction_(0)
 {
+}
+
+//-----------------------------------------------------------------------------
+
+/** \brief Second initialization phase
+ *
+ */
+void TypeBSplineSurfacePlugin::pluginsInitialized()
+{
+
+  if ( OpenFlipper::Options::gui() ){
+
+    QMenu* contextMenu = new QMenu("Options");
+
+    QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
+    // Render Control Net
+    renderControlNetAction_ = new QAction(tr("Render Control Net"), this);
+    renderControlNetAction_->setStatusTip(tr("Render Control Net"));
+//    renderControlNetAction_->setIcon( QIcon(iconPath + "showIndices.png") );
+    renderControlNetAction_->setCheckable(true);
+    renderControlNetAction_->setChecked(false);
+
+    // Render Surface
+    renderSurfaceAction_ = new QAction(tr("Render Surface"), this);
+    renderSurfaceAction_->setStatusTip(tr("Render Surface"));
+//    renderSurfaceAction_->setIcon( QIcon(iconPath + "coordsys.png") );
+    renderSurfaceAction_->setCheckable(true);
+    renderSurfaceAction_->setChecked(true);
+
+
+    connect(renderControlNetAction_,     SIGNAL(triggered()), this, SLOT(slotRenderControlNet()) );
+    connect(renderSurfaceAction_, SIGNAL(triggered()), this, SLOT(slotRenderSurface()) );
+
+    contextMenu->addAction(renderControlNetAction_);
+    contextMenu->addAction(renderSurfaceAction_);
+
+    emit addContextMenuItem(contextMenu->menuAction(), DATA_BSPLINE_SURFACE, CONTEXTOBJECTMENU);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void
+TypeBSplineSurfacePlugin::
+slotUpdateContextMenu( int _objectId ) {
+  if ( _objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(_objectId,object) )
+    return;
+
+  BSplineSurfaceObject* bsplineSurfaceObject = dynamic_cast<BSplineSurfaceObject*>(object);
+
+  if(bsplineSurfaceObject != 0){
+    renderControlNetAction_->setChecked( bsplineSurfaceObject->splineSurfaceNode()->render_control_net() );
+    renderSurfaceAction_->setChecked( bsplineSurfaceObject->splineSurfaceNode()->render_bspline_surface() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TypeBSplineSurfacePlugin::slotRenderControlNet(){
+
+  QVariant contextObject = renderControlNetAction_->data();
+  int objectId = contextObject.toInt();
+
+  if ( objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(objectId,object) )
+    return;
+
+  BSplineSurfaceObject* bsplineSurfaceObject = dynamic_cast<BSplineSurfaceObject*>(object);
+
+  if(bsplineSurfaceObject != 0){
+    bsplineSurfaceObject->splineSurfaceNode()->render_control_net(renderControlNetAction_->isChecked());
+    emit updatedObject( objectId, UPDATE_ALL );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TypeBSplineSurfacePlugin::slotRenderSurface(){
+
+  QVariant contextObject = renderSurfaceAction_->data();
+  int objectId = contextObject.toInt();
+
+  if ( objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(objectId,object) )
+    return;
+
+  BSplineSurfaceObject* bsplineSurfaceObject = dynamic_cast<BSplineSurfaceObject*>(object);
+
+  if(bsplineSurfaceObject != 0){
+    bsplineSurfaceObject->splineSurfaceNode()->render_bspline_surface(renderSurfaceAction_->isChecked());
+    emit updatedObject( objectId, UPDATE_ALL );
+  }
 }
 
 //-----------------------------------------------------------------------------
