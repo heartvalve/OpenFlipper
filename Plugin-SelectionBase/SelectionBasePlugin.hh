@@ -235,8 +235,8 @@ Q_INTERFACES(SelectionInterface)
             // Map that stores for each primitive type a set of
             // operations that are supported on it
             std::multimap<PrimitiveType, QPushButton*> operations;
-            // Keep index of tab for selection environment
-            int tabIndex;
+            // Keep name of tab for selection environment
+            QWidget* tabWidget;
         };
         
         /// Get a unique pickmode name
