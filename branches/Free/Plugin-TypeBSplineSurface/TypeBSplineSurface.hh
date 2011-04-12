@@ -121,7 +121,7 @@ class TypeBSplineSurfacePlugin : public QObject, BaseInterface, TypeInterface, L
      
   public slots:
 
-    QString version() { return QString("1.0"); };
+    QString version() { return QString("1.1"); };
 
   private:
     /// Context menu action
