@@ -425,7 +425,6 @@ void BSplineSurfaceSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
     
-    unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     
     if(_event->type() == QEvent::MouseButtonPress) {
