@@ -49,6 +49,20 @@
 #include "GroupBackup.hh"
 
 //-----------------------------------------------------------------------------
+BackupPlugin::BackupPlugin():
+backupMenu_(0),
+backupsEnabledAction_(0),
+undoMenuAction_(0),
+redoMenuAction_(0),
+undoToolAction_(0),
+redoToolAction_(0),
+undoContextAction_(0),
+redoContextAction_(0)
+{
+
+}
+
+//-----------------------------------------------------------------------------
 
 void BackupPlugin::pluginsInitialized() {
 
@@ -220,9 +234,6 @@ void BackupPlugin::slotUpdateContextMenu( int _objectId ){
     }
   }
 
-  //TODO do it correct
-  emit addContextMenuItem(redoContextAction_, DATA_ALL, CONTEXTOBJECTMENU);
-  emit addContextMenuItem(undoContextAction_, DATA_ALL, CONTEXTOBJECTMENU);
 }
 
 //-----------------------------------------------------------------------------
