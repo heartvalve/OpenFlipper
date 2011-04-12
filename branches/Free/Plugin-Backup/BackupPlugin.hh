@@ -141,6 +141,7 @@ public slots:
   
 public:
   ~BackupPlugin() {};
+  BackupPlugin();
   
   QString name() { return (QString("Backup")); };
   QString description( ) { return (QString("Creates Backups of objects when supported by plugins")); };
