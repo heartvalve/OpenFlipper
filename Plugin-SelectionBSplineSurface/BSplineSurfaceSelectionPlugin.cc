@@ -304,7 +304,7 @@ void BSplineSurfaceSelectionPlugin::slotSelectionOperation(QString _operation) {
 
 //==============================================================================================
 
-void BSplineSurfaceSelectionPlugin::slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+void BSplineSurfaceSelectionPlugin::slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
 
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & allSupportedTypes_) == 0) return;
@@ -314,7 +314,7 @@ void BSplineSurfaceSelectionPlugin::slotToggleSelection(QPoint _position, Select
         unsigned int node_idx, target_idx;
         ACG::Vec3d   hit_point;
 
-        if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _position, node_idx, target_idx, &hit_point)) {
+        if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
 
             BaseObjectData* object = 0;
 
@@ -351,7 +351,7 @@ void BSplineSurfaceSelectionPlugin::slotToggleSelection(QPoint _position, Select
         unsigned int node_idx, target_idx;
         ACG::Vec3d   hit_point;
 
-        if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_SPLINE, _position,node_idx, target_idx, &hit_point)) {
+        if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_SPLINE, _event->pos(),node_idx, target_idx, &hit_point)) {
             
             BaseObjectData* object = 0;
 
