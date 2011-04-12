@@ -238,7 +238,6 @@ void MeshRepairPlugin::detectFlatTriangles(int _objectId, double _angle) {
         TriMesh::VFIter                     vf_it;
         TriMesh::FaceHandle                 fh;
         std::vector<TriMesh::VertexHandle>  vh(3);
-        unsigned int                        i;
         TriMesh::Scalar                     cosangle(cos(_angle/180.0*M_PI));
 
         for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
