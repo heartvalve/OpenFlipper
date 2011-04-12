@@ -1,15 +1,52 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11174 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11290 )</b>
+ *      - <b>ACG</b>
+ *          - SceneGraph
+ *              - MeshNode
+ *                  - Added GPU Cache optimizer ( For per vertex draw modes; Speedup for rendering about 3 )
+ *              - ShaderNode
+ *                  - Fixed return type of functions
+ *          - GL
+ *              - Fixed bug that made VertexBufferObject unusable
+ *              - Fixed bug that made FrameBufferObject unusable
+ *              - Avoid usage of glIsRenderBuffer
  *      - <b>Core</b>
  *          - Load/Save
  *              - Fixed handling of last directory to avoid jumps between dirs in file dialogs.
+ *              - Fixed variable initialization in ParseINI
+ *          - About Dialog
+ *              - List registered file plugins
+ *      - <b>Interfaces</b>
+ *          - Introduced selection Interface
+ *          - Reworked Backup Interface
  *      - <b>ObjectTypes</b>
+ *          - BSplineCurve
+ *              - 
+ *          - BSplineSurface
+ *              - BSplineSurfaceT: Added selection wrapper functions
+ *              - Fixed rendering of knot selection
+ *              - Added icon for B-spline surfaces
+ *              - Corrected behaviour of control point deletion 
+ *          - CoordSys
+ *              - Fixed coordsys node which did not initialize the rotation matrix.
+ *              - Smooth shaded mode for coordsys
  *          - MeshObject
  *              - Fixed functions to set/get selections which ignored vertex 0
  *      - <b>Plugins</b>
+ *          - Backup
+ *              - Reworked Backup system
+ *                  - Support for global undo redo
+ *                  - Support for per object undo redo
+ *                  - Support for undo/redo groups
+ *                  - Support for partial backups (selection only ... )
+ *                  - Integrated backup requests in with type plugins
  *          - Selection
+ *              - Reworked selection Interface
+ *                  - SelectionBase Plugin now handles the basics
+ *                  - Per type one selection plugin handles this types selection
+ *                  - Only available selection metaphors are enabled in the gui
  *              - Fixed bug where vertex selection was not saved properly
  *          - Datacontrol
  *              - Don' change source and target settings of objects when they get grouped
@@ -18,6 +55,13 @@
  *          - Introduced option to debug OpenFlipperSettings (cerr read and write access to settings)
  *          - Introduced mac option to provide a user defined Info.plist
  *          - Added 512x512 Icon to OpenFlipper_Icon.icns 
+ *          - Only build documentation if doxygen is available
+ *          - Added simple ANN finder
+ *          - Plugin Configuration output
+ *              - Sort list of configured plugins
+ *              - Add more spaces for longer plugin names
+ *              - Sort plugin configuration details into groups
+ *              - Output Build type when configuring
  * 
  *
  * - <b>OpenFlipper 1.0.1 (  03.21.2011 , 11158 )</b>
