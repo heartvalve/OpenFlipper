@@ -129,9 +129,6 @@ private slots:
 private slots:
   
   void updateButtons();
-   
-  /// Backup Menu clicked
-  void slotBackupMenu(QAction* _action);
   
   /// Backups enabled or disabled checkbox
   void slotEnableDisableBackups();
