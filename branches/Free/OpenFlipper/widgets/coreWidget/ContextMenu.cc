@@ -534,8 +534,13 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
     //this plugin adds all context menus, no special configuration so far.
     visible = viewModes_[0]->visibleContextMenus;
   }
+
+  // Remove Plugin Name from string
   visible.replaceInStrings(QRegExp(".*>"), "");
   
+  // Remove accelerator specifications
+  visible.replaceInStrings("&", "");
+
   while (it.hasNext()) {
      it.next();
      if (visible.contains(it.key())) {
