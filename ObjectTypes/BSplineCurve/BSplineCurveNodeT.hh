@@ -151,8 +151,10 @@ public:
   void set_rendering_resolution(int _res){resolution_ = _res;};
 
   void render_control_polygon(bool _render) {render_control_polygon_ = _render;};
+  bool render_control_polygon() {return render_control_polygon_; };
 
   void render_bspline_curve(bool _render) {render_bspline_curve_ = _render;};
+  bool render_bspline_curve() {return render_bspline_curve_; };
 
   void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
   
