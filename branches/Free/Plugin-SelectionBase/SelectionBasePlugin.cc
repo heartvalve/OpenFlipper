@@ -398,7 +398,7 @@ void SelectionBasePlugin::slotAddSelectionEnvironment(QString _modeName, QString
     
     // Add type frame to tab widget
     int index = tool_->typeTabWidget->addTab(tab, _icon, _modeName);
-    env.tabIndex = index;
+    env.tabWidget = tool_->typeTabWidget->widget(index);
     
     // Disable type frame unless there's at least one
     // object of the desired type in the scene
@@ -443,8 +443,8 @@ void SelectionBasePlugin::slotRegisterType(QString _handleName, DataType _type) 
         // of the associated type already exists in the scenegraph
         if(typeExists(_type)) {
             // Show selection environment's tab widget
-            tool_->typeTabWidget->setTabEnabled((*it).second.tabIndex, true);
-            tool_->typeTabWidget->widget((*it).second.tabIndex)->setEnabled(true);
+            tool_->typeTabWidget->setTabEnabled(tool_->typeTabWidget->indexOf((*it).second.tabWidget), true);
+            (*it).second.tabWidget->setEnabled(true);
         }
         
     } else {
@@ -694,7 +694,7 @@ void SelectionBasePlugin::updateActivePrimitiveTypes(bool _checked) {
     // Automatically show tab widget associated to this primitive type
     std::map<QString,SelectionEnvironment>::iterator sit = selectionEnvironments_.find(clickedAction->selectionEnvironmentHandle());
     if(sit != selectionEnvironments_.end() && _checked) {
-        tool_->typeTabWidget->setCurrentIndex((*sit).second.tabIndex);
+        tool_->typeTabWidget->setCurrentIndex(tool_->typeTabWidget->indexOf((*sit).second.tabWidget));
     }
     
     // Clear lines
@@ -1424,10 +1424,10 @@ void SelectionBasePlugin::addedEmptyObject (int _id) {
     }
     
     if(found) {
-        // We have found a selection environment for the
-        // recently loaded data type -> show tab widget
-        tool_->typeTabWidget->setTabEnabled((*it).second.tabIndex, true);
-        tool_->typeTabWidget->widget((*it).second.tabIndex)->setEnabled(true);
+      // We have found a selection environment for the
+      // recently loaded data type -> show tab widget
+      tool_->typeTabWidget->setTabEnabled(tool_->typeTabWidget->indexOf((*it).second.tabWidget), true);
+      (*it).second.tabWidget->setEnabled(true);
     }
     
     updatePickModeToolBar();
@@ -1494,8 +1494,8 @@ void SelectionBasePlugin::objectDeleted (int _id) {
         }
         // Show tab widget if at least one object of supported data type was found
         // Hide it otherwise
-        tool_->typeTabWidget->setTabEnabled((*it).second.tabIndex, atLeastOne);
-        tool_->typeTabWidget->widget((*it).second.tabIndex)->setEnabled(atLeastOne);
+        tool_->typeTabWidget->setTabEnabled(tool_->typeTabWidget->indexOf((*it).second.tabWidget), atLeastOne);
+        (*it).second.tabWidget->setEnabled(atLeastOne);
     }
     
     updatePickModeToolBar();
@@ -1521,13 +1521,6 @@ void SelectionBasePlugin::updateTabsOrder() {
             // Tab remains in old order
             newMappings.insert(std::pair<int,int>(i,i));
         }
-    }
-
-    // Now update indices in selection environments
-    for(std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.begin();
-            it != selectionEnvironments_.end(); ++it) {
-
-        (*it).second.tabIndex = newMappings[(*it).second.tabIndex];
     }
 
     // Choose first active tab
