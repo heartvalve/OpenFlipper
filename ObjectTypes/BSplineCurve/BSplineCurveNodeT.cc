@@ -888,8 +888,17 @@ create_knot_selection_texture(GLState& /*_state*/)
   std::vector<bool> selectedKnotSpans(numKnots, false);  
   for (int i = 0; i < numKnots; ++i)
   {
-    if (bsplineCurve_.get_knotvector_ref()->selected(i))
-      selectedKnotSpans[i] = true;
+    if (bsplineCurve_.get_knotvector_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineCurve_.span(bsplineCurve_.get_knot(i));
+      // check for incomple spline
+      if (span[0] < 0 || span[1] < 0)
+        return;
+
+      for(int j = span[0]; j <= span[1]+degree; ++j)
+        selectedKnotSpans[j] = true;
+    }
   }
 
 //   Vec4f curveColor     = _state.base_color();
@@ -905,7 +914,7 @@ create_knot_selection_texture(GLState& /*_state*/)
     Vec4f color;
     Vec2i interval = bsplineCurve_.interval(u);
     // check if highlighted
-    if (selectedKnotSpans[interval[0]])
+    if (selectedKnotSpans[interval[0]] && selectedKnotSpans[interval[1]])
       color = highlightColor;
     else
       color = curveColor;
