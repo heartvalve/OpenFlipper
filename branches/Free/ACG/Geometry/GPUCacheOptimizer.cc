@@ -40,7 +40,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 #include "GPUCacheOptimizer.hh"
 #include <assert.h>
@@ -48,12 +48,12 @@
 #include <vector>
 #include <string.h>
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 namespace ACG
 {
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 GPUCacheOptimizer::GPUCacheOptimizer(UINT NumTris, UINT NumVerts, UINT IndexSize, 
 									 const void* pIndices)
@@ -68,7 +68,7 @@ GPUCacheOptimizer::~GPUCacheOptimizer(void)
 	delete [] m_pTriMap;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 UINT GPUCacheOptimizer::GetIndex(UINT i) const
 {
@@ -102,7 +102,7 @@ void GPUCacheOptimizer::SetIndex(UINT i, UINT val, UINT IndexSize, void* pIB)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 void GPUCacheOptimizer::WriteIndexBuffer(UINT DstIndexSize, void* pDst)
 {
@@ -135,7 +135,7 @@ void GPUCacheOptimizer::WriteIndexBuffer(UINT DstIndexSize, void* pDst)
 	if (bTmpCopy) delete [] pSrc;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts, 
 									  const UINT* pVertMap, 
@@ -175,7 +175,7 @@ void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts,
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 void GPUCacheOptimizer::OptimizeVertices(UINT NumTris, UINT NumVerts,
 										 UINT IndexSize, const void* pIndices,
@@ -199,7 +199,7 @@ void GPUCacheOptimizer::OptimizeVertices(UINT NumTris, UINT NumVerts,
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 UINT GPUCacheOptimizer::ComputeNumberOfVertexTransformations(UINT VertexCacheSize)
 {
@@ -251,7 +251,7 @@ UINT GPUCacheOptimizer::ComputeNumberOfVertexTransformations(UINT VertexCacheSiz
 	return m_NumTransformations;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 float GPUCacheOptimizer::ComputeACMR(UINT VertexCacheSize)
 {
@@ -259,7 +259,7 @@ float GPUCacheOptimizer::ComputeACMR(UINT VertexCacheSize)
 	return float(NumT) / float(m_NumTris);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 float GPUCacheOptimizer::ComputeATVR(UINT VertexCacheSize)
 {
@@ -267,7 +267,7 @@ float GPUCacheOptimizer::ComputeATVR(UINT VertexCacheSize)
 	return float(NumT) / float(m_NumVerts);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 // forsyth's score function
 void GPUCacheOptimizer::Opt_Vertex::FindScore(UINT MaxSizeVertexCache)
@@ -319,7 +319,7 @@ void GPUCacheOptimizer::Opt_Vertex::RemoveTriFromList(UINT tri)
 	--iNumTrisLeft;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 // tipsify
 
 GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris, UINT NumVerts, UINT IndexSize, const void *pIndices)
@@ -365,7 +365,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 
 	// use the cache_pos of the OptFaces_Vertex as the time stamp
 
-	//////////////////////////////////////////////////////////////////////////
+	//=============================================================================
 	// OPTIMIZATION:
 	//  push and pop on DeadEndVertexStack greatly increases processing time
 	// -> replace with fixed size ring stack
@@ -478,7 +478,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 	delete [] pTris;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 GPUCacheEfficiencyTester::GPUCacheEfficiencyTester(UINT NumTris, UINT NumVerts, 
 												   UINT IndexSize, const void* pIndices)
@@ -487,7 +487,7 @@ GPUCacheEfficiencyTester::GPUCacheEfficiencyTester(UINT NumTris, UINT NumVerts,
 	for (UINT i = 0; i < NumTris; ++i) m_pTriMap[i] = i;
 }
 
-//////////////////////////////////////////////////////////////////////////
+//=============================================================================
 
 
 }
