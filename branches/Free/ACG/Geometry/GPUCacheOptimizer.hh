@@ -180,8 +180,9 @@ protected:
 
 protected:
 
-	UINT m_NumTris;
+
 	UINT m_NumVerts;
+	UINT m_NumTris;
 	
 	/**
 	TriMap[new tri index] = old tri index
@@ -190,8 +191,9 @@ protected:
 	UINT* m_pTriMap;
 
 private:
-	const void* m_pIndices;
 	UINT m_IndexSize;
+	const void* m_pIndices;
+
 
 	UINT m_NumTransformations;
 
