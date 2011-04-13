@@ -200,7 +200,7 @@ if ( APPLE )
 
  if ( EXISTS /opt/local/lib/Resources/qt_menu.nib )
   acg_copy_after_build( OpenFlipper "/opt/local/lib/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
- if ( EXISTS /usr/bin/qt_menu.nib )
+ elseif ( EXISTS /usr/bin/qt_menu.nib )
    acg_copy_after_build( OpenFlipper "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  elseif ( EXISTS "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" )
    acg_copy_after_build( OpenFlipper "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
