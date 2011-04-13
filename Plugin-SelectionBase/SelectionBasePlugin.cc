@@ -1507,8 +1507,6 @@ void SelectionBasePlugin::objectDeleted (int _id) {
 
 void SelectionBasePlugin::updateTabsOrder() {
 
-    if(tool_->typeTabWidget->isTabEnabled(tool_->typeTabWidget->currentIndex())) return;
-
     std::map<int, int> newMappings;
 
     int firstFree = 0;
