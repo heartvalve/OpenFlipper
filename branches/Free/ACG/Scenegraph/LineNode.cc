@@ -68,13 +68,6 @@ LineNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   ConstPointIter p_it=points_.begin(), p_end=points_.end();
-
-  if ( p_it!=p_end ){
-    _bbMax = *p_it;
-    _bbMin = *p_it;
-    ++p_it;
-  }
-
   for (; p_it!=p_end; ++p_it)
   {
       _bbMax.maximize(*p_it);
