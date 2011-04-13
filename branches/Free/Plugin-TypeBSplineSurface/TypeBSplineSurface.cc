@@ -78,7 +78,7 @@ void TypeBSplineSurfacePlugin::pluginsInitialized()
 
   if ( OpenFlipper::Options::gui() ){
 
-    QMenu* contextMenu = new QMenu("Options");
+    QMenu* contextMenu = new QMenu("Rendering");
 
     QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
