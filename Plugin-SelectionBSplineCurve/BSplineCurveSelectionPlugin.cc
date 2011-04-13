@@ -418,8 +418,6 @@ void BSplineCurveSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event, 
                                     curve->deselect_controlpoint(i);
                                 else
                                     curve->select_controlpoint(i);
-                            } else {
-                                curve->deselect_controlpoint(i);
                             }
                         }
                     }
