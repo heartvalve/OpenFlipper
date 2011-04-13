@@ -476,8 +476,6 @@ void BSplineSurfaceSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event
                                         surface->deselect_controlpoint(i,j);
                                     else
                                         surface->select_controlpoint(i,j);
-                                } else {
-                                    surface->deselect_controlpoint(i,j);
                                 }
                             }
                         }
