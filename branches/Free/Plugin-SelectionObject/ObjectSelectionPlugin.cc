@@ -163,7 +163,7 @@ void ObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, SelectionIn
     if((_currentType & objectType_) == 0) return;
 
     // Return if mouse event is not a left-button click
-    if(_event->button() == Qt::LeftButton) return;
+    if(_event->button() != Qt::LeftButton) return;
      
     unsigned int node_idx = 0;
     unsigned int target_idx = 0;
