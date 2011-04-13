@@ -568,7 +568,7 @@ pick(GLState& _state, PickTarget _target)
     {
       _state.pick_set_maximum (bsplineCurve_.n_control_points() + curve_samples_.size());
       pick_vertices(_state);
-//       pick_spline(_state, bsplineCurve_.n_control_points());
+      //pick_spline(_state, bsplineCurve_.n_control_points());
       pick_curve(_state, bsplineCurve_.n_control_points());
       break;
     }
@@ -616,29 +616,48 @@ void
 BSplineCurveNodeT< BSplineCurve >::
 pick_curve( GLState& _state, unsigned int _offset)
 {
-  // radius in pixels
-  int psize = 7;
+  int numKnots = bsplineCurve_.n_knots();
+  GLfloat *knots = new GLfloat[numKnots];
+  for (int i = 0; i < numKnots; ++i)
+    knots[i] = bsplineCurve_.get_knot(i);
 
-//   _state.pick_set_maximum(curve_samples_.size());
-//   _state.pick_set_name (0);
+  const int numCPs = bsplineCurve_.n_control_points();
 
-  for (unsigned int i = 0; i < curve_samples_.size(); ++i)
+  // check for incomplete curve
+  if (numCPs < (int)bsplineCurve_.degree() + 1)
+    return;
+
+  GLfloat *ctlpoints = new GLfloat[numCPs * 3];
+  for (int i = 0; i < numCPs; ++i)
   {
-    _state.pick_set_name (i + _offset);
-
-    Vec3d pos = curve_samples_[i].first;
-    glVertex3f(pos[0], pos[1], pos[2]);
-
-    Vec3d window_pos = _state.project( pos );
-    int px = round( window_pos[0]);
-    int py = round( window_pos[1]);
-    double angle = acos(_state.viewing_direction(px, py).normalize()|_state.viewing_direction(px+psize, py).normalize());
-    double l = (_state.eye() - pos).norm();
-    double r = l*tan(angle);
-
-    // draw 3d sphere
-    draw_sphere(pos, r, _state);
+    Vec3d p = bsplineCurve_.get_control_point(i);
+    ctlpoints[i * 3 + 0] = (GLfloat)p[0];
+    ctlpoints[i * 3 + 1] = (GLfloat)p[1];
+    ctlpoints[i * 3 + 2] = (GLfloat)p[2];
   }
+
+  int order = bsplineCurve_.degree() + 1;
+
+  GLUnurbsObj *theNurb;
+  theNurb = gluNewNurbsRenderer();
+
+  #ifdef WIN32
+    gluNurbsCallback(theNurb, GLU_ERROR, (void (__stdcall *)(void))(&nurbsErrorCallback) );
+  #else
+    gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) (&nurbsErrorCallback) );
+  #endif
+
+  gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
+  gluNurbsProperty(theNurb, GLU_SAMPLING_TOLERANCE, 5.0);
+
+  gluBeginCurve(theNurb);
+  gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_VERTEX_3);
+  gluEndCurve(theNurb);
+
+  gluDeleteNurbsRenderer(theNurb);
+
+  delete[] knots;
+  delete[] ctlpoints;
 }
 
 //----------------------------------------------------------------------------
