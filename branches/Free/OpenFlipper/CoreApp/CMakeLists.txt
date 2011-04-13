@@ -164,14 +164,6 @@ if (APPLE)
       MACOSX_BUNDLE_INFO_PLIST ${APPLE_INFO_PLIST}
    )
 
-   # Required for Snow leopard, and the latest qt. Then the resources have to be copied
-   if ( EXISTS "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" )
-       add_custom_command(TARGET OpenFlipper POST_BUILD
-          COMMAND ${CMAKE_COMMAND} -E copy_directory "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib" 
-         )
-   endif ()
-
-
 endif ()
 
 # Translations
@@ -206,9 +198,17 @@ endif()
 if ( APPLE ) 
   # we need qt_menu.nib in our resources dir so try to get it
 
-  if ( EXISTS /usr/bin/qt_menu.nib )
-    acg_copy_after_build( OpenFlipper "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
-  endif()
+ if ( EXISTS /opt/local/lib/Resources/qt_menu.nib )
+  acg_copy_after_build( OpenFlipper "/opt/local/lib/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+ if ( EXISTS /usr/bin/qt_menu.nib )
+   acg_copy_after_build( OpenFlipper "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+ elseif ( EXISTS "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" )
+   acg_copy_after_build( OpenFlipper "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+ endif ()
+
+ 
+ 
+ 
 
 endif( APPLE )
 
