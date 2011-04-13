@@ -546,13 +546,6 @@ pick(GLState& _state, PickTarget _target)
       break;
     }
 
-    case PICK_EDGE:
-    {
-      _state.pick_set_maximum (curve_samples_.size());
-      pick_curve(_state, 0);
-      break;
-    }
-
     case PICK_SPLINE:
     {
       _state.pick_set_maximum (pick_texture_res_ );
@@ -563,10 +556,9 @@ pick(GLState& _state, PickTarget _target)
 
     case PICK_ANYTHING:
     {
-      _state.pick_set_maximum (bsplineCurve_.n_control_points() + curve_samples_.size());
+      _state.pick_set_maximum (bsplineCurve_.n_control_points() + pick_texture_res_);
       pick_vertices(_state);
-//       pick_spline(_state, bsplineCurve_.n_control_points());
-      pick_curve(_state, bsplineCurve_.n_control_points());
+      pick_spline(_state, bsplineCurve_.n_control_points());
       break;
     }
 
@@ -608,32 +600,10 @@ pick_vertices( GLState& _state )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineCurve>
-void
-BSplineCurveNodeT< BSplineCurve >::
-pick_curve( GLState& _state, unsigned int _offset)
-{
-  // radius in pixels
-  int psize = 7;
-
-  glBegin(GL_LINE_STRIP);
-  for (unsigned int i = 0; i < curve_samples_.size(); ++i)
-  {
-    if(i > 0)
-      _state.pick_set_name (i - 1 + _offset);
-
-    Vec3d pos = curve_samples_[i].first;
-    glVertex3f(pos[0], pos[1], pos[2]);
-  }
-  glEnd();
-}
-
-//----------------------------------------------------------------------------
-
 template <class BSplineCurve >
 void
 BSplineCurveNodeT<BSplineCurve>::
-pick_spline( GLState& _state, unsigned int /*_offset*/ )
+pick_spline( GLState& _state, unsigned int _offset )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -642,9 +612,9 @@ pick_spline( GLState& _state, unsigned int /*_offset*/ )
 //   glEnable(GL_MAP1_TEXTURE_COORD_1);
 
 
-  if( _state.pick_current_index () != pick_texture_baseidx_)
+  if( _state.pick_current_index () + _offset != pick_texture_baseidx_)
   {
-    pick_texture_baseidx_ = _state.pick_current_index();
+    pick_texture_baseidx_ = _state.pick_current_index() + _offset;
     pick_create_texture( _state);
   }
   else

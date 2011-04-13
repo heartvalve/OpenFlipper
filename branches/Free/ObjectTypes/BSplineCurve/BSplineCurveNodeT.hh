@@ -173,7 +173,6 @@ public:
 private:
 
   void pick_vertices(GLState& _state);
-  void pick_curve( GLState& _state, unsigned int _offset);
   void pick_spline( GLState& _state, unsigned int _offset );
 
   void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices = 16, unsigned int _stacks = 1);
