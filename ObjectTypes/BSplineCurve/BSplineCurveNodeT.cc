@@ -497,9 +497,6 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 updateGeometry()
 {
-  if (bspline_draw_mode_ == NORMAL)
-    return;
-
   curve_samples_.clear();
 
   std::pair< Vec3d, Vec4f > sample;
@@ -619,26 +616,16 @@ pick_curve( GLState& _state, unsigned int _offset)
   // radius in pixels
   int psize = 7;
 
-//   _state.pick_set_maximum(curve_samples_.size());
-//   _state.pick_set_name (0);
-
+  glBegin(GL_LINE_STRIP);
   for (unsigned int i = 0; i < curve_samples_.size(); ++i)
   {
-    _state.pick_set_name (i + _offset);
+    if(i > 0)
+      _state.pick_set_name (i - 1 + _offset);
 
     Vec3d pos = curve_samples_[i].first;
     glVertex3f(pos[0], pos[1], pos[2]);
-
-    Vec3d window_pos = _state.project( pos );
-    int px = round( window_pos[0]);
-    int py = round( window_pos[1]);
-    double angle = acos(_state.viewing_direction(px, py).normalize()|_state.viewing_direction(px+psize, py).normalize());
-    double l = (_state.eye() - pos).norm();
-    double r = l*tan(angle);
-
-    // draw 3d sphere
-    draw_sphere(pos, r, _state);
   }
+  glEnd();
 }
 
 //----------------------------------------------------------------------------
