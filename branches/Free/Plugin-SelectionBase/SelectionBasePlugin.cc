@@ -675,9 +675,11 @@ void SelectionBasePlugin::updateActivePrimitiveTypes(bool _checked) {
     // If currently selected selection mode is not available
     // for the currently active primitive types, reset selection mode
     QList<QAction*> sm_actions = selectionModesGroup_->actions();
+    bool atLeastOneSelectionMode = false;
     for(int i = 0; i < sm_actions.size(); ++i) {
 
         if(sm_actions[i]->isChecked()) {
+            atLeastOneSelectionMode = true;
             HandleAction* ha = 0;
             ha = dynamic_cast<HandleAction*>(sm_actions[i]);
             if(ha) {
@@ -689,6 +691,10 @@ void SelectionBasePlugin::updateActivePrimitiveTypes(bool _checked) {
                 }
             }
         }
+    }
+    // If no selection mode is active, automatically go into toggle mode
+    if(!atLeastOneSelectionMode) {
+        toggleSelectionAction_->trigger();
     }
 
     // Automatically show tab widget associated to this primitive type
