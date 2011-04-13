@@ -457,8 +457,6 @@ void BSplineCurveSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event, 
                                 } else {
                                     knotvec->select(i+1);
                                 }
-                            } else {
-                                knotvec->deselect(i+1);
                             }
                         }
                     }
