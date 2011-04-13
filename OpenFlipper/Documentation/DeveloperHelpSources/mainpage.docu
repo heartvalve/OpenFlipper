@@ -26,6 +26,8 @@
  * - \ref changelog
  * - \ref todo
  *
+ * \subpage integrated_libs
+ *
  * \page integrated_libs Integrated libraries
  * - \subpage OpenMeshDoc
  * - \subpage ACGDoc
