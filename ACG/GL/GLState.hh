@@ -505,12 +505,27 @@ public:
   /// initialize name/color picking stack (like glInitNames())
   void pick_init (bool _color);
 
-  /// sets the maximum used name index at current stack position (only used in color picking)
-  /// A restriction inside the color picking implementation forces to set the maximum used
-  /// number for the following pick_set_name calls between the two pick_push_name/pick_pop_name calls.
+  /** \brief Set the maximal number of primitives/components of your object
+   *
+   * Sets the maximum used name index at current stack position (only used in color picking)
+   * A restriction inside the color picking implementation forces to set the maximum used
+   * number for the following pick_set_name calls between the two pick_push_name/pick_pop_name calls.
+   *
+   * If you create picking for your nodes, the values set with pick_set_name have to be between zero and
+   * this value.
+   */
   bool pick_set_maximum (unsigned int _idx);
 
-  /// sets the current name/color (like glLoadName(_idx))
+  /** \brief sets the current name/color (like glLoadName(_idx))
+   *
+   * This will be the index of the primitive/component in the object.
+   * If you create picking for your nodes, the values set here will be returned as the target index. So
+   * if your object has three parts, you call pick_set_name(0), than render the first component
+   * and then pick_set_name(1), ...
+   *
+   * If you perform the picking and click on the second component, the returned index will be 1 as set in
+   * the node.
+   */
   void pick_set_name (unsigned int _idx);
 
   /// returns the color that will be used for index _idx during color picking if this index will be set
@@ -535,9 +550,14 @@ public:
   /// Mostly to small color depth or wrong handling of pick_set_maximum
   bool pick_error () const;
 
-  /// returns the current color picking index (can be used for caching)
-  /// Is this value equal to a value used in a previous picking, then the same colors will be used.
-  /// In this case a previously calculated color array/display list can be reused.
+  /** \brief Returns the current color picking index (can be used for caching)
+   *
+   * Is this value equal to a value used in a previous picking run, then the same colors will be used.
+   * In this case a previously calculated color array/display list can be reused.
+   *
+   * This is basically the name of the whole object, not the name of the primitives/compoents in the object!
+   *
+   */
   unsigned int pick_current_index () const;
 
   /// Is color picking active?
