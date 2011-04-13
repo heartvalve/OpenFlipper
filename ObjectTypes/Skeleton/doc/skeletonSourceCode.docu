@@ -1,0 +1,119 @@
+/** \page skeletonSource Skeleton Tutorial SourceCode
+
+\code
+
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
+#include <ACG/Math/GLMatrixT.hh>
+#include <ObjectTypes/Skeleton/Skeleton.hh>
+#include <ObjectTypes/Skeleton/BaseSkin.hh>
+
+
+void skeletonTutorial2() {
+  
+  int objectId = -1;
+  
+  emit addEmptyObject( DATA_SKELETON, objectId );
+
+  SkeletonObject* skeletonObject;
+  if ( !PluginFunctions::getObject(objectId, skeletonObject) ) {
+    emit log(LOGERR,"Unable to create new Skeleton");
+    return;
+  }
+
+  Skeleton* skeleton = PluginFunctions::skeleton(skeletonObject);
+
+  //setup the topology
+  Skeleton::Joint* currentParent = 0;
+  int jointCount = 3;
+
+  for (int i=0; i < jointCount; i++){
+    std::string     jointName = QString("Joint" + QString::number(i)).toStdString();
+    Skeleton::Joint* newJoint = new Skeleton::Joint(currentParent, jointName );
+    skeleton->addJoint(currentParent, newJoint);
+    currentParent = newJoint;
+  }
+  
+  //set positions for the reference pose
+  Skeleton::Pose* refPose = skeleton->referencePose();
+  double xOffset = 0.0;
+  
+  for (Skeleton::Iterator it = skeleton->begin(); it != skeleton->end(); ++it){
+    refPose->setGlobalTranslation( (*it)->id(), ACG::Vec3d(xOffset, 0.0, 0.0) );
+    xOffset += 1.0;
+  }
+  
+  //add an animation
+  int frameCount = 100;
+  
+  FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
+  AnimationHandle animHandle = skeleton->addAnimation("Rotation", animation);
+  skeleton->animation(animHandle)->setFps(25);
+  
+  //set position in every pose/frame of the animation
+  Skeleton::Joint* middleJoint = skeleton->joint(1);
+  ACG::GLMatrixd rotationMatrix;
+  
+  rotationMatrix.identity();
+  double maxAngle = 90.0;
+  ACG::Vec3d axis(0.0, 0.0, 1.0);
+
+  for (int i=0; i < frameCount; i++){
+    animHandle.setFrame(i);
+
+    Skeleton::Pose* pose = skeleton->pose(animHandle);
+
+    for (Skeleton::Iterator it = skeleton->begin(); it != skeleton->end(); ++it)
+      pose->setGlobalTranslation( (*it)->id(), refPose->globalTranslation( (*it)->id() ) );
+
+    rotationMatrix.rotate( maxAngle / frameCount, axis);
+    pose->setGlobalMatrix(     middleJoint->id(), rotationMatrix, false );
+    pose->setGlobalTranslation(middleJoint->id(), refPose->globalTranslation( middleJoint->id() ), false );
+  }
+
+  //add a mesh
+  objectId = -1;
+  emit addEmptyObject( DATA_TRIANGLE_MESH, objectId );
+
+  TriMeshObject* meshObject;
+  if ( !PluginFunctions::getObject(objectId,meshObject) ) {
+    emit log(LOGERR,"Unable to create new Mesh");
+    return;
+  }
+
+  TriMesh* mesh = PluginFunctions::triMesh(meshObject);
+  
+  //add skin-weights property on the mesh
+  OpenMesh::VPropHandleT< BaseSkin::SkinWeights > propWeights;
+  mesh->add_property(propWeights, SKIN_WEIGHTS_PROP);
+
+  int steps = 50;
+
+  for (int i=0; i < jointCount; i++)
+  for (int j=0; j < steps;      j++){
+    double xPos = (j / double(steps-1));
+    TriMesh::VertexHandle vh1 = mesh->add_vertex( ACG::Vec3d(i + xPos,  0.1, 0.0) );
+    TriMesh::VertexHandle vh2 = mesh->add_vertex( ACG::Vec3d(i + xPos, -0.1, 0.0) );
+
+    mesh->property(propWeights, vh1)[ i ] = 1.0 - xPos;
+    mesh->property(propWeights, vh2)[ i ] = 1.0 - xPos;
+
+    if ( i != 2 ){
+      mesh->property(propWeights, vh1)[ i+1 ] = xPos;
+      mesh->property(propWeights, vh2)[ i+1 ] = xPos;
+    } else
+      break;
+  }
+
+
+  RPC::callFunctionValue<bool, int, int>("skeletalanimation", "attachSkin", skeletonObject->id(), meshObject->id());
+
+  emit updatedObject(skeletonObject->id(), UPDATE_ALL);
+  emit updatedObject(meshObject->id(), UPDATE_ALL);
+  PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::POINTS );
+  PluginFunctions::viewAll();
+}
+
+\endcode 
+*/
