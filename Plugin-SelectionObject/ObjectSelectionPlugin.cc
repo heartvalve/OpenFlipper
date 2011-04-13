@@ -157,17 +157,20 @@ void ObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
 
 //==============================================================================================
 
-void ObjectSelectionPlugin::slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+void ObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
 
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & objectType_) == 0) return;
+
+    // Return if mouse event is not a left-button click
+    if(_event->button() == Qt::LeftButton)
      
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     
     BaseObjectData* object = 0;
 
-    bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _position, node_idx,
+    bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
                               target_idx, &hit_point) && PluginFunctions::getPickedObject(node_idx, object);
 
     if(successfullyPicked) {

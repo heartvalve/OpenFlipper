@@ -129,7 +129,7 @@ private slots:
 
     // SelectionInterface
     void slotSelectionOperation(QString _operation);
-    void slotToggleSelection(QPoint _position, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
     void slotLoadSelection(const INIFile& _file);
