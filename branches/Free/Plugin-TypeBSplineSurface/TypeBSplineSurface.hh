@@ -105,6 +105,9 @@ class TypeBSplineSurfacePlugin : public QObject, BaseInterface, TypeInterface, L
     /// Slot triggered from context menu, if the surface should be rendered
     void slotRenderSurface();
 
+    /// Slot triggered from context menu, if the selection rendering should be altered
+    void slotRenderSelection(QAction* _action);
+
   public :
 
      ~TypeBSplineSurfacePlugin() {};
@@ -129,6 +132,11 @@ class TypeBSplineSurfacePlugin : public QObject, BaseInterface, TypeInterface, L
 
     /// Context menu action
     QAction* renderSurfaceAction_;
+
+    /// Context menu action (render selection texture)
+    QAction* renderCPSelectionAction_;
+    QAction* renderKnotSelectionAction_;
+    QAction* renderNoSelectionAction_;
 
 };
 
