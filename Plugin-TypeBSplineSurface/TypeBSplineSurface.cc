@@ -224,10 +224,10 @@ void TypeBSplineSurfacePlugin::slotRenderSelection(QAction* _action) {
     if(_action == renderCPSelectionAction_) {
       bsplineSurfaceObject->splineSurfaceNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineSurfaceNodeT<BSplineSurface>::CONTROLPOINT);
       emit updatedObject( objectId, UPDATE_ALL );
-    } else if(renderKnotSelectionAction_) {
+    } else if(_action == renderKnotSelectionAction_) {
       bsplineSurfaceObject->splineSurfaceNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineSurfaceNodeT<BSplineSurface>::KNOTVECTOR);
       emit updatedObject( objectId, UPDATE_ALL );
-    } else if(renderNoSelectionAction_) {
+    } else if(_action == renderNoSelectionAction_) {
       bsplineSurfaceObject->splineSurfaceNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineSurfaceNodeT<BSplineSurface>::NONE);
       emit updatedObject( objectId, UPDATE_ALL );
 
