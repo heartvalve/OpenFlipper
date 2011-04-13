@@ -106,6 +106,9 @@ class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, Log
     /// Slot triggered from context menu, if the curve should be rendered
     void slotRenderCurve();
 
+    /// Slot triggered from context menu, if the selection rendering should be altered
+    void slotRenderSelection(QAction* _action);
+
   public :
 
      ~TypeBSplineCurvePlugin() {};
@@ -135,6 +138,11 @@ class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, Log
 
     /// Context menu action
     QAction* renderCurveAction_;
+
+    /// Context menu action (render selection texture)
+    QAction* renderCPSelectionAction_;
+    QAction* renderKnotSelectionAction_;
+    QAction* renderNoSelectionAction_;
 
 };
 

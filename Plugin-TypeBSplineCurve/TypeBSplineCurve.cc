@@ -63,7 +63,10 @@
 TypeBSplineCurvePlugin::
 TypeBSplineCurvePlugin():
 renderControlPolygonAction_(0),
-renderCurveAction_(0)
+renderCurveAction_(0),
+renderCPSelectionAction_(0),
+renderKnotSelectionAction_(0),
+renderNoSelectionAction_(0)
 {
 }
 
@@ -78,7 +81,7 @@ void TypeBSplineCurvePlugin::pluginsInitialized()
 
   if ( OpenFlipper::Options::gui() ){
 
-    QMenu* contextMenu = new QMenu("Options");
+    QMenu* contextMenu = new QMenu("Rendering");
 
     QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
@@ -96,12 +99,42 @@ void TypeBSplineCurvePlugin::pluginsInitialized()
     renderCurveAction_->setCheckable(true);
     renderCurveAction_->setChecked(true);
 
+    QActionGroup* group = new QActionGroup(this);
+    group->setExclusive(true);
+
+    // Render Control Point Selection
+    renderCPSelectionAction_ = new QAction(tr("Render Control Point Selection"), group);
+    renderCPSelectionAction_->setStatusTip(tr("Render Control Point Selection"));
+//    renderCPSelectionAction_->setIcon( QIcon(iconPath + "coordsys.png") );
+    renderCPSelectionAction_->setCheckable(true);
+    renderCPSelectionAction_->setChecked(true);
+
+    // Render Knot Selection
+    renderKnotSelectionAction_ = new QAction(tr("Render Knot Selection"), group);
+    renderKnotSelectionAction_->setStatusTip(tr("Render Knot Selection"));
+//    renderKnotSelectionAction_->setIcon( QIcon(iconPath + "coordsys.png") );
+    renderKnotSelectionAction_->setCheckable(true);
+    renderKnotSelectionAction_->setChecked(true);
+
+    // Render No Selection
+    renderNoSelectionAction_ = new QAction(tr("Don't Render Selection"), group);
+    renderNoSelectionAction_->setStatusTip(tr("Don't Render Selection"));
+//    renderNoSelectionAction_->setIcon( QIcon(iconPath + "coordsys.png") );
+    renderNoSelectionAction_->setCheckable(true);
+    renderNoSelectionAction_->setChecked(true);
+
 
     connect(renderControlPolygonAction_, SIGNAL(triggered()), this, SLOT(slotRenderControlPolygon()) );
     connect(renderCurveAction_,          SIGNAL(triggered()), this, SLOT(slotRenderCurve()) );
 
+    connect(group, SIGNAL(triggered(QAction*)), this, SLOT(slotRenderSelection(QAction*)));
+
     contextMenu->addAction(renderControlPolygonAction_);
     contextMenu->addAction(renderCurveAction_);
+    contextMenu->addSeparator();
+    contextMenu->addAction(renderCPSelectionAction_);
+    contextMenu->addAction(renderKnotSelectionAction_);
+    contextMenu->addAction(renderNoSelectionAction_);
 
     emit addContextMenuItem(contextMenu->menuAction(), DATA_BSPLINE_CURVE, CONTEXTOBJECTMENU);
   }
@@ -124,6 +157,9 @@ slotUpdateContextMenu( int _objectId ) {
   if(bsplineCurveObject != 0){
     renderControlPolygonAction_->setChecked( bsplineCurveObject->splineCurveNode()->render_control_polygon() );
     renderCurveAction_->setChecked( bsplineCurveObject->splineCurveNode()->render_bspline_curve() );
+    renderCPSelectionAction_->setChecked( bsplineCurveObject->splineCurveNode()->get_selection_draw_mode() == ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::CONTROLPOINT );
+    renderKnotSelectionAction_->setChecked( bsplineCurveObject->splineCurveNode()->get_selection_draw_mode() == ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::KNOTVECTOR );
+    renderNoSelectionAction_->setChecked( bsplineCurveObject->splineCurveNode()->get_selection_draw_mode() == ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::NONE );
   }
 }
 
@@ -168,6 +204,36 @@ void TypeBSplineCurvePlugin::slotRenderCurve(){
   if(bsplineCurveObject != 0){
     bsplineCurveObject->splineCurveNode()->render_bspline_curve(renderCurveAction_->isChecked());
     emit updatedObject( objectId, UPDATE_ALL );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TypeBSplineCurvePlugin::slotRenderSelection(QAction* _action) {
+
+  QVariant contextObject = _action->data();
+  int objectId = contextObject.toInt();
+
+  if ( objectId == -1)
+    return;
+
+  BaseObjectData* object;
+  if ( !PluginFunctions::getObject(objectId,object) )
+    return;
+
+  BSplineCurveObject* bsplineCurveObject = dynamic_cast<BSplineCurveObject*>(object);
+
+  if(bsplineCurveObject != 0){
+    if(_action == renderCPSelectionAction_) {
+      bsplineCurveObject->splineCurveNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::CONTROLPOINT);
+      emit updatedObject( objectId, UPDATE_ALL );
+    } else if(_action == renderKnotSelectionAction_) {
+      bsplineCurveObject->splineCurveNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::KNOTVECTOR);
+      emit updatedObject( objectId, UPDATE_ALL );
+    } else if(_action == renderNoSelectionAction_) {
+      bsplineCurveObject->splineCurveNode()->set_selection_draw_mode(ACG::SceneGraph::BSplineCurveNodeT<BSplineCurve>::NONE);
+      emit updatedObject( objectId, UPDATE_ALL );
+    }
   }
 }
 
