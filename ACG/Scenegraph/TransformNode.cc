@@ -73,6 +73,7 @@ TransformNode(BaseNode* _parent, const std::string& _name)
 {
   // ortho 2d stuff
   is2DObject_ = false;
+  isPerSkeletonObject_ = false;
   scaleFactor2D_ = 1.0;
   offset_ = ACG::Vec2d(0.0,0.0);
   imageDimensions_ = ACG::Vec2i(-1,-1); // no image per default
@@ -248,6 +249,9 @@ enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode */ )
 
   if (is2DObject_)
     ortho2DMode(_state);
+  
+  if(isPerSkeletonObject_)
+    perSkeletonMode(_state);
 }
 
 
@@ -327,6 +331,16 @@ ortho2DMode(GLState& _state)
 */
 
 //----------------------------------------------------------------------------
+
+
+
+void
+TransformNode::
+perSkeletonMode(GLState& _state)
+{
+  _state.set_modelview(perSkeletonModelView_);
+}
+
 
 
 void
