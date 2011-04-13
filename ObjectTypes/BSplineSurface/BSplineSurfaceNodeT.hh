@@ -160,6 +160,8 @@ class BSplineSurfaceNodeT : public BaseNode
   void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
   
   void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
+
+  BSplineSelectionDrawMode get_selection_draw_mode() const { return bspline_selection_draw_mode_; }
   
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
   
