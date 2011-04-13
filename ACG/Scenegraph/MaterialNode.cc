@@ -208,11 +208,33 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
 //----------------------------------------------------------------------------
 
-void MaterialNode::enterPick(GLState& /*_state*/ , PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
+void MaterialNode::enterPick(GLState& _state , PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 
+  if (applyProperties_ & PointSize)
+  {
+    materialBackup_.pointSize_ = _state.point_size();
+    _state.set_point_size(material_.pointSize_);
+  }
+
+  if (applyProperties_ & LineWidth)
+  {
+    materialBackup_.lineWidth_ = _state.line_width();
+    _state.set_line_width(material_.lineWidth_);
+  }
 }
 
-void MaterialNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
+void MaterialNode::leavePick(GLState& _state, PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
+
+  if (applyProperties_ & PointSize)
+  {
+    _state.set_point_size(materialBackup_.pointSize_);
+  }
+
+
+  if (applyProperties_ & LineWidth)
+  {
+    _state.set_line_width(materialBackup_.lineWidth_);
+  }
 }
 
 
