@@ -1,5 +1,5 @@
  
-/** \page skeletonType Skeleton Datatype
+/** \page skeletonType Skeleton
 
 \section skeletonStructure Skeleton Structure
 
@@ -75,6 +75,202 @@ in the reference pose to global coordinates in another pose. If the global matri
 
 Functions to access the unified matrices of a pose are defined in the \ref UnifiedMatrices "Unified Matrices section".
 
+\section Skeleton Tutorial 1: Simple Skeletal Animation
+
+This section shows and explains a sample code to construct a simple skeletal animation. Images from the resulting animation are shown
+below:
+\image html skeletonTutorial1.png
+
+To generate such an animation we first have to define the structure of the skeleton:
+
+\code
+  //add an empty skeleton in OpenFlipper
+  int objectId = -1;
+  
+  emit addEmptyObject( DATA_SKELETON, objectId );
+
+  SkeletonObject* skeletonObject;
+  if ( !PluginFunctions::getObject(objectId, skeletonObject) ) {
+    emit log(LOGERR,"Unable to create new Skeleton");
+    return;
+  }
+
+  Skeleton* skeleton = PluginFunctions::skeleton(skeletonObject);
+
+  // setup the structure of the skeleton
+  // we want to construct a row of 3 joints
+  Skeleton::Joint* currentParent = 0;
+  int jointCount = 3;
+
+  for (int i=0; i < jointCount; i++){
+    std::string      jointName = QString("Joint" + QString::number(i)).toStdString(); // name of the joint
+    Skeleton::Joint*  newJoint = new Skeleton::Joint(currentParent, jointName );      // create new joint object with a pointer to its parent joint object
+
+    skeleton->addJoint(currentParent, newJoint);                                      // and add it to the skeleton
+    currentParent = newJoint;
+  }
+\endcode
+
+Now the structure of the skeleton is defined, but it does not have an animation and the position of all joints in the reference pose is \f$ p = (0,0,0)^\top \f$.
+In the next step we set the correct positions for the reference pose:
+
+\code
+  // set positions for the reference pose
+  Skeleton::Pose* refPose = skeleton->referencePose();
+  double xOffset = 0.0;
+  
+  // iterate over all joints of the skeleton and set a new translation
+  // the joints transformation matrix is initially the identity so changing
+  // the translation yields the desired effect
+  for (Skeleton::Iterator it = skeleton->begin(); it != skeleton->end(); ++it){
+    refPose->setGlobalTranslation( (*it)->id(), ACG::Vec3d(xOffset, 0.0, 0.0) );
+    xOffset += 1.0;
+  }
+\endcode
+
+The reference pose of the skeleton is now completely defined, but we still don't have an animation. It is created and added to the skeleton as follows:
+
+\code
+  //add an animation
+  int frameCount = 100;
+  
+  FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
+  AnimationHandle animHandle = skeleton->addAnimation("Rotation", animation);
+  skeleton->animation(animHandle)->setFps(25);
+\endcode
+
+We have added an animation with 100 frames and a playback rate of 25 frames per second. The transformations for every joint and every frame of the
+animation however is still an identity matrix and therefore only one point is visible when this animation is played. To change this we now have to
+change the transformations of all joints for the complete animation:
+
+\code
+  // set position in every pose/frame of the animation
+  // joints are indexed 0,1,2 in our case. so 1 yields the middle joint
+  Skeleton::Joint* middleJoint = skeleton->joint(1);
+
+  // for the two outer joints we just use the same translation
+  // like in the reference pose, but for the middle joint we also
+  // apply a rotation which is incremented from 0 to 90 degrees
+  ACG::GLMatrixd rotationMatrix;
+  rotationMatrix.identity();
+  double maxAngle = 90.0;
+  ACG::Vec3d axis(0.0, 0.0, 1.0);
+
+  for (int i=0; i < frameCount; i++){
+    animHandle.setFrame(i);
+
+    Skeleton::Pose* pose = skeleton->pose(animHandle);
+
+    // set the same translation like in the reference pose
+    for (Skeleton::Iterator it = skeleton->begin(); it != skeleton->end(); ++it)
+      pose->setGlobalTranslation( (*it)->id(), refPose->globalTranslation( (*it)->id() ) );
+
+    // update the rotation matrix
+    rotationMatrix.rotate( maxAngle / frameCount, axis);
+    // copy the rotation matrix to the global matrix of the middle joint
+    pose->setGlobalMatrix(     middleJoint->id(), rotationMatrix, false );
+    // since the translation is lost now..re-add it
+    pose->setGlobalTranslation(middleJoint->id(), refPose->globalTranslation( middleJoint->id() ), false );
+  }
+\endcode
+
+Now the animation is complete. In order to use these code snippets two additional things are needed. For one we need two includes:
+\code
+#include <ACG/Math/GLMatrixT.hh>
+#include <ObjectTypes/Skeleton/Skeleton.hh>
+\endcode
+
+and after the animation is constructed we have to inform OpenFlipper about the changes:
+
+\code
+  emit updatedObject(skeletonObject->id(), UPDATE_ALL);
+  PluginFunctions::viewAll();
+\endcode
+
+\section Skeleton Tutorial 2: Skinning
+
+In this tutorial we extend the first tutorial by adding a mesh which deforms with the rotation of the skeleton. For simplicity we just
+construct a mesh without faces. Additionally, the skin weights for the points of the mesh are also computed using a very simple method
+and therefore the result does not look perfect. The result is shown below:
+
+\image html skeletonTutorial2.png
+
+The first thing we need to do is to add a mesh object:
+
+\code
+  //add a mesh
+  objectId = -1;
+  emit addEmptyObject( DATA_TRIANGLE_MESH, objectId );
+
+  TriMeshObject* meshObject;
+  if ( !PluginFunctions::getObject(objectId,meshObject) ) {
+    emit log(LOGERR,"Unable to create new Mesh");
+    return;
+  }
+
+  TriMesh* mesh = PluginFunctions::triMesh(meshObject);
+\endcode
+
+The connection between joints of the skeleton and vertices of the mesh is stored in the skin weights. They describe the weighted influence of different
+joints on one vertex. The weights are stored as a mesh property and we need to add the property first:
+
+\code
+  //add skin-weights property on the mesh
+  OpenMesh::VPropHandleT< BaseSkin::SkinWeights > propWeights;
+  mesh->add_property(propWeights, SKIN_WEIGHTS_PROP);
+\endcode
+
+Now we can go on and add vertices to the mesh and set their skin weights. The points are added above and below the skeleton and we add 50 points between
+two joints both above and below:
+
+\code
+  int steps = 50; // number of intermediate points
+
+  for (int i=0; i < jointCount; i++)
+  for (int j=0; j < steps;      j++){
+    // intermediate position
+    double xPos = j / double(steps-1);
+
+    // add vertices
+    TriMesh::VertexHandle vh1 = mesh->add_vertex( ACG::Vec3d(i + xPos,  0.1, 0.0) );
+    TriMesh::VertexHandle vh2 = mesh->add_vertex( ACG::Vec3d(i + xPos, -0.1, 0.0) );
+
+    // add a simple weighting from 1 directly at joint i down to 0
+    // at the position of the next joint
+    mesh->property(propWeights, vh1)[ i ] = 1.0 - xPos;
+    mesh->property(propWeights, vh2)[ i ] = 1.0 - xPos;
+
+    if ( i != 2 ){
+      // add an increasing weight for the next joint
+      // this weight starts with 0 near the joint i and increases
+      // to 1 near joint i+1
+      mesh->property(propWeights, vh1)[ i+1 ] = xPos;
+      mesh->property(propWeights, vh2)[ i+1 ] = xPos;
+    } else
+      break; // no intermediate points after the last joint
+  }
+\endcode
+
+This simple skin weight definition shifts the center of the rotation between the first and the second joint, but a 'correct' weight computation would
+exceed the range of this tutorial. To run the code two more things have to be considered. First, we have to add an include for the skinweights:
+
+\code
+#include <ObjectTypes/Skeleton/BaseSkin.hh>
+\endcode
+
+And additionally we have to inform OpenFlipper about the changes that have been made:
+
+\code
+  // tell the skeletal animation plugin to attach the mesh to the skeleton
+  RPC::callFunctionValue<bool, int, int>("skeletalanimation", "attachSkin", skeletonObject->id(), meshObject->id());
+  // the mesh has been updated
+  emit updatedObject(meshObject->id(), UPDATE_ALL);
+  // switch to drawMode points because we have no faces in our mesh
+  PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::POINTS )
+\endcode
+
+<B>Note:</B> The RPC function call can be left out, but then the user has to connect skeleton and skin with the 'Attach Skin to Skeleton' Button in the Skeletal Animation Toolbox.\n\n
+The complete sourcecode of this tutorial can be found \ref skeletonSource "here".
 
 
 */
