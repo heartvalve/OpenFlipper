@@ -555,7 +555,8 @@ public:
    * Is this value equal to a value used in a previous picking run, then the same colors will be used.
    * In this case a previously calculated color array/display list can be reused.
    *
-   * This is basically the name of the whole object, not the name of the primitives/compoents in the object!
+   * This is basically the name of the whole object ( which would be the same as the name of the first component
+   * of the object), not the name of the primitives/components in the object!
    *
    */
   unsigned int pick_current_index () const;
@@ -638,6 +639,165 @@ private: //--------------------------------------------------------------------
   GLenum depth_func_;
 
 };
+
+/** \page pickingDocumentation Picking in the ACG SceneGraph
+
+\section Overview
+Picking is the operation to find an object in the 3D scene that is visible at a specific position. Usually you click
+with the mouse into the scene and want to get the node index of the object you clicked on and possibly the specific
+primitive you hit.
+
+Picking in the ACG Scenegraph is done as color picking. Each node in the scenegraph has functions that are used
+only when the SceneGraph is traversed in picking mode (  ACG::SceneGraph::traverse() with ACG::SceneGraph::PickAction ).
+These functions render the scene in this special mode, and all objects and their primitives are rendered with a
+different color.
+
+After rendering, the color at the position, where a mouse click is done, is read. The color is than split into the object
+and the primitive id used while rendering. Therefore the developer can map the numbers back to what the user clicked on
+or what is visible at the specific location.
+
+\section Rendering
+For rendering the color picking, you have to use the ACG::SceneGraph::traverse() function with the
+ACG::SceneGraph::PickAction. The Action will than traverse the SceneGraph and each of the nodes do their rendering.
+
+The PickAction traverses the SceneGraph in the same hierarchy as the draw function. But for entering, it calls
+ACG::SceneGraph::BaseNode::enterPick() and for leaving ACG::SceneGraph::BaseNode::leavePick(). The actual drawing is
+done in ACG::SceneGraph::BaseNode::pick() between these calls. The node index is set as the picking object name via
+GLState::pick_push_name() and is valid during the ACG::SceneGraph::BaseNode::pick() function. Afterwards it is
+reset via GLState::pick_pop_name(). The nodes do not need to handle this explicitly as it is done by the traversal.
+
+\section pickingUsage Usage
+
+\subsection pickingUsageInNodes Implementation in Nodes
+If you implement your own node and need picking, you have to implement the functions ACG::SceneGraph::BaseNode::pick() and
+if you need to change states ACG::SceneGraph::BaseNode::enterPick() and ACG::SceneGraph::BaseNode::leavePick().
+
+In the pick function, you get the current state and the ACG::SceneGraph::PickTarget. The PickTarget defines the primitives
+the user wants to pick. For a mesh, this would be vertices, edges or faces. With ACG::SceneGraph::PICK_ANYTHING you should
+render all primitives, one after the other with increasing indices.
+
+The main pick function usually splits the picking for each of the primitives in the object. You have to set
+the maximum number of primitives that should be distinguished by the picking with the GLState::pick_set_maximum()
+function:
+
+\code
+// The picking function
+// Global object variable object_ assumed
+void ExampleNode::pick(GLState& _state, PickTarget _target)
+{
+
+  // Switch based on the target
+  switch (_target)
+  {
+    case PICK_VERTEX:
+    {
+      // Set the maximal number of primitives for this object
+      // In this case the number of vertices
+      _state.pick_set_maximum (object_.n_vertices());
+      pick_vertices( _state);
+      break;
+    }
+
+    case PICK_EDGE:
+    {
+      _state.pick_set_maximum (object_.n_edges());
+      pick_edges(_state, 0);
+      break;
+    }
+
+    case PICK_ANYTHING:
+    {
+      _state.pick_set_maximum (object_.n_vertices() + object_.n_edges());
+      pick_vertices( _state);
+      pick_edges( _state, object_.n_vertices() );
+      break;
+    }
+
+    default:
+      break;
+  }
+}
+\endcode
+
+The pick vertices function would than look like the following example.
+You have to set the name for all of the primitives you want to render.
+You can render multiple primitives with the same index. This means that
+if you click on one of these primitives, they will return the same id.
+This is useful, if one of your components you want to pick consists
+of multiple parts (e.g. an arrow consisting of the cylinder and a cone)
+and should be handled as one component for the picking.
+
+\code
+void ExampleNode::pick_vertices( GLState& _state )
+{
+  for (unsigned int i=0; i< object_.n_vertices(); ++i) {
+
+    // Set the picking name of the next primitive.
+    // This will be the target index returned by the picking.
+    _state.pick_set_name (i);
+
+    // Render an arbitrary number of primitives which will all get the same picking index.
+    glBegin(GL_POINTS);
+      // Render the vertex with number i (note that this number matches the picking index returned by the picking)
+      glVertex3fv( object_.vertex(i) );
+    glEnd();
+  }
+
+}
+\endcode
+
+For the edges the code would be a bit more complex. If they are picked with ACG::SceneGraph::PICK_EDGE they
+will be handled as the vertices. If ACG::SceneGraph::PICK_ANYTHING is used, they will be used with the
+vertices. Therefore the indices given to the edges have to start after the vertices, which is implemented
+as an offset:
+
+\code
+void ExampleNode::pick_edges( GLState& _state, unsigned int _offset)
+{
+  for (unsigned int i=0; i<object_n_edges(); ++i) {
+
+    // Set the name for the current edge
+    _state.pick_set_name (i + _offset);
+
+    // Render current edge
+    glBegin(GL_LINES);
+      glVertex3fv( object_.vertex(  i      % object_.n_vertices() ) );
+      glVertex3fv( object_.vertex( (i + 1) % object_.n_vertices() ) );
+    glEnd();
+
+  }
+}
+\endcode
+
+\subsection pickingRetrieval Getting the picking information
+After rendering, you just retrieve the rgba color at the click position. This color can be converted to
+the node id and the component:
+
+\code
+  // Color at the picked position
+  ACG::Vec4uc rgba;
+
+  // Read color from framebuffer at desired position into rgba
+  std::vector<unsigned int> rv = glState_.pick_color_to_stack(rgba);
+
+  // something wrong with the color stack
+  if (rv.size () < 2)
+    return;
+
+  // Index of the picked Node in the SceneGraph ( This can be used to fetch the node from the scenegraph ).
+  _nodeIdx   = rv[1];
+
+  // This is the component of the object at the picked position which has been set with pick_set_name()
+  _targetIdx = rv[0];
+\endcode
+
+To get the node with the returned index, you can use the ACG::SceneGraph::FindNodeAction.
+
+\subsection pickingNEVER NEVER DO THIS
+Do not enable lighting, shading, alpha,... basically everything that shades colors! The picking relies on
+fixed colors. Otherwise the correspondence to the objects/components gets lost and will always fail in weird ways.
+
+*/
 
 #ifdef WIN32
 	#pragma warning(push)

@@ -9,11 +9,12 @@
 
 This file contains documentation about the ACG library used inside of OpenFlipper. The
 ACG library provides the scenegraph and rendering functions for OpenFlipper. Also it
-contains some usefull wrappers and math tools to make programming easier.
+contains some useful wrappers and math tools to make programming easier.
 If you build OpenFlipper, the library will be automatically build and integrated.
 
 
 \li \subpage naming_conventions
 \li \subpage compiling_ACG
+\li \subpage pickingDocumentation
 
 */
