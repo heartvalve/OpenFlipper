@@ -187,7 +187,13 @@ public:
   // ortho 2d mode
   bool is2D(){return is2DObject_;};
   void set2D(bool _2d){is2DObject_ = _2d;};
+  
+  bool isPerSkeletonObject(){return isPerSkeletonObject_;};
+  void setPerSkeletonObject(bool _is){isPerSkeletonObject_ = _is;};
+  void setPerSkeletonModelView(GLMatrixd _is){perSkeletonModelView_ = _is;};
+  
   void ortho2DMode(GLState& _state);
+  void perSkeletonMode(GLState& _state);
   void update2DOffset(ACG::Vec2d _offset){offset_ += _offset;};
   void scale2D(double _scale){scaleFactor2D_ = _scale;};
   void setImageDimensions(ACG::Vec2i _dim){imageDimensions_ = _dim;};
@@ -211,6 +217,8 @@ private:
 public:
   // ortho 2d mode
   bool is2DObject_;
+  bool isPerSkeletonObject_;
+  GLMatrixd perSkeletonModelView_;
   double scaleFactor2D_;
   ACG::Vec2i imageDimensions_;
   ACG::Vec2d offset_;
