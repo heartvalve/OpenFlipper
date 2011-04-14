@@ -96,67 +96,56 @@ function (of_print_plugin_stats)
   message ("")
 
   # Print all plugins, which have no cmake build system
-  if ( NOT ${PLUGINS_NO_CMAKE} EQUAL "" )
-    acg_color_message ("\n${_escape}[4mPlugins without cmake build system:${_escape}[0m\n")
-    foreach (_plugin ${PLUGINS_NO_CMAKE})
-      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
-      string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 25 _plugin_name)
+  acg_color_message ("\n${_escape}[4mPlugins without cmake build system:${_escape}[0m\n")
+  foreach (_plugin ${PLUGINS_NO_CMAKE})
+    string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+    string (TOUPPER ${_plugin_name} _PLUGIN)
+    acg_format_string (${_plugin_name} 25 _plugin_name)
  
-      acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mNo CMake build system${_escape}[0m")
-    endforeach ()
+    acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mNo CMake build system${_escape}[0m")
+  endforeach ()
 
-    message ("")
+  message ("")
 
-  endif()
-
- 
   # Print all plugins, which are ok
-  if ( NOT PLUGINS_OK EQUAL "" )
-    acg_color_message ("\n${_escape}[4mPlugins configured successfully:${_escape}[0m\n")
-    foreach (_plugin ${PLUGINS_OK})
-      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
-      string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 25 _plugin_name)
+  acg_color_message ("\n${_escape}[4mPlugins configured successfully:${_escape}[0m\n")
+  foreach (_plugin ${PLUGINS_OK})
+    string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+    string (TOUPPER ${_plugin_name} _PLUGIN)
+    acg_format_string (${_plugin_name} 25 _plugin_name)
  
-      acg_color_message ("  ${_plugin_name}: ${_escape}[1;32mYes${_escape}[0m")
-    endforeach ()
+    acg_color_message ("  ${_plugin_name}: ${_escape}[1;32mYes${_escape}[0m")
+  endforeach ()
 
-    message ("")
-
-  endif()
+  message ("")
 
 
   # Print all plugins, which are disabled
-  if ( NOT ${PLUGINS_DISABLED} EQUAL "" )
-    acg_color_message ("\n${_escape}[4mPlugins disabled:${_escape}[0m\n")
-    foreach (_plugin ${PLUGINS_DISABLED})
-      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
-      string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 25 _plugin_name)
-                                                                                       
-      acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mDisabled${_escape}[0m")
-    endforeach ()
+  acg_color_message ("\n${_escape}[4mPlugins disabled:${_escape}[0m\n")
+  foreach (_plugin ${PLUGINS_DISABLED})
+    string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+    string (TOUPPER ${_plugin_name} _PLUGIN)
+    acg_format_string (${_plugin_name} 25 _plugin_name)
+                                                                                     
+    acg_color_message ("  ${_plugin_name}: ${_escape}[1;34mDisabled${_escape}[0m")
+  endforeach ()
 
-    message ("")
+  message ("")
 
-  endif()
 
 
   # Print all plugins, which have missing dependencies
-  if ( NOT ${PLUGINS_DEPENDENCIES} EQUAL "" )
-    acg_color_message ("\n${_escape}[4mPlugins with missing dependencies:${_escape}[0m\n")
-    foreach (_plugin ${PLUGINS_DEPENDENCIES})
-      string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
-      string (TOUPPER ${_plugin_name} _PLUGIN)
-      acg_format_string (${_plugin_name} 25 _plugin_name)
-                                                                                       
-      acg_color_message ("  ${_plugin_name}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
-    endforeach ()
-    
-    message ("")
+  acg_color_message ("\n${_escape}[4mPlugins with missing dependencies:${_escape}[0m\n")
+  foreach (_plugin ${PLUGINS_DEPENDENCIES})
+    string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+    string (TOUPPER ${_plugin_name} _PLUGIN)
+    acg_format_string (${_plugin_name} 25 _plugin_name)
+                                                                                     
+    acg_color_message ("  ${_plugin_name}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
+  endforeach ()
+  
+  message ("")
  
-  endif()
 
   if ( NOT WIN32 )
     message("${_escape}[4mCurrent Build Type:${_escape}[0m ${_escape}[1;34m ${CMAKE_BUILD_TYPE} ${_escape}[0m")
