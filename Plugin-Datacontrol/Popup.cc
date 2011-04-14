@@ -624,8 +624,8 @@ void DataControlPlugin::slotZoomTo(){
 
       //compute boundingBox
       bool firstRound = true;
-      ACG::Vec3d bbmin;
-      ACG::Vec3d bbmax;
+      ACG::Vec3d bbmin(FLT_MAX,FLT_MAX,FLT_MAX);
+      ACG::Vec3d bbmax(FLT_MIN,FLT_MIN,FLT_MIN);
 
       for (int i=0; i < children.size(); i++){
         BaseObjectData* child = dynamic_cast< BaseObjectData* > (children[i]);
