@@ -128,10 +128,10 @@ if (APPLE)
       if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/mac/Info.plist )
         # option to configure the custom Info.plist
         set ( APPLE_INFO_PLIST "${CMAKE_SOURCE_DIR}\\branding\\mac\\Info.plist" CACHE FILEPATH "Path to the Info.plist file for Bundle" )
-      else( EXISTS ${CMAKE_SOURCE_DIR}/branding/Info.plist )
+      else ( EXISTS ${CMAKE_SOURCE_DIR}/branding/mac/Info.plist )
         # option to configure a custum Info.plist but configure with default one
         set ( APPLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../installer/mac/Info.plist" CACHE FILEPATH "Path to the Info.plist file for Bundle" )
-      endif( EXISTS ${CMAKE_SOURCE_DIR}/branding/Info.plist )
+      endif( EXISTS ${CMAKE_SOURCE_DIR}/branding/mac/Info.plist )
     ENDIF(NOT APPLE_INFO_PLIST )
 
   else()
