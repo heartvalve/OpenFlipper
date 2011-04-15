@@ -92,4 +92,14 @@ PlaneObject* planeObject( BaseObjectData* _object ) {
   return dynamic_cast< PlaneObject* >( _object );
 }
 
+PlaneObject* planeObject( int _objectId ) {
+  if ( _objectId == -1 ) {
+    return 0;
+  }
+
+  BaseObject* object = objectRoot()->childExists( _objectId );
+  PlaneObject* plane  = dynamic_cast< PlaneObject* >(object);
+  return plane;
+}
+
 }
