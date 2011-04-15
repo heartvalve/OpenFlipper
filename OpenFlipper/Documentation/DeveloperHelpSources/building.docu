@@ -53,7 +53,7 @@
  *
  * <ul>
  * <li> Get Visual Studio 2008 </li>
- * <li> Get and Install Qt ( >= 4.7 , Visual Studio Version ) </li>
+ * <li> Get and Install Qt ( >= 4.6 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory:<br />
  * <br />
  *      <b>Windows Vista/7:</b> <br />
