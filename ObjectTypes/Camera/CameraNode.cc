@@ -1,0 +1,412 @@
+//=============================================================================
+//
+//  CLASS GlutPrimitiveNode - IMPLEMENTATION
+//
+//=============================================================================
+
+#define CAMERAVISNODE_C
+
+//== INCLUDES =================================================================
+#include "CameraNode.hh"
+
+#include <ACG/GL/gl.hh>
+
+//== NAMESPACES ===============================================================
+
+namespace ACG {
+namespace SceneGraph {
+
+#define axis_length 0.1
+
+//== IMPLEMENTATION ==========================================================
+
+/// Default constructor.
+CameraNode::CameraNode(BaseNode* _parent, std::string _name) :
+    BaseNode(_parent, _name),
+    upQuadric_(0),
+    rightQuadric_(0),
+    viewQuadric_(0),
+    showFrustum_(false) {
+
+    upQuadric_ = gluNewQuadric();
+    rightQuadric_ = gluNewQuadric();
+    viewQuadric_ = gluNewQuadric();
+}
+
+CameraNode::~CameraNode() {
+
+    gluDeleteQuadric(upQuadric_);
+    gluDeleteQuadric(rightQuadric_);
+    gluDeleteQuadric(viewQuadric_);
+}
+
+void CameraNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax) {
+
+    _bbMin.minimize(bbmin_);
+    _bbMax.maximize(bbmax_);
+}
+
+//----------------------------------------------------------------------------
+
+DrawModes::DrawMode CameraNode::availableDrawModes() const {
+    return (DrawModes::POINTS | DrawModes::WIREFRAME | DrawModes::HIDDENLINE | DrawModes::SOLID_FLAT_SHADED
+            | DrawModes::SOLID_SMOOTH_SHADED);
+}
+
+//----------------------------------------------------------------------------
+
+void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) {
+
+    glPushAttrib(GL_LIGHTING_BIT);
+    glPushAttrib(GL_ENABLE_BIT);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHTING); // Turn lighting on
+
+    // Store modelview matrix
+    _state.push_modelview_matrix();
+
+    Vec4f lastBaseColor     = _state.base_color();
+    Vec4f lastDiffuseColor  = _state.diffuse_color();
+    Vec4f lastSpecularColor = _state.specular_color();
+
+    // Set modelview matrix such that it matches
+    // the remote settings (+ the local transformation).
+    // This is performed by multiplying the local
+    // modelview matrix by the inverse remote
+    // modelview matrix: M_l' = M_l * M^{-1}_r
+    ACG::GLMatrixd modelview = _state.modelview();
+    _state.set_modelview(modelview * modelView_);
+
+    // Update bounding box data and clipped_ flag
+    updateBoundingBoxes(_state, modelview);
+
+    _state.set_base_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
+    _state.set_diffuse_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
+    _state.set_specular_color(ACG::Vec4f(1.0, 1.0, 0.0, 1.0));
+
+    // Draw camera box
+    glPushAttrib(GL_LIGHTING_BIT);
+    glDisable(GL_LIGHTING); // Disable lighting
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(half_width_, half_height_, -1.0f);
+
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+
+    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+    glEnd();
+    glPopAttrib();
+
+    // Render frustum
+    if(showFrustum_) {
+
+        // Draw left side of frustum
+        glEnable (GL_BLEND);
+        glPushAttrib(GL_LIGHTING_BIT);
+        glDisable(GL_LIGHTING); // Disable lighting
+        
+        glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
+        
+        glBegin(GL_LINES);
+        
+        // Top plane
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        
+        
+        // Bottom plane
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        
+        // Left
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        
+        // Right
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(0.0f, 0.0f, 0.0f);
+        
+        // Far
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        
+        glEnd();
+
+        glColor4f(0.0f, 1.0f, 0.0f, 0.01f);
+
+        glBegin(GL_TRIANGLES);
+
+        // Top plane
+        glVertex3f(-half_width_, -half_height_, -1.0f);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-half_width_, half_height_, -1.0f);
+        glVertex3f(-half_width_, -half_height_, -1.0f);
+
+        // Bottom plane
+        glVertex3f(half_width_, -half_height_, -1.0f);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(half_width_, half_height_, -1.0f);
+        glVertex3f(half_width_, -half_height_, -1.0f);
+
+        // Left
+        glVertex3f(-half_width_, half_height_, -1.0f);
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(half_width_, half_height_, -1.0f);
+        glVertex3f(-half_width_, half_height_, -1.0f);
+
+        // Right
+        glVertex3f(-half_width_, -half_height_, -1.0f);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(half_width_, -half_height_, -1.0f);
+        glVertex3f(-half_width_, -half_height_, -1.0f);
+
+        // Far
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+
+        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+
+        glEnd();
+        
+        
+        
+       
+        
+        glPopAttrib(); // LIGHTING
+    }
+
+    // Draw right vector
+    _state.rotate(90, 0.0, 1.0, 0.0);
+
+    _state.set_base_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
+    _state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
+    _state.set_specular_color(ACG::Vec4f(1.0, 0.4, 0.4, 1.0));
+
+    gluCylinder(rightQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+    // Draw up vector
+    _state.rotate(-90, 1.0, 0.0, 0.0);
+
+    _state.set_base_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+    _state.set_diffuse_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+    _state.set_specular_color(ACG::Vec4f(0.4, 1.0, 0.4, 1.0));
+
+    gluCylinder(upQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+    // Draw viewing direction vector
+    _state.rotate(90, 0.0, 1.0, 0.0);
+
+    _state.set_base_color(ACG::Vec4f(0.0, 0.0, 1.0, 1.0));
+    _state.set_diffuse_color(ACG::Vec4f(0.0, 0.0, 1.0, 1.0));
+    _state.set_specular_color(ACG::Vec4f(0.4, 0.4, 1.0, 1.0));
+
+    gluCylinder(viewQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+
+    // Reset to previous modelview
+    _state.pop_modelview_matrix();
+
+    _state.set_base_color(lastBaseColor);
+    _state.set_diffuse_color(lastDiffuseColor);
+    _state.set_specular_color(lastSpecularColor);
+
+    glPopAttrib(); // GL_ENABLE_BIT
+    glPopAttrib(); // LIGHTING
+}
+
+//----------------------------------------------------------------------------
+
+void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
+
+    _state.pick_set_maximum(2);
+
+    _state.pick_set_name(0);
+
+    // Store modelview matrix
+    _state.push_modelview_matrix();
+
+    // Set modelview matrix such that it matches
+    // the remote settings (+ the local transformation).
+    // This is performed by multiplying the local
+    // modelview matrix by the inverse remote
+    // modelview matrix: M_l' = M_l * M^{-1}_r
+    ACG::GLMatrixd modelview = _state.modelview();
+    _state.set_modelview(modelview * modelView_);
+
+    // Update bounding box data and clipped_ flag
+    updateBoundingBoxes(_state, modelview);
+
+    // Draw camera box
+    glBegin(GL_LINES);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(half_width_, half_height_, -1.0f);
+
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+
+    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -1.0f);
+
+    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -1.0f);
+    glEnd();
+
+
+    _state.pick_set_name(1);
+
+    // Draw right vector
+    _state.rotate(90, 0.0, 1.0, 0.0);
+
+    gluCylinder(rightQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+    // Draw up vector
+    _state.rotate(-90, 1.0, 0.0, 0.0);
+
+    gluCylinder(upQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+    // Draw viewing direction vector
+    _state.rotate(90, 0.0, 1.0, 0.0);
+
+    gluCylinder(viewQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+
+    // Draw top
+    _state.translate(0.0, 0.0, axis_length );
+    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    _state.translate(0.0, 0.0, -axis_length );
+
+    // Reset to previous modelview
+    _state.pop_modelview_matrix();
+}
+
+//----------------------------------------------------------------------------
+
+void CameraNode::updateBoundingBoxes(GLState& _state, GLMatrixd& _modelview) {
+
+    // Get fovy of remote projection
+    fovy_ = atan(1/projection_(0,0)) * 2;
+
+    OpenMesh::Vec3f e = OpenMesh::Vec3f(modelView_(0,3), modelView_(1,3), modelView_(2,3));
+
+    // Set bounding box of camera to be of sufficient
+    // size to cover any camera rotation.
+    // Note: 1.41421 = sqrt(2)
+
+    aspectRatio_ = (double)width_ / (double)height_;
+
+    half_height_ = tan(fovy_/2);
+    half_width_ = aspectRatio_ * half_height_;
+
+    if(showFrustum_) {
+        far_half_height_ = tan(fovy_/2) * sceneRadius_;
+        far_half_width_ = far_half_height_ * aspectRatio_;
+    }
+
+    OpenMesh::Vec3f tmp(std::max(1.41421, half_width_), std::max(1.41421, half_height_), 1.41421);
+
+    bbmin_ = e - tmp;
+    bbmax_ = e + tmp;
+}
+
+//=============================================================================
+} // namespace SceneGraph
+} // namespace ACG
+//=============================================================================
