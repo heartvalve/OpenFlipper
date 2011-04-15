@@ -1,9 +1,11 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11290 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11381 )</b>
  *      - <b>ACG</b>
  *          - SceneGraph
+ *              - MaterialNode
+ *                  - Change point size and line width in picking mode to avoid user confusion
  *              - MeshNode
  *                  - Added GPU Cache optimizer ( For per vertex draw modes; Speedup for rendering about 3 )
  *              - ShaderNode
@@ -12,7 +14,13 @@
  *              - Fixed bug that made VertexBufferObject unusable
  *              - Fixed bug that made FrameBufferObject unusable
  *              - Avoid usage of glIsRenderBuffer
+ *          - Documentation
+ *              - Color picking documentation
  *      - <b>Core</b>
+ *          - Rendering
+ *              - Fixed bug, when empty objects where added (Scenegraph Bounding box was not correctly reset)
+ *          - View mode
+ *              - When add ing context menus, remove the accelerators & to avoid matching failiures
  *          - Load/Save
  *              - Fixed handling of last directory to avoid jumps between dirs in file dialogs.
  *              - Fixed variable initialization in ParseINI
@@ -23,17 +31,27 @@
  *          - Reworked Backup Interface
  *      - <b>ObjectTypes</b>
  *          - BSplineCurve
- *              - 
+ *              - BSplineCurveT: Added selection wrapper functions 
+ *              - Fixed rendering of knot selection
+ *              - Added icon for B-spline Curves
+ *              - Added context menu to show/hide selection and cotrol net
  *          - BSplineSurface
  *              - BSplineSurfaceT: Added selection wrapper functions
  *              - Fixed rendering of knot selection
  *              - Added icon for B-spline surfaces
+ *              - Added context menu to show/hide selection and cotrol net
  *              - Corrected behaviour of control point deletion 
+ *          - Camera
+ *              - New Datatype for visualizing cameras
  *          - CoordSys
  *              - Fixed coordsys node which did not initialize the rotation matrix.
  *              - Smooth shaded mode for coordsys
  *          - MeshObject
  *              - Fixed functions to set/get selections which ignored vertex 0
+ *          - Plane
+ *              - Added missing plugin function (get PlaneObject from id)
+ *          - Skeleton
+ *              - Fixed error on some compilers not building although class was defined as friend
  *      - <b>Plugins</b>
  *          - Backup
  *              - Reworked Backup system
@@ -62,6 +80,12 @@
  *              - Add more spaces for longer plugin names
  *              - Sort plugin configuration details into groups
  *              - Output Build type when configuring
+ *          - Additional mac path for qt_menu.nib
+ *      - <b>Documentation</b>
+ *          - Fixed doxygen problem with missing includes
+ *          - Fixed typo which caused DeveloperDoc to include user doc
+ *          - Skeleton Documentation
+ *          - Tutorial to add empty objects
  * 
  *
  * - <b>OpenFlipper 1.0.1 (  03.21.2011 , 11158 )</b>
