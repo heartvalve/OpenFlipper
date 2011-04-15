@@ -49,6 +49,48 @@ TypeCameraPlugin::TypeCameraPlugin() {
 
 }
 
+void TypeCameraPlugin::pluginsInitialized() {
+  contextMenu_ = new QMenu(tr("Rendering"));
+
+  QAction* lastAction;
+
+  lastAction = contextMenu_->addAction( tr("Show viewing frustum") );
+  lastAction->setCheckable(true);
+  lastAction->setChecked(false);
+  lastAction->setToolTip(tr("Visualize cameras viewing frustum."));
+  lastAction->setStatusTip( lastAction->toolTip() );
+
+  // Add context menu
+  emit addContextMenuItem(contextMenu_->menuAction(), DATA_CAMERA, CONTEXTOBJECTMENU);
+
+  connect(contextMenu_, SIGNAL(triggered(QAction*)), this ,SLOT(contextMenuClicked(QAction*)));
+}
+
+void TypeCameraPlugin::slotUpdateContextMenuObject(int _objectId) {
+
+}
+
+void TypeCameraPlugin::contextMenuClicked(QAction* _contextAction) {
+
+  QVariant contextObject = _contextAction->data();
+  int objectId = contextObject.toInt();
+
+  if (objectId == -1)
+    return;
+
+  CameraObject* object;
+  if (!PluginFunctions::getObject(objectId, object))
+    return;
+
+  if (_contextAction->text() == tr("Show viewing frustum")) {
+
+    // Set frustum flag to whether action is checked or not
+    object->cameraNode()->showFrustum(_contextAction->isChecked());
+
+  }
+
+}
+
 bool TypeCameraPlugin::registerType() {
     
     addDataType ( "Camera",tr ( "Camera" ) );
