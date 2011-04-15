@@ -192,7 +192,6 @@ void ObjectSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event, Select
     // Return if none of the currently active types is handled by this plugin
     if((_currentType & objectType_) == 0) return;
     
-    unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     
     if(_event->type() == QEvent::MouseButtonPress) {
