@@ -1,0 +1,28 @@
+/** \page CameraType Camera
+  \image html type_Camera_thumb.png
+
+\section type_Camera_info Camera Datatype Information
+
+OpenFlipper includes a datatype "DATA_CAMERA" for visualizing cameras. A camera consists of the
+modelview and the projection matrix. Additionally it requires the aspect ration and the
+near /far plane distances.
+
+\section type_camera_usage Usage
+To use the dataType, create an empty object of type DATA_CAMERA
+
+\code
+\endcode
+
+Afterwards get the camera node from the object.
+
+
+
+The basic object type for handling polygonal meshes is the PolyMeshObject. This object manages
+rendering and data storage of a polygonal %OpenMesh.\n
+
+To get the actual mesh you can call the PolyMeshObject::mesh() function which returns a pointer
+to the %OpenMesh structure, which can be directly manipulated with the functions described in
+the \ref OpenMeshDoc "OpenMesh Documentation".\n
+
+Note: If you know that you only work on triangular meshes, use the \ref triMeshType "Triangular Mesh datatype".\n
+*/
