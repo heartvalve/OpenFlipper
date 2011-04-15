@@ -33,10 +33,15 @@ CameraNode::CameraNode(BaseNode* _parent, std::string _name) :
     modelView_.identity();
 
     projection_.identity();
-    projection_.perspective(45 ,1.0,0.5,1.0);
+    // Setup a standard projection ( Full fovy 90, aspect 1.0, near 1.0, far 2.0 )
+    projection_.perspective(45 ,1.0,1.0,2.0);
 
-    width_  = 640;
-    height_ = 480;
+    far_ = 2.0;
+    near_ = 1.0;
+
+
+    width_  = 500;
+    height_ = 500;
 
     updateBoundingBoxes(modelView_);
 
@@ -100,28 +105,28 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     glDisable(GL_LIGHTING); // Disable lighting
     glBegin(GL_LINES);
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
 
-    glVertex3f(-half_width_, -half_height_, -1.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
+    glVertex3f(half_width_, -half_height_, -near_);
 
-    glVertex3f(-half_width_, -half_height_, -1.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
+    glVertex3f(-half_width_, half_height_, -near_);
 
-    glVertex3f(half_width_, half_height_, -1.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
+    glVertex3f(half_width_, -half_height_, -near_);
 
-    glVertex3f(half_width_, half_height_, -1.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
+    glVertex3f(-half_width_, half_height_, -near_);
     glEnd();
     glPopAttrib();
 
@@ -139,54 +144,54 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
         
         // Top plane
         glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
         
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
         
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
         glVertex3f(0.0f, 0.0f, 0.0f);
         
         
         // Bottom plane
         glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         glVertex3f(0.0f, 0.0f, 0.0f);
         
         // Left
         glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
         
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         glVertex3f(0.0f, 0.0f, 0.0f);
         
         // Right
         glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
         
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
         glVertex3f(0.0f, 0.0f, 0.0f);
         
         // Far
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
         
         glEnd();
 
@@ -196,55 +201,52 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
 
         // Top plane
         glVertex3f(-half_width_, -half_height_, -1.0f);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
 
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
         glVertex3f(-half_width_, half_height_, -1.0f);
         glVertex3f(-half_width_, -half_height_, -1.0f);
 
         // Bottom plane
         glVertex3f(half_width_, -half_height_, -1.0f);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
 
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         glVertex3f(half_width_, half_height_, -1.0f);
         glVertex3f(half_width_, -half_height_, -1.0f);
 
         // Left
         glVertex3f(-half_width_, half_height_, -1.0f);
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
 
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
         glVertex3f(half_width_, half_height_, -1.0f);
         glVertex3f(-half_width_, half_height_, -1.0f);
 
         // Right
         glVertex3f(-half_width_, -half_height_, -1.0f);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
 
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
         glVertex3f(half_width_, -half_height_, -1.0f);
         glVertex3f(-half_width_, -half_height_, -1.0f);
 
         // Far
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, -far_half_height_, -sceneRadius_);
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, -far_half_height_, -far_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
 
-        glVertex3f(far_half_width_, far_half_height_, -sceneRadius_);
-        glVertex3f(-far_half_width_, far_half_height_, -sceneRadius_);
-        glVertex3f(-far_half_width_, -far_half_height_, -sceneRadius_);
+        glVertex3f(far_half_width_, far_half_height_, -far_);
+        glVertex3f(-far_half_width_, far_half_height_, -far_);
+        glVertex3f(-far_half_width_, -far_half_height_, -far_);
 
         glEnd();
         
-        
-        
-       
-        
+
         glPopAttrib(); // LIGHTING
     }
 
@@ -327,28 +329,28 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
     // Draw camera box
     glBegin(GL_LINES);
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, -half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, half_height_, -near_);
 
     glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
 
-    glVertex3f(-half_width_, -half_height_, -1.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
+    glVertex3f(half_width_, -half_height_, -near_);
 
-    glVertex3f(-half_width_, -half_height_, -1.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(-half_width_, -half_height_, -near_);
+    glVertex3f(-half_width_, half_height_, -near_);
 
-    glVertex3f(half_width_, half_height_, -1.0f);
-    glVertex3f(half_width_, -half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
+    glVertex3f(half_width_, -half_height_, -near_);
 
-    glVertex3f(half_width_, half_height_, -1.0f);
-    glVertex3f(-half_width_, half_height_, -1.0f);
+    glVertex3f(half_width_, half_height_, -near_);
+    glVertex3f(-half_width_, half_height_, -near_);
     glEnd();
 
 
@@ -403,11 +405,11 @@ void CameraNode::updateBoundingBoxes(GLMatrixd& _modelview) {
 
     aspectRatio_ = (double)width_ / (double)height_;
 
-    half_height_ = tan(fovy_/2);
+    half_height_ = tan(fovy_/2) * near_;
     half_width_ = aspectRatio_ * half_height_;
 
     if(showFrustum_) {
-        far_half_height_ = tan(fovy_/2) * sceneRadius_;
+        far_half_height_ = tan(fovy_/2) * far_;
         far_half_width_ = far_half_height_ * aspectRatio_;
     }
 

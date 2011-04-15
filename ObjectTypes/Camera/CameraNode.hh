@@ -63,14 +63,20 @@ public:
     /// Set projection Matrix ( used to calculate frustum ... )
     void setProjection(ACG::GLMatrixd _projection) { projection_ = _projection; };
 
-    /// Set viewport size
-    void setSize(int _w, int _h) { width_ = _w; height_ = _h; }
+    /// Set viewport size ( This will be used to compute the aspect ration )
+    void setSize(int _w, int _h) { aspectRatio_ = (double)width_ / (double)height_; }
+
+    /// Set aspect ration ( width = a * height ; x = a * y )
+    void setAspectRation(double _aspect) { aspectRatio_ = _aspect; }
 
     /// Return encoded view string
     void setEncodedView(QString _encodedView) { encodedView_ = _encodedView; };
 
-    /// Set scene radius
-    void setSceneRadius(double _sceneRadius) { sceneRadius_ = _sceneRadius; };
+    /// Set distance to far plane ( e.g. scene radius )
+    void setFarPlane(double _far) { far_ = _far; };
+
+    /// Set distance to near plane
+    void setNearPlane(double _near) { near_ = _near; };
 
     /// Return encoded view string
     QString getEncodedView() { return encodedView_; };
@@ -101,8 +107,13 @@ private:
     double far_half_height_;
     double far_half_width_;
 
-    double sceneRadius_;
+    double near_half_height_;
+    double near_half_width_;
+
+
     double aspectRatio_;
+    double near_;
+    double far_;
 
     GLUquadric* upQuadric_;
     GLUquadric* rightQuadric_;
@@ -112,6 +123,8 @@ private:
 
     bool showFrustum_;
 };
+
+
 
 //=============================================================================
 } // namespace SceneGraph
