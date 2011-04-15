@@ -23,14 +23,26 @@ namespace SceneGraph {
 /// Default constructor.
 CameraNode::CameraNode(BaseNode* _parent, std::string _name) :
     BaseNode(_parent, _name),
+    bbmin_(FLT_MAX,FLT_MAX,FLT_MAX),
+    bbmax_(FLT_MIN,FLT_MIN,FLT_MIN),
     upQuadric_(0),
     rightQuadric_(0),
     viewQuadric_(0),
     showFrustum_(false) {
 
-    upQuadric_ = gluNewQuadric();
+    modelView_.identity();
+
+    projection_.identity();
+    projection_.perspective(45 ,1.0,0.5,1.0);
+
+    width_  = 640;
+    height_ = 480;
+
+    updateBoundingBoxes(modelView_);
+
+    upQuadric_    = gluNewQuadric();
     rightQuadric_ = gluNewQuadric();
-    viewQuadric_ = gluNewQuadric();
+    viewQuadric_  = gluNewQuadric();
 }
 
 CameraNode::~CameraNode() {
@@ -40,8 +52,7 @@ CameraNode::~CameraNode() {
     gluDeleteQuadric(viewQuadric_);
 }
 
-void CameraNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax) {
-
+void CameraNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
     _bbMin.minimize(bbmin_);
     _bbMax.maximize(bbmax_);
 }
@@ -78,7 +89,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     _state.set_modelview(modelview * modelView_);
 
     // Update bounding box data and clipped_ flag
-    updateBoundingBoxes(_state, modelview);
+    updateBoundingBoxes(modelview);
 
     _state.set_base_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
     _state.set_diffuse_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
@@ -311,7 +322,7 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
     _state.set_modelview(modelview * modelView_);
 
     // Update bounding box data and clipped_ flag
-    updateBoundingBoxes(_state, modelview);
+    updateBoundingBoxes(modelview);
 
     // Draw camera box
     glBegin(GL_LINES);
@@ -379,7 +390,7 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
 
 //----------------------------------------------------------------------------
 
-void CameraNode::updateBoundingBoxes(GLState& _state, GLMatrixd& _modelview) {
+void CameraNode::updateBoundingBoxes(GLMatrixd& _modelview) {
 
     // Get fovy of remote projection
     fovy_ = atan(1/projection_(0,0)) * 2;

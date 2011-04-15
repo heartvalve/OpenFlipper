@@ -49,7 +49,7 @@ public:
     DrawModes::DrawMode availableDrawModes() const;
 
     /// update bounding box
-    void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+    void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
     /// drawing
     void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
@@ -83,10 +83,10 @@ public:
 
 private:
 
-    void updateBoundingBoxes(GLState& _state, GLMatrixd& _modelview);
+    void updateBoundingBoxes(GLMatrixd& _modelview);
 
-    OpenMesh::Vec3f bbmin_;
-    OpenMesh::Vec3f bbmax_;
+    OpenMesh::Vec3d bbmin_;
+    OpenMesh::Vec3d bbmax_;
 
     ACG::GLMatrixd modelView_;
     ACG::GLMatrixd projection_;
