@@ -21,7 +21,7 @@
  *
  * \section build_cmake Building OpenFlipper using Cmake
  *
- * For the following section CMake >= 2.6.x has to be installed.
+ * For the following section CMake >= 2.8.4 has to be installed.
  * In the toplevel directory of OpenFlipper is a CMakeLists.txt
  * file that specifies the build configuration and targets. In most cases
  * this file should be left untouched. Additional functions and environment
@@ -52,8 +52,8 @@
  * \subsection cmake_bwin Building OpenFlipper under Windows
  *
  * <ul>
- * <li> Get Visual Studio >= 2008 </li>
- * <li> Get and Install Qt ( >= 4.6 , Visual Studio Version ) </li>
+ * <li> Get Visual Studio 2008 </li>
+ * <li> Get and Install Qt ( >= 4.7 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory:<br />
  * <br />
  *      <b>Windows Vista/7:</b> <br />
