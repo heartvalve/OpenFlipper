@@ -83,6 +83,13 @@ PlaneNode* planeNode( BaseObjectData* _object );
 DLLEXPORT
 PlaneObject* planeObject( BaseObjectData* _object );
 
+/** \brief Get a PlaneObject from an object id if possible
+*
+* @param _object If the object is a plane, a PlaneObject is returned. Otherwise a NULL pointer is returned.
+*/
+DLLEXPORT
+PlaneObject* planeObject( int _objectId );
+
 }
 
 #endif // PLUGINFUNCTIONSPLANE_HH
