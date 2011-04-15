@@ -51,16 +51,18 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
+#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 
 #include <ObjectTypes/Camera/Camera.hh>
 
-class TypeCameraPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface
+class TypeCameraPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, ContextMenuInterface
 {
    Q_OBJECT
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(LoadSaveInterface)
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(TypeInterface)
+   Q_INTERFACES(ContextMenuInterface)
 
   signals:
     // Logging interface
@@ -70,9 +72,19 @@ class TypeCameraPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggi
     // LoadSave Interface
     void emptyObjectAdded( int _id );
 
+    // ContextMenuInterface
+    void addContextMenuItem(QAction* _action , ContextMenuType _type);
+    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
+
   private slots:
 
     void noguiSupported( ) {} ;
+
+    // BaseInterface
+    void pluginsInitialized();
+
+    // ContextMenuInterface
+    void slotUpdateContextMenuObject( int _objectId );
 
   public :
 
@@ -88,15 +100,20 @@ class TypeCameraPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggi
 
     // Base Interface
     QString version() { return QString("1.0"); };
-    
+
     // Type Interface
     int addEmpty();
     DataType supportedType() { return DATA_CAMERA; }; 
+
+  private slots:
+    void contextMenuClicked(QAction* _contextAction);
     
   private:
     
     /// Return unique name for object
     QString get_unique_name(CameraObject* _object);
+
+    QMenu* contextMenu_;
 
 };
 
