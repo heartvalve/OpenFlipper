@@ -178,7 +178,16 @@ public:
 		      const Vec3& up);
 
 
-  /// multiply self with a perspective projection matrix 
+  /** \brief multiply self with a perspective projection matrix
+   *
+   * The specified perspective projection will be multiplied with the
+   * matrix already stored in this matix.
+   *
+   * @param fovY        Half of the Field of View in y direction angle (Degree)
+   * @param aspect      aspect ratio: x = y * aspect
+   * @param near_plane  Distance to near plane ( > 0 )
+   * @param far_plane   Distance to far plane ( > near_plane > 0 )
+   */
   void perspective(Scalar fovY, Scalar aspect, 
 		   Scalar near_plane, Scalar far_plane);
 
