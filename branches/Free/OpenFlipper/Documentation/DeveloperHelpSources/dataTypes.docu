@@ -25,7 +25,7 @@ The following datatypes are available in OpenFlipper:
 - \subpage coordsysType "Coordinate Systems"
   \image html type_coordsys_thumb.png
 - \subpage CameraType "Camera"
-  \image html type_Camera_thumb.png
+  \image html type_camera_thumb.png
 
 \section datatypes_adding_custom Adding custom datatypes
 TODO: How to create a custom datatype
