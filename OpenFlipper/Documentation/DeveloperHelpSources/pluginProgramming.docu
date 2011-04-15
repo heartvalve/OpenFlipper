@@ -164,4 +164,5 @@
  *
  * \subpage pluginExamples Programming examples for OpenFlipper plugins
  * \subpage interfaces Plugin Interfaces
+ * \subpage adding_empty_objects
  */

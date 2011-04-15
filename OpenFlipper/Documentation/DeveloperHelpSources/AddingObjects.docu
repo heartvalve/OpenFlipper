@@ -1,0 +1,68 @@
+/*! \page adding_empty_objects Adding empty Objects in a plugin
+\section adding_empty_objects_overview Overview
+OpenFlipper provides a set of datatypes (\ref datatypes_integrated ). While the load and save functions
+automatically generate objects for the loaded data, it is also useful to generate objects of a specific datatype and
+fill them with custom data. This page describes how a plugin can create a new object.
+
+\section adding_empty_objects_creating Creating a new object
+
+Your plugin has to implement a part of the \ref loadSaveInterfacePage.
+So you have to derive from that interface and add the LoadSaveInterface::addEmptyObject  signal to your plugin:
+
+\code
+
+//includes
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+...
+
+
+class ExamplePlugin::QObject, ... , LoadSaveInterface, ...
+{
+  Q_OBJECT
+  Q_INTERFACES(BaseInterface)
+  ...
+  Q_INTERFACES(LoadSaveInterface)
+
+signals:
+  // LoadSaveInterface
+  void addEmptyObject( DataType _type, int& _id);
+
+...
+\endcode
+
+To generate the object you can implement the following in one of your functions:
+
+\code
+void ExamplePlugin::exampleFunction() {
+  // Variable which will store the id of the newly created object.
+  int newObjectId = -1;
+
+  // Emit the signal, that we want to create a new object of the specified type plane
+  emit addEmptyObject(DATA_PLANE, newObjectId);
+
+  // Get the newly created object
+  PlaneObject* object = PluginFunctions::getObject(newObjectId);
+
+  if(object) {
+
+      // Now you can use the object as usual, e.g. Get the node
+      PlaneNode* planeNode = object->planeNode();
+
+      // change it
+      planeNode->setPosition(origin,normal);
+      planeNode->setSize(kinectinfo_->getMaxDepth() / 2, kinectinfo_->getMaxDepth() / 2);
+
+      // ...
+
+  } else {
+    // Something went wrong when creating the object.
+    std::cerr << "Unable to create object" << std::endl;
+  }
+
+}
+\endcode
+Of course you have to add the includes for the ObjectTypes you want to use to your list of includes.
+
+
+
+*/

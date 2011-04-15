@@ -2,6 +2,9 @@
 
 \section datatypes_intro Datatypes in OpenFlipper
 
+OpenFlipper supports a variety of datatypes. The default ones shipped with it are listed in the following section.
+It is also possible to extend OpenFlipper with additional datatypes. this is described in the section \ref datatypes_adding_custom.
+
 \section datatypes_integrated Integrated data types
 
 The following datatypes are available in OpenFlipper:
@@ -23,4 +26,8 @@ The following datatypes are available in OpenFlipper:
   \image html type_coordsys_thumb.png
 - \subpage CameraType "Camera"
   \image html type_Camera_thumb.png
+
+\section datatypes_adding_custom Adding custom datatypes
+TODO: How to create a custom datatype
+
 */
