@@ -143,11 +143,11 @@ typename SkeletonT<PointT>::Iterator &SkeletonT<PointT>::Iterator::operator++()
     return *this;
 
   // try to make this iterator point to the first child
-  if(pCurrent_->children_.size() > 0)
+  if(pCurrent_->size() > 0)
   {
     // there are children, so add the current joint to the stack and choose the first child as new current position
     stJoints_.push(pCurrent_);
-    pCurrent_ = pCurrent_->children_[0];
+    pCurrent_ = pCurrent_->child(0);
   }else{
 
     if ( pCurrent_->isRoot() ){
