@@ -575,6 +575,8 @@ void Core::slotEmptyObjectAdded ( int _id ) {
   emit signalObjectUpdated(_id);
   emit signalObjectUpdated(_id,UPDATE_ALL);
 
+  resetScenegraph(false);
+
   ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
 
