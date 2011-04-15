@@ -3,26 +3,45 @@
 
 \section type_Camera_info Camera Datatype Information
 
-OpenFlipper includes a datatype "DATA_CAMERA" for visualizing cameras. A camera consists of the
-modelview and the projection matrix. Additionally it requires the aspect ration and the
-near /far plane distances.
+OpenFlipper includes a data type "DATA_CAMERA" for visualizing cameras. A camera consists of the
+modelview and the projection matrix. Additionally it requires the aspect ratio and the
+near/far plane distances.
 
 \section type_camera_usage Usage
 To use the dataType, create an empty object of type DATA_CAMERA
 
 \code
+ // Variable which will store the id of the newly created object.
+  int newObjectId = -1;
+
+  // Emit the signal, that we want to create a new object of the specified type DATA_CAMERA
+  emit addEmptyObject(DATA_CAMERA, newObjectId);
+
+  // Get the newly created object
+  CameraObject* object = PluginFunctions::getObject(newObjectId);
+
+  if(object) {
+
+      // Get the node
+      CameraNode* cameraNode = object->cameraNode();
+
+      // ...
+       *
+  } else {
+    // Something went wrong when creating the object.
+    std::cerr << "Unable to create object" << std::endl;
+  }
 \endcode
 
-Afterwards get the camera node from the object.
+Now that you have the camera node, you have to set some variables.
+- Set the Modelview Matrix:   CameraNode::setModelView()
+- Set the projection Matrix:  CameraNode::setProjection()
+- Set near and far plane:     CameraNode::setFarPlane(), CameraNode::setNearPlane()
+- Aspect ration of the setup: CameraNode::setAspectRation()
 
-
-
-The basic object type for handling polygonal meshes is the PolyMeshObject. This object manages
-rendering and data storage of a polygonal %OpenMesh.\n
-
-To get the actual mesh you can call the PolyMeshObject::mesh() function which returns a pointer
-to the %OpenMesh structure, which can be directly manipulated with the functions described in
-the \ref OpenMeshDoc "OpenMesh Documentation".\n
-
-Note: If you know that you only work on triangular meshes, use the \ref triMeshType "Triangular Mesh datatype".\n
+This will setup all required parameters of your camera. Don't forget to call
+\code
+emit updatedObject(cameraObject->id(),UPDATE_ALL);
+\endcode
+to make your changes visible.
 */
