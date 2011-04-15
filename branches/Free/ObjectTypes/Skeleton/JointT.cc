@@ -43,6 +43,7 @@
 #define JOINTT_C
 
 #include "JointT.hh"
+#include <assert.h>
 
 using namespace std;
 
@@ -209,6 +210,8 @@ inline size_t JointT<PointT>::size()
 template<typename PointT>
 inline JointT<PointT> *JointT<PointT>::child(size_t _index)
 {
+  assert( _index < children_.size() );
+
   if(_index >= children_.size())
     return 0;
   return children_[_index];
