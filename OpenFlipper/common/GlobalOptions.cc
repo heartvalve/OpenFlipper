@@ -723,17 +723,20 @@ QString coreVersion() {
 
 bool initializeSettings() {
   
-  #if defined(__GNUC__)
+  #if defined(__INTEL_COMPILER)
+    compilerInfo_ = "Intel: " + QString(  TOSTRING(__INTEL_COMPILER) ) + "." + QString(  TOSTRING(__GNUC_MINOR__) ) ;
+    #if defined(__INTEL_COMPILER_BUILD_DATE)
+      compilerInfo_ += " BuildDate " + QString(  TOSTRING(__INTEL_COMPILER_BUILD_DATE) );
+    #endif
+  #elif defined(__GNUC__)
     compilerInfo_ = "Gnu CC: " + QString(  TOSTRING(__GNUC__) ) + "." + QString(  TOSTRING(__GNUC_MINOR__) ) ;
     #if defined(__GNUC_PATCHLEVEL__)
       compilerInfo_ += "." + QString(  TOSTRING(__GNUC_PATCHLEVEL__) );
     #endif
-  #else 
-    #if defined (_MSC_FULL_VER)
-    compilerInfo_ = "MSVC: " + QString(  TOSTRING(_MSC_FULL_VER) );  
-    #else 
-      compilerInfo_ = "Unknown";
-    #endif
+  #elif defined (_MSC_FULL_VER)
+    compilerInfo_ = "MSVC: " + QString(  TOSTRING(_MSC_FULL_VER) );
+  #else
+    compilerInfo_ = "Unknown Compiler";
   #endif
   
   
