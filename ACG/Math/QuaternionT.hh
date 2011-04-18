@@ -317,7 +317,7 @@ public:
 
     std::cerr << "quaternion : " << (*this)      << std::endl;
     std::cerr << "length     : " << this->norm() << std::endl;
-    std::cerr << "axis, angle: " << axis << ", " << angle*180.0/M_PI << "°\n";
+    std::cerr << "axis, angle: " << axis << ", " << angle*180.0/M_PI << "\n";
     std::cerr << "rot matrix :\n";
     std::cerr << m << std::endl;
   }
