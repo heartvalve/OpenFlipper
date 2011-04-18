@@ -356,7 +356,7 @@ bool BaseObjectData::pickingEnabled() {
 // ===============================================================================
 // Content Nodes
 // ===============================================================================
-void BaseObjectData::update()
+void BaseObjectData::update(UpdateType _type )
 {
 
 }
