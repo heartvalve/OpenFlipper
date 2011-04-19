@@ -13,6 +13,18 @@ is also a GroupObject which holds no data and is used for grouping different obj
 All objects in OpenFlipper are handled by the core. To create and delete objects use
 the functions provided by the LoadSaveInterface(\ref adding_empty_objects ).
 
+\subsection DataAccess Access to data from within the Plugins
+From each plugin you have to get access to the data. Functions to get the right data are provided in the
+PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
+time you will use the ObjectIterator defined there. If you need consistent data access during the plugin
+lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made
+available in this namespace which never change( \ref identifying_objects).\n \n
+It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
+Only the identifiers will stay constant. If one of these changes occurs, the main application will call
+BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
+has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
+If you have to keep track of these changes, implement these functions.
+
 \section identifying_objects Identifying Objects
 Objects in OpenFlipper get a unique id when they are created. This id will not change during runtime.
 It is possible, that pointers change so you should only use the id to reference objects in your plugins.
@@ -25,17 +37,6 @@ If you want to load or delete data from within your plugin and you only use exis
 you can derive from the LoadSaveInterface. This interface provides load and save functions
 to tell the core that you want to access existing data types.
 
-\subsection DataAccess Access to data from within the Plugins
-From each plugin you have to get access to the data. Functions to get the right data are provided in the
-PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
-time you will use the ObjectIterator defined there. If you need consistent data access during the plugin 
-lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made 
-available in this namespace which never change.\n \n
-It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
-Only the identifiers will stay constant. If one of these changes occurs, the main application will call
-BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
-has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
- If you have to keep track of these changes, implement these functions.
 
 \section basicObjectTypes Basic object types
 \subsection baseObjectDescription BaseObject
