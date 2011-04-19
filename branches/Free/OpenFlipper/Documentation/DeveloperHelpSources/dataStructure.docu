@@ -1,72 +1,80 @@
-/** \page  dataStructure Datastructures
- * 
- * \section Overview
- *
- *
- * All Objects have to be derived from the BaseObject. For the predefined objects this is 
- * already the case. In BaseObject a tree structure is implemented. You can use the functions
- * in BaseObject to search for items and access them. A root Object is created by OpenFlipper
- * which is the root of the object tree. You can get it via PluginFunctions::objectRoot(). There
- * is also a groupobject which holds no data and is used for grouping different objects.
- * 
- * All objects in OpenFlipper are handled by the core. To create and delete objects use
- * the functions provided by the LoadSaveInterface.
- * 
- * \section loadingDataAndExistingTypes Loading data and existing types
- * If you want to load or delete data from within your plugin and you only use existing types
- * you can derive from the LoadSaveInterface. This interface provides load and save functions
- * to tell the core that you want to access existing data types.
- *
- * \subsection DataAccess Access to data from within the Plugins
- * From each plugin you have to get access to the data. Functions to get the right data are provided in the
- * PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
- * time you will use the ObjectIterator defined there. If you need consistent data access during the plugin 
- * lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made 
- * available in this namespace which never change.\n \n
- * It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
- * Only the identifiers will stay constant. If one of these changes occurs, the main application will call
- * BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
- * has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
- *  If you have to keep track of these changes, implement these functions.
- *
- * \section basicObjectTypes Basic object types
- * \subsection baseObjectDescription BaseObject
- * All objects are derived from BaseObject. This object implements the basic object 
- * functions. It creates a tree structure of all available objects, includes object
- * selection, name and type information. It does not contain any code to visualize
- * objects.
- * Each object derived from BaseObject has a datatype function BaseObject::dataType.
- * 
- * Additionally you can add data to each object by using the perObjectData class.
- * See PerObjectData
- *
- * \subsection baseObjectDataDescription BaseObjectData
- * This class is derived from BaseObject and includes basic visualization functions. It creates
- * the basic scenegraph nodes for the object ( TODO : See per Object Scenegraph structure ).
- * 
- * For every object, the top scenegraph node is the ObjectData::SeparatorNode*. All other
- * nodes ( including per object custom nodes ) have to be added below this node. Additionally
- * an ManipulatorNode is added below the separator node. This manipulator is used to move
- * or transform the object. Normally this node is managed by the move plugin. If you
- * use per object nodes which should be transformed along with the object you can attach
- * them below this node ( BaseObjectData::manipulatorNode() ).
- *
- * Additionally per object scenegraph nodes can be managed automatically by BaseObjectData.
- * 
- *
- * \subsection MeshObjectDescription MeshObject
- * MeshObject is the class representing triangle or poly meshes. It uses OpenMesh as its 
- * data structure.
- * It is based on BaseObjectData and adds additional scenegraph nodes. First it creates a materialNode
- * used to set the meshes rendering material properties, followed by a texture node ( MeshObject::textureNode() ). A shader node ( MeshObject::shaderNode() ) is than 
- * added to manage the systems and user defined shaders. Below the shader node is the mesh node ( MeshObject::meshNode()  )which actually
- * renders the mesh.
- * Additionally some nodes to render selection, features or modeling areas are added by the MeshObject
- * 
- * See MeshObject for the detailed function documentation.
- * 
- *
- * \section creatingCustomObjectTypes Creating custom object types
- *
- */
+/** \page  dataStructure Data Structures
+
+\section Overview
+
+\image html ObjectTree.png
+
+All Objects in OpeFlipper have to be derived from the BaseObject. For the predefined objects this is
+already the case. In BaseObject a tree structure is implemented. You can use the functions
+in BaseObject to search for items and access them. A root Object is created by OpenFlipper
+which is the root of the object tree. You can get it via PluginFunctions::objectRoot(). There
+is also a GroupObject which holds no data and is used for grouping different objects like in the figure above.
+
+All objects in OpenFlipper are handled by the core. To create and delete objects use
+the functions provided by the LoadSaveInterface(\ref adding_empty_objects ).
+
+\section identifying_objects Identifying Objects
+Objects in OpenFlipper get a unique id when they are created. This id will not change during runtime.
+It is possible, that pointers change so you should only use the id to reference objects in your plugins.
+To get this id, just call the BaseObject::id() function. To get an object with a specific id, you can use the
+PluginFunctions provided by the data type (e.g. PluginFunctions::triMeshObject() ). This way, you will always
+be sure to get the right object.
+
+\section loadingDataAndExistingTypes Loading data and existing types
+If you want to load or delete data from within your plugin and you only use existing types
+you can derive from the LoadSaveInterface. This interface provides load and save functions
+to tell the core that you want to access existing data types.
+
+\subsection DataAccess Access to data from within the Plugins
+From each plugin you have to get access to the data. Functions to get the right data are provided in the
+PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
+time you will use the ObjectIterator defined there. If you need consistent data access during the plugin 
+lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made 
+available in this namespace which never change.\n \n
+It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
+Only the identifiers will stay constant. If one of these changes occurs, the main application will call
+BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
+has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
+ If you have to keep track of these changes, implement these functions.
+
+\section basicObjectTypes Basic object types
+\subsection baseObjectDescription BaseObject
+All objects are derived from BaseObject. This object implements the basic object 
+functions. It creates a tree structure of all available objects, includes object
+selection, name and type information. It does not contain any code to visualize
+objects.
+Each object derived from BaseObject has a datatype function BaseObject::dataType.
+
+Additionally you can add data to each object by using the perObjectData class.
+See PerObjectData
+
+\subsection baseObjectDataDescription BaseObjectData
+This class is derived from BaseObject and includes basic visualization functions. It creates
+the basic scenegraph nodes for the object ( TODO : See per Object Scenegraph structure ).
+
+For every object, the top scenegraph node is the ObjectData::SeparatorNode*. All other
+nodes ( including per object custom nodes ) have to be added below this node. Additionally
+an ManipulatorNode is added below the separator node. This manipulator is used to move
+or transform the object. Normally this node is managed by the move plugin. If you
+use per object nodes which should be transformed along with the object you can attach
+them below this node ( BaseObjectData::manipulatorNode() ).
+
+Additionally per object scenegraph nodes can be managed automatically by BaseObjectData.
+
+
+\subsection MeshObjectDescription MeshObject
+MeshObject is the class representing triangle or poly meshes. It uses OpenMesh as its 
+data structure.
+It is based on BaseObjectData and adds additional scenegraph nodes. First it creates a materialNode
+used to set the meshes rendering material properties, followed by a texture node ( MeshObject::textureNode() ). A shader node ( MeshObject::shaderNode() ) is than 
+added to manage the systems and user defined shaders. Below the shader node is the mesh node ( MeshObject::meshNode()  )which actually
+renders the mesh.
+Additionally some nodes to render selection, features or modeling areas are added by the MeshObject
+
+See MeshObject for the detailed function documentation.
+
+
+\section creatingCustomObjectTypes Creating custom object types
+
+*/
  
