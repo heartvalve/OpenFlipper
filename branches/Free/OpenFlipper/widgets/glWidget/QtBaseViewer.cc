@@ -938,14 +938,22 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
     }
     else
     {
-
       // Project hitpoint to get depth
       ACG::Vec3d hitPointProjected = glstate_->project(hitPoint);
 
       // Create projected center point with same depth as hitpoint
       ACG::Vec3d centerPointProjected = hitPointProjected;
-      centerPointProjected[0] = glstate_->viewport_width() / 2.0 ;
-      centerPointProjected[1] = glstate_->viewport_height() / 2.0 ;
+
+      // Get viewport data
+      int w = 0, h = 0,left = 0, bottom = 0;
+      glstate_->get_viewport(left, bottom, w, h);
+
+      // Compute the center point. Note that the project function includes the viewport matrix.
+      // As we have different viewports for the viewer but one global coord system,
+      // we need to set the real center coordinates and therefore add the lower left corner position
+      // which is the left and bottom of the viewport
+      centerPointProjected[0] = left   + glstate_->viewport_width() / 2.0 ;
+      centerPointProjected[1] = bottom + glstate_->viewport_height() / 2.0 ;
 
       // unproject center point
       ACG::Vec3d centerPointUnProjected = glstate_->unproject(centerPointProjected);
@@ -1038,8 +1046,8 @@ void glViewer::flyTo(const ACG::Vec3d&  _position,
   // compute translation
   ACG::Vec3d target = glstate_->modelview().transform_point(_center);
   ACG::Vec3d trans ( -target[0],
-		-target[1],
-		-target[2] - (_position-_center).norm() );
+	                   -target[1],
+		                 -target[2] - (_position-_center).norm() );
 
 
 
