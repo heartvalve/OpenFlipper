@@ -103,6 +103,10 @@
 * * Core/Gui/fullscreen                      Show OpenFlipper in Fullscreen Mode(bool)\n
 * * Core/Projection/FOVY                     Field of view for projection matrix in perspective mode(double)\n
 *
+* <b>User Interface Settings for each of the viewers</b>\n
+* * Viewer<viewer>/perspectiveProjection     Orthogonal = false,Perspective = true (bool)\n
+*
+*
 * <b>File Handling</b>\n
 * * Core/CurrentDir                          The current Directory of the Application \n
 * * Core/File/RecentFiles                    List of Recent Files \n
@@ -455,13 +459,17 @@ QString helpDirStr();
   DLLEXPORT
   ACG::SceneGraph::DrawModes::DrawMode defaultDrawMode( int _viewer );
 
-  /// Store defaultProjectionMode setting
+  /** \brief Store defaultProjectionMode setting
+
+    Perspective projection = true;
+    Orthogonal Projection  = false;
+  */
   DLLEXPORT
-  void defaultProjectionMode( int _mode, int _viewer );
+  void defaultPerspectiveProjectionMode( bool _mode, int _viewer );
 
   /// get defaultProjectionMode setting
   DLLEXPORT
-  int defaultProjectionMode( int _viewer );
+  bool defaultPerspectiveProjectionMode( int _viewer );
 
   /// Store defaultViewingDirection setting
   DLLEXPORT

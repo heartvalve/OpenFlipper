@@ -172,10 +172,6 @@ Core() :
   PluginFunctions::setViewerProperties(viewerProperties);
 
   //set viewer defaults
-  OpenFlipper::Options::defaultProjectionMode( 1, 0 );
-  OpenFlipper::Options::defaultProjectionMode( 0, 1 );
-  OpenFlipper::Options::defaultProjectionMode( 0, 2 );
-  OpenFlipper::Options::defaultProjectionMode( 0, 3 );
   OpenFlipper::Options::defaultViewingDirection( PluginFunctions::VIEW_FREE,  0 );
   OpenFlipper::Options::defaultViewingDirection( PluginFunctions::VIEW_TOP,   1 );
   OpenFlipper::Options::defaultViewingDirection( PluginFunctions::VIEW_LEFT,  2 );
