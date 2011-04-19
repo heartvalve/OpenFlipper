@@ -150,9 +150,6 @@ static bool synchronization_ = false;
 /// Store the defaultDrawMode_ mode
 static std::vector<ACG::SceneGraph::DrawModes::DrawMode> defaultDrawMode_ = std::vector<ACG::SceneGraph::DrawModes::DrawMode> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
 
-/// Store the defaultProjectionMode_ mode
-static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 1);
-
 /// Store the defaultViewingDirection_ mode
 static std::vector<int> defaultViewingDirection_ = std::vector<int> (4, 0);
 
@@ -486,12 +483,33 @@ ACG::SceneGraph::DrawModes::DrawMode defaultDrawMode(int _viewer){
   return defaultDrawMode_[_viewer];
 }
 
-void defaultProjectionMode( int _mode, int _viewer){
-  defaultProjectionMode_[_viewer] = _mode;
+void defaultPerspectiveProjectionMode( bool _mode, int _viewer){
+
+  // Core/Gui/glViewer<viewer> Orthogonal = false,Perspective = true (bool)\n
+
+  QString entry = "Viewer" + QString::number(_viewer) + "/perspectiveProjection";
+  OpenFlipperSettings().setValue(entry,_mode);
+
 }
 
-int defaultProjectionMode(int _viewer){
-  return defaultProjectionMode_[_viewer];
+bool defaultPerspectiveProjectionMode(int _viewer){
+
+  QString entry = "Viewer" + QString::number(_viewer) + "/perspectiveProjection";
+
+  switch (_viewer) {
+    case 0:
+      return OpenFlipperSettings().value(entry,true).toBool();
+    case 1:
+      return OpenFlipperSettings().value(entry,false).toBool();
+    case 2:
+      return OpenFlipperSettings().value(entry,false).toBool();
+    case 3:
+      return OpenFlipperSettings().value(entry,false).toBool();
+    default:
+      std::cerr << "defaultProjectionMode: illegal viewer id: " << _viewer << std::endl;
+  }
+
+  return true;
 }
 
 void defaultViewingDirection( int _mode, int _viewer){

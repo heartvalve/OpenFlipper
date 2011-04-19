@@ -497,10 +497,10 @@ void Core::slotFileOpened ( int _id ) {
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ){
       PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
 
-      if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
-        PluginFunctions::orthographicProjection(i);
-      else
+      if ( OpenFlipper::Options::defaultPerspectiveProjectionMode(i) )
         PluginFunctions::perspectiveProjection(i);
+      else
+        PluginFunctions::orthographicProjection(i);
 
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
     }

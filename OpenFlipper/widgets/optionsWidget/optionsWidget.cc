@@ -122,7 +122,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   for ( int i=0; i < PluginFunctions::viewers(); i++ ){
     viewerList->addItem("Viewer " + QString::number(i+1) );
     defaultDrawModes_.push_back( ACG::SceneGraph::DrawModes::DEFAULT );
-    defaultProjectionMode_.push_back( 0 );
+    defaultProjectionMode_.push_back( true );
     defaultViewingDirections_.push_back( 0 );
   }
 
@@ -187,7 +187,7 @@ void OptionsWidget::viewerSettingsChanged(int /*_index*/){
 	mode.push_back( availDrawModes->item(i)->text() );
 
     defaultDrawModes_[         viewerList->currentRow() ] = descriptionsToDrawMode(mode);
-    defaultProjectionMode_[    viewerList->currentRow() ] = projectionBox->currentIndex();
+    defaultProjectionMode_[    viewerList->currentRow() ] = projectionBox->currentIndex() ;
     defaultViewingDirections_[ viewerList->currentRow() ] = directionBox->currentIndex();
   }
 };
@@ -235,7 +235,11 @@ void OptionsWidget::updateViewerSettings(int _row){
     }
   }
 
-  projectionBox->setCurrentIndex( defaultProjectionMode_[_row] );
+  if ( defaultProjectionMode_[_row] )
+    projectionBox->setCurrentIndex( 1 );
+  else
+    projectionBox->setCurrentIndex( 0 );
+
   directionBox->setCurrentIndex(  defaultViewingDirections_[_row] );
 
   updatingViewerSettings_ = false;
@@ -399,7 +403,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   for ( int i=0; i < PluginFunctions::viewers(); i++ ){
     defaultDrawModes_[i] = OpenFlipper::Options::defaultDrawMode(i);
-    defaultProjectionMode_[i] = OpenFlipper::Options::defaultProjectionMode(i);
+    defaultProjectionMode_[i] = OpenFlipper::Options::defaultPerspectiveProjectionMode(i);
     defaultViewingDirections_[i] = OpenFlipper::Options::defaultViewingDirection(i);
   }
 
@@ -684,7 +688,7 @@ void OptionsWidget::slotApply() {
   //viewer defaults
   for (int i=0; i < PluginFunctions::viewers(); i++){
     OpenFlipper::Options::defaultDrawMode(         defaultDrawModes_[i],         i );
-    OpenFlipper::Options::defaultProjectionMode(   defaultProjectionMode_[i],    i );
+    OpenFlipper::Options::defaultPerspectiveProjectionMode(   defaultProjectionMode_[i],    i );
     OpenFlipper::Options::defaultViewingDirection( defaultViewingDirections_[i], i );
   }
 
