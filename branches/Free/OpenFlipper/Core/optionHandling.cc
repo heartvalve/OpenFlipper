@@ -123,9 +123,11 @@ void Core::applyOptions(){
 
     //set viewer properties
     for (int i=0; i < PluginFunctions::viewers(); i++){
+      std::cerr << "ApplyOptions" << std::endl;
 
       // PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
+      PluginFunctions::allowRotation(!OpenFlipper::Options::defaultLockRotation(i),i);
 
       //only switch projection here if an object is opened
       //this prevents problems when applying options on app start

@@ -77,6 +77,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect( availDrawModes, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(viewerSettingsChanged(QListWidgetItem*)) );
   connect( projectionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
   connect( directionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
+  connect( lockRotationBox, SIGNAL(stateChanged(int)), this, SLOT(viewerSettingsChanged(int)));
 
   // Switch stacked widget of stereo settings
   connect(stereoOpengl, SIGNAL(clicked()),
@@ -119,11 +120,13 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
     mode = mode<<1;
   }
 
+  defaultProjectionMode_.resize(4);
+  defaultViewingDirections_.resize(4);
+  defaultRotationLocks_.resize(4);
+
   for ( int i=0; i < PluginFunctions::viewers(); i++ ){
     viewerList->addItem("Viewer " + QString::number(i+1) );
     defaultDrawModes_.push_back( ACG::SceneGraph::DrawModes::DEFAULT );
-    defaultProjectionMode_.push_back( true );
-    defaultViewingDirections_.push_back( 0 );
   }
 
   pluginOptionsLayout = new QVBoxLayout;
@@ -184,11 +187,17 @@ void OptionsWidget::viewerSettingsChanged(int /*_index*/){
 
     for (int i=0; i < availDrawModes->count(); i++)
       if (availDrawModes->item(i)->checkState() == Qt::Checked)
-	mode.push_back( availDrawModes->item(i)->text() );
+        mode.push_back( availDrawModes->item(i)->text() );
 
     defaultDrawModes_[         viewerList->currentRow() ] = descriptionsToDrawMode(mode);
     defaultProjectionMode_[    viewerList->currentRow() ] = projectionBox->currentIndex() ;
     defaultViewingDirections_[ viewerList->currentRow() ] = directionBox->currentIndex();
+    defaultRotationLocks_[ viewerList->currentRow() ]     = lockRotationBox->isChecked();
+
+    if ( lockRotationBox->isChecked() )
+      std::cerr << "locked" << std::endl;
+    else
+      std::cerr << "unlocked" << std::endl;
   }
 };
 
@@ -241,6 +250,8 @@ void OptionsWidget::updateViewerSettings(int _row){
     projectionBox->setCurrentIndex( 0 );
 
   directionBox->setCurrentIndex(  defaultViewingDirections_[_row] );
+
+  lockRotationBox->setChecked( defaultRotationLocks_[_row] );
 
   updatingViewerSettings_ = false;
 }
@@ -405,6 +416,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
     defaultDrawModes_[i] = OpenFlipper::Options::defaultDrawMode(i);
     defaultProjectionMode_[i] = OpenFlipper::Options::defaultPerspectiveProjectionMode(i);
     defaultViewingDirections_[i] = OpenFlipper::Options::defaultViewingDirection(i);
+    defaultRotationLocks_[i] = OpenFlipper::Options::defaultLockRotation(i);
   }
 
   updateViewerSettings(0);
@@ -690,6 +702,7 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::defaultDrawMode(         defaultDrawModes_[i],         i );
     OpenFlipper::Options::defaultPerspectiveProjectionMode(   defaultProjectionMode_[i],    i );
     OpenFlipper::Options::defaultViewingDirection( defaultViewingDirections_[i], i );
+    OpenFlipper::Options::defaultLockRotation( defaultRotationLocks_[i], i );
   }
 
   OpenFlipper::Options::defaultViewerLayout( viewerLayout->currentIndex() );
