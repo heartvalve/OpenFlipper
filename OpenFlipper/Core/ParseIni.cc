@@ -432,9 +432,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );
 
-    if ( !_ini.section_exists("ViewerProperties") )
-      _ini.add_section("ViewerProperties");
-
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       QString entryHead = "Viewer" + QString::number(i) + "/";
       OpenFlipperSettings().setValue(entryHead + "Animation", PluginFunctions::viewerProperties(i).animation());
