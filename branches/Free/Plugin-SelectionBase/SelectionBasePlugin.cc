@@ -84,7 +84,7 @@ tool_(0),
 primitivesBar_(0),
 primitivesBarGroup_(0),
 toolsBar_(0),
-pickingModeGroup_(0),
+selectionModesGroup_(0),
 toggleSelectionAction_(0),
 lassoSelectionAction_(0),
 volumeLassoSelectionAction_(0),
@@ -92,7 +92,6 @@ surfaceLassoSelectionAction_(0),
 sphereSelectionAction_(0),
 boundarySelectionAction_(0),
 floodFillSelectionAction_(0),
-selectionModesGroup_(0),
 nextFreePrimitiveType_(1u),
 sphere_mat_node_(0),
 sphere_node_(0),
@@ -169,44 +168,50 @@ void SelectionBasePlugin::initializePlugin() {
     // Create selection tools toolbar
     toolsBar_ = new QToolBar(tr("Selection Base Tools"), pickModeToolBar);
     
-    pickingModeGroup_ = new QActionGroup(pickModeToolBar);
-    
     pickModeToolBar->addWidget(primitivesBar_);
     pickModeToolBar->addSeparator();
     pickModeToolBar->addWidget(toolsBar_);
-    emit setPickModeToolbar(SELECTION_PICKING, pickModeToolBar);
     
     // Create default selection mode actions
-    selectionModesGroup_ = new QActionGroup(0);
+    selectionModesGroup_ = new QActionGroup(toolsBar_);
     selectionModesGroup_->setExclusive(true);
     toggleSelectionAction_ = new HandleAction(QIcon(iconPath + TOGGLE_IMG), TOGGLE_DESC, selectionModesGroup_);
     toggleSelectionAction_->setCheckable(true);
     toggleSelectionAction_->selectionModeHandle(SB_TOGGLE);
+    toolsBar_->addAction(toggleSelectionAction_);
     connect(toggleSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     lassoSelectionAction_ = new HandleAction(QIcon(iconPath + LASSO_IMG), LASSO_DESC, selectionModesGroup_);
     lassoSelectionAction_->setCheckable(true);
     lassoSelectionAction_->selectionModeHandle(SB_LASSO);
+    toolsBar_->addAction(lassoSelectionAction_);
     connect(lassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     volumeLassoSelectionAction_ = new HandleAction(QIcon(iconPath + VOLUME_LASSO_IMG), VOLUME_LASSO_DESC, selectionModesGroup_);
     volumeLassoSelectionAction_->setCheckable(true);
     volumeLassoSelectionAction_->selectionModeHandle(SB_VOLUME_LASSO);
+    toolsBar_->addAction(volumeLassoSelectionAction_);
     connect(volumeLassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     surfaceLassoSelectionAction_ = new HandleAction(QIcon(iconPath + SURFACE_LASSO_IMG), SURFACE_LASSO_DESC, selectionModesGroup_);
     surfaceLassoSelectionAction_->setCheckable(true);
     surfaceLassoSelectionAction_->selectionModeHandle(SB_SURFACE_LASSO);
+    toolsBar_->addAction(surfaceLassoSelectionAction_);
     connect(surfaceLassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     sphereSelectionAction_ = new HandleAction(QIcon(iconPath + SPHERE_IMG), SPHERE_DESC, selectionModesGroup_);
     sphereSelectionAction_->setCheckable(true);
     sphereSelectionAction_->selectionModeHandle(SB_SPHERE);
+    toolsBar_->addAction(sphereSelectionAction_);
     connect(sphereSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     boundarySelectionAction_ = new HandleAction(QIcon(iconPath + BOUNDARY_IMG), BOUNDARY_DESC, selectionModesGroup_);
     boundarySelectionAction_->setCheckable(true);
     boundarySelectionAction_->selectionModeHandle(SB_BOUNDARY);
+    toolsBar_->addAction(boundarySelectionAction_);
     connect(boundarySelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     floodFillSelectionAction_ = new HandleAction(QIcon(iconPath + FLOODFILL_IMG), FLOODFILL_DESC, selectionModesGroup_);
     floodFillSelectionAction_->setCheckable(true);
     floodFillSelectionAction_->selectionModeHandle(SB_FLOODFILL);
+    toolsBar_->addAction(floodFillSelectionAction_);
     connect(floodFillSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
+
+    emit setPickModeToolbar(SELECTION_PICKING, pickModeToolBar);
 }
 
 //============================================================================================
@@ -454,37 +459,30 @@ void SelectionBasePlugin::slotRegisterType(QString _handleName, DataType _type) 
 
 void SelectionBasePlugin::updatePickModeToolBar() {
     
-    // Get all actions in pick mode toolbar
-    QList<QAction*> pickingActionsList = pickingModeGroup_->actions();
-    
     // Add newly added primitive and tool buttons
     QList<QAction*> primitivesList = primitivesBarGroup_->actions();
     
     for(QList<QAction*>::iterator it = primitivesList.begin(); it != primitivesList.end(); ++it) {
-        if(!pickingActionsList.contains(*it)) {
-            pickingActionsList.append(*it);
-            primitivesBar_->addAction(*it);
             (*it)->setEnabled(false);
             
-            // If at least one object of this type exists in the scene,
-            // don't grey out the button
-            PrimitiveAction* act = dynamic_cast<PrimitiveAction*>(*it);
-            if(act) {
-                std::map<QString,SelectionEnvironment>::iterator sit =
-                    selectionEnvironments_.find(act->selectionEnvironmentHandle());
-                if(sit != selectionEnvironments_.end()) {
-                    
-                    bool atLeastOne = false;
-                    for(std::vector<DataType>::iterator tit = (*sit).second.types.begin();
-                        tit != (*sit).second.types.end(); ++tit) {
-                        if(typeExists(*tit)) {
-                            atLeastOne = true;
-                            break;
-                        }
+        // If at least one object of this type exists in the scene,
+        // don't grey out the button
+        PrimitiveAction* act = dynamic_cast<PrimitiveAction*>(*it);
+        if(act) {
+            std::map<QString,SelectionEnvironment>::iterator sit =
+                selectionEnvironments_.find(act->selectionEnvironmentHandle());
+            if(sit != selectionEnvironments_.end()) {
+
+                bool atLeastOne = false;
+                for(std::vector<DataType>::iterator tit = (*sit).second.types.begin();
+                    tit != (*sit).second.types.end(); ++tit) {
+                    if(typeExists(*tit)) {
+                        atLeastOne = true;
+                        break;
                     }
-                    if(atLeastOne) {
-                        (*it)->setEnabled(true);
-                    }
+                }
+                if(atLeastOne) {
+                    (*it)->setEnabled(true);
                 }
             }
         }
@@ -492,37 +490,22 @@ void SelectionBasePlugin::updatePickModeToolBar() {
     
     // Only activate those tools, that are available for the current
     // active primitive type
-    toolsBar_->clear();
     
     for(std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.begin();
         it != selectionEnvironments_.end(); ++it) {
             
         // Default selection modes
-        toolsBar_->addAction(toggleSelectionAction_);
         toggleSelectionAction_->setEnabled(toggleSelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(lassoSelectionAction_);
         lassoSelectionAction_->setEnabled(lassoSelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(volumeLassoSelectionAction_);
         volumeLassoSelectionAction_->setEnabled(volumeLassoSelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(surfaceLassoSelectionAction_);
         surfaceLassoSelectionAction_->setEnabled(surfaceLassoSelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(sphereSelectionAction_);
         sphereSelectionAction_->setEnabled(sphereSelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(boundarySelectionAction_);
         boundarySelectionAction_->setEnabled(boundarySelectionAction_->isAssociated(currentPrimitiveType_, true));
-
-        toolsBar_->addAction(floodFillSelectionAction_);
         floodFillSelectionAction_->setEnabled(floodFillSelectionAction_->isAssociated(currentPrimitiveType_, true));
 
         // Custom selection modes
         for(std::set<HandleAction*>::iterator cit = (*it).second.customSelectionModes.begin();
             cit != (*it).second.customSelectionModes.end(); ++cit) {
-            toolsBar_->addAction(*cit);
             (*cit)->setEnabled((*cit)->isAssociated(currentPrimitiveType_, true));
         }
 
@@ -613,6 +596,7 @@ void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _nam
     action->setCheckable(true);
     action->selectionEnvironmentHandle(_handleName);
     primitivesBarGroup_->addAction(action);
+    primitivesBar_->addAction(action);
     
     // Also add type button to tool box of environment tab
     ActionButton* button = new ActionButton(action);
@@ -1034,6 +1018,9 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
             action->selectionModeHandle(_customIdentifier);
             action->addAssociatedType(_associatedTypes);
             
+            // Add action to tools bar
+            toolsBar_->addAction(action);
+
             // Add pickmode name and button to selection environment's container
             (*it).second.customSelectionModes.insert(action);
             

@@ -284,9 +284,8 @@ Q_INTERFACES(SelectionInterface)
         // Toolbar that contains all available tools
         QToolBar* toolsBar_;
         
-        // QActionGroup for all actions that are in the picking bar
-        QActionGroup* pickingModeGroup_;
-        
+        QActionGroup* selectionModesGroup_;
+
         // Actions for default selection modes
         HandleAction* toggleSelectionAction_;
         HandleAction* lassoSelectionAction_;
@@ -295,8 +294,6 @@ Q_INTERFACES(SelectionInterface)
         HandleAction* sphereSelectionAction_;
         HandleAction* boundarySelectionAction_;
         HandleAction* floodFillSelectionAction_;
-        
-        QActionGroup* selectionModesGroup_;
         
         std::set<std::pair<int,Qt::KeyboardModifiers> > registeredKeys_;
         
