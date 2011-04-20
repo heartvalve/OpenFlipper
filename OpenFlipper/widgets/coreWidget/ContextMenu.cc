@@ -537,15 +537,18 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   // Remove Plugin Name from string
   visible.replaceInStrings(QRegExp(".*>"), "");
-  
+
   // Remove accelerator specifications
   visible.replaceInStrings("&", "");
 
   while (it.hasNext()) {
-     it.next();
-     if (visible.contains(it.key())) {
-        _menu->addAction( it.value() );
-     }
+    it.next();
+
+	for ( int i = 0 ; i < visible.size(); ++i ) {
+	  if ( it.key().contains(visible[i]) ) {
+	    _menu->addAction( it.value() );
+	  }
+    }
   }
 
   _menu->addSeparator();
@@ -555,16 +558,19 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   while (it2.hasNext()) {
      it2.next();
-     if (visible.contains(it2.key())) {
-        _menu->addAction( it2.value() );
-     }
+
+	 for ( int i = 0 ; i < visible.size(); ++i ) {
+		 if ( it2.key().contains(visible[i]) ) {
+	       _menu->addAction( it2.value() );
+		 }
+	 }
   }
 
   return added;
 }
 
 
-
+ 
 /** \brief check current context and initialize context menu according to this context.
  *
  * This function is called whenever a context menu for the corewidget is requested.
