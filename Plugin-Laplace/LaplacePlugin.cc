@@ -122,11 +122,7 @@ void LaplaceLengthPlugin::computeLaplaceLength(MeshT* _mesh) {
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
     handles.push_back( v_it.handle() );
 
-  /*
-   * OpenMP parallelization fails for some
-   * reason on Darwin architectures.
-   */
-  #if defined(USE_OPENMP) && !defined(__APPLE__)
+  #ifdef USE_OPENMP
     #pragma omp parallel for
   #endif
   for ( int i = 0 ; i < (int)handles.size(); ++i ) {
@@ -171,11 +167,7 @@ void LaplaceLengthPlugin::computeLaplaceSquaredLength(MeshT* _mesh) {
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
     handles.push_back( v_it.handle() );
 
-  /*
-   * OpenMP parallelization fails for some
-   * reason on Darwin architectures.
-   */
-  #if defined(USE_OPENMP) && !defined(__APPLE__)
+  #ifdef USE_OPENMP
     #pragma omp parallel for
   #endif
   for ( int i = 0 ; i < (int)handles.size(); ++i ) {
