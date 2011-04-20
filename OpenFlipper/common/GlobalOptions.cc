@@ -536,13 +536,13 @@ int defaultViewingDirection(int _viewer){
 }
 
 void defaultLockRotation( bool _lock, int _viewer ) {
-  QString entry = "Viewer" + QString::number(_viewer) + "/lockRotation";
+  QString entry = "Viewer" + QString::number(_viewer) + "/defaultLockRotation";
   OpenFlipperSettings().setValue(entry,_lock);
 }
 
 bool defaultLockRotation( int _viewer ) {
 
-  QString entry = "Viewer" + QString::number(_viewer) + "/lockRotation";
+  QString entry = "Viewer" + QString::number(_viewer) + "/defaultLockRotation";
 
   switch (_viewer) {
     case 0:

@@ -113,7 +113,7 @@ namespace Viewer {
     Q_OBJECT
 
     public:
-      ViewerProperties();
+      ViewerProperties(int _id);
       ~ViewerProperties();
       
     //===========================================================================
@@ -245,6 +245,14 @@ namespace Viewer {
                                  c.setAlphaF(backgroundColor_[3]);
                                  return c.rgba(); };
 
+      /// Get current background color
+      QColor backgroundQColor(){ QColor c;
+                                 c.setRedF(  backgroundColor_[0]);
+                                 c.setGreenF(backgroundColor_[1]);
+                                 c.setBlueF( backgroundColor_[2]);
+                                 c.setAlphaF(backgroundColor_[3]);
+                                 return c; }
+
       /** Set background color.
       */
       void backgroundColor( ACG::Vec4f _color ) { backgroundColor_ = _color; emit updated(); };
@@ -257,6 +265,14 @@ namespace Viewer {
                                             backgroundColor_[2] = c.blueF();
                                             backgroundColor_[3] = c.alphaF();
                                             emit updated(); };
+
+      /** Set background color.
+      */
+      void backgroundColor( QColor _color ) { backgroundColor_[0] = _color.redF();
+                                              backgroundColor_[1] = _color.greenF();
+                                              backgroundColor_[2] = _color.blueF();
+                                              backgroundColor_[3] = _color.alphaF();
+                                              emit updated(); };
 
     private:
       ACG::Vec4f backgroundColor_;
@@ -548,6 +564,29 @@ namespace Viewer {
 
       /// set active action mode
       void actionMode(const Viewer::ActionMode _am);
+
+    //===========================================================================
+    //===========================================================================
+    /** @name Viewer id handling
+     * @{ */
+    //===========================================================================
+    //===========================================================================
+
+      /// Get the id of the viewer this viewerproperties belongs to
+      int viewerId();
+
+      /// Set the id of the viewer this viewerproperties belongs to
+      void viewerId(int _id);
+
+    private:
+
+      /// Stores the id of the viewer this property belongs to
+      int viewerId_;
+
+      /// String for the Settings storage
+      QString settingsSection_;
+
+    /** @} */
 
   };
 

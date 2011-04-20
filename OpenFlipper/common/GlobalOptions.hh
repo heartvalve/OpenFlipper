@@ -106,8 +106,11 @@
 * <b>User Interface Settings for each of the viewers</b>\n
 * * Viewer<viewer>/perspectiveProjection     Orthogonal = false,Perspective = true (bool)\n
 * * Viewer<viewer>/defaultViewingDirection   0:VIEW_FREE; 1:VIEW_TOP; 2:VIEW_BOTTOM; 3:VIEW_LEFT; 4:VIEW_RIGHT; 5:VIEW_FRONT; 6:VIEW_BACK (int)\n
-* * Viewer<viewer>/lockRotation              true: locked, false: unlocked (bool)\n
-*
+* * Viewer<viewer>/defaultLockRotation       true: locked , false: unlocked (bool)\n
+* * Viewer<viewer>/Animation                 true: enabled, false: disabled (bool)\n
+* * Viewer<viewer>/BackfaceCulling           true: enabled, false: disabled (bool)\n
+* * Viewer<viewer>/TwoSidedLighting          true: enabled, false: disabled (bool)\n
+* * Viewer<viewer>/BackgroundColor           Color of the viewer background (QColor)\n
 *
 * <b>File Handling</b>\n
 * * Core/CurrentDir                          The current Directory of the Application \n
