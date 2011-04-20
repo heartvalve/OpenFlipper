@@ -55,6 +55,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 #include <QDir>
 #include <QCoreApplication>
 
@@ -149,9 +150,6 @@ static bool synchronization_ = false;
 
 /// Store the defaultDrawMode_ mode
 static std::vector<ACG::SceneGraph::DrawModes::DrawMode> defaultDrawMode_ = std::vector<ACG::SceneGraph::DrawModes::DrawMode> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
-
-/// Store the defaultViewingDirection_ mode
-static std::vector<int> defaultViewingDirection_ = std::vector<int> (4, 0);
 
 /// Store the defaultViewer layout
 static int defaultViewerLayout_ = 0;
@@ -513,12 +511,55 @@ bool defaultPerspectiveProjectionMode(int _viewer){
 }
 
 void defaultViewingDirection( int _mode, int _viewer){
-  defaultViewingDirection_[_viewer] = _mode;
+  QString entry = "Viewer" + QString::number(_viewer) + "/defaultViewingDirection";
+  OpenFlipperSettings().setValue(entry,_mode);
 }
 
 int defaultViewingDirection(int _viewer){
-  return defaultViewingDirection_[_viewer];
+
+  QString entry = "Viewer" + QString::number(_viewer) + "/defaultViewingDirection";
+
+  switch (_viewer) {
+    case 0:
+      return OpenFlipperSettings().value(entry,PluginFunctions::VIEW_FREE).toInt();
+    case 1:
+      return OpenFlipperSettings().value(entry,PluginFunctions::VIEW_FRONT).toInt();
+    case 2:
+      return OpenFlipperSettings().value(entry,PluginFunctions::VIEW_RIGHT).toInt();
+    case 3:
+      return OpenFlipperSettings().value(entry,PluginFunctions::VIEW_TOP).toInt();
+    default:
+      std::cerr << "defaultViewingDirection: illegal viewer id: " << _viewer << std::endl;
+  }
+
+  return PluginFunctions::VIEW_FREE;
 }
+
+void defaultLockRotation( bool _lock, int _viewer ) {
+  QString entry = "Viewer" + QString::number(_viewer) + "/lockRotation";
+  OpenFlipperSettings().setValue(entry,_lock);
+}
+
+bool defaultLockRotation( int _viewer ) {
+
+  QString entry = "Viewer" + QString::number(_viewer) + "/lockRotation";
+
+  switch (_viewer) {
+    case 0:
+      return OpenFlipperSettings().value(entry,false).toBool();
+    case 1:
+      return OpenFlipperSettings().value(entry,true).toBool();
+    case 2:
+      return OpenFlipperSettings().value(entry,true).toBool();
+    case 3:
+      return OpenFlipperSettings().value(entry,true).toBool();
+    default:
+      std::cerr << "defaultViewingDirection: illegal viewer id: " << _viewer << std::endl;
+  }
+
+  return false;
+}
+
 
 void defaultViewerLayout( int _layout ){
   defaultViewerLayout_ = _layout;

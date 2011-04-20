@@ -490,22 +490,6 @@ void Core::slotFileOpened ( int _id ) {
   PluginFunctions::getObject(_id,object);
 
   // ================================================================================
-  // Set defaults for DrawMode, ViewingDirection and Projection if this is the first opened object
-  // If a plugin changes the drawmode later, this setting will be overridden!
-  // ================================================================================
-  if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ){
-      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
-
-      if ( OpenFlipper::Options::defaultPerspectiveProjectionMode(i) )
-        PluginFunctions::perspectiveProjection(i);
-      else
-        PluginFunctions::orthographicProjection(i);
-
-      PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
-    }
-
-  // ================================================================================
   // Recompute bounding box and scenegraph info
   // Reset scene center here to include new object
   // ================================================================================

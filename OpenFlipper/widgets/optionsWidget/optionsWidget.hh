@@ -175,7 +175,8 @@ private:
   // remember changes to viewer properties
   std::vector< ACG::SceneGraph::DrawModes::DrawMode > defaultDrawModes_;
   std::vector< bool >  defaultProjectionMode_;
-  std::vector< int >  defaultViewingDirections_;
+  std::vector< int >   defaultViewingDirections_;
+  std::vector< bool >  defaultRotationLocks_;
 
   bool updatingViewerSettings_;
   

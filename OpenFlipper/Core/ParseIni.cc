@@ -260,8 +260,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       if( _ini.get_entry(draw_modes, "Options", "DefaultDrawModes" + QString::number(i) ) )
         OpenFlipper::Options::defaultDrawMode( listToDrawMode(draw_modes), i );
 
-      if( _ini.get_entry(mode, "Options", "DefaultViewingDirection" + QString::number(i) ) )
-        OpenFlipper::Options::defaultViewingDirection( mode, i );
     }
 
     //============================================================================
@@ -463,7 +461,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
       draw_modes = drawModeToList( OpenFlipper::Options::defaultDrawMode(i) );
       _ini.add_entry("Options","DefaultDrawModes" + QString::number(i), draw_modes);
 
-      _ini.add_entry("Options","DefaultViewingDirection" + QString::number(i), OpenFlipper::Options::defaultViewingDirection(i) );
     }
 
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
