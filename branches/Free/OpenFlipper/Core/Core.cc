@@ -164,7 +164,7 @@ Core() :
   std::vector< Viewer::ViewerProperties* > viewerProperties;
 
   for (int i=0; i < 4; i++) {
-    Viewer::ViewerProperties* viewerProperty = new Viewer::ViewerProperties();
+    Viewer::ViewerProperties* viewerProperty = new Viewer::ViewerProperties(i);
     viewerProperty->snapshotBaseFileName("snap-Viewer-" + QString::number(i) + ".png");
     viewerProperties.push_back( viewerProperty );
   }

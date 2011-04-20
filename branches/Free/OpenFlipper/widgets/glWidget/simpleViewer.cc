@@ -67,6 +67,7 @@
 
 SimpleViewer::SimpleViewer(QWidget* _parent) :
   QGraphicsView (_parent),
+  props_(-1),
   actionMode_ (Viewer::ExamineMode)
 {
   QGLWidget *share = PluginFunctions::shareGLWidget (); 

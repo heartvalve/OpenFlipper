@@ -107,7 +107,7 @@ static SeparatorNode* sceneGraphRootNode_ = 0;
 /** \brief a dummy properties object returned as a reference if the real object does not exist
  *
  */
-static Viewer::ViewerProperties dummyProperties;
+static Viewer::ViewerProperties dummyProperties(-1);
 
 
 /** \brief DONT USE DIRECTLY!!

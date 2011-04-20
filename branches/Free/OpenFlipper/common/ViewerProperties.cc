@@ -56,7 +56,7 @@
 
 namespace Viewer {
 
-  ViewerProperties::ViewerProperties():
+  ViewerProperties::ViewerProperties(int _id):
     currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
     snapshotName_("snap"),
     snapshotFileType_("png"),
@@ -85,7 +85,7 @@ namespace Viewer {
     trackballCenter_(ACG::Vec3d( 0.0, 0.0, 0.0 )),
     trackballRadius_(1.0)
   {
-
+    settingsSection_ = "Viewer" + QString::number(_id) + "/";
   }
 
   ViewerProperties::~ViewerProperties() {
@@ -140,6 +140,15 @@ namespace Viewer {
   void ViewerProperties::rotationLocked(bool _locked){
     rotationLocked_ = _locked;
   }
+
+  int ViewerProperties::viewerId() {
+    return viewerId_;
+  };
+
+  void ViewerProperties::viewerId(int _id) {
+    viewerId_ = _id;
+    settingsSection_ = "Viewer" + QString::number(_id) + "/";
+  };
 
 }
 
