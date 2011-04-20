@@ -85,35 +85,39 @@ void Core::scriptLogFunction( QString _output) {
 }
 
 void Core::createWidget(QString _objectName, QString _uiFilename) {
-  QUiLoader loader;
+  if ( OpenFlipper::Options::gui()) {
+    QUiLoader loader;
 
-  QFile uiFile(_uiFilename);
+    QFile uiFile(_uiFilename);
 
-  if ( !uiFile.exists() ) {
-    emit log(LOGERR,tr("File does not exist : ") + _uiFilename );
-    return;
+    if ( !uiFile.exists() ) {
+      emit log(LOGERR,tr("File does not exist : ") + _uiFilename );
+      return;
+    }
+
+    uiFile.open(QIODevice::ReadOnly);
+    QWidget *ui = loader.load(&uiFile);
+    uiFile.close();
+
+    if ( ui == 0 ) {
+      emit log(LOGERR,tr("Unable to create QWidget from ui file for ") + _objectName );
+      return;
+    }
+
+    QScriptValue scriptUi = scriptEngine_.newQObject(ui, QScriptEngine::ScriptOwnership);
+
+    if ( !scriptUi.isValid() ) {
+      emit log(LOGERR,tr("Unable to generate script interface for ") + _objectName );
+      return;
+    }
+
+    scriptEngine_.globalObject().setProperty(_objectName, scriptUi);
+
+
+    ui->show();
+  } else {
+    emit log(LOGERR,tr("Error! Script tried to create Widget in ui less batc mode! Creation Aborted!"));
   }
-
-  uiFile.open(QIODevice::ReadOnly);
-  QWidget *ui = loader.load(&uiFile);
-  uiFile.close();
-
-  if ( ui == 0 ) {
-    emit log(LOGERR,tr("Unable to create QWidget from ui file for ") + _objectName );
-	return;
-  }
-
-  QScriptValue scriptUi = scriptEngine_.newQObject(ui, QScriptEngine::ScriptOwnership);
-
-  if ( !scriptUi.isValid() ) {
-    emit log(LOGERR,tr("Unable to generate script interface for ") + _objectName );
-	return;
-  }
-
-  scriptEngine_.globalObject().setProperty(_objectName, scriptUi);
-
-
-  ui->show();
 
 }
 
