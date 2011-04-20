@@ -191,6 +191,7 @@ void TypeLightPlugin::addDefaultLights() {
 
 void TypeLightPlugin::pluginsInitialized(){
   
+  if ( OpenFlipper::Options::gui() ){
     //PICKMODES
     emit addPickMode("Separator");
     emit addHiddenPickMode("MoveLights");
@@ -279,11 +280,12 @@ void TypeLightPlugin::pluginsInitialized(){
     emit setPickModeToolbar ("TranslateLights", lightOptions_);
     emit setPickModeToolbar ("RotateLights", lightOptions_);
     
-    // Disable the build in light management and use this plugins light handling
-    PluginFunctions::disableExaminerLightHandling();
-  
-    // Add default light sources to active scene
-    addDefaultLights();
+  }
+  // Disable the build in light management and use this plugins light handling
+  PluginFunctions::disableExaminerLightHandling();
+
+  // Add default light sources to active scene
+  addDefaultLights();
 }
 
 void TypeLightPlugin::slotPickModeChanged (const std::string& /*_pickMode*/) {
