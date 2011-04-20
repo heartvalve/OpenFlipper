@@ -99,14 +99,18 @@ void MeanCurvaturePlugin::computeMeanCurvature(MeshT* _mesh) {
   if(!_mesh->get_property_handle( mean, "Mean Curvature"))
     _mesh->add_property( mean, "Mean Curvature" );
 
-  QTime time;
-  time.start();
+  //QTime time;
+  //time.start();
   std::vector< typename MeshT::VertexHandle > handles;
   handles.reserve(_mesh->n_vertices());
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
     handles.push_back( v_it.handle() );
 
-  #ifdef USE_OPENMP
+  /*
+   * OMP parallelization fails for some
+   * reason on Darwin architectures.
+   */
+  #if defined(USE_OPENMP) && !defined(__APPLE__)
     #pragma omp parallel for
   #endif
   for ( int i = 0 ; i < (int)handles.size(); ++i ) {
