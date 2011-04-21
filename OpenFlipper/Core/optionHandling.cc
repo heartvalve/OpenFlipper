@@ -123,7 +123,6 @@ void Core::applyOptions(){
 
     //set viewer properties
     for (int i=0; i < PluginFunctions::viewers(); i++){
-      std::cerr << "ApplyOptions" << std::endl;
 
       // PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
