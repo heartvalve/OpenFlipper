@@ -44,6 +44,7 @@
 #include "TypeCamera.hh"
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 TypeCameraPlugin::TypeCameraPlugin() {
 
