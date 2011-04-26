@@ -51,10 +51,9 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
-class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface, RPCInterface
+class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, RPCInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -62,7 +61,6 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
-   Q_INTERFACES(INIInterface)
    Q_INTERFACES(RPCInterface)
 
   signals:

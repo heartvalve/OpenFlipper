@@ -46,6 +46,8 @@
 #include "FileBVH.hh"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
