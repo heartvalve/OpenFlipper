@@ -51,9 +51,8 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 
-class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface
+class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -61,7 +60,6 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
-   Q_INTERFACES(INIInterface)
 
   signals:
     void openedFile( int _id );

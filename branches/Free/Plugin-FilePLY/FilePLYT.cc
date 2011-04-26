@@ -46,6 +46,10 @@
 
 #include "FilePLY.hh"
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 template <class MeshT>
 bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLYHeader& _header) {
     

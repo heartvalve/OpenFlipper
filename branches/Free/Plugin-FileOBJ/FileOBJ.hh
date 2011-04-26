@@ -51,7 +51,6 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
@@ -79,7 +78,7 @@ enum ReaderMode
 };
 
 class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
-    LoggingInterface, ScriptInterface, INIInterface, StatusbarInterface, RPCInterface, TextureInterface
+    LoggingInterface, ScriptInterface, StatusbarInterface, RPCInterface, TextureInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -87,7 +86,6 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
-   Q_INTERFACES(INIInterface)
    Q_INTERFACES(StatusbarInterface)
    Q_INTERFACES(RPCInterface)
    Q_INTERFACES(TextureInterface)

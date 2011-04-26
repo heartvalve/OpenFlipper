@@ -52,14 +52,13 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
-    LoggingInterface, ScriptInterface, INIInterface
+    LoggingInterface, ScriptInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -67,7 +66,6 @@ class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
-   Q_INTERFACES(INIInterface)
 
   signals:
     void openedFile( int _id );
