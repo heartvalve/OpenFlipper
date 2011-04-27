@@ -96,6 +96,9 @@ public slots:
 \image html informationInterface.png
 \n
 
+Click InformationInterface for a detailed overview of all provided slots
+in the interface.
+
 Derive from the information interface in order to provide information
 on objects of a specific data type. To clarify this, we will give a short
 example. Assuming we want to provide information on all mesh objects
