@@ -42,7 +42,7 @@
 
 //=============================================================================
 //
-//  CLASS InfoPlugin - IMPLEMENTATION
+//  CLASS InfoMeshObjectPlugin - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -69,12 +69,12 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void InfoPlugin::initializePlugin() {
+void InfoMeshObjectPlugin::initializePlugin() {
   infoBar_ = new InfoBar();
 }
 
 /// initialize the plugin
-void InfoPlugin::pluginsInitialized() {
+void InfoMeshObjectPlugin::pluginsInitialized() {
 
   //set the slot descriptions
   setDescriptions();
@@ -88,14 +88,14 @@ void InfoPlugin::pluginsInitialized() {
 
 //-----------------------------------------------------------------------------
 
-DataType InfoPlugin::supportedDataTypes() {
+DataType InfoMeshObjectPlugin::supportedDataTypes() {
     return DataType(DATA_POLY_MESH | DATA_TRIANGLE_MESH);
 }
 
 //-----------------------------------------------------------------------------
 
 template< class MeshT >
-void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG::Vec3d& _hitPoint ) {
+void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG::Vec3d& _hitPoint ) {
 
   QLocale locale;
 
@@ -366,7 +366,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
  */
 
 template <class MeshT>
-int InfoPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
+int InfoMeshObjectPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
 
     typename MeshT::FaceVertexIter fv_it;
 
@@ -403,7 +403,7 @@ int InfoPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
  */
 
 template <class MeshT>
-int InfoPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
+int InfoMeshObjectPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
 
     typename MeshT::ConstFaceHalfedgeIter fh_it;
     typename MeshT::VertexHandle v1, v2;
@@ -444,7 +444,7 @@ int InfoPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
 //----------------------------------------------------------------------------------------------
 
 void
-InfoPlugin::
+InfoMeshObjectPlugin::
   slotInformationRequested(const QPoint _clickedPoint, DataType _type) {
 
     // Only respond on mesh objects
@@ -478,7 +478,7 @@ InfoPlugin::
 //------------------------------------------------------------------------------
 
 template< class MeshT >
-void InfoPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max, double &mean)
+void InfoMeshObjectPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max, double &mean)
 {
   typename MeshT::ConstEdgeIter e_it(_mesh->edges_sbegin()),
                                 e_end(_mesh->edges_end());
@@ -500,7 +500,7 @@ void InfoPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max, double &
 
 //------------------------------------------------------------------------------
 
-bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
+bool InfoMeshObjectPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_id,object) )
@@ -539,7 +539,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 
 //------------------------------------------------------------------------------
 
-void InfoPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType _type){
+void InfoMeshObjectPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType _type){
 
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 
@@ -600,16 +600,16 @@ void InfoPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType _type
 
 //------------------------------------------------------------------------------
 
-void InfoPlugin::slotObjectSelectionChanged( int _identifier ){
+void InfoMeshObjectPlugin::slotObjectSelectionChanged( int _identifier ){
   slotObjectUpdated( _identifier , UPDATE_ALL );
 }
 
 //------------------------------------------------------------------------------
 
-void InfoPlugin::slotAllCleared(){
+void InfoMeshObjectPlugin::slotAllCleared(){
   infoBar_->hideCounts();
 }
 
-Q_EXPORT_PLUGIN2( InfoPlugin , InfoPlugin );
+Q_EXPORT_PLUGIN2( InfoMeshObjectPlugin , InfoMeshObjectPlugin );
 
 

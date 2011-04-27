@@ -52,7 +52,7 @@
 /** \brief set the descriptions for scripting slots
  * 
  */
-void InfoPlugin::setDescriptions(){
+void InfoMeshObjectPlugin::setDescriptions(){
 
   emit setSlotDescription("vertexCount(int)",tr("get total number of vertices for a given object"),
                           QStringList(tr("objectID")), QStringList(tr("id of an object")));
@@ -120,7 +120,7 @@ void InfoPlugin::setDescriptions(){
  * @param _id object id
  * @return number of vertices or -1 if an error occured
  */
-int InfoPlugin::vertexCount(int _id)
+int InfoMeshObjectPlugin::vertexCount(int _id)
 {
 
   BaseObjectData* object;
@@ -162,7 +162,7 @@ int InfoPlugin::vertexCount(int _id)
  * @param _id object id
  * @return number of edges or -1 if an error occured
  */
-int InfoPlugin::edgeCount(int _id)
+int InfoMeshObjectPlugin::edgeCount(int _id)
 {
 
   BaseObjectData* object;
@@ -204,7 +204,7 @@ int InfoPlugin::edgeCount(int _id)
  * @param _id object id
  * @return number of faces or -1 if an error occured
  */
-int InfoPlugin::faceCount(int _id)
+int InfoMeshObjectPlugin::faceCount(int _id)
 {
 
   BaseObjectData* object;
@@ -246,7 +246,7 @@ int InfoPlugin::faceCount(int _id)
  * @param _id object id
  * @return number of boundaries or -1 if an error occured
  */
-int InfoPlugin::boundaryCount(int _id)
+int InfoMeshObjectPlugin::boundaryCount(int _id)
 {
 
   BaseObjectData* object;
@@ -288,7 +288,7 @@ int InfoPlugin::boundaryCount(int _id)
  * @param _id object id
  * @return number of components or -1 if an error occured
  */
-int InfoPlugin::componentCount(int _id)
+int InfoMeshObjectPlugin::componentCount(int _id)
 {
 
   BaseObjectData* object;
@@ -330,7 +330,7 @@ int InfoPlugin::componentCount(int _id)
  * @param _id id of an object
  * @return the genus
  */
-int InfoPlugin::genus(int _id)
+int InfoMeshObjectPlugin::genus(int _id)
 {
 
   BaseObjectData* object;
@@ -372,7 +372,7 @@ int InfoPlugin::genus(int _id)
  * @param _id id of an object
  * @return the center of gravity
  */
-Vector InfoPlugin::cog(int _id)
+Vector InfoMeshObjectPlugin::cog(int _id)
 {
 
   BaseObjectData* object;
@@ -414,7 +414,7 @@ Vector InfoPlugin::cog(int _id)
  * @param _id id of an object
  * @return minimum point of the bounding box
  */
-Vector InfoPlugin::boundingBoxMin(int _id)
+Vector InfoMeshObjectPlugin::boundingBoxMin(int _id)
 {
 
   BaseObjectData* object;
@@ -464,7 +464,7 @@ Vector InfoPlugin::boundingBoxMin(int _id)
  * @param _id id of an object
  * @return maximum point of the bounding box
  */
-Vector InfoPlugin::boundingBoxMax(int _id)
+Vector InfoMeshObjectPlugin::boundingBoxMax(int _id)
 {
 
   BaseObjectData* object;
@@ -514,7 +514,7 @@ Vector InfoPlugin::boundingBoxMax(int _id)
  * @param _id id of an object
  * @return size of the bounding box
  */
-Vector InfoPlugin::boundingBoxSize(int _id)
+Vector InfoMeshObjectPlugin::boundingBoxSize(int _id)
 {
 
   BaseObjectData* object;
@@ -565,7 +565,7 @@ Vector InfoPlugin::boundingBoxSize(int _id)
  * @param _edgeHandle edge handle
  * @return edge length or -1 if an error occured
  */
-double InfoPlugin::edgeLength(int _id, int _edgeHandle)
+double InfoMeshObjectPlugin::edgeLength(int _id, int _edgeHandle)
 {
 
   BaseObjectData* object;
@@ -630,7 +630,7 @@ double InfoPlugin::edgeLength(int _id, int _edgeHandle)
  * @param _faceHandle face handle
  * @return face area or -1 if an error occured
  */
-double InfoPlugin::faceArea(int _id, int _faceHandle)
+double InfoMeshObjectPlugin::faceArea(int _id, int _faceHandle)
 {
 
   BaseObjectData* object;
@@ -705,7 +705,7 @@ double InfoPlugin::faceArea(int _id, int _faceHandle)
  * @param _faceHandle face handle
  * @return aspect ratio or -1 if an error occured
  */
-double InfoPlugin::aspectRatio(int _id, int _faceHandle)
+double InfoMeshObjectPlugin::aspectRatio(int _id, int _faceHandle)
 {
 
   BaseObjectData* object;
@@ -758,7 +758,7 @@ double InfoPlugin::aspectRatio(int _id, int _faceHandle)
  * @param _vertexHandle vertex handle
  * @return vertex valence or -1 if an error occured
  */
-int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
+int InfoMeshObjectPlugin::vertexValence  (int _id, int _vertexHandle)
 {
 
   BaseObjectData* object;
@@ -827,7 +827,7 @@ int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
  * @param _id object id
  * @return minimal edge length or -1 if an error occured
  */
-double InfoPlugin::minEdgeLength(int _id)
+double InfoMeshObjectPlugin::minEdgeLength(int _id)
 {
   double min, max, mean;
 
@@ -844,7 +844,7 @@ double InfoPlugin::minEdgeLength(int _id)
  * @param _id object id
  * @return maximal edge length or -1 if an error occured
  */
-double InfoPlugin::maxEdgeLength(int _id)
+double InfoMeshObjectPlugin::maxEdgeLength(int _id)
 {
   double min, max, mean;
 
@@ -861,7 +861,7 @@ double InfoPlugin::maxEdgeLength(int _id)
  * @param _id object id
  * @return mean edge length or -1 if an error occured
  */
-double InfoPlugin::meanEdgeLength(int _id)
+double InfoMeshObjectPlugin::meanEdgeLength(int _id)
 {
   double min, max, mean;
 

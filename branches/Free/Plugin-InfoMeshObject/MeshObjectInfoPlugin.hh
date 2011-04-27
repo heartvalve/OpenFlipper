@@ -42,7 +42,7 @@
 
 //=============================================================================
 //
-// CLASS InfoPlugin
+// CLASS InfoMeshObjectPlugin
 //
 // Author:  David Bommes <bommes@cs.rwth-aachen.de>
 //=============================================================================
@@ -73,7 +73,7 @@
  
   Plugin to visualize information about objects in the scene
 */
-class InfoPlugin : public QObject, BaseInterface, InformationInterface, LoggingInterface, StatusbarInterface
+class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface, LoggingInterface, StatusbarInterface
 {
   Q_OBJECT
       Q_INTERFACES(BaseInterface)
@@ -109,10 +109,10 @@ class InfoPlugin : public QObject, BaseInterface, InformationInterface, LoggingI
   public :
 
   // default constructor
-      InfoPlugin(): info_(0),infoBar_(0) {};
+      InfoMeshObjectPlugin(): info_(0),infoBar_(0) {};
 
   // default destructor
-      ~InfoPlugin() {};
+      ~InfoMeshObjectPlugin() {};
 
       /// Name of the Plugin
       QString name(){ return (QString("InfoMeshObject")); };
