@@ -118,7 +118,7 @@ class InfoPlugin : public QObject, BaseInterface, InformationInterface, LoggingI
       QString name(){ return (QString("Info")); };
 
       /// Description of the Plugin
-      QString description() { return (QString(tr("Providing Information about Objects"))); };
+      QString description() { return (QString(tr("Provides Information on Mesh Objects"))); };
 
   private :
     InfoDialog* info_;
