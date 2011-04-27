@@ -154,6 +154,11 @@ can use this interface to react on selection events and add selections for diffe
 Allows plugins to specify custom data types and makes them available
 to other plugins ( \ref typeInterfacePage ).
 
+\subpage informationInterfacePage
+\image html informationInterface.png
+Allows plugins to provide information on objects of a
+specific data type ( \ref informationInterfacePage ).
+
 */
 
 
