@@ -237,8 +237,11 @@ void OBJImporter::addUsedVertices(){
     //add all vertices to the mesh
     std::set<VertexHandle>::iterator it;
 
+    // Clear the map of already existing vertices
+    vertexMapTri_.clear();
+
     for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
-  
+
       if ( *it >= (int)vertices_.size() ){
         std::cerr << "Error: Vertex ID too large" << std::endl;
         continue;
@@ -255,6 +258,9 @@ void OBJImporter::addUsedVertices(){
 
     //add all vertices to the mesh
     std::set<VertexHandle>::iterator it;
+
+    // Clear the map of already existing vertices
+    vertexMapPoly_.clear();
 
     for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
         
