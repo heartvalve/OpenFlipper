@@ -34,13 +34,13 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-#include "InfoPlugin.hh"
+#include "MeshObjectInfoPlugin.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Geometry/Algorithms.hh>

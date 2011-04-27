@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -51,7 +51,7 @@
 
 #include <QtGui>
 
-#include "InfoPlugin.hh"
+#include "MeshObjectInfoPlugin.hh"
 
 #include <iostream>
 #include <ACG/GL/GLState.hh>
@@ -84,6 +84,12 @@ void InfoPlugin::pluginsInitialized() {
   
   // Initialize hit point
   hit_point_ = ACG::Vec3d(0.0, 0.0, 0.0);
+}
+
+//-----------------------------------------------------------------------------
+
+DataType InfoPlugin::supportedDataTypes() {
+    return DataType(DATA_POLY_MESH | DATA_TRIANGLE_MESH);
 }
 
 //-----------------------------------------------------------------------------
@@ -439,13 +445,15 @@ int InfoPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
 
 void
 InfoPlugin::
-  slotMouseEventIdentify( QMouseEvent* _event ) {
-  if (_event->type() == QEvent::MouseButtonPress)
-  {
+  slotInformationRequested(const QPoint _clickedPoint, DataType _type) {
+
+    // Only respond on mesh objects
+    if((_type != DATA_TRIANGLE_MESH) && (_type != DATA_POLY_MESH)) return;
+
     unsigned int   node_idx, target_idx;
     ACG::Vec3d     hit_point;
 
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _clickedPoint, node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
 
 //     BaseObject* obj = dynamic_cast< BaseObject* > (object);
@@ -465,7 +473,6 @@ InfoPlugin::
 
       } else return;
     }
-  }
 }
 
 //------------------------------------------------------------------------------
