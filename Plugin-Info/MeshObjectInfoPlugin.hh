@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10872 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-02-09 17:22:02 +0100 (Wed, 09 Feb 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -55,7 +55,7 @@
 #include <QObject>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/MouseInterface.hh>
+#include <OpenFlipper/BasePlugin/InformationInterface.hh>
 
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
@@ -73,11 +73,11 @@
  
   Plugin to visualize information about objects in the scene
 */
-class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterface, StatusbarInterface
+class InfoPlugin : public QObject, BaseInterface, InformationInterface, LoggingInterface, StatusbarInterface
 {
   Q_OBJECT
       Q_INTERFACES(BaseInterface)
-      Q_INTERFACES(MouseInterface)
+      Q_INTERFACES(InformationInterface)
       Q_INTERFACES(LoggingInterface)
       Q_INTERFACES(StatusbarInterface)
 
@@ -93,7 +93,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
 
     // StatusbarInterface
     void addWidgetToStatusbar(QWidget* _widget);
-    
+
   private slots :
     // BaseInterface
     void initializePlugin();
@@ -102,11 +102,10 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     void slotObjectSelectionChanged( int _identifier );
     void slotAllCleared();
     
-    // MouseInterface
-    void slotMouseEventIdentify( QMouseEvent* _event );
+    // InformationInterface
+    void slotInformationRequested(const QPoint _clickedPoint, DataType _type);
+    DataType supportedDataTypes();
 
-    
-    
   public :
 
   // default constructor
