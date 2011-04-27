@@ -92,7 +92,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // modelview matrix: M_l' = M_l * M^{-1}_r
     ACG::GLMatrixd modelview = _state.modelview();
     _state.set_modelview(modelview * modelView_);
-
+    
     // Update bounding box data and clipped_ flag
     updateBoundingBoxes(modelview);
 
@@ -101,6 +101,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     _state.set_specular_color(ACG::Vec4f(1.0, 1.0, 0.0, 1.0));
 
     // Draw camera box
+    
     glPushAttrib(GL_LIGHTING_BIT);
     glDisable(GL_LIGHTING); // Disable lighting
     glBegin(GL_LINES);
@@ -322,7 +323,7 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
     // modelview matrix: M_l' = M_l * M^{-1}_r
     ACG::GLMatrixd modelview = _state.modelview();
     _state.set_modelview(modelview * modelView_);
-
+    
     // Update bounding box data and clipped_ flag
     updateBoundingBoxes(modelview);
 
@@ -395,9 +396,7 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
 void CameraNode::updateBoundingBoxes(GLMatrixd& _modelview) {
 
     // Get fovy of remote projection
-    fovy_ = atan(1/projection_(0,0)) * 2;
-
-    OpenMesh::Vec3f e = OpenMesh::Vec3f(modelView_(0,3), modelView_(1,3), modelView_(2,3));
+    fovy_ = atan(1/projection_(1,1)) * 2;
 
     // Set bounding box of camera to be of sufficient
     // size to cover any camera rotation.
@@ -405,19 +404,23 @@ void CameraNode::updateBoundingBoxes(GLMatrixd& _modelview) {
 
     aspectRatio_ = (double)width_ / (double)height_;
 
-    half_height_ = tan(fovy_/2) * near_;
+    half_height_ = height_/2.0;
     half_width_ = aspectRatio_ * half_height_;
 
     if(showFrustum_) {
         far_half_height_ = tan(fovy_/2) * far_;
         far_half_width_ = far_half_height_ * aspectRatio_;
     }
-
+    
+    OpenMesh::Vec3f e = OpenMesh::Vec3f(modelView_(0,3), modelView_(1,3), modelView_(2,3));
+  
     OpenMesh::Vec3f tmp(std::max(1.41421, half_width_), std::max(1.41421, half_height_), 1.41421);
 
     bbmin_ = e - tmp;
     bbmax_ = e + tmp;
 }
+
+
 
 //=============================================================================
 } // namespace SceneGraph
