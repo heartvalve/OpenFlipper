@@ -128,6 +128,9 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     template< class MeshT >
     void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face, ACG::Vec3d& _hitPoint );
 
+    // Show/Hide face related stats if not in face picking mode
+    void showPickedFaceStats(bool _show);
+
 
 //===========================================================================
 /** @name Scripting Functions

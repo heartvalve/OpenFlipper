@@ -67,10 +67,24 @@
 
 #include <float.h>
 
+// Defines
+#define PICK_FACES      "Pick Faces"
+#define PICK_EDGES      "Pick Edges"
+#define PICK_VERTICES   "Pick Vertices"
+
 //== IMPLEMENTATION ==========================================================
 
 void InfoMeshObjectPlugin::initializePlugin() {
   infoBar_ = new InfoBar();
+
+  // Create info dialog
+  info_ = new InfoDialog();
+
+  // Set avaliable pick modes in dialog box
+  info_->pickMode->addItem(PICK_FACES);
+  info_->pickMode->addItem(PICK_EDGES);
+  info_->pickMode->addItem(PICK_VERTICES);
+  info_->pickMode->setCurrentIndex(0); // PICK_FACES
 }
 
 /// initialize the plugin
@@ -98,10 +112,6 @@ template< class MeshT >
 void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG::Vec3d& _hitPoint ) {
 
   QLocale locale;
-
-  if (info_ == 0){
-    info_ = new InfoDialog();
-  }
 
   int closest_v_idx = getClosestVertex(_mesh, _face);
   int closest_e_idx = getClosestEdge(_mesh, _face);
@@ -359,6 +369,31 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
 //----------------------------------------------------------------------------------------------
 
+void InfoMeshObjectPlugin::showPickedFaceStats(bool _show) {
+
+    if(_show) {
+        info_->face01->show();
+        info_->face02->show();
+        info_->face03->show();
+        info_->face04->show();
+        info_->normalX->show();
+        info_->normalY->show();
+        info_->normalZ->show();
+        info_->faceHandle->show();
+    } else {
+        info_->face01->hide();
+        info_->face02->hide();
+        info_->face03->hide();
+        info_->face04->hide();
+        info_->normalX->hide();
+        info_->normalY->hide();
+        info_->normalZ->hide();
+        info_->faceHandle->hide();
+    }
+}
+
+//----------------------------------------------------------------------------------------------
+
 /** \brief Find closest vertex to selection
  *
  * @param _mesh Refernce to the mesh
@@ -450,10 +485,24 @@ InfoMeshObjectPlugin::
     // Only respond on mesh objects
     if((_type != DATA_TRIANGLE_MESH) && (_type != DATA_POLY_MESH)) return;
 
+    ACG::SceneGraph::PickTarget target = ACG::SceneGraph::PICK_FACE;
+
+    bool showFaceStats = true;
+    if(info_->pickMode->currentText() == PICK_EDGES) {
+        target = ACG::SceneGraph::PICK_EDGE;
+        showFaceStats = false;
+    } else if (info_->pickMode->currentText() == PICK_VERTICES) {
+        target = ACG::SceneGraph::PICK_VERTEX;
+        showFaceStats = false;
+    }
+
+    // Hide/Show face related stats
+    showPickedFaceStats(showFaceStats);
+
     unsigned int   node_idx, target_idx;
     ACG::Vec3d     hit_point;
 
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _clickedPoint, node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(target, _clickedPoint, node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
 
 //     BaseObject* obj = dynamic_cast< BaseObject* > (object);
