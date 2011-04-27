@@ -115,7 +115,7 @@ class InfoPlugin : public QObject, BaseInterface, InformationInterface, LoggingI
       ~InfoPlugin() {};
 
       /// Name of the Plugin
-      QString name(){ return (QString("Info")); };
+      QString name(){ return (QString("InfoMeshObject")); };
 
       /// Description of the Plugin
       QString description() { return (QString(tr("Provides Information on Mesh Objects"))); };
