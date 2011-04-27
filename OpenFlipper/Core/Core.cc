@@ -645,6 +645,9 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
 //   if ( _event->button() == Qt::RightButton )
 //     return;
 
+  // Only catch left-button clicks
+  if(_event->button() != Qt::LeftButton) return;
+
   const QObject* senderPointer = sender();
   unsigned int examinerId = 0;
 
@@ -664,9 +667,22 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
 
   PluginFunctions::setActiveExaminer( examinerId );
 
-  emit PluginMouseEventIdentify( _event );
+  // Do picking
+  unsigned int   node_idx, target_idx;
+  ACG::Vec3d     hit_point;
 
+  if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
 
+    BaseObjectData* object = 0;
+
+    if(PluginFunctions::getPickedObject(node_idx, object)) {
+      // Request type information widget
+      InformationInterface* infoPlugin = 0;
+      infoPlugin = getInfoPlugin(object->dataType());
+      if(infoPlugin != 0)
+          infoPlugin->slotInformationRequested(_event->pos(), object->dataType());
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

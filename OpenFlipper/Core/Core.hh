@@ -95,6 +95,7 @@
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
+#include "OpenFlipper/BasePlugin/InformationInterface.hh"
 #include "OpenFlipper/BasePlugin/SelectionInterface.hh" // -> for SelectionInterface::PrimitiveType
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 
@@ -112,6 +113,7 @@
 #include <OpenFlipper/threads/JobInfo.hh>
 
 #include <OpenFlipper/common/FileTypes.hh>
+#include <OpenFlipper/common/InformationPlugins.hh>
 
 //== CLASS DEFINITION =========================================================
 
@@ -172,9 +174,6 @@ signals:
    /// When this Signal is emitted when a Mouse Event occures
    void PluginMouseEvent(QMouseEvent* );
 
-   /// Emitted when an identify event occurs
-   void PluginMouseEventIdentify( QMouseEvent* );
-   
    /// Emitted when an light event occurs
    void PluginMouseEventLight( QMouseEvent* );
 

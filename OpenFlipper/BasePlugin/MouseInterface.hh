@@ -85,17 +85,6 @@ class MouseInterface {
       *  @param _event Mousevent
     */
     virtual void slotMouseEvent( QMouseEvent* _event ) {};
-
-    /**  \brief Mouse Event from Main App ( Identify Mode )
-      *
-      *  This slot is called if a mouse event occured in the Viewer
-      *  This slot will only get called in identifyMode.
-      *  Right button clicks will not be passed to the plugins as this is reserved for
-      *  the context Menu.
-      *
-      *  @param _event Mousevent
-    */
-    virtual void slotMouseEventIdentify( QMouseEvent* _event ) {};
     
     /**  \brief Mouse Event from Main App ( Light Mode )
       *
@@ -129,7 +118,6 @@ There are 4 main viewer modes:
 inside the viewers.
 <li> <b>Picking Mode</b> events where passed through the MouseInterface::slotMouseEvent() and MouseInterface::slotMouseWheelEvent().
 <li> <b>Light Mode</b> events where passed through the MouseInterface::slotMouseEventLight()
-<li> <b>Identify Mode</b> events where passed through the MouseInterface::slotMouseEventIdentify()
 </ul>
 
 You can add handlers for these mouse events in your plugin. Remember that all plugins receive these signals.\n

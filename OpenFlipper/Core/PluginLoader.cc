@@ -940,14 +940,19 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(this   , SIGNAL(PluginMouseEvent(QMouseEvent*)),
               plugin , SLOT(slotMouseEvent(QMouseEvent*)));
 
-    if ( checkSlot( plugin , "slotMouseEventIdentify(QMouseEvent*)" ) )
-      connect(this   , SIGNAL(PluginMouseEventIdentify(QMouseEvent*)),
-              plugin , SLOT(slotMouseEventIdentify(QMouseEvent*)));
-              
     if ( checkSlot( plugin , "slotMouseEventLight(QMouseEvent*)" ) )
       connect(this   , SIGNAL(PluginMouseEventLight(QMouseEvent*)),
               plugin , SLOT(slotMouseEventLight(QMouseEvent*)));
 
+  }
+
+  //Check if the plugin supports InformationInterface
+  InformationInterface* infoPlugin = qobject_cast< InformationInterface * >(plugin);
+  if ( infoPlugin && OpenFlipper::Options::gui()  ) {
+    supported = supported + "TypeInformation ";
+
+    DataType dtype = infoPlugin->supportedDataTypes();
+    supportedInfoTypes().insert(std::pair<InformationInterface*,DataType>(infoPlugin,dtype));
   }
 
   //Check if the plugin supports Picking-Interface
