@@ -63,11 +63,8 @@ public:
     /// Set projection Matrix ( used to calculate frustum ... )
     void setProjection(ACG::GLMatrixd _projection) { projection_ = _projection; };
 
-    /// Set viewport size ( This will be used to compute the aspect ration )
-    void setSize(int _w, int _h) { aspectRatio_ = (double)width_ / (double)height_; }
-
-    /// Set aspect ration ( width = a * height ; x = a * y )
-    void setAspectRation(double _aspect) { aspectRatio_ = _aspect; }
+    /// Set viewport size ( This will be used to compute the aspect ratio )
+    void setSize(int _w, int _h) { width_ = _w; height_ = _h; aspectRatio_ = (double)width_ / (double)height_; }
 
     /// Return encoded view string
     void setEncodedView(QString _encodedView) { encodedView_ = _encodedView; };
