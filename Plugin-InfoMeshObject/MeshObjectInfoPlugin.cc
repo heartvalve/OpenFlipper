@@ -67,11 +67,6 @@
 
 #include <float.h>
 
-// Defines
-#define PICK_FACES      "Pick Faces"
-#define PICK_EDGES      "Pick Edges"
-#define PICK_VERTICES   "Pick Vertices"
-
 //== IMPLEMENTATION ==========================================================
 
 void InfoMeshObjectPlugin::initializePlugin() {
@@ -80,10 +75,7 @@ void InfoMeshObjectPlugin::initializePlugin() {
   // Create info dialog
   info_ = new InfoDialog();
 
-  // Set avaliable pick modes in dialog box
-  info_->pickMode->addItem(PICK_FACES);
-  info_->pickMode->addItem(PICK_EDGES);
-  info_->pickMode->addItem(PICK_VERTICES);
+  // Set default pick mode in dialog box
   info_->pickMode->setCurrentIndex(0); // PICK_FACES
 }
 
@@ -96,8 +88,6 @@ void InfoMeshObjectPlugin::pluginsInitialized() {
   emit addWidgetToStatusbar(infoBar_);
   infoBar_->hideCounts();
   
-  // Initialize hit point
-  hit_point_ = ACG::Vec3d(0.0, 0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,12 +99,36 @@ DataType InfoMeshObjectPlugin::supportedDataTypes() {
 //-----------------------------------------------------------------------------
 
 template< class MeshT >
-void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG::Vec3d& _hitPoint ) {
+void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _index, ACG::Vec3d& _hitPoint ) {
+
+  bool face   = false;
+  bool edge   = false;
+  bool vertex = false;
+
+  int closestVertexIndex = -1;
+  int closestEdgeIndex   = -1;
+
+  switch (info_->pickMode->currentIndex() ) {
+    case 0 : //Face
+      closestVertexIndex = getClosestVertexInFace(_mesh, _index, _hitPoint);
+      closestEdgeIndex   = getClosestEdgeInFace  (_mesh, _index, _hitPoint);
+      face = true;
+      break;
+    case 1 : //Edge
+      closestVertexIndex = getClosestVertexFromEdge(_mesh, _index, _hitPoint);
+      closestEdgeIndex   = _index;
+      edge = true;
+      break;
+    case 2 : //Vertex
+      closestVertexIndex = _index;
+      vertex = true;
+      break;
+    default:
+      emit log(LOGERR,"Error: unknown picking mode in printMeshInfo");
+      return;
+  }
 
   QLocale locale;
-
-  int closest_v_idx = getClosestVertex(_mesh, _face);
-  int closest_e_idx = getClosestEdge(_mesh, _face);
 
   QString name;
 
@@ -131,12 +145,163 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   info_->faces->setText( locale.toString( _mesh->n_faces() ) );
   // Edges
   info_->edges->setText( locale.toString( _mesh->n_edges() ) );
-  // Closest Vertex
-  info_->vertexHandle->setText( locale.toString( closest_v_idx ) );
-  // Closest Edge
-  info_->edgeHandle->setText( locale.toString( closest_e_idx ) );
-  // Picked Vertex
-  info_->faceHandle->setText( locale.toString( _face ) );
+
+  if ( face ) {
+
+    // Picked Face
+    info_->closestFaceLabel->setText( tr("Picked Face:") );
+    info_->closestFaceLabel->show();
+    info_->faceHandle->setText( locale.toString( _index ) );
+    info_->faceHandle->show();
+
+    // Closest Vertex
+    info_->closestVertexLabel->setText( tr("Closest Vertex:") );
+    info_->vertexHandle->setText( locale.toString( closestVertexIndex ) );
+
+    // Closest Edge
+    info_->closestEdgeLabel->setText( tr("Closest Edge:") );
+    info_->edgeHandle->setText( locale.toString( closestEdgeIndex ) );
+    info_->closestEdgeLabel->show();
+    info_->edgeHandle->show();
+
+    //adjacent vertex handles
+    typename MeshT::FaceHandle fh = _mesh->face_handle(_index);
+
+    typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(fh);
+    QString adjacentVertices;
+
+    if ( fv_it ){
+      adjacentVertices = QString::number( fv_it.handle().idx() );
+      ++fv_it;
+    }
+
+    while( fv_it ){
+      adjacentVertices += "; " + QString::number( fv_it.handle().idx() );
+      ++fv_it;
+    }
+
+    info_->adjVertexHandles->setText( adjacentVertices );
+    info_->adjVertexHandles->show();
+    info_->adjacentVertexLabel->show();
+
+    //normal
+    info_->normalLabel->setText(tr("Normal of picked face:"));
+    info_->normalX->setText( QString::number( _mesh->normal(fh)[0],'f' ) );
+    info_->normalY->setText( QString::number( _mesh->normal(fh)[1],'f' ) );
+    info_->normalZ->setText( QString::number( _mesh->normal(fh)[2],'f' ) );
+    info_->normalLabel->show();
+    info_->normalLeft->show();
+    info_->normalX->show();
+    info_->normalY->show();
+    info_->normalZ->show();
+    info_->normalRight->show();
+
+    // closest vertex coordinates
+    info_->closestVertexPosLabel->setText(tr("Closest Vertex on the mesh:"));
+
+  } else if (edge) {
+
+    // Adjacent Faces
+    info_->closestFaceLabel->setText( tr("Adjacent Faces:") );
+    info_->closestFaceLabel->show();
+    typename MeshT::HalfedgeHandle he1 = _mesh->halfedge_handle(_mesh->edge_handle(_index),0);
+    typename MeshT::HalfedgeHandle he2 = _mesh->halfedge_handle(_mesh->edge_handle(_index),1);
+
+    int fh1 = _mesh->face_handle(he1).idx();
+    int fh2 = _mesh->face_handle(he2).idx();
+
+    info_->faceHandle->setText( locale.toString( fh1 ) + ";" + locale.toString( fh2 ) );
+    info_->faceHandle->show();
+
+    // Adjacent vertices
+    info_->adjVertexHandles->setText(QString::number( _mesh->from_vertex_handle(he1).idx() ) + ";" + QString::number( _mesh->to_vertex_handle(he1).idx() ));
+    info_->adjVertexHandles->show();
+    info_->adjacentVertexLabel->show();
+
+    // Closest Vertex
+    info_->closestVertexLabel->setText( tr("Closest Vertex:") );
+    info_->vertexHandle->setText( locale.toString( closestVertexIndex ) );
+
+    // Picked Edge
+    info_->closestEdgeLabel->setText( tr("Picked Edge:") );
+    info_->edgeHandle->setText( locale.toString( closestEdgeIndex ) );
+    info_->closestEdgeLabel->show();
+    info_->edgeHandle->show();
+
+    // Normal
+    info_->normalLabel->hide();
+    info_->normalLeft->hide();
+    info_->normalX->hide();
+    info_->normalY->hide();
+    info_->normalZ->hide();
+    info_->normalRight->hide();
+
+    // closest vertex coordinates
+    info_->closestVertexPosLabel->setText(tr("Closest Vertex on the mesh:"));
+
+  } else if (vertex) {
+
+    // Faces
+    info_->closestFaceLabel->hide();
+    info_->faceHandle->hide();
+
+    // Adjacent vertices
+    info_->adjVertexHandles->hide();
+    info_->adjacentVertexLabel->hide();
+
+    // Closest Vertex
+    info_->closestVertexLabel->setText( tr("Picked Vertex:") );
+    info_->vertexHandle->setText( locale.toString( closestVertexIndex ) );
+
+    // Closest Edge
+    info_->closestEdgeLabel->hide();
+    info_->edgeHandle->hide();
+
+    // Normal
+    typename MeshT::VertexHandle vh = _mesh->vertex_handle(_index);
+    info_->normalLabel->setText(tr("Normal of picked vertex:"));
+    info_->normalX->setText( QString::number( _mesh->normal(vh)[0],'f' ) );
+    info_->normalY->setText( QString::number( _mesh->normal(vh)[1],'f' ) );
+    info_->normalZ->setText( QString::number( _mesh->normal(vh)[2],'f' ) );
+    info_->normalLabel->show();
+    info_->normalLeft->show();
+    info_->normalX->show();
+    info_->normalY->show();
+    info_->normalZ->show();
+    info_->normalRight->show();
+
+    // closest vertex coordinates
+    info_->closestVertexPosLabel->setText(tr("Picked Vertex on the mesh:"));
+
+    // Adjacent Edges
+    info_->closestFaceLabel->setText( tr("Adjacent Edges:") );
+    info_->closestFaceLabel->show();
+
+    //adjacent vertex handles
+
+    typename MeshT::VertexEdgeIter ve_it = _mesh->ve_iter(vh);
+    QString adjacentEdges;
+
+    if ( ve_it ){
+      adjacentEdges = QString::number( ve_it.handle().idx() );
+      ++ve_it;
+    }
+
+    while( ve_it ){
+      adjacentEdges += "; " + QString::number( ve_it.handle().idx() );
+      ++ve_it;
+    }
+
+    info_->faceHandle->setText( adjacentEdges );
+    info_->faceHandle->show();
+  }
+
+  // closest vertex coordinates
+  info_->vertexX->setText( QString::number( _mesh->point( _mesh->vertex_handle(closestVertexIndex) )[0],'f' ) );
+  info_->vertexY->setText( QString::number( _mesh->point( _mesh->vertex_handle(closestVertexIndex) )[1],'f' ) );
+  info_->vertexZ->setText( QString::number( _mesh->point( _mesh->vertex_handle(closestVertexIndex) )[2],'f' ) );
+
+
   // Components
   info_->components->setText( locale.toString(MeshInfo::componentCount(_mesh)));
   // Boundaries
@@ -300,24 +465,6 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     info_->dihedralMax->setText( "-" );
   }
 
-  typename MeshT::FaceHandle fh = _mesh->face_handle(_face);
-
-  //adjacent vertex handles
-  typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(fh);
-  QString adjacentVertices;
-
-  if ( fv_it ){
-    adjacentVertices = QString::number( fv_it.handle().idx() );
-    ++fv_it;
-  }
-
-  while( fv_it ){
-    adjacentVertices += "; " + QString::number( fv_it.handle().idx() );
-    ++fv_it;
-  }
-
-  info_->adjVertexHandles->setText( adjacentVertices );
-
   //Calculate Bounding Box(min,max,cog)
   ACG::Vec3d min;
   ACG::Vec3d max;
@@ -345,51 +492,14 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   info_->cogY->setText( QString::number(cog[1],'f') );
   info_->cogZ->setText( QString::number(cog[2],'f') );
 
-  //face-normal
-  info_->normalX->setText( QString::number( _mesh->normal(fh)[0],'f' ) );
-  info_->normalY->setText( QString::number( _mesh->normal(fh)[1],'f' ) );
-  info_->normalZ->setText( QString::number( _mesh->normal(fh)[2],'f' ) );
-
   //hitpoint
   info_->pointX->setText( QString::number( _hitPoint[0],'f' ) );
   info_->pointY->setText( QString::number( _hitPoint[1],'f' ) );
   info_->pointZ->setText( QString::number( _hitPoint[2],'f' ) );
 
-
-  //closest vertex
-  info_->vertexX->setText( QString::number( _mesh->point( _mesh->vertex_handle(closest_v_idx) )[0],'f' ) );
-  info_->vertexY->setText( QString::number( _mesh->point( _mesh->vertex_handle(closest_v_idx) )[1],'f' ) );
-  info_->vertexZ->setText( QString::number( _mesh->point( _mesh->vertex_handle(closest_v_idx) )[2],'f' ) );
-
-
   info_->setWindowFlags(info_->windowFlags() | Qt::WindowStaysOnTopHint);
 
   info_->show();
-}
-
-//----------------------------------------------------------------------------------------------
-
-void InfoMeshObjectPlugin::showPickedFaceStats(bool _show) {
-
-    if(_show) {
-        info_->face01->show();
-        info_->face02->show();
-        info_->face03->show();
-        info_->face04->show();
-        info_->normalX->show();
-        info_->normalY->show();
-        info_->normalZ->show();
-        info_->faceHandle->show();
-    } else {
-        info_->face01->hide();
-        info_->face02->hide();
-        info_->face03->hide();
-        info_->face04->hide();
-        info_->normalX->hide();
-        info_->normalY->hide();
-        info_->normalZ->hide();
-        info_->faceHandle->hide();
-    }
 }
 
 //----------------------------------------------------------------------------------------------
@@ -401,7 +511,7 @@ void InfoMeshObjectPlugin::showPickedFaceStats(bool _show) {
  */
 
 template <class MeshT>
-int InfoMeshObjectPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
+int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint) {
 
     typename MeshT::FaceVertexIter fv_it;
 
@@ -418,7 +528,7 @@ int InfoMeshObjectPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
 
       // Find closest vertex to selection
       vTemp = ACG::Vec3d(p[0], p[1], p[2]);
-      temp_dist = (vTemp - hit_point_).length();
+      temp_dist = (vTemp - _hitPoint).length();
 
       if (temp_dist < dist) {
           dist = temp_dist;
@@ -438,16 +548,15 @@ int InfoMeshObjectPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
  */
 
 template <class MeshT>
-int InfoMeshObjectPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
+int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint) {
 
     typename MeshT::ConstFaceHalfedgeIter fh_it;
     typename MeshT::VertexHandle v1, v2;
     typename MeshT::Point p1, p2;
 
-    ACG::Vec3d vp1, vp2, click, e, g, h;
+    ACG::Vec3d vp1, vp2, e, g, h;
     double x, temp_dist, dist = DBL_MAX;
     int closest_e_handle = 0;
-    click = ACG::Vec3d(hit_point_[0], hit_point_[1], hit_point_[2]);
 
     for (fh_it = _mesh->fh_iter(_mesh->face_handle(_face_idx)); fh_it; ++fh_it){
 
@@ -462,10 +571,10 @@ int InfoMeshObjectPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
 
       e = vp2 - vp1;
       e.normalize();
-      g = click - vp1;
+      g = _hitPoint - vp1;
       x = g | e;
 
-      temp_dist = (click - (vp1 + x * e)).length();
+      temp_dist = (_hitPoint - (vp1 + x * e)).length();
 
       if (temp_dist < dist) {
           dist = temp_dist;
@@ -474,6 +583,32 @@ int InfoMeshObjectPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
     }
 
     return closest_e_handle;
+}
+
+//----------------------------------------------------------------------------------------------
+
+/** \brief Find closest vertex on the edge (endpoint)
+ *
+ * @param _mesh Reference to the mesh
+ * @param _face_idx Index of the edge that has been clicked on
+ */
+
+template <class MeshT>
+int InfoMeshObjectPlugin::getClosestVertexFromEdge(MeshT* _mesh, int _edge_idx, ACG::Vec3d& _hitPoint) {
+
+    int closest_v_idx = 0;
+
+    ACG::Vec3d toVertex   = _mesh->point( _mesh->to_vertex_handle(   _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 )) );
+    ACG::Vec3d fromVertex = _mesh->point( _mesh->from_vertex_handle( _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 )) );
+
+    double distTo   = (_hitPoint - toVertex  ).norm();
+    double distFrom = (_hitPoint - fromVertex).norm();
+
+    if ( distTo > distFrom )
+      return _mesh->from_vertex_handle( _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 ) ).idx();
+    else
+      return _mesh->to_vertex_handle(   _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 ) ).idx();
+
 }
 
 //----------------------------------------------------------------------------------------------
@@ -487,17 +622,11 @@ InfoMeshObjectPlugin::
 
     ACG::SceneGraph::PickTarget target = ACG::SceneGraph::PICK_FACE;
 
-    bool showFaceStats = true;
-    if(info_->pickMode->currentText() == PICK_EDGES) {
+    if(info_->pickMode->currentText().contains("PICK_EDGES") ) {
         target = ACG::SceneGraph::PICK_EDGE;
-        showFaceStats = false;
-    } else if (info_->pickMode->currentText() == PICK_VERTICES) {
+    } else if (info_->pickMode->currentText().contains("PICK_VERTICES")) {
         target = ACG::SceneGraph::PICK_VERTEX;
-        showFaceStats = false;
     }
-
-    // Hide/Show face related stats
-    showPickedFaceStats(showFaceStats);
 
     unsigned int   node_idx, target_idx;
     ACG::Vec3d     hit_point;
@@ -505,20 +634,15 @@ InfoMeshObjectPlugin::
     if (PluginFunctions::scenegraphPick(target, _clickedPoint, node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
 
-//     BaseObject* obj = dynamic_cast< BaseObject* > (object);
-
       if ( PluginFunctions::getPickedObject(node_idx, object) ) {
 
          emit log( LOGINFO , object->getObjectinfo() );
 
-         // Set hit point
-         hit_point_ = ACG::Vec3d(hit_point[0], hit_point[1], hit_point[2]);
-
          if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) )
-            printMeshInfo( PluginFunctions::triMesh(object) , object->id(), target_idx, hit_point_ );
+            printMeshInfo( PluginFunctions::triMesh(object) , object->id(), target_idx, hit_point );
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) )
-            printMeshInfo( PluginFunctions::polyMesh(object) , object->id(), target_idx, hit_point_ );
+            printMeshInfo( PluginFunctions::polyMesh(object) , object->id(), target_idx, hit_point );
 
       } else return;
     }
