@@ -128,10 +128,6 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     template< class MeshT >
     void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face, ACG::Vec3d& _hitPoint );
 
-    // Show/Hide face related stats if not in face picking mode
-    void showPickedFaceStats(bool _show);
-
-
 //===========================================================================
 /** @name Scripting Functions
   * @{ */
@@ -184,13 +180,17 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     /// set scripting slot descriptions
     void setDescriptions();
     
-    /// Get closest vertex index
+    /// Get closest vertex index from a face
     template< class MeshT >
-    int getClosestVertex(MeshT* _mesh, int _face_idx);
+    int getClosestVertexInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint);
     
-    /// Get closest edge index
+    /// Get closest edge index from a face
     template< class MeshT >
-    int getClosestEdge(MeshT* _mesh, int _face_idx);
+    int getClosestEdgeInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint);
+
+    /// Get closest vertex index from an edge
+    template< class MeshT >
+    int getClosestVertexFromEdge(MeshT* _mesh, int _edge_idx, ACG::Vec3d& _hitPoint);
 
     /// Get edge lengths
     template< class MeshT >
@@ -198,9 +198,6 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
 
     /// Get edge lengths
     bool getEdgeLengths(int _id, double &min, double &max, double &mean);
-    
-    /// Mouse click hit point on face
-    ACG::Vec3d hit_point_;
     
 /** @} */
 
