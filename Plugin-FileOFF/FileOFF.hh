@@ -148,7 +148,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     bool parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName);
     
     /// Get color type
-    int getColorType(std::string& _line, bool _texCoordsAvailable) const;
+    int getColorType(std::string& _line, bool _texCoordsAvailable);
     
     /// Update user options depending on which options have been selected
     /// on the load dialog
