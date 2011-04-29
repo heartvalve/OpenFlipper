@@ -748,7 +748,7 @@ bool FileOFFPlugin::checkDegenerateFace(const std::vector<VertexHandle>& _v) {
 
 //-----------------------------------------------------------------------------------------------------
 
-int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) const {
+int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) {
     /*
     0 : no Color
     1 : one int (e.g colormap index)
@@ -764,11 +764,8 @@ int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) co
         return 0;
     
     //first remove spaces at start/end of the line
-    while (std::isspace(_line[0]))
-        _line = _line.substr(1);
-    while (std::isspace(_line[ _line.length()-1 ]))
-        _line = _line.substr(0, _line.length()-1);
-    
+    trimString(_line);
+
     //count the remaining items in the line
     size_t found;
     int count = 0;
