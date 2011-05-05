@@ -150,6 +150,6 @@ The generated license has to be copied into OpenFlippers License subdirectory.
 
 */
 
-Q_DECLARE_INTERFACE(SecurityInterface,"OpenFlipper.SecurityInterface/0.1")
+Q_DECLARE_INTERFACE(SecurityInterface,"OpenFlipper.SecurityInterface/1.0")
 
 #endif // SECURITYINTERFACE_HH
