@@ -121,9 +121,10 @@ macro (_check_plugin_deps _prefix)
 endmacro ()
 
 macro (_plugin_licensemanagement)
-  acg_append_files (headers "*.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
+  acg_append_files (headers "LicenseManager.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
 
   if ( OPENFLIPPER_ENABLE_LICENSE_MANAGER )
+    acg_append_files (headers "LicenseManagerActive.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
     acg_append_files (sources "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
   # acg_append_files (ui "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
 
@@ -162,6 +163,8 @@ macro (_plugin_licensemanagement)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/LicenseManagement"
       )
     endif ()
+  else(OPENFLIPPER_ENABLE_LICENSE_MANAGER)
+    acg_append_files (headers "LicenseManagerDisabled.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
   endif()
 endmacro ()
 

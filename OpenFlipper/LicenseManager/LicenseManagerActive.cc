@@ -70,7 +70,7 @@ License File format:
 #endif
 
 
-#include <OpenFlipper/LicenseManager/LicenseManager.hh>
+#include <OpenFlipper/LicenseManager/LicenseManagerActive.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <QFile>
 #include <QCryptographicHash>
