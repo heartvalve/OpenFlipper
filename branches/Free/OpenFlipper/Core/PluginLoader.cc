@@ -323,19 +323,42 @@ void Core::loadPlugins()
           if ( lit->contains("Contact mail:")  ) {
             *lit = lit->section(":",-1).simplified();
           }
-          
+           
         }
-        
-        QMessageBox::StandardButton button = QMessageBox::warning ( 0, tr("Plugin License check failed, issuer is: %1").arg( it.key() ),  request.join("\n") + tr("\n\n The text has been copied to your clipboard.\n Open in Mail program?"),QMessageBox::Yes | QMessageBox::No,QMessageBox::Yes  );
-        
-        
-        QClipboard *cb = QApplication::clipboard();
-        
+
+        QDialog licenseBox;
+          
+        QTextEdit *edit = new QTextEdit(&licenseBox);
+        edit->setText(request.join("\n"));
+
+        QLabel* mailLabel = new QLabel(&licenseBox);
+        mailLabel->setText(tr("The text has been copied to your clipboard. Open in Mail program?"));
+
+        QPushButton* noButton = new QPushButton(&licenseBox);
+        noButton->setText(tr("No"));
+        connect( noButton, SIGNAL(clicked ()), &licenseBox, SLOT(reject()) );
+
+        QPushButton* yesButton = new QPushButton(&licenseBox);
+        yesButton->setText(tr("Yes"));
+        connect( yesButton, SIGNAL(clicked ()), &licenseBox, SLOT(accept()) );
+
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(edit,0,0,1,2);
+        layout->addWidget(mailLabel,1,0,1,2);
+        layout->addWidget(noButton,2,0);
+        layout->addWidget(yesButton,2,1);
+        licenseBox.setLayout(layout);
+
+        licenseBox.resize(500,500);
+        licenseBox.setModal(true);
+        licenseBox.setWindowTitle(tr("Plugin License check failed, issuer is: %1").arg( it.key() ));  
+        int userAnswer =licenseBox.exec();
+
         // set a text to the Clipboard
+        QClipboard *cb = QApplication::clipboard();
         cb->setText(request.join("\n"));
 
-
-        if ( button == QMessageBox::Yes ) {
+        if ( userAnswer == 1 ) {
            QString url = "mailto:" + it.key();
            url += "?subject=License Request&body=";
 #ifdef WIN32
