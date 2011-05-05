@@ -45,17 +45,18 @@
 
 #include <OpenFlipper/BasePlugin/SecurityInterface.hh>
 
-/* The salt file has to be provided for each plugin. It can be the same
-  for all plugins. See example for details on how this file has to be setup
-*/
-#include "salt.hh"
-
-
 /** \file LicenseManager.hh
 *
 * This interface is used to add copy protection to plugins. \ref securityInterfacePage
 *
 */
+
+#ifdef WITH_LICENSE_MANAGER
+
+/* The salt file has to be provided for each plugin. It can be the same
+  for all plugins. See example for details on how this file has to be setup
+*/
+#include "salt.hh"
 
 /** \brief License management base class
  *
@@ -126,5 +127,15 @@ Q_INTERFACES(SecurityInterface)
     void connectNotify ( const char * signal );
 
 };
+
+#else
+
+class LicenseManager : public QObject  {
+
+Q_OBJECT
+
+};
+
+#endif
 
 #endif // LICENSEMANAGER_HH

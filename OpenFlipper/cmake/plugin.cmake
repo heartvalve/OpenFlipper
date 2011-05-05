@@ -122,44 +122,47 @@ endmacro ()
 
 macro (_plugin_licensemanagement)
   acg_append_files (headers "*.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
-  acg_append_files (sources "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
-#  acg_append_files (ui "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
 
-  acg_append_files (keygen_hdr "*.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
-  acg_append_files (keygen_src "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
-  acg_append_files (keygen_ui  "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
+  if ( OPENFLIPPER_ENABLE_LICENSE_MANAGER )
+    acg_append_files (sources "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
+  # acg_append_files (ui "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager")
+
+    acg_append_files (keygen_hdr "*.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
+    acg_append_files (keygen_src "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
+    acg_append_files (keygen_ui  "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
   
-  # genereate uic and moc targets
-  acg_qt4_autouic (keygen_uic ${keygen_ui})
-  acg_qt4_automoc (keygen_moc ${keygen_hdr})
+    # genereate uic and moc targets
+    acg_qt4_autouic (keygen_uic ${keygen_ui})
+    acg_qt4_automoc (keygen_moc ${keygen_hdr})
 
-  add_executable (Plugin-${plugin}-keygen ${keygen_uic} ${keygen_moc} ${keygen_hdr} ${keygen_src})
+    add_executable (Plugin-${plugin}-keygen ${keygen_uic} ${keygen_moc} ${keygen_hdr} ${keygen_src})
 
-  target_link_libraries (
-    Plugin-${plugin}-keygen
-    ${QT_LIBRARIES}
-  )
-
-  # create our output directroy
-  if (NOT EXISTS ${CMAKE_BINARY_DIR}/LicenseManagement)
-    file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/LicenseManagement)
-  endif ()
-
-  if (WIN32)
-    # copy exe file to "Build" directory
-    # Visual studio will create this file in a subdirectory so we can't use
-    # RUNTIME_OUTPUT_DIRECTORY directly here
-    add_custom_command (TARGET Plugin-${plugin}-keygen POST_BUILD
-                        COMMAND ${CMAKE_COMMAND} -E
-                        copy_if_different
-                          ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/Plugin-${plugin}-keygen.exe
-                          ${CMAKE_BINARY_DIR}/LicenseManagement/Plugin-${plugin}-keygen.exe)
-  else ()
-    set_target_properties (
-      Plugin-${plugin}-keygen PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/LicenseManagement"
+    target_link_libraries (
+      Plugin-${plugin}-keygen
+      ${QT_LIBRARIES}
     )
-  endif ()
+
+    # create our output directroy
+    if (NOT EXISTS ${CMAKE_BINARY_DIR}/LicenseManagement)
+      file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/LicenseManagement)
+    endif ()
+
+    if (WIN32)
+      # copy exe file to "Build" directory
+      # Visual studio will create this file in a subdirectory so we can't use
+      # RUNTIME_OUTPUT_DIRECTORY directly here
+      add_custom_command (TARGET Plugin-${plugin}-keygen POST_BUILD
+                          COMMAND ${CMAKE_COMMAND} -E
+                          copy_if_different
+                            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/Plugin-${plugin}-keygen.exe
+                          ${CMAKE_BINARY_DIR}/LicenseManagement/Plugin-${plugin}-keygen.exe)
+    else ()
+      set_target_properties (
+        Plugin-${plugin}-keygen PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/LicenseManagement"
+      )
+    endif ()
+  endif()
 endmacro ()
 
 # main function
@@ -310,8 +313,13 @@ function (_build_openflipper_plugin plugin)
       acg_list_filter (ui)
     endif ()
 
-    if (${_PLUGIN}_LICENSEMANAGER)
+    set(${_PLUGIN}_LICENSE_DEFS "")
+    if (${_PLUGIN}_LICENSEMANAGER )
       _plugin_licensemanagement ()
+ 
+      if ( OPENFLIPPER_ENABLE_LICENSE_MANAGER )
+	   set(${_PLUGIN}_LICENSE_DEFS "-DWITH_LICENSE_MANAGER")
+      endif()
     endif ()
 
     # genereate uic and moc targets
@@ -325,10 +333,11 @@ function (_build_openflipper_plugin plugin)
     acg_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
     acg_set (OPENFLIPPER_${_PLUGIN}_BUILD "1")
 
+    #
     # append compiler and linker flags from plugin dependencies
     set_target_properties (
       Plugin-${plugin} PROPERTIES
-      COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD}"
+      COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD} ${${_PLUGIN}_LICENSE_DEFS}"
       LINK_FLAGS "${${_PLUGIN}_LDFLAGSADD} ${${_PLUGIN}_DEPS_LINKER_FLAGS}"
     )
     
