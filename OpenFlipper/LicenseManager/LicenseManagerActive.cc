@@ -86,6 +86,8 @@ LicenseManager::~LicenseManager()
 
 LicenseManager::LicenseManager()
 {
+  std::cerr << "Constructor " << std::endl;
+
   authenticated_ = false;
   
   // On startup, block all signals by default until the plugin is authenticated!
@@ -95,6 +97,8 @@ LicenseManager::LicenseManager()
 // Override default block signals. Transparent if authenticated, otherwise
 // the function will always block the signals automatically
 void LicenseManager::blockSignals( bool _state) {
+
+  std::cerr << "Block " << std::endl;
 
   if ( !authenticated() ) {
     QObject::blockSignals( true );
@@ -106,6 +110,8 @@ void LicenseManager::blockSignals( bool _state) {
 
 // Plugin authentication function.
 bool LicenseManager::authenticate() {
+
+  std::cerr << "Authenticate" << std::endl;
 
   // Construct license string (will be cleaned up if license valid)
   authstring_ = "==\n";
@@ -449,6 +455,7 @@ bool LicenseManager::authenticated() {
 }
 
 void LicenseManager::connectNotify ( const char * /*signal*/ ) {
+  std::cerr << "Notify " << std::endl;
 
   // if the plugin is not authenticated and something wants to connect, we block all signals and force a direct disconnect
   // here, rendering all signal/slot connections useless.
