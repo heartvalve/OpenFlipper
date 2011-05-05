@@ -51,8 +51,6 @@
 *
 */
 
-#ifdef WITH_LICENSE_MANAGER
-
 /* The salt file has to be provided for each plugin. It can be the same
   for all plugins. See example for details on how this file has to be setup
 */
@@ -127,15 +125,5 @@ Q_INTERFACES(SecurityInterface)
     void connectNotify ( const char * signal );
 
 };
-
-#else
-
-class LicenseManager : public QObject  {
-
-Q_OBJECT
-
-};
-
-#endif
 
 #endif // LICENSEMANAGER_HH
