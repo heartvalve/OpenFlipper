@@ -580,7 +580,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
   BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
   if ( basePlugin ) {
     emit log(LOGOUT,tr("Found Plugin : \t %1").arg(basePlugin->name()) );
-    emit log(LOGOUT,tr("Location : \t %2").arg(filename) );
 
     if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splashMessage_ = splashMessage_ + " " + basePlugin->name() ;
