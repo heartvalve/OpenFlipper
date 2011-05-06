@@ -469,6 +469,7 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
 
             TriMesh::VertexHandle vh = m.add_vertex(hit_point);
             m.split(fh,vh);
+            m.garbage_collection();
             m.update_normals();
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
@@ -477,7 +478,22 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
          }
 
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
-            emit log(LOGWARN,"Face Splits not supported for Poly Meshes");
+           PolyMesh& m = *PluginFunctions::polyMesh(object);
+           PolyMesh::FaceHandle fh = m.face_handle(target_idx);
+
+           emit( log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
+               QString::number(m.normal(fh)[0]) + "," +
+               QString::number(m.normal(fh)[1]) + "," +
+               QString::number(m.normal(fh)[2]) + ") ") );
+
+           PolyMesh::VertexHandle vh = m.add_vertex(hit_point);
+           m.split(fh,vh);
+           m.garbage_collection();
+           m.update_normals();
+
+           emit updatedObject(object->id(), UPDATE_TOPOLOGY);
+           emit updateView();
+           emit createBackup(object->id(),"Split Face", UPDATE_TOPOLOGY);
          }
       } else return;
    }
@@ -648,6 +664,7 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
             if ( m.is_collapse_ok(closest_edge) ){
    //             m.point(m.to_vertex_handle(closest_edge)) = hit_point;
                m.collapse(closest_edge );
+               m.garbage_collection();
             } else
               emit log(LOGERR,"Collapse is not allowed here!");
 
@@ -658,8 +675,47 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
             emit createBackup(object->id(),"Edge Collapse", UPDATE_TOPOLOGY);
          }
 
+         // Poly Meshes
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
-           emit log(LOGWARN,"Edge Collapses not supported for Poly Meshes");
+           PolyMesh& m = *PluginFunctions::polyMesh(object);
+           PolyMesh::FaceHandle fh = m.face_handle(target_idx);
+
+           // find closest edge
+           PolyMesh::HalfedgeHandle closest_edge(-1);
+           double min_dist = FLT_MAX;
+
+           PolyMesh::FaceEdgeIter fe_it(m,fh);
+           for(; fe_it; ++fe_it)
+           {
+             PolyMesh::HalfedgeHandle heh = m.halfedge_handle(fe_it.handle(),0);
+             double dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( heh )), m.point(m.from_vertex_handle( heh )));
+
+             if( dist < min_dist)
+             {
+               min_dist = dist;
+               closest_edge = heh;
+             }
+           }
+
+           // collapse into to point which is closer to hitpoint
+           PolyMesh::Point to = m.point( m.to_vertex_handle(closest_edge) );
+           PolyMesh::Point from = m.point( m.from_vertex_handle(closest_edge) );
+
+           if ( (hit_point - to).sqrnorm() > (hit_point - from).sqrnorm() )
+              closest_edge = m.opposite_halfedge_handle(closest_edge);
+
+//           if ( m.is_collapse_ok(closest_edge) ){
+  //             m.point(m.to_vertex_handle(closest_edge)) = hit_point;
+              m.collapse(closest_edge );
+              m.garbage_collection();
+//           } else
+//             emit log(LOGERR,"Collapse is not allowed here!");
+
+           emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
+
+           emit updatedObject(object->id(), UPDATE_TOPOLOGY);
+           emit updateView();
+           emit createBackup(object->id(),"Edge Collapse", UPDATE_TOPOLOGY);
          }
 
       } else return;
