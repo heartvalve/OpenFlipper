@@ -1,7 +1,7 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11381 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11478 )</b>
  *      - <b>ACG</b>
  *          - SceneGraph
  *              - MaterialNode
@@ -19,17 +19,32 @@
  *      - <b>Core</b>
  *          - Rendering
  *              - Fixed bug, when empty objects where added (Scenegraph Bounding box was not correctly reset)
+ *          - User Interactions
+ *              - Fixed doubleclick in multiview not moving hitpoint to center in ortho mode
+ *          - Options
+ *              - Handle default projection mode via OpenFlipperSettings and reorder widget
+ *              - Added default lock rotation setting
+ *              - Make ViewerProperties aware of the viewer id it belongs to
  *          - View mode
- *              - When add ing context menus, remove the accelerators & to avoid matching failiures
+ *              - When adding context menus, remove the accelerators & to avoid matching failiures
+ *              - Fix for the undo/redo context menu entries containing special characters.
  *          - Load/Save
  *              - Fixed handling of last directory to avoid jumps between dirs in file dialogs.
  *              - Fixed variable initialization in ParseINI
+ *          - Scripting
+ *              - Dont create ui elements from scripting in batch mode
  *          - About Dialog
  *              - List registered file plugins
+ *              - Added intel compiler infos
  *      - <b>Interfaces</b>
  *          - Introduced selection Interface
+ *          - Introduced Information Interface
+ *              - From now on, it is necessary to implement an info plugin for each specific data type. 
+ *              - This plugin has to override InformationInterface in order to provide information on a clicked object.
  *          - Reworked Backup Interface
  *      - <b>ObjectTypes</b>
+ *          - BaseObjectData
+ *              - Fixed virtual function shadowing
  *          - BSplineCurve
  *              - BSplineCurveT: Added selection wrapper functions 
  *              - Fixed rendering of knot selection
@@ -60,15 +75,28 @@
  *                  - Support for undo/redo groups
  *                  - Support for partial backups (selection only ... )
  *                  - Integrated backup requests in with type plugins
+ *          - Datacontrol
+ *              - Don' change source and target settings of objects when they get grouped
+ *              - Fixed warning, when groupobjects have been appended to their parent twice
+ *          - FileOBJ
+ *              - Fixed crash with wrong indices in obj importer (Only triggered on defect obj files)
+ *          - FileOFF
+ *              - Fixed windows build error on some VS versions
+ *          - Info
+ *              - Renamed to InfoMeshObject
  *          - Selection
  *              - Reworked selection Interface
  *                  - SelectionBase Plugin now handles the basics
  *                  - Per type one selection plugin handles this types selection
  *                  - Only available selection metaphors are enabled in the gui
  *              - Fixed bug where vertex selection was not saved properly
- *          - Datacontrol
- *              - Don' change source and target settings of objects when they get grouped
- *              - Fixed warning, when groupobjects have been appended to their parent twice
+ *              - Fixed pickmode toolbar rendering bug in MacOS and Windows.
+ *          - Texture Plugins
+ *              - Fixed OpenFlipper crash when computing curvature textures on Darwin (Disabled openmp .. unclear why it crashes)
+ *          - TypeLight
+ *              - Make TypeLight run in batch mode
+ *          - TypeCamera
+ *              - Make TypeCamera run in batch mode
  *      - <b>Build System</b>
  *          - Introduced option to debug OpenFlipperSettings (cerr read and write access to settings)
  *          - Introduced mac option to provide a user defined Info.plist
@@ -81,6 +109,7 @@
  *              - Sort plugin configuration details into groups
  *              - Output Build type when configuring
  *          - Additional mac path for qt_menu.nib
+ *          - License Manager changes. Global flag now controls if the license managers get enabled.
  *      - <b>Documentation</b>
  *          - Fixed doxygen problem with missing includes
  *          - Fixed typo which caused DeveloperDoc to include user doc
