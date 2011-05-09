@@ -296,6 +296,13 @@ void CoreWidget::showAboutWidget( ) {
         aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t CPU flag specification not found")); 
       }    
       
+      #if Q_BYTE_ORDER == Q_BIG_ENDIAN
+        aboutWidget_->OpenFlipperAbout->append(tr("System is Big Endian"));
+      #endif
+
+      #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
+        aboutWidget_->OpenFlipperAbout->append(tr("System is Little Endian"));
+      #endif
       
     }
   
@@ -485,10 +492,11 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
   aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
-    aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:\n") );
+
+  aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:") );
   QStringList libPaths = QCoreApplication::libraryPaths();
   for(int i = 0 ; i < libPaths.size() ; ++i)
-    aboutWidget_->OpenFlipperAbout->append("\t" + libPaths[i]);
+    aboutWidget_->OpenFlipperAbout->append(" " + libPaths[i]);
 
   // =====================================================================================
   // Compiler information
