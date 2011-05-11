@@ -117,6 +117,7 @@ Q_INTERFACES(SelectionInterface)
         void sphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void closestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void floodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+        void componentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
         void customSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
         
         void selectionOperation(QString _operation);
@@ -163,6 +164,7 @@ Q_INTERFACES(SelectionInterface)
         void slotShowSphereSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
         void slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
         void slotShowFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+        void slotShowComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
         
         void slotGetActiveDataTypes(SelectionInterface::TypeList& _types);
         void slotGetActivePrimitiveType(SelectionInterface::PrimitiveType& _type);
@@ -190,6 +192,7 @@ Q_INTERFACES(SelectionInterface)
         void slotSphereSelection(QMouseEvent* _event);
         void slotBoundarySelection(QMouseEvent* _event);
         void slotFloodFillSelection(QMouseEvent* _event);
+        void slotComponentsSelection(QMouseEvent* _event);
         void slotCustomSelection(QMouseEvent* _event);
         
         void slotLoadSelection();
@@ -294,6 +297,7 @@ Q_INTERFACES(SelectionInterface)
         HandleAction* sphereSelectionAction_;
         HandleAction* boundarySelectionAction_;
         HandleAction* floodFillSelectionAction_;
+        HandleAction* componentsSelectionAction_;
         
         std::set<std::pair<int,Qt::KeyboardModifiers> > registeredKeys_;
         

@@ -110,6 +110,10 @@ void Core::slotShowFloodFillSelectionMode(QString _handleName, bool _show, Selec
     emit showFloodFillSelectionMode(_handleName, _show, _associatedTypes);
 }
 
+void Core::slotShowComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
+    emit showComponentsSelectionMode(_handleName, _show, _associatedTypes);
+}
+
 void Core::slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
     emit toggleSelection(_event, _currentType, _deselect);
 }
@@ -136,6 +140,10 @@ void Core::slotClosestBoundarySelection(QMouseEvent* _event, SelectionInterface:
 
 void Core::slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
     emit floodFillSelection(_event, _maxAngle, _currentType, _deselect);
+}
+
+void Core::slotComponentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+    emit componentsSelection(_event, _currentType, _deselect);
 }
 
 void Core::slotCustomSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {

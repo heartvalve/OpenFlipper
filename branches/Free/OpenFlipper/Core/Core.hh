@@ -282,6 +282,9 @@ signals:
    
    /// SelectionInterface: This signal is emitted when standard flood fill selection is required
    void showFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
+   /// SelectionInterface: This signal is emitted when standard connected components selection is required
+   void showComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
   
    /// SelectionInterface: This signal is emitted when standard toggle selection has been performed
    void toggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
@@ -304,6 +307,9 @@ signals:
    /// SelectionInterface: This signal is emitted when standard flood fill selection has been performed
    void floodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
    
+   /// SelectionInterface: This signal is emitted when standard connected components selection has been performed
+   void componentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
    /// SelectionInterface: This signal is emitted when a custom selection operation has been performed
    void customSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
   
@@ -524,6 +530,9 @@ signals:
       /// SelectionInterface: Provide flood fill selection operation for specific selection mode
       void slotShowFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
 
+      /// SelectionInterface: Provide connected components selection operation for specific selection mode
+      void slotShowComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
       /// SelectionInterface: Called when toggle selection operation has been performed
       void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
@@ -544,6 +553,9 @@ signals:
 
       /// SelectionInterface: Called when flood fill selection operation has been performed
       void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+      /// SelectionInterface: Called when connected components selection operation has been performed
+      void slotComponentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
       /// SelectionInterface: Called when custom selection operation has been performed
       void slotCustomSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
