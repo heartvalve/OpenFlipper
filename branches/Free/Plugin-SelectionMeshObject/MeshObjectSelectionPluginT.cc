@@ -45,6 +45,8 @@
 #include <MeshTools/MeshNavigationT.hh>
 #include <OpenMesh/Core/Geometry/MathDefs.hh>
 
+#include <set>
+
 /** \brief Delete all selected elements of a mesh
  *
  * @param _mesh a mesh
@@ -617,6 +619,152 @@ void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, doubl
             if(_primitiveTypes & faceType_)
                 _mesh->status(f_it).set_selected(!_deselection);
         }
+    }
+}
+
+//***********************************************************************************
+
+/** \brief Select a complete connected component
+ *
+ * @param _mesh a mesh
+ * @param _fh handle of the face that was picked
+ * @param _hit_point point that was picked
+ * @param _primitiveType primitive types to be selected
+ */
+template<class MeshT>
+void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType) {
+
+    typename MeshT::FaceHandle fh = _mesh->face_handle(_fh);
+
+    if(!fh.is_valid())
+        return;
+
+    //Vertex Selection
+    if(_primitiveType & vertexType_) {
+
+        OpenMesh::VPropHandleT<bool> visited;
+        _mesh->add_property(visited);
+
+        typename MeshT::VertexIter v_it;
+        typename MeshT::VertexIter v_end = _mesh->vertices_end();
+
+        // Initialize vertex tag
+        for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+            _mesh->property(visited, v_it) = false;
+
+        // Get some vertex incident to the clicked face
+        typename MeshT::VertexHandle current = _mesh->fv_iter(fh).handle();
+        if(!current.is_valid())
+            return;
+
+        std::set<typename MeshT::VertexHandle> unprocessed;
+        unprocessed.insert(current);
+
+        while(unprocessed.size() > 0) {
+
+            // Select current vertex
+            current = *unprocessed.begin();
+            _mesh->status(current).set_selected(!(_mesh->status(current)).selected());
+            _mesh->property(visited, current) = true;
+            unprocessed.erase(current);
+
+            // Go over all neighbors
+            for(typename MeshT::VertexVertexIter vv_it = _mesh->vv_iter(current); vv_it; ++vv_it) {
+                if(_mesh->property(visited, vv_it) == true) continue;
+                unprocessed.insert(vv_it);
+            }
+
+        }
+
+        _mesh->remove_property(visited);
+    }
+
+    //Edge Selection
+    if(_primitiveType & edgeType_ || _primitiveType & halfedgeType_) {
+
+        OpenMesh::FPropHandleT<bool> visited;
+        _mesh->add_property(visited);
+
+        typename MeshT::FaceIter f_it;
+        typename MeshT::FaceIter f_end = _mesh->faces_end();
+
+        // Initialize face tag
+        for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it)
+            _mesh->property(visited, f_it) = false;
+
+
+        typename MeshT::FaceHandle current = fh;
+
+        std::set<typename MeshT::FaceHandle> unprocessed;
+        unprocessed.insert(current);
+
+        typename MeshT::EdgeHandle firstEdge = _mesh->fe_iter(fh).handle();
+        if(!firstEdge.is_valid()) return;
+        bool selected = _mesh->status(firstEdge).selected();
+
+        while(unprocessed.size() > 0) {
+
+            // Select all edges incident to current face
+            current = *unprocessed.begin();
+            for(typename MeshT::FaceHalfedgeIter fh_it = _mesh->fh_iter(current); fh_it; ++fh_it) {
+                if(_primitiveType & halfedgeType_) {
+                    _mesh->status(fh_it.handle()).set_selected(!(_mesh->status(fh_it.handle())).selected());
+                }
+                if(_primitiveType & edgeType_) {
+                    _mesh->status(_mesh->edge_handle(fh_it.handle())).set_selected(!selected);
+                }
+            }
+
+            _mesh->property(visited, current) = true;
+            unprocessed.erase(current);
+
+            // Go over all neighbors
+            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it; ++ff_it) {
+                if(_mesh->property(visited, ff_it) == true) continue;
+                unprocessed.insert(ff_it);
+            }
+
+        }
+
+        _mesh->remove_property(visited);
+    }
+
+    //Face Selection
+    if(_primitiveType & faceType_) {
+
+        OpenMesh::FPropHandleT<bool> visited;
+        _mesh->add_property(visited);
+
+        typename MeshT::FaceIter f_it;
+        typename MeshT::FaceIter f_end = _mesh->faces_end();
+
+        // Initialize face tag
+        for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it)
+            _mesh->property(visited, f_it) = false;
+
+
+        typename MeshT::FaceHandle current = fh;
+
+        std::set<typename MeshT::FaceHandle> unprocessed;
+        unprocessed.insert(current);
+
+        while(unprocessed.size() > 0) {
+
+            // Select all edges incident to current face
+            current = *unprocessed.begin();
+            _mesh->status(current).set_selected(!(_mesh->status(current)).selected());
+            _mesh->property(visited, current) = true;
+            unprocessed.erase(current);
+
+            // Go over all neighbors
+            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it; ++ff_it) {
+                if(_mesh->property(visited, ff_it) == true) continue;
+                unprocessed.insert(ff_it);
+            }
+
+        }
+
+        _mesh->remove_property(visited);
     }
 }
 
