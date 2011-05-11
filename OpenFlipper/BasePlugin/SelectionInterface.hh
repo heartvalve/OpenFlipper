@@ -314,6 +314,19 @@ class SelectionInterface {
      */
     virtual void showFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
+    /** \brief Show connected components selection mode in a specified selection environment
+     *
+     *  Show or hide the connected components selection mode for the specified selection environment.
+     *  Note that per default no interactive selection mode will be available.
+     *  One will always have to explicitly add the required selection modes for
+     *  each selection environment.
+     *
+     *  @param _handleName      The handle of the selection environment in which this mode should be available
+     *  @param _show            Indicates whether the mode should be available or not
+     *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
+     */
+    virtual void showComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
+
     /** \brief Add a custom interactive selection mode
      *
      *  If a plugin should provide an interactive selection mode other than the
@@ -746,6 +759,18 @@ class SelectionInterface {
     */
    virtual void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
 
+   /** \brief Called whenever the user performs a connected components selection
+    *
+    *  This has to be implemented by each type selection plugin if this interactive selection mode should be provided.
+    *  The metaphor behind it is that the user clicks on an object and all primitives that are connected to the
+    *  clicked primitive are selected as well.
+    *
+    *  @param _event               The mouse event that currently is performed
+    *  @param _currentType         The currently active primitive type
+    *  @param _deselect            True if entities should be deselected
+    */
+   virtual void slotComponentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
+
    /** \brief Called whenever the user performs a custom selection
     *
     *  This has to be implemented by each type selection plugin if this
@@ -784,7 +809,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a toggle selection
     *
-    *  This connects to slotToggleSelection(QPoint,QString) which has to be implemented
+    *  This connects to slotToggleSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -795,7 +820,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a lasso selection
     *
-    *  This connects to slotLassoSelection(QMouseEvent*,QString) which has to be implemented
+    *  This connects to slotLassoSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -806,7 +831,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a volume lasso selection
     *
-    *  This connects to slotVolumeLassoSelection(QMouseEvent*,QString) which has to be implemented
+    *  This connects to slotVolumeLassoSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -817,7 +842,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a surface lasso selection
     *
-    *  This connects to slotSurfaceLassoSelection(QMouseEvent*,QString) which has to be implemented
+    *  This connects to slotSurfaceLassoSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -828,7 +853,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a sphere selection
     *
-    *  This connects to slotSphereSelection(QPoint,QString) which has to be implemented
+    *  This connects to slotSphereSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -840,7 +865,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a closest boundary selection
     *
-    *  This connects to slotClosestBoundarySelection(QPoint,QString) which has to be implemented
+    *  This connects to slotClosestBoundarySelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -851,7 +876,7 @@ class SelectionInterface {
 
    /** \brief Emitted by selection base plugin whenever the user performs a flood fill selection
     *
-    *  This connects to slotFloodFillSelection(QPoint,QString) which has to be implemented
+    *  This connects to slotFloodFillSelection() which has to be implemented
     *  by each type selection plugin if this interactive selection mode should be provided.
     *
     *  @param _event               The mouse event that currently is performed
@@ -860,6 +885,17 @@ class SelectionInterface {
     *  @param _deselect            True if entities should be deselected
     */
    virtual void floodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
+
+   /** \brief Emitted by selection base plugin whenever the user performs a connected components selection
+    *
+    *  This connects to slotComponentsSelection() which has to be implemented
+    *  by each type selection plugin if this interactive selection mode should be provided.
+    *
+    *  @param _event               The mouse event that currently is performed
+    *  @param _currentType         The currently active primitive type
+    *  @param _deselect            True if entities should be deselected
+    */
+   virtual void componentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a custom selection
     *
@@ -930,6 +966,7 @@ class SelectionInterface {
    virtual void slotShowSphereSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
    virtual void slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
    virtual void slotShowFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
+   virtual void slotComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
    virtual void slotRegisterKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers) {};
 

@@ -52,6 +52,7 @@
 #define SPHERE_IMG          "selection_paintSphere.png"
 #define BOUNDARY_IMG        "selection_boundary.png"
 #define FLOODFILL_IMG       "selection_floodFill.png"
+#define COMPONENTS_IMG      "selection_connected.png"
 
 // Standard selection mode descriptions
 #define TOGGLE_DESC         "Toggle Selection"
@@ -61,6 +62,7 @@
 #define SPHERE_DESC         "Sphere Selection"
 #define BOUNDARY_DESC       "Boundary Selection"
 #define FLOODFILL_DESC      "Floodfill Selection"
+#define COMPONENTS_DESC     "Selected Components Selection"
 
 // Standard selection mode names
 #define SB_TOGGLE           "sb_toggle"
@@ -70,6 +72,7 @@
 #define SB_SPHERE           "sb_sphere"
 #define SB_BOUNDARY         "sb_closestboundary"
 #define SB_FLOODFILL        "sb_floodfill"
+#define SB_COMPONENTS       "sb_components"
 
 // Constant to set if no selection picking is enabled
 #define NO_SELECTION_PICKING    "No_Selection_Picking"
@@ -92,6 +95,7 @@ surfaceLassoSelectionAction_(0),
 sphereSelectionAction_(0),
 boundarySelectionAction_(0),
 floodFillSelectionAction_(0),
+componentsSelectionAction_(0),
 nextFreePrimitiveType_(1u),
 sphere_mat_node_(0),
 sphere_node_(0),
@@ -210,6 +214,11 @@ void SelectionBasePlugin::initializePlugin() {
     floodFillSelectionAction_->selectionModeHandle(SB_FLOODFILL);
     toolsBar_->addAction(floodFillSelectionAction_);
     connect(floodFillSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
+    componentsSelectionAction_ = new HandleAction(QIcon(iconPath + COMPONENTS_IMG), COMPONENTS_DESC, selectionModesGroup_);
+    componentsSelectionAction_->setCheckable(true);
+    componentsSelectionAction_->selectionModeHandle(SB_COMPONENTS);
+    toolsBar_->addAction(componentsSelectionAction_);
+    connect(componentsSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
 
     emit setPickModeToolbar(SELECTION_PICKING, pickModeToolBar);
 }
@@ -502,6 +511,7 @@ void SelectionBasePlugin::updatePickModeToolBar() {
         sphereSelectionAction_->setEnabled(sphereSelectionAction_->isAssociated(currentPrimitiveType_, true));
         boundarySelectionAction_->setEnabled(boundarySelectionAction_->isAssociated(currentPrimitiveType_, true));
         floodFillSelectionAction_->setEnabled(floodFillSelectionAction_->isAssociated(currentPrimitiveType_, true));
+        componentsSelectionAction_->setEnabled(componentsSelectionAction_->isAssociated(currentPrimitiveType_, true));
 
         // Custom selection modes
         for(std::set<HandleAction*>::iterator cit = (*it).second.customSelectionModes.begin();
@@ -554,6 +564,8 @@ void SelectionBasePlugin::slotMouseEvent(QMouseEvent* _event) {
         slotBoundarySelection(_event);
     } else if (currentSelectionMode_ == SB_FLOODFILL) {
         slotFloodFillSelection(_event);
+    } else if (currentSelectionMode_ == SB_COMPONENTS) {
+        slotComponentsSelection(_event);
     } else {
         // Custom selection mode
         slotCustomSelection(_event);
@@ -899,6 +911,7 @@ void SelectionBasePlugin::slotPickModeChanged (const std::string& _pickmode) {
     sphereSelectionAction_->setChecked(!resetPickToolBar && currentSelectionMode_ == SB_SPHERE);
     boundarySelectionAction_->setChecked(!resetPickToolBar && currentSelectionMode_ == SB_BOUNDARY);
     floodFillSelectionAction_->setChecked(!resetPickToolBar && currentSelectionMode_ == SB_FLOODFILL);
+    componentsSelectionAction_->setChecked(!resetPickToolBar && currentSelectionMode_ == SB_COMPONENTS);
     
     for(std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.begin();
         it != selectionEnvironments_.end(); ++it) {
@@ -1002,6 +1015,17 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
                 if(e != (*it).second.defaultSelectionModes.end()) {
                     (*it).second.defaultSelectionModes.erase(e);
                     floodFillSelectionAction_->removeAssociatedType(_associatedTypes);
+                }
+            }
+        } else if (_mode == SB_COMPONENTS) {
+            if(_show) {
+                (*it).second.defaultSelectionModes.insert(componentsSelectionAction_);
+                componentsSelectionAction_->addAssociatedType(_associatedTypes);
+            } else {
+                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(componentsSelectionAction_);
+                if(e != (*it).second.defaultSelectionModes.end()) {
+                    (*it).second.defaultSelectionModes.erase(e);
+                    componentsSelectionAction_->removeAssociatedType(_associatedTypes);
                 }
             }
         }
@@ -1125,6 +1149,17 @@ void SelectionBasePlugin::slotShowFloodFillSelectionMode(QString _handleName, bo
     QIcon icon(iconPath + FLOODFILL_IMG);
     QString dummy;
     showSelectionMode(SB_FLOODFILL, icon, FLOODFILL_DESC, _handleName, _show, _associatedTypes, dummy);
+    updatePickModeToolBar();
+}
+
+//============================================================================================
+
+void SelectionBasePlugin::slotShowComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
+
+    QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
+    QIcon icon(iconPath + COMPONENTS_IMG);
+    QString dummy;
+    showSelectionMode(SB_COMPONENTS, icon, COMPONENTS_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1369,6 +1404,19 @@ void SelectionBasePlugin::slotFloodFillSelection(QMouseEvent* _event) {
             maxAngle = tool_->maxFloodFillAngle->value();
         
         emit floodFillSelection(_event, maxAngle, currentPrimitiveType_, deselection_);
+    }
+}
+
+//============================================================================================
+
+void SelectionBasePlugin::slotComponentsSelection(QMouseEvent* _event) {
+
+    // Only emit componentsSelection if left mouse button was clicked
+    if (_event->type() == QEvent::MouseButtonPress) {
+
+        if (_event->button() == Qt::RightButton) return;
+
+        emit componentsSelection(_event, currentPrimitiveType_, deselection_);
     }
 }
 

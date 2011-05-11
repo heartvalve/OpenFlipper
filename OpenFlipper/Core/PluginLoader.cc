@@ -1152,6 +1152,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( checkSlot( plugin , "slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
       connect(this   , SIGNAL(showFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
               plugin , SLOT(slotShowFloodFillSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSignal(plugin,"showComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)") )
+      connect(plugin , SIGNAL(showComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              this   , SLOT(slotShowComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotShowComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)" ) )
+      connect(this   , SIGNAL(showComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),
+              plugin , SLOT(slotShowComponentsSelectionMode(QString,bool,SelectionInterface::PrimitiveType)),Qt::DirectConnection);
               
     if ( checkSignal(plugin,"toggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
       connect(plugin , SIGNAL(toggleSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
@@ -1208,6 +1216,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( checkSlot( plugin , "slotFloodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)" ) )
       connect(this   , SIGNAL(floodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),
               plugin , SLOT(slotFloodFillSelection(QMouseEvent*,double,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSignal(plugin,"componentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)") )
+      connect(plugin , SIGNAL(componentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              this   , SLOT(slotComponentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotComponentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)" ) )
+      connect(this   , SIGNAL(componentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),
+              plugin , SLOT(slotComponentsSelection(QMouseEvent*,SelectionInterface::PrimitiveType,bool)),Qt::DirectConnection);
               
     if ( checkSignal(plugin,"customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)") )
       connect(plugin , SIGNAL(customSelection(QMouseEvent*,SelectionInterface::PrimitiveType,QString,bool)),
