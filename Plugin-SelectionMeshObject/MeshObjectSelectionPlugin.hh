@@ -113,10 +113,10 @@ signals:
 
     void showLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     void showVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
-
     void showSphereSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     void showClosestBoundarySelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     void showFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+    void showComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     
     void getActiveDataTypes(SelectionInterface::TypeList& _types);
     void getActivePrimitiveType(SelectionInterface::PrimitiveType& _type);
@@ -147,10 +147,10 @@ private slots:
 
     void slotLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
-
     void slotSphereSelection(QMouseEvent* _event, double _radius, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotClosestBoundarySelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotComponentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
     void slotLoadSelection(const INIFile& _file);
     void slotSaveSelection(INIFile& _file);
@@ -419,6 +419,10 @@ private:
     template<class MeshT>
     void floodFillSelection(MeshT* _mesh, uint _fh, double _maxAngle,
                             PrimitiveType _primitiveTypes, bool _deselection);
+
+    /// Connected component mesh selection
+    template<typename MeshT>
+    void componentsMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType);
                             
     /// Colorize the selection
     template<class MeshT>

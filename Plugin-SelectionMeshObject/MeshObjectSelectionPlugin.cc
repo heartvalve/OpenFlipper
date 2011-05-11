@@ -158,6 +158,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     emit showVolumeLassoSelectionMode(environmentHandle_, true, allSupportedTypes_);
 
     emit showFloodFillSelectionMode(environmentHandle_, true, allSupportedTypes_);
+    emit showComponentsSelectionMode(environmentHandle_, true, allSupportedTypes_);
     emit showClosestBoundarySelectionMode(environmentHandle_, true, allSupportedTypes_);
     
     // Define general operations
@@ -915,7 +916,7 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, Selecti
             }
         }
         emit updatedObject(object->id(), UPDATE_SELECTION);
-        emit  createBackup(object->id(), "Toggle Selection", UPDATE_SELECTION);
+        emit createBackup(object->id(), "Toggle Selection", UPDATE_SELECTION);
     }
 }
 
@@ -1094,6 +1095,44 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QMouseEvent* _event, doub
                 emit log(LOGERR,tr("floodFillSelection: Unsupported dataType"));
             }
         }
+    }
+}
+
+void MeshObjectSelectionPlugin::slotComponentsSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect) {
+
+    // Return if none of the currently active types is handled by this plugin
+    if((_currentType & allSupportedTypes_) == 0) return;
+
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
+
+    // First of all, pick anything to find all possible objects
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
+        _event->pos(), node_idx, target_idx, &hit_point)) {
+
+        BaseObjectData* object(0);
+        PluginFunctions::getPickedObject(node_idx, object);
+        if(!object) return;
+
+        if (object->dataType() == DATA_TRIANGLE_MESH) {
+            // Pick triangle meshes
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
+
+                if (object->dataType(DATA_TRIANGLE_MESH)) {
+                    componentsMeshSelection(PluginFunctions::triMesh(object), target_idx, hit_point, _currentType);
+                }
+            }
+        } else if (object->dataType() == DATA_POLY_MESH) {
+            // Pick poly meshes
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
+
+                if (object->dataType(DATA_POLY_MESH)) {
+                    componentsMeshSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _currentType);
+                }
+            }
+        }
+        emit updatedObject(object->id(), UPDATE_SELECTION);
+        emit createBackup(object->id(), "Connected Components Selection", UPDATE_SELECTION);
     }
 }
 
