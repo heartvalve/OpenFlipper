@@ -130,6 +130,14 @@ bool getMesh(  int _identifier , TriMesh*& _mesh );
 DLLEXPORT
 TriMesh* triMesh( BaseObjectData* _object );
 
+/** \brief Get a triangle mesh from an object id.
+ *
+ * @param _identifier Identifier of the object. If its a triangle mesh, the function will return the pointer to the mesh
+ *                    otherwise 0
+ */
+DLLEXPORT
+TriMesh* triMesh( int _identifier );
+
 /** \brief Cast an BaseObject to a TriMeshObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a triangle Mesh, a
