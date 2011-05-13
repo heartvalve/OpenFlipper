@@ -131,6 +131,14 @@ bool getMesh(  int _identifier , PolyMesh*& _mesh );
 DLLEXPORT
 PolyMesh* polyMesh( BaseObjectData* _object );
 
+/** \brief Get a poly mesh from an object id.
+ *
+ * @param _identifier Identifier of the object. If its a poly mesh, the function will return the pointer to the mesh
+ *                    otherwise 0
+ */
+DLLEXPORT
+TriMesh* polyMesh( int _identifier );
+
 /** \brief Cast an BaseObject to a PolyMeshObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a poly Mesh, a

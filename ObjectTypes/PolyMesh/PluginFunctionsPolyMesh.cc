@@ -133,6 +133,15 @@ PolyMesh* polyMesh( BaseObjectData* _object ) {
     return NULL;
 }
 
+PolyMesh* polyMesh( int _identifier ) {
+  PolyMeshObject* object = polyMeshObject(_identifier);
+
+   if ( object == 0)
+     return 0;
+   else
+     return object->mesh();
+}
+
 PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
   
   if ( _object == 0 )
