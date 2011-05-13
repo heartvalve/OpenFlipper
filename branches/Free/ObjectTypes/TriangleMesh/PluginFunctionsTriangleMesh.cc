@@ -138,6 +138,16 @@ TriMesh* triMesh( BaseObjectData* _object ) {
     return 0;
 }
 
+
+TriMesh* triMesh( int _identifier ) {
+   TriMeshObject* object = triMeshObject(_identifier);
+
+   if ( object == 0)
+     return 0;
+   else
+     return object->mesh();
+}
+
 TriMeshObject* triMeshObject( BaseObjectData* _object ) {
   if ( _object == 0 )
     return 0;
