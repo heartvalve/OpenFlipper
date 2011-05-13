@@ -137,7 +137,7 @@ PolyMesh* polyMesh( BaseObjectData* _object );
  *                    otherwise 0
  */
 DLLEXPORT
-TriMesh* polyMesh( int _identifier );
+PolyMesh* polyMesh( int _identifier );
 
 /** \brief Cast an BaseObject to a PolyMeshObject if possible
  *
