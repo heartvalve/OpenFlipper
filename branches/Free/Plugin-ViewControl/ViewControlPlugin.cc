@@ -57,19 +57,34 @@
 #define USEGLOBALDRAWMODE "Use Global DrawMode"
 #define SETSHADERS "Set Shader"
 
-void ViewControlPlugin::pluginsInitialized() {
+ViewControlPlugin::ViewControlPlugin():
+viewControlMenu_(0),
+shaderWidget_(0),
+toolbar_(0),
+toolbarViewingDirections_(0),
+viewTop_(0),
+viewBottom_(0),
+viewLeft_(0),
+viewRight_(0),
+viewFront_(0),
+viewBack_(0)
+{
 
-  shaderWidget_ = 0;
+}
+
+void ViewControlPlugin::pluginsInitialized() {
 
   // Disable Context Menu for draw Modes
   OpenFlipper::Options::drawModesInContextMenu(false);
 
+  // Create a new visualization context menu
   viewControlMenu_ = new QMenu("Visualization");
 
-  QIcon icon;
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
+  // Set an icon for the menu
+  QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
+  // Add it as context menu for trianlge and poly meshes
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH        , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH            , CONTEXTOBJECTMENU );
   
@@ -101,13 +116,14 @@ void ViewControlPlugin::pluginsInitialized() {
 
   setDescriptions();
   
-  // TOOLBAR
+  // Create toolbar
   toolbar_ = new QToolBar(tr("Viewing Directions"));
-  emit addToolbar(toolbar_);
-  toolbarViewingDirections_ = new QActionGroup(toolbar_);
 
+  // Action group for toolbar
+  toolbarViewingDirections_ = new QActionGroup(toolbar_);
   QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
+  // different viewing direction buttons for toolbar
   viewTop_ = new QAction( QIcon(iconPath + "viewcontrol_top.png"), tr("View from top") , toolbarViewingDirections_);
   toolbar_->addAction( viewTop_ );
   viewBottom_ = new QAction( QIcon(iconPath + "viewcontrol_bottom.png"), tr("View from bottom") , toolbarViewingDirections_);
@@ -120,8 +136,13 @@ void ViewControlPlugin::pluginsInitialized() {
   toolbar_->addAction( viewFront_ );
   viewBack_ = new QAction( QIcon(iconPath + "viewcontrol_back.png"), tr("View from back") , toolbarViewingDirections_);
   toolbar_->addAction( viewBack_ );
-  
+
   connect( toolbarViewingDirections_, SIGNAL( triggered(QAction*) ), this, SLOT(setView(QAction*)) );
+  
+  // Add the generated toolbar to the core
+  emit addToolbar(toolbar_);
+
+
 }
 
 void ViewControlPlugin::updateShaderList() {
