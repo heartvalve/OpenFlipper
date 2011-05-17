@@ -134,6 +134,7 @@ void QtPickToolbar::paintWindowFrame(QPainter *_painter,
                                      const QStyleOptionGraphicsItem* /*_option*/,
                                      QWidget* /*_widget*/ )
 {
+  std::cerr << "paintWindowFrame at " << w << " " << h << std::endl;
   int w = geometry().width();
   int h = geometry().height();
 
@@ -164,6 +165,9 @@ Qt::WindowFrameSection QtPickToolbar::windowFrameSectionAt(const QPointF &/*_pos
 
 void QtPickToolbar::updateGeometry ()
 {
+  std::cerr << "updateGeometry" << std::endl;
+
+
   if (parentWidget () && widget ())
   {
     resize (qMin ((int)parentWidget ()->geometry ().width () - 20, widget ()->sizeHint ().width ()),
