@@ -135,9 +135,11 @@ void QtPickToolbar::paintWindowFrame(QPainter *_painter,
                                      const QStyleOptionGraphicsItem* /*_option*/,
                                      QWidget* /*_widget*/ )
 {
-  std::cerr << "paintWindowFrame at " << w << " " << h << std::endl;
+
   int w = geometry().width();
   int h = geometry().height();
+
+  std::cerr << "paintWindowFrame at " << w << " " << h << std::endl;
 
   _painter->setRenderHint(QPainter::Antialiasing, true);
   _painter->setBrush(QBrush(QColor(BACKGROUND_RED,
