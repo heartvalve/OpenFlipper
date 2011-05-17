@@ -115,6 +115,7 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     typedef std::pair<std::string,std::string> PPair;
     struct PLYHeader {
         bool    binary;
+        bool    bigEndian;
         bool    isTriangleMesh;
         
         int     numVertices;
@@ -178,16 +179,16 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// \brief Helper functions for writing/reading of binary data
 
     template <class T>
-    void readValue(std::istream& _in, T& _value) const {
+    void readValue(std::istream& _in, T& _value, bool _bigEndian) const {
         T tmp;    
-        OpenMesh::IO::restore(_in , tmp, false); //assuming LSB byte order
+        OpenMesh::IO::restore(_in , tmp, _bigEndian); //assuming LSB byte order
         _value = tmp;
     }
     
     template <class T>
-    void writeValue(std::ostream& _out, T value) const {
+    void writeValue(std::ostream& _out, T value, bool _bigEndian = false) const {
         T tmp = value;
-        OpenMesh::IO::store(_out, tmp, false);
+        OpenMesh::IO::store(_out, tmp, _bigEndian);
     }
     
     

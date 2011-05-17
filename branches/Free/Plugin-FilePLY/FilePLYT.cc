@@ -112,6 +112,9 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
     unsigned int propIndex;
     bool next;
     
+    // Reserve enough space for all vertices to avoid resizing and save time
+    vertexIndices.reserve(_header.numVertices);
+
     // Parse vertices
     for(int i = 0; i < _header.numVertices; ++i) {
         
@@ -336,6 +339,9 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
     unsigned int numProps = _header.vProps.size();
     typename MeshT::VertexHandle currentVertex;
     
+    // Reserve enough space for all vertices to avoid resizing and save time
+    vertexIndices.reserve(_header.numVertices);
+
     // Read in vertices
     for(int i = 0; i < _header.numVertices; ++i) {
         
@@ -347,22 +353,22 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 if(getTypeSize(_header.vProps[propIndex].second) == 4) {
                     if(_header.vProps[propIndex].second == "int" || _header.vProps[propIndex].second == "int32" ||
                        _header.vProps[propIndex].second == "uint" || _header.vProps[propIndex].second == "uint32") {
-                        readValue(ifs, v3i[0]);
-                        readValue(ifs, v3i[1]);
-                        readValue(ifs, v3i[2]);
+                        readValue(ifs, v3i[0],_header.bigEndian);
+                        readValue(ifs, v3i[1],_header.bigEndian);
+                        readValue(ifs, v3i[2],_header.bigEndian);
                         currentVertex = _mesh->add_vertex(typename MeshT::Point(v3i));
                     } else {
-                        readValue(ifs, v3f[0]);
-                        readValue(ifs, v3f[1]);
-                        readValue(ifs, v3f[2]);
+                        readValue(ifs, v3f[0],_header.bigEndian);
+                        readValue(ifs, v3f[1],_header.bigEndian);
+                        readValue(ifs, v3f[2],_header.bigEndian);
                         currentVertex = _mesh->add_vertex(typename MeshT::Point(v3f));
                     }
                     vertexIndices.push_back(currentVertex);
                     propIndex += 3;
                 } else if (getTypeSize(_header.vProps[propIndex].second) == 8) {
-                    readValue(ifs, v3d[0]);
-                    readValue(ifs, v3d[1]);
-                    readValue(ifs, v3d[2]);
+                    readValue(ifs, v3d[0],_header.bigEndian);
+                    readValue(ifs, v3d[1],_header.bigEndian);
+                    readValue(ifs, v3d[2],_header.bigEndian);
                     currentVertex = _mesh->add_vertex(typename MeshT::Point(v3d));
                     vertexIndices.push_back(currentVertex);
                     propIndex += 3;
@@ -376,18 +382,18 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 if(getTypeSize(_header.vProps[propIndex].second) == 4) {
                     if(_header.vProps[propIndex].second == "int" || _header.vProps[propIndex].second == "int32" ||
                        _header.vProps[propIndex].second == "uint" || _header.vProps[propIndex].second == "uint32") {
-                        readValue(ifs, v2i[0]);
-                        readValue(ifs, v2i[1]);
+                        readValue(ifs, v2i[0],_header.bigEndian);
+                        readValue(ifs, v2i[1],_header.bigEndian);
                         if(vTexCoords) _mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(v2i));
                     } else {
-                        readValue(ifs, v2f[0]);
-                        readValue(ifs, v2f[1]);
+                        readValue(ifs, v2f[0],_header.bigEndian);
+                        readValue(ifs, v2f[1],_header.bigEndian);
                         if(vTexCoords) _mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(v2f));
                     }
                     propIndex += 2;
                 } else if (getTypeSize(_header.vProps[propIndex].second) == 8) {
-                    readValue(ifs, v2d[0]);
-                    readValue(ifs, v2d[1]);
+                    readValue(ifs, v2d[0],_header.bigEndian);
+                    readValue(ifs, v2d[1],_header.bigEndian);
                     if(vTexCoords) _mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(v2d));
                     propIndex += 2;
                 } else {
@@ -400,21 +406,21 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 if(getTypeSize(_header.vProps[propIndex].second) == 4) {
                     if(_header.vProps[propIndex].second == "int" || _header.vProps[propIndex].second == "int32" ||
                        _header.vProps[propIndex].second == "uint" || _header.vProps[propIndex].second == "uint32") {
-                        readValue(ifs, v3i[0]);
-                        readValue(ifs, v3i[1]);
-                        readValue(ifs, v3i[2]);
+                        readValue(ifs, v3i[0],_header.bigEndian);
+                        readValue(ifs, v3i[1],_header.bigEndian);
+                        readValue(ifs, v3i[2],_header.bigEndian);
                         if(vNormals) _mesh->set_normal(currentVertex, typename MeshT::Normal(v3i));
                     } else {
-                        readValue(ifs, v3f[0]);
-                        readValue(ifs, v3f[1]);
-                        readValue(ifs, v3f[2]);
+                        readValue(ifs, v3f[0],_header.bigEndian);
+                        readValue(ifs, v3f[1],_header.bigEndian);
+                        readValue(ifs, v3f[2],_header.bigEndian);
                         if(vNormals) _mesh->set_normal(currentVertex, typename MeshT::Normal(v3f));
                     }
                     propIndex += 3;
                 } else if (getTypeSize(_header.vProps[propIndex].second) == 8) {
-                    readValue(ifs, v3d[0]);
-                    readValue(ifs, v3d[1]);
-                    readValue(ifs, v3d[2]);
+                    readValue(ifs, v3d[0],_header.bigEndian);
+                    readValue(ifs, v3d[1],_header.bigEndian);
+                    readValue(ifs, v3d[2],_header.bigEndian);
                     if(vNormals) _mesh->set_normal(currentVertex, typename MeshT::Normal(v3d));
                     propIndex += 3;
                 } else {
@@ -425,11 +431,11 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             } else if(_header.vProps[propIndex].first == "rgb") {
                 // Get vertex color
                 if(getTypeSize(_header.vProps[propIndex].second) == 1) {
-                    readValue(ifs, v4uc[0]);
-                    readValue(ifs, v4uc[1]);
-                    readValue(ifs, v4uc[2]);
+                    readValue(ifs, v4uc[0],_header.bigEndian);
+                    readValue(ifs, v4uc[1],_header.bigEndian);
+                    readValue(ifs, v4uc[2],_header.bigEndian);
                     if(_header.hasVertexColorAlpha) {
-                        readValue(ifs, v4uc[3]);
+                        readValue(ifs, v4uc[3],_header.bigEndian);
                         propIndex++;
                     }
                     if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4uc[0], v4uc[1], v4uc[2]));
@@ -437,20 +443,20 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 } else if (getTypeSize(_header.vProps[propIndex].second) == 4) {
                     if(_header.vProps[propIndex].second == "int" || _header.vProps[propIndex].second == "int32" ||
                        _header.vProps[propIndex].second == "uint" || _header.vProps[propIndex].second == "uint32") {
-                        readValue(ifs, v4i[0]);
-                        readValue(ifs, v4i[1]);
-                        readValue(ifs, v4i[2]);
+                        readValue(ifs, v4i[0],_header.bigEndian);
+                        readValue(ifs, v4i[1],_header.bigEndian);
+                        readValue(ifs, v4i[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4i[3]);
+                            readValue(ifs, v4i[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4i[0], v4i[1], v4i[2]));
                     } else {
-                        readValue(ifs, v4f[0]);
-                        readValue(ifs, v4f[1]);
-                        readValue(ifs, v4f[2]);
+                        readValue(ifs, v4f[0],_header.bigEndian);
+                        readValue(ifs, v4f[1],_header.bigEndian);
+                        readValue(ifs, v4f[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4f[3]);
+                            readValue(ifs, v4f[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4f[0], v4f[1], v4f[2]));
@@ -464,11 +470,11 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             } else if(_header.vProps[propIndex].first == "diffuse_rgb") {
                 // Get diffuse vertex color
                 if(getTypeSize(_header.vProps[propIndex].second) == 1) {
-                    readValue(ifs, v4uc[0]);
-                    readValue(ifs, v4uc[1]);
-                    readValue(ifs, v4uc[2]);
+                    readValue(ifs, v4uc[0],_header.bigEndian);
+                    readValue(ifs, v4uc[1],_header.bigEndian);
+                    readValue(ifs, v4uc[2],_header.bigEndian);
                     if(_header.hasVertexColorAlpha) {
-                        readValue(ifs, v4uc[3]);
+                        readValue(ifs, v4uc[3],_header.bigEndian);
                         propIndex++;
                     }
                     if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4uc[0], v4uc[1], v4uc[2]));
@@ -476,20 +482,20 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 } else if (getTypeSize(_header.vProps[propIndex].second) == 4) {
                     if(_header.vProps[propIndex].second == "int" || _header.vProps[propIndex].second == "int32" ||
                        _header.vProps[propIndex].second == "uint" || _header.vProps[propIndex].second == "uint32") {
-                        readValue(ifs, v4i[0]);
-                        readValue(ifs, v4i[1]);
-                        readValue(ifs, v4i[2]);
+                        readValue(ifs, v4i[0],_header.bigEndian);
+                        readValue(ifs, v4i[1],_header.bigEndian);
+                        readValue(ifs, v4i[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4i[3]);
+                            readValue(ifs, v4i[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4i[0], v4i[1], v4i[2]));
                     } else {
-                        readValue(ifs, v4f[0]);
-                        readValue(ifs, v4f[1]);
-                        readValue(ifs, v4f[2]);
+                        readValue(ifs, v4f[0],_header.bigEndian);
+                        readValue(ifs, v4f[1],_header.bigEndian);
+                        readValue(ifs, v4f[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4f[3]);
+                            readValue(ifs, v4f[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(vColors) _mesh->set_color(currentVertex, typename MeshT::Color(v4f[0], v4f[1], v4f[2]));
@@ -525,10 +531,10 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
         // Read in face valence
         vertex_list.clear();
         if(getTypeSize(_header.valenceType) == 1) {
-            readValue(ifs, v_uc);
+            readValue(ifs, v_uc,_header.bigEndian);
             val = (unsigned int)v_uc;
         } else if (getTypeSize(_header.valenceType) == 4) {
-          readValue(ifs, val);
+          readValue(ifs, val,_header.bigEndian);
         } else {
             emit log(LOGERR, tr("Face valence has unsupported data size. Aborting!"));
             ifs.close();
@@ -538,10 +544,10 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
         for(uint j = 0; j < val; ++j) {
             // Read vertex index
             if(getTypeSize(_header.indexType) == 1) {
-                readValue(ifs, i_uc);
+                readValue(ifs, i_uc,_header.bigEndian);
                 index = (unsigned int)i_uc;
             } else if(getTypeSize(_header.indexType) == 4) {
-                readValue(ifs, index);
+                readValue(ifs, index,_header.bigEndian);
             } else {
                 emit log(LOGERR, tr("Vertex index type for face definitions has unsupported data size. Aborting!"));
                 ifs.close();
@@ -566,21 +572,21 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 if(getTypeSize(_header.fProps[propIndex].second) == 4) {
                     if(_header.fProps[propIndex].second == "int" || _header.fProps[propIndex].second == "int32" ||
                        _header.fProps[propIndex].second == "uint" || _header.fProps[propIndex].second == "uint32") {
-                        readValue(ifs, v3i[0]);
-                        readValue(ifs, v3i[1]);
-                        readValue(ifs, v3i[2]);
+                        readValue(ifs, v3i[0],_header.bigEndian);
+                        readValue(ifs, v3i[1],_header.bigEndian);
+                        readValue(ifs, v3i[2],_header.bigEndian);
                         if(fNormals) _mesh->set_normal(currentFace, typename MeshT::Normal(v3i));
                     } else {
-                        readValue(ifs, v3f[0]);
-                        readValue(ifs, v3f[1]);
-                        readValue(ifs, v3f[2]);
+                        readValue(ifs, v3f[0],_header.bigEndian);
+                        readValue(ifs, v3f[1],_header.bigEndian);
+                        readValue(ifs, v3f[2],_header.bigEndian);
                         if(fNormals) _mesh->set_normal(currentFace, typename MeshT::Normal(v3f));
                     }
                     propIndex += 3;
                 } else if (getTypeSize(_header.fProps[propIndex].second) == 8) {
-                    readValue(ifs, v3d[0]);
-                    readValue(ifs, v3d[1]);
-                    readValue(ifs, v3d[2]);
+                    readValue(ifs, v3d[0],_header.bigEndian);
+                    readValue(ifs, v3d[1],_header.bigEndian);
+                    readValue(ifs, v3d[2],_header.bigEndian);
                     if(fNormals) _mesh->set_normal(currentFace, typename MeshT::Normal(v3d));
                     propIndex += 3;
                 } else {
@@ -591,11 +597,11 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             } else if(_header.fProps[propIndex].first == "rgb") {
                 // Get vertex color
                 if(getTypeSize(_header.fProps[propIndex].second) == 1) {
-                    readValue(ifs, v4uc[0]);
-                    readValue(ifs, v4uc[1]);
-                    readValue(ifs, v4uc[2]);
+                    readValue(ifs, v4uc[0],_header.bigEndian);
+                    readValue(ifs, v4uc[1],_header.bigEndian);
+                    readValue(ifs, v4uc[2],_header.bigEndian);
                     if(_header.hasVertexColorAlpha) {
-                        readValue(ifs, v4uc[3]);
+                        readValue(ifs, v4uc[3],_header.bigEndian);
                         propIndex++;
                     }
                     if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4uc[0], v4uc[1], v4uc[2]));
@@ -603,20 +609,20 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 } else if (getTypeSize(_header.fProps[propIndex].second) == 4) {
                     if(_header.fProps[propIndex].second == "int" || _header.fProps[propIndex].second == "int32" ||
                        _header.fProps[propIndex].second == "uint" || _header.fProps[propIndex].second == "uint32") {
-                        readValue(ifs, v4i[0]);
-                        readValue(ifs, v4i[1]);
-                        readValue(ifs, v4i[2]);
+                        readValue(ifs, v4i[0],_header.bigEndian);
+                        readValue(ifs, v4i[1],_header.bigEndian);
+                        readValue(ifs, v4i[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4i[3]);
+                            readValue(ifs, v4i[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4i[0], v4i[1], v4i[2]));
                     } else {
-                        readValue(ifs, v4f[0]);
-                        readValue(ifs, v4f[1]);
-                        readValue(ifs, v4f[2]);
+                        readValue(ifs, v4f[0],_header.bigEndian);
+                        readValue(ifs, v4f[1],_header.bigEndian);
+                        readValue(ifs, v4f[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4f[3]);
+                            readValue(ifs, v4f[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4f[0], v4f[1], v4f[2]));
@@ -630,11 +636,11 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             } else if(_header.fProps[propIndex].first == "diffuse_rgb") {
                 // Get diffuse vertex color
                 if(getTypeSize(_header.fProps[propIndex].second) == 1) {
-                    readValue(ifs, v4uc[0]);
-                    readValue(ifs, v4uc[1]);
-                    readValue(ifs, v4uc[2]);
+                    readValue(ifs, v4uc[0],_header.bigEndian);
+                    readValue(ifs, v4uc[1],_header.bigEndian);
+                    readValue(ifs, v4uc[2],_header.bigEndian);
                     if(_header.hasVertexColorAlpha) {
-                        readValue(ifs, v4uc[3]);
+                        readValue(ifs, v4uc[3],_header.bigEndian);
                         propIndex++;
                     }
                     if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4uc[0], v4uc[1], v4uc[2]));
@@ -642,20 +648,20 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                 } else if (getTypeSize(_header.fProps[propIndex].second) == 4) {
                     if(_header.fProps[propIndex].second == "int" || _header.fProps[propIndex].second == "int32" ||
                        _header.fProps[propIndex].second == "uint" || _header.fProps[propIndex].second == "uint32") {
-                        readValue(ifs, v4i[0]);
-                        readValue(ifs, v4i[1]);
-                        readValue(ifs, v4i[2]);
+                        readValue(ifs, v4i[0],_header.bigEndian);
+                        readValue(ifs, v4i[1],_header.bigEndian);
+                        readValue(ifs, v4i[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4i[3]);
+                            readValue(ifs, v4i[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4i[0], v4i[1], v4i[2]));
                     } else {
-                        readValue(ifs, v4f[0]);
-                        readValue(ifs, v4f[1]);
-                        readValue(ifs, v4f[2]);
+                        readValue(ifs, v4f[0],_header.bigEndian);
+                        readValue(ifs, v4f[1],_header.bigEndian);
+                        readValue(ifs, v4f[2],_header.bigEndian);
                         if(_header.hasVertexColorAlpha) {
-                            readValue(ifs, v4f[3]);
+                            readValue(ifs, v4f[3],_header.bigEndian);
                             propIndex++;
                         }
                         if(fColors) _mesh->set_color(currentFace, typename MeshT::Color(v4f[0], v4f[1], v4f[2]));
