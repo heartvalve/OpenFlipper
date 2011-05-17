@@ -76,7 +76,6 @@
 #include "QtPickToolbar.hh"
 #include "QtGraphicsButton.hh"
 
-#include <iostream>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -135,11 +134,8 @@ void QtPickToolbar::paintWindowFrame(QPainter *_painter,
                                      const QStyleOptionGraphicsItem* /*_option*/,
                                      QWidget* /*_widget*/ )
 {
-
   int w = geometry().width();
   int h = geometry().height();
-
-  std::cerr << "paintWindowFrame at " << w << " " << h << std::endl;
 
   _painter->setRenderHint(QPainter::Antialiasing, true);
   _painter->setBrush(QBrush(QColor(BACKGROUND_RED,
@@ -168,9 +164,6 @@ Qt::WindowFrameSection QtPickToolbar::windowFrameSectionAt(const QPointF &/*_pos
 
 void QtPickToolbar::updateGeometry ()
 {
-  std::cerr << "updateGeometry" << std::endl;
-
-
   if (parentWidget () && widget ())
   {
     resize (qMin ((int)parentWidget ()->geometry ().width () - 20, widget ()->sizeHint ().width ()),
