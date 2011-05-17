@@ -175,12 +175,13 @@ void CoreWidget::getPickMode(std::string& _mode){
 
 void CoreWidget::updatePickMenu()
 {
-  if (pickMenu_ != 0)
-    delete pickMenu_;
-
-  pickMenu_ = new QMenu( 0 );
-  connect( pickMenu_, SIGNAL( aboutToHide() ),
-     this, SLOT( hidePopupMenus() ) );
+  if (pickMenu_ != 0) {
+    pickMenu_->clear();
+  } else {
+    pickMenu_ = new QMenu( 0 );
+    connect( pickMenu_, SIGNAL( aboutToHide() ),
+         this, SLOT( hidePopupMenus() ) );
+  }
 
   QActionGroup * ag = new QActionGroup( pickMenu_ );
   ag->setExclusive( true );
