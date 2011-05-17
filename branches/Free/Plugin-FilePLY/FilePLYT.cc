@@ -84,18 +84,18 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
     }
     
     // Get desired properties
-    bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
+    bool gui = OpenFlipper::Options::gui() && (loadVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
-    bool vNormals   = _mesh->has_vertex_normals() && (((gui && saveVertexNormal_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/Normals",true).toBool()));
-    bool vColors    = _mesh->has_vertex_colors() && (((gui && saveVertexColor_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/VertexColor",true).toBool()));
-    bool vTexCoords = _mesh->has_vertex_texcoords2D() && (((gui && saveVertexTexCoord_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/TexCoords",true).toBool()));
-    bool fNormals   = _mesh->has_face_normals() && (((gui && saveFaceNormal_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool()));
-    bool fColors    = _mesh->has_face_colors() && (((gui && saveFaceColor_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool()));
+    bool vNormals   =  ((gui && loadVertexNormal_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/Normals",true).toBool()));
+    bool vColors    =  ((gui && loadVertexColor_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/VertexColor",true).toBool()));
+    bool vTexCoords =  ((gui && loadVertexTexCoord_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/TexCoords",true).toBool()));
+    bool fNormals   =  ((gui && loadFaceNormal_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceNormal",true).toBool()));
+    bool fColors    =  ((gui && loadFaceColor_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()));
     
     // Request properties
     if(vNormals)
@@ -142,7 +142,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 // Parse vertex normal coordinates
                 sstr >> dx >> dy >> dz;
                 // Set normal
-                _mesh->set_normal(currentVertex, typename MeshT::Normal(dx, dy, dz));
+                if ( vNormals ) _mesh->set_normal(currentVertex, typename MeshT::Normal(dx, dy, dz));
                 // Go over to next property
                 propIndex +=3;
             } else if (_header.vProps[propIndex].first == "rgb" && vColors) {
@@ -154,7 +154,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                     propIndex++;
                 }
                 // Set color
-                _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz));
+                if ( vColors ) _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz));
                 // Go over to next property
                 propIndex += 3;
                 
@@ -166,7 +166,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
             } else if (_header.vProps[propIndex].first == "d_rgb" && vColors) {
                 sstr >> dx >> dy >> dz;
                 // Set color
-                _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz));
+                if ( vColors ) _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz));
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.vProps[propIndex].first == "s_rgb" && vColors) {
@@ -178,7 +178,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 // Parse uv-texture coordinates
                 sstr >> du >> dv;
                 // Set texture coordinate
-                _mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(du, dv));
+                if ( vTexCoords )_mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(du, dv));
                 // Go over to next property
                 propIndex += 2;
             } else {
@@ -206,7 +206,13 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
         vlist.clear();
         for(int c = 0; c < dInt; ++c) {
             sstr >> index;
-            vlist.push_back(vertexIndices[index]);
+
+            if ( (unsigned int)index < vertexIndices.size() )
+              vlist.push_back(vertexIndices[index]);
+            else {
+              emit log(LOGERR, tr("Illegal index in index List for face %1 vertex %2/%3. Vertices available: %4 ; Index: %5  ").arg(i).arg(c+1).arg(dInt).arg(vertexIndices.size()).arg(index+1));
+              return false;
+            }
         }
         
         // Add face
@@ -227,14 +233,14 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 // Parse face normal coordinates
                 sstr >> dx >> dy >> dz;
                 // Set normal
-                _mesh->set_normal(currentFace, typename MeshT::Normal(dx, dy, dz));
+                if ( fNormals ) _mesh->set_normal(currentFace, typename MeshT::Normal(dx, dy, dz));
                 // Go over to next property
                 propIndex +=3;
             } else if (_header.fProps[propIndex].first == "rgb" && fColors) {
                 // Parse face colors
                 sstr >> dx >> dy >> dz;
                 // Set color
-                _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz));
+                if (fColors) _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz));
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "a_rgb" && fColors) {
@@ -245,7 +251,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
             } else if (_header.fProps[propIndex].first == "d_rgb" && fColors) {
                 sstr >> dx >> dy >> dz;
                 // Set color
-                _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz));
+                if (fColors) _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz));
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "s_rgb" && fColors) {
@@ -261,8 +267,9 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
         }
     }       
     
-    // Update normals
-    _mesh->update_normals();
+    // Update normals if we do not have them or did not read them
+    if ( !_header.hasFaceNormals || !vNormals)
+      _mesh->update_normals();
     
     ifs.close();
     return true;
@@ -312,18 +319,18 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
     }
     
     // Get desired properties
-    bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
+    bool gui = OpenFlipper::Options::gui() && (loadVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
-    bool vNormals   = _mesh->has_vertex_normals() && (((gui && saveVertexNormal_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/Normals",true).toBool()));
-    bool vColors    = _mesh->has_vertex_colors() && (((gui && saveVertexColor_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/VertexColor",true).toBool()));
-    bool vTexCoords = _mesh->has_vertex_texcoords2D() && (((gui && saveVertexTexCoord_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/TexCoords",true).toBool()));
-    bool fNormals   = _mesh->has_face_normals() && (((gui && saveFaceNormal_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool()));
-    bool fColors    = _mesh->has_face_colors() && (((gui && saveFaceColor_->isChecked())) ||
-                        (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool()));
+    bool vNormals   =  ((gui && loadVertexNormal_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/Normals",true).toBool()));
+    bool vColors    =  ((gui && loadVertexColor_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/VertexColor",true).toBool()));
+    bool vTexCoords =  ((gui && loadVertexTexCoord_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/TexCoords",true).toBool()));
+    bool fNormals   =  ((gui && loadFaceNormal_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceNormal",true).toBool()));
+    bool fColors    =  ((gui && loadFaceColor_->isChecked()) ||
+                        (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()));
     
     unsigned int propIndex;
     unsigned int numProps = _header.vProps.size();
@@ -360,7 +367,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     vertexIndices.push_back(currentVertex);
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Vertices have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Vertices have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -384,7 +391,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     if(vTexCoords) _mesh->set_texcoord2D(currentVertex, typename MeshT::TexCoord2D(v2d));
                     propIndex += 2;
                 } else {
-                    emit log(LOGERR, "Vertex texture coordinates have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Vertex texture coordinates have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -411,7 +418,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     if(vNormals) _mesh->set_normal(currentVertex, typename MeshT::Normal(v3d));
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Vertex normals have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Vertex normals have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -450,7 +457,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     }                    
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Vertex colors have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Vertex colors have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -489,7 +496,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     }
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Vertex colors have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Vertex colors have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -521,9 +528,9 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             readValue(ifs, v_uc);
             val = (unsigned int)v_uc;
         } else if (getTypeSize(_header.valenceType) == 4) {
-            readValue(ifs, val);
+          readValue(ifs, val);
         } else {
-            emit log(LOGERR, "Face valence has unsupported data size. Aborting!");
+            emit log(LOGERR, tr("Face valence has unsupported data size. Aborting!"));
             ifs.close();
             return false;
         }
@@ -536,12 +543,17 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             } else if(getTypeSize(_header.indexType) == 4) {
                 readValue(ifs, index);
             } else {
-                emit log(LOGERR, "Vertex index type for face definitions has unsupported data size. Aborting!");
+                emit log(LOGERR, tr("Vertex index type for face definitions has unsupported data size. Aborting!"));
                 ifs.close();
                 return false;
             }
 
-            vertex_list.push_back(vertexIndices[index]);
+            if ( index < vertexIndices.size() )
+              vertex_list.push_back(vertexIndices[index]);
+            else {
+              emit log(LOGERR, tr("Illegal index in index List for face %1 vertex %2/%3. Vertices available: %4 ; Index: %5  ").arg(i).arg(j+1).arg(val).arg(vertexIndices.size()).arg(index+1));
+              return false;
+            }
         }
         
         currentFace = _mesh->add_face(vertex_list);
@@ -572,7 +584,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     if(fNormals) _mesh->set_normal(currentFace, typename MeshT::Normal(v3d));
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Face normals have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Face normals have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -611,7 +623,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     }
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Face colors have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Face colors have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -650,7 +662,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                     }
                     propIndex += 3;
                 } else {
-                    emit log(LOGERR, "Face colors have unsupported data size in binary PLY file. Aborting!");
+                    emit log(LOGERR, tr("Face colors have unsupported data size in binary PLY file. Aborting!"));
                     ifs.close();
                     return false;
                 }
@@ -663,6 +675,10 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
         }
     }
     
+    // Update normals if we do not have them or did not read them
+    if ( !_header.hasFaceNormals || !vNormals)
+      _mesh->update_normals();
+
     ifs.close();
     return true;
 }
