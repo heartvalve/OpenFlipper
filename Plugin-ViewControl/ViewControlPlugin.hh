@@ -121,6 +121,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
   public :
 
+    ViewControlPlugin();
     ~ViewControlPlugin() {};
 
 
