@@ -61,7 +61,9 @@
 //-----------------------------------------------------------------------------
 
 void CoreWidget::setActionMode(const Viewer::ActionMode _am){
+  std::cerr << "Switching action mode 1 " << std::endl;
   if (_am != actionMode_) {
+    std::cerr << "Switching action mode 2 " << std::endl;
     lastActionMode_ = actionMode_;
     actionMode_ = _am;
 
@@ -72,6 +74,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     pickButton_->setDown(false);
     questionButton_->setDown(false);
 
+    std::cerr << "Switching action mode 3 " << std::endl;
     switch (_am)
     {
       case Viewer::ExamineMode:
@@ -87,6 +90,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         break;
     }
 
+    std::cerr << "Switching action mode 4 " << std::endl;
     // update cursor
     switch ( _am )
     {
@@ -107,9 +111,13 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         break;
     }
 
+    std::cerr << "Switching action mode 5 " << std::endl;
+
     //update Viewers
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+
+      std::cerr << "Configuring viewer " << i << std::endl;
 
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
       examiner_widgets_[i]->trackMouse(false);
@@ -135,6 +143,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
           break;
       }
     }
+    std::cerr << "Switching action mode 6 " << std::endl;
 
     //emit pickmodeChanged with either the name of the current pickmode or an empty string
     if( pickingMode() )
@@ -246,6 +255,7 @@ void CoreWidget::hidePopupMenus()
 
 void CoreWidget::pickMode( int _id )
 {
+  std::cerr << "Setting pick mode" << std::endl;
   if (_id < (int) pick_modes_.size() )
   {
     pick_mode_idx_  = _id;
