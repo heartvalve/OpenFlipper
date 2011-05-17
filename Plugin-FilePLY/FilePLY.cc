@@ -121,6 +121,8 @@ size_t FilePLYPlugin::getTypeSize(std::string _type) {
         return sizeof(int);
     else if(_type == "double" || _type == "int64" || _type == "uint64" || _type == "uint64")
         return sizeof(double);
+    else
+        std::cerr << "Unable to parse SizeType. I got " << _type << std::endl;
     
     // We don't support long type since its size differs depending on
     // the host architecture
