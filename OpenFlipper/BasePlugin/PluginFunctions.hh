@@ -350,7 +350,7 @@ const std::string pickMode ();
 
 /// Set the current Picking mode for all examiner widgets
 DLLEXPORT
-void pickMode ( std::string _mode);
+void pickMode ( const std::string _mode);
 
 /// Returns a QImage of the current View
 DLLEXPORT
