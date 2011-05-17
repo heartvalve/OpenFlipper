@@ -163,7 +163,17 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
             // Determine file format (either ascii or binary)
             // format ascii/binary version
             sstr >> dString;
-            _header.binary = (dString != "ascii");
+            if ( dString.find("ascii") != std::string::npos ) {
+              _header.binary = false;
+            } else {
+              _header.binary = true;
+              if ( dString.find("little") != std::string::npos ) {
+                _header.bigEndian = false;
+              } else {
+                _header.bigEndian = true;
+              }
+
+            }
             // Skip version
             continue;
         } else if(dString == "element") {
@@ -300,7 +310,7 @@ int FilePLYPlugin::loadObject(QString _filename) {
     }
     
     // Create header and initialize with binary zeros
-    PLYHeader header = {0,0,0,0,0,0,0,std::vector<PPair>(),
+    PLYHeader header = {0,false,0,0,0,0,0,0,std::vector<PPair>(),
                         0,0,0,0,"","",std::vector<PPair>()};
     
     // Parse header in order to extract important information
