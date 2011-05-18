@@ -133,10 +133,12 @@ void MovePlugin::pluginsInitialized() {
   emit setPickModeMouseTracking ("MoveSelection", true);
 
   //KEYS
+  emit registerKey (Qt::Key_Shift, Qt::NoModifier, tr("Manipulator rotation"), true);
   emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, tr("Manipulator rotation"), true);
   emit registerKey (Qt::Key_Shift, Qt::ControlModifier | Qt::ShiftModifier, tr("Manipulator rotation"), true);
+  emit registerKey (Qt::Key_Control, Qt::NoModifier, tr("Resize"), true);
   emit registerKey (Qt::Key_Control, Qt::ControlModifier, tr("Resize"), true);
-  emit registerKey (Qt::Key_Control, Qt::ShiftModifier| Qt::ControlModifier, tr("Resize"), true);
+  emit registerKey (Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, tr("Resize"), true);
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
