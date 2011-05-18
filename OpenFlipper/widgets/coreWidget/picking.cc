@@ -99,7 +99,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       case Viewer::PickingMode:
         cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  ) ,0,0 ));
         if (pick_mode_idx_ != -1) {
-          cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor);
+          cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor() );
         }
         break;
       case Viewer::QuestionMode:
@@ -122,11 +122,11 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
           break;
         case Viewer::PickingMode:
           if (pick_mode_idx_ != -1) {
-            examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking);
+            examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking() );
             
             // Show the pickMode Toolbar for this picking mode if it is set
-            if (pick_modes_[pick_mode_idx_].toolbar)
-              pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
+            if (pick_modes_[pick_mode_idx_].toolbar() )
+              pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
             else
               pickToolbar_->detachToolbar ();
           }
@@ -156,7 +156,7 @@ void CoreWidget::setPickMode(const std::string _mode){
 
   for (unsigned int i=0; i<pick_modes_.size(); ++i)
   {
-    if (pick_modes_[i].name == _mode)
+    if (pick_modes_[i].name() == _mode)
     {
       pickMode( i );
       updatePickMenu();
@@ -187,17 +187,17 @@ void CoreWidget::updatePickMenu()
   ag->setExclusive( true );
 
   for (unsigned int i=0; i<pick_modes_.size(); ++i) {
-    if ( !pick_modes_[i].visible )
+    if ( !pick_modes_[i].visible() )
       continue;
 
-    if (pick_modes_[i].name == "Separator")
+    if (pick_modes_[i].name() == "Separator")
     {
       if ((i > 0) && (i<pick_modes_.size()-1)) // not first, not last
         pickMenu_->addSeparator();
     }
     else
     {
-      QAction* ac = new QAction( pick_modes_[i].name.c_str(), ag );
+      QAction* ac = new QAction( pick_modes_[i].name().c_str(), ag );
       ac->setData( QVariant( i ) );
       ac->setCheckable( true );
 
@@ -250,21 +250,21 @@ void CoreWidget::pickMode( int _id )
   if (_id < (int) pick_modes_.size() )
   {
     pick_mode_idx_  = _id;
-    pick_mode_name_ = pick_modes_[pick_mode_idx_].name;
+    pick_mode_name_ = pick_modes_[pick_mode_idx_].name();
 
-    if (pick_modes_[pick_mode_idx_].toolbar)
-      pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
+    if (pick_modes_[pick_mode_idx_].toolbar() )
+      pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
     else
       pickToolbar_->detachToolbar ();
 
     // adjust mouse tracking
     if ( pickingMode() )
       for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking);
+        examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking() );
 
     // adjust Cursor
     if ( pickingMode() )
-        cursorPainter_->setCursor( pick_modes_[pick_mode_idx_].cursor);
+        cursorPainter_->setCursor( pick_modes_[pick_mode_idx_].cursor() );
 
     // emit signal
     emit(signalPickModeChanged(pick_mode_name_));
@@ -299,8 +299,8 @@ void CoreWidget::addPickMode(const std::string& _name,
 void CoreWidget::setPickModeCursor(const std::string& _name, QCursor _cursor)
 {
   for (uint i=0; i < pick_modes_.size(); i++)
-    if ( pick_modes_[i].name == _name ){
-      pick_modes_[i].cursor = _cursor;
+    if ( pick_modes_[i].name() == _name ){
+      pick_modes_[i].cursor() = _cursor;
 
       //switch cursor if pickMode is active
       if (pick_mode_name_ == _name && pickingMode() )
@@ -314,8 +314,9 @@ void CoreWidget::setPickModeCursor(const std::string& _name, QCursor _cursor)
 void CoreWidget::setPickModeMouseTracking(const std::string& _name, bool _mouseTracking)
 {
   for (uint i=0; i < pick_modes_.size(); i++)
-    if ( pick_modes_[i].name == _name ){
-      pick_modes_[i].tracking = _mouseTracking;
+    if ( pick_modes_[i].name() == _name ){
+
+      pick_modes_[i].tracking(_mouseTracking );
 
       //switch cursor if pickMode is active
       if (pick_mode_name_ == _name && pickingMode() )
@@ -331,10 +332,10 @@ void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolb
 {
   // Get the pickmode that belongs to the given name
   for (uint i=0; i < pick_modes_.size(); i++)
-    if ( pick_modes_[i].name == _mode ){
+    if ( pick_modes_[i].name() == _mode ){
 
       // Set the new toolbar for that mode
-      pick_modes_[i].toolbar = _toolbar;
+      pick_modes_[i].toolbar( _toolbar );
 
       // Activate the toolbar if this mode is currently active
       if (pick_mode_name_ == _mode && pickingMode() )
@@ -349,8 +350,9 @@ void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolb
 void CoreWidget::removePickModeToolbar( const std::string _mode )
 {
   for (uint i=0; i < pick_modes_.size(); i++)
-    if ( pick_modes_[i].name == _mode ){
-      pick_modes_[i].toolbar = NULL;
+    if ( pick_modes_[i].name() == _mode ){
+
+      pick_modes_[i].toolbar(0);
 
       if (pick_mode_name_ == _mode && pickingMode() )
         pickToolbar_->detachToolbar ();
