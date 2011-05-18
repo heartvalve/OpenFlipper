@@ -134,9 +134,9 @@ void MovePlugin::pluginsInitialized() {
 
   //KEYS
   emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, tr("Manipulator rotation"), true);
-  emit registerKey (Qt::Key_Shift, Qt::NoModifier, tr("Manipulator rotation"), true);
+  emit registerKey (Qt::Key_Shift, Qt::ControlModifier | Qt::ShiftModifier, tr("Manipulator rotation"), true);
   emit registerKey (Qt::Key_Control, Qt::ControlModifier, tr("Resize"), true);
-  emit registerKey (Qt::Key_Control, Qt::NoModifier, tr("Resize"), true);
+  emit registerKey (Qt::Key_Control, Qt::ShiftModifier| Qt::ControlModifier, tr("Resize"), true);
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
@@ -371,10 +371,17 @@ void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
 
 void MovePlugin::slotKeyEvent (QKeyEvent* _event)
 {
-  if (_event->key() == Qt::Key_Control)
+  if ((_event->key() == Qt::Key_Control) && _event->modifiers() != Qt::ShiftModifier) {
     setManipMode (QtTranslationManipulatorNode::Resize);
-  else if (_event->key () == Qt::Key_Shift)
+    return;
+  } else if ((_event->key () == Qt::Key_Shift) && _event->modifiers() != Qt::ControlModifier) {
     setManipMode (QtTranslationManipulatorNode::LocalRotation);
+    return;
+  }
+
+  // Return to normal mode if Ctrl + Shift is pressed since this
+  // is used in translation manipulator node for rotation rasterization
+  setManipMode (QtTranslationManipulatorNode::TranslationRotation);
 }
 
 //------------------------------------------------------------------------------
