@@ -775,6 +775,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   double        old_axis_hit, new_axis_hit, new_axis_over;
   bool          rot[3], trans[3];
   unsigned int  i;
+  bool lockOldPoint = false;
 
   updateSize (_state);
 
@@ -872,6 +873,9 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     case QEvent::MouseMove:
     {
       if(!draw_manipulator_) return; // Avoid manipulation if manipulator is invisible
+
+      // Get pressed modifiers
+      Qt::KeyboardModifiers mods = Qt::ShiftModifier | Qt::ControlModifier;
 
       for (i = 0; i < NumElements; i++)
         element_[i].over_ = false;
@@ -1222,13 +1226,28 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
+        int rotation = 0;
+
+        // Rasterize movement if shift is pressed
+        if(_event->modifiers() == mods) {
+            if(abs(dist[1]) < (int)(_state.viewport_height()/16)) {
+                rotation = 0;
+                lockOldPoint = true;
+            } else {
+                // Rotate exactly 45 degrees
+                if(dist[1] < 0) rotation = -45;
+                else            rotation =  45;;
+            }
+        } else {
+            rotation = dist[1];
+        }
 
         // Shift has been pressed
         // Rotate manipulator but not parent node
         if (mode_ == LocalRotation) {
 
           // Update only local rotation
-          localTransformation_.rotate( -dist[1], directionX(),ACG::MULT_FROM_LEFT);
+          localTransformation_.rotate( -rotation, directionX(),ACG::MULT_FROM_LEFT);
 
         } else {
           // Rotate parent node but not manipulator
@@ -1236,7 +1255,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           _state.translate(center()[0], center()[1], center()[2]);
           update_rotation(_state);
 
-          rotate(dist[1], directionX() );
+          rotate(rotation, directionX() );
 
           _state.pop_modelview_matrix();
         }
@@ -1251,18 +1270,32 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
+        int rotation = 0;
 
+        // Rasterize movement if shift is pressed
+        if(_event->modifiers() == mods) {
+            if(abs(dist[1]) < (int)(_state.viewport_width()/16)) {
+                rotation = 0;
+                lockOldPoint = true;
+            } else {
+                // Rotate exactly 45 degrees
+                if(dist[1] < 0) rotation = -45;
+                else            rotation =  45;;
+            }
+        } else {
+            rotation = dist[1];
+        }
 
         if (mode_ == LocalRotation) {
 
           // Update only local rotation
-          localTransformation_.rotate( -dist[0], directionY(),ACG::MULT_FROM_LEFT);
+          localTransformation_.rotate(-rotation, directionY(),ACG::MULT_FROM_LEFT);
 
         } else {
           _state.push_modelview_matrix();
           _state.translate(center()[0], center()[1], center()[2]);
 
-          rotate(dist[0], directionY() );
+          rotate(rotation, directionY() );
 
           _state.pop_modelview_matrix();
         }
@@ -1277,16 +1310,32 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
 
+        int rotation = 0;
+
+        // Rasterize movement if shift is pressed
+        if(_event->modifiers() == mods) {
+            if(abs(dist[1]) < (int)(_state.viewport_width()/16)) {
+                rotation = 0;
+                lockOldPoint = true;
+            } else {
+                // Rotate exactly 45 degrees
+                if(dist[1] < 0) rotation = 45;
+                else            rotation = -45;;
+            }
+        } else {
+            rotation = -dist[1];
+        }
+
         if (mode_ == LocalRotation) {
 
           // Update only local rotation
-          localTransformation_.rotate( (dist[0]+dist[1])/2, directionZ(),ACG::MULT_FROM_LEFT);
+          localTransformation_.rotate(-rotation, directionZ(),ACG::MULT_FROM_LEFT); // (dist[0]+dist[1])/2
 
         } else {
           _state.push_modelview_matrix();
           _state.translate(center()[0], center()[1], center()[2]);
 
-          rotate((dist[0]+dist[1])/2, directionZ());
+          rotate(rotation, directionZ());
 
           _state.pop_modelview_matrix();
         }
@@ -1303,7 +1352,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   setDirty ();
 
   // save old Point
-  oldPoint2D_   = newPoint2D;
+  if(!lockOldPoint)
+      oldPoint2D_   = newPoint2D;
 }
 
 
