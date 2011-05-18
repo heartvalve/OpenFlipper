@@ -138,15 +138,67 @@ class StackWidgetInfo {
 
 /** Info struct containing information about custom context menus
  */
-struct MenuInfo {
-  /// The context item
-  QAction*          action;
+class MenuInfo {
+  public:
+    MenuInfo():
+      action(0)
+    {}
 
-  /// Type of objects for which the context Menu should be visible
-  DataType        contextType;
+    /// The context item
+    QAction*          action;
 
-  /// Type of the context Menu ( Context for what type .. Background,Object,Node)
+    /// Type of objects for which the context Menu should be visible
+    DataType        contextType;
+
+    /// Type of the context Menu ( Context for what type .. Background,Object,Node)
   ContextMenuType type;
+};
+
+/** Struct containing information about pickModes
+*/
+class PickMode
+{
+  public:
+    /// Constructor
+    PickMode(const std::string& _n, const bool _t, const bool _v, QCursor _c, QToolBar *_tb = 0 );
+
+    ~PickMode() {};
+
+
+    void visible(const bool _visible);
+
+    bool visible() const;
+
+    std::string name() const;
+
+    void tracking(const bool _tracking);
+    bool tracking() const;
+
+    QCursor cursor() const;
+
+    void toolbar(QToolBar* _toolbar);
+    QToolBar* toolbar() const;
+
+  private:
+
+    /// Name of the pickMode
+    std::string  name_;
+
+    /** MouseTracking enabled for this mode?
+    */
+    bool         tracking_;
+
+    /** Defines if the Mode will be visible in the popup Menu
+    */
+    bool         visible_;
+
+    /** Cursor used in  this pickMode
+    */
+    QCursor      cursor_;
+
+    /** Additional toolbar showed in this pickMode
+    */
+    QToolBar *   toolbar_;
 };
 
 /** Core Widget of the Application
@@ -1219,41 +1271,6 @@ public:
   private:
 
     QMenu* pickMenu_;
-
-    /** Struct containing information about pickModes
-     */
-    class PickMode
-    {
-      public:
-        /// Constructor
-        PickMode(const std::string& _n, bool _t, bool _v, QCursor _c, QToolBar *_tb = 0 ) :
-          name(_n),
-          tracking(_t),
-          visible(_v),
-          cursor(_c),
-          toolbar(_tb) {};
-
-        ~PickMode() {};
-
-        /// Name of the pickMode
-        std::string  name;
-
-        /** MouseTracking enabled for this mode?
-        */
-        bool         tracking;
-
-        /** Defines if the Mode will be visible in the popup Menu
-        */
-        bool         visible;
-
-        /** Cursor used in  this pickMode
-        */
-        QCursor      cursor;
-
-        /** Additional toolbar showed in this pickMode
-        */
-        QToolBar *   toolbar;
-    };
 
     /** Vector of all Picking modes
      */

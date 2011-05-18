@@ -71,6 +71,56 @@
 
 //== IMPLEMENTATION ==========================================================
 
+PickMode::PickMode(const std::string& _n, const bool _t, const bool _v, QCursor _c, QToolBar *_tb ) :
+      name_(_n),
+      tracking_(_t),
+      visible_(_v),
+      cursor_(_c),
+      toolbar_(_tb)
+{
+
+}
+
+void PickMode::visible(const bool _visible) {
+  visible_ = _visible;
+}
+
+bool PickMode::visible() const  {
+  return visible_;
+}
+
+std::string PickMode::name() const {
+  return name_;
+}
+
+void PickMode::tracking(bool _tracking) {
+  tracking_ = _tracking;
+}
+
+bool PickMode::tracking() const {
+  return tracking_;
+}
+
+QCursor PickMode::cursor() const{
+  return cursor_;
+}
+
+void PickMode::toolbar(QToolBar* _toolbar) {
+  toolbar_ = _toolbar;
+}
+
+QToolBar * PickMode::toolbar() const {
+  return toolbar_;
+}
+
+
+
+
+
+
+
+
+
 /** \brief Constuctor for the Core Widget
  *
 */
