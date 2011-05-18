@@ -101,6 +101,10 @@ bool PickMode::tracking() const {
   return tracking_;
 }
 
+void PickMode::cursor(const QCursor _cursor) {
+  cursor_ = _cursor;
+}
+
 QCursor PickMode::cursor() const{
   return cursor_;
 }

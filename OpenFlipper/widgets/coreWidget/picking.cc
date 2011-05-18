@@ -300,7 +300,7 @@ void CoreWidget::setPickModeCursor(const std::string& _name, QCursor _cursor)
 {
   for (uint i=0; i < pick_modes_.size(); i++)
     if ( pick_modes_[i].name() == _name ){
-      pick_modes_[i].cursor() = _cursor;
+      pick_modes_[i].cursor( _cursor );
 
       //switch cursor if pickMode is active
       if (pick_mode_name_ == _name && pickingMode() )
