@@ -69,7 +69,7 @@
 //== IMPLEMENTATION ==========================================================
 
 /// \todo After obj writing to one file is implemented in obj plugin, remove this Function and the whole File!
-void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly)
+void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly, std::map<int,QString>& _fileMapping)
 {
   // open file
   std::string fname = _filename.toStdString();
@@ -97,7 +97,13 @@ void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly
   for ( PluginFunctions::ObjectIterator o_it (restriction) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
-    QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+    QString file;
+    std::map<int,QString>::iterator f = _fileMapping.find(o_it->id());
+    if(f == _fileMapping.end()) {
+        file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+    } else {
+        file = f->second;
+    }
 
     if (QFile(file).exists())
     {

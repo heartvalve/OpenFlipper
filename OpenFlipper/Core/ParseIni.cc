@@ -610,7 +610,8 @@ void Core::writeIniFile(QString _filename,
                         bool _targetOnly,
                         bool _saveSystemSettings,
                         bool _savePluginSettings ,
-                        bool _saveObjectInfo ) {
+                        bool _saveObjectInfo,
+                        std::map<int,QString>& _fileMapping) {
 
   INIFile ini;
 
@@ -646,7 +647,14 @@ void Core::writeIniFile(QString _filename,
     QString sectionName;
     for ( PluginFunctions::ObjectIterator o_it(restriction) ;
                                           o_it != PluginFunctions::objectsEnd(); ++o_it) {
-      QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+
+      QString file;
+      std::map<int,QString>::iterator f = _fileMapping.find(o_it->id());
+      if(f == _fileMapping.end()) {
+          file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+      } else {
+          file = f->second;
+      }
     
       // Don't save default light source objects
       LightObject* light = 0;
