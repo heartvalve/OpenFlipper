@@ -83,6 +83,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
     
   }
   
+  // Check if a toolbar with the same name is already registered
   for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
       emit log(LOGERR,tr("slotAddToolbar: Toolbar already added to system: ") + _toolbar->windowTitle() );
@@ -90,17 +91,23 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
     }
   }
 
+  // Correctly set the object ame
   _toolbar->setObjectName( _toolbar->windowTitle() );
+
+  // Store in internal vector
   toolbars_.push_back( _toolbar );
+
+  // Add to main ui
   addToolBar( _toolbar );
   
+  // Remember which plugin this toolbar belongs to
   if ( id != -1 )
     plugins_[id].toolbars.push_back( std::pair< QString,QToolBar* >( _toolbar->windowTitle() , _toolbar) );
   
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolbars.contains( _toolbar->windowTitle() ) ){
-    viewModes_[0]->visibleToolbars << _toolbar->windowTitle();
-    viewModes_[0]->visibleToolbars.sort();
+        viewModes_[0]->visibleToolbars << _toolbar->windowTitle();
+        viewModes_[0]->visibleToolbars.sort();
   }      
   
 }
