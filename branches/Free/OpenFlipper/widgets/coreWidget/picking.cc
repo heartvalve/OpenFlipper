@@ -329,12 +329,17 @@ void CoreWidget::setPickModeMouseTracking(const std::string& _name, bool _mouseT
 
 void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolbar )
 {
+  // Get the pickmode that belongs to the given name
   for (uint i=0; i < pick_modes_.size(); i++)
     if ( pick_modes_[i].name == _mode ){
+
+      // Set the new toolbar for that mode
       pick_modes_[i].toolbar = _toolbar;
 
+      // Activate the toolbar if this mode is currently active
       if (pick_mode_name_ == _mode && pickingMode() )
         pickToolbar_->attachToolbar (_toolbar);
+
       break;
     }
 }
