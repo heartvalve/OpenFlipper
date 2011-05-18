@@ -154,7 +154,10 @@ class MenuInfo {
   ContextMenuType type;
 };
 
-/** Struct containing information about pickModes
+/** \brief Struct containing information about pickModes
+ *
+ * This is an internal DataStructure! Don't use it. It's used to
+ * manage the pickmode information internally.
 */
 class PickMode
 {
@@ -162,21 +165,65 @@ class PickMode
     /// Constructor
     PickMode(const std::string& _n, const bool _t, const bool _v, QCursor _c, QToolBar *_tb = 0 );
 
+    /// Destructor
     ~PickMode() {};
 
 
+    /** \brief PickMode visible
+     *
+     * @param _visible Should this be a visible or a hidden pick mode?
+     */
     void visible(const bool _visible);
 
+    /** \brief PickMode visible
+     *
+     * Visible or hidden pick mode
+     */
     bool visible() const;
 
+    /** \brief PickMode Name
+    *
+    * Name of the pick mode
+    */
     std::string name() const;
 
+    /** \brief PickMode mouse tracking
+     *
+     * If the pick mode has mouse tracking enabled, it will emit
+     * mouse events with every movement and not only on button events.
+     *
+     * @param _tracking mouse tracking enabled or not
+     */
     void tracking(const bool _tracking);
+
+    /** \brief PickMode mouse tracking
+    *
+    * If the pick mode has mouse tracking enabled, it will emit
+    * mouse events with every movement and not only on button events.
+    */
     bool tracking() const;
 
+    /** \brief PickMode cursor
+    *
+    * The cursor associated with this pick mode. You can define a non standard
+    * cursor that is visible, if this pick mode is active.
+    */
     QCursor cursor() const;
 
+    /** \brief PickMode toolbar
+    *
+    * Each pickmode can have a toolbar that will be visible at the top of the screen.
+    * This toolbar is stored here.
+    *
+    * @param _toolbar The used toolbar
+    */
     void toolbar(QToolBar* _toolbar);
+
+    /** \brief PickMode toolbar
+    *
+    * Each pickmode can have a toolbar that will be visible at the top of the screen.
+    * This toolbar is stored here.
+    */
     QToolBar* toolbar() const;
 
   private:
