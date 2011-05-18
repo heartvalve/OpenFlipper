@@ -210,6 +210,15 @@ class PickMode
     */
     QCursor cursor() const;
 
+    /** \brief PickMode cursor
+    *
+    * The cursor associated with this pick mode. You can define a non standard
+    * cursor that is visible, if this pick mode is active.
+    *
+    * @param _cursor The cursor to be used in this pickmode
+    */
+    void cursor(const QCursor _cursor);
+
     /** \brief PickMode toolbar
     *
     * Each pickmode can have a toolbar that will be visible at the top of the screen.
@@ -1291,7 +1300,7 @@ public:
      */
     void setPickModeMouseTracking(const std::string& _name, bool _mouseTracking);
 
-    /** \brief Set the additinal toolbar of the given PickMode
+    /** \brief Set the additional toolbar of the given PickMode
      *
      * Set the additional toolbar that should be shown in the pickMode
      *
