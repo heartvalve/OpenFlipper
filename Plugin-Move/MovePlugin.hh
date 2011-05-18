@@ -71,8 +71,6 @@
 #include "MoveProps.hh"
 #include "MoveObjectMarker.hh"
 
-enum SelectionType {VERTEX, EDGE, FACE };
-
 /** Plugin for moving objects and selections
 */
 class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface, LoadSaveInterface, RPCInterface
@@ -90,6 +88,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   Q_INTERFACES(ToolbarInterface)
   Q_INTERFACES(LoadSaveInterface)
   Q_INTERFACES(RPCInterface)
+
+public:
+  enum SelectionType {VERTEX, EDGE, FACE};
 
   signals:
     // BaseInterface
@@ -389,19 +390,13 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   * @{ */
 //===========================================================================
 
-    /// have we already tried to connect to Selection Plugin?
-    bool selectionConnected_;
-
     /// Current SelectionType of SelectionPlugin
     SelectionType selectionType_;
 
-    /// Connect to SelectionPlugin
-    void connectSelectionActions();
+    /// Get current primitive selection
+    void updateSelectionType();
 
   private slots:
-
-    /// The SelectionMode changed in SelectionPlugin
-    void slotSelectionModeChanged(QAction* _action);
 
     /// Sets whether all targets should be affected or not
     void setAllTargets(bool _state);

@@ -85,7 +85,6 @@ MovePlugin::MovePlugin() :
     manip_size_modifier_ = 1.0;
 
     selectionType_ = VERTEX;
-    selectionConnected_ = false;
 
     axisA_ = 0;
     axisB_ = 1;
@@ -486,13 +485,19 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
  */
 void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type) {
 
+    // Get currently active primitive type
+    updateSelectionType();
+
   if ( !mat.is_identity() ){
-    if (selectionType_ == VERTEX)
+    if (selectionType_ == VERTEX) {
       transformVertexSelection( _id , mat );
-    else if (selectionType_ == FACE)
+    }
+    else if (selectionType_ == FACE) {
       transformFaceSelection( _id , mat );
-    else if (selectionType_ == EDGE)
+    }
+    else if (selectionType_ == EDGE) {
       transformEdgeSelection( _id , mat );
+    }
 
     emit updatedObject(_id, UPDATE_GEOMETRY);
   }
@@ -1591,8 +1596,6 @@ void MovePlugin::slotSetMoveMode(QAction* _action) {
 
   if (_action == moveSelectionAction_){
 
-    connectSelectionActions();
-
     PluginFunctions::actionMode(Viewer::PickingMode);
     PluginFunctions::pickMode("MoveSelection");
 
@@ -1850,63 +1853,31 @@ void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb
 /** \brief Connect to SelectionPlugin
  *
  */
-void MovePlugin::connectSelectionActions(){
+void MovePlugin::updateSelectionType(){
 
-  if (!selectionConnected_){
-
-    selectionConnected_ = true;
-
-    bool connected = false;
-
-    QToolBar* selToolBar = 0;
-    emit getToolBar( "Selection", selToolBar );
-
-    if (selToolBar != 0){
-
-      QActionGroup* actionGroup = 0;
-
-      for (int i=0; i < selToolBar->actions().count(); i++){
-        if( selToolBar->actions().at(i)->text() == tr("Enable Vertex Selection") ){
-
-          actionGroup = selToolBar->actions().at(i)->actionGroup();
-
-          if ( selToolBar->actions().at(i)->isChecked() )
-            selectionType_ = VERTEX;
-
-        } else if ( (selToolBar->actions().at(i)->text() == tr("Enable Edge Selection") )
-                && (selToolBar->actions().at(i)->isChecked()) )
-            selectionType_ = EDGE;
-        else if ( (selToolBar->actions().at(i)->text() == tr("Enable Face Selection") )
-                && (selToolBar->actions().at(i)->isChecked()) )
-            selectionType_ = FACE;
-      }
-
-      if (actionGroup != 0){
-        connect( actionGroup, SIGNAL( triggered(QAction*) ), this, SLOT(slotSelectionModeChanged(QAction*)) );
-        connected = true;
-      }
-    }
-
-    if (!connected)
-      emit log(LOGWARN, tr("Unable to connect to Selection-Plugin. MoveSelection will work on vertices only."));
-  }
-}
-
-
-//------------------------------------------------------------------------------
-
-/** \brief The SelectionMode in SelectionPlugin Changed
- *
- * @param _action the action on the Selection-Toolbar that was hit
- */
-void MovePlugin::slotSelectionModeChanged(QAction* _action){
-
-  if (_action->text() == tr("Enable Vertex Selection"))
     selectionType_ = VERTEX;
-  if (_action->text() == tr("Enable Edge Selection"))
-    selectionType_ = EDGE;
-  if (_action->text() == tr("Enable Face Selection"))
-    selectionType_ = FACE;
+
+    bool functionExistsMeshV;
+    emit functionExists("meshobjectselection", "vertexTypeActive()", functionExistsMeshV);
+    bool functionExistsMeshE;
+    emit functionExists("meshobjectselection", "edgeTypeActive()", functionExistsMeshE);
+    bool functionExistsMeshF;
+    emit functionExists("meshobjectselection", "faceTypeActive()", functionExistsMeshF);
+
+    if(functionExistsMeshV && functionExistsMeshE && functionExistsMeshF) {
+
+        // Make RPC call
+        if(RPC::callFunctionValue<bool>("meshobjectselection", "vertexTypeActive")) {
+            selectionType_ = VERTEX;
+        } else if(RPC::callFunctionValue<bool>("meshobjectselection", "edgeTypeActive")) {
+            selectionType_ = EDGE;
+        } else if(RPC::callFunctionValue<bool>("meshobjectselection", "faceTypeActive")) {
+            selectionType_ = FACE;
+        }
+
+    } else {
+        emit log(LOGWARN, tr("Unable to connect to Selection-Plugin. MoveSelection will work on vertices only."));
+    }
 }
 
 //------------------------------------------------------------------------------
