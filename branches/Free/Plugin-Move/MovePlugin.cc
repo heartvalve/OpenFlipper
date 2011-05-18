@@ -489,13 +489,13 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type)
     updateSelectionType();
 
   if ( !mat.is_identity() ){
-    if (selectionType_ == VERTEX) {
+    if (selectionType_ & VERTEX) {
       transformVertexSelection( _id , mat );
     }
-    else if (selectionType_ == FACE) {
+    if (selectionType_ & FACE) {
       transformFaceSelection( _id , mat );
     }
-    else if (selectionType_ == EDGE) {
+    if (selectionType_ & EDGE) {
       transformEdgeSelection( _id , mat );
     }
 
@@ -1853,9 +1853,7 @@ void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb
 /** \brief Connect to SelectionPlugin
  *
  */
-void MovePlugin::updateSelectionType(){
-
-    selectionType_ = VERTEX;
+void MovePlugin::updateSelectionType() {
 
     bool functionExistsMeshV;
     emit functionExists("meshobjectselection", "vertexTypeActive()", functionExistsMeshV);
@@ -1866,17 +1864,22 @@ void MovePlugin::updateSelectionType(){
 
     if(functionExistsMeshV && functionExistsMeshE && functionExistsMeshF) {
 
+        selectionType_ = 0u;
+
         // Make RPC call
         if(RPC::callFunctionValue<bool>("meshobjectselection", "vertexTypeActive")) {
-            selectionType_ = VERTEX;
-        } else if(RPC::callFunctionValue<bool>("meshobjectselection", "edgeTypeActive")) {
-            selectionType_ = EDGE;
-        } else if(RPC::callFunctionValue<bool>("meshobjectselection", "faceTypeActive")) {
-            selectionType_ = FACE;
+            selectionType_ |= VERTEX;
+        }
+        if(RPC::callFunctionValue<bool>("meshobjectselection", "edgeTypeActive")) {
+            selectionType_ |= EDGE;
+        }
+        if(RPC::callFunctionValue<bool>("meshobjectselection", "faceTypeActive")) {
+            selectionType_ |= FACE;
         }
 
     } else {
         emit log(LOGWARN, tr("Unable to connect to Selection-Plugin. MoveSelection will work on vertices only."));
+        selectionType_ = VERTEX;
     }
 }
 

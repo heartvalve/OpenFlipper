@@ -90,7 +90,10 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   Q_INTERFACES(RPCInterface)
 
 public:
-  enum SelectionType {VERTEX, EDGE, FACE};
+  typedef unsigned int SelectionType;
+  static const SelectionType VERTEX = 1;
+  static const SelectionType EDGE   = 2;
+  static const SelectionType FACE   = 4;
 
   signals:
     // BaseInterface
