@@ -2237,12 +2237,14 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       ACG::Vec4f backColorBak;
       ACG::Vec4f newBack;
       
+      bool formerCoordsysState = true;
       // Hide coordsys node if demanded
       if(_hideCoordsys) {
           // Find coordsys node
           ACG::SceneGraph::BaseNode* node = 0;
           node = sceneGraphRoot_->find("Core Coordsys Node");
           if(node != 0) {
+              formerCoordsysState = node->visible();
               node->hide();
           } else {
               emit statusMessage(QString(tr("Could not find coordsys node, thus it will appear in the snapshot anyway.")));
@@ -2266,7 +2268,7 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
           // Find coordsys node
           ACG::SceneGraph::BaseNode* node = 0;
           node = sceneGraphRoot_->find("Core Coordsys Node");
-          if(node != 0) {
+          if(node != 0 && formerCoordsysState) {
               node->show();
           }
       }
