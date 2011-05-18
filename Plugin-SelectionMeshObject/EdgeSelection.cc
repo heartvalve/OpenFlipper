@@ -216,6 +216,29 @@ void MeshObjectSelectionPlugin::selectBoundaryEdges( int objectId ) {
 
 //=========================================================
 
+void MeshObjectSelectionPlugin::deleteEdgeSelection(int _objectId) {
+
+    BaseObjectData* object = 0;
+    if (!PluginFunctions::getObject(_objectId,object)) {
+        emit log(LOGERR,tr("deleteEdgeSelection: unable to get object"));
+        return;
+    }
+
+    if (object->dataType() == DATA_TRIANGLE_MESH)
+        deleteSelection(PluginFunctions::triMesh(object), edgeType_);
+    else if (object->dataType() == DATA_POLY_MESH)
+        deleteSelection(PluginFunctions::polyMesh(object), edgeType_);
+    else {
+        emit log(LOGERR,tr("deleteEdgeSelection: Unsupported object Type"));
+        return;
+    }
+
+    emit updatedObject(object->id(), UPDATE_ALL);
+    emit scriptInfo("deleteEdgeSelection(ObjectId)");
+}
+
+//=========================================================
+
 IdList MeshObjectSelectionPlugin::getEdgeSelection( int objectId ) {
     
     BaseObjectData* object;

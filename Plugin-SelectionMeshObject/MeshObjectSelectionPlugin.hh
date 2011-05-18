@@ -240,7 +240,7 @@ public slots:
     IdList getVertexSelection(int _objectId);
 
     /// Delete vertices and faces that are currently selected
-    void deleteSelection(int _objectId);
+    void deleteVertexSelection(int _objectId);
 
     /// Colorize the vertex selection
     void colorizeVertexSelection(int _objectId, int _r, int _g, int _b);
@@ -307,6 +307,9 @@ public slots:
     /// select boundary edges
     void selectBoundaryEdges(int objectId);
 
+    /// Delete edges that are currently selected
+    void deleteEdgeSelection(int _objectId);
+
     /// Return a list of all selected edges
     IdList getEdgeSelection(int objectId);
 
@@ -359,6 +362,9 @@ public slots:
 
     /// Invert the current face selection
     void invertFaceSelection(int objectId);
+
+    /// Delete face that are currently selected
+    void deleteFaceSelection(int _objectId);
 
     /// Select all boundary faces of the given object
     void selectBoundaryFaces(int objectId);

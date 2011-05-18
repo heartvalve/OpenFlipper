@@ -313,11 +313,11 @@ IdList MeshObjectSelectionPlugin::getVertexSelection(int _objectId) {
 
 //=========================================================
   
-void MeshObjectSelectionPlugin::deleteSelection(int _objectId) {
+void MeshObjectSelectionPlugin::deleteVertexSelection(int _objectId) {
   
     BaseObjectData* object;
     if (!PluginFunctions::getObject(_objectId,object)) {
-        emit log(LOGERR,tr("deleteSelection: unable to get object")); 
+        emit log(LOGERR,tr("deleteVertexSelection: unable to get object"));
         return;
     }
 
@@ -326,12 +326,12 @@ void MeshObjectSelectionPlugin::deleteSelection(int _objectId) {
     else if (object->dataType() == DATA_POLY_MESH)
         deleteSelection(PluginFunctions::polyMesh(object), vertexType_);
     else {
-        emit log(LOGERR,tr("deleteSelection: Unsupported object Type")); 
+        emit log(LOGERR,tr("deleteVertexSelection: Unsupported object Type"));
         return;
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("deleteSelection(ObjectId)");
+    emit scriptInfo("deleteVertexSelection(ObjectId)");
 }
 
 //=========================================================
