@@ -55,6 +55,8 @@
 #include <QGroupBox>
 #include <QBoxLayout>
 
+#include <set>
+
 /// Save Settings (slot is called from CoreWidget's File-Menu)
 void Core::saveSettings(){
 
@@ -168,6 +170,9 @@ void Core::saveSettings(){
   // ========================================================================================
   // Depending on the checkbox iterate over all objects or only the selected ones.
 
+  // Memorize saved files new file names
+  std::map<int,QString> savedFiles;
+
   if ( saveObjectInfo->isChecked() ) {
 
     PluginFunctions::IteratorRestriction restriction;
@@ -175,6 +180,9 @@ void Core::saveSettings(){
       restriction = PluginFunctions::TARGET_OBJECTS;
     else
       restriction = PluginFunctions::ALL_OBJECTS;
+
+    // Store saved file's original names (in order to get number of duplicates)
+    std::multiset<QString> originalFiles;
 
     //Iterate over opened objects and save them
     for ( PluginFunctions::ObjectIterator o_it(restriction);
@@ -220,11 +228,28 @@ void Core::saveSettings(){
           if(light->defaultLight()) continue;
       }
 
+      // Store original file name
+      originalFiles.insert(filename);
+
+      // If a file with the same name already has been saved,
+      // rename it.
+      unsigned int c = originalFiles.count(filename);
+      if(c > 1) {
+          QFileInfo finfo(filename);
+          filename = finfo.absolutePath() + OpenFlipper::Options::dirSeparator();
+          filename += finfo.baseName() + QString("_%1").arg((c-1)) + ".";
+          filename += finfo.completeSuffix();
+      }
+
+
       // decide whether to use saveObject or saveObjectTo
       if ( !QFile(filename).exists() || !askOverwrite->isChecked() )
         saveObject( o_it->id(), filename);
       else
         saveObjectTo(o_it->id(), filename);
+
+      // Store saved file's name
+      savedFiles.insert(std::pair<int,QString>(o_it->id(),filename));
 
     }
   }
@@ -241,12 +266,13 @@ void Core::saveSettings(){
                   targetOnly->isChecked(),
                   saveProgramSettings->isChecked(),
                   savePluginSettings->isChecked(),
-                  saveObjectInfo->isChecked());
+                  saveObjectInfo->isChecked(),
+                  savedFiles);
 
   } else if ( complete_name.endsWith("obj") ) {
 
     //write to obj
-    writeObjFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked() );
+    writeObjFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked(), savedFiles);
 
   }
 

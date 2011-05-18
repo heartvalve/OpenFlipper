@@ -1019,19 +1019,21 @@ private slots:
     * @param _saveSystemSettings Choose if you also want to save system settings into the ini file.
     * @param _savePluginSettings Choose if you want to save per Plugin global settings into the ini file.
     * @param _saveObjectInfo If you want to store information about all open objects this has to be true
+    * @param _fileMappings If multiple files have the same name, all duplicates get renamed. Mapping: Id -> new file name.
     */
    void writeIniFile( QString _filename,
                       bool    _relativePaths,
                       bool    _targetOnly,
                       bool    _saveSystemSettings,
                       bool    _savePluginSettings ,
-                      bool    _saveObjectInfo );
+                      bool    _saveObjectInfo,
+                      std::map<int,QString>& _fileMapping);
 
    /** \brief Write current status to obj file (Application and File Options)
     *
     *  Writes the complete status to an obj file ( All open objects and their Information )
     */
-   void writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly);
+   void writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly, std::map<int,QString>& _fileMapping);
 
    /// Called if app is closed and writes all information to ini file
    void writeOnExit();
