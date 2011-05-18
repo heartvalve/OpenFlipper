@@ -44,6 +44,7 @@
 #ifndef SELECTIONINTERFACE_HH
 #define SELECTIONINTERFACE_HH
 
+#include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <QtGui>
 
