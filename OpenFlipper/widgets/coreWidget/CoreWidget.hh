@@ -1201,7 +1201,7 @@ public:
      */
     void setPickModeToolbar( const std::string _mode , QToolBar * _toolbar );
 
-    /** \brief Removes the additinal toolbar of the given PickMode
+    /** \brief Removes the additional toolbar of the given PickMode
      *
      * Set the additional toolbar that should be shown in the pickMode
      *
@@ -1222,30 +1222,37 @@ public:
 
     /** Struct containing information about pickModes
      */
-    struct PickMode
+    class PickMode
     {
-      /// Constructor
-      PickMode(const std::string& _n, bool _t, bool _v, QCursor _c, QToolBar *_tb = NULL) :
-               name(_n), tracking(_t), visible(_v), cursor(_c), toolbar(_tb) {}
+      public:
+        /// Constructor
+        PickMode(const std::string& _n, bool _t, bool _v, QCursor _c, QToolBar *_tb = 0 ) :
+          name(_n),
+          tracking(_t),
+          visible(_v),
+          cursor(_c),
+          toolbar(_tb) {};
 
-      /// Name of the pickMode
-      std::string  name;
+        ~PickMode() {};
 
-      /** MouseTracking enabled for this mode?
-       */
-      bool         tracking;
+        /// Name of the pickMode
+        std::string  name;
 
-      /** Defines if the Mode will be visible in the popup Menu
-       */
-      bool         visible;
+        /** MouseTracking enabled for this mode?
+        */
+        bool         tracking;
 
-      /** Cursor used in  this pickMode
-       */
-      QCursor      cursor;
+        /** Defines if the Mode will be visible in the popup Menu
+        */
+        bool         visible;
 
-      /** Additinal toolbar showd in this pickMode
-       */
-      QToolBar *   toolbar;
+        /** Cursor used in  this pickMode
+        */
+        QCursor      cursor;
+
+        /** Additional toolbar showed in this pickMode
+        */
+        QToolBar *   toolbar;
     };
 
     /** Vector of all Picking modes
