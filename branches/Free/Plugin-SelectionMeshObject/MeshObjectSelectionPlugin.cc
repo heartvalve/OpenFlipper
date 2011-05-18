@@ -73,6 +73,7 @@
 #define E_SELECT_ALL    "Select All Edges"
 #define E_CLEAR         "Clear Edge Selection"
 #define E_INVERT        "Invert Edge Selection"
+#define E_DELETE        "Delete Edge Selection"
 #define E_BOUNDARY      "Select Boundary Edges"
 #define E_COLORIZE      "Colorize Edge Selection"
 // Halfedges
@@ -85,6 +86,7 @@
 #define F_SELECT_ALL    "Select All Faces"
 #define F_CLEAR         "Clear Face Selection"
 #define F_INVERT        "Invert Face Selection"
+#define F_DELETE        "Delete Face Selection"
 #define F_BOUNDARY      "Select Boundary Faces"
 #define F_SHRINK        "Shrink Face Selection"
 #define F_GROW          "Grow Face Selection"
@@ -185,6 +187,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     edgeOperations.append(E_SELECT_ALL);
     edgeOperations.append(E_CLEAR);
     edgeOperations.append(E_INVERT);
+    edgeOperations.append(E_DELETE);
     edgeOperations.append(E_BOUNDARY);
     edgeOperations.append(E_COLORIZE);
     
@@ -201,6 +204,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     faceOperations.append(F_SELECT_ALL);
     faceOperations.append(F_CLEAR);
     faceOperations.append(F_INVERT);
+    faceOperations.append(F_DELETE);
     faceOperations.append(F_BOUNDARY);
     faceOperations.append(F_SHRINK);
     faceOperations.append(F_GROW);
@@ -244,7 +248,7 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
                             QStringList("objectId"), QStringList("Id of an object"));
     emit setSlotDescription("growVertexSelection(int)", tr("Grow vertex selection by an-ring of selection"),
                             QStringList("objectId"), QStringList("Id of an object"));
-    emit setSlotDescription("deleteSelection(int)", tr("Delete selected vertices"),
+    emit setSlotDescription("deleteVertexSelection(int)", tr("Delete selected vertices"),
                             QStringList("objectId"), QStringList("Id of an object"));
     emit setSlotDescription("colorizeVertexSelection(int,int,int,int)", tr("Colorize the selected vertices"),
                             QString("objectId,r,g,b").split(","), QString("Id of an object,Red,Green,Blue").split(","));
@@ -401,7 +405,7 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
         for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL)); 
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
             if (o_it->visible()){
-              deleteSelection(o_it->id());
+              deleteVertexSelection(o_it->id());
               emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
               emit createBackup(o_it->id(), "Delete Vertices", UPDATE_GEOMETRY);
             }
@@ -454,6 +458,13 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
             if (o_it->visible())
                 invertEdgeSelection(o_it->id());
+        }
+    } else if(_operation == E_DELETE) {
+        // Delete edge selection
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteEdgeSelection(o_it->id());
         }
     } else if(_operation == E_BOUNDARY) {
         // Select boundary edges
@@ -526,6 +537,13 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
             if (o_it->visible())
                 invertFaceSelection(o_it->id());
+        }
+    } else if(_operation == F_DELETE) {
+        // Delete face selection
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteFaceSelection(o_it->id());
         }
     } else if(_operation == F_BOUNDARY) {
         // Select boundary faces
@@ -1435,7 +1453,12 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
             if (o_it->visible()) {
                 // Delete all selected primitives
-                deleteSelection(o_it->id());
+                if(type & vertexType_)
+                    deleteVertexSelection(o_it->id());
+                if(type & edgeType_)
+                    deleteEdgeSelection(o_it->id());
+                if(type & faceType_)
+                    deleteFaceSelection(o_it->id());
             }
             emit updatedObject(o_it->id(), UPDATE_TOPOLOGY);
             emit  createBackup(o_it->id(), "Delete Selection", UPDATE_TOPOLOGY);

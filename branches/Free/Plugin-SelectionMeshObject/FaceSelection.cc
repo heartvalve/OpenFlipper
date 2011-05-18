@@ -194,6 +194,29 @@ void MeshObjectSelectionPlugin::invertFaceSelection(int objectId) {
 
 //=========================================================
 
+void MeshObjectSelectionPlugin::deleteFaceSelection(int _objectId) {
+
+    BaseObjectData* object = 0;
+    if (!PluginFunctions::getObject(_objectId,object)) {
+        emit log(LOGERR,tr("deleteFaceSelection: unable to get object"));
+        return;
+    }
+
+    if (object->dataType() == DATA_TRIANGLE_MESH)
+        deleteSelection(PluginFunctions::triMesh(object), faceType_);
+    else if (object->dataType() == DATA_POLY_MESH)
+        deleteSelection(PluginFunctions::polyMesh(object), faceType_);
+    else {
+        emit log(LOGERR,tr("deleteFaceSelection: Unsupported object Type"));
+        return;
+    }
+
+    emit updatedObject(object->id(), UPDATE_ALL);
+    emit scriptInfo("deleteFaceSelection(ObjectId)");
+}
+
+//=========================================================
+
 void MeshObjectSelectionPlugin::selectBoundaryFaces(int objectId) {
     
     BaseObjectData* object;
