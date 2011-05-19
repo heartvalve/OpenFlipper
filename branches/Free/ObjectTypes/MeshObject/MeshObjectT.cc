@@ -203,8 +203,8 @@
       return;
 
 
- 	 if ( manipulatorNode() == NULL)
-		std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
+    if ( manipulatorNode() == NULL)
+          std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
 
     // Node showing selection
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
@@ -359,15 +359,15 @@
     else 
     {
       if ( _type.contains(UPDATE_GEOMETRY) ) {
-	updateGeometry();
+        updateGeometry();
       } 
       if ( _type.contains(UPDATE_SELECTION) ) {
-	updateSelection();
-	updateFeatures();
-	updateModelingRegions();
+        updateSelection();
+        updateFeatures();
+        updateModelingRegions();
       }
       if ( _type.contains(UPDATE_COLOR) ) {
-	updateColor();
+        updateColor();
       }
     }
   }
@@ -382,8 +382,16 @@
   /** Updates the geometry information in the mesh scenegraph node */
   template < class MeshT  >
   void MeshObject< MeshT >::updateGeometry() {
-    if ( meshNode_ )
+    if ( meshNode_ ) {
       meshNode_->update_geometry();
+
+      // Also update the selection nodes here.
+      // These nodes store their positions based on the mesh.
+      // So they would be at the wrong position afterwards
+      updateSelection();
+      updateFeatures();
+      updateModelingRegions();
+    }
     invalidateTriangleBsp();
   }
 
