@@ -125,17 +125,10 @@ private slots:
     /// Button slot
     void slotRemoveSelectedVal3Vertices();
 
-    /// Button Slot
-    void slotDetectEdgesLonger();
 
-    /// Button Slot
-    void slotDetectEdgesShorter();
 
     /// Button slot
     void slotRemoveSelectedEdges();
-
-    /// Button slot
-    void slotFlipOrientation();
 
     /// Button slot
     void slotDetectSkinnyTriangleByAngle();
@@ -149,26 +142,70 @@ private slots:
     /// Button slot
     void slotDetectTriangleAspect();
 
+
+
+
+
+
+
+
+    /// Button slot
+    void slotFlipOrientation();
+
+    /// Button slot
+    void slotUpdateVertexNormals();
+
+    /// Button slot
+    void slotUpdateFaceNormals();
+
+    /// Button slot
+    void slotUpdateNormals();
+
+    /// Button Slot
+     void slotDetectEdgesLonger();
+
+     /// Button Slot
+     void slotDetectEdgesShorter();
+
+
+
     //Scripting functions:
 public slots:
 
-    /// Selects all edges of an oobject which are shorter than the given length
-    void selectEdgesShorterThan(int _objectId,double _length);
-
-    /// Selects all edges of an oobject which are larger than the given length
-    void selectEdgesLongerThan(int _objectId,double _length);
-
     /// Removes all selected edges
     void removeSelectedEdges(int _objectId);
-
-    /// Flips the normals of all faces by changing the vertex order
-    void flipOrientation(int _objectId);
 
     /// Detect/Remove edges where neighbouring faces form angle > _angle degrees
     void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
     
     /// Detect valence 3 triangles that lie in the plane of their adjacent triangles
     void detectFlatTriangles(int _objectId, double _angle);
+
+
+
+
+
+
+
+
+
+    /// Recomputes the face normals of an object
+    void updateFaceNormals(int _objectId);
+
+    /// Recomputes the vertex normals of an object
+    void updateVertexNormals(int _objectId);
+
+    /// Recomputes the face and vertex normals of an object
+    void updateNormals(int _objectId);
+
+    /// Flips the normals of all faces by changing the vertex order
+    void flipOrientation(int _objectId);
+
+    /// Selects all edges of an object which are shorter than the given length
+    void selectEdgesShorterThan(int _objectId,double _length);
+
+    /// Selects all edges of an object which are larger than the given length
+    void selectEdgesLongerThan(int _objectId,double _length);
 
 private:
     /** \brief select edges based on length
@@ -180,13 +217,9 @@ private:
     */
     void selectionEdgeLength(int _objectId, double _length, bool _larger);
 
-private:
-
-    typedef ACG::Vec3uc Color;
-
 public slots:
     QString version() {
-        return QString("1.0");
+        return QString("1.2");
     };
 };
 
