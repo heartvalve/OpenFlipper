@@ -119,13 +119,10 @@ private :
 
 private slots:
 
-    /// Button slot
-    void slotDetectFlatTriangles();
+
     
     /// Button slot
     void slotRemoveSelectedVal3Vertices();
-
-
 
     /// Button slot
     void slotRemoveSelectedEdges();
@@ -141,6 +138,7 @@ private slots:
 
     /// Button slot
     void slotDetectTriangleAspect();
+
 
 
 
@@ -167,7 +165,8 @@ private slots:
      /// Button Slot
      void slotDetectEdgesShorter();
 
-
+     /// Button slot
+     void slotDetectFlatValence3Vertices();
 
     //Scripting functions:
 public slots:
@@ -175,11 +174,10 @@ public slots:
     /// Removes all selected edges
     void removeSelectedEdges(int _objectId);
 
-    /// Detect/Remove edges where neighbouring faces form angle > _angle degrees
+    /// Detect/Remove edges where neighboring faces form angle > _angle degrees
     void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
     
-    /// Detect valence 3 triangles that lie in the plane of their adjacent triangles
-    void detectFlatTriangles(int _objectId, double _angle);
+
 
 
 
@@ -206,6 +204,9 @@ public slots:
 
     /// Selects all edges of an object which are larger than the given length
     void selectEdgesLongerThan(int _objectId,double _length);
+
+    /// Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
+    void detectFlatValence3Vertices(int _objectId, double _angle);
 
 private:
     /** \brief select edges based on length

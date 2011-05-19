@@ -65,7 +65,7 @@ initializePlugin()
 
 
   // Vertex Selection/Removal
-  connect(tool_->valenceThreeButton, SIGNAL(clicked()), this, SLOT(slotDetectFlatTriangles()) );
+  connect(tool_->valenceThreeButton, SIGNAL(clicked()), this, SLOT(slotDetectFlatValence3Vertices()) );
   connect(tool_->repairRemoveVButton, SIGNAL(clicked()), this, SLOT(slotRemoveSelectedVal3Vertices()) );
 
   // Edge Selection/Repairing
@@ -96,70 +96,7 @@ initializePlugin()
 
 
 
-//-----------------------------------------------------------------------------
 
-void MeshRepairPlugin::slotDetectFlatTriangles() {
-  double angle = tool_->valenceThreeSpinbox->value();
-
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
-    detectFlatTriangles(o_it->id(), angle);
-}
-
-//-----------------------------------------------------------------------------
-
-void MeshRepairPlugin::detectFlatTriangles(int _objectId, double _angle) {
-
-  unsigned int count(0);
-
-  // get the target mesh
-  TriMesh* mesh = 0;
-  PluginFunctions::getMesh(_objectId,mesh);
-
-  if ( mesh ) {
-
-    // Clear current triangle selection
-    MeshSelection::clearVertexSelection(mesh);
-
-    TriMesh::VertexIter                 v_it, v_end(mesh->vertices_end());
-    TriMesh::VVIter                     vv_it;
-    TriMesh::VFIter                     vf_it;
-    TriMesh::FaceHandle                 fh;
-    std::vector<TriMesh::VertexHandle>  vh(3);
-    TriMesh::Scalar                     cosangle(cos(_angle/180.0*M_PI));
-
-    for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
-    {
-      if (!mesh->status(v_it).deleted() && !mesh->is_boundary(v_it) && mesh->valence(v_it) == 3)
-      {
-        vf_it = mesh->vf_iter(v_it);
-        const TriMesh::Normal& n0 = mesh->normal(vf_it);
-        const TriMesh::Normal& n1 = mesh->normal(++vf_it);
-        const TriMesh::Normal& n2 = mesh->normal(++vf_it);
-
-        if ( (n0|n1) > cosangle &&
-            (n0|n2) > cosangle &&
-            (n1|n2) > cosangle )
-        {
-
-          mesh->status(v_it).set_selected(true);
-          ++count;
-        }
-      }
-    }
-  }
-  else {
-    emit log(LOGERR, "Cannot detect flat triangles on non-trimesh " + QString::number(_objectId) + ".");
-  }
-
-  if (count > 0) {
-    emit updatedObject(_objectId, UPDATE_SELECTION);
-    emit createBackup(_objectId, "Select vertices", UPDATE_SELECTION);
-  }
-  emit log ("Selected " + QString::number(count) + " vertices on object " + QString::number(_objectId) + " with face angle difference smaller than " + QString::number(_angle) + ".");
-  emit scriptInfo( "detectFlatTriangles(" + QString::number(_objectId) + ", " + QString::number(_angle) + ")" );
-
-  emit updateView();
-}
 
 //-----------------------------------------------------------------------------
 
@@ -587,6 +524,17 @@ void MeshRepairPlugin::slotDetectEdgesLonger(){
   emit updateView();
 }
 
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::slotDetectFlatValence3Vertices() {
+  double angle = tool_->valenceThreeSpinbox->value();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+    detectFlatValence3Vertices(o_it->id(), angle);
+
+  emit updateView();
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -619,6 +567,10 @@ void MeshRepairPlugin::pluginsInitialized() {
   emit setSlotDescription("selectEdgesLongerThan(int,double)",tr("Selects all edges of an object which are longer than the given length"),
                               QString(tr("objectId,length")).split(","),
                               QString(tr("ID of an object; All edges longer than this length will be selected")).split(";"));
+
+  emit setSlotDescription("detectFlatValence3Vertices(int,double)",tr("Selects all vertices that have valence 3 and the normals of their neighboring faces have an angle less then the given angle"),
+                              QString(tr("objectId,angle")).split(","),
+                              QString(tr("ID of an object; the maximal angle between the adjacent faces")).split(";"));
 
 }
 
@@ -904,6 +856,62 @@ void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _
 }
 
 
+
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::detectFlatValence3Vertices(int _objectId, double _angle) {
+
+  unsigned int count(0);
+
+  // get the target mesh
+  TriMesh* mesh = 0;
+  PluginFunctions::getMesh(_objectId,mesh);
+
+  if ( mesh ) {
+
+    // Clear current triangle selection
+    MeshSelection::clearVertexSelection(mesh);
+
+    TriMesh::VertexIter                 v_it, v_end(mesh->vertices_end());
+    TriMesh::VVIter                     vv_it;
+    TriMesh::VFIter                     vf_it;
+    TriMesh::FaceHandle                 fh;
+    std::vector<TriMesh::VertexHandle>  vh(3);
+    TriMesh::Scalar                     cosangle(cos(_angle/180.0*M_PI));
+
+    for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
+    {
+      if (!mesh->status(v_it).deleted() && !mesh->is_boundary(v_it) && mesh->valence(v_it) == 3)
+      {
+        vf_it = mesh->vf_iter(v_it);
+        const TriMesh::Normal& n0 = mesh->normal(vf_it);
+        const TriMesh::Normal& n1 = mesh->normal(++vf_it);
+        const TriMesh::Normal& n2 = mesh->normal(++vf_it);
+
+        if ( (n0|n1) > cosangle &&
+             (n0|n2) > cosangle &&
+             (n1|n2) > cosangle )
+        {
+
+          mesh->status(v_it).set_selected(true);
+          ++count;
+        }
+      }
+    }
+  }
+  else {
+    emit log(LOGERR, "Cannot detect flat triangles on non-trimesh " + QString::number(_objectId) + ".");
+  }
+
+  if (count > 0) {
+    emit updatedObject(_objectId, UPDATE_SELECTION);
+    emit createBackup(_objectId, "Select vertices", UPDATE_SELECTION);
+  }
+
+  emit log (LOGINFO,"Selected " + QString::number(count) + " vertices on object " + QString::number(_objectId) + " with face angle difference smaller than " + QString::number(_angle) + ".");
+  emit scriptInfo( "detectFlatValence3Vertices(" + QString::number(_objectId) + ", " + QString::number(_angle) + ")" );
+
+}
 
 
 
