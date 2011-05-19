@@ -322,8 +322,6 @@ public:
     Vec3d bbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
     _node->boundingBox(bbMin, bbMax);
 
-    std::cerr << "Bounding box of node " << _node->name() << " " << bbMin << " " << bbMax << std::endl;
-
     if ((bbMin[0] > bbMax[0]) ||
         (bbMin[1] > bbMax[1]) ||
         (bbMin[2] > bbMax[2]))
