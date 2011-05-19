@@ -2021,8 +2021,8 @@ void TranslationManipulatorNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 
   float r = 2 * manipulator_height_;
 
-  _bbMin.minimize(Vec3d(-r,-r,-r));
-  _bbMax.maximize(Vec3d(r,r,r));
+  _bbMin.minimize(center()+Vec3d(-r,-r,-r));
+  _bbMax.maximize(center()+Vec3d(r,r,r));
 }
 
 //----------------------------------------------------------------------------
