@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>564</height>
+    <width>456</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -589,6 +589,67 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Normals</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QPushButton" name="computeNormals">
+        <property name="toolTip">
+         <string>Recomputes Vertex and Face Normals on all Target Meshes</string>
+        </property>
+        <property name="statusTip">
+         <string>Recomputes Vertex and Face Normals on all Target Meshes</string>
+        </property>
+        <property name="whatsThis">
+         <string>Recomputes Vertex and Face Normals on all Target Meshes</string>
+        </property>
+        <property name="text">
+         <string>Compute Normals</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QPushButton" name="computeVertexNormals">
+          <property name="toolTip">
+           <string>Recomputes Vertex Normals on all Target Meshes</string>
+          </property>
+          <property name="statusTip">
+           <string>Recomputes Vertex Normals on all Target Meshes</string>
+          </property>
+          <property name="whatsThis">
+           <string>Recomputes Vertex Normals on all Target Meshes</string>
+          </property>
+          <property name="text">
+           <string>Vertex</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="computeFaceNormals">
+          <property name="toolTip">
+           <string>Recomputes Face Normals on all Target Meshes</string>
+          </property>
+          <property name="statusTip">
+           <string>Recomputes Face Normals on all Target Meshes</string>
+          </property>
+          <property name="whatsThis">
+           <string>Recomputes Face Normals on all Target Meshes</string>
+          </property>
+          <property name="text">
+           <string>Face</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
