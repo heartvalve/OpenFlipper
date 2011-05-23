@@ -60,7 +60,7 @@
 
 #include "BaseNode.hh"
 #include <vector>
-#include <ACG/GL/DrawMesh.hh>
+#include <ACG/Scenegraph/StripProcessorT.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -159,7 +159,13 @@ public:
 //   void update_strips();
 
 private:
-  DrawMeshT<Mesh>* drawMesh_;
+  StripProcessorT<Mesh> stripProcessor_;
+
+  std::vector<unsigned int> tris_; // tri list
+  std::vector<unsigned int> vertRemap_; // vertex remapping
+
+  GLuint indexBuffer_;
+  bool indexBufferInitialized_;
 
 /** @} */  
 
@@ -187,6 +193,24 @@ private:
 /** @} */
   
 //===========================================================================
+/** @name Vertex Buffer
+* @{ */
+//===========================================================================
+  
+private:
+  
+  /// Vertex buffer
+  GLuint vertexBuffer_;
+  
+  /// Vertex buffer initialization flag
+  bool   vertexBufferInitialized_;  
+  
+  /// Internal buffer used when rendering non float vertex coordinates
+  std::vector< ACG::Vec3f > vertices_;
+  
+/** @} */
+
+//===========================================================================
 /** @name Normal Buffer
 * @{ */
 //===========================================================================
@@ -202,6 +226,15 @@ private:
   
   /// Flag if normals should be used
   bool enableNormals_;
+  
+  /// Normal buffer
+  GLuint normalVertexBuffer_;
+  
+  /// normal buffer initialization flag
+  bool normalVertexBufferInitialized_;
+  
+  /// Internal buffer used when rendering non float normals
+  std::vector< ACG::Vec3f > normals_;
 
 /** @} */
   
@@ -219,8 +252,48 @@ public:
 private:
   
   bool enableColors_;
-
+  
+  /// color buffer
+  GLuint colorVertexbuffer_;
+  
+  /// normal buffer initialization flag
+  bool colorVertexBufferInitialized_;
+  
+  /// Internal buffer used when rendering non Vec4f colors
+  std::vector< ACG::Vec4f > colors_;
+  
   /** @} */
+  
+//===========================================================================
+/** @name Texcoord buffer
+* @{ */
+//===========================================================================  
+public:
+  /// Returns if the per vertex Texture coordinates array is currently activated
+  bool texCoordEnabled() { return enableTexCoords_; };
+  
+  /// Enable or disable the use of the  per vertex Texture coordinates array
+  void enableTexCoords(bool _enable) { enableTexCoords_ = _enable; };
+  
+private:
+  
+  bool enableTexCoords_;
+  
+  /** @} */  
+    
+//===========================================================================
+/** @name Line buffer
+* @{ */
+//===========================================================================    
+private:
+  /// Vector storing vertices for rendering all edges in the mesh
+  std::vector< unsigned int > lineIndices_;
+  
+  /// Index buffer for lines
+  GLuint lineIndexBuffer_;
+  
+  /// lineIndexBuffer initialization flag
+  bool lineIndexBufferInitialized_;
   
 //===========================================================================
 /** @name Array control functions
@@ -242,8 +315,18 @@ private:
   enum ArrayType
   {
     NONE                             = 0,
+    VERTEX_ARRAY                     = 1,
+    NORMAL_VERTEX_ARRAY              = 2,
+    COLOR_VERTEX_ARRAY               = 4,
+    TEXCOORD_VERTEX_ARRAY            = 8,
+    LINE_INDEX_ARRAY                 = 16,
     PER_EDGE_VERTEX_ARRAY            = 32,
     PER_EDGE_COLOR_ARRAY             = 64,
+    PER_FACE_VERTEX_ARRAY            = 128,
+    PER_FACE_NORMAL_ARRAY            = 256,
+    PER_FACE_PER_VERTEX_NORMAL_ARRAY = 512,
+    PER_FACE_COLOR_ARRAY             = 1024,
+    PER_FACE_TEXCOORD_ARRAY          = 2048,
     PER_HALFEDGE_VERTEX_ARRAY        = 4096,
     PER_HALFEDGE_COLOR_ARRAY         = 8192
   };
@@ -271,6 +354,8 @@ public:
   ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
   
 private:
+  // types
+  enum FaceMode {  PER_VERTEX, PER_FACE };
   
   /** \brief draws all vertices of the mesh
   *
@@ -291,7 +376,7 @@ private:
   /** \brief draws all faces of the mesh 
   *
   */
-  void draw_faces();
+  void draw_faces(FaceMode _mode);
   
   
 private:
