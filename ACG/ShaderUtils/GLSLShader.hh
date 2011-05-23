@@ -46,7 +46,7 @@
  * Utility classes for GLSL shaders.
  *
  * (C)2007
- * Lehrstuhl I8 RWTH-Aachen, http://www-i8.informatik.rwth-aachen.de
+ * Lehrstuhl I8 RWTH-Aachen, http://www.graphics.rwth-aachen.de
  * Author: Markus Tavenrath <speedygoo@speedygoo.de>
  *
  ******************************************************************************/
@@ -71,109 +71,110 @@ namespace GLSL {
 
 #define GLSL_MAX_LOGSIZE 16384
 
-    typedef std::list<std::string> StringList;
+  typedef std::list<std::string> StringList;
 
-    /** \brief A generic shader base class
-     */
-    class ACGDLLEXPORT Shader
-    {
+  /** \brief A generic shader base class
+  */
+  class ACGDLLEXPORT Shader {
+
     public:
-        Shader(GLenum shaderType);
-        virtual ~Shader();
-        void setSource(StringList source);
+      Shader(GLenum shaderType);
+      virtual ~Shader();
+      void setSource(StringList source);
 
-        // FIXME implement StringList getSource();
-        bool compile();
+      // FIXME implement StringList getSource();
+      bool compile();
 
     protected:
-        GLuint m_shaderId;
+      GLuint m_shaderId;
 
-        friend class Program;
-    };
+      friend class Program;
+  };
 
-    typedef Shader* PtrShader;
-    typedef const Shader* PtrConstShader;
+  typedef Shader* PtrShader;
+  typedef const Shader* PtrConstShader;
 
-    //--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-    /** \brief GLSL vertex shader.
-     */
-    class ACGDLLEXPORT VertexShader
-        : public Shader
-    {
+  /** \brief GLSL vertex shader.
+  */
+  class ACGDLLEXPORT VertexShader : public Shader {
+
     public:
-        VertexShader();
-        virtual ~VertexShader();
-    };
+      VertexShader();
+      virtual ~VertexShader();
 
-    typedef VertexShader* PtrVertexShader;
-    typedef const VertexShader* PtrVertexConstShader;
+  };
 
-    //--------------------------------------------------------------------------
+  typedef VertexShader* PtrVertexShader;
+  typedef const VertexShader* PtrVertexConstShader;
 
-    /** \brief GLSL fragment shader.
-     */
-    class ACGDLLEXPORT FragmentShader : public Shader {
+  //--------------------------------------------------------------------------
+
+  /** \brief GLSL fragment shader.
+  */
+  class ACGDLLEXPORT FragmentShader : public Shader {
+
     public:
-        FragmentShader();
-        virtual ~FragmentShader();
-    };
+      FragmentShader();
+      virtual ~FragmentShader();
+  };
 
-    typedef FragmentShader* PtrFragmentShader;
-    typedef const FragmentShader* PtrConstFragmentShader;
+  typedef FragmentShader* PtrFragmentShader;
+  typedef const FragmentShader* PtrConstFragmentShader;
 
-    //--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-    /** \brief GLSL program class.
-     *
-     * A GLSL program links together the vertex and fragment shaders.
-     */
-    class ACGDLLEXPORT Program
-    {
+  /** \brief GLSL program class.
+  *
+  * A GLSL program links together the vertex and fragment shaders.
+  */
+  class ACGDLLEXPORT Program {
+
     public:
-        Program();
-        virtual ~Program();
+      Program();
+      virtual ~Program();
 
-        void attach(PtrConstShader shader);
-        void detach(PtrConstShader shader);
-        void link();
+      void attach(PtrConstShader shader);
+      void detach(PtrConstShader shader);
+      void link();
 
-        void setUniform(const char *name, GLint value);
-        void setUniform(const char *name, GLfloat value);
-        void setUniform(const char *name, const ACG::Vec3f &value);
+      void setUniform(const char *name, GLint value);
+      void setUniform(const char *name, GLfloat value);
+      void setUniform(const char *name, const ACG::Vec3f &value);
 
-        void setUniform(const char *name, GLint *value, int count);
+      void setUniform(const char *name, GLint *value, int count);
 
-        // set element of array
-        void setUniform(const char *name, int index, bool value);
-        void setUniform(const char *name, int index, int value);
-        void setUniform(const char *name, int index, float value);
+      // set element of array
+      void setUniform(const char *name, int index, bool value);
+      void setUniform(const char *name, int index, int value);
+      void setUniform(const char *name, int index, float value);
 
-        void bindAttributeLocation(unsigned int index, const char *name);
-        int getAttributeLocation(const char *name);
-        int getUniformLocation(const char *name);
+      void bindAttributeLocation(unsigned int index, const char *name);
+      int getAttributeLocation(const char *name);
+      int getUniformLocation(const char *name);
 
-        void use();
+      void use();
 
-        void disable();
+      void disable();
 
-        bool isActive();
+      bool isActive();
 
     private:
 
-        std::list<PtrConstShader> m_linkedShaders;
-        GLint m_programId;
-    };
+      std::list<PtrConstShader> m_linkedShaders;
+      GLint m_programId;
+  };
 
-    typedef Program* PtrProgram;
-    typedef const Program* PtrConstProgram;
+  typedef Program* PtrProgram;
+  typedef const Program* PtrConstProgram;
 
-    //--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-    GLSL::StringList ACGDLLEXPORT loadShader(const char *filename);
+  GLSL::StringList ACGDLLEXPORT loadShader(const char *filename);
 
-    GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name);
-    GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name);
+  GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name);
+  GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name);
 
 }
 
@@ -182,7 +183,7 @@ namespace GLSL {
 
 // Local Variables:
 // mode: C++
-// c-basic-offset: 4
+// c-basic-offset: 2
 // indent-tabs-mode: nil
 // End:
 
