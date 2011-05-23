@@ -523,6 +523,12 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
       break;
     }
   }
+
+  // Default to mode all (0) if not found
+  if ( id == -1 ) {
+    emit log(LOGERR, tr("Unable to find view mode %1.").arg(OpenFlipper::Options::currentViewMode()) );
+    id = 0;
+  }
   
   /// \todo Sort the menu entries by the order given in visibleContextMenus
   
