@@ -1576,9 +1576,9 @@ bool Core::checkLibraryVersions()  {
   if ( qtCompiledVersion != qtCurrentVersion ) {
     messages += tr("QT Library Version mismatch!\n");
     
-    messages += tr("Currently used QT Version:\t") + qVersion();
-    messages += tr("Link time QT Version:\t\t") + QString( QT_VERSION_STR );
-    messages += tr("This inconsistency may lead to an unstable behaviour of OpenFLipper!");
+    messages += tr("Currently used QT Version:\t") + qVersion() + "\n";
+    messages += tr("Link time QT Version:\t\t") + QString( QT_VERSION_STR ) + "\n";
+    messages += tr("This inconsistency may lead to an unstable behavior of OpenFlipper!");
     
     warn = true;
   }
