@@ -82,13 +82,6 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
     }
     
   }
-  
-  // Security check if all fails (no scripting plugin, no sender)
-  if ( id == -1) {
-    emit log(LOGERR,tr("slotAddToolbar: no sender and scripting plugin not available! Strange!"));
-    emit log(LOGERR,tr("slotAddToolbar: Could not add Toolbar!"));
-    return;
-  }
 
   // Check if a toolbar with the same name is already registered
   for ( unsigned int i = 0 ; i < toolbars_.size(); ++i ) {
@@ -132,7 +125,7 @@ void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {
 
   _toolbar = 0;
 
-  emit log(LOGERR,tr("getToolBar: Toolbar not found.") );
+  emit log(LOGERR,tr("getToolBar: Toolbar \"%1\" not found.").arg(_name) );
 }
 
 void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
