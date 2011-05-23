@@ -52,6 +52,7 @@
 #define ACG_MESHNODE_C
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
+#include <ACG/GL/DrawMesh.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -72,20 +73,9 @@ MeshNodeT(Mesh&        _mesh,
               std::string  _name ): 
   BaseNode(_parent, _name),
   mesh_(_mesh),
-  stripProcessor_(_mesh),
-  indexBuffer_(0),
-  indexBufferInitialized_(false),
-  vertexBuffer_(0),
-  vertexBufferInitialized_(false),
+  drawMesh_(0),
   enableNormals_(true),
-  normalVertexBuffer_(0),
-  normalVertexBufferInitialized_(false),
   enableColors_(true),
-  colorVertexbuffer_(0),
-  colorVertexBufferInitialized_(false),
-  enableTexCoords_(true),
-  lineIndexBuffer_(0),
-  lineIndexBufferInitialized_(false),
   enabled_arrays_(0),
   updateVertexPickingList_(true),
   vertexPickingBaseIndex_(0),
@@ -109,6 +99,7 @@ MeshNodeT(Mesh&        _mesh,
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
   
+  drawMesh_ = new DrawMeshT<Mesh>(mesh_);
   
   vertexPickingList_ = glGenLists(1);
   edgePickingList_   = glGenLists(1);
@@ -122,21 +113,7 @@ MeshNodeT<Mesh>::
 ~MeshNodeT()
 {
   // Delete all allocated buffers
-  if (vertexBuffer_)
-    glDeleteBuffersARB(1, &vertexBuffer_);
-  
-  if (normalVertexBuffer_)
-    glDeleteBuffersARB(1, &normalVertexBuffer_);  
-  
-  if (colorVertexbuffer_)
-    glDeleteBuffersARB(1, &colorVertexbuffer_);    
-  
-  if (lineIndexBuffer_)
-    glDeleteBuffersARB(1, &lineIndexBuffer_);     
 
-  if (indexBuffer_)
-	  glDeleteBuffersARB(1, &indexBuffer_);     
-  
   if (vertexPickingList_)
     glDeleteLists (vertexPickingList_, 1);
   
@@ -149,6 +126,7 @@ MeshNodeT<Mesh>::
   if (anyPickingList_)
     glDeleteLists (anyPickingList_, 3);
   
+  delete drawMesh_;
 }
 
 template<class Mesh>
@@ -226,15 +204,32 @@ void
 MeshNodeT<Mesh>::
 draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
-  // Update strips if necessary
-  stripProcessor_.stripify();
+  if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) ||
+    ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
+    ( _drawMode & DrawModes::SOLID_TEXTURED) ||
+    ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE))
+  {
+    drawMesh_->setFlatShading();
+  }
+  else
+    drawMesh_->setSmoothShading();
+
+
+  if ( (_drawMode & DrawModes::SOLID_FACES_COLORED ||
+    _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED))
+  {
+    drawMesh_->usePerFaceColors();
+  }
+  else
+    drawMesh_->usePerVertexColors();
+
     
   GLenum prev_depth = _state.depthFunc();
   
-  unsigned int arrays = VERTEX_ARRAY;
+  unsigned int arrays = NONE;
   
   glPushAttrib(GL_ENABLE_BIT);
- 
+
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
     glShadeModel(GL_FLAT);
@@ -246,21 +241,20 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
     // Use Colors in this mode if allowed
     if ( enableColors_ && (_drawMode & DrawModes::POINTS_COLORED) )
-      arrays |= COLOR_VERTEX_ARRAY;
-    
-    // Use Normals in this mode if allowed
-    if ( enableNormals_ && (_drawMode & DrawModes::POINTS_SHADED ) ) {
-      arrays |= NORMAL_VERTEX_ARRAY;
-      
+    {
+      drawMesh_->usePerVertexColors();
+
       // If we have colors and lighting with normals, we have to use colormaterial
-      if ( (arrays & COLOR_VERTEX_ARRAY) )
+      if ( enableNormals_ && (_drawMode & DrawModes::POINTS_SHADED ) )
         glEnable(GL_COLOR_MATERIAL);
-      else 
+      else
         glDisable(GL_COLOR_MATERIAL);
     }
+    else
+      drawMesh_->disableColors();
     
     // Bring the arrays online
-    enable_arrays(arrays);
+//    enable_arrays(arrays);
     
     // Draw vertices
     draw_vertices();
@@ -270,15 +264,18 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   /// \todo We can render also wireframe shaded and with vertex colors
   if (_drawMode & DrawModes::WIREFRAME)
   {
-    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
+//    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
+
+    drawMesh_->disableColors();
+
     draw_lines();
   }  
   
   if (_drawMode & DrawModes::HIDDENLINE)
   {
-    enable_arrays(VERTEX_ARRAY);
+//    enable_arrays(VERTEX_ARRAY);
     
     // First:
     // Render all faces in background color to initialize z-buffer
@@ -290,14 +287,17 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glShadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
+
+//    drawMesh_->setFlatShading();
+    drawMesh_->disableColors();
     
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     // Second
     // Render the lines. All lines not on the front will be skipped in z-test
-    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
+//    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
     glDepthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     draw_lines();
@@ -339,12 +339,10 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glDepthRange(0.01, 1.0);
     if ( enableNormals_ ) {
        glEnable(GL_COLOR_MATERIAL);
-       enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY | NORMAL_VERTEX_ARRAY  );
     } else {
       glDisable(GL_COLOR_MATERIAL);
-      enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY  );
     }
-    draw_faces(PER_VERTEX);
+    draw_faces();
     glDepthRange(0.0, 1.0);
   }
   
@@ -353,19 +351,21 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glEnable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
-    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_NORMAL_ARRAY);
-    draw_faces(PER_FACE);
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
   }
   
   
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals() )
   {
-    enable_arrays( VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+
+    drawMesh_->disableColors();
+    draw_faces();
     glDepthRange(0.0, 1.0);
   }
   
@@ -381,12 +381,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     //
     //         // Enable own Phong shader
     //         program->use();
-    
-    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
+//    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     //disable own Phong shader
@@ -403,8 +405,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
-    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY);    
-    draw_faces(PER_FACE);
+//    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY);    
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     _state.set_base_color(base_color_backup);
@@ -418,8 +420,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
-    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY | PER_FACE_NORMAL_ARRAY );
-    draw_faces(PER_FACE);
+//    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY | PER_FACE_NORMAL_ARRAY );
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     _state.set_base_color(base_color_backup);
@@ -429,41 +431,49 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
     ///\todo enableTexCoords_
-    enable_arrays(VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY );
+//    enable_arrays(VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY );
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
   {
-    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY);
+//    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
   }
   
-  
-  
+    
   // Textured by using coordinates stored in halfedges ... arrays generated by stripprocessor
   if ( (_drawMode & DrawModes::SOLID_2DTEXTURED_FACE)  && mesh_.n_faces() > 0 )
   {
     glEnable(GL_TEXTURE_2D);
     
-    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY );
+//    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY );
     
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_FACE);
+
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     glDisable(GL_TEXTURE_2D);
@@ -474,12 +484,15 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   {
     glEnable(GL_TEXTURE_2D);
     
-    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
+//    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
 
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_FACE);
+
+    drawMesh_->disableColors();
+
+    draw_faces();
     glDepthRange(0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
     
@@ -497,11 +510,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 draw_vertices() {
-    
-  if ( !vertexBufferInitialized_ || ( mesh_.n_vertices() == 0 ))
-    return;
-
-  glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+  drawMesh_->drawVertices();
 }
 
 template<class Mesh>
@@ -509,21 +518,13 @@ void
 MeshNodeT<Mesh>::
 draw_lines() {
 
-  if ( enabled_arrays_ & LINE_INDEX_ARRAY )
-    
-    // Check if array is set up correctly
-    if ( lineIndexBufferInitialized_ )
-      glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
-    else 
-      return;
-    
-  // If we are rendering per edge per vertex attributes, we need to use a seperated vertex buffer!
-  else if ( enabled_arrays_ & PER_EDGE_VERTEX_ARRAY )
+  if ((enabled_arrays_ & PER_EDGE_COLOR_ARRAY) && (enabled_arrays_ & PER_EDGE_VERTEX_ARRAY))
+  {
+    // colored edges still slow
     glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
-  
-  // Something went wrong here!
+  }
   else
-    std::cerr << "Unable to Draw! array configuration is invalid!!" << std::endl;
+    drawMesh_->drawLines();
 }
 
 
@@ -542,165 +543,19 @@ draw_halfedges() {
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-draw_faces(FaceMode _mode) {
-  
-  // If we have all properties per Vertex, we can render with index array from triangle strips!
-  if (_mode == PER_VERTEX) {
-   
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexBuffer_);
-
-    glDrawElements(GL_TRIANGLES, tris_.size(), GL_UNSIGNED_INT, 0);
-
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-
-  } else if ( _mode ==  PER_FACE ) {
-    
-    if ( stripProcessor_.perFaceTextureIndexAvailable()  && (textureMap_ != 0) ) {
-
-      int lastTexture = -1;
-      
-      for ( uint i = 0 ; i < stripProcessor_.textureRenderData()->size() ; ++i ) {
-        int texture =  (*stripProcessor_.textureRenderData())[i].textureId;
-        if ( texture != lastTexture) {
-
-          if ( textureMap_->find(texture) == textureMap_->end() ) {
-            std::cerr << "Illegal texture index ... trying to access " << texture << std::endl;
-            lastTexture = -1;
-            continue;
-          }
-          
-          glBindTexture( GL_TEXTURE_2D, (*textureMap_)[texture] );          
-          
-          lastTexture = texture;
-        }
-        
-        // We need per face attributes so we have to use seperate vertices per face
-        glDrawArrays(GL_TRIANGLES, (*stripProcessor_.textureRenderData())[i].startOffset , (*stripProcessor_.textureRenderData())[i].faceCount * 3 );
-        
-      }
-      
-      // Unbind Texture again
-      glBindTexture( GL_TEXTURE_2D, 0 );
-      
-    } else {
-      // We need per face attributes so we have to use seperate vertices per face
-      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
-    }
-  }
-
+draw_faces() {
+  drawMesh_->draw(textureMap_);
 }
 
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
-  
+
   // Unbind everything to ensure sane settings
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-  
-  //===================================================================
-  // Vertex Array
-  //===================================================================
-  
-  // Check if we should enable the vertex array
-  if ( (_arrays & VERTEX_ARRAY ) && vertexBufferInitialized_ ) {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & VERTEX_ARRAY)) {
-      
-      // Enable the vertex buffer
-      enabled_arrays_ |= VERTEX_ARRAY;
-   
-      // Bind the Vertex buffer
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffer_);
-      
-      // As we ensure that buffers are converted to float before using them, use Float here
-      glVertexPointer(3, GL_FLOAT, 0, 0);
-      glEnableClientState(GL_VERTEX_ARRAY);
-    }
-  } else if (enabled_arrays_ & VERTEX_ARRAY) {
-    // Disable the Vertex array
-    enabled_arrays_ &= ~VERTEX_ARRAY;
-    glDisableClientState(GL_VERTEX_ARRAY);
-  }
-  
-  
-  //===================================================================
-  // Normal Array
-  //===================================================================
-  
-  // Check if we should enable the normal array
-  if ( mesh_.has_vertex_normals() && ( _arrays & NORMAL_VERTEX_ARRAY ) && normalVertexBufferInitialized_ ) {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & NORMAL_VERTEX_ARRAY)) {
-      enabled_arrays_ |= NORMAL_VERTEX_ARRAY;
-      
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalVertexBuffer_);
-      
-      // As we ensure that buffers are converted to float before using them, use Float here
-      glNormalPointer(GL_FLOAT, 0 , 0);
-      
-      glEnableClientState(GL_NORMAL_ARRAY);
-    }
-  } else if (enabled_arrays_ & NORMAL_VERTEX_ARRAY) {
-    // Disable Normal array
-    enabled_arrays_ &= ~NORMAL_VERTEX_ARRAY;
-    glDisableClientState(GL_NORMAL_ARRAY);
-  } 
-  
-  //===================================================================
-  // per Vertex Color Array
-  //===================================================================  
-  
-  /// \todo This is different to normal and vertex buffer since it uses openmesh colors directly! Check for different color representations in OpenMesh!
-  // Check if we should enable the color array
-  if ( mesh_.has_vertex_colors() && ( _arrays & COLOR_VERTEX_ARRAY ))  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & COLOR_VERTEX_ARRAY)) {
-      enabled_arrays_ |= COLOR_VERTEX_ARRAY;
-      
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
-      
-      // Explicitly give the pointer as we uploaded the data ourself!
-      glColorPointer(4, GL_FLOAT , 0 , 0);
-      
-      glEnableClientState(GL_COLOR_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & COLOR_VERTEX_ARRAY) {
-    // Disable Color array
-    enabled_arrays_ &= ~COLOR_VERTEX_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
-  } 
-  
-  //===================================================================
-  // per Vertex Texture coordinate Array
-  //===================================================================  
-  
-  // Check if we should enable the color array
-  if ( mesh_.has_vertex_texcoords2D() && ( _arrays & TEXCOORD_VERTEX_ARRAY ))  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & TEXCOORD_VERTEX_ARRAY)) {
-      enabled_arrays_ |= TEXCOORD_VERTEX_ARRAY;
-      
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      
-      // Explicitly give the pointer as we uploaded the data ourself!
-      glTexCoordPointer(2, GL_FLOAT , 0 , mesh_.texcoords2D() );
-      
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & TEXCOORD_VERTEX_ARRAY) {
-    // Disable TexCoord array
-    enabled_arrays_ &= ~TEXCOORD_VERTEX_ARRAY;
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  }   
-  
+
   //===================================================================
   // per Edge Vertex Array
   //===================================================================  
@@ -714,7 +569,7 @@ enable_arrays(unsigned int _arrays) {
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glVertexPointer( stripProcessor_.perEdgeVertexBuffer() );   
+      glVertexPointer( drawMesh_->perEdgeVertexBuffer() );   
       
       glEnableClientState(GL_VERTEX_ARRAY);
       
@@ -738,7 +593,7 @@ enable_arrays(unsigned int _arrays) {
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glColorPointer( stripProcessor_.perEdgeColorBuffer() );   
+      glColorPointer( drawMesh_->perEdgeColorBuffer() );
       
       glEnableClientState(GL_COLOR_ARRAY);
       
@@ -763,7 +618,7 @@ enable_arrays(unsigned int _arrays) {
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glVertexPointer( stripProcessor_.perHalfedgeVertexBuffer() );   
+      glVertexPointer( drawMesh_->perHalfedgeVertexBuffer() );   
       
       glEnableClientState(GL_VERTEX_ARRAY);
       
@@ -787,7 +642,7 @@ enable_arrays(unsigned int _arrays) {
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glColorPointer( stripProcessor_.perHalfedgeColorBuffer() );
+      glColorPointer( drawMesh_->perHalfedgeColorBuffer() );
       
       glEnableClientState(GL_COLOR_ARRAY);
       
@@ -797,147 +652,7 @@ enable_arrays(unsigned int _arrays) {
     enabled_arrays_ &= ~PER_HALFEDGE_COLOR_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
   }   
-  
-  //===================================================================
-  // per Face Vertex Array
-  //===================================================================  
-  
-  // Check if we should enable the per face vertex array
-  if (_arrays & PER_FACE_VERTEX_ARRAY)  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & PER_FACE_VERTEX_ARRAY)) {
-      enabled_arrays_ |= PER_FACE_VERTEX_ARRAY;
-      
-      // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );   
-      
-      glEnableClientState(GL_VERTEX_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & PER_FACE_VERTEX_ARRAY) {
-    // Disable Vertex array
-    enabled_arrays_ &= ~PER_FACE_VERTEX_ARRAY;
-    glDisableClientState(GL_VERTEX_ARRAY);
-  } 
 
-  //===================================================================
-  // per Face Normal Array
-  //===================================================================  
-
-  // Check if we should enable the per face normal array
-  if (mesh_.has_face_normals() && (_arrays & PER_FACE_NORMAL_ARRAY) )  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & PER_FACE_NORMAL_ARRAY)) {
-      enabled_arrays_ |= PER_FACE_NORMAL_ARRAY;
-      
-      // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glNormalPointer( stripProcessor_.perFaceNormalBuffer() );   
-      
-      glEnableClientState(GL_NORMAL_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & PER_FACE_NORMAL_ARRAY) {
-    // Disable Normal array
-    enabled_arrays_ &= ~PER_FACE_NORMAL_ARRAY;
-    glDisableClientState(GL_NORMAL_ARRAY);
-  } 
-  
-  //===================================================================
-  // per Face per vertex normal array
-  //===================================================================  
-  
-  // Check if we should enable the per face normal array
-  if (mesh_.has_vertex_normals() && (_arrays & PER_FACE_PER_VERTEX_NORMAL_ARRAY) )  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & PER_FACE_PER_VERTEX_NORMAL_ARRAY)) {
-      enabled_arrays_ |= PER_FACE_PER_VERTEX_NORMAL_ARRAY;
-      
-      // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glNormalPointer( stripProcessor_.perFacePerVertexNormalBuffer() );   
-      
-      glEnableClientState(GL_NORMAL_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & PER_FACE_PER_VERTEX_NORMAL_ARRAY) {
-    // Disable Normal array
-    enabled_arrays_ &= ~PER_FACE_PER_VERTEX_NORMAL_ARRAY;
-    glDisableClientState(GL_NORMAL_ARRAY);
-  } 
-  
-  //===================================================================
-  // per Face Color Array
-  //===================================================================  
-  
-  // Check if we should enable the per face color array
-  if (mesh_.has_face_colors() && (_arrays & PER_FACE_COLOR_ARRAY) )  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & PER_FACE_COLOR_ARRAY)) {
-      enabled_arrays_ |= PER_FACE_COLOR_ARRAY;
-      
-      // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glColorPointer( stripProcessor_.perFaceColorBuffer() );   
-      
-      glEnableClientState(GL_COLOR_ARRAY);
-      
-    }
-  } else if (enabled_arrays_ & PER_FACE_COLOR_ARRAY) {
-    // Disable Normal array
-    enabled_arrays_ &= ~PER_FACE_COLOR_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
-  }   
-  
-  //===================================================================
-  // per Face TexCoord Array
-  //===================================================================  
-  
-  // Check if we should enable the per face color array
-  if ( stripProcessor_.perFaceTextureCoordinateAvailable() && (_arrays & PER_FACE_TEXCOORD_ARRAY ) )  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & PER_FACE_TEXCOORD_ARRAY)) {
-      enabled_arrays_ |= PER_FACE_TEXCOORD_ARRAY;
-      
-      // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glTexCoordPointer( stripProcessor_.perFacePerVertexTextureCoordBuffer() );   
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY );
-    }
-  } else if (enabled_arrays_ & PER_FACE_TEXCOORD_ARRAY) {
-    // Disable Texture Coordinate array
-    enabled_arrays_ &= ~PER_FACE_TEXCOORD_ARRAY;
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  }   
-  
-  //===================================================================
-  // Line Index Array
-  //===================================================================  
-  
-  // Check if we should enable the color array
-  if (_arrays & LINE_INDEX_ARRAY)  {
-    
-    // Check if its already enabled
-    if (!(enabled_arrays_ & LINE_INDEX_ARRAY)) {
-      enabled_arrays_ |= LINE_INDEX_ARRAY;
-      
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIndexBuffer_);
-    }
-  } else if (enabled_arrays_ & LINE_INDEX_ARRAY) {
-    // Disable Color array
-    enabled_arrays_ &= ~LINE_INDEX_ARRAY;
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-  } 
-  
-  if ( _arrays == 0 ) 
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  
   //===================================================================
   // Check for OpenGL Errors
   //===================================================================    
@@ -1010,7 +725,6 @@ pick_vertices(GLState& _state, bool _front)
   }
   
   if (_front && ( mesh_.n_faces() != 0 ) ) {
-    enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
     Vec4f  base_color  = _state.base_color();
@@ -1020,7 +734,7 @@ pick_vertices(GLState& _state, bool _front)
     _state.set_base_color(clear_color);
     
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -1045,14 +759,13 @@ pick_vertices(GLState& _state, bool _front)
     vertexPickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking ()) {
-    stripProcessor_.updatePickingVertices(_state);
+  if (_state.color_picking () && drawMesh_) {
+    drawMesh_->updatePickingVertices(_state);
     
-    enable_arrays(VERTEX_ARRAY);
     
     // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer( stripProcessor_.pickVertexColorBuffer() );   
+    glColorPointer( drawMesh_->pickVertexColorBuffer() );   
     glEnableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking
@@ -1093,7 +806,6 @@ pick_edges(GLState& _state, bool _front)
   }
   
   if ( _front && ( mesh_.n_faces() != 0 ) ) {
-    enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
     Vec4f  base_color  = _state.base_color();
@@ -1103,7 +815,7 @@ pick_edges(GLState& _state, bool _front)
     _state.set_base_color(clear_color);
     
     glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
+    draw_faces();
     glDepthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -1130,8 +842,8 @@ pick_edges(GLState& _state, bool _front)
   
   if (_state.color_picking () ) {
     
-    if ( mesh_.n_edges() != 0 ) {
-      stripProcessor_.updatePickingEdges(_state);
+    if ( mesh_.n_edges() != 0 && drawMesh_) {
+      drawMesh_->updatePickingEdges(_state);
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -1139,8 +851,8 @@ pick_edges(GLState& _state, bool _front)
       glEnableClientState(GL_VERTEX_ARRAY);
       glEnableClientState(GL_COLOR_ARRAY);
       
-      glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
-      glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+      glVertexPointer(drawMesh_->perEdgeVertexBuffer());
+      glColorPointer(drawMesh_->pickEdgeColorBuffer());
       
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
       
@@ -1205,7 +917,7 @@ pick_faces(GLState& _state)
   if (_state.color_picking ()) {
 
     if ( mesh_.n_faces() != 0 ) {
-      stripProcessor_.updatePickingFaces(_state);
+      drawMesh_->updatePickingFaces(_state);
       
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -1213,10 +925,10 @@ pick_faces(GLState& _state)
       glEnableClientState(GL_VERTEX_ARRAY);
       glEnableClientState(GL_COLOR_ARRAY);
       
-      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
-      glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
+      glVertexPointer(drawMesh_->pickFaceVertexBuffer());
+      glColorPointer(drawMesh_->pickFaceColorBuffer());
       
-      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
+      glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
       
       glDisableClientState(GL_COLOR_ARRAY);
       glDisableClientState(GL_VERTEX_ARRAY);
@@ -1275,9 +987,9 @@ pick_any(GLState& _state)
     anyPickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking() ) {
+  if (_state.color_picking()) {
     
-    stripProcessor_.updatePickingAny(_state);
+    drawMesh_->updatePickingAny(_state);
     
     // For this version we load the colors directly, not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -1286,12 +998,16 @@ pick_any(GLState& _state)
     glEnableClientState(GL_COLOR_ARRAY);
     
     // If we do not have any faces, we generate an empty list here.  
-    if ( mesh_.n_faces() != 0) {
+    if ( mesh_.n_faces() != 0 && drawMesh_) {
       
-      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
-      glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
+
+      glVertexPointer(drawMesh_->pickFaceVertexBuffer());
+      glColorPointer(drawMesh_->pickFaceColorBuffer());
       
-      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
+
+      glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
+
+
     }
     
     if (anyPickingList_)
@@ -1303,10 +1019,10 @@ pick_any(GLState& _state)
     glDepthFunc(GL_LEQUAL);
     
     // If we do not have any edges, we generate an empty list here.  
-    if ( mesh_.n_edges() != 0) {
+    if ( mesh_.n_edges() != 0 && drawMesh_) {
       
-      glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
-      glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+      glVertexPointer(drawMesh_->perEdgeVertexBuffer());
+      glColorPointer(drawMesh_->pickEdgeColorBuffer());
     
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
     }
@@ -1322,11 +1038,10 @@ pick_any(GLState& _state)
       glDepthFunc(GL_LEQUAL);
     }
     
-    enable_arrays(VERTEX_ARRAY);
     
     // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer( stripProcessor_.pickVertexColorBuffer() );   
+    glColorPointer(drawMesh_->pickVertexColorBuffer());
     glEnableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking
@@ -1368,16 +1083,15 @@ update_geometry() {
   updateFacePickingList_   = true;
   updateAnyPickingList_    = true;
   
-  
-  // Set per face arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerFaceBuffers();
-  
   // Set per edge arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerEdgeBuffers();
+  drawMesh_->invalidatePerEdgeBuffers();
 
   // Set per halfedge arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerHalfedgeBuffers();
+  drawMesh_->invalidatePerHalfedgeBuffers();
   
+  drawMesh_->updateGeometry();
+
+
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
   bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -1389,220 +1103,19 @@ update_geometry() {
     bbMin_.minimize(mesh_.point(v_it));
     bbMax_.maximize(mesh_.point(v_it));
   }
-  
-  //===================================================================
-  // Generate a vertex buffer on the GPU
-  //===================================================================
-  
-  // Allocate it if required
-  if (!vertexBuffer_)  glGenBuffersARB(1,  (GLuint*) &vertexBuffer_);
-  
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffer_);
-  vertexBufferInitialized_ = false;
-  
-  //Check if using floats otherwise convert to internal float array
-  if ( sizeof(PointScalar) == 4 ) {
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                    3 * mesh_.n_vertices() * sizeof(PointScalar),
-                    mesh_.points(),
-                    GL_STATIC_DRAW_ARB);
-                    
-                    vertexBufferInitialized_ = true;
-  } else {
-    vertices_.clear();
-    typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
-    v_end(mesh_.vertices_end());
-    
-    for ( ; v_it != v_end ; ++v_it )
-      vertices_.push_back( ACG::Vec3f(mesh_.point(v_it)) );
-    
-    if ( !vertices_.empty() ) {
-      
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      3 * mesh_.n_vertices() * sizeof(float),
-                      &vertices_[0],
-                      GL_STATIC_DRAW_ARB);
-                      vertexBufferInitialized_ = true;
-                      
-    }
-  }
-  
-  // ==========================================================================
-  // Generate normal buffer
-  // ==========================================================================
-  
-  // Allocate it if required
-  if (!normalVertexBuffer_)  glGenBuffersARB(1,  (GLuint*)  &normalVertexBuffer_);
-  
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalVertexBuffer_);
-  normalVertexBufferInitialized_ = false;
-  
-  // Check if using floats otherwise convert to internal float array
-  if ( sizeof(NormalScalar) == 4) {
-    
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                    3 * mesh_.n_vertices() * sizeof(NormalScalar),
-                    mesh_.vertex_normals(),
-                    GL_STATIC_DRAW_ARB);
-                    
-                    normalVertexBufferInitialized_ = true;
-                    
-  } else {
-    // Clear local conversion array
-    normals_.clear();
-
-    // Preallocate memory for efficiency
-    normals_.reserve( mesh_.n_vertices() );
-
-    // Convert data to the desired format
-    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
-    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
-      normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
-    
-    if ( !normals_.empty() ) {
-      
-      // Upload to graphics card
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      3 * mesh_.n_vertices() * sizeof(float),
-                      &normals_[0],
-                      GL_STATIC_DRAW_ARB);
-                      normalVertexBufferInitialized_ = true;
-                      
-      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
-      normals_.clear();
-      std::vector< ACG::Vec3f >().swap(normals_);
-    }
-    
-  }
-  
-  // ==========================================================================
-  // unbind all buffers
-  // ==========================================================================
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  
 }
 
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
 update_topology() {
-  // ==========================================================================
-  // Clear the strips and regenerate them!
-  // ==========================================================================
-  // Mark strips as invalid to force an update
-  stripProcessor_.invalidateStrips();
-  
-  // Set per face arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerFaceBuffers();
-  
-  // Set per edge arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerEdgeBuffers();
 
-  // Set per halfedge arrays to invalid as they have to be regenerated
-  stripProcessor_.invalidatePerHalfedgeBuffers();
-  
-  stripProcessor_.stripify();
-
-//   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
-  
-  // ==========================================================================
-  // Generate a buffer for rendering all lines
-  // ==========================================================================
-  lineIndices_.clear();
-  
-  typename Mesh::ConstEdgeIter e_it(mesh_.edges_begin()),
-  e_end(mesh_.edges_end());
-  
-  for ( ; e_it != e_end ; ++e_it ) {
-    lineIndices_.push_back( mesh_.from_vertex_handle(mesh_.halfedge_handle(e_it,0)).idx() );
-    lineIndices_.push_back( mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it,0)).idx()  );
-  }
-  
-  // Allocate it if required
-  if (!lineIndexBuffer_)  glGenBuffersARB(1,  (GLuint*) &lineIndexBuffer_);
-  
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIndexBuffer_);
-  lineIndexBufferInitialized_ = false;
-  
-  if ( !lineIndices_.empty() ) {
-    // Copy the buffer to the graphics card
-    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
-                    mesh_.n_edges() * sizeof(unsigned int) * 2,
-                    &lineIndices_[0],
-                    GL_STATIC_DRAW_ARB);
-
-    // Clear the vector
-    std::vector< unsigned int >().swap(lineIndices_);
-    
-    lineIndexBufferInitialized_ = true;
-  }
+  drawMesh_->invalidatePerEdgeBuffers();
+  drawMesh_->invalidatePerHalfedgeBuffers();
 
 
-  // ====================================================
-  // Triangle List Index Buffer
-  // ====================================================
+  drawMesh_->updateTopology();
 
-  // first version: 
-  // simply convert from strips to tri list
-  {
-	  typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
-	  typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
-
-	  unsigned int numTris = 0;
-
-	  for (; strip_it!=strip_last; ++strip_it) numTris += strip_it->indexArray.size() - 2;
-
-	  tris_.resize(numTris * 3);
-
-	  unsigned int nOffset = 0;
-
-	  for (strip_it = stripProcessor_.begin(); strip_it != strip_last; ++strip_it)
-	  {
-		  const int iStripLen = strip_it->indexArray.size();
-		  if (iStripLen < 3) continue;
-
-		  for (int i = 0; i < iStripLen - 2; ++i)
-		  {
-			  if (i&1)
-			  {
-				  tris_[nOffset++] = strip_it->indexArray[i+1];
-				  tris_[nOffset++] = strip_it->indexArray[i];
-			  }
-			  else
-			  {
-				  tris_[nOffset++] = strip_it->indexArray[i];
-				  tris_[nOffset++] = strip_it->indexArray[i+1];
-			  }
-			  tris_[nOffset++] = strip_it->indexArray[i+2];
-
-			  // degenerate triangle check redundant ?
-			  // strips splitted instead of deg. tris
-		  }
-	  }
-
-	  if (tris_.size())
-	  {
-		  GPUCacheOptimizerTipsify Opt(24, tris_.size() / 3, mesh_.n_vertices(), 4, &tris_[0]);
-		  Opt.WriteIndexBuffer(4, &tris_[0]);
-	  }
-  }
-
-  // Allocate it if required
-  if (!indexBuffer_)  glGenBuffersARB(1,  (GLuint*) &indexBuffer_);
-
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indexBuffer_);
-  indexBufferInitialized_ = false;
-
-  if ( !tris_.empty() ) {
-	  // Copy the buffer to the graphics card
-	  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
-		  tris_.size() * sizeof(unsigned int),
-		  &tris_[0],
-		  GL_STATIC_DRAW_ARB);
-
-	  indexBufferInitialized_ = true;
-  }
- 
   // Unbind the buffer after the work has been done
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
@@ -1612,89 +1125,41 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 update_color() {
-
-  // ==========================================================================
-  // Generate color buffer
-  // ==========================================================================
-
-  // Allocate it if required
-  if (!colorVertexbuffer_)  glGenBuffersARB(1,  (GLuint*)  &colorVertexbuffer_);
-
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
-  colorVertexBufferInitialized_ = false;
-
-  // Colors consist of 4 scalars (RGBA) with type float -> direct upload!
-  if ( sizeof(ColorScalar) == 4 && mesh_.vertex_colors()->dim() == 4 ) {
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                    4 * mesh_.n_vertices() * sizeof(ColorScalar),
-                    mesh_.vertex_colors(),
-                    GL_STATIC_DRAW_ARB);
-                    
-    colorVertexBufferInitialized_ = true;
-  } else {
-    // Format mismatch -> conversion
-    
-    // Clear the local color conversion array
-    colors_.clear();
-    
-    // Preallocate memory for efficiency
-    colors_.reserve( mesh_.n_vertices() );
-    
-    // Convert data to the desired format
-    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
-    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
-      colors_.push_back( OpenMesh::color_cast<Vec4f>(mesh_.color(v_it)) );
-    
-    if ( !colors_.empty() ) {
-      // Upload to graphics card
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      4 * mesh_.n_vertices() * sizeof(float),
-                      &colors_[0],
-                      GL_STATIC_DRAW_ARB);
-                      colorVertexBufferInitialized_ = true;
-      
-      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
-      colors_.clear();
-      std::vector< ACG::Vec4f >().swap(colors_);
-    }
-    
-  }
   
-  // ==========================================================================
-  // unbind all buffers
-  // ==========================================================================
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  drawMesh_->invalidatePerEdgeBuffers();
+  drawMesh_->invalidatePerHalfedgeBuffers();
   
-  stripProcessor_.invalidatePerEdgeBuffers();
-  stripProcessor_.invalidatePerHalfedgeBuffers();
-  stripProcessor_.invalidatePerFaceBuffers();
+  // TODO: optimize update strategy:
+  // if only vertex colors have changed, then call UpdateGeometry() (faster)
+  // for face colors we have to use UpdateFull()
+  drawMesh_->updateFull();
 }
 
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
 setIndexPropertyName( std::string _indexPropertyName ) { 
-  stripProcessor_.setIndexPropertyName(_indexPropertyName);
-  
-  perFaceTextureIndexAvailable_ =  stripProcessor_.perFaceTextureIndexAvailable();
-    
+
+  drawMesh_->setTextureIndexPropertyName(_indexPropertyName);
+  perFaceTextureIndexAvailable_ =  drawMesh_->perFaceTextureIndexAvailable() != 0;
 };
 
 template<class Mesh>
 const std::string&
 MeshNodeT<Mesh>::
 indexPropertyName() const {
-    
-    return stripProcessor_.indexPropertyName();
+
+  return drawMesh_->getTextureIndexPropertyName();
 }
 
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
 setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){ 
-  stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
+
+  drawMesh_->setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
+  perFaceTextureCoordsAvailable_ = drawMesh_->perFaceTextureCoordinateAvailable() != 0;
   
-  perFaceTextureCoordsAvailable_ = stripProcessor_.perFaceTextureCoordinateAvailable();
 };
 
 //=============================================================================
