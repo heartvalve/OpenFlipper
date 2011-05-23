@@ -83,6 +83,13 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
     
   }
   
+  // Security check if all fails (no scripting plugin, no sender)
+  if ( id == -1) {
+    emit log(LOGERR,tr("slotAddToolbar: no sender and scripting plugin not available! Strange!"));
+    emit log(LOGERR,tr("slotAddToolbar: Could not add Toolbar!"));
+    return;
+  }
+
   // Check if a toolbar with the same name is already registered
   for ( unsigned int i = 0 ; i < toolbars_.size(); ++i ) {
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
