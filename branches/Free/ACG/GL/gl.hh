@@ -286,7 +286,7 @@ inline bool openGLVersion( const int _major, const int _minor  )  {
   int minor;
   stream >> minor;
 
-  if ( (_major < major) || ( (_major == major) && (_minor < minor))  ) {
+  if ( (_major > major) || ( (_major == major) && (_minor > minor))  ) {
     std::cerr << "OpenGL Version check failed. Required  : " << _major << "." << _minor << std::endl;
     std::cerr << "OpenGL Version check failed. Available : " << major << "." << minor << std::endl;
     return false;
