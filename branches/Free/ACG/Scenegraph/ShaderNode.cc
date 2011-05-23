@@ -289,6 +289,11 @@ setShader( DrawModes::DrawMode _drawmode ,
            std::string _pickVertexShader,
            std::string _pickFragmentShader) {
 
+  if ( !ACG::openGLVersion(2,0) ) {
+    std::cerr << "Shaders not supported with OpenGL Version less than 2.0" << std::endl;
+    return;
+  }
+
   if ( shaderDir_ == "" ) {
     std::cerr << "No shader dir set for shadernode. Unable to load shaders!" << std::endl;
     return;
