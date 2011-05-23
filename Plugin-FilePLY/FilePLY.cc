@@ -167,10 +167,13 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
               _header.binary = false;
             } else {
               _header.binary = true;
-              if ( dString.find("little") != std::string::npos ) {
-                _header.bigEndian = false;
-              } else {
+              if ( dString.find("big") != std::string::npos ) {
                 _header.bigEndian = true;
+              } else {
+                if ( dString.find("little") == std::string::npos ) {
+                  emit log(LOGWARN,tr("Binary PLY file without endian specification. Assuming little endian."));
+                }
+                _header.bigEndian = false;
               }
 
             }
@@ -440,9 +443,13 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader _header)
         
         // Get mesh
         TriMesh* mesh = object->mesh();
-    
+
+        // Reserve Memory to speed up loading
+        // Euler formula to calculate number of edges (approximation)
+        mesh->reserve(_header.numVertices,(_header.numVertices+_header.numFaces)/2,_header.numFaces);
+
         if(!_header.binary) {
-            // Read ascii file
+            // Read ASCII file
             if(!readMeshFileAscii(_filename, mesh, _header)) {
                 emit log(LOGERR, "Error while reading ascii PLY file!");
                 emit deleteObject(id);
@@ -492,9 +499,12 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader _header
         
         // Get mesh
         PolyMesh* mesh = object->mesh();
+
+        // Reserve Memory to speed up loading
+        mesh->reserve(_header.numVertices,_header.numVertices * 4,_header.numFaces);
     
         if(!_header.binary) {
-            // Read ascii file
+            // Read ASCII file
             if(!readMeshFileAscii(_filename, mesh, _header)) {
                 emit log(LOGERR, "Error while reading ascii PLY file!");
                 emit deleteObject(id);
