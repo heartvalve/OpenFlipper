@@ -53,6 +53,7 @@
 //== INCLUDES =================================================================
 
 #include <stdlib.h>
+#include <sstream>
 
 
 #if defined(ARCH_DARWIN)
@@ -260,6 +261,37 @@ inline bool checkExtensionSupported( std::string _extension )  {
    std::string supported((const char*)glGetString(GL_EXTENSIONS));
 
    return (supported.find(_extension) != std::string::npos);
+}
+
+/** Check if OpenGL Version is greater or equal than the given values
+*/
+inline bool openGLVersion( const int _major, const int _minor  )  {
+
+  // Read OpenGL Version string
+  std::string glVersionString = (const char*)glGetString(GL_VERSION);
+
+  // Use stringstream to pars
+  std::istringstream stream;
+  stream.str(glVersionString);
+
+  // Buffer for the dot between major and minor
+  char dot;
+
+  // Read Major version number
+  int major ;
+  stream >> major;
+  stream >> dot;
+
+  // Read minor version number
+  int minor;
+  stream >> minor;
+
+  if ( ! ((_major >= major) && (_minor>= minor)) ) {
+    std::cerr << "OpenGL Version check failed. Required  : " << _major << "." << _minor << std::endl;
+    std::cerr << "OpenGL Version check failed. Available : " << major << "." << minor << std::endl;
+  }
+
+  return ((_major >= major) && (_minor>= minor));
 }
 
 
