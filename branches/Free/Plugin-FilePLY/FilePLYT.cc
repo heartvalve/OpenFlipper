@@ -710,7 +710,7 @@ void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) 
     
     // Write general information
     _os << "ply\n";
-    _os << "format " << (_binary ? "binary" : "ascii") << " 1.0\n";
+    _os << "format " << (_binary ? "binary_little_endian" : "ascii") << " 1.0\n";
     _os << "comment =================================\n";
     _os << "comment Exported via OpenFlipper " << OpenFlipper::Options::coreVersion().toStdString() << "\n";
     _os << "comment www.openflipper.org\n";
