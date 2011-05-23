@@ -65,7 +65,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   int id = -1;
   
   // Find the plugin which added this Toolbox
-  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+  for ( unsigned int i = 0 ; i < plugins_.size(); ++i ) {
     if ( plugins_[i].plugin == sender() ) {
       id = i;
       break;
@@ -74,7 +74,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   
   // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
   if ( id == -1 ) {
-    for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    for ( unsigned int i = 0 ; i < plugins_.size(); ++i ) {
       if ( plugins_[i].name == "Scripting" ) {
         id = i;
         break;
@@ -84,7 +84,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   }
   
   // Check if a toolbar with the same name is already registered
-  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+  for ( unsigned int i = 0 ; i < toolbars_.size(); ++i ) {
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
       emit log(LOGERR,tr("slotAddToolbar: Toolbar already added to system: ") + _toolbar->windowTitle() );
       return;
@@ -114,7 +114,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
 
 void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {
 
-  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+  for ( unsigned int i = 0 ; i < toolbars_.size(); ++i ) {
 
     if ( toolbars_[i]->windowTitle() == _name ) {
       _toolbar = toolbars_[i];
@@ -129,7 +129,7 @@ void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {
 }
 
 void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
-  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+  for ( unsigned int i = 0 ; i < toolbars_.size(); ++i ) {
 
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
       std::cerr << "Todo : erase Toolbar from list" << std::endl;
