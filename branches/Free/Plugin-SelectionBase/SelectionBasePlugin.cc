@@ -84,9 +84,7 @@
 SelectionBasePlugin::SelectionBasePlugin() :
 toolBar_(0),
 tool_(0),
-primitivesBar_(0),
 primitivesBarGroup_(0),
-toolsBar_(0),
 selectionModesGroup_(0),
 toggleSelectionAction_(0),
 lassoSelectionAction_(0),
@@ -163,64 +161,55 @@ void SelectionBasePlugin::initializePlugin() {
     tool_->typeTabWidget->setMovable(true);
 
     // Set pick mode toolbar
-    QToolBar* pickModeToolBar = new QToolBar("Selection Picking Toolbar");
+    pickModeToolBar_ = new QToolBar("Selection Picking Toolbar");
+
     // Create primitive toolbar
-    primitivesBar_ = new QToolBar(tr("Selection Base Primitives"), pickModeToolBar);
-    primitivesBarGroup_ = new QActionGroup(primitivesBar_);
+    primitivesBarGroup_ = new QActionGroup(pickModeToolBar_);
     primitivesBarGroup_->setExclusive(true);
-    
-    // Create selection tools toolbar
-    toolsBar_ = new QToolBar(tr("Selection Base Tools"), pickModeToolBar);
-    
-    pickModeToolBar->addWidget(primitivesBar_);
-    pickModeToolBar->addSeparator();
-    pickModeToolBar->addWidget(toolsBar_);
-    
+
+
     // Create default selection mode actions
-    selectionModesGroup_ = new QActionGroup(toolsBar_);
+    selectionModesGroup_ = new QActionGroup(pickModeToolBar_);
     selectionModesGroup_->setExclusive(true);
     toggleSelectionAction_ = new HandleAction(QIcon(iconPath + TOGGLE_IMG), TOGGLE_DESC, selectionModesGroup_);
     toggleSelectionAction_->setCheckable(true);
     toggleSelectionAction_->selectionModeHandle(SB_TOGGLE);
-    toolsBar_->addAction(toggleSelectionAction_);
     connect(toggleSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     lassoSelectionAction_ = new HandleAction(QIcon(iconPath + LASSO_IMG), LASSO_DESC, selectionModesGroup_);
     lassoSelectionAction_->setCheckable(true);
     lassoSelectionAction_->selectionModeHandle(SB_LASSO);
-    toolsBar_->addAction(lassoSelectionAction_);
     connect(lassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     volumeLassoSelectionAction_ = new HandleAction(QIcon(iconPath + VOLUME_LASSO_IMG), VOLUME_LASSO_DESC, selectionModesGroup_);
     volumeLassoSelectionAction_->setCheckable(true);
     volumeLassoSelectionAction_->selectionModeHandle(SB_VOLUME_LASSO);
-    toolsBar_->addAction(volumeLassoSelectionAction_);
     connect(volumeLassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     surfaceLassoSelectionAction_ = new HandleAction(QIcon(iconPath + SURFACE_LASSO_IMG), SURFACE_LASSO_DESC, selectionModesGroup_);
     surfaceLassoSelectionAction_->setCheckable(true);
     surfaceLassoSelectionAction_->selectionModeHandle(SB_SURFACE_LASSO);
-    toolsBar_->addAction(surfaceLassoSelectionAction_);
     connect(surfaceLassoSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     sphereSelectionAction_ = new HandleAction(QIcon(iconPath + SPHERE_IMG), SPHERE_DESC, selectionModesGroup_);
     sphereSelectionAction_->setCheckable(true);
     sphereSelectionAction_->selectionModeHandle(SB_SPHERE);
-    toolsBar_->addAction(sphereSelectionAction_);
     connect(sphereSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     boundarySelectionAction_ = new HandleAction(QIcon(iconPath + BOUNDARY_IMG), BOUNDARY_DESC, selectionModesGroup_);
     boundarySelectionAction_->setCheckable(true);
     boundarySelectionAction_->selectionModeHandle(SB_BOUNDARY);
-    toolsBar_->addAction(boundarySelectionAction_);
     connect(boundarySelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     floodFillSelectionAction_ = new HandleAction(QIcon(iconPath + FLOODFILL_IMG), FLOODFILL_DESC, selectionModesGroup_);
     floodFillSelectionAction_->setCheckable(true);
     floodFillSelectionAction_->selectionModeHandle(SB_FLOODFILL);
-    toolsBar_->addAction(floodFillSelectionAction_);
     connect(floodFillSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
     componentsSelectionAction_ = new HandleAction(QIcon(iconPath + COMPONENTS_IMG), COMPONENTS_DESC, selectionModesGroup_);
     componentsSelectionAction_->setCheckable(true);
     componentsSelectionAction_->selectionModeHandle(SB_COMPONENTS);
-    toolsBar_->addAction(componentsSelectionAction_);
     connect(componentsSelectionAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
 
-    emit setPickModeToolbar(SELECTION_PICKING, pickModeToolBar);
+    pickModeToolBar_->clear();
+    pickModeToolBar_->addActions(primitivesBarGroup_->actions());
+    pickModeToolBar_->addSeparator();
+    pickModeToolBar_->addActions(selectionModesGroup_->actions());
+
+    emit setPickModeToolbar(SELECTION_PICKING, pickModeToolBar_);
 }
 
 //============================================================================================
@@ -608,8 +597,11 @@ void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _nam
     action->setCheckable(true);
     action->selectionEnvironmentHandle(_handleName);
     primitivesBarGroup_->addAction(action);
-    primitivesBar_->addAction(action);
-    
+    pickModeToolBar_->clear();
+    pickModeToolBar_->addActions(primitivesBarGroup_->actions());
+    pickModeToolBar_->addSeparator();
+    pickModeToolBar_->addActions(selectionModesGroup_->actions());
+
     // Also add type button to tool box of environment tab
     ActionButton* button = new ActionButton(action);
     button->setMinimumSize(QSize(32,32));
@@ -1043,7 +1035,11 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
             action->addAssociatedType(_associatedTypes);
             
             // Add action to tools bar
-            toolsBar_->addAction(action);
+            selectionModesGroup_->addAction(action);
+            pickModeToolBar_->clear();
+            pickModeToolBar_->addActions(primitivesBarGroup_->actions());
+            pickModeToolBar_->addSeparator();
+            pickModeToolBar_->addActions(selectionModesGroup_->actions());
 
             // Add pickmode name and button to selection environment's container
             (*it).second.customSelectionModes.insert(action);

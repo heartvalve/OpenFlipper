@@ -281,11 +281,8 @@ Q_INTERFACES(SelectionInterface)
         SelectionBaseToolboxWidget* tool_;
         
         // Toolbar that displays ALL primitive types of all selection environments
-        QToolBar* primitivesBar_;
         QActionGroup* primitivesBarGroup_;
-        
-        // Toolbar that contains all available tools
-        QToolBar* toolsBar_;
+        QToolBar* pickModeToolBar_;
         
         QActionGroup* selectionModesGroup_;
 
