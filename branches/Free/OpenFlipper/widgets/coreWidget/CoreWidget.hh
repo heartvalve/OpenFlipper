@@ -655,7 +655,7 @@ public:
     QScrollArea* toolBoxScroll_;
 
     /// Toolbar showed in pickmode
-    QtPickToolbar* pickToolbar_;
+    QToolBar* pickToolbar_;
 
     /// Cursor handling
     CursorPainter* cursorPainter_;
