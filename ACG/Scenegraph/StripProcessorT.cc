@@ -1051,7 +1051,7 @@ perFaceVertexBuffer() {
     updatePerFaceBuffers();
   
   return &(perFaceVertexBuffer_)[0]; 
-};
+}
 
 template <class Mesh>
 ACG::Vec3f * 
@@ -1062,7 +1062,7 @@ perFaceNormalBuffer() {
     updatePerFaceBuffers();
   
   return &(perFaceNormalBuffer_)[0]; 
-};
+}
 
 template <class Mesh>
 ACG::Vec3f * 
@@ -1073,7 +1073,7 @@ perFacePerVertexNormalBuffer() {
     updatePerFaceBuffers();
   
   return &(perFacePerVertexNormalBuffer_)[0]; 
-};
+}
 
 template <class Mesh>
 ACG::Vec4f * 
@@ -1084,7 +1084,7 @@ perFaceColorBuffer() {
     updatePerFaceBuffers();
   
   return &(perFaceColorBuffer_)[0]; 
-};  
+}
 
 template <class Mesh>
 void
@@ -1154,7 +1154,7 @@ setIndexPropertyName( std::string _indexPropertyName ) {
   
   // mark the buffers as invalid as we have a new per face index array
   invalidatePerFaceBuffers();
-};
+}
 
 //=============================================================================
 } // namespace SceneGraph
