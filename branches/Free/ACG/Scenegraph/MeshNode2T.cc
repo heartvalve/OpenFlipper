@@ -1678,7 +1678,7 @@ setIndexPropertyName( std::string _indexPropertyName ) {
   
   perFaceTextureIndexAvailable_ =  stripProcessor_.perFaceTextureIndexAvailable();
     
-};
+}
 
 template<class Mesh>
 const std::string&
@@ -1695,7 +1695,7 @@ setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){
   stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
   
   perFaceTextureCoordsAvailable_ = stripProcessor_.perFaceTextureCoordinateAvailable();
-};
+}
 
 //=============================================================================
 } // namespace SceneGraph
