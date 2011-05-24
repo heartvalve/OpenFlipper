@@ -146,6 +146,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   windowMenu_(0),
   AC_ShowViewModeControls_(0),
   AC_ShowToolbox_(0),
+  pickToolbar_(0),
   cursorPainter_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),
@@ -553,13 +554,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     toolSplitter_->setSizes(wsizes);
   }
   
-
-  // ======================================================================
-  // Create pick ToolBar
-  // ======================================================================
-
-  pickToolbar_ = new QtPickToolbar (this, centerWidget_);
-
   // ======================================================================
   // Context menu setup
   // ======================================================================
@@ -1115,7 +1109,6 @@ CoreWidget::sceneRectChanged(const QRectF &rect)
 {
   centerWidget_->setGeometry (rect);
   slidingLogger_->updateGeometry ();
-  pickToolbar_->updateGeometry ();
 }
 
 //-----------------------------------------------------------------------------
