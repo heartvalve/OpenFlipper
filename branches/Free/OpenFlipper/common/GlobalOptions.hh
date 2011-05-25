@@ -96,6 +96,7 @@
 * * Core/Gui/glViewer/minimalSceneSize       The minimal scene radius. If the scene is smaller, than the size will be set to this value (double)\n
 * * Core/Gui/ToolBoxes/hidden                Hide the toolbox sidebar (bool)\n
 * * Core/Gui/ToolBoxes/ToolBoxOnTheRight     Toolbox on the right or on the left (bool)\n
+* * Core/Gui/ToolBars/PickToolbarInScene     Render picking toolbar into gl scene or as toolbox into main widget
 * * Core/Gui/TaskSwitcher/Hide               Show or Hide the task switcher(bool)\n
 * * Core/Gui/LogWindow/LogWindowMode         Log Window Mode .. 0 InScene, 1 Window, 2 Hidden (int)\n
 * * Core/Gui/LogWindow/OpenMeshErrors        Log OpenMesh Errors? (bool)\n

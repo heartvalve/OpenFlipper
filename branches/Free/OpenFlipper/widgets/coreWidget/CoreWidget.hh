@@ -477,6 +477,9 @@ public:
 
     QSize defaultIconSize();
     
+    // Update pick toolbar settings
+    void updatePickToolbar();
+
   public slots:
     
     /// Show or hide toolbox
@@ -655,7 +658,7 @@ public:
     QScrollArea* toolBoxScroll_;
 
     /// Toolbar showed in pickmode
-    QToolBar* pickToolbar_;
+    QtPickToolbar* pickToolbar_;
 
     /// Cursor handling
     CursorPainter* cursorPainter_;

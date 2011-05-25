@@ -106,45 +106,38 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  ) ,0,0 ));
         break;
     }
-    // update toolbar
-    switch ( _am )
-    {
+
+    // Update pickmode toolbar
+    switch ( _am ) {
       case Viewer::ExamineMode:
-        if ( pickToolbar_ != 0) {
-          pickToolbar_->hide();
-          removeToolBar(pickToolbar_);
-          pickToolbar_ = 0;
-        }
+        pickToolbar_->detachToolbar ();
         break;
-      case Viewer::LightMode:
-        break;
+
       case Viewer::PickingMode:
         // Show the pickMode Toolbar for this picking mode if it is set
-        if ((pick_mode_idx_ != -1) && pick_modes_[pick_mode_idx_].toolbar() ) {
-
-          if ( pickToolbar_ != 0) {
-            // Remove old toolbar
-            pickToolbar_->hide();
-            removeToolBar(pickToolbar_);
-            pickToolbar_ = 0;
-          }
-
-          pickToolbar_ = pick_modes_[pick_mode_idx_].toolbar();
-          pickToolbar_->setOrientation(Qt::Vertical);
-          addToolBar(Qt::LeftToolBarArea,pickToolbar_);
-          pickToolbar_->show();
-
+        if (pick_mode_idx_ != -1) {
+          if (pick_modes_[pick_mode_idx_].toolbar() )
+            pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
+          else
+            pickToolbar_->detachToolbar ();
         }
         break;
-      case Viewer::QuestionMode:
+
+      default:
         break;
     }
 
-
     //update Viewers
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
       examiner_widgets_[i]->trackMouse(false);
+
+      if(_am == Viewer::PickingMode) {
+          if (pick_mode_idx_ != -1) {
+                examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking() );
+          }
+      }
     }
 
     //emit pickmodeChanged with either the name of the current pickmode or an empty string
@@ -263,27 +256,10 @@ void CoreWidget::pickMode( int _id )
     pick_mode_idx_  = _id;
     pick_mode_name_ = pick_modes_[pick_mode_idx_].name();
 
-    if (pick_modes_[pick_mode_idx_].toolbar() ) {
-
-      if ( pickToolbar_ != 0) {
-        // Remove old toolbar
-        pickToolbar_->hide();
-        removeToolBar(pickToolbar_);
-        pickToolbar_ = 0;
-      }
-
-      pickToolbar_ = pick_modes_[pick_mode_idx_].toolbar();
-      pickToolbar_->setOrientation(Qt::Vertical);
-      addToolBar(Qt::LeftToolBarArea,pickToolbar_);
-      pickToolbar_->show();
-
-    } else
-      if ( pickToolbar_ != 0) {
-        // Remove old toolbar
-        pickToolbar_->hide();
-        removeToolBar(pickToolbar_);
-        pickToolbar_ = 0;
-      }
+    if (pick_modes_[pick_mode_idx_].toolbar() )
+      pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
+    else
+      pickToolbar_->detachToolbar ();
 
     // adjust mouse tracking
     if ( pickingMode() )
@@ -366,20 +342,8 @@ void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolb
       pick_modes_[i].toolbar( _toolbar );
 
       // Activate the toolbar if this mode is currently active
-      if (pick_mode_name_ == _mode && pickingMode() ) {
-
-        if ( pickToolbar_ != 0) {
-          // Remove old toolbar
-          pickToolbar_->hide();
-          removeToolBar(pickToolbar_);
-          pickToolbar_ = 0;
-        }
-
-        pickToolbar_ = _toolbar;
-        pickToolbar_->setOrientation(Qt::Vertical);
-        addToolBar(Qt::LeftToolBarArea,pickToolbar_);
-        pickToolbar_->show();
-      }
+      if (pick_mode_name_ == _mode && pickingMode() )
+        pickToolbar_->attachToolbar (_toolbar);
 
       break;
     }
@@ -395,12 +359,7 @@ void CoreWidget::removePickModeToolbar( const std::string _mode )
       pick_modes_[i].toolbar(0);
 
       if (pick_mode_name_ == _mode && pickingMode() )
-        if ( pickToolbar_ != 0) {
-          // Remove old toolbar
-          pickToolbar_->hide();
-          removeToolBar(pickToolbar_);
-          pickToolbar_ = 0;
-        }
+        pickToolbar_->detachToolbar ();
       break;
     }
 }

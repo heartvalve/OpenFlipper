@@ -79,10 +79,11 @@
 
 //== IMPLEMENTATION ==========================================================
 
-QtPickToolbar::QtPickToolbar(QMainWindow *_core, QGraphicsItem *_parent) :
+QtPickToolbar::QtPickToolbar(QMainWindow *_core, QGraphicsItem *_parent, bool _renderInScene) :
   QGraphicsProxyWidget(_parent),
   toolbar_(0),
-  core_(_core)
+  core_(_core),
+  renderInScene_(_renderInScene)
 {
   setCacheMode (QGraphicsItem::DeviceCoordinateCache);
   setWindowFrameMargins (2, 2, 2, 2);
@@ -95,37 +96,58 @@ QtPickToolbar::QtPickToolbar(QMainWindow *_core, QGraphicsItem *_parent) :
 
 void QtPickToolbar::attachToolbar (QToolBar *_t)
 {
-  if (!_t)
-  {
-    detachToolbar ();
-    return;
-  }
+    if (!_t) {
+        detachToolbar();
+        return;
+    }
 
-  if (_t == toolbar_)
-    return;
+    if (_t == toolbar_)
+        return;
 
-  toolbar_ = _t;
-  toolbar_->setParent(0);
+    if (renderInScene_) {
 
-  setWidget (toolbar_);
-  setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        toolbar_ = _t;
+        toolbar_->setOrientation(Qt::Horizontal);
+        toolbar_->setParent(0);
 
-  show ();
+        setWidget(toolbar_);
+        setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
 
-  updateGeometry ();
+        show();
+
+        updateGeometry();
+
+    } else {
+        // Remove old toolbar
+        if(toolbar_) {
+            core_->removeToolBar(toolbar_);
+        }
+        toolbar_ = _t;
+        core_->addToolBar(Qt::LeftToolBarArea, toolbar_);
+        toolbar_->setOrientation(Qt::Vertical);
+        toolbar_->show();
+    }
 }
 
 //-----------------------------------------------------------------------------
 
 void QtPickToolbar::detachToolbar ()
 {
-  if (toolbar_)
-  {
-    setWidget (0);
-    hide ();
-    toolbar_->setParent(0);
-    toolbar_ = 0;
-  }
+    if (renderInScene_) {
+        if (toolbar_) {
+            setWidget(0);
+            hide();
+            toolbar_->setParent(0);
+            toolbar_ = 0;
+        }
+    } else {
+        if(toolbar_) {
+            toolbar_->hide();
+            core_->removeToolBar(toolbar_);
+            toolbar_->setParent(0);
+            toolbar_ = 0;
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -134,6 +156,8 @@ void QtPickToolbar::paintWindowFrame(QPainter *_painter,
                                      const QStyleOptionGraphicsItem* /*_option*/,
                                      QWidget* /*_widget*/ )
 {
+  if(!renderInScene_) return;
+
   int w = geometry().width();
   int h = geometry().height();
 
@@ -164,6 +188,8 @@ Qt::WindowFrameSection QtPickToolbar::windowFrameSectionAt(const QPointF &/*_pos
 
 void QtPickToolbar::updateGeometry ()
 {
+  if(!renderInScene_) return;
+
   if (parentWidget () && widget ())
   {
     resize (qMin ((int)parentWidget ()->geometry ().width () - 20, widget ()->sizeHint ().width ()),
@@ -176,6 +202,7 @@ void QtPickToolbar::updateGeometry ()
 
 bool QtPickToolbar::eventFilter(QObject *_obj, QEvent *_event)
 {
+  if(!renderInScene_) return false;
   /* The QGraphicsProxyWidged does not sent the StatusTip messages to the main
      application window status bar. So we have to do it manually.
   */
