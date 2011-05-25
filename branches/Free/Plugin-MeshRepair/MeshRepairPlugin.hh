@@ -119,8 +119,6 @@ private :
 
 private slots:
 
-
-    
     /// Button slot
     void slotRemoveSelectedVal3Vertices();
 
@@ -139,14 +137,6 @@ private slots:
     /// Button slot
     void slotDetectTriangleAspect();
 
-
-
-
-
-
-
-
-
     /// Button slot
     void slotFlipOrientation();
 
@@ -160,32 +150,31 @@ private slots:
     void slotUpdateNormals();
 
     /// Button Slot
-     void slotDetectEdgesLonger();
+    void slotDetectEdgesLonger();
 
-     /// Button Slot
-     void slotDetectEdgesShorter();
+    /// Button Slot
+    void slotDetectEdgesShorter();
 
-     /// Button slot
-     void slotDetectFlatValence3Vertices();
+    /// Button slot
+    void slotDetectFlatValence3Vertices();
 
     //Scripting functions:
 public slots:
+
+    /// Remove all selected valence 3 vertices
+    void removeSelectedVal3Vertices(int _objectId);
 
     /// Removes all selected edges
     void removeSelectedEdges(int _objectId);
 
     /// Detect/Remove edges where neighboring faces form angle > _angle degrees
     void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
-    
 
+    /// Detect folded-over configurations
+    void detectFoldover(int _objectId, float _angle);
 
-
-
-
-
-
-
-
+    /// Detect triangle with aspect of _aspect and select candidates
+    void detectTriangleAspect(int _objectId, float _aspect);
 
     /// Recomputes the face normals of an object
     void updateFaceNormals(int _objectId);
