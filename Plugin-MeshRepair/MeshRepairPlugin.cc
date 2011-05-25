@@ -93,117 +93,16 @@ initializePlugin()
   emit addToolbox( tr("Mesh Repair") , tool_,  toolIcon_);
 }
 
-
-
-
-
-
-//-----------------------------------------------------------------------------
+//===========================================================================
+// Button Slots
+//===========================================================================
 
 void MeshRepairPlugin::slotRemoveSelectedVal3Vertices() {
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-
-    float angle = tool_->detectFoldoverSpinbox->value();
-    unsigned int count(0);
-
-    if (o_it->dataType() != DATA_TRIANGLE_MESH) {
-      emit log("Cannot delete/merge vertices on non-trimesh " + QString::number(o_it->id()) + ".");
-      continue;
-    }
-
-    // get the target mesh
-    TriMesh* mesh = 0;
-    PluginFunctions::getMesh(o_it->id(),mesh);
-
-    if ( mesh ) {
-
-      TriMesh::VertexIter                 v_it, v_end(mesh->vertices_end());
-      TriMesh::VVIter                     vv_it;
-      TriMesh::VFIter                     vf_it;
-      int                                 i;
-      std::vector<TriMesh::VertexHandle>  vh(3);
-
-      for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
-      {
-        vf_it = mesh->vf_iter(v_it);
-        if ((mesh->status(v_it).selected()) && !mesh->status(v_it).feature() && mesh->valence(v_it) == 3)
-        {
-          for (i=0, vv_it=mesh->vv_iter(v_it); vv_it; ++vv_it, ++i)
-            vh[2-i] = vv_it.handle();
-
-          mesh->delete_vertex(v_it, false);
-          mesh->add_face(vh);
-
-          ++count;
-        }
-      }
-      if (count > 0)
-        mesh->garbage_collection();
-    }
-
-    if (count > 0) {
-      emit updatedObject(o_it->id(), UPDATE_ALL);
-      emit createBackup(o_it->id(), "Delete/merge selected vertices", UPDATE_ALL);
-    }
-    emit log ("Deleted " + QString::number(count) + " vertices on object " + QString::number(o_it->id()) + ".");
-  }
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+      removeSelectedVal3Vertices(o_it->id());
 
   emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-void MeshRepairPlugin::removeSelectedEdges(int _objectId){
-
-  // get the target mesh
-  TriMesh* triMesh = 0;
-
-  PluginFunctions::getMesh(_objectId,triMesh);
-
-  if ( triMesh ) {
-
-    TriMesh::EdgeIter e_it, e_end=triMesh->edges_end();
-
-    for (e_it = triMesh->edges_begin(); e_it != e_end ; ++e_it) {
-
-      if ( !triMesh->status(e_it).deleted() && triMesh->status(e_it).selected() ) {
-
-        const TriMesh::VHandle   v0 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 0));
-        const TriMesh::VHandle   v1 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 1));
-
-        const bool boundary0 = triMesh->is_boundary(v0);
-        const bool boundary1 = triMesh->is_boundary(v1);
-
-        const bool feature0 = triMesh->status(v0).feature();
-        const bool feature1 = triMesh->status(v1).feature();
-        const bool featureE = triMesh->status(e_it).feature();
-
-        // Collapsing v1 into vo:
-        // collapse is ok, if collapsed vertex is not a feature vertex or the target vertex is a feature
-        // and if we collapse along an feature edge or if the collapsed vertex is not a feature
-        if ((!boundary1 || boundary0) && (!feature1 || (feature0 && featureE)) && triMesh->is_collapse_ok(triMesh->halfedge_handle(e_it, 0)))
-          triMesh->collapse(triMesh->halfedge_handle(e_it, 0));
-        else if ((!boundary0 || boundary1) && (!feature0 || (feature1 && featureE)) && triMesh->is_collapse_ok(triMesh->halfedge_handle(e_it, 1)))
-          triMesh->collapse(triMesh->halfedge_handle(e_it, 1));
-
-      }
-
-    }
-
-    triMesh->garbage_collection();
-    triMesh->update_normals();
-
-
-    emit updatedObject(_objectId,UPDATE_ALL);
-    emit createBackup( _objectId, "Removed selected Edges", UPDATE_ALL);
-    emit scriptInfo( "removeSelectedEdges(" + QString::number(_objectId) + ")" );
-
-    return;
-  }
-
-  emit log( LOGERR,tr("Unsupported Object Type for edge removal") );
-    
 }
 
 //-----------------------------------------------------------------------------
@@ -216,84 +115,13 @@ void MeshRepairPlugin::slotRemoveSelectedEdges(){
   emit updateView();
 }
 
-
-
-
-
-//-----------------------------------------------------------------------------
-
-void MeshRepairPlugin::detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove)
-{
-  // get the target mesh
-  TriMesh* triMesh = 0;
-
-  PluginFunctions::getMesh(_objectId,triMesh);
-
-  if ( triMesh ) {
-
-    // Clear current edge selection
-    MeshSelection::clearEdgeSelection(triMesh);
-
-    double maxAngle = cos(_angle * M_PI / 180.0);
-    double angle = 0.0;
-    TriMesh::EdgeIter e_it, e_end=triMesh->edges_end();
-
-    for (e_it = triMesh->edges_begin(); e_it != e_end ; ++e_it) {
-
-      // Check prerequisites
-      if (!triMesh->status(e_it).deleted() && !triMesh->status(e_it).feature() && triMesh->is_flip_ok(e_it)) {
-
-        // For both halfedges
-        for (unsigned int h=0; h<2; ++h) {
-          TriMesh::HalfedgeHandle hh = triMesh->halfedge_handle(e_it.handle(), h);
-          const TriMesh::Point& a = triMesh->point(triMesh->from_vertex_handle(hh));
-          const TriMesh::Point& b = triMesh->point(triMesh->to_vertex_handle(hh));
-          hh = triMesh->next_halfedge_handle(hh);
-          const TriMesh::Point& c  = triMesh->point(triMesh->to_vertex_handle(hh));
-
-          angle  = ( (a-c).normalize() | (b-c).normalize() );
-
-          if (angle < maxAngle) {
-
-            // selcet it
-            triMesh->status(e_it).set_selected(true);
-
-            // remove it if requested
-            if (_remove) 
-              triMesh->flip(e_it);
-
-          }
-
-        }
-
-      }
-    }
-
-
-    if ( _remove ) {
-      emit updatedObject(_objectId, UPDATE_ALL);
-      emit createBackup( _objectId, tr("Removed cap edges"), UPDATE_ALL );
-    } else {
-      emit updatedObject(_objectId, UPDATE_SELECTION);
-      emit createBackup( _objectId, tr("Selected cap edges"), UPDATE_ALL );
-    }
-    emit scriptInfo( "detectSkinnyTriangleByAngle(" + QString::number(_objectId) + "," + QString::number(_angle) + "," + _remove + ")" );
-
-    return;
-  }
-
-  emit log( LOGERR,tr("Unsupported Object Type for Cap detection!") );
-
-  
-}
-
 //-----------------------------------------------------------------------------
 
 void MeshRepairPlugin::slotDetectSkinnyTriangleByAngle()
 {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it) 
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
     detectSkinnyTriangleByAngle( o_it->id(), tool_->capAngleSpinbox->value(), false );
-  
+
   emit updateView();
 }
 
@@ -302,7 +130,7 @@ void MeshRepairPlugin::slotDetectSkinnyTriangleByAngle()
 void MeshRepairPlugin::slotRemoveSkinnyTriangleByAngle()
 {
   //rewrite!!!
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it) 
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
     detectSkinnyTriangleByAngle( o_it->id(), tool_->capAngleSpinbox->value(), true );
 
   emit updateView();
@@ -312,83 +140,8 @@ void MeshRepairPlugin::slotRemoveSkinnyTriangleByAngle()
 
 void MeshRepairPlugin::slotDetectFoldover() {
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-
-    float angle = tool_->detectFoldoverSpinbox->value();
-    unsigned int count(0);
-
-    //is there any way to get around duplicating this code?
-    if (o_it->dataType() == DATA_TRIANGLE_MESH) {
-
-      // get the target mesh
-      TriMesh* mesh = 0;
-      PluginFunctions::getMesh(o_it->id(),mesh);
-
-      if ( mesh ) {
-
-        // Clear current edge selection
-        MeshSelection::clearEdgeSelection(mesh);
-
-        TriMesh::EdgeIter      e_it, e_end(mesh->edges_end());
-        TriMesh::FaceHandle    fh;
-        TriMesh::Scalar        a, cosa = cos(angle/180.0*M_PI);
-
-        for (e_it=mesh->edges_begin(); e_it!=e_end; ++e_it)
-        {
-          if (!mesh->is_boundary(e_it))
-          {
-            a = ( mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) |
-                mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 1))) );
-
-            if (a < cosa)
-            {
-              mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))).
-                  set_selected(true);
-              ++count;
-            }
-          }
-        }
-      }
-    }
-    else if (o_it->dataType() == DATA_POLY_MESH) {
-
-      // get the target mesh
-      PolyMesh* mesh = 0;
-      PluginFunctions::getMesh(o_it->id(),mesh);
-
-      if ( mesh ) {
-
-        // Clear current edge selection
-        MeshSelection::clearEdgeSelection(mesh);
-
-        PolyMesh::EdgeIter      e_it, e_end(mesh->edges_end());
-        PolyMesh::FaceHandle    fh;
-        PolyMesh::Scalar        a, cosa = cos(angle/180.0*M_PI);
-
-        for (e_it=mesh->edges_begin(); e_it!=e_end; ++e_it)
-        {
-          if (!mesh->is_boundary(e_it))
-          {
-            a = ( mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) |
-                mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 1))) );
-
-            if (a < cosa)
-            {
-              mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))).
-                  set_selected(true);
-              ++count;
-            }
-          }
-        }
-      }
-    }
-
-    if (count > 0) {
-      emit updatedObject(o_it->id(), UPDATE_SELECTION);
-      emit createBackup(o_it->id(), "Select edges", UPDATE_SELECTION);
-    }
-    emit log ("Selected " + QString::number(count) + " fold-overs on object " + QString::number(o_it->id()) + " with angle greater than " + QString::number(angle) + ".");
-  }
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+      detectFoldover(o_it->id(), tool_->detectFoldoverSpinbox->value());
 
   emit updateView();
 }
@@ -397,75 +150,13 @@ void MeshRepairPlugin::slotDetectFoldover() {
 
 void MeshRepairPlugin::slotDetectTriangleAspect() {
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-
-    if (o_it->dataType() != DATA_TRIANGLE_MESH) {
-      emit log("Cannot detect skinny triangles on non-trimesh " + QString::number(o_it->id()) + ".");
-      continue;
-    }
-
-    float aspect = tool_->triangleAspectSpinbox->value();
-    unsigned int count(0);
-
-    // get the target mesh
-    TriMesh* mesh = 0;
-    PluginFunctions::getMesh(o_it->id(),mesh);
-
-    if ( mesh ) {
-
-      // Clear current face selection
-      MeshSelection::clearFaceSelection(mesh);
-
-      TriMesh::FaceIter      f_it, f_end(mesh->faces_end());
-      TriMesh::FVIter        fv_it;
-      TriMesh::FEIter        fe_it;
-
-
-      for (f_it=mesh->faces_begin(); f_it!=f_end; ++f_it)
-      {
-        fv_it = mesh->fv_iter(f_it);
-
-        const TriMesh::Point& p0 = mesh->point(fv_it);
-        const TriMesh::Point& p1 = mesh->point(++fv_it);
-        const TriMesh::Point& p2 = mesh->point(++fv_it);
-
-        if (ACG::Geometry::aspectRatio(p0, p1, p2) > aspect)
-        {
-          mesh->status(f_it).set_selected(true);
-          ++count;
-        }
-      }
-    }
-    if (count > 0) {
-      emit updatedObject(o_it->id(), UPDATE_SELECTION);
-      emit createBackup(o_it->id(), "Select triangles", UPDATE_SELECTION);
-    }
-    emit log ("Selected " + QString::number(count) + " triangles on object " + QString::number(o_it->id()) + " with aspect ratio greater than " + QString::number(aspect) + ".");
-  }
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+      detectTriangleAspect(o_it->id(), tool_->triangleAspectSpinbox->value());
 
   emit updateView();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//===========================================================================
-// Button Slots
-//===========================================================================
+//-----------------------------------------------------------------------------
 
 void MeshRepairPlugin::slotFlipOrientation(){
 
@@ -559,18 +250,37 @@ void MeshRepairPlugin::pluginsInitialized() {
                           QStringList(tr("objectId")),
                           QStringList(tr("ID of an object")));
 
+  emit setSlotDescription("removeSelectedEdges(int)",tr("Remove the selected edges"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("removeSelectedVal3Vertices(int)",tr("Remove all selected valence 3 vertices"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("detectFoldover(int,float)",tr("Selects edges that are incident to folded over faces."),
+                              QString(tr("objectId,angle")).split(","),
+                              QString(tr("ID of an object;Minimum threshold angle for fold-overs")).split(";"));
+
+  emit setSlotDescription("detectTriangleAspect(int,float)",tr("Selects all vertices that have a minimum aspect."),
+                              QString(tr("objectId,aspect")).split(","),
+                              QString(tr("ID of an object;The minimum aspect ratio")).split(";"));
 
   emit setSlotDescription("selectEdgesShorterThan(int,double)",tr("Selects all edges of an object which are shorter than the given length"),
                               QString(tr("objectId,length")).split(","),
-                              QString(tr("ID of an object; All edges shorter than this length will be selected")).split(";"));
+                              QString(tr("ID of an object;All edges shorter than this length will be selected")).split(";"));
 
   emit setSlotDescription("selectEdgesLongerThan(int,double)",tr("Selects all edges of an object which are longer than the given length"),
                               QString(tr("objectId,length")).split(","),
-                              QString(tr("ID of an object; All edges longer than this length will be selected")).split(";"));
+                              QString(tr("ID of an object;All edges longer than this length will be selected")).split(";"));
 
   emit setSlotDescription("detectFlatValence3Vertices(int,double)",tr("Selects all vertices that have valence 3 and the normals of their neighboring faces have an angle less then the given angle"),
                               QString(tr("objectId,angle")).split(","),
-                              QString(tr("ID of an object; the maximal angle between the adjacent faces")).split(";"));
+                              QString(tr("ID of an object;the maximal angle between the adjacent faces")).split(";"));
+
+  emit setSlotDescription("detectSkinnyTriangleByAngle(int,double,bool)",tr("Select or remove skinny triangles. Whether a triangle is skinny is determined by a minimum angle threshold."),
+                              QString(tr("objectId,angle,remove")).split(","),
+                              QString(tr("ID of an object;Minimum angle threshold")).split(";"));
 
 }
 
@@ -579,6 +289,237 @@ void MeshRepairPlugin::pluginsInitialized() {
 //===========================================================================
 // Scriptable functions
 //===========================================================================
+
+void MeshRepairPlugin::removeSelectedVal3Vertices(int _objectId) {
+
+    unsigned int count = 0;
+
+    // get the target mesh
+    TriMesh* mesh = 0;
+    PluginFunctions::getMesh(_objectId, mesh);
+
+    if (mesh) {
+
+        TriMesh::VertexIter v_it, v_end(mesh->vertices_end());
+        TriMesh::VVIter vv_it;
+        TriMesh::VFIter vf_it;
+        int i;
+        std::vector<TriMesh::VertexHandle> vh(3);
+
+        for (v_it = mesh->vertices_begin(); v_it != v_end; ++v_it) {
+            vf_it = mesh->vf_iter(v_it);
+            if ((mesh->status(v_it).selected()) && !mesh->status(v_it).feature() && mesh->valence(v_it) == 3) {
+                for (i = 0, vv_it = mesh->vv_iter(v_it); vv_it; ++vv_it, ++i)
+                    vh[2 - i] = vv_it.handle();
+
+                mesh->delete_vertex(v_it, false);
+                mesh->add_face(vh);
+
+                ++count;
+            }
+        }
+        if (count > 0)
+            mesh->garbage_collection();
+    }
+
+    if (count > 0) {
+        emit updatedObject(_objectId, UPDATE_ALL);
+        emit createBackup(_objectId, "Delete/merge selected vertices", UPDATE_ALL);
+    }
+    emit log("Deleted " + QString::number(count) + " vertices on object " + QString::number(_objectId) + ".");
+}
+
+void MeshRepairPlugin::removeSelectedEdges(int _objectId) {
+
+    // get the target mesh
+    TriMesh* triMesh = 0;
+
+    PluginFunctions::getMesh(_objectId, triMesh);
+
+    if (triMesh) {
+
+        TriMesh::EdgeIter e_it, e_end = triMesh->edges_end();
+
+        for (e_it = triMesh->edges_begin(); e_it != e_end; ++e_it) {
+
+            if (!triMesh->status(e_it).deleted() && triMesh->status(e_it).selected()) {
+
+                const TriMesh::VHandle v0 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 0));
+                const TriMesh::VHandle v1 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 1));
+
+                const bool boundary0 = triMesh->is_boundary(v0);
+                const bool boundary1 = triMesh->is_boundary(v1);
+
+                const bool feature0 = triMesh->status(v0).feature();
+                const bool feature1 = triMesh->status(v1).feature();
+                const bool featureE = triMesh->status(e_it).feature();
+
+                // Collapsing v1 into vo:
+                // collapse is ok, if collapsed vertex is not a feature vertex or the target vertex is a feature
+                // and if we collapse along an feature edge or if the collapsed vertex is not a feature
+                if ((!boundary1 || boundary0) && (!feature1 || (feature0 && featureE)) && triMesh->is_collapse_ok(
+                        triMesh->halfedge_handle(e_it, 0)))
+                    triMesh->collapse(triMesh->halfedge_handle(e_it, 0));
+                else if ((!boundary0 || boundary1) && (!feature0 || (feature1 && featureE)) && triMesh->is_collapse_ok(
+                        triMesh->halfedge_handle(e_it, 1)))
+                    triMesh->collapse(triMesh->halfedge_handle(e_it, 1));
+            }
+        }
+
+        triMesh->garbage_collection();
+        triMesh->update_normals();
+
+        emit updatedObject(_objectId, UPDATE_ALL);
+        emit createBackup(_objectId, "Removed selected Edges", UPDATE_ALL);
+        emit scriptInfo("removeSelectedEdges(" + QString::number(_objectId) + ")");
+
+        return;
+    }
+
+    emit log(LOGERR, tr("Unsupported Object Type for edge removal"));
+
+}
+
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove) {
+    // get the target mesh
+    TriMesh* triMesh = 0;
+
+    PluginFunctions::getMesh(_objectId, triMesh);
+
+    if (triMesh) {
+
+        // Clear current edge selection
+        MeshSelection::clearEdgeSelection(triMesh);
+
+        double maxAngle = cos(_angle * M_PI / 180.0);
+        double angle = 0.0;
+        TriMesh::EdgeIter e_it, e_end = triMesh->edges_end();
+
+        for (e_it = triMesh->edges_begin(); e_it != e_end; ++e_it) {
+
+            // Check prerequisites
+            if (!triMesh->status(e_it).deleted() && !triMesh->status(e_it).feature() && triMesh->is_flip_ok(e_it)) {
+
+                // For both halfedges
+                for (unsigned int h = 0; h < 2; ++h) {
+                    TriMesh::HalfedgeHandle hh = triMesh->halfedge_handle(e_it.handle(), h);
+                    const TriMesh::Point& a = triMesh->point(triMesh->from_vertex_handle(hh));
+                    const TriMesh::Point& b = triMesh->point(triMesh->to_vertex_handle(hh));
+                    hh = triMesh->next_halfedge_handle(hh);
+                    const TriMesh::Point& c = triMesh->point(triMesh->to_vertex_handle(hh));
+
+                    angle = ((a - c).normalize() | (b - c).normalize());
+
+                    if (angle < maxAngle) {
+
+                        // selcet it
+                        triMesh->status(e_it).set_selected(true);
+
+                        // remove it if requested
+                        if (_remove)
+                            triMesh->flip(e_it);
+                    }
+                }
+            }
+        }
+
+        if (_remove) {
+            emit updatedObject(_objectId, UPDATE_ALL);
+            emit createBackup(_objectId, tr("Removed cap edges"), UPDATE_ALL);
+        } else {
+            emit updatedObject(_objectId, UPDATE_SELECTION);
+            emit createBackup(_objectId, tr("Selected cap edges"), UPDATE_ALL);
+        } emit
+        scriptInfo(
+                "detectSkinnyTriangleByAngle(" + QString::number(_objectId) + "," + QString::number(_angle) + ","
+                        + _remove + ")");
+
+        return;
+    }
+
+    emit log(LOGERR, tr("Unsupported Object Type for Cap detection!"));
+}
+
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::detectFoldover(int _objectId, float _angle) {
+
+    // get the target mesh
+    TriMeshObject* trimesh_o = 0;
+    PolyMeshObject* polymesh_o = 0;
+
+    PluginFunctions::getObject(_objectId, trimesh_o);
+    PluginFunctions::getObject(_objectId, polymesh_o);
+
+    unsigned int count = 0;
+
+    if (trimesh_o != 0) {
+
+        // get the target mesh
+        TriMesh* mesh = trimesh_o->mesh();
+
+        if (mesh) {
+
+            // Clear current edge selection
+            MeshSelection::clearEdgeSelection(mesh);
+
+            TriMesh::EdgeIter e_it, e_end(mesh->edges_end());
+            TriMesh::FaceHandle fh;
+            TriMesh::Scalar a, cosa = cos(_angle / 180.0 * M_PI);
+
+            for (e_it = mesh->edges_begin(); e_it != e_end; ++e_it) {
+                if (!mesh->is_boundary(e_it)) {
+                    a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) | mesh->normal(
+                            mesh->face_handle(mesh->halfedge_handle(e_it, 1))));
+
+                    if (a < cosa) {
+                        mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))). set_selected(true);
+                        ++count;
+                    }
+                }
+            }
+        }
+    } else if (polymesh_o != 0) {
+
+        // get the target mesh
+        PolyMesh* mesh = polymesh_o->mesh();
+
+        if (mesh) {
+
+            // Clear current edge selection
+            MeshSelection::clearEdgeSelection(mesh);
+
+            PolyMesh::EdgeIter e_it, e_end(mesh->edges_end());
+            PolyMesh::FaceHandle fh;
+            PolyMesh::Scalar a, cosa = cos(_angle / 180.0 * M_PI);
+
+            for (e_it = mesh->edges_begin(); e_it != e_end; ++e_it) {
+                if (!mesh->is_boundary(e_it)) {
+                    a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) | mesh->normal(
+                            mesh->face_handle(mesh->halfedge_handle(e_it, 1))));
+
+                    if (a < cosa) {
+                        mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))). set_selected(true);
+                        ++count;
+                    }
+                }
+            }
+        }
+    }
+
+    if (count > 0) {
+        emit updatedObject(_objectId, UPDATE_SELECTION);
+        emit createBackup(_objectId, "Select edges", UPDATE_SELECTION);
+        emit scriptInfo("detectFoldover(" + QString::number(_objectId) + ", " + QString::number(_angle) + ")");
+    }
+    emit log(
+            "Selected " + QString::number(count) + " fold-overs on object " + QString::number(_objectId)
+                    + " with angle greater than " + QString::number(_angle) + ".");
+}
+
+//-----------------------------------------------------------------------------
 
 void MeshRepairPlugin::updateFaceNormals(int _objectId) {
   BaseObjectData* object = 0;
@@ -659,9 +600,54 @@ void MeshRepairPlugin::updateNormals(int _objectId) {
 //-----------------------------------------------------------------------------
 
 void
-MeshRepairPlugin::
-flipOrientation(int _objectId)
-{
+MeshRepairPlugin::detectTriangleAspect(int _objectId, float _aspect) {
+
+    // get the target mesh
+    TriMesh* mesh = 0;
+
+    PluginFunctions::getMesh(_objectId, mesh);
+
+    if (mesh) {
+
+        unsigned int count(0);
+
+        // Clear current face selection
+        MeshSelection::clearFaceSelection(mesh);
+
+        TriMesh::FaceIter f_it, f_end(mesh->faces_end());
+        TriMesh::FVIter fv_it;
+        TriMesh::FEIter fe_it;
+
+        for (f_it = mesh->faces_begin(); f_it != f_end; ++f_it) {
+            fv_it = mesh->fv_iter(f_it);
+
+            const TriMesh::Point& p0 = mesh->point(fv_it);
+            const TriMesh::Point& p1 = mesh->point(++fv_it);
+            const TriMesh::Point& p2 = mesh->point(++fv_it);
+
+            if (ACG::Geometry::aspectRatio(p0, p1, p2) > _aspect) {
+                mesh->status(f_it).set_selected(true);
+                ++count;
+            }
+        }
+        if (count > 0) {
+            emit updatedObject(_objectId, UPDATE_SELECTION);
+            emit createBackup(_objectId, "Select triangles", UPDATE_SELECTION);
+            emit scriptInfo( "detectTriangleAspect(" + QString::number(_objectId) + ", " + QString::number(_aspect) + ")" );
+        }
+        emit log(
+                "Selected " + QString::number(count) + " triangles on object " + QString::number(_objectId)
+                        + " with aspect ratio greater than " + QString::number(_aspect) + ".");
+    } else {
+        emit log("Cannot detect skinny triangles on non-trimesh " + QString::number(_objectId) + ".");
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void
+MeshRepairPlugin::flipOrientation(int _objectId) {
+
   // get the target mesh
   TriMesh* triMesh = 0;
 
