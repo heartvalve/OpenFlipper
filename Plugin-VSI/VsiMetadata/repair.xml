@@ -1,4 +1,119 @@
 <OpenFlipper>
+
+void detectFlatValence3Vertices(int _objectId, double _angle);
+  <element name="repair_detectFlatValence3Vertices">
+    <category>Mesh Repair</category>
+    <short>Select flat vertices of valence 3</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="angle" type="Number">
+        <short>Angle threshold</short>
+        <long>Angle threshold</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.detectFlatValence3Vertices ([input="obj"], [input="angle"]);
+    </code>
+  </element>
+  <element name="repair_updateNormals">
+    <category>Mesh Repair</category>
+    <short>Recompute face and vertex normals of an object</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.updateNormals ([input="obj"]);
+    </code>
+  </element>
+  <element name="repair_updateVertexNormals">
+    <category>Mesh Repair</category>
+    <short>Update vertex normals</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.updateVertexNormals ([input="obj"]);
+    </code>
+  </element>
+  <element name="repair_updateFaceNormals">
+    <category>Mesh Repair</category>
+    <short>Update face normals</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.updateFaceNormals ([input="obj"]);
+    </code>
+  </element>
+  <element name="repair_detectTriangleAspect">
+    <category>Mesh Repair</category>
+    <short>Select triangles that have a certain aspect ratio</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="aspect" type="Number">
+        <short>Aspect threshold</short>
+        <long>Aspect threshold</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.detectTriangleAspect ([input="obj"], [input="aspect"]);
+    </code>
+  </element>
+  <element name="repair_detectfoldover">
+    <category>Mesh Repair</category>
+    <short>Detect edges that are incident to faces that are folded-over</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="angle" type="Number">
+        <short>Threshold angle</short>
+        <long>Threshold angle</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.detectFoldover ([input="obj"], [input="angle"]);
+    </code>
+  </element>
+
+
+
+  <element name="repair_removeselectedval3vertices">
+    <category>Mesh Repair</category>
+    <short>Remove selected valence 3 vertices</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.removeSelectedVal3Vertices ([input="obj"]);
+    </code>
+  </element>
   <element name="repair_selectedgeslongerthan">
     <category>Mesh Repair</category>
     <short>Select long edges</short>
