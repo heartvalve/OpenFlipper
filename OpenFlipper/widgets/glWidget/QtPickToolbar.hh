@@ -77,7 +77,7 @@ class DLLEXPORT QtPickToolbar : public QGraphicsProxyWidget
     /** Create a pick toolbar.
     \param _parent parent graphics item
     */
-    QtPickToolbar (QMainWindow *_core, QGraphicsItem *_parent = 0);
+    QtPickToolbar (QMainWindow *_core, QGraphicsItem *_parent = 0, bool _renderInScene = true);
 
     /// recalculate geometry
     void updateGeometry ();
@@ -87,6 +87,9 @@ class DLLEXPORT QtPickToolbar : public QGraphicsProxyWidget
 
     /// detach toolbar
     void detachToolbar ();
+
+    // Set rendering flag
+    void setRenderFlag(bool _inScene) { renderInScene_ = _inScene; }
 
   private:
 
@@ -105,6 +108,9 @@ class DLLEXPORT QtPickToolbar : public QGraphicsProxyWidget
     QToolBar *toolbar_;
 
     QMainWindow *core_;
+
+    // Render pick toolbar into scene
+    bool renderInScene_;
 };
 
 //=============================================================================
