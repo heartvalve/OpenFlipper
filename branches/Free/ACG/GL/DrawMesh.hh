@@ -94,8 +94,8 @@ namespace ACG {
         Optimize triangles for each subset for efficient gpu vertex cache usage.
         After that reorder vertices to avoid big gpu-memory jumps when reading in vertices
     while processing maintain the following maps:
-      vertex index in the final vertex buffer -> halfedge index in OpenMesh  (m_pVertexMap)
-      triangle index in the final index buffer -> face index in OpenMesh  (m_pTriToFaceMap)
+      vertex index in the final vertex buffer -> halfedge index in OpenMesh  (vertexMap_)
+      triangle index in the final index buffer -> face index in OpenMesh  (triToFaceMap_)
  */
 template <class Mesh>
 class DrawMeshT
@@ -134,9 +134,9 @@ private:
 
   struct Subset
   {
-    int  MaterialID;
-    unsigned int StartIndex;
-    unsigned int NumTris;
+    int  materialID;
+    unsigned int startIndex;
+    unsigned int numTris;
   };
 
   enum REBUILD_TYPE {REBUILD_NONE = 0, REBUILD_FULL = 1, REBUILD_GEOMETRY = 2, REBUILD_TOPOLOGY = 4};
@@ -147,12 +147,12 @@ public:
   DrawMeshT(Mesh& _mesh);
   virtual ~DrawMeshT();
 
-  void disableColors()      {m_iColorMode = 0;}
-  void usePerVertexColors() {m_iColorMode = 1;}
-  void usePerFaceColors()   {m_iColorMode = 2;}
+  void disableColors()      {colorMode_ = 0;}
+  void usePerVertexColors() {colorMode_ = 1;}
+  void usePerFaceColors()   {colorMode_ = 2;}
 
-  void setFlatShading()     {m_bFlatMode = 1;}
-  void setSmoothShading()   {m_bFlatMode = 0;}
+  void setFlatShading()     {flatMode_ = 1;}
+  void setSmoothShading()   {flatMode_ = 0;}
 
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
@@ -180,25 +180,25 @@ public:
   void drawVertices();
 
 
-  unsigned int getNumTris() const {return m_NumTris;}
-  unsigned int getNumVerts() const {return m_NumVerts;}
-  unsigned int getNumSubsets() const {return m_NumSubsets;}
+  unsigned int getNumTris() const {return numTris_;}
+  unsigned int getNumVerts() const {return numVerts_;}
+  unsigned int getNumSubsets() const {return numSubsets_;}
 
   // The UpdateX functions give a hint on what to update.
   //  may perform a full rebuild internally!
 
   /** \brief request an update for the mesh topology
    */
-  void updateTopology() {m_Rebuild |= REBUILD_TOPOLOGY;}
+  void updateTopology() {rebuild_ |= REBUILD_TOPOLOGY;}
 
   /** \brief request an update for the mesh vertices
    */
-  void updateGeometry() {m_Rebuild |= REBUILD_GEOMETRY;}
+  void updateGeometry() {rebuild_ |= REBUILD_GEOMETRY;}
 
   /** \brief request a full rebuild of the mesh
    *
    */
-  void updateFull() {m_Rebuild |= REBUILD_FULL;}
+  void updateFull() {rebuild_ |= REBUILD_FULL;}
 
   /** \brief returns the number of used textured of this mesh
    *
@@ -262,32 +262,32 @@ private:
    *
    * (only operates on indices)
    *
-   * @param DstIndexBuf
-   * @param MaxFaceVertexCount
+   * @param _dstIndexBuf
+   * @param _maxFaceVertexCount
    *
-   * @return # of triangles,  also fills m_pTriToFaceMap
+   * @return # of triangles,  also fills triToFaceMap_
    */
-  unsigned int convertToTriangleMesh(unsigned int* DstIndexBuf, unsigned int MaxFaceVertexCount);
+  unsigned int convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount);
 
   /** \brief create the big 3 * NumTris vertex buffer
    *
-   * @param DstVertexBuf
-   * @param DstVertexMap
-   * @param IndexBuf
+   * @param _dstVertexBuf
+   * @param _dstVertexMap
+   * @param _indexBuf
    */
-  void createBigVertexBuf(Vertex* DstVertexBuf, unsigned int* DstVertexMap, const unsigned int* IndexBuf);
+  void createBigVertexBuf(Vertex* _dstVertexBuf, unsigned int* _dstVertexMap, const unsigned int* _indexBuf);
 
   /** \brief
    *
-   * @param pDst
-   * @param vh
-   * @param hh
-   * @param fh
+   * @param _pDst
+   * @param _vh
+   * @param _hh
+   * @param _fh
    */
-  void readVertex(Vertex*                       pDst,
-                  typename Mesh::VertexHandle   vh,
-                  typename Mesh::HalfedgeHandle hh,
-                  typename Mesh::FaceHandle      fh);
+  void readVertex(Vertex*                       _pDst,
+                  typename Mesh::VertexHandle   _vh,
+                  typename Mesh::HalfedgeHandle _hh,
+                  typename Mesh::FaceHandle     _fh);
 
   /** \brief
    *
@@ -296,59 +296,59 @@ private:
 
   /** \brief minimize the big vertex buffer
    *
-   * @param DstVertexBuf
-   * @param SrcVertexBuf
-   * @param DstIndexBuf
-   * @param DstVertexMap
-   * @param SrcVertexMap
+   * @param _dstVertexBuf
+   * @param _srcVertexBuf
+   * @param _dstIndexBuf
+   * @param _dstVertexMap
+   * @param _srcVertexMap
    * @return new #vertices
    */
-  unsigned int weldVertices(Vertex*             DstVertexBuf,
-                            const Vertex*       SrcVertexBuf,
-                            unsigned int*       DstIndexBuf,
-                            unsigned int*       DstVertexMap,
-                            const unsigned int* SrcVertexMap);
+  unsigned int weldVertices(Vertex*             _dstVertexBuf,
+                            const Vertex*       _srcVertexBuf,
+                            unsigned int*       _dstIndexBuf,
+                            unsigned int*       _dstVertexMap,
+                            const unsigned int* _srcVertexMap);
 
   /** \brief sort triangles by material id
    *
    *
-   * also creates subsets: m_pSubsets
+   * also creates subsets: subsets_
    *
-   * DstIndexBuf and SrcIndexBuf must be different!
+   * _dstIndexBuf and _srcIndexBuf must be different!
    *
-   * @param DstIndexBuf
-   * @param SrcIndexBuf
+   * @param _dstIndexBuf
+   * @param _srcIndexBuf
    */
-  void sortTrisByMaterial(unsigned int* DstIndexBuf, const unsigned int* SrcIndexBuf);
+  void sortTrisByMaterial(unsigned int* _dstIndexBuf, const unsigned int* _srcIndexBuf);
 
   /** \brief GPU cache optimization
    *
-   * DstIndexBuf == SrcIndexBuf allowed (inplace operation)
+   * _dstIndexBuf == _srcIndexBuf allowed (inplace operation)
    * tris are optimized based on subsets
    * SortTrisByMaterial must be called prior!!
-   * also maintains m_pTriToFaceMap
+   * also maintains triToFaceMap_
    *
-   * @param DstIndexBuf
-   * @param SrcIndexBuf
+   * @param _dstIndexBuf
+   * @param _srcIndexBuf
    */
-  void optimizeTris(unsigned int* DstIndexBuf, unsigned int* SrcIndexBuf);
+  void optimizeTris(unsigned int* _dstIndexBuf, unsigned int* _srcIndexBuf);
 
   /** \brief optimize vertex layout
    *
    * for best results, call this after OptimizeTris
-   * also maintains m_pVertexMap,
-   * NOTE: SrcVertexMap is invalid after this call
-   * SrcVertexBuf != DstVertexBuf!!
+   * also maintains vertexMap_,
+   * NOTE: _srcVertexMap is invalid after this call
+   * _srcVertexBuf != _dstVertexBuf!!
    *
-   * @param DstVertexBuf
-   * @param SrcVertexBuf
-   * @param InOutIndexBuf
-   * @param SrcVertexMap
+   * @param _dstVertexBuf
+   * @param _srcVertexBuf
+   * @param _inOutIndexBuf
+   * @param _srcVertexMap
    */
-  void optimizeVerts(Vertex*             DstVertexBuf,
-                     const Vertex*       SrcVertexBuf,
-                     unsigned int*       InOutIndexBuf,
-                     const unsigned int* SrcVertexMap);
+  void optimizeVerts(Vertex*             _dstVertexBuf,
+                     const Vertex*       _srcVertexBuf,
+                     unsigned int*       _inOutIndexBuf,
+                     const unsigned int* _srcVertexMap);
 
 
   /** \brief  stores the vertex buffer on the gpu
@@ -381,12 +381,12 @@ public:
   *
   * @return pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickVertexColorBuffer(){ return &(m_PickVertBuf)[0]; };
+  ACG::Vec4uc * pickVertexColorBuffer(){ return &(pickVertBuf_)[0]; };
   
 private:  
   
   /// The color buffer used for vertex picking
-  std::vector< ACG::Vec4uc > m_PickVertBuf;
+  std::vector< ACG::Vec4uc > pickVertBuf_;
 
 
 
@@ -411,13 +411,13 @@ public:
   *
   * @return pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickEdgeColorBuffer(){ return &(m_PickEdgeBuf)[0]; };
+  ACG::Vec4uc * pickEdgeColorBuffer(){ return &(pickEdgeBuf_)[0]; };
   
 
   
 private:  
   
-  std::vector< ACG::Vec4uc > m_PickEdgeBuf;
+  std::vector< ACG::Vec4uc > pickEdgeBuf_;
 
 
 
@@ -437,7 +437,7 @@ public:
   *
   * @return
   */
-  ACG::Vec4uc * pickFaceColorBuffer(){ return &(m_PickFaceColBuf)[0]; };
+  ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColBuf_)[0]; };
 
   /** \brief get a pointer to the per vertex picking color buffer
     *
@@ -447,12 +447,12 @@ public:
     *
     * @return pointer to the first element of the picking buffer
     */
-  ACG::Vec3f * pickFaceVertexBuffer(){ return &(m_PickFaceVertexBuf)[0]; };
+  ACG::Vec3f * pickFaceVertexBuffer(){ return &(pickFaceVertexBuf_)[0]; };
   
 private:  
 
-  std::vector< ACG::Vec3f > m_PickFaceVertexBuf;
-  std::vector< ACG::Vec4uc > m_PickFaceColBuf;
+  std::vector< ACG::Vec3f > pickFaceVertexBuf_;
+  std::vector< ACG::Vec4uc > pickFaceColBuf_;
 
 
 public:
@@ -473,11 +473,11 @@ public:
   *
   * @return Pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickAnyColorBuffer(){ return &(m_PickAnyBuf)[0]; };
+  ACG::Vec4uc * pickAnyColorBuffer(){ return &(pickAnyBuf_)[0]; };
   
 private:  
   
-  std::vector< ACG::Vec4uc > m_PickAnyBuf;
+  std::vector< ACG::Vec4uc > pickAnyBuf_;
   
 
 private:
@@ -489,77 +489,77 @@ private:
    * returns the number of tris after triangulation of this mesh
    * if needed, also returns the highest number of vertices of a face
    *
-   * @param pOutMaxPolyVerts
+   * @param _pOutMaxPolyVerts
    *
    * @return
   */
-  unsigned int countTris(unsigned int* pOutMaxPolyVerts = 0);
+  unsigned int countTris(unsigned int* _pOutMaxPolyVerts = 0);
 
   /** \brief get the texture index of a triangle
    *
    *
-   *  @param tri Triangle index (-1 if not available)
+   *  @param _tri Triangle index (-1 if not available)
    *
    *  @return Texture index of a triangle
    */
-  int getTextureIDofTri(unsigned int tri);
+  int getTextureIDofTri(unsigned int _tri);
 
 private:
 
   /// OpenMesh object to be rendered
-  Mesh& m_Mesh;
+  Mesh& mesh_;
 
-  unsigned int m_NumTris, m_NumVerts;
+  unsigned int numTris_, numVerts_;
 
   /// final index buffer used for rendering
-  unsigned int* m_pIndices;
+  unsigned int* indices_;
 
   /// final vertex buffer used for rendering
-  Vertex* m_pVertices;
+  Vertex* vertices_;
 
   /// hint on what to rebuild
-  unsigned int m_Rebuild;
+  unsigned int rebuild_;
 
   /** used to track mesh changes, that require a full rebuild
     * values directly taken from Mesh template
     */
-  unsigned int m_PrevNumFaces,m_PrevNumVerts;
+  unsigned int prevNumFaces_,prevNumVerts_;
 
 
   // per material/texture subsets
-  unsigned int m_NumSubsets;
-  Subset* m_pSubsets;
+  unsigned int numSubsets_;
+  Subset* subsets_;
 
-  GLuint m_VBO,
-         m_IBO;
+  GLuint vbo_,
+         ibo_;
 
   /// index buffer used in Wireframe / Hiddenline mode
-  GLuint m_LineIBO;
+  GLuint lineIBO_;
 
   /// support for 2 and 4 byte unsigned integers
-  GLenum m_IndexType;
+  GLenum indexType_;
 
   /// Color Mode: 0: none, 1: per vertex,  else: per face
-  int m_iColorMode;
+  int colorMode_;
   /// flat / smooth shade mode toggle
-  int m_bFlatMode;
+  int flatMode_;
 
   /// normals in VBO currently in flat / smooth mode
-  int m_bVBOinFlatMode;
+  int bVBOinFlatMode_;
 
 
   /** remapping for faster mesh change updates
    *  maps from triangle index to Mesh::FaceHandle::idx
    */
-  unsigned int* m_pTriToFaceMap;
+  unsigned int* triToFaceMap_;
 
   /// vertex index in vbo -> original OpenMesh halfedge index
-  unsigned int* m_pVertexMap;
+  unsigned int* vertexMap_;
 
   /** inverse vertex map: original OpenMesh vertex index -> one vertex index in vbo
       this map is ambiguous and only useful for per vertex attributes rendering i.e. lines!
   */
-  unsigned int* m_pInvVertexMap;
+  unsigned int* invVertexMap_;
 
 
   //========================================================================
@@ -567,8 +567,8 @@ private:
   // temporal buffer allocations to avoid memory requests while updating
   //========================================================================
 
-  unsigned int* m_pIndicesTmp;
-  Vertex* m_pVerticesTmp;
+  unsigned int* indicesTmp_;
+  Vertex* verticesTmp_;
 
   //========================================================================
   // texture handling
@@ -594,25 +594,25 @@ private:
 public:
   //========================================================================
   // per edge buffers
-  void invalidatePerEdgeBuffers() {m_bUpdatePerEdgeBuffers = 1;}
+  void invalidatePerEdgeBuffers() {updatePerEdgeBuffers_ = 1;}
   void updatePerEdgeBuffers();
   ACG::Vec3f* perEdgeVertexBuffer();
   ACG::Vec4f* perEdgeColorBuffer();
 
-  void invalidatePerHalfedgeBuffers() {m_bUpdatePerHalfedgeBuffers = 1;}
+  void invalidatePerHalfedgeBuffers() {updatePerHalfedgeBuffers_ = 1;}
   void updatePerHalfedgeBuffers();
   ACG::Vec3f* perHalfedgeVertexBuffer();
   ACG::Vec4f* perHalfedgeColorBuffer();
 
 
 private:
-  int m_bUpdatePerEdgeBuffers;
-  std::vector<ACG::Vec3f> m_PerEdgeVertexBuf;
-  std::vector<ACG::Vec4f> m_PerEdgeColorBuf;
+  int updatePerEdgeBuffers_;
+  std::vector<ACG::Vec3f> perEdgeVertexBuf_;
+  std::vector<ACG::Vec4f> perEdgeColorBuf_;
 
-  int m_bUpdatePerHalfedgeBuffers;
-  std::vector<ACG::Vec3f> m_PerHalfedgeVertexBuf;
-  std::vector<ACG::Vec4f> m_PerHalfedgeColorBuf;
+  int updatePerHalfedgeBuffers_;
+  std::vector<ACG::Vec3f> perHalfedgeVertexBuf_;
+  std::vector<ACG::Vec4f> perHalfedgeColorBuf_;
 
   /** \brief compute halfedge point
   * compute visualization point for halfedge (shifted to interior of face)

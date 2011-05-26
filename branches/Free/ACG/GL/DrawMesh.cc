@@ -112,28 +112,28 @@ inline int intNextPowerOfTwo(int x)
 
 template <class Mesh>
 DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
-:  m_Mesh(_mesh),
-   m_NumTris(0), m_NumVerts(0),
-   m_pIndices(0),
-   m_pVertices(0),
-   m_Rebuild(REBUILD_NONE),
-   m_PrevNumFaces(0), m_PrevNumVerts(0),
-   m_NumSubsets(0),
-   m_pSubsets(0),
-   m_VBO(0), m_IBO(0),
-   m_LineIBO(0),
-   m_IndexType(0),
-   m_iColorMode(1),
-   m_bFlatMode(0), m_bVBOinFlatMode(0),
-   m_pTriToFaceMap(0),
-   m_pVertexMap(0),
-   m_pInvVertexMap(0),
-   m_pIndicesTmp(0),
-   m_pVerticesTmp(0),
+:  mesh_(_mesh),
+   numTris_(0), numVerts_(0),
+   indices_(0),
+   vertices_(0),
+   rebuild_(REBUILD_NONE),
+   prevNumFaces_(0), prevNumVerts_(0),
+   numSubsets_(0),
+   subsets_(0),
+   vbo_(0), ibo_(0),
+   lineIBO_(0),
+   indexType_(0),
+   colorMode_(1),
+   flatMode_(0), bVBOinFlatMode_(0),
+   triToFaceMap_(0),
+   vertexMap_(0),
+   invVertexMap_(0),
+   indicesTmp_(0),
+   verticesTmp_(0),
    textureIndexPropertyName_("Not Set"),
    perFaceTextureCoordinatePropertyName_("Not Set"),
-   m_bUpdatePerEdgeBuffers(1),
-  m_bUpdatePerHalfedgeBuffers(1)
+   updatePerEdgeBuffers_(1),
+  updatePerHalfedgeBuffers_(1)
 {
 }
 
@@ -142,111 +142,111 @@ template <class Mesh>
 void
 DrawMeshT<Mesh>::rebuild()
 {
-  if (m_Rebuild == REBUILD_NONE) return;
+  if (rebuild_ == REBUILD_NONE) return;
 
-  unsigned int MaxFaceVertCount = 0;
-  unsigned int NewTriCount = countTris(&MaxFaceVertCount);
+  unsigned int maxFaceVertCount = 0;
+  unsigned int newTriCount = countTris(&maxFaceVertCount);
   
   int bTriangleRebuild = 0; // what should be rebuild?
   int bVertexRebuild = 0;
 
-//  m_Mesh.request_face_normals();
+//  mesh_.request_face_normals();
 
 
-  if (NewTriCount > m_NumTris)
+  if (newTriCount > numTris_)
   {
     // index buffers too small
     // resize here
-    delete [] m_pIndices;
-    delete [] m_pIndicesTmp;
-    delete [] m_pTriToFaceMap;
+    delete [] indices_;
+    delete [] indicesTmp_;
+    delete [] triToFaceMap_;
 
-    glDeleteBuffers(1, &m_IBO);
-    m_IBO = 0;
+    glDeleteBuffers(1, &ibo_);
+    ibo_ = 0;
 
-    m_NumTris = NewTriCount;
+    numTris_ = newTriCount;
 
-    m_pTriToFaceMap = new unsigned int[m_NumTris];
-    m_pIndices = new unsigned int[m_NumTris * 3];
-    m_pIndicesTmp = new unsigned int[m_NumTris * 3];
+    triToFaceMap_ = new unsigned int[numTris_];
+    indices_ = new unsigned int[numTris_ * 3];
+    indicesTmp_ = new unsigned int[numTris_ * 3];
 
     bTriangleRebuild = 1;
   }
 
-  if (m_PrevNumFaces != m_Mesh.n_faces())
+  if (prevNumFaces_ != mesh_.n_faces())
   {
     bTriangleRebuild = 1;
-    m_PrevNumFaces = m_Mesh.n_faces();
+    prevNumFaces_ = mesh_.n_faces();
   }
 
-  if (m_PrevNumVerts != m_Mesh.n_vertices())
+  if (prevNumVerts_ != mesh_.n_vertices())
   {
-    if (m_PrevNumVerts < m_Mesh.n_vertices())
+    if (prevNumVerts_ < mesh_.n_vertices())
     {
       // resize inverse vertex map
-      delete [] m_pInvVertexMap;
-      m_pInvVertexMap = new unsigned int[m_Mesh.n_vertices()];
+      delete [] invVertexMap_;
+      invVertexMap_ = new unsigned int[mesh_.n_vertices()];
     }
 
     bVertexRebuild = 1;
     bTriangleRebuild = 1; // this may have caused changes in the topology!
-    m_PrevNumVerts = m_Mesh.n_vertices();
+    prevNumVerts_ = mesh_.n_vertices();
   }
 
   // support faster update by only updating vertices
-  if (!bTriangleRebuild && !bVertexRebuild && m_Rebuild == REBUILD_GEOMETRY)
+  if (!bTriangleRebuild && !bVertexRebuild && rebuild_ == REBUILD_GEOMETRY)
   {
     // only update vertices, i.e. update values of vertices
     
-    for (unsigned int i = 0; i < m_NumVerts; ++i)
+    for (unsigned int i = 0; i < numVerts_; ++i)
     {
-      unsigned int MeshHalfedge = m_pVertexMap[i];
+      unsigned int MeshHalfedge = vertexMap_[i];
 
-//      Mesh::VertexHandle vh = m_Mesh.vertex_handle(MeshVertex);
+//      Mesh::VertexHandle vh = mesh_.vertex_handle(MeshVertex);
 
       // just pick one face, srews up face colors here so color updates need a full rebuild
-      typename Mesh::HalfedgeHandle hh = m_Mesh.halfedge_handle(MeshHalfedge);
-      typename Mesh::VertexHandle vh = m_Mesh.to_vertex_handle(hh);
-      typename Mesh::FaceHandle fh = m_Mesh.face_handle(hh);
+      typename Mesh::HalfedgeHandle hh = mesh_.halfedge_handle(MeshHalfedge);
+      typename Mesh::VertexHandle vh = mesh_.to_vertex_handle(hh);
+      typename Mesh::FaceHandle fh = mesh_.face_handle(hh);
 
-      readVertex(m_pVertices + i, vh, hh, fh);
+      readVertex(vertices_ + i, vh, hh, fh);
     }
 
     createVBO();
 
-    m_Rebuild = REBUILD_NONE;
+    rebuild_ = REBUILD_NONE;
     return;
   }
 
 
-  std::vector<unsigned int> Tris(m_NumTris * 3);
+  std::vector<unsigned int> tris(numTris_ * 3);
 
 
   //////////////////////////////////////////////////////////////////////////
   // convert from half_edge data structure to triangle index list
 
 
-  m_NumTris = convertToTriangleMesh(&Tris[0], MaxFaceVertCount);
+  numTris_ = convertToTriangleMesh(&tris[0], maxFaceVertCount);
 
   //////////////////////////////////////////////////////////////////////////
   // process vertices
   //  1. one vertex per triangle corner
   //  2. weld equal vertices
 
-  unsigned int NewNumVerts = 0;
-  std::vector<Vertex> TmpVertexBuffer(3 * m_NumTris); // pre vertex welding
-  std::vector<Vertex> DstVertexBuffer(3 * m_NumTris); // post vertex welding
+  unsigned int newNumVerts = 0;
+  std::vector<Vertex> tmpVertexBuffer(3 * numTris_); // pre vertex welding
+  std::vector<Vertex> dstVertexBuffer(3 * numTris_); // post vertex welding
 
-  unsigned int* pVertexRemap = new unsigned int[3 * m_NumTris]; // keeps track of vertex origin (per-vertex attributes)
+  unsigned int* pVertexRemap = new unsigned int[3 * numTris_]; // keeps track of vertex origin (per-vertex attributes)
 
-  createBigVertexBuf(&TmpVertexBuffer[0], pVertexRemap, &Tris[0]);
+  createBigVertexBuf(&tmpVertexBuffer[0], pVertexRemap, &tris[0]);
 
 
   // minimize vertex buffer
-  unsigned int* pTmpVertexRemap = new unsigned int[3 * m_NumTris];
+  unsigned int* pTmpVertexRemap = new unsigned int[3 * numTris_];
 
-  NewNumVerts = weldVertices(&DstVertexBuffer[0],
-    &TmpVertexBuffer[0], &Tris[0], &pTmpVertexRemap[0], pVertexRemap);
+  newNumVerts = weldVertices(&dstVertexBuffer[0],
+    &tmpVertexBuffer[0], &tris[0], &pTmpVertexRemap[0], pVertexRemap);
 
 
   std::swap(pTmpVertexRemap, pVertexRemap);
@@ -255,19 +255,19 @@ DrawMeshT<Mesh>::rebuild()
 
   // end-of mesh extraction
 
-  if (m_NumVerts < NewNumVerts)
+  if (numVerts_ < newNumVerts)
   {
     // per vertex buffers too small
-    delete [] m_pVertices;
-    delete [] m_pVerticesTmp;
-    delete [] m_pVertexMap;
+    delete [] vertices_;
+    delete [] verticesTmp_;
+    delete [] vertexMap_;
 //    delete [] m_pVerticesC;
 
-    m_NumVerts = NewNumVerts;
+    numVerts_ = newNumVerts;
 
-    m_pVertices = new Vertex[m_NumVerts];
-    m_pVerticesTmp = new Vertex[m_NumVerts];
-    m_pVertexMap = new unsigned int[m_NumVerts];
+    vertices_ = new Vertex[numVerts_];
+    verticesTmp_ = new Vertex[numVerts_];
+    vertexMap_ = new unsigned int[numVerts_];
   }
 
  
@@ -275,8 +275,7 @@ DrawMeshT<Mesh>::rebuild()
   //////////////////////////////////////////////////////////////////////////
   // sort triangles by material
 
-  sortTrisByMaterial(m_pIndices, &Tris[0]);
-//  memcpy(m_pIndices, &Tris[0], 3 * m_NumTris * sizeof(UINT));
+  sortTrisByMaterial(indices_, &tris[0]);
 
   //////////////////////////////////////////////////////////////////////////
   // optimize vcache
@@ -284,8 +283,8 @@ DrawMeshT<Mesh>::rebuild()
 
   // index buffer first
 
-  optimizeTris(m_pIndices, m_pIndices);
-  optimizeVerts(m_pVertices, &DstVertexBuffer[0], m_pIndices, pVertexRemap);
+  optimizeTris(indices_, indices_);
+  optimizeVerts(vertices_, &dstVertexBuffer[0], indices_, pVertexRemap);
 
 
   delete [] pVertexRemap;
@@ -294,10 +293,10 @@ DrawMeshT<Mesh>::rebuild()
   //////////////////////////////////////////////////////////////////////////
   // create the inverse vertex map
 
-  for (unsigned int i = 0; i < m_NumVerts; ++i)
+  for (unsigned int i = 0; i < numVerts_; ++i)
   {
-    OpenMesh::HalfedgeHandle hh = m_Mesh.halfedge_handle(m_pVertexMap[i]);
-    m_pInvVertexMap[m_Mesh.to_vertex_handle(hh).idx()] = i;
+    OpenMesh::HalfedgeHandle hh = mesh_.halfedge_handle(vertexMap_[i]);
+    invVertexMap_[mesh_.to_vertex_handle(hh).idx()] = i;
   }
 
 
@@ -308,7 +307,7 @@ DrawMeshT<Mesh>::rebuild()
   createIBO();
 
 
-  m_Rebuild = REBUILD_NONE;
+  rebuild_ = REBUILD_NONE;
 
   // picking buffers update
 }
@@ -316,70 +315,70 @@ DrawMeshT<Mesh>::rebuild()
 
 template <class Mesh>
 unsigned int
-DrawMeshT<Mesh>::convertToTriangleMesh(unsigned int* DstIndexBuf, unsigned int MaxFaceVertexCount)
+DrawMeshT<Mesh>::convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount)
 {
-  unsigned int TriCounter = 0;
-  unsigned int IndexCounter = 0;
+  unsigned int triCounter = 0;
+  unsigned int indexCounter = 0;
 
-  unsigned int* pFaceVerts = new unsigned int[MaxFaceVertexCount];
+  unsigned int* pFaceVerts = new unsigned int[_maxFaceVertexCount];
 
-  for (unsigned int i = 0; i < m_Mesh.n_faces(); ++i)
+  for (unsigned int i = 0; i < mesh_.n_faces(); ++i)
   {
-    typename Mesh::FaceHandle fh =  m_Mesh.face_handle(i);
+    typename Mesh::FaceHandle fh =  mesh_.face_handle(i);
     // convert this face to triangles
 
-	  typename Mesh::HalfedgeHandle hh_start = m_Mesh.halfedge_handle(fh);
+	  typename Mesh::HalfedgeHandle hh_start = mesh_.halfedge_handle(fh);
  
   	// count vertices
   	unsigned int nPolyVerts = 0;
 
     // read all vertex indices of this face
-    for (typename Mesh::FaceHalfedgeIter hh_it = m_Mesh.fh_iter(fh); hh_it; ++hh_it )
-      pFaceVerts[nPolyVerts++] = m_Mesh.to_vertex_handle(hh_it).idx();
+    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )
+      pFaceVerts[nPolyVerts++] = mesh_.to_vertex_handle(hh_it).idx();
 
     //////////////////////////////////////////////////////////////////////////
     // convert to triangles
 
-    m_pTriToFaceMap[TriCounter++] = i;
-    for (int k = 0; k < 3; ++k) DstIndexBuf[IndexCounter++] = pFaceVerts[k];
+    triToFaceMap_[triCounter++] = i;
+    for (int k = 0; k < 3; ++k) _dstIndexBuf[indexCounter++] = pFaceVerts[k];
 
     //  trivial fanning
 
     for (unsigned int k = 3; k < nPolyVerts; ++k)
     {
-      m_pTriToFaceMap[TriCounter++] = i;
+      triToFaceMap_[triCounter++] = i;
 
-      DstIndexBuf[IndexCounter++] = pFaceVerts[0];
-      DstIndexBuf[IndexCounter++] = pFaceVerts[k-1];
-      DstIndexBuf[IndexCounter++] = pFaceVerts[k];
+      _dstIndexBuf[indexCounter++] = pFaceVerts[0];
+      _dstIndexBuf[indexCounter++] = pFaceVerts[k-1];
+      _dstIndexBuf[indexCounter++] = pFaceVerts[k];
     }
   }
 
   delete [] pFaceVerts;
 
-  return TriCounter;
+  return triCounter;
 }
 
 template <class Mesh>
 void
-DrawMeshT<Mesh>::readVertex(Vertex* pV,
-                            typename Mesh::VertexHandle vh,
-                            typename Mesh::HalfedgeHandle hh,
-                            typename Mesh::FaceHandle fh)
+DrawMeshT<Mesh>::readVertex(Vertex* _pV,
+                            typename Mesh::VertexHandle _vh,
+                            typename Mesh::HalfedgeHandle _hh,
+                            typename Mesh::FaceHandle _fh)
 {
   for (int m = 0; m < 3; ++m)
   {
-    pV->pos[m] = m_Mesh.point(vh)[m];
+    _pV->pos[m] = mesh_.point(_vh)[m];
 
-    if (m_Mesh.has_vertex_normals())
-      pV->n[m] = m_Mesh.normal(vh)[m];
-    else pV->n[m] = 0.0f;
+    if (mesh_.has_vertex_normals())
+      _pV->n[m] = mesh_.normal(_vh)[m];
+    else _pV->n[m] = 0.0f;
 
     if (m < 2)
     {
-      if (m_Mesh.has_vertex_texcoords2D())
-         pV->tex[m] = m_Mesh.texcoord2D(hh)[m];
-      else pV->tex[m] = 0.0f;
+      if (mesh_.has_vertex_texcoords2D())
+         _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
+      else _pV->tex[m] = 0.0f;
     }
   }
   
@@ -389,8 +388,8 @@ DrawMeshT<Mesh>::readVertex(Vertex* pV,
   {
     typename Mesh::Color vecCol(255, 255, 255);
 
-    if (col == 0 && m_Mesh.has_vertex_colors()) vecCol = m_Mesh.color(vh);
-    if (col == 1 && m_Mesh.has_face_colors() && fh.idx() >= 0) vecCol = m_Mesh.color(fh);
+    if (col == 0 && mesh_.has_vertex_colors()) vecCol = mesh_.color(_vh);
+    if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) vecCol = mesh_.color(_fh);
 
     // OpenGL color format: A8B8G8R8
     byteCol[col] = (unsigned char)(vecCol[0]);
@@ -400,43 +399,43 @@ DrawMeshT<Mesh>::readVertex(Vertex* pV,
     byteCol[col] |= 0xFF << 24;
   }
 
- pV->vcol = byteCol[0];
-//  pV->vcol = 0xFFFF0000; // blue,  debug
- pV->fcol = byteCol[1];
+ _pV->vcol = byteCol[0];
+//  _pV->vcol = 0xFFFF0000; // blue,  debug
+ _pV->fcol = byteCol[1];
 //  pV->fcol = 0xFF00FF00; // green, debug
 }
 
 template <class Mesh>
 void
-DrawMeshT<Mesh>::createBigVertexBuf(Vertex* DstVertexBuf,
-                                    unsigned int* DstVertexMap,
-                                    const unsigned int* IndexBuf)
+DrawMeshT<Mesh>::createBigVertexBuf(Vertex* _dstVertexBuf,
+                                    unsigned int* _dstVertexMap,
+                                    const unsigned int* _indexBuf)
 {
   // fill 3 * NumTris vertex buffer
-  for (unsigned int i = 0; i < m_NumTris; ++i)
+  for (unsigned int i = 0; i < numTris_; ++i)
   {
-    typename Mesh::FaceHandle fh = m_Mesh.face_handle(m_pTriToFaceMap[i]);
+    typename Mesh::FaceHandle fh = mesh_.face_handle(triToFaceMap_[i]);
 
     for (int k = 0; k < 3; ++k)
     {
-      typename Mesh::VertexHandle vh = m_Mesh.vertex_handle(IndexBuf[i * 3 + k]);
+      typename Mesh::VertexHandle vh = mesh_.vertex_handle(_indexBuf[i * 3 + k]);
 
       // find corresponding halfedge and get per face attributes
       typename Mesh::HalfedgeHandle hh;
 
-      for (typename Mesh::FaceHalfedgeIter hh_it = m_Mesh.fh_iter(fh); hh_it; ++hh_it )
+      for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )
       {
-        if (m_Mesh.to_vertex_handle(hh_it).idx() == vh.idx())
+        if (mesh_.to_vertex_handle(hh_it).idx() == vh.idx())
         {
           hh = hh_it;
           break;
         }
       }
 
-      DstVertexMap[i * 3 + k] = hh.idx();
+      _dstVertexMap[i * 3 + k] = hh.idx();
 
 
-      Vertex* pV = DstVertexBuf + i * 3 + k;
+      Vertex* pV = _dstVertexBuf + i * 3 + k;
 
       readVertex(pV, vh, hh, fh);
     }
@@ -445,65 +444,52 @@ DrawMeshT<Mesh>::createBigVertexBuf(Vertex* DstVertexBuf,
 
 template <class Mesh>
 unsigned int 
-DrawMeshT<Mesh>::weldVertices(Vertex* DstVertexBuf,
-                              const Vertex* SrcVertexBuf,
-                              unsigned int* DstIndexBuf, 
-                              unsigned int* DstVertexMap,
-                              const unsigned int* SrcVertexMap)
+DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
+                              const Vertex* _srcVertexBuf,
+                              unsigned int* _dstIndexBuf, 
+                              unsigned int* _dstVertexMap,
+                              const unsigned int* _srcVertexMap)
 {
-// 
-//   for (unsigned int i = 0; i < m_Mesh.n_vertices(); ++i)
-//   {
-//     typename Mesh::VertexHandle vh = m_Mesh.vertex_handle(i);
-// 
-//     DstVertexMap[i] = i;
-// 
-//     ReadVertex(DstVertexBuf + i, vh, (OpenMesh::HalfedgeHandle)0, (OpenMesh::FaceHandle)0);
-//   }
-// 
-//   return m_Mesh.n_vertices();
-
-
-  unsigned int NewCount = 0;
-  unsigned int HashSize = intNextPowerOfTwo(3 * m_NumTris);
+  unsigned int newCount = 0;
+  unsigned int hashSize = intNextPowerOfTwo(3 * numTris_);
 
   // hash table + linked list for collision check
-  std::vector<unsigned int> HashTable(HashSize + 3 * m_NumTris);
-  unsigned int* pNext = &HashTable[HashSize];
+  std::vector<unsigned int> hashTable(hashSize + 3 * numTris_);
+  unsigned int* pNext = &hashTable[hashSize];
 
-  memset(&HashTable[0], 0xFFFFFFFF, HashSize * sizeof(unsigned int));
+  memset(&hashTable[0], 0xFFFFFFFF, hashSize * sizeof(unsigned int));
 
-  for (unsigned int i = 0; i < 3 * m_NumTris; ++i)
+  for (unsigned int i = 0; i < 3 * numTris_; ++i)
   {
-    const Vertex* pV = SrcVertexBuf + i;
+    const Vertex* pV = _srcVertexBuf + i;
 
     // float3 hash function, hash by position only
     unsigned int* ui = (unsigned int*)pV->pos;
     unsigned int f = (ui[0] - ui[1]*13 + ui[2]*23)&0x7ffffE00; // make unsigned, discard some high precision mantissa bits
-    unsigned int HashVal = ((f>>22)^(f>>12)^(f)) & (HashSize - 1); //  modulo HashSize
+    unsigned int hashVal = ((f>>22)^(f>>12)^(f)) & (hashSize - 1); //  modulo hashSize
 
     // check previous entries
 
-    unsigned int Offset = HashTable[HashVal];
+    unsigned int offset = hashTable[hashVal];
 
-    while ((Offset != 0xFFFFFFFF) && (!DstVertexBuf[Offset].equals(*pV)))
-      Offset = pNext[Offset];
+    while ((offset != 0xFFFFFFFF) && (!_dstVertexBuf[offset].equals(*pV)))
+      offset = pNext[offset];
 
-    if (Offset == 0xFFFFFFFF)
+    if (offset == 0xFFFFFFFF)
     {
       // create new vertex entry here:
-      DstIndexBuf[i] = NewCount;
+      _dstIndexBuf[i] = newCount;
 
-      DstVertexMap[NewCount] = SrcVertexMap[i];
+      _dstVertexMap[newCount] = _srcVertexMap[i];
 
-      memcpy(&DstVertexBuf[NewCount], pV, sizeof(Vertex));
+      memcpy(&_dstVertexBuf[newCount], pV, sizeof(Vertex));
 
-      pNext[NewCount] = HashTable[HashVal];
+      pNext[newCount] = hashTable[hashVal];
 
-      HashTable[HashVal] = NewCount++;
+      hashTable[hashVal] = newCount++;
     }
     else // duplicate vertex found, use previous index
-      DstIndexBuf[i] = Offset;
+      _dstIndexBuf[i] = offset;
   }
 
 
@@ -514,62 +500,62 @@ DrawMeshT<Mesh>::weldVertices(Vertex* DstVertexBuf,
   //  when switching to flat-shading, this vertex holds the face normal
 
   // count # adjacent tris for each vertex
-  unsigned int* pNumAdjTris = new unsigned int[NewCount];
-  memset(pNumAdjTris, 0, NewCount * sizeof(unsigned int));
+  unsigned int* pNumAdjTris = new unsigned int[newCount];
+  memset(pNumAdjTris, 0, newCount * sizeof(unsigned int));
 
-  unsigned int TotalNumAdjTris = 0;
+  unsigned int totalNumAdjTris = 0;
 
-  for (unsigned int i = 0; i < m_NumTris; ++i)
+  for (unsigned int i = 0; i < numTris_; ++i)
   {
     for (unsigned int k = 0; k < 3; ++k)
     {
-      ++pNumAdjTris[DstIndexBuf[i * 3 + k]];
-      ++TotalNumAdjTris;
+      ++pNumAdjTris[_dstIndexBuf[i * 3 + k]];
+      ++totalNumAdjTris;
     }
   }
 
   // detect tris not owning a distinct vertex
 
-  for (unsigned int t = 0; t < m_NumTris; ++t)
+  for (unsigned int t = 0; t < numTris_; ++t)
   {
-    unsigned int UnsharedVertex = 0xFFFFFFFF; // which vertex of this tri is unshared
+    unsigned int unsharedVertex = 0xFFFFFFFF; // which vertex of this tri is unshared
 
     // count # shared vertices
     for (unsigned int i = 0; i < 3; ++i)
     {
-      unsigned int V = DstIndexBuf[t * 3 + i];
+      unsigned int V = _dstIndexBuf[t * 3 + i];
 
       if (pNumAdjTris[V] == 1)
       {
-        UnsharedVertex = V;
+        unsharedVertex = V;
         break;
       }
     }
 
-    if (UnsharedVertex == 0xFFFFFFFF)
+    if (unsharedVertex == 0xFFFFFFFF)
     {
       // this tri does not own a distinct vertex
       // add a seperate vertex for this triangle
 
-      DstVertexMap[NewCount] = DstVertexMap[DstIndexBuf[t*3+2]];
+      _dstVertexMap[newCount] = _dstVertexMap[_dstIndexBuf[t*3+2]];
 
       // optimization: only split when necessary, (no double split if NumAdjTris[V] = 2)
-      --pNumAdjTris[DstIndexBuf[t*3+2]];
+      --pNumAdjTris[_dstIndexBuf[t*3+2]];
 
-      memcpy(&DstVertexBuf[NewCount], &DstVertexBuf[DstIndexBuf[t*3+2]], sizeof(Vertex));
+      memcpy(&_dstVertexBuf[newCount], &_dstVertexBuf[_dstIndexBuf[t*3+2]], sizeof(Vertex));
 
-      DstIndexBuf[t*3+2] = NewCount++;
+      _dstIndexBuf[t*3+2] = newCount++;
     }
     else
     {
       // rotate references until the unshared vertex is the first one
-      while (UnsharedVertex != DstIndexBuf[t * 3 + 2])
+      while (unsharedVertex != _dstIndexBuf[t * 3 + 2])
       {
-        unsigned int tri[] = {DstIndexBuf[t*3], DstIndexBuf[t*3+1], DstIndexBuf[t*3+2]};
+        unsigned int tri[] = {_dstIndexBuf[t*3], _dstIndexBuf[t*3+1], _dstIndexBuf[t*3+2]};
 
-        DstIndexBuf[t*3] = tri[1];
-        DstIndexBuf[t*3+1] = tri[2];
-        DstIndexBuf[t*3+2] = tri[0];
+        _dstIndexBuf[t*3] = tri[1];
+        _dstIndexBuf[t*3+1] = tri[2];
+        _dstIndexBuf[t*3+2] = tri[0];
       }
     }
   }
@@ -577,137 +563,137 @@ DrawMeshT<Mesh>::weldVertices(Vertex* DstVertexBuf,
   delete [] pNumAdjTris;
 
 
-  return NewCount;
+  return newCount;
 }
 
 
 template <class Mesh>
 int
-DrawMeshT<Mesh>::getTextureIDofTri(unsigned int tri)
+DrawMeshT<Mesh>::getTextureIDofTri(unsigned int _tri)
 {
   OpenMesh::FPropHandleT< int > textureIndexProperty;
-  if (m_Mesh.get_property_handle(textureIndexProperty, textureIndexPropertyName_))
-    return m_Mesh.property(textureIndexProperty, m_Mesh.face_handle(m_pTriToFaceMap[tri]));
+  if (mesh_.get_property_handle(textureIndexProperty, textureIndexPropertyName_))
+    return mesh_.property(textureIndexProperty, mesh_.face_handle(triToFaceMap_[_tri]));
   
-  if (m_Mesh.has_face_texture_index())
-    return m_Mesh.texture_index(m_Mesh.face_handle(m_pTriToFaceMap[tri]));
+  if (mesh_.has_face_texture_index())
+    return mesh_.texture_index(mesh_.face_handle(triToFaceMap_[_tri]));
   
   return 0;
 }
 
 template<class Mesh>
 void
-DrawMeshT<Mesh>::sortTrisByMaterial(unsigned int* DstIndexBuf, const unsigned int* SrcIndexBuf)
+DrawMeshT<Mesh>::sortTrisByMaterial(unsigned int* _dstIndexBuf, const unsigned int* _srcIndexBuf)
 {
-  delete [] m_pSubsets;
-  m_pSubsets = 0;
-  m_NumSubsets = 0;
+  delete [] subsets_;
+  subsets_ = 0;
+  numSubsets_ = 0;
 
-  unsigned int* pTmpTriToFaceMap = new unsigned int[m_NumTris];
+  unsigned int* pTmpTriToFaceMap = new unsigned int[numTris_];
 
   std::map<int, unsigned int> MatIDs; // map[matid] = first tri
 
-  for (unsigned int i = 0; i < m_NumTris; ++i)
+  for (unsigned int i = 0; i < numTris_; ++i)
   {
     int texID = getTextureIDofTri(i);
     if (MatIDs.find(texID) == MatIDs.end())
       MatIDs[texID] = i;
   }
 
-  m_NumSubsets = MatIDs.size();
-  m_pSubsets = new Subset[m_NumSubsets];
+  numSubsets_ = MatIDs.size();
+  subsets_ = new Subset[numSubsets_];
 
   std::map<int, unsigned int>::const_iterator it = MatIDs.begin();
 
-  unsigned int LastIndexOffset = 0;
+  unsigned int lastIndexOffset = 0;
 
   for (unsigned int i = 0; it != MatIDs.end(); ++i, ++it)
   {
-    m_pSubsets[i].MaterialID = it->first;
+    subsets_[i].materialID = it->first;
 
     // rearrange by subset chunks
 
-    m_pSubsets[i].StartIndex = LastIndexOffset;
-    m_pSubsets[i].NumTris = 0;
+    subsets_[i].startIndex = lastIndexOffset;
+    subsets_[i].numTris = 0;
 
-    for (unsigned int k = it->second; k < m_NumTris; ++k)
+    for (unsigned int k = it->second; k < numTris_; ++k)
     {
-      if (getTextureIDofTri(k) == m_pSubsets[i].MaterialID)
+      if (getTextureIDofTri(k) == subsets_[i].materialID)
       {
-        pTmpTriToFaceMap[LastIndexOffset / 3] = m_pTriToFaceMap[k];
+        pTmpTriToFaceMap[lastIndexOffset / 3] = triToFaceMap_[k];
 
         for (int v = 0; v < 3; ++v)
-          DstIndexBuf[LastIndexOffset++] = SrcIndexBuf[k * 3 + v];
+          _dstIndexBuf[lastIndexOffset++] = _srcIndexBuf[k * 3 + v];
       }
     }
 
-    m_pSubsets[i].NumTris = (LastIndexOffset - m_pSubsets[i].StartIndex) / 3;
+    subsets_[i].numTris = (lastIndexOffset - subsets_[i].startIndex) / 3;
 
   }
 
-  std::swap(m_pTriToFaceMap, pTmpTriToFaceMap);
+  std::swap(triToFaceMap_, pTmpTriToFaceMap);
 
   delete [] pTmpTriToFaceMap;
 }
 
 template<class Mesh>
 void
-DrawMeshT<Mesh>::optimizeTris(unsigned int* DstIndexBuf, unsigned int* SrcIndexBuf)
+DrawMeshT<Mesh>::optimizeTris(unsigned int* _dstIndexBuf, unsigned int* _srcIndexBuf)
 {
-  unsigned int* pTmpTriToFaceMap = new unsigned int[m_NumTris];
-  for (unsigned int i = 0; i < m_NumSubsets; ++i)
+  unsigned int* pTmpTriToFaceMap = new unsigned int[numTris_];
+  for (unsigned int i = 0; i < numSubsets_; ++i)
   {
-    Subset* pSubset = m_pSubsets + i;
+    Subset* pSubset = subsets_ + i;
 
-    GPUCacheOptimizerTipsify copt(24, pSubset->NumTris, m_NumVerts, 4, SrcIndexBuf + pSubset->StartIndex);
-    copt.WriteIndexBuffer(4, DstIndexBuf + pSubset->StartIndex);
+    GPUCacheOptimizerTipsify copt(24, pSubset->numTris, numVerts_, 4, _srcIndexBuf + pSubset->startIndex);
+    copt.WriteIndexBuffer(4, _dstIndexBuf + pSubset->startIndex);
 
     // apply changes to trimap
-    const unsigned int StartTri = pSubset->StartIndex/3;
-    for (unsigned int k = 0; k < pSubset->NumTris; ++k)
+    const unsigned int StartTri = pSubset->startIndex/3;
+    for (unsigned int k = 0; k < pSubset->numTris; ++k)
     {
       unsigned int SrcTri = copt.GetTriangleMap()[k];
-      pTmpTriToFaceMap[k + StartTri] = m_pTriToFaceMap[SrcTri + StartTri];
+      pTmpTriToFaceMap[k + StartTri] = triToFaceMap_[SrcTri + StartTri];
     }
   }
-  std::swap(m_pTriToFaceMap, pTmpTriToFaceMap);
+  std::swap(triToFaceMap_, pTmpTriToFaceMap);
   delete [] pTmpTriToFaceMap;
 }
 
 
 template <class Mesh>
 void
-DrawMeshT<Mesh>::optimizeVerts(Vertex* DstVertexBuf,
-                               const Vertex* SrcVertexBuf,
-                               unsigned int* InOutIndexBuf, 
-                               const unsigned int* SrcVertexMap)
+DrawMeshT<Mesh>::optimizeVerts(Vertex* _dstVertexBuf,
+                               const Vertex* _srcVertexBuf,
+                               unsigned int* _inOutIndexBuf, 
+                               const unsigned int* _srcVertexMap)
 {
   // vertices
-  std::vector<unsigned int> VertexRemap(m_NumVerts);
-  GPUCacheOptimizer::OptimizeVertices(m_NumTris, m_NumVerts, 4, InOutIndexBuf, &VertexRemap[0]);
+  std::vector<unsigned int> vertexRemap(numVerts_);
+  GPUCacheOptimizer::OptimizeVertices(numTris_, numVerts_, 4, _inOutIndexBuf, &vertexRemap[0]);
 
-  for (unsigned int i = 0; i < m_NumTris * 3; ++i) m_pIndices[i] = VertexRemap[m_pIndices[i]];
+  for (unsigned int i = 0; i < numTris_ * 3; ++i) indices_[i] = vertexRemap[indices_[i]];
 
   // isolated vertices get sorted out here
-  // it's crucial to set m_NumVerts to the # referenced verts, to avoid problems 
+  // it's crucial to set numVerts_ to the # referenced verts, to avoid problems 
   // with picking functions
 
-  unsigned int NumIsolates = 0;
+  unsigned int numIsolates = 0;
 
-  for (unsigned int i = 0; i < m_NumVerts; ++i)
+  for (unsigned int i = 0; i < numVerts_; ++i)
   {
-    if (VertexRemap[i] < m_NumVerts)
+    if (vertexRemap[i] < numVerts_)
     {
-      memcpy(DstVertexBuf + VertexRemap[i], SrcVertexBuf + i, sizeof(Vertex));
+      memcpy(_dstVertexBuf + vertexRemap[i], _srcVertexBuf + i, sizeof(Vertex));
 
-//      m_pVertexMap[i] = SrcVertexMap[i];
-      m_pVertexMap[VertexRemap[i]] = SrcVertexMap[i];
+//      vertexMap_[i] = _srcVertexMap[i];
+      vertexMap_[vertexRemap[i]] = _srcVertexMap[i];
     }
     else
-      ++NumIsolates; // isolated vertex
+      ++numIsolates; // isolated vertex
   }
 
-  m_NumVerts -= NumIsolates;
+  numVerts_ -= numIsolates;
 }
 
 
@@ -715,32 +701,32 @@ template <class Mesh>
 void
 DrawMeshT<Mesh>::createVBO()
 {
-  // data read from m_pVertices
-  if (!m_VBO)
-    glGenBuffersARB(1, &m_VBO);
+  // data read from vertices_
+  if (!vbo_)
+    glGenBuffersARB(1, &vbo_);
 
-  glGenBuffersARB(1, &m_VBO);
+  glGenBuffersARB(1, &vbo_);
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_VBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
-  if (!m_bFlatMode)
+  if (!flatMode_)
   {
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_NumVerts * sizeof(Vertex), m_pVertices, GL_STATIC_DRAW_ARB);
-    m_bVBOinFlatMode = 0;
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
+    bVBOinFlatMode_ = 0;
   }
   else
   {
     // use per face normals
-    memcpy(m_pVerticesTmp, m_pVertices, sizeof(Vertex) * m_NumVerts);
+    memcpy(verticesTmp_, vertices_, sizeof(Vertex) * numVerts_);
 
-    for (unsigned int i = 0; i < m_NumTris; ++i)
+    for (unsigned int i = 0; i < numTris_; ++i)
     {
       // calculate face normal
       ACG::Vec3f V[3];
 
       for (unsigned int k = 0; k < 3; ++k)
       {
-        Vertex* p = m_pVerticesTmp + m_pIndices[i * 3 + k];
+        Vertex* p = verticesTmp_ + indices_[i * 3 + k];
         V[k] = ACG::Vec3f(p->pos[0], p->pos[1], p->pos[2]);
       }
 
@@ -751,13 +737,13 @@ DrawMeshT<Mesh>::createVBO()
       // store face normal in first vertex
       for (unsigned int k = 0; k < 3; ++k)
       {
-        m_pVerticesTmp[m_pIndices[i*3+2]].n[k] = n[k];
+        verticesTmp_[indices_[i*3+2]].n[k] = n[k];
       }
     }
 
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_NumVerts * sizeof(Vertex), m_pVerticesTmp, GL_STATIC_DRAW_ARB);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), verticesTmp_, GL_STATIC_DRAW_ARB);
 
-    m_bVBOinFlatMode = 1;
+    bVBOinFlatMode_ = 1;
   }
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -767,95 +753,65 @@ template <class Mesh>
 void
 DrawMeshT<Mesh>::createIBO()
 {
-  // data read from m_pIndices
+  // data read from indices_
 
   // create triangle index buffer
 
-  if (!m_IBO)
-    glGenBuffersARB(1, &m_IBO);
-  
-if(0)  {
-    FILE* pFile = fopen("ibo_dm.dat", "wb");
-    fwrite(m_pIndices, m_NumTris * 4 * 3, 1, pFile);
-    fclose(pFile);
+  if (!ibo_)
+    glGenBuffersARB(1, &ibo_);
 
-    pFile = fopen("mesh_info_dm.txt", "wt");
-    fprintf(pFile, "#faces: %d\n#tris: %d\n#verts: %d\n#dmverts: %d", m_Mesh.n_faces(), m_NumTris, m_Mesh.n_vertices(), m_NumVerts);
-    fclose(pFile);
-  }
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_IBO);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
 
-if(1){
-
-  m_IndexType = GL_UNSIGNED_INT;
-  if (m_NumVerts <= 0xFFFF)
+  indexType_ = GL_UNSIGNED_INT;
+  if (numVerts_ <= 0xFFFF)
   {
     // use 2 byte indices
-    unsigned short* pwIndices = (unsigned short*)m_pIndicesTmp;
-    m_IndexType = GL_UNSIGNED_SHORT;
+    unsigned short* pwIndices = (unsigned short*)indicesTmp_;
+    indexType_ = GL_UNSIGNED_SHORT;
 
-    for (unsigned int i = 0; i < m_NumTris * 3; ++i)
-      pwIndices[i] = (unsigned short)m_pIndices[i];
+    for (unsigned int i = 0; i < numTris_ * 3; ++i)
+      pwIndices[i] = (unsigned short)indices_[i];
 
-    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_NumTris * 3 * sizeof(unsigned short), pwIndices, GL_STATIC_DRAW_ARB);
+    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, numTris_ * 3 * sizeof(unsigned short), pwIndices, GL_STATIC_DRAW_ARB);
   }
   else
-    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_NumTris * 3 * sizeof(unsigned int), m_pIndices, GL_STATIC_DRAW_ARB);
-}
-else
-{
-  FILE* pFile = fopen("ibo.dat", "rb");
-  fseek(pFile, 0, SEEK_END);
-  m_NumTris = ftell(pFile) / (3 * 4);
-  fseek(pFile, 0, SEEK_SET);
-
-  UINT* pTmp = new UINT[m_NumTris * 3];
-
-  fread(pTmp, m_NumTris * 3 * 4, 1, pFile);
-
-  m_IndexType = GL_UNSIGNED_INT;
-
-  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_NumTris * 3 * 4, pTmp, GL_STATIC_DRAW_ARB);
-
-  delete [] pTmp;
-
-}
+    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, numTris_ * 3 * sizeof(unsigned int), indices_, GL_STATIC_DRAW_ARB);
 
 
   // line index buffer:
-  if (m_Mesh.n_edges())
+  if (mesh_.n_edges())
   {
-    unsigned int* pLineBuffer = new unsigned int[m_Mesh.n_edges() * 2];
+    unsigned int* pLineBuffer = new unsigned int[mesh_.n_edges() * 2];
 
-    if (!m_LineIBO)
-      glGenBuffersARB(1, &m_LineIBO);
+    if (!lineIBO_)
+      glGenBuffersARB(1, &lineIBO_);
 
-    for (unsigned int i = 0; i < m_Mesh.n_edges(); ++i)
+    for (unsigned int i = 0; i < mesh_.n_edges(); ++i)
     {
-      OpenMesh::HalfedgeHandle hh = m_Mesh.halfedge_handle(m_Mesh.edge_handle(i), 0);
+      OpenMesh::HalfedgeHandle hh = mesh_.halfedge_handle(mesh_.edge_handle(i), 0);
 
-      if (m_IndexType == GL_UNSIGNED_SHORT)
+      if (indexType_ == GL_UNSIGNED_SHORT)
       {
-        ((unsigned short*)pLineBuffer)[2*i] = (unsigned short)m_pInvVertexMap[m_Mesh.from_vertex_handle(hh).idx()];
-        ((unsigned short*)pLineBuffer)[2*i+1] = (unsigned short)m_pInvVertexMap[m_Mesh.to_vertex_handle(hh).idx()];
+        ((unsigned short*)pLineBuffer)[2*i] = (unsigned short)invVertexMap_[mesh_.from_vertex_handle(hh).idx()];
+        ((unsigned short*)pLineBuffer)[2*i+1] = (unsigned short)invVertexMap_[mesh_.to_vertex_handle(hh).idx()];
       }
       else
       {
-        pLineBuffer[2*i] = m_pInvVertexMap[m_Mesh.from_vertex_handle(hh).idx()];
-        pLineBuffer[2*i+1] = m_pInvVertexMap[m_Mesh.to_vertex_handle(hh).idx()];
+        pLineBuffer[2*i] = invVertexMap_[mesh_.from_vertex_handle(hh).idx()];
+        pLineBuffer[2*i+1] = invVertexMap_[mesh_.to_vertex_handle(hh).idx()];
       }
     }
 
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, m_LineIBO);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
 
     // 2 or 4 byte indices:
-    if (m_IndexType == GL_UNSIGNED_SHORT)
+    if (indexType_ == GL_UNSIGNED_SHORT)
       glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 
-                   m_Mesh.n_edges() * 2 * sizeof(unsigned short), 
+                   mesh_.n_edges() * 2 * sizeof(unsigned short), 
                    pLineBuffer, GL_STATIC_DRAW_ARB);
     else
       glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 
-                   m_Mesh.n_edges() * 2 * sizeof(unsigned int),
+                   mesh_.n_edges() * 2 * sizeof(unsigned int),
                    pLineBuffer, GL_STATIC_DRAW_ARB);
 
     delete [] pLineBuffer;
@@ -867,47 +823,47 @@ else
 template <class Mesh>
 DrawMeshT<Mesh>::~DrawMeshT(void)
 {
-  delete [] m_pIndices;
-  delete [] m_pIndicesTmp;
-  delete [] m_pVertices;
-  delete [] m_pVerticesTmp;
+  delete [] indices_;
+  delete [] indicesTmp_;
+  delete [] vertices_;
+  delete [] verticesTmp_;
 //  delete [] m_pVerticesC;
 
-  delete [] m_pSubsets;
+  delete [] subsets_;
 
-  delete [] m_pVertexMap;
+  delete [] vertexMap_;
 
-  delete [] m_pTriToFaceMap;
+  delete [] triToFaceMap_;
 
-  delete [] m_pInvVertexMap;
+  delete [] invVertexMap_;
 
-  if (m_VBO) glDeleteBuffersARB(1, &m_VBO);
-  if (m_IBO) glDeleteBuffersARB(1, &m_IBO);
-  if (m_LineIBO) glDeleteBuffersARB(1, &m_LineIBO);
+  if (vbo_) glDeleteBuffersARB(1, &vbo_);
+  if (ibo_) glDeleteBuffersARB(1, &ibo_);
+  if (lineIBO_) glDeleteBuffersARB(1, &lineIBO_);
 }
 
 template <class Mesh>
 void DrawMeshT<Mesh>::bindBuffers()
 {
   // rebuild if necessary
-  if (!m_NumTris || ! m_NumVerts || !m_pSubsets) m_Rebuild = REBUILD_FULL;
+  if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
 
   // if no rebuild necessary, check for smooth / flat shading switch 
   // to update normals
-  if (m_Rebuild == REBUILD_NONE)
+  if (rebuild_ == REBUILD_NONE)
   {
-    if (m_bVBOinFlatMode != m_bFlatMode)
+    if (bVBOinFlatMode_ != flatMode_)
       createVBO();
   }
   else
     rebuild();
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_VBO);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   // prepare color mode
-  if (m_iColorMode)
+  if (colorMode_)
   {
-    if (m_iColorMode == 1)
+    if (colorMode_ == 1)
       glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)offsetof(Vertex, vcol));
     else
       glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)offsetof(Vertex, fcol));
@@ -931,7 +887,7 @@ void DrawMeshT<Mesh>::bindBuffers()
 
   //  glEnableClientState(GL_TANGENT_ARRAY_EXT);
 
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_IBO);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
 }
 
 template <class Mesh>
@@ -942,7 +898,7 @@ void DrawMeshT<Mesh>::unbindBuffers()
   glDisableClientState(GL_NORMAL_ARRAY);
   //  glDisableClientState(GL_TANGENT_ARRAY_EXT);
 
-  if (m_iColorMode)
+  if (colorMode_)
     glDisableClientState(GL_COLOR_ARRAY);
 
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
@@ -958,23 +914,23 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
   {
     // textured mode
 
-    for (unsigned int i = 0; i < m_NumSubsets; ++i)
+    for (unsigned int i = 0; i < numSubsets_; ++i)
     {
-      Subset* pSubset = m_pSubsets + i;
+      Subset* pSubset = subsets_ + i;
 
-      if ( _textureMap->find(pSubset->MaterialID) == _textureMap->end() ) {
-        std::cerr << "Illegal texture index ... trying to access " << pSubset->MaterialID << std::endl;
+      if ( _textureMap->find(pSubset->materialID) == _textureMap->end() ) {
+        std::cerr << "Illegal texture index ... trying to access " << pSubset->materialID << std::endl;
         glBindTexture(GL_TEXTURE_2D, 0);
       }
       else
-        glBindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->MaterialID]);
+        glBindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
 
-      glDrawElements(GL_TRIANGLES, pSubset->NumTris * 3, m_IndexType,
-        (char*)( pSubset->StartIndex * (m_IndexType == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+      glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
+        (char*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
     }
   }
   else
-    glDrawElements(GL_TRIANGLES, m_NumTris * 3, m_IndexType, 0);
+    glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
 
   unbindBuffers();
 }
@@ -984,9 +940,9 @@ void DrawMeshT<Mesh>::drawLines()
 {
   bindBuffers();
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_LineIBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
 
-  glDrawElements(GL_LINES, m_Mesh.n_edges() * 2, m_IndexType, 0);
+  glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
 
   unbindBuffers();
 }
@@ -996,7 +952,7 @@ void DrawMeshT<Mesh>::drawVertices()
 {
   bindBuffers();
 
-  glDrawArrays(GL_POINTS, 0, m_NumVerts);
+  glDrawArrays(GL_POINTS, 0, numVerts_);
 
   unbindBuffers();
 }
@@ -1004,43 +960,43 @@ void DrawMeshT<Mesh>::drawVertices()
 template <class Mesh>
 void DrawMeshT<Mesh>::removeIsolatedVerts()
 {
-  if (!m_NumVerts || !m_NumTris) return;
+  if (!numVerts_ || !numTris_) return;
 
-  unsigned char* pVertexUsed = new unsigned char[m_NumVerts];
-  memset(pVertexUsed, 0, m_NumVerts);
+  unsigned char* pVertexUsed = new unsigned char[numVerts_];
+  memset(pVertexUsed, 0, numVerts_);
 
-  for (unsigned int i = 0; i < m_NumTris * 3; ++i)
-    pVertexUsed[m_pIndices[i]] = 1;
+  for (unsigned int i = 0; i < numTris_ * 3; ++i)
+    pVertexUsed[indices_[i]] = 1;
 
-  unsigned int NewNumVerts = 0;
+  unsigned int newNumVerts = 0;
 
-  for (unsigned int i = 0; i < m_NumVerts; ++i)
+  for (unsigned int i = 0; i < numVerts_; ++i)
   {
     if (pVertexUsed[i])
-      ++NewNumVerts;
+      ++newNumVerts;
   }
 
 
-  if (NewNumVerts == m_NumVerts) // early out
+  if (newNumVerts == numVerts_) // early out
   {
     delete [] pVertexUsed;
     return;
   }
 
 
-  memcpy(m_pVerticesTmp, m_pVertices, m_NumVerts * sizeof(Vertex));
+  memcpy(verticesTmp_, vertices_, numVerts_ * sizeof(Vertex));
 
   // remap vertices, track changes
 
-  unsigned int* pRemap = new unsigned int[m_NumVerts]; // remap[old] = new index
+  unsigned int* pRemap = new unsigned int[numVerts_]; // remap[old] = new index
 
-  unsigned int Counter = 0;
-  for (unsigned int i = 0; i < m_NumVerts; ++i)
+  unsigned int counter = 0;
+  for (unsigned int i = 0; i < numVerts_; ++i)
   {
     if (pVertexUsed[i])
-      pRemap[i] = Counter++;
+      pRemap[i] = counter++;
     else
-      pRemap[i] = NewNumVerts;
+      pRemap[i] = newNumVerts;
   }
 
 
@@ -1053,20 +1009,20 @@ void DrawMeshT<Mesh>::removeIsolatedVerts()
 template <class Mesh>
 unsigned int DrawMeshT<Mesh>::countTris(unsigned int* pMaxVertsOut)
 {
-  unsigned int TriCounter = 0;
+  unsigned int triCounter = 0;
 
   if (pMaxVertsOut) *pMaxVertsOut = 0;
 
-  for (unsigned int i = 0; i < m_Mesh.n_faces(); ++i)
+  for (unsigned int i = 0; i < mesh_.n_faces(); ++i)
   {
-    typename Mesh::FaceHandle fh =  m_Mesh.face_handle(i);
+    typename Mesh::FaceHandle fh =  mesh_.face_handle(i);
 
     // count vertices
   	unsigned int nPolyVerts = 0;
 
-    for (typename Mesh::FaceHalfedgeIter hh_it = m_Mesh.fh_iter(fh); hh_it; ++hh_it )++nPolyVerts;
+    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )++nPolyVerts;
 
-    TriCounter += (nPolyVerts - 2);
+    triCounter += (nPolyVerts - 2);
 
     if (pMaxVertsOut)
     {
@@ -1075,7 +1031,7 @@ unsigned int DrawMeshT<Mesh>::countTris(unsigned int* pMaxVertsOut)
     }
   }
 
-  return TriCounter;
+  return triCounter;
 }
 
 
@@ -1084,18 +1040,18 @@ template <class Mesh>
 ACG::Vec3f* DrawMeshT<Mesh>::perEdgeVertexBuffer()
 {
   // Force update of the buffers if required
-  if (m_bUpdatePerEdgeBuffers)
+  if (updatePerEdgeBuffers_)
     updatePerEdgeBuffers();
-  return &(m_PerEdgeVertexBuf)[0]; 
+  return &(perEdgeVertexBuf_)[0]; 
 }
 
 template <class Mesh>
 ACG::Vec4f* DrawMeshT<Mesh>::perEdgeColorBuffer()
 {
   // Force update of the buffers if required
-  if (m_bUpdatePerEdgeBuffers)
+  if (updatePerEdgeBuffers_)
     updatePerEdgeBuffers();
-  return &(m_PerEdgeColorBuf[0]); 
+  return &(perEdgeColorBuf_[0]); 
 }
 
 
@@ -1106,12 +1062,12 @@ void DrawMeshT<Mesh>::updatePickingVertices(ACG::GLState& _state,
   unsigned int idx = 0;
 
   // Adjust size of the color buffer to the number of vertices in the mesh
-  m_PickVertBuf.resize( m_Mesh.n_vertices() );
+  pickVertBuf_.resize( mesh_.n_vertices() );
 
   // Get the right picking colors from the gl state and add them per vertex to the color buffer
-  typename Mesh::ConstVertexIter v_it(m_Mesh.vertices_begin()), v_end(m_Mesh.vertices_end());
+  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
   for (; v_it!=v_end; ++v_it, ++idx) 
-    m_PickVertBuf[idx] = _state.pick_get_name_color(idx + _offset);
+    pickVertBuf_[idx] = _state.pick_get_name_color(idx + _offset);
 }
 
 
@@ -1120,68 +1076,68 @@ template <class Mesh>
 void DrawMeshT<Mesh>::updatePerEdgeBuffers()
 {
   // Only update buffers if they are invalid
-  if (!m_bUpdatePerEdgeBuffers) 
+  if (!updatePerEdgeBuffers_) 
     return;
 
-  m_PerEdgeVertexBuf.resize(m_Mesh.n_edges() * 2);
+  perEdgeVertexBuf_.resize(mesh_.n_edges() * 2);
 
-  if ( m_Mesh.has_edge_colors() ) {
-    m_PerEdgeColorBuf.resize(m_Mesh.n_edges() * 2);
+  if ( mesh_.has_edge_colors() ) {
+    perEdgeColorBuf_.resize(mesh_.n_edges() * 2);
   } else
-    m_PerEdgeColorBuf.clear();    
+    perEdgeColorBuf_.clear();    
 
   unsigned int idx = 0;
 
-  typename Mesh::ConstEdgeIter  e_it(m_Mesh.edges_sbegin()), e_end(m_Mesh.edges_end());
+  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
 
-    m_PerEdgeVertexBuf[idx]   = m_Mesh.point(m_Mesh.to_vertex_handle(m_Mesh.halfedge_handle(e_it, 0)));
-    m_PerEdgeVertexBuf[idx+1] = m_Mesh.point(m_Mesh.to_vertex_handle(m_Mesh.halfedge_handle(e_it, 1)));
+    perEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
+    perEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
 
-    if (  m_Mesh.has_edge_colors() ) {
-      const Vec4f color = OpenMesh::color_cast<Vec4f>( m_Mesh.color(e_it) ) ;
-      m_PerEdgeColorBuf[ idx ]     = color;
-      m_PerEdgeColorBuf[ idx + 1 ] = color;
+    if (  mesh_.has_edge_colors() ) {
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(e_it) ) ;
+      perEdgeColorBuf_[ idx ]     = color;
+      perEdgeColorBuf_[ idx + 1 ] = color;
     }
 
     idx += 2;
   }
 
-  m_bUpdatePerEdgeBuffers = 0;
+  updatePerEdgeBuffers_ = 0;
 }
 
 template <class Mesh>
 void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
 {
   // Only update buffers if they are invalid
-  if (!m_bUpdatePerHalfedgeBuffers) 
+  if (!updatePerHalfedgeBuffers_) 
     return;
 
-  m_PerHalfedgeVertexBuf.resize(m_Mesh.n_halfedges() * 2);
+  perHalfedgeVertexBuf_.resize(mesh_.n_halfedges() * 2);
 
-  if ( m_Mesh.has_halfedge_colors() ) {
-    m_PerHalfedgeColorBuf.resize(m_Mesh.n_halfedges() * 2);
+  if ( mesh_.has_halfedge_colors() ) {
+    perHalfedgeColorBuf_.resize(mesh_.n_halfedges() * 2);
   } else
-    m_PerHalfedgeColorBuf.clear();    
+    perHalfedgeColorBuf_.clear();    
 
   unsigned int idx = 0;
 
-  typename Mesh::ConstHalfedgeIter  he_it(m_Mesh.halfedges_sbegin()), he_end(m_Mesh.halfedges_end());
+  typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
   for (; he_it!=he_end; ++he_it) {
 
-    m_PerHalfedgeVertexBuf[idx]   = halfedge_point(he_it);
-    m_PerHalfedgeVertexBuf[idx+1] = halfedge_point(m_Mesh.prev_halfedge_handle(he_it));
+    perHalfedgeVertexBuf_[idx]   = halfedge_point(he_it);
+    perHalfedgeVertexBuf_[idx+1] = halfedge_point(mesh_.prev_halfedge_handle(he_it));
 
-    if (  m_Mesh.has_halfedge_colors() ) {
-      const Vec4f color = OpenMesh::color_cast<Vec4f>( m_Mesh.color(he_it) ) ;
-      m_PerHalfedgeColorBuf[ idx ]     = color;
-      m_PerHalfedgeColorBuf[ idx + 1 ] = color;
+    if (  mesh_.has_halfedge_colors() ) {
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(he_it) ) ;
+      perHalfedgeColorBuf_[ idx ]     = color;
+      perHalfedgeColorBuf_[ idx + 1 ] = color;
     }
 
     idx += 2;
   }
 
-  m_bUpdatePerHalfedgeBuffers = 1;
+  updatePerHalfedgeBuffers_ = 1;
 }
 
 template <class Mesh>
@@ -1189,16 +1145,16 @@ typename Mesh::Point
 DrawMeshT<Mesh>::
 halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
 
-  typename Mesh::Point p  = m_Mesh.point(m_Mesh.to_vertex_handle  (_heh));
-  typename Mesh::Point pp = m_Mesh.point(m_Mesh.from_vertex_handle(_heh));
-  typename Mesh::Point pn = m_Mesh.point(m_Mesh.to_vertex_handle(m_Mesh.next_halfedge_handle(_heh)));
+  typename Mesh::Point p  = mesh_.point(mesh_.to_vertex_handle  (_heh));
+  typename Mesh::Point pp = mesh_.point(mesh_.from_vertex_handle(_heh));
+  typename Mesh::Point pn = mesh_.point(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(_heh)));
 
   //  typename Mesh::Point n  = (p-pp)%(pn-p);
   typename Mesh::Point fn;
-  if( !m_Mesh.is_boundary(_heh))
-    fn = m_Mesh.normal(m_Mesh.face_handle(_heh));
+  if( !mesh_.is_boundary(_heh))
+    fn = mesh_.normal(mesh_.face_handle(_heh));
   else
-    fn = m_Mesh.normal(m_Mesh.face_handle(m_Mesh.opposite_halfedge_handle(_heh)));
+    fn = mesh_.normal(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
 
   typename Mesh::Point upd = ((fn%(pn-p)).normalize() + (fn%(p-pp)).normalize()).normalize();
 
@@ -1217,18 +1173,18 @@ template <class Mesh>
 ACG::Vec3f* DrawMeshT<Mesh>::perHalfedgeVertexBuffer()
 {
   // Force update of the buffers if required
-  if (m_bUpdatePerHalfedgeBuffers)
+  if (updatePerHalfedgeBuffers_)
     updatePerHalfedgeBuffers();
-  return &(m_PerHalfedgeVertexBuf)[0]; 
+  return &(perHalfedgeVertexBuf_)[0]; 
 }
 
 template <class Mesh>
 ACG::Vec4f* DrawMeshT<Mesh>::perHalfedgeColorBuffer()
 {
   // Force update of the buffers if required
-  if (m_bUpdatePerHalfedgeBuffers)
+  if (updatePerHalfedgeBuffers_)
     updatePerHalfedgeBuffers();
-  return &(m_PerHalfedgeColorBuf)[0]; 
+  return &(perHalfedgeColorBuf_)[0]; 
 }
 
 
@@ -1240,18 +1196,18 @@ void DrawMeshT<Mesh>::updatePickingEdges(ACG::GLState& _state,
 {
   updatePerEdgeBuffers();
 
-  m_PickEdgeBuf.resize(m_Mesh.n_edges() * 2);
+  pickEdgeBuf_.resize(mesh_.n_edges() * 2);
 
 
   int idx = 0;
 
-  typename Mesh::ConstEdgeIter  e_it(m_Mesh.edges_sbegin()), e_end(m_Mesh.edges_end());
+  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
 
     const Vec4uc pickColor =  _state.pick_get_name_color (e_it.handle().idx() + _offset);
 
-    m_PickEdgeBuf[idx]    = pickColor;
-    m_PickEdgeBuf[idx+1]  = pickColor;
+    pickEdgeBuf_[idx]    = pickColor;
+    pickEdgeBuf_[idx+1]  = pickColor;
 
     idx += 2;
   }
@@ -1271,21 +1227,21 @@ void DrawMeshT<Mesh>::updatePickingFaces(ACG::GLState& _state )
   // Make sure, the face buffers are up to date before generating the picking data!
 //  updatePerFaceBuffers();
 
-  m_PickFaceVertexBuf.resize(3 * m_NumTris);
-  m_PickFaceColBuf.resize(3 * m_NumTris);
+  pickFaceVertexBuf_.resize(3 * numTris_);
+  pickFaceColBuf_.resize(3 * numTris_);
 
   // Index to the current buffer position
   unsigned int bufferIndex = 0;
 
-  for (unsigned int i = 0; i < m_NumTris; ++i)
+  for (unsigned int i = 0; i < numTris_; ++i)
   {
-    const Vec4uc pickColor = _state.pick_get_name_color ( m_pTriToFaceMap[i] );
+    const Vec4uc pickColor = _state.pick_get_name_color ( triToFaceMap_[i] );
     for (unsigned int k = 0; k < 3; ++k)
     {
-      m_PickFaceVertexBuf[i * 3 + k] = m_Mesh.point(
-        m_Mesh.to_vertex_handle(m_Mesh.halfedge_handle(m_pVertexMap[m_pIndices[i * 3 + k]])));
+      pickFaceVertexBuf_[i * 3 + k] = mesh_.point(
+        mesh_.to_vertex_handle(mesh_.halfedge_handle(vertexMap_[indices_[i * 3 + k]])));
 
-      m_PickFaceColBuf[i * 3 + k] = pickColor;
+      pickFaceColBuf_[i * 3 + k] = pickColor;
     }
   }
 
@@ -1299,8 +1255,8 @@ void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
   // stripify()
 
   updatePickingFaces(_state);
-  updatePickingEdges(_state, m_Mesh.n_faces());
-  updatePickingVertices(_state, m_Mesh.n_faces() + m_Mesh.n_edges());
+  updatePickingEdges(_state, mesh_.n_faces());
+  updatePickingVertices(_state, mesh_.n_faces() + mesh_.n_edges());
 }
 
 
@@ -1311,7 +1267,7 @@ setTextureIndexPropertyName( std::string _indexPropertyName ) {
 
   // Check if the given property exists
   OpenMesh::FPropHandleT< int > textureIndexProperty;
-  if ( !m_Mesh.get_property_handle(textureIndexProperty,_indexPropertyName) )  {
+  if ( !mesh_.get_property_handle(textureIndexProperty,_indexPropertyName) )  {
     std::cerr << "StripProcessor: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
     return;
   }
@@ -1324,7 +1280,7 @@ setTextureIndexPropertyName( std::string _indexPropertyName ) {
 // 
 //   // mark the buffers as invalid as we have a new per face index array
 //   invalidatePerFaceBuffers();
-  m_Rebuild |= REBUILD_TOPOLOGY;
+  rebuild_ |= REBUILD_TOPOLOGY;
 };
 
 template <class Mesh>
@@ -1334,7 +1290,7 @@ setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePr
 
   // Check if the given property exists
   OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;
-  if ( !m_Mesh.get_property_handle(perFaceTextureCoordinateProperty,_perFaceTextureCoordinatePropertyName) )  {
+  if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty,_perFaceTextureCoordinatePropertyName) )  {
     std::cerr << "StripProcessor: Unable to get per face texture coordinate property named " << _perFaceTextureCoordinatePropertyName << std::endl;
     return;
   }
@@ -1344,7 +1300,7 @@ setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePr
 
   // mark the buffers as invalid as we have a new per face index array
 //  invalidatePerFaceBuffers();
-  m_Rebuild |= REBUILD_GEOMETRY;
+  rebuild_ |= REBUILD_GEOMETRY;
 }
 
 
@@ -1352,9 +1308,9 @@ template <class Mesh>
 unsigned int DrawMeshT<Mesh>::getNumTextures()
 {
   unsigned int n = 0;
-  for (unsigned int i = 0; i < m_NumSubsets; ++i)
+  for (unsigned int i = 0; i < numSubsets_; ++i)
   {
-    if (m_pSubsets[i].MaterialID > 0) ++n;
+    if (subsets_[i].materialID > 0) ++n;
   }
   return n;
 }
@@ -1365,7 +1321,7 @@ DrawMeshT<Mesh>::perFaceTextureCoordinateAvailable()  {
 
   // We really have to recheck, as the property might get lost externally (e.g. on restores of the mesh)
   OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;
-  if ( !m_Mesh.get_property_handle(perFaceTextureCoordinateProperty, perFaceTextureCoordinatePropertyName_) )  {
+  if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty, perFaceTextureCoordinatePropertyName_) )  {
     return false;
   }
 
@@ -1381,7 +1337,7 @@ DrawMeshT<Mesh>::perFaceTextureIndexAvailable() {
 
   // We really have to recheck, as the property might get lost externally (e.g. on restores of the mesh)
   OpenMesh::FPropHandleT< int > textureIndexProperty;
-  if ( !m_Mesh.get_property_handle(textureIndexProperty, textureIndexPropertyName_) )  {
+  if ( !mesh_.get_property_handle(textureIndexProperty, textureIndexPropertyName_) )  {
     return false;
   }
 
