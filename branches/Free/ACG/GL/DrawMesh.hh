@@ -108,13 +108,13 @@ private:
   {
     Vertex();
 
-    float pos[3]; // position
-    float tex[2]; // tex coords
-    float n[3]; // normal vector
-//    float tan[4]; // tangent vector + parity
+    float pos[3]; /*!< Position */
+    float tex[2]; /*!< texture coordinates */
+    float n[3];   /*!< normal vector */
+//    float tan[4]; /*!< tangent vector + parity */
 
-     unsigned int vcol; // per vertex color
-     unsigned int fcol;   // per face color
+     unsigned int vcol; /*!<  per vertex color */
+     unsigned int fcol; /*!<  per face color */
 
     int equals(const Vertex& r);
   };
