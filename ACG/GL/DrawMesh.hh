@@ -113,8 +113,8 @@ private:
     float n[3];   /*!< normal vector */
 //    float tan[4]; /*!< tangent vector + parity */
 
-     unsigned int vcol; /*!<  per vertex color */
-     unsigned int fcol; /*!<  per face color */
+    unsigned int vcol; /*!<  per vertex color */
+    unsigned int fcol; /*!<  per face color */
 
     int equals(const Vertex& r);
   };
@@ -184,7 +184,7 @@ public:
   unsigned int getNumVerts() const {return numVerts_;}
   unsigned int getNumSubsets() const {return numSubsets_;}
 
-  // The UpdateX functions give a hint on what to update.
+  // The updateX functions give a hint on what to update.
   //  may perform a full rebuild internally!
 
   /** \brief request an update for the mesh topology
@@ -218,7 +218,7 @@ public:
 
   /** \brief get the name of the texture index property
    *
-   * @return
+   * @return name of the texture index property
    */
   const std::string& getTextureIndexPropertyName() const { return textureIndexPropertyName_; };
 
@@ -236,7 +236,7 @@ public:
   *
   * If this function returns true, a per face per vertex texture array is available
   *
-  * @return
+  * @return zero if not available, nonzero otherwise
   */
   int perFaceTextureCoordinateAvailable();
 
@@ -245,7 +245,7 @@ public:
   * If this function returns true, the strip processor will respect textures during strip generation.
   * Each returned strip has than an index that has to be used as a texture index during strip rendering.
   *
-  * @return
+  * @return zero if not available, nonzero otherwise
   */
   int perFaceTextureIndexAvailable();
 
@@ -262,8 +262,8 @@ private:
    *
    * (only operates on indices)
    *
-   * @param _dstIndexBuf
-   * @param _maxFaceVertexCount
+   * @param _dstIndexBuf [in] pointer to the resulting index buffer
+   * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh_
    *
    * @return # of triangles,  also fills triToFaceMap_
    */
@@ -271,18 +271,18 @@ private:
 
   /** \brief create the big 3 * NumTris vertex buffer
    *
-   * @param _dstVertexBuf
-   * @param _dstVertexMap
-   * @param _indexBuf
+   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
+   * @param _dstVertexMap [out] pointer to the resulting vertex map
+   * @param _indexBuf [in] pointer to the original index buffer, which is not needed anymore after this call
    */
   void createBigVertexBuf(Vertex* _dstVertexBuf, unsigned int* _dstVertexMap, const unsigned int* _indexBuf);
 
-  /** \brief
+  /** \brief reads a vertex from mesh_ and write it to _pDst
    *
-   * @param _pDst
-   * @param _vh
-   * @param _hh
-   * @param _fh
+   * @param _pDst [out] pointer to the resulting vertex
+   * @param _vh mesh vertex handle to read from
+   * @param _hh corresponding halfedge handle of this vertex
+   * @param _fh corresponding face handle of this vertex
    */
   void readVertex(Vertex*                       _pDst,
                   typename Mesh::VertexHandle   _vh,
@@ -296,11 +296,11 @@ private:
 
   /** \brief minimize the big vertex buffer
    *
-   * @param _dstVertexBuf
-   * @param _srcVertexBuf
-   * @param _dstIndexBuf
-   * @param _dstVertexMap
-   * @param _srcVertexMap
+   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
+   * @param _srcVertexBuf [in] pointer to the big vertex buffer
+   * @param _dstIndexBuf [out] pointer to the resutling index buffer
+   * @param _dstVertexMap [out] pointer to the resulting vertex map (new -> old vertex)
+   * @param _srcVertexMap [in] pointer to the previously used vertex map (new -> old vertex)
    * @return new #vertices
    */
   unsigned int weldVertices(Vertex*             _dstVertexBuf,
@@ -316,8 +316,8 @@ private:
    *
    * _dstIndexBuf and _srcIndexBuf must be different!
    *
-   * @param _dstIndexBuf
-   * @param _srcIndexBuf
+   * @param _dstIndexBuf [out] pointer to the resulting index buffer
+   * @param _srcIndexBuf [in] pointer to the index buffer about to be sorted
    */
   void sortTrisByMaterial(unsigned int* _dstIndexBuf, const unsigned int* _srcIndexBuf);
 
@@ -328,22 +328,22 @@ private:
    * SortTrisByMaterial must be called prior!!
    * also maintains triToFaceMap_
    *
-   * @param _dstIndexBuf
-   * @param _srcIndexBuf
+   * @param _dstIndexBuf [out] pointer to the resulting index buffer
+   * @param _srcIndexBuf [in] pointer to the unoptimized index buffer
    */
   void optimizeTris(unsigned int* _dstIndexBuf, unsigned int* _srcIndexBuf);
 
   /** \brief optimize vertex layout
    *
-   * for best results, call this after OptimizeTris
+   * for best results, call this after optimizeTris
    * also maintains vertexMap_,
    * NOTE: _srcVertexMap is invalid after this call
    * _srcVertexBuf != _dstVertexBuf!!
    *
-   * @param _dstVertexBuf
-   * @param _srcVertexBuf
-   * @param _inOutIndexBuf
-   * @param _srcVertexMap
+   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
+   * @param _srcVertexBuf [in] pointer to the source vertex buffer
+   * @param _inOutIndexBuf [in, out] pointer to the index buffer, altered by this function
+   * @param _srcVertexMap [in] pointer to the vertex map (new -> old vertex)
    */
   void optimizeVerts(Vertex*             _dstVertexBuf,
                      const Vertex*       _srcVertexBuf,
@@ -435,7 +435,7 @@ public:
   * Use updatePickingFaces to update the buffer before you render it via
   * glColorPointer.
   *
-  * @return
+  * @return pointer to the per face picking color buffer
   */
   ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColBuf_)[0]; };
 
@@ -461,7 +461,7 @@ public:
   * This function calls the updatePickingVertices, updatePickingEdges, updatePickingVertices
   * functions with an appropriate offset so that the standard arrays will be updated.
   *
-  * @param _state
+  * @param _state OpenGL state
   */
   void updatePickingAny(ACG::GLState& _state );    
   
@@ -491,7 +491,7 @@ private:
    *
    * @param _pOutMaxPolyVerts
    *
-   * @return
+   * @return #triangles
   */
   unsigned int countTris(unsigned int* _pOutMaxPolyVerts = 0);
 
@@ -594,14 +594,55 @@ private:
 public:
   //========================================================================
   // per edge buffers
+
+  /** \brief Update of the buffers
+  *
+  * This function will set all per edge buffers to invalid and will force an update
+  * whe they are requested
+  */
   void invalidatePerEdgeBuffers() {updatePerEdgeBuffers_ = 1;}
+
+  /** \brief Update all per edge drawing buffers
+  *
+  * The updated buffers are: vertex buffer ( 2 vertices per edge ), color buffer
+  */
   void updatePerEdgeBuffers();
+  
+  /** \brief get a pointer to the per edge vertex buffer
+  *
+  * This function will return a pointer to the first element of the vertex buffer.
+  */
   ACG::Vec3f* perEdgeVertexBuffer();
+  
+  /** \brief get a pointer to the per edge color buffer
+  *
+  * This function will return a pointer to the first element of the color buffer.
+  */
   ACG::Vec4f* perEdgeColorBuffer();
 
+  /** \brief Update of the buffers
+  *
+  * This function will set all per edge buffers to invalid and will force an update
+  * whe they are requested
+  */
   void invalidatePerHalfedgeBuffers() {updatePerHalfedgeBuffers_ = 1;}
+
+  /** \brief Update all per edge drawing buffer
+  *n
+  * The updated buffers are: per edge vertex buffer ( 2 vertices per edge )
+  */
   void updatePerHalfedgeBuffers();
+   
+  /** \brief get a pointer to the per edge vertex buffer
+  *
+  * This function will return a pointer to the first element of the vertex buffer.
+  */
   ACG::Vec3f* perHalfedgeVertexBuffer();
+  
+  /** \brief get a pointer to the per edge color buffer
+  *
+  * This function will return a pointer to the first element of the color buffer.
+  */
   ACG::Vec4f* perHalfedgeColorBuffer();
 
 
