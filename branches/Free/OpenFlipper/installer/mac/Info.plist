@@ -34,5 +34,81 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>2011 RWTH Aachen University</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>obj</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>OpenFlipper_Icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>OBJ file</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>OBJ  </string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<string>Yes</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>off</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>OpenFlipper_Icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>OFF file</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>OFF  </string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<string>Yes</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>stl</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>OpenFlipper_Icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>STL file</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>STL  </string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<string>Yes</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ply</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>OpenFlipper_Icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>PLY file</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>PLY  </string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<string>Yes</string>
+		</dict>
+	</array>
+
 </dict>
 </plist>
