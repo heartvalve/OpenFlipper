@@ -1021,19 +1021,14 @@ Core::writeOnExit() {
   QString inifile = OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
 
   INIFile ini;
-  if ( ! ini.connect( inifile ,false) ) {
-    emit log(LOGERR,tr("Failed to connect to users ini file"));
 
-    if ( ! ini.connect( inifile,true) ) {
-      emit log(LOGERR,tr("Can not create user ini file"));
-    } else {
-      writeApplicationOptions(ini);
-      ini.disconnect();
-    }
+  if ( ! ini.connect( inifile,true) ) {
+    emit log(LOGERR,tr("Can not create user ini file"));
   } else {
     writeApplicationOptions(ini);
     ini.disconnect();
   }
+
 
   //store the windowState
   if ( OpenFlipper::Options::gui() ) {
