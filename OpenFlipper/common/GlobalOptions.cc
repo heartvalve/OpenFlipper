@@ -189,9 +189,6 @@ static bool doSlotDebugging_ = false;
 /// last used DataType
 static QString lastDataType_ = "Triangle Mesh";
 
-/// translation
-static QString translation_ = "en_US";
-
 /// Should backups be enabled
 static bool enableBackup_ = true;
 
@@ -249,14 +246,6 @@ bool isDarwin() {
 QString lang() {
   QString lang = getenv( "LANG" ) ;
   return lang;
-}
-
-QString translation() {
-  return translation_;
-}
-
-void translation(QString _translation) {
-  translation_ = _translation;
 }
 
 QString dirSeparator() {
