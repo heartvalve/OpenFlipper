@@ -298,24 +298,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
 */
 void Core::writeApplicationOptions(INIFile& _ini) {
 
-  // Write maximum recent file count to ini
-  _ini.add_entry("Options","MaxRecent", OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
-
-  // Write list of recent files to ini
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
-  
-  for ( int j = 0 ; j < recentFiles.size(); ++j) {
-    // Save filename
-    QString key = "recent" + QString::number(j);
-    QString filename = recentFiles[j];
-    _ini.add_entry( "Options" , key , filename );
-    // Save DataType
-    key = "type" + QString::number(j);
-    QString type = recentTypes[j];
-    _ini.add_entry( "Options" , key , type );
-  }
-
   // save ViewModes
   QVector< QString > toolboxes;
   QVector< QString > toolbars;
