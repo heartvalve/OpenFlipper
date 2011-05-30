@@ -187,8 +187,7 @@ void Core::applyOptions(){
 }
 
 void Core::saveOptions(){
-  QString inifile = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "OpenFlipper.ini";
+  QString inifile = OpenFlipper::Options::configDirStr() +  "OpenFlipper.ini";
 
   INIFile ini;
   if ( ! ini.connect( inifile ,false) ) {

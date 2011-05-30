@@ -572,8 +572,7 @@ Core::init() {
 
   if ( OpenFlipper::Options::gui() ) {
 
-    QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                           OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+    QSettings windowStates(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat", QSettings::IniFormat);
 
     //try to restore the windowState
     coreWidget_->restoreState (windowStates.value("Core/Window/State").toByteArray ());
@@ -1019,8 +1018,7 @@ Core::slotRecentOpen(QAction* _action)
 
 void
 Core::writeOnExit() {
-  QString inifile = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "OpenFlipper.ini";
+  QString inifile = OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
 
   INIFile ini;
   if ( ! ini.connect( inifile ,false) ) {
@@ -1040,8 +1038,7 @@ Core::writeOnExit() {
   //store the windowState
   if ( OpenFlipper::Options::gui() ) {
 
-    QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                           OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+    QSettings windowStates(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat", QSettings::IniFormat);
 
     windowStates.setValue("Core/Window/State", coreWidget_->saveState ());
     windowStates.setValue("Core/Window/Geometry", coreWidget_->saveGeometry ());
@@ -1119,8 +1116,7 @@ void Core::slotLogToFile(Logtype _type, QString _message){
     QFileInfo fi( fileName );
 
     if ( fileName == "" || !fi.dir().exists() ) {
-      OpenFlipperSettings().setValue("Core/Log/logFile", QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                         OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
+      OpenFlipperSettings().setValue("Core/Log/logFile", OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
     }
 
     logFile_ = new QFile( OpenFlipperSettings().value("Core/Log/logFile").toString() );
