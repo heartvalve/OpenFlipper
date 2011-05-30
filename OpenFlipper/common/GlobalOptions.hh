@@ -121,8 +121,13 @@
 * * Core/File/UseLoadDefaults                Use the defaults saved in the file plugins \n
 *
 * <b>Log Settings</b>\n
-* * Core/Log/Logfile                          This is the location of the log file \n
-* * Core/Log/logFileEnabled                   This controls, if logging to file is enabled(bool)\n
+* * Core/Log/Logfile                         This is the location of the log file \n
+* * Core/Log/logFileEnabled                  This controls, if logging to file is enabled(bool)\n
+*
+* <b>Update Settings</b>\n
+* * Core/Update/UserName                     Update UserName
+* * Core/Update/Pass                         Update Password
+* * Core/Update/URL                          Update URL
 * 
 * <b>Mouse Controls<b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
@@ -145,6 +150,8 @@
 * \n
 * Anaglyph stereo mode settings:\n
 */
+
+
 DLLEXPORT
 OpenFlipperQSettings& OpenFlipperSettings();
 
@@ -720,44 +727,6 @@ void doSlotDebugging( bool _debugging );
 
 DLLEXPORT
 bool doSlotDebugging( );
-
-/** @} */
-
-//===========================================================================
-/** @name Update Options
- * @{ */
-//===========================================================================
-
-/** Set Server URL to check for updates
- */
-DLLEXPORT
-void updateUrl( QString _url );
-
-/** Get Server URL to check for updates
- */
-DLLEXPORT
-QString updateUrl( );
-
-/** Set Username for updates
- */
-DLLEXPORT
-void updateUsername( QString _username );
-
-/** Get Username for updates
- */
-DLLEXPORT
-QString updateUsername( );
-
-/** Set Password for updates
- */
-DLLEXPORT
-void updatePassword( QString _password );
-
-/** Get Password for updates
- */
-DLLEXPORT
-QString updatePassword( );
-
 
 /** @} */
 

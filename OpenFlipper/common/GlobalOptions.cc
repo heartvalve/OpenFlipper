@@ -186,15 +186,6 @@ static bool debug_ = false;
 /// Slot Debugging
 static bool doSlotDebugging_ = false;
 
-/// URL for updates
-static QString updateURL_ = "";
-
-/// Username for updates
-static QString updateUsername_ = "";
-
-/// Password for updates
-static QString updatePassword_ = "";
-
 /// last used DataType
 static QString lastDataType_ = "Triangle Mesh";
 
@@ -747,30 +738,6 @@ void doSlotDebugging( bool _debugging ) {
 
 bool doSlotDebugging( ) {
   return doSlotDebugging_;
-}
-
-void updateUrl( QString _url ) {
-  updateURL_ = _url;
-}
-
-QString updateUrl( ) {
-  return updateURL_;
-}
-
-void updateUsername( QString _username ) {
-  updateUsername_ = _username;
-}
-
-QString updateUsername( ) {
-  return updateUsername_;
-}
-
-void updatePassword( QString _password ) {
-  updatePassword_ = _password;
-}
-
-QString updatePassword( ) {
-  return updatePassword_;
 }
 
 QString coreVersion() {
