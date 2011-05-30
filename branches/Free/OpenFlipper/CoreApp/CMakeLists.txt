@@ -89,6 +89,12 @@ endif ()
 # Mark this build part as building OpenFlippers Core
 add_definitions(-DOPENFLIPPERCORE )
 
+# Build app store compliant
+if ( OPENFLIPPER_BUILD_APP_STORE_COMPLIANT )
+   add_definitions( -DAPP_STORE_COMPLIANT )
+endif()
+
+
 if (WIN32)
   add_definitions( -DACGDLL
                    -DUSEACG )
