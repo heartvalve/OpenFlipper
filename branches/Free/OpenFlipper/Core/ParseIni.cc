@@ -297,20 +297,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       PluginFunctions::viewerProperties(i).backgroundColor(OpenFlipperSettings().value(entryHeader+"BackgroundColor",QColor(0,0,0)).value< QColor >());
     }
 
-    //============================================================================
-    // Update information
-    //============================================================================
-    QString updateUrl = "";
-    if( _ini.get_entry(updateUrl, "Options", "UpdateURL") )
-      OpenFlipper::Options::updateUrl(updateUrl);
-
-    QString updateUsername = "";
-    if( _ini.get_entry(updateUsername, "Options", "UpdateUsername") )
-      OpenFlipper::Options::updateUsername(updateUsername);
-
-    QString updatePassword = "";
-    if( _ini.get_entry(updatePassword, "Options", "UpdatePassword") )
-      OpenFlipper::Options::updatePassword(updatePassword);
   }
 }
 
@@ -399,13 +385,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   // Debugging
   //============================================================================
   _ini.add_entry("Options","SlotDebugging",OpenFlipper::Options::doSlotDebugging() );
-
-  //============================================================================
-  // Update information
-  //============================================================================
-  _ini.add_entry("Options","UpdateURL",OpenFlipper::Options::updateUrl() );
-  _ini.add_entry("Options","UpdateUsername",OpenFlipper::Options::updateUsername() );
-  _ini.add_entry("Options","UpdatePassword",OpenFlipper::Options::updatePassword() );
 
   if ( !_ini.section_exists("Plugins") )
     _ini.add_section("Plugins");

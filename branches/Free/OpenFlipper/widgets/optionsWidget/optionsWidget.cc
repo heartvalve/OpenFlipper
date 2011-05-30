@@ -365,9 +365,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   initPluginOptions();
 
   // updates
-  updateUser->setText( OpenFlipper::Options::updateUsername() );
-  updatePass->setText( OpenFlipper::Options::updatePassword() );
-  updateURL->setText( OpenFlipper::Options::updateUrl( ) );
+  updateUser->setText( OpenFlipperSettings().value("Core/Update/UserName","anonymous").toString() );
+  updatePass->setText( OpenFlipperSettings().value("Core/Update/Pass","anonymous").toString() );
+  updateURL->setText( OpenFlipperSettings().value("Core/Update/URL","http://").toString() );
 
   // debugging
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
@@ -695,9 +695,9 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Gui/glViewer/nativeMouse",nativeMouse->isChecked ());
 
   // updates
-  OpenFlipper::Options::updateUrl( updateURL->text() );
-  OpenFlipper::Options::updateUsername( updateUser->text() );
-  OpenFlipper::Options::updatePassword( updatePass->text() );
+  OpenFlipperSettings().setValue("Core/Update/UserName", updateUser->text());
+  OpenFlipperSettings().setValue("Core/Update/Pass",updatePass->text());
+  OpenFlipperSettings().setValue("Core/Update/URL",updateURL->text());
 
   // Debugging
   OpenFlipper::Options::doSlotDebugging(slotDebugging->isChecked());
