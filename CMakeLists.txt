@@ -74,6 +74,21 @@ foreach (_localLib ${_local_libs_in})
 endforeach ()
 
 # ========================================================================
+# License Manager
+# ========================================================================
+if ( NOT DEFINED OPENFLIPPER_ENABLE_LICENSE_MANAGER )
+  set( OPENFLIPPER_ENABLE_LICENSE_MANAGER true CACHE BOOL "Enable or disable license management in all plugins" )
+endif()
+
+# ========================================================================
+# Apple Mac Store Flags
+# ========================================================================
+if ( APPLE AND NOT DEFINED OPENFLIPPER_BUILD_APP_STORE_COMPLIANT )
+  set( OPENFLIPPER_BUILD_APP_STORE_COMPLIANT true CACHE BOOL "Enable app store compliant build (No internal update, different paths,...)" )
+endif()
+
+
+# ========================================================================
 # Plugins
 # ========================================================================
 
