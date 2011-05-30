@@ -74,8 +74,6 @@ class LoadWidget : public QFileDialog
     QStringList lastPaths;
     std::vector<fileTypes>& supportedTypes_;
     
-    void getPluginForExtensionINI(QStringList _extensions);
-    
   public:
     int showLoad();
     int showSave(int     _id, QString _filename);
