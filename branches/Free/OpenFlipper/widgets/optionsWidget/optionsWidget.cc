@@ -431,9 +431,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   viewerLayout->setCurrentIndex( OpenFlipper::Options::defaultViewerLayout() );
 
-  if (OpenFlipper::Options::translation() == "en_US")
+  if (OpenFlipperSettings().value("Core/Language/Translation","en_US").toString() == "en_US")
     translation->setCurrentIndex(0);
-  else if (OpenFlipper::Options::translation() == "de_DE")
+  else if (OpenFlipperSettings().value("Core/Language/Translation","en_US").toString() == "de_DE")
     translation->setCurrentIndex(1);
   else
     translation->setCurrentIndex(2);
@@ -744,9 +744,9 @@ void OptionsWidget::slotApply() {
   }
   
   switch ( translation->currentIndex() ){
-    case 0 : OpenFlipper::Options::translation("en_US");  break;
-    case 1 : OpenFlipper::Options::translation("de_DE");  break;
-    default: OpenFlipper::Options::translation("locale"); break;
+    case 0 : OpenFlipperSettings().setValue("Core/Language/Translation","en_US");  break;
+    case 1 : OpenFlipperSettings().setValue("Core/Language/Translation","de_DE");  break;
+    default: OpenFlipperSettings().setValue("Core/Language/Translation","locale"); break;
   }
 
   applyShortcuts();

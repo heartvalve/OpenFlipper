@@ -124,6 +124,9 @@
 * * Core/Log/Logfile                         This is the location of the log file \n
 * * Core/Log/logFileEnabled                  This controls, if logging to file is enabled(bool)\n
 *
+* <b>Language Settings</b>\n
+* * Core/Language/Translation                This is the translation to use ( default is en_US)  \n
+*
 * <b>Update Settings</b>\n
 * * Core/Update/UserName                     Update UserName
 * * Core/Update/Pass                         Update Password
@@ -380,14 +383,6 @@ QString helpDirStr();
   /// Returns the LANG environment variable string
   DLLEXPORT
   QString lang();
-
-  /// Returns the translation language (locale, de_DE, en_US)
-  DLLEXPORT
-  QString translation();
-
-  /// Set the translation language (locale, de_DE, en_US)
-  DLLEXPORT
-  void translation(QString _translation);
 
 /** @} */
 

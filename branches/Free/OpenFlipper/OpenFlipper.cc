@@ -374,7 +374,7 @@ int main(int argc, char **argv)
       return 1;
     }
 
-    QString tLang = OpenFlipper::Options::translation();
+    QString tLang = OpenFlipperSettings().value("Core/Language/Translation","en_US").toString();
 
     if (tLang == "locale")
       tLang = QLocale::system().name();

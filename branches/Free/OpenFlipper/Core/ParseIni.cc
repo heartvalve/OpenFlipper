@@ -229,13 +229,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::currentViewMode(viewmode);
 
     //============================================================================
-    // Load the setting for the translation language
-    //============================================================================
-    QString translation = "";
-    if ( _ini.get_entry( translation, "Options" , "Translation") )
-      OpenFlipper::Options::translation(translation);
-
-    //============================================================================
     // Load the setting for the gridVisibility
     //============================================================================
     bool visible = false;
@@ -406,7 +399,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   if ( OpenFlipper::Options::gui() ) {
 
     _ini.add_entry("Options","DefaultViewerLayout", OpenFlipper::Options::defaultViewerLayout() );
-    _ini.add_entry("Options","Translation", OpenFlipper::Options::translation() );
     _ini.add_entry("Options","GridVisible", OpenFlipper::Options::gridVisible() );
 
     _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );
