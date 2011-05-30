@@ -811,16 +811,17 @@ bool initializeSettings() {
     if ( ! configDir_.cd("Application Support") )
       configDir_.mkdir("Application Support");
 
-    if ( ! configDir_.cd("OpenFlipper") ) {
-      configDir_.mkdir("OpenFlipper");
-      if ( ! configDir_.cd("OpenFlipper") ) {
-        std::cerr << "Unable to create config dir ~/Library/OpenFlipper" << std::endl;
+    if ( ! configDir_.cd("de.rwth-aachen.graphics.openflipper") ) {
+      configDir_.mkdir("de.rwth-aachen.graphics.openflipper");
+      if ( ! configDir_.cd("de.rwth-aachen.graphics.openflipper") ) {
+        std::cerr << "Unable to create config dir ~/Library/de.rwth-aachen.graphics.openflipper" << std::endl;
         return false;
       }
     }
   #else
     configDir_ = QDir::home();
     if ( ! configDir_.cd(".OpenFlipper") ) {
+      std::cerr << "2" << std::endl;
       std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
       configDir_.mkdir(".OpenFlipper");
       if ( ! configDir_.cd(".OpenFlipper") ) {
@@ -828,6 +829,7 @@ bool initializeSettings() {
         return false;
       }
     }
+
   #endif
 
   

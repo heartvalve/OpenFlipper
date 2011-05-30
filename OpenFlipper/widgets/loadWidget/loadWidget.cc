@@ -220,9 +220,7 @@ void LoadWidget::loadFile(){
       }
     }
   }
-  
-  getPluginForExtensionINI(ext);
-  
+
   // display options for all dataTypes
   if ( !optionsBox_->isChecked() ){
 
@@ -293,8 +291,6 @@ void LoadWidget::saveFile(){
       break;
     }
   }
-  
-  getPluginForExtensionINI(QStringList(fi.suffix()));
   
   // display options for all dataTypes
   if ( !optionsBox_->isChecked() ){
@@ -490,34 +486,6 @@ void LoadWidget::accept() {
 
 void LoadWidget::slotSetPluginForExtension(QString _extension, int _pluginId ){
   pluginForExtension_[ _extension ] = _pluginId;
-}
-
-void LoadWidget::getPluginForExtensionINI(QStringList _extensions){
-    
-  QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
-  
-  INIFile ini;
-  
-  if ( ! ini.connect(filename,false) ) {
-    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
-    return;
-  }
-
-  for (int i=0; i < _extensions.count(); i++){
-    QString pluginName;
-    
-    if ( ini.get_entry(pluginName, "LoadSave" , "Extension_" + _extensions[i] ) ){
-      
-      for (uint t=0; t < supportedTypes_.size(); t++)
-        if ( supportedTypes_[t].name == pluginName ){
-          pluginForExtension_[ _extensions[i] ] = t;
-          break;
-        }
-    }
-  }
-
-  // close ini file
-  ini.disconnect();
 }
 
 
