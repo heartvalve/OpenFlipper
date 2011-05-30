@@ -153,6 +153,12 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   // Clear settings and ini buttons
   connect(clearSettingsButton, SIGNAL(clicked()), this, SLOT(slotClearSettings()));
   connect(clearINIButton,      SIGNAL(clicked()), this, SLOT(slotClearINI()));
+
+  // Disable update tab if app store compliant build
+  #ifdef OPENFLIPPER_BUILD_APP_STORE_COMPLIANT
+    //tabWidget->setTabEnabled(tabWidget->count()-1,false);
+    tabWidget->removeTab(tabWidget->count()-1);
+  #endif
 }
 
 void OptionsWidget::getBackgroundColor(){

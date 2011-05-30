@@ -125,7 +125,7 @@ QToolBar * PickMode::toolbar() const {
 
 
 
-/** \brief Constuctor for the Core Widget
+/** \brief Constructor for the Core Widget
  *
 */
 CoreWidget::
@@ -213,7 +213,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ===============================================================================
   // Test context capabilities ...
   // If we get stereo buffers, we use them .. which might disable multisampling
-  // If we dont have stereo, we disable it to not interfere with multisampling
+  // If we don't have stereo, we disable it to not interfere with multisampling
   // ===============================================================================
   QGLWidget* test = new QGLWidget(format);
   if ( ! test->format().stereo() ) {
