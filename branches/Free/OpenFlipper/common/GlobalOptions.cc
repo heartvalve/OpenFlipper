@@ -821,7 +821,6 @@ bool initializeSettings() {
   #else
     configDir_ = QDir::home();
     if ( ! configDir_.cd(".OpenFlipper") ) {
-      std::cerr << "2" << std::endl;
       std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
       configDir_.mkdir(".OpenFlipper");
       if ( ! configDir_.cd(".OpenFlipper") ) {
