@@ -802,15 +802,34 @@ bool initializeSettings() {
   //==================================================================================================
   // Get the Main config dir in the home directory and possibly create it
   //==================================================================================================
-  configDir_ = QDir::home();
-  if ( ! configDir_.cd(".OpenFlipper") ) {
-    std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
-    configDir_.mkdir(".OpenFlipper");
-    if ( ! configDir_.cd(".OpenFlipper") ) {
-      std::cerr << "Unable to create config dir ~/.OpenFlipper" << std::endl;
-      return false;
+  #if  defined(ARCH_DARWIN)
+    configDir_ = QDir::home();
+
+    if ( ! configDir_.cd("Library") )
+      configDir_.mkdir("Library");
+
+    if ( ! configDir_.cd("Application Support") )
+      configDir_.mkdir("Application Support");
+
+    if ( ! configDir_.cd("OpenFlipper") ) {
+      configDir_.mkdir("OpenFlipper");
+      if ( ! configDir_.cd("OpenFlipper") ) {
+        std::cerr << "Unable to create config dir ~/Library/OpenFlipper" << std::endl;
+        return false;
+      }
     }
-  }
+  #else
+    configDir_ = QDir::home();
+    if ( ! configDir_.cd(".OpenFlipper") ) {
+      std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
+      configDir_.mkdir(".OpenFlipper");
+      if ( ! configDir_.cd(".OpenFlipper") ) {
+        std::cerr << "Unable to create config dir ~/.OpenFlipper" << std::endl;
+        return false;
+      }
+    }
+  #endif
+
   
   //==================================================================================================
   // Setup settings. 
