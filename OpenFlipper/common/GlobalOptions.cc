@@ -160,9 +160,6 @@ static int redrawDisabled_ = 0;
 /// Set if a drawMode Menu should always be in the context menu
 static bool drawModesInContextMenu_ = true;
 
-/// Set if a grid should be drawn in every viewer
-static bool gridVisible_ = false;
-
 /// Current view mode
 static QString currentViewMode_ = "";
 
