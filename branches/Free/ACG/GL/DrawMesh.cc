@@ -144,14 +144,42 @@ DrawMeshT<Mesh>::rebuild()
 {
   if (rebuild_ == REBUILD_NONE) return;
 
+  // support for point clouds:
+  if (mesh_.n_vertices() && mesh_.n_faces() == 0)
+  {
+    if (mesh_.n_vertices() > numVerts_)
+    {
+      delete [] vertexMap_; vertexMap_ = 0;
+      delete [] invVertexMap_; invVertexMap_ = 0;
+      delete [] vertices_; vertices_ = 0;
+      delete [] verticesTmp_; verticesTmp_ = 0;
+
+      numVerts_ = mesh_.n_vertices();
+      vertices_ = new Vertex[numVerts_];
+      verticesTmp_ = new Vertex[numVerts_];
+    }
+
+    numVerts_ = mesh_.n_vertices();
+
+    // read all vertices
+    for (unsigned int i = 0; i < numVerts_; ++i)
+      readVertex(vertices_ + i,
+                 mesh_.vertex_handle(i), 
+                 (typename Mesh::HalfedgeHandle)0, 
+                 (typename Mesh::FaceHandle)0);
+
+    createVBO();
+
+    return;
+  }
+
+
+
   unsigned int maxFaceVertCount = 0;
   unsigned int newTriCount = countTris(&maxFaceVertCount);
   
   int bTriangleRebuild = 0; // what should be rebuild?
   int bVertexRebuild = 0;
-
-//  mesh_.request_face_normals();
-
 
   if (newTriCount > numTris_)
   {
@@ -377,7 +405,11 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     if (m < 2)
     {
       if (mesh_.has_vertex_texcoords2D())
-         _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
+      {
+        if (_hh != (typename Mesh::HalfedgeHandle)0)
+          _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
+        else _pV->tex[m] = mesh_.texcoord2D(_vh)[m];
+      }
       else _pV->tex[m] = 0.0f;
     }
   }
@@ -389,7 +421,11 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     typename Mesh::Color vecCol(255, 255, 255);
 
     if (col == 0 && mesh_.has_vertex_colors()) vecCol = mesh_.color(_vh);
-    if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) vecCol = mesh_.color(_fh);
+    if ((_fh != (typename Mesh::FaceHandle)0))
+    {
+      if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
+        vecCol = mesh_.color(_fh);
+    }
 
     // OpenGL color format: A8B8G8R8
     byteCol[col] = (unsigned char)(vecCol[0]);
