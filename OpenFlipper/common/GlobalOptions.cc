@@ -568,14 +568,6 @@ void drawModesInContextMenu(bool _show) {
   drawModesInContextMenu_ = _show;
 }
 
-bool gridVisible() {
-  return gridVisible_;
-}
-
-void gridVisible(bool _visible) {
-  gridVisible_ = _visible;
-}
-
 unsigned int examinerWidgets() {
   if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
     return 4;
