@@ -329,8 +329,58 @@ function (_build_openflipper_plugin plugin)
     acg_qt4_autouic (uic_targets ${ui})
     acg_qt4_automoc (moc_targets ${headers})
     acg_qt4_autoqrc (qrc_targets ${qrc})
-
+    
+    
     add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets} ${qrc_targets} ${${_PLUGIN}_ADDSRC})
+    
+    
+     # Check if cuda is in the list of dependencies:
+ 	list(FIND ${_PLUGIN}_DEPS "CUDA" FIND_RESULT)
+   	if ( NOT FIND_RESULT EQUAL -1 )
+    	message(status " CUDA REQUIRED!")
+    
+     # Required but maybe it is not found
+     # finder is automatically called before this
+     if ( CUDA_FOUND )
+       #Setup options
+       CUDA_ADD_CUDA_INCLUDE_ONCE()
+
+       # Clear out the directory defines to prevent nvcc from getting them
+       # TODO : Create an additional flag variable for CUDA
+       get_directory_property( CURRENT_DEFINITIONS COMPILE_DEFINITIONS )
+       set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "" )
+
+       get_directory_property( CURRENT_DEFINITIONS_A COMPILE_DEFINITIONS )
+
+       # Get all cuda sources
+       file(GLOB_RECURSE ${_PLUGIN}_CUDA_SRCS Cuda/*.cu Cuda/*.c Cuda/*.cc Cuda/*.cpp Cuda/*.h Cuda/*.hh)
+       
+       CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS})
+       
+       CUDA_ADD_LIBRARY(${_PLUGIN}_cuda_lib ${${_PLUGIN}_CUDA_GENERATED_FILES})
+       
+       target_link_libraries(Plugin-${plugin} ${_PLUGIN}_cuda_lib)
+
+     endif( CUDA_FOUND )
+   endif()
+
+
+ # Add the library.
+ #add_library(${cuda_target} ${_cmake_options}
+ #  ${_generated_files}
+ #  ${_sources}
+ #  )
+
+ #target_link_libraries(${cuda_target}
+ #  ${CUDA_LIBRARIES}
+ #  )
+
+ # We need to set the linker language based on what the expected generated file
+ # would be. CUDA_C_OR_CXX is computed based on CUDA_HOST_COMPILATION_CPP.
+ #set_target_properties(${cuda_target}
+ #  PROPERTIES
+ #  LINKER_LANGUAGE ${CUDA_C_OR_CXX}
+ #  )
 
     # add this plugin to build plugin list for dependency tracking
     acg_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
