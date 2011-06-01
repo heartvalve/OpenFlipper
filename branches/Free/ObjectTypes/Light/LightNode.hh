@@ -55,10 +55,11 @@
 
 //== INCLUDES =================================================================
 
-#include "ACG/Scenegraph/BaseNode.hh"
+#include <ACG/Scenegraph/BaseNode.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#include "ACG/GL/gl.hh"
+#include <ACG/GL/gl.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <string>
 #include <vector>
 
@@ -313,43 +314,48 @@ private:
 * return GL_INVALID_ENUM as light source enumerant.
 */
 class DLLEXPORT LightSourceHandle {
-    public:
-        LightSourceHandle() {
-            // Get max number of lights
-            GLint maxLights;
-            glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
-            for(int i = 0; i < maxLights; ++i) {
-                lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, (LightNode*)0 ));
-            }
-        };
-        
-        GLenum getLight(LightNode* _node) {
-            GLenum light = GL_INVALID_ENUM;
-            for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
-                it != lights_.end(); ++it) {
-                
-                if(it->second == 0) {
-                    lights_[it->first] = _node;
-                    light = it->first;
-                    break;
-                }
-            }
-            return light;
-        };
-        
-        void removeLight(LightNode* _node) {
-            for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
-                it != lights_.end(); ++it) {
-                
-                if(it->second == _node) {
-                    lights_[it->first] = 0;
-                    break;
-                }
-            }
-        };
-        
-    private:
-        std::map<GLenum, LightNode*> lights_;
+  public:
+    LightSourceHandle() {
+      GLint maxLights;
+
+      // Get max number of lights
+      if (OpenFlipper::Options::gui())
+        glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
+      else
+        maxLights = 50;
+
+      for(int i = 0; i < maxLights; ++i) {
+        lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, (LightNode*)0 ));
+      }
+    };
+
+    GLenum getLight(LightNode* _node) {
+      GLenum light = GL_INVALID_ENUM;
+      for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
+          it != lights_.end(); ++it) {
+
+        if(it->second == 0) {
+          lights_[it->first] = _node;
+          light = it->first;
+          break;
+        }
+      }
+      return light;
+    };
+
+    void removeLight(LightNode* _node) {
+      for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
+          it != lights_.end(); ++it) {
+
+        if(it->second == _node) {
+          lights_[it->first] = 0;
+          break;
+        }
+      }
+    };
+
+  private:
+    std::map<GLenum, LightNode*> lights_;
 };
 
 //=============================================================================
