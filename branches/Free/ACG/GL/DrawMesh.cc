@@ -741,8 +741,6 @@ DrawMeshT<Mesh>::createVBO()
   if (!vbo_)
     glGenBuffersARB(1, &vbo_);
 
-  glGenBuffersARB(1, &vbo_);
-
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   if (!flatMode_)
