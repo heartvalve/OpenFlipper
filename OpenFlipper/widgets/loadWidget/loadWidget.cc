@@ -214,7 +214,7 @@ void LoadWidget::loadFile(){
       
       QString filters = supportedTypes_[t].loadFilters;  
       
-      if (filters.contains(ext[i])){
+      if (filters.contains(ext[i],Qt::CaseInsensitive)){
         pluginForExtension_[ ext[i] ] = t;
         break;
       }
@@ -242,6 +242,7 @@ void LoadWidget::loadFile(){
 
     if (fi.isDir() || !file.exists()) continue; //do nothing if its a not a valid file
     QString ext = fi.suffix();
+
 
     //emit load signal
     if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() ){
@@ -286,7 +287,7 @@ void LoadWidget::saveFile(){
 
     QString filters = supportedTypes_[t].saveFilters;  
 
-    if (filters.contains( fi.suffix() )){
+    if (filters.contains( fi.suffix(),Qt::CaseInsensitive )){
       pluginForExtension_[ fi.suffix() ] = t;
       break;
     }
