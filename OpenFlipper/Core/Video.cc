@@ -119,7 +119,7 @@ void Core::viewUpdated( ) {
   if ( capture_ )
     captureVideo();
 
-  emit pluginViewUpdated();
+  emit pluginViewChanged();
 }
 
 
