@@ -88,6 +88,9 @@ public:
   // constructor
   SceneGraphWidgetGenerator();
 
+  // destructor
+  virtual ~SceneGraphWidgetGenerator() {}
+
   /** \brief Get a widget for this Node
   *
   * Derive from this class to get a widget for the given node
@@ -144,7 +147,7 @@ public:
 
 
   /// destructor
-  ~QtSceneGraphWidget() {}
+  virtual ~QtSceneGraphWidget() {}
 
   enum Columns { Node, Type, Status, Mode };
 
