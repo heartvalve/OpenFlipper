@@ -165,8 +165,8 @@ DrawMeshT<Mesh>::rebuild()
     for (unsigned int i = 0; i < numVerts_; ++i)
       readVertex(vertices_ + i,
                  mesh_.vertex_handle(i), 
-                 (typename Mesh::HalfedgeHandle)0, 
-                 (typename Mesh::FaceHandle)0);
+                 (typename Mesh::HalfedgeHandle)(-1), 
+                 (typename Mesh::FaceHandle)(-1));
 
     createVBO();
 
@@ -406,7 +406,7 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     {
       if (mesh_.has_vertex_texcoords2D())
       {
-        if (_hh != (typename Mesh::HalfedgeHandle)0)
+        if (_hh != (typename Mesh::HalfedgeHandle)(-1))
           _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
         else _pV->tex[m] = mesh_.texcoord2D(_vh)[m];
       }
@@ -421,7 +421,7 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     typename Mesh::Color vecCol(255, 255, 255);
 
     if (col == 0 && mesh_.has_vertex_colors()) vecCol = mesh_.color(_vh);
-    if ((_fh != (typename Mesh::FaceHandle)0))
+    if ((_fh != (typename Mesh::FaceHandle)(-1)))
     {
       if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
         vecCol = mesh_.color(_fh);
