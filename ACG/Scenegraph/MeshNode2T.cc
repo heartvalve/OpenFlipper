@@ -343,6 +343,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
       glDisable(GL_COLOR_MATERIAL);
     }
 
+    drawMesh_->usePerVertexColors();
+
     draw_faces();
     glDepthRange(0.0, 1.0);
   }
