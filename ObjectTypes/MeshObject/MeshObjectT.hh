@@ -161,6 +161,9 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     /// Update Topology of all data structures
     void updateTopology();
 
+    /// Update Texture of all data structures
+    void updateTexture();
+
     /** return a full copy of this object ( All scenegraph nodes will be created )
      *  but the object will not be a part of the object tree.
      */

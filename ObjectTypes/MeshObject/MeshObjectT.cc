@@ -355,6 +355,7 @@
       updateSelection();
       updateFeatures();
       updateModelingRegions();
+      updateTexture();
     }
     else 
     {
@@ -368,6 +369,9 @@
       }
       if ( _type.contains(UPDATE_COLOR) ) {
         updateColor();
+      }
+      if ( _type.contains(UPDATE_TEXTURE)) {
+        updateTexture();
       }
     }
   }
@@ -424,6 +428,13 @@
   void MeshObject< MeshT >::updateFeatures() {
     if ( featureNode_ )
       featureNode_->update_cache();
+  }
+
+  /** Updates the modeling regions scenegraph nodes */
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateTexture() {
+      std::cerr << "Todo:update_texture" << std::endl;
+      meshNode_->update_textures();
   }
 
 
