@@ -1317,7 +1317,8 @@ setTextureIndexPropertyName( std::string _indexPropertyName ) {
   // Check if the given property exists
   OpenMesh::FPropHandleT< int > textureIndexProperty;
   if ( !mesh_.get_property_handle(textureIndexProperty,_indexPropertyName) )  {
-    std::cerr << "DrawMeshT: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
+    if ( _indexPropertyName != "No Texture Index" )
+      std::cerr << "DrawMeshT: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
     return;
   }
 
@@ -1340,7 +1341,8 @@ setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePr
   // Check if the given property exists
   OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;
   if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty,_perFaceTextureCoordinatePropertyName) )  {
-    std::cerr << "DrawMeshT: Unable to get per face texture coordinate property named " << _perFaceTextureCoordinatePropertyName << std::endl;
+    if ( _perFaceTextureCoordinatePropertyName != "No Texture" )
+      std::cerr << "DrawMeshT: Unable to get per face texture coordinate property named " << _perFaceTextureCoordinatePropertyName << std::endl;
     return;
   }
 
