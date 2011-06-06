@@ -753,6 +753,11 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   texData->texture(_textureName).clean();
 
   // ================================================================================
+  // Tell plugins to update texture
+  // ================================================================================
+  emit updatedObject(obj->id(),UPDATE_TEXTURE);
+
+  // ================================================================================
   // Enable the right draw mode and update
   // ================================================================================
   switchDrawMode( texData->texture( _textureName ).type() );
@@ -1489,6 +1494,8 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       emit log(LOGERR, "doSwitchTexture: Texture Error ( mesh required) for Texture: " + _textureName );
     }
   }
+
+  emit updatedObject(obj->id(),UPDATE_TEXTURE);
 
   // ================================================================================
   // Switch to a texture drawMode
