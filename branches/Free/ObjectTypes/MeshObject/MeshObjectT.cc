@@ -433,7 +433,6 @@
   /** Updates the modeling regions scenegraph nodes */
   template < class MeshT  >
   void MeshObject< MeshT >::updateTexture() {
-      std::cerr << "Todo:update_texture" << std::endl;
       meshNode_->update_textures();
   }
 
