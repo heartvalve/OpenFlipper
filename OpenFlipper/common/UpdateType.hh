@@ -156,8 +156,14 @@ const UpdateType UPDATE_SELECTION_KNOTS( UpdateTypeSet(1) << 9 );
 */
 const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 10 );
 
+/** \brief Textures have changed
+*
+* Update the Textures.
+*/
+const UpdateType UPDATE_TEXTURE( UpdateTypeSet(1) << 11 );
+
 /// marks the last used ID
-const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 11 );
+const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 12 );
 
 /**@}*/
 
