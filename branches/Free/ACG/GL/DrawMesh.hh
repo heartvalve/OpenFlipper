@@ -381,7 +381,14 @@ public:
   *
   * @return pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickVertexColorBuffer(){ return &(pickVertBuf_)[0]; };
+  ACG::Vec4uc * pickVertexColorBuffer(){
+    if ( pickVertBuf_.size() >0 )
+      return &(pickVertBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickVertexColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  };
   
 private:  
   
@@ -411,9 +418,14 @@ public:
   *
   * @return pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickEdgeColorBuffer(){ return &(pickEdgeBuf_)[0]; };
-  
-
+  ACG::Vec4uc * pickEdgeColorBuffer(){
+    if ( pickEdgeBuf_.size() >0 )
+      return &(pickEdgeBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickEdgeColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
   
 private:  
   
@@ -437,7 +449,14 @@ public:
   *
   * @return pointer to the per face picking color buffer
   */
-  ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColBuf_)[0]; };
+  ACG::Vec4uc * pickFaceColorBuffer(){
+    if ( pickFaceColBuf_.size() >0 )
+      return &(pickFaceColBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickFaceColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
 
   /** \brief get a pointer to the per vertex picking color buffer
     *
@@ -447,7 +466,14 @@ public:
     *
     * @return pointer to the first element of the picking buffer
     */
-  ACG::Vec3f * pickFaceVertexBuffer(){ return &(pickFaceVertexBuf_)[0]; };
+  ACG::Vec3f * pickFaceVertexBuffer(){
+    if ( pickFaceVertexBuf_.size() >0 )
+      return &(pickFaceVertexBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickFaceVertexBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
   
 private:  
 
@@ -473,7 +499,14 @@ public:
   *
   * @return Pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickAnyColorBuffer(){ return &(pickAnyBuf_)[0]; };
+  ACG::Vec4uc * pickAnyColorBuffer(){
+    if ( pickAnyBuf_.size() >0 )
+      return &(pickAnyBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickAnyColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
   
 private:  
   
