@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                       *
- *   $Author$                                                      *
- *   $Date$                   *
+ *                                                  *
+ *                                          *
+ *             *
  *                                                                           *
 \*===========================================================================*/
 
@@ -109,7 +109,7 @@ private:
     Vertex();
 
     float pos[3]; /*!< Position */
-    float tex[2]; /*!< texture coordinates */
+    float tex[2]; /*!< per halfedge texture coordinates */
     float n[3];   /*!< normal vector */
 //    float tan[4]; /*!< tangent vector + parity */
 
@@ -153,6 +153,9 @@ public:
 
   void setFlatShading()     {flatMode_ = 1;}
   void setSmoothShading()   {flatMode_ = 0;}
+
+  void usePerVertexTexcoords()     {textureMode_ = 0;}
+  void usePerHalfedgeTexcoords()   {textureMode_ = 1;}
 
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
@@ -580,9 +583,15 @@ private:
   int colorMode_;
   /// flat / smooth shade mode toggle
   int flatMode_;
-
+  
   /// normals in VBO currently in flat / smooth mode
   int bVBOinFlatMode_;
+
+  /// per vertex / halfedge texture mode toggle:  0: per vertex,  1: per halfedge
+  int textureMode_;
+
+  /// texcoords in VBO currently in per vertex / halfedge mode toggle
+  int bVBOinHalfedgeTexMode_;
 
 
   /** remapping for faster mesh change updates
