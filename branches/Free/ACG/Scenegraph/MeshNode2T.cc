@@ -452,6 +452,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glDepthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
+    drawMesh_->usePerVertexTexcoords();
 
     draw_faces();
     glDepthRange(0.0, 1.0);
@@ -468,6 +469,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
+    drawMesh_->usePerVertexTexcoords();
 
     draw_faces();
     glDepthRange(0.0, 1.0);
@@ -487,6 +489,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     glDepthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
+    drawMesh_->usePerHalfedgeTexcoords();
 
     draw_faces();
     glDepthRange(0.0, 1.0);
@@ -507,6 +510,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
+    drawMesh_->usePerHalfedgeTexcoords();
 
     draw_faces();
     glDepthRange(0.0, 1.0);
@@ -1135,15 +1139,6 @@ update_topology() {
   // Unbind the buffer after the work has been done
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
-
-template<class Mesh>
-void
-MeshNodeT<Mesh>::
-update_textures() {
-  drawMesh_->updateTextures();
-
-}
-
 
 
 template<class Mesh>
