@@ -1140,6 +1140,15 @@ update_topology() {
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
+template<class Mesh>
+void
+MeshNodeT<Mesh>::
+update_textures() {
+  drawMesh_->updateTextures();
+
+}
+
+
 
 template<class Mesh>
 void
