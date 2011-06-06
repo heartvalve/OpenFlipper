@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                       *
- *   $Author$                                                      *
- *   $Date$                   *
+ *                                                *
+ *                                          *
+ *             *
  *                                                                           *
 \*===========================================================================*/
 
@@ -125,6 +125,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    indexType_(0),
    colorMode_(1),
    flatMode_(0), bVBOinFlatMode_(0),
+   textureMode_(1), bVBOinHalfedgeTexMode_(1),
    triToFaceMap_(0),
    vertexMap_(0),
    invVertexMap_(0),
@@ -404,11 +405,10 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
 
     if (m < 2)
     {
-      if (mesh_.has_vertex_texcoords2D())
+      if (mesh_.has_halfedge_texcoords2D())
       {
         if (_hh != (typename Mesh::HalfedgeHandle)(-1))
           _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
-        else _pV->tex[m] = mesh_.texcoord2D(_vh)[m];
       }
       else _pV->tex[m] = 0.0f;
     }
@@ -743,7 +743,7 @@ DrawMeshT<Mesh>::createVBO()
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
-  if (!flatMode_)
+  if (!flatMode_ && textureMode_)
   {
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
     bVBOinFlatMode_ = 0;
@@ -753,31 +753,46 @@ DrawMeshT<Mesh>::createVBO()
     // use per face normals
     memcpy(verticesTmp_, vertices_, sizeof(Vertex) * numVerts_);
 
-    for (unsigned int i = 0; i < numTris_; ++i)
+    if (flatMode_)
     {
-      // calculate face normal
-      ACG::Vec3f V[3];
-
-      for (unsigned int k = 0; k < 3; ++k)
+      for (unsigned int i = 0; i < numTris_; ++i)
       {
-        Vertex* p = verticesTmp_ + indices_[i * 3 + k];
-        V[k] = ACG::Vec3f(p->pos[0], p->pos[1], p->pos[2]);
+        // calculate face normal
+        ACG::Vec3f V[3];
+
+        for (unsigned int k = 0; k < 3; ++k)
+        {
+          Vertex* p = verticesTmp_ + indices_[i * 3 + k];
+          V[k] = ACG::Vec3f(p->pos[0], p->pos[1], p->pos[2]);
+        }
+
+        ACG::Vec3f u = V[1] - V[0];
+        ACG::Vec3f v = V[2] - V[0];
+        ACG::Vec3f n = OpenMesh::cross(u, v).normalize_cond();
+
+        // store face normal in last tri vertex
+        for (unsigned int k = 0; k < 3; ++k)
+        {
+          verticesTmp_[indices_[i*3+2]].n[k] = n[k];
+        }
       }
-
-      ACG::Vec3f u = V[1] - V[0];
-      ACG::Vec3f v = V[2] - V[0];
-      ACG::Vec3f n = OpenMesh::cross(u, v).normalize_cond();
-
-      // store face normal in first vertex
-      for (unsigned int k = 0; k < 3; ++k)
+      bVBOinFlatMode_ = 1;
+    }
+    if (!textureMode_)
+    {
+      for (unsigned int i = 0; i < numVerts_; ++i)
       {
-        verticesTmp_[indices_[i*3+2]].n[k] = n[k];
+        for (int k = 0; k < 2; ++k)
+        {
+          verticesTmp_[i].tex[k] = mesh_.texcoord2D(
+            mesh_.to_vertex_handle(mesh_.halfedge_handle(vertexMap_[i])))[k];
+        }
       }
+      bVBOinHalfedgeTexMode_ = 0;
     }
 
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), verticesTmp_, GL_STATIC_DRAW_ARB);
 
-    bVBOinFlatMode_ = 1;
   }
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -886,7 +901,7 @@ void DrawMeshT<Mesh>::bindBuffers()
   // to update normals
   if (rebuild_ == REBUILD_NONE)
   {
-    if (bVBOinFlatMode_ != flatMode_)
+    if (bVBOinFlatMode_ != flatMode_ || bVBOinHalfedgeTexMode_ != textureMode_)
       createVBO();
   }
   else
