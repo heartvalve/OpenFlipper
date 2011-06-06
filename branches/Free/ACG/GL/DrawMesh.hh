@@ -139,7 +139,7 @@ private:
     unsigned int numTris;
   };
 
-  enum REBUILD_TYPE {REBUILD_NONE = 0, REBUILD_FULL = 1, REBUILD_GEOMETRY = 2, REBUILD_TOPOLOGY = 4};
+  enum REBUILD_TYPE {REBUILD_NONE = 0, REBUILD_FULL = 1, REBUILD_GEOMETRY = 2, REBUILD_TOPOLOGY = 4, REBUILD_TEXTURES = 5};
 
 
 public:
@@ -194,6 +194,10 @@ public:
   /** \brief request an update for the mesh vertices
    */
   void updateGeometry() {rebuild_ |= REBUILD_GEOMETRY;}
+
+  /** \brief request an update for the textures
+     */
+  void updateTextures() {rebuild_ |= REBUILD_TEXTURES;}
 
   /** \brief request a full rebuild of the mesh
    *
