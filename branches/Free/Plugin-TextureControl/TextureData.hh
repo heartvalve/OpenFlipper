@@ -47,7 +47,6 @@
 
 #include <QString>
 #include <QStringList>
-#include <QImage>
 #include <ACG/GL/gl.hh>
 #include <vector>
 #include <map>
@@ -103,6 +102,7 @@ class Texture {
     : parameters(_tex.parameters),
     multiTextureList(_tex.multiTextureList),
     name_(_tex.name_),
+    textureImageId_(_tex.textureImageId_),
     visibleName_(_tex.visibleName_),
     filename_(_tex.filename_),
     id_(_tex.id_),
@@ -114,8 +114,6 @@ class Texture {
     type_(_tex.type_),
     indexMappingProperty_(_tex.indexMappingProperty_)
     {
-      // copy QImage ( we need a deep copy! )
-      textureImage =  _tex.textureImage.copy(_tex.textureImage.rect());
     }
 
 
@@ -156,6 +154,9 @@ class Texture {
     void clean() { dirty_ = false; };
     void setDirty() { dirty_ = true; };
 
+    void textureImageId( int _id) {textureImageId_ = _id;};
+    int textureImageId() {return textureImageId_; };
+
 
     void type( TextureType _type ) { type_ = _type; };
     TextureType type( ) { return type_; };
@@ -168,8 +169,6 @@ class Texture {
     /// Parameters of the texture
     TexParameters parameters;
 
-    /// The image used as the texture
-    QImage textureImage;
 
     /// If this is a multiTexture, the list will contain all textures for this multi Texture node.
     QStringList multiTextureList;
@@ -177,6 +176,9 @@ class Texture {
   private:
     /// Texture Name
     QString name_;
+
+    /// The image used as the texture ( Ids are handled by the ImageStore )
+    int textureImageId_;
 
     /// Name visible in the gui
     QString visibleName_;
@@ -256,7 +258,7 @@ class TextureData : public PerObjectData
       bool addMultiTexture( QString _textureName );
 
       /// Stores the given image in the texture information
-      bool setImage( QString _textureName , QImage& _image );
+      bool setImage( QString _textureName , int _id );
 
       /*
       /// Delete a given texture

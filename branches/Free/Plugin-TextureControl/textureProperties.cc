@@ -53,6 +53,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include "ImageStorage.hh"
 
 texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     : QDialog(parent)
@@ -289,7 +290,13 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
   }
 
   // Show the texture Image
-  imageLabel->setPixmap(QPixmap::fromImage(texture.textureImage));
+  bool ok = false;
+  imageLabel->setPixmap(QPixmap::fromImage( imageStore().getImage(texture.textureImageId(),&ok) ));
+
+  if ( !ok ) {
+    std::cerr<< imageStore().error().toStdString();
+  }
+
   imageLabel->setScaledContents(true);
 
   if ( texture.filename().startsWith("/") )
@@ -318,7 +325,12 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
                                      absBox->isChecked(),
                                      scaleBox->isChecked());
 
-        image_ = texture.textureImage;
+        bool ok = false;
+        image_ = imageStore().getImage(texture.textureImageId(),&ok);
+        if ( !ok ) {
+          std::cerr << imageStore().error().toStdString();
+        }
+
 
         functionPlot_->setImage( &image_ );
 
@@ -409,8 +421,12 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
     }
 
     if ( texture.filename() != currentImage_ ){
+      // Set the new filename of the image
       texture.filename( currentImage_ );
-      texture.textureImage = QImage( currentImage_ );
+
+      // Add it to the imagestore and set the index in the texture description
+      texture.textureImageId( imageStore().addImageFile(currentImage_) );
+
       changed = true;
     }
 
