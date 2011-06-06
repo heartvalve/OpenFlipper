@@ -54,6 +54,7 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
+#include "ImageStorage.hh"
 
 #include <math.h>
 
@@ -85,12 +86,13 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   // Get the image file
   // ================================================================================
 
-  QImage textureImage;
+  // Add Image to the image store and set the index in the texture description
+  int newId = imageStore().addImageFile(_filename);
 
-  if ( !getImage(_filename,textureImage) )
-    emit log(LOGERR, "slotTextureAdded : Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
-
-
+  if ( newId == -1 ) {
+    emit log(LOGERR,imageStore().error());
+    return;
+  }
 
   // ================================================================================
   // Add the texture to the texture node and get the corresponding id
@@ -99,10 +101,10 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 
   //inform textureNode about the new texture
   if( obj->dataType( DATA_TRIANGLE_MESH ) )
-    glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(textureImage);
+    glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newId,0));
 
   if ( obj->dataType( DATA_POLY_MESH ) )
-    glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(textureImage);
+    glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newId,0));
 
   // ================================================================================
   // Store texture information in objects metadata
@@ -114,7 +116,10 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   }
 
   texData->addTexture(_textureName,_filename,_dimension,glName);
-  texData->setImage(_textureName,textureImage);
+
+  // Remember id in texture descriptor
+  texData->setImage(_textureName,newId);
+
   texData->texture(_textureName).disable();
 }
 
@@ -125,12 +130,14 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
     globalTextures_.addTexture(_textureName,_filename,_dimension,0);
     globalTextures_.texture(_textureName).disable();
 
-    QImage textureImage;
+    int newImageId = imageStore().addImageFile(_filename);
 
-    if ( !getImage(_filename,textureImage) )
-      emit log(LOGERR, "slotTextureAdded: Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+    if ( newImageId == -1 ) {
+      emit log(LOGERR,imageStore().error());
+      return;
+    }
 
-    globalTextures_.texture(_textureName).textureImage = textureImage;
+    globalTextures_.texture(_textureName).textureImageId(newImageId);
 
   } else {
     emit log(LOGERR,"slotTextureAdded: Trying to add already existing global texture " + _textureName );
@@ -181,12 +188,16 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   //hide the texture (its accessible through the multiTexture)
   texData->texture(_name).hidden( true );
 
-  QImage textureImage;
+  // Add to image store
+  int newImageId = imageStore().addImageFile(_name);
 
-  if ( !getImage(_filename,textureImage) )
-    emit log(LOGERR, "slotMultiTextureAdded: Cannot load multiTexture '" + _textureGroup + "'. File not found '" + _filename + "'");
+  if ( newImageId == -1 ) {
+    emit log(LOGERR,imageStore().error());
+    return;
+  }
 
-  texData->texture(_name).textureImage = textureImage;
+  // Add to texture description
+  texData->texture(_name).textureImageId(newImageId);
 
   // Store the new texture in the list of this textureGroup
   if ( _textureId != -1 ) {
@@ -195,31 +206,6 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
     emit log(LOGERR,"slotMultiTextureAdded: Error when getting internal id of new multitexture!");
   }
 
-}
-
-bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
-  QString loadFilename;
-
-  if ( _fileName.startsWith("/") || _fileName.startsWith(".") || _fileName.contains(":") )
-    loadFilename = _fileName;
-  else
-    loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
-
-  //qimage cannot handle tga directly
-  if ( QFileInfo(loadFilename).suffix().toLower() == "tga" ){
-
-    QPixmap pic(loadFilename);
-    _image = pic.toImage();
-    
-  } else {
-    //load the image
-    if ( !_image.load( loadFilename ) ){
-      _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
-      return false;
-    }
-  }
-  
-  return true;
 }
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
@@ -245,17 +231,15 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
   
   // Iterate over all available global textures and add them to the object
   for ( uint i = 0 ; i < globalTextures_.textures().size() ; ++i) {
-    
-    // ================================================================================
-    // Get the image file
-    // ================================================================================
-    
-    QImage textureImage;
-    
-    if ( !getImage(globalTextures_.textures()[i].filename(),textureImage) )
-      emit log(LOGERR, "addedEmptyObject: Cannot load global texture '" + globalTextures_.textures()[i].name() +
-      "'. File not found '" + globalTextures_.textures()[i].filename() + "'");
-    
+
+    // Add to image store
+    int newImageId = imageStore().addImageFile(globalTextures_.textures()[i].filename());
+
+    if ( newImageId == -1 ) {
+      emit log(LOGERR,imageStore().error());
+      continue;
+    }
+
     // ================================================================================
     // Add the texture to the texture node and get the corresponding id
     // ================================================================================
@@ -263,19 +247,22 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
     
     //inform textureNode about the new texture
     if( obj->dataType( DATA_TRIANGLE_MESH ) )
-      glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(textureImage);
+      glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
     
     if ( obj->dataType( DATA_POLY_MESH ) )
-      glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(textureImage);
+      glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
     
     // ================================================================================
     // Store texture information in objects metadata
     // ================================================================================
     if (glName != 0) {
       texData->addTexture(globalTextures_.textures()[i], glName);
-      texData->setImage(globalTextures_.textures()[i].name(),textureImage);
+
+      // Add to texture description
+      texData->setImage(globalTextures_.textures()[i].name(),newImageId);
     }
     else {
+      imageStore().removeImage(newImageId);
       emit log(LOGERR,"addedEmptyObject: Unable to bind Texture");
       continue;
     }
@@ -399,7 +386,12 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   // Update the image
   // ================================================================================
   Texture& texture = texData->texture(_textureName);
-  texture.textureImage = _image;
+
+  // Add to image store
+  int newImageId = imageStore().addImage(_image);
+
+  // Add to texture description
+  texture.textureImageId(newImageId);
 
   // ================================================================================
   // Flag dirty or update
@@ -429,7 +421,12 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   // Update the image in the global texture
   // ================================================================================
   Texture& texture = globalTextures_.texture(_textureName);
-  texture.textureImage = _image;
+
+  // Add to image store
+  int newImageId = imageStore().addImage(_image);
+
+  // Add to texture description
+  texture.textureImageId(newImageId);
 
   // ================================================================================
   // check if the local textures need to be updated
@@ -440,7 +437,7 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
     if (texData != 0)
       if ( texData->textureExists(_textureName) ){
         Texture& localTex = texData->texture(_textureName);
-        localTex.textureImage = _image;
+        localTex.textureImageId(newImageId);
 
           if( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
             PluginFunctions::triMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
@@ -482,7 +479,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
   if ( texData->texture(_textureName).type() == MULTITEXTURE )
     _image = QImage();
   else
-    _image = texData->texture(_textureName).textureImage;
+    _image = imageStore().getImage(texData->texture(_textureName).textureImageId(),0 );
 }
 
 
@@ -496,7 +493,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
   if ( globalTextures_.texture(_textureName).type() == MULTITEXTURE )
     _image = QImage();
   else
-    _image = globalTextures_.texture(_textureName).textureImage;
+    _image = imageStore().getImage(globalTextures_.texture(_textureName).textureImageId(),0);
 }
 
 void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int& _index){
@@ -1257,9 +1254,9 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
     Texture& texture = _texData->texture(_textureName );
 
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-      PluginFunctions::triMeshObject(obj)->textureNode()->set_texture(texture.textureImage , texture.glName() );
+      PluginFunctions::triMeshObject(obj)->textureNode()->set_texture(imageStore().getImage(texture.textureImageId(),0) , texture.glName() );
     } else  if ( obj->dataType( DATA_POLY_MESH ) ) {
-      PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture(texture.textureImage , texture.glName() );
+      PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture(imageStore().getImage(texture.textureImageId(),0) , texture.glName() );
     }
 
     // Always mark texture as dirty

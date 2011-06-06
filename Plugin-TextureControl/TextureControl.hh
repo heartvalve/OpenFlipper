@@ -83,6 +83,7 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 
     // BaseInterface
     void updateView();
+    void updatedObject(int _identifier, const UpdateType _type);
 
     // TextureInterface
     void updateTexture( QString , int);
@@ -157,9 +158,6 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
   private :
 
     bool StringToBool(QString _value);
-
-    /// Load an Image from disk ( if filename contains leading "/ " its consedered global otherwise in texturedir)
-    bool getImage( QString _fileName, QImage& _image );
 
     /// Checks for a correct drawmode and changes if necessary
     void switchDrawMode( TextureType _type );
