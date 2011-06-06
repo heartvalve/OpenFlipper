@@ -121,6 +121,12 @@ public:
   */
   void update_color();
   
+  /** \brief force an texture update
+   *
+   * This function has to be called, when the textures have changed
+   */
+  void update_textures();
+
 private:
 
   /** Typedefs of the mesh representation
