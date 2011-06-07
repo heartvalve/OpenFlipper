@@ -528,6 +528,19 @@ DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
       _dstIndexBuf[i] = offset;
   }
 
+  // nearly degenerate triangle fix
+  if (newCount < 3)
+  {
+    // copy input buffer
+    newCount = 3 * numTris_;
+    memcpy(_dstVertexBuf, _srcVertexBuf, sizeof(Vertex) * newCount);
+    for (unsigned int i = 0; i < newCount; ++i)
+    {
+      _dstIndexBuf[i] = i;
+      _dstVertexMap[i] = _srcVertexMap[i];
+    }
+  }
+
 
   // PER-FACE-NORMAL FIX
   // welding is finished here, but we have to ensure that each
