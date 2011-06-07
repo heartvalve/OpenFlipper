@@ -70,12 +70,14 @@ class SmootherObject : public PerObjectData
     void distance(float _distance)             { distance_ = _distance; }
     void features(bool _features)               { respectFeatures_ = _features; }
     void iterations(uint _iterations)           { iterations_ = _iterations; }
+    void initialized(bool _initialized)         { initialized_ = _initialized; }
     
     SmoothingComponent component()      { return component_; }
     SmoothingContinuity continuity()    { return continuity_; }
     float distance()                   { return distance_; }
     bool features()                     { return respectFeatures_; }
     uint iterations()                   { return iterations_; }
+    bool initialized()                  { return initialized_;}
     
   private:
     // Smoothing attributes
@@ -91,5 +93,8 @@ class SmootherObject : public PerObjectData
     
     // Iterations
     uint iterations_;
+
+    // initialization necessary?
+    bool initialized_;
 };
 

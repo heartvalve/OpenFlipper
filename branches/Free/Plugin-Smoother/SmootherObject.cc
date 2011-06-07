@@ -46,7 +46,9 @@
 SmootherObject::SmootherObject() :
 distance_(0.0f),
 respectFeatures_(false),
-iterations_(0u) {  
+iterations_(0u),
+initialized_(false)
+{
 }
 
 SmootherObject::~SmootherObject() {

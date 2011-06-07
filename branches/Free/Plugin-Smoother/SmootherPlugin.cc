@@ -191,7 +191,13 @@ slot_smooth()
     data->iterations(tool_->sB_iter->value());
     
     // Initialize smoother
-    smoother.initialize(component,continuity );
+
+    if(tool_->cbReinitialize->isChecked() || !data->initialized())
+    {
+         smoother.initialize(component,continuity );
+         data->initialized(true);
+    }
+
     smoother.skip_features(data->features());
 
     smoother.smooth( data->iterations() );
@@ -199,7 +205,8 @@ slot_smooth()
     jobDescription +=  ") " + QString::number(tool_->sB_iter->value()) + " iterations";
 
     if (mesh != 0)
-      mesh->garbage_collection();
+//      mesh->garbage_collection();
+      mesh->update_normals();
 
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
     emit createBackup(o_it->id(), "Smoothing", UPDATE_GEOMETRY );
