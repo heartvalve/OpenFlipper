@@ -182,25 +182,9 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QLabel" name="label3">
-            <property name="toolTip">
-             <string>number of smoothing iterations</string>
-            </property>
-            <property name="statusTip">
-             <string>number of smoothing iterations</string>
-            </property>
-            <property name="text">
-             <string>Iterations</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QSpinBox" name="sB_iter">
             <property name="toolTip">
@@ -219,7 +203,33 @@
           </item>
          </layout>
         </item>
-        <item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label3">
+          <property name="toolTip">
+           <string>number of smoothing iterations</string>
+          </property>
+          <property name="statusTip">
+           <string>number of smoothing iterations</string>
+          </property>
+          <property name="text">
+           <string>Iterations</string>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="cbReinitialize">
+          <property name="text">
+           <string>Re-Init Weights</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
          <widget class="QPushButton" name="pB_smooth">
           <property name="enabled">
            <bool>true</bool>
