@@ -1,19 +1,28 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11478 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11739 )</b>
  *      - <b>ACG</b>
  *          - SceneGraph
+ *              - GridNode
+ *                  - Only return a bounding box, if there will be something visible
+ *              - ManipulatorNode
+ *                  - Fixed manipulator node, where bounding box was computed without center
  *              - MaterialNode
  *                  - Change point size and line width in picking mode to avoid user confusion
  *              - MeshNode
  *                  - Added GPU Cache optimizer ( For per vertex draw modes; Speedup for rendering about 3 )
+ *                  - Use buffer objects for rendering
  *              - ShaderNode
  *                  - Fixed return type of functions
+ *                  - Don't use shaders when insufficient gl version is detected
  *          - GL
  *              - Fixed bug that made VertexBufferObject unusable
  *              - Fixed bug that made FrameBufferObject unusable
  *              - Avoid usage of glIsRenderBuffer
+ *              - Added functions for gl version check
+ *          - Shaderutils
+ *              - Check if gl version satisfies requirements for shaders
  *          - Documentation
  *              - Color picking documentation
  *      - <b>Core</b>
@@ -21,6 +30,7 @@
  *              - Fixed bug, when empty objects where added (Scenegraph Bounding box was not correctly reset)
  *          - User Interactions
  *              - Fixed doubleclick in multiview not moving hitpoint to center in ortho mode
+ *              - Context Menu: Fixed crash when no default view mode was set
  *          - Options
  *              - Handle default projection mode via OpenFlipperSettings and reorder widget
  *              - Added default lock rotation setting
@@ -31,17 +41,24 @@
  *          - Load/Save
  *              - Fixed handling of last directory to avoid jumps between dirs in file dialogs.
  *              - Fixed variable initialization in ParseINI
+ *              - Rename files if multiple files have the same name when saving settings file.
+ *              - Fixed bug in load save dialog, where capital extensions were not handled correctly
  *          - Scripting
  *              - Dont create ui elements from scripting in batch mode
+ *          - User Interface
+ *              - Introduced option if pickmode toolbars are handled in the viewer or as a traditional toolbar on the left
  *          - About Dialog
  *              - List registered file plugins
  *              - Added intel compiler infos
+ *              - Show os endian type
  *      - <b>Interfaces</b>
  *          - Introduced selection Interface
  *          - Introduced Information Interface
  *              - From now on, it is necessary to implement an info plugin for each specific data type. 
  *              - This plugin has to override InformationInterface in order to provide information on a clicked object.
  *          - Reworked Backup Interface
+ *          - BaseInterface
+ *              - Fixed non called slot pluginViewUpdated which broke the viewChanged signal in BaseInterface
  *      - <b>ObjectTypes</b>
  *          - BaseObjectData
  *              - Fixed virtual function shadowing
@@ -61,8 +78,13 @@
  *          - CoordSys
  *              - Fixed coordsys node which did not initialize the rotation matrix.
  *              - Smooth shaded mode for coordsys
+ *              - fixed bug where coordsys state was wrong after snapshot
+ *          - Light
+ *              - Make sure to not use OpenGL, if its not there (Fixes batch mode in headless compute clusters)
  *          - MeshObject
  *              - Fixed functions to set/get selections which ignored vertex 0
+ *              - Update status nodes when geometry is updated. Otherwise they are at the wrong pos with wrong bounding box
+ *              - Introduced update textures signal
  *          - Plane
  *              - Added missing plugin function (get PlaneObject from id)
  *          - Skeleton
@@ -82,8 +104,21 @@
  *              - Fixed crash with wrong indices in obj importer (Only triggered on defect obj files)
  *          - FileOFF
  *              - Fixed windows build error on some VS versions
+ *          - FilePLY
+ *              - Improved error handling when indices are out of range
+ *              - don't ignore user settings in ascii reader
+ *              - Support big endian files
+ *              - Correctly write binary header(missing endian)
+ *              - reserve memory before adding data to improve speed
  *          - Info
  *              - Renamed to InfoMeshObject
+ *          - MeshRepair
+ *              - Cleanup, functions to compute normals
+ *              - Made mesh repair functions scriptable
+ *              - Visual scripting interface itegration
+ *          - Move
+ *              - Move multiple objects at once
+ *              - Built in function to rasterize manipulator rotation (in 45 degree steps) if shift and control is pressed simultaneously.
  *          - Selection
  *              - Reworked selection Interface
  *                  - SelectionBase Plugin now handles the basics
@@ -91,8 +126,16 @@
  *                  - Only available selection metaphors are enabled in the gui
  *              - Fixed bug where vertex selection was not saved properly
  *              - Fixed pickmode toolbar rendering bug in MacOS and Windows.
+ *          - Smoother
+ *              - updated normals after smoothing
+ *              - add possibility for using fixed weights
+ *              - removed unnecessary garbage collection
  *          - Texture Plugins
  *              - Fixed OpenFlipper crash when computing curvature textures on Darwin (Disabled openmp .. unclear why it crashes)
+ *          - TextureControl
+ *              - Added imagestore to reuse already active textures
+ *          - Topology
+ *              - Now operates on quad meshes where possible
  *          - TypeLight
  *              - Make TypeLight run in batch mode
  *          - TypeCamera
@@ -110,6 +153,13 @@
  *              - Output Build type when configuring
  *          - Additional mac path for qt_menu.nib
  *          - License Manager changes. Global flag now controls if the license managers get enabled.
+ *          - Added cmake macros for gtest dependencies used for unit testing
+ *          - Flag for appstore compliance added (-DAPP_STORE_COMPLIANT)
+ *          - Added cuda integration for plugins
+ *      - <b>Packaging</b>
+ *          - Added file type association for mac OS
+ *          - Flag for appstore compliance added
+ *          - Changed the path to OpenFlippers config dir to be app store compliant
  *      - <b>Documentation</b>
  *          - Fixed doxygen problem with missing includes
  *          - Fixed typo which caused DeveloperDoc to include user doc
