@@ -105,6 +105,12 @@ class OBJImporter
     
     typedef uint ObjectOptions;
 
+    /// Constructor
+    OBJImporter() : currentGroup_(0) {
+        // Add default group
+        addGroup("DefaultGroup");
+    }
+
     /// base class needs virtual destructor
     ~OBJImporter();
 
@@ -129,7 +135,7 @@ class OBJImporter
     int degreeV();
     
     /// add an object
-    void addObject( BaseObject* _object );
+    void setObject( BaseObject* _object, int _groupId );
     
     /// get id of the active object
     int currentObject();
@@ -149,7 +155,7 @@ class OBJImporter
 #endif
 
     /// add all vertices that are used to the mesh (in correct order)
-    void addUsedVertices();
+    void addUsedVertices(int _groupId);
     
     /// set vertex texture coordinate
     void setVertexTexCoord(VertexHandle _vh, int _texCoordID);
@@ -182,7 +188,6 @@ class OBJImporter
 
     uint objectCount();
     
-    
     /// return object with given index
     BaseObject* object(int _objectID );
     
@@ -205,7 +210,7 @@ class OBJImporter
     
     /// store an initial options object for an object
     /// containing info about the meshType
-    void addObjectOptions(ObjectOptions _options);
+    void setObjectOptions(ObjectOptions _options);
     
     /// Object Options for all objects
     std::vector< ObjectOptions >& objectOptions();
@@ -216,10 +221,27 @@ class OBJImporter
     /// change the name of an object
     void setObjectName(int _objectID, QString _name);
     
-    /// sets the name of the group where the objects are put into
-    void setGroup(QString _groupName);
-    QString group();
-    
+    // Add a new group
+    int addGroup(const QString& _groupName);
+    int groupId(const QString& _groupName) const;
+    unsigned int numGroups() const { return groupNames_.size(); }
+    const QString groupName(const int _grpId) const;
+    void setGroupName(const int _grp, const QString& _name);
+
+    void setCurrentGroup(const int _current);
+    int currentGroup() const;
+
+    void stats() {
+        std::cerr << std::endl << "Num groups: " << numGroups() << std::endl;
+        int i = 0;
+        for(std::vector<QString>::const_iterator it = groupNames_.begin();
+                it != groupNames_.end(); ++it) {
+            std::cerr << it->toStdString() << ", num vs: " << usedVertices_[i].size() <<
+                    ", Type: " << (objectOptions_[i] == TRIMESH ? "TriMesh" : "PolyMesh") << std::endl;
+            ++i;
+        }
+    }
+
     /// Finish up importing:
     /// Duplicate vertices of non-manifold faces and
     /// add new face as isolated one
@@ -238,32 +260,23 @@ class OBJImporter
     MaterialList materials_;
     
     QString path_;
-    QString groupName_;
     
+    std::vector<QString> groupNames_;
+    int currentGroup_;
+
     // polyMesh data
-    std::map< int, PolyMesh::VertexHandle > vertexMapPoly_;
+    std::vector<std::map< int, PolyMesh::VertexHandle > > vertexMapPoly_;
     
     PolyMesh::FaceHandle addedFacePoly_;
     
-    std::vector< PolyMesh* > polyMeshes_;
-    
     // triMesh data
-    std::map< int, TriMesh::VertexHandle > vertexMapTri_;
+    std::vector<std::map< int, TriMesh::VertexHandle > > vertexMapTri_;
     
-    std::vector< TriMesh::FaceHandle > addedFacesTri_;
+    std::vector<std::vector< TriMesh::FaceHandle > > addedFacesTri_;
     
-    std::vector< TriMesh* > triMeshes_;
-    
-#ifdef ENABLE_BSPLINECURVE_SUPPORT
-    std::vector< BSplineCurve* > curves_;
-#endif
-
-#ifdef ENABLE_BSPLINESURFACE_SUPPORT
-    std::vector< BSplineSurface* > surfaces_;
-#endif
-
     //object data
     std::vector< BaseObject* > objects_;
+
     std::vector< ObjectOptions > objectOptions_;
     
     // for each object a vector of materialNames

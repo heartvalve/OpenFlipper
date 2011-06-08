@@ -120,81 +120,50 @@ int OBJImporter::degreeV(){
 //-----------------------------------------------------------------------------
 
 /// add a mesh
-void OBJImporter::addObject( BaseObject* _object ){
+void OBJImporter::setObject(BaseObject* _object, int _groupId) {
 
-  PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (_object);
-  TriMeshObject*  triMeshObj  = dynamic_cast< TriMeshObject*  > (_object);
-  
-#ifdef ENABLE_BSPLINECURVE_SUPPORT
-  BSplineCurveObject* curveObject = dynamic_cast< BSplineCurveObject*  > (_object);
-#endif
+    while ((unsigned int)_groupId >= objects_.size()) {
+        objects_.push_back(NULL);
+    }
 
-#ifdef ENABLE_BSPLINESURFACE_SUPPORT
-  BSplineSurfaceObject* surfaceObject = dynamic_cast< BSplineSurfaceObject*  > (_object);
-#endif
+    if (objects_[_groupId] != NULL)
+        return;
 
-  if ( polyMeshObj ){
+    if (_object != NULL) {
 
-    polyMeshes_.push_back( polyMeshObj->mesh() );
-    objects_.push_back( _object );
+        objects_[_groupId] = _object;
 
-    addUsedVertices();
-    
-  } else if ( triMeshObj ){
-    
-    triMeshes_.push_back( triMeshObj->mesh() );
-    objects_.push_back( _object );
-    
-    addUsedVertices();
-    
-  }
+        if(PluginFunctions::polyMesh(_object->id()) != NULL || PluginFunctions::triMesh(_object->id()) != NULL) {
+            addUsedVertices(_groupId);
+        }
 
-#ifdef ENABLE_BSPLINECURVE_SUPPORT
-  else if ( curveObject ){
-    
-    curves_.push_back( curveObject->splineCurve() );
-    objects_.push_back( _object );  
-  }
-#endif
-
-#ifdef ENABLE_BSPLINESURFACE_SUPPORT
-  else if ( surfaceObject ){
-    
-    surfaces_.push_back( surfaceObject->splineSurface() );
-    objects_.push_back( _object );  
-  }
-#endif
-
-  else {
-    std::cerr << "Error: Cannot add object. Type is unknown!" << std::endl;
-  }
+    } else {
+        std::cerr << "Error: Cannot add object. Type is unknown!" << std::endl;
+    }
 }
 
 //-----------------------------------------------------------------------------
 
 /// get id of the active object
 int OBJImporter::currentObject(){
-  return objects_.size()-1;
+
+    return currentGroup_;
 }
 
 //-----------------------------------------------------------------------------
 
 /// get the active polyMesh
 PolyMesh* OBJImporter::currentPolyMesh(){
-  if (polyMeshes_.size() == 0)
-    return 0;
-  else
-    return polyMeshes_.back();
+
+    return PluginFunctions::polyMesh(object(currentObject())->id());
 }
 
 //-----------------------------------------------------------------------------
 
 /// get the active triMesh
 TriMesh* OBJImporter::currentTriMesh(){
-  if (triMeshes_.size() == 0)
-    return 0;
-  else
-    return triMeshes_.back();
+
+    return PluginFunctions::triMesh(object(currentObject())->id());
 }
 
 //-----------------------------------------------------------------------------
@@ -202,10 +171,8 @@ TriMesh* OBJImporter::currentTriMesh(){
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
 
 BSplineCurve* OBJImporter::currentCurve(){
-  if (curves_.size() == 0)
-    return 0;
-  else
-    return curves_.back();
+
+    return PluginFunctions::splineCurve(PluginFunctions::baseObjectData(object(currentObject())));
 }
   
 #endif
@@ -215,10 +182,8 @@ BSplineCurve* OBJImporter::currentCurve(){
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 
 BSplineSurface* OBJImporter::currentSurface(){
-  if (surfaces_.size() == 0)
-    return 0;
-  else
-    return surfaces_.back();
+
+    return PluginFunctions::splineSurface(PluginFunctions::baseObjectData(object(currentObject())));
 }
   
 #endif
@@ -226,53 +191,52 @@ BSplineSurface* OBJImporter::currentSurface(){
 //-----------------------------------------------------------------------------
 
 /// add all vertices that are used to the mesh (in correct order)
-void OBJImporter::addUsedVertices(){
+void OBJImporter::addUsedVertices(int _groupId) {
 
-  
-  if ( isTriangleMesh( currentObject() ) ){
+    BaseObject* obj = objects_[_groupId];
 
-    //handle triangle meshes
-    if ( !currentTriMesh() ) return;
-    
-    //add all vertices to the mesh
-    std::set<VertexHandle>::iterator it;
+    if (isTriangleMesh(_groupId)) {
 
-    // Clear the map of already existing vertices
-    vertexMapTri_.clear();
+        //handle triangle meshes
+        TriMesh* curMesh = PluginFunctions::triMesh(obj->id());
+        if (curMesh == NULL)
+            return;
 
-    for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
+        // add all vertices to the mesh
 
-      if ( *it >= (int)vertices_.size() ){
-        std::cerr << "Error: Vertex ID too large" << std::endl;
-        continue;
-      }
+        for (std::set<VertexHandle>::iterator it = usedVertices_[_groupId].begin(); it != usedVertices_[_groupId].end(); it++) {
 
-      if ( vertexMapTri_.find( *it ) == vertexMapTri_.end() )
-        vertexMapTri_[ *it ] = currentTriMesh()->add_vertex( (TriMesh::Point) vertices_[*it] );
+            if (*it >= (int) vertices_.size()) {
+                std::cerr << "Error: Vertex ID too large" << std::endl;
+                continue;
+            }
+
+            if (vertexMapTri_[_groupId].find(*it) == vertexMapTri_[_groupId].end()) {
+                (vertexMapTri_[_groupId])[*it] = curMesh->add_vertex((TriMesh::Point) vertices_[*it]);
+            }
+        }
+
+    } else if (isPolyMesh(_groupId)) {
+
+        //handle triangle meshes
+        PolyMesh* curMesh = PluginFunctions::polyMesh(obj->id());
+        if (curMesh == NULL)
+            return;
+
+        //add all vertices to the mesh
+
+        for (std::set<VertexHandle>::iterator it = usedVertices_[currentObject()].begin(); it
+                != usedVertices_[currentObject()].end(); it++) {
+
+            if (*it >= (int) vertices_.size()) {
+                std::cerr << "Error: Vertex ID too large" << std::endl;
+                return;
+            }
+
+            if (vertexMapPoly_[_groupId].find(*it) == vertexMapPoly_[_groupId].end())
+                (vertexMapPoly_[_groupId])[*it] = curMesh->add_vertex((PolyMesh::Point) vertices_[*it]);
+        }
     }
-      
-  } else if ( isPolyMesh( currentObject() ) ){
-
-    //handle poly meshes
-    if ( !currentPolyMesh() ) return;
-
-    //add all vertices to the mesh
-    std::set<VertexHandle>::iterator it;
-
-    // Clear the map of already existing vertices
-    vertexMapPoly_.clear();
-
-    for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
-        
-      if ( *it >= (int)vertices_.size() ){
-        std::cerr << "Error: Vertex ID too large" << std::endl;
-        return;
-      }
-
-      if ( vertexMapPoly_.find( *it ) == vertexMapPoly_.end() )
-        vertexMapPoly_[ *it ] = currentPolyMesh()->add_vertex( (PolyMesh::Point) vertices_[*it] );
-    }
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -292,8 +256,8 @@ void OBJImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
         currentTriMesh()->request_vertex_texcoords2D();
       
       //set the texCoords
-      if ( vertexMapTri_.find( _vh ) != vertexMapTri_.end() )
-        currentTriMesh()->set_texcoord2D( vertexMapTri_[_vh], texCoords_[ _texCoordID ] ); 
+      if ( vertexMapTri_[currentGroup_].find( _vh ) != vertexMapTri_[currentGroup_].end() )
+        currentTriMesh()->set_texcoord2D( vertexMapTri_[currentGroup_][_vh], texCoords_[ _texCoordID ] );
 
     }else{
       std::cerr << "Error: TexCoord ID too large" << std::endl;
@@ -311,8 +275,8 @@ void OBJImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
         currentPolyMesh()->request_vertex_texcoords2D();
       
       //set the texCoords
-      if ( vertexMapPoly_.find( _vh ) != vertexMapPoly_.end() )
-        currentPolyMesh()->set_texcoord2D( vertexMapPoly_[_vh], texCoords_[ _texCoordID ] ); 
+      if ( vertexMapPoly_[currentGroup_].find( _vh ) != vertexMapPoly_[currentGroup_].end() )
+        currentPolyMesh()->set_texcoord2D( vertexMapPoly_[currentGroup_][_vh], texCoords_[ _texCoordID ] );
 
     }else{
       std::cerr << "Error: TexCoord ID too large" << std::endl;
@@ -332,9 +296,9 @@ void OBJImporter::setNormal(VertexHandle _vh, int _normalID){
     
     if ( _normalID < (int) normals_.size() ){
     
-      if ( vertexMapTri_.find( _vh ) != vertexMapTri_.end() ){
-        currentTriMesh()->set_normal( vertexMapTri_[_vh], (TriMesh::Point) normals_[ _normalID ] ); 
-        objectOptions_[ objects_.size() - 1 ] |= NORMALS;
+      if ( vertexMapTri_[currentGroup_].find( _vh ) != vertexMapTri_[currentGroup_].end() ){
+        currentTriMesh()->set_normal( vertexMapTri_[currentGroup_][_vh], (TriMesh::Point) normals_[ _normalID ] );
+        objectOptions_[ currentGroup_ ] |= NORMALS;
       }
 
     }else{
@@ -348,9 +312,9 @@ void OBJImporter::setNormal(VertexHandle _vh, int _normalID){
     
     if ( _normalID < (int) normals_.size() ){
     
-      if ( vertexMapPoly_.find( _vh ) != vertexMapPoly_.end() ){
-        currentPolyMesh()->set_normal( vertexMapPoly_[_vh], (PolyMesh::Point) normals_[ _normalID ] ); 
-        objectOptions_[ objects_.size() - 1 ] |= NORMALS;
+      if ( vertexMapPoly_[currentGroup_].find( _vh ) != vertexMapPoly_[currentGroup_].end() ){
+        currentPolyMesh()->set_normal( vertexMapPoly_[currentGroup_][_vh], (PolyMesh::Point) normals_[ _normalID ] );
+        objectOptions_[ currentGroup_ ] |= NORMALS;
       }
 
     }else{
@@ -370,15 +334,15 @@ void OBJImporter::addFace(const VHandles& _indices){
     //handle triangle meshes
     if ( !currentTriMesh() ) return;
     
-    addedFacesTri_.clear();
+    addedFacesTri_[currentGroup_].clear();
     
     std::vector< TriMesh::VertexHandle > vertices;
     
     for (uint i=0; i < _indices.size(); i++){
 
-      if ( vertexMapTri_.find( _indices[i] ) != vertexMapTri_.end() ){
+      if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
     
-        vertices.push_back( vertexMapTri_[ _indices[i] ] );
+        vertices.push_back( vertexMapTri_[currentGroup_][ _indices[i] ] );
 
       }else{
         std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
@@ -398,7 +362,7 @@ void OBJImporter::addFace(const VHandles& _indices){
     } else {
     	// Store recently added face
     	for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-    		addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
+    		addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
     }
     
     
@@ -411,9 +375,9 @@ void OBJImporter::addFace(const VHandles& _indices){
     
     for (uint i=0; i < _indices.size(); i++){
       
-      if ( vertexMapPoly_.find( _indices[i] ) != vertexMapPoly_.end() ){
+      if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
     
-        vertices.push_back( vertexMapPoly_[ _indices[i] ] );
+        vertices.push_back( vertexMapPoly_[currentGroup_][ _indices[i] ] );
 
       }else{
         std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
@@ -442,15 +406,15 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     //handle triangle meshes
     if ( !currentTriMesh() ) return;
     
-    addedFacesTri_.clear();
+    addedFacesTri_[currentGroup_].clear();
     
     std::vector< TriMesh::VertexHandle > vertices;
     
     for (uint i=0; i < _indices.size(); i++){
 
-      if ( vertexMapTri_.find( _indices[i] ) != vertexMapTri_.end() ){
+      if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
     
-        vertices.push_back( vertexMapTri_[ _indices[i] ] );
+        vertices.push_back( vertexMapTri_[currentGroup_][ _indices[i] ] );
 
       }else{
         std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
@@ -470,7 +434,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
 
     // Store recently added face
     for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-    	addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
+    	addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
     
     //perhaps request texCoords for the mesh
     if ( !currentTriMesh()->has_halfedge_texcoords2D() )
@@ -479,7 +443,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     //now add texCoords
   
     // get first halfedge handle
-    TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[0] );
+    TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[currentGroup_][0] );
     TriMesh::HalfedgeHandle end_heh = currentTriMesh()->prev_halfedge_handle(cur_heh);
 
     // find start heh
@@ -509,11 +473,11 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     for (uint i=0; i < _indices.size(); i++){
 
-      if ( vertexMapPoly_.find( _indices[i] ) != vertexMapPoly_.end() ){
+      if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
     
-        vertices.push_back( vertexMapPoly_[ _indices[i] ] );
+        vertices.push_back( vertexMapPoly_[currentGroup_][ _indices[i] ] );
 
-      }else{
+      } else {
         std::cerr << "Error: cannot add face poly mesh. undefined index(" <<  _indices[i] << ")" << std::endl;
         std::cerr << "Verticies in Index map: " << vertexMapPoly_.size() << std::endl;
         return;
@@ -590,13 +554,13 @@ void OBJImporter::addMaterial(std::string _materialName){
         }
       }
 
-      for (uint i=0; i < addedFacesTri_.size(); i++){
+      for (uint i=0; i < addedFacesTri_[currentGroup_].size(); i++){
       
         if ( mat.has_Kd() ) {
           bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
           
           if ( currentTriMesh()->has_face_colors() && colorAllowed ){
-            currentTriMesh()->set_color(addedFacesTri_[i], OpenMesh::color_cast< TriMesh::Color >(mat.Kd() ) );
+            currentTriMesh()->set_color(addedFacesTri_[currentGroup_][i], OpenMesh::color_cast< TriMesh::Color >(mat.Kd() ) );
             objectOptions_[ currentObject() ] |= FACECOLOR;
           }
         }
@@ -607,12 +571,12 @@ void OBJImporter::addMaterial(std::string _materialName){
         if ( mat.has_Texture() ) {
 
           if ( hasTexture( currentObject() ) && textureAllowed )
-            currentTriMesh()->property(indexProperty, addedFacesTri_[i]) = mat.map_Kd_index();
+            currentTriMesh()->property(indexProperty, addedFacesTri_[currentGroup_][i]) = mat.map_Kd_index();
 
         } else {
           // If we don't have the info, set it to no texture
           if ( hasTexture( currentObject() ) && textureAllowed )
-            currentTriMesh()->property(indexProperty, addedFacesTri_[i]) = 0;
+            currentTriMesh()->property(indexProperty, addedFacesTri_[currentGroup_][i]) = 0;
         }
       }
     }
@@ -751,9 +715,10 @@ uint OBJImporter::objectCount(){
 
 //-----------------------------------------------------------------------------
 
-BaseObject* OBJImporter::object(int _objectID){
+BaseObject* OBJImporter::object(int _objectID) {
+
   if (objects_.size() == 0 || (int)objects_.size() <= _objectID)
-    return 0;
+    return NULL;
   else
     return objects_[ _objectID ];
 }
@@ -778,8 +743,13 @@ void OBJImporter::setPath(QString _path){
 
 //-----------------------------------------------------------------------------
 
-void OBJImporter::addObjectOptions(ObjectOptions _options){
-  objectOptions_.push_back( _options );
+void OBJImporter::setObjectOptions(ObjectOptions _options) {
+
+    while((unsigned int)currentGroup_ >= objectOptions_.size()) {
+        objectOptions_.push_back(POLYMESH);
+    }
+
+    objectOptions_[currentGroup_] = _options;
 }
 
 //-----------------------------------------------------------------------------
@@ -811,14 +781,61 @@ void OBJImporter::setObjectName(int _objectID, QString _name){
 
 //-----------------------------------------------------------------------------
 
-void OBJImporter::setGroup(QString _groupName){
-  groupName_ = _groupName;
+int OBJImporter::addGroup(const QString& _groupName) {
+
+    QString group = _groupName.trimmed();
+    int id = groupId(group);
+    if(id == -1) {
+        groupNames_.push_back(group);
+        vertexMapTri_.push_back(std::map<int,TriMesh::VertexHandle>());
+        vertexMapPoly_.push_back(std::map<int,TriMesh::VertexHandle>());
+        addedFacesTri_.push_back(std::vector< TriMesh::FaceHandle>());
+        return groupNames_.size() - 1;
+    }
+    return id;
 }
 
 //-----------------------------------------------------------------------------
 
-QString OBJImporter::group(){
-  return groupName_;
+int OBJImporter::groupId(const QString& _groupName) const {
+
+    for(unsigned int i = 0; i < groupNames_.size(); ++i) {
+        if(groupNames_[i] == _groupName.trimmed()) return i;
+    }
+    return -1;
+}
+
+//-----------------------------------------------------------------------------
+
+const QString OBJImporter::groupName(const int _grpId) const {
+
+    if((unsigned int)_grpId < groupNames_.size()) {
+        return groupNames_[_grpId];
+    }
+    return QString();
+}
+
+//-----------------------------------------------------------------------------
+
+void OBJImporter::setGroupName(const int _grp, const QString& _name) {
+
+    if((unsigned int)_grp >= groupNames_.size()) return;
+
+    groupNames_[_grp] = _name;
+}
+
+//-----------------------------------------------------------------------------
+
+void OBJImporter::setCurrentGroup(const int _current) {
+
+    currentGroup_ = _current;
+}
+
+//-----------------------------------------------------------------------------
+
+int OBJImporter::currentGroup() const {
+
+    return currentGroup_;
 }
 
 //-----------------------------------------------------------------------------
@@ -945,10 +962,16 @@ void OBJImporter::useMaterial( std::string _materialName ){
 ///used vertices
 void OBJImporter::useVertex(VertexHandle _vertex){
 
-  while( (int)usedVertices_.size() - 1 < (int) objectOptions_.size() )
-    usedVertices_.push_back( std::set<VertexHandle>() );
+    while(currentGroup_ >= (int)usedVertices_.size()) {
+        usedVertices_.push_back(std::set<VertexHandle>());
+    }
 
-  usedVertices_[ objectOptions_.size() ].insert( _vertex );
+    usedVertices_[currentGroup_].insert(_vertex);
+
+//  while( (int)usedVertices_.size() - 1 < (int) objectOptions_.size() )
+//    usedVertices_.push_back( std::set<VertexHandle>() );
+//
+//  usedVertices_[ objectOptions_.size() ].insert( _vertex );
 }
 
 //-----------------------------------------------------------------------------
