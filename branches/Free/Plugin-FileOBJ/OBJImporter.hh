@@ -231,17 +231,6 @@ class OBJImporter
     void setCurrentGroup(const int _current);
     int currentGroup() const;
 
-    void stats() {
-        std::cerr << std::endl << "Num groups: " << numGroups() << std::endl;
-        int i = 0;
-        for(std::vector<QString>::const_iterator it = groupNames_.begin();
-                it != groupNames_.end(); ++it) {
-            std::cerr << it->toStdString() << ", num vs: " << usedVertices_[i].size() <<
-                    ", Type: " << (objectOptions_[i] == TRIMESH ? "TriMesh" : "PolyMesh") << std::endl;
-            ++i;
-        }
-    }
-
     /// Finish up importing:
     /// Duplicate vertices of non-manifold faces and
     /// add new face as isolated one
@@ -274,8 +263,17 @@ class OBJImporter
     
     std::vector<std::vector< TriMesh::FaceHandle > > addedFacesTri_;
     
+    //std::vector< BaseObject* > objects_;
+
     //object data
-    std::vector< BaseObject* > objects_;
+    std::vector<TriMeshObject*> triMeshes_;
+    std::vector<PolyMeshObject*> polyMeshes_;
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    std::vector<BSplineCurveObject*> bSplineCurves_;
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    std::vector<BSplineSurfaceObject*> bSplineSurfaces_;
+#endif
 
     std::vector< ObjectOptions > objectOptions_;
     

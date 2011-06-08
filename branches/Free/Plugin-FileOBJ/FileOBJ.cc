@@ -331,6 +331,8 @@ void FileOBJPlugin::createAllGroupObjects(OBJImporter& _importer) {
 
         else if (_importer.isCurve( i )) {
 
+            std::cerr << "Creating curve" << std::endl;
+
             int id = -1;
             emit addEmptyObject(DATA_BSPLINE_CURVE, id);
 
@@ -540,6 +542,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   std::string keyWrd;
   std::string nextKeyWrd = "";
 
+  unsigned int curveCount = 0;
+  unsigned int surfaceCount = 0;
+
   float x, y, z, u, v;
   int   deg, index;
   double knot;
@@ -692,16 +697,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       std::string groupName;
       std::getline(stream, groupName);
 
-//      if ( faceCount > 0 )
-//        addNewObject( _importer, QString(groupName.c_str()) );
-      //else {
       if(faceCount == 0) {
         currentFileName = QString(groupName.c_str());
       }
-
-      //since obj-groups are used, all new objects will be grouped together in OpenFlipper
-//      if ( _importer.objectOptions().size() > 1 )
-//        _importer.setGroup( QFileInfo(_filename).fileName() );
 
       int id = _importer.groupId(groupName.c_str());
       if(id == -1) {
@@ -722,10 +720,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       vhandles.clear();
       face_texcoords.clear();
-
-      //add object if not already there
-//      if (_importer.currentObject() == -1)
-//          addNewObject(_importer, currentFileName );
       
       // read full line after detecting a face
       std::string faceLine;
@@ -896,8 +890,16 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = CURVE;
       
-//      if ( keyWrd == "curv" )
-//        addNewObject(_importer, currentFileName );
+      if ( keyWrd == "curv" ) {
+
+          int id = _importer.groupId(QString("spline_curve_%1").arg(curveCount));
+          if(id == -1) {
+              std::cerr << "Error: Group has not been added before!" << std::endl;
+              return;
+          }
+          _importer.setCurrentGroup(id);
+          curveCount++;
+      }
       
       //get curve control points
       std::string curveLine;
@@ -1005,8 +1007,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       
         lineData >> knot;
 
-        if ( !lineData.fail() )
+        if ( !lineData.fail() ) {
           knots->push_back( knot );
+        }
       }
     }
 
@@ -1015,8 +1018,16 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = SURFACE;
       
-//      if ( keyWrd == "surf" )
-//        addNewObject(_importer, currentFileName );
+      if ( keyWrd == "surf" ) {
+
+          int id = _importer.groupId(QString("spline_surface_%1").arg(surfaceCount));
+          if(id == -1) {
+              std::cerr << "Error: Group has not been added before!" << std::endl;
+              return;
+          }
+          _importer.setCurrentGroup(id);
+          surfaceCount++;
+      }
       
       //get surface control points
       std::string surfLine;
@@ -1066,7 +1077,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         // compute number of control points in m and in n direction
         int dimU = knotsU.size() - _importer.degreeU() - 1;
         int dimV = knotsV.size() - _importer.degreeV() - 1;
-        
+
         // add the control points
         std::vector< ACG::Vec3d > controlPolygon;
         
@@ -1083,6 +1094,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
         _importer.currentSurface()->set_knots_m(knotsU);
         _importer.currentSurface()->set_knots_n(knotsV);
+
+
       }
       
       cpIndices.clear();
@@ -1114,6 +1127,9 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   std::string keyWrd;
   std::string nextKeyWrd = "";
   
+  unsigned int curveCount = 0;
+  unsigned int surfaceCount = 0;
+
   float x, y, z;
   int index;
   int faceCount = 0;
@@ -1184,7 +1200,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
     // group
     else if (mode == NONE && keyWrd == "g"){
-      //if ( faceCount > 0 ){
+
         //give options to importer and reinitialize
         //for next object
 
@@ -1200,7 +1216,6 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         _importer.setObjectOptions( options );
         options = OBJImporter::TRIMESH;
         faceCount = 0;
-      //}
     }
     // face
     else if (mode == NONE && keyWrd == "f"){
@@ -1275,16 +1290,18 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       mode = CURVE;
       
-      if ( keyWrd == "curv" ){
-        
-        if ( faceCount > 0 ){
-          //give options to importer and reinitialize
-          //for next object
-          if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
-          if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+      if ( keyWrd == "curv" ) {
 
-          _importer.setObjectOptions( options );
-        }
+        //give options to importer and reinitialize
+        //for next object
+        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+
+        int id = _importer.addGroup(QString("spline_curve_%1").arg(curveCount));
+        _importer.setCurrentGroup(id);
+        curveCount++;
+
+        _importer.setObjectOptions( options );
 
         options = OBJImporter::CURVE;
       }
@@ -1343,14 +1360,16 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       if ( keyWrd == "surf" ){
         
-        if ( faceCount > 0 ){
-          //give options to importer and reinitialize
-          //for next object
-          if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
-          if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+        //give options to importer and reinitialize
+        //for next object
+        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-          _importer.setObjectOptions( options );
-        }
+        int id = _importer.addGroup(QString("spline_surface_%1").arg(surfaceCount));
+        _importer.setCurrentGroup(id);
+        surfaceCount++;
+
+        _importer.setObjectOptions( options );
       
         options = OBJImporter::SURFACE;        
       }
