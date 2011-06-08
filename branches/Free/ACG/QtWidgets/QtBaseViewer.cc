@@ -212,7 +212,7 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   
   
   backFaceCulling_  = false;
-  twoSidedLighting_ = true;
+  twoSidedLighting_ = false;
   animation_        = false;
 
   light_matrix_.identity();
