@@ -122,22 +122,34 @@ int OBJImporter::degreeV(){
 /// add a mesh
 void OBJImporter::setObject(BaseObject* _object, int _groupId) {
 
-    while ((unsigned int)_groupId >= objects_.size()) {
-        objects_.push_back(NULL);
+    if((unsigned int)_groupId >= triMeshes_.size()) {
+        std::cerr << "Error: Group does not exist!" << std::endl;
+        return;
     }
 
-    if (objects_[_groupId] != NULL)
-        return;
+    if(PluginFunctions::polyMeshObject(_object->id()) != NULL) {
 
-    if (_object != NULL) {
+        polyMeshes_[_groupId] = PluginFunctions::polyMeshObject(_object->id());
+        addUsedVertices(_groupId);
 
-        objects_[_groupId] = _object;
+    } else if(PluginFunctions::triMeshObject(_object->id()) != NULL) {
 
-        if(PluginFunctions::polyMesh(_object->id()) != NULL || PluginFunctions::triMesh(_object->id()) != NULL) {
-            addUsedVertices(_groupId);
-        }
+        triMeshes_[_groupId] = PluginFunctions::triMeshObject(_object->id());
+        addUsedVertices(_groupId);
+    }
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    else if(PluginFunctions::bsplineCurveObject(PluginFunctions::baseObjectData(_object)) != NULL) {
 
-    } else {
+        bSplineCurves_[_groupId] = PluginFunctions::bsplineCurveObject(PluginFunctions::baseObjectData(_object));
+    }
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    else if(PluginFunctions::bsplineSurfaceObject(PluginFunctions::baseObjectData(_object)) != NULL) {
+
+        bSplineSurfaces_[_groupId] = PluginFunctions::bsplineSurfaceObject(PluginFunctions::baseObjectData(_object));
+    }
+#endif
+    else {
         std::cerr << "Error: Cannot add object. Type is unknown!" << std::endl;
     }
 }
@@ -155,7 +167,7 @@ int OBJImporter::currentObject(){
 /// get the active polyMesh
 PolyMesh* OBJImporter::currentPolyMesh(){
 
-    return PluginFunctions::polyMesh(object(currentObject())->id());
+    return polyMeshes_[currentGroup_]->mesh();
 }
 
 //-----------------------------------------------------------------------------
@@ -163,7 +175,7 @@ PolyMesh* OBJImporter::currentPolyMesh(){
 /// get the active triMesh
 TriMesh* OBJImporter::currentTriMesh(){
 
-    return PluginFunctions::triMesh(object(currentObject())->id());
+    return triMeshes_[currentGroup_]->mesh();
 }
 
 //-----------------------------------------------------------------------------
@@ -172,7 +184,7 @@ TriMesh* OBJImporter::currentTriMesh(){
 
 BSplineCurve* OBJImporter::currentCurve(){
 
-    return PluginFunctions::splineCurve(PluginFunctions::baseObjectData(object(currentObject())));
+    return bSplineCurves_[currentGroup_]->splineCurve();
 }
   
 #endif
@@ -183,7 +195,7 @@ BSplineCurve* OBJImporter::currentCurve(){
 
 BSplineSurface* OBJImporter::currentSurface(){
 
-    return PluginFunctions::splineSurface(PluginFunctions::baseObjectData(object(currentObject())));
+    return bSplineSurfaces_[currentGroup_]->splineSurface();
 }
   
 #endif
@@ -193,12 +205,10 @@ BSplineSurface* OBJImporter::currentSurface(){
 /// add all vertices that are used to the mesh (in correct order)
 void OBJImporter::addUsedVertices(int _groupId) {
 
-    BaseObject* obj = objects_[_groupId];
-
     if (isTriangleMesh(_groupId)) {
 
         //handle triangle meshes
-        TriMesh* curMesh = PluginFunctions::triMesh(obj->id());
+        TriMesh* curMesh = triMeshes_[_groupId]->mesh();
         if (curMesh == NULL)
             return;
 
@@ -219,7 +229,7 @@ void OBJImporter::addUsedVertices(int _groupId) {
     } else if (isPolyMesh(_groupId)) {
 
         //handle triangle meshes
-        PolyMesh* curMesh = PluginFunctions::polyMesh(obj->id());
+        PolyMesh* curMesh = polyMeshes_[_groupId]->mesh();
         if (curMesh == NULL)
             return;
 
@@ -710,17 +720,22 @@ uint OBJImporter::n_texCoords(){
 //-----------------------------------------------------------------------------
 
 uint OBJImporter::objectCount(){
-  return objects_.size();
+  return groupNames_.size();
 }
 
 //-----------------------------------------------------------------------------
 
 BaseObject* OBJImporter::object(int _objectID) {
 
-  if (objects_.size() == 0 || (int)objects_.size() <= _objectID)
+  if (objectCount() == 0 || objectCount() <= (unsigned int)_objectID)
     return NULL;
-  else
-    return objects_[ _objectID ];
+
+  if(triMeshes_[_objectID] != NULL)             return triMeshes_[_objectID];
+  else if(polyMeshes_[_objectID] != NULL)       return polyMeshes_[_objectID];
+  else if(bSplineCurves_[_objectID] != NULL)    return bSplineCurves_[_objectID];
+  else if(bSplineSurfaces_[_objectID] != NULL)  return bSplineSurfaces_[_objectID];
+
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -790,6 +805,15 @@ int OBJImporter::addGroup(const QString& _groupName) {
         vertexMapTri_.push_back(std::map<int,TriMesh::VertexHandle>());
         vertexMapPoly_.push_back(std::map<int,TriMesh::VertexHandle>());
         addedFacesTri_.push_back(std::vector< TriMesh::FaceHandle>());
+
+        triMeshes_.push_back(NULL);
+        polyMeshes_.push_back(NULL);
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+        bSplineCurves_.push_back(NULL);
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+        bSplineSurfaces_.push_back(NULL);
+#endif
         return groupNames_.size() - 1;
     }
     return id;
