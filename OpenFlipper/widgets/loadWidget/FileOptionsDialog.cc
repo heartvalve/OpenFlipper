@@ -65,7 +65,7 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
     int count = 0;
     QStringList names;
     
-    for (uint t=0; t < supportedTypes_.size(); t++){
+    for (unsigned int t=0; t < supportedTypes_.size(); t++){
       
       QString filters;
       
@@ -73,8 +73,8 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
         filters = supportedTypes_[t].loadFilters;
       else
         filters = supportedTypes_[t].saveFilters;
-      
-      if (filters.contains(ext_[i])){
+
+      if (filters.contains("." + ext_[i],Qt::CaseInsensitive)){
         count++;
         names.push_back( supportedTypes_[t].name );
         usefulPlugins.push_back( t );
@@ -115,7 +115,7 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
 
   
   //add option widgets from all fileplugins
-  for (uint t=0; t < supportedTypes_.size(); t++){
+  for (unsigned int t=0; t < supportedTypes_.size(); t++){
     
     if ( !usefulPlugins.contains(t) ) 
       continue;
@@ -160,7 +160,7 @@ FileOptionsDialog::~FileOptionsDialog()
     tabs_.removeTab(i);
   
   //and set parent of widgets to NULL
-  for (uint t=0; t < supportedTypes_.size(); t++){
+  for (unsigned int t=0; t < supportedTypes_.size(); t++){
     
     QWidget* widget;
     
@@ -186,7 +186,7 @@ void FileOptionsDialog::slotPluginChanged(QString _name){
   
   QComboBox* box = dynamic_cast<QComboBox*>(QObject::sender());
 
-  for (uint t=0; t < supportedTypes_.size(); t++)
+  for (unsigned int t=0; t < supportedTypes_.size(); t++)
     if ( supportedTypes_[t].name == _name ){
       emit setPluginForExtension(box->accessibleName(), t ); //accessibleName contains the extension
       break;
