@@ -70,7 +70,7 @@ namespace Viewer {
     pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING),
     locked_(0),
     backFaceCulling_(false),
-    twoSidedLighting_(true),
+    twoSidedLighting_(false),
     multisampling_(true),
     mipmapping_(true),
     animation_(false),
