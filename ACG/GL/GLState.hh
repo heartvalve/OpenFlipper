@@ -62,6 +62,7 @@
 #include "ColorStack.hh"
 #include <stack>
 #include <vector>
+#include <bitset>
 
 #ifdef WIN32
 	#pragma warning(push)
@@ -123,6 +124,9 @@ public:
 
   void makeCurrent() {  }
 
+  /// synchronize this class with the OpenGL state machine
+  void syncFromGL();
+
   /// initialize all state variables (called by constructor)
   void initialize();
 
@@ -142,6 +146,115 @@ public:
 
   /// clear buffers viewport rectangle
   void clearBuffers ();
+
+
+  //--- glEnable / glDisable functionality ------------------------------------
+
+  /// replaces glEnable, but supports locking
+  void enable(GLenum _cap);
+
+  /// replaces glDisable, but supports locking
+  void disable(GLenum _cap);
+
+  /// locks a specific cap state, such that enable() or disable() has no effect
+  void lockState(GLenum _cap);
+
+  /// unlocks a specific cap state
+  void unlockState(GLenum _cap);
+
+  /// returns true, if a cap state is locked
+  bool isStateLocked(GLenum _cap);
+
+  /// returns true, if a cpa state is enabled
+  bool isStateEnabled(GLenum _cap);
+
+
+  /// replaces glBlendFunc, supports locking
+  void blendFunc(GLenum _sfactor, GLenum _dfactor);
+
+  /// get blend function, null-ptr safe
+  void getBlendFunc(GLenum* _sfactor, GLenum* _dfactor);
+
+  void lockBlendFunc() {blendFuncLock_ = true;}
+  void unlockBlendFunc() {blendFuncLock_ = false;}
+  bool isBlendFuncLocked() {return blendFuncLock_;}
+
+  /// replaces glBlendEquation, supports locking
+  void blendEquation(GLenum _mode);
+
+  GLenum getBlendEquation() {return blendEquationState_;}
+
+  void lockBlendEquation() {blendEquationLock_ = true;}
+  void unlockBlendEquation() {blendEquationLock_ = false;}
+  bool isBlendEquationLocked() {return blendEquationLock_;}
+
+  /// replaces glBlendColor, supports locking
+  void blendColor(GLclampf _red, GLclampf _green, GLclampf _blue, GLclampf _alpha);
+
+  // get blend color, not null-ptr safe, 4 element color output: RGBA
+  void getBlendColor(GLclampf* _col);
+
+  void lockBlendColor() {blendColorLock_ = true;}
+  void unlockBlendColor() {blendColorLock_ = false;}
+  bool isBlendColorLocked() {return blendColorLock_;}
+
+
+  /// replaces glAlphaFunc, supports locking
+  void alphaFunc(GLenum _func, GLclampf _ref);
+
+  // get alpha function, null-ptr safe
+  void getAlphaFunc(GLenum* _func, GLclampf* _ref);
+
+  void lockAlphaFunc() {alphaFuncLock_ = true;}
+  void unlockAlphaFunc() {alphaFuncLock_ = false;}
+  bool isAlphaFuncLocked() {return alphaFuncLock_;}
+
+
+  //--- GL buffer binding -----------------------------------------------------
+
+  /// replaces glBindBuffer, supports locking
+  void bindBuffer(GLenum _target, GLuint _buffer);
+
+  void lockBufferTarget(GLenum _target);
+  
+  void unlockBufferTarget(GLenum _target);
+
+  bool isBufferTargetLocked(GLenum _target);
+
+  GLuint getBoundBuf(GLenum _target);
+
+private:
+
+  // bijective map from GLenum buffer_target to [0..3], -1 if unsupported
+  int getBufferTargetIndex(GLenum _target);
+
+public:
+
+  //--- GL texture binding ----------------------------------------------------
+
+  /// replaces glActiveTexture, no locking support
+  inline void setActiveTexture(GLenum _texunit) {activeTexture_ = _texunit;}
+
+  inline GLenum getActiveTexture() {return activeTexture_;}
+
+  /// replaces glBindTexture, supports locking
+  void bindTexture(GLenum _target, GLuint _buffer);
+
+  /// locks the current texture stage (set by setActiveTexture)
+  void lockTextureTarget(GLenum _target);
+
+  void unlockTextureTarget(GLenum _target);
+
+  bool isTextureTargetLocked(GLenum _target);
+
+  GLuint getBoundTextureBuffer(GLenum _target); 
+
+private:
+
+  // bijective map from GLenum texture_target to [0..3], -1 if unsupported
+  int getTextureTargetIndex(GLenum _target);
+
+public:
 
   //---  set GL projection matrix ---------------------------------------------
 
@@ -323,6 +436,11 @@ public:
   const GLenum& depthFunc() const;
   /// Call glDepthFunc() to actually change the depth comparison function, and store the new value in this GLState
   void set_depthFunc(const GLenum& _depth_func);
+
+//   inline void lockDepthFunc() {depthFuncLock_ = true;}
+//   inline void unlockDepthFunc() {depthFuncLock_ = false;}
+//   inline bool isDepthFuncLocked() const {return depthFuncLock_;}
+
 
   //--- project and unproject points ------------------------------------------
 
@@ -637,7 +755,55 @@ private: //--------------------------------------------------------------------
   
   // depth comparison function (GL_LESS by default)
   GLenum depth_func_;
+  bool depthFuncLock_;
 
+
+  // glEnable / glDisable states locker
+  // iff a bit is set for a state, it is locked
+  std::bitset<0xFFFF+1> glStateLock_;
+
+  // glEnable / glDisable states
+  // iff a bit is set for a state, it is enabled in OpenGL
+  std::bitset<0xFFFF+1> glStateEnabled_;
+
+  // element 0: sfactor, 1: dfactor
+  GLenum blendFuncState_[2];
+  bool blendFuncLock_;
+
+
+  GLenum blendEquationState_;
+  bool blendEquationLock_;
+
+  GLclampf blendColorState_[4];
+  bool blendColorLock_;
+
+  GLenum alphaFuncState_;
+  GLclampf alphaRefState_;
+  bool alphaFuncLock_;
+
+
+  // 4 buffer targets:
+  // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
+  int glBufferTargetLock_[4];
+
+  // current state of a buffer target
+  GLuint glBufferTargetState_[4];
+
+
+  // active texture unit: GL_TEXTUREi
+  GLenum activeTexture_;
+
+  // 16 texture stages, 4 targets
+  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
+  int glTextureTargetLock_[16][4];
+
+  // current state of a texture target
+  GLuint glTextureTargetState_[16][4];
+
+
+  // graphics card caps, retrieved via glGet
+  int maxTextureCoords_;
+  int maxCombinedTextureImageUnits_;
 };
 
 /** \page pickingDocumentation Picking in the ACG SceneGraph
