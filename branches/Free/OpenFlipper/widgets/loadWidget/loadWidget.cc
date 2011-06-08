@@ -210,10 +210,11 @@ void LoadWidget::loadFile(){
   pluginForExtension_.clear();
   
   for (int i=0; i < ext.size(); i++){
+
     for (uint t=0; t < supportedTypes_.size(); t++){
       
       QString filters = supportedTypes_[t].loadFilters;  
-      
+
       if (filters.contains(ext[i],Qt::CaseInsensitive)){
         pluginForExtension_[ ext[i] ] = t;
         break;
