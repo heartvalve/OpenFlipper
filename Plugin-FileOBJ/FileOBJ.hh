@@ -170,7 +170,8 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     bool readMaterial(QString _filename, OBJImporter& _importer);
     void readOBJFile(QString _filename, OBJImporter& _importer);
-    void addNewObject(OBJImporter& _importer, QString _name );
+    void createAllGroupObjects(OBJImporter& _importer);
+    //void addNewObject(OBJImporter& _importer, QString _name );
     void addTextures(OBJImporter& _importer, int _objectID );
     
     /// Convert non-valid filenames (e.g. of groups that end with .jpg) to valid .objs.

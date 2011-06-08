@@ -279,103 +279,107 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
 
 //-----------------------------------------------------------------------------
 
+void FileOBJPlugin::createAllGroupObjects(OBJImporter& _importer) {
 
-void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
-{
-  convertToOBJName(_name);
-    
-  //if no additional object is needed return
-  if ( _importer.currentObject()+1 >= (int)_importer.objectOptions().size() )
-    return;
-  
-  if ( _importer.isTriangleMesh( _importer.currentObject()+1 )  ){
-  
-    // add a triangle mesh
-    int id = -1;
-    emit addEmptyObject(DATA_TRIANGLE_MESH, id);
-    
-    
-    BaseObjectData* object(0);
-    
-    if(PluginFunctions::getObject( id, object)){
-      
-      _importer.addObject( object );
-
-      object->setPath( _importer.path() );
-      std::cerr << "Adding object " << _name.toStdString() << std::endl;
-      object->setName( _name );
+    // Two cases: Either groups exist or they don't
+    unsigned int i = 0;
+    if(_importer.numGroups() > 1) {
+        // We do have groups, so neglect
+        // default mesh in index 0
+        i = 1;
     }
-  
-  } else if ( _importer.isPolyMesh( _importer.currentObject()+1 )  ){
-  
-    int id = -1;
-    emit addEmptyObject(DATA_POLY_MESH, id);
-    
-    
-    BaseObjectData* object(0);
-    
-    if(PluginFunctions::getObject( id, object)){
-      
-      _importer.addObject( object );
 
-      object->setPath( _importer.path() );
-      object->setName( _name );
-    }
-  }
-  
+    for(; i < _importer.numGroups(); ++i) {
+
+        // Get group name
+        QString name = _importer.groupName(i);
+        convertToOBJName(name);
+
+        if ( _importer.isTriangleMesh( i )  ){
+
+            // add a triangle mesh
+            int id = -1;
+            emit addEmptyObject(DATA_TRIANGLE_MESH, id);
+
+            BaseObjectData* object(0);
+
+            if (PluginFunctions::getObject(id, object)) {
+
+                _importer.setObject(object, i);
+
+                object->setPath(_importer.path());
+                object->setName(name);
+            }
+
+        } else if (_importer.isPolyMesh( i )) {
+
+            int id = -1;
+            emit addEmptyObject(DATA_POLY_MESH, id);
+
+            BaseObjectData* object(0);
+
+            if (PluginFunctions::getObject(id, object)) {
+
+                _importer.setObject(object, i);
+
+                object->setPath(_importer.path());
+                object->setName(name);
+            }
+        }
+
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
-  
-  else if ( _importer.isCurve( _importer.currentObject()+1 )  ){
-  
-    int id = -1;
-    emit addEmptyObject(DATA_BSPLINE_CURVE, id);
-    
-    BaseObjectData* object(0);
-    
-    if(PluginFunctions::getObject( id, object)){
-      
-      _importer.addObject( object );
 
-      object->setPath( _importer.path() );
-      object->setName( _name );
-    }
-  }
-  
+        else if (_importer.isCurve( i )) {
+
+            int id = -1;
+            emit addEmptyObject(DATA_BSPLINE_CURVE, id);
+
+            BaseObjectData* object(0);
+
+            if (PluginFunctions::getObject(id, object)) {
+
+                _importer.setObject(object, i);
+
+                object->setPath(_importer.path());
+                object->setName(name);
+            }
+        }
+
 #endif
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
-  
-  else if ( _importer.isSurface( _importer.currentObject()+1 )  ){
-  
-    int id = -1;
-    emit addEmptyObject(DATA_BSPLINE_SURFACE, id);
-    
-    BaseObjectData* object(0);
-    
-    if(PluginFunctions::getObject( id, object)){
-      
-      _importer.addObject( object );
 
-      object->setPath( _importer.path() );
-      object->setName( _name );
-    }
-  }
-  
+        else if (_importer.isSurface( i )) {
+
+            int id = -1;
+            emit addEmptyObject(DATA_BSPLINE_SURFACE, id);
+
+            BaseObjectData* object(0);
+
+            if (PluginFunctions::getObject(id, object)) {
+
+                _importer.setObject(object, i);
+
+                object->setPath(_importer.path());
+                object->setName(name);
+            }
+        }
+
 #endif
-  
-  //force gui settings
-  if ( OpenFlipper::Options::gui() && loadOptions_ != 0 ){
-    
-    if ( !loadFaceColor_->isChecked() )
-      _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOCOLOR;
-    
-    if ( !loadNormals_->isChecked() )
-      _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NONORMALS;
-    
-    if ( !loadTexCoords_->isChecked() || !loadTextures_->isChecked())
-      _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOTEXTURES;
-  }
-  
+
+        //force gui settings
+        if (OpenFlipper::Options::gui() && loadOptions_ != 0) {
+
+            if (!loadFaceColor_->isChecked())
+                _importer.objectOptions()[ i ] |= OBJImporter::FORCE_NOCOLOR;
+
+            if (!loadNormals_->isChecked())
+                _importer.objectOptions()[ i ] |= OBJImporter::FORCE_NONORMALS;
+
+            if (!loadTexCoords_->isChecked() || !loadTextures_->isChecked())
+                _importer.objectOptions()[ i ] |= OBJImporter::FORCE_NOTEXTURES;
+        }
+    }
 }
 
 void FileOBJPlugin::convertToOBJName(QString& _name) {
@@ -560,6 +564,12 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
   _importer.setPath( path );
   
+  // Set filename for default mesh
+  _importer.setGroupName(0, currentFileName);
+
+  // Now add all meshes for every group (if exists)
+  createAllGroupObjects(_importer);
+
   while( input && !input.eof() )
   {
     std::getline(input,line);
@@ -617,9 +627,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     
         if ( mat.has_Texture() ){
           //add object if not already there
-          if (_importer.currentObject() == -1) {
-            addNewObject(_importer, currentFileName ); 
-          }
+//          if (_importer.currentObject() == -1) {
+//            addNewObject(_importer, currentFileName );
+//          }
 
           _importer.useMaterial( matname );
         }
@@ -680,17 +690,25 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     else if (mode == NONE && keyWrd == "g"){
       
       std::string groupName;
-      std::getline(stream,groupName);
+      std::getline(stream, groupName);
 
-      if ( faceCount > 0 )
-        addNewObject( _importer, QString(groupName.c_str()) );
-      else {
+//      if ( faceCount > 0 )
+//        addNewObject( _importer, QString(groupName.c_str()) );
+      //else {
+      if(faceCount == 0) {
         currentFileName = QString(groupName.c_str());
       }
 
       //since obj-groups are used, all new objects will be grouped together in OpenFlipper
-      if ( _importer.objectOptions().size() > 1 )
-        _importer.setGroup( QFileInfo(_filename).fileName() );
+//      if ( _importer.objectOptions().size() > 1 )
+//        _importer.setGroup( QFileInfo(_filename).fileName() );
+
+      int id = _importer.groupId(groupName.c_str());
+      if(id == -1) {
+          std::cerr << "Error: Group has not been added before!" << std::endl;
+          return;
+      }
+      _importer.setCurrentGroup(id);
 
       faceCount = 0;
     }
@@ -706,8 +724,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       face_texcoords.clear();
 
       //add object if not already there
-      if (_importer.currentObject() == -1)
-          addNewObject(_importer, currentFileName );
+//      if (_importer.currentObject() == -1)
+//          addNewObject(_importer, currentFileName );
       
       // read full line after detecting a face
       std::string faceLine;
@@ -878,8 +896,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = CURVE;
       
-      if ( keyWrd == "curv" )
-        addNewObject(_importer, currentFileName );
+//      if ( keyWrd == "curv" )
+//        addNewObject(_importer, currentFileName );
       
       //get curve control points
       std::string curveLine;
@@ -997,8 +1015,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       mode = SURFACE;
       
-      if ( keyWrd == "surf" )
-        addNewObject(_importer, currentFileName );
+//      if ( keyWrd == "surf" )
+//        addNewObject(_importer, currentFileName );
       
       //get surface control points
       std::string surfLine;
@@ -1166,16 +1184,23 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
     // group
     else if (mode == NONE && keyWrd == "g"){
-      if ( faceCount > 0 ){
+      //if ( faceCount > 0 ){
         //give options to importer and reinitialize
         //for next object
+
+        std::string grpName;
+        stream >> grpName;
+
         if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        _importer.addObjectOptions( options );
+        int id = _importer.addGroup(grpName.c_str());
+        _importer.setCurrentGroup(id);
+
+        _importer.setObjectOptions( options );
         options = OBJImporter::TRIMESH;
         faceCount = 0;
-      }
+      //}
     }
     // face
     else if (mode == NONE && keyWrd == "f"){
@@ -1258,7 +1283,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
           if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
           if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-          _importer.addObjectOptions( options );
+          _importer.setObjectOptions( options );
         }
 
         options = OBJImporter::CURVE;
@@ -1303,7 +1328,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       mode = NONE;
       
-      _importer.addObjectOptions( options );
+      _importer.setObjectOptions( options );
       options = OBJImporter::TRIMESH;
       faceCount = 0;
     }
@@ -1324,7 +1349,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
           if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
           if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-          _importer.addObjectOptions( options );
+          _importer.setObjectOptions( options );
         }
       
         options = OBJImporter::SURFACE;        
@@ -1361,7 +1386,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       mode = NONE;
       
-      _importer.addObjectOptions( options );
+      _importer.setObjectOptions( options );
       options = OBJImporter::TRIMESH;
       faceCount = 0;
     }
@@ -1372,7 +1397,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   if (faceCount > 0){
     if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
     if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
-    _importer.addObjectOptions( options );
+    _importer.setObjectOptions( options );
   }
   
   if (TriMeshCount == 0 && PolyMeshCount == 0)
@@ -1453,7 +1478,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
   
   //add a group if we have includes
   if (includes.size() > 0)
-    importer.setGroup( QFileInfo(_filename).fileName() );
+    importer.addGroup( QFileInfo(_filename).fileName() );
   
   //check if something was found
   if ( importer.objectOptions().size() == 0 && objIDs.size() == 0 ){
@@ -1473,28 +1498,34 @@ int FileOBJPlugin::loadObject(QString _filename) {
   int returnID = -1;
   
   //perhaps add group
-  if ( importer.group() != "" ){
+  if ( importer.numGroups() > 1 ){
    
     bool dataControlExists = false;
     pluginExists( "datacontrol", dataControlExists );
     
     if ( dataControlExists ){
     
-      for(uint i=0; i < importer.objectCount(); i++)
-        objIDs.push_back( importer.object(i)->id() );
-    
-    
-      returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.group());
+      for(uint i=1; i < importer.objectCount(); i++) {
+          BaseObject* obj = importer.object(i);
+          if(obj) {
+              objIDs.push_back( obj->id() );
+          } else {
+              std::cerr << "Object is NULL!" << std::endl;
+          }
+      }
+
+      returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
     }
   }
-  
+
   //check all new objects
   for(uint i=0; i < importer.objectCount(); i++){
     
     BaseObject* object = importer.object(i);
+    if(object == NULL) continue;
 
     //remember the id of the first opened object
-    if ( i == 0 && importer.group() == "" )
+    if ( returnID == -1)
       returnID = object->id();
     
     //handle new PolyMeshes
