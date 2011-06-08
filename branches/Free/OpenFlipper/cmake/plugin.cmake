@@ -453,8 +453,11 @@ function (_build_openflipper_plugin plugin)
         get_directory_property( CURRENT_DEFINITIONS_A COMPILE_DEFINITIONS )
 
         # Get all cuda sources
-        file(GLOB_RECURSE ${_PLUGIN}_CUDA_SRCS Cuda/*.cu Cuda/*.c Cuda/*.cc Cuda/*.cpp Cuda/*.h Cuda/*.hh)
-     
+        file(GLOB_RECURSE ${_PLUGIN}_CUDA_SRCS Cuda/*.cu Cuda/*.c)
+        
+        # Add cuda include dirs to global build target
+        include_directories(${CUDA_INCLUDE_DIRS})
+        
         # Force to -fPIC such that we can correctly link against the lib lateron in the plugin
         list ( APPEND CMAKE_CXX_FLAGS "-fPIC" )
         list ( APPEND CMAKE_CC_FLAGS "-fPIC" )
