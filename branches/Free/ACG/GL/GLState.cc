@@ -83,8 +83,21 @@ GLState::GLState(bool _updateGL)
     updateGL_(_updateGL),
     blending_(false),
     msSinceLastRedraw_ (1),
-    depth_func_(GL_LESS)
+    depth_func_(GL_LESS),
+    depthFuncLock_(false),
+    blendFuncLock_(false),
+    blendEquationLock_(false),
+    blendColorLock_(false),
+    alphaFuncLock_(false)
 {
+  // every state is unlocked at start
+  for (int i = 0; i < 16; ++i)
+    memset(glTextureTargetLock_[i], 0, 4 * sizeof(int));
+
+  memset(glBufferTargetLock_, 0, sizeof(glBufferTargetLock_));
+
+  glStateLock_.reset();
+
   initialize();
 }
 
@@ -867,8 +880,8 @@ const GLenum& GLState::depthFunc() const
   GLenum real_depth;
   glGetIntegerv (GL_DEPTH_FUNC, (GLint*) &real_depth);
   if (depth_func_ != real_depth)
-      std::cerr << "GLState depth_func_ ("<<depth_func_<<") doesn't match actual enabled GL_DEPTH_FUNC ("<<real_depth<<")!" << std::endl;
-      
+    std::cerr << "GLState depth_func_ ("<<depth_func_<<") doesn't match actual enabled GL_DEPTH_FUNC ("<<real_depth<<")!" << std::endl;
+
   return depth_func_;
 }
 
@@ -876,10 +889,9 @@ const GLenum& GLState::depthFunc() const
 
 void GLState:: set_depthFunc(const GLenum& _depth_func)
 {
-    glDepthFunc(_depth_func);
-    depth_func_ = _depth_func;
+  glDepthFunc(_depth_func);
+  depth_func_ = _depth_func;
 }
-
 
 //-----------------------------------------------------------------------------
 
@@ -1055,6 +1067,378 @@ unsigned int GLState::pick_current_index () const
 bool GLState::color_picking () const
 {
   return colorPicking_;
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::syncFromGL()
+{
+  // get enabled states
+  GLenum caps[] = {GL_ALPHA_TEST,
+    GL_AUTO_NORMAL,
+    GL_MAP2_VERTEX_3,
+    GL_MAP2_VERTEX_4,
+    GL_BLEND,
+    GL_CLIP_PLANE0,
+    GL_CLIP_PLANE1,
+    GL_CLIP_PLANE2,
+    GL_CLIP_PLANE3,
+    GL_CLIP_PLANE4,
+    GL_CLIP_PLANE5,
+    GL_COLOR_LOGIC_OP,
+    GL_COLOR_MATERIAL,
+    GL_COLOR_SUM,
+    GL_COLOR_TABLE,
+    GL_CONVOLUTION_1D,
+    GL_CONVOLUTION_2D,
+    GL_CULL_FACE,
+    GL_DEPTH_TEST,
+    GL_DITHER,
+    GL_FOG,
+    GL_HISTOGRAM,
+    GL_INDEX_LOGIC_OP,
+    GL_LIGHT0,
+    GL_LIGHT1,
+    GL_LIGHT2,
+    GL_LIGHT3,
+    GL_LIGHT4,
+    GL_LIGHT5,
+    GL_LIGHT6,
+    GL_LIGHT7,
+    GL_LIGHTING,
+    GL_LINE_SMOOTH,
+    GL_LINE_STIPPLE,
+    GL_MAP1_COLOR_4,
+    GL_MAP1_INDEX,
+    GL_MAP1_NORMAL,
+    GL_MAP1_TEXTURE_COORD_1,
+    GL_MAP1_TEXTURE_COORD_2,
+    GL_MAP1_TEXTURE_COORD_3,
+    GL_MAP1_TEXTURE_COORD_4,
+    GL_MAP1_VERTEX_3,
+    GL_MAP1_VERTEX_4,
+    GL_MAP2_COLOR_4,
+    GL_MAP2_INDEX,
+    GL_MAP2_NORMAL,
+    GL_MAP2_TEXTURE_COORD_1,
+    GL_MAP2_TEXTURE_COORD_2,
+    GL_MAP2_TEXTURE_COORD_3,
+    GL_MAP2_TEXTURE_COORD_4,
+    GL_MAP2_VERTEX_3,
+    GL_MAP2_VERTEX_4,
+    GL_MINMAX,
+    GL_MULTISAMPLE,
+    GL_NORMALIZE,
+    GL_RESCALE_NORMAL,
+    GL_POINT_SMOOTH,
+    GL_POINT_SPRITE,
+    GL_POLYGON_OFFSET_FILL,
+    GL_FILL,
+    GL_POLYGON_OFFSET_LINE,
+    GL_LINE,
+    GL_POLYGON_OFFSET_POINT,
+    GL_POINT,
+    GL_POLYGON_SMOOTH,
+    GL_POLYGON_STIPPLE,
+    GL_POST_COLOR_MATRIX_COLOR_TABLE,
+    GL_POST_CONVOLUTION_COLOR_TABLE,
+    GL_RESCALE_NORMAL,
+    GL_NORMALIZE,
+    GL_SAMPLE_ALPHA_TO_COVERAGE,
+    GL_SAMPLE_ALPHA_TO_ONE,
+    GL_SAMPLE_COVERAGE,
+    GL_SAMPLE_COVERAGE_INVERT,
+    GL_SEPARABLE_2D,
+    GL_SCISSOR_TEST,
+    GL_STENCIL_TEST,
+    GL_TEXTURE_1D,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_3D,
+    GL_TEXTURE_CUBE_MAP,
+    GL_TEXTURE_GEN_Q,
+    GL_TEXTURE_GEN_R,
+    GL_TEXTURE_GEN_S,
+    GL_TEXTURE_GEN_T,
+    GL_VERTEX_PROGRAM_POINT_SIZE,
+    GL_VERTEX_PROGRAM_TWO_SIDE};
+
+  for (int i = 0; i < sizeof(caps) / sizeof(GLenum); ++i)
+  {
+    if (glIsEnabled(caps[i])) glStateEnabled_.set(caps[i]);
+    else glStateEnabled_.reset(caps[i]);
+  }
+  
+  GLint getparam;
+  glGetIntegerv(GL_BLEND_SRC, &getparam);
+  blendFuncState_[0] = getparam;
+
+  glGetIntegerv(GL_BLEND_DST, &getparam);
+  blendFuncState_[1] = getparam;
+
+
+  glGetIntegerv(GL_BLEND_EQUATION_RGB, &getparam);
+  blendEquationState_ = getparam;
+  
+  glGetFloatv(GL_BLEND_COLOR, blendColorState_);
+  
+  glGetIntegerv(GL_ALPHA_TEST_FUNC, &getparam);
+  alphaFuncState_ = getparam;
+
+  glGetFloatv(GL_ALPHA_TEST_REF, &alphaRefState_);
+
+  // bound buffers
+
+  GLenum bufGets[8] = {
+    GL_ARRAY_BUFFER_BINDING, GL_ARRAY_BUFFER,
+    GL_ELEMENT_ARRAY_BUFFER_BINDING, GL_ELEMENT_ARRAY_BUFFER, 
+    GL_PIXEL_PACK_BUFFER_BINDING, GL_PIXEL_PACK_BUFFER,
+    GL_PIXEL_UNPACK_BUFFER_BINDING, GL_PIXEL_UNPACK_BUFFER};
+
+  for (int i = 0; i < 4; ++i)
+    glGetIntegerv(bufGets[i*2], (GLint*)glBufferTargetState_ + getBufferTargetIndex(bufGets[i*2+1]));
+
+
+  // bound textures
+  glGetIntegerv(GL_ACTIVE_TEXTURE, &getparam);
+  activeTexture_ = getparam;
+
+  GLenum texBufGets[] = {
+    GL_TEXTURE_BINDING_1D, GL_TEXTURE_1D,
+    GL_TEXTURE_BINDING_2D, GL_TEXTURE_2D,
+    GL_TEXTURE_BINDING_3D, GL_TEXTURE_3D,
+    GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP};
+
+  glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextureCoords_);
+  glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits_);
+
+  // safe clamp
+  if (maxTextureCoords_ > 16) maxTextureCoords_ = 16;
+  if (maxCombinedTextureImageUnits_ > 16) maxCombinedTextureImageUnits_ = 16;
+
+  int numTexUnits = maxTextureCoords_;
+  if (numTexUnits < maxCombinedTextureImageUnits_) numTexUnits = maxCombinedTextureImageUnits_;
+
+  for (int i = 0; i < numTexUnits; ++i)
+  {
+    glActiveTexture(GL_TEXTURE0 + i);
+
+    // for each texture stage query 4 texture types: 1D, 2D, 3D, Cube
+    for (int k = 0; k < 4; ++k)
+      glGetIntegerv(texBufGets[k*2],
+        glTextureTargetLock_[i] + getTextureTargetIndex(texBufGets[k*2+1]));
+  }
+
+  // restore active texture unit
+  glActiveTexture(activeTexture_);
+}
+
+//-----------------------------------------------------------------------------
+
+
+void GLState::enable(GLenum _cap)
+{
+  if (!glStateLock_.test(_cap))
+  {
+    if (!glStateEnabled_.test(_cap))
+    {
+      glEnable(_cap);
+      glStateEnabled_.set(_cap);
+    }
+  }
+}
+
+void GLState::disable(GLenum _cap)
+{
+  if (!glStateLock_.test(_cap))
+  {
+    if (glStateEnabled_.test(_cap))
+    {
+      glDisable(_cap);
+      glStateEnabled_.reset(_cap);
+    }
+  }
+}
+
+void GLState::lockState(GLenum _cap)
+{
+  glStateLock_.set(_cap);
+}
+
+void GLState::unlockState(GLenum _cap)
+{
+  glStateLock_.reset(_cap);
+}
+
+bool GLState::isStateLocked(GLenum _cap)
+{
+  return glStateLock_.test(_cap);
+}
+
+bool GLState::isStateEnabled(GLenum _cap)
+{
+  return glStateEnabled_.test(_cap);
+}
+
+//-----------------------------------------------------------------------------
+// blending functions
+
+void GLState::blendFunc(GLenum _sfactor, GLenum _dfactor)
+{
+  if (!blendFuncLock_)
+  {
+    if (blendFuncState_[0] != _sfactor && blendFuncState_[1] != _dfactor)
+    {
+      glBlendFunc(_sfactor, _dfactor);
+      blendFuncState_[0] = _sfactor;
+      blendFuncState_[1] = _dfactor;
+    }
+  }
+}
+
+void GLState::getBlendFunc(GLenum* _sfactor, GLenum* _dfactor)
+{
+  if (_sfactor) *_sfactor = blendFuncState_[0];
+  if (_dfactor) *_dfactor = blendFuncState_[1];
+}
+
+void GLState::blendEquation(GLenum _mode)
+{
+  if (!blendEquationLock_)
+  {
+    if (blendEquationState_ != _mode)
+    {
+      glBlendEquation(_mode);
+      blendEquationState_ = _mode;
+    }
+  }
+}
+
+void GLState::blendColor(GLclampf _red, GLclampf _green, GLclampf _blue, GLclampf _alpha)
+{
+  if (!blendColorLock_)
+  {
+    if (blendColorState_[0] != _red && blendColorState_[1] != _green &&
+        blendColorState_[2] != _blue && blendColorState_[3] != _alpha)
+    {
+      glBlendColor(_red, _green, _blue, _alpha);
+      blendColorState_[0] = _red;  blendColorState_[1] = _green;
+      blendColorState_[2] = _blue;  blendColorState_[3] = _alpha;
+    }
+  }
+}
+
+void GLState::getBlendColor(GLclampf* _col)
+{
+  for (int i = 0; i < 4; ++i) _col[i] = blendColorState_[i];
+}
+
+
+void GLState::alphaFunc(GLenum _func, GLclampf _ref)
+{
+  if (!alphaFuncLock_)
+  {
+    if (alphaFuncState_ != _func && alphaRefState_ != _ref)
+    {
+      glAlphaFunc(_func, _ref);
+      alphaFuncState_ = _func;
+      alphaRefState_ = _ref;
+    }
+  }
+}
+
+void GLState::getAlphaFunc(GLenum* _func, GLclampf* _ref)
+{
+  if (_func) *_func = alphaFuncState_;
+  if (_ref) *_ref = alphaRefState_;
+}
+
+//-----------------------------------------------------------------------------
+
+int GLState::getBufferTargetIndex(GLenum _target)
+{
+  switch (_target)
+  {
+  case GL_ARRAY_BUFFER: return 0;
+  case GL_ELEMENT_ARRAY_BUFFER: return 1;
+  case GL_PIXEL_PACK_BUFFER: return 2;
+  case GL_PIXEL_UNPACK_BUFFER: return 3;
+  }
+  return -1;
+}
+
+void GLState::bindBuffer(GLenum _target, GLuint _buffer)
+{
+  int idx = getBufferTargetIndex(_target);
+  if (!glBufferTargetLock_[idx])
+  {
+    if (glBufferTargetState_[idx] != _buffer)
+    {
+      glBindBuffer(_target, _buffer);
+      glBufferTargetState_[idx] = _buffer;
+    }
+  }
+}
+
+void GLState::lockBufferTarget(GLenum _target)
+{
+  glBufferTargetLock_[getBufferTargetIndex(_target)] = 1;
+}
+
+void GLState::unlockBufferTarget(GLenum _target)
+{
+  glBufferTargetLock_[getBufferTargetIndex(_target)] = 0;
+}
+
+bool GLState::isBufferTargetLocked(GLenum _target)
+{
+  return glBufferTargetLock_[getBufferTargetIndex(_target)] != 0;
+}
+
+GLuint GLState::getBoundBuf(GLenum _target)
+{
+  return glBufferTargetState_[getBufferTargetIndex(_target)];
+}
+
+//-----------------------------------------------------------------------------
+
+int GLState::getTextureTargetIndex(GLenum _target)
+{
+  switch (_target)
+  {
+  case GL_TEXTURE_2D: return 1;
+  case GL_TEXTURE_CUBE_MAP: return 3;
+  case GL_TEXTURE_1D: return 0;
+  case GL_TEXTURE_3D: return 2;
+  }
+  return -1;
+}
+
+void GLState::bindTexture(GLenum _target, GLuint _buffer)
+{
+  int activeTex = getActiveTexture();
+
+  if (!glTextureTargetLock_[activeTex][getTextureTargetIndex(_target)])
+    glBindTexture(_target, _buffer);
+}
+
+void GLState::lockTextureTarget(GLenum _target)
+{
+  glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] = 1;
+}
+
+void GLState::unlockTextureTarget(GLenum _target)
+{
+  glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] = 0;
+}
+
+bool GLState::isTextureTargetLocked(GLenum _target)
+{
+  return glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] != 0;
+}
+
+GLuint GLState::getBoundTextureBuffer(GLenum _target)
+{
+  return glTextureTargetState_[getActiveTexture()][getTextureTargetIndex(_target)];
 }
 
 //=============================================================================
