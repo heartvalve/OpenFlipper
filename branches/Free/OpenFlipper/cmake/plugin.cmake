@@ -103,6 +103,8 @@ macro (_check_plugin_deps _prefix)
         message("Current List: ${global_dependency_list}")
 
         list (APPEND global_dependency_list ${_val} )
+
+        list(REMOVE_DUPLICATES global_dependency_list)
              
         set_property( GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST ${global_dependency_list} )
 
