@@ -91,21 +91,22 @@ endmacro ()
 
 # check dependencies
 macro (_check_plugin_deps _prefix)
-    message("${_prefix}")
     set (${_prefix}_HAS_DEPS TRUE)
     foreach (_val ${ARGN})
         string (TOUPPER ${_val} _VAL)
 
         find_package(${_val})
 
-        message("Dependency : ${_val} ") 
+        # Get our current list of all dependencies used by plugins
 	get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
-        message("Current List: ${global_dependency_list}")
 
+	#Add the new entry to the list
         list (APPEND global_dependency_list ${_val} )
 
+        # Remove it again, if it was a duplicate
         list(REMOVE_DUPLICATES global_dependency_list)
              
+        # Store the list in the global property
         set_property( GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST ${global_dependency_list} )
 
         if (${_val}_FOUND OR ${_VAL}_FOUND)
