@@ -23,7 +23,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>6</number>
      </property>
      <property name="usesScrollButtons">
       <bool>true</bool>
@@ -1795,6 +1795,11 @@ p, li { white-space: pre-wrap; }
            <item>
             <property name="text">
              <string>PICK_FRONT_EDGE</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>PICK_CELL</string>
             </property>
            </item>
           </widget>

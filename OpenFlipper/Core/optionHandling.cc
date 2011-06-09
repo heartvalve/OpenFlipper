@@ -116,6 +116,8 @@ void Core::applyOptions(){
       target = ACG::SceneGraph::PICK_FRONT_VERTEX;
     } else if ( pickRenderMode == "PICK_FRONT_EDGE") {
       target = ACG::SceneGraph::PICK_FRONT_EDGE;
+    } else if ( pickRenderMode == "PICK_CELL") {
+      target = ACG::SceneGraph::PICK_CELL;
     } else {
       std::cerr << "Error : optionHandling unable to find pick mode!!! " << pickRenderMode.toStdString() << std::endl;
       target = ACG::SceneGraph::PICK_ANYTHING;
