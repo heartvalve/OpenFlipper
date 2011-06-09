@@ -437,7 +437,6 @@ function (_build_openflipper_plugin plugin)
     # Check if cuda is in the list of dependencies:
     list(FIND ${_PLUGIN}_DEPS "CUDA" FIND_RESULT)
     if ( NOT FIND_RESULT EQUAL -1 )
-      message(status " CUDA REQUIRED!")
     
       # Required but maybe it is not found
       # finder is automatically called before this
