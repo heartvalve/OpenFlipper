@@ -148,7 +148,10 @@ public:
   void clearBuffers ();
 
 
-  //--- glEnable / glDisable functionality ------------------------------------
+  //===========================================================================
+  /** @name glEnable / glDisable functionality
+  * @{ */
+  //===========================================================================
 
   /// replaces glEnable, but supports locking
   void enable(GLenum _cap);
@@ -202,15 +205,19 @@ public:
   /// replaces glAlphaFunc, supports locking
   void alphaFunc(GLenum _func, GLclampf _ref);
 
-  // get alpha function, null-ptr safe
+  /// get alpha function, null-ptr safe
   void getAlphaFunc(GLenum* _func, GLclampf* _ref);
 
   void lockAlphaFunc() {alphaFuncLock_ = true;}
   void unlockAlphaFunc() {alphaFuncLock_ = false;}
   bool isAlphaFuncLocked() {return alphaFuncLock_;}
 
+  /** @} */
 
-  //--- GL buffer binding -----------------------------------------------------
+  //===========================================================================
+  /** @name GL buffer binding
+  * @{ */
+  //===========================================================================
 
   /// replaces glBindBuffer, supports locking
   void bindBuffer(GLenum _target, GLuint _buffer);
@@ -223,6 +230,8 @@ public:
 
   GLuint getBoundBuf(GLenum _target);
 
+  /** @} */
+
 private:
 
   // bijective map from GLenum buffer_target to [0..3], -1 if unsupported
@@ -230,7 +239,10 @@ private:
 
 public:
 
-  //--- GL texture binding ----------------------------------------------------
+  //===========================================================================
+  /** @name GL texture binding
+  * @{ */
+  //===========================================================================
 
   /// replaces glActiveTexture, no locking support
   inline void setActiveTexture(GLenum _texunit) {activeTexture_ = _texunit;}
@@ -249,6 +261,8 @@ public:
 
   GLuint getBoundTextureBuffer(GLenum _target); 
 
+  /** @} */
+
 private:
 
   // bijective map from GLenum texture_target to [0..3], -1 if unsupported
@@ -256,8 +270,10 @@ private:
 
 public:
 
-  //---  set GL projection matrix ---------------------------------------------
-
+  //===========================================================================
+  /** @name set GL projection matrix
+  * @{ */
+  //===========================================================================
 
   /// reset projection matrix (load identity)
   void reset_projection();
@@ -288,10 +304,12 @@ public:
 	         int _glwidth = 0, int _glheight = 0);
 
 
+  /** @} */
 
-
-
-  //---  set GL modelview matrix ----------------------------------------------
+  //===========================================================================
+  /** @name  set GL modelview matrix
+  * @{ */
+  //===========================================================================
 
 
   /// reset modelview matrix (load identity)
@@ -347,8 +365,12 @@ public:
   /// pop modelview matrix
   void pop_modelview_matrix();
 
+  /** @} */
 
-  //---  get GL states and matrices -------------------------------------------
+  //===========================================================================
+  /** @name  get GL states, matrices and projection details
+  * @{ */
+  //===========================================================================
 
 
   /// get projection matrix
@@ -432,6 +454,9 @@ public:
   */
   void viewing_ray(int _x, int _y, Vec3d& _origin, Vec3d& _direction) const;
   
+  /** @} */
+
+
   /// get glDepthFunc() that is supposed to be active
   const GLenum& depthFunc() const;
   /// Call glDepthFunc() to actually change the depth comparison function, and store the new value in this GLState
