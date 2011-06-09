@@ -98,6 +98,11 @@ acg_set (OPENFLIPPER_PLUGINS "")
 # add plugins
 of_add_plugins ()
 
+# Get list of their dependencies and handle special ones
+get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
+
+message("Dependencies of plugis : ${global_dependency_list}")
+
 
 # ========================================================================
 # Bundle generation
