@@ -35,13 +35,12 @@ if (NOT GLUT_FOUND)
 endif ()
 
 # ========================================================================
-# Core Components
+# Core Library Components (Except the Core application)
 # ========================================================================
 add_subdirectory (OpenMesh/src/OpenMesh/Core)
 add_subdirectory (OpenMesh/src/OpenMesh/Tools)
 add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
-add_subdirectory (OpenFlipper/CoreApp)
 
 # ========================================================================
 # Documentation generators  
@@ -98,10 +97,11 @@ acg_set (OPENFLIPPER_PLUGINS "")
 # add plugins
 of_add_plugins ()
 
-# Get list of their dependencies and handle special ones
-get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
+# ========================================================================
+# Build core as we now know all dependencies
+# ========================================================================
 
-message("Dependencies of plugis : ${global_dependency_list}")
+add_subdirectory (OpenFlipper/CoreApp)
 
 
 # ========================================================================
