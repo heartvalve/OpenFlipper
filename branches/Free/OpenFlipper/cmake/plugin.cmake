@@ -91,11 +91,20 @@ endmacro ()
 
 # check dependencies
 macro (_check_plugin_deps _prefix)
+    message("${_prefix}")
     set (${_prefix}_HAS_DEPS TRUE)
     foreach (_val ${ARGN})
         string (TOUPPER ${_val} _VAL)
 
         find_package(${_val})
+
+        message("Dependency : ${_val} ") 
+	get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
+        message("Current List: ${global_dependency_list}")
+
+        list (APPEND global_dependency_list ${_val} )
+             
+        set_property( GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST ${global_dependency_list} )
 
         if (${_val}_FOUND OR ${_VAL}_FOUND)
           foreach (_name ${_val} ${_VAL})

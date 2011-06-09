@@ -110,6 +110,7 @@ target_link_libraries (OpenFlipper
   ${GLEW_LIBRARY}
   ${GLUT_LIBRARIES}
   ${FTGL_LIBS}
+  /usr/lib/libOpenNI.so
 )
 
 if (APPLE)
