@@ -100,6 +100,36 @@ if (WIN32)
                    -DUSEACG )
 endif ()
 
+# ====================================================================================
+# Get list of  ll plugin dependencies and handle special ones
+# where we need to link the library directly into the core to prevent 
+# linker problems
+# ====================================================================================
+# Get the property containing the list of all dependencies of the plugins
+# List is created when the plugins are added
+get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
+
+set(COREAPP_ADDITIONAL_LINK_LIBRARIES "")
+
+# Special Handling for mpi
+list( FIND global_dependency_list "MPI" found)
+if ( NOT found EQUAL -1 )
+  find_package(MPI)
+  list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${MPI_LIBRARIES})
+endif()
+
+# Special Handling for openni
+list( FIND global_dependency_list "OPENNI" found)
+if ( NOT found EQUAL -1 )
+  find_package(OPENNI)
+  list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${OPENNI_LIBRARY})
+endif()
+
+# ====================================================================================
+# Linker Dependencies for Core app
+# ====================================================================================
+
+
 target_link_libraries (OpenFlipper
   OpenMeshCore
   OpenMeshTools
@@ -110,7 +140,7 @@ target_link_libraries (OpenFlipper
   ${GLEW_LIBRARY}
   ${GLUT_LIBRARIES}
   ${FTGL_LIBS}
-  /usr/lib/libOpenNI.so
+  ${COREAPP_ADDITIONAL_LINK_LIBRARIES}
 )
 
 if (APPLE)
