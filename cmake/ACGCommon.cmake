@@ -215,19 +215,6 @@ macro (acg_openmp)
   endif ()
 endmacro ()
 
-# test for MPI
-macro (acg_mpi)
-  if (NOT MPI_NOTFOUND)
-    find_package(MPI)
-    if (MPI_FOUND)
-      # Is required e.g. for Petsc and TAO 
-      LINK_LIBRARIES(${MPI_LIBRARIES})
-    else ()
-      set (MPI_NOTFOUND 1)
-    endif ()
-  endif ()
-endmacro ()
-
 # test for FTGL
 macro (acg_ftgl)
   find_package (Freetype)
