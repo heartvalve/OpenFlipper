@@ -7,16 +7,16 @@ if (WIN32)
    find_path(GUROBI_INCLUDE_DIR NAMES gurobi_c++.h
      PREFIXES SRC
      PATHS
-     "C:\\libs\\gurobi40"
+     "C:\\libs\\gurobi45"
      ${GUROBI_INCLUDE_PATH}
    )
 
    find_library( GUROBI_LIBRARY_RELEASE 
                  SuperLU
-                 PATHS "C:\\libs\\gurobi40\\lib" )
+                 PATHS "C:\\libs\\gurobi45\\lib" )
    find_library( GUROBI_LIBRARY_DEBUG
                    SuperLUd
-                   PATHS "C:\\libs\\gurobi40\\lib" )
+                   PATHS "C:\\libs\\gurobi45\\lib" )
 
 
    set ( GUROBI_LIBRARY "optimized;${GUROBI_LIBRARY_RELEASE};debug;${GUROBI_LIBRARY_DEBUG}" CACHE  STRING "GUROBI Libraries" )
@@ -43,7 +43,7 @@ ELSE( WIN32 )
       SET(GUROBI_FOUND TRUE)
       SET(GUROBI_INCLUDE_DIR ${GUROBI_INCLUDE_DIR})
       SET(GUROBI_LIBRARY_DIR "$ENV{GUROBI_HOME}/lib/" CACHE PATH "Path to GUROBI Library")
-      SET(GUROBI_LIBRARY "gurobi40;gurobi_c++;pthread" CACHE STRING "GUROBI Libraries")  
+      SET(GUROBI_LIBRARY "gurobi45;gurobi_c++;pthread" CACHE STRING "GUROBI Libraries")  
       MESSAGE(STATUS "${GUROBI_LIBRARY_DIR}")
       MESSAGE(STATUS "${GUROBI_LIBRARY}")
     ELSE(GUROBI_INCLUDE_DIR)
