@@ -474,7 +474,13 @@ function (_build_openflipper_plugin plugin)
         list ( APPEND CMAKE_CC_FLAGS "-fPIC" )
  
         # Prepare the files
-        CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS})
+        if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        	message("Compiling cuda sources in debug mode")
+        	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS} " -g -G -deviceemu -Xcompile ")
+        else()
+        	message("Compiling cuda sources in release mode")
+        	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS})
+        endif()
        
         # Create the library containing all cuda files
         CUDA_ADD_LIBRARY(${_PLUGIN}_cuda_lib STATIC ${${_PLUGIN}_CUDA_GENERATED_FILES} )
