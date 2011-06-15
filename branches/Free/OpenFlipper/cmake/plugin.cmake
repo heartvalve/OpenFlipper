@@ -479,7 +479,7 @@ function (_build_openflipper_plugin plugin)
         	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS} OPTIONS -g -G --device-emulation -Xcompiler)
         else()
         	message("Compiling cuda sources in release mode")
-        	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS})
+        	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS} OPTIONS -O2)
         endif()
        
         # Create the library containing all cuda files
