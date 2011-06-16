@@ -88,13 +88,24 @@ GLState::GLState(bool _updateGL)
     blendFuncLock_(false),
     blendEquationLock_(false),
     blendColorLock_(false),
-    alphaFuncLock_(false)
+    alphaFuncLock_(false),
+    shadeModelLock_(false),
+    cullFaceLock_(false),
+    vertexPointerLock_(false),
+    normalPointerLock_(false),
+    texcoordPointerLock_(false),
+    colorPointerLock_(false),
+    activeDrawBuffer_(0),
+    drawBufferLock_(false),
+    programLock_(false)
 {
   // every state is unlocked at start
   for (int i = 0; i < 16; ++i)
     memset(glTextureTargetLock_[i], 0, 4 * sizeof(int));
 
   memset(glBufferTargetLock_, 0, sizeof(glBufferTargetLock_));
+
+  framebufferLock_[0] = framebufferLock_[1] = false;
 
   glStateLock_.reset();
 
@@ -1160,7 +1171,15 @@ void GLState::syncFromGL()
     GL_TEXTURE_GEN_S,
     GL_TEXTURE_GEN_T,
     GL_VERTEX_PROGRAM_POINT_SIZE,
-    GL_VERTEX_PROGRAM_TWO_SIDE};
+    GL_VERTEX_PROGRAM_TWO_SIDE,
+    GL_COLOR_ARRAY,
+    GL_EDGE_FLAG_ARRAY,
+    GL_FOG_COORD_ARRAY,
+    GL_INDEX_ARRAY,
+    GL_NORMAL_ARRAY,
+    GL_SECONDARY_COLOR_ARRAY,
+    GL_TEXTURE_COORD_ARRAY,
+    GL_VERTEX_ARRAY};
 
   for (int i = 0; i < sizeof(caps) / sizeof(GLenum); ++i)
   {
@@ -1230,6 +1249,71 @@ void GLState::syncFromGL()
 
   // restore active texture unit
   glActiveTexture(activeTexture_);
+
+
+  // shade model
+  glGetIntegerv(GL_SHADE_MODEL, &getparam);
+  shadeModel_ = getparam;
+
+  // cull face
+  glGetIntegerv(GL_CULL_FACE_MODE, &getparam);
+  cullFace_ = getparam;
+
+
+  // vertex pointers
+  {
+    GLenum ptrEnums[] = {
+      GL_VERTEX_ARRAY_SIZE, GL_VERTEX_ARRAY_TYPE,
+      GL_VERTEX_ARRAY_STRIDE, GL_VERTEX_ARRAY_POINTER,
+      GL_COLOR_ARRAY_SIZE,  GL_COLOR_ARRAY_TYPE,
+      GL_COLOR_ARRAY_STRIDE, GL_COLOR_ARRAY_POINTER,
+      GL_TEXTURE_COORD_ARRAY_SIZE, GL_TEXTURE_COORD_ARRAY_TYPE,
+      GL_TEXTURE_COORD_ARRAY_STRIDE, GL_TEXTURE_COORD_ARRAY_POINTER};
+
+    GLVertexPointer* ptrs[] = {&vertexPointer_, 
+      &colorPointer_, &texcoordPointer_};
+
+    for (int i = 0; i < 3 ; ++i)
+    {
+      glGetIntegerv(ptrEnums[i*4], &getparam);
+      ptrs[i]->size = getparam;
+      glGetIntegerv(ptrEnums[i*4+1], &getparam);
+      ptrs[i]->type = getparam;
+      glGetIntegerv(ptrEnums[i*4+2], &getparam);
+      ptrs[i]->stride = getparam;
+      glGetPointerv(ptrEnums[i*4+3], (GLvoid**)&ptrs[i]->pointer);
+    }
+
+    glGetIntegerv(GL_NORMAL_ARRAY_STRIDE, &getparam);
+    normalPointer_.size = getparam;
+    glGetIntegerv(GL_NORMAL_ARRAY_TYPE, &getparam);
+    normalPointer_.type = getparam;
+    glGetPointerv(GL_NORMAL_ARRAY_POINTER, (GLvoid**)&normalPointer_.pointer);
+  }
+
+
+  // draw buffer state
+  glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers_);
+  if (maxDrawBuffers_ > 16) maxDrawBuffers_ = 16;
+
+  for (int i = 0; i < maxDrawBuffers_; ++i)
+  {
+    glGetIntegerv(GL_DRAW_BUFFER0 + i, &getparam);
+    drawBufferState_[i] = getparam;
+  }
+
+  glGetIntegerv(GL_DRAW_BUFFER, &getparam);
+  drawBufferSingle_ = getparam;
+
+  // framebuffer
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &getparam);
+  framebuffers_[0] = getparam;
+  glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &getparam);
+  framebuffers_[1] = getparam;
+
+  // shader program
+  glGetIntegerv(GL_CURRENT_PROGRAM, &getparam);
+  program_ = getparam;
 }
 
 //-----------------------------------------------------------------------------
@@ -1275,6 +1359,53 @@ bool GLState::isStateLocked(GLenum _cap)
 }
 
 bool GLState::isStateEnabled(GLenum _cap)
+{
+  return glStateEnabled_.test(_cap);
+}
+
+//-----------------------------------------------------------------------------
+// client state functions
+
+void GLState::enableClientState(GLenum _cap)
+{
+  if (!glStateLock_.test(_cap))
+  {
+    if (!glStateEnabled_.test(_cap))
+    {
+      glEnableClientState(_cap);
+      glStateEnabled_.set(_cap);
+    }
+  }
+}
+
+void GLState::disableClientState(GLenum _cap)
+{
+  if (!glStateLock_.test(_cap))
+  {
+    if (glStateEnabled_.test(_cap))
+    {
+      glDisableClientState(_cap);
+      glStateEnabled_.reset(_cap);
+    }
+  }
+}
+
+void GLState::lockClientState(GLenum _cap)
+{
+  glStateLock_.set(_cap);
+}
+
+void GLState::unlockClientState(GLenum _cap)
+{
+  glStateLock_.reset(_cap);
+}
+
+bool GLState::isClientStateLocked(GLenum _cap)
+{
+  return glStateLock_.test(_cap);
+}
+
+bool GLState::isClientStateEnabled(GLenum _cap)
 {
   return glStateEnabled_.test(_cap);
 }
@@ -1350,6 +1481,30 @@ void GLState::getAlphaFunc(GLenum* _func, GLclampf* _ref)
 {
   if (_func) *_func = alphaFuncState_;
   if (_ref) *_ref = alphaRefState_;
+}
+
+void GLState::shadeModel(GLenum _mode)
+{
+  if (!shadeModelLock_)
+  {
+    if (shadeModel_ != _mode)
+    {
+      glShadeModel(_mode);
+      shadeModel_ = _mode;
+    }
+  }
+}
+
+void GLState::cullFace(GLenum _mode)
+{
+  if (!cullFaceLock_)
+  {
+    if (cullFace_ != _mode)
+    {
+      glCullFace(_mode);
+      cullFace_ = _mode;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1440,6 +1595,189 @@ GLuint GLState::getBoundTextureBuffer(GLenum _target)
 {
   return glTextureTargetState_[getActiveTexture()][getTextureTargetIndex(_target)];
 }
+
+
+//----------------------------------------------------------
+// vertex pointers
+
+void GLState::vertexPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer)
+{
+  if (!vertexPointerLock_)
+  {
+    if (!vertexPointer_.equals(_size, _type, _stride, _pointer))
+    {
+      glVertexPointer(_size, _type, _stride, _pointer);
+      vertexPointer_.set(_size, _type, _stride, _pointer);
+    }
+  }
+}
+
+void GLState::getVertexPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer)
+{
+  if (_size) *_size = vertexPointer_.size;
+  if (_stride) *_stride = vertexPointer_.stride;
+  if (_type) *_type = vertexPointer_.type;
+  if (_pointer) *_pointer = vertexPointer_.pointer;
+}
+
+void GLState::normalPointer(GLenum _type, GLsizei _stride, const GLvoid* _pointer)
+{
+  if (!normalPointerLock_)
+  {
+    if (!normalPointer_.equals(normalPointer_.size, _type, _stride, _pointer))
+    {
+      glNormalPointer(_type, _stride, _pointer);
+      normalPointer_.set(3, _type, _stride, _pointer);
+    }
+  }
+}
+
+void GLState::getNormalPointer(GLenum* _type, GLsizei* _stride, const GLvoid** _pointer)
+{
+  if (_type) *_type = normalPointer_.type;
+  if (_stride) *_stride = normalPointer_.stride;
+  if (_pointer) *_pointer = normalPointer_.pointer;
+}
+
+
+void GLState::colorPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer)
+{
+  if (!colorPointerLock_)
+  {
+    if (!colorPointer_.equals(_size, _type, _stride, _pointer))
+    {
+      glColorPointer(_size, _type, _stride, _pointer);
+      colorPointer_.set(_size, _type, _stride, _pointer);
+    }
+  }
+}
+
+void GLState::getColorPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer)
+{
+  if (_size) *_size = colorPointer_.size;
+  if (_stride) *_stride = colorPointer_.stride;
+  if (_type) *_type = colorPointer_.type;
+  if (_pointer) *_pointer = colorPointer_.pointer;
+}
+
+//---------------------------------------------------------------------
+// draw buffer functions
+
+void GLState::drawBuffer(GLenum _mode)
+{
+  if (!drawBufferLock_)
+  {
+    if (drawBufferSingle_ != _mode || activeDrawBuffer_)
+    {
+      glDrawBuffer(_mode);
+      drawBufferSingle_ = _mode;
+      activeDrawBuffer_ = 0;
+    }
+  }
+}
+
+void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
+{
+  if (!drawBufferLock_)
+  {
+    int bChange = !activeDrawBuffer_;
+    for (int i = 0; i < _n && (!bChange); ++i)
+    {
+      if (drawBufferState_[i] != _bufs[i])
+        bChange = 1;
+    }
+
+    if (bChange)
+    {
+      glDrawBuffers(_n, _bufs);
+
+      for (int i = 0; i < _n; ++i)
+        drawBufferState_[i] = _bufs[i];
+
+      activeDrawBuffer_ = 1;
+    }
+  }
+}
+
+
+
+void GLState::framebuffer(GLenum _target, GLuint _framebuffer)
+{
+  int i = -1;
+  switch (_target)
+  {
+  case GL_FRAMEBUFFER:
+    {
+      framebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
+      framebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer);
+      return;
+    }
+  case GL_DRAW_FRAMEBUFFER: i = 0; break;
+  case GL_READ_FRAMEBUFFER: i = 1; break;
+  }
+
+  if (!framebufferLock_[i])
+  {
+    if (framebuffers_[i] != _framebuffer)
+    {
+      glBindFramebuffer(_target, _framebuffer);
+      framebuffers_[i] = _framebuffer;
+    }
+  }
+}
+
+void GLState::lockFramebuffer(GLenum _target)
+{
+  switch (_target)
+  {
+  case GL_FRAMEBUFFER:
+    framebufferLock_[0] = framebufferLock_[1] = true; break;
+
+  case GL_DRAW_FRAMEBUFFER: framebufferLock_[0] = true; break;
+  case GL_READ_FRAMEBUFFER: framebufferLock_[1] = true; break;
+  }
+}
+
+void GLState::unlockFramebuffer(GLenum _target)
+{
+  switch (_target)
+  {
+  case GL_FRAMEBUFFER:
+    framebufferLock_[0] = framebufferLock_[1] = false; break;
+
+  case GL_DRAW_FRAMEBUFFER: framebufferLock_[0] = false; break;
+  case GL_READ_FRAMEBUFFER: framebufferLock_[1] = false; break;
+  }
+}
+
+bool GLState::isFramebufferLocked(GLenum _target)
+{
+  switch (_target)
+  {
+  case GL_FRAMEBUFFER:
+    return framebufferLock_[0] && framebufferLock_[1];
+
+  case GL_DRAW_FRAMEBUFFER: return framebufferLock_[0];
+  case GL_READ_FRAMEBUFFER: return framebufferLock_[1];
+  }
+  return false;
+}
+
+void GLState::useProgram(GLuint _program)
+{
+  if (!programLock_)
+  {
+    if (program_ != _program)
+    {
+      glUseProgram(_program);
+      program_ = _program;
+    }
+  }
+}
+
+
+
+
 
 //=============================================================================
 } // namespace ACG
