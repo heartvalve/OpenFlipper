@@ -115,14 +115,18 @@ set(COREAPP_ADDITIONAL_LINK_LIBRARIES "")
 list( FIND global_dependency_list "MPI" found)
 if ( NOT found EQUAL -1 )
   find_package(MPI)
-  list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${MPI_LIBRARIES})
+  if ( MPI_FOUND )
+    list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${MPI_LIBRARIES})
+  endif()
 endif()
 
 # Special Handling for openni
 list( FIND global_dependency_list "OPENNI" found)
 if ( NOT found EQUAL -1 )
   find_package(OPENNI)
-  list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${OPENNI_LIBRARY})
+  if ( OPENNI_FOUND )
+    list(APPEND COREAPP_ADDITIONAL_LINK_LIBRARIES  ${OPENNI_LIBRARY})
+  endif()
 endif()
 
 # ====================================================================================
