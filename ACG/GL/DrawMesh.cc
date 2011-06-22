@@ -274,9 +274,10 @@ DrawMeshT<Mesh>::rebuild()
   // minimize vertex buffer
   unsigned int* pTmpVertexRemap = new unsigned int[3 * numTris_];
 
-  newNumVerts = weldVertices(&dstVertexBuffer[0],
-    &tmpVertexBuffer[0], &tris[0], &pTmpVertexRemap[0], pVertexRemap);
+  std::map<unsigned int, unsigned int> duplicatesMap;
 
+  newNumVerts = weldVertices(&dstVertexBuffer[0],
+    &tmpVertexBuffer[0], &tris[0], &pTmpVertexRemap[0], pVertexRemap, duplicatesMap);
 
   std::swap(pTmpVertexRemap, pVertexRemap);
   delete [] pTmpVertexRemap; pTmpVertexRemap = 0;
@@ -328,6 +329,13 @@ DrawMeshT<Mesh>::rebuild()
     invVertexMap_[mesh_.to_vertex_handle(hh).idx()] = i;
   }
 
+  std::map<unsigned int, unsigned int>::iterator duplIt;
+  for (duplIt = duplicatesMap.begin(); duplIt != duplicatesMap.end(); ++duplIt)
+  {
+    unsigned int idx = invVertexMap_[duplIt->second]; // final vertex index in DrawMesh
+
+    invVertexMap_[duplIt->first] = idx;
+  }
 
   //////////////////////////////////////////////////////////////////////////
   // copy to GPU
@@ -484,7 +492,8 @@ DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
                               const Vertex* _srcVertexBuf,
                               unsigned int* _dstIndexBuf, 
                               unsigned int* _dstVertexMap,
-                              const unsigned int* _srcVertexMap)
+                              const unsigned int* _srcVertexMap,
+                              std::map<unsigned int, unsigned int>& _duplicatesMap)
 {
   unsigned int newCount = 0;
   unsigned int hashSize = intNextPowerOfTwo(3 * numTris_);
@@ -525,7 +534,21 @@ DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
       hashTable[hashVal] = newCount++;
     }
     else // duplicate vertex found, use previous index
+    {
       _dstIndexBuf[i] = offset;
+
+
+      // INCOMPLETE INVERSE VERTEX MAP FIX
+      // create a multimap to get all pairs of duplicates
+      typename Mesh::HalfedgeHandle h1 = mesh_.halfedge_handle(_dstVertexMap[offset]);
+      typename Mesh::HalfedgeHandle h2 = mesh_.halfedge_handle(_srcVertexMap[i]);
+
+      unsigned int idx1 = mesh_.to_vertex_handle(h1).idx();
+      unsigned int idx2 = mesh_.to_vertex_handle(h2).idx();
+
+      if (idx1 != idx2)
+        _duplicatesMap[idx2] = idx1;
+    }
   }
 
   // nearly degenerate triangle fix
@@ -988,7 +1011,7 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
         glBindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
 
       glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
-        (char*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
     }
   }
   else
