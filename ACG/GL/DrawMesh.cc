@@ -1367,7 +1367,7 @@ setTextureIndexPropertyName( std::string _indexPropertyName ) {
 //   // mark the buffers as invalid as we have a new per face index array
 //   invalidatePerFaceBuffers();
   rebuild_ |= REBUILD_TOPOLOGY;
-};
+}
 
 template <class Mesh>
 void
