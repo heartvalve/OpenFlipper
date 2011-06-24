@@ -1,10 +1,13 @@
 # - Try to find SUITESPARSE
 # Once done this will define
 #  
-#  SUITESPARSE_FOUND        - system has SUITESPARSE
-#  SUITESPARSE_INCLUDE_DIRS - the SUITESPARSE include directory
-#  SUITESPARSE_LIBRARIES    - Link these to use SUITESPARSE
-#  SUITESPARSE_LIBRARY_DIR  - Library directory containing suitesparse libs
+#  SUITESPARSE_FOUND            - system has SUITESPARSE
+#  SUITESPARSE_INCLUDE_DIRS     - the SUITESPARSE include directory
+#  SUITESPARSE_LIBRARIES        - Link these to use SUITESPARSE
+#  SUITESPARSE_SPQR_LIBRARY     - name of spqr library (necessary due to error in debian package)
+#  SUITESPARSE_SPQR_LIBRARY_DIR - name of spqr library (necessary due to error in debian package)
+#  SUITESPARSE_LIBRARY_DIR      - Library main directory containing suitesparse libs
+#  SUITESPARSE_LIBRARY_DIRS     - all Library directories containing suitesparse libs
 #   
 
 IF (SUITESPARSE_INCLUDE_DIRS)
@@ -25,21 +28,21 @@ if( WIN32 )
 
 
    # find path suitesparse library
-   FIND_PATH( SUITESPARSE_LIBRARY_DIRS 
+   FIND_PATH( SUITESPARSE_LIBRARY_DIR 
 	         amd.lib
                PATHS "C:\\libs\\win32\\SuiteSparse\\libs" )
 
    # if we found the library, add it to the defined libraries
-   IF ( SUITESPARSE_LIBRARY_DIRS )
+   IF ( SUITESPARSE_LIBRARY_DIR )
 	list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;optimized;spqr;optimized;umfpack;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;spqrd;debug;umfpackd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
-   ENDIF( SUITESPARSE_LIBRARY_DIRS )  
+   ENDIF( SUITESPARSE_LIBRARY_DIR )  
 
 else( WIN32 )
    IF( APPLE)
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
         	      PATHS  /opt/local/include/ufsparse )
 
-           FIND_PATH( SUITESPARSE_LIBRARY_DIR
+           FIND_PATH( SUITESPARSE_LIBRARY_DIRS
                       NAMES libcholmod.a 
                       PATHS /opt/local/lib )
 
@@ -66,14 +69,23 @@ else( WIN32 )
 
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIR )
-       list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_LIBRARY_DIR} )
        FIND_LIBRARY( CHOLMOD_LIBRARY
                      NAMES cholmod CHOLMOD
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
        FIND_LIBRARY( UMFPACK_LIBRARY
                      NAMES umfpack UMFPACK
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
-
+       FIND_LIBRARY( SUITESPARSE_SPQR_LIBRARY
+                     NAMES spqr SPQR
+                     HINTS $ENV{HOME}/opt/SPQR/lib
+                     PATHS ${SUITESPARSE_LIBRARY_DIR} )
+    
+        FIND_PATH( SUITESPARSE_SPQR_LIBRARY_DIR
+                      NAMES libspqr.so 
+                      PATHS /usr/lib /usr/local/lib $ENV{HOME}/opt/SPQR/lib)
+                    
+       list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_SPQR_LIBRARY_DIR} )
+       list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_LIBRARY_DIR} )
 	IF(APPLE)
 		list ( APPEND SUITESPARSE_LIBRARIES ${SUITESPARSE_LIBRARY_DIR}/libamd.a 
                                                     ${SUITESPARSE_LIBRARY_DIR}/libbtf.a
@@ -90,7 +102,7 @@ else( WIN32 )
 	ENDIF(APPLE)
 
 
-	list ( APPEND SUITESPARSE_LIBRARIES ${CHOLMOD_LIBRARY} ${UMFPACK_LIBRARY} )
+	list ( APPEND SUITESPARSE_LIBRARIES ${CHOLMOD_LIBRARY} ${UMFPACK_LIBRARY} ${SUITESPARSE_SPQR_LIBRARY})
    ENDIF( SUITESPARSE_LIBRARY_DIR )  
    
 endif( WIN32 )
