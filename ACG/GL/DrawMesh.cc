@@ -274,7 +274,7 @@ DrawMeshT<Mesh>::rebuild()
   // minimize vertex buffer
   unsigned int* pTmpVertexRemap = new unsigned int[3 * numTris_];
 
-  std::map<unsigned int, unsigned int> duplicatesMap;
+  std::list<std::pair<unsigned int, unsigned int>> duplicatesMap;
 
   newNumVerts = weldVertices(&dstVertexBuffer[0],
     &tmpVertexBuffer[0], &tris[0], &pTmpVertexRemap[0], pVertexRemap, duplicatesMap);
@@ -329,7 +329,7 @@ DrawMeshT<Mesh>::rebuild()
     invVertexMap_[mesh_.to_vertex_handle(hh).idx()] = i;
   }
 
-  std::map<unsigned int, unsigned int>::iterator duplIt;
+  std::list<std::pair<unsigned int, unsigned int>>::iterator duplIt;
   for (duplIt = duplicatesMap.begin(); duplIt != duplicatesMap.end(); ++duplIt)
   {
     unsigned int idx = invVertexMap_[duplIt->second]; // final vertex index in DrawMesh
@@ -493,7 +493,7 @@ DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
                               unsigned int* _dstIndexBuf, 
                               unsigned int* _dstVertexMap,
                               const unsigned int* _srcVertexMap,
-                              std::map<unsigned int, unsigned int>& _duplicatesMap)
+                              std::list<std::pair<unsigned int, unsigned int>>& _duplicatesMap)
 {
   unsigned int newCount = 0;
   unsigned int hashSize = intNextPowerOfTwo(3 * numTris_);
@@ -547,7 +547,7 @@ DrawMeshT<Mesh>::weldVertices(Vertex* _dstVertexBuf,
       unsigned int idx2 = mesh_.to_vertex_handle(h2).idx();
 
       if (idx1 != idx2)
-        _duplicatesMap[idx2] = idx1;
+        _duplicatesMap.push_front(std::pair<unsigned int, unsigned int>(idx2, idx1));
     }
   }
 
