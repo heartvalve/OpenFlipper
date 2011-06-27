@@ -199,6 +199,15 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     void trimString( std::string& _string);
     
+    /** \brief Function to retrieve next line
+     *
+     * @param ifs             The input stream we operate on
+     * @param _string         This will be the output string
+     * @param _skipEmptyLines Skip empty/comment lines? If not, empty strings will be returned if comment or (remaining) line is empty
+     * @return
+     */
+    bool getCleanLine( std::istream& ifs , std::string& _string, bool _skipEmptyLines = true);
+
     /// Check for degenerate faces before adding them
     bool checkDegenerateFace(const std::vector<VertexHandle>& _v);
     
