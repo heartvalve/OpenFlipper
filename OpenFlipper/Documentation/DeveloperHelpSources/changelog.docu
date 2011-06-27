@@ -1,7 +1,7 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11739 )</b>
+ * - <b>OpenFlipper 1.0.2 (  ? , 11874 )</b>
  *      - <b>ACG</b>
  *          - SceneGraph
  *              - GridNode
@@ -21,6 +21,7 @@
  *              - Fixed bug that made FrameBufferObject unusable
  *              - Avoid usage of glIsRenderBuffer
  *              - Added functions for gl version check
+ *              - Preparation of gl state locking (not completed yet)
  *          - Shaderutils
  *              - Check if gl version satisfies requirements for shaders
  *          - Documentation
@@ -28,6 +29,7 @@
  *      - <b>Core</b>
  *          - Rendering
  *              - Fixed bug, when empty objects where added (Scenegraph Bounding box was not correctly reset)
+ *              - Disable two sided lighting by default (Way faster rendering without tsl)
  *          - User Interactions
  *              - Fixed doubleclick in multiview not moving hitpoint to center in ortho mode
  *              - Context Menu: Fixed crash when no default view mode was set
@@ -45,6 +47,8 @@
  *              - Fixed bug in load save dialog, where capital extensions were not handled correctly
  *          - Scripting
  *              - Dont create ui elements from scripting in batch mode
+ *          - Sapshots
+ *              - Removed process events from aplpication snapshot (strange behavior)
  *          - User Interface
  *              - Introduced option if pickmode toolbars are handled in the viewer or as a traditional toolbar on the left
  *          - About Dialog
@@ -102,6 +106,7 @@
  *              - Fixed warning, when groupobjects have been appended to their parent twice
  *          - FileOBJ
  *              - Fixed crash with wrong indices in obj importer (Only triggered on defect obj files)
+ *              - Fixed group parsing (All items that have the same group name will end up in one object now)
  *          - FileOFF
  *              - Fixed windows build error on some VS versions
  *          - FilePLY
@@ -156,6 +161,7 @@
  *          - Added cmake macros for gtest dependencies used for unit testing
  *          - Flag for appstore compliance added (-DAPP_STORE_COMPLIANT)
  *          - Added cuda integration for plugins
+ *          - Fixed include of global dependencies that havve to be integrated to core
  *      - <b>Packaging</b>
  *          - Added file type association for mac OS
  *          - Flag for appstore compliance added
