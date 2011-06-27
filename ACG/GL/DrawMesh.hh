@@ -317,7 +317,7 @@ private:
                             unsigned int*       _dstIndexBuf,
                             unsigned int*       _dstVertexMap,
                             const unsigned int* _srcVertexMap,
-                            std::list<std::pair<unsigned int, unsigned int>>& _duplicatesMap);
+                            std::list< std::pair<unsigned int, unsigned int> >& _duplicatesMap);
 
   /** \brief sort triangles by material id
    *
