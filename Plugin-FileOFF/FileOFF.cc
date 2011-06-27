@@ -158,6 +158,41 @@ void FileOFFPlugin::trimString( std::string& _string) {
 
 //-----------------------------------------------------------------------------------------------------
 
+bool FileOFFPlugin::getCleanLine( std::istream& ifs , std::string& _string, bool _skipEmptyLines) {
+
+  // while we are not at the end of the file
+  while (true) {
+
+    // get the current line:
+    std::getline(ifs,_string);
+
+    // Remove whitespace at beginning and end
+    trimString(_string);
+
+    // Check if string is not empty ( otherwise we continue
+    if ( _string.size() != 0  ) {
+
+      // Check if string is a comment ( starting with # )
+      if ( _string[0] != '#') {
+        return true;
+      }
+
+    } else {
+      if ( !_skipEmptyLines )
+        return true;
+    }
+
+    if ( ifs.eof() ) {
+      std::cerr << "End of file reached while searching for input!" << std::endl;
+      return false;
+    }
+
+  }
+
+}
+
+//-----------------------------------------------------------------------------------------------------
+
 void FileOFFPlugin::updateUserOptions() {
     
     // If the options dialog has not been initialized, keep
@@ -356,7 +391,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         // Parse ASCII file
         
         // Get whole line since there could be comments in it
-        std::getline(ifs, str);
+        getCleanLine(ifs, str);
         sstr.str(str);
         
         // + #Vertices, #Faces, #Edges
@@ -366,7 +401,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         
         // Skip vertices
         for(unsigned int i = 0; i < nV; ++i) {
-            std::getline(ifs, trash);
+          getCleanLine(ifs, trash);
         }
         
         trash = "";
@@ -374,8 +409,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         // Count vertices per face
         for(unsigned int i = 0; i < nF; ++i) {
             sstr.clear();
-            std::getline(ifs, trash);
-            trimString(trash);
+            getCleanLine(ifs, trash);
             sstr.str(trash);
             
             sstr >> tmp_count;
@@ -545,12 +579,12 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     std::istringstream sstr;
     
     // read header line
-    std::getline(_in, line);
+    getCleanLine(_in, line);
     
     // + #Vertices, #Faces, #Edges
     // Note: We use a stringstream because there
     // could be comments in the line
-    std::getline(_in, line);
+    getCleanLine(_in, line);
     sstr.str(line);
     sstr >> nV;
     sstr >> nF;
@@ -576,7 +610,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
         }
         
         sstr.clear();
-        std::getline(_in, line);
+        getCleanLine(_in, line, false);
         sstr.str(line);
         
         int colorType = getColorType(line, _importer.hasTextureCoords() );
@@ -646,10 +680,10 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
         // If number of faces < 3, we have a degenerated face
         // which we don't allow and thus skip
         if (nV < 3) {
-            // Read the rest of the line and dump it
-            std::getline(_in, line);
-            // Proceed reading
-            continue;
+          // Read the rest of the line and dump it
+          getCleanLine(_in, line, false);
+          // Proceed reading
+          continue;
         }
         
         vhandles.clear();
@@ -679,7 +713,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             
             //take the rest of the line and check how colors are defined
             sstr.clear();
-            std::getline(_in, line);
+            getCleanLine(_in, line, false);
             sstr.str(line);
             
             int colorType = getColorType(line, false);
@@ -828,7 +862,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     
     // read header line
     std::string header;
-    std::getline(_in,header);
+    getCleanLine(_in,header);
     
     // + #Vertices, #Faces, #Edges
     readValue(_in, nV);
