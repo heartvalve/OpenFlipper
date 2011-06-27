@@ -335,6 +335,18 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
     bool fColors    =  ((gui && loadFaceColor_->isChecked()) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()));
     
+    // Request properties
+    if(vNormals)
+        _mesh->request_vertex_normals();
+    if(vColors)
+        _mesh->request_vertex_colors();
+    if(vTexCoords)
+        _mesh->request_vertex_texcoords2D();
+    if(fNormals)
+        _mesh->request_face_normals();
+    if(fColors)
+        _mesh->request_face_colors();
+
     unsigned int propIndex;
     unsigned int numProps = _header.vProps.size();
     typename MeshT::VertexHandle currentVertex;
