@@ -41,7 +41,7 @@ include (BundleUtilities)
 
 # copy qt plugins to bundle
 file (GLOB _plugins "@CMAKE_BINARY_DIR@/Build/OpenFlipper.app/Contents/Resources/Plugins/*.so")
-file (GLOB_RECURSE _qtplugins "@QT_PLUGINS_DIR@/*.bundle")
+file (GLOB_RECURSE _qtplugins "@CMAKE_BINARY_DIR@/Build/OpenFlipper.app/Contents/Resources/QtPlugins/*.dylib")
 foreach (_qtp ${_qtplugins})
   get_filename_component(_dir "${_qtp}" PATH)
   list(APPEND _qtdirs "${_dir}")
