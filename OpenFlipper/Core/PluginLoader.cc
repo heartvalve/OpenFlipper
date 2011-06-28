@@ -98,6 +98,86 @@
 #include <ACG/QtWidgets/QtFileDialog.hh>
 #include "OpenFlipper/widgets/PluginDialog/PluginDialog.hh"
 
+#include <deque>
+#include <limits>
+
+/**
+ * The number of plugins to load simultaneously.
+ *
+ * FIXME: This number should not be constant but be
+ * determined from the number of processor cores.
+ */
+static const int PRELOAD_THREADS_COUNT = 8;
+
+class PreloadAggregator {
+    public:
+        PreloadAggregator() : expectedLoaders_(0) {}
+
+        /**
+         * Intended to be called by a PreloadThread
+         * before count subsequent calls to loaderReady().
+         * May be called multiple times in which case
+         * the counts accumulate.
+         *
+         * @param count The number of times the calling
+         * PreloadThread intents to call loaderReady().
+         */
+        void expectLoaders(int count) {
+            QMutexLocker loadersLock(&loadersMutex_);
+            expectedLoaders_ += count;
+        }
+
+        /**
+         * Intended to be called by a PreloadThread.
+         *
+         * Transfers ownership of the supplied loader
+         * to the PreloadAggregator.
+         */
+        void loaderReady(QPluginLoader *loader) {
+            QMutexLocker loadersLock(&loadersMutex_);
+            loaders_.push_back(loader);
+            --expectedLoaders_;
+            pluginAvailable_.wakeOne();
+        }
+
+        /**
+         * If there are still loaders expected, block
+         * until the next loader becomes available and return
+         * it.
+         *
+         * Ownership of the returned object is transferred
+         * to the caller. (I.e. the caller has to delete it.)
+         *
+         * @return Null if there are no more loaders expected.
+         * The next loader, otherwise.
+         */
+        QPluginLoader *waitForNextLoader() {
+            QMutexLocker loadersLock(&loadersMutex_);
+            if (loaders_.empty()) {
+                if (expectedLoaders_ > 0) {
+                    pluginAvailable_.wait(&loadersMutex_);
+                } else {
+                    return 0;
+                }
+            }
+
+            /*
+             * At this point, it is guaranteed that
+             * loaders_.size() > 0.
+             */
+            QPluginLoader *result = loaders_.front();
+            loaders_.pop_front();
+            return result;
+        }
+
+    protected:
+        std::deque<QPluginLoader *> loaders_;
+        QWaitCondition pluginAvailable_;
+        QMutex loadersMutex_;
+
+        int expectedLoaders_;
+};
+
 class PreloadThread : public QThread
 {
   public: 
@@ -107,40 +187,82 @@ class PreloadThread : public QThread
     * This constructor initializes the preloading thread.
     * @param _fileName Filename of the Plugin to be loaded.
     */
-    PreloadThread(QString _fileName):
-      filename_(_fileName) {      
+    PreloadThread(PreloadAggregator *aggregator) : aggregator_(aggregator) {
     }
   
   public:
     
-    /** \brief get an instance of the loaded plugin
-    *
-    * This function returns an instance of the loaded plugin or 0 if something went wrong.
-    * This mehod has to be called from the main thread as the plugins have to stay in the
-    * core thread of the application.
-    */
-    QObject* getInstance() { return loader_.instance(); }
-    
-    /** \brief function to get the filename used in this preloader */
-    QString filename() { return filename_; }
-    
-    /// If an error occured, this function will return the error message
-    QString getError() { return loader_.errorString(); }
-    
+    void addFilename(const QString &filename) {
+        QMutexLocker filenamesLock(&filenamesMutex_);
+        filenames_.push_back(filename);
+        aggregator_->expectLoaders(1);
+    }
+
     /** \brief preload function
     *
     * This function is used in the thread to preload a plugin. The name is given in the constructor.
     */
     void run() {
-      loader_.setFileName( filename_ );
-      loader_.load();
+      for (;;) {
+          QString fileName;
+          {
+              /*
+               * Just to be on the safe side, we protect
+               * filenames_. (addFilename() could be called from
+               * a different thread.)
+               */
+              QMutexLocker filenamesLock(&filenamesMutex_);
+              if (filenames_.empty()) break;
+              fileName = filenames_.front();
+              filenames_.pop_front();
+          }
+
+          QPluginLoader *loader = new QPluginLoader;
+          loader->setFileName(fileName);
+          loader->load();
+          aggregator_->loaderReady(loader);
+      }
     }
     
   private:
-    QString filename_;
-    QPluginLoader loader_;
+    std::deque<QString> filenames_;
+    QMutex filenamesMutex_;
+    PreloadAggregator *aggregator_;
 };
 
+/**
+ * @brief Defines the order in which plugins have to be loaded.
+ *
+ * First load all type Plugins to register the dataTypes to the core
+ * Than load the file plugins to load objects
+ * Next is textureControl to control texture based properties
+ * Then load everything else.
+ */
+class PluginInitializationOrder {
+    public:
+        int getTypeOrdinal(const QString &name) const {
+            const QString basename = QFileInfo(name).baseName();
+            if (basename.contains("Plugin-Type"))
+                return 0;
+            else if (basename.contains("Plugin-File"))
+                return 1;
+            else if (basename.contains("TextureControl"))
+                return 2;
+            else
+                return 3;
+
+        }
+        bool operator() (const QString &a, const QString &b) const {
+            const int typeA = getTypeOrdinal(a);
+            const int typeB = getTypeOrdinal(b);
+            if (typeA != typeB) { return typeA < typeB; }
+            return a < b;
+        }
+
+        bool operator() (const QPluginLoader *a, const QPluginLoader *b) const {
+            return operator() (a->fileName(), b->fileName());
+        }
+};
 
 //== IMPLEMENTATION ==========================================================
 
@@ -202,29 +324,12 @@ void Core::loadPlugins()
   
   // Prepend the additional Plugins to the plugin list
   pluginlist = additionalPlugins << pluginlist;
-  
-  // Sort plugins to load FilePlugins first
-  QStringList typePlugins;
-  QStringList filePlugins;
-  QStringList textureControl;
-  QStringList otherPlugins;
-  //plugin Liste sortieren
-  for (int i=0; i < pluginlist.size(); i++)
-    if (pluginlist[i].contains("Plugin-Type") )
-      typePlugins.push_back(pluginlist[i]);
-    else if (pluginlist[i].contains("Plugin-File") )
-      filePlugins.push_back(pluginlist[i]);
-    else if (pluginlist[i].contains("TextureControl"))
-      textureControl.push_back(pluginlist[i]);
-    else
-      otherPlugins.push_back(pluginlist[i]);
 
-  // This is the order in which plugins have to be loaded:
-  // First load all type Plugins to register the dataTypes to the core
-  // Than load the file plugins to load objects 
-  // Next is textureControl to control texture based properties
-  // Than load everything else.
-  pluginlist = typePlugins << filePlugins << textureControl << otherPlugins;
+  /*
+   * Note: This call is not necessary, anymore. Initialization order
+   * is determined later.
+   */
+  std::sort(pluginlist.begin(), pluginlist.end(), PluginInitializationOrder());
 
   for ( int i = 0 ; i < dontLoadPlugins.size(); ++i )
     emit log(LOGWARN,tr("Skipping Plugins :\t %1").arg( dontLoadPlugins[i] ) );
@@ -235,44 +340,88 @@ void Core::loadPlugins()
   
   time.start();
   
-  std::vector< PreloadThread* > loaderThreads;
+  PreloadAggregator preloadAggregator;
+  std::vector< PreloadThread* > loaderThreads(PRELOAD_THREADS_COUNT);
+
+  /*
+   * Initialize loaderThreads.
+   */
+  for (std::vector< PreloadThread* >::iterator it = loaderThreads.begin();
+          it != loaderThreads.end(); ++it) {
+      *it = new PreloadThread(&preloadAggregator);
+  }
   
-  // Try to load each file as a plugin in a separate thread (only load them in seperate thread. Instance will be created in main thread)
+  /*
+   * Distribute plugins onto loader threads in a round robin fashion.
+   * (only load them in seperate thread. Instance will be created in main thread)
+   */
   for ( int i = 0 ; i < pluginlist.size() ; ++i) {
-    
-    // create loader thread
-    PreloadThread* load = new PreloadThread(pluginlist[i]);
-    
-    // remember loader thread
-    loaderThreads.push_back(load);
-    
-    // start loader thread
-    load->start();
+    loaderThreads[i % loaderThreads.size()]->addFilename(pluginlist[i]);
+  }
+
+  /*
+   * Start plugin preloading.
+   */
+  for (std::vector< PreloadThread* >::iterator it = loaderThreads.begin();
+          it != loaderThreads.end(); ++it) {
+      (*it)->start();
   }
   
-  // Check each thread for a valid plugin
-  for ( uint i = 0 ; i < loaderThreads.size() ; ++i) {
-    
-    if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
-      splashMessage_ = tr("Loading Plugin %1/%2").arg(i).arg(loaderThreads.size()) ;
-      splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-      QApplication::processEvents();
-    }
-    
-    loaderThreads[i]->wait();
-    
-    if ( loaderThreads[i]->getInstance() != 0 ) {
-      QString pluginLicenseText  = "";
-      loadPlugin(loaderThreads[i]->filename(),true,pluginLicenseText, loaderThreads[i]->getInstance());
-      licenseTexts += pluginLicenseText;
-    } else {
-      emit log(LOGERR,tr("Unable to load Plugin :\t %1").arg( loaderThreads[i]->filename() ) );
-      emit log(LOGERR,tr("Error was : ") + loaderThreads[i]->getError() );
-      emit log(LOGOUT,"================================================================================");       
-    }
-    
-    delete loaderThreads[i];
+  /*
+   * Wait for the plugins to get preloaded
+   */
+  std::vector<QPluginLoader*> loadedPlugins;
+  loadedPlugins.reserve(pluginlist.size());
+
+  for (QPluginLoader *loader = preloadAggregator.waitForNextLoader(); loader != 0;
+          loader = preloadAggregator.waitForNextLoader()) {
+
+      loadedPlugins.push_back(loader);
+
+      if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
+        splashMessage_ = tr("Loading Plugin %1/%2").arg(loadedPlugins.size()).arg(pluginlist.size()) ;
+        splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
+        QApplication::processEvents();
+      }
   }
+
+  /*
+   * Finalize PreloadThreads.
+   */
+  for (std::vector< PreloadThread* >::iterator it = loaderThreads.begin();
+          it != loaderThreads.end(); ++it) {
+      (*it)->wait();
+      delete *it;
+  }
+
+  /*
+   * Initialize preloaded plugins in the correct order.
+   */
+  std::sort(loadedPlugins.begin(), loadedPlugins.end(), PluginInitializationOrder());
+  for (std::vector<QPluginLoader*>::iterator it = loadedPlugins.begin();
+          it != loadedPlugins.end(); ++it) {
+
+      if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
+        splashMessage_ = tr("Initializing Plugin %1/%2")
+                .arg(std::distance(loadedPlugins.begin(), it) + 1)
+                .arg(loadedPlugins.size());
+        splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
+        QApplication::processEvents();
+      }
+
+      if ((*it)->instance() != 0 ) {
+        QString pluginLicenseText  = "";
+        loadPlugin((*it)->fileName(),true,pluginLicenseText, (*it)->instance());
+        licenseTexts += pluginLicenseText;
+      } else {
+        emit log(LOGERR,tr("Unable to load Plugin :\t %1").arg( (*it)->fileName() ) );
+        emit log(LOGERR,tr("Error was : ") + (*it)->errorString() );
+        emit log(LOGOUT,"================================================================================");
+      }
+      delete *it;
+  }
+
+  emit log(LOGINFO, tr("Total time needed to load plugins was %1 ms.").arg(time.elapsed()));
 
   splashMessage_ = "";
   
