@@ -13,7 +13,8 @@ ENDIF (SVM_INCLUDE_DIRS)
 
 FIND_PATH( SVM_INCLUDE_DIR libsvm/svm.h
            PATHS /usr/include/libsvm-2.0
-                 /usr/include/libsvm-3.0 )
+                 /usr/include/libsvm-3.0
+                 /usr/include )
 
 
 FIND_LIBRARY( SVM_LIBRARY
