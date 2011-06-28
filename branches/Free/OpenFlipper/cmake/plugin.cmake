@@ -90,13 +90,118 @@ macro (_get_plugin_parameters _prefix)
 endmacro ()
 
 # check dependencies
-macro (_check_plugin_deps _prefix)
+# _prefix    : prefix used ( usually the plugin name )
+# _optional : if we are currently pars
+macro (_check_plugin_deps _prefix _optional )
+
     set (${_prefix}_HAS_DEPS TRUE)
+
+    # This will contain the final list of all dependencies
+    list (APPEND FULL_DEPENDENCY_LIST "")
+
+    #======================================================================================       
+    # Collect dependencies of dependencies
+    # Recursive dependencies will be added here. 
+    # The base package name will be used and the variables
+    # PACKAGE_DEPS     : Mandatory recursive dependencies
+    # PACKAGE_OPT_DEPS : Optional recursive dependencies
+    #======================================================================================
     foreach (_val ${ARGN})
+       string (TOUPPER ${_val} _VAL)
+	
+       # First we try to find the dependencies directly
+       find_package(${_val})
+
+       # This will contain the list of all dependencies of the current base dependency ( including recursive dependencies for one level )
+       set (CURRENT_DEPENDENCY_LIST "")
+
+       # Flag if all dependencies were found (Only mandatory ones) 
+       set (ALL_REQUIRED_DEPENDENCIES_FOUND TRUE)
+
+       # Recursive dependencies which are not optional will also be added by default (Not optional, so error if not available!)
+       if  ( DEFINED ${_VAL}_DEPS )
+
+          foreach (_rec_dep ${${_VAL}_DEPS})
+
+            string (TOUPPER ${_rec_dep} _REC_DEP)
+
+            find_package(${_rec_dep})
+    
+            if ( ${_REC_DEP}_FOUND )
+              list (APPEND CURRENT_DEPENDENCY_LIST ${_rec_dep} )
+              add_definitions( -DENABLE_${_REC_DEP} )
+            else()
+              set (ALL_REQUIRED_DEPENDENCIES_FOUND FALSE)
+              acg_set (_${_prefix}_MISSING_DEPS "${_${_prefix}_MISSING_DEPS} ${_VAL}_MISSING_MANDATORY_RECURSIVE_DEP_${_REC_DEP}")
+            endif()
+          endforeach()
+          
+       endif()
+
+
+       # optional dependencies will be added if available and compiler flags will be set accordingly
+       if  ( DEFINED ${_VAL}_OPT_DEPS )
+
+          foreach (_rec_dep ${${_VAL}_OPT_DEPS})
+
+            string (TOUPPER ${_rec_dep} _REC_DEP)
+
+            find_package(${_rec_dep})
+
+            # Optional so add if we found the dependency or we skip it.
+            # Defines will be added due to the optional status	
+            if ( ${_REC_DEP}_FOUND )
+              list (APPEND CURRENT_DEPENDENCY_LIST ${_rec_dep} )
+              add_definitions( -DENABLE_${_REC_DEP} )
+            else()
+              add_definitions( -DDISABLE_${_REC_DEP} )
+	    endif()
+          endforeach()
+       endif()
+
+       if ( ${_optional} STREQUAL "TRUE"  )
+
+         if ( ${_VAL}_FOUND )
+           message("Info optional dependency ${_VAL} for ${_prefix}  not found .. proceeding without it!")
+        
+           if ( ALL_REQUIRED_DEPENDENCIES_FOUND )
+             # All found so add package dependencies
+             list (APPEND FULL_DEPENDENCY_LIST ${CURRENT_DEPENDENCY_LIST})
+             # Add package itself
+             list (APPEND FULL_DEPENDENCY_LIST ${_val})
+           else()
+	     message("Missing recursive dependencies when optional")
+           endif()
+
+         else()
+           message("Info: OPTIONAL Dependency  ${_VAL} for  ${_prefix}  not found .. proceeding without it!")
+
+         endif()
+
+       else()
+
+         if ( ALL_REQUIRED_DEPENDENCIES_FOUND )
+           # All found so add package dependencies
+           list (APPEND FULL_DEPENDENCY_LIST ${CURRENT_DEPENDENCY_LIST})
+           # Add package itself
+           list (APPEND FULL_DEPENDENCY_LIST ${_val})
+         else()
+    	   acg_set (_${_prefix}_MISSING_DEPS "${_${_prefix}_MISSING_DEPS} ${_VAL}_BECAUSE_OF_MISSING_RECURSIVE_DEPENDENCY")
+           set (${_prefix}_HAS_DEPS FALSE)
+         endif()
+
+       endif()
+
+    endforeach()
+
+    foreach (_val ${FULL_DEPENDENCY_LIST})
         string (TOUPPER ${_val} _VAL)
 
         find_package(${_val})
 
+        #======================================================================================
+        # Global dependency tracking
+        #======================================================================================
         # Get our current list of all dependencies used by plugins
 	get_property( global_dependency_list GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST)
 
@@ -108,6 +213,10 @@ macro (_check_plugin_deps _prefix)
              
         # Store the list in the global property
         set_property( GLOBAL PROPERTY GLOBAL_PLUGIN_DEPENDENCIES_LIST ${global_dependency_list} )
+
+        #======================================================================================
+        # Collect all dependencies (local and global)
+        #======================================================================================
 
         if (${_val}_FOUND OR ${_VAL}_FOUND)
           foreach (_name ${_val} ${_VAL})
@@ -212,11 +321,11 @@ function (_build_openflipper_plugin plugin)
   # check dependencies
   acg_unset (_${_PLUGIN}_MISSING_DEPS)
   set (${_PLUGIN}_HAS_DEPS)
-  _check_plugin_deps (${_PLUGIN} ${${_PLUGIN}_OPTDEPS})
+  _check_plugin_deps (${_PLUGIN} TRUE ${${_PLUGIN}_OPTDEPS})
 
   acg_unset (_${_PLUGIN}_MISSING_DEPS)
   set (${_PLUGIN}_HAS_DEPS)
-  _check_plugin_deps (${_PLUGIN} ${${_PLUGIN}_DEPS})
+  _check_plugin_deps (${_PLUGIN} FALSE ${${_PLUGIN}_DEPS})
 
   #============================================================================================
   # Remember Lib dirs for bundle generation
