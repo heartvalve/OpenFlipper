@@ -247,9 +247,8 @@ if ( APPLE )
    acg_copy_after_build( OpenFlipper "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  endif ()
 
- 
- 
- 
+ # Copy qt plugins into bundle
+ acg_copy_after_build ( OpenFlipper "${QT_PLUGINS_DIR}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins")
 
 endif( APPLE )
 
