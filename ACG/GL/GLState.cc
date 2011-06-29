@@ -1181,7 +1181,7 @@ void GLState::syncFromGL()
     GL_TEXTURE_COORD_ARRAY,
     GL_VERTEX_ARRAY};
 
-  for (int i = 0; i < sizeof(caps) / sizeof(GLenum); ++i)
+  for (unsigned int i = 0; i < sizeof(caps) / sizeof(GLenum); ++i)
   {
     if (glIsEnabled(caps[i])) glStateEnabled_.set(caps[i]);
     else glStateEnabled_.reset(caps[i]);
