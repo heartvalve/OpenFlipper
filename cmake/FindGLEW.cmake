@@ -20,11 +20,11 @@ if( WIN32 )
        set( COMPILER_PATH "C:/Program\ Files/Microsoft\ Visual\ Studio\ .NET\ 2003/Vc7" )
    endif( MSVC71 )
    FIND_PATH( GLEW_INCLUDE_DIR gl/glew.h gl/wglew.h
-              PATHS "c:/glew/include" "c:/libs/glew/include" ${COMPILER_PATH}/PlatformSDK/Include )
+              PATHS "c:/glew/include" "c:/libs/glew/include" "c:/libs/glew-1.6.0/include" ${COMPILER_PATH}/PlatformSDK/Include )
    SET( GLEW_NAMES glew32 )
    FIND_LIBRARY( GLEW_LIBRARY
                  NAMES ${GLEW_NAMES}
-                 PATHS "c:/glew/lib"  "c:/libs/glew/lib" ${COMPILER_PATH}/PlatformSDK/Lib )
+                 PATHS "c:/glew/lib"  "c:/libs/glew/lib" "c:/libs/glew-1.6.0/lib" ${COMPILER_PATH}/PlatformSDK/Lib )
 else( WIN32 )
    FIND_PATH( GLEW_INCLUDE_DIR GL/glew.h GL/wglew.h
               PATHS /usr/local/include /usr/include )
