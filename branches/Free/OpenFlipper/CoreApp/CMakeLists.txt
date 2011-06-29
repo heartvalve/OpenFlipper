@@ -249,6 +249,14 @@ if ( APPLE )
 
  # Copy qt plugins into bundle
  acg_copy_after_build ( OpenFlipper "${QT_PLUGINS_DIR}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins")
+elseif(WIN32)
+
+ #copy qt plugins to Build directory and configure qt.conf file
+ file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/*"  )
+ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Build/QtPlugins" )
+ foreach (qtplugin ${qtplugin_dirs})
+	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Build/QtPlugins/")
+ endforeach ()
 
 endif( APPLE )
 
@@ -267,11 +275,18 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${ACG_PROJECT_DATADIR}/Fonts")
  # acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
 
-if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
-  if ( WIN32 ) 
-    acg_install_dir ( "${CMAKE_SOURCE_DIR}/branding/win" "${ACG_PROJECT_DATADIR}/Icons")
-   endif()
-endif()
+  if ( WIN32 )
+    # create qt config file and install it
+	file(WRITE "@CMAKE_BINARY_DIR@/Build/qt.conf" "[Paths]\nPlugins = QtPlugins")
+	install( FILES "@CMAKE_BINARY_DIR@/Build/qt.conf" DESTINATION "${ACG_PROJECT_DATADIR}/" )
+	acg_install_dir ("${CMAKE_BINARY_DIR}/Build/QtPlugins/" "${ACG_PROJECT_DATADIR}/QtPlugins")
+  endif(WIN32)
+  
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+    if ( WIN32 ) 
+      acg_install_dir ( "${CMAKE_SOURCE_DIR}/branding/win" "${ACG_PROJECT_DATADIR}/Icons")
+     endif()
+  endif()
 
 
 #todo install splash file for windows and Linux branding
