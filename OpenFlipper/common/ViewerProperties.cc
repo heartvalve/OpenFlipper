@@ -57,7 +57,7 @@
 namespace Viewer {
 
   ViewerProperties::ViewerProperties(int _id):
-    currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
+    currentDrawMode_(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED),
     snapshotName_("snap"),
     snapshotFileType_("png"),
     snapshotCounter_(0),
