@@ -360,8 +360,7 @@ int main(int argc, char **argv)
     QApplication app(argc,argv);
 
 #ifdef __APPLE__
-    // Set organization domain
-    //QCoreApplication::setOrganizationDomain("de.rwth-aachen.graphics.openflipper");
+    // Set organization and application names
     QCoreApplication::setOrganizationName("rwth-aachen.de");
     QCoreApplication::setApplicationName("graphics.openflipper");
 #endif
@@ -445,8 +444,7 @@ int main(int argc, char **argv)
     QCoreApplication app(argc,argv);
 
 #ifdef __APPLE__
-    // Set organization domain
-    //QCoreApplication::setOrganizationDomain("de.rwth-aachen.graphics.openflipper");
+    // Set organization and application names
     QCoreApplication::setOrganizationName("rwth-aachen.de");
     QCoreApplication::setApplicationName("graphics.openflipper");
 #endif
