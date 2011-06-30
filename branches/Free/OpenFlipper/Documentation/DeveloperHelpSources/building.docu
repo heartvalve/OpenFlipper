@@ -4,16 +4,16 @@
  * 
  * OpenFlipper is developed on top of the Qt framework. This framework provides
  * easy cross platform development. Therefore an installed version of QT with
- * at least version 4.6 is required. We use the cmake MakeFile generator to build 
+ * at least version 4.7.3 is required. We use the cmake MakeFile generator to build 
  * OpenFlipper.
  *
  * \section reqlibs Required libraries
  * <ul>
- * <li> Qt >= 4.6 ( http://www.qtsoftware.com/downloads )</li>
- * <li> GLUT      ( http://www.opengl.org/resources/libraries/glut/ )</li>
- * <li> GLEW      ( http://glew.sourceforge.net )</li>
- * <li> freetype2 ( optional http://www.freetype.org/freetype2/index.html )</li>
- * <li> ftgl      ( optional http://sourceforge.net/projects/ftgl/)</li>
+ * <li> Qt >= 4.7.3  ( http://www.qtsoftware.com/downloads )</li>
+ * <li> GLUT         ( http://www.opengl.org/resources/libraries/glut/ )</li>
+ * <li> GLEW (>=1.6) ( http://glew.sourceforge.net )</li>
+ * <li> freetype2    ( optional http://www.freetype.org/freetype2/index.html )</li>
+ * <li> ftgl         ( optional http://sourceforge.net/projects/ftgl/)</li>
  * </ul> 
  *
  * \section bs Build System
@@ -53,7 +53,7 @@
  *
  * <ul>
  * <li> Get Visual Studio 2008 </li>
- * <li> Get and Install Qt ( >= 4.6 , Visual Studio Version ) </li>
+ * <li> Get and Install Qt ( >= 4.7.3 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory:<br />
  * <br />
  *      <b>Windows Vista/7:</b> <br />
