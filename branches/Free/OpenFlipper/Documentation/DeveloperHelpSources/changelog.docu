@@ -1,7 +1,7 @@
 /*! \page changelog Changelog
  *
  *
- * - <b>OpenFlipper 1.0.2 (  ? , 11874 )</b>
+ * - <b>OpenFlipper 1.0.2 (  2011.06.30 , 11903 )</b>
  *      - <b>ACG</b>
  *          - SceneGraph
  *              - GridNode
@@ -30,6 +30,7 @@
  *          - Rendering
  *              - Fixed bug, when empty objects where added (Scenegraph Bounding box was not correctly reset)
  *              - Disable two sided lighting by default (Way faster rendering without tsl)
+ *              - Fixed initial draw mode on mac os on first startup
  *          - User Interactions
  *              - Fixed doubleclick in multiview not moving hitpoint to center in ortho mode
  *              - Context Menu: Fixed crash when no default view mode was set
@@ -37,6 +38,7 @@
  *              - Handle default projection mode via OpenFlipperSettings and reorder widget
  *              - Added default lock rotation setting
  *              - Make ViewerProperties aware of the viewer id it belongs to
+ *              - Place options in correct config files to be app store compliant
  *          - View mode
  *              - When adding context menus, remove the accelerators & to avoid matching failiures
  *              - Fix for the undo/redo context menu entries containing special characters.
@@ -45,6 +47,8 @@
  *              - Fixed variable initialization in ParseINI
  *              - Rename files if multiple files have the same name when saving settings file.
  *              - Fixed bug in load save dialog, where capital extensions were not handled correctly
+ *          - Plugin Loader
+ *              - Limit number of preload threads
  *          - Scripting
  *              - Dont create ui elements from scripting in batch mode
  *          - Sapshots
@@ -109,12 +113,15 @@
  *              - Fixed group parsing (All items that have the same group name will end up in one object now)
  *          - FileOFF
  *              - Fixed windows build error on some VS versions
+ *              - Fixed parsing of off files containing empty lines
+ *              - Fixed parsing of some comments
  *          - FilePLY
  *              - Improved error handling when indices are out of range
  *              - don't ignore user settings in ascii reader
  *              - Support big endian files
  *              - Correctly write binary header(missing endian)
  *              - reserve memory before adding data to improve speed
+ *              - Fixed crash in binary reader with texture coordinates
  *          - Info
  *              - Renamed to InfoMeshObject
  *          - MeshRepair
@@ -162,10 +169,12 @@
  *          - Flag for appstore compliance added (-DAPP_STORE_COMPLIANT)
  *          - Added cuda integration for plugins
  *          - Fixed include of global dependencies that havve to be integrated to core
+ *          - Introduced Recursive dependecies (Parses flags like LIBRARY_DEPS and LIBRARY_OPT_DEPS)
  *      - <b>Packaging</b>
  *          - Added file type association for mac OS
  *          - Flag for appstore compliance added
  *          - Changed the path to OpenFlippers config dir to be app store compliant
+ *          - Automatically copy qt plugins into bundle/installer
  *      - <b>Documentation</b>
  *          - Fixed doxygen problem with missing includes
  *          - Fixed typo which caused DeveloperDoc to include user doc
