@@ -147,7 +147,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
      */
     void setFromFileName(QString _filename );
 
-    /// set the name of the object. ( If you overwrite it, call BaseObjectData::setName(_name ) it in your funtion first)
+    /// set the name of the object. ( If you overwrite it, call BaseObjectData::setName(_name ) it in your function first)
     virtual void setName( QString _name );
 
     /// return the path to the object ( defaults to "." if unset )
