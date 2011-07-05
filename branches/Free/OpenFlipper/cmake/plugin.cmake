@@ -584,10 +584,8 @@ function (_build_openflipper_plugin plugin)
  
         # Prepare the files
         if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        	message("Compiling cuda sources in debug mode")
         	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS} OPTIONS -g -G --device-emulation -Xcompiler)
         else()
-        	message("Compiling cuda sources in release mode")
         	CUDA_COMPILE(${_PLUGIN}_CUDA_GENERATED_FILES ${${_PLUGIN}_CUDA_SRCS} OPTIONS -O2)
         endif()
        
