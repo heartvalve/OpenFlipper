@@ -753,9 +753,12 @@ void OptionsWidget::slotApply() {
 
   emit applyOptions();
   emit saveOptions();
-  
+
+  // Make sure all settings are written before we quit!
+  OpenFlipperSettings().sync();
+
   // Close OpenFlipper if demanded
-  if(exitOnClose_)  emit exit(0);
+  if(exitOnClose_)  QCoreApplication::quit();
 }
 
 void OptionsWidget::slotOk(){
