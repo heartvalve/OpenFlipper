@@ -2,7 +2,7 @@
 # Once done this will define
 #  
 #  PHYSIM_FOUND        - system has PHYSIM
-#  PHYSIM_INCLUDE_DIR  - the PHYSIM include directory
+#  PHYSIM_INCLUDE_DIRS - the PHYSIM include directory
 #  PHYSIM_LIBRARY_DIR  - where the libraries are
 #  PHYSIM_LIBRARY      - Link these to use PHYSIM
 #   
