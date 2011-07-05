@@ -6,12 +6,12 @@
     <message>
         <location filename="../ColorPlugin.cc" line="91"/>
         <source>&amp;Color schemes</source>
-        <translation>Farb Schemata</translation>
+        <translation>&amp;Farb Schemata</translation>
     </message>
     <message>
         <location filename="../ColorPlugin.cc" line="101"/>
         <source>&amp;Default colors</source>
-        <translation>Standard Farben</translation>
+        <translation>&amp;Standard Farben</translation>
     </message>
     <message>
         <location filename="../ColorPlugin.cc" line="102"/>
@@ -26,7 +26,7 @@
     <message>
         <location filename="../ColorPlugin.cc" line="109"/>
         <source>&amp;Presentation colors</source>
-        <translation>Präsentations Farben</translation>
+        <translation>&amp;Präsentations Farben</translation>
     </message>
     <message>
         <location filename="../ColorPlugin.cc" line="110"/>
@@ -41,7 +41,7 @@
     <message>
         <location filename="../ColorPlugin.cc" line="117"/>
         <source>&amp;Paper colors</source>
-        <translation>Paper Farben</translation>
+        <translation>&amp;Paper Farben</translation>
     </message>
     <message>
         <location filename="../ColorPlugin.cc" line="118"/>
@@ -101,28 +101,28 @@
         <location filename="../colorOptions.ui" line="88"/>
         <location filename="../colorOptions.ui" line="147"/>
         <source>Background Color:</source>
-        <translation>Hintergrund Farbe</translation>
+        <translation>Hintergrund Farbe:</translation>
     </message>
     <message>
         <location filename="../colorOptions.ui" line="43"/>
         <location filename="../colorOptions.ui" line="102"/>
         <location filename="../colorOptions.ui" line="161"/>
         <source>Base Color:</source>
-        <translation>Grund Farbe</translation>
+        <translation>Grund Farbe:</translation>
     </message>
     <message>
         <location filename="../colorOptions.ui" line="57"/>
         <location filename="../colorOptions.ui" line="116"/>
         <location filename="../colorOptions.ui" line="175"/>
         <source>Material Color:</source>
-        <translation>Material Farbe</translation>
+        <translation>Material Farbe:</translation>
     </message>
     <message>
         <location filename="../colorOptions.ui" line="71"/>
         <location filename="../colorOptions.ui" line="130"/>
         <location filename="../colorOptions.ui" line="189"/>
         <source>Line Width:</source>
-        <translation>Linien Breite</translation>
+        <translation>Linien Breite:</translation>
     </message>
     <message>
         <location filename="../colorOptions.ui" line="82"/>
