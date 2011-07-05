@@ -4,53 +4,73 @@
 <context>
     <name>DecimaterPlugin</name>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="90"/>
+        <location filename="../DecimaterPlugin.cc" line="89"/>
         <source>Decimater</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="98"/>
+        <location filename="../DecimaterPlugin.cc" line="97"/>
         <source>Decimate a given object</source>
         <translation>Objekt dezimieren</translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="99"/>
+        <location filename="../DecimaterPlugin.cc" line="98"/>
         <source>objectId,constraints</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="100"/>
+        <location filename="../DecimaterPlugin.cc" line="99"/>
         <source>ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="144"/>
+        <location filename="../DecimaterPlugin.cc" line="143"/>
         <source>Unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="169"/>
-        <location filename="../DecimaterPlugin.cc" line="277"/>
+        <location filename="../DecimaterPlugin.cc" line="203"/>
+        <location filename="../DecimaterPlugin.cc" line="348"/>
         <source>Decimater could not be initialized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="203"/>
+        <location filename="../DecimaterPlugin.cc" line="239"/>
         <source>Unable to get Object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="211"/>
+        <location filename="../DecimaterPlugin.cc" line="247"/>
         <source>Unable to get object ( Only Triangle Meshes supported)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="294"/>
+        <location filename="../DecimaterPlugin.cc" line="366"/>
+        <source>distance = %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DecimaterPlugin.cc" line="367"/>
+        <source>normal_deviation = %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DecimaterPlugin.cc" line="368"/>
+        <source>roundness = %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DecimaterPlugin.cc" line="369"/>
+        <source>vertices = %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DecimaterPlugin.cc" line="376"/>
         <source>Unsupported object type for decimater</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.hh" line="118"/>
+        <location filename="../DecimaterPlugin.hh" line="127"/>
         <source>Mesh Decimation ...</source>
         <translation>Mesh Dezimierung ...</translation>
     </message>
