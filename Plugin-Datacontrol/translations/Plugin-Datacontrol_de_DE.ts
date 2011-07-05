@@ -16,7 +16,7 @@
     <message>
         <location filename="../DataControlPlugin.cc" line="89"/>
         <source>&amp;Hide</source>
-        <translation>Verstecken</translation>
+        <translation>&amp;Verstecken</translation>
     </message>
     <message>
         <location filename="../DataControlPlugin.cc" line="90"/>
@@ -26,12 +26,12 @@
     <message>
         <location filename="../DataControlPlugin.cc" line="96"/>
         <source>&amp;Target</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ziel</translation>
     </message>
     <message>
         <location filename="../DataControlPlugin.cc" line="104"/>
         <source>&amp;Source</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Quelle</translation>
     </message>
     <message>
         <source>&amp;target</source>
@@ -54,16 +54,16 @@
     <message>
         <location filename="../DataControlPlugin.cc" line="114"/>
         <source>&amp;Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Entfernen</translation>
     </message>
     <message>
         <location filename="../DataControlPlugin.cc" line="116"/>
         <source>Remove object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt entfernen</translation>
     </message>
     <message>
         <location filename="../DataControlPlugin.cc" line="123"/>
-        <location filename="../Popup.cc" line="317"/>
+        <location filename="../Popup.cc" line="328"/>
         <source>Material Properties</source>
         <translation>MAterial Eigenschaften</translation>
     </message>
@@ -131,270 +131,280 @@
     <message>
         <location filename="../DataControlPluginScripting.cc" line="69"/>
         <source>id of the object, set object as target?</source>
-        <translation type="unfinished"></translation>
+        <translation>id des Objektes, Objekt als Ziel setzen?</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="71"/>
         <source>Set given object as source.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das angegebene Objekt als Quelle auswählen.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="72"/>
         <source>ObjectId,Source</source>
-        <translation type="unfinished"></translation>
+        <translation>ObjectId,Quelle</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="73"/>
         <source>id of the object, set object as source?</source>
-        <translation type="unfinished"></translation>
+        <translation>id des Objektes, Objekt als Quelle setzen?</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="75"/>
         <source>Set name of given object.</source>
-        <translation type="unfinished"></translation>
+        <translation>Namen des Objektes ändern.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="76"/>
         <source>ObjectId,name</source>
-        <translation type="unfinished"></translation>
+        <translation>ObjectId,Name</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="77"/>
         <source>id of the object, the new name</source>
-        <translation type="unfinished"></translation>
+        <translation>id des Objektes, neuer Name</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="79"/>
         <location filename="../DataControlPluginScripting.cc" line="83"/>
         <source>Group given Objects together.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppiere Objekte.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="80"/>
         <source>objectIds,groupName</source>
-        <translation type="unfinished"></translation>
+        <translation>ObjectId,Gruppenname</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="81"/>
         <source>List of objects that should be grouped., Name of the group.</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste von Objekten die gruppiert werden sollen, Name der Gruppe.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="84"/>
         <source>objectIds</source>
-        <translation type="unfinished"></translation>
+        <translation>objectIds</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="84"/>
         <source>List of objects that should be grouped.</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste von Objekten die gruppiert werden sollen.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="86"/>
         <source>Remove the given object from its group and append to root node.</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt aus seiner Gruppe entfernen und an die Wurzel anhängen.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="87"/>
         <source>ObjectId</source>
-        <translation type="unfinished"></translation>
+        <translation>ObjectId</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="87"/>
         <source>Object to be removed from group.</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt das aus der Gruppe entfernt werden soll.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="89"/>
         <source>Delete an object</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche ein Objekt</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="90"/>
         <source>Delete the given object.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche das angegebene Objekt.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="92"/>
         <source>Create a copy of an object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt kopieren</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="93"/>
         <source>Object to copy.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu kopierendes Objekt.</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="95"/>
         <source>Set All objects as targets</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze alle Objekte als Ziel</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="98"/>
         <source>Set All objects as source</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze alle Objekte als Quelle</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="101"/>
         <source>Clear targets</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Ziel Markierungen entfernen</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="104"/>
         <source>Clear sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Quell Markierungen entfernen</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="107"/>
         <source>Show all objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Objekte zeigen</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="110"/>
         <source>Hide all objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Objekte verstecken</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="161"/>
         <source>getObjectName : unable to get object</source>
-        <translation type="unfinished"></translation>
+        <translation>getObjectName: Kann Objekt nicht finden</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="162"/>
         <source>Unknown Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekanntes Objekt</translation>
     </message>
     <message>
         <location filename="../DataControlPluginScripting.cc" line="288"/>
         <source>No objects to group.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Objekte in Gruppe.</translation>
     </message>
     <message>
-        <location filename="../DataControlPluginScripting.cc" line="348"/>
+        <location filename="../DataControlPluginScripting.cc" line="335"/>
         <source>Unable to get Object with id %1 for ungrouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Objekte mit id %1 nicht aus Gruppe entfernen (nicht gefunden!)</translation>
     </message>
     <message>
         <location filename="../Popup.cc" line="76"/>
         <source>Do you really want to remove the selected objects?</source>
-        <translation type="unfinished"></translation>
+        <translation>Sollen wirklich alle gewählten Objekte entfernt werden?</translation>
     </message>
     <message>
-        <location filename="../DataControlPluginScripting.cc" line="302"/>
-        <location filename="../Popup.cc" line="202"/>
+        <location filename="../DataControlPluginScripting.cc" line="297"/>
+        <location filename="../Popup.cc" line="198"/>
         <source>Cannot group Objects with different parents</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Objekte mit unterschiedlichen Eltern nicht gruppieren</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="215"/>
+        <location filename="../Popup.cc" line="207"/>
         <source>newGroup</source>
         <translation>Neue Gruppe</translation>
     </message>
     <message>
-        <location filename="../DataControlPluginScripting.cc" line="319"/>
-        <location filename="../Popup.cc" line="216"/>
+        <location filename="../DataControlPluginScripting.cc" line="311"/>
+        <location filename="../Popup.cc" line="208"/>
         <source>newGroup </source>
         <translation>Neue Gruppe</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="270"/>
-        <location filename="../Popup.cc" line="320"/>
+        <location filename="../Popup.cc" line="257"/>
+        <location filename="../Popup.cc" line="331"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
     <message>
+        <location filename="../Popup.cc" line="259"/>
         <location filename="../Popup.cc" line="272"/>
-        <location filename="../Popup.cc" line="285"/>
-        <location filename="../Popup.cc" line="296"/>
-        <location filename="../Popup.cc" line="322"/>
+        <location filename="../Popup.cc" line="294"/>
+        <location filename="../Popup.cc" line="333"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="276"/>
+        <location filename="../Popup.cc" line="263"/>
         <source>Zoom to objects</source>
         <translation>Zoom auf Objekt</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="279"/>
+        <location filename="../Popup.cc" line="266"/>
         <source>Ungroup</source>
         <translation>Grupierung aufheben</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="281"/>
-        <location filename="../Popup.cc" line="293"/>
-        <location filename="../Popup.cc" line="314"/>
-        <location filename="../Popup.cc" line="457"/>
+        <location filename="../Popup.cc" line="268"/>
+        <location filename="../Popup.cc" line="291"/>
+        <location filename="../Popup.cc" line="325"/>
+        <location filename="../Popup.cc" line="468"/>
         <source>Rename</source>
         <translation>Umbenennnen</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="308"/>
+        <location filename="../Popup.cc" line="281"/>
+        <source>Object </source>
+        <translation>Objekt</translation>
+    </message>
+    <message>
+        <location filename="../Popup.cc" line="303"/>
+        <source>Switch On</source>
+        <translation>Einschalten</translation>
+    </message>
+    <message>
+        <location filename="../Popup.cc" line="309"/>
+        <source>Switch Off</source>
+        <translation>Ausschalten</translation>
+    </message>
+    <message>
+        <location filename="../Popup.cc" line="319"/>
         <source>Zoom to object</source>
         <translation>Zoom auf Objekt</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="290"/>
-        <location filename="../Popup.cc" line="311"/>
+        <location filename="../Popup.cc" line="288"/>
+        <location filename="../Popup.cc" line="322"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="300"/>
-        <source>Switch On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Popup.cc" line="303"/>
+        <location filename="../Popup.cc" line="314"/>
         <source>Edit Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Licht bearbeiten</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="366"/>
+        <location filename="../Popup.cc" line="377"/>
         <source>Show all</source>
         <translation>Zeige Alle</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="371"/>
+        <location filename="../Popup.cc" line="382"/>
         <source>Show all of type &apos;</source>
         <translation>Zeige Alle vom Typ &apos;</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="376"/>
+        <location filename="../Popup.cc" line="387"/>
         <source>Hide all</source>
         <translation>Verstecke Alle</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="381"/>
+        <location filename="../Popup.cc" line="392"/>
         <source>Hide all of type &apos;</source>
         <translation>VErstecke Alle vom Typ &apos;</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="388"/>
-        <location filename="../Popup.cc" line="410"/>
+        <location filename="../Popup.cc" line="399"/>
+        <location filename="../Popup.cc" line="421"/>
         <source>Select all</source>
         <translation>Selektiere Alle</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="393"/>
-        <location filename="../Popup.cc" line="415"/>
+        <location filename="../Popup.cc" line="404"/>
+        <location filename="../Popup.cc" line="426"/>
         <source>Select all of type &apos;</source>
         <translation>Selektiere Alle vom Typ &apos;</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="398"/>
-        <location filename="../Popup.cc" line="420"/>
+        <location filename="../Popup.cc" line="409"/>
+        <location filename="../Popup.cc" line="431"/>
         <source>Deselect all</source>
         <translation>Hebe Selektion für Alle auf</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="403"/>
-        <location filename="../Popup.cc" line="425"/>
+        <location filename="../Popup.cc" line="414"/>
+        <location filename="../Popup.cc" line="436"/>
         <source>Deselect all of type &apos;</source>
         <translation>Hebe Selektion für Objekte vom Typ &apos;</translation>
     </message>
     <message>
-        <location filename="../Popup.cc" line="458"/>
+        <location filename="../Popup.cc" line="469"/>
         <source>Enter a new name:</source>
         <translation>Geben sie einen neuen Namen ein:</translation>
     </message>
@@ -407,34 +417,46 @@
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="42"/>
-        <source>Visible Data</source>
-        <translation type="unfinished"></translation>
+        <location filename="../toolbox.ui" line="45"/>
+        <source>Object Visibility</source>
+        <translation>Objekt Sichtbarkeit</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="48"/>
+        <location filename="../toolbox.ui" line="64"/>
         <source>Show Light Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Lichtquellen</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="58"/>
+        <location filename="../toolbox.ui" line="81"/>
         <source>Object Bounding Box</source>
         <translation>Objekt Bounding Box</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="66"/>
+        <location filename="../toolbox.ui" line="100"/>
+        <source>Show always</source>
+        <translation>Immer anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../toolbox.ui" line="107"/>
+        <source>Show on source objects</source>
+        <translation>Bei Quell Objekten anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../toolbox.ui" line="114"/>
+        <source>Show on target objects</source>
+        <translation>Bei Ziel Objekten anzeigen</translation>
+    </message>
+    <message>
         <source>Not selected</source>
-        <translation>Nicht ausgewählt</translation>
+        <translation type="obsolete">Nicht ausgewählt</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="73"/>
         <source>Source</source>
-        <translation>Quelle</translation>
+        <translation type="obsolete">Quelle</translation>
     </message>
     <message>
-        <location filename="../toolbox.ui" line="80"/>
         <source>Target</source>
-        <translation>Ziel</translation>
+        <translation type="obsolete">Ziel</translation>
     </message>
 </context>
 </TS>
