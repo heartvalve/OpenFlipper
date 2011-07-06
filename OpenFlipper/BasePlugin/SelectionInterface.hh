@@ -451,6 +451,17 @@ class SelectionInterface {
     */
     virtual void slotSaveSelection(INIFile& _file) {};
 
+    public slots:
+
+    /** \brief Scripting slot for loading selections
+    *
+    *  Override this slot in order to directly load selections from files.
+    *
+    *  @param _objId    The target object's id
+    *  @param _filename The file in which the data is stored
+    */
+    virtual void loadSelection(int _objId, const QString& _filename) {};
+
     /** @} */
 
     //===========================================================================
