@@ -171,7 +171,10 @@ add_definitions (-DINCLUDE_TEMPLATES)
 # look for selected qt dependencies
 macro (acg_qt4)
   if (NOT QT4_FOUND)
-    find_package (Qt4 COMPONENTS QtCore QtGui ${ARGN})
+
+    set (QT_MIN_VERSION ${ARGN}) 
+
+    find_package (Qt4 COMPONENTS QtCore QtGui )
 
     set (QT_USE_QTOPENGL 1)
     set (QT_USE_QTNETWORK 1)
