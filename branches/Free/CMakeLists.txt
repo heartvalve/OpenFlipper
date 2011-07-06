@@ -14,7 +14,8 @@ acg_get_version (OpenMesh)
 include (package)
 include (ACGOutput)
 
-acg_qt4 (REQUIRED 4.5)
+
+acg_qt4 (4.7.0)
 acg_openmp ()
 acg_ftgl ()
 
