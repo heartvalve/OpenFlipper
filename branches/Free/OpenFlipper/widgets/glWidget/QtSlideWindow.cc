@@ -155,13 +155,16 @@ void QtSlideWindow::attachWidget (QWidget *_m)
 }
 
 //-----------------------------------------------------------------------------
-
+#include <iostream>
 void QtSlideWindow::detachWidget ()
 {
   setWidget (0);
   hide ();
-  mainWidget_->setParent(0);
-  mainWidget_ = 0;
+
+  if(mainWidget_) {
+    mainWidget_->setParent(0);
+    mainWidget_ = 0;
+  }
 
   if (dialog_)
   {
