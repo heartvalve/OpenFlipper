@@ -269,6 +269,9 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
     emit setSlotDescription("setAllModelingVertices(int)", tr("Add al vertices of an object to modeling area"),
                             QStringList("objectId"), QStringList("Id of an object"));
     
+    emit setSlotDescription("loadSelection(int,QString)", tr("Load selection from selection file"),
+                            QString("objectId,filename").split(","), QString("Id of an object,Selection file").split(","));
+
     emit setSlotDescription("loadFlipperModelingSelection(int,QString)", tr("Load selection from Flipper selection file"),
                             QString("objectId,filename").split(","), QString("Id of an object,Flipper selection file").split(","));
     emit setSlotDescription("saveFlipperModelingSelection(int,QString)", tr("Save selection into Flipper selection file"),
@@ -1152,6 +1155,20 @@ void MeshObjectSelectionPlugin::slotComponentsSelection(QMouseEvent* _event, Sel
         emit updatedObject(object->id(), UPDATE_SELECTION);
         emit createBackup(object->id(), "Connected Components Selection", UPDATE_SELECTION);
     }
+}
+
+void MeshObjectSelectionPlugin::loadSelection(int _objId, const QString& _filename) {
+
+    // Load ini file
+    INIFile file;
+
+    if(!file.connect(_filename, false)) {
+        emit log(LOGERR, QString("Could not read file '%1'!").arg(_filename));
+        return;
+    }
+
+    // Load selection from file
+    loadIniFile(file, _objId);
 }
 
 void MeshObjectSelectionPlugin::loadIniFile(INIFile& _ini, int _id) {

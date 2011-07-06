@@ -130,6 +130,11 @@ signals:
     // ScriptInterface
     void scriptInfo(QString _functionName);
 
+public slots:
+
+    // SelectionInterface
+    void loadSelection(int _objId, const QString& _filename);
+
 private slots:
 
     // INIInterface
