@@ -128,6 +128,9 @@ void ObjectSelectionPlugin::updateSlotDescriptions() {
                             QStringList("objectId"), QStringList("Id of object"));
     emit setSlotDescription("selectObjects(int,IdList)", tr("Select the specified objects"),
                             QString("objectId,objectList").split(","), QString("Id of object,List of objects").split(","));
+
+    emit setSlotDescription("loadSelection(int,QString)", tr("Load selection from selection file"),
+                            QString("objectId,filename").split(","), QString("Id of an object,Selection file").split(","));
 }
 
 //==============================================================================================
@@ -236,6 +239,22 @@ void ObjectSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event, Select
         // Clear lasso points
         volumeLassoPoints_.clear();
     }
+}
+
+//==============================================================================================
+
+void ObjectSelectionPlugin::loadSelection(int _objId, const QString& _filename) {
+
+    // Load ini file
+    INIFile file;
+
+    if(!file.connect(_filename, false)) {
+        emit log(LOGERR, QString("Could not read file '%1'!").arg(_filename));
+        return;
+    }
+
+    // Load selection from file
+    loadIniFile(file, _objId);
 }
 
 //==============================================================================================

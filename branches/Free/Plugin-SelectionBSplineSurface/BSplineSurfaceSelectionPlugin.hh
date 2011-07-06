@@ -138,6 +138,11 @@ private slots:
     
     void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers);
 
+public slots:
+
+    // SelectionInterface
+    void loadSelection(int _objId, const QString& _filename);
+
 public:
 
     // BaseInterface
