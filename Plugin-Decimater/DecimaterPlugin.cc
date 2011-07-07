@@ -393,7 +393,7 @@ void DecimaterPlugin::slotUpdateNumVertices()
   int div = 0;
 
   bool ok;
-  emit functionExists( "info" , "vertexCount(int)", ok  ) ;
+  emit functionExists( "infomeshobject" , "vertexCount(int)", ok  ) ;
   if (!ok)
   {
     tool_->currentNumVertices->setText ("<not available>");
@@ -404,7 +404,7 @@ void DecimaterPlugin::slotUpdateNumVertices()
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
 
-    max = std::max( RPC::callFunctionValue<int>   ("info" , "vertexCount",o_it->id()) , max );
+    max = std::max( RPC::callFunctionValue<int>   ("infomeshobject" , "vertexCount",o_it->id()) , max );
     div++;
   }
 
