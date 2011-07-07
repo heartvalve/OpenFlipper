@@ -34,15 +34,15 @@
     </outputs>
     <code>
       if ([is_connected="nVert"])
-        [output="nVert"] = info.vertexCount([input="obj"]);
+        [output="nVert"] = infomeshobject.vertexCount([input="obj"]);
       if ([is_connected="nEdge"])
-        [output="nEdge"] = info.edgeCount([input="obj"]);
+        [output="nEdge"] = infomeshobject.edgeCount([input="obj"]);
       if ([is_connected="nFace"])
-        [output="nFace"] = info.faceCount([input="obj"]);
+        [output="nFace"] = infomeshobject.faceCount([input="obj"]);
       if ([is_connected="nBound"])
-        [output="nBound"] = info.boundaryCount([input="obj"]);
+        [output="nBound"] = infomeshobject.boundaryCount([input="obj"]);
       if ([is_connected="nComp"])
-        [output="nComp"] = info.componentCount([input="obj"]);
+        [output="nComp"] = infomeshobject.componentCount([input="obj"]);
     </code>
   </element>
 
@@ -73,11 +73,11 @@
     </outputs>
     <code>
       if ([is_connected="minEdgeLength"])
-        [output="minEdgeLength"] = info.minEdgeLength([input="obj"]);
+        [output="minEdgeLength"] = infomeshobject.minEdgeLength([input="obj"]);
       if ([is_connected="maxEdgeLength"])
-        [output="maxEdgeLength"] = info.maxEdgeLength([input="obj"]);
+        [output="maxEdgeLength"] = infomeshobject.maxEdgeLength([input="obj"]);
       if ([is_connected="meanEdgeLength"])
-        [output="meanEdgeLength"] = info.meanEdgeLength([input="obj"]);
+        [output="meanEdgeLength"] = infomeshobject.meanEdgeLength([input="obj"]);
     </code>
   </element>
 
@@ -112,13 +112,13 @@
     </outputs>
     <code>
       if ([is_connected="min"])
-        [output="min"] = info.boundingBoxMin([input="obj"]);
+        [output="min"] = infomeshobject.boundingBoxMin([input="obj"]);
       if ([is_connected="max"])
-        [output="max"] = info.boundingBoxMax([input="obj"]);
+        [output="max"] = infomeshobject.boundingBoxMax([input="obj"]);
       if ([is_connected="size"])
-        [output="size"] = info.boundingBoxSize([input="obj"]);
+        [output="size"] = infomeshobject.boundingBoxSize([input="obj"]);
       if ([is_connected="cog"])
-        [output="cog"] = info.cog([input="obj"]);
+        [output="cog"] = infomeshobject.cog([input="obj"]);
     </code>
   </element>
 
