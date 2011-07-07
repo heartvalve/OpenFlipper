@@ -134,7 +134,7 @@ void IsotropicRemesherPlugin::slotSetMinLength()
   bool first = true;
 
   bool ok;
-  emit functionExists( "info" , "minEdgeLength(int)", ok  ) ;
+  emit functionExists( "infomeshobject" , "minEdgeLength(int)", ok  ) ;
   if (!ok)
     return;
 
@@ -143,11 +143,11 @@ void IsotropicRemesherPlugin::slotSetMinLength()
 
     if (first)
     {
-      current = RPC::callFunctionValue<double>("info" , "minEdgeLength",o_it->id() );
+      current = RPC::callFunctionValue<double>("infomeshobject" , "minEdgeLength",o_it->id() );
       first = false;
     }
     else
-      current = qMin (current, RPC::callFunctionValue<double>("info" , "minEdgeLength",o_it->id() ));
+      current = qMin (current, RPC::callFunctionValue<double>("infomeshobject" , "minEdgeLength",o_it->id() ));
     
   }
 
@@ -161,7 +161,7 @@ void IsotropicRemesherPlugin::slotSetMaxLength()
   bool first = true;
 
   bool ok;
-  emit functionExists( "info" , "maxEdgeLength(int)", ok  ) ;
+  emit functionExists( "infomeshobject" , "maxEdgeLength(int)", ok  ) ;
   if (!ok)
     return;
 
@@ -170,11 +170,11 @@ void IsotropicRemesherPlugin::slotSetMaxLength()
 
     if (first)
     {
-      current = RPC::callFunctionValue<double>("info" , "maxEdgeLength",o_it->id() );
+      current = RPC::callFunctionValue<double>("infomeshobject" , "maxEdgeLength",o_it->id() );
       first = false;
     }
     else
-      current = qMax (current, RPC::callFunctionValue<double>("info" , "maxEdgeLength",o_it->id() ));
+      current = qMax (current, RPC::callFunctionValue<double>("infomeshobject" , "maxEdgeLength",o_it->id() ));
     
   }
 
@@ -188,7 +188,7 @@ void IsotropicRemesherPlugin::slotSetMeanLength()
   int  div = 0;
 
   bool ok;
-  emit functionExists( "info" , "edgeCount(int)", ok  ) ;
+  emit functionExists( "infomeshobject" , "edgeCount(int)", ok  ) ;
   if (!ok)
     return;
 
@@ -196,9 +196,9 @@ void IsotropicRemesherPlugin::slotSetMeanLength()
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
 
-    current += RPC::callFunctionValue<int>   ("info" , "edgeCount",o_it->id()) *
-               RPC::callFunctionValue<double>("info" , "meanEdgeLength",o_it->id() );
-    div     += RPC::callFunctionValue<int>   ("info" , "edgeCount",o_it->id()      );
+    current += RPC::callFunctionValue<int>   ("infomeshobject" , "edgeCount",o_it->id()) *
+               RPC::callFunctionValue<double>("infomeshobject" , "meanEdgeLength",o_it->id() );
+    div     += RPC::callFunctionValue<int>   ("infomeshobject" , "edgeCount",o_it->id()      );
   }
 
   if (div > 0)
