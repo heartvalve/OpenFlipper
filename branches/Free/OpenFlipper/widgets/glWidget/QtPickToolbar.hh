@@ -40,118 +40,77 @@
 *                                                                            *
 \*===========================================================================*/
 
-#ifndef QT_SLIDE_WINDOW_
-#define QT_SLIDE_WINDOW_
+#ifndef QT_PICK_TOOLBAR_
+#define QT_PICK_TOOLBAR_
 
 //=============================================================================
 //
-//  CLASS QtSlideWindow
+//  CLASS QtPickToolbar
 //
 //=============================================================================
 
 //== INCLUDES =================================================================
 
 #include <QSettings>
+#include <QMainWindow>
 
 #include <QGraphicsProxyWidget>
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
-class QtGraphicsButton;
-class QTimeLine;
-class QGraphicsItemAnimation;
+class QToolBar;
 
 //== CLASS DEFINITION =========================================================
 
 
-/** \class QtSlideWindow QtSlideWindow.hh <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
+/** \class QtPickToolbar QtPickToolbar.hh <OpenFlipper/widgets/glWidget/QtPickToolbar.hh>
 
-   A graphics scene widget that has a hover slide effect and detach functionality
-   for a child widget
+   A graphics scene widget that displays a toolbar inside the graphics scene
  **/
 
-class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
+class DLLEXPORT QtPickToolbar : public QGraphicsProxyWidget
 {
     Q_OBJECT
 
   public:
-    /** Create a glViewer.
-    \param _name displayed titlebar name
+    /** Create a pick toolbar.
     \param _parent parent graphics item
     */
-    QtSlideWindow (QString _name = 0, QGraphicsItem *_parent = 0);
+    QtPickToolbar (QMainWindow *_core, QGraphicsItem *_parent = 0, bool _renderInScene = true);
 
     /// recalculate geometry
     void updateGeometry ();
 
-    /// attach a child widget
-    void attachWidget (QWidget *_m);
+    /// attach a QToolBar
+    void attachToolbar (QToolBar *_m);
 
-    /// detach child widget
-    void detachWidget ();
+    /// detach toolbar
+    void detachToolbar ();
 
-
-    /// saves the current state
-    void saveState (QSettings &_settings);
-
-    /// restores the state
-    void restoreState (QSettings &_settings);
+    // Set rendering flag
+    void setRenderFlag(bool _inScene) { renderInScene_ = _inScene; }
 
   private:
 
     /// paints decoration
     virtual void paintWindowFrame(QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget = 0);
 
-    /// track frame events
-    virtual bool windowFrameEvent(QEvent *_e);
-
     /// categorize frame area
     virtual Qt::WindowFrameSection windowFrameSectionAt(const QPointF &_pos) const;
 
-    /// hove event tracking
-    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent *_event);
-    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent *_event);
-
-    /// size & position event tracking
-    virtual void resizeEvent (QGraphicsSceneResizeEvent *_event);
-    virtual void moveEvent (QGraphicsSceneMoveEvent *_event);
-
-  private slots:
-    /// detach button pressed
-    void detachPressed ();
-
-    /// detached dialog closed
-    void dialogClosed ();
-
-    /// autohide button presed
-    void autohidePressed ();
-
-    /// Executed if the timeline reches the end of its animation
-    void timelineFinished ();
-
+    /// event filter to track status tip events
+    bool eventFilter(QObject *_obj, QEvent *_event);
 
   private:
 
-    // name
-    QString name_;
-
     // child widget
-    QWidget *mainWidget_;
+    QToolBar *toolbar_;
 
-    // buttons
-    QtGraphicsButton *autohideButton_;
-    QtGraphicsButton *detachButton_;
+    QMainWindow *core_;
 
-    // animation
-    QTimeLine *hideTimeLine_;
-    QGraphicsItemAnimation *hideAnimation_;
-
-    // detached dialog
-    QDialog *dialog_;
-
-    // temporary widget
-    QWidget *tempWidget_;
+    // Render pick toolbar into scene
+    bool renderInScene_;
 };
 
 //=============================================================================
