@@ -588,7 +588,7 @@ Core::init() {
 
     windowStates.beginGroup ("Core");
     windowStates.beginGroup ("LogSlider");
-    coreWidget_->slidingLogger_->restoreState (windowStates);
+    //coreWidget_->slidingLogger_->restoreState (windowStates);
     windowStates.endGroup ();
     coreWidget_->toolBox_->restoreState (windowStates);
     windowStates.endGroup ();
@@ -1043,7 +1043,7 @@ Core::writeOnExit() {
 
     windowStates.beginGroup ("Core");
     windowStates.beginGroup ("LogSlider");
-    coreWidget_->slidingLogger_->saveState (windowStates);
+    //coreWidget_->slidingLogger_->saveState (windowStates);
     windowStates.endGroup ();
     coreWidget_->toolBox_->saveState (windowStates);
     windowStates.endGroup ();

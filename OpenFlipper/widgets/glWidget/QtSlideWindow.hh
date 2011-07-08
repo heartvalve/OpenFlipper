@@ -80,10 +80,13 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     \param _name displayed titlebar name
     \param _parent parent graphics item
     */
-    QtSlideWindow (QString _name = 0, QGraphicsItem *_parent = 0);
+    QtSlideWindow (QString _name = 0, QGraphicsProxyWidget* _parent = 0);
 
     /// recalculate geometry
     void updateGeometry ();
+
+    /// Keep track of parent window's geometry
+    void setParentGeometry(const QRectF& _rect) { rect_ = _rect; }
 
     /// attach a child widget
     void attachWidget (QWidget *_m);
@@ -152,6 +155,9 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 
     // temporary widget
     QWidget *tempWidget_;
+
+    // Parent widget's geometry
+    QRectF rect_;
 };
 
 //=============================================================================

@@ -76,7 +76,7 @@
 
 //== IMPLEMENTATION ==========================================================
 
-QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
+QtSlideWindow::QtSlideWindow(QString _name, QGraphicsProxyWidget* _parent) :
   QGraphicsProxyWidget(_parent),
   name_(_name),
   mainWidget_(0),
@@ -361,12 +361,12 @@ void QtSlideWindow::autohidePressed ()
 
 void QtSlideWindow::updateGeometry ()
 {
-  if (parentWidget () && widget ())
-  {
-    setPos (8, parentWidget ()->geometry ().height () - geometry ().height ());
-    resize (parentWidget ()->geometry ().width () - 20,
+  if (widget ()) {
+
+    setPos (8, rect_.height() - geometry ().height () - 5);
+    resize (rect_.width() - 20,
             widget ()->size ().height ());
-    
+
     if (autohideButton_) {
       autohideButton_->setPos (geometry().width() - 12, -13);
     }

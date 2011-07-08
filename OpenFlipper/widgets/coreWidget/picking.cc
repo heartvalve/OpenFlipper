@@ -110,16 +110,16 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     // Update pickmode toolbar
     switch ( _am ) {
       case Viewer::ExamineMode:
-        pickToolbar_->detachToolbar ();
+        hidePickToolBar();
         break;
 
       case Viewer::PickingMode:
         // Show the pickMode Toolbar for this picking mode if it is set
         if (pick_mode_idx_ != -1) {
           if (pick_modes_[pick_mode_idx_].toolbar() )
-            pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
+            setActivePickToolBar(pick_modes_[pick_mode_idx_].toolbar() );
           else
-            pickToolbar_->detachToolbar ();
+            hidePickToolBar();
         }
         break;
 
@@ -173,6 +173,45 @@ void CoreWidget::setPickMode(const std::string _mode){
 
 void CoreWidget::getPickMode(std::string& _mode){
   _mode = pick_mode_name_;
+}
+
+//-----------------------------------------------------------------------------
+
+void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
+
+    if(_tool != 0) {
+
+        // Hide all picking toolbars
+        hidePickToolBar();
+
+        // Try to find toolbar in local map
+        PickToolBarMap::iterator ret = curPickingToolbarItems_.find(_tool);
+        if(ret == curPickingToolbarItems_.end()) {
+            // Add widget
+            QGraphicsItem* item = glScene_->addWidget(_tool);
+            // Put it into center of the screen
+            int midP = (glScene_->width() / 2) - (int)(_tool->width() / 2);
+            item->setPos(midP, 0);
+            item->show();
+            curPickingToolbarItems_.insert(std::pair<QToolBar*,QGraphicsItem*>(_tool,item));
+        } else {
+            // Widget has already been added once, so just show it
+            ret->second->show();
+        }
+    } else {
+        hidePickToolBar();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void CoreWidget::hidePickToolBar() {
+
+    // Hide all picking toolbars
+    for(PickToolBarMap::iterator it = curPickingToolbarItems_.begin();
+            it != curPickingToolbarItems_.end(); ++it) {
+        it->second->hide();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -257,9 +296,9 @@ void CoreWidget::pickMode( int _id )
     pick_mode_name_ = pick_modes_[pick_mode_idx_].name();
 
     if (pick_modes_[pick_mode_idx_].toolbar() )
-      pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar() );
+      setActivePickToolBar(pick_modes_[pick_mode_idx_].toolbar() );
     else
-      pickToolbar_->detachToolbar ();
+      hidePickToolBar();
 
     // adjust mouse tracking
     if ( pickingMode() )
@@ -343,7 +382,7 @@ void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolb
 
       // Activate the toolbar if this mode is currently active
       if (pick_mode_name_ == _mode && pickingMode() )
-        pickToolbar_->attachToolbar (_toolbar);
+        setActivePickToolBar(_toolbar);
 
       break;
     }
@@ -359,7 +398,7 @@ void CoreWidget::removePickModeToolbar( const std::string _mode )
       pick_modes_[i].toolbar(0);
 
       if (pick_mode_name_ == _mode && pickingMode() )
-        pickToolbar_->detachToolbar ();
+        hidePickToolBar();
       break;
     }
 }

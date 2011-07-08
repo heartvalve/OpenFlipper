@@ -74,7 +74,6 @@
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
 #include <OpenFlipper/widgets/glWidget/QtMultiViewLayout.hh>
 #include <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
-#include <OpenFlipper/widgets/glWidget/QtPickToolbar.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -477,9 +476,6 @@ public:
 
     QSize defaultIconSize();
     
-    // Update pick toolbar settings
-    void updatePickToolbar();
-
   public slots:
     
     /// Show or hide toolbox
@@ -491,6 +487,24 @@ public:
     uint fullscreenState_;
     
     QSize defaultIconSize_;
+
+  /** @} */
+
+  //===========================================================================
+  /** @name GUI Controls
+  * @{ */
+  //===========================================================================
+
+  public slots:
+
+    /// Show in-scene logger widget
+    void showInSceneLogger();
+
+    /// Hide in-scene logger widget
+    void hideInSceneLogger();
+
+    /// Update logger's geometry
+    void updateInSceneLoggerGeometry(const QRectF& _rect);
 
   /** @} */
 
@@ -657,8 +671,9 @@ public:
     /// Toolbox scroll area
     QScrollArea* toolBoxScroll_;
 
-    /// Toolbar showed in pickmode
-    QtPickToolbar* pickToolbar_;
+    /// Handle to picking toolbar
+    typedef std::map<QToolBar*,QGraphicsItem*> PickToolBarMap;
+    PickToolBarMap curPickingToolbarItems_;
 
     /// Cursor handling
     CursorPainter* cursorPainter_;
@@ -689,7 +704,7 @@ public:
 
    /** Updates the size of the main graphics widget in the scene
      */
-   void sceneRectChanged(const QRectF &rect);
+   void sceneRectChanged(const QRectF& _rect);
 
   //===========================================================================
     /** @name Menubar controls
@@ -1286,6 +1301,12 @@ public:
 
 
     void getPickMode(std::string& _name);
+
+    /// Set toolbar to be active pick toolbar
+    void setActivePickToolBar(QToolBar* _tool);
+
+    /// Hide picking toolbar
+    void hidePickToolBar();
 
   public slots:
 
