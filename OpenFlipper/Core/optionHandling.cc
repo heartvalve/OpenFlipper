@@ -147,6 +147,9 @@ void Core::applyOptions(){
     // toolbox orientation
     coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool());
 
+    // Update pick toolbar settings
+    coreWidget_->updatePickToolbar();
+
     //set defaultBackgroundColor
     QColor c =  OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
 

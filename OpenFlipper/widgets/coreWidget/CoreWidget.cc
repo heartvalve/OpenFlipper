@@ -146,9 +146,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   windowMenu_(0),
   AC_ShowViewModeControls_(0),
   AC_ShowToolbox_(0),
-  glScene_(0),
-  centerWidget_(0),
-  slidingLogger_(0),
+  pickToolbar_(0),
   cursorPainter_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),
@@ -261,45 +259,37 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Set up the logging window
   // ======================================================================
 
-  slidingLogger_ = new QtSlideWindow (tr("Log Viewer"));
+  slidingLogger_ = new QtSlideWindow (tr("Log Viewer"), centerWidget_);
   tempLogWidget = new QWidget;
 
   logWidget_ = new LoggerWidget(splitter_);
   logWidget_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Preferred ) );
-  logWidget_->resize( splitter_->width(), 240);
-
-  // Attach sliding logger
-  slidingLogger_->attachWidget (logWidget_);
+  logWidget_->resize( splitter_->width() ,240);
 
   originalLoggerSize_ = 0;
   loggerState_ = OpenFlipper::Options::Normal;
 
-  // Add logger to gl scene
-  glScene_->addItem(slidingLogger_);
-
   QList<int> wsizes( splitter_->sizes() );
 
   if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene) {
+    slidingLogger_->attachWidget (logWidget_);
     splitter_->insertWidget (1, tempLogWidget);
-    if(wsizes.size() > 0) wsizes[0] = 1;
-    if(wsizes.size() > 1) wsizes[1] = 0;
+    wsizes[0] = 1;
+    wsizes[1] = 0;
     splitter_->setSizes(wsizes);
     loggerState_ = OpenFlipper::Options::InScene;
     baseLayout_->setContentsMargins (0, 0, 0, 16);
-    showInSceneLogger();
   } else if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden) {
     splitter_->insertWidget (1, tempLogWidget);
-    if(wsizes.size() > 0) wsizes[0] = 1;
-    if(wsizes.size() > 1) wsizes[1] = 0;
+    wsizes[0] = 1;
+    wsizes[1] = 0;
     splitter_->setSizes(wsizes);
     loggerState_ = OpenFlipper::Options::Hidden;
-    hideInSceneLogger();
   } else {
     // Set initial values to have a usable state
-    if(wsizes.size() > 0) wsizes[0] = 480;
-    if(wsizes.size() > 1) wsizes[1] = 240;
+    wsizes[0] = 480;
+    wsizes[1] = 240;
     splitter_->setSizes(wsizes);
-    hideInSceneLogger();
   }
 
 
@@ -507,6 +497,12 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Remember logger size
   wsizes = splitter_->sizes();
   originalLoggerSize_  = wsizes[1];
+
+  // ======================================================================
+  // Create pickmode toolbar
+  // ======================================================================
+
+  pickToolbar_ = new QtPickToolbar(this, centerWidget_, OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool());
 
   // ======================================================================
   // Create ToolBox area
@@ -768,77 +764,122 @@ CoreWidget::toggleLogger() {
   */
 void
 CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
-    //Hide Logger
-    if (_state == loggerState_)
-        return;
+  //Hide Logger
+  if (_state == loggerState_)
+    return;
 
-    qreal left, top, right, bottom;
-    baseLayout_->getContentsMargins(&left, &top, &right, &bottom);
+  qreal left, top, right, bottom;
+  baseLayout_->getContentsMargins (&left, &top, &right, &bottom);
 
-    switch (_state) {
-    case OpenFlipper::Options::InScene: {
-        QList<int> wsizes(splitter_->sizes());
+  switch (_state)
+  {
+    case OpenFlipper::Options::InScene:
+      {
+        QList<int> wsizes( splitter_->sizes() );
 
         // Remember old size
         if (loggerState_ == OpenFlipper::Options::Normal)
-            originalLoggerSize_ = wsizes[1];
+          originalLoggerSize_  = wsizes[1];
 
-        if (originalLoggerSize_ == 0)
-            originalLoggerSize_ = 240;
+	if ( originalLoggerSize_ == 0)
+          originalLoggerSize_ = 240;
 
-        splitter_->insertWidget(1, tempLogWidget);
-        wsizes[0] = wsizes[0] + wsizes[1];
+        splitter_->insertWidget (1, tempLogWidget);
+        wsizes[0] = wsizes[0]+wsizes[1];
         wsizes[1] = 0;
         splitter_->setSizes(wsizes);
-        logWidget_->resize(logWidget_->width(), originalLoggerSize_);
-        baseLayout_->setContentsMargins(left, top, right, 16);
+        logWidget_->resize (logWidget_->width (), originalLoggerSize_);
+        slidingLogger_->attachWidget (logWidget_);
+        baseLayout_->setContentsMargins (left, top, right, 16);
+      }
+      break;
+    case OpenFlipper::Options::Normal:
+      {
+        if ( originalLoggerSize_ == 0)
+          originalLoggerSize_ = 240;
 
-        showInSceneLogger();
-        break;
-    }
-    case OpenFlipper::Options::Normal: {
-        if (originalLoggerSize_ == 0)
-            originalLoggerSize_ = 240;
-
-        QList<int> wsizes(splitter_->sizes());
+        QList<int> wsizes( splitter_->sizes() );
 
         if (loggerState_ == OpenFlipper::Options::InScene)
-            originalLoggerSize_ = logWidget_->height();
+          originalLoggerSize_ = logWidget_->height ();
 
-        splitter_->insertWidget(1, logWidget_);
-        logWidget_->show();
+        slidingLogger_->detachWidget ();
+        splitter_->insertWidget (1, logWidget_);
+        logWidget_->show ();
 
-        wsizes[0] = wsizes[0] + wsizes[1] - originalLoggerSize_;
+        wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
         wsizes[1] = originalLoggerSize_;
         splitter_->setSizes(wsizes);
-        baseLayout_->setContentsMargins(left, top, right, 0);
-
-        hideInSceneLogger();
-        break;
-    }
-    case OpenFlipper::Options::Hidden: {
-        QList<int> wsizes(splitter_->sizes());
+        baseLayout_->setContentsMargins (left, top, right, 0);
+      }
+      break;
+    case OpenFlipper::Options::Hidden:
+      {
+        QList<int> wsizes( splitter_->sizes() );
 
         // Remember old size
         if (loggerState_ == OpenFlipper::Options::Normal)
-            originalLoggerSize_ = wsizes[1];
+          originalLoggerSize_  = wsizes[1];
 
-        if (loggerState_ == OpenFlipper::Options::InScene) {
-            originalLoggerSize_ = logWidget_->height();
-        }
+	if (loggerState_ == OpenFlipper::Options::InScene)
+	{
+	  slidingLogger_->detachWidget ();
+	  originalLoggerSize_ = logWidget_->height ();
+	}
 
-        splitter_->insertWidget(1, tempLogWidget);
-        wsizes[0] = wsizes[0] + wsizes[1];
+        splitter_->insertWidget (1, tempLogWidget);
+        wsizes[0] = wsizes[0]+wsizes[1];
         wsizes[1] = 0;
         splitter_->setSizes(wsizes);
-        baseLayout_->setContentsMargins(left, top, right, 0);
+        baseLayout_->setContentsMargins (left, top, right, 0);
+      }
+      break;
+  }
+  loggerState_ = _state;
 
-        hideInSceneLogger();
-        break;
-    }
-    } // End switch
+/*
+  if ( !_state ) {
+    QList<int> wsizes( splitter_->sizes() );
 
-    loggerState_ = _state;
+    // Remember old size
+    originalLoggerSize_  = wsizes[1];
+
+    int height = logWidget_->height ();
+
+    splitter_->insertWidget (1, tempLogWidget);
+    wsizes[0] = wsizes[0]+wsizes[1];
+    wsizes[1] = 0;
+    splitter_->setSizes(wsizes);
+    logWidget_->resize (logWidget_->width (), height);
+    slidingLogger_->attachWidget (logWidget_);
+
+  } else if (splitter_->widget (1) == logWidget_) {
+
+    if ( originalLoggerSize_ == 0)
+        originalLoggerSize_ = 240;
+
+    QList<int> wsizes( splitter_->sizes() );
+
+    if (wsizes[0] == 0)
+      wsizes[0] = height();
+
+    wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
+    wsizes[1] = originalLoggerSize_;
+    splitter_->setSizes(wsizes);
+  } else {
+
+    QList<int> wsizes( splitter_->sizes() );
+
+    int height = logWidget_->height ();
+
+    slidingLogger_->detachWidget ();
+    splitter_->insertWidget (1, logWidget_);
+
+    wsizes[0] = wsizes[0]+wsizes[1] - height;
+    wsizes[1] = height;
+    splitter_->setSizes(wsizes);
+  }
+  */
 }
 
 //-----------------------------------------------------------------------------
@@ -1070,11 +1111,11 @@ CoreWidget::slotShowSceneGraphDialog()
 //-----------------------------------------------------------------------------
 
 void
-CoreWidget::sceneRectChanged(const QRectF& _rect)
+CoreWidget::sceneRectChanged(const QRectF &rect)
 {
-  centerWidget_->setGeometry (_rect);
-  if(loggerState_ == OpenFlipper::Options::InScene)
-      updateInSceneLoggerGeometry(_rect);
+  centerWidget_->setGeometry (rect);
+  slidingLogger_->updateGeometry ();
+  pickToolbar_->updateGeometry();
 }
 
 //-----------------------------------------------------------------------------
@@ -1117,6 +1158,14 @@ void CoreWidget::slotActivateExaminer()
 void CoreWidget::setForceNativeCursor ( bool _state )
 {
   cursorPainter_->setForceNative (_state);
+}
+
+//-----------------------------------------------------------------------------
+
+void CoreWidget::updatePickToolbar() {
+
+    pickToolbar_->detachToolbar();
+    pickToolbar_->setRenderFlag(OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene", true).toBool());
 }
 
 //=============================================================================
