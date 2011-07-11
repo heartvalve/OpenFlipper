@@ -146,7 +146,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   windowMenu_(0),
   AC_ShowViewModeControls_(0),
   AC_ShowToolbox_(0),
-  pickToolbar_(0),
   cursorPainter_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),
@@ -497,12 +496,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Remember logger size
   wsizes = splitter_->sizes();
   originalLoggerSize_  = wsizes[1];
-
-  // ======================================================================
-  // Create pickmode toolbar
-  // ======================================================================
-
-  pickToolbar_ = new QtPickToolbar(this, centerWidget_, OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool());
 
   // ======================================================================
   // Create ToolBox area
@@ -1115,7 +1108,6 @@ CoreWidget::sceneRectChanged(const QRectF &rect)
 {
   centerWidget_->setGeometry (rect);
   slidingLogger_->updateGeometry ();
-  pickToolbar_->updateGeometry();
 }
 
 //-----------------------------------------------------------------------------
@@ -1158,14 +1150,6 @@ void CoreWidget::slotActivateExaminer()
 void CoreWidget::setForceNativeCursor ( bool _state )
 {
   cursorPainter_->setForceNative (_state);
-}
-
-//-----------------------------------------------------------------------------
-
-void CoreWidget::updatePickToolbar() {
-
-    pickToolbar_->detachToolbar();
-    pickToolbar_->setRenderFlag(OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene", true).toBool());
 }
 
 //=============================================================================

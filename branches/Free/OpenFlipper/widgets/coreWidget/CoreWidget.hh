@@ -74,7 +74,6 @@
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
 #include <OpenFlipper/widgets/glWidget/QtMultiViewLayout.hh>
 #include <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
-#include <OpenFlipper/widgets/glWidget/QtPickToolbar.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -476,9 +475,6 @@ public:
     void setForceNativeCursor ( bool _state );
 
     QSize defaultIconSize();
-    
-    // Update pick toolbar settings
-    void updatePickToolbar();
 
   public slots:
     
@@ -657,8 +653,9 @@ public:
     /// Toolbox scroll area
     QScrollArea* toolBoxScroll_;
 
-    /// Toolbar showed in pickmode
-    QtPickToolbar* pickToolbar_;
+    /// Handle to picking toolbar
+    typedef std::map<QToolBar*,QGraphicsItem*> PickToolBarMap;
+    PickToolBarMap curPickingToolbarItems_;
 
     /// Cursor handling
     CursorPainter* cursorPainter_;
@@ -1286,6 +1283,12 @@ public:
 
 
     void getPickMode(std::string& _name);
+
+    /// Set toolbar to be active pick toolbar
+    void setActivePickToolBar(QToolBar* _tool);
+
+    /// Hide picking toolbar
+    void hidePickToolBar();
 
   public slots:
 
