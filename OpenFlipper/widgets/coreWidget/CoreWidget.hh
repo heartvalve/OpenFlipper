@@ -264,6 +264,8 @@ class CoreWidget : public QMainWindow
 
 public:
 
+  friend class Core;
+
   /// constructor
   CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfo>& _plugins, QList< SlotInfo >& _coreSlots );
 
@@ -585,7 +587,7 @@ public:
     * @{ */
   //===========================================================================
 
-  public :
+  private:
 
     /// Examiner Widget
     std::vector< glViewer* >  examiner_widgets_;
