@@ -971,6 +971,15 @@ void Core::showToolbox( bool _state ) {
     coreWidget_->showToolbox(_state);
 }
 
+//-----------------------------------------------------------------------------
+
+void Core::showStatusBar( bool _state ) {
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->showStatusBar(_state);
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::multiViewMode( int _mode ) {
   if ( !OpenFlipper::Options::gui() || !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
     return;
@@ -1388,6 +1397,7 @@ void Core::setDescriptions(){
   emit setSlotDescription("loggerState(int)", tr("Change the logger window state"), QStringList(tr("Change the logger window state")), QStringList());
   emit setSlotDescription("enableOpenMeshErrorLog(bool)", tr("Enable or disable OpenMesh error logging"), QStringList(tr("OpenMesh error logging enabled")), QStringList());
   emit setSlotDescription("showToolbox(bool)", tr("Show or hide toolbox"), QStringList(tr("Show or hide the toolbox")), QStringList());
+  emit setSlotDescription("showStatusBar(bool)", tr("Show or hide status bar"), QStringList(tr("Show or hide the status bar")), QStringList());
   emit setSlotDescription("multiViewMode(int)", tr("Switch MultiView Mode"),
                           QStringList(tr("Mode")), QStringList(tr("0: One Viewer\n 1: Grid \n 2: Horizontal split")));
 

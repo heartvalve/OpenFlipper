@@ -522,30 +522,33 @@ void CoreWidget::registerCoreKeys() {
           this , SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString, bool)) );
 
   emit registerKey(Qt::Key_Print  , Qt::NoModifier, "Create Snapshot");
+  emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
+  emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
+
   emit registerKey(Qt::Key_S      , Qt::ControlModifier, "Save Object");
   emit registerKey(Qt::Key_O      , Qt::ControlModifier, "Open Object");
   emit registerKey(Qt::Key_L      , Qt::ControlModifier, "Show/Hide Logger");
   emit registerKey(Qt::Key_T      , Qt::ControlModifier, "Show/Hide Toolbox");
   emit registerKey(Qt::Key_F      , Qt::ControlModifier, "Toggle Fullscreen");
-  emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
-  emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
+  emit registerKey(Qt::Key_B      , Qt::ControlModifier, "Show/Hide StatusBar");
+
 
   if ( OpenFlipper::Options::isLinux() ) {
     emit registerKey(Qt::Key_Meta , Qt::MetaModifier, "Use Navigation mode while key is pressed");
     emit registerKey(Qt::Key_Meta , Qt::NoModifier, "Use Navigation mode while key is pressed");
   } else {
-    emit registerKey(Qt::Key_Alt , Qt::AltModifier, "Use Navigation mode while key is pressed");
-    emit registerKey(Qt::Key_Alt , Qt::NoModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Alt  , Qt::AltModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Alt  , Qt::NoModifier, "Use Navigation mode while key is pressed");
   }
 
   emit registerKey(Qt::Key_Shift  , Qt::ShiftModifier, "Apply context menu action to all Viewers", true);
   emit registerKey(Qt::Key_Shift  , Qt::NoModifier, "Apply context menu action to all Viewers", true);
   
   
-  emit registerKey(Qt::Key_A  , Qt::NoModifier, "First Person view strafe left");
-  emit registerKey(Qt::Key_D , Qt::NoModifier, "First Person view strafe right");
-  emit registerKey(Qt::Key_W    , Qt::NoModifier, "First Person view move forward");
-  emit registerKey(Qt::Key_S  , Qt::NoModifier, "First Person view move back");
+  emit registerKey(Qt::Key_A      , Qt::NoModifier, "First Person view strafe left");
+  emit registerKey(Qt::Key_D      , Qt::NoModifier, "First Person view strafe right");
+  emit registerKey(Qt::Key_W      , Qt::NoModifier, "First Person view move forward");
+  emit registerKey(Qt::Key_S      , Qt::NoModifier, "First Person view move back");
   
 }
 
@@ -570,6 +573,10 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
   if (_e->modifiers() & Qt::ControlModifier ) {
     switch (_e->key()) {
+      case Qt::Key_B :
+          toggleStatusBar();
+        return;
+
       case Qt::Key_F :
           toggleFullscreen();
         return;

@@ -634,6 +634,9 @@ public slots:
     /// Show or hide toolbox
     void showToolbox( bool _state );
 
+    /// Show or hide Status Bar
+    void showStatusBar( bool _state );
+
     /// Switch the multiView Mode
     void multiViewMode( int _mode );
 
