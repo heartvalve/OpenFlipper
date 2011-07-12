@@ -133,4 +133,32 @@ void CoreWidget::addWidgetToStatusbar(QWidget* _widget){
   
 }
 
+//-----------------------------------------------------------------------------
+
+/** Hide or show Status bar
+  */
+void
+CoreWidget::toggleStatusBar() {
+
+  //toggle
+  showStatusBar( OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool() );
+}
+
+//-----------------------------------------------------------------------------
+
+/** Hide or show  Status bar
+  */
+void
+CoreWidget::showStatusBar( bool _state ) {
+
+  //toggle
+  OpenFlipperSettings().setValue("Core/Gui/StatusBar/hidden",!_state);
+
+  if ( OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool() ){
+    statusBar_->setVisible(false);
+  }else{
+    statusBar_->setVisible(true);
+  }
+}
+
 //=============================================================================

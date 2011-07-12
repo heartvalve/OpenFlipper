@@ -473,6 +473,9 @@ public:
     /// Hide or show toolbox area
     void toggleToolbox();
 
+    /// Change visibility of the Status Bar
+    void toggleStatusBar();
+
     /// Use native or gl painted cursor
     void setForceNativeCursor ( bool _state );
 
@@ -482,6 +485,9 @@ public:
     
     /// Show or hide toolbox
     void showToolbox( bool _state );
+
+    /// Show or hide status bar
+    void showStatusBar( bool _state );
 
   private:
     OpenFlipper::Options::LoggerState loggerState_;

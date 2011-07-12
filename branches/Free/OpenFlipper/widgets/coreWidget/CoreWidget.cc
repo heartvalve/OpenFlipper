@@ -911,6 +911,7 @@ CoreWidget::showToolbox( bool _state ) {
   }
 }
 
+
 //=============================================================================
 
 void CoreWidget::setToolBoxOrientationOnTheRight(bool _toolBoxRight) {
