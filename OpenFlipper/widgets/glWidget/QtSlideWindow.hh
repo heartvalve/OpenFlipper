@@ -52,8 +52,9 @@
 //== INCLUDES =================================================================
 
 #include <QSettings>
-
 #include <QGraphicsProxyWidget>
+#include <QPropertyAnimation>
+
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 //== FORWARDDECLARATIONS ======================================================
@@ -127,9 +128,17 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     /// autohide button presed
     void autohidePressed ();
 
-    /// Executed if the timeline reches the end of its animation
-    void timelineFinished ();
+    /// Slide widget up
+    void slideUp();
 
+    /// Slide widget down
+    void slideDown();
+
+    /// Call this to correctly set start and ending positions
+    void updateParentGeometry();
+
+    // Slot is called whenever the animation is finished
+    void animationFinished();
 
   private:
 
@@ -143,15 +152,23 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     QtGraphicsButton *autohideButton_;
     QtGraphicsButton *detachButton_;
 
-    // animation
-    QTimeLine *hideTimeLine_;
-    QGraphicsItemAnimation *hideAnimation_;
-
     // detached dialog
     QDialog *dialog_;
 
-    // temporary widget
-    QWidget *tempWidget_;
+    // Starting position (for animation)
+    QPointF startP_;
+
+    // Ending position (for animation)
+    QPointF endP_;
+
+    // Track if widget is at bottom position
+    bool down_;
+
+    // Animation object
+    QPropertyAnimation* animation_;
+
+    // Is widget animating in this moment?
+    bool animating_;
 };
 
 //=============================================================================
