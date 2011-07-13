@@ -74,11 +74,24 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
       else
         filters = supportedTypes_[t].saveFilters;
 
-      if (filters.contains("." + ext_[i],Qt::CaseInsensitive)){
-        count++;
-        names.push_back( supportedTypes_[t].name );
-        usefulPlugins.push_back( t );
+      // Only take the parts inside the brackets
+      filters = filters.section("(",1).section(")",0,0);
+
+      // Split into blocks
+      QStringList separateFilters = filters.split(" ");
+
+      for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+        separateFilters[filterId] = separateFilters[filterId].trimmed();
+
+        if (separateFilters[filterId].endsWith("." + ext_[i],Qt::CaseInsensitive)){
+          count++;
+          names.push_back( supportedTypes_[t].name );
+          usefulPlugins.push_back( t );
+          continue;
+        }
+
       }
+
     }
     
     //more than one plugin can handle the extension

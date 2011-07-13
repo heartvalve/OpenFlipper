@@ -206,14 +206,36 @@ int Core::loadObject ( QString _filename ) {
     for (int i=0; i < (int)supportedTypes().size(); i++){
 
       QString filters = supportedTypes()[i].plugin->getLoadFilters();
-      //check extension
-      if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
-        if (  ! filters.contains( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
-          continue;
-        } else {
-          emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!"); 
+
+      // Only take the parts inside the brackets
+      filters = filters.section("(",1).section(")",0,0);
+
+      // Split into blocks
+      QStringList separateFilters = filters.split(" ");
+
+      bool found = false;
+
+      // for all filters associated with this plugin
+      for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+        separateFilters[filterId] = separateFilters[filterId].trimmed();
+
+        //check extension
+        if ( separateFilters[filterId].endsWith( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
+          found = true;
+          break;
         }
+
+        if (  separateFilters[filterId].endsWith( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
+          found = true;
+          emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!");
+          break;
+        }
+
       }
+
+      // continue processing only if found
+      if ( ! found )
+        continue;
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
@@ -267,10 +289,36 @@ int Core::loadObject( DataType _type, QString _filename) {
     if (supportedTypes()[i].type & _type || supportedTypes()[i].type == _type) {
 
       QString filters = supportedTypes()[i].plugin->getLoadFilters();
-      //check extension
-      if ( ! filters.contains( "*." + fi.suffix() ,Qt::CaseInsensitive ) )
+
+      // Only take the parts inside the brackets
+      filters = filters.section("(",1).section(")",0,0);
+
+      // Split into blocks
+      QStringList separateFilters = filters.split(" ");
+
+      bool found = false;
+
+      // for all filters associated with this plugin
+      for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+        separateFilters[filterId] = separateFilters[filterId].trimmed();
+
+        //check extension
+        if ( separateFilters[filterId].endsWith( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
+          found = true;
+          break;
+        }
+
+        if (  separateFilters[filterId].endsWith( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
+          found = true;
+          emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!");
+          break;
+        }
+
+      }
+
+      // continue processing only if found
+      if ( ! found )
         continue;
-        
       
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
