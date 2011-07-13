@@ -640,14 +640,18 @@ CoreWidget::toggleFullscreen() {
 
       //hide plugin toolbars
       for (uint p=0; p < plugins_.size(); p++)
-        for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j )
-          plugins_[p].toolbars[j].second->hide();
+        for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j ) {
+          if ( ! plugins_[p].toolbars[j].second->isFloating() )
+            plugins_[p].toolbars[j].second->hide();
+        }
 
       //hide main toolbar
-      mainToolbar_->hide();
+      if ( ! mainToolbar_->isFloating() )
+        mainToolbar_->hide();
 
       //hide viewer toolbar
-      viewerToolbar_->hide();
+      if ( ! viewerToolbar_->isFloating() )
+        viewerToolbar_->hide();
 
       //hide the menubar
       menuBar()->hide();
