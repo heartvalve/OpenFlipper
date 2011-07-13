@@ -660,9 +660,6 @@ CoreWidget::toggleFullscreen() {
       //hide the statusbar
       statusBar()->hide();
 
-      //remove viewer frame
-      glView_->setFrameStyle(QFrame::NoFrame);
-
       break;
 
     default:
@@ -679,8 +676,6 @@ CoreWidget::toggleFullscreen() {
       //show the statusbar
       statusBar()->show();
 
-      //add viewer frame
-      glView_->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
   }
 
   fullscreenState_ = (fullscreenState_ + 1) % 3;
