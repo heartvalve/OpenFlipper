@@ -35,8 +35,8 @@
 /*===========================================================================*\
 *                                                                            *
 *   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $LastChangedBy$                                                 *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 
@@ -470,6 +470,9 @@ public:
     /// Change visibility of the logger
     void showLogger(OpenFlipper::Options::LoggerState _state);
 
+    /// Show logger in splitter or not
+    void showLoggerInSplitView(bool _show);
+
     /// Hide or show toolbox area
     void toggleToolbox();
 
@@ -642,9 +645,6 @@ public:
 
     /// Class that holds the animated log widget
     QtSlideWindow* slidingLogger_;
-
-    /// Temporary widget
-    QWidget* tempLogWidget;
 
     /// Widget for toolBox
     QWidget* toolBoxArea_;
