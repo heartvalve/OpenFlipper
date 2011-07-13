@@ -299,10 +299,10 @@ void QtSlideWindow::autohidePressed() {
 void QtSlideWindow::updateParentGeometry() {
 
     startP_.setX(10);
-    startP_.setY(parentWidget()->geometry().height() - geometry().height() - 5);
+    startP_.setY(parentWidget()->geometry().height() - geometry().height());
 
     endP_.setX(10);
-    endP_.setY(parentWidget()->geometry().height() - (size().height() - geometry().height()) - 5);
+    endP_.setY(parentWidget()->geometry().height() - (size().height() - geometry().height()));
 }
 
 //-----------------------------------------------------------------------------
