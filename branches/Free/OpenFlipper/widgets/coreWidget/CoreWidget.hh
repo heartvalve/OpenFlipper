@@ -473,6 +473,9 @@ public:
     /// Show logger in splitter or not
     void showLoggerInSplitView(bool _show);
 
+    /// Set in-scene logger geometry right
+    void updateInSceneLoggerGeometry();
+
     /// Hide or show toolbox area
     void toggleToolbox();
 

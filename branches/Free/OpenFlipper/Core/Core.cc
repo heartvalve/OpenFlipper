@@ -582,8 +582,6 @@ Core::init() {
     coreWidget_->toolSplitter_->restoreState (windowStates.value("Core/ToolSplitter").toByteArray ());
     coreWidget_->splitter_->restoreState (windowStates.value("Core/LogSplitter").toByteArray ());
 
-    // Update logger
-    coreWidget_->showLogger(OpenFlipper::Options::loggerState());
     coreWidget_->show();
 
     applyOptions();
