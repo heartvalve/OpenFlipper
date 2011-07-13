@@ -115,8 +115,13 @@ void CoreWidget::showLoggerInSplitView(bool _show) {
         QList<int> wsizes = splitter_->sizes();
 
         // Remember old size
-        if (loggerState_ == OpenFlipper::Options::Normal)
-            originalLoggerSize_ = wsizes[1];
+        if (loggerState_ == OpenFlipper::Options::Normal) {
+            if(wsizes.size() > 1) {
+                originalLoggerSize_ = wsizes[1];
+            } else {
+                originalLoggerSize_ = 240;
+            }
+        }
 
         if (originalLoggerSize_ == 0)
             originalLoggerSize_ = 240;
