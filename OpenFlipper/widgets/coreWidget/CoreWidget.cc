@@ -237,6 +237,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glView_->setViewport(glWidget_);
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
+  glView_->setFrameStyle(QFrame::NoFrame);
 
   // gl widget as parent to make sure that the CursorPainter will be deleted before
   cursorPainter_ = new CursorPainter (glWidget_);
