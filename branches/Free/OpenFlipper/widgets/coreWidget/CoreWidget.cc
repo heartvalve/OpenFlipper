@@ -281,7 +281,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   } else if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden) {
 
-    showLoggerInSplitView(true);
+    showLoggerInSplitView(false);
     loggerState_ = OpenFlipper::Options::Hidden;
   } else {
 
