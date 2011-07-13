@@ -55,6 +55,11 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   : QWidget(parent),
   newData_(true)
 {
+  // Don't delete this widget on close actions
+  // since it may be embedded in different widget
+  // containers at the same time
+  setAttribute(Qt::WA_DeleteOnClose, false);
+
   QVBoxLayout* vlayout  = new QVBoxLayout();
   QHBoxLayout* hlayout  = new QHBoxLayout();
   QHBoxLayout* hlayout2 = new QHBoxLayout();
