@@ -94,6 +94,9 @@ void CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
     }
     case OpenFlipper::Options::Hidden: {
 
+        if (loggerState_ == OpenFlipper::Options::InScene)
+            slidingLogger_->detachWidget();
+
         showLoggerInSplitView(false);
 
         break;

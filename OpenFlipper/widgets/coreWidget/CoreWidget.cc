@@ -492,7 +492,12 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   // Remember logger size
   wsizes = splitter_->sizes();
-  originalLoggerSize_  = wsizes[1];
+
+  if(wsizes.size() > 1) {
+    originalLoggerSize_  = wsizes[1];
+  } else {
+    originalLoggerSize_ = 240;
+  }
 
   // ======================================================================
   // Create ToolBox area
