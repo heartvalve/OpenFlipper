@@ -99,6 +99,9 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     /// restores the state
     void restoreState (QSettings &_settings);
 
+    /// Call this to correctly set start and ending positions
+    void updateParentGeometry();
+
   private:
 
     /// paints decoration
@@ -133,9 +136,6 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 
     /// Slide widget down
     void slideDown();
-
-    /// Call this to correctly set start and ending positions
-    void updateParentGeometry();
 
     // Slot is called whenever the animation is finished
     void animationFinished();
