@@ -215,10 +215,25 @@ void LoadWidget::loadFile(){
       
       QString filters = supportedTypes_[t].loadFilters;  
 
-      if (filters.contains(ext[i],Qt::CaseInsensitive)){
-        pluginForExtension_[ ext[i] ] = t;
-        break;
+      // Take only part inside brackets
+      filters = filters.section("(",1).section(")",0,0);
+
+      QStringList separateFilters = filters.split(" ");
+
+      bool found = false;
+
+      for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+
+        if (separateFilters[filterId].endsWith(ext[i],Qt::CaseInsensitive)){
+          pluginForExtension_[ ext[i] ] = t;
+          found = true;
+        }
+
       }
+
+      if ( found )
+        break;
+
     }
   }
 
@@ -288,10 +303,25 @@ void LoadWidget::saveFile(){
 
     QString filters = supportedTypes_[t].saveFilters;  
 
-    if (filters.contains( fi.suffix(),Qt::CaseInsensitive )){
-      pluginForExtension_[ fi.suffix() ] = t;
-      break;
+    // Take only part inside brackets
+    filters = filters.section("(",1).section(")",0,0);
+
+    QStringList separateFilters = filters.split(" ");
+
+    bool found = false;
+
+    for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+
+      if (separateFilters[filterId].endsWith(fi.suffix(),Qt::CaseInsensitive)){
+        pluginForExtension_[ fi.suffix() ] = t;
+        found = true;
+      }
+
     }
+
+    if ( found )
+      break;
+
   }
   
   // display options for all dataTypes
