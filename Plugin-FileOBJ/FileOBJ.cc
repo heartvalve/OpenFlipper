@@ -1413,10 +1413,15 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
   }
   
-  if (faceCount > 0){
+  if(faceCount > 0) {
     if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
     if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
     _importer.setObjectOptions( options );
+  } else {
+    // Mesh does not contain any faces
+    PolyMeshCount++;
+    _importer.setObjectOptions(OBJImporter::TRIMESH);
+    std::cerr << "Adding a polymesh" << std::endl;
   }
   
   if (TriMeshCount == 0 && PolyMeshCount == 0)
