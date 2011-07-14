@@ -1147,12 +1147,16 @@ void DrawMeshT<Mesh>::updatePickingVertices(ACG::GLState& _state,
   unsigned int idx = 0;
 
   // Adjust size of the color buffer to the number of vertices in the mesh
+  pickVertColBuf_.resize( mesh_.n_vertices() );
   pickVertBuf_.resize( mesh_.n_vertices() );
 
   // Get the right picking colors from the gl state and add them per vertex to the color buffer
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
   for (; v_it!=v_end; ++v_it, ++idx) 
-    pickVertBuf_[idx] = _state.pick_get_name_color(idx + _offset);
+  {
+    pickVertColBuf_[idx] = _state.pick_get_name_color(idx + _offset);
+    pickVertBuf_[idx] = mesh_.point(mesh_.vertex_handle(idx));
+  }
 }
 
 
