@@ -88,6 +88,7 @@ CoordsysObject* coordsysObject( BaseObjectData* _object );
  * @param _objectId The object should be of type CoordsysObject. If the id belongs to a coordsys, a
  *                a CoordsysObject is returned. Otherwise a NULL pointer is returned.
  */
+DLLEXPORT
 CoordsysObject* coordsysObject( int _objectId );
 
 
