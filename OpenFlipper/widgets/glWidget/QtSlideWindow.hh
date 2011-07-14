@@ -54,6 +54,7 @@
 #include <QSettings>
 #include <QGraphicsProxyWidget>
 #include <QPropertyAnimation>
+#include <QTimer>
 
 #include <OpenFlipper/common/GlobalDefines.hh>
 
@@ -140,6 +141,9 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     // Slot is called whenever the animation is finished
     void animationFinished();
 
+    // Start actual slide down
+    void startSlideDownAnimation();
+
   private:
 
     // name
@@ -169,6 +173,9 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 
     // Is widget animating in this moment?
     bool animating_;
+
+    // Wait some milliseconds before sliding widget down
+    QTimer* timer_;
 };
 
 //=============================================================================
