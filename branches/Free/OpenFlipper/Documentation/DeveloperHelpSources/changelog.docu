@@ -1,6 +1,29 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.3 (  ? , 11903 )</b>
+ * - <b>OpenFlipper 1.0.3 (  ? , 11997 )</b>
+ *      - <b>Core</b>
+ *          - File handling
+ *              - Fixed load and save bug, where extensions where considered equal if prefix matched
+ *          - GUI
+ *              - Fixed bug causing a crash when switching between logger modes
+ *              - Reworked log viewer animation and embedding
+ *              - Reworked in scene toolbar integration
+ *              - Fixed bug with transparent frame introduced with QT 4.7.3 onward
+ *              - Added functions to hide status bar ( Ctrl+b , scripting)
+ *              - When going to fullscreen, hide only toolbars that are currently docked
+ *          - Options 
+ *              - Fixed bug where translations could not be switched in the options dialog
+ *              - Added sliders to options widget to support smaller screens
+ *      - <b>Plugins</b>
+ *          - File OBJ
+ *              - Add empty object if empty file is read instead of failing
+ *          - Selection
+ *              - Introduce function to load selections via scripting from files
+ *          - VSI
+ *              - Fixed bug where meshobjectinfo was not correctly supported
+ *      - <b>Build System</b>
+ *          - Increased min cmake version to 2.8.5 to work around some build problems with minor versions
+ *          - Follow links when recursivly adding sources
  *
  * - <b>OpenFlipper 1.0.2 (  2011.06.30 , 11903 )</b>
  *      - <b>ACG</b>
