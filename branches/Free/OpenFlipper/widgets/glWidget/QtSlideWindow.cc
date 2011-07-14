@@ -54,10 +54,10 @@
 #define BACKGROUND_BLUE  0xff
 #define BACKGROUND_ALPHA 0xcf
 
-#define SLIDE_DURATION 400
+#define SLIDE_DURATION        300
+#define WAIT_UNTIL_SLIDE_DOWN 500
 
 //== INCLUDES =================================================================
-
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
@@ -81,7 +81,8 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
     detachButton_(0),
     dialog_(0),
     down_(false),
-    animating_(false) {
+    animating_(false),
+    timer_(0) {
 
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     setWindowFrameMargins(2, 15, 2, 2);
@@ -103,8 +104,15 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
 
     // Create animation object
     animation_ = new QPropertyAnimation(this, "pos");
-    animation_->setDuration(300); // 300 ms animation
+    animation_->setDuration(SLIDE_DURATION);
     connect(animation_, SIGNAL(finished()), this, SLOT(animationFinished()));
+
+    // Create timer
+    timer_ = new QTimer();
+    timer_->setSingleShot(true);
+
+    // Wait some milliseconds before starting the actual slide down animation
+    connect(timer_, SIGNAL(timeout()), this, SLOT(startSlideDownAnimation()));
 
     // Hide widget
     hide();
@@ -201,6 +209,13 @@ Qt::WindowFrameSection QtSlideWindow::windowFrameSectionAt(const QPointF &_pos) 
 //-----------------------------------------------------------------------------
 
 void QtSlideWindow::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
+
+    // Stop slide down action after timeout if the cursor
+    // re-enters the logger within the timeout interval
+    if(timer_->isActive()) {
+        timer_->stop();
+        return;
+    }
 
     // Don't do anything if animation is currently in progress
     if(animating_) return;
@@ -312,6 +327,8 @@ void QtSlideWindow::animationFinished() {
     animating_ = false;
 }
 
+//-----------------------------------------------------------------------------
+
 void QtSlideWindow::slideUp() {
 
     if(!widget()) return;
@@ -334,6 +351,13 @@ void QtSlideWindow::slideDown() {
     if(!widget()) return;
 
     updateParentGeometry();
+
+    timer_->start(WAIT_UNTIL_SLIDE_DOWN);
+}
+
+//-----------------------------------------------------------------------------
+
+void QtSlideWindow::startSlideDownAnimation() {
 
     down_ = true;
     animating_ = true;
