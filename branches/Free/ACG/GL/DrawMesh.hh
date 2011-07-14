@@ -392,18 +392,37 @@ public:
   * @return pointer to the first element of the picking buffer
   */
   ACG::Vec4uc * pickVertexColorBuffer(){
+    if ( pickVertColBuf_.size() >0 )
+      return &(pickVertColBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickVertexColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  };
+
+  /** \brief get a pointer to the per vertex picking vertex buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingVertices to update the buffer before you render it via
+  * glVertexPointer.
+  *
+  * @return pointer to the first element of the picking buffer
+  */
+  ACG::Vec3f * pickVertexBuffer(){
     if ( pickVertBuf_.size() >0 )
       return &(pickVertBuf_)[0];
     else {
-      std::cerr << "Illegal request to pickVertexColorBuffer when buffer is empty!" << std::endl;
+      std::cerr << "Illegal request to pickVertexBuffer when buffer is empty!" << std::endl;
       return 0;
     }
   };
   
 private:  
   
+  /// The vertex buffer used for vertex picking
+  std::vector< ACG::Vec3f > pickVertBuf_;
   /// The color buffer used for vertex picking
-  std::vector< ACG::Vec4uc > pickVertBuf_;
+  std::vector< ACG::Vec4uc > pickVertColBuf_;
 
 
 
