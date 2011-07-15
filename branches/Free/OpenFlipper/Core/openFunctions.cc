@@ -126,8 +126,10 @@ void Core::commandLineScript(const char* _filename ) {
 
 void Core::slotExecuteAfterStartup() {
 
+
   // Update logger
-  coreWidget_->updateInSceneLoggerGeometry();
+  if ( OpenFlipper::Options::gui())
+    coreWidget_->updateInSceneLoggerGeometry();
 
   //check if we have scripting support:
   bool scriptingSupport = false;
