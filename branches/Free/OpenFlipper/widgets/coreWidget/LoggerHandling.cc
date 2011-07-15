@@ -151,7 +151,7 @@ void CoreWidget::showLoggerInSplitView(bool _show) {
 
 void CoreWidget::updateInSceneLoggerGeometry() {
 
-  if(loggerState_ == OpenFlipper::Options::InScene) {
+  if(OpenFlipper::Options::gui() && loggerState_ == OpenFlipper::Options::InScene) {
       slidingLogger_->updateGeometry();
   }
 }
