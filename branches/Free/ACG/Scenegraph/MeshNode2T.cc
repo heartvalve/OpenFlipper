@@ -749,7 +749,7 @@ pick_vertices(GLState& _state, bool _front)
     Vec4f  clear_color = _state.clear_color();
     Vec4f  base_color  = _state.base_color();
     clear_color[3] = 1.0;
-    
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
     
@@ -763,7 +763,6 @@ pick_vertices(GLState& _state, bool _front)
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
-    enable_arrays(0);
   }
   
   
@@ -787,6 +786,10 @@ pick_vertices(GLState& _state, bool _front)
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     glColorPointer( drawMesh_->pickVertexColorBuffer() );   
     glEnableClientState(GL_COLOR_ARRAY);    
+
+    // vertex positions
+    glVertexPointer( drawMesh_->pickVertexBuffer() );
+    glEnableClientState(GL_VERTEX_ARRAY);
     
     // Draw color picking
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
@@ -794,8 +797,8 @@ pick_vertices(GLState& _state, bool _front)
     // Disable color array
     glDisableClientState(GL_COLOR_ARRAY);
     
-    // disable all other arrays
-    enable_arrays(0);
+    // disable vertex array
+    glDisableClientState(GL_VERTEX_ARRAY);
     
   } else 
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
