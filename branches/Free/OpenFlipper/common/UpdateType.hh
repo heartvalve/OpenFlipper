@@ -162,8 +162,14 @@ const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 10 );
 */
 const UpdateType UPDATE_TEXTURE( UpdateTypeSet(1) << 11 );
 
+/** \brief State has changed
+*
+* The object's state (target, source) has changed
+*/
+const UpdateType UPDATE_STATE( UpdateTypeSet(1) << 12 );
+
 /// marks the last used ID
-const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 12 );
+const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 13 );
 
 /**@}*/
 
