@@ -197,6 +197,14 @@ void initializeUpdateTypes() {
   updateTypeToTypeInfo[UPDATE_COLOR]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_COLOR, "Color", true) );
   
+  stringToUpdateTypeInfo["Texture"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_TEXTURE]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_TEXTURE, "Texture", true) );
+
+  stringToUpdateTypeInfo["State"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_STATE]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_STATE, "State", true) );
+
   updateTypeToString[UPDATE_ALL]                = "All";
   updateTypeToString[UPDATE_VISIBILITY]         = "Visibility";
   updateTypeToString[UPDATE_GEOMETRY]           = "Geometry";
@@ -208,6 +216,8 @@ void initializeUpdateTypes() {
   updateTypeToString[UPDATE_SELECTION_FACES]    = "FaceSelection";
   updateTypeToString[UPDATE_SELECTION_KNOTS]    = "KnotSelection";
   updateTypeToString[UPDATE_COLOR]              = "Color";
+  updateTypeToString[UPDATE_TEXTURE]            = "Texture";
+  updateTypeToString[UPDATE_STATE]              = "State";
 }
 
 /// Adds a updateType and returns the id for the new type
