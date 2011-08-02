@@ -81,36 +81,6 @@ static std::map< QString , unsigned int > stringToTypeInfo;
  */
 static std::map< DataType , unsigned int > typeToTypeInfo;
 
-class TypeInfo {
-
-  public:
-
-  TypeInfo(DataType _type, QString _name, QString _iconName, QString _readableName ) :
-    type(_type),
-    name(_name),
-    iconName(_iconName),
-    readableName(_readableName)
-  {
-    // Use internal name if no external name is given
-    if ( _readableName == "" )
-      readableName = _name;
-  }
-
-  /// The id of the datatype
-  DataType type;
-
-  /// The name of the datatype
-  QString  name;
-
-  /// The icon of the datatype
-  QString  iconName;
-  
-  QIcon    icon;
-
-  /// Human readable name
-  QString readableName;
-};
-
 static QIcon dummyIcon;
 
 static std::vector< TypeInfo > types;
@@ -207,6 +177,16 @@ bool typeExists( QString _name ) {
 /// Return the number of registered types
 uint typeCount() {
   return types.size();
+}
+
+/// Get iterator pointing to the first element in the tyoes list
+std::vector< TypeInfo >::const_iterator typesBegin() {
+    return types.begin();
+}
+
+/// Get iterator pointing to the last element in the tyoes list
+std::vector< TypeInfo >::const_iterator typesEnd() {
+    return types.end();
 }
 
 /// Get the icon of a given dataType

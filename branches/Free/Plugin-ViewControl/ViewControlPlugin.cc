@@ -84,33 +84,11 @@ void ViewControlPlugin::pluginsInitialized() {
   QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
-  // Add it as context menu for trianlge and poly meshes
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH        , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH            , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("PolyVolMesh") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyVolMesh")   , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("TetMeshCGAL") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TetMeshCGAL")   , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("Volume") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("BSplineSurface") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
-  
-  if ( typeExists("BSplineCurve") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineCurve")  , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("TSplineMesh") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh")   , CONTEXTOBJECTMENU );
-
-  if ( typeExists("Skeleton") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Skeleton")      , CONTEXTOBJECTMENU );
-  
-  if ( typeExists("PolyLine") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyLine")      , CONTEXTOBJECTMENU );
+  // Add it as context menu for all registered data types
+  for(std::vector<TypeInfo>::const_iterator it = typesBegin(); it != typesEnd(); ++it) {
+      if(it->name == "Unknown" || it->name == "Group" || it->name == "All") continue;
+      emit addContextMenuItem(viewControlMenu_->menuAction(), it->type, CONTEXTOBJECTMENU );
+  }
   
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 

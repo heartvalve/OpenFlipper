@@ -129,6 +129,36 @@ class DLLEXPORT DataType  {
     unsigned int field;
 };
 
+class TypeInfo {
+
+  public:
+
+  TypeInfo(DataType _type, QString _name, QString _iconName, QString _readableName ) :
+    type(_type),
+    name(_name),
+    iconName(_iconName),
+    readableName(_readableName)
+  {
+    // Use internal name if no external name is given
+    if ( _readableName == "" )
+      readableName = _name;
+  }
+
+  /// The id of the datatype
+  DataType type;
+
+  /// The name of the datatype
+  QString  name;
+
+  /// The icon of the datatype
+  QString  iconName;
+
+  QIcon    icon;
+
+  /// Human readable name
+  QString readableName;
+};
+
 /// Identifier for all available objects
 const DataType DATA_ALL(UINT_MAX);
 
@@ -196,6 +226,21 @@ bool typeExists( QString _name );
 */
 DLLEXPORT 
 uint typeCount();
+
+/** @} */
+
+//================================================================================================
+/** @name Type iterators
+* @{ */
+//================================================================================================
+
+/// Get iterator pointing to the first element in the tyoes list
+DLLEXPORT
+std::vector< TypeInfo >::const_iterator typesBegin();
+
+/// Get iterator pointing to the last element in the tyoes list
+DLLEXPORT
+std::vector< TypeInfo >::const_iterator typesEnd();
 
 /** @} */
 
