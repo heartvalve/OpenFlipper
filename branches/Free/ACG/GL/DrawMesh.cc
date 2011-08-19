@@ -793,18 +793,8 @@ DrawMeshT<Mesh>::createVBO()
     {
       for (unsigned int i = 0; i < numTris_; ++i)
       {
-        // calculate face normal
-        ACG::Vec3f V[3];
-
-        for (unsigned int k = 0; k < 3; ++k)
-        {
-          Vertex* p = verticesTmp_ + indices_[i * 3 + k];
-          V[k] = ACG::Vec3f(p->pos[0], p->pos[1], p->pos[2]);
-        }
-
-        ACG::Vec3f u = V[1] - V[0];
-        ACG::Vec3f v = V[2] - V[0];
-        ACG::Vec3f n = OpenMesh::cross(u, v).normalize_cond();
+        // get face normal
+        ACG::Vec3d n = mesh_.normal(mesh_.face_handle(triToFaceMap_[i]));
 
         // store face normal in last tri vertex
         for (unsigned int k = 0; k < 3; ++k)
