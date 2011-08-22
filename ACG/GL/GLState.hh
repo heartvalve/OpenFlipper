@@ -63,6 +63,7 @@
 #include <stack>
 #include <vector>
 #include <bitset>
+#include <deque>
 
 #ifdef WIN32
 	#pragma warning(push)
@@ -111,6 +112,90 @@ namespace ACG {
     \image html paspect.png "Computing the aspect out of the projection matrix"
 **/
 
+
+struct GLStateContext
+{
+  // this struct is needed for push/popAttrib operations
+  // it contains a copy of the OpenGL state machine
+
+public:
+  GLStateContext() { activeTexture_ = 0;}
+
+  // glEnable / glDisable states
+  // iff a bit is set for a state, it is enabled in OpenGL
+  std::bitset<0xFFFF+1> glStateEnabled_;
+
+  // element 0: sfactor, 1: dfactor
+  GLenum blendFuncState_[2];
+
+
+  GLenum blendEquationState_;
+
+  GLclampf blendColorState_[4];
+
+  GLenum alphaFuncState_;
+  GLclampf alphaRefState_;
+
+
+  // 4 buffer targets:
+  // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
+  // current state of a buffer target
+  GLuint glBufferTargetState_[4];
+
+
+  // active texture unit: GL_TEXTUREi
+  GLenum activeTexture_;
+
+  // 16 texture stages, 4 targets
+  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
+  // current state of a texture target
+  GLuint glTextureTargetState_[16][4];
+
+  // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
+  GLenum shadeModel_;
+
+  // current cull face mode: GL_FRONT, GL_FRONT_AND_BACK
+  GLenum cullFace_;
+
+  // vertex pointers, used in glVertexPointer, glTexcoordPointer..
+  struct GLVertexPointer
+  {
+    GLint size;
+    GLenum type;
+    GLsizei stride;
+    const GLvoid* pointer;
+
+    bool equals(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _ptr)
+    {
+      return (size == _size && _type == type && _stride == stride && pointer == _ptr);
+    }
+
+    void set(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _ptr)
+    {
+      size = _size; type = _type; stride = _stride, pointer = _ptr;
+    }
+  };
+
+  GLVertexPointer vertexPointer_;
+  GLVertexPointer normalPointer_;
+  GLVertexPointer texcoordPointer_;
+  GLVertexPointer colorPointer_;
+
+
+  // draw buffers
+  GLenum drawBufferSingle_;
+  GLenum drawBufferState_[16];
+  int activeDrawBuffer_; // = 0 -> drawBufferSignle_; != 0 -> drawBufferState
+
+  // framebuffer
+  //  framebuffer id for each target: 0 - GL_DRAW_FRAMEBUFFER, 1-> GL_READ_FRAMEBUFFER
+  GLuint framebuffers_[2];
+
+  // current gl shader program
+  GLuint program_;
+};
+
+
 class ACGDLLEXPORT GLState
 {
 public:
@@ -147,6 +232,12 @@ public:
   /// clear buffers viewport rectangle
   void clearBuffers ();
 
+
+  /// use this instead of glPushAttrib
+  void pushAttrib();
+  
+  /// use this instead of glPushAttrib
+  void popAttrib();
 
   //===========================================================================
   /** @name glEnable / glDisable functionality
@@ -205,7 +296,7 @@ public:
   void blendEquation(GLenum _mode);
 
   /// get blend equation
-  GLenum getBlendEquation() {return blendEquationState_;}
+  GLenum getBlendEquation() {return stateStack_.back().blendEquationState_;}
 
   /// lock blend equation
   void lockBlendEquation() {blendEquationLock_ = true;}
@@ -245,7 +336,7 @@ public:
   /// replaces glShadeModel, supports locking
   void shadeModel(GLenum _mode);
   /// get current shade model
-  GLenum getShadeModel() {return shadeModel_;}
+  GLenum getShadeModel() {return stateStack_.back().shadeModel_;}
   /// lock shade model
   void lockShadeModel() {shadeModelLock_ = true;}
   /// unlock shade model
@@ -257,7 +348,7 @@ public:
   /// replaces glCullFace, supports locking
   void cullFace(GLenum _mode);
   /// get current cull face
-  GLenum getCullFace() {return cullFace_;}
+  GLenum getCullFace() {return stateStack_.back().cullFace_;}
   /// lock cull face
   void lockCullFace() {cullFaceLock_ = true;}
   /// unlock cull face
@@ -313,7 +404,7 @@ public:
   /// replaces glTexcoordPointer, supports locking
   void texcoordPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get color pointer, null-ptr safe
-  void getTexcoordPointer(GLint* _size, GLenum* _type, GLsizei* _stride, GLvoid** _pointer);
+  void getTexcoordPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
   /// lock color pointer
   void lockTexcoordPointer() {colorPointerLock_ = true;}
@@ -382,7 +473,7 @@ public:
   /// replaces glUseProgram, supports locking
   void useProgram(GLuint _program);
   /// get bound program
-  GLuint getProgram() {return program_;}
+  GLuint getProgram() {return stateStack_.back().program_;}
 
   /// lock the program
   void lockProgram() {programLock_ = true;}
@@ -407,10 +498,10 @@ public:
   //===========================================================================
 
   /// replaces glActiveTexture, no locking support
-  inline void setActiveTexture(GLenum _texunit) {activeTexture_ = _texunit;}
+  inline void setActiveTexture(GLenum _texunit) {stateStack_.back().activeTexture_ = _texunit;}
 
   /// get active GL texture
-  inline GLenum getActiveTexture() {return activeTexture_;}
+  inline GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
 
   /// replaces glBindTexture, supports locking
   void bindTexture(GLenum _target, GLuint _buffer);
@@ -943,33 +1034,29 @@ private: //--------------------------------------------------------------------
 
   // are we using color picking
   bool colorPicking_;
-  
+
+
   // depth comparison function (GL_LESS by default)
   GLenum depth_func_;
   bool depthFuncLock_;
 
 
+  //////////////////////////////////////////////////////////////////////////
+  // state locking members
+
+  // stack needed for glPush/PopAttrib
+  std::deque <GLStateContext> stateStack_;
+
+  // all possible params for glEnable
+  static GLenum glStateCaps[95];
+
   // glEnable / glDisable states locker
   // iff a bit is set for a state, it is locked
   std::bitset<0xFFFF+1> glStateLock_;
 
-  // glEnable / glDisable states
-  // iff a bit is set for a state, it is enabled in OpenGL
-  std::bitset<0xFFFF+1> glStateEnabled_;
-
-  // element 0: sfactor, 1: dfactor
-  GLenum blendFuncState_[2];
   bool blendFuncLock_;
-
-
-  GLenum blendEquationState_;
   bool blendEquationLock_;
-
-  GLclampf blendColorState_[4];
   bool blendColorLock_;
-
-  GLenum alphaFuncState_;
-  GLclampf alphaRefState_;
   bool alphaFuncLock_;
 
 
@@ -977,73 +1064,30 @@ private: //--------------------------------------------------------------------
   // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
   int glBufferTargetLock_[4];
 
-  // current state of a buffer target
-  GLuint glBufferTargetState_[4];
-
-
-  // active texture unit: GL_TEXTUREi
-  GLenum activeTexture_;
-
   // 16 texture stages, 4 targets
   // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
   int glTextureTargetLock_[16][4];
 
-  // current state of a texture target
-  GLuint glTextureTargetState_[16][4];
-
   // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
-  GLenum shadeModel_;
   bool   shadeModelLock_;
 
   // current cull face mode: GL_FRONT, GL_FRONT_AND_BACK
-  GLenum cullFace_;
   bool   cullFaceLock_;  
 
-  // vertex pointers, used in glVertexPointer, glTexcoordPointer..
-  struct GLVertexPointer
-  {
-    GLint size;
-    GLenum type;
-    GLsizei stride;
-    const GLvoid* pointer;
-
-    bool equals(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _ptr)
-    {
-      return (size == _size && _type == type && _stride == stride && pointer == _ptr);
-    }
-    
-    void set(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _ptr)
-    {
-      size = _size; type = _type; stride = _stride, pointer = _ptr;
-    }
-  };
-
-  GLVertexPointer vertexPointer_;
   bool vertexPointerLock_;
-
-  GLVertexPointer normalPointer_;
   bool normalPointerLock_;
-
-  GLVertexPointer texcoordPointer_;
   bool texcoordPointerLock_;
-
-  GLVertexPointer colorPointer_;
   bool colorPointerLock_;
 
 
   // draw buffers
-  GLenum drawBufferSingle_;
-  GLenum drawBufferState_[16];
-  int activeDrawBuffer_; // = 0 -> drawBufferSignle_; != 0 -> drawBufferState
   bool drawBufferLock_;
 
   // framebuffer
   //  framebuffer id for each target: 0 - GL_DRAW_FRAMEBUFFER, 1-> GL_READ_FRAMEBUFFER
-  GLuint framebuffers_[2];
   bool framebufferLock_[2];
 
   // current gl shader program
-  GLuint program_;
   bool programLock_;
 
 
