@@ -1,0 +1,14 @@
+    * dec.vtk, (ASCII format, POLYDATA) prices for DEC stock;
+    * ge.vtk, (ASCII format, POLYDATA) prices for GE stock;
+    * gm.vtk, (ASCII format, POLYDATA) prices for GM stock;
+    * hello.vtk, (ASCII format, POLYDATA) Stroked lines spell "hello";
+    * ibm.vtk, (ASCII format, POLYDATA) prices for IBM stock;
+    * mesh_smag_0040.vtk, (ASCII format, UNSTRUCTURED GRID) a (U,V,W) and P flow field in a long rectangular channel;
+    * rbc_001.vtk, (ASCII format, UNSTRUCTURED_GRID), the first file of 80, which form an animation of the motion and deformation of a red blood cell.
+    * rbc_vtk.tar.gz, a GZIP'ed TAR file of all 80 VTK files for the red blood cell animation.
+    * texthres.vtk, (ASCII format, STRUCTURED_POINTS) Texture map for thresholding data (use boolean textures for 2D map);
+    * texthres2.vtk, (ASCII format, STRUCTURED_POINTS) Texture map for thresholding data (use boolean textures for 2D map);
+    * triangle_mesh_linear.vtk, (ASCII format, UNSTRUCTURED_GRID) an example of an unstructured grid in 2D, 8 nodes, 6 cells; (Note that 2D points must be specified with 3 components. Simply set the third component to zero!)
+    * triangle_mesh_linear.png, a screen shot from PARAVIEW.
+    * ugridex.vtk, (ASCII format, UNSTRUCTURED_GRID) an example of an unstructured grid in 3D;
+    * vtk.vtk, (ASCII format, POLYDATA) Line representation of "VTK";
