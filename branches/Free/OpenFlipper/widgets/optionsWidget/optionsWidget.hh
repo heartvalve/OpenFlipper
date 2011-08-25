@@ -231,7 +231,7 @@ private:
    
    /** Used to track whether another language has been selected
    */
-   bool translationIndexChanged_;
+   bool restartRequired_;
    bool exitOnClose_;
 
 
