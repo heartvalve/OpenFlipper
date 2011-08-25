@@ -59,7 +59,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
     plugins_(_plugins),
     coreKeys_(_core),
     keys_(_invKeys),
-    translationIndexChanged_(false),
+    restartRequired_(false),
     exitOnClose_(false)
 {
   setupUi(this);
@@ -229,7 +229,7 @@ void OptionsWidget::switchStackedWidget() {
 }
 
 void OptionsWidget::slotTranslationIndexChanged(int /*_index*/) {
-    translationIndexChanged_ = true;
+  restartRequired_ = true;
 }
 
 void OptionsWidget::updateViewerSettings(int _row){
@@ -622,7 +622,10 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
   
   // Render picking toolbar into scene
-  OpenFlipperSettings().setValue("Core/Gui/ToolBars/PickToolbarInScene", pickToolbarInScene->isChecked());
+  if ( OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool() != pickToolbarInScene->isChecked() )  {
+    OpenFlipperSettings().setValue("Core/Gui/ToolBars/PickToolbarInScene", pickToolbarInScene->isChecked());
+    restartRequired_ = true;
+  }
 
   if ( iconDefault->isChecked() )
     OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 0);
@@ -734,19 +737,19 @@ void OptionsWidget::slotApply() {
                                                                       ((double) backgroundColor_.blueF()),
                                                                         1.0));
 
-  // Show warning message that restart is required if language has been changed...
-  if(translationIndexChanged_) {
+  switch ( translation->currentIndex() ){
+    case 0 : OpenFlipperSettings().setValue("Core/Language/Translation","en_US");  break;
+    case 1 : OpenFlipperSettings().setValue("Core/Language/Translation","de_DE");  break;
+    default: OpenFlipperSettings().setValue("Core/Language/Translation","locale"); break;
+  }
+
+  // Show warning message that restart is required if language or in scene toolbar has been changed...
+  if(restartRequired_) {
     int restart = QMessageBox::information(this, tr("Restart required!"),
                       tr("The changes will take effect after next restart. Do you want to close OpenFlipper now?"),
                       QMessageBox::Yes | QMessageBox::No);
                     
     if(restart == QMessageBox::Yes) exitOnClose_ = true;
-  }
-  
-  switch ( translation->currentIndex() ){
-    case 0 : OpenFlipperSettings().setValue("Core/Language/Translation","en_US");  break;
-    case 1 : OpenFlipperSettings().setValue("Core/Language/Translation","de_DE");  break;
-    default: OpenFlipperSettings().setValue("Core/Language/Translation","locale"); break;
   }
 
   applyShortcuts();

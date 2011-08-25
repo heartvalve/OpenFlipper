@@ -181,23 +181,59 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
 
     if(_tool != 0) {
 
-        // Hide all picking toolbars
-        hidePickToolBar();
+      // Hide all picking toolbars
+      hidePickToolBar();
 
-        // Try to find toolbar in local map
+      if ( OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool() ) {
+
+        // Try to find toolbar in local map ( if it is in the gl scene
         PickToolBarMap::iterator ret = curPickingToolbarItems_.find(_tool);
         if(ret == curPickingToolbarItems_.end()) {
-            // Add widget
-            QGraphicsItem* item = glScene_->addWidget(_tool);
-            // Put it into center of the screen
-            int midP = (glScene_->width() / 2) - (int)(_tool->width() / 2);
-            item->setPos(midP, 3);
-            item->show();
-            curPickingToolbarItems_.insert(std::pair<QToolBar*,QGraphicsItem*>(_tool,item));
+
+          // Set horizontal orientation
+          _tool->setOrientation(Qt::Horizontal);
+
+          // Update size as the orientation changed
+          _tool->adjustSize();
+
+          // Add widget to the gl scene
+          QGraphicsItem* item = glScene_->addWidget(_tool);
+
+          // Put it into center of the screen
+          int midP = (glScene_->width() / 2) - (int)(_tool->width() / 2);
+          item->setPos(midP, 3);
+
+          item->show();
+
+          // Remember it as being part of the scene
+          curPickingToolbarItems_.insert(std::pair<QToolBar*,QGraphicsItem*>(_tool,item));
         } else {
-            // Widget has already been added once, so just show it
-            ret->second->show();
+          // Widget has already been added once, so just show it
+          ret->second->show();
         }
+      } else {
+
+        // Try to find toolbar in local map
+        // If its in there, we need to remove it from the graphics scene before adding it
+        // to the side toolbar.
+        PickToolBarMap::iterator ret = curPickingToolbarItems_.find(_tool);
+        if(ret != curPickingToolbarItems_.end()) {
+
+          glScene_->removeItem(ret->second);
+          ret->first->setParent(0);
+
+          // remove from list of widgets in glScene
+          curPickingToolbarItems_.erase(ret);
+        }
+
+        pickToolBarExternal_ = _tool;
+
+        // size
+        pickToolBarExternal_->setOrientation(Qt::Vertical);
+        pickToolBarExternal_->adjustSize();
+        addToolBar(Qt::LeftToolBarArea,_tool);
+        _tool->show();
+      }
     } else {
         hidePickToolBar();
     }
@@ -207,11 +243,23 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
 
 void CoreWidget::hidePickToolBar() {
 
-    // Hide all picking toolbars
-    for(PickToolBarMap::iterator it = curPickingToolbarItems_.begin();
-            it != curPickingToolbarItems_.end(); ++it) {
-        it->second->hide();
-    }
+  // Hide all picking toolbars
+  for(PickToolBarMap::iterator it = curPickingToolbarItems_.begin();
+      it != curPickingToolbarItems_.end(); ++it) {
+    it->second->hide();
+  }
+
+  // if a toolbar is in the global scene, we remove it here.
+  if ( pickToolBarExternal_ != 0 ) {
+    pickToolBarExternal_->hide();
+    removeToolBar(pickToolBarExternal_);
+    pickToolBarExternal_->setParent(0);
+    pickToolBarExternal_ = 0;
+  }
+
+
+
+
 }
 
 //-----------------------------------------------------------------------------

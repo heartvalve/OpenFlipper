@@ -668,6 +668,9 @@ public:
     typedef std::map<QToolBar*,QGraphicsItem*> PickToolBarMap;
     PickToolBarMap curPickingToolbarItems_;
 
+    /// Extra toolbar not in scene for picking
+    QToolBar* pickToolBarExternal_;
+
     /// Cursor handling
     CursorPainter* cursorPainter_;
 
