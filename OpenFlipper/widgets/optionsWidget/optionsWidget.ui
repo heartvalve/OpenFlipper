@@ -166,6 +166,33 @@
             </widget>
            </item>
            <item>
+            <widget class="QGroupBox" name="groupBox_13">
+             <property name="title">
+              <string>Pick Toolbar</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QFormLayout" name="formLayout_6">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_29">
+                  <property name="text">
+                   <string>Render pick toolbar into scene</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QCheckBox" name="pickToolbarInScene">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <widget class="QGroupBox" name="groupBox_11">
              <property name="title">
               <string>Toolbar Size</string>

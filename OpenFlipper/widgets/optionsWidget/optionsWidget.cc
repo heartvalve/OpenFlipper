@@ -289,6 +289,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   // UI settings
   toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool() ? 0 : 1));
+  
+  pickToolbarInScene->setChecked(OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool());
 
   //stereo
 
@@ -618,6 +620,9 @@ void OptionsWidget::slotApply() {
   
   // Toolbox orientation
   OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
+  
+  // Render picking toolbar into scene
+  OpenFlipperSettings().setValue("Core/Gui/ToolBars/PickToolbarInScene", pickToolbarInScene->isChecked());
 
   if ( iconDefault->isChecked() )
     OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 0);
