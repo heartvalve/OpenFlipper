@@ -16,7 +16,7 @@
 #
 # DIRS        = additional directories with source files
 # DEPS        = required dependencies for find_package macro
-# OPTDEPS     = optional dependencies for find_package macro
+# OPTDEPS     = optional dependencies for find_package macro, if found, define ENABLE_<Depname> will be set
 # LDFLAGSADD  = flags added to the link command
 # CFLAGSADD   = flags added to the compile command
 # LIBRARIES   = libraries added to link command
@@ -162,8 +162,12 @@ macro (_check_plugin_deps _prefix _optional )
        if ( ${_optional} STREQUAL "TRUE"  )
 
          if ( ${_VAL}_FOUND )
-           message("Info optional dependency ${_VAL} for ${_prefix}  not found .. proceeding without it!")
-        
+
+           # Optional dependency found and recursive found, so add definition to enable it
+           if ( ${_optional} STREQUAL "TRUE" )
+             add_definitions(-DENABLE_${_VAL})
+           endif()
+
            if ( ALL_REQUIRED_DEPENDENCIES_FOUND )
              # All found so add package dependencies
              list (APPEND FULL_DEPENDENCY_LIST ${CURRENT_DEPENDENCY_LIST})
@@ -596,9 +600,9 @@ function (_build_openflipper_plugin plugin)
        
         # Link the cuda plugin library to the plugin itself
         target_link_libraries(Plugin-${plugin} ${_PLUGIN}_cuda_lib)
-        
+       
         # reset to original compile definitions
-        set_directory_properties( PROPERTIES COMPILE_DEFINITIONS ${CURRENT_DEFINITIONS} )
+        set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "${CURRENT_DEFINITIONS}" )
 
       endif( CUDA_FOUND )
     endif()
