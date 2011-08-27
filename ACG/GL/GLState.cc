@@ -60,6 +60,7 @@ namespace ACG {
 
 //== IMPLEMENTATION ==========================================================
 
+//#define GLSTATE_AVOID_REDUNDANT_GLCALLS
 
 const Vec4f    GLState::default_clear_color(0.0, 0.0, 0.0, 1.0);
 const Vec4f    GLState::default_base_color(1.0, 1.0, 1.0, 1.0);
@@ -71,6 +72,30 @@ const float  GLState::default_shininess(100.0);
 
 //-----------------------------------------------------------------------------
 
+bool GLState::depthFuncLock_ = false;
+bool GLState::blendFuncLock_ = false;
+bool GLState::blendEquationLock_ = false;
+bool GLState::blendColorLock_ = false;
+bool GLState::alphaFuncLock_ = false;
+bool GLState::shadeModelLock_ = false;
+bool GLState::cullFaceLock_ = false;
+bool GLState::vertexPointerLock_ = false;
+bool GLState::normalPointerLock_ = false;
+bool GLState::texcoordPointerLock_ = false;
+bool GLState::colorPointerLock_ = false;
+bool GLState::drawBufferLock_ = false;
+bool GLState::programLock_ = false;
+
+std::deque <GLStateContext> GLState::stateStack_;
+std::bitset<0xFFFF+1> GLState::glStateLock_;
+int GLState::glBufferTargetLock_[4] = {0};
+int GLState::glTextureTargetLock_[16][5];
+bool GLState::framebufferLock_[2] = {false};
+int GLState::maxTextureCoords_ = 0;
+int GLState::maxCombinedTextureImageUnits_ = 0;
+int GLState::maxDrawBuffers_ = 0;
+
+int GLState::num_texture_units_ = 0;
 
 GLState::GLState(bool _updateGL)
   : render_pass_(1),
@@ -82,34 +107,22 @@ GLState::GLState(bool _updateGL)
     mipmapping_(true),
     updateGL_(_updateGL),
     blending_(false),
-    msSinceLastRedraw_ (1),
-    depth_func_(GL_LESS),
-    depthFuncLock_(false),
-    blendFuncLock_(false),
-    blendEquationLock_(false),
-    blendColorLock_(false),
-    alphaFuncLock_(false),
-    shadeModelLock_(false),
-    cullFaceLock_(false),
-    vertexPointerLock_(false),
-    normalPointerLock_(false),
-    texcoordPointerLock_(false),
-    colorPointerLock_(false),
-    drawBufferLock_(false),
-    programLock_(false)
+    msSinceLastRedraw_ (1)
 {
-  stateStack_.push_back(GLStateContext());
+  if (stateStack_.size() == 0)
+  {
+    stateStack_.push_back(GLStateContext());
 
-  // every state is unlocked at start
-  for (int i = 0; i < 16; ++i)
-    memset(glTextureTargetLock_[i], 0, 4 * sizeof(int));
+    // every state is unlocked at start
+    for (int i = 0; i < 16; ++i)
+      memset(glTextureTargetLock_[i], 0, 5 * sizeof(int));
 
-  memset(glBufferTargetLock_, 0, sizeof(glBufferTargetLock_));
+    memset(glBufferTargetLock_, 0, sizeof(glBufferTargetLock_));
 
-  framebufferLock_[0] = framebufferLock_[1] = false;
+    framebufferLock_[0] = framebufferLock_[1] = false;
 
-  glStateLock_.reset();
-
+    glStateLock_.reset();
+  }
 
   initialize();
 }
@@ -217,9 +230,9 @@ void GLState::clearBuffers ()
 {
     glPushAttrib (GL_ALL_ATTRIB_BITS);
 
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DITHER);
+    GLState::disable(GL_DEPTH_TEST);
+    GLState::disable(GL_LIGHTING);
+    GLState::disable(GL_DITHER);
     glShadeModel( GL_FLAT );
 
     glMatrixMode(GL_PROJECTION);
@@ -239,7 +252,7 @@ void GLState::clearBuffers ()
     
     //Enable scissor 
     if (!scissor)
-      glEnable(GL_SCISSOR_TEST);
+      GLState::enable(GL_SCISSOR_TEST);
     
     // Restrict to our current viewport
     glScissor(  left_,bottom_,width_,height_ );
@@ -251,7 +264,7 @@ void GLState::clearBuffers ()
     glScissor(  origBox[0], origBox[1], origBox[2], origBox[3] );
     
     if (!scissor)
-      glDisable(GL_SCISSOR_TEST);
+      GLState::disable(GL_SCISSOR_TEST);
       
     glPopMatrix ();
     glMatrixMode(GL_PROJECTION);
@@ -796,16 +809,16 @@ void GLState::set_multisampling(bool _b)
     if ( allow_multisampling_ ) {
 
       if ( _b )
-        glEnable( GL_MULTISAMPLE );
+        GLState::enable( GL_MULTISAMPLE );
       else
-        glDisable( GL_MULTISAMPLE );
+        GLState::disable( GL_MULTISAMPLE );
 
     } else {
 
       multisampling_ = false;
 
       if ( glIsEnabled( GL_MULTISAMPLE ) )
-        glDisable( GL_MULTISAMPLE );
+        GLState::disable( GL_MULTISAMPLE );
 
     }
   }
@@ -889,21 +902,30 @@ void GLState::viewing_ray( int _x, int _y,
 
 const GLenum& GLState::depthFunc() const
 {
-  ///\todo Remove this additional check if there are no errors here ever.
-  GLenum real_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, (GLint*) &real_depth);
-  if (depth_func_ != real_depth)
-    std::cerr << "GLState depth_func_ ("<<depth_func_<<") doesn't match actual enabled GL_DEPTH_FUNC ("<<real_depth<<")!" << std::endl;
-
-  return depth_func_;
+  return stateStack_.back().depthFunc_;
 }
 
 //-----------------------------------------------------------------------------
 
 void GLState:: set_depthFunc(const GLenum& _depth_func)
 {
-  glDepthFunc(_depth_func);
-  depth_func_ = _depth_func;
+  depthFunc(_depth_func);
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::depthFunc(GLenum _depthFunc)
+{
+  if (!depthFuncLock_)
+  {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
+    if (stateStack_.back().depthFunc_ != _depthFunc)
+#endif
+    {
+      glDepthFunc(_depthFunc);
+      stateStack_.back().depthFunc_ = _depthFunc;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1242,11 +1264,8 @@ void GLState::syncFromGL()
     GL_POINT_SMOOTH,
     GL_POINT_SPRITE,
     GL_POLYGON_OFFSET_FILL,
-    GL_FILL,
     GL_POLYGON_OFFSET_LINE,
-    GL_LINE,
     GL_POLYGON_OFFSET_POINT,
-    GL_POINT,
     GL_POLYGON_SMOOTH,
     GL_POLYGON_STIPPLE,
     GL_POST_COLOR_MATRIX_COLOR_TABLE,
@@ -1256,7 +1275,6 @@ void GLState::syncFromGL()
     GL_SAMPLE_ALPHA_TO_COVERAGE,
     GL_SAMPLE_ALPHA_TO_ONE,
     GL_SAMPLE_COVERAGE,
-    GL_SAMPLE_COVERAGE_INVERT,
     GL_SEPARABLE_2D,
     GL_SCISSOR_TEST,
     GL_STENCIL_TEST,
@@ -1303,6 +1321,9 @@ void GLState::syncFromGL()
 
   glGetFloatv(GL_ALPHA_TEST_REF, &stateStack_.back().alphaRefState_);
 
+  glGetIntegerv(GL_DEPTH_FUNC, &getparam);
+  stateStack_.back().depthFunc_ = getparam;
+
   // bound buffers
 
   GLenum bufGets[8] = {
@@ -1323,7 +1344,8 @@ void GLState::syncFromGL()
     GL_TEXTURE_BINDING_1D, GL_TEXTURE_1D,
     GL_TEXTURE_BINDING_2D, GL_TEXTURE_2D,
     GL_TEXTURE_BINDING_3D, GL_TEXTURE_3D,
-    GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP};
+    GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP,
+    GL_TEXTURE_BINDING_RECTANGLE, GL_TEXTURE_RECTANGLE};
 
   glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextureCoords_);
   glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits_);
@@ -1339,10 +1361,10 @@ void GLState::syncFromGL()
   {
     glActiveTexture(GL_TEXTURE0 + i);
 
-    // for each texture stage query 4 texture types: 1D, 2D, 3D, Cube
-    for (int k = 0; k < 4; ++k)
+    // for each texture stage query 5 texture types: 1D, 2D, 3D, Cube, Rect
+    for (int k = 0; k < 5; ++k)
       glGetIntegerv(texBufGets[k*2],
-        glTextureTargetLock_[i] + getTextureTargetIndex(texBufGets[k*2+1]));
+        (GLint*)stateStack_.back().glTextureTargetState_[i] + getTextureTargetIndex(texBufGets[k*2+1]));
   }
 
   // restore active texture unit
@@ -1422,7 +1444,9 @@ void GLState::enable(GLenum _cap)
 {
   if (!glStateLock_.test(_cap))
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().glStateEnabled_.test(_cap))
+#endif
     {
       glEnable(_cap);
       stateStack_.back().glStateEnabled_.set(_cap);
@@ -1434,7 +1458,9 @@ void GLState::disable(GLenum _cap)
 {
   if (!glStateLock_.test(_cap))
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().glStateEnabled_.test(_cap))
+#endif
     {
       glDisable(_cap);
       stateStack_.back().glStateEnabled_.reset(_cap);
@@ -1469,7 +1495,9 @@ void GLState::enableClientState(GLenum _cap)
 {
   if (!glStateLock_.test(_cap))
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().glStateEnabled_.test(_cap))
+#endif
     {
       glEnableClientState(_cap);
       stateStack_.back().glStateEnabled_.set(_cap);
@@ -1481,7 +1509,9 @@ void GLState::disableClientState(GLenum _cap)
 {
   if (!glStateLock_.test(_cap))
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().glStateEnabled_.test(_cap))
+#endif
     {
       glDisableClientState(_cap);
       stateStack_.back().glStateEnabled_.reset(_cap);
@@ -1516,7 +1546,9 @@ void GLState::blendFunc(GLenum _sfactor, GLenum _dfactor)
 {
   if (!blendFuncLock_)
   {
-    if (stateStack_.back().blendFuncState_[0] != _sfactor && stateStack_.back().blendFuncState_[1] != _dfactor)
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
+    if (stateStack_.back().blendFuncState_[0] != _sfactor || stateStack_.back().blendFuncState_[1] != _dfactor)
+#endif
     {
       glBlendFunc(_sfactor, _dfactor);
       stateStack_.back().blendFuncState_[0] = _sfactor;
@@ -1535,7 +1567,9 @@ void GLState::blendEquation(GLenum _mode)
 {
   if (!blendEquationLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().blendEquationState_ != _mode)
+#endif
     {
       glBlendEquation(_mode);
       stateStack_.back().blendEquationState_ = _mode;
@@ -1547,8 +1581,10 @@ void GLState::blendColor(GLclampf _red, GLclampf _green, GLclampf _blue, GLclamp
 {
   if (!blendColorLock_)
   {
-    if (stateStack_.back().blendColorState_[0] != _red && stateStack_.back().blendColorState_[1] != _green &&
-        stateStack_.back().blendColorState_[2] != _blue && stateStack_.back().blendColorState_[3] != _alpha)
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
+    if (stateStack_.back().blendColorState_[0] != _red || stateStack_.back().blendColorState_[1] != _green ||
+        stateStack_.back().blendColorState_[2] != _blue || stateStack_.back().blendColorState_[3] != _alpha)
+#endif
     {
       glBlendColor(_red, _green, _blue, _alpha);
       stateStack_.back().blendColorState_[0] = _red;  stateStack_.back().blendColorState_[1] = _green;
@@ -1567,7 +1603,9 @@ void GLState::alphaFunc(GLenum _func, GLclampf _ref)
 {
   if (!alphaFuncLock_)
   {
-    if (stateStack_.back().alphaFuncState_ != _func && stateStack_.back().alphaRefState_ != _ref)
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
+    if (stateStack_.back().alphaFuncState_ != _func || stateStack_.back().alphaRefState_ != _ref)
+#endif
     {
       glAlphaFunc(_func, _ref);
       stateStack_.back().alphaFuncState_ = _func;
@@ -1586,7 +1624,9 @@ void GLState::shadeModel(GLenum _mode)
 {
   if (!shadeModelLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().shadeModel_ != _mode)
+#endif
     {
       glShadeModel(_mode);
       stateStack_.back().shadeModel_ = _mode;
@@ -1598,7 +1638,9 @@ void GLState::cullFace(GLenum _mode)
 {
   if (!cullFaceLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().cullFace_ != _mode)
+#endif
     {
       glCullFace(_mode);
       stateStack_.back().cullFace_ = _mode;
@@ -1625,7 +1667,9 @@ void GLState::bindBuffer(GLenum _target, GLuint _buffer)
   int idx = getBufferTargetIndex(_target);
   if (!glBufferTargetLock_[idx])
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().glBufferTargetState_[idx] != _buffer)
+#endif
     {
       glBindBuffer(_target, _buffer);
       stateStack_.back().glBufferTargetState_[idx] = _buffer;
@@ -1660,6 +1704,7 @@ int GLState::getTextureTargetIndex(GLenum _target)
   switch (_target)
   {
   case GL_TEXTURE_2D: return 1;
+  case GL_TEXTURE_RECTANGLE: return 4;
   case GL_TEXTURE_CUBE_MAP: return 3;
   case GL_TEXTURE_1D: return 0;
   case GL_TEXTURE_3D: return 2;
@@ -1667,16 +1712,29 @@ int GLState::getTextureTargetIndex(GLenum _target)
   return -1;
 }
 
+void GLState::activeTexture(GLenum _texunit)
+{
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
+  if (stateStack_.back().activeTexture_ != _texunit)
+#endif
+  {
+    glActiveTexture(_texunit);
+    stateStack_.back().activeTexture_ = _texunit;
+  }
+}
+
 void GLState::bindTexture(GLenum _target, GLuint _buffer)
 {
-  int activeTex = getActiveTexture();
+  int activeTex = getActiveTextureIndex();
 
   int texTargetIdx = getTextureTargetIndex(_target);
   assert(texTargetIdx >= 0);
 
   if (!glTextureTargetLock_[activeTex][texTargetIdx])
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (_buffer != stateStack_.back().glTextureTargetState_[activeTex][texTargetIdx])
+#endif
     {
       glBindTexture(_target, _buffer);
       stateStack_.back().glTextureTargetState_[activeTex][texTargetIdx] = _buffer;
@@ -1686,22 +1744,22 @@ void GLState::bindTexture(GLenum _target, GLuint _buffer)
 
 void GLState::lockTextureTarget(GLenum _target)
 {
-  glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] = 1;
+  glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] = 1;
 }
 
 void GLState::unlockTextureTarget(GLenum _target)
 {
-  glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] = 0;
+  glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] = 0;
 }
 
 bool GLState::isTextureTargetLocked(GLenum _target)
 {
-  return glTextureTargetLock_[getActiveTexture()][getTextureTargetIndex(_target)] != 0;
+  return glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] != 0;
 }
 
 GLuint GLState::getBoundTextureBuffer(GLenum _target)
 {
-  return stateStack_.back().glTextureTargetState_[getActiveTexture()][getTextureTargetIndex(_target)];
+  return stateStack_.back().glTextureTargetState_[getActiveTextureIndex()][getTextureTargetIndex(_target)];
 }
 
 
@@ -1712,7 +1770,9 @@ void GLState::vertexPointer(GLint _size, GLenum _type, GLsizei _stride, const GL
 {
   if (!vertexPointerLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().vertexPointer_.equals(_size, _type, _stride, _pointer))
+#endif
     {
       glVertexPointer(_size, _type, _stride, _pointer);
       stateStack_.back().vertexPointer_.set(_size, _type, _stride, _pointer);
@@ -1732,7 +1792,9 @@ void GLState::normalPointer(GLenum _type, GLsizei _stride, const GLvoid* _pointe
 {
   if (!normalPointerLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().normalPointer_.equals(stateStack_.back().normalPointer_.size, _type, _stride, _pointer))
+#endif
     {
       glNormalPointer(_type, _stride, _pointer);
       stateStack_.back().normalPointer_.set(3, _type, _stride, _pointer);
@@ -1752,7 +1814,9 @@ void GLState::colorPointer(GLint _size, GLenum _type, GLsizei _stride, const GLv
 {
   if (!colorPointerLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().colorPointer_.equals(_size, _type, _stride, _pointer))
+#endif
     {
       glColorPointer(_size, _type, _stride, _pointer);
       stateStack_.back().colorPointer_.set(_size, _type, _stride, _pointer);
@@ -1772,7 +1836,9 @@ void GLState::texcoordPointer(GLint _size, GLenum _type, GLsizei _stride, const 
 {
   if (!texcoordPointerLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (!stateStack_.back().texcoordPointer_.equals(_size, _type, _stride, _pointer))
+#endif
     {
       glTexCoordPointer(_size, _type, _stride, _pointer);
       stateStack_.back().texcoordPointer_.set(_size, _type, _stride, _pointer);
@@ -1795,7 +1861,9 @@ void GLState::drawBuffer(GLenum _mode)
 {
   if (!drawBufferLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().drawBufferSingle_ != _mode || stateStack_.back().activeDrawBuffer_)
+#endif
     {
       glDrawBuffer(_mode);
       stateStack_.back().drawBufferSingle_ = _mode;
@@ -1808,6 +1876,7 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
 {
   if (!drawBufferLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     int bChange = !stateStack_.back().activeDrawBuffer_;
     for (int i = 0; i < _n && (!bChange); ++i)
     {
@@ -1816,6 +1885,7 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
     }
 
     if (bChange)
+#endif
     {
       glDrawBuffers(_n, _bufs);
 
@@ -1829,15 +1899,15 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
 
 
 
-void GLState::framebuffer(GLenum _target, GLuint _framebuffer)
+void GLState::bindFramebuffer(GLenum _target, GLuint _framebuffer)
 {
   int i = -1;
   switch (_target)
   {
   case GL_FRAMEBUFFER:
     {
-      framebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
-      framebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer);
+      bindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
+      bindFramebuffer(GL_DRAW_FRAMEBUFFER, _framebuffer);
       return;
     }
   case GL_DRAW_FRAMEBUFFER: i = 0; break;
@@ -1846,9 +1916,11 @@ void GLState::framebuffer(GLenum _target, GLuint _framebuffer)
 
   if (!framebufferLock_[i])
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().framebuffers_[i] != _framebuffer)
+#endif
     {
-      glBindFramebuffer(_target, _framebuffer);
+      glBindFramebufferEXT(_target, _framebuffer);
       stateStack_.back().framebuffers_[i] = _framebuffer;
     }
   }
@@ -1895,7 +1967,9 @@ void GLState::useProgram(GLuint _program)
 {
   if (!programLock_)
   {
+#ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
     if (stateStack_.back().program_ != _program)
+#endif
     {
       glUseProgram(_program);
       stateStack_.back().program_ = _program;
@@ -1934,6 +2008,7 @@ void GLState::popAttrib()
 
   alphaFunc(p->alphaFuncState_, p->alphaRefState_);
 
+  depthFunc(p->depthFunc_);
 
   bindBuffer(GL_ARRAY_BUFFER, p->glBufferTargetState_[0]);
   bindBuffer(GL_ELEMENT_ARRAY_BUFFER, p->glBufferTargetState_[1]);
@@ -1945,15 +2020,15 @@ void GLState::popAttrib()
 
     for (int i = 0; i < num_texture_units_; ++i)
     {
-      setActiveTexture(GL_TEXTURE0 + i);
+      activeTexture(GL_TEXTURE0 + i);
 
-      for (int t = 0; t < 4; ++t)
+      for (int t = 0; t < 5; ++t)
         bindTexture(targets[t], stateStack_.back().glTextureTargetState_[i][t]);
 
     }
   }
 
-  setActiveTexture(p->activeTexture_);
+  activeTexture(p->activeTexture_);
 
   shadeModel(p->shadeModel_);
 
@@ -1978,8 +2053,8 @@ void GLState::popAttrib()
   else
     drawBuffer(p->drawBufferSingle_);
 
-  framebuffer(GL_DRAW_FRAMEBUFFER, p->framebuffers_[0]);
-  framebuffer(GL_READ_FRAMEBUFFER, p->framebuffers_[1]);
+  bindFramebuffer(GL_DRAW_FRAMEBUFFER, p->framebuffers_[0]);
+  bindFramebuffer(GL_READ_FRAMEBUFFER, p->framebuffers_[1]);
 
   useProgram(p->program_);
 

@@ -112,7 +112,6 @@ namespace ACG {
     \image html paspect.png "Computing the aspect out of the projection matrix"
 **/
 
-
 struct GLStateContext
 {
   // this struct is needed for push/popAttrib operations
@@ -128,7 +127,6 @@ public:
   // element 0: sfactor, 1: dfactor
   GLenum blendFuncState_[2];
 
-
   GLenum blendEquationState_;
 
   GLclampf blendColorState_[4];
@@ -136,6 +134,8 @@ public:
   GLenum alphaFuncState_;
   GLclampf alphaRefState_;
 
+  // depth function
+  GLenum depthFunc_;
 
   // 4 buffer targets:
   // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
@@ -146,10 +146,10 @@ public:
   // active texture unit: GL_TEXTUREi
   GLenum activeTexture_;
 
-  // 16 texture stages, 4 targets
-  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
+  // 16 texture stages, 5 targets
+  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_RECTANGLE
   // current state of a texture target
-  GLuint glTextureTargetState_[16][4];
+  GLuint glTextureTargetState_[16][5];
 
   // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
   GLenum shadeModel_;
@@ -210,7 +210,7 @@ public:
   void makeCurrent() {  }
 
   /// synchronize this class with the OpenGL state machine
-  void syncFromGL();
+  static void syncFromGL();
 
   /// initialize all state variables (called by constructor)
   void initialize();
@@ -234,10 +234,10 @@ public:
 
 
   /// use this instead of glPushAttrib
-  void pushAttrib();
+  static void pushAttrib();
   
   /// use this instead of glPushAttrib
-  void popAttrib();
+  static void popAttrib();
 
   //===========================================================================
   /** @name glEnable / glDisable functionality
@@ -245,116 +245,116 @@ public:
   //===========================================================================
 
   /// replaces glEnable, but supports locking
-  void enable(GLenum _cap);
+  static void enable(GLenum _cap);
 
   /// replaces glDisable, but supports locking
-  void disable(GLenum _cap);
+  static void disable(GLenum _cap);
 
   /// locks a specific cap state, such that enable() or disable() has no effect
-  void lockState(GLenum _cap);
+  static void lockState(GLenum _cap);
 
   /// unlocks a specific cap state
-  void unlockState(GLenum _cap);
+  static void unlockState(GLenum _cap);
 
   /// returns true, if a cap state is locked
-  bool isStateLocked(GLenum _cap);
+  static bool isStateLocked(GLenum _cap);
 
   /// returns true, if a cpa state is enabled
-  bool isStateEnabled(GLenum _cap);
+  static bool isStateEnabled(GLenum _cap);
 
 
   /// replaces glEnableClientState, supports locking
-  void enableClientState(GLenum _cap);
+  static void enableClientState(GLenum _cap);
   /// replaces glDisableClientState, supports locking
-  void disableClientState(GLenum _cap);
+  static void disableClientState(GLenum _cap);
 
   /// locks a client state
-  void lockClientState(GLenum _cap);
+  static void lockClientState(GLenum _cap);
   /// unlocks a client state
-  void unlockClientState(GLenum _cap);
+  static void unlockClientState(GLenum _cap);
 
   /// returns true, if a client state is enabled
-  bool isClientStateEnabled(GLenum _cap);
+  static bool isClientStateEnabled(GLenum _cap);
   /// returns true, if a client state is locked
-  bool isClientStateLocked(GLenum _cap);
+  static bool isClientStateLocked(GLenum _cap);
 
 
   /// replaces glBlendFunc, supports locking
-  void blendFunc(GLenum _sfactor, GLenum _dfactor);
+  static void blendFunc(GLenum _sfactor, GLenum _dfactor);
 
   /// get blend function, null-ptr safe
-  void getBlendFunc(GLenum* _sfactor, GLenum* _dfactor);
+  static void getBlendFunc(GLenum* _sfactor, GLenum* _dfactor);
 
   /// lock blend func
-  void lockBlendFunc() {blendFuncLock_ = true;}
+  static void lockBlendFunc() {blendFuncLock_ = true;}
   /// unlock blend func
-  void unlockBlendFunc() {blendFuncLock_ = false;}
+  static void unlockBlendFunc() {blendFuncLock_ = false;}
   /// get blend func locking state
-  bool isBlendFuncLocked() {return blendFuncLock_;}
+  static bool isBlendFuncLocked() {return blendFuncLock_;}
 
   /// replaces glBlendEquation, supports locking
-  void blendEquation(GLenum _mode);
+  static void blendEquation(GLenum _mode);
 
   /// get blend equation
-  GLenum getBlendEquation() {return stateStack_.back().blendEquationState_;}
+  static GLenum getBlendEquation() {return stateStack_.back().blendEquationState_;}
 
   /// lock blend equation
-  void lockBlendEquation() {blendEquationLock_ = true;}
+  static void lockBlendEquation() {blendEquationLock_ = true;}
   /// unlock blend equation
-  void unlockBlendEquation() {blendEquationLock_ = false;}
+  static void unlockBlendEquation() {blendEquationLock_ = false;}
   /// get blend equation locking state 
-  bool isBlendEquationLocked() {return blendEquationLock_;}
+  static bool isBlendEquationLocked() {return blendEquationLock_;}
 
   /// replaces glBlendColor, supports locking
-  void blendColor(GLclampf _red, GLclampf _green, GLclampf _blue, GLclampf _alpha);
+  static void blendColor(GLclampf _red, GLclampf _green, GLclampf _blue, GLclampf _alpha);
 
   /// get blend color, not null-ptr safe, 4 element color output: RGBA
-  void getBlendColor(GLclampf* _col);
+  static void getBlendColor(GLclampf* _col);
 
   /// lock blend color
-  void lockBlendColor() {blendColorLock_ = true;}
+  static void lockBlendColor() {blendColorLock_ = true;}
   /// unlock blend color
-  void unlockBlendColor() {blendColorLock_ = false;}
+  static void unlockBlendColor() {blendColorLock_ = false;}
   /// get blend color locking state 
-  bool isBlendColorLocked() {return blendColorLock_;}
+  static bool isBlendColorLocked() {return blendColorLock_;}
 
 
   /// replaces glAlphaFunc, supports locking
-  void alphaFunc(GLenum _func, GLclampf _ref);
+  static void alphaFunc(GLenum _func, GLclampf _ref);
 
   /// get alpha function, null-ptr safe
-  void getAlphaFunc(GLenum* _func, GLclampf* _ref);
+  static void getAlphaFunc(GLenum* _func, GLclampf* _ref);
 
   /// lock alpha func
-  void lockAlphaFunc() {alphaFuncLock_ = true;}
+  static void lockAlphaFunc() {alphaFuncLock_ = true;}
   /// unlock alpha func
-  void unlockAlphaFunc() {alphaFuncLock_ = false;}
+  static void unlockAlphaFunc() {alphaFuncLock_ = false;}
   /// get alpha func locking state 
-  bool isAlphaFuncLocked() {return alphaFuncLock_;}
+  static bool isAlphaFuncLocked() {return alphaFuncLock_;}
 
 
   /// replaces glShadeModel, supports locking
-  void shadeModel(GLenum _mode);
+  static void shadeModel(GLenum _mode);
   /// get current shade model
-  GLenum getShadeModel() {return stateStack_.back().shadeModel_;}
+  static GLenum getShadeModel() {return stateStack_.back().shadeModel_;}
   /// lock shade model
-  void lockShadeModel() {shadeModelLock_ = true;}
+  static void lockShadeModel() {shadeModelLock_ = true;}
   /// unlock shade model
-  void unlockShadeModel() {shadeModelLock_ = false;}
+  static void unlockShadeModel() {shadeModelLock_ = false;}
   /// get shade model locking state 
-  bool isShadeModelLocked() {return shadeModelLock_;}
+  static bool isShadeModelLocked() {return shadeModelLock_;}
 
 
   /// replaces glCullFace, supports locking
-  void cullFace(GLenum _mode);
+  static void cullFace(GLenum _mode);
   /// get current cull face
-  GLenum getCullFace() {return stateStack_.back().cullFace_;}
+  static GLenum getCullFace() {return stateStack_.back().cullFace_;}
   /// lock cull face
-  void lockCullFace() {cullFaceLock_ = true;}
+  static void lockCullFace() {cullFaceLock_ = true;}
   /// unlock cull face
-  void unlockCullFace() {cullFaceLock_ = false;}
+  static void unlockCullFace() {cullFaceLock_ = false;}
   /// get cull face locking state
-  bool isCullFaceLocked() {return cullFaceLock_;}
+  static bool isCullFaceLocked() {return cullFaceLock_;}
   
   /** @} */
 
@@ -364,54 +364,54 @@ public:
   //===========================================================================
 
   /// replaces glVertexPointer, supports locking
-  void vertexPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
+  static void vertexPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get vertex pointer, null-ptr safe
-  void getVertexPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+  static void getVertexPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
   /// lock vertex pointer
-  void lockVertexPointer() {vertexPointerLock_ = true;}
+  static void lockVertexPointer() {vertexPointerLock_ = true;}
   /// unlock vertex pointer
-  void unlockVertexPointer() {vertexPointerLock_ = false;}
+  static void unlockVertexPointer() {vertexPointerLock_ = false;}
   /// get vertex pointer lock state
-  bool isVertexPointerLocked() {return vertexPointerLock_;}
+  static bool isVertexPointerLocked() {return vertexPointerLock_;}
 
   /// replaces glNormalPointer, supports locking
-  void normalPointer(GLenum _type, GLsizei _stride, const GLvoid* _pointer);
+  static void normalPointer(GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get normal pointer, null-ptr safe
-  void getNormalPointer(GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+  static void getNormalPointer(GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
   /// lock normal pointer
-  void lockNormalPointer() {normalPointerLock_ = true;}
+  static void lockNormalPointer() {normalPointerLock_ = true;}
   /// unlock normal pointer
-  void unlockNormalPointer() {normalPointerLock_ = false;}
+  static void unlockNormalPointer() {normalPointerLock_ = false;}
   /// get normal pointer lock state
-  bool isNormalPointerLocked() {return normalPointerLock_;}
+  static bool isNormalPointerLocked() {return normalPointerLock_;}
 
 
   /// replaces glColorPointer, supports locking
-  void colorPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
+  static void colorPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get color pointer, null-ptr safe
-  void getColorPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+  static void getColorPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
   /// lock color pointer
-  void lockColorPointer() {colorPointerLock_ = true;}
+  static void lockColorPointer() {colorPointerLock_ = true;}
   /// unlock vertex pointer
-  void unlockColorPointer() {colorPointerLock_ = false;}
+  static void unlockColorPointer() {colorPointerLock_ = false;}
   /// get vertex pointer lock state
-  bool isColorPointerLocked() {return colorPointerLock_;}
+  static bool isColorPointerLocked() {return colorPointerLock_;}
 
 
   /// replaces glTexcoordPointer, supports locking
-  void texcoordPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
+  static void texcoordPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get color pointer, null-ptr safe
-  void getTexcoordPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+  static void getTexcoordPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
   /// lock color pointer
-  void lockTexcoordPointer() {colorPointerLock_ = true;}
+  static void lockTexcoordPointer() {colorPointerLock_ = true;}
   /// unlock vertex pointer
-  void unlockTexcoordPointer() {colorPointerLock_ = false;}
+  static void unlockTexcoordPointer() {colorPointerLock_ = false;}
   /// get vertex pointer lock state
-  bool isTexcoordPointerLocked() {return colorPointerLock_;}
+  static bool isTexcoordPointerLocked() {return colorPointerLock_;}
 
 
   /** @} */
@@ -422,45 +422,45 @@ public:
   //===========================================================================
 
   /// replaces glBindBuffer, supports locking
-  void bindBuffer(GLenum _target, GLuint _buffer);
+  static void bindBuffer(GLenum _target, GLuint _buffer);
 
   /// lock buffer target
-  void lockBufferTarget(GLenum _target);
+  static void lockBufferTarget(GLenum _target);
   
   /// unlock buffer target
-  void unlockBufferTarget(GLenum _target);
+  static void unlockBufferTarget(GLenum _target);
 
   /// get buffer target locking state
-  bool isBufferTargetLocked(GLenum _target);
+  static bool isBufferTargetLocked(GLenum _target);
 
   /// get currently bound buffer
-  GLuint getBoundBuf(GLenum _target);
+  static GLuint getBoundBuf(GLenum _target);
 
 
   /// replaces glDrawBuffer, supports locking
-  void drawBuffer(GLenum _mode);
+  static void drawBuffer(GLenum _mode);
   /// replaces glDrawBuffers, supports locking
-  void drawBuffers(GLsizei _n, const GLenum* _bufs);
+  static void drawBuffers(GLsizei _n, const GLenum* _bufs);
 
   /// lock draw buffer state, applies to drawBuffer and drawBuffers
-  void lockDrawBuffer() {drawBufferLock_ = true;}
+  static void lockDrawBuffer() {drawBufferLock_ = true;}
   /// unlock draw buffer state
-  void unlockDrawBuffer() {drawBufferLock_ = false;}
+  static void unlockDrawBuffer() {drawBufferLock_ = false;}
   /// get draw buffer lock state
-  bool isDrawBufferLocked() {return drawBufferLock_;}
+  static bool isDrawBufferLocked() {return drawBufferLock_;}
 
 
   /// replaces glBindFramebuffer, supports locking
-  void framebuffer(GLenum _target, GLuint _framebuffer);
+  static void bindFramebuffer(GLenum _target, GLuint _framebuffer);
   /// get current framebuffer of a target
-  GLuint getFramebuffer(GLenum _target);
+  static GLuint getFramebuffer(GLenum _target);
 
   /// lock a framebuffer target
-  void lockFramebuffer(GLenum _target);
+  static void lockFramebuffer(GLenum _target);
   /// unlock a framebuffer target
-  void unlockFramebuffer(GLenum _target);
+  static void unlockFramebuffer(GLenum _target);
   /// get framebuffer target lock state
-  bool isFramebufferLocked(GLenum _target);
+  static bool isFramebufferLocked(GLenum _target);
 
 
   /** @} */
@@ -471,16 +471,16 @@ public:
   //===========================================================================
 
   /// replaces glUseProgram, supports locking
-  void useProgram(GLuint _program);
+  static void useProgram(GLuint _program);
   /// get bound program
-  GLuint getProgram() {return stateStack_.back().program_;}
+  static GLuint getProgram() {return stateStack_.back().program_;}
 
   /// lock the program
-  void lockProgram() {programLock_ = true;}
+  static void lockProgram() {programLock_ = true;}
   /// unlock the program
-  void unlockProgram() {programLock_ = false;}
+  static void unlockProgram() {programLock_ = false;}
   /// get program locking state
-  bool isProgramLocked() {return programLock_;}
+  static bool isProgramLocked() {return programLock_;}
 
 
   /** @} */
@@ -488,7 +488,7 @@ public:
 private:
 
   /// bijective map from GLenum buffer_target to [0..3], -1 if unsupported
-  int getBufferTargetIndex(GLenum _target);
+  static int getBufferTargetIndex(GLenum _target);
 
 public:
 
@@ -498,32 +498,34 @@ public:
   //===========================================================================
 
   /// replaces glActiveTexture, no locking support
-  inline void setActiveTexture(GLenum _texunit) {stateStack_.back().activeTexture_ = _texunit;}
+  static void activeTexture(GLenum _texunit);
 
   /// get active GL texture
-  inline GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
+  inline static GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
+  /// get active texture as zero based index
+  inline static int getActiveTextureIndex() {return getActiveTexture() - GL_TEXTURE0;}
 
   /// replaces glBindTexture, supports locking
-  void bindTexture(GLenum _target, GLuint _buffer);
+  static void bindTexture(GLenum _target, GLuint _buffer);
 
   /// locks the current texture stage (set by setActiveTexture)
-  void lockTextureTarget(GLenum _target);
+  static void lockTextureTarget(GLenum _target);
 
   /// unlocks the current texture target
-  void unlockTextureTarget(GLenum _target);
+  static void unlockTextureTarget(GLenum _target);
 
   /// get texture target locking state
-  bool isTextureTargetLocked(GLenum _target);
+  static bool isTextureTargetLocked(GLenum _target);
 
   /// get bound texture
-  GLuint getBoundTextureBuffer(GLenum _target); 
+  static GLuint getBoundTextureBuffer(GLenum _target); 
 
   /** @} */
 
 private:
 
-  /// bijective map from GLenum texture_target to [0..3], -1 if unsupported
-  int getTextureTargetIndex(GLenum _target);
+  /// bijective map from GLenum texture_target to [0..4], -1 if unsupported
+  static int getTextureTargetIndex(GLenum _target);
 
 public:
 
@@ -719,9 +721,13 @@ public:
   /// Call glDepthFunc() to actually change the depth comparison function, and store the new value in this GLState
   void set_depthFunc(const GLenum& _depth_func);
 
-//   inline void lockDepthFunc() {depthFuncLock_ = true;}
-//   inline void unlockDepthFunc() {depthFuncLock_ = false;}
-//   inline bool isDepthFuncLocked() const {return depthFuncLock_;}
+
+  /// replaces glDepthFunc, supports locking (called in set_depthFunc too)
+  static void depthFunc(GLenum _depthFunc);
+
+  inline static void lockDepthFunc() {depthFuncLock_ = true;}
+  inline static void unlockDepthFunc() {depthFuncLock_ = false;}
+  inline static bool isDepthFuncLocked() {return depthFuncLock_;}
 
 
   //--- project and unproject points ------------------------------------------
@@ -1015,7 +1021,7 @@ private: //--------------------------------------------------------------------
   bool multisampling_;
   bool allow_multisampling_;
   
-  int num_texture_units_;
+  static int num_texture_units_;
   
   // Mipmapping settings
   bool mipmapping_;
@@ -1037,64 +1043,63 @@ private: //--------------------------------------------------------------------
 
 
   // depth comparison function (GL_LESS by default)
-  GLenum depth_func_;
-  bool depthFuncLock_;
+  static bool depthFuncLock_;
 
 
   //////////////////////////////////////////////////////////////////////////
   // state locking members
 
   // stack needed for glPush/PopAttrib
-  std::deque <GLStateContext> stateStack_;
+  static std::deque <GLStateContext> stateStack_;
 
   // all possible params for glEnable
   static GLenum glStateCaps[95];
 
   // glEnable / glDisable states locker
   // iff a bit is set for a state, it is locked
-  std::bitset<0xFFFF+1> glStateLock_;
+  static std::bitset<0xFFFF+1> glStateLock_;
 
-  bool blendFuncLock_;
-  bool blendEquationLock_;
-  bool blendColorLock_;
-  bool alphaFuncLock_;
+  static bool blendFuncLock_;
+  static bool blendEquationLock_;
+  static bool blendColorLock_;
+  static bool alphaFuncLock_;
 
 
   // 4 buffer targets:
   // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
-  int glBufferTargetLock_[4];
+  static int glBufferTargetLock_[4];
 
   // 16 texture stages, 4 targets
   // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
-  int glTextureTargetLock_[16][4];
+  static int glTextureTargetLock_[16][5];
 
   // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
-  bool   shadeModelLock_;
+  static bool   shadeModelLock_;
 
   // current cull face mode: GL_FRONT, GL_FRONT_AND_BACK
-  bool   cullFaceLock_;  
+  static bool   cullFaceLock_;  
 
-  bool vertexPointerLock_;
-  bool normalPointerLock_;
-  bool texcoordPointerLock_;
-  bool colorPointerLock_;
+  static bool vertexPointerLock_;
+  static bool normalPointerLock_;
+  static bool texcoordPointerLock_;
+  static bool colorPointerLock_;
 
 
   // draw buffers
-  bool drawBufferLock_;
+  static bool drawBufferLock_;
 
   // framebuffer
   //  framebuffer id for each target: 0 - GL_DRAW_FRAMEBUFFER, 1-> GL_READ_FRAMEBUFFER
-  bool framebufferLock_[2];
+  static bool framebufferLock_[2];
 
   // current gl shader program
-  bool programLock_;
+  static bool programLock_;
 
 
   // graphics card caps, retrieved via glGet
-  int maxTextureCoords_;
-  int maxCombinedTextureImageUnits_;
-  int maxDrawBuffers_;
+  static int maxTextureCoords_;
+  static int maxCombinedTextureImageUnits_;
+  static int maxDrawBuffers_;
 };
 
 /** \page pickingDocumentation Picking in the ACG SceneGraph
