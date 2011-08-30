@@ -1067,7 +1067,8 @@ private:
   private:
 
     /// The animation object for flyTo
-    QPropertyAnimation* animation_;
+    QPropertyAnimation* flyAnimationPerspective_;
+    QPropertyAnimation* flyAnimationOrthogonal_;
 
     /// Full translation between start and ed of animation
     ACG::Vec3d flyTranslation_;

@@ -118,19 +118,24 @@ void glViewer::flyTo(const QPoint& _pos, bool _moveBack)
       properties_.trackballCenter( hitPoint );
 
       // Create animation object
-      animation_ = new QPropertyAnimation(this, "currentAnimationPosition");
-      animation_->setDuration(300);
+      if ( flyAnimationOrthogonal_ == 0) {
+        flyAnimationOrthogonal_ = new QPropertyAnimation(this, "currentAnimationPosition");
 
-      // Range is from 0 to one, as we linearly interpolate the animation
-      animation_->setStartValue(0.0);
-      animation_->setEndValue(1.0);
 
-      // Connect signals for the animation and its end
-      connect(animation_, SIGNAL(valueChanged(QVariant)), this, SLOT(flyAnimationOrthogonal(QVariant)));
-      connect(animation_, SIGNAL(finished()), this, SLOT(flyAnimationOrthogonalFinished()));
+        // Range is from 0 to one, as we linearly interpolate the animation
+        flyAnimationOrthogonal_->setStartValue(0.0);
+        flyAnimationOrthogonal_->setEndValue(1.0);
+
+        // Connect signals for the animation and its end
+        connect(flyAnimationOrthogonal_, SIGNAL(valueChanged(QVariant)), this, SLOT(flyAnimationOrthogonal(QVariant)));
+        connect(flyAnimationOrthogonal_, SIGNAL(finished()), this, SLOT(flyAnimationOrthogonalFinished()));
+      }
+
+      // Set duration
+      flyAnimationOrthogonal_->setDuration(300);
 
       // Start it
-      animation_->start();
+      flyAnimationOrthogonal_->start();
 
     }
   }
@@ -200,17 +205,14 @@ void glViewer::flyAnimationOrthogonalFinished() {
   // Inform others that the current view has changed
   emit viewChanged();
 
-  if ( animation_)
-    delete animation_;
 }
 
 void glViewer::flyAnimationPerspectiveFinished() {
+
   // Update the trackball to the final position
   properties_.trackballCenter( flyCenter_ );
   properties_.trackballRadius( std::max( properties_.sceneRadius(),( flyCenter_ - flyPosition_ ).norm() * 0.9f  ) );
 
-  if ( animation_)
-    delete animation_;
 }
 
 void glViewer::flyTo(const ACG::Vec3d&  _position,
@@ -244,20 +246,23 @@ void glViewer::flyTo(const ACG::Vec3d&  _position,
   lastAnimationPos_ = 0.0;
 
   // Create animation object
-  animation_ = new QPropertyAnimation(this, "currentAnimationPosition");
+  if ( flyAnimationPerspective_ == 0) {
+    flyAnimationPerspective_ = new QPropertyAnimation(this, "currentAnimationPosition");
 
-  animation_->setDuration(_time);
+    // Range is from 0 to one, as we linearly interpolate the animation
+    flyAnimationPerspective_->setStartValue(0.0);
+    flyAnimationPerspective_->setEndValue(1.0);
 
-  // Range is from 0 to one, as we linearly interpolate the animation
-  animation_->setStartValue(0.0);
-  animation_->setEndValue(1.0);
+    // Connect signals for the animation and its end
+    connect(flyAnimationPerspective_, SIGNAL(valueChanged(QVariant)), this, SLOT(flyAnimationPerspective(QVariant)));
+    connect(flyAnimationPerspective_, SIGNAL(finished()), this, SLOT(flyAnimationPerspectiveFinished()));
+  }
 
-  // Connect signals for the animation and its end
-  connect(animation_, SIGNAL(valueChanged(QVariant)), this, SLOT(flyAnimationPerspective(QVariant)));
-  connect(animation_, SIGNAL(finished()), this, SLOT(flyAnimationPerspectiveFinished()));
+  // Set duration
+  flyAnimationPerspective_->setDuration(_time);
 
   // Start it
-  animation_->start();
+  flyAnimationPerspective_->start();
 }
 
 
