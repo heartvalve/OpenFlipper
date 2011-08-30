@@ -156,7 +156,12 @@ glViewer::glViewer( QGraphicsScene* _scene,
   clickEvent_(QEvent::MouseButtonPress, QPoint (), Qt::NoButton, Qt::NoButton, Qt::NoModifier),
   properties_(_properties),
   glstate_(0),
-  initialized_(false)
+  initialized_(false),
+  flyAnimationPerspective_(0),
+  flyAnimationOrthogonal_(0),
+  flyAngle_(0.0),
+  currentAnimationPos_(0.0),
+  flyMoveBack_(false)
 {
 
   // widget stuff
