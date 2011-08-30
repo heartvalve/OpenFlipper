@@ -2,8 +2,8 @@
 # Find the native TAUCS headers and libraries.
 #
 #  TAUCS_INCLUDE_DIR -  where to find TAUCS.h, etc.
-#  TAUCS_LIBRARIES    - List of libraries when using TAUCS.
-#  TAUCS_FOUND        - True if TAUCS found.
+#  TAUCS_LIBRARY     - List of libraries when using TAUCS.
+#  TAUCS_FOUND       - True if TAUCS found.
 
 IF (TAUCS_INCLUDE_DIR)
   # Already in cache, be silent
