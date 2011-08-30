@@ -83,6 +83,7 @@
 #include <QTimer>
 #include <QGraphicsWidget>
 #include <QGraphicsSceneDragDropEvent>
+#include <QPropertyAnimation>
 
 #include <vector>
 #include <string>
@@ -320,21 +321,6 @@ public slots:
   virtual void home();
   /// view the whole scene
   virtual void viewAll();
-  /// Fly to. Get closer if \c _move_back=\c false, get more distant else.
-  virtual void flyTo(const QPoint& _pos, bool _move_back);
-  /// Fly to, get closer.
-  virtual void flyTo(const QPoint& _pos) { flyTo(_pos,false); }
-  /// Fly to, get more distant.
-  virtual void flyFrom(const QPoint& _pos) { flyTo(_pos,true); }
-
-  /**  Fly to point and set new viewing direction (animated).
-   * @param _position New viewer position ( the new eye point of the viewer )
-   * @param _center   The new scene center ( the point we are looking at )
-   * @param _time     Animation time in ms
-   */
-  virtual void flyTo(const ACG::Vec3d& _position,
-		               const ACG::Vec3d& _center,
-		               double       _time = 1000.0);
 
   /// set perspective view (projectionMode(PERSPECTIVE_PROJECTION))
   virtual void perspectiveProjection();
@@ -1036,6 +1022,104 @@ private:
      *  You have to set the context yourself!
      */
     void applyProperties();
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Flying animation properties
+    * @{ */
+  //===========================================================================
+  public slots:
+
+    /** \brief Animated flight to or away from a given point
+     *
+     * Animated flight to or away from a given point.
+     *
+     * @param _pos Point defining direction of flight (eye-point)
+     * @param _moveBack  To or away from point?
+     */
+    virtual void flyTo(const QPoint& _pos, bool _moveBack);
+
+    /** \brief Animated flight
+     *
+     * Animated flight into the direction of the given point.
+     *
+     */
+    virtual void flyTo(const QPoint& _pos) { flyTo(_pos,false); }
+
+
+    /** \brief Animated flight
+     *
+     * Animated flight away from the given point.
+     *
+     */
+    virtual void flyFrom(const QPoint& _pos) { flyTo(_pos,true); }
+
+    /**  Fly to point and set new viewing direction (animated).
+     * @param _position New viewer position ( the new eye point of the viewer )
+     * @param _center   The new scene center ( the point we are looking at )
+     * @param _time     Animation time in ms
+     */
+    virtual void flyTo(const ACG::Vec3d& _position,
+                       const ACG::Vec3d& _center,
+                       int               _time = 1000);
+
+  private:
+
+    /// The animation object for flyTo
+    QPropertyAnimation* animation_;
+
+    /// Full translation between start and ed of animation
+    ACG::Vec3d flyTranslation_;
+
+    /// The rotation axis for fly to animation
+    ACG::Vec3d flyAxis_;
+
+    /// The rotation angle (full angle) for fly to animation
+    double     flyAngle_;
+
+    /// The last position of the animation to compute the difference vector
+    double     lastAnimationPos_;
+
+    Q_PROPERTY(double currentAnimationPosition READ currentAnimationPos WRITE currentAnimationPos NOTIFY currentAnimationPosChanged)
+
+    /// The property that is animated by flyTo
+    double     currentAnimationPos_;
+
+    /// Getter for aflyToAnimationPosition
+    double currentAnimationPos() {return currentAnimationPos_;};
+
+    /// Setter for aflyToAnimationPosition
+    void   currentAnimationPos(double _currentAnimationPos) {currentAnimationPos_ = _currentAnimationPos; emit currentAnimationPosChanged(_currentAnimationPos); };
+
+    /// The new center after the flyTo animation
+    ACG::Vec3d flyCenter_;
+
+    /// The new position after the flyTo animation
+    ACG::Vec3d flyPosition_;
+
+    /// Original orthogonal width during flyTo in orthogonal mode
+    double flyOrthoWidthOriginal_;
+
+    /// Flag for fly in orthogonal mode if we move back or forward
+    bool flyMoveBack_;
+
+  signals:
+    /// Emitted when the currentAnimationPosition changed
+    void currentAnimationPosChanged(double _currentAnimationPos);
+
+  private slots:
+    /// Slot called during flyTo Animation in perspective mode
+    void flyAnimationPerspective(QVariant _pos);
+
+    /// Slot called during flyTo Animation in orthogonal mode
+    void flyAnimationOrthogonal(QVariant _pos);
+
+    /// Slot called when flyTo perspective Animation finished
+    void flyAnimationPerspectiveFinished();
+
+    /// Slot called when flyTo orthogonal Animation finished
+    void flyAnimationOrthogonalFinished();
 
   /** @} */
 };
