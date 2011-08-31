@@ -750,6 +750,9 @@ void CoreWidget::delete_garbage() {
     if(!watcher) {
         return;
     }
+
+    map_mutex_.lock();
+
     std::map<QFutureWatcher<void>*,QFuture<void>*>::iterator f;
     f = watcher_garbage_.find(watcher);
     if(f != watcher_garbage_.end()) {
@@ -757,6 +760,8 @@ void CoreWidget::delete_garbage() {
         delete f->first;
         watcher_garbage_.erase(f);
     }
+
+    map_mutex_.unlock();
 }
 
 void CoreWidget::slotPasteView( ) {
