@@ -118,8 +118,6 @@ void CoreWidget::setStatus( ApplicationStatus::applicationStatus _status)
   
   statusIcon_->setPixmap(pix.scaled(12,12,Qt::KeepAspectRatio,Qt::SmoothTransformation));
   
-//   QApplication::processEvents();
-  
 }
 
 void CoreWidget::addWidgetToStatusbar(QWidget* _widget){
