@@ -462,10 +462,6 @@ void CoreWidget::applicationSnapshot() {
 
   suggest += format;
 
-  // Disabled, as it caused strange behaviour in the app ... early frames
-  // of the capture contained images from frames at the end of the capture process
-  // QApplication::processEvents();
-
   QPixmap pic = QPixmap::grabWindow( winId() );
 
   pic.save(suggest);

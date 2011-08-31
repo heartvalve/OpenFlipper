@@ -531,7 +531,6 @@ glViewer::copyToImage( QImage& _image,
 			     GLenum /* _buffer */ )
 {
 
-//    qApp->processEvents();
 //    makeCurrent();
 
   _image = glWidget_->grabFrameBuffer(true).copy (_l, _t, _w, _h).convertToFormat (QImage::Format_RGB32);
@@ -2059,7 +2058,6 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     if ( fb.isValid() ){
 
       fb.bind();
-      qApp->processEvents();
       makeCurrent();
       
       // Turn alpha on if demanded
