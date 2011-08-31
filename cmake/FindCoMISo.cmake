@@ -16,67 +16,71 @@ ENDIF (COMISO_INCLUDE_DIR)
 FIND_PATH( COMISO_INCLUDE_DIR CoMISo/Config/config.hh
            PATHS "${CMAKE_SOURCE_DIR}/libs/" )
 
-FILE(READ ${COMISO_INCLUDE_DIR}/CoMISo/Config/config.hh CURRENT_COMISO_CONFIG)
+if ( COMISO_INCLUDE_DIR )
 
-set(COMISO_OPT_DEPS "")
+  FILE(READ ${COMISO_INCLUDE_DIR}/CoMISo/Config/config.hh CURRENT_COMISO_CONFIG)
+
+  set(COMISO_OPT_DEPS "")
 
 
-STRING(REGEX MATCH "\#define COMISO_MPI_AVAILABLE 1" COMISO_MPI_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+  STRING(REGEX MATCH "\#define COMISO_MPI_AVAILABLE 1" COMISO_MPI_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
-if ( COMISO_MPI_BUILD_TIME_AVAILABLE )
+  if ( COMISO_MPI_BUILD_TIME_AVAILABLE )
 
- find_package(MPI)
+   find_package(MPI)
 
- if ( NOT MPI_FOUND )
-   message(ERROR "COMISO configured with mpi but mpi not available")
- endif()
+   if ( NOT MPI_FOUND )
+     message(ERROR "COMISO configured with mpi but mpi not available")
+   endif()
 
- list (APPEND  COMISO_OPT_DEPS "MPI")
+   list (APPEND  COMISO_OPT_DEPS "MPI")
 
-endif()
+  endif()
 
-STRING(REGEX MATCH "\#define COMISO_PETSC_AVAILABLE 1" COMISO_PETSC_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+  STRING(REGEX MATCH "\#define COMISO_PETSC_AVAILABLE 1" COMISO_PETSC_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
-if ( COMISO_PETSC_BUILD_TIME_AVAILABLE )
+  if ( COMISO_PETSC_BUILD_TIME_AVAILABLE )
 
- find_package(PETSC)
+   find_package(PETSC)
 
- if ( NOT PETSC_FOUND )
-   message(ERROR "COMISO configured with petsc but petsc not available")
- endif()
+   if ( NOT PETSC_FOUND )
+     message(ERROR "COMISO configured with petsc but petsc not available")
+   endif()
 
- list (APPEND  COMISO_OPT_DEPS "PETSC")
+   list (APPEND  COMISO_OPT_DEPS "PETSC")
 
-endif()
+  endif()
 
-STRING(REGEX MATCH "\#define COMISO_IPOPT_AVAILABLE 1" COMISO_IPOPT_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+  STRING(REGEX MATCH "\#define COMISO_IPOPT_AVAILABLE 1" COMISO_IPOPT_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
-if ( COMISO_IPOPT_BUILD_TIME_AVAILABLE )
+  if ( COMISO_IPOPT_BUILD_TIME_AVAILABLE )
 
- find_package(IPOPT)
+   find_package(IPOPT)
 
- if ( NOT IPOPT_FOUND )
-   message(ERROR "COMISO configured with ipopt but ipopt not available")
- endif()
+   if ( NOT IPOPT_FOUND )
+     message(ERROR "COMISO configured with ipopt but ipopt not available")
+   endif()
 
- list (APPEND  COMISO_OPT_DEPS "IPOPT")
+   list (APPEND  COMISO_OPT_DEPS "IPOPT")
 
-endif()
+  endif()
 
-STRING(REGEX MATCH "\#define COMISO_TAO_AVAILABLE 1" COMISO_TAO_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+  STRING(REGEX MATCH "\#define COMISO_TAO_AVAILABLE 1" COMISO_TAO_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
-if ( COMISO_TAO_BUILD_TIME_AVAILABLE )
+  if ( COMISO_TAO_BUILD_TIME_AVAILABLE )
 
- find_package(TAO)
+   find_package(TAO)
 
- if ( NOT TAO_FOUND )
-   message(ERROR "COMISO configured with tao but tao not available")
- endif()
+   if ( NOT TAO_FOUND )
+     message(ERROR "COMISO configured with tao but tao not available")
+   endif()
 
- list (APPEND  COMISO_OPT_DEPS "TAO")
-endif()
+   list (APPEND  COMISO_OPT_DEPS "TAO")
+  endif()
 
-add_definitions (-DCOMISODLL -DUSECOMISO )
+  add_definitions (-DCOMISODLL -DUSECOMISO )
+
+endif(COMISO_INCLUDE_DIR)
 
 IF (COMISO_INCLUDE_DIR)
   SET(COMISO_FOUND TRUE)
