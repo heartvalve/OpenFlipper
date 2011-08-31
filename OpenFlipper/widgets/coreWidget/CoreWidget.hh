@@ -945,6 +945,9 @@ public:
     // Store pointers to QFuture and QFutureWatcher
     std::map<QFutureWatcher<void>*,QFuture<void>*> watcher_garbage_;
 
+    // Mutex for operations on map
+    QMutex map_mutex_;
+
   private slots:
 
     void delete_garbage();
