@@ -462,9 +462,9 @@ void CoreWidget::applicationSnapshot() {
 
   suggest += format;
 
-  QPixmap pic = QPixmap::grabWindow( winId() );
-
-  pic.save(suggest);
+  // Write image asynchronously
+  QPixmap* pic = new QPixmap(QPixmap::grabWindow( winId() ));
+  writeImageAsynchronously(pic, suggest);
 }
 
 
@@ -725,6 +725,39 @@ void CoreWidget::applicationSnapshotName(QString _name) {
   snapshotCounter_ = 0;
 }
 
+void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name) {
+
+    QFuture<void>* future = new QFuture<void>();
+    *future = QtConcurrent::run(this, &CoreWidget::writeImage, _pixmap, _name);
+    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+    watcher->setFuture(*future);
+
+    watcher_garbage_.insert(std::pair<QFutureWatcher<void>*,QFuture<void>*>(watcher, future));
+
+    connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
+}
+
+void CoreWidget::writeImage(QPixmap* _pixmap, const QString _name) const {
+
+    _pixmap->save(_name);
+    delete _pixmap;
+}
+
+void CoreWidget::delete_garbage() {
+
+    QObject* obj = QObject::sender();
+    QFutureWatcher<void>* watcher = dynamic_cast<QFutureWatcher<void>*>(obj);
+    if(!watcher) {
+        return;
+    }
+    std::map<QFutureWatcher<void>*,QFuture<void>*>::iterator f;
+    f = watcher_garbage_.find(watcher);
+    if(f != watcher_garbage_.end()) {
+        delete f->second;
+        delete f->first;
+        watcher_garbage_.erase(f);
+    }
+}
 
 void CoreWidget::slotPasteView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
