@@ -430,8 +430,6 @@ void CoreWidget::applicationSnapshotDialog() {
     }else
       snapshotCounter_++;
 
-    QApplication::processEvents();
-
     QPixmap pic = QPixmap::grabWindow( winId() );
 
     pic.save(newName);
