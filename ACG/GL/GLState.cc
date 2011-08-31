@@ -1344,8 +1344,11 @@ void GLState::syncFromGL()
     GL_TEXTURE_BINDING_1D, GL_TEXTURE_1D,
     GL_TEXTURE_BINDING_2D, GL_TEXTURE_2D,
     GL_TEXTURE_BINDING_3D, GL_TEXTURE_3D,
-    GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP,
-    GL_TEXTURE_BINDING_RECTANGLE, GL_TEXTURE_RECTANGLE};
+    GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP
+#ifndef __APPLE__
+    , GL_TEXTURE_BINDING_RECTANGLE, GL_TEXTURE_RECTANGLE
+#endif
+  };
 
   glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextureCoords_);
   glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits_);
@@ -1362,7 +1365,11 @@ void GLState::syncFromGL()
     glActiveTexture(GL_TEXTURE0 + i);
 
     // for each texture stage query 5 texture types: 1D, 2D, 3D, Cube, Rect
-    for (int k = 0; k < 5; ++k)
+    int entries = 5;
+#ifdef __APPLE__
+    entries = 4;
+#endif
+    for (int k = 0; k < entries; ++k)
       glGetIntegerv(texBufGets[k*2],
         (GLint*)stateStack_.back().glTextureTargetState_[i] + getTextureTargetIndex(texBufGets[k*2+1]));
   }
@@ -1704,7 +1711,9 @@ int GLState::getTextureTargetIndex(GLenum _target)
   switch (_target)
   {
   case GL_TEXTURE_2D: return 1;
+#ifndef __APPLE__
   case GL_TEXTURE_RECTANGLE: return 4;
+#endif  
   case GL_TEXTURE_CUBE_MAP: return 3;
   case GL_TEXTURE_1D: return 0;
   case GL_TEXTURE_3D: return 2;
