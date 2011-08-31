@@ -331,8 +331,6 @@ void FileOBJPlugin::createAllGroupObjects(OBJImporter& _importer) {
 
         else if (_importer.isCurve( i )) {
 
-            std::cerr << "Creating curve" << std::endl;
-
             int id = -1;
             emit addEmptyObject(DATA_BSPLINE_CURVE, id);
 
@@ -1205,7 +1203,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         //for next object
 
         std::string grpName;
-        stream >> grpName;
+        std::getline(stream, grpName);
 
         if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
@@ -1421,7 +1419,6 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     // Mesh does not contain any faces
     PolyMeshCount++;
     _importer.setObjectOptions(OBJImporter::TRIMESH);
-    std::cerr << "Adding a polymesh" << std::endl;
   }
   
   if (TriMeshCount == 0 && PolyMeshCount == 0)
