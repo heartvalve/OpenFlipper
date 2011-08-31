@@ -409,7 +409,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
     
     const std::vector<std::string> matNames = _importer.usedMaterials( _objectID );
     
-    for (uint i=0; i < matNames.size(); i++){
+    for (unsigned int i=0; i < matNames.size(); i++){
     
       Material& material = _importer.materials()[ matNames[i] ];
       
@@ -948,7 +948,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         // add the control points
         std::vector< ACG::Vec3d > controlPolygon;
         
-        for (uint i = 0; i < cpIndices.size(); ++i)
+        for (unsigned int i = 0; i < cpIndices.size(); ++i)
           controlPolygon.push_back( (ACG::Vec3d) _importer.vertex( cpIndices[i] ) );
 
         _importer.currentCurve()->set_control_polygon( controlPolygon );
@@ -1526,7 +1526,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     
     if ( dataControlExists ){
     
-      for(uint i=1; i < importer.objectCount(); i++) {
+      for(unsigned int i=1; i < importer.objectCount(); i++) {
           BaseObject* obj = importer.object(i);
           if(obj) {
               objIDs.push_back( obj->id() );
@@ -1540,7 +1540,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
   }
 
   //check all new objects
-  for(uint i=0; i < importer.objectCount(); i++){
+  for(unsigned int i=0; i < importer.objectCount(); i++){
     
     BaseObject* object = importer.object(i);
     if(object == NULL) continue;

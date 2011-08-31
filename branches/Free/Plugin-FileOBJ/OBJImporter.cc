@@ -62,7 +62,7 @@ VertexHandle OBJImporter::addVertex(const Vec3f& _point){
 }
 
 /// get vertex with given index
-Vec3f OBJImporter::vertex(uint _index){
+Vec3f OBJImporter::vertex(unsigned int _index){
   
   if ( vertices_.size() > _index )
     return vertices_[ _index ];
@@ -354,7 +354,7 @@ void OBJImporter::addFace(const VHandles& _indices){
     
     std::vector< TriMesh::VertexHandle > vertices;
     
-    for (uint i=0; i < _indices.size(); i++){
+    for (unsigned int i=0; i < _indices.size(); i++){
 
       if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
     
@@ -389,7 +389,7 @@ void OBJImporter::addFace(const VHandles& _indices){
     
     std::vector< PolyMesh::VertexHandle > vertices;
     
-    for (uint i=0; i < _indices.size(); i++){
+    for (unsigned int i=0; i < _indices.size(); i++){
       
       if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
     
@@ -426,7 +426,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     std::vector< TriMesh::VertexHandle > vertices;
     
-    for (uint i=0; i < _indices.size(); i++){
+    for (unsigned int i=0; i < _indices.size(); i++){
 
       if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
     
@@ -487,7 +487,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     std::vector< PolyMesh::VertexHandle > vertices;
     
-    for (uint i=0; i < _indices.size(); i++) {
+    for (unsigned int i=0; i < _indices.size(); i++) {
 
       if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
     
@@ -570,7 +570,7 @@ void OBJImporter::addMaterial(std::string _materialName){
         }
       }
 
-      for (uint i=0; i < addedFacesTri_[currentGroup_].size(); i++){
+      for (unsigned int i=0; i < addedFacesTri_[currentGroup_].size(); i++){
       
         if ( mat.has_Kd() ) {
           bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
@@ -651,7 +651,7 @@ void OBJImporter::addMaterial(std::string _materialName){
 // force all meshes to be opened with specific type
 void OBJImporter::forceMeshType( ObjectOptions _meshType ){
   
-  for (uint i=0; i < objectOptions_.size(); i++){
+  for (unsigned int i=0; i < objectOptions_.size(); i++){
     
     bool isMesh = (objectOptions_[i] & TRIMESH) | (objectOptions_[i] & POLYMESH);
     bool correctType = objectOptions_[i] & _meshType;
@@ -707,25 +707,25 @@ bool OBJImporter::hasTextureCoords(int _objectID){
 
 //-----------------------------------------------------------------------------
 
-uint OBJImporter::n_vertices(){
+unsigned int OBJImporter::n_vertices(){
   return vertices_.size();
 }
 
 //-----------------------------------------------------------------------------
 
-uint OBJImporter::n_normals(){
+unsigned int OBJImporter::n_normals(){
   return normals_.size();
 }
 
 //-----------------------------------------------------------------------------
 
-uint OBJImporter::n_texCoords(){
+unsigned int OBJImporter::n_texCoords(){
   return texCoords_.size();
 }
 
 //-----------------------------------------------------------------------------
 
-uint OBJImporter::objectCount(){
+unsigned int OBJImporter::objectCount(){
   return groupNames_.size();
 }
 
@@ -782,7 +782,7 @@ std::vector< OBJImporter::ObjectOptions >& OBJImporter::objectOptions(){
 //-----------------------------------------------------------------------------
 
 // check if object with given id has given option
-bool OBJImporter::hasOption( uint _id, ObjectOptions _option ){
+bool OBJImporter::hasOption( unsigned int _id, ObjectOptions _option ){
   
   if (_id >= objectOptions_.size())
     return false;
@@ -964,7 +964,7 @@ void OBJImporter::finish() {
 //-----------------------------------------------------------------------------
 
 //used materials
-const std::vector<std::string> OBJImporter::usedMaterials(uint _objectID){
+const std::vector<std::string> OBJImporter::usedMaterials(unsigned int _objectID){
 
   if (_objectID >= usedMaterials_.size())
     return std::vector<std::string>();
@@ -980,7 +980,7 @@ void OBJImporter::useMaterial( std::string _materialName ){
     usedMaterials_.push_back( std::vector<std::string>() );
   
   //check that it is not added already
-  for (uint i=0; i < usedMaterials_[ currentObject() ].size(); i++ )
+  for (unsigned int i=0; i < usedMaterials_[ currentObject() ].size(); i++ )
     if ( usedMaterials_[ currentObject() ][i] == _materialName )
       return;
   

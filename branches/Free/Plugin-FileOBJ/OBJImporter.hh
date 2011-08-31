@@ -103,7 +103,7 @@ class OBJImporter
       FORCE_NOTEXTURES = 1 << 10
     };
     
-    typedef uint ObjectOptions;
+    typedef unsigned int ObjectOptions;
 
     /// Constructor
     OBJImporter() : currentGroup_(0) {
@@ -118,7 +118,7 @@ class OBJImporter
     VertexHandle addVertex(const Vec3f& _point);
 
     /// get vertex with given index
-    Vec3f vertex(uint _index);
+    Vec3f vertex(unsigned int _index);
     
     /// add texture coordinates
     int addTexCoord(const Vec2f& _coord);
@@ -182,11 +182,11 @@ class OBJImporter
     bool isSurface(int _objectID);
 
     /// Global Properties
-    uint n_vertices();
-    uint n_normals();
-    uint n_texCoords();
+    unsigned int n_vertices();
+    unsigned int n_normals();
+    unsigned int n_texCoords();
 
-    uint objectCount();
+    unsigned int objectCount();
     
     /// return object with given index
     BaseObject* object(int _objectID );
@@ -198,7 +198,7 @@ class OBJImporter
     void addMaterial(std::string _materialName);
     
     /// used materials
-    const std::vector<std::string> usedMaterials(uint _objectID);
+    const std::vector<std::string> usedMaterials(unsigned int _objectID);
     void useMaterial( std::string _materialName );
     
     ///used vertices
@@ -216,7 +216,7 @@ class OBJImporter
     std::vector< ObjectOptions >& objectOptions();
     
     /// check if object with given id has given option
-    bool hasOption( uint _id, ObjectOptions _option );
+    bool hasOption( unsigned int _id, ObjectOptions _option );
     
     /// change the name of an object
     void setObjectName(int _objectID, QString _name);
