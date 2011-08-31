@@ -97,8 +97,6 @@ slotLog(Logtype _type, QString _message) {
   if (_type == LOGERR)
     statusBar_->showMessage(_message,textColor, 4000);
 
-  // Make shure, we see the message
-//   QApplication::processEvents();
 }
 
 //=============================================================================
