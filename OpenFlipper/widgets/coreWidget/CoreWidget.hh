@@ -82,6 +82,9 @@
 #include <QToolBar>
 #include <QStatusBar>
 
+#include <QFuture>
+#include <QFutureWatcher>
+
 #include <QDockWidget>
 
 #include <OpenFlipper/widgets/aboutWidget/aboutWidget.hh>
@@ -927,6 +930,28 @@ public:
   /** @} */
 
   //===========================================================================
+    /** @name Thread-safe functions using QFuture
+    * @{ */
+  //===========================================================================
+
+  public:
+
+    void writeImageAsynchronously(QPixmap* _pixmap, const QString _name);
+
+  private:
+
+    void writeImage(QPixmap* _pixmap, const QString _name) const;
+
+    // Store pointers to QFuture and QFutureWatcher
+    std::map<QFutureWatcher<void>*,QFuture<void>*> watcher_garbage_;
+
+  private slots:
+
+    void delete_garbage();
+
+  /** @} */
+
+  //===========================================================================
     /** @name StackWidget controls
     * @{ */
   //===========================================================================
@@ -1368,7 +1393,6 @@ public:
 
     void hidePopupMenus();
   /** @} */
-
 };
 
 
