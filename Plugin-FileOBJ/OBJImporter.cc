@@ -216,15 +216,16 @@ void OBJImporter::addUsedVertices(int _groupId) {
 
         if(usedVertices_.size() <= (unsigned int)_groupId) return;
 
-        for (std::set<VertexHandle>::iterator it = usedVertices_[_groupId].begin(); it != usedVertices_[_groupId].end(); it++) {
+        for(std::map<int, VertexHandle>::const_iterator it = usedVertices_[_groupId].begin();
+                it != usedVertices_[_groupId].end(); ++it) {
 
-            if (*it >= (int) vertices_.size()) {
+            if (it->first >= (int)vertices_.size()) {
                 std::cerr << "Error: Vertex ID too large" << std::endl;
                 continue;
             }
 
-            if (vertexMapTri_[_groupId].find(*it) == vertexMapTri_[_groupId].end()) {
-                (vertexMapTri_[_groupId])[*it] = curMesh->add_vertex((TriMesh::Point) vertices_[*it]);
+            if (vertexMapTri_[_groupId].find(it->first) == vertexMapTri_[_groupId].end()) {
+                vertexMapTri_[_groupId].insert(std::pair<int, TriMesh::VertexHandle>(it->first, curMesh->add_vertex((TriMesh::Point)vertices_[it->first])));
             }
         }
 
@@ -239,16 +240,17 @@ void OBJImporter::addUsedVertices(int _groupId) {
 
         if(usedVertices_.size() <= (unsigned int)currentObject()) return;
 
-        for (std::set<VertexHandle>::iterator it = usedVertices_[currentObject()].begin(); it
-                != usedVertices_[currentObject()].end(); it++) {
+        for(std::map<int, VertexHandle>::const_iterator it = usedVertices_[_groupId].begin();
+                it != usedVertices_[_groupId].end(); ++it) {
 
-            if (*it >= (int) vertices_.size()) {
+            if (it->first >= (int)vertices_.size()) {
                 std::cerr << "Error: Vertex ID too large" << std::endl;
-                return;
+                continue;
             }
 
-            if (vertexMapPoly_[_groupId].find(*it) == vertexMapPoly_[_groupId].end())
-                (vertexMapPoly_[_groupId])[*it] = curMesh->add_vertex((PolyMesh::Point) vertices_[*it]);
+            if (vertexMapPoly_[_groupId].find(it->first) == vertexMapPoly_[_groupId].end()) {
+                vertexMapPoly_[_groupId].insert(std::pair<int, PolyMesh::VertexHandle>(it->first, curMesh->add_vertex((PolyMesh::Point)vertices_[it->first])));
+            }
         }
     }
 }
@@ -301,7 +303,7 @@ void OBJImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
 //-----------------------------------------------------------------------------
 
 /// set vertex normal
-void OBJImporter::setNormal(VertexHandle _vh, int _normalID){
+void OBJImporter::setNormal(int _index, int _normalID){
   
   if ( isTriangleMesh( currentObject() ) ){
   
@@ -310,8 +312,8 @@ void OBJImporter::setNormal(VertexHandle _vh, int _normalID){
     
     if ( _normalID < (int) normals_.size() ){
     
-      if ( vertexMapTri_[currentGroup_].find( _vh ) != vertexMapTri_[currentGroup_].end() ){
-        currentTriMesh()->set_normal( vertexMapTri_[currentGroup_][_vh], (TriMesh::Point) normals_[ _normalID ] );
+      if ( vertexMapTri_[currentGroup_].find( _index ) != vertexMapTri_[currentGroup_].end() ){
+        currentTriMesh()->set_normal( vertexMapTri_[currentGroup_][_index], (TriMesh::Point) normals_[ _normalID ] );
         objectOptions_[ currentGroup_ ] |= NORMALS;
       }
 
@@ -326,8 +328,8 @@ void OBJImporter::setNormal(VertexHandle _vh, int _normalID){
     
     if ( _normalID < (int) normals_.size() ){
     
-      if ( vertexMapPoly_[currentGroup_].find( _vh ) != vertexMapPoly_[currentGroup_].end() ){
-        currentPolyMesh()->set_normal( vertexMapPoly_[currentGroup_][_vh], (PolyMesh::Point) normals_[ _normalID ] );
+      if ( vertexMapPoly_[currentGroup_].find( _index ) != vertexMapPoly_[currentGroup_].end() ){
+        currentPolyMesh()->set_normal( vertexMapPoly_[currentGroup_][_index], (PolyMesh::Point) normals_[ _normalID ] );
         objectOptions_[ currentGroup_ ] |= NORMALS;
       }
 
@@ -485,7 +487,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     std::vector< PolyMesh::VertexHandle > vertices;
     
-    for (uint i=0; i < _indices.size(); i++){
+    for (uint i=0; i < _indices.size(); i++) {
 
       if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
     
@@ -493,7 +495,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
 
       } else {
         std::cerr << "Error: cannot add face poly mesh. undefined index(" <<  _indices[i] << ")" << std::endl;
-        std::cerr << "Verticies in Index map: " << vertexMapPoly_.size() << std::endl;
+        std::cerr << "Vertices in index map: " << vertexMapPoly_[currentGroup_].size() << std::endl;
         return;
       }
     }
@@ -988,13 +990,13 @@ void OBJImporter::useMaterial( std::string _materialName ){
 }
 
 ///used vertices
-void OBJImporter::useVertex(VertexHandle _vertex){
+void OBJImporter::useVertex(int _vertex_index){
 
     while(currentGroup_ >= (int)usedVertices_.size()) {
-        usedVertices_.push_back(std::set<VertexHandle>());
+        usedVertices_.push_back(std::map<int,VertexHandle>());
     }
 
-    usedVertices_[currentGroup_].insert(_vertex);
+    usedVertices_[currentGroup_].insert(std::pair<int,VertexHandle>(_vertex_index,-1));
 
 //  while( (int)usedVertices_.size() - 1 < (int) objectOptions_.size() )
 //    usedVertices_.push_back( std::set<VertexHandle>() );

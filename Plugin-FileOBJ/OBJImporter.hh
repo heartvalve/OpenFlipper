@@ -161,7 +161,7 @@ class OBJImporter
     void setVertexTexCoord(VertexHandle _vh, int _texCoordID);
     
     /// set vertex normal
-    void setNormal(VertexHandle _vh, int _normalID);
+    void setNormal(int _index, int _normalID);
 
     /// add a face with indices _indices refering to vertices
     void addFace(const VHandles& _indices);
@@ -202,7 +202,7 @@ class OBJImporter
     void useMaterial( std::string _materialName );
     
     ///used vertices
-    void useVertex(VertexHandle _vertex);
+    void useVertex(int _vertex_index);
     
     /// Path of the OBJ file
     QString path();
@@ -282,7 +282,7 @@ class OBJImporter
     
     // for each object a vector of vertex indices
     // this ensures that a vertex defined first gets a lower index
-    std::vector< std::set< VertexHandle > > usedVertices_;
+    std::vector< std::map< int, VertexHandle > > usedVertices_;
 
     // Store vertices of invalid faces due to non-manifold
     // configurations.
