@@ -258,10 +258,16 @@ int Core::loadObject ( QString _filename ) {
           // Get the object to figure out the data type
           BaseObject* object;
           PluginFunctions::getObject(id,object);
-          
-          // Add to recent files with the given datatype
-          if ( OpenFlipper::Options::gui() )
-            coreWidget_->addRecent(_filename, object->dataType());
+
+          // Security check, if object really exists         
+          if ( object != 0 ) { 
+
+            // Add to recent files with the given datatype
+            if ( OpenFlipper::Options::gui() )
+              coreWidget_->addRecent(_filename, object->dataType());
+          } else {
+            emit log(LOGERR, tr("Unable to add recent as object with id %1 could not be found!").arg(id) );
+          }
           
         } else
           coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
