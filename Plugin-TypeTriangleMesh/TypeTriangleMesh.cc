@@ -97,25 +97,8 @@ QString TypeTriangleMeshPlugin::get_unique_name(TriMeshObject* _object)
 
   int cur_idx = _object->id();
 
-  while(!name_unique)
-  {
-    name_unique = true;
 
-    QString cur_name = QString(tr("TriangleMesh %1.off").arg( cur_idx ));
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_TRIANGLE_MESH );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-        name_unique = false;
-        cur_idx += 10;
-        break;
-      }
-    }
-  }
-
-  return QString(tr("TriangleMesh %1.off").arg( cur_idx ));
+  return QString(tr("TriangleMesh new %1.off").arg( cur_idx ));
 }
 
 //-----------------------------------------------------------------------------

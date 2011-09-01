@@ -213,25 +213,7 @@ QString TypeSkeletonPlugin::get_unique_name(SkeletonObject* _object)
 
   int cur_idx = _object->id();
 
-  while(!name_unique)
-  {
-    name_unique = true;
-
-    QString cur_name = QString(tr("Skeleton %1").arg( cur_idx ));
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_SKELETON );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-        name_unique = false;
-        cur_idx += 10;
-        break;
-      }
-    }
-  }
-
-  return QString(tr("Skeleton %1").arg( cur_idx ));
+  return QString(tr("Skeleton new %1.off").arg( cur_idx  ));
 }
 
 void TypeSkeletonPlugin::generateBackup( int _id, QString _name, UpdateType _type ){
