@@ -939,22 +939,22 @@ void DrawMeshT<Mesh>::bindBuffers()
   if (colorMode_)
   {
     if (colorMode_ == 1)
-      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)offsetof(Vertex, vcol));
+      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
     else
-      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)offsetof(Vertex, fcol));
+      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)36);
 
     glEnableClientState(GL_COLOR_ARRAY);
   }
 
   // vertex decl
-  glVertexPointer(3, GL_FLOAT, sizeof(Vertex), (char*)offsetof(Vertex, pos));
+  glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
   glEnableClientState(GL_VERTEX_ARRAY);
 
   glClientActiveTexture(GL_TEXTURE0);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)offsetof(Vertex, tex));
+  glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)12);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glNormalPointer(GL_FLOAT, sizeof(Vertex), (char*)offsetof(Vertex, n));
+  glNormalPointer(GL_FLOAT, sizeof(Vertex), (char*)20);
   glEnableClientState(GL_NORMAL_ARRAY);
 
 //  glNormalPointerEXT(3, GL_FLOAT, sizeof(Vertex), (char*)(20));  // glNormalPointerEXT crashes sth. in OpenGL
@@ -995,10 +995,10 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 
       if ( _textureMap->find(pSubset->materialID) == _textureMap->end() ) {
         std::cerr << "Illegal texture index ... trying to access " << pSubset->materialID << std::endl;
-        glBindTexture(GL_TEXTURE_2D, 0);
+        ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
       }
       else
-        glBindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
+        ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
 
       glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
         (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
