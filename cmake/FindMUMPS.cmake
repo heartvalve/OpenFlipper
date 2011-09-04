@@ -1,0 +1,26 @@
+if (MUMPS_INCLUDE_DIR)
+  # in cache already
+  SET(MUMPS_FIND_QUIETLY TRUE)
+endif (MUMPS_INCLUDE_DIR)
+
+if (WIN32)
+#TODO
+ELSEIF(APPLE)
+#TODO
+ELSE( WIN32 )
+   find_path(MUMPS_INCLUDE_DIR NAMES dmumps_c.h
+     PATHS "/usr/include/"
+   )
+
+   IF(MUMPS_INCLUDE_DIR)
+      SET(MUMPS_FOUND TRUE)
+      SET(MUMPS_INCLUDE_DIR ${MUMPS_INCLUDE_DIR})
+    ELSE(MUMPS_INCLUDE_DIR)
+      SET(MUMPS_FOUND FALSE)
+      SET(MUMPS_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
+    ENDIF(MUMPS_INCLUDE_DIR)
+
+   find_library( MUMPS_LIBRARY 
+                 dmumps
+                 PATHS "/usr/lib" )
+ENDIF()
