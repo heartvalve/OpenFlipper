@@ -14,7 +14,7 @@ ENDIF (COMISO_INCLUDE_DIR)
 
 # Find CoMISo config file
 FIND_PATH( COMISO_INCLUDE_DIR CoMISo/Config/config.hh
-           PATHS "${CMAKE_SOURCE_DIR}/libs/" )
+           PATHS "${CMAKE_SOURCE_DIR}/../" "${CMAKE_SOURCE_DIR}/libs/" )
 
 if ( COMISO_INCLUDE_DIR )
 
@@ -62,6 +62,20 @@ if ( COMISO_INCLUDE_DIR )
    endif()
 
    list (APPEND  COMISO_OPT_DEPS "IPOPT")
+
+  endif()
+
+  STRING(REGEX MATCH "\#define COMISO_MUMPS_AVAILABLE 1" COMISO_MUMPS_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+
+  if ( COMISO_MUMPS_BUILD_TIME_AVAILABLE )
+
+   find_package(MUMPS)
+
+   if ( NOT MUMPS_FOUND )
+     message(ERROR "COMISO configured with mumps but mumps not available")
+   endif()
+
+   list (APPEND  COMISO_OPT_DEPS "MUMPS")
 
   endif()
 
