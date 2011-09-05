@@ -838,10 +838,15 @@ CoreWidget::updateRecent()
 
     QFileInfo fi(recentFiles[i]);
 
-    if (fi.suffix() == "ini")
-      recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i]);
-    else
-      recentFilesMenu_->addAction(typeIcon( typeId(recentTypes[i]) ), recentFiles[i]);
+    QAction* newAction = 0;
+
+    if (fi.suffix() == "ini") {
+      newAction = recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i]);
+      newAction->setData( QVariant( QString("ini") ) );
+    } else {
+      newAction = recentFilesMenu_->addAction(typeIcon( typeId(recentTypes[i]) ), recentFiles[i]);
+      newAction->setData( QVariant( recentTypes[i]) );
+    }
 
   }
 
