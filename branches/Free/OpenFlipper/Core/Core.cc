@@ -1011,10 +1011,12 @@ void Core::multiViewMode( int _mode ) {
 void
 Core::slotRecentOpen(QAction* _action)
 {
+  // Get the recent files lists and datatypes
   QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
   QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
 
   // The type of the file to open is attached to the action as a string.
+  // the name is the actions text
   QString actionTypeName = _action->data().toString();
 
   // Iterate over all recent files
