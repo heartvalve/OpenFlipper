@@ -144,6 +144,9 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
     
+    /// Loads object with forcing the given datatype
+    int loadObject(QString _filename, DataType _type);
+
     /// Always loads mesh as polymesh
     int loadPolyMeshObject(QString _filename, const PLYHeader _header);
     
