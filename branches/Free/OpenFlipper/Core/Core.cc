@@ -1013,15 +1013,26 @@ Core::slotRecentOpen(QAction* _action)
 {
   QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
   QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
-  
+
+  // The type of the file to open is attached to the action as a string.
+  QString actionTypeName = _action->data().toString();
+
+  // Iterate over all recent files
   for (int i = 0 ; i < recentFiles.size() ; ++i )
-    if ( recentFiles[i] == _action->text() ){
+
+    // If the name matches and also the type, we open it.
+    if ( (recentFiles[i] == _action->text()) && ( actionTypeName ==  recentTypes[i] ) ){
+
         OpenFlipper::Options::loadingRecentFile(true);
         loadObject(typeId(recentTypes[i]), recentFiles[i]);
         coreWidget_->addRecent(recentFiles[i],typeId(recentTypes[i]) );
         OpenFlipper::Options::loadingRecentFile(false);
+
         return;
     }
+
+  emit log(LOGERR, tr("Unable to open recent. Unable to find %1 with datatype %2 in recent files list.").arg(_action->text()).arg(actionTypeName) );
+
 }
 
 
