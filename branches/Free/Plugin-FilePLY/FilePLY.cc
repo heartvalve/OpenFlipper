@@ -299,6 +299,52 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
 }
 
 //-----------------------------------------------------------------------------------------------------
+int FilePLYPlugin::loadObject(QString _filename, DataType _type) {
+
+  // Create header and initialize with binary zeros
+  PLYHeader header = {0,false,0,0,0,0,0,0,std::vector<PPair>(),
+                      0,0,0,0,"","",std::vector<PPair>()};
+
+  // Parse header in order to extract important information
+  if(!parseHeader(_filename, header)) {
+    return -1;
+  }
+
+  int objectId = -1;
+
+  // Forced polymesh read
+  if ( _type == DATA_POLY_MESH ) {
+    objectId = loadPolyMeshObject(_filename, header);
+
+    PolyMeshObject* object(0);
+    if(PluginFunctions::getObject( objectId, object )) {
+
+      object->show();
+      emit openedFile( objectId );
+    }
+
+    return objectId;
+  } else if ( _type == DATA_TRIANGLE_MESH) {
+    // If always open as TriMesh is selected
+
+    objectId = loadTriMeshObject(_filename, header);
+
+    TriMeshObject* object(0);
+    if(PluginFunctions::getObject( objectId, object )) {
+
+      object->show();
+      emit openedFile( objectId );
+    }
+
+    return objectId;
+  } else {
+    emit ( LOGERR, tr("FilePLYPlugin::loadObject(): Tried loading with unknown forced data type"));
+  }
+
+  return -1;
+}
+
+//-----------------------------------------------------------------------------------------------------
 
 int FilePLYPlugin::loadObject(QString _filename) {
 
