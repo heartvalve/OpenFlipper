@@ -169,7 +169,10 @@ public slots:
        * has been created!
        *
        * If the Plugin is able to open the file in different DataTypes
-       * one of these DataTypes can be forced here
+       * one of these DataTypes can be forced with this function.
+       *
+       * This forcing is used for example by the recent files function for
+       * choosing between poly or triangle mesh loading.
        *
        */
       virtual int loadObject(QString _filename, DataType _type){ return -1;};
