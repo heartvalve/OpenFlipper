@@ -72,6 +72,7 @@
 #include "OpenFlipper/BasePlugin/OptionsInterface.hh"
 #include "OpenFlipper/BasePlugin/ToolbarInterface.hh"
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
+#include "OpenFlipper/BasePlugin/RenderInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ProcessInterface.hh"
@@ -1871,6 +1872,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin  , SIGNAL( crossPluginConnect(QString,const char*,QString,const char*) ),
               this    , SLOT( slotCrossPluginConnect(QString,const char*,QString,const char*) ));
     }
+  }
+
+  //Check if the plugin supports RenderInterface
+  RenderInterface* renderPlugin = qobject_cast< RenderInterface * >(plugin);
+  if ( renderPlugin ) {
+    supported = supported + "Rendering ";
+
+    std::cerr << "Render Plugin .. not yet implemented" << std::endl;
   }
 
   //========================================================================================
