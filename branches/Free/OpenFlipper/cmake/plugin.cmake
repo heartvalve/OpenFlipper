@@ -16,7 +16,7 @@
 #
 # DIRS        = additional directories with source files
 # DEPS        = required dependencies for find_package macro
-# OPTDEPS     = optional dependencies for find_package macro, if found, define ENABLE_<Depname> will be set
+# OPTDEPS     = optional dependencies for find_package macro, if found, a define ENABLE_<Depname> will be added automatically
 # LDFLAGSADD  = flags added to the link command
 # CFLAGSADD   = flags added to the compile command
 # LIBRARIES   = libraries added to link command
