@@ -89,6 +89,8 @@
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/PluginConnectionInterface.hh"
 
+#include "OpenFlipper/Core/RendererInfo.hh"
+
 #include "OpenFlipper/INIFile/INIFile.hh"
 
 #include "OpenFlipper/common/GlobalOptions.hh"
@@ -1882,10 +1884,34 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( checkSlot( plugin , "rendererName()" ) ) {
       QString rendererNameString = "";
 
+      // Get the name of the renderer
       QMetaObject::invokeMethod(plugin,"rendererName", Qt::DirectConnection,   Q_RETURN_ARG(QString,rendererNameString) ) ;
 
       std::cerr << rendererNameString.toStdString() << std::endl;
 
+      // Check if it already exists and add it if not.
+      RendererInfo* rendererInfo = 0;
+      if ( ! renderManager().rendererExists(rendererNameString) ) {
+        rendererInfo = renderManager().newRenderer(rendererNameString);
+      } else {
+        emit log(LOGERR,tr("Error: Renderer Plugin %1 already exists").arg(rendererNameString));
+      }
+
+      // Retrieve and store renderer information
+      if ( rendererInfo != 0) {
+        std::cerr << "Rendererinfo ok" << std::endl;
+        rendererInfo->plugin = plugin;
+
+        ACG::SceneGraph::DrawModes::DrawMode supportedModes;
+
+        // Get the supported draw modes of the renderer
+        QMetaObject::invokeMethod(plugin,"supportedDrawModes", Q_ARG(ACG::SceneGraph::DrawModes::DrawMode& ,supportedModes) );
+
+        rendererInfo->modes = supportedModes;
+      }
+
+    } else {
+      emit log(LOGERR,tr("Error: Renderer Plugin without rendererNameFunction?!"));
     }
 
     std::cerr << "Render Plugin .. not yet implemented" << std::endl;

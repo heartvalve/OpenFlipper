@@ -78,14 +78,13 @@ class RenderInterface {
      */
     virtual void render(/* Unknow options yet.. to be evaluated*/) {};
 
-
     /** \brief announce required draw modes
      *
      * This function is called by the core to get a list of draw modes that are supported
      * by this renderer. If such a draw mode is set and the currently active
      * renderer does not support the given mode, the core will switch to
      * this renderer automatically. If there are multiple renderers capable of rendering
-     * the drawmode, the core will ask the user for its preference.
+     * the drawmode(s), the core will ask the user for its preference.
      *
      * @param _mode Combined list of drawmodes
      */
