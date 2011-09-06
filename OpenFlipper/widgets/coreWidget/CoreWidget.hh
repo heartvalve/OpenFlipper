@@ -937,10 +937,12 @@ public:
   public:
 
     void writeImageAsynchronously(QPixmap* _pixmap, const QString _name);
+    void writeImageAsynchronously(QImage* _image, const QString _name);
 
   private:
 
-    void writeImage(QPixmap* _pixmap, const QString _name) const;
+    void writeImageQPixmap(QPixmap* _pixmap, const QString _name) const;
+    void writeImageQImage(QImage* _image, const QString _name) const;
 
     // Store pointers to QFuture and QFutureWatcher
     std::map<QFutureWatcher<void>*,QFuture<void>*> watcher_garbage_;
