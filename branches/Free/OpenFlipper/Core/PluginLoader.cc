@@ -1879,6 +1879,15 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
   if ( renderPlugin ) {
     supported = supported + "Rendering ";
 
+    if ( checkSlot( plugin , "rendererName()" ) ) {
+      QString rendererNameString = "";
+
+      QMetaObject::invokeMethod(plugin,"rendererName", Qt::DirectConnection,   Q_RETURN_ARG(QString,rendererNameString) ) ;
+
+      std::cerr << rendererNameString.toStdString() << std::endl;
+
+    }
+
     std::cerr << "Render Plugin .. not yet implemented" << std::endl;
   }
 

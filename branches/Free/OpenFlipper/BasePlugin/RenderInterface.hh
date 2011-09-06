@@ -79,12 +79,15 @@ class RenderInterface {
     virtual void render(/* Unknow options yet.. to be evaluated*/) {};
 
 
-    /** \brief announce available draw modes
+    /** \brief announce required draw modes
      *
-     * This function is called by the core to get a list of draw modes that is supported
-     * by the render function in the plugin.
+     * This function is called by the core to get a list of draw modes that are supported
+     * by this renderer. If such a draw mode is set and the currently active
+     * renderer does not support the given mode, the core will switch to
+     * this renderer automatically. If there are multiple renderers capable of rendering
+     * the drawmode, the core will ask the user for its preference.
      *
-     * @param _mode Combined list of supported drawmodes
+     * @param _mode Combined list of drawmodes
      */
     virtual void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {};
 
@@ -93,7 +96,7 @@ class RenderInterface {
      *
      * @param _name displayed name of the rendering function
      */
-    virtual void rendererName(QString& _name) {};
+    virtual QString rendererName() = 0;
 
   signals:
 
