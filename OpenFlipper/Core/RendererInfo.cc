@@ -41,66 +41,54 @@
 \*===========================================================================*/
 
 
-#ifndef RENDERERINFO_HH
-#define RENDERERINFO_HH
 
-#include <QString>
-#include <QObject>
-#include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/Core/RendererInfo.hh>
 
-#include <vector>
+#include <iostream>
 
-/** Type defining a currently loaded Renderer */
-class RendererInfo{
+static RenderManager renderManager_;
 
-  public :
+RenderManager& renderManager() {
+  return renderManager_;
+}
 
-    RendererInfo() {
-     plugin = 0;
-     name = "";
-  }
+RenderManager::RenderManager() {
+  availableRenderers_.clear();
 
-  /// Pointer to the loaded plugin (Already casted when loading it)
-  QObject*    plugin;
+  std::cerr << "Render Manager Constructor" << std::endl;
+}
 
-  /// Name of the plugin ( requested from the plugin on load)
-  QString     name;
+bool RenderManager::rendererExists(QString _name) {
+  std::cerr << "Render Manager rendererExists ?" << std::endl;
 
-  /// Supported DrawModes
-  ACG::SceneGraph::DrawModes::DrawMode modes;
-};
+  for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
+    if ( availableRenderers_[i].name == _name)
+      return true;
 
-class RenderManager {
-  public:
-    RenderManager();
+  return false;
 
-    /** \brief Check if a renderer with the given name exists
-     *
-     * @param _name Name of the renderer
-     * @return exists or not
-     */
-    bool rendererExists(QString _name);
+}
 
-    /**\brief  Get a new renderer Instance
-     *
-     * @param _name Name of the new renderer
-     *
-     * @return Pointer to renderer. If it exists, the existing one is returned!
-     */
-    RendererInfo* newRenderer(QString _name);
+RendererInfo* RenderManager::newRenderer(QString _name) {
+  std::cerr << "Render Manager newRenderer" << std::endl;
 
-    /** \brief get renderer with the given name
-     *
-     * @param _name Name of the renderer
-     * @return pointer or 0 if it does not exist
-     */
-    RendererInfo* getRenderer(QString _name);
+  for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
+    if ( availableRenderers_[i].name == _name)
+      return &availableRenderers_[i];
 
-  private:
-    std::vector<RendererInfo> availableRenderers_;
-};
+  availableRenderers_.push_back(RendererInfo());
+  availableRenderers_[availableRenderers_.size()-1].name = _name;
 
-/// Get an instance of the render manager
-RenderManager& renderManager();
+  return &availableRenderers_[availableRenderers_.size()-1];
+}
 
-#endif //RENDERERINFO_HH
+RendererInfo* RenderManager::getRenderer(QString _name) {
+
+  std::cerr << "Render Manager getRenderer" << std::endl;
+
+  for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
+    if ( availableRenderers_[i].name == _name)
+      return &availableRenderers_[i];
+
+  return 0;
+}
