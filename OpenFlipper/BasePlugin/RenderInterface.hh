@@ -76,7 +76,24 @@ class RenderInterface {
      * If you need to initialize something,you can do it within this function.
      * gl and glew are already setUp here.
      */
-    virtual void render(/* Unknow options yet.. to be evaluated*/);
+    virtual void render(/* Unknow options yet.. to be evaluated*/) {};
+
+
+    /** \brief announce available draw modes
+     *
+     * This function is called by the core to get a list of draw modes that is supported
+     * by the render function in the plugin.
+     *
+     * @param _mode Combined list of supported drawmodes
+     */
+    virtual void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {};
+
+    /** \brief announce name for the rendering function
+     *
+     *
+     * @param _name displayed name of the rendering function
+     */
+    virtual void rendererName(QString& _name) {};
 
   signals:
 
