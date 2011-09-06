@@ -248,7 +248,6 @@ Core::init() {
 
       splash_->showMessage(tr("Initializing mainwindow") ,
                           Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-      QApplication::processEvents();
     }
 
     coreWidget_ = new CoreWidget(viewModes_ , plugins, coreSlots_);
@@ -547,7 +546,6 @@ Core::init() {
     if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splash_->showMessage(tr("Loading Configuration File ") + QString::number(i) + "/"  + QString::number(optionFiles.size()) ,
                            Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-      QApplication::processEvents();
     }
 
     // Load global ini files. Use only plugin global options from these files as the

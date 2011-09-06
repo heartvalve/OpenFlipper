@@ -381,7 +381,6 @@ void Core::loadPlugins()
       if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
         splashMessage_ = tr("Loading Plugin %1/%2").arg(loadedPlugins.size()).arg(pluginlist.size()) ;
         splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-        QApplication::processEvents();
       }
   }
 
@@ -406,7 +405,6 @@ void Core::loadPlugins()
                 .arg(std::distance(loadedPlugins.begin(), it) + 1)
                 .arg(loadedPlugins.size());
         splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-        QApplication::processEvents();
       }
 
       if ((*it)->instance() != 0 ) {
@@ -733,7 +731,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splashMessage_ = splashMessage_ + " " + basePlugin->name() ;
       splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-      QApplication::processEvents();
     }
 
     //Check if plugin is already loaded
