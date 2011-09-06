@@ -9,7 +9,7 @@
  *
  * \section reqlibs Required libraries
  * <ul>
- * <li> Qt >= 4.7.3  ( http://www.qtsoftware.com/downloads )</li>
+ * <li> Qt >= 4.7.3  ( http://qt.nokia.com/downloads )</li>
  * <li> GLUT         ( http://www.opengl.org/resources/libraries/glut/ )</li>
  * <li> GLEW (>=1.6) ( http://glew.sourceforge.net )</li>
  * <li> freetype2    ( optional http://www.freetype.org/freetype2/index.html )</li>
