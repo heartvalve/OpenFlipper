@@ -648,11 +648,11 @@ void CoreWidget::viewerSnapshot() {
 
     case QtMultiViewLayout::SingleView:
     {
-      QImage finalImage;
+      QImage* finalImage = new QImage();
 
-      examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage);
+      examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(*finalImage);
 
-      finalImage.save(suggest);
+      writeImageAsynchronously(finalImage, suggest);
 
       break;
     }
@@ -665,11 +665,11 @@ void CoreWidget::viewerSnapshot() {
       examiner_widgets_[2]->snapshot(img2);
       examiner_widgets_[3]->snapshot(img3);
 
-      QImage finalImage(img0.width() + img1.width() + 2, img0.height() + img2.height() + 2, QImage::Format_ARGB32_Premultiplied);
+      QImage* finalImage = new QImage(img0.width() + img1.width() + 2, img0.height() + img2.height() + 2, QImage::Format_ARGB32_Premultiplied);
 
-      QPainter painter(&finalImage);
+      QPainter painter(finalImage);
 
-      painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+      painter.fillRect(0,0,finalImage->width(), finalImage->height(), QBrush(Qt::gray));
 
       painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                         QRectF(           0,             0, img0.width(), img0.height()) );
@@ -680,7 +680,7 @@ void CoreWidget::viewerSnapshot() {
       painter.drawImage(QRectF(img0.width()+2, img0.height()+2, img3.width(), img3.height()),img3,
                         QRectF(           0,             0, img3.width(), img3.height()) );
 
-      finalImage.save(suggest);
+      writeImageAsynchronously(finalImage, suggest);
 
       break;
     }
@@ -693,11 +693,11 @@ void CoreWidget::viewerSnapshot() {
       examiner_widgets_[2]->snapshot(img2);
       examiner_widgets_[3]->snapshot(img3);
 
-      QImage finalImage(img0.width() + img1.width() + 2, img0.height(), QImage::Format_ARGB32_Premultiplied);
+      QImage* finalImage = new QImage(img0.width() + img1.width() + 2, img0.height(), QImage::Format_ARGB32_Premultiplied);
 
-      QPainter painter(&finalImage);
+      QPainter painter(finalImage);
 
-      painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+      painter.fillRect(0,0,finalImage->width(), finalImage->height(), QBrush(Qt::gray));
 
       painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                         QRectF(           0,             0, img0.width(), img0.height()) );
@@ -708,7 +708,7 @@ void CoreWidget::viewerSnapshot() {
       painter.drawImage(QRectF(img0.width()+2, img1.height()+img2.height()+4, img3.width(),img3.height()),img3,
                         QRectF(           0,             0, img3.width(), img3.height()) );
 
-      finalImage.save(suggest);
+      writeImageAsynchronously(finalImage, suggest);
 
       break;
     }
@@ -726,7 +726,7 @@ void CoreWidget::applicationSnapshotName(QString _name) {
 void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name) {
 
     QFuture<void>* future = new QFuture<void>();
-    *future = QtConcurrent::run(this, &CoreWidget::writeImage, _pixmap, _name);
+    *future = QtConcurrent::run(this, &CoreWidget::writeImageQPixmap, _pixmap, _name);
     QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
     watcher->setFuture(*future);
 
@@ -735,10 +735,28 @@ void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name)
     connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
 }
 
-void CoreWidget::writeImage(QPixmap* _pixmap, const QString _name) const {
+void CoreWidget::writeImageQPixmap(QPixmap* _pixmap, const QString _name) const {
 
     _pixmap->save(_name);
     delete _pixmap;
+}
+
+void CoreWidget::writeImageAsynchronously(QImage* _image, const QString _name) {
+
+    QFuture<void>* future = new QFuture<void>();
+    *future = QtConcurrent::run(this, &CoreWidget::writeImageQImage, _image, _name);
+    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+    watcher->setFuture(*future);
+
+    watcher_garbage_.insert(std::pair<QFutureWatcher<void>*,QFuture<void>*>(watcher, future));
+
+    connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
+}
+
+void CoreWidget::writeImageQImage(QImage* _image, const QString _name) const {
+
+    _image->save(_name);
+    delete _image;
 }
 
 void CoreWidget::delete_garbage() {
