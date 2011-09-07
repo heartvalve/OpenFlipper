@@ -102,6 +102,9 @@ Q_INTERFACES(SelectionInterface)
 
     signals:
         
+        // BaseInterface
+        void updateView();
+
         // LoggingInterface
         void log(Logtype _type, QString _message);
         void log(QString _message);
