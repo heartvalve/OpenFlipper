@@ -845,6 +845,9 @@ public:
     /// Called when a coordsys drawMode has been changed
     void slotViewerDrawMenu( QAction * _action );
 
+    /// Called when a different post processor has been chosen
+    void slotPostProcessorMenu( QAction * _action);
+
     /// Creates a draw Menu for the currently active Viewer
     void slotUpdateViewerDrawMenu();
 

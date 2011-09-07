@@ -44,20 +44,39 @@
 
 #include <OpenFlipper/Core/RendererInfo.hh>
 
-#include <iostream>
-
-static RenderManager renderManager_;
+static RenderManager        renderManager_;
+static PostProcessorManager postProcessorManager_;
 
 RenderManager& renderManager() {
   return renderManager_;
 }
 
-RenderManager::RenderManager() {
+PostProcessorManager& postProcessorManager() {
+  return postProcessorManager_;
+}
+
+RendererInfo::RendererInfo():
+  plugin(0),
+  name("")
+{
+}
+
+RendererInfo::RendererInfo(QObject* _plugin,QString _name) :
+    plugin(_plugin),
+    name(_name)
+{
+}
+
+
+RenderManager::RenderManager():
+    activeRenderer_(0)
+{
   availableRenderers_.clear();
+  availableRenderers_.push_back(RendererInfo(0,"Default internal renderer"));
+
 }
 
 bool RenderManager::rendererExists(QString _name) {
-  std::cerr << "Render Manager rendererExists ?" << std::endl;
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
     if ( availableRenderers_[i].name == _name)
@@ -68,7 +87,6 @@ bool RenderManager::rendererExists(QString _name) {
 }
 
 RendererInfo* RenderManager::newRenderer(QString _name) {
-  std::cerr << "Render Manager newRenderer" << std::endl;
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
     if ( availableRenderers_[i].name == _name)
@@ -81,8 +99,6 @@ RendererInfo* RenderManager::newRenderer(QString _name) {
 }
 
 RendererInfo* RenderManager::getRenderer(QString _name) {
-
-  std::cerr << "Render Manager getRenderer" << std::endl;
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
     if ( availableRenderers_[i].name == _name)
@@ -100,22 +116,8 @@ int RenderManager::countRenderers(ACG::SceneGraph::DrawModes::DrawMode _mode) {
      if ( (availableRenderers_[i].modes & _mode) )
        renderers++;
 
-  std::cerr << "Found " << renderers << " Renderers" << std::endl;
-
   return renderers;
 }
-
-std::vector<int> RenderManager::getRendererIds(ACG::SceneGraph::DrawModes::DrawMode _mode){
-  std::vector <int> renderers;
-
-   // Skip first one as it is the default renderer
-   for ( unsigned int i = 1 ; i < availableRenderers_.size() ; ++i)
-      if ( (availableRenderers_[i].modes & _mode) )
-        renderers.push_back(i);
-
-   return renderers;
-}
-
 
 RendererInfo* RenderManager::operator[](unsigned int _id) {
 
@@ -125,4 +127,126 @@ RendererInfo* RenderManager::operator[](unsigned int _id) {
     return &availableRenderers_[_id];
 
 }
+
+unsigned int RenderManager::available() {
+  return availableRenderers_.size();
+}
+
+
+void RenderManager::setActive(unsigned int _active) {
+  if ( _active <  availableRenderers_.size() )
+    activeRenderer_ = _active;
+  else
+    std::cerr << "Out of range error when setting active renderer" << std::endl;
+}
+
+void RenderManager::setActive(QString _active) {
+
+  for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
+    if ( availableRenderers_[i].name == _active) {
+      activeRenderer_ = i;
+    }
+
+}
+
+RendererInfo* RenderManager::active() {
+  return &availableRenderers_[activeRenderer_];
+}
+
+unsigned int RenderManager::activeId() {
+  return activeRenderer_;
+}
+
+//===================================================================
+
+PostProcessorInfo::PostProcessorInfo(PostProcessorInterface* _plugin, QString _name) :
+          plugin(_plugin),
+          name(_name)
+{
+}
+
+PostProcessorInfo::PostProcessorInfo()
+{
+  plugin = 0;
+  name = "";
+}
+
+
+PostProcessorManager::PostProcessorManager():
+    activePostProcessor_(0)
+{
+  availablePostProcessors_.clear();
+  availablePostProcessors_.push_back(PostProcessorInfo(0,"Default internal post processor"));
+}
+
+
+bool PostProcessorManager::postProcessorExists(QString _name) {
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _name)
+      return true;
+
+  return false;
+
+}
+
+PostProcessorInfo* PostProcessorManager::newPostProcessor(QString _name) {
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _name)
+      return &availablePostProcessors_[i];
+
+  availablePostProcessors_.push_back(PostProcessorInfo());
+  availablePostProcessors_[availablePostProcessors_.size()-1].name = _name;
+
+  return &availablePostProcessors_[availablePostProcessors_.size()-1];
+}
+
+PostProcessorInfo* PostProcessorManager::getPostProcessor(QString _name) {
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _name)
+      return &availablePostProcessors_[i];
+
+  return 0;
+}
+
+PostProcessorInfo* PostProcessorManager::operator[](unsigned int _id) {
+
+  if ( _id >= availablePostProcessors_.size())
+    return 0;
+  else
+    return &availablePostProcessors_[_id];
+
+}
+
+unsigned int PostProcessorManager::available() {
+  return availablePostProcessors_.size();
+}
+
+void PostProcessorManager::setActive(unsigned int _active) {
+  if ( _active <  availablePostProcessors_.size() )
+    activePostProcessor_ = _active;
+  else
+    std::cerr << "Out of range error when setting active postprocessor" << std::endl;
+}
+
+void PostProcessorManager::setActive(QString _active) {
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _active) {
+      activePostProcessor_ = i;
+    }
+
+}
+
+PostProcessorInfo* PostProcessorManager::active() {
+  return &availablePostProcessors_[activePostProcessor_];
+}
+
+unsigned int PostProcessorManager::activeId() {
+  return activePostProcessor_;
+}
+
+
 

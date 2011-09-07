@@ -120,6 +120,9 @@
 
 #include <QGLFramebufferObject>
 
+#include <OpenFlipper/Core/RendererInfo.hh>
+#include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
+
 //== NAMESPACES ===============================================================
 
 
@@ -584,10 +587,27 @@ void glViewer::drawScene()
 
   // draw mono or stereo
   makeCurrent();
+
+
+ /* std::cerr << "Draw Scene" << std::endl;
+
+  std::cerr << "Available renderers: "      << renderManager().available() << std::endl;
+  std::cerr << "Active    renderer: "       << renderManager().active()->name.toStdString() << std::endl;
+
+  std::cerr << "Available postprocessors: " << postProcessorManager().available() << std::endl;
+  std::cerr << "Active    postprocessor: "  << postProcessorManager().active()->name.toStdString() << std::endl;
+*/
   if (stereo_) drawScene_stereo();
   else         drawScene_mono();
 
   
+  if ( postProcessorManager().activeId() != 0 ) {
+    std::cerr << "Non default postProcessor!" << std::endl;
+    postProcessorManager().active()->plugin->postProcess(glstate_);
+  }
+//  } else {
+//    std::cerr << "No post processor" << std::endl;
+//  }
   
   glFinish();
   frame_time_ = timer.elapsed();
@@ -828,6 +848,7 @@ void glViewer::drawScene_mono()
     cursorPainter_->paintCursor (glstate_);
     glstate_->pop_modelview_matrix ();
   }
+
 }
 
 

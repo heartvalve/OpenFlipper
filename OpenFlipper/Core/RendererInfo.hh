@@ -47,6 +47,7 @@
 #include <QString>
 #include <QObject>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
 
 #include <vector>
 
@@ -55,20 +56,20 @@ class RendererInfo{
 
   public :
 
-    RendererInfo() {
-     plugin = 0;
-     name = "";
-  }
+    RendererInfo();
 
-  /// Pointer to the loaded plugin (Already casted when loading it)
-  QObject*    plugin;
+    RendererInfo(QObject* _plugin,QString _name);
 
-  /// Name of the plugin ( requested from the plugin on load)
-  QString     name;
+    /// Pointer to the loaded plugin (Already casted when loading it)
+    QObject*    plugin;
 
-  /// Supported DrawModes
-  ACG::SceneGraph::DrawModes::DrawMode modes;
+    /// Name of the plugin ( requested from the plugin on load)
+    QString     name;
+
+    /// Supported DrawModes
+    ACG::SceneGraph::DrawModes::DrawMode modes;
 };
+
 
 class RenderManager {
   public:
@@ -106,15 +107,150 @@ class RenderManager {
      */
     int countRenderers(ACG::SceneGraph::DrawModes::DrawMode _mode);
 
-    std::vector<int> getRendererIds(ACG::SceneGraph::DrawModes::DrawMode _mode);
-
+    /** \brief Get the renderer with the given id
+     *
+     * @param _id Id of the renderer
+     * @return
+     */
     RendererInfo* operator[](unsigned int _id);
 
+    /** \brief number of available renderers
+     *
+     * @return number of available renderers
+     */
+    unsigned int available();
+
+    /** \brief set the active renderer
+     *
+     * @param _active id of the renderer
+     */
+    void setActive(unsigned int _active);
+
+    /** \brief set the active renderer
+    *
+    * @param _active name of the renderer
+    */
+    void setActive(QString _active);
+
+    /** \brief Get the current active renderer
+     *
+     * @return Renderer
+     */
+    RendererInfo* active();
+
+    /** \brief Get the id of the active renderer
+     *
+     * @return renderer id
+     */
+    unsigned int activeId();
+
   private:
+    /// Vector holding all available renderers
     std::vector<RendererInfo> availableRenderers_;
+
+    /// The currently active renderer id
+    unsigned int activeRenderer_;
 };
 
 /// Get an instance of the render manager
 RenderManager& renderManager();
+
+//===================================================================================
+// Post processor Manager
+//===================================================================================
+
+/** Type defining a currently loaded Post processor */
+class PostProcessorInfo{
+
+  public :
+
+    PostProcessorInfo();
+
+    PostProcessorInfo(PostProcessorInterface* _plugin, QString _name);
+
+    /// Pointer to the loaded plugin (Already casted when loading it)
+    PostProcessorInterface*    plugin;
+
+    /// Name of the plugin ( requested from the plugin on load)
+    QString     name;
+
+};
+
+
+class PostProcessorManager {
+  public:
+
+    PostProcessorManager();
+
+    /** \brief Check if a post processor with the given name exists
+     *
+     * @param _name Name of the post processor
+     * @return exists or not
+     */
+    bool postProcessorExists(QString _name);
+
+    /**\brief  Get a new post processor Instance
+     *
+     * @param _name Name of the new post processor
+     *
+     * @return Pointer to post processor. If it exists, the existing one is returned!
+     */
+    PostProcessorInfo* newPostProcessor(QString _name);
+
+    /** \brief get post processor with the given name
+     *
+     * @param _name Name of the post processor
+     * @return pointer or 0 if it does not exist
+     */
+    PostProcessorInfo* getPostProcessor(QString _name);
+
+    /** \brief Get the  post processor with the given id
+    *
+    * @param _id Id of the  post processor
+    * @return
+    */
+    PostProcessorInfo* operator[](unsigned int _id);
+
+    /** \brief number of available post processor
+    *
+    * @return number of available post processor
+    */
+    unsigned int available();
+
+    /** \brief set the active post processor
+    *
+    * @param _active id of the post processor
+    */
+    void setActive(unsigned int _active);
+
+    /** \brief set the active post processor
+    *
+    * @param _active name of the post processor
+    */
+    void setActive(QString _active);
+
+    /** \brief Get the current active post processor
+    *
+    * @return post processor
+    */
+    PostProcessorInfo* active();
+
+
+    /** \brief Get the id of the active post processor
+    *
+    * @return post processor id
+    */
+    unsigned int activeId();
+
+  private:
+    /// Vector holding all available  post processors
+    std::vector<PostProcessorInfo> availablePostProcessors_;
+
+    /// The currently active post processor id
+    int activePostProcessor_;
+};
+
+/// Get an instance of the Post Processor manager
+PostProcessorManager& postProcessorManager();
 
 #endif //RENDERERINFO_HH
