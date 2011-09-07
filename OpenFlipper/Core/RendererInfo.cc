@@ -54,8 +54,6 @@ RenderManager& renderManager() {
 
 RenderManager::RenderManager() {
   availableRenderers_.clear();
-
-  std::cerr << "Render Manager Constructor" << std::endl;
 }
 
 bool RenderManager::rendererExists(QString _name) {
@@ -92,3 +90,39 @@ RendererInfo* RenderManager::getRenderer(QString _name) {
 
   return 0;
 }
+
+int RenderManager::countRenderers(ACG::SceneGraph::DrawModes::DrawMode _mode) {
+
+  int renderers = 0;
+
+  // Skip first one as it is the default renderer
+  for ( unsigned int i = 1 ; i < availableRenderers_.size() ; ++i)
+     if ( (availableRenderers_[i].modes & _mode) )
+       renderers++;
+
+  std::cerr << "Found " << renderers << " Renderers" << std::endl;
+
+  return renderers;
+}
+
+std::vector<int> RenderManager::getRendererIds(ACG::SceneGraph::DrawModes::DrawMode _mode){
+  std::vector <int> renderers;
+
+   // Skip first one as it is the default renderer
+   for ( unsigned int i = 1 ; i < availableRenderers_.size() ; ++i)
+      if ( (availableRenderers_[i].modes & _mode) )
+        renderers.push_back(i);
+
+   return renderers;
+}
+
+
+RendererInfo* RenderManager::operator[](unsigned int _id) {
+
+  if ( _id >= availableRenderers_.size())
+    return 0;
+  else
+    return &availableRenderers_[_id];
+
+}
+
