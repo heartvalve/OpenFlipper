@@ -216,7 +216,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   // Post processor Menu
   //============================================================================================================
 
-  if ( postProcessorManager().available() > 0 ) {
+  if ( postProcessorManager().available() > 1 ) {
     QMenu* postProcessorMenu = new QMenu(tr("Post processors"),_menu);
 
     _menu->addMenu(postProcessorMenu);
