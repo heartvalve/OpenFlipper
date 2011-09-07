@@ -527,7 +527,6 @@ void SelectionBasePlugin::slotMouseWheelEvent(QWheelEvent* _event, const std::st
         sphere_node_->set_size(sphere_radius_);
         sphere_node_->show();
 
-        emit updatedObject(sphere_node_->id(), UPDATE_GEOMETRY);
         emit updateView();
     }
 }
