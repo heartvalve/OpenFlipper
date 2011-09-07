@@ -57,6 +57,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include "../../common/GlobalOptions.hh"
+#include <OpenFlipper/Core/RendererInfo.hh>
 
 //== IMPLEMENTATION ==========================================================
 #include <ACG/Scenegraph/CoordsysNode.hh>
@@ -210,6 +211,42 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   mipmapping->setIcon( QIcon(iconPath+"mipmapping.png") );
   mipmapping->setChecked( PluginFunctions::viewerProperties().mipmapping() );
   connect(mipmapping, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMipmapping(bool) ) );
+
+  //============================================================================================================
+  // Post processor Menu
+  //============================================================================================================
+
+  if ( postProcessorManager().available() > 0 ) {
+    QMenu* postProcessorMenu = new QMenu(tr("Post processors"),_menu);
+
+    _menu->addMenu(postProcessorMenu);
+
+    // Recreate actionGroup
+    QActionGroup* groupPostProcessor = new QActionGroup( this );
+    groupPostProcessor->setExclusive( true );
+
+    for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
+
+      // Add a new Action with the postprocessors name
+      QAction * action = new QAction( postProcessorManager()[i]->name, groupPostProcessor );
+      action->setCheckable( true );
+
+      // Check if this processor is currently active
+      if ( postProcessorManager().activeId() == i )
+        action->setChecked(true);
+
+      // Remember the id for the processor
+      action->setData(QVariant(i));
+    }
+
+    // Add all new actions from the group to the menu
+    postProcessorMenu->addActions( groupPostProcessor->actions() );
+
+    // Connect signal of group to our managing slot
+    connect( groupPostProcessor , SIGNAL( triggered( QAction * ) ),
+             this               , SLOT( slotPostProcessorMenu( QAction * ) ) );
+
+  }
 
 
   //============================================================================================================
@@ -811,6 +848,11 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
   else
     PluginFunctions::viewerProperties().drawMode(mode );
 
+}
+
+void CoreWidget::slotPostProcessorMenu( QAction * _action)  {
+  unsigned int mode = _action->data().toUInt();
+  postProcessorManager().setActive(mode);
 }
 
 //=============================================================================

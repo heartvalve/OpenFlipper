@@ -73,6 +73,7 @@
 #include "OpenFlipper/BasePlugin/ToolbarInterface.hh"
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 #include "OpenFlipper/BasePlugin/RenderInterface.hh"
+#include "OpenFlipper/BasePlugin/PostProcessorInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ProcessInterface.hh"
@@ -1911,10 +1912,44 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       }
 
     } else {
-      emit log(LOGERR,tr("Error: Renderer Plugin without rendererNameFunction?!"));
+      emit log(LOGERR,tr("Error: Renderer Plugin without rendererName Function?!"));
     }
 
     std::cerr << "Render Plugin .. not yet implemented" << std::endl;
+  }
+
+  //Check if the plugin supports PostProcessorInterface
+  PostProcessorInterface* postProcessorPlugin = qobject_cast< PostProcessorInterface * >(plugin);
+  if ( postProcessorPlugin ) {
+    supported = supported + "PostProcessor ";
+
+    if ( checkSlot( plugin , "postProcessorName()" ) ) {
+      QString postProcessorNameString = "";
+
+      // Get the name of the PostProcessor
+      QMetaObject::invokeMethod(plugin,"postProcessorName", Qt::DirectConnection,   Q_RETURN_ARG(QString,postProcessorNameString) ) ;
+
+      std::cerr << postProcessorNameString.toStdString() << std::endl;
+
+      // Check if it already exists and add it if not.
+      PostProcessorInfo* postProcessorInfo = 0;
+      if ( ! postProcessorManager().postProcessorExists(postProcessorNameString) ) {
+        postProcessorInfo = postProcessorManager().newPostProcessor(postProcessorNameString);
+      } else {
+        emit log(LOGERR,tr("Error: PostProcessor Plugin %1 already exists").arg(postProcessorNameString));
+      }
+
+      // Retrieve and store PostProcessor information
+      if ( postProcessorInfo != 0) {
+        std::cerr << "PostProcessor ok" << std::endl;
+        postProcessorInfo->plugin = postProcessorPlugin;
+      }
+
+    } else {
+      emit log(LOGERR,tr("Error: PostProcessor Plugin without postProcessorName Function?!"));
+    }
+
+    std::cerr << "PostProcessor Plugin .. not yet implemented" << std::endl;
   }
 
   //========================================================================================
