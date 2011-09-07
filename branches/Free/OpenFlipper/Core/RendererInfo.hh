@@ -96,6 +96,20 @@ class RenderManager {
      */
     RendererInfo* getRenderer(QString _name);
 
+    /** \brief count renderers for a DrawMode (excluding the default renderer)
+     *
+     * Checks in the list of renderers how many support the given draw mode combination.
+     * The combination is checked as one complete block.
+     *
+     * @param _mode The mode that should be checked.
+     *
+     */
+    int countRenderers(ACG::SceneGraph::DrawModes::DrawMode _mode);
+
+    std::vector<int> getRendererIds(ACG::SceneGraph::DrawModes::DrawMode _mode);
+
+    RendererInfo* operator[](unsigned int _id);
+
   private:
     std::vector<RendererInfo> availableRenderers_;
 };
