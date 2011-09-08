@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.3 (  ? , 12259 )</b>
+ * - <b>OpenFlipper 1.0.3 (  ? , 12301 )</b>
  *       - <b>ACG</b>
  *          - SceneGraph
  *              - MeshNode
@@ -14,6 +14,7 @@
  *              - Removed process events calls from snapshots
  *              - Added threaded writing for video function (higher framerates possible due to less io waiting)
  *              - Removed the unique naming functions from file plugins (not required, horribly slow)
+ *              - Removed all processEvents from core
  *          - GUI
  *              - Fixed bug causing a crash when switching between logger modes
  *              - Reworked log viewer animation and embedding
@@ -30,6 +31,13 @@
  *              - Added sliders to options widget to support smaller screens
  *          - Rendering
  *              - Moved flyTo animations to animation framework (no more ugly processEvents)
+ *              - Snapshot functions now have asynchronus file writers
+ *          - Scripting
+ *              - More slot documentations
+ *              - added deleteObject function
+ *      - <b>Interfaces</b>
+ *          - PostProcessorInterface
+ *              - Introduced new interface to add rendering postprocessors to plugins (e.g. render depth image)
  *      - <b>Plugins</b>
  *          - File OBJ
  *              - Add empty object if empty file is read instead of failing
@@ -38,9 +46,14 @@
  *          - File PLY
  *              - PLY Reader implementation for forcing data type (required for recent files with specific type)
  *          - File VTK
- *              - Introduced new VTK importer/exporter plugin    
+ *              - Introduced new VTK importer/exporter plugin   
+ *          - Post Processor Depth Image 
+ *              - New Plugin taking depth buffer and rendering it as the final output image
  *          - Selection
  *              - Introduce function to load selections via scripting from files
+ *              - Fixed bug in selection plugin where sphere painter size was not updated on the fly
+ *              - Readded button to load flipper selections
+ *              - Fixed bug where sphere selection sometimes failed (pciking itself instead of object)
  *          - VSI
  *              - Fixed bug where meshobjectinfo was not correctly supported
  *      - <b>Build System</b>
