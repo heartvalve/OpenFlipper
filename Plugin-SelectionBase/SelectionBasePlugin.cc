@@ -1356,6 +1356,7 @@ void SelectionBasePlugin::slotSphereSelection(QMouseEvent* _event) {
             sphere_node_->show();
             sphere_node_->set_position(hit_point);
             sphere_node_->set_size(sphere_radius_);
+            sphere_node_->enablePicking(false);
             
             if( (_event->buttons() & Qt::LeftButton) //left button
               ||( (_event->buttons() == Qt::NoButton) && (_event->type() == QEvent::MouseButtonRelease)) // or release of left button
