@@ -157,9 +157,6 @@ void Core::applyOptions(){
 
       // Picking Debugger
       PluginFunctions::viewerProperties(i).renderPicking( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() , target );
-      
-      // Depth Debugger
-      PluginFunctions::viewerProperties(i).renderDepthImage( OpenFlipperSettings().value("Core/Debug/Picking/RenderDepthImage",false).toBool() );
     }
 
     //hideToolbox

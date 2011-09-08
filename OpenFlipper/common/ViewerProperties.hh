@@ -297,23 +297,11 @@ namespace Viewer {
         pickRendererMode_ = _mode ; renderPicking_ = _renderPicking; emit updated();
       }
       
-      /** Render depth image or color image
-      */
-      bool renderDepthImage(){ return renderDepthImage_; };
-     
-      /** Render depth image or color image
-      */
-      void renderDepthImage(bool _depth){ renderDepthImage_ = _depth; emit updated(); };
-      
     private:
       /** This variable controls if the scene is rendered in normal or in picking mode
       */
       bool renderPicking_;
       
-      /** This variable controls if the depth image is rendered instead of the color image
-      */
-      bool renderDepthImage_;
-
       /** If rendering is in picking mode, this variable controls which picking targets
       * will be rendered. ( see renderPicking_ , renderPicking(bool _renderPicking, PickRendererMode _mode) ,
       * and ACG::SceneGraph::PickTarget
