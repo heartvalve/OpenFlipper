@@ -1249,7 +1249,7 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
     }
 }
 
-void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
+void Core::snapshotBaseFileName(QString _fname, unsigned int _viewerId ){
 
   if ( OpenFlipper::Options::gui() ) {
     if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
@@ -1262,7 +1262,7 @@ void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
 
 }
 
-void Core::snapshotFileType(const QString& _type, unsigned int _viewerId ){
+void Core::snapshotFileType(QString _type, unsigned int _viewerId ){
   
   if ( OpenFlipper::Options::gui() ) {
     if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
@@ -1417,10 +1417,12 @@ void Core::setDescriptions(){
                         QStringList(tr("enabled")), QStringList(tr("restriction switch")));
   emit setSlotDescription("setMaxFrameRate(int)", tr("set the maximal framerate (automatically enables framerate restriction)"),
                         QStringList(tr("frameRate")), QStringList(tr("Maximum frameRate")));
-  emit setSlotDescription("snapshotBaseFileName(QString&)", tr("Set a filename for storing snapshots.")
+  emit setSlotDescription("snapshotBaseFileName(QString)", tr("Set a filename for storing snapshots.")
                           , QStringList(), QStringList());
-  emit setSlotDescription("snapshotFileType(QString&)", tr("Set a filetype for storing snapshots.")
-                          , QStringList(), QStringList());                          
+  emit setSlotDescription("snapshotFileType(QString)", tr("Set a filetype for storing snapshots.")
+                          , QStringList(), QStringList());
+  emit setSlotDescription("snapshotCounterStart(int)", tr("Set the starting number for the snapshot counter.")
+                          , QStringList("StartValue"), QStringList("Starting number for the counter"));
   emit setSlotDescription("snapshot()", tr("Make a snapshot of the viewer. If no filename"
                           " was set using snapshotBaseFileName() the snapshot is stored"
                           " in snap.png in the current directory. The captured image will have "

@@ -650,10 +650,10 @@ public slots:
 
     /// set the baseFilename for snapshots (a counter is automatically increased when
     /// snapshot() is called)
-    void snapshotBaseFileName(const QString& _fname, unsigned int _viewerId = 0);
+    void snapshotBaseFileName(QString _fname, unsigned int _viewerId = 0);
     
     /// Set the file type for snapshots.
-    void snapshotFileType(const QString& _type, unsigned int _viewerId = 0);
+    void snapshotFileType(QString _type, unsigned int _viewerId = 0);
     
     /// Set the start index for the snapshot counter
     void snapshotCounterStart(const int _counter, unsigned int _viewerId = 0);
