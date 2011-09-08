@@ -1396,6 +1396,7 @@ void Core::setDescriptions(){
   connect(this, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
           this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
 
+  emit setSlotDescription("deleteObject(int)", tr("Delete an object from the scene."), QStringList("ObjectId"), QStringList(tr("Id of the object to delete")));
   emit setSlotDescription("updateView()", tr("Redraw the contents of the viewer."), QStringList(), QStringList());
   emit setSlotDescription("clearAll()", tr("Clear all data objects."), QStringList(), QStringList());
   emit setSlotDescription("exitApplication()", tr("Quit OpenFlipper"), QStringList(), QStringList());
@@ -1524,7 +1525,7 @@ void Core::setDescriptions(){
                           QStringList(tr("side")), QStringList(tr("The desired side of the toolboxes (either 'left' or 'right')")));
 }
 
-void Core::slotDeleteObject( int _id ){
+void Core::deleteObject( int _id ){
 
   if ( _id == -1 )
     return;
