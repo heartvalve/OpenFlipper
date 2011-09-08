@@ -1341,7 +1341,31 @@ void ViewControlPlugin::setDescriptions() {
                           QStringList("fovy"), QStringList("FOVY angle"));
                           
   emit setSlotDescription("setCoordsysProjection(bool)", "Set the projection mode of the coordinate system.",
-                          QStringList("orthogonal"), QStringList("If true, orthogonal projection otherwise perspective projection"));                        
+                          QStringList("orthogonal"), QStringList("If true, orthogonal projection otherwise perspective projection"));
+
+  emit setSlotDescription("upVector()", "Get the current upVector.",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("upVector(int)", "Get the current upVector of a specific viewer.",
+                          QStringList("ViewerId"), QStringList("Id of the viewer"));
+
+  emit setSlotDescription("eyePosition()", "Get the current eyePosition.",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("eyePosition(int)", "Get the current eyePosition of a specific viewer.",
+                            QStringList("ViewerId"), QStringList("Id of the viewer"));
+
+  emit setSlotDescription("sceneCenter()", "Get the current sceneCenter.",
+                            QStringList(), QStringList());
+
+  emit setSlotDescription("sceneCenter(int)", "Get the current sceneCenter of a specific viewer.",
+                            QStringList("ViewerId"), QStringList("Id of the viewer"));
+
+  emit setSlotDescription("viewingDirection()", "Get the current viewingDirection.",
+                            QStringList(), QStringList());
+
+  emit setSlotDescription("viewingDirection(int)", "Get the current viewingDirection of a specific viewer.",
+                            QStringList("ViewerId"), QStringList("Id of the viewer"));
                           
 }
 
