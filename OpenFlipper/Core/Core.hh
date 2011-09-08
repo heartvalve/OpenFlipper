@@ -590,8 +590,7 @@ signals:
       */ 
       void slotGetAllFilters ( QStringList& _list);
 
-      /// Called when a plugin wants to delete an object
-      void slotDeleteObject( int _id );
+
 
       /// Called when a plugin wants to delete all objects
       void slotDeleteAllObjects( );
@@ -615,6 +614,9 @@ public slots:
 
     /// Clear all data objects
     void clearAll();
+
+    /// Called to delete an object
+    void deleteObject( int _id );
 
     /// exit the current application
     void exitApplication();
