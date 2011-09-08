@@ -217,37 +217,41 @@ class PostProcessorManager {
     */
     unsigned int available();
 
-    /** \brief set the active post processor
+    /** \brief set the active post processor for viewer
     *
+    * @param _id viewer id
     * @param _active id of the post processor
     */
-    void setActive(unsigned int _active);
+    void setActive(unsigned int _active, unsigned int _id);
 
-    /** \brief set the active post processor
+    /** \brief set the active post processor for viewer
     *
+    * @param _id viewer id
     * @param _active name of the post processor
     */
-    void setActive(QString _active);
+    void setActive(QString _active, unsigned int _id);
 
-    /** \brief Get the current active post processor
+    /** \brief Get the current active post processor for viewer
     *
+    * @param _id ViewerId
     * @return post processor
     */
-    PostProcessorInfo* active();
+    PostProcessorInfo* active(unsigned int _id);
 
 
-    /** \brief Get the id of the active post processor
+    /** \brief Get the id of the active post processor for viewer
     *
+    * @param _id ViewerId
     * @return post processor id
     */
-    unsigned int activeId();
+    unsigned int activeId(unsigned int _id);
 
   private:
     /// Vector holding all available  post processors
     std::vector<PostProcessorInfo> availablePostProcessors_;
 
     /// The currently active post processor id
-    int activePostProcessor_;
+    std::vector<int> activePostProcessors_;
 };
 
 /// Get an instance of the Post Processor manager

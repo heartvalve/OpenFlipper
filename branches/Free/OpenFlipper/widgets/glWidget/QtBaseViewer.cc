@@ -588,7 +588,6 @@ void glViewer::drawScene()
   // draw mono or stereo
   makeCurrent();
 
-
  /* std::cerr << "Draw Scene" << std::endl;
 
   std::cerr << "Available renderers: "      << renderManager().available() << std::endl;
@@ -597,19 +596,17 @@ void glViewer::drawScene()
   std::cerr << "Available postprocessors: " << postProcessorManager().available() << std::endl;
   std::cerr << "Active    postprocessor: "  << postProcessorManager().active()->name.toStdString() << std::endl;
 */
+
   if (stereo_) drawScene_stereo();
   else         drawScene_mono();
 
   
-  if ( postProcessorManager().activeId() != 0 ) {
-    std::cerr << "Non default postProcessor!" << std::endl;
-    postProcessorManager().active()->plugin->postProcess(glstate_);
+  if ( postProcessorManager().activeId( properties_.viewerId() ) != 0 ) {
+    postProcessorManager().active( properties_.viewerId() )->plugin->postProcess(glstate_);
   }
-//  } else {
-//    std::cerr << "No post processor" << std::endl;
-//  }
   
   glFinish();
+
   frame_time_ = timer.elapsed();
 
   

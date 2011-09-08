@@ -232,7 +232,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
       action->setCheckable( true );
 
       // Check if this processor is currently active
-      if ( postProcessorManager().activeId() == i )
+      if ( postProcessorManager().activeId(PluginFunctions::activeExaminer() ) == i )
         action->setChecked(true);
 
       // Remember the id for the processor
@@ -852,7 +852,7 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
 
 void CoreWidget::slotPostProcessorMenu( QAction * _action)  {
   unsigned int mode = _action->data().toUInt();
-  postProcessorManager().setActive(mode);
+  postProcessorManager().setActive(mode,PluginFunctions::activeExaminer());
 }
 
 //=============================================================================
