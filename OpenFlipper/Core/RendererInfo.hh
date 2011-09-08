@@ -122,34 +122,38 @@ class RenderManager {
 
     /** \brief set the active renderer
      *
+     * @param _id viewer id
      * @param _active id of the renderer
      */
-    void setActive(unsigned int _active);
+    void setActive(unsigned int _active, unsigned int _id);
 
     /** \brief set the active renderer
     *
+    * @param _id viewer id
     * @param _active name of the renderer
     */
-    void setActive(QString _active);
+    void setActive(QString _active, unsigned int _id);
 
     /** \brief Get the current active renderer
      *
+     * @param _id viewer id
      * @return Renderer
      */
-    RendererInfo* active();
+    RendererInfo* active(unsigned int _id);
 
     /** \brief Get the id of the active renderer
      *
+     * @param _id viewer id
      * @return renderer id
      */
-    unsigned int activeId();
+    unsigned int activeId(unsigned int _id);
 
   private:
     /// Vector holding all available renderers
     std::vector<RendererInfo> availableRenderers_;
 
-    /// The currently active renderer id
-    unsigned int activeRenderer_;
+    /// The currently active renderer ids
+    std::vector<unsigned int> activeRenderers_;
 };
 
 /// Get an instance of the render manager
@@ -251,7 +255,7 @@ class PostProcessorManager {
     std::vector<PostProcessorInfo> availablePostProcessors_;
 
     /// The currently active post processor id
-    std::vector<int> activePostProcessors_;
+    std::vector<unsigned int> activePostProcessors_;
 };
 
 /// Get an instance of the Post Processor manager

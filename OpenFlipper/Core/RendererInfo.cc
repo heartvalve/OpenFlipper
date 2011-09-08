@@ -68,12 +68,12 @@ RendererInfo::RendererInfo(QObject* _plugin,QString _name) :
 }
 
 
-RenderManager::RenderManager():
-    activeRenderer_(0)
+RenderManager::RenderManager()
 {
   availableRenderers_.clear();
   availableRenderers_.push_back(RendererInfo(0,"Default internal renderer"));
 
+  activeRenderers_.clear();
 }
 
 bool RenderManager::rendererExists(QString _name) {
@@ -133,28 +133,43 @@ unsigned int RenderManager::available() {
 }
 
 
-void RenderManager::setActive(unsigned int _active) {
+void RenderManager::setActive(unsigned int _active, unsigned int _id) {
+  // Increase vector size
+  if ( _id >= activeRenderers_.size() )
+    activeRenderers_.resize(_id +1 );
+
   if ( _active <  availableRenderers_.size() )
-    activeRenderer_ = _active;
+    activeRenderers_[_id] = _active;
   else
     std::cerr << "Out of range error when setting active renderer" << std::endl;
 }
 
-void RenderManager::setActive(QString _active) {
+void RenderManager::setActive(QString _active, unsigned int _id) {
+  // Increase vector size
+  if ( _id >= activeRenderers_.size() )
+    activeRenderers_.resize(_id +1 );
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
     if ( availableRenderers_[i].name == _active) {
-      activeRenderer_ = i;
+      activeRenderers_[i] = i;
     }
 
 }
 
-RendererInfo* RenderManager::active() {
-  return &availableRenderers_[activeRenderer_];
+RendererInfo* RenderManager::active(unsigned int _id) {
+  // Increase vector size
+  if ( _id >= activeRenderers_.size() )
+    activeRenderers_.resize(_id +1 );
+
+  return &availableRenderers_[activeRenderers_[_id]];
 }
 
-unsigned int RenderManager::activeId() {
-  return activeRenderer_;
+unsigned int RenderManager::activeId(unsigned int _id) {
+  // Increase vector size
+  if ( _id >= activeRenderers_.size() )
+    activeRenderers_.resize(_id +1 );
+
+  return activeRenderers_[_id];
 }
 
 //===================================================================
