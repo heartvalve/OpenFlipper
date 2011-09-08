@@ -137,7 +137,7 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate) {
   // ======================================================================================================
   // Copy depth component of rendered image to texture
   // ======================================================================================================
-  glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, 0, 0, vp_w , vp_h, 0);
+  glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, vp_l, vp_b, vp_w , vp_h, 0);
 
   // ======================================================================================================
   // Render plain textured
@@ -155,31 +155,14 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate) {
   _glstate->reset_projection();
   _glstate->reset_modelview();
 
-  _glstate->ortho(vp_l, vp_l+vp_w, vp_b, vp_b+vp_h, 0, 1);
+  // Setup orthogonal projection (remember that we are in a viewport of the current glstate)
+  _glstate->ortho(0, vp_w, 0, vp_h, 0, 1);
+
 
   // ======================================================================================================
   // Clear rendering buffer
   // ======================================================================================================
-
-  //glClearColor(0.0, 0.0, 0.0, 0.0);
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // GetoriginalScissor settings
-  GLboolean scissor =  glIsEnabled(GL_SCISSOR_TEST);
-
-  GLint origBox[4];
-  glGetIntegerv(GL_SCISSOR_BOX,&origBox[0]);
-
-  //Enable scissor
-  if (!scissor)
-    _glstate->enable(GL_SCISSOR_TEST);
-
-  // Restrict to our current viewport
-  glScissor(  vp_l,vp_b,vp_w,vp_h );
-
-  // Clear restricted region
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
+  _glstate->clearBuffers();
 
   // ======================================================================================================
   // Render a simple quad (rest is done by the texture)
@@ -197,12 +180,6 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate) {
 
   // Disable depth stencil buffer
   pDepthStencilTexture_.disable();
-
-  // Reset to originalsettings
-  glScissor(  origBox[0], origBox[1], origBox[2], origBox[3] );
-
-  if (!scissor)
-    _glstate->disable(GL_SCISSOR_TEST);
 
   // ======================================================================================================
   // Reset projection and modelview
