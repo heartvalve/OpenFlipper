@@ -44,6 +44,8 @@
 
 #include <set>
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <MeshTools/MeshSelectionT.hh>
 
 // Primitive type icons
@@ -69,6 +71,7 @@
 #define V_COLORIZE      "Colorize Vertex Selection"
 #define V_HANDLE        "Set to Handle Region"
 #define V_MODELING      "Set to Modeling Region"
+#define V_LOAD_FLIPPER  "Load Flipper Selection"
 // Edges
 #define E_SELECT_ALL    "Select All Edges"
 #define E_CLEAR         "Clear Edge Selection"
@@ -181,6 +184,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     vertexOperations.append(V_COLORIZE);
     vertexOperations.append(V_HANDLE);
     vertexOperations.append(V_MODELING);
+    vertexOperations.append(V_LOAD_FLIPPER);
     
     // Define edge operations
     QStringList edgeOperations;
@@ -439,6 +443,17 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
                 std::vector<int> ids = getVertexSelection(o_it->id());
                 selectModelingVertices(o_it->id(), ids);
                 clearVertexSelection(o_it->id());
+            }
+        }
+    } else if(_operation == V_LOAD_FLIPPER) {
+        // Load Flipper selection file
+        QString fileName = QFileDialog::getOpenFileName(0,
+                tr("Open Flipper Selection File"), OpenFlipper::Options::dataDirStr(),
+                tr("Flipper Selection Files (*.sel)"));
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible()) {
+                loadFlipperModelingSelection(o_it->id(), fileName);
             }
         }
     } else if(_operation == E_SELECT_ALL) {
