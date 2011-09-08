@@ -373,7 +373,6 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
 
   renderPicking->setChecked( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() );
-  renderDepth->setChecked( OpenFlipperSettings().value("Core/Debug/Picking/RenderDepthImage",false).toBool() );
   int itemIndex = pickingRenderMode->findText( OpenFlipperSettings().value("Core/Debug/Picking/RenderPickingMode",QString("PICK_ANYTHING")).toString() );
   if (  itemIndex != -1 )
     pickingRenderMode->setCurrentIndex(itemIndex);
@@ -707,8 +706,6 @@ void OptionsWidget::slotApply() {
 
   OpenFlipperSettings().setValue("Core/Debug/Picking/RenderPicking",renderPicking->isChecked() );
   OpenFlipperSettings().setValue("Core/Debug/Picking/RenderPickingMode",pickingRenderMode->currentText()  );
-  
-  OpenFlipperSettings().setValue("Core/Debug/Picking/RenderDepthImage",renderDepth->isChecked() );
 
   //viewer defaults
   for (int i=0; i < PluginFunctions::viewers(); i++){
