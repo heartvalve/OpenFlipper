@@ -172,11 +172,12 @@ PostProcessorInfo::PostProcessorInfo()
 }
 
 
-PostProcessorManager::PostProcessorManager():
-    activePostProcessor_(0)
+PostProcessorManager::PostProcessorManager()
 {
   availablePostProcessors_.clear();
   availablePostProcessors_.push_back(PostProcessorInfo(0,"Default internal post processor"));
+
+  activePostProcessors_.clear();
 }
 
 
@@ -224,28 +225,45 @@ unsigned int PostProcessorManager::available() {
   return availablePostProcessors_.size();
 }
 
-void PostProcessorManager::setActive(unsigned int _active) {
+void PostProcessorManager::setActive(unsigned int _active, unsigned int _id) {
+
+  // Increase vector size
+  if ( _id >= activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
+
   if ( _active <  availablePostProcessors_.size() )
-    activePostProcessor_ = _active;
+    activePostProcessors_[_id] = _active;
   else
-    std::cerr << "Out of range error when setting active postprocessor" << std::endl;
+    std::cerr << "Out of range error when setting active post processor" << std::endl;
 }
 
-void PostProcessorManager::setActive(QString _active) {
+void PostProcessorManager::setActive(QString _active,unsigned int _id) {
+
+  // Increase vector size
+  if ( _id >= activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
 
   for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
     if ( availablePostProcessors_[i].name == _active) {
-      activePostProcessor_ = i;
+      activePostProcessors_[_id] = i;
     }
 
 }
 
-PostProcessorInfo* PostProcessorManager::active() {
-  return &availablePostProcessors_[activePostProcessor_];
+PostProcessorInfo* PostProcessorManager::active(unsigned int _id) {
+  // Increase vector size
+   if ( _id >= activePostProcessors_.size() )
+     activePostProcessors_.resize(_id +1 );
+
+  return &availablePostProcessors_[activePostProcessors_[_id]];
 }
 
-unsigned int PostProcessorManager::activeId() {
-  return activePostProcessor_;
+unsigned int PostProcessorManager::activeId(unsigned int _id) {
+  // Increase vector size
+   if ( _id >= activePostProcessors_.size() )
+     activePostProcessors_.resize(_id +1 );
+
+  return activePostProcessors_[_id];
 }
 
 
