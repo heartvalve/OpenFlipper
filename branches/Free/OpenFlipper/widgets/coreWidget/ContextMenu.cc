@@ -261,6 +261,18 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     QActionGroup* groupPostProcessor = new QActionGroup( this );
     groupPostProcessor->setExclusive( true );
 
+    // Get the options action for the currently active
+    for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
+
+      if ( postProcessorManager().activeId(PluginFunctions::activeExaminer() ) == i )
+        if( postProcessorManager()[i]->optionsAction != 0 ) {
+          postProcessorMenu->addAction(postProcessorManager()[i]->optionsAction);
+          postProcessorMenu->addSeparator();
+        }
+
+    }
+
+    // Now add the processor chooser
     for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
 
       // Add a new Action with the postprocessors name

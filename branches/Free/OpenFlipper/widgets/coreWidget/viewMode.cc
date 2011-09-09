@@ -423,35 +423,9 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     // Set values
     stereoSettingsWidget_->stereoAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
     stereoSettingsWidget_->stereoCustomAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
-    stereoSettingsWidget_->stereoPhilips->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
     stereoSettingsWidget_->eyeDistance->setValue( OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() );
     stereoSettingsWidget_->focalDistance->setValue( OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() * 1000);
-
-    // Philips stereo mode part
-
-    // Block signals such that slotApplyStereoSettings
-    // won't be called when setting the initial values here...
-    stereoSettingsWidget_->headerContentType->blockSignals(true);
-    stereoSettingsWidget_->headerSelect->blockSignals(true);
-
-    stereoSettingsWidget_->headerContentType->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Content").toInt());
-    stereoSettingsWidget_->headerFactor->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
-    stereoSettingsWidget_->headerOffsetCC->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
-    stereoSettingsWidget_->factorCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
-    stereoSettingsWidget_->offsetCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
-    stereoSettingsWidget_->headerSelect->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Select").toInt());
-
-    // Unblock signals
-    stereoSettingsWidget_->headerContentType->blockSignals(false);
-    stereoSettingsWidget_->headerSelect->blockSignals(false);
-
-    // Show right stacked widget
-    if (stereoSettingsWidget_->stereoPhilips->isChecked()) {
-        stereoSettingsWidget_->stackedWidget->setCurrentIndex(1);
-    } else {
-        stereoSettingsWidget_->stackedWidget->setCurrentIndex(0);
-    }
 
     // Move widget to the position of the cursor
     stereoSettingsWidget_->move(stereoButton_->mapToGlobal(_pos) - QPoint((int)(stereoSettingsWidget_->width()/2), 0));
@@ -470,9 +444,6 @@ void CoreWidget::slotApplyStereoSettings(int /*_tmpParam*/) {
     } else if (stereoSettingsWidget_->stereoAnaglyph->isChecked()) {
         OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
         stereoSettingsWidget_->stackedWidget->setCurrentIndex(0);
-    } else if (stereoSettingsWidget_->stereoPhilips->isChecked()) {
-        OpenFlipper::Options::stereoMode(OpenFlipper::Options::Philips);
-        stereoSettingsWidget_->stackedWidget->setCurrentIndex(1);
     } else {
         OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
         stereoSettingsWidget_->stackedWidget->setCurrentIndex(0);
@@ -481,16 +452,6 @@ void CoreWidget::slotApplyStereoSettings(int /*_tmpParam*/) {
     // Save everything
     OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",stereoSettingsWidget_->eyeDistance->value());
     OpenFlipperSettings().setValue("Core/Stereo/FocalDistance",double(stereoSettingsWidget_->focalDistance->value()/1000.0));
-
-    // Update labels that display the current values
-    stereoSettingsWidget_->factorCounter->setNum(stereoSettingsWidget_->headerFactor->value());
-    stereoSettingsWidget_->offsetCounter->setNum(stereoSettingsWidget_->headerOffsetCC->value());
-
-    // Set option entries
-    OpenFlipperSettings().setValue("Core/Stereo/Philips/Content",stereoSettingsWidget_->headerContentType->currentIndex());
-    OpenFlipperSettings().setValue("Core/Stereo/Philips/Factor",stereoSettingsWidget_->headerFactor->value());
-    OpenFlipperSettings().setValue("Core/Stereo/Philips/Offset",stereoSettingsWidget_->headerOffsetCC->value());
-    OpenFlipperSettings().setValue("Core/Stereo/Philips/Select",stereoSettingsWidget_->headerSelect->currentIndex());
 
     // Update all views
     for (unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i) {

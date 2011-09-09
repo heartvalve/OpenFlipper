@@ -888,20 +888,6 @@ bool initializeSettings() {
   
   if ( ! settings_->contains("Core/Stereo/EyeDistance") )
     settings_->setValue("Core/Stereo/EyeDistance",0.07);
-  
-  
-  // Philips stereo display settings
-  if ( ! settings_->contains("Core/Stereo/Philips/Content") )
-    settings_->setValue("Core/Stereo/Philips/Content",3);
-  
-  if ( ! settings_->contains("Core/Stereo/Philips/Factor") )
-    settings_->setValue("Core/Stereo/Philips/Factor",64);
-  
-  if ( ! settings_->contains("Core/Stereo/Philips/Offset") )
-    settings_->setValue("Core/Stereo/Philips/Offset",128);
-  
-  if ( ! settings_->contains("Core/Stereo/Philips/Select") )
-    settings_->setValue("Core/Stereo/Philips/Select",0);
     
   return true;
   

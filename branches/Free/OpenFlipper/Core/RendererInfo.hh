@@ -179,6 +179,9 @@ class PostProcessorInfo{
     /// Name of the plugin ( requested from the plugin on load)
     QString     name;
 
+    /// Possible action to add an options action or menu to the system.
+    QAction* optionsAction;
+
 };
 
 

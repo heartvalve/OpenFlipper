@@ -176,7 +176,8 @@ unsigned int RenderManager::activeId(unsigned int _id) {
 
 PostProcessorInfo::PostProcessorInfo(PostProcessorInterface* _plugin, QString _name) :
           plugin(_plugin),
-          name(_name)
+          name(_name),
+          optionsAction(0)
 {
 }
 

@@ -1937,6 +1937,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       // Retrieve and store PostProcessor information
       if ( postProcessorInfo != 0) {
         postProcessorInfo->plugin = postProcessorPlugin;
+
+        if ( checkSlot( plugin , "optionsAction()" ) ) {
+          //Get an action for the post processor options
+          postProcessorInfo->optionsAction = postProcessorPlugin->optionsAction();
+
+        } else {
+          postProcessorInfo->optionsAction = 0;
+        }
       }
 
     } else {
