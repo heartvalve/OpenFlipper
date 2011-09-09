@@ -665,41 +665,8 @@ private:
     GLuint agProgram_;
     bool   customAnaglyphSupported_;
 
-    GLSL::PtrProgram pProgram_;
-    bool philipsStereoInitialized_;
 
   /** @} */
-
-  //===========================================================================
-  /** @name Buffers
-  * @{ */
-  //===========================================================================
-  
-  private:
-    
-    /// Updates the Color Texture Buffer to the current size and initializes it if necessary
-    void updateColorTextureBuffer();
-
-    /// Updates the DepthStencil Texture Buffer to the current size and initializes it if necessary
-    void updateDepthStencilTextureBuffer();
-
-    /// color texture buffer
-    ACG::Texture2D pColorTexture_;
-
-    /// depthStencil texture buffer
-    ACG::Texture2D pDepthStencilTexture_;
-
-    /// Current width of the color texture buffer
-    int     colorTextureBufferWidth_;
-    
-    /// Current height of the color texture buffer
-    int     colorTextureBufferHeight_;
-
-    /// Current width of the depthStencil texture buffer
-    int     depthStencilTextureBufferWidth_;
-
-    /// Current height of the depthStencil texture buffer
-    int     depthStencilTextureBufferHeight_;
 
   //===========================================================================
   /** @name Key handling

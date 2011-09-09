@@ -147,12 +147,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
   glWidget_(_glWidget),
   cursorPainter_(0),
   cursorPositionValid_(false),
-  pProgram_(0),
-  philipsStereoInitialized_(false),
-  colorTextureBufferWidth_(0),
-  colorTextureBufferHeight_(0),
-  depthStencilTextureBufferWidth_(0),
-  depthStencilTextureBufferHeight_(0),
   pickCache_(0),
   updatePickCache_(true),
   pickCacheSupported_(true),
@@ -588,16 +582,6 @@ void glViewer::drawScene()
   // draw mono or stereo
   makeCurrent();
 
- /* std::cerr << "Draw Scene" << std::endl;
-
-  std::cerr << "Available renderers: "      << renderManager().available() << std::endl;
-  std::cerr << "Active    renderer: "       << renderManager().active()->name.toStdString() << std::endl;
-
-  std::cerr << "Available postprocessors: " << postProcessorManager().available() << std::endl;
-  std::cerr << "Active    postprocessor: "  << postProcessorManager().active()->name.toStdString() << std::endl;
-*/
-
-
   // Check if we use build in default renderers
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
     if (stereo_) drawScene_stereo();
@@ -797,15 +781,7 @@ glViewer::drawScene_stereo()
     // if somthing went wrong, fallback to normal anaglyph
     if (customAnaglyphSupported_)
       return;
-  } else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::Philips )
-  {
-    drawScenePhilipsStereo ();
-
-    return;
-
   }
-
-
 
   drawScene_anaglyphStereo ();
 }

@@ -415,8 +415,7 @@ QString helpDirStr();
   enum StereoMode {
     OpenGL,
     AnaglyphRedCyan,
-    AnaglyphCustom,
-    Philips
+    AnaglyphCustom
   };
 
   /// Store opengl stereo support setting

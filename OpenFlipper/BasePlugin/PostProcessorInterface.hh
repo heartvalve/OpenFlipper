@@ -45,6 +45,7 @@
 #define POSTPROCESSORINTERFACE_HH
 
 #include <ACG/GL/GLState.hh>
+#include <QAction>
 
 /** \file PostProcessorInterface.hh
 *
@@ -79,6 +80,16 @@ class PostProcessorInterface {
      * @param _name displayed name of the postProcessor function
      */
     virtual QString postProcessorName() = 0;
+
+    /** \brief Return options menu
+     *
+     * If you want an options Menu or menu entry, you can return your action here.
+     * It will be shown on top of the post processors list in the options menu.
+     *
+     *
+     * @return Action for a menu or menu entry
+     */
+    virtual QAction* optionsAction() { return 0; };
 
 };
 

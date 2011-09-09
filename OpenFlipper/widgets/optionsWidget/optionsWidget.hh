@@ -113,9 +113,6 @@ private slots:
    /// Switch between the stacked widgets of the stereo settings
    void switchStackedWidget();
 
-   /// Update the labels that show th current values of the sliders
-   void updateSliderCounter();
-   
    /// This function is called to update stereo settings for real-time preview
    /// Note: The parameter only makes sure that the signals can be connected
    /// to this slot.
