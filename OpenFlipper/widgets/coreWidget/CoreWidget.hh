@@ -848,6 +848,9 @@ public:
     /// Called when a different post processor has been chosen
     void slotPostProcessorMenu( QAction * _action);
 
+    /// Called when a different renderer has been chosen
+    void slotRenderMenu( QAction * _action);
+
     /// Creates a draw Menu for the currently active Viewer
     void slotUpdateViewerDrawMenu();
 

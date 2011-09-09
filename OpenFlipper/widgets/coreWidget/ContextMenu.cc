@@ -213,6 +213,42 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   connect(mipmapping, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMipmapping(bool) ) );
 
   //============================================================================================================
+  // Renderer Menu
+  //============================================================================================================
+
+  if ( renderManager().available() > 1 ) {
+    QMenu* rendererMenu = new QMenu(tr("Renderers"),_menu);
+
+    _menu->addMenu(rendererMenu);
+
+    // Recreate actionGroup
+    QActionGroup* groupRenderer = new QActionGroup( this );
+    groupRenderer->setExclusive( true );
+
+    for ( unsigned int i = 0 ; i < renderManager().available() ; ++i) {
+
+      // Add a new Action with the renderer name
+      QAction * action = new QAction( renderManager()[i]->name, groupRenderer );
+      action->setCheckable( true );
+
+      // Check if this processor is currently active
+      if ( renderManager().activeId(PluginFunctions::activeExaminer() ) == i )
+        action->setChecked(true);
+
+      // Remember the id for the processor
+      action->setData(QVariant(i));
+    }
+
+    // Add all new actions from the group to the menu
+    rendererMenu->addActions( groupRenderer->actions() );
+
+    // Connect signal of group to our managing slot
+    connect( groupRenderer , SIGNAL( triggered( QAction * ) ),
+        this               , SLOT( slotRenderMenu( QAction * ) ) );
+
+  }
+
+  //============================================================================================================
   // Post processor Menu
   //============================================================================================================
 
@@ -853,6 +889,11 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
 void CoreWidget::slotPostProcessorMenu( QAction * _action)  {
   unsigned int mode = _action->data().toUInt();
   postProcessorManager().setActive(mode,PluginFunctions::activeExaminer());
+}
+
+void CoreWidget::slotRenderMenu( QAction * _action)  {
+  unsigned int mode = _action->data().toUInt();
+  renderManager().setActive(mode,PluginFunctions::activeExaminer());
 }
 
 //=============================================================================

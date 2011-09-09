@@ -597,8 +597,14 @@ void glViewer::drawScene()
   std::cerr << "Active    postprocessor: "  << postProcessorManager().active()->name.toStdString() << std::endl;
 */
 
-  if (stereo_) drawScene_stereo();
-  else         drawScene_mono();
+
+  // Check if we use build in default renderers
+  if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
+    if (stereo_) drawScene_stereo();
+    else         drawScene_mono();
+  } else {
+    renderManager().active( properties_.viewerId() )->plugin->render(glstate_);
+  }
 
   
   if ( postProcessorManager().activeId( properties_.viewerId() ) != 0 ) {
