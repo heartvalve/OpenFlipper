@@ -1906,6 +1906,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
         QMetaObject::invokeMethod(plugin,"supportedDrawModes", Q_ARG(ACG::SceneGraph::DrawModes::DrawMode& ,supportedModes) );
 
         rendererInfo->modes = supportedModes;
+
+        if ( checkSlot( plugin , "optionsAction()" ) ) {
+          //Get an action for the post processor options
+          rendererInfo->optionsAction = renderPlugin->optionsAction();
+
+        } else {
+          rendererInfo->optionsAction = 0;
+        }
       }
 
     } else {

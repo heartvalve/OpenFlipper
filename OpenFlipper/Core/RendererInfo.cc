@@ -57,13 +57,15 @@ PostProcessorManager& postProcessorManager() {
 
 RendererInfo::RendererInfo():
   plugin(0),
-  name("")
+  name(""),
+  optionsAction(0)
 {
 }
 
 RendererInfo::RendererInfo(RenderInterface* _plugin,QString _name) :
     plugin(_plugin),
-    name(_name)
+    name(_name),
+    optionsAction(0)
 {
 }
 
@@ -181,10 +183,11 @@ PostProcessorInfo::PostProcessorInfo(PostProcessorInterface* _plugin, QString _n
 {
 }
 
-PostProcessorInfo::PostProcessorInfo()
+PostProcessorInfo::PostProcessorInfo():
+    plugin(0),
+    name(""),
+    optionsAction(0)
 {
-  plugin = 0;
-  name = "";
 }
 
 

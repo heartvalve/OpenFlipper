@@ -45,6 +45,7 @@
 #define RENDERINTERFACE_HH
 
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/common/ViewerProperties.hh>
 
 /** \file RenderInterface.hh
 *
@@ -99,7 +100,17 @@ class RenderInterface {
      * If you need to initialize something,you can do it within this function.
      * gl and glew are already setUp here.
      */
-    virtual void render(ACG::GLState* _glState) {};
+    virtual void render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties) {};
+
+    /** \brief Return options menu
+     *
+     * If you want an options Menu or menu entry, you can return your action here.
+     * It will be shown on top of the renderer list in the options menu.
+     *
+     *
+     * @return Action for a menu or menu entry
+     */
+    virtual QAction* optionsAction() { return 0; };
 
 };
 

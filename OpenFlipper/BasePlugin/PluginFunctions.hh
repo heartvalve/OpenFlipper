@@ -360,6 +360,7 @@ void getCurrentViewImage(QImage& _image);
 *
 * Get the real root node of the scenegraph.This node is the topmost
 * node of the scenegraph. Normally you do not need to use this node.
+* Exceptyou are writing a renderer plugin.
 * All objects should be added below the data root node which you can get
 * with getRootNode().
 */

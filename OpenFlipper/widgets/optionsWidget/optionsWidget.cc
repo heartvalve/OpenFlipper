@@ -337,11 +337,6 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   // debugging
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
 
-  renderPicking->setChecked( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() );
-  int itemIndex = pickingRenderMode->findText( OpenFlipperSettings().value("Core/Debug/Picking/RenderPickingMode",QString("PICK_ANYTHING")).toString() );
-  if (  itemIndex != -1 )
-    pickingRenderMode->setCurrentIndex(itemIndex);
-
   //keyBindings
   initKeyTree();
 
@@ -659,9 +654,6 @@ void OptionsWidget::slotApply() {
 
   // Debugging
   OpenFlipper::Options::doSlotDebugging(slotDebugging->isChecked());
-
-  OpenFlipperSettings().setValue("Core/Debug/Picking/RenderPicking",renderPicking->isChecked() );
-  OpenFlipperSettings().setValue("Core/Debug/Picking/RenderPickingMode",pickingRenderMode->currentText()  );
 
   //viewer defaults
   for (int i=0; i < PluginFunctions::viewers(); i++){
