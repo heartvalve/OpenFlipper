@@ -48,6 +48,7 @@
 #include <QObject>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
+#include <OpenFlipper/BasePlugin/RenderInterface.hh>
 
 #include <vector>
 
@@ -58,10 +59,10 @@ class RendererInfo{
 
     RendererInfo();
 
-    RendererInfo(QObject* _plugin,QString _name);
+    RendererInfo(RenderInterface* _plugin,QString _name);
 
     /// Pointer to the loaded plugin (Already casted when loading it)
-    QObject*    plugin;
+    RenderInterface*    plugin;
 
     /// Name of the plugin ( requested from the plugin on load)
     QString     name;

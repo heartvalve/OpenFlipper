@@ -61,7 +61,7 @@ RendererInfo::RendererInfo():
 {
 }
 
-RendererInfo::RendererInfo(QObject* _plugin,QString _name) :
+RendererInfo::RendererInfo(RenderInterface* _plugin,QString _name) :
     plugin(_plugin),
     name(_name)
 {

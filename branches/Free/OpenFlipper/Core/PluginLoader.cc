@@ -1888,8 +1888,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       // Get the name of the renderer
       QMetaObject::invokeMethod(plugin,"rendererName", Qt::DirectConnection,   Q_RETURN_ARG(QString,rendererNameString) ) ;
 
-      std::cerr << rendererNameString.toStdString() << std::endl;
-
       // Check if it already exists and add it if not.
       RendererInfo* rendererInfo = 0;
       if ( ! renderManager().rendererExists(rendererNameString) ) {
@@ -1900,8 +1898,7 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
 
       // Retrieve and store renderer information
       if ( rendererInfo != 0) {
-        std::cerr << "Rendererinfo ok" << std::endl;
-        rendererInfo->plugin = plugin;
+        rendererInfo->plugin = renderPlugin;
 
         ACG::SceneGraph::DrawModes::DrawMode supportedModes;
 
@@ -1929,8 +1926,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       // Get the name of the PostProcessor
       QMetaObject::invokeMethod(plugin,"postProcessorName", Qt::DirectConnection,   Q_RETURN_ARG(QString,postProcessorNameString) ) ;
 
-      std::cerr << postProcessorNameString.toStdString() << std::endl;
-
       // Check if it already exists and add it if not.
       PostProcessorInfo* postProcessorInfo = 0;
       if ( ! postProcessorManager().postProcessorExists(postProcessorNameString) ) {
@@ -1941,7 +1936,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
 
       // Retrieve and store PostProcessor information
       if ( postProcessorInfo != 0) {
-        std::cerr << "PostProcessor ok" << std::endl;
         postProcessorInfo->plugin = postProcessorPlugin;
       }
 

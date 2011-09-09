@@ -68,15 +68,7 @@ class RenderInterface {
 
   private slots:
 
-    /** \brief rendering function
-     *
-     * Implement this function to render the scene. You have to traverse the
-     * scenegraph in this function. The glContext is made current before this
-     * call.
-     * If you need to initialize something,you can do it within this function.
-     * gl and glew are already setUp here.
-     */
-    virtual void render(/* Unknow options yet.. to be evaluated*/) {};
+
 
     /** \brief announce required draw modes
      *
@@ -88,7 +80,7 @@ class RenderInterface {
      *
      * @param _mode Combined list of drawmodes
      */
-    virtual void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {};
+    virtual void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) = 0;
 
     /** \brief announce name for the rendering function
      *
@@ -97,17 +89,17 @@ class RenderInterface {
      */
     virtual QString rendererName() = 0;
 
-  signals:
+  public slots:
 
-    /** \brief register a new rendering function to the core
+    /** \brief rendering function
      *
-     * Emit this signal to register your plugin with a given drawmode.
-     * Whenever this drawmode is active OpenFlipper will not call its internal
-     * rendering but your plugins render function.
-     *
-     * @param _mode The drawmode for the new rendering function
+     * Implement this function to render the scene. You have to traverse the
+     * scenegraph in this function. The glContext is made current before this
+     * call.
+     * If you need to initialize something,you can do it within this function.
+     * gl and glew are already setUp here.
      */
-   virtual void registerRenderingFunction(ACG::SceneGraph::DrawModes::DrawMode _mode) {};
+    virtual void render(ACG::GLState* _glState) {};
 
 };
 
