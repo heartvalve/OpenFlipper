@@ -1950,8 +1950,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     } else {
       emit log(LOGERR,tr("Error: PostProcessor Plugin without postProcessorName Function?!"));
     }
-
-    std::cerr << "PostProcessor Plugin .. not yet implemented" << std::endl;
   }
 
   //========================================================================================
