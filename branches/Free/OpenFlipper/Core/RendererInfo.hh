@@ -69,6 +69,9 @@ class RendererInfo{
 
     /// Supported DrawModes
     ACG::SceneGraph::DrawModes::DrawMode modes;
+
+    /// Possible action to add an options action or menu to the system.
+    QAction* optionsAction;
 };
 
 

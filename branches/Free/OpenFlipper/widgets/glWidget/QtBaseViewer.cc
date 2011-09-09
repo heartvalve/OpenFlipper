@@ -587,9 +587,8 @@ void glViewer::drawScene()
     if (stereo_) drawScene_stereo();
     else         drawScene_mono();
   } else {
-    renderManager().active( properties_.viewerId() )->plugin->render(glstate_);
+    renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
   }
-
   
   if ( postProcessorManager().activeId( properties_.viewerId() ) != 0 ) {
     postProcessorManager().active( properties_.viewerId() )->plugin->postProcess(glstate_);
@@ -611,141 +610,120 @@ void glViewer::drawScene()
 
 void glViewer::drawScene_mono()
 {
-  if (sceneGraphRoot_)
-  {
-    if (! properties_.renderPicking() ) {
+  if (sceneGraphRoot_) {
+    ViewObjectMarker *oM = properties_.objectMarker();
+    GLuint refBits = 0;
+    QSet<GLuint> references;
 
-      ViewObjectMarker *oM = properties_.objectMarker();
-      GLuint refBits = 0;
-      QSet<GLuint> references;
+    if (oM)
+    {
+      glClear (GL_STENCIL_BUFFER_BIT);
+      glEnable (GL_STENCIL_TEST);
+      glStencilOp (GL_KEEP, GL_KEEP, GL_ZERO);
+      glStencilFunc (GL_ALWAYS, 0, ~0);
 
-      if (oM)
+      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_ALL) ;
+          o_it != PluginFunctions::objectsEnd(); ++o_it)
       {
-        glClear (GL_STENCIL_BUFFER_BIT);
-        glEnable (GL_STENCIL_TEST);
-        glStencilOp (GL_KEEP, GL_KEEP, GL_ZERO);
-        glStencilFunc (GL_ALWAYS, 0, ~0);
+        bool ok;
+        GLuint ref;
 
-        for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_ALL) ;
-                                             o_it != PluginFunctions::objectsEnd(); ++o_it)
+        ok = oM->stencilRefForObject(*o_it, ref);
+
+        if (ok)
         {
-          bool ok;
-          GLuint ref;
-
-          ok = oM->stencilRefForObject(*o_it, ref);
-
-          if (ok)
-          {
-            o_it->stencilRefNode ()->setReference (ref);
-            o_it->stencilRefNode ()->show ();
-            refBits |= ref;
-            references << ref;
-          }
-          else
-            o_it->stencilRefNode ()->hide ();
+          o_it->stencilRefNode ()->setReference (ref);
+          o_it->stencilRefNode ()->show ();
+          refBits |= ref;
+          references << ref;
         }
+        else
+          o_it->stencilRefNode ()->hide ();
+      }
+    }
+
+    ACG::SceneGraph::DrawAction action( properties_.drawMode(), *glstate_ , false);
+    ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
+
+    if( blending_ )
+    {
+      ACG::SceneGraph::DrawAction action(properties_.drawMode(), *glstate_, true);
+      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
+    }
+
+    if (oM)
+    {
+      if (oM->type() == ViewObjectMarker::PerBit)
+      {
+        references.clear ();
+        for (unsigned int i = 0; i < sizeof (GLuint) * 8; i++)
+          if (refBits & (1 << i))
+            references << (1 << i);
       }
 
-      ACG::SceneGraph::DrawAction action( properties_.drawMode(), *glstate_ , false);
-      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
+      glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-      if( blending_ )
-      {
-        ACG::SceneGraph::DrawAction action(properties_.drawMode(), *glstate_, true);
-        ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
-      }
+      glEnable(GL_BLEND);
+      glDisable(GL_DEPTH_TEST);
+      glDisable(GL_LIGHTING);
+      glDisable(GL_DITHER);
 
-      if (oM)
+      int vp_l, vp_b, vp_w, vp_h;
+      glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix ();
+      glLoadIdentity();
+      glOrtho(0, vp_w, vp_h, 0, 0, 1.0);
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix ();
+      glLoadIdentity();
+
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+
+      foreach (unsigned int ref, references)
       {
+        bool ok;
+        GLenum sfactor;
+        GLenum dfactor;
+        ACG::Vec4f color;
+        unsigned int mask = ~0;
+
         if (oM->type() == ViewObjectMarker::PerBit)
         {
-          references.clear ();
-          for (unsigned int i = 0; i < sizeof (GLuint) * 8; i++)
-            if (refBits & (1 << i))
-              references << (1 << i);
+          ok = oM->blendForStencilRefBit (ref, sfactor, dfactor, color);
+          mask = ref;
         }
+        else
+          ok = oM->blendForStencilRefNumber (ref, sfactor, dfactor, color);
 
-        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        if (!ok)
+          continue;
 
-        glEnable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_DITHER);
+        glStencilFunc (GL_EQUAL, ref, mask);
 
-        int vp_l, vp_b, vp_w, vp_h;
-        glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+        glBlendFunc (sfactor, dfactor);
+        glColor4f (color[0], color [1], color [2], color[3]);
 
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix ();
-        glLoadIdentity();
-        glOrtho(0, vp_w, vp_h, 0, 0, 1.0);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix ();
-        glLoadIdentity();
+        glBegin (GL_QUADS);
+        glVertex2i(0, 0);
+        glVertex2i(0, vp_h);
+        glVertex2i(vp_w, vp_h);
+        glVertex2i(vp_w, 0);
+        glEnd ();
 
-        glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
-
-        foreach (unsigned int ref, references)
-        {
-          bool ok;
-          GLenum sfactor;
-          GLenum dfactor;
-          ACG::Vec4f color;
-          unsigned int mask = ~0;
-
-          if (oM->type() == ViewObjectMarker::PerBit)
-          {
-            ok = oM->blendForStencilRefBit (ref, sfactor, dfactor, color);
-            mask = ref;
-          }
-          else
-            ok = oM->blendForStencilRefNumber (ref, sfactor, dfactor, color);
-
-          if (!ok)
-            continue;
-
-          glStencilFunc (GL_EQUAL, ref, mask);
-
-          glBlendFunc (sfactor, dfactor);
-          glColor4f (color[0], color [1], color [2], color[3]);
-
-          glBegin (GL_QUADS);
-          glVertex2i(0, 0);
-          glVertex2i(0, vp_h);
-          glVertex2i(vp_w, vp_h);
-          glVertex2i(vp_w, 0);
-          glEnd ();
-
-        }
-
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix ();
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix ();
-
-        glPopAttrib ();
-        glDisable (GL_STENCIL_TEST);
       }
-    } else {
 
-      // prepare GL state
-      makeCurrent();
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix ();
+      glMatrixMode(GL_MODELVIEW);
+      glPopMatrix ();
 
-      glDisable(GL_LIGHTING);
-      glDisable(GL_BLEND);
-      glClear(GL_DEPTH_BUFFER_BIT);
-      glInitNames();
-      glPushName((GLuint) 0);
-
-      // do the picking
-      glstate_->pick_init (true);
-      ACG::SceneGraph::PickAction action(*glstate_, properties_.renderPickingMode(), properties_.drawMode());
-      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,*glstate_);
-
-      glEnable(GL_LIGHTING);
-      glEnable(GL_BLEND);
+      glPopAttrib ();
+      glDisable (GL_STENCIL_TEST);
     }
-    
+
+
   }
 
   if (cursorPainter_ && cursorPainter_->enabled () && cursorPositionValid_)
@@ -950,15 +928,9 @@ void glViewer::paintGL()
 
     applyProperties();
 
-    glstate_->setState ();
+    glstate_->setState();
 
     glColor4f(1.0,0.0,0.0,1.0);
-
-    if (properties_.renderPicking())
-    {
-      clear_color = properties_.glState().clear_color();
-      properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 1.0));
-    }
 
     // clear (stereo mode clears buffers on its own)
     if (!stereo_)
@@ -975,10 +947,8 @@ void glViewer::paintGL()
     glPopMatrix();
 
     glPopAttrib ();
-
-    if (properties_.renderPicking())
-      properties_.glState().set_clear_color (clear_color);
   }
+
 }
 
 

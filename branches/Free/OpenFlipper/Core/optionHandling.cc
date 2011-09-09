@@ -98,31 +98,6 @@ void Core::applyOptions(){
     // gl mouse cursor
     coreWidget_->setForceNativeCursor( OpenFlipperSettings().value("Core/Gui/glViewer/nativeMouse",false).toBool() );
     
-    QString pickRenderMode =  OpenFlipperSettings().value("Core/Debug/Picking/RenderPickingMode",QString("PICK_ANYTHING")).toString();
-    
-    // Prepare Picking Debugger Flag
-    ACG::SceneGraph::PickTarget target;
-    if ( pickRenderMode == "PICK_ANYTHING") {
-      target = ACG::SceneGraph::PICK_ANYTHING;
-    } else if ( pickRenderMode == "PICK_VERTEX") {
-      target = ACG::SceneGraph::PICK_VERTEX;
-    } else if ( pickRenderMode == "PICK_EDGE") {
-      target = ACG::SceneGraph::PICK_EDGE;
-    } else if ( pickRenderMode == "PICK_SPLINE") {
-      target = ACG::SceneGraph::PICK_SPLINE;
-    } else if ( pickRenderMode == "PICK_FACE") {
-      target = ACG::SceneGraph::PICK_FACE;
-    } else if ( pickRenderMode == "PICK_FRONT_VERTEX") {
-      target = ACG::SceneGraph::PICK_FRONT_VERTEX;
-    } else if ( pickRenderMode == "PICK_FRONT_EDGE") {
-      target = ACG::SceneGraph::PICK_FRONT_EDGE;
-    } else if ( pickRenderMode == "PICK_CELL") {
-      target = ACG::SceneGraph::PICK_CELL;
-    } else {
-      std::cerr << "Error : optionHandling unable to find pick mode!!! " << pickRenderMode.toStdString() << std::endl;
-      target = ACG::SceneGraph::PICK_ANYTHING;
-    }
-
     //set viewer properties
     for (int i=0; i < PluginFunctions::viewers(); i++){
 
@@ -154,9 +129,6 @@ void Core::applyOptions(){
       //wheel zoom factor
       PluginFunctions::viewerProperties(i).wheelZoomFactor( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor",1).toDouble() );
       PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift",0.2).toDouble() );
-
-      // Picking Debugger
-      PluginFunctions::viewerProperties(i).renderPicking( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() , target );
     }
 
     //hideToolbox

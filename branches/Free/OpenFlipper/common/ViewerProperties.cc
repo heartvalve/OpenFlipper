@@ -65,8 +65,6 @@ namespace Viewer {
     wZoomFactorShift_(0.2),
     CCWFront_(true),
     backgroundColor_(0.0f,0.0f,0.0f,1.0f),
-    renderPicking_(false),
-    pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING),
     locked_(0),
     backFaceCulling_(false),
     twoSidedLighting_(false),

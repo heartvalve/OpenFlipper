@@ -225,6 +225,13 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     QActionGroup* groupRenderer = new QActionGroup( this );
     groupRenderer->setExclusive( true );
 
+
+    // Get the options action for the currently active renderer
+    if( renderManager()[ renderManager().activeId(PluginFunctions::activeExaminer() )]->optionsAction != 0 ) {
+      rendererMenu->addAction(renderManager()[ renderManager().activeId(PluginFunctions::activeExaminer() ) ]->optionsAction );
+      rendererMenu->addSeparator();
+    }
+
     for ( unsigned int i = 0 ; i < renderManager().available() ; ++i) {
 
       // Add a new Action with the renderer name
@@ -261,16 +268,13 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     QActionGroup* groupPostProcessor = new QActionGroup( this );
     groupPostProcessor->setExclusive( true );
 
-    // Get the options action for the currently active
-    for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
-
-      if ( postProcessorManager().activeId(PluginFunctions::activeExaminer() ) == i )
-        if( postProcessorManager()[i]->optionsAction != 0 ) {
-          postProcessorMenu->addAction(postProcessorManager()[i]->optionsAction);
-          postProcessorMenu->addSeparator();
-        }
-
+    // Get the options action for the currently active postprocessor
+    if( postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() )]->optionsAction != 0 ) {
+      postProcessorMenu->addAction(postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() ) ]->optionsAction );
+      postProcessorMenu->addSeparator();
     }
+
+
 
     // Now add the processor chooser
     for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
