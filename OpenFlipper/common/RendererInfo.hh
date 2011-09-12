@@ -49,11 +49,12 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
 #include <OpenFlipper/BasePlugin/RenderInterface.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <vector>
 
 /** Type defining a currently loaded Renderer */
-class RendererInfo{
+class DLLEXPORT RendererInfo{
 
   public :
 
@@ -75,7 +76,7 @@ class RendererInfo{
 };
 
 
-class RenderManager {
+class DLLEXPORT RenderManager {
   public:
     RenderManager();
 
@@ -161,6 +162,7 @@ class RenderManager {
 };
 
 /// Get an instance of the render manager
+DLLEXPORT
 RenderManager& renderManager();
 
 //===================================================================================
@@ -168,7 +170,7 @@ RenderManager& renderManager();
 //===================================================================================
 
 /** Type defining a currently loaded Post processor */
-class PostProcessorInfo{
+class DLLEXPORT PostProcessorInfo{
 
   public :
 
@@ -188,7 +190,7 @@ class PostProcessorInfo{
 };
 
 
-class PostProcessorManager {
+class DLLEXPORT PostProcessorManager {
   public:
 
     PostProcessorManager();
@@ -266,6 +268,7 @@ class PostProcessorManager {
 };
 
 /// Get an instance of the Post Processor manager
+DLLEXPORT
 PostProcessorManager& postProcessorManager();
 
 #endif //RENDERERINFO_HH
