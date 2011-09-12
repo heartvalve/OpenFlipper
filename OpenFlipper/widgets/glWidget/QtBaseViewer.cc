@@ -120,7 +120,7 @@
 
 #include <QGLFramebufferObject>
 
-#include <OpenFlipper/Core/RendererInfo.hh>
+#include <OpenFlipper/common/RendererInfo.hh>
 #include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
 
 //== NAMESPACES ===============================================================

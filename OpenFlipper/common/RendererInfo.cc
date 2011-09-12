@@ -42,7 +42,7 @@
 
 
 
-#include <OpenFlipper/Core/RendererInfo.hh>
+#include <OpenFlipper/common/RendererInfo.hh>
 
 static RenderManager        renderManager_;
 static PostProcessorManager postProcessorManager_;

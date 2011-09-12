@@ -90,7 +90,7 @@
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/PluginConnectionInterface.hh"
 
-#include "OpenFlipper/Core/RendererInfo.hh"
+#include "OpenFlipper/common/RendererInfo.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 

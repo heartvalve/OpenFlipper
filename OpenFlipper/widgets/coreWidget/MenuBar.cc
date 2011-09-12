@@ -55,7 +55,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
-#include <OpenFlipper/Core/RendererInfo.hh>
+#include <OpenFlipper/common/RendererInfo.hh>
 
 //== IMPLEMENTATION ==========================================================
 
