@@ -57,7 +57,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include "../../common/GlobalOptions.hh"
-#include <OpenFlipper/Core/RendererInfo.hh>
+#include <OpenFlipper/common/RendererInfo.hh>
 
 //== IMPLEMENTATION ==========================================================
 #include <ACG/Scenegraph/CoordsysNode.hh>
