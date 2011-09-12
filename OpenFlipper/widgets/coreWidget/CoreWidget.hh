@@ -760,6 +760,11 @@ public:
     /// Setup and update the global draw menu
     void slotUpdateGlobalDrawMenu();
 
+    /// Setup and update the global renderer menu
+    void slotUpdateRendererMenu();
+
+    /// Setup and update the global postprocessor menu
+    void slotUpdatePostProcessorMenu();
 
     /// Change viewer layout that was selected in the combo box
     void setViewerLayout(int _idx);
@@ -774,11 +779,29 @@ public:
     /// Called before the view Menu is shown
     void slotViewMenuAboutToShow();
 
+    /// Called when the global renderer is selected
+    void slotGlobalRendererMenu(QAction * _action);
+
+    /// Called when the global postprocessor is selected
+    void slotGlobalPostProcessorMenu(QAction * _action);
+
   private:
     /// This variable holds the global draw menu
     QMenu* globalDrawMenu_;
 
+    /// This variable holds the global renderer menu
+    QMenu* rendererMenu_;
+
+    /// This variable holds the global postprocessor menu
+    QMenu* postprocessorMenu_;
+
     QActionGroup * drawGroup_;
+
+    /// Group for all renderers
+    QActionGroup * rendererGroup_;
+
+    /// Group for all postprocessors
+    QActionGroup *  postProcessorGroup_;
 
     /// Group for all menu items
     QActionGroup* viewGroup_;
