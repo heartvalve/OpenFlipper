@@ -51,11 +51,11 @@
 
 //== INCLUDES =================================================================
 
-// -------------------- mview
 #include "CoreWidget.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
+#include <OpenFlipper/Core/RendererInfo.hh>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -286,6 +286,18 @@ void CoreWidget::setupMenuBar()
   globalMipmappingAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mipmapping.png") );
   connect(globalMipmappingAction_, SIGNAL(triggered(bool)), this , SLOT( slotGlobalToggleMipmapping()) );
   
+
+  //============================================================================================================
+  // Global renderer menu
+  //============================================================================================================
+
+  slotUpdateRendererMenu();
+
+  //============================================================================================================
+  // Global post processor menu
+  //============================================================================================================
+
+  slotUpdatePostProcessorMenu();
 
   //============================================================================================================
   // Other toplevel actions
@@ -628,6 +640,134 @@ void CoreWidget::slotViewMenuAboutToShow() {
 
 }
 
+void CoreWidget::slotUpdateRendererMenu() {
+
+  // Add the menu if it does not exist yet
+  if ( rendererMenu_ == 0 ) {
+
+    rendererMenu_ = new QMenu(tr("Global Renderer"),viewMenu_);
+    viewMenu_->addMenu(rendererMenu_);
+
+    connect(rendererMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateRendererMenu() ) );
+  }
+
+  // delete the old renerer group if it exists
+  if ( rendererGroup_ ) {
+
+    disconnect( rendererGroup_ , SIGNAL( triggered( QAction * ) ),
+        this           , SLOT( slotGlobalRendererMenu( QAction * ) ) );
+
+    delete( rendererGroup_ );
+    rendererGroup_ = 0;
+
+  }
+
+  // Recreate actionGroup
+  rendererGroup_ = new QActionGroup( this );
+  rendererGroup_->setExclusive( true );
+
+//  // Add the options for all active renderers
+//  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i) {
+//
+//    //Get the options action for the currently active renderer
+//    if( renderManager()[ renderManager().activeId( i )]->optionsAction != 0 ) {
+//      rendererMenu_->addAction(renderManager()[ renderManager().activeId(i) ]->optionsAction );
+//    }
+//  }
+
+//  rendererMenu_->addSeparator();
+
+  // Add the renderers
+  for ( unsigned int i = 0 ; i < renderManager().available() ; ++i) {
+
+    // Add a new Action with the renderer name
+    QAction * action = new QAction( renderManager()[i]->name, rendererGroup_ );
+    action->setCheckable( true );
+
+    // Check if this processor is currently active
+    if ( renderManager().activeId(PluginFunctions::activeExaminer() ) == i )
+      action->setChecked(true);
+
+    // Remember the id for the processor
+    action->setData(QVariant(i));
+  }
+
+  // Remove old data
+  rendererMenu_->clear();
+
+  // Add all new actions from the group to the menu
+  rendererMenu_->addActions( rendererGroup_->actions() );
+
+  // Connect signal of group to our managing slot
+  connect( rendererGroup_ , SIGNAL( triggered( QAction * ) ),
+      this          , SLOT( slotGlobalRendererMenu( QAction * ) ) );
+
+
+}
+
+void CoreWidget::slotUpdatePostProcessorMenu() {
+
+
+  // Add the menu if it does not exist yet
+  if ( postprocessorMenu_ == 0 ) {
+
+    postprocessorMenu_ = new QMenu(tr("Global Post Processor"),viewMenu_);
+    viewMenu_->addMenu(postprocessorMenu_);
+
+    connect(postprocessorMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdatePostProcessorMenu() ) );
+  }
+
+  // delete the old post processor group if it exists
+  if ( postProcessorGroup_ ) {
+
+    disconnect( postProcessorGroup_ , SIGNAL( triggered( QAction * ) ),
+        this           , SLOT( slotGlobalPostProcessorMenu( QAction * ) ) );
+
+    delete( postProcessorGroup_ );
+    postProcessorGroup_ = 0;
+
+  }
+
+  // Recreate actionGroup
+  postProcessorGroup_ = new QActionGroup( this );
+  postProcessorGroup_->setExclusive( true );
+
+//  // Get the options action for the currently active postprocessor
+//  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i)
+//    if( postProcessorManager()[ postProcessorManager().activeId( i )]->optionsAction != 0 ) {
+//      postprocessorMenu_->addAction(postProcessorManager()[ postProcessorManager().activeId( i ) ]->optionsAction );
+//    }
+
+//  postprocessorMenu_->addSeparator();
+
+
+  // Now add the post processors
+  for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
+
+    // Add a new Action with the postprocessors name
+    QAction * action = new QAction( postProcessorManager()[i]->name, postProcessorGroup_ );
+    action->setCheckable( true );
+
+    // Check if this processor is currently active
+    if ( postProcessorManager().activeId(PluginFunctions::activeExaminer() ) == i )
+      action->setChecked(true);
+
+    // Remember the id for the processor
+    action->setData(QVariant(i));
+  }
+
+  // Remove old data
+  postprocessorMenu_->clear();
+
+  // Add all new actions from the group to the menu
+  postprocessorMenu_->addActions( postProcessorGroup_->actions() );
+
+  // Connect signal of group to our managing slot
+  connect( postProcessorGroup_ , SIGNAL( triggered( QAction * ) ),
+      this          , SLOT( slotGlobalPostProcessorMenu( QAction * ) ) );
+
+}
+
 void CoreWidget::slotUpdateGlobalDrawMenu() {
   if ( drawGroup_ ) {
 
@@ -685,6 +825,26 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
   }
 
   globalDrawMenu_->addActions( drawGroup_->actions() );
+
+}
+
+void CoreWidget::slotGlobalRendererMenu(QAction * _action) {
+
+  unsigned int mode = _action->data().toUInt();
+
+  // Set renderer for all viewers
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i)
+    renderManager().setActive(mode,i);
+
+}
+
+void CoreWidget::slotGlobalPostProcessorMenu(QAction * _action) {
+
+  unsigned int mode = _action->data().toUInt();
+
+  // Set postprocessor for all viewers
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i)
+    postProcessorManager().setActive(mode,i);
 
 }
 

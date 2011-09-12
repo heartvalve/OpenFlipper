@@ -1920,7 +1920,6 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       emit log(LOGERR,tr("Error: Renderer Plugin without rendererName Function?!"));
     }
 
-    std::cerr << "Render Plugin .. not yet implemented" << std::endl;
   }
 
   //Check if the plugin supports PostProcessorInterface
