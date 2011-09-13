@@ -96,10 +96,17 @@ public:
   ACG_CLASSNAME(StatusNode);
 
 
-  /** build/update cache of active vertices/edges/faces. This function
-      automatically enables caching.
-  */
-  void update_cache();
+  /** \brief set geometry invalid, topology and selection is kept
+   */
+  void updateGeometry();
+
+  /** \brief set topology invalid (updates everything)
+    */
+  void updateTopology();
+
+  /** \brief set selection invalid (Only selection changed, rest is kept)
+    */
+  void updateSelection();
 
 
   DrawModes::DrawMode  availableDrawModes() const;
@@ -109,6 +116,11 @@ public:
 
 
 private:
+
+  /** build/update cache of active vertices/edges/faces. This function
+      automatically enables caching.
+  */
+  void update_cache();
 
   typedef typename Mesh::Face           Face;
   typedef typename Mesh::Vertex         Vertex;
@@ -140,6 +152,15 @@ private:
   // bounding box
   Vec3d bbMin_;
   Vec3d bbMax_;
+
+  /// State variables
+  bool invalidGeometry_;
+
+  bool vertexIndexInvalid_;
+  bool halfedgeCacheInvalid_;
+  bool edgeIndexInvalid_;
+  bool faceIndexInvalid_;
+
 };
 
 

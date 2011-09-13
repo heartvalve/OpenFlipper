@@ -59,7 +59,6 @@
 #include "StatusNodesT.hh"
 #include "../GL/gl.hh"
 
-
 //== NAMESPACES ===============================================================
 
 
@@ -77,7 +76,12 @@ StatusNodeT( const Mesh&         _mesh,
              const std::string&  _name )
   : MaterialNode(_parent, _name), mesh_(_mesh),
   bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
-  bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
+  bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX),
+  invalidGeometry_(true),
+  vertexIndexInvalid_(true),
+  halfedgeCacheInvalid_(true),
+  edgeIndexInvalid_(true),
+  faceIndexInvalid_(true)
 {
   set_line_width(3);
   set_point_size(5);
@@ -119,86 +123,24 @@ void
 StatusNodeT<Mesh, Mod>::
 update_cache()
 {
-  bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
-  bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+  if ( invalidGeometry_ ) {
+    bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
+    bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
-                                  v_end(mesh_.vertices_end());
+    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
+        v_end(mesh_.vertices_end());
 
-  v_cache_.clear();
-  for (; v_it!=v_end; ++v_it)
-  {
-    if (Mod::is_vertex_selected(mesh_, v_it.handle()))
+    for (; v_it!=v_end; ++v_it)
     {
-      v_cache_.push_back(v_it.handle().idx());
+      bbMin_.minimize(mesh_.point(v_it));
+      bbMax_.maximize(mesh_.point(v_it));
     }
-    bbMin_.minimize(mesh_.point(v_it));
-    bbMax_.maximize(mesh_.point(v_it));
+
+    invalidGeometry_  = false;
   }
 
 
 
-  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
-                                e_end(mesh_.edges_end());
-  typename Mesh::VertexHandle   vh;
-
-  e_cache_.clear();
-  for (; e_it!=e_end; ++e_it)
-  {
-    if (Mod::is_edge_selected(mesh_, e_it))
-    {
-      vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
-      e_cache_.push_back(vh.idx());
-      vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
-      e_cache_.push_back(vh.idx());
-    }
-  }
-
-
-
-  typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
-                                f_end(mesh_.faces_end());
-  typename Mesh::ConstFaceVertexIter   fv_it;
-
-  f_cache_.clear();
-  fh_cache_.clear();
-  for (; f_it!=f_end; ++f_it)
-  {
-    if (Mod::is_face_selected(mesh_, f_it))
-    {
-      fv_it = mesh_.cfv_iter(f_it);
-      f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-      f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-      f_cache_.push_back(fv_it.handle().idx());
-      fh_cache_.push_back(f_it);
-    }
-  }
-
-
-  typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
-                                    he_end(mesh_.halfedges_end());
-  //  mesh_.request_face_normals();
-  he_points_.clear();
-  he_normals_.clear();
-  for (; he_it!=he_end; ++he_it)
-  {
-    if (Mod::is_halfedge_selected(mesh_, he_it))
-    {
-      // add vertices
-      he_points_.push_back( halfedge_point(he_it));
-      he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
-
-      // add normals
-      FaceHandle fh;
-      if(!mesh_.is_boundary(he_it))
-	fh = mesh_.face_handle(he_it);
-      else
-	fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
-
-      he_normals_.push_back( mesh_.normal(fh));
-      he_normals_.push_back( mesh_.normal(fh));
-    }
-  }
 }
 
 
@@ -210,6 +152,9 @@ void
 StatusNodeT<Mesh, Mod>::
 draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
+  // Call updater function before doing anything
+  update_cache();
+
   bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
 			       DrawModes::SOLID_SMOOTH_SHADED |
 			       DrawModes::SOLID_PHONG_SHADED |
@@ -295,19 +240,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     }
   }
 
-  // edges
+  // half edges
   if (halfedges)
-  {
-    glEnableClientState(GL_NORMAL_ARRAY);
-    if ( !he_points_.empty()) {
-      glVertexPointer(&he_points_[0]);
-
-      if ( !he_normals_.empty()) 
-        glNormalPointer(&he_normals_[0]);
-    
-      draw_halfedges();
-    }
-  }
+    draw_halfedges();
 
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
@@ -324,11 +259,29 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_points()
 {
+
+  if ( vertexIndexInvalid_ ) {
+
+    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
+        v_end(mesh_.vertices_end());
+
+    v_cache_.clear();
+    for (; v_it!=v_end; ++v_it)
+    {
+      if (Mod::is_vertex_selected(mesh_, v_it.handle()))
+      {
+        v_cache_.push_back(v_it.handle().idx());
+      }
+    }
+
+    vertexIndexInvalid_ = false;
+  }
+
   if ( !v_cache_.empty() )
     glDrawElements(GL_POINTS,
   		             v_cache_.size(),
-		             GL_UNSIGNED_INT,
-		             &v_cache_[0]);
+		               GL_UNSIGNED_INT,
+		               &v_cache_[0]);
 }
 
 
@@ -340,11 +293,33 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_edges()
 {
+  // update Index list of selected edges
+  if ( edgeIndexInvalid_ ) {
+
+    typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
+        e_end(mesh_.edges_end());
+    typename Mesh::VertexHandle   vh;
+
+    e_cache_.clear();
+    for (; e_it!=e_end; ++e_it)
+    {
+      if (Mod::is_edge_selected(mesh_, e_it))
+      {
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
+        e_cache_.push_back(vh.idx());
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
+        e_cache_.push_back(vh.idx());
+      }
+    }
+
+    edgeIndexInvalid_ = false;
+  }
+
   if ( !e_cache_.empty() )
     glDrawElements(GL_LINES,
   		             e_cache_.size(),
-		             GL_UNSIGNED_INT,
-		             &e_cache_[0]);
+		               GL_UNSIGNED_INT,
+		               &e_cache_[0]);
 }
 
 
@@ -354,10 +329,51 @@ draw_edges()
 template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
-draw_halfedges()
-{
-  if ( !he_points_.empty() )
+draw_halfedges() {
+
+  if ( halfedgeCacheInvalid_) {
+    // update Index list of selected halfedges
+    typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
+        he_end(mesh_.halfedges_end());
+    //  mesh_.request_face_normals();
+    he_points_.clear();
+    he_normals_.clear();
+    for (; he_it!=he_end; ++he_it)
+    {
+      if (Mod::is_halfedge_selected(mesh_, he_it))
+      {
+        // add vertices
+        he_points_.push_back( halfedge_point(he_it));
+        he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
+
+        // add normals
+        FaceHandle fh;
+        if(!mesh_.is_boundary(he_it))
+          fh = mesh_.face_handle(he_it);
+        else
+          fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
+
+        he_normals_.push_back( mesh_.normal(fh));
+        he_normals_.push_back( mesh_.normal(fh));
+      }
+    }
+
+    halfedgeCacheInvalid_ = false;
+  }
+
+
+
+  if ( !he_points_.empty()) {
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glVertexPointer(&he_points_[0]);
+
+    if ( !he_normals_.empty())
+      glNormalPointer(&he_normals_[0]);
+
     glDrawArrays(GL_LINES, 0, he_points_.size() );
+  }
+
 }
 
 
@@ -388,6 +404,29 @@ draw_faces(bool _per_vertex)
 
       glEnd();
     } else {
+
+      // update Index list of selected faces
+      if ( faceIndexInvalid_ ) {
+        typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
+            f_end(mesh_.faces_end());
+        typename Mesh::ConstFaceVertexIter   fv_it;
+
+        f_cache_.clear();
+        fh_cache_.clear();
+        for (; f_it!=f_end; ++f_it)
+        {
+          if (Mod::is_face_selected(mesh_, f_it))
+          {
+            fv_it = mesh_.cfv_iter(f_it);
+            f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+            f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+            f_cache_.push_back(fv_it.handle().idx());
+            fh_cache_.push_back(f_it);
+          }
+        }
+        faceIndexInvalid_ = false;
+      }
+
       if ( !f_cache_.empty() )
         glDrawElements(GL_TRIANGLES,
                 f_cache_.size(),
@@ -450,6 +489,29 @@ halfedge_point(const HalfedgeHandle _heh)
   // if( (fn | n)  < 0.0) alpha *=-1.0;
 
   // return (p*(1.0-2.0*alpha) + pp*alpha + pn*alpha);
+}
+
+template <class Mesh, class Mod>
+void StatusNodeT<Mesh, Mod>::updateGeometry() {
+  invalidGeometry_ = true;
+}
+
+template <class Mesh, class Mod>
+void StatusNodeT<Mesh, Mod>::updateTopology() {
+  vertexIndexInvalid_   = true;
+  halfedgeCacheInvalid_ = true;
+  edgeIndexInvalid_     = true;
+  faceIndexInvalid_     = true;
+
+}
+
+template <class Mesh, class Mod>
+void StatusNodeT<Mesh, Mod>::updateSelection() {
+  vertexIndexInvalid_   = true;
+  halfedgeCacheInvalid_ = true;
+  edgeIndexInvalid_     = true;
+  faceIndexInvalid_     = true;
+
 }
 
 
