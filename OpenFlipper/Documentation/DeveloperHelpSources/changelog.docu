@@ -1,11 +1,13 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.3 (  ? , 12301 )</b>
+ * - <b>OpenFlipper 1.0.3 (  ? , 12330 )</b>
  *       - <b>ACG</b>
  *          - SceneGraph
  *              - MeshNode
  *                  - Fixed bug in per vertex picking buffer(was sometimes empty).
  *                  - Render faces with normals defined on the mesh(and do not compute them)
+ *              - StatusNode
+ *                  - Implement on demand updates (before everything was updated on a change)
  *      - <b>Core</b>
  *          - File handling
  *              - Fixed load and save bug, where extensions where considered equal if prefix matched
@@ -15,6 +17,7 @@
  *              - Added threaded writing for video function (higher framerates possible due to less io waiting)
  *              - Removed the unique naming functions from file plugins (not required, horribly slow)
  *              - Removed all processEvents from core
+ *              - Large speedup to mesh object updates (due to status node switch for on demand updates)
  *          - GUI
  *              - Fixed bug causing a crash when switching between logger modes
  *              - Reworked log viewer animation and embedding
@@ -23,6 +26,7 @@
  *              - Added functions to hide status bar ( Ctrl+b , scripting)
  *              - When going to fullscreen, hide only toolbars that are currently docked
  *              - Reintroduced checkbox for rendering toolbar outside of scene
+ *              - Added menus to switch between postprocessors and renderers
  *          - Load/Save
  *              - Dont crash when we get a wrong id after adding a new object
  *              - Fixed bug in recent files menu which sometimes ignored the type
@@ -32,10 +36,13 @@
  *          - Rendering
  *              - Moved flyTo animations to animation framework (no more ugly processEvents)
  *              - Snapshot functions now have asynchronus file writers
+ *              - Removed philips stereo code from core ( moved into postprocessor plugin)
  *          - Scripting
  *              - More slot documentations
  *              - added deleteObject function
  *      - <b>Interfaces</b>
+ *          - RenderInterface
+ *              - New interface to replace the core rendering function with a specialized one
  *          - PostProcessorInterface
  *              - Introduced new interface to add rendering postprocessors to plugins (e.g. render depth image)
  *      - <b>Plugins</b>
@@ -49,6 +56,11 @@
  *              - Introduced new VTK importer/exporter plugin   
  *          - Post Processor Depth Image 
  *              - New Plugin taking depth buffer and rendering it as the final output image
+ *          - Post Processor Philips Stereo
+ *              - Postprocessor for image output on Philips autostereoscopic displays
+ *          - Render Picking
+ *              - Plugin that implements the core render picking functionality
+ *              - Renders the picking color buffer to the screen.
  *          - Selection
  *              - Introduce function to load selections via scripting from files
  *              - Fixed bug in selection plugin where sphere painter size was not updated on the fly
