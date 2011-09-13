@@ -380,22 +380,25 @@
   template < class MeshT  >
   void MeshObject< MeshT >::updateSelection() {
     if ( statusNode_ )
-      statusNode_->update_cache();
+      statusNode_->updateSelection();
   }
 
   /** Updates the geometry information in the mesh scenegraph node */
   template < class MeshT  >
   void MeshObject< MeshT >::updateGeometry() {
+
     if ( meshNode_ ) {
       meshNode_->update_geometry();
 
       // Also update the selection nodes here.
       // These nodes store their positions based on the mesh.
       // So they would be at the wrong position afterwards
-      updateSelection();
-      updateFeatures();
-      updateModelingRegions();
+      statusNode_->updateGeometry();
+      featureNode_->updateGeometry();
+      areaNode_->updateGeometry();
+      handleNode_->updateGeometry();
     }
+
     invalidateTriangleBsp();
   }
 
@@ -409,8 +412,13 @@
   /** Updates the topology information in the mesh scenegraph node */
   template < class MeshT  >
   void MeshObject< MeshT >::updateTopology() {
-    if ( meshNode_ ) 
+    if ( meshNode_ ) {
       meshNode_->update_topology();
+      statusNode_->updateTopology();
+      featureNode_->updateTopology();
+      areaNode_->updateTopology();
+      handleNode_->updateTopology();
+    }
     invalidateTriangleBsp();
   }
 
@@ -418,8 +426,8 @@
   template < class MeshT  >
   void MeshObject< MeshT >::updateModelingRegions() {
     if ( areaNode_ && handleNode_ ) {
-      areaNode_->update_cache();
-      handleNode_->update_cache();
+      areaNode_->updateSelection();
+      handleNode_->updateSelection();
     }
   }
 
@@ -427,7 +435,7 @@
   template < class MeshT  >
   void MeshObject< MeshT >::updateFeatures() {
     if ( featureNode_ )
-      featureNode_->update_cache();
+      featureNode_->updateSelection();
   }
 
   /** Updates the modeling regions scenegraph nodes */
