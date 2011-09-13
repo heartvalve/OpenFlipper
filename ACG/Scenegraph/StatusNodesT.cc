@@ -385,6 +385,30 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_faces(bool _per_vertex)
 {
+
+  // update Index list of selected faces
+  if ( faceIndexInvalid_ ) {
+
+    typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
+            f_end(mesh_.faces_end());
+    typename Mesh::ConstFaceVertexIter   fv_it;
+
+    f_cache_.clear();
+    fh_cache_.clear();
+    for (; f_it!=f_end; ++f_it)
+    {
+      if (Mod::is_face_selected(mesh_, f_it))
+      {
+        fv_it = mesh_.cfv_iter(f_it);
+        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+        f_cache_.push_back(fv_it.handle().idx());
+        fh_cache_.push_back(f_it);
+      }
+    }
+    faceIndexInvalid_ = false;
+  }
+
   typename std::vector<FaceHandle>::const_iterator  fh_it(fh_cache_.begin()),
                                                     fh_end(fh_cache_.end());
   typename Mesh::CFVIter                            fv_it;
@@ -404,28 +428,6 @@ draw_faces(bool _per_vertex)
 
       glEnd();
     } else {
-
-      // update Index list of selected faces
-      if ( faceIndexInvalid_ ) {
-        typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
-            f_end(mesh_.faces_end());
-        typename Mesh::ConstFaceVertexIter   fv_it;
-
-        f_cache_.clear();
-        fh_cache_.clear();
-        for (; f_it!=f_end; ++f_it)
-        {
-          if (Mod::is_face_selected(mesh_, f_it))
-          {
-            fv_it = mesh_.cfv_iter(f_it);
-            f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-            f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-            f_cache_.push_back(fv_it.handle().idx());
-            fh_cache_.push_back(f_it);
-          }
-        }
-        faceIndexInvalid_ = false;
-      }
 
       if ( !f_cache_.empty() )
         glDrawElements(GL_TRIANGLES,
