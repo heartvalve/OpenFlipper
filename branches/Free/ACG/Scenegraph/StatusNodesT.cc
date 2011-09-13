@@ -130,16 +130,13 @@ update_cache()
     typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
         v_end(mesh_.vertices_end());
 
-    for (; v_it!=v_end; ++v_it)
-    {
+    for (; v_it!=v_end; ++v_it) {
       bbMin_.minimize(mesh_.point(v_it));
       bbMax_.maximize(mesh_.point(v_it));
     }
 
     invalidGeometry_  = false;
   }
-
-
 
 }
 
@@ -192,8 +189,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   else         glShadeModel(GL_FLAT);
 
 
-  if (shaded && mesh_.has_vertex_normals())
-  {
+  if (shaded && mesh_.has_vertex_normals()) {
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(mesh_.vertex_normals());
   }
@@ -218,16 +214,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 
   // faces
-  if (faces)
-  {
-    if (wires)
-    {
+  if (faces)  {
+    if (wires) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       draw_faces(smooth);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-    else
-    {
+    } else {
       
       glPushAttrib( GL_ENABLE_BIT );
 
@@ -260,16 +252,15 @@ StatusNodeT<Mesh, Mod>::
 draw_points()
 {
 
+  // Update the indices for selected vertices
   if ( vertexIndexInvalid_ ) {
 
     typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
         v_end(mesh_.vertices_end());
 
     v_cache_.clear();
-    for (; v_it!=v_end; ++v_it)
-    {
-      if (Mod::is_vertex_selected(mesh_, v_it.handle()))
-      {
+    for (; v_it!=v_end; ++v_it) {
+      if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
         v_cache_.push_back(v_it.handle().idx());
       }
     }
@@ -293,18 +284,16 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_edges()
 {
-  // update Index list of selected edges
+  // Update index list of selected edges
   if ( edgeIndexInvalid_ ) {
 
     typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
-        e_end(mesh_.edges_end());
+                                  e_end(mesh_.edges_end());
     typename Mesh::VertexHandle   vh;
 
     e_cache_.clear();
-    for (; e_it!=e_end; ++e_it)
-    {
-      if (Mod::is_edge_selected(mesh_, e_it))
-      {
+    for (; e_it!=e_end; ++e_it) {
+      if (Mod::is_edge_selected(mesh_, e_it)) {
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
         e_cache_.push_back(vh.idx());
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
@@ -331,17 +320,16 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_halfedges() {
 
+  // Update index list of selected halfedges
   if ( halfedgeCacheInvalid_) {
-    // update Index list of selected halfedges
+
     typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
-        he_end(mesh_.halfedges_end());
-    //  mesh_.request_face_normals();
+                                      he_end(mesh_.halfedges_end());
+
     he_points_.clear();
     he_normals_.clear();
-    for (; he_it!=he_end; ++he_it)
-    {
-      if (Mod::is_halfedge_selected(mesh_, he_it))
-      {
+    for (; he_it!=he_end; ++he_it) {
+      if (Mod::is_halfedge_selected(mesh_, he_it))  {
         // add vertices
         he_points_.push_back( halfedge_point(he_it));
         he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
@@ -386,19 +374,17 @@ StatusNodeT<Mesh, Mod>::
 draw_faces(bool _per_vertex)
 {
 
-  // update Index list of selected faces
+  // update index list of selected faces
   if ( faceIndexInvalid_ ) {
 
     typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
-            f_end(mesh_.faces_end());
+                                  f_end(mesh_.faces_end());
     typename Mesh::ConstFaceVertexIter   fv_it;
 
     f_cache_.clear();
     fh_cache_.clear();
-    for (; f_it!=f_end; ++f_it)
-    {
-      if (Mod::is_face_selected(mesh_, f_it))
-      {
+    for (; f_it!=f_end; ++f_it) {
+      if (Mod::is_face_selected(mesh_, f_it)) {
         fv_it = mesh_.cfv_iter(f_it);
         f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
         f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
@@ -431,14 +417,16 @@ draw_faces(bool _per_vertex)
 
       if ( !f_cache_.empty() )
         glDrawElements(GL_TRIANGLES,
-                f_cache_.size(),
-              GL_UNSIGNED_INT,
-              &f_cache_[0]);
+                       f_cache_.size(),
+                       GL_UNSIGNED_INT,
+                       &f_cache_[0]);
     }
 
     // POLYGONS
   } else {
+
     if (!_per_vertex) {
+
       for (; fh_it!=fh_end; ++fh_it) {
         glBegin(GL_POLYGON);
         glNormal(mesh_.normal(*fh_it));
@@ -446,7 +434,9 @@ draw_faces(bool _per_vertex)
           glVertex(mesh_.point(fv_it));
         glEnd();
       }
+
     } else {
+
       for (; fh_it!=fh_end; ++fh_it) {
         glBegin(GL_POLYGON);
         for (fv_it=mesh_.cfv_iter(*fh_it); fv_it; ++fv_it) {
@@ -455,6 +445,7 @@ draw_faces(bool _per_vertex)
         }
         glEnd();
       }
+
     }
   }
 }
