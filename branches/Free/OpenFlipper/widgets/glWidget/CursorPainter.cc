@@ -108,12 +108,12 @@ void CursorPainter::initializeGL()
   // setup cursor texture
   glGenTextures (1, &texture_);
 
-  glBindTexture (GL_TEXTURE_2D, texture_);
+  ACG::GLState::bindTexture (GL_TEXTURE_2D, texture_);
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-  glBindTexture (GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture (GL_TEXTURE_2D, 0);
 
   cursorToTexture ();
 
@@ -161,15 +161,15 @@ void CursorPainter::paintCursor (ACG::GLState *_state)
 
   glPushAttrib (GL_ALL_ATTRIB_BITS);
 
-  glDisable (GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::disable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // bind texture
   glEnable (GL_TEXTURE_2D);
-  glBindTexture (GL_TEXTURE_2D, texture_);
+  ACG::GLState::bindTexture (GL_TEXTURE_2D, texture_);
 
   glColor4f (1.0, 1.0, 1.0, 1.0);
 
@@ -301,11 +301,11 @@ void CursorPainter::cursorToTexture()
       }
 
   glEnable (GL_TEXTURE_2D);
-  glBindTexture (GL_TEXTURE_2D, texture_);
+  ACG::GLState::bindTexture (GL_TEXTURE_2D, texture_);
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, 32, 32, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, buf);
-  glBindTexture (GL_TEXTURE_2D, 0);
-  glDisable (GL_TEXTURE_2D);
+  ACG::GLState::bindTexture (GL_TEXTURE_2D, 0);
+  ACG::GLState::disable(GL_TEXTURE_2D);
 
   hasCursor_ = true;
 }

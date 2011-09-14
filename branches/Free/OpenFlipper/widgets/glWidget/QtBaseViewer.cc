@@ -510,7 +510,7 @@ void glViewer::normalsMode(NormalsMode _mode)
       break;
 
     case NORMALIZE_NORMALS:
-      glEnable(GL_NORMALIZE);
+      ACG::GLState::enable(GL_NORMALIZE);
       break;
   }
 
@@ -663,7 +663,7 @@ void glViewer::drawScene_mono()
 
       glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-      glEnable(GL_BLEND);
+      ACG::GLState::enable(GL_BLEND);
       glDisable(GL_DEPTH_TEST);
       glDisable(GL_LIGHTING);
       glDisable(GL_DITHER);
@@ -702,7 +702,7 @@ void glViewer::drawScene_mono()
 
         glStencilFunc (GL_EQUAL, ref, mask);
 
-        glBlendFunc (sfactor, dfactor);
+        ACG::GLState::blendFunc (sfactor, dfactor);
         glColor4f (color[0], color [1], color [2], color[3]);
 
         glBegin (GL_QUADS);
@@ -850,10 +850,10 @@ void glViewer::initializeGL()
   glstate_->initialize();
 
   // OpenGL state
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
+  ACG::GLState::enable(GL_DEPTH_TEST);
+  ACG::GLState::enable(GL_LIGHTING);
   glDisable(GL_DITHER);
-  glShadeModel( GL_FLAT );
+  ACG::GLState::shadeModel( GL_FLAT );
 
 
   projectionMode(   projectionMode_   );
@@ -912,10 +912,10 @@ void glViewer::paintGL()
 
     glPushAttrib (GL_ALL_ATTRIB_BITS);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
+    ACG::GLState::enable(GL_DEPTH_TEST);
+    ACG::GLState::enable(GL_LIGHTING);
     glDisable(GL_DITHER);
-    glShadeModel( GL_FLAT );
+    ACG::GLState::shadeModel( GL_FLAT );
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -1895,7 +1895,7 @@ void glViewer::applyProperties() {
     glFrontFace( GL_CW );
 
   if ( properties_.backFaceCulling() )
-    glEnable( GL_CULL_FACE );
+    ACG::GLState::enable(GL_CULL_FACE );
   else
     glDisable( GL_CULL_FACE );
 
