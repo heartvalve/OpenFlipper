@@ -232,12 +232,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
-    glShadeModel(GL_FLAT);
+    ACG::GLState::shadeModel(GL_FLAT);
     
     if ( _drawMode & DrawModes::POINTS_SHADED  ) {
-      glEnable(GL_LIGHTING);
+      ACG::GLState::enable(GL_LIGHTING);
     } else
-      glDisable(GL_LIGHTING);
+      ACG::GLState::disable(GL_LIGHTING);
   
     // Use Colors in this mode if allowed
     if ( enableColors_ && (_drawMode & DrawModes::POINTS_COLORED) )
@@ -246,9 +246,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
       // If we have colors and lighting with normals, we have to use colormaterial
       if ( enableNormals_ && (_drawMode & DrawModes::POINTS_SHADED ) )
-        glEnable(GL_COLOR_MATERIAL);
+        ACG::GLState::enable(GL_COLOR_MATERIAL);
       else
-        glDisable(GL_COLOR_MATERIAL);
+        ACG::GLState::disable(GL_COLOR_MATERIAL);
     }
     else
       drawMesh_->disableColors();
@@ -265,8 +265,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if (_drawMode & DrawModes::WIREFRAME)
   {
 //    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
 
     drawMesh_->disableColors();
 
@@ -283,8 +283,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     Vec4f  base_color  = _state.base_color();
     clear_color[3] = 1.0;
     
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
 
@@ -298,12 +298,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     // Second
     // Render the lines. All lines not on the front will be skipped in z-test
 //    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     draw_lines();
     
     //restore depth buffer comparison function for the next draw calls inside this function
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -311,36 +311,36 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if (_drawMode & DrawModes::EDGES_COLORED)
   {
     enable_arrays( PER_EDGE_VERTEX_ARRAY | PER_EDGE_COLOR_ARRAY );
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_lines();
   }  
 
   if (_drawMode & DrawModes::HALFEDGES)
   {
     enable_arrays( PER_HALFEDGE_VERTEX_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_halfedges();
   }  
 
   if (_drawMode & DrawModes::HALFEDGES_COLORED)
   {
     enable_arrays( PER_HALFEDGE_VERTEX_ARRAY | PER_HALFEDGE_COLOR_ARRAY );
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_halfedges();
   }  
   
   if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     if ( enableNormals_ ) {
-       glEnable(GL_COLOR_MATERIAL);
+       ACG::GLState::enable(GL_COLOR_MATERIAL);
     } else {
-      glDisable(GL_COLOR_MATERIAL);
+      ACG::GLState::disable(GL_COLOR_MATERIAL);
     }
 
     drawMesh_->usePerVertexColors();
@@ -351,8 +351,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals() && mesh_.n_faces() > 0)
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->setFlatShading();
@@ -365,8 +365,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals() )
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
@@ -388,8 +388,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     //         // Enable own Phong shader
     //         program->use();
 //    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
@@ -409,8 +409,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   {
     Vec4f base_color_backup = _state.base_color();
     
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
 //    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY);    
 
@@ -426,9 +426,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals()  && mesh_.n_faces() > 0 )
   {
     Vec4f base_color_backup = _state.base_color();
-    glEnable(GL_LIGHTING);
+    ACG::GLState::enable(GL_LIGHTING);
     
-    glShadeModel(GL_FLAT);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
 //    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY | PER_FACE_NORMAL_ARRAY );
 
@@ -446,9 +446,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   {
     ///\todo enableTexCoords_
 //    enable_arrays(VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY );
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
@@ -456,15 +456,15 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     draw_faces();
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
   {
 //    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
@@ -473,19 +473,19 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     draw_faces();
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
     
   // Textured by using coordinates stored in halfedges ... arrays generated by stripprocessor
   if ( (_drawMode & DrawModes::SOLID_2DTEXTURED_FACE)  && mesh_.n_faces() > 0 )
   {
-    glEnable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_TEXTURE_2D);
     
 //    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY );
     
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
@@ -494,18 +494,18 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     draw_faces();
     glDepthRange(0.0, 1.0);
     
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
   // Textured by using coordinates stored in halfedges
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_face_normals()  && mesh_.n_faces() > 0)
   {
-    glEnable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_TEXTURE_2D);
     
 //    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
 
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
@@ -514,7 +514,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     draw_faces();
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
     
   }
   
@@ -758,7 +758,7 @@ pick_vertices(GLState& _state, bool _front)
     glDepthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -768,7 +768,7 @@ pick_vertices(GLState& _state, bool _front)
   
   if (vertexPickingList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
     glCallList (vertexPickingList_);
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     return;
   }
   
@@ -803,7 +803,7 @@ pick_vertices(GLState& _state, bool _front)
   } else 
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
       
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
   
   if (vertexPickingList_) {
     glEndList ();
@@ -842,7 +842,7 @@ pick_edges(GLState& _state, bool _front)
     glDepthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -853,7 +853,7 @@ pick_edges(GLState& _state, bool _front)
   
   if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_) {
     glCallList (edgePickingList_);
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     return;
   }
   
@@ -892,7 +892,7 @@ pick_edges(GLState& _state, bool _front)
     std::cerr << "No fallback pick_edges!" << std::endl;
   }
   
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
   
   if (edgePickingList_) {
     glEndList ();
@@ -1039,7 +1039,7 @@ pick_any(GLState& _state)
       glNewList (anyPickingList_+1, GL_COMPILE);
     }
     
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     
     // If we do not have any edges, we generate an empty list here.  
     if ( mesh_.n_edges() != 0 && drawMesh_) {
@@ -1053,12 +1053,12 @@ pick_any(GLState& _state)
     if (anyPickingList_)
     {
       //restore depth buffer comparison function for this display list
-      glDepthFunc(prev_depth);
+      ACG::GLState::depthFunc(prev_depth);
       
       glEndList ();
       glNewList (anyPickingList_+2, GL_COMPILE);
       
-      glDepthFunc(GL_LEQUAL);
+      ACG::GLState::depthFunc(GL_LEQUAL);
     }
     
     
@@ -1078,7 +1078,7 @@ pick_any(GLState& _state)
   }
   
   //restore depth buffer comparison function for the active display list
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
   
   if (anyPickingList_)
   {

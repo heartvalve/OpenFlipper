@@ -112,8 +112,8 @@ void PlaneNode::drawPlane( GLState&  /*_state*/) {
 
   //then the red front side
 
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  ACG::GLState::enable (GL_BLEND);
+  ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glPolygonMode(GL_FRONT, GL_FILL);
 
@@ -172,7 +172,7 @@ void PlaneNode::draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*
   glPushAttrib(GL_LIGHTING_BIT);
 
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
-  glEnable(GL_COLOR_MATERIAL);
+  ACG::GLState::enable(GL_COLOR_MATERIAL);
 
   Vec3f pos = position_ - xDirection_*0.5 - yDirection_*0.5;
 

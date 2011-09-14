@@ -118,9 +118,9 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
     if( material_.roundPoints_ ) {
       glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-      glEnable(GL_POINT_SMOOTH);
+      ACG::GLState::enable(GL_POINT_SMOOTH);
     } else
-      glDisable(GL_POINT_SMOOTH);
+      ACG::GLState::disable(GL_POINT_SMOOTH);
   }
 
   if (applyProperties_ & LineSmooth)
@@ -130,9 +130,9 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
     if( material_.linesSmooth_ ) {
       glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-      glEnable(GL_LINE_SMOOTH);
+      ACG::GLState::enable(GL_LINE_SMOOTH);
     } else
-      glDisable(GL_LINE_SMOOTH);
+      ACG::GLState::disable(GL_LINE_SMOOTH);
   }
 
   if (applyProperties_ & MultiSampling)
@@ -148,12 +148,12 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
     if(material_.alphaTest_)
     {
-      glAlphaFunc(GL_GREATER, material_.alphaClip_ );
-      glEnable(GL_ALPHA_TEST);
+      ACG::GLState::alphaFunc(GL_GREATER, material_.alphaClip_ );
+      ACG::GLState::enable(GL_ALPHA_TEST);
     }
     else
     {
-      glDisable(GL_ALPHA_TEST);
+      ACG::GLState::disable(GL_ALPHA_TEST);
     }
   }
 
@@ -169,13 +169,13 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
     if (material_.blending_)
     {
       _state.set_depthFunc(GL_LEQUAL);
-      glBlendFunc(material_.blendParam1_, material_.blendParam2_);
-      glEnable(GL_BLEND);
+      ACG::GLState::blendFunc(material_.blendParam1_, material_.blendParam2_);
+      ACG::GLState::enable(GL_BLEND);
     }
     else
     {
       _state.set_depthFunc(GL_LESS);
-      glDisable(GL_BLEND);
+      ACG::GLState::disable(GL_BLEND);
     }
   }
 
@@ -185,9 +185,9 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
     materialBackup_.backfaceCulling_ = glIsEnabled(GL_CULL_FACE);
 
     if ( material_.backfaceCulling_ )
-      glEnable( GL_CULL_FACE );
+      ACG::GLState::enable( GL_CULL_FACE );
     else
-      glDisable( GL_CULL_FACE );
+      ACG::GLState::disable( GL_CULL_FACE );
 
   }
 
@@ -197,11 +197,11 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
     materialBackup_.colorMaterial_ = glIsEnabled(GL_COLOR_MATERIAL);
 
     if (material_.colorMaterial_ ) {
-      glDisable( GL_COLOR_MATERIAL );
+      ACG::GLState::disable( GL_COLOR_MATERIAL );
       glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-      glEnable( GL_COLOR_MATERIAL );
+      ACG::GLState::enable( GL_COLOR_MATERIAL );
     } else
-      glDisable( GL_COLOR_MATERIAL );
+      ACG::GLState::disable( GL_COLOR_MATERIAL );
   }
 
 }
@@ -273,17 +273,17 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
   if (applyProperties_ & RoundPoints)
   {
     if( materialBackup_.roundPoints_)
-      glEnable(GL_POINT_SMOOTH);
+      ACG::GLState::enable(GL_POINT_SMOOTH);
     else
-      glDisable(GL_POINT_SMOOTH);
+      ACG::GLState::disable(GL_POINT_SMOOTH);
   }
 
   if (applyProperties_ & LineSmooth)
   {
     if( materialBackup_.linesSmooth_)
-      glEnable(GL_LINE_SMOOTH);
+      ACG::GLState::enable(GL_LINE_SMOOTH);
     else
-      glDisable(GL_LINE_SMOOTH);
+      ACG::GLState::disable(GL_LINE_SMOOTH);
   }
 
   if (applyProperties_ & MultiSampling)
@@ -293,12 +293,12 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
   {
     if (materialBackup_.alphaTest_)
     {
-      glAlphaFunc(GL_GREATER, materialBackup_.alphaClip_);
-      glEnable(GL_ALPHA_TEST);
+      ACG::GLState::alphaFunc(GL_GREATER, materialBackup_.alphaClip_);
+      ACG::GLState::enable(GL_ALPHA_TEST);
     }
     else
     {
-      glDisable(GL_ALPHA_TEST);
+      ACG::GLState::disable(GL_ALPHA_TEST);
     }
   }
 
@@ -310,13 +310,13 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
     if (materialBackup_.blending_)
     {
       _state.set_depthFunc(GL_LEQUAL);
-      glBlendFunc(materialBackup_.blendParam1_, materialBackup_.blendParam2_);
-      glEnable(GL_BLEND);
+      ACG::GLState::blendFunc(materialBackup_.blendParam1_, materialBackup_.blendParam2_);
+      ACG::GLState::enable(GL_BLEND);
     }
     else
     {
       _state.set_depthFunc(GL_LESS);
-      glDisable(GL_BLEND);
+      ACG::GLState::disable(GL_BLEND);
     }
   }
 
@@ -324,18 +324,18 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
   if (applyProperties_ & BackFaceCulling)
   {
     if (materialBackup_.backfaceCulling_)
-      glEnable( GL_CULL_FACE );
+      ACG::GLState::enable( GL_CULL_FACE );
     else
-      glDisable( GL_CULL_FACE );
+      ACG::GLState::disable( GL_CULL_FACE );
  }
 
   if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
                                                  (_drawmode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED) ) )
   {
     if (materialBackup_.colorMaterial_ ) {
-      glEnable( GL_COLOR_MATERIAL );
+      ACG::GLState::enable( GL_COLOR_MATERIAL );
     } else
-      glDisable( GL_COLOR_MATERIAL );
+      ACG::GLState::disable( GL_COLOR_MATERIAL );
   }
 
 }

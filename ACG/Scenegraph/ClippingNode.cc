@@ -139,7 +139,7 @@ void ClippingNode::enter(GLState& /* _state */ , const DrawModes::DrawMode& /* _
   if (slice_width_ == 0.0)
   {
     glClipPlane(GL_CLIP_PLANE0, offset_plane0_);
-    glEnable(GL_CLIP_PLANE0);
+    ACG::GLState::enable(GL_CLIP_PLANE0);
   }
 
 
@@ -147,9 +147,9 @@ void ClippingNode::enter(GLState& /* _state */ , const DrawModes::DrawMode& /* _
   else 
   {
     glClipPlane(GL_CLIP_PLANE0, offset_plane0_);
-    glEnable(GL_CLIP_PLANE0);
+    ACG::GLState::enable(GL_CLIP_PLANE0);
     glClipPlane(GL_CLIP_PLANE1, offset_plane1_);
-    glEnable(GL_CLIP_PLANE1);
+    ACG::GLState::enable(GL_CLIP_PLANE1);
   }
 }
 
@@ -159,9 +159,9 @@ void ClippingNode::enter(GLState& /* _state */ , const DrawModes::DrawMode& /* _
 
 void ClippingNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& /* _drawmode */ )
 {
-  glDisable(GL_CLIP_PLANE0);
+  ACG::GLState::disable(GL_CLIP_PLANE0);
   if (slice_width_ > 0.0)
-    glDisable(GL_CLIP_PLANE1);
+    ACG::GLState::disable(GL_CLIP_PLANE1);
 }
 
 

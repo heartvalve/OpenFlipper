@@ -109,6 +109,7 @@ GLState::GLState(bool _updateGL)
     blending_(false),
     msSinceLastRedraw_ (1)
 {
+
   if (stateStack_.size() == 0)
   {
     stateStack_.push_back(GLStateContext());
@@ -1737,6 +1738,7 @@ void GLState::bindTexture(GLenum _target, GLuint _buffer)
   int activeTex = getActiveTextureIndex();
 
   int texTargetIdx = getTextureTargetIndex(_target);
+
   assert(texTargetIdx >= 0);
 
   if (!glTextureTargetLock_[activeTex][texTargetIdx])
@@ -2031,7 +2033,9 @@ void GLState::popAttrib()
     {
       activeTexture(GL_TEXTURE0 + i);
 
-      for (int t = 0; t < 5; ++t)
+      //TODO, changed 5 to 4 for end variable t as targets has only four elements
+      // check if this is correct
+      for (int t = 0; t < 4; ++t)
         bindTexture(targets[t], stateStack_.back().glTextureTargetState_[i][t]);
 
     }

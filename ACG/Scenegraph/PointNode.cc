@@ -102,7 +102,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   // points
   if (_drawMode & DrawModes::POINTS)
   {
-    glDisable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(&points_[0]);
     glDrawArrays(GL_POINTS, 0, points_.size());
@@ -114,7 +114,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   {
     if (points_.size() == normals_.size())
     {
-      glEnable(GL_LIGHTING);
+      ACG::GLState::enable(GL_LIGHTING);
       glEnableClientState(GL_VERTEX_ARRAY);
       glVertexPointer(&points_[0]);
       glEnableClientState(GL_NORMAL_ARRAY);
@@ -129,7 +129,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   {
     if (points_.size() == colors_.size())
     {
-      glDisable(GL_LIGHTING);
+      ACG::GLState::disable(GL_LIGHTING);
       glEnableClientState(GL_VERTEX_ARRAY);
       glVertexPointer(&points_[0]);
       glEnableClientState(GL_COLOR_ARRAY);

@@ -148,8 +148,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     if (_drawMode & DrawModes::POINTS)
     {
-      glDisable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
+      ACG::GLState::disable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
       glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
       draw_obj(i);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -158,8 +158,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     if (_drawMode & DrawModes::WIREFRAME)
     {
-      glDisable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
+      ACG::GLState::disable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       draw_obj(i);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -167,8 +167,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     if (_drawMode & DrawModes::SOLID_FACES_COLORED)
     {
-      glDisable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
+      ACG::GLState::disable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       
       if ( setColor_ ) {
@@ -185,8 +185,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     {
       Vec4f base_color_backup = _state.base_color();
 
-      glDisable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
+      ACG::GLState::disable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
 
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       glColor(_state.clear_color());
@@ -204,9 +204,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     if (_drawMode & DrawModes::SOLID_FLAT_SHADED)
     {
-      glEnable( GL_COLOR_MATERIAL );
-      glEnable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
+      ACG::GLState::enable( GL_COLOR_MATERIAL );
+      ACG::GLState::enable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
       
       if ( setColor_ ) {
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -219,9 +219,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     if (_drawMode & DrawModes::SOLID_SMOOTH_SHADED)
     {
-      glEnable( GL_COLOR_MATERIAL );
-      glEnable(GL_LIGHTING);
-      glShadeModel(GL_SMOOTH);
+      ACG::GLState::enable( GL_COLOR_MATERIAL );
+      ACG::GLState::enable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_SMOOTH);
       
       if ( setColor_ ) {
         glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);

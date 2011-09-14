@@ -92,7 +92,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   {
     glPushAttrib (GL_ENABLE_BIT);
 
-    glDisable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
 
     glBegin(GL_LINES);
 

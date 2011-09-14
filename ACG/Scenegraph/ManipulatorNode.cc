@@ -173,8 +173,8 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
 {
   if (draw_cylinder_)
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
 
 
     // backup colors
@@ -210,7 +210,7 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
 	glLoadIdentity();
 	glRotatef(-90, 0.0, 1.0, 0.0);*/
 
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     gluCylinder(cylinder_,
 		cylinder_radius_,
 		cylinder_radius_,
@@ -226,7 +226,7 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
     {
       _state.set_diffuse_color(select_color * 0.6f);
       _state.set_specular_color(select_color * 0.0f);
-      glShadeModel(GL_SMOOTH);
+      ACG::GLState::shadeModel(GL_SMOOTH);
       glutWireSphere(cylinder_height_+4*cylinder_radius_, 20, 20);
     }
 
@@ -251,7 +251,7 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
       _state.set_specular_color(sphere_color * 0.8f);
     }
 
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glutSolidSphere(2*cylinder_radius_, 20, 20);
 
     _state.pop_modelview_matrix();

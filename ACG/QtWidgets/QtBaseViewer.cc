@@ -736,9 +736,9 @@ void QtBaseViewer::backFaceCulling(bool _b)
   makeCurrent();
   if (funcMenu_==0)  updatePopupMenu();
   if ( (backFaceCulling_ = _b) )
-    glEnable( GL_CULL_FACE );
+    ACG::GLState::enable( GL_CULL_FACE );
   else
-    glDisable( GL_CULL_FACE );
+    ACG::GLState::disable( GL_CULL_FACE );
 
   action_["BackfaceCulling"]->setChecked( backFaceCulling_ );
   updateGL();
@@ -775,11 +775,11 @@ void QtBaseViewer::normalsMode(NormalsMode _mode)
   switch(normalsMode_ = _mode)
   {
     case DONT_TOUCH_NORMALS:
-      glDisable(GL_NORMALIZE);
+      ACG::GLState::disable(GL_NORMALIZE);
       break;
 
     case NORMALIZE_NORMALS:
-      glEnable(GL_NORMALIZE);
+      ACG::GLState::enable(GL_NORMALIZE);
       break;
   }
 
@@ -883,7 +883,7 @@ void QtBaseViewer::drawScene_mono()
       // prepare GL state
       makeCurrent();
 
-      glDisable(GL_LIGHTING);
+      ACG::GLState::disable(GL_LIGHTING);
       glClear(GL_DEPTH_BUFFER_BIT);
       glInitNames();
       glPushName((GLuint) 0);
@@ -892,7 +892,7 @@ void QtBaseViewer::drawScene_mono()
       SceneGraph::PickAction action(*glstate_, pickRendererMode_, curDrawMode_);
       SceneGraph::traverse(sceneGraphRoot_, action);
 
-      glEnable(GL_LIGHTING);
+      ACG::GLState::enable(GL_LIGHTING);
     }
   }
 }
@@ -930,7 +930,7 @@ QtBaseViewer::drawScene_stereo()
   glFrustum(l+offset2, r+offset2, b, t, near_, far_);
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_LEFT);
+  ACG::GLState::drawBuffer(GL_BACK_LEFT);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
@@ -941,10 +941,10 @@ QtBaseViewer::drawScene_stereo()
   glFrustum(l-offset2, r-offset2, b, t, near_, far_);
   glTranslatef(offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_RIGHT);
+  ACG::GLState::drawBuffer(GL_BACK_RIGHT);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
-  glDrawBuffer(GL_BACK);
+  ACG::GLState::drawBuffer(GL_BACK);
 }
 
 
@@ -1148,10 +1148,10 @@ void QtBaseViewer::initializeGL()
   glstate_->initialize();
 
   // OpenGL state
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glDisable(GL_DITHER);
-  glShadeModel( GL_FLAT );
+  ACG::GLState::enable(GL_DEPTH_TEST);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::disable(GL_DITHER);
+  ACG::GLState::shadeModel( GL_FLAT );
 
 
   projectionMode(   projectionMode_   );
@@ -1219,7 +1219,7 @@ void QtBaseViewer::update_lights()
     glLightfv(GL_LIGHT##i, GL_POSITION, pos);	\
     glLightfv(GL_LIGHT##i, GL_DIFFUSE,  col);	\
     glLightfv(GL_LIGHT##i, GL_SPECULAR, col);	\
-    glEnable(GL_LIGHT##i);			\
+    ACG::GLState::enable(GL_LIGHT##i);			\
   }
 
   SET_LIGHT(0,  0.0,  0.0, 1.0);
@@ -1297,10 +1297,10 @@ void QtBaseViewer::paintGL()
 
     glPushAttrib (GL_ALL_ATTRIB_BITS);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glDisable(GL_DITHER);
-    glShadeModel( GL_FLAT );
+    ACG::GLState::enable(GL_DEPTH_TEST);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::disable(GL_DITHER);
+    ACG::GLState::shadeModel( GL_FLAT );
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();

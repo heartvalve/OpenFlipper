@@ -569,8 +569,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if (_drawMode & DrawModes::POINTS)
   {
     enable_arrays(VERTEX_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_vertices();
   }
 
@@ -578,8 +578,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
   {
     enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_vertices();
   }
 
@@ -587,8 +587,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     draw_vertices();
   }
 
@@ -597,11 +597,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   {
     glPushAttrib(GL_ENABLE_BIT);
 
-    glDisable( GL_CULL_FACE );
+    ACG::GLState::disable( GL_CULL_FACE );
 
     enable_arrays(VERTEX_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw_faces(PER_VERTEX);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -618,8 +618,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     Vec4f  base_color  = _state.base_color();
     clear_color[3] = 1.0;
 
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
 
@@ -628,18 +628,18 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     glDepthRange(0.0, 1.0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     draw_faces(PER_VERTEX);
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
 
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_NORMALS);
     glDepthRange(0.0, 1.0);
@@ -649,8 +649,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
@@ -669,8 +669,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 //         program->use();
 
         enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-        glEnable(GL_LIGHTING);
-        glShadeModel(GL_SMOOTH);
+        ACG::GLState::enable(GL_LIGHTING);
+        ACG::GLState::shadeModel(GL_SMOOTH);
         glDepthRange(0.01, 1.0);
         draw_faces(PER_VERTEX);
         glDepthRange(0.0, 1.0);
@@ -684,8 +684,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_ENV_MAPPED ) && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
@@ -696,8 +696,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   {
     Vec4f base_color_backup = _state.base_color();
 
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_COLORS);
     glDepthRange(0.0, 1.0);
@@ -709,9 +709,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals())
   {
     Vec4f base_color_backup = _state.base_color();
-    glEnable(GL_LIGHTING);
+    ACG::GLState::enable(GL_LIGHTING);
 
-    glShadeModel(GL_FLAT);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_NORMALS_COLORS);
     glDepthRange(0.0, 1.0);
@@ -725,8 +725,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     Vec4f base_color_backup = _state.base_color();
 
     enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
@@ -738,40 +738,40 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED ) && mesh_.has_vertex_texcoords2D())
   {
     enable_arrays(VERTEX_ARRAY | TEXTURE_COORD_2D_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
 
 
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY | TEXTURE_COORD_2D_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
 
 
   if ( ( _drawMode & DrawModes::SOLID_1DTEXTURED ) && mesh_.has_vertex_texcoords1D())
   {
     enable_arrays(VERTEX_ARRAY | TEXTURE_COORD_1D_ARRAY);
-    glEnable(GL_TEXTURE_1D);
+    ACG::GLState::enable(GL_TEXTURE_1D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_1D);
+    ACG::GLState::disable(GL_TEXTURE_1D);
   }
 
 
@@ -791,13 +791,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY | TEXTURE_COORD_1D_ARRAY);
-    glEnable(GL_TEXTURE_1D);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_TEXTURE_1D);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_1D);
+    ACG::GLState::disable(GL_TEXTURE_1D);
 
     // restore colors
     _state.set_ambient_color(ambient);
@@ -813,53 +813,53 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_3DTEXTURED ) && mesh_.has_vertex_texcoords3D())
   {
     enable_arrays(VERTEX_ARRAY | TEXTURE_COORD_3D_ARRAY);
-    glEnable(GL_TEXTURE_3D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_TEXTURE_3D);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_3D);
+    ACG::GLState::disable(GL_TEXTURE_3D);
   }
 
 
   if ( ( _drawMode & DrawModes::SOLID_3DTEXTURED_SHADED ) && mesh_.has_vertex_texcoords3D() && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY | TEXTURE_COORD_3D_ARRAY);
-    glEnable(GL_TEXTURE_3D);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_TEXTURE_3D);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_3D);
+    ACG::GLState::disable(GL_TEXTURE_3D);
   }
 
   // Textured by using coordinates stored in halfedges
   // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE ) && mesh_.has_halfedge_texcoords2D())
   {
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_HALFEDGE_TEXTURED);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   }
 
   // Textured by using coordinates stored in halfedges
   // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_halfedge_texcoords2D() && mesh_.has_face_normals())
   {
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
+    ACG::GLState::enable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_LIGHTING);
 
-    glShadeModel(GL_FLAT);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_HALFEDGE_TEXTURED);
     glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_2D);
 
   }
 
@@ -871,8 +871,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     else
       enable_arrays( VERTEX_ARRAY );
 
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
@@ -1082,7 +1082,7 @@ draw_faces(FaceMode _mode)
                 }
               }
 
-              glBindTexture( GL_TEXTURE_2D, (*textureMap_)[texture] );
+              ACG::GLState::bindTexture( GL_TEXTURE_2D, (*textureMap_)[texture] );
 
               // Remember active texture to skip extra switches
               last_texture = texture;
@@ -1265,7 +1265,7 @@ pick_vertices(GLState& _state, bool _front)
     glDepthRange(0.0, 1.0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -1277,7 +1277,7 @@ pick_vertices(GLState& _state, bool _front)
   if (vertexList_ && !updateVertexList_ && _state.pick_current_index () == vertexBaseIndex_)
   {
     glCallList (vertexList_);
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     return;
   }
 
@@ -1326,7 +1326,7 @@ pick_vertices(GLState& _state, bool _front)
     glCallList (vertexList_);
   }
   
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
 }
 
 
@@ -1515,7 +1515,7 @@ pick_edges(GLState& _state, bool _front)
     glDepthRange(0.0, 1.0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -1526,7 +1526,7 @@ pick_edges(GLState& _state, bool _front)
   if (edgeList_ && !updateEdgeList_ && _state.pick_current_index () == edgeBaseIndex_)
   {
     glCallList (edgeList_);
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     return;
   }
 
@@ -1580,7 +1580,7 @@ pick_edges(GLState& _state, bool _front)
     glCallList (edgeList_);
   }
   
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
 }
 
 //----------------------------------------------------------------------------
@@ -1701,7 +1701,7 @@ pick_any(GLState& _state)
       glNewList (anyList_+1, GL_COMPILE);
     }
 
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
 
     // edges
     idx = 0;
@@ -1721,10 +1721,10 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
-      glDepthFunc(prev_depth);
+      ACG::GLState::depthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+2, GL_COMPILE);
-      glDepthFunc(GL_LEQUAL);
+      ACG::GLState::depthFunc(GL_LEQUAL);
     }
 
     // vertices
@@ -1778,12 +1778,12 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
-      glDepthFunc(prev_depth);
+      ACG::GLState::depthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+1, GL_COMPILE);
     }
 
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
 
     // edges
     for (; e_it!=e_end; ++e_it)
@@ -1797,10 +1797,10 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
-      glDepthFunc(prev_depth);
+      ACG::GLState::depthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+2, GL_COMPILE);
-      glDepthFunc(GL_LEQUAL);
+      ACG::GLState::depthFunc(GL_LEQUAL);
     }
 
     // vertices
@@ -1813,7 +1813,7 @@ pick_any(GLState& _state)
     }
   }
   
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
   
   if (anyList_)
   {

@@ -109,7 +109,7 @@ QtBaseViewer::setStereoMode(bool _b)
     statusbar_->showMessage("Stereo disabled");
     stereoButton_->setIcon( QPixmap(monoIcon) );
     makeCurrent();
-    glDrawBuffer(GL_BACK);
+    ACG::GLState::drawBuffer(GL_BACK);
   }
 
   updateGL();

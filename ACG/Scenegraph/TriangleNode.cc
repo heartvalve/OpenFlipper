@@ -135,8 +135,8 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   if (_drawMode & DrawModes::WIREFRAME ||
       _drawMode & DrawModes::HIDDENLINE )
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw_wireframe();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -146,8 +146,8 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   if (_drawMode & DrawModes::SOLID_FLAT_SHADED ||
       _drawMode & DrawModes::HIDDENLINE )
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces();
     glDepthRange(0.0, 1.0);
@@ -155,8 +155,8 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 
   if (_drawMode & DrawModes::SOLID_FACES_COLORED)
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces();
     glDepthRange(0.0, 1.0);

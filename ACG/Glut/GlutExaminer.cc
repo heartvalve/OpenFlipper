@@ -89,8 +89,8 @@ GlutExaminer::init()
 void 
 GlutExaminer::draw()
 {
-  glEnable(GL_LIGHTING);
-  glShadeModel(GL_SMOOTH);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::shadeModel(GL_SMOOTH);
   glutSolidTeapot(0.5);
 }
 
