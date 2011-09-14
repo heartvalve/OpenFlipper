@@ -235,9 +235,9 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
   Vec4f lastBaseColor = _state.base_color();
 
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
-  glEnable(GL_COLOR_MATERIAL);
-  glEnable(GL_LIGHTING);
-  glShadeModel(GL_SMOOTH);
+  ACG::GLState::enable(GL_COLOR_MATERIAL);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::shadeModel(GL_SMOOTH);
 
   // Translate to right position  
   _state.translate(position_);

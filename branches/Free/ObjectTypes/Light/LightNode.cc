@@ -316,7 +316,7 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
              
          // Set lighting
          glGetBooleanv(GL_LIGHTING, &lighting_backup);
-         glEnable(GL_LIGHTING);
+         ACG::GLState::enable(GL_LIGHTING);
  
          // Make light directional just for the drawing
          // of itself
@@ -330,7 +330,7 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          if(lightId_ == GL_INVALID_ENUM) {
              
              // Reset all stored attributes before returning
-             if(!lighting_backup) glDisable(GL_LIGHTING);
+             if(!lighting_backup) ACG::GLState::disable(GL_LIGHTING);
  
              gluDeleteQuadric(quadric);
  
@@ -351,7 +351,7 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          float gl_sc[] = {sc[0], sc[1], sc[2], sc[3]};
          glLightfv(lightId_, GL_SPECULAR, gl_sc);
          
-         glEnable(lightId_);
+         ACG::GLState::enable(lightId_);
          
          gluQuadricOrientation(quadric, GLU_OUTSIDE);
          gluSphere( quadric, light_.radius(), 10, 10 );
@@ -387,7 +387,7 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          }
  
          // Lighting
-         if(!lighting_backup) glDisable(GL_LIGHTING);
+         if(!lighting_backup) ACG::GLState::disable(GL_LIGHTING);
  
          gluDeleteQuadric(quadric);
  
@@ -424,8 +424,8 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
              
              // Enable depth test but store original status
              glPushAttrib(GL_DEPTH_BUFFER_BIT);
-             glEnable(GL_DEPTH_TEST);
-             glDepthFunc(GL_LEQUAL);
+             ACG::GLState::enable(GL_DEPTH_TEST);
+             ACG::GLState::depthFunc(GL_LEQUAL);
              
              _state.pick_set_maximum(1);
              _state.pick_set_name(0);
@@ -468,7 +468,7 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
 
              _state.pop_modelview_matrix();
              
-             glDepthFunc(prev_depth);
+             ACG::GLState::depthFunc(prev_depth);
          }  
     }
 }
@@ -509,10 +509,10 @@ void LightNode::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode *
             //std::cerr << "New Light pos :" << light_.position << std::endl;
         }
 
-        glEnable(lightId_);
+        ACG::GLState::enable(lightId_);
         setParameters(lightId_, light_);
     } else {
-        glDisable(lightId_);
+        ACG::GLState::disable(lightId_);
     }
 }
 
@@ -529,11 +529,11 @@ void LightNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& /* _dra
       
     // restore old enabled light
     if(lightSave_.enabled_) {
-        glEnable(lightId_);
+        ACG::GLState::enable(lightId_);
         setParameters(lightId_, lightSave_);
     }
     else {
-        glDisable(lightId_);
+        ACG::GLState::disable(lightId_);
     }
     
     // Free light id

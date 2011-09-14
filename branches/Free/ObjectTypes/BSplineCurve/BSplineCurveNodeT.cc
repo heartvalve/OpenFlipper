@@ -126,28 +126,28 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   
   if (_drawMode & DrawModes::WIREFRAME)
   {
-    glDisable( GL_CULL_FACE );
+    ACG::GLState::disable( GL_CULL_FACE );
     
     if (bspline_draw_mode_ == NORMAL)
     {
-      glDisable(GL_LIGHTING);
+      ACG::GLState::disable(GL_LIGHTING);
     }
     else if (bspline_draw_mode_ == FANCY)
     {
-//       glEnable(GL_AUTO_NORMAL);
-//       glEnable(GL_NORMALIZE);
+//       ACG::GLState::ACG::GLState::enable(GL_AUTO_NORMAL);
+//       ACG::GLState::Enable(GL_NORMALIZE);
       glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-      glEnable( GL_COLOR_MATERIAL );
-      glEnable(GL_LIGHTING);
-      glShadeModel(GL_SMOOTH);
+      ACG::GLState::enable( GL_COLOR_MATERIAL );
+      ACG::GLState::enable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_SMOOTH);
     }
 
     render( _state, false, _drawMode);
   }
   else if (_drawMode & DrawModes::POINTS)
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     
     render( _state, false, _drawMode);
   }
@@ -464,12 +464,12 @@ BSplineCurveNodeT<BSplineCurve>::
 drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 {   
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glEnable( GL_COLOR_MATERIAL );
+  ACG::GLState::enable (GL_COLOR_MATERIAL );
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   
-  glEnable(GL_TEXTURE_2D);
+  ACG::GLState::enable(GL_TEXTURE_2D);
   
-  glBindTexture( GL_TEXTURE_2D, _texture_idx);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, _texture_idx);
   
   // blend colors (otherwise lighting does not affect the texture)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -484,9 +484,9 @@ drawTexturedCurve(GLState& _state, GLuint _texture_idx)
   draw_textured_nurbs( _state);
   glLineWidth(line_width_old);
 
-  glBindTexture( GL_TEXTURE_2D, 0);
-  glDisable(GL_TEXTURE_2D);
-  glDisable( GL_COLOR_MATERIAL );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::disable(GL_TEXTURE_2D);
+  ACG::GLState::disable( GL_COLOR_MATERIAL );
   glPopAttrib( );
 }
 
@@ -607,9 +607,9 @@ pick_spline( GLState& _state, unsigned int _offset )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-  glEnable(GL_TEXTURE_2D);
-//   glEnable(GL_TEXTURE_1D);
-//   glEnable(GL_MAP1_TEXTURE_COORD_1);
+  ACG::GLState::enable(GL_TEXTURE_2D);
+//   ACG::GLState::enable(GL_TEXTURE_1D);
+//   ACG::GLState::enable(GL_MAP1_TEXTURE_COORD_1);
 
 
   if( _state.pick_current_index () + _offset != pick_texture_baseidx_)
@@ -628,8 +628,8 @@ pick_spline( GLState& _state, unsigned int _offset )
     // GL_REPLACE to avoid smearing colors (else color picking breaks!)
     glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   
-    glBindTexture( GL_TEXTURE_2D, pick_texture_idx_);
-//     glBindTexture( GL_TEXTURE_1D, pick_texture_idx_);
+    ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_);
+//     ACG::GLState::bindTexture( GL_TEXTURE_1D, pick_texture_idx_);
   }
 
   float line_width_old = _state.line_width();
@@ -637,12 +637,12 @@ pick_spline( GLState& _state, unsigned int _offset )
   draw_textured_nurbs( _state);
   glLineWidth(line_width_old);
 
-//   glBindTexture( GL_TEXTURE_1D, 0);
-//   glDisable(GL_TEXTURE_1D);
-//   glDisable(GL_MAP1_TEXTURE_COORD_1);
+//   ACG::GLState::bindTexture( GL_TEXTURE_1D, 0);
+//   ACG::GLState::disable(GL_TEXTURE_1D);
+//   ACG::GLState::disable(GL_MAP1_TEXTURE_COORD_1);
 
-  glBindTexture( GL_TEXTURE_2D, 0);
-  glDisable(GL_TEXTURE_2D);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::disable(GL_TEXTURE_2D);
 
   glPopAttrib( );
 }
@@ -729,7 +729,7 @@ selection_init_texturing(GLuint & _texture_idx)
   // generate texture index
   glGenTextures( 1, &_texture_idx );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, _texture_idx );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, _texture_idx );
   // blend colors (otherwise lighting does not affect the texture)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -739,7 +739,7 @@ selection_init_texturing(GLuint & _texture_idx)
   // GL_MODULATE to include lighting effects
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   // unbind current texture
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -810,7 +810,7 @@ create_cp_selection_texture(GLState& /*_state*/)
   cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, cp_selection_texture_image_.width(), cp_selection_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, cp_selection_texture_image_.bits() );
@@ -889,7 +889,7 @@ create_knot_selection_texture(GLState& /*_state*/)
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, knot_selection_texture_image_.width(), knot_selection_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, knot_selection_texture_image_.bits() );
@@ -908,7 +908,7 @@ pick_init_texturing( )
   // generate texture index
   glGenTextures( 1, &pick_texture_idx_ );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
   // do not blend colors (else color picking breaks!)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -918,7 +918,7 @@ pick_init_texturing( )
   // GL_REPLACE to avoid smearing colors (else color picking breaks!)
   glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // unbind current texture
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -975,7 +975,7 @@ pick_create_texture( GLState& _state)
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, pick_texture_image_.width(), pick_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, pick_texture_image_.bits() );
@@ -1091,7 +1091,7 @@ pick_init_texturing( )
   // generate texture index
   glGenTextures( 1, &pick_texture_idx_ );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_1D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_1D, pick_texture_idx_ );
   // do not blend colors (else color picking breaks!)
   glTexParameterf( GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -1100,7 +1100,7 @@ pick_init_texturing( )
   // GL_REPLACE to avoid smearing colors (else color picking breaks!)
   glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // unbind current texture
-  glBindTexture( GL_TEXTURE_1D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_1D, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -1142,7 +1142,7 @@ pick_create_texture( GLState& _state)
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_1D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_1D, pick_texture_idx_ );
   glTexImage1D(  GL_TEXTURE_1D,
                  0, GL_RGBA, pick_texture_image_.width(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, 

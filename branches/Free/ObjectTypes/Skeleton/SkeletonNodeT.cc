@@ -294,7 +294,7 @@ template <class Skeleton>
 void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   
-  glDisable(GL_LIGHTING);
+  ACG::GLState::disable(GL_LIGHTING);
   
   glPushAttrib(GL_ENABLE_BIT);
   
@@ -333,7 +333,7 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
     // draw the local coordinate frames
     if(bCoordFramesVisible_)
     {
-      glEnable(GL_DEPTH_TEST);
+      ACG::GLState::enable(GL_DEPTH_TEST);
       glPointSize(6.0);
       glBegin(GL_POINTS);
       for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
@@ -366,12 +366,12 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
     if ( (_drawMode == DrawModes::SOLID_FLAT_SHADED)
       || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ){
 
-      glShadeModel(GL_FLAT);
-      glEnable(GL_LIGHTING);
+      ACG::GLState::shadeModel(GL_FLAT);
+      ACG::GLState::enable(GL_LIGHTING);
     }
     
     if (_drawMode == DrawModes::SOLID_FACES_COLORED)
-      glShadeModel(GL_FLAT);
+      ACG::GLState::shadeModel(GL_FLAT);
     
     
     glLineWidth(1.5);
@@ -403,8 +403,8 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
     // draw the local coordinate frames
     if(bCoordFramesVisible_)
     {
-      glDisable(GL_COLOR_MATERIAL);
-      glDisable(GL_LIGHTING);
+      ACG::GLState::disable(GL_COLOR_MATERIAL);
+      ACG::GLState::disable(GL_LIGHTING);
 
       glLineWidth(3.0);
       glBegin(GL_LINES);
