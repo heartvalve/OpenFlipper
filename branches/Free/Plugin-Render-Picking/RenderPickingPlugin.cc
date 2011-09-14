@@ -147,8 +147,8 @@ void RenderPickingPlugin::supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMod
 
 void RenderPickingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties) {
 
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
   glClear(GL_DEPTH_BUFFER_BIT);
   glInitNames();
   glPushName((GLuint) 0);
@@ -158,8 +158,8 @@ void RenderPickingPlugin::render(ACG::GLState* _glState, Viewer::ViewerPropertie
   ACG::SceneGraph::PickAction action(*_glState, pickRendererMode_, _properties.drawMode());
   ACG::SceneGraph::traverse_multipass( PluginFunctions::getSceneGraphRootNode() , action,*_glState);
 
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
 }
 
