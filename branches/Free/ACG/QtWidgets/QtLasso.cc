@@ -116,7 +116,7 @@ slotMouseEvent(QMouseEvent* _event)
   unsigned int width  = glstate_.viewport_width();
   unsigned int height = glstate_.viewport_height();
 
-  glDrawBuffer( GL_FRONT );
+  ACG::GLState::drawBuffer( GL_FRONT );
 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -127,9 +127,9 @@ slotMouseEvent(QMouseEvent* _event)
   glPushMatrix();
   glLoadIdentity();
 
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_DITHER);
+  ACG::GLState::disable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_DITHER);
   glLineWidth(2.0);
   glColor3ub(0, 255, 10);
 
@@ -180,7 +180,7 @@ slotMouseEvent(QMouseEvent* _event)
         // draw rubber band
         else
         {
-          glEnable(GL_COLOR_LOGIC_OP);
+          ACG::GLState::enable(GL_COLOR_LOGIC_OP);
           glLogicOp(GL_XOR);
           glBegin(GL_LINES);
           glVertex(last_point_);
@@ -188,7 +188,7 @@ slotMouseEvent(QMouseEvent* _event)
           glVertex(last_point_);
           glVertex(p);
           glEnd();
-          glDisable(GL_COLOR_LOGIC_OP);
+          ACG::GLState::disable(GL_COLOR_LOGIC_OP);
           rubberband_point_ = p;
         }
       }
@@ -232,12 +232,12 @@ slotMouseEvent(QMouseEvent* _event)
 
 
   // restore GL settings
-  glDrawBuffer(GL_BACK);
+  ACG::GLState::drawBuffer(GL_BACK);
   glReadBuffer(GL_BACK);
 
   glLineWidth(glstate_.line_width());
   glColor4fv(glstate_.base_color().data());
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::enable(GL_DEPTH_TEST);
 
   glMatrixMode(GL_PROJECTION );
   glPopMatrix();

@@ -107,7 +107,7 @@ bool QtBaseViewer::pick( SceneGraph::PickTarget _pickTarget,
     glMultMatrixd(projection.get_raw_data());
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixd(modelview.get_raw_data());
-    glDisable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
     glClear(GL_DEPTH_BUFFER_BIT);
     glstate_->pick_init (false);
 
@@ -121,7 +121,7 @@ bool QtBaseViewer::pick( SceneGraph::PickTarget _pickTarget,
     glLoadMatrixd(projection.get_raw_data());
     glMatrixMode( GL_MODELVIEW );
     glLoadMatrixd(modelview.get_raw_data());
-    glEnable(GL_LIGHTING);
+    ACG::GLState::enable(GL_LIGHTING);
 
 
     // process hit record

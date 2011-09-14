@@ -191,7 +191,7 @@ public:
   {
     if(!valid) gen();
     activate();
-    glBindTexture(target, texture);
+    ACG::GLState::bindTexture(target, texture);
   }
   
   void activate()
@@ -226,13 +226,13 @@ public:
   void enable()
   {
     activate();
-    glEnable(target);
+    ACG::GLState::enable(target);
   }
 
   void disable()
   {
     activate();
-    glDisable(target);
+    ACG::GLState::disable(target);
   }
 
   void del()

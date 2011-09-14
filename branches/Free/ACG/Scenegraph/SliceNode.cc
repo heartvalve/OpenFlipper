@@ -132,19 +132,19 @@ SliceNode::draw( GLState & /* _state */ , const DrawModes::DrawMode& /* _drawMod
   if ( view_frame_ )
     draw_frame();
   
-  glEnable( GL_LIGHTING );
+  ACG::GLState::enable( GL_LIGHTING );
   glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
 
-  glEnable( GL_TEXTURE_3D );    
+  ACG::GLState::enable( GL_TEXTURE_3D );    
 
-  glEnable( GL_BLEND );
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  ACG::GLState::enable( GL_BLEND );
+  ACG::GLState::blendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
   draw_planes();
 
-  glDisable( GL_BLEND );
-  glDisable( GL_TEXTURE_3D );    
-  glDisable( GL_LIGHTING );
+  ACG::GLState::disable( GL_BLEND );
+  ACG::GLState::disable( GL_TEXTURE_3D );    
+  ACG::GLState::disable( GL_LIGHTING );
   
   glPopAttrib();
   glPopAttrib();
@@ -159,9 +159,9 @@ SliceNode::draw( GLState & /* _state */ , const DrawModes::DrawMode& /* _drawMod
 void
 SliceNode::draw_frame() const
 {
-  glDisable( GL_BLEND );
-  glDisable( GL_TEXTURE_3D );    
-  glDisable( GL_LIGHTING );
+  ACG::GLState::disable( GL_BLEND );
+  ACG::GLState::disable( GL_TEXTURE_3D );    
+  ACG::GLState::disable( GL_LIGHTING );
 
   glBegin( GL_LINES );
 
@@ -248,7 +248,7 @@ SliceNode::draw_frame() const
 void
 SliceNode::draw_planes() const
 {
-  glShadeModel( GL_FLAT );
+  ACG::GLState::shadeModel( GL_FLAT );
 
 
   glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -413,7 +413,7 @@ SliceNode::pick( GLState & _state, PickTarget /* _target */  )
 {
   _state.pick_set_maximum (1);
   _state.pick_set_name (0);
-  glDisable(GL_LIGHTING);
+  ACG::GLState::disable(GL_LIGHTING);
   glPushMatrix();
   draw_planes();
   glPopMatrix();

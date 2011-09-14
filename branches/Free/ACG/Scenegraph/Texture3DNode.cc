@@ -92,7 +92,7 @@ Texture3DNode::enter( GLState &    /*_state */, const DrawModes::DrawMode& /* _d
 {
   if ( glIsTexture( texture_ ) )
   {
-    glBindTexture( GL_TEXTURE_3D, texture_ );
+    ACG::GLState::bindTexture( GL_TEXTURE_3D, texture_ );
     glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_);
     glTexParameterfv( GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, border_color_.data() );
 
@@ -113,7 +113,7 @@ Texture3DNode::enter( GLState &    /*_state */, const DrawModes::DrawMode& /* _d
 void
 Texture3DNode::leave( GLState &    /* _state */ , const DrawModes::DrawMode& /* _drawmode */  )
 {
-  glBindTexture( GL_TEXTURE_3D, 0 );
+  ACG::GLState::bindTexture( GL_TEXTURE_3D, 0 );
 }
 
 
@@ -161,12 +161,12 @@ Texture3DNode::set_texture( unsigned int    _width,
     glDeleteTextures( 1, & texture_ );
 
   glGenTextures( 1, & texture_ );
-  glBindTexture( GL_TEXTURE_3D, texture_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_3D, texture_ );
 
   glTexImage3D( GL_TEXTURE_3D, 0, GL_RGBA,
  		_width, _height, _depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data );
 
-  glBindTexture( GL_TEXTURE_3D, 0 );
+  ACG::GLState::bindTexture( GL_TEXTURE_3D, 0 );
 
 }
 

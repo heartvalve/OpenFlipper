@@ -207,7 +207,7 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
   applyGLSettings();
 
   // copy texture to GL
-  glBindTexture( GL_TEXTURE_2D, textures_[_textureId].id );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[_textureId].id );
 
   if ( mipmapping_ )
     textures_[_textureId].mipmapAvailable = true;
@@ -244,7 +244,7 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
   textures_[_textureId].height      = _height;
   
   // Unbind until we use it
-  glBindTexture(GL_TEXTURE_2D,0);
+  ACG::GLState::bindTexture(GL_TEXTURE_2D,0);
 }
 
 
@@ -260,7 +260,7 @@ void TextureNode::updateMipmaps(bool _mipmap) {
     for(unsigned int i = 1; i < textures_.size(); ++i) {
         
         // Bind texture
-        glBindTexture( GL_TEXTURE_2D, textures_[i].id );
+        ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[i].id );
         
         // Get pixel data out of texture memory
         GLubyte* buffer = (GLubyte *)malloc(textures_[i].width*textures_[i].height*4);
@@ -514,7 +514,7 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
                       DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
                       DrawModes::SOLID_SHADER))
    {
-      glEnable( GL_TEXTURE_2D );
+      ACG::GLState::enable( GL_TEXTURE_2D );
       
       mipmapping_globally_active_ = _state.mipmapping_allowed();
       
@@ -530,7 +530,7 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
       }
       
       if ( !textures_.empty() ) {
-        glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
+        ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
       }
       glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_ );
    }
@@ -549,8 +549,8 @@ void TextureNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& _draw
                       DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
                       DrawModes::SOLID_SHADER))
    {
-      glBindTexture( GL_TEXTURE_2D, 0 );
-      glDisable( GL_TEXTURE_2D );
+      ACG::GLState::bindTexture( GL_TEXTURE_2D, 0 );
+      ACG::GLState::disable( GL_TEXTURE_2D );
    }
 }
 

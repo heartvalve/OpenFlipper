@@ -52,6 +52,7 @@
 
 #include "stipple_alpha.hh"
 #include "gl.hh"
+#include <GL/GLState.hh>
 
 
 //== NAMESPACES ===============================================================
@@ -62,7 +63,7 @@ namespace ACG {
 const GLubyte stippleMask[17][128] =
 {
   /* NOTE: 0% opaqueness is faster to set and probably faster to render with:
-	glDisable(GL_POLYGON_STIPPLE);
+	ACG::GLState::disable(GL_POLYGON_STIPPLE);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); */
   {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -337,7 +338,7 @@ const GLubyte stippleMask[17][128] =
    0xff, 0xff, 0xff, 0xff, 0x77, 0x77, 0x77, 0x77},
 
   /* NOTE: 100% opaqueness is faster to set and probably faster to render with:
-        glDisable(GL_POLYGON_STIPPLE); */
+        ACG::GLState::disable(GL_POLYGON_STIPPLE); */
   {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
@@ -367,14 +368,14 @@ void stipple_alpha(float _alpha)
   {
     if (_alpha < 0.0) _alpha = 0.0;
 
-    glEnable(GL_POLYGON_STIPPLE);
+    ACG::GLState::enable(GL_POLYGON_STIPPLE);
     glPolygonStipple(stippleMask[ (unsigned int)(_alpha * 16.0 + 0.5)]);
   }
 
   // opaque
   else
   {
-    glDisable(GL_POLYGON_STIPPLE);
+    ACG::GLState::disable(GL_POLYGON_STIPPLE);
   }
 }
 

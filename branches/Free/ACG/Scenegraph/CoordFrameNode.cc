@@ -109,8 +109,8 @@ CoordFrameNode::draw(GLState& /* _state */ , const DrawModes::DrawMode& /* _draw
 {
   // draw bounding box
 
-  glDisable(GL_LIGHTING);
-  glShadeModel(GL_FLAT);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::shadeModel(GL_FLAT);
 
   glBegin(GL_LINE_LOOP);
   glVertex3f(bb_min_[0], bb_min_[1], bb_min_[2]);

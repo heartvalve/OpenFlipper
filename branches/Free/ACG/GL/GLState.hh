@@ -503,7 +503,12 @@ public:
   /// get active GL texture
   inline static GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
   /// get active texture as zero based index
-  inline static int getActiveTextureIndex() {return getActiveTexture() - GL_TEXTURE0;}
+  inline static int getActiveTextureIndex() {
+    if (getActiveTexture() == 0)
+      return 0;
+    else
+      return getActiveTexture() - GL_TEXTURE0;
+  }
 
   /// replaces glBindTexture, supports locking
   static void bindTexture(GLenum _target, GLuint _buffer);

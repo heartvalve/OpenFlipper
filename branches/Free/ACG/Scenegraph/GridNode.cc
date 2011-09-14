@@ -135,10 +135,10 @@ GridNode::draw(GLState&  _state  , const DrawModes::DrawMode& /* _drawMode */ )
 {
 
   glPushAttrib( GL_LIGHTING_BIT ); // STACK_ATTRIBUTES <- LIGHTING_ATTRIBUTE
-  glDisable(GL_LIGHTING);
+  ACG::GLState::disable(GL_LIGHTING);
 
   glPushAttrib( GL_DEPTH_TEST );
-  glEnable( GL_DEPTH_TEST );
+  ACG::GLState::enable( GL_DEPTH_TEST );
 
   glLineWidth(0.1);
 

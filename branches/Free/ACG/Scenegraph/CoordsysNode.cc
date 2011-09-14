@@ -221,10 +221,10 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
   Vec4f lastBaseColor = _state.base_color();
 
   glPushAttrib( GL_LIGHTING_BIT ); // STACK_ATTRIBUTES <- LIGHTING_ATTRIBUTE
-  glEnable(GL_LIGHTING);
+  ACG::GLState::enable(GL_LIGHTING);
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
-  glEnable(GL_COLOR_MATERIAL);
-  glShadeModel(GL_SMOOTH);
+  ACG::GLState::enable(GL_COLOR_MATERIAL);
+  ACG::GLState::shadeModel(GL_SMOOTH);
 
   // Init state - changes when mode_ != POSITION
   Vec3d pos3D(0.0,0.0,0.0);
@@ -272,26 +272,26 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
     // clear the depth buffer behind the coordsys
     glDepthRange (1.0, 1.0);
-    glDepthFunc (GL_ALWAYS);
+    ACG::GLState::depthFunc (GL_ALWAYS);
 
     drawCoordsys(_state);
 
     glDepthRange (0.0, 1.0);
-    glDepthFunc (GL_LESS);
+    ACG::GLState::depthFunc (GL_LESS);
 
     // draw coordsys
     drawCoordsys(_state);
 
     // set depth buffer to 0 so that nothing can paint over cordsys
     glDepthRange (0.0, 0.0);
-    glDepthFunc (GL_ALWAYS);
+    ACG::GLState::depthFunc (GL_ALWAYS);
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
     glDepthRange (0.0, 1.0);
-    glDepthFunc (prev_depth);
+    ACG::GLState::depthFunc (prev_depth);
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
 
     // Projection reload
@@ -310,21 +310,21 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
     // clear depth buffer in coordsys region
     glDepthRange (1.0, 1.0);
-    glDepthFunc (GL_ALWAYS);
+    ACG::GLState::depthFunc (GL_ALWAYS);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
     // draw coordsys in normal mode
     glDepthRange (0.0, 1.0);
-    glDepthFunc (GL_LESS);
+    ACG::GLState::depthFunc (GL_LESS);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
     // set depth buffer to 0 so that nothing can paint over cordsys
     glDepthRange (0.0, 0.0);
-    glDepthFunc (GL_ALWAYS);
+    ACG::GLState::depthFunc (GL_ALWAYS);
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
     // Koordinatensystem zeichnen
@@ -332,7 +332,7 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
     // reset to default
     glDepthRange (0.0, 1.0);
-    glDepthFunc (prev_depth);
+    ACG::GLState::depthFunc (prev_depth);
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
   }
 
@@ -453,21 +453,21 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       {
         // clear depth buffer in coordsys region
         glDepthRange (1.0, 1.0);
-        glDepthFunc (GL_ALWAYS);
+        ACG::GLState::depthFunc (GL_ALWAYS);
 
         // Koordinatensystem zeichnen
         drawCoordsys(_state);
 
         // draw coordsys in normal mode
         glDepthRange (0.0, 1.0);
-        glDepthFunc (GL_LESS);
+        ACG::GLState::depthFunc (GL_LESS);
 
         // Koordinatensystem zeichnen
         drawCoordsys(_state);
 
         // set depth buffer to 0 so tah nothing can paint over cordsys
         glDepthRange (0.0, 0.0);
-        glDepthFunc (GL_ALWAYS);
+        ACG::GLState::depthFunc (GL_ALWAYS);
         glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
         // Koordinatensystem zeichnen
@@ -475,7 +475,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
         // reset to default
         glDepthRange (0.0, 1.0);
-        glDepthFunc (prev_depth);
+        ACG::GLState::depthFunc (prev_depth);
         glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       }
 
@@ -523,21 +523,21 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       {
         // clear depth buffer in coordsys region
         glDepthRange (1.0, 1.0);
-        glDepthFunc (GL_ALWAYS);
+        ACG::GLState::depthFunc (GL_ALWAYS);
 
         // Koordinatensystem zeichnen
         drawCoordsys(_state);
 
         // draw coordsys in normal mode
         glDepthRange (0.0, 1.0);
-        glDepthFunc (GL_LESS);
+        ACG::GLState::depthFunc (GL_LESS);
 
         // Koordinatensystem zeichnen
         drawCoordsys(_state);
 
         // set depth buffer to 0 so tah nothing can paint over cordsys
         glDepthRange (0.0, 0.0);
-        glDepthFunc (GL_ALWAYS);
+        ACG::GLState::depthFunc (GL_ALWAYS);
         glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
         // Koordinatensystem zeichnen
@@ -545,7 +545,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
         // reset to default
         glDepthRange (0.0, 1.0);
-        glDepthFunc (prev_depth);
+        ACG::GLState::depthFunc (prev_depth);
         glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       }
     }
@@ -597,7 +597,7 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
 
   _state.push_modelview_matrix();
   _state.reset_modelview();
-  glDepthFunc (GL_ALWAYS);
+  ACG::GLState::depthFunc (GL_ALWAYS);
   glDepthRange (_depth, _depth);
   _state.translate (center[0], center[1], -0.5);
 
@@ -609,7 +609,7 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
   // 10% more to ensure everything is in
   gluDisk( quadric, 0, radius * 1.1, 10, 10 );
 
-  glDepthFunc (prev_depth);
+  ACG::GLState::depthFunc (prev_depth);
   _state.pop_modelview_matrix();
   _state.pop_projection_matrix();
 

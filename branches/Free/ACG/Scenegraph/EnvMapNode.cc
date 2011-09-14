@@ -94,9 +94,9 @@ void EnvMapNode::enter(GLState& _state, const DrawModes::DrawMode& _drawmode)
     TextureNode::enter(_state, _drawmode);
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
-    glEnable(GL_TEXTURE_2D);
+    ACG::GLState::enable(GL_TEXTURE_GEN_S);
+    ACG::GLState::enable(GL_TEXTURE_GEN_T);
+    ACG::GLState::enable(GL_TEXTURE_2D);
   } else
     TextureNode::enter( _state, _drawmode);
 }
@@ -110,9 +110,9 @@ void EnvMapNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode)
   if (_drawmode==DrawModes::SOLID_ENV_MAPPED)
   {
     TextureNode::leave(_state, _drawmode);
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
+    ACG::GLState::disable(GL_TEXTURE_GEN_S);
+    ACG::GLState::disable(GL_TEXTURE_GEN_T);
+    ACG::GLState::disable(GL_TEXTURE_2D);
   } else
     TextureNode::leave( _state, _drawmode);
 }

@@ -104,10 +104,10 @@ void LightSourceNode::enter(GLState& _state, const DrawModes::DrawMode& /* _draw
 	  _state.inverse_modelview()*lights_[i].position;
       else lights_[i].realPosition = lights_[i].position;
 
-      glEnable(index2gl(i));
+      ACG::GLState::enable(index2gl(i));
       set_parameters(index2gl(i), lights_[i]);
     }
-    else glDisable(index2gl(i));
+    else ACG::GLState::disable(index2gl(i));
 
   }
 }
@@ -123,10 +123,10 @@ void LightSourceNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& /
   {
     if(lightsSave_[i].enabled)
     {
-      glEnable(index2gl(i));
+      ACG::GLState::enable(index2gl(i));
       set_parameters(index2gl(i), lightsSave_[i]);
     }
-    else glDisable(index2gl(i));
+    else ACG::GLState::disable(index2gl(i));
   }
 }
 

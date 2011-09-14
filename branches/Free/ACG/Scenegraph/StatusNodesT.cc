@@ -180,13 +180,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   GLenum prev_depth = _state.depthFunc();
   
-  glDepthFunc(GL_LEQUAL);
+  ACG::GLState::depthFunc(GL_LEQUAL);
 
-  if (shaded)  glEnable(GL_LIGHTING);
-  else         glDisable(GL_LIGHTING);
+  if (shaded)  ACG::GLState::enable(GL_LIGHTING);
+  else         ACG::GLState::disable(GL_LIGHTING);
 
-  if (smooth)  glShadeModel(GL_SMOOTH);
-  else         glShadeModel(GL_FLAT);
+  if (smooth)  ACG::GLState::shadeModel(GL_SMOOTH);
+  else         ACG::GLState::shadeModel(GL_FLAT);
 
 
   if (shaded && mesh_.has_vertex_normals()) {
@@ -223,7 +223,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
       
       glPushAttrib( GL_ENABLE_BIT );
 
-      glEnable(GL_POLYGON_OFFSET_FILL);
+      ACG::GLState::enable(GL_POLYGON_OFFSET_FILL);
 
       glPolygonOffset(0.001, 0.0);
       draw_faces(smooth);
@@ -239,7 +239,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
   
-  glDepthFunc(prev_depth);
+  ACG::GLState::depthFunc(prev_depth);
 }
 
 

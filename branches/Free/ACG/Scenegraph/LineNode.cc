@@ -112,7 +112,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
   if (_drawMode & DrawModes::WIREFRAME)
   {
-    glDisable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
 
     if (line_mode_ == LineSegmentsMode)
       glBegin(GL_LINES);

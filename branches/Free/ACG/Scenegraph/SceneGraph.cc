@@ -83,9 +83,9 @@ bool PickAction::operator()(BaseNode* _node)
   if ( !_node->pickingEnabled() )
     return true;
   
-  glDisable(GL_LIGHTING);
-  glDisable(GL_DITHER);
-  glShadeModel(GL_FLAT);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_DITHER);
+  ACG::GLState::shadeModel(GL_FLAT);
 
   state_.pick_push_name ((GLuint) _node->id());
 

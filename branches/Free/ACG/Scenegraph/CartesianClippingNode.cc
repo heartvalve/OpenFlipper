@@ -90,7 +90,7 @@ CartesianClippingNode::enter( GLState & _state, const DrawModes::DrawMode& /* _d
     }
     
     glClipPlane( GL_CLIP_PLANE0, xy_plane );
-    glEnable( GL_CLIP_PLANE0 );
+    ACG::GLState::enable( GL_CLIP_PLANE0 );
   }
 
   if ( is_enabled( YZ_PLANE ) )
@@ -112,7 +112,7 @@ CartesianClippingNode::enter( GLState & _state, const DrawModes::DrawMode& /* _d
     }
     
     glClipPlane( GL_CLIP_PLANE1, yz_plane );
-    glEnable( GL_CLIP_PLANE1 );
+    ACG::GLState::enable( GL_CLIP_PLANE1 );
   }
 
   if ( is_enabled( XZ_PLANE ) )
@@ -134,7 +134,7 @@ CartesianClippingNode::enter( GLState & _state, const DrawModes::DrawMode& /* _d
     }
     
     glClipPlane( GL_CLIP_PLANE2, xz_plane );
-    glEnable( GL_CLIP_PLANE2 );
+    ACG::GLState::enable( GL_CLIP_PLANE2 );
   }
 
 
@@ -148,9 +148,9 @@ CartesianClippingNode::enter( GLState & _state, const DrawModes::DrawMode& /* _d
 void
 CartesianClippingNode::leave( GLState & /* _state */ , const DrawModes::DrawMode& /* _drawmode */ )
 {
-  glDisable( GL_CLIP_PLANE0 );
-  glDisable( GL_CLIP_PLANE1 );
-  glDisable( GL_CLIP_PLANE2 );
+  ACG::GLState::disable( GL_CLIP_PLANE0 );
+  ACG::GLState::disable( GL_CLIP_PLANE1 );
+  ACG::GLState::disable( GL_CLIP_PLANE2 );
 }
 
 

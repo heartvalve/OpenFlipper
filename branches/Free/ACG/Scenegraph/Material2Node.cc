@@ -131,9 +131,9 @@ void Material2Node::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmo
                            glIsEnabled(GL_ALPHA_TEST);
 
     if( round_points_)
-      glEnable(GL_POINT_SMOOTH);
+      ACG::GLState::enable(GL_POINT_SMOOTH);
     else
-      glDisable(GL_POINT_SMOOTH);
+      ACG::GLState::disable(GL_POINT_SMOOTH);
   }
 
 
@@ -144,12 +144,12 @@ void Material2Node::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmo
   
     if(alpha_test_)
     {
-      glAlphaFunc(GL_GREATER, alpha_clip_);
-      glEnable(GL_ALPHA_TEST);
+      ACG::GLState::alphaFunc(GL_GREATER, alpha_clip_);
+      ACG::GLState::enable(GL_ALPHA_TEST);
     }
     else
     {
-      glDisable(GL_ALPHA_TEST);
+      ACG::GLState::disable(GL_ALPHA_TEST);
     }
   }
 
@@ -166,13 +166,13 @@ void Material2Node::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmo
     if (blending_)
     {
       _state.set_depthFunc(GL_LEQUAL);
-      glBlendFunc(blend_param1_, blend_param2_);
-      glEnable(GL_BLEND);
+      ACG::GLState::blendFunc(blend_param1_, blend_param2_);
+      ACG::GLState::enable(GL_BLEND);
     }
     else
     {
       _state.set_depthFunc(GL_LESS);
-      glDisable(GL_BLEND);
+      ACG::GLState::disable(GL_BLEND);
     }
   }
   
@@ -182,9 +182,9 @@ void Material2Node::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmo
     backface_culling_backup_ = glIsEnabled(GL_CULL_FACE);
 
     if (backface_culling_)
-      glEnable( GL_CULL_FACE );
+      ACG::GLState::enable( GL_CULL_FACE );
     else
-      glDisable( GL_CULL_FACE );
+      ACG::GLState::disable( GL_CULL_FACE );
  }
 
 
@@ -239,21 +239,21 @@ void Material2Node::leave(GLState& _state, const DrawModes::DrawMode& /* _drawmo
   if (applyProperties_ & RoundPoints)
   {
     if( round_points_backup_)
-      glEnable(GL_POINT_SMOOTH);
+      ACG::GLState::enable(GL_POINT_SMOOTH);
     else
-      glDisable(GL_POINT_SMOOTH);
+      ACG::GLState::disable(GL_POINT_SMOOTH);
   }
 
   if (applyProperties_ & AlphaTest)
   {
     if (alpha_test_backup_)
     {
-      glAlphaFunc(GL_GREATER, alpha_clip_backup_);
-      glEnable(GL_ALPHA_TEST);
+      ACG::GLState::alphaFunc(GL_GREATER, alpha_clip_backup_);
+      ACG::GLState::enable(GL_ALPHA_TEST);
     }
     else
     {
-      glDisable(GL_ALPHA_TEST);
+      ACG::GLState::disable(GL_ALPHA_TEST);
     }
   }
 
@@ -265,12 +265,12 @@ void Material2Node::leave(GLState& _state, const DrawModes::DrawMode& /* _drawmo
 
     if (blending_backup_)
     {
-      glBlendFunc(blend_param1_backup_, blend_param2_backup_);
-      glEnable(GL_BLEND);
+      ACG::GLState::blendFunc(blend_param1_backup_, blend_param2_backup_);
+      ACG::GLState::enable(GL_BLEND);
     }
     else
     {
-      glDisable(GL_BLEND);
+      ACG::GLState::disable(GL_BLEND);
     }
   }
 
@@ -278,9 +278,9 @@ void Material2Node::leave(GLState& _state, const DrawModes::DrawMode& /* _drawmo
   if (applyProperties_ & BackFaceCulling)
   {
     if (backface_culling_backup_)
-      glEnable( GL_CULL_FACE );
+      ACG::GLState::enable( GL_CULL_FACE );
     else
-      glDisable( GL_CULL_FACE );
+      ACG::GLState::disable( GL_CULL_FACE );
  }
 }
 

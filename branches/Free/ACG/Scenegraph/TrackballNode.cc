@@ -77,8 +77,8 @@ TrackballNode::draw(GLState& /* _state */ , const DrawModes::DrawMode& /* _drawM
   // draw the trackball
   if (drawTrackball_) 
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel( GL_FLAT );
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel( GL_FLAT );
     glPushMatrix();
     glTranslatef(center()[0], center()[1], center()[2]);
     glutWireSphere(radius_, 20, 20);
@@ -94,8 +94,8 @@ TrackballNode::draw(GLState& /* _state */ , const DrawModes::DrawMode& /* _drawM
     glGetFloatv(GL_CURRENT_COLOR, backupColor);
     glGetFloatv(GL_LINE_WIDTH, &backupLineWidth);
     
-    glDisable(GL_LIGHTING);
-    glShadeModel( GL_FLAT );
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel( GL_FLAT );
     glLineWidth(3.0);
 
     glColor3f(1.0, 0.0, 0.0);

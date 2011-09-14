@@ -426,7 +426,7 @@ bool TranslationManipulatorNode::updateCurrentColors (GLState& _state)
 void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
 {
   glPushAttrib(GL_ENABLE_BIT );
-  glDisable( GL_CULL_FACE );
+  ACG::GLState::disable( GL_CULL_FACE );
 
   // Save modelview matrix
   _state.push_modelview_matrix();
@@ -435,21 +435,21 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   // Sphere
   //================================================================================================
 
-//     glDisable(GL_ALPHA_TEST);
-//     glEnable(GL_BLEND);
-//     glEnable(GL_CULL_FACE);
+//     ACG::GLState::disable(GL_ALPHA_TEST);
+//     ACG::GLState::enable(GL_BLEND);
+//     ACG::GLState::enable(GL_CULL_FACE);
 //     glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
-//     glEnable(GL_COLOR_MATERIAL);
+//     ACG::GLState::enable(GL_COLOR_MATERIAL);
 //
-//     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_DST_ALPHA);
+//     ACG::GLState::blendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_DST_ALPHA);
 //
 //     glColor4f( 1.0,0.0,0.0,0.3);
 //     gluSphere( axis_, manipulator_height_ * 1.5 ,  manipulator_slices_ * 2, manipulator_stacks_ * 2);
-//     glDisable(GL_COLOR_MATERIAL);
+//     ACG::GLState::disable(GL_COLOR_MATERIAL);
 //
 //
-//     glEnable(GL_ALPHA_TEST);
-//     glDisable(GL_BLEND);
+//     ACG::GLState::enable(GL_ALPHA_TEST);
+//     ACG::GLState::disable(GL_BLEND);
 
   //================================================================================================
   // Z-Axis
@@ -624,9 +624,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   // Outer-Rings
   //=================================================================================================
 
-  glEnable (GL_BLEND);
+  ACG::GLState::enable (GL_BLEND);
   glPushAttrib(GL_LIGHTING_BIT);
-  glDisable(GL_LIGHTING);
+  ACG::GLState::disable(GL_LIGHTING);
 
   if (_active)
   {
@@ -694,8 +694,8 @@ TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* 
 
     // Store lighting bits and enable lighting
     glPushAttrib(GL_LIGHTING_BIT);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
 
     // Store original depth status
     glPushAttrib(GL_DEPTH_BUFFER_BIT);
@@ -718,15 +718,15 @@ TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* 
     if (updateCurrentColors (_state))
       setDirty ();
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_GREATER);
+    ACG::GLState::enable(GL_DEPTH_TEST);
+    ACG::GLState::depthFunc(GL_GREATER);
     glDepthMask(GL_FALSE);
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    ACG::GLState::enable (GL_BLEND);
+    ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     drawManipulator(_state, false);
-    glDisable (GL_BLEND);
+    ACG::GLState::disable (GL_BLEND);
 
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     glDepthMask(GL_TRUE);
     drawManipulator(_state, true);
 
@@ -740,7 +740,7 @@ TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* 
     _state.set_diffuse_color(backup_diffuse);
     _state.set_specular_color(backup_specular);
     
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
   }
 }
 
@@ -1802,8 +1802,8 @@ pick(GLState& _state, PickTarget _target)
 
 	// Enable depth test but store original status
 	glPushAttrib(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+	ACG::GLState::enable(GL_DEPTH_TEST);
+	ACG::GLState::depthFunc(GL_LEQUAL);
 
 	// Save modelview matrix
 	_state.push_modelview_matrix();
@@ -1906,7 +1906,7 @@ pick(GLState& _state, PickTarget _target)
 	_state.pop_modelview_matrix();
 	
 	//restore original depth comparison function
-	glDepthFunc(prev_depth);
+	ACG::GLState::depthFunc(prev_depth);
     }
   }
 }

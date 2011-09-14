@@ -119,10 +119,10 @@ GlutViewer::init()
 
 
   // OpenGL state
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_LIGHTING);
-  glDisable(GL_DITHER);
-  glShadeModel(GL_FLAT);
+  ACG::GLState::enable(GL_DEPTH_TEST);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::disable(GL_DITHER);
+  ACG::GLState::shadeModel(GL_FLAT);
   glFrontFace(GL_CCW);
 
 
@@ -138,7 +138,7 @@ GlutViewer::init()
   glLightfv(GL_LIGHT##i, GL_POSITION, pos);	\
   glLightfv(GL_LIGHT##i, GL_DIFFUSE,  col);	\
   glLightfv(GL_LIGHT##i, GL_SPECULAR, col);	\
-  glEnable(GL_LIGHT##i);			\
+  ACG::GLState::enable(GL_LIGHT##i);			\
 }
 
   SET_LIGHT(0,  0.0,  0.0, 1.0);
