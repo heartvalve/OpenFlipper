@@ -95,7 +95,7 @@ glViewer::setStereoMode(bool _b)
 
   if (!stereo_) {
     makeCurrent();
-    glDrawBuffer(GL_BACK);
+    ACG::GLState::drawBuffer(GL_BACK);
   }
 
   updateProjectionMatrix ();
@@ -136,7 +136,7 @@ glViewer::drawScene_glStereo()
   glFrustum(l+offset2, r+offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(+offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_LEFT);
+  ACG::GLState::drawBuffer(GL_BACK_LEFT);
   glstate_->clearBuffers ();
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
@@ -148,11 +148,11 @@ glViewer::drawScene_glStereo()
   glFrustum(l-offset2, r-offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_RIGHT);
+  ACG::GLState::drawBuffer(GL_BACK_RIGHT);
   glstate_->clearBuffers ();
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
-  glDrawBuffer(GL_BACK);
+  ACG::GLState::drawBuffer(GL_BACK);
 }
 
 
@@ -263,13 +263,13 @@ glViewer::updateCustomAnaglyphStereo()
   if (glstate_->viewport_width () != agTexWidth_ ||
       glstate_->viewport_height () != agTexHeight_)
   {
-    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+    ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
     glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width (),
                   glstate_->viewport_height (), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+    ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
     glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, glstate_->viewport_width (),
                   glstate_->viewport_height (), 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+    ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
     agTexWidth_ = glstate_->viewport_width ();
     agTexHeight_ = glstate_->viewport_height ();
@@ -338,9 +338,9 @@ glViewer::drawScene_customAnaglyphStereo()
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
   glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
   // right eye
   glMatrixMode(GL_PROJECTION);
@@ -352,16 +352,16 @@ glViewer::drawScene_customAnaglyphStereo()
   glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
   glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
   glActiveTexture (GL_TEXTURE0);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
   glEnable (GL_TEXTURE_RECTANGLE_ARB);
 
   glActiveTexture (GL_TEXTURE1);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
   glEnable (GL_TEXTURE_RECTANGLE_ARB);
 
   glEnable (GL_FRAGMENT_PROGRAM_ARB);
@@ -381,7 +381,7 @@ glViewer::drawScene_customAnaglyphStereo()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glDisable (GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_DEPTH_TEST);
 
   glBegin (GL_QUADS);
   glMultiTexCoord2f (GL_TEXTURE0, 0, vp_h);
@@ -401,15 +401,15 @@ glViewer::drawScene_customAnaglyphStereo()
   glEnable (GL_DEPTH_TEST);
 
   glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0);
-  glDisable (GL_FRAGMENT_PROGRAM_ARB);
+  ACG::GLState::disable(GL_FRAGMENT_PROGRAM_ARB);
 
   glActiveTexture (GL_TEXTURE1);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
-  glDisable (GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  ACG::GLState::disable(GL_TEXTURE_RECTANGLE_ARB);
 
   glActiveTexture (GL_TEXTURE0);
-  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
-  glDisable (GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
+  ACG::GLState::disable(GL_TEXTURE_RECTANGLE_ARB);
 
 }
 
