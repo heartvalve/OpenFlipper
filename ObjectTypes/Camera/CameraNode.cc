@@ -75,8 +75,8 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
 
     glPushAttrib(GL_LIGHTING_BIT);
     glPushAttrib(GL_ENABLE_BIT);
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_LIGHTING); // Turn lighting on
+    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING); // Turn lighting on
 
     // Store modelview matrix
     _state.push_modelview_matrix();
@@ -103,7 +103,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // Draw camera box
     
     glPushAttrib(GL_LIGHTING_BIT);
-    glDisable(GL_LIGHTING); // Disable lighting
+    ACG::GLState::disable(GL_LIGHTING); // Disable lighting
     glBegin(GL_LINES);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(-half_width_, -half_height_, -near_);
@@ -137,7 +137,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
         // Draw left side of frustum
         glEnable (GL_BLEND);
         glPushAttrib(GL_LIGHTING_BIT);
-        glDisable(GL_LIGHTING); // Disable lighting
+        ACG::GLState::disable(GL_LIGHTING); // Disable lighting
         
         glColor4f(0.0f, 0.5f, 0.0f, 1.0f);
         

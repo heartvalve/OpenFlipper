@@ -126,8 +126,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   
   if (_drawMode & DrawModes::POINTS)
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     render( _state, false);
   }
 
@@ -135,9 +135,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   {
     glPushAttrib(GL_ENABLE_BIT);
 
-    glDisable( GL_CULL_FACE );
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::disable( GL_CULL_FACE );
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     render( _state, false);
@@ -153,9 +153,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     Vec4f  base_color  = _state.base_color();
     clear_color[3] = 1.0;
 
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_DEPTH_TEST);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
 
@@ -166,23 +166,23 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     glDepthRange(0.0, 1.0);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
+    ACG::GLState::depthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
 
     render( _state, false);
 
-    glDepthFunc(prev_depth);
+    ACG::GLState::depthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
 
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ))
   {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_FLAT);
 
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
+    ACG::GLState::enable(GL_AUTO_NORMAL);
+    ACG::GLState::enable(GL_NORMALIZE);
 
     glDepthRange(0.01, 1.0);
 
@@ -194,11 +194,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) )
   {
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
+    ACG::GLState::enable(GL_AUTO_NORMAL);
+    ACG::GLState::enable(GL_NORMALIZE);
 
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     render( _state, true);
@@ -208,11 +208,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED )  )
   {
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
+    ACG::GLState::enable(GL_AUTO_NORMAL);
+    ACG::GLState::enable(GL_NORMALIZE);
 
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     render( _state, true);
@@ -223,11 +223,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     // If in shader mode, just draw, as the shader has to be set by a shadernode above this node
   if ( (_drawMode & DrawModes::SOLID_SHADER )  ) {
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
+    ACG::GLState::enable(GL_AUTO_NORMAL);
+    ACG::GLState::enable(GL_NORMALIZE);
 
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
 //     draw_faces(PER_VERTEX);
@@ -238,12 +238,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 
   if ( (_drawMode & DrawModes::SOLID_TEXTURED )  ) {
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_NORMALIZE);
+    ACG::GLState::enable(GL_AUTO_NORMAL);
+    ACG::GLState::enable(GL_NORMALIZE);
     glEnable (GL_BLEND); 
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
 
     arb_texture_used_ = true;
@@ -251,7 +251,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     arb_texture_used_ = false;
 
     glDepthRange(0.0, 1.0);
-    glDisable(GL_BLEND);
+    ACG::GLState::disable(GL_BLEND);
   }
 
   glPopAttrib();
@@ -380,10 +380,10 @@ BSplineSurfaceNodeT<BSplineSurface>::
 drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  glEnable( GL_COLOR_MATERIAL );
+  ACG::GLState::enable (GL_COLOR_MATERIAL );
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     
-  glEnable(GL_TEXTURE_2D);
+  ACG::GLState::enable(GL_TEXTURE_2D);
   
   // blend colors (otherwise lighting does not affect the texture)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -402,13 +402,13 @@ drawTexturedSurface(GLState& _state, GLuint _texture_idx)
   // GL_MODULATE to include lighting effects
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   
-  glBindTexture( GL_TEXTURE_2D, _texture_idx);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, _texture_idx);
 
   draw_textured_nurbs( _state);
 
-  glBindTexture( GL_TEXTURE_2D, 0);
-  glDisable(GL_TEXTURE_2D);
-  glDisable( GL_COLOR_MATERIAL );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::disable(GL_TEXTURE_2D);
+  ACG::GLState::disable( GL_COLOR_MATERIAL );
   glPopAttrib( );
 }
 
@@ -426,9 +426,9 @@ drawControlNet(GLState& _state)
 //   glPushAttrib(GL_ENABLE_BIT);
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-  glDisable( GL_CULL_FACE );
-  glDisable(GL_LIGHTING);
-  glShadeModel(GL_FLAT);
+  ACG::GLState::disable( GL_CULL_FACE );
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::shadeModel(GL_FLAT);
 
   // draw points
   
@@ -554,13 +554,13 @@ drawFancyControlNet(GLState& _state)
 //   glPushAttrib(GL_ENABLE_BIT);
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-  glDisable( GL_CULL_FACE );
+  ACG::GLState::disable( GL_CULL_FACE );
   
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable( GL_COLOR_MATERIAL );
-  glEnable(GL_LIGHTING);
+  ACG::GLState::enable(GL_COLOR_MATERIAL );
+  ACG::GLState::enable(GL_LIGHTING);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glShadeModel(GL_SMOOTH);
+  ACG::GLState::shadeModel(GL_SMOOTH);
 
 
   // draw points
@@ -640,7 +640,7 @@ pick(GLState& _state, PickTarget _target)
   if(pick_texture_idx_ == 0)
       pick_init_texturing();
     
-  glDisable(GL_COLOR_MATERIAL);
+  ACG::GLState::disable(GL_COLOR_MATERIAL);
   
   switch (_target)
   {
@@ -722,11 +722,11 @@ pick_spline( GLState& _state )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-  glEnable(GL_TEXTURE_2D);
+  ACG::GLState::enable(GL_TEXTURE_2D);
   
-  glDisable(GL_COLOR_MATERIAL);
-  glDisable(GL_LIGHTING);
-  glShadeModel(GL_FLAT);
+  ACG::GLState::disable(GL_COLOR_MATERIAL);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::shadeModel(GL_FLAT);
 
   std::cout << "[BSplineSurface] pick_spline: \n"
             << "pick_texture_baseidx_ = " << pick_texture_baseidx_
@@ -750,13 +750,13 @@ pick_spline( GLState& _state )
     // GL_REPLACE to avoid smearing colors (else color picking breaks!)
     glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     
-    glBindTexture( GL_TEXTURE_2D, pick_texture_idx_);
+    ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_);
   }
 
   draw_textured_nurbs( _state);
 
-  glBindTexture( GL_TEXTURE_2D, 0);
-  glDisable(GL_TEXTURE_2D);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::disable(GL_TEXTURE_2D);
   glPopAttrib( );
 }
 
@@ -858,7 +858,7 @@ selection_init_texturing(GLuint & _texture_idx )
   // generate texture index
   glGenTextures( 1, &_texture_idx );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, _texture_idx );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, _texture_idx );
   // blend colors (otherwise lighting does not affect the texture)
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -868,7 +868,7 @@ selection_init_texturing(GLuint & _texture_idx )
   // GL_MODULATE to include lighting effects
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   // unbind current texture
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -970,7 +970,7 @@ create_cp_selection_texture(GLState& /*_state*/)
   cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, cp_selection_texture_image_.width(), cp_selection_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, cp_selection_texture_image_.bits() );
@@ -1108,7 +1108,7 @@ create_knot_selection_texture(GLState& _state)
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, knot_selection_texture_image_.width(), knot_selection_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, knot_selection_texture_image_.bits() );
@@ -1129,7 +1129,7 @@ pick_init_texturing( )
   // generate texture index
   glGenTextures( 1, &pick_texture_idx_ );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
   // do not blend colors (else color picking breaks!)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -1139,7 +1139,7 @@ pick_init_texturing( )
   // GL_REPLACE to avoid smearing colors (else color picking breaks!)
   glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // unbind current texture
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 }
 
 //----------------------------------------------------------------------------
@@ -1203,7 +1203,7 @@ pick_create_texture( GLState& _state)
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
                  0, GL_RGBA, pick_texture_image_.width(), pick_texture_image_.height(), 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, pick_texture_image_.bits() );
@@ -1219,7 +1219,7 @@ set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v
   if(arb_texture_idx_ == 0)
       selection_init_texturing(arb_texture_idx_);
     
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 
   arb_texture_repeat_   = _repeat;
   arb_texture_repeat_u_ = _u_repeat;
@@ -1230,7 +1230,7 @@ set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v
   int v_res          = arb_texture_image_.height();
 
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, arb_texture_idx_ );
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, arb_texture_idx_ );
 
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1240,7 +1240,7 @@ set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v
                  0, GL_RGBA, GL_UNSIGNED_BYTE, arb_texture_image_.bits() );
 
   // unbind current texture
-  glBindTexture( GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
 }
 
 //----------------------------------------------------------------------------
