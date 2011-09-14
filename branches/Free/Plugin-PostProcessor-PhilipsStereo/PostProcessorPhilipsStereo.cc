@@ -190,7 +190,7 @@ void PostProcessorPhilipsStereoPlugin::updateScenePhilipsStereo(ACG::GLState* _g
     glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, _glstate->viewport_width(), _glstate->viewport_height(), 0,
         GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
 
     colorTextureBufferWidth_  = _glstate->viewport_width();
     colorTextureBufferHeight_ = _glstate->viewport_height();
@@ -233,7 +233,7 @@ void PostProcessorPhilipsStereoPlugin::updateScenePhilipsStereo(ACG::GLState* _g
     glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, _glstate->viewport_width(), _glstate->viewport_height(), 0,
         GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
 
     depthStencilTextureBufferWidth_  = _glstate->viewport_width();
     depthStencilTextureBufferHeight_ = _glstate->viewport_height();
@@ -302,9 +302,9 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate) {
   // ======================================================================================================
   // Render plain textured
   // ======================================================================================================
-  glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);
-  glDisable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_COLOR_MATERIAL);
+  ACG::GLState::disable(GL_DEPTH_TEST);
 
   // ======================================================================================================
   // Setup orthogonal projection
@@ -344,7 +344,7 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate) {
 
   pProgram_->disable();
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
 
   // ======================================================================================================
   // Cleanup (color and depth textures)
