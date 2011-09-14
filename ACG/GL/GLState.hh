@@ -368,6 +368,19 @@ public:
   /// get vertex pointer, null-ptr safe
   static void getVertexPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
+  /// Wrapper: glVertexPointer for Vec2f
+  static void vertexPointer(const Vec2f* _p) {vertexPointer(2, GL_FLOAT, 0, _p);}
+  /// Wrapper: glVertexPointer for Vec2d
+  static void vertexPointer(const Vec2d* _p) {vertexPointer(2, GL_DOUBLE, 0, _p);}
+  /// Wrapper: glVertexPointer for Vec3f
+  static void vertexPointer(const Vec3f* _p) {vertexPointer(3, GL_FLOAT, 0, _p);}
+  /// Wrapper: glVertexPointer for Vec3d
+  static void vertexPointer(const Vec3d* _p) {vertexPointer(3, GL_DOUBLE, 0, _p);}
+  /// Wrapper: glVertexPointer for Vec4f
+  static void vertexPointer(const Vec4f* _p) {vertexPointer(4, GL_FLOAT, 0, _p);}
+  /// Wrapper: glVertexPointer for Vec4d
+  static void vertexPointer(const Vec4d* _p) {vertexPointer(4, GL_DOUBLE, 0, _p);}
+
   /// lock vertex pointer
   static void lockVertexPointer() {vertexPointerLock_ = true;}
   /// unlock vertex pointer
@@ -379,6 +392,11 @@ public:
   static void normalPointer(GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get normal pointer, null-ptr safe
   static void getNormalPointer(GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+
+  /// Wrapper: glNormalPointer for Vec3f
+  static void normalPointer(const Vec3f* _p) { glNormalPointer(GL_FLOAT, 0, _p); }
+  /// Wrapper: glNormalPointer for Vec3d
+  static void normalPointer(const Vec3d* _p) { glNormalPointer(GL_DOUBLE, 0, _p); }
 
   /// lock normal pointer
   static void lockNormalPointer() {normalPointerLock_ = true;}
@@ -393,6 +411,15 @@ public:
   /// get color pointer, null-ptr safe
   static void getColorPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
 
+  /// Wrapper: glColorPointer for Vec3uc
+  static void colorPointer(const Vec3uc* _p) {colorPointer(3, GL_UNSIGNED_BYTE, 0, _p);}
+  /// Wrapper: glColorPointer for Vec3f
+  static void colorPointer(const Vec3f* _p) {colorPointer(3, GL_FLOAT, 0, _p);}
+  /// Wrapper: glColorPointer for Vec4uc
+  static void colorPointer(const Vec4uc* _p) {colorPointer(4, GL_UNSIGNED_BYTE, 0, _p);}
+  /// Wrapper: glColorPointer for Vec4f
+  static void colorPointer(const Vec4f* _p) {colorPointer(4, GL_FLOAT, 0, _p);}
+
   /// lock color pointer
   static void lockColorPointer() {colorPointerLock_ = true;}
   /// unlock vertex pointer
@@ -405,6 +432,24 @@ public:
   static void texcoordPointer(GLint _size, GLenum _type, GLsizei _stride, const GLvoid* _pointer);
   /// get color pointer, null-ptr safe
   static void getTexcoordPointer(GLint* _size, GLenum* _type, GLsizei* _stride, const GLvoid** _pointer);
+
+  /// Wrapper: glTexcoordPointer for float
+  static void texcoordPointer(const float* _p) {texcoordPointer(1, GL_FLOAT, 0, _p); }
+  /// Wrapper: glTexcoordPointer for double
+  static void texcoordPointer(const double* _p) {texcoordPointer(1, GL_DOUBLE, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec2f
+  static void texcoordPointer(const Vec2f* _p) {texcoordPointer(2, GL_FLOAT, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec2d
+  static void texcoordPointer(const Vec2d* _p) {texcoordPointer(2, GL_DOUBLE, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec3f
+  static void texcoordPointer(const Vec3f* _p) {texcoordPointer(3, GL_FLOAT, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec3d
+  static void texcoordPointer(const Vec3d* _p) {texcoordPointer(3, GL_DOUBLE, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec4f
+  static void texcoordPointer(const Vec4f* _p) {texcoordPointer(4, GL_FLOAT, 0, _p); }
+  /// Wrapper: glTexcoordPointer for Vec4d
+  static void texcoordPointer(const Vec4d* _p) {texcoordPointer(4, GL_DOUBLE, 0, _p); }
+
 
   /// lock color pointer
   static void lockTexcoordPointer() {colorPointerLock_ = true;}
@@ -422,7 +467,9 @@ public:
   //===========================================================================
 
   /// replaces glBindBuffer, supports locking
-  static void bindBuffer(GLenum _target, GLuint _buffer);
+  static void bindBuffer(GLenum _target, GLuint _buffer);  
+  /// same function as bindBuffer
+  static void bindBufferARB(GLenum _target, GLuint _buffer) {bindBuffer(_target, _buffer);}
 
   /// lock buffer target
   static void lockBufferTarget(GLenum _target);
@@ -499,6 +546,9 @@ public:
 
   /// replaces glActiveTexture, no locking support
   static void activeTexture(GLenum _texunit);
+  /// same functiona as activeTexture
+  static void activeTextureARB(GLenum _texunit) {activeTexture(_texunit);}
+
 
   /// get active GL texture
   inline static GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
