@@ -103,8 +103,8 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   if (_drawMode & DrawModes::POINTS)
   {
     ACG::GLState::disable(GL_LIGHTING);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(&points_[0]);
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::vertexPointer(&points_[0]);
     glDrawArrays(GL_POINTS, 0, points_.size());
   }
 
@@ -115,10 +115,10 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
     if (points_.size() == normals_.size())
     {
       ACG::GLState::enable(GL_LIGHTING);
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glVertexPointer(&points_[0]);
-      glEnableClientState(GL_NORMAL_ARRAY);
-      glNormalPointer(&normals_[0]);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::vertexPointer(&points_[0]);
+      ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
+      ACG::GLState::normalPointer(&normals_[0]);
       glDrawArrays(GL_POINTS, 0, points_.size());
     }
   }
@@ -130,19 +130,19 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
     if (points_.size() == colors_.size())
     {
       ACG::GLState::disable(GL_LIGHTING);
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glVertexPointer(&points_[0]);
-      glEnableClientState(GL_COLOR_ARRAY);
-      glColorPointer(&colors_[0]);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::vertexPointer(&points_[0]);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::colorPointer(&colors_[0]);
       glDrawArrays(GL_POINTS, 0, points_.size());
     }
   }
 
 
   // disable arrays
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
+  ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
+  ACG::GLState::disableClientState(GL_COLOR_ARRAY);
 }
 
 

@@ -521,7 +521,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   enable_arrays(0);
   
   // Unbind all remaining buffers
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
   
   glPopAttrib();
 }
@@ -573,8 +573,8 @@ MeshNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
 
   // Unbind everything to ensure sane settings
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
   //===================================================================
   // per Edge Vertex Array
@@ -588,16 +588,16 @@ enable_arrays(unsigned int _arrays) {
       enabled_arrays_ |= PER_EDGE_VERTEX_ARRAY;
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glVertexPointer( drawMesh_->perEdgeVertexBuffer() );   
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::vertexPointer( drawMesh_->perEdgeVertexBuffer() );   
       
-      glEnableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
       
     }
   } else if (enabled_arrays_ & PER_EDGE_VERTEX_ARRAY) {
     // Disable Vertex array
     enabled_arrays_ &= ~PER_EDGE_VERTEX_ARRAY;
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   } 
   
   //===================================================================
@@ -612,16 +612,16 @@ enable_arrays(unsigned int _arrays) {
       enabled_arrays_ |= PER_EDGE_COLOR_ARRAY;
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glColorPointer( drawMesh_->perEdgeColorBuffer() );
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::colorPointer( drawMesh_->perEdgeColorBuffer() );
       
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       
     }
   } else if (enabled_arrays_ & PER_EDGE_COLOR_ARRAY) {
     // Disable Vertex array
     enabled_arrays_ &= ~PER_EDGE_COLOR_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
   }   
 
 
@@ -637,16 +637,16 @@ enable_arrays(unsigned int _arrays) {
       enabled_arrays_ |= PER_HALFEDGE_VERTEX_ARRAY;
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glVertexPointer( drawMesh_->perHalfedgeVertexBuffer() );   
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::vertexPointer( drawMesh_->perHalfedgeVertexBuffer() );   
       
-      glEnableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
       
     }
   } else if (enabled_arrays_ & PER_HALFEDGE_VERTEX_ARRAY) {
     // Disable Vertex array
     enabled_arrays_ &= ~PER_HALFEDGE_VERTEX_ARRAY;
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   } 
   
   //===================================================================
@@ -661,16 +661,16 @@ enable_arrays(unsigned int _arrays) {
       enabled_arrays_ |= PER_HALFEDGE_COLOR_ARRAY;
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-      glColorPointer( drawMesh_->perHalfedgeColorBuffer() );
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::colorPointer( drawMesh_->perHalfedgeColorBuffer() );
       
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       
     }
   } else if (enabled_arrays_ & PER_HALFEDGE_COLOR_ARRAY) {
     // Disable Vertex array
     enabled_arrays_ &= ~PER_HALFEDGE_COLOR_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
   }   
 
   //===================================================================
@@ -783,22 +783,22 @@ pick_vertices(GLState& _state, bool _front)
     
     
     // For this version we load the colors directly not from vbo
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer( drawMesh_->pickVertexColorBuffer() );   
-    glEnableClientState(GL_COLOR_ARRAY);    
+    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::colorPointer( drawMesh_->pickVertexColorBuffer() );   
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
 
     // vertex positions
-    glVertexPointer( drawMesh_->pickVertexBuffer() );
-    glEnableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::vertexPointer( drawMesh_->pickVertexBuffer() );
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
     
     // Draw color picking
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
     
     // Disable color array
-    glDisableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
     
     // disable vertex array
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
     
   } else 
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
@@ -869,18 +869,18 @@ pick_edges(GLState& _state, bool _front)
       drawMesh_->updatePickingEdges(_state);
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
       
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       
-      glVertexPointer(drawMesh_->perEdgeVertexBuffer());
-      glColorPointer(drawMesh_->pickEdgeColorBuffer());
+      ACG::GLState::vertexPointer(drawMesh_->perEdgeVertexBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickEdgeColorBuffer());
       
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
       
-      glDisableClientState(GL_COLOR_ARRAY);
-      glDisableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
 
       // disable all other arrays
       enable_arrays(0); 
@@ -943,18 +943,18 @@ pick_faces(GLState& _state)
       drawMesh_->updatePickingFaces(_state);
       
       // For this version we load the colors directly not from vbo
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
       
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       
-      glVertexPointer(drawMesh_->pickFaceVertexBuffer());
-      glColorPointer(drawMesh_->pickFaceColorBuffer());
+      ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickFaceColorBuffer());
       
       glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
       
-      glDisableClientState(GL_COLOR_ARRAY);
-      glDisableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
       
       // disable all other arrays
       enable_arrays(0);
@@ -1015,17 +1015,17 @@ pick_any(GLState& _state)
     drawMesh_->updatePickingAny(_state);
     
     // For this version we load the colors directly, not from vbo
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
     
     // If we do not have any faces, we generate an empty list here.  
     if ( mesh_.n_faces() != 0 && drawMesh_) {
       
 
-      glVertexPointer(drawMesh_->pickFaceVertexBuffer());
-      glColorPointer(drawMesh_->pickFaceColorBuffer());
+      ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickFaceColorBuffer());
       
 
       glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
@@ -1044,8 +1044,8 @@ pick_any(GLState& _state)
     // If we do not have any edges, we generate an empty list here.  
     if ( mesh_.n_edges() != 0 && drawMesh_) {
       
-      glVertexPointer(drawMesh_->perEdgeVertexBuffer());
-      glColorPointer(drawMesh_->pickEdgeColorBuffer());
+      ACG::GLState::vertexPointer(drawMesh_->perEdgeVertexBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickEdgeColorBuffer());
     
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
     }
@@ -1063,15 +1063,15 @@ pick_any(GLState& _state)
     
     
     // For this version we load the colors directly not from vbo
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer(drawMesh_->pickVertexColorBuffer());
-    glEnableClientState(GL_COLOR_ARRAY);    
+    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::colorPointer(drawMesh_->pickVertexColorBuffer());
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
     
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
     
     // disable all other arrays
     enable_arrays(0);
@@ -1140,7 +1140,7 @@ update_topology() {
   drawMesh_->updateTopology();
 
   // Unbind the buffer after the work has been done
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
 template<class Mesh>

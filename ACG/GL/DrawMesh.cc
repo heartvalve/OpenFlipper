@@ -777,7 +777,7 @@ DrawMeshT<Mesh>::createVBO()
   if (!vbo_)
     glGenBuffersARB(1, &vbo_);
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   if (!flatMode_ && textureMode_)
   {
@@ -821,7 +821,7 @@ DrawMeshT<Mesh>::createVBO()
 
   }
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 
 template <class Mesh>
@@ -835,7 +835,7 @@ DrawMeshT<Mesh>::createIBO()
   if (!ibo_)
     glGenBuffersARB(1, &ibo_);
 
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
+  ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
 
   indexType_ = GL_UNSIGNED_INT;
   if (numVerts_ <= 0xFFFF)
@@ -877,7 +877,7 @@ DrawMeshT<Mesh>::createIBO()
       }
     }
 
-    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
+    ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
 
     // 2 or 4 byte indices:
     if (indexType_ == GL_UNSIGNED_SHORT)
@@ -892,7 +892,7 @@ DrawMeshT<Mesh>::createIBO()
     delete [] pLineBuffer;
   }
 
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
 
 template <class Mesh>
@@ -933,51 +933,51 @@ void DrawMeshT<Mesh>::bindBuffers()
   else
     rebuild();
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, vbo_);
 
   // prepare color mode
   if (colorMode_)
   {
     if (colorMode_ == 1)
-      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
+      ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
     else
-      glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)36);
+      ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)36);
 
-    glEnableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
   }
 
   // vertex decl
-  glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
-  glEnableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::vertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+  ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
 
   glClientActiveTexture(GL_TEXTURE0);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)12);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  ACG::GLState::texcoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)12);
+  ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glNormalPointer(GL_FLOAT, sizeof(Vertex), (char*)20);
-  glEnableClientState(GL_NORMAL_ARRAY);
+  ACG::GLState::normalPointer(GL_FLOAT, sizeof(Vertex), (char*)20);
+  ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
-//  glNormalPointerEXT(3, GL_FLOAT, sizeof(Vertex), (char*)(20));  // glNormalPointerEXT crashes sth. in OpenGL
+//  ACG::GLState::normalPointerEXT(3, GL_FLOAT, sizeof(Vertex), (char*)(20));  // ACG::GLState::normalPointerEXT crashes sth. in OpenGL
 //  glTangentPointerEXT(4, GL_FLOAT, sizeof(Vertex), (void*)(32));
 
-  //  glEnableClientState(GL_TANGENT_ARRAY_EXT);
+  //  ACG::GLState::enableClientState(GL_TANGENT_ARRAY_EXT);
 
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo_);
 }
 
 template <class Mesh>
 void DrawMeshT<Mesh>::unbindBuffers()
 {
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  //  glDisableClientState(GL_TANGENT_ARRAY_EXT);
+  ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
+  ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
+  //  ACG::GLState::disableClientState(GL_TANGENT_ARRAY_EXT);
 
   if (colorMode_)
-    glDisableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
 
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 }
 
 template <class Mesh>
@@ -1015,7 +1015,7 @@ void DrawMeshT<Mesh>::drawLines()
 {
   bindBuffers();
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
+  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
 
   glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
 
