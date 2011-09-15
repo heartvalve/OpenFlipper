@@ -240,7 +240,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( (_drawMode & DrawModes::SOLID_TEXTURED )  ) {
     ACG::GLState::enable(GL_AUTO_NORMAL);
     ACG::GLState::enable(GL_NORMALIZE);
-    glEnable (GL_BLEND); 
+    ACG::GLState::enable (GL_BLEND); 
     ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
@@ -380,7 +380,7 @@ BSplineSurfaceNodeT<BSplineSurface>::
 drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  ACG::GLState::enable (GL_COLOR_MATERIAL );
+  ACG::GLState::enable( GL_COLOR_MATERIAL );
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     
   ACG::GLState::enable(GL_TEXTURE_2D);
@@ -557,7 +557,7 @@ drawFancyControlNet(GLState& _state)
   ACG::GLState::disable( GL_CULL_FACE );
   
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  ACG::GLState::enable(GL_COLOR_MATERIAL );
+  ACG::GLState::enable( GL_COLOR_MATERIAL );
   ACG::GLState::enable(GL_LIGHTING);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   ACG::GLState::shadeModel(GL_SMOOTH);
