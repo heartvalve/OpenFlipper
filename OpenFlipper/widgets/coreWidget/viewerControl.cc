@@ -519,9 +519,9 @@ void CoreWidget::viewerSnapshotDialog() {
         QImage finalImage;
 
         examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage,
-                dialog.snapWidth->value(), dialog.snapHeight->value(),
-                dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked(),
-		dialog.multisampling->isChecked() ? dialog.num_samples->value() : 1);
+            dialog.snapWidth->value(), dialog.snapHeight->value(),
+            dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked(),
+            dialog.multisampling->isChecked() ? dialog.num_samples->value() : 1);
 
         finalImage.save(newName);
 
