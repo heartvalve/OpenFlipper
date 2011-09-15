@@ -288,11 +288,11 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate) {
   // ======================================================================================================
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
-  glActiveTextureARB(GL_TEXTURE0_ARB);
+  ACG::GLState::activeTextureARB(GL_TEXTURE0_ARB);
   pColorTexture_.enable();
   pColorTexture_.bind();
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);
+  ACG::GLState::activeTextureARB(GL_TEXTURE1_ARB);
   pDepthStencilTexture_.enable();
   pDepthStencilTexture_.bind();
 
