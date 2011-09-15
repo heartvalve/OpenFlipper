@@ -250,7 +250,7 @@ enable_arrays(unsigned int _arrays)
 
   // unbind VBO buffers
   if (!use_vbo && vertex_buffer_)
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
 
 
@@ -259,25 +259,25 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & VERTEX_ARRAY))
     {
       enabled_arrays_ |= VERTEX_ARRAY;
-      glEnableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
 
       if (use_vbo )
       {
-         glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
+         ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
 
          // As we ensure that buffers are converted to float before using them, use Float here
-         glVertexPointer(3, GL_FLOAT, 0, 0);
+         ACG::GLState::vertexPointer(3, GL_FLOAT, 0, 0);
       }
       else
       {
-         glVertexPointer(mesh_.points());
+         ACG::GLState::vertexPointer(mesh_.points());
       }
     }
   }
   else if (enabled_arrays_ & VERTEX_ARRAY)
   {
     enabled_arrays_ &= ~VERTEX_ARRAY;
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   }
 
 
@@ -286,25 +286,25 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & NORMAL_ARRAY))
     {
       enabled_arrays_ |= NORMAL_ARRAY;
-      glEnableClientState(GL_NORMAL_ARRAY);
+      ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
       if (use_vbo)
       {
-         glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
+         ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
 
          // As we ensure that buffers are converted to float before using them, use Float here
-         glNormalPointer(GL_FLOAT, 0 , 0);
+         ACG::GLState::normalPointer(GL_FLOAT, 0 , 0);
       }
       else
       {
-         glNormalPointer(mesh_.vertex_normals());
+         ACG::GLState::normalPointer(mesh_.vertex_normals());
       }
     }
   }
   else if (enabled_arrays_ & NORMAL_ARRAY)
   {
     enabled_arrays_ &= ~NORMAL_ARRAY;
-    glDisableClientState(GL_NORMAL_ARRAY);
+    ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
   }
 
 
@@ -313,14 +313,14 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & COLOR_ARRAY))
     {
       enabled_arrays_ |= COLOR_ARRAY;
-      glEnableClientState(GL_COLOR_ARRAY);
-      glColorPointer(mesh_.vertex_colors());
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::colorPointer(mesh_.vertex_colors());
     }
   }
   else if (enabled_arrays_ & COLOR_ARRAY)
   {
     enabled_arrays_ &= ~COLOR_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
   }
 
 
@@ -329,14 +329,14 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & TEXTURE_COORD_1D_ARRAY))
     {
       enabled_arrays_ |= TEXTURE_COORD_1D_ARRAY;
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-      glTexCoordPointer(mesh_.texcoords1D());
+      ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+      ACG::GLState::texcoordPointer(mesh_.texcoords1D());
     }
   }
   else if (enabled_arrays_ & TEXTURE_COORD_1D_ARRAY)
   {
     enabled_arrays_ &= ~TEXTURE_COORD_1D_ARRAY;
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
   }
 
 
@@ -345,14 +345,14 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & TEXTURE_COORD_2D_ARRAY))
     {
       enabled_arrays_ |= TEXTURE_COORD_2D_ARRAY;
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-      glTexCoordPointer(mesh_.texcoords2D());
+      ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+      ACG::GLState::texcoordPointer(mesh_.texcoords2D());
     }
   }
   else if (enabled_arrays_ & TEXTURE_COORD_2D_ARRAY)
   {
     enabled_arrays_ &= ~TEXTURE_COORD_2D_ARRAY;
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
   }
 
 
@@ -361,14 +361,14 @@ enable_arrays(unsigned int _arrays)
     if (!(enabled_arrays_ & TEXTURE_COORD_3D_ARRAY))
     {
       enabled_arrays_ |= TEXTURE_COORD_3D_ARRAY;
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-      glTexCoordPointer(mesh_.texcoords3D());
+      ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+      ACG::GLState::texcoordPointer(mesh_.texcoords3D());
     }
   }
   else if (enabled_arrays_ & TEXTURE_COORD_3D_ARRAY)
   {
     enabled_arrays_ &= ~TEXTURE_COORD_3D_ARRAY;
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
   }
 
 
@@ -412,7 +412,7 @@ update_geometry()
 
     if (!vertex_buffer_)  glGenBuffersARB(1,  (GLuint*) &vertex_buffer_);
 
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
+    ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
     vertexBufferInitialized_ = false;
 
     //Check if using floats otherwise convert to internal float array
@@ -450,7 +450,7 @@ update_geometry()
     //===================================================================
 
     if (!normal_buffer_)  glGenBuffersARB(1,  (GLuint*)  &normal_buffer_);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
+    ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
     normalBufferInitialized_ = false;
 
     // Check if using floats otherwise convert to internal float array
@@ -483,7 +483,7 @@ update_geometry()
     }
 
     // unbind buffers
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   } else omlog() << "MeshNodeT: VBO not supported on this machine\n";
 }
@@ -537,7 +537,7 @@ update_topology()
       if (!face_index_buffer_)  glGenBuffersARB(1,  (GLuint*)  &face_index_buffer_);
 
       // index buffer
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, face_index_buffer_);
+      ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, face_index_buffer_);
 
       glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
                       indices_.size() * sizeof(unsigned int),
@@ -547,7 +547,7 @@ update_topology()
       faceIndexBufferInitialized_ = true;
 
       // unbind buffer
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
     }
 
@@ -1127,7 +1127,7 @@ draw_faces(FaceMode _mode)
           if ( faceIndexBufferInitialized_  ) {
 
             // As we have a list of all faces on the GPU bind it
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,face_index_buffer_);
+            ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,face_index_buffer_);
 
             // Draw it
             glDrawElements(GL_TRIANGLES,
@@ -1136,7 +1136,7 @@ draw_faces(FaceMode _mode)
                            0);
 
             // And unbind it again
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
+            ACG::GLState::bindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
 
           } else {
 
@@ -1298,16 +1298,16 @@ pick_vertices(GLState& _state, bool _front)
       pickVertexBuf_[idx] = mesh_.point(v_it);
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer (&pickVertexBuf_[0]);
-    glColorPointer(&pickColorBuf_[0]);
+    ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+    ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
 
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   }
   else
   {
@@ -1392,16 +1392,16 @@ pick_faces(GLState& _state)
         idx += 3;
       }
 
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
 
-      glVertexPointer (&pickVertexBuf_[0]);
-      glColorPointer(&pickColorBuf_[0]);
+      ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+      ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
       glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
 
-      glDisableClientState(GL_COLOR_ARRAY);
-      glDisableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
 
     }
     else
@@ -1426,16 +1426,16 @@ pick_faces(GLState& _state)
         }
         count[face] = cnt; 
       }
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glEnableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);
 
-      glVertexPointer (&pickVertexBuf_[0]);
-      glColorPointer(&pickColorBuf_[0]);
+      ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+      ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
       glMultiDrawArrays(GL_POLYGON, &first[0], &count[0], mesh_.n_faces());
 
-      glDisableClientState(GL_COLOR_ARRAY);
-      glDisableClientState(GL_VERTEX_ARRAY);
+      ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+      ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
     }
   }
   else
@@ -1551,16 +1551,16 @@ pick_edges(GLState& _state, bool _front)
       idx += 2;
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
 
-    glVertexPointer (&pickVertexBuf_[0]);
-    glColorPointer(&pickColorBuf_[0]);
+    ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+    ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
     glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
 
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   }
   else
   {
@@ -1641,8 +1641,8 @@ pick_any(GLState& _state)
   {
     update_pick_buffers ();
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
 
     // faces
     unsigned int idx = 0;
@@ -1659,8 +1659,8 @@ pick_any(GLState& _state)
         idx += 3;
       }
 
-      glVertexPointer (&pickVertexBuf_[0]);
-      glColorPointer(&pickColorBuf_[0]);
+      ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+      ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
       glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
 
@@ -1688,8 +1688,8 @@ pick_any(GLState& _state)
         count[face] = cnt; 
       }
 
-      glVertexPointer (&pickVertexBuf_[0]);
-      glColorPointer(&pickColorBuf_[0]);
+      ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+      ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
       glMultiDrawArrays(GL_POLYGON, &first[0], &count[0], mesh_.n_faces());
 
@@ -1714,8 +1714,8 @@ pick_any(GLState& _state)
       idx += 2;
     }
 
-    glVertexPointer (&pickVertexBuf_[0]);
-    glColorPointer(&pickColorBuf_[0]);
+    ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+    ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
     glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
 
@@ -1735,13 +1735,13 @@ pick_any(GLState& _state)
       pickVertexBuf_[idx] = mesh_.point(v_it);
     }
 
-    glVertexPointer (&pickVertexBuf_[0]);
-    glColorPointer(&pickColorBuf_[0]);
+    ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
+    ACG::GLState::colorPointer(&pickColorBuf_[0]);
 
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
 
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   }
   else
   {

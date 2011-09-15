@@ -190,13 +190,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 
   if (shaded && mesh_.has_vertex_normals()) {
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(mesh_.vertex_normals());
+    ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
+    ACG::GLState::normalPointer(mesh_.vertex_normals());
   }
 
 
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(mesh_.points());
+  ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::vertexPointer(mesh_.points());
   
 
   // points
@@ -210,7 +210,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 
   if (shaded && !smooth)
-    glDisableClientState(GL_NORMAL_ARRAY);
+    ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
 
 
   // faces
@@ -236,8 +236,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if (halfedges)
     draw_halfedges();
 
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
+  ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   
   ACG::GLState::depthFunc(prev_depth);
 }
@@ -352,12 +352,12 @@ draw_halfedges() {
 
 
   if ( !he_points_.empty()) {
-    glEnableClientState(GL_NORMAL_ARRAY);
+    ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
-    glVertexPointer(&he_points_[0]);
+    ACG::GLState::vertexPointer(&he_points_[0]);
 
     if ( !he_normals_.empty())
-      glNormalPointer(&he_normals_[0]);
+      ACG::GLState::normalPointer(&he_normals_[0]);
 
     glDrawArrays(GL_LINES, 0, he_points_.size() );
   }

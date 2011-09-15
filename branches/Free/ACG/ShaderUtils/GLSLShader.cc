@@ -63,6 +63,7 @@
 #include <fstream>
 
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/GLState.hh>
 
 #include "gldebug.h"
 #include "GLSLShader.hh"
@@ -248,14 +249,14 @@ namespace GLSL {
   /** \brief Enables the program object for using.
   */
   void Program::use() {
-    glUseProgram(this->m_programId);
+    ACG::GLState::useProgram(this->m_programId);
     checkGLError2("use program failed");
   }
 
   /** \brief Resets to standard rendering pipeline
   */
   void Program::disable() {
-    glUseProgram(0);
+    ACG::GLState::useProgram(0);
     checkGLError2("shader disable failed");
   }
 

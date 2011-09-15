@@ -7,7 +7,7 @@
 //== INCLUDES =================================================================
 
 #include "FBO.hh"
-
+#include "GLState.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -139,7 +139,7 @@ bind()
        return false;
 
     // bind framebuffer object
-    glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, fbo_ );
+    ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, fbo_ );
 
     return true;
 }
@@ -151,7 +151,7 @@ FBO::
 unbind()
 {
     //set to normal rendering
-    glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
+    ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, 0 );
 }
 
 //-----------------------------------------------------------------------------

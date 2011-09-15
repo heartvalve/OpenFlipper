@@ -151,106 +151,106 @@ inline void glColor(const Vec4uc&  _v) { glColor4ubv(_v.data()); }
 
 
 
-//-------------------------------------------------------------- glVertexPointer
-
-/// Wrapper: glVertexPointer for Vec2f
+//-------------------------------------------------------------- ACG::GLState::vertexPointer
+/*
+/// Wrapper: ACG::GLState::vertexPointer for Vec2f
 inline void glVertexPointer(const Vec2f* _p)
-{ ::glVertexPointer(2, GL_FLOAT, 0, _p); }
-/// Wrapper: glVertexPointer for Vec2d
-inline void glVertexPointer(const Vec2d* _p)
-{ ::glVertexPointer(2, GL_DOUBLE, 0, _p); }
+{ ::ACG::GLState::vertexPointer(2, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::vertexPointer for Vec2d
+inline void ACG::GLState::vertexPointer(const Vec2d* _p)
+{ ::ACG::GLState::vertexPointer(2, GL_DOUBLE, 0, _p); }
 
-/// Wrapper: glVertexPointer for Vec3f
-inline void glVertexPointer(const Vec3f* _p)
-{ ::glVertexPointer(3, GL_FLOAT, 0, _p); }
-/// Wrapper: glVertexPointer for Vec3d
-inline void glVertexPointer(const Vec3d* _p)
-{ ::glVertexPointer(3, GL_DOUBLE, 0, _p); }
+/// Wrapper: ACG::GLState::vertexPointer for Vec3f
+inline void ACG::GLState::vertexPointer(const Vec3f* _p)
+{ ::ACG::GLState::vertexPointer(3, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::vertexPointer for Vec3d
+inline void ACG::GLState::vertexPointer(const Vec3d* _p)
+{ ::ACG::GLState::vertexPointer(3, GL_DOUBLE, 0, _p); }
 
-/// Wrapper: glVertexPointer for Vec4f
-inline void glVertexPointer(const Vec4f* _p)
-{ ::glVertexPointer(4, GL_FLOAT, 0, _p); }
-/// Wrapper: glVertexPointer for Vec4d
-inline void glVertexPointer(const Vec4d* _p)
-{ ::glVertexPointer(4, GL_DOUBLE, 0, _p); }
-
-/// original method
-inline void glVertexPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
-{ ::glVertexPointer(n, t, s, p); }
-
-
-
-//-------------------------------------------------------------- glNormalPointer
-
-/// Wrapper: glNormalPointer for Vec3f
-inline void glNormalPointer(const Vec3f* _p)
-{ ::glNormalPointer(GL_FLOAT, 0, _p); }
-/// Wrapper: glNormalPointer for Vec3d
-inline void glNormalPointer(const Vec3d* _p)
-{ ::glNormalPointer(GL_DOUBLE, 0, _p); }
+/// Wrapper: ACG::GLState::vertexPointer for Vec4f
+inline void ACG::GLState::vertexPointer(const Vec4f* _p)
+{ ::ACG::GLState::vertexPointer(4, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::vertexPointer for Vec4d
+inline void ACG::GLState::vertexPointer(const Vec4d* _p)
+{ ::ACG::GLState::vertexPointer(4, GL_DOUBLE, 0, _p); }
 
 /// original method
-inline void glNormalPointer(GLenum t, GLsizei s, const GLvoid *p)
-{ ::glNormalPointer(t, s, p); }
+inline void ACG::GLState::vertexPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
+{ ::ACG::GLState::vertexPointer(n, t, s, p); }
 
 
 
-//--------------------------------------------------------------- glColorPointer
+//-------------------------------------------------------------- ACG::GLState::normalPointer
 
-/// Wrapper: glColorPointer for Vec3uc
-inline void glColorPointer(const Vec3uc* _p)
-{ ::glColorPointer(3, GL_UNSIGNED_BYTE, 0, _p); }
-/// Wrapper: glColorPointer for Vec3f
-inline void glColorPointer(const Vec3f* _p)
-{ ::glColorPointer(3, GL_FLOAT, 0, _p); }
-
-/// Wrapper: glColorPointer for Vec4uc
-inline void glColorPointer(const Vec4uc* _p)
-{ ::glColorPointer(4, GL_UNSIGNED_BYTE, 0, _p); }
-/// Wrapper: glColorPointer for Vec4f
-inline void glColorPointer(const Vec4f* _p)
-{ ::glColorPointer(4, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::normalPointer for Vec3f
+inline void ACG::GLState::normalPointer(const Vec3f* _p)
+{ ::ACG::GLState::normalPointer(GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::normalPointer for Vec3d
+inline void ACG::GLState::normalPointer(const Vec3d* _p)
+{ ::ACG::GLState::normalPointer(GL_DOUBLE, 0, _p); }
 
 /// original method
-inline void glColorPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
-{ ::glColorPointer(n, t, s, p); }
+inline void ACG::GLState::normalPointer(GLenum t, GLsizei s, const GLvoid *p)
+{ ::ACG::GLState::normalPointer(t, s, p); }
 
 
 
-//------------------------------------------------------------ glTexCoordPointer
+//--------------------------------------------------------------- ACG::GLState::colorPointer
 
-/// Wrapper: glTexCoordPointer for float
-inline void glTexCoordPointer(const float* _p)
-{ ::glTexCoordPointer(1, GL_FLOAT, 0, _p); }
-/// Wrapper: glTexCoordPointer for Vec2d
-inline void glTexCoordPointer(const double* _p)
-{ ::glTexCoordPointer(1, GL_DOUBLE, 0, _p); }
+/// Wrapper: ACG::GLState::colorPointer for Vec3uc
+inline void ACG::GLState::colorPointer(const Vec3uc* _p)
+{ ::ACG::GLState::colorPointer(3, GL_UNSIGNED_BYTE, 0, _p); }
+/// Wrapper: ACG::GLState::colorPointer for Vec3f
+inline void ACG::GLState::colorPointer(const Vec3f* _p)
+{ ::ACG::GLState::colorPointer(3, GL_FLOAT, 0, _p); }
 
-/// Wrapper: glTexCoordPointer for Vec2f
-inline void glTexCoordPointer(const Vec2f* _p)
-{ ::glTexCoordPointer(2, GL_FLOAT, 0, _p); }
-/// Wrapper: glTexCoordPointer for Vec2d
-inline void glTexCoordPointer(const Vec2d* _p)
-{ ::glTexCoordPointer(2, GL_DOUBLE, 0, _p); }
-
-/// Wrapper: glTexCoordPointer for Vec3f
-inline void glTexCoordPointer(const Vec3f* _p)
-{ ::glTexCoordPointer(3, GL_FLOAT, 0, _p); }
-/// Wrapper: glTexCoordPointer for Vec3d
-inline void glTexCoordPointer(const Vec3d* _p)
-{ ::glTexCoordPointer(3, GL_DOUBLE, 0, _p); }
-
-/// Wrapper: glTexCoordPointer for Vec4f
-inline void glTexCoordPointer(const Vec4f* _p)
-{ ::glTexCoordPointer(4, GL_FLOAT, 0, _p); }
-/// Wrapper: glTexCoordPointer for Vec4d
-inline void glTexCoordPointer(const Vec4d* _p)
-{ ::glTexCoordPointer(4, GL_DOUBLE, 0, _p); }
+/// Wrapper: ACG::GLState::colorPointer for Vec4uc
+inline void ACG::GLState::colorPointer(const Vec4uc* _p)
+{ ::ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, 0, _p); }
+/// Wrapper: ACG::GLState::colorPointer for Vec4f
+inline void ACG::GLState::colorPointer(const Vec4f* _p)
+{ ::ACG::GLState::colorPointer(4, GL_FLOAT, 0, _p); }
 
 /// original method
-inline void glTexCoordPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
-{ ::glTexCoordPointer(n, t, s, p); }
+inline void ACG::GLState::colorPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
+{ ::ACG::GLState::colorPointer(n, t, s, p); }
 
+
+
+//------------------------------------------------------------ ACG::GLState::texcoordPointer
+
+/// Wrapper: ACG::GLState::texcoordPointer for float
+inline void ACG::GLState::texcoordPointer(const float* _p)
+{ ::ACG::GLState::texcoordPointer(1, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::texcoordPointer for Vec2d
+inline void ACG::GLState::texcoordPointer(const double* _p)
+{ ::ACG::GLState::texcoordPointer(1, GL_DOUBLE, 0, _p); }
+
+/// Wrapper: ACG::GLState::texcoordPointer for Vec2f
+inline void ACG::GLState::texcoordPointer(const Vec2f* _p)
+{ ::ACG::GLState::texcoordPointer(2, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::texcoordPointer for Vec2d
+inline void ACG::GLState::texcoordPointer(const Vec2d* _p)
+{ ::ACG::GLState::texcoordPointer(2, GL_DOUBLE, 0, _p); }
+
+/// Wrapper: ACG::GLState::texcoordPointer for Vec3f
+inline void ACG::GLState::texcoordPointer(const Vec3f* _p)
+{ ::ACG::GLState::texcoordPointer(3, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::texcoordPointer for Vec3d
+inline void ACG::GLState::texcoordPointer(const Vec3d* _p)
+{ ::ACG::GLState::texcoordPointer(3, GL_DOUBLE, 0, _p); }
+
+/// Wrapper: ACG::GLState::texcoordPointer for Vec4f
+inline void ACG::GLState::texcoordPointer(const Vec4f* _p)
+{ ::ACG::GLState::texcoordPointer(4, GL_FLOAT, 0, _p); }
+/// Wrapper: ACG::GLState::texcoordPointer for Vec4d
+inline void ACG::GLState::texcoordPointer(const Vec4d* _p)
+{ ::ACG::GLState::texcoordPointer(4, GL_DOUBLE, 0, _p); }
+
+/// original method
+inline void ACG::GLState::texcoordPointer(GLint n, GLenum t, GLsizei s, const GLvoid *p)
+{ ::ACG::GLState::texcoordPointer(n, t, s, p); }
+*/
 
 
 //-----------------------------------------------------------------------------

@@ -127,8 +127,8 @@ public:
   void del() { if(valid) glDeleteBuffersARB(1, &vbo); valid = false; }
   bool is_valid() const { return valid; }
 
-  void bind()   { if(!valid) gen(); glBindBufferARB(target, vbo); }
-  void unbind() { glBindBufferARB(target, 0); }
+  void bind()   { if(!valid) gen(); ACG::GLState::bindBuffer(target, vbo); }
+  void unbind() { ACG::GLState::bindBuffer(target, 0); }
 
   void upload(GLsizeiptr size, const GLvoid* data, GLenum usage)
   {
@@ -196,7 +196,7 @@ public:
   
   void activate()
   {
-    if (unit != GL_NONE) glActiveTextureARB(unit);
+    if (unit != GL_NONE) ACG::GLState::activeTexture(unit);
   }
 
   void parameter(GLenum pname, GLint i)

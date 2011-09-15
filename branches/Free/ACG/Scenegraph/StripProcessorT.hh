@@ -316,7 +316,7 @@ public:
   *
   * This function will return a pointer to the first element of the per face vertex buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
-  * glColorPointer. 
+  * ACG::GLState::colorPointer. 
   */
   ACG::Vec3f * perFaceVertexBuffer();
   
@@ -324,7 +324,7 @@ public:
   *
   * This function will return a pointer to the first element of the per face normal buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
-  * glNormalPointer. The buffer contains 3 equal normals per face.
+  * ACG::GLState::normalPointer. The buffer contains 3 equal normals per face.
   */  
   ACG::Vec3f * perFaceNormalBuffer();
   
@@ -332,7 +332,7 @@ public:
   *
   * This function will return a pointer to the first element of the per face per vertex normal buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
-  * glNormalPointer. The buffer contains 3 equal normals per face.
+  * ACG::GLState::normalPointer. The buffer contains 3 equal normals per face.
   */  
   ACG::Vec3f * perFacePerVertexNormalBuffer();
   
@@ -340,7 +340,7 @@ public:
   *
   * This function will return a pointer to the first element of the per face color buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
-  * glColorPointer. The buffer contains 3 equal normals per face.
+  * ACG::GLState::colorPointer. The buffer contains 3 equal normals per face.
   */  
   ACG::Vec4f * perFaceColorBuffer();  
   
@@ -390,7 +390,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingVertices to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   */
   ACG::Vec4uc * pickVertexColorBuffer(){ return &(pickVertexColorBuf_)[0]; };
   
@@ -419,7 +419,7 @@ private:
     *
     * This function will return a pointer to the first element of the picking buffer.
     * Use updatePickingEdges to update the buffer before you render it via
-    * glColorPointer.
+    * ACG::GLState::colorPointer.
     */
     ACG::Vec4uc * pickEdgeColorBuffer(){ return &(pickEdgeColorBuf_)[0]; };
     
@@ -446,7 +446,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingFaces to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   */
   ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColorBuf_)[0]; };
   
@@ -482,7 +482,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingAny to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   */
   ACG::Vec4uc * pickAnyColorBuffer(){ return &(pickAnyColorBuf_)[0]; };
   

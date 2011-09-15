@@ -387,7 +387,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingVertices to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   *
   * @return pointer to the first element of the picking buffer
   */
@@ -404,7 +404,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingVertices to update the buffer before you render it via
-  * glVertexPointer.
+  * ACG::GLState::vertexPointer.
   *
   * @return pointer to the first element of the picking buffer
   */
@@ -443,7 +443,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingEdges to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   *
   * @return pointer to the first element of the picking buffer
   */
@@ -474,7 +474,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingFaces to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   *
   * @return pointer to the per face picking color buffer
   */
@@ -491,7 +491,7 @@ public:
     *
     * This function will return a pointer to the first element of the picking buffer.
     * Use updatePickingFaces to update the buffer before you render it via
-    * glColorPointer.
+    * ACG::GLState::colorPointer.
     *
     * @return pointer to the first element of the picking buffer
     */
@@ -524,7 +524,7 @@ public:
   *
   * This function will return a pointer to the first element of the picking buffer.
   * Use updatePickingAny to update the buffer before you render it via
-  * glColorPointer.
+  * ACG::GLState::colorPointer.
   *
   * @return Pointer to the first element of the picking buffer
   */
