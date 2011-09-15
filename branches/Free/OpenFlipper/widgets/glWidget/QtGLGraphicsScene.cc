@@ -191,8 +191,8 @@ glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
     {
       if (_setActive && PluginFunctions::activeExaminer() != i)
       {
-        PluginFunctions::setActiveExaminer (i);
-	update();
+        PluginFunctions::setActiveExaminer(i);
+        update();
       }
       return views_->at(i);
     }

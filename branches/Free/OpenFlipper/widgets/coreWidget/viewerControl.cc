@@ -687,16 +687,16 @@ void CoreWidget::viewerSnapshot() {
     	examiner_widgets_[0]->snapshot(img[0]);
     	examiner_widgets_[1]->snapshot(img[1]);
 
-    	QImage finalImage(img[0].width() + img[1].width() +2, img[0].height(), QImage::Format_ARGB32_Premultiplied);
+    	QImage* finalImage = new QImage(img[0].width() + img[1].width() +2, img[0].height(), QImage::Format_ARGB32_Premultiplied);
 
-    	QPainter painter(&finalImage);
+    	QPainter painter(finalImage);
 
-    	painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+    	painter.fillRect(0,0,finalImage->width(), finalImage->height(), QBrush(Qt::gray));
 
     	painter.drawImage(QRectF(           0,             0, img[0].width(), img[0].height()),img[0],
-    			QRectF(           0,             0, img[0].width(), img[0].height()) );
+    			              QRectF(           0,             0, img[0].width(), img[0].height()) );
     	painter.drawImage(QRectF(img[0].width()+2,         0, img[1].width(), img[1].height()),img[1],
-    			QRectF(           0,             0, img[1].width(), img[1].height()) );
+    	              		QRectF(           0,             0, img[1].width(), img[1].height()) );
 
     	writeImageAsynchronously(finalImage, suggest);
 
