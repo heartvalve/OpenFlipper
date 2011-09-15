@@ -628,13 +628,10 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
     #ifndef NDEBUG
-    std::cerr << "slotGetCurrentTexture: No Texture Data! "<< obj->getPerObjectDataMap().size() << std::endl;
     
       // Iterate over all per Object datas and output them
       QMap<QString, PerObjectData*>::const_iterator mapIter = obj->getPerObjectDataMap().begin();  
       while ( mapIter != obj->getPerObjectDataMap().end() ) {
-        std::cerr << "slotGetCurrentTexture: Available Texture Data: " << mapIter.key().toStdString() << std::endl;
-        
         mapIter++;
       }
     #endif
@@ -754,10 +751,6 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   emit updatedObject(obj->id(),UPDATE_TEXTURE);
 
-  // ================================================================================
-  // Enable the right draw mode and update
-  // ================================================================================
-  switchDrawMode( texData->texture( _textureName ).type() );
 }
 
 void TextureControlPlugin::slotUpdateTexture( QString _textureName , int _identifier) {
@@ -893,6 +886,43 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
       _value *= (max_val - min_val) / (_max - _min);
       _value += min_val;
    }
+   
+   
+}
+
+void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
+
+  // Only update if we have a relevant draw mode
+  if (! ( ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED ) ||
+          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED) || 
+	  ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE) ||
+	  ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED) )) {
+    return;
+  }
+
+  // Iterate over all Objects
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                         o_it != PluginFunctions::objectsEnd();
+                                         ++o_it) {
+
+    // Get the corresponding texture data
+    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+    if (texData == 0){
+      continue;
+    }
+
+    // Go over all textures and if one of them is enabled and dirty, update it here
+    for ( uint i = 0; i < texData->textures().size(); ++i ) {
+      if ( texData->textures()[i].enabled() && texData->textures()[i].dirty() ) {
+        emit updateTexture( texData->textures()[i].name() , o_it->id() );
+      }
+    }
+
+
+  }
+  
+  emit updateView();
+
 }
 
 void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType _type)
@@ -1339,6 +1369,19 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
 void TextureControlPlugin::slotTextureMenu(QAction* _action) {
   // call existing function to switch the texture
   slotSwitchTexture( _action->text() );
+
+  // Switch to the corresponding draw mode
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                        o_it != PluginFunctions::objectsEnd();
+                                        ++o_it) {
+
+    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+
+    if (texData != 0) {
+      switchDrawMode(texData->texture(_action->text()).type());
+    }
+
+  }
 }
 
 void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
@@ -1494,11 +1537,6 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
 
   emit updatedObject(obj->id(),UPDATE_TEXTURE);
 
-  // ================================================================================
-  // Switch to a texture drawMode
-  // ================================================================================
-  switchDrawMode(texData->texture( _textureName ).type());
-
 }
 
 void TextureControlPlugin::switchDrawMode( TextureType _type ) {
@@ -1519,7 +1557,7 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED );
         break;
       case UNSET:
-        emit log(LOGERR,"doSwitchTexture: Switching drawmode for unknonw Texture Type!");
+        emit log(LOGERR,"doSwitchTexture: Switching drawmode for unknown Texture Type!");
         break;
     }
   }
@@ -1631,15 +1669,17 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
   QVariant idVariant = _action->data( );
   int id = idVariant.toInt();
 
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  id , obj ) ) {
+    emit log(LOGERR,"slotTextureContextMenu: Unable to get Object for id " + QString::number(id) );
+    return;
+  }
+
+  // Get the corresponding texture data
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+
   if (_action->text() == "Texture Settings"){
-
-    BaseObjectData* obj;
-    if (! PluginFunctions::getObject(  id , obj ) ) {
-      emit log(LOGERR,"slotTextureContextMenu: Unable to get Object for id " + QString::number(id) );
-      return;
-    }
-
-    TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
 
     if (texData == 0){
 
@@ -1654,7 +1694,12 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
 
   } else {
 
-    slotSwitchTexture( _action->text() , id );
+    if ( texData != 0) {
+      slotSwitchTexture( _action->text() , id );
+
+      // Switch to a texture drawMode
+      switchDrawMode(texData->texture( _action->text() ).type());
+    }
   }
 
 }
