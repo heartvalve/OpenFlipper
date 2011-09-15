@@ -110,8 +110,8 @@ public:
 
   /** Per reference number blending values
     @param _reference stencil reference for blending
-    @param _src sfactor parameter for glBlendFunc function
-    @param _dst dfactor parameter for glBlendFunc function
+    @param _src sfactor parameter for ACG::GLState::blendFunc function
+    @param _dst dfactor parameter for ACG::GLState::blendFunc function
     @param _color color used for blending
     @return should blending be berformed for this reference
   */
@@ -119,8 +119,8 @@ public:
 
   /** Per reference bit blending values
     @param _refbit stencil reference bit for blending
-    @param _src sfactor parameter for glBlendFunc function
-    @param _dst dfactor parameter for glBlendFunc function
+    @param _src sfactor parameter for ACG::GLState::blendFunc function
+    @param _dst dfactor parameter for ACG::GLState::blendFunc function
     @param _color color used for blending
     @return should blending be berformed for this reference
   */
