@@ -123,7 +123,9 @@ namespace Viewer {
 
     public:
       /// set draw mode (No test if this mode is available!)
-      void drawMode(ACG::SceneGraph::DrawModes::DrawMode _mode) { currentDrawMode_ = _mode; emit updated(); };
+      void drawMode(ACG::SceneGraph::DrawModes::DrawMode _mode) { currentDrawMode_ = _mode;
+                                                                  emit updated();
+                                                                  emit drawModeChanged(viewerId_); };
       
       /// get current draw mode
       ACG::SceneGraph::DrawModes::DrawMode drawMode() { return currentDrawMode_; };
@@ -498,9 +500,16 @@ namespace Viewer {
     
 
     signals:
+
       /** \brief This signal is emitted when the configuration has been changed
+       *
       */
       void updated();
+
+      /** \brief This signal is emitted when the drawmode changed
+       *
+       */
+      void drawModeChanged(int _viewerId );
 
       void getPickMode(std::string& _mode );
       void setPickMode(const std::string  _mode );

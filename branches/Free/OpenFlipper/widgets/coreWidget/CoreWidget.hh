@@ -1279,6 +1279,12 @@ public:
     /// When using first person mode strafe to the right
     void strafeRight();
 
+  signals :
+    /** \brief The viewer with id _viewerId changed its draw Mode
+     *
+     */
+    void drawModeChanged(int _viewerId);
+
   private :
     bool stereoActive_;
 

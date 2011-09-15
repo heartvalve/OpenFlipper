@@ -144,7 +144,7 @@ class BaseInterface {
       *
       */
     virtual void nodeVisibilityChanged( int _identifier ) {};
-   
+
   private slots:
 
     /**  \brief An object has been updated by another plugin
@@ -216,6 +216,11 @@ class BaseInterface {
     */
     virtual void slotViewChanged() {};
 
+    /** \brief A viewer changed its draw mode
+     *
+     * @param _viewerId Id of the viewer that changed its draw mode
+     */
+    virtual void slotDrawModeChanged(int _viewerId) {};
   /** @} */
 
   //===========================================================================

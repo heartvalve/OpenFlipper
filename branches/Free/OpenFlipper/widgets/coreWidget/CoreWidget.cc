@@ -335,6 +335,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       connect (&PluginFunctions::viewerProperties(i), SIGNAL( setActionMode(const Viewer::ActionMode) ),
                this,                                   SLOT( setActionMode(const Viewer::ActionMode)), Qt::DirectConnection );
 
+      connect (&PluginFunctions::viewerProperties(i), SIGNAL( drawModeChanged(int)), this, SIGNAL(drawModeChanged(int)));
     }
 
     // Initialize all examiners
