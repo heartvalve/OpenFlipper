@@ -1587,8 +1587,7 @@ void glViewer::handleFirstPersonNavigation( QMouseEvent* _event) {
   }
 
   case QEvent::MouseButtonDblClick: {
-    if (allowRotation_)
-      flyTo(_event->pos(), _event->button() == Qt::MidButton);
+    flyTo(_event->pos(), _event->button() == Qt::MidButton);
     break;
   }
 
@@ -1673,8 +1672,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
     }
 
     case QEvent::MouseButtonDblClick: {
-      if (allowRotation_)
-          flyTo(_event->pos(), _event->button() == Qt::MidButton);
+      flyTo(_event->pos(), _event->button() == Qt::MidButton);
       break;
     }
 

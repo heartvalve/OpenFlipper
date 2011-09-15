@@ -179,9 +179,10 @@ void glViewer::flyAnimationPerspective(QVariant _pos) {
 
   translate(t);
 
-  // Only rotate, if we have realistic values
-  if (fabs(a) > FLT_MIN)
-    rotate(flyAxis_, a, flyCenter_);
+  // Only rotate, if we have realistic values and if rotation is allowed
+  if ( allowRotation_ )
+    if (fabs(a) > FLT_MIN)
+      rotate(flyAxis_, a, flyCenter_);
 
   // Pick cache is definitely invalid after that
   updatePickCache_ = true;
