@@ -356,15 +356,15 @@ glViewer::drawScene_customAnaglyphStereo()
   glCopyTexSubImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
   ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
 
-  glActiveTexture (GL_TEXTURE0);
+  ACG::GLState::activeTexture (GL_TEXTURE0);
   ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[0]);
-  glEnable (GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::enable (GL_TEXTURE_RECTANGLE_ARB);
 
-  glActiveTexture (GL_TEXTURE1);
+  ACG::GLState::activeTexture (GL_TEXTURE1);
   ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, agTexture_[1]);
-  glEnable (GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::enable (GL_TEXTURE_RECTANGLE_ARB);
 
-  glEnable (GL_FRAGMENT_PROGRAM_ARB);
+  ACG::GLState::enable (GL_FRAGMENT_PROGRAM_ARB);
   glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, agProgram_);
 
   glProgramEnvParameter4fARB (GL_FRAGMENT_PROGRAM_ARB, 0, le[0], le[3], le[6], 0.0);
@@ -381,7 +381,7 @@ glViewer::drawScene_customAnaglyphStereo()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  ACG::GLState::disable(GL_DEPTH_TEST);
+  ACG::GLState::disable (GL_DEPTH_TEST);
 
   glBegin (GL_QUADS);
   glMultiTexCoord2f (GL_TEXTURE0, 0, vp_h);
@@ -398,18 +398,18 @@ glViewer::drawScene_customAnaglyphStereo()
   glVertex2i(vp_w, 0);
   glEnd ();
 
-  glEnable (GL_DEPTH_TEST);
+  ACG::GLState::enable (GL_DEPTH_TEST);
 
   glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0);
-  ACG::GLState::disable(GL_FRAGMENT_PROGRAM_ARB);
+  ACG::GLState::disable (GL_FRAGMENT_PROGRAM_ARB);
 
-  glActiveTexture (GL_TEXTURE1);
+  ACG::GLState::activeTexture (GL_TEXTURE1);
   ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
-  ACG::GLState::disable(GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::disable (GL_TEXTURE_RECTANGLE_ARB);
 
-  glActiveTexture (GL_TEXTURE0);
+  ACG::GLState::activeTexture (GL_TEXTURE0);
   ACG::GLState::bindTexture (GL_TEXTURE_RECTANGLE_ARB, 0);
-  ACG::GLState::disable(GL_TEXTURE_RECTANGLE_ARB);
+  ACG::GLState::disable (GL_TEXTURE_RECTANGLE_ARB);
 
 }
 

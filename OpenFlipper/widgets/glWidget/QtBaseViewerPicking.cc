@@ -176,9 +176,9 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
+  ACG::GLState::enable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
 
@@ -191,7 +191,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
+  ACG::GLState::enable(GL_LIGHTING);
 
   properties_.glState().set_clear_color (clear_color);
 
@@ -439,8 +439,8 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
   glClear(GL_DEPTH_BUFFER_BIT);
   properties_.glState().pick_init (false);
 
@@ -454,8 +454,8 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
   // process hit record
   if ( hits > 0 )
@@ -571,9 +571,9 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
+  ACG::GLState::enable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
 
@@ -586,8 +586,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
   properties_.glState().set_clear_color (clear_color);
 
@@ -713,9 +713,9 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
+  ACG::GLState::enable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
 
@@ -728,8 +728,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
   properties_.glState().set_clear_color (clear_color);
 
@@ -886,9 +886,9 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
+  ACG::GLState::enable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
 
@@ -901,8 +901,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
   properties_.glState().set_clear_color (clear_color);
 
@@ -1060,9 +1060,9 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
+  ACG::GLState::disable(GL_LIGHTING);
+  ACG::GLState::disable(GL_BLEND);
+  ACG::GLState::enable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
 
@@ -1075,8 +1075,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glLoadMatrixd(projection.get_raw_data());
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
-  glEnable(GL_LIGHTING);
-  glEnable(GL_BLEND);
+  ACG::GLState::enable(GL_LIGHTING);
+  ACG::GLState::enable(GL_BLEND);
 
   properties_.glState().set_clear_color (clear_color);
 

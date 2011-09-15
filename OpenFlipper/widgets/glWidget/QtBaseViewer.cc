@@ -506,7 +506,7 @@ void glViewer::normalsMode(NormalsMode _mode)
   switch(normalsMode_ = _mode)
   {
     case DONT_TOUCH_NORMALS:
-      glDisable(GL_NORMALIZE);
+      ACG::GLState::disable(GL_NORMALIZE);
       break;
 
     case NORMALIZE_NORMALS:
@@ -618,7 +618,7 @@ void glViewer::drawScene_mono()
     if (oM)
     {
       glClear (GL_STENCIL_BUFFER_BIT);
-      glEnable (GL_STENCIL_TEST);
+      ACG::GLState::enable (GL_STENCIL_TEST);
       glStencilOp (GL_KEEP, GL_KEEP, GL_ZERO);
       glStencilFunc (GL_ALWAYS, 0, ~0);
 
@@ -664,9 +664,9 @@ void glViewer::drawScene_mono()
       glPushAttrib(GL_ALL_ATTRIB_BITS);
 
       ACG::GLState::enable(GL_BLEND);
-      glDisable(GL_DEPTH_TEST);
-      glDisable(GL_LIGHTING);
-      glDisable(GL_DITHER);
+      ACG::GLState::disable(GL_DEPTH_TEST);
+      ACG::GLState::disable(GL_LIGHTING);
+      ACG::GLState::disable(GL_DITHER);
 
       int vp_l, vp_b, vp_w, vp_h;
       glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
@@ -720,7 +720,7 @@ void glViewer::drawScene_mono()
       glPopMatrix ();
 
       glPopAttrib ();
-      glDisable (GL_STENCIL_TEST);
+      ACG::GLState::disable (GL_STENCIL_TEST);
     }
 
 
@@ -852,7 +852,7 @@ void glViewer::initializeGL()
   // OpenGL state
   ACG::GLState::enable(GL_DEPTH_TEST);
   ACG::GLState::enable(GL_LIGHTING);
-  glDisable(GL_DITHER);
+  ACG::GLState::disable(GL_DITHER);
   ACG::GLState::shadeModel( GL_FLAT );
 
 
@@ -914,7 +914,7 @@ void glViewer::paintGL()
 
     ACG::GLState::enable(GL_DEPTH_TEST);
     ACG::GLState::enable(GL_LIGHTING);
-    glDisable(GL_DITHER);
+    ACG::GLState::disable(GL_DITHER);
     ACG::GLState::shadeModel( GL_FLAT );
 
     glMatrixMode(GL_PROJECTION);
@@ -1895,9 +1895,9 @@ void glViewer::applyProperties() {
     glFrontFace( GL_CW );
 
   if ( properties_.backFaceCulling() )
-    ACG::GLState::enable(GL_CULL_FACE );
+    ACG::GLState::enable( GL_CULL_FACE );
   else
-    glDisable( GL_CULL_FACE );
+    ACG::GLState::disable( GL_CULL_FACE );
 
 }
 
