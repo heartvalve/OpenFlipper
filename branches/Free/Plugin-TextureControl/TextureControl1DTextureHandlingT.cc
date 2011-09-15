@@ -144,10 +144,10 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
 
     // Get the value of the property
     double value = _mesh.property(_texProp, h_it);
-
+    
     // Mangle it with the predefined user options
     computeValue(_texture, min, max, value);
-
+    
     // Write result to the openmesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
     _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value), float(value) ) );
   }
