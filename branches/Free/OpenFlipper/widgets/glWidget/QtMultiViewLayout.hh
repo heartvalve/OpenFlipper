@@ -82,6 +82,16 @@ class DLLEXPORT QtMultiViewLayout : public QGraphicsLayout
        SingleView,
        /*
        * #############
+       * #     #     #
+       * #     #     #
+       * #  1  #  2  #
+       * #     #     #
+       * #     #     #
+       * #############
+       */
+       DoubleView,
+       /*
+       * #############
        * #  1  #  2  #
        * #     #     #
        * #############

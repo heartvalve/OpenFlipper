@@ -989,9 +989,12 @@ void Core::multiViewMode( int _mode ) {
       PluginFunctions::setActiveExaminer(0);
       break;
     case 1:
-      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::Grid);
+      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::DoubleView);
       break;
     case 2:
+      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::Grid);
+      break;
+    case 3:
       coreWidget_->baseLayout_->setMode (QtMultiViewLayout::HSplit);
       break;
 
@@ -1411,7 +1414,7 @@ void Core::setDescriptions(){
   emit setSlotDescription("showToolbox(bool)", tr("Show or hide toolbox"), QStringList(tr("Show or hide the toolbox")), QStringList());
   emit setSlotDescription("showStatusBar(bool)", tr("Show or hide status bar"), QStringList(tr("Show or hide the status bar")), QStringList());
   emit setSlotDescription("multiViewMode(int)", tr("Switch MultiView Mode"),
-                          QStringList(tr("Mode")), QStringList(tr("0: One Viewer\n 1: Grid \n 2: Horizontal split")));
+                          QStringList(tr("Mode")), QStringList(tr("0: One Viewer\n1: Double Viewer\n2: Grid \n3: Horizontal split ")));
 
   emit setSlotDescription("restrictFrameRate(bool)", tr("Restrict FrameRate to MaxFrameRate"),
                         QStringList(tr("enabled")), QStringList(tr("restriction switch")));

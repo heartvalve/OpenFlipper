@@ -455,11 +455,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "Possible layouts are: "
                   "<ul> "
 				  "<li>Single viewer</li>"
+          "<li>Double viewer</li>"
 				  "<li>Multiple viewers (grid)</li>"
 				  "<li>Multiple viewers (hsplit)</li>"
 				  "</ul>"));
 
   viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"singleviewmode.png"), "");
+  viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"doubleviewmode.png"), "");
   viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
   viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode2.png"), "");
 
@@ -884,17 +886,24 @@ void CoreWidget::nextViewerLayout() {
     switch (baseLayout_->mode()) {
       case QtMultiViewLayout::SingleView:
               baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-              baseLayout_->setMode(QtMultiViewLayout::Grid);
+              baseLayout_->setMode(QtMultiViewLayout::DoubleView);
 
               // Update combo box in the toolbar
               viewerLayoutBox_->setCurrentIndex(1);
+              break;
+      case QtMultiViewLayout::DoubleView:
+              baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+              baseLayout_->setMode(QtMultiViewLayout::Grid);
+
+              // Update combo box in the toolbar
+              viewerLayoutBox_->setCurrentIndex(2);
               break;
       case QtMultiViewLayout::Grid:
               baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
               baseLayout_->setMode(QtMultiViewLayout::HSplit);
 
               // Update combo box in the toolbar
-              viewerLayoutBox_->setCurrentIndex(2);
+              viewerLayoutBox_->setCurrentIndex(3);
               break;
       case QtMultiViewLayout::HSplit:
               baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
@@ -915,17 +924,21 @@ CoreWidget::setViewerLayout(int _idx) {
 
   switch (_idx) {
     case 0:
-            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-            baseLayout_->setMode(QtMultiViewLayout::SingleView);
-            break;
+      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+      baseLayout_->setMode(QtMultiViewLayout::SingleView);
+      break;
     case 1:
-            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-            baseLayout_->setMode(QtMultiViewLayout::Grid);
-            break;
+      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+      baseLayout_->setMode(QtMultiViewLayout::DoubleView);
+      break;
     case 2:
-            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-            baseLayout_->setMode(QtMultiViewLayout::HSplit);
-            break;
+      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+      baseLayout_->setMode(QtMultiViewLayout::Grid);
+      break;
+    case 3:
+      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+      baseLayout_->setMode(QtMultiViewLayout::HSplit);
+      break;
   }
 
     viewerLayoutBox_->setCurrentIndex(_idx);
