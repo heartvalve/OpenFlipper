@@ -527,6 +527,35 @@ void CoreWidget::viewerSnapshotDialog() {
 
         break;
       }
+      case QtMultiViewLayout::DoubleView:
+      {
+    	int w = dialog.snapHeight->value();
+
+    	double relSizeW = static_cast<double>( examiner_widgets_[0]->glWidth() / static_cast<double>( glScene_->width() ) );
+
+    	//Get the images
+    	QImage img[2];
+    	examiner_widgets_[0]->snapshot(img[0], static_cast<int>(relSizeW * w) , dialog.snapWidth->value(),
+    								   dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+    	examiner_widgets_[1]->snapshot(img[1], static_cast<int>(relSizeW * w) , dialog.snapWidth->value(),
+    	    						   dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+
+    	QImage finalImage(img[0].width() + img[1].width() +2, img[0].height(), QImage::Format_ARGB32_Premultiplied);
+
+    	QPainter painter(&finalImage);
+
+    	painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
+    	painter.drawImage(QRectF(           0,             0, img[0].width(), img[0].height()),img[0],
+    	                  QRectF(           0,             0, img[0].width(), img[0].height()) );
+    	painter.drawImage(QRectF(img[0].width()+2,         0, img[1].width(), img[1].height()),img[1],
+    	                  QRectF(           0,             0, img[1].width(), img[1].height()) );
+
+    	finalImage.save(newName);
+
+    	break;
+      }
+
       case QtMultiViewLayout::Grid:
       {
         // Compute size of each viewer
@@ -547,11 +576,6 @@ void CoreWidget::viewerSnapshotDialog() {
                                        dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
         examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * (1.0 - relSizeH)),
                                        dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
-        
-        img0.save("/home/kremer/multsnap0.png");
-        img1.save("/home/kremer/multsnap1.png");
-        img2.save("/home/kremer/multsnap2.png");
-        img3.save("/home/kremer/multsnap3.png");
 
         QImage finalImage(img0.width() + img1.width()+2, img0.height() + img2.height()+2, QImage::Format_ARGB32_Premultiplied);
 
@@ -656,6 +680,29 @@ void CoreWidget::viewerSnapshot() {
 
       break;
     }
+    case QtMultiViewLayout::DoubleView:
+    {
+    	//Get the images
+    	QImage img[2];
+    	examiner_widgets_[0]->snapshot(img[0]);
+    	examiner_widgets_[1]->snapshot(img[1]);
+
+    	QImage finalImage(img[0].width() + img[1].width() +2, img[0].height(), QImage::Format_ARGB32_Premultiplied);
+
+    	QPainter painter(&finalImage);
+
+    	painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
+    	painter.drawImage(QRectF(           0,             0, img[0].width(), img[0].height()),img[0],
+    			QRectF(           0,             0, img[0].width(), img[0].height()) );
+    	painter.drawImage(QRectF(img[0].width()+2,         0, img[1].width(), img[1].height()),img[1],
+    			QRectF(           0,             0, img[1].width(), img[1].height()) );
+
+    	writeImageAsynchronously(finalImage, suggest);
+
+    	break;
+    }
+
     case QtMultiViewLayout::Grid:
     {
       QImage img0,img1,img2,img3;
