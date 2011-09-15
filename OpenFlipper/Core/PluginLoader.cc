@@ -881,6 +881,9 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     if ( checkSlot( plugin , "slotViewChanged()" ) )
       connect(this,SIGNAL(pluginViewChanged()),plugin,SLOT(slotViewChanged()), Qt::DirectConnection);
 
+    if ( checkSlot( plugin , "slotDrawModeChanged(int)" ) )
+          connect(coreWidget_,SIGNAL(drawModeChanged(int)),plugin,SLOT(slotDrawModeChanged(int)), Qt::DirectConnection);
+
     if ( checkSlot(plugin,"slotObjectPropertiesChanged(int)"))
       connect(this,SIGNAL(objectPropertiesChanged(int)),plugin,SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection);
 
