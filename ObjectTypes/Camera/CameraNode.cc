@@ -135,7 +135,7 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     if(showFrustum_) {
 
         // Draw left side of frustum
-        glEnable (GL_BLEND);
+        ACG::GLState::enable (GL_BLEND);
         glPushAttrib(GL_LIGHTING_BIT);
         ACG::GLState::disable(GL_LIGHTING); // Disable lighting
         

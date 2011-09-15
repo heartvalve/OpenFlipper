@@ -134,8 +134,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     }
     else if (bspline_draw_mode_ == FANCY)
     {
-//       ACG::GLState::ACG::GLState::enable(GL_AUTO_NORMAL);
-//       ACG::GLState::Enable(GL_NORMALIZE);
+//       ACG::GLState::enable(GL_AUTO_NORMAL);
+//       ACG::GLState::enable(GL_NORMALIZE);
       glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
       ACG::GLState::enable( GL_COLOR_MATERIAL );
       ACG::GLState::enable(GL_LIGHTING);
@@ -464,7 +464,7 @@ BSplineCurveNodeT<BSplineCurve>::
 drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 {   
   glPushAttrib(GL_ALL_ATTRIB_BITS);
-  ACG::GLState::enable (GL_COLOR_MATERIAL );
+  ACG::GLState::enable( GL_COLOR_MATERIAL );
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   
   ACG::GLState::enable(GL_TEXTURE_2D);
