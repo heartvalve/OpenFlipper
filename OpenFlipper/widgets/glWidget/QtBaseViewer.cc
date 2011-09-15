@@ -2014,7 +2014,7 @@ void glViewer::snapshot( int _width, int _height, bool _alpha, bool _hideCoordsy
    
    QFileInfo fi(properties_.snapshotName());
 
-   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + "." + properties_.snapshotFileType().toLower();
+   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()).rightJustified(7,'0') + "." + properties_.snapshotFileType().toLower();
    
    QImageWriter writer(fname);
    writer.setFormat(properties_.snapshotFileType().simplified().toLatin1());
