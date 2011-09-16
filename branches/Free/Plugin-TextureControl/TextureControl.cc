@@ -1039,12 +1039,17 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
         _texture.parameters.scale = StringToBool(value);
         changed = true;
       }
-    }else if ( sectionName == "indexproperty" ) {
+    } else if ( sectionName == "abs" ) {
+      if ( StringToBool(value) != _texture.parameters.abs ) {
+        _texture.parameters.abs = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "indexproperty" ) {
       if ( value != _texture.indexMappingProperty() ) {
         _texture.indexMappingProperty( value );
         changed = true;
       }
-    }else if ( sectionName == "visiblename" ) {
+    } else if ( sectionName == "visiblename" ) {
       if ( value != _texture.visibleName() ) {
         _texture.visibleName( value );
         changed = true;
@@ -1270,7 +1275,8 @@ void TextureControlPlugin::slotSetTextureProperties() {
 
 void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _textureName, int _id) {
 
-  if (_id != -1){
+  if (_id != -1)
+  {
     //local texture
 
     // Get the object
@@ -1304,7 +1310,9 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
 
     emit updateView();
 
-  } else {
+  } 
+  else 
+  {
     // global texture
 
     _texData->texture( _textureName ).setDirty();
@@ -1735,32 +1743,75 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
   if ( texData->texture( _textureName ).dirty() )
     emit updateTexture( _textureName , _id );
 
-  OpenMesh::VPropHandleT< double > coordProp;
 
+  // collect the 1d texture coords from vertex or halfedge porperty, depending on the texture type
   _x.clear();
 
-  if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ) 
+  {
     TriMesh* mesh = PluginFunctions::triMesh(obj);
-
-    if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
-      emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
-      return;
-    }
-
-    for ( TriMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
-      _x.push_back( mesh->property(coordProp,v_it) );
-
-  } else if ( obj->dataType( DATA_POLY_MESH ) ) {
+    
+    if ( texData->texture(_textureName).type() == VERTEXBASED )
+    {
+      OpenMesh::VPropHandleT< double > coordProp;
+      
+      if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
+      
+      for ( TriMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+        _x.push_back( mesh->property(coordProp,v_it) );
+      
+    } // end of if vertex based for tri meshes
+    else if ( texData->texture(_textureName).type() == HALFEDGEBASED ) 
+    {
+      OpenMesh::HPropHandleT< double > coordProp;
+      
+      if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
+      
+      for ( TriMesh::HalfedgeIter h_it = mesh->halfedges_begin() ; h_it != mesh->halfedges_end(); ++h_it)
+        _x.push_back( mesh->property(coordProp,h_it) );
+    } // end of if halfedge based for tri meshes
+    
+  } // end of if tri mesh
+  else if ( obj->dataType( DATA_POLY_MESH ) ) 
+  {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
 
-    if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
-      emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
-      return;
-    }
+    if ( texData->texture(_textureName).type() == VERTEXBASED )
+    {
+      OpenMesh::VPropHandleT< double > coordProp;
+    
+      if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
 
-    for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
-      _x.push_back( mesh->property(coordProp,v_it) );
-  }
+      for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+        _x.push_back( mesh->property(coordProp,v_it) );
+    } // end of if vertex based for poly meshes
+    else if ( texData->texture(_textureName).type() == HALFEDGEBASED ) 
+    {
+      OpenMesh::HPropHandleT< double > coordProp;
+    
+      if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
+
+      for ( PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin() ; h_it != mesh->halfedges_end(); ++h_it)
+        _x.push_back( mesh->property(coordProp,h_it) );
+    } // end of if halfedge based for poly meshes
+  }// end of if poly mesh
+  
 }
 
 void TextureControlPlugin::slotAboutToRestore( int _objectid, int /*_internalId*/) {
