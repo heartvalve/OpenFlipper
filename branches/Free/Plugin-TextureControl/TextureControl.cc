@@ -895,8 +895,8 @@ void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
   // Only update if we have a relevant draw mode
   if (! ( ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED ) ||
           ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED) || 
-	  ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE) ||
-	  ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED) )) {
+          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE) ||
+          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED) )) {
     return;
   }
 
@@ -965,6 +965,8 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType _
     for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+       update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE );
+       update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
     }
 
     if ( update && texData->textures()[i].enabled() )
