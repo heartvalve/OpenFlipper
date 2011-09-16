@@ -89,7 +89,7 @@ bool GLState::programLock_ = false;
 std::deque <GLStateContext> GLState::stateStack_;
 std::bitset<0xFFFF+1> GLState::glStateLock_;
 int GLState::glBufferTargetLock_[4] = {0};
-int GLState::glTextureTargetLock_[16][5];
+int GLState::glTextureStageLock_[16] = {0};
 bool GLState::framebufferLock_[2] = {false};
 int GLState::maxTextureCoords_ = 0;
 int GLState::maxCombinedTextureImageUnits_ = 0;
@@ -113,10 +113,6 @@ GLState::GLState(bool _updateGL)
   if (stateStack_.size() == 0)
   {
     stateStack_.push_back(GLStateContext());
-
-    // every state is unlocked at start
-    for (int i = 0; i < 16; ++i)
-      memset(glTextureTargetLock_[i], 0, 5 * sizeof(int));
 
     memset(glBufferTargetLock_, 0, sizeof(glBufferTargetLock_));
 
@@ -1346,9 +1342,7 @@ void GLState::syncFromGL()
     GL_TEXTURE_BINDING_2D, GL_TEXTURE_2D,
     GL_TEXTURE_BINDING_3D, GL_TEXTURE_3D,
     GL_TEXTURE_BINDING_CUBE_MAP, GL_TEXTURE_CUBE_MAP
-#ifndef __APPLE__
-    , GL_TEXTURE_BINDING_RECTANGLE, GL_TEXTURE_RECTANGLE
-#endif
+    , GL_TEXTURE_BINDING_RECTANGLE_ARB, GL_TEXTURE_RECTANGLE_ARB
   };
 
   glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextureCoords_);
@@ -1365,14 +1359,17 @@ void GLState::syncFromGL()
   {
     glActiveTexture(GL_TEXTURE0 + i);
 
+    getparam = 0;
     // for each texture stage query 5 texture types: 1D, 2D, 3D, Cube, Rect
-    int entries = 5;
-#ifdef __APPLE__
-    entries = 4;
-#endif
-    for (int k = 0; k < entries; ++k)
-      glGetIntegerv(texBufGets[k*2],
-        (GLint*)stateStack_.back().glTextureTargetState_[i] + getTextureTargetIndex(texBufGets[k*2+1]));
+    for (int k = 0; k < 5 && !getparam; ++k)
+    {
+      glGetIntegerv(texBufGets[k*2], &getparam);
+      if (getparam)
+      {
+        stateStack_.back().glTextureStage_[i].buf_ = getparam;
+        stateStack_.back().glTextureStage_[i].target_ = texBufGets[k*2+1];
+      }
+    }
   }
 
   // restore active texture unit
@@ -1707,21 +1704,6 @@ GLuint GLState::getBoundBuf(GLenum _target)
 
 //-----------------------------------------------------------------------------
 
-int GLState::getTextureTargetIndex(GLenum _target)
-{
-  switch (_target)
-  {
-  case GL_TEXTURE_2D: return 1;
-#ifndef __APPLE__
-  case GL_TEXTURE_RECTANGLE: return 4;
-#endif  
-  case GL_TEXTURE_CUBE_MAP: return 3;
-  case GL_TEXTURE_1D: return 0;
-  case GL_TEXTURE_3D: return 2;
-  }
-  return -1;
-}
-
 void GLState::activeTexture(GLenum _texunit)
 {
 #ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
@@ -1737,42 +1719,48 @@ void GLState::bindTexture(GLenum _target, GLuint _buffer)
 {
   int activeTex = getActiveTextureIndex();
 
-  int texTargetIdx = getTextureTargetIndex(_target);
+  assert(activeTex >= 0);
 
-  assert(texTargetIdx >= 0);
+  GLStateContext::TextureStage* stage = stateStack_.back().glTextureStage_ + activeTex;
 
-  if (!glTextureTargetLock_[activeTex][texTargetIdx])
+  if (!glTextureStageLock_[activeTex])
   {
 #ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS
-    if (_buffer != stateStack_.back().glTextureTargetState_[activeTex][texTargetIdx])
+    if (_buffer != stage->buf_ || _target != stage->target_)
 #endif
     {
       glBindTexture(_target, _buffer);
-      stateStack_.back().glTextureTargetState_[activeTex][texTargetIdx] = _buffer;
+
+      stage->target_ = _target;
+      stage->buf_ = _buffer;
     }
   }
 }
 
-void GLState::lockTextureTarget(GLenum _target)
+void GLState::lockTextureStage()
 {
-  glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] = 1;
+  glTextureStageLock_[getActiveTextureIndex()] = 1;
 }
 
-void GLState::unlockTextureTarget(GLenum _target)
+void GLState::unlockTextureStage()
 {
-  glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] = 0;
+  glTextureStageLock_[getActiveTextureIndex()] = 0;
 }
 
-bool GLState::isTextureTargetLocked(GLenum _target)
+bool GLState::isTextureTargetLocked()
 {
-  return glTextureTargetLock_[getActiveTextureIndex()][getTextureTargetIndex(_target)] != 0;
+  return glTextureStageLock_[getActiveTextureIndex()] != 0;
 }
 
-GLuint GLState::getBoundTextureBuffer(GLenum _target)
+GLuint GLState::getBoundTextureBuffer()
 {
-  return stateStack_.back().glTextureTargetState_[getActiveTextureIndex()][getTextureTargetIndex(_target)];
+  return stateStack_.back().glTextureStage_[getActiveTextureIndex()].buf_;
 }
 
+GLenum GLState::getBoundTextureTarget()
+{
+  return stateStack_.back().glTextureStage_[getActiveTextureIndex()].target_;
+}
 
 //----------------------------------------------------------
 // vertex pointers
@@ -2026,19 +2014,10 @@ void GLState::popAttrib()
   bindBuffer(GL_PIXEL_PACK_BUFFER, p->glBufferTargetState_[2]);
   bindBuffer(GL_PIXEL_UNPACK_BUFFER, p->glBufferTargetState_[3]);
 
+  for (int i = 0; i < num_texture_units_; ++i)
   {
-    GLenum targets[4] = {GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP};
-
-    for (int i = 0; i < num_texture_units_; ++i)
-    {
-      activeTexture(GL_TEXTURE0 + i);
-
-      //TODO, changed 5 to 4 for end variable t as targets has only four elements
-      // check if this is correct
-      for (int t = 0; t < 4; ++t)
-        bindTexture(targets[t], stateStack_.back().glTextureTargetState_[i][t]);
-
-    }
+    activeTexture(GL_TEXTURE0 + i);
+    bindBuffer(p->glTextureStage_[i].target_, p->glTextureStage_[i].buf_);
   }
 
   activeTexture(p->activeTexture_);

@@ -118,7 +118,7 @@ struct GLStateContext
   // it contains a copy of the OpenGL state machine
 
 public:
-  GLStateContext() { activeTexture_ = 0;}
+  GLStateContext() { activeTexture_ = GL_TEXTURE0;}
 
   // glEnable / glDisable states
   // iff a bit is set for a state, it is enabled in OpenGL
@@ -146,10 +146,17 @@ public:
   // active texture unit: GL_TEXTUREi
   GLenum activeTexture_;
 
-  // 16 texture stages, 5 targets
-  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_RECTANGLE
-  // current state of a texture target
-  GLuint glTextureTargetState_[16][5];
+
+  struct TextureStage
+  {
+    TextureStage() : target_(0), buf_(0) {}
+    // current stage target
+    GLenum target_;
+    // current stage buffer
+    GLuint buf_;
+  };
+  // 16 texture stages
+  TextureStage glTextureStage_[16];
 
   // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
   GLenum shadeModel_;
@@ -553,34 +560,26 @@ public:
   /// get active GL texture
   inline static GLenum getActiveTexture() {return stateStack_.back().activeTexture_;}
   /// get active texture as zero based index
-  inline static int getActiveTextureIndex() {
-    if (getActiveTexture() == 0)
-      return 0;
-    else
-      return getActiveTexture() - GL_TEXTURE0;
-  }
+  inline static int getActiveTextureIndex() {return getActiveTexture() - GL_TEXTURE0;}
 
   /// replaces glBindTexture, supports locking
   static void bindTexture(GLenum _target, GLuint _buffer);
 
   /// locks the current texture stage (set by setActiveTexture)
-  static void lockTextureTarget(GLenum _target);
+  static void lockTextureStage();
 
   /// unlocks the current texture target
-  static void unlockTextureTarget(GLenum _target);
+  static void unlockTextureStage();
 
   /// get texture target locking state
-  static bool isTextureTargetLocked(GLenum _target);
+  static bool isTextureTargetLocked();
 
   /// get bound texture
-  static GLuint getBoundTextureBuffer(GLenum _target); 
+  static GLuint getBoundTextureBuffer(); 
+  /// get bound texture target
+  static GLenum getBoundTextureTarget();
 
   /** @} */
-
-private:
-
-  /// bijective map from GLenum texture_target to [0..4], -1 if unsupported
-  static int getTextureTargetIndex(GLenum _target);
 
 public:
 
@@ -1124,9 +1123,8 @@ private: //--------------------------------------------------------------------
   // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_PIXEL_PACK_BUFFER, GL_PIXEL_UNPACK_BUFFER
   static int glBufferTargetLock_[4];
 
-  // 16 texture stages, 4 targets
-  // GL_TEXTURE_1D, GL_TEXTURE_2D, GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP
-  static int glTextureTargetLock_[16][5];
+  // 16 texture stages
+  static int glTextureStageLock_[16];
 
   // current shade model: GL_FLAT, GL_SMOOTH, set by glShadeModel
   static bool   shadeModelLock_;
