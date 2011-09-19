@@ -240,6 +240,13 @@ LightNode::~LightNode() {
     
 //----------------------------------------------------------------------------
 
+void LightNode::getLightSource(LightSource* _light) const
+{
+  memcpy(_light, &light_, sizeof(LightSource));
+}
+
+//----------------------------------------------------------------------------
+
 void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
     
     if( visualize_ && !light_.directional() ) {

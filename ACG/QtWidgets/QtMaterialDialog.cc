@@ -478,7 +478,9 @@ void QtMaterialDialog::changeAmbientColor()
 {
   bool* ok = 0;
 
-  QColor newColor = QColor( QColorDialog::getRgba(convertColor(ambient_).rgba(), ok, this));
+  QColor oldColor = convertColor(ambient_);
+
+  QColor newColor = QColorDialog::getColor(oldColor, this, "Ambient Color", QColorDialog::ShowAlphaChannel);
 
   if( newColor.isValid())
   {
