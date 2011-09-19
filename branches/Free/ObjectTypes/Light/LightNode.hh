@@ -259,6 +259,9 @@ public:
   /// Set the light source parameters
   void setLightSource(LightSource _light ) { light_ = _light; };
 
+  /// Get the light source parameters
+  void getLightSource(LightSource* _light) const;
+
   ACG_CLASSNAME(LightNode);
 
   /// Get bounding box (for visualization purposes)
