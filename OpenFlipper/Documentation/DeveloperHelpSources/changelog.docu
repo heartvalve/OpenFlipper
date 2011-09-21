@@ -1,8 +1,12 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.3 (  ? , 12330 )</b>
+ * - <b>OpenFlipper 1.0.3 (  ? , 12412 )</b>
  *       - <b>ACG</b>
  *          - SceneGraph
+ *              - General
+ *                  - Changed all nodes to use the glstate system instead of direct gl calls
+ *              - MaterialNode
+ *                  - Changes to light and material dialog to set alpha channel
  *              - MeshNode
  *                  - Fixed bug in per vertex picking buffer(was sometimes empty).
  *                  - Render faces with normals defined on the mesh(and do not compute them)
@@ -27,6 +31,8 @@
  *              - When going to fullscreen, hide only toolbars that are currently docked
  *              - Reintroduced checkbox for rendering toolbar outside of scene
  *              - Added menus to switch between postprocessors and renderers
+ *              - Introduced split viewer layout with two viewers next to each other
+ *              - Set focus on right examiner when a context menu is requested
  *          - Load/Save
  *              - Dont crash when we get a wrong id after adding a new object
  *              - Fixed bug in recent files menu which sometimes ignored the type
@@ -35,12 +41,16 @@
  *              - Added sliders to options widget to support smaller screens
  *          - Rendering
  *              - Moved flyTo animations to animation framework (no more ugly processEvents)
+ *              - Fixed fly to animation not working when rotation ofthe viewer was locked
  *              - Snapshot functions now have asynchronus file writers
  *              - Removed philips stereo code from core ( moved into postprocessor plugin)
  *          - Scripting
  *              - More slot documentations
  *              - added deleteObject function
+ *              - Changed snapshot functions to count filenames with leading zeros
  *      - <b>Interfaces</b>
+ *          - BaseInterface
+ *              - Added a drawModeChanged slot
  *          - RenderInterface
  *              - New interface to replace the core rendering function with a specialized one
  *          - PostProcessorInterface
@@ -66,6 +76,11 @@
  *              - Fixed bug in selection plugin where sphere painter size was not updated on the fly
  *              - Readded button to load flipper selections
  *              - Fixed bug where sphere selection sometimes failed (pciking itself instead of object)
+ *          - Texturecontrol
+ *              - Don't switch drawmode when texture is switched ( ==== You have to switch the drawmode yourself in a plugin now) ===== )
+ *              - Bugfix to react on switching to texture based drawmodes
+ *              - Histogramm for 1d halfedge based texture coords for texture properties widget
+ *              - Bugfix property abs (absolute value) no longer causes a parse error
  *          - VSI
  *              - Fixed bug where meshobjectinfo was not correctly supported
  *      - <b>Build System</b>
