@@ -1306,6 +1306,9 @@ void glViewer::releaseGLArea()
 
 void glViewer::contextMenuEvent(QGraphicsSceneContextMenuEvent* _e)
 {
+  emit signalMakeActive();
+  glScene_->update ();
+
   QPoint p (_e->pos().x(), _e->pos().y());
   emit signalCustomContextMenuRequested (p);
 }
