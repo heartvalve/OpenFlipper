@@ -645,8 +645,12 @@ void CoreWidget::slotUpdateRendererMenu() {
   // Add the menu if it does not exist yet
   if ( rendererMenu_ == 0 ) {
 
+    QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
     rendererMenu_ = new QMenu(tr("Global Renderer"),viewMenu_);
+    rendererMenu_->setIcon(QIcon(iconPath+"renderers.png"));
     viewMenu_->addMenu(rendererMenu_);
+
 
     connect(rendererMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateRendererMenu() ) );
   }
@@ -711,7 +715,10 @@ void CoreWidget::slotUpdatePostProcessorMenu() {
   // Add the menu if it does not exist yet
   if ( postprocessorMenu_ == 0 ) {
 
+    QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
     postprocessorMenu_ = new QMenu(tr("Global Post Processor"),viewMenu_);
+    postprocessorMenu_->setIcon(QIcon(iconPath+"postprocessors.png"));
     viewMenu_->addMenu(postprocessorMenu_);
 
     connect(postprocessorMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdatePostProcessorMenu() ) );

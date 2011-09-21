@@ -218,6 +218,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   if ( renderManager().available() > 1 ) {
     QMenu* rendererMenu = new QMenu(tr("Renderers"),_menu);
+    rendererMenu->setIcon(QIcon(iconPath+"renderers.png"));
 
     _menu->addMenu(rendererMenu);
 
@@ -261,6 +262,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   if ( postProcessorManager().available() > 1 ) {
     QMenu* postProcessorMenu = new QMenu(tr("Post processors"),_menu);
+    postProcessorMenu->setIcon(QIcon(iconPath+"postprocessors.png"));
 
     _menu->addMenu(postProcessorMenu);
 
