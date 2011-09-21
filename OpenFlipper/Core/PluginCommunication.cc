@@ -127,8 +127,11 @@ void Core::slotVisibilityChanged( int _id ) {
 */
 void Core::slotObjectSelectionChanged( int _id )
 {
-  // just inform the plugins as we dont do anything else
+  // just inform the plugins as we don't do anything else
   emit objectSelectionChanged(_id);
+
+  // Send via second interface
+  emit updatedObject(objectId,UPDATE_STATE);
 
   updateView();
 }
