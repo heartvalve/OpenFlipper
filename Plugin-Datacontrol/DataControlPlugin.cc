@@ -415,13 +415,11 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
     // source
     case 2:
       obj->source( _value.toBool() );
-      emit updatedObject(_id, UPDATE_STATE);
       break;
 
     // target
     case 3:
       obj->target( _value.toBool() );
-      emit updatedObject(_id, UPDATE_STATE);
       break;
 
     default:
@@ -683,13 +681,11 @@ void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 
       if (_obj->source() != value){
         _obj->source( value );
-        emit updatedObject(_obj->id(), UPDATE_STATE);
         changed = true;
       }
 
       if (_obj->target() != value2){
         _obj->target( value2 );
-        emit updatedObject(_obj->id(), UPDATE_STATE);
         changed = true;
       }
 
@@ -733,13 +729,11 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
 
         if ( current->source() != _obj->source() ){
           current->source( _obj->source() );
-          emit updatedObject(_obj->id(), UPDATE_STATE);
           changed = true;
         }
 
         if ( current->target() != _obj->target() ){
           current->target( _obj->target() );
-          emit updatedObject(_obj->id(), UPDATE_STATE);
           changed = true;
         }
 
