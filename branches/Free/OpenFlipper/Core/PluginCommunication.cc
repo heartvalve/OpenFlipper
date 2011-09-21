@@ -131,7 +131,7 @@ void Core::slotObjectSelectionChanged( int _id )
   emit objectSelectionChanged(_id);
 
   // Send via second interface
-  emit updatedObject(objectId,UPDATE_STATE);
+  emit signalObjectUpdated(_id,UPDATE_STATE);
 
   updateView();
 }
