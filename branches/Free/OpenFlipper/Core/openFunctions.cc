@@ -152,6 +152,9 @@ void Core::slotExecuteAfterStartup() {
       if ( scriptFiles[i].endsWith("ofs",Qt::CaseInsensitive) )
         emit executeFileScript(scriptDir.path() + "/" + scriptFiles[i]);
 
+    // Clear scripting window afterexecuting the coresubdir scripts
+    bool ok = false;
+    slotCall( "scripting" ,"clearEditor()",ok);
   }
 
   // Open all files given at the commandline
