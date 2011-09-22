@@ -326,3 +326,29 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   return engine->undefinedValue();
 }
 
+QScriptValue printToFileFunction(QScriptContext *context, QScriptEngine *engine)
+{
+  if ( context->argumentCount() < 2 ) {
+    context->throwError( QScriptContext::SyntaxError, "Error! printToFileFunction needs at least two arguments, filename and what should be printed" );
+    return  engine->undefinedValue();
+  }
+
+  QString result;
+  for (int i = 1; i < context->argumentCount(); ++i) {
+    if (i > 1)
+        result.append(" ");
+    result.append(context->argument(i).toString());
+  }
+
+  QFile file(context->argument(0).toString());
+
+  file.open(QIODevice::Append);
+  QTextStream stream(&file);
+
+  stream << result << "\n";
+
+  file.close();
+
+  return engine->undefinedValue();
+}
+

@@ -429,7 +429,9 @@ Core::init() {
   printFunction.setProperty("textedit",scriptEngine_.newQObject(this));
   scriptEngine_.globalObject().setProperty("print", printFunction);
 
-
+  // Register print to file function :
+  QScriptValue printToFileFunc = scriptEngine_.newFunction(printToFileFunction);
+  scriptEngine_.globalObject().setProperty("printToFile", printToFileFunc);
 
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
