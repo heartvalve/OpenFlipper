@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.3 (  ? , 12412 )</b>
+ * - <b>OpenFlipper 1.1 (  ? , 12446 )</b>
  *       - <b>ACG</b>
  *          - SceneGraph
  *              - General
@@ -48,6 +48,9 @@
  *              - More slot documentations
  *              - added deleteObject function
  *              - Changed snapshot functions to count filenames with leading zeros
+ *              - Added printToFile scripting function
+ *              - Added the global function printToFile to list of scripting functions
+ *              - Slot descriptions for global scripting functions
  *      - <b>Interfaces</b>
  *          - BaseInterface
  *              - Added a drawModeChanged slot
@@ -71,11 +74,20 @@
  *          - Render Picking
  *              - Plugin that implements the core render picking functionality
  *              - Renders the picking color buffer to the screen.
+ *          - Scripting
+ *              - Added if and break to keywords
+ *              - Added line numbers to editor and error line highlighting
+ *              - Added statusbar and error messages with line numbers
+ *              - Toolbar for scripting widget
+ *              - Clear scripting window after executing core scripts
+ *              - Scripting function to clear the script widget
  *          - Selection
  *              - Introduce function to load selections via scripting from files
  *              - Fixed bug in selection plugin where sphere painter size was not updated on the fly
  *              - Readded button to load flipper selections
  *              - Fixed bug where sphere selection sometimes failed (pciking itself instead of object)
+ *          - SkeletonEditing
+ *              - Fixed flickering when adding skeleton joints
  *          - Texturecontrol
  *              - Don't switch drawmode when texture is switched ( ==== You have to switch the drawmode yourself in a plugin now) ===== )
  *              - Bugfix to react on switching to texture based drawmodes
