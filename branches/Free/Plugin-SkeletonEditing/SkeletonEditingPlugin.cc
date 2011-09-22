@@ -848,12 +848,15 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
         // set joint position
         setJointPosition(PluginFunctions::skeletonObject(baseObject), joint, lastHitPoint);
         emit updatedObject(baseObject->id(), UPDATE_ALL);
+
+        Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
+        skeleton->addJoint(joint, tmpJoint);
+        setJointPosition(PluginFunctions::skeletonObject(baseObject), tmpJoint, lastHitPoint);
+
+        currentJoint_ = tmpJoint->id();
       }
 
-      Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
-      skeleton->addJoint(joint, tmpJoint);
 
-      currentJoint_ = tmpJoint->id();
     }
   }
 
