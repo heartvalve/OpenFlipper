@@ -132,6 +132,11 @@ public slots:
   */
   void slotLoadScript( QString _filename );
   
+  /** \brief Clear the editor window
+   * Clears the script editor window
+   */
+  void clearEditor();
+
 /** @} */
 
 //===========================================================================
