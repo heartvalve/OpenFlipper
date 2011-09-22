@@ -1210,13 +1210,19 @@ private slots:
     /// set a description for one of the plugin's public slots
     void slotSetSlotDescription(QString     _slotName,   QString _slotDescription,
                                 QStringList _parameters, QStringList _descriptions);
+
+    /// set a description for a global scripting function
+    void slotSetSlotDescriptionGlobalFunction(QString     _functionName,   QString _slotDescription,
+                                              QStringList _parameters, QStringList _descriptions);
+
     /// get available descriptions for a given public slot
-    void slotGetDescription(QString _function, QString& _fnDescription,
-                                QStringList& _parameters, QStringList& _descriptions );
+    void slotGetDescription(QString _function,        QString& _fnDescription,
+                            QStringList& _parameters, QStringList& _descriptions );
 
   private:
 
     QList< SlotInfo > coreSlots_;
+    QList< SlotInfo > globalFunctions_;
 
     void setDescriptions();
 

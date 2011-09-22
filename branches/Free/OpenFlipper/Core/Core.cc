@@ -432,7 +432,7 @@ Core::init() {
   // Register print to file function :
   QScriptValue printToFileFunc = scriptEngine_.newFunction(printToFileFunction);
   scriptEngine_.globalObject().setProperty("printToFile", printToFileFunc);
-  scriptingFunctions_.push_back( "-.printToFile" );
+  scriptingFunctions_.push_back( "-.printToFile(QString,QString)" );
 
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
@@ -1203,6 +1203,19 @@ void Core::slotSetSlotDescription(QString      _slotName,   QString _slotDescrip
   pluginInfo->slotInfos.append( info );
 }
 
+/// set descriptions for a scriptable slot
+void Core::slotSetSlotDescriptionGlobalFunction(QString      _functionName,   QString _slotDescription,
+                                                QStringList _parameters,      QStringList _descriptions)
+{
+  SlotInfo info;
+  info.slotName        = _functionName;
+  info.slotDescription = _slotDescription;
+  info.parameters      = _parameters;
+  info.descriptions    = _descriptions;
+
+  globalFunctions_.push_back( info );
+}
+
 /// get available Descriptions for a scriptable slot
 void Core::slotGetDescription(QString      _function,   QString&     _fnDescription,
                               QStringList& _parameters, QStringList& _descriptions )
@@ -1210,11 +1223,21 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
   QString pluginName = _function.section(".", 0, 0);
   QString slotName   = _function.section(".", 1, 1);
 
-  if ( pluginName == "-") {
-    std::cerr << "Global function, no description implemented yet!" << std::endl;
-    _fnDescription = "";
-    _parameters.clear();
-    _descriptions.clear();
+  // Global function
+  if ( !_function.contains(".") ) {
+
+    // Only one section, so we have to swap
+    slotName = pluginName;
+
+    for (int i=0; i < globalFunctions_.count(); i++) {
+
+      if (globalFunctions_[i].slotName == slotName){
+        _fnDescription = globalFunctions_[i].slotDescription;
+        _parameters    = globalFunctions_[i].parameters;
+        _descriptions  = globalFunctions_[i].descriptions;
+        return;
+      }
+    }
     return;
   }
 
@@ -1409,6 +1432,8 @@ void Core::setDescriptions(){
 
   connect(this, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
           this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
+
+  emit slotSetSlotDescriptionGlobalFunction("printToFile(QString,QString)", tr("Print a message to a file"), QStringList(QString("Filename;Values").split(";")), QStringList(QString("Filename to print into;Arbitrary number of arguments").split(";")));
 
   emit setSlotDescription("deleteObject(int)", tr("Delete an object from the scene."), QStringList("ObjectId"), QStringList(tr("Id of the object to delete")));
   emit setSlotDescription("updateView()", tr("Redraw the contents of the viewer."), QStringList(), QStringList());
