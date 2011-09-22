@@ -26,7 +26,7 @@
        </property>
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QTextEdit" name="currentScript">
+         <widget class="CodeEditorWidget" name="currentScript">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -175,6 +175,11 @@
    <class>FunctionList</class>
    <extends>QListWidget</extends>
    <header>FunctionList.hh</header>
+  </customwidget>
+  <customwidget>
+   <class>CodeEditorWidget</class>
+   <extends>QTextEdit</extends>
+   <header>codeeditor.hh</header>
   </customwidget>
  </customwidgets>
  <resources/>

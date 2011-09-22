@@ -44,62 +44,70 @@
 
 #include "highLighter.hh"
 
- Highlighter::Highlighter(QTextEdit *parent)
+ Highlighter::Highlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
 {
-  // Set the basic format styles
-  keywordFormat_.setForeground(Qt::darkGreen);
-  keywordFormat_.setFontWeight(QFont::Bold);
+ init();
+}
 
-  pluginFormat_.setForeground(Qt::darkBlue);
-  pluginFormat_.setFontWeight(QFont::Bold);
+Highlighter::Highlighter(QTextEdit *parent)
+: QSyntaxHighlighter(parent)
+{
+  init();
+}
 
-  functionFormat_.setForeground(Qt::darkYellow);
-  functionFormat_.setFontWeight(QFont::Bold);
+ void Highlighter::init() {
+   // Set the basic format styles
+   keywordFormat_.setForeground(Qt::darkGreen);
+   keywordFormat_.setFontWeight(QFont::Bold);
 
-  typeFormat_.setForeground(Qt::darkMagenta);
-  typeFormat_.setFontWeight(QFont::Bold);
+   pluginFormat_.setForeground(Qt::darkBlue);
+   pluginFormat_.setFontWeight(QFont::Bold);
 
-  quotationFormat_.setForeground(Qt::darkRed);
+   functionFormat_.setForeground(Qt::darkYellow);
+   functionFormat_.setFontWeight(QFont::Bold);
 
-  listFormat_.setForeground(Qt::darkRed);
+   typeFormat_.setForeground(Qt::darkMagenta);
+   typeFormat_.setFontWeight(QFont::Bold);
 
-  singleLineCommentFormat_.setForeground(Qt::red);
-  multiLineCommentFormat_.setForeground(Qt::red);
+   quotationFormat_.setForeground(Qt::darkRed);
 
-  commentStartExpression_ = QRegExp("/\\*");
-  commentEndExpression_   = QRegExp("\\*/");
+   listFormat_.setForeground(Qt::darkRed);
 
-  // Define basic keywords
-  keywordPatterns_ << "while" << "for" << "print" << "var";
+   singleLineCommentFormat_.setForeground(Qt::red);
+   multiLineCommentFormat_.setForeground(Qt::red);
 
-  // Types which are accepted by the scripting system
-  typePatterns_ << "int" << "Matrix4x4" << "QString" << "idList" << "bool" << "Vector" << "double";
+   commentStartExpression_ = QRegExp("/\\*");
+   commentEndExpression_   = QRegExp("\\*/");
 
-  update();
+   // Define basic keywords
+   keywordPatterns_ << "while" << "for" << "print" << "var";
 
-//   classFormat.setFontWeight(QFont::Bold);
-//   classFormat.setForeground(Qt::darkMagenta);
-//   rule.pattern = QRegExp("\\bQ[A-Za-z]+\\b");
-//   rule.format = classFormat;
-//   highlightingRules.append(rule);
-//
+   // Types which are accepted by the scripting system
+   typePatterns_ << "int" << "Matrix4x4" << "QString" << "idList" << "bool" << "Vector" << "double";
+
+   update();
+
+   //   classFormat.setFontWeight(QFont::Bold);
+   //   classFormat.setForeground(Qt::darkMagenta);
+   //   rule.pattern = QRegExp("\\bQ[A-Za-z]+\\b");
+   //   rule.format = classFormat;
+   //   highlightingRules.append(rule);
+   //
 
 
 
-//   functionFormat.setFontItalic(true);
-//   functionFormat.setForeground(Qt::blue);
-//   rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
-//   rule.format = functionFormat;
-//   highlightingRules.append(rule);
-//
-
+   //   functionFormat.setFontItalic(true);
+   //   functionFormat.setForeground(Qt::blue);
+   //   rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
+   //   rule.format = functionFormat;
+   //   highlightingRules.append(rule);
+   //
 }
 
 void Highlighter::update() {
 
   highlightingRules_.clear();
-
 
   HighlightingRule rule;
 
@@ -150,7 +158,8 @@ void Highlighter::update() {
 
  void Highlighter::highlightBlock(const QString &text)
 {
-  foreach (HighlightingRule rule, highlightingRules_) {
+
+   foreach (HighlightingRule rule, highlightingRules_) {
     QRegExp expression(rule.pattern);
     int index = text.indexOf(expression);
     while (index >= 0) {

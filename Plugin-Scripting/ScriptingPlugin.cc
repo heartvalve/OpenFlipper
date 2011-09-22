@@ -45,7 +45,6 @@
 
 #include "ScriptingPlugin.hh"
 
-#include <iostream>
 #include <ACG/GL/GLState.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -167,7 +166,7 @@ void ScriptingPlugin::pluginsInitialized() {
 
   scriptWidget_->description->setVisible( false );
 
-  highlighterCurrent_ = new Highlighter( scriptWidget_->currentScript );
+  highlighterCurrent_ = new Highlighter( scriptWidget_->currentScript->document() );
   highlighterLive_    = new Highlighter( scriptWidget_->liveEdit );
 //   highlighterList_    = new Highlighter( scriptWidget_->functionList  );
   frameTime_.start();
@@ -275,8 +274,17 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
     int lineNumber = engine->uncaughtExceptionLineNumber();
     emit log( LOGERR , tr("Script execution failed at line %1, with : %2 ").arg(lineNumber).arg(exception) );
 
-    if ( OpenFlipper::Options::gui())
+    if ( OpenFlipper::Options::gui()) {
         statusBar_->showMessage(tr("Script execution failed at line %1, with : %2 ").arg(lineNumber).arg(exception));
+
+        // Get cursor and move it to the line containing the error
+        QTextCursor cursor = scriptWidget_->currentScript->textCursor();
+        cursor.setPosition(0);
+        cursor.movePosition ( QTextCursor::Down, QTextCursor::MoveAnchor, lineNumber - 1 );
+        scriptWidget_->currentScript->setTextCursor(cursor);
+
+        scriptWidget_->currentScript->highLightErrorLine(lineNumber);
+    }
   }
 
   if ( OpenFlipper::Options::gui() && !error)
@@ -297,7 +305,7 @@ void ScriptingPlugin::slotExecuteFileScript( QString _filename ) {
     } while (!input.atEnd());
 
     if ( OpenFlipper::Options::gui() )
-      scriptWidget_->currentScript->setText(script);
+      scriptWidget_->currentScript->setPlainText(script);
 
     // Set lastfilename to the opened file
     lastFile_ = _filename;
@@ -437,7 +445,7 @@ void ScriptingPlugin::slotLoadScript( QString _filename ) {
     if (data.open(QFile::ReadOnly)) {
       QTextStream input(&data);
       do {
-        scriptWidget_->currentScript->append(input.readLine());
+        scriptWidget_->currentScript->appendPlainText(input.readLine());
       } while (!input.atEnd());
       
       lastFile_ = _filename;
@@ -569,7 +577,7 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
 
   showScriptWidget ();
 
-  scriptWidget_->currentScript->setText (_code);
+  scriptWidget_->currentScript->setPlainText(_code);
 }
 
 void ScriptingPlugin::clearEditor() {

@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "FunctionList.hh"
-#include <iostream>
 
 FunctionList::FunctionList(QWidget *parent)
     : QListWidget(parent)
