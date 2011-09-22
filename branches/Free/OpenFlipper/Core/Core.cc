@@ -432,6 +432,7 @@ Core::init() {
   // Register print to file function :
   QScriptValue printToFileFunc = scriptEngine_.newFunction(printToFileFunction);
   scriptEngine_.globalObject().setProperty("printToFile", printToFileFunc);
+  scriptingFunctions_.push_back( "-.printToFile" );
 
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
@@ -1208,6 +1209,14 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
 {
   QString pluginName = _function.section(".", 0, 0);
   QString slotName   = _function.section(".", 1, 1);
+
+  if ( pluginName == "-") {
+    std::cerr << "Global function, no description implemented yet!" << std::endl;
+    _fnDescription = "";
+    _parameters.clear();
+    _descriptions.clear();
+    return;
+  }
 
   //handle core slots
   if (pluginName == "core"){
