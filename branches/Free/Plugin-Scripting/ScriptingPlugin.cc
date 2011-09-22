@@ -83,26 +83,49 @@ void ScriptingPlugin::pluginsInitialized() {
 
   scriptWidget_ = new ScriptWidget();
 
+
+  QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
+
   scriptWidget_->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png");
+  icon.addFile(iconPath+"document-open.png");
   scriptWidget_->actionLoad_Script->setIcon(icon);
 
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png");
+  icon.addFile(iconPath+"document-save.png");
   scriptWidget_->actionSave_Script->setIcon(icon);
 
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save-as.png");
+  icon.addFile(iconPath+"document-save-as.png");
   scriptWidget_->actionSave_Script_As->setIcon(icon);
 
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"window-close.png");
+  icon.addFile(iconPath+"window-close.png");
   scriptWidget_->actionClose->setIcon(icon);
+
+  QToolBar* toolBar = new QToolBar(tr("File Actions"));
+
+
+  QAction* openButton = new QAction(QIcon(iconPath + "document-open.png"), "Open", toolBar);
+  toolBar->addAction(openButton);
+  connect (openButton, SIGNAL( triggered() ), this, SLOT( slotLoadScript() ) );
+
+  QAction* saveButton = new QAction(QIcon(iconPath + "document-save.png"), "Save", toolBar);
+  toolBar->addAction(saveButton);
+  connect (saveButton, SIGNAL( triggered() ), this, SLOT( slotSaveScript() ) );
+
+  QAction* saveAsButton = new QAction(QIcon(iconPath + "document-save-as.png"), "Save as", toolBar);
+  toolBar->addAction(saveAsButton);
+  connect (saveAsButton, SIGNAL( triggered() ), this, SLOT( slotSaveScriptAs() ) );
+
+  toolBar->addSeparator();
+
+  QAction* executeButton = new QAction(QIcon(iconPath + "arrow-right.png"), "Execute", toolBar);
+  toolBar->addAction(executeButton);
+  connect (executeButton, SIGNAL( triggered() ), this, SLOT( slotExecuteScriptButton() ) );
+
+  scriptWidget_->addToolBar(toolBar);
 
   scriptWidget_->hide();
 
   scriptWidget_->resize(scriptWidget_->width() , std::min(QApplication::desktop()->screenGeometry().height() - 150 , 800) );
-
-  connect( scriptWidget_->executeButton, SIGNAL(clicked()),
-           this                        , SLOT( slotExecuteScriptButton() ));
 
   connect (scriptWidget_->actionLoad_Script, SIGNAL( triggered() ), this, SLOT( slotLoadScript() ) );
   scriptWidget_->actionLoad_Script->setShortcut( QKeySequence(Qt::CTRL + Qt::Key_O) );
