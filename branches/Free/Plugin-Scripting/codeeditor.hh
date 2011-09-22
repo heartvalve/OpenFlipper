@@ -40,62 +40,65 @@
 *                                                                            *
 \*===========================================================================*/
 
-#ifndef HIGHLIGHTER_H
-#define HIGHLIGHTER_H
+#ifndef CODEEDITORWIDGET_HH
+#define CODEEDITORWIDGET_HH
 
-#include <QSyntaxHighlighter>
+#include <QPlainTextEdit>
+#include <QObject>
 
-#include <QHash>
-#include <QTextCharFormat>
+class QPaintEvent;
+class QResizeEvent;
+class QSize;
+class QWidget;
 
-class QTextDocument;
+class LineNumberArea;
 
-class Highlighter : public QSyntaxHighlighter
+
+class CodeEditorWidget : public QPlainTextEdit
 {
-  Q_OBJECT
+    Q_OBJECT
 
   public:
-    Highlighter( QTextDocument* parent = 0);
-    Highlighter( QTextEdit* parent = 0);
+    CodeEditorWidget(QWidget *parent = 0);
 
-    /// Updates the highlighter with the current rule set defined in the patterns
-    void update();
-
-    QStringList keywordPatterns_;
-    QStringList pluginPatterns_;
-    QStringList functionPatterns_;
-    QStringList typePatterns_;
+    void lineNumberAreaPaintEvent(QPaintEvent *event);
+    int lineNumberAreaWidth();
 
   protected:
+    void resizeEvent(QResizeEvent *event);
 
-    void highlightBlock(const QString &text);
+  public:
+    void highLightErrorLine(int _line);
+
+  private slots:
+    void updateLineNumberAreaWidth(int newBlockCount);
+    void highlightCurrentLine();
+    void updateLineNumberArea(const QRect &, int);
 
   private:
-    /// common initializer function called by the constructors
-    void init();
-
-    struct HighlightingRule
-    {
-      QRegExp pattern;
-      QTextCharFormat format;
-    };
-
-    QVector<HighlightingRule> highlightingRules_;
-
-    QRegExp commentStartExpression_;
-    QRegExp commentEndExpression_;
-
-    QTextCharFormat keywordFormat_;
-    QTextCharFormat pluginFormat_;
-    QTextCharFormat functionFormat_;
-    QTextCharFormat typeFormat_;
-
-//     QTextCharFormat classFormat;
-    QTextCharFormat singleLineCommentFormat_;
-    QTextCharFormat multiLineCommentFormat_;
-    QTextCharFormat quotationFormat_;
-    QTextCharFormat listFormat_;
-//     QTextCharFormat functionFormat;
+    QWidget *lineNumberArea;
 };
+
+
+class LineNumberArea : public QWidget
+{
+  public:
+    LineNumberArea(CodeEditorWidget *editor) : QWidget(editor) {
+      codeEditor = editor;
+    }
+
+    QSize sizeHint() const {
+      return QSize(codeEditor->lineNumberAreaWidth(), 0);
+    }
+
+  protected:
+    void paintEvent(QPaintEvent *event) {
+      codeEditor->lineNumberAreaPaintEvent(event);
+    }
+
+  private:
+    CodeEditorWidget *codeEditor;
+};
+
 
 #endif

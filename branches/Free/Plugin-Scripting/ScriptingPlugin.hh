@@ -57,6 +57,7 @@
 #include "scriptingWidget.hh"
 
 
+
 class ScriptingPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface, RPCInterface, LoggingInterface
 {
 Q_OBJECT
