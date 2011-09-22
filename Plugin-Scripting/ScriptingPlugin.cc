@@ -519,5 +519,10 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
   scriptWidget_->currentScript->setText (_code);
 }
 
+void ScriptingPlugin::clearEditor() {
+  std::cerr<< "Slotclear editor " << std::endl;
+  scriptWidget_->currentScript->clear();
+}
+
 Q_EXPORT_PLUGIN2( skriptingplugin , ScriptingPlugin );
 
