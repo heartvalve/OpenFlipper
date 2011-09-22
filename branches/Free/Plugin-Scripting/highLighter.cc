@@ -81,7 +81,7 @@ Highlighter::Highlighter(QTextEdit *parent)
    commentEndExpression_   = QRegExp("\\*/");
 
    // Define basic keywords
-   keywordPatterns_ << "while" << "for" << "print" << "var";
+   keywordPatterns_ << "while" << "for" << "print" << "var" << "break" << "if";
 
    // Types which are accepted by the scripting system
    typePatterns_ << "int" << "Matrix4x4" << "QString" << "idList" << "bool" << "Vector" << "double";
