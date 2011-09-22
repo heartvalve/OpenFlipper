@@ -199,8 +199,12 @@ void ScriptingPlugin::showScriptWidget( ) {
   for ( int i = 0  ; i <  completeList.size() ; ++i) {
 
     QString plugin   = completeList[i].section('.',0,0);
-    if ( ! plugins.contains( plugin ) )
-      plugins.push_back( plugin );
+
+    // Global functions start with - and are not added as plugins!
+    if (plugin != "-") {
+      if ( ! plugins.contains( plugin ) )
+        plugins.push_back( plugin );
+    }
 
 
     QString function = completeList[i].section('.',1,1);
@@ -208,7 +212,11 @@ void ScriptingPlugin::showScriptWidget( ) {
     if ( ! functions.contains( function ) )
       functions.push_back( function );
 
-    scriptWidget_->functionList->addItem( completeList[i] );
+    // Either write the whole string or cut the "-." for global functions
+    if ( plugin != "-")
+      scriptWidget_->functionList->addItem( completeList[i] );
+    else
+      scriptWidget_->functionList->addItem( completeList[i].right(completeList[i].size() - 2) );
 
   }
 
