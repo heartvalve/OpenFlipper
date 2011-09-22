@@ -100,7 +100,11 @@ void ScriptingPlugin::pluginsInitialized() {
   icon.addFile(iconPath+"window-close.png");
   scriptWidget_->actionClose->setIcon(icon);
 
-  QToolBar* toolBar = new QToolBar(tr("File Actions"));
+  // ==================================================================
+  // Add a toolbar
+  // ==================================================================
+
+  QToolBar* toolBar = new QToolBar(tr("Scripting Toolbar"));
 
 
   QAction* openButton = new QAction(QIcon(iconPath + "document-open.png"), "Open", toolBar);
@@ -122,6 +126,16 @@ void ScriptingPlugin::pluginsInitialized() {
   connect (executeButton, SIGNAL( triggered() ), this, SLOT( slotExecuteScriptButton() ) );
 
   scriptWidget_->addToolBar(toolBar);
+
+  // ==================================================================
+  // Create a status bar
+  // ==================================================================
+
+  statusBar_ = new QStatusBar();
+
+  scriptWidget_->setStatusBar( statusBar_ );
+
+  // ==================================================================
 
   scriptWidget_->hide();
 
@@ -235,6 +249,10 @@ void ScriptingPlugin::slotScriptInfo( QString _pluginName , QString _functionNam
 }
 
 void ScriptingPlugin::slotExecuteScript( QString _script ) {
+
+  if ( OpenFlipper::Options::gui())
+    statusBar_->showMessage(tr("Executing Script"));
+
   QScriptEngine* engine;
   emit getScriptingEngine( engine  );
 
@@ -245,12 +263,24 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
   // Get the filename of the script and set it in the scripting environment
   engine->globalObject().setProperty("ScriptPath",QScriptValue(engine,lastFile_.section(OpenFlipper::Options::dirSeparator(), 0, -2)));
 
+  // Execute the script
   engine->evaluate( _script );
+
+  // Catch errors and print some reasonable error message to log and statusbar
+  bool error = false;
   if ( engine->hasUncaughtException() ) {
+    error = true;
     QScriptValue result = engine->uncaughtException();
     QString exception = result.toString();
-    emit log( LOGERR , tr("Script execution failed with : ") + exception );
+    int lineNumber = engine->uncaughtExceptionLineNumber();
+    emit log( LOGERR , tr("Script execution failed at line %1, with : %2 ").arg(lineNumber).arg(exception) );
+
+    if ( OpenFlipper::Options::gui())
+        statusBar_->showMessage(tr("Script execution failed at line %1, with : %2 ").arg(lineNumber).arg(exception));
   }
+
+  if ( OpenFlipper::Options::gui() && !error)
+    statusBar_->clearMessage();
 
   /// Switch scripting mode off
   OpenFlipper::Options::scripting(false);
@@ -543,7 +573,6 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
 }
 
 void ScriptingPlugin::clearEditor() {
-  std::cerr<< "Slotclear editor " << std::endl;
   scriptWidget_->currentScript->clear();
 }
 

@@ -182,11 +182,13 @@ private :
 private :
   ScriptWidget* scriptWidget_;
 
-  Highlighter* highlighterCurrent_;
-  Highlighter* highlighterLive_;
-  Highlighter* highlighterList_;
+  QStatusBar*   statusBar_;
 
-  QString lastFile_;
+  Highlighter*  highlighterCurrent_;
+  Highlighter*  highlighterLive_;
+  Highlighter*  highlighterList_;
+
+  QString       lastFile_;
 
 public slots:
   QString version() { return QString("1.0"); };
