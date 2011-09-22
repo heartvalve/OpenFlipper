@@ -1395,6 +1395,9 @@ private slots:
 /// Special print function for core logger
 QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine);
 
+/// Special print function for sending output to a file
+QScriptValue printToFileFunction(QScriptContext *context, QScriptEngine *engine);
+
 //=============================================================================
 #endif // MVIEWWIDGET_HH defined
 //=============================================================================
