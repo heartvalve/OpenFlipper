@@ -492,7 +492,7 @@ function (_build_openflipper_plugin plugin)
 	OpenMeshCore
         OpenMeshTools
         ACG
-        PluginLib
+        OpenFlipperPluginLib
         ${GLUT_LIBRARIES}
       )
 
@@ -512,7 +512,7 @@ function (_build_openflipper_plugin plugin)
 
       target_link_libraries (
          Plugin-${plugin}
-	 PluginLib
+	 OpenFlipperPluginLib
 	 ${QT_LIBRARIES}
       )
       # copy plugin so file to application bundle inside "Build" directory

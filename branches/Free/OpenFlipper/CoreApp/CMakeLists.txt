@@ -138,7 +138,7 @@ target_link_libraries (OpenFlipper
   OpenMeshCore
   OpenMeshTools
   ACG
-  PluginLib
+  OpenFlipperPluginLib
   ${QT_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${GLEW_LIBRARY}

@@ -105,15 +105,15 @@ acg_qt4_automoc (moc_targets ${headers})
 # Create library
 #=======================================================
 
-acg_add_library (PluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+acg_add_library (OpenFlipperPluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 if( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS )
   set_target_properties (
-    PluginLib PROPERTIES 
+    OpenFlipperPluginLib PROPERTIES 
     COMPILE_FLAGS ${ADDITIONAL_PLUGINLIB_COMPILER_FLAGS}
   )
 endif()
 
-target_link_libraries (PluginLib
+target_link_libraries (OpenFlipperPluginLib
   OpenMeshCore
   OpenMeshTools
   ACG
@@ -126,13 +126,13 @@ target_link_libraries (PluginLib
 )
 
 #=======================================================
-# Setup translation files for PluginLib
+# Setup translation files for OpenFlipperPluginLib
 #=======================================================
 
 set (trans_files ${sources})
 list (APPEND trans_files ${ui})
 list (APPEND trans_files ${headers})
-acg_add_translations (PluginLib "de_DE" "${trans_files}")
+acg_add_translations (OpenFlipperPluginLib "de_DE" "${trans_files}")
 
 
 
