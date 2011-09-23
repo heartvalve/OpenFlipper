@@ -104,6 +104,10 @@ acg_qt4_autouic (uic_targets ${ui})
 acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+if ( NOT WIN32 )
+  set_target_properties (ACG PROPERTIES VERSION 1.0
+                                        SOVERSION 1.0 )
+endif()
 
 if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
   install (TARGETS ACG DESTINATION ${ACG_PROJECT_LIBDIR})
