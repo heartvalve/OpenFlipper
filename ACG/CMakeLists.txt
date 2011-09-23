@@ -1,5 +1,7 @@
 include (ACGCommon)
 
+acg_get_version ()
+
 # Disable Library installation when not building ACG on its own but as part of another project!
 if ( ${PROJECT_NAME} MATCHES "OpenFlipper")
   set(ACG_NO_LIBRARY_INSTALL true)
@@ -105,13 +107,17 @@ acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 if ( NOT WIN32 )
-  set_target_properties (ACG PROPERTIES VERSION 1.0
-                                        SOVERSION 1.0 )
+  set_target_properties (ACG PROPERTIES VERSION ${ACG_VERSION_MAJOR}.${ACG_VERSION_MINOR}
+                                      SOVERSION ${ACG_VERSION_MAJOR}.${ACG_VERSION_MINOR})
 endif()
 
 if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
   install (TARGETS ACG DESTINATION ${ACG_PROJECT_LIBDIR})
 endif ()
+
+# display results
+acg_print_configure_header (ACG "ACG")
+
 
 if ( FTGL_FOUND )
 	target_link_libraries (ACG 
