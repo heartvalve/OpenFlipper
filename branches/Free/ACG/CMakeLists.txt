@@ -105,6 +105,10 @@ acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 
+if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
+  install (TARGETS ACG DESTINATION ${ACG_PROJECT_LIBDIR})
+endif ()
+
 if ( FTGL_FOUND )
 	target_link_libraries (ACG 
 	  OpenMeshCore
