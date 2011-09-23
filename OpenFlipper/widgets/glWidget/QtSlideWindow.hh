@@ -138,10 +138,10 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     /// Slide widget down
     void slideDown();
 
-    // Slot is called whenever the animation is finished
+    /// Slot is called whenever the animation is finished
     void animationFinished();
 
-    // Start actual slide down
+    /// Start actual slide down
     void startSlideDownAnimation();
 
   private:

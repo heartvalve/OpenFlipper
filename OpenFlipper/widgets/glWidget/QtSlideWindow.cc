@@ -322,9 +322,17 @@ void QtSlideWindow::updateParentGeometry() {
 
 //-----------------------------------------------------------------------------
 
+#include <iostream>
 void QtSlideWindow::animationFinished() {
 
     animating_ = false;
+
+    // If we reached up position,
+    // check if the mouse is still inside (could leave in between as we block the leave event
+    // when animating to avoid flickering
+    // If mouse is not inside anymore, we start the countdown for slideDown
+    if ( !down_ && !isUnderMouse() )
+      timer_->start(WAIT_UNTIL_SLIDE_DOWN);
 }
 
 //-----------------------------------------------------------------------------
