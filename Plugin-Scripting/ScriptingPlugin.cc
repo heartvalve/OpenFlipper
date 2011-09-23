@@ -230,6 +230,9 @@ void ScriptingPlugin::showScriptWidget( ) {
   highlighterLive_->update();
   highlighterLive_->rehighlight();
 
+  // Bring it to foreground
+  scriptWidget_->raise();
+
 //   highlighterList_->pluginPatterns_      = plugins;
 //   highlighterList_->functionPatterns_    = functions;
 //   highlighterList_->update();
@@ -589,6 +592,9 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
 }
 
 void ScriptingPlugin::clearEditor() {
+  if ( OpenFlipper::Options::nogui() )
+     return;
+
   scriptWidget_->currentScript->clear();
 }
 
