@@ -202,7 +202,7 @@ void ScriptingPlugin::slotScriptChanged(){
       break;
     case QScriptSyntaxCheckResult::Valid :
       break;
-    case default :
+    default :
       break;
   }
 }
