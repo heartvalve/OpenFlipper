@@ -147,7 +147,7 @@ void ScriptingPlugin::pluginsInitialized() {
   connect (scriptWidget_->actionSave_Script_As, SIGNAL( triggered() ), this, SLOT( slotSaveScriptAs() ) );
   connect (scriptWidget_->actionClose, SIGNAL( triggered() ), scriptWidget_, SLOT( close() ) );
 
-  connect (scriptWidget_->currentScript, SIGNAL( textChanged() ), this, SLOT( slotEnableSave() ) );
+  connect (scriptWidget_->currentScript, SIGNAL( textChanged() ), this, SLOT( slotScriptChanged() ) );
 
   connect (scriptWidget_->functionList, SIGNAL( itemClicked(QListWidgetItem*) ),
            this,                          SLOT( slotFunctionClicked(QListWidgetItem*) ));
@@ -170,14 +170,44 @@ void ScriptingPlugin::pluginsInitialized() {
   highlighterLive_    = new Highlighter( scriptWidget_->liveEdit );
 //   highlighterList_    = new Highlighter( scriptWidget_->functionList  );
   frameTime_.start();
+
+
+  // Timer for syntax error while editing. If the Syntax is not correct
+  // And the text does not change for a specified time, the line will be highlighted
+  // And a message printed to the status bar
+  errorTimer_ = new QTimer();
+  errorTimer_->setSingleShot(true);
+  connect(errorTimer_,SIGNAL(timeout()),this,SLOT(slotHighlightError()));
 }
 
 void ScriptingPlugin::slotApplyFilter(){
   scriptWidget_->functionList->filter( scriptWidget_->filterEdit->text() );
 }
 
-void ScriptingPlugin::slotEnableSave(){
+void ScriptingPlugin::slotScriptChanged(){
   scriptWidget_->actionSave_Script->setEnabled( true );
+
+  // Stop timers, as the text changed!
+  errorTimer_->stop();
+
+  // Check the current script for syntax
+  const QString script = scriptWidget_->currentScript->toPlainText();
+  QScriptSyntaxCheckResult syntaxCheck = QScriptEngine::checkSyntax ( script );
+
+  switch (syntaxCheck.state() ) {
+    case QScriptSyntaxCheckResult::Error :
+      lastProblemLine_ = syntaxCheck.errorLineNumber();
+      lastError_       = syntaxCheck.errorMessage();
+      errorTimer_->start(500);
+      break;
+    case QScriptSyntaxCheckResult::Valid :
+      break;
+  }
+}
+
+void ScriptingPlugin::slotHighlightError() {
+  scriptWidget_->currentScript->highLightErrorLine(lastProblemLine_);
+  statusBar_->showMessage(lastError_,5000);
 }
 
 void ScriptingPlugin::showScriptWidget( ) {
@@ -295,6 +325,10 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
         scriptWidget_->currentScript->setTextCursor(cursor);
 
         scriptWidget_->currentScript->highLightErrorLine(lineNumber);
+
+        lastProblemLine_ = lineNumber;
+        lastError_       = exception;
+
     }
   }
 

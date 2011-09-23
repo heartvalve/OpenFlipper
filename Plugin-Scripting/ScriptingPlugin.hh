@@ -102,15 +102,34 @@ public :
   QString description( ) { return (QString(tr("Provides Scripting for OpenFlipper"))); };
 
 private slots :
+
   void slotExecuteScriptButton();
-  void slotEnableSave();
+
+  /** \brief Called everytime the text in the scriptingwidget is changed by the user
+   *
+   * This slot also handles syntax checking!
+   */
+  void slotScriptChanged();
 
   void slotFunctionClicked(QListWidgetItem* _item);
   void slotFunctionDoubleClicked(QListWidgetItem* _item);
 
   void slotApplyFilter();
 
+  /// Called when an error is detected when checking the syntax
+  void slotHighlightError();
+
 private:
+
+  /// Store the last line that contained an error
+  int lastProblemLine_;
+
+  /// Store the last error message
+  QString lastError_;
+
+  /// Timer to wait until the user stopped typing before showing an error
+  QTimer* errorTimer_;
+
   QList< QLabel* > descriptionLabels_;
   QVBoxLayout* descrLayout_;
 
