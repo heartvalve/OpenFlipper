@@ -140,7 +140,6 @@ void CodeEditorWidget::highLightErrorLine(int _line) {
 }
 
 
-
 void CodeEditorWidget::lineNumberAreaPaintEvent(QPaintEvent *event) {
 
   QPainter painter(lineNumberArea);
