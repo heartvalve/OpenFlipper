@@ -1,0 +1,5 @@
+openflipper (1.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Jan Möbius <moebius@adenauer.informatik.rwth-aachen.de>  Fri, 23 Sep 2011 09:52:04 +0200
