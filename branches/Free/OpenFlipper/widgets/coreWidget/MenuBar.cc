@@ -423,7 +423,7 @@ void CoreWidget::setupMenuBar()
   toolsMenu_->addSeparator();
 
   QAction* startVideoCaptureAction =  new QAction( tr("Start Video Capture ") ,toolsMenu_ );
-  startVideoCaptureAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"recordVideo.png") );
+  startVideoCaptureAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"video-start.png") );
   startVideoCaptureAction->setCheckable( false );
   startVideoCaptureAction->setToolTip( tr("Start video capturing.") );
   startVideoCaptureAction->setWhatsThis( tr("Start to capture a video sequence of the user actions")) ;
@@ -431,7 +431,7 @@ void CoreWidget::setupMenuBar()
   connect(startVideoCaptureAction, SIGNAL(triggered()), this, SLOT(startVideoCaptureDialog()) );
 
   QAction* stopVideoCaptureAction =  new QAction( tr("Stop Video Capture ") ,toolsMenu_ );
-  stopVideoCaptureAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"stopVideoCapture.png") );
+  stopVideoCaptureAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"video-stop.png") );
   stopVideoCaptureAction->setCheckable( false );
   stopVideoCaptureAction->setToolTip( tr("Stop video capturing." ));
   stopVideoCaptureAction->setWhatsThis( tr("Stop Video capturing" ));
