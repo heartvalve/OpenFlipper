@@ -1,7 +1,7 @@
 /*! \page changelog Changelog
  *
  * - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
- *       - <b>ACG</b>
+ *      - <b>ACG</b>
  *          - SceneGraph
  *              - General
  *                  - Changed all nodes to use the glstate system instead of direct gl calls
