@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.1 (  ? , 12446 )</b>
+ * - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
  *       - <b>ACG</b>
  *          - SceneGraph
  *              - General
@@ -33,6 +33,7 @@
  *              - Added menus to switch between postprocessors and renderers
  *              - Introduced split viewer layout with two viewers next to each other
  *              - Set focus on right examiner when a context menu is requested
+ *              - Icons for video capture
  *          - Load/Save
  *              - Dont crash when we get a wrong id after adding a new object
  *              - Fixed bug in recent files menu which sometimes ignored the type
@@ -81,6 +82,8 @@
  *              - Toolbar for scripting widget
  *              - Clear scripting window after executing core scripts
  *              - Scripting function to clear the script widget
+ *              - Bring widget to front when requested
+ *              - Online syntax checking
  *          - Selection
  *              - Introduce function to load selections via scripting from files
  *              - Fixed bug in selection plugin where sphere painter size was not updated on the fly
@@ -99,6 +102,9 @@
  *          - Increased min cmake version to 2.8.5 to work around some build problems with minor versions
  *          - Follow links when recursivly adding sources
  *          - Added missing call t find_package doxygen causing per plugin docs to be skipped
+ *          - Install ACG Library along with OpenFlipper
+ *          - Changed name of PluginLib to OpenFlipperPluginLib 
+ *          - Added basic debian build directory
  *
  * - <b>OpenFlipper 1.0.2 (  2011.06.30 , 11903 )</b>
  *      - <b>ACG</b>
