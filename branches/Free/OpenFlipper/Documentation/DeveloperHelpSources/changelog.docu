@@ -3,9 +3,9 @@
 - <b>OpenFlipper 1.2 ( ?  , 12492 )</b>
      - <b>ObjectTypes</b>
          - PolyMeshObject
-             - <FONT COLOR="#cc0000">Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive</FONT>
+             - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
          - TriMeshObject
-             - <FONT COLOR="#cc0000">Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive</FONT>
+             - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
      - <b>Build System</b>
          - Added option to allow in source builds (not recommended but it works)
 
@@ -101,7 +101,7 @@
          - SkeletonEditing
              - Fixed flickering when adding skeleton joints
          - Texturecontrol
-             - <FONT COLOR="#cc0000">Don't switch drawmode when texture is switched ( ==== You have to switch the drawmode yourself in a plugin now) ===== ) </FONT>
+             - Don't switch drawmode when texture is switched ( ==== You have to switch the drawmode yourself in a plugin now) ===== )
              - Bugfix to react on switching to texture based drawmodes
              - Histogramm for 1d halfedge based texture coords for texture properties widget
              - Bugfix property abs (absolute value) no longer causes a parse error
