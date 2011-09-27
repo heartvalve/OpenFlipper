@@ -179,7 +179,7 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
     
     Vec3f v, n;
     Vec2f t;
-    OpenMesh::Vec4f c;
+    OpenMesh::Vec4f c(1.0,1.0,1.0,1.0);
     OpenMesh::Vec3f p;
     
     typename MeshT::VertexIter vit = _mesh.vertices_begin();
