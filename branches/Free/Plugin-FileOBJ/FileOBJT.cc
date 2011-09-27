@@ -86,9 +86,8 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
   typename MeshT::FaceIter f_it;
   typename MeshT::FaceIter f_end = _mesh.faces_end();
 
+  // Prepare materials ( getMaterial handles a list that is set up by this call)
   for (f_it = _mesh.faces_begin(); f_it != f_end; ++f_it){
-    
-    c  = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color( f_it.handle() ));
     getMaterial(_mesh, f_it.handle(), _objId);
   }
 
@@ -142,7 +141,7 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
         optionColorAlpha = saveAlpha_->isChecked();
     // \TODO Fetch options from ini states if dialog box is not available
     
-    OpenMesh::Vec4f c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color( _fh ));
+    OpenMesh::Vec4f c = _mesh.color( _fh );
     
     // First off, try to fetch texture index of current face/object...
     if(!textureIndexPropFetched_) {

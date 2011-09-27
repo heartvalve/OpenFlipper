@@ -337,7 +337,7 @@ void MeshObjectSelectionPlugin::deleteVertexSelection(int _objectId) {
 //=========================================================
 
 /// colorize the vertex selection
-void MeshObjectSelectionPlugin::colorizeVertexSelection(int _objectId, int r, int g, int b) {
+void MeshObjectSelectionPlugin::colorizeVertexSelection(int _objectId, int r, int g, int b, int a) {
   
     BaseObjectData* object;
     if (!PluginFunctions::getObject(_objectId, object)) {
@@ -346,9 +346,9 @@ void MeshObjectSelectionPlugin::colorizeVertexSelection(int _objectId, int r, in
     }
 
     if (object->dataType() == DATA_TRIANGLE_MESH) {
-        colorizeSelection(PluginFunctions::triMesh(object), vertexType_, r, g, b);
+        colorizeSelection(PluginFunctions::triMesh(object), vertexType_, r, g, b, a);
     } else if (object->dataType() == DATA_POLY_MESH) {
-        colorizeSelection(PluginFunctions::polyMesh(object), vertexType_, r, g, b);
+        colorizeSelection(PluginFunctions::polyMesh(object), vertexType_, r, g, b, a);
     } else {
         emit log(LOGERR,"colorizeVertexSelection: Unsupported object Type");
         return;

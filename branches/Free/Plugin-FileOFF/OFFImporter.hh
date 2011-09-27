@@ -64,6 +64,7 @@ typedef int VertexHandle;
 typedef int FaceHandle;
 typedef std::vector<VertexHandle> VHandles;
 typedef std::vector<OpenMesh::VertexHandle> OMVHandles;
+typedef OpenMesh::Vec4f Vec4f;
 typedef OpenMesh::Vec3f Vec3f;
 typedef OpenMesh::Vec2f Vec2f;
 typedef OpenMesh::Vec4uc Vec4uc;
@@ -111,11 +112,8 @@ class OFFImporter
     int addTexCoord(const Vec2f& _coord);
     
     /// add a color
-    int addColor(const Vec4uc& _color);
-    
-    /// add a color
-    int addColor(const Vec3uc& _color);
-    
+    int addColor(const Vec4f& _color);
+
     /// add a normal
     int addNormal(const Vec3f& _normal);
         
@@ -191,7 +189,7 @@ class OFFImporter
     std::vector< Vec3f > vertices_;
     std::vector< Vec3f > normals_;
     std::vector< Vec2f > texCoords_;
-    std::vector< Vec4uc > colors_;
+    std::vector< Vec4f > colors_;
     
     // file path
     QString path_;

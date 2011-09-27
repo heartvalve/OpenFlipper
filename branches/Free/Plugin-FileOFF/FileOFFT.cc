@@ -129,7 +129,7 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR)) {
             c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(vit.handle()));
             _out.precision(6);
-            _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2];
+            _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2] << " " << std::showpoint << c[3];
         }
         
         // Write vertex texcoords
@@ -163,7 +163,7 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         if(_mesh.has_face_colors() && userWriteOptions_ & OFFImporter::FACECOLOR) {
             c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(fit.handle()));
             _out.precision(6);
-            _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2];
+            _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2] << " " << std::showpoint << c[3];
             
             if(userWriteOptions_ & OFFImporter::COLORALPHA) _out <<  " " << std::showpoint << c[3];
         }
@@ -259,7 +259,7 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
             if(userWriteOptions_ & OFFImporter::COLORALPHA) writeValue(_out, c[3]);
         } else {
             // There are no face colors
-            writeValue(_out, (uint)0);
+            writeValue(_out, c[3]);
         }
     }
     

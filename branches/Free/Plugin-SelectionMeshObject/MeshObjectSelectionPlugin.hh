@@ -269,7 +269,7 @@ public slots:
     void deleteVertexSelection(int _objectId);
 
     /// Colorize the vertex selection
-    void colorizeVertexSelection(int _objectId, int _r, int _g, int _b);
+    void colorizeVertexSelection(int _objectId, int _r, int _g, int _b, int a);
 
     //==========================================
 
@@ -340,7 +340,7 @@ public slots:
     IdList getEdgeSelection(int objectId);
 
     /// Colorize the edge selection
-    void colorizeEdgeSelection(int objectId, int r, int g, int b);
+    void colorizeEdgeSelection(int objectId, int r, int g, int b, int a);
 
     //==========================================
     // HALFEDGE OPERATIONS
@@ -368,7 +368,7 @@ public slots:
     IdList getHalfedgeSelection(int objectId);
 
     /// Colorize the edge selection
-    void colorizeHalfedgeSelection(int objectId, int r, int g, int b);
+    void colorizeHalfedgeSelection(int objectId, int r, int g, int b, int a);
 
     //==========================================
     // FACE OPERATIONS
@@ -405,7 +405,7 @@ public slots:
     IdList getFaceSelection(int objectId);
 
     /// Colorize the face selection
-    void colorizeFaceSelection(int objectId, int r, int g, int b);
+    void colorizeFaceSelection(int objectId, int r, int g, int b, int a);
     
     //===========================================================================
     
@@ -458,7 +458,7 @@ private:
                             
     /// Colorize the selection
     template<class MeshT>
-    void colorizeSelection(MeshT* _mesh, PrimitiveType _primitiveTypes, int _red, int _green, int _blue);
+    void colorizeSelection(MeshT* _mesh, PrimitiveType _primitiveTypes, int _red, int _green, int _blue, int _alpha);
 
     /** @} */
 

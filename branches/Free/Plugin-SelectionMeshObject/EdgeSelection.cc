@@ -264,7 +264,7 @@ IdList MeshObjectSelectionPlugin::getEdgeSelection( int objectId ) {
 
 //=========================================================
 
-void MeshObjectSelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b ) {
+void MeshObjectSelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b, int a ) {
     
     BaseObjectData* object;
     if ( ! PluginFunctions::getObject(objectId,object) ) {
@@ -273,9 +273,9 @@ void MeshObjectSelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g
     }
 
     if ( object->dataType() == DATA_TRIANGLE_MESH ) {
-        colorizeSelection(PluginFunctions::triMesh(object), edgeType_, r, g, b);
+        colorizeSelection(PluginFunctions::triMesh(object), edgeType_, r, g, b, a);
     } else if ( object->dataType() == DATA_POLY_MESH ) {
-        colorizeSelection(PluginFunctions::polyMesh(object), edgeType_, r, g, b);
+        colorizeSelection(PluginFunctions::polyMesh(object), edgeType_, r, g, b, a);
     } else {
         emit log(LOGERR,"colorizeEdgeSelection : Unsupported object Type" );
         return;
