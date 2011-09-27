@@ -323,6 +323,9 @@ int FilePLYPlugin::loadObject(QString _filename, DataType _type) {
       emit openedFile( objectId );
     }
 
+    // Update viewport
+    PluginFunctions::viewAll();
+
     return objectId;
   } else if ( _type == DATA_TRIANGLE_MESH) {
     // If always open as TriMesh is selected
@@ -335,6 +338,9 @@ int FilePLYPlugin::loadObject(QString _filename, DataType _type) {
       object->show();
       emit openedFile( objectId );
     }
+
+    // Update viewport
+    PluginFunctions::viewAll();
 
     return objectId;
   } else {
@@ -382,6 +388,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
                 emit openedFile( objectId );
             }
             
+            // Update viewport
+            PluginFunctions::viewAll();
+
             return objectId;
             
         } else {
@@ -394,6 +403,10 @@ int FilePLYPlugin::loadObject(QString _filename) {
                 object->show();
                 emit openedFile( objectId );
             }
+
+            // Update viewport
+            PluginFunctions::viewAll();
+
             return objectId;
         }
         
@@ -422,6 +435,10 @@ int FilePLYPlugin::loadObject(QString _filename) {
                 object->show();
                 emit openedFile( objectId );
             }
+
+            // Update viewport
+            PluginFunctions::viewAll();
+
             return objectId;
         }
                                                                      
@@ -437,6 +454,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
             emit openedFile( objectId );
         }
         
+        // Update viewport
+        PluginFunctions::viewAll();
+
         return objectId;
     } else {
         // If always open as TriMesh is selected
@@ -450,6 +470,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
             emit openedFile( objectId );
         }
         
+        // Update viewport
+        PluginFunctions::viewAll();
+
         return objectId;
     }
     
@@ -462,6 +485,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
         
         object->show();
         emit openedFile( objectId );
+
+        // Update viewport
+        PluginFunctions::viewAll();
     }
     
     return objectId;
