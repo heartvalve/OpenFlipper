@@ -3,10 +3,20 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.cmake)
 endif ()
 
 # prevent build in source directory
-if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
-    message (SEND_ERROR "Building in the source directory is not supported.")
-    message (FATAL_ERROR "Please remove the created \"CMakeCache.txt\" file, the \"CMakeFiles\" directory and create a build directory and call \"${CMAKE_COMMAND} <path to the sources>\".")
-endif ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+
+# add option to disable plugin build
+option (
+  BLOCK_IN_SOURCE_BUILD
+  "Disable building inside the source tree"
+  ON
+)
+
+if ( BLOCK_IN_SOURCE_BUILD )
+  if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+      message (SEND_ERROR "Building in the source directory is not supported.")
+      message (FATAL_ERROR "Please remove the created \"CMakeCache.txt\" file, the \"CMakeFiles\" directory and create a build directory and call \"${CMAKE_COMMAND} <path to the sources>\".")
+  endif ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+endif()
 
 # allow only Debug and Release builds
 set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
