@@ -659,6 +659,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 
                 default:
                     std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+                    break;
             }
         }
         
@@ -759,6 +760,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 
                 default:
                     std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+                    break;
             }
         }
     }
