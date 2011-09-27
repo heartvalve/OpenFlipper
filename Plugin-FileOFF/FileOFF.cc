@@ -837,7 +837,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     unsigned int                nV, nF, dummy;
     float                       dummy_f;
     OpenMesh::Vec3f             v, n;
-    OpenMesh::Vec3f             c;
+    OpenMesh::Vec4f             c;
     float                       alpha = 1.0f;
     OpenMesh::Vec2f             t;
     std::vector<VertexHandle>   vhandles;
@@ -895,9 +895,10 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             readValue(_in, c[0]);
             readValue(_in, c[1]);
             readValue(_in, c[2]);
+            c[3] = 1.0;
                 
             if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c) );
+                int cidx = _importer.addColor( c );
                 _importer.setVertexColor(vh, cidx);
             }
         }
@@ -1023,11 +1024,11 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             
             if(userReadOptions_ & OFFImporter::FACECOLOR) {
                 if(userReadOptions_ & OFFImporter::COLORALPHA) {
-                    int cidx = _importer.addColor(OpenMesh::color_cast<OpenMesh::Vec4uc, OpenMesh::Vec4f>(OpenMesh::Vec4f(c[0], c[1], c[2], alpha)));
+                    int cidx = _importer.addColor(OpenMesh::Vec4f(c[0], c[1], c[2], alpha));
                     _importer.setFaceColor( fh,  cidx );
                     _importer.addOption(OFFImporter::COLORALPHA);
                 } else {
-                    int cidx = _importer.addColor(OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c));
+                    int cidx = _importer.addColor(OpenMesh::color_cast<OpenMesh::Vec4f>(c));
                     _importer.setFaceColor( fh,  cidx );
                 }
             }

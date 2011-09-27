@@ -426,21 +426,21 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
   unsigned int byteCol[2];
   for (int col = 0; col < 2; ++col)
   {
-    typename Mesh::Color vecCol(255, 255, 255);
+    typename Mesh::Color vecCol(255, 255, 255, 255);
 
-    if (col == 0 && mesh_.has_vertex_colors()) vecCol = mesh_.color(_vh);
+    if (col == 0 && mesh_.has_vertex_colors()) vecCol = OpenMesh::color_cast<Vec4uc,typename Mesh::Color>(mesh_.color(_vh));
     if ((_fh != (typename Mesh::FaceHandle)(-1)))
     {
       if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
-        vecCol = mesh_.color(_fh);
+        vecCol = OpenMesh::color_cast<Vec4uc,typename Mesh::Color>(mesh_.color(_fh));
     }
 
     // OpenGL color format: A8B8G8R8
     byteCol[col] = (unsigned char)(vecCol[0]);
     byteCol[col] |= ((unsigned char)(vecCol[1])) << 8;
     byteCol[col] |= ((unsigned char)(vecCol[2])) << 16;
-//          byteCol[col] |= ((unsigned char)(floatCol[3])) << 24;   // no alpha channel in OpenMesh
-    byteCol[col] |= 0xFF << 24;
+    byteCol[col] |= ((unsigned char)(vecCol[3])) << 24;
+    //byteCol[col] |= 0xFF << 24; // if no alpha channel
   }
 
  _pV->vcol = byteCol[0];

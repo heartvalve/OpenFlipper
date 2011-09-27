@@ -779,12 +779,19 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
  * @param _blue rgb color
  */
 template< typename MeshT >
-void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh, PrimitiveType _primitiveTypes, int _red, int _green, int _blue) {
+void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
+                                                  PrimitiveType _primitiveTypes,
+                                                  int _red,
+                                                  int _green,
+                                                  int _blue,
+                                                  int _alpha) {
 
-    typename MeshT::Color color;
-    color[0] = _red;
+    typename MeshT::Color color = OpenMesh::color_cast<OpenMesh::Vec4f,OpenMesh::Vec4uc>(OpenMesh::Vec4uc(_red,_green,_blue,_alpha));
+    /*color[0] = _red;
     color[1] = _green;
     color[2] = _blue;
+    color[3] = _alpha;
+    */
 
     if (_primitiveTypes & vertexType_) {
         typename MeshT::VertexIter v_it, v_end=_mesh->vertices_end();

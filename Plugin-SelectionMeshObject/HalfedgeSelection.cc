@@ -242,7 +242,7 @@ IdList MeshObjectSelectionPlugin::getHalfedgeSelection(int objectId) {
 //=========================================================
 
 /// colorize the halfedge selection
-void MeshObjectSelectionPlugin::colorizeHalfedgeSelection(int objectId, int r, int g, int b) {
+void MeshObjectSelectionPlugin::colorizeHalfedgeSelection(int objectId, int r, int g, int b, int a) {
     
     BaseObjectData* object;
     if (! PluginFunctions::getObject(objectId,object)) {
@@ -251,9 +251,9 @@ void MeshObjectSelectionPlugin::colorizeHalfedgeSelection(int objectId, int r, i
     }
 
     if (object->dataType() == DATA_TRIANGLE_MESH) {
-        colorizeSelection(PluginFunctions::triMesh(object), halfedgeType_, r, g, b);
+        colorizeSelection(PluginFunctions::triMesh(object), halfedgeType_, r, g, b, a);
     } else if (object->dataType() == DATA_POLY_MESH) {
-        colorizeSelection(PluginFunctions::polyMesh(object), halfedgeType_, r, g, b);
+        colorizeSelection(PluginFunctions::polyMesh(object), halfedgeType_, r, g, b, a);
     } else {
         emit log(LOGERR,"colorizeHalfedgeSelection: Unsupported object Type");
         return;

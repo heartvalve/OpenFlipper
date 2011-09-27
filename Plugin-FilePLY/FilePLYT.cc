@@ -155,9 +155,11 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 if(_header.hasVertexColorAlpha) {
                     sstr >> alpha;
                     propIndex++;
+                } else {
+                  alpha = 1.0;
                 }
                 // Set color
-                if ( vColors ) _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz));
+                if ( vColors ) _mesh->set_color(currentVertex, typename MeshT::Color(dx, dy, dz,alpha));
                 // Go over to next property
                 propIndex += 3;
                 
@@ -243,7 +245,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 // Parse face colors
                 sstr >> dx >> dy >> dz;
                 // Set color
-                if (fColors) _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz));
+                if (fColors) _mesh->set_color(currentFace, typename MeshT::Color(dx, dy, dz,1.0));
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "a_rgb" && fColors) {

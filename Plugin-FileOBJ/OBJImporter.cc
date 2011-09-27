@@ -576,7 +576,17 @@ void OBJImporter::addMaterial(std::string _materialName){
           bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
           
           if ( currentTriMesh()->has_face_colors() && colorAllowed ){
-            currentTriMesh()->set_color(addedFacesTri_[currentGroup_][i], OpenMesh::color_cast< TriMesh::Color >(mat.Kd() ) );
+
+            TriMesh::Color color = OpenMesh::color_cast< OpenMesh::Vec4f >(mat.Kd() );
+
+            // Get alpha if available
+            if (mat.has_Tr() ) {
+              color[3] = mat.Tr();
+            } else {
+              color[3] = 1.0;
+            }
+
+            currentTriMesh()->set_color(addedFacesTri_[currentGroup_][i], color  );
             objectOptions_[ currentObject() ] |= FACECOLOR;
           }
         }
@@ -624,7 +634,17 @@ void OBJImporter::addMaterial(std::string _materialName){
         bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
         
         if ( currentPolyMesh()->has_face_colors() && colorAllowed && addedFacePoly_.is_valid()  ){
-          currentPolyMesh()->set_color(addedFacePoly_, OpenMesh::color_cast< PolyMesh::Color >(mat.Kd() ));
+
+          TriMesh::Color color = OpenMesh::color_cast< OpenMesh::Vec4f >(mat.Kd() );
+
+          // Get alpha if available
+          if (mat.has_Tr() ) {
+            color[3] = mat.Tr();
+          } else {
+            color[3] = 1.0;
+          }
+
+          currentPolyMesh()->set_color(addedFacePoly_, color );
           objectOptions_[ currentObject() ] |= FACECOLOR;
         }
       }

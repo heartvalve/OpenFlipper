@@ -597,21 +597,21 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
 
 void MeshObjectSelectionPlugin::setColorForSelection(const int _objectId, const PrimitiveType _primitiveTypes) {
     
-    QColor c = QColorDialog::getColor(Qt::red, 0);
+    QColor c = QColorDialog::getColor(Qt::red, 0, tr("Choose color"),QColorDialog::ShowAlphaChannel);
     
     if(c.isValid()) {
         if(_primitiveTypes & vertexType_) {
             // Vertex colorization
-            colorizeVertexSelection(_objectId, c.red(), c.green(), c.blue());
+            colorizeVertexSelection(_objectId, c.red(), c.green(), c.blue(), c.alpha());
         } else if (_primitiveTypes & edgeType_) {
             // Edge colorization
-            colorizeEdgeSelection(_objectId, c.red(), c.green(), c.blue());
+            colorizeEdgeSelection(_objectId, c.red(), c.green(), c.blue(), c.alpha());
         } else if (_primitiveTypes & halfedgeType_) {
             // Edge colorization
-            colorizeHalfedgeSelection(_objectId, c.red(), c.green(), c.blue());
+            colorizeHalfedgeSelection(_objectId, c.red(), c.green(), c.blue(), c.alpha());
         } else if (_primitiveTypes & faceType_) {
             // Edge colorization
-            colorizeFaceSelection(_objectId, c.red(), c.green(), c.blue());
+            colorizeFaceSelection(_objectId, c.red(), c.green(), c.blue(), c.alpha());
         }
     }
 }

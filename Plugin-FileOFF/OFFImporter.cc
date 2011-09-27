@@ -119,17 +119,8 @@ int OFFImporter::addNormal(const Vec3f& _normal){
 //-----------------------------------------------------------------------------
 
 /// add a color
-int OFFImporter::addColor(const Vec4uc& _color) {
+int OFFImporter::addColor(const Vec4f& _color) {
     colors_.push_back( _color );
-    
-    return colors_.size()-1;
-}
-
-//-----------------------------------------------------------------------------
-
-/// add a color
-int OFFImporter::addColor(const Vec3uc& _color) {
-    colors_.push_back( Vec4uc(_color[0], _color[1], _color[2], 255) );
     
     return colors_.size()-1;
 }
@@ -544,9 +535,7 @@ void OFFImporter::setObjectName(QString _name){
 
 /// set RGBA color of vertex
 void OFFImporter::setVertexColor(VertexHandle _vh, int _colorIndex) {
-    
-    // TODO Implement color alpha
-    
+
     if ( isTriangleMesh() ){
         
         //handle triangle meshes
@@ -555,8 +544,7 @@ void OFFImporter::setVertexColor(VertexHandle _vh, int _colorIndex) {
         if ( _colorIndex < (int) colors_.size() ){
             
             if ( vertexMapTri_.find( _vh ) != vertexMapTri_.end() ){
-                Vec4uc c = colors_[_colorIndex];
-                triMesh()->set_color( vertexMapTri_[_vh], TriMesh::Color(c[0], c[1], c[2]) ); 
+                triMesh()->set_color( vertexMapTri_[_vh], colors_[_colorIndex] );
                 objectOptions_ |= VERTEXCOLOR;
             }
             
@@ -572,8 +560,7 @@ void OFFImporter::setVertexColor(VertexHandle _vh, int _colorIndex) {
         if ( _colorIndex < (int) colors_.size() ){
             
             if ( vertexMapPoly_.find( _vh ) != vertexMapPoly_.end() ){
-                Vec4uc c = colors_[_colorIndex];
-                polyMesh()->set_color( vertexMapPoly_[_vh], PolyMesh::Color(c[0], c[1], c[2]) ); 
+                polyMesh()->set_color( vertexMapPoly_[_vh], colors_[_colorIndex] );
                 objectOptions_ |= VERTEXCOLOR;
             }
             
@@ -597,8 +584,7 @@ void OFFImporter::setFaceColor(FaceHandle _fh, int _colorIndex) {
         if ( _colorIndex < (int) colors_.size() ){
             
             if ( _fh < (int)faceMapTri_.size() ) {
-                Vec4uc c = colors_[_colorIndex];
-                triMesh()->set_color( faceMapTri_[_fh], TriMesh::Color(c[0], c[1], c[2]) ); 
+                triMesh()->set_color( faceMapTri_[_fh],colors_[_colorIndex] );
                 objectOptions_ |= FACECOLOR;
             }
             
@@ -614,8 +600,7 @@ void OFFImporter::setFaceColor(FaceHandle _fh, int _colorIndex) {
         if ( _colorIndex < (int) colors_.size() ){
             
             if ( _fh < (int)faceMapPoly_.size() ) {
-                Vec4uc c = colors_[_colorIndex];
-                polyMesh()->set_color( faceMapPoly_[_fh], PolyMesh::Color(c[0], c[1], c[2]) ); 
+                polyMesh()->set_color( faceMapPoly_[_fh], colors_[_colorIndex] );
                 objectOptions_ |= FACECOLOR;
             }
             

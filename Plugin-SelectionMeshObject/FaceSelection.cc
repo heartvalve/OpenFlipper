@@ -310,7 +310,7 @@ IdList MeshObjectSelectionPlugin::getFaceSelection(int objectId) {
 //=========================================================
 
 /// colorize the face selection
-void MeshObjectSelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b) {
+void MeshObjectSelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b, int a) {
     
     BaseObjectData* object;
     if (! PluginFunctions::getObject(objectId,object)) {
@@ -319,9 +319,9 @@ void MeshObjectSelectionPlugin::colorizeFaceSelection(int objectId, int r, int g
     }
 
     if (object->dataType() == DATA_TRIANGLE_MESH) {
-        colorizeSelection(PluginFunctions::triMesh(object), faceType_, r, g, b);
+        colorizeSelection(PluginFunctions::triMesh(object), faceType_, r, g, b, a);
     } else if (object->dataType() == DATA_POLY_MESH) {
-        colorizeSelection(PluginFunctions::polyMesh(object), faceType_, r, g, b);
+        colorizeSelection(PluginFunctions::polyMesh(object), faceType_, r, g, b, a);
     } else {
         emit log(LOGERR,"colorizeFaceSelection : Unsupported object Type");
         return;
