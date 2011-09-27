@@ -56,17 +56,17 @@ bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ){
     ******************/
     
     // Write option ST
-    if(_mesh.has_vertex_texcoords2D() && userWriteOptions_ & OFFImporter::VERTEXTEXCOORDS) {
+    if(_mesh.has_vertex_texcoords2D() && (userWriteOptions_ & OFFImporter::VERTEXTEXCOORDS) ) {
         _out << "ST ";
     }
     
     // Write option C
-    if(_mesh.has_vertex_colors() && userWriteOptions_ & OFFImporter::VERTEXCOLOR) {
+    if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR) ) {
         _out << "C ";
     }
     
     // Write option N
-    if(_mesh.has_vertex_normals() && userWriteOptions_ & OFFImporter::VERTEXNORMAL) {
+    if(_mesh.has_vertex_normals() && (userWriteOptions_ & OFFImporter::VERTEXNORMAL) ) {
         _out << "N ";
     }
     
@@ -160,7 +160,7 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         }
         
         // Write face colors
-        if(_mesh.has_face_colors() && userWriteOptions_ & OFFImporter::FACECOLOR) {
+        if(_mesh.has_face_colors() && (userWriteOptions_ & OFFImporter::FACECOLOR ) ) {
             c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(fit.handle()));
             _out.precision(6);
             _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2] << " " << std::showpoint << c[3];

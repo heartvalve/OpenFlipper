@@ -189,6 +189,8 @@ bool FileOFFPlugin::getCleanLine( std::istream& ifs , std::string& _string, bool
 
   }
 
+  return false;
+
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -1136,7 +1138,7 @@ int FileOFFPlugin::loadObject(QString _filename) {
     
     if ( triMeshObj ){
         
-        if ( !importer.hasVertexNormals() || userReadOptions_ & OFFImporter::FORCE_NONORMALS )
+        if ( !importer.hasVertexNormals() || (userReadOptions_ & OFFImporter::FORCE_NONORMALS) )
             triMeshObj->mesh()->update_normals();
         else
             triMeshObj->mesh()->update_face_normals();  
