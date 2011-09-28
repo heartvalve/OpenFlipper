@@ -48,7 +48,7 @@
  *      Author: ebke
  */
 
-#include "ColorChooserButton.hh"
+#include "QtColorChooserButton.hh"
 
 #include <qstyleoption.h>
 #include <qstylepainter.h>
@@ -56,23 +56,23 @@
 
 #include <iostream>
 
-QtColorChooserButton::ColorChooserButton(QWidget *parent) :
+QtColorChooserButton::QtColorChooserButton(QWidget *parent) :
         QPushButton(parent), color_(0xE0, 0x20, 0x20) {
 
     init();
 }
-QtColorChooserButton::ColorChooserButton(const QString &text, QWidget *parent) :
+QtColorChooserButton::QtColorChooserButton(const QString &text, QWidget *parent) :
         QPushButton(text, parent), color_(0xE0, 0x20, 0x20) {
 
     init();
 }
-QtColorChooserButton::ColorChooserButton(const QIcon& icon, const QString &text, QWidget *parent) :
+QtColorChooserButton::QtColorChooserButton(const QIcon& icon, const QString &text, QWidget *parent) :
         QPushButton(icon, text, parent), color_(0xE0, 0x20, 0x20) {
 
     init();
 }
 
-QtColorChooserButton::~ColorChooserButton() {
+QtColorChooserButton::~QtColorChooserButton() {
 }
 
 void QtColorChooserButton::init() {
