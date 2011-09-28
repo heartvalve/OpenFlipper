@@ -174,14 +174,14 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.colorMaterial,       SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.multiSampling,       SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
 
-  connect( ui_.baseColorButton, SIGNAL( clicked() ),
-	   this, SLOT( changeBaseColor() ) );
-  connect( ui_.ambientColorButton, SIGNAL( clicked() ),
-	   this, SLOT( changeAmbientColor() ) );
-  connect( ui_.diffuseColorButton, SIGNAL( clicked() ),
-	   this, SLOT( changeDiffuseColor() ) );
-  connect( ui_.specularColorButton, SIGNAL( clicked() ),
-	   this, SLOT( changeSpecularColor() ) );
+  connect( ui_.baseColorButton, SIGNAL( colorChanged(QColor) ),
+	   this, SLOT( changeBaseColor(QColor) ) );
+  connect( ui_.ambientColorButton, SIGNAL( colorChanged(QColor) ),
+	   this, SLOT( changeAmbientColor(QColor) ) );
+  connect( ui_.diffuseColorButton, SIGNAL( colorChanged(QColor) ),
+	   this, SLOT( changeDiffuseColor(QColor) ) );
+  connect( ui_.specularColorButton, SIGNAL( colorChanged(QColor) ),
+	   this, SLOT( changeSpecularColor(QColor) ) );
   connect( ui_.shininessSlider, SIGNAL( sliderMoved(int) ),
 	   this, SLOT( changeShine(int) ) );
 
@@ -271,12 +271,10 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
 
 
 void
-QtMaterialDialog::setButtonColor( QPushButton * _button,
-				  const Vec4f & _color )
+QtMaterialDialog::setButtonColor( QtColorChooserButton* _button,
+                                  const Vec4f&          _color )
 {
-  QPalette p( _button->palette() );
-  p.setColor( QPalette::Button, convertColor( _color ) );
-  _button->setPalette( p );
+  _button->setColor(  convertColor( _color ) );
 }
 
 
@@ -300,9 +298,9 @@ Vec4f
 QtMaterialDialog::convertColor( QColor _color)
 {
   return Vec4f (_color.redF(),
-		          _color.greenF(),
-		          _color.blueF(),
-                _color.alphaF() );
+		            _color.greenF(),
+		            _color.blueF(),
+		            _color.alphaF() );
 }
 
 
@@ -457,70 +455,41 @@ void QtMaterialDialog::undoChanges()
 //-----------------------------------------------------------------------------
 
 
-void QtMaterialDialog::changeDiffuseColor()
+void QtMaterialDialog::changeDiffuseColor(QColor _newColor)
 {
-  bool* ok = 0;
-
-  QColor newColor = QColor( QColorDialog::getRgba(convertColor(diffuse_).rgba(), ok, this));
-
-  if( newColor.isValid())
-  {
-    diffuse_ = convertColor( newColor );
-    applyChanges();
-  }
+  diffuse_ = convertColor( _newColor );
+  applyChanges();
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void QtMaterialDialog::changeAmbientColor()
+void QtMaterialDialog::changeAmbientColor(QColor _newColor)
 {
-  bool* ok = 0;
+  ambient_ = convertColor( _newColor );
+  applyChanges();
 
-  QColor oldColor = convertColor(ambient_);
-
-  QColor newColor = QColorDialog::getColor(oldColor, this, "Ambient Color", QColorDialog::ShowAlphaChannel);
-
-  if( newColor.isValid())
-  {
-    ambient_ = convertColor( newColor );
-    applyChanges();
-  }
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void QtMaterialDialog::changeSpecularColor()
+void QtMaterialDialog::changeSpecularColor(QColor _newColor)
 {
-  bool* ok = 0;
-
-  QColor newColor = QColor( QColorDialog::getRgba(convertColor(specular_).rgba(), ok, this));
-
-  if( newColor.isValid())
-  {
-    specular_ = convertColor( newColor );
-    applyChanges();
-  }
+  specular_ = convertColor( _newColor );
+  applyChanges();
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void QtMaterialDialog::changeBaseColor()
+void QtMaterialDialog::changeBaseColor(QColor _newColor)
 {
-  bool* ok = 0;
-
-  QColor newColor = QColor( QColorDialog::getRgba(convertColor(color_).rgba(), ok, this));
-
-  if( newColor.isValid())
-  {
-    color_ = convertColor( newColor );
-    applyChanges();
-  }
+  color_ = convertColor( _newColor );
+  applyChanges();
 }
 
 

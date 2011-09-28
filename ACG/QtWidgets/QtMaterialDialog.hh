@@ -107,15 +107,15 @@ private:
   QColor convertColor( Vec4f  _color);
   Vec4f  convertColor( QColor _color);
 
-  void setButtonColor( QPushButton * _button,
-		                 const Vec4f & _color );
+  void setButtonColor( QtColorChooserButton* _button,
+		                   const Vec4f&          _color );
 
 private slots:
 
-  void changeBaseColor();
-  void changeAmbientColor();
-  void changeDiffuseColor();
-  void changeSpecularColor();
+  void changeBaseColor(QColor _newColor);
+  void changeAmbientColor(QColor _newColor);
+  void changeDiffuseColor(QColor _newColor);
+  void changeSpecularColor(QColor _newColor);
   void changeShine(int _new);
   void changePointSize(int _new);
   void changeLineWidth(int _new);
