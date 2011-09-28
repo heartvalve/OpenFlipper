@@ -230,6 +230,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   glPushAttrib(GL_ENABLE_BIT);
 
+  /// get bound texture buffer and target
+  GLuint lastBuffer = ACG::GLState::getBoundTextureBuffer();
+  GLenum lastTarget = ACG::GLState::getBoundTextureTarget();
+
+  // Unbind to avoid painting textures on non textured primitives
+  ACG::GLState::bindTexture(lastTarget,0);
+
+
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
     ACG::GLState::shadeModel(GL_FLAT);
@@ -441,6 +449,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     _state.set_base_color(base_color_backup);
   }
   
+  // Rebind the previous texture
+  ACG::GLState::bindTexture(lastTarget,lastBuffer);
   
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
