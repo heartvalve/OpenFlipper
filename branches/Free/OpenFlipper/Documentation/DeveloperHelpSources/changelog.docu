@@ -1,11 +1,18 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 12492 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 12507 )</b>
+     - <b>ACG</b>
+         - QtWidgets
+             - Added ColorChooserButton with alpha channel display
+             - Use new ColorChooserButton for QtMaterialDialog
      - <b>ObjectTypes</b>
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
          - TriMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
+     - <b>Plugins</b>
+         - File PLY
+             - View all after loading a file to see the scene
      - <b>Build System</b>
          - Added option to allow in source builds (not recommended but it works)
 
