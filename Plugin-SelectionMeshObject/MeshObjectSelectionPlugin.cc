@@ -1267,6 +1267,8 @@ void MeshObjectSelectionPlugin::loadIniFile(INIFile& _ini, int _id) {
         invert = false;
         _ini.get_entry(invert, sectionName, "InvertEdgeSelection");
 
+        ids = convertVertexPairsToEdges(_id, ids);
+
         if(invert) {
             selectAllEdges(object->id());
             unselectEdges(object->id(),ids);
@@ -1326,7 +1328,7 @@ void MeshObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
     }
 
     _ini.add_entry(sectionName, "VertexSelection", getVertexSelection(object->id()));
-    _ini.add_entry(sectionName, "EdgeSelection"  , getEdgeSelection(object->id()));
+    _ini.add_entry(sectionName, "EdgeSelection", convertEdgesToVertexPairs(_id, getEdgeSelection(object->id())));
 
     if(object->dataType(DATA_POLY_MESH ) || object->dataType( DATA_TRIANGLE_MESH)) {
         _ini.add_entry(sectionName, "FaceSelection", getFaceSelection(object->id()));
@@ -1350,27 +1352,27 @@ void MeshObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
         }
         
         std::vector<int> ids;
-        // Store vertex selection:
+        // Load vertex selection:
         _file.get_entry(ids, section, "VertexSelection");
         selectVertices(o_it->id(), ids);
         ids.clear();
-        // Store edge selection:
+        // Load edge selection:
         _file.get_entry(ids, section, "EdgeSelection");
-        selectEdges(o_it->id(), ids);
+        selectEdges(o_it->id(), convertVertexPairsToEdges(o_it->id(), ids));
         ids.clear();
-        // Store halfedge selection:
+        // Load halfedge selection:
         _file.get_entry(ids, section, "HalfedgeSelection");
         selectHalfedges(o_it->id(), ids);
         ids.clear();
-        // Store face selection:
+        // Load face selection:
         _file.get_entry(ids, section, "FaceSelection");
         selectFaces(o_it->id(), ids);
         ids.clear();
-        // Store handle region:
+        // Load handle region:
         _file.get_entry(ids, section, "HandleRegion");
         selectHandleVertices(o_it->id(), ids);
         ids.clear();
-        // Store modeling region:
+        // Load modeling region:
         _file.get_entry(ids, section, "ModelingRegion");
         selectModelingVertices(o_it->id(), ids);
         ids.clear();
@@ -1398,7 +1400,7 @@ void MeshObjectSelectionPlugin::slotSaveSelection(INIFile& _file) {
         // Store vertex selection:
         _file.add_entry(section, "VertexSelection", getVertexSelection(o_it->id()));
         // Store edge selection:
-        _file.add_entry(section, "EdgeSelection", getEdgeSelection(o_it->id()));
+        _file.add_entry(section, "EdgeSelection", convertEdgesToVertexPairs(o_it->id(), getEdgeSelection(o_it->id())));
         // Store halfedge selection:
         _file.add_entry(section, "HalfedgeSelection", getHalfedgeSelection(o_it->id()));
         // Store face selection:

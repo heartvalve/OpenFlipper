@@ -339,6 +339,12 @@ public slots:
     /// Return a list of all selected edges
     IdList getEdgeSelection(int objectId);
 
+    /// Convert edge ids to vertex pairs
+    IdList convertEdgesToVertexPairs(int _id, const IdList& _edges);
+
+    /// Inverse of function above
+    IdList convertVertexPairsToEdges(int _id, const IdList& _vertices);
+
     /// Colorize the edge selection
     void colorizeEdgeSelection(int objectId, int r, int g, int b, int a);
 
