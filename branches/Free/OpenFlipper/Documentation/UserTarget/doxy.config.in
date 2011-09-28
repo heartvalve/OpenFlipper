@@ -678,7 +678,7 @@ EXCLUDE_PATTERNS       = */Debian*/* \
                          .svn \
                          SimpleOpt* \
                          *CPack_Packages* \
-                         build-*
+                         build*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -915,7 +915,7 @@ DOCSET_BUNDLE_ID       = org.doxygen.user
 # Microsoft HTML help workshop to generate a compiled HTML help file (.chm)
 # of the generated HTML documentation.
 
-GENERATE_HTMLHELP      = YES
+GENERATE_HTMLHELP      = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can
 # be used to specify the file name of the resulting .chm file. You
@@ -959,13 +959,13 @@ TOC_EXPAND             = NO
 # Qt's qhelpgenerator to generate a Qt Compressed Help (.qch) of the generated
 # HTML documentation.
 
-GENERATE_QHP           = YES
+GENERATE_QHP           = NO
 
 # If the QHG_LOCATION tag is specified, the QCH_FILE tag can
 # be used to specify the file name of the resulting .qch file.
 # The path specified is relative to the HTML output folder.
 
-QCH_FILE               = @user_qt_help_dir@/user.qch
+QCH_FILE               = 
 
 # The QHP_NAMESPACE tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see
@@ -1001,7 +1001,7 @@ QHP_SECT_FILTER_ATTRS  =
 # If non-empty doxygen will try to run qhelpgenerator on the generated
 # .qhp file.
 
-QHG_LOCATION           = qhelpgenerator
+QHG_LOCATION           = 
 
 # If the GENERATE_ECLIPSEHELP tag is set to YES, additional index files
 #  will be generated, which together with the HTML files, form an Eclipse help
@@ -1023,7 +1023,7 @@ ECLIPSE_DOC_ID         = org.doxygen.Project
 # top of each HTML page. The value NO (the default) enables the index and
 # the value YES disables it.
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 # This tag can be used to set the number of enum values (range [1..20])
 # that doxygen will group on one line in the generated HTML documentation.
