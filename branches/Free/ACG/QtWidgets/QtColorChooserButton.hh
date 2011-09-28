@@ -79,6 +79,9 @@ class QtColorChooserButton: public QPushButton {
     public Q_SLOTS:
         void onClick();
 
+    signals:
+        void colorChanged(QColor _newcolor );
+
     private:
         QColor color_;
 };

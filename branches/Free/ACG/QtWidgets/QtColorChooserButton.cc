@@ -81,7 +81,10 @@ void QtColorChooserButton::init() {
 
 void QtColorChooserButton::onClick() {
     QColor newColor = QColorDialog::getColor(color_, this, "Pick Color", QColorDialog::ShowAlphaChannel);
-    if (newColor.isValid()) color_ = newColor;
+    if (newColor.isValid()) {
+      color_ = newColor;
+      emit colorChanged(color_);
+    }
 }
 
 void QtColorChooserButton::paintEvent(QPaintEvent *ev) {
