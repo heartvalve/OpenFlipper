@@ -17,7 +17,8 @@ SkeletonEditingPlugin::SkeletonEditingPlugin()
    currentJoint_(-1),
    jointPreview_(false),
    transformChildJoints_(false),
-   transformAllFrames_(true)
+   transformAllFrames_(true),
+   dblClick_(false)
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -690,6 +691,8 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
   //----------------------------------------------------------------------
   else if ( _event->type() == QEvent::MouseButtonDblClick ){
 
+
+  	dblClick_ = true;
     // end the path in the skeleton
     if (currentSkeleton_ != -1){
       cancelJointInsertion();
@@ -706,6 +709,7 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
       ACG::Vec3d viewCoords   = ACG::Vec3d(_event->pos().x(), PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y(), 0.5);
       lastHitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
     }
+
 
     int newSkeletonID = -1;
     emit addEmptyObject(DATA_SKELETON, newSkeletonID);
@@ -776,89 +780,94 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
   //----------------------------------------------------------------------
   // handle RELEASE events
   //----------------------------------------------------------------------
-  } else if ( _event->type() == QEvent::MouseButtonRelease ){
+  } else if ( _event->type() == QEvent::MouseButtonRelease){
 
-    // CASE 1 : this is a release on a joint from which the insertion should be started
-    if ( !jointPreview_ ){
-      // in 
-      unsigned int    node_idx, target_idx;
-      ACG::Vec3d      hitPoint;
-      BaseObjectData* object;
+    if (!dblClick_) {
 
-      //disable picking for anything but skeletons
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-        o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
+      // CASE 1 : this is a release on a joint from which the insertion should be started
+      if ( !jointPreview_ ){
+        // in
+        unsigned int    node_idx, target_idx;
+        ACG::Vec3d      hitPoint;
+        BaseObjectData* object;
 
-      //perform picking
-      bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx,
-                                                                target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+        //disable picking for anything but skeletons
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+          o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
 
-      //reenable picking for anything
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-        o_it->enablePicking( true );
+        //perform picking
+        bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx,
+            target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
 
-      if ( successfullyPicked ){
-        Skeleton* skeleton = PluginFunctions::skeleton( object );
+        //reenable picking for anything
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+          o_it->enablePicking( true );
 
-        if ( !skeleton )
-          return;
+        if ( successfullyPicked ){
+          Skeleton* skeleton = PluginFunctions::skeleton( object );
 
-        currentSkeleton_ = object->id();
+          if ( !skeleton )
+            return;
 
-        Skeleton::Joint* joint = skeleton->joint( target_idx );
+          currentSkeleton_ = object->id();
 
-        if ( joint != 0 ){
+          Skeleton::Joint* joint = skeleton->joint( target_idx );
 
-          if ( joint->selected() ){
-            //only if the joint is selected we are sure it was the same joint
-            //like on the mouse press
-            Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
-            skeleton->addJoint(joint, tmpJoint);
+          if ( joint != 0 ){
 
-            currentJoint_ = tmpJoint->id();
-            jointPreview_ = true;
+            if ( joint->selected() ){
+              //only if the joint is selected we are sure it was the same joint
+              //like on the mouse press
+              Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
+              skeleton->addJoint(joint, tmpJoint);
+
+              currentJoint_ = tmpJoint->id();
+              jointPreview_ = true;
+            }
           }
         }
-      }
 
-    } else {
-      // CASE 2 : a joint is already under construction
-      //          so we insert the new joint at the current position
-      BaseObjectData* baseObject = 0;
-      PluginFunctions::getObject(currentSkeleton_, baseObject);
+      } else {
+        // CASE 2 : a joint is already under construction
+  			//          so we insert the new joint at the current position
+  			BaseObjectData* baseObject = 0;
+  			PluginFunctions::getObject(currentSkeleton_, baseObject);
 
-      if (baseObject == 0)
-        return;
+  			if (baseObject == 0)
+  				return;
 
-      Skeleton* skeleton = PluginFunctions::skeleton( baseObject );
+  			Skeleton* skeleton = PluginFunctions::skeleton( baseObject );
 
-      if (skeleton == 0)
-        return;
+  			if (skeleton == 0)
+  				return;
 
-      Skeleton::Joint* joint = skeleton->joint( currentJoint_ );
+  			Skeleton::Joint* joint = skeleton->joint( currentJoint_ );
 
-      if (joint != 0){
+  			if (joint != 0){
 
-        ACG::Vec3d parentPosition = activePose(PluginFunctions::skeletonObject(baseObject))->globalTranslation(joint->parent()->id());
-        ACG::Vec3d parentViewer = PluginFunctions::viewerProperties().glState().project(parentPosition);
+  				ACG::Vec3d parentPosition = activePose(PluginFunctions::skeletonObject(baseObject))->globalTranslation(joint->parent()->id());
+  				ACG::Vec3d parentViewer = PluginFunctions::viewerProperties().glState().project(parentPosition);
 
-        ACG::Vec3d viewCoords   = ACG::Vec3d(_event->pos().x(), PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y(), parentViewer[2]);
-        ACG::Vec3d lastHitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
+  				ACG::Vec3d viewCoords   = ACG::Vec3d(_event->pos().x(), PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y(), parentViewer[2]);
+  				ACG::Vec3d lastHitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
 
-        // set joint position
-        setJointPosition(PluginFunctions::skeletonObject(baseObject), joint, lastHitPoint);
-        emit updatedObject(baseObject->id(), UPDATE_ALL);
+  				// set joint position
+  				setJointPosition(PluginFunctions::skeletonObject(baseObject), joint, lastHitPoint);
+  				emit updatedObject(baseObject->id(), UPDATE_ALL);
 
-        Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
-        skeleton->addJoint(joint, tmpJoint);
-        setJointPosition(PluginFunctions::skeletonObject(baseObject), tmpJoint, lastHitPoint);
+  				Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
+  				skeleton->addJoint(joint, tmpJoint);
+  				setJointPosition(PluginFunctions::skeletonObject(baseObject), tmpJoint, lastHitPoint);
 
-        currentJoint_ = tmpJoint->id();
-      }
+  				currentJoint_ = tmpJoint->id();
+  			}
 
 
-    }
+  		}
+  	} else
+  	  dblClick_ = false;
   }
+
 
   // keep the joint selection correct
   if ( (_event->type() != QEvent::MouseButtonPress) ){

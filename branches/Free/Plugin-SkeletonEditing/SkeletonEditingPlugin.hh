@@ -206,6 +206,8 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     bool transformChildJoints_;
     bool transformAllFrames_;
     
+    bool dblClick_;
+
   private:
     // object ids of all objects with active Manipulator
     std::vector< int > activeManipulators_;
