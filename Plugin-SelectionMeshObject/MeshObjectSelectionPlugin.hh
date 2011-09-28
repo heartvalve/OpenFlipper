@@ -373,6 +373,12 @@ public slots:
     /// Return a list of all selected edges
     IdList getHalfedgeSelection(int objectId);
 
+    /// Convert halfedge ids to vertex pairs
+    IdList convertHalfedgesToVertexPairs(int _id, const IdList& _halfedges);
+
+    /// Inverse of function above
+    IdList convertVertexPairsToHalfedges(int _id, const IdList& _vertices);
+
     /// Colorize the edge selection
     void colorizeHalfedgeSelection(int objectId, int r, int g, int b, int a);
 
