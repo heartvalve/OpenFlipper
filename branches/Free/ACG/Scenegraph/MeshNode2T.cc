@@ -230,10 +230,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   glPushAttrib(GL_ENABLE_BIT);
 
-  // If a texture is currently bound,we un bind it for the non textured draw modes
-  GLenum lastTexture = ACG::GLState::getActiveTexture();
-  ACG::GLState::bindTexture( GL_TEXTURE_2D, 0);
-
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
     ACG::GLState::shadeModel(GL_FLAT);
@@ -445,8 +441,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     _state.set_base_color(base_color_backup);
   }
   
-  // Rebind the last active texture
-  ACG::GLState::bindTexture( GL_TEXTURE_2D, lastTexture);
   
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
