@@ -1362,7 +1362,7 @@ void MeshObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
         ids.clear();
         // Load halfedge selection:
         _file.get_entry(ids, section, "HalfedgeSelection");
-        selectHalfedges(o_it->id(), ids);
+        selectHalfedges(o_it->id(), convertVertexPairsToHalfedges(o_it->id(), ids));
         ids.clear();
         // Load face selection:
         _file.get_entry(ids, section, "FaceSelection");
@@ -1402,7 +1402,7 @@ void MeshObjectSelectionPlugin::slotSaveSelection(INIFile& _file) {
         // Store edge selection:
         _file.add_entry(section, "EdgeSelection", convertEdgesToVertexPairs(o_it->id(), getEdgeSelection(o_it->id())));
         // Store halfedge selection:
-        _file.add_entry(section, "HalfedgeSelection", getHalfedgeSelection(o_it->id()));
+        _file.add_entry(section, "HalfedgeSelection", convertHalfedgesToVertexPairs(o_it->id(), getHalfedgeSelection(o_it->id())));
         // Store face selection:
         _file.add_entry(section, "FaceSelection", getFaceSelection(o_it->id()));
         // Store handle region:

@@ -241,6 +241,117 @@ IdList MeshObjectSelectionPlugin::getHalfedgeSelection(int objectId) {
 
 //=========================================================
 
+IdList MeshObjectSelectionPlugin::convertHalfedgesToVertexPairs(int _id, const IdList& _halfedges) {
+
+    IdList vertex_pairs;
+
+    BaseObjectData* object = 0;
+    if ( !PluginFunctions::getObject(_id,object) ) {
+        emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id));
+        return IdList(0);
+    }
+
+    if(object->dataType() == DATA_TRIANGLE_MESH) {
+
+        TriMeshObject* obj = 0;
+        if(!PluginFunctions::getObject(_id, obj)) {
+            emit log(LOGERR, "Could not get mesh object!");
+            return IdList(0);
+        }
+
+        TriMesh* mesh = obj->mesh();
+
+        for(IdList::const_iterator it = _halfedges.begin(); it != _halfedges.end(); ++it) {
+            vertex_pairs.push_back(mesh->from_vertex_handle(TriMesh::HalfedgeHandle(*it)).idx());
+            vertex_pairs.push_back(mesh->to_vertex_handle(TriMesh::HalfedgeHandle(*it)).idx());
+        }
+
+    } else if(object->dataType() == DATA_POLY_MESH) {
+
+        PolyMeshObject* obj = 0;
+        if(!PluginFunctions::getObject(_id, obj)) {
+            emit log(LOGERR, "Could not get mesh object!");
+            return IdList(0);
+        }
+
+        PolyMesh* mesh = obj->mesh();
+
+        for(IdList::const_iterator it = _halfedges.begin(); it != _halfedges.end(); ++it) {
+            vertex_pairs.push_back(mesh->from_vertex_handle(PolyMesh::HalfedgeHandle(*it)).idx());
+            vertex_pairs.push_back(mesh->to_vertex_handle(PolyMesh::HalfedgeHandle(*it)).idx());
+        }
+    }
+
+    return vertex_pairs;
+}
+
+//=========================================================
+
+IdList MeshObjectSelectionPlugin::convertVertexPairsToHalfedges(int _id, const IdList& _vertices) {
+
+    if(_vertices.size() % 2 != 0) {
+        emit log(LOGERR, "Number of vertices is not even!");
+        return IdList(0);
+    }
+
+    IdList halfedges;
+
+    BaseObjectData* object = 0;
+    if ( !PluginFunctions::getObject(_id,object) ) {
+        emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id));
+        return IdList(0);
+    }
+
+    if(object->dataType() == DATA_TRIANGLE_MESH) {
+
+        TriMeshObject* obj = 0;
+        if(!PluginFunctions::getObject(_id, obj)) {
+            emit log(LOGERR, "Could not get mesh object!");
+            return IdList(0);
+        }
+
+        TriMesh* mesh = obj->mesh();
+
+        for(IdList::const_iterator it = _vertices.begin(); it != _vertices.end(); it+=2) {
+            TriMesh::VertexHandle vh = TriMesh::VertexHandle(*it);
+            if(!vh.is_valid()) continue;
+            for(TriMesh::VertexOHalfedgeIter voh_it = mesh->voh_iter(vh);
+                    voh_it; ++voh_it) {
+                if(mesh->to_vertex_handle(voh_it.handle()).idx() == *(it+1)) {
+                    halfedges.push_back(voh_it.handle().idx());
+                    continue;
+                }
+            }
+        }
+
+    } else if(object->dataType() == DATA_POLY_MESH) {
+
+        PolyMeshObject* obj = 0;
+        if(!PluginFunctions::getObject(_id, obj)) {
+            emit log(LOGERR, "Could not get mesh object!");
+            return IdList(0);
+        }
+
+        PolyMesh* mesh = obj->mesh();
+
+        for(IdList::const_iterator it = _vertices.begin(); it != _vertices.end(); it+=2) {
+            PolyMesh::VertexHandle vh = PolyMesh::VertexHandle(*it);
+            if(!vh.is_valid()) continue;
+            for(PolyMesh::VertexOHalfedgeIter voh_it = mesh->voh_iter(vh);
+                    voh_it; ++voh_it) {
+                if(mesh->to_vertex_handle(voh_it.handle()).idx() == *(it+1)) {
+                    halfedges.push_back(voh_it.handle().idx());
+                    continue;
+                }
+            }
+        }
+    }
+
+    return halfedges;
+}
+
+//=========================================================
+
 /// colorize the halfedge selection
 void MeshObjectSelectionPlugin::colorizeHalfedgeSelection(int objectId, int r, int g, int b, int a) {
     
