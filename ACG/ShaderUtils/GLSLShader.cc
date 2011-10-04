@@ -290,11 +290,31 @@ namespace GLSL {
 
   /** \brief Sets a uniform variable for the program.
   */
+  void Program::setUniform(const char *name, const ACG::Vec2f &value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, name);
+    checkGLError2(name);
+    glUniform2fv(location, 1, value.data());
+    checkGLError();
+  }
+
+  /** \brief Sets a uniform variable for the program.
+  */
   void Program::setUniform(const char *name, const ACG::Vec3f &value) {
     checkGLError();
     GLint location = glGetUniformLocation(this->m_programId, name);
     checkGLError2(name);
     glUniform3fv(location, 1, value.data());
+    checkGLError();
+  }
+
+  /** \brief Sets a uniform variable for the program.
+  */
+  void Program::setUniform(const char *name, const ACG::Vec4f &value) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, name);
+    checkGLError2(name);
+    glUniform4fv(location, 1, value.data());
     checkGLError();
   }
 
