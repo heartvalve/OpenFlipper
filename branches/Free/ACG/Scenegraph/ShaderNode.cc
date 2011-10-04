@@ -313,8 +313,6 @@ setShader( DrawModes::DrawMode _drawmode ,
   disableShader (_drawmode);
   unsigned int index = _drawmode.getIndex();
 
-  std::cerr << "Added shader for mode : " << index << std::endl;
-
   shaders[index].vertexShaderFile   = shaderDir_ + _vertexShader;
   shaders[index].fragmentShaderFile = shaderDir_ + _fragmentShader;
 
