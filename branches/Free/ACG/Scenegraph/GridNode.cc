@@ -88,7 +88,7 @@ GridNode(BaseNode* _parent, const std::string& _name)
 
 
 DrawModes::DrawMode
-GridNode::availableDrawModes() const
+GridNode::availableDrawModes()
 {
   return ( DrawModes::WIREFRAME           |
 	        DrawModes::SOLID_FLAT_SHADED   );

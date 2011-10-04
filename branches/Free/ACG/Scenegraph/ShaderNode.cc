@@ -200,7 +200,7 @@ ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
 
 void ShaderNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) 
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it)
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
       it->second.program->disable();
 }
@@ -210,7 +210,7 @@ void ShaderNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode
 
 void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& _drawmode )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) 
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it)
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
       it->second.program->disable();
 }
@@ -262,21 +262,27 @@ void
 ShaderNode::
 disableShader (DrawModes::DrawMode _drawmode) {
 
-    unsigned int index = _drawmode.getIndex();
 
-    // Cleanup old shaders for this mode, if they exist
-    if ( shaders[index].initialized ) {
-        if ( shaders[index].program != 0 )
-            delete shaders[index].program;
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "disableShader: Error, draw mode not atomic!" << std::endl;
+    return;
+  }
 
-        if ( shaders[index].vertexShader != 0 )
-            delete shaders[index].vertexShader;
+  unsigned int index = _drawmode.getIndex();
 
-        if ( shaders[index].fragmentShader != 0 )
-            delete shaders[index].fragmentShader;
+  // Cleanup old shaders for this mode, if they exist
+  if ( shaders[index].initialized ) {
+    if ( shaders[index].program != 0 )
+      delete shaders[index].program;
 
-        shaders[index].initialized    = false;
-    }
+    if ( shaders[index].vertexShader != 0 )
+      delete shaders[index].vertexShader;
+
+    if ( shaders[index].fragmentShader != 0 )
+      delete shaders[index].fragmentShader;
+
+    shaders[index].initialized    = false;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -299,8 +305,15 @@ setShader( DrawModes::DrawMode _drawmode ,
     return;
   }
   
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "setShader: Error, draw mode not atomic!" << std::endl;
+    return;
+  }
+
   disableShader (_drawmode);
   unsigned int index = _drawmode.getIndex();
+
+  std::cerr << "Added shader for mode : " << index << std::endl;
 
   shaders[index].vertexShaderFile   = shaderDir_ + _vertexShader;
   shaders[index].fragmentShaderFile = shaderDir_ + _fragmentShader;
@@ -385,13 +398,17 @@ setShaderDir( std::string _shaderDir) {
 
 DrawModes::DrawMode
 ShaderNode::
-availableDrawModes() const
+availableDrawModes()
 {
-
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 
-  drawModes |= DrawModes::SOLID_PHONG_SHADED;
-  drawModes |= DrawModes::SOLID_SHADER;
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+    // If the shader for this drawmode is initialized, this node supports the given draw mode.
+    // Then we add it to the list of supported draw modes
+    if ( it->second.initialized) {
+      drawModes |= DrawModes::DrawMode(it->first);
+    }
+  }
 
   return drawModes;
 

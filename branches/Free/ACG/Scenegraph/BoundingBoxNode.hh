@@ -96,7 +96,7 @@ public:
   ACG_CLASSNAME(BoundingBoxNode);
 
   /// return available draw modes
-  DrawModes::DrawMode availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes();
 
   /// draw lines and normals
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);

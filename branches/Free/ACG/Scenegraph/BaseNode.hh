@@ -151,7 +151,7 @@ public:
 
   /** Return a list of available draw modes for this node: should be OR'ed
       from the items of the enum DrawModeIDs. */
-  virtual DrawModes::DrawMode availableDrawModes() const { return DrawModes::NONE; }
+  virtual DrawModes::DrawMode availableDrawModes() { return DrawModes::NONE; }
 
   /** Compute the bounding box of this node and update the values
       _bbMin and _bbMax accordingly. Do not initialize _bbMin and

@@ -101,7 +101,7 @@ namespace DrawModes {
       *
       * This constructor creates a DrawMode with the given drawMode index.
       * Be CareFull! this constructor can only be used to construct atomic drawmodes!
-      * The int will not be handled like an bitset but really as an index.
+      * The unsigned int will not be handled like an bitset but really as an index.
       * See the list of draw modes below to check for the right numbers.
       * You should use the predefined drawModes or create new ones using the other functions
       * and ignore this constructor!

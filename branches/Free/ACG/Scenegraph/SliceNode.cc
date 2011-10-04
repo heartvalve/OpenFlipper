@@ -104,7 +104,7 @@ SliceNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 
   
 DrawModes::DrawMode 
-SliceNode::availableDrawModes() const
+SliceNode::availableDrawModes()
 {
   return 0;
   return ( DrawModes::POINTS              |

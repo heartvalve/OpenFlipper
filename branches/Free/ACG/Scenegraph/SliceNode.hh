@@ -90,7 +90,7 @@ public:
 
   ACG_CLASSNAME( SliceNode );
 
-  DrawModes::DrawMode availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes();
 
   void boundingBox( Vec3d & _bbMin, Vec3d & _bbMax );
 
