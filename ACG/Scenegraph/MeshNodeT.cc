@@ -158,7 +158,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 template<class Mesh>
 DrawModes::DrawMode
 MeshNodeT<Mesh>::
-availableDrawModes() const
+availableDrawModes()
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 

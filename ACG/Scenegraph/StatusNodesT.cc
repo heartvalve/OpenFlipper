@@ -107,7 +107,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 template <class Mesh, class Mod>
 DrawModes::DrawMode
 StatusNodeT<Mesh, Mod>::
-availableDrawModes() const
+availableDrawModes()
 {
   return (DrawModes::POINTS |
 	  DrawModes::WIREFRAME |

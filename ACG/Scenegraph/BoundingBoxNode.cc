@@ -65,7 +65,7 @@ namespace SceneGraph {
 
 DrawModes::DrawMode
 BoundingBoxNode::
-availableDrawModes() const
+availableDrawModes()
 {
   return DrawModes::WIREFRAME;
 }

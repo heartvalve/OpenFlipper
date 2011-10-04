@@ -79,7 +79,7 @@ void PlaneNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------------------
 
 DrawModes::DrawMode
-PlaneNode::availableDrawModes() const
+PlaneNode::availableDrawModes()
 {
   return ( DrawModes::POINTS |
 	        DrawModes::POINTS_SHADED |

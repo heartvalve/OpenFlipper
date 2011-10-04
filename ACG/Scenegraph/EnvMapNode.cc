@@ -78,7 +78,7 @@ EnvMapNode::EnvMapNode( BaseNode*            _parent,
 //----------------------------------------------------------------------------
 
 
-DrawModes::DrawMode EnvMapNode::availableDrawModes() const
+DrawModes::DrawMode EnvMapNode::availableDrawModes()
 {
   return ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED;
 }

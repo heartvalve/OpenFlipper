@@ -83,7 +83,7 @@ CoordFrameNode(BaseNode* _parent, const std::string& _name)
 
 
 DrawModes::DrawMode
-CoordFrameNode::availableDrawModes() const
+CoordFrameNode::availableDrawModes()
 {
   return ( DrawModes::WIREFRAME           |
 	   DrawModes::SOLID_FLAT_SHADED   );
