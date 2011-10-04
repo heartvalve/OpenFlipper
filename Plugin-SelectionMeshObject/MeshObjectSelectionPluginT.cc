@@ -176,7 +176,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG:
     }
 
     //Edge Selection
-    if(_primitiveType & edgeType_ || _primitiveType & halfedgeType_) {
+    if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_) ) {
 
         typename MeshT::FaceHalfedgeIter fhe_it(*_mesh, fh);
 
@@ -339,7 +339,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT* _mesh ,
 
                 if(vertex_handles.size()> 0)tagged = true;
             }
-            if(_primitiveType & edgeType_ || _primitiveType & halfedgeType_) {
+            if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_)) {
                 for(uint i=0; i <edge_handles.size(); i++)
                     _mesh->status(edge_handles[i]).set_tagged(true);
 
@@ -432,7 +432,7 @@ bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _sta
         }
     }
     
-    if(_primitiveType & edgeType_ || _primitiveType & halfedgeType_) {
+    if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_) ) {
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it) {
             
@@ -680,7 +680,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
     }
 
     //Edge Selection
-    if(_primitiveType & edgeType_ || _primitiveType & halfedgeType_) {
+    if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_ ) ) {
 
         OpenMesh::FPropHandleT<bool> visited;
         _mesh->add_property(visited);
