@@ -623,42 +623,43 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             std::string trash;
             
             switch (colorType){
-                case 0 : break; //no color
-                case 1 : sstr >> trash; break; //one int (isn't handled atm)
-                case 2 : sstr >> trash; sstr >> trash; break; //corrupt format (ignore)
-                    // rgb int
-                case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
+              case 0 : break; //no color
+              case 1 : sstr >> trash; break; //one int (isn't handled atm)
+              case 2 : sstr >> trash; sstr >> trash; break; //corrupt format (ignore)
+              // rgb int
+              case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c3 ) );
-                    _importer.setVertexColor(vh, cidx);
+                  int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c3 ) );
+                  _importer.setVertexColor(vh, cidx);
                 }
                 break;
-                // rgba int
-                case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
+              // rgba int
+              case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c4 ) );
-                    _importer.setVertexColor(vh, cidx);
-                    _importer.addOption(OFFImporter::COLORALPHA);
+                  int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c4 ) );
+                  _importer.setVertexColor(vh, cidx);
+                  _importer.addOption(OFFImporter::COLORALPHA);
                 }
                 break;
-                // rgb floats
-                case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
+              // rgb floats
+              case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c3f) );
-                    _importer.setVertexColor(vh, cidx);
+                  int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c3f) );
+                  _importer.setVertexColor(vh, cidx);
                 }
                 break;
-                // rgba floats
-                case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
+              // rgba floats
+              case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c4f) );
-                    _importer.setVertexColor(vh, cidx);
-                    _importer.addOption(OFFImporter::COLORALPHA);
+                  int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c4f) );
+                  _importer.setVertexColor(vh, cidx);
+                  _importer.addOption(OFFImporter::COLORALPHA);
                 }
                 break;
-                
-                default:
-                    std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+
+              default:
+                std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+                break;
                     break;
             }
         }
