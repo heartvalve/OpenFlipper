@@ -87,7 +87,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 template <class BSplineSurface>
 DrawModes::DrawMode
 BSplineSurfaceNodeT<BSplineSurface>::
-availableDrawModes() const
+availableDrawModes()
 {
   DrawModes::DrawMode drawModes(0);
 

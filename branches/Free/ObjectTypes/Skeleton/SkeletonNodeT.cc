@@ -140,7 +140,7 @@ void SkeletonNodeT<Skeleton>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
  * 
  */
 template <class Skeleton>
-DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes() const
+DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes()
 {
   return (DrawModes::WIREFRAME           | DrawModes::POINTS | DrawModes::SOLID_FLAT_SHADED
         | DrawModes::SOLID_FACES_COLORED | DrawModes::SOLID_FACES_COLORED_FLAT_SHADED);

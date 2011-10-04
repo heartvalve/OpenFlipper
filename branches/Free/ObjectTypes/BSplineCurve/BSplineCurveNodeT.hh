@@ -137,7 +137,7 @@ public:
   ACG_CLASSNAME(BSplineCurveNodeT);
 
   /// return available draw modes
-  DrawModes::DrawMode availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes();
   
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
