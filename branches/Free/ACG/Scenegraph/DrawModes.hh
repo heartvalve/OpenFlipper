@@ -278,20 +278,28 @@ namespace DrawModes {
   ACGDLLEXPORT 
   void initializeDefaultDrawModes( void );
 
-  /** Add a custom DrawMode.
-      The new ID is returned in the variable \c _newId. A false return value
-      indicates that the addition failed because all available IDs 
-      are occupied.
-  */
-  ACGDLLEXPORT 
-  bool addDrawMode( const std::string & _name, DrawMode & _newId );
+  /** \brief Add a custom DrawMode.
+   *
+      The id of the new draw mode is returned. If it already exists, the id of the existing one
+      is returned.
 
-  /** \brief Get a DrawMode from its name
-      The Id of the DrawMode with name \c _name is returned in variable \c _Id.
-      Returns false if the DrawMode could not been found.
+      @param _name Name of the drawmode to add
+      @return Id of the new draw mode
   */
   ACGDLLEXPORT 
-  bool getDrawMode( const std::string & _name, DrawMode & _Id  );
+  const DrawMode& addDrawMode( const std::string & _name);
+
+
+  /** \brief Get a custom DrawMode.
+   *
+      The id of the draw mode is returned or if it does not exist, DrawMode::NONE is returned.
+
+      @param _name Name of the drawmode
+      @return Id of the draw mode or DrawModes::NONE
+  */
+  ACGDLLEXPORT 
+  const DrawMode& getDrawMode( const std::string & _name);
+
   
   /** \brief Check if the given draw mode exists
   *
