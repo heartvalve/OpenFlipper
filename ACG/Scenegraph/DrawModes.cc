@@ -278,14 +278,8 @@ unsigned int DrawMode::maxModes() {
  
  
  
- 
- 
- 
- 
- 
- 
- 
- 
+
+
 
 
 
@@ -355,55 +349,50 @@ void initializeDefaultDrawModes( void )
 //----------------------------------------------------------------------------
 
 
-bool addDrawMode( const std::string & _name, DrawMode & _newId )
+const DrawMode& addDrawMode( const std::string & _name )
 {
-  /// \todo Create a new DrawMode correctly
-  
   // check if mode exists already
   VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
 
   for( modeIter = currentDrawModes_.begin(); modeIter != modeEnd; ++modeIter ) {
-    if( _name == modeIter->name_ )
-        return modeIter->id_;
+    if( _name == modeIter->name_ ) {
+      return modeIter->id_;
+    }
   }
 
 
   // add new mode
-  _newId = firstFreeID_;
-  currentDrawModes_.push_back( DrawModeInternal( _name, _newId ) );
+  currentDrawModes_.push_back( DrawModeInternal( _name, firstFreeID_ ) );
   ++firstFreeID_;
-  
-  return true;
+
+  return currentDrawModes_[ currentDrawModes_.size() - 1 ].id_;
 }
 
 
 //----------------------------------------------------------------------------
 
 
-bool getDrawMode( const std::string & _name, DrawMode & _Id  )
+const DrawMode& getDrawMode( const std::string & _name )
 {
-    // check if mode exists
-    VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  // check if mode exists
+  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
 
-    for( modeIter = currentDrawModes_.begin();
-	 modeIter != modeEnd;
-	 ++modeIter )
+  for( modeIter = currentDrawModes_.begin(); modeIter != modeEnd;  ++modeIter )
+  {
+    if( _name == modeIter->name_ )
     {
-       if( _name == modeIter->name_ )
-       {
-	   _Id = modeIter->id_;
-           return true;
-       }
+      return modeIter->id_;
     }
+  }
 
-    // the DrawMode does not exists
-    return false;
+  // the DrawMode does not exists
+  return DrawModes::NONE;
 }
 
 bool drawModeExists(const std::string & _name) {
   
   // check if mode exists
-  VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
   
   for( modeIter = currentDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
   {
@@ -414,6 +403,7 @@ bool drawModeExists(const std::string & _name) {
   // the DrawMode does not exists
   return false;  
 }
+
 
 DrawMode getDrawModeFromIndex( unsigned int _index ) {
   return DrawMode(_index);
