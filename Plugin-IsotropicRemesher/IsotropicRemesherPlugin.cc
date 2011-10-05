@@ -74,7 +74,6 @@ void IsotropicRemesherPlugin::slotRemeshButtonClicked() {
   
   if ( thread_ == 0){
     thread_ = new OpenFlipperThread(name() + "IsotropicRemesh");                         // Create your thread containing a unique id \n
-    connect(thread_,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));                  // connect your threads state info to the global one \n
     connect(thread_,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                           // connect your threads finish info to the global one ( you can do the same for a local one ) \n
     connect(thread_,SIGNAL( function() ), this,SLOT(slotRemesh()),Qt::DirectConnection);           // You can directly give a slot of your app that gets called \n
     connect(this,SIGNAL( finishJob(QString)), this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
