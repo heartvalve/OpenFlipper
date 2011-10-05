@@ -250,6 +250,17 @@ A quick example for stating a thread:
  thread->start();                                                                                           // start thread
  thread->startProcessing();                                                                                 // start processing
 \endcode
+
+Note: If your class is derived from OpenFlipperThread and reimplements the
+run() function, you might also want to connect the signal OpenFlipperThread::state()
+to the plugin's signal setJobState():
+
+\code
+ connect(thread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
+\endcode
+
+Use signal OpenFlipperThread::state() within your run() function in order to
+correctly update the job's state.
 */
 
 Q_DECLARE_INTERFACE(ProcessInterface,"OpenFlipper.ProcessInterface/1.0")
