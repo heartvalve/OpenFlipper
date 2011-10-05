@@ -244,7 +244,6 @@ A quick example for stating a thread:
 
 \code
  OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                                   // Create your thread containing a unique id
- connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));                      // connect your threads state info to the global one
  connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                               // connect your threads finish info to the global one ( you can do the same for a local one )
  connect(thread,SIGNAL( function(QString)), this,SLOT(testFunctionThread(QString)),Qt::DirectConnection);   // You can directly give a slot of your app that gets called
  emit startJob( name() + "unique id", "Description" , 0 , 100 , false);                                     // Tell the core about your thread
