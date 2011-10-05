@@ -90,7 +90,8 @@ class DLLEXPORT OpenFlipperThread : public QThread
     /** \brief Main processing
     *
     * Either reimplement this function or connect the function()
-    * signal.
+    * signal. If this function is reimplemented, use signal state()
+    * in order to inform the core about the job's current state.
     */
     virtual void run();
     
@@ -115,11 +116,14 @@ class DLLEXPORT OpenFlipperThread : public QThread
   signals:
     /** \brief Tell core about job state
     *
-    * Emit this signal to tell the core about your job status. You have to create a new run function for
-    * this. In simple mode, this signal is not emitted at all!
+    * Use this signal to inform core about the job's state if and
+    * only if the thread class inherits from OpenFlipperThread
+    * and the virtual run() function is overridden. In all other cases
+    * this signal won't be used and does not have to be connected to from
+    * within the plugins.
     */
     void state( QString _jobId, int _state );
-    
+
   /** @} */
     
     
