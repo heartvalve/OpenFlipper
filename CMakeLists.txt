@@ -53,7 +53,9 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help )
 
 # Add the deocumentation targets
 add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
+add_subdirectory (OpenFlipper/Documentation/DeveloperQtHelpTarget)
 add_subdirectory (OpenFlipper/Documentation/UserTarget)
+add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
 
 
 # ========================================================================
