@@ -5,10 +5,10 @@
          - DrawModes
              - Reworked dynamic drawMode interface         
          - SceneGraph
-             - General
-                 - !!! Switch available drawmodes function from const to non const as nodes may dynamically change the supported drawmodes depending on the data they have !!!!! ( you also have to remove the const from the given function or it will not be called by the scenegraph anymore !!
              - MeshNode
                  - Don't texture edges, halfedges and points in meshnode
+             - ShaderNode
+                 - Return the available drawmodes based on the set shaders
          - QtWidgets
              - Added ColorChooserButton with alpha channel display
              - Use new ColorChooserButton for QtMaterialDialog
