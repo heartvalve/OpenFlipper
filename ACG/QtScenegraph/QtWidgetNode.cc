@@ -82,7 +82,7 @@ boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
   
 DrawModes::DrawMode 
 QtWidgetNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return ( DrawModes::SOLID_FLAT_SHADED );
 }

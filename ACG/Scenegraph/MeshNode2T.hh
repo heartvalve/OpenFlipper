@@ -274,7 +274,7 @@ public:
   * The drawmodes are constructed based on the mesh properties and the hardware capabilities
   * of the system.
   */
-  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes();
+  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
   
 private:
   

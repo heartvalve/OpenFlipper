@@ -97,7 +97,7 @@ boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 
 DrawModes::DrawMode
 TextNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return ( DrawModes::POINTS |
            DrawModes::POINTS_SHADED |

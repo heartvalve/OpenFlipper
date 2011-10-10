@@ -123,7 +123,7 @@ public:
   ACG_CLASSNAME(LineNode);
 
   /// return available draw modes
-  DrawModes::DrawMode  availableDrawModes();
+  DrawModes::DrawMode  availableDrawModes() const;
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);

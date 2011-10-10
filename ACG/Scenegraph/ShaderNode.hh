@@ -134,7 +134,7 @@ public:
   bool hasShader( DrawModes::DrawMode _drawmode, bool _pick = false);
 
   /// return available draw modes
-  DrawModes::DrawMode availableDrawModes();
+  DrawModes::DrawMode availableDrawModes() const;
 
 private :
   // Path to the shaders ( if set ). If empty shaders will not be used.

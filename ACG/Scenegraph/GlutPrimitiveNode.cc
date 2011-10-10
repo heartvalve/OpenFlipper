@@ -123,7 +123,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
   
 DrawModes::DrawMode
 GlutPrimitiveNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return ( DrawModes::POINTS              |
 	   DrawModes::WIREFRAME           |

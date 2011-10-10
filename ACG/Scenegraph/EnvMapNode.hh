@@ -87,7 +87,7 @@ public:
   ACG_CLASSNAME(EnvMapNode);
 
   /// add env mapping
-  DrawModes::DrawMode  availableDrawModes();
+  DrawModes::DrawMode  availableDrawModes() const;
 
   /// set texture
   void enter(GLState& _state, const DrawModes::DrawMode& _drawmode);
