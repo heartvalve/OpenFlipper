@@ -400,7 +400,7 @@ availableDrawModes() const
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+  for ( std::map<unsigned int,ShaderInfo>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
     // If the shader for this drawmode is initialized, this node supports the given draw mode.
     // Then we add it to the list of supported draw modes
     if ( it->second.initialized) {
