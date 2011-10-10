@@ -112,7 +112,7 @@ TriangleNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
   
 DrawModes::DrawMode
 TriangleNode::
-availableDrawModes()
+availableDrawModes() const
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
   

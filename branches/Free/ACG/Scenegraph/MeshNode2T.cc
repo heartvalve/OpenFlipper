@@ -132,7 +132,7 @@ MeshNodeT<Mesh>::
 template<class Mesh>
 DrawModes::DrawMode
 MeshNodeT<Mesh>::
-availableDrawModes() {
+availableDrawModes() const {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
   
   // We can always render points and a wireframe.

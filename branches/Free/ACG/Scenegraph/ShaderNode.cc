@@ -396,7 +396,7 @@ setShaderDir( std::string _shaderDir) {
 
 DrawModes::DrawMode
 ShaderNode::
-availableDrawModes()
+availableDrawModes() const
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 

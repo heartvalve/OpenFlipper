@@ -81,7 +81,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 DrawModes::DrawMode
 LineNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return DrawModes::WIREFRAME;
 }

@@ -112,7 +112,7 @@ QuadNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
   
 DrawModes::DrawMode
 QuadNode::
-availableDrawModes()
+availableDrawModes() const
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 

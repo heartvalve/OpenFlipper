@@ -111,7 +111,7 @@ public:
   ACG_CLASSNAME(CoordsysNode);
 
   /// return available draw modes
-  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes();
+  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);

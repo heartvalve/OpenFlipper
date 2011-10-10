@@ -79,7 +79,7 @@ boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 
 DrawModes::DrawMode
 CoordsysNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return ( DrawModes::POINTS |
 	        DrawModes::POINTS_SHADED |
