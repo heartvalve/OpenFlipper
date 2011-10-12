@@ -365,7 +365,6 @@ function (interrogate_mpi_compiler lang try_libs)
 
           if (MPI_LIB)
             list(APPEND MPI_LIBRARIES_WORK ${MPI_LIB})
-			message("WORK 1: ${MPI_LIBRARIES_WORK}")
           elseif (NOT MPI_FIND_QUIETLY)
             message(WARNING "Unable to find MPI library ${LIB}")
           endif()
@@ -402,8 +401,6 @@ function (interrogate_mpi_compiler lang try_libs)
         HINTS         ${_MPI_BASE_DIR} ${_MPI_PREFIX_PATH}
         PATH_SUFFIXES lib lib/${MS_MPI_ARCH_DIR} Lib Lib/${MS_MPI_ARCH_DIR})
       set(MPI_LIBRARIES_WORK ${MPI_LIB})
-	  
-	  message("WORK 2: ${MPI_LIBRARIES_WORK}")
 
       # Right now, we only know about the extra libs for C++.
       # We could add Fortran here (as there is usually libfmpich, etc.), but
@@ -417,7 +414,6 @@ function (interrogate_mpi_compiler lang try_libs)
           PATH_SUFFIXES lib)
         if (MPI_LIBRARIES_WORK AND MPI_LIB)
           set(MPI_LIBRARIES_WORK "${MPI_LIBRARIES_WORK};${MPI_LIB}")
-		  message("WORK 3: ${MPI_LIBRARIES_WORK}")
         endif()
       endif()
 
