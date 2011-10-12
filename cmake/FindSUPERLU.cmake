@@ -4,8 +4,8 @@ if (SUPERLU_INCLUDE_DIR)
 else (SUPERLU_INCLUDE_DIR)
 
 if (WIN32)
-   find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
-     PREFIXES SRC
+
+   find_path(SUPERLU_INCLUDE_DIR NAMES SRC/supermatrix.h
      PATHS
      "C:\\libs\\SuperLU_3.0"
      ${SUPERLU_INCLUDE_PATH}

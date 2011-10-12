@@ -15,6 +15,10 @@ if (GMP_INCLUDE_DIR AND GMP_LIBRARY_DIR )
    
   set(GMP_FOUND TRUE)
   
+  if ( WIN32 )
+	 list ( APPEND GMP_LIBRARIES libgmp-10.lib;libmpfr-4.lib )	    
+  endif()
+  
 else()  
   find_package(CGAL)
   if (NOT CGAL_FOUND)
@@ -32,15 +36,16 @@ else()
     endif()
     
     if ( CGAL_AUTO_LINK_ENABLED )
-    
       find_path(GMP_LIBRARY_DIR 
-                NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
+                NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib" libgmp-10.lib
                 PATHS "${CGAL_INCLUDE_DIR}/../auxiliary/gmp/lib"
                 DOC "Directory containing the GMP library"
                )
       
+	    if ( WIN32 )
+	      list ( APPEND GMP_LIBRARIES libgmp-10.lib;libmpfr-4.lib )	    
+		endif()
     else()
-    
       find_library(GMP_LIBRARIES NAMES gmp 
                    PATHS ENV GMP_LIB_DIR
                    DOC "Path to the GMP library"

@@ -4,8 +4,7 @@ if (GUROBI_INCLUDE_DIR)
 else (GUROBI_INCLUDE_DIR)
 
 if (WIN32)
-   find_path(GUROBI_INCLUDE_DIR NAMES gurobi_c++.h
-     PREFIXES SRC
+   find_path(GUROBI_INCLUDE_DIR NAMES SRC/gurobi_c++.h
      PATHS
      "C:\\libs\\gurobi45"
      ${GUROBI_INCLUDE_PATH}
