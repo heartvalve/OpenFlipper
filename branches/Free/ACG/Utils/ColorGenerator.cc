@@ -47,12 +47,12 @@
 
 namespace ACG {
 
-const float ColorGenerator::defaultSaturation_  = 1.0f;
-const float ColorGenerator::defaultValue_  = 1.0f;
+#define DEFAULT_SATURATION 1.0f
+#define DEFAULT_VALUE      1.0f
 
 ColorGenerator::ColorGenerator(float _alpha, float _baseHue) :
         currentSubdiv_(2), currentIt_(0), currentTriadIt_(0),
-        alpha_(_alpha), baseHue_(_baseHue) {
+        alpha_(_alpha), baseHue_(_baseHue),defaultSaturation_(DEFAULT_SATURATION),defaultValue_(DEFAULT_VALUE)  {
 }
 
 static inline float wrap01(float v) {
