@@ -52,8 +52,9 @@
 
 #include <qpushbutton.h>
 #include <qcolor.h>
+#include "../Config/ACGDefines.hh"
 
-class QtColorChooserButton: public QPushButton {
+class ACGDLLEXPORT QtColorChooserButton: public QPushButton {
     Q_OBJECT
 
     Q_PROPERTY(QColor color READ color WRITE setColor)

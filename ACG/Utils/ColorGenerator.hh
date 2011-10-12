@@ -44,6 +44,7 @@
 #define COLORGENERATOR_HH_
 
 #include <ACG/Math/VectorT.hh>
+#include "../Config/ACGDefines.hh"
 
 namespace ACG {
 
@@ -54,7 +55,7 @@ namespace ACG {
  * Note that it intentionally behaves totally deterministic. (Because
  * reproducibility rocks.)
  */
-class ColorGenerator {
+class ACGDLLEXPORT ColorGenerator {
     public:
         /**
          * Constructor
@@ -111,7 +112,7 @@ class ColorGenerator {
         float alpha_;
         float baseHue_;
 
-        static const float defaultSaturation_, defaultValue_;
+        const float defaultSaturation_, defaultValue_;
 };
 
 } /* namespace ACG */
