@@ -18,7 +18,8 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                                  /usr/include
                                  /usr/local/include
                                  "c:\\libs\\gmm-3.0\\include"
-				 ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
+								 "c:\\libs\\gmm-4.1\\include"
+				                 ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
                                  ../../External/include
                                  ${module_file_path}/../../../External/include)
 
