@@ -294,7 +294,7 @@ void SplatCloudNode::rebuildVBO()
 	bool success = glUnmapBufferARB( GL_ARRAY_BUFFER_ARB );
 
 	// deactivate vertex-buffer-object
-	glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+	ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 
 	// mark vertex-buffer-object as valid only if it was successfully updated and unmaped
 	vboValid_ = (buffer != 0) && success;
