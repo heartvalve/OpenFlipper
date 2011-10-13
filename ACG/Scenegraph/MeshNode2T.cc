@@ -299,9 +299,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 //    drawMesh_->SetFlatShading();
     drawMesh_->disableColors();
     
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     // Second
     // Render the lines. All lines not on the front will be skipped in z-test
@@ -344,7 +344,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   {
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     if ( enableNormals_ ) {
        ACG::GLState::enable(GL_COLOR_MATERIAL);
     } else {
@@ -354,20 +354,20 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->usePerVertexColors();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals() && mesh_.n_faces() > 0)
   {
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->setFlatShading();
     drawMesh_->disableColors();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
   }
   
   
@@ -375,12 +375,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   {
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )
@@ -398,13 +398,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 //    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     //disable own Phong shader
     //         program->disable();
@@ -419,13 +419,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 //    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY);    
 
     drawMesh_->usePerFaceColors();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     _state.set_base_color(base_color_backup);
   }
@@ -437,14 +437,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::enable(GL_LIGHTING);
     
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 //    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY | PER_FACE_NORMAL_ARRAY );
 
     drawMesh_->setFlatShading();
     drawMesh_->usePerFaceColors();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     _state.set_base_color(base_color_backup);
   }
@@ -459,13 +459,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::enable(GL_TEXTURE_2D);
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
     drawMesh_->usePerVertexTexcoords();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
@@ -475,14 +475,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::enable(GL_TEXTURE_2D);
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
     drawMesh_->usePerVertexTexcoords();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
@@ -496,13 +496,13 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->disableColors();
     drawMesh_->usePerHalfedgeTexcoords();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     ACG::GLState::disable(GL_TEXTURE_2D);
   }
@@ -516,14 +516,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
     drawMesh_->usePerHalfedgeTexcoords();
 
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     ACG::GLState::disable(GL_TEXTURE_2D);
     
   }
@@ -763,9 +763,9 @@ pick_vertices(GLState& _state, bool _front)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
     
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     ACG::GLState::depthFunc(GL_LEQUAL);
@@ -847,9 +847,9 @@ pick_edges(GLState& _state, bool _front)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     _state.set_base_color(clear_color);
     
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     ACG::GLState::depthFunc(GL_LEQUAL);

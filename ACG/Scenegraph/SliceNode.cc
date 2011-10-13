@@ -253,7 +253,7 @@ SliceNode::draw_planes() const
 
   glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-  glDepthRange(0.01, 1.0);
+  ACG::GLState::depthRange(0.01, 1.0);
 
   Vec3f rel;
   Vec3f tcmin;
@@ -338,7 +338,7 @@ SliceNode::draw_planes() const
   }
   
 
-  glDepthRange(0.0, 1.0);
+  ACG::GLState::depthRange(0.0, 1.0);
 }
 
 //----------------------------------------------------------------------------

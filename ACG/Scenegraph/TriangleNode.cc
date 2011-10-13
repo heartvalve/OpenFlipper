@@ -148,18 +148,18 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   {
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
   }
 
   if (_drawMode & DrawModes::SOLID_FACES_COLORED)
   {
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
   }
 }
 

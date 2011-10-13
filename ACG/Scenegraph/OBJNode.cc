@@ -139,12 +139,12 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glColor(_state.clear_color());    
-    glDepthRange(0.01, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
     draw_obj();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor(base_color_backup);
-    glDepthRange(0.0, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
     draw_obj();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
