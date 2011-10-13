@@ -93,8 +93,8 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 {
 	// check if drawmode is valid
 	if( _drawMode != splatsDrawMode_ && 
-		_drawMode != dotsDrawMode_   && 
-		_drawMode != pointsDrawMode_ )
+	    _drawMode != dotsDrawMode_   &&
+	    _drawMode != pointsDrawMode_ )
 	{
 		return;
 	}
@@ -126,14 +126,14 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 
 		// enable "pointsize by program" depending on current drawmode
 		if( _drawMode != pointsDrawMode_ )
-			glEnable( GL_PROGRAM_POINT_SIZE );
+			glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 		// draw as points
 		glDrawArrays( GL_POINTS, 0, numPoints() );
 
 		// disable "pointsize by program" if it was enabled
 		if( _drawMode != pointsDrawMode_ )
-			glDisable( GL_PROGRAM_POINT_SIZE );
+			glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 		// disable arrays
 		glDisableClientState( GL_VERTEX_ARRAY );
