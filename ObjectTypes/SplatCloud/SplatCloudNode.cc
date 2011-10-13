@@ -100,7 +100,7 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 	}
 
 	// set desired depth function
-	glDepthFunc( _state.depthFunc() );
+	ACG::GLState::depthFunc( _state.depthFunc() );
 
 	// is vertex-buffer-object is invalid then rebuild
 	if( !vboValid_ )
@@ -111,7 +111,7 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 	if( vboValid_ )
 	{
 		// activate vertex-buffer-object
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
+		ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
 		// tell GL where our data is (NULL = beginning of vertex-buffer-object)
 		glInterleavedArrays( GL_C4F_N3F_V3F, 0, 0 );
@@ -126,22 +126,22 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 
 		// enable "pointsize by program" depending on current drawmode
 		if( _drawMode != pointsDrawMode_ )
-			glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		  ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 		// draw as points
 		glDrawArrays( GL_POINTS, 0, numPoints() );
 
 		// disable "pointsize by program" if it was enabled
 		if( _drawMode != pointsDrawMode_ )
-			glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		  ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 		// disable arrays
-		glDisableClientState( GL_VERTEX_ARRAY );
-		glDisableClientState( GL_NORMAL_ARRAY );
-		glDisableClientState( GL_COLOR_ARRAY  );
+		ACG::GLState::disableClientState( GL_VERTEX_ARRAY );
+		ACG::GLState::disableClientState( GL_NORMAL_ARRAY );
+		ACG::GLState::disableClientState( GL_COLOR_ARRAY  );
 
 		// deactivate vertex-buffer-object
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 	}
 }
 
@@ -245,7 +245,7 @@ void SplatCloudNode::rebuildVBO()
 	unsigned int size = numPoints() * 10 * sizeof(float);
 
 	// activate vertex-buffer-object
-	glBindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
+	ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
 	// tell GL that we are seldom updating the vertex-buffer-object but are often drawing it
 	glBufferDataARB( GL_ARRAY_BUFFER_ARB, size, 0, GL_STATIC_DRAW_ARB );

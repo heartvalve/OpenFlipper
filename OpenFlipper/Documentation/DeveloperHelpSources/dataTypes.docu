@@ -18,6 +18,8 @@ The following datatypes are available in OpenFlipper:
   \image html type_plane_thumb.png
 - \subpage sphereType   "Spheres"
   \image html type_Sphere_thumb.png
+- \subpage splatType   "Point Splats"
+  \image html type_splats_thumb.png
 - \subpage BSplineCurveType "BSplineCurves"
   \image html type_SplineCurve_thumb.png
 - \subpage BSplineSurfaceType "BSplineSurfaces"
