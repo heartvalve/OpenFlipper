@@ -146,6 +146,7 @@ namespace GLSL {
       void setUniform(const char *name, const ACG::Vec4f &value);
 
       void setUniform(const char *name, GLint *value, int count);
+      void setUniform(const char *name, GLfloat *value, int count);
 
       // set element of array
       void setUniform(const char *name, int index, bool value);

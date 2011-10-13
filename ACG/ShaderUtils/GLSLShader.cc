@@ -326,6 +326,14 @@ namespace GLSL {
     checkGLError();
   }
 
+  void Program::setUniform(const char *name, GLfloat *values, int count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, name);
+    checkGLError2(name);
+    glUniform1fv(location, count, values);
+    checkGLError();
+  }
+
   void Program::setUniform(const char *name, int index, bool value) {
     char varName[1024];
     snprintf(varName, 1024, "%s[%d]", name, index);
