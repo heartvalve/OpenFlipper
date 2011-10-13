@@ -23,7 +23,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="MaterialBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -33,7 +33,7 @@
        <property name="title">
         <string>Material</string>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="MaterialBoxLayout">
         <property name="margin">
          <number>9</number>
         </property>
@@ -67,7 +67,7 @@
          </spacer>
         </item>
         <item row="1" column="1">
-         <layout class="QGridLayout" name="l3">
+         <layout class="QGridLayout" name="ColorButtonLayout">
           <property name="margin">
            <number>0</number>
           </property>
@@ -215,7 +215,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="ThicknessBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -225,7 +225,7 @@
        <property name="title">
         <string>Thickness</string>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="ThicknessBoxLayout">
         <property name="margin">
          <number>9</number>
         </property>
@@ -241,7 +241,7 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QGridLayout">
+           <layout class="QGridLayout" name="PointLayout">
             <property name="margin">
              <number>0</number>
             </property>
@@ -374,7 +374,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="RenderingBox">
          <property name="title">
           <string>Rendering</string>
          </property>
