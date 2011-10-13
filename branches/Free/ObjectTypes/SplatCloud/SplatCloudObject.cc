@@ -198,9 +198,9 @@ void SplatCloudObject::reloadShaders()
 	// load shaders
 
 	if( QFile( shaderDir + SPLATS_VERTEXSHADER_FILENAME        ).exists() && 
-		QFile( shaderDir + SPLATS_PICK_VERTEXSHADER_FILENAME   ).exists() && 
-		QFile( shaderDir + SPLATS_FRAGMENTSHADER_FILENAME      ).exists() && 
-		QFile( shaderDir + SPLATS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
+		  QFile( shaderDir + SPLATS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
+		  QFile( shaderDir + SPLATS_FRAGMENTSHADER_FILENAME      ).exists() &&
+		  QFile( shaderDir + SPLATS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
 	{
 		shaderNode_->setShader( splatsDrawMode, 
 			SPLATS_VERTEXSHADER_FILENAME,      SPLATS_FRAGMENTSHADER_FILENAME, 
@@ -212,9 +212,9 @@ void SplatCloudObject::reloadShaders()
 	}
 
 	if( QFile( shaderDir + DOTS_VERTEXSHADER_FILENAME        ).exists() && 
-		QFile( shaderDir + DOTS_PICK_VERTEXSHADER_FILENAME   ).exists() && 
-		QFile( shaderDir + DOTS_FRAGMENTSHADER_FILENAME      ).exists() && 
-		QFile( shaderDir + DOTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
+		  QFile( shaderDir + DOTS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
+		  QFile( shaderDir + DOTS_FRAGMENTSHADER_FILENAME      ).exists() &&
+		  QFile( shaderDir + DOTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
 	{
 		shaderNode_->setShader( dotsDrawMode, 
 			DOTS_VERTEXSHADER_FILENAME,      DOTS_FRAGMENTSHADER_FILENAME, 
@@ -226,9 +226,9 @@ void SplatCloudObject::reloadShaders()
 	}
 
 	if( QFile( shaderDir + POINTS_VERTEXSHADER_FILENAME        ).exists() && 
-		QFile( shaderDir + POINTS_PICK_VERTEXSHADER_FILENAME   ).exists() && 
-		QFile( shaderDir + POINTS_FRAGMENTSHADER_FILENAME      ).exists() && 
-		QFile( shaderDir + POINTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
+	    QFile( shaderDir + POINTS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
+	    QFile( shaderDir + POINTS_FRAGMENTSHADER_FILENAME      ).exists() &&
+	    QFile( shaderDir + POINTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
 	{
 		shaderNode_->setShader( pointsDrawMode, 
 			POINTS_VERTEXSHADER_FILENAME,      POINTS_FRAGMENTSHADER_FILENAME, 
