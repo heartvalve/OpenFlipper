@@ -95,6 +95,10 @@ ShaderNode *splatShaderNode( BaseObjectData *_object )
 		return 0;
 
 	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+
+	if ( object == 0 )
+	    return 0;
+
 	return object->shaderNode();
 }
 
@@ -108,6 +112,10 @@ SplatCloudNode *splatCloudNode( BaseObjectData *_object )
 		return 0;
 
 	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+
+	if ( object == 0 )
+	  return 0;
+
 	return object->splatCloudNode();
 }
 
