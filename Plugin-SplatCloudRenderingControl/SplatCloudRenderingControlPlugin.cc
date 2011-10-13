@@ -402,10 +402,11 @@ void SplatCloudRenderingControlPlugin::slotUpdateContextMenu( int _objectId )
 	// get splatcloud-object
 	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
 
-	// If it is not a splat object, we stop here
-	if ( splatCloud != 0 ) {
-	  // update context-menu value
-	  menuCullingAction_->setChecked( splatCloud->isBackfaceCullingEnabled() );
+	// if object is a SplatCloud...
+	if( splatCloud )
+	{
+		// update context-menu value
+		menuCullingAction_->setChecked( splatCloud->isBackfaceCullingEnabled() );
 	}
 }
 
@@ -467,19 +468,17 @@ void SplatCloudRenderingControlPlugin::slotToolboxReloadShadersButtonClicked()
 	PluginFunctions::ObjectIterator objIter( PluginFunctions::ALL_OBJECTS, DATA_SPLATCLOUD );
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
 	{
-		// get scenegraph splatcloud-node
+		// get scenegraph splatcloud-object
 		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
 
-		// apply update (reload standard and picking shaders)
+		// apply update (reload standard and picking shaders and re-set uniforms)
 		splatCloud->reloadShaders();
+		splatCloud->setPointsizeScale    ( splatCloud->pointsizeScale()           );
+		splatCloud->enableBackfaceCulling( splatCloud->isBackfaceCullingEnabled() );
 
 		// emit signal that object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
 	}
-
-	// after reloading a shader we have to re-set all uniforms for this shader
-	slotToolboxPointsizeScaleValueChanged();
-	slotToolboxBackfaceCullingStateChanged();
 }
 
 
@@ -495,13 +494,11 @@ void SplatCloudRenderingControlPlugin::slotToolboxRebuildVBOsButtonClicked()
 		// get scenegraph splatcloud-node
 		SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( *objIter );
 
-		if ( splatCloudNode != 0) {
-		  // apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
-		  splatCloudNode->invalidateVBO();
+		// apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
+		splatCloudNode->invalidateVBO();
 
-		  // emit signal that object has to be updated
-		  emit updatedObject( objIter->id(), UPDATE_ALL );
-		}
+		// emit signal that object has to be updated
+		emit updatedObject( objIter->id(), UPDATE_ALL );
 	}
 }
 
@@ -518,19 +515,17 @@ void SplatCloudRenderingControlPlugin::slotToolboxApplyDefaultsButtonClicked()
 		// get scenegraph splatcloud-node
 		SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( *objIter );
 
-		if ( splatCloudNode ) {
-		  // apply update (this may trigger the VBO to become invalid so it will be rebuilt)
-		  splatCloudNode->setDefaultNormal( SplatCloudNode::Normal(	toolboxDefaultNormalX_->value(),
-			                               														toolboxDefaultNormalY_->value(),
-			                               														toolboxDefaultNormalZ_->value() ) );
-		  splatCloudNode->setDefaultPointsize( toolboxDefaultPointsize_->value() );
-		  splatCloudNode->setDefaultColor( SplatCloudNode::Color(	toolboxDefaultColorR_->value(),
-																                              toolboxDefaultColorG_->value(),
-																                              toolboxDefaultColorB_->value() ) );
+		// apply update (this may trigger the VBO to become invalid so it will be rebuilt)
+		splatCloudNode->setDefaultNormal( SplatCloudNode::Normal( toolboxDefaultNormalX_->value(), 
+		                                                          toolboxDefaultNormalY_->value(), 
+		                                                          toolboxDefaultNormalZ_->value() ) );
+		splatCloudNode->setDefaultPointsize( toolboxDefaultPointsize_->value() );
+		splatCloudNode->setDefaultColor( SplatCloudNode::Color( toolboxDefaultColorR_->value(), 
+		                                                        toolboxDefaultColorG_->value(), 
+		                                                        toolboxDefaultColorB_->value() ) );
 
-		  // emit signal that object has to be updated
-		  emit updatedObject( objIter->id(), UPDATE_ALL );
-		}
+		// emit signal that object has to be updated
+		emit updatedObject( objIter->id(), UPDATE_ALL );
 	}
 }
 
@@ -555,15 +550,19 @@ void SplatCloudRenderingControlPlugin::slotMenuScaleActionTriggered()
 	// get splatcloud-object
 	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
 
-	// update scale-widget option value
-	scaleWidgetPointsizeScale_->setValue( splatCloud->pointsizeScale() );
+	// if object is a SplatCloud...
+	if( splatCloud )
+	{
+		// update scale-widget option value
+		scaleWidgetPointsizeScale_->setValue( splatCloud->pointsizeScale() );
 
-	// move scale-widget to position of context menu entry
-	QWidget *menuWidget = menuScaleAction_->associatedWidgets()[0];
-	scaleWidget_->move( menuWidget->x(), menuWidget->y() );
+		// move scale-widget to position of context menu entry
+		QWidget *menuWidget = menuScaleAction_->associatedWidgets()[0];
+		scaleWidget_->move( menuWidget->x(), menuWidget->y() );
 
-	// show scale-widget
-	scaleWidget_->show();
+		// show scale-widget
+		scaleWidget_->show();
+	}
 }
 
 
@@ -584,17 +583,21 @@ void SplatCloudRenderingControlPlugin::slotScaleWidgetPointsizeScaleValueChanged
 	if( ! PluginFunctions::getObject( objectId, object ) )
 		return;
 
-	// get scale-widget option value
-	float scale = (float) scaleWidgetPointsizeScale_->value();
-
 	// get splatcloud-object
 	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
 
-	// apply update
-	splatCloud->setPointsizeScale( scale );
+	// if object is a SplatCloud...
+	if( splatCloud )
+	{
+		// get scale-widget option value
+		float scale = (float) scaleWidgetPointsizeScale_->value();
 
-	// emit signal that object has to be updated
-	emit updatedObject( object->id(), UPDATE_ALL );
+		// apply update
+		splatCloud->setPointsizeScale( scale );
+
+		// emit signal that object has to be updated
+		emit updatedObject( object->id(), UPDATE_ALL );
+	}
 }
 
 
@@ -615,17 +618,21 @@ void SplatCloudRenderingControlPlugin::slotMenuCullingActionTriggered()
 	if( ! PluginFunctions::getObject( objectId, object ) )
 		return;
 
-	// get context-menu option value
-	bool enable = menuCullingAction_->isChecked();
-
 	// get splatcloud-object
 	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
 
-	// apply update
-	splatCloud->enableBackfaceCulling( enable );
+	// if object is a SplatCloud...
+	if( splatCloud )
+	{
+		// get context-menu option value
+		bool enable = menuCullingAction_->isChecked();
 
-	// emit signal that the object has to be updated
-	emit updatedObject( object->id(), UPDATE_ALL );
+		// apply update
+		splatCloud->enableBackfaceCulling( enable );
+
+		// emit signal that the object has to be updated
+		emit updatedObject( object->id(), UPDATE_ALL );
+	}
 }
 
 
@@ -649,11 +656,17 @@ void SplatCloudRenderingControlPlugin::slotMenuReloadShadersActionTriggered()
 	// get splatcloud-object
 	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
 
-	// apply update (reload standard and picking shaders)
-	splatCloud->reloadShaders();
+	// if object is a SplatCloud...
+	if( splatCloud )
+	{
+		// apply update (reload standard and picking shaders and re-set uniforms)
+		splatCloud->reloadShaders();
+		splatCloud->setPointsizeScale    ( splatCloud->pointsizeScale()           );
+		splatCloud->enableBackfaceCulling( splatCloud->isBackfaceCullingEnabled() );
 
-	// emit signal that object has to be updated
-	emit updatedObject( object->id(), UPDATE_ALL );
+		// emit signal that object has to be updated
+		emit updatedObject( object->id(), UPDATE_ALL );
+	}
 }
 
 
@@ -677,12 +690,14 @@ void SplatCloudRenderingControlPlugin::slotMenuRebuildVBOActionTriggered()
 	// get splatcloud-node
 	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
 
-	if ( splatCloudNode != 0) {
-	  // apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
-	  splatCloudNode->invalidateVBO();
+	// if object is a SplatCloud...
+	if( splatCloudNode )
+	{
+		// apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
+		splatCloudNode->invalidateVBO();
 
-	  // emit signal that object has to be updated
-	  emit updatedObject( object->id(), UPDATE_ALL );
+		// emit signal that object has to be updated
+		emit updatedObject( object->id(), UPDATE_ALL );
 	}
 }
 
@@ -707,22 +722,24 @@ void SplatCloudRenderingControlPlugin::slotMenuDefaultsActionTriggered()
 	// get splatcloud-node
 	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
 
-	if ( splatCloudNode ) {
-	  // update defaults-widget option values
-	  defaultsWidgetDefaultNormalX_->setValue( splatCloudNode->defaultNormal()[0] );
-	  defaultsWidgetDefaultNormalY_->setValue( splatCloudNode->defaultNormal()[1] );
-	  defaultsWidgetDefaultNormalZ_->setValue( splatCloudNode->defaultNormal()[2] );
-	  defaultsWidgetDefaultPointsize_->setValue( splatCloudNode->defaultPointsize() );
-	  defaultsWidgetDefaultColorR_->setValue( splatCloudNode->defaultColor()[0] );
-	  defaultsWidgetDefaultColorG_->setValue( splatCloudNode->defaultColor()[1] );
-	  defaultsWidgetDefaultColorB_->setValue( splatCloudNode->defaultColor()[2] );
+	// if object is a SplatCloud...
+	if( splatCloudNode )
+	{
+		// update defaults-widget option values
+		defaultsWidgetDefaultNormalX_->setValue( splatCloudNode->defaultNormal()[0] );
+		defaultsWidgetDefaultNormalY_->setValue( splatCloudNode->defaultNormal()[1] );
+		defaultsWidgetDefaultNormalZ_->setValue( splatCloudNode->defaultNormal()[2] );
+		defaultsWidgetDefaultPointsize_->setValue( splatCloudNode->defaultPointsize() );
+		defaultsWidgetDefaultColorR_->setValue( splatCloudNode->defaultColor()[0] );
+		defaultsWidgetDefaultColorG_->setValue( splatCloudNode->defaultColor()[1] );
+		defaultsWidgetDefaultColorB_->setValue( splatCloudNode->defaultColor()[2] );
 
-	  // move defaults widget to position of context menu entry
-	  QWidget *menuWidget = menuDefaultsAction_->associatedWidgets()[0];
-	  defaultsWidget_->move( menuWidget->x(), menuWidget->y() );
+		// move defaults widget to position of context menu entry
+		QWidget *menuWidget = menuDefaultsAction_->associatedWidgets()[0];
+		defaultsWidget_->move( menuWidget->x(), menuWidget->y() );
 
-	  // show defaults widget
-	  defaultsWidget_->show();
+		// show defaults widget
+		defaultsWidget_->show();
 	}
 }
 
@@ -757,19 +774,20 @@ void SplatCloudRenderingControlPlugin::slotDefaultsWidgetApplyButtonClicked()
 	// get splatcloud-node
 	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
 
-	if ( splatCloudNode != 0) {
+	// if object is a SplatCloud...
+	if( splatCloudNode )
+	{
+		// apply update (this may trigger the VBO to become invalid so it will be rebuilt)
+		splatCloudNode->setDefaultNormal( SplatCloudNode::Normal( defaultsWidgetDefaultNormalX_->value(), 
+		                                                          defaultsWidgetDefaultNormalY_->value(), 
+		                                                          defaultsWidgetDefaultNormalZ_->value() ) );
+		splatCloudNode->setDefaultPointsize( defaultsWidgetDefaultPointsize_->value() );
+		splatCloudNode->setDefaultColor( SplatCloudNode::Color( defaultsWidgetDefaultColorR_->value(), 
+		                                                        defaultsWidgetDefaultColorG_->value(), 
+		                                                        defaultsWidgetDefaultColorB_->value() ) );
 
-	  // apply update (this may trigger the VBO to become invalid so it will be rebuilt)
-	  splatCloudNode->setDefaultNormal( SplatCloudNode::Normal(	defaultsWidgetDefaultNormalX_->value(),
-	                                                            defaultsWidgetDefaultNormalY_->value(),
-	                                                            defaultsWidgetDefaultNormalZ_->value() ) );
-	  splatCloudNode->setDefaultPointsize( defaultsWidgetDefaultPointsize_->value() );
-	  splatCloudNode->setDefaultColor( SplatCloudNode::Color(	defaultsWidgetDefaultColorR_->value(),
-	                                                          defaultsWidgetDefaultColorG_->value(),
-	                                                          defaultsWidgetDefaultColorB_->value() ) );
-
-	  // emit signal that the object has to be updated
-	  emit updatedObject( object->id(), UPDATE_ALL );
+		// emit signal that the object has to be updated
+		emit updatedObject( object->id(), UPDATE_ALL );
 	}
 
 	// close widget
