@@ -164,6 +164,10 @@ public:
   // current cull face mode: GL_FRONT, GL_FRONT_AND_BACK
   GLenum cullFace_;
 
+
+  // current depth range:  zNear and zFar
+  GLclampd depthRange_[2];
+
   // vertex pointers, used in glVertexPointer, glTexcoordPointer..
   struct GLVertexPointer
   {
@@ -362,6 +366,17 @@ public:
   static void unlockCullFace() {cullFaceLock_ = false;}
   /// get cull face locking state
   static bool isCullFaceLocked() {return cullFaceLock_;}
+
+  /// replaces glDepthRange, supports locking
+  static void depthRange(GLclampd _zNear, GLclampd _zFar);
+  /// get current depth range
+  static void getDepthRange(GLclampd* _zNearOut, GLclampd* _zFarOut);
+  /// lock depth range
+  static void lockDepthRange() {depthRangeLock_ = true;}
+  /// unlock depth range
+  static void unlockDepthRange() {depthRangeLock_ = false;}
+  /// get depth range locking state
+  static bool isDepthRangeLocked() {return depthRangeLock_;}
   
   /** @} */
 
@@ -1117,6 +1132,8 @@ private: //--------------------------------------------------------------------
   static bool blendEquationLock_;
   static bool blendColorLock_;
   static bool alphaFuncLock_;
+
+  static bool depthRangeLock_;
 
 
   // 4 buffer targets:
