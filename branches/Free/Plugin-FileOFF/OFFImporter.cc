@@ -58,7 +58,8 @@ OFFImporter::OFFImporter() :
 polyMesh_(0),
 triMesh_(0),
 object_(0),
-objectOptions_(0) {}
+objectOptions_(0),
+maxFaceValence_(0) {}
 
 //-----------------------------------------------------------------------------
 
@@ -478,6 +479,24 @@ uint OFFImporter::n_normals(){
 
 uint OFFImporter::n_texCoords(){
   return texCoords_.size();
+}
+
+//-----------------------------------------------------------------------------
+
+void OFFImporter::reserve(unsigned int _nv, unsigned int _ne, unsigned int _nf) {
+
+    vertices_.reserve(_nv);
+    normals_.reserve(_nv);
+    texCoords_.reserve(_nv);
+    colors_.reserve(_nv);
+
+    if(isPolyMesh() && polyMesh_ != 0) {
+        polyMesh_->reserve(_nv, _ne, _nf);
+    }
+
+    if(isTriangleMesh() && triMesh_ != 0) {
+        triMesh_->reserve(_nv, _ne, _nf);
+    }
 }
 
 //-----------------------------------------------------------------------------

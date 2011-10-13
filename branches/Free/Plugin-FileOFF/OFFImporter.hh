@@ -102,6 +102,10 @@ class OFFImporter
     /// add initial object
     void addObject( BaseObject* _object );
     
+    unsigned int maxFaceValence() const { return maxFaceValence_; }
+
+    void maxFaceValence(unsigned int _maxValence) { maxFaceValence_ = _maxValence; }
+
     /// add a vertex with coordinate \c _point
     VertexHandle addVertex(const Vec3f& _point);
 
@@ -151,6 +155,9 @@ class OFFImporter
     uint n_vertices();
     uint n_normals();
     uint n_texCoords();
+
+    // Reserve memory for all entity types
+    void reserve(unsigned int _nv, unsigned int _ne, unsigned int _nf);
         
     /// Path of the OFF file
     QString path();
@@ -214,6 +221,9 @@ class OFFImporter
     
     // Store invalid face vertex handles
     std::vector<OMVHandles> invalidFaces_;
+
+    // Keep track of max face valence
+    unsigned int maxFaceValence_;
 };
 
 //=============================================================================
