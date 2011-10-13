@@ -435,6 +435,8 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     
     ifs.close();
     
+    _importer.maxFaceValence(vertexCount);
+
     if(vertexCount == 3) {
         _importer.addOption(OFFImporter::TRIMESH);
         _importer.removeOption(OFFImporter::POLYMESH);
@@ -592,6 +594,9 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     sstr >> nF;
     sstr >> dummy;
     
+    // Reserve memory
+    _importer.reserve(nV, nF * _importer.maxFaceValence() /*Upper bound*/, nF);
+
     // read vertices: coord [hcoord] [normal] [color] [texcoord]
     for (uint i=0; i<nV && !_in.eof(); ++i) {
         
@@ -874,6 +879,9 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     readValue(_in, nF);
     readValue(_in, dummy);
     
+    // Reserve memory
+    _importer.reserve(nV, nF * _importer.maxFaceValence() /*Upper bound*/, nF);
+
     // read vertices: coord [hcoord] [normal] [color] [texcoord]
     for (uint i=0; i<nV && !_in.eof(); ++i)
     {
