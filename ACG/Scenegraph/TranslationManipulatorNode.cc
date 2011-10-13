@@ -1920,7 +1920,7 @@ TranslationManipulatorNode::set_direction(const Vec3d& _directionX, const Vec3d&
 
   localTransformation_.identity();
 
-  double angle;
+  double angle = 0.0;
 
 //   std::cerr << "_directionX " << _directionX[0] << " " << _directionX[1] << " " << _directionX[2] << std::endl;
 //   std::cerr << "_directionY " << _directionY[0] << " " << _directionY[1] << " " << _directionY[2] << std::endl;
