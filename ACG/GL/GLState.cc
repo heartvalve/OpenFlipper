@@ -73,6 +73,7 @@ const float  GLState::default_shininess(100.0);
 //-----------------------------------------------------------------------------
 
 bool GLState::depthFuncLock_ = false;
+bool GLState::depthRangeLock_ = false;
 bool GLState::blendFuncLock_ = false;
 bool GLState::blendEquationLock_ = false;
 bool GLState::blendColorLock_ = false;
@@ -1321,6 +1322,8 @@ void GLState::syncFromGL()
   glGetIntegerv(GL_DEPTH_FUNC, &getparam);
   stateStack_.back().depthFunc_ = getparam;
 
+  glGetDoublev(GL_DEPTH_RANGE, stateStack_.back().depthRange_);
+
   // bound buffers
 
   GLenum bufGets[8] = {
@@ -1651,6 +1654,28 @@ void GLState::cullFace(GLenum _mode)
       stateStack_.back().cullFace_ = _mode;
     }
   }
+}
+
+void GLState::depthRange(GLclampd _zNear, GLclampd _zFar)
+{
+  if (!depthRangeLock_)
+  {
+ #ifdef GLSTATE_AVOID_REDUNDANT_GLCALLS    
+    if (abs(_zNear - stateStack_.back().depthRange_[0]) > 1e-6 ||
+      abs(_zFar - stateStack_.back().depthRange_[1]) > 1e-6)
+ #endif
+    {
+      glDepthRange(_zNear, _zFar);
+      stateStack_.back().depthRange_[0] = _zNear;
+      stateStack_.back().depthRange_[1] = _zFar;
+    }
+  }
+}
+
+void GLState::getDepthRange(GLclampd* _zNearOut, GLclampd* _zFarOut)
+{
+  if (_zNearOut) *_zNearOut = stateStack_.back().depthRange_[0];
+  if (_zFarOut) *_zFarOut = stateStack_.back().depthRange_[1];
 }
 
 //-----------------------------------------------------------------------------
@@ -2008,6 +2033,8 @@ void GLState::popAttrib()
   alphaFunc(p->alphaFuncState_, p->alphaRefState_);
 
   depthFunc(p->depthFunc_);
+
+  depthRange(p->depthRange_[0], p->depthRange_[1]);
 
   bindBuffer(GL_ARRAY_BUFFER, p->glBufferTargetState_[0]);
   bindBuffer(GL_ELEMENT_ARRAY_BUFFER, p->glBufferTargetState_[1]);
