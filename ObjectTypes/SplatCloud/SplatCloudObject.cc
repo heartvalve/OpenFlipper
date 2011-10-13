@@ -392,14 +392,13 @@ void SplatCloudObject::init( SplatCloudNode *_node )
 		std::cerr << "Error when creating SplatCloud Object! materialNode is NULL!" << std::endl;
 
 	// create new scenegraph nodes
-	shaderNode_ = new ShaderNode( materialNode(), "NEW ShaderNode for" );
+	shaderNode_     = new ShaderNode( materialNode(), "NEW ShaderNode for" );
 	splatCloudNode_	= new SplatCloudNode( shaderNode_, "NEW SplatCloudNode" );
 
 	// load shaders
 	reloadShaders();
 
 	// set initial drawmode of shader- and splatcloud-node
-
 	ACG::SceneGraph::DrawModes::DrawMode initialDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
 
 	if( initialDrawMode == ACG::SceneGraph::DrawModes::NONE )

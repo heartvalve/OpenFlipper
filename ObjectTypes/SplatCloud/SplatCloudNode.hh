@@ -95,10 +95,10 @@ public:
 	typedef float		Pointsize;
 	typedef ACG::Vec3uc	Color;
 
-	typedef std::vector<Point>		PointVector;
-	typedef std::vector<Normal>		NormalVector;
+	typedef std::vector<Point>		  PointVector;
+	typedef std::vector<Normal>		  NormalVector;
 	typedef std::vector<Pointsize>	PointsizeVector;
-	typedef std::vector<Color>		ColorVector;
+	typedef std::vector<Color>		  ColorVector;
 
 	//----------------------------------------------------------------
 
@@ -126,7 +126,9 @@ public:
 	ACG_CLASSNAME( SplatCloudNode );
 
 	/// return available draw modes
-	inline DrawModes::DrawMode availableDrawModes() { return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_; }
+	inline DrawModes::DrawMode availableDrawModes() const {
+	  return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_;
+	}
 
 	/// update bounding box
 	void boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax );
@@ -196,20 +198,20 @@ private:
 	DrawModes::DrawMode	pointsDrawMode_;
 
 	// ---- data vectors ----
-	PointVector  	points_;
-	NormalVector 	normals_;
+	PointVector  	  points_;
+	NormalVector 	  normals_;
 	PointsizeVector	pointsizes_;
-	ColorVector  	colors_;
+	ColorVector    	colors_;
 
 	// ---- default values ----
 	/// the default values will be used when the specific array is not present
 	Normal		defaultNormal_;
 	Pointsize	defaultPointsize_;
-	Color		defaultColor_;
+	Color		  defaultColor_;
 
 	// ---- vertex buffer object ----
 	GLuint	vboGlId_;
-	bool	vboValid_;
+	bool	  vboValid_;
 
 	void createVBO();
 	void destroyVBO();
