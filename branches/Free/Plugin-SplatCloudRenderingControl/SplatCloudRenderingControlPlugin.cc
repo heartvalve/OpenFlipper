@@ -86,27 +86,31 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	toolboxPointsizeScaleLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxPointsizeScaleLayout->addWidget( toolboxPointsizeScale_           );
 
-	// backfaceCulling
-	toolboxBackfaceCulling_ = new QCheckBox( "Backface Culling" );
-	toolboxBackfaceCulling_->setChecked( false );
+	// buttons
+	QPushButton *toolboxEnableBackfaceCullingButton  = new QPushButton( "Enable Backface Culling"  );
+	QPushButton *toolboxDisableBackfaceCullingButton = new QPushButton( "Disable Backface Culling" );
+	QPushButton *toolboxReloadShadersButton          = new QPushButton( "Reload Shaders"           );
+	QPushButton *toolboxRebuildVBOsButton            = new QPushButton( "Rebuild VBOs"             );
 
-	// reloadShaders and rebuildVBOs buttons
-	QPushButton *toolboxReloadShadersButton = new QPushButton( "Reload Shaders" );
-	QPushButton *toolboxRebuildVBOsButton   = new QPushButton( "Rebuild VBOs"   );
+	// top buttons layout
+	QHBoxLayout *toolboxTopButtonsLayout = new QHBoxLayout();
+	toolboxTopButtonsLayout->addWidget( toolboxEnableBackfaceCullingButton  );
+	toolboxTopButtonsLayout->addItem  ( new QSpacerItem( 8, 8 )             );
+	toolboxTopButtonsLayout->addWidget( toolboxDisableBackfaceCullingButton );
 
-	// buttons layout
-	QHBoxLayout *toolboxButtonsLayout = new QHBoxLayout();
-	toolboxButtonsLayout->addWidget( toolboxReloadShadersButton );
-	toolboxButtonsLayout->addItem  ( new QSpacerItem( 8, 8 )    );
-	toolboxButtonsLayout->addWidget( toolboxRebuildVBOsButton   );
+	// bottom buttons layout
+	QHBoxLayout *toolboxBottomButtonsLayout = new QHBoxLayout();
+	toolboxBottomButtonsLayout->addWidget( toolboxReloadShadersButton );
+	toolboxBottomButtonsLayout->addItem  ( new QSpacerItem( 8, 8 )    );
+	toolboxBottomButtonsLayout->addWidget( toolboxRebuildVBOsButton   );
 
 	// options layout
 	QVBoxLayout *toolboxOptionsLayout = new QVBoxLayout();
 	toolboxOptionsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxOptionsLayout->addItem  ( toolboxPointsizeScaleLayout );
-	toolboxOptionsLayout->addWidget( toolboxBackfaceCulling_     );
 	toolboxOptionsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-	toolboxOptionsLayout->addItem  ( toolboxButtonsLayout        );
+	toolboxOptionsLayout->addItem  ( toolboxTopButtonsLayout     );
+	toolboxOptionsLayout->addItem  ( toolboxBottomButtonsLayout  );
 
 	// ---- defaults ----
 
@@ -211,11 +215,12 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// ----
 
 	// connect events to slots
-	connect( toolboxPointsizeScale_,     SIGNAL( valueChanged(double) ), this, SLOT( slotToolboxPointsizeScaleValueChanged()  ) );
-	connect( toolboxBackfaceCulling_,    SIGNAL( stateChanged(int)    ), this, SLOT( slotToolboxBackfaceCullingStateChanged() ) );
-	connect( toolboxReloadShadersButton, SIGNAL( clicked()            ), this, SLOT( slotToolboxReloadShadersButtonClicked()  ) );
-	connect( toolboxRebuildVBOsButton,   SIGNAL( clicked()            ), this, SLOT( slotToolboxRebuildVBOsButtonClicked()    ) );
-	connect( toolboxApplyDefaultsButton, SIGNAL( clicked()            ), this, SLOT( slotToolboxApplyDefaultsButtonClicked()  ) );
+	connect( toolboxPointsizeScale_,              SIGNAL( valueChanged(double) ), this, SLOT( slotToolboxPointsizeScaleValueChanged()          ) );
+	connect( toolboxEnableBackfaceCullingButton,  SIGNAL( clicked()            ), this, SLOT( slotToolboxEnableBackfaceCullingButtonClicked()  ) );
+	connect( toolboxDisableBackfaceCullingButton, SIGNAL( clicked()            ), this, SLOT( slotToolboxDisableBackfaceCullingButtonClicked() ) );
+	connect( toolboxReloadShadersButton,          SIGNAL( clicked()            ), this, SLOT( slotToolboxReloadShadersButtonClicked()          ) );
+	connect( toolboxRebuildVBOsButton,            SIGNAL( clicked()            ), this, SLOT( slotToolboxRebuildVBOsButtonClicked()            ) );
+	connect( toolboxApplyDefaultsButton,          SIGNAL( clicked()            ), this, SLOT( slotToolboxApplyDefaultsButtonClicked()          ) );
 
 	// emit signal to add the new toolbox
 	toolBoxIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"SplatCloudType.png");
@@ -438,11 +443,8 @@ void SplatCloudRenderingControlPlugin::slotToolboxPointsizeScaleValueChanged()
 //----------------------------------------------------------------
 
 
-void SplatCloudRenderingControlPlugin::slotToolboxBackfaceCullingStateChanged()
+void SplatCloudRenderingControlPlugin::slotToolboxEnableBackfaceCullingButtonClicked()
 {
-	// get toolbox option value
-	bool enable = toolboxBackfaceCulling_->isChecked();
-
 	// for all splatcloud-objects...
 	PluginFunctions::ObjectIterator objIter( PluginFunctions::ALL_OBJECTS, DATA_SPLATCLOUD );
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
@@ -451,7 +453,28 @@ void SplatCloudRenderingControlPlugin::slotToolboxBackfaceCullingStateChanged()
 		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
 
 		// apply update
-		splatCloud->enableBackfaceCulling( enable );
+		splatCloud->enableBackfaceCulling( true );
+
+		// emit signal that the object has to be updated
+		emit updatedObject( objIter->id(), UPDATE_ALL );
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloudRenderingControlPlugin::slotToolboxDisableBackfaceCullingButtonClicked()
+{
+	// for all splatcloud-objects...
+	PluginFunctions::ObjectIterator objIter( PluginFunctions::ALL_OBJECTS, DATA_SPLATCLOUD );
+	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
+	{
+		// get splatcloud-object
+		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
+
+		// apply update
+		splatCloud->enableBackfaceCulling( false );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
