@@ -105,7 +105,6 @@ private:
 
 	// toolbox options
 	QDoubleSpinBox *toolboxPointsizeScale_;
-	QCheckBox      *toolboxBackfaceCulling_;
 	QDoubleSpinBox *toolboxDefaultNormalX_;
 	QDoubleSpinBox *toolboxDefaultNormalY_;
 	QDoubleSpinBox *toolboxDefaultNormalZ_;
@@ -146,9 +145,10 @@ private slots:
 
 	// slot called when a toolbox option changed value
 	void slotToolboxPointsizeScaleValueChanged();
-	void slotToolboxBackfaceCullingStateChanged();
 
 	// slots called when a toolbox button was clicked
+	void slotToolboxEnableBackfaceCullingButtonClicked();
+	void slotToolboxDisableBackfaceCullingButtonClicked();
 	void slotToolboxReloadShadersButtonClicked();
 	void slotToolboxRebuildVBOsButtonClicked();
 	void slotToolboxApplyDefaultsButtonClicked();
