@@ -23,14 +23,16 @@ if (WIN32)
 
 ELSEIF(APPLE)
 
-   find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
+   find_path(SUPERLU_INCLUDE_DIR NAMES superlu/supermatrix.h
 	     PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/SuperLU_3.0.64-bit.snow_leopard/SuperLU"
 	     	   ${SUPERLU_INCLUDE_PATH}
+                   ~/sw/SuperLU_4.2/include
             )
 
    find_library( SUPERLU_LIBRARY 
-                 SuperLU
-                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/SuperLU_3.0.64-bit.snow_leopard/SuperLU")
+                 SuperLU libsuperlu_4.2.a
+                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/SuperLU_3.0.64-bit.snow_leopard/SuperLU"
+                       ~/sw/SuperLU_4.2/lib )
 
 ELSE( WIN32 )
    find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
