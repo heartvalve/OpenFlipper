@@ -17,6 +17,7 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                            PATHS /ACG/acgdev/gcc-4.3-i686/gmm-3/include/
                                  /usr/include
                                  /usr/local/include
+                                 ~/sw/gmm-4.1/include
                                  "c:\\libs\\gmm-3.0\\include"
 								 "c:\\libs\\gmm-4.1\\include"
 				                 ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
