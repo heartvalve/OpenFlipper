@@ -78,14 +78,24 @@ else( WIN32 )
        FIND_LIBRARY( UMFPACK_LIBRARY
                      NAMES umfpack UMFPACK
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
-       FIND_LIBRARY( SUITESPARSE_SPQR_LIBRARY
-                     NAMES spqr SPQR
-                     HINTS $ENV{HOME}/opt/SPQR/lib
-                     PATHS ${SUITESPARSE_LIBRARY_DIR} )
-    
-        FIND_PATH( SUITESPARSE_SPQR_LIBRARY_DIR
-                      NAMES libspqr.so 
-                      PATHS /usr/lib /usr/local/lib $ENV{HOME}/opt/SPQR/lib)
+       if ( NOT APPLE)
+         FIND_LIBRARY( SUITESPARSE_SPQR_LIBRARY
+                       NAMES spqr SPQR
+                       HINTS $ENV{HOME}/opt/SPQR/lib
+                       PATHS ${SUITESPARSE_LIBRARY_DIR} )
+         FIND_PATH( SUITESPARSE_SPQR_LIBRARY_DIR
+                    NAMES libspqr.so 
+                    PATHS /usr/lib /usr/local/lib $ENV{HOME}/opt/SPQR/lib)
+       else()
+         FIND_LIBRARY( SUITESPARSE_SPQR_LIBRARY
+                       NAMES libspqr.a
+                       HINTS $ENV{HOME}/opt/SPQR/lib
+                       PATHS ${SUITESPARSE_LIBRARY_DIR} )
+
+         FIND_PATH( SUITESPARSE_SPQR_LIBRARY_DIR
+                    NAMES libspqr.a
+                    PATHS ${SUITESPARSE_LIBRARY_DIR})
+       endif()
                     
        list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_SPQR_LIBRARY_DIR} )
        list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_LIBRARY_DIR} )
