@@ -25,6 +25,7 @@ ELSE(WIN32)
     IF(APPLE)
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
                   PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/taucs/src" 
+                        ~/sw/taucs/include
                  )
 
     ELSE (APPLE)
@@ -50,6 +51,7 @@ IF(TAUCS_INCLUDE_DIR )
 	    FIND_LIBRARY( TAUCS_LIBRARY
         	          NAMES taucs
                 	  PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/taucs/lib/darwin9.0" 
+                                ~/sw/taucs/lib/darwin
 	               )	
     ELSE (APPLE)
  	   FIND_LIBRARY( TAUCS_LIBRARY
