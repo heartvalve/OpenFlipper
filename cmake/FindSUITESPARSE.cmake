@@ -38,11 +38,11 @@ if( WIN32 )
    ENDIF( SUITESPARSE_LIBRARY_DIRS )  
 
 else( WIN32 )
-   IF( APPLE)
+   IF(APPLE)
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
         	      PATHS  /opt/local/include/ufsparse )
 
-           FIND_PATH( SUITESPARSE_LIBRARY_DIRS
+           FIND_PATH( SUITESPARSE_LIBRARY_DIR
                       NAMES libcholmod.a 
                       PATHS /opt/local/lib )
 
@@ -50,7 +50,10 @@ else( WIN32 )
 
    ELSE(APPLE)
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
-        	      PATHS /usr/local/include /usr/include /usr/include/suitesparse/ ${CMAKE_SOURCE_DIR}/MacOS/Libs/cholmod
+        	      PATHS /usr/local/include 
+                            /usr/include 
+                            /usr/include/suitesparse/ 
+                            ${CMAKE_SOURCE_DIR}/MacOS/Libs/cholmod
               	      PATH_SUFFIXES cholmod/ CHOLMOD/ )
 
    	
