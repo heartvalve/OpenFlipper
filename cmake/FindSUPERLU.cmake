@@ -27,11 +27,13 @@ ELSEIF(APPLE)
 	     PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/SuperLU_3.0.64-bit.snow_leopard/SuperLU"
 	     	   ${SUPERLU_INCLUDE_PATH}
                    ~/sw/SuperLU_4.2/include
+                   ~/sw/SuperLU_4.1/include
             )
 
    find_library( SUPERLU_LIBRARY 
-                 SuperLU libsuperlu_4.2.a
+                 SuperLU libsuperlu_4.1.a SuperLU libsuperlu_4.2.a
                  PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/SuperLU_3.0.64-bit.snow_leopard/SuperLU"
+                       ~/sw/SuperLU_4.1/lib 
                        ~/sw/SuperLU_4.2/lib )
 
 ELSE( WIN32 )
