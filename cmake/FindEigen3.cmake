@@ -16,8 +16,9 @@ FIND_PATH(Eigen3_INCLUDE_DIR NAMES Eigen/Dense
                              PATHS /usr/include/eigen3
                                    /usr/local/include
                                    "c:\\libs\\eigen3\\include"
-								   "c:\\libs\\eigen\\include"
-				                   ${PROJECT_SOURCE_DIR}/MacOS/Libs/eigen3/include
+			           "c:\\libs\\eigen\\include"
+				   ${PROJECT_SOURCE_DIR}/MacOS/Libs/eigen3/include
+				   /opt/local/include/eigen3
                                    ../../External/include
                                    ${module_file_path}/../../../External/include)
 
