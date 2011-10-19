@@ -89,15 +89,23 @@ void SplatCloudNode::boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax )
 
 //----------------------------------------------------------------
 
+
 void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode )
 {
+	static const int RENDERMODE_POINTS = 0;
+	static const int RENDERMODE_DOTS   = 1;
+	static const int RENDERMODE_SPLATS = 2;
+
 	// check if drawmode is valid
-	if( _drawMode != splatsDrawMode_ && 
-	    _drawMode != dotsDrawMode_   &&
-	    _drawMode != pointsDrawMode_ )
-	{
+	int rendermode;
+	if( _drawMode.containsAtomicDrawMode( splatsDrawMode_ ) )
+		rendermode = RENDERMODE_SPLATS;
+	else if( _drawMode.containsAtomicDrawMode( dotsDrawMode_ ) )
+		rendermode = RENDERMODE_DOTS;
+	else if( _drawMode.containsAtomicDrawMode( pointsDrawMode_ ) )
+		rendermode = RENDERMODE_POINTS;
+	else
 		return;
-	}
 
 	// set desired depth function
 	ACG::GLState::depthFunc( _state.depthFunc() );
@@ -124,16 +132,20 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 		// Normals are always needed for backface culling, even in drawmode 'Points'!
 		// Colors are always needed for pointsizes, even in color picking mode!
 
-		// enable "pointsize by program" depending on current drawmode
-		if( _drawMode != pointsDrawMode_ )
-		  ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		// enable "pointsize by program" depending on current rendermode
+		if( rendermode != RENDERMODE_POINTS )
+		{
+			ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		}
 
-		// draw as points
+		// draw as GLpoints
 		glDrawArrays( GL_POINTS, 0, numPoints() );
 
 		// disable "pointsize by program" if it was enabled
-		if( _drawMode != pointsDrawMode_ )
-		  ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		if( rendermode != RENDERMODE_POINTS )
+		{
+			ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
+		}
 
 		// disable arrays
 		ACG::GLState::disableClientState( GL_VERTEX_ARRAY );

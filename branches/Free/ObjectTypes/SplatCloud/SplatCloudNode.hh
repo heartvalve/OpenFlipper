@@ -90,20 +90,20 @@ public:
 
 	//-- TYPEDEFS ----------------------------------------------------
 
-	typedef ACG::Vec3f	Point;
-	typedef ACG::Vec3f	Normal;
-	typedef float		Pointsize;
-	typedef ACG::Vec3uc	Color;
+	typedef ACG::Vec3f  Point;
+	typedef ACG::Vec3f  Normal;
+	typedef float       Pointsize;
+	typedef ACG::Vec3uc Color;
 
-	typedef std::vector<Point>		  PointVector;
-	typedef std::vector<Normal>		  NormalVector;
-	typedef std::vector<Pointsize>	PointsizeVector;
-	typedef std::vector<Color>		  ColorVector;
+	typedef std::vector<Point>     PointVector;
+	typedef std::vector<Normal>    NormalVector;
+	typedef std::vector<Pointsize> PointsizeVector;
+	typedef std::vector<Color>     ColorVector;
 
 	//----------------------------------------------------------------
 
 	/// Constructor
-	SplatCloudNode( BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" ) : 
+	SplatCloudNode(   BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" ) :
 		BaseNode         ( _parent, _name ), 
 		defaultNormal_   ( Normal(0.0f,0.0f,1.0f) ), 
 		defaultPointsize_( 0.01f ), 
@@ -193,25 +193,25 @@ public:
 private:
 
 	// ---- draw modes ----
-	DrawModes::DrawMode	splatsDrawMode_;
-	DrawModes::DrawMode	dotsDrawMode_;
-	DrawModes::DrawMode	pointsDrawMode_;
+	DrawModes::DrawMode splatsDrawMode_;
+	DrawModes::DrawMode dotsDrawMode_;
+	DrawModes::DrawMode pointsDrawMode_;
 
 	// ---- data vectors ----
-	PointVector  	  points_;
-	NormalVector 	  normals_;
-	PointsizeVector	pointsizes_;
-	ColorVector    	colors_;
+	PointVector     points_;
+	NormalVector    normals_;
+	PointsizeVector pointsizes_;
+	ColorVector     colors_;
 
 	// ---- default values ----
 	/// the default values will be used when the specific array is not present
-	Normal		defaultNormal_;
-	Pointsize	defaultPointsize_;
-	Color		  defaultColor_;
+	Normal    defaultNormal_;
+	Pointsize defaultPointsize_;
+	Color     defaultColor_;
 
 	// ---- vertex buffer object ----
-	GLuint	vboGlId_;
-	bool	  vboValid_;
+	GLuint vboGlId_;
+	bool   vboValid_;
 
 	void createVBO();
 	void destroyVBO();
