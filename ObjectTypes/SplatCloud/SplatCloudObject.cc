@@ -56,6 +56,7 @@
 #include "SplatCloud.hh"
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <QString>
 
@@ -180,8 +181,8 @@ void SplatCloudObject::reloadShaders()
 
 	// if drawmodes don't exist something went wrong
 	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-		dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
-		pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
+	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+	    pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
 	{
 		std::cerr << "Shader DrawModes for SplatCloud not existent!" << std::endl;
 		return;
@@ -198,9 +199,9 @@ void SplatCloudObject::reloadShaders()
 	// load shaders
 
 	if( QFile( shaderDir + SPLATS_VERTEXSHADER_FILENAME        ).exists() && 
-		  QFile( shaderDir + SPLATS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
-		  QFile( shaderDir + SPLATS_FRAGMENTSHADER_FILENAME      ).exists() &&
-		  QFile( shaderDir + SPLATS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
+	    QFile( shaderDir + SPLATS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
+	    QFile( shaderDir + SPLATS_FRAGMENTSHADER_FILENAME      ).exists() &&
+	    QFile( shaderDir + SPLATS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
 	{
 		shaderNode_->setShader( splatsDrawMode, 
 			SPLATS_VERTEXSHADER_FILENAME,      SPLATS_FRAGMENTSHADER_FILENAME, 
@@ -212,9 +213,9 @@ void SplatCloudObject::reloadShaders()
 	}
 
 	if( QFile( shaderDir + DOTS_VERTEXSHADER_FILENAME        ).exists() && 
-		  QFile( shaderDir + DOTS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
-		  QFile( shaderDir + DOTS_FRAGMENTSHADER_FILENAME      ).exists() &&
-		  QFile( shaderDir + DOTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
+	    QFile( shaderDir + DOTS_PICK_VERTEXSHADER_FILENAME   ).exists() &&
+	    QFile( shaderDir + DOTS_FRAGMENTSHADER_FILENAME      ).exists() &&
+	    QFile( shaderDir + DOTS_PICK_FRAGMENTSHADER_FILENAME ).exists() )
 	{
 		shaderNode_->setShader( dotsDrawMode, 
 			DOTS_VERTEXSHADER_FILENAME,      DOTS_FRAGMENTSHADER_FILENAME, 
@@ -256,8 +257,8 @@ void SplatCloudObject::enableBackfaceCulling( bool _enable )
 
 	// if drawmodes don't exist something went wrong
 	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-		dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
-		pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
+	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+	    pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
 	{
 		std::cerr << "Shader DrawModes for SplatCloud not existent!" << std::endl;
 		return;
@@ -334,7 +335,7 @@ void SplatCloudObject::setPointsizeScale( float _scale )
 
 	// if drawmodes don't exist something went wrong
 	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-		dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE )
+	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE )
 	{
 		std::cerr << "Shader DrawModes for SplatCloud not existent!" << std::endl;
 		return;
@@ -398,16 +399,19 @@ void SplatCloudObject::init( SplatCloudNode *_node )
 	// load shaders
 	reloadShaders();
 
-	// set initial drawmode of shader- and splatcloud-node
-	ACG::SceneGraph::DrawModes::DrawMode initialDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
+	// get drawmodes
+	ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
+	ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
+	ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
 
-	if( initialDrawMode == ACG::SceneGraph::DrawModes::NONE )
+	// if drawmodes don't exist something went wrong
+	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
+	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+	    pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
 	{
 		std::cerr << "Shader DrawModes for SplatCloud not existent!" << std::endl;
 		return;
 	}
-
-	setObjectDrawMode( initialDrawMode );
 
 	// copy contents
 	if( _node )
