@@ -83,7 +83,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// pointsizeScale layout
 	QHBoxLayout *toolboxPointsizeScaleLayout = new QHBoxLayout();
 	toolboxPointsizeScaleLayout->addWidget( new QLabel( "Pointsize Scale:" ) );
-	toolboxPointsizeScaleLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxPointsizeScaleLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxPointsizeScaleLayout->addWidget( toolboxPointsizeScale_           );
 
 	// buttons
@@ -92,25 +92,20 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	QPushButton *toolboxReloadShadersButton          = new QPushButton( "Reload Shaders"           );
 	QPushButton *toolboxRebuildVBOsButton            = new QPushButton( "Rebuild VBOs"             );
 
-	// top buttons layout
-	QHBoxLayout *toolboxTopButtonsLayout = new QHBoxLayout();
-	toolboxTopButtonsLayout->addWidget( toolboxEnableBackfaceCullingButton  );
-	toolboxTopButtonsLayout->addItem  ( new QSpacerItem( 8, 8 )             );
-	toolboxTopButtonsLayout->addWidget( toolboxDisableBackfaceCullingButton );
-
-	// bottom buttons layout
-	QHBoxLayout *toolboxBottomButtonsLayout = new QHBoxLayout();
-	toolboxBottomButtonsLayout->addWidget( toolboxReloadShadersButton );
-	toolboxBottomButtonsLayout->addItem  ( new QSpacerItem( 8, 8 )    );
-	toolboxBottomButtonsLayout->addWidget( toolboxRebuildVBOsButton   );
+	// buttons layout
+	QGridLayout *toolboxButtonsLayout = new QGridLayout();
+	toolboxButtonsLayout->setSpacing( 6 );
+	toolboxButtonsLayout->addWidget( toolboxEnableBackfaceCullingButton,  0, 0 );
+	toolboxButtonsLayout->addWidget( toolboxDisableBackfaceCullingButton, 0, 1 );
+	toolboxButtonsLayout->addWidget( toolboxReloadShadersButton,          1, 0 );
+	toolboxButtonsLayout->addWidget( toolboxRebuildVBOsButton,            1, 1 );
 
 	// options layout
 	QVBoxLayout *toolboxOptionsLayout = new QVBoxLayout();
-	toolboxOptionsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxOptionsLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxOptionsLayout->addItem  ( toolboxPointsizeScaleLayout );
-	toolboxOptionsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-	toolboxOptionsLayout->addItem  ( toolboxTopButtonsLayout     );
-	toolboxOptionsLayout->addItem  ( toolboxBottomButtonsLayout  );
+	toolboxOptionsLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxOptionsLayout->addItem  ( toolboxButtonsLayout        );
 
 	// ---- defaults ----
 
@@ -134,11 +129,11 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultNormal layout
 	QHBoxLayout *toolboxDefaultNormalLayout = new QHBoxLayout();
 	toolboxDefaultNormalLayout->addWidget( new QLabel( "Default Normal:" ) );
-	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxDefaultNormalLayout->addWidget( toolboxDefaultNormalX_          );
-	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 4, 4 )         );
+	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6 )         );
 	toolboxDefaultNormalLayout->addWidget( toolboxDefaultNormalY_          );
-	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 4, 4 )         );
+	toolboxDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6 )         );
 	toolboxDefaultNormalLayout->addWidget( toolboxDefaultNormalZ_          );
 
 	// defaultPointsize
@@ -151,7 +146,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultPointsize layout
 	QHBoxLayout *toolboxDefaultPointsizeLayout = new QHBoxLayout();
 	toolboxDefaultPointsizeLayout->addWidget( new QLabel( "Default Pointsize:" ) );
-	toolboxDefaultPointsizeLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxDefaultPointsizeLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxDefaultPointsizeLayout->addWidget( toolboxDefaultPointsize_           );
 
 	// defaultColor
@@ -171,11 +166,11 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultColor layout
 	QHBoxLayout *toolboxDefaultColorLayout = new QHBoxLayout();
 	toolboxDefaultColorLayout->addWidget( new QLabel( "Default Color:" ) );
-	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxDefaultColorLayout->addWidget( toolboxDefaultColorR_          );
-	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 4, 4 )        );
+	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6 )        );
 	toolboxDefaultColorLayout->addWidget( toolboxDefaultColorG_          );
-	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 4, 4 )        );
+	toolboxDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6 )        );
 	toolboxDefaultColorLayout->addWidget( toolboxDefaultColorB_          );
 
 	// applyDefaults button
@@ -186,7 +181,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	toolboxDefaultsLayout->addItem  ( toolboxDefaultNormalLayout    );
 	toolboxDefaultsLayout->addItem  ( toolboxDefaultPointsizeLayout );
 	toolboxDefaultsLayout->addItem  ( toolboxDefaultColorLayout     );
-	toolboxDefaultsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	toolboxDefaultsLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxDefaultsLayout->addWidget( toolboxApplyDefaultsButton    );
 
 	// ----
@@ -281,7 +276,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// pointsizeScale layout
 	QHBoxLayout *scaleWidgetPointsizeScaleLayout = new QHBoxLayout();
 	scaleWidgetPointsizeScaleLayout->addWidget( new QLabel( "Pointsize Scale:" ) );
-	scaleWidgetPointsizeScaleLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	scaleWidgetPointsizeScaleLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	scaleWidgetPointsizeScaleLayout->addWidget( scaleWidgetPointsizeScale_       );
 
 	// widget layout
@@ -319,11 +314,11 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultNormal layout
 	QHBoxLayout *defaultsWidgetDefaultNormalLayout = new QHBoxLayout();
 	defaultsWidgetDefaultNormalLayout->addWidget( new QLabel( "Default Normal:" ) );
-	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	defaultsWidgetDefaultNormalLayout->addWidget( defaultsWidgetDefaultNormalX_   );
-	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 4, 4 )         );
+	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6 )         );
 	defaultsWidgetDefaultNormalLayout->addWidget( defaultsWidgetDefaultNormalY_   );
-	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 4, 4 )         );
+	defaultsWidgetDefaultNormalLayout->addItem  ( new QSpacerItem( 6, 6 )         );
 	defaultsWidgetDefaultNormalLayout->addWidget( defaultsWidgetDefaultNormalZ_   );
 
 	// defaultPointsize
@@ -335,7 +330,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultPointsize layout
 	QHBoxLayout *defaultsWidgetDefaultPointsizeLayout = new QHBoxLayout();
 	defaultsWidgetDefaultPointsizeLayout->addWidget( new QLabel( "Default Pointsize:" ) );
-	defaultsWidgetDefaultPointsizeLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	defaultsWidgetDefaultPointsizeLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	defaultsWidgetDefaultPointsizeLayout->addWidget( defaultsWidgetDefaultPointsize_    );
 
 	// defaultColor
@@ -352,11 +347,11 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// defaultColor layout
 	QHBoxLayout *defaultsWidgetDefaultColorLayout = new QHBoxLayout();
 	defaultsWidgetDefaultColorLayout->addWidget( new QLabel( "Default Color:" ) );
-	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	defaultsWidgetDefaultColorLayout->addWidget( defaultsWidgetDefaultColorR_   );
-	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 4, 4 )        );
+	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6 )        );
 	defaultsWidgetDefaultColorLayout->addWidget( defaultsWidgetDefaultColorG_   );
-	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 4, 4 )        );
+	defaultsWidgetDefaultColorLayout->addItem  ( new QSpacerItem( 6, 6 )        );
 	defaultsWidgetDefaultColorLayout->addWidget( defaultsWidgetDefaultColorB_   );
 
 	// cancel and apply buttons
@@ -366,7 +361,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// buttons layout
 	QHBoxLayout *defaultsWidgetButtonsLayout = new QHBoxLayout();
 	defaultsWidgetButtonsLayout->addWidget( defaultsWidgetCancelButton );
-	defaultsWidgetButtonsLayout->addItem  ( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	defaultsWidgetButtonsLayout->addItem  ( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	defaultsWidgetButtonsLayout->addWidget( defaultsWidgetApplyButton  );
 
 	// widget layout
@@ -374,7 +369,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	defaultsWidgetLayout->addItem( defaultsWidgetDefaultNormalLayout    );
 	defaultsWidgetLayout->addItem( defaultsWidgetDefaultPointsizeLayout );
 	defaultsWidgetLayout->addItem( defaultsWidgetDefaultColorLayout     );
-	defaultsWidgetLayout->addItem( new QSpacerItem( 8, 8, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	defaultsWidgetLayout->addItem( new QSpacerItem( 6, 6, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	defaultsWidgetLayout->addItem( defaultsWidgetButtonsLayout          );
 
 	// widget
