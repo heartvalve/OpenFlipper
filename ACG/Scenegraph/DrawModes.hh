@@ -138,13 +138,13 @@ namespace DrawModes {
       * If this drawMode is a combination of different drawModes, the returned value will be 0.
       * Otherwise the internal flag index will be returned
       */
-      unsigned int getIndex();
+      unsigned int getIndex() const;
       
       /** Get a description string for this DrawMode
       * An empty string is returned if this is not a valid draw mode.
       * this list has the format DrawModeName+DrawMOdeName+...
       */
-      std::string description();
+      std::string description() const;
       
       /** \brief Check if this is an atomic draw Mode
       *
@@ -158,17 +158,17 @@ namespace DrawModes {
       
       /** \brief Seperates this drawMode into a list of all seperate atomic drawmodes
       *
-      * A drawMOde can consist of several atomic drawmodes. This function returns a list of the seperated
+      * A drawMode can consist of several atomic drawmodes. This function returns a list of the seperated
       * atomic drawmodes.
       */
-      std::vector< DrawMode > getAtomicDrawModes();
+      std::vector< DrawMode > getAtomicDrawModes() const;
       
       /** \brief Get the number of maximum Modes which could be handled by the current implementation
       *
       */
-      unsigned int maxModes();
+      unsigned int maxModes() const;
       
-      operator bool();
+      operator bool() const;
       
     private:
       ModeFlagSet modeFlags_;

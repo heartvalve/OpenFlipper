@@ -146,7 +146,7 @@ DrawMode::DrawMode( ModeFlagSet _flags ) {
   modeFlags_ = _flags;
 }
 
-DrawMode::operator bool() {
+DrawMode::operator bool() const {
   return( modeFlags_ != NONE.modeFlags_ );
 }
 
@@ -210,7 +210,7 @@ DrawMode DrawMode::operator~( ) const {
 
 
 
-unsigned int DrawMode::getIndex() {
+unsigned int DrawMode::getIndex() const {
   if ( modeFlags_.count() == 1 ) {
     for ( size_t i = 0 ; i < modeFlags_.size() ; ++i ) 
      if ( modeFlags_[i] ) 
@@ -220,11 +220,11 @@ unsigned int DrawMode::getIndex() {
   return 0;
 }
 
-std::string DrawMode::description()
+std::string DrawMode::description() const
 {
   std::string text("");
   
-  VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
   for( modeIter = currentDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
   {
     if( (*this) & modeIter->id_ )
@@ -240,11 +240,11 @@ std::string DrawMode::description()
 //----------------------------------------------------------------------------
 
 std::vector< DrawMode >
-DrawMode::getAtomicDrawModes( )
+DrawMode::getAtomicDrawModes() const
 {
   std::vector< DrawMode > draw_mode_ids;
   
-  VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
   for( modeIter = currentDrawModes_.begin();
   modeIter != modeEnd;
   ++modeIter )
@@ -272,7 +272,7 @@ DrawMode::containsAtomicDrawMode( DrawMode _atomicDrawMode) const
  
 //---------------------------------------------------------------------------- 
  
-unsigned int DrawMode::maxModes() {
+unsigned int DrawMode::maxModes() const {
   return (modeFlags_.size() );
 }
  
