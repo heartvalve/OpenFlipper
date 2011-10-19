@@ -399,20 +399,6 @@ void SplatCloudObject::init( SplatCloudNode *_node )
 	// load shaders
 	reloadShaders();
 
-	// get drawmodes
-	ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
-	ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
-	ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
-
-	// if drawmodes don't exist something went wrong
-	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
-	    pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
-	{
-		std::cerr << "Shader DrawModes for SplatCloud not existent!" << std::endl;
-		return;
-	}
-
 	// copy contents
 	if( _node )
 	{

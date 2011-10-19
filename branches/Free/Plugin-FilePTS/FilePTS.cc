@@ -647,22 +647,32 @@ int FilePTSPlugin::loadObject( QString _filename )
 	emit updatedObject( splatCloud->id(), UPDATE_ALL );
 	emit openedFile( splatCloud->id() );
 
-  // get drawmodes
-  ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
-  ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
-  ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
+	// get drawmodes
+	ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
+	ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
+	ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
 
-  // get global drawmode
-  ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
+	// if drawmodes don't exist something went wrong
+	if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
+	    dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+	    pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
+	{
+		emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
+	}
+	else
+	{
+		// get global drawmode
+		ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
 
-  // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
-  if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) &&
-      !drawmode.containsAtomicDrawMode( dotsDrawMode   ) &&
-      !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
-  {
-    drawmode |= pointsDrawMode;
-    PluginFunctions::setDrawMode( drawmode );
-  }
+		// if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
+		if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) &&
+		    !drawmode.containsAtomicDrawMode( dotsDrawMode   ) &&
+		    !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
+		{
+			drawmode |= pointsDrawMode;
+			PluginFunctions::setDrawMode( drawmode );
+		}
+	}
 
 	// return the id of the new splatcloud object
 	return id;
