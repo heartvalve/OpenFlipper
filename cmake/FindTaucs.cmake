@@ -51,7 +51,7 @@ IF(TAUCS_INCLUDE_DIR )
 	    FIND_LIBRARY( TAUCS_LIBRARY
         	          NAMES taucs
                 	  PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/taucs/lib/darwin9.0" 
-                                ~/sw/taucs/lib/darwin
+                                ~/sw/taucs/lib/darwin11
 	               )	
     ELSE (APPLE)
  	   FIND_LIBRARY( TAUCS_LIBRARY
