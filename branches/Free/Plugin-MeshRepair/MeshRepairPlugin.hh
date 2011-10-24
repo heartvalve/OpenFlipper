@@ -98,7 +98,6 @@ private slots:
 
     void initializePlugin();
     void pluginsInitialized();
-    void slotActiveObjectChanged() {};
 
 public :
 
