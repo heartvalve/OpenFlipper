@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 12538 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 12673 )</b>
      - <b>ACG</b>
          - DrawModes
              - Reworked dynamic drawMode interface         
@@ -12,14 +12,24 @@
          - QtWidgets
              - Added ColorChooserButton with alpha channel display
              - Use new ColorChooserButton for QtMaterialDialog
+         - ShaderUtils
+             - Uniform setters for Vec2f and Vec4f
+             - Uniform setter for float arrays
          - Utilities
              - Added ACG::ColorGenerator (For generating good reproducable colors)
+     - <b>Core</b>
+         - General
+             - Bugfix for ++ operator in UpdateType
      - <b>ObjectTypes</b>
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
+         - SplatCloud
+             - Added new splat cloud object type
          - TriMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
      - <b>Plugins</b>
+         - File OBJ
+             - Bugfix: Don't try to add information when faces are not added
          - File PLY
              - View all after loading a file to see the scene
          - SkeletonEditing
@@ -27,8 +37,12 @@
          - MeshObjectSelections
              - Store edge selections as vertex pairs since edge ids are not stable (differ depending on the file reader).
              - Also store vertex pairs for halfedge selections instead of direct ids since they're not stable either.
+     - <b>Documentation</b>
+         - Do not build html index on top of each page for qt-help
      - <b>Build System</b>
          - Added option to allow in source builds (not recommended but it works)
+         - Doxygen, don't warn if undocumented
+         - Added Eigen3 finder
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
