@@ -115,7 +115,7 @@ UpdateType& UpdateType::operator++() {
     std::cerr << "Operator ++ for UpdateType which is not atomic!!" << std::endl;
   }
   
-  type_ << 1;
+  type_ <<= 1;
   
   return (*this);
 }

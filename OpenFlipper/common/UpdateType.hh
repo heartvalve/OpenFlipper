@@ -184,22 +184,22 @@ const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 13 );
  *
  */
 
-/** Adds a datatype and returns the id for the new type
+/** Adds a UpdateType and returns the id for the new type
 *
-* @param _name Internal name for the new DataType
-* @param _readableName Human readable Name for this type ( Use tr to make it translatable )
+* @param _name Internal name for the new UpdateType
+* @param _resetNeeded If a sceneGraph reset is needed for this update
 */
 DLLEXPORT
-UpdateType addUpdateType(QString _name);
+UpdateType addUpdateType(QString _name, bool _resetNeeded = true);
 
-/// Given a dataType Identifier string this function will return the id of the datatype
+/// Given an UpdateType Identifier string this function will return the id of the UpdateType
 DLLEXPORT
 UpdateType updateType(QString _name);
 
 /** \brief Get the name of a type with given id
 *
-* The ids are organized in a bitfield. So use either the macro for getting the type id or
-* use the id directly (they have to be power of 2! ... Bitfield)
+* The ids are organized in a bit field. So use either the macro for getting the type id or
+* use the id directly (they have to be power of 2! ... Bit field)
 */
 DLLEXPORT
 QString updateTypeName(UpdateType _id);
