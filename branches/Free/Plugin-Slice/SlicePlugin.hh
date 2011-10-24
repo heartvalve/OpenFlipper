@@ -65,7 +65,6 @@ Q_INTERFACES(LoggingInterface)
 //BaseInterface
 signals:
   void updateView();
-  void updatedObject(int);
 
 //LoggingInterface:
   void log( Logtype _type, QString _message );
