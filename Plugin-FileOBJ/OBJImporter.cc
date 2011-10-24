@@ -446,37 +446,42 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     if(!fh.is_valid()) {
     	// Store non-manifold face
     	invalidFaces_.push_back(vertices);
-    }
 
-    // Store recently added face
-    for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-    	addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
-    
-    //perhaps request texCoords for the mesh
-    if ( !currentTriMesh()->has_halfedge_texcoords2D() )
-      currentTriMesh()->request_halfedge_texcoords2D();
-    
-    //now add texCoords
-  
-    // get first halfedge handle
-    TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[currentGroup_][0] );
-    TriMesh::HalfedgeHandle end_heh = currentTriMesh()->prev_halfedge_handle(cur_heh);
+    	std::cerr << "Error: Unable to add face " << std::endl;
 
-    // find start heh
-    while( currentTriMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
-      cur_heh = currentTriMesh()->next_halfedge_handle( cur_heh);
+    } else {
 
-    for(unsigned int i=0; i<_face_texcoords.size(); ++i)
-    {
-      if ( _face_texcoords[i] < (int)texCoords_.size() ){
+      // Store recently added face
+      for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
+        addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
 
-        PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-        currentTriMesh()->set_texcoord2D(cur_heh, tex);
+      //perhaps request texCoords for the mesh
+      if ( !currentTriMesh()->has_halfedge_texcoords2D() )
+        currentTriMesh()->request_halfedge_texcoords2D();
 
-        cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
+      //now add texCoords
 
-      } else
-        std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+      // get first halfedge handle
+      TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[currentGroup_][0] );
+      TriMesh::HalfedgeHandle end_heh = currentTriMesh()->prev_halfedge_handle(cur_heh);
+
+      // find start heh
+      while( currentTriMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
+        cur_heh = currentTriMesh()->next_halfedge_handle( cur_heh);
+
+      for(unsigned int i=0; i<_face_texcoords.size(); ++i)
+      {
+        if ( _face_texcoords[i] < (int)texCoords_.size() ){
+
+          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+          currentTriMesh()->set_texcoord2D(cur_heh, tex);
+
+          cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
+
+        } else
+          std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+      }
+
     }
     
     
@@ -505,36 +510,37 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     if(!fh.is_valid()) {
     	// Store non-manifold face
     	invalidFaces_.push_back(vertices);
-    }
+    } else {
     
-    addedFacePoly_ = fh;
+      addedFacePoly_ = fh;
 
-    //perhaps request texCoords for the mesh
-    if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
-      currentPolyMesh()->request_halfedge_texcoords2D();
-    
-    //now add texCoords
-  
-    if ( addedFacePoly_.is_valid() ) {
-      // get first halfedge handle
-      PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
-      PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
+      //perhaps request texCoords for the mesh
+      if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
+        currentPolyMesh()->request_halfedge_texcoords2D();
 
-      // find start heh
-      while( currentPolyMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
-        cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
+      //now add texCoords
 
-      for(unsigned int i=0; i<_face_texcoords.size(); ++i)
-      {
-        if ( _face_texcoords[i] < (int)texCoords_.size() ){
+      if ( addedFacePoly_.is_valid() ) {
+        // get first halfedge handle
+        PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
+        PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
 
-          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-          currentPolyMesh()->set_texcoord2D(cur_heh, tex);
+        // find start heh
+        while( currentPolyMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
+          cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
 
-          cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
+        for(unsigned int i=0; i<_face_texcoords.size(); ++i)
+        {
+          if ( _face_texcoords[i] < (int)texCoords_.size() ){
 
-        }else
-          std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+            PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+            currentPolyMesh()->set_texcoord2D(cur_heh, tex);
+
+            cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
+
+          }else
+            std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+        }
       }
     }
   }
