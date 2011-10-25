@@ -62,8 +62,8 @@
 
 void Core::slotPluginExists( QString _pluginName , bool& _exists ) {
 
-  for ( int i = 0 ; i < (int)plugins.size(); ++i ) {
-    if ( plugins[i].rpcName == _pluginName ) {
+  for ( int i = 0 ; i < (int)plugins_.size(); ++i ) {
+    if ( plugins_[i].rpcName == _pluginName ) {
       _exists = true;
       return;
     }
@@ -76,8 +76,8 @@ void Core::slotFunctionExists( QString _pluginName , QString _functionName , boo
 
   //Find plugin
   int plugin = -1;
-  for ( int i = 0 ; i < (int)plugins.size(); ++i ) {
-    if ( plugins[i].rpcName == _pluginName ) {
+  for ( int i = 0 ; i < (int)plugins_.size(); ++i ) {
+    if ( plugins_[i].rpcName == _pluginName ) {
       plugin = i;
       break;
     }
@@ -88,15 +88,15 @@ void Core::slotFunctionExists( QString _pluginName , QString _functionName , boo
     return;
   }
 
-  _exists = plugins[plugin].rpcFunctions.contains(_functionName);
+  _exists = plugins_[plugin].rpcFunctions.contains(_functionName);
 }
 
 void Core::slotCall( QString _pluginName , QString _functionName , bool& _success  ) {
 
   //Find plugin
   int plugin = -1;
-  for ( int i = 0 ; i < (int)plugins.size(); ++i ) {
-    if ( plugins[i].rpcName == _pluginName ) {
+  for ( int i = 0 ; i < (int)plugins_.size(); ++i ) {
+    if ( plugins_[i].rpcName == _pluginName ) {
       plugin = i;
       break;
     }
@@ -108,7 +108,7 @@ void Core::slotCall( QString _pluginName , QString _functionName , bool& _succes
     return;
   }
 
-  if ( !plugins[plugin].rpcFunctions.contains(_functionName) ) {
+  if ( !plugins_[plugin].rpcFunctions.contains(_functionName) ) {
     _success = false;
     emit log(LOGERR, tr("Unable to call function from Plugin : ") + _pluginName);
     emit log(LOGERR, tr("Function ") + _functionName + tr(" not found!"));

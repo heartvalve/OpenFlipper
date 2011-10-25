@@ -221,8 +221,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 
   // Find the plugin which added this Toolbox
-  for ( uint i = 0 ; i < plugins.size(); ++i ) {
-    if ( plugins[i].plugin == sender() ) {
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    if ( plugins_[i].plugin == sender() ) {
       id = i;
       break;
     }
@@ -230,8 +230,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
 
   // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
   if ( id == -1 ) {
-    for ( uint i = 0 ; i < plugins.size(); ++i ) {
-      if ( plugins[i].name == "Scripting" ) {
+    for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+      if ( plugins_[i].name == "Scripting" ) {
         id = i;
         break;
       }
@@ -244,8 +244,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
     }
   }
 
-  plugins[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
-  plugins[id].toolboxIcons.push_back( 0 );
+  plugins_[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
+  plugins_[id].toolboxIcons.push_back( 0 );
 
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolboxes.contains(_name) ){
@@ -262,8 +262,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget, QIcon* _icon) {
   int id = -1;
 
   // Find the plugin which added this Toolbox
-  for ( uint i = 0 ; i < plugins.size(); ++i ) {
-    if ( plugins[i].plugin == sender() ) {
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    if ( plugins_[i].plugin == sender() ) {
       id = i;
       break;
     }
@@ -271,8 +271,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget, QIcon* _icon) {
 
   // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
   if ( id == -1 ) {
-    for ( uint i = 0 ; i < plugins.size(); ++i ) {
-      if ( plugins[i].name == "Scripting" ) {
+    for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+      if ( plugins_[i].name == "Scripting" ) {
         id = i;
         break;
       }
@@ -285,8 +285,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget, QIcon* _icon) {
     }
   }
 
-  plugins[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
-  plugins[id].toolboxIcons.push_back( _icon );
+  plugins_[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
+  plugins_[id].toolboxIcons.push_back( _icon );
 
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolboxes.contains(_name) ){
@@ -348,6 +348,42 @@ QScriptValue printToFileFunction(QScriptContext *context, QScriptEngine *engine)
   stream << result << "\n";
 
   file.close();
+
+  return engine->undefinedValue();
+}
+
+QScriptValue helpFunction(QScriptContext *context, QScriptEngine *engine)
+{
+  if ( context->argumentCount() != 1 ) {
+    context->throwError( QScriptContext::SyntaxError, "Error! helpFunction needs one argument" );
+    return  engine->undefinedValue();
+  }
+
+  QString helpString = context->argument(0).toString();
+
+  // Get the corewidget poiter ( Set in Core.cc )
+  QScriptValue calleeData = context->callee().property("core");
+  Core *core = qobject_cast<Core*>(calleeData.toQObject());
+
+  const std::vector<PluginInfo> plugins = core->plugins();
+
+  for (unsigned int i=0; i < plugins.size(); i++) {
+    if (plugins[i].rpcName == helpString) {
+      core->scriptLogFunction( "=======================================================\n" );
+      core->scriptLogFunction( "Found Plugin \"" + plugins[i].name +  "\" \n" );
+      core->scriptLogFunction( "Description: " + plugins[i].description + " \n");
+      core->scriptLogFunction( "=======================================================\n" );
+      core->scriptLogFunction( "Scripting functions: \n");
+
+      for ( int j = 0 ; j < plugins[i].rpcFunctions.size() ; ++j ) {
+        core->scriptLogFunction( plugins[i].rpcFunctions[j]+"\n");
+      }
+
+      core->scriptLogFunction( "\n\n");
+    }
+  }
+
+
 
   return engine->undefinedValue();
 }

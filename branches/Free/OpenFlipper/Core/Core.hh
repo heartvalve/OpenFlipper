@@ -1104,9 +1104,12 @@ private slots:
       * @{ */
   //===========================================================================
 
+  public :
+    const std::vector<PluginInfo> plugins() const {return plugins_; };
+
   private:
-    /// List of all loaded plugins
-    std::vector<PluginInfo> plugins;
+    /// List of all loaded plugins_
+    std::vector<PluginInfo> plugins_;
 
     /// Index of Plugins toolbox widget
     int toolboxindex_;
@@ -1403,6 +1406,9 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine);
 
 /// Special print function for sending output to a file
 QScriptValue printToFileFunction(QScriptContext *context, QScriptEngine *engine);
+
+/// Function to print help about scripting functions
+QScriptValue helpFunction(QScriptContext *context, QScriptEngine *engine);
 
 //=============================================================================
 #endif // MVIEWWIDGET_HH defined
