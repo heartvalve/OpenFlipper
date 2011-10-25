@@ -134,7 +134,7 @@
 
 enum {OPT_HELP , OPT_STEREO, OPT_BATCH ,OPT_CONSOLE_LOG , OPT_DEBUGGING, OPT_FULLSCREEN,
       OPT_HIDDDEN_LOGGER , OPT_NOSPLASH ,OPT_HIDDDEN_TOOLBOX , OPT_LOAD_POLYMESHES,
-      OPT_REMOTE};
+      OPT_REMOTE, OPT_REMOTE_PORT};
 
 CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_DEBUGGING        , (char*) "--debug"          , SO_NONE    },
@@ -151,6 +151,7 @@ CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_HIDDDEN_TOOLBOX  , (char*) "-t"               , SO_NONE    },
     { OPT_LOAD_POLYMESHES  , (char*) "-p"               , SO_NONE    },
     { OPT_REMOTE           , (char*) "--remote-control" , SO_NONE    },
+    { OPT_REMOTE_PORT      , (char*) "--remote-port"    , SO_REQ_SEP },
     SO_END_OF_OPTIONS                       // END
 };
 
@@ -259,6 +260,8 @@ bool remoteControl  = false;
 
 bool parseCommandLineOptions(CSimpleOpt& args){
 
+  QString port;
+
   // while there are arguments left to process
   while (args.Next()) {
 
@@ -275,26 +278,31 @@ bool parseCommandLineOptions(CSimpleOpt& args){
           OpenFlipper::Options::debug(true);
           break;
         case OPT_STEREO:
-            OpenFlipper::Options::stereo(false);
-            break;
+          OpenFlipper::Options::stereo(false);
+          break;
         case OPT_HIDDDEN_TOOLBOX:
-            OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/hidden",true);
-            break;
+          OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/hidden",true);
+          break;
         case OPT_HIDDDEN_LOGGER:
-            OpenFlipper::Options::loggerState(OpenFlipper::Options::Hidden);
-            break;
+          OpenFlipper::Options::loggerState(OpenFlipper::Options::Hidden);
+          break;
         case OPT_FULLSCREEN:
-            OpenFlipperSettings().setValue("Core/Gui/fullscreen",false);
-            break;
+          OpenFlipperSettings().setValue("Core/Gui/fullscreen",false);
+          break;
         case OPT_LOAD_POLYMESHES:
-            openPolyMeshes = true;
-            break;
+          openPolyMeshes = true;
+          break;
         case OPT_NOSPLASH:
-            OpenFlipperSettings().setValue("Core/Gui/splash",false);
-            break;
+          OpenFlipperSettings().setValue("Core/Gui/splash",false);
+          break;
         case OPT_REMOTE:
-            OpenFlipper::Options::remoteControl(true);
-            break;
+          OpenFlipper::Options::remoteControl(true);
+          break;
+        case OPT_REMOTE_PORT:
+          port = args.OptionArg();
+          std::cerr << "Got option : " << port.toStdString() << std::endl;
+          OpenFlipper::Options::remoteControl(port.toInt());
+          break;
         case OPT_HELP:
           showHelp();
           return 0;
