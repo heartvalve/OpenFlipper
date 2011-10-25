@@ -698,6 +698,14 @@ bool remoteControl();
 DLLEXPORT
 void remoteControl( bool _remote );
 
+/// Get the remote control port
+DLLEXPORT
+int remoteControlPort();
+
+/// Set the remote control port
+DLLEXPORT
+void remoteControlPort(int _remotePort);
+
 //===========================================================================
 /** @name Debugging Options
  * @{ */

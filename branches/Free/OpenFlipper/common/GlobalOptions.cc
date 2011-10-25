@@ -204,6 +204,8 @@ static char *** argv_;
 
 static bool remoteControl_ = false;
 
+static int remoteControlPort_ = 2000;
+
 # if __WORDSIZE == 64
   const bool is64 = true;
 #else
@@ -708,6 +710,14 @@ bool remoteControl(){
 
 void remoteControl(bool _remote){
   remoteControl_ = _remote;
+}
+
+int remoteControlPort(){
+  return remoteControlPort_;
+}
+
+void remoteControlPort(int _remotePort){
+  remoteControlPort_ = _remotePort;
 }
 
 void doSlotDebugging( bool _debugging ) {
