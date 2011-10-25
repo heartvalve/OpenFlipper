@@ -145,6 +145,8 @@ DrawMeshT<Mesh>::rebuild()
 {
   if (rebuild_ == REBUILD_NONE) return;
 
+  if (!mesh_.n_vertices()) return;
+
   // support for point clouds:
   if (mesh_.n_vertices() && mesh_.n_faces() == 0)
   {
@@ -985,27 +987,30 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 {
   bindBuffers();
 
-  if (_textureMap)
+  if (numTris_)
   {
-    // textured mode
-
-    for (unsigned int i = 0; i < numSubsets_; ++i)
+    if (_textureMap)
     {
-      Subset* pSubset = subsets_ + i;
+      // textured mode
 
-      if ( _textureMap->find(pSubset->materialID) == _textureMap->end() ) {
-        std::cerr << "Illegal texture index ... trying to access " << pSubset->materialID << std::endl;
-        ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
+      for (unsigned int i = 0; i < numSubsets_; ++i)
+      {
+        Subset* pSubset = subsets_ + i;
+
+        if ( _textureMap->find(pSubset->materialID) == _textureMap->end() ) {
+          std::cerr << "Illegal texture index ... trying to access " << pSubset->materialID << std::endl;
+          ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
+        }
+        else
+          ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
+
+        glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
+          (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
       }
-      else
-        ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
-
-      glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
-        (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
     }
+    else
+      glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
   }
-  else
-    glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
 
   unbindBuffers();
 }
@@ -1015,9 +1020,12 @@ void DrawMeshT<Mesh>::drawLines()
 {
   bindBuffers();
 
-  ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
+  if (mesh_.n_edges())
+  {
+    ACG::GLState::bindBuffer(GL_ELEMENT_ARRAY_BUFFER, lineIBO_);
 
-  glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+    glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+  }
 
   unbindBuffers();
 }
@@ -1025,9 +1033,11 @@ void DrawMeshT<Mesh>::drawLines()
 template <class Mesh>
 void DrawMeshT<Mesh>::drawVertices()
 {
+
   bindBuffers();
 
-  glDrawArrays(GL_POINTS, 0, numVerts_);
+  if (numVerts_)
+    glDrawArrays(GL_POINTS, 0, numVerts_);
 
   unbindBuffers();
 }
