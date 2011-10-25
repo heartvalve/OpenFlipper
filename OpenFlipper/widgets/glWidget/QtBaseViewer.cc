@@ -1079,17 +1079,6 @@ bool glViewer::decodeView(const QString& _view)
   // Apply new modelview matrix
   glstate_->set_modelview(m);
 
-
-  std::cerr << "Todo : Add Checkbox if size should also be pasted" << std::endl;
-
-//   if (w>0 && h>0 &&
-//       action_["PasteDropSize"]->isChecked() )
-//   {
-//     glstate_->set_projection(p);
-//     glView_->setFixedSize(w,h);
-//     updateGeometry();
-//   }
-
   updateGL();
 
   return true;
