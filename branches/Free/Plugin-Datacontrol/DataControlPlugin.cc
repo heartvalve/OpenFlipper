@@ -82,6 +82,9 @@ void DataControlPlugin::pluginsInitialized() {
   //set the slot descriptions
   setDescriptions();
 
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   QMenu* contextMenu = new QMenu("Object");
 
   //Target Objects
@@ -137,63 +140,66 @@ void DataControlPlugin::pluginsInitialized() {
 
 void DataControlPlugin::initializePlugin()
 {
-   locked = false;
-   tool_ = new DatacontrolToolboxWidget();
-   connect( tool_ , SIGNAL( keyEvent( QKeyEvent* ) ),
-            this  , SLOT(slotKeyEvent ( QKeyEvent* ) ));
-   QSize size(300, 300);
-   tool_->resize(size);
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
-   model_ = new TreeModel( );
+  locked = false;
+  tool_ = new DatacontrolToolboxWidget();
+  connect( tool_ , SIGNAL( keyEvent( QKeyEvent* ) ),
+      this  , SLOT(slotKeyEvent ( QKeyEvent* ) ));
+  QSize size(300, 300);
+  tool_->resize(size);
 
-   view_ = tool_->treeView;
+  model_ = new TreeModel( );
 
-   tool_->treeView->setModel(model_);
+  view_ = tool_->treeView;
 
-   view_->QTreeView::resizeColumnToContents(1);
-   view_->QTreeView::resizeColumnToContents(2);
-   view_->QTreeView::resizeColumnToContents(3);
+  tool_->treeView->setModel(model_);
 
-
-   connect( model_,SIGNAL(dataChangedInside(int,int,const QVariant&) ),
-            this,  SLOT(    slotDataChanged(int,int,const QVariant&)) );
-
-   connect( model_,SIGNAL(   moveBaseObject(int,int) ),
-            this,  SLOT( slotMoveBaseObject(int,int) ) );
-
-   connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
-            this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
-
-   connect( tool_->notSelected, SIGNAL(stateChanged ( int ) ),
-            this, SLOT (slotBoundingBoxChange ( ) ));
-   connect( tool_->sourceSelected, SIGNAL(stateChanged ( int ) ),
-            this, SLOT (slotBoundingBoxChange ( ) ));
-   connect( tool_->targetSelected, SIGNAL(stateChanged ( int ) ),
-            this, SLOT (slotBoundingBoxChange ( ) ));
+  view_->QTreeView::resizeColumnToContents(1);
+  view_->QTreeView::resizeColumnToContents(2);
+  view_->QTreeView::resizeColumnToContents(3);
 
 
-   viewHeader_ = tool_->treeView->header();
-   viewHeader_->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect( model_,SIGNAL(dataChangedInside(int,int,const QVariant&) ),
+      this,  SLOT(    slotDataChanged(int,int,const QVariant&)) );
 
-   // connect the slot for the context menu
-   connect( viewHeader_, SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
-            this,        SLOT(slotHeaderCustomContextMenuRequested ( const QPoint & ) ));
+  connect( model_,SIGNAL(   moveBaseObject(int,int) ),
+      this,  SLOT( slotMoveBaseObject(int,int) ) );
 
-   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-toolbox.png");
+  connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
+      this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
 
-   emit addToolbox("Data Control", tool_, toolIcon_);
-   
-   onlyDown_ = 0;
-   onlyUp_   = 0;
-   
-   QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-boundingBox.png");
-   tool_->boundingBoxBtn->setIcon( icon );
-   icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-hide-object.png");
-   tool_->visibleDataBtn->setIcon( icon );
-   
-   //hide additional boxes
-   tool_->visibleDataBtn->setChecked(false);
-   tool_->boundingBoxBtn->setChecked(false);
+  connect( tool_->notSelected, SIGNAL(stateChanged ( int ) ),
+      this, SLOT (slotBoundingBoxChange ( ) ));
+  connect( tool_->sourceSelected, SIGNAL(stateChanged ( int ) ),
+      this, SLOT (slotBoundingBoxChange ( ) ));
+  connect( tool_->targetSelected, SIGNAL(stateChanged ( int ) ),
+      this, SLOT (slotBoundingBoxChange ( ) ));
+
+
+  viewHeader_ = tool_->treeView->header();
+  viewHeader_->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  // connect the slot for the context menu
+  connect( viewHeader_, SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
+      this,        SLOT(slotHeaderCustomContextMenuRequested ( const QPoint & ) ));
+
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-toolbox.png");
+
+  emit addToolbox("Data Control", tool_, toolIcon_);
+
+  onlyDown_ = 0;
+  onlyUp_   = 0;
+
+  QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-boundingBox.png");
+  tool_->boundingBoxBtn->setIcon( icon );
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-hide-object.png");
+  tool_->visibleDataBtn->setIcon( icon );
+
+  //hide additional boxes
+  tool_->visibleDataBtn->setChecked(false);
+  tool_->boundingBoxBtn->setChecked(false);
 }
 
 
@@ -205,6 +211,9 @@ void DataControlPlugin::initializePlugin()
 void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 {
   
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   BaseObjectData* obj = 0;
 
   if ( PluginFunctions::getObject( _identifier, obj) )
@@ -252,6 +261,9 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotVisibilityChanged( int _identifier ){
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   // if onlyUp_ > 0 --> _identifier is a group and the selection
   // does not have to be applied
@@ -303,6 +315,10 @@ void DataControlPlugin::slotVisibilityChanged( int _identifier ){
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   model_->objectChanged( _identifier );
 }
 
@@ -325,6 +341,9 @@ void DataControlPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateTyp
  * @param _id id of an object
  */
 void DataControlPlugin::fileOpened(int _id){
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   BaseObject* obj = 0;
 
@@ -353,6 +372,10 @@ void DataControlPlugin::addedEmptyObject(int _id){
  * @param _id id of the object
  */
 void DataControlPlugin::objectDeleted(int _id){
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   model_->objectDeleted(_id);
 }
 
@@ -480,7 +503,7 @@ void DataControlPlugin::slotShowLightSources( int _state ) {
  */
 void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
 
-  if ( _ini.section_exists( "BoundingBox" ) )
+  if ( _ini.section_exists( "BoundingBox" ) && OpenFlipper::Options::gui() )
   {
     bool value;
     if (_ini.get_entry(value, "BoundingBox","notSelected"))
@@ -632,11 +655,14 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
   // Write the primary group names to the file
   _ini.add_entry("Groups","rootGroup",rootGroup);
 
-  if ( !_ini.section_exists( "BoundingBox" ) )
-    _ini.add_section("BoundingBox");
-  _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
-  _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
-  _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
+  if ( OpenFlipper::Options::gui() ) {
+    if ( !_ini.section_exists( "BoundingBox" ) )
+      _ini.add_section("BoundingBox");
+
+    _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
+    _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
+    _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
+  }
 
 }
 

@@ -109,6 +109,10 @@ void DataControlPlugin::setDescriptions(){
 
   emit setSlotDescription("hideAll()",tr("Hide all objects"),
                           QStringList(), QStringList());
+
+  emit setSlotDescription("printObjectInfoToLog()",tr("Print info about all objects to log"),
+                            QStringList(), QStringList());
+
 }
 
 
@@ -173,6 +177,9 @@ QString DataControlPlugin::getObjectName( int objectId ) {
  * @param objectId id of an object
  */
 void DataControlPlugin::hideObject( int objectId ) {
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
@@ -257,6 +264,9 @@ void DataControlPlugin::objectDelete( int objectId ) {
  * @param objectId id of an object
  */
 void DataControlPlugin::showObject( int objectId ) {
+
+  if ( ! OpenFlipper::Options::gui())
+      return;
 
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
@@ -434,6 +444,9 @@ void DataControlPlugin::clearAllSource() {
  */
 void DataControlPlugin::hideAll() {
 
+  if ( ! OpenFlipper::Options::gui())
+      return;
+
   DataType type = DATA_ALL;
 
   //try to find dataType restriction if called by contextMenu
@@ -456,6 +469,9 @@ void DataControlPlugin::hideAll() {
  *
  */
 void DataControlPlugin::showAll() {
+
+  if ( ! OpenFlipper::Options::gui())
+      return;
 
   DataType type = DATA_ALL;
 
@@ -501,5 +517,14 @@ IdList DataControlPlugin::getSourceObjects(DataType _type) {
   return list;  
 }
 
+//******************************************************************************
 
+/** \brief Prints information about all open objects to the Log
+ *
+ */
+void DataControlPlugin::printObjectInfoToLog() {
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)
+    emit log(LOGINFO, tr("Object \"%1\" with ID %2 of type %3 ").arg(o_it->name()).arg(o_it->id()).arg(o_it->dataType().name()));
+}
 

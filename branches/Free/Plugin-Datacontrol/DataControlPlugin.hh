@@ -123,6 +123,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void addedEmptyObject(int _id);
     void objectDeleted(int _id);
 
+    // Tell system that this plugin runs without ui
+    void noguiSupported( ) {} ;
+
   public :
     /// Destructor
     ~DataControlPlugin() {};
@@ -356,6 +359,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         
         /// Get all source objects of given type
         IdList getSourceObjects(DataType _type);
+
+        /// Print information about all open objects to the console
+        void printObjectInfoToLog();
 
 /** @} */
 
