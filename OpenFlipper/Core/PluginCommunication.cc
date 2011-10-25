@@ -378,12 +378,12 @@ void Core::slotCrossPluginConnect( QString _pluginName1, const char* _signal, QS
   QObject* plugin1 = 0;
   QObject* plugin2 = 0;
   
-  for ( int i = 0 ; i < (int)plugins.size(); ++i ) {
-    if ( plugins[i].rpcName == _pluginName1 ) {
-      plugin1 = plugins[i].plugin;
+  for ( int i = 0 ; i < (int)plugins_.size(); ++i ) {
+    if ( plugins_[i].rpcName == _pluginName1 ) {
+      plugin1 = plugins_[i].plugin;
     }
-    if ( plugins[i].rpcName == _pluginName2 ) {
-      plugin2 = plugins[i].plugin;
+    if ( plugins_[i].rpcName == _pluginName2 ) {
+      plugin2 = plugins_[i].plugin;
     }
   }
 

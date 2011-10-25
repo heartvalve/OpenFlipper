@@ -250,7 +250,7 @@ Core::init() {
                           Qt::AlignBottom | Qt::AlignLeft , Qt::white);
     }
 
-    coreWidget_ = new CoreWidget(viewModes_ , plugins, coreSlots_);
+    coreWidget_ = new CoreWidget(viewModes_ , plugins_, coreSlots_);
 
     connect(coreWidget_, SIGNAL(clearAll())           , this, SLOT(clearAll()));
     connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(loadObject()));
@@ -434,6 +434,12 @@ Core::init() {
   scriptEngine_.globalObject().setProperty("printToFile", printToFileFunc);
   scriptingFunctions_.push_back( "-.printToFile(QString,QString)" );
 
+  // Register help function :
+  QScriptValue helpFunc = scriptEngine_.newFunction(helpFunction);
+  helpFunc.setProperty("core",scriptEngine_.newQObject(this));
+  scriptEngine_.globalObject().setProperty("help", helpFunc);
+  scriptingFunctions_.push_back( "-.help(QString)" );
+
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
   
@@ -614,13 +620,13 @@ Core::init() {
 
 Core::~Core()
 {
-   for ( uint i = 0 ; i < plugins.size() ; ++i ){
-     BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins[i].plugin);
+   for ( uint i = 0 ; i < plugins_.size() ; ++i ){
+     BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins_[i].plugin);
 
      // Dont call exit if we cannot get the Plugin
      if ( basePlugin )
-       if ( checkSlot( plugins[i].plugin , "exit()" ) )
-          QMetaObject::invokeMethod(plugins[i].plugin, "exit",  Qt::DirectConnection);
+       if ( checkSlot( plugins_[i].plugin , "exit()" ) )
+          QMetaObject::invokeMethod(plugins_[i].plugin, "exit",  Qt::DirectConnection);
   }
 
   // Delete the objectRoot if it was constructed
@@ -1076,11 +1082,11 @@ Core::writeOnExit() {
   }
 
   // Call exit for all plugins
-   for (uint i = 0 ; i < plugins.size() ; ++i) {
-      BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins[i].plugin);
+   for (uint i = 0 ; i < plugins_.size() ; ++i) {
+      BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugins_[i].plugin);
       if ( basePlugin )
-          if ( checkSlot( plugins[i].plugin , "exit()" ) )
-            QMetaObject::invokeMethod(plugins[i].plugin, "exit",  Qt::DirectConnection);
+          if ( checkSlot( plugins_[i].plugin , "exit()" ) )
+            QMetaObject::invokeMethod(plugins_[i].plugin, "exit",  Qt::DirectConnection);
    }
 }
 
@@ -1185,9 +1191,9 @@ void Core::slotSetSlotDescription(QString      _slotName,   QString _slotDescrip
   //find plugin
  PluginInfo* pluginInfo = 0;
 
-  for (uint i=0; i < plugins.size(); i++)
-    if (plugins[i].plugin == sender())
-      pluginInfo = &plugins[i];
+  for (uint i=0; i < plugins_.size(); i++)
+    if (plugins_[i].plugin == sender())
+      pluginInfo = &plugins_[i];
 
     if (pluginInfo == 0){
       emit log(LOGERR, tr("Unable to set slot-description. Plugin not found!"));
@@ -1263,9 +1269,9 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
   //find plugin
   PluginInfo* pluginInfo = 0;
 
-  for (uint i=0; i < plugins.size(); i++)
-    if (plugins[i].rpcName == pluginName)
-      pluginInfo = &plugins[i];
+  for (uint i=0; i < plugins_.size(); i++)
+    if (plugins_[i].rpcName == pluginName)
+      pluginInfo = &plugins_[i];
 
   if (pluginInfo == 0){
     emit log(LOGERR, tr("Unable to get slot-description. Plugin not found!"));
@@ -1395,13 +1401,13 @@ INIFile ini;
     ini.add_entry( "Core" , "VersionLinux"   , OpenFlipper::Options::coreVersion() );
 
   //add pluginVersions
-  for (uint i=0; i < plugins.size(); i++){
-    ini.add_section( plugins[i].name );
+  for (uint i=0; i < plugins_.size(); i++){
+    ini.add_section( plugins_[i].name );
 
     if ( OpenFlipper::Options::isWindows() )
-      ini.add_entry( plugins[i].name , "VersionWindows" , plugins[i].version );
+      ini.add_entry( plugins_[i].name , "VersionWindows" , plugins_[i].version );
     else
-      ini.add_entry( plugins[i].name , "VersionLinux"   , plugins[i].version );
+      ini.add_entry( plugins_[i].name , "VersionLinux"   , plugins_[i].version );
   }
 
   ini.disconnect();
@@ -1434,6 +1440,8 @@ void Core::setDescriptions(){
           this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
 
   emit slotSetSlotDescriptionGlobalFunction("printToFile(QString,QString)", tr("Print a message to a file"), QStringList(QString("Filename;Values").split(";")), QStringList(QString("Filename to print into;Arbitrary number of arguments").split(";")));
+  emit slotSetSlotDescriptionGlobalFunction("help(QString)", tr("Print help about something"), QStringList("Help Entry"), QStringList("help about what?"));
+
 
   emit setSlotDescription("deleteObject(int)", tr("Delete an object from the scene."), QStringList("ObjectId"), QStringList(tr("Id of the object to delete")));
   emit setSlotDescription("updateView()", tr("Redraw the contents of the viewer."), QStringList(), QStringList());

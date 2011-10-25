@@ -533,7 +533,7 @@ void Core::loadPlugins()
 
   emit pluginsInitialized();
 
-  emit log(LOGOUT,tr("Loaded %n Plugin(s)","",plugins.size()) );
+  emit log(LOGOUT,tr("Loaded %n Plugin(s)","",plugins_.size()) );
 }
 
 /** @brief slot for loading Plugins
@@ -631,7 +631,7 @@ void Core::slotShowPlugins(){
 
     while (ret == 0){
 
-      PluginDialog* dialog = new PluginDialog(plugins, coreWidget_);
+      PluginDialog* dialog = new PluginDialog(plugins_, coreWidget_);
 
       //connect signals
       connect(dialog, SIGNAL(unloadPlugin(QString)), this, SLOT(unloadPlugin(QString)));
@@ -649,26 +649,26 @@ void Core::slotShowPlugins(){
  *  @param name plugin name
  */
 void Core::unloadPlugin(QString name){
-  for (uint i=0; i < plugins.size(); i++)
-    if (plugins[i].rpcName == name){
-      if ( checkSlot( plugins[i].plugin , "exit()" ) )
-        QMetaObject::invokeMethod(plugins[i].plugin, "exit",  Qt::DirectConnection);
+  for (uint i=0; i < plugins_.size(); i++)
+    if (plugins_[i].rpcName == name){
+      if ( checkSlot( plugins_[i].plugin , "exit()" ) )
+        QMetaObject::invokeMethod(plugins_[i].plugin, "exit",  Qt::DirectConnection);
 
       //remove toolbox widget
       QString name_nospace = name;
       name_nospace.remove(" ");
       if ( coreWidget_->viewModes_[0]->visibleToolboxes.contains(name_nospace) )
         coreWidget_->viewModes_[0]->visibleToolboxes.removeAt(coreWidget_->viewModes_[0]->visibleToolboxes.indexOf(name_nospace));
-      for ( uint j = 0 ; j < plugins[i].toolboxWidgets.size() ; ++j )
-        if (plugins[i].toolboxWidgets[j].second ){
-          plugins[i].toolboxWidgets[j].second->setVisible(false);
-          delete plugins[i].toolboxWidgets[j].second;
+      for ( uint j = 0 ; j < plugins_[i].toolboxWidgets.size() ; ++j )
+        if (plugins_[i].toolboxWidgets[j].second ){
+          plugins_[i].toolboxWidgets[j].second->setVisible(false);
+          delete plugins_[i].toolboxWidgets[j].second;
 
-          if( plugins[i].toolboxIcons[j] != 0 )
-            delete plugins[i].toolboxIcons[j];
+          if( plugins_[i].toolboxIcons[j] != 0 )
+            delete plugins_[i].toolboxIcons[j];
         }
 
-      plugins.erase(plugins.begin() + i);
+      plugins_.erase(plugins_.begin() + i);
 
       emit log(LOGOUT,tr("Unloaded Plugin :\t\t %1").arg( name) );
 
@@ -738,14 +738,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     }
 
     //Check if plugin is already loaded
-    for (uint k=0; k < plugins.size(); k++){
+    for (uint k=0; k < plugins_.size(); k++){
 
         QString name_nospace =  basePlugin->name();
         name_nospace.remove(" ");
 
-        if (plugins[k].name == name_nospace){
+        if (plugins_[k].name == name_nospace){
           if (silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
-            emit log(LOGWARN, tr("\t\t\t Already loaded from %1").arg( plugins[k].path) );
+            emit log(LOGWARN, tr("\t\t\t Already loaded from %1").arg( plugins_[k].path) );
             emit log(LOGOUT,"================================================================================");
             return;
         }else{ //ask the user
@@ -753,12 +753,12 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
                                           tr("Plugin already loaded"),
                                           tr("A Plugin with the same name was already loaded from %1.\n" 
                                               "You can only load the new plugin if you unload the existing one first.\n\n"
-                                              "Do you want to unload the existing plugin first?").arg( plugins[k].path),
+                                              "Do you want to unload the existing plugin first?").arg( plugins_[k].path),
                                           QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
           if (ret == QMessageBox::Yes)
-            unloadPlugin(plugins[k].name);
+            unloadPlugin(plugins_[k].name);
           else{
-            emit log(LOGWARN, tr("\t\t\t Already loaded from %1.").arg( plugins[k].path));
+            emit log(LOGWARN, tr("\t\t\t Already loaded from %1.").arg( plugins_[k].path));
             emit log(LOGOUT,"================================================================================");
             return;
           }
@@ -2065,7 +2065,7 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
   //========================================================================================
   //========================================================================================
 
-  plugins.push_back(info);
+  plugins_.push_back(info);
 
   // Initialize Plugin
   if ( basePlugin ) {
