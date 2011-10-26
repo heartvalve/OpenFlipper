@@ -170,6 +170,48 @@ of the new type. The type itself has to be defined in the ObjectTypes subdirecto
  Now, each time a plugin emits addEmptyObject(DATA_MY_DATA), the addEmpty() function will
  add the object to the scenegraph and return the newly created object's id.
 
+ \section Backups
+ Backups are very specific to the underlying data structures of certain types. Therefore the type
+ plugins also manage backups. Backups itself are managed by perObjectData objects based on
+ the BackupData class.
+ When the slot gets called, we first have to check, if an BackupData is already available. If not,
+ we create one. Than the backup is generated and passed to the backup data attached to the object.
+
+ You have to derive your backups from the BaseBackup class, where you only need to implement the
+ apply function and your constructor. In the following example, this class is named TriMeshBackup.
+
+ \code
+ void TypeTriangleMeshPlugin::generateBackup( int _id, QString _name, UpdateType _type ){
+
+  // Get the object corresponding to the id
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_id, object);
+  TriMeshObject* meshObj = PluginFunctions::triMeshObject(object);
+
+  // Safety check
+  if ( meshObj != 0 ){
+
+    //get backup object data
+    BackupData* backupData = 0;
+
+    // If a backup data has already been attached, get it, otherwise create it.
+    if ( object->hasObjectData( OBJECT_BACKUPS ) )
+      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+    else{
+      //add backup data
+      backupData = new BackupData(object);
+      object->setObjectData(OBJECT_BACKUPS, backupData);
+    }
+
+    // Create a new backup
+    TriMeshBackup* backup = new TriMeshBackup(meshObj, _name, _type);
+
+    // Store it in the backup data
+    backupData->storeBackup( backup );
+  }
+ }
+ \endcode
+
 To use the TypeInterface:
 <ul>
 <li> include TypeInterface.hh in your plugins header file
