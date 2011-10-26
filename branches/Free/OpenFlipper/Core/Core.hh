@@ -363,14 +363,10 @@ signals:
    void redo();
 
    /// Backup Plugin tells other Plugins that a restore will happen
-   void aboutToRestore(int _objectId, UpdateType _type);
-   
-   /// Backup Plugin tells other Plugins that they should restore their own data
-   void restore(int _objectId, UpdateType _type);
+   void aboutToRestore(int _objectId);
    
    /// Backup Plugin tells other Plugins that a restore has happened
-   void restored( int _objectId, UpdateType _type);
-
+   void restored( int _objectId);
 
    /// Tell the plugins that a file has been opened ( -> Database)
    void openedFile( int _id );
