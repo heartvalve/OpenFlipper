@@ -49,12 +49,12 @@
 
 /** \file RenderInterface.hh
 *
-* Interface for adding global rendering functions. \ref RenderInterfacePage
+* Interface for adding global rendering functions. \ref renderInterfacePage
 */
 
 /** \brief Interface to add additional rendering functions from within plugins.
  *
- * \ref RenderInterfacePage "Detailed description"
+ * \ref renderInterfacePage "Detailed description"
  * \n
  * \n
  *
@@ -114,7 +114,7 @@ class RenderInterface {
 
 };
 
-/** \page RenderInterfacePage Render Interface
+/** \page renderInterfacePage Render Interface
 \image html RenderInterface.png
 \n
 

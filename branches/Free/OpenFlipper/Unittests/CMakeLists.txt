@@ -22,14 +22,14 @@ if(GTEST_FOUND)
 	
 	if ( NOT WIN32)
       # Link against all necessary libraries
-      target_link_libraries(unittests OpenFlipperPluginLib ACG OpenMeshCore OpenMeshTools pthread ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
+      target_link_libraries(unittests ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 	  
 	  # Set output directory to ${BINARY_DIR}/Unittests
       set_target_properties(unittests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests)
 	
     else()
 	  # Link against all necessary libraries
-      target_link_libraries(unittests OpenFlipperPluginLib ACG OpenMeshCore OpenMeshTools pthread ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES}) 
+      target_link_libraries(unittests  ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES}) 
 	endif()
 	
 
