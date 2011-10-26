@@ -49,12 +49,12 @@
 
 /** \file PostProcessorInterface.hh
 *
-* Interface for adding global image post processor functions. \ref PostProcessorInterfacePage
+* Interface for adding global image post processor functions. \ref postProcessorInterfacePage
 */
 
 /** \brief Interface to add global image post processor functions from within plugins.
  *
- * \ref PostProcessorInterfacePage "Detailed description"
+ * \ref postProcessorInterfacePage "Detailed description"
  * \n
  * \n
  *
@@ -93,7 +93,7 @@ class PostProcessorInterface {
 
 };
 
-/** \page PostProcessorInterfacePage Post Processor Interface
+/** \page postProcessorInterfacePage Post Processor Interface
 \image html PostProcessorInterfacePage.png
 \n
 

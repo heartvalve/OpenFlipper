@@ -49,6 +49,8 @@ The following groups of Interfaces are available:
 
 \subpage pluginInterfacesInputDevices
 
+\subpage pluginInterfacesRendering
+
 \subpage pluginInterfacesOtherInterfaces
 
 
@@ -226,6 +228,29 @@ The ProcessInterface can be used to start arbitrary functions within threads. ( 
 The security Interface can be used to add a license management to your plugin. When it is used,
 plugins will only start, if a valid license is available. The license is bound to a machine
 (Processor,network,...) and expires after a specified date. ( \ref securityInterfacePage  )
+\n
+
+*/
+
+/** \page pluginInterfacesRendering Rendering Interface
+This page shows interfaces which could be used to modify OpenFlippers rendering system
+
+
+\subpage renderInterfacePage
+\n
+\image html RenderInterface.png
+\n
+The RenderInterface can be used to replace OpenFlippers default renderer. Therefore special rendering
+capabilities can be added as a plugin.( \ref renderInterfacePage  )
+\n
+
+\subpage postProcessorInterfacePage
+\n
+\image html PostProcessorInterface.png
+\n
+The PostProcessorInterface can be used to add a post processing step to OpenFlipper. After an image is
+rendered, it is passed to the post processor which can add additional image processing steps
+like edge detection.( \ref renderInterfacePage  )
 \n
 
 */
