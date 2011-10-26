@@ -250,7 +250,7 @@ capabilities can be added as a plugin.( \ref renderInterfacePage  )
 \n
 The PostProcessorInterface can be used to add a post processing step to OpenFlipper. After an image is
 rendered, it is passed to the post processor which can add additional image processing steps
-like edge detection.( \ref renderInterfacePage  )
+like edge detection.( \ref postProcessorInterfacePage  )
 \n
 
 */
