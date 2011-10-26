@@ -336,7 +336,9 @@ void BackupPlugin::slotCreateBackup( IdList _objectids , QString _name, std::vec
 
 void BackupPlugin::slotUndo(int _objectid){
 
+  emit aboutToRestore(_objectid);
   globalBackup_.undo(_objectid);
+  emit restored(_objectid);
   emit updatedObject(_objectid, UPDATE_ALL);
 
   updateButtons();
@@ -360,7 +362,9 @@ void BackupPlugin::slotUndo(){
 
 void BackupPlugin::slotRedo(int _objectid){
 
+  emit aboutToRestore(_objectid);
   globalBackup_.redo(_objectid);
+  emit restored(_objectid);
   emit updatedObject(_objectid, UPDATE_ALL);
 
   updateButtons();

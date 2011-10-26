@@ -87,9 +87,8 @@ signals:
   void undo();
   void redo(int _objectid);
   void redo();
-  void aboutToRestore(int _objectid, UpdateType _type);
-  void restore(int _objectid, UpdateType _type);
-  void restored(int _objectid, UpdateType _type);
+  void aboutToRestore(int _objectid);
+  void restored(int _objectid);
   void generateBackup( int _id, QString _name, UpdateType _type);
   
   // ToolBarInterface
