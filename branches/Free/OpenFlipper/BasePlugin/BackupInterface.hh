@@ -265,7 +265,7 @@ redo operations which get managed by the backup plugin.
 
 \section backupInterfacePage_generatingBackups Generating Backups
 To generate a backup of a specific object, you just have to derive from the BackupInterface and emit the
-createBackup() signal. a simple example looks like this:
+BackupInterface::createBackup() signal. A simple example looks like this:
 
 \code
 emit createBackup(object->id(),"Smoothing", UPDATE_GEOMETRY );
@@ -278,11 +278,14 @@ It is also possible to create backup groups. This is required, if you change sev
 they should be restored only together.
 
 \section backupInterfacePage_restoringBackups Restoring Backups
-Backups can be restored and re-applied. You can simply emit the undo() signal and the last backup will be
-restored. redo() will re apply the last operation stored. It is also possible to restore backups of a specific
-object via undo(int) and redo(int), if they are not blocked by a group backup which can only be reverted as one
-operation.
+Backups can be restored and re-applied. You can simply emit the BackupInterface::undo() signal and the
+last backup will be restored. BackupInterface::redo() will re apply the last operation stored. It is
+also possible to restore backups of a specific object via BackupInterface::undo(int) and
+BackupInterface::redo(int), if they are not blocked by a group backup which can only be reverted as one
+operation.\n
 
+The other plugins will be informed about a restore operation by BackupInterface::slotAboutToRestore(int)
+and BackupInterface::slotRestored(int) which will be emitted directly before and after the restore operation.
 
 
 \section backupInterfacePage_usage Usage
