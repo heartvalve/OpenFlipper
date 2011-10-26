@@ -77,18 +77,14 @@ MeshNodeT(Mesh&        _mesh,
   enableNormals_(true),
   enableColors_(true),
   enabled_arrays_(0),
-  updateVertexPickingList_(true),
+  updateVertexPicking_(true),
   vertexPickingBaseIndex_(0),
-  vertexPickingList_(0),
-  updateEdgePickingList_(true),
+  updateEdgePicking_(true),
   edgePickingBaseIndex_(0),
-  edgePickingList_(0),
-  updateFacePickingList_(true),
+  updateFacePicking_(true),
   facePickingBaseIndex_(0),
-  facePickingList_(0),
-  updateAnyPickingList_(true),
+  updateAnyPicking_(true),
   anyPickingBaseIndex_(0),
-  anyPickingList_(0),
   perFaceTextureIndexAvailable_(false),
   perFaceTextureCoordsAvailable_(false),
   textureMap_(0)
@@ -101,11 +97,6 @@ MeshNodeT(Mesh&        _mesh,
   
   drawMesh_ = new DrawMeshT<Mesh>(mesh_);
   
-  vertexPickingList_ = glGenLists(1);
-  edgePickingList_   = glGenLists(1);
-  facePickingList_   = glGenLists(1);
-  anyPickingList_    = glGenLists(3);
-
 }  
 
 template<class Mesh>
@@ -113,19 +104,6 @@ MeshNodeT<Mesh>::
 ~MeshNodeT()
 {
   // Delete all allocated buffers
-
-  if (vertexPickingList_)
-    glDeleteLists (vertexPickingList_, 1);
-  
-  if (edgePickingList_)
-    glDeleteLists (edgePickingList_, 1);
-  
-  if (facePickingList_)
-    glDeleteLists (facePickingList_, 1);
-  
-  if (anyPickingList_)
-    glDeleteLists (anyPickingList_, 3);
-  
   delete drawMesh_;
 }
 
@@ -776,21 +754,13 @@ pick_vertices(GLState& _state, bool _front)
   }
   
   
-  if (vertexPickingList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
-    glCallList (vertexPickingList_);
-    ACG::GLState::depthFunc(prev_depth);
-    return;
-  }
-  
-  if (vertexPickingList_) {
-    glNewList (vertexPickingList_, GL_COMPILE);
-    updateVertexPickingList_ = false;
-    vertexPickingBaseIndex_ = _state.pick_current_index ();
-  }
-  
-  if (_state.color_picking () && drawMesh_) {
+  if ( updateVertexPicking_ || _state.pick_current_index () != vertexPickingBaseIndex_) {
     drawMesh_->updatePickingVertices(_state);
-    
+    vertexPickingBaseIndex_ = _state.pick_current_index ();
+    updateVertexPicking_    = false;
+  }
+
+  if (_state.color_picking () && drawMesh_) {
     
     // For this version we load the colors directly not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -814,11 +784,7 @@ pick_vertices(GLState& _state, bool _front)
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
       
   ACG::GLState::depthFunc(prev_depth);
-  
-  if (vertexPickingList_) {
-    glEndList ();
-    glCallList (vertexPickingList_);
-  }
+
 }
 
 template<class Mesh>
@@ -861,22 +827,15 @@ pick_edges(GLState& _state, bool _front)
     enable_arrays(0);
   }
   
-  if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_) {
-    glCallList (edgePickingList_);
-    ACG::GLState::depthFunc(prev_depth);
-    return;
-  }
-  
-  if (edgePickingList_) {
-    glNewList (edgePickingList_, GL_COMPILE);
-    updateEdgePickingList_ = false;
+  if ( updateEdgePicking_ || _state.pick_current_index () != edgePickingBaseIndex_) {
+    drawMesh_->updatePickingEdges(_state);
     edgePickingBaseIndex_ = _state.pick_current_index ();
+    updateEdgePicking_    = false;
   }
   
   if (_state.color_picking () ) {
     
     if ( mesh_.n_edges() != 0 && drawMesh_) {
-      drawMesh_->updatePickingEdges(_state);
       
       // For this version we load the colors directly not from vbo
       ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -903,11 +862,7 @@ pick_edges(GLState& _state, bool _front)
   }
   
   ACG::GLState::depthFunc(prev_depth);
-  
-  if (edgePickingList_) {
-    glEndList ();
-    glCallList (edgePickingList_);
-  }
+
 }
 
 template<class Mesh>
@@ -936,21 +891,15 @@ pick_faces(GLState& _state)
     }
   }
   
-  if (facePickingList_ && !updateFacePickingList_ && _state.pick_current_index () == facePickingBaseIndex_) {
-    glCallList (facePickingList_);
-    return;
+  if ( updateFacePicking_ || _state.pick_current_index () != facePickingBaseIndex_) {
+    drawMesh_->updatePickingFaces(_state);
+    facePickingBaseIndex_ = _state.pick_current_index ();
+    updateFacePicking_    = false;
   }
-  
-  if (facePickingList_) {
-    glNewList (facePickingList_, GL_COMPILE);
-    updateFacePickingList_ = false;
-    facePickingBaseIndex_ = _state.pick_current_index();
-  }
-  
+
   if (_state.color_picking ()) {
 
     if ( mesh_.n_faces() != 0 ) {
-      drawMesh_->updatePickingFaces(_state);
       
       // For this version we load the colors directly not from vbo
       ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -975,10 +924,6 @@ pick_faces(GLState& _state)
   } else
     std::cerr << "No fallback pick_faces!" << std::endl;
   
-  if (facePickingList_) {
-    glEndList ();
-    glCallList (facePickingList_);
-  }
 }
 
 template<class Mesh>
@@ -1006,23 +951,14 @@ pick_any(GLState& _state)
     return;
   }
   
-  if (anyPickingList_ && !updateAnyPickingList_ && _state.pick_current_index () == anyPickingBaseIndex_)
-  {
-    glCallList (anyPickingList_);
-    glCallList (anyPickingList_+1);
-    glCallList (anyPickingList_+2);
-    return;
-  }
-  
-  if (anyPickingList_) {
-    glNewList (anyPickingList_, GL_COMPILE);
-    updateAnyPickingList_ = false;
+  if ( updateAnyPicking_ || _state.pick_current_index () != anyPickingBaseIndex_) {
+    drawMesh_->updatePickingAny(_state);
     anyPickingBaseIndex_ = _state.pick_current_index ();
+    updateAnyPicking_    = false;
+
   }
   
   if (_state.color_picking()) {
-    
-    drawMesh_->updatePickingAny(_state);
     
     // For this version we load the colors directly, not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -1043,12 +979,6 @@ pick_any(GLState& _state)
 
     }
     
-    if (anyPickingList_)
-    {
-      glEndList ();
-      glNewList (anyPickingList_+1, GL_COMPILE);
-    }
-    
     ACG::GLState::depthFunc(GL_LEQUAL);
     
     // If we do not have any edges, we generate an empty list here.  
@@ -1059,18 +989,6 @@ pick_any(GLState& _state)
     
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
     }
-    
-    if (anyPickingList_)
-    {
-      //restore depth buffer comparison function for this display list
-      ACG::GLState::depthFunc(prev_depth);
-      
-      glEndList ();
-      glNewList (anyPickingList_+2, GL_COMPILE);
-      
-      ACG::GLState::depthFunc(GL_LEQUAL);
-    }
-    
     
     // For this version we load the colors directly not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -1090,14 +1008,6 @@ pick_any(GLState& _state)
   //restore depth buffer comparison function for the active display list
   ACG::GLState::depthFunc(prev_depth);
   
-  if (anyPickingList_)
-  {
-    glEndList ();
-    glCallList (anyPickingList_);
-    glCallList (anyPickingList_+1);
-    glCallList (anyPickingList_+2);
-  }
-  
   glCheckErrors();
 }
 
@@ -1111,10 +1021,10 @@ update_geometry() {
   updateAnyList_ = true;
   */
   
-  updateVertexPickingList_ = true;
-  updateEdgePickingList_   = true;
-  updateFacePickingList_   = true;
-  updateAnyPickingList_    = true;
+  updateVertexPicking_ = true;
+  updateEdgePicking_   = true;
+  updateFacePicking_   = true;
+  updateAnyPicking_    = true;
   
   // Set per edge arrays to invalid as they have to be regenerated
   drawMesh_->invalidatePerEdgeBuffers();
