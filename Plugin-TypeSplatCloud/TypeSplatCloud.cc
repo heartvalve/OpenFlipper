@@ -54,6 +54,9 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#include <OpenFlipper/common/BackupData.hh>
+#include "SplatCloudBackup.hh"
+
 #include <ACG/GL/GLState.hh>
 
 
@@ -241,6 +244,38 @@ QString TypeSplatCloudPlugin::get_unique_name( SplatCloudObject *_object )
 	}
 
 	return QString( tr( "SplatCloud %1.spl" ).arg( cur_idx ) );
+}
+
+
+//----------------------------------------------------------------
+
+
+void TypeSplatCloudPlugin::generateBackup( int _id, QString _name, UpdateType _type )
+{
+	BaseObjectData *object = 0;
+	PluginFunctions::getObject( _id, object );
+
+	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+
+	if( splatCloud )
+	{
+		// get backup object data
+		BackupData *backupData = 0;
+
+		if( object->hasObjectData( OBJECT_BACKUPS ) )
+			backupData = dynamic_cast<BackupData *>( object->objectData( OBJECT_BACKUPS ) );
+		else
+		{
+			// add backup data
+			backupData = new BackupData( object );
+			object->setObjectData( OBJECT_BACKUPS, backupData );
+		}
+
+		// store a new backup
+		SplatCloudBackup *backup = new SplatCloudBackup( splatCloud, _name, _type );
+
+		backupData->storeBackup( backup );
+	}
 }
 
 

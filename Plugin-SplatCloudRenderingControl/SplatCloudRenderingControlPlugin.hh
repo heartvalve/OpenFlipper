@@ -63,8 +63,8 @@
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -72,13 +72,13 @@
 //== CLASS DEFINITION ============================================
 
 
-class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ContextMenuInterface
+class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxInterface, ContextMenuInterface, LoggingInterface
 {
 	Q_OBJECT
 	Q_INTERFACES( BaseInterface        )
 	Q_INTERFACES( ToolboxInterface     )
-	Q_INTERFACES( LoggingInterface     )
 	Q_INTERFACES( ContextMenuInterface )
+	Q_INTERFACES( LoggingInterface     )
 
 signals:
 
@@ -86,14 +86,14 @@ signals:
 	void updatedObject( int _identifier, const UpdateType _type);
 
 	//-- Toolbox Interface --
-	void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
+	void addToolbox( QString  _name, QWidget *_widget, QIcon *_icon );
+
+	//-- ContextMenu Interface--
+	void addContextMenuItem( QAction *_action, DataType _objectType, ContextMenuType _type );
 
 	//-- Logging Interface --
 	void log( Logtype _type, QString _message );
 	void log( QString _message );
-
-	//-- ContextMenu Interface--
-	void addContextMenuItem( QAction *_action, DataType _objectType, ContextMenuType _type );
 
 public:
 
@@ -112,14 +112,13 @@ private:
 	QSpinBox       *toolboxDefaultColorR_;
 	QSpinBox       *toolboxDefaultColorG_;
 	QSpinBox       *toolboxDefaultColorB_;
-	QIcon          *toolBoxIcon_;
 
-	// menu options
-	QAction *menuScaleAction_;
-	QAction *menuCullingAction_;
-	QAction *menuDefaultsAction_;
-	QAction *menuReloadShadersAction_;
-	QAction *menuRebuildVBOAction_;
+	// context menu options
+	QAction *contextScaleAction_;
+	QAction *contextCullingAction_;
+	QAction *contextDefaultsAction_;
+	QAction *contextReloadShadersAction_;
+	QAction *contextRebuildVBOAction_;
 
 	// scale widget options
 	QWidget        *scaleWidget_;
@@ -154,11 +153,11 @@ private slots:
 	void slotToolboxApplyDefaultsButtonClicked();
 
 	// slots called when a context menu action was triggered
-	void slotMenuScaleActionTriggered();
-	void slotMenuCullingActionTriggered();
-	void slotMenuReloadShadersActionTriggered();
-	void slotMenuRebuildVBOActionTriggered();
-	void slotMenuDefaultsActionTriggered();
+	void slotContextScaleActionTriggered();
+	void slotContextCullingActionTriggered();
+	void slotContextReloadShadersActionTriggered();
+	void slotContextRebuildVBOActionTriggered();
+	void slotContextDefaultsActionTriggered();
 
 	// slots called when a scale widget option changed value
 	void slotScaleWidgetPointsizeScaleValueChanged();

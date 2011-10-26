@@ -79,8 +79,8 @@ class TypeSplatCloudPlugin : public QObject, BaseInterface, LoggingInterface, Ty
 
 signals:
 
-  //-- Type Interface --
-  void emptyObjectAdded( int _id );
+	//-- Type Interface --
+	void emptyObjectAdded( int _id );
 
 	//-- Logging Interface --
 	void log( Logtype _type, QString _message );
@@ -113,6 +113,7 @@ public slots:
 	//-- Type Interface --
 	int addEmpty();
 	DataType supportedType() { return DATA_SPLATCLOUD; }; 
+	void generateBackup( int _id, QString _name, UpdateType _type );
 
 private:
 
