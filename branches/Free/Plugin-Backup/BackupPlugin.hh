@@ -135,7 +135,7 @@ private slots:
 
   void slotObjectUndo();
   void slotObjectRedo();
-  
+
 public slots:
   QString version() { return QString("0.1"); };  
   

@@ -79,13 +79,13 @@ void BackupPlugin::pluginsInitialized() {
     undoMenuAction_->setEnabled(false);
     undoMenuAction_->setStatusTip(tr("Undo the last action."));
     undoMenuAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-undo.png") );
-    connect(undoMenuAction_, SIGNAL(triggered()), this, SLOT(slotUndo()) );
+    connect(undoMenuAction_, SIGNAL(triggered()), this, SIGNAL( undo() ) );
     
     redoMenuAction_ = new QAction(tr("&Redo"), this);
     redoMenuAction_->setEnabled(false);
     redoMenuAction_->setStatusTip(tr("Redo the last action"));
     redoMenuAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-redo.png") );
-    connect(redoMenuAction_, SIGNAL(triggered()), this, SLOT(slotRedo()) );
+    connect(redoMenuAction_, SIGNAL(triggered()), this, SIGNAL( redo() ) );
 
     backupMenu_->addAction(undoMenuAction_);
     backupMenu_->addAction(redoMenuAction_);
@@ -100,7 +100,7 @@ void BackupPlugin::pluginsInitialized() {
     undoToolAction_->setEnabled(false);
     undoToolAction_->setStatusTip(tr("Undo the last action."));
     undoToolAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-undo.png") );
-    connect(undoToolAction_, SIGNAL(triggered()), this, SLOT(slotUndo()) );
+    connect(undoToolAction_, SIGNAL(triggered()), this, SIGNAL( undo() ) );
     toolbar->addAction(undoToolAction_);
     
     //Redo
@@ -108,7 +108,7 @@ void BackupPlugin::pluginsInitialized() {
     redoToolAction_->setEnabled(false);
     redoToolAction_->setStatusTip(tr("Redo the last action"));
     redoToolAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-redo.png") );
-    connect(redoToolAction_, SIGNAL(triggered()), this, SLOT(slotRedo()) );
+    connect(redoToolAction_, SIGNAL(triggered()), this, SIGNAL( redo() ) );
     toolbar->addAction(redoToolAction_);
   
     emit addToolbar( toolbar );
