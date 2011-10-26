@@ -133,9 +133,8 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     void addedEmptyObject( int _id );
     
     //BackupInterface
-    void slotAboutToRestore( int _objectid , int _internalId);      
-    void slotRestore( int _objectid, int _internalId);
-    void slotRestored( int _objectid, int _internalId);
+    void slotAboutToRestore( int _objectid );
+    void slotRestored( int _objectid);
 
   private slots:
 
