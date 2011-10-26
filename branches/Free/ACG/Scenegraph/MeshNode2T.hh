@@ -329,14 +329,11 @@ private:
   */
   void pick_vertices(GLState& _state, bool _front = false);
   
-  /// Flag indicating if the vertex picking display list has to be updates
-  bool updateVertexPickingList_;  
+  /// Flag indicating if the vertex picking has to be updated
+  bool updateVertexPicking_;
 
   /// Index of the first vertex in vertexpicking
   unsigned int vertexPickingBaseIndex_;
-  
-  /// Dispplay list for rendering vertex picking
-  GLuint vertexPickingList_;
   
 /** @} */
   
@@ -353,14 +350,12 @@ private:
   */
   void pick_edges(GLState& _state, bool _front = false);  
   
-  /// Flag indicating if the edge picking display list has to be updates
-  bool updateEdgePickingList_;
+  /// Flag indicating if the edge picking has to be updated
+  bool updateEdgePicking_;
   
   /// Index of the first edge in edgepicking
   unsigned int edgePickingBaseIndex_;
-  
-  /// Dispplay list for rendering edge picking
-  GLuint edgePickingList_;
+
 
 /** @} */
 
@@ -376,14 +371,11 @@ private:
   */
   void pick_faces(GLState& _state);
   
-  /// Flag indicating if the edge picking display list has to be updates
-  bool updateFacePickingList_;
+  /// Flag indicating if the edge picking has to be updated
+  bool updateFacePicking_;
   
   /// Index of the first face in facepicking
   unsigned int facePickingBaseIndex_;  
-  
-  /// Dispplay list for rendering edge picking
-  GLuint facePickingList_;
 
 /** @} */
 
@@ -399,14 +391,11 @@ private:
   */
   void pick_any(GLState& _state);  
   
-  /// Flag indicating if the any picking display list has to be updates
-  bool updateAnyPickingList_;
+  /// Flag indicating if the any picking has to be updated
+  bool updateAnyPicking_;
   
   /// Index of the first face in anypicking
   unsigned int anyPickingBaseIndex_;    
-  
-  /// Dispplay list for rendering general picking
-  GLuint anyPickingList_;  
   
 /** @} */
   
