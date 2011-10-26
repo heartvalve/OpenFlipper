@@ -119,7 +119,7 @@ class BaseInterface {
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
       *  For performance reasons try to always give the id and not -1!
       *
-      *  @param _ objectId Id of the object or -1 if referring to all or deleted objects.
+      *  @param _objectId Id of the object or -1 if referring to all or deleted objects.
       */
     virtual void updatedObject(int _objectId) {};
 
