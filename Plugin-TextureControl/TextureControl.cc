@@ -1814,7 +1814,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
   
 }
 
-void TextureControlPlugin::slotAboutToRestore( int _objectid, int /*_internalId*/) {
+void TextureControlPlugin::slotAboutToRestore( int _objectid ) {
 
   // ================================================================================
   // Get  current object
@@ -1845,8 +1845,7 @@ void TextureControlPlugin::slotAboutToRestore( int _objectid, int /*_internalId*
 
 }
 
-void TextureControlPlugin::slotRestore( int _objectid, int /*_internalId*/) {
-  
+void TextureControlPlugin::slotRestored( int _objectid ) {
   // ================================================================================
   // Get the last active texture in the restored perObjectData
   // ================================================================================
@@ -1857,10 +1856,6 @@ void TextureControlPlugin::slotRestore( int _objectid, int /*_internalId*/) {
   // Enable the last active texture 
   // ================================================================================
   slotSwitchTexture(currentTexture,_objectid);
-}
-
-void TextureControlPlugin::slotRestored( int /*_objectid*/, int /*_internalId*/) {
-  // Nothing to do yet
 }
 
 Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
