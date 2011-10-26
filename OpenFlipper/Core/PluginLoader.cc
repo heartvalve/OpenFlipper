@@ -1692,21 +1692,15 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     //====================================================================================
     
     // Stage one : restore will happen soon
-    if ( checkSignal( plugin , "aboutToRestore(int,UpdateType)" ) ) {
-      connect(plugin  , SIGNAL( aboutToRestore(int,UpdateType)) ,
-              this    , SIGNAL( aboutToRestore(int,UpdateType) ),Qt::DirectConnection);
+    if ( checkSignal( plugin , "aboutToRestore(int)" ) ) {
+      connect(plugin  , SIGNAL( aboutToRestore(int)) ,
+              this    , SIGNAL( aboutToRestore(int) ),Qt::DirectConnection);
     }
     
-    // Stage two: Core restore done, plugins should restore
-    if ( checkSignal( plugin , "restore(int,UpdateType)" ) ) {
-      connect(plugin  , SIGNAL(restore(int,UpdateType)) ,
-              this    , SIGNAL( restore(int,UpdateType) ),Qt::DirectConnection);
-    }
-    
-    // Stage three: Restore complete
-    if ( checkSignal( plugin , "restored(int,UpdateType)" ) ) {
-      connect(plugin  , SIGNAL(restored(int,UpdateType)) ,
-              this    , SIGNAL( restored(int,UpdateType) ),Qt::DirectConnection);
+    // Stage two: Restore complete
+    if ( checkSignal( plugin , "restored(int)" ) ) {
+      connect(plugin  , SIGNAL(restored(int)) ,
+              this    , SIGNAL( restored(int) ),Qt::DirectConnection);
     }
     
     //====================================================================================
@@ -1714,21 +1708,15 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     //====================================================================================
      
      // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotAboutToRestore(int,UpdateType)" ) ) {
-       connect(this   , SIGNAL( aboutToRestore(int,UpdateType)) ,
-               plugin , SLOT( slotAboutToRestore(int,UpdateType) ),Qt::DirectConnection);
+     if ( checkSlot( plugin , "slotAboutToRestore(int)" ) ) {
+       connect(this   , SIGNAL( aboutToRestore(int)) ,
+               plugin , SLOT( slotAboutToRestore(int) ),Qt::DirectConnection);
      }
      
-     // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotRestore(int,UpdateType)" ) ) {
-       connect(this   , SIGNAL( restore(int,UpdateType)) ,
-               plugin , SLOT( slotRestore(int,UpdateType) ),Qt::DirectConnection);
-     }
-     
-     // Stage one : restore will happen soon
-     if ( checkSlot( plugin , "slotRestored(int,UpdateType)" ) ) {
-       connect(this   , SIGNAL( restored(int,UpdateType)) ,
-               plugin , SLOT( slotRestored(int,UpdateType) ),Qt::DirectConnection);
+     // Stage two : restore will happen soon
+     if ( checkSlot( plugin , "slotRestored(int)" ) ) {
+       connect(this   , SIGNAL( restored(int)) ,
+               plugin , SLOT( slotRestored(int) ),Qt::DirectConnection);
      }
      
      // Signal from plugin to restore a group with the given id
