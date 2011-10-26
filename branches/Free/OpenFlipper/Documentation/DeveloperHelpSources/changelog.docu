@@ -1,7 +1,9 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 12673 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 12698 )</b>
      - <b>ACG</b>
+         - DrawMesh
+             - Fixed crash with some empty meshes
          - DrawModes
              - Reworked dynamic drawMode interface         
          - SceneGraph
@@ -20,6 +22,8 @@
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
+         - Scripting
+             - Added help function to print help about different objects (e.g. plugins with help("datacontrol") )
      - <b>ObjectTypes</b>
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
@@ -28,10 +32,16 @@
          - TriMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
      - <b>Plugins</b>
+         - Backup
+             - Small fix for signal flow through backup plugin
+         - DataControl
+             - Made DataControl scriptable
+             - added printObjectInfoToLog function which prints info about all available objects to the log
          - File OBJ
              - Bugfix: Don't try to add information when faces are not added
          - File PLY
              - View all after loading a file to see the scene
+             - Fixed conversion to 4 color components
          - SkeletonEditing
              - Don't add root joint twice when creating new skeletons
          - MeshObjectSelections
@@ -39,6 +49,9 @@
              - Also store vertex pairs for halfedge selections instead of direct ids since they're not stable either.
      - <b>Documentation</b>
          - Do not build html index on top of each page for qt-help
+         - Documentation for Backup Interface
+         - Documentation for Postprocessor Interface
+         - Documentation for Render Interface
      - <b>Build System</b>
          - Added option to allow in source builds (not recommended but it works)
          - Doxygen, don't warn if undocumented
