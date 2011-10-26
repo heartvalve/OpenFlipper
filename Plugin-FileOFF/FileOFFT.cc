@@ -257,9 +257,6 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
             writeValue(_out, c[2]);
             
             if(userWriteOptions_ & OFFImporter::COLORALPHA) writeValue(_out, c[3]);
-        } else {
-            // There are no face colors
-            writeValue(_out, c[3]);
         }
     }
     
