@@ -63,11 +63,6 @@ Allows your plugin to provide a texture. ( TextureInterface )
 \image html ViewInterface.png
 This interface is used to add additional view widgets ( ViewInterface ).
 
-\subsection BackupPlugin Backup Interface
-\image html BackupInterface.png
-Use this interface to backup data ( BackupInterface )
-
-
 \subsection INIPlugin Use Inifiles to store information
 \image html INIInterface.png
 Receive an event if an ini file is opened by the application. ( INIInterface )\n
@@ -158,6 +153,10 @@ to other plugins ( \ref typeInterfacePage ).
 \image html informationInterface.png
 Allows plugins to provide information on objects of a
 specific data type ( \ref informationInterfacePage ).
+
+\subpage backupInterfacePage
+\image html BackupInterface.png
+Use this interface to backup data ( \ref backupInterfacePage )
 
 */
 

@@ -5,6 +5,5 @@
  *  - \subpage  ex2 "Implementing a mesh smoother plugin"
  *  - \subpage  ex3 "Implementing mouse and keyboard interaction"
  *  - \subpage  tutorial_thread 
- *  - \subpage  ex6 "Tracking changes of an object: The Backup Plugin"
  *
  */
