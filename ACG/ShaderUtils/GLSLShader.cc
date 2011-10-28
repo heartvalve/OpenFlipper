@@ -175,6 +175,13 @@ namespace GLSL {
   FragmentShader::~FragmentShader() {}
 
   //--------------------------------------------------------------------------
+  // Geometry shader
+  //--------------------------------------------------------------------------
+
+  GeometryShader::GeometryShader() : Shader(GL_GEOMETRY_SHADER_EXT) {}
+  GeometryShader::~GeometryShader() {}
+
+  //--------------------------------------------------------------------------
   // Shader program object
   //--------------------------------------------------------------------------
 
@@ -369,6 +376,19 @@ namespace GLSL {
     return attributeLocation;
   }
 
+  void Program::setGeometryInputType(GLint type) {
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+  }
+
+  void Program::setGeometryOutputType(GLint type) {
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+  }
+
+  void Program::setGeometryVertexCount(GLint numVerticesOut){
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_VERTICES_OUT_EXT, numVerticesOut);
+  }
+
+
   /** \brief Loads the shader source
   *
   * The shader is assumed to be placed in ../shader relative to the
@@ -428,6 +448,20 @@ namespace GLSL {
       fragmentShader->compile();
     }
     return fragmentShader;
+  }
+
+  /** \brief Loads, compiles and installs a new vertex shader.
+  */
+  GLSL::PtrGeometryShader loadGeometryShader(const char *name) {
+    PtrGeometryShader geometryShader = 0;
+    StringList sourceVertex = loadShader(name);
+
+    if (sourceVertex.size() != 0) {
+      geometryShader = GLSL::PtrGeometryShader(new GLSL::GeometryShader());
+      geometryShader->setSource(sourceVertex);
+      geometryShader->compile();
+    }
+    return geometryShader;
   }
 
 }
