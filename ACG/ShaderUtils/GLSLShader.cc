@@ -41,13 +41,11 @@
 \*===========================================================================*/
 
 /*******************************************************************************
- * GLSLShader.h
+ * GLSLShader.hh
  *
  * Utility classes for GLSL shaders.
  *
- * (C)2007
  * Lehrstuhl I8 RWTH-Aachen, http://www-i8.informatik.rwth-aachen.de
- * Author: Markus Tavenrath <speedygoo@speedygoo.de>
  *
  ******************************************************************************/
 
