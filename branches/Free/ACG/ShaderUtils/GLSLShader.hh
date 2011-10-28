@@ -45,9 +45,7 @@
  *
  * Utility classes for GLSL shaders.
  *
- * (C)2007
  * Lehrstuhl I8 RWTH-Aachen, http://www.graphics.rwth-aachen.de
- * Author: Markus Tavenrath <speedygoo@speedygoo.de>
  *
  ******************************************************************************/
 
