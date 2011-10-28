@@ -125,6 +125,20 @@ namespace GLSL {
 
   //--------------------------------------------------------------------------
 
+  /** \brief GLSL geometry shader.
+  */
+  class ACGDLLEXPORT GeometryShader : public Shader {
+
+    public:
+      GeometryShader();
+      virtual ~GeometryShader();
+  };
+
+  typedef GeometryShader* PtrGeometryShader;
+  typedef const GeometryShader* PtrConstGeometryShader;
+
+  //--------------------------------------------------------------------------
+
   /** \brief GLSL program class.
   *
   * A GLSL program links together the vertex and fragment shaders.
@@ -157,6 +171,19 @@ namespace GLSL {
       int getAttributeLocation(const char *name);
       int getUniformLocation(const char *name);
 
+      // geometry shader params
+
+      // valid input types: GL_POINTS, GL_LINES, GL_LINES_ADJACENCY_EXT, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY_EXT
+      void setGeometryInputType(GLint type);
+      
+      // valid output types: GL_POINTS, GL_LINE_STRIP, GL_TRIANGLE_STRIP
+      void setGeometryOutputType(GLint type);
+
+      // Sets the maximum vertex output of the geometry shader. 
+      //  query GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT to get the gpu limitation
+      void setGeometryVertexCount(GLint numVerticesOut);
+
+
       void use();
 
       void disable();
@@ -178,6 +205,7 @@ namespace GLSL {
 
   GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name);
   GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name);
+  GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name);
 
 }
 
