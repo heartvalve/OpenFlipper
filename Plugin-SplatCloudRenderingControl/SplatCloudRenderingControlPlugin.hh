@@ -64,6 +64,7 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/ViewModeInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
@@ -72,12 +73,13 @@
 //== CLASS DEFINITION ============================================
 
 
-class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxInterface, ContextMenuInterface, LoggingInterface
+class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxInterface, ContextMenuInterface, ViewModeInterface, LoggingInterface
 {
 	Q_OBJECT
 	Q_INTERFACES( BaseInterface        )
 	Q_INTERFACES( ToolboxInterface     )
 	Q_INTERFACES( ContextMenuInterface )
+	Q_INTERFACES( ViewModeInterface    )
 	Q_INTERFACES( LoggingInterface     )
 
 signals:
@@ -90,6 +92,12 @@ signals:
 
 	//-- ContextMenu Interface--
 	void addContextMenuItem( QAction *_action, DataType _objectType, ContextMenuType _type );
+
+	//-- ViewMode Interface--
+	void defineViewModeToolboxes   ( QString _mode, QStringList _usedWidgets      );
+	void defineViewModeToolbars    ( QString _mode, QStringList _usedToolbars     );
+	void defineViewModeContextMenus( QString _mode, QStringList _usedContextMenus );
+	void defineViewModeIcon        ( QString _mode, QString _iconName             );
 
 	//-- Logging Interface --
 	void log( Logtype _type, QString _message );
