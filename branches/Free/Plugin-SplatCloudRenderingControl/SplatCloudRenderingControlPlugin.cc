@@ -415,6 +415,37 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// connect events to slots
 	connect( defaultsWidgetCancelButton, SIGNAL( clicked() ), this, SLOT( slotDefaultsWidgetCancelButtonClicked() ) );
 	connect( defaultsWidgetApplyButton,  SIGNAL( clicked() ), this, SLOT( slotDefaultsWidgetApplyButtonClicked()  ) );
+
+	// ----------------------------------
+	// -------- create view mode --------
+	// ----------------------------------
+
+	// toolboxes
+	QStringList viewModeToolboxes;
+	viewModeToolboxes += "Data Control";
+	viewModeToolboxes += "SplatCloud Estimator";
+	viewModeToolboxes += "SplatCloud Rendering Control";
+
+	// toolbars
+	QStringList viewModeToolbars;
+	viewModeToolbars += "Main Toolbar";
+	viewModeToolbars += "Viewer Toolbar";
+	viewModeToolbars += "Color Toolbar";
+	viewModeToolbars += "Viewing Directions";
+
+	// context menus
+	QStringList viewModeContextMenus;
+	viewModeContextMenus += "DataControl->Material Properties";
+	viewModeContextMenus += "DataControl->Object";
+	viewModeContextMenus += "SplatCloudEstimatorPlugin->SplatCloud Estimator";
+	viewModeContextMenus += "SplatCloudRenderingControlPlugin->SplatCloud Rendering Control";
+	viewModeContextMenus += "ViewControl->Visualization";
+
+	// emit signals to add new viewmode
+	emit defineViewModeToolboxes   ( "SplatCloud", viewModeToolboxes    );
+	emit defineViewModeToolbars    ( "SplatCloud", viewModeToolbars     );
+	emit defineViewModeContextMenus( "SplatCloud", viewModeContextMenus );
+	emit defineViewModeIcon        ( "SplatCloud", "SplatCloudType.png" );
 }
 
 
