@@ -98,12 +98,8 @@ signals:
 
 private slots:
 
-  // -- Base Interface --
-  void noguiSupported() { }
-
-  // slots called when user wants to save the given Load/Save Options as default
-  void slotLoadMakeDefaultButtonClicked();
-  void slotSaveMakeDefaultButtonClicked();
+	// -- Base Interface --
+	void noguiSupported() { }
 
 public:
 
@@ -115,8 +111,8 @@ public:
 	QString name() { return QString( "FilePTS" ); }
 	QString description( ) { return QString( tr( "Load/Save SplatCloud format files" ) ); }
 
-  // -- File Interface --
-  DataType supportedType() { return DATA_SPLATCLOUD; }
+	// -- File Interface --
+	DataType supportedType() { return DATA_SPLATCLOUD; }
 
 	// -- File Interface --
 	QString getSaveFilters() { return QString( tr( "SplatCloud format files ( *.pts *.bin )" ) ); }
@@ -154,6 +150,7 @@ private:
 	QCheckBox* loadBinaryFile_;
 	QCheckBox* loadNormals_;
 	QCheckBox* loadPointsizes_;
+	QCheckBox* loadColors_;
 	QComboBox* loadColorRange_;
 	QCheckBox* loadNormalizeSize_;
 
@@ -161,11 +158,22 @@ private:
 	QCheckBox* saveBinaryFile_;
 	QCheckBox* saveNormals_;
 	QCheckBox* savePointsizes_;
+	QCheckBox* saveColors_;
 	QComboBox* saveColorRange_;
 
 	// buttons
 	QPushButton* loadMakeDefaultButton_;
 	QPushButton* saveMakeDefaultButton_;
+
+private slots:
+
+	// slots called when the Load/Save colors checkbox or binaryfile checkbox was clicked
+	void slotUpdateLoadColorRange();
+	void slotUpdateSaveColorRange();
+
+	// slots called when user wants to save the given Load/Save Options as default
+	void slotLoadMakeDefaultButtonClicked();
+	void slotSaveMakeDefaultButtonClicked();
 };
 
 
