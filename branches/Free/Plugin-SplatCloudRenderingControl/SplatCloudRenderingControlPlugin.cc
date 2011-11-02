@@ -116,9 +116,11 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 
 	// options layout
 	QVBoxLayout *toolboxOptionsLayout = new QVBoxLayout();
+	toolboxOptionsLayout->setAlignment( Qt::AlignTop );
 	toolboxOptionsLayout->setSpacing( 6 );
 	toolboxOptionsLayout->addItem  ( toolboxPointsizeScaleLayout );
 	toolboxOptionsLayout->addItem  ( toolboxButtonsALayout       );
+	toolboxOptionsLayout->addItem  ( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	toolboxOptionsLayout->addWidget( toolboxSeparatorFrame       );
 	toolboxOptionsLayout->addItem  ( toolboxButtonsBLayout       );
 
@@ -209,6 +211,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 
 	// defaults layout
 	QVBoxLayout *toolboxDefaultsLayout = new QVBoxLayout();
+	toolboxDefaultsLayout->setAlignment( Qt::AlignTop );
 	toolboxDefaultsLayout->setSpacing( 6 );
 	toolboxDefaultsLayout->addItem  ( toolboxDefaultOptionsLayout );
 	toolboxDefaultsLayout->addWidget( toolboxApplyDefaultsButton  );
@@ -303,6 +306,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 
 	// widget layout
 	QVBoxLayout *scaleWidgetLayout = new QVBoxLayout();
+	scaleWidgetLayout->setAlignment( Qt::AlignTop );
 	scaleWidgetLayout->setSpacing( 6 );
 	scaleWidgetLayout->addItem( scaleWidgetPointsizeScaleLayout );
 
@@ -401,6 +405,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 
 	// widget layout
 	QVBoxLayout *defaultsWidgetLayout = new QVBoxLayout();
+	defaultsWidgetLayout->setAlignment( Qt::AlignTop );
 	defaultsWidgetLayout->setSpacing( 6 );
 	defaultsWidgetLayout->addItem( defaultsWidgetDefaultOptionsLayout );
 	defaultsWidgetLayout->addItem( defaultsWidgetButtonsLayout        );

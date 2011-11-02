@@ -69,10 +69,9 @@
 //== CONSTANTS ===================================================
 
 
-// constants for colorrange drop down box
-static const int COLORRANGE_NONE	= 0;
-static const int COLORRANGE_0_1		= 1;
-static const int COLORRANGE_0_255	= 2;
+// constants of colorrange drop down box
+static const int COLORRANGE_0_1   = 0;
+static const int COLORRANGE_0_255 = 1;
 
 
 //== IMPLEMENTATION ==============================================
@@ -83,14 +82,16 @@ bool FilePTSPlugin::readBinaryFile( std::ifstream &_instream, SplatCloudNode *_s
 	// set default options
 	bool loadNormals    = true;
 	bool loadPointsizes = true;
-	int  loadColorRange = 1;
+	bool loadColors     = true;
+//	int  loadColorRange = 0;
 
 	// get options
 	if( OpenFlipper::Options::gui() && loadOptions_ )
 	{
 		loadNormals    = loadNormals_   ->isChecked();
 		loadPointsizes = loadPointsizes_->isChecked();
-		loadColorRange = loadColorRange_->currentIndex();
+		loadColors     = loadColors_    ->isChecked();
+//		loadColorRange = loadColorRange_->currentIndex();
 	}
 
 	// read file type
@@ -157,7 +158,7 @@ bool FilePTSPlugin::readBinaryFile( std::ifstream &_instream, SplatCloudNode *_s
 	}
 
 	// read colors
-	if( loadColorRange != COLORRANGE_NONE )
+	if( loadColors )
 	{
 		unsigned int i;
 		for( i=0; i<numPoints; ++i )
@@ -187,13 +188,15 @@ bool FilePTSPlugin::readTextFile( std::ifstream &_instream, SplatCloudNode *_spl
 	// set default options
 	bool loadNormals    = true;
 	bool loadPointsizes = true;
-	int  loadColorRange = 1;
+	bool loadColors     = true;
+	int  loadColorRange = 0;
 
 	// get options
 	if( OpenFlipper::Options::gui() && loadOptions_ )
 	{
 		loadNormals    = loadNormals_   ->isChecked();
 		loadPointsizes = loadPointsizes_->isChecked();
+		loadColors     = loadColors_    ->isChecked();
 		loadColorRange = loadColorRange_->currentIndex();
 	}
 
@@ -221,7 +224,7 @@ bool FilePTSPlugin::readTextFile( std::ifstream &_instream, SplatCloudNode *_spl
 		}
 
 		// read color
-		if( loadColorRange != COLORRANGE_NONE )
+		if( loadColors )
 		{
 			float col[3];
 			sstream >> col[0];
@@ -376,14 +379,16 @@ bool FilePTSPlugin::writeBinaryFile( std::ofstream &_outstream, const SplatCloud
 	// set default options
 	bool saveNormals    = true;
 	bool savePointsizes = true;
-	int  saveColorRange = 1;
+	bool saveColors     = true;
+//	int  saveColorRange = 0;
 
 	// get options
 	if( OpenFlipper::Options::gui() && saveOptions_ )
 	{
 		saveNormals    = saveNormals_   ->isChecked();
 		savePointsizes = savePointsizes_->isChecked();
-		saveColorRange = saveColorRange_->currentIndex();
+		saveColors     = saveColors_    ->isChecked();
+//		saveColorRange = saveColorRange_->currentIndex();
 	}
 
 	// write file type
@@ -447,7 +452,7 @@ bool FilePTSPlugin::writeBinaryFile( std::ofstream &_outstream, const SplatCloud
 	}
 
 	// write colors
-	if( saveColorRange != COLORRANGE_NONE )
+	if( saveColors )
 	{
 		unsigned int i;
 		for( i=0; i<numPoints; ++i )
@@ -476,13 +481,15 @@ bool FilePTSPlugin::writeTextFile( std::ofstream &_outstream, const SplatCloudNo
 	// set default options
 	bool saveNormals    = true;
 	bool savePointsizes = true;
-	int  saveColorRange = 1;
+	bool saveColors     = true;
+	int  saveColorRange = 0;
 
 	// get options
 	if( OpenFlipper::Options::gui() && saveOptions_ )
 	{
 		saveNormals    = saveNormals_   ->isChecked();
 		savePointsizes = savePointsizes_->isChecked();
+		saveColors     = saveColors_    ->isChecked();
 		saveColorRange = saveColorRange_->currentIndex();
 	}
 
@@ -505,7 +512,7 @@ bool FilePTSPlugin::writeTextFile( std::ofstream &_outstream, const SplatCloudNo
 		}
 
 		// write color
-		if( saveColorRange != COLORRANGE_NONE )
+		if( saveColors )
 		{
 			const SplatCloudNode::Color &color = _splatCloudNode->hasColors() 
 				? _splatCloudNode->colors()[ i ] 
@@ -746,39 +753,57 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
 		// create new widget (including Load Options and buttons)
 
 		loadBinaryFile_ = new QCheckBox( "Load as Binary File" );
+
 		loadNormals_    = new QCheckBox( "Contains Normals"    );
 		loadPointsizes_ = new QCheckBox( "Contains Pointsizes" );
+		loadColors_     = new QCheckBox( "Contains Colors"     );
 
 		loadColorRange_ = new QComboBox();
-		loadColorRange_->addItem( tr( "Contains No Colors"       ) );
-		loadColorRange_->addItem( tr( "Contains Colors [0..1]"   ) );
-		loadColorRange_->addItem( tr( "Contains Colors [0..255]" ) );
+		loadColorRange_->addItem( "[0..1]"   );
+		loadColorRange_->addItem( "[0..255]" );
+		slotUpdateLoadColorRange();
+
+		QHBoxLayout *loadColorsLayout = new QHBoxLayout();
+		loadColorsLayout->setSpacing( 6 );
+		loadColorsLayout->addWidget( loadColors_     );
+		loadColorsLayout->addWidget( loadColorRange_ );
+
+		QVBoxLayout *loadStructureLayout = new QVBoxLayout();
+		loadStructureLayout->setSpacing( 6 );
+		loadStructureLayout->addWidget( loadNormals_     );
+		loadStructureLayout->addWidget( loadPointsizes_  );
+		loadStructureLayout->addItem  ( loadColorsLayout );
+
+		QGroupBox *loadStructureGroupBox = new QGroupBox( "Internal File Structure" );
+		loadStructureGroupBox->setLayout( loadStructureLayout );
 
 		loadNormalizeSize_ = new QCheckBox( "Normalize Size" );
 
 		loadMakeDefaultButton_ = new QPushButton( "Make Default" );
 
-		QVBoxLayout *layout = new QVBoxLayout();
-		layout->setAlignment( Qt::AlignTop );
-		layout->addWidget( loadBinaryFile_        );
-		layout->addWidget( loadNormals_           );
-		layout->addWidget( loadPointsizes_        );
-		layout->addWidget( loadColorRange_        );
-		layout->addWidget( loadNormalizeSize_     );
-		layout->addWidget( loadMakeDefaultButton_ );
+		QVBoxLayout *loadLayout = new QVBoxLayout();
+		loadLayout->setAlignment( Qt::AlignTop );
+		loadLayout->setSpacing( 6 );
+		loadLayout->addWidget( loadBinaryFile_        );
+		loadLayout->addWidget( loadStructureGroupBox  );
+		loadLayout->addWidget( loadNormalizeSize_     );
+		loadLayout->addWidget( loadMakeDefaultButton_ );
 
 		loadOptions_ = new QWidget();
-		loadOptions_->setLayout( layout );
+		loadOptions_->setLayout( loadLayout );
 
 		// connect events to slots
-		connect( loadMakeDefaultButton_, SIGNAL( clicked() ), this, SLOT( slotLoadMakeDefaultButtonClicked() ) );
+		connect( loadBinaryFile_,        SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange()         ) );
+		connect( loadColors_,            SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange()         ) );
+		connect( loadMakeDefaultButton_, SIGNAL( clicked()         ), this, SLOT( slotLoadMakeDefaultButtonClicked() ) );
 
 		// get Load Options from OpenFlipper (from disc)
-		loadBinaryFile_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/BinaryFile",    true ).toBool() );
-		loadNormals_->setChecked        ( OpenFlipperSettings().value( "FilePTS/Load/Normals",       true ).toBool() );
-		loadPointsizes_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Pointsizes",    true ).toBool() );
-		loadColorRange_->setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Load/ColorRange",    1    ).toInt()  );
-		loadNormalizeSize_->setChecked  ( OpenFlipperSettings().value( "FilePTS/Load/NormalizeSize", true ).toBool() );
+		loadBinaryFile_   ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/BinaryFile",    true ).toBool() );
+		loadNormals_      ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Normals",       true ).toBool() );
+		loadPointsizes_   ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Pointsizes",    true ).toBool() );
+		loadColors_       ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Colors",        true ).toBool() );
+		loadColorRange_   ->setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Load/ColorRange",    0    ).toInt()  );
+		loadNormalizeSize_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/NormalizeSize", true ).toBool() );
 	}
 
 	return loadOptions_;
@@ -795,38 +820,74 @@ QWidget *FilePTSPlugin::saveOptionsWidget( QString _currentFilter )
 		// create new widget (including Save Options and buttons)
 
 		saveBinaryFile_ = new QCheckBox( "Save as Binary File" );
+
 		saveNormals_    = new QCheckBox( "Save Normals"        );
 		savePointsizes_ = new QCheckBox( "Save Pointsizes"     );
+		saveColors_     = new QCheckBox( "Save Colors"         );
 
 		saveColorRange_ = new QComboBox();
-		saveColorRange_->addItem( tr( "Save No Colors"       ) );
-		saveColorRange_->addItem( tr( "Save Colors [0..1]"   ) );
-		saveColorRange_->addItem( tr( "Save Colors [0..255]" ) );
+		saveColorRange_->addItem( "[0..1]"   );
+		saveColorRange_->addItem( "[0..255]" );
+		slotUpdateSaveColorRange();
+
+		QHBoxLayout *saveColorsLayout = new QHBoxLayout();
+		saveColorsLayout->setSpacing( 6 );
+		saveColorsLayout->addWidget( saveColors_     );
+		saveColorsLayout->addWidget( saveColorRange_ );
+
+		QVBoxLayout *saveStructureLayout = new QVBoxLayout();
+		saveStructureLayout->setSpacing( 6 );
+		saveStructureLayout->addWidget( saveNormals_     );
+		saveStructureLayout->addWidget( savePointsizes_  );
+		saveStructureLayout->addItem  ( saveColorsLayout );
+
+		QGroupBox *saveStructureGroupBox = new QGroupBox( "Internal File Structure" );
+		saveStructureGroupBox->setLayout( saveStructureLayout );
 
 		saveMakeDefaultButton_ = new QPushButton( "Make Default" );
 
-		QVBoxLayout *layout = new QVBoxLayout();
-		layout->setAlignment( Qt::AlignTop );
-		layout->addWidget( saveBinaryFile_        );
-		layout->addWidget( saveNormals_           );
-		layout->addWidget( savePointsizes_        );
-		layout->addWidget( saveColorRange_        );
-		layout->addWidget( saveMakeDefaultButton_ );
+		QVBoxLayout *saveLayout = new QVBoxLayout();
+		saveLayout->setAlignment( Qt::AlignTop );
+		saveLayout->setSpacing( 6 );
+		saveLayout->addWidget( saveBinaryFile_        );
+		saveLayout->addWidget( saveStructureGroupBox  );
+		saveLayout->addWidget( saveMakeDefaultButton_ );
 
 		saveOptions_ = new QWidget();
-		saveOptions_->setLayout( layout );
+		saveOptions_->setLayout( saveLayout );
 
 		// connect events to slots
-		connect( saveMakeDefaultButton_, SIGNAL( clicked() ), this, SLOT( slotSaveMakeDefaultButtonClicked() ) );
+		connect( saveBinaryFile_,        SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange()         ) );
+		connect( saveColors_,            SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange()         ) );
+		connect( saveMakeDefaultButton_, SIGNAL( clicked()         ), this, SLOT( slotSaveMakeDefaultButtonClicked() ) );
 
 		// get Save Options from OpenFlipper (from disc)
 		saveBinaryFile_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Save/BinaryFile", true ).toBool() );
-		saveNormals_->setChecked        ( OpenFlipperSettings().value( "FilePTS/Save/Normals",    true ).toBool() );
+		saveNormals_   ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Save/Normals",    true ).toBool() );
 		savePointsizes_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Save/Pointsizes", true ).toBool() );
-		saveColorRange_->setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Save/ColorRange", 1    ).toInt()  );
+		saveColors_    ->setChecked     ( OpenFlipperSettings().value( "FilePTS/Save/Colors",     true ).toBool() );
+		saveColorRange_->setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Save/ColorRange", 0    ).toInt()  );
 	}
 
 	return saveOptions_;
+}
+
+
+//----------------------------------------------------------------
+
+
+void FilePTSPlugin::slotUpdateLoadColorRange()
+{
+	loadColorRange_->setEnabled( loadColors_->isChecked() && !loadBinaryFile_->isChecked() );
+}
+
+
+//----------------------------------------------------------------
+
+
+void FilePTSPlugin::slotUpdateSaveColorRange()
+{
+	saveColorRange_->setEnabled( saveColors_->isChecked() && !saveBinaryFile_->isChecked() );
 }
 
 
@@ -839,6 +900,7 @@ void FilePTSPlugin::slotLoadMakeDefaultButtonClicked()
 	OpenFlipperSettings().setValue( "FilePTS/Load/BinaryFile",    loadBinaryFile_   ->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Load/Normals",       loadNormals_      ->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Load/Pointsizes",    loadPointsizes_   ->isChecked()    );
+	OpenFlipperSettings().setValue( "FilePTS/Load/Colors",        loadColors_       ->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Load/ColorRange",    loadColorRange_   ->currentIndex() );
 	OpenFlipperSettings().setValue( "FilePTS/Load/NormalizeSize", loadNormalizeSize_->isChecked()    );
 
@@ -855,6 +917,7 @@ void FilePTSPlugin::slotSaveMakeDefaultButtonClicked()
 	OpenFlipperSettings().setValue( "FilePTS/Save/BinaryFile", saveBinaryFile_->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Save/Normals",    saveNormals_   ->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Save/Pointsizes", savePointsizes_->isChecked()    );
+	OpenFlipperSettings().setValue( "FilePTS/Save/Colors",     saveColors_    ->isChecked()    );
 	OpenFlipperSettings().setValue( "FilePTS/Save/ColorRange", saveColorRange_->currentIndex() );
 }
 
