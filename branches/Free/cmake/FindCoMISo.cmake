@@ -91,6 +91,20 @@ if ( COMISO_INCLUDE_DIR )
 
    list (APPEND  COMISO_OPT_DEPS "TAO")
   endif()
+  
+  STRING(REGEX MATCH "\#define COMISO_TAUCS_AVAILABLE 1" COMISO_TAUCS_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+
+  if ( COMISO_TAUCS_BUILD_TIME_AVAILABLE )
+
+   find_package(Taucs)
+
+   if ( NOT TAUCS_FOUND )
+     message(ERROR "COMISO configured with Taucs but Taucs not available")
+   endif()
+
+   list (APPEND  COMISO_OPT_DEPS "Taucs")
+
+  endif()
 
   add_definitions (-DCOMISODLL -DUSECOMISO )
 
