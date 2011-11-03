@@ -332,7 +332,7 @@ void SSAOPlugin::reloadResources(int _viewerId)
       randVecs[i][2] = sinf(theta);
       randVecs[i][3] = cosf(theta);
     }
-    #ifdef APPLE
+    #ifdef ARCH_DARWIN
       //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
     #else
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
@@ -486,7 +486,7 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   for (int i = 0; i < 6; ++i)
   {
     ACG::GLState::activeTexture(GL_TEXTURE0 + i);
-    #ifdef APPLE
+    #ifdef ARCH_DARWIN
       ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
     #else
       ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, 0);
