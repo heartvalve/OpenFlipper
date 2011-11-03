@@ -482,7 +482,11 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   for (int i = 0; i < 6; ++i)
   {
     ACG::GLState::activeTexture(GL_TEXTURE0 + i);
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, 0);
+    #ifdef APPLE
+      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
+    #else
+      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, 0);
+    #endif
   }
 
   ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, pViewer->sceneFbo_);
