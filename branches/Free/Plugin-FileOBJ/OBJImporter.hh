@@ -238,6 +238,8 @@ class OBJImporter
 
   private:
     
+    bool vertexListIsManifold(const std::vector<PolyMesh::VertexHandle>& _vertices) const;
+
     // general data
     std::vector< Vec3f > vertices_;
     std::vector< Vec3f > normals_;

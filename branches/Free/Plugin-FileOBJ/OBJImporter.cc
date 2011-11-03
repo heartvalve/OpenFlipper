@@ -401,6 +401,11 @@ void OBJImporter::addFace(const VHandles& _indices){
       }
     }
     
+    if(!vertexListIsManifold(vertices)) {
+        std::cerr << "Face consists of multiple occurrences of the same vertex!" << std::endl;
+        return;
+    }
+
     OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
 
     if(!fh.is_valid()) {
@@ -410,6 +415,19 @@ void OBJImporter::addFace(const VHandles& _indices){
     	addedFacePoly_ = fh;
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool OBJImporter::vertexListIsManifold(const std::vector<PolyMesh::VertexHandle>& _vertices) const {
+
+    std::set<PolyMesh::VertexHandle> check;
+    for(std::vector<PolyMesh::VertexHandle>::const_iterator v_it = _vertices.begin();
+            v_it != _vertices.end(); ++v_it) {
+        check.insert(*v_it);
+    }
+
+    return (check.size() == _vertices.size());
 }
 
 //-----------------------------------------------------------------------------
