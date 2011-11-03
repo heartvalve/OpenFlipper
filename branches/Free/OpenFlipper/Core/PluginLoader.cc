@@ -1767,6 +1767,10 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin , SIGNAL( deleteAllObjects() ) ,
               this   , SLOT( slotDeleteAllObjects() ),Qt::DirectConnection);
 
+   if ( checkSignal(plugin,"getAllFileFilters(QStringList&)" ) )
+      connect(plugin , SIGNAL( getAllFileFilters(QStringList&) ) ,
+              this   , SLOT( slotGetAllFilters(QStringList&) ),Qt::DirectConnection);
+
     if ( checkSlot(plugin,"objectDeleted(int)" ) )
       connect(this ,   SIGNAL( objectDeleted( int ) ) ,
               plugin   , SLOT( objectDeleted( int ) ),Qt::DirectConnection);
