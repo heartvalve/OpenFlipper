@@ -183,6 +183,27 @@ template< typename MeshT >
 inline
 void convertVertexToFaceSelection(MeshT* _mesh);
 
+/**
+ * Convert vertex selection to feature selection
+ */
+template< typename MeshT >
+inline
+void convertVertexSelectionToFeatureVertices(MeshT* _mesh);
+
+/**
+ * Convert feature selection to vertex selection
+ */
+template< typename MeshT >
+inline
+void convertFeatureVerticesToVertexSelection(MeshT* _mesh);
+
+/**
+ * Clear all features
+ */
+template< typename MeshT >
+inline
+void clearFeatureVertices(MeshT* _mesh);
+
 /** @} */
 
 //===========================================================================
@@ -309,21 +330,21 @@ void convertEdgeToHalfedgeSelection(MeshT* _mesh);
  */
 template< typename MeshT >
 inline
-void convertEdgeToFeatureSelection(MeshT* _mesh);
+void convertEdgeSelectionToFeatureEdges(MeshT* _mesh);
 
 /**
  * Convert feature selection to edge selection
  */
 template< typename MeshT >
 inline
-void convertFeatureToEdgeSelection(MeshT* _mesh);
+void convertFeatureEdgesToEdgeSelection(MeshT* _mesh);
 
 /**
  * Clear all features
  */
 template< typename MeshT >
 inline
-void clearFeatureSelection(MeshT* _mesh);
+void clearFeatureEdges(MeshT* _mesh);
 
 
 /** @} */
@@ -480,6 +501,27 @@ void convertFaceToEdgeSelection(MeshT* _mesh);
 template< typename MeshT >
 inline
 void convertFaceToHalfedgeSelection(MeshT* _mesh);
+
+/**
+ * Convert face selection to feature selection
+ */
+template< typename MeshT >
+inline
+void convertFaceSelectionToFeatureFaces(MeshT* _mesh);
+
+/**
+ * Convert feature selection to edge selection
+ */
+template< typename MeshT >
+inline
+void convertFeatureFacesToFaceSelection(MeshT* _mesh);
+
+/**
+ * Clear all features
+ */
+template< typename MeshT >
+inline
+void clearFeatureFaces(MeshT* _mesh);
 
 /** @} */
 
