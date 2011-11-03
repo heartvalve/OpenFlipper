@@ -109,12 +109,17 @@ class LoadSaveInterface {
        *
        * @param _id Id of the object
        */
-      virtual void deleteObject( int _id ){};
+      virtual void deleteObject( int _id ) {};
 
       /** \brief Delete all Objects
        *
        */
-      virtual void deleteAllObjects(){};
+      virtual void deleteAllObjects() {};
+
+      /** \brief Get all file filters that are registered
+       *
+       */
+      virtual void getAllFileFilters(QStringList& _filters) {};
 
   private slots :
 
