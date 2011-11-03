@@ -408,6 +408,46 @@ void convertVertexToFaceSelection(MeshT* _mesh) {
   }
 }
 
+template< typename MeshT >
+inline
+void convertVertexSelectionToFeatureVertices(MeshT* _mesh) {
+
+    for (typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
+
+        if (_mesh->status(v_it).selected()) {
+
+            _mesh->status(v_it).set_feature(true);
+        } else {
+            _mesh->status(v_it).set_feature(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void convertFeatureVerticesToVertexSelection(MeshT* _mesh) {
+
+    for (typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
+
+        if (_mesh->status(v_it).feature()) {
+
+            _mesh->status(v_it).set_selected(true);
+        } else {
+            _mesh->status(v_it).set_selected(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void clearFeatureVertices(MeshT* _mesh) {
+
+    for (typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
+
+        _mesh->status(v_it).set_feature(false);
+    }
+}
+
 //=========================================================
 //== Modeling Regions =====================================
 //=========================================================
@@ -681,7 +721,7 @@ void convertEdgeToHalfedgeSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertEdgeToFeatureSelection(MeshT* _mesh) {
+void convertEdgeSelectionToFeatureEdges(MeshT* _mesh) {
 
     for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
 
@@ -696,7 +736,7 @@ void convertEdgeToFeatureSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertFeatureToEdgeSelection(MeshT* _mesh) {
+void convertFeatureEdgesToEdgeSelection(MeshT* _mesh) {
 
     for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
 
@@ -711,7 +751,7 @@ void convertFeatureToEdgeSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void clearFeatureSelection(MeshT* _mesh) {
+void clearFeatureEdges(MeshT* _mesh) {
 
     for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
 
@@ -1104,6 +1144,46 @@ void convertFaceToHalfedgeSelection(MeshT* _mesh) {
 
       for (; fh_iter; ++fh_iter)
         _mesh->status(fh_iter).set_selected(true);
+    }
+}
+
+template< typename MeshT >
+inline
+void convertFaceSelectionToFeatureFaces(MeshT* _mesh) {
+
+    for (typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
+
+        if (_mesh->status(f_it).selected()) {
+
+            _mesh->status(f_it).set_feature(true);
+        } else {
+            _mesh->status(f_it).set_feature(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void convertFeatureFacesToFaceSelection(MeshT* _mesh) {
+
+    for (typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
+
+        if (_mesh->status(f_it).feature()) {
+
+            _mesh->status(f_it).set_selected(true);
+        } else {
+            _mesh->status(f_it).set_selected(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void clearFeatureFaces(MeshT* _mesh) {
+
+    for (typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
+
+        _mesh->status(f_it).set_feature(false);
     }
 }
 
