@@ -83,14 +83,14 @@ void Core::resetScenegraph( bool _resetTrackBall  ) {
 //========================================================================================
 
 
-void Core::slotGetAllFilters ( QStringList& _list){
 
+void Core::slotGetAllFilters ( QStringList& _list){
   /// \todo check why the supported Type is used here!
   // Iterate over all types
   for (int i=0; i < (int)supportedTypes().size(); i++){
     QString f = supportedTypes()[i].plugin->getLoadFilters();
     f = f.section(")",0,0).section("(",1,1).trimmed();
-    _list << (QString::number(supportedTypes()[i].plugin->supportedType().value()) + " " + f);
+    _list << f;
   }
 }
 
