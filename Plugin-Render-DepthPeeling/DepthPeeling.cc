@@ -175,7 +175,7 @@ void DepthPeelingPlugin::reloadResources(int _viewerId) {
 
     // back_blender_tex_id
     #ifdef APPLE
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE,
+      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE_EXT,
                                 p->blendDualPeelTexID_[6], 0);
     #else
       glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE,
@@ -1099,7 +1099,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
 
   ACG::GLState::activeTexture(GL_TEXTURE5); // back_blender:  offset 6
   #ifdef APPLE
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[6]);
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[6]);
   #else
     ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[6]);
   #endif
@@ -1107,7 +1107,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
 
   ACG::GLState::activeTexture(GL_TEXTURE4); // front_blender_tex  base_offset: 2
   #ifdef APPLE
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[2 + currId]);
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[2 + currId]);
   #else
     ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[2 + currId]);
   #endif
