@@ -304,6 +304,26 @@ template< typename MeshT >
 inline
 void convertEdgeToHalfedgeSelection(MeshT* _mesh);
 
+/**
+ * Convert edge selection to feature selection
+ */
+template< typename MeshT >
+inline
+void convertEdgeToFeatureSelection(MeshT* _mesh);
+
+/**
+ * Convert feature selection to edge selection
+ */
+template< typename MeshT >
+inline
+void convertFeatureToEdgeSelection(MeshT* _mesh);
+
+/**
+ * Clear all features
+ */
+template< typename MeshT >
+inline
+void clearFeatureSelection(MeshT* _mesh);
 
 
 /** @} */

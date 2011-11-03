@@ -679,7 +679,45 @@ void convertEdgeToHalfedgeSelection(MeshT* _mesh) {
     }
 }
 
+template< typename MeshT >
+inline
+void convertEdgeToFeatureSelection(MeshT* _mesh) {
 
+    for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
+
+        if (_mesh->status(e_it).selected()) {
+
+            _mesh->status(e_it).set_feature(true);
+        } else {
+            _mesh->status(e_it).set_feature(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void convertFeatureToEdgeSelection(MeshT* _mesh) {
+
+    for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
+
+        if (_mesh->status(e_it).feature()) {
+
+            _mesh->status(e_it).set_selected(true);
+        } else {
+            _mesh->status(e_it).set_selected(false);
+        }
+    }
+}
+
+template< typename MeshT >
+inline
+void clearFeatureSelection(MeshT* _mesh) {
+
+    for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(); e_it != _mesh->edges_end(); ++e_it) {
+
+        _mesh->status(e_it).set_feature(false);
+    }
+}
 
 //=========================================================
 //== Halfedge Selection =====================================
