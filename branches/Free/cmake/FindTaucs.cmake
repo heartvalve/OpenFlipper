@@ -20,6 +20,7 @@ IF(WIN32)
 	 
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
                 PATHS  "${CGAL_TAUCS_DIR}/include" )
+				
 ELSE(WIN32)
 
     IF(APPLE)
@@ -46,6 +47,7 @@ IF(TAUCS_INCLUDE_DIR )
 
   IF(WIN32)
 	find_package(CGAL)
+	SET(TAUCS_LIBRARY "${CGAL_TAUCS_DIR}/lib/libtaucs.lib" )
   ELSE(WIN32)
     IF(APPLE)
 	    FIND_LIBRARY( TAUCS_LIBRARY
