@@ -485,7 +485,7 @@ triangleAreaSquared( const Vec& _v0,
 
 
 
-/** \brief return aspect ratio of triangle
+/** \brief return aspect ratio (length/height) of triangle
 *
 */
 template <typename Scalar, int N>
