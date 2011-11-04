@@ -1062,24 +1062,30 @@ aspectRatio( const VectorT<Scalar, N>& _v0,
 	     const VectorT<Scalar, N>& _v1,
 	     const VectorT<Scalar, N>& _v2 )
 {
-  Scalar d0 = (_v0-_v1).sqrnorm(),
-         d1 = (_v1-_v2).sqrnorm(),
-         d2 = (_v2-_v0).sqrnorm();
+  VectorT<Scalar,3> d0 = _v0 - _v1;
+  VectorT<Scalar,3> d1 = _v1 - _v2;
 
-  if (d0 < d1) {
-    if (d0 < d2) {
-      if (d1 < d2) return sqrt(d2/d0);
-      else   	   return sqrt(d1/d0);
-    }
-    else           return sqrt(d1/d2);
-  }
-  else {
-    if (d1 < d2) {
-      if (d0 < d2) return sqrt(d2/d1);
-      else   	   return sqrt(d0/d1);
-    }
-    else           return sqrt(d0/d2);
-  }    
+  // finds the max squared edge length
+  Scalar l2, maxl2 = d0.sqrnorm();
+  if ((l2=d1.sqrnorm()) > maxl2)
+    maxl2 = l2;
+  // keep searching for the max squared edge length
+  d1 = _v2 - _v0;
+  if ((l2=d1.sqrnorm()) > maxl2)
+    maxl2 = l2;
+
+  // squared area of the parallelogram spanned by d0 and d1
+  Scalar a2 = (d0 % d1).sqrnorm();
+
+  // the area of the triangle would be
+  // sqrt(a2)/2 or length * height / 2
+  // aspect ratio = length / height
+  //              = length * length / (2*area)
+  //              = length * length / sqrt(a2)
+
+  // returns the length of the longest edge
+  //         divided by its corresponding height
+  return sqrt( (maxl2 * maxl2) / a2 );
 }
 
 
