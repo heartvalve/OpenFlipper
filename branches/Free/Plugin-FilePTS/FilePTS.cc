@@ -202,11 +202,14 @@ bool FilePTSPlugin::readTextFile( std::ifstream &_instream, SplatCloudNode *_spl
 
 	char buffer[4096];
 
-	while( !_instream.eof() )
+	while( true )
 	{
 		_instream.getline( buffer, 4096, '\n' );
 		std::string       strbuffer( buffer );
 		std::stringstream sstream( strbuffer );
+
+		if( _instream.eof() )
+			break;
 
 		// read point
 		{
