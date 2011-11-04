@@ -117,8 +117,14 @@ void RemesherPlugin::threadFinished(QString _jobId) {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;
       o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-    emit updatedObject(o_it->id(), UPDATE_GEOMETRY | UPDATE_TOPOLOGY );
-    emit createBackup(o_it->id(), "Remeshing", UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+
+    if ( operation_ == REMESH_ADAPTIVE ) {
+      emit updatedObject(o_it->id(), UPDATE_TOPOLOGY );
+      emit createBackup(o_it->id(), "Adaptive remeshing", UPDATE_TOPOLOGY);
+    } else if ( operation_ == REMESH_UNIFORM ) {
+      emit updatedObject(o_it->id(), UPDATE_TOPOLOGY );
+      emit createBackup(o_it->id(), "Uniform remeshing", UPDATE_TOPOLOGY);
+    }
   }
 
   // Detach job from progress emitter
@@ -257,20 +263,22 @@ void RemesherPlugin::adaptiveRemeshing() {
     unsigned int iters = tool_->adaptive_iters->text().toInt();
     bool projection = tool_->adaptive_projection->isChecked();
 
-    adaptiveRemeshing(o_it->id(), error, min_edge, max_edge, iters, projection);
+    slotAdaptiveRemeshing(o_it->id(), error, min_edge, max_edge, iters, projection);
 
   }
 }
 
 // ----------------------------------------------------------------------------------------
 
-void RemesherPlugin::adaptiveRemeshing(int           _objectID,
-                                       double        _error,
-                                       double        _min_edge_length,
-                                       double        _max_edge_length,
-                                       unsigned int  _iters,
-                                       bool          _use_projection) {
+void RemesherPlugin::slotAdaptiveRemeshing(int           _objectID,
+                                           double        _error,
+                                           double        _min_edge_length,
+                                           double        _max_edge_length,
+                                           unsigned int  _iters,
+                                           bool          _use_projection) {
     
+  operation_ = REMESH_ADAPTIVE;
+
   BaseObjectData* object = 0;
 
   if (PluginFunctions::getObject(_objectID, object)) {
@@ -287,9 +295,9 @@ void RemesherPlugin::adaptiveRemeshing(int           _objectID,
       mesh->update_normals();
 
 
-      QString projectionString = "FALSE";
+      QString projectionString = "\"FALSE\"";
       if (_use_projection)
-        projectionString = "TRUE";
+        projectionString = "\"TRUE\"";
 
       emit scriptInfo("adaptiveRemeshing(" + QString::number(_objectID) + ", "
                                            + QString::number(_error) + ", "
@@ -353,18 +361,20 @@ void RemesherPlugin::uniformRemeshing(){
     // on edge flips which are only defined
     // for triangle configurations.
 
-    uniformRemeshing(o_it->id(), edge_length, iters, area_iters, projection);
+    slotUniformRemeshing(o_it->id(), edge_length, iters, area_iters, projection);
   }
 }
 
 // ----------------------------------------------------------------------------------------
 
-void RemesherPlugin::uniformRemeshing(int           _objectID,
-                                      double        _edge_length,
-                                      unsigned int  _iters,
-                                      unsigned int  _area_iters,
-                                      bool          _use_projection) {
+void RemesherPlugin::slotUniformRemeshing(int           _objectID,
+                                          double        _edge_length,
+                                          unsigned int  _iters,
+                                          unsigned int  _area_iters,
+                                          bool          _use_projection) {
     
+  operation_ = REMESH_UNIFORM;
+
   BaseObjectData* object = 0;
 
   if (PluginFunctions::getObject(_objectID, object)) {
@@ -380,20 +390,49 @@ void RemesherPlugin::uniformRemeshing(int           _objectID,
 
       mesh->update_normals();
 
-      QString projectionString = "FALSE";
+      QString projectionString = "\"FALSE\"";
       if (_use_projection)
-        projectionString = "TRUE";
+        projectionString = "\"TRUE\"";
 
-      emit scriptInfo("adaptiveRemeshing(" + QString::number(_objectID) + ", "
-                                           + QString::number(_edge_length) + ", "
-                                           + QString::number(_iters) + ", "
-                                           + QString::number(_area_iters) + ", "
-                                           + QString::number(_iters) + ", "
-                                           + projectionString + ")");
+      emit scriptInfo("uniformRemeshing(" + QString::number(_objectID) + ", "
+                                          + QString::number(_edge_length) + ", "
+                                          + QString::number(_iters) + ", "
+                                          + QString::number(_area_iters) + ", "
+                                          + QString::number(_iters) + ", "
+                                          + projectionString + ")");
 
       return;
     }
   }
+
+}
+
+// ----------------------------------------------------------------------------------------
+
+void RemesherPlugin::adaptiveRemeshing(int           _objectID,
+                                       double        _error,
+                                       double        _min_edge_length,
+                                       double        _max_edge_length,
+                                       unsigned int  _iters,
+                                       bool          _use_projection) {
+
+  slotAdaptiveRemeshing(_objectID,_error,_min_edge_length,_max_edge_length,_iters,_use_projection);
+  emit updatedObject(_objectID, UPDATE_TOPOLOGY );
+  emit createBackup(_objectID, "Adaptive remeshing", UPDATE_TOPOLOGY);
+
+}
+
+// ----------------------------------------------------------------------------------------
+
+void RemesherPlugin::uniformRemeshing(int           _objectID,
+                                      double        _edge_length,
+                                      unsigned int  _iters,
+                                      unsigned int  _area_iters,
+                                      bool          _use_projection) {
+
+  slotUniformRemeshing(_objectID,_edge_length,_iters,_area_iters,_use_projection);
+  emit updatedObject(_objectID, UPDATE_TOPOLOGY );
+  emit createBackup(_objectID, "Uniform remeshing", UPDATE_TOPOLOGY);
 
 }
 
