@@ -333,7 +333,7 @@ void SSAOPlugin::reloadResources(int _viewerId)
       randVecs[i][3] = cosf(theta);
     }
     #ifdef ARCH_DARWIN
-      //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
     #else
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
     #endif
