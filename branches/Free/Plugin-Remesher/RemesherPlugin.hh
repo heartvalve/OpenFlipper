@@ -127,6 +127,10 @@ private :
 
   QIcon* toolIcon_;
 
+  enum RemeshingOperation { REMESH_UNIFORM, REMESH_ADAPTIVE };
+
+  RemeshingOperation operation_;
+
 private slots:
     
   //---- Adaptive Remeshing ------------
@@ -150,6 +154,19 @@ private slots:
   /// Compute mean edge length and set values
   void computeInitValues();
 
+  void slotAdaptiveRemeshing(int           _objectId,
+                               double        _error,
+                               double        _min_edge_length,
+                               double        _max_edge_length,
+                               unsigned int  _iters,
+                               bool          _use_projection = true);
+
+  void slotUniformRemeshing(int           _objectId,
+                            double        _edge_length,
+                            unsigned int  _iters,
+                            unsigned int  _area_iters,
+                            bool          _use_projection = true);
+
 
 //scripting functions
 public slots:
@@ -160,7 +177,7 @@ public slots:
                          double        _max_edge_length,
                          unsigned int  _iters,
                          bool          _use_projection = true);
-                           
+
   void uniformRemeshing(int           _objectId,
                         double        _edge_length,
                         unsigned int  _iters,
