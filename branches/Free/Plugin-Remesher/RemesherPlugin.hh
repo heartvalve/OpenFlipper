@@ -56,10 +56,10 @@
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
-#include "AdvancedRemesherToolbox.hh"
+#include "RemesherToolbox.hh"
 #include "ProgressEmitter.hh"
 
-class AdvancedRemesherPlugin : public QObject, BaseInterface, BackupInterface, ToolboxInterface, LoggingInterface, RPCInterface, ProcessInterface, ScriptInterface
+class RemesherPlugin : public QObject, BaseInterface, BackupInterface, ToolboxInterface, LoggingInterface, RPCInterface, ProcessInterface, ScriptInterface
 {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -73,102 +73,102 @@ Q_INTERFACES(ScriptInterface)
 
 signals:
   
-    //BaseInterface
-    void updateView();
-    void updatedObject(int _id, const UpdateType _type);
+  //BaseInterface
+  void updateView();
+  void updatedObject(int _id, const UpdateType _type);
 
-    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
-    //LoggingInterface:
-    void log( Logtype _type, QString _message );
-    void log( QString _message );
+  //LoggingInterface:
+  void log( Logtype _type, QString _message );
+  void log( QString _message );
 
-    // RPC Interface
-    void pluginExists( QString _pluginName , bool& _exists  ) ;
-    void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+  // RPC Interface
+  void pluginExists( QString _pluginName , bool& _exists  ) ;
+  void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
 
-    // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
+  // ToolboxInterface
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
 
-    // ProcessInterface 
-    void startJob( QString _jobId, QString _description, int _min, int _max, bool _blocking = false);
-    void setJobState(QString _jobId, int _value);
-    void setJobName(QString _jobId, QString _name);
-    void finishJob(QString _jobId);
-    void setJobDescription(QString _jobId, QString _description);
+  // ProcessInterface
+  void startJob( QString _jobId, QString _description, int _min, int _max, bool _blocking = false);
+  void setJobState(QString _jobId, int _value);
+  void setJobName(QString _jobId, QString _name);
+  void finishJob(QString _jobId);
+  void setJobDescription(QString _jobId, QString _description);
 
-    // BackupInterface
-    void createBackup(int _id , QString _name, UpdateType _type = UPDATE_ALL);
+  // BackupInterface
+  void createBackup(int _id , QString _name, UpdateType _type = UPDATE_ALL);
 
-    // ScriptInterface
-    void scriptInfo(QString _functionName);
+  // ScriptInterface
+  void scriptInfo(QString _functionName);
 
 private slots:
 
-    // BaseInterface
-    void initializePlugin();  
-    void pluginsInitialized(); // BaseInterface
+  // BaseInterface
+  void initializePlugin();
+  void pluginsInitialized(); // BaseInterface
 
 public :
 
-    AdvancedRemesherPlugin();
+  RemesherPlugin();
 
-    ~AdvancedRemesherPlugin();
+  ~RemesherPlugin();
 
-    QString name() { return (QString("AdvancedRemesher")); };
-    QString description( ) { return (QString("An advanced remesher plugin.")); };
+  QString name() { return (QString("Remesher")); };
+  QString description( ) { return (QString("Remeshing plugin with isotropic and adaptive remesher.")); };
 
 //GUI
 private :
-    AdvancedRemesherToolBox* tool_;
+  RemesherToolBox* tool_;
 
-    ProgressEmitter* progress_;
+  ProgressEmitter* progress_;
 
-    QIcon* toolIcon_;
+  QIcon* toolIcon_;
 
 private slots:
     
-    //---- Adaptive Remeshing ------------
+  //---- Adaptive Remeshing ------------
     
-    void adaptiveRemeshingButtonClicked();
+  void adaptiveRemeshingButtonClicked();
 
-    void adaptiveRemeshing();
+  void adaptiveRemeshing();
 
-    //---- Adaptive Remeshing ------------
-    
-    void uniformRemeshingButtonClicked();
-    
-    void uniformRemeshing();
-    
-    //------------------------------------
-  
-    void threadFinished(QString _jobId);
+  //---- Adaptive Remeshing ------------
 
-    //------------------------------------
+  void uniformRemeshingButtonClicked();
 
-    /// Compute mean edge length and set values
-    void computeInitValues();
+  void uniformRemeshing();
+
+  //------------------------------------
+
+  void threadFinished(QString _jobId);
+
+  //------------------------------------
+
+  /// Compute mean edge length and set values
+  void computeInitValues();
 
 
 //scripting functions
 public slots:
     
-    void adaptiveRemeshing(int           _objectId,
-                           double        _error,
-                           double        _min_edge_length,
-                           double        _max_edge_length,
-                           unsigned int  _iters,
-                           bool          _use_projection = true);
+  void adaptiveRemeshing(int           _objectId,
+                         double        _error,
+                         double        _min_edge_length,
+                         double        _max_edge_length,
+                         unsigned int  _iters,
+                         bool          _use_projection = true);
                            
-    void uniformRemeshing(int           _objectId,
-                          double        _edge_length,
-                          unsigned int  _iters,
-                          unsigned int  _area_iters,
-                          bool          _use_projection = true);
+  void uniformRemeshing(int           _objectId,
+                        double        _edge_length,
+                        unsigned int  _iters,
+                        unsigned int  _area_iters,
+                        bool          _use_projection = true);
 
 public slots:
-    QString version() { return QString("1.0"); };
+  QString version() { return QString("1.0"); };
 };
 
 #endif //ADVANCEDREMESHERPLUGIN_HH
