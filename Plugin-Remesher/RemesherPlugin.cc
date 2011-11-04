@@ -109,6 +109,8 @@ void RemesherPlugin::initializePlugin() {
     toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"remesher.png");
     emit addToolbox( tr("Remesher") , tool_ , toolIcon_);
   }
+
+  connect(this,   SIGNAL( finishJob(QString)),    this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
 }
 
 // ----------------------------------------------------------------------------------------
@@ -228,7 +230,7 @@ void RemesherPlugin::adaptiveRemeshingButtonClicked() {
 
   connect(thread, SIGNAL( finished(QString)),     this, SIGNAL(finishJob(QString)));
   connect(thread, SIGNAL( function() ),           this, SLOT(adaptiveRemeshing()),Qt::DirectConnection);
-  connect(this,   SIGNAL( finishJob(QString)),    this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
+
 
   emit startJob( jobId, "Adaptive remeshing" , 0 , 100 , true);
 
@@ -320,7 +322,6 @@ void RemesherPlugin::uniformRemeshingButtonClicked() {
   connect(thread, SIGNAL( state(QString, int)),   this, SIGNAL(setJobState(QString, int)));
   connect(thread, SIGNAL( finished(QString)),     this, SIGNAL(finishJob(QString)));
   connect(thread, SIGNAL( function() ),           this, SLOT(uniformRemeshing()),Qt::DirectConnection);
-  connect(this,   SIGNAL( finishJob(QString)),    this, SLOT(threadFinished(QString)), Qt::QueuedConnection);
 
   emit startJob( name() + "UniformRemeshing", "Uniform remeshing" , 0 , 100 , true);
 
