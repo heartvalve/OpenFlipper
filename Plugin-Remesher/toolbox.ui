@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AdvancedRemesherTool</class>
- <widget class="QWidget" name="AdvancedRemesherTool">
+ <class>RemesherTool</class>
+ <widget class="QWidget" name="RemesherTool">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>331</height>
+    <width>377</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,6 +74,15 @@
          </item>
          <item row="6" column="1">
           <widget class="QPushButton" name="adaptive_button">
+           <property name="toolTip">
+            <string>Start remeshing</string>
+           </property>
+           <property name="statusTip">
+            <string>Start remeshing</string>
+           </property>
+           <property name="whatsThis">
+            <string>Start remeshing</string>
+           </property>
            <property name="text">
             <string>Remesh</string>
            </property>
@@ -86,6 +95,15 @@
              <width>16777215</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>Number of iterations</string>
+           </property>
+           <property name="statusTip">
+            <string>Number of iterations</string>
+           </property>
+           <property name="whatsThis">
+            <string>Number of iterations</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -103,6 +121,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="adaptive_error">
+           <property name="toolTip">
+            <string>Maximal allowedd deviation from the original surface</string>
+           </property>
+           <property name="statusTip">
+            <string>Maximal allowedd deviation from the original surface</string>
+           </property>
+           <property name="whatsThis">
+            <string>Maximal allowedd deviation from the original surface</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -122,6 +149,15 @@
          </item>
          <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="adaptive_min_edge">
+           <property name="toolTip">
+            <string>Minimal ede length of the resulting mesh</string>
+           </property>
+           <property name="statusTip">
+            <string>Minimal ede length of the resulting mesh</string>
+           </property>
+           <property name="whatsThis">
+            <string>Minimal ede length of the resulting mesh</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -141,6 +177,15 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="adaptive_max_edge">
+           <property name="toolTip">
+            <string>Maximum ede length of the resulting mesh</string>
+           </property>
+           <property name="statusTip">
+            <string>Maximum ede length of the resulting mesh</string>
+           </property>
+           <property name="whatsThis">
+            <string>Maximum ede length of the resulting mesh</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -160,13 +205,31 @@
          </item>
          <item row="4" column="1">
           <widget class="QPushButton" name="adaptive_initial_values">
+           <property name="toolTip">
+            <string>Estimate good parameters for error and edge lengths</string>
+           </property>
+           <property name="statusTip">
+            <string>Estimate good parameters for error and edge lengths</string>
+           </property>
+           <property name="whatsThis">
+            <string>Estimate good parameters for error and edge lengths</string>
+           </property>
            <property name="text">
-            <string>Estimate Initial Values</string>
+            <string>Estimate parameters</string>
            </property>
           </widget>
          </item>
          <item row="5" column="1">
           <widget class="QCheckBox" name="adaptive_projection">
+           <property name="toolTip">
+            <string>Project new vertices onto surface</string>
+           </property>
+           <property name="statusTip">
+            <string>Project new vertices onto surface</string>
+           </property>
+           <property name="whatsThis">
+            <string>Project new vertices onto surface</string>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
@@ -221,6 +284,15 @@
          </item>
          <item row="5" column="1">
           <widget class="QPushButton" name="uniform_button">
+           <property name="toolTip">
+            <string>Start remeshing</string>
+           </property>
+           <property name="statusTip">
+            <string>Start remeshing</string>
+           </property>
+           <property name="whatsThis">
+            <string>Start remeshing</string>
+           </property>
            <property name="text">
             <string>Remesh</string>
            </property>
@@ -256,6 +328,15 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>Number of iterations for the algorithm</string>
+           </property>
+           <property name="statusTip">
+            <string>Number of iterations for the algorithm</string>
+           </property>
+           <property name="whatsThis">
+            <string>Number of iterations for the algorithm</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -272,6 +353,15 @@
          </item>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="uniform_edge_length">
+           <property name="toolTip">
+            <string>Average edge length of the resulting mesh</string>
+           </property>
+           <property name="statusTip">
+            <string>Average edge length of the resulting mesh</string>
+           </property>
+           <property name="whatsThis">
+            <string>Average edge length of the resulting mesh</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -291,13 +381,31 @@
          </item>
          <item row="3" column="1">
           <widget class="QPushButton" name="uniform_initial_values">
+           <property name="toolTip">
+            <string>Estimate good parameters for edge lengths</string>
+           </property>
+           <property name="statusTip">
+            <string>Estimate good parameters for edge lengths</string>
+           </property>
+           <property name="whatsThis">
+            <string>Estimate good parameters for edge lengths</string>
+           </property>
            <property name="text">
-            <string>Estimate Initial Values</string>
+            <string>Estimate Parameters</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
           <widget class="QCheckBox" name="uniform_projection">
+           <property name="toolTip">
+            <string>Project new vertices onto surface</string>
+           </property>
+           <property name="statusTip">
+            <string>Project new vertices onto surface</string>
+           </property>
+           <property name="whatsThis">
+            <string>Project new vertices onto surface</string>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>

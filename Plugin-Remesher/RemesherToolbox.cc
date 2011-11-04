@@ -40,22 +40,17 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include "ui_toolbox.hh"
+#include "RemesherToolbox.hh"
 #include <QtGui>
-#include <iostream>
 
-class AdvancedRemesherToolBox : public QWidget, public Ui::AdvancedRemesherTool
+RemesherToolBox::RemesherToolBox(QWidget *parent)
+    : QWidget(parent)
 {
-  Q_OBJECT
+    setupUi(this);
+}
 
-  signals:
-    // emitted when the widget will get visible
-    void showing();
-
-  public:
-    AdvancedRemesherToolBox(QWidget *parent = 0);
-
-  protected:
-    void showEvent ( QShowEvent * _event );
-};
-
+void RemesherToolBox::showEvent ( QShowEvent * _event )
+{
+  QWidget::showEvent ( _event );
+  emit showing();
+}
