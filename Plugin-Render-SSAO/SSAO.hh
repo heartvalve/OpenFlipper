@@ -91,7 +91,7 @@ private:
   void destroyResources(int _viewerId);
 
   /// reload gl resources
-  void reloadResources(int _viewerId);
+  void reloadResources(int _viewerId, unsigned int _sceneTexWidth, unsigned int _sceneTexHeight);
 
   /// draw a quad in projection space (only positions)
   void drawQuadProj(float _x0 = -1.0f, float _y0 = 1.0f, 
@@ -126,6 +126,11 @@ private:
     /// viewer window height
     unsigned int glHeight_;
 
+    /// scene render target width
+    unsigned int rtSceneWidth_; 
+    /// scene render target height
+    unsigned int rtSceneHeight_;
+
     /// render target width
     unsigned int rtWidth_; 
     /// render target height
@@ -143,8 +148,11 @@ private:
     /// R8G8B8 format
     GLuint sceneNormalTex_;
 
-    /// depth renderbuffer for early Z
-    GLuint depthRenderBuf_;
+    /// depth renderbuffer for ssaoFbo
+    GLuint depthSSAORenderBuf_;
+
+    /// depth renderbuffer for sceneFbo
+    GLuint depthSceneRenderBuf_;
 
     /// standard scene without a render target
     GLuint sceneBufTex_;
@@ -158,19 +166,23 @@ private:
     /// occlusion render target
     GLuint occlusionTex_;
 
-    /// sceneFbo for scene rendering and early z pass
-    /// attachement order: scene, depth, normal, occlusion
+    /// sceneFbo for scene color rendering only (seperated for multisampling)
+    /// attachment order: only scene color texture
     GLuint sceneFbo_;
 
+    /// ssaoFbo for deferred rendering
+    /// attachment order: depth, normal, occlusion
+    GLuint ssaoFbo_;
+
     /// blurFbo for downsampling and gaussian blur filter
-    /// attachement order: downsampled, downsampledTmp, occlusion
+    /// attachment order: downsampled, downsampledTmp, occlusion
     GLuint blurFbo_;
   };
 
   std::map<int, ViewerResources> viewerRes_;
 
   /// shader resources
-  GLSL::Shader* shaders_[8];
+  GLSL::Shader* shaders_[10];
 
   enum
   { 
@@ -178,11 +190,12 @@ private:
     PROG_DOWNSAMPLING,
     PROG_BLUR,
     PROG_SSAO,
-    PROG_FINAL
+    PROG_FINAL,
+    PROG_FINAL_MSAA
   };
   
   /// shader programs
-  GLSL::Program* programs_[5];
+  GLSL::Program* programs_[6];
 
   /// random vector table for sample offset rotation
   GLuint randomVecTex_;

@@ -117,7 +117,7 @@ void SSAOPlugin::supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode)
 
 //////////////////////////////////////////////////////////////////////////
 
-void SSAOPlugin::reloadResources(int _viewerId) 
+void SSAOPlugin::reloadResources(int _viewerId, unsigned int _sceneTexWidth, unsigned int _sceneTexHeight) 
 {
   ViewerResources* p = &viewerRes_[_viewerId];
 
@@ -135,6 +135,9 @@ void SSAOPlugin::reloadResources(int _viewerId)
 
   p->rtDownWidth_ = p->rtWidth_ / 2;
   p->rtDownHeight_ = p->rtHeight_ / 2;
+
+  p->rtSceneWidth_ = _sceneTexWidth;
+  p->rtSceneHeight_ = _sceneTexHeight;
   
   // the scene texture contains the color result of a standard scene render pass
   // format: R8G8B8A8
@@ -144,9 +147,9 @@ void SSAOPlugin::reloadResources(int _viewerId)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   // filter: none (1 to 1 mapping in final pass)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p->glWidth_, p->glHeight_, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p->rtSceneWidth_, p->rtSceneHeight_, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
   // depth buf render texture
   // format: R32F, maybe change to R16F if it works ok
@@ -202,26 +205,48 @@ void SSAOPlugin::reloadResources(int _viewerId)
   ACG::glCheckErrors();
 
   // create depth render buffer
-  glGenRenderbuffersEXT(1, &p->depthRenderBuf_);
-  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, p->depthRenderBuf_);
+  glGenRenderbuffersEXT(1, &p->depthSSAORenderBuf_);
+  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, p->depthSSAORenderBuf_);
   glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, p->glWidth_, p->glHeight_);
   glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-
+  
   // initialize the fbo
-  glGenFramebuffersEXT(1, &p->sceneFbo_);
-  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, p->sceneFbo_);
+  glGenFramebuffersEXT(1, &p->ssaoFbo_);
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, p->ssaoFbo_);
 
   // color_attachment order:
   // scene color, depth, scene normals, occlusion
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, p->sceneBufTex_, 0);
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_TEXTURE_2D, p->depthBufTex_, 0);
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT2_EXT, GL_TEXTURE_2D, p->sceneNormalTex_, 0);
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT3_EXT, GL_TEXTURE_2D, p->occlusionTex_, 0);
-  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, p->depthRenderBuf_);
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, p->depthBufTex_, 0);
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_TEXTURE_2D, p->sceneNormalTex_, 0);
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT2_EXT, GL_TEXTURE_2D, p->occlusionTex_, 0);
+  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, p->depthSSAORenderBuf_);
 
   GLenum fboStatus = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
   if(fboStatus != GL_FRAMEBUFFER_COMPLETE_EXT)
+    printf("SSAO Plugin: ssaoFbo failed to initialize\n");
+
+
+  glGenFramebuffersEXT(1, &p->sceneFbo_);
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, p->sceneFbo_);
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, p->sceneBufTex_, 0);
+
+  if (p->rtSceneWidth_ > p->rtWidth_ || p->rtSceneHeight_ > p->rtHeight_)
+  {
+    // use new depth buffer for multisampling
+    glGenRenderbuffersEXT(1, &p->depthSceneRenderBuf_);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, p->depthSceneRenderBuf_);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, p->rtSceneWidth_, p->rtSceneHeight_);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+   
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, p->depthSceneRenderBuf_);
+  }
+  else
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, p->depthSSAORenderBuf_);
+
+  fboStatus = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+  if(fboStatus != GL_FRAMEBUFFER_COMPLETE_EXT)
     printf("SSAO Plugin: sceneFbo failed to initialize\n");
+
 
   glGenFramebuffersEXT(1, &p->blurFbo_);
   ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, p->blurFbo_);
@@ -245,9 +270,11 @@ void SSAOPlugin::reloadResources(int _viewerId)
     "SSAO/downsampling_fragment.glsl",
     "SSAO/blur_fragment.glsl",
     "SSAO/ssao_fragment.glsl",
-    "SSAO/final_fragment.glsl"};
+    "SSAO/final_fragment.glsl",
+    "SSAO/final_MSAA_vertex.glsl",
+    "SSAO/final_MSAA_fragment.glsl"};
 
-  for (int i = 0; i < 7; ++i)
+  for (int i = 0; i < 9; ++i)
   {
     QString shaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString(ShaderFiles[i]);
 
@@ -257,19 +284,20 @@ void SSAOPlugin::reloadResources(int _viewerId)
     if (shaders_[i]) continue;
 #endif
 
-    if (i < 2) // first two are vertex shaders
+    if (i < 2 || i == 7) // first two are vertex shaders
       shaders_[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
     else
       shaders_[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
 
-    if (!shaders_[i]) {
+    if (!shaders_[i])
+    {
       log(LOGERR, QString(ShaderFiles[i]) + QString(" could not be loaded and compiled"));
       return;
     }
   }
 
   // all needed glprograms
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 6; ++i)
   {
 #ifndef SSAO_SHADER_DEBUG_MODE
     if (!programs_[i])
@@ -300,6 +328,10 @@ void SSAOPlugin::reloadResources(int _viewerId)
       case PROG_FINAL:
         pr->attach(shaders_[1]);
         pr->attach(shaders_[6]); break;
+
+      case PROG_FINAL_MSAA:
+        pr->attach(shaders_[7]);
+        pr->attach(shaders_[8]); break;
       }
 
       pr->link();
@@ -332,11 +364,7 @@ void SSAOPlugin::reloadResources(int _viewerId)
       randVecs[i][2] = sinf(theta);
       randVecs[i][3] = cosf(theta);
     }
-    #ifdef ARCH_DARWIN
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
-    #else
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
-    #endif
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, 4, 4, 0, GL_RGBA, GL_FLOAT, randVecs);
   }
   
   ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
@@ -375,9 +403,12 @@ void SSAOPlugin::destroyResources(int _viewerId)
   ViewerResources* p = &viewerRes_[_viewerId];
 
   if (p->sceneFbo_) glDeleteFramebuffersEXT(1, &p->sceneFbo_);
+  if (p->ssaoFbo_) glDeleteFramebuffersEXT(1, &p->ssaoFbo_);
   if (p->blurFbo_) glDeleteFramebuffersEXT(1, &p->blurFbo_);
 
-  if (p->depthRenderBuf_) glDeleteRenderbuffersEXT(1, &p->depthRenderBuf_);
+  if (p->depthSSAORenderBuf_) glDeleteRenderbuffersEXT(1, &p->depthSSAORenderBuf_);
+  
+  if (p->depthSceneRenderBuf_) glDeleteRenderbuffersEXT(1, &p->depthSceneRenderBuf_);
 
   if (p->sceneBufTex_) glDeleteTextures(1, &p->sceneBufTex_);
   if (p->depthBufTex_) glDeleteTextures(1, &p->depthBufTex_);
@@ -462,11 +493,15 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   pViewer->glWidth_ = _glState->viewport_width();
   pViewer->glHeight_ = _glState->viewport_height();
 
-  if (pViewer->glWidth_ != pViewer->rtWidth_ || pViewer->glHeight_ != pViewer->rtHeight_)
-    reloadResources(viewerId);
+  if (_properties.multisampling())
+  {
+    if ((pViewer->glWidth_ * 2 != pViewer->rtSceneWidth_) || (pViewer->glHeight_ * 2 != pViewer->rtSceneHeight_))
+      reloadResources(viewerId, pViewer->glWidth_ * 2, pViewer->glHeight_ * 2);
+  }
+  else if ((pViewer->glWidth_ != pViewer->rtSceneWidth_) || (pViewer->glHeight_ != pViewer->rtSceneHeight_))
+    reloadResources(viewerId, pViewer->glWidth_, pViewer->glHeight_);
 
   BaseNode* sceneGraphRoot = PluginFunctions::getSceneGraphRootNode();  
-
 
   GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0_EXT,
     GL_COLOR_ATTACHMENT1_EXT,
@@ -481,57 +516,32 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
 
   GLint oldViewport[4];
   glGetIntegerv(GL_VIEWPORT, oldViewport);
-  glViewport(0, 0, pViewer->glWidth_, pViewer->glHeight_);
 
   for (int i = 0; i < 6; ++i)
   {
     ACG::GLState::activeTexture(GL_TEXTURE0 + i);
-    #ifdef ARCH_DARWIN
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
-    #else
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, 0);
-    #endif
+    ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
   }
-
-  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, pViewer->sceneFbo_);
 
   float texelSize[4] = {1.0f / float(pViewer->rtWidth_), 1.0f / float(pViewer->rtHeight_), 0.0f, 0.0f};
 
-  // ---------------------------------------------
-  // 1. init depth and normal targets
-  ACG::GLState::enable(GL_DEPTH_TEST);
-  ACG::GLState::depthFunc(GL_LESS);
-  glDepthMask(GL_TRUE);
-
-  // color attachment 1 and 2 stores the scene depth and normals
-  // clear first
-  ACG::GLState::drawBuffer(drawBuffers[1]);
-  glClearColor(maxDepth, 0.0f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  ACG::GLState::drawBuffer(drawBuffers[2]);
-  glClearColor(0.5f, 0.5f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  ACG::GLState::drawBuffers(2, drawBuffers+1);
-
-  programs_[PROG_INIT]->use();
-  drawScenePass(_glState, _properties, sceneGraphRoot);
-  programs_[PROG_INIT]->disable();
 
   // ---------------------------------------------
-  // 2. render scene with standard materials:
+  // 1. render scene with standard materials:
+  glViewport(0, 0, pViewer->rtSceneWidth_, pViewer->rtSceneHeight_);
+
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, pViewer->sceneFbo_);
   ACG::GLState::drawBuffer(drawBuffers[0]); // scene buffer in render target 0
   glClearColor(_glState->clear_color()[0], _glState->clear_color()[1], _glState->clear_color()[2], 0);
 
   // NOTE: for some reason the early z pass optimization does not work here
   //  using the depth buffer from previous pass gives z fighting
   // early z cull optimization settings:
-//   ACG::GLState::enable(GL_DEPTH_TEST);
-//   ACG::GLState::depthFunc(GL_LEQUAL);
-//   ACG::GLState::lockDepthFunc();
-//   glDepthMask(GL_FALSE); // disable z writing
-//   glClear(GL_COLOR_BUFFER_BIT);
+  //   ACG::GLState::enable(GL_DEPTH_TEST);
+  //   ACG::GLState::depthFunc(GL_LEQUAL);
+  //   ACG::GLState::lockDepthFunc();
+  //   glDepthMask(GL_FALSE); // disable z writing
+  //   glClear(GL_COLOR_BUFFER_BIT);
 
   // without early z cull:
   ACG::GLState::enable(GL_DEPTH_TEST);
@@ -542,10 +552,37 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   drawScenePass(_glState, _properties, sceneGraphRoot);
 
   ACG::GLState::unlockDepthFunc(); // unlock less-equal depth function
-  
+
+
+  if (pViewer->rtSceneWidth_ != pViewer->glWidth_ || pViewer->rtSceneHeight_ != pViewer->glHeight_)
+    glViewport(0, 0, pViewer->glWidth_, pViewer->glHeight_);
+
+  // ---------------------------------------------
+  // 2. init depth and normal targets
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, pViewer->ssaoFbo_);
+  ACG::GLState::enable(GL_DEPTH_TEST);
+  ACG::GLState::depthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+
+  // color attachment 0 and 1 stores the scene depth and normals
+  // clear first
+  ACG::GLState::drawBuffer(drawBuffers[0]);
+  glClearColor(maxDepth, 0.0f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  ACG::GLState::drawBuffer(drawBuffers[1]);
+  glClearColor(0.5f, 0.5f, 0.0f, 0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  ACG::GLState::drawBuffers(2, drawBuffers);
+
+  programs_[PROG_INIT]->use();
+  drawScenePass(_glState, _properties, sceneGraphRoot);
+  programs_[PROG_INIT]->disable();
+
   // ---------------------------------------------
   // 3. compute occlusion
-  ACG::GLState::drawBuffer(drawBuffers[3]); // occlusion buffer in render target 3
+  ACG::GLState::drawBuffer(drawBuffers[2]); // occlusion buffer in render target 2
   ACG::GLState::disable(GL_DEPTH_TEST);
 
   texelSize[0] = 1.0f / float(pViewer->rtWidth_);
@@ -606,6 +643,7 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
 
   programs_[PROG_BLUR]->use();
   programs_[PROG_BLUR]->setUniform("DepthTex", 1);
+  programs_[PROG_BLUR]->setUniform("EdgeBlur", _properties.multisampling() ? 0.3f : 0.0f);
   ACG::GLState::activeTexture(GL_TEXTURE1);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, pViewer->depthBufTex_);
 
@@ -613,13 +651,13 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   texelSize[0] = 1.0f / float(pViewer->rtDownWidth_);
   texelSize[1] = 0.0f;
 
-   gaussianBlurPass(pViewer, texelSize, drawBuffers[1], pViewer->downsampledTex_);
+  gaussianBlurPass(pViewer, texelSize, drawBuffers[1], pViewer->downsampledTex_);
 
   // vertical
   texelSize[0] = 0.0f;
   texelSize[1] = 1.0f / float(pViewer->rtDownHeight_);
 
-   gaussianBlurPass(pViewer, texelSize, drawBuffers[0], pViewer->downsampledTmpTex_);
+  gaussianBlurPass(pViewer, texelSize, drawBuffers[0], pViewer->downsampledTmpTex_);
   // blurred result in pViewer->downsampledTex_
 
   //-----------------------------------------
@@ -633,13 +671,17 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   ACG::GLState::activeTexture(GL_TEXTURE0);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, pViewer->sceneBufTex_);
 
-  programs_[PROG_FINAL]->use();
-  programs_[PROG_FINAL]->setUniform("OcclusionTex", 1);
-  programs_[PROG_FINAL]->setUniform("SceneTex", 0);
+  GLSL::Program* finalProg = programs_[_properties.multisampling() ? PROG_FINAL_MSAA : PROG_FINAL];
+
+  finalProg->use();
+  finalProg->setUniform("OcclusionTex", 1);
+  finalProg->setUniform("SceneTex", 0);
+  if (_properties.multisampling())
+    finalProg->setUniform("SceneTexelSize", ACG::Vec2f(1.0f / float(pViewer->rtSceneWidth_), 1.0f / float(pViewer->rtSceneHeight_)));
 
   drawQuadProj();
 
-  programs_[PROG_FINAL]->disable();
+  finalProg->disable();
   //-----------------------------------------
 
 
