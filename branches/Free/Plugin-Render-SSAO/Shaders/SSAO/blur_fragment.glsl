@@ -15,11 +15,13 @@ uniform float Kernel[5]; // gaussian distribution in one direction only
 
 const float DepthThreshold = 0.01;
 
+uniform float EdgeBlur; // [0,1]: 0 -> no edge blurring, 1 -> blur everywhere
+
 float GetDepthWeight(vec2 uv, float Depth)
 {
 	float SampleDepth = texture2D(DepthTex, uv).x;
 	float DepthRange = abs(Depth - SampleDepth) / (Depth + 0.001);
-	float DepthCheck = DepthRange > DepthThreshold ? 0.0 : 1.0;
+	float DepthCheck = DepthRange > DepthThreshold ? EdgeBlur : 1.0;
 	
 	return DepthCheck;
 }
