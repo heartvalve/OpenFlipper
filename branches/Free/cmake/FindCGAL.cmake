@@ -54,7 +54,7 @@ IF(CGAL_INCLUDE_DIR )
                 PATHS "${CGAL_INCLUDE_DIR}/../lib"
                 DOC "Directory containing the CGAL library"
                ) 
-    add_definitions (-DCGAL_AUTOLINK)
+    #add_definitions (-DCGAL_AUTOLINK)
   ELSEIF( APPLE)
     find_path(CGAL_LIBRARY_DIR 
                 NAMES "libCGAL.dylib"
