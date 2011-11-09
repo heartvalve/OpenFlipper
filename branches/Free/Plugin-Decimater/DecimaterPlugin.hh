@@ -66,8 +66,6 @@
 
 //== CLASS DEFINITION =========================================================
 
-/** Plugin port of the Decimater from Flipper
- */
 class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -97,7 +95,7 @@ public:
   ~DecimaterPlugin() {};
 
   QString name() { return QString("DecimaterPlugin"); };
-  QString description() { return QString("A port of the Decimater plugin in Flipper"); };
+  QString description() { return QString("Mesh Decimater Plugin"); };
 
 private:
 

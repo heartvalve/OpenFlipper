@@ -77,7 +77,7 @@ void DecimaterPlugin::initializePlugin() {
   connect(tool_, SIGNAL(showing()), this, SLOT(slotUpdateNumTriangles()));
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
-  emit addToolbox(QString("Decimater Flipper"), tool_, toolIcon_);
+  emit addToolbox(QString("Decimater"), tool_, toolIcon_);
 
 }
 
@@ -347,7 +347,7 @@ void DecimaterPlugin::slot_decimate() {
     pObject->mesh()->update_normals();
     pObject->update();
 
-    emit createBackup(o_it->id(), "Decimation Flipper");
+    emit createBackup(o_it->id(), "Decimation");
     emit updatedObject(o_it->id(), UPDATE_TOPOLOGY);
   }
 
