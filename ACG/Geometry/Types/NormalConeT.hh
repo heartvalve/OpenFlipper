@@ -77,7 +77,7 @@ namespace Geometry {
 **/
 
 template <typename Scalar>
-class ACGDLLEXPORT NormalConeT
+class NormalConeT
 {
 public:
 
