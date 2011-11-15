@@ -42,6 +42,9 @@ ELSE( WIN32 )
    IF(IPOPT_INCLUDE_DIR)
       SET(IPOPT_FOUND TRUE)
       SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
+      
+      #wrong config under Debian workaround
+      add_definitions( -DHAVE_CSTDDEF )
 #      SET(IPOPT_LIBRARY_DIR "$ENV{IPOPT_DIR}/lib/$ENV{IPOPT_ARCH}/" CACHE PATH "Path to IPOPT Library")
 #      SET(IPOPT_LIBRARY "tao;taopetsc;taofortran" CACHE STRING "IPOPT Libraries")  
 #      MESSAGE(STATUS "${IPOPT_LIBRARY_DIR}")
