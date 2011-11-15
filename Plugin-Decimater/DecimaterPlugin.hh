@@ -60,8 +60,7 @@
 #include <OpenMesh/Tools/Decimater/ModHausdorffT.hh>
 #include <OpenMesh/Tools/Decimater/ModNormalDeviationT.hh>
 #include <OpenMesh/Tools/Decimater/ModEdgeLengthT.hh>
-
-#include "Decimater/DecimaterMods/ModRoundnessT.hh"
+#include <OpenMesh/Tools/Decimater/ModAspectRatioT.hh>
 
 
 //== CLASS DEFINITION =========================================================
@@ -109,7 +108,7 @@ private:
   typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle ModNormalFlippingH;
   typedef OpenMesh::Decimater::ModHausdorffT< DecimaterType >::Handle ModHausdorffH;
   typedef OpenMesh::Decimater::ModNormalDeviationT< DecimaterType >::Handle ModNormalDeviationH;
-  typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle ModRoundnessH;
+  typedef OpenMesh::Decimater::ModAspectRatioT< DecimaterType >::Handle ModAspectRatioH;
   typedef OpenMesh::Decimater::ModEdgeLengthT< DecimaterType >::Handle ModEdgeLengthH;
 
 private slots:
