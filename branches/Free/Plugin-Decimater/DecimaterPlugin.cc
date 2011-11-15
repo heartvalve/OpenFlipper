@@ -257,7 +257,7 @@ void DecimaterPlugin::slot_decimate() {
     ModNormalFlippingH hModNormalFlipping;
     ModHausdorffH hModHausdorff;
     ModNormalDeviationH hModNormalDeviation;
-    ModRoundnessH hModRoundness;
+    ModAspectRatioH hModAspectRatio;
     ModEdgeLengthH hModEdgeLength;
 
     // remove old constraints first
@@ -265,7 +265,7 @@ void DecimaterPlugin::slot_decimate() {
     decimater_object.remove(hModHausdorff);
     decimater_object.remove(hModNormalDeviation);
     decimater_object.remove(hModNormalFlipping);
-    decimater_object.remove(hModRoundness);
+    decimater_object.remove(hModAspectRatio);
     decimater_object.remove(hModEdgeLength);
 
     // priority module: quadrics, normal dev or edge length
@@ -283,7 +283,7 @@ void DecimaterPlugin::slot_decimate() {
 
     // binary modules (order wrt. computation cost)
     if (tool_->cbEdgeLength->isChecked())  decimater_object.add(hModEdgeLength);
-    if (tool_->cbAspectRatio->isChecked()) decimater_object.add(hModRoundness);
+    if (tool_->cbAspectRatio->isChecked()) decimater_object.add(hModAspectRatio);
     if (tool_->cbNormalDev->isChecked())   decimater_object.add(hModNormalDeviation);
     else                                   decimater_object.add(hModNormalFlipping);
     if (tool_->cbDistance->isChecked())    decimater_object.add(hModHausdorff);
@@ -311,8 +311,8 @@ void DecimaterPlugin::slot_decimate() {
       decimater_object.module(hModNormalDeviation).set_normal_deviation(tool_->normalDev->value());
 
     // roundness
-    if (tool_->aspectRatio->value() >= 0.0 && hModRoundness.is_valid())
-      decimater_object.module(hModRoundness).set_roundness(tool_->aspectRatio->value());
+    if (tool_->aspectRatio->value() >= 0.0 && hModAspectRatio.is_valid())
+      decimater_object.module(hModAspectRatio).set_roundness(tool_->aspectRatio->value());
 
     // edge length
     if (tool_->edgeLength->value() >= 0.0 && hModEdgeLength.is_valid())
