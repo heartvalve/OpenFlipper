@@ -57,31 +57,56 @@ class DecimaterInfo : public PerObjectData
   // Copy function
   PerObjectData* copyPerObjectData();
   
+  enum DecimationOrder { DISTANCE, NORMALDEV, EDGELENGTH };
+
   void setDistanceConstraint( double _value );
   void setNormalDeviationConstraint( int _value );
+  void setNormalFlippingConstraint();
   void setRoundnessConstraint( double _value );
+  void setAspectRatioConstraint( double _value );
+  void setEdgeLengthConstraint( double _value );
+  void setIndependentSetsConstraint();
+  void setDecimationOrder( DecimationOrder _order );
   
   void removeDistanceConstraint();
   void removeNormalDeviationConstraint();
+  void removeNormalFlippingConstraint();
   void removeRoundnessConstraint();
+  void removeAspectRatioConstraint();
+  void removeEdgeLengthConstraint();
+  void removeIndependentSetsConstraint();
   
   // Get/Set methods
   bool normalDeviation()    { return normalDeviation_; }
+  bool normalFlipping()     { return normalFlipping_; }
   bool distance()           { return distance_; }
   bool roundness()          { return roundness_; }
+  bool aspectRatio()        { return aspectRatio_; }
+  bool edgeLength()         { return edgeLength_; }
+  bool independentSets()    { return independentSets_; }
   
   int normalDeviationValue()    { return normalDeviation_value_; }
   double distanceValue()        { return distance_value_; }
+  double edgeLengthValue()      { return edgeLength_value_; }
+  double aspectRatioValue()     { return aspectRatio_value_; }
   double roundnessValue()       { return roundness_value_; }
 
 private :
 
+
   bool normalDeviation_;
+  bool normalFlipping_;
   bool distance_;
+  bool edgeLength_;
+  bool aspectRatio_;
   bool roundness_;
+  bool independentSets_;
   
+  DecimationOrder decimationOrder_;
   int normalDeviation_value_;
   double distance_value_;
+  double edgeLength_value_;
+  double aspectRatio_value_;
   double roundness_value_;
 };
 
