@@ -1660,6 +1660,7 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   glView_->setViewport(glWidget_);
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
+  glView_->setFrameStyle(QFrame::NoFrame);
 
   wheelZ_=new QtWheel( 0,"wheel-z",QtWheel::Vertical);
   wheelZ_->setMinimumSize(wheelZ_->sizeHint());
