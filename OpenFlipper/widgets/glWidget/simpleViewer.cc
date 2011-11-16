@@ -121,6 +121,7 @@ void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidge
   scene_->addItem (mainWidget_);
   scene_->setView (mainWidget_);
   mainWidget_->setGeometry (QRect(QPoint(0, 0), size()));
+  setFrameStyle(QFrame::NoFrame);
 
   mainWidget_->sceneGraph (PluginFunctions::getSceneGraphRootNode (), true);
 
