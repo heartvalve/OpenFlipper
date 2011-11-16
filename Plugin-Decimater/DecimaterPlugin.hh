@@ -61,6 +61,8 @@
 #include <OpenMesh/Tools/Decimater/ModNormalDeviationT.hh>
 #include <OpenMesh/Tools/Decimater/ModEdgeLengthT.hh>
 #include <OpenMesh/Tools/Decimater/ModAspectRatioT.hh>
+#include <OpenMesh/Tools/Decimater/ModRoundnessT.hh>
+#include <OpenMesh/Tools/Decimater/ModIndependentSetsT.hh>
 
 
 //== CLASS DEFINITION =========================================================
@@ -104,12 +106,14 @@ private:
 
   typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
 
-  typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle ModQuadricH;
-  typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle ModNormalFlippingH;
-  typedef OpenMesh::Decimater::ModHausdorffT< DecimaterType >::Handle ModHausdorffH;
+  typedef OpenMesh::Decimater::ModAspectRatioT< DecimaterType >::Handle     ModAspectRatioH;
+  typedef OpenMesh::Decimater::ModEdgeLengthT< DecimaterType >::Handle      ModEdgeLengthH;
+  typedef OpenMesh::Decimater::ModHausdorffT< DecimaterType >::Handle       ModHausdorffH;
+  typedef OpenMesh::Decimater::ModIndependentSetsT< DecimaterType >::Handle ModIndependentH;
   typedef OpenMesh::Decimater::ModNormalDeviationT< DecimaterType >::Handle ModNormalDeviationH;
-  typedef OpenMesh::Decimater::ModAspectRatioT< DecimaterType >::Handle ModAspectRatioH;
-  typedef OpenMesh::Decimater::ModEdgeLengthT< DecimaterType >::Handle ModEdgeLengthH;
+  typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle  ModNormalFlippingH;
+  typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle         ModQuadricH;
+  typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle       ModRoundnessH;
 
 private slots:
 
@@ -117,6 +121,9 @@ private slots:
   void initializePlugin();
   void slotObjectUpdated(int _identifier , const UpdateType _type);
   void slotObjectSelectionChanged(int _identifier);
+
+  /// initialization called from button in toolbox
+  void slot_init();
 
   /// decimating called from button in toolbox
   void slot_decimate();
