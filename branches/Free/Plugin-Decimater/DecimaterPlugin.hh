@@ -40,17 +40,27 @@
 *                                                                            *
 \*===========================================================================*/
 
-#ifndef DECIMATER_PLUGIN_HH_INCLUDED
-#define DECIMATER_PLUGIN_HH_INCLUDED
+#ifndef DECIMATERPLUGIN_HH
+#define DECIMATERPLUGIN_HH
+
+//== INCLUDES =================================================================
+
+#include <QObject>
+#include <QMenuBar>
+#include <QTimer>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
+#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
+#include "DecimaterInfo.hh"
 
 #include "DecimaterToolbarWidget.hh"
 
@@ -64,48 +74,78 @@
 #include <OpenMesh/Tools/Decimater/ModRoundnessT.hh>
 #include <OpenMesh/Tools/Decimater/ModIndependentSetsT.hh>
 
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
 
 //== CLASS DEFINITION =========================================================
 
-class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface {
-Q_OBJECT
-Q_INTERFACES(BaseInterface)
-Q_INTERFACES(ToolboxInterface)
-Q_INTERFACES(LoggingInterface)
-Q_INTERFACES(BackupInterface)
+/** Plugin for Decimater Support
+ */
+class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface
+{
+  Q_OBJECT
+  Q_INTERFACES(BaseInterface)
+  Q_INTERFACES(ToolboxInterface)
+  Q_INTERFACES(BackupInterface)
+  Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(ScriptInterface)
+  Q_INTERFACES(RPCInterface)
 
 signals:
 
   // BaseInterface
   void updateView();
   void updatedObject(int _id, const UpdateType _type);
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                          QStringList _parameters, QStringList _descriptions);
 
   // LoggingInterface
   void log(Logtype _type, QString _message);
   void log(QString _message);
 
+  // RPC Interface
+  void pluginExists( QString _pluginName , bool& _exists  ) ;
+  void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+  
   // ToolboxInterface
   void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
-
+  
+  // ScriptInterface
+  void scriptInfo( QString _functionName );
+  
   // BackupInterface
-  void createBackup(int _id, QString _name, UpdateType _type = UPDATE_ALL);
+  void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
-public:
+private slots:
+    // BaseInterface
+    void initializePlugin();
+    void pluginsInitialized();
+    
+    void slotObjectUpdated( int _identifier , const UpdateType _type ); // BaseInterface
+    void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
+public :
+
+  /// Default constructor
   DecimaterPlugin() : tool_(0) {};
+
+  /// Default destructor
   ~DecimaterPlugin() {};
 
-  QString name() { return QString("DecimaterPlugin"); };
-  QString description() { return QString("Mesh Decimater Plugin"); };
+  /// Name of the Plugin
+  QString name(){ return (QString("Decimater")); };
 
-private:
+  /// Description of the Plugin
+  QString description() { return (QString(tr("Mesh Decimation ..."))); };
+
+private :
 
   /// Widget for Toolbox
   DecimaterToolbarWidget* tool_;
   QIcon* toolIcon_;
-
+  
   typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
-
+  
   typedef OpenMesh::Decimater::ModAspectRatioT< DecimaterType >::Handle     ModAspectRatioH;
   typedef OpenMesh::Decimater::ModEdgeLengthT< DecimaterType >::Handle      ModEdgeLengthH;
   typedef OpenMesh::Decimater::ModHausdorffT< DecimaterType >::Handle       ModHausdorffH;
@@ -114,39 +154,38 @@ private:
   typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle  ModNormalFlippingH;
   typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle         ModQuadricH;
   typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle       ModRoundnessH;
-
+  
 private slots:
-
-  // BaseInterface
-  void initializePlugin();
-  void slotObjectUpdated(int _identifier , const UpdateType _type);
-  void slotObjectSelectionChanged(int _identifier);
-
-  /// initialization called from button in toolbox
-  void slot_init();
 
   /// decimating called from button in toolbox
   void slot_decimate();
 
-  // slider / spinbox updates
-  void slotUpdateNumTriangles();
+  /// roundness slider - spinbox sync
+  void updateRoundness(int    _value);
+  void updateRoundness(double _value);
 
-  void updateNormalDev(int _value);
-  void updateAspectRatio(int _value);
-  void updateAspectRatio(double _value);
-  void updateNumTriangles(int _value);
+  /// slider / spinbox updates
+  void updateDistance ();
+  void updateNormalDev ();
+  void updateVertices ();
 
-  // checkbox updates
-  void cbUpdateDistance(int _state);
-  void cbUpdateNormalDev(int _state);
-  void cbUpdateAspectRatio(int _state);
-  void cbUpdateEdgeLength(int _state);
-  void cbUpdateNumTriangles(int _state);
+  /// update number of vertices information
+  void slotUpdateNumVertices();
 
+//===========================================================================
+/** @name Scripting Functions
+  * @{ */
+//===========================================================================
 
 public slots:
+  void decimate(int _objID, QVariantMap _constraints);
 
-  QString version() { return QString("0.1"); };
+public slots:
+   QString version() { return QString("1.0"); };
+
+
+/** @} */
+
 };
 
-#endif
+#endif //DECIMATERPLUGIN_HH

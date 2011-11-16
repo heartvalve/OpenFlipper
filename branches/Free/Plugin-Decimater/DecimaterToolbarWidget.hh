@@ -34,13 +34,11 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 11270 $                                                       *
-*   $LastChangedBy: wilden $                                                *
-*   $Date: 2011-04-11 15:13:21 +0200 (Mo, 11 Apr 2011) $                     *
+*   $Revision: 10745 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-01-26 10:23:50 +0100 (Mi, 26 Jan 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
-
-
 
 #ifndef DECIMATERTOOLBARWIDGET_HH
 #define DECIMATERTOOLBARWIDGET_HH
