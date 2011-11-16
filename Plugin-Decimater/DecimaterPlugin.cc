@@ -34,234 +34,123 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 11270 $                                                       *
-*   $LastChangedBy: wilden $                                                *
-*   $Date: 2011-04-11 15:13:21 +0200 (Mo, 11 Apr 2011) $                     *
+*   $Revision: 11950 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-07-07 10:01:14 +0200 (Do, 07 Jul 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
 
+//=============================================================================
+//
+//  CLASS DecimaterPlugin - IMPLEMENTATION
+//
+//=============================================================================
+
+
 //== INCLUDES =================================================================
 
+#include <QtGui>
+
 #include "DecimaterPlugin.hh"
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-#include <string>
-#include <sstream>
+#include <iostream>
+#include <ACG/GL/GLState.hh>
+#include <QStringList>
+#include <ACG/Scenegraph/ManipulatorNode.hh>
 
-//== IMPLEMENTATION ===========================================================
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-/** \brief initialization of the plugin
- *
- */
-void DecimaterPlugin::initializePlugin() {
+#define DECIMATER "DecimaterData"
+
+//== IMPLEMENTATION ==========================================================
+
+void DecimaterPlugin::initializePlugin()
+{
   tool_ = new DecimaterToolbarWidget();
+  QSize size(100, 100);
+  tool_->resize(size);
 
-  // connect signals to slots
-  connect(tool_->cbDistance, SIGNAL(stateChanged(int)), this, SLOT(cbUpdateDistance(int)));
-  connect(tool_->cbNormalDev, SIGNAL(stateChanged(int)), this, SLOT(cbUpdateNormalDev(int)));
-  connect(tool_->cbAspectRatio, SIGNAL(stateChanged(int)), this, SLOT(cbUpdateAspectRatio(int)));
-  connect(tool_->cbEdgeLength, SIGNAL(stateChanged(int)), this, SLOT(cbUpdateEdgeLength(int)));
-  connect(tool_->cbNumTriangles, SIGNAL(stateChanged(int)), this, SLOT(cbUpdateNumTriangles(int)));
+  // connect signals->slots
+  connect(tool_->pbDecimate,SIGNAL(clicked() ),this,SLOT(slot_decimate()));
 
-  connect(tool_->normalDev, SIGNAL(valueChanged(int)), this, SLOT(updateNormalDev(int)));
-  connect(tool_->normalDevSlider, SIGNAL(valueChanged(int)), this, SLOT(updateNormalDev(int)));
-  connect(tool_->aspectRatio, SIGNAL(valueChanged(double)), this, SLOT(updateAspectRatio(double)));
-  connect(tool_->aspectRatioSlider, SIGNAL(valueChanged(int)), this, SLOT(updateAspectRatio(int)));
-  connect(tool_->numTriangles, SIGNAL(valueChanged(int)), this, SLOT(updateNumTriangles(int)));
-  connect(tool_->numTrianglesSlider, SIGNAL(valueChanged(int)), this, SLOT(updateNumTriangles(int)));
-
-  connect(tool_->pbDecimate, SIGNAL(clicked()), this, SLOT(slot_decimate()));
+  connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(updateRoundness(double)) );
+  connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateRoundness(int)) );
+  connect(tool_->distance,SIGNAL(valueChanged(double) ),this,SLOT(updateDistance()) );
+  connect(tool_->normalDeviation,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
+  connect(tool_->normalDeviationSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
+  connect(tool_->verticesCount,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
+  connect(tool_->verticesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
 
   // Force update if the Toolbox gets visible
-  connect(tool_, SIGNAL(showing()), this, SLOT(slotUpdateNumTriangles()));
+  connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
-  emit addToolbox(QString("Decimater"), tool_, toolIcon_);
-
+  emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
 }
 
-//-----------------------------------------------------------------------------
-
-/** \brief gets and sets the current maximum number of triangles
- *
+/** \brief Initialization of the plugin when it is loaded by the core
+ * 
  */
-void DecimaterPlugin::slotUpdateNumTriangles() {
-  // only update if the tool is visible
-  if (!tool_->isVisible())
-    return;
+void DecimaterPlugin::pluginsInitialized() {
 
-  uint max = 0;
-
-  for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_TRIANGLE_MESH));
-                                       o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    TriMesh* mesh = PluginFunctions::triMesh(o_it->id());
-    max = std::max(mesh->n_faces(), max);
-  }
-
-  tool_->numTriangles->setMinimum(1);
-  tool_->numTriangles->setMaximum(max);
-  tool_->numTrianglesSlider->setMinimum(1);
-  tool_->numTrianglesSlider->setMaximum(max);
+  emit setSlotDescription("decimate(int,QVariantMap)",tr("Decimate a given object"),
+                          QString(tr("objectId,constraints")).split(","),
+                          QString(tr("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)")).split(";"));
 }
 
 
 //-----------------------------------------------------------------------------
 
-/** \brief enables and disables slider and/or spinbox
+/** \brief sync between values of roundness slider and spinbox in the toolbox
  *
+ * @param _value new roundness value
  */
-void DecimaterPlugin::cbUpdateDistance(int _state) {
-  if (_state == Qt::Checked)
-    tool_->distance->setEnabled(true);
-  else if (_state == Qt::Unchecked)
-    tool_->distance->setEnabled(false);
-}
-
-
-//-----------------------------------------------------------------------------
-
-/** \brief enables and disables slider and/or spinbox
- *
- */
-void DecimaterPlugin::cbUpdateNormalDev(int _state) {
-  if (_state == Qt::Checked) {
-    tool_->normalDev->setEnabled(true);
-    tool_->normalDevSlider->setEnabled(true);
-  } else if (_state == Qt::Unchecked) {
-    tool_->normalDev->setEnabled(false);
-    tool_->normalDevSlider->setEnabled(false);
-  }
-}
-
-
-//-----------------------------------------------------------------------------
-
-/** \brief enables and disables slider and/or spinbox
- *
- */
-void DecimaterPlugin::cbUpdateAspectRatio(int _state) {
-  if (_state == Qt::Checked) {
-    tool_->aspectRatio->setEnabled(true);
-    tool_->aspectRatioSlider->setEnabled(true);
-  } else if (_state == Qt::Unchecked) {
-    tool_->aspectRatio->setEnabled(false);
-    tool_->aspectRatioSlider->setEnabled(false);
-  }
-}
-
-
-//-----------------------------------------------------------------------------
-
-/** \brief enables and disables slider and/or spinbox
- *
- */
-void DecimaterPlugin::cbUpdateEdgeLength(int _state) {
-  if (_state == Qt::Checked)
-    tool_->edgeLength->setEnabled(true);
-  else if (_state == Qt::Unchecked)
-    tool_->edgeLength->setEnabled(false);
-}
-
-
-//-----------------------------------------------------------------------------
-
-/** \brief enables and disables slider and/or spinbox
- *
- */
-void DecimaterPlugin::cbUpdateNumTriangles(int _state) {
-  if (_state == Qt::Checked) {
-    tool_->numTriangles->setEnabled(true);
-    tool_->numTrianglesSlider->setEnabled(true);
-  } else if (_state == Qt::Unchecked) {
-    tool_->numTriangles->setEnabled(false);
-    tool_->numTrianglesSlider->setEnabled(false);
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
+void DecimaterPlugin::updateRoundness(int _value)
 {
-  slotUpdateNumTriangles();
+  tool_->roundness->setValue( (double) _value / 100.0 );
+  tool_->cbRoundness->setChecked (true);
 }
+
 
 //-----------------------------------------------------------------------------
 
-void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType _type )
+/** \brief sync between values of roundness slider and spinbox in the toolbox
+ *
+ * @param _value new roundness value
+ */
+void DecimaterPlugin::updateRoundness(double _value)
 {
-  if (_type.contains(UPDATE_TOPOLOGY))
-    slotUpdateNumTriangles();
+  tool_->roundnessSlider->setValue( (int) (_value * 100) );
+  tool_->cbRoundness->setChecked (true);
 }
 
 //-----------------------------------------------------------------------------
 
-/** \brief syncs slider and spinbox
+/** \brief Decimation called by toolbox
  *
  */
-void DecimaterPlugin::updateNormalDev(int _value) {
-  tool_->normalDev->setValue(_value);
-  tool_->normalDevSlider->setValue(_value);
-}
+void DecimaterPlugin::slot_decimate()
+{
+  
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
-//-----------------------------------------------------------------------------
+    //initialize
+    TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
 
-/** \brief syncs slider and spinbox
- *
- */
-void DecimaterPlugin::updateAspectRatio(double _value) {
-  tool_->aspectRatioSlider->setValue((int)(_value * 100));
-}
+    if ( object == 0 )
+      emit log(LOGWARN , tr("Unable to get object"));
 
-//-----------------------------------------------------------------------------
-
-/** \brief syncs slider and spinbox
- *
- */
-void DecimaterPlugin::updateAspectRatio(int _value) {
-  tool_->aspectRatio->setValue((double)_value / 100);
-}
-
-//-----------------------------------------------------------------------------
-
-/** \brief syncs slider and spinbox
- *
- */
-void DecimaterPlugin::updateNumTriangles(int _value) {
-  tool_->numTriangles->setValue(_value);
-  tool_->numTrianglesSlider->setValue(_value);
-}
-
-//-----------------------------------------------------------------------------
-
-/** \brief initialization slot called from the toolbox
- *
- */
-void DecimaterPlugin::slot_init() {
-
-
-}
-
-//-----------------------------------------------------------------------------
-
-/** \brief decimation called from the toolbox
- *
- */
-void DecimaterPlugin::slot_decimate() {
-  for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH);
-                                       o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-    // initialize
-    TriMeshObject* pObject = PluginFunctions::triMeshObject(*o_it);
-
-    if (pObject == 0)
-      emit log(LOGWARN, tr("Unable to get object"));
+    DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( o_it->objectData(DECIMATER) );
 
     TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-
-    if ((uint)tool_->numTriangles->value() >= mesh->n_faces()) return;
-
-    DecimaterType decimater_object(*mesh);
-
+  
+    if (decimater == 0){
+      decimater = new DecimaterInfo();
+      o_it->setObjectData(DECIMATER, decimater);
+    }
+    
     // constraint handles for decimation
     ModAspectRatioH     hModAspectRatio;
     ModEdgeLengthH      hModEdgeLength;
@@ -271,102 +160,229 @@ void DecimaterPlugin::slot_decimate() {
     ModNormalFlippingH  hModNormalFlipping;
     ModQuadricH         hModQuadric;
     ModRoundnessH       hModRoundness;
-
-
-    // remove old constraints first
-    decimater_object.remove(hModAspectRatio);
-    decimater_object.remove(hModEdgeLength);
-    decimater_object.remove(hModHausdorff);
-    decimater_object.remove(hModIndependent);
-    decimater_object.remove(hModNormalDeviation);
-    decimater_object.remove(hModNormalFlipping);
-    decimater_object.remove(hModQuadric);
-    decimater_object.remove(hModRoundness);
-
-
-    // TODO: Use all modules correctly from here!
-
-    // priority module: quadrics, normal dev or edge length
-    if (tool_->rbByDistance->isChecked()) {
-      decimater_object.add(hModQuadric);
-      decimater_object.module(hModQuadric).set_binary(false);
-    } else if (tool_->rbByNormalDeviation->isChecked()) {
-      decimater_object.add(hModNormalDeviation);
-      decimater_object.module(hModNormalDeviation).set_binary(false);
-    } else if (tool_->rbByEdgeLength->isChecked()) {
-      decimater_object.add(hModEdgeLength);
-      decimater_object.module(hModEdgeLength).set_binary(false);
+    
+    // Create decimater
+    DecimaterType decimater_object( *mesh );
+    decimater_object.add( hModQuadric );
+    decimater_object.module( hModQuadric ).unset_max_err();
+    
+    // Remove old constraints
+    if(decimater->distance()) {
+        decimater->removeDistanceConstraint();
+        decimater_object.remove(hModHausdorff);
+    }
+    if(decimater->normalDeviation()) {
+        decimater->removeNormalDeviationConstraint();
+        decimater_object.remove(hModNormalFlipping);
+    }
+    if(decimater->roundness()) {
+        decimater->removeRoundnessConstraint();
+        decimater_object.remove(hModRoundness);
     }
 
+    //and set new constraints
+    if ( tool_->cbDistance->isChecked() ) {
+      if (  decimater_object.add( hModHausdorff ) ) {
+          decimater->setDistanceConstraint( tool_->distance->value() );
+          decimater_object.module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
+      }
+    }
 
-    // binary modules (order wrt. computation cost)
-    if (tool_->cbEdgeLength->isChecked())  decimater_object.add(hModEdgeLength);
-    if (tool_->cbAspectRatio->isChecked()) decimater_object.add(hModAspectRatio);
-    if (tool_->cbNormalDev->isChecked())   decimater_object.add(hModNormalDeviation);
-    else                                   decimater_object.add(hModNormalFlipping);
-    if (tool_->cbDistance->isChecked())    decimater_object.add(hModHausdorff);
+    if ( tool_->cbNormalDev->isChecked() ) {
+      if (  decimater_object.add( hModNormalFlipping ) ) {
+          decimater->setNormalDeviationConstraint( tool_->normalDeviation->value() );
+          decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() );
+      }
+    }
 
+    if ( tool_->cbRoundness->isChecked() ) {      
+      if (  decimater_object.add( hModRoundness ) ) {
+          decimater->setRoundnessConstraint( tool_->roundness->value() );
+          decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+      }
+    }
 
-    // init decimater
-    if (!decimater_object.initialize()) {
+    // Initialize the decimater
+    if( ! decimater_object.initialize() ){
       emit log(LOGWARN, tr("Decimater could not be initialized"));
       continue;
     }
 
-    // go over checkboxes
-    if (!tool_->cbDistance->isChecked()) tool_->distance->setValue(-1.0);
-    if (!tool_->cbNormalDev->isChecked()) tool_->normalDev->setValue(-1);
-    if (!tool_->cbAspectRatio->isChecked()) tool_->aspectRatio->setValue(-1.0);
-    if (!tool_->cbEdgeLength->isChecked()) tool_->edgeLength->setValue(-1.0);
-    if (!tool_->cbNumTriangles->isChecked()) tool_->numTriangles->setValue(1);
+    //decimate
+    if ( tool_->cbVertices->isChecked() )
+        decimater_object.decimate_to(tool_->verticesCount->value());
+    else
+        decimater_object.decimate();
 
-    // Hausdorff error
-    if (tool_->distance->value() >= 0.0 && hModHausdorff.is_valid())
-      decimater_object.module(hModHausdorff).set_tolerance(tool_->distance->value());
+    object->mesh()->garbage_collection();
+    object->mesh()->update_normals();
+    object->update();
+    
+    // Create backup
+    emit createBackup(o_it->id(), "Decimation");
+    emit updatedObject( o_it->id() , UPDATE_TOPOLOGY );
+  }
 
-    // normal deviation
-    if (tool_->normalDev->value() >= 0.0 && hModNormalDeviation.is_valid())
-      decimater_object.module(hModNormalDeviation).set_normal_deviation(tool_->normalDev->value());
+  emit updateView();
+}
 
-    // roundness
-    if (tool_->aspectRatio->value() >= 0.0 && hModAspectRatio.is_valid())
-      decimater_object.module(hModAspectRatio).set_aspect_ratio(tool_->aspectRatio->value());
 
-    // edge length
-    if (tool_->edgeLength->value() >= 0.0 && hModEdgeLength.is_valid())
-      decimater_object.module(hModEdgeLength).set_edge_length(tool_->edgeLength->value());
+//-----------------------------------------------------------------------------
 
-    // if something is selected: lock un-selected vertices
-    TriMesh::VertexIter  v_it, v_end(mesh->vertices_end());
-    bool something_selected = false;
-    for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-      if (mesh->status(v_it).selected()) {
-        something_selected = true;
-        break;
+/** \brief Decimation called by Scripting
+ *
+ * @param _objID id of an object
+ * @param _constraints A string containing a comma separated list of constraints (distance,normal_deviation,roundness,triangles)
+ * @param _values a string containing a comma separated list of constraint values suited to the _constraints parameter
+ */
+void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
+
+
+  BaseObjectData* baseObjectData;
+  if ( ! PluginFunctions::getObject(_objID,baseObjectData) ) {
+    emit log(LOGERR,tr("Unable to get Object"));
+    return;
+  }
+
+  if ( baseObjectData->dataType() == DATA_TRIANGLE_MESH ) {
+    TriMeshObject* object = PluginFunctions::triMeshObject(baseObjectData);
+
+    if ( object == 0 ) {
+      emit log(LOGWARN , tr("Unable to get object ( Only Triangle Meshes supported)"));
+      return;
+    }
+
+    DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( object->objectData(DECIMATER) );
+
+    TriMesh* mesh = PluginFunctions::triMesh(baseObjectData);
+    
+    if (decimater == 0){
+      decimater = new DecimaterInfo();
+      object->setObjectData(DECIMATER, decimater);
+    }
+    
+    // constraint handles for decimation
+    ModAspectRatioH     hModAspectRatio;
+    ModEdgeLengthH      hModEdgeLength;
+    ModHausdorffH       hModHausdorff;
+    ModIndependentH     hModIndependent;
+    ModNormalDeviationH hModNormalDeviation;
+    ModNormalFlippingH  hModNormalFlipping;
+    ModQuadricH         hModQuadric;
+    ModRoundnessH       hModRoundness;
+    
+    // Create decimater
+    DecimaterType decimater_object( *mesh );
+    decimater_object.add( hModQuadric );
+    decimater_object.module( hModQuadric ).unset_max_err();
+
+    // Remove old constraints
+    if(decimater->distance()) {
+        decimater->removeDistanceConstraint();
+        decimater_object.remove(hModHausdorff);
+    }
+    if(decimater->normalDeviation()) {
+        decimater->removeNormalDeviationConstraint();
+        decimater_object.remove(hModNormalFlipping);
+    }
+    if(decimater->roundness()) {
+        decimater->removeRoundnessConstraint();
+        decimater_object.remove(hModRoundness);
+    }
+
+    //distance constraint
+    if ( _constraints.contains("distance") ){
+
+      bool ok;
+
+      double value = _constraints["distance"].toDouble(&ok);
+
+      if (ok) {
+        if (  decimater_object.add( hModHausdorff ) ) {
+            decimater->setDistanceConstraint( value );
+            decimater_object.module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
+        }
       }
     }
-    if (something_selected)
-      for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
-        mesh->status(v_it).set_locked(!mesh->status(v_it).selected());
 
-    std::ostringstream infostream;
-    decimater_object.info(infostream);
-    std::cout << infostream.str();
+    //normal deviation constraint
+    if ( _constraints.contains("normal_deviation") ){
 
-    // decimate
-    decimater_object.decimate_to_faces(0, tool_->numTriangles->value());
+      bool ok;
 
-    // unlock again
-    if (something_selected)
-      for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            mesh->status(v_it).set_locked(false);
+      int value = _constraints["normal_deviation"].toInt(&ok);
 
-    pObject->mesh()->garbage_collection();
-    pObject->mesh()->update_normals();
-    pObject->update();
+      if (ok) {
+        if (  decimater_object.add( hModNormalFlipping ) ) {
+            decimater->setNormalDeviationConstraint( value );
+            decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() );
+        }
+      }
+    }
 
-    emit createBackup(o_it->id(), "Decimation");
-    emit updatedObject(o_it->id(), UPDATE_TOPOLOGY);
+    //roundness constraint
+    if ( _constraints.contains("roundness") ){
+
+      bool ok;
+
+      double value = _constraints["roundness"].toDouble(&ok);
+
+      if (ok) {
+        if (  decimater_object.add( hModRoundness ) ) {
+            decimater->setRoundnessConstraint( value );
+            decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+        }
+      }
+    }
+
+    //triangleCount constraint
+    bool triangleCount = false;
+    int triangles = 0;
+
+    if ( _constraints.contains("vertices") ){
+
+      bool ok;
+
+      int value = _constraints["vertices"].toInt(&ok);
+
+      if (ok){
+        triangleCount = true;
+        triangles = value;
+      }
+    }
+
+    //init the decimater
+    if( ! decimater_object.initialize() ){
+      emit log(LOGWARN, tr("Decimater could not be initialized"));
+      return;
+    }
+
+    //decimate
+    if ( triangleCount )
+      decimater_object.decimate_to( triangles ); // do decimation
+    else
+      decimater_object.decimate(); // do decimation
+
+    object->mesh()->garbage_collection();
+    object->mesh()->update_normals();
+    object->update();
+
+    // Create backup
+    emit createBackup(_objID, "Decimation");
+    
+    // Create QVariantMap parameter string
+    QString param = "("  + (_constraints.contains("distance") ? tr("distance = %1").arg(_constraints["distance"].toString()) : "") +
+                    ", " + (_constraints.contains("normal_deviation") ? tr("normal_deviation = %1").arg(_constraints["normal_deviation"].toString()) : "") +
+                    ", " + (_constraints.contains("roundness") ? tr("roundness = %1").arg(_constraints["roundness"].toString()) : "") +
+                    ", " + (_constraints.contains("vertices") ? tr("vertices = %1").arg(_constraints["vertices"].toString()) : "") + ")";
+    
+    emit scriptInfo( "decimate(" + QString::number(_objID) + ", " + param + ")" );
+    
+    emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
+
+  } else {
+    emit log(LOGERR,tr("Unsupported object type for decimater"));
+    return;
   }
 
   emit updateView();
@@ -374,4 +390,84 @@ void DecimaterPlugin::slot_decimate() {
 
 //-----------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2(DecimaterPlugin, DecimaterPlugin);
+void DecimaterPlugin::slotUpdateNumVertices()
+{
+  // Only update if tool is visible
+  if ( !tool_->isVisible() ) {
+    return;
+  }
+
+  int max = 0;
+  int div = 0;
+
+  bool ok;
+  emit functionExists( "infomeshobject" , "vertexCount(int)", ok  ) ;
+  if (!ok)
+  {
+    tool_->currentNumVertices->setText ("<not available>");
+    return;
+  }
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH)) ;
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+
+    max = std::max( RPC::callFunctionValue<int>   ("infomeshobject" , "vertexCount",o_it->id()) , max );
+    div++;
+  }
+
+  if (div <= 0)
+    tool_->currentNumVertices->setText ("<not available>");
+  else {
+    tool_->currentNumVertices->setText (QString::number(max));
+    tool_->verticesCount->setMaximum(max);
+    tool_->verticesCountSlider->setMaximum(max);
+    
+    if ( tool_->verticesCount->value() < 2 )
+      tool_->verticesCount->setValue( max / 2 );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
+{
+  slotUpdateNumVertices ();
+}
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType _type )
+{
+  if ( _type.contains(UPDATE_TOPOLOGY) )
+    slotUpdateNumVertices ();
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateVertices()
+{
+  tool_->cbVertices->setChecked (true);
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateNormalDev()
+{
+  tool_->cbNormalDev->setChecked (true);
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateDistance()
+{
+  tool_->cbDistance->setChecked (true);
+}
+
+//-----------------------------------------------------------------------------
+
+Q_EXPORT_PLUGIN2(DecimaterPlugin , DecimaterPlugin );
+
