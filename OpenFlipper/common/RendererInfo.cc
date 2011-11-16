@@ -135,9 +135,15 @@ unsigned int RenderManager::available() {
 }
 
 
-void RenderManager::setActive(unsigned int _active, unsigned int _id) {
+void RenderManager::setActive(unsigned int _active, int _id) {
+
+  if ( _id < 0 ) {
+    std::cerr << "RenderManager::setActive illegal viewer id: " << _id << std::endl;
+    return;
+  }
+
   // Increase vector size
-  if ( _id >= activeRenderers_.size() )
+  if ( _id >= (int)activeRenderers_.size() )
     activeRenderers_.resize(_id +1 );
 
   if ( _active <  availableRenderers_.size() )
@@ -146,9 +152,15 @@ void RenderManager::setActive(unsigned int _active, unsigned int _id) {
     std::cerr << "Out of range error when setting active renderer" << std::endl;
 }
 
-void RenderManager::setActive(QString _active, unsigned int _id) {
+void RenderManager::setActive(QString _active, int _id) {
+
+  if ( _id < 0 ) {
+    std::cerr << "RenderManager::setActive illegal viewer id: " << _id << std::endl;
+    return;
+  }
+
   // Increase vector size
-  if ( _id >= activeRenderers_.size() )
+  if ( _id >= (int)activeRenderers_.size() )
     activeRenderers_.resize(_id +1 );
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
@@ -158,17 +170,27 @@ void RenderManager::setActive(QString _active, unsigned int _id) {
 
 }
 
-RendererInfo* RenderManager::active(unsigned int _id) {
+RendererInfo* RenderManager::active( int _id) {
+
+  // Temporary viewer with no fixed id, return first renderer
+  if ( _id < 0 )
+    return 0;
+
   // Increase vector size
-  if ( _id >= activeRenderers_.size() )
+  if ( _id >= (int)activeRenderers_.size() )
     activeRenderers_.resize(_id +1 );
 
   return &availableRenderers_[activeRenderers_[_id]];
 }
 
-unsigned int RenderManager::activeId(unsigned int _id) {
+unsigned int RenderManager::activeId( int _id) {
+
+  // Temporary viewer with no fixed id, return first renderer
+  if ( _id < 0 )
+    return 0;
+
   // Increase vector size
-  if ( _id >= activeRenderers_.size() )
+  if ( _id >= (int)activeRenderers_.size() )
     activeRenderers_.resize(_id +1 );
 
   return activeRenderers_[_id];
@@ -231,7 +253,7 @@ PostProcessorInfo* PostProcessorManager::getPostProcessor(QString _name) {
   return 0;
 }
 
-PostProcessorInfo* PostProcessorManager::operator[](unsigned int _id) {
+PostProcessorInfo* PostProcessorManager::operator[](unsigned int _id ) {
 
   if ( _id >= availablePostProcessors_.size())
     return 0;
@@ -244,10 +266,16 @@ unsigned int PostProcessorManager::available() {
   return availablePostProcessors_.size();
 }
 
-void PostProcessorManager::setActive(unsigned int _active, unsigned int _id) {
+void PostProcessorManager::setActive(unsigned int _active, int _id ) {
+
+  // Temporary viewer with no fixed id
+  if ( _id < 0 ) {
+    std::cerr << "PostProcessorManager::setActive illegal viewer id: " << _id << std::endl;
+    return;
+  }
 
   // Increase vector size
-  if ( _id >= activePostProcessors_.size() )
+  if ( _id >= (int)activePostProcessors_.size() )
     activePostProcessors_.resize(_id +1 );
 
   if ( _active <  availablePostProcessors_.size() )
@@ -256,10 +284,16 @@ void PostProcessorManager::setActive(unsigned int _active, unsigned int _id) {
     std::cerr << "Out of range error when setting active post processor" << std::endl;
 }
 
-void PostProcessorManager::setActive(QString _active,unsigned int _id) {
+void PostProcessorManager::setActive(QString _active, int _id ) {
+
+  // Temporary viewer with no fixed id
+  if ( _id < 0 ) {
+    std::cerr << "PostProcessorManager::setActive illegal viewer id: " << _id << std::endl;
+    return;
+  }
 
   // Increase vector size
-  if ( _id >= activePostProcessors_.size() )
+  if ( _id >= (int)activePostProcessors_.size() )
     activePostProcessors_.resize(_id +1 );
 
   for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
@@ -269,18 +303,28 @@ void PostProcessorManager::setActive(QString _active,unsigned int _id) {
 
 }
 
-PostProcessorInfo* PostProcessorManager::active(unsigned int _id) {
+PostProcessorInfo* PostProcessorManager::active( int _id ) {
+
+  // Temporary viewer with no fixed id, return first post processor
+  if ( _id < 0 )
+    return 0;
+
   // Increase vector size
-   if ( _id >= activePostProcessors_.size() )
+   if ( _id >= (int)activePostProcessors_.size() )
      activePostProcessors_.resize(_id +1 );
 
   return &availablePostProcessors_[activePostProcessors_[_id]];
 }
 
-unsigned int PostProcessorManager::activeId(unsigned int _id) {
+unsigned int PostProcessorManager::activeId( int _id ) {
+
+  // Temporary viewer with no fixed id, return first post processor
+  if ( _id < 0 )
+    return 0;
+
   // Increase vector size
-   if ( _id >= activePostProcessors_.size() )
-     activePostProcessors_.resize(_id +1 );
+  if ( _id >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
 
   return activePostProcessors_[_id];
 }
