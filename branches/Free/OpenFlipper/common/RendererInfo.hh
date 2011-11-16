@@ -130,28 +130,28 @@ class DLLEXPORT RenderManager {
      * @param _id viewer id
      * @param _active id of the renderer
      */
-    void setActive(unsigned int _active, unsigned int _id);
+    void setActive(unsigned int _active, int _id);
 
     /** \brief set the active renderer
     *
     * @param _id viewer id
     * @param _active name of the renderer
     */
-    void setActive(QString _active, unsigned int _id);
+    void setActive(QString _active, int _id);
 
     /** \brief Get the current active renderer
      *
      * @param _id viewer id
      * @return Renderer
      */
-    RendererInfo* active(unsigned int _id);
+    RendererInfo* active(int _id);
 
     /** \brief Get the id of the active renderer
      *
      * @param _id viewer id
      * @return renderer id
      */
-    unsigned int activeId(unsigned int _id);
+    unsigned int activeId(int _id);
 
   private:
     /// Vector holding all available renderers
@@ -235,21 +235,21 @@ class DLLEXPORT PostProcessorManager {
     * @param _id viewer id
     * @param _active id of the post processor
     */
-    void setActive(unsigned int _active, unsigned int _id);
+    void setActive(unsigned int _active, int _id);
 
     /** \brief set the active post processor for viewer
     *
     * @param _id viewer id
     * @param _active name of the post processor
     */
-    void setActive(QString _active, unsigned int _id);
+    void setActive(QString _active, int _id);
 
     /** \brief Get the current active post processor for viewer
     *
     * @param _id ViewerId
     * @return post processor
     */
-    PostProcessorInfo* active(unsigned int _id);
+    PostProcessorInfo* active( int _id);
 
 
     /** \brief Get the id of the active post processor for viewer
@@ -257,7 +257,7 @@ class DLLEXPORT PostProcessorManager {
     * @param _id ViewerId
     * @return post processor id
     */
-    unsigned int activeId(unsigned int _id);
+    unsigned int activeId( int _id);
 
   private:
     /// Vector holding all available  post processors
