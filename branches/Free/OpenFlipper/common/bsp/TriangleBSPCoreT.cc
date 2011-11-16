@@ -76,7 +76,6 @@ build(unsigned int _max_handles, unsigned int _max_depth)
   // call recursive helper
   _build(root_, _max_handles, _max_depth);
   
-  std::cout << "Number of nodes:" << nodes << std::endl;
 }
 
 
