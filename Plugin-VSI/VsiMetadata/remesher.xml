@@ -1,0 +1,94 @@
+<OpenFlipper>
+  <element name="uniform_remesher">
+    <category>Algorithms</category>
+    <short>Uniform Remeshing</short>
+    <long>Uniform Remeshing</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="eLength" type="Number">
+        <short>Target edge length</short>
+        <long>Desired resulting edge length</long>
+        <min>0.0</min>
+        <max>1000</max>
+        <precision>0.0001</precision>
+      </input>
+      <input name="iterations" type="Number" external="false" runtime="false">
+        <short>Number of iterations</short>
+        <long>Number of remeshing iterations that will be performed</long>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+        <default>1</default>
+      </input>
+      <input name="area_iterations" type="Number" external="false" runtime="false">
+        <short>Number of area iterations</short>
+        <long>Number of area remeshing iterations that will be performed</long>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+        <default>1</default>
+      </input>
+      <input name="projection" type="Bool" external="false" runtime="false">
+        <short>Project to surface</short>
+        <long>Project vertices back to surface after a remeshing step</long>
+        <default>true</default>
+      </input>
+    </inputs>
+    <code>
+      remesher.uniformRemeshing([input="obj"],[input="eLength"],[input="iterations"],[input="area_iterations"],[input="projection"]);
+    </code>
+  </element>
+  <element name="adaptive_remesher">
+    <category>Algorithms</category>
+    <short>Adaptive Remeshing</short>
+    <long>Adaptive Remeshing</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+       <input name="error" type="Number">
+        <short>Error</short>
+        <long>Maximum distance to original mesh</long>
+        <min>0.0</min>
+        <max>1000</max>
+        <precision>0.0001</precision>
+      </input>
+      <input name="minEdgeLength" type="Number">
+        <short>Minimal edge length</short>
+        <long>Desired resulting minimal edge length</long>
+        <min>0.0</min>
+        <max>1000</max>
+        <precision>0.0001</precision>
+      </input>
+      <input name="maxEdgeLength" type="Number">
+        <short>Maximal edge length</short>
+        <long>Desired resulting maximal edge length</long>
+        <min>0.0</min>
+        <max>1000</max>
+        <precision>0.0001</precision>
+      </input>      
+      <input name="iterations" type="Number" external="false" runtime="false">
+        <short>Number of iterations</short>
+        <long>Number of remeshing iterations that will be performed</long>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+        <default>1</default>
+      </input>
+      <input name="projection" type="Bool" external="false" runtime="false">
+        <short>Project to surface</short>
+        <long>Project vertices back to surface after a remeshing step</long>
+        <default>true</default>
+      </input>
+    </inputs>
+    <code>
+      remesher.adaptiveRemeshing([input="obj"],[input="error"],[input="minEdgeLength"],[input="maxEdgeLength"],[input="iterations"],[input="projection"]);
+    </code>
+  </element>  
+</OpenFlipper>
