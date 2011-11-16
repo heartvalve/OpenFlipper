@@ -163,14 +163,19 @@ private slots:
   /// roundness slider - spinbox sync
   void updateRoundness(int    _value);
   void updateRoundness(double _value);
+  void updateAspectRatio(int _value);
+  void updateAspectRatio(double _value);
 
   /// slider / spinbox updates
   void updateDistance ();
   void updateNormalDev ();
   void updateVertices ();
+  void updateTriangles ();
+  void updateEdgeLength ();
 
   /// update number of vertices information
   void slotUpdateNumVertices();
+  void slotUpdateNumTriangles();
 
 //===========================================================================
 /** @name Scripting Functions

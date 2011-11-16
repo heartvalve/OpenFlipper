@@ -44,10 +44,17 @@
 
 DecimaterInfo::DecimaterInfo() :
   normalDeviation_(false),
+  normalFlipping_(false),
   distance_(false),
+  edgeLength_(false),
+  aspectRatio_(false),
   roundness_(false),
+  independentSets_(false),
+  decimationOrder_(DISTANCE),
   normalDeviation_value_(0),
   distance_value_(0),
+  edgeLength_value_(0),
+  aspectRatio_value_(0),
   roundness_value_(0) {}
 
 
@@ -81,10 +88,49 @@ void DecimaterInfo::setNormalDeviationConstraint( int _value ){
 
 //-----------------------------------------------------------------------------------
 
+void DecimaterInfo::setNormalFlippingConstraint(){
+
+  normalFlipping_ = true;
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setIndependentSetsConstraint(){
+
+  independentSets_ = true;
+}
+
+
+//-----------------------------------------------------------------------------------
+
 void DecimaterInfo::setRoundnessConstraint( double _value ){
 
   roundness_ = true;
   roundness_value_ = _value;
+}
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setAspectRatioConstraint( double _value ){
+
+  aspectRatio_ = true;
+  aspectRatio_value_ = _value;
+}
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setEdgeLengthConstraint( double _value ){
+
+  edgeLength_ = true;
+  edgeLength_value_ = _value;
+}
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setDecimationOrder( DecimationOrder _order ){
+
+  decimationOrder_ = _order;
 }
 
 //-----------------------------------------------------------------------------------
@@ -100,11 +146,53 @@ void DecimaterInfo::removeDistanceConstraint(){
 
 //-----------------------------------------------------------------------------------
 
+void DecimaterInfo::removeEdgeLengthConstraint(){
+
+  if (  edgeLength_ ) {
+    edgeLength_ = false;
+    edgeLength_value_ = 0;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
 void DecimaterInfo::removeNormalDeviationConstraint(){
 
   if ( normalDeviation_ ) {
     normalDeviation_ = false;
     normalDeviation_value_ = 0;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::removeNormalFlippingConstraint(){
+
+  if ( normalFlipping_ ) {
+    normalFlipping_ = false;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::removeIndependentSetsConstraint(){
+
+  if ( independentSets_ ) {
+    independentSets_ = false;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::removeAspectRatioConstraint(){
+
+  if ( aspectRatio_ ) {
+    aspectRatio_ = false;
+    aspectRatio_value_ = 0;
   }
 }
 

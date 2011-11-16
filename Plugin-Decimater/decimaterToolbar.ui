@@ -7,13 +7,46 @@
     <x>0</x>
     <y>0</y>
     <width>364</width>
-    <height>290</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Decimation Order</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="rbByDistance">
+        <property name="text">
+         <string>by Distance</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbByNormalDeviation">
+        <property name="text">
+         <string>by Normal Deviation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbByEdgeLength">
+        <property name="text">
+         <string>by Edge length</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
@@ -109,7 +142,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QCheckBox" name="cbRoundness">
           <property name="enabled">
            <bool>true</bool>
@@ -125,7 +158,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QSlider" name="roundnessSlider">
           <property name="maximum">
            <number>100</number>
@@ -138,7 +171,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
+        <item row="3" column="2">
          <widget class="QDoubleSpinBox" name="roundness">
           <property name="enabled">
            <bool>true</bool>
@@ -157,45 +190,63 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QCheckBox" name="cbVertices">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="cbAspectRatio">
           <property name="text">
-           <string>#Vertices</string>
+           <string>AspectRatio</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QSlider" name="verticesCountSlider">
+        <item row="4" column="2">
+         <widget class="QDoubleSpinBox" name="aspectRatio">
           <property name="minimum">
-           <number>1</number>
+           <double>1.200000000000000</double>
           </property>
           <property name="maximum">
-           <number>100000</number>
+           <double>15.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
           <property name="value">
-           <number>5000</number>
+           <double>3.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSlider" name="aspectRatioSlider">
+          <property name="minimum">
+           <number>120</number>
+          </property>
+          <property name="maximum">
+           <number>1500</number>
+          </property>
+          <property name="value">
+           <number>300</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QSpinBox" name="verticesCount">
-          <property name="enabled">
-           <bool>true</bool>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="cbEdgeLength">
+          <property name="text">
+           <string>Edge Length</string>
           </property>
-          <property name="minimum">
-           <number>1</number>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QDoubleSpinBox" name="edgeLength">
+          <property name="singleStep">
+           <double>0.010000000000000</double>
           </property>
-          <property name="maximum">
-           <number>99999</number>
-          </property>
-          <property name="value">
-           <number>5000</number>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="cbIndependentSets">
+          <property name="text">
+           <string>Independent Sets</string>
           </property>
          </widget>
         </item>
@@ -224,6 +275,100 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Stock conditions</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="rbTriangles">
+           <property name="text">
+            <string>#Triangles</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSlider" name="trianglesCountSlider">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100000</number>
+           </property>
+           <property name="value">
+            <number>5000</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QSpinBox" name="trianglesCount">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>99999</number>
+           </property>
+           <property name="value">
+            <number>5000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="rbVertices">
+           <property name="text">
+            <string>#Vertices</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSlider" name="verticesCountSlider">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>100000</number>
+           </property>
+           <property name="value">
+            <number>5000</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="verticesCount">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>99999</number>
+           </property>
+           <property name="value">
+            <number>5000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="rbConstraintsOnly">
+           <property name="text">
+            <string>Constraints only</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pbDecimate">
@@ -263,12 +408,12 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>71</y>
+     <x>235</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel">
-     <x>258</x>
-     <y>76</y>
+     <x>344</x>
+     <y>212</y>
     </hint>
    </hints>
   </connection>
@@ -279,28 +424,60 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>232</x>
-     <y>81</y>
+     <x>344</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
-     <x>189</x>
-     <y>82</y>
+     <x>235</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trianglesCountSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>trianglesCount</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>365</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>295</x>
+     <y>367</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trianglesCount</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>trianglesCountSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>291</x>
+     <y>362</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>365</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>verticesCountSlider</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>sliderMoved(int)</signal>
    <receiver>verticesCount</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>190</x>
-     <y>137</y>
+     <x>234</x>
+     <y>390</y>
     </hint>
     <hint type="destinationlabel">
-     <x>261</x>
-     <y>141</y>
+     <x>312</x>
+     <y>399</y>
     </hint>
    </hints>
   </connection>
@@ -311,12 +488,12 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>232</x>
-     <y>133</y>
+     <x>317</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>133</y>
+     <x>228</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>
