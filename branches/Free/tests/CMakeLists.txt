@@ -31,7 +31,15 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # that pretend to be scriptable without ui are correct and the core
   # can start
   # ========================================================================
-  ADD_TEST(BatchStart ${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper -b -c )
+
+  if (APPLE)
+    ADD_TEST(BatchStart ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app/Contents/MacOS/OpenFlipper -b -c )
+  elseif( WIN32 )
+    ADD_TEST(BatchStart ${CMAKE_BINARY_DIR}/Build/OpenFlipper.exe -b -c )
+  else()
+    ADD_TEST(BatchStart ${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper -b -c )
+  endif()
+
 
   # Timeout after 60 seconds if we havean endless loop
   # Should be run serial to avoid collisons with other instances
