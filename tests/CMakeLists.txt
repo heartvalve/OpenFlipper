@@ -73,6 +73,35 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
     add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/${_local_test_dir})
   endforeach ()
 
-  
+
+
+
+
+
+  # ========================================================================
+  # ========================================================================
+  # ========================================================================
+  # Add tests from plugins
+  # ========================================================================
+  # ========================================================================
+  # ========================================================================
+
+
+  file (
+      GLOB _plugins_in
+      RELATIVE "${CMAKE_SOURCE_DIR}"
+      "${CMAKE_SOURCE_DIR}/Plugin-*/CMakeLists.txt"
+  )
+
+  foreach (_plugin ${_plugins_in})
+
+    get_filename_component (_plugin_dir ${_plugin} PATH)
+
+     # If a test subdir exists, we add it here
+    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests)
+      add_subdirectory(${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests ${CMAKE_BINARY_DIR}/tests/${_plugin_dir} )
+    endif()
+
+   endforeach ()
 
 endif()
