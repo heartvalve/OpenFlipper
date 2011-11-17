@@ -5,6 +5,8 @@ INCLUDE(CTest)
 
 if(BUILD_TESTING)
 
+SET (CTEST_DROP_SITE_CDASH FALSE)
+
   # ========================================================================
   # Copy converter files from ctest output to junit output
   # ========================================================================
@@ -12,7 +14,7 @@ if(BUILD_TESTING)
     ${CMAKE_BINARY_DIR}/tests/CTest2JUnit.py COPYONLY)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTest2JUnit.xsl
-    ${CMAKE_BINARY_DIR}/tests//CTest2JUnit.xsl COPYONLY)
+    ${CMAKE_BINARY_DIR}/tests/CTest2JUnit.xsl COPYONLY)
 
 
 
@@ -31,18 +33,17 @@ if(BUILD_TESTING)
   # ========================================================================
   ADD_TEST(BatchStart ${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper -b -c )
 
+  # Timeout after 60 seconds if we havean endless loop
+  # Should be run serial to avoid collisons with other instances
+  # Only one processor required
   set_tests_properties (
       BatchStart PROPERTIES
-      TIMEOUT 1
+      TIMEOUT 60
       RUN_SERIAL TRUE
       PROCESSORS 1
   ) 
 
-
-
-
-
-
+  
   # ========================================================================
   # ========================================================================
   # ========================================================================

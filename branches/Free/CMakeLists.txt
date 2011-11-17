@@ -46,7 +46,7 @@ add_subdirectory (OpenFlipper/PluginLib)
 # ========================================================================
 # Tests
 # ========================================================================
-add_subdirectory (OpenFlipper/tests)
+add_subdirectory (tests)
 
 # ========================================================================
 # Documentation generators  
