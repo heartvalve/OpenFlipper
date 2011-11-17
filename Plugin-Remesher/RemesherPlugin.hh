@@ -154,7 +154,7 @@ private slots:
   /// Compute mean edge length and set values
   void computeInitValues();
 
-  void slotAdaptiveRemeshing(int           _objectId,
+  void slotAdaptiveRemeshing(int             _objectId,
                                double        _error,
                                double        _min_edge_length,
                                double        _max_edge_length,
