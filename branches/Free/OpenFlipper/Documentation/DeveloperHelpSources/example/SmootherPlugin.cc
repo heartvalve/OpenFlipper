@@ -39,7 +39,7 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-void SmootherPlugin::initializePlugin()
+void SkeletonTestPlugin::initializePlugin()
 {
   // Create the Toolbox Widget
   QWidget* toolBox = new QWidget();
@@ -69,7 +69,7 @@ void SmootherPlugin::initializePlugin()
 /** \brief
  *
  */
-void SmootherPlugin::simpleLaplace() {
+void SkeletonTestPlugin::simpleLaplace() {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS);
 	o_it != PluginFunctions::objectsEnd(); ++o_it) {
@@ -205,5 +205,5 @@ void SmootherPlugin::simpleLaplace() {
 }
 
 
-Q_EXPORT_PLUGIN2( smootherplugin , SmootherPlugin );
+Q_EXPORT_PLUGIN2( smootherplugin , SkeletonTestPlugin );
 
