@@ -6,7 +6,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
-class SkeletonTestPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface
+class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
