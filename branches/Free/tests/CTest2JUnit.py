@@ -2,11 +2,11 @@ from lxml import etree
 import StringIO
 import sys
 
-TAGfile = open(sys.argv[1]+"/Testing/TAG", 'r')
+TAGfile = open("./Testing/TAG", 'r')
 dirname = TAGfile.readline().strip()
 
-xmlfile = open(sys.argv[1]+"/Testing/"+dirname+"/Test.xml", 'r')
-xslfile = open(sys.argv[2], 'r')
+xmlfile = open("./Testing/"+dirname+"/Test.xml", 'r')
+xslfile = open("CTest2JUnit.xsl", 'r')
 
 xmlcontent = xmlfile.read()
 xslcontent = xslfile.read()
