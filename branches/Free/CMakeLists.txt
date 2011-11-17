@@ -36,6 +36,17 @@ if (NOT GLUT_FOUND)
 endif ()
 
 # ========================================================================
+# Configure the executables path for tests
+# ========================================================================
+if (APPLE)
+  SET( OPENFLIPPER_EXECUTABLE "${CMAKE_BINARY_DIR}/Build/OpenFlipper.app/Contents/MacOS/OpenFlipper" )
+elseif( WIN32 )
+  SET( OPENFLIPPER_EXECUTABLE "${CMAKE_BINARY_DIR}/Build/OpenFlipper.exe" )
+else()
+  SET( OPENFLIPPER_EXECUTABLE "${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper" )
+endif()
+
+# ========================================================================
 # Core Library Components (Except the Core application)
 # ========================================================================
 add_subdirectory (OpenMesh/src/OpenMesh/Core)

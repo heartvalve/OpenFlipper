@@ -20,7 +20,7 @@ if(BUILD_TESTING)
   # that pretend to be scriptable without ui are correct and the core
   # can start
   # ========================================================================
-  ADD_TEST(SmootherTest ${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper -b -c )
+  ADD_TEST(SmootherTest ${OPENFLIPPER_EXECUTABLE} -b -c )
 
   # Timeout after 60 seconds if we havean endless loop
   # Should be run serial to avoid collisons with other instances
@@ -31,5 +31,8 @@ if(BUILD_TESTING)
       RUN_SERIAL TRUE
       PROCESSORS 1
   ) 
+
+
+
 
 endif()
