@@ -8,16 +8,10 @@ if(BUILD_TESTING)
 SET (CTEST_DROP_SITE_CDASH FALSE)
 
   # ========================================================================
-  # Copy converter files from ctest output to junit output
+  # Copy converter files from ctest output to correctly generate xml output
   # ========================================================================
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTest2JUnit.py
-    ${CMAKE_BINARY_DIR}/tests/CTest2JUnit.py COPYONLY)
-
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTest2JUnit.xsl
-    ${CMAKE_BINARY_DIR}/tests/CTest2JUnit.xsl COPYONLY)
-
-
-
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.sh
+    ${CMAKE_BINARY_DIR}/tests/run_tests.sh COPYONLY)
 
   # ========================================================================
   # ========================================================================
