@@ -33,7 +33,7 @@ if(BUILD_TESTING)
 
   set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
   set( args "-c -b smoother_test_script.ofs" )
-  add_test( PLUGIN-SMOOTHER-NOGUI_Cube_10_Iterations_tangential_C1 );
+  add_test( PLUGIN-SMOOTHER-NOGUI_Cube_10_Iterations_tangential_C1 
      ${CMAKE_COMMAND}
      -D test_cmd=${test_cmd}
      -D test_args:string=${args}
