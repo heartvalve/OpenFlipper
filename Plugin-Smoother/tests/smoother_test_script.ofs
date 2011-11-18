@@ -1,0 +1,11 @@
+var cube = fileoff.loadObject("@OPENFLIPPER_TEST_FILES@/cube1.off");
+
+print("Loaded file")
+smoother.smooth(cube,10,"tangential","C1");
+
+print("Smoothed")
+fileobj.saveObject(cube,"@OPENFLIPPER_TEST_RESULTS@/smoother_test_result.obj");
+
+
+print("Written")
+core.exitApplication();
