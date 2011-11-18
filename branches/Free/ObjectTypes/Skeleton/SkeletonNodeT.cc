@@ -316,13 +316,21 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
     
     for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
     {
-      //select joint color
       
+
+      // If the vertex is selected, it will be always red
+      // If it is not selected,
       if ( (*it)->selected() )
         glColor3f(1.0, 0.0, 0.0);
-      else{
-        glColor3fv( &jointColor[0] );
+      else {
+        // If it is the root joint, it will get some kind of orange color
+        // Otherwise the the Base color is used
+        if ( (*it)->isRoot() )
+          glColor3f(1.0, 0.66, 0.0);
+        else
+          glColor3fv( &jointColor[0] );
       }
+
 
       //and draw the point
       glVertex( pose->globalTranslation( (*it)->id() ) );
