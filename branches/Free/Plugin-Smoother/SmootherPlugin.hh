@@ -128,6 +128,9 @@ private slots:
   /// Second initialization stage
   void pluginsInitialized();
 
+  // Tell system that this plugin runs without ui
+  void noguiSupported( ) {} ;
+
 private :
 
   /// Widget for Toolbox
