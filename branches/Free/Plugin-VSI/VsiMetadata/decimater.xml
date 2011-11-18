@@ -9,6 +9,13 @@
         <short>ID of an Object</short>
         <long>ID of an Object</long>
       </input>
+      <input name="decimation_order" type="Number" optional="false">
+        <short>Decimation Order</short>
+        <long>Decimation Order: 0 (by Distance), 1 (by Normal Deviation), and 2 (by Edge Length)</long>
+        <min>0</min>
+        <max>2</max>
+        <precision>1</precision>
+      </input>
       <input name="vertices" type="Number" optional="true">
         <short>Number of Vertices</short>
         <long>Desired resulting number of vertices</long>
@@ -16,8 +23,19 @@
         <max>5000000</max>
         <precision>1</precision>
       </input>
+      <input name="triangles" type="Number" optional="true">
+        <short>Number of Triangles</short>
+        <long>Desired resulting number of triangles</long>
+        <min>1</min>
+        <max>5000000</max>
+        <precision>1</precision>
+      </input>
       <input name="distance" type="Number" optional="true">
         <short>Distance</short>
+        <precision>0.001</precision>
+      </input>
+      <input name="edge_length" type="Number" optional="true">
+        <short>Edge Length</short>
         <precision>0.001</precision>
       </input>
       <input name="normal_deviation" type="Number" optional="true">
@@ -32,20 +50,39 @@
         <max>1</max>
         <precision>0.01</precision>
       </input>
+      <input name="aspect_ratio" type="Number" optional="true">
+        <short>Aspect Ratio</short>
+        <min>1.2</min>
+        <max>15.0</max>
+        <precision>0.01</precision>
+      </input>
+      <input name="independent_sets" type="Bool" optional="true">
+        <short>Independent Sets</short>
+      </input>
     </inputs>
     <precode>
       var decimater_constraints
     </precode>
     <code>
       decimater_constraints = new Object ();
+      if ([is_set="decimation_order"])
+        decimater_constraints["decimation_order"] = [input="decimation_order"];
       if ([is_set="vertices"])
         decimater_constraints["vertices"] = [input="vertices"];
+      if ([is_set="triangles"])
+        decimater_constraints["triangles"] = [input="triangles"];
       if ([is_set="distance"])
         decimater_constraints["distance"] = [input="distance"];
+      if ([is_set="edge_length"])
+        decimater_constraints["edge_length"] = [input="edge_length"];
       if ([is_set="normal_deviation"])
         decimater_constraints["normal_deviation"] = [input="normal_deviation"];
       if ([is_set="roundness"])
         decimater_constraints["roundness"] = [input="roundness"];
+      if ([is_set="aspect_ratio"])
+        decimater_constraints["aspect_ratio"] = [input="aspect_ratio"];
+      if ([is_set="independent_sets"])
+        decimater_constraints["independent_sets"] = [input="independent_sets"];
       decimater.decimate ([input="obj"],decimater_constraints);
     </code>
   </element>

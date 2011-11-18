@@ -102,7 +102,7 @@ void DecimaterPlugin::pluginsInitialized() {
 
   emit setSlotDescription("decimate(int,QVariantMap)",tr("Decimate a given object"),
                           QString(tr("objectId,constraints")).split(","),
-                          QString(tr("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)")).split(";"));
+                          QString(tr("ID of an object; Object that can has one or more constraint properties (decimation_order,distance,edge_length,normal_deviation,roundness,aspect_ratio,independent_sets,vertices,triangles)")).split(";"));
 }
 
 
@@ -360,21 +360,96 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     
     // Create decimater
     DecimaterType decimater_object( *mesh );
-    decimater_object.add( hModQuadric );
-    decimater_object.module( hModQuadric ).unset_max_err();
 
     // Remove old constraints
     if(decimater->distance()) {
-        decimater->removeDistanceConstraint();
-        decimater_object.remove(hModHausdorff);
+      decimater->removeDistanceConstraint();
+      decimater_object.remove(hModHausdorff);
     }
     if(decimater->normalDeviation()) {
-        decimater->removeNormalDeviationConstraint();
-        decimater_object.remove(hModNormalFlipping);
+      decimater->removeNormalDeviationConstraint();
+      decimater_object.remove(hModNormalDeviation);
+    }
+    if(decimater->normalFlipping()) {
+      decimater->removeNormalFlippingConstraint();
+      decimater_object.remove(hModNormalFlipping);
     }
     if(decimater->roundness()) {
-        decimater->removeRoundnessConstraint();
-        decimater_object.remove(hModRoundness);
+      decimater->removeRoundnessConstraint();
+      decimater_object.remove(hModRoundness);
+    }
+    if(decimater->aspectRatio()) {
+      decimater->removeAspectRatioConstraint();
+      decimater_object.remove(hModAspectRatio);
+    }
+    if(decimater->edgeLength()) {
+      decimater->removeEdgeLengthConstraint();
+      decimater_object.remove(hModEdgeLength);
+    }
+    if(decimater->independentSets()) {
+      decimater->removeIndependentSetsConstraint();
+      decimater_object.remove(hModIndependent);
+    }
+
+    // set priority module: quadric, normal deviation or edge length
+    if ( _constraints.contains("decimation_order") ){
+      bool ok;
+
+      int value = _constraints["decimation_order"].toInt(&ok);
+
+      if (ok) {
+        switch (value) {
+        case 0:
+          decimater->setDecimationOrder(DecimaterInfo::DISTANCE);
+          decimater_object.add( hModQuadric );
+          decimater_object.module( hModQuadric ).unset_max_err();
+          break;
+        case 1:
+          decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
+          decimater_object.add(hModNormalDeviation);
+          decimater_object.module(hModNormalDeviation).set_binary(false);
+          break;
+        case 2:
+          decimater->setDecimationOrder(DecimaterInfo::EDGELENGTH);
+          decimater_object.add(hModEdgeLength);
+          decimater_object.module(hModEdgeLength).set_binary(false);
+          break;
+        default:
+          emit log(LOGERR,tr("Invalid Decimation Order"));
+          return;
+        }
+      }
+    } else {
+      emit log(LOGERR,tr("No Decimation Order set"));
+      return;
+    }
+
+    // stock options (triangle and vertices count) constraint
+    bool verticesCount = false;
+    bool trianglesCount = false;
+    int vertices = 0;
+    int triangles = 0;
+
+    if ( _constraints.contains("vertices") ){
+
+      bool ok;
+
+      int value = _constraints["vertices"].toInt(&ok);
+
+      if (ok){
+        verticesCount = true;
+        vertices = value;
+      }
+    } else if ( _constraints.contains("triangles") ){
+
+      bool ok;
+
+      int value = _constraints["triangles"].toInt(&ok);
+
+      if (ok){
+        trianglesCount = true;
+        triangles = value;
+      }
     }
 
     //distance constraint
@@ -385,7 +460,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["distance"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModHausdorff ) ) {
+        if (  decimater_object.add( hModHausdorff ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setDistanceConstraint( value );
             decimater_object.module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
         }
@@ -400,10 +475,15 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       int value = _constraints["normal_deviation"].toInt(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModNormalFlipping ) ) {
+        if (  decimater_object.add( hModNormalDeviation ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setNormalDeviationConstraint( value );
-            decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() );
+            decimater_object.module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
         }
+      }
+    } else { // flipping constraint
+      if (  decimater_object.add( hModNormalFlipping ) || (!verticesCount && !trianglesCount)  ) {
+        decimater->setNormalFlippingConstraint();
+        // decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() ); ?
       }
     }
 
@@ -415,26 +495,52 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["roundness"].toDouble(&ok);
 
       if (ok) {
-        if (  decimater_object.add( hModRoundness ) ) {
+        if (  decimater_object.add( hModRoundness ) || (!verticesCount && !trianglesCount)  ) {
             decimater->setRoundnessConstraint( value );
             decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
         }
       }
     }
 
-    //triangleCount constraint
-    bool triangleCount = false;
-    int triangles = 0;
-
-    if ( _constraints.contains("vertices") ){
+    //aspect ratio constraint
+    if ( _constraints.contains("aspect_ratio") ){
 
       bool ok;
 
-      int value = _constraints["vertices"].toInt(&ok);
+      double value = _constraints["aspect_ratio"].toDouble(&ok);
 
-      if (ok){
-        triangleCount = true;
-        triangles = value;
+      if (ok) {
+        if (  decimater_object.add( hModAspectRatio ) || (!verticesCount && !trianglesCount)  ) {
+            decimater->setAspectRatioConstraint( value );
+            decimater_object.module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
+        }
+      }
+    }
+
+    //edge length constraint
+    if ( _constraints.contains("edge_length") ){
+
+      bool ok;
+
+      double value = _constraints["edge_length"].toDouble(&ok);
+
+      if (ok) {
+        if (  decimater_object.add( hModEdgeLength ) || (!verticesCount && !trianglesCount)  ) {
+            decimater->setEdgeLengthConstraint( value );
+            decimater_object.module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
+        }
+      }
+    }
+
+    //independent sets constraint
+    if ( _constraints.contains("independent_sets") ){
+
+      bool value = _constraints["independent_sets"].toBool();
+
+      if (value) {
+        if (  decimater_object.add( hModIndependent ) || (!verticesCount && !trianglesCount)  ) {
+            decimater->setIndependentSetsConstraint();
+        }
       }
     }
 
@@ -445,10 +551,12 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     }
 
     //decimate
-    if ( triangleCount )
-      decimater_object.decimate_to( triangles ); // do decimation
+    if ( verticesCount )
+      decimater_object.decimate_to( vertices ); // do decimation (vertices)
+    else if (trianglesCount )
+      decimater_object.decimate_to_faces(0, triangles); // do decimation (triangles)
     else
-      decimater_object.decimate(); // do decimation
+      decimater_object.decimate_to_faces(0, 1); // do decimation
 
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();
@@ -458,9 +566,14 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     emit createBackup(_objID, "Decimation");
     
     // Create QVariantMap parameter string
-    QString param = "("  + (_constraints.contains("distance") ? tr("distance = %1").arg(_constraints["distance"].toString()) : "") +
+    QString param = "("  + (_constraints.contains("decimation_order") ? tr("decimation_order =  %1").arg(_constraints["decimation_order"].toString()) : "") +
+                    ", " + (_constraints.contains("distance") ? tr("distance = %1").arg(_constraints["distance"].toString()) : "") +
                     ", " + (_constraints.contains("normal_deviation") ? tr("normal_deviation = %1").arg(_constraints["normal_deviation"].toString()) : "") +
+                    ", " + (_constraints.contains("edge_length") ? tr("edge_length = %1").arg(_constraints["edge_length"].toString()) : "") +
                     ", " + (_constraints.contains("roundness") ? tr("roundness = %1").arg(_constraints["roundness"].toString()) : "") +
+                    ", " + (_constraints.contains("aspect_ratio") ? tr("aspect_ratio = %1").arg(_constraints["aspect_ratio"].toString()) : "") +
+                    ", " + (_constraints.contains("independent_sets") ? tr("independent_sets = %1").arg(_constraints["independent_sets"].toString()) : "") +
+                    ", " + (_constraints.contains("triangles") ? tr("triangles = %1").arg(_constraints["triangles"].toString()) : "") +
                     ", " + (_constraints.contains("vertices") ? tr("vertices = %1").arg(_constraints["vertices"].toString()) : "") + ")";
     
     emit scriptInfo( "decimate(" + QString::number(_objID) + ", " + param + ")" );
