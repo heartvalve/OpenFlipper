@@ -19,33 +19,21 @@ if(BUILD_TESTING)
   # that pretend to be scriptable without ui are correct and the core
   # can start
   # ========================================================================
-  ADD_TEST(SmootherTest ${OPENFLIPPER_EXECUTABLE} -b  )
+  ADD_TEST(PLUGIN-SMOOTHER-NOGUI_Start_OpenFlipper_in_batch_mode ${OPENFLIPPER_EXECUTABLE} -b  )
 
   # Timeout after 60 seconds if we havean endless loop
   # Should be run serial to avoid collisons with other instances
   # Only one processor required
   set_tests_properties (
-      SmootherTest PROPERTIES
+      PLUGIN-SMOOTHER-NOGUI_Start_OpenFlipper_in_batch_mode PROPERTIES
       TIMEOUT 60
       RUN_SERIAL TRUE
       PROCESSORS 1
   ) 
 
-#  set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
-#  set( args "-b -c" )
-#  add_test( createExprTest_1
-#     ${CMAKE_COMMAND}
-#     -D test_cmd=${test_cmd}
-#     -D test_args:string=${args}
-#     -D output_blessed=${CMAKE_SOURCE_DIR}/util/test/test1.h
-#     -D output_test=${CMAKE_BINARY_DIR}/util/test1.h
-#     -P ${CMAKE_SOURCE_DIR}/tests/run_test_compare.cmake
-#  )
-
-
   set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
   set( args "-c -b smoother_test_script.ofs" )
-  add_test( SmootherResult 
+  add_test( PLUGIN-SMOOTHER-NOGUI_Cube_10_Iterations_tangential_C1 );
      ${CMAKE_COMMAND}
      -D test_cmd=${test_cmd}
      -D test_args:string=${args}
@@ -54,6 +42,15 @@ if(BUILD_TESTING)
      -P ${CMAKE_SOURCE_DIR}/tests/run_test_md5.cmake
   )
 
+  # Timeout after 2 minutes if we have an endless loop
+  # Should be run serial to avoid collisons with other instances
+  # Only one processor required
+  set_tests_properties (
+      PLUGIN-SMOOTHER-NOGUI_Cube_10_Iterations_tangential_C1 PROPERTIES
+      TIMEOUT 120
+      RUN_SERIAL TRUE
+      PROCESSORS 1
+  )
 
 
 
