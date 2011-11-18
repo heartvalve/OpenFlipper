@@ -71,15 +71,17 @@ void
 SmootherPlugin::
 initializePlugin()
 {
-  tool_ = new SmootherToolbarWidget();
-  QSize size(100, 100);
-  tool_->resize(size);
+  if ( OpenFlipper::Options::gui() ) {
+    tool_ = new SmootherToolbarWidget();
+    QSize size(100, 100);
+    tool_->resize(size);
 
-  // connect signals->slots
-  connect(tool_->pB_smooth,SIGNAL(clicked() ),this,SLOT(slot_smooth()));
+    // connect signals->slots
+    connect(tool_->pB_smooth,SIGNAL(clicked() ),this,SLOT(slot_smooth()));
 
-  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother2.png");
-  emit addToolbox( tr("Smoother") , tool_, toolIcon_ );
+    toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother2.png");
+    emit addToolbox( tr("Smoother") , tool_, toolIcon_ );
+  }
 }
 
 //-----------------------------------------------------------------------------
