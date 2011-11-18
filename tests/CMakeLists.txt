@@ -13,6 +13,11 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.sh
     ${CMAKE_BINARY_DIR}/tests/run_tests.sh COPYONLY)
 
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/globalTestFiles/cube1.obj
+    ${OPENFLIPPER_TEST_FILES}/cube1.obj COPYONLY)
+
+  make_directory(${OPENFLIPPER_TEST_RESULTS})
+
   # ========================================================================
   # ========================================================================
   # Internal global tests start here
