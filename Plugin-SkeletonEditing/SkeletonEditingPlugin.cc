@@ -18,7 +18,9 @@ SkeletonEditingPlugin::SkeletonEditingPlugin()
    jointPreview_(false),
    transformChildJoints_(false),
    transformAllFrames_(true),
+   inverseKinematic_(false),
    dblClick_(false)
+
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -127,6 +129,14 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   transformChildManipAction_->setChecked(transformChildJoints_);
   pickToolbar_->addAction(transformChildManipAction_);
   
+  inverseKinematicAction_ = new QAction(tr("Inverse kinematic"), pickToolBarActions_);
+  inverseKinematicAction_->setStatusTip(tr("Move selected joint using inverse kinematic."));
+  inverseKinematicAction_->setToolTip(tr("<B>Inverse kinematic</B><br>Move selected joint using inverse kinematic."));
+  inverseKinematicAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_invkinematic.png") );
+  inverseKinematicAction_->setCheckable(true);
+  inverseKinematicAction_->setChecked(inverseKinematic_);
+  pickToolbar_->addAction(inverseKinematicAction_);
+
   connect(pickToolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotPickToolbarAction(QAction*)) );
 
   emit setPickModeToolbar("MoveJoints", pickToolbar_);
@@ -287,6 +297,8 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
     transformAllFrames_ = transformAllManipAction_->isChecked();
   else if (_action == transformChildManipAction_)
     transformChildJoints_ = transformChildManipAction_->isChecked();
+  else if (_action == inverseKinematicAction_)
+  	inverseKinematic_ = inverseKinematicAction_->isChecked();
   
   moveJointAction_->setChecked(   _action == moveJointAction_);
   insertJointAction_->setChecked( _action == insertJointAction_ );
@@ -435,11 +447,137 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
   mat.identity();
   mat = _node->matrix();
 
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(objectId, object);
+
+  if(inverseKinematic_)
+  {
+    Skeleton* skeleton = PluginFunctions::skeleton( object );
+
+    if (skeleton == 0)
+    	return;
+
+    Skeleton::Joint* pickedJoint = skeleton->joint( _node->getData().toInt() );
+
+    if (!pickedJoint)
+    	return;
+
+    Skeleton::Pose* currentPose = skeleton->referencePose();
+
+    const Matrix4x4 pickedGlobalMatrix = currentPose->globalMatrix(pickedJoint->id());
+
+    //get our destination
+    const ACG::Vec3d dest = (mat*pickedGlobalMatrix).transform_point( ACG::Vec3d(0.0,0.0,0.0) );
+
+    if (pickedJoint->isRoot())
+    {
+    	//we have no fixed points, when we pick our root
+    	currentPose->setGlobalTranslation(pickedJoint->id(), dest, false);
+    }
+    else
+    {
+    	//get all Parent Joints (picked,fixed]
+    	std::vector<Skeleton::Joint*> rotatableJoints;
+
+    	Skeleton::Iterator iter = pickedJoint->parent();
+
+    	//go from our picked Joint and find the first fixed/root Joint
+    	for (;iter && !iter->selected() && !iter->isRoot(); iter = iter->parent())
+    		rotatableJoints.push_back(*iter);
+
+    	if (iter)
+    		rotatableJoints.push_back(*iter); //save the fixed/root Joint, because he can rotate
+    	else
+    		return;
+
+    	//Now we can rotate every Joint in rotatableJoints
+    	ACG::Vec3d pickedJointPos = currentPose->globalMatrix(pickedJoint->id()).transform_point(ACG::Vec3d(0.0,0.0,0.0));
+
+    	ACG::Matrix4x4d IMatrix;
+    	IMatrix.identity();
+
+    	for(std::size_t i = 5; i && pickedJointPos != dest; --i )
+    	{
+
+    		//iterates through the skeleton from our picked joint to our fixed/root
+    		for (std::vector<Skeleton::Joint*>::iterator iter = rotatableJoints.begin() ; iter != rotatableJoints.end();  ++iter)
+    		{
+    			const unsigned int currentId = (*iter)->id();
+
+    			//when we rotate to the false side
+    			//we are going to compute a new angle
+    			//it is more precise
+    			int angleFac = -1;
+    			bool rightRotation = true;
+    			unsigned int tries = 0;//to be sure that we are terminate
+    			do
+    			{
+    				//update the position of our picked Joint
+    				pickedJointPos = currentPose->globalMatrix(pickedJoint->id()).transform_point(ACG::Vec3d(0.0,0.0,0.0));
+
+    				//get the position and the matrix of our current joint
+    				const ACG::Matrix4x4d currentGlobalMatrix = currentPose->globalMatrix(currentId);
+    				const ACG::Vec3d currentJointPos = currentGlobalMatrix.transform_point(ACG::Vec3d(0.0,0.0,0.0));
+
+    				ACG::Vec3d toDest = currentJointPos - dest; //distance from current to Destination
+    				ACG::Vec3d toPickedJoint = currentJointPos - pickedJointPos;//distance from current to picked Joint
+
+    				//get angle of toDest and toPickedJoint
+    				double theta = (double)angleFac*acos(dot(toPickedJoint ,toDest) / sqrt( toDest.sqrnorm() * toPickedJoint.sqrnorm()));
+
+    				if(theta != theta || theta == 0)//test nan
+    					break;
+
+    				//get rotation matrix for theta and our rotation axis
+    				ACG::Vec3d rotationAxis = cross(toDest,toPickedJoint);
+    				ACG::Quaterniond quaternion(rotationAxis ,theta);
+
+    				ACG::Matrix4x4d changingMatrix = currentGlobalMatrix * quaternion.rotation_matrix();
+    				ACG::Vec3d currentTranslation = currentPose->globalTranslation( currentId );
+
+    				//set position and rotation of our currentJoint, so pickedJoint is moving to our destination
+    				currentPose->setGlobalMatrix(currentId, changingMatrix, false);
+    				currentPose->setGlobalTranslation(currentId, currentTranslation, false);
+
+    				//test new position
+    				//it is false, when the distance of pickedJoint and destination is far more away then before
+    				ACG::Vec3d pickedJointPosOld = pickedJointPos;
+    				pickedJointPos = currentPose->globalMatrix(pickedJoint->id()).transform_point(ACG::Vec3d(0.0,0.0,0.0));
+
+    				//compare the distance of the old/new position
+    				bool rightRotation = !( (pickedJointPos -dest).sqrnorm() > (pickedJointPosOld -dest).sqrnorm());
+
+    				if ( !rightRotation )
+    				{
+    					//not the right rotation? then rotate back and compute a new angle
+    					ACG::Quaterniond quaternionBack(rotationAxis ,-theta);
+    					ACG::Vec3d currentTranslation = currentPose->globalTranslation( currentId );
+
+    					//rotate back and compute our angle again
+    					changingMatrix = currentGlobalMatrix * quaternionBack.rotation_matrix();
+
+    					currentPose->setGlobalMatrix(currentId, changingMatrix , false);
+    					currentPose->setGlobalTranslation(currentId, currentTranslation, false);
+
+    					//compute angle again and this time, we try the other side for our rotation
+    					++tries;
+    					angleFac *= 1;
+    				}
+    			}while( rightRotation && tries <= 5);
+    		}
+    	}
+    }//end else picked->isRoot()
+
+    //update
+    emit updatedObject(objectId, UPDATE_GEOMETRY);
+  }
+  else
+  	transformJoint( objectId, _node->getData().toInt(), mat );
+
   // Reset Node
   _node->loadIdentity();
   _node->set_center(mat.transform_point(_node->center()));
 
-  transformJoint( objectId, _node->getData().toInt(), mat );
 
   if (_event->type() == QEvent::MouseButtonPress)
     accumMatrix_.identity();
@@ -450,9 +588,6 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
   if ( (_event->type() == QEvent::MouseButtonRelease) && !accumMatrix_.is_identity() )
     emit createBackup(objectId, "Joint Transformation", UPDATE_GEOMETRY);
 
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject(objectId, object);
-  
   if ( object != 0)
     //check if there is a skin which has to be deformed
     if ( object->hasObjectData(OBJECTDATA_SKELETON) ){
@@ -460,14 +595,14 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
       SkeletonObjectData* skeletonData = reinterpret_cast< SkeletonObjectData* >( object->objectData(OBJECTDATA_SKELETON) );
 
       AnimationHandle hAni = PluginFunctions::skeletonObject(object)->activePose();
-      
+
       for (unsigned int i=0; i < skeletonData->skinCount(); i++){
         //deform all attached skin meshes
         int meshId = skeletonData->skin(i);
 
         BaseObjectData* meshObject = 0;
         PluginFunctions::getObject(meshId, meshObject);
-        
+
         if (meshObject == 0)
           continue;
 
