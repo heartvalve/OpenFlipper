@@ -87,8 +87,23 @@ file (
         "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
 )
 
-# add all found libs to the build
+
+set( REMAINING_LOCAL_LIBS "" )
+
+# Special Comiso case:
+# The library has to be configured first
 foreach (_localLib ${_local_libs_in})
+  if ( "${_localLib}" MATCHES .*CoMISo.* )
+    get_filename_component (_local_lib_dir ${_localLib} PATH)
+    add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+  else()
+    LIST(APPEND REMAINING_LOCAL_LIBS ${_localLib})
+  endif()
+endforeach ()
+
+
+# add all found libs to the build
+foreach (_localLib ${REMAINING_LOCAL_LIBS})
   get_filename_component (_local_lib_dir ${_localLib} PATH)
   add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
 endforeach ()
