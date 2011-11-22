@@ -303,11 +303,17 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
 
   // Components
-  info_->components->setText( locale.toString(MeshInfo::componentCount(_mesh)));
+  int compo_count = MeshInfo::componentCount(_mesh);
+  info_->components->setText( locale.toString(compo_count));
   // Boundaries
-  info_->boundaries->setText( locale.toString(MeshInfo::boundaryCount(_mesh)) );
+  int boundary_count = MeshInfo::boundaryCount(_mesh);
+  info_->boundaries->setText( locale.toString(boundary_count) );
   // Genus
-  int genus = (2 - _mesh->n_vertices() + _mesh->n_edges() - _mesh->n_faces()) / 2;
+  int chi = _mesh->n_vertices();
+  chi -= _mesh->n_edges();
+  chi += _mesh->n_faces(); // chi = Euler characteristic
+  // chi + n_holes = 2(n_components - genus) => genus = n_components - (chi + n_holes)/2;
+  float genus = compo_count - 0.5*(chi + boundary_count);
   info_->genus->setText( QString::number(genus) );
 
   // Coordinates
