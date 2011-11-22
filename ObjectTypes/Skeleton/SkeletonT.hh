@@ -122,18 +122,18 @@ public:
     * @name Modifying the tree structure
     * Use these methods to edit the skeleton tree.
     */
-  //@{
+  ///@{
   void addJoint(typename SkeletonT<PointT>::Joint *_pParent, typename SkeletonT<PointT>::Joint *_pJoint);
   void removeJoint(typename SkeletonT<PointT>::Joint *_pJoint);
   inline void clear();
-  //@}
+  ///@}
 
   /** \anchor JointAccess
     * @name   Basic Joint Access
     *
     * Use these methods to access joints in the skeleton.
     */
-  //@{
+  ///@{
   inline Joint *root();
   inline Joint *joint(const unsigned int &_index);
   int parent(unsigned int _joint);
@@ -144,14 +144,14 @@ public:
   /// Iterator over joints of the skeletal tree in TOP-DOWN order (from root to leafs)
   Iterator begin();
   Iterator end();
-  //@}
+  ///@}
  
 
   /** \anchor AnimationAccess
     * @name   Animation
     * Use these methods to equip the skeleton with animation data.
     */
-  //@{
+  ///@{
 
   inline Pose *pose(const AnimationHandle &_hAni);
   inline Pose *referencePose();
@@ -167,7 +167,7 @@ public:
 
   unsigned int animationCount();
   const std::string &animationName(unsigned int _index);
-  //@}
+  ///@}
 
 
 protected:
