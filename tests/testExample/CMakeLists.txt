@@ -8,6 +8,14 @@ if(BUILD_TESTING)
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
     )
+	
+  if (WIN32)
+    add_custom_command (TARGET test_example POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E
+                        copy_if_different
+                          ${CMAKE_BINARY_DIR}/tests/${CMAKE_CFG_INTDIR}/test_example.exe
+                          ${CMAKE_BINARY_DIR}/tests/test_example.exe)
+  endif()
 
   ADD_TEST(NAME "Test_Example"
            COMMAND ${CMAKE_BINARY_DIR}/tests/test_example )
