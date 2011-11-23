@@ -45,9 +45,6 @@
 #include "PrimitivesGenerator.hh"
 
 
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-
-
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 void PrimitivesGeneratorPlugin::initializePlugin()
@@ -56,6 +53,8 @@ void PrimitivesGeneratorPlugin::initializePlugin()
   emit setSlotDescription("addTriangulatedCube()",tr("Generates a cube (ObjectId is returned)")         ,QStringList(), QStringList());
   emit setSlotDescription("addIcosahedron()"     ,tr("Generates an icosahedron (ObjectId is returned)") ,QStringList(), QStringList());
   emit setSlotDescription("addPyramid()"         ,tr("Generates a pyramid (ObjectId is returned)")      ,QStringList(), QStringList());
+  emit setSlotDescription("addOctahedron()"      ,tr("Generates an octahedron (ObjectId is returned)")  ,QStringList(), QStringList());
+  emit setSlotDescription("addDodecahedron()"    ,tr("Generates a dodecahedron (ObjectId is returned)")  ,QStringList(), QStringList());
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -86,6 +85,14 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
     action->setIcon(*icon);
+
+    action = primitivesMenu->addAction("Octahedron"                  ,this,SLOT(addOctahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_octahedron.png");
+    action->setIcon(*icon);
+
+    action = primitivesMenu->addAction("Dodecahedron"                  ,this,SLOT(addDodecahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png");
+    action->setIcon(*icon);
   }
 
 }
@@ -98,6 +105,20 @@ int PrimitivesGeneratorPlugin::addTriMesh() {
   emit addEmptyObject( DATA_TRIANGLE_MESH, objectId );
 
   TriMeshObject* object;
+  if ( !PluginFunctions::getObject(objectId,object) ) {
+    emit log(LOGERR,"Unable to create new Object");
+    return -1;
+  }
+
+  return objectId;
+}
+
+int PrimitivesGeneratorPlugin::addPolyMesh() {
+  int objectId = -1;
+
+  emit addEmptyObject( DATA_POLY_MESH, objectId );
+
+  PolyMeshObject* object;
   if ( !PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,"Unable to create new Object");
     return -1;
@@ -261,6 +282,18 @@ void PrimitivesGeneratorPlugin::add_face( int _vh1 , int _vh2, int _vh3 ) {
 
 }
 
+void PrimitivesGeneratorPlugin::add_face( int _vh1 , int _vh2, int _vh3, int _vh4 , int _vh5 ) {
+  std::vector<PolyMesh::VertexHandle> vhandles;
+
+  vhandles.push_back(vphandles_[_vh1]);
+  vhandles.push_back(vphandles_[_vh2]);
+  vhandles.push_back(vphandles_[_vh3]);
+  vhandles.push_back(vphandles_[_vh4]);
+  vhandles.push_back(vphandles_[_vh5]);
+
+  polyMesh_->add_face(vhandles);
+}
+
 int PrimitivesGeneratorPlugin::addIcosahedron() {
   int newObject = addTriMesh();
 
@@ -340,7 +373,125 @@ int PrimitivesGeneratorPlugin::addIcosahedron() {
   return -1;
 }
 
+int PrimitivesGeneratorPlugin::addOctahedron() {
+  int newObject = addTriMesh();
 
+  TriMeshObject* object;
+  if ( !PluginFunctions::getObject(newObject,object) ) {
+    emit log(LOGERR,"Unable to create new Object");
+    return -1;
+  } else {
+
+    object->setName( "Octahedron " + QString::number(newObject) );
+
+    triMesh_ =  object->mesh();
+
+    triMesh_->clear();
+
+    // Add 12 vertices
+    vhandles_.resize(6);
+
+    vhandles_[0 ] = triMesh_->add_vertex(TriMesh::Point( -0.5 , -0.5 , 0.0 ));
+    vhandles_[1 ] = triMesh_->add_vertex(TriMesh::Point(  0.5 , -0.5 , 0.0 ));
+    vhandles_[2 ] = triMesh_->add_vertex(TriMesh::Point(  0.5 ,  0.5 , 0.0 ));
+    vhandles_[3 ] = triMesh_->add_vertex(TriMesh::Point( -0.5 ,  0.5 , 0.0 ));
+
+    vhandles_[4 ] = triMesh_->add_vertex(TriMesh::Point(  0.0 ,  0.0 , 0.5  ));
+    vhandles_[5 ] = triMesh_->add_vertex(TriMesh::Point(  0.0 ,  0.0 ,-0.5  ));
+
+
+    // Add 8 faces
+    add_face(0,1,4);
+    add_face(1,2,4);
+
+    add_face(2,3,4);
+    add_face(0,4,3);
+
+    add_face(5,1,0);
+    add_face(5,2,1);
+
+    add_face(5,3,2);
+    add_face(5,0,3);
+
+    triMesh_->update_normals();
+
+    emit updatedObject(newObject,UPDATE_ALL);
+
+    return newObject;
+  }
+
+  return -1;
+}
+
+int PrimitivesGeneratorPlugin::addDodecahedron() {
+  int newObject = addPolyMesh();
+
+  PolyMeshObject* object;
+  if ( !PluginFunctions::getObject(newObject,object) ) {
+    emit log(LOGERR,"Unable to create new Object");
+    return -1;
+  } else {
+
+    object->setName( "Octahedron " + QString::number(newObject) );
+
+    polyMesh_ =  object->mesh();
+
+    polyMesh_->clear();
+
+    // Add 20 vertices
+    vphandles_.resize(20);
+
+    double phi = (1.0 + sqrt(5.0)) / 2.0;
+
+    vphandles_[0 ] = polyMesh_->add_vertex(TriMesh::Point(  1.0 ,  1.0 , 1.0 ));
+    vphandles_[1 ] = polyMesh_->add_vertex(TriMesh::Point(  1.0 ,  1.0 ,-1.0 ));
+    vphandles_[2 ] = polyMesh_->add_vertex(TriMesh::Point(  1.0 , -1.0 , 1.0 ));
+    vphandles_[3 ] = polyMesh_->add_vertex(TriMesh::Point(  1.0 , -1.0 ,-1.0 ));
+    vphandles_[4 ] = polyMesh_->add_vertex(TriMesh::Point( -1.0 ,  1.0 , 1.0 ));
+    vphandles_[5 ] = polyMesh_->add_vertex(TriMesh::Point( -1.0 ,  1.0 ,-1.0 ));
+    vphandles_[6 ] = polyMesh_->add_vertex(TriMesh::Point( -1.0 , -1.0 , 1.0 ));
+    vphandles_[7 ] = polyMesh_->add_vertex(TriMesh::Point( -1.0 , -1.0 ,-1.0 ));
+
+    vphandles_[8 ] = polyMesh_->add_vertex(TriMesh::Point( 0.0 ,  1.0 / phi ,  phi ));
+    vphandles_[9 ] = polyMesh_->add_vertex(TriMesh::Point( 0.0 ,  1.0 / phi , -phi ));
+    vphandles_[10] = polyMesh_->add_vertex(TriMesh::Point( 0.0 , -1.0 / phi ,  phi ));
+    vphandles_[11] = polyMesh_->add_vertex(TriMesh::Point( 0.0 , -1.0 / phi , -phi ));
+
+    vphandles_[12] = polyMesh_->add_vertex(TriMesh::Point(  1.0 / phi ,  phi, 0.0));
+    vphandles_[13] = polyMesh_->add_vertex(TriMesh::Point(  1.0 / phi , -phi, 0.0));
+    vphandles_[14] = polyMesh_->add_vertex(TriMesh::Point( -1.0 / phi ,  phi, 0.0));
+    vphandles_[15] = polyMesh_->add_vertex(TriMesh::Point( -1.0 / phi , -phi, 0.0));
+
+    vphandles_[16] = polyMesh_->add_vertex(TriMesh::Point(  phi , 0.0 , 1.0 / phi));
+    vphandles_[17] = polyMesh_->add_vertex(TriMesh::Point(  phi , 0.0 ,-1.0 / phi));
+    vphandles_[18] = polyMesh_->add_vertex(TriMesh::Point( -phi , 0.0 , 1.0 / phi));
+    vphandles_[19] = polyMesh_->add_vertex(TriMesh::Point( -phi , 0.0 ,-1.0 / phi));
+
+    // Add 12 faces
+    add_face(14, 5,19,18, 4);
+    add_face( 5, 9,11, 7,19);
+    add_face( 6,15,13, 2,10);
+    add_face(12, 0,16,17, 1);
+
+    add_face( 0, 8,10, 2,16);
+    add_face(16, 2,13, 3,17);
+    add_face( 3,13,15, 7,11);
+    add_face( 7,15, 6,18,19);
+
+    add_face( 4,18, 6,10, 8);
+    add_face( 4, 8, 0,12,14);
+    add_face(14,12, 1, 9, 5);
+    add_face( 9, 1,17, 3,11);
+
+    polyMesh_->update_normals();
+
+    emit updatedObject(newObject,UPDATE_ALL);
+
+    return newObject;
+  }
+
+  return -1;
+}
 
 
 

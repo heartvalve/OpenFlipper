@@ -50,6 +50,7 @@
 #include <OpenFlipper/common/Types.hh>
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
 class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface {
   Q_OBJECT
@@ -100,15 +101,22 @@ public slots:
   int addPyramid();
   int addTriangulatedCube();
   int addIcosahedron();
+  int addOctahedron();
+  int addDodecahedron();
 
 private:
   int addTriMesh();
+  int addPolyMesh();
 
   inline void add_face( int _vh1 , int _vh2, int _vh3 );
 
-  std::vector<TriMesh::VertexHandle> vhandles_;
+  inline void add_face( int _vh1 , int _vh2, int _vh3, int _vh4 , int _vh5 );
 
-  TriMesh* triMesh_;
+  std::vector<TriMesh::VertexHandle> vhandles_;
+  std::vector<PolyMesh::VertexHandle> vphandles_;
+
+  TriMesh*  triMesh_;
+  PolyMesh* polyMesh_;
 };
 
 #endif //PRIMITIVESGENERATORPLUGIN_HH
