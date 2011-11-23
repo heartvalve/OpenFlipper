@@ -59,31 +59,34 @@ void PrimitivesGeneratorPlugin::initializePlugin()
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
-  // Primitives Menu
-  QMenu *primitivesMenu;
 
-  emit getMenubarMenu(tr("&Primitives"), primitivesMenu, true );
+  if ( OpenFlipper::Options::gui()) {
+    // Primitives Menu
+    QMenu *primitivesMenu;
 
-  QIcon* icon;
-  QAction * action;
+    emit getMenubarMenu(tr("&Primitives"), primitivesMenu, true );
 
-  action = primitivesMenu->addAction("Cube (Triangle Mesh)"       ,this,SLOT(addTriangulatedCube()));
-  icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png");
-  action->setIcon(*icon);
+    QIcon* icon;
+    QAction * action;
 
-  action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
-  icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
-  action->setIcon(*icon);
+    action = primitivesMenu->addAction("Cube (Triangle Mesh)"       ,this,SLOT(addTriangulatedCube()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png");
+    action->setIcon(*icon);
 
-
-  action = primitivesMenu->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
-  icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png");
-  action->setIcon(*icon);
+    action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
+    action->setIcon(*icon);
 
 
-  action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
-  icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
-  action->setIcon(*icon);
+    action = primitivesMenu->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png");
+    action->setIcon(*icon);
+
+
+    action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
+    action->setIcon(*icon);
+  }
 
 }
 
