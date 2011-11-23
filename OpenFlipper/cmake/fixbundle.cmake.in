@@ -47,6 +47,9 @@ foreach (_qtp ${_qtplugins})
   list(APPEND _qtdirs "${_dir}")
 endforeach ()
 
+# This will enforce copied libraries to be writeable
+SET( BU_CHMOD_BUNDLE_ITEMS TRUE)
+
 # fix all dependencies
 fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.app "${_plugins};${_qtplugins}" "/usr/lib;${_qtdirs}")
 
