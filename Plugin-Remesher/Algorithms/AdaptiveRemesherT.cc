@@ -89,6 +89,12 @@ project_to_reference(typename Mesh::VertexHandle _vh) const
 {
   typename Mesh::Point          p = Base::mesh_.point(_vh);
   typename Mesh::FaceHandle     fh = Base::bsp_->nearest(p).handle;
+
+  if ( ! fh.is_valid() ) {
+    std::cerr << "AdaptiveRemesherT: Projection, invalid face handle" << std::endl;
+    return;
+  }
+
   typename Mesh::CFVIter        fv_it = Base::refmesh_->cfv_iter(fh);
 	  
 

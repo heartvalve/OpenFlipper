@@ -136,7 +136,7 @@ init_reference()
     v0    = fv_it.handle();
     v1    = (++fv_it).handle();
     v2    = (++fv_it).handle();
-      
+
     if (mesh_.status(v0).tagged() &&
 	mesh_.status(v1).tagged() &&
 	mesh_.status(v2).tagged())
@@ -159,7 +159,7 @@ init_reference()
   // build BSP
   bsp_ = new BSP(*refmesh_);
   bsp_->reserve(refmesh_->n_faces());
-  for (f_it=refmesh_->faces_begin(), f_end=refmesh_->faces_end(); 
+  for (f_it=refmesh_->faces_begin(), f_end=refmesh_->faces_end();
        f_it!=f_end; ++f_it)
     bsp_->push_back(f_it.handle());
   bsp_->build(10, 100);
@@ -189,8 +189,12 @@ project_to_reference(typename Mesh::VertexHandle _vh) const
 {
   typename Mesh::Point          p = mesh_.point(_vh);
   typename Mesh::FaceHandle     fh = bsp_->nearest(p).handle;
+
+  if ( ! fh.is_valid() )
+    return;
+
   typename Mesh::CFVIter        fv_it = refmesh_->cfv_iter(fh);
-	  
+
 
   const typename Mesh::Point&   p0 = refmesh_->point(fv_it);
   typename Mesh::Normal         n0 = refmesh_->normal(fv_it);
@@ -226,7 +230,7 @@ project_to_reference(typename Mesh::VertexHandle _vh) const
 template <class Mesh>
 void
 BaseRemesherT<Mesh>::
-remesh(unsigned int           _iters, 
+remesh(unsigned int           _iters,
        unsigned int           _area_iters,
        bool                   _use_projection) {
 
@@ -288,7 +292,7 @@ prepare()
        v_it!=v_end; ++v_it)
     mesh_.status(v_it).set_locked(!mesh_.status(v_it).selected());
 
-  for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end(); 
+  for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end();
        e_it!=e_end; ++e_it)
   {
     v0 = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
@@ -335,7 +339,7 @@ prepare()
 template <class Mesh>
 void
 BaseRemesherT<Mesh>::
-remeshh(unsigned int           _iters, 
+remeshh(unsigned int           _iters,
 	unsigned int _area_iters, bool _use_projection) {
 
     double progress_step = 100.0 / (((double)_iters/4.0 + (double)_area_iters));
@@ -414,7 +418,7 @@ cleanup()
   {
     mesh_.status(v_it).set_locked(false);
   }
-  for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end(); 
+  for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end();
        e_it!=e_end; ++e_it)
   {
     mesh_.status(e_it).set_locked(false);
@@ -444,95 +448,72 @@ void
 BaseRemesherT<Mesh>::
 split_long_edges()
 {
-  typename Mesh::VIter     v_it, v_end;
-  typename Mesh::EIter     e_it, e_end;
-  typename Mesh::VHandle   v0, v1, vh;
-  typename Mesh::EHandle   eh, e0, e1;
-  typename Mesh::FHandle   f0, f1, f2, f3;
-  bool                     ok, is_feature, is_boundary;
-  int                      i;
+  typename Mesh::VIter v_it, v_end;
+  typename Mesh::EIter e_it, e_end;
+  typename Mesh::VHandle v0, v1, vh;
+  typename Mesh::EHandle eh, e0, e1;
+  typename Mesh::FHandle f0, f1, f2, f3;
 
-
+  bool ok, is_feature, is_boundary;
+  int i;
 
   // un-tagg
-  for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end();
-       v_it!=v_end; ++v_it)
+  for (v_it = mesh_.vertices_begin(), v_end = mesh_.vertices_end(); v_it != v_end; ++v_it)
     mesh_.status(v_it).set_tagged(false);
-
 
   // handle Nastran PIDs during refinement
   OpenMesh::FPropHandleT<unsigned int> pids;
   mesh_.get_property_handle(pids, "Nastran PIDs");
 
-
-
   // split long edges
-  for (ok=false, i=0; !ok && i<100; ++i)
-  {
+  for (ok = false, i = 0; !ok && i < 100; ++i) {
     ok = true;
 
-    for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end(); 
-	 e_it!=e_end; ++e_it)
-    {
+    for (e_it = mesh_.edges_begin(), e_end = mesh_.edges_end(); e_it != e_end; ++e_it) {
       v0 = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
       v1 = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
 
-      if (!mesh_.status(e_it).locked() && is_too_long(v0, v1))
-      {
-	const typename Mesh::Point& p0 = mesh_.point(v0);
-	const typename Mesh::Point& p1 = mesh_.point(v1);
+      if (!mesh_.status(e_it).locked() && is_too_long(v0, v1)) {
+        const typename Mesh::Point& p0 = mesh_.point(v0);
+        const typename Mesh::Point& p1 = mesh_.point(v1);
 
-	is_feature  = mesh_.status(e_it).feature();
-	is_boundary = mesh_.is_boundary(e_it);
+        is_feature = mesh_.status(e_it).feature();
+        is_boundary = mesh_.is_boundary(e_it);
 
-	vh = mesh_.add_vertex((p0+p1)*0.5);
-	mesh_.split(e_it, vh);
+        vh = mesh_.add_vertex((p0 + p1) * 0.5);
+        mesh_.split(e_it, vh);
 
-	mesh_.status(vh).set_selected(true);
+        mesh_.status(vh).set_selected(true);
 
-	if (is_feature)
-	{
-	  eh = (is_boundary ? 
-		mesh_.edge_handle(mesh_.n_edges() - 2) :
-		mesh_.edge_handle(mesh_.n_edges() - 3));
+        if (is_feature) {
+          eh = (is_boundary ? mesh_.edge_handle(mesh_.n_edges() - 2) : mesh_.edge_handle(mesh_.n_edges() - 3));
 
-	  mesh_.status(eh).set_feature(true);
-	  mesh_.status(vh).set_feature(true);
-	}
-	else
-	{
-	  project_to_reference(vh);
-	}
+          mesh_.status(eh).set_feature(true);
+          mesh_.status(vh).set_feature(true);
+        } else {
+          project_to_reference(vh);
+        }
 
+        if (pids.is_valid()) {
+          e0 = e_it.handle();
+          e1 = (is_boundary ? mesh_.edge_handle(mesh_.n_edges() - 2) : mesh_.edge_handle(mesh_.n_edges() - 3));
 
-	if (pids.is_valid())
-	{
-	  e0 = e_it.handle();
-	  e1 = (is_boundary ? 
-	        mesh_.edge_handle(mesh_.n_edges() - 2) :
-	        mesh_.edge_handle(mesh_.n_edges() - 3));
+          f0 = mesh_.face_handle(mesh_.halfedge_handle(e0, 0));
+          f1 = mesh_.face_handle(mesh_.halfedge_handle(e0, 1));
+          f2 = mesh_.face_handle(mesh_.halfedge_handle(e1, 0));
+          f3 = mesh_.face_handle(mesh_.halfedge_handle(e1, 1));
 
-	  f0 = mesh_.face_handle(mesh_.halfedge_handle(e0,0));
-	  f1 = mesh_.face_handle(mesh_.halfedge_handle(e0,1));
-	  f2 = mesh_.face_handle(mesh_.halfedge_handle(e1,0));
-	  f3 = mesh_.face_handle(mesh_.halfedge_handle(e1,1));
+          if (f0.is_valid() && f3.is_valid()) mesh_.property(pids, f3) = mesh_.property(pids, f0);
 
-	  if (f0.is_valid() && f3.is_valid())
-	    mesh_.property(pids, f3) = mesh_.property(pids, f0);
+          if (f1.is_valid() && f2.is_valid()) mesh_.property(pids, f2) = mesh_.property(pids, f1);
+        }
 
-	  if (f1.is_valid() && f2.is_valid())
-	    mesh_.property(pids, f2) = mesh_.property(pids, f1);
-	}
-
-
-	ok = false;
+        ok = false;
       }
     }
   }
 
-
-
-  if (i==100) omlog() << "split break\n";
+  if (i == 100) omlog() << "split break\n";
 }
 
 
@@ -544,147 +525,136 @@ void
 BaseRemesherT<Mesh>::
 collapse_short_edges()
 {
-  typename Mesh::EIter     e_it, e_end;
-  typename Mesh::CVVIter   vv_it;
-  typename Mesh::VHandle   v0, v1;
-  typename Mesh::HHandle   h0, h1, h01, h10;
-  typename Mesh::Point     p;
-  bool                     ok, skip, b0, b1, l0, l1, f0, f1;
-  int                      i;
-  bool                     hcol01, hcol10;
+  typename Mesh::EIter e_it, e_end;
+  typename Mesh::CVVIter vv_it;
+  typename Mesh::VHandle v0, v1;
+  typename Mesh::HHandle h0, h1, h01, h10;
+  typename Mesh::Point p;
+  bool ok, skip, b0, b1, l0, l1, f0, f1;
+  int i;
+  bool hcol01, hcol10;
 
-
-
-  for (ok=false, i=0; !ok && i<100; ++i)
-  {
+  for (ok = false, i = 0; !ok && i < 100; ++i) {
     ok = true;
 
-    for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end(); 
-	 e_it!=e_end; ++e_it)
-    {
-      if (!mesh_.status(e_it).deleted() && !mesh_.status(e_it).locked())
-      {
-	h10 = mesh_.halfedge_handle(e_it, 0);
-	h01 = mesh_.halfedge_handle(e_it, 1);
-	v0  = mesh_.to_vertex_handle(h10);
-	v1  = mesh_.to_vertex_handle(h01);
+    for (e_it = mesh_.edges_begin(), e_end = mesh_.edges_end(); e_it != e_end; ++e_it) {
+      if (!mesh_.status(e_it).deleted() && !mesh_.status(e_it).locked()) {
+        h10 = mesh_.halfedge_handle(e_it, 0);
+        h01 = mesh_.halfedge_handle(e_it, 1);
+        v0 = mesh_.to_vertex_handle(h10);
+        v1 = mesh_.to_vertex_handle(h01);
 
-	if (is_too_short(v0, v1))
-	{
-	  // get status
-	  b0 = mesh_.is_boundary(v0);
-	  b1 = mesh_.is_boundary(v1);
-	  l0 = mesh_.status(v0).locked();
-	  l1 = mesh_.status(v1).locked();
-	  f0 = mesh_.status(v0).feature();
-	  f1 = mesh_.status(v1).feature();
-	  hcol01 = hcol10 = true;
+        if (is_too_short(v0, v1)) {
+          // get status
+          b0 = mesh_.is_boundary(v0);
+          b1 = mesh_.is_boundary(v1);
+          l0 = mesh_.status(v0).locked();
+          l1 = mesh_.status(v1).locked();
+          f0 = mesh_.status(v0).feature();
+          f1 = mesh_.status(v1).feature();
+          hcol01 = hcol10 = true;
 
-	  if (mesh_.status(e_it).feature() && !f0 && !f1)
-	    std::cerr << "Bad luck" << std::endl;
+          if (mesh_.status(e_it).feature() && !f0 && !f1)
+            std::cerr << "Bad luck" << std::endl;
 
-	  // boundary rules
-	  if (b0 && b1) { if (!mesh_.is_boundary(e_it)) continue; }
-	  else if (b0) hcol01=false; 
-	  else if (b1) hcol10=false;
+          // boundary rules
+          if (b0 && b1) {
+            if (!mesh_.is_boundary(e_it))
+              continue;
+          } else if (b0)
+            hcol01 = false;
+          else if (b1)
+            hcol10 = false;
 
+          // locked rules
+          if (l0 && l1)
+            continue;
+          else if (l0)
+            hcol01 = false;
+          else if (l1)
+            hcol10 = false;
 
-	  // locked rules
-	  if (l0 && l1) continue;
-	  else if (l0) hcol01=false; 
-	  else if (l1) hcol10=false;
+          // feature rules
 
+          // the other two edges removed by collapse must not be features
+          h0 = mesh_.prev_halfedge_handle(h01);
+          h1 = mesh_.next_halfedge_handle(h10);
+          if (mesh_.status(mesh_.edge_handle(h0)).feature() || mesh_.status(mesh_.edge_handle(h1)).feature())
+            hcol01 = false;
+          h0 = mesh_.prev_halfedge_handle(h10);
+          h1 = mesh_.next_halfedge_handle(h01);
+          if (mesh_.status(mesh_.edge_handle(h0)).feature() || mesh_.status(mesh_.edge_handle(h1)).feature())
+            hcol10 = false;
 
-	  // feature rules
+          if (f0 && f1) {
+            // edge must be feature
+            if (!mesh_.status(e_it).feature())
+              continue;
 
-	  // the other two edges removed by collapse must not be features
-	  h0 = mesh_.prev_halfedge_handle(h01);
-	  h1 = mesh_.next_halfedge_handle(h10);
-	  if (mesh_.status(mesh_.edge_handle(h0)).feature() ||
-	      mesh_.status(mesh_.edge_handle(h1)).feature())
-	    hcol01 = false;
-	  h0 = mesh_.prev_halfedge_handle(h10);
-	  h1 = mesh_.next_halfedge_handle(h01);
-	  if (mesh_.status(mesh_.edge_handle(h0)).feature() ||
-	      mesh_.status(mesh_.edge_handle(h1)).feature())
-	    hcol10 = false;
+            // the other two edges removed by collapse must not be features
+            h0 = mesh_.prev_halfedge_handle(h01);
+            h1 = mesh_.next_halfedge_handle(h10);
+            if (mesh_.status(mesh_.edge_handle(h0)).feature() || mesh_.status(mesh_.edge_handle(h1)).feature())
+              hcol01 = false;
+            h0 = mesh_.prev_halfedge_handle(h10);
+            h1 = mesh_.next_halfedge_handle(h01);
+            if (mesh_.status(mesh_.edge_handle(h0)).feature() || mesh_.status(mesh_.edge_handle(h1)).feature())
+              hcol10 = false;
+          } else if (f0)
+            hcol01 = false;
+          else if (f1)
+            hcol10 = false;
 
-	  if (f0 && f1) 
-	  { 
-	    // edge must be feature
-	    if (!mesh_.status(e_it).feature()) continue; 
+          // topological rules
+          if (hcol01)
+            hcol01 = mesh_.is_collapse_ok(h01);
+          if (hcol10)
+            hcol10 = mesh_.is_collapse_ok(h10);
 
-	    // the other two edges removed by collapse must not be features
-	    h0 = mesh_.prev_halfedge_handle(h01);
-	    h1 = mesh_.next_halfedge_handle(h10);
-	    if (mesh_.status(mesh_.edge_handle(h0)).feature() ||
-		mesh_.status(mesh_.edge_handle(h1)).feature())
-	      hcol01 = false;
-	    h0 = mesh_.prev_halfedge_handle(h10);
-	    h1 = mesh_.next_halfedge_handle(h01);
-	    if (mesh_.status(mesh_.edge_handle(h0)).feature() ||
-		mesh_.status(mesh_.edge_handle(h1)).feature())
-	      hcol10 = false;
-	  }
-	  else if (f0) hcol01=false;
-	  else if (f1) hcol10=false;
+          // both collapses possible: collapse into vertex w/ higher valence
+          if (hcol01 && hcol10) {
+            if (mesh_.valence(v0) < mesh_.valence(v1))
+              hcol10 = false;
+            else
+              hcol01 = false;
+          }
 
+          // try v1 -> v0
+          if (hcol10) {
+            // don't create too long edges
+            skip = false;
+            for (vv_it = mesh_.cvv_iter(v1); vv_it && !skip; ++vv_it)
+              if (is_too_long(v0, vv_it))
+                skip = true;
 
-	  // topological rules
-	  if (hcol01)  hcol01 = mesh_.is_collapse_ok(h01);
-	  if (hcol10)  hcol10 = mesh_.is_collapse_ok(h10);
+            if (!skip) {
+              mesh_.collapse(h10);
+              ok = false;
+            }
+          }
 
+          // try v0 -> v1
+          else if (hcol01) {
+            // don't create too long edges
+            skip = false;
+            for (vv_it = mesh_.cvv_iter(v0); vv_it && !skip; ++vv_it)
+              if (is_too_long(v1, vv_it))
+                skip = true;
 
-	  // both collapses possible: collapse into vertex w/ higher valence
-	  if (hcol01 && hcol10)
-	  {
-	    if (mesh_.valence(v0) < mesh_.valence(v1))
-	      hcol10 = false;
-	    else
-	      hcol01 = false;
-	  }
-
-
-	  // try v1 -> v0
-	  if (hcol10)
-	  {
-	    // don't create too long edges
-	    skip = false;
-	    for (vv_it=mesh_.cvv_iter(v1); vv_it && !skip; ++vv_it)
-	      if (is_too_long(v0, vv_it))
-		skip=true; 
-
-	    if (!skip)
-	    {
-	      mesh_.collapse(h10);
-	      ok = false;
-	    }
-	  }
-	    
-
-	  // try v0 -> v1
-	  else if (hcol01)
-	  {
-	    // don't create too long edges
-	    skip = false;
-	    for (vv_it=mesh_.cvv_iter(v0); vv_it && !skip; ++vv_it)
-	      if (is_too_long(v1, vv_it))
-		skip=true; 
-
-	    if (!skip)
-	    {
-	      mesh_.collapse(h01);
-	      ok = false;
-	    }
-	  }
-	}
+            if (!skip) {
+              mesh_.collapse(h01);
+              ok = false;
+            }
+          }
+        }
       }
     }
   }
 
   mesh_.garbage_collection();
 
-  if (i==100) omlog() << "collapse break\n";
+  if (i == 100)
+    omlog() << "collapse break\n";
 }
 
 
@@ -708,12 +678,12 @@ flip_edges()
   int             ve0, ve1, ve2, ve3, ve_before, ve_after;
   bool            ok;
   int             i;
-  
+
 
 
 
   // compute vertex valences
-  for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end(); 
+  for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end();
        v_it!=v_end; ++v_it)
     mesh_.property(valences_, v_it) = mesh_.valence(v_it);
 
@@ -723,7 +693,7 @@ flip_edges()
   {
     ok = true;
 
-    for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end(); 
+    for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end();
 	 e_it!=e_end; ++e_it)
     {
       if (!mesh_.status(e_it).locked() && !mesh_.status(e_it).feature())
@@ -757,7 +727,7 @@ flip_edges()
 
 	  ve_before = ve0 + ve1 + ve2 + ve3;
 
-	  --val0;  --val1; 
+	  --val0;  --val1;
 	  ++val2;  ++val3;
 
 	  ve0 = (val0 - val_opt0);  ve0 *= ve0;
@@ -765,9 +735,9 @@ flip_edges()
 	  ve2 = (val2 - val_opt2);  ve2 *= ve2;
 	  ve3 = (val3 - val_opt3);  ve3 *= ve3;
 
-	
+
 	  ve_after = ve0 + ve1 + ve2 + ve3;
-	
+
 	  if (ve_before > ve_after && mesh_.is_flip_ok(e_it))
 	  {
 	    mesh_.flip(e_it);
@@ -802,7 +772,7 @@ tangential_smoothing(bool _use_projection)
 
   // tag active vertices
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
-    mesh_.status(v_it).set_tagged( !mesh_.status(v_it).locked() && 
+    mesh_.status(v_it).set_tagged( !mesh_.status(v_it).locked() &&
 				   !mesh_.status(v_it).feature() &&
 				   !mesh_.is_boundary(v_it) );
 
@@ -876,7 +846,7 @@ balanace_area(unsigned int _iters, bool _use_projection)
   // tag active vertices
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
   {
-    bool active = ( !mesh_.status(v_it).locked() && 
+    bool active = ( !mesh_.status(v_it).locked() &&
 		    !mesh_.status(v_it).feature() &&
 		    !mesh_.is_boundary(v_it) );
 
@@ -885,7 +855,7 @@ balanace_area(unsigned int _iters, bool _use_projection)
       if (mesh_.is_boundary(vv_it))
 	active = false;
 
-    mesh_.status(v_it).set_tagged( active ); 
+    mesh_.status(v_it).set_tagged( active );
   }
 
 
@@ -910,7 +880,7 @@ balanace_area(unsigned int _iters, bool _use_projection)
     // compute vertex areas
     for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
       if (mesh_.status(v_it).tagged2())
-	mesh_.property(area_, v_it) = 
+	mesh_.property(area_, v_it) =
   	  pow(diffgeo.compute_area(v_it), 2);
 
 
@@ -949,7 +919,7 @@ balanace_area(unsigned int _iters, bool _use_projection)
       }
 
       for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
-	if (!mesh_.status(v_it).locked() && 
+	if (!mesh_.status(v_it).locked() &&
 	    !mesh_.status(v_it).feature() &&
 	    !mesh_.is_boundary(v_it))
 	  mesh_.point(v_it) += mesh_.property(update_, v_it);
@@ -993,7 +963,7 @@ remove_caps()
 
   for (e_it=mesh_.edges_begin(); e_it!=e_end; ++e_it)
   {
-    if (!mesh_.status(e_it).locked() && 
+    if (!mesh_.status(e_it).locked() &&
 	mesh_.is_flip_ok(e_it))
     {
       h  = mesh_.halfedge_handle(e_it.handle(), 0);
@@ -1010,7 +980,7 @@ remove_caps()
 
       a0 = ( (a-b).normalize() | (c-b).normalize() );
       a1 = ( (a-d).normalize() | (c-d).normalize() );
-      
+
       if (a0 < a1)  { amin = a0; v = vb; }
       else          { amin = a1; v = vd; }
 
@@ -1029,7 +999,7 @@ remove_caps()
 
 	  if (v == vb)
 	    mesh_.property(pids, fb) = mesh_.property(pids, fd);
-	  else 
+	  else
 	    mesh_.property(pids, fd) = mesh_.property(pids, fb);
 	}
 
