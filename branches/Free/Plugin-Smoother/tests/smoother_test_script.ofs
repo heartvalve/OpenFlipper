@@ -1,4 +1,4 @@
-var cube = fileoff.loadObject("@OPENFLIPPER_TEST_FILES@/cube1.off");
+var cube = fileobj.loadObject("@OPENFLIPPER_TEST_FILES@/cube1.obj");
 
 print("Loaded file")
 smoother.smooth(cube,10,"tangential","C1");
