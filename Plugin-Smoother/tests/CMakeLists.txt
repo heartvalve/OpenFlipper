@@ -37,7 +37,7 @@ if(BUILD_TESTING)
      ${CMAKE_COMMAND}
      -D test_cmd=${test_cmd}
      -D test_args:string=${args}
-     -D md5=d41d8cd98f00b204e9800998ecf8427e
+     -D md5=23699491b2e4a2517d41ec91acca13db
      -D output_test=${OPENFLIPPER_TEST_RESULTS}/smoother_test_result.obj
      -P ${CMAKE_SOURCE_DIR}/tests/run_test_md5.cmake
   )
