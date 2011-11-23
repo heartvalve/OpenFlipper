@@ -462,7 +462,7 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
     if (!pickedJoint)
     	return;
 
-    Skeleton::Pose* currentPose = skeleton->referencePose();
+    Skeleton::Pose* currentPose = activePose(PluginFunctions::skeletonObject(object));
 
     const Matrix4x4 pickedGlobalMatrix = currentPose->globalMatrix(pickedJoint->id());
 
