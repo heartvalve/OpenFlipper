@@ -106,6 +106,21 @@ if ( COMISO_INCLUDE_DIR )
 
   endif()
 
+  STRING(REGEX MATCH "\#define COMISO_GUROBI_AVAILABLE 1" COMISO_GUROBI_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+
+  if ( COMISO_GUROBI_BUILD_TIME_AVAILABLE )
+
+   find_package(GUROBI)
+
+   if ( NOT GUROBI_FOUND )
+     message(ERROR "COMISO configured with GUROBI but GUROBI not available")
+   endif()
+
+   list (APPEND  COMISO_OPT_DEPS "GUROBI")
+
+  endif()
+
+
   add_definitions (-DCOMISODLL -DUSECOMISO )
 
 endif(COMISO_INCLUDE_DIR)
