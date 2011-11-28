@@ -67,7 +67,9 @@
 #include "GLSLShader.hh"
 
 #ifdef WIN32
-#define snprintf sprintf_s
+  #ifndef __MINGW32__
+    #define snprintf sprintf_s
+  #endif 
 #endif
 
 //==============================================================================
