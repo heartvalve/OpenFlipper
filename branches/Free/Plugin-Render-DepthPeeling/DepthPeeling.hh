@@ -104,11 +104,24 @@ private:
   void generatePeelingShaders(GLSL::StringList* _strVertexShaderOut,
     GLSL::StringList* _strFragmentShaderOut,
     GLSL::StringList* _strGeometryShaderOut,
-    bool _textured, bool _flatShaded, bool _phong);
+    bool _textured, bool _flatShaded, bool _phong, bool _vertexColor, bool _wireFrame);
+
+  /// regenerates peeling shaders based on light nodes in scenegraph
+  void updatePeelingShaderSet();
 
   /// draw the current scene
-  void drawScenePass(ACG::GLState* _glState, Viewer::ViewerProperties& _properties, BaseNode* _sceneGraphRoot);
+  void drawScenePass(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, BaseNode* _sceneGraphRoot);
+  
+  void drawScenePeelPass(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, BaseNode* _sceneGraphRoot, int _peelPass);
+  
+  template <class Action>
+  void traverseDraw(BaseNode* _node, Action& _action, ACG::SceneGraph::DrawModes::DrawMode _globalDrawMode, int _pass, int _peelPass);
+  
+  template <class Action>
+  bool traverseDrawApplyAction(BaseNode* _node, Action& _action, ACG::SceneGraph::DrawModes::DrawMode _globalDrawMode, int _pass, int _peelPass);
 
+  /// converts a drawmode to the correct shading program index
+  unsigned int getPeelShaderIndex(ACG::SceneGraph::DrawModes::DrawMode _drawMode);
 
 private:
   
@@ -131,21 +144,6 @@ private:
     GLuint blendDualPeelTexID_[7];
     /// depth peeling fbo
     GLuint blendDualPeelFbo_;
-
-    /// current shader state based on the Viewer DrawMode
-    bool peelShaderTextured_,  peelShaderFlat_,  peelShaderPhong_;
-
-    /// peel vertex shader
-    GLSL::Shader* peelVertexShader_;
-    
-    /// peel fragment shader
-    GLSL::Shader* peelFragmentShader_;
-
-    /// peel geometry shader
-    GLSL::Shader* peelGeometryShader_;
-    
-    /// peel program
-    GLSL::Program* peelProg_;
   };
 
   std::map<int, ViewerResources> viewerRes_;
@@ -156,8 +154,31 @@ private:
   /// depth peeling programs
   GLSL::Program* blendDualPeelProg_[4];
 
+  // note that shader flags are only good easy shader indexing
+  //  some combinations like phong + flat make no sense
+  enum
+  {
+    PEEL_SHADER_WIREFRAME = 0, // wireframe is a special case here, not combinable with others
+    PEEL_SHADER_HIDDENLINE = 1, // hiddenline is another special case, it renders geometry in background color
+    PEEL_SHADER_TEXTURED = 0x1,
+    PEEL_SHADER_PHONG = 0x2,
+    PEEL_SHADER_GOURAUD = 0x4,
+    PEEL_SHADER_FLAT = 0x8,
+    PEEL_SHADER_VERTEXCOLORS = 0x10,
+    PEEL_NUM_COMBINATIONS = 0x20,
+    PEEL_SHADER_NUM_FLAGS = 5
+  };
+  /// generated shader set
+  GLSL::Shader* peelShaders_[PEEL_NUM_COMBINATIONS*3]; // interleaved: vertex, geometry, fragment
+
+  /// generates shader programs
+  GLSL::Program* peelProgs_[PEEL_NUM_COMBINATIONS];
+
   /// fragment query
   GLuint blendQueryID_;
+
+  /// current glState ptr for hiddenline rendering
+  ACG::GLState* glStateTmp_;
 
   /// number of used lights in the scene
   GLuint numLights_;

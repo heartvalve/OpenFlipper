@@ -57,19 +57,16 @@ DepthPeelingPlugin::ViewerResources::ViewerResources()
 
   memset(blendDualPeelTexID_, 0, 7*4);
 
-  peelProg_ = 0;
-  peelVertexShader_ = 0;
-  peelFragmentShader_ = 0;
-  peelGeometryShader_ = 0;
-
   blendDualPeelFbo_ = 0;
 }
 
 void DepthPeelingPlugin::initializePlugin()
 {
-  memset(blendShaders_, 0, 8 * sizeof(GLSL::Shader*));
+  memset(blendShaders_, 0, sizeof(blendShaders_));
+  memset(peelShaders_, 0, sizeof(peelShaders_));
 
-  memset(blendDualPeelProg_, 0, 4 * sizeof(GLSL::Program*));
+  memset(blendDualPeelProg_, 0, sizeof(blendDualPeelProg_));
+  memset(peelProgs_, 0, sizeof(peelProgs_));
 
   blendQueryID_ = 0;
   numLights_ = 0;
@@ -123,7 +120,6 @@ void DepthPeelingPlugin::reloadResources(int _viewerId) {
     if (i >= 2) fmt = GL_RGBA; // fmt for front_blender01 and back_temp01
     if (i == 6) fmt = GL_RGB; // fmt for back_blender
 
-#ifdef ARCH_DARWIN
     ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, p->blendDualPeelTexID_[i]);
     // texture access: clamped
     glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -133,17 +129,6 @@ void DepthPeelingPlugin::reloadResources(int _viewerId) {
     glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, DualPeelIntFmt[i], p->glWidth_, p->glHeight_, 0, fmt, GL_FLOAT, 0);
-#else
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, p->blendDualPeelTexID_[i]);
-    // texture access: clamped
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    // filter: none
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, DualPeelIntFmt[i], p->glWidth_, p->glHeight_, 0, fmt, GL_FLOAT, 0);
-#endif
 
 
 
@@ -166,21 +151,12 @@ void DepthPeelingPlugin::reloadResources(int _viewerId) {
     for (int i = 0; i < 6; ++i)
     {
       glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+i,
-      #ifdef ARCH_DARWIN
         GL_TEXTURE_RECTANGLE_EXT, p->blendDualPeelTexID_[i < 3 ? 2*i : 2*(i-3) +1], 0);
-      #else
-        GL_TEXTURE_RECTANGLE, p->blendDualPeelTexID_[i < 3 ? 2*i : 2*(i-3) +1], 0);
-      #endif
     }
 
     // back_blender_tex_id
-    #ifdef ARCH_DARWIN
       glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE_EXT,
                                 p->blendDualPeelTexID_[6], 0);
-    #else
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_RECTANGLE,
-                                p->blendDualPeelTexID_[6], 0);
-    #endif
   }
 
   ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -264,6 +240,16 @@ void DepthPeelingPlugin::destroyResources() {
     blendShaders_[i] = 0;
   }
 
+  for (unsigned int i = 0; i < sizeof(peelShaders_) / sizeof(peelShaders_[0]); ++i)
+  {
+    delete peelShaders_[i]; peelShaders_[i] = 0;
+  }
+
+  for (unsigned int i = 0; i < sizeof(peelProgs_) / sizeof(peelProgs_[0]); ++i)
+  {
+    delete peelProgs_[i]; peelProgs_[i] = 0;
+  }
+
   // free all viewer specific resources
   std::map<int, ViewerResources>::iterator resIt = viewerRes_.begin();
   for (; resIt != viewerRes_.end(); ++resIt)
@@ -281,11 +267,6 @@ void DepthPeelingPlugin::destroyResources(int _viewerId)
 
   if (p->blendDualPeelTexID_) glDeleteTextures(7, p->blendDualPeelTexID_);
   memset(p->blendDualPeelTexID_, 0, sizeof(p->blendDualPeelTexID_));
-
-  delete p->peelVertexShader_; p->peelVertexShader_ = 0;
-  delete p->peelFragmentShader_; p->peelFragmentShader_ = 0;
-  delete p->peelGeometryShader_; p->peelGeometryShader_ = 0;
-  delete p->peelProg_; p->peelProg_ = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -384,9 +365,12 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
                                                 GLSL::StringList* _strGeometryShaderOut,
                                                 bool _textured,
                                                 bool _flatShaded,
-                                                bool _phong)
+                                                bool _phong,
+                                                bool _vertexColor,
+                                                bool _wireFrame)
 {
   if (_flatShaded) _phong = false;
+  if (_vertexColor) _phong = false;
 
   std::string strColor = "color";
   std::string strNormal = "normal";
@@ -395,9 +379,12 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
   if (_flatShaded)
     strFragPos = "VPosVS";
 
+  if (_wireFrame)
+    _flatShaded = _vertexColor = _textured = _phong = false;
+
   std::string strCode = "";
 
-  for (unsigned int i = 0; i < numLights_; ++i)
+  for (unsigned int i = 0; i < numLights_ && (!_wireFrame); ++i)
   {
     // new code block for this light
     strCode += "{\n";
@@ -429,6 +416,15 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     strCode += "colLight += ldotn * ";
     if (_textured && _phong)
       strCode += "diffColor * ";
+
+    if (_vertexColor)
+    {
+      if (_flatShaded)
+        strCode += "vColor[2];\n";
+      else
+        strCode += "gl_Color;\n";
+    }
+    else
     strCode += strMaterial + ".diffuse;\n";
 
     //specular
@@ -606,7 +602,7 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
   }
 
   // finalize vertex shader
-  if (!_phong && !_flatShaded)
+  if (!_phong && !_flatShaded && !_wireFrame)
   {
     // lighting code:
     _strVertexShaderOut->push_back("\nvec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);");
@@ -623,7 +619,11 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     _strVertexShaderOut->push_back("\nvColor = color;\n");
   }
   if (_flatShaded)
+  {
+    if (_vertexColor)
+      _strVertexShaderOut->push_back("vColor = gl_Color;\n");
     _strVertexShaderOut->push_back("gl_Position = gl_Vertex;\n");
+  }
 
   _strVertexShaderOut->push_back("\n}");
   
@@ -655,39 +655,45 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     _strFragmentShaderOut->push_back(str);
   }
 
-  if (!_flatShaded)
+  if (!_wireFrame)
   {
-    _strFragmentShaderOut->push_back("  vec3 normal = normalize(vNormal);\n");
-    _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
-  }
-  else
-  {
-    _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
-    _strFragmentShaderOut->push_back("  vec4 vColor = VColor;\n");
-  }
-
-  if (_textured)
-    _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, vTexCoord); color.a *= diffColor.a;\n");
-
-  if (!_phong)
-  {
-    if (_textured)
-      _strFragmentShaderOut->push_back(" color = diffColor * vColor;\n");
-    else
-      _strFragmentShaderOut->push_back(" color = vColor;\n");
-  }
-  else
-  {
-    // lighting code:
-    std::string::size_type curPos = 0;
-    std::string::size_type newLinePos = strCode.find_first_of('\n');
-    while (newLinePos != std::string::npos)
+    if (!_flatShaded)
     {
-      _strFragmentShaderOut->push_back(strCode.substr(curPos, newLinePos - curPos + 1));
-      curPos = newLinePos + 1; 
-      newLinePos = strCode.find_first_of('\n', curPos);
+      _strFragmentShaderOut->push_back("  vec3 normal = normalize(vNormal);\n");
+      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
+      if (_textured)
+        _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, vTexCoord); color.a *= diffColor.a;\n");
+    }
+    else
+    {
+      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
+      _strFragmentShaderOut->push_back("  vec4 vColor = VColor;\n");
+      if (_textured)
+        _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, VTexCoord); color.a *= diffColor.a;\n");
+    }
+    
+    if (!_phong)
+    {
+      if (_textured)
+        _strFragmentShaderOut->push_back(" color = diffColor * vColor;\n");
+      else
+        _strFragmentShaderOut->push_back(" color = vColor;\n");
+    }
+    else
+    {
+      // lighting code:
+      std::string::size_type curPos = 0;
+      std::string::size_type newLinePos = strCode.find_first_of('\n');
+      while (newLinePos != std::string::npos)
+      {
+        _strFragmentShaderOut->push_back(strCode.substr(curPos, newLinePos - curPos + 1));
+        curPos = newLinePos + 1; 
+        newLinePos = strCode.find_first_of('\n', curPos);
+      }
     }
   }
+  else // wireframe: no shading necessary
+    _strFragmentShaderOut->push_back("  vec4 color = vec4(1.0, 1.0, 1.0, gl_FrontMaterial.ambient.a);\n");
 
   for (unsigned int i = 0; i < sizeof(szFragmentShaderEnd) / sizeof(char*); ++i)
   {
@@ -751,120 +757,485 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
 
 //////////////////////////////////////////////////////////////////////////
 
-void DepthPeelingPlugin::drawScenePass(ACG::GLState* _glState, Viewer::ViewerProperties& _properties, BaseNode* _sceneGraphRoot)
+template <class Action>
+bool
+DepthPeelingPlugin::traverseDrawApplyAction( BaseNode* _node, Action& _action, ACG::SceneGraph::DrawModes::DrawMode _globalDrawMode, int _pass, int _peelPass)
 {
-  ACG::SceneGraph::DrawAction action(_properties.drawMode(), *_glState, false);
-  ACG::SceneGraph::traverse_multipass(_sceneGraphRoot, action, *_glState, _properties.drawMode());
+  bool ret = true; // process_children flag returned
+
+  // use nodes drawmode to grab a peeler program with correct shading
+  ACG::SceneGraph::DrawModes::DrawMode dm, dmSave = _node->drawMode();
+  dm = dmSave;
+
+  if (!dm) return ret;
+
+  if (dm & ACG::SceneGraph::DrawModes::DEFAULT)
+    dm = _globalDrawMode;
+/*
+  if (dm & ACG::SceneGraph::DrawModes::HIDDENLINE)
+  {
+    // hiddenline is accomplished with wireframe in first peel layer only
+    dm &= ~ACG::SceneGraph::DrawModes::HIDDENLINE;
+    dm |= ACG::SceneGraph::DrawModes::WIREFRAME;
+    if (_peelPass > 2)
+      return ret;
+    _node->drawMode(dm);
+  }
+*/
+  if (dm & ACG::SceneGraph::DrawModes::WIREFRAME || dm & ACG::SceneGraph::DrawModes::HIDDENLINE)
+  {
+    ACG::SceneGraph::DrawModes::DrawMode dmShaded = dm;
+    dmShaded &= ~ACG::SceneGraph::DrawModes::WIREFRAME;
+    dmShaded &= ~ACG::SceneGraph::DrawModes::HIDDENLINE;
+
+    // polygon only draw
+    if (dmShaded)
+    {
+      _node->drawMode(dmShaded); // evil method: change nodes drawmode here, restore it later
+      ret &= traverseDrawApplyAction(_node, _action, _globalDrawMode, _pass, _peelPass);
+    }
+
+    // wireframe only follows
+    dm &= (~dmShaded);
+    _node->drawMode(dm);
+  }
+
+  UINT shaderIndex = getPeelShaderIndex(dm);
+
+  // do hiddenline algorithmus manually here
+  GLenum prev_depth = glStateTmp_->depthFunc();
+  if (dm & ACG::SceneGraph::DrawModes::HIDDENLINE)
+  {
+    // manual hiddenline
+
+    // First:
+    // Render all faces in background color to initialize z-buffer
+    _node->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
+
+    GLSL::Program* peelProg = peelProgs_[PEEL_SHADER_HIDDENLINE];
+    peelProg->use();
+    peelProg->setUniform("DepthBlenderTex", 4);
+    peelProg->setUniform("FrontBlenderTex", 5);
+    peelProg->setUniform("ObjectColor", glStateTmp_->clear_color());
+
+    ACG::GLState::depthRange(0.01, 1.0);
+    ACG::GLState::lockDepthRange();
+    ACG::GLState::lockProgram();
+    ret &= _action(_node);
+    ACG::GLState::unlockProgram();
+    ACG::GLState::unlockDepthRange();
+    ACG::GLState::depthRange(0.0, 1.0);
+
+    // Second
+    // Render the lines. All lines not on the front will be skipped in z-test
+    _node->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    ACG::GLState::depthFunc(GL_LEQUAL);
+    ACG::GLState::lockDepthFunc();
+
+    // use wireframe shader now
+    shaderIndex = PEEL_SHADER_WIREFRAME;
+  }
+
+  GLSL::Program* peelProg = peelProgs_[shaderIndex];
+  peelProg->use();
+  peelProg->setUniform("DepthBlenderTex", 4);
+  peelProg->setUniform("FrontBlenderTex", 5);
+
+  if (shaderIndex & PEEL_SHADER_FLAT)
+  {
+    // set geomtry shader constants
+    peelProg->setGeometryInputType(GL_TRIANGLES);
+    peelProg->setGeometryOutputType(GL_TRIANGLE_STRIP);
+    peelProg->setGeometryVertexCount(3);
+  }
+  peelProg->setUniform("DiffuseTex", 0);
+
+  ACG::GLState::lockProgram();
+  ret &= _action(_node);
+  ACG::GLState::unlockProgram();
+
+  // restore state
+  _node->drawMode(dmSave);
+
+  if (dm & ACG::SceneGraph::DrawModes::HIDDENLINE)
+  {
+    ACG::GLState::unlockDepthFunc();
+
+    //restore depth buffer comparison function
+    ACG::GLState::depthFunc(prev_depth);
+  }
+
+  return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+template <class Action>
+void
+DepthPeelingPlugin::traverseDraw( BaseNode* _node, Action& _action, ACG::SceneGraph::DrawModes::DrawMode _globalDrawMode, int _pass, int _peelPass)
+{
+
+  // Process node if it exists
+  if (_node) {
+    BaseNode::StatusMode status(_node->status());
+    bool process_children(status != BaseNode::HideChildren);
+
+    // If the subtree is hidden, ignore this node and its children while rendering
+    if (status != BaseNode::HideSubtree) {
+
+      // Executes this nodes enter function (if available and active in multipass)
+      if ( _node->multipassStatusActive(_pass) ) {
+        if_has_enter(_action, _node);
+      }
+
+      // If the node itself is hidden, don't call the action on it.
+      // Additionally check if rendering order is node first. otherwise, we will call it after the children.
+      // And check if it should be called in this rendering pass.
+      if ( (_node->status() != BaseNode::HideNode )  && ( _node->traverseMode() & BaseNode::NodeFirst ) && _node->multipassNodeActive(_pass))
+        process_children &= traverseDrawApplyAction(_node, _action, _globalDrawMode, _pass, _peelPass);
+
+      if (process_children) {
+
+        BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+
+        // Process all children
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverseDraw(*cIt, _action, _globalDrawMode, _pass, _peelPass);
+
+        // Process all children which are second pass
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverseDraw(*cIt, _action, _globalDrawMode, _pass, _peelPass);
+
+      }
+
+
+      // If we are in childrenfirst node, the children have been painted andwe now check, if we can draw this node.
+      // If its hidden, ignore it.
+      // If it should not be rendered in this pass, ignore it too.
+      if ( (_node->traverseMode() & BaseNode::ChildrenFirst ) && (_node->status() != BaseNode::HideNode) && _node->multipassNodeActive(_pass) )
+        process_children &= traverseDrawApplyAction(_node, _action, _globalDrawMode, _pass, _peelPass);
+
+      // Call the leave function of the node (if available and active in multipass).
+      if ( _node->multipassStatusActive(_pass) )
+        if_has_leave(_action, _node);
+
+    } // if (status != BaseNode::HideSubtree)
+  } // if(node_)
+}
+
+void DepthPeelingPlugin::drawScenePeelPass(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, BaseNode* _sceneGraphRoot, int _peelPass)
+{
+  ACG::SceneGraph::DrawAction action(_drawMode, *_glState, false);
+//  traverseDraw(_sceneGraphRoot, action, *_glState, _drawMode);
+
+  // Reset render pass counter
+  _glState->reset_render_pass();
+
+  // Get max render passes
+  unsigned int max_passes = _glState->max_render_passes();
+
+  // Render all passes
+  for(unsigned int pass = BaseNode::PASS_1; pass <= (BaseNode::PASS_1 + max_passes); ++pass) {
+
+    // Traverse scenegraph
+    traverseDraw (_sceneGraphRoot, action, _drawMode, pass, _peelPass);
+    // Increment render pass counter by 1
+    _glState->next_render_pass();
+  }
+
+  // Reset render pass counter
+  _glState->reset_render_pass();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void DepthPeelingPlugin::drawScenePass(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, BaseNode* _sceneGraphRoot)
+{
+  ACG::SceneGraph::DrawAction action(_drawMode, *_glState, false);
+  traverse_multipass(_sceneGraphRoot, action, *_glState, _drawMode);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void DepthPeelingPlugin::updatePeelingShaderSet()
+{
+  bool rebuildShaders = false;
+
+  BaseNode* sceneGraphRoot = PluginFunctions::getSceneGraphRootNode();
+
+  // peel shader is rebuilt, if a new light is added or a light type changed
+
+  LightType prevLights[8];
+  unsigned int prevIDs[8];
+  unsigned int prevNum = numLights_;
+
+  memcpy(prevLights, lightTypes_, sizeof(LightType) * numLights_);
+  memcpy(prevIDs, glLightIDs_, sizeof(unsigned int) * numLights_);
+
+  numLights_ = 0;
+  traverseLightNodes(sceneGraphRoot);
+
+  // test for necessary shader recompilation
+  if (numLights_ == prevNum)
+  {
+    // look for any light node changes
+    if (memcmp(prevLights, lightTypes_, sizeof(LightType) * numLights_) ||
+      memcmp(prevIDs, glLightIDs_, sizeof(unsigned int) * numLights_))
+      rebuildShaders = true;
+  }
+  else rebuildShaders = true;
+
+  if (rebuildShaders)
+  {
+    // delete old shaders and programs
+    for (UINT i = 0; i < sizeof(peelShaders_) / sizeof(peelShaders_[0]); ++i)
+    {
+      delete peelShaders_[i]; peelShaders_[i] = 0;
+    }
+
+    for (UINT i = 0; i < sizeof(peelProgs_) / sizeof(peelProgs_[0]); ++i)
+    {
+      delete peelProgs_[i]; peelProgs_[i] = 0;
+    }
+
+    for (UINT i = 0; i < PEEL_NUM_COMBINATIONS; ++i)
+    {
+      GLuint texturedDrawMode = 0, flatDrawMode = 0, phongDrawMode = 0, vertexColorDrawMode = 0, gouraudDrawMode = 0;
+
+      texturedDrawMode = i & PEEL_SHADER_TEXTURED;
+      flatDrawMode = i & PEEL_SHADER_FLAT;
+      phongDrawMode = i & PEEL_SHADER_PHONG;
+      vertexColorDrawMode = i & PEEL_SHADER_VERTEXCOLORS;
+      gouraudDrawMode = i & PEEL_SHADER_GOURAUD;
+
+      if (i != PEEL_SHADER_WIREFRAME)
+      {
+        // filter nonsense
+        if (flatDrawMode && phongDrawMode) continue;
+        if (flatDrawMode && gouraudDrawMode) continue;
+        if (phongDrawMode && gouraudDrawMode) continue;
+
+        if (phongDrawMode + flatDrawMode + gouraudDrawMode == 0) continue;
+      }
+      
+      GLSL::StringList strVertexShader, strFragmentShader, strGeometryShader;
+      generatePeelingShaders(&strVertexShader, &strFragmentShader, &strGeometryShader, texturedDrawMode != 0, flatDrawMode != 0, phongDrawMode != 0, vertexColorDrawMode != 0, i == PEEL_SHADER_WIREFRAME);
+
+      peelProgs_[i] = new GLSL::Program();
+
+      GLSL::VertexShader* pVertexSh = new GLSL::VertexShader();
+      pVertexSh->setSource(strVertexShader);
+      pVertexSh->compile();
+      peelShaders_[i*3 + 0] = pVertexSh;
+      peelProgs_[i]->attach(pVertexSh);
+
+      if (flatDrawMode)
+      {
+        GLSL::GeometryShader* pGeomSh = new GLSL::GeometryShader();
+        pGeomSh->setSource(strGeometryShader);
+        pGeomSh->compile();
+        peelShaders_[i*3 + 1] = pGeomSh;
+        peelProgs_[i]->attach(pGeomSh);
+      }
+
+      GLSL::FragmentShader* pFragSh = new GLSL::FragmentShader();
+      pFragSh->setSource(strFragmentShader);
+      pFragSh->compile();
+      peelShaders_[i*3 + 2] = pFragSh;
+      peelProgs_[i]->attach(pFragSh);
+
+      peelProgs_[i]->link();
+      ACG::glCheckErrors();
+
+
+#ifdef DEPTHPEELING_SHADER_EXPORT
+      char szFileName[256];
+      sprintf(szFileName, "peel_vertex_%02d.glsl", i);
+      FILE* pShaderOut = fopen(szFileName, "wt");
+      for (GLSL::StringList::iterator it = strVertexShader.begin(); it != strVertexShader.end(); ++it)
+        fprintf(pShaderOut, it->c_str());
+      fclose(pShaderOut);
+
+
+      sprintf(szFileName, "peel_frag%02d.glsl", i);
+      pShaderOut = fopen(szFileName, "wt");
+      for (GLSL::StringList::iterator it = strFragmentShader.begin(); it != strFragmentShader.end(); ++it)
+        fprintf(pShaderOut, it->c_str());
+      fclose(pShaderOut);
+
+      if (flatDrawMode)
+      {
+        sprintf(szFileName, "peel_geom%02d.glsl", i);
+        pShaderOut = fopen(szFileName, "wt");
+        for (GLSL::StringList::iterator it = strGeometryShader.begin(); it != strGeometryShader.end(); ++it)
+          fprintf(pShaderOut, it->c_str());
+        fclose(pShaderOut);
+      }
+#endif
+    }
+  }
+
+
+  // create a special shader for hiddenline
+  // hiddenline = wireframe + early z cull
+  // the special shader is needed for the z buffer pass
+
+  const char* szVertexShader[] = {
+    "void main(void)",
+    "{",
+    "  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;",
+    "}"};
+
+  const char* szFragmentShader[] = {
+    "uniform vec4 ObjectColor;",
+    "uniform sampler2DRect DepthBlenderTex;",
+    "uniform sampler2DRect FrontBlenderTex;",
+    "",
+    "#define MAX_DEPTH 1.0",
+    "",
+    "",
+    "void main(void)",
+    "{",
+    "  // window-space depth interpolated linearly in screen space",
+    "  float fragDepth = gl_FragCoord.z;",
+    "",
+    "  vec2 depthBlender = texture2DRect(DepthBlenderTex, gl_FragCoord.xy).xy;",
+    "  vec4 forwardTemp = texture2DRect(FrontBlenderTex, gl_FragCoord.xy);",
+    "  ",
+    "  // Depths and 1.0-alphaMult always increase",
+    "  // so we can use pass-through by default with MAX blending",
+    "  gl_FragData[0].xy = depthBlender;",
+    "  ",
+    "  // Front colors always increase (DST += SRC*ALPHA_MULT)",
+    "  // so we can use pass-through by default with MAX blending",
+    "  gl_FragData[1] = forwardTemp;",
+    "  ",
+    "  // Because over blending makes color increase or decrease,",
+    "  // we cannot pass-through by default.",
+    "  // Each pass, only one fragment writes a color greater than 0",
+    "  gl_FragData[2] = vec4(0.0);",
+    "",
+    "  float nearestDepth = -depthBlender.x;",
+    "  float farthestDepth = depthBlender.y;",
+    "  float alphaMultiplier = 1.0 - forwardTemp.w;",
+    "",
+    "  if (fragDepth < nearestDepth || fragDepth > farthestDepth) {",
+    "    // Skip this depth in the peeling algorithm",
+    "    gl_FragData[0].xy = vec2(-MAX_DEPTH);",
+    "    return;",
+    "  }",
+    "  ",
+    "  if (fragDepth > nearestDepth && fragDepth < farthestDepth) {",
+    "    // This fragment needs to be peeled again",
+    "    gl_FragData[0].xy = vec2(-fragDepth, fragDepth);",
+    "    return;",
+    "  }",
+    "  ",
+    "  // If we made it here, this fragment is on the peeled layer from last pass",
+    "  // therefore, we need to shade it, and make sure it is not peeled any farther",
+    "  vec4 color = ObjectColor;",
+    "  gl_FragData[0].xy = vec2(-MAX_DEPTH);",
+    "  ",
+    "  if (fragDepth == nearestDepth) {",
+    "    gl_FragData[1].xyz += color.rgb * color.a * alphaMultiplier;",
+    "    gl_FragData[1].w = 1.0 - alphaMultiplier * (1.0 - color.a);",
+    "  } else {",
+    "    gl_FragData[2] += color;",
+    "  }",
+    "}"};
+
+    GLSL::StringList strVertexShader, strFragmentShader;
+    for (unsigned int i = 0; i < sizeof(szVertexShader) / sizeof(char*); ++i)
+    {
+      std::string str = szVertexShader[i];
+      str += "\n";
+      strVertexShader.push_back(str);
+    }
+
+    for (unsigned int i = 0; i < sizeof(szFragmentShader) / sizeof(char*); ++i)
+    {
+      std::string str = szFragmentShader[i];
+      str += "\n";
+      strFragmentShader.push_back(str);
+    }
+
+    GLSL::Program* peelHiddenLine = peelProgs_[PEEL_SHADER_HIDDENLINE] = new GLSL::Program();
+
+    GLSL::VertexShader* pVertexSh = new GLSL::VertexShader();
+    pVertexSh->setSource(strVertexShader);
+    pVertexSh->compile();
+    peelShaders_[PEEL_SHADER_HIDDENLINE*3 + 0] = pVertexSh;
+    peelHiddenLine->attach(pVertexSh);
+
+    GLSL::FragmentShader* pFragSh = new GLSL::FragmentShader();
+    pFragSh->setSource(strFragmentShader);
+    pFragSh->compile();
+    peelShaders_[PEEL_SHADER_HIDDENLINE*3 + 2] = pFragSh;
+    peelHiddenLine->attach(pFragSh);
+
+    peelHiddenLine->link();
+    ACG::glCheckErrors();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+unsigned int DepthPeelingPlugin::getPeelShaderIndex(ACG::SceneGraph::DrawModes::DrawMode _drawMode)
+{
+  if (_drawMode & ACG::SceneGraph::DrawModes::WIREFRAME ||
+    _drawMode & ACG::SceneGraph::DrawModes::HIDDENLINE)
+    return PEEL_SHADER_WIREFRAME;
+
+  bool textured = _drawMode & ACG::SceneGraph::DrawModes::SOLID_TEXTURED || _drawMode & ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED;
+  bool flat = _drawMode & ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED;
+  bool phong = _drawMode & ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED;
+  bool vertexColor = _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED || _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ||
+    _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED || _drawMode & ACG::SceneGraph::DrawModes::POINTS_COLORED;
+
+  bool gouraud = _drawMode & ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
+
+  // fix illegal combinations
+  if (phong && flat) flat = false;
+  if (flat && gouraud) gouraud = false;
+  if (gouraud && phong) phong = false;
+
+  // wireframe, point, etc use gouraud shading
+  if ((!phong) && (!gouraud) && (!flat)) gouraud = true;
+
+  unsigned int idx = 0;
+
+  if (flat) idx |= PEEL_SHADER_FLAT;
+  if (gouraud) idx |= PEEL_SHADER_GOURAUD;
+  if (phong) idx |= PEEL_SHADER_PHONG;
+  if (vertexColor) idx |= PEEL_SHADER_VERTEXCOLORS;
+  if (textured) idx |= PEEL_SHADER_TEXTURED;
+
+  return idx;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
 {
+  glStateTmp_ = _glState;
+
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
   int viewerId = _properties.viewerId();
 
-  viewerRes_[viewerId].glWidth_ = _glState->viewport_width();
-  viewerRes_[viewerId].glHeight_ = _glState->viewport_height();
   ViewerResources* pViewer = &viewerRes_[viewerId];
+  pViewer->glWidth_ = _glState->viewport_width();
+  pViewer->glHeight_ = _glState->viewport_height();
 
-  bool rebuildShaders = false;
-
-  if (pViewer->glWidth_ != pViewer->rtWidth_ || pViewer->glHeight_ != pViewer->rtHeight_) {
+  if (pViewer->glWidth_ != pViewer->rtWidth_ || pViewer->glHeight_ != pViewer->rtHeight_)
     reloadResources(viewerId);
-    rebuildShaders = true;
-  }
-
+  
+//  updatePeelingShaderSet(viewerId, _properties.drawMode());
+  updatePeelingShaderSet();
   BaseNode* sceneGraphRoot = PluginFunctions::getSceneGraphRootNode();
 
-  {
-    // peel shader is rebuilt, if a new light is added or a light type changed
-    // or a viewer DrawMode change
-
-    LightType prevLights[8];
-    unsigned int prevIDs[8];
-    unsigned int prevNum = numLights_;
-
-    memcpy(prevLights, lightTypes_, sizeof(LightType) * numLights_);
-    memcpy(prevIDs, glLightIDs_, sizeof(unsigned int) * numLights_);
-
-    numLights_ = 0;
-    traverseLightNodes(sceneGraphRoot);
-
-    // test for necessary shader recompilation
-    if (numLights_ == prevNum)
-    {
-      // look for any light node changes
-      if (memcmp(prevLights, lightTypes_, sizeof(LightType) * numLights_) ||
-        memcmp(prevIDs, glLightIDs_, sizeof(unsigned int) * numLights_))
-        rebuildShaders = true;
-    }
-    else rebuildShaders = true;
-
-    // check drawmode
-    bool texturedDrawMode = _properties.drawMode() & ACG::SceneGraph::DrawModes::SOLID_TEXTURED || _properties.drawMode() & ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED;
-    bool flatDrawMode = _properties.drawMode() & ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED || _properties.drawMode() & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED;
-    bool phongDrawMode = _properties.drawMode() & ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED;
-    if (flatDrawMode) phongDrawMode = false;
-
-    if ( !pViewer->peelProg_ || ! pViewer->peelVertexShader_ || ! pViewer->peelFragmentShader_ ||
-      pViewer->peelShaderTextured_ != texturedDrawMode || 
-      pViewer->peelShaderFlat_ != flatDrawMode || 
-      pViewer->peelShaderPhong_ != phongDrawMode)
-    {
-      rebuildShaders = true;
-      pViewer->peelShaderTextured_ = texturedDrawMode;
-      pViewer->peelShaderFlat_ = flatDrawMode;
-      pViewer->peelShaderPhong_ = phongDrawMode;
-    }
-
-    if (rebuildShaders)
-    {
-      GLSL::StringList strVertexShader, strFragmentShader, strGeometryShader;
-
-      generatePeelingShaders(&strVertexShader, &strFragmentShader, &strGeometryShader, texturedDrawMode, flatDrawMode, phongDrawMode);
-
-      delete pViewer->peelProg_;
-
-      // recompile
-
-      pViewer->peelProg_ = new GLSL::Program();
-
-      delete pViewer->peelVertexShader_;
-      delete pViewer->peelFragmentShader_;
-      delete pViewer->peelGeometryShader_;
-
-      pViewer->peelVertexShader_ = GLSL::PtrVertexShader(new GLSL::VertexShader());
-      pViewer->peelVertexShader_->setSource(strVertexShader);
-      pViewer->peelVertexShader_->compile();
-
-      pViewer->peelFragmentShader_ = GLSL::PtrFragmentShader(new GLSL::FragmentShader());
-      pViewer->peelFragmentShader_->setSource(strFragmentShader);
-      pViewer->peelFragmentShader_->compile();
-
-      pViewer->peelProg_->attach(pViewer->peelVertexShader_);
-      pViewer->peelProg_->attach(pViewer->peelFragmentShader_);
-
-      pViewer->peelGeometryShader_ = 0;
-      if (flatDrawMode)
-      {
-        pViewer->peelGeometryShader_ = GLSL::PtrGeometryShader(new GLSL::GeometryShader());
-        pViewer->peelGeometryShader_->setSource(strGeometryShader);
-        pViewer->peelFragmentShader_->compile();
-        pViewer->peelProg_->attach(pViewer->peelGeometryShader_);
-      }
-
-      pViewer->peelProg_->link();
-
-
-      ACG::glCheckErrors();
-
-    }
-  }
-  
-  
-  
   ACG::GLState::depthFunc(GL_LESS);
 
 
@@ -929,13 +1300,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
   for (int i = 0; i < 6; ++i)
   {
     ACG::GLState::activeTexture(GL_TEXTURE0 + i);
-
-    #ifdef ARCH_DARWIN
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
-    #else
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, 0);
-    #endif
-
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, 0);
   }
   
 
@@ -961,7 +1326,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
 
   blendDualPeelProg_[0]->use();
   ACG::GLState::lockProgram();
-  drawScenePass(_glState, _properties, sceneGraphRoot);
+  drawScenePass(_glState, _properties.drawMode(), sceneGraphRoot);
   ACG::GLState::unlockProgram();
 
 
@@ -1004,44 +1369,21 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
     ACG::GLState::blendEquation(GL_MAX_EXT);
     ACG::GLState::lockBlendEquation();
 
-
-    pViewer->peelProg_->use();
-    pViewer->peelProg_->setUniform("DepthBlenderTex", 4);
-    pViewer->peelProg_->setUniform("FrontBlenderTex", 5);
-
-    if (pViewer->peelShaderFlat_)
-    {
-      // set geomtry shader constants
-      pViewer->peelProg_->setGeometryInputType(GL_TRIANGLES);
-      pViewer->peelProg_->setGeometryOutputType(GL_TRIANGLE_STRIP);
-      pViewer->peelProg_->setGeometryVertexCount(3);
-    }
-
     ACG::GLState::activeTexture(GL_TEXTURE5); // front_blender_tex  base_offset: 2
-    #ifdef ARCH_DARWIN
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[2 + prevId]);
-    #else
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[2 + prevId]);
-    #endif
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[2 + prevId]);
 
     ACG::GLState::activeTexture(GL_TEXTURE4); // depth_tex  base_offset: 0
-    #ifdef ARCH_DARWIN
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[0 + prevId]);
-    #else
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[0 + prevId]);
-    #endif
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[0 + prevId]);
 
 
     // scene geometry peeling pass
+    //  note that the peel shader is set right before rendering in the traverser, based on a node's drawmode
     ACG::GLState::activeTexture(GL_TEXTURE0);
-    pViewer->peelProg_->setUniform("DiffuseTex", 0);
 
-    ACG::GLState::lockProgram();
     ACG::GLState::shadeModel(GL_SMOOTH); // flat shading is emulated in Geometry Shader, which only works with interpolated vertex shader output
     ACG::GLState::lockShadeModel();
-    drawScenePass(_glState, _properties, sceneGraphRoot);
+    drawScenePeelPass(_glState, _properties.drawMode(), sceneGraphRoot, pass);
     ACG::GLState::unlockShadeModel();
-    ACG::GLState::unlockProgram();
 
 
     // Full screen pass to alpha-blend the back color
@@ -1059,11 +1401,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
     blendDualPeelProg_[2]->setUniform("TempTex", 4);
 
     ACG::GLState::activeTexture(GL_TEXTURE4); // back_temp_tex  base_offset: 4
-    #ifdef ARCH_DARWIN
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[4 + currId]);
-    #else
-      ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[4 + currId]);
-    #endif
+    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[4 + currId]);
 
     drawQuadProj(); // full screen quad, already projected
 
@@ -1098,20 +1436,11 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
   blendDualPeelProg_[3]->setUniform("ViewportOffset", ACG::Vec2f(old_viewport[0], old_viewport[1]));
 
   ACG::GLState::activeTexture(GL_TEXTURE5); // back_blender:  offset 6
-  #ifdef ARCH_DARWIN
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[6]);
-  #else
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[6]);
-  #endif
+  ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[6]);
 
 
   ACG::GLState::activeTexture(GL_TEXTURE4); // front_blender_tex  base_offset: 2
-  #ifdef ARCH_DARWIN
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[2 + currId]);
-  #else
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE, pViewer->blendDualPeelTexID_[2 + currId]);
-  #endif
-
+  ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_EXT, pViewer->blendDualPeelTexID_[2 + currId]);
 
   
   glViewport(old_viewport[0], old_viewport[1], old_viewport[2], old_viewport[3]);
