@@ -800,7 +800,7 @@ DepthPeelingPlugin::traverseDrawApplyAction( BaseNode* _node, Action& _action, A
     _node->drawMode(dm);
   }
 
-  UINT shaderIndex = getPeelShaderIndex(dm);
+  unsigned int shaderIndex = getPeelShaderIndex(dm);
 
   // do hiddenline algorithmus manually here
   GLenum prev_depth = glStateTmp_->depthFunc();
@@ -991,17 +991,17 @@ void DepthPeelingPlugin::updatePeelingShaderSet()
   if (rebuildShaders)
   {
     // delete old shaders and programs
-    for (UINT i = 0; i < sizeof(peelShaders_) / sizeof(peelShaders_[0]); ++i)
+    for (unsigned int i = 0; i < sizeof(peelShaders_) / sizeof(peelShaders_[0]); ++i)
     {
       delete peelShaders_[i]; peelShaders_[i] = 0;
     }
 
-    for (UINT i = 0; i < sizeof(peelProgs_) / sizeof(peelProgs_[0]); ++i)
+    for (unsigned int i = 0; i < sizeof(peelProgs_) / sizeof(peelProgs_[0]); ++i)
     {
       delete peelProgs_[i]; peelProgs_[i] = 0;
     }
 
-    for (UINT i = 0; i < PEEL_NUM_COMBINATIONS; ++i)
+    for (unsigned int i = 0; i < PEEL_NUM_COMBINATIONS; ++i)
     {
       GLuint texturedDrawMode = 0, flatDrawMode = 0, phongDrawMode = 0, vertexColorDrawMode = 0, gouraudDrawMode = 0;
 
