@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 12862 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 12937 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -38,6 +38,8 @@
      - <b>ObjectTypes</b>
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
+         - Skeleton
+             - Draw root joint in orange
          - SplatCloud
              - Added new splat cloud object type
          - TriMeshObject
@@ -56,11 +58,15 @@
          - File PLY
              - View all after loading a file to see the scene
              - Fixed conversion to 4 color components
+         - MeshObjectInfo
+             - Corrected and improved genus computation
          - MeshObjectSelections
              - Added functions to convert edge selections to features.
              - Added conversion functions for all types of features (vertices, edges and faces)
              - Store edge selections as vertex pairs since edge ids are not stable (differ depending on the file reader).
              - Also store vertex pairs for halfedge selections instead of direct ids since they're not stable either.
+         - Primitives Generator 
+             - New plugin to generate primitives
          - Remesher
              - New remesher with adaptive and uniform remeshing 
              - Feature support
@@ -68,8 +74,11 @@
              - New plugin integrating a dual depth peeling renderer
          - Render SSAO
              - New plugin integrating a screen space ambient occlusion renderer
+         - Smoother Plugin
+             - Make Smoother scriptable
          - SkeletonEditing
              - Don't add root joint twice when creating new skeletons
+             - Basic inverse kinematics implementation
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
@@ -77,10 +86,13 @@
          - Documentation for Backup Interface
          - Documentation for Postprocessor Interface
          - Documentation for Render Interface
+     - <b>Testing</b>
+         - Integrated basic testing framework
      - <b>Build System</b>
          - Added option to allow in source builds (not recommended but it works)
          - Doxygen, don't warn if undocumented
          - Added Eigen3 finder
+         - Fix problem with fixbundle on mac, where libraries with restrictive permissions did not get fixed properly
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
