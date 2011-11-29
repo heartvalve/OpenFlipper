@@ -132,7 +132,7 @@ void BaseObjectData::init() {
 
     // Bind this manipulator to the current object
     manipulatorNode_->setIdentifier(id());
-    manipulatorNode_->set_status( ACG::SceneGraph::TranslationManipulatorNode::HideNode );
+    manipulatorNode_->set_status( ACG::SceneGraph::TranslationManipulatorNode::Active );
   }
   else
     std::cerr << "Manipulator Node already exists. this should not happen!" << std::endl;
