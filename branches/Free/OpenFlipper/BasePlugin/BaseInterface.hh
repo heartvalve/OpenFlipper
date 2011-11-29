@@ -264,6 +264,21 @@ class BaseInterface {
       virtual void setSlotDescription(QString     _slotName    ,   QString     _slotDescription,
                                       QStringList _parameters  , QStringList _descriptions) {};
 
+   /** @} */
+
+  //===========================================================================
+   /** @name Renderer control
+    * @{ */
+  //===========================================================================
+  signals:
+
+     /** \brief Set a renderer for the given viewer
+      *
+      * @param _viewer Id of the viewer to set the renderer for
+      * @param _rendererName Name of the renderer to be used
+      */
+     virtual void setRenderer(unsigned int _viewer, QString _rendererName) {};
+
   /** @} */
 
   private slots :

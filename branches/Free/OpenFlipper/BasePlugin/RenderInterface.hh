@@ -69,8 +69,6 @@ class RenderInterface {
 
   private slots:
 
-
-
     /** \brief announce required draw modes
      *
      * This function is called by the core to get a list of draw modes that are supported
