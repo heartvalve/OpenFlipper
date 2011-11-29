@@ -160,12 +160,14 @@ void RenderManager::setActive(QString _active, int _id) {
   }
 
   // Increase vector size
-  if ( _id >= (int)activeRenderers_.size() )
+  if ( _id >= (int)activeRenderers_.size() ) {
     activeRenderers_.resize(_id +1 );
+
+  }
 
   for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
     if ( availableRenderers_[i].name == _active) {
-      activeRenderers_[i] = i;
+      activeRenderers_[_id] = i;
     }
 
 }
