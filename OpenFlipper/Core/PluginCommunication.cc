@@ -62,6 +62,8 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctionsCore.hh"
 
+#include <OpenFlipper/common/RendererInfo.hh>
+
 //== IMPLEMENTATION ==========================================================
 
 //========================================================================================
@@ -401,8 +403,12 @@ void Core::slotCrossPluginConnect( QString _pluginName1, const char* _signal, QS
   connect(plugin1,_signal,plugin2,_slot);
 }
 
-
-
+//========================================================================================
+// ===            Renderer Settings                    ============================
+//========================================================================================
+void Core::slotSetRenderer(unsigned int _viewer, QString _rendererName) {
+  renderManager().setActive(_rendererName,_viewer);
+}
 
 
 
