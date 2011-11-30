@@ -140,7 +140,7 @@ void SkeletonNodeT<Skeleton>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
  * 
  */
 template <class Skeleton>
-DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes()
+DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes() const
 {
   return (DrawModes::WIREFRAME           | DrawModes::POINTS | DrawModes::SOLID_FLAT_SHADED
         | DrawModes::SOLID_FACES_COLORED | DrawModes::SOLID_FACES_COLORED_FLAT_SHADED);
@@ -541,7 +541,7 @@ void SkeletonNodeT<Skeleton>::pick_edges(GLState &_state)
       _state.pick_set_name(child->id());
 
       Vec3d p0 = pose->globalTranslation(joint->id()),
-          p1 = pose->globalTranslation(child->id());
+            p1 = pose->globalTranslation(child->id());
 
       glBegin(GL_LINES);
       glVertex(p0);
