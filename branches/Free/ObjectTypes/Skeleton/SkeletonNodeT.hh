@@ -95,7 +95,7 @@ public:
   Skeleton& skeleton();
 
   /// Returns available draw modes
-  DrawModes::DrawMode availableDrawModes();
+  DrawModes::DrawMode availableDrawModes() const;
   /// Returns the bounding box of this node
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// Renders the nodes contents using the given render state and draw mode
