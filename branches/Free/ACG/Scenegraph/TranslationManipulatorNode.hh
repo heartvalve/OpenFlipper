@@ -88,11 +88,31 @@ public:
     Always
   };
 
+  /** \brief enum to define the manipulator mode
+   *
+   * This enum defines several modes of the manipulator.
+   *  - TranslationRotation: Full featured mode, rotations and translations will be possible
+   *  - LocalRotation:       The manipulator can be rotated, but no transformation is applied to the child node (use to re-align manipulator)
+   *  - Resize:              No rings, no rotation. The manipulator scales along each axis seperatly. Center sphere scales uniformly in all directions
+   *  - Place:               -
+   */
   enum ManipulatorMode {
     TranslationRotation,
     LocalRotation,
     Resize,
     Place
+  };
+
+  /** \brief enum to define which rotation axis should be enabled
+   *
+   * This enum defines which rotation axis rings will be visible and available for picking.
+   * The modes can be combined.
+   */
+  enum ActiveRotations {
+    X_AXIS   = 1,
+    Y_AXIS   = 1 << 2,
+    Z_AXIS   = 1 << 3,
+    ALL_AXIS = 7,
   };
 
   /// Default constructor.
@@ -142,6 +162,26 @@ public:
 
   /// get autosize mode
   AutoSizeMode autosize () const { return auto_size_; }
+
+  /** \brief Enable or disable manipulator handles for specific orientations
+   *
+   * This enum defines which rotation axis rings will be visible and available for picking.
+   * The modes can be combined. ( e.g. ACG::SceneGraph::TranslationManipulatorNode::X_AXIS|ACG::SceneGraph::TranslationManipulatorNode::Y_AXIS )
+   *
+   * @param _active The activated axis
+   */
+  void enabled_rotations(ActiveRotations _active) {
+    activeRotations_ = _active;
+  }
+
+  /** \brief Get the current setting, which rotation handles are active
+    *
+    *
+    * @return _active The activated axis
+    */
+  ActiveRotations enabled_rotations() const {
+    return activeRotations_;
+  }
 
   void rotate (double _angle, Vec3d _axis)
   {
@@ -273,6 +313,8 @@ private:
 
   AutoSizeMode       auto_size_;
   double             auto_size_length_;
+
+  ActiveRotations    activeRotations_;
 };
 
 
