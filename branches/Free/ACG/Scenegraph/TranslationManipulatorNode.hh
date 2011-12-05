@@ -94,7 +94,7 @@ public:
    *  - TranslationRotation: Full featured mode, rotations and translations will be possible
    *  - LocalRotation:       The manipulator can be rotated, but no transformation is applied to the child node (use to re-align manipulator)
    *  - Resize:              No rings, no rotation. The manipulator scales along each axis seperatly. Center sphere scales uniformly in all directions
-   *  - Place:               -
+   *  - Place:               --
    */
   enum ManipulatorMode {
     TranslationRotation,
