@@ -1932,17 +1932,17 @@ TranslationManipulatorNode::set_direction(const Vec3d& _directionX, const Vec3d&
   localTransformation_(0,0) = _directionX[0];
   localTransformation_(1,0) = _directionX[1];
   localTransformation_(2,0) = _directionX[2];
-  localTransformation_(3,0) = _directionX[3];
+  localTransformation_(3,0) = 0.0;
 
   localTransformation_(0,1) = _directionY[0];
   localTransformation_(1,1) = _directionY[1];
   localTransformation_(2,1) = _directionY[2];
-  localTransformation_(3,1) = _directionY[3];
+  localTransformation_(3,1) = 0.0;
 
   localTransformation_(0,2) = cross[0];
   localTransformation_(1,2) = cross[1];
   localTransformation_(2,2) = cross[2];
-  localTransformation_(3,2) = cross[3];
+  localTransformation_(3,2) = 0.0;
 
 }
 
