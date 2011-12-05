@@ -365,8 +365,8 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
       o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
 
     //perform picking
-    successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
-            target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+    successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hitPoint) &&
+                         PluginFunctions::getPickedObject(node_idx, object);
     
     //reenable picking for anything
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
@@ -393,6 +393,18 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
         object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
         object->manipulatorNode()->setMode( QtTranslationManipulatorNode::TranslationRotation );
         object->manipulatorNode()->show();
+
+        // Get the global matrix from the picked joint
+        Skeleton* skeleton = PluginFunctions::skeleton( object );
+        Skeleton::Joint* pickedJoint = skeleton->joint( data );
+        Skeleton::Pose* currentPose = activePose(PluginFunctions::skeletonObject(object));
+        const Matrix4x4 pickedGlobalMatrix = currentPose->globalMatrix(pickedJoint->id());
+
+        // Orient the manipulator to be aligned with the joint coordinate system.
+        Vector x_axis = pickedGlobalMatrix.transform_vector(Vector(1.0, 0.0, 0.0));
+        Vector y_axis = pickedGlobalMatrix.transform_vector(Vector(0.0, 1.0, 0.0));
+
+        object->manipulatorNode()->set_direction(x_axis,y_axis);
 
         object->manipulatorNode()->apply_transformation(false);
 
