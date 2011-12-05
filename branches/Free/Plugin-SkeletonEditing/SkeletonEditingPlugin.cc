@@ -19,6 +19,7 @@ SkeletonEditingPlugin::SkeletonEditingPlugin()
    transformChildJoints_(false),
    transformAllFrames_(true),
    inverseKinematic_(false),
+   rotateCoordSystem_(false),
    dblClick_(false)
 
 {
@@ -136,6 +137,15 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   inverseKinematicAction_->setCheckable(true);
   inverseKinematicAction_->setChecked(inverseKinematic_);
   pickToolbar_->addAction(inverseKinematicAction_);
+
+  rotateCoordSystemAction_ = new QAction(tr("Rotate local coordinate system"), pickToolBarActions_);
+  rotateCoordSystemAction_->setStatusTip(tr(""));
+  rotateCoordSystemAction_->setToolTip(tr("<B></B><br>."));
+  rotateCoordSystemAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_invkinematic.png") );
+  rotateCoordSystemAction_->setCheckable(true);
+  rotateCoordSystemAction_->setChecked(rotateCoordSystem_);
+  pickToolbar_->addAction(rotateCoordSystemAction_);
+
 
   connect(pickToolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotPickToolbarAction(QAction*)) );
 
@@ -299,6 +309,8 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
     transformChildJoints_ = transformChildManipAction_->isChecked();
   else if (_action == inverseKinematicAction_)
   	inverseKinematic_ = inverseKinematicAction_->isChecked();
+  else if (_action == rotateCoordSystemAction_)
+  	rotateCoordSystem_ = rotateCoordSystemAction_->isChecked();
   
   moveJointAction_->setChecked(   _action == moveJointAction_);
   insertJointAction_->setChecked( _action == insertJointAction_ );
@@ -408,6 +420,34 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
 
         object->manipulatorNode()->apply_transformation(false);
 
+        //deactivate unused rotation axes
+        //and set the direction correctly
+        if (rotateCoordSystem_)
+        {
+        	ACG::SceneGraph::TranslationManipulatorNode::ActiveRotations active_axes;
+
+        	//get translation from parent in world space
+        	ACG::Vec3d tr = currentPose->localTranslation(pickedJoint->id());
+        	ACG::Vec3d bone = currentPose->localMatrixInv(pickedJoint->id()).transform_vector(tr);
+
+        	ACG::Vec3d x_axis = bone.normalize();
+
+        	Skeleton::Joint* parentJoint = pickedJoint->parent();
+
+        	//now we need another axis
+        	if (parentJoint)
+        	{
+        		ACG::Vec3d parent_tr = currentPose->localTranslation(parentJoint->id());
+        		ACG::Vec3d parent_bone = currentPose->localMatrixInv(parentJoint->id()).transform_vector(parent_tr);
+        		parent_bone.normalize();
+        		y_axis = cross(parent_bone,x_axis).normalize();
+        	}
+        	else
+        		y_axis = cross(ACG::Vec3d(1.0,0.0,0.0),x_axis);
+
+        	object->manipulatorNode()->set_direction(x_axis,y_axis);
+        }
+
         // Disconnect a previously connected Signal
         disconnect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
                    this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
@@ -461,6 +501,84 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
 
   BaseObjectData* object = 0;
   PluginFunctions::getObject(objectId, object);
+
+  if(rotateCoordSystem_)
+  {
+  	Skeleton* skeleton = PluginFunctions::skeleton( object );
+
+  	if (skeleton == 0)
+  		return;
+
+  	Skeleton::Joint* pickedJoint = skeleton->joint( _node->getData().toInt() );
+
+  	if (!pickedJoint)
+  		return;
+
+  	Skeleton::Pose* currentPose = activePose(PluginFunctions::skeletonObject(object));
+
+
+  	//now lets get our angle
+  	//first, compute a simple rotation
+
+  	ACG::Vec3d tmpVec = ACG::Vec3d( 1.0, 1.0, 1.0 ).normalize();
+  	ACG::Vec3d tmpRotVec = mat.transform_point( tmpVec ).normalize();
+
+  	const ACG::Vec3d rotation_axis = cross(tmpVec,tmpRotVec).normalize();
+
+  	//extract the changing for our wanted rotation
+  	tmpVec    = tmpVec - rotation_axis * ( dot(rotation_axis,tmpVec));
+  	tmpRotVec = tmpRotVec - rotation_axis * ( dot(rotation_axis,tmpRotVec));
+
+  	tmpVec.normalize();
+  	tmpRotVec.normalize();
+
+  	const ACG::Vec3d right = cross(tmpVec, rotation_axis).normalize();
+
+  	double angle = acos( dot(tmpVec , tmpRotVec) );
+
+  	if (angle != angle)//NaN?
+  		return;
+
+  	//compute the direction
+  	if (cross(right,tmpRotVec)[0] < 0)
+  		angle = -angle;
+
+  	//now we can pass our rotation
+  	Skeleton::Joint* iter = pickedJoint;
+
+  	unsigned int count_joint = 0;
+  	while(iter && ((!iter->selected() && !iter->isRoot()) || iter == pickedJoint))
+  	{
+  		++count_joint;
+  		iter = iter->parent();
+  	}
+
+  	//the weight of our rotation
+  	//joints far away of our rotated joint will not be rotated so much
+  	double weight = 1.0 - (1.0/count_joint);
+
+  	//rotate all joints
+  	//with the given angle and the given weight
+  	//iter can be NULL, when pickedJoint == Root
+  	iter = pickedJoint;
+  	while(iter && ((!iter->selected() && !iter->isRoot()) || iter == pickedJoint))
+  	{
+  		unsigned int id = iter->id();
+  		//get our rotation_axis. notice: vector given back by "localTranslation" is in localMatrix space
+  		ACG::Vec3d axis = currentPose->localMatrixInv(id).transform_vector(currentPose->localTranslation(id));
+
+  		ACG::Quaterniond quaternion(axis, weight*angle);
+
+  		//pass our matrix to the global space
+  		ACG::Vec3d tr = currentPose->globalTranslation(id);
+  		ACG::Matrix4x4d changingMatrix = quaternion.rotation_matrix() * currentPose->globalMatrix(id);
+  		currentPose->setGlobalMatrix(id,changingMatrix, true);
+  		currentPose->setGlobalTranslation(id,tr, true);
+
+  		iter = iter->parent();
+  		weight -= 1.0/count_joint;
+  	}
+  }
 
   if(inverseKinematic_)
   {

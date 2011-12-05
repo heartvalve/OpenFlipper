@@ -199,6 +199,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     QAction*      transformAllManipAction_;
     QAction*      rotateManipAction_;
     QAction*      inverseKinematicAction_;
+    QAction*			rotateCoordSystemAction_;
 
     int currentSkeleton_;
     int currentJoint_;
@@ -207,6 +208,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     bool transformChildJoints_;
     bool transformAllFrames_;
     bool inverseKinematic_;
+    bool rotateCoordSystem_;
     
     bool dblClick_;
 
