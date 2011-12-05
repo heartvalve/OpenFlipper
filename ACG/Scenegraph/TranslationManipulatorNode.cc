@@ -1921,34 +1921,29 @@ TranslationManipulatorNode::set_direction(const Vec3d& _directionX, const Vec3d&
   localTransformation_.identity();
 
   double angle = 0.0;
+  const Vec3d cross = _directionX % _directionY;
 
-//   std::cerr << "_directionX " << _directionX[0] << " " << _directionX[1] << " " << _directionX[2] << std::endl;
-//   std::cerr << "_directionY " << _directionY[0] << " " << _directionY[1] << " " << _directionY[2] << std::endl;
-//   std::cerr << "dirX_ " << dirX_[0] << " " << dirX_[1] << " " << dirX_[2] << std::endl;
-//   std::cerr << "dirY_ " << dirY_[0] << " " << dirY_[1] << " " << dirY_[2] << std::endl;
+//  std::cerr << "_directionX " << _directionX[0] << " " << _directionX[1] << " " << _directionX[2] << std::endl;
+//  std::cerr << "_directionY " << _directionY[0] << " " << _directionY[1] << " " << _directionY[2] << std::endl;
+//  std::cerr << "dirX_ " << dirX_[0] << " " << dirX_[1] << " " << dirX_[2] << std::endl;
+//  std::cerr << "dirY_ " << dirY_[0] << " " << dirY_[1] << " " << dirY_[2] << std::endl;
+//  std::cerr << "cross " << cross[0] << " " << cross[1] << " " << cross[2] << std::endl;
 
-  angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(_directionX) | MathTools::sane_normalized(dirX_) )));
+  localTransformation_(0,0) = _directionX[0];
+  localTransformation_(1,0) = _directionX[1];
+  localTransformation_(2,0) = _directionX[2];
+  localTransformation_(3,0) = _directionX[3];
 
-// std::cerr << "X angle = " << angle << std::endl;
+  localTransformation_(0,1) = _directionY[0];
+  localTransformation_(1,1) = _directionY[1];
+  localTransformation_(2,1) = _directionY[2];
+  localTransformation_(3,1) = _directionY[3];
 
-  Vec3d rotAxis = MathTools::sane_normalized( dirX_ % _directionX );
+  localTransformation_(0,2) = cross[0];
+  localTransformation_(1,2) = cross[1];
+  localTransformation_(2,2) = cross[2];
+  localTransformation_(3,2) = cross[3];
 
-  if ( rotAxis.sqrnorm() == 0.0 )
-    rotAxis = MathTools::sane_normalized( dirZ_ );
-
-  localTransformation_.rotate( angle, rotAxis );
-
-  Vec3d newDirY = MathTools::sane_normalized( localTransformation_.transform_vector(dirY_) );
-
-  angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(_directionY) | MathTools::sane_normalized(newDirY) )));
-
-// std::cerr << "Y angle = " << angle <<  std::endl;
-  Vec3d rotAxis2 = MathTools::sane_normalized( newDirY % _directionY );
-
-  if ( rotAxis2.sqrnorm() == 0.0 )
-    rotAxis2 = MathTools::sane_normalized( localTransformation_.transform_vector(dirX_) );
-
-  localTransformation_.rotate( angle, rotAxis2 );
 }
 
 //----------------------------------------------------------------------------
