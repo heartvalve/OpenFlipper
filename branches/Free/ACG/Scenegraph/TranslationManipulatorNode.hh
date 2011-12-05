@@ -170,7 +170,7 @@ public:
    *
    * @param _active The activated axis
    */
-  void enabled_rotations(ActiveRotations _active) {
+  void enable_rotations(ActiveRotations _active) {
     activeRotations_ = _active;
   }
 
