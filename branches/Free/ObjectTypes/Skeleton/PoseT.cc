@@ -130,7 +130,8 @@ void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix &_local, bo
 /**
  * @brief Returns the local translation vector
  *
- * The local translation vector describes the joints position in its parents coordinate system.
+ * The local translation vector describes the translation from the origin of the parent joint
+ * coordinate system to the origin of the local joint coordinate system in local coordinates.
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @return The local translation vector (the 4th column in the local matrix)
@@ -289,7 +290,7 @@ void PoseT<PointT>::insertJointAt(unsigned int _index)
 
   DualQuaternion idDQ;
   idDQ.identity();
-  
+
   local_.insert(local_.begin() + _index, id);
   global_.insert(global_.begin() + _index, id);
   unified_.insert(unified_.begin() + _index, id);
@@ -378,7 +379,7 @@ void PoseT<PointT>::updateFromGlobal(unsigned int _joint, bool _keepChildPositio
   unified_[_joint] = globalMatrix(_joint) * matRefGlobalInv;
   unifiedDualQuaternion_[_joint] = DualQuaternion(unified_[_joint]);
 
-  // update children  
+  // update children
   if (_keepChildPositions) {
     for(unsigned int i = 0; i < skeleton_->childCount(_joint); ++i) {
       updateFromGlobal(skeleton_->child(_joint, i));
