@@ -225,6 +225,44 @@ calc_angle_around( const MeshT& _mesh , const typename MeshT::VertexHandle _vh)
     return angle;
 }
 
+template< typename MeshT >
+void transformMesh(ACG::Matrix4x4d _matrix , MeshT& _mesh) {
+
+    // Get the inverse matrix of the transformation for the normals
+    ACG::Matrix4x4d invTranspMat = _matrix;
+
+    // Build inverse transposed matrix of _matrix
+    invTranspMat.invert();
+    invTranspMat.transpose();
+
+    typename MeshT::VertexIter v_it = _mesh.vertices_begin();
+    typename MeshT::VertexIter v_end = _mesh.vertices_end();
+    for (; v_it != v_end; ++v_it) {
+
+        // Transform the mesh vertex
+        _mesh.set_point(v_it, _matrix.transform_point(_mesh.point(v_it)));
+
+        // Transform the vertex normal
+        typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(v_it));
+
+        n.normalize();
+
+        _mesh.set_normal(v_it, n);
+    }
+
+    typename MeshT::FaceIter f_it = _mesh.faces_begin();
+    typename MeshT::FaceIter f_end = _mesh.faces_end();
+    for (; f_it != f_end; ++f_it) {
+
+        // Transform the face normal
+        typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(f_it));
+
+        n.normalize();
+
+        _mesh.set_normal(f_it, n);
+    }
+}
+
 //=============================================================================
 } // MeshFunctions Namespace 
 //=============================================================================
