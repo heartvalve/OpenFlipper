@@ -752,6 +752,14 @@ void SkeletalAnimationPlugin::attachSkin(BaseObjectData* _skin, BaseObjectData* 
 
       if (ret == QMessageBox::Yes)
         RPC::callFunction("skinningplugin", "computeSkinWeights");
+      else
+        if(_skin->dataType(DATA_TRIANGLE_MESH)){
+          PluginFunctions::triMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
+          PluginFunctions::triMesh(_skin)->remove_property(propWeights);
+        }else if(_skin->dataType(DATA_POLY_MESH)){
+          PluginFunctions::polyMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
+          PluginFunctions::polyMesh(_skin)->remove_property(propWeights);
+        }
     }
   }
   
