@@ -73,7 +73,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   connect(toolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotSetEditingMode(QAction*)) );
 
   emit addToolbar(toolbar_);
-  
+
   pickToolbar_ = new QToolBar(tr("Skeleton Editing"));
   pickToolbar_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
@@ -122,7 +122,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   transformAllManipAction_->setCheckable(true);
   transformAllManipAction_->setChecked(transformAllFrames_);
   pickToolbar_->addAction(transformAllManipAction_);
-  
+
   transformChildManipAction_ = new QAction(tr("Transform Child Joints"), pickToolBarActions_);
   transformChildManipAction_->setStatusTip(tr("Apply joint transformation to child joints as well and thereby rigidly move the whole subtree."));
   transformChildManipAction_->setToolTip(tr("<B>Transform child joints</B><br>Apply joint transformation to all child joints as well."));
@@ -130,7 +130,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   transformChildManipAction_->setCheckable(true);
   transformChildManipAction_->setChecked(transformChildJoints_);
   pickToolbar_->addAction(transformChildManipAction_);
-  
+
   inverseKinematicAction_ = new QAction(tr("Inverse kinematic"), pickToolBarActions_);
   inverseKinematicAction_->setStatusTip(tr("Move selected joint using inverse kinematic."));
   inverseKinematicAction_->setToolTip(tr("<B>Inverse kinematic</B><br>Move selected joint using inverse kinematic."));
@@ -272,10 +272,10 @@ void SkeletonEditingPlugin::slotPickModeChanged( const std::string& _mode)
   insertJointAction_->setChecked( _mode == "InsertJoints" );
   deleteJointAction_->setChecked( _mode == "DeleteJoints" );
   selectJointAction_->setChecked( _mode == "SelectJoints" );
-  
+
   skeletonEditingAction_->setChecked( (_mode == "MoveJoints")  ||(_mode == "InsertJoints")
                                     ||(_mode == "DeleteJoints")||(_mode == "SelectJoints") );
-  
+
   showManipulators();
 }
 
@@ -312,7 +312,7 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
   	inverseKinematic_ = inverseKinematicAction_->isChecked();
   else if (_action == rotateCoordSystemAction_)
   	rotateCoordSystem_ = rotateCoordSystemAction_->isChecked();
-  
+
   moveJointAction_->setChecked(   _action == moveJointAction_);
   insertJointAction_->setChecked( _action == insertJointAction_ );
   deleteJointAction_->setChecked( _action == deleteJointAction_ );
@@ -380,7 +380,7 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
     //perform picking
     successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hitPoint) &&
                          PluginFunctions::getPickedObject(node_idx, object);
-    
+
     //reenable picking for anything
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
       o_it->enablePicking( true );
@@ -470,10 +470,10 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
         // Disconnect a previously connected Signal
         disconnect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
                    this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
-                
+
         disconnect(object->manipulatorNode() , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
                   this , SLOT( ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
-        
+
         // Reconnect the signals.
         connect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
                 this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
@@ -482,9 +482,9 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
                 this , SLOT( ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
 
         emit updateView();
-       
+
         bool found = false;
-        
+
         for (uint i=0; i < activeManipulators_.size(); i++)
           if ( activeManipulators_[i] == object->id() ){
             found = true;
@@ -514,6 +514,7 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
 
   int objectId = _node->getIdentifier();
 
+  // rotation matrix from the manipulator
   ACG::Matrix4x4d mat;
   mat.identity();
   mat = _node->matrix();
@@ -536,35 +537,26 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
   	Skeleton::Pose* currentPose = activePose(PluginFunctions::skeletonObject(object));
 
 
-  	//now lets get our angle
-  	//first, compute a simple rotation
-
+  	// we compute the rotation angle by applying the
+        // rotation matrix from the manipulator to an arbitrary point
   	ACG::Vec3d tmpVec = ACG::Vec3d( 1.0, 1.0, 1.0 ).normalize();
   	ACG::Vec3d tmpRotVec = mat.transform_point( tmpVec ).normalize();
 
   	const ACG::Vec3d rotation_axis = cross(tmpVec,tmpRotVec).normalize();
 
-  	//extract the changing for our wanted rotation
-  	tmpVec    = tmpVec - rotation_axis * ( dot(rotation_axis,tmpVec));
-  	tmpRotVec = tmpRotVec - rotation_axis * ( dot(rotation_axis,tmpRotVec));
-
-  	tmpVec.normalize();
-  	tmpRotVec.normalize();
-
   	const ACG::Vec3d right = cross(tmpVec, rotation_axis).normalize();
 
   	double angle = acos( dot(tmpVec , tmpRotVec) );
 
-  	if (angle != angle)//NaN?
+  	if (angle != angle) // NaN?
   		return;
 
-  	//compute the direction
-  	if (cross(right,tmpRotVec)[0] < 0)
+  	// compute the direction of the rotation
+        if (dot(right, tmpRotVec) < 0)
   		angle = -angle;
 
-  	//now we can pass our rotation
+        // count all joints from including the picked joint to the selected joint
   	Skeleton::Joint* iter = pickedJoint;
-
   	unsigned int count_joint = 0;
   	while(iter && ((!iter->selected() && !iter->isRoot()) || iter == pickedJoint))
   	{
@@ -572,29 +564,29 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
   		iter = iter->parent();
   	}
 
-  	//the weight of our rotation
-  	//joints far away of our rotated joint will not be rotated so much
-  	double weight = 1.0 - (1.0/count_joint);
+  	// the weight of our rotation
+        // the first joint gets rotated by 100%
+  	double weight = 1.0;
 
-  	//rotate all joints
-  	//with the given angle and the given weight
-  	//iter can be NULL, when pickedJoint == Root
+  	// rotate the joints including the picked joints and its children
+        // until the selected joint
+  	// with the given angle and the given weight
+  	// iter can be NULL, when pickedJoint == Root
   	iter = pickedJoint;
   	while(iter && ((!iter->selected() && !iter->isRoot()) || iter == pickedJoint))
   	{
   		unsigned int id = iter->id();
-  		//get our rotation_axis. notice: vector given back by "localTranslation" is in localMatrix space
-  		ACG::Vec3d axis = currentPose->localMatrixInv(id).transform_vector(currentPose->localTranslation(id));
+  		// get our rotation axis. notice: vector given back by "localTranslation" is in localMatrix space
+  		ACG::Vec3d axis = currentPose->localTranslation(id);
 
   		ACG::Quaterniond quaternion(axis, weight*angle);
 
-  		//pass our matrix to the global space
-  		ACG::Vec3d tr = currentPose->globalTranslation(id);
-  		ACG::Matrix4x4d changingMatrix = quaternion.rotation_matrix() * currentPose->globalMatrix(id);
-  		currentPose->setGlobalMatrix(id,changingMatrix, true);
-  		currentPose->setGlobalTranslation(id,tr, true);
+                // rotate the joint around its own axis
+                ACG::Matrix4x4d newLocalMatrix = currentPose->localMatrix(id) * quaternion.rotation_matrix();
+                currentPose->setLocalMatrix(id, newLocalMatrix, true);
 
   		iter = iter->parent();
+                // interpolate the weight of the rotation between the joints
   		weight -= 1.0/count_joint;
   	}
   }
@@ -880,7 +872,7 @@ void SkeletonEditingPlugin::deleteJoint(QMouseEvent* _event)
         else{
           //delete on release
           if ( wasSelected ){
-            
+
             if (skeleton->jointCount() > 1){
               skeleton->removeJoint(joint);
               PluginFunctions::skeletonObject(object)->updateIndices();
@@ -1322,18 +1314,18 @@ OpenMesh::Vec3d SkeletonEditingPlugin::getNearestJoint(SkeletonObject* _skeleton
 
   ACG::Vec3d    bestJoint;
   double        bestDistance = DBL_MAX;
-  
+
   _bestJointID = -1;
-  
+
   Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
 
   Skeleton::Pose* pose = activePose(_skeletonObj);
 
   //find the nearest joint
   for (unsigned int joint = 0; joint < skeleton->jointCount(); joint++){
-    
+
     double dist = (_hitPoint - pose->globalTranslation(joint)).sqrnorm();
-    
+
     if (dist < bestDistance){
       bestJoint     = pose->globalTranslation(joint);
       _bestJointID  = joint;
