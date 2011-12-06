@@ -953,18 +953,15 @@ template <typename Scalar>
 VectorT<Scalar,3>
 perpendicular( const VectorT<Scalar,3>&  v )
 {
-  if (fabs(v[0]) < fabs(v[1]))
-  {
+  if (fabs(v[0]) < fabs(v[1])) {
     if (fabs(v[0]) < fabs(v[2]))
-      return VectorT<Scalar,3>( Scalar(1.0) - v[0]*v[0], -v[0]*v[1], -v[0]*v[2]).normalize();
+      return VectorT<Scalar, 3>(Scalar(1.0) - v[0] * v[0], -v[0] * v[1], -v[0] * v[2]).normalize();
+  } else {
+    if (fabs(v[1]) < fabs(v[2]))
+      return VectorT<Scalar, 3>(-v[1] * v[0], Scalar(1.0) - v[1] * v[1], -v[1] * v[2]).normalize();
   }
-  else
-    {
-      if (fabs(v[1]) < fabs(v[2]))
-	return VectorT<Scalar,3>(-v[1]*v[0], Scalar(1.0) - v[1]*v[1], -v[1]*v[2]).normalize();
-    }
-  
-  return VectorT<Scalar,3>(-v[2]*v[0], -v[2]*v[1], Scalar(1.0) - v[2]*v[2]).normalize();
+
+  return VectorT<Scalar, 3>(-v[2] * v[0], -v[2] * v[1], Scalar(1.0) - v[2] * v[2]).normalize();
 }
 
 

@@ -96,7 +96,14 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
 }
 
 
-/// find a vector that's perpendicular to _v
+/** \brief find a vector that's perpendicular to _v
+ *
+ * This function takes a vector and  generates a new arbitrary
+ * vecor that is perpendicular to the input vector.
+ *
+ * @param _v Input vector
+ * @return Perpendicular vector
+ */
 template <typename Scalar>
 VectorT<Scalar,3>
 perpendicular( const VectorT<Scalar,3>&  _v );
