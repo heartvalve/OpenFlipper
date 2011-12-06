@@ -389,7 +389,7 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
 
       hitPoint = getNearestJoint(PluginFunctions::skeletonObject(object), hitPoint, data);
 
-      PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+      PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED | ACG::SceneGraph::DrawModes::WIREFRAME );
     }
 
     if (successfullyPicked) {
