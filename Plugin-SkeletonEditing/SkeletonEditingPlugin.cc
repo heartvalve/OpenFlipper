@@ -7,6 +7,7 @@
 #include <ObjectTypes/Skeleton/Skeleton.hh>
 #include <ObjectTypes/Skeleton/BaseSkin.hh>
 #include <ObjectTypes/Skeleton/SkeletonObjectData.hh>
+#include <ACG/Geometry/Algorithms.hh>
 //--------------------------------------------------------------------------------
 
 /** \brief Default Constructor
@@ -417,6 +418,7 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
         Vector y_axis = pickedGlobalMatrix.transform_vector(Vector(0.0, 1.0, 0.0));
 
         object->manipulatorNode()->set_direction(x_axis,y_axis);
+        object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::ALL_AXIS);
 
         object->manipulatorNode()->apply_transformation(false);
 
@@ -424,28 +426,45 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
         //and set the direction correctly
         if (rotateCoordSystem_)
         {
-        	ACG::SceneGraph::TranslationManipulatorNode::ActiveRotations active_axes;
+          // Get parent and child joints if they exist.
+          Skeleton::Joint* parentJoint = pickedJoint->parent();
+          Skeleton::Joint* childJoint  = pickedJoint->child(0);
 
-        	//get translation from parent in world space
-        	ACG::Vec3d tr = currentPose->localTranslation(pickedJoint->id());
-        	ACG::Vec3d bone = currentPose->localMatrixInv(pickedJoint->id()).transform_vector(tr);
+          // Root joint uses the local joint coordinate system
+          if ( parentJoint == 0 ) {
 
-        	ACG::Vec3d x_axis = bone.normalize();
+          } else if ( childJoint == 0) { // Leaf joint, only the previous axis is important
+            Vector prevAxis = currentPose->globalTranslation(pickedJoint->id()) - currentPose->globalTranslation(parentJoint->id());
+            prevAxis.normalize();
 
-        	Skeleton::Joint* parentJoint = pickedJoint->parent();
+            // Create a local coordinate system based on the axis and an arbitrary right vector
+            Vector cross = ACG::Geometry::perpendicular(prevAxis);
+            cross.normalize();
 
-        	//now we need another axis
-        	if (parentJoint)
-        	{
-        		ACG::Vec3d parent_tr = currentPose->localTranslation(parentJoint->id());
-        		ACG::Vec3d parent_bone = currentPose->localMatrixInv(parentJoint->id()).transform_vector(parent_tr);
-        		parent_bone.normalize();
-        		y_axis = cross(parent_bone,x_axis).normalize();
-        	}
-        	else
-        		y_axis = cross(ACG::Vec3d(1.0,0.0,0.0),x_axis);
 
-        	object->manipulatorNode()->set_direction(x_axis,y_axis);
+            object->manipulatorNode()->set_direction(prevAxis,cross);
+
+            // As we only allow rotations around the main axis, we disable the others
+            object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
+
+          } else { //Joint in between, use both to estimate a good orientation of the manipulator
+            Vector prevAxis = currentPose->globalTranslation(pickedJoint->id()) - currentPose->globalTranslation(parentJoint->id());
+            Vector nextAxis = currentPose->globalTranslation(childJoint->id())  - currentPose->globalTranslation(pickedJoint->id());
+            prevAxis.normalize();
+            nextAxis.normalize();
+
+            // Create a local coordinate system based on the axis and an right vector depending on the bone positions
+            Vector right = prevAxis % nextAxis;
+            right.normalize();
+
+
+            object->manipulatorNode()->set_direction(prevAxis,right);
+
+            // As we only allow rotations around the main axis, we disable the others
+            object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
+
+          }
+
         }
 
         // Disconnect a previously connected Signal
@@ -608,6 +627,7 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
     {
     	//get all Parent Joints (picked,fixed]
     	std::vector<Skeleton::Joint*> rotatableJoints;
+
 
     	Skeleton::Iterator iter = pickedJoint->parent();
 
