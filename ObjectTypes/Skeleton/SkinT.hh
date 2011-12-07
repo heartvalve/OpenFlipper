@@ -23,7 +23,13 @@ public:
   typedef typename ACG::DualQuaternionT<Scalar> DualQuaternion;
 
 public:
-  SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh);
+  /** \brief constructor
+   *
+   * @param _skeleton  Pointer to the skeleton which will be skinned
+   * @param _mesh      Pointer to the mesh that is the skin
+   * @param _objectID  ObjectId of the Skeleton
+   */
+  SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh, int _objectID);
   virtual ~SkinT();
 
 public:
@@ -43,6 +49,7 @@ public:
 private:
   Skeleton*       skeleton_;
   MeshT*          mesh_;
+  int             objectId_;
 
   AnimationHandle lastAnimationHandle_;
   Method          lastmethod_;

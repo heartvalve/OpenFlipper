@@ -3,10 +3,13 @@
 //-----------------------------------------------------------------------------
 
 template<typename MeshT>
-SkinT<MeshT>::SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh) :
+SkinT<MeshT>::SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh, int _objectID) :
+  BaseSkin(_objectID),
   skeleton_(_skeleton),
   mesh_(_mesh),
+  objectId_(_objectID),
   lastmethod_(M_LBS)
+
 {
 }
 
