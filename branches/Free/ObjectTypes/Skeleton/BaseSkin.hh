@@ -104,7 +104,10 @@ public:
   };
 
 public:
-  BaseSkin() {};
+  BaseSkin(int _skeletonId) {
+    skeleton_ = _skeletonId;
+  };
+
   ~BaseSkin() {};
 
 public:
@@ -118,6 +121,18 @@ public:
   virtual void deformSkin(const AnimationHandle &_hAni, Method _method = M_LBS) = 0;
   virtual void releaseSkin() = 0;
   //@}
+
+  /**
+   * @name Information about the attached skeleton
+   */
+  //@{
+  int skeletonId() {return skeleton_;};
+
+  //@}
+
+private:
+  /// Holds the associated skeleton
+  int skeleton_;
 };
 
 
