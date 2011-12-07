@@ -291,6 +291,9 @@ bool FilePTSPlugin::readTextFile( std::ifstream &_instream, SplatCloudNode *_spl
 
 void FilePTSPlugin::normalizeSize( SplatCloudNode *_splatCloudNode )
 {
+        _splatCloudNode->normalizeSize();
+	
+	/*
 	SplatCloudNode::PointVector     &points     = _splatCloudNode->points();
 	SplatCloudNode::PointsizeVector &pointsizes = _splatCloudNode->pointsizes();
 
@@ -319,9 +322,9 @@ void FilePTSPlugin::normalizeSize( SplatCloudNode *_splatCloudNode )
 	cogX *= rcp_count;
 	cogY *= rcp_count;
 	cogZ *= rcp_count;
-
+	std::cout << "FilePTSPlugin::normalizeSize(): translate points by: ( " << cogX << ", " << cogY << ", " << cogZ << " )" << std::endl;
+	
 	// move points' center-of-gravety to origin and calculate squared length
-
 	float sqLength = 0.0f;
 
 	for( pointIter = points.begin(); pointIter != points.end(); ++pointIter )
@@ -343,6 +346,7 @@ void FilePTSPlugin::normalizeSize( SplatCloudNode *_splatCloudNode )
 		return;
 
 	scale = 1.0f / scale;
+	std::cout << "FilePTSPlugin::normalizeSize(): scaling points with factor: " << scale << std::endl;
 
 	// scale points (and pointsizes as well) by calculated scale
 
@@ -371,6 +375,7 @@ void FilePTSPlugin::normalizeSize( SplatCloudNode *_splatCloudNode )
 			p[2] *= scale;
 		}
 	}
+	*/
 }
 
 
@@ -384,7 +389,11 @@ bool FilePTSPlugin::writeBinaryFile( std::ofstream &_outstream, const SplatCloud
 	bool savePointsizes = true;
 	bool saveColors     = true;
 //	int  saveColorRange = 0;
-
+	
+	// get current translation and scaling
+	float scale = 1.0 / _splatCloudNode->cur_scale_factor();
+	SplatCloudNode::Point t = -_splatCloudNode->cur_translation();
+	
 	// get options
 	if( OpenFlipper::Options::gui() && saveOptions_ )
 	{
@@ -410,9 +419,9 @@ bool FilePTSPlugin::writeBinaryFile( std::ofstream &_outstream, const SplatCloud
 			const SplatCloudNode::Point &point = _splatCloudNode->points()[ i ];
 
 			float pnt[3];
-			pnt[0] = point[0];
-			pnt[1] = point[1];
-			pnt[2] = point[2];
+			pnt[0] = point[0] * scale + t[0];
+			pnt[1] = point[1] * scale + t[1];
+			pnt[2] = point[2] * scale + t[2];
 
 			_outstream.write( (char *) pnt, 3 * sizeof(float) );
 		}
@@ -448,7 +457,7 @@ bool FilePTSPlugin::writeBinaryFile( std::ofstream &_outstream, const SplatCloud
 				: _splatCloudNode->defaultPointsize();
 
 			float ps;
-			ps = pointsize;
+			ps = pointsize * scale;
 
 			_outstream.write( (char *) &ps, sizeof(float) );
 		}
@@ -486,6 +495,10 @@ bool FilePTSPlugin::writeTextFile( std::ofstream &_outstream, const SplatCloudNo
 	bool savePointsizes = true;
 	bool saveColors     = true;
 	int  saveColorRange = 0;
+	
+	// get current translation and scaling
+	float scale = 1.0 / _splatCloudNode->cur_scale_factor();
+	SplatCloudNode::Point t = -_splatCloudNode->cur_translation();
 
 	// get options
 	if( OpenFlipper::Options::gui() && saveOptions_ )
@@ -505,9 +518,9 @@ bool FilePTSPlugin::writeTextFile( std::ofstream &_outstream, const SplatCloudNo
 			const SplatCloudNode::Point &point = _splatCloudNode->points()[ i ];
 
 			float pnt[3];
-			pnt[0] = point[0];
-			pnt[1] = point[1];
-			pnt[2] = point[2];
+			pnt[0] = point[0] * scale + t[0];
+			pnt[1] = point[1] * scale + t[1];
+			pnt[2] = point[2] * scale + t[2];
 
 			_outstream <<        pnt[0];
 			_outstream << " " << pnt[1];
@@ -572,7 +585,7 @@ bool FilePTSPlugin::writeTextFile( std::ofstream &_outstream, const SplatCloudNo
 				: _splatCloudNode->defaultPointsize();
 
 			float ps;
-			ps = pointsize;
+			ps = pointsize * scale;
 
 			_outstream << " " << ps;
 		}
