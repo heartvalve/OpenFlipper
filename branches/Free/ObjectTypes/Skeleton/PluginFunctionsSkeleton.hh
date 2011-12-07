@@ -77,6 +77,13 @@ bool getObject(  int _identifier , SkeletonObject*& _object );
 DLLEXPORT
 Skeleton* skeleton( BaseObjectData* _object );
 
+/** \brief Get a skeleton from an id.
+ *
+ * @param _object The skeleton is returned if the object with id is a skeleton object, otherwise 0.
+ */
+DLLEXPORT
+Skeleton* skeleton(  int _identifier );
+
 /** \brief Cast an BaseObject to a SkeletonObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a polyLine, a
@@ -84,6 +91,13 @@ Skeleton* skeleton( BaseObjectData* _object );
  */
 DLLEXPORT
 SkeletonObject* skeletonObject( BaseObjectData* _object );
+
+/** \brief Get SkeletonObject with its id if possible
+ *
+ * @param _object The skeleton object if request was successfull or otherwise 0
+ */
+DLLEXPORT
+SkeletonObject* skeletonObject( int _identifier );
 
 }
 

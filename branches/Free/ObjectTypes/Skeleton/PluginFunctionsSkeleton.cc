@@ -81,11 +81,32 @@ Skeleton* skeleton( BaseObjectData* _object ) {
     return NULL;
 }
 
+Skeleton* skeleton(  int _identifier ) {
+
+  SkeletonObject* object = skeletonObject(_identifier);
+
+  if ( object  ) {
+    return object->skeleton();
+  } else
+    return NULL;
+}
+
 
 SkeletonObject* skeletonObject( BaseObjectData* _object ) {
   if ( !_object || ! _object->dataType(DATA_SKELETON) )
     return NULL;
   return dynamic_cast< SkeletonObject* >( _object );
+}
+
+
+SkeletonObject* skeletonObject( int _identifier ) {
+  SkeletonObject* object;
+  if ( ! getObject( _identifier, object ) )
+    return 0;
+
+  if ( !object || ! object->dataType(DATA_SKELETON) )
+    return NULL;
+  return dynamic_cast< SkeletonObject* >( object );
 }
 
 
