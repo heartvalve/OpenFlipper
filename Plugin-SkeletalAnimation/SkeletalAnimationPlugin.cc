@@ -720,10 +720,10 @@ void SkeletalAnimationPlugin::attachSkin(BaseObjectData* _skin, BaseObjectData* 
 
   if(_skin->dataType(DATA_TRIANGLE_MESH)){
     hasSkinWeights = PluginFunctions::triMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
-    baseSkin       = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin)) );
+    baseSkin       = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin),_skeletonObj->id()) );
   }else if(_skin->dataType(DATA_POLY_MESH)){
     hasSkinWeights = PluginFunctions::polyMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
-    baseSkin       = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin)) );
+    baseSkin       = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin) ,_skeletonObj->id() ));
   }
 
   baseSkin->attachSkin();
@@ -821,9 +821,9 @@ void SkeletalAnimationPlugin::detachSkin(BaseObjectData* _skin, BaseObjectData* 
     BaseSkin* baseSkin = 0;
 
     if(_skin->dataType(DATA_TRIANGLE_MESH))
-      baseSkin = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin)) );
+      baseSkin = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin) ,_skeletonObj->id()));
     else if(_skin->dataType(DATA_POLY_MESH))
-      baseSkin = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin)) );
+      baseSkin = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin) ,_skeletonObj->id()));
 
     baseSkin->releaseSkin();
     _skin->clearObjectData(OBJECTDATA_SKIN);
