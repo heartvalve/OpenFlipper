@@ -445,7 +445,7 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
             object->manipulatorNode()->set_direction(prevAxis,cross);
 
             // As we only allow rotations around the main axis, we disable the others
-            object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
+            //object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
 
           } else { //Joint in between, use both to estimate a good orientation of the manipulator
             Vector prevAxis = currentPose->globalTranslation(pickedJoint->id()) - currentPose->globalTranslation(parentJoint->id());
@@ -461,7 +461,7 @@ void SkeletonEditingPlugin::placeManip(QMouseEvent * _event) {
             object->manipulatorNode()->set_direction(prevAxis,right);
 
             // As we only allow rotations around the main axis, we disable the others
-            object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
+            //object->manipulatorNode()->enable_rotations(QtTranslationManipulatorNode::X_AXIS);
 
           }
 
