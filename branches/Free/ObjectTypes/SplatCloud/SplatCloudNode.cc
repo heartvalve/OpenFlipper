@@ -112,7 +112,7 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 
     // is vertex-buffer-object is invalid then rebuild
     if ( !vboValid_ )
-        rebuildVBO();
+        rebuildVBO( _state );
 
     // if vertex-buffer-object is valid now...
     // (if not it will be rebuilt the next time, but this should not happen)
@@ -122,12 +122,13 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
         ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
         // tell GL where our data is (NULL = beginning of vertex-buffer-object)
-        glInterleavedArrays( GL_C4F_N3F_V3F, 0, 0 );
+        glInterleavedArrays( GL_T4F_C4F_N3F_V4F, 0, 0 );
 
         // arrays are automatically enabled by glInterleavedArrays()
-        //glEnableClientState( GL_VERTEX_ARRAY );
-        //glEnableClientState( GL_NORMAL_ARRAY );
-        //glEnableClientState( GL_COLOR_ARRAY  );
+        //glEnableClientState( GL_VERTEX_ARRAY         );
+        //glEnableClientState( GL_NORMAL_ARRAY         );
+        //glEnableClientState( GL_COLOR_ARRAY          );
+        //glEnableClientState( GL_TEXTURE_COORD_ARRAY  );
 
         // Normals are always needed for backface culling, even in drawmode 'Points'!
         // Colors are always needed for pointsizes, even in color picking mode!
@@ -148,9 +149,10 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
         }
 
         // disable arrays
-        ACG::GLState::disableClientState( GL_VERTEX_ARRAY );
-        ACG::GLState::disableClientState( GL_NORMAL_ARRAY );
-        ACG::GLState::disableClientState( GL_COLOR_ARRAY  );
+        ACG::GLState::disableClientState( GL_VERTEX_ARRAY        );
+        ACG::GLState::disableClientState( GL_NORMAL_ARRAY        );
+        ACG::GLState::disableClientState( GL_COLOR_ARRAY         );
+        ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
 
         // deactivate vertex-buffer-object
         ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
@@ -172,82 +174,32 @@ void SplatCloudNode::enterPick( GLState &_state, PickTarget _target, const DrawM
 
 void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 {
-//     if ( !_state.pick_set_maximum( points_.size() ) )
-//      return;
+	// if pick target is valid, ...
+	if( _target == PICK_ANYTHING || _target == PICK_VERTEX )
+	{
+		// set number of pick colors used (each points gets a unique pick color)
+		if( !_state.pick_set_maximum( points_.size() ) )
+			return;
 
-    if ( _target == PICK_ANYTHING || _target == PICK_VERTEX )
-    {
-        // change GL's primary color according to pick name
-//         _state.pick_set_name( 0 );
+		// get first pick color
+		_state.pick_set_name( 0 );
+		Vec4uc pc = _state.pick_get_name_color( 0 );
 
-        // Copy GL's primary color to texture coordinate, which will be outputted by the picking shader as color.
-        // This enables us to use RGBA instead of just RGB as it is the case when using GL's secondary color.
-//         GLfloat color[4];
-//         glGetFloatv( GL_CURRENT_COLOR, color );
-//         glTexCoord4fv( color );
+		// if first pick color has changed, store this color and invalidate VBO (so VBO will be rebuilt and new pick colors will be used)
+		if( firstPickColor_ != pc )
+		{
+			firstPickColor_ = pc;
+			vboValid_ = false;
+		}
 
-        // TODO: see above ( enterPick() )
-//         draw( _state, g_pickDrawMode );
-
-        draw_pick( _state );
-    }
+		// TODO: see above ( enterPick() )
+		draw( _state, g_pickDrawMode );
+	}
 }
 
 
 //----------------------------------------------------------------
 
-void
-SplatCloudNode::
-draw_pick( GLState &_state )
-{
-    _state.pick_set_maximum(points_.size());
-
-    for ( unsigned int i = 0; i < points_.size(); ++i )
-    {
-        _state.pick_set_name(i);
-        glBegin(GL_POINTS);
-        glVertex3f( float(points_[i][0] ),float(points_[i][1] ),float(points_[i][2] ) );
-        glEnd();
-    }
-
-/*
-    if (!_state.pick_set_maximum (points_.size()))
-    {
-        std::cerr << "Splat Node::draw_pick: color range too small, " << "picking failed\n";
-        return;
-    }
-
-    if ( updateVertexPicking_ || _state.pick_current_index () != vertexPickingBaseIndex_) {
-        pick_colors_.clear();
-
-        pick_colors_.reserve( points_.size() );
-        for ( unsigned int i = 0; i < points_.size(); ++i )
-            pick_colors_[i] = _state.pick_get_name_color( i );
-
-        vertexPickingBaseIndex_ = _state.pick_current_index ();
-        updateVertexPicking_    = false;
-    }
-
-    // For this version we load the colors directly not from vbo
-    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-    ACG::GLState::colorPointer( &(pick_colors_[0]) );
-    ACG::GLState::enableClientState(GL_COLOR_ARRAY);
-
-    // vertex positions
-    ACG::GLState::vertexPointer( &(points_[0]) );
-    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
-
-    // Draw color picking
-    glDrawArrays(GL_POINTS, 0, points_.size());
-
-    // Disable color array
-    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
-
-    // disable vertex array
-    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);*/
-}
-
-//----------------------------------------------------------------
 
 void SplatCloudNode::createVBO()
 {
@@ -295,7 +247,7 @@ static void addFloatToBuffer( float _value, unsigned char *&_buffer )
 //----------------------------------------------------------------
 
 
-void SplatCloudNode::rebuildVBO()
+void SplatCloudNode::rebuildVBO( GLState &_state )
 {
     // check if vertex-buffer-object has already been created (and not destroyed so far)
     if ( vboGlId_ == 0 )
@@ -308,8 +260,8 @@ void SplatCloudNode::rebuildVBO()
         return;
     }
 
-    // we use GL_C4F_N3F_V3F as interleaved array type, so we have 4+3+3 = 10 floats per splat
-    unsigned int size = numPoints() * 10 * sizeof(float);
+    // we use GL_T4F_C4F_N3F_V4F as interleaved array type, so we have 4+4+3+4 = 15 floats per splat
+    unsigned int size = numPoints() * 15 * sizeof(float);
 
     // activate vertex-buffer-object
     ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
@@ -333,6 +285,14 @@ void SplatCloudNode::rebuildVBO()
         {
             static const float RCP255 = 1.0f / 255.0f;
 
+            // add pick color
+			_state.pick_set_name( i );
+			Vec4uc pc = _state.pick_get_name_color( i );
+            addFloatToBuffer( RCP255 * pc[0], buffer );
+            addFloatToBuffer( RCP255 * pc[1], buffer );
+            addFloatToBuffer( RCP255 * pc[2], buffer );
+            addFloatToBuffer( RCP255 * pc[3], buffer );
+
             // add color
             const Color &c = hasCol ? colors_[i] : defaultColor_;
             addFloatToBuffer( RCP255 * c[0], buffer );
@@ -354,6 +314,7 @@ void SplatCloudNode::rebuildVBO()
             addFloatToBuffer( p[0], buffer );
             addFloatToBuffer( p[1], buffer );
             addFloatToBuffer( p[2], buffer );
+            addFloatToBuffer( 1.0f, buffer );
 
             // add pick color
 
@@ -376,7 +337,7 @@ void SplatCloudNode::rebuildVBO()
 
 void SplatCloudNode::normalizeSize()
 {
-        // check if there is nothing to do
+	// check if there is nothing to do
 	if( points_.size() == 0 )
 		return;
 
@@ -398,11 +359,11 @@ void SplatCloudNode::normalizeSize()
 	cogX *= rcp_count;
 	cogY *= rcp_count;
 	cogZ *= rcp_count;
-	
-	cur_translation_ = -Point ( cogX, cogY, cogZ );
+
+	cur_translation_ = Point( -cogX, -cogY, -cogZ );
 	translate( cur_translation_ );
 	std::cout << "SplatCloudNode::normalizeSize(): translate points by: " << cur_translation_ << std::endl;
-	
+
 	// calculate squared length
 	float sqLength = 0.0f;
 	for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
@@ -415,63 +376,66 @@ void SplatCloudNode::normalizeSize()
 
 	if( s == 0.0f )
 	  return;
-	
-	cur_scale_factor_ = 1.0f / s;
 
+	cur_scale_factor_ = 1.0f / s;
 	scale( cur_scale_factor_ );
 	std::cout << "SplatCloudNode::normalizeSize(): scaling points with factor: " << cur_scale_factor_ << std::endl;
 }
 
+
 //----------------------------------------------------------------
 
 
-void SplatCloudNode::translate( const Point& _t )
+void SplatCloudNode::translate( const Point &_t )
 {
-        SplatCloudNode::PointVector::iterator pointIter;
+	// translate points
+	SplatCloudNode::PointVector::iterator pointIter;
 	for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
 	{
 		SplatCloudNode::Point &p = *pointIter;
-		
+
 		p[0] += _t[0];
 		p[1] += _t[1];
 		p[2] += _t[2];
 	}
 }
 
+
 //----------------------------------------------------------------
 
 
-void SplatCloudNode::scale( const float _scale )
+void SplatCloudNode::scale( float _s )
 {
-        // scale points (and pointsizes as well) by calculated scale
-        SplatCloudNode::PointVector::iterator pointIter;
+	// scale points (and pointsizes as well)
 	if( pointsizes_.size() == points_.size() )
 	{
 		SplatCloudNode::PointsizeVector::iterator pointsizeIter = pointsizes_.begin();
+		SplatCloudNode::PointVector::iterator     pointIter;
 		for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter, ++pointsizeIter )
 		{
 			SplatCloudNode::Point     &p  = *pointIter;
 			SplatCloudNode::Pointsize &ps = *pointsizeIter;
 
-			p[0] *= _scale;
-			p[1] *= _scale;
-			p[2] *= _scale;
-			ps   *= _scale; // scale pointsize as well
+			p[0] *= _s;
+			p[1] *= _s;
+			p[2] *= _s;
+			ps   *= _s; // scale pointsize as well
 		}
 	}
 	else
 	{
+		SplatCloudNode::PointVector::iterator pointIter;
 		for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
 		{
 			SplatCloudNode::Point &p = *pointIter;
 
-			p[0] *= _scale;
-			p[1] *= _scale;
-			p[2] *= _scale;
+			p[0] *= _s;
+			p[1] *= _s;
+			p[2] *= _s;
 		}
-	}
-	
+	}	
 }
+
 
 //================================================================
 
