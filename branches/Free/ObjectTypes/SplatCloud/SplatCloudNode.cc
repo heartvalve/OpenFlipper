@@ -182,7 +182,6 @@ void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 			return;
 
 		// get first pick color
-		_state.pick_set_name( 0 );
 		Vec4uc pc = _state.pick_get_name_color( 0 );
 
 		// if first pick color has changed, store this color and invalidate VBO (so VBO will be rebuilt and new pick colors will be used)
@@ -279,6 +278,9 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
         bool hasPS  = hasPointsizes();
         bool hasCol = hasColors();
 
+        // set number of pick colors used (each points gets a unique pick color)
+        _state.pick_set_maximum( numPoints() );
+
         // for all points...
         int i, num = numPoints();
         for ( i=0; i<num; ++i )
@@ -286,8 +288,7 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
             static const float RCP255 = 1.0f / 255.0f;
 
             // add pick color
-			_state.pick_set_name( i );
-			Vec4uc pc = _state.pick_get_name_color( i );
+            Vec4uc pc = _state.pick_get_name_color( i );
             addFloatToBuffer( RCP255 * pc[0], buffer );
             addFloatToBuffer( RCP255 * pc[1], buffer );
             addFloatToBuffer( RCP255 * pc[2], buffer );
@@ -315,9 +316,6 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
             addFloatToBuffer( p[1], buffer );
             addFloatToBuffer( p[2], buffer );
             addFloatToBuffer( 1.0f, buffer );
-
-            // add pick color
-
         }
     }
 
