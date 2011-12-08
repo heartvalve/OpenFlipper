@@ -94,35 +94,30 @@ public:
 	typedef ACG::Vec3f  Normal;
 	typedef float       Pointsize;
 	typedef ACG::Vec3uc Color;
-	typedef ACG::Vec4uc PickColor;
 
 	typedef std::vector<Point>     PointVector;
 	typedef std::vector<Normal>    NormalVector;
 	typedef std::vector<Pointsize> PointsizeVector;
 	typedef std::vector<Color>     ColorVector;
-	typedef std::vector<PickColor> PickColorVector;
 
 	//----------------------------------------------------------------
 
 	/// Constructor
 	SplatCloudNode(   BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" ) :
 		BaseNode         ( _parent, _name ), 
+		firstPickColor_  ( Vec4uc(0,0,0,0) ), 
+		cur_translation_ ( Point(0.0f,0.0f,0.0f) ), 
+		cur_scale_factor_( 1.0f ), 
 		defaultNormal_   ( Normal(0.0f,0.0f,1.0f) ), 
 		defaultPointsize_( 0.01f ), 
 		defaultColor_    ( Color(255,255,255) ), 
 		vboGlId_         ( 0 ), 
 		vboValid_        ( false )
 	{
-	        cur_translation_  = Point( 0.0f,0.0f,0.0f  );
-                cur_scale_factor_ = 1.0;
-	
 		// add (possibly) new drawmodes
 		pointsDrawMode_ = DrawModes::addDrawMode( "Points" );
 		dotsDrawMode_   = DrawModes::addDrawMode( "Dots"   );
 		splatsDrawMode_ = DrawModes::addDrawMode( "Splats" );
-		
-		vertexPickingBaseIndex_ = 0;
-		updateVertexPicking_ = true;
 
 		// create a new vertex-buffer-object (will be invalid and rebuilt the next time drawn (or picked))
 		createVBO();
@@ -149,21 +144,18 @@ public:
 	void pick( GLState &_state, PickTarget _target );
 
 	// ---- data vectors ----
-	
-	/// set flag if vertex picking needs to be updated
-	void updateVertexPicking(){  updateVertexPicking_=true; }
 
-	inline void clearPoints()     { points_.clear(); updateVertexPicking_=true;     }
-	inline void clearNormals()    { normals_.clear(); updateVertexPicking_=true;    }
-	inline void clearPointsizes() { pointsizes_.clear(); updateVertexPicking_=true; }
-	inline void clearColors()     { colors_.clear(); updateVertexPicking_=true;     }
+	inline void clearPoints()     { points_.clear();     }
+	inline void clearNormals()    { normals_.clear();    }
+	inline void clearPointsizes() { pointsizes_.clear(); }
+	inline void clearColors()     { colors_.clear();     }
 
-	inline void clear() { clearPoints(); clearNormals(); clearPointsizes(); clearColors();  updateVertexPicking_=true; }
+	inline void clear() { clearPoints(); clearNormals(); clearPointsizes(); clearColors(); }
 
-	inline void addPoint    ( const Point     &_point     ) { points_.push_back    ( _point     );  updateVertexPicking_=true; }
-	inline void addNormal   ( const Normal    &_normal    ) { normals_.push_back   ( _normal    );  updateVertexPicking_=true; }
-	inline void addPointsize( const Pointsize &_pointsize ) { pointsizes_.push_back( _pointsize );  updateVertexPicking_=true; }
-	inline void addColor    ( const Color     &_color     ) { colors_.push_back    ( _color     );  updateVertexPicking_=true; }
+	inline void addPoint    ( const Point     &_point     ) { points_.push_back    ( _point     ); }
+	inline void addNormal   ( const Normal    &_normal    ) { normals_.push_back   ( _normal    ); }
+	inline void addPointsize( const Pointsize &_pointsize ) { pointsizes_.push_back( _pointsize ); }
+	inline void addColor    ( const Color     &_color     ) { colors_.push_back    ( _color     ); }
 
 	inline unsigned int numPoints()     const { return points_.size();     }
 	inline unsigned int numNormals()    const { return normals_.size();    }
@@ -198,21 +190,19 @@ public:
 
 	/// make vertex-buffer-object invalid so it will be rebuilt the next time drawn (or picked)
 	inline void invalidateVBO() { vboValid_ = false; }
-	
+
 	/// normalize dimenstion of point cloud to unit size
 	void normalizeSize();
-	
+
 	float cur_scale_factor() const { return cur_scale_factor_; }
-	const Point& cur_translation() const { return cur_translation_; }
+	const Point &cur_translation() const { return cur_translation_; }
 
 	//----------------------------------------------------------------
 
 private:
-  
-        void scale( const float _scale );
-	void translate( const Point& _t );
-  
-        void draw_pick( GLState &_state );
+
+	void translate( const Point &_t );
+	void scale( float _s );
 
 	// ---- draw modes ----
 	DrawModes::DrawMode splatsDrawMode_;
@@ -224,11 +214,13 @@ private:
 	NormalVector    normals_;
 	PointsizeVector pointsizes_;
 	ColorVector     colors_;
-	PickColorVector pick_colors_;
-	
-	// ----- cur scale and translation ----
-	Point           cur_translation_;
-        float           cur_scale_factor_;
+
+	// ---- first picking color ----
+	Vec4uc firstPickColor_;
+
+	// ---- cur scale and translation ----
+	Point cur_translation_;
+	float cur_scale_factor_;
 
 	// ---- default values ----
 	/// the default values will be used when the specific array is not present
@@ -242,13 +234,7 @@ private:
 
 	void createVBO();
 	void destroyVBO();
-	void rebuildVBO();
-	
-	// check if picking needs update
-	bool updateVertexPicking_;
-	
-	// current base pick index
-	unsigned int  vertexPickingBaseIndex_;
+	void rebuildVBO( GLState &_state );
 };
 
 
