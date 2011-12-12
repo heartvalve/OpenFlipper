@@ -66,7 +66,17 @@ namespace ACG {
 
 
 /**
-    DualQuaternion class for representing rigid motions in 3d
+    \brief DualQuaternion class for representing rigid motions in 3d
+
+    This is an implementation of:
+
+    @techreport{kavan-06-dual,
+    author = "Ladislav Kavan and Steven Collins and Carol O'Sullivan and Jiri Zara",
+    series = "Technical report TCD-CS-2006-46, Trinity College Dublin",
+    title = "{D}ual {Q}uaternions for {R}igid {T}ransformation {B}lending",
+    url = "http://www.cgg.cvut.cz/~kavanl1/",
+    year = "2006"
+    }
 */
 
 template <class Scalar>
