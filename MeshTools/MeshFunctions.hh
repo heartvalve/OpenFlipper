@@ -157,6 +157,14 @@ calc_angle_around( const MeshT& _mesh , const typename MeshT::VertexHandle _vh);
 template< typename MeshT >
 void transformMesh(ACG::Matrix4x4d _matrix , MeshT& _mesh);
 
+/**
+ * Transform handle vertices only
+ * @param _matrix The transformation matrix
+ * @param _mesh The mesh that is to be transformed
+ */
+template< typename MeshT >
+void transformHandleVertices(ACG::Matrix4x4d _matrix , MeshT& _mesh);
+
 //=============================================================================
 } // MeshFunctions Namespace 
 //=============================================================================
