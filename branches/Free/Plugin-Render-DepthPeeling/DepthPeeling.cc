@@ -660,6 +660,7 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     if (!_flatShaded)
     {
       _strFragmentShaderOut->push_back("  vec3 normal = normalize(vNormal);\n");
+//      _strFragmentShaderOut->push_back("  vec3 normal = normalize(cross(dFdx(vPosVS.xyz), dFdy(vPosVS.xyz)));\n");
       _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
       if (_textured)
         _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, vTexCoord); color.a *= diffColor.a;\n");
@@ -1020,11 +1021,22 @@ void DepthPeelingPlugin::updatePeelingShaderSet()
 
         if (phongDrawMode + flatDrawMode + gouraudDrawMode == 0) continue;
       }
-      
+
+      if (flatDrawMode)
+      {
+        // replace flat shading with gouraud, if geometry shaders are not supported
+        if (!ACG::checkExtensionSupported("GL_ARB_geometry_shader4") && !ACG::checkExtensionSupported("GL_EXT_geometry_shader4"))
+        {
+          flatDrawMode = 0;
+          gouraudDrawMode = 1;
+        }
+      }
+
       GLSL::StringList strVertexShader, strFragmentShader, strGeometryShader;
       generatePeelingShaders(&strVertexShader, &strFragmentShader, &strGeometryShader, texturedDrawMode != 0, flatDrawMode != 0, phongDrawMode != 0, vertexColorDrawMode != 0, i == PEEL_SHADER_WIREFRAME);
 
       peelProgs_[i] = new GLSL::Program();
+      
 
       GLSL::VertexShader* pVertexSh = new GLSL::VertexShader();
       pVertexSh->setSource(strVertexShader);
