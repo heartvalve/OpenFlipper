@@ -827,12 +827,12 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
     // Get rotation angle (in radiant)
     _angle = acos(v0 | v1);
 
-    // Convert to degree
-    _angle *= 180 / M_PI;
-
     // Is nan?
     if (_angle != _angle)
         _angle = 0.0;
+
+    // Convert to degree
+    _angle *= 180 / M_PI;
 
     // Get orientation of right-handed coordinates system
     // to determine whether we rotated clockwise
