@@ -175,8 +175,34 @@ void SkeletalAnimationPlugin::addedEmptyObject(int /*_id*/) {
 /** \brief Update ui when the object is deleted
  *
  */
-void SkeletalAnimationPlugin::objectDeleted(int /*_id*/) {
-  checkObjectSelection();
+void SkeletalAnimationPlugin::objectDeleted(int _id) {
+
+    checkObjectSelection();
+
+    // Check for skin that is to be cleared
+    BaseObjectData* bod = 0;
+    if (!PluginFunctions::getObject(_id, bod)) {
+        return;
+    }
+
+    if (bod->hasObjectData(OBJECTDATA_SKIN)) {
+
+        BaseSkin* baseSkin = 0;
+
+        if (bod->dataType(DATA_TRIANGLE_MESH))
+            baseSkin = dynamic_cast<BaseSkin*> (bod->objectData(OBJECTDATA_SKIN));
+        else if (bod->dataType(DATA_POLY_MESH))
+            baseSkin = dynamic_cast<BaseSkin*> (bod->objectData(OBJECTDATA_SKIN));
+
+        if (baseSkin) {
+            BaseObjectData* skeletonObj = PluginFunctions::skeletonObject(baseSkin->skeletonId());
+
+            if(skeletonObj) {
+                // Detach skin  from skeleton
+                detachSkin(bod, skeletonObj);
+            }
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
