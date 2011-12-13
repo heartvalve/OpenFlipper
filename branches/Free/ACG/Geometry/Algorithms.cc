@@ -801,6 +801,46 @@ circumRadiusSquared( const VectorT<Scalar,3>&  _v0,
 
 //-----------------------------------------------------------------------------
 
+template<typename Vec>
+bool
+rotationOfTwoVectors( const Vec&  _v0,
+                      const Vec&  _v1,
+                      Vec&  _axis,
+                      typename Vec::Scalar& _angle ) {
+
+    // Normalize axes
+    Vec v0 = _v0.normalize();
+    Vec v1 = _v1.normalize();
+
+    // Get rotation axis
+    _axis = (v0 % v1).normalize();
+
+    // Is nan?
+    if (_axis != _axis) {
+        return false;
+    }
+
+    // Get rotation angle (in radiant)
+    _angle = acos(v0 | v1);
+
+    // Convert to degree
+    _angle *= 180 / M_PI;
+
+    // Is nan?
+    if (_angle != _angle)
+        _angle = 0.0;
+
+    // Get orientation of right-handed coordinates system
+    // to determine whether we rotated clockwise
+    // or counter-clockwise (w.r.t. rotation axis)
+    if (determinant(v0, v1, _axis) >= 0)
+        _angle *= -1.0;
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+
 template<class VectorT>
 int isObtuse(const VectorT& _p0,
              const VectorT& _p1,
