@@ -806,7 +806,7 @@ bool
 rotationOfTwoVectors( const Vec&  _v0,
                       const Vec&  _v1,
                       Vec&  _axis,
-                      typename Vec::Scalar& _angle ) {
+                      typename Vec::value_type& _angle ) {
 
     // Normalize axes
     Vec v0 = _v0.normalize();
