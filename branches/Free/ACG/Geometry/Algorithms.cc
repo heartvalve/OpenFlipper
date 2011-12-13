@@ -808,9 +808,13 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
                       VectorT<Scalar,3>&  _axis,
                       Scalar& _angle ) {
 
+    // Copy axes
+    VectorT<Scalar,3> v0 = _v0;
+    VectorT<Scalar,3> v1 = _v1;
+
     // Normalize axes
-    VectorT<Scalar,3> v0 = _v0.normalize();
-    VectorT<Scalar,3> v1 = _v1.normalize();
+    v0.normalize();
+    v1.normalize();
 
     // Get rotation axis
     _axis = (v0 % v1).normalize();
