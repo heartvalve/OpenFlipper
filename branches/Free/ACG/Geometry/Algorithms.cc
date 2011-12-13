@@ -806,11 +806,11 @@ bool
 rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
                       const VectorT<Scalar,3>&  _v1,
                       VectorT<Scalar,3>&  _axis,
-                      typename Scalar& _angle ) {
+                      Scalar& _angle ) {
 
     // Normalize axes
-    Vec v0 = _v0.normalize();
-    Vec v1 = _v1.normalize();
+    VectorT<Scalar,3> v0 = _v0.normalize();
+    VectorT<Scalar,3> v1 = _v1.normalize();
 
     // Get rotation axis
     _axis = (v0 % v1).normalize();

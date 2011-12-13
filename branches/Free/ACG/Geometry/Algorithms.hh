@@ -128,7 +128,7 @@ bool
 rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
                       const VectorT<Scalar,3>&  _v1,
                       VectorT<Scalar,3>&  _axis,
-                      typename Scalar& _angle );
+                      Scalar& _angle );
 
 /** \brief Get determinant of matrix [_v1, _v2, _v3]
  */
