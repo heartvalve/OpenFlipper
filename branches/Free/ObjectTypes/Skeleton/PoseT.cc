@@ -185,6 +185,8 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::localMatrixInv(unsigned int _joint
 /**
  * @brief Returns the global matrix for the given joint
  *
+ * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
+ *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @return The global matrix, relative to world coordinates
  */
@@ -199,6 +201,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::globalMatrix(unsigne
 /**
  * @brief Sets the global coordinate system
  *
+ * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  * The change will automatically be propagated to all children. Also the local matrices will be updated.
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
@@ -256,6 +259,9 @@ void PoseT<PointT>::setGlobalTranslation(unsigned int _joint, const Vector &_pos
 
 /**
  * @brief Simply returns the inverse of the global matrix
+ *
+ * The inverse of the global Matrix defines the transformation from global world coordinates in the
+ * currently active pose into bone coordinates.
  */
 template<typename PointT>
 typename PoseT<PointT>::Matrix PoseT<PointT>::globalMatrixInv(unsigned int _joint) const
@@ -398,6 +404,11 @@ void PoseT<PointT>::updateFromGlobal(unsigned int _joint, bool _keepChildPositio
  * \f[ M_{unified} = M_{pose} \cdot M^{-1}_{reference} \f]
  * speeding up the calculation of the vertices in the current pose
  * \f[ v_{pose} = M_{pose} \cdot M^{-1}_{reference} \cdot v_{reference} \f]
+ * The matrix \f[  M^{-1}_{reference} \f] transforms a point of the skin in global coordinates
+ * when the skeleton is in the reference pose to local bone coordinates.
+ * The Matrix \f[ M_{pose} \f] takes a point in bone coordinates and transforms it back into global
+ * coordinates. As the matrix is given by a skeleton in a different pose, the points in local
+ * coordinates will therefore follow the skeleton.
  * \f[ v_{pose} = M_{unified} \cdot v_{reference} \f]
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
