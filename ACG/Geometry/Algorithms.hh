@@ -130,7 +130,7 @@ rotationOfTwoVectors( const Vec&  _v0,
                       Vec&  _axis,
                       typename Vec::Scalar& _angle );
 
-/** \brief Get determinant of matrix [_v0, _v1, _v2]
+/** \brief Get determinant of matrix [_v1, _v2, _v3]
  */
 template<typename Scalar>
 Scalar
