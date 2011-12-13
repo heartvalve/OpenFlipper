@@ -123,12 +123,12 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
  * @param _axis A reference to a vector in which the rotation axis is stored
  * @param _angle A reference to a scalar type in which the signed angle is stored
  */
-template<typename Vec>
+template<typename Scalar>
 bool
-rotationOfTwoVectors( const Vec&  _v0,
-                      const Vec&  _v1,
-                      Vec&  _axis,
-                      typename Vec::value_type& _angle );
+rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
+                      const VectorT<Scalar,3>&  _v1,
+                      VectorT<Scalar,3>&  _axis,
+                      typename Scalar& _angle );
 
 /** \brief Get determinant of matrix [_v1, _v2, _v3]
  */
