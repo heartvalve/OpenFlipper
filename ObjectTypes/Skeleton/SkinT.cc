@@ -198,6 +198,10 @@ void SkinT<MeshT>::releaseSkin()
     }
     mesh_->remove_property(propDefaultPose);
   }
+
+  // Remove the skin weights
+  OpenMesh::VPropHandleT<SkinWeights> propSkinWeights;
+  mesh_->remove_property(propSkinWeights);
 }
 
 //-----------------------------------------------------------------------------
