@@ -105,7 +105,7 @@ public:
   GLSphere(int _slices, int _stacks);
   ~GLSphere();
 
-  void draw(GLState* _state, float _radius, const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f));
+  void draw(GLState& _state, float _radius, const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f));
 
   int getNumTriangles();
 
@@ -134,10 +134,10 @@ public:
   ~GLCone();
 
   void draw(
-      GLState* _state,
+      GLState& _state,
       float _height,
       const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f),
-      ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 1.0f, 0.0f));
+      ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f));
 
   int getNumTriangles();
 
