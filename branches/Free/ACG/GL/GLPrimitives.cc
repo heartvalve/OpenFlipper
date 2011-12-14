@@ -158,16 +158,16 @@ GLSphere::~GLSphere()
 
 //------------------------------------------------------------------------
 
-void GLSphere::draw(GLState* _state, float _radius, const ACG::Vec3f& _center)
+void GLSphere::draw(GLState& _state, float _radius, const ACG::Vec3f& _center)
 {
-  _state->push_modelview_matrix();
+  _state.push_modelview_matrix();
 
-  _state->translate(ACG::Vec3d(_center));
-  _state->scale(_radius, _radius, _radius);
+  _state.translate(ACG::Vec3d(_center));
+  _state.scale(_radius, _radius, _radius);
 
   GLPrimitive::draw();
 
-  _state->pop_modelview_matrix();
+  _state.pop_modelview_matrix();
 }
 
 //------------------------------------------------------------------------
@@ -274,14 +274,14 @@ GLCone::~GLCone()
 
 //------------------------------------------------------------------------
 
-void GLCone::draw(GLState* _state, float _height, const ACG::Vec3f& _center, ACG::Vec3f _upDir)
+void GLCone::draw(GLState& _state, float _height, const ACG::Vec3f& _center, ACG::Vec3f _upDir)
 {
 //  ACG::mat4 mWorld = ACG::translate(ACG::mat4(1.0f), _center);
 
-  _state->push_modelview_matrix();
+  _state.push_modelview_matrix();
 
   // translate
-  _state->translate(ACG::Vec3d(_center));
+  _state.translate(ACG::Vec3d(_center));
 
   _upDir.normalize();
 
@@ -314,11 +314,11 @@ void GLCone::draw(GLState* _state, float _height, const ACG::Vec3f& _center, ACG
   ACG::GLMatrixd mAlignInv(mAlign);
   mAlignInv.invert();
 
-  _state->mult_matrix(mAlign, mAlignInv);
+  _state.mult_matrix(mAlign, mAlignInv);
 
   GLPrimitive::draw();
 
-  _state->pop_modelview_matrix();
+  _state.pop_modelview_matrix();
 }
 
 //------------------------------------------------------------------------
@@ -347,7 +347,7 @@ ACG::Vec3f GLCone::positionOnCone(int _sliceNumber, int _stackNumber)
   double ringRadius = (1.0 - relativeHeight) * bottomRadius_ + relativeHeight * topRadius_;
   position[0] = sin(beta) * ringRadius;
   position[1] = cos(beta) * ringRadius;
-  position[2] = relativeHeight - 0.5;
+  position[2] = relativeHeight;
 
   return position;
 }
@@ -414,7 +414,7 @@ void GLCone::updateVBO()
       ACG::Vec3f n[3];
       ACG::Vec2f tex[3];
 
-      p[0] = ACG::Vec3f(0.0, 0.0, 0.5);
+      p[0] = ACG::Vec3f(0.0, 0.0, 1.0);
       p[1] = positionOnCone(sl + 1, stacks_);
       p[2] = positionOnCone(sl, stacks_);
       n[0] = ACG::Vec3f(0.0, 0.0, 1.0);
@@ -440,7 +440,7 @@ void GLCone::updateVBO()
       ACG::Vec3f n[3];
       ACG::Vec2f tex[3];
 
-      p[0] = ACG::Vec3f(0.0, 0.0, -0.5);
+      p[0] = ACG::Vec3f(0.0, 0.0, 0.0);
       p[1] = positionOnCone(sl, 0);
       p[2] = positionOnCone(sl + 1, 0);
       n[0] = ACG::Vec3f(0.0, 0.0, -1.0);
