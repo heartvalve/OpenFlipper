@@ -49,15 +49,14 @@
 #include <vector>
 #include <iostream>
 #include "JointT.hh"
+#include "Properties.hh"
 #include "Animation/AnimationT.hh"
 #include "PoseT.hh"
-
-#include "SkeletonBaseKernel.hh"
 
 #include <stack>
 
 template <class PointT>
-class SkeletonT : public SkeletonBaseKernel
+class SkeletonT : public Properties
 {
   template<typename>
   friend class JointT;
