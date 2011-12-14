@@ -296,15 +296,17 @@ SkeletonT<PointT>::SkeletonT() : referencePose_(this)
  */
 template<typename PointT>
 SkeletonT<PointT>::SkeletonT(const SkeletonT<PointT> &_other) :
-  Properties(),
+  SkeletonBaseKernel(),
   referencePose_(this)
 {
   // create a copy of the joints, not yet linked because they refer to each other using pointers
-  for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
-  {
+  for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
     joints_.push_back(new Joint(**it));
-    insert_property_at( (*it)->id() );
   }
+
+  // Copy properties
+  jprops_copy(_other.jprops_);
+  sprops_copy(_other.sprops_);
 
   // construct the links
   for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
@@ -347,8 +349,11 @@ SkeletonT<PointT>& SkeletonT<PointT>::operator= (const SkeletonT<PointT>& _other
     // create a copy of the joints, not yet linked because they refer to each other using pointers
     for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
       joints_.push_back(new Joint(**it));
-      insert_property_at( (*it)->id() );
     }
+
+    // Copy properties
+    jprops_copy(_other.jprops_);
+    sprops_copy(_other.sprops_);
 
     // construct the links
     for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
@@ -407,7 +412,8 @@ void SkeletonT<PointT>::addJoint(typename SkeletonT<PointT>::Joint *_pParent, ty
   if(_pParent == 0)
   {
     clear();
-    clean_properties();
+    // Clear all joint properties
+    jprops_clear();
 
     _pJoint->setId(0);
     joints_.push_back(_pJoint);
@@ -421,8 +427,8 @@ void SkeletonT<PointT>::addJoint(typename SkeletonT<PointT>::Joint *_pParent, ty
     newJointID = joints_.size() - 1;
   }
 
-  //onAddJoint
-  insert_property_at(newJointID);
+  // Automatically extend joint props vector
+  jprops_resize(joints_.size());
 
   referencePose_.insertJointAt(newJointID);
   for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
@@ -452,7 +458,7 @@ void SkeletonT<PointT>::removeJoint(typename SkeletonT<PointT>::Joint *_pJoint)
     return;
   }
 
-  remove_property_at(_pJoint->id());
+  remove_jprop_element(_pJoint->id());
   referencePose_.removeJointAt(_pJoint->id());
 
   for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
@@ -485,8 +491,9 @@ void SkeletonT<PointT>::removeJoint(typename SkeletonT<PointT>::Joint *_pJoint)
 
   typename std::vector<Joint*>::iterator it = joints_.begin() + _pJoint->id(); // iterator pointing to the element that has to be erased
   it = joints_.erase(it);                                                      // erase the element
-  for(; it != joints_.end(); ++it)                                             // for all following elements
-    (*it)->setId((*it)->id() - 1);                                             // reduce their index by one (since they have been moved there)
+  for(; it != joints_.end(); ++it) {                                           // for all following elements
+      (*it)->setId((*it)->id() - 1);                                           // reduce their index by one (since they have been moved there)
+  }
 
   referencePose_.updateFromGlobal(0, true);
   for (typename std::vector<Animation*>::iterator a_it = animations_.begin(); a_it != animations_.end(); ++a_it) {
@@ -508,7 +515,7 @@ template<typename PointT>
 inline void SkeletonT<PointT>::clear()
 {
   // no joints, so no animation either
-  clean_properties();
+  jprops_clear();
   clearAnimations();
 
   // clear the joints
