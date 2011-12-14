@@ -81,6 +81,8 @@ SkeletonNodeT<Skeleton>::SkeletonNodeT(Skeleton &_skeleton, BaseNode *_parent, s
                fFrameSize_(0.0)
 {
   this->multipassNodeSetActive(3, true);
+
+  sphere_ = new ACG::GLSphere(10, 10);
 }
 
 
@@ -312,30 +314,46 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
     // draw all joint positions
     glPointSize(12);
                 
-    glBegin(GL_POINTS);
-    
     for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
     {
-      
 
       // If the vertex is selected, it will be always red
       // If it is not selected,
       if ( (*it)->selected() )
-        glColor3f(1.0, 0.0, 0.0);
+        glColor4f(1.0, 0.0, 0.0 ,1.0);
       else {
         // If it is the root joint, it will get some kind of orange color
         // Otherwise the the Base color is used
         if ( (*it)->isRoot() )
-          glColor3f(1.0, 0.66, 0.0);
-        else
-          glColor3fv( &jointColor[0] );
+          glColor4f(1.0, 0.66, 0.0 ,1.0);
+        else {
+
+          glColor4f( jointColor[0], jointColor[1] , jointColor[2], 1.0 );
+        }
       }
 
+      //---------------------------------------------------
+      // Simulate glPointSize(12) with a sphere
+      //---------------------------------------------------
 
-      //and draw the point
-      glVertex( pose->globalTranslation( (*it)->id() ) );
+      // 1. Project point to screen
+      ACG::Vec3d projected = _state.project( pose->globalTranslation( (*it)->id() ) );
+
+      // 2. Shift it by the requested point size
+      //    glPointSize defines the diameter but we want the radius, so we divide it by two
+      ACG::Vec3d shifted = projected;
+      shifted[0] = shifted[0] + (double)_state.point_size() / 2.0 ;
+
+      // 3. un-project into 3D
+      ACG::Vec3d unProjectedShifted = _state.unproject( shifted );
+
+      // 4. The difference vector defines the radius in 3D for the sphere
+      ACG::Vec3d difference = unProjectedShifted - pose->globalTranslation( (*it)->id() );
+
+      const double sphereSize = difference.norm();
+
+      sphere_->draw(_state,sphereSize,ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
     }
-    glEnd();
 
 
     // draw the local coordinate frames
