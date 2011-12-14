@@ -79,7 +79,7 @@ CoordsysNode::CoordsysNode(BaseNode* _parent, std::string _name, CoordsysMode _m
 
   sphere_   = new ACG::GLSphere(slices,stacks);
   cylinder_ = new ACG::GLCylinder(slices, stacks, bodyRadius,false,false);
-  cone_     = new ACG::GLCone(slices, stacks, 0, topRadius , true,false);
+  cone_     = new ACG::GLCone(slices, stacks, 0, topRadius , false,true);
 }
 
 
