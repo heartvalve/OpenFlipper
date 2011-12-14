@@ -367,7 +367,7 @@ struct SkeletonBasePropHandleT {
 
 public:
     // Default constructor
-    explicit SkeletonBasePropHandleT(int _idx) : idx_(_idx) {};
+    explicit SkeletonBasePropHandleT(int _idx = -1) : idx_(_idx) {};
 
     SkeletonBasePropHandleT& operator=(int _idx) {
         idx_ = _idx;
