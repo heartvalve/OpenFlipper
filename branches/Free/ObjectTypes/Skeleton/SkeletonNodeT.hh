@@ -49,6 +49,7 @@
 
 #include <ACG/Scenegraph/MaterialNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/GLPrimitives.hh>
 #include "JointT.hh"
 
 //== FORWARDDECLARATIONS ======================================================
@@ -147,6 +148,8 @@ private:
   
   /// size for the coord-frame
   double fFrameSize_;
+
+  ACG::GLSphere* sphere_;
 };
 
 
