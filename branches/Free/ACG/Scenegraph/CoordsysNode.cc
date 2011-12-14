@@ -52,7 +52,8 @@
 //== INCLUDES =================================================================
 
 #include "CoordsysNode.hh"
-#include "../GL/gl.hh"
+#include <ACG/GL/gl.hh>
+
 #include <iostream>
 #include <math.h>
 
@@ -64,6 +65,22 @@ namespace SceneGraph {
 
 
 //== IMPLEMENTATION ==========================================================
+
+
+CoordsysNode::CoordsysNode(BaseNode* _parent, std::string _name, CoordsysMode _mode, ProjectionMode _projectionMode) :
+        BaseNode(_parent, _name),
+        mode_(_mode),
+        projectionMode_(_projectionMode)
+{
+  const double bodyRadius = 0.004;
+  const double topRadius = 0.01;
+  const int slices = 10;
+  const int stacks = 10;
+
+  sphere_   = new ACG::GLSphere(slices,stacks);
+  cylinder_ = new ACG::GLCylinder(slices, stacks, bodyRadius,false,false);
+  cone_     = new ACG::GLCone(slices, stacks, 0, topRadius , true,false);
+}
 
 
 void
@@ -93,30 +110,26 @@ void
 CoordsysNode::
 drawCoordsys( GLState&  _state) {
 
-  double topRadius = 0.01;
-  double arrowLength = 0.04;
-  double bodyRadius = 0.004;
-  double bodyLength = 0.06;
-  int slices = 10;
-  int stacks = 10;
-  int loops = 10;
-  double sphereRadius = 0.01;
-
-  GLUquadricObj *quadric = gluNewQuadric();
+  const double topRadius    = 0.01;
+  const double arrowLength  = 0.03;
+  const double bodyRadius   = 0.004;
+  const double bodyLength   = 0.06;
+  const int slices          = 10;
+  const int stacks          = 10;
+  const double sphereRadius = 0.01;
 
   // Origin
   glColor3f(0.5, 0.5, 0.5);
-  gluSphere( quadric, sphereRadius, slices, stacks );
+  sphere_->draw(_state,sphereRadius);
   
   // X-Axis
   glColor3f(1.0, 0.0, 0.0);
   _state.push_modelview_matrix ();
   _state.rotate (-90, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
 
   // Y-Axis
@@ -124,10 +137,9 @@ drawCoordsys( GLState&  _state) {
   _state.push_modelview_matrix ();
   _state.rotate (90, 1, 0, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
 
   // Z-Axis
@@ -135,13 +147,11 @@ drawCoordsys( GLState&  _state) {
   _state.push_modelview_matrix ();
   _state.rotate (180, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
 
-  gluDeleteQuadric(quadric);
 }
 
 //============================================================================
@@ -149,41 +159,37 @@ drawCoordsys( GLState&  _state) {
 void
 CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
-  double topRadius = 0.01;
-  double arrowLength = 0.04;
-  double bodyRadius = 0.004;
-  double bodyLength = 0.06;
-  int slices = 10;
-  int stacks = 10;
-  int loops = 10;
-  double sphereRadius = 0.01;
-
-  GLUquadricObj *quadric = gluNewQuadric();
+  const double topRadius    = 0.01;
+  const double arrowLength  = 0.03;
+  const double bodyRadius   = 0.004;
+  const double bodyLength   = 0.06;
+  const int slices          = 10;
+  const int stacks          = 10;
+  const double sphereRadius = 0.01;
 
   // Origin
   _state.pick_set_name (1);
-  gluSphere( quadric, sphereRadius, slices, stacks );
+  sphere_->draw(_state,sphereRadius);
 
   // X-Axis
   _state.pick_set_name (2);
   _state.push_modelview_matrix ();
   _state.rotate (-90, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
+
 
   // Y-Axis
   _state.pick_set_name (3);
   _state.push_modelview_matrix ();
   _state.rotate (90, 1, 0, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
 
   // Z-Axis
@@ -191,14 +197,10 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
   _state.push_modelview_matrix ();
   _state.rotate (180, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
-  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  gluDisk( quadric, 0, topRadius, slices, loops );
+  cylinder_->draw(_state,bodyLength);
   _state.translate ( 0, 0, -arrowLength );
-  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
-
-
-  gluDeleteQuadric(quadric);
 
 }
 
