@@ -58,6 +58,7 @@
 
 #include "BaseNode.hh"
 #include "DrawModes.hh"
+#include <ACG/GL/GLPrimitives.hh>
 #include <vector>
 
 //== NAMESPACES ===============================================================
@@ -97,12 +98,11 @@ public:
    * @param _parent Define the parent Node this node gets attached to
    * @param _name Name of this Node
    */
-  CoordsysNode( BaseNode*         _parent=0,
-	         std::string  _name="<TextNode>",
-            CoordsysMode _mode = SCREENPOS, ProjectionMode _projectionMode = PERSPECTIVE_PROJECTION)
-            : BaseNode(_parent, _name),
-              mode_(_mode),
-              projectionMode_(_projectionMode) {};
+  CoordsysNode(
+      BaseNode* _parent = 0,
+      std::string _name = "<TextNode>",
+      CoordsysMode _mode = SCREENPOS,
+      ProjectionMode _projectionMode = PERSPECTIVE_PROJECTION);
 
   /// destructor
   ~CoordsysNode() {};
@@ -148,6 +148,11 @@ public:
     ProjectionMode projectionMode_;
 	
     Vec3f pos3f_;
+
+
+    ACG::GLSphere*   sphere_;
+    ACG::GLCylinder* cylinder_;
+    ACG::GLCone*     cone_;
 };
 
 
