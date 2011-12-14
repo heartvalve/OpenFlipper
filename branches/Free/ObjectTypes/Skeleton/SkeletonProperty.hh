@@ -73,10 +73,11 @@ public:
 	}
 
 	virtual void stats(std::ostream& _ostr) const {
-		for(typename vector_type::const_iterator it = data_.begin();
-			it != data_.end(); ++it) {
-				_ostr << *it << " ";
-		}
+	    /// \TODO: Implement streaming operator
+//		for(typename vector_type::const_iterator it = data_.begin();
+//			it != data_.end(); ++it) {
+//				_ostr << *it << " ";
+//		}
 	}
 
 public:
