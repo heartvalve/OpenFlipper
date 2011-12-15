@@ -114,7 +114,7 @@ void GLPrimitive::bindVBO()
     delete[] vboData_;
     vboData_ = 0;
   } else
-    glBindBufferARB(GL_ARRAY_BUFFER, vbo_);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   glVertexPointer(3, GL_FLOAT, 32, 0);
   glEnableClientState(GL_VERTEX_ARRAY);
