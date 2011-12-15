@@ -359,7 +359,7 @@ ACG::Vec2f GLCone::texCoordOnCone(int _sliceNumber, int _stackNumber)
   ACG::Vec2f texCoord;
 
   texCoord[0] = _sliceNumber / (double) slices_;
-  texCoord[1] = _sliceNumber / (double) stacks_;
+  texCoord[1] = _stackNumber / (double) stacks_;
 
   return texCoord;
 }
