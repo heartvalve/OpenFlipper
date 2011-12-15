@@ -174,25 +174,26 @@ void SplatCloudNode::enterPick( GLState &_state, PickTarget _target, const DrawM
 
 void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 {
-	// if pick target is valid, ...
+	// if pick target is valid...
 	if( _target == PICK_ANYTHING || _target == PICK_VERTEX )
 	{
 		// set number of pick colors used (each points gets a unique pick color)
-		if( !_state.pick_set_maximum( points_.size() ) )
-			return;
-
-		// get first pick color
-		Vec4uc pc = _state.pick_get_name_color( 0 );
-
-		// if first pick color has changed, store this color and invalidate VBO (so VBO will be rebuilt and new pick colors will be used)
-		if( firstPickColor_ != pc )
+		if( !_state.pick_set_maximum( numPoints() ) )
 		{
-			firstPickColor_ = pc;
-			vboValid_ = false;
+			std::cerr << "SplatCloudNode::pick() : Color range too small, picking failed." << std::endl;
+			return;
 		}
 
-		// TODO: see above ( enterPick() )
-		draw( _state, g_pickDrawMode );
+		// if in color picking mode...
+		if( _state.color_picking() )
+		{
+			// if picking base index has changed, rebuild VBO so new pick colors will be used
+			if( pickingBaseIndex_ != _state.pick_current_index() )
+				vboValid_ = false;
+
+			// TODO: see above ( enterPick() )
+			draw( _state, g_pickDrawMode );
+		}
 	}
 }
 
@@ -278,8 +279,12 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
         bool hasPS  = hasPointsizes();
         bool hasCol = hasColors();
 
-        // set number of pick colors used (each points gets a unique pick color)
-        _state.pick_set_maximum( numPoints() );
+        // if in color picking mode...
+        if( _state.color_picking() )
+        {
+            // store picking base index
+            pickingBaseIndex_ = _state.pick_current_index();
+        }
 
         // for all points...
         int i, num = numPoints();

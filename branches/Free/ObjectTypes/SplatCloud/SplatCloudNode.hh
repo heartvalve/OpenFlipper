@@ -105,7 +105,7 @@ public:
 	/// Constructor
 	SplatCloudNode(   BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" ) :
 		BaseNode         ( _parent, _name ), 
-		firstPickColor_  ( Vec4uc(0,0,0,0) ), 
+		pickingBaseIndex_( 0 ), 
 		cur_translation_ ( Point(0.0f,0.0f,0.0f) ), 
 		cur_scale_factor_( 1.0f ), 
 		defaultNormal_   ( Normal(0.0f,0.0f,1.0f) ), 
@@ -215,8 +215,8 @@ private:
 	PointsizeVector pointsizes_;
 	ColorVector     colors_;
 
-	// ---- first picking color ----
-	Vec4uc firstPickColor_;
+	// ---- picking base index ----
+	unsigned int pickingBaseIndex_;
 
 	// ---- cur scale and translation ----
 	Point cur_translation_;
