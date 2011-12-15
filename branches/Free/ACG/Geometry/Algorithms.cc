@@ -832,7 +832,7 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
         _angle = 0.0;
 
     // Convert to degree
-    _angle *= 180 / M_PI;
+    _angle *= 180.0 / M_PI;
 
     // Get orientation of right-handed coordinates system
     // to determine whether we rotated clockwise

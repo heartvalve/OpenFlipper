@@ -121,7 +121,7 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
  * @param _v0 The first vector
  * @param _v1 The second vector
  * @param _axis A reference to a vector in which the rotation axis is stored
- * @param _angle A reference to a scalar type in which the signed angle is stored
+ * @param _angle A reference to a scalar type in which the signed angle is stored ( in degree)
  */
 template<typename Scalar>
 bool
