@@ -118,12 +118,20 @@ drawCoordsys( GLState&  _state) {
   const int stacks          = 10;
   const double sphereRadius = 0.01;
 
+
+  ACG::Vec4f matCol(0.5f, 0.5f, 0.5f, 1.0f);
+
   // Origin
-  glColor3f(0.5, 0.5, 0.5);
+  glColor4f(0.5, 0.5, 0.5 , 1.0);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (matCol * 0.5f).data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, matCol.data());
   sphere_->draw(_state,sphereRadius);
   
   // X-Axis
-  glColor3f(1.0, 0.0, 0.0);
+  glColor4f(1.0, 0.0, 0.0, 1.0);
+  matCol[0] = 1.0f;  matCol[1] = 0.0f; matCol[2] = 0.0f;
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (matCol * 0.5f).data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, matCol.data());
   _state.push_modelview_matrix ();
   _state.rotate (-90, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
@@ -133,7 +141,10 @@ drawCoordsys( GLState&  _state) {
   _state.pop_modelview_matrix ();
 
   // Y-Axis
-  glColor3f(0.0, 1.0, 0.0);
+  glColor4f(0.0, 1.0, 0.0, 1.0);
+  matCol[0] = 0.0f;  matCol[1] = 1.0f; matCol[2] = 0.0f;
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (matCol * 0.2f).data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, matCol.data());
   _state.push_modelview_matrix ();
   _state.rotate (90, 1, 0, 0);
   _state.translate ( 0, 0, -bodyLength );
@@ -143,7 +154,10 @@ drawCoordsys( GLState&  _state) {
   _state.pop_modelview_matrix ();
 
   // Z-Axis
-  glColor3f(0.0, 0.0, 1.0);
+  glColor4f(0.0, 0.0, 1.0, 1.0);
+  matCol[0] = 0.0f;  matCol[1] = 0.0f; matCol[2] = 1.0f;
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (matCol * 0.5f).data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, matCol.data());
   _state.push_modelview_matrix ();
   _state.rotate (180, 0, 1, 0);
   _state.translate ( 0, 0, -bodyLength );
@@ -227,6 +241,10 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
   ACG::GLState::enable(GL_COLOR_MATERIAL);
   ACG::GLState::shadeModel(GL_SMOOTH);
+
+  GLfloat zeroVec[4] = {0.0f};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, zeroVec);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, zeroVec);
 
   // Init state - changes when mode_ != POSITION
   Vec3d pos3D(0.0,0.0,0.0);
