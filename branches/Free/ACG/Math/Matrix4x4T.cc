@@ -171,6 +171,23 @@ operator*(const VectorT<T,4>& _v) const
 //-----------------------------------------------------------------------------
 
 
+template <typename Scalar>
+Matrix4x4T<Scalar>
+Matrix4x4T<Scalar>::operator*(const Scalar& scalar)
+{
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      M(i,j) *= scalar;
+    }
+  }
+
+  return *this;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
 template <typename Scalar> 
 template <typename T>
 VectorT<T,3>
