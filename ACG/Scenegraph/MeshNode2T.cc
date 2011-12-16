@@ -750,41 +750,50 @@ pick_vertices(GLState& _state, bool _front)
     _state.set_base_color(base_color);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
   }
   
-  
-  if ( updateVertexPicking_ || _state.pick_current_index () != vertexPickingBaseIndex_) {
-    drawMesh_->updatePickingVertices(_state);
-    vertexPickingBaseIndex_ = _state.pick_current_index ();
-    updateVertexPicking_    = false;
-  }
+  if (_state.color_picking () ) {
+    
+    if ( updateVertexPicking_ || _state.pick_current_index () != vertexPickingBaseIndex_) {
+      drawMesh_->updatePickingVertices(_state);
+      vertexPickingBaseIndex_ = _state.pick_current_index ();
+      updateVertexPicking_    = false;
 
-  if (_state.color_picking () && drawMesh_) {
+      // Invalidate the any picking buffers
+      // as they are changed for the current picking now
+      updateAnyPicking_ = true;
+    }
     
-    // For this version we load the colors directly not from vbo
-    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-    ACG::GLState::colorPointer( drawMesh_->pickVertexColorBuffer() );   
-    ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
-
-    // vertex positions
-    ACG::GLState::vertexPointer( drawMesh_->pickVertexBuffer() );
-    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
-    
-    // Draw color picking
-    glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
-    
-    // Disable color array
-    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
-    
-    // disable vertex array
-    ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
-    
-  } else 
-    std::cerr << "Fallback not available pick_vertices!" << std::endl;
+    if (drawMesh_) {
       
+      // For this version we load the colors directly not from vbo
+      ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+      ACG::GLState::colorPointer( drawMesh_->pickVertexColorBuffer() );   
+      ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
+      
+      // vertex positions
+      ACG::GLState::vertexPointer( drawMesh_->pickVertexBuffer() );
+      ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+      
+      // Draw color picking
+      glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+      
+      // Disable color array
+      ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+      
+      // disable vertex array
+      ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
+      
+    } else {
+     std::cerr << "pick_vertices: No vertices in Mesh!" << std::endl; 
+    }
+    
+  } else {
+    std::cerr << "No fallback pick_vertices!" << std::endl;
+  }
+  
   ACG::GLState::depthFunc(prev_depth);
-
+  
 }
 
 template<class Mesh>
@@ -827,13 +836,17 @@ pick_edges(GLState& _state, bool _front)
     enable_arrays(0);
   }
   
-  if ( updateEdgePicking_ || _state.pick_current_index () != edgePickingBaseIndex_) {
-    drawMesh_->updatePickingEdges(_state);
-    edgePickingBaseIndex_ = _state.pick_current_index ();
-    updateEdgePicking_    = false;
-  }
-  
   if (_state.color_picking () ) {
+    
+    if ( updateEdgePicking_ || _state.pick_current_index () != edgePickingBaseIndex_) {
+      drawMesh_->updatePickingEdges(_state);
+      edgePickingBaseIndex_ = _state.pick_current_index ();
+      updateEdgePicking_    = false;
+
+      // Invalidate the any picking buffers
+      // as they are changed for the current picking now
+      updateAnyPicking_ = true;
+    }
     
     if ( mesh_.n_edges() != 0 && drawMesh_) {
       
@@ -850,11 +863,10 @@ pick_edges(GLState& _state, bool _front)
       
       ACG::GLState::disableClientState(GL_COLOR_ARRAY);
       ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
-
+      
       // disable all other arrays
       enable_arrays(0); 
-    } else {
-     std::cerr << "pick_edges: No edges in Mesh!" << std::endl; 
+      
     }
     
   } else {
@@ -862,7 +874,7 @@ pick_edges(GLState& _state, bool _front)
   }
   
   ACG::GLState::depthFunc(prev_depth);
-
+  
 }
 
 template<class Mesh>
@@ -891,14 +903,18 @@ pick_faces(GLState& _state)
     }
   }
   
-  if ( updateFacePicking_ || _state.pick_current_index () != facePickingBaseIndex_) {
-    drawMesh_->updatePickingFaces(_state);
-    facePickingBaseIndex_ = _state.pick_current_index ();
-    updateFacePicking_    = false;
-  }
-
   if (_state.color_picking ()) {
+    
+    if ( updateFacePicking_ || _state.pick_current_index () != facePickingBaseIndex_) {
+      drawMesh_->updatePickingFaces(_state);
+      facePickingBaseIndex_ = _state.pick_current_index ();
+      updateFacePicking_    = false;
 
+      // Invalidate the any picking buffers
+      // as they are changed for the current picking now
+      updateAnyPicking_ = true;
+    }
+    
     if ( mesh_.n_faces() != 0 ) {
       
       // For this version we load the colors directly not from vbo
@@ -917,8 +933,7 @@ pick_faces(GLState& _state)
       
       // disable all other arrays
       enable_arrays(0);
-    } else {
-      std::cerr << "pick_faces: No faces in Mesh! " << std::endl;
+      
     }
     
   } else
@@ -951,14 +966,19 @@ pick_any(GLState& _state)
     return;
   }
   
-  if ( updateAnyPicking_ || _state.pick_current_index () != anyPickingBaseIndex_) {
-    drawMesh_->updatePickingAny(_state);
-    anyPickingBaseIndex_ = _state.pick_current_index ();
-    updateAnyPicking_    = false;
-
-  }
-  
   if (_state.color_picking()) {
+
+    if ( updateAnyPicking_ || _state.pick_current_index () != anyPickingBaseIndex_) {
+      drawMesh_->updatePickingAny(_state);
+      anyPickingBaseIndex_ = _state.pick_current_index ();
+      updateAnyPicking_    = false;
+
+      // Invalidate the face edge and vertex picking buffers
+      // as they are changed for the any picking now
+      updateFacePicking_   = true;
+      updateEdgePicking_   = true;
+      updateVertexPicking_ = true;
+    }
     
     // For this version we load the colors directly, not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -969,14 +989,10 @@ pick_any(GLState& _state)
     // If we do not have any faces, we generate an empty list here.  
     if ( mesh_.n_faces() != 0 && drawMesh_) {
       
-
       ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
       ACG::GLState::colorPointer(drawMesh_->pickFaceColorBuffer());
       
-
       glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
-
-
     }
     
     ACG::GLState::depthFunc(GL_LEQUAL);
@@ -1003,8 +1019,9 @@ pick_any(GLState& _state)
     
     // disable all other arrays
     enable_arrays(0);
-  }
-  
+  } else
+    std::cerr << "No fallback pick_any!" << std::endl;
+
   //restore depth buffer comparison function for the active display list
   ACG::GLState::depthFunc(prev_depth);
   
