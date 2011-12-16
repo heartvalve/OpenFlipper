@@ -56,6 +56,7 @@
 
 //== INCLUDES ====================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <ACG/Math/VectorT.hh>
 
@@ -70,7 +71,7 @@
  * Storage of points, normals, point sizes and colors for a SplatCloud.
  */
 
-class SplatCloud
+class DLLEXPORT SplatCloud
 {
 public:
 
