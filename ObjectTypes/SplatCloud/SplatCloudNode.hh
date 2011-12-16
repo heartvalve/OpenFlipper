@@ -44,9 +44,9 @@
 //
 //  CLASS SplatCloudNode
 //
-//    SplatCloudNode renders splats by passing points, normals, point sizes and colors to the GL.
-//    These elements are internally stored in arrays and rendered using OpenGL vertex, normal,
-//    texcoord and color arrays.
+//    SplatCloudNode renders splats by passing points, normals, point sizes and colors (and picking colors) to the GL.
+//    These elements are internally stored in an interleaved array using an OpenGL vertex-buffer-object
+//    including vertices, normals, texcoords and colors.
 //
 //================================================================
 
@@ -58,6 +58,8 @@
 //== INCLUDES ====================================================
 
 
+#include "SplatCloud/SplatCloud.hh"
+
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <ACG/Scenegraph/BaseNode.hh>
@@ -65,8 +67,6 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 
 #include <ACG/GL/gl.hh>
-
-#include <vector>
 
 
 //== NAMESPACES ==================================================
@@ -86,45 +86,24 @@ namespace SceneGraph {
 
 class DLLEXPORT SplatCloudNode : public BaseNode
 {
-public:
+private:
 
 	//-- TYPEDEFS ----------------------------------------------------
 
-	typedef ACG::Vec3f  Point;
-	typedef ACG::Vec3f  Normal;
-	typedef float       Pointsize;
-	typedef ACG::Vec3uc Color;
-
-	typedef std::vector<Point>     PointVector;
-	typedef std::vector<Normal>    NormalVector;
-	typedef std::vector<Pointsize> PointsizeVector;
-	typedef std::vector<Color>     ColorVector;
+	typedef SplatCloud::Point     Point;
+	typedef SplatCloud::Normal    Normal;
+	typedef SplatCloud::Pointsize Pointsize;
+	typedef SplatCloud::Color     Color;
 
 	//----------------------------------------------------------------
 
-	/// Constructor
-	SplatCloudNode(   BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" ) :
-		BaseNode         ( _parent, _name ), 
-		pickingBaseIndex_( 0 ), 
-		cur_translation_ ( Point(0.0f,0.0f,0.0f) ), 
-		cur_scale_factor_( 1.0f ), 
-		defaultNormal_   ( Normal(0.0f,0.0f,1.0f) ), 
-		defaultPointsize_( 0.01f ), 
-		defaultColor_    ( Color(255,255,255) ), 
-		vboGlId_         ( 0 ), 
-		vboValid_        ( false )
-	{
-		// add (possibly) new drawmodes
-		pointsDrawMode_ = DrawModes::addDrawMode( "Points" );
-		dotsDrawMode_   = DrawModes::addDrawMode( "Dots"   );
-		splatsDrawMode_ = DrawModes::addDrawMode( "Splats" );
+public:
 
-		// create a new vertex-buffer-object (will be invalid and rebuilt the next time drawn (or picked))
-		createVBO();
-	}
+	/// constructor
+	SplatCloudNode( BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" );
 
-	/// Destructor
-	~SplatCloudNode() { destroyVBO(); }
+	/// destructor
+	~SplatCloudNode();
 
 	ACG_CLASSNAME( SplatCloudNode );
 
@@ -143,90 +122,55 @@ public:
 	void enterPick( GLState &_state, PickTarget _target, const DrawModes::DrawMode &_drawMode );
 	void pick( GLState &_state, PickTarget _target );
 
-	// ---- data vectors ----
+	// ---- splat cloud ----
 
-	inline void clearPoints()     { points_.clear();     }
-	inline void clearNormals()    { normals_.clear();    }
-	inline void clearPointsizes() { pointsizes_.clear(); }
-	inline void clearColors()     { colors_.clear();     }
+	void copySplatCloud( const SplatCloud &_splatCloud );
 
-	inline void clear() { clearPoints(); clearNormals(); clearPointsizes(); clearColors(); }
-
-	inline void addPoint    ( const Point     &_point     ) { points_.push_back    ( _point     ); }
-	inline void addNormal   ( const Normal    &_normal    ) { normals_.push_back   ( _normal    ); }
-	inline void addPointsize( const Pointsize &_pointsize ) { pointsizes_.push_back( _pointsize ); }
-	inline void addColor    ( const Color     &_color     ) { colors_.push_back    ( _color     ); }
-
-	inline unsigned int numPoints()     const { return points_.size();     }
-	inline unsigned int numNormals()    const { return normals_.size();    }
-	inline unsigned int numPointsizes() const { return pointsizes_.size(); }
-	inline unsigned int numColors()     const { return colors_.size();     }
-
-	inline bool hasNormals()    const { return normals_.size()    == points_.size(); }
-	inline bool hasPointsizes() const { return pointsizes_.size() == points_.size(); }
-	inline bool hasColors()     const { return colors_.size()     == points_.size(); }
-
-	inline       PointVector     &points()           { return points_;     }
-	inline       NormalVector    &normals()          { return normals_;    }
-	inline       PointsizeVector &pointsizes()       { return pointsizes_; }
-	inline       ColorVector     &colors()           { return colors_;     }
-	inline const PointVector     &points()     const { return points_;     }
-	inline const NormalVector    &normals()    const { return normals_;    }
-	inline const PointsizeVector &pointsizes() const { return pointsizes_; }
-	inline const ColorVector     &colors()     const { return colors_;     }
+	inline       SplatCloud *splatCloud()       { return splatCloud_; }
+	inline const SplatCloud *splatCloud() const { return splatCloud_; }
 
 	// ---- default values ----
 
 	// if an array is not present, changing the default value for this array will make the VBO invalid and trigger a rebuild()
-	inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    if( !hasNormals()    ) vboValid_ = false; }
-	inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; if( !hasPointsizes() ) vboValid_ = false; }
-	inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     if( !hasColors()     ) vboValid_ = false; }
+	inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    if( splatCloud_ && !splatCloud_->hasNormals()    ) vboValid_ = false; }
+	inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; if( splatCloud_ && !splatCloud_->hasPointsizes() ) vboValid_ = false; }
+	inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     if( splatCloud_ && !splatCloud_->hasColors()     ) vboValid_ = false; }
 
 	inline const Normal    &defaultNormal()    const { return defaultNormal_;    }
 	inline const Pointsize &defaultPointsize() const { return defaultPointsize_; }
 	inline const Color     &defaultColor()     const { return defaultColor_;     }
+
+	// if the point, normal, pointsize or color with the given _index exists it is returned, otherwise the default value is returned (check for splatCloud_ != 0 first)
+	inline Point     getPoint    ( unsigned int _index ) const { return                                splatCloud_->points()    [ _index ]                    ; }
+	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_->hasNormals()    ? splatCloud_->normals()   [ _index ] : defaultNormal_   ; }
+	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_->hasPointsizes() ? splatCloud_->pointsizes()[ _index ] : defaultPointsize_; }
+	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_->hasColors()     ? splatCloud_->colors()    [ _index ] : defaultColor_    ; }
 
 	// ---- vertex buffer object ----
 
 	/// make vertex-buffer-object invalid so it will be rebuilt the next time drawn (or picked)
 	inline void invalidateVBO() { vboValid_ = false; }
 
-	/// normalize dimenstion of point cloud to unit size
-	void normalizeSize();
-
-	float cur_scale_factor() const { return cur_scale_factor_; }
-	const Point &cur_translation() const { return cur_translation_; }
-
 	//----------------------------------------------------------------
 
 private:
 
-	void translate( const Point &_t );
-	void scale( float _s );
-
-	// ---- draw modes ----
-	DrawModes::DrawMode splatsDrawMode_;
-	DrawModes::DrawMode dotsDrawMode_;
-	DrawModes::DrawMode pointsDrawMode_;
-
-	// ---- data vectors ----
-	PointVector     points_;
-	NormalVector    normals_;
-	PointsizeVector pointsizes_;
-	ColorVector     colors_;
-
-	// ---- picking base index ----
-	unsigned int pickingBaseIndex_;
-
-	// ---- cur scale and translation ----
-	Point cur_translation_;
-	float cur_scale_factor_;
+	// ---- splat cloud ----
+	SplatCloud *splatCloud_;
 
 	// ---- default values ----
 	/// the default values will be used when the specific array is not present
 	Normal    defaultNormal_;
 	Pointsize defaultPointsize_;
 	Color     defaultColor_;
+
+	// ---- draw modes ----
+	DrawModes::DrawMode splatsDrawMode_;
+	DrawModes::DrawMode dotsDrawMode_;
+	DrawModes::DrawMode pointsDrawMode_;
+
+	// ---- picking base index ----
+	unsigned int pickingBaseIndex_;
 
 	// ---- vertex buffer object ----
 	GLuint vboGlId_;

@@ -7,18 +7,24 @@
 //== IMPLEMENTATION ==============================================
 
 
-SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_splatCloud, QString _name, UpdateType _type ) : 
-	BaseBackup       ( _splatCloud, _name, _type ), 
-	splatCloud_      ( _splatCloud ), 
+SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type ) : 
+	BaseBackup       ( _object, _name, _type ), 
+	splatCloudObject_( _object ), 
 	normalsBackup_   ( 0 ), 
 	pointsizesBackup_( 0 ) 
 {
 //	std::cerr << "Create SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
 
-	if( _type == updateType( "Normals" ) || _type == UPDATE_ALL )
-		normalsBackup_ = new SplatCloudNode::NormalVector( _splatCloud->splatCloudNode()->normals() );
-	else if ( _type == updateType( "Pointsizes" ) || _type == UPDATE_ALL )
-		pointsizesBackup_ = new SplatCloudNode::PointsizeVector( _splatCloud->splatCloudNode()->pointsizes() );
+	const SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
+
+	if( splatCloud )
+	{
+		if( _type == updateType( "Normals" ) || _type == UPDATE_ALL )
+			normalsBackup_ = new SplatCloud::NormalVector( splatCloud->normals() );
+
+		else if ( _type == updateType( "Pointsizes" ) || _type == UPDATE_ALL )
+			pointsizesBackup_ = new SplatCloud::PointsizeVector( splatCloud->pointsizes() );
+	}
 }
 
 
@@ -44,9 +50,14 @@ void SplatCloudBackup::apply()
 
 //	std::cerr << "Apply SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
 
-	if( normalsBackup_ )
-		splatCloud_->splatCloudNode()->normals() = *normalsBackup_;
+	SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
 
-	if( pointsizesBackup_ )
-		splatCloud_->splatCloudNode()->pointsizes() = *pointsizesBackup_;
+	if( splatCloud )
+	{
+		if( normalsBackup_ )
+			splatCloud->normals() = *normalsBackup_;
+
+		if( pointsizesBackup_ )
+			splatCloud->pointsizes() = *pointsizesBackup_;
+	}
 }

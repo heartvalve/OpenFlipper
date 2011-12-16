@@ -8,6 +8,7 @@
 
 uniform float pointsizeScale  = 1.0;
 uniform bool  backfaceCulling = false;
+uniform float modelviewScale;
 uniform float viewportScaleFov_y;
 
 void main()
@@ -24,7 +25,7 @@ void main()
         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
         // calculate pointsize (gl_Color.a is the pointsize in model-coordinates)
-        float ecPointsize  = pointsizeScale * gl_Color.a;
+        float ecPointsize  = modelviewScale * pointsizeScale * gl_Color.a;
 
         // output pointsize in window-coordinates
         //   - divided by gl_Position.w to shrink size by distance

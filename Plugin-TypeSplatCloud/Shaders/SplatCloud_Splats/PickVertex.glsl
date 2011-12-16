@@ -12,6 +12,7 @@ varying float ecSquaredRadius;
 
 uniform float pointsizeScale  = 1.0;
 uniform bool  backfaceCulling = false;
+uniform float modelviewScale;
 uniform float viewportScaleFov_y;
 
 void main()
@@ -38,7 +39,7 @@ void main()
         ecScaledNormal = ecNormal / dot( ecCenter, ecNormal );
 
         // calculate pointsize (gl_Color.a is the pointsize in model-coordinates)
-        float ecPointsize  = pointsizeScale * gl_Color.a;
+        float ecPointsize  = modelviewScale * pointsizeScale * gl_Color.a;
 
         // pass squared radius (= (1/2 pointsize)^2) in eye-coordinates to fragment-shader
         ecSquaredRadius = 0.25 * (ecPointsize * ecPointsize);

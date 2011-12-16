@@ -399,13 +399,10 @@ void SplatCloudObject::init( SplatCloudNode *_node )
 	// load shaders
 	reloadShaders();
 
-	// copy contents
-	if( _node )
+	// if _node is *not* 0 we want to have a copy of the scenegraph node, so copy it's contents
+	if( _node && _node->splatCloud() )
 	{
-		splatCloudNode_->points()     = _node->points();     // _node->points() returns a reference, so using copy constructor of std::vector is possible
-		splatCloudNode_->normals()    = _node->normals();    // 
-		splatCloudNode_->pointsizes() = _node->pointsizes(); // 
-		splatCloudNode_->colors()     = _node->colors();     // 
+		splatCloudNode_->copySplatCloud( *_node->splatCloud() );
 	}
 }
 
@@ -478,10 +475,15 @@ QString SplatCloudObject::getObjectinfo()
 	if( dataType( DATA_SPLATCLOUD ) )
 	{
 		output += "Object Contains SplatCloud : ";
-		output += " # points: " + QString::number( splatCloudNode_->numPoints() );
-		output += ", normals used: ";    output += splatCloudNode_->hasNormals()    ? "true" : "false";
-		output += ", pointsizes used: "; output += splatCloudNode_->hasPointsizes() ? "true" : "false";
-		output += ", colors used: ";     output += splatCloudNode_->hasColors()     ? "true" : "false";
+
+		if( splatCloudNode_->splatCloud() )
+		{
+			output += " # points: " + QString::number( splatCloudNode_->splatCloud()->numPoints() );
+			output += ", normals used: ";    output += splatCloudNode_->splatCloud()->hasNormals()    ? "true" : "false";
+			output += ", pointsizes used: "; output += splatCloudNode_->splatCloud()->hasPointsizes() ? "true" : "false";
+			output += ", colors used: ";     output += splatCloudNode_->splatCloud()->hasColors()     ? "true" : "false";
+		}
+
 		output += "\n";
 	}
 

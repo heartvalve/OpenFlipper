@@ -135,9 +135,6 @@ private:
 	bool readBinaryFile( std::ifstream &_instream, SplatCloudNode *_splatCloudNode );
 	bool readTextFile  ( std::ifstream &_instream, SplatCloudNode *_splatCloudNode );
 
-	// normalize the overall size of the SplatCloud (move points to center of gravity and then shrink or expand the points)
-	void normalizeSize( SplatCloudNode *_splatCloudNode );
-
 	// write binary/text file from scenegraph node to disc
 	bool writeBinaryFile( std::ofstream &_outstream, const SplatCloudNode *_splatCloudNode );
 	bool writeTextFile  ( std::ofstream &_outstream, const SplatCloudNode *_splatCloudNode );

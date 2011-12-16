@@ -20,7 +20,7 @@ class SplatCloudBackup : public BaseBackup
 {
 public:
 
-	SplatCloudBackup( SplatCloudObject *_splatCloud, QString _name, UpdateType _type );
+	SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type );
 	~SplatCloudBackup();
 
 	//-- BaseBackup --
@@ -28,9 +28,9 @@ public:
 
 private:
 
-	SplatCloudObject                *splatCloud_;
-	SplatCloudNode::NormalVector    *normalsBackup_;
-	SplatCloudNode::PointsizeVector *pointsizesBackup_;
+	SplatCloudObject            *splatCloudObject_;
+	SplatCloud::NormalVector    *normalsBackup_;
+	SplatCloud::PointsizeVector *pointsizesBackup_;
 };
 
 

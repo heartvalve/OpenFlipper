@@ -78,11 +78,11 @@ void TypeSplatCloudPlugin::slotViewChanged()
 	}
 
 	// get current glState
-	const ACG::GLState &state = PluginFunctions::viewerProperties().glState();
+	const ACG::GLState &glstate = PluginFunctions::viewerProperties().glState();
 
 	// get viewport
 	int left, bottom, width, height;
-	state.get_viewport( left, bottom, width, height );
+	glstate.get_viewport( left, bottom, width, height );
 
 	float x = (float) left;
 	float y = (float) bottom;
@@ -90,7 +90,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 	float h = (float) height;
 
 	// get depthrange
-	// TODO: use state.get_depth_range when implemented
+	// TODO: use glstate.get_depth_range when implemented
 	GLfloat	depthRange[2];
 	glGetFloatv( GL_DEPTH_RANGE, depthRange );
 	float z = (float) depthRange[0];
@@ -118,8 +118,42 @@ void TypeSplatCloudPlugin::slotViewChanged()
 	GLfloat VPs_z = 0.5f * d;
 	GLfloat VPt_z = z + VPs_z;
 
+	// calculate scaling factor of modelview_projection matrix
+//	ACG::GLMatrixd mvp = glstate.projection() * glstate.modelview();
+ACG::GLMatrixd mvp = glstate.projection();
+	const GLdouble &mvp0 = mvp(1,0);
+	const GLdouble &mvp1 = mvp(1,1);
+	const GLdouble &mvp2 = mvp(1,2);
+	double sqLength = mvp0*mvp0 + mvp1*mvp1 + mvp2*mvp2;
+//	GLfloat MVs = (GLfloat) ( (sqLength == 0.0) ? 1.0 : (1.0 / sqrt( sqLength )) );
+GLfloat MVs = (GLfloat) 1.0;
+
+//printf( "%f\n", MVs ); // FIXME: delete!
+
+/*
+// FIXME: delete!
+{
+printf( "\n" );
+printf( "\n" );
+const ACG::GLMatrixd &m = glstate.modelview();
+printf( "%f %f %f %f\n", m(0,0), m(0,1), m(0,2), m(0,3) );
+printf( "%f %f %f %f\n", m(1,0), m(1,1), m(1,2), m(1,3) );
+printf( "%f %f %f %f\n", m(2,0), m(2,1), m(2,2), m(2,3) );
+printf( "%f %f %f %f\n", m(3,0), m(3,1), m(3,2), m(3,3) );
+printf( "\n" );
+const ACG::GLMatrixd &p = glstate.projection();
+printf( "%f %f %f %f\n", p(0,0), p(0,1), p(0,2), p(0,3) );
+printf( "%f %f %f %f\n", p(1,0), p(1,1), p(1,2), p(1,3) );
+printf( "%f %f %f %f\n", p(2,0), p(2,1), p(2,2), p(2,3) );
+printf( "%f %f %f %f\n", p(3,0), p(3,1), p(3,2), p(3,3) );
+printf( "\n" );
+}
+*/
+
 	// calculate scale for pointsizes in eye-coordinates according to fovy and transformation to window-coordinates
-	GLfloat VPsFov_y = state.projection()(1,1) * (0.5f * h);
+	GLfloat VPsFov_y = glstate.projection()(1,1) * (0.5f * h);
+
+//printf( "%f\n", VPsFov_y ); // FIXME: delete!
 
 	// for all splatcloud-objects...
 	PluginFunctions::ObjectIterator objIter( PluginFunctions::ALL_OBJECTS, DATA_SPLATCLOUD );
@@ -143,6 +177,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 			splatsShader->setUniform( "invViewportTransp",  invVPt   );
 			splatsShader->setUniform( "viewportScale_z",    VPs_z    );
 			splatsShader->setUniform( "viewportTransp_z",   VPt_z    );
+			splatsShader->setUniform( "modelviewScale",     MVs      );
 			splatsShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			splatsShader->disable();
 		}
@@ -154,6 +189,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 			splatsPickShader->setUniform( "invViewportTransp",  invVPt   );
 			splatsPickShader->setUniform( "viewportScale_z",    VPs_z    );
 			splatsPickShader->setUniform( "viewportTransp_z",   VPt_z    );
+			splatsPickShader->setUniform( "modelviewScale",     MVs      );
 			splatsPickShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			splatsPickShader->disable();
 		}
@@ -161,6 +197,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 		if( dotsShader )
 		{
 			dotsShader->use();
+			dotsShader->setUniform( "modelviewScale",     MVs      );
 			dotsShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			dotsShader->disable();
 		}
@@ -168,6 +205,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 		if( dotsPickShader )
 		{
 			dotsPickShader->use();
+			dotsPickShader->setUniform( "modelviewScale",     MVs      );
 			dotsPickShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			dotsPickShader->disable();
 		}
@@ -255,9 +293,9 @@ void TypeSplatCloudPlugin::generateBackup( int _id, QString _name, UpdateType _t
 	BaseObjectData *object = 0;
 	PluginFunctions::getObject( _id, object );
 
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// get backup object data
 		BackupData *backupData = 0;
@@ -272,7 +310,7 @@ void TypeSplatCloudPlugin::generateBackup( int _id, QString _name, UpdateType _t
 		}
 
 		// store a new backup
-		SplatCloudBackup *backup = new SplatCloudBackup( splatCloud, _name, _type );
+		SplatCloudBackup *backup = new SplatCloudBackup( splatCloudObject, _name, _type );
 
 		backupData->storeBackup( backup );
 	}

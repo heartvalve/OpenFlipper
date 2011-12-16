@@ -468,13 +468,13 @@ void SplatCloudRenderingControlPlugin::slotUpdateContextMenu( int _objectId )
 		return;
 
 	// get splatcloud-object
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
 	// if object is a SplatCloud...
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// update context menu value
-		contextCullingAction_->setChecked( splatCloud->isBackfaceCullingEnabled() );
+		contextCullingAction_->setChecked( splatCloudObject->isBackfaceCullingEnabled() );
 	}
 }
 
@@ -492,10 +492,10 @@ void SplatCloudRenderingControlPlugin::slotToolboxPointsizeScaleValueChanged()
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
 	{
 		// get splatcloud-object
-		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
+		SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( *objIter );
 
 		// apply update
-		splatCloud->setPointsizeScale( scale );
+		splatCloudObject->setPointsizeScale( scale );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -513,10 +513,10 @@ void SplatCloudRenderingControlPlugin::slotToolboxEnableBackfaceCullingButtonCli
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
 	{
 		// get splatcloud-object
-		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
+		SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( *objIter );
 
 		// apply update
-		splatCloud->enableBackfaceCulling( true );
+		splatCloudObject->enableBackfaceCulling( true );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -534,10 +534,10 @@ void SplatCloudRenderingControlPlugin::slotToolboxDisableBackfaceCullingButtonCl
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
 	{
 		// get splatcloud-object
-		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
+		SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( *objIter );
 
 		// apply update
-		splatCloud->enableBackfaceCulling( false );
+		splatCloudObject->enableBackfaceCulling( false );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -555,12 +555,12 @@ void SplatCloudRenderingControlPlugin::slotToolboxReloadShadersButtonClicked()
 	for( ; objIter != PluginFunctions::objectsEnd(); ++objIter )
 	{
 		// get scenegraph splatcloud-object
-		SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( *objIter );
+		SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( *objIter );
 
 		// apply update (reload standard and picking shaders and re-set uniforms)
-		splatCloud->reloadShaders();
-		splatCloud->setPointsizeScale    ( splatCloud->pointsizeScale()           );
-		splatCloud->enableBackfaceCulling( splatCloud->isBackfaceCullingEnabled() );
+		splatCloudObject->reloadShaders();
+		splatCloudObject->setPointsizeScale    ( splatCloudObject->pointsizeScale()           );
+		splatCloudObject->enableBackfaceCulling( splatCloudObject->isBackfaceCullingEnabled() );
 
 		// emit signal that object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -602,13 +602,13 @@ void SplatCloudRenderingControlPlugin::slotToolboxApplyDefaultsButtonClicked()
 		SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( *objIter );
 
 		// apply update (this may trigger the VBO to become invalid so it will be rebuilt)
-		splatCloudNode->setDefaultNormal( SplatCloudNode::Normal( toolboxDefaultNormalX_->value(), 
-		                                                          toolboxDefaultNormalY_->value(), 
-		                                                          toolboxDefaultNormalZ_->value() ) );
+		splatCloudNode->setDefaultNormal( SplatCloud::Normal( toolboxDefaultNormalX_->value(), 
+		                                                      toolboxDefaultNormalY_->value(), 
+		                                                      toolboxDefaultNormalZ_->value() ) );
 		splatCloudNode->setDefaultPointsize( toolboxDefaultPointsize_->value() );
-		splatCloudNode->setDefaultColor( SplatCloudNode::Color( toolboxDefaultColorR_->value(), 
-		                                                        toolboxDefaultColorG_->value(), 
-		                                                        toolboxDefaultColorB_->value() ) );
+		splatCloudNode->setDefaultColor( SplatCloud::Color( toolboxDefaultColorR_->value(), 
+		                                                    toolboxDefaultColorG_->value(), 
+		                                                    toolboxDefaultColorB_->value() ) );
 
 		// emit signal that object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -631,13 +631,13 @@ void SplatCloudRenderingControlPlugin::slotContextScaleActionTriggered()
 		return;
 
 	// get splatcloud-object
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
 	// if object is a SplatCloud...
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// update scale-widget option value
-		scaleWidgetPointsizeScale_->setValue( splatCloud->pointsizeScale() );
+		scaleWidgetPointsizeScale_->setValue( splatCloudObject->pointsizeScale() );
 
 		// move scale-widget to position of context menu entry
 		scaleWidget_->move( contextScaleAction_->associatedWidgets()[0]->mapToGlobal( QPoint() ) );
@@ -663,16 +663,16 @@ void SplatCloudRenderingControlPlugin::slotScaleWidgetPointsizeScaleValueChanged
 		return;
 
 	// get splatcloud-object
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
 	// if object is a SplatCloud...
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// get scale-widget option value
 		float scale = (float) scaleWidgetPointsizeScale_->value();
 
 		// apply update
-		splatCloud->setPointsizeScale( scale );
+		splatCloudObject->setPointsizeScale( scale );
 
 		// emit signal that object has to be updated
 		emit updatedObject( object->id(), UPDATE_ALL );
@@ -695,16 +695,16 @@ void SplatCloudRenderingControlPlugin::slotContextCullingActionTriggered()
 		return;
 
 	// get splatcloud-object
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
 	// if object is a SplatCloud...
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// get context menu option value
 		bool enable = contextCullingAction_->isChecked();
 
 		// apply update
-		splatCloud->enableBackfaceCulling( enable );
+		splatCloudObject->enableBackfaceCulling( enable );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( object->id(), UPDATE_ALL );
@@ -727,15 +727,15 @@ void SplatCloudRenderingControlPlugin::slotContextReloadShadersActionTriggered()
 		return;
 
 	// get splatcloud-object
-	SplatCloudObject *splatCloud = PluginFunctions::splatCloudObject( object );
+	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
 	// if object is a SplatCloud...
-	if( splatCloud )
+	if( splatCloudObject )
 	{
 		// apply update (reload standard and picking shaders and re-set uniforms)
-		splatCloud->reloadShaders();
-		splatCloud->setPointsizeScale    ( splatCloud->pointsizeScale()           );
-		splatCloud->enableBackfaceCulling( splatCloud->isBackfaceCullingEnabled() );
+		splatCloudObject->reloadShaders();
+		splatCloudObject->setPointsizeScale    ( splatCloudObject->pointsizeScale()           );
+		splatCloudObject->enableBackfaceCulling( splatCloudObject->isBackfaceCullingEnabled() );
 
 		// emit signal that object has to be updated
 		emit updatedObject( object->id(), UPDATE_ALL );
@@ -844,13 +844,13 @@ void SplatCloudRenderingControlPlugin::slotDefaultsWidgetApplyButtonClicked()
 	if( splatCloudNode )
 	{
 		// apply update (this may trigger the VBO to become invalid so it will be rebuilt)
-		splatCloudNode->setDefaultNormal( SplatCloudNode::Normal( defaultsWidgetDefaultNormalX_->value(), 
-		                                                          defaultsWidgetDefaultNormalY_->value(), 
-		                                                          defaultsWidgetDefaultNormalZ_->value() ) );
+		splatCloudNode->setDefaultNormal( SplatCloud::Normal( defaultsWidgetDefaultNormalX_->value(), 
+		                                                      defaultsWidgetDefaultNormalY_->value(), 
+		                                                      defaultsWidgetDefaultNormalZ_->value() ) );
 		splatCloudNode->setDefaultPointsize( defaultsWidgetDefaultPointsize_->value() );
-		splatCloudNode->setDefaultColor( SplatCloudNode::Color( defaultsWidgetDefaultColorR_->value(), 
-		                                                        defaultsWidgetDefaultColorG_->value(), 
-		                                                        defaultsWidgetDefaultColorB_->value() ) );
+		splatCloudNode->setDefaultColor( SplatCloud::Color( defaultsWidgetDefaultColorR_->value(), 
+		                                                    defaultsWidgetDefaultColorG_->value(), 
+		                                                    defaultsWidgetDefaultColorB_->value() ) );
 
 		// emit signal that the object has to be updated
 		emit updatedObject( object->id(), UPDATE_ALL );
