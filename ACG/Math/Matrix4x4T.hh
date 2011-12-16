@@ -177,6 +177,9 @@ public:
   /// self * _rhs
   Matrix4x4T operator*(const Matrix4x4T<Scalar>& inst) const;
 
+  /// self * scalar
+  Matrix4x4T operator*(const Scalar& scalar);
+
 
   /// self += _rhs
   inline Matrix4x4T& operator+= ( const Matrix4x4T<Scalar>& _rhs) {
@@ -209,7 +212,6 @@ public:
   template <typename T>
   inline VectorT<T,3> transform_vector(const VectorT<T,3>& _v) const;
 
-  
   /// sets all elements to zero
   inline void clear();
 
