@@ -2,6 +2,45 @@
 # Custom settings for compiler flags and similar
 ################################################################################
 
+if ( WIN32 )
+  ################################################################################
+  # Windows large memory support
+  ################################################################################
+  if ( NOT DEFINED WINDOWS_LARGE_MEMORY_SUPPORT )
+    set( WINDOWS_LARGE_MEMORY_SUPPORT true CACHE BOOL "Enable or disable binary support for large memory" )
+  endif()
+  
+  set( ADDITIONAL_CMAKE_EXE_LINKER_FLAGS )
+  set( ADDITIONAL_CMAKE_SHARED_LINKER_FLAGS )
+  set( ADDITIONAL_CMAKE_MODULE_LINKER_FLAGS )
+  
+  if ( WINDOWS_LARGE_MEMORY_SUPPORT )
+	list(APPEND ADDITIONAL_CMAKE_EXE_LINKER_FLAGS       "/LARGEADDRESSAWARE" )
+	list(APPEND ADDITIONAL_CMAKE_SHARED_LINKER_FLAGS    "/LARGEADDRESSAWARE" )
+	list(APPEND ADDITIONAL_CMAKE_MODULE_LINKER_FLAGS    "/LARGEADDRESSAWARE" )
+  endif()
+  
+  
+  foreach( flag ${ADDITIONAL_CMAKE_EXE_LINKER_FLAGS} )
+    if( NOT CMAKE_EXE_LINKER_FLAGS MATCHES "${flag}" )
+      set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag} ")
+    endif()
+  endforeach()
+  
+  foreach( flag ${ADDITIONAL_CMAKE_SHARED_LINKER_FLAGS} )
+    if( NOT CMAKE_SHARED_LINKER_FLAGS MATCHES "${flag}" )
+      set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${flag} ")
+    endif()
+  endforeach()
+  
+  foreach( flag ${ADDITIONAL_CMAKE_MODULE_LINKER_FLAGS} )
+    if( NOT CMAKE_MODULE_LINKER_FLAGS MATCHES "${flag}" )
+      set( CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${flag} ")
+    endif()
+  endforeach()
+  
+endif( WIN32 )
+
 if (UNIX)
 
   set ( ADDITIONAL_CXX_DEBUG_FLAGS )
