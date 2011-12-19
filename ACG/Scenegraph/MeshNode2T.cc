@@ -983,6 +983,9 @@ pick_any(GLState& _state)
     // For this version we load the colors directly, not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
+    ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
+    ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
+
     ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
     ACG::GLState::enableClientState(GL_COLOR_ARRAY);
     
