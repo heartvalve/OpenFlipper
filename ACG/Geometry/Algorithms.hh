@@ -99,25 +99,11 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
 /** \brief Get rotation axis and signed angle of rotation between two vectors
  *
  * Get two vectors, _v0 and _v1, and compute rotation axis _v0 % _v1
- * as well the angle between _v0 and _v1. Note that the angle is negative
- * if the counter-clockwise rotation of _v1 with respect to the rotation axis is
- * smaller than the same rotation in clockwise direction.
- * The following illustration depicts this. The viewing direction
- * is aligned to the negative rotation axis.
+ * as well the angle between _v0 and _v1. Note that the angle is always negative.
+ * We consider the rotation to be performed from _v0 to _v1.
+ * The angle is given in degree if not explicitly demanded in radiant
+ * (pass false as fifth parameter).
  *
- *              v1         v0
- *                _      _
- *               |\      /|
- *                 \-a->/    => a is negative
- *                  \  /
- *                   \/
- *
- *              v0         v1
- *                _      _
- *               |\      /|
- *                 \-a->/    => a is positive
- *                  \  /
- *                   \/
  * @param _v0 The first vector
  * @param _v1 The second vector
  * @param _axis A reference to a vector in which the rotation axis is stored
@@ -128,16 +114,8 @@ bool
 rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
                       const VectorT<Scalar,3>&  _v1,
                       VectorT<Scalar,3>&  _axis,
-                      Scalar& _angle );
-
-/** \brief Get determinant of matrix [_v1, _v2, _v3]
- */
-template<typename Scalar>
-Scalar
-determinant(const VectorT<Scalar,3>& _v1, const VectorT<Scalar,3>& _v2, const VectorT<Scalar,3>& _v3) {
-    return (_v1[0]*_v2[1]*_v3[2] + _v2[0]*_v3[1]*_v1[2] + _v3[0]*_v1[1]*_v2[2] -
-            _v3[0]*_v2[1]*_v1[2] - _v2[0]*_v1[1]*_v3[2] - _v1[0]*_v3[1]*_v2[2]);
-}
+                      Scalar& _angle,
+                      bool _degree = true);
 
 
 /** \brief find a vector that's perpendicular to _v

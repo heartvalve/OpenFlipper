@@ -806,7 +806,8 @@ bool
 rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
                       const VectorT<Scalar,3>&  _v1,
                       VectorT<Scalar,3>&  _axis,
-                      Scalar& _angle ) {
+                      Scalar& _angle,
+                      bool _degree ) {
 
     // Copy axes
     VectorT<Scalar,3> v0 = _v0;
@@ -832,13 +833,9 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
         _angle = 0.0;
 
     // Convert to degree
-    _angle *= 180.0 / M_PI;
-
-    // Get orientation of right-handed coordinates system
-    // to determine whether we rotated clockwise
-    // or counter-clockwise (w.r.t. rotation axis)
-    if (determinant(v0, v1, _axis) >= 0)
-        _angle *= -1.0;
+    if(_degree) {
+        _angle *= 180.0 / M_PI;
+    }
 
     return true;
 }
