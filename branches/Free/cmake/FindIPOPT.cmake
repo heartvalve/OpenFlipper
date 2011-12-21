@@ -4,22 +4,30 @@ if (IPOPT_INCLUDE_DIR)
 endif (IPOPT_INCLUDE_DIR)
 
 if (WIN32)
-   find_path(IPOPT_INCLUDE_DIR NAMES tao.h
-     PREFIXES SRC
+   find_path(IPOPT_INCLUDE_DIR NAMES IpNLP.hpp
      PATHS
-     "C:\\libs\\gurobi45"
+     "C:\\libs\\Ipopt-3.8.2\\include\\coin"
      ${IPOPT_DIR}/include
    )
 
    find_library( IPOPT_LIBRARY_RELEASE 
-                 SuperLU
-                 PATHS "C:\\libs\\gurobi45\\lib" )
+                 Ipopt
+                 PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\release" )
    find_library( IPOPT_LIBRARY_DEBUG
-                   SuperLUd
-                   PATHS "C:\\libs\\gurobi45\\lib" )
-
+                 Ipopt
+                 PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\debug" )
 
    set ( IPOPT_LIBRARY "optimized;${IPOPT_LIBRARY_RELEASE};debug;${IPOPT_LIBRARY_DEBUG}" CACHE  STRING "IPOPT Libraries" )
+
+   IF(IPOPT_INCLUDE_DIR)
+      SET(IPOPT_FOUND TRUE)
+      SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
+	  # Todo, set right version depending on build type (debug/release)
+	  #GET_FILENAME_COMPONENT( IPOPT_LIBRARY_DIR ${GLEW_LIBRARY} PATH )
+    ELSE(IPOPT_INCLUDE_DIR)
+      SET(IPOPT_FOUND FALSE)
+      SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
+    ENDIF(IPOPT_INCLUDE_DIR)
 
 ELSEIF(APPLE)
 
