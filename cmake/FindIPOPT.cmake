@@ -10,16 +10,16 @@ if (WIN32)
      ${IPOPT_DIR}/include
    )
 
-   find_library( IPOPT_LIBRARY_RELEASE 
-                 Ipopt
-                 PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\release" )
-   find_library( IPOPT_LIBRARY_DEBUG
-                 Ipopt
-                 PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\debug" )
-
-   set ( IPOPT_LIBRARY "optimized;${IPOPT_LIBRARY_RELEASE};debug;${IPOPT_LIBRARY_DEBUG}" CACHE  STRING "IPOPT Libraries" )
-
    IF(IPOPT_INCLUDE_DIR)
+      find_library( IPOPT_LIBRARY_RELEASE 
+                    Ipopt
+                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\release" )
+      find_library( IPOPT_LIBRARY_DEBUG
+                    Ipopt
+                    PATHS "C:\\libs\\Ipopt-3.8.2\\lib\\win32\\debug" )
+
+      set ( IPOPT_LIBRARY "optimized;${IPOPT_LIBRARY_RELEASE};debug;${IPOPT_LIBRARY_DEBUG}" CACHE  STRING "IPOPT Libraries" )
+
       SET(IPOPT_FOUND TRUE)
       SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
 	  # Todo, set right version depending on build type (debug/release)
