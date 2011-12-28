@@ -274,6 +274,90 @@ typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::Iterator::nextSibling(Join
   return 0;
 }
 
+//-----------------------------------------------------------------------------
+// AnimationIterator - IMPLEMENTATION
+//-----------------------------------------------------------------------------
+
+/**
+ * @brief Default constructor
+ *
+ * Creates an iterator pointing to the beginning of the vector of animations
+ */
+template<typename PointT>
+SkeletonT<PointT>::AnimationIterator::AnimationIterator(std::vector<Animation*>& _animations ) :
+  animations_(_animations)
+{
+  currentIndex_ = 0;
+
+  // Increment, until we are at the end or we found a valid animation which is not deleted ( == 0 )
+  while ( currentIndex_ < animations_.size() &&  animations_[currentIndex_] == 0) {
+    currentIndex_++;
+  }
+
+}
+
+/**
+ * @brief Constructor - Creates an iterator for the given animation set starting at a specific position
+ *
+ */
+template<typename PointT>
+SkeletonT<PointT>::AnimationIterator::AnimationIterator(std::vector<Animation*>& _animations, unsigned int _animationIndex ) :
+animations_(_animations)
+{
+  currentIndex_ = _animationIndex;
+
+  // Increment, until we are at the end or we found a valid animation which is not deleted ( == 0 )
+  while ( currentIndex_ < animations_.size() &&  animations_[currentIndex_] == 0) {
+    currentIndex_++;
+  }
+}
+
+/**
+ * @brief Increase the iterator
+ *
+ * The iterator will be changed to the next animation in the list
+ */
+template<typename PointT>
+typename SkeletonT<PointT>::AnimationIterator& SkeletonT<PointT>::AnimationIterator::operator++() {
+  currentIndex_++;
+
+  // Increment, until we are at the end or we found a valid animation which is not deleted ( == 0 )
+  while ( currentIndex_ < animations_.size() &&  animations_[currentIndex_] == 0) {
+    currentIndex_++;
+  }
+
+  return *this;
+}
+
+/**
+ * @brief Operator =
+ *
+ */
+template<typename PointT>
+typename SkeletonT<PointT>::AnimationIterator& SkeletonT<PointT>::AnimationIterator::operator=(const AnimationIterator &other) {
+  currentIndex_ = other.currentIndex_;
+  animations_ = other.animations_;
+  return *this;
+}
+
+/**
+ * @brief boolean operator
+ *
+ * Returns true if the iterator is pointing to a valid handle
+ */
+template<typename PointT>
+SkeletonT<PointT>::AnimationIterator::operator bool() const {
+  return ( currentIndex_ < animations_.size() );
+}
+
+/**
+ * @brief Get an animation handle for the current animation
+ *
+ */
+template<typename PointT>
+AnimationHandle SkeletonT<PointT>::AnimationIterator::operator*() const {
+  return AnimationHandle(currentIndex_);
+}
 
 //-----------------------------------------------------------------------------
 // SKELETONT - IMPLEMENTATION
@@ -638,6 +722,7 @@ typename SkeletonT<PointT>::Iterator SkeletonT<PointT>::end()
   return Iterator(0);
 }
 
+
 //-----------------------------------------------------------------------------
 
 /**
@@ -842,6 +927,31 @@ void SkeletonT<PointT>::clearAnimations()
     delete *it;
   animations_.clear();
 }
+
+//-----------------------------------------------------------------------------
+
+/**
+ * @brief Returns an iterator pointing to the first animation
+ *
+ */
+template<typename PointT>
+typename SkeletonT<PointT>::AnimationIterator SkeletonT<PointT>::animationsBegin()
+{
+  return AnimationIterator(animations_);
+}
+
+//-----------------------------------------------------------------------------
+
+/**
+ * @brief Returns an iterator pointing behind the last animation
+ */
+template<typename PointT>
+typename SkeletonT<PointT>::AnimationIterator SkeletonT<PointT>::animationsEnd()
+{
+
+  return AnimationIterator(animations_.size());
+}
+
 
 //-----------------------------------------------------------------------------
 
