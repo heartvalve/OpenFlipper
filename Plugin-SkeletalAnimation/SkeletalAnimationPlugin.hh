@@ -125,6 +125,7 @@ public slots:
   //@}
 
   void UpdateUI();
+  void setComboBoxPosition(unsigned int _animationIndex);
   void checkObjectSelection();
 
 private slots:
@@ -142,6 +143,7 @@ private slots:
   void slotFrameChanged(int /*_index*/);
   void slotSkipFramesChanged(int _state);
   void slotAddAnimation();
+  void slotDeleteAnimation();
 
   void animate();
 

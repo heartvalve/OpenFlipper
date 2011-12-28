@@ -96,8 +96,10 @@ void SkeletalAnimationPlugin::initializePlugin()
   connect( pToolbox_->sbFPS,                      SIGNAL(valueChanged ( int )),     this, SLOT( changeFPS(int) ) );
   connect( pToolbox_->cbSkipFrames,               SIGNAL(stateChanged(int)),        this, SLOT(slotSkipFramesChanged(int)) );
   connect( pToolbox_->pbAddAnimation,             SIGNAL(clicked()),                this, SLOT(slotAddAnimation()) );
+  connect( pToolbox_->pbDeleteAnimation,          SIGNAL(clicked()),                this, SLOT(slotDeleteAnimation()) );
   
   pToolbox_->pbAddAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"addAnimation.png") );
+  pToolbox_->pbDeleteAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"deleteAnimation.png") );
   
   pToolbox_->cbMethod->addItem("Linear Blend Skinning");
   pToolbox_->cbMethod->addItem("Dual Quaternion Blend Skinning");
@@ -367,7 +369,7 @@ void SkeletalAnimationPlugin::slotObjectUpdated( int _id, const UpdateType /*_ty
       if ( !newHandle.isValid() ) //refPose
         pToolbox_->cbAnimation->setCurrentIndex( 0 ); 
       else
-        pToolbox_->cbAnimation->setCurrentIndex( newHandle.animationIndex()+1 );
+        setComboBoxPosition(newHandle.animationIndex());
     }
 
     //check if animationCount changed
@@ -658,10 +660,15 @@ void SkeletalAnimationPlugin::UpdateUI()
     // create the reference pose
     pToolbox_->cbAnimation->addItem("Reference Pose");
 
-    // create the other poses
-    for(unsigned int i = 0; i < skeleton->animationCount(); ++i)
-      pToolbox_->cbAnimation->addItem(skeleton->animationName(i).c_str());
-    pToolbox_->cbAnimation->setCurrentIndex(hAni.animationIndex() + 1);
+    Skeleton::AnimationIterator animations = skeleton->animationsBegin();
+
+    while ( animations ) {
+      AnimationHandle anim = *animations;
+      pToolbox_->cbAnimation->addItem(skeleton->animationName(anim.animationIndex()).c_str(),QVariant(anim.animationIndex()));
+      ++animations;
+    }
+
+    setComboBoxPosition(hAni.animationIndex());
 
     // get the number of frames in the animation
     pToolbox_->hsFrame->setEnabled(true);
@@ -932,7 +939,32 @@ void SkeletalAnimationPlugin::slotAddAnimation()
     emit updatedObject(activeSkeletons_[0], UPDATE_ALL);
 
     //select the new animation
-    pToolbox_->cbAnimation->setCurrentIndex( pToolbox_->cbAnimation->count()-1 );
+    setComboBoxPosition(handle.animationIndex());
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void SkeletalAnimationPlugin::slotDeleteAnimation()
+{
+  int iAnimation = pToolbox_->cbAnimation->currentIndex();
+  unsigned int animationIndex = pToolbox_->cbAnimation->itemData(iAnimation).toUInt();
+
+  if ( iAnimation == 0 ) {
+    emit log(LOGERR,"Reference pose could never be removed!");
+  } else {
+    pToolbox_->cbAnimation->removeItem(iAnimation);
+
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+      SkeletonObject* skeletonObject = dynamic_cast<SkeletonObject*>(*o_it);
+      Skeleton*             skeleton = PluginFunctions::skeleton(skeletonObject);
+
+      skeleton->removeAnimation(AnimationHandle(animationIndex));
+
+    }
+
+    UpdateUI();
   }
 }
 
@@ -941,17 +973,38 @@ void SkeletalAnimationPlugin::slotAddAnimation()
 /**
  * @brief Returns a handle describing the current frame in the active animation
  *
- * This information is derived from the corresponding combobox and slider.
+ * This information is derived from the corresponding combo box and slider.
  */
 AnimationHandle SkeletalAnimationPlugin::currentAnimationHandle()
 {
   int iAnimation = pToolbox_->cbAnimation->currentIndex();
+  unsigned int animationId = pToolbox_->cbAnimation->itemData(iAnimation).toUInt();
   
   if(iAnimation == 0)
     return AnimationHandle(); //This will be the reference pose, i.e. an empty animation
   else if(iAnimation > 0)
-    return AnimationHandle(iAnimation - 1, pToolbox_->hsFrame->value());
+    return AnimationHandle(animationId, pToolbox_->hsFrame->value());
   return AnimationHandle(); // should not happen
+}
+
+//------------------------------------------------------------------------------
+
+/**
+ * @brief Sets the animations combo box to the right entry
+ *
+ */
+void SkeletalAnimationPlugin::setComboBoxPosition(unsigned int _animationIndex)
+{
+  for ( int i = 0 ; i <  pToolbox_->cbAnimation->count(); ++i ) {
+    unsigned int animationId = pToolbox_->cbAnimation->itemData(i).toUInt();
+
+    if ( animationId == _animationIndex ) {
+      pToolbox_->cbAnimation->setCurrentIndex(i);
+      return;
+    }
+
+  }
+
 }
 
 //------------------------------------------------------------------------------
