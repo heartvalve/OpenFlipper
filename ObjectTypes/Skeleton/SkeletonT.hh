@@ -105,6 +105,27 @@ public:
     stack<Joint*> stJoints_;
   };
 
+  /**
+    * @brief Iterator class for the animations attached to a skeleton
+    *
+    * This iterator can be used to iterate over all animations that are attached to the skeleton
+    */
+  class AnimationIterator {
+  public:
+    AnimationIterator(std::vector<Animation*>& _animations );
+    AnimationIterator(std::vector<Animation*>& _animations, unsigned int _animationIndex );
+
+  public:
+    AnimationIterator &operator++();
+    AnimationHandle operator*() const;
+    AnimationIterator &operator=(const AnimationIterator &other);
+    operator bool() const;
+
+  private:
+    unsigned int currentIndex_;
+
+    std::vector<Animation*>& animations_;
+  };
 
 public:
   /// Default constructor
@@ -164,6 +185,10 @@ public:
   void removeAnimation(std::string _name);
   void removeAnimation(const AnimationHandle &_hAni);
   void clearAnimations();
+
+  /// Iterator over the animations
+  AnimationIterator animationsBegin();
+  AnimationIterator animationsEnd();
 
   unsigned int animationCount();
   const std::string &animationName(unsigned int _index);
