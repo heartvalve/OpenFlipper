@@ -239,6 +239,9 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     /// make sure the manipulator is positioned on a joint
     void updateManipulatorPosition(BaseObjectData* _skeletonObj);
 
+    ///function for computing the position of our joints using inverse Kinematic
+    void inverseKinematic(ACG::Vec3d dest,Skeleton::Pose* currentPose,Skeleton::Joint* pickedJoint, std::vector<Skeleton::Joint*> rotatableJoints);
+
   private slots:
     /// move the object when its manipulator moves
     void manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseEvent* _event);
