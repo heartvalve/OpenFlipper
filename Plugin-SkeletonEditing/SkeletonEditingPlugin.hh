@@ -172,6 +172,9 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     /// add animation
     void addAnimation(int _objectId, QString _name, int _frames);
 
+    /// split selected Joint
+    void splitJoint(QMouseEvent* _event);
+
 /** @} */
 
   public slots:
@@ -193,6 +196,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     QActionGroup* pickToolBarActions_;
     QAction*      selectJointAction_;
     QAction*      insertJointAction_;
+    QAction*			splitJointAction_;
     QAction*      deleteJointAction_;
     QAction*      moveJointAction_;
     QAction*      transformChildManipAction_;
