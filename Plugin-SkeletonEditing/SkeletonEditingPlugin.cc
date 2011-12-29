@@ -142,7 +142,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   inverseKinematicAction_ = new QAction(tr("Inverse kinematic"), pickToolBarActions_);
   inverseKinematicAction_->setStatusTip(tr("Move selected joint using inverse kinematic."));
   inverseKinematicAction_->setToolTip(tr("<B>Inverse kinematic</B><br>Move selected joint using inverse kinematic."));
-  inverseKinematicAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_invkinematic.png") );
+  inverseKinematicAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_inverseKinematic.png") );
   inverseKinematicAction_->setCheckable(true);
   inverseKinematicAction_->setChecked(inverseKinematic_);
   pickToolbar_->addAction(inverseKinematicAction_);
