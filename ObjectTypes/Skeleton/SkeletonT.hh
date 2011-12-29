@@ -145,6 +145,7 @@ public:
     */
   ///@{
   void addJoint(typename SkeletonT<PointT>::Joint *_pParent, typename SkeletonT<PointT>::Joint *_pJoint);
+  void insertJoint(typename SkeletonT<PointT>::Joint *_pChild, typename SkeletonT<PointT>::Joint *_pInsert);
   void removeJoint(typename SkeletonT<PointT>::Joint *_pJoint);
   inline void clear();
   ///@}

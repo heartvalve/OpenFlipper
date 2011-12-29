@@ -51,6 +51,7 @@
 //== INCLUDES =================================================================
 
 #include <iostream>
+#include <algorithm>
 
 #include "SkeletonT.hh"
 
@@ -1003,6 +1004,47 @@ void SkeletonT<PointT>::updateFromGlobal(unsigned int _idJoint)
     if (*it)
       (*it)->updateFromGlobal(_idJoint);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+/**
+ * @brief insert a Joint given its future child joint
+ *
+ * @param _pChild existing joint, will be the child
+ * @param _pInsert joint, which will be inserted. _pChild will be his child and the parent of _pChild will be his parent.
+ */
+template<typename PointT>
+void SkeletonT<PointT>::insertJoint(typename SkeletonT<PointT>::Joint *_pChild, typename SkeletonT<PointT>::Joint *_pInsert)
+{
+	std::size_t i = 0;
+	if (!_pChild || !_pChild->parent() || !_pInsert)
+		return;
+
+	Joint* parent = _pChild->parent();
+
+	//update IDs of our joints
+	unsigned int childID = _pChild->id();
+	for(typename std::vector<Joint*>::iterator it = joints_.begin() + childID; it !=  joints_.end(); ++it)
+		(*it)->setId((*it)->id() + 1);
+
+	//insert our new joint into this skeleton
+	joints_.insert(joints_.begin() + childID, _pInsert);
+	_pInsert->setId(childID);
+
+	//update the parents
+	//note: pChild will be automatically erased in parent->children_
+	_pInsert->setParent(parent, *this);
+	_pChild->setParent(_pInsert, *this);
+
+	insert_property_at(childID);
+
+	referencePose_.insertJointAt(childID);
+	for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
+		if (*it)
+			(*it)->insertJointAt(childID);
+
+	referencePose_.updateFromGlobal(0, true);
 }
 
 //-----------------------------------------------------------------------------
