@@ -1345,7 +1345,7 @@ void SelectionBasePlugin::slotSphereSelection(QMouseEvent* _event) {
     sphere_node_->hide();
 
     // Pick anything to find all possible objects
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE,
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
             _event->pos(), node_idx, target_idx, &hit_point)) {
         
         BaseObjectData* object = 0;
@@ -1456,8 +1456,15 @@ void SelectionBasePlugin::addedEmptyObject (int _id) {
             if(found) break;
         }
     } else {
+      BaseObject* bObject = 0;
+      PluginFunctions::getObject(_id, bObject);
+
+      // Groups are ok, others will cause an error
+      if (!bObject->isGroup()) {
         emit log(LOGERR, "Could not retrieve object type! Maybe a selection environment will be missing.");
-        return;
+      }
+
+      return;
     }
     
     if(found) {
