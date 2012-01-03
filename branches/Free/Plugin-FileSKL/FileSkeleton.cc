@@ -134,40 +134,60 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
     }
   }
   
-  //read animation
-  unsigned int frameCount;
-  in >> frameCount;
-  
-  if ( frameCount > 0 ){
-    
-    FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(_pSkeleton, frameCount);
-    AnimationHandle animHandle = _pSkeleton->addAnimation("Animation1", animation);
-    
-    for (unsigned int k = 0; k < frameCount; k++){
-    
-      animHandle.setFrame(k);
-      typename Skeleton::Pose* pose = _pSkeleton->pose( animHandle );
-      
-      for(unsigned int i = 0; i < nJoints; ++i)
-      {
-        unsigned int id; // id not stored in skeleton; the read order is increasing for joints
+  unsigned int num_anim = 0;
+  while(in.good()) {
 
-        // read joint id
-        in >> id;
+      num_anim++;
 
-        // read its matrix
-        Matrix mat;
-        mat.identity();
-        for(int y = 0; y < 3; ++y)
-          for(int x = 0; x < 3; ++x)
-            in >> mat(y, x);
-        for(int y = 0; y < 3; ++y)
-          in >> mat(y, 3);
-        
-        //set matrix
-        pose->setGlobalMatrix(jointMap[ id ], mat);
+      // Test whether animation name is provided
+      int pos = in.tellg();
+      std::string identifier;
+      in >> identifier;
+      std::string animationName = (QString("Animation") + QString::number(num_anim)).toStdString();
+    
+      if(identifier == "animation") {
+          std::getline(in, animationName);
+          // Trim string
+          animationName = QString(animationName.c_str()).trimmed().toStdString();
+      } else {
+          in.seekg(pos);
       }
-    }
+    
+      //read animation
+      unsigned int frameCount = 0;
+      in >> frameCount;
+      
+      if ( frameCount > 0 ){
+
+        FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(_pSkeleton, frameCount);
+        AnimationHandle animHandle = _pSkeleton->addAnimation(animationName, animation);
+
+        for (unsigned int k = 0; k < frameCount; k++){
+        
+          animHandle.setFrame(k);
+          typename Skeleton::Pose* pose = _pSkeleton->pose( animHandle );
+
+          for(unsigned int i = 0; i < nJoints; ++i)
+          {
+            unsigned int id; // id not stored in skeleton; the read order is increasing for joints
+
+            // read joint id
+            in >> id;
+
+            // read its matrix
+            Matrix mat;
+            mat.identity();
+            for(int y = 0; y < 3; ++y)
+              for(int x = 0; x < 3; ++x)
+                in >> mat(y, x);
+            for(int y = 0; y < 3; ++y)
+              in >> mat(y, 3);
+
+            //set matrix
+            pose->setGlobalMatrix(jointMap[ id ], mat);
+          }
+        }
+      }
   }
 
   in.close();
@@ -242,56 +262,52 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
     out << endl;
   }
   
-  //now store animation
+  // now store animations
   AnimationT<ACG::Vec3d>* animation = 0;
-  unsigned int iAnimation;
-  //get first animation with name
-  for (unsigned int i = 0; i < _pSkeleton->animationCount(); i++){
-    animation = _pSkeleton->animation( AnimationHandle(i, 0 ) );
 
-    if (animation->name() == "")
-      animation = 0;
-    else{
-      iAnimation = i;
-      break;
+  for (unsigned int i = 0; i < _pSkeleton->animationCount(); i++) {
+
+      animation = _pSkeleton->animation(AnimationHandle(i, 0));
+
+        if (animation != 0) {
+
+            std::string name = animation->name();
+
+            out << "animation " << name << std::endl;
+
+            out << animation->frameCount() << std::endl;
+
+            AnimationHandle animHandle = _pSkeleton->animationHandle(name);
+
+            // every frame of that animation
+            for (unsigned int k = 0; k < animation->frameCount(); ++k) {
+
+                animHandle.setFrame(k);
+                typename Skeleton::Pose* pose = _pSkeleton->pose(animHandle);
+
+                for (typename Skeleton::Iterator it = _pSkeleton->begin(); it != _pSkeleton->end(); ++it) {
+
+                    unsigned int i = (*it)->id();
+                    Joint *pJoint = *it;
+
+                    // write this joints id
+                    out << pJoint->id() << " ";
+
+                    // write its position
+                    const Matrix &mat = pose->globalMatrix(i);
+                    for (int y = 0; y < 3; ++y)
+                        for (int x = 0; x < 3; ++x)
+                            out << mat(y, x) << " ";
+                    for (int y = 0; y < 3; ++y)
+                        out << mat(y, 3) << " ";
+                }
+
+                out << endl;
+            }
+        } else {
+            out << "0" << endl;
+        }
     }
-  }
-
-  if (animation != 0){
-
-    out << animation->frameCount() << endl;
-    
-    std::string name = _pSkeleton->animationName(iAnimation);
-    AnimationHandle animHandle = _pSkeleton->animationHandle(name);
-
-    // every frame of that animation
-    for(unsigned int k = 0; k < animation->frameCount(); ++k){
-      
-      animHandle.setFrame(k);
-      typename Skeleton::Pose* pose = _pSkeleton->pose( animHandle );
-      
-      for (typename Skeleton::Iterator it = _pSkeleton->begin(); it != _pSkeleton->end(); ++it ){
-
-        unsigned int i = (*it)->id();
-        Joint *pJoint   = *it;
-
-        // write this joints id
-        out << pJoint->id() << " ";
-
-        // write its position
-        const Matrix &mat = pose->globalMatrix(i);
-        for(int y = 0; y < 3; ++y)
-          for(int x = 0; x < 3; ++x)
-            out << mat(y, x) << " ";
-        for(int y = 0; y < 3; ++y)
-          out << mat(y, 3) << " ";
-      }
-
-      out << endl;
-    }
-  } else {
-    out << "0" << endl; 
-  }
 
   out.close();
   return !out.fail();
