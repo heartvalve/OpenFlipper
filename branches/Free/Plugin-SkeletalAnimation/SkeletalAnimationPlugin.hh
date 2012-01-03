@@ -128,6 +128,8 @@ public slots:
   void setComboBoxPosition(unsigned int _animationIndex);
   void checkObjectSelection();
 
+  void slotAnimationNameChanged();
+
 private slots:
   void setDescriptions();
   
