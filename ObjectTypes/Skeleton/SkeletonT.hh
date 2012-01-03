@@ -168,7 +168,6 @@ public:
   Iterator end();
   ///@}
  
-
   /** \anchor AnimationAccess
     * @name   Animation
     * Use these methods to equip the skeleton with animation data.
@@ -186,6 +185,15 @@ public:
   void removeAnimation(std::string _name);
   void removeAnimation(const AnimationHandle &_hAni);
   void clearAnimations();
+
+  void replaceAnimationName(const std::string _strOld, const std::string _strNew) {
+      std::map<std::string,unsigned int>::iterator f = names_.find(_strOld);
+      if(f != names_.end()) {
+          unsigned int c = f->second;
+          names_.erase(f);
+          names_[_strNew] = c;
+      }
+  }
 
   /// Iterator over the animations
   AnimationIterator animationsBegin();
