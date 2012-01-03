@@ -40,6 +40,9 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <QInputDialog>
+#include <QMessageBox>
+
 #include "SkeletalAnimationPlugin.hh"
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
@@ -98,8 +101,11 @@ void SkeletalAnimationPlugin::initializePlugin()
   connect( pToolbox_->pbAddAnimation,             SIGNAL(clicked()),                this, SLOT(slotAddAnimation()) );
   connect( pToolbox_->pbDeleteAnimation,          SIGNAL(clicked()),                this, SLOT(slotDeleteAnimation()) );
   
+  connect( pToolbox_->pbEditAnimation, SIGNAL(clicked()), this, SLOT(slotAnimationNameChanged()));
+
   pToolbox_->pbAddAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"addAnimation.png") );
   pToolbox_->pbDeleteAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"deleteAnimation.png") );
+  pToolbox_->pbEditAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"editAnimation.png") );
   
   pToolbox_->cbMethod->addItem("Linear Blend Skinning");
   pToolbox_->cbMethod->addItem("Dual Quaternion Blend Skinning");
@@ -243,6 +249,45 @@ void SkeletalAnimationPlugin::checkObjectSelection(){
   }
 
   UpdateUI();
+}
+
+//------------------------------------------------------------------------------
+
+void SkeletalAnimationPlugin::slotAnimationNameChanged() {
+
+    if(pToolbox_->cbAnimation->currentText() == "Reference Pose") {
+
+        QMessageBox::warning(0, "Not editable!", "You cannot change the reference pose's name!");
+        return;
+    }
+
+    QString newName = QInputDialog::getText(0, tr("Change Animation's Name"), tr("New Name:"),
+            QLineEdit::Normal, pToolbox_->cbAnimation->currentText());
+
+    // Set animation's name
+    for (unsigned int i=0; i < activeSkeletons_.size(); i++){
+
+        // Get active skeleton
+        BaseObjectData* baseObject = 0;
+        PluginFunctions::getObject(activeSkeletons_[i], baseObject);
+
+        if ( baseObject == 0 )
+          continue;
+
+        SkeletonObject* skeletonObject = dynamic_cast<SkeletonObject*>(baseObject);
+        if(!skeletonObject) continue;
+        Skeleton*             skeleton = PluginFunctions::skeleton(skeletonObject);
+
+        AnimationHandle h = skeleton->animationHandle(pToolbox_->cbAnimation->currentText().toStdString());
+        if(skeleton != 0 && h.isValid()) {
+            skeleton->animation(h)->setName(newName.toStdString());
+            skeleton->replaceAnimationName(pToolbox_->cbAnimation->currentText().toStdString(), newName.toStdString());
+        } else {
+            return;
+        }
+    }
+
+    pToolbox_->cbAnimation->setItemText(pToolbox_->cbAnimation->currentIndex(), newName);
 }
 
 //------------------------------------------------------------------------------
