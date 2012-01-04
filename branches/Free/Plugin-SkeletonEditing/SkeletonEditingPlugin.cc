@@ -439,7 +439,7 @@ void SkeletonEditingPlugin::splitJoint(QMouseEvent* _event)
 			o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
 
 		//perform picking
-		bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx,
+		bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
 				target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
 
 		//reenable picking for anything
