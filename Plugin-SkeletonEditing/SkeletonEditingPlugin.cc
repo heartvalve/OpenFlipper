@@ -21,7 +21,9 @@ SkeletonEditingPlugin::SkeletonEditingPlugin()
    transformAllFrames_(true),
    inverseKinematic_(false),
    rotateCoordSystem_(false),
-   dblClick_(false)
+   dblClick_(false),
+   lastRenderer_(""),
+   rendererChanged_(false)
 
 {
     manip_size_          = 1.0;
@@ -63,6 +65,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
 
   //TOOLBAR
   toolbar_ = new QToolBar(tr("Skeleton Editing"));
+  toolbar_->setObjectName("Skeleton_Editing_Toolbar");
 
   toolBarActions_ = new QActionGroup(toolbar_);
 
@@ -279,14 +282,40 @@ void SkeletonEditingPlugin::slotPickModeChanged( const std::string& _mode)
     if ( insertJointAction_->isChecked() )
       cancelJointInsertion();
 
-  moveJointAction_->setChecked( _mode == "MoveJoints" );
+  moveJointAction_->setChecked(   _mode == "MoveJoints" );
   insertJointAction_->setChecked( _mode == "InsertJoints" );
   deleteJointAction_->setChecked( _mode == "DeleteJoints" );
   selectJointAction_->setChecked( _mode == "SelectJoints" );
-  splitJointAction_->setChecked( _mode == "SplitJoints" );
+  splitJointAction_->setChecked(  _mode == "SplitJoints" );
 
   skeletonEditingAction_->setChecked( (_mode == "MoveJoints")  ||(_mode == "InsertJoints")
-                                    ||(_mode == "DeleteJoints")||(_mode == "SelectJoints") );
+                                    ||(_mode == "DeleteJoints")||(_mode == "SelectJoints")
+                                    || (_mode == "SplitJoints"));
+
+  // We left the pickmodes, that are used for skeletonediting
+  // If the mode is "", we are in examine mode or anything else
+  // But we do not change the renderer than
+  if ( (_mode != "")              &&
+       (_mode != "MoveJoints")    &&
+       (_mode != "InsertJoints")  &&
+       (_mode != "DeleteJoints")  &&
+       (_mode != "SelectJoints")  &&
+       (_mode != "SplitJoints")) {
+
+    // Get the currently active renderer and switch to default one
+    QString currentRenderer;
+    emit getCurrentRenderer(PluginFunctions::activeExaminer(), currentRenderer);
+
+    // If we still have the Depth peeling renderer, we switch back
+    // otherwise the user changed the active renderer and we do not override the setting
+    if ( rendererChanged_ && (currentRenderer == "Depth Peeling Renderer" ) ) {
+      emit setRenderer(PluginFunctions::activeExaminer(),lastRenderer_);
+      rendererChanged_ = false;
+    }
+
+
+  }
+
 
   showManipulators();
 }
@@ -340,11 +369,23 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
 
 void SkeletonEditingPlugin::slotSetEditingMode(QAction* /*_action*/)
 {
+
+  if ( ! rendererChanged_ ) {
+
+    // Get the currently active renderer and switch to default one
+    emit getCurrentRenderer(PluginFunctions::activeExaminer(), lastRenderer_);
+    emit setRenderer(PluginFunctions::activeExaminer(),"Depth Peeling Renderer");
+
+    // remember, that we changed the active renderer in this plugin
+    // to prevent switching, if we did not do it
+    rendererChanged_ = true;
+  }
+
   PluginFunctions::actionMode(Viewer::PickingMode);
   PluginFunctions::pickMode("MoveJoints");
 }
 
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 void SkeletonEditingPlugin::slotRotateManipulator(bool _toggled)
 {

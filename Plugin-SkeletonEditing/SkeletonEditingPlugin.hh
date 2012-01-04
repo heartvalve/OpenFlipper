@@ -45,6 +45,9 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     void updatedObject(int, const UpdateType _type);
     void nodeVisibilityChanged(int);
 
+    void setRenderer(unsigned int _viewer, QString _rendererName);
+    void getCurrentRenderer(unsigned int _viewer, QString& _rendererName);
+
     // PickingInterface
     void addPickMode( const std::string _mode );
     void addHiddenPickMode( const std::string _mode );
@@ -215,6 +218,11 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     bool rotateCoordSystem_;
     
     bool dblClick_;
+
+    /// Stores the last active renderer before we switched to skeleton editing mode
+    QString lastRenderer_;
+    /// Remembers, if we changed the renderer
+    bool rendererChanged_;
 
   private:
     // object ids of all objects with active Manipulator
