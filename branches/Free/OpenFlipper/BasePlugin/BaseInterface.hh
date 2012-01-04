@@ -279,6 +279,13 @@ class BaseInterface {
       */
      virtual void setRenderer(unsigned int _viewer, QString _rendererName) {};
 
+     /** \brief Get the current renderer for the given viewer
+      *
+      * @param _viewer Id of the viewer to set the renderer for
+      * @param _rendererName Name of the renderer that is currently active
+      */
+     virtual void getCurrentRenderer(unsigned int _viewer, QString& _rendererName) {};
+
   /** @} */
 
   private slots :

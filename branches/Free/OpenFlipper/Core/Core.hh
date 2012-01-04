@@ -596,8 +596,11 @@ signals:
       /// called to switch the renderer for a specific viewer
       void slotSetRenderer(unsigned int _viewer, QString _rendererName);
 
+      /// called to get the currently active renderer renderer for a specific viewer
+      void slotGetCurrentRenderer(unsigned int _viewer, QString& _rendererName);
+
       /// Get a Pointer to the Plugin with given _name (if it is loaded)
-//       void slotGetPlugin(QString _name, QObject* & _plugin );
+      //  void slotGetPlugin(QString _name, QObject* & _plugin );
 
    /** @} */
 

@@ -929,10 +929,17 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
               this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
 
+    // =============================================
     // Function allowing switching of renderers from other plugins
+    // =============================================
     if ( checkSignal(plugin,"setRenderer(unsigned int,QString)" ) ) {
       connect(plugin,SIGNAL(setRenderer(unsigned int,QString)),this,SLOT(slotSetRenderer(unsigned int,QString)));
     }
+
+    if ( checkSignal(plugin,"getCurrentRenderer(unsigned int,QString&)" ) ) {
+      connect(plugin,SIGNAL(getCurrentRenderer(unsigned int,QString&)),this,SLOT(slotGetCurrentRenderer(unsigned int,QString&)), Qt::DirectConnection);
+    }
+
 
   }
 

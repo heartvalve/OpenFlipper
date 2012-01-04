@@ -410,6 +410,10 @@ void Core::slotSetRenderer(unsigned int _viewer, QString _rendererName) {
   renderManager().setActive(_rendererName,_viewer);
 }
 
+void Core::slotGetCurrentRenderer(unsigned int _viewer, QString& _rendererName) {
+  _rendererName = renderManager().active(_viewer)->name;
+}
+
 
 
 //=============================================================================
