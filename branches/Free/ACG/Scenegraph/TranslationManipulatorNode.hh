@@ -110,9 +110,9 @@ public:
    */
   enum ActiveRotations {
     X_AXIS   = 1,
-    Y_AXIS   = 1 << 2,
-    Z_AXIS   = 1 << 3,
-    ALL_AXIS = 7,
+    Y_AXIS   = 1 << 1,
+    Z_AXIS   = 1 << 2,
+    ALL_AXIS = X_AXIS | Y_AXIS | Z_AXIS,
   };
 
   /// Default constructor.
