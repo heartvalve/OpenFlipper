@@ -45,6 +45,9 @@
 # The files in this directory will be compiled by nvcc and linked
 # into the plugin
 #
+# The variables PLUGIN_${plugin}_MISSING_DEPS indicate whether any mandatory
+# dependencies of the respective plugins are missing.
+#
 
 include (ACGCommon)
 
@@ -618,10 +621,12 @@ function (_build_openflipper_plugin plugin)
       list (APPEND trans_files ${${_PLUGIN}_TRANSLATION_ADDFILES})
       acg_add_translations(Plugin-${plugin} ${${_PLUGIN}_TRANSLATION_LANGUAGES} "${trans_files}" )
     endif ()
+    set(PLUGIN_${plugin}_MISSING_DEPS FALSE PARENT_SCOPE)
 
   else ()
     message (STATUS "[WARNING] One or more dependencies for plugin ${plugin} not found. Skipping plugin.")
     message (STATUS "Missing dependencies :${_${_PLUGIN}_MISSING_DEPS}")
+    set(PLUGIN_${plugin}_MISSING_DEPS TRUE PARENT_SCOPE)
   endif ()
   
 endfunction ()
