@@ -342,150 +342,168 @@ void SkeletonEditingPlugin::transformJoint(int _objectId, int _jointId,
       if (_matrix(0, 3) == 0 && _matrix(1, 3) == 0 && _matrix(2, 3) == 0) // no translation
         return;
 
-      if (!joint->parent())
-        return;
+      if (joint->isRoot()) {
 
-      // init params
-      bool parentIsNotBranch = (joint->parent()->size() == 1);
-      bool hasOneChild = (joint->size() == 1);
-      ACG::Vec3d oldParentAxis(0.0, 0.0, 0.0);
-      ACG::Vec3d oldJointAxis(0.0, 0.0, 0.0);
-      ACG::Vec3d transParentAxis(0.0, 0.0, 0.0);
-      ACG::Vec3d transJointAxis(0.0, 0.0, 0.0);
-      ACG::Vec3d parentRotAxis(0.0, 0.0, 0.0);
-      ACG::Vec3d jointRotAxis(0.0, 0.0, 0.0);
-      double parentRotAngle = 0.0;
-      double jointRotAngle = 0.0;
+        /*
+         * Change translation of root joint.
+         */
 
-      // get the original parent axis: parent joint -----> current joint
-      oldParentAxis = activePose->localTranslation(_jointId);
-      // get the original joint axis: current joint -----> child joint
-      if (hasOneChild)
-        oldJointAxis = activePose->localTranslation(joint->child(0)->id());
+        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), true);
 
-      // store the joint axes of all animations before the translation of the current joint
-      // so that the rotations can be calculated for the animation poses
-      std::vector<ACG::Vec3d> oldAnimJoint, oldAnimParent;
-      for (unsigned int a = 0; a < skeleton->animationCount(); ++a) {
-        for (unsigned int iFrame = 0; iFrame
-            < skeleton->animation(a)->frameCount(); iFrame++) {
-          Skeleton::Pose* pose = skeleton->animation(a)->pose(iFrame);
+      } else {
 
-          if (hasOneChild)
-            oldAnimJoint.push_back(
-                pose->localTranslation(joint->child(0)->id()));
+        /*
+         * Change translation of non-root joint.
+         *
+         * In these cases, the rotation of the coordinate frame of the parent
+         * joint (unless it is not a branching joint) as well as the
+         * the rotation of the coordinate frame of the current joint have to be
+         * corrected in the following way:
+         *
+         * We compute the rotation of the affected joints' coordinate system
+         * such that the local(!) translation of the respective child
+         * joint remains constant. So, in 2D, consider configuration
+         * A --> B --> C, where C is a child of B is a child of A.
+         * If C has translation (2, 0) and B has translation (3,5), then, after
+         * global translation of B, the coordinate frames of A and B have to be rotated
+         * such that the joint axes remain constant, so B lies on the line (0,0) + x*(3,5)
+         * with respect to A's coordinate system and C lies somewhere on the line (0,0) + y*(2,0)
+         * with respect to B's coordinate system.
+         *
+         */
 
-          oldAnimParent.push_back(pose->localTranslation(_jointId));
-        }
-      }
+        // init params
+        bool parentIsNotBranch = (joint->parent()->size() == 1);
+        bool hasOneChild = (joint->size() == 1);
+        ACG::Vec3d oldParentAxis(0.0, 0.0, 0.0);
+        ACG::Vec3d oldJointAxis(0.0, 0.0, 0.0);
+        ACG::Vec3d transParentAxis(0.0, 0.0, 0.0);
+        ACG::Vec3d transJointAxis(0.0, 0.0, 0.0);
+        ACG::Vec3d parentRotAxis(0.0, 0.0, 0.0);
+        ACG::Vec3d jointRotAxis(0.0, 0.0, 0.0);
+        double parentRotAngle = 0.0;
+        double jointRotAngle = 0.0;
 
-      // translate the joint
-      transformer.translateJoint(joint,
-          ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), true);
+        // get the original parent axis: parent joint -----> current joint
+        oldParentAxis = activePose->localTranslation(_jointId);
+        // get the original joint axis: current joint -----> child joint
+        if (hasOneChild)
+          oldJointAxis = activePose->localTranslation(joint->child(0)->id());
 
-      // get translated parent axis
-      transParentAxis = activePose->localTranslation(_jointId);
+        // store the joint axes of all animations before the translation of the current joint
+        // so that the rotations can be calculated for the animation poses
+        std::vector<ACG::Vec3d> oldAnimJoint, oldAnimParent;
+        for (unsigned int a = 0; a < skeleton->animationCount(); ++a) {
+          for (unsigned int iFrame = 0; iFrame < skeleton->animation(a)->frameCount(); iFrame++) {
+            Skeleton::Pose* pose = skeleton->animation(a)->pose(iFrame);
 
-      if (hasOneChild) {
-        // get translated joint axis
-        transJointAxis = activePose->localTranslation(joint->child(0)->id());
-      }
+            if (hasOneChild)
+              oldAnimJoint.push_back(pose->localTranslation(joint->child(0)->id()));
 
-      // now calculate the rotation that has to occur for a translation of the joint:
-
-      // get the rotation axis and angle between the old and new parent axis
-      if (!ACG::Geometry::rotationOfTwoVectors<double>(oldParentAxis,
-          transParentAxis, parentRotAxis, parentRotAngle))
-        return;
-
-      // get rotation axis and angle between old and new joint axis
-      if (hasOneChild) {
-        if (!ACG::Geometry::rotationOfTwoVectors<double>(oldJointAxis,
-            transJointAxis, jointRotAxis, jointRotAngle))
-          return;
-      }
-
-      if (parentIsNotBranch) {
-        // parent rotation matrix
-        ACG::GLMatrixT<double> parentRotMatrix;
-        parentRotMatrix.identity();
-        parentRotMatrix.rotate(parentRotAngle, parentRotAxis);
-
-        // apply rotation to parent joint
-        ACG::Matrix4x4d localParent = activePose->localMatrix(
-            joint->parent()->id());
-        localParent *= parentRotMatrix;
-        activePose->setLocalMatrix(joint->parent()->id(), localParent, false);
-      }
-
-      if (hasOneChild) {
-        // joint rotation matrix
-        ACG::GLMatrixT<double> jointRotMatrix;
-        jointRotMatrix.identity();
-        jointRotMatrix.rotate(jointRotAngle, jointRotAxis);
-
-        // apply current joint
-        ACG::Matrix4x4d localJoint = activePose->localMatrix(joint->id());
-        localJoint *= jointRotMatrix;
-        activePose->setLocalMatrix(joint->id(), localJoint, false);
-      }
-
-      // apply rotations to animation
-      std::vector<ACG::Vec3d>::iterator jointIt, parentIt;
-      jointIt = oldAnimJoint.begin();
-      parentIt = oldAnimParent.begin();
-      for (unsigned int a = 0; a < skeleton->animationCount(); ++a) {
-        for (unsigned int iFrame = 0; iFrame
-            < skeleton->animation(a)->frameCount(); iFrame++) {
-          Skeleton::Pose* pose = skeleton->animation(a)->pose(iFrame);
-
-          // only apply rotation to parent joint if it is not a branch
-          if (parentIsNotBranch) {
-
-            // get the rotation axis and angle between the old and new parent axis
-            ACG::Vec3d translatedParent = pose->localTranslation(_jointId);
-            ACG::Vec3d parentRotAxis(0.0, 0.0, 0.0);
-            double parentRotAngle = 0.0;
-            if (!ACG::Geometry::rotationOfTwoVectors<double>(*parentIt,
-                translatedParent, parentRotAxis, parentRotAngle))
-              return;
-
-            // parent rotation matrix
-            ACG::GLMatrixT<double> parentRotMatrix;
-            parentRotMatrix.identity();
-            parentRotMatrix.rotate(parentRotAngle, parentRotAxis);
-
-            // apply rotation to parent joint
-            ACG::Matrix4x4d parentMat =
-                pose->localMatrix(joint->parent()->id());
-            parentMat *= parentRotMatrix;
-            pose->setLocalMatrix(joint->parent()->id(), parentMat, false);
-
-            ++parentIt;
+            oldAnimParent.push_back(pose->localTranslation(_jointId));
           }
+        }
 
-          if (hasOneChild) {
-            // get rotation axis and angle between old and new joint axis
-            ACG::Vec3d translatedAxis = pose->localTranslation(
-                joint->child(0)->id());
-            ACG::Vec3d jointRotAxis(0.0, 0.0, 0.0);
-            double jointRotAngle = 0.0;
+        // translate the joint
+        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), true);
 
-            if (!ACG::Geometry::rotationOfTwoVectors<double>(*jointIt,
-                translatedAxis, jointRotAxis, jointRotAngle))
-              return;
+        // get translated parent axis
+        transParentAxis = activePose->localTranslation(_jointId);
 
-            // joint rotation matrix
-            ACG::GLMatrixT<double> jointRotMatrix;
-            jointRotMatrix.identity();
-            jointRotMatrix.rotate(jointRotAngle, jointRotAxis);
+        if (hasOneChild) {
+          // get translated joint axis
+          transJointAxis = activePose->localTranslation(joint->child(0)->id());
+        }
 
-            // apply rotation to current joint
-            ACG::Matrix4x4d localMat = pose->localMatrix(joint->id());
-            localMat *= jointRotMatrix;
-            pose->setLocalMatrix(joint->id(), localMat, false);
+        // now calculate the rotation that has to occur for a translation of the joint:
 
-            ++jointIt;
+        // get the rotation axis and angle between the old and new parent axis
+        if (!ACG::Geometry::rotationOfTwoVectors<double>(oldParentAxis, transParentAxis, parentRotAxis, parentRotAngle))
+          return;
+
+        // get rotation axis and angle between old and new joint axis
+        if (hasOneChild) {
+          if (!ACG::Geometry::rotationOfTwoVectors<double>(oldJointAxis, transJointAxis, jointRotAxis, jointRotAngle))
+            return;
+        }
+
+        if (parentIsNotBranch) {
+          // parent rotation matrix
+          ACG::GLMatrixT<double> parentRotMatrix;
+          parentRotMatrix.identity();
+          parentRotMatrix.rotate(parentRotAngle, parentRotAxis);
+
+          // apply rotation to parent joint
+          ACG::Matrix4x4d localParent = activePose->localMatrix(joint->parent()->id());
+          localParent *= parentRotMatrix;
+          activePose->setLocalMatrix(joint->parent()->id(), localParent, false);
+        }
+
+        if (hasOneChild) {
+          // joint rotation matrix
+          ACG::GLMatrixT<double> jointRotMatrix;
+          jointRotMatrix.identity();
+          jointRotMatrix.rotate(jointRotAngle, jointRotAxis);
+
+          // apply current joint
+          ACG::Matrix4x4d localJoint = activePose->localMatrix(joint->id());
+          localJoint *= jointRotMatrix;
+          activePose->setLocalMatrix(joint->id(), localJoint, false);
+        }
+
+        // apply rotations to animation
+        std::vector<ACG::Vec3d>::iterator jointIt, parentIt;
+        jointIt = oldAnimJoint.begin();
+        parentIt = oldAnimParent.begin();
+        for (unsigned int a = 0; a < skeleton->animationCount(); ++a) {
+          for (unsigned int iFrame = 0; iFrame < skeleton->animation(a)->frameCount(); iFrame++) {
+            Skeleton::Pose* pose = skeleton->animation(a)->pose(iFrame);
+
+            // only apply rotation to parent joint if it is not a branch
+            if (parentIsNotBranch) {
+
+              // get the rotation axis and angle between the old and new parent axis
+              ACG::Vec3d translatedParent = pose->localTranslation(_jointId);
+              ACG::Vec3d parentRotAxis(0.0, 0.0, 0.0);
+              double parentRotAngle = 0.0;
+              if (!ACG::Geometry::rotationOfTwoVectors<double>(*parentIt, translatedParent, parentRotAxis,
+                  parentRotAngle))
+                return;
+
+              // parent rotation matrix
+              ACG::GLMatrixT<double> parentRotMatrix;
+              parentRotMatrix.identity();
+              parentRotMatrix.rotate(parentRotAngle, parentRotAxis);
+
+              // apply rotation to parent joint
+              ACG::Matrix4x4d parentMat = pose->localMatrix(joint->parent()->id());
+              parentMat *= parentRotMatrix;
+              pose->setLocalMatrix(joint->parent()->id(), parentMat, false);
+
+              ++parentIt;
+            }
+
+            if (hasOneChild) {
+              // get rotation axis and angle between old and new joint axis
+              ACG::Vec3d translatedAxis = pose->localTranslation(joint->child(0)->id());
+              ACG::Vec3d jointRotAxis(0.0, 0.0, 0.0);
+              double jointRotAngle = 0.0;
+
+              if (!ACG::Geometry::rotationOfTwoVectors<double>(*jointIt, translatedAxis, jointRotAxis, jointRotAngle))
+                return;
+
+              // joint rotation matrix
+              ACG::GLMatrixT<double> jointRotMatrix;
+              jointRotMatrix.identity();
+              jointRotMatrix.rotate(jointRotAngle, jointRotAxis);
+
+              // apply rotation to current joint
+              ACG::Matrix4x4d localMat = pose->localMatrix(joint->id());
+              localMat *= jointRotMatrix;
+              pose->setLocalMatrix(joint->id(), localMat, false);
+
+              ++jointIt;
+            }
           }
         }
       }
