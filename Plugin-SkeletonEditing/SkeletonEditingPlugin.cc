@@ -1304,6 +1304,8 @@ Skeleton::Pose* SkeletonEditingPlugin::activePose(SkeletonObject* _skeletonObj){
 
   Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
 
+  if(!skeleton) return NULL;
+
   AnimationHandle handle = _skeletonObj->skeletonNode()->activePose();
 
   if ( !handle.isValid() ){
@@ -1487,9 +1489,9 @@ void SkeletonEditingPlugin::updateManipulatorPosition(BaseObjectData* _skeletonO
   if (skeleton->joint(jointID) == 0)
     return;
 
-  AnimationHandle handle = PluginFunctions::skeletonObject(_skeletonObj)->skeletonNode()->activePose();
-
   Skeleton::Pose* pose = activePose(PluginFunctions::skeletonObject(_skeletonObj));
+
+  if(!pose) return;
 
   ACG::Vec3d newPos = pose->globalTranslation( jointID );
 
