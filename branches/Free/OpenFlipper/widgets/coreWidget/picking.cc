@@ -228,10 +228,27 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
 
         pickToolBarExternal_ = _tool;
 
-        // size
-        pickToolBarExternal_->setOrientation(Qt::Vertical);
-        pickToolBarExternal_->adjustSize();
-        addToolBar(Qt::LeftToolBarArea,_tool);
+        // Check whether this toolbar has been displayed before
+        if(registeredToolbars_.count(_tool) == 0) {
+
+          /*
+           * This code makes sure that the orientation and size
+           * of a toolbar is only set once (the first time it is added).
+           * In some cases, the user wants to move the toolbar somewhere
+           * else and thus this check makes sure that it does not
+           * loose its position and orientation after a pickmode change.
+           */
+
+          // Adjust its size and orientation
+          pickToolBarExternal_->setOrientation(Qt::Vertical);
+          pickToolBarExternal_->adjustSize();
+
+          addToolBar(Qt::LeftToolBarArea,_tool);
+
+          // Add to registered toolbars
+          registeredToolbars_.insert(_tool);
+        }
+
         _tool->show();
       }
     } else {
@@ -252,9 +269,7 @@ void CoreWidget::hidePickToolBar() {
   // if a toolbar is in the global scene, we remove it here.
   if ( pickToolBarExternal_ != 0 ) {
     pickToolBarExternal_->hide();
-    removeToolBar(pickToolBarExternal_);
-    pickToolBarExternal_->setParent(0);
-    pickToolBarExternal_ = 0;
+    pickToolBarExternal_ = NULL;
   }
 
 
