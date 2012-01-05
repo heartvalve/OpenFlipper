@@ -348,7 +348,7 @@ void SkeletonEditingPlugin::transformJoint(int _objectId, int _jointId,
          * Change translation of root joint.
          */
 
-        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), true);
+        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), !transformChildJoints_);
 
       } else {
 
@@ -405,7 +405,7 @@ void SkeletonEditingPlugin::transformJoint(int _objectId, int _jointId,
         }
 
         // translate the joint
-        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), true);
+        transformer.translateJoint(joint, ACG::Vec3d(_matrix(0, 3), _matrix(1, 3), _matrix(2, 3)), !transformChildJoints_);
 
         // get translated parent axis
         transParentAxis = activePose->localTranslation(_jointId);
