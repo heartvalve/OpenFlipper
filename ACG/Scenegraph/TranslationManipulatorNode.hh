@@ -97,6 +97,7 @@ public:
    *  - Place:               --
    */
   enum ManipulatorMode {
+    Rotation,
     TranslationRotation,
     LocalRotation,
     Resize,
