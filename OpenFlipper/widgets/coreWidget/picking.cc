@@ -184,7 +184,7 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
       // Hide all picking toolbars
       hidePickToolBar();
 
-      if ( OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",true).toBool() ) {
+      if ( OpenFlipperSettings().value("Core/Gui/ToolBars/PickToolbarInScene",false).toBool() ) {
 
         // Try to find toolbar in local map ( if it is in the gl scene
         PickToolBarMap::iterator ret = curPickingToolbarItems_.find(_tool);
