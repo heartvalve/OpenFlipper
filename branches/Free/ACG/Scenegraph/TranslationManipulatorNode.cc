@@ -802,7 +802,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       }
 
       // hit origin ?
-      if (mode_ != LocalRotation)
+      if ((mode_ != LocalRotation) && (mode_ != Rotation))
         element_[Origin].clicked_ = hitSphere(_state, newPoint2D);
       else
         element_[Origin].clicked_ = false;
@@ -888,7 +888,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       if (!(element_[Origin].clicked_ || any_top_clicked_ || any_axis_clicked_ || outer_ring_clicked_)) {
         // over origin ?
-        if (mode_ != LocalRotation)
+        if ((mode_ != LocalRotation) && (mode_ != Rotation))
           element_[Origin].over_ = hitSphere(_state, newPoint2D);
         else
           element_[Origin].over_ = false;
@@ -936,6 +936,12 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // set action for the different modes
       switch (mode_) {
+        case Rotation:
+          for (i = 0; i < 3; i++) {
+            rot[i] = element_[XTop + i].clicked_ || element_[XRing + i].clicked_;
+            trans[i] = false;
+          }
+          break;
         case TranslationRotation:
           for (i = 0; i < 3; i++) {
             rot[i] = element_[XTop + i].clicked_ || element_[XRing + i].clicked_;
