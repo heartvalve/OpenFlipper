@@ -61,6 +61,7 @@
 #include <ACG/Math/VectorT.hh>
 
 #include <vector>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 
 //== CLASS DEFINITION ============================================
