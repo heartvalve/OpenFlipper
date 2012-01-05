@@ -70,7 +70,6 @@ DataType  FileSKLPlugin::supportedType() {
   return type;
 }
 
-
 template<typename Skeleton>
 bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 {
@@ -125,11 +124,13 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
     // how many child nodes
     unsigned int nChildren;
     in >> nChildren;
+
     for(unsigned int j = 0; j < nChildren; ++j)
     {
       // remember to attach this child joint once its being load
       unsigned int idChild;
       in >> idChild;
+
       parents[idChild] = pJoint;
     }
   }
@@ -140,30 +141,34 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
       num_anim++;
 
       // Test whether animation name is provided
-      int pos = in.tellg();
       std::string identifier;
       in >> identifier;
       std::string animationName = (QString("Animation") + QString::number(num_anim)).toStdString();
-    
+
+	  //read animation
+      unsigned int frameCount = 0;
+	  
+
       if(identifier == "animation") {
           std::getline(in, animationName);
           // Trim string
           animationName = QString(animationName.c_str()).trimmed().toStdString();
+
+		  in >> frameCount;
       } else {
-          in.seekg(pos);
+
+		  istringstream tmp(identifier);
+		  tmp >> frameCount;
+
       }
-    
-      //read animation
-      unsigned int frameCount = 0;
-      in >> frameCount;
-      
+
       if ( frameCount > 0 ){
 
         FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(_pSkeleton, frameCount);
         AnimationHandle animHandle = _pSkeleton->addAnimation(animationName, animation);
 
         for (unsigned int k = 0; k < frameCount; k++){
-        
+
           animHandle.setFrame(k);
           typename Skeleton::Pose* pose = _pSkeleton->pose( animHandle );
 
