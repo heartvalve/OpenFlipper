@@ -58,6 +58,8 @@
 
 //== INCLUDES =================================================================
 
+#include <set>
+
 #include "OpenFlipper/common/Types.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
@@ -673,6 +675,9 @@ public:
 
     /// Extra toolbar not in scene for picking
     QToolBar* pickToolBarExternal_;
+
+    /// Store all toolbars that once have been registered
+    std::set<QToolBar*> registeredToolbars_;
 
     /// Cursor handling
     CursorPainter* cursorPainter_;
