@@ -1017,7 +1017,6 @@ void SkeletonT<PointT>::updateFromGlobal(unsigned int _idJoint)
 template<typename PointT>
 void SkeletonT<PointT>::insertJoint(typename SkeletonT<PointT>::Joint *_pChild, typename SkeletonT<PointT>::Joint *_pInsert)
 {
-	std::size_t i = 0;
 	if (!_pChild || !_pChild->parent() || !_pInsert)
 		return;
 
