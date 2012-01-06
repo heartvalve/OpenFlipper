@@ -113,7 +113,7 @@ public:
     X_AXIS   = 1,
     Y_AXIS   = 1 << 1,
     Z_AXIS   = 1 << 2,
-    ALL_AXIS = X_AXIS | Y_AXIS | Z_AXIS,
+    ALL_AXIS = X_AXIS | Y_AXIS | Z_AXIS
   };
 
   /// Default constructor.
