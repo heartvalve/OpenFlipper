@@ -392,7 +392,7 @@ public:
   * @return pointer to the first element of the picking buffer
   */
   ACG::Vec4uc * pickVertexColorBuffer(){
-    if ( pickVertColBuf_.size() >0 )
+    if ( !pickVertColBuf_.empty() )
       return &(pickVertColBuf_)[0];
     else {
       std::cerr << "Illegal request to pickVertexColorBuffer when buffer is empty!" << std::endl;
@@ -409,7 +409,7 @@ public:
   * @return pointer to the first element of the picking buffer
   */
   ACG::Vec3f * pickVertexBuffer(){
-    if ( pickVertBuf_.size() >0 )
+    if ( !pickVertBuf_.empty() )
       return &(pickVertBuf_)[0];
     else {
       std::cerr << "Illegal request to pickVertexBuffer when buffer is empty!" << std::endl;
@@ -448,7 +448,7 @@ public:
   * @return pointer to the first element of the picking buffer
   */
   ACG::Vec4uc * pickEdgeColorBuffer(){
-    if ( pickEdgeBuf_.size() >0 )
+    if ( !pickEdgeBuf_.empty() )
       return &(pickEdgeBuf_)[0];
     else {
       std::cerr << "Illegal request to pickEdgeColorBuffer when buffer is empty!" << std::endl;
@@ -479,7 +479,7 @@ public:
   * @return pointer to the per face picking color buffer
   */
   ACG::Vec4uc * pickFaceColorBuffer(){
-    if ( pickFaceColBuf_.size() >0 )
+    if ( !pickFaceColBuf_.empty() )
       return &(pickFaceColBuf_)[0];
     else {
       std::cerr << "Illegal request to pickFaceColorBuffer when buffer is empty!" << std::endl;
@@ -496,7 +496,7 @@ public:
     * @return pointer to the first element of the picking buffer
     */
   ACG::Vec3f * pickFaceVertexBuffer(){
-    if ( pickFaceVertexBuf_.size() >0 )
+    if ( !pickFaceVertexBuf_.empty() )
       return &(pickFaceVertexBuf_)[0];
     else {
       std::cerr << "Illegal request to pickFaceVertexBuffer when buffer is empty!" << std::endl;
@@ -529,7 +529,7 @@ public:
   * @return Pointer to the first element of the picking buffer
   */
   ACG::Vec4uc * pickAnyColorBuffer(){
-    if ( pickAnyBuf_.size() >0 )
+    if ( !pickAnyBuf_.empty() )
       return &(pickAnyBuf_)[0];
     else {
       std::cerr << "Illegal request to pickAnyColorBuffer when buffer is empty!" << std::endl;
