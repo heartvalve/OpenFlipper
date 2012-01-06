@@ -155,7 +155,7 @@ QtExaminerViewer::viewMouseEvent(QMouseEvent* _event)
              (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
           return;
 
-        double value_x, value_y;
+        double value_y;
         Vec3d  newPoint3D;
         bool   newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D );
 
@@ -189,6 +189,7 @@ QtExaminerViewer::viewMouseEvent(QMouseEvent* _event)
         // move in x,y direction
         else if (_event->buttons() & Qt::MidButton)
         {
+          double value_x;
           value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
           value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
           translate( Vec3d(value_x  * factor , -value_y  * factor , 0.0) );
@@ -262,61 +263,52 @@ QtExaminerViewer::viewMouseEvent(QMouseEvent* _event)
 void
 QtExaminerViewer::lightMouseEvent(QMouseEvent* _event)
 {
-  switch (_event->type())
-  {
-    case QEvent::MouseButtonPress:
-    {
-      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_=_event->pos(),
-					  lastPoint3D_ );
+  switch (_event->type()) {
+    case QEvent::MouseButtonPress: {
+      lastPoint_hitSphere_ = mapToSphere(lastPoint2D_ = _event->pos(), lastPoint3D_);
       isRotating_ = true;
       timer_->stop();
       break;
     }
 
+    case QEvent::MouseMove: {
 
-    case QEvent::MouseMove:
-    {
       // rotate lights
-      if (_event->buttons() & Qt::LeftButton)
-      {
-	QPoint newPoint2D = _event->pos();
+      if (_event->buttons() & Qt::LeftButton) {
+        QPoint newPoint2D = _event->pos();
 
-	if ( (newPoint2D.x()<0) || (newPoint2D.x() > (int)glWidth()) ||
-	     (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
-	  return;
+        if ((newPoint2D.x() < 0) || (newPoint2D.x() > (int) glWidth()) || (newPoint2D.y() < 0)
+            || (newPoint2D.y() > (int) glHeight()))
+          return;
 
+        Vec3d newPoint3D;
+        bool newPoint_hitSphere = mapToSphere(newPoint2D, newPoint3D);
 
-	Vec3d  newPoint3D;
-	bool   newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D );
+        makeCurrent();
 
-	makeCurrent();
+        if (lastPoint_hitSphere_) {
+          Vec3d axis(1.0, 0.0, 0.0);
+          double angle(0.0);
 
-	Vec3d axis(1.0,0.0,0.0);
-	double angle(0.0);
+          if ((newPoint_hitSphere = mapToSphere(newPoint2D, newPoint3D))) {
+            axis = lastPoint3D_ % newPoint3D;
+            double cos_angle = (lastPoint3D_ | newPoint3D);
+            if (fabs(cos_angle) < 1.0) {
+              angle = acos(cos_angle) * 180.0 / M_PI;
+              angle *= 2.0;
+            }
+          }
+          rotate_lights(axis, angle);
+        }
 
-	if ( lastPoint_hitSphere_ )
-	{
-	  if ( ( newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D ) ) )
-	  {
-	    axis = lastPoint3D_ % newPoint3D;
-	    double cos_angle = ( lastPoint3D_ | newPoint3D );
-	    if ( fabs(cos_angle) < 1.0 ) {
-	      angle = acos( cos_angle ) * 180.0 / M_PI;
-	      angle *= 2.0;
-	    }
-	  }
-	  rotate_lights(axis, angle);
-	}
+        lastPoint2D_ = newPoint2D;
+        lastPoint3D_ = newPoint3D;
+        lastPoint_hitSphere_ = newPoint_hitSphere;
 
-	lastPoint2D_ = newPoint2D;
-	lastPoint3D_ = newPoint3D;
-	lastPoint_hitSphere_ = newPoint_hitSphere;
-
-	updateGL();
+        updateGL();
       }
       break;
     }
-
 
     default: // avoid warning
       break;

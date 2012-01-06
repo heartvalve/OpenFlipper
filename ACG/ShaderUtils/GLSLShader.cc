@@ -428,7 +428,7 @@ namespace GLSL {
     PtrVertexShader vertexShader = 0;
     StringList sourceVertex = loadShader(name);
 
-    if (sourceVertex.size() != 0) {
+    if (!sourceVertex.empty() ) {
       vertexShader = GLSL::PtrVertexShader(new GLSL::VertexShader());
       vertexShader->setSource(sourceVertex);
       vertexShader->compile();
@@ -442,7 +442,7 @@ namespace GLSL {
     PtrFragmentShader fragmentShader = 0;
     StringList sourceVertex = loadShader(name);
 
-    if (sourceVertex.size() != 0) {
+    if ( !sourceVertex.empty() ) {
       fragmentShader = GLSL::PtrFragmentShader(new GLSL::FragmentShader());
       fragmentShader->setSource(sourceVertex);
       fragmentShader->compile();
@@ -456,7 +456,7 @@ namespace GLSL {
     PtrGeometryShader geometryShader = 0;
     StringList sourceVertex = loadShader(name);
 
-    if (sourceVertex.size() != 0) {
+    if (!sourceVertex.empty()) {
       geometryShader = GLSL::PtrGeometryShader(new GLSL::GeometryShader());
       geometryShader->setSource(sourceVertex);
       geometryShader->compile();
