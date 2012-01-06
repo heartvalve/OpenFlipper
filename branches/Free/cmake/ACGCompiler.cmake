@@ -84,8 +84,8 @@ if (UNIX)
   # Build/Release Defines
   ################################################################################
   IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-DDEBUG" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-DNDEBUG" )
+    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-DDEBUG -Wall -Wextra -Wno-long-long -Wunused -Wuninitialized" )
+    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-DNDEBUG -Wall -Wextra -Wno-long-long -Wunused -Wuninitialized" )
     list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-DDEBUG" )    
     
     list(APPEND ADDITIONAL_C_DEBUG_FLAGS            "-DDEBUG" )
