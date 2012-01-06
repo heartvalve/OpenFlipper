@@ -88,6 +88,29 @@ void addRecentFile(QString _file, DataType _type) {
   OpenFlipperSettings().setValue("Core/File/RecentTypes", recentTypes); 
 }
 
+void rememberRecentItem(const QString &propName, const QString &itemName, const int RECENT_ITEMS_MAX_SIZE) {
+    // Read setting.
+    QStringList recentItems = OpenFlipperSettings().value(propName, QStringList()).toStringList();
+
+    // If file already on list, remove it (so it appears on top, eventually).
+    int position = recentItems.indexOf(QRegExp(QRegExp::escape(itemName)));
+    if (position != -1) recentItems.removeAt(position);
+
+    // Truncate list if too long.
+    if (recentItems.size() >= RECENT_ITEMS_MAX_SIZE) recentItems.removeLast();
+
+    // Add new file to front.
+    recentItems.push_front(itemName);
+
+    // Write back setting.
+    OpenFlipperSettings().setValue(propName, recentItems);
+}
+
+QStringList getRecentItems(const QString &propName) {
+    return OpenFlipperSettings().value(propName, QStringList()).toStringList();
+}
+
+
 }
 }
 

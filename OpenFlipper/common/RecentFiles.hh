@@ -75,6 +75,21 @@ namespace Options {
   /// Add a file to the recent files list ( removes one, if list grows to larger then maxRecent )
   DLLEXPORT
   void addRecentFile(QString _file, DataType _type);
+
+  /**
+   * Bookkeeping helper for a list of recent items.
+   *
+   * Usage example:
+   * OpenFlipper::Options::rememberRecentItem(QString::fromUtf8("Plugin-MIQParameterize/File/RecentGurobiEnvironmentFiles"), file);
+   */
+  DLLEXPORT
+  void rememberRecentItem(const QString &propName, const QString &itemName, const int RECENT_ITEMS_MAX_SIZE = 10);
+
+  /**
+   * Bookkeeping helper for a list of recent items.
+   */
+  DLLEXPORT
+  QStringList getRecentItems(const QString &propName);
     
 /** @} */      
   
