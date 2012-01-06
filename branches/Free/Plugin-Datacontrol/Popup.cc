@@ -668,11 +668,10 @@ void DataControlPlugin::slotZoomTo(){
       //zoom to object
       BaseObjectData* obj = dynamic_cast< BaseObjectData* >(item);
 
-      if ( !obj->visible() ){
-        obj->show();
-      }
-
       if (obj){
+
+        if ( !obj->visible() )
+          obj->show();
 
         ACG::Vec3d bbmin;
         ACG::Vec3d bbmax;
