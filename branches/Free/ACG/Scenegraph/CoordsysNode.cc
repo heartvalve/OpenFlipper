@@ -110,12 +110,8 @@ void
 CoordsysNode::
 drawCoordsys( GLState&  _state) {
 
-  const double topRadius    = 0.01;
   const double arrowLength  = 0.03;
-  const double bodyRadius   = 0.004;
   const double bodyLength   = 0.06;
-  const int slices          = 10;
-  const int stacks          = 10;
   const double sphereRadius = 0.01;
 
 
@@ -173,12 +169,8 @@ drawCoordsys( GLState&  _state) {
 void
 CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
-  const double topRadius    = 0.01;
   const double arrowLength  = 0.03;
-  const double bodyRadius   = 0.004;
   const double bodyLength   = 0.06;
-  const int slices          = 10;
-  const int stacks          = 10;
   const double sphereRadius = 0.01;
 
   // Origin

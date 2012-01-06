@@ -96,7 +96,7 @@ void
 PointNode::
 draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
-  if (points_.size() == 0)
+  if (points_.empty())
     return;
   
   // points
