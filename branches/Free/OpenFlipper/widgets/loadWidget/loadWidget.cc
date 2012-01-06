@@ -197,8 +197,6 @@ void LoadWidget::loadFile(){
   //get selection
   QStringList files = selectedFiles();
 
-  bool success = false;
-
   //get all extensions
   QStringList ext;
 
@@ -264,7 +262,6 @@ void LoadWidget::loadFile(){
     if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() ){
 
       emit load(filename, pluginForExtension_[ fi.suffix() ]);
-      success = true;
     }
   }
 }
@@ -505,7 +502,7 @@ bool LoadWidget::validFilename() {
 
 void LoadWidget::accept() {
     
-  if( !loadMode_ | validFilename() ) {
+  if( (!loadMode_) || validFilename() ) {
     
     if ( loadMode_ )
       loadFile();

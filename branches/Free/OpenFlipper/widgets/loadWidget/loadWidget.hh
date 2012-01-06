@@ -93,7 +93,5 @@ class LoadWidget : public QFileDialog
 
     std::map< QString, int > pluginForExtension_;
     
-    bool step_;
-    
 };
 
