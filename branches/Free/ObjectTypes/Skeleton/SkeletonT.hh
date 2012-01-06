@@ -186,7 +186,7 @@ public:
   void removeAnimation(const AnimationHandle &_hAni);
   void clearAnimations();
 
-  void replaceAnimationName(const std::string _strOld, const std::string _strNew) {
+  void replaceAnimationName(const std::string& _strOld, const std::string& _strNew) {
       std::map<std::string,unsigned int>::iterator f = names_.find(_strOld);
       if(f != names_.end()) {
           unsigned int c = f->second;
