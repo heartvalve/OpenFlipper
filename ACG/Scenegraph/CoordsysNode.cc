@@ -637,7 +637,7 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
 
 void CoordsysNode::boundingCircle(std::vector<Vec2f> &_in, Vec2f &_center, float &_radius)
 {
-  if (_in.size () == 0)
+  if (_in.empty())
     return;
   if (_in.size () < 2)
   {
