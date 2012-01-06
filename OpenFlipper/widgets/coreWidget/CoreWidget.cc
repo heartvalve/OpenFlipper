@@ -673,6 +673,8 @@ CoreWidget::toggleFullscreen() {
       //show the statusbar
       statusBar()->show();
 
+      break;
+
   }
 
   fullscreenState_ = (fullscreenState_ + 1) % 3;

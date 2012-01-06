@@ -262,7 +262,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   switch ( OpenFlipperSettings().value("Core/Toolbar/iconSize",0).toInt() ){
     case 1  : iconSmall->setChecked(true); break;
     case 2  : iconNormal->setChecked(true); break;
-    default : iconDefault->setChecked(true);
+    default : iconDefault->setChecked(true); break;
   }
   
   loggerHidden->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden);
