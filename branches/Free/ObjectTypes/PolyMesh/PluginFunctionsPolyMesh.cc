@@ -68,7 +68,7 @@ bool getSourceMeshes( std::vector<PolyMesh*>& _meshes  ) {
     _meshes.push_back ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() );
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
@@ -81,7 +81,7 @@ bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
       _meshes.push_back ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() );
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 bool getObject(  int _identifier , PolyMeshObject*& _object ) {

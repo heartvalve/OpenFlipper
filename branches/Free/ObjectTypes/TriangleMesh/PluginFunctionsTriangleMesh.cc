@@ -65,7 +65,7 @@ bool getSourceMeshes( std::vector<TriMesh*>& _meshes  ) {
     _meshes.push_back ( dynamic_cast< TriMeshObject* >( *o_it )->mesh() );
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 bool getTargetMeshes( std::vector<TriMesh*>& _meshes  ) {
@@ -78,7 +78,7 @@ bool getTargetMeshes( std::vector<TriMesh*>& _meshes  ) {
       _meshes.push_back ( dynamic_cast< TriMeshObject* >( *o_it )->mesh() );
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 
