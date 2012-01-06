@@ -602,7 +602,7 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
   std::vector< BaseObject* > groups;
 
   // Get all groups from the tree
-  while ( children.size() > 0 ) {
+  while ( ! children.empty() ) {
     BaseObject* item = children.front();
     children.pop();
 
