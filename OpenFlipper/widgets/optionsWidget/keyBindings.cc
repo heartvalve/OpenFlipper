@@ -258,7 +258,6 @@ void OptionsWidget::initKeyTree(){
     //get the default settings
     QString               description;
     bool                  multiUse;
-    bool                  slot;
     int                   defKey;
     Qt::KeyboardModifiers defModi;
 
@@ -266,7 +265,6 @@ void OptionsWidget::initKeyTree(){
 
       description = coreKeys_[bindingID].description;
       multiUse = coreKeys_[bindingID].multiUse;
-      slot = coreKeys_[bindingID].slot;
       defKey = coreKeys_[bindingID].key;
       defModi = coreKeys_[bindingID].modifiers;
 
@@ -274,7 +272,6 @@ void OptionsWidget::initKeyTree(){
 
       description = plugins_[i].keys[bindingID].description;
       multiUse = plugins_[i].keys[bindingID].multiUse;
-      slot = plugins_[i].keys[bindingID].slot;
       defKey = plugins_[i].keys[bindingID].key;
       defModi = plugins_[i].keys[bindingID].modifiers;
     }
