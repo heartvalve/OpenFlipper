@@ -70,9 +70,14 @@ std::map<int, GlutViewer*>  GlutViewer::windows__;
 //-----------------------------------------------------------------------------
 
 
-GlutViewer::
-GlutViewer(const char* _title, int _width, int _height)
-  : width_(_width), height_(_height), fullscreen_(false)
+GlutViewer::GlutViewer(const char* _title, int _width, int _height) :
+        width_(_width),
+        height_(_height),
+        fullscreen_(false),
+        bak_left_(0),
+        bak_top_(0),
+        bak_width_(0),
+        bak_height_(0)
 {
   // create window
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE | GLUT_ALPHA);
@@ -222,31 +227,24 @@ void GlutViewer::idle(void) {
 
 void GlutViewer::keyboard(int key, int /* x */ , int /* y */ ) 
 {
-  switch (key)
-  {
-    case 27:  
-    {
-      exit(0); 
+  switch (key) {
+    case 27: {
+      exit(0);
       break;
     }
 
-
-    case GLUT_KEY_F12: 
-    {
-      if (!fullscreen_) 
-      {
-	bak_left_   = glutGet(GLUT_WINDOW_X);
-	bak_top_    = glutGet(GLUT_WINDOW_Y);
-	bak_width_  = glutGet(GLUT_WINDOW_WIDTH);
-	bak_height_ = glutGet(GLUT_WINDOW_HEIGHT);
-	glutFullScreen();
-	fullscreen_ = true;
-      }
-      else
-      {
-	glutReshapeWindow(bak_width_, bak_height_);
-	glutPositionWindow(bak_left_, bak_top_);
-	fullscreen_ = false;
+    case GLUT_KEY_F12: {
+      if (!fullscreen_) {
+        bak_left_ = glutGet(GLUT_WINDOW_X);
+        bak_top_ = glutGet(GLUT_WINDOW_Y);
+        bak_width_ = glutGet(GLUT_WINDOW_WIDTH);
+        bak_height_ = glutGet(GLUT_WINDOW_HEIGHT);
+        glutFullScreen();
+        fullscreen_ = true;
+      } else {
+        glutReshapeWindow(bak_width_, bak_height_);
+        glutPositionWindow(bak_left_, bak_top_);
+        fullscreen_ = false;
       }
       break;
     }
