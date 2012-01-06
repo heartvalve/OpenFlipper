@@ -322,7 +322,7 @@ void BackupPlugin::slotCreateBackup( IdList _objectids , QString _name, std::vec
   }
 
   //add global backup
-  if ( groupIds.size() > 0 ){
+  if ( ! groupIds.size().empty() ){
     
     GroupBackup* backup = new GroupBackup(groupIds, _name);
     globalBackup_.storeBackup( backup );
