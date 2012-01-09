@@ -1,18 +1,30 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 12937 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13286 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
          - DrawModes
-             - Reworked dynamic drawMode interface         
+             - Reworked dynamic drawMode interface         i
          - Geometry
              - Fixed aspect ratio function
+             - compute the rotation axis as wellas the rotation angle of two given vectors
+         - GL
+             - Added GLPrimitives class to get rid of glut
+         - Math
+             - Added operator* for matrix * scalar multiplication, where each element of the matrix is multiplied with the scalar.
          - SceneGraph
+             - CoordsysNode
+                 - Rendering fix for colors of coordsys
              - MeshNode
                  - Don't texture edges, halfedges and points in meshnode
+                 - Fixed picking bug, not updating the buffers when switching between any and face picking
              - ShaderNode
                  - Return the available drawmodes based on the set shaders
+             - TranslationManipulatorNode
+                 - Make QtTranslationManipulatorNode active per default, since otherwise it is neglected when computing the scene's bounding box
+                 - Fixed set_direction for translation manipulator Node
+                 - Added functions to disable unused rotation parts of the manipulator
          - QtWidgets
              - Added ColorChooserButton with alpha channel display
              - Use new ColorChooserButton for QtMaterialDialog
@@ -23,23 +35,37 @@
              - Geometry Shader support
          - Utilities
              - Added ACG::ColorGenerator (For generating good reproducable colors)
+             - Halton Color generator
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
          - Rendering
              - Rendermanager/PostprocessorManager bugfix (crash when illegal viewer id -1 was used)
+             - Fixed bug in renderinfo not setting viewer to a renderer mode
          - Scripting
              - Added help function to print help about different objects (e.g. plugins with help("datacontrol") )
          - UI
              - Get rid of ugly frame rendering bug in SimpleViewer
+             - Do not reset picking toolbar's position and orientation each time it is shown.
      - <b>Interfaces</b>
+         - BaseInterface 
+             - Added Basinterface function to switch renderer
+             - Added function to get current renderer
          - FileInterface
              - Added getAllFileFilters signal to LoadSaveInterface. This signal was documented but in fact never implemented.
+             - Added two convenience functions for list of recent items bookkeeping. (rememberRecentItem,getRecentItems)
      - <b>ObjectTypes</b>
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
          - Skeleton
              - Draw root joint in orange
+             - Fixed non const function hiding draw modes for skeletons
+             - Additional PluginFunctions to get skeletons / skeletonObjects by id
+             - Add reference information to find a skeleton to a skin
+             - Introduced animation iterator
+             - insert joint function
+             - split joint function
+             - rename for animations
          - SplatCloud
              - Added new splat cloud object type
          - TriMeshObject
@@ -76,9 +102,13 @@
              - New plugin integrating a screen space ambient occlusion renderer
          - Smoother Plugin
              - Make Smoother scriptable
+         - Skeletal Animation
+             - Detach skin from skeleton if mesh is removed from scene.
          - SkeletonEditing
              - Don't add root joint twice when creating new skeletons
              - Basic inverse kinematics implementation
+             - When a joint is translated via the Plugin, its parent joint and itself are rotated now, such that their coordinate systems stay constant w.r.t the bone axis. 
+             - Automatically switch to depth peeling renderer when editing skeletons
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
@@ -89,10 +119,13 @@
      - <b>Testing</b>
          - Integrated basic testing framework
      - <b>Build System</b>
+         - Support Visual Studio 2010 and QT 4.8
          - Added option to allow in source builds (not recommended but it works)
          - Doxygen, don't warn if undocumented
          - Added Eigen3 finder
          - Fix problem with fixbundle on mac, where libraries with restrictive permissions did not get fixed properly
+         - Added code style template for eclipse
+         - Add option to for windows large memory support (enabled by default)
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
