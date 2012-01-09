@@ -56,12 +56,12 @@
 
 //== INCLUDES ====================================================
 
+
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <ACG/Math/VectorT.hh>
 
 #include <vector>
-#include <OpenFlipper/common/GlobalDefines.hh>
 
 
 //== CLASS DEFINITION ============================================
@@ -82,11 +82,13 @@ public:
 	typedef ACG::Vec3f  Normal;
 	typedef float       Pointsize;
 	typedef ACG::Vec3uc Color;
+	typedef bool        Selection;
 
 	typedef std::vector<Point>     PointVector;
 	typedef std::vector<Normal>    NormalVector;
 	typedef std::vector<Pointsize> PointsizeVector;
 	typedef std::vector<Color>     ColorVector;
+	typedef std::vector<Selection> SelectionVector;
 
 	//----------------------------------------------------------------
 
@@ -99,41 +101,63 @@ public:
 		normals_    ( _splatCloud.normals_     ), 
 		pointsizes_ ( _splatCloud.pointsizes_  ), 
 		colors_     ( _splatCloud.colors_      ), 
+		selections_ ( _splatCloud.selections_  ), 
 		translation_( _splatCloud.translation_ ), 
 		scaleFactor_( _splatCloud.scaleFactor_ ) 
 	{ }
 
 	// ---- data vectors ----
 
-	inline void clearPoints()     { points_.clear();     }
-	inline void clearNormals()    { normals_.clear();    }
-	inline void clearPointsizes() { pointsizes_.clear(); }
-	inline void clearColors()     { colors_.clear();     }
+	inline void clearPoints()     { points_     = PointVector();     }
+	inline void clearNormals()    { normals_    = NormalVector();    }
+	inline void clearPointsizes() { pointsizes_ = PointsizeVector(); }
+	inline void clearColors()     { colors_     = ColorVector();     }
+	inline void clearSelections() { selections_ = SelectionVector(); }
 
-	inline void clear() { clearPoints(); clearNormals(); clearPointsizes(); clearColors(); }
+	inline void clear() { clearPoints(); clearNormals(); clearPointsizes(); clearColors(); clearSelections(); }
 
 	inline void addPoint    ( const Point     &_point     ) { points_.push_back    ( _point     ); }
 	inline void addNormal   ( const Normal    &_normal    ) { normals_.push_back   ( _normal    ); }
 	inline void addPointsize( const Pointsize &_pointsize ) { pointsizes_.push_back( _pointsize ); }
 	inline void addColor    ( const Color     &_color     ) { colors_.push_back    ( _color     ); }
+	inline void addSelection( const Selection &_selection ) { selections_.push_back( _selection ); }
 
 	inline unsigned int numPoints()     const { return points_.size();     }
 	inline unsigned int numNormals()    const { return normals_.size();    }
 	inline unsigned int numPointsizes() const { return pointsizes_.size(); }
 	inline unsigned int numColors()     const { return colors_.size();     }
+	inline unsigned int numSelections() const { return selections_.size(); } /// *not* numSelected() ! use countSelected() for this
 
-	inline bool hasNormals()    const { return normals_.size()    == points_.size(); }
-	inline bool hasPointsizes() const { return pointsizes_.size() == points_.size(); }
-	inline bool hasColors()     const { return colors_.size()     == points_.size(); }
+	inline bool hasPoints()     const { return numPoints() > 0; }
+	inline bool hasNormals()    const { return hasPoints() && (numNormals()    == numPoints()); }
+	inline bool hasPointsizes() const { return hasPoints() && (numPointsizes() == numPoints()); }
+	inline bool hasColors()     const { return hasPoints() && (numColors()     == numPoints()); }
+	inline bool hasSelections() const { return hasPoints() && (numSelections() == numPoints()); }
+
+	inline void initNormals()    { if( !hasNormals()    ) normals_    = NormalVector   ( numPoints(), Normal(0.0f,0.0f,0.0f) ); }
+	inline void initPointsizes() { if( !hasPointsizes() ) pointsizes_ = PointsizeVector( numPoints(), Pointsize(0.0f)        ); }
+	inline void initColors()     { if( !hasColors()     ) colors_     = ColorVector    ( numPoints(), Color(0,0,0)           ); }
+	inline void initSelections() { if( !hasSelections() ) selections_ = SelectionVector( numPoints(), Selection(false)       ); }
 
 	inline       PointVector     &points()           { return points_;     }
 	inline       NormalVector    &normals()          { return normals_;    }
 	inline       PointsizeVector &pointsizes()       { return pointsizes_; }
 	inline       ColorVector     &colors()           { return colors_;     }
+	inline       SelectionVector &selections()       { return selections_; }
 	inline const PointVector     &points()     const { return points_;     }
 	inline const NormalVector    &normals()    const { return normals_;    }
 	inline const PointsizeVector &pointsizes() const { return pointsizes_; }
 	inline const ColorVector     &colors()     const { return colors_;     }
+	inline const SelectionVector &selections() const { return selections_; }
+
+	unsigned int countSelected() const;
+
+	void setSelections( const Selection &_selection );
+	void setSphereSelections( const Point &_center, float _sqRadius, const Selection &_selection );
+	void invertSelections();
+
+	bool deleteSelected();
+	bool colorizeSelected( const Color &_color );
 
 	// ---- translation and scale ----
 
@@ -152,6 +176,7 @@ private:
 	NormalVector    normals_;
 	PointsizeVector pointsizes_;
 	ColorVector     colors_;
+	SelectionVector selections_;
 
 	// ---- translation and scale ----
 	Point translation_;

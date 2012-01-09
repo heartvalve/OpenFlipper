@@ -38,8 +38,8 @@ void main()
         //   - scale so we do not have to do this in fragment-shader for every fragment
         ecScaledNormal = ecNormal / dot( ecCenter, ecNormal );
 
-        // calculate pointsize (gl_Color.a is the pointsize in model-coordinates)
-        float ecPointsize  = modelviewScale * pointsizeScale * gl_Color.a;
+        // calculate pointsize (gl_MultiTexCoord0.x is the pointsize in model-coordinates)
+        float ecPointsize  = modelviewScale * pointsizeScale * gl_MultiTexCoord0.x;
 
         // pass squared radius (= (1/2 pointsize)^2) in eye-coordinates to fragment-shader
         ecSquaredRadius = 0.25 * (ecPointsize * ecPointsize);
@@ -50,13 +50,22 @@ void main()
         //   - multiply by viewportScaleFov_y to get window coordinates
         gl_PointSize = ecPointsize * viewportScaleFov_y / (-normalize( ecCenter ).z * gl_Position.w);
 
-////////////////////////////////////////////////////////////////////
-/**/                                                            /**/
-/**/    // pass color to fragment-shader                        /**/
-/**/    gl_FrontColor.rgb = gl_Color.rgb;                       /**/
-/**/    gl_FrontColor.a   = 1.0;                                /**/
-/**/                                                            /**/
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/**/                                                      /**/
+/**/    // pass secondary color to fragment-shader        /**/
+/**/    // (if selected, pass selection-color instead)    /**/
+/**/    if( gl_MultiTexCoord1.x != 0.0 )                  /**/
+/**/    {                                                 /**/
+/**/        gl_FrontColor = vec4( 1.0, 0.0, 0.0, 1.0 );   /**/
+/**/    }                                                 /**/
+/**/    else                                              /**/
+/**/    {                                                 /**/
+/**/        gl_FrontColor.rgb = gl_SecondaryColor.rgb;    /**/
+/**/        gl_FrontColor.a   = 1.0;                      /**/
+/**/                                                      /**/
+/**/    }                                                 /**/
+/**/                                                      /**/
+//////////////////////////////////////////////////////////////
 
     }
 }

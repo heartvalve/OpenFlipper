@@ -100,6 +100,15 @@ DLLEXPORT
 SplatCloudNode *splatCloudNode( BaseObjectData *_object );
 
 
+/** \brief Get a SplatCloud from an object.
+ *
+ * @param _object The object should be of type BaseDataObject. If the content is a SplatCloud, a
+ *                SplatCloud will be returned. Otherwise a NULL pointer is returned.
+ */
+DLLEXPORT
+SplatCloud *splatCloud( BaseObjectData *_object );
+
+
 /** \brief Cast an BaseObject to a SplatCloudObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a SplatCloud, a

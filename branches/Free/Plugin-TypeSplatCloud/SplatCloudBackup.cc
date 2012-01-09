@@ -46,26 +46,37 @@
 #include "SplatCloudBackup.hh"
 
 
+//== DEFINES =====================================================
+
+
+//#define REPORT_BACKUP
+
+
 //== IMPLEMENTATION ==============================================
 
 
 SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type ) : 
 	BaseBackup       ( _object, _name, _type ), 
 	splatCloudObject_( _object ), 
+	pointsBackup_    ( 0 ), 
 	normalsBackup_   ( 0 ), 
-	pointsizesBackup_( 0 ) 
+	pointsizesBackup_( 0 ), 
+	colorsBackup_    ( 0 ), 
+	selectionsBackup_( 0 ) 
 {
-//	std::cerr << "Create SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	ifdef REPORT_BACKUP
+	std::cerr << "Create SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	endif
 
 	const SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
 
 	if( splatCloud )
 	{
-		if( _type == updateType( "Normals" ) || _type == UPDATE_ALL )
-			normalsBackup_ = new SplatCloud::NormalVector( splatCloud->normals() );
-
-		else if ( _type == updateType( "Pointsizes" ) || _type == UPDATE_ALL )
-			pointsizesBackup_ = new SplatCloud::PointsizeVector( splatCloud->pointsizes() );
+		if( _type.contains( UPDATE_GEOMETRY          ) ) pointsBackup_     = new SplatCloud::PointVector    ( splatCloud->points()     );
+		if( _type.contains( updateType("Normals")    ) ) normalsBackup_    = new SplatCloud::NormalVector   ( splatCloud->normals()    );
+		if( _type.contains( updateType("Pointsizes") ) ) pointsizesBackup_ = new SplatCloud::PointsizeVector( splatCloud->pointsizes() );
+		if( _type.contains( UPDATE_COLOR             ) ) colorsBackup_     = new SplatCloud::ColorVector    ( splatCloud->colors()     );
+		if( _type.contains( UPDATE_SELECTION         ) ) selectionsBackup_ = new SplatCloud::SelectionVector( splatCloud->selections() );
 	}
 }
 
@@ -75,10 +86,15 @@ SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, Up
 
 SplatCloudBackup::~SplatCloudBackup()
 {
-//	std::cerr << "Delete SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	ifdef REPORT_BACKUP
+	std::cerr << "Delete SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	endif
 
+	delete pointsBackup_;
 	delete normalsBackup_;
 	delete pointsizesBackup_;
+	delete colorsBackup_;
+	delete selectionsBackup_;
 }
 
 
@@ -90,16 +106,18 @@ void SplatCloudBackup::apply()
 	// first apply the baseBackup
 	BaseBackup::apply();
 
-//	std::cerr << "Apply SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	ifdef REPORT_BACKUP
+	std::cerr << "Apply SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
+#	endif
 
 	SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
 
 	if( splatCloud )
 	{
-		if( normalsBackup_ )
-			splatCloud->normals() = *normalsBackup_;
-
-		if( pointsizesBackup_ )
-			splatCloud->pointsizes() = *pointsizesBackup_;
+		if( pointsBackup_     ) splatCloud->points()     = *pointsBackup_;
+		if( normalsBackup_    ) splatCloud->normals()    = *normalsBackup_;
+		if( pointsizesBackup_ ) splatCloud->pointsizes() = *pointsizesBackup_;
+		if( colorsBackup_     ) splatCloud->colors()     = *colorsBackup_;
+		if( selectionsBackup_ ) splatCloud->selections() = *selectionsBackup_;
 	}
 }

@@ -56,10 +56,195 @@
 //== IMPLEMENTATION ==============================================
 
 
+unsigned int SplatCloud::countSelected() const
+{
+	unsigned int numSelected = 0;
+
+	SelectionVector::const_iterator selectionIter;
+	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
+	{
+		if( *selectionIter )
+			++numSelected;
+	}
+
+	return numSelected;
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloud::setSelections( const Selection &_selection )
+{
+	// select all entries...
+	SelectionVector::iterator selectionIter;
+	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
+		(*selectionIter) = _selection;
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloud::setSphereSelections( const Point &_center, float _sqRadius, const Selection &_selection )
+{
+	// set all selections within given radius from center
+	PointVector::const_iterator pointIter     = points_.begin();
+	SelectionVector::iterator   selectionIter = selections_.begin();
+	for( ; pointIter != points_.end(); ++pointIter, ++selectionIter )
+	{
+		const Point &point = *pointIter;
+
+		float dx = point[0] - _center[0];
+		float dy = point[1] - _center[1];
+		float dz = point[2] - _center[2];
+
+		if( (dx*dx + dy*dy + dz*dz) <= _sqRadius )
+			*selectionIter = _selection;
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloud::invertSelections()
+{
+	// invert all entries...
+	SelectionVector::iterator selectionIter;
+	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
+		(*selectionIter) = !(*selectionIter);
+}
+
+
+//----------------------------------------------------------------
+
+
+bool SplatCloud::deleteSelected()
+{
+	// count number of selected points
+	unsigned int numSelected = countSelected();
+
+	// if no point selected, abort
+	if( numSelected == 0 )
+		return false; // nothing has been modified
+
+	unsigned int newSize = numPoints() - numSelected;
+
+	bool hasNrm = hasNormals();
+	bool hasPS  = hasPointsizes();
+	bool hasCol = hasColors();
+	bool hasSel = hasSelections();
+
+	// create new (empty) data vectors
+	PointVector     newPoints;
+	NormalVector    newNormals;
+	PointsizeVector newPointsizes;
+	ColorVector     newColors;
+	SelectionVector newSelections;
+
+	// reserve memory/space if data vector(s) in use
+	/*        */ newPoints.reserve    ( newSize );
+	if( hasNrm ) newNormals.reserve   ( newSize );
+	if( hasPS  ) newPointsizes.reserve( newSize );
+	if( hasCol ) newColors.reserve    ( newSize );
+	if( hasSel ) newSelections.reserve( newSize );
+
+	PointVector::const_iterator     pointIter     = points_.begin();
+	NormalVector::const_iterator    normalIter    = normals_.begin();
+	PointsizeVector::const_iterator pointsizeIter = pointsizes_.begin();
+	ColorVector::const_iterator     colorIter     = colors_.begin();
+	SelectionVector::const_iterator selectionIter = selections_.begin();
+
+	// add old data entry to new data vector if point is *not* selected
+	while( pointIter != points_.end() )
+	{
+		bool unselected = !(*selectionIter);
+
+		{
+			if( unselected )
+				newPoints.push_back    ( *pointIter     );
+			++pointIter;
+		}
+
+		if( hasNrm )
+		{
+			if( unselected )
+				newNormals.push_back   ( *normalIter    );
+			++normalIter;
+		}
+
+		if( hasPS  )
+		{
+			if( unselected )
+				newPointsizes.push_back( *pointsizeIter );
+			++pointsizeIter;
+		}
+
+		if( hasCol )
+		{
+			if( unselected )
+				newColors.push_back    ( *colorIter     );
+			++colorIter;
+		}
+
+		if( hasSel )
+		{
+			if( unselected )
+				newSelections.push_back( *selectionIter );
+			++selectionIter;
+		}
+	}
+
+	// replace old data vectors by new ones (even when data vector was *not* in use, so new vector has the right size)
+	points_     = newPoints;
+	normals_    = newNormals;
+	pointsizes_ = newPointsizes;
+	colors_     = newColors;
+	selections_ = newSelections;
+
+	return true; // data has been modified
+}
+
+
+//----------------------------------------------------------------
+
+
+bool SplatCloud::colorizeSelected( const Color &_color )
+{
+	// if colors_ vector is *not* of the right size, resize
+	if( numColors() != numPoints() )
+		colors_.resize( numPoints(), Color(255,255,255) ); // initialize with white color
+
+	bool modified = false;
+
+	ColorVector::iterator     colorIter     = colors_.begin();
+	SelectionVector::iterator selectionIter = selections_.begin();
+
+	// delete all selected entries (from selections_ vector and as well from points_, normals_, pointsizes_ and colors_ vectors)
+	while( selectionIter != selections_.end() )
+	{
+		if( *selectionIter )
+		{
+			(*colorIter) = _color;
+			modified = true;
+		}
+
+		++colorIter;
+		++selectionIter;
+	}
+
+	return modified;
+}
+
+
+//----------------------------------------------------------------
+
+
 void SplatCloud::normalizeSize()
 {
 	// check if there is nothing to do
-	if( points_.size() == 0 )
+	if( !hasPoints() )
 		return;
 
 	// calculate center-of-gravety
@@ -76,7 +261,7 @@ void SplatCloud::normalizeSize()
 		cogZ += p[2];
 	}
 
-	float rcp_count = 1.0f / (float) points_.size();
+	float rcp_count = 1.0f / (float) numPoints();
 	cogX *= rcp_count;
 	cogY *= rcp_count;
 	cogZ *= rcp_count;
@@ -128,7 +313,7 @@ void SplatCloud::translate( const Point &_t )
 void SplatCloud::scale( float _s )
 {
 	// scale points (and pointsizes as well)
-	if( pointsizes_.size() == points_.size() )
+	if( hasPointsizes() )
 	{
 
 		PointsizeVector::iterator pointsizeIter = pointsizes_.begin();

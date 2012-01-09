@@ -5,8 +5,8 @@ varying vec3  ecCenter;
 varying vec3  ecScaledNormal;
 varying float ecSquaredRadius;
 
-uniform vec4 invViewportScale;
-uniform vec4 invViewportTransp;
+uniform vec4  invViewportScale;
+uniform vec4  invViewportTransp;
 uniform float viewportScale_z;
 uniform float viewportTransp_z;
 

@@ -21,13 +21,22 @@ void main()
         // output vertex in clip-coordinates
         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-////////////////////////////////////////////////////////////////////
-/**/                                                            /**/
-/**/    // pass color to fragment-shader                        /**/
-/**/    gl_FrontColor.rgb = gl_Color.rgb;                       /**/
-/**/    gl_FrontColor.a   = 1.0;                                /**/
-/**/                                                            /**/
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/**/                                                      /**/
+/**/    // pass secondary color to fragment-shader        /**/
+/**/    // (if selected, pass selection-color instead)    /**/
+/**/    if( gl_MultiTexCoord1.x != 0.0 )                  /**/
+/**/    {                                                 /**/
+/**/        gl_FrontColor = vec4( 1.0, 0.0, 0.0, 1.0 );   /**/
+/**/    }                                                 /**/
+/**/    else                                              /**/
+/**/    {                                                 /**/
+/**/        gl_FrontColor.rgb = gl_SecondaryColor.rgb;    /**/
+/**/        gl_FrontColor.a   = 1.0;                      /**/
+/**/                                                      /**/
+/**/    }                                                 /**/
+/**/                                                      /**/
+//////////////////////////////////////////////////////////////
 
     }
 }
