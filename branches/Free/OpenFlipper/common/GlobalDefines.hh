@@ -67,12 +67,12 @@
 #define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__ * 10)
 
 
-#if QT_VERSION >= 0x040800
+#if QT_VERSION > 0x040800
   #ifdef WIN32
-    #pragma message("Detected QT Version 4.8 or higher!")
+    #pragma message("Detected QT Version higher than 4.8!")
     #pragma message("OpenFlipper has not been tested with this QT Version.")
   #else
-    #warning Detected QT Version 4.8 or higher!
+    #warning Detected QT Version higher than 4.8!
     #warning OpenFlipper has not been tested with this QT Version.
   #endif
 #endif

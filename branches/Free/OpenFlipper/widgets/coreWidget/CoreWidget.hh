@@ -975,9 +975,6 @@ public:
 
   private:
 
-    void writeImageQPixmap(QPixmap* _pixmap, const QString _name) const;
-    void writeImageQImage(QImage* _image, const QString _name) const;
-
     // Store pointers to QFuture and QFutureWatcher
     std::map<QFutureWatcher<void>*,QFuture<void>*> watcher_garbage_;
 
