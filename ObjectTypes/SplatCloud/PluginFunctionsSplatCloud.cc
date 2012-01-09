@@ -123,6 +123,28 @@ SplatCloudNode *splatCloudNode( BaseObjectData *_object )
 //----------------------------------------------------------------
 
 
+SplatCloud *splatCloud( BaseObjectData *_object )
+{
+	if( !_object->dataType( DATA_SPLATCLOUD ) )
+		return 0;
+
+	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+
+	if ( object == 0 )
+	  return 0;
+
+	SplatCloudNode *node = object->splatCloudNode();
+
+	if( node == 0 )
+		return 0;
+
+	return node->splatCloud();
+}
+
+
+//----------------------------------------------------------------
+
+
 SplatCloudObject *splatCloudObject( BaseObjectData *_object )
 {
 	if( !_object->dataType( DATA_SPLATCLOUD ) )

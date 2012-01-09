@@ -580,8 +580,8 @@ void SplatCloudRenderingControlPlugin::slotToolboxRebuildVBOsButtonClicked()
 		// get scenegraph splatcloud-node
 		SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( *objIter );
 
-		// apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
-		splatCloudNode->invalidateVBO();
+		// rebuild the vertex-buffer-object the next time the node is drawn (or picked)
+        splatCloudNode->modifiedAll();
 
 		// emit signal that object has to be updated
 		emit updatedObject( objIter->id(), UPDATE_ALL );
@@ -763,8 +763,8 @@ void SplatCloudRenderingControlPlugin::slotContextRebuildVBOActionTriggered()
 	// if object is a SplatCloud...
 	if( splatCloudNode )
 	{
-		// apply update (make vertex-buffer-object invalid so it will be rebuilt the next time the node is drawn (or picked))
-		splatCloudNode->invalidateVBO();
+		// rebuild the vertex-buffer-object the next time the node is drawn (or picked)
+        splatCloudNode->modifiedAll();
 
 		// emit signal that object has to be updated
 		emit updatedObject( object->id(), UPDATE_ALL );

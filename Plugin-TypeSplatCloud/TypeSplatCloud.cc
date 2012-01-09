@@ -60,6 +60,12 @@
 #include <ACG/GL/GLState.hh>
 
 
+//== DEFINES =====================================================
+
+
+//#define REPORT_UPDATE_TYPE
+
+
 //== IMPLEMENTATION ==============================================
 
 
@@ -119,41 +125,10 @@ void TypeSplatCloudPlugin::slotViewChanged()
 	GLfloat VPt_z = z + VPs_z;
 
 	// calculate scaling factor of modelview_projection matrix
-//	ACG::GLMatrixd mvp = glstate.projection() * glstate.modelview();
-ACG::GLMatrixd mvp = glstate.projection();
-	const GLdouble &mvp0 = mvp(1,0);
-	const GLdouble &mvp1 = mvp(1,1);
-	const GLdouble &mvp2 = mvp(1,2);
-	double sqLength = mvp0*mvp0 + mvp1*mvp1 + mvp2*mvp2;
-//	GLfloat MVs = (GLfloat) ( (sqLength == 0.0) ? 1.0 : (1.0 / sqrt( sqLength )) );
-GLfloat MVs = (GLfloat) 1.0;
-
-//printf( "%f\n", MVs ); // FIXME: delete!
-
-/*
-// FIXME: delete!
-{
-printf( "\n" );
-printf( "\n" );
-const ACG::GLMatrixd &m = glstate.modelview();
-printf( "%f %f %f %f\n", m(0,0), m(0,1), m(0,2), m(0,3) );
-printf( "%f %f %f %f\n", m(1,0), m(1,1), m(1,2), m(1,3) );
-printf( "%f %f %f %f\n", m(2,0), m(2,1), m(2,2), m(2,3) );
-printf( "%f %f %f %f\n", m(3,0), m(3,1), m(3,2), m(3,3) );
-printf( "\n" );
-const ACG::GLMatrixd &p = glstate.projection();
-printf( "%f %f %f %f\n", p(0,0), p(0,1), p(0,2), p(0,3) );
-printf( "%f %f %f %f\n", p(1,0), p(1,1), p(1,2), p(1,3) );
-printf( "%f %f %f %f\n", p(2,0), p(2,1), p(2,2), p(2,3) );
-printf( "%f %f %f %f\n", p(3,0), p(3,1), p(3,2), p(3,3) );
-printf( "\n" );
-}
-*/
+	GLfloat MVs = 1.0f;
 
 	// calculate scale for pointsizes in eye-coordinates according to fovy and transformation to window-coordinates
 	GLfloat VPsFov_y = glstate.projection()(1,1) * (0.5f * h);
-
-//printf( "%f\n", VPsFov_y ); // FIXME: delete!
 
 	// for all splatcloud-objects...
 	PluginFunctions::ObjectIterator objIter( PluginFunctions::ALL_OBJECTS, DATA_SPLATCLOUD );
@@ -209,6 +184,85 @@ printf( "\n" );
 			dotsPickShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			dotsPickShader->disable();
 		}
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void TypeSplatCloudPlugin::slotObjectUpdated( int _objectId, const UpdateType _type )
+{
+	if( _objectId == -1 )
+		return;
+
+	BaseObjectData *object = 0;
+	PluginFunctions::getObject( _objectId, object );
+
+	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
+
+	if( splatCloudNode )
+	{
+
+		if( _type == UPDATE_ALL )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_ALL" << std::endl;
+			std::cout << std::endl;
+#			endif
+
+			splatCloudNode->modifiedAll();
+			return;
+		}
+
+		if( _type.contains( UPDATE_GEOMETRY ) )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_GEOMETRY" << std::endl;
+#			endif
+
+			splatCloudNode->modifiedPoints();
+		}
+
+		if( _type.contains( updateType("Normals") ) )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_Normals" << std::endl;
+#			endif
+
+			splatCloudNode->modifiedNormals();
+		}
+
+		if( _type.contains( updateType("Pointsizes") ) )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_Pointsizes" << std::endl;
+#			endif
+
+			splatCloudNode->modifiedPointsizes();
+		}
+
+		if( _type.contains( UPDATE_COLOR ) )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_COLOR" << std::endl;
+#			endif
+
+			splatCloudNode->modifiedColors();
+		}
+
+		if( _type.contains( UPDATE_SELECTION ) )
+		{
+#			ifdef REPORT_UPDATE_TYPE
+			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_SELECTION" << std::endl;
+#			endif
+
+			splatCloudNode->modifiedSelections();
+		}
+
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << std::endl;
+#		endif
 	}
 }
 
@@ -288,10 +342,13 @@ QString TypeSplatCloudPlugin::get_unique_name( SplatCloudObject *_object )
 //----------------------------------------------------------------
 
 
-void TypeSplatCloudPlugin::generateBackup( int _id, QString _name, UpdateType _type )
+void TypeSplatCloudPlugin::generateBackup( int _objectId, QString _name, UpdateType _type )
 {
+	if( _objectId == -1 )
+		return;
+
 	BaseObjectData *object = 0;
-	PluginFunctions::getObject( _id, object );
+	PluginFunctions::getObject( _objectId, object );
 
 	SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( object );
 
@@ -301,7 +358,9 @@ void TypeSplatCloudPlugin::generateBackup( int _id, QString _name, UpdateType _t
 		BackupData *backupData = 0;
 
 		if( object->hasObjectData( OBJECT_BACKUPS ) )
+		{
 			backupData = dynamic_cast<BackupData *>( object->objectData( OBJECT_BACKUPS ) );
+		}
 		else
 		{
 			// add backup data

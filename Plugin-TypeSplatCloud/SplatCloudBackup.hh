@@ -70,9 +70,13 @@ public:
 
 private:
 
-	SplatCloudObject            *splatCloudObject_;
+	SplatCloudObject *splatCloudObject_;
+
+	SplatCloud::PointVector     *pointsBackup_;
 	SplatCloud::NormalVector    *normalsBackup_;
 	SplatCloud::PointsizeVector *pointsizesBackup_;
+	SplatCloud::ColorVector     *colorsBackup_;
+	SplatCloud::SelectionVector *selectionsBackup_;
 };
 
 

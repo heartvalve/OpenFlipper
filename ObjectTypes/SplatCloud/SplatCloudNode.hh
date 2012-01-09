@@ -94,6 +94,7 @@ private:
 	typedef SplatCloud::Normal    Normal;
 	typedef SplatCloud::Pointsize Pointsize;
 	typedef SplatCloud::Color     Color;
+	typedef SplatCloud::Selection Selection;
 
 	//----------------------------------------------------------------
 
@@ -108,9 +109,7 @@ public:
 	ACG_CLASSNAME( SplatCloudNode );
 
 	/// return available draw modes
-	inline DrawModes::DrawMode availableDrawModes() const {
-	  return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_;
-	}
+	inline DrawModes::DrawMode availableDrawModes() const { return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_; }
 
 	/// update bounding box
 	void boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax );
@@ -129,56 +128,102 @@ public:
 	inline       SplatCloud *splatCloud()       { return splatCloud_; }
 	inline const SplatCloud *splatCloud() const { return splatCloud_; }
 
+	inline void modifiedPoints()     { pointsModified_     = true; }
+	inline void modifiedNormals()    { normalsModified_    = true; }
+	inline void modifiedPointsizes() { pointsizesModified_ = true; }
+	inline void modifiedColors()     { colorsModified_     = true; }
+	inline void modifiedSelections() { selectionsModified_ = true; }
+	inline void modifiedPickColors() { pickColorsModified_ = true; }
+
+	inline void modifiedAll() { modifiedPoints(); modifiedNormals(); modifiedPointsizes(); modifiedColors(); modifiedSelections(); modifiedPickColors(); }
+
 	// ---- default values ----
 
-	// if an array is not present, changing the default value for this array will make the VBO invalid and trigger a rebuild()
-	inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    if( splatCloud_ && !splatCloud_->hasNormals()    ) vboValid_ = false; }
-	inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; if( splatCloud_ && !splatCloud_->hasPointsizes() ) vboValid_ = false; }
-	inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     if( splatCloud_ && !splatCloud_->hasColors()     ) vboValid_ = false; }
+	inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    }
+	inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; }
+	inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     }
 
 	inline const Normal    &defaultNormal()    const { return defaultNormal_;    }
 	inline const Pointsize &defaultPointsize() const { return defaultPointsize_; }
 	inline const Color     &defaultColor()     const { return defaultColor_;     }
 
-	// if the point, normal, pointsize or color with the given _index exists it is returned, otherwise the default value is returned (check for splatCloud_ != 0 first)
-	inline Point     getPoint    ( unsigned int _index ) const { return                                splatCloud_->points()    [ _index ]                    ; }
-	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_->hasNormals()    ? splatCloud_->normals()   [ _index ] : defaultNormal_   ; }
-	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_->hasPointsizes() ? splatCloud_->pointsizes()[ _index ] : defaultPointsize_; }
-	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_->hasColors()     ? splatCloud_->colors()    [ _index ] : defaultColor_    ; }
-
-	// ---- vertex buffer object ----
-
-	/// make vertex-buffer-object invalid so it will be rebuilt the next time drawn (or picked)
-	inline void invalidateVBO() { vboValid_ = false; }
+	/// if the data array exists, the entry with the given _index is returned, otherwise the default value is returned (check for splatCloud_ != 0 first)
+	inline Point     getPoint    ( unsigned int _index ) const { return splatCloud_->hasPoints()     ? splatCloud_->points()    [ _index ] : Point(0.0f,0.0f,0.0f); }
+	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_->hasNormals()    ? splatCloud_->normals()   [ _index ] : defaultNormal_       ; }
+	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_->hasPointsizes() ? splatCloud_->pointsizes()[ _index ] : defaultPointsize_    ; }
+	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_->hasColors()     ? splatCloud_->colors()    [ _index ] : defaultColor_        ; }
+	inline Selection getSelection( unsigned int _index ) const { return splatCloud_->hasSelections() ? splatCloud_->selections()[ _index ] : false                ; }
 
 	//----------------------------------------------------------------
 
 private:
 
 	// ---- splat cloud ----
+
+	/// pointer to class containing all the data
 	SplatCloud *splatCloud_;
 
+	/// marks if parts of the data has been modified
+	bool pointsModified_;
+	bool normalsModified_;
+	bool pointsizesModified_;
+	bool colorsModified_;
+	bool selectionsModified_;
+	bool pickColorsModified_;
+
+	/// return true iff any of the data values in the VBO has to be changed
+	inline bool vboModified() const { return pointsModified_ || normalsModified_ || pointsizesModified_ || colorsModified_ || selectionsModified_ || pickColorsModified_; }
+
 	// ---- default values ----
+
 	/// the default values will be used when the specific array is not present
 	Normal    defaultNormal_;
 	Pointsize defaultPointsize_;
 	Color     defaultColor_;
 
 	// ---- draw modes ----
+
 	DrawModes::DrawMode splatsDrawMode_;
 	DrawModes::DrawMode dotsDrawMode_;
 	DrawModes::DrawMode pointsDrawMode_;
 
 	// ---- picking base index ----
+
 	unsigned int pickingBaseIndex_;
 
 	// ---- vertex buffer object ----
-	GLuint vboGlId_;
-	bool   vboValid_;
+
+	GLuint        vboGlId_;
+	unsigned int  vboNumPoints_;
+	unsigned char *vboData_;
+
+	/// offsets relative to vboData_ or -1 if *not* present in VBO
+	int vboPointsOffset_;
+	int vboNormalsOffset_;
+	int vboPointsizesOffset_;
+	int vboColorsOffset_;
+	int vboSelectionsOffset_;
+	int vboPickColorsOffset_;
+
+	/// returns true iff the internal block structure of the VBO has to be changed (check for splatCloud_ != 0 first)
+	inline bool vboStructureModified() const { return 
+		vboNumPoints_                != splatCloud_->numPoints()     || 
+		(vboPointsOffset_     != -1) != splatCloud_->hasPoints()     || 
+		(vboNormalsOffset_    != -1) != splatCloud_->hasNormals()    || 
+		(vboPointsizesOffset_ != -1) != splatCloud_->hasPointsizes() || 
+		(vboColorsOffset_     != -1) != splatCloud_->hasColors()     || 
+		(vboSelectionsOffset_ != -1) != splatCloud_->hasSelections(); }
 
 	void createVBO();
 	void destroyVBO();
 	void rebuildVBO( GLState &_state );
+
+	void rebuildVBOPoints();
+	void rebuildVBONormals();
+	void rebuildVBOPointsizes();
+	void rebuildVBOColors();
+	void rebuildVBOSelections();
+	void rebuildVBOPickColors( GLState &_state );
 };
 
 

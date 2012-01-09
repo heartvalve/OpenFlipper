@@ -91,6 +91,7 @@ private slots:
 	// -- Base Inferface --
 	void noguiSupported() { }
 	void slotViewChanged();
+	void slotObjectUpdated( int _objectId, const UpdateType _type );
 
 public:
 
@@ -113,7 +114,7 @@ public slots:
 	//-- Type Interface --
 	int addEmpty();
 	DataType supportedType() { return DATA_SPLATCLOUD; }; 
-	void generateBackup( int _id, QString _name, UpdateType _type );
+	void generateBackup( int _objectId, QString _name, UpdateType _type );
 
 private:
 

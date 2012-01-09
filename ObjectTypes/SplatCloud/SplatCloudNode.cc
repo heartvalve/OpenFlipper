@@ -53,6 +53,12 @@
 #include "SplatCloudNode.hh"
 
 
+//== DEFINES =====================================================
+
+
+//#define REPORT_VBO_UPDATES
+
+
 //== NAMESPACES ==================================================
 
 
@@ -64,13 +70,30 @@ namespace SceneGraph {
 
 
 SplatCloudNode::SplatCloudNode( BaseNode *_parent, std::string _name ) : 
-	BaseNode         ( _parent, _name ), 
-	defaultNormal_   ( Normal(0.0f,0.0f,1.0f) ), 
-	defaultPointsize_( Pointsize(0.01f) ), 
-	defaultColor_    ( Color(255,255,255) ), 
-	pickingBaseIndex_( 0 ), 
-	vboGlId_         ( 0 ), 
-	vboValid_        ( false )
+	BaseNode            ( _parent, _name ), 
+	splatCloud_         ( 0 ), 
+	pointsModified_     ( false ), 
+	normalsModified_    ( false ), 
+	pointsizesModified_ ( false ), 
+	colorsModified_     ( false ), 
+	selectionsModified_ ( false ), 
+	pickColorsModified_ ( false ), 
+	defaultNormal_      ( Normal(0.0f,0.0f,1.0f) ), 
+	defaultPointsize_   ( Pointsize(0.01f) ), 
+	defaultColor_       ( Color(255,255,255) ), 
+	splatsDrawMode_     ( DrawModes::NONE ), 
+	dotsDrawMode_       ( DrawModes::NONE ), 
+	pointsDrawMode_     ( DrawModes::NONE ), 
+	pickingBaseIndex_   ( 0 ), 
+	vboGlId_            ( 0 ), 
+	vboNumPoints_       ( 0 ), 
+	vboData_            ( 0 ), 
+	vboPointsOffset_    ( -1 ), 
+	vboNormalsOffset_   ( -1 ), 
+	vboPointsizesOffset_( -1 ), 
+	vboColorsOffset_    ( -1 ), 
+	vboSelectionsOffset_( -1 ), 
+	vboPickColorsOffset_( -1 ) 
 {
 	// allocate memory for splat cloud
 	splatCloud_ = new SplatCloud;
@@ -84,7 +107,7 @@ SplatCloudNode::SplatCloudNode( BaseNode *_parent, std::string _name ) :
 	dotsDrawMode_   = DrawModes::addDrawMode( "Dots"   );
 	splatsDrawMode_ = DrawModes::addDrawMode( "Splats" );
 
-	// create a new vertex-buffer-object (will be invalid and rebuilt the next time drawn (or picked))
+	// create a new VBO (will be invalid and rebuilt the next time drawn (or picked))
 	createVBO();
 }
 
@@ -138,71 +161,157 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 	if( !splatCloud_ )
 		return;
 
-    static const int RENDERMODE_POINTS = 0;
-    static const int RENDERMODE_DOTS   = 1;
-    static const int RENDERMODE_SPLATS = 2;
+	static const int RENDERMODE_POINTS = 0;
+	static const int RENDERMODE_DOTS   = 1;
+	static const int RENDERMODE_SPLATS = 2;
 
-    // check if drawmode is valid
-    int rendermode;
-    if ( _drawMode.containsAtomicDrawMode( splatsDrawMode_ ) )
-        rendermode = RENDERMODE_SPLATS;
-    else if ( _drawMode.containsAtomicDrawMode( dotsDrawMode_ ) )
-        rendermode = RENDERMODE_DOTS;
-    else if ( _drawMode.containsAtomicDrawMode( pointsDrawMode_ ) )
-        rendermode = RENDERMODE_POINTS;
-    else
-        return;
+	// check if drawmode is valid
+	int rendermode;
+	if( _drawMode.containsAtomicDrawMode( splatsDrawMode_ ) )
+		rendermode = RENDERMODE_SPLATS;
+	else if( _drawMode.containsAtomicDrawMode( dotsDrawMode_ ) )
+		rendermode = RENDERMODE_DOTS;
+	else if( _drawMode.containsAtomicDrawMode( pointsDrawMode_ ) )
+		rendermode = RENDERMODE_POINTS;
+	else
+		return;
 
-    // set desired depth function
-    ACG::GLState::depthFunc( _state.depthFunc() );
+	// set desired depth function
+	ACG::GLState::depthFunc( _state.depthFunc() );
 
-    // is vertex-buffer-object is invalid then rebuild
-    if ( !vboValid_ )
-        rebuildVBO( _state );
+	// if VBO is invalid or was (partially) modified, then rebuild
+	if( !vboData_ || vboModified() )
+		rebuildVBO( _state );
 
-    // if vertex-buffer-object is valid now...
-    // (if not it will be rebuilt the next time, but this should not happen)
-    if ( vboValid_ )
-    {
-        // activate vertex-buffer-object
-        ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
+	// if VBO is valid...
+	if( vboData_ )
+	{
+		// activate VBO
+		ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
-        // tell GL where our data is (NULL = beginning of vertex-buffer-object)
-        glInterleavedArrays( GL_T4F_C4F_N3F_V4F, 0, 0 );
+		// enable arrays:
+		// --------------
 
-        // arrays are automatically enabled by glInterleavedArrays()
-        //glEnableClientState( GL_VERTEX_ARRAY         );
-        //glEnableClientState( GL_NORMAL_ARRAY         );
-        //glEnableClientState( GL_COLOR_ARRAY          );
-        //glEnableClientState( GL_TEXTURE_COORD_ARRAY  );
+		// points
+		if( vboPointsOffset_ != -1 )
+		{
+			ACG::GLState::enableClientState( GL_VERTEX_ARRAY );
+			ACG::GLState::vertexPointer( 3, GL_FLOAT, 0, (unsigned char *) 0 + vboPointsOffset_ );
+		}
+		else
+		{
+			ACG::GLState::disableClientState( GL_VERTEX_ARRAY );
+		}
 
-        // Normals are always needed for backface culling, even in drawmode 'Points'!
-        // Colors are always needed for pointsizes, even in color picking mode!
+		// normals
+		if( vboNormalsOffset_ != -1 )
+		{
+			ACG::GLState::enableClientState( GL_NORMAL_ARRAY );
+			ACG::GLState::normalPointer( GL_FLOAT, 0, (unsigned char *) 0 + vboNormalsOffset_ );
+		}
+		else
+		{
+			ACG::GLState::disableClientState( GL_NORMAL_ARRAY );
+			glNormal3f( defaultNormal_[0], defaultNormal_[1], defaultNormal_[2] );
+		}
 
-        // enable "pointsize by program" depending on current rendermode
-        if ( rendermode != RENDERMODE_POINTS )
-        {
-            ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
-        }
+		// pointsizes
+		if( vboPointsizesOffset_ != -1 )
+		{
+			glClientActiveTexture( GL_TEXTURE0 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+			ACG::GLState::enableClientState( GL_TEXTURE_COORD_ARRAY );
+			ACG::GLState::texcoordPointer( 1, GL_FLOAT, 0, (unsigned char *) 0 + vboPointsizesOffset_ );
+		}
+		else
+		{
+			glClientActiveTexture( GL_TEXTURE0 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+			ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
+			glMultiTexCoord1f( GL_TEXTURE0, defaultPointsize_ );
+		}
 
-        // draw as GLpoints
-        glDrawArrays( GL_POINTS, 0, splatCloud_->numPoints() );
+		// colors
+		if( vboColorsOffset_ != -1 )
+		{
+			ACG::GLState::enableClientState( GL_SECONDARY_COLOR_ARRAY );
+			glSecondaryColorPointer( 3, GL_UNSIGNED_BYTE, 0, (unsigned char *) 0 + vboColorsOffset_ ); // TODO: use ACG::GLState::secondaryColorPointer() when implemented
+		}
+		else
+		{
+			ACG::GLState::disableClientState( GL_SECONDARY_COLOR_ARRAY );
+			glSecondaryColor3ub( defaultColor_[0], defaultColor_[1], defaultColor_[2] );
+		}
 
-        // disable "pointsize by program" if it was enabled
-        if ( rendermode != RENDERMODE_POINTS )
-        {
-            ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
-        }
+		// selections
+		if( vboSelectionsOffset_ != -1 )
+		{
+			glClientActiveTexture( GL_TEXTURE1 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+			ACG::GLState::enableClientState( GL_TEXTURE_COORD_ARRAY );
+			ACG::GLState::texcoordPointer( 1, GL_FLOAT, 0, (unsigned char *) 0 + vboSelectionsOffset_ );
+		}
+		else
+		{
+			glClientActiveTexture( GL_TEXTURE1 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+			ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
+			glMultiTexCoord1f( GL_TEXTURE1, 0.0f );
+		}
 
-        // disable arrays
-        ACG::GLState::disableClientState( GL_VERTEX_ARRAY        );
-        ACG::GLState::disableClientState( GL_NORMAL_ARRAY        );
-        ACG::GLState::disableClientState( GL_COLOR_ARRAY         );
-        ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
+		// pick colors
+		if( vboPickColorsOffset_ != -1 )
+		{
+			ACG::GLState::enableClientState( GL_COLOR_ARRAY );
+			ACG::GLState::colorPointer( 4, GL_UNSIGNED_BYTE, 0, (unsigned char *) 0 + vboPickColorsOffset_ );
+		}
+		else
+		{
+			ACG::GLState::disableClientState( GL_COLOR_ARRAY );
+			glColor4ub( 255, 255, 255, 255 );
+		}
 
-        // deactivate vertex-buffer-object
-        ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-    }
+		// --------------
+
+		// enable "pointsize by program" depending on current rendermode
+		if( rendermode == RENDERMODE_SPLATS || rendermode == RENDERMODE_DOTS )
+			ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
+
+		// draw as GLpoints
+		glDrawArrays( GL_POINTS, 0, vboNumPoints_ );
+
+		// disable arrays:
+		// ---------------
+
+		// points
+		ACG::GLState::disableClientState( GL_VERTEX_ARRAY );
+
+		// normals
+		ACG::GLState::disableClientState( GL_NORMAL_ARRAY );
+
+		// pointsizes
+		glClientActiveTexture( GL_TEXTURE0 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+		ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
+
+		// colors
+		ACG::GLState::disableClientState( GL_SECONDARY_COLOR_ARRAY );
+
+		// selections
+		glClientActiveTexture( GL_TEXTURE1 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+		ACG::GLState::disableClientState( GL_TEXTURE_COORD_ARRAY );
+
+		// pick colors
+		ACG::GLState::disableClientState( GL_COLOR_ARRAY );
+
+		// ---------------
+
+		// disable "pointsize by program"
+		ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
+
+		// make defaults current again
+		glClientActiveTexture( GL_TEXTURE0 ); // TODO: use ACG::GLState::clientActiveTexture() when implemented
+		glColor4f         ( 1.0f, 1.0f, 1.0f, 1.0f );
+		glSecondaryColor3f( 1.0f, 1.0f, 1.0f );
+
+		// deactivate VBO
+		ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+	}
 }
 
 
@@ -228,7 +337,7 @@ void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 	if( _target == PICK_ANYTHING || _target == PICK_VERTEX )
 	{
 		// set number of pick colors used (each points gets a unique pick color)
-		if( !_state.pick_set_maximum( splatCloud_->numPoints() ) )
+		if( !_state.pick_set_maximum( splatCloud_->numPoints() ) ) // number of points could have changed, so use new number of points (*not* the one in VBO memory!)
 		{
 			std::cerr << "SplatCloudNode::pick() : Color range too small, picking failed." << std::endl;
 			return;
@@ -237,9 +346,11 @@ void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 		// if in color picking mode...
 		if( _state.color_picking() )
 		{
-			// if picking base index has changed, rebuild VBO so new pick colors will be used
+			// if picking base index has changed, rebuild pick colors block in VBO so new pick colors will be used
 			if( pickingBaseIndex_ != _state.pick_current_index() )
-				vboValid_ = false;
+			{
+				pickColorsModified_ = true;
+			}
 
 			// TODO: see above ( enterPick() )
 			draw( _state, g_pickDrawMode );
@@ -268,11 +379,15 @@ void SplatCloudNode::copySplatCloud( const SplatCloud &_splatCloud )
 
 void SplatCloudNode::createVBO()
 {
-    // create a new vertex-buffer-object if not already existing
-    if ( vboGlId_ == 0 )
-    {
-        glGenBuffersARB( 1, &vboGlId_ );
-    }
+	// create new VBO (if *not* already existing)
+	if( vboGlId_ == 0 )
+	{
+		glGenBuffersARB( 1, &vboGlId_ );
+		vboNumPoints_ = 0;
+		vboData_      = 0;
+
+		modifiedAll(); // (re-)build all data block in VBO memory the first time
+	}
 }
 
 
@@ -281,15 +396,117 @@ void SplatCloudNode::createVBO()
 
 void SplatCloudNode::destroyVBO()
 {
-    // delete existing vertex-buffer-object
-    if ( vboGlId_ != 0 )
-    {
-        glDeleteBuffersARB( 1, &vboGlId_ );
-        vboGlId_ = 0;
-    }
+	// delete VBO (if existing)
+	if( vboGlId_ != 0 )
+	{
+		glDeleteBuffersARB( 1, &vboGlId_ );
+		vboGlId_      = 0;
+		vboNumPoints_ = 0;
+		vboData_      = 0;
+	}
+}
 
-    // make vertex-buffer-object invalid so it will not be used
-    vboValid_ = false;
+
+//----------------------------------------------------------------
+
+
+void SplatCloudNode::rebuildVBO( GLState &_state )
+{
+	// if something went wrong in the initialization, make VBO invalid and abort
+	if( vboGlId_ == 0 || !splatCloud_)
+	{
+		vboData_ = 0;
+		return;
+	}
+
+	// activate VBO
+	ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
+
+	// calculate size of data and offsets
+	unsigned int numPoints = splatCloud_->numPoints();
+	unsigned int size      = 0;
+
+	int pointsOffset     = -1;
+	int normalsOffset    = -1;
+	int pointsizesOffset = -1;
+	int colorsOffset     = -1;
+	int selectionsOffset = -1;
+	int pickColorsOffset = -1;
+
+	if( splatCloud_->hasPoints()     ) { pointsOffset     = size; size += numPoints * 12; }
+	if( splatCloud_->hasNormals()    ) { normalsOffset    = size; size += numPoints * 12; }
+	if( splatCloud_->hasPointsizes() ) { pointsizesOffset = size; size += numPoints * 4;  }
+	if( splatCloud_->hasColors()     ) { colorsOffset     = size; size += numPoints * 3;  }
+	if( splatCloud_->hasSelections() ) { selectionsOffset = size; size += numPoints * 4;  }
+	/* has pick colors = true       */ { pickColorsOffset = size; size += numPoints * 4;  }
+
+	// tell GL that we are seldomly updating the VBO but are often drawing it
+	glBufferDataARB( GL_ARRAY_BUFFER_ARB, size, 0, GL_STATIC_DRAW_ARB );
+
+	// get pointer to VBO memory
+	unsigned char *data = (unsigned char *) glMapBufferARB( GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB );
+
+	// check if something went wrong during VBO mapping
+	if( !data )
+	{
+		std::cout << "SplatCloudNode::rebuildVBO() : glMapBufferARB() failed." << std::endl;
+		vboData_ = 0;
+		return;
+	}
+
+	// if VBO memory block was moved or the internal block structure has to be changed, rebuild entire VBO
+	if( vboData_ != data || vboStructureModified() )
+	{
+		vboNumPoints_ = numPoints;
+		vboData_      = data;
+
+		vboPointsOffset_     = pointsOffset;
+		vboNormalsOffset_    = normalsOffset;
+		vboPointsizesOffset_ = pointsizesOffset;
+		vboColorsOffset_     = colorsOffset;
+		vboSelectionsOffset_ = selectionsOffset;
+		vboPickColorsOffset_ = pickColorsOffset;
+
+		// mark all data block to rebuild them lateron
+		modifiedAll();
+	}
+
+	// if in color picking mode...
+	if( _state.color_picking() )
+	{
+		// store picking base index
+		pickingBaseIndex_ = _state.pick_current_index();
+	}
+
+	// rebuild data blocks if needed
+	if( pointsModified_     ) rebuildVBOPoints();
+	if( normalsModified_    ) rebuildVBONormals();
+	if( pointsizesModified_ ) rebuildVBOPointsizes();
+	if( colorsModified_     ) rebuildVBOColors();
+	if( selectionsModified_ ) rebuildVBOSelections();
+	if( pickColorsModified_ ) rebuildVBOPickColors( _state );
+
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << std::endl;
+#	endif
+
+	// every block in VBO memory has been updated
+	pointsModified_     = false;
+	normalsModified_    = false;
+	pointsizesModified_ = false;
+	colorsModified_     = false;
+	selectionsModified_ = false;
+	pickColorsModified_ = false;
+
+	// release pointer to VBO memory. if something went wrong, make VBO invalid and abort
+	if( !glUnmapBufferARB( GL_ARRAY_BUFFER_ARB ) )
+	{
+		vboData_ = 0;
+		return;
+	}
+
+	// deactivate VBO
+	ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 }
 
 
@@ -312,91 +529,177 @@ static void addFloatToBuffer( float _value, unsigned char *&_buffer )
 //----------------------------------------------------------------
 
 
-void SplatCloudNode::rebuildVBO( GLState &_state )
+static void addUCharToBuffer( unsigned char _value, unsigned char *&_buffer )
 {
-	// if something went wrong in the initialization, abort
-	if( !splatCloud_ )
+    // get pointer
+    unsigned char *v = (unsigned char *) &_value;
+
+    // copy over 1 byte
+    *_buffer++ = *v;
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloudNode::rebuildVBOPoints()
+{
+	if( vboPointsOffset_ == -1 || !splatCloud_->hasPoints() )
 		return;
 
-    // check if vertex-buffer-object has already been created (and not destroyed so far)
-    if ( vboGlId_ == 0 )
-        return;
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBOPoints()" << std::endl;
+#	endif
 
-    // check if there could be a valid vertex-buffer-object
-    if ( splatCloud_->numPoints() == 0 )
-    {
-        vboValid_ = false;
-        return;
-    }
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboPointsOffset_;
 
-    // we use GL_T4F_C4F_N3F_V4F as interleaved array type, so we have 4+4+3+4 = 15 floats per splat
-    unsigned int size = splatCloud_->numPoints() * 15 * sizeof(float);
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		// add point
+		const Point &p = getPoint( i );
+		addFloatToBuffer( p[0], buffer );
+		addFloatToBuffer( p[1], buffer );
+		addFloatToBuffer( p[2], buffer );
+	}
+}
 
-    // activate vertex-buffer-object
-    ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
-    // tell GL that we are seldom updating the vertex-buffer-object but are often drawing it
-    glBufferDataARB( GL_ARRAY_BUFFER_ARB, size, 0, GL_STATIC_DRAW_ARB );
+//----------------------------------------------------------------
 
-    // get pointer to vertex-buffer-object's memory
-    unsigned char *buffer = (unsigned char *) glMapBufferARB( GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB );
 
-    // if pointer is valid...
-    if ( buffer )
-    {
-        // if in color picking mode...
-        if( _state.color_picking() )
-        {
-            // store picking base index
-            pickingBaseIndex_ = _state.pick_current_index();
-        }
+void SplatCloudNode::rebuildVBONormals()
+{
+	if( vboNormalsOffset_ == -1 || !splatCloud_->hasNormals()  )
+		return;
 
-        // for all points...
-        int i, num = splatCloud_->numPoints();
-        for ( i=0; i<num; ++i )
-        {
-            static const float RCP255 = 1.0f / 255.0f;
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBONormals()" << std::endl;
+#	endif
 
-            // add pick color
-            Vec4uc pc = _state.pick_get_name_color( i );
-            addFloatToBuffer( RCP255 * pc[0], buffer );
-            addFloatToBuffer( RCP255 * pc[1], buffer );
-            addFloatToBuffer( RCP255 * pc[2], buffer );
-            addFloatToBuffer( RCP255 * pc[3], buffer );
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboNormalsOffset_;
 
-            // add color
-            const Color &c = getColor( i );
-            addFloatToBuffer( RCP255 * c[0], buffer );
-            addFloatToBuffer( RCP255 * c[1], buffer );
-            addFloatToBuffer( RCP255 * c[2], buffer );
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		// add normal
+		const Normal &n = getNormal( i );
+		addFloatToBuffer( n[0], buffer );
+		addFloatToBuffer( n[1], buffer );
+		addFloatToBuffer( n[2], buffer );
+	}
+}
 
-            // add pointsize (as alpha-component of color)
-            const Pointsize &ps = getPointsize( i );
-            addFloatToBuffer( ps, buffer );
 
-            // add normal
-            const Normal &n = getNormal( i );
-            addFloatToBuffer( n[0], buffer );
-            addFloatToBuffer( n[1], buffer );
-            addFloatToBuffer( n[2], buffer );
+//----------------------------------------------------------------
 
-            // add point
-            const Point &p = getPoint( i );
-            addFloatToBuffer( p[0], buffer );
-            addFloatToBuffer( p[1], buffer );
-            addFloatToBuffer( p[2], buffer );
-            addFloatToBuffer( 1.0f, buffer );
-        }
-    }
 
-    // release pointer to vertex-buffer-object's memory
-    bool success = glUnmapBufferARB( GL_ARRAY_BUFFER_ARB );
+void SplatCloudNode::rebuildVBOPointsizes()
+{
+	if( vboPointsizesOffset_ == -1 || !splatCloud_->hasPointsizes()  )
+		return;
 
-    // deactivate vertex-buffer-object
-    ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBOPointsizes()" << std::endl;
+#	endif
 
-    // mark vertex-buffer-object as valid only if it was successfully updated and unmaped
-    vboValid_ = (buffer != 0) && success;
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboPointsizesOffset_;
+
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		// add pointsize
+		const Pointsize &ps = getPointsize( i );
+		addFloatToBuffer( ps, buffer );
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloudNode::rebuildVBOColors()
+{
+	if( vboColorsOffset_ == -1 || !splatCloud_->hasColors()  )
+		return;
+
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBOColors()" << std::endl;
+#	endif
+
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboColorsOffset_;
+
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		// add color
+		const Color &c = getColor( i );
+		addUCharToBuffer( c[0], buffer );
+		addUCharToBuffer( c[1], buffer );
+		addUCharToBuffer( c[2], buffer );
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloudNode::rebuildVBOSelections()
+{
+	if( vboSelectionsOffset_ == -1 || !splatCloud_->hasSelections()  )
+		return;
+
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBOSelections()" << std::endl;
+#	endif
+
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboSelectionsOffset_;
+
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		const bool &s = getSelection( i );
+		addFloatToBuffer( (s ? 1.0f : 0.0f), buffer );
+	}
+}
+
+
+//----------------------------------------------------------------
+
+
+void SplatCloudNode::rebuildVBOPickColors( GLState &_state )
+{
+	if( vboPickColorsOffset_ == -1 )
+		return;
+
+#	ifdef REPORT_VBO_UPDATES
+	std::cout << "SplatCloudNode::rebuildVBOPickColors()" << std::endl;
+#	endif
+
+	// get pointer to buffer
+	unsigned char *buffer = vboData_ + vboPickColorsOffset_;
+
+	// for all points...
+	unsigned int i, num = splatCloud_->numPoints();
+	for( i=0; i<num; ++i )
+	{
+		// add pick color
+		const Vec4uc &pc = _state.pick_get_name_color( i );
+		addUCharToBuffer( pc[0], buffer );
+		addUCharToBuffer( pc[1], buffer );
+		addUCharToBuffer( pc[2], buffer );
+		addUCharToBuffer( pc[3], buffer );
+	}
 }
 
 

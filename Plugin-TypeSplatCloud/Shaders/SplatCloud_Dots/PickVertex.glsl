@@ -24,8 +24,8 @@ void main()
         // output vertex in clip-coordinates
         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-        // calculate pointsize (gl_Color.a is the pointsize in model-coordinates)
-        float ecPointsize  = modelviewScale * pointsizeScale * gl_Color.a;
+        // calculate pointsize (gl_MultiTexCoord0.x is the pointsize in model-coordinates)
+        float ecPointsize  = modelviewScale * pointsizeScale * gl_MultiTexCoord0.x;
 
         // output pointsize in window-coordinates
         //   - divided by gl_Position.w to shrink size by distance
@@ -33,13 +33,22 @@ void main()
         //   - multiply by viewportScaleFov_y to get window coordinates
         gl_PointSize = ecPointsize * viewportScaleFov_y / gl_Position.w;
 
-////////////////////////////////////////////////////////////////////
-/**/                                                            /**/
-/**/    // pass texture coordinate as color to fragment-shader  /**/
-/**/    gl_FrontColor = gl_MultiTexCoord0;                      /**/
-/**/                                                            /**/
-/**/                                                            /**/
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/**/                                                      /**/
+/**/    // pass primary color to fragment-shader          /**/
+/**/    gl_FrontColor = gl_Color;                         /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+/**/                                                      /**/
+//////////////////////////////////////////////////////////////
 
     }
 }
