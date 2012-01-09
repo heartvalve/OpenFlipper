@@ -56,18 +56,18 @@
 
 #include <bitset>
 
-const std::bitset<4>  HIERARCHY			(static_cast<unsigned long>(0));
-const std::bitset<4>  ROOT_DEFINITION	(static_cast<unsigned long>(1));
-const std::bitset<4>  OPENED_BRACKET	(static_cast<unsigned long>(2));
-const std::bitset<4>  CLOSED_BRACKET	(static_cast<unsigned long>(3));
-const std::bitset<4>  OFFSET			(static_cast<unsigned long>(4));
-const std::bitset<4>  CHANNELS			(static_cast<unsigned long>(5));
-const std::bitset<4>  JOINT				(static_cast<unsigned long>(6));
-const std::bitset<4>  ENDSITE			(static_cast<unsigned long>(7));
-const std::bitset<4>  MOTION			(static_cast<unsigned long>(8));
-const std::bitset<4>  FRAMES			(static_cast<unsigned long>(9));
-const std::bitset<4>  FRAME_TIME		(static_cast<unsigned long>(10));
-const std::bitset<4>  CHANNEL_DATA		(static_cast<unsigned long>(11));
+const std::bitset<4>  HIERARCHY			(static_cast<int>(0));
+const std::bitset<4>  ROOT_DEFINITION	(static_cast<int>(1));
+const std::bitset<4>  OPENED_BRACKET	(static_cast<int>(2));
+const std::bitset<4>  CLOSED_BRACKET	(static_cast<int>(3));
+const std::bitset<4>  OFFSET			(static_cast<int>(4));
+const std::bitset<4>  CHANNELS			(static_cast<int>(5));
+const std::bitset<4>  JOINT				(static_cast<int>(6));
+const std::bitset<4>  ENDSITE			(static_cast<int>(7));
+const std::bitset<4>  MOTION			(static_cast<int>(8));
+const std::bitset<4>  FRAMES			(static_cast<int>(9));
+const std::bitset<4>  FRAME_TIME		(static_cast<int>(10));
+const std::bitset<4>  CHANNEL_DATA		(static_cast<int>(11));
 
 //-----------------------------------------------------------------------------
 //data structures used for parsing

@@ -770,28 +770,16 @@ void CoreWidget::applicationSnapshotName(QString _name) {
   snapshotCounter_ = 0;
 }
 
-void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name) {
-
-    QFuture<void>* future = new QFuture<void>();
-    *future = QtConcurrent::run(this, &CoreWidget::writeImageQPixmap, _pixmap, _name);
-    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-    watcher->setFuture(*future);
-
-    watcher_garbage_.insert(std::pair<QFutureWatcher<void>*,QFuture<void>*>(watcher, future));
-
-    connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
-}
-
-void CoreWidget::writeImageQPixmap(QPixmap* _pixmap, const QString _name) const {
+void writeImageQPixmap(QPixmap* _pixmap, const QString _name) {
 
     _pixmap->save(_name);
     delete _pixmap;
 }
 
-void CoreWidget::writeImageAsynchronously(QImage* _image, const QString _name) {
+void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name) {
 
     QFuture<void>* future = new QFuture<void>();
-    *future = QtConcurrent::run(this, &CoreWidget::writeImageQImage, _image, _name);
+    *future = QtConcurrent::run(writeImageQPixmap, _pixmap, _name);
     QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
     watcher->setFuture(*future);
 
@@ -800,11 +788,27 @@ void CoreWidget::writeImageAsynchronously(QImage* _image, const QString _name) {
     connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
 }
 
-void CoreWidget::writeImageQImage(QImage* _image, const QString _name) const {
+
+
+void writeImageQImage(QImage* _image, const QString _name) {
 
     _image->save(_name);
     delete _image;
 }
+
+void CoreWidget::writeImageAsynchronously(QImage* _image, const QString _name) {
+
+    QFuture<void>* future = new QFuture<void>();
+    *future = QtConcurrent::run(writeImageQImage, _image, _name);
+    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
+    watcher->setFuture(*future);
+
+    watcher_garbage_.insert(std::pair<QFutureWatcher<void>*,QFuture<void>*>(watcher, future));
+
+    connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
+}
+
+
 
 void CoreWidget::delete_garbage() {
 
