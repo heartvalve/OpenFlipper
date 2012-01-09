@@ -59,6 +59,7 @@
 #define PLUGINFUNCTIONS_HH
 
 #include <QPair>
+#include <QFileDialog>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -674,6 +675,39 @@ int viewerId();
 /// Get the root of the object structure
 DLLEXPORT
 BaseObject*& objectRoot();
+
+/**
+ * The same as QFileDialog::getOpenFileName, except the dialog remembers its
+ * last location within the file systems and opens at the same location the
+ * next time.
+ *
+ * @param configProperty The name of the property in which to store the
+ *                       last location. Should be of the form "Plugin-Foo/OpenBarFile".
+ *
+ * @param defaultDir If the property doesn't exist yet, defaultDir is used
+ *                   as the initial location.
+ */
+DLLEXPORT
+QString getOpenFileName(const QString &configProperty,
+                        QWidget * parent = 0, const QString & caption = QString(),
+                        const QString & defaultDir = QString(), const QString & filter = QString(),
+                        QString * selectedFilter = 0, QFileDialog::Options options = 0);
+/**
+ * The same as QFileDialog::getSaveFileName, except the dialog remembers its
+ * last location within the file systems and opens at the same location the
+ * next time.
+ *
+ * @param configProperty The name of the property in which to store the
+ *                       last location. Should be of the form "Plugin-Foo/SaveBarFile".
+ *
+ * @param defaultDir If the property doesn't exist yet, defaultDir is used
+ *                   as the initial location.
+ */
+DLLEXPORT
+QString getSaveFileName(const QString &configProperty,
+                        QWidget * parent = 0, const QString & caption = QString(),
+                        const QString & defaultDir = QString(), const QString & filter = QString(),
+                        QString * selectedFilter = 0, QFileDialog::Options options = 0);
 
 }
 

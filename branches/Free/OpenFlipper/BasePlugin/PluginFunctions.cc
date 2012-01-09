@@ -50,6 +50,7 @@
 //=============================================================================
 
 #include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <QGLWidget>
 
 #include "PluginFunctions.hh"
@@ -1128,6 +1129,32 @@ void addSceneGraphGenerator(ACG::QtWidgets::SceneGraphWidgetGenerator* _generato
 
 QMap< std::string ,ACG::QtWidgets::SceneGraphWidgetGenerator* > getSceneGraphGeneratorList(){
   return sceneGraphGenerators_;
+}
+
+QString getOpenFileName(const QString &configProperty,
+                        QWidget * parent, const QString & caption,
+                        const QString & defaultDir, const QString & filter,
+                        QString * selectedFilter, QFileDialog::Options options) {
+
+    const QString dir = OpenFlipperSettings().value(configProperty, defaultDir).toString();
+    const QString result = QFileDialog::getOpenFileName(parent, caption, dir,
+                                                        filter, selectedFilter, options);
+    if (result.length())
+        OpenFlipperSettings().setValue(configProperty, result);
+    return result;
+}
+
+QString getSaveFileName(const QString &configProperty,
+                        QWidget * parent, const QString & caption,
+                        const QString & defaultDir, const QString & filter,
+                        QString * selectedFilter, QFileDialog::Options options) {
+
+    const QString dir = OpenFlipperSettings().value(configProperty, defaultDir).toString();
+    const QString result = QFileDialog::getSaveFileName(parent, caption, dir,
+                                                        filter, selectedFilter, options);
+    if (result.length())
+        OpenFlipperSettings().setValue(configProperty, result);
+    return result;
 }
 
 } // End namespace PluginFunctions
