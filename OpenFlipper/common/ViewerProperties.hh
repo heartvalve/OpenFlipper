@@ -523,7 +523,7 @@ namespace Viewer {
       std::string pickMode();
 
       /// set the pickMode
-      void pickMode(const std::string _name);
+      void pickMode(const std::string& _name);
 
       /// get the action mode
       Viewer::ActionMode actionMode();

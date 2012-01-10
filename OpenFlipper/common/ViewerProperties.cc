@@ -109,7 +109,7 @@ namespace Viewer {
     return mode;
   }
 
-  void ViewerProperties::pickMode(const std::string _name){
+  void ViewerProperties::pickMode(const std::string& _name){
     emit setPickMode(_name);
   }
 
