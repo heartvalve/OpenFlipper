@@ -121,7 +121,7 @@ void CoreWidget::slotContextHomeView() {
 void CoreWidget::slotSwitchWheels(bool _state) {
   std::vector< glViewer* >::iterator it = examiner_widgets_.begin();
 
-  for(; it != examiner_widgets_.end(); it++)
+  for(; it != examiner_widgets_.end(); ++it)
     _state ? (*it)->slotShowWheels() : (*it)->slotHideWheels();
 }
 
@@ -129,7 +129,7 @@ void CoreWidget::slotSwitchWheels(bool _state) {
 void CoreWidget::slotSwitchNavigation(bool _egomode) {
   std::vector< glViewer* >::iterator it = examiner_widgets_.begin();
 
-  for(; it != examiner_widgets_.end(); it++) {
+  for(; it != examiner_widgets_.end(); ++it) {
     _egomode ? (*it)->navigationMode(glViewer::FIRSTPERSON_NAVIGATION) :
     	(*it)->navigationMode(glViewer::NORMAL_NAVIGATION);
   }
