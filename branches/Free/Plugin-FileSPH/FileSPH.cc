@@ -139,10 +139,13 @@ int FileSPHPlugin::loadObject(QString _filename)
         
         settings.endGroup();
       }
+
+      emit updatedObject( sphereObject->id(), UPDATE_ALL );
+      emit openedFile( sphereObject->id() );
+
     }
 
-    emit updatedObject( sphereObject->id(), UPDATE_ALL );
-    emit openedFile( sphereObject->id() );
+
   }
 
   return id;
