@@ -71,29 +71,29 @@ namespace SceneGraph {
     A more elaborate description follows.
 */
 
-template <class Skeleton>
+template <class SkeletonType>
 class SkeletonNodeT : public BaseNode
 {
 public:
   // static name of this class
   ACG_CLASSNAME(SkeletonNodeT);
 
-  typedef typename Skeleton::Point            Point;
-  typedef JointT<typename Skeleton::Point>    Joint;
-  typedef typename Skeleton::Pose              Pose;
-  typedef typename Skeleton::Matrix          Matrix;
+  typedef typename SkeletonType::Point            Point;
+  typedef JointT<typename SkeletonType::Point>    Joint;
+  typedef typename SkeletonType::Pose              Pose;
+  typedef typename SkeletonType::Matrix          Matrix;
 
 public:
   
   /// Constructor
-  SkeletonNodeT(Skeleton &_skeleton, BaseNode *_parent=0, std::string _name="<SkeletonNode>");
+  SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_parent=0, std::string _name="<SkeletonNode>");
 
   /// Destructor
   ~SkeletonNodeT();
 
 public:
   /// Returns a pointer to the skeleton
-  Skeleton& skeleton();
+  SkeletonType& skeleton();
 
   /// Returns available draw modes
   DrawModes::DrawMode availableDrawModes() const;
@@ -138,7 +138,7 @@ private:
   /// Coordinate frames are visible if this is true, not visible if false
   bool bCoordFramesVisible_;
   /// The skeleton nodes skeleton
-  Skeleton& skeleton_;
+  SkeletonType& skeleton_;
   /// The active pose, this one is going to be rendered
   AnimationHandle hAni_;
   

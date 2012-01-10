@@ -76,16 +76,16 @@ namespace SceneGraph {
   A more elaborate description follows.
 */
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 class BSplineSurfaceNodeT : public BaseNode
 {
   public:
 
   // typedefs for easy access
-  typedef typename BSplineSurface::Point Point;
+  typedef typename BSplineSurfaceType::Point Point;
 
   /// Constructor
-  BSplineSurfaceNodeT(BSplineSurface& _bss,
+  BSplineSurfaceNodeT(BSplineSurfaceType& _bss,
                       BaseNode*    _parent=0,
                       std::string  _name="<BSplineSurfaceNode>" ) :
     BaseNode(_parent, _name),
@@ -128,7 +128,7 @@ class BSplineSurfaceNodeT : public BaseNode
   };
 
 
-  BSplineSurface& bsplineSurface() { return bsplineSurface_; }
+  BSplineSurfaceType& bsplineSurface() { return bsplineSurface_; }
 
   void set_pick_radius( double _pr) { pick_radius_ = _pr; }
 
