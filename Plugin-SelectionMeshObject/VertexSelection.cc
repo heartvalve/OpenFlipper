@@ -54,16 +54,13 @@
 
 void MeshObjectSelectionPlugin::selectVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if(_vertexList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("selectVertices: unable to get object")); 
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::selectVertices(PluginFunctions::triMesh(object), _vertexList);
@@ -90,16 +87,13 @@ void MeshObjectSelectionPlugin::selectVertices(int _objectId, IdList _vertexList
 
 void MeshObjectSelectionPlugin::unselectVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if(_vertexList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("unselectVertices: unable to get object")); 
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::unselectVertices(PluginFunctions::triMesh(object), _vertexList);
@@ -372,7 +366,7 @@ void MeshObjectSelectionPlugin::selectHandleVertices(int _objectId, IdList _vert
         return;
     }
 
-    if (_vertexList.size() == 0)
+    if (_vertexList.empty() )
         return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH){
@@ -402,16 +396,13 @@ void MeshObjectSelectionPlugin::selectHandleVertices(int _objectId, IdList _vert
 
 void MeshObjectSelectionPlugin::unselectHandleVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if(_vertexList.empty()) return;
   
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("unselectHandleVertices: unable to get object")); 
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::setArea(PluginFunctions::triMesh(object), _vertexList, HANDLEAREA, false);
@@ -510,16 +501,13 @@ IdList MeshObjectSelectionPlugin::getHandleVertices(int _objectId) {
 
 void MeshObjectSelectionPlugin::selectModelingVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if(_vertexList.empty() ) return;
   
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("selectModelingVertices: unable to get object"));
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH) {
         MeshSelection::setArea(PluginFunctions::triMesh(object), _vertexList, AREA, true);
@@ -548,16 +536,13 @@ void MeshObjectSelectionPlugin::selectModelingVertices(int _objectId, IdList _ve
 
 void MeshObjectSelectionPlugin::unselectModelingVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if(_vertexList.empty() ) return;
   
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("unselectModelingVertices: unable to get object"));
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::setArea(PluginFunctions::triMesh(object), _vertexList, AREA, false);

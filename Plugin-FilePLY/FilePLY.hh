@@ -148,10 +148,10 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     int loadObject(QString _filename, DataType _type);
 
     /// Always loads mesh as polymesh
-    int loadPolyMeshObject(QString _filename, const PLYHeader _header);
+    int loadPolyMeshObject(QString _filename, const PLYHeader& _header);
     
     /// Loads a triangle mesh
-    int loadTriMeshObject(QString _filename, const PLYHeader _header);
+    int loadTriMeshObject(QString _filename, const PLYHeader& _header);
 
     bool saveObject(int _id, QString _filename);
 

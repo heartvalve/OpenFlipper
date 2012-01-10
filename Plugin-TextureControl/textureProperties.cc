@@ -315,7 +315,7 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 
       emit getCoordinates1D(textureName_, id_, coords);
 
-      if ( coords.size() > 0 ){
+      if ( ! coords.empty() ){
 
         functionPlot_->setFunction( coords );
 

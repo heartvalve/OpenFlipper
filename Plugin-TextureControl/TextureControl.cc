@@ -632,7 +632,7 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
       // Iterate over all per Object datas and output them
       QMap<QString, PerObjectData*>::const_iterator mapIter = obj->getPerObjectDataMap().begin();  
       while ( mapIter != obj->getPerObjectDataMap().end() ) {
-        mapIter++;
+        ++mapIter;
       }
     #endif
     

@@ -54,16 +54,13 @@
 
 void MeshObjectSelectionPlugin::selectHalfedges(int objectId , IdList _halfedgeList) {
     
-    if(_halfedgeList.size() == 0) return;
+    if(_halfedgeList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (! PluginFunctions::getObject(objectId,object)) {
         emit log(LOGERR,tr("selectHalfedges: unable to get object"));
         return;
     }
-
-    if (_halfedgeList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::selectHalfedges(PluginFunctions::triMesh(object), _halfedgeList);
@@ -90,16 +87,13 @@ void MeshObjectSelectionPlugin::selectHalfedges(int objectId , IdList _halfedgeL
 
 void MeshObjectSelectionPlugin::unselectHalfedges(int objectId , IdList _halfedgeList) {
     
-    if(_halfedgeList.size() == 0) return;
+    if(_halfedgeList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (! PluginFunctions::getObject(objectId,object)) {
         emit log(LOGERR,tr("unselectHalfedges: unable to get object"));
         return;
     }
-
-    if (_halfedgeList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::unselectHalfedges(PluginFunctions::triMesh(object), _halfedgeList);

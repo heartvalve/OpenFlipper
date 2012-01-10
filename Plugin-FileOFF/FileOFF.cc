@@ -272,7 +272,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     
     std::ifstream ifs(_filename.toUtf8());
     
-    if (!ifs.is_open() | !ifs.good()) {
+    if ( (!ifs.is_open()) || (!ifs.good())) {
         
         emit log(LOGERR, tr("Error: Could not read file options of specified OFF-file! Aborting."));
         return false;
@@ -335,7 +335,6 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     // the face valences
     
     unsigned int nV, nF, dummy_uint;
-    float dummy_f;
     unsigned int vertexCount = 0;
     unsigned int tmp_count = 0;
     std::string trash;
@@ -344,6 +343,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
        
     if(_importer.isBinary()) {
         // Parse BINARY file
+        float dummy_f;
         
         // + #Vertices, #Faces, #Edges
         readValue(ifs, nV);
@@ -665,7 +665,6 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
               default:
                 std::cerr << "Error in file format (colorType = " << colorType << ")\n";
                 break;
-                    break;
             }
         }
         

@@ -54,16 +54,13 @@
 
 void MeshObjectSelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
     
-    if(_edgeList.size() == 0) return;
+    if(_edgeList.empty() ) return;
     
     BaseObjectData* object = 0;
     if ( ! PluginFunctions::getObject(objectId,object) ) {
         emit log(LOGERR,tr("selectEdges : unable to get object") );
         return;
     }
-
-    if ( _edgeList.size() == 0 )
-        return;
 
     if ( object->dataType() == DATA_TRIANGLE_MESH )
         MeshSelection::selectEdges(PluginFunctions::triMesh(object), _edgeList);
@@ -90,16 +87,13 @@ void MeshObjectSelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
 
 void MeshObjectSelectionPlugin::unselectEdges( int objectId , IdList _edgeList ) {
     
-    if(_edgeList.size() == 0) return;
+    if(_edgeList.empty()) return;
     
     BaseObjectData* object;
     if ( ! PluginFunctions::getObject(objectId,object) ) {
         emit log(LOGERR,tr("unselectEdges : unable to get object") );
         return;
     }
-
-    if ( _edgeList.size() == 0 )
-        return;
 
     if ( object->dataType() == DATA_TRIANGLE_MESH )
         MeshSelection::unselectEdges(PluginFunctions::triMesh(object), _edgeList);

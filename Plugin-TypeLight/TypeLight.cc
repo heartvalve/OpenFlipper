@@ -419,10 +419,7 @@ void TypeLightPlugin::objectDeleted(int _id) {
 
 QString TypeLightPlugin::get_unique_name(LightObject* _object) {
     
-  bool name_unique = false;
-
   int cur_idx = _object->id();
-
 
   return QString(tr("Light new %1.lgt").arg( cur_idx ));
 }

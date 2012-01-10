@@ -209,7 +209,6 @@ int TypeSkeletonPlugin::addEmpty(){
 
 QString TypeSkeletonPlugin::get_unique_name(SkeletonObject* _object)
 {
-  bool name_unique = false;
 
   int cur_idx = _object->id();
 

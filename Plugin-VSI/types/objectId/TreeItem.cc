@@ -47,6 +47,7 @@
 TreeItem::TreeItem(int _id, QString _name, DataType _type, TreeItem* _parent) :
   id_(_id),
   dataType_(_type),
+  visible_(true),
   name_(_name),
   parentItem_(_parent)
 {

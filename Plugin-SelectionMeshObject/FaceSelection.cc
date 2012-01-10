@@ -55,16 +55,13 @@
 
 void MeshObjectSelectionPlugin::selectFaces(int objectId , IdList _faceList) {
     
-    if(_faceList.size() == 0) return;
+    if(_faceList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (! PluginFunctions::getObject(objectId,object)) {
         emit log(LOGERR,tr("selectFaces : unable to get object"));
         return;
     }
-
-    if (_faceList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::selectFaces(PluginFunctions::triMesh(object), _faceList);
@@ -91,16 +88,13 @@ void MeshObjectSelectionPlugin::selectFaces(int objectId , IdList _faceList) {
 
 void MeshObjectSelectionPlugin::unselectFaces(int objectId , IdList _faceList) {
     
-    if(_faceList.size() == 0) return;
+    if(_faceList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (! PluginFunctions::getObject(objectId,object)) {
         emit log(LOGERR,tr("unselectFaces : unable to get object"));
         return;
     }
-
-    if (_faceList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         MeshSelection::unselectFaces(PluginFunctions::triMesh(object), _faceList);
