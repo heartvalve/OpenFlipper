@@ -152,7 +152,7 @@ void BSplineSurfaceSelectionPlugin::invertControlPointSelection(int _objectId) {
 
 void BSplineSurfaceSelectionPlugin::selectControlPoints(int _objectId, const IdList _ids, bool _deselect) {
     
-    if(_ids.size() == 0) return;
+    if(_ids.empty() ) return;
     
     BaseObjectData* object = 0;
     
@@ -366,7 +366,7 @@ void BSplineSurfaceSelectionPlugin::deleteSelectedKnotsV(int _objectId) {
 
 void BSplineSurfaceSelectionPlugin::selectKnots(int _objectId, const IdList _ids_u, const IdList _ids_v, bool _deselect) {
     
-    if(_ids_u.size() == 0) return;
+    if(_ids_u.empty()) return;
     
     BaseObjectData* object = 0;
     
