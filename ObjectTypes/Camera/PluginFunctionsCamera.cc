@@ -62,7 +62,7 @@ bool getSourceCameras( std::vector<CameraNode*>& _cameras  )
       std::cerr << "ERROR: Camera - get_source_cameras fatal error\n";
   }
 
-  return (_cameras.size() > 0 );
+  return ( !_cameras.empty() );
 }
 
 
@@ -82,7 +82,7 @@ bool getTargetCameras( std::vector<CameraNode*>& _cameras  )
       std::cerr << "ERROR: Camera - getTargetPolylines fatal error\n";
   }
 
-  return (_cameras.size() > 0 );
+  return ( !_cameras.empty() );
 }
 
 

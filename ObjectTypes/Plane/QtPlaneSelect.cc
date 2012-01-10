@@ -60,8 +60,13 @@
 *******************************************************************************/
 QtPlaneSelect::QtPlaneSelect( ACG::GLState& glState )
   : glState( glState ),
+    nodeIdx_(0),
+    targetIdx_(0),
     isDragging( false ),
-    transformNode( NULL )
+    transformNode( NULL ),
+    transformNodeSource( NULL ),
+    transformNodeDrag( NULL ),
+    lineNode( NULL )
 {
 
 }

@@ -104,10 +104,6 @@ private:
     double far_half_height_;
     double far_half_width_;
 
-    double near_half_height_;
-    double near_half_width_;
-
-
     double aspectRatio_;
     double near_;
     double far_;
