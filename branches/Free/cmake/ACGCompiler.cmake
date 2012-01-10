@@ -100,7 +100,7 @@ if (UNIX)
   # Add the standard compiler warnings
   if ( NOT COMPILER_WARNINGS )
     IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-        set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+        set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ELSE()
       set ( COMPILER_WARNINGS "" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ENDIF()
