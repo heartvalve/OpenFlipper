@@ -137,6 +137,8 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     sphere_(0),
     manipulator_radius_(20.0),
     manipulator_height_(20),
+    set_manipulator_radius_(1.0),
+    set_manipulator_height_(1.0),
     manipulator_slices_(10),
     manipulator_stacks_(10),
     any_axis_clicked_(false),

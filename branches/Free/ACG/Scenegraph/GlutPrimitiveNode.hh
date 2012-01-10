@@ -111,8 +111,11 @@ public:
     unsigned int slices, stacks;
     
     // Constructor
-    Primitive() 
+    Primitive(GlutPrimitiveType _t)
     {
+      // Set the type
+      type = _t;
+
       // default axis is negative z 
       axis = Vec3d(0,0,1);
       
@@ -175,8 +178,7 @@ public:
       setColor_(true)
   {
     // add a single primitive of the given type
-    Primitive p;
-    p.type = _type;
+    Primitive p(_type);
     primitives_.push_back(p);
   }
 
