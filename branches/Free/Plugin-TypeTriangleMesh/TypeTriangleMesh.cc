@@ -93,10 +93,7 @@ int TypeTriangleMeshPlugin::addEmpty(){
 
 QString TypeTriangleMeshPlugin::get_unique_name(TriMeshObject* _object)
 {
-  bool name_unique = false;
-
   int cur_idx = _object->id();
-
 
   return QString(tr("TriangleMesh new %1.off").arg( cur_idx ));
 }

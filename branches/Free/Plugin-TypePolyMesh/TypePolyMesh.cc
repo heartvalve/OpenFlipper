@@ -94,8 +94,6 @@ int TypePolyMeshPlugin::addEmpty(){
 
 QString TypePolyMeshPlugin::get_unique_name(PolyMeshObject* _object)
 {
-  bool name_unique = false;
-
   int cur_idx = _object->id();
 
   QString cur_name = QString(tr("PolyMesh new %1.off").arg( cur_idx + 1 ));

@@ -416,6 +416,9 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
   {
     switch (manMode_)
     {
+      case QtTranslationManipulatorNode::Rotation:
+        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+        break;
       case QtTranslationManipulatorNode::Resize:
         PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
         break;
@@ -536,6 +539,10 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
       if (!hide_)
         switch (manMode_)
         {
+          case QtTranslationManipulatorNode::Rotation:
+            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            placeMode_ = false;
+            break;
           case QtTranslationManipulatorNode::Resize:
             PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
             placeMode_ = false;
@@ -706,8 +713,8 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 
     bool successfullyPicked = false;
 
-    int data = -1;
     
+
     /*
      * Snap manipulator to nearest geometry
      * element depending on which selection type is
@@ -764,6 +771,8 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 
         object->manipPlaced(true);
 
+        /// TODO: Whats this?
+        int data = -1;
         if (data != -1)
           object->manipulatorNode()->setData( data );
 
@@ -1582,7 +1591,7 @@ void MovePlugin::updateManipulatorDialog() {
 movePropsWidget* MovePlugin::getDialogWidget(BaseObjectData* _obj) {
 
     for(QList<movePropsWidget*>::iterator it = propsWindows_.begin();
-       it != propsWindows_.end(); it++) {
+       it != propsWindows_.end(); ++it) {
 	   if ( (*it)->getBaseObjectDataId() == _obj->id() )
 	       return *it;
        }

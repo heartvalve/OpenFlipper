@@ -111,7 +111,7 @@ void BSplineCurveSelectionPlugin::deleteSelectedControlPoints(int _objectId) {
 
 void BSplineCurveSelectionPlugin::selectControlPoints(int _objectId, const IdList _ids, bool _deselect) {
     
-    if(_ids.size() == 0) return;
+    if( _ids.empty()) return;
     
     BaseObjectData* object = 0;
     
@@ -279,7 +279,7 @@ void BSplineCurveSelectionPlugin::deleteSelectedKnots(int _objectId) {
 
 void BSplineCurveSelectionPlugin::selectKnots(int _objectId, const IdList _ids, bool _deselect) {
     
-    if(_ids.size() == 0) return;
+    if(_ids.empty()) return;
     
     BaseObjectData* object = 0;
     

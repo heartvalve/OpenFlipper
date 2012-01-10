@@ -215,7 +215,6 @@ QSizeF ZoomButton::sizeHint (Qt::SizeHint _which, const QSizeF &/*_constraint*/)
     case Qt::MaximumSize:
       sh = QSizeF (pixmap ().width (), pixmap ().height ());
       break;
-      break;
     default:
       break;
   }

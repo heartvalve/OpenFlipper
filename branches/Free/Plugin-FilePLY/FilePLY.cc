@@ -119,7 +119,7 @@ size_t FilePLYPlugin::getTypeSize(std::string _type) {
         return sizeof(float);
     else if(_type == "int" || _type == "int32" || _type == "uint" || _type == "uint32")
         return sizeof(int);
-    else if(_type == "double" || _type == "int64" || _type == "uint64" || _type == "uint64")
+    else if(_type == "double" || _type == "int64" || _type == "uint64")
         return sizeof(double);
     else
         std::cerr << "Unable to parse SizeType. I got " << _type << std::endl;
@@ -496,7 +496,7 @@ int FilePLYPlugin::loadObject(QString _filename) {
 //-----------------------------------------------------------------------------------------------------
 
 /// load a triangle-mesh with given filename
-int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader _header){
+int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header){
 
     int id = -1;
     emit addEmptyObject(DATA_TRIANGLE_MESH, id);
@@ -552,7 +552,7 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader _header)
 //-----------------------------------------------------------------------------------------------------
 
 /// load a poly-mesh with given filename
-int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader _header){
+int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _header){
 
     int id = -1;
     emit addEmptyObject(DATA_POLY_MESH, id);

@@ -127,7 +127,7 @@ private slots:
 public :
 
   /// Default constructor
-  DecimaterPlugin() : tool_(0) {};
+  DecimaterPlugin();
 
   /// Default destructor
   ~DecimaterPlugin() {};

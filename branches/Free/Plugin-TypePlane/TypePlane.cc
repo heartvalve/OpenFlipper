@@ -83,8 +83,6 @@ int TypePlanePlugin::addEmpty(){
 
 QString TypePlanePlugin::get_unique_name(PlaneObject* _object)
 {
-  bool name_unique = false;
-
   int cur_idx = _object->id();
 
   return QString(tr("Plane new %1.pla").arg( cur_idx ));

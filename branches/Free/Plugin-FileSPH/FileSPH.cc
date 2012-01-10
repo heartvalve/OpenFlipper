@@ -104,12 +104,11 @@ int FileSPHPlugin::loadObject(QString _filename)
           sphereObject->setFromFileName(_filename);
         }        
         
-        ACG::Vec3d position;
-        double     size;
-        int        slices,stacks;
+
         
         if ( settings.contains("PositionX") ) {
-          
+
+          ACG::Vec3d position;
           position[0] = settings.value("PositionX").toDouble();
           position[1] = settings.value("PositionY").toDouble();
           position[2] = settings.value("PositionZ").toDouble();
@@ -119,21 +118,21 @@ int FileSPHPlugin::loadObject(QString _filename)
         
         if ( settings.contains("Size") ){
           
-          size = settings.value("Size").toDouble();
+          double size = settings.value("Size").toDouble();
           
           sphere->get_primitive(0).size = size;
         }
         
         if ( settings.contains("Slices") ){
           
-          slices = settings.value("Slices").toDouble();
+          int slices = settings.value("Slices").toDouble();
           
           sphere->get_primitive(0).slices = slices;
         }
         
         if ( settings.contains("Stacks") ){
           
-          stacks = settings.value("Stacks").toDouble();
+          int stacks = settings.value("Stacks").toDouble();
           
           sphere->get_primitive(0).stacks = stacks;
         }

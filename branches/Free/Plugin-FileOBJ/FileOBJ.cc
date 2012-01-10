@@ -422,7 +422,6 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
 
       while ( options.size() > 1 ) {
         if ( options[0] == "-blendu" ) {
-        } else if ( options[0] == "-blendu" ) {
           options.pop_front();
           options.pop_front();
         } else if ( options[0] == "-blendv" ) {
@@ -835,7 +834,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       if( !vhandles.empty() ){
         
-        if ( face_texcoords.size() > 0 )
+        if ( !face_texcoords.empty() )
           //if we have texCoords add face+texCoords
           _importer.addFace(vhandles, face_texcoords );
         else

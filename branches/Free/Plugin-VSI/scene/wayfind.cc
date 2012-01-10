@@ -496,7 +496,7 @@ void VSI::WayFind::cleanup()
       delete n;
     }
     else
-      it++;
+      ++it;
   }
 }
 

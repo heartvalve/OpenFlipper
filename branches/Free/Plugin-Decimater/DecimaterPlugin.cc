@@ -65,6 +65,13 @@
 
 //== IMPLEMENTATION ==========================================================
 
+DecimaterPlugin::DecimaterPlugin() :
+        tool_(0),
+        toolIcon_(0)
+{
+
+}
+
 void DecimaterPlugin::initializePlugin()
 {
   tool_ = new DecimaterToolbarWidget();
