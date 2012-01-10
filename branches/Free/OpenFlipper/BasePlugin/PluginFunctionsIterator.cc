@@ -117,7 +117,9 @@ bool ObjectIterator::operator!=( const ObjectIterator& _rhs) const {
 }
 
 ObjectIterator& ObjectIterator::operator=( const ObjectIterator& _rhs) {
-   pos_ = _rhs.pos_;
+   pos_         = _rhs.pos_;
+   dataType_    = _rhs.dataType_;
+   restriction_ = _rhs.restriction_;
    return *this;
 }
 

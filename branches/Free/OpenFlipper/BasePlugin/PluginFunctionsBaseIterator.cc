@@ -121,7 +121,9 @@ bool BaseObjectIterator::operator!=( const BaseObjectIterator& _rhs) {
 }
 
 BaseObjectIterator& BaseObjectIterator::operator=( const BaseObjectIterator& _rhs) {
-   pos_ = _rhs.pos_;
+   pos_         = _rhs.pos_;
+   dataType_    = _rhs.dataType_;
+   restriction_ = _rhs.restriction_;
    return *this;
 }
 

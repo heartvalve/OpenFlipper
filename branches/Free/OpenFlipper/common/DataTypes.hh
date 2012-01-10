@@ -96,8 +96,8 @@ class DLLEXPORT DataType  {
     bool operator==( const unsigned int& _i );
     bool operator==(  const DataType& _i );
     
-    bool operator=( const unsigned int& _i );
-    bool operator=( const DataType& _i );
+    DataType& operator=( const unsigned int& _i );
+    DataType& operator=( const DataType& _i );
     
     bool operator<( const unsigned int& _i );
     bool operator<( const DataType& _i ) const;
@@ -114,8 +114,10 @@ class DLLEXPORT DataType  {
     
     DataType operator|( const DataType& _i ) const;
 
-    bool operator++(int _unused);
- 
+    DataType operator++(int _unused);
+
+    DataType& operator++();
+
     /** return the internal representation of the type which is an unsigned int at the moment.
     *
     * You should avoid using this directly as the internal representation might change in the future

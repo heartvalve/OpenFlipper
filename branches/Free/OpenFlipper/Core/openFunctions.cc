@@ -690,8 +690,8 @@ void Core::slotAddEmptyObjectMenu() {
       }
     }
     
-    // Advance to next type ( Indices are bits so multiply by to to get next bit)
-    currentType++;
+    // Advance to next type ( Indices are bits so multiply by two to get next bit)
+    ++currentType;
   }
   
   static addEmptyWidget* widget = 0;
