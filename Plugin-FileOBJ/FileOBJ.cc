@@ -900,7 +900,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       
       //get curve control points
       std::string curveLine;
-      std::string tmp;
       
       std::getline(stream, curveLine);
       
@@ -1028,7 +1027,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       
       //get surface control points
       std::string surfLine;
-      std::string tmp;
       
       std::getline(stream, surfLine);
       
@@ -1305,7 +1303,6 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       //get curve control points
       std::string curveLine;
-      std::string tmp;
       
       std::getline(stream, curveLine);
       
@@ -1373,7 +1370,6 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       
       //get surface control points
       std::string surfLine;
-      std::string tmp;
       
       std::getline(stream, surfLine);
       
@@ -1501,7 +1497,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     importer.addGroup( QFileInfo(_filename).fileName() );
   
   //check if something was found
-  if ( importer.objectOptions().size() == 0 && objIDs.size() == 0 ){
+  if ( importer.objectOptions().empty() && objIDs.empty() ){
     
     forceTriangleMesh_ = false;
     forcePolyMesh_     = false;

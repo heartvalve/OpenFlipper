@@ -127,6 +127,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void noguiSupported( ) {} ;
 
   public :
+
+    /// Constructor
+    DataControlPlugin();
+
     /// Destructor
     ~DataControlPlugin() {};
 
