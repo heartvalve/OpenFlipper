@@ -227,10 +227,12 @@ int FileLightPlugin::loadObject(QString _filename)
         
         settings.endGroup();
       }
+
+      emit updatedObject( lightObject->id(), UPDATE_ALL );
+      emit openedFile( lightObject->id() );
+
     }
 
-    emit updatedObject( lightObject->id(), UPDATE_ALL );
-    emit openedFile( lightObject->id() );
   }
 
   return id;
