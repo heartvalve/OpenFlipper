@@ -2,9 +2,16 @@
  
 #include <iostream>
  
-using namespace std;
+class test {
+
+  public:
+    test() { 
+      std::cout << "Constructor" << std::endl;
+    };
+};
  
 int main()
 {
-  cout << "Hello World!";
+  test a;
+  std::cout << "Hello World!";
 }

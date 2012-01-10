@@ -584,7 +584,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     trimString(line);
     
     // comment
-    if ( line.size() == 0 || line[0] == '#' || isspace(line[0]) ) {
+    if ( line.empty() || line[0] == '#' || isspace(line[0]) ) {
       continue;
     }
 
@@ -1146,7 +1146,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     trimString(line);
     
     // comment
-    if ( line.size() == 0 || line[0] == '#' || isspace(line[0]) ) {
+    if ( line.empty() || line[0] == '#' || isspace(line[0]) ) {
       continue;
     }
 
@@ -1493,7 +1493,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
   }
   
   //add a group if we have includes
-  if (includes.size() > 0)
+  if ( ! includes.empty() )
     importer.addGroup( QFileInfo(_filename).fileName() );
   
   //check if something was found

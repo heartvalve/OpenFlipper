@@ -269,7 +269,7 @@ bool getSourceIdentifiers( std::vector<int>& _identifiers  ) {
     if ( o_it->source() )
       _identifiers.push_back ( o_it->id() );
   }
-  return (_identifiers.size() >0 );
+  return ( ! _identifiers.empty() );
 }
 
 bool getTargetIdentifiers( std::vector<int>& _identifiers  ) {
@@ -279,7 +279,7 @@ bool getTargetIdentifiers( std::vector<int>& _identifiers  ) {
     if ( o_it->target() )
       _identifiers.push_back ( o_it->id() );
   }
-  return (_identifiers.size() >0 );
+  return ( !_identifiers.empty() );
 }
 
 // ===============================================================================
@@ -351,7 +351,7 @@ bool getAllMeshes( std::vector<int>& _identifiers  ) {
     _identifiers.push_back( o_it->id() );
   }
 
-  return (_identifiers.size() > 0);
+  return (!_identifiers.empty());
 }
 
 bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
@@ -364,7 +364,7 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
     _identifiers.push_back( o_it->id() );
   }
 
-  return (_identifiers.size() > 0);
+  return ( !_identifiers.empty() );
 }
 
 void setBackColor( OpenMesh::Vec4f _color) {

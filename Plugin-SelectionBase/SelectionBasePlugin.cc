@@ -1242,7 +1242,7 @@ void SelectionBasePlugin::slotLassoSelection(QMouseEvent* _event) {
         line_node_->add_point(hit_point);
         
         // Close lasso
-        if(linePoints_.size() > 0)
+        if( !linePoints_.empty() )
             line_node_->add_point(linePoints_[0]);
         
     } else if(_event->type() == QEvent::MouseButtonDblClick) {
@@ -1307,7 +1307,7 @@ void SelectionBasePlugin::slotVolumeLassoSelection(QMouseEvent* _event) {
         line_node_->add_point(hit_point);
         
         // Close lasso
-        if(linePoints_.size() > 0)
+        if( !linePoints_.empty() )
             line_node_->add_point(linePoints_[0]);
         
     } else if(_event->type() == QEvent::MouseButtonDblClick) {
