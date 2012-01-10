@@ -67,9 +67,9 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
@@ -84,9 +84,9 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 DrawModes::DrawMode
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 availableDrawModes()
 {
   DrawModes::DrawMode drawModes(0);
@@ -106,9 +106,9 @@ availableDrawModes()
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   GLenum prev_depth = _state.depthFunc();
@@ -259,9 +259,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 render(GLState& _state, bool _fill)
 {
   // draw the control net (includes selection on the net)
@@ -287,9 +287,9 @@ render(GLState& _state, bool _fill)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 drawSurface(GLState& _state, bool _fill)
 {
   int numKnots_m = bsplineSurface_.n_knots_m();
@@ -374,9 +374,9 @@ drawSurface(GLState& _state, bool _fill)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -414,9 +414,9 @@ drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 drawControlNet(GLState& _state)
 {
   // remember old color
@@ -542,9 +542,9 @@ drawControlNet(GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 drawFancyControlNet(GLState& _state)
 {
   // remember old color
@@ -632,9 +632,9 @@ drawFancyControlNet(GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick(GLState& _state, PickTarget _target)
 {
   if(pick_texture_idx_ == 0)
@@ -683,9 +683,9 @@ pick(GLState& _state, PickTarget _target)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick_vertices( GLState& _state )
 {
   // radius in pixels
@@ -715,9 +715,9 @@ pick_vertices( GLState& _state )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick_spline( GLState& _state )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -762,9 +762,9 @@ pick_spline( GLState& _state )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick_surface( GLState& _state, unsigned int _offset )
 {
   bool sampling_mode_backup = adaptive_sampling_;
@@ -779,9 +779,9 @@ pick_surface( GLState& _state, unsigned int _offset )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   // draw 3d sphere
@@ -797,9 +797,9 @@ draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices,
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   _state.push_modelview_matrix();
@@ -828,9 +828,9 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state,
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 updateControlPointSelectionTexture(GLState& _state)
 {
   create_cp_selection_texture(_state);
@@ -839,9 +839,9 @@ updateControlPointSelectionTexture(GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 updateKnotVectorSelectionTexture(GLState& _state)
 {
   create_knot_selection_texture(_state);
@@ -850,9 +850,9 @@ updateKnotVectorSelectionTexture(GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 selection_init_texturing(GLuint & _texture_idx )
 {
   // generate texture index
@@ -873,9 +873,9 @@ selection_init_texturing(GLuint & _texture_idx )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 create_cp_selection_texture(GLState& /*_state*/)
 {
   if (bsplineSurface_.n_knots_m() == 0 || bsplineSurface_.n_knots_n() == 0)
@@ -978,9 +978,9 @@ create_cp_selection_texture(GLState& /*_state*/)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 create_knot_selection_texture(GLState& _state)
 {
   if (bsplineSurface_.n_knots_m() == 0 ||bsplineSurface_.n_knots_n() == 0)
@@ -1116,9 +1116,9 @@ create_knot_selection_texture(GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick_init_texturing( )
 {
   std::cout << "[BSplineSurface] pick_init_texturing()" << std::endl;
@@ -1144,9 +1144,9 @@ pick_init_texturing( )
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 pick_create_texture( GLState& _state)
 {
   std::cout << "[BSplineSurface] pick_create_texture()" << std::endl;
@@ -1211,9 +1211,9 @@ pick_create_texture( GLState& _state)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v_repeat )
 {
   if(arb_texture_idx_ == 0)
@@ -1245,9 +1245,9 @@ set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 void
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 draw_textured_nurbs( GLState& /*_state*/)
 {
   int numKnots_m = bsplineSurface_.n_knots_m();
@@ -1347,9 +1347,9 @@ draw_textured_nurbs( GLState& /*_state*/)
 
 //----------------------------------------------------------------------------
 
-template <class BSplineSurface>
+template <class BSplineSurfaceType>
 ACG::Vec4f
-BSplineSurfaceNodeT<BSplineSurface>::
+BSplineSurfaceNodeT<BSplineSurfaceType>::
 generateHighlightColor(ACG::Vec4f _color)
 {
   float c1 = _color[0]*1.5; 

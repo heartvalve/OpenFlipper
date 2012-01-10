@@ -70,8 +70,8 @@ namespace SceneGraph {
 /** \brief Constructor
  * 
  */
-template <class Skeleton>
-SkeletonNodeT<Skeleton>::SkeletonNodeT(Skeleton &_skeleton, BaseNode *_parent, std::string _name) :
+template <class SkeletonType>
+SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_parent, std::string _name) :
                BaseNode(_parent, _name),
                bCoordFramesVisible_(false),
                skeleton_(_skeleton),
@@ -91,8 +91,8 @@ SkeletonNodeT<Skeleton>::SkeletonNodeT(Skeleton &_skeleton, BaseNode *_parent, s
 /** \brief Destructor
  * 
  */
-template <class Skeleton>
-SkeletonNodeT<Skeleton>::~SkeletonNodeT()
+template <class SkeletonType>
+SkeletonNodeT<SkeletonType>::~SkeletonNodeT()
 {
   // delete quadric if initialized
   if (quadricInitialized_)
@@ -105,8 +105,8 @@ SkeletonNodeT<Skeleton>::~SkeletonNodeT()
 /** \brief Returns a pointer to the skeleton
  * 
  */
-template <class Skeleton>
-Skeleton& SkeletonNodeT<Skeleton>::skeleton()
+template <class SkeletonType>
+SkeletonType& SkeletonNodeT<SkeletonType>::skeleton()
 {
   return skeleton_;
 }
@@ -117,14 +117,14 @@ Skeleton& SkeletonNodeT<Skeleton>::skeleton()
 /** \brief Returns the bounding box of this node
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {  
   if(skeleton_.jointCount() == 0)
     return; // no joints, no contribution to the bound box
 
   Pose *pose = skeleton_.pose(hAni_);
-  typename Skeleton::Iterator it;
+  typename SkeletonType::Iterator it;
   for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
   {
     _bbMin.minimize( (Vec3d)pose->globalTranslation((*it)->id()) );
@@ -141,8 +141,8 @@ void SkeletonNodeT<Skeleton>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 /** \brief Returns available draw modes
  * 
  */
-template <class Skeleton>
-DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes() const
+template <class SkeletonType>
+DrawModes::DrawMode SkeletonNodeT<SkeletonType>::availableDrawModes() const
 {
   return (DrawModes::WIREFRAME           | DrawModes::POINTS | DrawModes::SOLID_FLAT_SHADED
         | DrawModes::SOLID_FACES_COLORED | DrawModes::SOLID_FACES_COLORED_FLAT_SHADED);
@@ -154,8 +154,8 @@ DrawModes::DrawMode SkeletonNodeT<Skeleton>::availableDrawModes() const
 /** \brief Normalizes a coordinate frame defined by the given matrix
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::NormalizeCoordinateFrame(Matrix &_mat)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::NormalizeCoordinateFrame(Matrix &_mat)
 {
   ACG::Vec3d vec;
   for(int i = 0; i < 3; ++i)
@@ -179,8 +179,8 @@ void SkeletonNodeT<Skeleton>::NormalizeCoordinateFrame(Matrix &_mat)
  * @param[in] _HSV An array of 3 GLfloats, holding H, S and V
  * @param[out] _RGB An array of 3 GLfloats, holding R, G and B
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::HSVtoRGB(const Vec4f& _HSV, Vec4f& _RGB)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::HSVtoRGB(const Vec4f& _HSV, Vec4f& _RGB)
 {
   int h;
   float f, p, q, t;
@@ -240,8 +240,8 @@ void SkeletonNodeT<Skeleton>::HSVtoRGB(const Vec4f& _HSV, Vec4f& _RGB)
  * @param[out] _RGB An array of 3 GLfloats, holding R, G and B
  * @param[in] _HSV An array of 3 GLfloats, holding H, S and V
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::RGBtoHSV(const Vec4f& _RGB, Vec4f& _HSV)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::RGBtoHSV(const Vec4f& _RGB, Vec4f& _HSV)
 {
   double maxC = _RGB[2];
   if(maxC < _RGB[1])
@@ -292,8 +292,8 @@ void SkeletonNodeT<Skeleton>::RGBtoHSV(const Vec4f& _RGB, Vec4f& _HSV)
 /** \brief Renders the nodes contents using the given render state and draw mode
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   
   ACG::GLState::disable(GL_LIGHTING);
@@ -301,7 +301,7 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
   glPushAttrib(GL_ENABLE_BIT);
   
   Pose *pose = skeleton_.pose(hAni_);
-  typename Skeleton::Iterator it;
+  typename SkeletonType::Iterator it;
   
   // draw points
   //
@@ -364,7 +364,7 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
       glBegin(GL_POINTS);
       for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
       {
-        typename Skeleton::Matrix global = pose->globalMatrix( (*it)->id() );
+        typename SkeletonType::Matrix global = pose->globalMatrix( (*it)->id() );
         NormalizeCoordinateFrame(global);
         glColor3f(0.8, 0.2, 0.2);
         glVertex( global.transform_point(Point(fFrameSize_, 0, 0)) );
@@ -437,7 +437,7 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
       for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
       {
         unsigned int index = (*it)->id();
-        typename Skeleton::Matrix global = pose->globalMatrix(index);
+        typename SkeletonType::Matrix global = pose->globalMatrix(index);
         NormalizeCoordinateFrame(global);
         glColor3f(0.8, 0.2, 0.2);
         glVertex( pose->globalTranslation(index));
@@ -465,8 +465,8 @@ void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _
 /** \brief get suitable color for the joint
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::getJointColor( const Vec4f& _baseColor, Vec4f& _result )
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::getJointColor( const Vec4f& _baseColor, Vec4f& _result )
 {
   Vec4f hsv;
   RGBtoHSV(_baseColor, hsv);
@@ -486,8 +486,8 @@ void SkeletonNodeT<Skeleton>::getJointColor( const Vec4f& _baseColor, Vec4f& _re
 /** \brief Renders the node in picking mode, restricted to the node components given by \e _target
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::pick(GLState& _state, PickTarget _target)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::pick(GLState& _state, PickTarget _target)
 {
   unsigned int n_of_vertices = skeleton_.jointCount();
 
@@ -520,14 +520,14 @@ void SkeletonNodeT<Skeleton>::pick(GLState& _state, PickTarget _target)
 /** \brief Pick method for vertices
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::pick_vertices(GLState &_state)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::pick_vertices(GLState &_state)
 {
   glPointSize(16.0);
-  typename Skeleton::Pose* pose = skeleton_.pose(hAni_);
-  for(typename Skeleton::Iterator it = skeleton_.begin(); it != skeleton_.end(); ++it)
+  typename SkeletonType::Pose* pose = skeleton_.pose(hAni_);
+  for(typename SkeletonType::Iterator it = skeleton_.begin(); it != skeleton_.end(); ++it)
   {
-    typename Skeleton::Joint *joint = *it;
+    typename SkeletonType::Joint *joint = *it;
     _state.pick_set_name(joint->id());
 
     Vec3d p = pose->globalTranslation(joint->id());
@@ -544,12 +544,12 @@ void SkeletonNodeT<Skeleton>::pick_vertices(GLState &_state)
 /** \brief Pick method for edges
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::pick_edges(GLState &_state)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::pick_edges(GLState &_state)
 {
   glLineWidth(10);
-  typename Skeleton::Pose* pose = skeleton_.pose(hAni_);
-  for(typename Skeleton::Iterator it = skeleton_.begin(); it != skeleton_.end(); ++it)
+  typename SkeletonType::Pose* pose = skeleton_.pose(hAni_);
+  for(typename SkeletonType::Iterator it = skeleton_.begin(); it != skeleton_.end(); ++it)
   {
     Joint *joint = *it;
     for(typename Joint::ChildIter it_ch = joint->begin(); it_ch != joint->end(); ++it_ch)
@@ -575,8 +575,8 @@ void SkeletonNodeT<Skeleton>::pick_edges(GLState &_state)
 /** \brief Helper function to draw the bones
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::draw_bone(GLState &_state, DrawModes::DrawMode _drawMode, const Point& _parent, const Point& _axis)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode _drawMode, const Point& _parent, const Point& _axis)
 {
  
   _state.push_modelview_matrix();
@@ -642,8 +642,8 @@ void SkeletonNodeT<Skeleton>::draw_bone(GLState &_state, DrawModes::DrawMode _dr
  *
  * @param _hAni A handle to an animation, or an invalid handle for the default pose.
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::setActivePose(const AnimationHandle &_hAni)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::setActivePose(const AnimationHandle &_hAni)
 {
   hAni_ = _hAni;
 }
@@ -654,8 +654,8 @@ void SkeletonNodeT<Skeleton>::setActivePose(const AnimationHandle &_hAni)
 /**
  * @brief Returns the active pose set with SkeletonNodeT::setActivePose
  */
-template <class Skeleton>
-AnimationHandle SkeletonNodeT<Skeleton>::activePose()
+template <class SkeletonType>
+AnimationHandle SkeletonNodeT<SkeletonType>::activePose()
 {
   return hAni_;
 }
@@ -666,14 +666,14 @@ AnimationHandle SkeletonNodeT<Skeleton>::activePose()
 /** \brief Toggle visibility of coordinate frames for all joints
  * 
  */
-template <class Skeleton>
-void SkeletonNodeT<Skeleton>::showCoordFrames(bool _bVisible)
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::showCoordFrames(bool _bVisible)
 {
 	bCoordFramesVisible_ = _bVisible;
 }
 
-template <class Skeleton>
-bool SkeletonNodeT<Skeleton>::coordFramesVisible()
+template <class SkeletonType>
+bool SkeletonNodeT<SkeletonType>::coordFramesVisible()
 {
   return bCoordFramesVisible_;
 }
