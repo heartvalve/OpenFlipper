@@ -61,7 +61,7 @@ class GraphicsScene;
 //== CLASS DEFINITION =========================================================
 
 /** Layoutable text widget implementation with an optional background.
-  * The background can va convex or concave sides.
+  * The background can have convex or concave sides.
   */
 class Text : public QObject, public QGraphicsSimpleTextItem, public QGraphicsLayoutItem
 {

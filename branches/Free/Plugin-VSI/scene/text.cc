@@ -67,6 +67,8 @@ namespace VSI {
 Text::Text (QGraphicsItem *_parent) :
   QGraphicsSimpleTextItem (_parent),
   backgroundSet_ (false),
+  leftOut_(true),
+  rightOut_(true),
   alignment_ (Qt::AlignLeft),
   hStretch_ (true)
 {
@@ -80,6 +82,8 @@ Text::Text (const QString &_text, QGraphicsItem *_parent) :
   QGraphicsSimpleTextItem (_text, _parent),
   text_ (_text),
   backgroundSet_ (false),
+  leftOut_(true),
+  rightOut_(true),
   alignment_ (Qt::AlignLeft),
   hStretch_ (true)
 {
@@ -297,8 +301,8 @@ void Text::paint (QPainter *_painter, const QStyleOptionGraphicsItem *_option, Q
 void Text::setBackground(bool _leftOut, bool _rightOut)
 {
   backgroundSet_ = true;
-  leftOut_ = _leftOut;
-  rightOut_ = _rightOut;
+  leftOut_       = _leftOut;
+  rightOut_      = _rightOut;
   updateGeometry ();
 }
 

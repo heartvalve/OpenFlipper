@@ -74,6 +74,28 @@ const ACG::Vec4f target_color (0.0,0.5,0.2,1.0);
 
 //******************************************************************************
 
+
+
+DataControlPlugin::DataControlPlugin() :
+        tool_(0),
+        toolIcon_(0),
+        MeshDialogLayout_(0),
+        objectList_(0),
+        locked(false),
+        model_(0),
+        view_(0),
+        viewHeader_(0),
+        onlyDown_(0),
+        onlyUp_(0),
+        headerPopupType_(0),
+        targetAction_(0),
+        sourceAction_(0),
+        removeAction_(0)
+{
+
+}
+
+
 /** \brief Plugin initialization
  *
  */
@@ -143,7 +165,6 @@ void DataControlPlugin::initializePlugin()
   if ( ! OpenFlipper::Options::gui())
     return;
 
-  locked = false;
   tool_ = new DatacontrolToolboxWidget();
   connect( tool_ , SIGNAL( keyEvent( QKeyEvent* ) ),
       this  , SLOT(slotKeyEvent ( QKeyEvent* ) ));
@@ -188,9 +209,6 @@ void DataControlPlugin::initializePlugin()
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-toolbox.png");
 
   emit addToolbox("Data Control", tool_, toolIcon_);
-
-  onlyDown_ = 0;
-  onlyUp_   = 0;
 
   QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-boundingBox.png");
   tool_->boundingBoxBtn->setIcon( icon );
