@@ -1678,7 +1678,6 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
       if (_event->buttons() & (Qt::LeftButton | Qt::MidButton)) {
         QPoint newPoint2D = pos;
 
-        double value_x, value_y;
         ACG::Vec3d newPoint3D;
         bool newPoint_hitSphere = mapToSphere(newPoint2D, newPoint3D);
 
@@ -1689,7 +1688,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         if ((_event->buttons() & Qt::LeftButton) && (_event->buttons() & Qt::MidButton)) {
           switch (projectionMode()) {
             case PERSPECTIVE_PROJECTION: {
-                value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
+                double value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
                 translate(ACG::Vec3d(0.0, 0.0, value_y * factor));
                 updateGL();
                 emit viewChanged();
@@ -1697,7 +1696,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
             }
 
             case ORTHOGRAPHIC_PROJECTION: {
-                value_y = ((newPoint2D.y() - lastPoint2D_.y())) * properties_.orthoWidth() / (double) glHeight();
+                double value_y = ((newPoint2D.y() - lastPoint2D_.y())) * properties_.orthoWidth() / (double) glHeight();
                 properties_.orthoWidth( properties_.orthoWidth() - value_y * factor );
                 updateProjectionMatrix();
                 updateGL();
@@ -1715,6 +1714,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))  ) {
           
           ACG::Vec3d translation;
+          double value_x, value_y;
           
           // if start depth is 1, no object was hit when starting translation
           if ( startDepth_ == 1 ) {

@@ -310,7 +310,7 @@ bool LicenseManager::authenticate() {
     processor = QString(pCPU);
     
     // free memory
-    delete pCPU;
+    free(pCPU);
 
   #else
     QFile cpuinfo("/proc/cpuinfo");

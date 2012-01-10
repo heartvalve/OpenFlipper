@@ -226,7 +226,7 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("CPU Brand:\t\t ") + QString(pCPU) );
     
     // free memory
-    delete pCPU;
+    free(pCPU);
     
     int physicalCPUS = 0;
     
@@ -337,7 +337,7 @@ void CoreWidget::showAboutWidget( ) {
     
     aboutWidget_->OpenFlipperAbout->append(tr("OS Version:\t\t ") + QString(p) );
     
-    delete(p);
+    free(p);
 
   #else
     QFile versionInfo("/proc/version");
@@ -525,7 +525,7 @@ void CoreWidget::showAboutWidget( ) {
     types += typeName( currentType ) + "\t\t typeId: " + QString::number(currentType.value()) + "\n";
     
     // Advance to next type ( Indices are bits so multiply by to to get next bit)
-    currentType++;
+    ++currentType;
   }
   
   aboutWidget_->OpenFlipperAbout->append( types );

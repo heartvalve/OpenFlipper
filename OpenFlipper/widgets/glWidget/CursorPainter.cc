@@ -69,6 +69,8 @@ CursorPainter::CursorPainter (QObject *_parent) :
   enabled_(false),
   mouseIn_(false),
   forceNative_(false),
+  xOff_(0),
+  yOff_(0),
   texture_(0),
   hasCursor_(false)
 {
