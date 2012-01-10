@@ -166,7 +166,6 @@ private:
   /// Contains all orientations to draw
   unsigned int orientation_;
   
-  bool ok_;
 };
 
 

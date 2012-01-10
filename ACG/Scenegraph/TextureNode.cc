@@ -91,7 +91,7 @@ TextureNode::TextureNode( BaseNode*            _parent,
 
 TextureNode::~TextureNode()
 {
-  for (std::vector<TextureInfo>::iterator texturesIt = textures_.begin(); texturesIt != textures_.end(); texturesIt++) {
+  for (std::vector<TextureInfo>::iterator texturesIt = textures_.begin(); texturesIt != textures_.end(); ++texturesIt) {
     if ( glIsTexture( texturesIt->id ) ) {
       glDeleteTextures( 1, &(texturesIt->id) );
     }

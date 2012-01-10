@@ -66,7 +66,9 @@ namespace ACG {
 GLTrackball::
 GLTrackball(GLState& _state) 
   : glstate_(_state), 
-    center_(0,0,0) 
+    center_(0,0,0) ,
+    last_point_ok_(false),
+    action_(ROTATION)
 {
   for (int i=0; i<10; ++i)
     button_down_[i] = false;

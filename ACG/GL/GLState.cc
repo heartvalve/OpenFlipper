@@ -256,7 +256,7 @@ void GLState::clearBuffers ()
     glScissor(  left_,bottom_,width_,height_ );
     
     // Clear restricted region
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     
     // Reset to originalsettings
     glScissor(  origBox[0], origBox[1], origBox[2], origBox[3] );

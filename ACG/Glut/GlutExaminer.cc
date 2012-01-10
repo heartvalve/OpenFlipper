@@ -67,7 +67,9 @@ namespace ACG {
 GlutExaminer::
 GlutExaminer(const char* _title, int _width, int _height)
   : GlutViewer(_title, _width, _height),
-    trackball_(glstate_)
+    trackball_(glstate_),
+    center_(Vec3f(0.0,0.0,0.0)),
+    radius_(1.0)
 {
   init();
 }
