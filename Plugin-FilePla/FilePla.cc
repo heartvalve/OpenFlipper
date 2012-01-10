@@ -113,8 +113,11 @@ int FilePlaPlugin::loadObject(QString _filename)
           plane->setFromFileName(_filename);
         }
       }
+
+      emit updatedObject( plane->id() );
+
     }
-    emit updatedObject( plane->id() );
+
   }
 
   return id;

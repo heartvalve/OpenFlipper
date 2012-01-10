@@ -228,7 +228,7 @@ void SkeletalAnimationPlugin::checkObjectSelection(){
     activeSkeletons_.push_back( o_it->id() );
 
   // if no target skeleton there check if there is only one skeleton
-  if ( activeSkeletons_.size() == 0){
+  if ( activeSkeletons_.empty() ){
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
       activeSkeletons_.push_back( o_it->id() );
 
@@ -240,7 +240,7 @@ void SkeletalAnimationPlugin::checkObjectSelection(){
     activeMeshes_.push_back( o_it->id() );
 
   // if no target mesh there check if there is only one mesh
-  if ( activeMeshes_.size() == 0){
+  if ( activeMeshes_.empty() ){
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_TRIANGLE_MESH|DATA_POLY_MESH)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
       activeMeshes_.push_back( o_it->id() );
 
@@ -433,7 +433,7 @@ void SkeletalAnimationPlugin::slotAnimationIndexChanged(int /*_index*/)
   if(bGuiUpdating_)	// do not update while the gui is updating
     return;
 
-  if ( activeSkeletons_.size() == 0){
+  if ( activeSkeletons_.empty() ){
     pToolbox_->hsFrame->setRange( 0, 0 );
     pToolbox_->hsFrame->setTickInterval(1);
     pToolbox_->hsFrame->setValue(0);

@@ -75,22 +75,40 @@
  *
  */
 MovePlugin::MovePlugin() :
-    placeAndSnapAction_(0),
-    manMode_(QtTranslationManipulatorNode::TranslationRotation),
-    contextAction_(0),
-    toAllTargets_(0),
-    placeMode_(false)
+axisA_(0),
+axisB_(1),
+toolboxActive_(false),
+tool_(0),
+toolIcon_(0),
+moveAction_(0),
+moveSelectionAction_(0),
+toolBarActions_(0),
+toolbar_(0),
+pickToolbar_(0),
+placeAction_(0),
+rotateTranslateAction_(0),
+rotateManipAction_(0),
+resizeAction_(0),
+biggerManipAction_(0),
+smallerManipAction_(0),
+fixChildManipAction_(0),
+transformRefPoseManipAction_(0),
+currentPoseManipAction_(0),
+placeAndSnapAction_(0),
+pickToolBarActions_(0),
+manip_size_(1.0),
+manip_size_modifier_(1.0),
+lastActiveManipulator_(-1),
+manMode_(QtTranslationManipulatorNode::TranslationRotation),
+selectionType_(VERTEX),
+contextAction_(0),
+contextActionHide_(0),
+toAllTargets_(0),
+hide_(true),
+allTargets_(false),
+placeMode_(false)
 {
-    manip_size_          = 1.0;
-    manip_size_modifier_ = 1.0;
 
-    selectionType_ = VERTEX;
-
-    axisA_ = 0;
-    axisB_ = 1;
-
-    hide_ = true;
-    allTargets_ = false;
 }
 
 /** \brief Deconstructor
