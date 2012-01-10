@@ -13,20 +13,35 @@
 /** \brief Default Constructor
  *
  */
-SkeletonEditingPlugin::SkeletonEditingPlugin()
- : currentSkeleton_(-1),
-   currentJoint_(-1),
-   jointPreview_(false),
-   transformChildJoints_(false),
-   transformAllFrames_(true),
-   inverseKinematic_(false),
-   dblClick_(false),
-   lastRenderer_(""),
-   rendererChanged_(false)
+SkeletonEditingPlugin::SkeletonEditingPlugin() :
+        toolbar_(0),
+        toolBarActions_(0),
+        skeletonEditingAction_(0),
+        pickToolbar_(0),
+        pickToolBarActions_(0),
+        selectJointAction_(0),
+        insertJointAction_(0),
+        splitJointAction_(0),
+        deleteJointAction_(0),
+        moveJointAction_(0),
+        transformChildManipAction_(0),
+        transformAllManipAction_(0),
+        rotateManipAction_(0),
+        inverseKinematicAction_(0),
+
+        currentSkeleton_(-1),
+        currentJoint_(-1),
+        jointPreview_(false),
+        transformChildJoints_(false),
+        transformAllFrames_(true),
+        inverseKinematic_(false),
+        dblClick_(false),
+        lastRenderer_(""),
+        rendererChanged_(false),
+        manip_size_(1.0),
+        manip_size_modifier_(1.0)
 
 {
-    manip_size_          = 1.0;
-    manip_size_modifier_ = 1.0;
 }
 
 //--------------------------------------------------------------------------------

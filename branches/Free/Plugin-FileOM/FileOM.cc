@@ -64,10 +64,25 @@
 #define TYPETRIANGLE   3
 
 /// Constructor
-FileOMPlugin::FileOMPlugin()
-: loadOptions_(0),
-  saveOptions_(0),
-  triMeshHandling_(0) {
+FileOMPlugin::FileOMPlugin() :
+        loadOptions_(0),
+        saveOptions_(0),
+        saveBinary_(0),
+        saveVertexNormal_(0),
+        saveVertexTexCoord_(0),
+        saveVertexColor_(0),
+        saveFaceColor_(0),
+        saveFaceNormal_(0),
+        saveDefaultButton_(0),
+        triMeshHandling_(0),
+        loadVertexNormal_(0),
+        loadVertexTexCoord_(0),
+        loadVertexColor_(0),
+        loadFaceColor_(0),
+        loadFaceNormal_(0),
+        loadDefaultButton_(0)
+
+{
 }
 
 //-----------------------------------------------------------------------------------------------------
