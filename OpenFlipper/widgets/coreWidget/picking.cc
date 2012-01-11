@@ -197,7 +197,7 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
           _tool->adjustSize();
 
           // Add widget to the gl scene
-          QGraphicsItem* item = glScene_->addWidget(_tool);
+          QGraphicsProxyWidget* item = glScene_->addWidget(_tool);
 
           // Put it into center of the screen
           int midP = (glScene_->width() / 2) - (int)(_tool->width() / 2);
@@ -206,7 +206,7 @@ void CoreWidget::setActivePickToolBar(QToolBar* _tool) {
           item->show();
 
           // Remember it as being part of the scene
-          curPickingToolbarItems_.insert(std::pair<QToolBar*,QGraphicsItem*>(_tool,item));
+          curPickingToolbarItems_.insert(std::pair<QToolBar*,QGraphicsProxyWidget*>(_tool,item));
         } else {
           // Widget has already been added once, so just show it
           ret->second->show();
