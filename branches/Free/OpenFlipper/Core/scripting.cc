@@ -308,6 +308,10 @@ void Core::setToolBoxActive(QString _toolBoxName, bool _active)
 //== Script Special Functions =================================================
 //=============================================================================
 
+void Core::slotScriptError(const QScriptValue &error) {
+    emit log(LOGERR, tr("Script error: ") + error.toString());
+}
+
 QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 {
   QString result;

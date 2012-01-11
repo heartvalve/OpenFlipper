@@ -421,7 +421,7 @@ Core::init() {
   // Set a reference to the scriptengine for simple rpc calls
   RPC::setScriptEngine(&scriptEngine_);
 
-  connect(&scriptEngine_, SIGNAL( signalHandlerException(const QScriptValue &) ), this, SLOT( slot_script_error(const QScriptValue &) ));
+  connect(&scriptEngine_, SIGNAL( signalHandlerException(const QScriptValue &) ), this, SLOT( slotScriptError(const QScriptValue &) ));
 
   // process Events every 500 msecs during script execution
   scriptEngine_.setProcessEventsInterval( 500 );
@@ -1771,10 +1771,6 @@ bool Core::checkOpenGLCapabilities()  {
   #endif
   
   return ok;
-}
-
-void Core::slot_script_error(const QScriptValue &error) {
-    emit log(LOGERR, tr("Script error: ") + error.toString());
 }
 
 //=============================================================================
