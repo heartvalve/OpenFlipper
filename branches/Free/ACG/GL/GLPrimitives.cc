@@ -126,6 +126,15 @@ void GLPrimitive::bindVBO()
   glTexCoordPointer(2, GL_FLOAT, 32, (GLvoid*) 24);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+//------------------------------------------------------------------------
+
+void GLPrimitive::unBindVBO()
+{
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
 
 //------------------------------------------------------------------------
 
@@ -134,6 +143,8 @@ void GLPrimitive::draw()
   bindVBO();
 
   glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
+
+  unBindVBO();
 }
 
 //========================================================================
