@@ -94,6 +94,11 @@ public:
   StopWatch() {
     #ifdef _WIN32
       QueryPerformanceFrequency(&freq_);
+    #else
+      starttime_.tv_sec  = 0;
+      starttime_.tv_usec = 0;
+      endtime_.tv_sec    = 0;
+      endtime_.tv_usec   = 0;
     #endif
   }
 
