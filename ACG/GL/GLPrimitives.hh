@@ -87,6 +87,8 @@ protected:
 
   void bindVBO();
 
+  void unBindVBO();
+
 private:
 
   int numTris_;
