@@ -668,7 +668,7 @@ void SkeletalAnimationPlugin::UpdateUI()
 
   bGuiUpdating_ = true;
 
-  if( activeSkeletons_.size() > 0 )
+  if( ! activeSkeletons_.empty() )
   {
     //get first active skeleton
     BaseObjectData* baseObject = 0;
