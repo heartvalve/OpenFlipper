@@ -1223,6 +1223,8 @@ private slots:
     void slotGetDescription(QString _function,        QString& _fnDescription,
                             QStringList& _parameters, QStringList& _descriptions );
 
+    void slot_script_error(const QScriptValue &error);
+
   private:
 
     QList< SlotInfo > coreSlots_;
