@@ -670,7 +670,7 @@ public:
     QScrollArea* toolBoxScroll_;
 
     /// Handle to picking toolbar
-    typedef std::map<QToolBar*,QGraphicsItem*> PickToolBarMap;
+    typedef std::map<QToolBar*,QGraphicsProxyWidget*> PickToolBarMap;
     PickToolBarMap curPickingToolbarItems_;
 
     /// Extra toolbar not in scene for picking
