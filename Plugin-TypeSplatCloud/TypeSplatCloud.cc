@@ -199,6 +199,10 @@ void TypeSplatCloudPlugin::slotObjectUpdated( int _objectId, const UpdateType _t
 	BaseObjectData *object = 0;
 	PluginFunctions::getObject( _objectId, object );
 
+	// Groups are not BaseObjectData, so this will fail.
+	if ( !object )
+	  return;
+
 	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
 
 	if( splatCloudNode )
