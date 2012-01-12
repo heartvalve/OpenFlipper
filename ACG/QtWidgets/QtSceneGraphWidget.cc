@@ -76,13 +76,6 @@
 
 //== FORWARDDECLARATIONS ======================================================
 
-
-namespace ACG {
-  namespace SceneGraph {
-    class BaseNode;
-  }
-}
-
 using ACG::SceneGraph::BaseNode;
 
 
