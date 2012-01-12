@@ -81,7 +81,7 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     void deleteObject(int _id);
     
     // BaseInterface
-    void updatedObject(int _id, const UpdateType _type);
+    void updatedObject(int _id, const UpdateType& _type);
     void updateView();
     
     // ToolbarInterface
