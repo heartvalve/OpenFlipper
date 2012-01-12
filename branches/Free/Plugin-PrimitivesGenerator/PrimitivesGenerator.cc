@@ -47,6 +47,18 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+PrimitivesGeneratorPlugin::PrimitivesGeneratorPlugin() :
+        triMesh_(0),
+        polyMesh_(0)
+{
+
+}
+
+PrimitivesGeneratorPlugin::~PrimitivesGeneratorPlugin()
+{
+
+}
+
 void PrimitivesGeneratorPlugin::initializePlugin()
 {
   emit setSlotDescription("addTetrahedron()"     ,tr("Generates a tetrahedron (ObjectId is returned)")  ,QStringList(), QStringList());
