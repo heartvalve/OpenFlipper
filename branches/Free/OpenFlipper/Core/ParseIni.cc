@@ -239,7 +239,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
     // Load the viewer settings
     //============================================================================
     std::vector< QString > draw_modes;
-    int mode;
 
     for (int i=0; i < 4/*PluginFunctions::viewers()*/; i++ ){
 

@@ -565,7 +565,7 @@ const std::string pickMode () {
   return viewerProperties().pickMode();
 }
 
-void pickMode ( const std::string _mode) {
+void pickMode ( const std::string& _mode) {
   // switch to default marker
   setViewObjectMarker (defaultViewObjectMarker ());
   viewerProperties().pickMode(_mode);
