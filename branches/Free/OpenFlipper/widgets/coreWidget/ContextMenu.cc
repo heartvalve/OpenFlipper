@@ -685,7 +685,6 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
   // =============================================================================
   // First do a picking on the current position to check which context we are in.
   // =============================================================================
-  int objectId = -1;
 
   enum CONTEXTTYPE {
     COORDSYSCONTEXT ,BACKGROUNDCONTEXT ,OBJECTCONTEXT, NODECONTEXT
@@ -694,13 +693,12 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
   // Do picking in the gl area to find an object
   unsigned int               node_idx, target_idx;
   ACG::Vec3d                 hit_point;
-  BaseObjectData*            object;
-  ACG::SceneGraph::BaseNode* node = 0;
+  BaseObjectData*            object = 0;
+  ACG::SceneGraph::BaseNode* node   = 0;
 
   if (examiner_widgets_[PluginFunctions::activeExaminer()]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
 
     if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-      objectId = object->id();
       context  = OBJECTCONTEXT;
     } else {
       node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode() , node_idx );

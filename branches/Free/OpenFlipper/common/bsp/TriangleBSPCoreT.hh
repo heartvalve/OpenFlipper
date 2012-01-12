@@ -75,7 +75,7 @@ public: //---------------------------------------------------------------------
   typedef BSPTraits                      Traits;
   typedef typename BSPTraits::Point      Point;
   typedef typename BSPTraits::Handle     Handle;
-  typedef typename BSPTraits::Node	 Node;
+  typedef typename BSPTraits::Node	     Node;
   typedef typename Point::value_type     Scalar;
   typedef ACG::Geometry::PlaneT<Scalar>  Plane;
   typedef std::vector<Handle>            Handles;
@@ -87,7 +87,7 @@ public: //---------------------------------------------------------------------
 
   /** Constructor: need traits that define the types and 
       give us the points by traits_.point(PointHandle) */
-  TriangleBSPCoreT(const BSPTraits& _traits) : traits_(_traits), root_(0) {}
+  TriangleBSPCoreT(const BSPTraits& _traits) : traits_(_traits), root_(0), nodes(0) {}
 
   /// Destructor
   ~TriangleBSPCoreT() { delete root_; }
@@ -120,7 +120,7 @@ protected: //-------------------------------------------------------------------
   BSPTraits  traits_;
   Handles    handles_;
   Node*      root_;
-  int	nodes;
+  int	       nodes;
   
 };
 

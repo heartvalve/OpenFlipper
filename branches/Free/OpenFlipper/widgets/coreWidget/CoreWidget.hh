@@ -145,7 +145,8 @@ class StackWidgetInfo {
 class MenuInfo {
   public:
     MenuInfo():
-      action(0)
+      action(0),
+      type(CONTEXTBACKGROUNDMENU)
     {}
 
     /// The context item
@@ -155,7 +156,7 @@ class MenuInfo {
     DataType        contextType;
 
     /// Type of the context Menu ( Context for what type .. Background,Object,Node)
-  ContextMenuType type;
+    ContextMenuType type;
 };
 
 /** \brief Struct containing information about pickModes
