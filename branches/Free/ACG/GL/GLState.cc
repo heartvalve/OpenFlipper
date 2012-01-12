@@ -116,7 +116,8 @@ GLState::GLState(bool _updateGL)
     mipmapping_(true),
     updateGL_(_updateGL),
     blending_(false),
-    msSinceLastRedraw_ (1)
+    msSinceLastRedraw_ (1),
+    colorPicking_(true)
 {
 
   if (stateStack_.size() == 0)
