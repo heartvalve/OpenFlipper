@@ -1389,9 +1389,10 @@ void MovePlugin::slotMoveToOrigin() {
 
 
     useCommonCOG =  ( button == QMessageBox::Yes );
-    double vertexCount = 0.0;
 
     if ( useCommonCOG ) {
+
+      double vertexCount = 0.0;
 
       // Compute cog for all objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
