@@ -59,12 +59,10 @@ class ProgressEmitter : public QObject
     
     void sendProgressSignal(double _percent) {
       emit signalJobState(jobId_, (int)_percent);
-//       std::cerr << "Job State for " << jobId_.toStdString() << ": " << (int)_percent << "%" << std::endl;
     }
     
     void sendChangeDescriptionSignal(QString _description) {
       emit changeDescription(jobId_, _description);
-//       std::cerr << "Job description for " << jobId_.toStdString() << ": '" << _description.toStdString() << "'" << std::endl;
     }
     
   private:

@@ -106,7 +106,7 @@ class OBJImporter
     typedef unsigned int ObjectOptions;
 
     /// Constructor
-    OBJImporter() : currentGroup_(0) {
+    OBJImporter() : degreeU_(0),degreeV_(0),currentGroup_(0) {
         // Add default group
         addGroup("DefaultGroup");
     }

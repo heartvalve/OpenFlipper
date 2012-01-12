@@ -48,7 +48,11 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-IsotropicRemesherPlugin::IsotropicRemesherPlugin() : thread_(0)
+IsotropicRemesherPlugin::IsotropicRemesherPlugin() :
+tool_(0),
+toolIcon_(0),
+edgeLength_(0),
+thread_(0)
 {
 }
 
