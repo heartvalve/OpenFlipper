@@ -134,7 +134,7 @@ class BaseInterface {
       * @param _identifier id of the object or -1 if referring to all or deleted objects.
       * @param _type the type states which part of the object (topology, selection, ..) has to be updated
       */
-    virtual void updatedObject(int _identifier, const UpdateType _type) {};
+    virtual void updatedObject(int _identifier, const UpdateType& _type) {};
     
     /** \brief A scenegraph node has been shown or hidden
       *
@@ -170,7 +170,7 @@ class BaseInterface {
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
       *  @param _type the type states which part of the object (topology, selection, ..) had been updated
     */
-    virtual void slotObjectUpdated( int _identifier, const UpdateType _type ) {};
+    virtual void slotObjectUpdated( int _identifier, const UpdateType& _type ) {};
 
     /**  \brief Called if the whole scene is cleared
       *
@@ -340,14 +340,14 @@ this change. This functionality is provided by the signals and slots for \ref Ba
 
 \image html updateObject.jpg
 
-If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType).
+If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType&).
 \n
-BaseInterface::updatedObject(int) forces an update of the whole object while BaseInterface::updatedObject(int,const UpdateType)
+BaseInterface::updatedObject(int) forces an update of the whole object while BaseInterface::updatedObject(int,const UpdateType&)
 can be restricted to a part of the object ( Geometry,Selection, ... ; see UpdateType ) and is therefore faster and should be preferred.
 
 Both signals get the id of the object that has been updated or -1 if all should be updated( you should not use -1 if you know what object changed!).
 
-If the signal is emitted, the core calls BaseInterface::slotObjectUpdated( int , const UpdateType ) of every plugin. You can
+If the signal is emitted, the core calls BaseInterface::slotObjectUpdated( int , const UpdateType& ) of every plugin. You can
 implement this slot if you need to react on object changes.
 
 After all plugins have been informed, the scene will be redrawn.

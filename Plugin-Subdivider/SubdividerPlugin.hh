@@ -71,7 +71,7 @@ class SubdividerPlugin : public QObject, BaseInterface , ToolboxInterface, Loggi
 
 signals:
   void updateView();
-  void updatedObject(int _id, const UpdateType _type);
+  void updatedObject(int _id, const UpdateType& _type);
 
   void addPickMode( const std::string _mode );
 

@@ -177,7 +177,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
 
 //------------------------------------------------------------------------------
 
-void SkeletonEditingPlugin::slotObjectUpdated( int _id, const UpdateType _type){
+void SkeletonEditingPlugin::slotObjectUpdated( int _id, const UpdateType& _type){
 
   if ( !_type.contains(UPDATE_GEOMETRY) )
     return;

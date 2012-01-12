@@ -73,7 +73,7 @@
 /** This function is called by a plugin if it changed something in the object list (source,target,...). The information is passed to all plugins.
  * @param _identifier Id of the updated object
  */
-void Core::slotObjectUpdated(int _identifier, UpdateType _type) {
+void Core::slotObjectUpdated(int _identifier, const UpdateType& _type) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {

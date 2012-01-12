@@ -191,7 +191,7 @@ void TypeSplatCloudPlugin::slotViewChanged()
 //----------------------------------------------------------------
 
 
-void TypeSplatCloudPlugin::slotObjectUpdated( int _objectId, const UpdateType _type )
+void TypeSplatCloudPlugin::slotObjectUpdated( int _objectId, const UpdateType& _type )
 {
 	if( _objectId == -1 )
 		return;

@@ -73,7 +73,7 @@ Q_INTERFACES(ContextMenuInterface)
 signals:
   // BaseInterface
   void updateView();
-  void updatedObject(int _identifier, const UpdateType _type);
+  void updatedObject(int _identifier, const UpdateType& _type);
   
   //  LoggingInterface
   void log(Logtype _type, QString _message);

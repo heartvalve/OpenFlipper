@@ -840,10 +840,10 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin,SIGNAL(updateView()),this,SLOT(updateView()));
 
 
-    if ( checkSignal(plugin,"updatedObject(int)") && checkSignal(plugin,"updatedObject(int,const UpdateType)") ){
+    if ( checkSignal(plugin,"updatedObject(int)") && checkSignal(plugin,"updatedObject(int,const UpdateType&)") ){
       
       log(LOGERR,tr("Plugin uses deprecated and(!) new updatedObject. Only new updatedObject will be active."));
-      connect(plugin,SIGNAL(updatedObject(int,const UpdateType)),this,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      connect(plugin,SIGNAL(updatedObject(int,const UpdateType&)),this,SLOT(slotObjectUpdated(int,const UpdateType&)), Qt::DirectConnection);
       
     } else {
 
@@ -852,14 +852,14 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
         connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
       }
 
-      if ( checkSignal(plugin,"updatedObject(int,const UpdateType)") )
-        connect(plugin,SIGNAL(updatedObject(int,const UpdateType)),this,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      if ( checkSignal(plugin,"updatedObject(int,const UpdateType&)") )
+        connect(plugin,SIGNAL(updatedObject(int,const UpdateType&)),this,SLOT(slotObjectUpdated(int,const UpdateType&)), Qt::DirectConnection);
     }
 
-    if ( checkSlot( plugin , "slotObjectUpdated(int)" ) && checkSlot( plugin , "slotObjectUpdated(int,const UpdateType)" ) ){
+    if ( checkSlot( plugin , "slotObjectUpdated(int)" ) && checkSlot( plugin , "slotObjectUpdated(int,const UpdateType&)" ) ){
       
       log(LOGERR,tr("Plugin uses deprecated and(!) new slotObjectUpdated. Only new slotObjectUpdated will be active."));
-      connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType)),plugin,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType&)),plugin,SLOT(slotObjectUpdated(int,const UpdateType&)), Qt::DirectConnection);
     
     } else {
 
@@ -868,8 +868,8 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
         connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
       }
 
-      if ( checkSlot( plugin , "slotObjectUpdated(int,const UpdateType)" ) )
-        connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType)),plugin,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      if ( checkSlot( plugin , "slotObjectUpdated(int,const UpdateType&)" ) )
+        connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType&)),plugin,SLOT(slotObjectUpdated(int,const UpdateType&)), Qt::DirectConnection);
     }
 
     if ( checkSignal(plugin,"objectPropertiesChanged(int)")) {
