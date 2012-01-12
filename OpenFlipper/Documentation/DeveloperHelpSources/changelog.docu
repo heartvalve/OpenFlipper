@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13286 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13366 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -44,10 +44,14 @@
              - Fixed bug in renderinfo not setting viewer to a renderer mode
          - Scripting
              - Added help function to print help about different objects (e.g. plugins with help("datacontrol") )
+             - Added script handler logging scripting errors to the console even if they are not run via the script editor
          - UI
              - Get rid of ugly frame rendering bug in SimpleViewer
              - Do not reset picking toolbar's position and orientation each time it is shown.
-     - <b>Interfaces</b>
+             - Fixed bug where logger and toolbar where invisible
+     - <b>Interfaces</b> 
+         - General
+             - Use const ref for passing strings where possible
          - BaseInterface 
              - Added Basinterface function to switch renderer
              - Added function to get current renderer
@@ -126,6 +130,7 @@
          - Fix problem with fixbundle on mac, where libraries with restrictive permissions did not get fixed properly
          - Added code style template for eclipse
          - Add option to for windows large memory support (enabled by default)
+         - Default warnings now contain -Wextra
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
