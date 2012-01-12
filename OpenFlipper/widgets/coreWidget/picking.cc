@@ -156,7 +156,7 @@ void CoreWidget::getActionMode(Viewer::ActionMode& _am){
 
 //-----------------------------------------------------------------------------
 
-void CoreWidget::setPickMode(const std::string _mode){
+void CoreWidget::setPickMode(const std::string& _mode){
 
   for (unsigned int i=0; i<pick_modes_.size(); ++i)
   {
@@ -434,7 +434,7 @@ void CoreWidget::setPickModeMouseTracking(const std::string& _name, bool _mouseT
 
 //-----------------------------------------------------------------------------
 
-void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolbar )
+void CoreWidget::setPickModeToolbar( const std::string& _mode , QToolBar * _toolbar )
 {
   // Get the pickmode that belongs to the given name
   for (uint i=0; i < pick_modes_.size(); i++)
@@ -453,7 +453,7 @@ void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolb
 
 //-----------------------------------------------------------------------------
 
-void CoreWidget::removePickModeToolbar( const std::string _mode )
+void CoreWidget::removePickModeToolbar( const std::string& _mode )
 {
   for (uint i=0; i < pick_modes_.size(); i++)
     if ( pick_modes_[i].name() == _mode ){

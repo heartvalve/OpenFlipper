@@ -1361,7 +1361,7 @@ public:
     /** Switch to given picking mode
      * @param _name Name of the picking mode
      */
-    void setPickMode(const std::string  _name);
+    void setPickMode(const std::string&  _name);
 
 
     void getPickMode(std::string& _name);
@@ -1395,7 +1395,7 @@ public:
      * @param _mode Identifier of Picking mode
      * @param _toolbar the toolbar
      */
-    void setPickModeToolbar( const std::string _mode , QToolBar * _toolbar );
+    void setPickModeToolbar( const std::string& _mode , QToolBar * _toolbar );
 
     /** \brief Removes the additional toolbar of the given PickMode
      *
@@ -1403,7 +1403,7 @@ public:
      *
      * @param _mode Identifier of Picking mode
      */
-    void removePickModeToolbar( const std::string _mode );
+    void removePickModeToolbar( const std::string& _mode );
 
     void actionPickMenu( QAction * _action );
 

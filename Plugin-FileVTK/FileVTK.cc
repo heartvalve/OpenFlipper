@@ -1143,8 +1143,6 @@ bool FileVTKPlugin::loadMesh(QTextStream& _in,MeshT*& _mesh, Dataset _type){
   
   QString line = "";
   
-  qint64 pos;
-  
   bool ok = true;
   
   // Flag if normals have been read from files

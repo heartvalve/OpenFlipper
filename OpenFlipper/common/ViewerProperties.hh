@@ -512,7 +512,7 @@ namespace Viewer {
       void drawModeChanged(int _viewerId );
 
       void getPickMode(std::string& _mode );
-      void setPickMode(const std::string  _mode );
+      void setPickMode(const std::string&  _mode );
 
       void getActionMode(Viewer::ActionMode& _am);
       void setActionMode(const Viewer::ActionMode  _am);

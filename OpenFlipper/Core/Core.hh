@@ -409,10 +409,10 @@ signals:
       void slotObjectSelectionChanged( int _id);
 
       /// Add a new picking mode to the examiner_widget_
-      void slotAddPickMode( const std::string _mode );
+      void slotAddPickMode( const std::string& _mode );
 
       /// Add a new and invisible picking mode to the examiner_widget_
-      void slotAddHiddenPickMode( const std::string _mode );
+      void slotAddHiddenPickMode( const std::string& _mode );
 
       /// Called by a plugin if it creates a texture
       void slotAddTexture( QString _textureName , QString _filename , uint _dimension , int _id );
