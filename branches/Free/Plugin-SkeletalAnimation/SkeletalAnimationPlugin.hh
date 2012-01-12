@@ -82,7 +82,7 @@ signals:
   void log(Logtype _type, QString _message);
   void log(QString _message);
   void addEmptyObject(DataType _type, int& _id);
-  void updatedObject(int _id, const UpdateType _type);
+  void updatedObject(int _id, const UpdateType& _type);
     
   void pluginExists(QString _pluginName, bool &_exists);
   void functionExists(QString _pluginName, QString _functionName, bool &_exists);
@@ -93,7 +93,7 @@ signals:
 public slots:
   // BaseInterface
   void slotAllCleared();
-  void slotObjectUpdated( int _id, const UpdateType _type);
+  void slotObjectUpdated( int _id, const UpdateType& _type);
   void slotObjectSelectionChanged(int _id);
   // LoadSaveInterface
   void fileOpened(int _id);

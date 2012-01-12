@@ -674,7 +674,7 @@ void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
 
 //-----------------------------------------------------------------------------
 
-void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType _type )
+void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType& _type )
 {
   if ( _type.contains(UPDATE_TOPOLOGY) ) {
     slotUpdateNumVertices ();

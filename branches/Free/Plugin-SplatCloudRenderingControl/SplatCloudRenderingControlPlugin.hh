@@ -85,7 +85,7 @@ class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxI
 signals:
 
 	//-- Base Interface --
-	void updatedObject( int _identifier, const UpdateType _type);
+	void updatedObject( int _identifier, const UpdateType& _type);
 
 	//-- Toolbox Interface --
 	void addToolbox( QString  _name, QWidget *_widget, QIcon *_icon );

@@ -718,7 +718,7 @@ bool InfoMeshObjectPlugin::getEdgeLengths(int _id, double &min, double &max, dou
 
 //------------------------------------------------------------------------------
 
-void InfoMeshObjectPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType _type){
+void InfoMeshObjectPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType& _type){
 
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 

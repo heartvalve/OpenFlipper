@@ -42,7 +42,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
   signals:
     // BaseInterface
     void updateView();
-    void updatedObject(int, const UpdateType _type);
+    void updatedObject(int, const UpdateType& _type);
     void nodeVisibilityChanged(int);
 
     void setRenderer(unsigned int _viewer, QString _rendererName);
@@ -88,7 +88,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
-    void slotObjectUpdated( int _id, const UpdateType _type);
+    void slotObjectUpdated( int _id, const UpdateType& _type);
 
     // MouseInterface
     void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode);

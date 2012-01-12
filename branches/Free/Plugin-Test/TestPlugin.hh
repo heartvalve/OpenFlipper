@@ -55,7 +55,7 @@ class TestPlugin: public QObject, BaseInterface, LoggingInterface {
   signals:
   //BaseInterface
   void updateView();
-  void updatedObject(int _id, const UpdateType _type);
+  void updatedObject(int _id, const UpdateType& _type);
 
   //LoggingInterface
   void log(Logtype _type, QString _message);

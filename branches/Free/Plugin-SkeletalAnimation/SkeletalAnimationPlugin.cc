@@ -392,7 +392,7 @@ void SkeletalAnimationPlugin::UpdateSkins(BaseObjectData *_skeletonObject, Anima
 /**
  * @brief Check activePose if a skeleton was updated
  */
-void SkeletalAnimationPlugin::slotObjectUpdated( int _id, const UpdateType /*_type*/ )
+void SkeletalAnimationPlugin::slotObjectUpdated( int _id, const UpdateType& /*_type*/ )
 {
   // do nothing during animation
   if ( animationTimer_.isActive() )

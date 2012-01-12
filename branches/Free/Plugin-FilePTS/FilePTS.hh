@@ -90,7 +90,7 @@ signals:
 
 	// -- LoadSave Interface --
 	void addEmptyObject( DataType _type, int &_id );
-	void updatedObject( int _identifier, const UpdateType _type);
+	void updatedObject( int _identifier, const UpdateType& _type);
 
 	//-- Logging Interface --
 	void log( Logtype _type, QString _message );
