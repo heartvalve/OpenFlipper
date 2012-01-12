@@ -150,7 +150,7 @@ private slots:
   void animate();
 
 public:
-  SkeletalAnimationPlugin() : pToolbox_(0) {};
+  SkeletalAnimationPlugin();
   QString name();
   QString description();
 
