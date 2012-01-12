@@ -49,7 +49,9 @@
 
 PrimitivesGeneratorPlugin::PrimitivesGeneratorPlugin() :
         triMesh_(0),
-        polyMesh_(0)
+        polyMesh_(0),
+        slices_(50),
+        stacks_(50)
 {
 
 }
@@ -66,7 +68,8 @@ void PrimitivesGeneratorPlugin::initializePlugin()
   emit setSlotDescription("addIcosahedron()"     ,tr("Generates an icosahedron (ObjectId is returned)") ,QStringList(), QStringList());
   emit setSlotDescription("addPyramid()"         ,tr("Generates a pyramid (ObjectId is returned)")      ,QStringList(), QStringList());
   emit setSlotDescription("addOctahedron()"      ,tr("Generates an octahedron (ObjectId is returned)")  ,QStringList(), QStringList());
-  emit setSlotDescription("addDodecahedron()"    ,tr("Generates a dodecahedron (ObjectId is returned)")  ,QStringList(), QStringList());
+  emit setSlotDescription("addDodecahedron()"    ,tr("Generates a dodecahedron (ObjectId is returned)") ,QStringList(), QStringList());
+  emit setSlotDescription("addSphere()"          ,tr("Generates a sphere (ObjectId is returned)")       ,QStringList(), QStringList());
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -84,27 +87,30 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png");
     action->setIcon(*icon);
 
-    action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
+    action = primitivesMenu->addAction("Dodecahedron"                  ,this,SLOT(addDodecahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png");
     action->setIcon(*icon);
-
 
     action = primitivesMenu->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png");
-    action->setIcon(*icon);
-
-
-    action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
     action->setIcon(*icon);
 
     action = primitivesMenu->addAction("Octahedron"                  ,this,SLOT(addOctahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_octahedron.png");
     action->setIcon(*icon);
 
-    action = primitivesMenu->addAction("Dodecahedron"                  ,this,SLOT(addDodecahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png");
+    action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
     action->setIcon(*icon);
+
+    action = primitivesMenu->addAction("Sphere",this,SLOT(addSphere()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png");
+    action->setIcon(*icon);
+
+    action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
+    action->setIcon(*icon);
+
   }
 
 }
@@ -234,11 +240,161 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube() {
   return -1;
 }
 
-int PrimitivesGeneratorPlugin::addSphere() {
-std::cerr << "Todo :add Sphere" << std::endl;
+//========================================================================
+// Sphere
+//========================================================================
 
-return -1;
+
+void PrimitivesGeneratorPlugin::addSphereTriangle(int sl0, int st0, int sl1, int st1, int sl2, int st2)
+{
+  ACG::Vec2f tex[3];
+
+  tex[0] = texCoordOnSphere(sl0, st0);
+  tex[1] = texCoordOnSphere(sl1, st1);
+  tex[2] = texCoordOnSphere(sl2, st2);
+
+//  std::vector<TriMesh::VertexHandle> vhandles;
+//
+//  vhandles.push_back(vhandles_[_vh1]);
+//  vhandles.push_back(vhandles_[_vh2]);
+//  vhandles.push_back(vhandles_[_vh3]);
+//
+//  triMesh_->add_face(vhandles);
+
+  //addTriangleToVBO(p, n, tex);
 }
+
+//------------------------------------------------------------------------
+
+ACG::Vec3d PrimitivesGeneratorPlugin::positionOnSphere(int _sliceNumber, int _stackNumber)
+{
+  ACG::Vec3d position;
+
+  double alpha = (M_PI / double(stacks_)) * double(_stackNumber);
+  double beta = ((2.0 * M_PI) / double(slices_)) * double(_sliceNumber);
+
+  double ringRadius = sin(alpha);
+  position[0] = sin(beta) * ringRadius;
+  position[1] = cos(beta) * ringRadius;
+  position[2] = cos(alpha);
+
+  return position;
+}
+
+//------------------------------------------------------------------------
+
+ACG::Vec2f PrimitivesGeneratorPlugin::texCoordOnSphere(int _sliceNumber, int _stackNumber)
+{
+  ACG::Vec2f texCoord;
+
+  double alpha = (M_PI / double(stacks_)) * double(_stackNumber);
+  texCoord[0] = double(_sliceNumber) / double(slices_);
+  texCoord[1] = 0.5 * (cos(alpha) + 1.0);
+
+  return texCoord;
+}
+
+//------------------------------------------------------------------------
+
+int PrimitivesGeneratorPlugin::addSphere() {
+
+  int newObject = addTriMesh();
+
+  TriMeshObject* object;
+  if (!PluginFunctions::getObject(newObject, object)) {
+    emit log(LOGERR, "Unable to create new Object");
+    return -1;
+  } else {
+
+    triMesh_ = object->mesh();
+    triMesh_->request_vertex_texcoords2D();
+
+    TriMesh::VertexHandle vh;
+
+    vh = triMesh_->add_vertex(positionOnSphere(0, 0));
+    triMesh_->set_texcoord2D(vh, texCoordOnSphere(0, 0));
+
+    for (int st = 1; st < stacks_ - 1; ++st) {
+      for (int sl = 0; sl < slices_; ++sl) {
+        vh = triMesh_->add_vertex(positionOnSphere(sl, st));
+        triMesh_->set_texcoord2D(vh, texCoordOnSphere(sl, st));
+      }
+    }
+
+    vh = triMesh_->add_vertex(positionOnSphere(slices_, stacks_));
+    triMesh_->set_texcoord2D(vh, texCoordOnSphere(slices_, stacks_));
+
+    std::vector<TriMesh::VertexHandle> vhandles;
+
+    // Add top triangle fan ( Vertex index is shifted by one for the first slice )
+    for (int sl = 1; sl < slices_ + 1; ++sl) {
+
+      vhandles.clear();
+
+      vhandles.push_back(triMesh_->vertex_handle(sl));
+      vhandles.push_back(triMesh_->vertex_handle(0));
+      vhandles.push_back(triMesh_->vertex_handle(1 * 1 + (sl % slices_)));
+
+      triMesh_->add_face(vhandles);
+    }
+
+    for (int st = 0; st < stacks_ - 3; ++st) {
+
+      // Move around one slice
+      for (int sl = 0; sl < slices_; ++sl) {
+
+        // Offset 1 because of singular vertex
+        unsigned int startTop = 1 + slices_ * st;
+        unsigned int startBottom = 1 + slices_ * (st + 1);
+
+        vhandles.clear();
+
+        vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + sl));
+
+        triMesh_->add_face(vhandles);
+
+        vhandles.clear();
+
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + sl));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + ((sl + 1) % slices_)));
+
+        triMesh_->add_face(vhandles);
+      }
+
+    }
+
+    const int startTop     = 1 + (stacks_ - 3) * slices_;
+    const int bottomVertex = 1 + (stacks_ - 2) * slices_;
+
+    // Add bottom triangle fan
+    for (int sl = 0; sl < slices_; ++sl) {
+
+      vhandles.clear();
+
+      vhandles.push_back(triMesh_->vertex_handle(bottomVertex));
+      vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
+      vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+
+      triMesh_->add_face(vhandles);
+    }
+
+    triMesh_->update_normals();
+
+    emit updatedObject(newObject,UPDATE_ALL);
+
+    return object->id();
+  }
+
+
+}
+
+
+//========================================================================
+// Pyramid
+//========================================================================
 
 int PrimitivesGeneratorPlugin::addPyramid() {
   int newObject = addTriMesh();
