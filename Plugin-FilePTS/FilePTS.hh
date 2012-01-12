@@ -104,7 +104,7 @@ private slots:
 public:
 
 	// standard constructor/destructor
-	FilePTSPlugin();
+	FilePTSPlugin() : loadOptions_( 0 ), saveOptions_( 0 ) { }
 	~FilePTSPlugin() { }
 
 	//-- Base Interface --
