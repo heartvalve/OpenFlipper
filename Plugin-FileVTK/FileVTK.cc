@@ -76,7 +76,8 @@ FileVTKPlugin::FileVTKPlugin():
   saveVertexNormals_(0),
   saveVertexTexCoords_(0),
   saveDefaultButton_(),
-  binary_(false)
+  binary_(false),
+  userWriteOptions_(0)
 {
 }
 
