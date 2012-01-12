@@ -101,6 +101,8 @@ private slots:
 
 public :
 
+    MeshRepairPlugin();
+
     ~MeshRepairPlugin() {};
 
     QString name() {
