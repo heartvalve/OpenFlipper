@@ -85,6 +85,7 @@ SelectionBasePlugin::SelectionBasePlugin() :
 toolBar_(0),
 tool_(0),
 primitivesBarGroup_(0),
+pickModeToolBar_(0),
 selectionModesGroup_(0),
 toggleSelectionAction_(0),
 lassoSelectionAction_(0),
@@ -98,7 +99,9 @@ nextFreePrimitiveType_(1u),
 sphere_mat_node_(0),
 sphere_node_(0),
 line_node_(0),
-lassoSelection_(false) {
+lassoSelection_(false),
+toolIcon_(0)
+{
     
     // Reset active pick mode
     currentPickMode_            = NO_SELECTION_PICKING;

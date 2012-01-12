@@ -83,7 +83,7 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 
     // BaseInterface
     void updateView();
-    void updatedObject(int _identifier, const UpdateType _type);
+    void updatedObject(int _identifier, const UpdateType& _type);
 
     // TextureInterface
     void updateTexture( QString , int);
@@ -103,7 +103,7 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 
     // BaseInterface
     void pluginsInitialized();
-    void slotObjectUpdated(int _identifier, const UpdateType _type);
+    void slotObjectUpdated(int _identifier, const UpdateType& _type);
     void slotDrawModeChanged(int _viewerId );
 
     // TextureInterface

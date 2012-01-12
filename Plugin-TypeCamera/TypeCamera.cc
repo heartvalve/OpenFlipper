@@ -46,7 +46,9 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-TypeCameraPlugin::TypeCameraPlugin() {
+TypeCameraPlugin::TypeCameraPlugin() :
+        contextMenu_(0)
+{
 
 }
 

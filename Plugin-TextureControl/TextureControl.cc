@@ -935,7 +935,7 @@ void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
 
 }
 
-void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType _type)
+void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType& _type)
 {  
     if( !_type.contains(UPDATE_ALL) && !_type.contains(UPDATE_GEOMETRY) && !_type.contains(UPDATE_TOPOLOGY) )
         return;

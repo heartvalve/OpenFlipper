@@ -197,7 +197,7 @@ public slots:
 //     void deleteSelectedControlPointsV(int _objectId);
     
     /// Select specific control points of a curve
-    void selectControlPoints(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectControlPoints(int _objectId, const IdList& _ids, bool _deselect = false);
     
     /// Get current control point selection
     IdList getControlPointSelection(int _objectId);
@@ -218,7 +218,7 @@ public slots:
     void deleteSelectedKnotsV(int _objectId);
     
     /// Select specific knots of a curve
-    void selectKnots(int _objectId, const IdList _ids_u, const IdList _ids_v, bool _deselect = false);
+    void selectKnots(int _objectId, const IdList& _ids_u, const IdList& _ids_v, bool _deselect = false);
     
     /// Get current knot selection
     IdList getKnotSelectionU(int _objectId);

@@ -52,28 +52,29 @@
 #define DEF2 "Default Light 2.lgt"
 
 TypeLightPlugin::TypeLightPlugin() :
-    defaultLights_(true),
-    toolbar_(0),
-    lightOptions_(0),
-    lightAction_(0),
-    moveMode_(0),
-    translateMode_(0),
-    rotateMode_(0),
-    allLightsMode_(0),
-    onlyTargets_(false),
-    planeDepth_(0.0f),
-    transVec_(0.0),
-    rotation_(true),
-    radius_(0.0),
-    depth_(0.0f),
-    lightCenter_(0.0),
-    lightRadius_(0.0),
-    lightId_(-1),
-    hitLightTrackball_(false),
-    hitTrackball_(false) {
-        
-        // Reset transformation matrix
-        light_matrix_.identity();
+        defaultLights_(true),
+        toolbar_(0),
+        lightOptions_(0),
+        lightAction_(0),
+        moveMode_(0),
+        translateMode_(0),
+        rotateMode_(0),
+        allLightsMode_(0),
+        onlyTargets_(false),
+        planeDepth_(0.0f),
+        transVec_(0.0),
+        rotation_(true),
+        radius_(0.0),
+        depth_(0.0f),
+        lightCenter_(0.0),
+        lightRadius_(0.0),
+        lightId_(-1),
+        hitLightTrackball_(false),
+        hitTrackball_(false)
+{
+
+  // Reset transformation matrix
+  light_matrix_.identity();
 }
 
 bool TypeLightPlugin::registerType() {

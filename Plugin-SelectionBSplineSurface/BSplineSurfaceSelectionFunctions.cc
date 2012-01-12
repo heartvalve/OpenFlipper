@@ -150,7 +150,7 @@ void BSplineSurfaceSelectionPlugin::invertControlPointSelection(int _objectId) {
 //     emit scriptInfo("deleteSelectedControlPoints(ObjectId)");
 // }
 
-void BSplineSurfaceSelectionPlugin::selectControlPoints(int _objectId, const IdList _ids, bool _deselect) {
+void BSplineSurfaceSelectionPlugin::selectControlPoints(int _objectId, const IdList& _ids, bool _deselect) {
     
     if(_ids.empty() ) return;
     
@@ -250,8 +250,7 @@ void BSplineSurfaceSelectionPlugin::deselectAllKnots(int _objectId) {
         return;
     }
     
-    BSplineSurface* surface = PluginFunctions::splineSurface(object);
-    BSplineSurfaceObject* co = PluginFunctions::bsplineSurfaceObject(object);
+    BSplineSurface*  surface = PluginFunctions::splineSurface(object);
     
     if(surface) {    
         for(unsigned int i = 0; i < surface->n_knots_m(); ++i) {
@@ -364,7 +363,7 @@ void BSplineSurfaceSelectionPlugin::deleteSelectedKnotsV(int _objectId) {
 //     emit scriptInfo("deleteSelectedKnots(ObjectId)");
 }
 
-void BSplineSurfaceSelectionPlugin::selectKnots(int _objectId, const IdList _ids_u, const IdList _ids_v, bool _deselect) {
+void BSplineSurfaceSelectionPlugin::selectKnots(int _objectId, const IdList& _ids_u, const IdList& _ids_v, bool _deselect) {
     
     if(_ids_u.empty()) return;
     

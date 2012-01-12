@@ -109,7 +109,7 @@ void BSplineCurveSelectionPlugin::deleteSelectedControlPoints(int _objectId) {
     emit scriptInfo("deleteSelectedControlPoints(ObjectId)");
 }
 
-void BSplineCurveSelectionPlugin::selectControlPoints(int _objectId, const IdList _ids, bool _deselect) {
+void BSplineCurveSelectionPlugin::selectControlPoints(int _objectId, const IdList& _ids, bool _deselect) {
     
     if( _ids.empty()) return;
     
@@ -201,7 +201,6 @@ void BSplineCurveSelectionPlugin::deselectAllKnots(int _objectId) {
     }
     
     BSplineCurve* curve = PluginFunctions::splineCurve(object);
-    BSplineCurveObject* co = PluginFunctions::bsplineCurveObject(object);
     
     if(curve) {    
         for(unsigned int i = 0; i < curve->n_knots(); ++i) {
@@ -277,7 +276,7 @@ void BSplineCurveSelectionPlugin::deleteSelectedKnots(int _objectId) {
     emit scriptInfo("deleteSelectedKnots(ObjectId)");
 }
 
-void BSplineCurveSelectionPlugin::selectKnots(int _objectId, const IdList _ids, bool _deselect) {
+void BSplineCurveSelectionPlugin::selectKnots(int _objectId, const IdList& _ids, bool _deselect) {
     
     if(_ids.empty()) return;
     

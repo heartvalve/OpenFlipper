@@ -68,7 +68,7 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
   signals:
     // BaseInterface
     void updateView();
-    void updatedObject(int _id, const UpdateType _type);
+    void updatedObject(int _id, const UpdateType& _type);
 
     // PickingInterface
     void addHiddenPickMode( const std::string& _mode );
