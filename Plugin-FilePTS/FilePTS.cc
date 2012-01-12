@@ -69,6 +69,28 @@ static const int COLORRANGE_0_255 = 1;
 
 //== IMPLEMENTATION ==============================================
 
+FilePTSPlugin::FilePTSPlugin() :
+        loadOptions_(0),
+        saveOptions_(0),
+        loadBinaryFile_(0),
+        loadNormals_(0),
+        loadPointsizes_(0),
+        loadColors_(0),
+        loadColorRange_(0),
+        loadNormalizeSize_(0),
+        saveBinaryFile_(0),
+        saveNormals_(0),
+        savePointsizes_(0),
+        saveColors_(0),
+        saveColorRange_(0),
+        loadMakeDefaultButton_(0),
+        saveMakeDefaultButton_(0)
+
+{
+
+}
+
+
 bool FilePTSPlugin::readBinaryFile(std::ifstream &_instream, SplatCloudNode *_splatCloudNode)
 {
   // set default options
