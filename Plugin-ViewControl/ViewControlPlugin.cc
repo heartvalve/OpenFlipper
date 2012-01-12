@@ -59,6 +59,7 @@
 
 ViewControlPlugin::ViewControlPlugin():
 viewControlMenu_(0),
+lastObjectId_(0),
 shaderWidget_(0),
 toolbar_(0),
 toolbarViewingDirections_(0),
@@ -796,61 +797,59 @@ void ViewControlPlugin::itemChanged(QTableWidgetItem* item){
 
 }
 
-void ViewControlPlugin::slotSetShader(){
+void ViewControlPlugin::slotSetShader()
+{
 
   //get current shader index
-   int index = -1;
-   for ( int i = 0 ; i < (int)shaderList_.size(); ++i) {
-      if ( shaderList_[i].name == shaderWidget_->availableShaders->currentItem()->text() ) {
-         index = i;
-         break;
-      }
-   }
+  int index = -1;
+  for (int i = 0; i < (int) shaderList_.size(); ++i) {
+    if (shaderList_[i].name == shaderWidget_->availableShaders->currentItem()->text()) {
+      index = i;
+      break;
+    }
+  }
 
-   if ( index == -1 ) {
-      std::cerr << "Error: Shader Index not found! " << std::endl;
-      return;
-   }
+  if (index == -1) {
+    std::cerr << "Error: Shader Index not found! " << std::endl;
+    return;
+  }
 
-   std::vector <QString> mode;
-   for (int i=0; i < shaderWidget_->drawModes->count(); i++)
-   {
-      if (shaderWidget_->drawModes->item(i)->checkState() == Qt::Checked)  
-      {
-	  mode.push_back (shaderWidget_->drawModes->item(i)->text());
-	  setShader(lastObjectId_, descriptionsToDrawMode(mode), shaderList_[index]);
-	  mode.clear();
-      }
-      else
-      {
-	  mode.push_back (shaderWidget_->drawModes->item(i)->text());
-	  disableShader(lastObjectId_, descriptionsToDrawMode(mode), &shaderList_[index] );
-	  mode.clear();
-      }
-   }
+  std::vector<QString> mode;
+  for (int i = 0; i < shaderWidget_->drawModes->count(); i++) {
+    if (shaderWidget_->drawModes->item(i)->checkState() == Qt::Checked) {
+      mode.push_back(shaderWidget_->drawModes->item(i)->text());
+      setShader(lastObjectId_, descriptionsToDrawMode(mode), shaderList_[index]);
+      mode.clear();
+    } else {
+      mode.push_back(shaderWidget_->drawModes->item(i)->text());
+      disableShader(lastObjectId_, descriptionsToDrawMode(mode), &shaderList_[index]);
+      mode.clear();
+    }
+  }
 }
 
-void ViewControlPlugin::disableShader(int _objectId, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo* _shader) {
-    
-    BaseObjectData* object = 0;
-    PluginFunctions::getObject( _objectId, object );
-    
-    
-    if (object)
-    {
-	if (!_shader)
-	    object->shaderNode()->disableShader( _drawMode );
-	else
-	{
-	    std::string shadeDir = _shader->directory.toStdString() + OpenFlipper::Options::dirSeparator().toStdString();
-	    
-	    if (object->shaderNode()->vertexShaderName( _drawMode ) == shadeDir + _shader->vertexShader.toStdString() &&
-		object->shaderNode()->fragmentShaderName( _drawMode ) == shadeDir + _shader->fragmentShader.toStdString() )
-		    object->shaderNode()->disableShader( _drawMode );	
-	}
+void ViewControlPlugin::disableShader(
+    int _objectId,
+    ACG::SceneGraph::DrawModes::DrawMode _drawMode,
+    ShaderInfo* _shader)
+{
+
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId, object);
+
+  if (object) {
+    if (!_shader)
+      object->shaderNode()->disableShader(_drawMode);
+    else {
+      std::string shadeDir = _shader->directory.toStdString() + OpenFlipper::Options::dirSeparator().toStdString();
+
+      if (object->shaderNode()->vertexShaderName(_drawMode) == shadeDir + _shader->vertexShader.toStdString()
+          && object->shaderNode()->fragmentShaderName(_drawMode) == shadeDir + _shader->fragmentShader.toStdString())
+        object->shaderNode()->disableShader(_drawMode);
     }
-    
-    emit updateView();
+  }
+
+  emit updateView();
 }
 
 void ViewControlPlugin::setShader(int _id, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo _shader) {
