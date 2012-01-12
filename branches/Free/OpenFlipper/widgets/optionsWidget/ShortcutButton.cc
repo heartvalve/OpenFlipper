@@ -46,9 +46,13 @@
 #include <iostream>
 
 ///Constructor
-ShortcutButton::ShortcutButton(QWidget* _parent) : QPushButton(_parent)
+ShortcutButton::ShortcutButton(QWidget* _parent) :
+QPushButton(_parent),
+key_(-1),
+oldKey_(-1),
+checked_(false),
+firstPress_(true)
 {
-  key_ = -1;
   setCheckable(true);
 }
 

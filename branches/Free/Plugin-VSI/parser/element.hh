@@ -81,22 +81,22 @@ class Element {
     QString name () const { return name_; };
 
     /// Element category
-    const QString &category () { return category_; };
+    const QString &category () const { return category_; };
 
     /// Short description
-    const QString &shortDescription () { return shortDesc_; };
+    const QString &shortDescription () const { return shortDesc_; };
 
     /// Long description
-    const QString &longDescription () { return longDesc_; };
+    const QString &longDescription () const { return longDesc_; };
 
     /// Inputs
-    const QVector<Input *> &inputs () { return inputs_; };
+    const QVector<Input *> &inputs () const { return inputs_; };
 
     /// Outputs
-    const QVector<Output *> &outputs () { return outputs_; };
+    const QVector<Output *> &outputs () const { return outputs_; };
 
     /// Functions
-    const QVector <Function*> &functions () { return functions_; };
+    const QVector <Function*> &functions () const { return functions_; };
 
     /// Scenegraph input
     Input *dataIn () { return dataIn_; };

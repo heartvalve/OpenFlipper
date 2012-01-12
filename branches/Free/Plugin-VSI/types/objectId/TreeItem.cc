@@ -69,7 +69,7 @@ bool TreeItem::dataType(DataType _type) {
     return true;
   }
 
-  return ( dataType_ & _type);
+  return ( (dataType_ & _type) );
 }
 
 //--------------------------------------------------------------------------------

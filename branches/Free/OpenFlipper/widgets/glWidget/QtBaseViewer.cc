@@ -1714,13 +1714,12 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))  ) {
           
           ACG::Vec3d translation;
-          double value_x, value_y;
           
+
           // if start depth is 1, no object was hit when starting translation
           if ( startDepth_ == 1 ) {
-            
-            value_x = properties_.sceneRadius() * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
-            value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
+            double value_x = properties_.sceneRadius() * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
+            double value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
             translation = ACG::Vec3d(value_x * factor, -value_y * factor, 0.0);
             
           } else {

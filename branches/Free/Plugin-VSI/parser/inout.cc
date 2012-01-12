@@ -61,7 +61,7 @@ InOut::InOut (Element *_e) :
 //------------------------------------------------------------------------------
 
 /// Type
-QString InOut::typeString ()
+QString InOut::typeString () const
 {
   if (name_ == "data")
     return "data";

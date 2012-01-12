@@ -79,7 +79,7 @@ class Context {
     void parse (QByteArray _xml);
 
     /// Returns all available elements
-    const QVector<Element *>& elements () { return elements_; };
+    const QVector<Element *>& elements () const { return elements_; };
 
     /// Returns all available elements for a given category
     QVector<Element *> elements (QString _category);
