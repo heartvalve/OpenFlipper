@@ -105,6 +105,8 @@ signals:
 
 public:
 
+	SplatCloudRenderingControlPlugin();
+
 	//-- Base Interface --
 	QString name() { return QString( "SplatCloud Rendering Control Plugin" ); }
 	QString description() { return QString( "Control over rendering of SplatClouds" ); }

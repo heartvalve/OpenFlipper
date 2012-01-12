@@ -65,6 +65,37 @@
 //== IMPLEMENTATION ==============================================
 
 
+SplatCloudRenderingControlPlugin::SplatCloudRenderingControlPlugin() : 
+	toolboxPointsizeScale_( 0 ), 
+	toolboxDefaultNormalX_( 0 ), 
+	toolboxDefaultNormalY_( 0 ), 
+	toolboxDefaultNormalZ_( 0 ), 
+	toolboxDefaultPointsize_( 0 ), 
+	toolboxDefaultColorR_( 0 ), 
+	toolboxDefaultColorG_( 0 ), 
+	toolboxDefaultColorB_( 0 ), 
+	contextScaleAction_( 0 ), 
+	contextCullingAction_( 0 ), 
+	contextDefaultsAction_( 0 ), 
+	contextReloadShadersAction_( 0 ), 
+	contextRebuildVBOAction_( 0 ), 
+	scaleWidget_( 0 ), 
+	scaleWidgetPointsizeScale_( 0 ), 
+	defaultsWidget_( 0 ), 
+	defaultsWidgetDefaultNormalX_( 0 ), 
+	defaultsWidgetDefaultNormalY_( 0 ), 
+	defaultsWidgetDefaultNormalZ_( 0 ), 
+	defaultsWidgetDefaultPointsize_( 0 ), 
+	defaultsWidgetDefaultColorR_( 0 ), 
+	defaultsWidgetDefaultColorG_( 0 ), 
+	defaultsWidgetDefaultColorB_( 0 ) 
+{
+}
+
+
+//----------------------------------------------------------------
+
+
 void SplatCloudRenderingControlPlugin::initializePlugin()
 {
 	// --------------------------------
