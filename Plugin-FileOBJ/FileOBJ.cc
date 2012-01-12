@@ -539,12 +539,16 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   std::string keyWrd;
   std::string nextKeyWrd = "";
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
   unsigned int curveCount = 0;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
   unsigned int surfaceCount = 0;
+#endif
 
   float x, y, z, u, v;
-  int   deg, index;
-  double knot;
+  int   deg;
 
   std::vector<VertexHandle> vhandles;
   std::vector<int>          face_texcoords;
@@ -875,6 +879,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       while ( !lineData.eof() && !lineData.fail() )
       {
       
+        double knot;
+
         lineData >> knot;
 
         if ( !lineData.fail() )
@@ -918,9 +924,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         lineData >> trash;
       }
       
+
+
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
+        int index = 0;
+
         lineData >> index;
         
         if ( index < 0 ) {
@@ -1000,6 +1010,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
+
+        double knot;
       
         lineData >> knot;
 
@@ -1041,6 +1053,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
+        int index = 0;
+
         lineData >> index;
 
         if ( index < 0 ) {
@@ -1122,11 +1136,15 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   std::string keyWrd;
   std::string nextKeyWrd = "";
   
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
   unsigned int curveCount = 0;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
   unsigned int surfaceCount = 0;
+#endif
 
   float x, y, z;
-  int index;
   int faceCount = 0;
   
   int PolyMeshCount = 0;
@@ -1324,6 +1342,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
+        int index = 0;
+
         lineData >> index;
 
         if ( !lineData.fail() ){
@@ -1384,6 +1404,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
+        int index = 0;
+
         lineData >> index;
 
         if ( !lineData.fail() ){

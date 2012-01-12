@@ -47,8 +47,6 @@
 
 #include <iomanip>
 
-typedef OpenMesh::Vec3f Vec3f;
-
 /** \brief Material
  *
  * This class provides means to store materials
@@ -58,16 +56,31 @@ class Material
 {
   public:
 
-    Material() { cleanup(); }
+    Material() :
+          localNum_(0),
+          Kd_is_set_(false),
+          Ka_is_set_(false),
+          Ks_is_set_(false),
+          Tr_(0.0),
+          Tr_is_set_(false),
+          map_Kd_(""),
+          index_Kd_(0),
+          map_Kd_is_set_(false)
+    {
+    }
+
+
     
     void cleanup() {
-      
+        localNum_      = 0;
         Kd_is_set_     = false;
         Ka_is_set_     = false;
         Ks_is_set_     = false;
+        Tr_            = 0.0;
         Tr_is_set_     = false;
+        map_Kd_        = "";
+        index_Kd_      = 0;
         map_Kd_is_set_ = false;
-        localNum_      = 0;
     }
 
     bool is_valid(void) const
@@ -109,15 +122,15 @@ class Material
 
     /// Set diffuse color
     void set_Kd( float r, float g, float b )
-    { Kd_=Vec3f(r,g,b); Kd_is_set_=true; }
+    { Kd_=OpenMesh::Vec3f(r,g,b); Kd_is_set_=true; }
 
     /// Set ambient color
     void set_Ka( float r, float g, float b )
-    { Ka_=Vec3f(r,g,b); Ka_is_set_=true; }
+    { Ka_=OpenMesh::Vec3f(r,g,b); Ka_is_set_=true; }
 
     /// Set specular color
     void set_Ks( float r, float g, float b )
-    { Ks_=Vec3f(r,g,b); Ks_is_set_=true; }
+    { Ks_=OpenMesh::Vec3f(r,g,b); Ks_is_set_=true; }
 
     /// Set transparency value (between 0 and 1)
     void set_Tr( float t )
@@ -128,13 +141,13 @@ class Material
     { map_Kd_ = _name, index_Kd_ = _index_Kd; map_Kd_is_set_ = true; };
 
     /// Get diffuse color
-    const Vec3f& Kd( void ) const { return Kd_; }
+    const OpenMesh::Vec3f& Kd( void ) const { return Kd_; }
     
     /// Get ambient color
-    const Vec3f& Ka( void ) const { return Ka_; }
+    const OpenMesh::Vec3f& Ka( void ) const { return Ka_; }
     
     /// Get specular color
-    const Vec3f& Ks( void ) const { return Ks_; }
+    const OpenMesh::Vec3f& Ks( void ) const { return Ks_; }
     
     /// Get transparency value
     float Tr( void ) const { return Tr_; }
@@ -148,10 +161,10 @@ class Material
   private:
     
     unsigned int localNum_;
-    Vec3f Kd_;                          bool Kd_is_set_; // diffuse
-    Vec3f Ka_;                          bool Ka_is_set_; // ambient
-    Vec3f Ks_;                          bool Ks_is_set_; // specular
-    float Tr_;                          bool Tr_is_set_; // transperency
+    OpenMesh::Vec3f Kd_;                          bool Kd_is_set_; // diffuse
+    OpenMesh::Vec3f Ka_;                          bool Ka_is_set_; // ambient
+    OpenMesh::Vec3f Ks_;                          bool Ks_is_set_; // specular
+    float Tr_;                                    bool Tr_is_set_; // transperency
 
     std::string map_Kd_; int index_Kd_; bool map_Kd_is_set_; // Texture
 };
