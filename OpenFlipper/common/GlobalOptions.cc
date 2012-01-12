@@ -484,6 +484,7 @@ bool defaultPerspectiveProjectionMode(int _viewer){
       return OpenFlipperSettings().value(entry,false).toBool();
     default:
       std::cerr << "defaultProjectionMode: illegal viewer id: " << _viewer << std::endl;
+      break;
   }
 
   return true;

@@ -61,6 +61,16 @@
 #define TEXTUREDATA "TextureData"
  
 
+
+TextureControlPlugin::TextureControlPlugin() :
+settingsDialog_(0),
+textureMenu_(0),
+actionGroup_(0),
+contextMenu_(0)
+{
+
+}
+
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id)
 {
   // Get the new object

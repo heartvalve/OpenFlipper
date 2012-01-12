@@ -148,7 +148,7 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 
   public :
     /// Constructor
-    TextureControlPlugin() {};
+    TextureControlPlugin();
     /// Destructor
     ~TextureControlPlugin() {delete(settingsDialog_);};
 

@@ -273,7 +273,7 @@ private:
 		UINT uiStart, uiLen;
 		UINT uiSize;
 
-		inline UINT pos(UINT i)
+		inline UINT pos(UINT i) const
 		{
 			UINT t = uiStart + i;
 			if (t >= uiLen) t -= uiLen;
@@ -285,8 +285,8 @@ private:
 		{ pStack = new UINT[uiSize];}
 		~RingStack() {delete [] pStack;}
 
-		UINT length() {return uiLen;} // current stack length
-		UINT size() {return uiSize;} // reserved stack size i.e. maximum length
+		UINT length() const {return uiLen;} // current stack length
+		UINT size() const {return uiSize;} // reserved stack size i.e. maximum length
 
 		inline void push(UINT v)
 		{

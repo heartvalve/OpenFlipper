@@ -80,10 +80,10 @@ class Function {
     QString name () const { return name_; };
 
     /// Short description
-    const QString &shortDescription () { return shortDesc_; };
+    const QString &shortDescription () const { return shortDesc_; };
 
     /// Long description
-    const QString &longDescription () { return longDesc_; };
+    const QString &longDescription () const { return longDesc_; };
 
     /// Start element of this function
     Element *start () const { return start_; };

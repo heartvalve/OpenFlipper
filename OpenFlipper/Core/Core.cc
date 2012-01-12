@@ -1011,6 +1011,7 @@ void Core::multiViewMode( int _mode ) {
 
     default:
       emit log(LOGERR,tr("Requested illegal multiview mode!"));
+      break;
   }
 
 }

@@ -86,7 +86,7 @@ class ElementInput : public ElementInOut {
     void setValue (QString _value);
 
     /// Returns value set by user
-    QString value () { return value_; };
+    QString value () const { return value_; };
 
     /// Add connection
     void addConnection (Connection *_conn);
@@ -104,7 +104,7 @@ class ElementInput : public ElementInOut {
     void setForceAsk (bool _set) { forceAsk_ = _set; };
 
     /// Return "ForceAsk" flag
-    bool isForceAskSet () { return forceAsk_; };
+    bool isForceAskSet () const { return forceAsk_; };
 
     /// VSI::Input state passthrough
     unsigned int state ();

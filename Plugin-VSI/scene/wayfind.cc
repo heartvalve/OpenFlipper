@@ -76,7 +76,8 @@ namespace VSI {
 /// Constructor
 WayFind::WayFind(GraphicsScene *_scene) :
   scene_ (_scene),
-  counter_ (0)
+  counter_ (0),
+  ll_(0)
 {
 }
 

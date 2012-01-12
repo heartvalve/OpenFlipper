@@ -148,7 +148,11 @@ QtApplication::QtApplication(int _argc, char** _argv)
   : QApplication(_argc, _argv),
     record_(false),
     playback_(false),
-    play_loop_(false)
+    play_loop_(false),
+    eventnr_(0),
+    timer_id_(0),
+    dialog_(0),
+    mainWidget_(0)
 {
   // create new macro Dialog
 //   dialog_ = new QtMacroDialog(0, "MacroDialog");
@@ -169,7 +173,6 @@ QtApplication::QtApplication(int _argc, char** _argv)
 // 	  this,     SLOT(loadFile(const char*)));
 
 }
-
 
 //-----------------------------------------------------------------------------
 

@@ -66,22 +66,22 @@ class InOut {
     InOut (Element *_e);
 
     /// Name
-    const QString &name () { return name_; };
+    const QString &name () const { return name_; };
 
     /// Short description
-    const QString &shortDescription () { return shortDesc_; };
+    const QString &shortDescription () const { return shortDesc_; };
 
     /// Long description
-    const QString &longDescription () { return longDesc_; };
+    const QString &longDescription () const { return longDesc_; };
 
     /// Element of this input/output
-    const Element * element () { return element_; };
+    const Element * element () const { return element_; };
 
     /// Parsed hints for this input/output type
     QMap<QString, QString> hints () const { return hints_; };
 
     /// Type
-    QString typeString ();
+    QString typeString () const;
 
     friend class Context;
 

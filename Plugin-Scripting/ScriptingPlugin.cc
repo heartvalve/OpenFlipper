@@ -57,7 +57,18 @@
 #include <QTextStream>
 #include <QSyntaxHighlighter>
 
-ScriptingPlugin::ScriptingPlugin() {
+ScriptingPlugin::ScriptingPlugin() :
+   lastProblemLine_(0),
+   lastError_(""),
+   errorTimer_(0),
+   descrLayout_(0),
+   scriptWidget_(0),
+   statusBar_(0),
+   highlighterCurrent_(0),
+   highlighterLive_(0),
+   highlighterList_(0),
+   lastFile_("")
+{
 
 }
 
