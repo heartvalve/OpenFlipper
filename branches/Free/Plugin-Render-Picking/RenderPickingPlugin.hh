@@ -56,6 +56,8 @@ class RenderPickingPlugin : public QObject, BaseInterface, RenderInterface
 
   
   public :
+    RenderPickingPlugin() : pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING) {};
+
     QString name() { return (QString("Picking Rendering Plugin")); };
     QString description( ) { return (QString(tr("Print the picking color buffer to the current viewer"))); };
 
