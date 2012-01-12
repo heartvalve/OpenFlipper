@@ -31,7 +31,7 @@ class MouseAndKeyPlugin: public QObject,
 
 	//BaseInterface
 	void updateView();
-	void updatedObject(int _id);
+	void updatedObject(int _identifier, const UpdateType& _type);
 	//LoggingInterface
 	void log(Logtype _type, QString _message);
 	void log(QString _message);
@@ -39,12 +39,13 @@ class MouseAndKeyPlugin: public QObject,
 	void addContextMenuItem(QAction* _action , ContextMenuType _type);
 	void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
 	//PickingInterface
-	void addPickMode(const std::string _mode);
-	void addHiddenPickMode(const std::string _mode);
+	void addPickMode(const std::string& _mode);
+	void addHiddenPickMode(const std::string& _mode);
 	//KeyInterface
 	void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
-        // ToolboxInterface
-        void addToolbox( QString _name  , QWidget* _widget );  
+
+  // ToolboxInterface
+  void addToolbox(QString _name, QWidget* _widget);
 
 	private slots:
 
@@ -63,6 +64,8 @@ class MouseAndKeyPlugin: public QObject,
 	// BaseInterface
 	QString name() {return (QString("Mouse and Keyboard Plugin"));};
 	QString description() {return (QString("Shows some basic mouse and key embedding"));};
+
+	MouseAndKeyPlugin();
 
 	private:
 

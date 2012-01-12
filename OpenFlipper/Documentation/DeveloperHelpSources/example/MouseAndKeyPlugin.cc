@@ -38,16 +38,23 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 /*
+ * Constructor
+ */
+MouseAndKeyPlugin::MouseAndKeyPlugin() :
+        contextMenuEntry_(0),
+        tool_(0),
+        pickButton_(0),
+        activeObject_(-1),
+        axis_x_(ACG::Vec3d(1.0, 0.0, 0.0)),
+        axis_y_(ACG::Vec3d(0.0, 1.0, 0.0))
+{
+
+}
+
+/*
  * Initialize plugin
  */
 void MouseAndKeyPlugin::initializePlugin() {
-
-	// Set active object to -1
-	activeObject_ = -1;
-
-	// Set rotation axes to x, y and z axis
-	axis_x_ = ACG::Vec3d(1.0, 0.0, 0.0);
-	axis_y_ = ACG::Vec3d(0.0, 1.0, 0.0);
 
 	// Register keys
 	emit registerKey(Qt::Key_W,	Qt::NoModifier, "Rotate object down");
@@ -55,31 +62,31 @@ void MouseAndKeyPlugin::initializePlugin() {
 	emit registerKey(Qt::Key_A,	Qt::NoModifier, "Rotate object left");
 	emit registerKey(Qt::Key_D,	Qt::NoModifier, "Rotate object right");
         
-        tool_ = new QWidget();
-        QSize size(300, 300);
-        tool_->resize(size);
-        
-        // Create button that can be toggled
-        // to (de)activate plugin's picking mode
-        pickButton_ = new QPushButton(tr("Select object"));
-        pickButton_->setCheckable(true);
-        
-        // Create label
-        QLabel* label = new QLabel();
-        label->setText("(De)activate pick mode");
-        
-        // Set label to be above the button
-        QGridLayout* grid = new QGridLayout;
-        grid->addWidget(label, 0, 0);
-        grid->addWidget(pickButton_, 1, 0);
-        
-        tool_->setLayout(grid);
-        
-        // Connect button to slotButtonClicked()
-        connect( pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
-        
-        // Add the Toolbox
-        emit addToolbox( tr("Mouse and Key") , tool_ );
+  tool_ = new QWidget();
+  QSize size(300, 300);
+  tool_->resize(size);
+
+  // Create button that can be toggled
+  // to (de)activate plugin's picking mode
+  pickButton_ = new QPushButton(tr("Select object"));
+  pickButton_->setCheckable(true);
+
+  // Create label
+  QLabel* label = new QLabel();
+  label->setText("(De)activate pick mode");
+
+  // Set label to be above the button
+  QGridLayout* grid = new QGridLayout;
+  grid->addWidget(label, 0, 0);
+  grid->addWidget(pickButton_, 1, 0);
+
+  tool_->setLayout(grid);
+
+  // Connect button to slotButtonClicked()
+  connect(pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
+
+  // Add the Toolbox
+  emit addToolbox(tr("Mouse and Key"), tool_);
 
 } // End initializePlugin
 

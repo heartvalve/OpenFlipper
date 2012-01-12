@@ -16,7 +16,7 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
   signals:
     //BaseInterface
     void updateView();
-    void updatedObject(int _id);
+    void updatedObject(int _identifier, const UpdateType& _type);
 
     //LoggingInterface
     void log(Logtype _type, QString _message);
@@ -24,6 +24,8 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
 
     // ToolboxInterface
     void addToolbox( QString _name, QWidget* _widget );
+
+    SmootherPlugin();
 
   public:
 
