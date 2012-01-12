@@ -46,12 +46,14 @@
 
 Texture::Texture() :
   name_("No Texture"),
+  textureImageId_(0),
   visibleName_(""),
   filename_("Invalid"),
   id_(-1),
   glName_(0),
   dimension_(0),
   enabled_(false),
+  hidden_(false),
   dirty_(true),
   type_(UNSET),
   indexMappingProperty_("f:textureindex")
