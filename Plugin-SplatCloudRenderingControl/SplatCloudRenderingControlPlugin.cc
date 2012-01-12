@@ -428,6 +428,7 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	// toolboxes
 	QStringList viewModeToolboxes;
 	viewModeToolboxes += "Data Control";
+	viewModeToolboxes += "Selections";
 	viewModeToolboxes += "SplatCloud Estimator";
 	viewModeToolboxes += "SplatCloud Rendering Control";
 
@@ -437,6 +438,8 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	viewModeToolbars += "Viewer Toolbar";
 	viewModeToolbars += "Color Toolbar";
 	viewModeToolbars += "Viewing Directions";
+	viewModeToolbars += "Selection Base";
+	viewModeToolbars += "Backup Toolbar";
 
 	// context menus
 	QStringList viewModeContextMenus;
@@ -445,6 +448,8 @@ void SplatCloudRenderingControlPlugin::initializePlugin()
 	viewModeContextMenus += "SplatCloudEstimatorPlugin->SplatCloud Estimator";
 	viewModeContextMenus += "SplatCloudRenderingControlPlugin->SplatCloud Rendering Control";
 	viewModeContextMenus += "ViewControl->Visualization";
+	viewModeContextMenus += "Backup->&Redo";
+	viewModeContextMenus += "Backup->&Undo";
 
 	// emit signals to add new viewmode
 	emit defineViewModeToolboxes   ( "SplatCloud", viewModeToolboxes    );

@@ -91,6 +91,9 @@ bool getObject( int _identifier, SplatCloudObject *&_object )
 
 ShaderNode *splatShaderNode( BaseObjectData *_object )
 {
+	if( !_object )
+		return 0;
+
 	if( !_object->dataType( DATA_SPLATCLOUD ) )
 		return 0;
 
@@ -108,6 +111,9 @@ ShaderNode *splatShaderNode( BaseObjectData *_object )
 
 SplatCloudNode *splatCloudNode( BaseObjectData *_object )
 {
+	if( !_object )
+		return 0;
+
 	if( !_object->dataType( DATA_SPLATCLOUD ) )
 		return 0;
 
@@ -125,6 +131,9 @@ SplatCloudNode *splatCloudNode( BaseObjectData *_object )
 
 SplatCloud *splatCloud( BaseObjectData *_object )
 {
+	if( !_object )
+		return 0;
+
 	if( !_object->dataType( DATA_SPLATCLOUD ) )
 		return 0;
 
@@ -147,6 +156,9 @@ SplatCloud *splatCloud( BaseObjectData *_object )
 
 SplatCloudObject *splatCloudObject( BaseObjectData *_object )
 {
+	if( !_object )
+		return 0;
+
 	if( !_object->dataType( DATA_SPLATCLOUD ) )
 		return 0;
 
