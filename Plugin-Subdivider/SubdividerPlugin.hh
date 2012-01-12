@@ -110,6 +110,7 @@ public slots:
   
 
 public :
+  SubdividerPlugin();
   ~SubdividerPlugin() {};
 
   QString name() { return (QString("Subdivider")); };

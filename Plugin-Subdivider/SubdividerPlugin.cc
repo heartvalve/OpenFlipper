@@ -58,6 +58,15 @@
 #include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3InterpolatingSubdividerLabsikGreinerT.hh>
 #include <OpenMesh/Tools/Subdivider/Uniform/ModifiedButterFlyT.hh>
 
+
+SubdividerPlugin::SubdividerPlugin() :
+        tool_(0),
+        toolIcon_(0)
+{
+
+}
+
+
 void SubdividerPlugin::initializePlugin() 
 {
   if ( OpenFlipper::Options::gui() ) {
