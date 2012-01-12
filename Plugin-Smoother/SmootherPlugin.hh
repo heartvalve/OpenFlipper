@@ -110,7 +110,7 @@ signals:
 public :
 
   /// default constructor
-  SmootherPlugin() : tool_(0) {};
+  SmootherPlugin();
 
   /// default destructor
   ~SmootherPlugin() {};
