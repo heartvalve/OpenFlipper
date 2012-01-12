@@ -78,7 +78,7 @@ private slots:
   void initializePlugin(); // BaseInterface
   
 public :
-
+  SlicePlugin();
   ~SlicePlugin() {};
 
   QString name() { return (QString("Slice")); };
@@ -87,8 +87,6 @@ public :
 private :
   SliceToolBox* tool_;
   QIcon* toolIcon_;
-  QButtonGroup* bbGroup;
-  QButtonGroup* axisGroup;
 
   void getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax);
 

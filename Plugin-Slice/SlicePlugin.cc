@@ -50,6 +50,14 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+SlicePlugin::SlicePlugin() :
+        tool_(0),
+        toolIcon_(0),
+        node_(0)
+{
+
+}
+
 void SlicePlugin::initializePlugin(){
   //init the slice node
   node_ = new ACG::SceneGraph::ClippingNode(0,"Clipping Node");
@@ -65,12 +73,12 @@ void SlicePlugin::initializePlugin(){
   QSize size(300, 300);
   tool_->resize(size);
   
-  bbGroup = new QButtonGroup();
+  QButtonGroup* bbGroup = new QButtonGroup();
   bbGroup->setExclusive( true );
   bbGroup->addButton( tool_->radioAll );
   bbGroup->addButton( tool_->radioTarget );
   
-  axisGroup = new QButtonGroup();
+  QButtonGroup* axisGroup = new QButtonGroup();
   axisGroup->setExclusive( true );
   axisGroup->addButton( tool_->radioX );
   axisGroup->addButton( tool_->radioY );
