@@ -79,6 +79,9 @@ class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface
 
 public:
 
+  PrimitivesGeneratorPlugin();
+  ~PrimitivesGeneratorPlugin();
+
   // BaseInterface
   QString name() { return (QString("Primitives Generator Plugin"));  } ;
   QString description() {  return (QString("Plugin used for generating basic primitives")); } ;
