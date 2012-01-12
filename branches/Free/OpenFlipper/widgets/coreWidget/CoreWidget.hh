@@ -345,8 +345,6 @@ public:
     ///typedefs
     typedef std::multimap<  std::pair< int, Qt::KeyboardModifiers >  ,  std::pair< QObject*, int > > KeyMap;
 
-    typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;
-
     typedef std::pair< KeyMap::iterator, KeyMap::iterator > KeyRange;
 
     /** \brief Register all events related to the core
