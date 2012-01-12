@@ -73,7 +73,7 @@ signals:
   void updateView();
   void updatedObject(int _id, const UpdateType& _type);
 
-  void addPickMode( const std::string _mode );
+  void addPickMode( const std::string& _mode );
 
   void log(Logtype _type, QString _message);
   void log(QString _message);
