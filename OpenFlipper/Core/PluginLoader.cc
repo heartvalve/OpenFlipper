@@ -1152,31 +1152,31 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(coreWidget_,SIGNAL(signalPickModeChanged (const std::string &)),
               plugin,SLOT(slotPickModeChanged( const std::string &)));
 
-    if ( checkSignal(plugin,"addPickMode(const std::string)") )
-      connect(plugin,SIGNAL(addPickMode( const std::string )),
-              this,SLOT(slotAddPickMode( const std::string )),Qt::DirectConnection);
+    if ( checkSignal(plugin,"addPickMode(const std::string&)") )
+      connect(plugin,SIGNAL(addPickMode( const std::string& )),
+              this,SLOT(slotAddPickMode( const std::string& )),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"addHiddenPickMode(const std::string)") )
-      connect(plugin,SIGNAL(addHiddenPickMode( const std::string )),
-              this,SLOT(slotAddHiddenPickMode( const std::string )),Qt::DirectConnection);
+    if ( checkSignal(plugin,"addHiddenPickMode(const std::string&)") )
+      connect(plugin,SIGNAL(addHiddenPickMode( const std::string& )),
+              this,SLOT(slotAddHiddenPickMode( const std::string& )),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"setPickModeCursor(const std::string,QCursor)") )
+    if ( checkSignal(plugin,"setPickModeCursor(const std::string&,QCursor)") )
       for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        connect(plugin,SIGNAL(setPickModeCursor( const std::string ,QCursor)),
-                coreWidget_,SLOT(setPickModeCursor( const std::string ,QCursor)),Qt::DirectConnection);
+        connect(plugin,SIGNAL(setPickModeCursor( const std::string& ,QCursor)),
+                coreWidget_,SLOT(setPickModeCursor( const std::string& ,QCursor)),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"setPickModeMouseTracking(const std::string,bool)") )
+    if ( checkSignal(plugin,"setPickModeMouseTracking(const std::string&,bool)") )
       for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        connect(plugin,SIGNAL(setPickModeMouseTracking( const std::string ,bool)),
-                coreWidget_,SLOT(setPickModeMouseTracking( const std::string ,bool)),Qt::DirectConnection);
+        connect(plugin,SIGNAL(setPickModeMouseTracking( const std::string& ,bool)),
+                coreWidget_,SLOT(setPickModeMouseTracking( const std::string& ,bool)),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"setPickModeToolbar(const std::string,QToolBar*)") )
-      connect(plugin,SIGNAL(setPickModeToolbar (const std::string, QToolBar*)),
-              coreWidget_,SLOT(setPickModeToolbar (const std::string, QToolBar*)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"setPickModeToolbar(const std::string&,QToolBar*)") )
+      connect(plugin,SIGNAL(setPickModeToolbar (const std::string&, QToolBar*)),
+              coreWidget_,SLOT(setPickModeToolbar (const std::string&, QToolBar*)),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"removePickModeToolbar(const std::string)") )
-      connect(plugin,SIGNAL(removePickModeToolbar( const std::string)),
-              coreWidget_,SLOT(removePickModeToolbar( const std::string)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"removePickModeToolbar(const std::string&)") )
+      connect(plugin,SIGNAL(removePickModeToolbar( const std::string&)),
+              coreWidget_,SLOT(removePickModeToolbar( const std::string&)),Qt::DirectConnection);
 
   }
 

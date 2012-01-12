@@ -130,10 +130,10 @@ Q_INTERFACES(SelectionInterface)
         void keyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier);
         
         // PickingInterface
-        void addPickMode(const std::string _mode);
-        void setPickModeMouseTracking(const std::string _mode, bool _mouseTracking);
-        void setPickModeCursor(const std::string _mode, QCursor _cursor);
-        void setPickModeToolbar (const std::string _mode, QToolBar * _toolbar);
+        void addPickMode(const std::string& _mode);
+        void setPickModeMouseTracking(const std::string& _mode, bool _mouseTracking);
+        void setPickModeCursor(const std::string& _mode, QCursor _cursor);
+        void setPickModeToolbar (const std::string& _mode, QToolBar * _toolbar);
         
         // KeyInterface
         void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
