@@ -100,7 +100,7 @@ BaseObject::BaseObject(const BaseObject& _object) :
       std::cerr << "Failed to copy per Object Data: " << mapIter.key().toStdString() << std::endl;
     }
     
-    mapIter++;
+    ++mapIter;
   }
   
   // If the pointer is 0 then we are creating the objectroot

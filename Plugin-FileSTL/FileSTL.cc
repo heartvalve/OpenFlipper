@@ -57,9 +57,14 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
 /// Constructor
-FileSTLPlugin::FileSTLPlugin()
-: saveOptions_(0),
-  loadOptions_(0) {
+FileSTLPlugin::FileSTLPlugin() :
+        saveOptions_(0),
+        loadOptions_(0),
+        saveBinary_(0),
+        saveDefaultButton_(0),
+        loadDefaultButton_(0)
+
+{
 }
 
 //-----------------------------------------------------------------------------------------------------
