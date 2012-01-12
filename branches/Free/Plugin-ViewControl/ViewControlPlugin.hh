@@ -94,7 +94,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void updateView();
 
     //PickingInterface
-    void addHiddenPickMode( const std::string _mode );
+    void addHiddenPickMode( const std::string& _mode );
     
     //LoggingInterface
     void log(Logtype _type, QString _message);
@@ -150,14 +150,14 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     */
     std::vector <ShaderInfo> shaderList_;
     
-    QToolBar* toolbar_;
+    QToolBar*     toolbar_;
     QActionGroup* toolbarViewingDirections_;
-    QAction* viewTop_;
-    QAction* viewBottom_;
-    QAction* viewLeft_;
-    QAction* viewRight_;
-    QAction* viewFront_;
-    QAction* viewBack_;
+    QAction*      viewTop_;
+    QAction*      viewBottom_;
+    QAction*      viewLeft_;
+    QAction*      viewRight_;
+    QAction*      viewFront_;
+    QAction*      viewBack_;
 
   private slots:
     QString version() { return QString("1.0"); };

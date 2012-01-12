@@ -49,10 +49,10 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
     void getCurrentRenderer(unsigned int _viewer, QString& _rendererName);
 
     // PickingInterface
-    void addPickMode( const std::string _mode );
-    void addHiddenPickMode( const std::string _mode );
-    void setPickModeMouseTracking (const std::string _mode, bool _mouseTracking);
-    void setPickModeToolbar (const std::string _mode, QToolBar * _toolbar);
+    void addPickMode( const std::string& _mode );
+    void addHiddenPickMode( const std::string& _mode );
+    void setPickModeMouseTracking (const std::string& _mode, bool _mouseTracking);
+    void setPickModeToolbar (const std::string& _mode, QToolBar * _toolbar);
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);

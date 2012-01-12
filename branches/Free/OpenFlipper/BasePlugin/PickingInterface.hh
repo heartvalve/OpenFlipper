@@ -70,7 +70,7 @@ class PickingInterface {
        *
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addPickMode( const std::string _mode) {};
+      virtual void addPickMode( const std::string& _mode) {};
 
       /** \brief Add a new picking mode to the examiner which will be invisible
        *
@@ -80,7 +80,7 @@ class PickingInterface {
        *
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addHiddenPickMode( const std::string _mode ) {};
+      virtual void addHiddenPickMode( const std::string& _mode ) {};
 
       /** \brief Set the cursor of the given PickMode
        *
@@ -89,7 +89,7 @@ class PickingInterface {
        * @param _mode Identifier of Picking mode
        * @param _cursor the new cursor
       */
-      virtual void setPickModeCursor( const std::string _mode , QCursor _cursor ) {};
+      virtual void setPickModeCursor( const std::string& _mode , QCursor _cursor ) {};
 
       /** \brief Set mouse tracking for the given PickMode
        *
@@ -99,7 +99,7 @@ class PickingInterface {
        * @param _mode Identifier of Picking mode
        * @param _mouseTracking new state of mouseTracking
       */
-      virtual void setPickModeMouseTracking( const std::string _mode , bool _mouseTracking ) {};
+      virtual void setPickModeMouseTracking( const std::string& _mode , bool _mouseTracking ) {};
 
       /** \brief Set the additional toolbar of the given PickMode
        *
@@ -108,7 +108,7 @@ class PickingInterface {
        * @param _mode Identifier of Picking mode
        * @param _toolbar the toolbar
       */
-      virtual void setPickModeToolbar( const std::string _mode , QToolBar * _toolbar ) {};
+      virtual void setPickModeToolbar( const std::string& _mode , QToolBar * _toolbar ) {};
 
       /** \brief Removes the additional toolbar of the given PickMode
        *
@@ -116,7 +116,7 @@ class PickingInterface {
        *
        * @param _mode Identifier of Picking mode
       */
-      virtual void removePickModeToolbar( const std::string _mode ) {};
+      virtual void removePickModeToolbar( const std::string& _mode ) {};
 
      
   private slots:
