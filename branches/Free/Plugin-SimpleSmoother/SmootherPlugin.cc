@@ -50,6 +50,17 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
+SmootherPlugin::SmootherPlugin() :
+        iterationsSpinbox_(0)
+{
+
+}
+
+SmootherPlugin::~SmootherPlugin()
+{
+
+}
+
 void SmootherPlugin::initializePlugin()
 {
    // Create the Toolbox Widget

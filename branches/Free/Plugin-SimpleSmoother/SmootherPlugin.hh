@@ -84,6 +84,9 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
 
   public:
 
+    SmootherPlugin();
+    ~SmootherPlugin();
+
     // BaseInterface
     QString name() { return (QString("Simple Smoother")); };
     QString description( ) { return (QString("Smooths the active Mesh")); };
