@@ -101,6 +101,9 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
 
   public :
 
+    ///Constructor
+    TopologyPlugin();
+
     /// Destructor
     ~TopologyPlugin() {};
 

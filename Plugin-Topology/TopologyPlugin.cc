@@ -57,6 +57,19 @@
 #include <OpenMesh/Core/System/omstream.hh>
 #include <float.h>
 
+//******************************************************************************
+
+TopologyPlugin::TopologyPlugin() :
+        toolbar_(0),
+        edgeFlipAction_(0),
+        edgeSplitAction_(0),
+        edgeCollapseAction_(0),
+        faceAddAction_(0),
+        faceDeleteAction_(0),
+        faceSplitAction_(0)
+{
+
+}
 
 //******************************************************************************
 
