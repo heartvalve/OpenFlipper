@@ -245,27 +245,6 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube() {
 //========================================================================
 
 
-void PrimitivesGeneratorPlugin::addSphereTriangle(int sl0, int st0, int sl1, int st1, int sl2, int st2)
-{
-  ACG::Vec2f tex[3];
-
-  tex[0] = texCoordOnSphere(sl0, st0);
-  tex[1] = texCoordOnSphere(sl1, st1);
-  tex[2] = texCoordOnSphere(sl2, st2);
-
-//  std::vector<TriMesh::VertexHandle> vhandles;
-//
-//  vhandles.push_back(vhandles_[_vh1]);
-//  vhandles.push_back(vhandles_[_vh2]);
-//  vhandles.push_back(vhandles_[_vh3]);
-//
-//  triMesh_->add_face(vhandles);
-
-  //addTriangleToVBO(p, n, tex);
-}
-
-//------------------------------------------------------------------------
-
 ACG::Vec3d PrimitivesGeneratorPlugin::positionOnSphere(int _sliceNumber, int _stackNumber)
 {
   ACG::Vec3d position;

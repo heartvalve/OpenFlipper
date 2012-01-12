@@ -115,8 +115,6 @@ private:
 
   inline void add_face( int _vh1 , int _vh2, int _vh3, int _vh4 , int _vh5 );
 
-
-  void addSphereTriangle(int sl0, int st0, int sl1, int st1, int sl2, int st2);
   inline ACG::Vec3d positionOnSphere(int _sliceNumber, int _stackNumber);
   inline ACG::Vec2f texCoordOnSphere(int _sliceNumber, int _stackNumber);
 
