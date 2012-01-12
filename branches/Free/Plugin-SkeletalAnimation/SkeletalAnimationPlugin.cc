@@ -55,6 +55,19 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 
+/** \brief Constructor
+ *
+ */
+SkeletalAnimationPlugin::SkeletalAnimationPlugin() :
+        pToolbox_(0),
+        toolIcon_(0),
+        bGuiUpdating_(false),
+        animationOffset_(0)
+{
+}
+
+//------------------------------------------------------------------------------
+
 /** \brief returns the plugin name
  *
  */
