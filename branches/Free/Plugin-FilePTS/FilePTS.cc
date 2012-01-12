@@ -47,9 +47,7 @@
 //  CLASS FilePTSPlugin - IMPLEMENTATION
 //
 //================================================================
-
 //== INCLUDES ====================================================
-
 #include "FilePTS.hh"
 
 #include <QtGui>
@@ -71,33 +69,12 @@ static const int COLORRANGE_0_255 = 1;
 
 //== IMPLEMENTATION ==============================================
 
-FilePTSPlugin::FilePTSPlugin() :
-        loadOptions_(0),
-        saveOptions_(0),
-        loadBinaryFile_(0),
-        loadNormals_(0),
-        loadPointsizes_(0),
-        loadColors_(0),
-        loadColorRange_(0),
-        loadNormalizeSize_(0),
-        saveBinaryFile_(0),
-        saveNormals_(0),
-        savePointsizes_(0),
-        saveColors_(0),
-        saveColorRange_(0),
-        loadMakeDefaultButton_(0),
-        saveMakeDefaultButton_(0)
-
-{
-
-}
-
 bool FilePTSPlugin::readBinaryFile(std::ifstream &_instream, SplatCloudNode *_splatCloudNode)
 {
   // set default options
   bool loadNormals = true;
-  bool loadPointsizes = true;
-  bool loadColors = true;
+  bool loadPointsizes = false;
+  bool loadColors = false;
 //	int  loadColorRange = 0;
 
 // get options
@@ -192,8 +169,8 @@ bool FilePTSPlugin::readTextFile(std::ifstream &_instream, SplatCloudNode *_spla
 {
   // set default options
   bool loadNormals = true;
-  bool loadPointsizes = true;
-  bool loadColors = true;
+  bool loadPointsizes = false;
+  bool loadColors = false;
   int loadColorRange = 0;
 
   // get options
@@ -289,8 +266,8 @@ bool FilePTSPlugin::writeBinaryFile(std::ofstream &_outstream, const SplatCloudN
 {
   // set default options
   bool saveNormals = true;
-  bool savePointsizes = true;
-  bool saveColors = true;
+  bool savePointsizes = false;
+  bool saveColors = false;
 //	int  saveColorRange = 0;
 
   // get current translation and scaling
@@ -379,8 +356,8 @@ bool FilePTSPlugin::writeTextFile(std::ofstream &_outstream, const SplatCloudNod
 {
   // set default options
   bool saveNormals = true;
-  bool savePointsizes = true;
-  bool saveColors = true;
+  bool savePointsizes = false;
+  bool saveColors = false;
   int saveColorRange = 0;
 
   // get current translation and scale factor
@@ -476,8 +453,8 @@ bool FilePTSPlugin::writeTextFile(std::ofstream &_outstream, const SplatCloudNod
 int FilePTSPlugin::loadObject(QString _filename)
 {
   // set default options
-  bool loadBinaryFile = true;
-  bool loadNormalizeSize = true;
+  bool loadBinaryFile = false;
+  bool loadNormalizeSize = false;
 
   // get options
   if (OpenFlipper::Options::gui() && loadOptions_) {
@@ -487,8 +464,7 @@ int FilePTSPlugin::loadObject(QString _filename)
 
   // add a new, empty splatcloud object
   int id = -1;
-  emit
-  addEmptyObject(DATA_SPLATCLOUD, id);
+  emit addEmptyObject(DATA_SPLATCLOUD, id);
 
   // get splatcloud-object by id
   SplatCloudObject *splatCloudObject = 0;
@@ -539,10 +515,8 @@ int FilePTSPlugin::loadObject(QString _filename)
   splatCloudObject->setFromFileName(_filename);
 
   // emit signals that the object has to be updated and that a file was opened
-  emit
-  updatedObject(splatCloudObject->id(), UPDATE_ALL);
-  emit
-  openedFile(splatCloudObject->id());
+  emit updatedObject(splatCloudObject->id(), UPDATE_ALL);
+  emit openedFile(splatCloudObject->id());
 
   // get drawmodes
   ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode("Splats");
@@ -574,7 +548,7 @@ int FilePTSPlugin::loadObject(QString _filename)
 bool FilePTSPlugin::saveObject(int _id, QString _filename)
 {
   // set default options
-  bool saveBinaryFile = true;
+  bool saveBinaryFile = false;
 
   // get options
   if (OpenFlipper::Options::gui() && saveOptions_) {
@@ -673,9 +647,9 @@ QWidget *FilePTSPlugin::loadOptionsWidget(QString /*_currentFilter*/)
     loadOptions_->setLayout(loadLayout);
 
     // connect events to slots
-    connect(loadBinaryFile_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange() ));
-    connect(loadColors_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange() ));
-    connect(loadMakeDefaultButton_, SIGNAL( clicked() ), this, SLOT( slotLoadMakeDefaultButtonClicked() ));
+    connect( loadBinaryFile_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange() ) );
+    connect( loadColors_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateLoadColorRange() ) );
+    connect(loadMakeDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadMakeDefaultButtonClicked()));
 
     // get Load Options from OpenFlipper (from disc)
     loadBinaryFile_->setChecked(OpenFlipperSettings().value("FilePTS/Load/BinaryFile", true).toBool());
@@ -734,9 +708,9 @@ QWidget *FilePTSPlugin::saveOptionsWidget(QString _currentFilter)
     saveOptions_->setLayout(saveLayout);
 
     // connect events to slots
-    connect(saveBinaryFile_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange() ));
-    connect(saveColors_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange() ));
-    connect(saveMakeDefaultButton_, SIGNAL( clicked() ), this, SLOT( slotSaveMakeDefaultButtonClicked() ));
+    connect( saveBinaryFile_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange() ) );
+    connect( saveColors_, SIGNAL( stateChanged(int) ), this, SLOT( slotUpdateSaveColorRange() ) );
+    connect(saveMakeDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveMakeDefaultButtonClicked()));
 
     // get Save Options from OpenFlipper (from disc)
     saveBinaryFile_->setChecked(OpenFlipperSettings().value("FilePTS/Save/BinaryFile", true).toBool());
@@ -792,4 +766,4 @@ void FilePTSPlugin::slotSaveMakeDefaultButtonClicked()
 
 //================================================================
 
-Q_EXPORT_PLUGIN2( fileptsplugin, FilePTSPlugin);
+Q_EXPORT_PLUGIN2( fileptsplugin, FilePTSPlugin );
