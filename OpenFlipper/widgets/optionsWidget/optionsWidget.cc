@@ -270,8 +270,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   loggerInScene->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene);
   enableLogFile->setChecked( OpenFlipperSettings().value("Core/Log/logFileEnabled",true).toBool() );
 
-  //paths
+  //Files
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
+  maxRecentBox->setValue( OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
 
   // UI settings
   toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool() ? 0 : 1));
@@ -575,6 +576,8 @@ void OptionsWidget::slotApply() {
   
   OpenFlipperSettings().setValue("Core/Log/logFileEnabled",enableLogFile->isChecked());
   OpenFlipperSettings().setValue("Core/Log/logFile",logFile->text());
+
+  OpenFlipperSettings().setValue("Core/File/MaxRecent",maxRecentBox->value() ) ;
 
   
   // Toolbox orientation
