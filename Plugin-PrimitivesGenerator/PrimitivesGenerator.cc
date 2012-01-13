@@ -164,10 +164,12 @@ int PrimitivesGeneratorPlugin::addTetrahedron() {
     // Add 4 vertices
     vhandles_.resize(4);
 
-    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point(0, 0, 0));
-    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point(0, 1, 0));
-    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(1, 0, 0));
-    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point(0, 0, 1));
+    static const double size = 1.0;
+
+    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point(-size, -size,  size));
+    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point( size,  size,  size));
+    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(-size,  size, -size));
+    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point( size, -size, -size));
 
     // Add 4 faces
     add_face(0,1,2);
@@ -205,14 +207,16 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube() {
     // Add 8 vertices
     vhandles_.resize(8);
 
-    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point( 0.5, -0.5, 0.5));
-    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point( 0.5,  0.5, 0.5));
-    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(-0.5,  0.5, 0.5));
-    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point(-0.5, -0.5, 0.5));
-    vhandles_[4] = triMesh_->add_vertex(TriMesh::Point( 0.5, -0.5,-0.5));
-    vhandles_[5] = triMesh_->add_vertex(TriMesh::Point( 0.5,  0.5,-0.5));
-    vhandles_[6] = triMesh_->add_vertex(TriMesh::Point(-0.5,  0.5,-0.5));
-    vhandles_[7] = triMesh_->add_vertex(TriMesh::Point(-0.5, -0.5,-0.5));
+    static const double size = 1.0;
+
+    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point( size, -size, size));
+    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point( size,  size, size));
+    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(-size,  size, size));
+    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point(-size, -size, size));
+    vhandles_[4] = triMesh_->add_vertex(TriMesh::Point( size, -size,-size));
+    vhandles_[5] = triMesh_->add_vertex(TriMesh::Point( size,  size,-size));
+    vhandles_[6] = triMesh_->add_vertex(TriMesh::Point(-size,  size,-size));
+    vhandles_[7] = triMesh_->add_vertex(TriMesh::Point(-size, -size,-size));
 
 
     // Add 12 faces
@@ -285,7 +289,12 @@ int PrimitivesGeneratorPlugin::addSphere() {
     return -1;
   } else {
 
+    object->setName( "Sphere " + QString::number(newObject) );
+
     triMesh_ = object->mesh();
+
+    triMesh_->clear();
+
     triMesh_->request_vertex_texcoords2D();
 
     TriMesh::VertexHandle vh;
@@ -393,11 +402,14 @@ int PrimitivesGeneratorPlugin::addPyramid() {
     // Add 5 vertices
     vhandles_.resize(5);
 
-    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point( 0.5 ,-0.5 ,  0));
-    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point( 0.5 , 0.5 ,  0));
-    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(-0.5 , 0.5 ,  0));
-    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point(-0.5 ,-0.5 ,  0));
-    vhandles_[4] = triMesh_->add_vertex(TriMesh::Point(   0 ,   0 ,  1));
+    static const double size   = 1.0;
+
+    vhandles_[0] = triMesh_->add_vertex(TriMesh::Point( size, -size, 0.0));
+    vhandles_[1] = triMesh_->add_vertex(TriMesh::Point( size,  size, 0.0));
+    vhandles_[2] = triMesh_->add_vertex(TriMesh::Point(-size,  size, 0.0));
+    vhandles_[3] = triMesh_->add_vertex(TriMesh::Point(-size, -size, 0.0));
+
+    vhandles_[4] = triMesh_->add_vertex(TriMesh::Point(0.0, 0.0, sqrt(2.0)*size));
 
     // Add 6 faces
     add_face(2,1,0);
@@ -459,7 +471,7 @@ int PrimitivesGeneratorPlugin::addIcosahedron() {
     // Add 12 vertices
     vhandles_.resize(12);
 
-    double phi  = (1.0 + sqrt(5.0) / 2.0);
+    double phi  = 0.5 * (1.0 + sqrt(5.0));
     //double norm = 1.0 / sqrt(1.0 + phi*phi);
     double norm = 1.0;
 
@@ -535,16 +547,18 @@ int PrimitivesGeneratorPlugin::addOctahedron() {
 
     triMesh_->clear();
 
-    // Add 12 vertices
+    // Add 6 vertices
     vhandles_.resize(6);
 
-    vhandles_[0 ] = triMesh_->add_vertex(TriMesh::Point( -0.5 , -0.5 , 0.0 ));
-    vhandles_[1 ] = triMesh_->add_vertex(TriMesh::Point(  0.5 , -0.5 , 0.0 ));
-    vhandles_[2 ] = triMesh_->add_vertex(TriMesh::Point(  0.5 ,  0.5 , 0.0 ));
-    vhandles_[3 ] = triMesh_->add_vertex(TriMesh::Point( -0.5 ,  0.5 , 0.0 ));
+    static const double size = sqrt(2.0);
 
-    vhandles_[4 ] = triMesh_->add_vertex(TriMesh::Point(  0.0 ,  0.0 , 0.5  ));
-    vhandles_[5 ] = triMesh_->add_vertex(TriMesh::Point(  0.0 ,  0.0 ,-0.5  ));
+    vhandles_[0 ] = triMesh_->add_vertex(TriMesh::Point(-size,   0.0,   0.0));
+    vhandles_[1 ] = triMesh_->add_vertex(TriMesh::Point(  0.0, -size,   0.0));
+    vhandles_[2 ] = triMesh_->add_vertex(TriMesh::Point( size,   0.0,   0.0));
+    vhandles_[3 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,  size,   0.0));
+
+    vhandles_[4 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0,  size));
+    vhandles_[5 ] = triMesh_->add_vertex(TriMesh::Point(  0.0,   0.0, -size));
 
 
     // Add 8 faces
@@ -579,7 +593,7 @@ int PrimitivesGeneratorPlugin::addDodecahedron() {
     return -1;
   } else {
 
-    object->setName( "Octahedron " + QString::number(newObject) );
+    object->setName( "Dodecahedron " + QString::number(newObject) );
 
     polyMesh_ =  object->mesh();
 
