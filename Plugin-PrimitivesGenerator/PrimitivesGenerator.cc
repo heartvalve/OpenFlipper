@@ -302,7 +302,7 @@ int PrimitivesGeneratorPlugin::addSphere() {
     vh = triMesh_->add_vertex(positionOnSphere(0, 0));
     triMesh_->set_texcoord2D(vh, texCoordOnSphere(0, 0));
 
-    for (int st = 1; st < stacks_ - 1; ++st) {
+    for (int st = 1; st < stacks_; ++st) {
       for (int sl = 0; sl < slices_; ++sl) {
         vh = triMesh_->add_vertex(positionOnSphere(sl, st));
         triMesh_->set_texcoord2D(vh, texCoordOnSphere(sl, st));
@@ -326,7 +326,7 @@ int PrimitivesGeneratorPlugin::addSphere() {
       triMesh_->add_face(vhandles);
     }
 
-    for (int st = 0; st < stacks_ - 3; ++st) {
+    for (int st = 0; st < stacks_ - 2; ++st) {
 
       // Move around one slice
       for (int sl = 0; sl < slices_; ++sl) {
@@ -354,8 +354,8 @@ int PrimitivesGeneratorPlugin::addSphere() {
 
     }
 
-    const int startTop     = 1 + (stacks_ - 3) * slices_;
-    const int bottomVertex = 1 + (stacks_ - 2) * slices_;
+    const int startTop     = 1 + (stacks_ - 2) * slices_;
+    const int bottomVertex = 1 + (stacks_ - 1) * slices_;
 
     // Add bottom triangle fan
     for (int sl = 0; sl < slices_; ++sl) {
