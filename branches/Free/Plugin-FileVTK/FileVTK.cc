@@ -58,7 +58,7 @@
 
 struct CellType {
   // The type of the cell
-  unsigned int type;
+  // unsigned int type;
   
   // list of indices in the cell
   std::vector< OpenMesh::VertexHandle > indices;
