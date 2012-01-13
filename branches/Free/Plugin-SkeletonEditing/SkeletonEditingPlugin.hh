@@ -103,6 +103,7 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
 
   private:
     void moveJoint(QMouseEvent* _event);
+    bool canModify(QMouseEvent* _event);
     void insertJoint(QMouseEvent* _event);
     void cancelJointInsertion();
     void deleteJoint(QMouseEvent* _event);
