@@ -65,6 +65,10 @@ signals:
 
 
 public :
+
+  DepthPeelingPlugin();
+  ~DepthPeelingPlugin();
+
   QString name() { return (QString("Dual Depth Peeling Plugin")); };
   QString description( ) { return (QString(tr("Order independent transparency renderer"))); };
 

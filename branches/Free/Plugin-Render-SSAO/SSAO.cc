@@ -50,6 +50,19 @@
 
 const unsigned int SSAOPlugin::numSamples_ = 32;
 
+
+SSAOPlugin::SSAOPlugin() :
+        randomVecTex_(0)
+{
+
+}
+
+SSAOPlugin::~SSAOPlugin()
+{
+
+}
+
+
 SSAOPlugin::ViewerResources::ViewerResources()
 {
   memset(this, 0, sizeof(ViewerResources));
