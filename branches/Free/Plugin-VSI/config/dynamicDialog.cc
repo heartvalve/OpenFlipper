@@ -48,7 +48,7 @@
 #include <QScrollArea>
 
 
-#include "parser/input.hh"
+#include "../parser/input.hh"
 
 #include "dynamicDialog.hh"
 #include "dynamicValue.hh"

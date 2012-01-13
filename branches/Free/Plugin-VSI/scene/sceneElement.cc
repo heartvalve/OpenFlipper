@@ -72,11 +72,11 @@
 
 #include "config/configDialog.hh"
 
-#include "parser/element.hh"
-#include "parser/input.hh"
-#include "parser/type.hh"
-#include "parser/context.hh"
-#include "parser/function.hh"
+#include "../parser/element.hh"
+#include "../parser/input.hh"
+#include "../parser/type.hh"
+#include "../parser/context.hh"
+#include "../parser/function.hh"
 
 #define BACKGROUND_RED   0x00
 #define BACKGROUND_GREEN 0x00

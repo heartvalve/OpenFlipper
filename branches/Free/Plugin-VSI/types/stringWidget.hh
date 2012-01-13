@@ -46,7 +46,7 @@
 //== INCLUDES =================================================================
 #include <QString>
 
-#include "parser/typeWidget.hh"
+#include "../parser/typeWidget.hh"
 
 //== FORWARDDECLARATIONS ======================================================
 class QLineEdit;

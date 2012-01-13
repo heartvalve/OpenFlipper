@@ -47,7 +47,7 @@
 #include <QString>
 #include <QFileDialog>
 
-#include "parser/typeWidget.hh"
+#include "../parser/typeWidget.hh"
 
 class QLineEdit;
 class QPushButton;

@@ -48,7 +48,7 @@
 #include <QVector>
 #include <QPair>
 
-#include "parser/typeWidget.hh"
+#include "../parser/typeWidget.hh"
 
 //== FORWARDDECLARATIONS ======================================================
 class QPushButton;

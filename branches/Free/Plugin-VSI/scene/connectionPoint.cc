@@ -52,7 +52,7 @@
 #include "graphicsScene.hh"
 #include "elementArea.hh"
 #include "text.hh"
-#include "parser/inout.hh"
+#include "../parser/inout.hh"
 
 #define SIZE  20
 

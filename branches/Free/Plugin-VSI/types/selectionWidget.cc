@@ -48,7 +48,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 
-#include <parser/context.hh>
+#include "../parser/context.hh"
 #include "selectionWidget.hh"
 
 //== NAMESPACES ===============================================================

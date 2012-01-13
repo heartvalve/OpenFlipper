@@ -50,7 +50,7 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 
-#include "parser/typeWidget.hh"
+#include "../parser/typeWidget.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

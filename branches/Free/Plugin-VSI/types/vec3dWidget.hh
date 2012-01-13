@@ -44,7 +44,7 @@
 #define VSI_VEC3DWIDGET_HH
 
 //== INCLUDES =================================================================
-#include "parser/typeWidget.hh"
+#include "../parser/typeWidget.hh"
 
 //== FORWARDDECLARATIONS ======================================================
 class QLineEdit;
