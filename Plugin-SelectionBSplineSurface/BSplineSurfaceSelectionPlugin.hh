@@ -75,9 +75,6 @@ class BSplineSurfaceSelectionPlugin : public QObject, BaseInterface, KeyInterfac
 
 public:
     
-    /// IdList type
-    typedef std::vector<int> IdList;
-    
     /// Default constructor
     BSplineSurfaceSelectionPlugin();
 

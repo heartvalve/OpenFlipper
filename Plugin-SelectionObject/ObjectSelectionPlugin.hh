@@ -74,9 +74,6 @@ class ObjectSelectionPlugin : public QObject, BaseInterface, KeyInterface, LoadS
 
 public:
     
-    /// IdList type
-    typedef std::vector<int> IdList;
-    
     /// Default constructor
     ObjectSelectionPlugin();
 
