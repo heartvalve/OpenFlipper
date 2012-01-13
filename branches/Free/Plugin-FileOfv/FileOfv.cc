@@ -80,10 +80,10 @@ int FileViewPlugin::loadObject(QString _filename) {
     ACG::Vec3d  eye(1.0,1.0,1.0);
     ACG::Vec3d  center(0.0,0.0,0.0);
     ACG::Vec3d  up(1.0,0.0,0.0);
-    float       fovy = 0;
+//    float       fovy = 0;
     ACG::Vec4f  background;
     
-    bool e_widthAndHeight = false;
+    //bool e_widthAndHeight = false;
     bool e_eye = false;
     bool e_center = false;
     bool e_up = false;
@@ -97,7 +97,7 @@ int FileViewPlugin::loadObject(QString _filename) {
         width = settings.value("Width").toInt();
         height = settings.value("Height").toInt();
         std::cerr << "Setting new viewport to " << width << "x" << height << std::endl;
-        e_widthAndHeight = true;
+        //e_widthAndHeight = true;
     }
     
     if(settings.contains("EyeX")) {
