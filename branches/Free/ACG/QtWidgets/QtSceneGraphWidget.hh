@@ -55,7 +55,8 @@
 
 //== INCLUDES =================================================================
 
-#include "../Config/ACGDefines.hh"
+#include <ACG/Config/ACGDefines.hh>
+#include <ACG/Scenegraph/BaseNode.hh>
 #include <QDialog>
 #include <QKeyEvent>
 #include <QMenu>
@@ -66,11 +67,6 @@
 //== FORWARDDECLARATIONS ======================================================
 
 
-namespace ACG {
-  namespace SceneGraph {
-    class BaseNode;
-  }
-}
 
 //== NAMESPACES ===============================================================
 
