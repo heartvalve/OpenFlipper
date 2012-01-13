@@ -118,7 +118,7 @@ struct GLStateContext
   // it contains a copy of the OpenGL state machine
 
 public:
-  GLStateContext() { activeTexture_ = GL_TEXTURE0;}
+  GLStateContext() { activeTexture_ = GL_TEXTURE0; activeDrawBuffer_ = 0;}
 
   // glEnable / glDisable states
   // iff a bit is set for a state, it is enabled in OpenGL
@@ -171,6 +171,8 @@ public:
   // vertex pointers, used in glVertexPointer, glTexcoordPointer..
   struct GLVertexPointer
   {
+    GLVertexPointer() : size(0), type(0), stride(0), pointer(0) {}
+    
     GLint size;
     GLenum type;
     GLsizei stride;
