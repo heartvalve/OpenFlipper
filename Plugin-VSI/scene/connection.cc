@@ -55,7 +55,7 @@
 #include "elementArea.hh"
 #include "wayfind.hh"
 
-#include "parser/inout.hh"
+#include "../parser/inout.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

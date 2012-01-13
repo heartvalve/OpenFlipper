@@ -48,9 +48,9 @@
 #include "text.hh"
 #include "connection.hh"
 #include "connectionPoint.hh"
-#include "parser/inout.hh"
-#include "parser/element.hh"
-#include "parser/context.hh"
+#include "../parser/inout.hh"
+#include "../parser/element.hh"
+#include "../parser/context.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

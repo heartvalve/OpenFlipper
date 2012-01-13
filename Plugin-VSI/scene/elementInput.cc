@@ -48,11 +48,11 @@
 #include "connection.hh"
 #include "graphicsScene.hh"
 #include "text.hh"
-#include "parser/input.hh"
-#include "parser/element.hh"
-#include "parser/context.hh"
-#include "parser/type.hh"
-#include "parser/typeWidget.hh"
+#include "../parser/input.hh"
+#include "../parser/element.hh"
+#include "../parser/context.hh"
+#include "../parser/type.hh"
+#include "../parser/typeWidget.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

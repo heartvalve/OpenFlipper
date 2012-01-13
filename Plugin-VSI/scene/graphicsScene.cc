@@ -72,10 +72,10 @@
 #include <QXmlResultItems>
 #include <QRegExp>
 
-#include "parser/context.hh"
-#include "parser/inout.hh"
-#include "parser/output.hh"
-#include "parser/function.hh"
+#include "../parser/context.hh"
+#include "../parser/inout.hh"
+#include "../parser/output.hh"
+#include "../parser/function.hh"
 
 #define SELECTION_RED   0x00
 #define SELECTION_GREEN 0x00

@@ -45,8 +45,8 @@
 
 #include "graphicsScene.hh"
 #include "sceneElement.hh"
-#include "parser/function.hh"
-#include "parser/element.hh"
+#include "../parser/function.hh"
+#include "../parser/element.hh"
 
 #include "baseWidget.hh"
 

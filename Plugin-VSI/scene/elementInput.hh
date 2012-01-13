@@ -51,7 +51,7 @@
 #include <QXmlQuery>
 
 #include "elementInOut.hh"
-#include "parser/input.hh"
+#include "../parser/input.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

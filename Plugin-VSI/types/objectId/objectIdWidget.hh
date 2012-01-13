@@ -44,7 +44,7 @@
 #define VSI_OBJECTIDWIDGET_HH
 
 //== INCLUDES =================================================================
-#include "parser/typeWidget.hh"
+#include "../../parser/typeWidget.hh"
 
 //== FORWARDDECLARATIONS ======================================================
 class QComboBox;

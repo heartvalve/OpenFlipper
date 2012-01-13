@@ -45,11 +45,11 @@
 #include <QHBoxLayout>
 #include <QFrame>
 
-#include "scene/elementInput.hh"
-#include "parser/type.hh"
-#include "parser/inout.hh"
-#include "parser/element.hh"
-#include "parser/context.hh"
+#include "../scene/elementInput.hh"
+#include "../parser/type.hh"
+#include "../parser/inout.hh"
+#include "../parser/element.hh"
+#include "../parser/context.hh"
 
 #include "configValue.hh"
 

@@ -44,7 +44,7 @@
 #define VSI_OBJECTID_HH
 
 //== INCLUDES =================================================================
-#include "parser/type.hh"
+#include "../../parser/type.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

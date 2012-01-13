@@ -45,7 +45,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 
-#include "parser/element.hh"
+#include "../parser/element.hh"
 #include "elementArea.hh"
 #include "graphicsScene.hh"
 #include "sceneElement.hh"

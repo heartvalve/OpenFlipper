@@ -48,8 +48,8 @@
 #include <QCheckBox>
 #include <QGroupBox>
 
-#include "parser/input.hh"
-#include "parser/typeWidget.hh"
+#include "../parser/input.hh"
+#include "../parser/typeWidget.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {

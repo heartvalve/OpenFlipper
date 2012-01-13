@@ -58,8 +58,8 @@
 #include "text.hh"
 #include "button.hh"
 
-#include "parser/function.hh"
-#include "parser/element.hh"
+#include "../parser/function.hh"
+#include "../parser/element.hh"
 
 #define BACKGROUND_RED   0x0
 #define BACKGROUND_GREEN 0x0

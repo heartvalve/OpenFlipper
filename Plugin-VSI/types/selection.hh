@@ -44,7 +44,7 @@
 #define VSI_SELECTION_HH
 
 //== INCLUDES =================================================================
-#include "parser/type.hh"
+#include "../parser/type.hh"
 
 //== NAMESPACES ===============================================================
 namespace VSI {
