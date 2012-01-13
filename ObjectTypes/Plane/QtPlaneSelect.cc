@@ -166,21 +166,21 @@ void QtPlaneSelect::slotMouseEvent(QMouseEvent* event)
       {
           if( isDragging )
           {
-              Vec3d source2D = glState.project( sourcePoint3D );
-              Vec3d target2D(event->pos().x(), height-event->pos().y()-1, 0);
+              ACG::Vec3d source2D = glState.project( sourcePoint3D );
+              ACG::Vec3d target2D(event->pos().x(), height-event->pos().y()-1, 0);
 
               source2D[2] = 0;
 
-              Vec3d diff = source2D - target2D;
+              ACG::Vec3d diff = source2D - target2D;
               //diff.normalize( );  <- this is bad
-              Vec3d ortho(-diff[1], diff[0], 0 );
+              ACG::Vec3d ortho(-diff[1], diff[0], 0 );
 
-              Vec3d left = glState.unproject( source2D+ortho*10+Vec3d(0,0,0) );
-              Vec3d right= glState.unproject( source2D-ortho*10+Vec3d(0,0,0) );
+              ACG::Vec3d left = glState.unproject( source2D+ortho*10+ACG::Vec3d(0,0,0) );
+              ACG::Vec3d right= glState.unproject( source2D-ortho*10+ACG::Vec3d(0,0,0) );
 
-              Vec3d leftvec = left-sourcePoint3D;
+              ACG::Vec3d leftvec = left-sourcePoint3D;
               leftvec.normalize( );
-              Vec3d rightvec = right-sourcePoint3D;
+              ACG::Vec3d rightvec = right-sourcePoint3D;
               rightvec.normalize( );
 
               normal = cross( rightvec, leftvec );
