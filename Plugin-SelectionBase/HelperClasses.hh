@@ -89,7 +89,10 @@ class PrimitiveAction : public QAction {
     public:
         /// Default constructor
         PrimitiveAction(QIcon _icon, QString _description, QObject* _parent = 0) :
-            QAction(_icon, _description, _parent) {};
+            QAction(_icon, _description, _parent),
+            primitiveType_(0),
+            selectionEnvironmentHandle_("")
+        {};
        
         /// Default destructor
         ~PrimitiveAction() {};
