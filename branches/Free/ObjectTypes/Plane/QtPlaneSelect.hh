@@ -61,10 +61,6 @@ class DLLEXPORT QtPlaneSelect : public QObject
 {
     Q_OBJECT
 
-    typedef ACG::Vec2i              Vec2i;
-    typedef ACG::Vec2f              Vec2f;
-    typedef ACG::Vec3d              Vec3d;
-
     /*******************************************************************************
              Initialization and deinitialization
      *******************************************************************************/
@@ -100,8 +96,8 @@ class DLLEXPORT QtPlaneSelect : public QObject
             Public accessors.
      *******************************************************************************/
     public:
-        Vec3d                getNormal( ) { return normal; }
-        Vec3d                getSourcePoint( ) { return sourcePoint3D; }
+        ACG::Vec3d           getNormal( ) { return normal; }
+        ACG::Vec3d           getSourcePoint( ) { return sourcePoint3D; }
         unsigned int         getNode() { return nodeIdx_; };
         unsigned int         getTargetIndex() { return targetIdx_; };
 
@@ -111,8 +107,8 @@ class DLLEXPORT QtPlaneSelect : public QObject
      *******************************************************************************/
     protected:
         ACG::GLState&       glState;
-        Vec3d               sourcePoint3D;
-        Vec3d               normal;
+        ACG::Vec3d          sourcePoint3D;
+        ACG::Vec3d          normal;
         unsigned int        nodeIdx_;
         unsigned int        targetIdx_;
         bool                isDragging;
