@@ -107,11 +107,13 @@ DrawModes::DrawMode
 SliceNode::availableDrawModes() const
 {
   return 0;
+  /*
   return ( DrawModes::POINTS              |
            DrawModes::WIREFRAME           |
            DrawModes::HIDDENLINE          |
            DrawModes::SOLID_FLAT_SHADED   |
            DrawModes::SOLID_SMOOTH_SHADED );
+*/
 }
 
 
