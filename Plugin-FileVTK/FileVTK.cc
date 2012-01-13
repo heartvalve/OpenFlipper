@@ -56,12 +56,20 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
-struct CellType {
+class CellType {
+
+public:
+
+  CellType() :
+          type(0)
+  {
+  }
+
   // The type of the cell
-  // unsigned int type;
-  
+  unsigned int type;
+
   // list of indices in the cell
-  std::vector< OpenMesh::VertexHandle > indices;
+  std::vector<OpenMesh::VertexHandle> indices;
 };
 
 //-----------------------------------------------------------------------------------------------------
