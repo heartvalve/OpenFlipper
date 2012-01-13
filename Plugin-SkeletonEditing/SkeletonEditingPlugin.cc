@@ -71,7 +71,6 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   emit addHiddenPickMode("SelectJoints");
   emit setPickModeMouseTracking ("MoveJoints", true);
   emit setPickModeMouseTracking ("InsertJoints", true);
-  emit setPickModeMouseTracking ("SplitJoints", true);
 
   //KEYS
   emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, tr("Manipulator rotation"), true);
@@ -132,7 +131,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
 
   rotateManipAction_ = new QAction(tr("Rotate manipulator"), pickToolBarActions_);
   rotateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
-  rotateManipAction_->setToolTip(tr("Rotate manipulator. <Shift>"));
+  rotateManipAction_->setToolTip(tr("<B>Rotate manipulator</B><br> Rotates only the manipulator, not the joints. <B>Shift</B>"));
   rotateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_maniprotate.png") );
   rotateManipAction_->setCheckable(true);
   pickToolbar_->addAction(rotateManipAction_);
@@ -231,6 +230,53 @@ void SkeletonEditingPlugin::slotMouseWheelEvent(QWheelEvent * _event, const std:
   emit updateView();
 }
 
+//------------------------------------------------------------------------------
+
+/** \brief checks, if the skeleton can be modified.
+ *  a skeleton can be modified, if the active pose is the reference pose
+ * @param _event the event that occured
+ */
+bool SkeletonEditingPlugin::canModify(QMouseEvent* _event)
+{
+	//if jointPreview_ is true, we could modify the skeleton
+	//so the skeleton is in reference pose
+	if (jointPreview_)
+		return true;
+
+	// try to select a joint from which the insertion should be started
+	unsigned int    node_idx, target_idx;
+	ACG::Vec3d      hitPoint;
+	BaseObjectData* object;
+
+	//disable picking for anything but skeletons
+	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+		o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
+
+	//perform picking
+	bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
+			target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+
+	//reenable picking for anything
+	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+		o_it->enablePicking( true );
+
+	if ( successfullyPicked )
+	{
+
+		//check if the active pose is the reference pose
+		Skeleton* skeleton = PluginFunctions::skeleton( object );
+
+		if ( !skeleton )
+			return false;
+
+		if (activePose(PluginFunctions::skeletonObject(object)) == skeleton->referencePose())
+			return true;
+		else
+			return false;
+	}
+	else
+		return false;
+}
 
 //------------------------------------------------------------------------------
 
@@ -243,16 +289,21 @@ void SkeletonEditingPlugin::slotMouseEvent(QMouseEvent* _event) {
   if (PluginFunctions::actionMode() != Viewer::PickingMode)
     return;
 
-  if ( PluginFunctions::pickMode() == ("DeleteJoints") )
-    deleteJoint(_event);
-  if ( PluginFunctions::pickMode() == ("InsertJoints") )
-    insertJoint(_event);
   if ( PluginFunctions::pickMode() == ("MoveJoints") )
-    moveJoint(_event);
-  if ( PluginFunctions::pickMode() == ("SelectJoints") )
-    selectJoint(_event);
-  if (PluginFunctions::pickMode() == ("SplitJoints"))
-  	splitJoint(_event);
+  	moveJoint(_event);
+  else if ( PluginFunctions::pickMode() == ("SelectJoints") )
+  	selectJoint(_event);
+  else if (canModify(_event))
+  {
+  	if ( PluginFunctions::pickMode() == ("DeleteJoints") )
+  		deleteJoint(_event);
+  	else if ( PluginFunctions::pickMode() == ("InsertJoints") )
+  		insertJoint(_event);
+  	else if (PluginFunctions::pickMode() == ("SplitJoints"))
+  		splitJoint(_event);
+  }
+
+
 }
 
 /*******************************************************************************
@@ -283,7 +334,7 @@ void SkeletonEditingPlugin::slotKeyReleaseEvent (QKeyEvent* _event)
  */
 void SkeletonEditingPlugin::slotPickModeChanged( const std::string& _mode)
 {
-  if (_mode != "InsertJoints")
+  if (_mode != "InsertJoints" )
     if ( insertJointAction_->isChecked() )
       cancelJointInsertion();
 
@@ -331,6 +382,9 @@ void SkeletonEditingPlugin::slotPickModeChanged( const std::string& _mode)
 
 void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
 {
+	if (_action == rotateManipAction_)//in this case, enable the button and keep the rest as it is
+		return;
+
   if (_action != insertJointAction_)
     if ( insertJointAction_->isChecked() )
       cancelJointInsertion();
@@ -354,14 +408,14 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
     PluginFunctions::actionMode(Viewer::PickingMode);
     PluginFunctions::pickMode("SelectJoints");
 
-  } else if (_action == transformAllManipAction_)
+  }else if (_action == transformAllManipAction_)
     transformAllFrames_ = transformAllManipAction_->isChecked();
   else if (_action == transformChildManipAction_)
     transformChildJoints_ = transformChildManipAction_->isChecked();
   else if (_action == inverseKinematicAction_)
   	inverseKinematic_ = inverseKinematicAction_->isChecked();
 
-  moveJointAction_->setChecked(   _action == moveJointAction_);
+  moveJointAction_->setChecked( _action == moveJointAction_ );
   insertJointAction_->setChecked( _action == insertJointAction_ );
   deleteJointAction_->setChecked( _action == deleteJointAction_ );
   selectJointAction_->setChecked( _action == selectJointAction_ );
@@ -420,109 +474,6 @@ void SkeletonEditingPlugin::slotRotateManipulator(bool _toggled)
   }
 }
 
-//--------------------------------------------------------------------------------
-/** \brief split the selected joint. selected joint will be child of new joint
- *
- * @param _event  mouseEvent that occured
- */
-void SkeletonEditingPlugin::splitJoint(QMouseEvent* _event)
-{
-	if ( _event->type() == QEvent::MouseButtonPress )
-	{
-		if ( jointPreview_ )
-			return;
-
-		// try to select a joint from which the insertion should be started
-		unsigned int    node_idx, target_idx;
-		ACG::Vec3d      hitPoint;
-		BaseObjectData* object;
-
-		//disable picking for anything but skeletons
-		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-			o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
-
-		//perform picking
-		bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
-				target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
-
-		//reenable picking for anything
-		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-			o_it->enablePicking( true );
-
-		if ( successfullyPicked )
-		{
-			Skeleton* skeleton = PluginFunctions::skeleton( object );
-
-			if ( !skeleton )
-				return;
-
-			currentSkeleton_ = object->id();
-			jointPreview_ = false;
-
-			Skeleton::Joint* joint = skeleton->joint( target_idx );
-
-			if ( joint )
-			{
-				//clear selection
-				for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
-					(*it)->setSelected(false);
-
-				currentJoint_ = joint->id();
-				joint->setSelected(true);
-			}
-			else
-				return;
-
-			Skeleton::Joint* parent = joint->parent();
-			if (!parent)
-				return;
-
-			BaseObjectData* baseObject = 0;
-			PluginFunctions::getObject(currentSkeleton_, baseObject);
-			if (baseObject == 0)
-				return;
-
-			//now we got all data (selected joint, is not root)
-			//so we can insert a new Joint
-			Skeleton::Joint* newJoint = new Skeleton::Joint(joint);
-			skeleton->insertJoint(joint,newJoint);
-
-			//compute the middle of Joint and his old parent
-			ACG::Vec3d middle = ACG::Vec3d(0.0,0.0,0.0);
-
-			//first, modify the reference pose
-			Skeleton::Pose* pose = skeleton->referencePose();
-
-			ACG::Vec3d jointPos = pose->globalTranslation(joint->id());
-			ACG::Vec3d parentPos = pose->globalTranslation(parent->id());
-
-			middle = parentPos + 0.5*(jointPos-parentPos);
-			pose->setGlobalTranslation(newJoint->id(),middle,true);
-
-
-			//second, modify all poses in all animations
-			for (unsigned int a=0; a < skeleton->animationCount(); a++)
-				if ( AnimationHandle(a, 0 ).isValid() )
-				{
-					AnimationT<ACG::Vec3d> *animation = skeleton->animation( AnimationHandle(a, 0 ) );
-					for (int iFrame=0; iFrame < (int)animation->frameCount(); iFrame++)
-					{
-						Skeleton::Pose* pose = skeleton->pose( AnimationHandle(a, iFrame ) );
-						if (!pose)
-							continue;
-
-						ACG::Vec3d jointPos = pose->globalTranslation(joint->id());
-						ACG::Vec3d parentPos = pose->globalTranslation(parent->id());
-
-						middle = parentPos + 0.5*(jointPos-parentPos);
-						pose->setGlobalTranslation(newJoint->id(),middle,true);
-					}
-				}
-
-			emit updatedObject(baseObject->id(), UPDATE_GEOMETRY);
-		}
-	}
-}
 //------------------------------------------------------------------------------
 
 /** \brief Place and show the Manipulator
@@ -973,6 +924,61 @@ void SkeletonEditingPlugin::deleteJoint(QMouseEvent* _event)
     currentSkeleton_ = -1;
     currentJoint_    = -1;
   }
+}
+
+//--------------------------------------------------------------------------------
+/** \brief split the selected joint. selected joint will be child of new joint
+ *
+ * @param _event  mouseEvent that occured
+ */
+void SkeletonEditingPlugin::splitJoint(QMouseEvent* _event)
+{
+	if ( _event->type() == QEvent::MouseButtonPress )
+	{
+		if ( jointPreview_ )
+			return;
+
+		// try to select a joint from which the insertion should be started
+		unsigned int    node_idx, target_idx;
+		ACG::Vec3d      hitPoint;
+		BaseObjectData* object;
+
+		//disable picking for anything but skeletons
+		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+			o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
+
+		//perform picking
+		bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
+				target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+
+		//reenable picking for anything
+		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+			o_it->enablePicking( true );
+
+		if ( successfullyPicked )
+		{
+			Skeleton* skeleton = PluginFunctions::skeleton( object );
+
+			if ( !skeleton )
+				return;
+
+			Skeleton::Joint* joint = skeleton->joint( target_idx );
+
+			if ( joint )
+			{
+				//clear selection
+				for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
+					(*it)->setSelected(false);
+
+				currentJoint_ = joint->id();
+				joint->setSelected(true);
+			}
+			else
+				return;
+
+			splitBone(object->id(), joint->id());
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------
