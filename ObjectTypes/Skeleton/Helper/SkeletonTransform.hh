@@ -57,9 +57,6 @@
 class DLLEXPORT SkeletonTransform {
 
   public:
-    typedef ACG::Matrix4x4d Matrix4x4;
-  
-  public:
     SkeletonTransform(Skeleton& _skeleton);
     ~SkeletonTransform() {}
 
