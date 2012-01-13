@@ -348,75 +348,81 @@ void
 MaterialNode::read(std::istream& _is)
 {
 
-  char                                  s[200];
-  float                                 x, y, z, u;
+  char        s[200];
+  float       x, y, z, u;
 
+  while (_is && (!_is.eof()) && _is.getline(s,200) ) {
+    std::istringstream buffer(s);
 
-  while(_is && (!_is.eof()) && _is.getline(s, 200))
-  {
-    // comment
-    if (s[0] == '#') continue;
+    // comment or empty
+    if ( s[0] == '#')
+      continue;
 
+    std::string specifier = "";
+
+    // Read specifier from buffer
+    buffer >> specifier;
 
     // BaseColor
-    else if (strncmp(s, "BaseColor ", 10) == 0)
-    {
-      if (sscanf(s, "BaseColor %f %f %f %f", &x, &y, &z, &u))
-      {
-        material_.baseColor(Vec4f(x,y,z,u));
+    if (specifier == "BaseColor") {
+      buffer >> x >> y >> z >> u;
+
+      if (buffer.good()) {
+        material_.baseColor(Vec4f(x, y, z, u));
       }
     }
     // AmbientColor
-    else if (strncmp(s, "AmbientColor ", 13) == 0)
-    {
-      if (sscanf(s, "AmbientColor %f %f %f %f", &x, &y, &z, &u))
-      {
-        material_.ambientColor(Vec4f(x,y,z,u));
+    else if (specifier == "AmbientColor") {
+      buffer >> x >> y >> z >> u;
+
+      if (buffer.good()) {
+        material_.ambientColor(Vec4f(x, y, z, u));
       }
     }
     // DiffuseColor
-    else if (strncmp(s, "DiffuseColor ", 13) == 0)
-    {
-      if (sscanf(s, "DiffuseColor %f %f %f %f", &x, &y, &z, &u))
-      {
-        material_.diffuseColor(Vec4f(x,y,z,u));
+    else if (specifier == "DiffuseColor") {
+      buffer >> x >> y >> z >> u;
+
+      if (buffer.good()) {
+        material_.diffuseColor(Vec4f(x, y, z, u));
       }
     }
     // SpecularColor
-    else if (strncmp(s, "SpecularColor ", 14) == 0)
-    {
-      if (sscanf(s, "SpecularColor %f %f %f %f", &x, &y, &z, &u))
-      {
-        material_.specularColor(Vec4f(x,y,z,u));
+    else if (specifier == "SpecularColor") {
+      buffer >> x >> y >> z >> u;
+
+      if (buffer.good()) {
+        material_.specularColor(Vec4f(x, y, z, u));
       }
     }
     // Shininess
-    else if (strncmp(s, "Shininess ", 10) == 0)
-    {
-      if (sscanf(s, "Shininess %f", &x))
-      {
+    else if (specifier == "Shininess") {
+      buffer >> x;
+
+      if (buffer.good()) {
         material_.shininess(x);
       }
     }
     // PointSize
-    else if (strncmp(s, "PointSize ", 10) == 0)
-    {
-      if (sscanf(s, "PointSize %f", &x))
-      {
+    else if (specifier == "PointSize") {
+      buffer >> x;
+
+      if (buffer.good()) {
         material_.pointSize(x);
       }
     }
     // LineWidth
-    else if (strncmp(s, "LineWidth ", 10) == 0)
-    {
-      if (sscanf(s, "LineWidth %f", &x))
-      {
+    else if (specifier == "LineWidth") {
+      buffer >> x;
+
+      if (buffer.good()) {
         material_.lineWidth(x);
       }
     }
 
+    if (!buffer.good())
+      std::cerr << "MaterialNode parse error while reading string : " << s << std::endl;
 
-    s[0]=' ';
   }
 }
 
