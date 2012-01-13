@@ -87,7 +87,7 @@ int FileViewPlugin::loadObject(QString _filename) {
     bool e_eye = false;
     bool e_center = false;
     bool e_up = false;
-    bool e_fovy = false;
+//    bool e_fovy = false;
     bool e_background = false;
     
     QSettings settings(_filename, QSettings::IniFormat);
@@ -124,11 +124,11 @@ int FileViewPlugin::loadObject(QString _filename) {
         e_up = true;
     }
     
-    if(settings.contains("Fovy")) {
-        fovy = settings.value("Fovy").toDouble();
-        std::cerr << "Setting fovy to " << fovy << std::endl;
-        e_fovy = true;
-    }
+//    if(settings.contains("Fovy")) {
+//        fovy = settings.value("Fovy").toDouble();
+//        std::cerr << "Setting fovy to " << fovy << std::endl;
+//        e_fovy = true;
+//    }
     
     if(settings.contains("BackgroundR")) {
         background[0] = settings.value("BackgroundR").toDouble();
@@ -151,10 +151,10 @@ int FileViewPlugin::loadObject(QString _filename) {
         Viewer::ViewerProperties& props = PluginFunctions::viewerProperties(i);
         ACG::GLState& state = props.glState();
         
-        // Perspective update
-        double aspect = 0.0;
-        if(e_widthAndHeight) aspect = width / height;
-        else                 aspect = state.aspect();
+//        // Perspective update
+//        double aspect = 0.0;
+//        if(e_widthAndHeight) aspect = width / height;
+//        else                 aspect = state.aspect();
 
         // Set projection matrix
         //if(e_fovy)
