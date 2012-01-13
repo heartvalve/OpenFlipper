@@ -52,9 +52,13 @@ const unsigned int SSAOPlugin::numSamples_ = 32;
 
 
 SSAOPlugin::SSAOPlugin() :
-        randomVecTex_(0)
+    randomVecTex_(0)
 {
+  for (unsigned int i = 0; i < 10; ++i)
+    shaders_[i] = 0;
 
+  for (unsigned int i = 0; i < 6; ++i)
+    programs_[i] = 0;
 }
 
 SSAOPlugin::~SSAOPlugin()

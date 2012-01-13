@@ -55,6 +55,22 @@ DepthPeelingPlugin::DepthPeelingPlugin() :
         numLights_(0)
 {
 
+  for (unsigned int i = 0; i < 16; ++i)
+    lightTypes_[i] = LIGHTTYPE_POINT;
+
+  for (unsigned int i = 0; i < PEEL_NUM_COMBINATIONS; ++i)
+    peelProgs_[i] = 0;
+
+  for (unsigned int i = 0; i < PEEL_NUM_COMBINATIONS*3; ++i)
+    peelShaders_[i] = 0;
+
+  for (unsigned int i = 0; i < 8; ++i)
+    blendShaders_[i] = 0;
+
+  for (unsigned int i = 0; i < 4; ++i)
+    blendDualPeelProg_[i] = 0;
+
+
 }
 
 DepthPeelingPlugin::~DepthPeelingPlugin() {
