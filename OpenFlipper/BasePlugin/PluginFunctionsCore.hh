@@ -76,6 +76,8 @@
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <OpenFlipper/common/ViewerProperties.hh>
 
+#include <ACG/QtWidgets/QtSceneGraphWidget.hh>
+
 namespace PluginFunctions {
 
 //=======================================
