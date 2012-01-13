@@ -49,6 +49,19 @@
 //#define DEPTHPEELING_SHADER_EXPORT
 
 
+DepthPeelingPlugin::DepthPeelingPlugin() :
+        blendQueryID_(0),
+        glStateTmp_(0),
+        numLights_(0)
+{
+
+}
+
+DepthPeelingPlugin::~DepthPeelingPlugin() {
+
+}
+
+
 DepthPeelingPlugin::ViewerResources::ViewerResources()
 {
   rtWidth_ = rtHeight_ = 0;
@@ -69,7 +82,7 @@ void DepthPeelingPlugin::initializePlugin()
   memset(peelProgs_, 0, sizeof(peelProgs_));
 
   blendQueryID_ = 0;
-  numLights_ = 0;
+  numLights_    = 0;
 
   ACG::glCheckErrors();
 }

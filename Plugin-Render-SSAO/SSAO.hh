@@ -65,6 +65,10 @@ signals:
 
 
 public :
+
+  SSAOPlugin();
+  ~SSAOPlugin();
+
   QString name() { return (QString("SSAO Plugin")); };
   QString description( ) { return (QString(tr("Screen Space Ambient Occlusion"))); };
 
