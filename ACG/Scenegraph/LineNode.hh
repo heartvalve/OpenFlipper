@@ -83,13 +83,17 @@ class ACGDLLEXPORT LineNode : public MaterialNode
 public:
 
   // typedefs
-  typedef ACG::Vec3uc                  Color;
-  typedef std::vector<Vec3d>           PointVector;
-  typedef PointVector::iterator        PointIter;
-  typedef PointVector::const_iterator  ConstPointIter;
-  typedef std::vector<ACG::Vec3uc>     ColorVector;
-  typedef ColorVector::iterator        ColorIter;
-  typedef ColorVector::const_iterator  ConstColorIter;
+  typedef ACG::Vec3uc                    Color;
+  typedef ACG::Vec4f                     Color4f;
+  typedef std::vector<Vec3d>             PointVector;
+  typedef PointVector::iterator          PointIter;
+  typedef PointVector::const_iterator    ConstPointIter;
+  typedef std::vector<ACG::Vec3uc>       ColorVector;
+  typedef ColorVector::iterator          ColorIter;
+  typedef ColorVector::const_iterator    ConstColorIter;
+  typedef std::vector<Color4f>           Color4fVector;
+  typedef Color4fVector::iterator        Color4fIter;
+  typedef Color4fVector::const_iterator  ConstColor4fIter;
 
   /// Line mode: draw line segments (every 2 points) or ONE polyline.
   enum LineMode { LineSegmentsMode, PolygonMode };
@@ -149,7 +153,7 @@ public:
   /// clear points/lines
   void clear_points() { points_.clear(); }
   /// clear colors
-  void clear_colors() { colors_.clear(); }
+  void clear_colors() { colors_.clear(); colors4f_.clear(); }
   
   /// Override material node's set color function in order to locally add color
   void set_color(const Vec4f& _c) {
@@ -171,6 +175,8 @@ public:
   /// add color (only for LineMode == LineSegmentsMode)
   void add_color(const ACG::Vec3uc& _c) { colors_.push_back(_c); }
 
+  /// add color 4f (only for LineMode == LineSegmentsMode)
+  void add_color(const Color4f _c) { colors4f_.push_back(_c); }
 
   /// number of points
   unsigned int n_points() const { return points_.size(); }
@@ -194,8 +200,9 @@ public:
 
 protected:
 
-  PointVector  points_;
-  ColorVector  colors_;
+  PointVector   points_;
+  ColorVector   colors_;
+  Color4fVector colors4f_;
 
   LineMode     line_mode_;
   
