@@ -260,7 +260,7 @@ slotItemPressed( QTreeWidgetItem * _item,
 
   if ( _item )
   {
-    curItem_ = (Item*) _item;
+    curItem_ = static_cast<Item* >(_item);
     BaseNode * node = curItem_->node();
 
     switch ( _col )
