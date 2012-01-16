@@ -1020,7 +1020,7 @@ bool glViewer::decodeView(const QString& _view)
   QStringList split = temp.split(QRegExp("[\\n\\s]"),QString::SkipEmptyParts);
 
   ACG::GLMatrixd m, p;
-  int            w, h, pMode;
+  int            pMode;
 
   // Check if the number of components matches the expected size
   if ( split.size() != 36 ) {
@@ -1064,8 +1064,8 @@ bool glViewer::decodeView(const QString& _view)
   p(3,2) = split[30].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   p(3,3) = split[31].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
 
-  w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
-  h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  //int w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  //int h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   pMode =  split[34].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   properties_.orthoWidth( split[35].toDouble(&ok) ); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
 
