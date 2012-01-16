@@ -57,6 +57,9 @@
 #include <QTextStream>
 #include <QSyntaxHighlighter>
 
+
+
+
 ScriptingPlugin::ScriptingPlugin() :
    lastProblemLine_(0),
    lastError_(""),
@@ -67,7 +70,12 @@ ScriptingPlugin::ScriptingPlugin() :
    highlighterCurrent_(0),
    highlighterLive_(0),
    highlighterList_(0),
-   lastFile_("")
+   lastFile_(""),
+   debuggerButton_(0),
+#ifdef QT_SCRIPTTOOLS_LIB
+   debugger_(0)
+#endif
+
 {
 
 }
@@ -116,7 +124,6 @@ void ScriptingPlugin::pluginsInitialized() {
 
   QToolBar* toolBar = new QToolBar(tr("Scripting Toolbar"));
 
-
   QAction* openButton = new QAction(QIcon(iconPath + "document-open.png"), "Open", toolBar);
   toolBar->addAction(openButton);
   connect (openButton, SIGNAL( triggered() ), this, SLOT( slotLoadScript() ) );
@@ -128,6 +135,23 @@ void ScriptingPlugin::pluginsInitialized() {
   QAction* saveAsButton = new QAction(QIcon(iconPath + "document-save-as.png"), "Save as", toolBar);
   toolBar->addAction(saveAsButton);
   connect (saveAsButton, SIGNAL( triggered() ), this, SLOT( slotSaveScriptAs() ) );
+
+  toolBar->addSeparator();
+
+  debuggerButton_ = new QAction(QIcon(iconPath + "script-debugger.png"), "Enable Debugger", toolBar);
+  debuggerButton_->setCheckable(true);
+  toolBar->addAction(debuggerButton_);
+
+#ifdef QT_SCRIPTTOOLS_LIB
+  if ( OpenFlipperSettings().value("Scripting/QtScriptDebugger",true).toBool() )
+    debuggerButton_->setChecked(true);
+  else
+    debuggerButton_->setChecked(false);
+
+  connect (debuggerButton_, SIGNAL( triggered() ), this, SLOT( slotDebuggerButton() ) );
+#else
+  debuggerButton_->setEnabled(false);
+#endif
 
   toolBar->addSeparator();
 
@@ -189,6 +213,19 @@ void ScriptingPlugin::pluginsInitialized() {
   errorTimer_ = new QTimer();
   errorTimer_->setSingleShot(true);
   connect(errorTimer_,SIGNAL(timeout()),this,SLOT(slotHighlightError()));
+
+  // ==================================================================
+  // Setup scripting debugger if available
+  // ==================================================================
+
+#ifdef QT_SCRIPTTOOLS_LIB
+  QScriptEngine* engine;
+  emit getScriptingEngine( engine  );
+  debugger_ = new QScriptEngineDebugger;
+
+  if ( OpenFlipperSettings().value("Scripting/QtScriptDebugger",true).toBool() )
+    debugger_->attachTo(engine);
+#endif
 }
 
 void ScriptingPlugin::slotApplyFilter(){
@@ -376,6 +413,26 @@ void ScriptingPlugin::slotExecuteFileScript( QString _filename ) {
 
 void ScriptingPlugin::slotExecuteScriptButton() {
   slotExecuteScript( scriptWidget_->currentScript->toPlainText() );
+}
+
+void ScriptingPlugin::slotDebuggerButton() {
+
+  std::cerr << "Debuggerbutton" << std::endl;
+
+#ifdef QT_SCRIPTTOOLS_LIB
+  QScriptEngine* engine;
+  emit getScriptingEngine( engine  );
+
+  if ( debuggerButton_->isChecked() ) {
+    debugger_->attachTo(engine);
+  } else {
+    debugger_->detach();
+  }
+
+  OpenFlipperSettings().setValue("Scripting/QtScriptDebugger",debuggerButton_->isChecked());
+
+#endif
+
 }
 
 QString ScriptingPlugin::mangleScript(QString _input ) {

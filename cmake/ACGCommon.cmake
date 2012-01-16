@@ -196,6 +196,10 @@ macro (acg_qt4)
     set (QT_USE_QTWEBKIT 1)
     set (QT_USE_QTUITOOLS 1)
 
+    if (QT_QTSCRIPTTOOLS_FOUND)
+      set (QT_USE_QTSCRIPTTOOLS 1)
+    endif()
+
     include (${QT_USE_FILE})
   endif ()
 endmacro ()

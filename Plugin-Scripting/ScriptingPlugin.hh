@@ -53,6 +53,11 @@
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
+// Include the scripttools for qt script debugging if available
+#ifdef QT_SCRIPTTOOLS_LIB
+  #include <QtScriptTools/QScriptEngineDebugger>
+#endif
+
 #include "highLighter.hh"
 #include "scriptingWidget.hh"
 
@@ -118,6 +123,9 @@ private slots :
 
   /// Called when an error is detected when checking the syntax
   void slotHighlightError();
+
+  /// Triggered by the debugger button
+  void slotDebuggerButton();
 
 private:
 
@@ -209,6 +217,13 @@ private :
   Highlighter*  highlighterList_;
 
   QString       lastFile_;
+
+  QAction*      debuggerButton_;
+#ifdef QT_SCRIPTTOOLS_LIB
+  QScriptEngineDebugger* debugger_;
+#endif
+
+
 
 public slots:
   QString version() { return QString("1.0"); };
