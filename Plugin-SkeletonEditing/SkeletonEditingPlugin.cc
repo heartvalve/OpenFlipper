@@ -234,7 +234,7 @@ void SkeletonEditingPlugin::slotMouseWheelEvent(QWheelEvent * _event, const std:
 
 /** \brief checks, if the skeleton can be modified.
  *  a skeleton can be modified, if the active pose is the reference pose
- * @param _event the event that occured
+ * @param _event the event that occurred
  */
 bool SkeletonEditingPlugin::canModify(QMouseEvent* _event)
 {
@@ -293,7 +293,9 @@ void SkeletonEditingPlugin::slotMouseEvent(QMouseEvent* _event) {
   	moveJoint(_event);
   else if ( PluginFunctions::pickMode() == ("SelectJoints") )
   	selectJoint(_event);
-  else if (canModify(_event))
+  else if ( (( PluginFunctions::pickMode() == ("DeleteJoints")) ||
+             ( PluginFunctions::pickMode() == ("InsertJoints")) ||
+             ( PluginFunctions::pickMode() == ("SplitJoints") ) ) && canModify(_event) )
   {
   	if ( PluginFunctions::pickMode() == ("DeleteJoints") )
   		deleteJoint(_event);
