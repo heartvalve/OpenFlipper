@@ -74,18 +74,22 @@ static ObjectManager objectManager_;
 static int idGenerator = 1;
 
 BaseObject::BaseObject(const BaseObject& _object) :
-  QObject() 
+  QObject(),
+  id_(idGenerator),
+  persistentId_(_object.persistentId_),
+  objectType_(_object.objectType_),
+  flags_(_object.flags_),
+  visible_(_object.visible_),
+  parentItem_(0)
+
 {
-  id_           = idGenerator;
+  // Increase id generator as we created a new object
   ++idGenerator;
-  persistentId_ = _object.persistentId_;
-  objectType_   = _object.objectType_;
-  flags_ = _object.flags_;
-  visible_ = _object.visible_;
-  parentItem_ = 0;
-  childItems_.clear();
+
+  // Generate a usable name based on the copied object
   name_ = "Copy of " + _object.name_;
 
+  childItems_.clear();
   dataMap_.clear();
   
   // Iterate over all per Object datas and try to copy them
@@ -103,11 +107,20 @@ BaseObject::BaseObject(const BaseObject& _object) :
     ++mapIter;
   }
   
-  // If the pointer is 0 then we are creating the objectroot
+  // If the pointer is 0 then we are creating the object root
+  // and we do not have anything to attach this object to
+  // otherwise, we attach the new object to the object root
   if ( PluginFunctions::objectRoot() ) {
+
     setParent(PluginFunctions::objectRoot());
     PluginFunctions::objectRoot()->appendChild(this);
+
+    // New object
     PluginFunctions::increaseObjectCount();
+
+    // If the new one is target, we also have to track this
+    if ( target() )
+      PluginFunctions::increaseTargetCount();
   }
   
   // Add object to object container
@@ -257,6 +270,7 @@ bool BaseObject::target() {
 }
 
 void BaseObject::target(bool _target) {
+
   if ( target() != _target ) {
     
     if ( _target )
