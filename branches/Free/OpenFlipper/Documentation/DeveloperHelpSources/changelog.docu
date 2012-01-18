@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13366 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13441 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -16,6 +16,8 @@
          - SceneGraph
              - CoordsysNode
                  - Rendering fix for colors of coordsys
+             - LineNode
+                 - added Vec4f color support and blending for LineNode (in segment mode)
              - MeshNode
                  - Don't texture edges, halfedges and points in meshnode
                  - Fixed picking bug, not updating the buffers when switching between any and face picking
@@ -39,6 +41,7 @@
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
+             - Bugfix: Avoid target counter underflow when copying objects
          - Rendering
              - Rendermanager/PostprocessorManager bugfix (crash when illegal viewer id -1 was used)
              - Fixed bug in renderinfo not setting viewer to a renderer mode
@@ -113,6 +116,10 @@
              - Basic inverse kinematics implementation
              - When a joint is translated via the Plugin, its parent joint and itself are rotated now, such that their coordinate systems stay constant w.r.t the bone axis. 
              - Automatically switch to depth peeling renderer when editing skeletons
+             - fixed "rotate manipulator"-button doesn't deactivate "transform joint"-button
+             - "splitJoint" depends on "splitBone" in "skeletonEditingScritpting.cc"
+             - it should not be possible to add/delete/split joints when not in reference pose
+             - fix: joint inserted by "splitJoint" will not be deleted, when you click on "addJoint"-Button and then press on another Button
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
@@ -131,6 +138,7 @@
          - Added code style template for eclipse
          - Add option to for windows large memory support (enabled by default)
          - Default warnings now contain -Wextra
+         - Moved OpenMesh sources to libs_required subfolder
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
@@ -172,12 +180,14 @@
          - Options 
              - Fixed bug where translations could not be switched in the options dialog
              - Added sliders to options widget to support smaller screens
+             - Options Setting for MaxRecent
          - Rendering
              - Moved flyTo animations to animation framework (no more ugly processEvents)
              - Fixed fly to animation not working when rotation ofthe viewer was locked
              - Snapshot functions now have asynchronus file writers
              - Removed philips stereo code from core ( moved into postprocessor plugin)
-         - Scripting
+         - Scripting  
+             - If qt scripttools are available, integrate them into the scripting plugin (Script debugger)
              - More slot documentations
              - added deleteObject function
              - Changed snapshot functions to count filenames with leading zeros
@@ -223,6 +233,8 @@
              - Fixed bug where sphere selection sometimes failed (pciking itself instead of object)
          - SkeletonEditing
              - Fixed flickering when adding skeleton joints
+         - Topology
+             - added split_edge supporting PolyMeshes
          - Texturecontrol
              - Don't switch drawmode when texture is switched ( ==== You have to switch the drawmode yourself in a plugin now) ===== )
              - Bugfix to react on switching to texture based drawmodes
