@@ -50,7 +50,7 @@
 //== INCLUDES =================================================================
 
 #include <float.h>
-#include "../Math/VectorT.hh"
+#include "OpenMesh/Math/VectorT.hh"
 
 
 namespace ACG {
