@@ -87,6 +87,7 @@ file (
   GLOB _local_libs_in
   RELATIVE "${CMAKE_SOURCE_DIR}"
         "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
+        "${CMAKE_SOURCE_DIR}/libs_required/*/CMakeLists.txt"
 )
 
 
