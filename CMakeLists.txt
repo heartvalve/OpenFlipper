@@ -9,7 +9,6 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include (ACGCommon)
 
 acg_get_version (OpenFlipper)
-acg_get_version (OpenMesh)
 
 include (package)
 include (ACGOutput)
@@ -34,6 +33,11 @@ find_package (GLUT)
 if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
+find_package (OpenMesh)
+if (NOT OPENMESH_FOUND)
+    message (FATAL_ERROR "OpenMesh not found!")
+endif ()
+
 
 # ========================================================================
 # Configure the executables path for tests
@@ -51,8 +55,6 @@ SET(OPENFLIPPER_TEST_RESULTS ${CMAKE_BINARY_DIR}/tests/testResults )
 # ========================================================================
 # Core Library Components (Except the Core application)
 # ========================================================================
-add_subdirectory (OpenMesh/src/OpenMesh/Core)
-add_subdirectory (OpenMesh/src/OpenMesh/Tools)
 add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 

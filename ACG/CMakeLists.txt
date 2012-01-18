@@ -28,6 +28,11 @@ if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
 
+find_package (OpenMesh)
+if (NOT OPENMESH_FOUND)
+    message (FATAL_ERROR "OpenMesh not found!")
+endif ()
+
 
 find_package( Freetype) 
 if (NOT FREETYPE_FOUND)
@@ -44,7 +49,7 @@ endif ()
 if(FTGL_FOUND)
 	include_directories (
 	  ..
-	  ${CMAKE_SOURCE_DIR}/OpenMesh/src
+      ${OPENMESH_INCLUDE_DIR}
 	  ${CMAKE_CURRENT_SOURCE_DIR}
 	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
 	  ${CMAKE_CURRENT_BINARY_DIR}
@@ -57,7 +62,7 @@ if(FTGL_FOUND)
 else(FTGL_FOUND)
 	include_directories (
 	  ..
-	  ${CMAKE_SOURCE_DIR}/OpenMesh/src
+      ${OPENMESH_INCLUDE_DIR}
 	  ${CMAKE_CURRENT_SOURCE_DIR}
 	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
 	  ${CMAKE_CURRENT_BINARY_DIR}

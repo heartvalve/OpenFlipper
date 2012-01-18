@@ -2,7 +2,7 @@ include (ACGCommon)
 
 include_directories (
   ..
-  ${CMAKE_SOURCE_DIR}/OpenMesh/src
+  ${OPENMESH_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
