@@ -46,6 +46,12 @@ public:
 
   Skeleton* skeleton();
 
+  /// Set whether weights are computed
+  void weightsComputed(bool _flag) { weightsComputed_ = _flag; }
+
+  /// Check whether weights were computed
+  bool weightsComputed() const { return weightsComputed_; }
+
 private:
   Skeleton*       skeleton_;
   MeshT*          mesh_;
@@ -53,6 +59,9 @@ private:
 
   AnimationHandle lastAnimationHandle_;
   Method          lastmethod_;
+
+  // Flag that indicates whether skin weights have been computed
+  bool weightsComputed_;
 };
 
 typedef SkinT< TriMesh >   TriMeshSkin;

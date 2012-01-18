@@ -8,7 +8,8 @@ SkinT<MeshT>::SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh, int _objectID) :
   skeleton_(_skeleton),
   mesh_(_mesh),
   objectId_(_objectID),
-  lastmethod_(M_LBS)
+  lastmethod_(M_LBS),
+  weightsComputed_(false)
 
 {
 }
@@ -101,6 +102,12 @@ void SkinT<MeshT>::deformSkin()
 template<typename MeshT>
 void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
 {
+  // Do not transform skin if skin weights were not computed before
+  // as the mesh entirely disappears since all vertices collapse to origin
+  if(!weightsComputed_) {
+      return;
+  }
+
   lastAnimationHandle_ = _hAni;
   lastmethod_          = _method;
 
