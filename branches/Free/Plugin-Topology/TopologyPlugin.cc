@@ -786,9 +786,40 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
             emit updateView();
             emit createBackup(object->id(),"Edge Split", UPDATE_TOPOLOGY);
          }
-
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
-           emit log(LOGWARN,"Edge Splits not supported for Poly Meshes");
+        	 PolyMesh& m = *PluginFunctions::polyMesh(object);
+        	 PolyMesh::FaceHandle fh = m.face_handle(target_idx);
+
+        	 PolyMesh::FaceEdgeIter fe_it(m,fh);
+
+        	 std::vector<PolyMesh::HalfedgeHandle> halfEdgeHandles;
+        	 //get all edges which belongs to the picked face
+        	 for (;fe_it; ++fe_it)
+        	 {
+        		 halfEdgeHandles.push_back(fe_it.current_halfedge_handle());
+        	 }
+
+        	 //search for the nearest edge
+        	 PolyMesh::EdgeHandle closest_edge = m.edge_handle(*halfEdgeHandles.begin());
+        	 double min_dist = ACG::Geometry::distPointLineSquared(hit_point, m.point(m.to_vertex_handle( *halfEdgeHandles.begin() )), m.point(m.from_vertex_handle( *halfEdgeHandles.begin() )));
+
+        	 for (std::vector<PolyMesh::HalfedgeHandle>::iterator iter = halfEdgeHandles.begin(); iter != halfEdgeHandles.end(); ++iter)
+        	 {
+        		 double dist = ACG::Geometry::distPointLineSquared(hit_point, m.point(m.to_vertex_handle( *iter )), m.point(m.from_vertex_handle( *iter )));
+        		 if (dist < min_dist)
+        		 {
+        			 closest_edge = m.edge_handle(*iter);
+        			 min_dist = dist;
+        		 }
+        	 }
+
+        	 m.split(closest_edge,hit_point);
+
+        	 emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
+
+        	 emit updatedObject(object->id(), UPDATE_TOPOLOGY);
+        	 emit updateView();
+        	 emit createBackup(object->id(),"Edge Split", UPDATE_TOPOLOGY);
          }
 
       } else return;
