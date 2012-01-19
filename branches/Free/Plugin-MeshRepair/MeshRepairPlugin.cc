@@ -92,6 +92,7 @@ initializePlugin()
   connect(tool_->computeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateNormals()));
   connect(tool_->computeVertexNormals,SIGNAL(clicked()),this,SLOT(slotUpdateVertexNormals()));
   connect(tool_->computeFaceNormals,SIGNAL(clicked()),this,SLOT(slotUpdateFaceNormals()));
+  connect(tool_->computeHalfedgeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateHalfedgeNormals()));
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"meshrepair-toolbox.png");
   tool_->repairCollapseEButton->setIcon(*toolIcon_);
@@ -194,6 +195,15 @@ void MeshRepairPlugin::slotUpdateFaceNormals() {
 
 //-----------------------------------------------------------------------------
 
+void MeshRepairPlugin::slotUpdateHalfedgeNormals() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+    updateHalfedgeNormals(o_it->id());
+
+  emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
 void MeshRepairPlugin::slotUpdateNormals(){
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
     updateNormals(o_it->id());
@@ -243,6 +253,10 @@ void MeshRepairPlugin::slotDetectFlatValence3Vertices() {
 void MeshRepairPlugin::pluginsInitialized() {
 
   emit setSlotDescription("updateFaceNormals(int)",tr("Recompute Face normals"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("updateHalfedgeNormals(int)",tr("Recompute Halfedge normals"),
                           QStringList(tr("objectId")),
                           QStringList(tr("ID of an object")));
 
@@ -553,6 +567,37 @@ void MeshRepairPlugin::updateFaceNormals(int _objectId) {
     emit log(LOGERR,tr("updateFaceNormals: MeshRepair only works on triangle and poly meshes!") );
 
 }
+
+
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::updateHalfedgeNormals(int _objectId) {
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId,object);
+
+  if ( object == 0) {
+    emit log(LOGERR,tr("updateFaceNormals: Unable to get object %1. ").arg(_objectId) );
+  }
+
+  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+    TriMesh* mesh = PluginFunctions::triMesh(object);
+    mesh->request_halfedge_normals();
+    mesh->update_halfedge_normals();
+    emit updatedObject(_objectId, UPDATE_ALL);
+    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
+    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
+  } else if ( object->dataType(DATA_POLY_MESH) ) {
+    PolyMesh* mesh = PluginFunctions::polyMesh(object);
+    mesh->request_halfedge_normals();
+    mesh->update_halfedge_normals();
+    emit updatedObject(_objectId, UPDATE_ALL);
+    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
+    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
+  } else
+    emit log(LOGERR,tr("updateFaceNormals: MeshRepair only works on triangle and poly meshes!") );
+
+}
+
 
 //-----------------------------------------------------------------------------
 
