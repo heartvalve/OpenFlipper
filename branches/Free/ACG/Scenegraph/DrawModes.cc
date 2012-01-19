@@ -67,37 +67,39 @@ namespace DrawModes {
 
 // == Default Draw Mode intitialization ======================================  
 
-DrawMode NONE                            = ModeFlagSet(0);
-DrawMode DEFAULT                         = ModeFlagSet(1);
-DrawMode POINTS                          = ModeFlagSet(1) << 1;
-DrawMode POINTS_COLORED                  = ModeFlagSet(1) << 2;
-DrawMode POINTS_SHADED                   = ModeFlagSet(1) << 3;
-DrawMode EDGES                           = ModeFlagSet(1) << 4;
-DrawMode EDGES_COLORED                   = ModeFlagSet(1) << 5;
-DrawMode WIREFRAME                       = ModeFlagSet(1) << 6;
-DrawMode FACES                           = ModeFlagSet(1) << 7;
-DrawMode HIDDENLINE                      = ModeFlagSet(1) << 8;
-DrawMode SOLID_FLAT_SHADED               = ModeFlagSet(1) << 9;
-DrawMode SOLID_SMOOTH_SHADED             = ModeFlagSet(1) << 10;
-DrawMode SOLID_PHONG_SHADED              = ModeFlagSet(1) << 11;
-DrawMode SOLID_FACES_COLORED             = ModeFlagSet(1) << 12;
-DrawMode SOLID_POINTS_COLORED            = ModeFlagSet(1) << 13;
-DrawMode SOLID_ENV_MAPPED                = ModeFlagSet(1) << 14;
-DrawMode SOLID_TEXTURED                  = ModeFlagSet(1) << 15;
-DrawMode SOLID_TEXTURED_SHADED           = ModeFlagSet(1) << 16;
-DrawMode SOLID_1DTEXTURED                = ModeFlagSet(1) << 17;
-DrawMode SOLID_1DTEXTURED_SHADED         = ModeFlagSet(1) << 18;
-DrawMode SOLID_3DTEXTURED                = ModeFlagSet(1) << 19;
-DrawMode SOLID_3DTEXTURED_SHADED         = ModeFlagSet(1) << 20;
-DrawMode SOLID_FACES_COLORED_FLAT_SHADED = ModeFlagSet(1) << 21;
-DrawMode SOLID_2DTEXTURED_FACE           = ModeFlagSet(1) << 22;
-DrawMode SOLID_2DTEXTURED_FACE_SHADED    = ModeFlagSet(1) << 23;
-DrawMode SOLID_SHADER                    = ModeFlagSet(1) << 24;
-DrawMode CELLS                           = ModeFlagSet(1) << 25;
-DrawMode CELLS_COLORED                   = ModeFlagSet(1) << 26;
-DrawMode HALFEDGES                       = ModeFlagSet(1) << 27;
-DrawMode HALFEDGES_COLORED               = ModeFlagSet(1) << 28;
-DrawMode UNUSED                          = ModeFlagSet(1) << 29;
+DrawMode NONE                              = ModeFlagSet(0);
+DrawMode DEFAULT                           = ModeFlagSet(1);
+DrawMode POINTS                            = ModeFlagSet(1) << 1;
+DrawMode POINTS_COLORED                    = ModeFlagSet(1) << 2;
+DrawMode POINTS_SHADED                     = ModeFlagSet(1) << 3;
+DrawMode EDGES                             = ModeFlagSet(1) << 4;
+DrawMode EDGES_COLORED                     = ModeFlagSet(1) << 5;
+DrawMode WIREFRAME                         = ModeFlagSet(1) << 6;
+DrawMode FACES                             = ModeFlagSet(1) << 7;
+DrawMode HIDDENLINE                        = ModeFlagSet(1) << 8;
+DrawMode SOLID_FLAT_SHADED                 = ModeFlagSet(1) << 9;
+DrawMode SOLID_SMOOTH_SHADED               = ModeFlagSet(1) << 10;
+DrawMode SOLID_PHONG_SHADED                = ModeFlagSet(1) << 11;
+DrawMode SOLID_FACES_COLORED               = ModeFlagSet(1) << 12;
+DrawMode SOLID_POINTS_COLORED              = ModeFlagSet(1) << 13;
+DrawMode SOLID_ENV_MAPPED                  = ModeFlagSet(1) << 14;
+DrawMode SOLID_TEXTURED                    = ModeFlagSet(1) << 15;
+DrawMode SOLID_TEXTURED_SHADED             = ModeFlagSet(1) << 16;
+DrawMode SOLID_1DTEXTURED                  = ModeFlagSet(1) << 17;
+DrawMode SOLID_1DTEXTURED_SHADED           = ModeFlagSet(1) << 18;
+DrawMode SOLID_3DTEXTURED                  = ModeFlagSet(1) << 19;
+DrawMode SOLID_3DTEXTURED_SHADED           = ModeFlagSet(1) << 20;
+DrawMode SOLID_FACES_COLORED_FLAT_SHADED   = ModeFlagSet(1) << 21;
+DrawMode SOLID_FACES_COLORED_SMOOTH_SHADED = ModeFlagSet(1) << 22;
+DrawMode SOLID_2DTEXTURED_FACE             = ModeFlagSet(1) << 23;
+DrawMode SOLID_2DTEXTURED_FACE_SHADED      = ModeFlagSet(1) << 24;
+DrawMode SOLID_SHADER                      = ModeFlagSet(1) << 25;
+DrawMode SOLID_SMOOTH_SHADED_FEATURES      = ModeFlagSet(1) << 26;
+DrawMode CELLS                             = ModeFlagSet(1) << 27;
+DrawMode CELLS_COLORED                     = ModeFlagSet(1) << 28;
+DrawMode HALFEDGES                         = ModeFlagSet(1) << 29;
+DrawMode HALFEDGES_COLORED                 = ModeFlagSet(1) << 30;
+DrawMode UNUSED                            = ModeFlagSet(1) << 31;
   
 
 //== IMPLEMENTATION ========================================================== 
@@ -330,10 +332,13 @@ void initializeDefaultDrawModes( void )
     currentDrawModes_.push_back( DrawModeInternal( "Solid (3D textured, shaded)", SOLID_3DTEXTURED_SHADED ) );
 
     currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, flat shaded)", SOLID_FACES_COLORED_FLAT_SHADED ) );
+    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, smooth shaded)", SOLID_FACES_COLORED_SMOOTH_SHADED ) );
 
     currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured)", SOLID_2DTEXTURED_FACE ) );
     currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured, shaded)", SOLID_2DTEXTURED_FACE_SHADED ) );
     currentDrawModes_.push_back( DrawModeInternal( "Shader controlled", SOLID_SHADER ) );
+
+    currentDrawModes_.push_back( DrawModeInternal( "Solid (smooth shaded, features)", SOLID_SMOOTH_SHADED_FEATURES ) );
 
     currentDrawModes_.push_back( DrawModeInternal( "Cells", CELLS ) );
     currentDrawModes_.push_back( DrawModeInternal( "Cells Colored", CELLS_COLORED ) );
