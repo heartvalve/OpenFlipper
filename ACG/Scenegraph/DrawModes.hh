@@ -236,6 +236,8 @@ namespace DrawModes {
   extern ACGDLLEXPORT DrawMode SOLID_3DTEXTURED_SHADED;
   /// draw flat shaded and colored faces (requires face normals and colors)
   extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED_FLAT_SHADED;
+  /// draw smooth shaded and colored faces (requires vertex normals and face colors)
+  extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED_SMOOTH_SHADED;
   /// draw per halfedge textured faces
   extern ACGDLLEXPORT DrawMode SOLID_2DTEXTURED_FACE;
   /// draw per halfedge textured faces
@@ -243,6 +245,8 @@ namespace DrawModes {
   /// drawing is controlled by shaders
   /// ( Use shadernodes to set them before the actual object to render)
   extern ACGDLLEXPORT DrawMode SOLID_SHADER;
+  /// draw smooth shaded (Gouraud shaded) faces (requires halfedge normals)
+  extern ACGDLLEXPORT DrawMode SOLID_SMOOTH_SHADED_FEATURES;
 
   //======================================================================
   //  Face Based Rendering Modes
