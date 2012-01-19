@@ -148,6 +148,9 @@ private slots:
     void slotUpdateFaceNormals();
 
     /// Button slot
+    void slotUpdateHalfedgeNormals();
+
+    /// Button slot
     void slotUpdateNormals();
 
     /// Button Slot
@@ -179,6 +182,9 @@ public slots:
 
     /// Recomputes the face normals of an object
     void updateFaceNormals(int _objectId);
+
+    /// Recomputes the halfedge normals of an object
+    void updateHalfedgeNormals(int _objectId);
 
     /// Recomputes the vertex normals of an object
     void updateVertexNormals(int _objectId);

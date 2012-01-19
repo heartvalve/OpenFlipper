@@ -636,6 +636,13 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="computeHalfedgeNormals">
+          <property name="text">
+           <string>Halfedge</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="computeFaceNormals">
           <property name="toolTip">
            <string>Recomputes Face Normals on all Target Meshes</string>
