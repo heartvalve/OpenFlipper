@@ -218,8 +218,10 @@ namespace DrawModes {
   extern ACGDLLEXPORT DrawMode SOLID_PHONG_SHADED;
   /// draw colored, but not lighted faces using face colors
   extern ACGDLLEXPORT DrawMode SOLID_FACES_COLORED;
-  /// draw faces, but use Gouraud shading to interpolate vertex colors
+  /// draw colored, but not lighted faces using interpolated vertex colors
   extern ACGDLLEXPORT DrawMode SOLID_POINTS_COLORED;
+  /// draw faces, but use Gouraud shading to interpolate vertex colors
+  extern ACGDLLEXPORT DrawMode SOLID_POINTS_COLORED_SHADED;
   /// draw environment mapped  
   extern ACGDLLEXPORT DrawMode SOLID_ENV_MAPPED;
   /// draw textured faces

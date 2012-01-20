@@ -133,6 +133,9 @@ availableDrawModes() const {
   {
     drawModes |= DrawModes::POINTS_COLORED;
     drawModes |= DrawModes::SOLID_POINTS_COLORED;
+
+    if (mesh_.has_vertex_normals())
+      drawModes |= DrawModes::SOLID_POINTS_COLORED_SHADED;
   }
 
   if(mesh_.has_edge_colors())
@@ -317,8 +320,20 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::shadeModel(GL_FLAT);
     draw_halfedges();
   }  
-  
+
   if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
+  {
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::depthRange(0.01, 1.0);
+
+    drawMesh_->usePerVertexColors();
+
+    draw_faces();
+    ACG::GLState::depthRange(0.0, 1.0);
+  }
+
+  if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED_SHADED ) && mesh_.has_vertex_colors() && mesh_.has_vertex_normals() )
   {
     ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
@@ -334,7 +349,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     draw_faces();
     ACG::GLState::depthRange(0.0, 1.0);
   }
-  
+
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals() && mesh_.n_faces() > 0)
   {
     ACG::GLState::enable(GL_LIGHTING);
