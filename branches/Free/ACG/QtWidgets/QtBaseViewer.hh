@@ -342,6 +342,9 @@ public:
   
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
+  
+  /// set field of view y
+  void setFovy( double _fovy );
 
   /// How to react on mouse events?
   enum ActionMode {
