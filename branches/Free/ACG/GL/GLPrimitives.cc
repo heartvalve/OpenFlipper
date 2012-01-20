@@ -49,6 +49,7 @@ namespace ACG {
 //========================================================================
 
 GLPrimitive::GLPrimitive() :
+        vboDataInvalid_(false),
         numTris_(0),
         vboData_(0),
         curTriPtr_(0),
@@ -71,7 +72,7 @@ GLPrimitive::~GLPrimitive()
 
 void GLPrimitive::addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, const ACG::Vec2f* _tex)
 {
-  if (!numTris_)
+  if (!numTris_ || vboDataInvalid_)
     numTris_ = getNumTriangles();
 
   if (!numTris_)
@@ -113,6 +114,11 @@ void GLPrimitive::bindVBO()
 
     delete[] vboData_;
     vboData_ = 0;
+  } else if (vboDataInvalid_) {
+    updateVBOData();
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numTris_ * 3 * 8 * 4, vboData_, GL_STATIC_DRAW_ARB);
+    vboDataInvalid_ = false;
   } else
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
@@ -145,6 +151,19 @@ void GLPrimitive::draw()
   glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
 
   unBindVBO();
+}
+
+//------------------------------------------------------------------------
+
+void GLPrimitive::updateVBOData() {
+  curTriPtr_ = 0;
+
+  if (vboData_) {
+    delete[] vboData_;
+    vboData_ = 0;
+  }
+
+  updateVBO();
 }
 
 //========================================================================
@@ -281,6 +300,22 @@ GLCone::GLCone(int _slices, int _stacks, float _bottomRadius, float _topRadius, 
 GLCone::~GLCone()
 {
 
+}
+
+//------------------------------------------------------------------------
+
+void GLCone::setBottomRadius(float _bottomRadius) {
+  if (bottomRadius_ != _bottomRadius)
+    vboDataInvalid_ = true;
+  bottomRadius_ = _bottomRadius;
+}
+
+//------------------------------------------------------------------------
+
+void GLCone::setTopRadius(float _topRadius) {
+  if (topRadius_ != _topRadius)
+    vboDataInvalid_ = true;
+  topRadius_ = _topRadius;
 }
 
 //------------------------------------------------------------------------
@@ -475,6 +510,224 @@ void GLCone::updateVBO()
 
 GLCylinder::GLCylinder(int _slices, int _stacks, float _radius, bool _bottomCap, bool _topCap) :
         GLCone(_slices, _stacks, _radius, _radius, _bottomCap, _topCap)
+{
+}
+
+//========================================================================
+// GLPartialDisk
+//========================================================================
+
+/**
+ * @param[in] _slices the number of slices that subdivide the partial disk has to be at least 2
+ * @param[in] _loops the number of loops that subdivide the slices has to be at least 1
+ * @param[in] _innerRadius the inner radius should not be smaller than zero and greater than the outer radius
+ * @param[in] _outerRadius the outer radius should not be zero or smaller than zero
+ * @param[in] _startAngle the angle at which the partial disk starts
+ * @param[in] _sweepAngle the angle at which the partial disk ends
+ */
+GLPartialDisk::GLPartialDisk(int _slices, int _loops, float _innerRadius, float _outerRadius, float _startAngle, float _sweepAngle) :
+    slices_(_slices),
+    loops_(_loops),
+    innerRadius_(_innerRadius),
+    outerRadius_(_outerRadius),
+    startAngle_(_startAngle),
+    sweepAngle_(_sweepAngle)
+{
+  updateVBO();
+}
+
+//------------------------------------------------------------------------
+
+void GLPartialDisk::setInnerRadius(float _innerRadius) {
+  if (innerRadius_ != _innerRadius)
+    vboDataInvalid_ = true;
+  innerRadius_ = _innerRadius;
+}
+
+//------------------------------------------------------------------------
+
+void GLPartialDisk::setOuterRadius(float _outerRadius) {
+  if (outerRadius_ != _outerRadius)
+    vboDataInvalid_ = true;
+  outerRadius_ = _outerRadius;
+}
+
+//------------------------------------------------------------------------
+
+int GLPartialDisk::getNumTriangles() {
+  return slices_ * (loops_+1) * 2;
+}
+
+//------------------------------------------------------------------------
+
+void GLPartialDisk::updateVBO() {
+  assert(slices_ < 2);
+  assert(loops_ < 1);
+  assert(outerRadius_ <= 0.0f);
+  assert(innerRadius_ < 0.0f);
+  assert(innerRadius_ > outerRadius_);
+
+  if (slices_ < 2) {
+    std::cerr << "Invalid number of slices for GLPartialDisk!\n";
+    return;
+  }
+  if (loops_ < 1) {
+    std::cerr << "Invalid number of loops for GLPartialDisk!\n";
+    return;
+  }
+  if (outerRadius_ <= 0.0f) {
+    std::cerr << "Invalid outer radius for GLPartialDisk!\n";
+    return;
+  }
+  if (innerRadius_ < 0.0f) {
+    std::cerr << "Invalid inner radius for GLPartialDisk!\n";
+    return;
+  }
+  if (innerRadius_ > outerRadius_) {
+    std::cerr << "Inner radius greater than outer radius for GLPartialDisk!\n";
+    return;
+  }
+
+  if (sweepAngle_ < -360.0f)
+    sweepAngle_ = 360.0f;
+  if (sweepAngle_ > 360.0f)
+    sweepAngle_ = 360.0f;
+  if (sweepAngle_ < 0) {
+    startAngle_ += sweepAngle_;
+    sweepAngle_ = -sweepAngle_;
+  }
+
+  float* sinCache = new float[slices_+1];
+  float* cosCache = new float[slices_+1];
+
+  // precompute all sine and cosine that are needed
+  float angleOffsetRadian = startAngle_ * M_PI / 180.0f;
+  float sweepAngleRadian = sweepAngle_ * M_PI / 180.0f;
+  for (int i = 0; i < slices_+1; ++i) {
+    float angle = angleOffsetRadian + sweepAngleRadian * i/slices_;
+    sinCache[i] = sin(angle);
+    cosCache[i] = cos(angle);
+  }
+
+  // iterate over loops (starting from the inner most) to generate triangles
+  float deltaRadius = outerRadius_ - innerRadius_;
+  for (int i = loops_+1; i > 0; --i) {
+
+    // for each slice generate two triangles
+    for (int j = 0; j < slices_; ++j) {
+
+      ACG::Vec3f p[3];
+      ACG::Vec3f n[3];
+      ACG::Vec2f tex[3];
+      ACG::Vec3f p2[3];
+      ACG::Vec3f n2[3];
+      ACG::Vec2f tex2[3];
+
+      // radius of the loop nearer to the center of the disk
+      float innerRadius = outerRadius_ - deltaRadius * ((float) i / (loops_ + 1));
+      // radius of the loop further from the center of the disk
+      float outerRadius = outerRadius_ - deltaRadius * ((float) (i - 1) / (loops_ + 1));
+
+      // first triangle:
+      // 1        2
+      //
+      // 0
+      // vertices
+      p[0] = ACG::Vec3f(innerRadius * sinCache[j], innerRadius * cosCache[j], 0.0f);
+      p[1] = ACG::Vec3f(outerRadius * sinCache[j], outerRadius * cosCache[j], 0.0f);
+      p[2] = ACG::Vec3f(outerRadius * sinCache[j+1], outerRadius * cosCache[j+1], 0.0f);
+      // normals
+      n[0] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      n[1] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      n[2] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      // TODO: proper texture coordinates
+      tex[0] = ACG::Vec2f(0.0f, 0.0f);
+      tex[1] = ACG::Vec2f(0.0f, 0.0f);
+      tex[2] = ACG::Vec2f(0.0f, 0.0f);
+
+      addTriangleToVBO(p, n, tex);
+
+      // second triangle:
+      // x        1
+      //
+      // 0        2
+      // vertices
+      p2[0] = ACG::Vec3f(innerRadius * sinCache[j], innerRadius * cosCache[j], 0.0f);
+      p2[1] = ACG::Vec3f(outerRadius * sinCache[j+1], outerRadius * cosCache[j+1], 0.0f);
+      p2[2] = ACG::Vec3f(innerRadius * sinCache[j+1], innerRadius * cosCache[j+1], 0.0f);
+      // normals
+      n2[0] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      n2[1] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      n2[2] = ACG::Vec3f(0.0f, 0.0f, 1.0f);
+      // TODO: proper texture coordinates
+      tex2[0] = ACG::Vec2f(0.0f, 0.0f);
+      tex2[1] = ACG::Vec2f(0.0f, 0.0f);
+      tex2[2] = ACG::Vec2f(0.0f, 0.0f);
+
+      addTriangleToVBO(p2, n2, tex2);
+
+    }
+  }
+
+  delete[] sinCache;
+  delete[] cosCache;
+}
+
+//------------------------------------------------------------------------
+
+void GLPartialDisk::draw( GLState& _state, const ACG::Vec3f& _center, ACG::Vec3f _upDir) {
+  _state.push_modelview_matrix();
+
+  // translate
+  _state.translate(ACG::Vec3d(_center));
+
+  _upDir.normalize();
+
+  // compute rotation matrix mAlign
+  //  such that vBindDir rotates to _upDir
+  ACG::GLMatrixd mAlign;
+  mAlign.identity();
+
+  ACG::Vec3f vBindDir(0.0f, 0.0f, 1.0f);
+
+  ACG::Vec3f vRotAxis = OpenMesh::cross(_upDir, vBindDir);
+  vRotAxis.normalize();
+
+  ACG::Vec3f vUp = OpenMesh::cross(_upDir, vRotAxis);
+
+  // rotate
+  for (int i = 0; i < 3; ++i) {
+    mAlign(i, 0) = vRotAxis[i];
+    mAlign(i, 1) = vUp[i];
+    mAlign(i, 2) = _upDir[i];
+  }
+
+  ACG::Vec3f vDelta = vBindDir - _upDir;
+  if (fabsf(OpenMesh::dot(vDelta, vDelta) < 1e-3f))
+    mAlign.identity();
+
+  ACG::GLMatrixd mAlignInv(mAlign);
+  mAlignInv.invert();
+
+  _state.mult_matrix(mAlign, mAlignInv);
+
+  GLPrimitive::draw();
+
+  _state.pop_modelview_matrix();
+}
+
+//========================================================================
+// GLDisk
+//========================================================================
+
+/**
+ * @param[in] _slices the number of slices that subdivide the disk has to be at least 2
+ * @param[in] _loops the number of loops that subdivide the slices has to be at least 1
+ * @param[in] _innerRadius the inner radius should not be smaller than zero and greater than the outer radius
+ * @param[in] _outerRadius the outer radius should not be zero or smaller than zero
+ */
+GLDisk::GLDisk(int _slices, int _loops, float _innerRadius, float _outerRadius) :
+  GLPartialDisk(_slices, _loops, _innerRadius, _outerRadius, 0.0f, 360.0f)
 {
 }
 

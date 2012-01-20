@@ -89,10 +89,13 @@ protected:
 
   void unBindVBO();
 
+  bool vboDataInvalid_;
+
 private:
 
-  int numTris_;
+  void updateVBOData();
 
+  int numTris_;
   float* vboData_;
   int curTriPtr_;
 
@@ -143,9 +146,11 @@ public:
 
   int getNumTriangles();
 
-private:
-
   void updateVBO();
+  void setBottomRadius(float _bottomRadius);
+  void setTopRadius(float _topRadius);
+
+private:
 
   void addTriangle(int sl0, int st0, int sl1, int st1, int sl2, int st2);
 
@@ -175,10 +180,39 @@ public:
 
 //------------------------------------------------------------------------
 
+class ACGDLLEXPORT GLPartialDisk: public GLPrimitive {
+public:
+  GLPartialDisk(int _slices, int _loops, float _innerRadius, float _outerRadius, float _startAngle, float _sweepAngle);
 
+  void setInnerRadius(float _innerRadius);
+  void setOuterRadius(float _outerRadius);
+  int getNumTriangles();
 
+  void draw(
+      GLState& _state,
+      const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f),
+      ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f));
 
+protected:
+  void updateVBO();
 
+private:
+  int slices_;
+  int loops_;
+  float innerRadius_;
+  float outerRadius_;
+  float startAngle_;
+  float sweepAngle_;
+};
+
+//------------------------------------------------------------------------
+
+class ACGDLLEXPORT GLDisk: public GLPartialDisk {
+public:
+  GLDisk(int _slices, int _loops, float _innerRadius, float _outerRadius);
+};
+
+//------------------------------------------------------------------------
 
 } // namespace ACG
 
