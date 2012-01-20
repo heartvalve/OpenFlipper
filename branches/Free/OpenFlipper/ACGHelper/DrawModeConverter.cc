@@ -78,12 +78,12 @@ std::vector< QString > drawModeToList(ACG::SceneGraph::DrawModes::DrawMode _draw
     draw_modes.push_back("SOLID_FLAT_SHADED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED)
     draw_modes.push_back("SOLID_PHONG_SHADED");
-  if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED)
-    draw_modes.push_back("SOLID_POINTS_COLORED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED)
     draw_modes.push_back("SOLID_FACES_COLORED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED)
     draw_modes.push_back("SOLID_POINTS_COLORED");
+  if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED_SHADED)
+    draw_modes.push_back("SOLID_POINTS_COLORED_SHADED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED)
     draw_modes.push_back("SOLID_ENV_MAPPED");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_TEXTURED)
@@ -138,10 +138,12 @@ ACG::SceneGraph::DrawModes::DrawMode listToDrawMode( std::vector< QString > _dra
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED;
     } else if( _draw_modes[i] == "SOLID_PHONG_SHADED" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED;
-    } else if( _draw_modes[i] == "SOLID_POINTS_COLORED" ) {
-      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED;
     } else if( _draw_modes[i] == "SOLID_FACES_COLORED" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED;
+    } else if( _draw_modes[i] == "SOLID_POINTS_COLORED" ) {
+      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED;
+    } else if( _draw_modes[i] == "SOLID_POINTS_COLORED_SHADED" ) {
+      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED_SHADED;
     } else if( _draw_modes[i] == "SOLID_ENV_MAPPED" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED;
     } else if( _draw_modes[i] == "SOLID_TEXTURED" ) {
@@ -203,6 +205,8 @@ ACG::SceneGraph::DrawModes::DrawMode descriptionsToDrawMode ( std::vector< QStri
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED;
     } else if( _draw_modes[i] == "Solid (colored per-vertex)" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED;
+    } else if( _draw_modes[i] == "Solid (colored per-vertex, shaded)" ) {
+      drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED_SHADED;
     } else if( _draw_modes[i] == "Solid (environment mapped)" ) {
       drawMode = drawMode | ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED;
     } else if( _draw_modes[i] == "Solid (textured)" ) {
@@ -257,12 +261,12 @@ std::vector< QString > drawModeToDescriptions(ACG::SceneGraph::DrawModes::DrawMo
     draw_modes.push_back("Solid (flat shaded)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED)
     draw_modes.push_back("Solid (Phong shaded)");
-  if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED)
-    draw_modes.push_back("Solid (colored per-vertex)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED)
     draw_modes.push_back("Solid (colored per-face)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED)
     draw_modes.push_back("Solid (colored per-vertex)");
+  if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED_SHADED)
+    draw_modes.push_back("Solid (colored per-vertex, shaded)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED)
     draw_modes.push_back("Solid (environment mapped)");
   if ( _drawMode & ACG::SceneGraph::DrawModes::SOLID_TEXTURED)
