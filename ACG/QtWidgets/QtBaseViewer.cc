@@ -634,6 +634,15 @@ void QtBaseViewer::viewingDirection( const Vec3d& _dir, const Vec3d& _up )
 
 //-----------------------------------------------------------------------------
 
+void QtBaseViewer::setFovy( double _fovy )
+{
+  // set new field of view
+  fovy_ = _fovy;
+  
+  emit viewChanged();
+}
+
+//-----------------------------------------------------------------------------
 
 void QtBaseViewer::actionMode(ActionMode _am)
 {
