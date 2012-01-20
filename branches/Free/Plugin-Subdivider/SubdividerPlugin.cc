@@ -85,7 +85,7 @@ void SubdividerPlugin::pluginsInitialized()
 {
   emit setSlotDescription("subdivide(int,QString,int)", "Smooth a triangular mesh",
                           QString("object_id,algorithm,iterations").split(","),
-                          QString("id of an object, algorithm to use (loop | sqrt3 | interpolating_sqrt3 | modifiedButterfly ), number of iterations").split(","));
+                          QString("id of an object, algorithm to use (linear | loop | sqrt3 | interpolating_sqrt3 | modifiedButterfly ), number of iterations").split(","));
 }
 
 //-----------------------------------------------------------------------------
@@ -97,7 +97,6 @@ void SubdividerPlugin::slotSubdivideUniform()
   {
     for (unsigned int i = 0; i < ids.size(); ++i)
     {
-     
       if(tool_->loop_radioButton->isChecked())
       {
         subdivide(ids[i],"loop",tool_->subdivision_steps_spinBox->value());
@@ -129,12 +128,13 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
 
   TriMesh* mesh = PluginFunctions::triMesh(object);
 
+
   if(_algorithm.contains("loop",Qt::CaseInsensitive))
   {
     OpenMesh::Subdivider::Uniform::LoopT<TriMesh,double> subdivider;
     
     subdivider.attach(*mesh);
-    subdivider(_steps);
+    subdivider(*mesh,_steps,tool_->updatePoints->isChecked());
     subdivider.detach();
   }
   else if ( _algorithm.contains("sqrt3",Qt::CaseInsensitive) )
@@ -142,7 +142,7 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
     OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
     
     subdivider.attach(*mesh);
-    subdivider(_steps);
+    subdivider(_steps,tool_->updatePoints->isChecked());
     subdivider.detach();
   }
   else if ( _algorithm.contains("interpolating_sqrt(3)",Qt::CaseInsensitive)  )
@@ -150,7 +150,7 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
     OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
     
     subdivider.attach(*mesh);
-    subdivider(_steps);
+    subdivider(_steps,tool_->updatePoints->isChecked());
     subdivider.detach();
   }
   else if ( _algorithm.contains("modifiedButterfly",Qt::CaseInsensitive)  )
@@ -158,7 +158,7 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
     OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
     
     subdivider.attach(*mesh);
-    subdivider(_steps);
+    subdivider(_steps,tool_->updatePoints->isChecked());
     subdivider.detach();
   }
 
