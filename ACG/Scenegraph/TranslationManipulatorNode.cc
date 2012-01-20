@@ -510,12 +510,12 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     _state.set_specular_color(element_[YAxis].inactive_current_color_);
   }
 
-  // Draw Bottom of z-axis
+  // Draw Bottom of y-axis
   axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
   axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
   axis_->draw(_state, manipulator_height_/2.0);
 
-  // Draw center of z-axis
+  // Draw center of y-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
   axis_->setBottomRadius(manipulator_radius_);
@@ -523,7 +523,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   axis_->draw(_state, manipulator_height_/2.0);
 
 
-  // Draw Top of z-axis
+  // Draw Top of y-axis
   if (_active)
   {
     _state.set_diffuse_color(element_[YTop].active_current_color_);
@@ -553,12 +553,12 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     _state.set_specular_color(element_[XAxis].inactive_current_color_);
   }
 
-  // Draw Bottom of z-axis
+  // Draw Bottom of x-axis
   axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
   axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
   axis_->draw(_state, manipulator_height_/2.0);
 
-  // Draw center of z-axis
+  // Draw center of x-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
   axis_->setBottomRadius(manipulator_radius_);
@@ -566,7 +566,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   axis_->draw(_state, manipulator_height_/2.0);
 
 
-  // Draw Top of z-axis
+  // Draw Top of x-axis
   if (_active)
   {
     _state.set_diffuse_color(element_[XTop].active_current_color_);
