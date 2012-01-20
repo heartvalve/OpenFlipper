@@ -157,10 +157,12 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
 {
   localTransformation_.identity();
 
-  // Create quadrics
-  axis_ = gluNewQuadric();
-  circle_ = gluNewQuadric();
-  sphere_ = gluNewQuadric();
+  // Create GLPrimitives
+  axis_ = new ACG::GLCone(manipulator_slices_, manipulator_stacks_,
+      (1.0 - resize_current_) * manipulator_radius_,
+      (1.0 + resize_current_) * manipulator_radius_, false, true);
+  sphere_ = new ACG::GLSphere(manipulator_slices_, manipulator_stacks_);
+  circle_ = new ACG::GLDisk(30, 30, 2.0f*manipulator_height_ - manipulator_height_/4.0f, 2.0f*manipulator_height_);
 
   setTraverseMode( BaseNode::ChildrenFirst );
 
@@ -185,17 +187,15 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
 
 TranslationManipulatorNode::~TranslationManipulatorNode() {
 
-	if (axis_) {
-		gluDeleteQuadric(axis_);
-	}
+  if (axis_)
+    delete axis_;
 
-	if (circle_) {
-		gluDeleteQuadric(circle_);
-	}
+  if (sphere_)
+    delete sphere_;
 
-	if (sphere_) {
-		gluDeleteQuadric(sphere_);
-	}
+	if (circle_)
+	  delete circle_;
+
 }
 
 
@@ -469,22 +469,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of z-axis
-  gluCylinder(axis_,
-              (1.0 - resize_current_) * manipulator_radius_,
-              (1.0 + resize_current_) * manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of z-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  gluCylinder(axis_,
-              manipulator_radius_,
-              manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_);
+  axis_->setTopRadius(manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of z-axis
@@ -498,12 +492,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  gluCylinder(axis_,
-              manipulator_radius_*2,
-              0,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_*2.0);
+  axis_->setTopRadius(0.0);
+  axis_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
   //================================================================================================
@@ -520,22 +511,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of z-axis
-  gluCylinder(axis_,
-              (1.0 - resize_current_) * manipulator_radius_,
-              (1.0 + resize_current_) * manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of z-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  gluCylinder(axis_,
-              manipulator_radius_,
-              manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_);
+  axis_->setTopRadius(manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of z-axis
@@ -549,12 +534,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  gluCylinder(axis_,
-              manipulator_radius_*2,
-              0,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_*2.0);
+  axis_->setTopRadius(0.0);
+  axis_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
 
@@ -572,22 +554,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of z-axis
-  gluCylinder(axis_,
-              (1.0 - resize_current_) * manipulator_radius_,
-              (1.0 + resize_current_) * manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of z-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  gluCylinder(axis_,
-              manipulator_radius_,
-              manipulator_radius_,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_);
+  axis_->setTopRadius(manipulator_radius_);
+  axis_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of z-axis
@@ -601,12 +577,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  gluCylinder(axis_,
-              manipulator_radius_*2,
-              0,
-              manipulator_height_/2,
-              manipulator_slices_,
-              manipulator_stacks_);
+  axis_->setBottomRadius(manipulator_radius_*2.0);
+  axis_->setTopRadius(0.0);
+  axis_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
   //=================================================================================================
@@ -621,7 +594,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     _state.set_specular_color(element_[Origin].inactive_current_color_);
   }
 
-  gluSphere( sphere_, manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
+  sphere_->draw(_state, manipulator_radius_*2);
 
   //=================================================================================================
   // Outer-Rings
@@ -630,6 +603,10 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   ACG::GLState::enable (GL_BLEND);
   glPushAttrib(GL_LIGHTING_BIT);
   ACG::GLState::disable(GL_LIGHTING);
+
+  // update circle size
+  circle_->setInnerRadius(2.0f*manipulator_height_ - manipulator_height_/4.0f);
+  circle_->setOuterRadius(2.0f*manipulator_height_);
 
   if ( activeRotations_ & X_AXIS) {
     if (_active)
@@ -645,7 +622,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
           element_[XRing].inactive_current_color_[3]);
     }
 
-    drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+    circle_->draw(_state);
   }
 
 
@@ -664,7 +641,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
           element_[YRing].inactive_current_color_[3]);
     }
 
-    drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+    circle_->draw(_state);
   }
 
   _state.rotate(90, 1.0, 0.0, 0.0);
@@ -682,7 +659,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
           element_[ZRing].inactive_current_color_[3]);
     }
 
-    drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+    circle_->draw(_state);
   }
 
   glPopAttrib(); // ENABLE_BIT
@@ -752,16 +729,6 @@ TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* 
     
     ACG::GLState::depthFunc(prev_depth);
   }
-}
-
-
-//----------------------------------------------------------------------------
-
-/// Draws a circle with given radius
-void
-TranslationManipulatorNode::drawCircle(const float outerRadius, const float innerRadius)
-{
-  gluDisk(circle_, innerRadius, outerRadius, 30, 30);
 }
 
 //----------------------------------------------------------------------------
@@ -1828,21 +1795,15 @@ pick(GLState& _state, PickTarget _target)
       //================================================================================================
       // gluCylinder draws into z direction so z-Axis first
 
-      gluCylinder(axis_,
-                  manipulator_radius_,
-                  manipulator_radius_,
-                  manipulator_height_,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_);
+      axis_->setTopRadius(manipulator_radius_);
+      axis_->draw(_state, manipulator_height_);
 
       // Draw Top of z-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      gluCylinder(axis_,
-                  manipulator_radius_*2,
-                  0,
-                  manipulator_height_/2,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_*2.0);
+      axis_->setTopRadius(manipulator_radius_*2.0);
+      axis_->draw(_state, manipulator_height_/2.0);
       _state.translate(0.0, 0.0, -manipulator_height_);
 
       _state.pick_set_name(1);
@@ -1850,21 +1811,15 @@ pick(GLState& _state, PickTarget _target)
       // Y-Axis
       //================================================================================================
       _state.rotate(-90, 1.0, 0.0, 0.0);
-      gluCylinder(axis_,
-                  manipulator_radius_,
-                  manipulator_radius_,
-                  manipulator_height_,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_);
+      axis_->setTopRadius(manipulator_radius_);
+      axis_->draw(_state, manipulator_height_);
 
       // Draw Top of y-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      gluCylinder(axis_,
-                  manipulator_radius_*2,
-                  0,
-                  manipulator_height_/2,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_*2.0);
+      axis_->setTopRadius(manipulator_radius_*2.0);
+      axis_->draw(_state, manipulator_height_/2.0);
       _state.translate(0.0, 0.0, -manipulator_height_);
 
 
@@ -1874,21 +1829,16 @@ pick(GLState& _state, PickTarget _target)
       //================================================================================================
       _state.rotate(90, 0.0, 1.0, 0.0);
 
-      gluCylinder(axis_,
-                  manipulator_radius_,
-                  manipulator_radius_,
-                  manipulator_height_,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_);
+      axis_->setTopRadius(manipulator_radius_);
+      axis_->draw(_state, manipulator_height_);
 
       // Draw Top of x-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      gluCylinder(axis_,
-                  manipulator_radius_*2,
-                  0,
-                  manipulator_height_/2,
-                  manipulator_slices_,
-                  manipulator_stacks_);
+      axis_->setBottomRadius(manipulator_radius_*2.0);
+      axis_->setTopRadius(manipulator_radius_*2.0);
+      axis_->draw(_state, manipulator_height_/2.0);
+
       _state.translate(0.0, 0.0, -manipulator_height_);
 
       _state.pick_set_name(3);
@@ -1896,23 +1846,25 @@ pick(GLState& _state, PickTarget _target)
       // Sphere
       //=================================================================================================
 
-      gluSphere( sphere_, manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
+      sphere_->draw(_state, manipulator_radius_*2);
 
       //=================================================================================================
       // Outer-Spheres
       //=================================================================================================
 
       _state.pick_set_name(4);
+      circle_->setInnerRadius(2.0f*manipulator_height_ - manipulator_height_/4.0f);
+      circle_->setOuterRadius(2.0f*manipulator_height_);
       if ( activeRotations_ & X_AXIS)
-        drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+        circle_->draw(_state);
 
       _state.rotate(90, 0.0, 1.0, 0.0);
       if ( activeRotations_ & Y_AXIS)
-        drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+        circle_->draw(_state);
 
       _state.rotate(90, 1.0, 0.0, 0.0);
       if ( activeRotations_ & Z_AXIS)
-        drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
+        circle_->draw(_state);
 
       // Restore old attributes and modelview
       glPopAttrib();
