@@ -64,6 +64,8 @@
 #include <QEvent>
 #include <QMouseEvent>
 
+#include <ACG/GL/GLPrimitives.hh>
+
 
 //== NAMESPACES ===============================================================
 
@@ -257,8 +259,6 @@ private:
 
   void drawManipulator (GLState& _state, bool _active);
 
-  void drawCircle(const float innerRadius, const float outerRadius);
-
   bool mapToCylinder (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
   bool mapToCylinderTop (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
 
@@ -278,9 +278,9 @@ private:
   Vec3d              dirY_;
   Vec3d              dirZ_;
 
-  GLUquadricObj*     axis_;
-  GLUquadricObj*     circle_;
-  GLUquadricObj*     sphere_;
+  ACG::GLCone*       axis_;
+  ACG::GLDisk*       circle_;
+  ACG::GLSphere*     sphere_;
 
   double             manipulator_radius_;
   double             manipulator_height_;
