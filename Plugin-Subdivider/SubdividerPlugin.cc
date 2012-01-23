@@ -144,8 +144,6 @@ void SubdividerPlugin::slotSimpleSubdivide()
 
 void SubdividerPlugin::simpleSubdivide(int _objectId, QString _algorithm , int _steps, double _parameter) {
 
-  std::cerr << "Simple" << std::endl;
-
   BaseObjectData* object;
   if (!test_trimesh_object(_objectId, object))
     return;
@@ -155,7 +153,6 @@ void SubdividerPlugin::simpleSubdivide(int _objectId, QString _algorithm , int _
   if (_algorithm.contains("longest", Qt::CaseInsensitive)) {
     OpenMesh::Subdivider::Uniform::LongestEdgeT<TriMesh, double> subdivider;
 
-    std::cerr << "Simple1" << std::endl;
     subdivider.attach(*mesh);
     subdivider.set_max_edge_length(_parameter);
     subdivider(*mesh, _steps, tool_->updatePoints->isChecked());
