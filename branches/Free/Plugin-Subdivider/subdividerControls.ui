@@ -6,160 +6,261 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
+    <width>410</width>
     <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Subdivision steps:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="subdivision_steps_spinBox">
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Uniform Subdivision</string>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Method:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="Uniform">
+      <attribute name="title">
+       <string>Uniform</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Subdivision steps:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="subdivision_steps_spinBox">
+           <property name="value">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Uniform Subdivision</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QRadioButton" name="loop_radioButton">
-              <property name="toolTip">
-               <string>C. T. Loop, &quot;Smooth Subdivision Surfaces Based on Triangles&quot;,
-M.S. Thesis, Department of Mathematics, University of Utah, August 1987.</string>
-              </property>
+             <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Loop</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+               <string>Method:</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QRadioButton" name="loop_radioButton">
+                  <property name="toolTip">
+                   <string>C. T. Loop, &quot;Smooth Subdivision Surfaces Based on Triangles&quot;,
+M.S. Thesis, Department of Mathematics, University of Utah, August 1987.</string>
+                  </property>
+                  <property name="text">
+                   <string>Loop</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="sqrt3_radioButton">
+                <property name="toolTip">
+                 <string>L. Kobbelt, &lt;a href=&quot;http://www-i8.informatik.rwth-aachen.de/publications/downloads/sqrt3.pdf&quot;&gt;&quot;Sqrt(3) subdivision&quot;&lt;/a&gt;, Proceedings of SIGGRAPH 2000.</string>
+                </property>
+                <property name="text">
+                 <string>Sqrt3</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="LabsikGreiner_radioButton">
+                <property name="toolTip">
+                 <string>Interpolating Labsik Greiner Subdivider as described in &quot;interpolating sqrt(3) subdivision&quot; Labsik &amp; Greiner, 2000</string>
+                </property>
+                <property name="text">
+                 <string>Interpolating Sqrt3</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="modifiedButterfly_radioButton">
+                <property name="toolTip">
+                 <string>The modified butterfly scheme of Denis Zorin, Peter Schröder and Wim Sweldens, 
+``Interpolating subdivision for meshes with arbitrary topology,'' in Proceedings 
+of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
+                </property>
+                <property name="text">
+                 <string>Modified Butterfly</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QRadioButton" name="sqrt3_radioButton">
+           <widget class="QCheckBox" name="updatePoints">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="toolTip">
-             <string>L. Kobbelt, &lt;a href=&quot;http://www-i8.informatik.rwth-aachen.de/publications/downloads/sqrt3.pdf&quot;&gt;&quot;Sqrt(3) subdivision&quot;&lt;/a&gt;, Proceedings of SIGGRAPH 2000.</string>
+             <string/>
             </property>
             <property name="text">
-             <string>Sqrt3</string>
+             <string>Update Points</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="LabsikGreiner_radioButton">
-            <property name="toolTip">
-             <string>Interpolating Labsik Greiner Subdivider as described in &quot;interpolating sqrt(3) subdivision&quot; Labsik &amp; Greiner, 2000</string>
-            </property>
-            <property name="text">
-             <string>Interpolating Sqrt3</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="modifiedButterfly_radioButton">
-            <property name="toolTip">
-             <string>The modified butterfly scheme of Denis Zorin, Peter Schröder and Wim Sweldens, 
-``Interpolating subdivision for meshes with arbitrary topology,'' in Proceedings 
-of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
-            </property>
-            <property name="text">
-             <string>Modified Butterfly</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="subdivide_uniform_toolButton">
+              <property name="text">
+               <string>Uniform Subdivide</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="updatePoints">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string/>
-        </property>
-        <property name="text">
-         <string>Update Points</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="subdivide_uniform_toolButton">
-          <property name="text">
-           <string>Uniform Subdivide</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Simple">
+      <attribute name="title">
+       <string>Simple</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QRadioButton" name="longestEdgeSplit">
+           <property name="toolTip">
+            <string>This algorithm splits edges longer than the given maximal length. For each split, the longest edge is split at its midpoint.</string>
+           </property>
+           <property name="text">
+            <string>Longest Edge </string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Max Edge Length</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="maximalEdgeLength">
+             <property name="toolTip">
+              <string>Maximal edge length after the algorithm</string>
+             </property>
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="simpleButton">
+         <property name="text">
+          <string>Subdivide</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
