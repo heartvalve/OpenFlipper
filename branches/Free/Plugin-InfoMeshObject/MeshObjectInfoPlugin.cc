@@ -164,6 +164,14 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     info_->closestEdgeLabel->show();
     info_->edgeHandle->show();
 
+    // Closest Edge Length
+    info_->edgeLengthLabel->setText( tr("Closest Edge Length:") );
+    info_->edgeLengthLabel->show();
+    const typename MeshT::Point from = _mesh->point(_mesh->from_vertex_handle( _mesh->halfedge_handle( _mesh->edge_handle(closestEdgeIndex),0 ) ));
+    const typename MeshT::Point to   = _mesh->point(_mesh->to_vertex_handle( _mesh->halfedge_handle( _mesh->edge_handle(closestEdgeIndex),0 ) ));
+    info_->edgeLength->setText( locale.toString( (to - from).norm() ) );
+    info_->edgeLength->show();
+
     //adjacent vertex handles
     typename MeshT::FaceHandle fh = _mesh->face_handle(_index);
 
@@ -228,6 +236,14 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     info_->closestEdgeLabel->show();
     info_->edgeHandle->show();
 
+    // Edge Length
+    info_->edgeLengthLabel->setText( tr("Edge Length:") );
+    info_->edgeLengthLabel->show();
+    const typename MeshT::Point from = _mesh->point(_mesh->from_vertex_handle( _mesh->halfedge_handle( _mesh->edge_handle(closestEdgeIndex),0 ) ));
+    const typename MeshT::Point to   = _mesh->point(_mesh->to_vertex_handle( _mesh->halfedge_handle( _mesh->edge_handle(closestEdgeIndex),0 ) ));
+    info_->edgeLength->setText( locale.toString( (to - from).norm() ) );
+    info_->edgeLength->show();
+
     // Normal
     info_->normalLabel->hide();
     info_->normalLeft->hide();
@@ -256,6 +272,10 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     // Closest Edge
     info_->closestEdgeLabel->hide();
     info_->edgeHandle->hide();
+
+    // Edge Length
+    info_->edgeLengthLabel->hide();
+    info_->edgeLength->hide();
 
     // Normal
     typename MeshT::VertexHandle vh = _mesh->vertex_handle(_index);

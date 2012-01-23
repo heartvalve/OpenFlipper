@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>730</width>
-    <height>1025</height>
+    <height>1008</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,422 +76,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="title">
-      <string>Local Information at clicked position</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_15">
-      <item>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <item>
-           <widget class="QLabel" name="clickPointLabel">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Clicked Point:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="bracketA_4">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="QLabel" name="pointX">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minX</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="pointY">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minY</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="pointZ">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minZ</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="bracketB_4">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="1">
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
-          <item>
-           <spacer name="horizontalSpacer_8">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="normalLabel">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Normal of picked face:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="normalLeft">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QLabel" name="normalX">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minX</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="normalY">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minY</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="normalZ">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minZ</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="normalRight">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <layout class="QHBoxLayout" name="horizontalLayout_13">
-          <item>
-           <spacer name="horizontalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="closestVertexPosLabel">
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Closest Vertex on the mesh:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="bracketA_6">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <item>
-             <widget class="QLabel" name="vertexX">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minX</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="vertexY">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minY</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="vertexZ">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>minZ</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="bracketB_6">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="title">
-         <string>mesh handles</string>
-        </property>
-        <layout class="QFormLayout" name="formLayout_3">
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::ExpandingFieldsGrow</enum>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="closestVertexLabel">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Closest Vertex:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="vertexHandle">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>vertexHandle</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="closestEdgeLabel">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Closest Edge:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="edgeHandle">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>edgeHandle</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="closestFaceLabel">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Picked Face:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="faceHandle">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>faceHandle</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="adjacentVertexLabel">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Adjacent Vertices:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="adjVertexHandles">
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>adjVertexHandles</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -1698,6 +1282,470 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>Local Information at clicked position</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QLabel" name="clickPointLabel">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Clicked Point:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="bracketA_4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLabel" name="pointX">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minX</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="pointY">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minY</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="pointZ">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minZ</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="bracketB_4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="normalLabel">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Normal of picked face:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="normalLeft">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QLabel" name="normalX">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minX</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="normalY">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minY</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="normalZ">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minZ</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="normalRight">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="2" rowspan="3">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="title">
+         <string>mesh handles</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="closestVertexLabel">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Closest Vertex:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="vertexHandle">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>vertexHandle</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="closestEdgeLabel">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Closest Edge:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="edgeHandle">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>edgeHandle</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="closestFaceLabel">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Picked Face:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="faceHandle">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>faceHandle</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="adjacentVertexLabel">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Adjacent Vertices:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="adjVertexHandles">
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>adjVertexHandles</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+        <zorder>closestVertexLabel</zorder>
+        <zorder>vertexHandle</zorder>
+        <zorder>closestEdgeLabel</zorder>
+        <zorder>edgeHandle</zorder>
+        <zorder>closestFaceLabel</zorder>
+        <zorder>faceHandle</zorder>
+        <zorder>adjacentVertexLabel</zorder>
+        <zorder>adjVertexHandles</zorder>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <spacer name="horizontalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="closestVertexPosLabel">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Closest Vertex on the mesh:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="bracketA_6">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketA.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QLabel" name="vertexX">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minX</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="vertexY">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minY</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="vertexZ">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>minZ</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="bracketB_6">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="icons.qrc">:/info/dialogIcons/info_bracketB.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_15">
+        <item>
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_22">
+          <item>
+           <widget class="QLabel" name="edgeLengthLabel">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edge Length:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="edgeLength">
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>EdgeLength</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
