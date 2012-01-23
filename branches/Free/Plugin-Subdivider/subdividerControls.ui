@@ -116,7 +116,7 @@ of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
           <item>
            <widget class="QCheckBox" name="updatePoints">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="toolTip">
              <string/>
