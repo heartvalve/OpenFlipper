@@ -103,11 +103,16 @@ private slots:
   
   void slotSubdivideUniform();
 
+  void slotSimpleSubdivide();
+
 public slots:
 
   /// Scripting slot for subdivision
   void subdivide(int _objectId, QString _algorithm , int _steps);
   
+  /// Scripting slot for the simple subdivision algorithms
+  void simpleSubdivide(int _objectId, QString _algorithm , int _steps, double _parameter);
+
 
 public :
   SubdividerPlugin();

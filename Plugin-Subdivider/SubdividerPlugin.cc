@@ -57,6 +57,7 @@
 #include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3T.hh>
 #include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3InterpolatingSubdividerLabsikGreinerT.hh>
 #include <OpenMesh/Tools/Subdivider/Uniform/ModifiedButterFlyT.hh>
+#include <OpenMesh/Tools/Subdivider/Uniform/LongestEdgeT.hh>
 
 
 SubdividerPlugin::SubdividerPlugin() :
@@ -75,6 +76,9 @@ void SubdividerPlugin::initializePlugin()
     tool_->resize(size);
     
     connect(tool_->subdivide_uniform_toolButton,    SIGNAL( clicked() ),  this, SLOT( slotSubdivideUniform() ) );
+    connect(tool_->simpleButton,                    SIGNAL( clicked() ),  this, SLOT( slotSimpleSubdivide() ) );
+
+
     
     toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"subdivider.png");
     emit addToolbox( tr("Subdivider") , tool_, toolIcon_ );
@@ -116,6 +120,60 @@ void SubdividerPlugin::slotSubdivideUniform()
     }
   }
   emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
+void SubdividerPlugin::slotSimpleSubdivide()
+{
+  std::vector< int > ids;
+  if ( PluginFunctions::getTargetIdentifiers( ids ) )
+  {
+    for (unsigned int i = 0; i < ids.size(); ++i)
+    {
+      if(tool_->longestEdgeSplit->isChecked())
+      {
+        simpleSubdivide(ids[i],"longest",tool_->subdivision_steps_spinBox->value(), tool_->maximalEdgeLength->value());
+      }
+    }
+  }
+  emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
+void SubdividerPlugin::simpleSubdivide(int _objectId, QString _algorithm , int _steps, double _parameter) {
+
+  std::cerr << "Simple" << std::endl;
+
+  BaseObjectData* object;
+  if (!test_trimesh_object(_objectId, object))
+    return;
+
+  TriMesh* mesh = PluginFunctions::triMesh(object);
+
+  if (_algorithm.contains("longest", Qt::CaseInsensitive)) {
+    OpenMesh::Subdivider::Uniform::LongestEdgeT<TriMesh, double> subdivider;
+
+    std::cerr << "Simple1" << std::endl;
+    subdivider.attach(*mesh);
+    subdivider.set_max_edge_length(_parameter);
+    subdivider(*mesh, _steps, tool_->updatePoints->isChecked());
+    subdivider.detach();
+  }
+
+  mesh->garbage_collection();
+
+  mesh->update_face_normals();
+  mesh->update_vertex_normals();
+  TriMeshObject* tmo = PluginFunctions::triMeshObject(object);
+  tmo->update();
+
+  // Create backup
+  emit createBackup(object->id(), "Subdivider", UPDATE_TOPOLOGY);
+
+  // Geometry and topology changed!
+  emit updatedObject(object->id(), UPDATE_TOPOLOGY);
 }
 
 //-----------------------------------------------------------------------------
@@ -162,6 +220,7 @@ void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps)
     subdivider.detach();
   }
 
+  mesh->garbage_collection();
 
   mesh->update_face_normals();
   mesh->update_vertex_normals();
