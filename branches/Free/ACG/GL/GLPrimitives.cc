@@ -561,32 +561,11 @@ int GLPartialDisk::getNumTriangles() {
 //------------------------------------------------------------------------
 
 void GLPartialDisk::updateVBO() {
-  assert(slices_ < 2);
-  assert(loops_ < 1);
-  assert(outerRadius_ <= 0.0f);
-  assert(innerRadius_ < 0.0f);
-  assert(innerRadius_ > outerRadius_);
-
-  if (slices_ < 2) {
-    std::cerr << "Invalid number of slices for GLPartialDisk!\n";
-    return;
-  }
-  if (loops_ < 1) {
-    std::cerr << "Invalid number of loops for GLPartialDisk!\n";
-    return;
-  }
-  if (outerRadius_ <= 0.0f) {
-    std::cerr << "Invalid outer radius for GLPartialDisk!\n";
-    return;
-  }
-  if (innerRadius_ < 0.0f) {
-    std::cerr << "Invalid inner radius for GLPartialDisk!\n";
-    return;
-  }
-  if (innerRadius_ > outerRadius_) {
-    std::cerr << "Inner radius greater than outer radius for GLPartialDisk!\n";
-    return;
-  }
+  assert(slices_ >= 2);
+  assert(loops_ >= 1);
+  assert(outerRadius_ > 0.0f);
+  assert(innerRadius_ >= 0.0f);
+  assert(innerRadius_ < outerRadius_);
 
   if (sweepAngle_ < -360.0f)
     sweepAngle_ = 360.0f;
