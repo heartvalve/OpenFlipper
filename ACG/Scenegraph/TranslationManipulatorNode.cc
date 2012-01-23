@@ -611,11 +611,17 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   if ( activeRotations_ & X_AXIS) {
     if (_active)
     {
+      _state.set_diffuse_color(element_[XRing].active_current_color_);
+      _state.set_ambient_color(element_[XRing].active_current_color_);
+
       glColor4f(element_[XRing].active_current_color_[0],
           element_[XRing].active_current_color_[1],
           element_[XRing].active_current_color_[2],
           element_[XRing].active_current_color_[3]);
     } else {
+      _state.set_diffuse_color(element_[XRing].inactive_current_color_);
+      _state.set_ambient_color(element_[XRing].inactive_current_color_);
+
       glColor4f(element_[XRing].inactive_current_color_[0],
           element_[XRing].inactive_current_color_[1],
           element_[XRing].inactive_current_color_[2],
@@ -630,11 +636,17 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   if ( activeRotations_ & Y_AXIS) {
     if (_active)
     {
+      _state.set_diffuse_color(element_[YRing].active_current_color_);
+      _state.set_ambient_color(element_[YRing].active_current_color_);
+
       glColor4f(element_[YRing].active_current_color_[0],
           element_[YRing].active_current_color_[1],
           element_[YRing].active_current_color_[2],
           element_[YRing].active_current_color_[3]);
     } else {
+      _state.set_diffuse_color(element_[YRing].inactive_current_color_);
+      _state.set_ambient_color(element_[YRing].inactive_current_color_);
+
       glColor4f(element_[YRing].inactive_current_color_[0],
           element_[YRing].inactive_current_color_[1],
           element_[YRing].inactive_current_color_[2],
@@ -648,11 +660,17 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   if ( activeRotations_ & Z_AXIS) {
     if (_active)
     {
+      _state.set_diffuse_color(element_[ZRing].active_current_color_);
+      _state.set_ambient_color(element_[ZRing].active_current_color_);
+
       glColor4f(element_[ZRing].active_current_color_[0],
           element_[ZRing].active_current_color_[1],
           element_[ZRing].active_current_color_[2],
           element_[ZRing].active_current_color_[3]);
     } else {
+      _state.set_diffuse_color(element_[ZRing].inactive_current_color_);
+      _state.set_ambient_color(element_[ZRing].inactive_current_color_);
+
       glColor4f(element_[ZRing].inactive_current_color_[0],
           element_[ZRing].inactive_current_color_[1],
           element_[ZRing].inactive_current_color_[2],
