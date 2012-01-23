@@ -128,6 +128,9 @@ availableDrawModes() const {
   
   if (mesh_.has_face_normals())
     drawModes |= DrawModes::SOLID_FLAT_SHADED;
+
+  if (mesh_.has_halfedge_normals())
+    drawModes |= DrawModes::SOLID_SMOOTH_SHADED_FEATURES;
   
   if (mesh_.has_vertex_colors())
   {
@@ -153,6 +156,9 @@ availableDrawModes() const {
     
     if( mesh_.has_face_normals() )
       drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
+
+    if( mesh().has_vertex_normals() )
+      drawModes |= DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED;
   }
   
   if ( mesh_.has_vertex_texcoords2D() ) {
@@ -370,6 +376,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::shadeModel(GL_SMOOTH);
     ACG::GLState::depthRange(0.01, 1.0);
 
+    drawMesh_->usePerVertexNormals();
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
     draw_faces();
@@ -423,6 +430,38 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     _state.set_base_color(base_color_backup);
   }
   
+  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED ) && mesh_.has_face_colors()  && mesh_.n_faces() > 0)
+  {
+    Vec4f base_color_backup = _state.base_color();
+
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::depthRange(0.01, 1.0);
+
+    drawMesh_->setSmoothShading();
+    drawMesh_->usePerVertexNormals();
+    drawMesh_->usePerFaceColors();
+
+    draw_faces();
+    ACG::GLState::depthRange(0.0, 1.0);
+
+    _state.set_base_color(base_color_backup);
+  }
+
+  if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED_FEATURES ) && mesh_.has_halfedge_normals()  && mesh_.n_faces() > 0)
+  {
+    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::depthRange(0.01, 1.0);
+
+    drawMesh_->disableColors();
+    drawMesh_->setSmoothShading();
+    drawMesh_->usePerHalfedgeNormals();
+
+    draw_faces();
+
+    ACG::GLState::depthRange(0.0, 1.0);
+  }
   
   if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals()  && mesh_.n_faces() > 0 )
   {
@@ -511,6 +550,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::shadeModel(GL_SMOOTH);
     ACG::GLState::depthRange(0.01, 1.0);
 
+    drawMesh_->usePerVertexNormals();
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
     drawMesh_->usePerHalfedgeTexcoords();

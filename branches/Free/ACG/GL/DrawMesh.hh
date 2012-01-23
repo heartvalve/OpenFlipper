@@ -157,6 +157,8 @@ public:
 
   void usePerVertexTexcoords()     {textureMode_ = 0;}
   void usePerHalfedgeTexcoords()   {textureMode_ = 1;}
+  void usePerVertexNormals()   {halfedgeNormalMode_ = 0;}
+  void usePerHalfedgeNormals()   {halfedgeNormalMode_ = 1;}
 
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
@@ -614,6 +616,12 @@ private:
 
   /// texcoords in VBO currently in per vertex / halfedge mode toggle
   int bVBOinHalfedgeTexMode_;
+
+  /// per vertex / halfedge normals mode toggle:  0: per vertex,  1: per halfedge
+  int halfedgeNormalMode_;
+
+  /// normals in VBO currently in per vertex / halfedge mode toggle
+  int bVBOinHalfedgeNormalMode_;
 
 
   /** remapping for faster mesh change updates
