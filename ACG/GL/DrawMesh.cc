@@ -126,6 +126,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    colorMode_(1),
    flatMode_(0), bVBOinFlatMode_(0),
    textureMode_(1), bVBOinHalfedgeTexMode_(1),
+   halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
    triToFaceMap_(0),
    vertexMap_(0),
    invVertexMap_(0),
@@ -345,6 +346,7 @@ DrawMeshT<Mesh>::rebuild()
   createVBO();
   createIBO();
 
+  bVBOinHalfedgeNormalMode_ = halfedgeNormalMode_;
 
   rebuild_ = REBUILD_NONE;
 
@@ -409,8 +411,11 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
   {
     _pV->pos[m] = mesh_.point(_vh)[m];
 
-    if (mesh_.has_vertex_normals())
+    if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
       _pV->n[m] = mesh_.normal(_vh)[m];
+    else if (halfedgeNormalMode_ && 
+      mesh_.has_halfedge_normals() && _hh != (typename Mesh::HalfedgeHandle)(-1))
+      _pV->n[m] = mesh_.normal(_hh)[m];
     else _pV->n[m] = 0.0f;
 
     if (m < 2)
@@ -924,6 +929,8 @@ void DrawMeshT<Mesh>::bindBuffers()
 {
   // rebuild if necessary
   if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
+
+  if (bVBOinHalfedgeNormalMode_ != halfedgeNormalMode_) rebuild_ = REBUILD_FULL;
 
   // if no rebuild necessary, check for smooth / flat shading switch 
   // to update normals
