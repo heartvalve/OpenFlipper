@@ -1350,9 +1350,58 @@ void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
 {
   // stripify()
 
-  updatePickingFaces(_state);
-  updatePickingEdges(_state, mesh_.n_faces());
-  updatePickingVertices(_state, mesh_.n_faces() + mesh_.n_edges());
+  
+  pickFaceVertexBuf_.resize(3 * numTris_);
+  pickAnyFaceColBuf_.resize(3 * numTris_);
+
+  // Index to the current buffer position
+  unsigned int bufferIndex = 0;
+
+  for (unsigned int i = 0; i < numTris_; ++i)
+  {
+    const Vec4uc pickColor = _state.pick_get_name_color ( triToFaceMap_[i] );
+    for (unsigned int k = 0; k < 3; ++k)
+    {
+      pickFaceVertexBuf_[i * 3 + k] = mesh_.point(
+        mesh_.to_vertex_handle(mesh_.halfedge_handle(vertexMap_[indices_[i * 3 + k]])));
+
+      pickAnyFaceColBuf_[i * 3 + k] = pickColor;
+    }
+  }
+
+
+
+  updatePerEdgeBuffers();
+
+  pickAnyEdgeColBuf_.resize(mesh_.n_edges() * 2);
+
+  unsigned int idx = 0;
+  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
+  for (; e_it!=e_end; ++e_it) {
+
+    const Vec4uc pickColor =  _state.pick_get_name_color (e_it.handle().idx() + mesh_.n_faces());
+
+    pickAnyEdgeColBuf_[idx]    = pickColor;
+    pickAnyEdgeColBuf_[idx+1]  = pickColor;
+
+    idx += 2;
+  }
+
+
+
+  idx = 0;
+
+  // Adjust size of the color buffer to the number of vertices in the mesh
+  pickAnyVertexColBuf_.resize( mesh_.n_vertices() );
+  pickVertBuf_.resize( mesh_.n_vertices() );
+
+  // Get the right picking colors from the gl state and add them per vertex to the color buffer
+  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
+  for (; v_it!=v_end; ++v_it, ++idx) 
+  {
+    pickAnyVertexColBuf_[idx] = _state.pick_get_name_color(idx + mesh_.n_faces() + mesh_.n_edges());
+    pickVertBuf_[idx] = mesh_.point(mesh_.vertex_handle(idx));
+  }
 }
 
 

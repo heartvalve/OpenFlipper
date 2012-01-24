@@ -813,10 +813,6 @@ pick_vertices(GLState& _state, bool _front)
       drawMesh_->updatePickingVertices(_state);
       vertexPickingBaseIndex_ = _state.pick_current_index ();
       updateVertexPicking_    = false;
-
-      // Invalidate the any picking buffers
-      // as they are changed for the current picking now
-      updateAnyPicking_ = true;
     }
     
     if (drawMesh_) {
@@ -897,10 +893,6 @@ pick_edges(GLState& _state, bool _front)
       drawMesh_->updatePickingEdges(_state);
       edgePickingBaseIndex_ = _state.pick_current_index ();
       updateEdgePicking_    = false;
-
-      // Invalidate the any picking buffers
-      // as they are changed for the current picking now
-      updateAnyPicking_ = true;
     }
     
     if ( mesh_.n_edges() != 0 && drawMesh_) {
@@ -964,10 +956,6 @@ pick_faces(GLState& _state)
       drawMesh_->updatePickingFaces(_state);
       facePickingBaseIndex_ = _state.pick_current_index ();
       updateFacePicking_    = false;
-
-      // Invalidate the any picking buffers
-      // as they are changed for the current picking now
-      updateAnyPicking_ = true;
     }
     
     if ( mesh_.n_faces() != 0 ) {
@@ -1027,12 +1015,6 @@ pick_any(GLState& _state)
       drawMesh_->updatePickingAny(_state);
       anyPickingBaseIndex_ = _state.pick_current_index ();
       updateAnyPicking_    = false;
-
-      // Invalidate the face edge and vertex picking buffers
-      // as they are changed for the any picking now
-      updateFacePicking_   = true;
-      updateEdgePicking_   = true;
-      updateVertexPicking_ = true;
     }
     
     // For this version we load the colors directly, not from vbo
@@ -1048,7 +1030,7 @@ pick_any(GLState& _state)
     if ( mesh_.n_faces() != 0 && drawMesh_) {
       
       ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
-      ACG::GLState::colorPointer(drawMesh_->pickFaceColorBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickAnyFaceColorBuffer());
       
       glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
     }
@@ -1059,14 +1041,14 @@ pick_any(GLState& _state)
     if ( mesh_.n_edges() != 0 && drawMesh_) {
       
       ACG::GLState::vertexPointer(drawMesh_->perEdgeVertexBuffer());
-      ACG::GLState::colorPointer(drawMesh_->pickEdgeColorBuffer());
+      ACG::GLState::colorPointer(drawMesh_->pickAnyEdgeColorBuffer());
     
       glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
     }
     
     // For this version we load the colors directly not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-    ACG::GLState::colorPointer(drawMesh_->pickVertexColorBuffer());
+    ACG::GLState::colorPointer(drawMesh_->pickAnyVertexColorBuffer());
     ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking

@@ -32,7 +32,7 @@ for your specific operating system.
 \subsection cmake_blinux Building OpenFlipper under Linux
 
 <ul>
-<li> First install the required libraries (see above)<br />
+<li> First install the required libraries via your linux distributions package management e.g. apt or rpm (for the list of packages see above)<br />
 <li> Extract the source code or get it via svn:<br />
 <code><b> svn co http://www.openflipper.org/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
 <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
