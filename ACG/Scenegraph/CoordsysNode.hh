@@ -105,7 +105,7 @@ public:
       ProjectionMode _projectionMode = PERSPECTIVE_PROJECTION);
 
   /// destructor
-  ~CoordsysNode() {};
+  ~CoordsysNode();
 
   /// static name of this class
   ACG_CLASSNAME(CoordsysNode);
@@ -153,6 +153,7 @@ public:
     ACG::GLSphere*   sphere_;
     ACG::GLCylinder* cylinder_;
     ACG::GLCone*     cone_;
+    ACG::GLDisk*     disk_;
 };
 
 
@@ -161,4 +162,3 @@ public:
 } // namespace ACG
 //=============================================================================
 #endif // ACG_COORDSYSNODE_HH defined
-//=============================================================================
