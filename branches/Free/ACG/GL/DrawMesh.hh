@@ -530,18 +530,54 @@ public:
   *
   * @return Pointer to the first element of the picking buffer
   */
-  ACG::Vec4uc * pickAnyColorBuffer(){
-    if ( !pickAnyBuf_.empty() )
-      return &(pickAnyBuf_)[0];
+  ACG::Vec4uc * pickAnyFaceColorBuffer(){
+    if ( !pickAnyFaceColBuf_.empty() )
+      return &(pickAnyFaceColBuf_)[0];
     else {
-      std::cerr << "Illegal request to pickAnyColorBuffer when buffer is empty!" << std::endl;
+      std::cerr << "Illegal request to pickAnyFaceColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
+
+  /** \brief get a pointer to the any picking color buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingAny to update the buffer before you render it via
+  * ACG::GLState::colorPointer.
+  *
+  * @return Pointer to the first element of the picking buffer
+  */
+  ACG::Vec4uc * pickAnyEdgeColorBuffer(){
+    if ( !pickAnyEdgeColBuf_.empty() )
+      return &(pickAnyEdgeColBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickAnyEdgeColorBuffer when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
+
+  /** \brief get a pointer to the any picking color buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingAny to update the buffer before you render it via
+  * ACG::GLState::colorPointer.
+  *
+  * @return Pointer to the first element of the picking buffer
+  */
+  ACG::Vec4uc * pickAnyVertexColorBuffer(){
+    if ( !pickAnyVertexColBuf_.empty() )
+      return &(pickAnyVertexColBuf_)[0];
+    else {
+      std::cerr << "Illegal request to pickAnyVertexColorBuffer when buffer is empty!" << std::endl;
       return 0;
     }
   }
   
 private:  
   
-  std::vector< ACG::Vec4uc > pickAnyBuf_;
+  std::vector< ACG::Vec4uc > pickAnyFaceColBuf_;
+  std::vector< ACG::Vec4uc > pickAnyEdgeColBuf_;
+  std::vector< ACG::Vec4uc > pickAnyVertexColBuf_;
   
 
 private:
