@@ -80,8 +80,22 @@ CoordsysNode::CoordsysNode(BaseNode* _parent, std::string _name, CoordsysMode _m
   sphere_   = new ACG::GLSphere(slices,stacks);
   cylinder_ = new ACG::GLCylinder(slices, stacks, bodyRadius,false,false);
   cone_     = new ACG::GLCone(slices, stacks, 0, topRadius , false,true);
+  disk_     = new ACG::GLDisk(slices, 10, 0.0f, bodyRadius);
 }
 
+CoordsysNode::~CoordsysNode() {
+  if (sphere_)
+    delete sphere_;
+
+  if (cylinder_)
+    delete cylinder_;
+
+  if (cone_)
+    delete cone_;
+
+  if (disk_)
+    delete disk_;
+}
 
 void
 CoordsysNode::
@@ -583,8 +597,6 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
   GLboolean colorMask[4];
   glGetBooleanv (GL_COLOR_WRITEMASK, colorMask);
 
-  GLUquadricObj *quadric = gluNewQuadric();
-
   // respect sphere radius
   Vec3d proj = _state.project (Vec3d (-0.01, -0.01, -0.01));
   points.push_back (Vec2f (proj[0], proj[1]));
@@ -619,7 +631,9 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
     glColorMask(false, false, false, false);
 
   // 10% more to ensure everything is in
-  gluDisk( quadric, 0, radius * 1.1, 10, 10 );
+  disk_->setInnerRadius(0.0f);
+  disk_->setOuterRadius(radius * 1.1f);
+  disk_->draw(_state);
 
   ACG::GLState::depthFunc (prev_depth);
   _state.pop_modelview_matrix();
@@ -629,8 +643,6 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
 
   if (!_draw)
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-
-  gluDeleteQuadric(quadric);
 }
 
 //----------------------------------------------------------------------------
