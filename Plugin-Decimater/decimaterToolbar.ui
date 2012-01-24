@@ -57,6 +57,9 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QCheckBox" name="cbDistance">
+          <property name="toolTip">
+           <string>The Hausdorff distance between the original and the decimated mesh will be lower than the given tolerance.</string>
+          </property>
           <property name="text">
            <string>Distance</string>
           </property>
@@ -64,6 +67,9 @@
         </item>
         <item row="0" column="2">
          <widget class="QDoubleSpinBox" name="distance">
+          <property name="toolTip">
+           <string>The Hausdorff distance between the original and the decimated mesh will be lower than the given tolerance.</string>
+          </property>
           <property name="decimals">
            <number>3</number>
           </property>
@@ -147,6 +153,9 @@ p, li { white-space: pre-wrap; }
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>The roundness ( radius of the circumference divided by the   length of the shortest edge) after the collapse has to be lower than the given value.</string>
+          </property>
           <property name="text">
            <string>Roundness</string>
           </property>
@@ -176,6 +185,9 @@ p, li { white-space: pre-wrap; }
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>The roundness ( radius of the circumference divided by the   length of the shortest edge) after the collapse has to be lower than the given value.</string>
+          </property>
           <property name="decimals">
            <number>2</number>
           </property>
@@ -192,6 +204,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="4" column="0">
          <widget class="QCheckBox" name="cbAspectRatio">
+          <property name="toolTip">
+           <string>The aspect ration of a triangle( the length of the longest edge divided by its corresponding height) after the collapse has to be greater than the given value.</string>
+          </property>
           <property name="text">
            <string>AspectRatio</string>
           </property>
@@ -199,6 +214,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="4" column="2">
          <widget class="QDoubleSpinBox" name="aspectRatio">
+          <property name="toolTip">
+           <string>The aspect ration of a triangle( the length of the longest edge divided by its corresponding height) after the collapse has to be greater than the given value.</string>
+          </property>
           <property name="minimum">
            <double>1.200000000000000</double>
           </property>
@@ -231,6 +249,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="0">
          <widget class="QCheckBox" name="cbEdgeLength">
+          <property name="toolTip">
+           <string>A collapse is only performed, if the length after the collapse is lower than the given value.</string>
+          </property>
           <property name="text">
            <string>Edge Length</string>
           </property>
@@ -238,6 +259,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="2">
          <widget class="QDoubleSpinBox" name="edgeLength">
+          <property name="toolTip">
+           <string>A collapse is only performed, if the length after the collapse is lower than the given value.</string>
+          </property>
           <property name="singleStep">
            <double>0.010000000000000</double>
           </property>
@@ -245,6 +269,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="5" column="0">
          <widget class="QCheckBox" name="cbIndependentSets">
+          <property name="toolTip">
+           <string>Lock one-ring around remaining vertex after a collapse to prevent further collapses of halfedges incident to the one-ring vertices.</string>
+          </property>
           <property name="text">
            <string>Independent Sets</string>
           </property>
