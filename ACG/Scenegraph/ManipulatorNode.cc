@@ -105,7 +105,7 @@ ManipulatorNode::
 ~ManipulatorNode()
 {
   if (cylinder_)
-    gluDeleteQuadric(cylinder_);
+    delete cylinder_;
 }
 
 
@@ -186,9 +186,7 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
 
     if (!cylinder_)
     {
-      cylinder_ = gluNewQuadric();
-      gluQuadricDrawStyle(cylinder_, GLU_FILL);
-      gluQuadricNormals(cylinder_, GLU_SMOOTH);
+      cylinder_ = new GLCylinder(cylinder_slices_, cylinder_stacks_, cylinder_radius_, false, false);
     }
 
     _state.push_modelview_matrix();
@@ -211,12 +209,9 @@ ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode *
 	glRotatef(-90, 0.0, 1.0, 0.0);*/
 
     ACG::GLState::shadeModel(GL_SMOOTH);
-    gluCylinder(cylinder_,
-		cylinder_radius_,
-		cylinder_radius_,
-                cylinder_height_,
-		cylinder_slices_,
-		cylinder_stacks_);
+    cylinder_->setBottomRadius(cylinder_radius_);
+    cylinder_->setTopRadius(cylinder_radius_);
+    cylinder_->draw(_state, cylinder_height_);
 
 	//glPopMatrix();
 
@@ -554,8 +549,9 @@ void ManipulatorNode::pick(GLState& _state, PickTarget _target) {
 			setup_cylinder_system(_state);
 			//glLoadName(1);
 			_state.pick_set_name(0);
-			gluCylinder(cylinder_, cylinder_radius_, cylinder_radius_, cylinder_height_, cylinder_slices_,
-			        cylinder_stacks_);
+			cylinder_->setBottomRadius(cylinder_radius_);
+		  cylinder_->setTopRadius(cylinder_radius_);
+			cylinder_->draw(_state, cylinder_height_);
 			_state.pop_modelview_matrix();
 
 			// sphere

@@ -64,6 +64,8 @@
 #include <QEvent>
 #include <QMouseEvent>
 
+#include <ACG/GL/GLPrimitives.hh>
+
 
 //== NAMESPACES ===============================================================
 
@@ -166,7 +168,7 @@ private:
   bool               draw_cylinder_;
 
   Vec3d              direction_;
-  GLUquadricObj*     cylinder_;
+  GLCylinder*        cylinder_;
   double             cylinder_radius_;
   double             cylinder_height_;
   int                cylinder_slices_;
