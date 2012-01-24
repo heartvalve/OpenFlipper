@@ -188,7 +188,7 @@ These vertices can usually be removed without destroying the features of the mes
                  <string/>
                 </property>
                 <property name="text">
-                 <string>&gt;=</string>
+                 <string>&gt;</string>
                 </property>
                </widget>
               </item>
