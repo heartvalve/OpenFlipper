@@ -71,11 +71,10 @@ ScriptingPlugin::ScriptingPlugin() :
    highlighterLive_(0),
    highlighterList_(0),
    lastFile_(""),
-   debuggerButton_(0),
+   debuggerButton_(0)
 #ifdef QT_SCRIPTTOOLS_LIB
-   debugger_(0)
+   ,debugger_(0)
 #endif
-
 {
 
 }
@@ -151,6 +150,7 @@ void ScriptingPlugin::pluginsInitialized() {
   connect (debuggerButton_, SIGNAL( triggered() ), this, SLOT( slotDebuggerButton() ) );
 #else
   debuggerButton_->setEnabled(false);
+  debuggerButton_->setToolTip(tr("QtScriptTools library not available. Debugger is not available!"));
 #endif
 
   toolBar->addSeparator();
@@ -223,7 +223,7 @@ void ScriptingPlugin::pluginsInitialized() {
   emit getScriptingEngine( engine  );
   debugger_ = new QScriptEngineDebugger;
 
-  if ( OpenFlipperSettings().value("Scripting/QtScriptDebugger",true).toBool() )
+  if ( OpenFlipperSettings().value("Scripting/QtScriptDebugger",false).toBool() )
     debugger_->attachTo(engine);
 #endif
 }
@@ -416,8 +416,6 @@ void ScriptingPlugin::slotExecuteScriptButton() {
 }
 
 void ScriptingPlugin::slotDebuggerButton() {
-
-  std::cerr << "Debuggerbutton" << std::endl;
 
 #ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngine* engine;
