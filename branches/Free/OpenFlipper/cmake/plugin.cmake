@@ -356,6 +356,7 @@ function (_build_openflipper_plugin plugin)
       .
       ${CMAKE_SOURCE_DIR}
       ${OPENMESH_INCLUDE_DIR}
+      ${OPENVOLUMEMESH_INCLUDE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
       ${${_PLUGIN}_DEPS_INCDIRS}
@@ -492,8 +493,9 @@ function (_build_openflipper_plugin plugin)
       # generate dllinport defines
       add_definitions (-DACGDLL -DUSEACG -DPLUGINLIBDLL -DUSEPLUGINLIBDLL)
       target_link_libraries (Plugin-${plugin}
-	OpenMeshCore
+    	OpenMeshCore
         OpenMeshTools
+        ${OPENVOLUMEMESH_LIBRARY}
         ACG
         OpenFlipperPluginLib
         ${GLUT_LIBRARIES}
