@@ -76,8 +76,6 @@ SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_p
                bCoordFramesVisible_(false),
                skeleton_(_skeleton),
                hAni_(),
-               quadricInitialized_(false),
-               quadric_(0),
                fFrameSize_(0.0)
 {
   this->multipassNodeSetActive(3, true);
@@ -94,9 +92,7 @@ SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_p
 template <class SkeletonType>
 SkeletonNodeT<SkeletonType>::~SkeletonNodeT()
 {
-  // delete quadric if initialized
-  if (quadricInitialized_)
-    gluDeleteQuadric(quadric_);
+
 }
 
 
@@ -615,27 +611,16 @@ void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode
   else
     _state.rotate(rot_angle, 1, 0, 0);
 
-  if (!quadricInitialized_)
-    quadric_ = gluNewQuadric();
-
-  if ( _drawMode == DrawModes::WIREFRAME ){
-    gluQuadricDrawStyle(quadric_, GLU_LINE);
-  } else {
-    gluQuadricDrawStyle(quadric_, GLU_FILL);
-  }
-
-  gluQuadricNormals(quadric_, GLU_SMOOTH);    
-
-
   double boneLength = _axis.norm();
   double radius     = boneLength * 0.07;
   
   //draw the large cone from midPoint to the end of the bone
-  gluCylinder(quadric_, radius, 0, boneLength * 0.9, slices, stacks);
+  GLCone cone = ACG::GLCone(slices,stacks,radius,0.0f,false,false);
+  cone.draw(_state,boneLength*0.9);
 
   //rotate 180.0 and draw the the small cone from midPoint to the start
   _state.rotate(180.0, 1, 0, 0);  
-  gluCylinder(quadric_, radius, 0, boneLength * 0.1, slices, stacks);
+  cone.draw(_state,boneLength*0.1);
   
   _state.pop_modelview_matrix();
 }
