@@ -966,18 +966,6 @@ void SkeletonEditingPlugin::splitJoint(QMouseEvent* _event)
 
 			Skeleton::Joint* joint = skeleton->joint( target_idx );
 
-			if ( joint )
-			{
-				//clear selection
-				for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
-					(*it)->setSelected(false);
-
-				currentJoint_ = joint->id();
-				joint->setSelected(true);
-			}
-			else
-				return;
-
 			splitBone(object->id(), joint->id());
 		}
 	}
