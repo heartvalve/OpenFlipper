@@ -1321,7 +1321,11 @@ template <class Mesh>
 void DrawMeshT<Mesh>::updatePickingFaces(ACG::GLState& _state )
 {
   // Make sure, the face buffers are up to date before generating the picking data!
-//  updatePerFaceBuffers();
+  if (!numTris_ && mesh_.n_faces())
+  {
+    rebuild_ = REBUILD_FULL;
+    rebuild();
+  }
 
   pickFaceVertexBuf_.resize(3 * numTris_);
   pickFaceColBuf_.resize(3 * numTris_);
@@ -1348,8 +1352,11 @@ void DrawMeshT<Mesh>::updatePickingFaces(ACG::GLState& _state )
 template <class Mesh>
 void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
 {
-  // stripify()
-
+  if (!numTris_ && mesh_.n_faces())
+  {
+    rebuild_ = REBUILD_FULL;
+    rebuild();
+  }
   
   pickFaceVertexBuf_.resize(3 * numTris_);
   pickAnyFaceColBuf_.resize(3 * numTris_);
