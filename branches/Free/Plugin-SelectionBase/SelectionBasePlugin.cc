@@ -165,6 +165,7 @@ void SelectionBasePlugin::initializePlugin() {
 
     // Set pick mode toolbar
     pickModeToolBar_ = new QToolBar("Selection Picking Toolbar");
+    pickModeToolBar_->setObjectName("Selection_Picking_Toolbar");
 
     // Create primitive toolbar
     primitivesBarGroup_ = new QActionGroup(pickModeToolBar_);
