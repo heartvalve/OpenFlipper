@@ -25,9 +25,8 @@ CameraNode::CameraNode(BaseNode* _parent, std::string _name) :
     BaseNode(_parent, _name),
     bbmin_(FLT_MAX,FLT_MAX,FLT_MAX),
     bbmax_(FLT_MIN,FLT_MIN,FLT_MIN),
-    upQuadric_(0),
-    rightQuadric_(0),
-    viewQuadric_(0),
+    cylinder_(0),
+    cone_(0),
     showFrustum_(false) {
 
     modelView_.identity();
@@ -45,16 +44,16 @@ CameraNode::CameraNode(BaseNode* _parent, std::string _name) :
 
     updateBoundingBoxes(modelView_);
 
-    upQuadric_    = gluNewQuadric();
-    rightQuadric_ = gluNewQuadric();
-    viewQuadric_  = gluNewQuadric();
+    cylinder_ = new GLCylinder(8, 4, 1.0f, false, false);
+    cone_ = new GLCone(8, 1, 1.0f, 0.0f, true, false);
 }
 
 CameraNode::~CameraNode() {
+  if (cylinder_)
+    delete cylinder_;
 
-    gluDeleteQuadric(upQuadric_);
-    gluDeleteQuadric(rightQuadric_);
-    gluDeleteQuadric(viewQuadric_);
+  if (cone_)
+    delete cone_;
 }
 
 void CameraNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
@@ -258,11 +257,15 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     _state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
     _state.set_specular_color(ACG::Vec4f(1.0, 0.4, 0.4, 1.0));
 
-    gluCylinder(rightQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->setBottomRadius(axis_length/20.0f);
+    cylinder_->setTopRadius(axis_length/20.0f);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->setBottomRadius(axis_length/5.0f);
+    cone_->setTopRadius(0.0f);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
     // Draw up vector
@@ -272,11 +275,11 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     _state.set_diffuse_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
     _state.set_specular_color(ACG::Vec4f(0.4, 1.0, 0.4, 1.0));
 
-    gluCylinder(upQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
     // Draw viewing direction vector
@@ -286,11 +289,11 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     _state.set_diffuse_color(ACG::Vec4f(0.0, 0.0, 1.0, 1.0));
     _state.set_specular_color(ACG::Vec4f(0.4, 0.4, 1.0, 1.0));
 
-    gluCylinder(viewQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
 
@@ -360,31 +363,35 @@ void CameraNode::pick(GLState& _state, PickTarget /*_target*/) {
     // Draw right vector
     _state.rotate(90, 0.0, 1.0, 0.0);
 
-    gluCylinder(rightQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->setBottomRadius(axis_length/20.0f);
+    cylinder_->setTopRadius(axis_length/20.0f);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->setBottomRadius(axis_length/5.0f);
+    cone_->setTopRadius(0.0f);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
     // Draw up vector
     _state.rotate(-90, 1.0, 0.0, 0.0);
 
-    gluCylinder(upQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
     // Draw viewing direction vector
     _state.rotate(90, 0.0, 1.0, 0.0);
 
-    gluCylinder(viewQuadric_, axis_length/20 , axis_length/20 , axis_length , 8, 4);
+    cylinder_->draw(_state, axis_length);
 
     // Draw top
     _state.translate(0.0, 0.0, axis_length );
-    glutSolidCone(axis_length/5 , axis_length/2 , 8, 1);
+    cone_->draw(_state, axis_length/2.0f);
     _state.translate(0.0, 0.0, -axis_length );
 
     // Reset to previous modelview

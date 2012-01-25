@@ -13,6 +13,7 @@
 
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/GLPrimitives.hh>
 #include <string>
 #include <vector>
 
@@ -108,9 +109,9 @@ private:
     double near_;
     double far_;
 
-    GLUquadric* upQuadric_;
-    GLUquadric* rightQuadric_;
-    GLUquadric* viewQuadric_;
+    GLCylinder* cylinder_;
+    GLCone* cone_;
+
 
     QString encodedView_;
 
