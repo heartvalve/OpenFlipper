@@ -231,11 +231,19 @@ LightNode::LightNode( BaseNode* _parent,
     if(lightSourceHandle == 0) {
         lightSourceHandle = new LightSourceHandle();
     }
+
+    sphere_ = new ACG::GLSphere(10, 10);
+    cone_ = new ACG::GLCone(10, 10, 1.0f, 1.0f, false, true);
 }
 
 //----------------------------------------------------------------------------
 
 LightNode::~LightNode() {
+  if (sphere_)
+    delete sphere_;
+
+  if (cone_)
+    delete cone_;
 }
     
 //----------------------------------------------------------------------------
@@ -314,8 +322,6 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          // Backup variables
          GLboolean lighting_backup;
  
-         GLUquadricObj* quadric = gluNewQuadric();
- 
          // Origin
          _state.push_modelview_matrix();
          // Transform to light origin and direction
@@ -339,8 +345,6 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
              // Reset all stored attributes before returning
              if(!lighting_backup) ACG::GLState::disable(GL_LIGHTING);
  
-             gluDeleteQuadric(quadric);
- 
              _state.pop_modelview_matrix();
              
              return;
@@ -360,8 +364,7 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          
          ACG::GLState::enable(lightId_);
          
-         gluQuadricOrientation(quadric, GLU_OUTSIDE);
-         gluSphere( quadric, light_.radius(), 10, 10 );
+         sphere_->draw(_state, light_.radius());
  
          // Visualize spot cone (or direction)
          if(light_.spotCutoff() < 180.0f) {
@@ -377,11 +380,15 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
              _state.rotate(angle, rA[0], rA[1], rA[2]);
  
              // Inverse normal orientation
-             gluQuadricOrientation(quadric, GLU_INSIDE);
-             gluCylinder( quadric, light_.radius()/6, light_.radius()/6, light_.radius()*2, 10, 10 );
+             cone_->setNormalOrientation(ACG::GLPrimitive::INSIDE);
+             cone_->setBottomRadius(light_.radius()/6.0f);
+             cone_->setTopRadius(light_.radius()/6.0f);
+             cone_->draw(_state, light_.radius()*2.0f);
              _state.translate(0.0, 0.0, light_.radius()*2);
              // Draw arrow tip
-             gluCylinder( quadric, light_.radius()/2, 0, light_.radius(), 10, 10 );
+             cone_->setBottomRadius(light_.radius()/2.0f);
+             cone_->setTopRadius(0.0f);
+             cone_->draw(_state, light_.radius());
          }
          
          // Free light id
@@ -395,8 +402,6 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
  
          // Lighting
          if(!lighting_backup) ACG::GLState::disable(GL_LIGHTING);
- 
-         gluDeleteQuadric(quadric);
  
          _state.pop_modelview_matrix();
      }
@@ -443,14 +448,12 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
              ACG::Vec3d spotDir = light_.realSpotDirection_;          
              ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
           
-             GLUquadricObj* quadric = gluNewQuadric();
-
              // Origin
              _state.push_modelview_matrix();
              // Transform to light origin and direction
              _state.translate(p[0], p[1], p[2]);
                  
-             gluSphere( quadric, light_.radius(), 10, 10 );
+             sphere_->draw(_state, light_.radius());
 
              // Visualize spot cone (or direction)
              if(light_.spotCutoff() < 180.0f) {
@@ -465,13 +468,16 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
                  ACG::Vec3d rA = z % spot;
                  _state.rotate(angle, rA[0], rA[1], rA[2]);
 
-                 gluCylinder( quadric, light_.radius()/6, light_.radius()/6, light_.radius()*2, 10, 10 );
+                 cone_->setNormalOrientation(ACG::GLPrimitive::OUTSIDE);
+                 cone_->setBottomRadius(light_.radius()/6.0f);
+                 cone_->setTopRadius(light_.radius()/6.0f);
+                 cone_->draw(_state, light_.radius()*2.0f);
                  _state.translate(0.0, 0.0, light_.radius()*2);
                  // Draw arrow tip
-                 gluCylinder( quadric, light_.radius()/2, 0, light_.radius(), 10, 10 );
+                 cone_->setBottomRadius(light_.radius()/2.0f);
+                 cone_->setTopRadius(0.0f);
+                 cone_->draw(_state, light_.radius());
              }
-
-             gluDeleteQuadric(quadric);
 
              _state.pop_modelview_matrix();
              
