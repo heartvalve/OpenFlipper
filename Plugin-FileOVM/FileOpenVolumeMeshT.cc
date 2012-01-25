@@ -146,7 +146,7 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
 
     // Read faces and find the respective halffaces
     iff >> s;
-    if( s != "Polyhedra") {
+    if(s != "Polyhedra") {
         std::cerr << "ERROR reading OpenVolumeMesh (Polyhedra Section Failed)\n";
         iff.close();
         return;
@@ -257,12 +257,6 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
         }
     }
     iff.close();
-
-    // Compute top-down-adjacencies
-    _mesh.update_adjacencies();
-
-    // Compute face normals
-    _mesh.request_face_normals();
 
     std::cerr << "######## openvolumemesh info #########\n";
     std::cerr << "#vertices: " << _mesh.n_vertices() << std::endl;

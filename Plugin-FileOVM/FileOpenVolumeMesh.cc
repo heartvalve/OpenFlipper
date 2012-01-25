@@ -109,7 +109,7 @@ void FileOpenVolumeMeshPlugin::initializePlugin() {
 
 
 QString FileOpenVolumeMeshPlugin::getLoadFilters() {
-    return QString(tr("Polyhedral Volume Mesh files ( *.ovm *.polyvolmesh )"));
+    return QString(tr("Polyhedral Volume Mesh files ( *.ovm *.polyvolmesh *.tetmesh )"));
 }
 ;
 
@@ -201,6 +201,12 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
 
                 loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
                          topology_checks, correct_face_order);
+
+                // Compute top-down-adjacencies
+                obj->mesh()->update_adjacencies();
+
+                // Compute face normals
+                obj->mesh()->request_face_normals();
 
             } else {
                 if(!fileManager_.readFile(_filename.toStdString(), *(obj->mesh()),
