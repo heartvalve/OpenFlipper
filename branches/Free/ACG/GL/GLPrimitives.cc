@@ -50,6 +50,7 @@ namespace ACG {
 
 GLPrimitive::GLPrimitive() :
         vboDataInvalid_(false),
+        normalOrientation_(OUTSIDE),
         numTris_(0),
         vboData_(0),
         curTriPtr_(0),
@@ -320,6 +321,14 @@ void GLCone::setTopRadius(float _topRadius) {
 
 //------------------------------------------------------------------------
 
+void GLCone::setNormalOrientation(NormalOrientation orientation) {
+  if (normalOrientation_ != orientation)
+    vboDataInvalid_ = true;
+  normalOrientation_ = orientation;
+}
+
+//------------------------------------------------------------------------
+
 void GLCone::draw(GLState& _state, float _height, const ACG::Vec3f& _center, ACG::Vec3f _upDir)
 {
 //  ACG::mat4 mWorld = ACG::translate(ACG::mat4(1.0f), _center);
@@ -439,9 +448,15 @@ void GLCone::addTriangle(int sl0, int st0, int sl1, int st1, int sl2, int st2)
   p[0] = positionOnCone(sl0, st0);
   p[1] = positionOnCone(sl1, st1);
   p[2] = positionOnCone(sl2, st2);
-  n[0] = normalOnCone(sl0, st0);
-  n[1] = normalOnCone(sl1, st1);
-  n[2] = normalOnCone(sl2, st2);
+  if (normalOrientation_ == OUTSIDE) {
+    n[0] = normalOnCone(sl0, st0);
+    n[1] = normalOnCone(sl1, st1);
+    n[2] = normalOnCone(sl2, st2);
+  } else if (normalOrientation_ == INSIDE) {
+    n[0] = -normalOnCone(sl0, st0);
+    n[1] = -normalOnCone(sl1, st1);
+    n[2] = -normalOnCone(sl2, st2);
+  }
   tex[0] = texCoordOnCone(sl0, st0);
   tex[1] = texCoordOnCone(sl1, st1);
   tex[2] = texCoordOnCone(sl2, st2);
@@ -463,9 +478,15 @@ void GLCone::updateVBO()
       p[0] = ACG::Vec3f(0.0, 0.0, 1.0);
       p[1] = positionOnCone(sl + 1, stacks_);
       p[2] = positionOnCone(sl, stacks_);
-      n[0] = ACG::Vec3f(0.0, 0.0, 1.0);
-      n[1] = ACG::Vec3f(0.0, 0.0, 1.0);
-      n[2] = ACG::Vec3f(0.0, 0.0, 1.0);
+      if (normalOrientation_ == OUTSIDE) {
+        n[0] = ACG::Vec3f(0.0, 0.0, 1.0);
+        n[1] = ACG::Vec3f(0.0, 0.0, 1.0);
+        n[2] = ACG::Vec3f(0.0, 0.0, 1.0);
+      } else if (normalOrientation_ == INSIDE) {
+        n[0] = ACG::Vec3f(0.0, 0.0, -1.0);
+        n[1] = ACG::Vec3f(0.0, 0.0, -1.0);
+        n[2] = ACG::Vec3f(0.0, 0.0, -1.0);
+      }
 
       tex[0] = ACG::Vec2f(0.5, 0.5);
       double beta = ((2.0 * M_PI) / slices_) * (sl + 1);
@@ -489,9 +510,15 @@ void GLCone::updateVBO()
       p[0] = ACG::Vec3f(0.0, 0.0, 0.0);
       p[1] = positionOnCone(sl, 0);
       p[2] = positionOnCone(sl + 1, 0);
-      n[0] = ACG::Vec3f(0.0, 0.0, -1.0);
-      n[1] = ACG::Vec3f(0.0, 0.0, -1.0);
-      n[2] = ACG::Vec3f(0.0, 0.0, -1.0);
+      if (normalOrientation_ == OUTSIDE) {
+        n[0] = ACG::Vec3f(0.0, 0.0, -1.0);
+        n[1] = ACG::Vec3f(0.0, 0.0, -1.0);
+        n[2] = ACG::Vec3f(0.0, 0.0, -1.0);
+      } else if (normalOrientation_ == INSIDE) {
+        n[0] = ACG::Vec3f(0.0, 0.0, 1.0);
+        n[1] = ACG::Vec3f(0.0, 0.0, 1.0);
+        n[2] = ACG::Vec3f(0.0, 0.0, 1.0);
+      }
 
       tex[0] = ACG::Vec2f(0.5, 0.5);
       double beta = ((2.0 * M_PI) / slices_) * (sl);
