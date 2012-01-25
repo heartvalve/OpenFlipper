@@ -37,6 +37,10 @@ find_package (OpenMesh)
 if (NOT OPENMESH_FOUND)
     message (FATAL_ERROR "OpenMesh not found!")
 endif ()
+find_package (OpenVolumeMesh)
+if (NOT OPENVOLUMEMESH_FOUND)
+    message (FATAL_ERROR "OpenVolumeMesh not found!")
+endif ()
 
 
 # ========================================================================
