@@ -142,10 +142,6 @@ private:
   /// The active pose, this one is going to be rendered
   AnimationHandle hAni_;
   
-  ///quadric for drawing cylinders
-  bool quadricInitialized_;
-  GLUquadricObj* quadric_;
-  
   /// size for the coord-frame
   double fFrameSize_;
 
