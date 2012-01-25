@@ -78,6 +78,8 @@ public:
   // triangle count must be known before updateVBO
   virtual int getNumTriangles() = 0;
 
+  enum NormalOrientation {OUTSIDE, INSIDE};
+
 protected:
 
   // calls addTriangleToVBO to fill vertex buffer
@@ -90,6 +92,8 @@ protected:
   void unBindVBO();
 
   bool vboDataInvalid_;
+
+  NormalOrientation normalOrientation_;
 
 private:
 
@@ -149,6 +153,7 @@ public:
   void updateVBO();
   void setBottomRadius(float _bottomRadius);
   void setTopRadius(float _topRadius);
+  void setNormalOrientation(NormalOrientation orienation);
 
 private:
 
