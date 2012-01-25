@@ -240,7 +240,7 @@ bool SkeletonEditingPlugin::canModify(QMouseEvent* _event)
 {
 	//if jointPreview_ is true, we could modify the skeleton
 	//so the skeleton is in reference pose
-	if (jointPreview_)
+	if (jointPreview_ || (PluginFunctions::pickMode() == ("InsertJoints") && _event->type() == QEvent::MouseButtonDblClick))
 		return true;
 
 	// try to select a joint from which the insertion should be started
