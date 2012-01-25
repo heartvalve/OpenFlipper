@@ -58,6 +58,7 @@
 
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/GLPrimitives.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <vector>
 
@@ -87,7 +88,7 @@ public:
   CoordinateSystemNode( BaseNode* _parent=0, std::string  _name="<TextNode>");
 
   /// destructor
-  ~CoordinateSystemNode() {};
+  ~CoordinateSystemNode();
 
   /// static name of this class
   ACG_CLASSNAME(CoordinateSystemNode);
@@ -136,6 +137,14 @@ public:
     /// Size of the coordsys
     double coordsysSize_;
 
+    int slices_;
+    int stacks_;
+    int loops_;
+
+    GLSphere* sphere_;
+    GLCone* cone_;
+    GLCylinder* cylinder_;
+    GLDisk* disk_;
 };
 
 
