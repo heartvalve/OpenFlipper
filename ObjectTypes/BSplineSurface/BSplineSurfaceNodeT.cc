@@ -788,9 +788,8 @@ draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices,
   _state.push_modelview_matrix();
   _state.translate( _p0[0], _p0[1], _p0[2]);
 
-  GLUquadricObj *qobj = gluNewQuadric();
-  gluSphere(qobj, _r, _slices, _stacks);
-  gluDeleteQuadric(qobj);
+  GLSphere sphere(_slices,_stacks);
+    sphere.draw(_state,_r);
 
   _state.pop_modelview_matrix();
 }
@@ -819,9 +818,8 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state,
   else
     _state.rotate(rot_angle,1,0,0);
 
-  GLUquadricObj *qobj = gluNewQuadric();
-  gluCylinder(qobj, _r, _r, _axis.norm(), _slices, _stacks);
-  gluDeleteQuadric(qobj);
+  GLCylinder cylinder(_slices,_stacks,_r,true,true);
+  cylinder.draw(_state,_axis.norm());
 
   _state.pop_modelview_matrix();
 }
