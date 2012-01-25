@@ -59,6 +59,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/GLPrimitives.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <string>
 #include <vector>
@@ -306,6 +307,9 @@ private:
   
   /// Internal light id
   GLenum lightId_;
+
+  ACG::GLCone* cone_;
+  ACG::GLSphere* sphere_;
 };
 
 /**
