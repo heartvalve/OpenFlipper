@@ -320,15 +320,24 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       // If the vertex is selected, it will be always red
       // If it is not selected,
       if ( (*it)->selected() )
-        glColor4f(1.0, 0.0, 0.0 ,1.0);
+      {
+      	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+      	_state.set_ambient_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+      	_state.set_specular_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+      }
       else {
         // If it is the root joint, it will get some kind of orange color
         // Otherwise the the Base color is used
         if ( (*it)->isRoot() )
-          glColor4f(1.0, 0.66, 0.0 ,1.0);
+        {
+        	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
+        	_state.set_ambient_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
+        	_state.set_specular_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
+        }
         else {
-
-          glColor4f( jointColor[0], jointColor[1] , jointColor[2], 1.0 );
+        	_state.set_diffuse_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
+        	_state.set_ambient_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
+        	_state.set_specular_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         }
       }
 
