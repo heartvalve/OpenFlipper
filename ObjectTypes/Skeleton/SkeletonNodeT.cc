@@ -303,11 +303,12 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
   Pose *pose = skeleton_.pose(hAni_);
   typename SkeletonType::Iterator it;
   
+
+
   // draw points
   //
   if (_drawMode == DrawModes::POINTS)
   {
-    
     Vec4f jointColor;
     getJointColor(_state.base_color(), jointColor);
     
@@ -323,21 +324,22 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       {
       	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       	_state.set_ambient_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
-      	_state.set_specular_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+      	_state.set_base_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       }
       else {
         // If it is the root joint, it will get some kind of orange color
         // Otherwise the the Base color is used
         if ( (*it)->isRoot() )
         {
-        	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
-        	_state.set_ambient_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
-        	_state.set_specular_color(ACG::Vec4f(1.0, 0.66, 0.0 ,1.0));
+        	ACG::Vec4f root_color = ACG::Vec4f(1.0, 0.66, 0.0 ,1.0);
+        	_state.set_diffuse_color(root_color);
+        	_state.set_ambient_color(root_color);
+        	_state.set_base_color(root_color);
         }
         else {
         	_state.set_diffuse_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         	_state.set_ambient_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
-        	_state.set_specular_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
+        	_state.set_base_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         }
       }
 
@@ -362,6 +364,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       const double sphereSize = difference.norm();
 
       sphere_->draw(_state,sphereSize,ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
+
     }
 
 
