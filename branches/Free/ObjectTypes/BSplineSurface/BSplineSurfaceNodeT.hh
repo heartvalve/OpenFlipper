@@ -111,10 +111,24 @@ class BSplineSurfaceNodeT : public BaseNode
     knot_selection_texture_idx_ = 0;
     pick_texture_idx_ = 0;  
     arb_texture_idx_ = 0;
+
+    cylinder_ = new GLCylinder(16, 1, 1.0f, true, true);
+    sphere_ = new GLSphere(5, 5);
+    fancySphere_ = new GLSphere(16, 16);
   }
 
   /// Destructor
-  ~BSplineSurfaceNodeT() {}
+  ~BSplineSurfaceNodeT()
+  {
+    if (cylinder_)
+      delete cylinder_;
+
+    if (sphere_)
+      delete sphere_;
+
+    if (fancySphere_)
+      delete fancySphere_;
+  }
 
   enum BSplineDrawMode {
     NORMAL = 0,
@@ -184,8 +198,8 @@ private:
   void pick_spline( GLState& _state );
   void pick_surface( GLState& _state, unsigned int _offset );
 
-  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices = 16, unsigned int _stacks = 1);
-  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, unsigned int _slices = 5, unsigned int _stacks = 5);
+  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state);
+  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, GLSphere* _sphere);
 
   /// Copy constructor (not used)
   BSplineSurfaceNodeT(const BSplineSurfaceNodeT& _rhs);
@@ -279,6 +293,9 @@ private:
   float  arb_texture_repeat_u_;
   float  arb_texture_repeat_v_;
   
+  GLCylinder* cylinder_;
+  GLSphere* sphere_;
+  GLSphere* fancySphere_;
 };
 
 //=============================================================================
