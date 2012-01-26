@@ -70,13 +70,16 @@
 //== IMPLEMENTATION ==========================================================
 
 void InfoMeshObjectPlugin::initializePlugin() {
-  infoBar_ = new InfoBar();
 
-  // Create info dialog
-  info_ = new InfoDialog();
+  if ( OpenFlipper::Options::gui()) {
+    infoBar_ = new InfoBar();
 
-  // Set default pick mode in dialog box
-  info_->pickMode->setCurrentIndex(0); // PICK_FACES
+    // Create info dialog
+    info_ = new InfoDialog();
+
+    // Set default pick mode in dialog box
+    info_->pickMode->setCurrentIndex(0); // PICK_FACES
+  }
 }
 
 /// initialize the plugin
@@ -85,8 +88,10 @@ void InfoMeshObjectPlugin::pluginsInitialized() {
   //set the slot descriptions
   setDescriptions();
 
-  emit addWidgetToStatusbar(infoBar_);
-  infoBar_->hideCounts();
+  if ( OpenFlipper::Options::gui()) {
+    emit addWidgetToStatusbar(infoBar_);
+    infoBar_->hideCounts();
+  }
   
 }
 
@@ -740,15 +745,15 @@ bool InfoMeshObjectPlugin::getEdgeLengths(int _id, double &min, double &max, dou
 
 void InfoMeshObjectPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType& _type){
 
+  if ( !infoBar_ ) {
+    return;
+  }
+
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 
     // This block is only interesting for topology changes
     if ( ! _type.contains(UPDATE_TOPOLOGY) ) {
       return;
-    }
-      
-    if ( !infoBar_ ) {
-      return;    
     }
 
     bool found = false;
@@ -806,7 +811,8 @@ void InfoMeshObjectPlugin::slotObjectSelectionChanged( int _identifier ){
 //------------------------------------------------------------------------------
 
 void InfoMeshObjectPlugin::slotAllCleared(){
-  infoBar_->hideCounts();
+  if ( infoBar_ )
+    infoBar_->hideCounts();
 }
 
 Q_EXPORT_PLUGIN2( InfoMeshObjectPlugin , InfoMeshObjectPlugin );

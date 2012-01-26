@@ -102,6 +102,8 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     void slotObjectSelectionChanged( int _identifier );
     void slotAllCleared();
     
+    void noguiSupported( ) {} ;
+
     // InformationInterface
     void slotInformationRequested(const QPoint _clickedPoint, DataType _type);
     DataType supportedDataTypes();
