@@ -76,11 +76,14 @@ SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_p
                bCoordFramesVisible_(false),
                skeleton_(_skeleton),
                hAni_(),
-               fFrameSize_(0.0)
+               fFrameSize_(0.0),
+               slices_(6),
+               stacks_(1)
 {
   this->multipassNodeSetActive(3, true);
 
   sphere_ = new ACG::GLSphere(10, 10);
+  cone_ = new ACG::GLCone(slices_, stacks_, 1.0f, 0.0f, false, false);
 }
 
 
@@ -92,7 +95,11 @@ SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_p
 template <class SkeletonType>
 SkeletonNodeT<SkeletonType>::~SkeletonNodeT()
 {
+  if (sphere_)
+    delete sphere_;
 
+  if (cone_)
+    delete cone_;
 }
 
 
@@ -593,9 +600,6 @@ void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode
   
   _state.translate(midPoint[0], midPoint[1], midPoint[2]);
 
-  unsigned int slices(6);
-  unsigned int stacks(1);
-
   Point  direction = _axis;
   Point  z_axis(0,0,1);
   Point  rot_normal;
@@ -615,12 +619,13 @@ void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode
   double radius     = boneLength * 0.07;
   
   //draw the large cone from midPoint to the end of the bone
-  GLCone cone = ACG::GLCone(slices,stacks,radius,0.0f,false,false);
-  cone.draw(_state,boneLength*0.9);
+  cone_->setBottomRadius(radius);
+  cone_->setTopRadius(0.0f);
+  cone_->draw(_state,boneLength*0.9);
 
   //rotate 180.0 and draw the the small cone from midPoint to the start
   _state.rotate(180.0, 1, 0, 0);  
-  cone.draw(_state,boneLength*0.1);
+  cone_->draw(_state,boneLength*0.1);
   
   _state.pop_modelview_matrix();
 }
