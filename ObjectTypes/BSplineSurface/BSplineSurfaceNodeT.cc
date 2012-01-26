@@ -582,7 +582,7 @@ drawFancyControlNet(GLState& _state)
       for (unsigned int j = 0; j < bsplineSurface_.n_control_points_n(); ++j)
       {
         if( bsplineSurface_.controlpoint_selection(i, j))
-          draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
+          draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, fancySphere_);
       }
     }
     
@@ -594,7 +594,7 @@ drawFancyControlNet(GLState& _state)
 
   for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
     for (unsigned int j = 0; j < bsplineSurface_.n_control_points_n(); ++j)
-      draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
+      draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, fancySphere_);
 
 
   // draw line segments
@@ -708,7 +708,7 @@ pick_vertices( GLState& _state )
       double r = l*tan(angle);
 
       // draw 3d sphere
-      draw_sphere( bsplineSurface_(i,j), r, _state);
+      draw_sphere( bsplineSurface_(i,j), r, _state, sphere_);
     }
   }
 }
@@ -782,14 +782,13 @@ pick_surface( GLState& _state, unsigned int _offset )
 template <class BSplineSurfaceType>
 void
 BSplineSurfaceNodeT<BSplineSurfaceType>::
-draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
+draw_sphere( const Point& _p0, double _r, GLState& _state, GLSphere* _sphere)
 {
   // draw 3d sphere
   _state.push_modelview_matrix();
   _state.translate( _p0[0], _p0[1], _p0[2]);
 
-  GLSphere sphere(_slices,_stacks);
-    sphere.draw(_state,_r);
+  _sphere->draw(_state,_r);
 
   _state.pop_modelview_matrix();
 }
@@ -799,7 +798,7 @@ draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices,
 template <class BSplineSurfaceType>
 void
 BSplineSurfaceNodeT<BSplineSurfaceType>::
-draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
+draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
 {
   _state.push_modelview_matrix();
   _state.translate(_p0[0], _p0[1], _p0[2]);
@@ -818,8 +817,9 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state,
   else
     _state.rotate(rot_angle,1,0,0);
 
-  GLCylinder cylinder(_slices,_stacks,_r,true,true);
-  cylinder.draw(_state,_axis.norm());
+  cylinder_->setBottomRadius(_r);
+  cylinder_->setTopRadius(_r);
+  cylinder_->draw(_state,_axis.norm());
 
   _state.pop_modelview_matrix();
 }
