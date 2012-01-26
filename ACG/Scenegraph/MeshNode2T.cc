@@ -430,11 +430,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     _state.set_base_color(base_color_backup);
   }
   
-  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED ) && mesh_.has_face_colors()  && mesh_.n_faces() > 0)
+  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED ) && mesh_.has_face_colors() && mesh_.has_vertex_normals() && mesh_.n_faces() > 0)
   {
     Vec4f base_color_backup = _state.base_color();
 
-    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::enable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
     ACG::GLState::depthRange(0.01, 1.0);
 
