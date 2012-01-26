@@ -11,7 +11,7 @@
 # Used files:
 # fileMeshTest.ofs ( configured and copied script for meshes )
 # run_file_test.cmake ( Executing the test and comparing the results) 
-function( run_single_object_file_test FILEPLUGIN TEST_FILE  )
+function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE  )
 
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData)
       message(WARNING "TEST Directory not found ! ${CMAKE_SOURCE_DIR}/TestData")
