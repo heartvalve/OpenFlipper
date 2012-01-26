@@ -190,7 +190,7 @@ private:
   void pick_spline( GLState& _state, unsigned int _offset );
 
   void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state);
-  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, GLSphere* sphere);
+  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, GLSphere* _sphere);
 
   /// Copy constructor (not used)
   BSplineCurveNodeT(const BSplineCurveNodeT& _rhs);
