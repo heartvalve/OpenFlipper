@@ -71,14 +71,21 @@ foreach(loop ${CHECKS})
       RESULT  ${TESTOUTPUT}
   )
 
+  # remove whitespace
+  string(STRIP ${RESULT} RESULT)
+
   #Get value from Info:
   string (
       REGEX REPLACE
       "^.*${loop}=([^\n]*).*$" "\\1"
       EXPECTED  ${INFOFILE}
   )
+  
+  # remove whitespace
+  string(STRIP ${EXPECTED} EXPECTED)
 
-  if ( NOT ${EXPECTED} EQUAL ${RESULT} )
+  # Use Stringcompare here
+  if ( NOT ${EXPECTED} STREQUAL ${RESULT} )
     message(WARNING "Mismatching values for ${loop}: EXPECTED ${EXPECTED} but got ${RESULT}!")
     set(test_not_successful true)
   endif()
