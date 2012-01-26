@@ -1233,7 +1233,7 @@ unsigned int DepthPeelingPlugin::getPeelShaderIndex(ACG::SceneGraph::DrawModes::
   bool flat = _drawMode & ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED;
   bool phong = _drawMode & ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED;
   bool vertexColor = _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED || _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ||
-    _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED || _drawMode & ACG::SceneGraph::DrawModes::POINTS_COLORED;
+    _drawMode & ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED || _drawMode & ACG::SceneGraph::DrawModes::POINTS_COLORED || _drawMode & ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED;
 
   bool gouraud = _drawMode & ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
 
