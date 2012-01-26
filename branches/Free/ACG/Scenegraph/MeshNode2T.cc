@@ -1048,8 +1048,8 @@ pick_any(GLState& _state)
     
     // For this version we load the colors directly not from vbo
     ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+    ACG::GLState::vertexPointer( drawMesh_->pickVertexBuffer() );
     ACG::GLState::colorPointer(drawMesh_->pickAnyVertexColorBuffer());
-    ACG::GLState::enableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
