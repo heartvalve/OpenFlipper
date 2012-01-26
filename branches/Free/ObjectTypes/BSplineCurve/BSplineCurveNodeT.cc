@@ -652,13 +652,13 @@ pick_spline( GLState& _state, unsigned int _offset )
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw_sphere( const Point& _p0, double _r, GLState& _state, GLSphere* sphere)
+draw_sphere( const Point& _p0, double _r, GLState& _state, GLSphere* _sphere)
 {
   // draw 3d sphere
   _state.push_modelview_matrix();
   _state.translate( _p0[0], _p0[1], _p0[2]);
 
-  sphere->draw(_state,_r);
+  _sphere->draw(_state,_r);
 
   _state.pop_modelview_matrix();
 }
