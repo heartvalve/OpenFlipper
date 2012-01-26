@@ -145,7 +145,11 @@ private:
   /// size for the coord-frame
   double fFrameSize_;
 
+  int slices_;
+  int stacks_;
+
   ACG::GLSphere* sphere_;
+  ACG::GLCone* cone_;
 };
 
 
