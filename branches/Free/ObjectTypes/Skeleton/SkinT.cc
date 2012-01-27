@@ -1,3 +1,6 @@
+#ifdef USE_OPENMP
+#include <omp.h>
+#endif
 #define SKINT_C
 
 //-----------------------------------------------------------------------------
@@ -125,21 +128,39 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
   
   // for every vertex
   typename MeshT::VertexIter it;
+#ifdef USE_OPENMP
+  std::vector< OpenMesh::VertexHandle > vhandles; vhandles.clear(); vhandles.reserve(mesh_->n_vertices());
+  for(it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it){vhandles.push_back(it.handle());}
+  int vhcount = (int) vhandles.size();
+  #pragma omp parallel for
+  for (int vhindex = 0; vhindex < vhcount; vhindex++)
+#else
   for(it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it)
+#endif
   {
+    #ifdef USE_OPENMP
+      const OpenMesh::VertexHandle currentVertexH = vhandles[vhindex];
+    #else
+      const OpenMesh::VertexHandle currentVertexH = it.handle();
+    #endif
+
     // based on its position in the default pose
-    OpenMesh::Vec3d default_point  = mesh_->property(propDefaultPose, it).point,
-                    default_normal = mesh_->property(propDefaultPose, it).normal;
+    OpenMesh::Vec3d default_point  = mesh_->property(propDefaultPose, currentVertexH).point,
+                    default_normal = mesh_->property(propDefaultPose, currentVertexH).normal;
 
     OpenMesh::Vec3d point(0, 0, 0), normal(0, 0, 0);	// the new position and normal
 
     if( _method == M_LBS ) {
 
       // Linear blend skinning
-      SkinWeights &weights = mesh_->property(propWeights, it);
+      SkinWeights &weights = mesh_->property(propWeights, currentVertexH);
 
+      #ifndef USE_OPENMP
       if (weights.size() == 0)
+      {
         verticesWithoutWeights++;
+      }
+      #endif
 
       SkinWeights::iterator it_w;
       for(it_w = weights.begin(); it_w != weights.end(); ++it_w)
@@ -156,7 +177,7 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
       std::vector<double>         weightVector;
       std::vector<DualQuaternion> dualQuaternions;
 
-      SkinWeights &weights = mesh_->property(propWeights, it);
+      SkinWeights &weights = mesh_->property(propWeights, currentVertexH);
       SkinWeights::iterator it_w;
 
       for(it_w = weights.begin(); it_w != weights.end(); ++it_w){
@@ -173,12 +194,14 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
       std::cerr << "ERROR: Unknown skinning method!" << std::endl;
     }
 
-    mesh_->set_point(it, point);
-    mesh_->set_normal(it, normal);
+    mesh_->set_point(currentVertexH, point);
+    mesh_->set_normal(currentVertexH, normal);
   }
 
-  if ( verticesWithoutWeights > 0 )
-    std::cerr << "Deform skin: " << verticesWithoutWeights << " vertices without skin weights." << std::endl;
+  #ifndef USE_OPENMP
+    if ( verticesWithoutWeights > 0 )
+      std::cerr << "Deform skin: " << verticesWithoutWeights << " vertices without skin weights." << std::endl;
+  #endif
 
   mesh_->update_face_normals();
 }
