@@ -573,9 +573,12 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
     ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
     std::string  descr = id.description();
 
-    QAction * action = new QAction( descr.c_str(), drawGroup );
-    action->setCheckable( true );
-    action->setChecked( activeDrawModes_.containsAtomicDrawMode(id) );
+    QCheckBox *checkBox = new QCheckBox(QString(descr.c_str()), viewControlMenu_);
+    checkBox->setChecked(activeDrawModes_.containsAtomicDrawMode(id));
+    QWidgetAction *checkableAction = new QWidgetAction(drawGroup);
+    checkableAction->setText(descr.c_str());
+    checkableAction->setDefaultWidget(checkBox);
+    connect(checkBox, SIGNAL(toggled(bool) ), checkableAction, SLOT(trigger() ) );
   }
 
   viewControlMenu_->addActions( drawGroup->actions() );
@@ -615,7 +618,10 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
     if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
       activeDrawModes_ = ( activeDrawModes_ ^ mode);
     else
+    {
+      emit hideContextMenu();
       activeDrawModes_ = mode ;
+    }
     
   } else {
     // Switch back to global drawmode-> default
