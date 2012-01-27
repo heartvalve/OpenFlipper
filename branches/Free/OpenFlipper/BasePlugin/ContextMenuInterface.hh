@@ -121,6 +121,9 @@ signals:
   */
   virtual void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type ) {};
 
+  /// hide the main context menu
+  virtual void hideContextMenu() {};
+
 private slots:
 
   /** When the main application requests a context menu, this slot is called before showing the window.
