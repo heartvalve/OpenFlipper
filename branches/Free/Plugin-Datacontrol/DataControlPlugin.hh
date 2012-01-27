@@ -364,6 +364,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Get all source objects of given type
         IdList getSourceObjects(DataType _type);
 
+        /// Returns the number of groups
+        unsigned int groupCount() const;
+
         /// Print information about all open objects to the console
         void printObjectInfoToLog();
 
