@@ -4,7 +4,7 @@ if (QT_QTSCRIPTTOOLS_FOUND)
   endif() 
 
   if ( OPENFLIPPER_ENABLE_SCRIPT_DEBUGGER )
-    add_definitions(ENABLE_SCRIPT_DEBUGGER)
+    add_definitions(-DENABLE_SCRIPT_DEBUGGER)
   endif()
 endif()
 
