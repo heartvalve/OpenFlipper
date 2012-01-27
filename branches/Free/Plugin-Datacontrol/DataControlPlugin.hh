@@ -313,6 +313,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Get the id of an object by its name
         int getObject( QString _name );
 
+        /// Get the DataType of a given object
+        DataType dataType( int objectId );
+
         /// Hide the given Object
         void hideObject( int objectId );
 
@@ -366,6 +369,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 
         /// Returns the number of groups
         unsigned int groupCount() const;
+
+        /// Returns a list of all available DataTypes
+        QStringList availableDataTypeNames() const;
 
         /// Print information about all open objects to the console
         void printObjectInfoToLog();

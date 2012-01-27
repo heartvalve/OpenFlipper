@@ -236,11 +236,11 @@ uint typeCount();
 * @{ */
 //================================================================================================
 
-/// Get iterator pointing to the first element in the tyoes list
+/// Get iterator pointing to the first element in the types list
 DLLEXPORT
 std::vector< TypeInfo >::const_iterator typesBegin();
 
-/// Get iterator pointing to the last element in the tyoes list
+/// Get iterator pointing to the last element in the types list
 DLLEXPORT
 std::vector< TypeInfo >::const_iterator typesEnd();
 
@@ -251,11 +251,11 @@ std::vector< TypeInfo >::const_iterator typesEnd();
 * @{ */
 //================================================================================================
 
-/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+/// Get DataType Human readable name ( this name might change. Use the typeName instead! )
 DLLEXPORT
 QString dataTypeName( DataType _id );
 
-/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+/// Get DataType Human readable name ( this name might change. Use the typeName instead! )
 DLLEXPORT
 QString dataTypeName( QString _typeName);
 
@@ -283,7 +283,7 @@ QString typeIconName(QString  _name);
 DLLEXPORT
 QString typeIconName(DataType _id);
 
-/** \brief Get an QIcon associated with the given datatype
+/** \brief Get an QIcon associated with the given DataType
 * 
 * The icons are loaded once when set and then the reference is returned here.
 * This reduces the time when frequently requesting the icons (e.g. DataControl)
