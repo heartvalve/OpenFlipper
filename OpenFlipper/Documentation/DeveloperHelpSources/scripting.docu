@@ -3,6 +3,21 @@
 
 TODO: OpenFlipper Scripting and examples.
 
+  \section scripting_iterating
+    In the scripting system you can also iterate over objects in the scene.
+
+    \code
+      // Get a list of all target triangle meshes in the scene
+      var list = datacontrol.getTargetObjects(DataType("TriangleMesh"));
+
+      // Print the names of all target objects
+      for( object in list )
+      {
+        print(datacontrol.getObjectName(list[object]))
+      }
+    \endcode
+
+
   \section scripting_datattypes DataTypes
     In the scripting system the type DataType is already known. You can do for example
     \code
