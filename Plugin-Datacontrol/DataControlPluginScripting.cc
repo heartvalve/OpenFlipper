@@ -58,6 +58,9 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("getObjectName(int)",tr("Returns the name of an object with given id."),
                           QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
+  emit setSlotDescription("dataType(int)",tr("Returns the DataType of the object with the given id."),
+                            QStringList(tr("objectId")), QStringList(tr("ID of an object")));
+
   emit setSlotDescription("hideObject(int)",tr("Hide object with the given id."),
                           QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
@@ -112,6 +115,9 @@ void DataControlPlugin::setDescriptions(){
 
   emit setSlotDescription("hideAll()",tr("Hide all objects"),
                           QStringList(), QStringList());
+
+  emit setSlotDescription("availableDataTypeNames()",tr("Returns a QStringList of all available DataType names."),
+                              QStringList(tr("")), QStringList(tr("")));
 
   emit setSlotDescription("printObjectInfoToLog()",tr("Print info about all objects to log"),
                             QStringList(), QStringList());
@@ -170,6 +176,19 @@ QString DataControlPlugin::getObjectName( int objectId ) {
   } else
     return  object->name() ;
 
+}
+
+//******************************************************************************
+
+/// Get the DataType of a given object
+DataType DataControlPlugin::dataType( int _objectId ) {
+  BaseObject* object = 0;
+  PluginFunctions::getObject(_objectId,object);
+
+  if ( object )
+    return object->dataType();
+  else
+    return DATA_UNKNOWN;
 }
 
 
@@ -545,6 +564,24 @@ unsigned int DataControlPlugin::groupCount() const {
     ++count;
 
   return count;
+}
+
+//******************************************************************************
+
+/** \brief Return available dataType
+ *
+ * Returns a space separated list of all available DataTypes
+ *
+ * @return List of available data types
+ */
+QStringList DataControlPlugin::availableDataTypeNames() const {
+
+  QStringList list;
+
+  for ( std::vector< TypeInfo >::const_iterator dataType = typesBegin(); dataType != typesEnd(); ++dataType )
+    list.push_back(dataType->name);
+
+  return list;
 }
 
 //******************************************************************************

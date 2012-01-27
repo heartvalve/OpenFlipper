@@ -1,0 +1,42 @@
+/*!
+\page scripting OpenFlipper Scripting
+
+TODO: OpenFlipper Scripting and examples.
+
+  \section scripting_datattypes DataTypes
+    In the scripting system the type DataType is already known. You can do for example
+    \code
+      DataType("TriangleMesh");
+    \endcode
+    You can get a string list with all available data types via
+    \code
+      // Get the string list of data types via DataControl Plugin
+      var types = datacontrol.availableDataTypeNames();
+    \endcode
+
+    \subsection scripting_datattypes_getting_type Getting the DataType of an Object
+      \code
+      // Set the object id
+      var object = 5;
+
+      // Get the DataTypes and print its name
+      print(datacontrol.dataType(object))
+      \endcode
+
+
+  \section scripting_examples Scripting Examples
+    \subsection scripting_examples_qstringlist Iterating over a QStringList
+
+      \code
+      // Get the string list of data types via DataControl Plugin
+      var types = datacontrol.availableDataTypeNames();
+
+      // Iterate over the list and print to the console
+      for ( i = 0 ; i < types.length ; ++i ) {
+        print(types[i]);
+      }
+      \endcode
+
+
+
+ */
