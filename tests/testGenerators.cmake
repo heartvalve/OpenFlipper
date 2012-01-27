@@ -14,12 +14,10 @@
 function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE  )
 
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData)
-      message(WARNING "TEST Directory not found ! ${CMAKE_SOURCE_DIR}/TestData")
       return()
   endif()
 
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData/${TEST_FILE} )
-      message(WARNING "TEST File not found ! ${CMAKE_SOURCE_DIR}/TestData/${TEST_FILE} ")
       return()
   endif()
 
