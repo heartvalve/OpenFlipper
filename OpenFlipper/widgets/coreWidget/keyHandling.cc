@@ -158,7 +158,6 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
 
   if (_e->isAutoRepeat()) return; //consider only "real" release events
 
-
   std::pair< int,Qt::KeyboardModifiers > key = std::make_pair(_e->key(), _e->modifiers() );
 
   //iterate over all assigned keys

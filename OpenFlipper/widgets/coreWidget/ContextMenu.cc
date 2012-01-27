@@ -81,6 +81,10 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
 }
 
+void CoreWidget::slotHideContextMenu() {
+  contextMenu_->hide();
+}
+
 /** \brief Update context Menu when an arbitrary node has been clicked on.
  *
  * This function is called when a node has been clicked on not belonging to an object.
@@ -868,9 +872,12 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
     ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
     std::string  descr =  id.description();
 
-    QAction * action = new QAction( descr.c_str(), drawGroupViewer_ );
-    action->setCheckable( true );
-    action->setChecked(  activeDrawModes.containsAtomicDrawMode(id) );
+    QCheckBox *checkBox = new QCheckBox(QString(descr.c_str()), viewerDrawMenu_);
+    checkBox->setChecked(activeDrawModes.containsAtomicDrawMode(id));
+    QWidgetAction *checkableAction = new QWidgetAction(drawGroupViewer_);
+    checkableAction->setText(descr.c_str());
+    checkableAction->setDefaultWidget(checkBox);
+    connect(checkBox, SIGNAL(toggled(bool) ), checkableAction, SLOT(trigger() ) );
   }
 
   viewerDrawMenu_->addActions( drawGroupViewer_->actions() );
@@ -898,7 +905,10 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
   if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
     PluginFunctions::viewerProperties().drawMode(  PluginFunctions::viewerProperties().drawMode() ^ mode );
   else
+  {
+    contextMenu_->hide();
     PluginFunctions::viewerProperties().drawMode(mode );
+  }
 
 }
 
