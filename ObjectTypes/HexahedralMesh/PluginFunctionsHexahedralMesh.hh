@@ -110,4 +110,4 @@ HexahedralMeshObject* hexahedralMeshObject( int _identifier );
 
 }
 
-#endif // PLUGINFUNCTIONSOPENVOLUMEMESH_HH
+#endif // PLUGINFUNCTIONSHEXAHEDRALMESH_HH
