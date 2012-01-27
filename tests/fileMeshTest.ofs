@@ -6,6 +6,8 @@ var edgeCount      = infomeshobject.edgeCount(file);
 var faceCount      = infomeshobject.faceCount(file);
 var componentCount = infomeshobject.componentCount(file)
 
+var groupCount     = datacontrol.groupCount();
+
 
 printToFile("@OUTPUT_TEST_DATA_FILE@","Test: @TESTNAME@");
 printToFile("@OUTPUT_TEST_DATA_FILE@","Loaded File: @OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
@@ -14,5 +16,6 @@ printToFile("@OUTPUT_TEST_DATA_FILE@","VERTEXCOUNT=",vertexCount);
 printToFile("@OUTPUT_TEST_DATA_FILE@","EDGECOUNT=",edgeCount);
 printToFile("@OUTPUT_TEST_DATA_FILE@","FACECOUNT=",faceCount);
 printToFile("@OUTPUT_TEST_DATA_FILE@","COMPONENTCOUNT=",componentCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","GROUPCOUNT=",groupCount);
 
 core.exitApplication();

@@ -82,6 +82,9 @@ void DataControlPlugin::setDescriptions(){
 
   emit setSlotDescription("groupObjects(idList)",tr("Group given Objects together."),
                           QStringList(tr("objectIds")), QStringList(tr("List of objects that should be grouped.")));
+
+  emit setSlotDescription("groupCount()",tr("Returns the number of group objects."),
+                          QStringList(tr("")), QStringList(tr("")));
                           
   emit setSlotDescription("unGroupObject(int)",tr("Remove the given object from its group and append to root node."),
                           QStringList(tr("ObjectId")), QStringList(tr("Object to be removed from group.")));                          
@@ -528,3 +531,20 @@ void DataControlPlugin::printObjectInfoToLog() {
     emit log(LOGINFO, tr("Object \"%1\" with ID %2 of type %3 ").arg(o_it->name()).arg(o_it->id()).arg(o_it->dataType().name()));
 }
 
+//******************************************************************************
+
+/** \brief get number of groups
+ *
+ * Returns the number of groups that are in the scene
+ *
+ * @return Number of groups
+ */
+unsigned int DataControlPlugin::groupCount() const {
+  unsigned int count = 0;
+  for ( PluginFunctions::BaseObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_GROUP); o_it != PluginFunctions::objectsEnd(); ++o_it)
+    ++count;
+
+  return count;
+}
+
+//******************************************************************************
