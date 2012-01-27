@@ -159,6 +159,12 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     refMesh->add_property(vertexDistanceProp,"MeshCompare_VertexDistance");
   }
 
+  // Generate a property, where we store the information
+  OpenMesh::VPropHandleT<double> normalDeviationProp;
+  if ( ! refMesh->get_property_handle(normalDeviationProp,"MeshCompare_NormalDeviation") ) {
+    refMesh->add_property(normalDeviationProp,"MeshCompare_NormalDeviation");
+  }
+
 
   // Get a bsp for the target, as we will project the reference mesh onto the target mesh.
   // It will be build automatically at this point.
@@ -215,6 +221,9 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
       normalDeviation = 1.0;
 
     normalDeviation = 180.0 / M_PI * acos(normalDeviation);
+
+    // Set it to the reference mesh
+    refMesh->property(normalDeviationProp,v_it) = normalDeviation;
 
     if (normalDeviation > maxNormalDeviation)
       maxNormalDeviation = normalDeviation;
