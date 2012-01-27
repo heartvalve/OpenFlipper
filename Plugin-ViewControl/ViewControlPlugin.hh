@@ -107,6 +107,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
     void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
+    void hideContextMenu();
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
