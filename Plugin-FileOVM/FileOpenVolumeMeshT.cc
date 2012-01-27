@@ -216,15 +216,14 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
 
             if(hfhandles.size() > 3) {
 
-                // Implement hex mesh shit
-//                OpenHexMeshV3d* hm = 0;
-//                hm = dynamic_cast<OpenHexMeshV3d*>(&_mesh);
+                HexahedralMesh* hm = 0;
+                hm = dynamic_cast<HexahedralMesh*>(&_mesh);
 
-//                if(hm) {
-//                    hm->add_cell(hfhandles, _topCheck, _correctOrder);
-//                } else {
+                if(hm) {
+                    hm->add_cell(hfhandles, _topCheck, _correctOrder);
+                } else {
                     _mesh.add_cell(hfhandles, _topCheck);
-//                }
+                }
             } else {
                 std::cerr << "Could not determine corresponding halffaces!" << std::endl;
             }
@@ -246,14 +245,14 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
             }
 
             // Implement hex mesh shit
-//            OpenHexMeshV3d* hm = 0;
-//            hm = dynamic_cast<OpenHexMeshV3d*>(&_mesh);
-//
-//            if(hm) {
-//                hm->add_cell(hfs, _topCheck, _correctOrder);
-//            } else {
+            HexahedralMesh* hm = 0;
+            hm = dynamic_cast<HexahedralMesh*>(&_mesh);
+
+            if(hm) {
+                hm->add_cell(hfs, _topCheck, _correctOrder);
+            } else {
                 _mesh.add_cell(hfs, _topCheck);
-//            }
+            }
         }
     }
     iff.close();
