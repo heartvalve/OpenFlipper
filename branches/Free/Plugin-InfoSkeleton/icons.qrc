@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="info" >
+    <file>dialogIcons/info_boundingbox.png</file>
+    <file>dialogIcons/info_bracketA.png</file>
+    <file>dialogIcons/info_bracketB.png</file>
+  </qresource>
+</RCC>
