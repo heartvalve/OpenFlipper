@@ -217,8 +217,9 @@ void TypePolyhedralMeshPlugin::slot_change_shrinkage() {
                 0.0, 1.0, 2, &ok);
 
         PluginFunctions::polyhedralMeshObject(*o_it)->meshNode()->set_scaling(scale);
+
+        emit updatedObject((*o_it)->id(), UPDATE_GEOMETRY);
     }
-    emit updateView();
 }
 
 Q_EXPORT_PLUGIN2( typepolyhedralmeshplugin , TypePolyhedralMeshPlugin );

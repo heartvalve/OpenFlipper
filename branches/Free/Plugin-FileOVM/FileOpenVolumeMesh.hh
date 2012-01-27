@@ -56,6 +56,7 @@
 #include <ObjectTypes/Plane/Plane.hh>
 
 #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
 #ifndef FILEOPENVOLUMEMESHT_CC
     #include <OpenVolumeMesh/FileManager/FileManager.hh>
 #endif

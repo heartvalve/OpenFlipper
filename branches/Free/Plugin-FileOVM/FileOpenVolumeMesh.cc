@@ -156,39 +156,44 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
     if(!OpenFlipper::Options::nogui() && typeCheck_->currentIndex() == 0) {
         hexMesh = fileManager_.isHexahedralMesh(_filename.toStdString());
     } else if (!OpenFlipper::Options::nogui() && typeCheck_->currentIndex() == 2) {
-        hexMesh = false;
+        hexMesh = true;
     }
-
-    // Hack
-    hexMesh = false;
 
     if(hexMesh) {
 
-//        emit addEmptyObject(DATA_HEXAHEDRAL_MESH, id);
-//        HexahedralMeshObject* obj(0);
-//
-//        if (PluginFunctions::getObject(id, obj)) {
-//
-//            if(compatibility_mode) {
-//                loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
-//                         topology_checks, correct_face_order);
-//            } else {
-//                if(!fileManager_.readFile(_filename.toStdString(), *(obj->mesh()),
-//                                          topology_checks,true, true)) {
-//                    emit log(LOGERR, QString("Could not open file %1!").arg(_filename));
-//                }
-//            }
-//
-//            obj->setFromFileName(_filename);
-//        }
-//
-//        emit openedFile(obj->id());
-//
-//        // Go into solid flat shaded mode
-//        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED, PluginFunctions::activeExaminer());
-//
-//        // Scale polyhedra a bit
-//        obj->meshNode()->set_scaling(0.8);
+        emit addEmptyObject(DATA_HEXAHEDRAL_MESH, id);
+        HexahedralMeshObject* obj(0);
+
+        if (PluginFunctions::getObject(id, obj)) {
+
+            if(compatibility_mode) {
+
+                loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
+                         topology_checks, correct_face_order);
+
+                // Compute top-down-adjacencies
+                obj->mesh()->update_adjacencies();
+
+                // Compute face normals
+                obj->mesh()->request_face_normals();
+
+            } else {
+                if(!fileManager_.readFile(_filename.toStdString(), *(obj->mesh()),
+                                          topology_checks,true, true)) {
+                    emit log(LOGERR, QString("Could not open file %1!").arg(_filename));
+                }
+            }
+
+            obj->setFromFileName(_filename);
+        }
+
+        emit openedFile(obj->id());
+
+        // Go into solid flat shaded mode
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED, PluginFunctions::activeExaminer());
+
+        // Scale polyhedra a bit
+        obj->meshNode()->set_scaling(0.8);
 
     } else {
 
@@ -240,7 +245,7 @@ bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
     if (PluginFunctions::getObject(_id, obj)) {
 
         PolyhedralMeshObject* mesh_obj = PluginFunctions::polyhedralMeshObject(obj);
-        //HexahedralMeshObject* hex_mesh_obj = PluginFunctions::hexahedralMeshObject(obj);
+        HexahedralMeshObject* hex_mesh_obj = PluginFunctions::hexahedralMeshObject(obj);
         if (mesh_obj) {
 
             obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
@@ -251,22 +256,20 @@ bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
                 compatibility_mode = saveCompMode_->isChecked();
             }
 
-            //saveMesh((const char*) _filename.toAscii(), *(mesh_obj->mesh()), compatibility_mode);
             fileManager_.writeFile(_filename.toStdString(), *(mesh_obj->mesh()));
-
         }
-//        else if (hex_mesh_obj) {
-//
-//            obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
-//            obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
-//
-//            bool compatibility_mode = false;
-//            if(!OpenFlipper::Options::nogui()) {
-//                compatibility_mode = saveCompMode_->isChecked();
-//            }
-//
-//            saveMesh((const char*) _filename.toAscii(), *(hex_mesh_obj->mesh()), compatibility_mode);
-//        }
+        else if (hex_mesh_obj) {
+
+            obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
+            obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
+
+            bool compatibility_mode = false;
+            if(!OpenFlipper::Options::nogui()) {
+                compatibility_mode = saveCompMode_->isChecked();
+            }
+
+            fileManager_.writeFile(_filename.toStdString(), *(hex_mesh_obj->mesh()));
+        }
     }
 
     return true;
