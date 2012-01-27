@@ -995,6 +995,10 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin      , SIGNAL(addContextMenuItem(QAction*,DataType,ContextMenuType)),
               coreWidget_ , SLOT(slotAddContextItem(QAction*,DataType,ContextMenuType)),Qt::DirectConnection);
 
+    if ( checkSignal(plugin,"hideContextMenu()") )
+          connect(plugin      , SIGNAL(hideContextMenu()),
+                  coreWidget_ , SLOT(slotHideContextMenu()),Qt::DirectConnection);
+
     if ( checkSlot(plugin,"slotUpdateContextMenu(int)") )
       connect(coreWidget_ , SIGNAL(updateContextMenu(int)),
               plugin      , SLOT(slotUpdateContextMenu(int)),Qt::DirectConnection);
