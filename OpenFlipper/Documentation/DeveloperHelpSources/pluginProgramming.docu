@@ -70,12 +70,14 @@
  * from within a plugin. In our tutorial \ref ex2 we roughly mentioned that the communication between OpenFlipper
  * and it's plugins is accomplished through either one of the provided \ref interfaces or the \ref PluginFunctions.
  *
- * For example iterating over all objects that have been marked as source objects is done via
- * 
+ * For example iterating over all objects is managed via the ObjectIterator.
+ *
  * <code>
  * for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS);<br />
  * o_it != PluginFunctions::objectsEnd(); ++o_it) { ... }
  * </code>
+ * 
+ * See \ref OpenFlipperIterators for details.
  *
  * Possible restrictions are \c ALL_OBJECTS (to iterate over all objects in the scene), \c TARGET_OBJECTS (objects
  * that were marked as target) and \c SOURCE_OBJECTS.
@@ -159,9 +161,9 @@
  *
  * Also see \ref BaseInterface.
  *
- * \section Related pages
- *
- * \subpage pluginExamples Programming examples for OpenFlipper plugins
- * \subpage interfaces Plugin Interfaces
- * \subpage adding_empty_objects
+ * \section pluginProgramming_related_pages Related pages
+ * - \subpage pluginExamples
+ * - \subpage OpenFlipperIterators
+ * - \subpage interfaces
+ * - \subpage adding_empty_objects
  */

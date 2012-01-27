@@ -1,0 +1,90 @@
+/*!
+\page OpenFlipperIterators Iterators and their usage
+\section OpenFlipperIterators_Overview Overview
+  OpenFlipper comes with some build in iterators which are defined in \ref PluginFunctions.hh .These iterators can be used
+  to iterate over the objects in the current scene. They are described in the following sections.
+
+\section  OpenFlipperIterators_ObjectIterator ObjectIterator
+  The PluginFunctions::ObjectIterator iterates over all objects that have a visible representation in the scene
+  (Meshes, Points, Lights, Skeletons, ...).
+  If you also want to iterate over invisible objects (like groups) use the \ref OpenFlipperIterators_BaseObjectIterator.
+  You can restrict it to source(PluginFunctions::SOURCE_OBJECTS)
+  and target(PluginFunctions::TARGET_OBJECTS) objects or iterate over all objects (PluginFunctions::ALL_OBJECTS).
+
+
+  Additionally you can specify the DataType that will be returned by the iterator ( e.g.  DATA_TRIANGLE_MESH, DATA_POLY_MESH ).
+  The DataType can also be combined such that all specified types will be returned:
+  \code
+  DataType(DATA_TRIANGLE_MESH|DATA_POLY_MESH)
+  \endcode
+  The type for iterating over all objects is: DATA_ALL.
+
+  Here is a simple example how you can use the iterator to get all target triangle meshes.
+  \code
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
+         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+    // Get the corresponding mesh object.
+    TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
+
+    // Get the corresponding mesh.
+    TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+
+  }
+  \endcode
+
+  Second example how you can use the iterator to get all source skeletons.
+  \code
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS,DATA_SKELETON) ;
+         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+    // Get the corresponding mesh object.
+    SkeletonObject* object = PluginFunctions::skeletonObject(*o_it);
+
+    // Get the corresponding mesh.
+    Skeleton* skeleton = PluginFunctions::skeleton(*o_it);
+
+  }
+  \endcode
+
+  If you combine data types or iterate over all objects you need to check the DataType
+  \code
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_ALL) ;
+         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+    // Check if this is a skeleton
+    if ( o_it->dataType(DATA_SKELETON) ) {
+
+      // Get the corresponding mesh object.
+      SkeletonObject* object = PluginFunctions::skeletonObject(*o_it);
+
+      // Get the corresponding mesh.
+      Skeleton* skeleton = PluginFunctions::skeleton(*o_it);
+
+    } else if ( o_it->dataType(DATA_TRIANGLE_MESH) ) {
+
+      // Get the corresponding mesh object.
+      TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
+
+      // Get the corresponding mesh.
+      TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+
+    }
+
+  }
+  \endcode
+
+\section  OpenFlipperIterators_BaseObjectIterator BaseObjectIterator
+  The PluginFunctions::BaseObjectIterator works like the ObjectIterator, but also returns objects that do not have a visible
+  representation in the scene. A simple example is given in the following code:
+  \code
+      unsigned int count = 0;
+
+      // Iterate over all objects of type DATA_GROUP and count them
+      for ( PluginFunctions::BaseObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_GROUP);
+                                                o_it != PluginFunctions::objectsEnd(); ++o_it)
+        ++count;
+
+  \endcode
+
+*/
