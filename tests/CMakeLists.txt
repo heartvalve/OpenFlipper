@@ -10,17 +10,24 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # ========================================================================
   # Copy converter files from ctest output to correctly generate xml output
   # ========================================================================
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.sh
-    ${CMAKE_BINARY_DIR}/tests/run_tests.sh COPYONLY)
-	
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.bat
-    ${CMAKE_BINARY_DIR}/tests/run_tests.bat COPYONLY)
+  if ( WIN32 )	
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/head.bat
-    ${CMAKE_BINARY_DIR}/tests/head.bat COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.bat
+      ${CMAKE_BINARY_DIR}/tests/run_tests.bat COPYONLY)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/head.bat
+      ${CMAKE_BINARY_DIR}/tests/head.bat COPYONLY)
+
+  else(WIN32)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_tests.sh 
+      ${CMAKE_BINARY_DIR}/tests/run_tests.sh COPYONLY)
+
+  endif()
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/globalTestFiles/cube1.obj
     ${OPENFLIPPER_TEST_FILES}/cube1.obj COPYONLY)
+
 
   make_directory(${OPENFLIPPER_TEST_RESULTS})
 
