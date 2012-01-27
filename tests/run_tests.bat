@@ -1,6 +1,8 @@
 
 del testResults\*
 
+del ..\CTestResults.xml
+
 ctest -D ExperimentalTest -C Release --no-compress-output
 
 cd Testing
