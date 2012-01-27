@@ -8,10 +8,13 @@
 # The second parameter is the name of the file that should be loaded fro the toplevel TestData directory.
 # If that directory or file does not exist, no test will be generated! 
 #
+# The third parameter is the script that will be used. It will be taken from the global tests directory
+# TODO: also take local scripts!
+#
 # Used files:
 # fileMeshTest.ofs ( configured and copied script for meshes )
 # run_file_test.cmake ( Executing the test and comparing the results) 
-function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE  )
+function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT  )
 
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData)
       return()
@@ -28,7 +31,7 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE  )
   string (TOUPPER ${_plugin_dir} PLUGIN_DIR)
   set (TESTNAME "${PLUGIN_DIR}-${TEST_FILE}")
 
-  set (TESTSCRIPTNAME "testscript-${TESTNAME}-${TEST_FILE}.ofs")
+  set (TESTSCRIPTNAME "testscript-${TESTNAME}-${TEST_SCRIPT}")
 
   # update the output file to be inside the results directory
   set (OUTPUT_TEST_DATA_FILE "${OPENFLIPPER_TEST_RESULTS}/${TESTSCRIPTNAME}-result.txt" )
@@ -37,7 +40,7 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE  )
   set (TEST_FILE_INFO ${CMAKE_SOURCE_DIR}/TestData/${TEST_FILE}.info  )
 
   # Configure the test script from the current directory with the given filenames and variables into the test directory
-  configure_file(${CMAKE_SOURCE_DIR}/tests/fileMeshTest.ofs
+  configure_file(${CMAKE_SOURCE_DIR}/tests/${TEST_SCRIPT}
    ${CMAKE_BINARY_DIR}/tests/${_plugin_dir}/${TESTSCRIPTNAME} @ONLY )
 
   # Execute the script by OpenFlipper and than run the result parser which checks for correct values.

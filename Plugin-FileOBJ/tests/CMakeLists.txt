@@ -9,6 +9,6 @@ if(BUILD_TESTING)
   # Tests
   # ========================================================================
   # ========================================================================
-  run_single_object_file_mesh_test("fileobj" "covering-branch.obj")
+  run_single_object_file_mesh_test("fileobj" "covering-branch.obj" "fileMeshTest.ofs")
 
 endif()

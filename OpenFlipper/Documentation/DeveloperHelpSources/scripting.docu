@@ -3,7 +3,7 @@
 
 TODO: OpenFlipper Scripting and examples.
 
-  \section scripting_iterating
+  \section scripting_iterating Iterating over objects
     In the scripting system you can also iterate over objects in the scene.
 
     \code
