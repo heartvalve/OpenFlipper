@@ -109,6 +109,11 @@
 * This struct contains a ViewMode and its status information such as used widgets,toolbars or context menus
 *
 */
+
+
+
+
+
 struct ViewMode{
 
   /// Name of the View Mode
@@ -568,6 +573,9 @@ public:
       
       /// Hide or show the View Mode controls
       void showViewModeControls(bool _show);
+
+      /// Hide the context menu
+      void slotHideContextMenu();
 
     private slots:
       /// Remove viewMode
