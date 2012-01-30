@@ -52,8 +52,13 @@
 
 #include <OpenFlipper/common/bsp/TriangleBSPT.hh>
 #include <ACG/Geometry/Algorithms.hh>
+#include <ACG/Scenegraph/PointNode.hh>
+#include <ACG/Utils/ColorCoder.hh>
 
-MeshComparePlugin::MeshComparePlugin()
+MeshComparePlugin::MeshComparePlugin() :
+  tool_(0),
+  maximalDistance_(-1),
+  maxNormalDeviation_(-1)
 {
 
 }
@@ -65,37 +70,28 @@ MeshComparePlugin::~MeshComparePlugin()
 
 void MeshComparePlugin::initializePlugin()
 {
-   // Create the Toolbox Widget
-   QWidget* toolBox = new QWidget();
+  if ( OpenFlipper::Options::gui()) {
+    tool_ = new MeshCompareToolbarWidget();
 
-   QGridLayout* layout = new QGridLayout(toolBox);
+    connect( tool_->compare, SIGNAL(clicked()), this, SLOT(compareButton()) );
 
-   QPushButton* compareButton = new QPushButton("&Mesh Compare",toolBox);
-
-   QLabel* label = new QLabel("TODO:");
-
-   layout->addWidget( label             , 0, 0);
-   layout->addWidget( compareButton     , 1, 1);
-
-   layout->addItem(new QSpacerItem(10,10,QSizePolicy::Expanding,QSizePolicy::Expanding),2,0,1,2);
-
-   connect( compareButton, SIGNAL(clicked()), this, SLOT(compare()) );
-
-   //QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother1.png");
-   emit addToolbox( tr("Mesh Compare") , toolBox );
+    QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"MeshCompare.png");
+    emit addToolbox( tr("Mesh Compare") , tool_ , toolIcon);
+  }
 }
 
 void MeshComparePlugin::pluginsInitialized() {
     
-//    // Emit slot description
-//    emit setSlotDescription(tr("simpleLaplace(int)"),   tr("Smooth mesh using the Laplace operator with uniform weights."),
-//                            QStringList(tr("iterations")), QStringList(tr("Number of iterations")));
+  emit setSlotDescription(tr("compare(int,int)"), tr("Compare two meshes. Use lastMaximalDistance() and lastMaximalNormalDeviation() to get the results."),
+      QStringList(tr("ObjectId,ObjectId")), QStringList(tr("Id of the reference mesh, Id of the comparison mesh")));
+  emit setSlotDescription(tr("lastMaximalDistance()"), tr("Get the maximal distance between the meshes of the last comparison."),
+      QStringList(tr("")), QStringList(tr("")));
+  emit setSlotDescription(tr("lastMaximalNormalDeviation()"), tr("Get the maximal normal deviation in degree between the meshes of the last comparison."),
+      QStringList(tr("")), QStringList(tr("")));
+
 }
 
-void MeshComparePlugin::slotObjectUpdated( int _identifier, const UpdateType& _type ) {
-}
-
-void MeshComparePlugin::compare() {
+void MeshComparePlugin::compareButton() {
 
   // Get source and target objects
   BaseObjectData* targetObject = 0;
@@ -153,16 +149,28 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   TriMesh* refMesh  = PluginFunctions::triMesh(_sourceId);
   TriMesh* compMesh = PluginFunctions::triMesh(_targetId);
 
-  // Generate a property, where we store the information
-  OpenMesh::VPropHandleT<double> vertexDistanceProp;
-  if ( ! refMesh->get_property_handle(vertexDistanceProp,"MeshCompare_VertexDistance") ) {
-    refMesh->add_property(vertexDistanceProp,"MeshCompare_VertexDistance");
-  }
+  ACG::SceneGraph::PointNode *pNode = 0;
 
-  // Generate a property, where we store the information
-  OpenMesh::VPropHandleT<double> normalDeviationProp;
-  if ( ! refMesh->get_property_handle(normalDeviationProp,"MeshCompare_NormalDeviation") ) {
-    refMesh->add_property(normalDeviationProp,"MeshCompare_NormalDeviation");
+
+  // Check if we already attached a PointNode
+  if ( OpenFlipper::Options::gui() ) {
+
+    if ( !target->getAdditionalNode(pNode,name(), "MeshCompareDistance" ) ) {
+
+      ACG::SceneGraph::MaterialNode *pMatNode = 0;
+      pMatNode = new ACG::SceneGraph::MaterialNode(target->manipulatorNode(), "MeshCompare distance visualization material");
+      target->addAdditionalNode(pMatNode, name(), "MeshCompareDistanceMaterial");
+      pMatNode->set_point_size(5);
+      pMatNode->applyProperties(ACG::SceneGraph::MaterialNode::PointSize);
+
+      pNode = new ACG::SceneGraph::PointNode(pMatNode, "MeshCompare distance visualization");
+      pNode->drawMode(ACG::SceneGraph::DrawModes::POINTS_COLORED);
+      target->addAdditionalNode(pNode, name(), "MeshCompareDistance");
+    }
+
+    // Clear but reserve memory for the required vertices
+    pNode->clear();
+    pNode->reserve(refMesh->n_vertices(),refMesh->n_vertices(),refMesh->n_vertices() );
   }
 
 
@@ -170,8 +178,14 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   // It will be build automatically at this point.
   TriMeshObject::OMTriangleBSP* compBSP = target->requestTriangleBsp();
 
-  TriMesh::Scalar maximalDistance    = 0.0;
-  TriMesh::Scalar maxNormalDeviation = 0.0;
+  // Remember the maximal values as output and for specifying color coding range
+  maximalDistance_    = 0.0;
+  maxNormalDeviation_ = 0.0;
+
+
+  // Remember distances for colorCoding after we know the maximal distance
+  std::vector<double> distances;
+  std::vector<double> normalAngles;
 
   for ( TriMesh::VertexIter v_it = refMesh->vertices_begin() ; v_it != refMesh->vertices_end(); ++ v_it) {
 
@@ -179,11 +193,11 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     TriMesh::FaceHandle closestFace = nearest.handle;
 
     // Remember the maximal distance between the meshes
-    if ( nearest.dist > maximalDistance )
-      maximalDistance = nearest.dist;
+    if ( nearest.dist > maximalDistance_ )
+      maximalDistance_ = nearest.dist;
 
-    // Set it to the reference mesh
-    refMesh->property(vertexDistanceProp,v_it) = nearest.dist;
+    // Remember distance for color coding
+    distances.push_back(nearest.dist);
 
     // Get the vertices around that face and their properties
     TriMesh::CFVIter        fv_it = compMesh->cfv_iter(closestFace);
@@ -201,6 +215,10 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     TriMesh::Point projectedPoint;
     ACG::Geometry::distPointTriangle(refMesh->point(v_it), p0, p1, p2, projectedPoint);
 
+    // Add the position to the point node
+    if (pNode)
+      pNode->add_point(projectedPoint);
+
     // compute Barycentric coordinates
     ACG::Geometry::baryCoord(projectedPoint, p0, p1, p2, projectedPoint);
 
@@ -210,7 +228,6 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     normal += n1 * projectedPoint[1];
     normal += n2 * projectedPoint[2];
     normal.normalize();
-
 
     // Compute normal deviation in degrees
     double normalDeviation = (refMesh->normal(v_it) | normal);
@@ -222,16 +239,33 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
 
     normalDeviation = 180.0 / M_PI * acos(normalDeviation);
 
-    // Set it to the reference mesh
-    refMesh->property(normalDeviationProp,v_it) = normalDeviation;
+    // Remember normal deviation for color coding
+    normalAngles.push_back(normalDeviation);
 
-    if (normalDeviation > maxNormalDeviation)
-      maxNormalDeviation = normalDeviation;
+    if (normalDeviation > maxNormalDeviation_)
+      maxNormalDeviation_ = normalDeviation;
 
   }
 
-  std::cerr << "Maximal distance: " << maximalDistance << std::endl;
-  std::cerr << "Maximal Normal deviation in degree: " << maxNormalDeviation << std::endl;
+  // Generate the colors
+  if ( pNode ) {
+
+    if ( tool_->distance->isChecked() ) {
+      ACG::ColorCoder cCoder(0,maximalDistance_);
+
+      for ( unsigned int i = 0 ; i < distances.size() ; ++i) {
+        pNode->add_color(cCoder.color_float4(distances[i]));
+      }
+    } else {
+      ACG::ColorCoder cCoder(0,maxNormalDeviation_);
+
+      for ( unsigned int i = 0 ; i < normalAngles.size() ; ++i) {
+        pNode->add_color(cCoder.color_float4(normalAngles[i]));
+      }
+    }
+
+    emit updateView();
+  }
 
 }
 

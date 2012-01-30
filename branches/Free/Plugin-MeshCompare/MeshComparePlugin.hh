@@ -54,6 +54,8 @@
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
+#include "MeshCompareToolbarWidget.hh"
+
 class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, TextureInterface
 {
   Q_OBJECT
@@ -76,7 +78,7 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     void log(QString _message);
     
     // ToolboxInterface
-    void addToolbox( QString  _name  , QWidget* _widget );
+    void addToolbox( QString  _name  , QWidget* _widget ,QIcon* _icon);
     
     // BackupInterface
     void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
@@ -92,21 +94,35 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
   private slots:
 
-      void initializePlugin();
-      void pluginsInitialized();
-    
-     void compare();
+    void initializePlugin();
+    void pluginsInitialized();
 
-     void compare(int _sourceId,int _targetId);
+    void compareButton();
 
-     // BaseInterface
-     void slotObjectUpdated( int _identifier, const UpdateType& _type );
-
-    // Scriptable functions
-   public slots:
+  // Scriptable functions
+  public slots:
        
     QString version() { return QString("1.0"); };
 
+    /// Compares two meshes. Use the two getter functions to retrieve the maximal deviations
+    void compare(int _sourceId,int _targetId);
+
+    /// Get the maximal distance of the last comparison (-1, if no comparison performed so far)
+    double lastMaximalDistance() { return maximalDistance_; };
+
+    /// Get the maximal normal deviation of the last comparison in degree (-1, if no comparison performed so far)
+    double lastMaximalNormalDeviation() { return maxNormalDeviation_; };
+
+
+  private:
+    /// The toolbar widget of this plugin
+    MeshCompareToolbarWidget* tool_;
+
+    /// Last maximal computed distance
+    double maximalDistance_;
+
+    /// Last maximal computed normal deviation in degree
+    double maxNormalDeviation_;
 };
 
 #endif //MESHCOMPAREPLUGIN_HH
