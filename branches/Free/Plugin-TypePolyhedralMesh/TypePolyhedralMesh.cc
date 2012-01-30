@@ -143,7 +143,6 @@ void TypePolyhedralMeshPlugin::slotKeyEvent(QKeyEvent* _event) {
         if (_event->modifiers() & Qt::ShiftModifier)
             slot_change_shrinkage();
         break;
-        return;
     default:
         break;
     }
