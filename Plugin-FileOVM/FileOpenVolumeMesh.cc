@@ -251,22 +251,12 @@ bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
             obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
             obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
 
-            bool compatibility_mode = false;
-            if(!OpenFlipper::Options::nogui()) {
-                compatibility_mode = saveCompMode_->isChecked();
-            }
-
             fileManager_.writeFile(_filename.toStdString(), *(mesh_obj->mesh()));
         }
         else if (hex_mesh_obj) {
 
             obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
             obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
-
-            bool compatibility_mode = false;
-            if(!OpenFlipper::Options::nogui()) {
-                compatibility_mode = saveCompMode_->isChecked();
-            }
 
             fileManager_.writeFile(_filename.toStdString(), *(hex_mesh_obj->mesh()));
         }
