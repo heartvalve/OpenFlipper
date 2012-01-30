@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>321</width>
-    <height>156</height>
+    <height>183</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,14 @@
            <string>Compare mean curvature between meshes</string>
           </property>
           <property name="text">
-           <string>MeanCurvature</string>
+           <string>Mean curvature</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="gaussCurvature">
+          <property name="text">
+           <string>Gauss curvature</string>
           </property>
          </widget>
         </item>
@@ -76,16 +83,27 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="compare">
-     <property name="toolTip">
-      <string>Compute distance between to meshes.
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="compare">
+       <property name="toolTip">
+        <string>Compute distance between to meshes.
 
 Select one source mesh(the reference) and one target mesh. The points of the reference are projected onto target and the deviation(distance,normal) gets visualized by colored points.</string>
-     </property>
-     <property name="text">
-      <string>Compare</string>
-     </property>
-    </widget>
+       </property>
+       <property name="text">
+        <string>Compare</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <spacer name="verticalSpacer">

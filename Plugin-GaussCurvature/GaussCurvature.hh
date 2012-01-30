@@ -82,7 +82,7 @@ class GaussCurvaturePlugin : public QObject, BaseInterface, TextureInterface
 
     /** \brief Scripting slot to trigger computation of gaussian curvature
      *
-     * The curvature will be stored on the mesh on the vertex property called "Mean Curvature"
+     * The curvature will be stored on the mesh on the vertex property called "Gaussian Curvature"
      */
     bool computeGaussCurvature(int _objectId);
 
