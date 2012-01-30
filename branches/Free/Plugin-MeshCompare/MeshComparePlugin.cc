@@ -58,7 +58,8 @@
 MeshComparePlugin::MeshComparePlugin() :
   tool_(0),
   maximalDistance_(-1),
-  maxNormalDeviation_(-1)
+  maxNormalDeviation_(-1),
+  maxGaussCurvatureDev_(-1)
 {
 
 }
@@ -74,6 +75,7 @@ void MeshComparePlugin::initializePlugin()
     tool_ = new MeshCompareToolbarWidget();
 
     connect( tool_->compare, SIGNAL(clicked()), this, SLOT(compareButton()) );
+    connect( tool_->clear, SIGNAL(clicked()), this, SLOT(slotClear()) );
 
     QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"MeshCompare.png");
     emit addToolbox( tr("Mesh Compare") , tool_ , toolIcon);
@@ -92,7 +94,9 @@ void MeshComparePlugin::pluginsInitialized() {
   emit setSlotDescription(tr("lastMaximalNormalDeviation()"), tr("Get the maximal normal deviation in degree between the meshes of the last comparison."),
       QStringList(tr("")), QStringList(tr("")));
   emit setSlotDescription(tr("lastMaximalMeanCurvatureDeviation()"), tr("Get the maximal mean curvature deviation between the meshes of the last comparison."),
-        QStringList(tr("")), QStringList(tr("")));
+      QStringList(tr("")), QStringList(tr("")));
+  emit setSlotDescription(tr("lastMaximalGaussCurvatureDeviation()"), tr("Get the maximal gauss curvature deviation between the meshes of the last comparison."),
+      QStringList(tr("")), QStringList(tr("")));
 
   //===========================================================
   // Check mean curvature plugin and disable the box in gui mode
@@ -102,6 +106,15 @@ void MeshComparePlugin::pluginsInitialized() {
 
   if ( OpenFlipper::Options::gui() && !meanCurvature )
     tool_->meanCurvature->setEnabled(false);
+
+  //===========================================================
+  // Check gauss curvature plugin and disable the box in gui mode
+  //===========================================================
+  bool gaussCurvature = false;
+  emit pluginExists( "gausscurvature" , gaussCurvature  );
+
+  if ( OpenFlipper::Options::gui() && !gaussCurvature )
+    tool_->gaussCurvature->setEnabled(false);
 }
 
 void MeshComparePlugin::compareButton() {
@@ -144,6 +157,18 @@ void MeshComparePlugin::compareButton() {
     emit log(LOGERR,tr("Please select one source and one target mesh to compare! Source will be the reference mesh."));
   }
 
+
+}
+
+void MeshComparePlugin::slotClear() {
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+    ACG::SceneGraph::MaterialNode *pMatNode = 0;
+    if ( o_it->getAdditionalNode(pMatNode,name(), "MeshCompareDistanceMaterial" ) )
+      o_it->removeAdditionalNode(pMatNode,name(),"MeshCompareDistanceMaterial");
+
+  }
 
 }
 
@@ -206,24 +231,48 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   OpenMesh::VPropHandleT< double > meanComp;
 
   if( meanCurvature &&
-     ((!refMesh->get_property_handle( meanRef , "Mean Curvature") ) ||
+     ((!refMesh->get_property_handle(  meanRef , "Mean Curvature") ) ||
       (!compMesh->get_property_handle( meanComp, "Mean Curvature") ))) {
     meanCurvature = false;
   }
+
+  // ================================================================
+  // Compute mean curvature on both meshes ( if plugin is available )
+  // ================================================================
+  bool gaussCurvature = false;
+  emit pluginExists( "gausscurvature" , gaussCurvature  );
+
+  //
+  if ( gaussCurvature ) {
+    RPC::callFunction("gausscurvature","computeGaussCurvature",_sourceId);
+    RPC::callFunction("gausscurvature","computeGaussCurvature",_targetId);
+  }
+
+  OpenMesh::VPropHandleT< double > gaussRef;
+  OpenMesh::VPropHandleT< double > gaussComp;
+
+  if( gaussCurvature &&
+     ((!refMesh->get_property_handle(  gaussRef , "Gaussian Curvature") ) ||
+      (!compMesh->get_property_handle( gaussComp, "Gaussian Curvature") ))) {
+    gaussCurvature = false;
+  }
+
 
 
   // ================================================================
   // Remember the maximal values as output and for specifying color coding range
   // ================================================================
-  maximalDistance_     = -1.0;
-  maxNormalDeviation_  = -1.0;
-  maxMeanCurvatureDev_ = -1.0;
+  maximalDistance_      = -1.0;
+  maxNormalDeviation_   = -1.0;
+  maxMeanCurvatureDev_  = -1.0;
+  maxGaussCurvatureDev_ = -1.0;
 
 
   // Remember distances for colorCoding after we know the maximal distance
   std::vector<double> distances;
   std::vector<double> normalAngles;
   std::vector<double> meanCurvatures;
+  std::vector<double> gaussCurvatures;
 
   for ( TriMesh::VertexIter v_it = refMesh->vertices_begin() ; v_it != refMesh->vertices_end(); ++ v_it) {
 
@@ -289,8 +338,6 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
 
     if (meanCurvature) {
 
-      refMesh->property(meanRef,v_it);
-
       TriMesh::Scalar curvature = 0.0;
       curvature  = compMesh->property(meanComp,v0) * projectedPoint[0];
       curvature += compMesh->property(meanComp,v1) * projectedPoint[1];
@@ -304,6 +351,22 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
         maxMeanCurvatureDev_ = curvatureDev;
 
     }
+
+    if (gaussCurvature) {
+
+          TriMesh::Scalar curvature = 0.0;
+          curvature  = compMesh->property(gaussComp,v0) * projectedPoint[0];
+          curvature += compMesh->property(gaussComp,v1) * projectedPoint[1];
+          curvature += compMesh->property(gaussComp,v2) * projectedPoint[2];
+
+          const double curvatureDev = fabs( refMesh->property(gaussRef,v_it) - curvature );
+
+          gaussCurvatures.push_back( curvatureDev );
+
+          if ( curvatureDev > maxGaussCurvatureDev_ )
+            maxGaussCurvatureDev_ = curvatureDev;
+
+        }
 
   }
 
@@ -327,6 +390,13 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
 
       for ( unsigned int i = 0 ; i < meanCurvatures.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(meanCurvatures[i]));
+      }
+
+    } else if ( tool_->gaussCurvature->isChecked() ) {
+      ACG::ColorCoder cCoder(0,maxGaussCurvatureDev_);
+
+      for ( unsigned int i = 0 ; i < gaussCurvatures.size() ; ++i) {
+        pNode->add_color(cCoder.color_float4(gaussCurvatures[i]));
       }
 
     }

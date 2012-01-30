@@ -102,7 +102,11 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     void initializePlugin();
     void pluginsInitialized();
 
+    /// Triggers comparison of the selected meshes
     void compareButton();
+
+    /// Clears the visualization
+    void slotClear();
 
   // Scriptable functions
   public slots:
@@ -121,6 +125,8 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     /// Get the maximal mean curvature deviation of the last comparison (-1, if no comparison performed so far)
     double lastMaximalMeanCurvatureDeviation() { return maxMeanCurvatureDev_; };
 
+    /// Get the maximal gauss curvature deviation of the last comparison (-1, if no comparison performed so far)
+    double lastMaximalGaussCurvatureDeviation() { return maxGaussCurvatureDev_; };
 
   private:
     /// The toolbar widget of this plugin
@@ -134,6 +140,9 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
     /// Last maximal mean curvature deviation
     double maxMeanCurvatureDev_;
+
+    /// Last maximal gauss curvature deviation
+    double maxGaussCurvatureDev_;
 };
 
 #endif //MESHCOMPAREPLUGIN_HH
