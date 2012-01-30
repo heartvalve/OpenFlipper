@@ -84,7 +84,6 @@ void InfoSkeletonObjectPlugin::pluginsInitialized() {
 //-----------------------------------------------------------------------------
 
 DataType InfoSkeletonObjectPlugin::supportedDataTypes() {
-  std::cerr << "Supported Datatypes " << std::endl;
     return DataType(DATA_SKELETON);
 }
 
