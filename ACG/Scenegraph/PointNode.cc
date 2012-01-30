@@ -79,7 +79,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------------------
 
   
-  DrawModes::DrawMode 
+DrawModes::DrawMode
 PointNode::
 availableDrawModes() const
 {
@@ -135,7 +135,8 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
       ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       ACG::GLState::colorPointer(&colors_[0]);
       glDrawArrays(GL_POINTS, 0, points_.size());
-    }
+    } else
+      std::cerr << "Mismatch size!" << std::endl;
   }
 
 

@@ -85,7 +85,7 @@ public:
   typedef std::vector<ACG::Vec3d>      PointVector;
   typedef PointVector::iterator        PointIter;
   typedef PointVector::const_iterator  ConstPointIter;
-  typedef std::vector<ACG::Vec3uc>     ColorVector;
+  typedef std::vector<ACG::Vec4f>      ColorVector;
   typedef ColorVector::iterator        ColorIter;
   typedef ColorVector::const_iterator  ConstColorIter;
 
@@ -121,7 +121,7 @@ public:
   /// add normal
   void add_normal(const ACG::Vec3d& _n) { normals_.push_back(_n); }
   /// add color
-  void add_color(const ACG::Vec3uc& _c) { colors_.push_back(_c); }
+  void add_color(const ACG::Vec4f& _c) { colors_.push_back(_c); }
 
   /// how many points?
   unsigned int n_points() const { return points_.size(); }
