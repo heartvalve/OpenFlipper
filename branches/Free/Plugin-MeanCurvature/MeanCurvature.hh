@@ -61,29 +61,42 @@ class MeanCurvaturePlugin : public QObject, BaseInterface, TextureInterface
 
   signals:
 
+    // Texture Interface
     void addTexture( QString _textureName , QString _filename , uint dimension );
     void updatedTextures( QString , int );
     void setTextureMode(QString _textureName ,QString _mode);
+
+    // Base Interface
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
 
   private slots:
     void slotUpdateTexture( QString _textureName , int _identifier );
 
     void pluginsInitialized();
 
+  public slots:
+
+    /** \brief Scripting slot to trigger computation of mean curvature
+     *
+     * The curvature will be stored on the mesh on the vertex property called "Mean Curvature"
+     */
+    bool computeMeanCurvature(int _objectId);
+
   public :
 
-    ~MeanCurvaturePlugin() {};
-
-    void exit(){};
-
-    template< typename MeshT >
-    void computeMeanCurvature(MeshT* _mesh);
+    MeanCurvaturePlugin();
+    ~MeanCurvaturePlugin();
 
     QString name() { return (QString("MeanCurvature")); };
     QString description( ) { return (QString("Generates Mean Curvature information")); };
 
   public slots:
     QString version() { return QString("1.0"); };
+
+  private:
+    template< typename MeshT >
+    void computeMeanCurvature(MeshT* _mesh);
 };
 
 #endif //MEANCURVATUREPLUGIN_HH

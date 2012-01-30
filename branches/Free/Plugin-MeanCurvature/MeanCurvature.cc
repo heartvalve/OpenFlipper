@@ -61,10 +61,23 @@
 #include <omp.h>
 #endif
 
+MeanCurvaturePlugin::MeanCurvaturePlugin()
+{
+}
+
+
+MeanCurvaturePlugin::~MeanCurvaturePlugin()
+{
+}
+
+
 void MeanCurvaturePlugin::pluginsInitialized()
 {
   emit addTexture( "Mean Curvature" , "mean_curvature.png" , 1 );
   emit setTextureMode("Mean Curvature","clamp=true,center=true,repeat=false,clamp_min=-20,clamp_max=20");
+
+  emit setSlotDescription(tr("computeMeanCurvature(int)"), tr("Compute the mean curvature on a mesh. The curvature will be stored on the mesh on the vertex property called \"Mean Curvature\""),
+        QStringList(tr("ObjectId")), QStringList(tr("Id of the mesh")));
 }
 
 void MeanCurvaturePlugin::slotUpdateTexture( QString _textureName , int _identifier )
@@ -89,6 +102,27 @@ void MeanCurvaturePlugin::slotUpdateTexture( QString _textureName , int _identif
    }
 
    emit updatedTextures("Mean Curvature",_identifier);
+}
+
+bool MeanCurvaturePlugin::computeMeanCurvature(int _objectId) {
+  BaseObjectData* object;
+  if (! PluginFunctions::getObject(  _objectId , object ) ) {
+    return false;
+  }
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+    TriMesh* mesh = PluginFunctions::triMesh(object);
+    computeMeanCurvature(mesh);
+    return true;
+  }
+
+  if ( object->dataType( DATA_POLY_MESH ) ) {
+    PolyMesh* mesh = PluginFunctions::polyMesh(object);
+    computeMeanCurvature(mesh);
+    return true;
+  }
+
+  return false;
 }
 
 template< typename MeshT >
@@ -122,12 +156,6 @@ void MeanCurvaturePlugin::computeMeanCurvature(MeshT* _mesh) {
 
     _mesh->property(mean,handle) =  curv;
   }
-/*
-  #ifdef USE_OPENMP
-    std::cerr << "MeanCurvature parallel took : " << time.elapsed() << std::endl;
-  #else
-    std::cerr << "MeanCurvature sequential took : " << time.elapsed() << std::endl;
-  #endif*/
 
 }
 
