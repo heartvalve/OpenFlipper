@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MeshCompareToolbar</class>
+ <widget class="QWidget" name="MeshCompareToolbar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>321</width>
+    <height>131</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="toolTip">
+      <string>Set the smoothing directions</string>
+     </property>
+     <property name="statusTip">
+      <string>Set the smoothing directions</string>
+     </property>
+     <property name="title">
+      <string>Property</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QRadioButton" name="distance">
+          <property name="toolTip">
+           <string>Compare distance between meshes</string>
+          </property>
+          <property name="statusTip">
+           <string>Compare distance between meshes</string>
+          </property>
+          <property name="text">
+           <string>Distance</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="normalAngle">
+          <property name="toolTip">
+           <string>Compare normal deviation between meshes</string>
+          </property>
+          <property name="statusTip">
+           <string>Compare normal deviation between meshes</string>
+          </property>
+          <property name="text">
+           <string>Normal</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="compare">
+     <property name="toolTip">
+      <string>Compute distance between to meshes.
+
+Select one source mesh(the reference) and one target mesh. The points of the reference are projected onto target and the deviation(distance,normal) gets visualized by colored points.</string>
+     </property>
+     <property name="text">
+      <string>Compare</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <resources/>
+ <connections/>
+</ui>
