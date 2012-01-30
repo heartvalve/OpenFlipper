@@ -82,14 +82,21 @@ void MeshComparePlugin::initializePlugin()
 
 void MeshComparePlugin::pluginsInitialized() {
     
+  //===========================================================
+  // Describe scrpting slots
+  //===========================================================
   emit setSlotDescription(tr("compare(int,int)"), tr("Compare two meshes. Use lastMaximalDistance() and lastMaximalNormalDeviation() to get the results."),
       QStringList(tr("ObjectId,ObjectId")), QStringList(tr("Id of the reference mesh, Id of the comparison mesh")));
   emit setSlotDescription(tr("lastMaximalDistance()"), tr("Get the maximal distance between the meshes of the last comparison."),
       QStringList(tr("")), QStringList(tr("")));
   emit setSlotDescription(tr("lastMaximalNormalDeviation()"), tr("Get the maximal normal deviation in degree between the meshes of the last comparison."),
       QStringList(tr("")), QStringList(tr("")));
+  emit setSlotDescription(tr("lastMaximalMeanCurvatureDeviation()"), tr("Get the maximal mean curvature deviation between the meshes of the last comparison."),
+        QStringList(tr("")), QStringList(tr("")));
 
+  //===========================================================
   // Check mean curvature plugin and disable the box in gui mode
+  //===========================================================
   bool meanCurvature = false;
   emit pluginExists( "meancurvature" , meanCurvature  );
 
