@@ -89,6 +89,12 @@ void MeshComparePlugin::pluginsInitialized() {
   emit setSlotDescription(tr("lastMaximalNormalDeviation()"), tr("Get the maximal normal deviation in degree between the meshes of the last comparison."),
       QStringList(tr("")), QStringList(tr("")));
 
+  // Check mean curvature plugin and disable the box in gui mode
+  bool meanCurvature = false;
+  emit pluginExists( "meancurvature" , meanCurvature  );
+
+  if ( OpenFlipper::Options::gui() && !meanCurvature )
+    tool_->meanCurvature->setEnabled(false);
 }
 
 void MeshComparePlugin::compareButton() {
@@ -173,19 +179,44 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     pNode->reserve(refMesh->n_vertices(),refMesh->n_vertices(),refMesh->n_vertices() );
   }
 
-
   // Get a bsp for the target, as we will project the reference mesh onto the target mesh.
   // It will be build automatically at this point.
   TriMeshObject::OMTriangleBSP* compBSP = target->requestTriangleBsp();
 
+  // ================================================================
+  // Compute mean curvature on both meshes ( if plugin is available )
+  // ================================================================
+  bool meanCurvature = false;
+  emit pluginExists( "meancurvature" , meanCurvature  );
+
+  //
+  if ( meanCurvature ) {
+    RPC::callFunction("meancurvature","computeMeanCurvature",_sourceId);
+    RPC::callFunction("meancurvature","computeMeanCurvature",_targetId);
+  }
+
+  OpenMesh::VPropHandleT< double > meanRef;
+  OpenMesh::VPropHandleT< double > meanComp;
+
+  if( meanCurvature &&
+     ((!refMesh->get_property_handle( meanRef , "Mean Curvature") ) ||
+      (!compMesh->get_property_handle( meanComp, "Mean Curvature") ))) {
+    meanCurvature = false;
+  }
+
+
+  // ================================================================
   // Remember the maximal values as output and for specifying color coding range
-  maximalDistance_    = 0.0;
-  maxNormalDeviation_ = 0.0;
+  // ================================================================
+  maximalDistance_     = -1.0;
+  maxNormalDeviation_  = -1.0;
+  maxMeanCurvatureDev_ = -1.0;
 
 
   // Remember distances for colorCoding after we know the maximal distance
   std::vector<double> distances;
   std::vector<double> normalAngles;
+  std::vector<double> meanCurvatures;
 
   for ( TriMesh::VertexIter v_it = refMesh->vertices_begin() ; v_it != refMesh->vertices_end(); ++ v_it) {
 
@@ -202,14 +233,17 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     // Get the vertices around that face and their properties
     TriMesh::CFVIter        fv_it = compMesh->cfv_iter(closestFace);
 
-    const TriMesh::Point&   p0    = compMesh->point(fv_it);
-    const TriMesh::Normal   n0    = compMesh->normal(fv_it);
+    const TriMesh::Point&        p0    = compMesh->point(fv_it);
+    const TriMesh::Normal        n0    = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v0    = fv_it.handle();
 
-    const TriMesh::Point&   p1    = compMesh->point(++fv_it);
-    const TriMesh::Normal   n1    = compMesh->normal(fv_it);
+    const TriMesh::Point&        p1    = compMesh->point(++fv_it);
+    const TriMesh::Normal        n1    = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v1    = fv_it.handle();
 
-    const TriMesh::Point&   p2    = compMesh->point(++fv_it);
-    const TriMesh::Normal   n2    = compMesh->normal(fv_it);
+    const TriMesh::Point&        p2    = compMesh->point(++fv_it);
+    const TriMesh::Normal        n2    = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v2    = fv_it.handle();
 
     // project original point to current mesh
     TriMesh::Point projectedPoint;
@@ -245,6 +279,25 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
     if (normalDeviation > maxNormalDeviation_)
       maxNormalDeviation_ = normalDeviation;
 
+
+    if (meanCurvature) {
+
+      refMesh->property(meanRef,v_it);
+
+      TriMesh::Scalar curvature = 0.0;
+      curvature  = compMesh->property(meanComp,v0) * projectedPoint[0];
+      curvature += compMesh->property(meanComp,v1) * projectedPoint[1];
+      curvature += compMesh->property(meanComp,v2) * projectedPoint[2];
+
+      const double curvatureDev = fabs( refMesh->property(meanRef,v_it) - curvature );
+
+      meanCurvatures.push_back( curvatureDev );
+
+      if ( curvatureDev > maxMeanCurvatureDev_ )
+        maxMeanCurvatureDev_ = curvatureDev;
+
+    }
+
   }
 
   // Generate the colors
@@ -256,13 +309,22 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
       for ( unsigned int i = 0 ; i < distances.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(distances[i]));
       }
-    } else {
+    } else if ( tool_->normalAngle->isChecked() ) {
       ACG::ColorCoder cCoder(0,maxNormalDeviation_);
 
       for ( unsigned int i = 0 ; i < normalAngles.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(normalAngles[i]));
       }
+    } else if ( tool_->meanCurvature->isChecked() ) {
+      ACG::ColorCoder cCoder(0,maxMeanCurvatureDev_);
+
+      for ( unsigned int i = 0 ; i < meanCurvatures.size() ; ++i) {
+        pNode->add_color(cCoder.color_float4(meanCurvatures[i]));
+      }
+
     }
+
+
 
     emit updateView();
   }

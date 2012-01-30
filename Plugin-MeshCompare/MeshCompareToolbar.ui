@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>321</width>
-    <height>131</height>
+    <height>156</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,6 +54,19 @@
           </property>
           <property name="text">
            <string>Normal</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="meanCurvature">
+          <property name="toolTip">
+           <string>Compare mean curvature between meshes</string>
+          </property>
+          <property name="statusTip">
+           <string>Compare mean curvature between meshes</string>
+          </property>
+          <property name="text">
+           <string>MeanCurvature</string>
           </property>
          </widget>
         </item>

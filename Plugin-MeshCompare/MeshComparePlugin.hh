@@ -52,11 +52,12 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
 #include "MeshCompareToolbarWidget.hh"
 
-class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, TextureInterface
+class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, TextureInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -65,6 +66,7 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(TextureInterface)
+  Q_INTERFACES(RPCInterface)
 
   signals:
     //BaseInterface
@@ -82,6 +84,9 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     
     // BackupInterface
     void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
+
+    // RPC Interface
+    void pluginExists( QString _pluginName , bool& _exists  );
 
   public:
 
@@ -123,6 +128,9 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
     /// Last maximal computed normal deviation in degree
     double maxNormalDeviation_;
+
+    /// Last maximal mean curvature deviation
+    double maxMeanCurvatureDev_;
 };
 
 #endif //MESHCOMPAREPLUGIN_HH

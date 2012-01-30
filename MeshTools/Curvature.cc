@@ -101,10 +101,10 @@ gauss_curvature(MeshT& _mesh, const typename MeshT::VertexHandle& _vh) {
 
 
 template<class MeshT, class VectorT, class REALT>
-void discrete_mean_curv_op( const MeshT&                           _m,
-                        	                const typename MeshT::VertexHandle& _vh, 
-			                        VectorT&                                  _n,
-			                        REALT&                                   _area )
+void discrete_mean_curv_op( const MeshT&                        _m,
+                        	  const typename MeshT::VertexHandle& _vh,
+			                      VectorT&                            _n,
+			                      REALT&                              _area )
 {
   _n = VectorT(0,0,0);
   _area = 0.0;
