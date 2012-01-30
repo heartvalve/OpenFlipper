@@ -40,89 +40,14 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "ui_MeshCompareToolbar.hh"
+#include <QtGui>
 
-
-
-#ifndef MESHCOMPAREPLUGIN_HH
-#define MESHCOMPAREPLUGIN_HH
-
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
-#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/BackupInterface.hh>
-#include <OpenFlipper/BasePlugin/TextureInterface.hh>
-#include <OpenFlipper/common/Types.hh>
-
-#include "MeshCompareToolbarWidget.hh"
-
-class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, TextureInterface
+class MeshCompareToolbarWidget : public QWidget, public Ui::MeshCompareToolbar
 {
   Q_OBJECT
-  Q_INTERFACES(BaseInterface)
-  Q_INTERFACES(ToolboxInterface)
-  Q_INTERFACES(LoggingInterface)
-  Q_INTERFACES(ScriptInterface)
-  Q_INTERFACES(BackupInterface)
-  Q_INTERFACES(TextureInterface)
-
-  signals:
-    //BaseInterface
-    void updateView();
-    void updatedObject(int _id, const UpdateType& _type);
-    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
-                            QStringList _parameters, QStringList _descriptions);
-
-    //LoggingInterface
-    void log(Logtype _type, QString _message);
-    void log(QString _message);
-    
-    // ToolboxInterface
-    void addToolbox( QString  _name  , QWidget* _widget ,QIcon* _icon);
-    
-    // BackupInterface
-    void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
   public:
-
-    MeshComparePlugin();
-    ~MeshComparePlugin();
-
-    // BaseInterface
-    QString name() { return (QString("Mesh Compare")); };
-    QString description( ) { return (QString("Compare two meshes")); };
-
-  private slots:
-
-    void initializePlugin();
-    void pluginsInitialized();
-
-    void compareButton();
-
-  // Scriptable functions
-  public slots:
-       
-    QString version() { return QString("1.0"); };
-
-    /// Compares two meshes. Use the two getter functions to retrieve the maximal deviations
-    void compare(int _sourceId,int _targetId);
-
-    /// Get the maximal distance of the last comparison (-1, if no comparison performed so far)
-    double lastMaximalDistance() { return maximalDistance_; };
-
-    /// Get the maximal normal deviation of the last comparison in degree (-1, if no comparison performed so far)
-    double lastMaximalNormalDeviation() { return maxNormalDeviation_; };
-
-
-  private:
-    /// The toolbar widget of this plugin
-    MeshCompareToolbarWidget* tool_;
-
-    /// Last maximal computed distance
-    double maximalDistance_;
-
-    /// Last maximal computed normal deviation in degree
-    double maxNormalDeviation_;
+  MeshCompareToolbarWidget(QWidget *parent = 0);
 };
 
-#endif //MESHCOMPAREPLUGIN_HH
