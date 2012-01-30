@@ -83,6 +83,8 @@ class MeanCurvaturePlugin : public QObject, BaseInterface, TextureInterface
      */
     bool computeMeanCurvature(int _objectId);
 
+    QString version() { return QString("1.0"); };
+
   public :
 
     MeanCurvaturePlugin();
@@ -90,9 +92,6 @@ class MeanCurvaturePlugin : public QObject, BaseInterface, TextureInterface
 
     QString name() { return (QString("MeanCurvature")); };
     QString description( ) { return (QString("Generates Mean Curvature information")); };
-
-  public slots:
-    QString version() { return QString("1.0"); };
 
   private:
     template< typename MeshT >
