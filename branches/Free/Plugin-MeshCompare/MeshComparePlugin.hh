@@ -118,6 +118,9 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     /// Get the maximal normal deviation of the last comparison in degree (-1, if no comparison performed so far)
     double lastMaximalNormalDeviation() { return maxNormalDeviation_; };
 
+    /// Get the maximal mean curvature deviation of the last comparison (-1, if no comparison performed so far)
+    double lastMaximalMeanCurvatureDeviation() { return maxMeanCurvatureDev_; };
+
 
   private:
     /// The toolbar widget of this plugin
