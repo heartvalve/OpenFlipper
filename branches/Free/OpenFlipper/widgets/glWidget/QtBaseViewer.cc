@@ -1172,6 +1172,8 @@ void glViewer::translate(const ACG::Vec3d& _trans)
   makeCurrent();
   glstate_->translate(_trans[0], _trans[1], _trans[2], ACG::MULT_FROM_LEFT);
 
+  updateGL();
+
   emit viewChanged();
 }
 
@@ -1198,6 +1200,8 @@ void glViewer::rotate(const ACG::Vec3d&  _axis,
   glstate_->translate(-t[0], -t[1], -t[2], ACG::MULT_FROM_LEFT);
   glstate_->rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
   glstate_->translate( t[0],  t[1],  t[2], ACG::MULT_FROM_LEFT);
+
+  updateGL();
 
   emit viewChanged();
 }
