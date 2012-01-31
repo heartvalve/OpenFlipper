@@ -160,6 +160,20 @@ void MeshComparePlugin::compareButton() {
 
 }
 
+void MeshComparePlugin::slotObjectUpdated( int _identifier, const UpdateType& _type ) {
+  // Get source and target objects
+  BaseObjectData* object = 0;
+
+  PluginFunctions::getObject(_identifier,object);
+
+  if ( object ) {
+    ACG::SceneGraph::MaterialNode *pMatNode = 0;
+    if ( object->getAdditionalNode(pMatNode,name(), "MeshCompareDistanceMaterial" ) )
+      object->removeAdditionalNode(pMatNode,name(),"MeshCompareDistanceMaterial");
+  }
+
+}
+
 void MeshComparePlugin::slotClear() {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
