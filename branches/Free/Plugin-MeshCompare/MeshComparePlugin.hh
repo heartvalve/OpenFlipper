@@ -108,6 +108,9 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     /// Clears the visualization
     void slotClear();
 
+    /// Called when an object gets updated
+    void slotObjectUpdated( int _identifier, const UpdateType& _type );
+
   // Scriptable functions
   public slots:
        
