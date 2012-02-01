@@ -1756,13 +1756,13 @@ bool Core::checkOpenGLCapabilities()  {
     
     
   } else if ( warn ) {
-    QString message = tr("Warning! The OpenGL capabilities of your current machine/driver could be insufficient!\n\n");
+    QString message = tr("Warning! Automatic system environment checks discovered some possible problems!\n\n");
     message += tr("The following checks failed:\n\n");
     message += missing;
         
     std::cerr << message.toStdString() << std::endl;
     
-    QMessageBox::warning ( 0, tr( "Insufficient OpenGL Capabilities!"),message );
+    QMessageBox::warning ( 0, tr( "Detected possible problems!"),message );
     
   }
   #ifndef NDEBUG
