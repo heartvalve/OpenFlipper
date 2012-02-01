@@ -33,6 +33,8 @@ signals:
 To generate the object you can implement the following in one of your functions:
 
 \code
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
 void ExamplePlugin::exampleFunction() {
   // Variable which will store the id of the newly created object.
   int newObjectId = -1;

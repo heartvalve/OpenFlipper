@@ -50,6 +50,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_HEXAHEDRAL_MESH
+ * Use this macro to reference Hexahedral Meshes
+ */
 #define DATA_HEXAHEDRAL_MESH typeId("HexahedralMesh")
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshObject.hh>
 #include <ObjectTypes/HexahedralMesh/OpenFlipperHexahedralMesh.hh>

@@ -51,6 +51,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_COORDSYS
+ * Use this macro to reference Coordinate systems
+ */
 #define DATA_COORDSYS typeId("Coordsys")
 
 #include <ObjectTypes/Coordsys/CoordsysObject.hh>

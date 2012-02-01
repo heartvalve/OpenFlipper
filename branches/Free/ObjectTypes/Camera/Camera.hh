@@ -40,6 +40,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_CAMERA
+ * Use this macro to reference cameras
+ */
 #define DATA_CAMERA typeId("Camera")
 
 #include <ObjectTypes/Camera/CameraObject.hh>

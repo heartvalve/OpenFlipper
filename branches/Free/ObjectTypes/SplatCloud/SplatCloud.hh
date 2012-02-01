@@ -52,7 +52,9 @@
 
 //== DEFINES =====================================================
 
-
+/** \def DATA_SPLATCLOUD
+ * Use this macro to reference Splat Clouds
+ */
 #define DATA_SPLATCLOUD typeId( "SplatCloud" )
 
 

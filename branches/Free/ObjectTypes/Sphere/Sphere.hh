@@ -51,6 +51,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_SPHERE
+ * Use this macro to reference Spheres
+ */
 #define DATA_SPHERE typeId("Sphere")
 
 #include <ObjectTypes/Sphere/SphereObject.hh>
