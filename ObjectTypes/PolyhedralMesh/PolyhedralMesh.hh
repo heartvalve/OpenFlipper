@@ -50,6 +50,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_POLYHEDRAL_MESH
+ * Use this macro to reference Polyhedral Meshes
+ */
 #define DATA_POLYHEDRAL_MESH typeId("PolyhedralMesh")
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshObject.hh>
 #include <ObjectTypes/PolyhedralMesh/OpenFlipperPolyhedralMesh.hh>

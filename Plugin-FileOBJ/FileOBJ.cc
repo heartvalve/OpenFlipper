@@ -1435,7 +1435,11 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   } else {
     // Mesh does not contain any faces
     PolyMeshCount++;
-    _importer.setObjectOptions(OBJImporter::TRIMESH);
+    unsigned int currentOptions = _importer.objectOptions()[_importer.currentObject()];
+    // this is only a triangle mesh if the object is not a curve and not a surface
+    if (!(currentOptions & OBJImporter::CURVE) && !(currentOptions & OBJImporter::SURFACE)) {
+      _importer.setObjectOptions(OBJImporter::TRIMESH);
+    }
   }
   
   if (TriMeshCount == 0 && PolyMeshCount == 0)
