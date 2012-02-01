@@ -48,7 +48,7 @@ void main()
         //   - divided by gl_Position.w to shrink size by distance
         //   - divided by -normalize(ecCenter).z because splat could be oriented towards the eye (not necessarily parallel to near-plane)
         //   - multiply by viewportScaleFov_y to get window coordinates
-        gl_PointSize = ecPointsize * viewportScaleFov_y / (-normalize( ecCenter ).z * gl_Position.w);
+        gl_PointSize = max( ecPointsize * viewportScaleFov_y / (-normalize( ecCenter ).z * gl_Position.w), 1.0 );
 
 //////////////////////////////////////////////////////////////
 /**/                                                      /**/

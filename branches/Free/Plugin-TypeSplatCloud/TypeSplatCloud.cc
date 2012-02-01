@@ -124,8 +124,13 @@ void TypeSplatCloudPlugin::slotViewChanged()
 	GLfloat VPs_z = 0.5f * d;
 	GLfloat VPt_z = z + VPs_z;
 
-	// calculate scaling factor of modelview_projection matrix
-	GLfloat MVs = 1.0f;
+	// calculate scaling factor of modelview matrix
+	static const double RCP_3 = 1.0 / 3.0;
+	const ACG::GLMatrixd &mv = glstate.modelview();
+	double detMV = mv(0,0) * (mv(1,1)*mv(2,2) - mv(1,2)*mv(2,1)) 
+	             + mv(0,1) * (mv(1,2)*mv(2,0) - mv(1,0)*mv(2,2)) 
+	             + mv(0,2) * (mv(1,0)*mv(2,1) - mv(1,1)*mv(2,0));
+	GLfloat MVs = (GLfloat) pow( fabs( detMV ), RCP_3 );
 
 	// calculate scale for pointsizes in eye-coordinates according to fovy and transformation to window-coordinates
 	GLfloat VPsFov_y = glstate.projection()(1,1) * (0.5f * h);
