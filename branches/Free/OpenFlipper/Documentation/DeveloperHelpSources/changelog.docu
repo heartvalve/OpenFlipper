@@ -1,11 +1,12 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13441 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13568 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
          - DrawModes
-             - Reworked dynamic drawMode interface         i
+             - Reworked dynamic drawMode interface         
+             - new draw modes: points_colored / points_colored_shaded
          - Geometry
              - Fixed aspect ratio function
              - compute the rotation axis as wellas the rotation angle of two given vectors
@@ -14,6 +15,8 @@
          - Math
              - Added operator* for matrix * scalar multiplication, where each element of the matrix is multiplied with the scalar.
          - SceneGraph
+             - General
+                 - Replace usage of gluDisk/Sphere... by the GLPrimitives
              - CoordsysNode
                  - Rendering fix for colors of coordsys
              - LineNode
@@ -21,12 +24,16 @@
              - MeshNode
                  - Don't texture edges, halfedges and points in meshnode
                  - Fixed picking bug, not updating the buffers when switching between any and face picking
+                 - Extra buffer for any picking pass
+                 - Bugfix, where mesh was not build yet, but picking needed refs #281
+                 - Bugfix for any picking. closes #354
              - ShaderNode
                  - Return the available drawmodes based on the set shaders
              - TranslationManipulatorNode
                  - Make QtTranslationManipulatorNode active per default, since otherwise it is neglected when computing the scene's bounding box
                  - Fixed set_direction for translation manipulator Node
                  - Added functions to disable unused rotation parts of the manipulator
+                 - Corrected colors for translationmanipulatornode. closes #289
          - QtWidgets
              - Added ColorChooserButton with alpha channel display
              - Use new ColorChooserButton for QtMaterialDialog
@@ -38,6 +45,7 @@
          - Utilities
              - Added ACG::ColorGenerator (For generating good reproducable colors)
              - Halton Color generator
+             - Added colorcoder generating nice colors for a given range of doubles.
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
@@ -52,6 +60,7 @@
              - Get rid of ugly frame rendering bug in SimpleViewer
              - Do not reset picking toolbar's position and orientation each time it is shown.
              - Fixed bug where logger and toolbar where invisible
+             - Modified drawmode context menu to stay open if drawmodes are combined.
      - <b>Interfaces</b> 
          - General
              - Use const ref for passing strings where possible
@@ -62,6 +71,8 @@
              - Added getAllFileFilters signal to LoadSaveInterface. This signal was documented but in fact never implemented.
              - Added two convenience functions for list of recent items bookkeeping. (rememberRecentItem,getRecentItems)
      - <b>ObjectTypes</b>
+         - HexahedralMesh
+             - New object type for handling hexahedral meshes with an interface like OpenMesh (OpenVolumeMesh)
          - PolyMeshObject
              - Switched color type in meshes from Vec3uc to Vec4f to support alpha per primitive
          - Skeleton
@@ -83,6 +94,8 @@
          - DataControl
              - Made DataControl scriptable
              - added printObjectInfoToLog function which prints info about all available objects to the log
+             - Implemented scripting function in datacontrol to get number of groups in the scene.
+             - Function to get object datatype and stringlist of all available datatypes.
          - Decimater
              - New decimater with various constraints and feature support
          - File OBJ
@@ -93,11 +106,15 @@
              - Fixed conversion to 4 color components
          - MeshObjectInfo
              - Corrected and improved genus computation
+             - Display edge length closes #283
+             - Enable headless mode for meshinfo plugin
          - MeshObjectSelections
              - Added functions to convert edge selections to features.
              - Added conversion functions for all types of features (vertices, edges and faces)
              - Store edge selections as vertex pairs since edge ids are not stable (differ depending on the file reader).
              - Also store vertex pairs for halfedge selections instead of direct ids since they're not stable either.
+         - MeshRepair
+             - Added computation of halfedge-normals
          - Primitives Generator 
              - New plugin to generate primitives
          - Remesher
@@ -107,10 +124,17 @@
              - New plugin integrating a dual depth peeling renderer
          - Render SSAO
              - New plugin integrating a screen space ambient occlusion renderer
+         - Scripting
+             - Added user flag to enable or disable qtscript debugger
          - Smoother Plugin
              - Make Smoother scriptable
+         - Subdivider
+             - Implement option to keep original vertices at their position
+             - New subdivision function, splitting the currently longest edge until a maximal edge length is reached.
          - Skeletal Animation
+             - OpenMP parallelization
              - Detach skin from skeleton if mesh is removed from scene.
+             - Bug: Do not deform skin if skin weights are not computed
          - SkeletonEditing
              - Don't add root joint twice when creating new skeletons
              - Basic inverse kinematics implementation
@@ -120,6 +144,7 @@
              - "splitJoint" depends on "splitBone" in "skeletonEditingScritpting.cc"
              - it should not be possible to add/delete/split joints when not in reference pose
              - fix: joint inserted by "splitJoint" will not be deleted, when you click on "addJoint"-Button and then press on another Button
+             - Removed deselection and setting of the currentJoint in "splitJoints"
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
