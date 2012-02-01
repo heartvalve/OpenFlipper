@@ -43,7 +43,8 @@ void ExamplePlugin::exampleFunction() {
   emit addEmptyObject(DATA_PLANE, newObjectId);
 
   // Get the newly created object
-  PlaneObject* object = PluginFunctions::getObject(newObjectId);
+  PlaneObject* object = 0;
+  PluginFunctions::getObject(newObjectId,object);
 
   if(object) {
 
