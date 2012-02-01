@@ -51,6 +51,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_PLANE
+ * Use this macro to reference Plane objects
+ */
 #define DATA_PLANE typeId("Plane")
 
 #include <ObjectTypes/Plane/PlaneObject.hh>

@@ -51,6 +51,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_LIGHT
+ * Use this macro to reference light objects
+ */
 #define DATA_LIGHT typeId("Light")
 
 #include <ObjectTypes/Light/LightObject.hh>
