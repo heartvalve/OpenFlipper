@@ -31,7 +31,7 @@ void main()
         //   - divided by gl_Position.w to shrink size by distance
         //   - dot is always parallel to near-plane so we do not have to divide like in the vertex-shader for splats
         //   - multiply by viewportScaleFov_y to get window coordinates
-        gl_PointSize = ecPointsize * viewportScaleFov_y / gl_Position.w;
+        gl_PointSize = max( ecPointsize * viewportScaleFov_y / gl_Position.w, 1.0 );
 
 //////////////////////////////////////////////////////////////
 /**/                                                      /**/
