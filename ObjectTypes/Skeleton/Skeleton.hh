@@ -57,6 +57,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_SKELETON
+ * Use this macro to reference Skeleton objects
+ */
 #define DATA_SKELETON typeId("Skeleton")
 
 //#include "Skeleton.hh"

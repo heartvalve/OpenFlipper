@@ -52,6 +52,10 @@
 
 //== INCLUDES =================================================================
 
+
+/** \def DATA_TRIANGLE_MESH
+ * Use this macro to reference triangle meshes.
+ */
 #define DATA_TRIANGLE_MESH typeId("TriangleMesh")
 #include <ObjectTypes/MeshObject/MeshObjectT.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMeshTypes.hh>

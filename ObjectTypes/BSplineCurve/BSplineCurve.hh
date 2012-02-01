@@ -60,6 +60,9 @@
 
 //== INCLUDES =================================================================
 
+/** \def DATA_BSPLINE_CURVE
+ * Use this macro to reference B-Spline curves
+ */
 #define DATA_BSPLINE_CURVE typeId("BSplineCurve")
 
 #include <ObjectTypes/BSplineCurve/BSplineCurveT.hh>

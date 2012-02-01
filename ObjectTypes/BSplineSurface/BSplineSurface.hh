@@ -60,7 +60,9 @@
 
 //== INCLUDES =================================================================
 
-
+/** \def DATA_BSPLINE_SURFACE
+ * Use this macro to reference B-Spline surfaces
+ */
 #define DATA_BSPLINE_SURFACE typeId("BSplineSurface")
 
 #include <ObjectTypes/BSplineSurface/BSplineSurfaceT.hh>
