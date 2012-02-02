@@ -1,0 +1,18 @@
+var file = @FILEPLUGIN@.loadObject("@OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
+
+var name           = datacontrol.getObjectName(file);
+var groupCount     = datacontrol.groupCount();
+var jointCount     = infoskeletonobject.jointCount(file)
+var branchCount    = infoskeletonobject.branchCount(file)
+var leafCount      = infoskeletonobject.leafCount(file);
+
+
+printToFile("@OUTPUT_TEST_DATA_FILE@","Test: @TESTNAME@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","Loaded File: @OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","OBJECTNAME=",name);
+printToFile("@OUTPUT_TEST_DATA_FILE@","GROUPCOUNT=",groupCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","BRANCHCOUNT=",branchCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","LEAFCOUNT=",leafCount);
+
+
+core.exitApplication();
