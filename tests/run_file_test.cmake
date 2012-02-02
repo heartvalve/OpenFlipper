@@ -11,8 +11,13 @@ endif( NOT output_test )
 
 # output_test contains the info about the loaded file
 if( NOT test_file_info )
-   message( FATAL_ERROR "Variable test_file_info= not defined" )
+   message( FATAL_ERROR "Variable test_file_info not defined" )
 endif( NOT test_file_info )
+
+if( NOT result_checker )
+   message( FATAL_ERROR "Variable result_checker not defined" )
+endif( NOT result_checker )
+
 
 # convert the space-separated string to a list
 separate_arguments( test_args )
@@ -35,62 +40,29 @@ if ( NOT ${PROCESSRESULT} EQUAL 0 )
 endif()
 
 # ===================================================
-# Collect list of what should be tested
-# ===================================================
-
-# Read the info file
-file (STRINGS ${test_file_info} FILEINFO)
-
-#Create a list of properties we want to test
-foreach(loop ${FILEINFO})
-  string ( REGEX REPLACE "=.*$" "" TMP ${loop} )
-  list( APPEND CHECKS ${TMP})
-endforeach()
-
-# ===================================================
-# Read the files
-# ===================================================
-
-# read the test output
-file (READ ${output_test} TESTOUTPUT)
-
-# read the test output
-file (READ ${test_file_info} INFOFILE)
-
-# ===================================================
 # Compare
 # ===================================================
 
-# Now go through all checks:
-foreach(loop ${CHECKS})
 
-  #Get value from results:
-  string (
-      REGEX REPLACE
-      "^.*${loop}=([^\n]*).*$" "\\1"
-      RESULT  ${TESTOUTPUT}
-  )
 
-  # remove whitespace
-  string(STRIP ${RESULT} RESULT)
+if ( WIN32 )
+  set(result_checker "${result_checker}.exe")
 
-  #Get value from Info:
-  string (
-      REGEX REPLACE
-      "^.*${loop}=([^\n]*).*$" "\\1"
-      EXPECTED  ${INFOFILE}
-  )
-  
-  # remove whitespace
-  string(STRIP ${EXPECTED} EXPECTED)
+endif()
 
-  # Use Stringcompare here
-  if ( NOT ${EXPECTED} STREQUAL ${RESULT} )
-    message(WARNING "Mismatching values for ${loop}: EXPECTED ${EXPECTED} but got ${RESULT}!")
-    set(test_not_successful true)
-  endif()
+message( "Executing: ${result_checker} ${output_test} ${test_file_info} " )
 
-endforeach()
+# Timeout after 2 minutes
+execute_process(
+   COMMAND ${result_checker} ${output_test} ${test_file_info}
+   TIMEOUT 60
+   RESULT_VARIABLE PROCESSRESULT
+)
+
+if ( NOT ${PROCESSRESULT} EQUAL 0 )
+  message(SEND_ERROR "Compare Tool execution failed!")
+  set(test_not_successful TRUE)
+endif()
 
 if( test_not_successful )
    message( SEND_ERROR "Test Failed! See messages above to see what went wrong!" )
