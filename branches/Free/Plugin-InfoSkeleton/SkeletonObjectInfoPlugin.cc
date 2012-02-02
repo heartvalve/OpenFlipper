@@ -71,8 +71,10 @@
 
 void InfoSkeletonObjectPlugin::initializePlugin() {
 
-  // Create info dialog
-  info_ = new InfoDialog();
+  if ( OpenFlipper::Options::gui()) {
+    // Create info dialog
+    info_ = new InfoDialog();
+  }
 
 }
 
