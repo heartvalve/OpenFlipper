@@ -104,7 +104,11 @@ int main(int argv, char **args)
   }
   
 
-  
+  if ( ! ok ) {
+    std::cerr << "Test failed!" << std::endl;
+    return 1;
+  }
+
 
  
   std::cerr << "Got filename " << file1.toStdString() << std::endl;
