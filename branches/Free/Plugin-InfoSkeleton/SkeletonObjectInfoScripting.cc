@@ -266,9 +266,12 @@ double InfoSkeletonObjectPlugin::minBoneLength(int _skeletonID)
 	double min = std::numeric_limits<double>::max();
 	for (Skeleton::Iterator iter = skeleton->begin(); iter != skeleton->end(); ++iter)
 	{
-		double length = boneLength(_skeletonID,iter->id());
-		if (length < min)
-			min = length;
+		if (!iter->isRoot())
+		{
+			double length = boneLength(_skeletonID,iter->id());
+			if (length < min)
+				min = length;
+		}
 	}
 	return min;
 }
@@ -293,9 +296,12 @@ double InfoSkeletonObjectPlugin::maxBoneLength(int _skeletonID)
 	double max = std::numeric_limits<double>::min();
 	for (Skeleton::Iterator iter = skeleton->begin(); iter != skeleton->end(); ++iter)
 	{
-		double length = boneLength(_skeletonID,iter->id());
-		if (length > max)
-			max = length;
+		if (!iter->isRoot())
+		{
+			double length = boneLength(_skeletonID,iter->id());
+			if (length > max)
+				max = length;
+		}
 	}
 	return max;
 }
@@ -321,8 +327,11 @@ double InfoSkeletonObjectPlugin::meanBoneLength(int _skeletonID)
 	unsigned int count = 0;
 	for (Skeleton::Iterator iter = skeleton->begin(); iter != skeleton->end(); ++iter)
 	{
-		sum += boneLength(_skeletonID,iter->id());
-		++count;
+		if (!iter->isRoot())
+		{
+			sum += boneLength(_skeletonID,iter->id());
+			++count;
+		}
 	}
 
 	return (sum/static_cast<double>(count));
