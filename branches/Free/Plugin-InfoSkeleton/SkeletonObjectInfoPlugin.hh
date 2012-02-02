@@ -99,6 +99,8 @@ class InfoSkeletonObjectPlugin : public QObject, BaseInterface, InformationInter
     void initializePlugin();
     void pluginsInitialized();
     
+    void noguiSupported( ) {} ;
+
     // InformationInterface
     void slotInformationRequested(const QPoint _clickedPoint, DataType _type);
     DataType supportedDataTypes();

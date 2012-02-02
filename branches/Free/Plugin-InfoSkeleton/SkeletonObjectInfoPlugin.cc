@@ -78,6 +78,8 @@ void InfoSkeletonObjectPlugin::initializePlugin() {
 
 /// initialize the plugin
 void InfoSkeletonObjectPlugin::pluginsInitialized() {
+	//set the slot descriptions
+	setDescriptions();
 
 }
 
