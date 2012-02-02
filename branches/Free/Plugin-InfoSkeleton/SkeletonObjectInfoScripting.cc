@@ -34,8 +34,8 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 10745 $                                                       *
-*   $LastChangedBy: moebius $                                                *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
 *   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
@@ -49,28 +49,6 @@
 
 void InfoSkeletonObjectPlugin::setDescriptions()
 {
-	/// get total number of joints for a given skeleton
-  int jointCount(int _skeletonID);
-  /// get total number of branches for a given skeleton
-  int branchCount(int _skeletonID);
-
-  /// get minumum bounding box point
-  Vector boundingBoxMin(int _skeletonID);
-  /// get maximum bounding box point
-  Vector boundingBoxMax(int _skeletonID);
-  /// get the size of the bounding box
-  Vector boundingBoxSize(int _skeletonID);
-
-  /// get the length of a bone
-  double boneLength(int _skeletonID, int _jointID);
-
-  /// get the minimal bone length
-  double minBoneLength(int _skeletonID);
-  /// get the maximal bone length
-  double maxBoneLength(int _skeletonID);
-  /// get the mean bone length
-  double meanBoneLength(int _skeletonID);
-
 	emit setSlotDescription("jointCount(int)",tr("get total number of joints for a given skeleton"),
 			QStringList(tr("skeletontID")), QStringList(tr("id of a skeleton")));
 
