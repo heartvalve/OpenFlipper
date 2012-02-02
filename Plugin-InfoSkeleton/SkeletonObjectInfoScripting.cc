@@ -36,7 +36,7 @@
 *                                                                            *
 *   $Revision$                                                       *
 *   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 #include "SkeletonObjectInfoPlugin.hh"
@@ -54,6 +54,11 @@ void InfoSkeletonObjectPlugin::setDescriptions()
 
 	emit setSlotDescription("branchCount(int)",tr("get total number of branches for a given skeleton"),
 			QStringList(tr("skeletonID")), QStringList(tr("id of a skeleton")));
+
+	emit setSlotDescription("leafCount(int)",tr("get total number of leaves for a given skeleton"),
+				QStringList(tr("skeletonID")), QStringList(tr("id of a skeleton")));
+
+
 
 	emit setSlotDescription("boundingBoxMin(int)",tr("get minimum point of the axis-aligned bounding box"),
 			QStringList(tr("skeletonID")), QStringList(tr("id of a skeleton")));
@@ -111,6 +116,25 @@ int InfoSkeletonObjectPlugin::branchCount(int _skeletonID)
 
 	return result;
 
+}
+
+//-----------------------------------------------------------------------------
+
+int InfoSkeletonObjectPlusgins::leafCount(int _skeletonID)
+{
+	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
+	if ( !skeleton )
+	{
+		emit log(LOGERR, tr("Unable to get skeleton"));
+		return -1;
+	}
+
+	int result = 0;
+	for (Skeleton::Iterator iter = skeleton->begin(); iter != skeleton->end(); ++iter)
+		if (iter->size() == 0)
+			++result;
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------
