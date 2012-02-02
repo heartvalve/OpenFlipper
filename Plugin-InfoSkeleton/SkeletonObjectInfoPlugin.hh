@@ -127,7 +127,7 @@ class InfoSkeletonObjectPlugin : public QObject, BaseInterface, InformationInter
       int jointCount(int _skeletonID);
       /// get total number of branches for a given skeleton
       int branchCount(int _skeletonID);
-      /// get total number of joints which have no childs for a given skeleton
+      /// get total number of leaves for a given skeleton
       int leafCount(int _skeletonID);
 
       /// get minumum bounding box point
