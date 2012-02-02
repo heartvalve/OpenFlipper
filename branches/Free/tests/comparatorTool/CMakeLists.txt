@@ -21,9 +21,9 @@ if(BUILD_TESTING)
   if (WIN32)
     add_custom_command (TARGET test_example POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E
-                        copy_if_different
-                          ${CMAKE_BINARY_DIR}/tests/${CMAKE_CFG_INTDIR}/comparatorTool.exe
-                          ${CMAKE_BINARY_DIR}/tests/comparatorTool.exe)
+                        copy_if_different                               
+                          ${CMAKE_BINARY_DIR}/tests/${CMAKE_CFG_INTDIR}/compareTool.exe
+                          ${CMAKE_BINARY_DIR}/tests/compareTool.exe)
   endif()
 
 endif()
