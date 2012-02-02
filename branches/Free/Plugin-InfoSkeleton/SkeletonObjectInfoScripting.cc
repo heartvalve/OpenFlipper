@@ -127,7 +127,7 @@ int InfoSkeletonObjectPlugin::branchCount(int _skeletonID)
 			++result;
 
 	return result;
-
+//safsdf
 }
 
 //-----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ int InfoSkeletonObjectPlugin::branchCount(int _skeletonID)
  * @param _skeletonID skeleton id
  * @return number of leaves or -1 if an error occured
  */
-int InfoSkeletonObjectPlusgins::leafCount(int _skeletonID)
+int InfoSkeletonObjectPlugin::leafCount(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
 	if ( !skeleton )
