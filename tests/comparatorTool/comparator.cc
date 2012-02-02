@@ -85,7 +85,6 @@ int main(int argv, char **args)
   if ( groups.size() == 0 ) {
    std::cerr << "One level only" << std::endl;
    for ( int i = 0 ; i < toplevelKeys.size(); ++i) {
-     std::cerr << "Key " << i << " : " << toplevelKeys[i].toStdString() << std::endl; 
      if ( resultFile.contains(toplevelKeys[i]) ) {
        if ( toplevelKeys[i].endsWith("_DOUBLE") ) {
          ok &= compareDouble(toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
@@ -109,11 +108,5 @@ int main(int argv, char **args)
     return 1;
   }
 
-
- 
-  std::cerr << "Got filename " << file1.toStdString() << std::endl;
-  std::cerr << "Got filename " << file2.toStdString() << std::endl;
-
   return(0);
-
 }
