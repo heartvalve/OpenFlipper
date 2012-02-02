@@ -19,7 +19,7 @@ if(BUILD_TESTING)
   )
 	
   if (WIN32)
-    add_custom_command (TARGET test_example POST_BUILD
+    add_custom_command (TARGET comparatorTool POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E
                         copy_if_different                               
                           ${CMAKE_BINARY_DIR}/tests/${CMAKE_CFG_INTDIR}/compareTool.exe
