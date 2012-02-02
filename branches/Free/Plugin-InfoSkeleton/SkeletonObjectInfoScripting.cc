@@ -46,7 +46,9 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-
+/** \brief set the descriptions for scripting slots
+ *
+ */
 void InfoSkeletonObjectPlugin::setDescriptions()
 {
 	emit setSlotDescription("jointCount(int)",tr("get total number of joints for a given skeleton"),
@@ -86,6 +88,11 @@ void InfoSkeletonObjectPlugin::setDescriptions()
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return number of joints or -1 if an error occured
+ */
 int InfoSkeletonObjectPlugin::jointCount(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
@@ -100,6 +107,11 @@ int InfoSkeletonObjectPlugin::jointCount(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return number of branches (joints with multiple childs) or -1 if an error occured
+ */
 int InfoSkeletonObjectPlugin::branchCount(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
@@ -120,6 +132,11 @@ int InfoSkeletonObjectPlugin::branchCount(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return number of leaves or -1 if an error occured
+ */
 int InfoSkeletonObjectPlusgins::leafCount(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
@@ -139,13 +156,18 @@ int InfoSkeletonObjectPlusgins::leafCount(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return minimum point of the bounding box
+ */
 Vector InfoSkeletonObjectPlugin::boundingBoxMin(int _skeletonID)
 {
 	SkeletonObject* skeleton = PluginFunctions::skeletonObject(_skeletonID);
 	if ( !skeleton )
 	{
 		emit log(LOGERR, tr("Unable to get skeleton"));
-		return -1;
+		return Vector();
 	}
 
 	Vector min,max;
@@ -155,13 +177,18 @@ Vector InfoSkeletonObjectPlugin::boundingBoxMin(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return maximum point of the bounding box
+ */
 Vector InfoSkeletonObjectPlugin::boundingBoxMax(int _skeletonID)
 {
 	SkeletonObject* skeleton = PluginFunctions::skeletonObject(_skeletonID);
 	if ( !skeleton )
 	{
 		emit log(LOGERR, tr("Unable to get skeleton"));
-		return -1;
+		return Vector();
 	}
 
 	Vector min,max;
@@ -171,13 +198,18 @@ Vector InfoSkeletonObjectPlugin::boundingBoxMax(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return size of the bounding box
+ */
 Vector InfoSkeletonObjectPlugin::boundingBoxSize(int _skeletonID)
 {
 	SkeletonObject* skeleton = PluginFunctions::skeletonObject(_skeletonID);
 	if ( !skeleton )
 	{
 		emit log(LOGERR, tr("Unable to get skeleton"));
-		return -1;
+		return Vector();
 	}
 
 	Vector min,max;
@@ -198,14 +230,12 @@ double InfoSkeletonObjectPlugin::boneLength(int _skeletonID, int _jointID)
 	if ( !skeleton )
 	{
 		emit log(LOGERR, tr("Unable to get skeleton"));
-		return -1;
 	}
 
 	Skeleton::Joint* parent = skeleton->joint(_jointID)->parent();
 	if (!parent)
 	{
 		emit log(LOGERR, tr ("Unable to get parent joint"));
-		return -1;
 	}
 
 	unsigned int parentID = parent->id();
@@ -217,6 +247,12 @@ double InfoSkeletonObjectPlugin::boneLength(int _skeletonID, int _jointID)
 }
 
 //-----------------------------------------------------------------------------
+
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return minimal bone length or -1 if an error occured
+ */
 double InfoSkeletonObjectPlugin::minBoneLength(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
@@ -239,6 +275,11 @@ double InfoSkeletonObjectPlugin::minBoneLength(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return maximal bone length or -1 if an error occured
+ */
 double InfoSkeletonObjectPlugin::maxBoneLength(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
@@ -261,6 +302,11 @@ double InfoSkeletonObjectPlugin::maxBoneLength(int _skeletonID)
 
 //-----------------------------------------------------------------------------
 
+/** \brief get total number of vertices for a given object
+ *
+ * @param _skeletonID skeleton id
+ * @return mean bone length or -1 if an error occured
+ */
 double InfoSkeletonObjectPlugin::meanBoneLength(int _skeletonID)
 {
 	Skeleton* skeleton = PluginFunctions::skeleton(_skeletonID);
