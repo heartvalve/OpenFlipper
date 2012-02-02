@@ -52,6 +52,7 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT  )
      -D test_args:string=${args}
      -D output_test=${OUTPUT_TEST_DATA_FILE}
      -D test_file_info=${TEST_FILE_INFO}
+     -D result_checker=${CMAKE_BINARY_DIR}/tests/compareTool
      -P ${CMAKE_SOURCE_DIR}/tests/run_file_test.cmake
   )
 
