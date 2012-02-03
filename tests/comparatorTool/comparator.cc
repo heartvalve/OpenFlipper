@@ -1,32 +1,20 @@
+// C++ Hello World
 
-
-
+#include <QFile> 
 #include <QString> 
 #include <QStringList> 
 #include <QSettings>
-#include <QFileInfo>
-#include <QTextStream>
 
+#include <iostream>
 #include <math.h>
-#include <limits>
 
-/* Test File specification:
-Doubles can be given as:
-
-Exact test:
-VALUE_DOUBLE=1.0
-
-Tolerance test (0.0001)
-VALUE_DOUBLE=1.0,0.0001
-
-
-*/
 
 
 bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
+  std::cerr << "comparing Double" << std::endl;
 
   // maximal allowed double tolerance
-  double tolerance = std::numeric_limits<int>::epsilon();
+  double tolerance = 0.0;
 
   // Check if the reference consists of two colon separated values
   // Second value would specify maximal allowed tolerance
@@ -40,34 +28,29 @@ bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
   double reference = referenceData[0].toDouble();
 
   if ( fabs(result-reference) <= tolerance )  {
+    std::cerr << "Compared " << result << " " << reference << " " << " " << tolerance <<  " ok" << std::endl;
     return true;
   } else {
-
-    QTextStream cerr(stderr, QIODevice::WriteOnly);
-    cerr.setRealNumberPrecision(40);
-    cerr << "===================================================================\n";
-    cerr << "Comparison failed for key " <<  _key << " :\n";
-    cerr << "Result:                " << result << "\n";
-    cerr << "Expected:              " << reference << "\n";
-    cerr << "Difference:            " << fabs(result-reference) << "\n";
-    cerr << "Allowed tolerance was: " << tolerance << "\n";
-    cerr << "===================================================================\n";
+    std::cerr << "Comparison failed for key " <<  _key.toStdString() << " :" << std::endl;
+    std::cerr << "Result: " << result << " ; Expected: " << reference << std::endl;
+    std::cerr << "Difference: " << fabs(result-reference) << " allowed tolerance was: " << tolerance << std::endl;
     return false;
   }
   
 }
 
 bool compareString(QString _key ,QVariant _result, QVariant _reference) {
+  std::cerr << "comparing String" << std::endl;
 
   QString resultStr = _result.toString().simplified();
   QString resultRef = _reference.toString().simplified();
   
   if (resultStr == resultRef ) {
+    std::cerr << "Comparison ok for key " <<  _key.toStdString() << " :" << resultStr.toStdString() << " ; " << resultRef.toStdString()<< std::endl;
     return true;
   } else {
-    QTextStream cerr(stderr, QIODevice::WriteOnly);
-    cerr << "Comparison failed for key " <<  _key << " :\n";
-    cerr << "Result: " << resultStr << " ; Expected: " << resultRef << "\n";
+    std::cerr << "Comparison failed for key " <<  _key.toStdString() << " :" << std::endl;
+    std::cerr << "Result: " << resultStr.toStdString() << " ; Expected: " << resultRef.toStdString() << std::endl;
     return false;
   }
 
@@ -75,10 +58,6 @@ bool compareString(QString _key ,QVariant _result, QVariant _reference) {
 
 int main(int argv, char **args)
 {
-  QTextStream cout(stdout, QIODevice::WriteOnly);
-  QTextStream cerr(stderr, QIODevice::WriteOnly);
-
-  cout << "Comparing results to reference:\n" ;
 
   // Flag if everything went fine
   bool ok = true;
@@ -88,44 +67,23 @@ int main(int argv, char **args)
 
   // Return if we did not get exactly two arguments
   if ( argv != 3 ) {
-    cerr << "Wrong number of arguments!\n";
-    cerr << "Usage:\n";
-    cerr << "compareTool ResultFile ReferenceFile\n";
+    std::cerr << "Wrong number of arguments!" << std::endl;
+    std::cerr << "Usage:" << std::endl;
+    std::cerr << "compareTool ResultFile ReferenceFile" << std::endl;
     return(1);
   }
 
   QString file1(args[1]);
   QString file2(args[2]);
 
-  QFileInfo resultFileInfo(file1);
-  if ( !resultFileInfo.exists() ) {
-    cerr << "Result file: " << file1 << " does not exist!\n";
-    return 1;
-  }
-
-  QFileInfo referenceFileInfo(file2);
-  if ( !referenceFileInfo.exists() ) {
-    cerr << "Reference file: " << file2 << " does not exist!\n";
-    return 1;
-  }
-
   QSettings resultFile(file1,QSettings::IniFormat);
   QSettings referenceFile(file2,QSettings::IniFormat);
   
-  if ( resultFile.status() != QSettings::NoError) {
-    cerr << "QSettings error when opening result file: " << file1 << "\n";
-    return 1;
-  }
-
-  if ( referenceFile.status() != QSettings::NoError) {
-    cerr << "QSettings error when opening result reference file: " << file2 << "\n";
-    return 1;
-  }
-
   QStringList toplevelKeys = referenceFile.childKeys();
   QStringList groups       = referenceFile.childGroups();
    
   if ( groups.size() == 0 ) {
+   std::cerr << "One level only" << std::endl;
    for ( int i = 0 ; i < toplevelKeys.size(); ++i) {
      if ( resultFile.contains(toplevelKeys[i]) ) {
        if ( toplevelKeys[i].endsWith("_DOUBLE") ) {
@@ -133,7 +91,7 @@ int main(int argv, char **args)
        } else
          compareString( toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
      } else {
-       cerr << "Missing key in result file: " << toplevelKeys[i] << "\n";
+       std::cerr << "Missing key in result file: " << toplevelKeys[i].toStdString() << std::endl;
        ok = false;
      }
  
@@ -141,13 +99,12 @@ int main(int argv, char **args)
  
 
   } else {
-    cerr << "Multiple levels!" << "\n";
-    return 1;
+    std::cerr << "Multiple levels!" << std::endl;
   }
   
 
   if ( ! ok ) {
-    cerr << "At least one of the tests failed!\n";
+    std::cerr << "Test failed!" << std::endl;
     return 1;
   }
 
