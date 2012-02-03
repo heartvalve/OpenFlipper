@@ -170,7 +170,7 @@ int main(int argv, char **args)
        if ( toplevelKeys[i].endsWith("_DOUBLE") ) {
          ok &= compareDouble(toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
        } else
-         compareString( toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
+         ok &= compareString( toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
      } else {
        cerr << "Missing key in result file: " << toplevelKeys[i] << "\n";
        ok = false;
