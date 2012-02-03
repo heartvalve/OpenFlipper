@@ -1496,7 +1496,7 @@ SEARCH_INCLUDES        = YES
 
 INCLUDE_PATH           = @CMAKE_SOURCE_DIR@ \
                          @CMAKE_SOURCE_DIR@/ACG \
-                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/src
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
