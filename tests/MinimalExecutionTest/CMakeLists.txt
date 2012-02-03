@@ -5,6 +5,7 @@ if(BUILD_TESTING)
   
   set_target_properties (
       minimalExecutionTest PROPERTIES
+      RUNTIME_OUTPUT_NAME "minimalExecutionTest"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
     )
