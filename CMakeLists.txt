@@ -53,8 +53,9 @@ elseif( WIN32 )
 else()
   SET( OPENFLIPPER_EXECUTABLE "${CMAKE_BINARY_DIR}/Build/bin/OpenFlipper" )
 endif()
-SET(OPENFLIPPER_TEST_FILES   ${CMAKE_BINARY_DIR}/tests/globalTestFiles )
-SET(OPENFLIPPER_TEST_RESULTS ${CMAKE_BINARY_DIR}/tests/testResults )
+SET(OPENFLIPPER_TEST_FILES    ${CMAKE_BINARY_DIR}/tests/globalTestFiles )
+SET(OPENFLIPPER_TEST_RESULTS  ${CMAKE_BINARY_DIR}/tests/testResults )
+SET(OPENFLIPPER_TEST_BINARIES ${CMAKE_BINARY_DIR}/tests/testBinaries )
 
 # ========================================================================
 # Core Library Components (Except the Core application)
