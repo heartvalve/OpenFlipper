@@ -37,26 +37,7 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # ========================================================================
   # ========================================================================
 
-  
-  # ========================================================================
-  # Start OpenFlipper Headless in batch mode, to see if all plugins
-  # that pretend to be scriptable without ui are correct and the core
-  # can start
-  # ========================================================================
 
-  ADD_TEST(BatchStart "${OPENFLIPPER_EXECUTABLE}" -b -c )
-
-  # Timeout after 60 seconds if we havean endless loop
-  # Should be run serial to avoid collisons with other instances
-  # Only one processor required
-  set_tests_properties (
-      BatchStart PROPERTIES
-      TIMEOUT 60
-      RUN_SERIAL TRUE
-      PROCESSORS 1
-  ) 
-
-  
   # ========================================================================
   # ========================================================================
   # ========================================================================
@@ -78,10 +59,27 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
     add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/${_local_test_dir})
   endforeach ()
 
+  # ========================================================================
+  # ========================================================================
+  # ========================================================================
+  # Start OpenFlipper Headless in batch mode, to see if all plugins
+  # that pretend to be scriptable without ui are correct and the core
+  # can start
+  # ========================================================================
+  # ========================================================================
+  # ========================================================================
 
+  ADD_TEST(BatchStart "${OPENFLIPPER_EXECUTABLE}" -b -c )
 
-
-
+  # Timeout after 60 seconds if we havean endless loop
+  # Should be run serial to avoid collisons with other instances
+  # Only one processor required
+  set_tests_properties (
+      BatchStart PROPERTIES
+      TIMEOUT 60
+      RUN_SERIAL TRUE
+      PROCESSORS 1
+  ) 
 
   # ========================================================================
   # ========================================================================
