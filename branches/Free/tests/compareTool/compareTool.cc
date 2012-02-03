@@ -122,9 +122,6 @@ int main(int argv, char **args)
   // Flag if everything went fine
   bool ok = true;
 
-  // Maximal allowed deviation between two doubles
-  double DoubleTolerance = 0.0;
-
   // Return if we did not get exactly two arguments
   if ( argv != 3 ) {
     cerr << "Wrong number of arguments!\n";
