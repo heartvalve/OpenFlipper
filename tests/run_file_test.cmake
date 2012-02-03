@@ -40,17 +40,12 @@ if ( NOT ${PROCESSRESULT} EQUAL 0 )
 endif()
 
 # ===================================================
-# Compare
+# Compare the two files
 # ===================================================
-
-
 
 if ( WIN32 )
   set(result_checker "${result_checker}.exe")
-
 endif()
-
-message( "Executing: ${result_checker} ${output_test} ${test_file_info} " )
 
 # Timeout after 2 minutes
 execute_process(
