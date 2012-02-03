@@ -86,8 +86,9 @@ class BaseInterface {
 
       /**  \brief Initialize Plugin step 2
        *
-       *   This slot is called if all plugins are loaded and the core is ready. Here you can create objects,
-       *   set Textures and everything which will involve signals to the core.
+       *   This slot is called if all plugins are loaded and the core is ready. Afterwards you can already send
+       *   signals to other plugins and the core (e.g. adding global textures). Do not create objects via addEmpty
+       *   or load objects in this slot, as the rendering system is not ready yet.
       */
       virtual void pluginsInitialized() {};
 
