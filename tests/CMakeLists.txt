@@ -30,6 +30,7 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
 
 
   make_directory(${OPENFLIPPER_TEST_RESULTS})
+  make_directory(${OPENFLIPPER_TEST_BINARIES})
 
   # ========================================================================
   # ========================================================================
