@@ -9,8 +9,8 @@ var componentCount = infomeshobject.componentCount(file)
 var groupCount     = datacontrol.groupCount();
 
 
-printToFile("@OUTPUT_TEST_DATA_FILE@","TESTNAME=@TESTNAME@");
-printToFile("@OUTPUT_TEST_DATA_FILE@","LOADEDFILE=@OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","Test: @TESTNAME@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","Loaded File: @OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
 printToFile("@OUTPUT_TEST_DATA_FILE@","OBJECTNAME=",name);
 printToFile("@OUTPUT_TEST_DATA_FILE@","VERTEXCOUNT=",vertexCount);
 printToFile("@OUTPUT_TEST_DATA_FILE@","EDGECOUNT=",edgeCount);
