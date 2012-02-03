@@ -111,6 +111,8 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     /// Called when an object gets updated
     void slotObjectUpdated( int _identifier, const UpdateType& _type );
 
+    void noguiSupported( ) {} ;
+
   // Scriptable functions
   public slots:
        
