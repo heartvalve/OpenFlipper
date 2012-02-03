@@ -1,0 +1,17 @@
+
+
+var input     = core.loadObject("@OPENFLIPPER_TEST_INPUT_FILE@");
+var reference = core.loadObject("@OPENFLIPPER_TEST_REFERENCE_FILE@");
+
+smoother.smooth(input,10,"normal","C0");
+
+meshcompare.compare(reference,input);
+
+printToFile("@OUTPUT_TEST_DATA_FILE@","TEST=@TESTNAME@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","LOADEDFILE=@OPENFLIPPER_TEST_INPUT_FILE@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","MAXIMALDISTANCE_DOUBLE=",meshcompare.lastMaximalDistance());
+printToFile("@OUTPUT_TEST_DATA_FILE@","MAXIMALNORMALDEVIATION_DOUBLE=",meshcompare.lastMaximalNormalDeviation());
+printToFile("@OUTPUT_TEST_DATA_FILE@","MAXIMALMEANCURVATUREDEVIATION_DOUBLE=",meshcompare.lastMaximalMeanCurvatureDeviation());
+printToFile("@OUTPUT_TEST_DATA_FILE@","MAXIMALGAUSSCURVATUREDEVIATION_DOUBLE=",meshcompare.lastMaximalGaussCurvatureDeviation());
+
+core.exitApplication();
