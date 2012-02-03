@@ -59,6 +59,7 @@ MeshComparePlugin::MeshComparePlugin() :
   tool_(0),
   maximalDistance_(-1),
   maxNormalDeviation_(-1),
+  maxMeanCurvatureDev_(-1),
   maxGaussCurvatureDev_(-1)
 {
 
