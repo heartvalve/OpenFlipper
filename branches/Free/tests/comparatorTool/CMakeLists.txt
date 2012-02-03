@@ -1,7 +1,9 @@
 
 if(BUILD_TESTING)
- 
-  find_package (Qt4 COMPONENTS QtCore )
+
+  if ( NOT QT4_FOUND) 
+    find_package (Qt4 COMPONENTS QtCore )
+  endif()
  
   add_executable (comparatorTool comparator.cc )
 
