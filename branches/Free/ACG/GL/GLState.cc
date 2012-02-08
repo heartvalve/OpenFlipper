@@ -1929,7 +1929,15 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
   }
 }
 
+/// get current framebuffer of a target
+GLuint GLState::getFramebufferDraw(GLenum _target) {
+  return stateStack_.back().framebuffers_[0];
+}
 
+/// get current framebuffer of a target
+GLuint GLState::getFramebufferRead(GLenum _target) {
+  return stateStack_.back().framebuffers_[1];
+}
 
 void GLState::bindFramebuffer(GLenum _target, GLuint _framebuffer)
 {
