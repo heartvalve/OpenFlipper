@@ -65,7 +65,7 @@ namespace SceneGraph {
 namespace DrawModes {
 
 
-// == Default Draw Mode intitialization ======================================  
+// == Default Draw Mode initialization ======================================
 
 DrawMode NONE                              = ModeFlagSet(0);
 DrawMode DEFAULT                           = ModeFlagSet(1);
@@ -106,19 +106,54 @@ DrawMode UNUSED                            = ModeFlagSet(1) << 32;
 //== IMPLEMENTATION ========================================================== 
 
 
-/** Definition of a draw mode */
+/** \brief Definition of a draw mode
+ *
+ * This class is used to collect Information about a DrawMode in one central class.
+ * It stores the name and the id of a DrawMode.
+ *
+ * If the DrawMode gets switched to a property based one, this class will also
+ * store the properties.
+ */
 class DrawModeInternal {
   
   public:
-    /** Default constructor. */
-    DrawModeInternal() {}
-    
+
     /** Initializing constructor. */
-    DrawModeInternal( const std::string & _name, const DrawMode & _id )
-    : name_( _name ), id_( _id ) {}
+    DrawModeInternal(const std::string & _name, const DrawMode & _id, const bool _propertyBased = false) :
+      name_(_name),
+      id_(_id),
+      propertyBased_(_propertyBased)
+    {
+    }
+
+    /// Set the name of the DrawMode
+    void name(const std::string& _name) {
+      name_ = _name;
+    }
+
+    /// Get the name of the DrawMode
+    const std::string& name() const {
+      return name_;
+    }
     
-    std::string name_;
-    DrawMode id_;
+    const DrawMode& id() const {
+      return id_;
+    }
+
+    bool propertyBased() const {
+      return propertyBased_;
+    }
+
+
+    DrawModeProperties& properties() {
+      return properties_;
+    }
+
+  private:
+    std::string        name_;          ///< Human Readable Name
+    DrawMode           id_;            ///< The id of the DrawMode
+    bool               propertyBased_; ///< Flag if the DrawMode is property based
+    DrawModeProperties properties_;    ///< The properties associated with this DrawMode
 };
 
 
@@ -126,13 +161,20 @@ typedef std::vector< DrawModeInternal > VecDrawModes;
 
 /** Vector of all currently defined DrawModes.
 */
-static VecDrawModes currentDrawModes_;
+static VecDrawModes registeredDrawModes_;
 
 /** First free DrawMode ID for custom modes. */
 static DrawMode firstFreeID_;
 
 
-DrawMode::DrawMode(unsigned int _index) {
+
+DrawModeProperties::DrawModeProperties() {
+
+}
+
+
+DrawMode::DrawMode(unsigned int _index)
+{
   modeFlags_.reset();
   if ( _index >= modeFlags_.size() ) {
     std::cerr << "Illegal drawMode specification from unsigned int. This should not be a bitset!!!" << std::endl;
@@ -153,13 +195,29 @@ DrawMode::operator bool() const {
   return( modeFlags_ != NONE.modeFlags_ );
 }
 
+bool DrawMode::propertyBased() const {
+  if ( isAtomic() ) {
+    return registeredDrawModes_[getIndex()].propertyBased();
+  } else {
+    // Combined drawmode, iterate over all contained modes and return
+    VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
+    for( modeIter = registeredDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
+      if( ((*this) & modeIter->id()) && modeIter->propertyBased() )
+        return true;
+
+    return false;
+  }
+}
+
+DrawModeProperties* DrawMode::drawModeProperties() {
+  if ( isAtomic() ) {
+    return &(registeredDrawModes_[getIndex()].properties());
+  } else {
+    return 0;
+  }
+}
+
 bool DrawMode::operator==(const DrawMode& _mode) const {
-  // If we are asked for Point, also return the Modes for Points shaded and colors
-//   if ( (_mode.modeFlags_ & POINTS.modeFlags_).any() ) 
-//     return ( (modeFlags_ & ( POINTS_COLORED | POINTS_SHADED ).modeFlags_).any() );
-  
-  ///\todo Implement more combined returns for faces and Shading
-  
   return ((modeFlags_ & _mode.modeFlags_).any());
 }
 
@@ -178,12 +236,6 @@ DrawMode& DrawMode::operator++() {
 }
 
 DrawMode DrawMode::operator&(const DrawMode& _mode) const {
-  
-  // If we are asked for Point, also return the Modes for Points shaded and colors
-//   if ( (_mode.modeFlags_ & POINTS.modeFlags_).any() ) 
-//     return ( modeFlags_ & ( POINTS_COLORED | POINTS_SHADED ).modeFlags_ );
-  
-  ///\todo Implement more combined returns for faces and Shading
   return (modeFlags_ & _mode.modeFlags_);
 }
 
@@ -227,13 +279,13 @@ std::string DrawMode::description() const
 {
   std::string text("");
   
-  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
-  for( modeIter = currentDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
+  VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
+  for( modeIter = registeredDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
   {
-    if( (*this) & modeIter->id_ )
+    if( (*this) & modeIter->id() )
     {
       if (!text.empty()) text += "+";
-      text += modeIter->name_;
+      text += modeIter->name();
     }
   }
   
@@ -247,12 +299,12 @@ DrawMode::getAtomicDrawModes() const
 {
   std::vector< DrawMode > draw_mode_ids;
   
-  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
-  for( modeIter = currentDrawModes_.begin();
+  VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
+  for( modeIter = registeredDrawModes_.begin();
   modeIter != modeEnd;
   ++modeIter )
-  if( (*this) & modeIter->id_ )
-    draw_mode_ids.push_back( modeIter->id_ );
+  if( (*this) & modeIter->id() )
+    draw_mode_ids.push_back( modeIter->id() );
   
   return draw_mode_ids;
 }
@@ -279,12 +331,6 @@ unsigned int DrawMode::maxModes() const {
   return (modeFlags_.size() );
 }
  
- 
- 
-
-
-
-
 
 //----------------------------------------------------------------------------
 
@@ -296,57 +342,57 @@ void initializeDefaultDrawModes( void )
     if( initialized_ )
 	return;
 
-    currentDrawModes_.clear();
+    registeredDrawModes_.clear();
 
-    currentDrawModes_.push_back( DrawModeInternal( "<invalid>", NONE ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Default", DEFAULT ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "<invalid>", NONE ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Default", DEFAULT ) );
 
-    currentDrawModes_.push_back( DrawModeInternal( "Points", POINTS ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Points (colored)", POINTS_COLORED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Points (shaded)", POINTS_SHADED  ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Points", POINTS ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Points (colored)", POINTS_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Points (shaded)", POINTS_SHADED  ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Edges", EDGES ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Edges Colored", EDGES_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Edges", EDGES ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Edges Colored", EDGES_COLORED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Wireframe", WIREFRAME ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Wireframe", WIREFRAME ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Faces", FACES ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Faces", FACES ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Hiddenline", HIDDENLINE ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Hiddenline", HIDDENLINE ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (flat shaded)", SOLID_FLAT_SHADED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (smooth shaded)", SOLID_SMOOTH_SHADED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (Phong shaded)", SOLID_PHONG_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (flat shaded)", SOLID_FLAT_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (smooth shaded)", SOLID_SMOOTH_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (Phong shaded)", SOLID_PHONG_SHADED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face)", SOLID_FACES_COLORED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-vertex)", SOLID_POINTS_COLORED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-vertex, shaded)", SOLID_POINTS_COLORED_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face)", SOLID_FACES_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-vertex)", SOLID_POINTS_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-vertex, shaded)", SOLID_POINTS_COLORED_SHADED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (environment mapped)", SOLID_ENV_MAPPED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (environment mapped)", SOLID_ENV_MAPPED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (textured)", SOLID_TEXTURED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (textured, shaded)", SOLID_TEXTURED_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (textured)", SOLID_TEXTURED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (textured, shaded)", SOLID_TEXTURED_SHADED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (scalar field)", SOLID_1DTEXTURED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (scalar field, shaded)", SOLID_1DTEXTURED_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (scalar field)", SOLID_1DTEXTURED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (scalar field, shaded)", SOLID_1DTEXTURED_SHADED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (3D textured)", SOLID_3DTEXTURED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (3D textured, shaded)", SOLID_3DTEXTURED_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (3D textured)", SOLID_3DTEXTURED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (3D textured, shaded)", SOLID_3DTEXTURED_SHADED ) );
 
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, flat shaded)", SOLID_FACES_COLORED_FLAT_SHADED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, smooth shaded)", SOLID_FACES_COLORED_SMOOTH_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, flat shaded)", SOLID_FACES_COLORED_FLAT_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (colored per-face, smooth shaded)", SOLID_FACES_COLORED_SMOOTH_SHADED ) );
 
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured)", SOLID_2DTEXTURED_FACE ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured, shaded)", SOLID_2DTEXTURED_FACE_SHADED ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Shader controlled", SOLID_SHADER ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (face textured)", SOLID_2DTEXTURED_FACE ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (face textured, shaded)", SOLID_2DTEXTURED_FACE_SHADED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Shader controlled", SOLID_SHADER ) );
 
-    currentDrawModes_.push_back( DrawModeInternal( "Solid (smooth shaded, features)", SOLID_SMOOTH_SHADED_FEATURES ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Solid (smooth shaded, features)", SOLID_SMOOTH_SHADED_FEATURES ) );
 
-    currentDrawModes_.push_back( DrawModeInternal( "Cells", CELLS ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Cells Colored", CELLS_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Cells", CELLS ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Cells Colored", CELLS_COLORED ) );
     
-    currentDrawModes_.push_back( DrawModeInternal( "Halfedges", HALFEDGES ) );
-    currentDrawModes_.push_back( DrawModeInternal( "Halfedges Colored", HALFEDGES_COLORED ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Halfedges", HALFEDGES ) );
+    registeredDrawModes_.push_back( DrawModeInternal( "Halfedges Colored", HALFEDGES_COLORED ) );
 
     firstFreeID_ = UNUSED;
     initialized_ = true;
@@ -356,23 +402,23 @@ void initializeDefaultDrawModes( void )
 //----------------------------------------------------------------------------
 
 
-const DrawMode& addDrawMode( const std::string & _name )
+const DrawMode& addDrawMode( const std::string & _name , bool _propertyBased)
 {
   // check if mode exists already
-  VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::iterator modeIter, modeEnd( registeredDrawModes_.end() );
 
-  for( modeIter = currentDrawModes_.begin(); modeIter != modeEnd; ++modeIter ) {
-    if( _name == modeIter->name_ ) {
-      return modeIter->id_;
+  for( modeIter = registeredDrawModes_.begin(); modeIter != modeEnd; ++modeIter ) {
+    if( _name == modeIter->name() ) {
+      return modeIter->id();
     }
   }
 
 
   // add new mode
-  currentDrawModes_.push_back( DrawModeInternal( _name, firstFreeID_ ) );
+  registeredDrawModes_.push_back( DrawModeInternal( _name, firstFreeID_ , _propertyBased) );
   ++firstFreeID_;
 
-  return currentDrawModes_[ currentDrawModes_.size() - 1 ].id_;
+  return registeredDrawModes_[ registeredDrawModes_.size() - 1 ].id();
 }
 
 
@@ -382,13 +428,13 @@ const DrawMode& addDrawMode( const std::string & _name )
 const DrawMode& getDrawMode( const std::string & _name )
 {
   // check if mode exists
-  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
 
-  for( modeIter = currentDrawModes_.begin(); modeIter != modeEnd;  ++modeIter )
+  for( modeIter = registeredDrawModes_.begin(); modeIter != modeEnd;  ++modeIter )
   {
-    if( _name == modeIter->name_ )
+    if( _name == modeIter->name() )
     {
-      return modeIter->id_;
+      return modeIter->id();
     }
   }
 
@@ -399,11 +445,11 @@ const DrawMode& getDrawMode( const std::string & _name )
 bool drawModeExists(const std::string & _name) {
   
   // check if mode exists
-  VecDrawModes::const_iterator modeIter, modeEnd( currentDrawModes_.end() );
+  VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
   
-  for( modeIter = currentDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
+  for( modeIter = registeredDrawModes_.begin();  modeIter != modeEnd;  ++modeIter )
   {
-    if( _name == modeIter->name_ )
+    if( _name == modeIter->name() )
       return true;
   }
   
