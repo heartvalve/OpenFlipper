@@ -92,6 +92,30 @@ namespace DrawModes {
 
   typedef std::bitset<64> ModeFlagSet;
 
+  /** \brief This class will be used for property based draw modes.
+   *
+   * TODO: This class has to be implemented
+   */
+  class ACGDLLEXPORT DrawModeProperties {
+  public:
+    DrawModeProperties();
+
+  private:
+
+    // Specify lighting settings
+    bool lighting_;
+
+    // Specify which primitives will get uploaded to the graphics card
+    bool points_;
+    bool lines_;
+    bool triangles_;
+
+    // TODO: Shade model
+    // TODO: colors per?
+    // TODO: Shaders
+
+  };
+
   class ACGDLLEXPORT DrawMode {
     public:
       
@@ -100,13 +124,13 @@ namespace DrawModes {
       /** \brief constructor for unsigned int. 
       *
       * This constructor creates a DrawMode with the given drawMode index.
-      * Be CareFull! this constructor can only be used to construct atomic drawmodes!
+      * Be CareFull! this constructor can only be used to construct atomic draw modes!
       * The int will not be handled like an bitset but really as an index.
       * See the list of draw modes below to check for the right numbers.
       * You should use the predefined drawModes or create new ones using the other functions
       * and ignore this constructor!
       */
-      DrawMode(unsigned int _index); 
+      DrawMode(unsigned int _index);
       
       /** \brief constructor for ModeFlags. 
       *
@@ -114,7 +138,7 @@ namespace DrawModes {
       * This makes it easier to predefine draw modes using a bitset.
       */      
       DrawMode( ModeFlagSet _flags );
-      
+
       bool operator==(const DrawMode& _mode) const;
       
       DrawMode operator&(const DrawMode& _mode) const;
@@ -148,7 +172,7 @@ namespace DrawModes {
       
       /** \brief Check if this is an atomic draw Mode
       *
-      * This function checks, if this is a atomic drawmode ( no combination of multiple draw modes )
+      * This function checks, if this is a atomic draw mode ( no combination of multiple draw modes )
       */
       bool isAtomic() const;
       
@@ -156,10 +180,10 @@ namespace DrawModes {
       */ 
       bool containsAtomicDrawMode( DrawMode _atomicDrawMode ) const;
       
-      /** \brief Seperates this drawMode into a list of all seperate atomic drawmodes
+      /** \brief Separates this drawMode into a list of all separate atomic draw modes
       *
-      * A drawMode can consist of several atomic drawmodes. This function returns a list of the seperated
-      * atomic drawmodes.
+      * A drawMode can consist of several atomic draw modes. This function returns a list of the separated
+      * atomic draw modes.
       */
       std::vector< DrawMode > getAtomicDrawModes() const;
       
@@ -169,7 +193,24 @@ namespace DrawModes {
       unsigned int maxModes() const;
       
       operator bool() const;
-      
+
+
+      /** \brief returns, if this DrawMode is property based
+       *
+       * This function checks if the current drawmode is property based. If it is not
+       * an atomic draw mode, this function returns true if one of the drawmodes
+       * is property based.
+       */
+      bool propertyBased() const;
+
+      /** \brief returns the properties of this draw mode
+       *
+       * This function will return the properties of this DrawMode.
+       * This is only valid, if the DrawMode is atomic and has been declared as
+       * property based when it was added. Otherwise a 0 pointer is returned!
+       */
+      DrawModeProperties* drawModeProperties();
+
     private:
       ModeFlagSet modeFlags_;
   };
@@ -292,8 +333,8 @@ namespace DrawModes {
       @param _name Name of the drawmode to add
       @return Id of the new draw mode
   */
-  ACGDLLEXPORT 
-  const DrawMode& addDrawMode( const std::string & _name);
+  ACGDLLEXPORT
+  const DrawMode& addDrawMode( const std::string & _name, bool _propertyBased = false);
 
 
   /** \brief Get a custom DrawMode.
