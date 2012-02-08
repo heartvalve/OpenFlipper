@@ -523,8 +523,10 @@ public:
 
   /// replaces glBindFramebuffer, supports locking
   static void bindFramebuffer(GLenum _target, GLuint _framebuffer);
-  /// get current framebuffer of a target
-  static GLuint getFramebuffer(GLenum _target);
+  /// get current draw framebuffer of a target
+  static GLuint getFramebufferDraw(GLenum _target);
+  /// get current read framebuffer of a target
+  static GLuint getFramebufferRead(GLenum _target);
 
   /// lock a framebuffer target
   static void lockFramebuffer(GLenum _target);
