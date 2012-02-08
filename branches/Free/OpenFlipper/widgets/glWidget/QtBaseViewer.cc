@@ -1944,7 +1944,7 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     
     if ( fb.isValid() ){
 
-      fb.bind();
+      ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT,fb.handle());
       makeCurrent();
       
       // Turn alpha on if demanded
