@@ -61,8 +61,12 @@
 #include <qlabel.h>
 #include <qpainter.h>
 #include <qwt_curve_fitter.h>
-#include <qwt_interval_data.h>
 
+#if QWT_VERSION >= 0x060000
+ #include <qwt_plot_histogram.h>
+#else
+ #include <qwt_interval_data.h>
+#endif
 
 #include <float.h>
 #include <math.h>
@@ -92,7 +96,12 @@ QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
   // delete widget on close
   setAttribute(Qt::WA_DeleteOnClose, true);
 
+#if QWT_VERSION >= 0x060000
+  histogram_ = new Histogram();
+#else
   histogram_ = new HistogramItem();
+#endif
+
   image_ = 0;
 }
 
@@ -104,12 +113,15 @@ void QwtFunctionPlot::setFunction( std::vector<double>& _values)
 
   //get min/max values
   min_ = FLT_MAX;
-  max_ = FLT_MIN;
+  max_ = -FLT_MAX;
 
   for ( uint i=0; i < values_.size(); i++){
     min_ = std::min(min_, values_[i] );
     max_ = std::max(max_, values_[i] );
   }
+
+//  std::cerr << "Min is : "<< min_ << std::endl;
+//  std::cerr << "Max is : "<< max_ << std::endl;
 
 }
 
@@ -121,14 +133,14 @@ void QwtFunctionPlot::setParameters(bool _repeat, double _repeatMax,
                                     bool _absolute,
                                     bool _scale)
 {
-  repeat_ = _repeat;
+  repeat_    = _repeat;
   repeatMax_ = _repeatMax;
-  clamp_ = _clamp;
-  clampMin_ = _clampMin;
-  clampMax_ = _clampMax;
-  center_ = _center;
-  absolute_ = _absolute;
-  scale_ = _scale;
+  clamp_     = _clamp;
+  clampMin_  = _clampMin;
+  clampMax_  = _clampMax;
+  center_    = _center;
+  absolute_  = _absolute;
+  scale_     = _scale;
 }
 
 //------------------------------------------------------------------------------
@@ -142,26 +154,39 @@ void QwtFunctionPlot::setImage(QImage* _image)
 
 double QwtFunctionPlot::transform( double _value ){
 
-  if (absolute_)
+//  std::cerr << "Input value : " << _value << std::endl;
+
+  if (absolute_) {
+
     _value = fabs(_value);
+//    std::cerr << "abs " << _value << std::endl;
+  }
 
   if (clamp_){
     _value = std::max( clampMin_, _value );
     _value = std::min( clampMax_, _value );
+//    std::cerr << "clamp_ " << _value << std::endl;
   }
 
   if (repeat_){
     _value = ( (_value - currentMin_) / (currentMax_-currentMin_) ) * repeatMax_;
+//    std::cerr << "repeat_ " << _value << std::endl;
   }else{
 
-    if (center_)
+    if (center_) {
       _value -= (currentMax_-currentMin_) / 2.0; //TODO:thats wrong
+//      std::cerr << "center_ " << _value << std::endl;
+    }
 
-    if (scale_)
+    if (scale_) {
       _value = (_value - currentMin_) / (currentMax_-currentMin_);
+//      std::cerr << "scale_" << _value << std::endl;
+    }
 
-    if (center_)
+    if (center_) {
       _value += 0.5;
+//      std::cerr << "center_2" << _value << std::endl;
+    }
   }
 
   return _value;
@@ -211,7 +236,7 @@ void QwtFunctionPlot::zoomOut()
 
 void QwtFunctionPlot::clamp()
 {
-    QwtDoubleRect clamped = plot_zoomer_->zoomRect();
+    QRectF clamped = plot_zoomer_->zoomRect();
     clamped.setLeft( transform(min_) );
     clamped.setRight( transform(max_) );
     emit plot_zoomer_->zoom(clamped);
@@ -227,8 +252,12 @@ void QwtFunctionPlot::replot()
   //create intervals
   const int intervalCount = 100;
 
+#if QWT_VERSION >= 0x060000
+  QVector<QwtIntervalSample> intervals(intervalCount);
+#else
   QwtArray<QwtDoubleInterval> intervals(intervalCount);
   QwtArray<double> count(intervalCount);
+#endif
   std::vector< QColor > colors;
 
   double pos = transform(min_);
@@ -238,14 +267,26 @@ void QwtFunctionPlot::replot()
 
   for ( int i = 0; i < (int)intervals.size(); i++ )
   {
+//    std::cerr << "==============================" << std::endl;
+//    std::cerr << "Interval " << i << std::endl;
+//    std::cerr << "Pos:   " << pos << std::endl;
+//    std::cerr << "Width: " << pos << std::endl;
+
+#if QWT_VERSION >= 0x060000
+    intervals[i] = QwtIntervalSample(0.0,pos, pos + width);
+#else
     intervals[i] = QwtDoubleInterval(pos, pos + width);
+#endif
     pos += width;
 
     //compute a color for the given interval
     if (image_ != 0){
       double intervalCenter = pos + (width/2.0);
 
+//      std::cerr << "intervalCenter: " << intervalCenter << std::endl;
+
       if (intervalCenter > 1.0 && !repeat_){
+//        std::cerr  <<  lastColor.red() << " " << lastColor.green() << " " << lastColor.blue() << "\n";
         colors.push_back( lastColor );
         continue;
       }
@@ -261,26 +302,42 @@ void QwtFunctionPlot::replot()
 
       int val = int( intervalCenter * image_->width() );
 
+//      std::cerr << "Reading from image at " << val << std::endl;
       colors.push_back( QColor( image_->pixel(val, 0) ) );
 
       lastColor = colors.back();
+//      std::cerr  <<  lastColor.red() << " " << lastColor.green() << " " << lastColor.blue() << "\n";
     }
   }
 
   //sort values into intervals
   for ( uint i=0; i < values_.size(); i++)
     for ( int j = 0; j < (int)intervals.size(); j++ )
+#if QWT_VERSION >= 0x060000
+      if ( intervals[j].interval.contains( transform(values_[i])  ) )
+        intervals[j].value++;
+#else
       if ( intervals[j].contains( transform(values_[i])  ) )
         count[j]++;
+#endif
 
   //get max Count for scaling the y-axis
   double maxCount = 0;
 
   for ( int i = 0; i < (int)intervals.size(); i++ )
+#if QWT_VERSION >= 0x060000
+    maxCount = std::max(maxCount, intervals[i].value);
+#else
     maxCount = std::max(maxCount, count[i]);
+#endif
 
 
+#if QWT_VERSION >= 0x060000
+  QwtIntervalSeriesData* data = new QwtIntervalSeriesData(intervals);
+  histogram_->setData(data);
+#else
   histogram_->setData(QwtIntervalData(intervals, count));
+#endif
   histogram_->setColors(colors);
   histogram_->attach(qwtPlot);
 

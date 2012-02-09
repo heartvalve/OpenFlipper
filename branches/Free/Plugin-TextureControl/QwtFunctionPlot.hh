@@ -72,7 +72,12 @@
 // ACGMake users have to include
 // #include "QtFunctionPlotBase.hh"
 
-#include "HistogramItem.hh"
+#if QWT_VERSION >= 0x060000
+ #include <ACG/QtWidgets/QwtHistogramm.hh>
+#else
+ #include "HistogramItem.hh"
+#endif
+
 #include <vector>
 
 //== FORWARDDECLARATIONS ======================================================
@@ -123,8 +128,12 @@ private:
 
   QwtPlotZoomer* plot_zoomer_;
 
-  //function data
+  // Histogramm Plot
+#if QWT_VERSION >= 0x060000
+  Histogram* histogram_;
+#else
   HistogramItem* histogram_;
+#endif
 
   std::vector<double> values_;
 
