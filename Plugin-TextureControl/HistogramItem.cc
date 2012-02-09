@@ -43,9 +43,12 @@
 
 #ifdef WITH_QWT
 
+#include <qwt_plot.h>
+
+#if QWT_VERSION < 0x060000
 #include <qstring.h>
 #include <qpainter.h>
-#include <qwt_plot.h>
+
 #include <qwt_interval_data.h>
 #include <qwt_painter.h>
 #include <qwt_scale_map.h>
@@ -305,5 +308,7 @@ void HistogramItem::drawBar(QPainter *painter,
 
    painter->restore();
 }
+
+#endif // QWT 5
 
 #endif // WITH_QWT
