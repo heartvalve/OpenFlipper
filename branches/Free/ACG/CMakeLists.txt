@@ -33,44 +33,49 @@ if (NOT OPENMESH_FOUND)
     message (FATAL_ERROR "OpenMesh not found!")
 endif ()
 
+set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR}
+                 ${CMAKE_CURRENT_SOURCE_DIR}
+                 ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
+                 ${CMAKE_CURRENT_BINARY_DIR}
+                 ${OPENGL_INCLUDE_DIR}
+                 ${GLEW_INCLUDE_DIR}
+                 ${GLUT_INCLUDE_DIR} )
+
+set(LINK_LIBRARIS OpenMeshCore
+                  OpenMeshTools
+                  ${QT_LIBRARIES}
+                  ${OPENGL_LIBRARIES}
+                  ${GLEW_LIBRARY}
+                  ${GLUT_LIBRARIES} )
+
+if (NOT APPLE)
+  find_package(Qwt5)
+endif ()
+
+if(NOT APPLE AND Qwt5_Qt4_FOUND)
+  add_definitions(-DWITH_QWT)
+  set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
+  set(LINK_LIBRARIS ${LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})  
+endif()
 
 find_package( Freetype) 
 if (NOT FREETYPE_FOUND)
   message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
 else (NOT FREETYPE_FOUND)
-
   find_package (FTGL)
   if (NOT FTGL_FOUND)
     message (MESSAGE "FTGL not found! Disabled ftgl support!")
+  else ()
+    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
+    set( LINK_LIBRARIS ${LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )  
   endif ()
 
 endif ()
 
-if(FTGL_FOUND)
-	include_directories (
-	  ..
-      ${OPENMESH_INCLUDE_DIR}
-	  ${CMAKE_CURRENT_SOURCE_DIR}
-	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
-	  ${CMAKE_CURRENT_BINARY_DIR}
-	  ${OPENGL_INCLUDE_DIR}
-	  ${GLEW_INCLUDE_DIR}
-	  ${GLUT_INCLUDE_DIR}
-	  ${FREETYPE_INCLUDE_DIR_freetype2}
-	  ${FREETYPE_INCLUDE_DIR_ft2build}
-	)
-else(FTGL_FOUND)
-	include_directories (
-	  ..
-      ${OPENMESH_INCLUDE_DIR}
-	  ${CMAKE_CURRENT_SOURCE_DIR}
-	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
-	  ${CMAKE_CURRENT_BINARY_DIR}
-	  ${OPENGL_INCLUDE_DIR}
-	  ${GLEW_INCLUDE_DIR}
-	  ${GLUT_INCLUDE_DIR}
-	)                                        
-endif(FTGL_FOUND)
+include_directories (
+  ..
+  ${INCLUDE_DIRS}
+)
 
 link_directories (
   ${GLEW_LIBRARY_DIR}
@@ -124,24 +129,4 @@ endif ()
 acg_print_configure_header (ACG "ACG")
 
 
-if ( FTGL_FOUND )
-	target_link_libraries (ACG 
-	  OpenMeshCore
-	  OpenMeshTools
-	  ${QT_LIBRARIES}
-	  ${OPENGL_LIBRARIES}
-	  ${GLEW_LIBRARY}
-	  ${GLUT_LIBRARIES}
-	  ${FTGL_LIBS}
-	  ${FREETYPE_LIBRARIES}
-	)
-else( FTGL_FOUND )
-	target_link_libraries (ACG 
-	  OpenMeshCore
-	  OpenMeshTools
-	  ${QT_LIBRARIES}
-	  ${OPENGL_LIBRARIES}
-	  ${GLEW_LIBRARY}
-	  ${GLUT_LIBRARIES}
-	)
-endif( FTGL_FOUND )
+target_link_libraries ( ACG ${LINK_LIBRARIES} )
