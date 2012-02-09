@@ -129,6 +129,16 @@ if ( NOT found EQUAL -1 )
   endif()
 endif()
 
+if (NOT APPLE)
+  find_package(Qwt5)
+endif ()
+
+if(NOT APPLE AND Qwt5_Qt4_FOUND)
+  add_definitions(-DWITH_QWT)
+  set(COREAPP_ADDITIONAL_LINK_LIBRARIES ${COREAPP_ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
+endif()
+
+
 # ====================================================================================
 # Linker Dependencies for Core app
 # ====================================================================================
