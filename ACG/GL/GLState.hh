@@ -118,7 +118,8 @@ struct GLStateContext
   // it contains a copy of the OpenGL state machine
 
 public:
-  GLStateContext() { activeTexture_ = GL_TEXTURE0; activeDrawBuffer_ = 0;}
+  GLStateContext();
+
 
   // glEnable / glDisable states
   // iff a bit is set for a state, it is enabled in OpenGL
@@ -524,9 +525,9 @@ public:
   /// replaces glBindFramebuffer, supports locking
   static void bindFramebuffer(GLenum _target, GLuint _framebuffer);
   /// get current draw framebuffer of a target
-  static GLuint getFramebufferDraw(GLenum _target);
+  static GLuint getFramebufferDraw();
   /// get current read framebuffer of a target
-  static GLuint getFramebufferRead(GLenum _target);
+  static GLuint getFramebufferRead();
 
   /// lock a framebuffer target
   static void lockFramebuffer(GLenum _target);
