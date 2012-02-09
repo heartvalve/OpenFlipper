@@ -98,6 +98,16 @@ int GLState::maxDrawBuffers_ = 0;
 
 int GLState::num_texture_units_ = 0;
 
+GLStateContext::GLStateContext()
+{
+  activeTexture_ = GL_TEXTURE0;
+  activeDrawBuffer_ = 0; 
+  framebuffers_[0] = framebuffers_[1] = 0;
+  memset(drawBufferState_, GL_BACK, sizeof(drawBufferState_));
+  drawBufferSingle_ = GL_BACK;
+  program_ = 0;
+}
+
 GLState::GLState(bool _updateGL)
   : render_pass_(1),
     max_render_passes_(1),
@@ -1930,12 +1940,14 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
 }
 
 /// get current framebuffer of a target
-GLuint GLState::getFramebufferDraw(GLenum _target) {
+GLuint GLState::getFramebufferDraw()
+{
   return stateStack_.back().framebuffers_[0];
 }
 
 /// get current framebuffer of a target
-GLuint GLState::getFramebufferRead(GLenum _target) {
+GLuint GLState::getFramebufferRead()
+{
   return stateStack_.back().framebuffers_[1];
 }
 
