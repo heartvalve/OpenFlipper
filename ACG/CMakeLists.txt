@@ -41,12 +41,7 @@ set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR}
                  ${GLEW_INCLUDE_DIR}
                  ${GLUT_INCLUDE_DIR} )
 
-set(LINK_LIBRARIS OpenMeshCore
-                  OpenMeshTools
-                  ${QT_LIBRARIES}
-                  ${OPENGL_LIBRARIES}
-                  ${GLEW_LIBRARY}
-                  ${GLUT_LIBRARIES} )
+set(ADDITIONAL_LINK_LIBRARIES "" )
 
 if (NOT APPLE)
   find_package(Qwt5)
@@ -55,7 +50,7 @@ endif ()
 if(NOT APPLE AND Qwt5_Qt4_FOUND)
   add_definitions(-DWITH_QWT)
   set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
-  set(LINK_LIBRARIS ${LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})  
+  set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})  
 endif()
 
 find_package( Freetype) 
@@ -67,7 +62,7 @@ else (NOT FREETYPE_FOUND)
     message (MESSAGE "FTGL not found! Disabled ftgl support!")
   else ()
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
-    set( LINK_LIBRARIS ${LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )  
+    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )  
   endif ()
 
 endif ()
@@ -129,4 +124,10 @@ endif ()
 acg_print_configure_header (ACG "ACG")
 
 
-target_link_libraries ( ACG ${LINK_LIBRARIES} )
+target_link_libraries ( ACG  OpenMeshCore
+                             OpenMeshTools
+                             ${QT_LIBRARIES}
+                             ${OPENGL_LIBRARIES}
+                             ${GLEW_LIBRARY}
+                             ${GLUT_LIBRARIES}
+                             ${ADDITIONAL_LINK_LIBRARIES} )
