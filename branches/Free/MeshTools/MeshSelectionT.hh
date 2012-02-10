@@ -53,7 +53,7 @@
 #define MESHSELECTION_HH
 
 
-/*! \file MeshSelection.hh
+/*! \file MeshSelectionT.hh
     \brief Functions for selection on a mesh
 
 */

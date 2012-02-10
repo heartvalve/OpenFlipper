@@ -330,7 +330,11 @@ namespace DrawModes {
       The id of the new draw mode is returned. If it already exists, the id of the existing one
       is returned.
 
-      @param _name Name of the drawmode to add
+      Property based draw modes consist of various flags, which define which primitives and
+      additional information are send to the gpu.
+
+      @param _name Name of the draw mode to add
+      @param _propertyBased If set to true a property based draw mode is created.
       @return Id of the new draw mode
   */
   ACGDLLEXPORT

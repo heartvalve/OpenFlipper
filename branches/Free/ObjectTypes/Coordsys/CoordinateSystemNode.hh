@@ -70,9 +70,10 @@ namespace SceneGraph {
 //== CLASS DEFINITION =========================================================
 
 
-/** \class CoordinateSystemNode Node for displaying coordinate systems
+/** \class CoordinateSystemNode
+ * \brief Node for displaying coordinate systems
 
-    CoordinateSystemNode renders a coordinate system.
+ CoordinateSystemNode renders a coordinate system.
 
 **/
 
