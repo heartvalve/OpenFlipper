@@ -716,7 +716,7 @@ EXCLUDE_PATTERNS       = */Debian*/* \
                          *.svn* \
                          SimpleOpt* \
                          *CPack_Packages* \
-                         build-*
+                         */build-*/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
