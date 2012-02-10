@@ -78,7 +78,7 @@ bool getObject(  int _identifier , CameraObject*& _object );
 
 /** \brief Get a CameraObject from an object id if possible
 *
-* @param _object If the object is a camera, a CameraObject is returned. Otherwise a NULL pointer is returned.
+* @param _objectId If the object is a camera, a CameraObject is returned. Otherwise a NULL pointer is returned.
 */
 DLLEXPORT
 CameraObject* cameraObject( int _objectId );

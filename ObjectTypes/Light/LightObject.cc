@@ -189,10 +189,8 @@ BaseObject* LightObject::copy() {
 /** This function initalizes the light object. It creates the scenegraph nodes.
 */
 void LightObject::init(LightNode* _light, LightNode* _lightVis) {
-///\TODO Add Light Node here
 
-// Light nodes have to be on top of all other nodes.
-
+  // Light nodes have to be on top of all other nodes.
   lightNode_ = new LightNode( 0 , "LightNode");
   lightNode_->visualize(false);
   PluginFunctions::addGlobalStatusNode(lightNode_);
@@ -200,7 +198,6 @@ void LightObject::init(LightNode* _light, LightNode* _lightVis) {
   lightNodeVis_ = new LightNode( materialNode() , "LightNode Visualization");
   lightNodeVis_->visualize(true);
   lightNodeVis_->show();
-
 }
 
 // ===============================================================================
@@ -260,7 +257,6 @@ QString LightObject::getObjectinfo() {
   if ( dataType( DATA_LIGHT ) )
     output += "Object Contains Light : ";
 
-  ///\TODO Output info
   ACG::Vec3d pos = lightSource_.position();
 //   ACG::Vec3f nor = lightNode_->normal();
 
