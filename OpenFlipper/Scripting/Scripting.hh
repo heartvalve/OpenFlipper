@@ -54,8 +54,6 @@
 
 //=============================================================== INCLUDES ====
 
-#include <iostream>
-
 #include <QObject>
 
 //======================================================= CLASS DEFINITION ====
@@ -65,7 +63,8 @@
 */
 
 
-/** A wrapper class, getting events from an plugin, prepending plugin name to the scripting
+/** \class ScriptingWrapper
+ * A wrapper class, getting events from an plugin, prepending plugin name to the scripting
  * and passing it to the core. This class is generated for every plugin of the core.
  */
 class ScriptingWrapper : public QObject {
@@ -73,19 +72,26 @@ class ScriptingWrapper : public QObject {
 Q_OBJECT
 
 signals:
-  /// complete signalfor scripting plugins
+  /// complete signal for scripting plugins
+
   void scriptInfo( QString _pluginName , QString _functionName  );
     
 public:
   
-  /// Standard Constructor 
+  /** \brief Standard Constructor
+   *
+   * @param _pluginName Name of the Plugin which uses this logger (Prepended to all Output)
+   */
   ScriptingWrapper(QString _pluginName);
   
   /// Destructor
   ~ScriptingWrapper();
   
 private slots:
-  /// prepend pluginname and emit extended signal
+  /** \brief This function prepends the plugin name and emits the extended signal to the core.
+   *
+   * @param _functionName Name of the function
+   */
   void slotScriptInfo( QString _functionName  );
 
 private:

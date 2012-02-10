@@ -59,7 +59,6 @@
 
 /** 
  * @param _pluginName Name of the Plugin which uses this logger (Prepended to all Output)
- * @param _type Default log type ( used for streaming operations )
  */
 ScriptingWrapper::ScriptingWrapper(QString _pluginName ) :
     pluginName_(_pluginName)
