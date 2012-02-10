@@ -1944,6 +1944,8 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     
     if ( fb.isValid() ){
 
+      const GLuint prevFbo = ACG::GLState::getFramebufferDraw();
+
       ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT,fb.handle());
       makeCurrent();
       
@@ -1973,6 +1975,8 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       paintGL();
       glFinish();
+
+      ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, prevFbo);
       
       // Reset alpha settings
       if(_alpha)

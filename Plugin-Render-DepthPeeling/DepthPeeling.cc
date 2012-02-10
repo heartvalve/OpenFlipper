@@ -1264,6 +1264,8 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
 
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
+  const GLuint targetFbo = ACG::GLState::getFramebufferDraw();
+
   int viewerId = _properties.viewerId();
 
   ViewerResources* pViewer = &viewerRes_[viewerId];
@@ -1463,7 +1465,7 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
   // ---------------------------------------------------------------------
 
   // enable back buffer
-  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, targetFbo);
   ACG::GLState::drawBuffer(GL_BACK);
 
   // program id 3

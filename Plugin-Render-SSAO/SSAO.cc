@@ -504,6 +504,8 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
+  const GLuint targetFbo = ACG::GLState::getFramebufferDraw();
+
   int viewerId = _properties.viewerId();
 
   ViewerResources* pViewer = &viewerRes_[viewerId];
@@ -680,7 +682,7 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
   //-----------------------------------------
   // 6. final pass, present result
   glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
-  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, targetFbo);
 
   ACG::GLState::activeTexture(GL_TEXTURE1);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, pViewer->downsampledTex_);
