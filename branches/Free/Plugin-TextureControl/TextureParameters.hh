@@ -40,61 +40,34 @@
 *                                                                            *
 \*===========================================================================*/
 
+#ifndef TEXTUREPARAMETERS_HH
+#define TEXTUREPARAMETERS_HH
 
-
-
-#include "ui_textureProperties.hh"
-#include "TextureData.hh"
-#include <QtGui>
-
-#ifdef WITH_QWT
-  #include "QwtFunctionPlot.hh"
-#endif
-
-/** \class texturePropertiesWidget
- *
- * Widget for setting different properties of textures
- */
-class texturePropertiesWidget : public QDialog, public Ui::Dialog
+class TexParameters
 {
-  Q_OBJECT
-
-  signals:
-    void applyProperties(TextureData* _texData, QString _textureName, int _id);
-
-    void getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x );
-
   public:
-    texturePropertiesWidget(QWidget *parent = 0);
+    TexParameters();
 
-    void show(TextureData* _texData, int _id, QString _name = "");
+    bool operator==(const TexParameters& _comp) const;
+    bool operator!=(const TexParameters& _comp) const;
 
-  private slots:
+    bool   abs;
 
-    void textureAboutToChange(QTreeWidgetItem* _item , int _column);
+    bool   scale;
 
-    void textureChanged(QTreeWidgetItem* _item , int _column);
+    bool   clamp;
+    double clampMin;
+    double clampMax;
 
-    void slotButtonBoxClicked(QAbstractButton* _button);
+    bool   repeat;
+    double repeatMax;
+    double repeatMin;
 
-    void slotPropertiesChanged(double _value = 0.0);
+    bool   center;
 
-    void slotChangeImage();
 
-  private:
 
-    bool             propChanged_;
-    QTreeWidgetItem* curItem_;
-    QString          currentImage_;
-    QImage           image_;
 
-    TextureData*     texData_;
-    QString          textureName_;
-    int              id_;
-
-#ifdef WITH_QWT
-    ACG::QwtFunctionPlot* functionPlot_;
-#endif
 
 };
-
+#endif // TEXTUREPARAMETERS_HH

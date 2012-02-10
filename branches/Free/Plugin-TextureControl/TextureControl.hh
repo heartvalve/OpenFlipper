@@ -174,10 +174,6 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 
   private:
 
-    /// Take a scalar value and return a clamped,... depending on texture settings
-    inline
-    void computeValue(Texture& _texture, double _min, double _max, double& _value);
-
     /// Calls the correct \a copyTexture() function to copy the texture property into the displayed OM property
     template< typename MeshT >
     void doUpdateTexture ( Texture& _texture , MeshT& _mesh);

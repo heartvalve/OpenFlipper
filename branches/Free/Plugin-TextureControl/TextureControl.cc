@@ -56,8 +56,6 @@
 #include "OpenFlipper/common/GlobalOptions.hh"
 #include "ImageStorage.hh"
 
-#include <math.h>
-
 #define TEXTUREDATA "TextureData"
  
 
@@ -835,71 +833,6 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
 }
 
-void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _max, double& _value) {
-   const bool clamp         = _texture.parameters.clamp ;
-   const bool center        = _texture.parameters.center;
-   const double max_val     = _texture.parameters.max_val;
-   const double min_val     = _texture.parameters.min_val;
-   const bool abs           = _texture.parameters.abs;
-   const double clamp_max   = _texture.parameters.clamp_max;
-   const double clamp_min   = _texture.parameters.clamp_min;
-   const bool scale         = _texture.parameters.scale;
-   const double scaleFactor = fabs(_max) + fabs(_min);
-   const bool repeat        = _texture.parameters.repeat;
-
-   // Use absolute value as requested by plugin
-   if ( abs )
-      _value = fabs(_value);
-
-   // Clamp if requested
-   if ( clamp ) {
-      if ( _value > clamp_max )
-         _value = clamp_max;
-      if (_value < clamp_min)
-         _value = clamp_min;
-   }
-
-   // if all texCoords have the same value
-   if ( _min == _max ){
-
-      if ( ! repeat )
-        _value = 0.0;
-      else
-        _value = max_val;
-
-     return;
-   }
-
-   // if the texture should not be repeated, scale to 0..1
-   if ( ! repeat ) {
-      if (! center ) {
-        if ( scale) {
-          _value /= scaleFactor; //scaleFactor is != 0.0 (otherwise _min==_max)
-          _value -= _min/scaleFactor;
-        }
-      } else {
-         // the values above zero are mapped to 0.5..1 the negative ones to 0.5..0
-         if (_value > 0.0) {
-            _value /= ( _max * 2.0); //_max >= _value > 0.0
-            _value += 0.5;
-         } else {
-            if ( _min == 0.0 ){
-              _value = 0.0;
-            } else {
-              _value /= ( _min * 2.0);
-              _value = 0.5 - _value;
-            }
-         }
-      }
-   } else {
-      _value -= _min;
-      _value *= (max_val - min_val) / (_max - _min);
-      _value += min_val;
-   }
-   
-   
-}
-
 void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
 
   // Only update if we have a relevant draw mode
@@ -1015,23 +948,23 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
         changed = true;
       }
     } else if ( sectionName == "clamp_max" ) {
-      if (value.toDouble() != _texture.parameters.clamp_max){
-        _texture.parameters.clamp_max = value.toDouble();
+      if (value.toDouble() != _texture.parameters.clampMax){
+        _texture.parameters.clampMax = value.toDouble();
         changed = true;
       }
     } else if ( sectionName == "clamp_min" ) {
-      if (value.toDouble() != _texture.parameters.clamp_min){
-        _texture.parameters.clamp_min = value.toDouble();
+      if (value.toDouble() != _texture.parameters.clampMin){
+        _texture.parameters.clampMin = value.toDouble();
         changed = true;
       }
     } else if ( sectionName == "max_val" ) {
-      if (value.toDouble() != _texture.parameters.max_val){
-        _texture.parameters.max_val = value.toDouble();
+      if (value.toDouble() != _texture.parameters.repeatMax){
+        _texture.parameters.repeatMax = value.toDouble();
         changed = true;
       }
     } else if ( sectionName == "min_val" ) {
-      if (value.toDouble() != _texture.parameters.min_val){
-        _texture.parameters.min_val = value.toDouble();
+      if (value.toDouble() != _texture.parameters.repeatMin){
+        _texture.parameters.repeatMin = value.toDouble();
         changed = true;
       }
     } else if ( sectionName == "repeat" ) {
@@ -1131,23 +1064,23 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
           changed = true;
         }
 
-        if ( _mode.contains("clamp_max") && (texture.parameters.clamp_max != localTex.parameters.clamp_max) ){
-          localTex.parameters.clamp_max = texture.parameters.clamp_max;
+        if ( _mode.contains("clamp_max") && (texture.parameters.clampMax != localTex.parameters.clampMax) ){
+          localTex.parameters.clampMax = texture.parameters.clampMax;
           changed = true;
         }
 
-        if ( _mode.contains("clamp_min") && (texture.parameters.clamp_min != localTex.parameters.clamp_min) ){
-          localTex.parameters.clamp_min = texture.parameters.clamp_min;
+        if ( _mode.contains("clamp_min") && (texture.parameters.clampMin != localTex.parameters.clampMin) ){
+          localTex.parameters.clampMin = texture.parameters.clampMin;
           changed = true;
         }
 
-        if ( _mode.contains("max_val") && (texture.parameters.max_val != localTex.parameters.max_val) ){
-          localTex.parameters.max_val = texture.parameters.max_val;
+        if ( _mode.contains("max_val") && (texture.parameters.repeatMax != localTex.parameters.repeatMax) ){
+          localTex.parameters.repeatMax = texture.parameters.repeatMax;
           changed = true;
         }
         
-        if ( _mode.contains("min_val") && (texture.parameters.min_val != localTex.parameters.min_val) ){
-          localTex.parameters.min_val = texture.parameters.min_val;
+        if ( _mode.contains("min_val") && (texture.parameters.repeatMin != localTex.parameters.repeatMin) ){
+          localTex.parameters.repeatMin = texture.parameters.repeatMin;
           changed = true;
         }
 
@@ -1345,20 +1278,20 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
           localTexture.parameters.clamp = globalTexture.parameters.clamp;
           changed = true;
         }
-        if (localTexture.parameters.clamp_max != globalTexture.parameters.clamp_max){
-          localTexture.parameters.clamp_max = globalTexture.parameters.clamp_max;
+        if (localTexture.parameters.clampMax != globalTexture.parameters.clampMax){
+          localTexture.parameters.clampMax = globalTexture.parameters.clampMax;
           changed = true;
         }
-        if (localTexture.parameters.clamp_min != globalTexture.parameters.clamp_min){
-          localTexture.parameters.clamp_min = globalTexture.parameters.clamp_min;
+        if (localTexture.parameters.clampMin != globalTexture.parameters.clampMin){
+          localTexture.parameters.clampMin = globalTexture.parameters.clampMin;
           changed = true;
         }
-        if (localTexture.parameters.max_val != globalTexture.parameters.max_val){
-          localTexture.parameters.max_val = globalTexture.parameters.max_val;
+        if (localTexture.parameters.repeatMax != globalTexture.parameters.repeatMax){
+          localTexture.parameters.repeatMax = globalTexture.parameters.repeatMax;
           changed = true;
         }
-        if (localTexture.parameters.min_val != globalTexture.parameters.min_val){
-          localTexture.parameters.min_val = globalTexture.parameters.min_val;
+        if (localTexture.parameters.repeatMin != globalTexture.parameters.repeatMin){
+          localTexture.parameters.repeatMin = globalTexture.parameters.repeatMin;
           changed = true;
         }
         if (localTexture.parameters.repeat != globalTexture.parameters.repeat){

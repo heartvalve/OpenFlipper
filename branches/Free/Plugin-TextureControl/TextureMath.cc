@@ -40,61 +40,106 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "TextureMath.hh"
 
+#include <math.h>
 
-
-#include "ui_textureProperties.hh"
-#include "TextureData.hh"
-#include <QtGui>
-
-#ifdef WITH_QWT
-  #include "QwtFunctionPlot.hh"
-#endif
-
-/** \class texturePropertiesWidget
- *
- * Widget for setting different properties of textures
- */
-class texturePropertiesWidget : public QDialog, public Ui::Dialog
+TextureMath::TextureMath(const bool   _abs,
+                         const bool   _clamp,
+                         const double _clampMin,
+                         const double _clampMax,
+                         const bool   _repeat,
+                         const double _minRepeat,
+                         const double _maxRepeat,
+                         const bool   _center,
+                         const bool   _scale,
+                         const double _minimalInput,
+                         const double _maximalInput):
+        abs_(_abs),
+        clamp_(_clamp),
+        clampMin_(_clampMin),
+        clampMax_(_clampMax),
+        repeat_(_repeat),
+        repeatMin_(_minRepeat),
+        repeatMax_(_maxRepeat),
+        center_(_center),
+        scale_(_scale),
+        minInput_(_minimalInput),
+        maxInput_(_maximalInput)
 {
-  Q_OBJECT
 
-  signals:
-    void applyProperties(TextureData* _texData, QString _textureName, int _id);
+}
 
-    void getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x );
+TextureMath::TextureMath(const TexParameters& _parameters, const double _minimalInput, const double _maximalInput) :
+        abs_(_parameters.abs),
+        clamp_(_parameters.clamp),
+        clampMin_(_parameters.clampMin),
+        clampMax_(_parameters.clampMax),
+        repeat_(_parameters.repeat),
+        repeatMin_(_parameters.repeatMin),
+        repeatMax_(_parameters.repeatMax),
+        center_(_parameters.center),
+        scale_(_parameters.scale),
+        minInput_(_minimalInput),
+        maxInput_(_maximalInput)
+{
+}
 
-  public:
-    texturePropertiesWidget(QWidget *parent = 0);
+double TextureMath::transform(const double _input) const
+{
+  double value = _input;
 
-    void show(TextureData* _texData, int _id, QString _name = "");
 
-  private slots:
+  // Use absolute value as requested by plugin
+  if ( abs_ )
+    value = fabs(value);
 
-    void textureAboutToChange(QTreeWidgetItem* _item , int _column);
+  // Clamp if requested
+  if ( clamp_ ) {
+    if ( value > clampMax_ )
+      value = clampMax_;
+    if (value < clampMin_)
+      value = clampMin_;
+  }
 
-    void textureChanged(QTreeWidgetItem* _item , int _column);
+  // if all texCoords have the same value
+  if ( minInput_ == maxInput_){
 
-    void slotButtonBoxClicked(QAbstractButton* _button);
+    if ( ! repeat_ )
+      value = 0.0;
+    else
+      value = maxInput_;
 
-    void slotPropertiesChanged(double _value = 0.0);
+    return value;
+  }
 
-    void slotChangeImage();
 
-  private:
+  // if the texture should not be repeated, scale to 0..1
+  if ( ! repeat_ ) {
+    if (! center_ ) {
+      if ( scale_) {
+        value /=  fabs(maxInput_) + fabs(minInput_);           //scaleFactor is != 0.0 (otherwise _min==_max)
+        value -= minInput_/(fabs(maxInput_) + fabs(minInput_));
+      }
+    } else {
+      // the values above zero are mapped to 0.5..1 the negative ones to 0.5..0
+      if (value > 0.0) {
+        value /= ( maxInput_ * 2.0); //_max >= _value > 0.0
+        value += 0.5;
+      } else {
+        if ( minInput_ == 0.0 ){
+          value = 0.0;
+        } else {
+          value /= ( minInput_ * 2.0);
+          value = 0.5 - value;
+        }
+      }
+    }
+  } else {
+    value -= minInput_;
+    value *= (repeatMax_ - repeatMin_) / (maxInput_ - minInput_);
+    value += repeatMin_;
+  }
 
-    bool             propChanged_;
-    QTreeWidgetItem* curItem_;
-    QString          currentImage_;
-    QImage           image_;
-
-    TextureData*     texData_;
-    QString          textureName_;
-    int              id_;
-
-#ifdef WITH_QWT
-    ACG::QwtFunctionPlot* functionPlot_;
-#endif
-
-};
-
+  return value;
+}

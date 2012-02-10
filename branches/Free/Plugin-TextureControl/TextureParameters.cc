@@ -40,61 +40,35 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include "TextureParameters.hh"
+#include <float.h>
 
-
-
-#include "ui_textureProperties.hh"
-#include "TextureData.hh"
-#include <QtGui>
-
-#ifdef WITH_QWT
-  #include "QwtFunctionPlot.hh"
-#endif
-
-/** \class texturePropertiesWidget
- *
- * Widget for setting different properties of textures
- */
-class texturePropertiesWidget : public QDialog, public Ui::Dialog
+TexParameters::TexParameters() :
+        abs(false),
+        scale(true),
+        clamp(false),
+        clampMin(FLT_MIN),
+        clampMax(FLT_MAX),
+        repeat(false),
+        repeatMax(1.0),
+        repeatMin(0.0),
+        center(false)
 {
-  Q_OBJECT
+}
 
-  signals:
-    void applyProperties(TextureData* _texData, QString _textureName, int _id);
 
-    void getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x );
+bool TexParameters::operator==(const TexParameters& _comp) const {
+  return ( (scale     == _comp.scale)     &&
+           (clampMin  == _comp.clampMin)  &&
+           (clampMax  == _comp.clampMax)  &&
+           (clamp     == _comp.clamp)     &&
+           (repeat    == _comp.repeat)    &&
+           (center    == _comp.center)    &&
+           (abs       == _comp.abs)       &&
+           (repeatMax == _comp.repeatMax) &&
+           (repeatMin == _comp.repeatMin) );
+}
 
-  public:
-    texturePropertiesWidget(QWidget *parent = 0);
-
-    void show(TextureData* _texData, int _id, QString _name = "");
-
-  private slots:
-
-    void textureAboutToChange(QTreeWidgetItem* _item , int _column);
-
-    void textureChanged(QTreeWidgetItem* _item , int _column);
-
-    void slotButtonBoxClicked(QAbstractButton* _button);
-
-    void slotPropertiesChanged(double _value = 0.0);
-
-    void slotChangeImage();
-
-  private:
-
-    bool             propChanged_;
-    QTreeWidgetItem* curItem_;
-    QString          currentImage_;
-    QImage           image_;
-
-    TextureData*     texData_;
-    QString          textureName_;
-    int              id_;
-
-#ifdef WITH_QWT
-    ACG::QwtFunctionPlot* functionPlot_;
-#endif
-
-};
-
+bool TexParameters::operator!=(const TexParameters& _comp) const {
+  return ( !( (*this) == _comp) );
+}
