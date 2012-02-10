@@ -79,7 +79,7 @@ Skeleton* skeleton( BaseObjectData* _object );
 
 /** \brief Get a skeleton from an id.
  *
- * @param _object The skeleton is returned if the object with id is a skeleton object, otherwise 0.
+ * @param _identifier The skeleton is returned if the object with id is a skeleton object, otherwise 0.
  */
 DLLEXPORT
 Skeleton* skeleton(  int _identifier );
@@ -94,7 +94,7 @@ SkeletonObject* skeletonObject( BaseObjectData* _object );
 
 /** \brief Get SkeletonObject with its id if possible
  *
- * @param _object The skeleton object if request was successfull or otherwise 0
+ * @param _identifier The skeleton object if request was successfull or otherwise 0
  */
 DLLEXPORT
 SkeletonObject* skeletonObject( int _identifier );
