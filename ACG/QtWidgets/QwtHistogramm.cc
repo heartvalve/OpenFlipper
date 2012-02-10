@@ -261,8 +261,6 @@ void Histogram::drawBar(QPainter *painter, Qt::Orientation, const QRect& rect) c
   const QColor color(painter->pen().color());
   const QRect r = rect.normalized();
 
-  std::cerr << color.red() << " " << color.green() << " " << color.blue() << "\n";
-
   const int factor = 125;
   const QColor light(color.light(factor));
   const QColor dark(color.dark(factor));
