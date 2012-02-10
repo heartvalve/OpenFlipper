@@ -44,6 +44,7 @@
 #define TEXTUREDATA_HH
 
 #include <OpenFlipper/common/perObjectData.hh>
+#include "TextureParameters.hh"
 
 #include <QString>
 #include <QStringList>
@@ -51,7 +52,7 @@
 #include <vector>
 #include <map>
 #include <float.h>
-#include <iostream>
+
 
 enum TextureType { UNSET         = 1 << 0,
                    /// Texture Coordinates are stored on a per Vertex basis
@@ -62,36 +63,6 @@ enum TextureType { UNSET         = 1 << 0,
                    ENVIRONMENT   = 1 << 3,
                    /// MultiTexture Mode
                    MULTITEXTURE  = 1 << 4 };
-
-class TexParameters
-{
-  public:
-    TexParameters() :
-          scale ( true ),
-          clamp_min ( FLT_MIN ),
-          clamp_max ( FLT_MAX ),
-          clamp ( false ),
-          repeat ( false ),
-          center ( false ),
-          abs ( false ),
-          max_val ( 1.0 ),
-          min_val ( 0.0 ) {};
-
-    bool scale;
-
-    double clamp_min;
-    double clamp_max;
-
-    bool clamp;
-    bool repeat;
-
-    bool center;
-
-    bool abs;
-
-    double max_val;
-    double min_val;
-};
 
 class Texture {
   public :

@@ -79,6 +79,8 @@
 #endif
 
 #include <vector>
+#include "TextureParameters.hh"
+
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -105,12 +107,21 @@ public:
   // set the function to plot
   void setFunction( std::vector<double>& _values );
 
+  /// Set all parameters as one block
+  void setParameters(const TexParameters& _parameters);
+
+  /// Set the parameters separately
   void setParameters(bool repeat, double repeatMax,
                      bool clamp,  double clampMin, double clampMax,
                      bool center,
                      bool absolute,
                      bool scale);
 
+  /** The function plot accesses an image to get colors from them.
+   *  The colors are equivalent to the rendered color textures.
+   *
+   * @param _image Image that is used to take the colors from
+   */
   void setImage(QImage* _image);
 
 public slots:
@@ -121,10 +132,6 @@ public slots:
   void replot();
 
 private:
-
-  void initValues();
-
-  double transform( double _value );
 
   QwtPlotZoomer* plot_zoomer_;
 
@@ -139,20 +146,9 @@ private:
 
   QImage* image_;
 
-  bool   repeat_;
-  double repeatMax_;
-  bool   clamp_;
-  double clampMin_;
-  double clampMax_;
-  bool   center_;
-  bool   absolute_;
-  bool   scale_;
+  TexParameters parameters_;
 
-  double min_;
-  double max_;
-
-  double currentMin_;
-  double currentMax_;
+  double min_,max_;
 
 };
 

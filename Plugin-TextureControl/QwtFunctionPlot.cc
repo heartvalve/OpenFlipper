@@ -70,6 +70,7 @@
 
 #include <float.h>
 #include <math.h>
+#include "TextureMath.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -120,102 +121,42 @@ void QwtFunctionPlot::setFunction( std::vector<double>& _values)
     max_ = std::max(max_, values_[i] );
   }
 
-//  std::cerr << "Min is : "<< min_ << std::endl;
-//  std::cerr << "Max is : "<< max_ << std::endl;
-
 }
 
 //------------------------------------------------------------------------------
 
-void QwtFunctionPlot::setParameters(bool _repeat, double _repeatMax,
-                                    bool _clamp,  double _clampMin, double _clampMax,
-                                    bool _center,
-                                    bool _absolute,
-                                    bool _scale)
+void QwtFunctionPlot::setParameters(const TexParameters& _parameters)
 {
-  repeat_    = _repeat;
-  repeatMax_ = _repeatMax;
-  clamp_     = _clamp;
-  clampMin_  = _clampMin;
-  clampMax_  = _clampMax;
-  center_    = _center;
-  absolute_  = _absolute;
-  scale_     = _scale;
+  parameters_ = _parameters;
 }
+
+void QwtFunctionPlot::setParameters(
+    bool   _repeat,
+    double _repeatMax,
+    bool   _clamp,
+    double _clampMin,
+    double _clampMax,
+    bool   _center,
+    bool   _absolute,
+    bool   _scale)
+{
+
+  parameters_.repeat    = _repeat;
+  parameters_.repeatMax = _repeatMax;
+  parameters_.clamp     = _clamp;
+  parameters_.clampMin  = _clampMin;
+  parameters_.clampMax  = _clampMax;
+  parameters_.center    = _center;
+  parameters_.abs       = _absolute;
+  parameters_.scale     = _scale;
+}
+
 
 //------------------------------------------------------------------------------
 
 void QwtFunctionPlot::setImage(QImage* _image)
 {
   image_ = _image;
-}
-
-//------------------------------------------------------------------------------
-
-double QwtFunctionPlot::transform( double _value ){
-
-//  std::cerr << "Input value : " << _value << std::endl;
-
-  if (absolute_) {
-
-    _value = fabs(_value);
-//    std::cerr << "abs " << _value << std::endl;
-  }
-
-  if (clamp_){
-    _value = std::max( clampMin_, _value );
-    _value = std::min( clampMax_, _value );
-//    std::cerr << "clamp_ " << _value << std::endl;
-  }
-
-  if (repeat_){
-    _value = ( (_value - currentMin_) / (currentMax_-currentMin_) ) * repeatMax_;
-//    std::cerr << "repeat_ " << _value << std::endl;
-  }else{
-
-    if (center_) {
-      _value -= (currentMax_-currentMin_) / 2.0; //TODO:thats wrong
-//      std::cerr << "center_ " << _value << std::endl;
-    }
-
-    if (scale_) {
-      _value = (_value - currentMin_) / (currentMax_-currentMin_);
-//      std::cerr << "scale_" << _value << std::endl;
-    }
-
-    if (center_) {
-      _value += 0.5;
-//      std::cerr << "center_2" << _value << std::endl;
-    }
-  }
-
-  return _value;
-}
-
-//------------------------------------------------------------------------------
-
-void QwtFunctionPlot::initValues()
-{
-
-  //get min/max values
-  currentMin_ = FLT_MAX;
-  currentMax_ = FLT_MIN;
-
-  for ( uint i=0; i < values_.size(); i++){
-
-    double tranformed = values_[i];
-
-    if (absolute_)
-      tranformed = fabs(tranformed);
-
-    if (clamp_){
-      tranformed = std::max( clampMin_, tranformed );
-      tranformed = std::min( clampMax_, tranformed );
-    }
-
-    currentMin_ = std::min(currentMin_, tranformed );
-    currentMax_ = std::max(currentMax_, tranformed );
-  }
 }
 
 //------------------------------------------------------------------------------
@@ -237,8 +178,8 @@ void QwtFunctionPlot::zoomOut()
 void QwtFunctionPlot::clamp()
 {
     QRectF clamped = plot_zoomer_->zoomRect();
-    clamped.setLeft( transform(min_) );
-    clamped.setRight( transform(max_) );
+    clamped.setLeft( min_ );
+    clamped.setRight( max_ );
     emit plot_zoomer_->zoom(clamped);
 }
 
@@ -246,9 +187,6 @@ void QwtFunctionPlot::clamp()
 
 void QwtFunctionPlot::replot()
 {
-
-  initValues();
-
   //create intervals
   const int intervalCount = 100;
 
@@ -260,10 +198,12 @@ void QwtFunctionPlot::replot()
 #endif
   std::vector< QColor > colors;
 
-  double pos = transform(min_);
-  double width = ( transform(max_) - transform(min_) ) / intervalCount;
+  double pos = min_;
+  double width = ( max_ - min_ ) / intervalCount;
 
   QColor lastColor = Qt::black;
+
+  TextureMath convert(parameters_,min_,max_);
 
   for ( int i = 0; i < (int)intervals.size(); i++ )
   {
@@ -281,32 +221,15 @@ void QwtFunctionPlot::replot()
 
     //compute a color for the given interval
     if (image_ != 0){
-      double intervalCenter = pos + (width/2.0);
 
-//      std::cerr << "intervalCenter: " << intervalCenter << std::endl;
+      const double intervalCenter = pos + (width/2.0);
 
-      if (intervalCenter > 1.0 && !repeat_){
-//        std::cerr  <<  lastColor.red() << " " << lastColor.green() << " " << lastColor.blue() << "\n";
-        colors.push_back( lastColor );
-        continue;
-      }
+      const double value = convert.transform(intervalCenter);
+      int val = int( value * ( image_->width() - 1) );
 
-      if ( intervalCenter < 0.0){
-        colors.push_back( lastColor );
-        continue;
-      }
-
-      if ( intervalCenter > 1.0){
-        intervalCenter -= floor(intervalCenter);
-      }
-
-      int val = int( intervalCenter * image_->width() );
-
-//      std::cerr << "Reading from image at " << val << std::endl;
+      val = val % image_->width(); // Simulate If texture is repeated, we have to make sure, we stay inside of the image
       colors.push_back( QColor( image_->pixel(val, 0) ) );
-
       lastColor = colors.back();
-//      std::cerr  <<  lastColor.red() << " " << lastColor.green() << " " << lastColor.blue() << "\n";
     }
   }
 
@@ -314,10 +237,10 @@ void QwtFunctionPlot::replot()
   for ( uint i=0; i < values_.size(); i++)
     for ( int j = 0; j < (int)intervals.size(); j++ )
 #if QWT_VERSION >= 0x060000
-      if ( intervals[j].interval.contains( transform(values_[i])  ) )
+      if ( intervals[j].interval.contains( values_[i]  ) )
         intervals[j].value++;
 #else
-      if ( intervals[j].contains( transform(values_[i])  ) )
+      if ( intervals[j].contains( values_[i]  ) )
         count[j]++;
 #endif
 
@@ -342,7 +265,7 @@ void QwtFunctionPlot::replot()
   histogram_->attach(qwtPlot);
 
   qwtPlot->setAxisScale(QwtPlot::yLeft, 0.0, maxCount);
-  qwtPlot->setAxisScale(QwtPlot::xBottom, transform(min_), transform(max_));
+  qwtPlot->setAxisScale(QwtPlot::xBottom, min_, max_);
 
   qwtPlot->setAxisTitle(QwtPlot::yLeft,   "count" );
   qwtPlot->setAxisTitle(QwtPlot::xBottom, "values" );

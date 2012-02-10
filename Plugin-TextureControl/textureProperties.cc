@@ -251,9 +251,9 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
   centerBox->setChecked(texture.parameters.center);
   absBox->setChecked(texture.parameters.abs);
 
-  max_val->setValue( texture.parameters.max_val );
-  clamp_min->setValue( texture.parameters.clamp_min );
-  clamp_max->setValue( texture.parameters.clamp_max );
+  max_val->setValue( texture.parameters.repeatMax );
+  clamp_min->setValue( texture.parameters.clampMin );
+  clamp_max->setValue( texture.parameters.clampMax );
 
   switch (texture.type()) {
     case MULTITEXTURE:
@@ -345,27 +345,29 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 
 }
 
-void texturePropertiesWidget::slotChangeImage() {
+void texturePropertiesWidget::slotChangeImage()
+{
 
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
+  QString fileName = QFileDialog::getOpenFileName(this,
+                                                  tr("Open Image"),
                                                   OpenFlipper::Options::currentTextureDirStr(),
                                                   tr("Images (*.png *.xpm *.jpg, *.tga)"));
 
-  if ( QFile(fileName).exists() ){
+  if (QFile(fileName).exists()) {
     QFileInfo fileInfo(fileName);
-    OpenFlipper::Options::currentTextureDir( fileInfo.absolutePath() );
+    OpenFlipper::Options::currentTextureDir(fileInfo.absolutePath());
 
-    imageLabel->setPixmap( fileName );
+    imageLabel->setPixmap(fileName);
     imageLabel->setScaledContents(true);
 
-    fileLabel->setText( "File: " + fileName );
+    fileLabel->setText("File: " + fileName);
 
     currentImage_ = fileName;
     image_ = imageLabel->pixmap()->toImage();
-    
+
     #ifdef WITH_QWT
-    functionPlot_->setImage( &image_ );
-    functionPlot_->replot();
+      functionPlot_->setImage(&image_);
+      functionPlot_->replot();
     #endif
 
     propChanged_ = true;
@@ -405,18 +407,18 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
       changed = true;
     }
 
-    if ( texture.parameters.max_val != max_val->value() ){
-      texture.parameters.max_val = max_val->value();
+    if ( texture.parameters.repeatMax != max_val->value() ){
+      texture.parameters.repeatMax = max_val->value();
       changed = true;
     }
 
-    if ( texture.parameters.clamp_min != clamp_min->value() ){
-      texture.parameters.clamp_min = clamp_min->value();
+    if ( texture.parameters.clampMin != clamp_min->value() ){
+      texture.parameters.clampMin = clamp_min->value();
       changed = true;
     }
 
-    if ( texture.parameters.clamp_max != clamp_max->value() ){
-      texture.parameters.clamp_max = clamp_max->value();
+    if ( texture.parameters.clampMax != clamp_max->value() ){
+      texture.parameters.clampMax = clamp_max->value();
       changed = true;
     }
 
