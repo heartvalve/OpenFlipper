@@ -98,14 +98,14 @@ int GLState::maxDrawBuffers_ = 0;
 
 int GLState::num_texture_units_ = 0;
 
-GLStateContext::GLStateContext()
+GLStateContext::GLStateContext() :
+    activeTexture_(GL_TEXTURE0),
+    drawBufferSingle_(GL_BACK),
+    activeDrawBuffer_(0),
+    program_(0)
 {
-  activeTexture_ = GL_TEXTURE0;
-  activeDrawBuffer_ = 0; 
   framebuffers_[0] = framebuffers_[1] = 0;
   memset(drawBufferState_, GL_BACK, sizeof(drawBufferState_));
-  drawBufferSingle_ = GL_BACK;
-  program_ = 0;
 }
 
 GLState::GLState(bool _updateGL)

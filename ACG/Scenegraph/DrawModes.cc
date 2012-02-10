@@ -168,7 +168,12 @@ static DrawMode firstFreeID_;
 
 
 
-DrawModeProperties::DrawModeProperties() {
+DrawModeProperties::DrawModeProperties():
+    lighting_(true),
+    points_(false),
+    lines_(false),
+    triangles_(true)
+{
 
 }
 
