@@ -206,17 +206,6 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     template< typename MeshT >
     void copyTexture(Texture& _texture , MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
 
-
-    /// For a given mesh compute the minimum and maximum values depending on texture settings (vertex based)
-    template< typename MeshT >
-    inline
-    void computeMinMaxScalar(Texture& _textureData , MeshT& _mesh ,OpenMesh::VPropHandleT< double > _texture,double& _min , double& _max);
-
-    /// For a given mesh compute the minimum and maximum values depending on texture settings (halfedge based)
-    template< typename MeshT >
-    inline
-    void computeMinMaxScalar(Texture& _textureData , MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
-
     /** @} */
 
     //===========================================================================
