@@ -12,7 +12,7 @@ IF (OPENVOLUMEMESH_INCLUDE_DIRS)
   SET(OPENVOLUMEMESH_FIND_QUIETLY TRUE)
 ENDIF (OPENVOLUMEMESH_INCLUDE_DIRS)
 
-FIND_PATH(OPENVOLUMEMESH_INCLUDE_DIR OpenVolumeMesh/PolyhedralMesh/PolyhedralMesh.hh
+FIND_PATH(OPENVOLUMEMESH_INCLUDE_DIR OpenVolumeMesh/Mesh/PolyhedralMesh.hh
 	  PATHS /usr/local/include 
                 /usr/include 
                 /usr/local/OpenVolumeMesh/include
