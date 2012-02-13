@@ -30,7 +30,15 @@ ENDIF(NOT QT4_FOUND)
 IF( QT4_FOUND )
 	# Is Qwt5 installed? Look for header files
 	FIND_PATH( Qwt5_INCLUDE_DIR qwt.h 
-               PATHS ${QT_INCLUDE_DIR} /usr/local/qwt/include /usr/local/include /usr/include/qwt /usr/include c:\\Program\ Files\\qwt\\qwt-5.2.0 c:\\qwt-5.2.0 C:\\libs\\qwt-5.2.0
+               PATHS ${QT_INCLUDE_DIR} 
+				/usr/local/qwt/include 
+				/usr/local/include 
+				/usr/include/qwt 
+				/usr/include 
+				c:\\libs\\Qwt-6.0.1
+				c:\\Program\ Files\\qwt\\qwt-5.2.0 
+				c:\\qwt-5.2.0 
+				C:\\libs\\qwt-5.2.0
                PATH_SUFFIXES qwt qwt5 qwt-qt4 qwt5-qt4 qwt-qt3 qwt5-qt3 include qwt/include qwt5/include qwt-qt4/include qwt5-qt4/include qwt-qt3/include qwt5-qt3/include ENV PATH)
 	
 	# Find Qwt version
@@ -47,10 +55,18 @@ IF( QT4_FOUND )
                     get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY} PATH)
                     set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
 		ELSE( NOT WIN32)
+		message("aa")
 			 # Find Qwt5 library linked to Qt4 Release Version
-                 FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
+                 FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt qwt5-qt4 qwt-qt4 qwt5  PATHS 
+							   "c:\\libs\\Qwt-6.0.1\\lib"
+				               "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
+							   "c:\\libs\\qwt-5.2.0\\lib"
+							   )
 			 # Find Qwt5 library linked to Qt4 Debug Version
-		      FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
+		      FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwtd qwt5d  PATHS 
+			                "c:\\libs\\Qwt-6.0.1\\lib"
+			                "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
+							"c:\\libs\\qwt-5.2.0\\lib")
 
                  set ( Qwt5_Qt4_TENTATIVE_LIBRARY "optimized;${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE};debug;${Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG}")
                  get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE} PATH)
@@ -97,7 +113,7 @@ IF( QT4_FOUND )
 		
                 IF ( NOT APPLE )
 			# Find Qwt5 library linked to Qt3
-			FIND_LIBRARY( Qwt5_Qt3_TENTATIVE_LIBRARY NAMES qwt-qt3 qwt qwt5-qt3 qwt5 )
+			FIND_LIBRARY( Qwt5_Qt3_TENTATIVE_LIBRARY NAMES qwt-qt3 qwt qwt5-qt3 qwt5 qwt )
 			IF( UNIX AND NOT CYGWIN)
 				IF( Qwt5_Qt3_TENTATIVE_LIBRARY )
 					#MESSAGE("Qwt5_Qt3_TENTATIVE_LIBRARY = ${Qwt5_Qt3_TENTATIVE_LIBRARY}")
