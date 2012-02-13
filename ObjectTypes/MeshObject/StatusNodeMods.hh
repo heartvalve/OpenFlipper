@@ -80,14 +80,11 @@ struct AreaNodeMod
   /// tell status node if the face is marked as modeling area
   static inline bool is_area(const MeshT& _m, typename MeshT::FaceHandle _fh)
   {
-      bool isArea = true;
-      for(typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it) {
-          if(!_m.status(cfv_it.handle()).is_bit_set(AREA)) {
-              isArea = false;
-              break;
-          }
-      }
-      return isArea;
+    for (typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it)
+      if (_m.status(cfv_it.handle()).is_bit_set(AREA))
+        return true;
+
+    return false;
   }
 
   /// tell status node if the vertex is marked as modeling area
