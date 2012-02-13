@@ -45,13 +45,14 @@
 
 #include <qglobal.h>
 #include <qcolor.h>
+#include <ACG/Config/ACGDefines.hh>
 
 #include "qwt_plot_item.h" 
 
 class QwtIntervalData;
 class QString;
 
-class Histogram: public QwtPlotItem
+class ACGDLLEXPORT Histogram: public QwtPlotItem
 {
 public:
     explicit Histogram(const QString &title = QString::null);
