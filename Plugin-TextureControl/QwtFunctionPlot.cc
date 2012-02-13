@@ -61,6 +61,9 @@
 #include <qlabel.h>
 #include <qpainter.h>
 #include <qwt_curve_fitter.h>
+#include <qwt_plot_panner.h>
+#include <qwt_symbol.h>
+
 
 #if QWT_VERSION >= 0x060000
  #include <qwt_plot_histogram.h>
@@ -83,16 +86,24 @@ namespace ACG {
 QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
     QDialog( _parent ),
     Ui::QwtFunctionPlotBase(),
+    plot_zoomer_(0),
+    clampMinMarker_(0),
+    minSymbol_(0),
+    clampMaxMarker_(0),
+    maxSymbol_(0),
     min_(FLT_MAX),
     max_(FLT_MIN)
 {
   setupUi( this );
 
   plot_zoomer_ = new QwtPlotZoomer( qwtPlot->canvas());
+  plot_zoomer_->initKeyPattern();
   connect(zoomInButton, SIGNAL( clicked() ), this,SLOT( zoomIn() )  );
   connect(zoomOutButton,SIGNAL( clicked() ), this,SLOT( zoomOut() ) );
   connect(clampButton,  SIGNAL( clicked() ), this,SLOT( clamp() )   );
   
+  QwtPlotPanner *panner = new QwtPlotPanner( qwtPlot->canvas() );
+  panner->setMouseButton( Qt::MidButton );
   
   // delete widget on close
   setAttribute(Qt::WA_DeleteOnClose, true);
@@ -207,10 +218,6 @@ void QwtFunctionPlot::replot()
 
   for ( int i = 0; i < (int)intervals.size(); i++ )
   {
-//    std::cerr << "==============================" << std::endl;
-//    std::cerr << "Interval " << i << std::endl;
-//    std::cerr << "Pos:   " << pos << std::endl;
-//    std::cerr << "Width: " << pos << std::endl;
 
 #if QWT_VERSION >= 0x060000
     intervals[i] = QwtIntervalSample(0.0,pos, pos + width);
@@ -272,6 +279,58 @@ void QwtFunctionPlot::replot()
 
   //define this scaling as the zoomBase
   plot_zoomer_->setZoomBase();
+
+  // Mark the clamp values in the histogramm
+  if ( parameters_.clamp ) {
+    if ( ! clampMinMarker_ ) {
+      clampMinMarker_ = new QwtPlotMarker();
+      minSymbol_ = new QwtSymbol(QwtSymbol::VLine);
+      minSymbol_->setColor(QColor(255,0,0));
+      minSymbol_->setSize(200,1000);
+      QPen pen = minSymbol_->pen();
+      pen.setWidth(3);
+      minSymbol_->setPen(pen);
+      clampMinMarker_->setSymbol(minSymbol_);
+      clampMinMarker_->attach(qwtPlot);
+    }
+
+    // Draw at left boundary if less than the minimal value we get from the function
+    if ( parameters_.clampMin < min_ )
+      clampMinMarker_->setXValue(min_);
+    else
+      clampMinMarker_->setXValue(parameters_.clampMin);
+
+
+
+    clampMinMarker_->show();
+
+    if ( ! clampMaxMarker_ ) {
+      clampMaxMarker_ = new QwtPlotMarker();
+      maxSymbol_ = new QwtSymbol(QwtSymbol::VLine);
+      maxSymbol_->setColor(QColor(0,255,0));
+      maxSymbol_->setSize(200,1000);
+      QPen pen = maxSymbol_->pen();
+      pen.setWidth(3);
+      maxSymbol_->setPen(pen);
+      clampMaxMarker_->setSymbol(maxSymbol_);
+      clampMaxMarker_->attach(qwtPlot);
+    }
+
+    // Draw at right boundary if greater than the maximal value we get from the function
+    if ( parameters_.clampMax < max_ )
+      clampMaxMarker_->setXValue(parameters_.clampMax);
+    else
+      clampMaxMarker_->setXValue(max_);
+
+    clampMaxMarker_->show();
+
+  } else {
+    if ( clampMinMarker_ )
+      clampMinMarker_->hide();
+
+    if ( clampMaxMarker_ )
+      clampMaxMarker_->hide();
+  }
 
   // an plot it
   qwtPlot->replot();

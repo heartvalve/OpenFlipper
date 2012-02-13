@@ -65,6 +65,7 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_zoomer.h>
 #include <qwt_scale_engine.h>
+#include <qwt_plot_marker.h>
 
 // qmake users have to includepc
 #include <ui_QwtFunctionPlotBase.hh>
@@ -134,6 +135,12 @@ public slots:
 private:
 
   QwtPlotZoomer* plot_zoomer_;
+
+  QwtPlotMarker* clampMinMarker_;
+  QwtSymbol*     minSymbol_;
+
+  QwtPlotMarker* clampMaxMarker_;
+  QwtSymbol*     maxSymbol_;
 
   // Histogramm Plot
 #if QWT_VERSION >= 0x060000
