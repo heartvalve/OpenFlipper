@@ -46,75 +46,22 @@
 #include "TextureMath.hh"
 
 template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(Texture& _textureData ,
-                                               MeshT& _mesh,
-                                               OpenMesh::VPropHandleT< double > _texture,
-                                               double& _min , double& _max) {
-
-   const bool   abs       = _textureData.parameters.abs;
-   const bool   clamp     = _textureData.parameters.clamp ;
-   const double clamp_max = _textureData.parameters.clampMax;
-   const double clamp_min = _textureData.parameters.clampMin;
-
-   _max = FLT_MIN;
-   _min = FLT_MAX;
-
-   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin() ; v_it != _mesh.vertices_end(); ++v_it) {
-      if ( abs ) {
-         _max = std::max( fabs(_mesh.property(_texture,v_it)) , _max);
-         _min = std::min( fabs(_mesh.property(_texture,v_it)) , _min);
-      } else {
-         _max = std::max( _mesh.property(_texture,v_it) , _max);
-         _min = std::min( _mesh.property(_texture,v_it) , _min);
-      }
-   }
-
-   if ( clamp ) {
-      if ( _max > clamp_max )
-         _max = clamp_max;
-      if (_min < clamp_min)
-         _min = clamp_min;
-   }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(Texture& _textureData ,
-                                               MeshT& _mesh,
-                                               OpenMesh::HPropHandleT< double > _texture,
-                                               double& _min , double& _max) {
-
-   const bool   abs       = _textureData.parameters.abs;
-   const bool   clamp     = _textureData.parameters.clamp ;
-   const double clamp_max = _textureData.parameters.clampMax;
-   const double clamp_min = _textureData.parameters.clampMin;
-
-   _max = FLT_MIN;
-   _min = FLT_MAX;
-
-   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin() ; h_it != _mesh.halfedges_end(); ++h_it) {
-      if ( abs ) {
-         _max = std::max( fabs(_mesh.property(_texture,h_it)) , _max);
-         _min = std::min( fabs(_mesh.property(_texture,h_it)) , _min);
-      } else {
-         _max = std::max( _mesh.property(_texture,h_it) , _max);
-         _min = std::min( _mesh.property(_texture,h_it) , _min);
-      }
-   }
-
-   if ( clamp ) {
-      if ( _max > clamp_max )
-         _max = clamp_max;
-      if (_min < clamp_min)
-         _min = clamp_min;
-   }
-}
-
-template< typename MeshT >
 void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp )
 {
-  // Compute some basic values for this texture
-  double max,min;
-  computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
+  // Compute the minimal and maximal values for this texture
+  double max = -FLT_MIN;
+  double min =  FLT_MAX;
+
+
+  // Compute minimal and maximal value of the coordinates
+  // Keep track of absolute values!
+  for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin() ; v_it != _mesh.vertices_end(); ++v_it) {
+
+      max = std::max( _mesh.property(_texProp,v_it) , max);
+      min = std::min( _mesh.property(_texProp,v_it) , min);
+
+  }
+
 
   if ( !_mesh.has_vertex_texcoords2D() )
     _mesh.request_vertex_texcoords2D();
@@ -125,7 +72,7 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
     // Get the value of the property
     double value = _mesh.property(_texProp, v_it);
 
-    // Mangle it with the predefined user options
+    // Mangle it with the predefined user options (including absolute, clamping, ...)
     value = convert.transform(value);
     
     // Write result to the OpenMesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
@@ -136,9 +83,18 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
 template< typename MeshT >
 void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp )
 {
-  // Compute some basic values for this texture
-  double max,min;
-  computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
+  // Compute the minimal and maximal values for this texture
+  double max = -FLT_MIN;
+  double min =  FLT_MAX;
+
+  // Compute minimal and maximal value of the coordinates
+  // Keep track of absolute values!
+  for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin() ; h_it != _mesh.halfedges_end(); ++h_it) {
+
+      max = std::max( _mesh.property(_texProp,h_it) , max);
+      min = std::min( _mesh.property(_texProp,h_it) , min);
+
+  }
 
   if ( !_mesh.has_halfedge_texcoords2D() )
     _mesh.request_halfedge_texcoords2D();
@@ -150,7 +106,7 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
     // Get the value of the property
     double value = _mesh.property(_texProp, h_it);
     
-    // Mangle it with the predefined user options
+    // Mangle it with the predefined user options (including absolute, clamping, ...)
     value = convert.transform(value);
     
     // Write result to the OpenMesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
