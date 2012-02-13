@@ -55,7 +55,6 @@ IF( QT4_FOUND )
                     get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY} PATH)
                     set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
 		ELSE( NOT WIN32)
-		message("aa")
 			 # Find Qwt5 library linked to Qt4 Release Version
                  FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt qwt5-qt4 qwt-qt4 qwt5  PATHS 
 							   "c:\\libs\\Qwt-6.0.1\\lib"
