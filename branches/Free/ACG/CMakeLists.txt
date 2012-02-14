@@ -43,11 +43,9 @@ set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR}
 
 set(ADDITIONAL_LINK_LIBRARIES "" )
 
-if (NOT APPLE)
-  find_package(Qwt5)
-endif ()
+find_package(Qwt5)
 
-if(NOT APPLE AND Qwt5_Qt4_FOUND)
+if(Qwt5_Qt4_FOUND)
   add_definitions(-DWITH_QWT)
   set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
   set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})  
