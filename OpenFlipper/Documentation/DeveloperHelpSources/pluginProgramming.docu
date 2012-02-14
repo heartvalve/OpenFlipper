@@ -32,9 +32,9 @@
  * the QT library. Afterwards the object and scenegraph management are initialized. The next step creates the core
  * user interface and the logging system. Now the plugins are loaded in the following way:
  * -# All the plugins are loaded into memory.
- * -# For each plugin, the interfaces get connected and afterwards the BaseInterface::initializePlugin function is called.
+ * -# For each plugin, the interfaces get connected and afterwards the BaseInterface::initializePlugin() function is called.
  *    (Here you can setup your internal variables). After execution of this slot your plugin should be fully functional. Only gui
- *    elements may be uninitialized and should be created in pluginsInitialized().
+ *    elements may be uninitialized and should be created in BaseInterface::pluginsInitialized().
  * -# For each plugin the BaseInterface::pluginsInitialized() function is called. Here you can setup your gui elements and start
  *    sending signals to the core.
  * -# For each plugin the INIInterface::loadIniFileOptions() slot is called (if the interface is implemented). This slot can be used to load

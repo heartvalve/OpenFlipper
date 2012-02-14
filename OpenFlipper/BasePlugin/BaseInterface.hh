@@ -70,7 +70,9 @@ class BaseInterface {
 
    //===========================================================================
     /** @name Initialization
-    * @{ */
+    * @{
+    * \anchor BaseInterfaceInitialization
+    * */
    //===========================================================================
 
   private slots:
@@ -87,7 +89,7 @@ class BaseInterface {
       /**  \brief Initialize Plugin step 2
        *
        *   This slot is called if all plugins are loaded and the core is ready. Afterwards you can already send
-       *   signals to other plugins and the core (e.g. adding global textures). Do not create objects via addEmpty
+       *   signals to other plugins and the core (e.g. adding global textures). \note Do not create objects via addEmpty
        *   or load objects in this slot, as the rendering system is not ready yet.
       */
       virtual void pluginsInitialized() {};
@@ -323,7 +325,7 @@ To use the BaseInterface:
 </ul>
 
 \section baseInterfacePluginInitialization Plugin Initialization
-BaseInterface provides two functions to initialize a plugin. The first function is BaseInterface::initializePlugin().
+BaseInterface provides two functions to initialize a plugin \ref BaseInterfaceInitialization. The first function is BaseInterface::initializePlugin().
 This function is called immediately after the plugin has been connected with OpenFlipper. When a plugin is
 loaded, all signals and slots from the used interfaces are connected to the core. After this, the
 BaseInterface::initializePlugin() slot is called. In this slot you can initialize your plugin.
@@ -332,7 +334,7 @@ in this slot. \n
 After all plugins are loaded, the slot  BaseInterface::pluginsInitialized() is called for each plugin. All
 other plugins are now available and you can setup your user interface components in this slot.
 The following graphic shows the initialization of a plugin.
-\image html startupProcess.jpg
+\image html OpenFlipperStartup.png
 
 \section baseInterfaceObjectUpdateNotification Object Update Notification
 The objects in OpenFlippers scene are stored and managed in OpenFlippers core. If a plugin changes one of the

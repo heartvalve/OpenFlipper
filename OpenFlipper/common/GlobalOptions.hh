@@ -81,7 +81,7 @@
 * OpenFlipperSettings().setValue("<Key>","<Value>");\n
 * For detailed info about the values see the documentation of QSettings and the QVariant.\n
 *
-* <b>For each of your plugins, the key has to start with your plugin name!!!</b>
+* \note For each of your plugins, the key has to start with your plugin name!!!
 *
 * The following entries are available through the settings:
 *
@@ -132,21 +132,21 @@
 * * Core/Update/Pass                         Update Password
 * * Core/Update/URL                          Update URL
 * 
-* <b>Mouse Controls<b>\n
+* <b>Mouse Controls</b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
 * * Core/Mouse/Wheel/ZoomFactorShift  Zoom factor used when turning the mouse wheel while shift is pressed (makes zoom slower while shift is pressed)  (double)\n
 *
-* <b>General Stereo Settings<b>\n
+* <b>General Stereo Settings</b>\n
 * * Core/Stereo/EyeDistance    Distance between eyes. Defaults to 7 cm (double)\n
 * * Core/Stereo/FocalDistance  Focal distance. Defaults to center of scene (double)\n
 * \n
-* <b>Philips stereo display settings<b>\n
+* <b>Philips stereo display settings</b>\n
 * * Core/Stereo/Philips/Content  Philips stereo header content type (int)\n
 * * Core/Stereo/Philips/Factor   Philips stereo header factor (int)\n
 * * Core/Stereo/Philips/Offset   Philips stereo header offset cc (int)\n
 * * Core/Stereo/Philips/Select   Philips stereo header select (int)\n
 * \n
-* <b>Rendering debugger Settings<b>\n
+* <b>Rendering debugger Settings</b>\n
 * * Core/Debug/Picking/RenderPicking      Enable picking rendering (bool)\n
 * * Core/Debug/Picking/RenderPickingMode  The Mode used for picking rendering(QString) \n
 * * Core/Debug/Picking/RenderDepthImage   Renders the depth buffer as a grayscale image (bool) \n
