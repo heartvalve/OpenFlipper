@@ -1,10 +1,10 @@
 /*! \page ex2 Implementing a mesh smoother plugin
  *
- * The last section dealt with the implementation of a first plugin without any functionality at all. This section
+ * The last tutorial dealt with the implementation of a first plugin without any functionality at all. This tutorial
  * will show you how to progam a simple mesh smoother. We are assuming that you have read \ref ex1 and will only
  * explain parts that have to be added in order to include new functionality.
  *
- * \subsection ex2Header Definition of the header
+ * \section ex2Header Definition of the header
  *
  * To start off we first have to add two additional header files. The first one is the \c ToolboxInterface.
  * We need this interface because we want to add a Toolbox to our plugin in order to be able to set parameters.
@@ -65,7 +65,7 @@
  * \include example/SmootherPlugin.hh 
  *
  *
- * \subsection ex2Implemenation1 Implemention of the GUI
+ * \section ex2Implemenation1 Implemention of the GUI
  *
  * As we have already mentioned in \ref ex2Header, the tool box is generated inside the pluginsInitialized() function
  * and then added by the addToolbox() signal passing a reference to our toolbox.
@@ -95,7 +95,7 @@
  * \until emit addToolbox( tr("Smoother") , toolBox );
  *
  *
- * \subsection ex2Implemenation2 Implemention of the Smoother
+ * \section ex2Implemenation2 Implemention of the Smoother
  *
  * Now that the Toolbox is completely setup, we can start implementing the smoother. We begin with searching objects
  * on which we have to compute the smoothing. The algorithm takes all objects marked as target and tries to apply the
