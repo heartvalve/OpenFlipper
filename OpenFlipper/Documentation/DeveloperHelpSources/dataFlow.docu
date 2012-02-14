@@ -13,7 +13,7 @@
  * \subsection ref1 References:
  * \ref BaseInterface::initializePlugin(),<br>\ref BaseInterface::pluginsInitialized(),<br>\ref INIInterface::loadIniFileOptions()<br>
  *
- * \image html startupProcess.jpg
+ * \image html OpenFlipperStartup.png
  *
  * \section loadSettings Load settings
  *

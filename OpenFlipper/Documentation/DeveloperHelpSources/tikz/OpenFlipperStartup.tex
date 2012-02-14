@@ -1,3 +1,6 @@
+% File showing the startup process of OpenFlipper.
+% Author: Jan Möbius
+
 \tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
 text centered, text=black, text width=6cm]
 
@@ -12,7 +15,7 @@ text centered, text=black, text width=6cm]
 \node (LoadSettings) [abstract, rectangle split, rectangle split parts=2]
 {
     \textbf{Load global settings}
-    \nodepart{second}{Load global settings from files (~/.OpenFlipper)}
+    \nodepart{second}{Load global settings from files ($\sim$/.OpenFlipper)}
 };
 
 \node (Core) [above=of LoadSettings,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Core}} };
