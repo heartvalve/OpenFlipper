@@ -59,13 +59,11 @@ void ExamplePlugin::exampleFunction() {
 
   } else {
     // Something went wrong when creating the object.
-    std::cerr << "Unable to create object" << std::endl;
   }
 
 }
 \endcode
-Of course you have to add the includes for the ObjectTypes you want to use to your list of includes.
-
-
+Of course you have to add the includes for the ObjectTypes you want to use to your list of includes. A list of available
+ObjectTypes can be found here: \ref datatypes
 
 */
