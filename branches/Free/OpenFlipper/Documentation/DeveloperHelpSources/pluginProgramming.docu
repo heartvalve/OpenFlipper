@@ -3,6 +3,7 @@
  * 
  * \section quickref Quick references:
  * - \ref plugin_sec
+ * - \ref plugin_startup
  * - \ref plugin_prog_sec
  * - \ref geometryData
  * \section tuts Tutorials
@@ -21,6 +22,28 @@
  * copied to the Plugin sub folder. The cmake build system automatically places the plugins in the right folders
  * on all supported platforms. The Plugins are then loaded on startup of the core application
  * (they may also be loaded at runtime later).
+ *
+ * \section plugin_startup OpenFlipper Startup and Plugin Initialization
+ * The plugins are initialized as shown in the following flow diagram:
+ *
+ * \image html OpenFlipperStartup.png 
+ * 
+ * OpenFlipper first starts its core system. Therefore it loads the settings, parses command line options and initializes
+ * the QT library. Afterwards the object and scenegraph management are initialized. The next step creates the core
+ * user interface and the logging system. Now the plugins are loaded in the following way:
+ * -# All the plugins are loaded into memory.
+ * -# For each plugin, the interfaces get connected and afterwards the BaseInterface::initializePlugin function is called.
+ *    (Here you can setup your internal variables). After execution of this slot your plugin should be fully functional. Only gui
+ *    elements may be uninitialized and should be created in pluginsInitialized().
+ * -# For each plugin the BaseInterface::pluginsInitialized() function is called. Here you can setup your gui elements and start
+ *    sending signals to the core.
+ * -# For each plugin the INIInterface::loadIniFileOptions() slot is called (if the interface is implemented). This slot can be used to load
+ *    additional options from INI files. (DEPRECATED! Use the OpenFlipperSettings() class instead)
+ *
+ *\note - Do not create objects via addEmpty or load objects during OpenFlipper startup, as the rendering system is not ready yet!
+ *\note - The ini interface is deprecated for loading or storing plugin options. Please use OpenFlipperSettings() instead.
+ *
+ * Afterwards the plugin initialization is complete and the core sets up the final gui.
  * 
  * \section plugin_prog_sec Plugin Programming
  * The interface between the core and the plugins is managed via simple interfaces based on the signal/slot
