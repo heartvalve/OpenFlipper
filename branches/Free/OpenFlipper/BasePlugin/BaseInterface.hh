@@ -324,17 +324,27 @@ To use the BaseInterface:
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them except BaseInterface::description() and BaseInterface::name() )
 </ul>
 
+
 \section baseInterfacePluginInitialization Plugin Initialization
-BaseInterface provides two functions to initialize a plugin \ref BaseInterfaceInitialization. The first function is BaseInterface::initializePlugin().
-This function is called immediately after the plugin has been connected with OpenFlipper. When a plugin is
-loaded, all signals and slots from the used interfaces are connected to the core. After this, the
-BaseInterface::initializePlugin() slot is called. In this slot you can initialize your plugin.
-The order how plugins are loaded is not fixed. So you should not rely or communicate with other plugins
-in this slot. \n
-After all plugins are loaded, the slot  BaseInterface::pluginsInitialized() is called for each plugin. All
-other plugins are now available and you can setup your user interface components in this slot.
-The following graphic shows the initialization of a plugin.
+The OpenFlipper startup process consists of several steps, which are shown in this image:
 \image html OpenFlipperStartup.png
+OpenFlipper first starts its core system. Therefore it loads the settings, parses command line options and initializes
+the QT library. Afterwards the object and scenegraph management are initialized. The next step creates the core
+user interface and the logging system. Now the plugins are loaded in the following way:
+-# All the plugins are loaded into memory.
+-# For each plugin, the interfaces get connected to the plugin and afterwards the BaseInterface::initializePlugin() function is called.
+   (Here you can setup your internal variables). After execution of this slot your plugin should be fully functional. Only gui
+   elements may be uninitialized and should be created in BaseInterface::pluginsInitialized(). The order how plugins are loaded is not fixed.
+   So you should not rely or communicate with other plugins in this slot.
+-# For each plugin the BaseInterface::pluginsInitialized() function is called. Here you can setup your gui elements and start
+   sending signals to the core.
+-# For each plugin the INIInterface::loadIniFileOptions() slot is called (if the interface is implemented). This slot can be used to load
+   additional options from INI files. (DEPRECATED! Use the OpenFlipperSettings() class instead)
+
+\note - Do not create objects via addEmpty or load objects during OpenFlipper startup, as the rendering system is not ready yet!
+\note - The ini interface is deprecated for loading or storing plugin options. Please use OpenFlipperSettings() instead.
+
+Afterwards the plugin initialization is complete and the core sets up the final gui.
 
 \section baseInterfaceObjectUpdateNotification Object Update Notification
 The objects in OpenFlippers scene are stored and managed in OpenFlippers core. If a plugin changes one of the
