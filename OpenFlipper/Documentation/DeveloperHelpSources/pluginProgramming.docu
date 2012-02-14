@@ -5,7 +5,7 @@
  * - \ref plugin_sec
  * - \ref plugin_startup
  * - \ref plugin_prog_sec
- * - \ref geometryData
+ * - \ref plugin_prog_geometryData
  * \section tuts Tutorials
  * - \ref ex1
  * - \ref ex1c
@@ -47,12 +47,20 @@
  * and connected to the core. For details about the individual interfaces see the
  * \ref interfaces "Plugin Interfaces Documentation".
  *
- * \section geometryData Handling geometry data within a plugin
  *
- * \subsection addingAndRemovingGeometry Adding and removing mesh objects in OpenFlipper
+ * \section plugin_prog_geometryData Handling geometry data within a plugin
+ *
+ * \subsection addingEmptyObjects Adding empty objects to the scene
+ * To add empty objects to the scene, you have to use the LoadSaveInterface. The details are shown in the
+ * following example: \ref adding_empty_objects.
+ *
+ * \subsection LoadingExistingObjects Loading data from files in OpenFlipper
+ *
+ * Usually the user loads existing data via the Load Entry in the File menu. Nevertheless it is possible
+ * to load data from within a plugin( although it is not recommended).
  *
  * If you want to load geometry data from a file or simply add objects to the scene
- * from within a plugin, it has to implement the \ref LoadSavePlugin.
+ * from within a plugin, it has to implement the \ref loadSaveInterfacePage.
  *
  * LoadSaveInterface::load(	QString _file, DataType _type, int&	_id) tries to
  * load file with file name _file of type _type, _id contains the new created
@@ -60,51 +68,62 @@
  * the necessary scene graph nodes such that the developer generally does
  * not need to know in detail how to create and add the required nodes to the scene.
  *
- * Otherwise if a file has been loaded externally, slot
+ * Otherwise if a file has been loaded externally, the slot LoadSaveInterface::openedFile (int _id) is called.
  *
- * LoadSaveInterface::openedFile (int _id) is called.
+ * \subsection RemovingObjectsFromScene Removing data from the scene
+ * When removing objects from the scene, the plugin simply has to emit signal\n
+ *  LoadSaveInterface::deleteObject(int _id)\n
+ * or \n
+ *  LoadSaveInterface::deleteAllObjects() in order to clear the scene.
  *
- * When removing objects from the scene, the plugin simply has to emit signal
+ * \subsection GettingObjectsFromScene Getting and enumerating objects in the scene
  *
- * LoadSaveInterface::deleteObject(int _id)
+ * Iterating over all objects is managed via the ObjectIterator.
  *
- * or
+ * \code
+ * for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS);<br />
+ * o_it != PluginFunctions::objectsEnd(); ++o_it) { ... }
+ * \endcode
+ * 
+ * See \ref OpenFlipperIterators for details.
  *
- * LoadSaveInterface::deleteAllObjects() in order to clear the scene.
+ * Another way to get handles to scene objects is to use the functions \c PluginFunctions::getObject() or
+ * PluginFunctions::getPickedObject(). These functions provide a pointer to either a \ref BaseObjectData
+ * or \ref BaseObject object. As in \ref ex2 one can easily test the type of an object by calling:
+ *
+ * \code
+ *   // If you have a BaseObjectData or BaseObject pointer
+ *   DataType typeA =  object->dataType()
+ *
+ *   // with an object iterator
+ *   DataType typeB =  o_it->dataType()
+ * \endcode
+ *
+ * There are also boolean function where you can check for a specific type:
+ *
+ * \code
+ *   // If you have a BaseObjectData or BaseObject pointer
+ *   bool isTriangleMesh =  object->dataType(DATA_TRIANGLE_MESH)
+ *
+ *   // with an object iterator
+ *   bool isPolyMesh =  o_it->dataType(DATA_POLY_MESH)
+ * \endcode
+ *
+ *
+ * The mesh data itself can be obtained by calling the appropriate handle plugin function. For example if we consider
+ * a triangle mesh, we get a handle to the mesh itself by calling
+ *
+ * \code
+ *   TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+ * \endcode
+ *
+ * See \ref PluginFunctions for a complete overview.
  *
  * \subsection pluginFunctions OpenFlipper's plugin functions
  *
  * As a plugin in most cases operates on geometry data, developers might want to know how to gain access to mesh data
  * from within a plugin. In our tutorial \ref ex2 we roughly mentioned that the communication between OpenFlipper
  * and it's plugins is accomplished through either one of the provided \ref interfaces or the \ref PluginFunctions.
- *
- * For example iterating over all objects is managed via the ObjectIterator.
- *
- * <code>
- * for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS);<br />
- * o_it != PluginFunctions::objectsEnd(); ++o_it) { ... }
- * </code>
- * 
- * See \ref OpenFlipperIterators for details.
- *
- * Possible restrictions are \c ALL_OBJECTS (to iterate over all objects in the scene), \c TARGET_OBJECTS (objects
- * that were marked as target) and \c SOURCE_OBJECTS.
- *
- * Another way to get handles to scene objects is to use the functions \c PluginFunctions::getObject() or
- * PluginFunctions::getPickedObject(). These functions provide a pointer to either a \ref BaseObjectData
- * or \ref BaseObject object. As in \ref ex2 one can easily test the type of an object by calling
- *
- * \c o_it->dataType(DATA_TYPE)
- *
- * where \c o_it is an object iterator and \c DATA_TYPE is one of the data types specified in \ref OpenFlipper/common/Types.hh.
- * \c o_it->dataType(DATA_TRIANGLE_MESH) for example will return true if the object is a triangle mesh.
- *
- * The mesh data itself can be obtained by calling the appropriate handle plugin function. For example if we consider
- * a triangle mesh, we get a handle to the mesh itself by calling
- *
- * <code>TriMesh* mesh = PluginFunctions::triMesh(*o_it);</code>
- *
- * where \c o_it once again is our object iterator. See \ref PluginFunctions for a complete overview.
  *
  * \subsection updatingObjects Updating objects
  *
