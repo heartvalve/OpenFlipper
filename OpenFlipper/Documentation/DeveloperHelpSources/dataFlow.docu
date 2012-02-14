@@ -44,7 +44,7 @@
  *
  * \subsection ref4 References:
  * \ref BaseInterface::updatedObject(),<br>\ref BaseInterface::slotObjectUpdated(),<br>
- * \image html updateObject.jpg
+ * \image html ObjectUpdateNotification.png
  *
  *
  * \section updateView Update view
