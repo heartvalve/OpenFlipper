@@ -1,0 +1,104 @@
+\tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
+text centered, text=black, text width=6cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{CoreGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{PluginGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=0.5cm]
+
+\node (LoadSettings) [abstract, rectangle split, rectangle split parts=2]
+{
+    \textbf{Load global settings}
+    \nodepart{second}{Load global settings from files (~/.OpenFlipper)}
+};
+
+\node (Core) [above=of LoadSettings,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Core}} };
+
+\node (GetCommandLine) [abstract, rectangle split, rectangle split parts=2, below=of LoadSettings]
+{
+    \textbf{Get command line settings}
+    \nodepart{second}{Take the command line settings(overwrite the global file settings)}
+};
+\node (InitializeQt) [abstract, rectangle split, rectangle split parts=2, below=of GetCommandLine]
+{
+    \textbf{Initialize Qt library}
+    \nodepart{second}{Initialize the Qt library}
+};
+\node (InitializeSG) [abstract, rectangle split, rectangle split parts=2, below=of InitializeQt]
+{
+    \textbf{Initialize sceneGraph / Object system}
+    \nodepart{second}{Setup object managment and corresponding scenegraph}
+};
+\node (CreateGUI) [abstract, rectangle split, rectangle split parts=2, below=of InitializeSG]
+{
+    \textbf{Create GUI}
+    \nodepart{second}{Create and initialize the core gui components.}
+};
+\node (Logging) [abstract, rectangle split, rectangle split parts=2, below=of CreateGUI]
+{
+    \textbf{Setup loggers}
+    \nodepart{second}{Create and initialize the logging system.}
+};
+\node (LoadPlugins) [abstract, rectangle split, rectangle split parts=2, below=of Logging]
+{
+    \textbf{Load plugins}
+    \nodepart{second}{Load each plugin, connect interfaces (signals/slots)}
+};
+\node (AuxNode01) [text width=6cm, minimum height=0.7cm, below=of LoadPlugins] {};
+
+\node (initializePlugin) [abstract, rectangle split, rectangle split parts=2, right=of AuxNode01,xshift=0.5cm ]
+{
+    \textbf{Initialize the plugin}
+    \nodepart{second}{BaseInterface::initializePlugin is called for every plugin}
+};
+
+\node (Plugin) [above=of initializePlugin,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Plugins}} };
+
+
+\node (perPlugin1) [abstract, rectangle split, rectangle, below=of AuxNode01 ,yshift=-0.5cm]
+{
+    \textbf{Per plugin}
+};
+\node (pluginsInitialized) [abstract, rectangle split, rectangle split parts=2, right=of perPlugin1,xshift=0.5cm]
+{
+    \textbf{pluginsInitialized}
+    \nodepart{second}{BaseInterface::pluginsInitialized()}
+};
+\node (perPlugin2) [abstract, rectangle split, rectangle, below=of perPlugin1,yshift=-0.5cm]
+{
+    \textbf{Per plugin}
+};
+\node (loadIni) [abstract, rectangle split, rectangle split parts=2, right=of perPlugin2,xshift=0.5cm]
+{
+    \textbf{Load global plugin settings from ini file}
+    \nodepart{second}{INIInterface::loadIniFileOptions}
+};
+\node (finalizeGui) [abstract, rectangle, below=of perPlugin2]
+{
+    \textbf{Finalize gui}
+};
+
+\draw[flow] (LoadSettings.south) -- ++(0,0) -| (GetCommandLine.north);
+\draw[flow] (GetCommandLine.south) -- ++(0,0) -| (InitializeQt.north);
+\draw[flow] (InitializeQt.south) -- ++(0,0) -| (InitializeSG.north);
+\draw[flow] (InitializeSG.south) -- ++(0,0) -| (CreateGUI.north);
+\draw[flow] (CreateGUI.south) -- ++(0,0) -| (Logging.north);
+\draw[flow] (Logging.south) -- ++(0,0) -| (LoadPlugins.north);
+\draw[flow] (LoadPlugins.south) -- +(0,0) |- (initializePlugin.west);
+\draw[flow] (LoadPlugins.south) -- ++(0,0) -| (perPlugin1.north);
+\draw[flow] (perPlugin1.south) -- ++(0,0) -| (perPlugin2.north);
+\draw[flow] (perPlugin1.east) -- ++(0,0) |- (pluginsInitialized.west);
+\draw[flow] (perPlugin2.south) -- ++(0,0) -| (finalizeGui.north);
+\draw[flow] (perPlugin2.east) -- ++(0,0) |- (loadIni.west);
+
+\begin{pgfonlayer}{background}
+\node[CoreGroup,fit=(Core) (finalizeGui) ] (Core) {};
+\node[PluginGroup,fit=(Plugin) (loadIni) ] (Plugin) {};
+\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}
