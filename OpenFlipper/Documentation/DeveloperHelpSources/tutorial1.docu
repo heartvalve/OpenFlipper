@@ -1,6 +1,6 @@
 /*! \page ex1 A simple plugin
  *
- * In this section we are going to build our own OpenFlipper plugin step by step. The goal of this
+ * In this tutorial we are going to build our own OpenFlipper plugin step by step. The goal of this
  * tutorial is to build a simple plugin that is loaded by OpenFlipper at launch.
  *
  * We start by creating the plugin directory in OpenFlipper's root directory,
