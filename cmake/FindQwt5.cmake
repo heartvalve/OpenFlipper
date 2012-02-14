@@ -33,14 +33,15 @@ IF( QT4_FOUND )
                PATHS ${QT_INCLUDE_DIR} 
 				/usr/local/qwt/include 
 				/usr/local/include 
-				/usr/include/qwt 
+                                /opt/local/include
+				/usr/include
 				/usr/include 
 				c:\\libs\\Qwt-6.0.1
 				c:\\Program\ Files\\qwt\\qwt-5.2.0 
 				c:\\qwt-5.2.0 
 				C:\\libs\\qwt-5.2.0
                PATH_SUFFIXES qwt qwt5 qwt-qt4 qwt5-qt4 qwt-qt3 qwt5-qt3 include qwt/include qwt5/include qwt-qt4/include qwt5-qt4/include qwt-qt3/include qwt5-qt3/include ENV PATH)
-	
+
 	# Find Qwt version
 	IF( Qwt5_INCLUDE_DIR )
 		FILE( READ ${Qwt5_INCLUDE_DIR}/qwt_global.h QWT_GLOBAL_H )
@@ -51,7 +52,7 @@ IF( QT4_FOUND )
 
 		IF( NOT WIN32 )
 			# Find Qwt5 library linked to Qt4
-			FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /usr/local/lib /usr/lib )
+			FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /opt/local/lib /usr/local/lib /usr/lib )
                     get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY} PATH)
                     set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
 		ELSE( NOT WIN32)
