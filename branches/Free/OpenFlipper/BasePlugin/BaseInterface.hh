@@ -351,7 +351,7 @@ The objects in OpenFlippers scene are stored and managed in OpenFlippers core. I
 objects, it has to notify the core about that change. In turn OpenFlipper will then notify all other plugins about
 this change. This functionality is provided by the signals and slots for \ref BaseInterfaceUpdateSlots "update handling" .
 
-\image html updateObject.jpg
+\image html ObjectUpdateNotification.png 
 
 If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType&).
 \n

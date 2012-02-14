@@ -1,0 +1,67 @@
+% File showing the updated object flow
+% Author: Jan Möbius
+
+\tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
+text centered, text=black, text width=7cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{CoreGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{PluginGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm]
+
+\node (ModifiedObject) [abstract, rectangle ]
+{
+\textbf{Modified Object}
+};
+
+\node (Plugins) [above=of ModifiedObject,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Plugins}} };
+
+\node (signalUpdatedObject) [abstract, rectangle, below= of ModifiedObject ]
+{
+\textbf{signal BaseInterface::updatedObject()}
+};
+
+\node (slotObjectUpdated) [abstract, rectangle, below= of signalUpdatedObject ]
+{
+\textbf{slot BaseInterface::slotObjectUpdated()}
+};
+
+\node (perPlugin) [abstract, rectangle, left= of slotObjectUpdated, xshift=-2cm ]
+{
+\textbf{per plugin}
+};
+\node (AuxNode) [above=of perPlugin]{};
+\node (Core) [above=of perPlugin ,yshift=2.8cm] {\textbf{\huge{OpenFlipper Core}} };
+
+\node (redraw) [abstract, rectangle, below= of perPlugin ]
+{
+\textbf{Redraw Scene}
+};
+
+\node [label=above:received] (X) at ($ (perPlugin)!.5!(slotObjectUpdated) $) {};
+\node [label=above:emitted] (X) at ($ (AuxNode)!.5!(signalUpdatedObject) $) {};
+
+\draw[flow] (ModifiedObject.south) -- ++(0,0) -| (signalUpdatedObject.north);
+\draw[flow] (signalUpdatedObject.west) -- ++(0,0) -| (perPlugin.north);
+\draw[flow] (perPlugin.south) -- ++(0,0) -| (redraw.north);
+\draw[flow] (perPlugin.east)  --  ++(0,0) |-  (slotObjectUpdated.west);
+%\draw[flow] (CreateGUI.south) -- ++(0,0) -| (Logging.north);
+%\draw[flow] (Logging.south) -- ++(0,0) -| (LoadPlugins.north);
+%\draw[flow] (LoadPlugins.south) -- +(0,0) |- (initializePlugin.west);
+%\draw[flow] (LoadPlugins.south) -- ++(0,0) -| (perPlugin1.north);
+%\draw[flow] (perPlugin1.south) -- ++(0,0) -| (perPlugin2.north);
+%\draw[flow] (perPlugin1.east) -- ++(0,0) |- (pluginsInitialized.west);
+%\draw[flow] (perPlugin2.south) -- ++(0,0) -| (finalizeGui.north);
+%\draw[flow] (perPlugin2.east) -- ++(0,0) |- (loadIni.west);
+
+\begin{pgfonlayer}{background}
+\node[CoreGroup,fit=(Core) (redraw) ] (Core) {};
+\node[PluginGroup,fit=(Plugins) (slotObjectUpdated) ] (Plugin) {};
+\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}
