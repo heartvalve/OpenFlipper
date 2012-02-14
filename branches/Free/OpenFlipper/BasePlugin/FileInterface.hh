@@ -208,7 +208,7 @@ public slots:
 \section fileInterface_Functionality Functionality
 This interface class has to be fully implemented. When you want to support save and load
 for an object type you have to implement all functions in this class in a file plugin.
-The plugin has to be named Plugin-File<FileExtension>. The plugins are loaded directly after the
+The plugin has to be named Plugin-File\<FileExtension\>. The plugins are loaded directly after the
 Type Plugins.
 
 OpenFlipper manages loading and saving of files from the core.
