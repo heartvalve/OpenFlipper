@@ -16,7 +16,6 @@
  * - \subpage uiconcept "User Interface Concepts"
  * - \subpage buildingOpenFlipper "Building OpenFlipper"
  * - \subpage pluginProgramming "Plugin Programming"
- * - \subpage interfaces "Plugin Interfaces"
  * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
  * - \subpage options "Command line options and config files"
