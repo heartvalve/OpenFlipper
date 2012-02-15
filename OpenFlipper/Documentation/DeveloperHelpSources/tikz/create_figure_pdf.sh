@@ -10,6 +10,8 @@ echo "
 \usepackage{txfonts}
 \usetikzlibrary{backgrounds,positioning,shapes,shadows,arrows,calc,fit}
 \def\huge{\fontsize{15pt}{17pt}\selectfont} 
+\setlength{\textwidth}{40cm}
+\setlength{\pdfpagewidth}{40cm}
 \begin{document}
 \definecolor{awhite}{RGB}{254,254,254}
 \definecolor{acgorange}{RGB}{240,112,48}
