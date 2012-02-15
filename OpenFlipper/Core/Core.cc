@@ -818,47 +818,46 @@ Core::slotAddHiddenPickMode( const std::string& _mode ) {
 
  /** Update the view in the examiner widget
   */
-void Core::updateView() {
+void Core::updateView()
+{
 
-  if ( OpenFlipper::Options::doSlotDebugging() ) {
-    if ( sender() != 0 ) {
-      if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,tr("updateView() called by ") + QString( sender()->metaObject()->className() ) );
+  if (OpenFlipper::Options::doSlotDebugging()) {
+    if (sender() != 0) {
+      if (sender()->metaObject() != 0) {
+        emit log(LOGINFO, tr("updateView() called by ") + QString(sender()->metaObject()->className()));
       }
     }
   }
 
-  if ( !OpenFlipper::Options::gui() )
+  if (!OpenFlipper::Options::gui())
     return;
-  
-  if ( OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate",false).toBool() ) {
 
-    int elapsed = redrawTime_->elapsed ();
+  if (OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate", false).toBool()) {
 
-    if ( elapsed < 1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() )
-    {
+    int elapsed = redrawTime_->elapsed();
+
+    if (elapsed < 1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate", 35).toInt()) {
       // redraw time not reached ... waiting for timer event for next redraw
-      if ( redrawTimer_->isActive() ) {
-        if ( OpenFlipper::Options::doSlotDebugging() )
-          emit log(LOGINFO,tr("Too early for redraw! Delaying request from ") +
-                           QString( sender()->metaObject()->className() ) );
+      if (redrawTimer_->isActive()) {
+        if (OpenFlipper::Options::doSlotDebugging())
+          emit log(LOGINFO,
+              tr("Too early for redraw! Delaying request from ") + QString(sender()->metaObject()->className()));
         return;
       }
 
       // Start the timer
-      redrawTimer_->start( (1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() ) - elapsed);
+      redrawTimer_->start((1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate", 35).toInt()) - elapsed);
       return;
-    }
-    else if ( redrawTimer_->isActive() )
-	redrawTimer_->stop ();
+    } else if (redrawTimer_->isActive())
+      redrawTimer_->stop();
 
   }
 
-  redrawTime_->restart ();
+  redrawTime_->restart();
 
-  if ( !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
+  if (!OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled()) {
 
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    for (unsigned int i = 0; i < OpenFlipper::Options::examinerWidgets(); ++i)
       coreWidget_->examiner_widgets_[i]->updateGL();
   }
 }

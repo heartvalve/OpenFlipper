@@ -6,6 +6,10 @@
  * - \ref plugin_startup
  * - \ref plugin_prog_sec
  * - \ref plugin_prog_geometryData
+ *   - \ref addingEmptyObjects
+ *   - \ref LoadingExistingObjects
+ *   - \ref RemovingObjectsFromScene
+ * - \ref modifyingObjects
  * \section tuts Tutorials
  * - \ref ex1
  * - \ref ex1c
@@ -125,68 +129,17 @@
  * from within a plugin. In our tutorial \ref ex2 we roughly mentioned that the communication between OpenFlipper
  * and it's plugins is accomplished through either one of the provided \ref interfaces or the \ref PluginFunctions.
  *
- * \subsection updatingObjects Updating objects
+ * \section modifyingObjects Modifying Objects in OpenFlipper
+ * In the previous section we got objects from OpenFlippers object management system. These objects directly contain
+ * data in their original data structure (e.g. a pointer to an OpenMesh). In your plugin you can modify this data
+ * directly in the data structure. For a mesh, you can for example add new faces or remove faces,... . After you modified
+ * data, you have to inform OpenFlippers core system (and thereby the other plugins) what you did.
  *
- * Once your plugin has manipulated object data we have to inform OpenFlipper's core about the changes.
- * When doing this, OpenFlipper distinguishes between five basic types of changes:
+ * This information system is implemented in the BaseInterface. Additional information can be found here: \ref baseInterfaceObjectUpdateNotification
  *
- * - Object selections
- * - Visibility
- * - Geometry
- * - Topology
- * - Selections (Vertices, Edges, Faces)
- *
- * When changing geometry, OpenFlipper's core will be forced to redraw the object that has been
- * changed by emitting signal
- *
- * \ref BaseInterface::updatedObject(int _id, UpdateType _type)
- *
- * where \c _id is the object's id and _type is the type of changes that have been made.
- * Note: UpdateType offers the following values
- *
- * - UPDATE_ALL
- * - UPDATE_OBJECT_SELECTION
- * - UPDATE_VISIBILITY
- * - UPDATE_GEOMETRY
- * - UPDATE_TOPOLOGY
- * - UPDATE_SELECTION (ALL THREE KINDS)
- * - UPDATE_SELECTION_VERTICES
- * - UPDATE_SELECTION_EDGES
- * - UPDATE_SELECTION_FACES
- * - UPDATE_UNUSED
- *
- * If the second parameter of this signal is not specified, it will fall back
- * to the default value UPDATE_ALL for compatibility reasons which actually updates
- * each of the types. Unless it is really necessary this should generally be avoided
- * since it consumes a lot of computation time.
- *
- * Additionally, when overriding the slot BaseInterface::slotObjectUpdated(int, const UpdateType),
- * a plugin receives the updated object's id (first parameter) and the type
- * of changes (second parameter).
- *
- * See \ref BaseInterface for more information.
- *
- * When changing object properties it won't be necessary to redraw the scene
- * since it can be expensive in computation power. In this case, one should emit
- *
- * \ref BaseInterface::objectPropertiesChanged(int _id)
- *
- * where \c _id once again is the object's id.
- *
- * If a plugin changed an object's visibility (hide, show), it should emit
- *
- * \ref BaseInterface::visibilityChanged(int _id)
- *
- * for the core to update the visibility state of object with identifier \c _id.
- *
- * Last, when changing an object's selection, it
- * will be updated by emitting
- *
- * \ref BaseInterface::objectSelectionChanged(int _id)
- *
- * where \c _id as in the examples above is the object's identifier.
- *
- * Also see \ref BaseInterface.
+ * \section sceneUpdate Updating the current view
+ * If you modified an object and informed the core that the object has changed, the scene will be automatically redrawn. A more detailed description
+ * can be found in the BaseInterface: \ref baseInterfaceSceneUpdateNotification
  *
  * \section pluginProgramming_related_pages Related pages
  * - \subpage pluginExamples
