@@ -11,32 +11,27 @@ which is the root of the object tree. You can get it via PluginFunctions::object
 is also a GroupObject which holds no data and is used for grouping different objects like in the figure above.
 
 All objects in OpenFlipper are handled by the core. To create and delete objects use
-the functions provided by the LoadSaveInterface(\ref adding_empty_objects ).
+the functions provided by the \ref loadSaveInterfacePage. Additionally there is a small example on how
+to add empty objects to the scene which can be filled by the programmer: \ref adding_empty_objects
 
 \subsection DataAccess Access to data from within the Plugins
-From each plugin you have to get access to the data. Functions to get the right data are provided in the
-PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
-time you will use the ObjectIterator defined there. If you need consistent data access during the plugin
+From each plugin you have to get access to the data. Functions to get the right data are provided by the build-in
+ObjectIterators(\ref OpenFlipperIterators ). If you need consistent data access during the plugin
 lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made
-available in this namespace which never change( \ref identifying_objects).\n \n
+available by the objects which never change( \ref identifying_objects).\n
 It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
 Only the identifiers will stay constant. If one of these changes occurs, the main application will call
 BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
 has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
-If you have to keep track of these changes, implement these functions.
+If you have to keep track of these changes, implement these functions. More information about the update
+notifiation system is described in the BaseInterface documentation (\ref baseInterfacegeneralObjectUpdates )
 
 \section identifying_objects Identifying Objects
 Objects in OpenFlipper get a unique id when they are created. This id will not change during runtime.
 It is possible, that pointers change so you should only use the id to reference objects in your plugins.
 To get this id, just call the BaseObject::id() function. To get an object with a specific id, you can use the
-PluginFunctions provided by the data type (e.g. PluginFunctions::triMeshObject() ). This way, you will always
+PluginFunctions provided by the data type (e.g. PluginFunctions::triMeshObject(int) ). This way, you will always
 be sure to get the right object.
-
-\section loadingDataAndExistingTypes Loading data and existing types
-If you want to load or delete data from within your plugin and you only use existing types
-you can derive from the LoadSaveInterface. This interface provides load and save functions
-to tell the core that you want to access existing data types.
-
 
 \section basicObjectTypes Basic object types
 \subsection baseObjectDescription BaseObject
