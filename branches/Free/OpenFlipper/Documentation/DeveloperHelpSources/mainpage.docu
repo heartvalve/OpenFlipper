@@ -17,7 +17,6 @@
  * - \subpage buildingOpenFlipper "Building OpenFlipper"
  * - \subpage pluginProgramming "Plugin Programming"
  * - \subpage datatypes "Integrated Datatypes"
- * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
  * - \subpage options "Command line options and config files"
  * - \subpage scripting
