@@ -14,17 +14,71 @@ All objects in OpenFlipper are handled by the core. To create and delete objects
 the functions provided by the \ref loadSaveInterfacePage. Additionally there is a small example on how
 to add empty objects to the scene which can be filled by the programmer: \ref adding_empty_objects
 
-\subsection DataAccess Access to data from within the Plugins
+\section basicObjectTypes Basic object types
+The object hierarchy of OpenFlipper is shown in the following diagram:
+
+\image html ObjectClasses.png
+
+In most cases, you do not have to access the data or scenegraph nodes described in the following
+sections, as the predefined types already handle this for you. You can directly work on the meshes
+and tell OpenFlipper about the changes and the core does the relevant updates. If you want to
+create your own data types, you should definitely read the following information.
+
+\subsection baseObjectDescription The BaseObject class
+All objects are derived from BaseObject. This object implements the basic object
+functions. It creates a tree structure of all available objects, includes object
+selection, name and type information. It does not contain any code to visualize
+objects. Each object derived from BaseObject has a DataType function BaseObject::dataType() which
+can be used to identify which is the actual DataType, as the class BaseObject is never used
+directly but only via derived classes.
+
+Additionally the BaseObject class implements the PerObjectData system. You can append additional
+data to each object in the scene via BaseObject::setObjectData() ( see \ref perObjectData ). This
+data will be handled by the core. You always have a container for the specific object, which also
+gets destroyed, when the object itself gets destroyed.
+
+\subsection GroupObjectDescription The GroupObject class
+The GroupObject does not have a visible representation in the scene. It is only used
+to group several objects in the object tree. This grouping is also visible in the DataControl
+plugin.
+
+\subsection baseObjectDataDescription The BaseObjectData class
+This class is derived from BaseObject and includes basic visualization functions. It creates
+the basic scenegraph nodes for the object.
+
+For every object, the top scenegraph node is a SeparatorNode which you could get via
+BaseObjectData::baseNode() . All other nodes ( including per object custom nodes ) have to be
+added below this node. Additionally a ManipulatorNode is added below the separator node.
+This manipulator is used to move or transform the object. Normally this node is managed by
+the move plugin. There are also additional nodes below, which are described in the following figure.
+
+\image html SceneGraphBaseObjectData.png
+
+Usually you should append your own nodes below the last created node which is: BaseObjectData::materialNode().
+
+If you want to create your own object types which should be visible in the scene, you have to derive from
+this class! In the image above, you see that the available rendered object types (e.g. PlaneObject, MeshObject)
+are already derived from that class.
+
+\subsection MeshObjectDescription The MeshObject class
+MeshObject is the class representing triangle or polygonal meshes. It is special due to
+the fact, that there is a general MeshObject class, which is basically a template object class. The
+usable classes are derived from it(TriMeshObject,PolyMeshObject). All of them use OpenMesh as their
+mesh representation. It is based on BaseObjectData and adds some additional scenegraph nodes.
+
+See \ref triMeshType and \ref polyMeshType for the detailed documentation.
+
+\section DataAccess Access to data from within the Plugins
 From each plugin you have to get access to the data. Functions to get the right data are provided by the build-in
 ObjectIterators(\ref OpenFlipperIterators ). If you need consistent data access during the plugin
 lifetime (e.g. you have to track one mesh during the plugin lifetime) you should use the identifiers made
 available by the objects which never change( \ref identifying_objects).\n
+
+\note The only reliable way of uniquely identifying objects in the scene during the whole runtime, is to use the object Id!
+
 It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
-Only the identifiers will stay constant. If one of these changes occurs, the main application will call
-BaseInterface::updatedObject() of all Plugins containing the id of a changed object or -1 if an object
-has been deleted. LoadSaveInterface::objectDeleted() will tell you if an object is deleted.
-If you have to keep track of these changes, implement these functions. More information about the update
-notifiation system is described in the BaseInterface documentation (\ref baseInterfacegeneralObjectUpdates )
+Only the identifiers will stay constant. If changes occur, the plugins will get notified. More information about the update
+Notification system is described in the BaseInterface documentation (\ref baseInterfacegeneralObjectUpdates )
 
 \section identifying_objects Identifying Objects
 Objects in OpenFlipper get a unique id when they are created. This id will not change during runtime.
@@ -32,45 +86,6 @@ It is possible, that pointers change so you should only use the id to reference 
 To get this id, just call the BaseObject::id() function. To get an object with a specific id, you can use the
 PluginFunctions provided by the data type (e.g. PluginFunctions::triMeshObject(int) ). This way, you will always
 be sure to get the right object.
-
-\section basicObjectTypes Basic object types
-\subsection baseObjectDescription BaseObject
-All objects are derived from BaseObject. This object implements the basic object 
-functions. It creates a tree structure of all available objects, includes object
-selection, name and type information. It does not contain any code to visualize
-objects.
-Each object derived from BaseObject has a datatype function BaseObject::dataType.
-
-Additionally you can add data to each object by using the perObjectData class.
-See PerObjectData
-
-\subsection baseObjectDataDescription BaseObjectData
-This class is derived from BaseObject and includes basic visualization functions. It creates
-the basic scenegraph nodes for the object ( TODO : See per Object Scenegraph structure ).
-
-For every object, the top scenegraph node is the ObjectData::SeparatorNode*. All other
-nodes ( including per object custom nodes ) have to be added below this node. Additionally
-an ManipulatorNode is added below the separator node. This manipulator is used to move
-or transform the object. Normally this node is managed by the move plugin. If you
-use per object nodes which should be transformed along with the object you can attach
-them below this node ( BaseObjectData::manipulatorNode() ).
-
-Additionally per object scenegraph nodes can be managed automatically by BaseObjectData.
-
-
-\subsection MeshObjectDescription MeshObject
-MeshObject is the class representing triangle or poly meshes. It uses OpenMesh as its 
-data structure.
-It is based on BaseObjectData and adds additional scenegraph nodes. First it creates a materialNode
-used to set the meshes rendering material properties, followed by a texture node ( MeshObject::textureNode() ). A shader node ( MeshObject::shaderNode() ) is than 
-added to manage the systems and user defined shaders. Below the shader node is the mesh node ( MeshObject::meshNode()  )which actually
-renders the mesh.
-Additionally some nodes to render selection, features or modeling areas are added by the MeshObject
-
-See MeshObject for the detailed function documentation.
-
-
-\section creatingCustomObjectTypes Creating custom object types
 
 */
  

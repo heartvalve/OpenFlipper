@@ -1,0 +1,74 @@
+% File showing the updated object flow
+% Author: Jan Möbius
+
+\tikzstyle{predefinedNode}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,text centered, text=black, text width=5.5cm]
+\tikzstyle{userNode}=[rectangle, draw=black, rounded corners, fill=red!30!white, drop shadow,text centered, text=black, text width=5.5cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{InvisibleGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{VisibleGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm]
+
+
+
+
+
+\node (SeperatorNode) [predefinedNode,  rectangle split, rectangle split parts=2 ]
+{
+\textbf{ACG::SeperatorNode}
+\nodepart{second}{SeperatorNode for the current Object:\\ BaseObjectData::baseNode() }
+};
+
+\node (UntransformedNode) [userNode,  rectangle split, rectangle split parts=2 , below = of SeperatorNode,xshift=-3cm]
+{
+\textbf{Untransformed Nodes}
+\nodepart{second}{Add your own untransformed nodes here.}
+};
+
+\node (QtTranslationManipulatorNode) [predefinedNode,  rectangle split, rectangle split parts=2, below = of SeperatorNode ,xshift=3cm]
+{
+\textbf{QtTranslationManipulatorNode}
+\nodepart{second}{Node for translating every child node of the object: \\ BaseObjectData::manipulatorNode() }
+};
+
+\node (BoundingBoxNode) [predefinedNode,  rectangle split, rectangle split parts=2, below = of QtTranslationManipulatorNode ]
+{
+\textbf{BoundingBoxNode}
+\nodepart{second}{Node for visualizing the objects bounding box: \\ BaseObjectData::boundingBoxNode()}
+};
+
+\node (StencilRefNode) [predefinedNode,  rectangle split, rectangle split parts=2, below = of BoundingBoxNode ]
+{
+\textbf{StencilRefNode}
+\nodepart{second}{Node used to handle source/target selection visualization: \\ BaseObjectData::stencilRefNode() }
+};
+
+\node (MaterialNode) [predefinedNode,  rectangle split, rectangle split parts=2, below = of StencilRefNode ]
+{
+\textbf{MaterialNode}
+\nodepart{second}{Node used to set materials: \\ BaseObjectData::materialNode()}
+};
+
+\node (TransformedNode) [userNode,  rectangle split, rectangle split parts=2 , below = of MaterialNode]
+{
+\textbf{Transformed Nodes}
+\nodepart{second}{Add your own transformed nodes here.}
+};
+
+\draw[flow] (SeperatorNode.south) -- ++(0,-0.3cm) -| (QtTranslationManipulatorNode.north);
+\draw[flow] (SeperatorNode.south) -- ++(0,-0.3cm) -| (UntransformedNode.north);
+\draw[flow] (QtTranslationManipulatorNode.south) -- ++(0,0) -| (BoundingBoxNode.north);
+\draw[flow] (BoundingBoxNode.south) -- ++(0,0) -| (StencilRefNode.north);
+\draw[flow] (StencilRefNode.south) -- ++(0,0) -| (MaterialNode.north);
+\draw[flow] (MaterialNode.south) -- ++(0,0) -| (TransformedNode.north);
+
+\begin{pgfonlayer}{background}
+\node[InvisibleGroup,fit=(current bounding box) ] (Invisible) {};
+\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}
