@@ -1,0 +1,64 @@
+% This file describes how the scene updates are handled in OpenFlipper
+% Author: Jan Möbius
+
+\tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
+text centered, text=black, text width=7cm]
+\tikzstyle{timernode}=[rectangle, draw=black, rounded corners, fill=blue!10!white, drop shadow,
+text centered, text=black, text width=3cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{CoreGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{PluginGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm]
+
+
+
+\node (signalUpdatedObject) [abstract, rectangle ]
+{
+\textbf{signal BaseInterface::updatedObject()}
+};
+\node (Plugins) [above=of signalUpdatedObject,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Plugins}} };
+
+\node (signalUpdateView) [abstract, rectangle, below= of signalUpdatedObject ]
+{
+\textbf{signal BaseInterface::updateView()}
+};
+
+\node (coreUpdateHandling) [abstract, rectangle, left= of signalUpdateView, xshift=-2cm ]
+{
+\textbf{Update Handling}
+};
+\node (AuxNode) [above=of coreUpdateHandling]{};
+\node (Core) [above=of coreUpdateHandling ,yshift=1.3cm] {\textbf{\huge{OpenFlipper Core}} };
+
+\node (redraw) [abstract, rectangle, below= of coreUpdateHandling , yshift=-2cm]
+{
+\textbf{Redraw Scene}
+};
+
+\node (timer) [timernode, rectangle, above= of redraw,xshift=-2cm]
+{
+\textbf{Redraw Timer}
+};
+\node [label=above:emitted] (X) at ($ (coreUpdateHandling)!.5!(signalUpdateView) $) {};
+\node [label=above:emitted] (X) at ($ (AuxNode)!.5!(signalUpdatedObject) $) {};
+\node [label=right:update time reached] (X) at ($ (coreUpdateHandling)!.57!(redraw) $) {};
+\node [label=left:too many updates] (X) at ($ (coreUpdateHandling)!.4!(timer) $) {};
+
+\draw[flow] (signalUpdatedObject.west) -- ++(0,0) -| (coreUpdateHandling.north);
+\draw[flow] (coreUpdateHandling.south) -- ++(0,0) -| (redraw.north);
+\draw[flow] (coreUpdateHandling.south) -- ++(0,-0.9) -| (timer.north);
+\draw[flow] (signalUpdateView.west) --  ++(0,0) |-  (coreUpdateHandling.east);
+\draw[flow] (timer.south) --  ++(0,-0.4) -|  (redraw.north);
+
+\begin{pgfonlayer}{background}
+\node[CoreGroup,fit=(Core) (redraw) ] (Core) {};
+\node[PluginGroup,fit=(Plugins) (signalUpdateView) ] (Plugin) {};
+\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}

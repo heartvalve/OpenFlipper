@@ -351,6 +351,8 @@ The objects in OpenFlippers scene are stored and managed in OpenFlippers core. I
 objects, it has to notify the core about that change. In turn OpenFlipper will then notify all other plugins about
 this change. This functionality is provided by the signals and slots for \ref BaseInterfaceUpdateSlots "update handling" .
 
+\subsection baseInterfacegeneralObjectUpdates General update notifications
+
 \image html ObjectUpdateNotification.png 
 
 If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType&).
@@ -363,36 +365,43 @@ Both signals get the id of the object that has been updated or -1 if all should 
 If the signal is emitted, the core calls BaseInterface::slotObjectUpdated( int , const UpdateType& ) of every plugin. You can
 implement this slot if you need to react on object changes.
 
+\note Don't emit updatedObject from within slotObjectUpdated as this will cause an endless loop!
+\note If the object id passed to the functions is -1 all objects should be treated as updated.
+
 After all plugins have been informed, the scene will be redrawn.
 
 For more details about the UpdateType read the documentation about UpdateType and \ref DefaultUpdateTypes "predefined update types".
 A description for adding custom update types at runtime is available \ref UpdateTypeFunctions "here".
 
-It is also possible to insert custom nodes into the scenegraph. If you changed these nodes, you also have to inform the core.
-This is achieved by the BaseInterface::nodeVisibilityChanged() function. As nodes they are usually attached to objects in the scene,
-you should pass the id of the object to the function or -1 if its a global node (which should not be used!).
+\note If you do not specify an UpdateType, it will fall back to the default value UPDATE_ALL for compatibility reasons
+      which actually updates each of the types. Unless it is really necessary this should generally be avoided since it
+      consumes a lot of computation time. So try to narrow the updated properties as uch as possible!
 
+\subsection baseInterfaceNodeUpdates Node updates
+It is also possible to insert custom nodes into the scenegraph. If you changed these nodes, you also have to inform the core.
+This is achieved by the BaseInterface::nodeVisibilityChanged() function. As nodes are usually attached to objects in the scene,
+you should pass the id of the object to the function or -1 if its a global node.
+
+\subsection baseInterfaceObjectRemoval Object Removal notifications
 If the complete scene gets cleared, the slot BaseInterface::slotAllCleared() will be executed after all objects have been removed from the scene.
 A more fine grained information about objects added or removed from the scene is available via the \ref loadSaveInterfacePage .
 
+\subsection baseInterfaceSpecialNotifications Special Notifications
 There are three additional slots that are called by the core, if the object selection(source/target BaseInterface::slotObjectSelectionChanged() ),
 the object visibility(Show/Hide BaseInterface::slotVisibilityChanged()) or other properties changed (e.g. name BaseInterface::slotObjectPropertiesChanged() )
-
-Remarks:
-<ul>
-<li>If the object id passed to the functions is -1 all objects should be treated as updated.
-<li>Never emit the signal BaseInterface::updatedObject() inside the updated object slots as this causes endless loops!
-</ul>
 
 \section baseInterfaceSceneUpdateNotification Scene Update Notifications
 
 OpenFlipper manages the scene updates in its core. If objects get updated the scene will be automatically redrawn. Nevertheless,
-you can force an update of the scene by emitting the signal BaseInterface::updateView().
+you can force an update of the scene by emitting the signal BaseInterface::updateView(). OpenFlipper restricts the number of redraws
+to avoid useless updates. In the Options you can set a maximal frame rate or disable the restriction.
+The following image shows how the updates process is managed:
 
-\image html updateView.jpg
+\image html SceneViewUpdate.png
 
-If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. Be carefull, not to
-change the view in this function or you get an endless loop!
+If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. If you need
+to modify renderings or anything else depending on the current view, you can use this slot and adapt to the new view (e.g. modifying a shader).
+\note Be careful, not to change the view in this function or you get an endless loop!
 
 \section baseInterfaceManagementFunctions Management Functions
 There are some basic functions for managing plugins. The BaseInterface::description() function can be used
