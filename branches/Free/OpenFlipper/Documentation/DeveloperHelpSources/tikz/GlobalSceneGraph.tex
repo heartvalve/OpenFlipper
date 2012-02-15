@@ -1,0 +1,125 @@
+% File showing the updated object flow
+% Author: Jan Möbius
+
+\tikzstyle{predefinedNode}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,text centered, text=black, text width=6.5cm]
+
+\tikzstyle{action}=[rectangle, draw=black, rounded corners, fill=red!60!white, drop shadow,text centered, text=black, text width=6.5cm]
+\tikzstyle{userNode}=[rectangle, draw=black, rounded corners, fill=red!20!white, drop shadow,text centered, text=black, text width=6cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{InvisibleGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{VisibleGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=0.7cm]
+
+\node (RootNode) [predefinedNode,  rectangle split, rectangle split parts=2 ]
+{
+\textbf{Root Node}
+\nodepart{second}{The root node of OpenFlippers scenegraph (sceneGraphRootNode\_)}
+};
+
+\node (LightNodes) [predefinedNode,  rectangle split, rectangle split parts=2 , below = of RootNode]
+{
+\textbf{Light Nodes}
+\nodepart{second}{Usually here are various light nodes.}
+};
+
+\node (UserGlobalStatusNode) [userNode,  rectangle split, rectangle split parts=2 , below = of LightNodes]
+{
+\textbf{Global User Nodes}
+\nodepart{second}{User added global status nodes(No rendering, only status!)}
+};
+
+\node (AdditionalGlobalStatusNodes) [action,  rectangle split, rectangle split parts=2, right = of UserGlobalStatusNode]
+{
+\textbf{Adding additional Global StatusNodes}
+\nodepart{second}{Additional nodes can be added via \\ Pluginfunctions::addGlobalStatusNode()}
+};
+
+\node (RenderedRootNode) [predefinedNode,  rectangle split, rectangle split parts=2, below= of UserGlobalStatusNode]
+{
+\textbf{Rendered Nodes Root}
+\nodepart{second}{The root node for all rendered nodes.(sceneGraphRootNodeGlobal\_) \\ PluginFunctions::getSceneGraphRootNode() }
+};
+
+\node (CoreNodes) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of RenderedRootNode,yshift=-0.3cm]
+{
+\textbf{Separator for core nodes}
+\nodepart{second}{This is a separator node for all objects which are created by the core.}
+};
+
+\node (CoordsysNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of CoreNodes]
+{
+\textbf{Coordinate system node}
+\nodepart{second}{This is the rendering node for the coordinate system.}
+};
+
+\node (UserGlobalNode) [userNode,  rectangle split, rectangle split parts=2 , below right= of RenderedRootNode,yshift=-0.5cm]
+{
+\textbf{User defined global nodes}
+\nodepart{second}{Global nodes added by the user}
+};
+
+\node (AdditionalGlobalNodes) [action,  rectangle split, rectangle split parts=2, below = of UserGlobalNode]
+{
+\textbf{Adding additional Global Nodes}
+\nodepart{second}{Additional nodes can be added via \\ Pluginfunctions::addGlobalNode()}
+};
+
+
+
+
+\node (DataSeparatorNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below left= of RenderedRootNode,yshift=-0.5cm]
+{
+\textbf{Data Separator Node}
+\nodepart{second}{This is a separator node for all objects in the scene. \\ (dataSeparatorNode\_)}
+};
+
+\node (ClippingNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of DataSeparatorNode]
+{
+\textbf{Clipping Node}
+\nodepart{second}{This is a node used by the slcing plugin to add additional clipping planes. }
+};
+
+\node (UserObjectStatusNode) [userNode,  rectangle split, rectangle split parts=2 , below = of ClippingNode]
+{
+\textbf{Global Object Status Nodes}
+\nodepart{second}{User added global status nodes only applied to objects(No rendering, only status!)}
+};
+
+\node (AdditionalObjectStatusNodes) [action,  rectangle split, rectangle split parts=2, right = of UserObjectStatusNode]
+{
+\textbf{Adding additional Object StatusNodes}
+\nodepart{second}{Additional nodes can be added via \\ Pluginfunctions::addObjectRenderingNode()}
+};
+
+\node (DataRootNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of UserObjectStatusNode]
+{
+\textbf{Data Root Node}
+\nodepart{second}{This is the root of all Objects in OpenFlipper(dataRootNode\_). \\ PluginFuncions::getRootNode()  }
+};
+
+
+\draw[flow] (RootNode.south) -- ++(0,0) -| (LightNodes.north);
+\draw[flow] (LightNodes.south) -- ++(0,0) -| (UserGlobalStatusNode.north);
+\draw[flow] (UserGlobalStatusNode.south) -- ++(0,0) -| (RenderedRootNode.north);
+\draw[flow] (AdditionalGlobalStatusNodes.west) -- ++(0,0) |- (UserGlobalStatusNode.east);
+\draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (DataSeparatorNode.north);
+\draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (CoreNodes.north);
+\draw[flow] (CoreNodes.south) -- ++(0,-0.3) -| (CoordsysNode.north);
+\draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (UserGlobalNode.north);
+\draw[flow] (AdditionalGlobalNodes.north) -- ++(0,0) |- (UserGlobalNode.south);
+\draw[flow] (DataSeparatorNode.south) -- ++(0,0) -| (ClippingNode.north);
+\draw[flow] (ClippingNode.south) -- ++(0,0) -| (UserObjectStatusNode.north);
+\draw[flow] (AdditionalObjectStatusNodes.west) -- ++(0,0) |- (UserObjectStatusNode.east);
+\draw[flow] (UserObjectStatusNode.south) -- ++(0,0) -| (DataRootNode.north);
+
+%\begin{pgfonlayer}{background}
+%\node[InvisibleGroup,fit=(current bounding box) ] (Invisible) {};
+%\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}
