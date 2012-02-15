@@ -143,7 +143,7 @@
  *
  * \section pluginProgramming_related_pages Related pages
  * - \subpage pluginExamples
- * - \subpage OpenFlipperIterators
  * - \subpage interfaces
+ * - \subpage OpenFlipperIterators
  * - \subpage adding_empty_objects
  */
