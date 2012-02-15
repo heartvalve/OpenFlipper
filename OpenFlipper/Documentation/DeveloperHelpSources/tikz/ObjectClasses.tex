@@ -1,0 +1,83 @@
+% File showing the updated object flow
+% Author: Jan Möbius
+
+\tikzstyle{class}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,text centered, text=black, text width=3.5cm]
+
+\tikzstyle{flow}=[->, >= triangle 90, very thick]
+\tikzstyle{InvisibleGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+\tikzstyle{VisibleGroup} = [fill=orange!50!white,rectangle,rounded corners,draw,inner sep =0.4cm]
+
+
+\begin{center}
+\begin{tikzpicture}[node distance=0.7cm]
+
+
+
+
+
+\node (BaseObject) [class,  rectangle split, rectangle split parts=2 ]
+{
+\textbf{BaseObject}
+\nodepart{second}{Base class of all objects in OpenFlipper}
+};
+
+\node (GroupObject) [class,  rectangle split, rectangle split parts=2, below left = of BaseObject ]
+{
+\textbf{GroupObject}
+\nodepart{second}{Simple object for grouping other objects}
+};
+
+\node (BaseObjectData) [class,  rectangle split, rectangle split parts=2, below right = of BaseObject ]
+{
+\textbf{BaseObjectData}
+\nodepart{second}{Base class for all visible objects in the scene}
+};
+
+\node (PlaneObject) [class,  rectangle split, rectangle split parts=2, below left = of BaseObjectData ,yshift=-0.5 cm]
+{
+\textbf{PlaneObject}
+\nodepart{second}{Object for handling planes}
+};
+
+\node (PlaceHolderObject) [class,  rectangle, below = of BaseObjectData ,yshift=-0.5 cm]
+{
+\textbf{...}
+};
+
+\node (MeshObject) [class,  rectangle split, rectangle split parts=2, below right = of BaseObjectData,yshift=-0.5 cm ]
+{
+\textbf{MeshObject}
+\nodepart{second}{Generic template object for handling meshes}
+};
+
+\node (TriMeshObject) [class,  rectangle split, rectangle split parts=2, below = of MeshObject , xshift=-2cm ]
+{
+\textbf{TriMeshObject}
+\nodepart{second}{Object for triangular meshes}
+};
+
+\node (PolyMeshObject) [class,  rectangle split, rectangle split parts=2, below = of MeshObject ,xshift=2cm ]
+{
+\textbf{PolyMeshObject}
+\nodepart{second}{Object for polygonal meshes}
+};
+
+\node (InVisibleLabel) [anchor = west] at (current bounding box.north west) {\textbf{\huge{Invisible}} };
+\node (VisibleLabel) [anchor = south east] at (current bounding box.south) {\textbf{\huge{Visible}} };
+
+\draw[flow] (BaseObject.west) -- ++(0,0) -| (GroupObject.north);
+\draw[flow] (BaseObject.east) -- ++(0,0) -| (BaseObjectData.north);
+\draw[flow] (BaseObjectData.south) -- ++(0,-0.15cm) -| (PlaneObject.north);
+\draw[flow] (BaseObjectData.south) -- ++(0,-0.15cm) -| (PlaceHolderObject.north);
+\draw[flow] (BaseObjectData.south) -- ++(0,-0.15cm) -| (MeshObject.north);
+\draw[flow] (MeshObject.south) -- ++(0,-0.3cm) -| (TriMeshObject.north);
+\draw[flow] (MeshObject.south) -- ++(0,-0.3cm) -| (PolyMeshObject.north);
+
+\begin{pgfonlayer}{background}
+\node[InvisibleGroup,fit=(BaseObject) (GroupObject) (BaseObjectData) ] (Invisible) {};
+\node[VisibleGroup,fit=(PlaneObject) (MeshObject) (PolyMeshObject) ] (Visible) {};
+\end{pgfonlayer}
+
+
+\end{tikzpicture}
+\end{center}
