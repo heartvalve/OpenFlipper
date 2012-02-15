@@ -2,9 +2,15 @@
 % Author: Jan Möbius
 
 \tikzstyle{abstract}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
-text centered, text=black, text width=7cm]
+text centered, text=black, text width=6.5cm]
 \tikzstyle{timernode}=[rectangle, draw=black, rounded corners, fill=blue!10!white, drop shadow,
 text centered, text=black, text width=3cm]
+
+\tikzstyle{smallnode}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,
+text centered, text=black, text width=3cm]
+
+\tikzstyle{interactionnode}=[rectangle, draw=black, rounded corners, fill=blue!30!yellow!30, drop shadow,
+text centered, text=black, text width=3.5cm]
 
 \tikzstyle{flow}=[->, >= triangle 90, very thick]
 \tikzstyle{CoreGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
@@ -16,10 +22,16 @@ text centered, text=black, text width=3cm]
 
 
 
-\node (signalUpdatedObject) [abstract, rectangle ]
+
+
+
+
+
+\node (signalUpdatedObject) [abstract, rectangle]
 {
 \textbf{signal BaseInterface::updatedObject()}
 };
+
 \node (Plugins) [above=of signalUpdatedObject,yshift=-0.3cm] {\textbf{\huge{OpenFlipper Plugins}} };
 
 \node (signalUpdateView) [abstract, rectangle, below= of signalUpdatedObject ]
@@ -27,14 +39,45 @@ text centered, text=black, text width=3cm]
 \textbf{signal BaseInterface::updateView()}
 };
 
-\node (coreUpdateHandling) [abstract, rectangle, left= of signalUpdateView, xshift=-2cm ]
+\node (pluginViewChange) [interactionnode, rectangle, below = of signalUpdateView]
+{
+\textbf{Plugin view changes}
+};
+
+
+
+\node (slotViewChanged)[abstract, rectangle, below=of pluginViewChange ]
+{
+\textbf{slot BaseInterface::slotViewChanged()}
+};
+
+
+
+
+\node (coreUpdateHandling) [abstract, rectangle, left= of signalUpdateView, xshift=-1.6cm ]
 {
 \textbf{Update Handling}
 };
 \node (AuxNode) [above=of coreUpdateHandling]{};
+
+
+
+
 \node (Core) [above=of coreUpdateHandling ,yshift=1.3cm] {\textbf{\huge{OpenFlipper Core}} };
 
-\node (redraw) [abstract, rectangle, below= of coreUpdateHandling , yshift=-2cm]
+
+\node (viewManagement) [smallnode, rectangle, below= of coreUpdateHandling,yshift=-1.5cm]
+{
+\textbf{View Managment}
+};
+
+
+\node (userViewChange) [interactionnode, rectangle, above= of viewManagement,xshift=-2.1cm] 
+{
+\textbf{User View changes}
+};
+
+\node (redraw) [abstract, rectangle, below= of viewManagement , yshift=-2cm]
 {
 \textbf{Redraw Scene}
 };
@@ -45,18 +88,23 @@ text centered, text=black, text width=3cm]
 };
 \node [label=above:emitted] (X) at ($ (coreUpdateHandling)!.5!(signalUpdateView) $) {};
 \node [label=above:emitted] (X) at ($ (AuxNode)!.5!(signalUpdatedObject) $) {};
-\node [label=right:update time reached] (X) at ($ (coreUpdateHandling)!.57!(redraw) $) {};
-\node [label=left:too many updates] (X) at ($ (coreUpdateHandling)!.4!(timer) $) {};
+\node [label=above:per plugin,yshift=-3] (X) at ($ (viewManagement)!.78!(slotViewChanged.west) $) {};
+\node [label=right:update time reached] (X) at ($ (viewManagement)!.57!(redraw) $) {};
+\node [label=left:too many updates] (X) at ($ (viewManagement)!.4!(timer) $) {};
 
+\draw[flow] (pluginViewChange.west) -- ++(0,0) -| (viewManagement.north);
+\draw[flow] (userViewChange.south) -- ++(0,-0.5cm) -| (viewManagement.north);
+\draw[flow] (viewManagement.east) -- ++(0,0) |- (slotViewChanged.west);
+\draw[flow] (coreUpdateHandling.south) -- ++(0,0) -| (viewManagement.north);
 \draw[flow] (signalUpdatedObject.west) -- ++(0,0) -| (coreUpdateHandling.north);
-\draw[flow] (coreUpdateHandling.south) -- ++(0,0) -| (redraw.north);
-\draw[flow] (coreUpdateHandling.south) -- ++(0,-0.9) -| (timer.north);
+\draw[flow] (viewManagement.south) -- ++(0,0) -| (redraw.north);
+\draw[flow] (viewManagement.south) -- ++(0,-0.9) -| (timer.north);
 \draw[flow] (signalUpdateView.west) --  ++(0,0) |-  (coreUpdateHandling.east);
 \draw[flow] (timer.south) --  ++(0,-0.4) -|  (redraw.north);
 
 \begin{pgfonlayer}{background}
-\node[CoreGroup,fit=(Core) (redraw) ] (Core) {};
-\node[PluginGroup,fit=(Plugins) (signalUpdateView) ] (Plugin) {};
+\node[CoreGroup,fit=(Core) (redraw) (userViewChange) ] (Core) {};
+\node[PluginGroup,fit=(Plugins) (signalUpdatedObject) (slotViewChanged) ] (Plugin) {};
 \end{pgfonlayer}
 
 

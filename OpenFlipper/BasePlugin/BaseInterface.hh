@@ -399,8 +399,9 @@ The following image shows how the updates process is managed:
 
 \image html SceneViewUpdate.png
 
-If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called. If you need
-to modify renderings or anything else depending on the current view, you can use this slot and adapt to the new view (e.g. modifying a shader).
+If the view (viewer position /viewing direction) has been changed, the slot BaseInterface::slotViewChanged() will be called, before anything gets
+rendered. If you need to modify renderings or anything else depending on the current view, you can use this slot and adapt
+to the new view (e.g. modifying a shader).
 \note Be careful, not to change the view in this function or you get an endless loop!
 
 \section baseInterfaceManagementFunctions Management Functions
