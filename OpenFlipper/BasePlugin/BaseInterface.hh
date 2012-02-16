@@ -355,8 +355,8 @@ this change. This functionality is provided by the signals and slots for \ref Ba
 
 \image html ObjectUpdateNotification.png 
 
-If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType&).
-\n
+If you change data you have to emit one of BaseInterface::updatedObject(int) or BaseInterface::updatedObject(int,const UpdateType&).\n
+
 BaseInterface::updatedObject(int) forces an update of the whole object while BaseInterface::updatedObject(int,const UpdateType&)
 can be restricted to a part of the object ( Geometry,Selection, ... ; see UpdateType ) and is therefore faster and should be preferred.
 
@@ -368,7 +368,11 @@ implement this slot if you need to react on object changes.
 \note Don't emit updatedObject from within slotObjectUpdated as this will cause an endless loop!
 \note If the object id passed to the functions is -1 all objects should be treated as updated.
 
-After all plugins have been informed, the scene will be redrawn.
+After all plugins have been informed, the node itself gets updated. This means that for the corresponding object the update function is
+called (BaseObjectData::update() ). This function is implemented by every object type in OpenFlipper and has to take care of reacting
+to modifications of the object. E.g. the TriMeshObject, this could mean, that the OpenMesh data has changed (UPDATE_GEOMETRY). The object
+would than trigger an update of the rendering buffers which are used to draw the mesh.
+\note You should not call the update functions of an object directly as this means unnecessary overhead (As the core will call the function anyway on an update).
 
 For more details about the UpdateType read the documentation about UpdateType and \ref DefaultUpdateTypes "predefined update types".
 A description for adding custom update types at runtime is available \ref UpdateTypeFunctions "here".
