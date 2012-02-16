@@ -135,9 +135,9 @@ Core() :
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
   
   // init global data node
-  root_node_scenegraph_global_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_ , "SceneGraph Root Node");
+  root_node_scenegraph_global_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_ , "SceneGraph Rendered Root Node");
   
-  // This seperator will manage the cores nodes
+  // This separator will manage the cores nodes
   core_nodes_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_global_, "Core Nodes");
   
   // Coordsys rendering nodes
@@ -145,10 +145,10 @@ Core() :
   coordsysNode_ = new ACG::SceneGraph::CoordsysNode(coordsysMaterialNode_,"Core Coordsys Node");  
   coordsysNode_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
   
-  // seperator handling the nodes for data
+  // Separator handling the nodes for data
   dataSeparatorNode_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_global_, "Data Separator Root Node");
   
-  // seperator handling the nodes for data
+  // Separator handling the nodes for data
   dataRootNode_      = new ACG::SceneGraph::SeparatorNode(dataSeparatorNode_, "Data Root Node");
 
    // Add ViewMode All

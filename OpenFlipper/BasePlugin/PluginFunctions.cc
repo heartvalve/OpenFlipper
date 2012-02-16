@@ -934,7 +934,7 @@ void addGlobalStatusNode(ACG::SceneGraph::BaseNode* _node) {
     // Move the node to the new parent
     _node->set_parent(parent);
     
-    // move dataRootNode_ to the new parent
+    // move sceneGraphRootNodeGlobal_ to the new parent
     sceneGraphRootNodeGlobal_->set_parent(_node);
   }
 }
