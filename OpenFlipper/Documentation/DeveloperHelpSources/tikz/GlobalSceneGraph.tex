@@ -1,4 +1,4 @@
-% File showing the updated object flow
+% File showing the global scenegraph structure
 % Author: Jan Möbius
 
 \tikzstyle{predefinedNode}=[rectangle, draw=black, rounded corners, fill=blue!30!white, drop shadow,text centered, text=black, text width=6.5cm]
@@ -87,7 +87,7 @@
 \node (ClippingNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of DataSeparatorNode]
 {
 \textbf{Clipping Node}
-\nodepart{second}{This is a node used by the slcing plugin to add additional clipping planes. }
+\nodepart{second}{This is a node used by the slicing plugin to add additional clipping planes. }
 };
 
 \node (UserObjectStatusNode) [userNode,  rectangle split, rectangle split parts=2 , below = of ClippingNode]
@@ -136,7 +136,7 @@
 \draw[flow] (CoreNodes.south) -- ++(0,-0.3) -| (CoordsysNode.north);
 \draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (UserGlobalNode.north);
 \draw[flow] (AdditionalGlobalNodes.north) -- ++(0,0) |- (UserGlobalNode.south);
-\draw[flow] (DataSeparatorNode.south) -- ++(0,0) -| (ClippingNode.north);
+\draw[flow] (DataSeparatorNode.south)  -| (ClippingNode.north);
 \draw[flow] (ClippingNode.south) -- ++(0,0) -| (UserObjectStatusNode.north);
 \draw[flow] (AdditionalObjectStatusNodes.west) -- ++(0,0) |- (UserObjectStatusNode.east);
 \draw[flow] (UserObjectStatusNode.south) -- ++(0,0) -| (DataRootNode.north);
