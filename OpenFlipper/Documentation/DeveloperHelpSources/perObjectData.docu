@@ -1,5 +1,44 @@
-/** \page perObjectData Per Object Data
+/** \page perObjectDataPage Per Object Data
  *
- * TODO! Document per Object Data management.
+ * \section perObjectDataPage_Overview Overview
+ * To help developers organizing their data which belongs to specific objects, OpenFlipper provides the PerObjectData class.
+ * When you derive your classes from the PerObjectData base class, you can attach it to every object in the scene. This way
+ * OpenFlipper takes care of destructing the object, when the corresponding object gets removed and the developer has a permanent
+ * storage associated with the object.
  *
+ * \section perObjectDataPage_CreatingPerObjectDatas Creating your own class
+ * To use the system, just derive your class from the PerObjectData base class:
+ *
+ * \code
+ * #include <OpenFlipper/common/perObjectData.hh>
+ *
+ * class DataClass : public PerObjectData
+ * {
+ *  public :
+ *
+ *    // Constructor
+ *    DataClass();
+ *
+ *    // Destructor
+ *    ~DataClass();
+ *
+ *    // Copy function (Implement this copy function to create a hard copy of your class)
+ *    PerObjectData* copyPerObjectData();
+ *
+ *    // Your data/functions
+ *
+ *  };
+ * \endcode
+ *
+ * One important virtual function is the virtual PerObjectData::copyPerObjectData() function. In this function you have
+ * to create a hard copy of your class. This hard copy is used by OpenFlippers backup system to take a full snapshot
+ * of all Objects and their associated data. This way you can easily store your plugin state for a specific object in
+ * an PerObjectData. If the used than performs undo or redo operations, the attached data will also be switched and
+ * your states will be kept persistent with the current state of the object.
+ *
+ * \section perObjectDataPage_AttachingPerObjectDatas Attaching the per object data to objects in the scene.
+ * The corresponding functions are implemented in the BaseObject (\ref baseObjectPerObjectDataFunctions "here").
+ * The function to attach it is called BaseObject::setObjectData(). It gets a name(QString) which should start with the plugin
+ * name that generated the data and a reasonable description of the data. To get a pointer to a specific PerObjectDAta attached
+ * to the object, call BaseObject::objectData().
  */

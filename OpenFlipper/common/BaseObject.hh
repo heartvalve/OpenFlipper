@@ -441,6 +441,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
   //===========================================================================
   /** @name Object Payload
+   * \anchor baseObjectPerObjectDataFunctions
    * @{ */
   //===========================================================================
 

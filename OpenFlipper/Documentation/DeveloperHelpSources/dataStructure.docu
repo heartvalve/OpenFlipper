@@ -33,7 +33,7 @@ can be used to identify which is the actual DataType, as the class BaseObject is
 directly but only via derived classes.
 
 Additionally the BaseObject class implements the PerObjectData system. You can append additional
-data to each object in the scene via BaseObject::setObjectData() ( see \ref perObjectData ). This
+data to each object in the scene via BaseObject::setObjectData() ( see \ref perObjectDataPage ). This
 data will be handled by the core. You always have a container for the specific object, which also
 gets destroyed, when the object itself gets destroyed.
 
