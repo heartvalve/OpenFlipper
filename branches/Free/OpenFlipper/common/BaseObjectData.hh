@@ -302,6 +302,11 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
   //===========================================================================
   /** @name Additional nodes
+   *
+   *  \anchor BaseObjectData_AdditionalNodes_header Functions to attach additional Nodes to objects
+   *
+   *  Manage additional scenegraph nodes that belong to an object.
+   *
    * @{ */
   //===========================================================================
   public:
