@@ -1,0 +1,15 @@
+/** \page  OpenFlipperSceneGraph OpenFlipper SceneGraph
+ *
+ * \section OFSceneGraph_Overview Overview
+ * OpenFlipper has an integrated scenegraph which is used to render the scene. There are various nodes available,
+ * which are used to transform the scene, set OpenGL status flags, render objects or react on user interaction.
+ * When OpenFlipper is started, it generates a predefined scenegraph structure, that can be extended by the programmer.
+ * The following figure shows the basic setup:
+ *
+ * \image html GlobalSceneGraph.png
+ *
+ *\section OFSceneGraph_adding Adding additional scenegraph nodes
+ *
+ *
+ */
+
