@@ -8,8 +8,32 @@
  *
  * \image html GlobalSceneGraph.png
  *
- *\section OFSceneGraph_adding Adding additional scenegraph nodes
+ * \section OFSceneGraph_adding Adding additional scenegraph nodes
+ * Most of the time, you do not have to deal with scenegraph nodes directly. The Objects (e.g. MeshObject,PlaneObject) automatically
+ * handle and update their nodes as required. Each of the objects has a top level SeparatorNode which is attached to the data root
+ * node(PluginFunctions::getRootNode()). Below the SeparatorNode the objects generate their own node structure. This structure consists
+ * of the structure of BaseObjectData (which is the base class for all visible objects \ref baseObjectDataDescription). Visibility of
+ * each object is than managed in the DataControl plugin by hiding the subtree below the objects SeparatorNode.
  *
+ * \subsection OFSceneGraph_adding_global_status_nodes Adding global status nodes
+ * It is also possible to add several status nodes to the scenegraph. The top level status nodes (typically the light sources) are
+ * added via PluginFunctions::addGlobalStatusNode(). The light sources are managed by the light plugin and should not be modified directly.
+ * Please keep in mind, that all objects below your node will be influenced. This includes also core nodes like the coordinate system.
+ * \note Do not add nodes here, which render objects (triangles,...)
+ *
+ * \subsection OFSceneGraph_adding_data_status_nodes Adding data status nodes
+ * There is a second possibility to add special status nodes which will be only applied to data objects. These are added via
+ * PluginFunctions::addObjectRenderingNode().
+ * \note You should also avoid nodes that render primitives here.
+ *
+ * \subsection OFSceneGraph_adding_global_render_nodes Adding global rendering nodes
+ * If you need global nodes that do not correspond to objects, you can add them as global nodes (PluginFunctions::addGlobalNode(). These nodes
+ * should be completely independent of any other objects in the scene. If you have nodes, that visualize properties of an object or
+ * have a different association with it, please read (\ref OFSceneGraph_adding_nodes_to_objects)
+ *
+ * \section OFSceneGraph_adding_nodes_to_objects Adding nodes to objects
+ * All nodes that refer to a specific object have to be attached to it. This way, the core can hide them, when the object gets hidden and
+ * if it gets deleted, the attached nodes will also be cleaned up. The functions for attaching nodes are specified in BaseObjectData (\ref BaseObjectData_AdditionalNodes_header).
  *
  */
 
