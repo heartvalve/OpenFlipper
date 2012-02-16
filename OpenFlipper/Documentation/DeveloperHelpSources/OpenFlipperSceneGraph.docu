@@ -33,7 +33,8 @@
  *
  * \section OFSceneGraph_adding_nodes_to_objects Adding nodes to objects
  * All nodes that refer to a specific object have to be attached to it. This way, the core can hide them, when the object gets hidden and
- * if it gets deleted, the attached nodes will also be cleaned up. The functions for attaching nodes are specified in BaseObjectData (\ref BaseObjectData_AdditionalNodes_header).
+ * if it gets deleted, the attached nodes will also be cleaned up. The functions for attaching nodes are specified in BaseObjectData
+ * (\ref BaseObjectData_AdditionalNodes_header "Functions to attach additional Nodes to objects").
  *
  */
 
