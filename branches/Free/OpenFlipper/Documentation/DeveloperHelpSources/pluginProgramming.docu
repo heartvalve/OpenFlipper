@@ -147,5 +147,6 @@
  * - \subpage objectDataStructure
  * - \subpage OpenFlipperSceneGraph
  * - \subpage OpenFlipperIterators
+ * - \subpage perObjectDataPage
  * - \subpage adding_empty_objects
  */
