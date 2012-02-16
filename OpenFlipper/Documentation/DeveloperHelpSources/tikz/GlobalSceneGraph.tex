@@ -5,6 +5,7 @@
 
 \tikzstyle{action}=[rectangle, draw=black, rounded corners, fill=red!60!white, drop shadow,text centered, text=black, text width=6.5cm]
 \tikzstyle{userNode}=[rectangle, draw=black, rounded corners, fill=red!20!white, drop shadow,text centered, text=black, text width=6cm]
+\tikzstyle{objectNode}=[rectangle, draw=black, rounded corners, fill=yellow!20!white, drop shadow,text centered, text=black, text width=6cm]
 
 \tikzstyle{flow}=[->, >= triangle 90, very thick]
 \tikzstyle{InvisibleGroup} = [fill=orange!30!white,rectangle,rounded corners,draw,inner sep =0.4cm]
@@ -32,6 +33,7 @@
 \nodepart{second}{User added global status nodes(No rendering, only status!)}
 };
 
+
 \node (AdditionalGlobalStatusNodes) [action,  rectangle split, rectangle split parts=2, right = of UserGlobalStatusNode]
 {
 \textbf{Adding additional Global StatusNodes}
@@ -44,7 +46,7 @@
 \nodepart{second}{The root node for all rendered nodes.(sceneGraphRootNodeGlobal\_) \\ PluginFunctions::getSceneGraphRootNode() }
 };
 
-\node (CoreNodes) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of RenderedRootNode,yshift=-0.3cm]
+\node (CoreNodes) [predefinedNode,  rectangle split, rectangle split parts=2 , below left= of RenderedRootNode,yshift=-0.5cm]
 {
 \textbf{Separator for core nodes}
 \nodepart{second}{This is a separator node for all objects which are created by the core.}
@@ -62,6 +64,12 @@
 \nodepart{second}{Global nodes added by the user}
 };
 
+\node (LassoSelectionNode) [predefinedNode,  rectangle split, rectangle split parts=2 , right= of UserGlobalNode,yshift=0cm]
+{
+\textbf{Lasso Selection Node}
+\nodepart{second}{Node of the selection plugin.}
+};
+
 \node (AdditionalGlobalNodes) [action,  rectangle split, rectangle split parts=2, below = of UserGlobalNode]
 {
 \textbf{Adding additional Global Nodes}
@@ -69,13 +77,12 @@
 };
 
 
-
-
-\node (DataSeparatorNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below left= of RenderedRootNode,yshift=-0.5cm]
+\node (DataSeparatorNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below = of RenderedRootNode,yshift=-0.3cm]
 {
 \textbf{Data Separator Node}
 \nodepart{second}{This is a separator node for all objects in the scene. \\ (dataSeparatorNode\_)}
 };
+
 
 \node (ClippingNode) [predefinedNode,  rectangle split, rectangle split parts=2 , below= of DataSeparatorNode]
 {
@@ -101,6 +108,23 @@
 \nodepart{second}{This is the root of all Objects in OpenFlipper(dataRootNode\_). \\ PluginFuncions::getRootNode()  }
 };
 
+\node (Object1Node) [objectNode,  rectangle split, rectangle split parts=2 , below left= of DataRootNode,yshift=-0.5cm]
+{
+\textbf{Object Separator Node}
+\nodepart{second}{ Toplevel separator node for one object }
+};
+
+\node (Object2Node) [objectNode,  rectangle split, rectangle split parts=2 , below= of DataRootNode,yshift=-0.3cm]
+{
+\textbf{Object Separator Node}
+\nodepart{second}{ Toplevel separator node for one object }
+};
+
+\node (Object3Node) [objectNode,  rectangle split, rectangle split parts=2 , below right = of DataRootNode,yshift=-0.5cm]
+{
+\textbf{Object Separator Node}
+\nodepart{second}{ Toplevel separator node for one object }
+};
 
 \draw[flow] (RootNode.south) -- ++(0,0) -| (LightNodes.north);
 \draw[flow] (LightNodes.south) -- ++(0,0) -| (UserGlobalStatusNode.north);
@@ -108,6 +132,7 @@
 \draw[flow] (AdditionalGlobalStatusNodes.west) -- ++(0,0) |- (UserGlobalStatusNode.east);
 \draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (DataSeparatorNode.north);
 \draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (CoreNodes.north);
+\draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (LassoSelectionNode.north);
 \draw[flow] (CoreNodes.south) -- ++(0,-0.3) -| (CoordsysNode.north);
 \draw[flow] (RenderedRootNode.south) -- ++(0,-0.3) -| (UserGlobalNode.north);
 \draw[flow] (AdditionalGlobalNodes.north) -- ++(0,0) |- (UserGlobalNode.south);
@@ -115,6 +140,9 @@
 \draw[flow] (ClippingNode.south) -- ++(0,0) -| (UserObjectStatusNode.north);
 \draw[flow] (AdditionalObjectStatusNodes.west) -- ++(0,0) |- (UserObjectStatusNode.east);
 \draw[flow] (UserObjectStatusNode.south) -- ++(0,0) -| (DataRootNode.north);
+\draw[flow] (DataRootNode.south) -- ++(0,-0.3) -| (Object1Node.north);
+\draw[flow] (DataRootNode.south) -- ++(0,-0.3) -| (Object2Node.north);
+\draw[flow] (DataRootNode.south) -- ++(0,-0.3) -| (Object3Node.north);
 
 %\begin{pgfonlayer}{background}
 %\node[InvisibleGroup,fit=(current bounding box) ] (Invisible) {};

@@ -145,6 +145,7 @@
  * - \subpage pluginExamples
  * - \subpage interfaces
  * - \subpage objectDataStructure
+ * - \subpage OpenFlipperSceneGraph
  * - \subpage OpenFlipperIterators
  * - \subpage adding_empty_objects
  */
