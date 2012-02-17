@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13568 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13833 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -12,6 +12,7 @@
              - compute the rotation axis as wellas the rotation angle of two given vectors
          - GL
              - Added GLPrimitives class to get rid of glut
+             - Implemented missing read functions for current bound framebuffer. refs #373
          - Math
              - Added operator* for matrix * scalar multiplication, where each element of the matrix is multiplied with the scalar.
          - SceneGraph
@@ -27,6 +28,8 @@
                  - Extra buffer for any picking pass
                  - Bugfix, where mesh was not build yet, but picking needed refs #281
                  - Bugfix for any picking. closes #354
+             - PointNode
+                 - Switched to vec4f colors
              - ShaderNode
                  - Return the available drawmodes based on the set shaders
              - TranslationManipulatorNode
@@ -46,10 +49,12 @@
              - Added ACG::ColorGenerator (For generating good reproducable colors)
              - Halton Color generator
              - Added colorcoder generating nice colors for a given range of doubles.
+             - Add basic histogram plots with colored bars to ACG
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
              - Bugfix: Avoid target counter underflow when copying objects
+             - Bugfix: Missing updateGL causing wrong picking buffers in some special settings
          - Rendering
              - Rendermanager/PostprocessorManager bugfix (crash when illegal viewer id -1 was used)
              - Fixed bug in renderinfo not setting viewer to a renderer mode
@@ -104,6 +109,12 @@
          - File PLY
              - View all after loading a file to see the scene
              - Fixed conversion to 4 color components
+         - InfoSkeleton
+             - Scripting functions to get information
+         - MeanCurvature
+             - Scripting functions
+         - MeshCompare
+             - New plugin to compare two meshes (distance, normal deviation,...)
          - MeshObjectInfo
              - Corrected and improved genus computation
              - Display edge length closes #283
@@ -145,6 +156,9 @@
              - it should not be possible to add/delete/split joints when not in reference pose
              - fix: joint inserted by "splitJoint" will not be deleted, when you click on "addJoint"-Button and then press on another Button
              - Removed deselection and setting of the currentJoint in "splitJoints"
+         - TexxtureControl
+             - Switched to qwt 6
+             - Fixed histogram painting
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
@@ -152,8 +166,9 @@
          - Documentation for Backup Interface
          - Documentation for Postprocessor Interface
          - Documentation for Render Interface
+         - Added lots of documentation for plugin programming (with tikz pictures for the flow diagrams)
      - <b>Testing</b>
-         - Integrated basic testing framework
+         - Integrated basic testing framework for file load/save testing
      - <b>Build System</b>
          - Support Visual Studio 2010 and QT 4.8
          - Added option to allow in source builds (not recommended but it works)
@@ -164,6 +179,7 @@
          - Add option to for windows large memory support (enabled by default)
          - Default warnings now contain -Wextra
          - Moved OpenMesh sources to libs_required subfolder
+         - Switched to QWT 6 (and enabled it on mac)
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
