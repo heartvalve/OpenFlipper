@@ -2,7 +2,7 @@ include (ACGDoxygen)
 
 IF (DOXYGEN_FOUND)
 
-  set(user_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML")
+  set(user_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML/Core")
 
   # Create directories in order to avoid doxygen warnings
   if(NOT (IS_DIRECTORY ${user_html_doc_dir}) )
