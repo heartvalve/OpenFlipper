@@ -91,6 +91,8 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
   tabWidget_ = new QTabWidget(this);
 
+  // Generate the help engine. The filename is in the users home directory and
+  // contains all registered help resources.
   helpEngine_ = new QHelpEngine(filename, this);
   
   helpEngine_->setupData();
@@ -157,7 +159,39 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   connect(textWindow_, SIGNAL(urlChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
 
   // Register documentation
-  helpEngine_->registerDocumentation(filename);
+  // Seems to be an unneeded call!
+  //helpEngine_->registerDocumentation(filename);
+
+  QStringList tmp = helpEngine_->registeredDocumentations ();
+
+//#ifdef DEBUG
+  for ( int i = 0 ; i < tmp.size(); ++i) {
+    std::cerr << "=========================================================================================" << std::endl;
+    std::cerr << "Registered namespace: " << tmp[i].toStdString() << std::endl;
+    std::cerr << "From file : " << helpEngine_->documentationFileName(tmp[i]).toStdString() << std::endl;
+
+
+    QList<QStringList> filterAttribs = helpEngine_->filterAttributeSets (tmp[i]);
+//    std::cerr << "Filter attributes:" << std::endl;
+//    for ( int j = 0 ; j < filterAttribs.size(); ++j) {
+//      for ( int k = 0 ; k < filterAttribs[j].size(); ++k) {
+//        std::cerr <<  filterAttribs[j][k].toStdString() << std::endl;
+//      }
+//    }
+
+    // Print a list of all files included in this help file
+    if ( !filterAttribs.empty() ) {
+      QList<QUrl> list = helpEngine_->files ( tmp[i], filterAttribs[0]);
+      for ( int j = 0 ; j < list.size(); ++j) {
+        std::cerr << list[j].toString().toStdString() << std::endl;
+      }
+    } else {
+      std::cerr << "Error, empty filter! Unable to get list of included files." << std::endl;
+    }
+
+
+  }
+//#endif
 
   // Load main page
   textWindow_->open(QUrl(homeSite_));

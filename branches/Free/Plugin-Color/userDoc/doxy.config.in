@@ -971,13 +971,13 @@ QCH_FILE               = @plugin_qt_help_dir@/Plugin-@plugin@.qch
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#namespace
 
-QHP_NAMESPACE          = "org.openflipper.user.plugin_@plugin@"
+QHP_NAMESPACE          = "org.openflipper.user.@plugin@"
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#virtual-folders
 
-QHP_VIRTUAL_FOLDER     = "doc"
+QHP_VIRTUAL_FOLDER     = "Plugin-@plugin@"
 
 # If QHP_CUST_FILTER_NAME is set, it specifies the name of a custom filter to add.
 # For more information please see
@@ -1339,7 +1339,7 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by
 # the preprocessor.
 
-INCLUDE_PATH           = @CMAKE_SOURCE_DIR@
+INCLUDE_PATH           = 
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the

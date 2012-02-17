@@ -1,4 +1,4 @@
-/** @mainpage OpenFlipper User Documentation
+/** @mainpage General_User_Doc OpenFlipper General User Documentation
  * @image html splash.png
  * @section intro_sec Introduction
  *
@@ -12,4 +12,9 @@
  * - \subpage scripting "Scripting"
  * - \subpage view "View functions"
  * - \subpage tools "Tools"
+ * - \subpage Plugin-Color-Doc
+*
+*
+
+ * \ref Plugin-Color-Doc
  */
