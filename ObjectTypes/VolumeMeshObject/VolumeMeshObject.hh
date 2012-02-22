@@ -44,11 +44,16 @@
 #define VOLUME_MESH_OBJECT_HH
 
 // Includes
+#include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SeparatorNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/BaseObjectData.hh>
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshNode.hh>
+
+#include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
+#include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
+#include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
 
 template<class MeshT>
 class DLLEXPORTONLY VolumeMeshObject : public BaseObjectData {
@@ -120,8 +125,27 @@ public:
      */
     BaseObject* copy();
 
+    typedef OpenVolumeMesh::ColorAttrib<ACG::Vec4f> ColorAttrib;
+    typedef OpenVolumeMesh::NormalAttrib<MeshT> NormalAttrib;
+    typedef OpenVolumeMesh::StatusAttrib StatusAttrib;
+
+    const StatusAttrib& status() const { return statusAttrib_; }
+    StatusAttrib& status() { return statusAttrib_; }
+
+    const ColorAttrib& colors() const { return colorAttrib_; }
+    ColorAttrib& colors() { return colorAttrib_; }
+
+    const NormalAttrib& normals() const { return normalAttrib_; }
+    NormalAttrib& normals() { return normalAttrib_; }
+
   private:
-    MeshT*           mesh_;
+    MeshT* mesh_;
+
+    StatusAttrib statusAttrib_;
+
+    ColorAttrib colorAttrib_;
+
+    NormalAttrib normalAttrib_;
 
   /** @} */
 

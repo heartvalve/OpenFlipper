@@ -57,7 +57,11 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 template<class VolumeMeshT>
-VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(VolumeMesh& _mesh, BaseNode* _parent, std::string _name) :
+VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(VolumeMesh& _mesh,
+                                              OpenVolumeMesh::StatusAttrib& _statusAttrib,
+                                              OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
+                                              OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
+                                              BaseNode* _parent, std::string _name) :
 BaseNode(_parent, _name),
 mesh_(_mesh),
 scale_(1.0),
@@ -73,26 +77,13 @@ translucency_factor_(0.1),
 show_irregs_(false),
 show_outer_val2_irregs_(false),
 selection_color_(ACG::Vec4f(1.0f, 0.0f, 0.0f, 1.0f)),
-point_size_(2.0f) {
+point_size_(2.0f),
+statusAttrib_(_statusAttrib),
+colorAttrib_(_colorAttrib),
+normalAttrib_(_normalAttrib) {
 
     // Initialize rendering display list
     init();
-
-    // Request normals and status for all entities
-    if(!mesh_.has_face_normals())
-        mesh_.request_face_normals();
-
-    if(!mesh_.has_vertex_status())
-        mesh_.request_vertex_status();
-
-    if(!mesh_.has_edge_status())
-        mesh_.request_edge_status();
-
-    if(!mesh_.has_face_status())
-        mesh_.request_face_status();
-
-    if(!mesh_.has_cell_status())
-        mesh_.request_cell_status();
 }
 
 //----------------------------------------------------------------------------
@@ -112,7 +103,7 @@ void VolumeMeshNodeT<VolumeMeshT>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 
     int n_vertices(mesh_.n_vertices());
     for (int i = 0; i < n_vertices; ++i) {
-        Vec3d p(mesh_.vertex(VertexHandle(i)).position());
+        Vec3d p(mesh_.vertex(VertexHandle(i)));
         _bbMin.minimize(p);
         _bbMax.maximize(p);
     }
@@ -164,12 +155,12 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertices(GLState& _state, const DrawMode
 
         int n_vertices(mesh_.n_vertices());
         for (int i = 0; i < n_vertices; ++i) {
-            Vec3d p = mesh_.vertex(VertexHandle(i)).position();
+            Vec3d p = mesh_.vertex(VertexHandle(i));
 
             if(is_inside(p)) {
 
                 // Skip selected
-                if(mesh_.status(VertexHandle(i)).selected()) continue;
+                if(statusAttrib_[VertexHandle(i)].selected()) continue;
 
                 glVertex3d(p[0], p[1], p[2]);
             }
@@ -193,13 +184,13 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_edges(GLState& _state, const DrawModes::
         for (int i = 0; i < n_edges; ++i) {
 
             Edge e(mesh_.edge(EdgeHandle(i)));
-            Vec3d p0 = mesh_.vertex(e.from_vertex()).position();
-            Vec3d p1 = mesh_.vertex(e.to_vertex()).position();
+            Vec3d p0 = mesh_.vertex(e.from_vertex());
+            Vec3d p1 = mesh_.vertex(e.to_vertex());
 
             if (is_inside(p0) && is_inside(p1)) {
 
                 // Skip selected
-                if(mesh_.status(EdgeHandle(i)).selected())
+                if(statusAttrib_[EdgeHandle(i)].selected())
                     continue;
 
                 glBegin(GL_LINES);
@@ -224,10 +215,10 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
             // Only draw boundary
 
             // draw all boundary faces
-            for(typename VolumeMesh::BoundaryFaceIter bf_it = mesh_.bf_iter(); bf_it.valid(); ++bf_it) {
+            for(OpenVolumeMesh::BoundaryFaceIter bf_it = mesh_.bf_iter(); bf_it.valid(); ++bf_it) {
 
                 // Skip selected
-                if(mesh_.status(*bf_it).selected()) continue;
+                if(statusAttrib_[*bf_it].selected()) continue;
 
                 unsigned char c = 0;
                 if(mesh_.is_boundary(mesh_.halfface_handle(*bf_it, 1))) c = 1;
@@ -237,7 +228,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
                 for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                         he_it != hes.end(); ++he_it) {
 
-                    if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position())) {
+                    if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()))) {
                         all_inside = false;
                         break;
                     }
@@ -247,7 +238,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
 
                     glBegin(GL_POLYGON);
 
-                    ACG::Vec3d n = mesh_.face_normal(*bf_it);
+                    ACG::Vec3d n = normalAttrib_[*bf_it];
 
                     // Set normal
                     glNormal3d(n[0], n[1], n[2]);
@@ -255,7 +246,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
                     for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                             he_it != hes.end(); ++he_it) {
 
-                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
 
                         // Set vertex of face
                         glVertex3d(p[0], p[1], p[2]);
@@ -268,16 +259,16 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
         } else {
 
             // Draw all cells
-            for(typename VolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
+            for(OpenVolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
 
                 // Skip selected
-                if(mesh_.status(*c_it).selected()) continue;
+                if(statusAttrib_[*c_it].selected()) continue;
 
                 // Compute cell's cog
                 ACG::Vec3d cog(0.0, 0.0, 0.0);
                 unsigned int val = mesh_.n_vertices_in_cell(*c_it);
-                for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
-                    cog += mesh_.vertex(*cv_it).position() / (double)val;
+                for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+                    cog += mesh_.vertex(*cv_it) / (double)val;
                 }
 
                 // Now draw all faces
@@ -291,7 +282,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
                     for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                             he_it != hes.end(); ++he_it) {
 
-                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                         p = (scale_ * p) + ((1.0 - scale_) * cog);
 
                         if(!is_inside(p)) {
@@ -308,16 +299,16 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
                             hf_it != hfs.end(); ++hf_it) {
 
                         // Skip selected
-                        if(mesh_.status(mesh_.face_handle(*hf_it)).selected()) continue;
+                        if(statusAttrib_[mesh_.face_handle(*hf_it)].selected()) continue;
 
                         std::vector<HalfEdgeHandle> hes = mesh_.halfface(*hf_it).halfedges();
 
                         glBegin(GL_POLYGON);
 
-                        ACG::Vec3d n = mesh_.halfface_normal(*hf_it);
+                        ACG::Vec3d n = normalAttrib_[mesh_.face_handle(*hf_it)];
 
                         // Invert normal if it points inside the cell
-                        ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex()).position();
+                        ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex());
                         if((n | (cog - t_v)) > 0) {
                             n *= -1;
                         }
@@ -328,7 +319,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_faces(GLState& _state, const DrawModes::
                         for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                                 he_it != hes.end(); ++he_it) {
 
-                            ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                            ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                             p = (scale_ * p) + ((1.0 - scale_) * cog);
                             glVertex3d(p[0], p[1], p[2]);
                         }
@@ -374,12 +365,12 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertex_selection(GLState& _state, const 
 
     int n_vertices(mesh_.n_vertices());
     for (int i = 0; i < n_vertices; ++i) {
-        Vec3d p = mesh_.vertex(VertexHandle(i)).position();
+        Vec3d p = mesh_.vertex(VertexHandle(i));
 
         if(is_inside(p)) {
 
             // Skip unselected
-            if(!mesh_.status(VertexHandle(i)).selected()) continue;
+            if(!statusAttrib_[VertexHandle(i)].selected()) continue;
 
             glVertex3d(p[0], p[1], p[2]);
         }
@@ -407,13 +398,13 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_edge_selection(GLState& _state, const Dr
     for (int i = 0; i < n_edges; ++i) {
 
         Edge e(mesh_.edge(EdgeHandle(i)));
-        Vec3d p0 = mesh_.vertex(e.from_vertex()).position();
-        Vec3d p1 = mesh_.vertex(e.to_vertex()).position();
+        Vec3d p0 = mesh_.vertex(e.from_vertex());
+        Vec3d p1 = mesh_.vertex(e.to_vertex());
 
         if (is_inside(p0) && is_inside(p1)) {
 
             // Skip unselected
-            if(!mesh_.status(EdgeHandle(i)).selected())
+            if(!statusAttrib_[EdgeHandle(i)].selected())
                 continue;
 
             glBegin(GL_LINES);
@@ -439,10 +430,10 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
         // Only draw boundary
 
         // draw all boundary faces
-        for(typename VolumeMesh::BoundaryFaceIter bf_it = mesh_.bf_iter(); bf_it.valid(); ++bf_it) {
+        for(OpenVolumeMesh::BoundaryFaceIter bf_it = mesh_.bf_iter(); bf_it.valid(); ++bf_it) {
 
             // Skip unselected
-            if(!mesh_.status(*bf_it).selected()) continue;
+            if(!statusAttrib_[(*bf_it)].selected()) continue;
 
             unsigned char c = 0;
             if(mesh_.is_boundary(mesh_.halfface_handle(*bf_it, 1))) c = 1;
@@ -452,7 +443,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
             for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                     he_it != hes.end(); ++he_it) {
 
-                if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position())) {
+                if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()))) {
                     all_inside = false;
                     break;
                 }
@@ -462,7 +453,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
 
                 glBegin(GL_POLYGON);
 
-                ACG::Vec3d n = mesh_.face_normal(*bf_it);
+                ACG::Vec3d n = normalAttrib_[(*bf_it)];
 
                 // Set normal
                 glNormal3d(n[0], n[1], n[2]);
@@ -470,7 +461,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
                 for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                         he_it != hes.end(); ++he_it) {
 
-                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
 
                     // Set vertex of face
                     glVertex3d(p[0], p[1], p[2]);
@@ -483,13 +474,13 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
     } else {
 
         // Draw all cells
-        for(typename VolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
+        for(OpenVolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
 
             // Compute cell's cog
             ACG::Vec3d cog(0.0, 0.0, 0.0);
             unsigned int val = mesh_.n_vertices_in_cell(*c_it);
-            for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
-                cog += mesh_.vertex(*cv_it).position() / (double)val;
+            for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+                cog += mesh_.vertex(*cv_it) / (double)val;
             }
 
             // Now draw all faces
@@ -503,7 +494,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
                 for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                         he_it != hes.end(); ++he_it) {
 
-                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                     p = (scale_ * p) + ((1.0 - scale_) * cog);
 
                     if(!is_inside(p)) {
@@ -520,16 +511,16 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
                         hf_it != hfs.end(); ++hf_it) {
 
                     // Skip unselected
-                    if(!mesh_.status(mesh_.face_handle(*hf_it)).selected()) continue;
+                    if(!statusAttrib_[mesh_.face_handle(*hf_it)].selected()) continue;
 
                     std::vector<HalfEdgeHandle> hes = mesh_.halfface(*hf_it).halfedges();
 
                     glBegin(GL_POLYGON);
 
-                    ACG::Vec3d n = mesh_.halfface_normal(*hf_it);
+                    ACG::Vec3d n = normalAttrib_[mesh_.face_handle(*hf_it)];
 
                     // Invert normal if it points inside the cell
-                    ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex()).position();
+                    ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex());
                     if((n | (cog - t_v)) > 0) {
                         n *= -1;
                     }
@@ -540,7 +531,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_face_selection(GLState& _state, const Dr
                     for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                             he_it != hes.end(); ++he_it) {
 
-                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                        ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                         p = (scale_ * p) + ((1.0 - scale_) * cog);
                         glVertex3d(p[0], p[1], p[2]);
                     }
@@ -561,16 +552,16 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_cell_selection(GLState& _state, const Dr
     if(!(_drawMode & DrawModes::SOLID_FLAT_SHADED)) return;
 
     // Draw all cells
-    for(typename VolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
+    for(OpenVolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
 
         // Skip unselected
-        if(!mesh_.status(*c_it).selected()) continue;
+        if(!statusAttrib_[*c_it].selected()) continue;
 
         // Compute cell's cog
         ACG::Vec3d cog(0.0, 0.0, 0.0);
         unsigned int val = mesh_.n_vertices_in_cell(*c_it);
-        for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
-            cog += mesh_.vertex(*cv_it).position() / (double)val;
+        for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+            cog += mesh_.vertex(*cv_it) / (double)val;
         }
 
         // Now draw all faces
@@ -584,7 +575,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_cell_selection(GLState& _state, const Dr
             for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                     he_it != hes.end(); ++he_it) {
 
-                ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                 p = (scale_ * p) + ((1.0 - scale_) * cog);
 
                 if(!is_inside(p)) {
@@ -604,10 +595,10 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_cell_selection(GLState& _state, const Dr
 
                 glBegin(GL_POLYGON);
 
-                ACG::Vec3d n = mesh_.halfface_normal(*hf_it);
+                ACG::Vec3d n = normalAttrib_[mesh_.face_handle(*hf_it)];
 
                 // Invert normal if it points inside the cell
-                ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex()).position();
+                ACG::Vec3d t_v = mesh_.vertex(mesh_.halfedge(*hes.begin()).from_vertex());
                 if((n | (cog - t_v)) > 0) {
                     n *= -1;
                 }
@@ -618,7 +609,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_cell_selection(GLState& _state, const Dr
                 for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                         he_it != hes.end(); ++he_it) {
 
-                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                     p = (scale_ * p) + ((1.0 - scale_) * cog);
                     glVertex3d(p[0], p[1], p[2]);
                 }
@@ -663,8 +654,8 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_irreg_edges(GLState& _state, const DrawM
     for (int i = 0; i < n_edges; ++i) {
 
         Edge e(mesh_.edge(EdgeHandle(i)));
-        Vec3d p0 = mesh_.vertex(e.from_vertex()).position();
-        Vec3d p1 = mesh_.vertex(e.to_vertex()).position();
+        Vec3d p0 = mesh_.vertex(e.from_vertex());
+        Vec3d p1 = mesh_.vertex(e.to_vertex());
 
         if (is_inside(p0) && is_inside(p1)) {
 
@@ -871,13 +862,13 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_vertices(GLState& _state) {
     // draw all points
     glBegin(GL_POINTS);
 
-    for (typename VolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
+    for (OpenVolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
 
         // Compute cell's cog
         ACG::Vec3d cog(0.0, 0.0, 0.0);
         unsigned int val = mesh_.n_vertices_in_cell(*c_it);
-        for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
-            cog += mesh_.vertex(*cv_it).position() / (double)val;
+        for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+            cog += mesh_.vertex(*cv_it) / (double)val;
         }
 
         std::vector<HalfFaceHandle> hfs = mesh_.cell(*c_it).halffaces();
@@ -887,7 +878,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_vertices(GLState& _state) {
 
             std::vector<HalfEdgeHandle> hes = mesh_.halfface(*hf_it).halfedges();
             for (typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(); he_it != hes.end(); ++he_it) {
-                if (!is_inside(Vec3d(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position() * scale_ + (1.0 - scale_) * cog))) {
+                if (!is_inside(Vec3d(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()) * scale_ + (1.0 - scale_) * cog))) {
 
                     all_inside = false;
                     break;
@@ -897,9 +888,9 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_vertices(GLState& _state) {
         }
 
         if (all_inside)
-            for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+            for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
 
-                Vec3d scaled_pos = mesh_.vertex(*cv_it).position() * scale_ + (1.0 - scale_) * cog;
+                Vec3d scaled_pos = mesh_.vertex(*cv_it) * scale_ + (1.0 - scale_) * cog;
                 _state.pick_set_name(*cv_it);
                 glVertex3d(scaled_pos[0], scaled_pos[1], scaled_pos[2]);
             }
@@ -919,12 +910,12 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_edges(GLState& _state, unsigned int _off
 
     glBegin(GL_LINES);
 
-    for (typename VolumeMesh::EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
+    for (OpenVolumeMesh::EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
 
         _state.pick_set_name(*e_it + _offset);
 
-        Vec3d p0(mesh_.vertex(mesh_.edge(*e_it).from_vertex()).position());
-        Vec3d p1(mesh_.vertex(mesh_.edge(*e_it).to_vertex()).position());
+        Vec3d p0(mesh_.vertex(mesh_.edge(*e_it).from_vertex()));
+        Vec3d p1(mesh_.vertex(mesh_.edge(*e_it).to_vertex()));
 
         if (is_inside(p0) && is_inside(p1)) {
             glVertex3d(p0[0], p0[1], p0[2]);
@@ -940,13 +931,13 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_edges(GLState& _state, unsigned int _off
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::pick_faces(GLState& _state, unsigned int _offset) {
 
-    for (typename VolumeMesh::FaceIter f_it = mesh_.f_iter(); f_it.valid(); ++f_it) {
+    for (OpenVolumeMesh::FaceIter f_it = mesh_.f_iter(); f_it.valid(); ++f_it) {
 
         bool all_inside = true;
         std::vector<HalfEdgeHandle> hes = mesh_.face(*f_it).halfedges();
         for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                 he_it != hes.end(); ++he_it) {
-            if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position())) {
+            if(!is_inside(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()))) {
                 all_inside = false;
                 break;
             }
@@ -955,7 +946,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_faces(GLState& _state, unsigned int _off
         if(all_inside) {
 
             glBegin(GL_POLYGON);
-            ACG::Vec3d n = mesh_.face_normal(*f_it);
+            ACG::Vec3d n = normalAttrib_[*f_it];
             glNormal3d(n[0], n[1], n[2]);
 
             _state.pick_set_name(*f_it + _offset);
@@ -963,7 +954,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_faces(GLState& _state, unsigned int _off
             for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                 he_it != hes.end(); ++he_it) {
 
-                ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position();
+                ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex());
                 glVertex3d(p[0], p[1], p[2]);
             }
             glEnd();
@@ -977,13 +968,13 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_faces(GLState& _state, unsigned int _off
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::pick_cells(GLState& _state, unsigned int _offset) {
 
-    for (typename VolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
+    for (OpenVolumeMesh::CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
 
         // Compute cell's cog
         ACG::Vec3d cog(0.0, 0.0, 0.0);
         unsigned int val = mesh_.n_vertices_in_cell(*c_it);
-        for(typename VolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
-            cog += mesh_.vertex(*cv_it).position() / (double)val;
+        for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
+            cog += mesh_.vertex(*cv_it) / (double)val;
         }
 
         std::vector<HalfFaceHandle> hfs = mesh_.cell(*c_it).halffaces();
@@ -993,7 +984,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_cells(GLState& _state, unsigned int _off
 
             std::vector<HalfEdgeHandle> hes = mesh_.halfface(*hf_it).halfedges();
             for (typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(); he_it != hes.end(); ++he_it) {
-                if (!is_inside(Vec3d(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position() * scale_ + (1.0 - scale_) * cog))) {
+                if (!is_inside(Vec3d(mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()) * scale_ + (1.0 - scale_) * cog))) {
 
                     all_inside = false;
                     break;
@@ -1010,13 +1001,13 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_cells(GLState& _state, unsigned int _off
                 hf_it != hfs.end(); ++hf_it) {
 
                 glBegin(GL_POLYGON);
-                ACG::Vec3d n = mesh_.halfface_normal(*hf_it);
+                ACG::Vec3d n = normalAttrib_[mesh_.face_handle(*hf_it)];
                 glNormal3d(n[0], n[1], n[2]);
 
                 std::vector<HalfEdgeHandle> hes = mesh_.halfface(*hf_it).halfedges();
                 for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(); he_it != hes.end(); ++he_it) {
 
-                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()).position() * scale_ + cog * (1.0 - scale_);
+                    ACG::Vec3d p = mesh_.vertex(mesh_.halfedge(*he_it).to_vertex()) * scale_ + cog * (1.0 - scale_);
                     glVertex3d(p[0], p[1], p[2]);
                 }
                 glEnd();
