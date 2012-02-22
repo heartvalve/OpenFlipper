@@ -61,7 +61,14 @@
 
 template<class MeshT>
 VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
-    BaseObjectData(_object), mesh_(0), meshNode_(0) {
+    BaseObjectData(_object), mesh_(_object.mesh_),
+    statusAttrib_(*mesh_),
+    colorAttrib_(*mesh_),
+    normalAttrib_(*mesh_),
+    meshNode_((OpenFlipper::Options::nogui() ?
+               NULL :
+               new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
+                                                           normalAttrib_, NULL, "NEW VolumeMeshNode"))) {
 
     init(_object.mesh_);
 
@@ -70,7 +77,14 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
 
 template<class MeshT>
 VolumeMeshObject<MeshT>::VolumeMeshObject(DataType _typeId) :
-    BaseObjectData(), mesh_(0), meshNode_(0) {
+    BaseObjectData(), mesh_(new MeshT()),
+    statusAttrib_(*mesh_),
+    colorAttrib_(*mesh_),
+    normalAttrib_(*mesh_),
+    meshNode_((OpenFlipper::Options::nogui() ?
+               NULL :
+               new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
+                                                           normalAttrib_, NULL, "NEW VolumeMeshNode"))) {
 
     setDataType(_typeId);
     init();
@@ -125,13 +139,6 @@ void VolumeMeshObject<MeshT>::cleanup() {
 template<class MeshT>
 void VolumeMeshObject<MeshT>::init(MeshT* _mesh) {
 
-    if(_mesh == 0)
-        mesh_ = new MeshT();
-    else
-        mesh_ = new MeshT(*_mesh);
-
-    mesh_->request_face_normals();
-
     // Only initialize scenegraph nodes when we initialized a gui!!
     if(OpenFlipper::Options::nogui())
         return;
@@ -142,7 +149,7 @@ void VolumeMeshObject<MeshT>::init(MeshT* _mesh) {
     if(materialNode() == NULL)
         std::cerr << "Error when creating mesh object! Material node is NULL!" << std::endl;
 
-    meshNode_ = new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, materialNode(), "NEW VolumeMeshNode");
+    meshNode_->set_parent(materialNode());
 
     // Update all nodes
     update();
@@ -222,6 +229,8 @@ void VolumeMeshObject<MeshT>::updateSelection() {
 /** Updates the geometry information in the mesh scenegraph node */
 template<class MeshT>
 void VolumeMeshObject<MeshT>::updateGeometry() {
+
+    normalAttrib_.update_face_normals();
 
     if(meshNode_) {
         meshNode_->set_geometry_changed(true);
