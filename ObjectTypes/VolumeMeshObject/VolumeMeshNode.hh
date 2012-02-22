@@ -48,6 +48,8 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/BaseEntities.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -67,17 +69,17 @@ public:
 
     // typedefs for easy access
     typedef VolumeMeshT VolumeMesh;
-    typedef typename VolumeMeshT::VertexHandle VertexHandle;
-    typedef typename VolumeMeshT::EdgeHandle EdgeHandle;
-    typedef typename VolumeMeshT::HalfEdgeHandle HalfEdgeHandle;
-    typedef typename VolumeMeshT::FaceHandle FaceHandle;
-    typedef typename VolumeMeshT::HalfFaceHandle HalfFaceHandle;
-    typedef typename VolumeMeshT::CellHandle CellHandle;
+    typedef OpenVolumeMesh::VertexHandle VertexHandle;
+    typedef OpenVolumeMesh::EdgeHandle EdgeHandle;
+    typedef OpenVolumeMesh::HalfEdgeHandle HalfEdgeHandle;
+    typedef OpenVolumeMesh::FaceHandle FaceHandle;
+    typedef OpenVolumeMesh::HalfFaceHandle HalfFaceHandle;
+    typedef OpenVolumeMesh::CellHandle CellHandle;
 
-    typedef typename VolumeMeshT::Vertex Vertex;
-    typedef typename VolumeMeshT::Edge Edge;
-    typedef typename VolumeMeshT::Face Face;
-    typedef typename VolumeMeshT::Cell Cell;
+    typedef typename VolumeMeshT::PointT Vertex;
+    typedef OpenVolumeMesh::OpenVolumeMeshEdge Edge;
+    typedef OpenVolumeMesh::OpenVolumeMeshFace Face;
+    typedef OpenVolumeMesh::OpenVolumeMeshCell Cell;
 
     class Plane {
     public:
