@@ -201,7 +201,9 @@ void HelpWidget::linkActivated(const QUrl& _url) {
 
   textWindow_->open(_url);
   tabWidget_->setCurrentIndex(homeIndex_);
+  //todo: change content in Tree of help-browser
   //helpEngine_->contentWidget() shows the tree
+  //cannot find any function which changes the content
 }
 
 void HelpWidget::startSearch() {
