@@ -51,7 +51,10 @@ text centered, text=black, text width=3.5cm]
 \textbf{slot BaseInterface::slotViewChanged()}
 };
 
-
+\node (slotSceneDrawn)[abstract, rectangle, below=of slotViewChanged, yshift=-2.4cm ]
+{
+\textbf{slot BaseInterface::slotSceneDrawn()}
+};
 
 
 \node (coreUpdateHandling) [abstract, rectangle, left= of signalUpdateView, xshift=-1.6cm ]
@@ -91,6 +94,7 @@ text centered, text=black, text width=3.5cm]
 \node [label=above:per plugin,yshift=-3] (X) at ($ (viewManagement)!.78!(slotViewChanged.west) $) {};
 \node [label=right:update time reached] (X) at ($ (viewManagement)!.57!(redraw) $) {};
 \node [label=left:too many updates] (X) at ($ (viewManagement)!.4!(timer) $) {};
+\node [label=above:per plugin,yshift=-3] (X) at ($ (redraw.south)!.78!(slotSceneDrawn.west) $) {};
 
 \draw[flow] (pluginViewChange.west) -- ++(0,0) -| (viewManagement.north);
 \draw[flow] (userViewChange.south) -- ++(0,-0.5cm) -| (viewManagement.north);
@@ -101,10 +105,11 @@ text centered, text=black, text width=3.5cm]
 \draw[flow] (viewManagement.south) -- ++(0,-0.9) -| (timer.north);
 \draw[flow] (signalUpdateView.west) --  ++(0,0) |-  (coreUpdateHandling.east);
 \draw[flow] (timer.south) --  ++(0,-0.4) -|  (redraw.north);
+\draw[flow] (redraw.south) --  ++(0,0) |-  (slotSceneDrawn.west);
 
 \begin{pgfonlayer}{background}
 \node[CoreGroup,fit=(Core) (redraw) (userViewChange) ] (Core) {};
-\node[PluginGroup,fit=(Plugins) (signalUpdatedObject) (slotViewChanged) ] (Plugin) {};
+\node[PluginGroup,fit=(Plugins) (signalUpdatedObject) (slotSceneDrawn) ] (Plugin) {};
 \end{pgfonlayer}
 
 
