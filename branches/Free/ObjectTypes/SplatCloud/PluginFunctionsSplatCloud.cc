@@ -89,7 +89,7 @@ bool getObject( int _identifier, SplatCloudObject *&_object )
 //================================================================
 
 
-ShaderNode *splatShaderNode( BaseObjectData *_object )
+ShaderNode* splatShaderNode( BaseObjectData *_object )
 {
 	if( !_object )
 		return 0;
@@ -109,7 +109,7 @@ ShaderNode *splatShaderNode( BaseObjectData *_object )
 //----------------------------------------------------------------
 
 
-SplatCloudNode *splatCloudNode( BaseObjectData *_object )
+SplatCloudNode* splatCloudNode( BaseObjectData *_object )
 {
 	if( !_object )
 		return 0;
@@ -129,7 +129,7 @@ SplatCloudNode *splatCloudNode( BaseObjectData *_object )
 //----------------------------------------------------------------
 
 
-SplatCloud *splatCloud( BaseObjectData *_object )
+SplatCloud* splatCloud( BaseObjectData *_object )
 {
 	if( !_object )
 		return 0;
@@ -154,7 +154,7 @@ SplatCloud *splatCloud( BaseObjectData *_object )
 //----------------------------------------------------------------
 
 
-SplatCloudObject *splatCloudObject( BaseObjectData *_object )
+SplatCloudObject* splatCloudObject( BaseObjectData *_object )
 {
 	if( !_object )
 		return 0;
@@ -163,6 +163,23 @@ SplatCloudObject *splatCloudObject( BaseObjectData *_object )
 		return 0;
 
 	return dynamic_cast<SplatCloudObject *>( _object );
+}
+
+//----------------------------------------------------------------
+
+SplatCloudObject* splatCloudObject(  int _objectId ) {
+
+  if  (_objectId == -1)
+    return 0;
+
+  BaseObject* object = objectRoot()->childExists( _objectId );
+
+  if ( object == 0 )
+    return 0;
+
+  SplatCloudObject* splatCloudObject = dynamic_cast< SplatCloudObject* >(object);
+
+  return splatCloudObject;
 }
 
 
