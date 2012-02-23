@@ -1,0 +1,8 @@
+/** \mainpage Documentation for plugin DataControl
+
+\section Functionality
+
+The DataControl Plugin shows a tree of available objects in the scene. You can show or hide objects and change their selection. You can also
+enable/disable or disable light sources.
+
+*/
