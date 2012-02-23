@@ -126,7 +126,7 @@ QString FileOpenVolumeMeshPlugin::getSaveFilters() {
 
 DataType FileOpenVolumeMeshPlugin::supportedType() {
 
-    DataType type = DATA_POLYHEDRAL_MESH;// | DATA_HEXAHEDRAL_MESH;
+    DataType type = DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH;
     return type;
 }
 
