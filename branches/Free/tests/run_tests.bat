@@ -11,7 +11,7 @@ REM Run the tests
 ctest -D ExperimentalTest -C Release --no-compress-output
 
 REM Call head on the TAG to get the current folder where the test results are
-FOR /F "tokens=1 delims= " %%i IN ('head.bat 1 Testing\TAG') DO @set result=%%i 
+FOR /F "tokens=1 delims= " %%i IN ('tests\head.bat 1 Testing\TAG') DO @set result=%%i 
 
 REM Go into that folder
 cd Testing
