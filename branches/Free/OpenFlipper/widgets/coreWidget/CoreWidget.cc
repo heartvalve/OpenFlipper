@@ -616,6 +616,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   {
   	helpWidget_ = new HelpWidget(this);
   	connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(linkActivated(QUrl)));
+  	helpWidget_->hide();
   }
 
 }

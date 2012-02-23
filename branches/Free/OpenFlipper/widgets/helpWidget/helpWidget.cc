@@ -201,6 +201,7 @@ void HelpWidget::linkActivated(const QUrl& _url) {
 
   textWindow_->open(_url);
   tabWidget_->setCurrentIndex(homeIndex_);
+  //helpEngine_->contentWidget() shows the tree
 }
 
 void HelpWidget::startSearch() {
