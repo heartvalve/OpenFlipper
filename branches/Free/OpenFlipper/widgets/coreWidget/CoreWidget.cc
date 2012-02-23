@@ -606,6 +606,18 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Close button
   connect(stereoSettingsWidget_->closeButton, SIGNAL(clicked()),
           stereoSettingsWidget_, SLOT(hide()));
+
+
+  // ======================================================================
+  // Help Browser start up
+  // ======================================================================
+
+  if (!OpenFlipper::Options::nogui())
+  {
+  	helpWidget_ = new HelpWidget(this);
+  	connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(linkActivated(QUrl)));
+  }
+
 }
 
 
@@ -1021,6 +1033,22 @@ void CoreWidget::slotActivateExaminer()
 void CoreWidget::setForceNativeCursor ( bool _state )
 {
   cursorPainter_->setForceNative (_state);
+}
+
+//-----------------------------------------------------------------------------
+
+bool CoreWidget::event( QEvent *_event )
+{
+	//WhatsThisClicked for hyperlinks in 'whats this' Message Boxes
+	if( _event->type() == QEvent::WhatsThisClicked )
+	{
+		QWhatsThisClickedEvent *wtcEvent = static_cast<QWhatsThisClickedEvent*>(_event);
+		QWhatsThis::hideText();
+		this->showHelpBrowser(wtcEvent->href());
+		return true;
+	}
+
+	return QWidget::event(_event);
 }
 
 //=============================================================================

@@ -327,6 +327,8 @@ public:
     // Filter alt key events under windows
     //bool eventFilter(QObject *obj, QEvent *ev);
 
+    bool event( QEvent *event );
+
   signals :
 
     /** When this Signal is emitted when a Keyevent Event occures
@@ -1028,7 +1030,10 @@ public:
 
   public slots:
     /// Display the help Browser
-    void showHelpBrowser();
+    void showHelpBrowser(const QString &page = "qthelp://org.openflipper.dev/doc/main.html");
+
+  signals:
+   void changeHelpSite(QUrl);
 
   private:
     /// Pointer to the help Browser
