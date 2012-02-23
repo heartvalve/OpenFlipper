@@ -56,6 +56,7 @@
 #define DATA_POLYHEDRAL_MESH typeId("PolyhedralMesh")
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshObject.hh>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
 
 typedef OpenVolumeMesh::GeometryKernel<ACG::Vec3d, OpenVolumeMesh::TopologyKernel> PolyhedralMesh;
 
