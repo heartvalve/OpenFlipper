@@ -88,7 +88,7 @@ bool getObject( int _identifier, SplatCloudObject *&_object );
  *                ShaderNode will be returned. Otherwise a NULL pointer is returned.
  */
 DLLEXPORT
-ShaderNode *splatShaderNode( BaseObjectData *_object );
+ShaderNode* splatShaderNode( BaseObjectData *_object );
 
 
 /** \brief Get a SplatCloudNode from an object.
@@ -97,7 +97,7 @@ ShaderNode *splatShaderNode( BaseObjectData *_object );
  *                SplatCloudNode will be returned. Otherwise a NULL pointer is returned.
  */
 DLLEXPORT
-SplatCloudNode *splatCloudNode( BaseObjectData *_object );
+SplatCloudNode* splatCloudNode( BaseObjectData *_object );
 
 
 /** \brief Get a SplatCloud from an object.
@@ -106,16 +106,25 @@ SplatCloudNode *splatCloudNode( BaseObjectData *_object );
  *                SplatCloud will be returned. Otherwise a NULL pointer is returned.
  */
 DLLEXPORT
-SplatCloud *splatCloud( BaseObjectData *_object );
+SplatCloud* splatCloud( BaseObjectData *_object );
 
 
-/** \brief Cast an BaseObject to a SplatCloudObject if possible
+/** \brief Cast an SplatCloudObject to a SplatCloudObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a SplatCloud, a
  *                SplatCloudObject is returned. Otherwise a NULL pointer is returned.
  */
 DLLEXPORT
-SplatCloudObject *splatCloudObject( BaseObjectData *_object );
+SplatCloudObject* splatCloudObject( BaseObjectData *_object );
+
+
+/** \brief Get an SplatCloudObject by its id
+ *
+ * @param _objectId Id of the object. If the object exists and is a SplatCloud, a
+ *                SplatCloudObject is returned. Otherwise a NULL pointer is returned.
+ */
+DLLEXPORT
+SplatCloudObject* splatCloudObject(  int _objectId );
 
 
 //================================================================
