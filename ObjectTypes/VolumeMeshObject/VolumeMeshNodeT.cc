@@ -57,7 +57,7 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 template<class VolumeMeshT>
-VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(VolumeMesh& _mesh,
+VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(const VolumeMesh& _mesh,
                                               OpenVolumeMesh::StatusAttrib& _statusAttrib,
                                               OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                                               OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
