@@ -101,7 +101,7 @@ public:
     };
 
     /// Constructor
-    VolumeMeshNodeT(VolumeMesh& _mesh,
+    VolumeMeshNodeT(const VolumeMesh& _mesh,
                     OpenVolumeMesh::StatusAttrib& _statusAttrib,
                     OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                     OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
@@ -242,7 +242,7 @@ private:
 
 private:
 
-    VolumeMesh& mesh_;
+    const VolumeMesh& mesh_;
 
     std::vector<Plane> cut_planes_;
 

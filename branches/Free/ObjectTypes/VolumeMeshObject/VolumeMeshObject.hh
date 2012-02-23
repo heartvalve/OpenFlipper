@@ -44,6 +44,8 @@
 #define VOLUME_MESH_OBJECT_HH
 
 // Includes
+#include <memory>
+
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SeparatorNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
@@ -83,7 +85,7 @@ public:
   protected:
 
     /// Initialise current object, including all related nodes.
-    virtual void init(MeshT* _mesh = 0);
+    virtual void init();
 
   //===========================================================================
   /** @name Name and Path handling
@@ -139,7 +141,7 @@ public:
     NormalAttrib& normals() { return normalAttrib_; }
 
   private:
-    MeshT* mesh_;
+    std::auto_ptr<MeshT> mesh_;
 
     StatusAttrib statusAttrib_;
 

@@ -61,7 +61,7 @@
 
 template<class MeshT>
 VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
-    BaseObjectData(_object), mesh_(_object.mesh_),
+    BaseObjectData(_object), mesh_(_object.mesh_.get()),
     statusAttrib_(*mesh_),
     colorAttrib_(*mesh_),
     normalAttrib_(*mesh_),
@@ -70,7 +70,7 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
                new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
                                                            normalAttrib_, NULL, "NEW VolumeMeshNode"))) {
 
-    init(_object.mesh_);
+    init();
 
     setName(name());
 }
@@ -100,14 +100,6 @@ VolumeMeshObject<MeshT>::~VolumeMeshObject() {
     // perObjectData.
     deleteData();
 
-    // Delete the mesh only, if this object contains a mesh
-    if(mesh_ != NULL) {
-        delete mesh_;
-        mesh_ = NULL;
-    } else {
-        std::cerr << "Destructor error: Mesh already deleted." << std::endl;
-    }
-
     // No need to delete the scenegraph nodes as this will be managed by baseplugin
     meshNode_ = 0;
 }
@@ -117,14 +109,6 @@ VolumeMeshObject<MeshT>::~VolumeMeshObject() {
  */
 template<class MeshT>
 void VolumeMeshObject<MeshT>::cleanup() {
-
-    // Delete the mesh only, if this object contains a mesh
-    if(mesh_ != NULL) {
-        delete mesh_;
-        mesh_ = NULL;
-    } else {
-        std::cerr << "Cleanup error: Triangle Mesh already deleted." << std::endl;
-    }
 
     BaseObjectData::cleanup();
 
@@ -137,7 +121,7 @@ void VolumeMeshObject<MeshT>::cleanup() {
  *  the mesh and requests all required properties for the mesh.
  */
 template<class MeshT>
-void VolumeMeshObject<MeshT>::init(MeshT* _mesh) {
+void VolumeMeshObject<MeshT>::init() {
 
     // Only initialize scenegraph nodes when we initialized a gui!!
     if(OpenFlipper::Options::nogui())
@@ -183,7 +167,7 @@ void VolumeMeshObject<MeshT>::setName(QString _name) {
  */
 template<class MeshT>
 MeshT* VolumeMeshObject<MeshT>::mesh() {
-    return mesh_;
+    return mesh_.get();
 }
 
 /** Updates the visualization of the object. Calls VolumeMeshObject::updateGeometry,
