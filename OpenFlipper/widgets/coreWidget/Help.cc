@@ -57,17 +57,15 @@
 
 //== IMPLEMENTATION ==========================================================
 
-
-
-void CoreWidget::showHelpBrowser( ) {
+void CoreWidget::showHelpBrowser(const QString &page /*= "qthelp://org.openflipper.dev/doc/main.html"*/) {
 
 	if ( OpenFlipper::Options::nogui() )
 		return;
 
-	if(helpWidget_ == 0)
-		helpWidget_ = new HelpWidget(this, "qthelp://org.openflipper.dev/doc/main.html");
+	emit changeHelpSite(QUrl(page));
 
 	helpWidget_->show();
+	helpWidget_->activateWindow();
 
 }
 
