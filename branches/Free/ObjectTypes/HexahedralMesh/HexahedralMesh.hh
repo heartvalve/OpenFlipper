@@ -56,6 +56,7 @@
 #define DATA_HEXAHEDRAL_MESH typeId("HexahedralMesh")
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshObject.hh>
 #include <OpenVolumeMesh/Mesh/HexahedralMesh.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
 
 typedef OpenVolumeMesh::GeometryKernel<ACG::Vec3d, OpenVolumeMesh::HexahedralMeshTopologyKernel> HexahedralMesh;
 
