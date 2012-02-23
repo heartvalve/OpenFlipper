@@ -859,7 +859,12 @@ void Core::updateView()
 
     for (unsigned int i = 0; i < OpenFlipper::Options::examinerWidgets(); ++i)
       coreWidget_->examiner_widgets_[i]->updateGL();
+
+    // Inform plugins of the scene update
+    emit pluginSceneDrawn();
   }
+
+
 }
 
 

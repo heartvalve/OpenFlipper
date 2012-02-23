@@ -219,6 +219,18 @@ class BaseInterface {
     */
     virtual void slotViewChanged() {};
 
+    /** \brief triggered after a scene has been drawn
+     *
+     * This slot will be triggered every time, the OpenGl draw of one frame is completed.
+     * Every time you emit an updateView, a scene redraw will be triggered (except, if
+     * the minimal time between two frames is not yet reached). After drawing the scene, the
+     * core will call this slot to inform the plugins, that a new view is visible.
+     *
+     * You can use this slot, if you need to control special updates in your plugin, that
+     * react on the fps.
+     */
+    virtual void slotSceneDrawn() {};
+
     /** \brief A viewer changed its draw mode
      *
      * @param _viewerId Id of the viewer that changed its draw mode
@@ -407,6 +419,7 @@ If the view (viewer position /viewing direction) has been changed, the slot Base
 rendered. If you need to modify renderings or anything else depending on the current view, you can use this slot and adapt
 to the new view (e.g. modifying a shader).
 \note Be careful, not to change the view in this function or you get an endless loop!
+After the complete scene has been drawn, the core will inform the plugins via the BaseINterface::slotSceneRedrawn().
 
 \section baseInterfaceManagementFunctions Management Functions
 There are some basic functions for managing plugins. The BaseInterface::description() function can be used
