@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13833 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 13888 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -66,12 +66,15 @@
              - Do not reset picking toolbar's position and orientation each time it is shown.
              - Fixed bug where logger and toolbar where invisible
              - Modified drawmode context menu to stay open if drawmodes are combined.
+         - Help
+             - Open Help browser if waht's this links are clicked.
      - <b>Interfaces</b> 
          - General
              - Use const ref for passing strings where possible
          - BaseInterface 
              - Added Basinterface function to switch renderer
              - Added function to get current renderer
+             - Added slotSceneDrawn. Gets triggered after gl update. (closes #449)
          - FileInterface
              - Added getAllFileFilters signal to LoadSaveInterface. This signal was documented but in fact never implemented.
              - Added two convenience functions for list of recent items bookkeeping. (rememberRecentItem,getRecentItems)
@@ -168,7 +171,9 @@
          - Documentation for Render Interface
          - Added lots of documentation for plugin programming (with tikz pictures for the flow diagrams)
      - <b>Testing</b>
-         - Integrated basic testing framework for file load/save testing
+         - Integrated testing framework  for file load/save testing
+         - Integrated testing generators for algorithms
+         - Run unittests of OpenMesh when OpenFlipper tests are run
      - <b>Build System</b>
          - Support Visual Studio 2010 and QT 4.8
          - Added option to allow in source builds (not recommended but it works)
@@ -180,6 +185,7 @@
          - Default warnings now contain -Wextra
          - Moved OpenMesh sources to libs_required subfolder
          - Switched to QWT 6 (and enabled it on mac)
+         - Use one global doxy file to control the generation of the help files for plugins
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>

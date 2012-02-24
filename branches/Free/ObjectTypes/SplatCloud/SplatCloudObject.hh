@@ -62,6 +62,8 @@
 
 #include "SplatCloudTypes.hh"
 
+#include "SplatCloud/SplatCloud.hh"
+
 #include <OpenFlipper/common/BaseObjectData.hh>
 
 #include <OpenFlipper/common/GlobalDefines.hh>
@@ -116,7 +118,7 @@ private:
 
 protected:
     /// Initialise current Object, including all related Nodes
-	virtual void init( SplatCloudNode *_node = 0 );
+	virtual void init( const SplatCloud *_splatCloud = 0 );
 
 //--------------------------------
 /** @name Name and Path handling
@@ -129,19 +131,35 @@ public:
 /** @} */
 
 //--------------------------------
+/** @name Content
+ * @{ */
+//--------------------------------
+public:
+	/// Get SplatCloud
+	inline       SplatCloud *splatCloud()       { return splatCloud_; }
+	inline const SplatCloud *splatCloud() const { return splatCloud_; }
+
+private:
+	SplatCloud *splatCloud_;
+
+/** @} */
+
+//--------------------------------
 /** @name Visualization
  * @{ */
 //--------------------------------
 public:
 	/// Get Shader's scenegraph Node
-	ShaderNode *shaderNode();
+	inline       ShaderNode *shaderNode()       { return shaderNode_; }
+	inline const ShaderNode *shaderNode() const { return shaderNode_; }
 
 	/// Get SplatCloud's scenegraph Node
-	SplatCloudNode *splatCloudNode();
+	inline       SplatCloudNode *splatCloudNode()       { return splatCloudNode_; }
+	inline const SplatCloudNode *splatCloudNode() const { return splatCloudNode_; }
 
 private:
-	ShaderNode		*shaderNode_;
-	SplatCloudNode	*splatCloudNode_;
+	ShaderNode     *shaderNode_;
+	SplatCloudNode *splatCloudNode_;
 
 /** @} */
 

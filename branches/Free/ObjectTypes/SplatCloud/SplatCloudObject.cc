@@ -75,8 +75,15 @@ BaseObjectData         (       ),
 backfaceCullingEnabled_( false ), 
 pointsizeScale_        ( 1.0f  ), 
 shaderNode_            ( 0     ), 
-splatCloudNode_        ( 0     )
+splatCloudNode_        ( 0     ) 
 {
+	// allocate memory for splat cloud
+	splatCloud_ = new SplatCloud;
+	if( !splatCloud_ )
+	{
+		std::cerr << "SplatCloudObject::SplatCloudObject() : Out of memory." << std::endl;
+	}
+
 	setDataType( DATA_SPLATCLOUD );
 	setTypeIcon( DATA_SPLATCLOUD, "SplatCloudType.png" );
 	init();
@@ -89,9 +96,9 @@ splatCloudNode_        ( 0     )
 /**
  * Copy Constructor - generates a copy of the given object
  */
-SplatCloudObject::SplatCloudObject( const SplatCloudObject &_object) : BaseObjectData( _object )
+SplatCloudObject::SplatCloudObject( const SplatCloudObject &_object ) : BaseObjectData( _object )
 {
-	init( _object.splatCloudNode_ );
+	init( _object.splatCloud_ );
 	setName( name() );
 }
 
@@ -112,8 +119,12 @@ SplatCloudObject::~SplatCloudObject()
 	deleteData();
 
 	// No need to delete the scenegraph Nodes as this will be managed by baseplugin
-	shaderNode_ = 0;
+	shaderNode_     = 0;
 	splatCloudNode_ = 0;
+
+	// free memory of splat cloud
+	delete splatCloud_;
+	splatCloud_ = 0;
 }
 
 
@@ -127,11 +138,8 @@ void SplatCloudObject::cleanup()
 {
 	BaseObjectData::cleanup();
 
-	shaderNode_ = 0;
+	shaderNode_     = 0;
 	splatCloudNode_ = 0;
-
-	setDataType( DATA_SPLATCLOUD );
-	setTypeIcon( DATA_SPLATCLOUD, "SplatCloudType.png" );
 
 	init();
 }
@@ -387,23 +395,37 @@ void SplatCloudObject::setPointsizeScale( float _scale )
 
 /** This function initalizes the SplatCloud object. It creates the scenegraph nodes.
 */
-void SplatCloudObject::init( SplatCloudNode *_node )
+void SplatCloudObject::init( const SplatCloud *_splatCloud )
 {
 	if( materialNode() == NULL )
 		std::cerr << "Error when creating SplatCloud Object! materialNode is NULL!" << std::endl;
 
+	// if _splatCloud is *not* 0, copy it's contents
+	if( _splatCloud )
+	{
+		delete splatCloud_;
+
+		splatCloud_ = new SplatCloud( *_splatCloud );
+		if( !splatCloud_ )
+		{
+			std::cerr << "SplatCloudObject::init() : Out of memory." << std::endl;
+		}
+	}
+
+	// if something went wrong during initialization, abort
+	if( !splatCloud_ )
+	{
+		shaderNode_     = 0;
+		splatCloudNode_	= 0;
+		return;
+	}
+
 	// create new scenegraph nodes
-	shaderNode_     = new ShaderNode( materialNode(), "NEW ShaderNode for" );
-	splatCloudNode_	= new SplatCloudNode( shaderNode_, "NEW SplatCloudNode" );
+	shaderNode_     = new ShaderNode    (               materialNode(), "NEW ShaderNode for" );
+	splatCloudNode_	= new SplatCloudNode( *splatCloud_, shaderNode_,    "NEW SplatCloudNode" );
 
 	// load shaders
 	reloadShaders();
-
-	// if _node is *not* 0 we want to have a copy of the scenegraph node, so copy it's contents
-	if( _node && _node->splatCloud() )
-	{
-		splatCloudNode_->copySplatCloud( *_node->splatCloud() );
-	}
 }
 
 
@@ -430,32 +452,6 @@ void SplatCloudObject::setName( QString _name )
 
 
 //----------------------------------------------------------------
-//  Visualization
-//----------------------------------------------------------------
-
-
-/** Returns a pointer to the shader node
-* @return Pointer to the shader node
-*/
-ACG::SceneGraph::ShaderNode *SplatCloudObject::shaderNode()
-{
-	return shaderNode_;
-}
-
-
-//----------------------------------------------------------------
-
-
-/** Returns a pointer to the splatcloud node
-* @return Pointer to the splatcloud node
-*/
-SplatCloudNode *SplatCloudObject::splatCloudNode()
-{
-	return splatCloudNode_;
-}
-
-
-//----------------------------------------------------------------
 //  Object information
 //----------------------------------------------------------------
 
@@ -476,12 +472,12 @@ QString SplatCloudObject::getObjectinfo()
 	{
 		output += "Object Contains SplatCloud : ";
 
-		if( splatCloudNode_->splatCloud() )
+		if( splatCloud_ )
 		{
-			output += " # points: " + QString::number( splatCloudNode_->splatCloud()->numPoints() );
-			output += ", normals used: ";    output += splatCloudNode_->splatCloud()->hasNormals()    ? "true" : "false";
-			output += ", pointsizes used: "; output += splatCloudNode_->splatCloud()->hasPointsizes() ? "true" : "false";
-			output += ", colors used: ";     output += splatCloudNode_->splatCloud()->hasColors()     ? "true" : "false";
+			output += " # points: " + QString::number( splatCloud_->numPoints() );
+			output += ", normals used: ";    output += splatCloud_->hasNormals()    ? "true" : "false";
+			output += ", pointsizes used: "; output += splatCloud_->hasPointsizes() ? "true" : "false";
+			output += ", colors used: ";     output += splatCloud_->hasColors()     ? "true" : "false";
 		}
 
 		output += "\n";
