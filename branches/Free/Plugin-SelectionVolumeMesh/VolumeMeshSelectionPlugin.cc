@@ -364,13 +364,14 @@ void VolumeMeshSelectionPlugin::slotCustomSelection(QMouseEvent *_event, Primiti
 
     if(_customIdentifier == columnSelectionHandle_) {
 
-        unsigned int node_idx, target_idx;
         ACG::Vec3d hit_point;
 
         BaseObjectData* object = 0;
 
         if(_currentType & cellType_) {
+
             // Perform picking
+            unsigned int node_idx, target_idx;
             bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),
                                                                       node_idx, target_idx, &hit_point)
                     && PluginFunctions::getPickedObject(node_idx, object);
@@ -412,13 +413,13 @@ void VolumeMeshSelectionPlugin::slotCustomSelection(QMouseEvent *_event, Primiti
 
     if(_customIdentifier == sheetSelectionHandle_) {
 
-        unsigned int node_idx, target_idx;
         ACG::Vec3d hit_point;
 
         BaseObjectData* object = 0;
 
         if(_currentType & cellType_) {
             // Perform picking
+            unsigned int node_idx, target_idx;
             bool successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),
                                                                       node_idx, target_idx, &hit_point)
                     && PluginFunctions::getPickedObject(node_idx, object);
