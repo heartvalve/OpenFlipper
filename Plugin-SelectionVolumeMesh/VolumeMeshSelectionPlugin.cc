@@ -472,7 +472,7 @@ void VolumeMeshSelectionPlugin::slotCustomSelection(QMouseEvent *_event, Primiti
                                                                                                 orthDir));
 
                     // Flood-fill cell sheet
-                    while(unprocessed.size() > 0) {
+                    while(!unprocessed.empty() ) {
 
                         OpenVolumeMesh::CellHandle cur_c = *unprocessed.begin();
                         unprocessed.erase(cur_c);
