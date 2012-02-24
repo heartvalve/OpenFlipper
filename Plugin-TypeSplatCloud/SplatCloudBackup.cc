@@ -68,7 +68,7 @@ SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, Up
 	std::cerr << "Create SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
 #	endif
 
-	const SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
+	const SplatCloud *splatCloud = splatCloudObject_->splatCloud();
 
 	if( splatCloud )
 	{
@@ -110,7 +110,7 @@ void SplatCloudBackup::apply()
 	std::cerr << "Apply SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
 #	endif
 
-	SplatCloud *splatCloud = splatCloudObject_->splatCloudNode()->splatCloud();
+	SplatCloud *splatCloud = splatCloudObject_->splatCloud();
 
 	if( splatCloud )
 	{

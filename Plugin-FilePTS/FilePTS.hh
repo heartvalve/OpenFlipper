@@ -132,8 +132,8 @@ public slots:
 private:
 
 	// read binary/text file from disc to scenegraph node
-	bool readBinaryFile( std::ifstream &_instream, SplatCloudNode *_splatCloudNode );
-	bool readTextFile  ( std::ifstream &_instream, SplatCloudNode *_splatCloudNode );
+	bool readBinaryFile( std::ifstream &_instream, SplatCloud *_splatCloud );
+	bool readTextFile  ( std::ifstream &_instream, SplatCloud *_splatCloud );
 
 	// write binary/text file from scenegraph node to disc
 	bool writeBinaryFile( std::ofstream &_outstream, const SplatCloudNode *_splatCloudNode );

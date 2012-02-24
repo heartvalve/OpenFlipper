@@ -142,12 +142,7 @@ SplatCloud* splatCloud( BaseObjectData *_object )
 	if ( object == 0 )
 	  return 0;
 
-	SplatCloudNode *node = object->splatCloudNode();
-
-	if( node == 0 )
-		return 0;
-
-	return node->splatCloud();
+	return object->splatCloud();
 }
 
 
@@ -165,7 +160,9 @@ SplatCloudObject* splatCloudObject( BaseObjectData *_object )
 	return dynamic_cast<SplatCloudObject *>( _object );
 }
 
+
 //----------------------------------------------------------------
+
 
 SplatCloudObject* splatCloudObject(  int _objectId ) {
 

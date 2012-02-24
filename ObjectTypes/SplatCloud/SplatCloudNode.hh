@@ -101,7 +101,7 @@ private:
 public:
 
 	/// constructor
-	SplatCloudNode( BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" );
+	SplatCloudNode( const SplatCloud &_splatCloud, BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" );
 
 	/// destructor
 	~SplatCloudNode();
@@ -123,10 +123,9 @@ public:
 
 	// ---- splat cloud ----
 
-	void copySplatCloud( const SplatCloud &_splatCloud );
+	inline const SplatCloud &splatCloud() const { return splatCloud_; }
 
-	inline       SplatCloud *splatCloud()       { return splatCloud_; }
-	inline const SplatCloud *splatCloud() const { return splatCloud_; }
+	// ---- modification tags ----
 
 	inline void modifiedPoints()     { pointsModified_     = true; }
 	inline void modifiedNormals()    { normalsModified_    = true; }
@@ -147,12 +146,12 @@ public:
 	inline const Pointsize &defaultPointsize() const { return defaultPointsize_; }
 	inline const Color     &defaultColor()     const { return defaultColor_;     }
 
-	/// if the data array exists, the entry with the given _index is returned, otherwise the default value is returned (check for splatCloud_ != 0 first)
-	inline Point     getPoint    ( unsigned int _index ) const { return splatCloud_->hasPoints()     ? splatCloud_->points()    [ _index ] : Point(0.0f,0.0f,0.0f); }
-	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_->hasNormals()    ? splatCloud_->normals()   [ _index ] : defaultNormal_       ; }
-	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_->hasPointsizes() ? splatCloud_->pointsizes()[ _index ] : defaultPointsize_    ; }
-	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_->hasColors()     ? splatCloud_->colors()    [ _index ] : defaultColor_        ; }
-	inline Selection getSelection( unsigned int _index ) const { return splatCloud_->hasSelections() ? splatCloud_->selections()[ _index ] : false                ; }
+	/// if the data array exists, the entry with the given _index is returned, otherwise the default value is returned
+	inline Point     getPoint    ( unsigned int _index ) const { return splatCloud_.hasPoints()     ? splatCloud_.points()    [ _index ] : Point(0.0f,0.0f,0.0f); }
+	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_.hasNormals()    ? splatCloud_.normals()   [ _index ] : defaultNormal_       ; }
+	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_.hasPointsizes() ? splatCloud_.pointsizes()[ _index ] : defaultPointsize_    ; }
+	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_.hasColors()     ? splatCloud_.colors()    [ _index ] : defaultColor_        ; }
+	inline Selection getSelection( unsigned int _index ) const { return splatCloud_.hasSelections() ? splatCloud_.selections()[ _index ] : false                ; }
 
 	//----------------------------------------------------------------
 
@@ -160,8 +159,10 @@ private:
 
 	// ---- splat cloud ----
 
-	/// pointer to class containing all the data
-	SplatCloud *splatCloud_;
+	/// reference to class containing all the data
+	const SplatCloud &splatCloud_;
+
+	// ---- modification tags ----
 
 	/// marks if parts of the data has been modified
 	bool pointsModified_;
@@ -205,14 +206,16 @@ private:
 	int vboSelectionsOffset_;
 	int vboPickColorsOffset_;
 
-	/// returns true iff the internal block structure of the VBO has to be changed (check for splatCloud_ != 0 first)
-	inline bool vboStructureModified() const { return 
-		vboNumPoints_                != splatCloud_->numPoints()     || 
-		(vboPointsOffset_     != -1) != splatCloud_->hasPoints()     || 
-		(vboNormalsOffset_    != -1) != splatCloud_->hasNormals()    || 
-		(vboPointsizesOffset_ != -1) != splatCloud_->hasPointsizes() || 
-		(vboColorsOffset_     != -1) != splatCloud_->hasColors()     || 
-		(vboSelectionsOffset_ != -1) != splatCloud_->hasSelections(); }
+	/// returns true iff the internal block structure of the VBO has to be changed
+	inline bool vboStructureModified() const
+	{
+		return vboNumPoints_                != splatCloud_.numPoints()     || 
+		       (vboPointsOffset_     != -1) != splatCloud_.hasPoints()     || 
+		       (vboNormalsOffset_    != -1) != splatCloud_.hasNormals()    || 
+		       (vboPointsizesOffset_ != -1) != splatCloud_.hasPointsizes() || 
+		       (vboColorsOffset_     != -1) != splatCloud_.hasColors()     || 
+		       (vboSelectionsOffset_ != -1) != splatCloud_.hasSelections();
+	}
 
 	void createVBO();
 	void destroyVBO();

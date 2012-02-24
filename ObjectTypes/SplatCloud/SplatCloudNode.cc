@@ -69,9 +69,9 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==============================================
 
 
-SplatCloudNode::SplatCloudNode( BaseNode *_parent, std::string _name ) : 
+SplatCloudNode::SplatCloudNode( const SplatCloud &_splatCloud, BaseNode *_parent, std::string _name ) : 
 	BaseNode            ( _parent, _name ), 
-	splatCloud_         ( 0 ), 
+	splatCloud_         ( _splatCloud ), 
 	pointsModified_     ( false ), 
 	normalsModified_    ( false ), 
 	pointsizesModified_ ( false ), 
@@ -95,13 +95,6 @@ SplatCloudNode::SplatCloudNode( BaseNode *_parent, std::string _name ) :
 	vboSelectionsOffset_( -1 ), 
 	vboPickColorsOffset_( -1 ) 
 {
-	// allocate memory for splat cloud
-	splatCloud_ = new SplatCloud;
-	if( !splatCloud_ )
-	{
-		std::cerr << "SplatCloudNode::SplatCloudNode() : Out of memory." << std::endl;
-	}
-
 	// add (possibly) new drawmodes
 	pointsDrawMode_ = DrawModes::addDrawMode( "Points" );
 	dotsDrawMode_   = DrawModes::addDrawMode( "Dots"   );
@@ -118,9 +111,6 @@ SplatCloudNode::SplatCloudNode( BaseNode *_parent, std::string _name ) :
 SplatCloudNode::~SplatCloudNode()
 {
 	destroyVBO();
-
-	delete splatCloud_;
-	splatCloud_ = 0;
 }
 
 
@@ -129,15 +119,11 @@ SplatCloudNode::~SplatCloudNode()
 
 void SplatCloudNode::boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax )
 {
-	// if something went wrong in the initialization, abort
-	if( !splatCloud_ )
-		return;
-
     ACG::Vec3f bbMin( FLT_MAX, FLT_MAX, FLT_MAX );
     ACG::Vec3f bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX );
 
-    SplatCloud::PointVector::const_iterator pointIter, pointsEnd = splatCloud_->points().end();
-    for ( pointIter = splatCloud_->points().begin(); pointIter != pointsEnd; ++pointIter )
+    SplatCloud::PointVector::const_iterator pointIter, pointsEnd = splatCloud_.points().end();
+    for ( pointIter = splatCloud_.points().begin(); pointIter != pointsEnd; ++pointIter )
     {
         const Point &p = *pointIter;
 
@@ -157,10 +143,6 @@ void SplatCloudNode::boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax )
 
 void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode )
 {
-	// if something went wrong in the initialization, abort
-	if( !splatCloud_ )
-		return;
-
 	static const int RENDERMODE_POINTS = 0;
 	static const int RENDERMODE_DOTS   = 1;
 	static const int RENDERMODE_SPLATS = 2;
@@ -329,15 +311,11 @@ void SplatCloudNode::enterPick( GLState &_state, PickTarget _target, const DrawM
 
 void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 {
-	// if something went wrong in the initialization, abort
-	if( !splatCloud_ )
-		return;
-
 	// if pick target is valid...
 	if( _target == PICK_ANYTHING || _target == PICK_VERTEX )
 	{
 		// set number of pick colors used (each points gets a unique pick color)
-		if( !_state.pick_set_maximum( splatCloud_->numPoints() ) ) // number of points could have changed, so use new number of points (*not* the one in VBO memory!)
+		if( !_state.pick_set_maximum( splatCloud_.numPoints() ) ) // number of points could have changed, so use new number of points (*not* the one in VBO memory!)
 		{
 			std::cerr << "SplatCloudNode::pick() : Color range too small, picking failed." << std::endl;
 			return;
@@ -355,21 +333,6 @@ void SplatCloudNode::pick( GLState &_state, PickTarget _target )
 			// TODO: see above ( enterPick() )
 			draw( _state, g_pickDrawMode );
 		}
-	}
-}
-
-
-//----------------------------------------------------------------
-
-
-void SplatCloudNode::copySplatCloud( const SplatCloud &_splatCloud )
-{
-	delete splatCloud_;
-
-	splatCloud_ = new SplatCloud( _splatCloud );
-	if( !splatCloud_ )
-	{
-		std::cerr << "SplatCloudNode::copySplatCloud() : Out of memory." << std::endl;
 	}
 }
 
@@ -413,7 +376,7 @@ void SplatCloudNode::destroyVBO()
 void SplatCloudNode::rebuildVBO( GLState &_state )
 {
 	// if something went wrong in the initialization, make VBO invalid and abort
-	if( vboGlId_ == 0 || !splatCloud_)
+	if( vboGlId_ == 0 )
 	{
 		vboData_ = 0;
 		return;
@@ -423,7 +386,7 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
 	ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, vboGlId_ );
 
 	// calculate size of data and offsets
-	unsigned int numPoints = splatCloud_->numPoints();
+	unsigned int numPoints = splatCloud_.numPoints();
 	unsigned int size      = 0;
 
 	int pointsOffset     = -1;
@@ -433,11 +396,11 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
 	int selectionsOffset = -1;
 	int pickColorsOffset = -1;
 
-	if( splatCloud_->hasPoints()     ) { pointsOffset     = size; size += numPoints * 12; }
-	if( splatCloud_->hasNormals()    ) { normalsOffset    = size; size += numPoints * 12; }
-	if( splatCloud_->hasPointsizes() ) { pointsizesOffset = size; size += numPoints * 4;  }
-	if( splatCloud_->hasColors()     ) { colorsOffset     = size; size += numPoints * 3;  }
-	if( splatCloud_->hasSelections() ) { selectionsOffset = size; size += numPoints * 4;  }
+	if( splatCloud_.hasPoints()     ) { pointsOffset     = size; size += numPoints * 12; }
+	if( splatCloud_.hasNormals()    ) { normalsOffset    = size; size += numPoints * 12; }
+	if( splatCloud_.hasPointsizes() ) { pointsizesOffset = size; size += numPoints * 4;  }
+	if( splatCloud_.hasColors()     ) { colorsOffset     = size; size += numPoints * 3;  }
+	if( splatCloud_.hasSelections() ) { selectionsOffset = size; size += numPoints * 4;  }
 	/* has pick colors = true       */ { pickColorsOffset = size; size += numPoints * 4;  }
 
 	// tell GL that we are seldomly updating the VBO but are often drawing it
@@ -544,7 +507,7 @@ static void addUCharToBuffer( unsigned char _value, unsigned char *&_buffer )
 
 void SplatCloudNode::rebuildVBOPoints()
 {
-	if( vboPointsOffset_ == -1 || !splatCloud_->hasPoints() )
+	if( vboPointsOffset_ == -1 || !splatCloud_.hasPoints() )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
@@ -555,7 +518,7 @@ void SplatCloudNode::rebuildVBOPoints()
 	unsigned char *buffer = vboData_ + vboPointsOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		// add point
@@ -572,7 +535,7 @@ void SplatCloudNode::rebuildVBOPoints()
 
 void SplatCloudNode::rebuildVBONormals()
 {
-	if( vboNormalsOffset_ == -1 || !splatCloud_->hasNormals()  )
+	if( vboNormalsOffset_ == -1 || !splatCloud_.hasNormals()  )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
@@ -583,7 +546,7 @@ void SplatCloudNode::rebuildVBONormals()
 	unsigned char *buffer = vboData_ + vboNormalsOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		// add normal
@@ -600,7 +563,7 @@ void SplatCloudNode::rebuildVBONormals()
 
 void SplatCloudNode::rebuildVBOPointsizes()
 {
-	if( vboPointsizesOffset_ == -1 || !splatCloud_->hasPointsizes()  )
+	if( vboPointsizesOffset_ == -1 || !splatCloud_.hasPointsizes()  )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
@@ -611,7 +574,7 @@ void SplatCloudNode::rebuildVBOPointsizes()
 	unsigned char *buffer = vboData_ + vboPointsizesOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		// add pointsize
@@ -626,7 +589,7 @@ void SplatCloudNode::rebuildVBOPointsizes()
 
 void SplatCloudNode::rebuildVBOColors()
 {
-	if( vboColorsOffset_ == -1 || !splatCloud_->hasColors()  )
+	if( vboColorsOffset_ == -1 || !splatCloud_.hasColors()  )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
@@ -637,7 +600,7 @@ void SplatCloudNode::rebuildVBOColors()
 	unsigned char *buffer = vboData_ + vboColorsOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		// add color
@@ -654,7 +617,7 @@ void SplatCloudNode::rebuildVBOColors()
 
 void SplatCloudNode::rebuildVBOSelections()
 {
-	if( vboSelectionsOffset_ == -1 || !splatCloud_->hasSelections()  )
+	if( vboSelectionsOffset_ == -1 || !splatCloud_.hasSelections()  )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
@@ -665,7 +628,7 @@ void SplatCloudNode::rebuildVBOSelections()
 	unsigned char *buffer = vboData_ + vboSelectionsOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		const bool &s = getSelection( i );
@@ -690,7 +653,7 @@ void SplatCloudNode::rebuildVBOPickColors( GLState &_state )
 	unsigned char *buffer = vboData_ + vboPickColorsOffset_;
 
 	// for all points...
-	unsigned int i, num = splatCloud_->numPoints();
+	unsigned int i, num = splatCloud_.numPoints();
 	for( i=0; i<num; ++i )
 	{
 		// add pick color
