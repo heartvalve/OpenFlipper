@@ -61,6 +61,12 @@
 #include <QString>
 
 
+//== DEFINES =====================================================
+
+
+//#define REPORT_UPDATE_TYPE
+
+
 //== IMPLEMENTATION ==============================================
 
 
@@ -426,6 +432,82 @@ void SplatCloudObject::init( const SplatCloud *_splatCloud )
 
 	// load shaders
 	reloadShaders();
+}
+
+
+//----------------------------------------------------------------
+
+
+/**
+ * Update object and scenegraph nodes
+ */
+void SplatCloudObject::update( UpdateType _type )
+{
+	if( _type == UPDATE_ALL )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_ALL" << std::endl;
+		std::cout << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedAll();
+		return;
+	}
+
+	if( _type.contains( UPDATE_GEOMETRY ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_GEOMETRY" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedPoints();
+	}
+
+	if( _type.contains( updateType("Normals") ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_Normals" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedNormals();
+	}
+
+	if( _type.contains( updateType("Pointsizes") ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_Pointsizes" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedPointsizes();
+	}
+
+	if( _type.contains( UPDATE_COLOR ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_COLOR" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedColors();
+	}
+
+	if( _type.contains( UPDATE_SELECTION ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_SELECTION" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedSelections();
+	}
+
+#	ifdef REPORT_UPDATE_TYPE
+	std::cout << std::endl;
+#	endif
 }
 
 

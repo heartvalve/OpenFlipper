@@ -120,6 +120,10 @@ protected:
     /// Initialise current Object, including all related Nodes
 	virtual void init( const SplatCloud *_splatCloud = 0 );
 
+public:
+	/// Called by the core if the object has to be updated
+	void update( UpdateType _type = UPDATE_ALL );
+
 //--------------------------------
 /** @name Name and Path handling
  * @{ */

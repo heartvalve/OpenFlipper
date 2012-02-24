@@ -401,7 +401,7 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
 	if( splatCloud_.hasPointsizes() ) { pointsizesOffset = size; size += numPoints * 4;  }
 	if( splatCloud_.hasColors()     ) { colorsOffset     = size; size += numPoints * 3;  }
 	if( splatCloud_.hasSelections() ) { selectionsOffset = size; size += numPoints * 4;  }
-	/* has pick colors = true       */ { pickColorsOffset = size; size += numPoints * 4;  }
+	/* has pick colors = true      */ { pickColorsOffset = size; size += numPoints * 4;  }
 
 	// tell GL that we are seldomly updating the VBO but are often drawing it
 	glBufferDataARB( GL_ARRAY_BUFFER_ARB, size, 0, GL_STATIC_DRAW_ARB );
@@ -642,7 +642,7 @@ void SplatCloudNode::rebuildVBOSelections()
 
 void SplatCloudNode::rebuildVBOPickColors( GLState &_state )
 {
-	if( vboPickColorsOffset_ == -1 )
+	if( vboPickColorsOffset_ == -1 || !splatCloud_.hasPoints() )
 		return;
 
 #	ifdef REPORT_VBO_UPDATES
