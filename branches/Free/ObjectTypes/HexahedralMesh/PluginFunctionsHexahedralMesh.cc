@@ -63,7 +63,7 @@ bool getSourceMeshes( std::vector<HexahedralMesh*>& _meshes  )
       std::cerr << "ERROR: HexahedralMesh getSourceMeshes fatal error\n";
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 
@@ -83,7 +83,7 @@ bool getTargetMeshes( std::vector<HexahedralMesh*>& _meshes  )
       std::cerr << "ERROR: HexahedralMesh getTargetMeshes fatal error\n";
   }
 
-  return (_meshes.size() > 0 );
+  return ( !_meshes.empty() );
 }
 
 
