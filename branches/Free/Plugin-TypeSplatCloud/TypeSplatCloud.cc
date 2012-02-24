@@ -60,12 +60,6 @@
 #include <ACG/GL/GLState.hh>
 
 
-//== DEFINES =====================================================
-
-
-//#define REPORT_UPDATE_TYPE
-
-
 //== IMPLEMENTATION ==============================================
 
 
@@ -189,89 +183,6 @@ void TypeSplatCloudPlugin::slotViewChanged()
 			dotsPickShader->setUniform( "viewportScaleFov_y", VPsFov_y );
 			dotsPickShader->disable();
 		}
-	}
-}
-
-
-//----------------------------------------------------------------
-
-
-void TypeSplatCloudPlugin::slotObjectUpdated( int _objectId, const UpdateType& _type )
-{
-	if( _objectId == -1 )
-		return;
-
-	BaseObjectData *object = 0;
-	PluginFunctions::getObject( _objectId, object );
-
-	// Groups are not BaseObjectData, so this will fail.
-	if ( !object )
-	  return;
-
-	SplatCloudNode *splatCloudNode = PluginFunctions::splatCloudNode( object );
-
-	if( splatCloudNode )
-	{
-
-		if( _type == UPDATE_ALL )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_ALL" << std::endl;
-			std::cout << std::endl;
-#			endif
-
-			splatCloudNode->modifiedAll();
-			return;
-		}
-
-		if( _type.contains( UPDATE_GEOMETRY ) )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_GEOMETRY" << std::endl;
-#			endif
-
-			splatCloudNode->modifiedPoints();
-		}
-
-		if( _type.contains( updateType("Normals") ) )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_Normals" << std::endl;
-#			endif
-
-			splatCloudNode->modifiedNormals();
-		}
-
-		if( _type.contains( updateType("Pointsizes") ) )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_Pointsizes" << std::endl;
-#			endif
-
-			splatCloudNode->modifiedPointsizes();
-		}
-
-		if( _type.contains( UPDATE_COLOR ) )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_COLOR" << std::endl;
-#			endif
-
-			splatCloudNode->modifiedColors();
-		}
-
-		if( _type.contains( UPDATE_SELECTION ) )
-		{
-#			ifdef REPORT_UPDATE_TYPE
-			std::cout << "TypeSplatCloudPlugin::slotObjectUpdated() : UPDATE_SELECTION" << std::endl;
-#			endif
-
-			splatCloudNode->modifiedSelections();
-		}
-
-#		ifdef REPORT_UPDATE_TYPE
-		std::cout << std::endl;
-#		endif
 	}
 }
 

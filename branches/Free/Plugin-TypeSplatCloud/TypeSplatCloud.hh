@@ -91,7 +91,6 @@ private slots:
 	// -- Base Inferface --
 	void noguiSupported() { }
 	void slotViewChanged();
-	void slotObjectUpdated( int _objectId, const UpdateType& _type );
 
 public:
 
