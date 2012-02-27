@@ -175,17 +175,23 @@ if (WIN32)
     DESTINATION ${ACG_PROJECT_BINDIR}
   )
 
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 9 2008.*" )
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2008/vcredist_x86.exe")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 10.*" )
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2010/vcredist_x86.exe") 
+  endif()
+  
   # append dll's to installed package
-  if (EXISTS "${CMAKE_SOURCE_DIR}/win/vcredist_x86.exe")
-
-     install (FILES "${CMAKE_SOURCE_DIR}/win/vcredist_x86.exe"
+   if (EXISTS "${REDISTRIBUTABLE_FILE}")
+     install (FILES "${REDISTRIBUTABLE_FILE}"
       DESTINATION ${ACG_PROJECT_BINDIR}
     )
     set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'")
-
+	message("Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
   else()
-    message("Warning! No vcredist_x86 found. Please copy it to a directory called win in your source tree!!")
+    message("Warning! No vcredist_x86 found. Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
   endif ()
+ 
 
 elseif (APPLE)
 
