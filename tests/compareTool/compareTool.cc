@@ -48,6 +48,8 @@
 
 #include <math.h>
 #include <limits>
+#include <iostream>
+
 
 /* Test File specification:
 Doubles can be given as:
@@ -82,15 +84,15 @@ bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
     return true;
   } else {
 
-    QTextStream cerr(stderr, QIODevice::WriteOnly);
-    cerr.setRealNumberPrecision(40);
-    cerr << "===================================================================\n";
-    cerr << "Comparison failed for key " <<  _key << " :\n";
-    cerr << "Result:                " << result << "\n";
-    cerr << "Expected:              " << reference << "\n";
-    cerr << "Difference:            " << fabs(result-reference) << "\n";
-    cerr << "Allowed tolerance was: " << tolerance << "\n";
-    cerr << "===================================================================\n";
+    //qcerr.setRealNumberPrecision(40);
+	std::cerr.precision(40);
+    std::cerr << "===================================================================\n";
+	std::cerr << "Comparison failed for key " <<  _key.toStdString() << " :\n";
+    std::cerr << "Result:                " << result << "\n";
+    std::cerr << "Expected:              " << reference << "\n";
+    std::cerr << "Difference:            " << fabs(result-reference) << "\n";
+    std::cerr << "Allowed tolerance was: " << tolerance << "\n";
+    std::cerr << "===================================================================\n";
     return false;
   }
   
@@ -104,9 +106,8 @@ bool compareString(QString _key ,QVariant _result, QVariant _reference) {
   if (resultStr == resultRef ) {
     return true;
   } else {
-    QTextStream cerr(stderr, QIODevice::WriteOnly);
-    cerr << "Comparison failed for key " <<  _key << " :\n";
-    cerr << "Result: " << resultStr << " ; Expected: " << resultRef << "\n";
+	std::cerr << "Comparison failed for key " <<  _key.toStdString() << " :\n";
+    std::cerr << "Result: " << resultStr.toStdString() << " ; Expected: " << resultRef.toStdString() << "\n";
     return false;
   }
 
@@ -114,19 +115,17 @@ bool compareString(QString _key ,QVariant _result, QVariant _reference) {
 
 int main(int argv, char **args)
 {
-  QTextStream cout(stdout, QIODevice::WriteOnly);
-  QTextStream cerr(stderr, QIODevice::WriteOnly);
 
-  cout << "Comparing results to reference:\n" ;
+  std::cout << "Comparing results to reference:\n" ;
 
   // Flag if everything went fine
   bool ok = true;
 
   // Return if we did not get exactly two arguments
   if ( argv != 3 ) {
-    cerr << "Wrong number of arguments!\n";
-    cerr << "Usage:\n";
-    cerr << "compareTool ResultFile ReferenceFile\n";
+    std::cerr << "Wrong number of arguments!\n";
+    std::cerr << "Usage:\n";
+    std::cerr << "compareTool ResultFile ReferenceFile\n";
     return(1);
   }
 
@@ -135,13 +134,13 @@ int main(int argv, char **args)
 
   QFileInfo resultFileInfo(file1);
   if ( !resultFileInfo.exists() ) {
-    cerr << "Result file: " << file1 << " does not exist!\n";
+	std::cerr << "Result file: " << file1.toStdString() << " does not exist!\n";
     return 1;
   }
 
   QFileInfo referenceFileInfo(file2);
   if ( !referenceFileInfo.exists() ) {
-    cerr << "Reference file: " << file2 << " does not exist!\n";
+    std::cerr << "Reference file: " << file2.toStdString() << " does not exist!\n";
     return 1;
   }
 
@@ -149,12 +148,12 @@ int main(int argv, char **args)
   QSettings referenceFile(file2,QSettings::IniFormat);
   
   if ( resultFile.status() != QSettings::NoError) {
-    cerr << "QSettings error when opening result file: " << file1 << "\n";
+    std::cerr << "QSettings error when opening result file: " << file1.toStdString() << "\n";
     return 1;
   }
 
   if ( referenceFile.status() != QSettings::NoError) {
-    cerr << "QSettings error when opening result reference file: " << file2 << "\n";
+    std::cerr << "QSettings error when opening result reference file: " << file2.toStdString() << "\n";
     return 1;
   }
 
@@ -169,7 +168,7 @@ int main(int argv, char **args)
        } else
          ok &= compareString( toplevelKeys[i],resultFile.value(toplevelKeys[i]), referenceFile.value(toplevelKeys[i]));
      } else {
-       cerr << "Missing key in result file: " << toplevelKeys[i] << "\n";
+       std::cerr << "Missing key in result file: " << toplevelKeys[i].toStdString() << "\n";
        ok = false;
      }
  
@@ -177,13 +176,13 @@ int main(int argv, char **args)
  
 
   } else {
-    cerr << "Multiple levels!" << "\n";
+    std::cerr << "Multiple levels!" << "\n";
     return 1;
   }
   
 
   if ( ! ok ) {
-    cerr << "At least one of the tests failed!\n";
+    std::cerr << "At least one of the tests failed!\n";
     return 1;
   }
 
