@@ -83,7 +83,7 @@ void VolumeMeshSelectionPlugin::invertVertexSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectVertices(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectVertices(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 
@@ -255,7 +255,7 @@ void VolumeMeshSelectionPlugin::invertEdgeSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectEdges(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectEdges(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 
@@ -427,7 +427,7 @@ void VolumeMeshSelectionPlugin::invertHalfEdgeSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectHalfEdges(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectHalfEdges(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 
@@ -571,7 +571,7 @@ void VolumeMeshSelectionPlugin::invertFaceSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectFaces(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectFaces(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 
@@ -743,7 +743,7 @@ void VolumeMeshSelectionPlugin::invertHalfFaceSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectHalfFaces(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectHalfFaces(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 
@@ -886,7 +886,7 @@ void VolumeMeshSelectionPlugin::invertCellSelection(int _objectId) {
     emit updatedObject(_objectId, UPDATE_SELECTION);
 }
 
-void VolumeMeshSelectionPlugin::selectCells(int _objectId, const IdList _ids, bool _deselect) {
+void VolumeMeshSelectionPlugin::selectCells(int _objectId, const IdList& _ids, bool _deselect) {
 
     if(_ids.empty()) return;
 

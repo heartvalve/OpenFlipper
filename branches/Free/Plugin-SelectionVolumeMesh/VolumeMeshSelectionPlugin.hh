@@ -186,7 +186,7 @@ public slots:
     void invertVertexSelection(int _objectId);
 
     /// Select specific vertices of a volume mesh
-    void selectVertices(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectVertices(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current vertex selection
     IdList getVertexSelection(int _objectId);
@@ -206,7 +206,7 @@ public slots:
     void invertEdgeSelection(int _objectId);
 
     /// Select specific edges of a volume mesh
-    void selectEdges(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectEdges(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current edge selection
     IdList getEdgeSelection(int _objectId);
@@ -226,7 +226,7 @@ public slots:
     void invertHalfEdgeSelection(int _objectId);
 
     /// Select specific half-edges of a volume mesh
-    void selectHalfEdges(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectHalfEdges(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current half-edge selection
     IdList getHalfEdgeSelection(int _objectId);
@@ -243,7 +243,7 @@ public slots:
     void invertFaceSelection(int _objectId);
 
     /// Select specific faces of a volume mesh
-    void selectFaces(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectFaces(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current face selection
     IdList getFaceSelection(int _objectId);
@@ -263,7 +263,7 @@ public slots:
     void invertHalfFaceSelection(int _objectId);
 
     /// Select specific half-faces of a volume mesh
-    void selectHalfFaces(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectHalfFaces(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current half-face selection
     IdList getHalfFaceSelection(int _objectId);
@@ -280,7 +280,7 @@ public slots:
     void invertCellSelection(int _objectId);
 
     /// Select specific cells of a volume mesh
-    void selectCells(int _objectId, const IdList _ids, bool _deselect = false);
+    void selectCells(int _objectId, const IdList& _ids, bool _deselect = false);
 
     /// Get current cell selection
     IdList getCellSelection(int _objectId);
