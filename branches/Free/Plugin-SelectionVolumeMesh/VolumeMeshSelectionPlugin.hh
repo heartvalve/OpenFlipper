@@ -176,74 +176,117 @@ public slots:
     * @{ */
     //===========================================================================
     
-//    /// Select all vertices of a volume mesh
-//    void selectAllVertices(int _objectId);
-//
-//    /// Deselect all vertices of a volume mesh
-//    void deselectAllVertices(int _objectId);
-//
-//    /// Invert vertex selection
-//    void invertVertexSelection(int _objectId);
-//
-//    /// Select specific vertices of a volume mesh
-//    void selectVertices(int _objectId, const IdList _ids, bool _deselect = false);
-//
-//    /// Get current vertex selection
-//    IdList getVertexSelection(int _objectId);
-//
-//    //===========================================================================
-//
-//    /// Select all edges of a volume mesh
-//    void selectAllEdges(int _objectId);
-//
-//    /// Deselect all edges of a volume mesh
-//    void deselectAllEdges(int _objectId);
-//
-//    /// Invert edge selection
-//    void invertEdgeSelection(int _objectId);
-//
-//    /// Select specific edges of a volume mesh
-//    void selectEdges(int _objectId, const IdList _ids, bool _deselect = false);
-//
-//    /// Get current edge selection
-//    IdList getEdgeSelection(int _objectId);
-//
-//    //===========================================================================
-//
-//    /// Select all faces of a volume mesh
-//    void selectAllFaces(int _objectId);
-//
-//    /// Deselect all faces of a volume mesh
-//    void deselectAllFaces(int _objectId);
-//
-//    /// Invert face selection
-//    void invertFaceSelection(int _objectId);
-//
-//    /// Select specific faces of a volume mesh
-//    void selectFaces(int _objectId, const IdList _ids, bool _deselect = false);
-//
-//    /// Get current face selection
-//    IdList getFaceSelection(int _objectId);
-//
-//    //===========================================================================
-//
-//    /// Select all cells of a volume mesh
-//    void selectAllCells(int _objectId);
-//
-//    /// Deselect all cells of a volume mesh
-//    void deselectAllCells(int _objectId);
-//
-//    /// Invert cell selection
-//    void invertCellSelection(int _objectId);
-//
-//    /// Select specific cells of a volume mesh
-//    void selectCells(int _objectId, const IdList _ids, bool _deselect = false);
-//
-//    /// Get current cell selection
-//    IdList getCellSelection(int _objectId);
+    /// Select all vertices of a volume mesh
+    void selectAllVertices(int _objectId);
+
+    /// Deselect all vertices of a volume mesh
+    void deselectAllVertices(int _objectId);
+
+    /// Invert vertex selection
+    void invertVertexSelection(int _objectId);
+
+    /// Select specific vertices of a volume mesh
+    void selectVertices(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current vertex selection
+    IdList getVertexSelection(int _objectId);
+
+    /// Delete selected vertices from mesh
+    void deleteSelectedVertices(int _objectId, bool _preserveManifoldness = true);
+
+    //===========================================================================
+
+    /// Select all edges of a volume mesh
+    void selectAllEdges(int _objectId);
+
+    /// Deselect all edges of a volume mesh
+    void deselectAllEdges(int _objectId);
+
+    /// Invert edge selection
+    void invertEdgeSelection(int _objectId);
+
+    /// Select specific edges of a volume mesh
+    void selectEdges(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current edge selection
+    IdList getEdgeSelection(int _objectId);
+
+    /// Delete selected edges from mesh
+    void deleteSelectedEdges(int _objectId, bool _preserveManifoldness = true);
+
+    //===========================================================================
+
+    /// Select all half-edges of a volume mesh
+    void selectAllHalfEdges(int _objectId);
+
+    /// Deselect all half-edges of a volume mesh
+    void deselectAllHalfEdges(int _objectId);
+
+    /// Invert half-edge selection
+    void invertHalfEdgeSelection(int _objectId);
+
+    /// Select specific half-edges of a volume mesh
+    void selectHalfEdges(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current half-edge selection
+    IdList getHalfEdgeSelection(int _objectId);
+
+    //===========================================================================
+
+    /// Select all faces of a volume mesh
+    void selectAllFaces(int _objectId);
+
+    /// Deselect all faces of a volume mesh
+    void deselectAllFaces(int _objectId);
+
+    /// Invert face selection
+    void invertFaceSelection(int _objectId);
+
+    /// Select specific faces of a volume mesh
+    void selectFaces(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current face selection
+    IdList getFaceSelection(int _objectId);
+
+    /// Delete selected faces from mesh
+    void deleteSelectedFaces(int _objectId, bool _preserveManifoldness = true);
+
+    //===========================================================================
+
+    /// Select all half-faces of a volume mesh
+    void selectAllHalfFaces(int _objectId);
+
+    /// Deselect all half-faces of a volume mesh
+    void deselectAllHalfFaces(int _objectId);
+
+    /// Invert half-face selection
+    void invertHalfFaceSelection(int _objectId);
+
+    /// Select specific half-faces of a volume mesh
+    void selectHalfFaces(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current half-face selection
+    IdList getHalfFaceSelection(int _objectId);
+
+    //===========================================================================
+
+    /// Select all cells of a volume mesh
+    void selectAllCells(int _objectId);
+
+    /// Deselect all cells of a volume mesh
+    void deselectAllCells(int _objectId);
+
+    /// Invert cell selection
+    void invertCellSelection(int _objectId);
+
+    /// Select specific cells of a volume mesh
+    void selectCells(int _objectId, const IdList _ids, bool _deselect = false);
+
+    /// Get current cell selection
+    IdList getCellSelection(int _objectId);
 
     /// Delete selected cells from mesh
-    void deleteSelectedCells(int _objectId);
+    void deleteSelectedCells(int _objectId, bool _preserveManifoldness = true);
 
     /** @} */
 
