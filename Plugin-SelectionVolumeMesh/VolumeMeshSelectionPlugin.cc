@@ -561,16 +561,16 @@ VolumeMeshSelectionPlugin::HFPair VolumeMeshSelectionPlugin::getCommonFace(const
 
 void VolumeMeshSelectionPlugin::loadSelection(int _objId, const QString& _filename) {
 
-    //    // Load ini file
-    //    INIFile file;
-    //
-    //    if(!file.connect(_filename, false)) {
-    //        emit log(LOGERR, QString("Could not read file '%1'!").arg(_filename));
-    //        return;
-    //    }
-    //
-    //    // Load selection from file
-    //    loadIniFile(file, _objId);
+//    // Load ini file
+//    INIFile file;
+//
+//    if(!file.connect(_filename, false)) {
+//        emit log(LOGERR, QString("Could not read file '%1'!").arg(_filename));
+//        return;
+//    }
+//
+//    // Load selection from file
+//    loadIniFile(file, _objId);
 }
 
 //==============================================================================================
@@ -591,54 +591,73 @@ void VolumeMeshSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 void VolumeMeshSelectionPlugin::slotLoadSelection(const INIFile& _file) {
 
-    //    // Iterate over all volumemesh objects in the scene and save
-    //    // the selections for all supported entity types
-    //    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_POLY_VOLUME_MESH | DATA_HEX_VOLUME_MESH));
-    //         o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    //
-    //        // Read section for each object
-    //        // Append object name to section identifier
-    //        QString section = QString("VolumeMeshSelection") + "//" + o_it->name();
-    //        if(!_file.section_exists(section)) {
-    //            continue;
-    //        }
-    //
-    //        std::vector<int> ids;
-    //        // Load vertex selection:
-    //        _file.get_entry(ids, section, "VertexSelection");
-    //        selectVertices(o_it->id(), ids);
-    //        ids.clear();
-    //        // Load edge selection:
-    //        _file.get_entry(ids, section, "EdgeSelection");
-    //        selectEdges(o_it->id(), ids);
-    //        ids.clear();
-    //
-    //        emit updatedObject(o_it->id(), UPDATE_SELECTION);
-    //    }
+    // Iterate over all polyhedral mesh objects in the scene and save
+    // the selections for all supported entity types
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+         o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+        // Read section for each object
+        // Append object name to section identifier
+        QString section = QString("PolyhedralMeshSelection") + "//" + o_it->name();
+        if(!_file.section_exists(section)) {
+            continue;
+        }
+
+        std::vector<int> ids;
+        // Load vertex selection:
+        _file.get_entry(ids, section, "VertexSelection");
+        selectVertices(o_it->id(), ids);
+        ids.clear();
+        // Load edge selection:
+        _file.get_entry(ids, section, "EdgeSelection");
+        selectEdges(o_it->id(), ids);
+        ids.clear();
+        // Load half-edge selection:
+        _file.get_entry(ids, section, "HalfEdgeSelection");
+        selectHalfEdges(o_it->id(), ids);
+        ids.clear();
+        // Load face selection:
+        _file.get_entry(ids, section, "FaceSelection");
+        selectFaces(o_it->id(), ids);
+        ids.clear();
+        // Load half-face selection:
+        _file.get_entry(ids, section, "HalfFaceSelection");
+        selectHalfFaces(o_it->id(), ids);
+        ids.clear();
+        // Load cell selection:
+        _file.get_entry(ids, section, "CellSelection");
+        selectCells(o_it->id(), ids);
+        ids.clear();
+    }
 }
 
 //==============================================================================================
 
 void VolumeMeshSelectionPlugin::slotSaveSelection(INIFile& _file) {
 
-    //    // Iterate over all volumemesh objects in the scene and save
-    //    // the selections for all vertices
-    //    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_POLY_VOLUME_MESH | DATA_HEX_VOLUME_MESH));
-    //         o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    //
-    //        // Create section for each object
-    //        // Append object name to section identifier
-    //        QString section = QString("VolumeMeshSelection") + "//" + o_it->name();
-    //        if(!_file.section_exists(section)) {
-    //            _file.add_section(section);
-    //        } else {
-    //            continue;
-    //        }
-    //
-    //        // Store vertex selection:
-    //        _file.add_entry(section, "VertexSelection", getVertexSelection(o_it->id()));
-    //        _file.add_entry(section, "EdgeSelection", getEdgeSelection(o_it->id()));
-    //    }
+    // Iterate over all volumemesh objects in the scene and save
+    // the selections for all vertices
+    for(PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,
+            DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+        // Create section for each object
+        // Append object name to section identifier
+        QString section = QString("PolyhedralMeshSelection") + "//" + o_it->name();
+        if(!_file.section_exists(section)) {
+            _file.add_section(section);
+        } else {
+            continue;
+        }
+
+        // Store vertex selection:
+        _file.add_entry(section, "VertexSelection",     getVertexSelection(o_it->id()));
+        _file.add_entry(section, "EdgeSelection",       getEdgeSelection(o_it->id()));
+        _file.add_entry(section, "HalfEdgeSelection",   getHalfEdgeSelection(o_it->id()));
+        _file.add_entry(section, "FaceSelection",       getFaceSelection(o_it->id()));
+        _file.add_entry(section, "HalfFaceSelection",   getHalfFaceSelection(o_it->id()));
+        _file.add_entry(section, "CellSelection",       getCellSelection(o_it->id()));
+    }
 }
 
 //==============================================================================================
@@ -660,48 +679,66 @@ void VolumeMeshSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
     PluginFunctions::IteratorRestriction restriction = (targetsOnly ? PluginFunctions::TARGET_OBJECTS
                                                                     : PluginFunctions::ALL_OBJECTS);
 
-    //    if(_key == Qt::Key_A && _modifiers == Qt::ControlModifier) {
-    //        // Select all vertices
-    //        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLY_VOLUME_MESH | DATA_HEX_VOLUME_MESH));
-    //            o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    //            if (o_it->visible()) {
-    //                if(type & vertexType_)
-    //                    selectAllVertices(o_it->id());
-    //                if(type & edgeType_)
-    //                    selectAllEdges(o_it->id());
-    //            }
-    //            emit updatedObject(o_it->id(), UPDATE_SELECTION);
-    //        }
-    //    } else if(_key == Qt::Key_C && _modifiers == Qt::NoModifier) {
-    //        // Deselect all vertices
-    //        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLY_VOLUME_MESH | DATA_HEX_VOLUME_MESH));
-    //            o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    //            if (o_it->visible()) {
-    //                if(type & vertexType_)
-    //                    deselectAllVertices(o_it->id());
-    //                if(type & edgeType_)
-    //                    deselectAllEdges(o_it->id());
-    //            }
-    //            emit updatedObject(o_it->id(), UPDATE_SELECTION);
-    //        }
-    //    } else if(_key == Qt::Key_I && _modifiers == Qt::NoModifier) {
-    //        // Invert vertex selection
-    //        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLY_VOLUME_MESH | DATA_HEX_VOLUME_MESH));
-    //            o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    //            if (o_it->visible()) {
-    //                if(type & vertexType_)
-    //                    invertVertexSelection(o_it->id());
-    //                if(type & edgeType_)
-    //                    invertEdgeSelection(o_it->id());
-    //            }
-    //            emit updatedObject(o_it->id(), UPDATE_SELECTION);
-    //        }
+    if(_key == Qt::Key_A && _modifiers == Qt::ControlModifier) {
+        // Select all entities
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible()) {
+                if(type & vertexType_)
+                    selectAllVertices(o_it->id());
+                if(type & edgeType_)
+                    selectAllEdges(o_it->id());
+                if(type & faceType_)
+                    selectAllFaces(o_it->id());
+                if(type & cellType_)
+                    selectAllCells(o_it->id());
+            }
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        }
+    } else if(_key == Qt::Key_C && _modifiers == Qt::NoModifier) {
+        // Deselect all entities
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible()) {
+                if(type & vertexType_)
+                    deselectAllVertices(o_it->id());
+                if(type & edgeType_)
+                    deselectAllEdges(o_it->id());
+                if(type & faceType_)
+                    deselectAllFaces(o_it->id());
+                if(type & cellType_)
+                    deselectAllCells(o_it->id());
+            }
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        }
+    } else if(_key == Qt::Key_I && _modifiers == Qt::NoModifier) {
+        // Invert entity selection
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible()) {
+                if(type & vertexType_)
+                    invertVertexSelection(o_it->id());
+                if(type & edgeType_)
+                    invertEdgeSelection(o_it->id());
+                if(type & faceType_)
+                    invertFaceSelection(o_it->id());
+                if(type & cellType_)
+                    invertCellSelection(o_it->id());
+            }
+            emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        }
 
-    if(_key == Qt::Key_Delete && _modifiers == Qt::NoModifier) {
-        // Delete selected vertices and its children
-        for(PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH)); o_it
-                != PluginFunctions::objectsEnd(); ++o_it) {
+    } else if(_key == Qt::Key_Delete && _modifiers == Qt::NoModifier) {
+        // Delete selected entities and its children
+        for(PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
             if(o_it->visible()) {
+                if(type & vertexType_)
+                    deleteSelectedVertices(o_it->id());
+                if(type & edgeType_)
+                    deleteSelectedEdges(o_it->id());
+                if(type & faceType_)
+                    deleteSelectedFaces(o_it->id());
                 if(type & cellType_)
                     deleteSelectedCells(o_it->id());
             }
