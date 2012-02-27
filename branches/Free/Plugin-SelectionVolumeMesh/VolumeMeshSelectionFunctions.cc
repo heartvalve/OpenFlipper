@@ -85,6 +85,8 @@ void VolumeMeshSelectionPlugin::invertVertexSelection(int _objectId) {
 
 void VolumeMeshSelectionPlugin::selectVertices(int _objectId, const IdList _ids, bool _deselect) {
 
+    if(_ids.empty()) return;
+
     BaseObjectData* object = 0;
 
     if(!PluginFunctions::getObject(_objectId, object)) {
@@ -254,6 +256,8 @@ void VolumeMeshSelectionPlugin::invertEdgeSelection(int _objectId) {
 }
 
 void VolumeMeshSelectionPlugin::selectEdges(int _objectId, const IdList _ids, bool _deselect) {
+
+    if(_ids.empty()) return;
 
     BaseObjectData* object = 0;
 
@@ -425,6 +429,8 @@ void VolumeMeshSelectionPlugin::invertHalfEdgeSelection(int _objectId) {
 
 void VolumeMeshSelectionPlugin::selectHalfEdges(int _objectId, const IdList _ids, bool _deselect) {
 
+    if(_ids.empty()) return;
+
     BaseObjectData* object = 0;
 
     if(!PluginFunctions::getObject(_objectId, object)) {
@@ -566,6 +572,8 @@ void VolumeMeshSelectionPlugin::invertFaceSelection(int _objectId) {
 }
 
 void VolumeMeshSelectionPlugin::selectFaces(int _objectId, const IdList _ids, bool _deselect) {
+
+    if(_ids.empty()) return;
 
     BaseObjectData* object = 0;
 
@@ -737,6 +745,8 @@ void VolumeMeshSelectionPlugin::invertHalfFaceSelection(int _objectId) {
 
 void VolumeMeshSelectionPlugin::selectHalfFaces(int _objectId, const IdList _ids, bool _deselect) {
 
+    if(_ids.empty()) return;
+
     BaseObjectData* object = 0;
 
     if(!PluginFunctions::getObject(_objectId, object)) {
@@ -877,6 +887,8 @@ void VolumeMeshSelectionPlugin::invertCellSelection(int _objectId) {
 }
 
 void VolumeMeshSelectionPlugin::selectCells(int _objectId, const IdList _ids, bool _deselect) {
+
+    if(_ids.empty()) return;
 
     BaseObjectData* object = 0;
 
