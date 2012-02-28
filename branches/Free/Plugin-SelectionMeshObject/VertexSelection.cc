@@ -330,6 +330,12 @@ void MeshObjectSelectionPlugin::deleteVertexSelection(int _objectId) {
 
 //=========================================================
 
+int MeshObjectSelectionPlugin::createMeshFromVertexSelection( int _objectId) {
+  createMeshFromSelection(_objectId, vertexType_ );
+}
+
+//=========================================================
+
 /// colorize the vertex selection
 void MeshObjectSelectionPlugin::colorizeVertexSelection(int _objectId, int r, int g, int b, int a) {
   

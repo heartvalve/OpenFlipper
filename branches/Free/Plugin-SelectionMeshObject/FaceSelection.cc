@@ -211,6 +211,12 @@ void MeshObjectSelectionPlugin::deleteFaceSelection(int _objectId) {
 
 //=========================================================
 
+int MeshObjectSelectionPlugin::createMeshFromFaceSelection( int _objectId) {
+  createMeshFromSelection(_objectId, faceType_ );
+}
+
+//=========================================================
+
 void MeshObjectSelectionPlugin::selectBoundaryFaces(int objectId) {
     
     BaseObjectData* object;
