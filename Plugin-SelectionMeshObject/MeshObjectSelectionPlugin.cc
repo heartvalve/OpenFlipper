@@ -69,6 +69,7 @@
 #define V_GROW          "Grow Vertex Selection"
 #define V_DELETE        "Delete Vertex Selection"
 #define V_COLORIZE      "Colorize Vertex Selection"
+#define V_COPYSELECTION "Create mesh from Vertex Selection"
 #define V_HANDLE        "Set to Handle Region"
 #define V_MODELING      "Set to Modeling Region"
 #define V_LOAD_FLIPPER  "Load Flipper Selection"
@@ -79,6 +80,7 @@
 #define E_DELETE        "Delete Edge Selection"
 #define E_BOUNDARY      "Select Boundary Edges"
 #define E_COLORIZE      "Colorize Edge Selection"
+#define E_COPYSELECTION "Create mesh from Edge Selection"
 // Halfedges
 #define HE_SELECT_ALL   "Select All Halfedges"
 #define HE_CLEAR        "Clear Halfedge Selection"
@@ -94,6 +96,7 @@
 #define F_SHRINK        "Shrink Face Selection"
 #define F_GROW          "Grow Face Selection"
 #define F_COLORIZE      "Colorize Face Selection"
+#define F_COPYSELECTION "Create mesh from Face Selection"
 
 /// Default constructor
 MeshObjectSelectionPlugin::MeshObjectSelectionPlugin() :
@@ -184,6 +187,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     vertexOperations.append(V_GROW);
     vertexOperations.append(V_DELETE);
     vertexOperations.append(V_COLORIZE);
+    vertexOperations.append(V_COPYSELECTION);
     vertexOperations.append(V_HANDLE);
     vertexOperations.append(V_MODELING);
     vertexOperations.append(V_LOAD_FLIPPER);
@@ -196,6 +200,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     edgeOperations.append(E_DELETE);
     edgeOperations.append(E_BOUNDARY);
     edgeOperations.append(E_COLORIZE);
+    edgeOperations.append(E_COPYSELECTION);
     
     // Define halfedge operations
     QStringList hedgeOperations;
@@ -215,6 +220,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     faceOperations.append(F_SHRINK);
     faceOperations.append(F_GROW);
     faceOperations.append(F_COLORIZE);
+    faceOperations.append(F_COPYSELECTION);
     
     emit addSelectionOperations(environmentHandle_, generalOperations, "Selection Operations");
     emit addSelectionOperations(environmentHandle_, vertexOperations,  "Vertex Operations",   vertexType_);
@@ -256,6 +262,9 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
                             QStringList("objectId"), QStringList("Id of an object"));
     emit setSlotDescription("deleteVertexSelection(int)", tr("Delete selected vertices"),
                             QStringList("objectId"), QStringList("Id of an object"));
+    emit setSlotDescription("createMeshFromVertexSelection(int)", tr("Take vertex selection and create a new mesh from it"),
+                            QString("objectId").split(","), QString("Id of an object where the selection should be used to create a new mesh").split(","));
+
     emit setSlotDescription("colorizeVertexSelection(int,int,int,int)", tr("Colorize the selected vertices"),
                             QString("objectId,r,g,b").split(","), QString("Id of an object,Red,Green,Blue").split(","));
     emit setSlotDescription("selectHandleVertices(int,IdList)", tr("Add specified vertices to handle area"),
@@ -298,6 +307,8 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
     
     emit setSlotDescription("colorizeEdgeSelection(int,int,int,int)", tr("Colorize the selected edges"),
                             QString("objectId,r,g,b").split(","), QString("Id of an object,Red,Green,Blue").split(","));
+    emit setSlotDescription("createMeshFromEdgeSelection(int)", tr("Take edge selection and create a new mesh from it"),
+                            QString("objectId").split(","), QString("Id of an object where the selection should be used to create a new mesh").split(","));
     
     emit setSlotDescription("selectHalfedges(int,IdList)", tr("Select the specified halfedges"),
                             QString("objectId,halfedgeList").split(","), QString("Id of an object,List of halfedges").split(","));
@@ -333,6 +344,10 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
                             QStringList("objectId"), QStringList("Id of an object"));
     emit setSlotDescription("colorizeFaceSelection(int,int,int,int)", tr("Colorize the selected faces"),
                             QString("objectId,r,g,b").split(","), QString("Id of an object,Red,Green,Blue").split(","));
+
+    emit setSlotDescription("createMeshFromFaceSelection(int)", tr("Take face selection and create a new mesh from it"),
+                            QString("objectId").split(","), QString("Id of an object where the selection should be used to create a new mesh").split(","));
+
 }
 
 void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
@@ -427,6 +442,19 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
                 setColorForSelection(o_it->id(), vertexType_);
             }
         }
+    } else if(_operation == V_COPYSELECTION) {
+        // Copy vertex selection
+        std::vector<int> objects;
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+          if (o_it->visible()) {
+            objects.push_back(o_it->id());
+          }
+        }
+
+        for ( unsigned int i = 0 ; i < objects.size() ; ++i)
+          createMeshFromSelection(objects[i],vertexType_);
+
     } else if(_operation == V_HANDLE) {
         // Set vertex selection to be handle region
         for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL)); 
@@ -501,6 +529,19 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
                 setColorForSelection(o_it->id(), edgeType_);
             }
         }
+    } else if(_operation == E_COPYSELECTION) {
+      // Copy edge selection
+      std::vector<int> objects;
+      for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+          o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        if (o_it->visible()) {
+          objects.push_back(o_it->id());
+        }
+      }
+
+      for ( unsigned int i = 0 ; i < objects.size() ; ++i)
+        createMeshFromSelection(objects[i],edgeType_);
+
     } else if(_operation == HE_SELECT_ALL) {
         // Select all edges
         for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL)); 
@@ -594,6 +635,18 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
                 setColorForSelection(o_it->id(), faceType_);
             }
         }
+    } else if(_operation == F_COPYSELECTION) {
+      // Copy face selection
+      std::vector<int> objects;
+      for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+          o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        if (o_it->visible()) {
+          objects.push_back(o_it->id());
+        }
+      }
+
+      for ( unsigned int i = 0 ; i < objects.size() ; ++i)
+        createMeshFromSelection(objects[i],faceType_);
     }
 }
 
@@ -1719,5 +1772,92 @@ bool SelectVolumeAction::operator()(BaseNode* _node) {
     }
     return true;
 }
+
+/// Create a mesh containing the selection of the given mesh
+int MeshObjectSelectionPlugin::createMeshFromSelection(int _objectId, PrimitiveType _primitiveType)
+{
+
+  // get object
+  BaseObjectData *obj = 0;
+  PluginFunctions::getObject(_objectId, obj);
+
+  if (obj == 0) {
+    emit log(LOGERR, tr("Unable to get object"));
+    return -1;
+  }
+
+  if (obj->dataType(DATA_TRIANGLE_MESH)) {
+    TriMesh* mesh = PluginFunctions::triMesh(obj);
+
+    if (mesh == 0) {
+      emit log(LOGERR, tr("Unable to get mesh"));
+      return -1;
+    }
+
+    //add an empty mesh
+    int id = -1;
+    emit addEmptyObject(DATA_TRIANGLE_MESH, id);
+
+    if (id == -1) {
+      emit log(LOGERR, tr("Unable to add empty object"));
+      return -1;
+    }
+
+    BaseObjectData *newObj;
+    PluginFunctions::getObject(id, newObj);
+
+    TriMesh* newMesh = PluginFunctions::triMesh(newObj);
+
+    if (newMesh == 0) {
+      emit log(LOGERR, tr("Unable to get mesh"));
+      return -1;
+    }
+
+    //fill the empty mesh with the selection
+    createMeshFromSelection(*mesh, *newMesh,_primitiveType);
+
+    emit updatedObject(id, UPDATE_ALL);
+
+    return id;
+
+  } else if (obj->dataType(DATA_POLY_MESH)) {
+    PolyMesh* mesh = PluginFunctions::polyMesh(obj);
+
+    if (mesh == 0) {
+      emit log(LOGERR, tr("Unable to get mesh"));
+      return -1;
+    }
+
+    //add an empty mesh
+    int id;
+    emit addEmptyObject(DATA_POLY_MESH, id);
+
+    if (id == -1) {
+      emit log(LOGERR, tr("Unable to add empty object"));
+      return -1;
+    }
+
+    BaseObjectData *newObj;
+    PluginFunctions::getObject(id, newObj);
+
+    PolyMesh* newMesh = PluginFunctions::polyMesh(newObj);
+
+    if (newMesh == 0) {
+      emit log(LOGERR, tr("Unable to get mesh"));
+      return -1;
+    }
+
+    //fill the empty mesh with the selection
+    createMeshFromSelection(*mesh, *newMesh,_primitiveType);
+
+    emit updatedObject(id, UPDATE_ALL);
+
+    return id;
+  } else {
+    emit log(LOGERR, tr("DataType not supported"));
+    return -1;
+  }
+}
+
 
 Q_EXPORT_PLUGIN2(meshobjectselectionplugin, MeshObjectSelectionPlugin);

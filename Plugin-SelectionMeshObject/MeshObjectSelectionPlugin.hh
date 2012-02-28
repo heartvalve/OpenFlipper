@@ -126,6 +126,7 @@ signals:
     
     // LoadSaveInterface
     void deleteObject(int _objectId);
+    void addEmptyObject( DataType _type, int& _id);
     
     // ScriptInterface
     void scriptInfo(QString _functionName);
@@ -268,6 +269,8 @@ public slots:
     /// Delete vertices and faces that are currently selected
     void deleteVertexSelection(int _objectId);
 
+    int createMeshFromVertexSelection( int _objectId);
+
     /// Colorize the vertex selection
     void colorizeVertexSelection(int _objectId, int _r, int _g, int _b, int a);
 
@@ -345,6 +348,9 @@ public slots:
     /// Inverse of function above
     IdList convertVertexPairsToEdges(int _id, const IdList& _vertices);
 
+    /// Create a mesh containing the face selection of the given mesh
+    int createMeshFromEdgeSelection( int _objectId);
+
     /// Colorize the edge selection
     void colorizeEdgeSelection(int objectId, int r, int g, int b, int a);
 
@@ -416,11 +422,18 @@ public slots:
     /// Return a list of all selected faces
     IdList getFaceSelection(int objectId);
 
+    /// Create a mesh containing the face selection of the given mesh
+    int createMeshFromFaceSelection( int _objectId);
+
     /// Colorize the face selection
     void colorizeFaceSelection(int objectId, int r, int g, int b, int a);
     
     //===========================================================================
     
+
+
+
+
     /// Lasso selection tool
     void lassoSelection(QRegion& _region, PrimitiveType _primitiveType, bool _deselection);
 
@@ -472,7 +485,22 @@ private:
     template<class MeshT>
     void colorizeSelection(MeshT* _mesh, PrimitiveType _primitiveTypes, int _red, int _green, int _blue, int _alpha);
 
+    /// Create a new mesh from the selection
+    template< class MeshT >
+    void createMeshFromSelection( MeshT& _mesh, MeshT& _newMesh, PrimitiveType _primitiveType);
+
     /** @} */
+
+    //===========================================================================
+    /** @name Private helper function
+     * @{ */
+    //===========================================================================
+private:
+
+    /// Create a mesh containing the selection of the given mesh
+    int createMeshFromSelection( int _objectId , PrimitiveType _primitiveType);
+
+/** @} */
 
     //===========================================================================
     /** @name Member variables
