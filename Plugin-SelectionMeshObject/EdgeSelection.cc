@@ -234,7 +234,7 @@ void MeshObjectSelectionPlugin::deleteEdgeSelection(int _objectId) {
 //=========================================================
 
 int MeshObjectSelectionPlugin::createMeshFromEdgeSelection( int _objectId) {
-  createMeshFromSelection(_objectId, edgeType_ );
+  return createMeshFromSelection(_objectId, edgeType_ );
 }
 
 //=========================================================
