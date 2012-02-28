@@ -331,9 +331,9 @@ void TypeHexahedralMeshPlugin::setTranslucencyFactor() {
                 0.0, 1.0, 2, &ok);
 
         hexMeshObject->meshNode()->set_translucency_factor((float)factor);
-        hexMeshObject->meshNode()->set_geometry_changed(true);
-
-        emit updateView();
+        if(hexMeshObject->meshNode()->translucent()) {
+            emit updatedObject(objectId, UPDATE_GEOMETRY);
+        }
     }
 }
 
