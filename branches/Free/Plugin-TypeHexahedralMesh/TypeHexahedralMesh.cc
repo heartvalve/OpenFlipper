@@ -329,10 +329,11 @@ void TypeHexahedralMeshPlugin::setTranslucencyFactor() {
         float val = hexMeshObject->meshNode()->translucency_factor();
         double factor = QInputDialog::getDouble(0, tr("Set translucency factor"), tr("Factor [0, 1]:"), val,
                 0.0, 1.0, 2, &ok);
-        hexMeshObject->meshNode()->set_translucency_factor((float)factor);
 
-        if(hexMeshObject->meshNode()->translucent())
-            hexMeshObject->meshNode()->set_geometry_changed(true);
+        hexMeshObject->meshNode()->set_translucency_factor((float)factor);
+        hexMeshObject->meshNode()->set_geometry_changed(true);
+
+        emit updateView();
     }
 }
 
