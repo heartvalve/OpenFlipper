@@ -331,7 +331,7 @@ void MeshObjectSelectionPlugin::deleteVertexSelection(int _objectId) {
 //=========================================================
 
 int MeshObjectSelectionPlugin::createMeshFromVertexSelection( int _objectId) {
-  createMeshFromSelection(_objectId, vertexType_ );
+  return createMeshFromSelection(_objectId, vertexType_ );
 }
 
 //=========================================================
