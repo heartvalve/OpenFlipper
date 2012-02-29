@@ -40,10 +40,19 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # ========================================================================
   # ========================================================================
 
-  find_package(GoogleTest)
 
-  if(GTEST_FOUND)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/libs_required/OpenMesh/src/Unittests ${CMAKE_BINARY_DIR}/libs_required/OpenMesh/src/Unittests)
+  if ( NOT DEFINED OPENFLIPPER_BUILD_UNIT_TESTS )
+    set( OPENFLIPPER_BUILD_UNIT_TESTS false CACHE BOOL "Enable or disable unit tests on all integrated libraries." )
+  endif()
+
+  if ( OPENFLIPPER_BUILD_UNIT_TESTS ) 
+
+    find_package(GoogleTest)
+
+    if(GTEST_FOUND)
+      add_subdirectory(${CMAKE_SOURCE_DIR}/libs_required/OpenMesh/src/Unittests ${CMAKE_BINARY_DIR}/libs_required/OpenMesh/src/Unittests)
+    endif()
+
   endif()
 
   # ========================================================================
