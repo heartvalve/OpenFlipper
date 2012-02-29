@@ -643,7 +643,7 @@ void VolumeMeshSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 //==============================================================================================
 
-void VolumeMeshSelectionPlugin::slotLoadSelection(const INIFile& _file) {
+void VolumeMeshSelectionPlugin::slotLoadSelection(INIFile& _file) {
 
     // Iterate over all polyhedral mesh objects in the scene and save
     // the selections for all supported entity types
@@ -698,11 +698,6 @@ void VolumeMeshSelectionPlugin::slotSaveSelection(INIFile& _file) {
         // Create section for each object
         // Append object name to section identifier
         QString section = QString("PolyhedralMeshSelection") + "//" + o_it->name();
-        if(!_file.section_exists(section)) {
-            _file.add_section(section);
-        } else {
-            continue;
-        }
 
         // Store vertex selection:
         _file.add_entry(section, "VertexSelection",     getVertexSelection(o_it->id()));
