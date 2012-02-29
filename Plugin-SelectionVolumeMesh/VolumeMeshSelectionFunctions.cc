@@ -18,6 +18,8 @@ void VolumeMeshSelectionPlugin::selectAllVertices(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -44,6 +46,7 @@ void VolumeMeshSelectionPlugin::deselectAllVertices(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -70,6 +73,7 @@ void VolumeMeshSelectionPlugin::invertVertexSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -98,6 +102,7 @@ void VolumeMeshSelectionPlugin::selectVertices(int _objectId, const IdList& _ids
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -133,6 +138,7 @@ IdList VolumeMeshSelectionPlugin::getVertexSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -159,6 +165,7 @@ void VolumeMeshSelectionPlugin::deleteSelectedVertices(int _objectId, bool _pres
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -190,6 +197,7 @@ void VolumeMeshSelectionPlugin::selectAllEdges(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -216,6 +224,7 @@ void VolumeMeshSelectionPlugin::deselectAllEdges(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -242,6 +251,7 @@ void VolumeMeshSelectionPlugin::invertEdgeSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -270,6 +280,7 @@ void VolumeMeshSelectionPlugin::selectEdges(int _objectId, const IdList& _ids, b
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -305,6 +316,7 @@ IdList VolumeMeshSelectionPlugin::getEdgeSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -331,6 +343,7 @@ void VolumeMeshSelectionPlugin::deleteSelectedEdges(int _objectId, bool _preserv
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -362,6 +375,7 @@ void VolumeMeshSelectionPlugin::selectAllHalfEdges(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -388,6 +402,7 @@ void VolumeMeshSelectionPlugin::deselectAllHalfEdges(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -414,6 +429,7 @@ void VolumeMeshSelectionPlugin::invertHalfEdgeSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -442,6 +458,7 @@ void VolumeMeshSelectionPlugin::selectHalfEdges(int _objectId, const IdList& _id
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -477,6 +494,7 @@ IdList VolumeMeshSelectionPlugin::getHalfEdgeSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -506,6 +524,7 @@ void VolumeMeshSelectionPlugin::selectAllFaces(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -532,6 +551,7 @@ void VolumeMeshSelectionPlugin::deselectAllFaces(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -558,6 +578,7 @@ void VolumeMeshSelectionPlugin::invertFaceSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -586,6 +607,7 @@ void VolumeMeshSelectionPlugin::selectFaces(int _objectId, const IdList& _ids, b
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -621,6 +643,7 @@ IdList VolumeMeshSelectionPlugin::getFaceSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -647,6 +670,7 @@ void VolumeMeshSelectionPlugin::deleteSelectedFaces(int _objectId, bool _preserv
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -678,6 +702,7 @@ void VolumeMeshSelectionPlugin::selectAllHalfFaces(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -704,6 +729,7 @@ void VolumeMeshSelectionPlugin::deselectAllHalfFaces(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -730,6 +756,7 @@ void VolumeMeshSelectionPlugin::invertHalfFaceSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -758,6 +785,7 @@ void VolumeMeshSelectionPlugin::selectHalfFaces(int _objectId, const IdList& _id
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -793,6 +821,7 @@ IdList VolumeMeshSelectionPlugin::getHalfFaceSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -821,6 +850,7 @@ void VolumeMeshSelectionPlugin::selectAllCells(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -847,6 +877,7 @@ void VolumeMeshSelectionPlugin::deselectAllCells(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -873,6 +904,7 @@ void VolumeMeshSelectionPlugin::invertCellSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -901,6 +933,7 @@ void VolumeMeshSelectionPlugin::selectCells(int _objectId, const IdList& _ids, b
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -936,6 +969,7 @@ IdList VolumeMeshSelectionPlugin::getCellSelection(int _objectId) {
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return list;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
@@ -962,6 +996,7 @@ void VolumeMeshSelectionPlugin::deleteSelectedCells(int _objectId, bool _preserv
     HexahedralMeshObject* hexMeshObj = NULL;
     PluginFunctions::getObject(_objectId, polyMeshObj);
     PluginFunctions::getObject(_objectId, hexMeshObj);
+    if(!polyMeshObj && !hexMeshObj) return;
     OpenVolumeMesh::StatusAttrib& status = (polyMeshObj != NULL ?
                                             polyMeshObj->status() :
                                             hexMeshObj->status());
