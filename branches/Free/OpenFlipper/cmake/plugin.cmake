@@ -413,7 +413,7 @@ function (_build_openflipper_plugin plugin)
     
       find_package(Doxygen)
 
-      if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/userDoc/doxy.config.in AND DOXYGEN_FOUND )
+      if ( DOXYGEN_FOUND )
 
         # Create user documentation target with our template doxy file 
         acg_create_doc_target( doc-User-${plugin} "${CMAKE_SOURCE_DIR}/OpenFlipper/Documentation/PluginDoxyTemplate" )
