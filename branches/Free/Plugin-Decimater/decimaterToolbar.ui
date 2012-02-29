@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>581</height>
+    <width>378</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,7 +71,7 @@
            <string>The Hausdorff distance between the original and the decimated mesh will be lower than the given tolerance.</string>
           </property>
           <property name="decimals">
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="maximum">
            <double>10000.000000000000000</double>
@@ -189,7 +189,7 @@ p, li { white-space: pre-wrap; }
            <string>The roundness ( radius of the circumference divided by the   length of the shortest edge) after the collapse has to be lower than the given value.</string>
           </property>
           <property name="decimals">
-           <number>2</number>
+           <number>5</number>
           </property>
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -216,6 +216,9 @@ p, li { white-space: pre-wrap; }
          <widget class="QDoubleSpinBox" name="aspectRatio">
           <property name="toolTip">
            <string>The aspect ration of a triangle( the length of the longest edge divided by its corresponding height) after the collapse has to be greater than the given value.</string>
+          </property>
+          <property name="decimals">
+           <number>4</number>
           </property>
           <property name="minimum">
            <double>1.200000000000000</double>
@@ -261,6 +264,9 @@ p, li { white-space: pre-wrap; }
          <widget class="QDoubleSpinBox" name="edgeLength">
           <property name="toolTip">
            <string>A collapse is only performed, if the length after the collapse is lower than the given value.</string>
+          </property>
+          <property name="decimals">
+           <number>5</number>
           </property>
           <property name="singleStep">
            <double>0.010000000000000</double>

@@ -626,12 +626,18 @@ void DecimaterPlugin::slotUpdateNumVertices()
   if (div <= 0)
     tool_->currentNumVertices->setText ("<not available>");
   else {
+    tool_->verticesCount->blockSignals(true);
+    tool_->verticesCountSlider->blockSignals(true);
+
     tool_->currentNumVertices->setText (QString::number(max));
     tool_->verticesCount->setMaximum(max);
     tool_->verticesCountSlider->setMaximum(max);
     
     if ( tool_->verticesCount->value() < 2 )
       tool_->verticesCount->setValue( max / 2 );
+
+    tool_->verticesCount->blockSignals(false);
+    tool_->verticesCountSlider->blockSignals(false);
   }
 }
 
@@ -655,6 +661,9 @@ void DecimaterPlugin::slotUpdateNumTriangles() {
     meshN++;
   }
 
+  tool_->trianglesCount->blockSignals(true);
+  tool_->trianglesCountSlider->blockSignals(true);
+
   tool_->trianglesCount->setMinimum(1);
   tool_->trianglesCount->setMaximum(max);
   tool_->trianglesCountSlider->setMinimum(1);
@@ -662,6 +671,9 @@ void DecimaterPlugin::slotUpdateNumTriangles() {
 
   if (tool_->trianglesCount->value() < 2)
     tool_->trianglesCount->setValue(max/2);
+
+  tool_->trianglesCount->blockSignals(false);
+  tool_->trianglesCountSlider->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
