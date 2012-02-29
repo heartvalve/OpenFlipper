@@ -1452,7 +1452,7 @@ void MeshObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
     }
 }
 
-void MeshObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
+void MeshObjectSelectionPlugin::slotLoadSelection(INIFile& _file) {
     
     // Iterate over all mesh objects in the scene and save
     // the selections for all supported entity types
@@ -1507,11 +1507,7 @@ void MeshObjectSelectionPlugin::slotSaveSelection(INIFile& _file) {
         // Create section for each object
         // Append object name to section identifier
         QString section = QString("MeshObjectSelection") + "//" + o_it->name();
-        if(!_file.section_exists(section)) {
-            _file.add_section(section);
-        } else {
-            continue;
-        }
+
         // Store vertex selection:
         _file.add_entry(section, "VertexSelection", getVertexSelection(o_it->id()));
         // Store edge selection:
