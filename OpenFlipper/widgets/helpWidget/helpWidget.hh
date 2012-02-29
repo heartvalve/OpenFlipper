@@ -88,7 +88,11 @@ private slots:
 
 	void showSearchWidget();
 
+	//the entry was already selected by user
 	void linkActivated(const QUrl& _url);
+
+	//activate the url and jump to the entry
+	void activateLink(const QUrl& _url);
 
 	void showFoundSite(const QUrl& _url);
 
