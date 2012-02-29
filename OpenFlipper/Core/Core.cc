@@ -1393,7 +1393,7 @@ void Core::resizeApplication(int _width, int _height ){
 
 void Core::writeVersionNumbers(QString _filename){
 
-INIFile ini;
+  INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {
     emit log(LOGERR,tr("Failed to connect to _ini file") + _filename);
@@ -1401,7 +1401,6 @@ INIFile ini;
   }
 
   //add coreVersion
-  ini.add_section( "Core" );
   if ( OpenFlipper::Options::isWindows() )
     ini.add_entry( "Core" , "VersionWindows" , OpenFlipper::Options::coreVersion() );
   else
@@ -1409,7 +1408,6 @@ INIFile ini;
 
   //add pluginVersions
   for (uint i=0; i < plugins_.size(); i++){
-    ini.add_section( plugins_[i].name );
 
     if ( OpenFlipper::Options::isWindows() )
       ini.add_entry( plugins_[i].name , "VersionWindows" , plugins_[i].version );
