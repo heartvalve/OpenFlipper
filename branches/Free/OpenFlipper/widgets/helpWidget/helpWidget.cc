@@ -132,7 +132,6 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   connect(helpEngine_->contentWidget(), SIGNAL(linkActivated(const QUrl&)),
           this, SLOT(linkActivated(const QUrl&)));
 
-
   // Search button
   connect(searchButton_, SIGNAL(clicked()), this, SLOT(showSearchWidget()));
 
@@ -197,13 +196,23 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   textWindow_->open(QUrl(homeSite_));
 }
 
+void HelpWidget::activateLink(const QUrl& _url)
+{
+	//open and show the url
+	linkActivated(_url);
+
+	//set tree to the right entry
+	//this is _slow_, so do not use it in function "linkActivated". in "linkActivated" the entry is already selected by the user
+	helpEngine_->contentWidget()->hide();
+	QModelIndex modelIndex = helpEngine_->contentWidget()->indexOf(_url);
+	helpEngine_->contentWidget()->setCurrentIndex( modelIndex );
+	helpEngine_->contentWidget()->show();
+}
+
 void HelpWidget::linkActivated(const QUrl& _url) {
 
   textWindow_->open(_url);
   tabWidget_->setCurrentIndex(homeIndex_);
-  //todo: change content in Tree of help-browser
-  //helpEngine_->contentWidget() shows the tree
-  //cannot find any function which changes the content
 }
 
 void HelpWidget::startSearch() {
