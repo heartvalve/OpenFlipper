@@ -164,7 +164,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
   QStringList tmp = helpEngine_->registeredDocumentations ();
 
-//#ifdef DEBUG
+  #ifdef DEBUG
   for ( int i = 0 ; i < tmp.size(); ++i) {
     std::cerr << "=========================================================================================" << std::endl;
     std::cerr << "Registered namespace: " << tmp[i].toStdString() << std::endl;
@@ -191,7 +191,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
 
   }
-//#endif
+  #endif
 
   // Load main page
   textWindow_->open(QUrl(homeSite_));
