@@ -615,7 +615,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   if (!OpenFlipper::Options::nogui())
   {
   	helpWidget_ = new HelpWidget(this);
-  	connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(linkActivated(QUrl)));
+  	connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(activateLink(QUrl)));
   	helpWidget_->hide();
   }
 
