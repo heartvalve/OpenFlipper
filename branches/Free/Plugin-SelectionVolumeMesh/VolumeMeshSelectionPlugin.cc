@@ -578,6 +578,44 @@ void VolumeMeshSelectionPlugin::loadSelection(int _objId, const QString& _filena
 void VolumeMeshSelectionPlugin::loadIniFile(INIFile& _ini, int _id) {
     // From INI Interface
     // Load plugin specific settings
+
+    BaseObjectData* bod = NULL;
+    PluginFunctions::getObject(_id, bod);
+    if(!bod) {
+        emit log(LOGERR, "Could not get base object data!");
+        return;
+    }
+
+    QString section = QString("PolyhedralMeshSelection") + "//" + bod->name();
+    if(!_ini.section_exists(section)) {
+        return;
+    }
+
+    std::vector<int> ids;
+    // Load vertex selection:
+    _ini.get_entry(ids, section, "VertexSelection");
+    selectVertices(_id, ids);
+    ids.clear();
+    // Load edge selection:
+    _ini.get_entry(ids, section, "EdgeSelection");
+    selectEdges(_id, ids);
+    ids.clear();
+    // Load half-edge selection:
+    _ini.get_entry(ids, section, "HalfEdgeSelection");
+    selectHalfEdges(_id, ids);
+    ids.clear();
+    // Load face selection:
+    _ini.get_entry(ids, section, "FaceSelection");
+    selectFaces(_id, ids);
+    ids.clear();
+    // Load half-face selection:
+    _ini.get_entry(ids, section, "HalfFaceSelection");
+    selectHalfFaces(_id, ids);
+    ids.clear();
+    // Load cell selection:
+    _ini.get_entry(ids, section, "CellSelection");
+    selectCells(_id, ids);
+    ids.clear();
 }
 
 //==============================================================================================
@@ -585,6 +623,22 @@ void VolumeMeshSelectionPlugin::loadIniFile(INIFile& _ini, int _id) {
 void VolumeMeshSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
     // From INI Interface
     // Save plugin specific settings
+
+    BaseObjectData* bod = NULL;
+    PluginFunctions::getObject(_id, bod);
+    if(!bod) {
+        emit log(LOGERR, "Could not get base object data!");
+        return;
+    }
+
+    QString section = QString("PolyhedralMeshSelection") + "//" + bod->name();
+
+    _ini.add_entry(section, "VertexSelection",     getVertexSelection(_id));
+    _ini.add_entry(section, "EdgeSelection",       getEdgeSelection(_id));
+    _ini.add_entry(section, "HalfEdgeSelection",   getHalfEdgeSelection(_id));
+    _ini.add_entry(section, "FaceSelection",       getFaceSelection(_id));
+    _ini.add_entry(section, "HalfFaceSelection",   getHalfFaceSelection(_id));
+    _ini.add_entry(section, "CellSelection",       getCellSelection(_id));
 }
 
 //==============================================================================================
