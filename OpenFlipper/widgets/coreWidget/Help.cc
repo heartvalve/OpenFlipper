@@ -57,7 +57,7 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void CoreWidget::showHelpBrowser(const QString &page /*= "qthelp://org.openflipper.dev/doc/main.html"*/) {
+void CoreWidget::showHelpBrowser(const QString &page /*= "qthelp://org.openflipper.dev/doc/index.html"*/) {
 
 	if ( OpenFlipper::Options::nogui() )
 		return;
