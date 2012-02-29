@@ -539,8 +539,7 @@ void ColorPlugin::loadIniFileOptions(INIFile& _ini){
  */
 void ColorPlugin::saveIniFileOptions(INIFile& _ini){
 std::cerr << "save to ini file\n";
-  if ( !_ini.section_exists("ColorPlugin") )
-    _ini.add_section("ColorPlugin");
+
 
   _ini.add_entry("ColorPlugin","backgroundColorDefault",      convertColor( backgroundColorDefault_ )  );
   _ini.add_entry("ColorPlugin","backgroundColorPaper",        convertColor( backgroundColorPaper_ )  );
