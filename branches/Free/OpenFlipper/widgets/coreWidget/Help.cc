@@ -62,10 +62,10 @@ void CoreWidget::showHelpBrowser(const QString &page /*= "qthelp://org.openflipp
 	if ( OpenFlipper::Options::nogui() )
 		return;
 
-	emit changeHelpSite(QUrl(page));
-
 	helpWidget_->show();
 	helpWidget_->activateWindow();
+
+	emit changeHelpSite(QUrl(page));
 
 }
 
