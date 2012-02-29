@@ -353,12 +353,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //============================================================================
   _ini.add_entry("Options","SlotDebugging",OpenFlipper::Options::doSlotDebugging() );
 
-  if ( !_ini.section_exists("Plugins") )
-    _ini.add_section("Plugins");
-
-  if ( !_ini.section_exists("Options") )
-    _ini.add_section("Options");
-
   QString dir = OpenFlipperSettings().value("Core/CurrentDir").toString().toUtf8();
   _ini.add_entry("Options","StartupDir",dir);
 
@@ -610,7 +604,6 @@ void Core::writeIniFile(QString _filename,
       if (QFile(file).exists()){
         // Add a section for this object
         sectionName = o_it->name();
-        ini.add_section( sectionName );
         openFiles.push_back( sectionName );
 
         //modify filename if relativePaths are wanted
