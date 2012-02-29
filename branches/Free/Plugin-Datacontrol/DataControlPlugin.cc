@@ -611,9 +611,6 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
  */
 void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
 
-  if ( !_ini.section_exists( "Groups" ) )
-    _ini.add_section("Groups");
-
   std::queue< BaseObject* > children;
   children.push( PluginFunctions::objectRoot() );
 
@@ -640,9 +637,6 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
 
   for ( uint i = 0 ; i < groups.size() ; ++i ) {
     groupNames.push_back( groups[i]->name() );
-
-    if ( !_ini.section_exists( groups[i]->name() ) )
-      _ini.add_section(groups[i]->name());
 
     _ini.add_entry(groups[i]->name(),"groupname",groups[i]->name());
 
@@ -674,8 +668,6 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
   _ini.add_entry("Groups","rootGroup",rootGroup);
 
   if ( OpenFlipper::Options::gui() ) {
-    if ( !_ini.section_exists( "BoundingBox" ) )
-      _ini.add_section("BoundingBox");
 
     _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
     _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
@@ -842,8 +834,6 @@ void DataControlPlugin::updateBoundingBox(BaseObjectData* _obj)
  * @param _ini reference to ini file
  */
 void DataControlPlugin::saveOnExit(INIFile& _ini){
-  if ( !_ini.section_exists( "BoundingBox" ) )
-    _ini.add_section("BoundingBox");
   _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
   _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
   _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
