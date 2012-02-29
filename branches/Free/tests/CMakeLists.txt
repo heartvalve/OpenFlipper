@@ -47,6 +47,9 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
 
   if ( OPENFLIPPER_BUILD_UNIT_TESTS ) 
 
+    #enable the OpenMesh unit tests
+    set (OPENMESH_BUILD_UNIT_TESTS true CACHE BOOL "Enable or disable unit test builds in OpenMesh.")
+
     find_package(GoogleTest)
 
     if(GTEST_FOUND)
