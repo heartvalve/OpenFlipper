@@ -499,9 +499,6 @@ void CoreWidget::saveKeyBindings(INIFile& _ini){
   }
 
   //finally store everything to INI file
-  if ( !_ini.section_exists("KeyBindings") )
-    _ini.add_section("KeyBindings");
-
   _ini.add_entry("KeyBindings","KeyCount", keys.count());
 
   for (int i=0; i < keys.count(); i++){
