@@ -117,7 +117,7 @@ void SmootherPlugin::simpleLaplace() {
  * Smooth mesh using the Laplace operator
  * with uniform weights.
  *
- * @_iterations Number of iterations
+ * @param _iterations Number of iterations
  */
 void SmootherPlugin::simpleLaplace(int _iterations) {
     

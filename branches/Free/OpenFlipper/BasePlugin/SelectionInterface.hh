@@ -790,6 +790,7 @@ class SelectionInterface {
     *
     *  @param _event               The mouse event that currently is performed
     *  @param _currentType         The currently active primitive type
+    *  @param _customIdentifier Holds the identifier of the custom selection modes
     *  @param _deselect            True if entities should be deselected
     */
    virtual void slotCustomSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {};
@@ -916,6 +917,7 @@ class SelectionInterface {
     *
     *  @param _event               The mouse event that currently is performed
     *  @param _currentType         The currently active primitive type
+    *  @param _customIdentifier    Holds the identifier of the custom selection modes
     *  @param _deselect            True if entities should be deselected
     */
    virtual void customSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {};

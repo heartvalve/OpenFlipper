@@ -84,7 +84,7 @@ class RenderInterface {
     /** \brief announce name for the rendering function
      *
      *
-     * @param _name displayed name of the rendering function
+     * @return Name displayed for the rendering function
      */
     virtual QString rendererName() = 0;
 
