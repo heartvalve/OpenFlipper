@@ -853,7 +853,7 @@ CoreWidget::updateRecent()
 
     if (fi.suffix() == "ini") {
       newAction = recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i]);
-      newAction->setData( QVariant( QString("ini") ) );
+      newAction->setData( QVariant( QString("Unknown") ) );
     } else {
       newAction = recentFilesMenu_->addAction(typeIcon( typeId(recentTypes[i]) ), recentFiles[i]);
       newAction->setData( QVariant( recentTypes[i]) );
