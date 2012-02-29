@@ -203,9 +203,11 @@ void HelpWidget::activateLink(const QUrl& _url)
 
 	//set tree to the right entry
 	//this is _slow_, so do not use it in function "linkActivated". in "linkActivated" the entry is already selected by the user
+
 	helpEngine_->contentWidget()->hide();
 	QModelIndex modelIndex = helpEngine_->contentWidget()->indexOf(_url);
-	helpEngine_->contentWidget()->setCurrentIndex( modelIndex );
+	if (modelIndex.isValid())
+		helpEngine_->contentWidget()->setCurrentIndex( modelIndex );
 	helpEngine_->contentWidget()->show();
 }
 
