@@ -507,7 +507,7 @@ void BSplineCurveSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 //==============================================================================================
 
-void BSplineCurveSelectionPlugin::slotLoadSelection(const INIFile& _file) {
+void BSplineCurveSelectionPlugin::slotLoadSelection(INIFile& _file) {
     
     // Iterate over all B-spline curves in the scene and save
     // the selections for all supported entity types
@@ -550,11 +550,6 @@ void BSplineCurveSelectionPlugin::slotSaveSelection(INIFile& _file) {
         // Create section for each object
         // Append object name to section identifier
         QString section = QString("BSplineCurveSelection") + "//" + o_it->name();
-        if(!_file.section_exists(section)) {
-            _file.add_section(section);
-        } else {
-            continue;
-        }
         
         // Store control point selection
         _file.add_entry(section, "ControlPointSelection", getControlPointSelection(o_it->id()));
