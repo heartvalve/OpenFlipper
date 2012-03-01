@@ -66,6 +66,10 @@
 
 #include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
 
+// -------------------- Qt event Includes
+#include <QEvent>
+#include <QWhatsThisClickedEvent>
+
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
 
@@ -187,6 +191,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   pick_mode_name_(""),
   pick_mode_idx_(-1)
 {
+
   setupStatusBar();
 
   defaultIconSize_ = iconSize();
@@ -612,12 +617,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Help Browser start up
   // ======================================================================
 
-  if (!OpenFlipper::Options::nogui())
-  {
-  	helpWidget_ = new HelpWidget(this);
-  	connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(activateLink(QUrl)));
-  	helpWidget_->hide();
-  }
+  helpWidget_ = new HelpWidget(this);
+  connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(activateLink(QUrl)));
+  helpWidget_->hide();
 
 }
 
@@ -1040,7 +1042,7 @@ void CoreWidget::setForceNativeCursor ( bool _state )
 
 bool CoreWidget::event( QEvent *_event )
 {
-	//WhatsThisClicked for hyperlinks in 'whats this' Message Boxes
+	//WhatsThisClicked event for hyperlinks in 'whats this' boxes
 	if( _event->type() == QEvent::WhatsThisClicked )
 	{
 		QWhatsThisClickedEvent *wtcEvent = static_cast<QWhatsThisClickedEvent*>(_event);
@@ -1049,7 +1051,7 @@ bool CoreWidget::event( QEvent *_event )
 		return true;
 	}
 
-	return QWidget::event(_event);
+	return QMainWindow::event(_event);
 }
 
 //=============================================================================
