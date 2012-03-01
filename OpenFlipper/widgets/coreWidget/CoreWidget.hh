@@ -327,7 +327,11 @@ public:
     // Filter alt key events under windows
     //bool eventFilter(QObject *obj, QEvent *ev);
 
+  private:
+    //event handling
     bool event( QEvent *event );
+
+    bool eventFilter(QObject *_obj, QEvent *_event);
 
   signals :
 
@@ -602,7 +606,6 @@ public:
       
       /// Move a specific toolbox widget to the bottom of the side area
       void moveToolBoxToBottom(QString _name);
-      
 
    /** @} */
 

@@ -79,50 +79,51 @@ void CoreWidget::slotAddMenubarAction( QAction* _action , QString _name ) {
 
 void CoreWidget::slotGetMenubarMenu (QString _name, QMenu *& _menu, bool _create)
 {
+	//if menu already exists, return it
   if (menus_.contains (_name))
     _menu = menus_[_name];
+  //otherwise create a new one
   else if (_create)
   {
     _menu = new QMenu(_name);
     menus_[_name] = _menu;
+    //we have to install an event filter to get event information (e.g. what this)
+    _menu->installEventFilter(this);
+    //guarantee that helpMenu_ is always at the end of all menus
     menuBar()->insertAction(helpMenu_->menuAction() ,_menu->menuAction ());
-  } else
+  }
+  //otherwise no menu was found
+  else
     _menu = NULL;
 }
 
 
 //=============================================================================
-/*
-bool CoreWidget::eventFilter(QObject *obj, QEvent *event)
- {
-     if (obj == menuBar() ) {
-       emit log(LOGERR,"Alt filter menubar " + QString::number(int(event->type())));
-         if (event->type() == QEvent::ShortcutOverride) {
-             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-             if ( (keyEvent->key() == Qt::Key_Alt ||
-                   keyEvent->key() == Qt::Key_Meta ) &&
-                   keyEvent->modifiers() == Qt::AltModifier )
-                   emit log(LOGERR,"Alt key press");
-             return obj->eventFilter(obj, event);
-         } else {
-             return obj->eventFilter(obj, event);
-         }
-     } else {
-         // pass the event on to the parent class
-         return QMainWindow::eventFilter(obj, event);
-     }
- }*/
+
+bool CoreWidget::eventFilter(QObject *_obj, QEvent *_event)
+{
+	//WhatsThisClicked event for hyperlinks in 'whats this' boxes
+		if( _event->type() == QEvent::WhatsThisClicked )
+		{
+			QWhatsThisClickedEvent *wtcEvent = static_cast<QWhatsThisClickedEvent*>(_event);
+			QWhatsThis::hideText();
+			this->showHelpBrowser(wtcEvent->href());
+			return true;
+		}
+
+		return _obj->event(_event);
+}
+
+//=============================================================================
 
 void CoreWidget::setupMenuBar()
 {
-
- // menuBar()->installEventFilter(this);
 
   // ======================================================================
   // File Menu
   // ======================================================================
   fileMenu_ = new QMenu( FILEMENU );
-  menuBar()->addMenu(fileMenu_ );
+  menuBar()->addMenu( fileMenu_ );
   menus_[tr("File")] = fileMenu_;
 
   //Clear all
@@ -140,7 +141,6 @@ void CoreWidget::setupMenuBar()
   AC_Load->setStatusTip(tr("Load an object"));
   AC_Load->setWhatsThis(tr("Load a new object"));
   AC_Load->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png"));
-
   connect(AC_Load, SIGNAL(triggered()), this, SIGNAL(loadMenu()));
   fileMenu_->addAction(AC_Load);
 
@@ -518,6 +518,15 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addSeparator();
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
+
+
+  // install event filters for what is this event
+  // todo: why doesn't go any event through CoreWidget::event from menus? i don't get it
+  fileMenu_->installEventFilter(this);
+  viewMenu_->installEventFilter(this);
+  toolsMenu_->installEventFilter(this);
+  windowMenu_->installEventFilter(this);
+  helpMenu_->installEventFilter(this);
 }
 
 
