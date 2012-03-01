@@ -1079,7 +1079,7 @@ QHP_NAMESPACE          = "org.openflipper.dev"
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#virtual-folders
 
-QHP_VIRTUAL_FOLDER     = doc
+QHP_VIRTUAL_FOLDER     = dev
 
 # If QHP_CUST_FILTER_NAME is set, it specifies the name of a custom filter to
 # add. For more information please see

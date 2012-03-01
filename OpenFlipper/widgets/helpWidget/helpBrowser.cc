@@ -51,11 +51,13 @@
 
 #include <iostream>
 
-
 HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
 	QTextBrowser(parent),
-	helpEngine_(_helpEngine) {
+	helpEngine_(_helpEngine),
+	currentVirtualFolder_(""),
+	currentNameSpace_("")
+{
 
 	currentPage_ = 0;
 
@@ -72,65 +74,33 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
 	if (_url.scheme() == "qthelp") {
 
-		return QVariant(helpEngine_->fileData(_url));
-	}
-	else if (_url.toString().contains("../../")) {
+		// Extract the global virtual folder from this link
+		QString link = _url.toString();
 
-		// Relative link
-		// So convert into qthelp-link
+		QStringList linkParts = link.split("/");
 
-		QStringList list = _url.toString().split("/");
-
-		QString base = "";
-
-		for(int i = 0; i < list.size(); i++) {
-			if(list[i].toLower().contains("plugin")) {
-				base = list[i].toLower();
-				break;
-			}
+		if ( linkParts.size() > 3) {
+			currentNameSpace_     = linkParts[2];
+			currentVirtualFolder_ = linkParts[3];
+		} else {
+			currentNameSpace_ = "";
+			currentVirtualFolder_ = "";
+			std::cerr << "Unable to detect virtual folder or namespace of this link" << _url.toString().toStdString() << std::endl;
 		}
 
-		if(base != "") {
+		return QVariant(helpEngine_->fileData(_url));
+	}	else {
 
-			// Build new link
-			QStringList docDomains = helpEngine_->registeredDocumentations();
+		const QString sNewUrl = "qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/" + _url.toString();
+		const QUrl newUrl = helpEngine_->findFile(QUrl(sNewUrl));
 
-			QString newUrl = "qthelp://";
-
-			// This gives org.openflipper
-			newUrl += docDomains[0].split(".")[0] + "." + docDomains[0].split(".")[1];
-			newUrl += "." + base + "/doc/" + list.last();
-
-			if((helpEngine_->findFile(newUrl)).isValid()) {
-
-				return QVariant(helpEngine_->fileData(newUrl));
-			}
-
+		if(newUrl.isValid())
+			return QVariant(helpEngine_->fileData(newUrl));
+		else {
+			std::cerr << "Unable to find file at url : " << sNewUrl.toStdString() << std::endl;
 			return QVariant();
 		}
 
-		return QVariant();
-	}
-	else {
-
-		QUrl newUrl;
-
-		QStringList docDomains = helpEngine_->registeredDocumentations();
-
-		// Search in all namespaces for requested file
-		for(int i = 0; i < docDomains.size(); i++) {
-
-			QString sNewUrl = "qthelp://" + docDomains[i] + "/" + VIRTUAL_FOLDER +
-				"/" + _url.toString();
-
-			newUrl = helpEngine_->findFile(QUrl(sNewUrl));
-
-			if(newUrl.isValid()) return QVariant(helpEngine_->fileData(newUrl));
-		}
-
-		// If file has not been found in any of the namespaces
-		// return an empty QVariant
-		return QVariant();
 	}
 
 }

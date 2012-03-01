@@ -51,8 +51,6 @@
 #ifndef HELPBROWSER_HH_
 #define HELPBROWSER_HH_
 
-#define VIRTUAL_FOLDER "doc"
-
 #include <QtGui>
 #include <QTextBrowser>
 #include <QtHelp>
@@ -96,6 +94,9 @@ private:
 
 	QStringList visitedPages_;
 	int currentPage_;
+
+	QString currentVirtualFolder_;
+	QString currentNameSpace_;
 
 };
 
