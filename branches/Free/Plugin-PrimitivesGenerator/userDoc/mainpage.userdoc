@@ -1,0 +1,55 @@
+/** 
+\mainpage Documentation for primitve Generator
+
+\section Functionality
+
+The primitve Generator Plugin provides functions to create primitives in OpenFlipper.
+
+You can find this Plugin in the menu 'Primitives'.
+
+You can choose one of thw following generators to create a primitve:
+
+\subsection Generator
+ \li \ref Cube 
+ \li \ref Dodecahedron 
+ \li \ref Icosahedron 
+ \li \ref Octahedron 
+ \li \ref Pyramid 
+ \li \ref Sphere 
+ \li \ref Tetrahedron
+
+
+\subsection Cube
+\image html primitive_cube.png "Cube generator button"
+Click on the button 'Cube (Triangle Mesh)' in Menu 'Primitives' to generate a cube with triangles.
+
+\subsection Dodecahedron
+\image html primitive_dodecahedron.png "Dodecahedron generator button"
+Click on the button 'Dodecahedron' in Menu 'Primitives' to generate a dodecahedron with triangles.
+
+\subsection Icosahedron
+\image html primitive_icosahedron.png "Icosahedron generator button"
+Click on the button 'Icosahedron' in Menu 'Primitives' to generate a icosahedron with triangles.
+
+\subsection Octahedron
+\image html primitive_octahedron.png "Octahedron generator button"
+Click on the button 'Octahedron' in Menu 'Primitives' to generate a octahedron with triangles.
+
+\subsection Pyramid
+\image html primitive_pyramid.png "Pyramid generator button"
+Click on the button 'Pyramid' in Menu 'Primitives' to generate a pyramid with triangles.
+
+\subsection Sphere
+\image html primitive_sphere.png "Sphere generator button"
+Click on the button 'Sphere' in Menu 'Primitives' to generate a sphere with triangles.
+
+\subsection Tetrahedron
+\image html primitive_tetrahedron.png "Tetrahedron generator button"
+Click on the button 'Tetrahedron' in Menu 'Primitives' to generate a tetrahedron with triangles.
+*/
+
+
+
+
+
+
