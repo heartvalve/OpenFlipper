@@ -3,11 +3,11 @@
 
 \section Functionality
 
-The primitve Generator Plugin provides functions to create primitives in OpenFlipper.
+The primitve Generator Plugin provides functions to create simple primitives in OpenFlipper.
 
 You can find this Plugin in the menu 'Primitives'.
 
-You can choose one of thw following generators to create a primitve:
+You can choose one of the following generators to create a primitve:
 
 \subsection Generator
  \li \ref Cube 
@@ -20,32 +20,39 @@ You can choose one of thw following generators to create a primitve:
 
 
 \subsection Cube
-\image html primitive_cube.png "Cube generator button"
-Click on the button 'Cube (Triangle Mesh)' in Menu 'Primitives' to generate a cube with triangles.
+\image html primitive_cube.png "Cube generator"
+Click on the button 'Cube (Triangle Mesh)' in Menu 'Primitives' to generate a cube. The cube is modeled by a
+triangle mesh.
 
 \subsection Dodecahedron
-\image html primitive_dodecahedron.png "Dodecahedron generator button"
-Click on the button 'Dodecahedron' in Menu 'Primitives' to generate a dodecahedron with triangles.
+\image html primitive_dodecahedron.png "Dodecahedron generator"
+Click on the button 'Dodecahedron' in Menu 'Primitives' to generate a dodecahedron. The dodecahedron is represented
+by a poly mesh.
 
 \subsection Icosahedron
-\image html primitive_icosahedron.png "Icosahedron generator button"
-Click on the button 'Icosahedron' in Menu 'Primitives' to generate a icosahedron with triangles.
+\image html primitive_icosahedron.png "Icosahedron generator"
+Click on the button 'Icosahedron' in Menu 'Primitives' to generate a icosahedron. The icosahedron is modeled by a
+triangle mesh.
 
 \subsection Octahedron
-\image html primitive_octahedron.png "Octahedron generator button"
-Click on the button 'Octahedron' in Menu 'Primitives' to generate a octahedron with triangles.
+\image html primitive_octahedron.png "Octahedron generator"
+Click on the button 'Octahedron' in Menu 'Primitives' to generate a octahedron. The octahedron is modeled by a
+triangle mesh.
 
 \subsection Pyramid
-\image html primitive_pyramid.png "Pyramid generator button"
-Click on the button 'Pyramid' in Menu 'Primitives' to generate a pyramid with triangles.
+\image html primitive_pyramid.png "Pyramid generator"
+Click on the button 'Pyramid' in Menu 'Primitives' to generate a pyramid. The pyramid is modeled by a
+triangle mesh.
 
 \subsection Sphere
-\image html primitive_sphere.png "Sphere generator button"
-Click on the button 'Sphere' in Menu 'Primitives' to generate a sphere with triangles.
+\image html primitive_sphere.png "Sphere generator"
+Click on the button 'Sphere' in Menu 'Primitives' to generate a sphere. The sphere is modeled by a
+triangle mesh.
 
 \subsection Tetrahedron
-\image html primitive_tetrahedron.png "Tetrahedron generator button"
-Click on the button 'Tetrahedron' in Menu 'Primitives' to generate a tetrahedron with triangles.
+\image html primitive_tetrahedron.png "Tetrahedron generator"
+Click on the button 'Tetrahedron' in Menu 'Primitives' to generate a tetrahedron. The tetrahedron is modeled by a
+triangle mesh.
 */
 
 
