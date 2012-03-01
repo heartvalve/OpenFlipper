@@ -91,25 +91,44 @@ void TopologyPlugin::pluginsInitialized() {
 
   QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
+  const QString baseHelpURL = "<a href='qthelp://org.openflipper.plugin-topology/Plugin-Topology/index.html";
+  const QString clickText = tr("Click for more information</a>");
+
+
   edgeFlipAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeFlip.png"), EDGE_FLIP_POPUP );
   edgeFlipAction_->setCheckable( true);
   edgeFlipAction_->setActionGroup(group);
+  edgeFlipAction_->setWhatsThis(tr("Flip edge. ") + baseHelpURL+ "#flip_edge'>" + clickText);
+
   edgeSplitAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeSplit.png"), EDGE_SPLIT_POPUP );
   edgeSplitAction_->setCheckable( true);
   edgeSplitAction_->setActionGroup(group);
+  edgeSplitAction_->setWhatsThis(tr("Split edge. ") + baseHelpURL+ "#split_edge'>" + clickText);
+
+
   edgeCollapseAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeCollapse.png"), EDGE_COLLAPSE_POPUP );
   edgeCollapseAction_->setCheckable( true);
   edgeCollapseAction_->setActionGroup(group);
+  edgeCollapseAction_->setWhatsThis(tr("Collapse edge. ") + baseHelpURL+ "#collapse_edge'>" + clickText);
+
+
   toolbar_->addSeparator();
   faceAddAction_ = toolbar_->addAction( QIcon(iconPath + "topology-addFace.png"), FACE_ADD_POPUP );
   faceAddAction_->setCheckable( true);
   faceAddAction_->setActionGroup(group);
+  faceAddAction_->setWhatsThis(tr("Add face.") + baseHelpURL+ "#add_face'>" + clickText);
+
+
   faceDeleteAction_ = toolbar_->addAction( QIcon(iconPath + "topology-deleteFace.png"), FACE_DELETE_POPUP );
   faceDeleteAction_->setCheckable( true);
   faceDeleteAction_->setActionGroup(group);
+  faceDeleteAction_->setWhatsThis(tr("Delete face. ") + baseHelpURL+ "#delete_face'>" + clickText);
+
+
   faceSplitAction_ = toolbar_->addAction( QIcon(iconPath + "topology-splitFace.png"), FACE_SPLIT_POPUP );
   faceSplitAction_->setCheckable( true);
   faceSplitAction_->setActionGroup(group);
+  faceSplitAction_->setWhatsThis(tr("Split face. ") + baseHelpURL+ "#split_face'>" + clickText);
 
   group->setExclusive(true);
 
