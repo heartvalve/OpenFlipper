@@ -83,40 +83,44 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     QIcon* icon;
     QAction* action;
 
+    const QString baseHelpURL = "<a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html";
+    const QString clickText = tr("Click for more information</a>");
+
     action = primitivesMenu->addAction("Cube (Triangle Mesh)"       ,this,SLOT(addTriangulatedCube()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Cube. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Cube'>Click for more information</a>"));
+
+    action->setWhatsThis(tr("Create a Cube. ") + baseHelpURL+ "#Cube'>" + clickText);
 
     action = primitivesMenu->addAction("Dodecahedron"                  ,this,SLOT(addDodecahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Dodecahedron. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Dodecahedron'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create a Dodecahedron. ") + baseHelpURL+ "#Dodecahedron'>" + clickText);
 
     action = primitivesMenu->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Icosahedron. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Icosahedron'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create a Icosahedron. ") + baseHelpURL+ "#Icosahedron'>" + clickText);
 
     action = primitivesMenu->addAction("Octahedron"                  ,this,SLOT(addOctahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_octahedron.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create an Octahedron. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Octahedron'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create an Octahedron. ") + baseHelpURL+ "#Octahedron'>" + clickText);
 
     action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Pyramid. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Pyramid'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create a Pyramid. ") + baseHelpURL+ "#Pyramid'>" + clickText);
 
     action = primitivesMenu->addAction("Sphere",this,SLOT(addSphere()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Sphere. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Sphere'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create a Sphere. ") + baseHelpURL+ "#Sphere'>" + clickText);
 
     action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
     action->setIcon(*icon);
-    action->setWhatsThis(tr("Create a Tetrahedron. <a href='qthelp://org.openflipper.plugin-primitivesgenerator/Plugin-PrimitivesGenerator/index.html#Tetrahedron'>Click for more information</a>"));
+    action->setWhatsThis(tr("Create a Tetrahedron. ") + baseHelpURL+ "#Tetrahedron'>" + clickText);
 
   }
 
