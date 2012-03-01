@@ -90,7 +90,7 @@ int FileHeightFieldPNGPlugin::loadObject(QString _filename)
           QColor currentColor = image.pixel(i,j);
           double value = std::max(currentColor.redF(),currentColor.blueF());
           value = std::max(currentColor.greenF(),value);
-          mesh->add_vertex(TriMesh::Point(i,j,value));
+          mesh->add_vertex(TriMesh::Point(i,j,-value));
         }
       }
 
