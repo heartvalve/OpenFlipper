@@ -249,6 +249,16 @@ distPointLineSquared( const Vec& _p,
                       const Vec& _v1,
                       Vec*       _min_v=0);
 
+
+/// squared distance from point _p to triangle (_v0, _v1, _v2)
+template <class Vec>
+typename Vec::value_type
+distPointTriangleSquared( const Vec& _p,
+                          const Vec& _v0,
+                          const Vec& _v1,
+                          const Vec& _v2,
+                          Vec& _nearestPoint );
+
 /// distance from point _p to triangle (_v0, _v1, _v2)
 template <class Vec>
 typename Vec::value_type
@@ -259,16 +269,6 @@ distPointTriangle( const Vec& _p,
                    Vec& _nearestPoint )
 { return sqrt(distPointTriangleSquared(_p, _v0, _v1, _v2, _nearestPoint)); }
 
-
-/// squared distance from point _p to triangle (_v0, _v1, _v2)
-template <class Vec>
-typename Vec::value_type
-distPointTriangleSquared( const Vec& _p,
-                          const Vec& _v0,
-                          const Vec& _v1,
-                          const Vec& _v2,
-                          Vec& _nearestPoint );
-                          
 /** \brief Checks the distance from a point to a plane
 *
 *
@@ -491,6 +491,16 @@ int isObtuse(const VectorT& _p0,
 //===========================================================================   
 
 
+/** \brief return squared area of triangle (_v0, _v1, _v2)
+*
+*/
+template <class Vec>
+typename Vec::value_type
+triangleAreaSquared( const Vec& _v0,
+                     const Vec& _v1,
+                     const Vec& _v2 );
+
+
 /** \brief return area of triangle (_v0, _v1, _v2)
 *
 */
@@ -503,17 +513,6 @@ triangleArea( const Vec& _v0,
   return sqrt(triangleAreaSquared(_v0,_v1,_v2));
 }
   
-
-/** \brief return squared area of triangle (_v0, _v1, _v2)
-*
-*/
-template <class Vec>
-typename Vec::value_type
-triangleAreaSquared( const Vec& _v0,
-                     const Vec& _v1,
-                     const Vec& _v2 );
-
-
 
 /** \brief return aspect ratio (length/height) of triangle
 *
