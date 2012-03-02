@@ -91,6 +91,11 @@ public:
   /// max scalar value
   float max() const;
 
+  // Make the color coder usable as a function operator.
+  inline ACG::Vec4f operator() (float _v) const {
+      return color_float4(_v);
+  }
+
 private:
 
   ACG::Vec4uc color_unsigned(float _v) const;
