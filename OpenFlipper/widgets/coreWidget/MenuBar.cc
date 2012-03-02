@@ -63,16 +63,23 @@
 
 void CoreWidget::slotAddMenubarAction( QAction* _action , QString _name ) {
 
-  if (!menus_.contains (_name))
+  if (!menus_.contains(_name))
     return;
 
-  if (_name == FILEMENU)
-  {
+  if (_name == FILEMENU) {
     fileMenu_->insertSeparator(fileMenuEnd_);
-    fileMenu_->insertAction( fileMenuEnd_ , _action );
+    fileMenu_->insertAction(fileMenuEnd_, _action);
+  } else if (_name == ALGORITHMMENU) {
+
+    // We insert the algorithms menu if it is not available yet
+    if ( menuBar()->actions().contains(helpMenu_->menuAction()) )
+      menuBar()->insertMenu(helpMenu_->menuAction(), algorithmMenu_);
+
+    menus_[_name]->addAction(_action);
+  } else {
+    menus_[_name]->addAction(_action);
   }
-  else
-    menus_[_name]->addAction (_action);
+
 }
 
 //=============================================================================
@@ -219,7 +226,6 @@ void CoreWidget::setupMenuBar()
   AC_exit->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"application-exit.png"));
   connect(AC_exit, SIGNAL(triggered()), this, SIGNAL(exit()));
   fileMenu_->addAction(AC_exit);
-
 
   // ======================================================================
   // View Menu
@@ -479,6 +485,12 @@ void CoreWidget::setupMenuBar()
   
 
   // ======================================================================
+  // Algorithms Menu
+  // ======================================================================
+  algorithmMenu_ = new QMenu( ALGORITHMMENU );
+  menus_[tr("Algorithms")] = algorithmMenu_;
+
+  // ======================================================================
   // help Menu
   // ======================================================================
   helpMenu_ = new QMenu(tr("Help"));
@@ -526,6 +538,7 @@ void CoreWidget::setupMenuBar()
   viewMenu_->installEventFilter(this);
   toolsMenu_->installEventFilter(this);
   windowMenu_->installEventFilter(this);
+  algorithmMenu_->installEventFilter(this);
   helpMenu_->installEventFilter(this);
 }
 

@@ -56,6 +56,8 @@
 /// The Menu will be added inside the Tools Menu
 #define TOOLSMENU tr("Tools")
 
+/// The Menu will be added inside the Algorithms Menu
+#define ALGORITHMMENU tr("Algorithms")
 
 /** \file MenuInterface.hh
 *
@@ -141,7 +143,7 @@ void PrintPlugin::pluginsInitialized()
   // Set an icon for this submenu
   printMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-print.png"));
   
-  // Add the new submenu to OpenFlippers menus
+  // Add the new submenu to OpenFlippers file menu
   emit addMenubarAction(printMenu->menuAction(), FILEMENU );
   
   // Create an action to be added to the submenu
@@ -161,6 +163,15 @@ void PrintPlugin::pluginsInitialized()
 }
 \endcode
 
+If you want to create a toplevel menu you can use the following code snippet:
+\code
+  //Pointer to the new menu
+  QMenu *topLevelMenu;
+
+  // This function checks if a menu called "Toplevel" exists and returns it in the pointer.
+  // If it does not exist, it is automatically created.
+  emit getMenubarMenu(tr("Toplevel"), topLevelMenu, true );
+\endcode
 
 Signals and slots of your menus (e.g. from an action inside it) can be directly connected to signals and slots in
 your plugin. Therefore the embedding of your menus into the OpenFlippers menu list is fully transparent.
