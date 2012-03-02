@@ -1042,6 +1042,7 @@ void CoreWidget::setForceNativeCursor ( bool _state )
 
 bool CoreWidget::event( QEvent *_event )
 {
+
 	//WhatsThisClicked event for hyperlinks in 'whats this' boxes
 	if( _event->type() == QEvent::WhatsThisClicked )
 	{

@@ -636,6 +636,9 @@ public:
     /// QMenu containing the recently opened files
     QMenu* recentFilesMenu_;
 
+    /// Algorithms Menu
+    QMenu* algorithmMenu_;
+
     /// Help Menu
     QMenu* helpMenu_;
     
