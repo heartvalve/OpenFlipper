@@ -97,11 +97,31 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   
   helpEngine_->setupData();
   
-  for ( int i = 0 ; i < helpFiles.size() ; ++i ) 
-    if ( !helpEngine_->registerDocumentation( helpDir.path()+ QDir::separator() + helpFiles[i]) ) 
+  // Get all currently registered nameSpaces
+  QStringList registeredNamespaces =helpEngine_->registeredDocumentations();
+
+
+  QStringList documentationFiles;
+
+  // Get a list of all loaded documentation files from the namespaces
+  for ( int i = 0; i < registeredNamespaces.size() ; ++i)
+    documentationFiles.push_back( helpEngine_->documentationFileName(registeredNamespaces[i]) );
+
+
+  for ( int i = 0 ; i < helpFiles.size() ; ++i ) {
+    const QString filename = helpDir.path()+ QDir::separator() + helpFiles[i];
+
+    // Don't register files twice (stored between multiple OpenFlipper executions)
+    if (documentationFiles.contains(filename))
+      continue;
+
+    // Try to register the file
+    if ( !helpEngine_->registerDocumentation( filename ) ) {
+      std::cerr << "Error when trying to register file " << filename.toStdString() << std::endl;
       std::cerr << helpFiles[i].toStdString() << " :" << helpEngine_->error().toStdString() << std::endl;
-    else 
-      std::cerr << "Loaded Help file : " << helpFiles[i].toStdString() << std::endl;
+    }
+
+  }
 
   searchEngine_ = new QHelpSearchEngine(helpEngine_, this);
 
