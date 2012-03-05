@@ -103,7 +103,7 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # Only one processor required
   set_tests_properties (
       BatchStart PROPERTIES
-      TIMEOUT 60
+      TIMEOUT 180
       RUN_SERIAL TRUE
       PROCESSORS 1
   ) 
