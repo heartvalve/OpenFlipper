@@ -255,8 +255,32 @@ if ( APPLE )
    acg_copy_after_build( OpenFlipper "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  endif ()
 
- # Copy qt plugins into bundle
- acg_copy_after_build ( OpenFlipper "${QT_PLUGINS_DIR}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins")
+ # Copy qt plugins into bundle but omit debug libraries when in release mode and vice versa
+ acg_unset (_files)
+ acg_get_files_in_dir (_files ${QT_PLUGINS_DIR})
+ foreach (_file ${_files})
+   if ( CMAKE_BUILD_TYPE MATCHES "Release" )
+
+     # In release mode, we don't want debug binaries in the bundle as it could cause crashes due to wrong linking or mixing of debug and release
+     if ( NOT _file MATCHES ".*debug.*" )
+       add_custom_command(TARGET OpenFlipper POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${QT_PLUGINS_DIR}/${_file}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins/${_file}"
+       )
+     endif()
+
+   else ()
+     
+     # In debug mode, we don't want release binaries in the bundle as it could cause crashes due to wrong linking or mixing of debug and release
+     if ( _file MATCHES ".*debug.*" )
+       add_custom_command(TARGET OpenFlipper POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${QT_PLUGINS_DIR}/${_file}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins/${_file}"
+       )
+     endif()
+
+   endif()
+    
+ endforeach ()
+
 elseif(WIN32)
 
  #copy qt plugins to Build directory and configure qt.conf file
