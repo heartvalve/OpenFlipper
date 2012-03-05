@@ -118,7 +118,13 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
        
     QString version() { return QString("1.0"); };
 
-    /// Compares two meshes. Use the two getter functions to retrieve the maximal deviations
+    /** Compares two meshes. Use the two getter functions to retrieve the maximal deviations.
+     *
+     * The source will be the reference. The difference will be rendered as points on the target mesh.
+     *
+     * @param _sourceId Id of the reference mesh
+     * @param _targetId Id of the mesh that should be compared to the reference mesh.
+     */
     void compare(int _sourceId,int _targetId);
 
     /// Get the maximal distance of the last comparison (-1, if no comparison performed so far)
@@ -148,6 +154,7 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
     /// Last maximal gauss curvature deviation
     double maxGaussCurvatureDev_;
+
 };
 
 #endif //MESHCOMPAREPLUGIN_HH
