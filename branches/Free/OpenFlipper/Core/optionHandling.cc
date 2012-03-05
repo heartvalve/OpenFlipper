@@ -194,7 +194,7 @@ void Core::setupOptions() {
   if ( localIni.exists() )
     optionFiles.push_back(OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini");
 
-  // Set the previously generated Optionfiles
+  // Set the previously generated option files
   OpenFlipper::Options::optionFiles(optionFiles);
 
   // ==============================================================
