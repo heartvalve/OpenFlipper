@@ -185,6 +185,8 @@ void MeshComparePlugin::slotClear() {
 
   }
 
+  emit updateView();
+
 }
 
 void MeshComparePlugin::compare(int _sourceId,int _targetId) {
@@ -203,7 +205,6 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   TriMesh* compMesh = PluginFunctions::triMesh(_targetId);
 
   ACG::SceneGraph::PointNode *pNode = 0;
-
 
   // Check if we already attached a PointNode
   if ( OpenFlipper::Options::gui() ) {
@@ -388,31 +389,74 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   // Generate the colors
   if ( pNode ) {
 
-    if ( tool_->distance->isChecked() ) {
-      ACG::ColorCoder cCoder(0,maximalDistance_);
+    tool_->minValue->setText( QString::number(0.0) );
 
+    double min = 0.0;
+    double max = 1.0;
+
+    if ( tool_->distance->isChecked() ) {
+      tool_->maxValue->setText( QString::number(maximalDistance_) );
+
+      if ( tool_->doClamp->isChecked() ) {
+        min = tool_->minVal->value();
+        max = tool_->maxVal->value();
+      } else
+        max = maximalDistance_;
+
+
+      ACG::ColorCoder cCoder(min,max);
       for ( unsigned int i = 0 ; i < distances.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(distances[i]));
       }
+
+
     } else if ( tool_->normalAngle->isChecked() ) {
-      ACG::ColorCoder cCoder(0,maxNormalDeviation_);
+      tool_->maxValue->setText( QString::number(maxNormalDeviation_) );
+
+      if ( tool_->doClamp->isChecked() ) {
+        min = tool_->minVal->value();
+        max = tool_->maxVal->value();
+      } else
+        max = maxNormalDeviation_;
+
+      ACG::ColorCoder cCoder(min,max);
 
       for ( unsigned int i = 0 ; i < normalAngles.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(normalAngles[i]));
       }
+
+
     } else if ( tool_->meanCurvature->isChecked() ) {
-      ACG::ColorCoder cCoder(0,maxMeanCurvatureDev_);
+      tool_->maxValue->setText( QString::number(maxMeanCurvatureDev_) );
+
+      if ( tool_->doClamp->isChecked() ) {
+        min = tool_->minVal->value();
+        max = tool_->maxVal->value();
+      } else
+        max = maxMeanCurvatureDev_;
+
+      ACG::ColorCoder cCoder(min,max);
 
       for ( unsigned int i = 0 ; i < meanCurvatures.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(meanCurvatures[i]));
       }
 
+
     } else if ( tool_->gaussCurvature->isChecked() ) {
-      ACG::ColorCoder cCoder(0,maxGaussCurvatureDev_);
+      tool_->maxValue->setText( QString::number(maxGaussCurvatureDev_) );
+
+      if ( tool_->doClamp->isChecked() ) {
+        min = tool_->minVal->value();
+        max = tool_->maxVal->value();
+      } else
+        max = maxGaussCurvatureDev_;
+
+      ACG::ColorCoder cCoder(min,max);
 
       for ( unsigned int i = 0 ; i < gaussCurvatures.size() ; ++i) {
         pNode->add_color(cCoder.color_float4(gaussCurvatures[i]));
       }
+
 
     }
 
