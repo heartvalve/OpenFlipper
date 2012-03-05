@@ -123,9 +123,11 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper configuration files:"));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
-  aboutWidget_->OpenFlipperAbout->append("ConfigDir:\t\t\t" +   OpenFlipper::Options::configDirStr() );
-  aboutWidget_->OpenFlipperAbout->append("Main option file:\t\t" + OpenFlipperSettings().fileName());
-  aboutWidget_->OpenFlipperAbout->append("Additional option files:");
+  aboutWidget_->OpenFlipperAbout->append(tr("ConfigDir:\t\t\t") +   OpenFlipper::Options::configDirStr() );
+  aboutWidget_->OpenFlipperAbout->append(tr("Window states:\t\t") + OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat");
+
+  aboutWidget_->OpenFlipperAbout->append(tr("Main option file:\t\t") + OpenFlipperSettings().fileName());
+  aboutWidget_->OpenFlipperAbout->append(tr("Additional option files:"));
   for ( int i = 0 ; i < OpenFlipper::Options::optionFiles().size() ; ++i)
     aboutWidget_->OpenFlipperAbout->append(OpenFlipper::Options::optionFiles()[i]);
 
