@@ -113,7 +113,24 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append("Icons:\t " + OpenFlipper::Options::iconDirStr() );
   aboutWidget_->OpenFlipperAbout->append("Fonts:\t" + OpenFlipper::Options::fontsDirStr() );
   aboutWidget_->OpenFlipperAbout->append("Help:\t" + OpenFlipper::Options::helpDirStr() );
-  
+  aboutWidget_->OpenFlipperAbout->append("\n");
+
+  // =====================================================================================
+  // Config files
+  // =====================================================================================
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper configuration files:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
+
+  aboutWidget_->OpenFlipperAbout->append("ConfigDir:\t\t\t" +   OpenFlipper::Options::configDirStr() );
+  aboutWidget_->OpenFlipperAbout->append("Main option file:\t\t" + OpenFlipperSettings().fileName());
+  aboutWidget_->OpenFlipperAbout->append("Additional option files:");
+  for ( int i = 0 ; i < OpenFlipper::Options::optionFiles().size() ; ++i)
+    aboutWidget_->OpenFlipperAbout->append(OpenFlipper::Options::optionFiles()[i]);
+
+
+
   
   // =====================================================================================
   // Memory infos
@@ -291,7 +308,8 @@ void CoreWidget::showAboutWidget( ) {
       position = splitted.indexOf ( QRegExp("^flags.*") );
       if ( position != -1 ){
         QString cpuFlags = splitted[position].section(':', -1).simplified();
-        aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t ") + cpuFlags );
+        aboutWidget_->OpenFlipperAbout->append( tr("CPU capabilities:") );
+        aboutWidget_->OpenFlipperAbout->append( cpuFlags );
       } else {
         aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t CPU flag specification not found")); 
       }    
