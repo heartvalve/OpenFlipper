@@ -581,26 +581,36 @@ Core::init() {
 
   if ( OpenFlipper::Options::gui() ) {
 
-    QSettings windowStates(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat", QSettings::IniFormat);
+    QFile statesFile(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat");
 
-    //try to restore the windowState
-    coreWidget_->restoreState (windowStates.value("Core/Window/State").toByteArray ());
-    //try to restore the geometry
-    coreWidget_->restoreGeometry (windowStates.value("Core/Window/Geometry").toByteArray ());
+    if (statesFile.exists() ) {
+      QSettings windowStates(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat", QSettings::IniFormat);
 
-    coreWidget_->toolSplitter_->restoreState (windowStates.value("Core/ToolSplitter").toByteArray ());
-    coreWidget_->splitter_->restoreState (windowStates.value("Core/LogSplitter").toByteArray ());
+      //try to restore the windowState
+      coreWidget_->restoreState (windowStates.value("Core/Window/State").toByteArray ());
+      //try to restore the geometry
+      coreWidget_->restoreGeometry (windowStates.value("Core/Window/Geometry").toByteArray ());
 
-    coreWidget_->show();
+      coreWidget_->toolSplitter_->restoreState (windowStates.value("Core/ToolSplitter").toByteArray ());
+      coreWidget_->splitter_->restoreState (windowStates.value("Core/LogSplitter").toByteArray ());
 
-    applyOptions();
+      coreWidget_->show();
 
-    windowStates.beginGroup ("Core");
-    windowStates.beginGroup ("LogSlider");
-    coreWidget_->slidingLogger_->restoreState (windowStates);
-    windowStates.endGroup ();
-    coreWidget_->toolBox_->restoreState (windowStates);
-    windowStates.endGroup ();
+      applyOptions();
+
+      windowStates.beginGroup ("Core");
+      windowStates.beginGroup ("LogSlider");
+      coreWidget_->slidingLogger_->restoreState (windowStates);
+      windowStates.endGroup ();
+      coreWidget_->toolBox_->restoreState (windowStates);
+      windowStates.endGroup ();
+
+    } else {
+
+      coreWidget_->show();
+      applyOptions();
+
+    }
 
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splash_->finish(coreWidget_);
