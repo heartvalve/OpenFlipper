@@ -40,30 +40,24 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include "ui_ImageDialog.hh"
-#include <QtGui>
+#include <QLabel>
 
-class ImageDialog : public QDialog, public Ui::ImageDialog
+class QClickableLabel : public QLabel
 {
   Q_OBJECT
 
+  signals:
+    void mouseButtonPressEvent(QPoint _p);
+    void mouseButtonMoveEvent(QPoint _p);
+    void mouseButtonReleaseEvent(QPoint _p);
+
   public:
-    ImageDialog(QImage _image, QWidget *parent = 0);
+    QClickableLabel(QWidget *_parent = 0);
 
-  public slots:
-    void slidersChanged();
+  protected :
+    void mouseMoveEvent ( QMouseEvent * _event);
+    void mousePressEvent ( QMouseEvent * _event);
+    void mouseReleaseEvent ( QMouseEvent * _event );
 
-
-  private slots:
-    void mouseButtonMoveEvent ( QPoint _p );
-    void mouseButtonPressEvent ( QPoint _p );
-    void mouseButtonReleaseEvent ( QPoint _p );
-
-  private:
-    QImage  image_;
-    QPixmap buffer_;
-
-    bool   dragging_;
-    QPoint dragStartPoint_;
 };
 
