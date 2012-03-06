@@ -513,6 +513,20 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
   aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
 
+  QList<QByteArray> imageFormats = QImageReader::supportedImageFormats();
+  QString formatsString = "";
+  for ( int i = 0 ; i < imageFormats.size() ; ++i) {
+    formatsString += imageFormats[i] + " ";
+
+    if ( (i != 0)  && (i % 15) == 0 )
+      formatsString+= "\n";
+  }
+
+  aboutWidget_->OpenFlipperAbout->append(tr("Supported image read formats:") );
+  aboutWidget_->OpenFlipperAbout->append(formatsString);
+
+  aboutWidget_->OpenFlipperAbout->append("\n");
+
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Library paths:") );
   QStringList libPaths = QCoreApplication::libraryPaths();
   for(int i = 0 ; i < libPaths.size() ; ++i)
