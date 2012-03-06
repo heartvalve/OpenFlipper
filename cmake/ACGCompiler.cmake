@@ -38,7 +38,7 @@ if ( WIN32 )
       set( CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${flag} ")
     endif()
   endforeach()
-  
+
 endif( WIN32 )
 
 if (UNIX)
@@ -96,19 +96,18 @@ if (UNIX)
   ################################################################################
   # Warnings
   ################################################################################
-  
+ 
   # Add the standard compiler warnings
   if ( NOT COMPILER_WARNINGS )
-    IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-        set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
-    ELSE()
+   
+    IF ( APPLE  )
+      # Skip unused parameters as it has to be used for the documentation via doxygen and the interfaces
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" "-Wno-non-virtual-dtor" "-Wno-unused-parameter" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+    ELSEIF ( CMAKE_SYSTEM MATCHES "SunOS*" )
       set ( COMPILER_WARNINGS "" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+    ELSE ()
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ENDIF()
-
-    # Skip warning on non-virtual destructor
-    if (APPLE)
-       list( APPEND COMPILER_WARNINGS "-Wno-non-virtual-dtor"  )
-    endif()
 
   endif ( NOT COMPILER_WARNINGS )
 
