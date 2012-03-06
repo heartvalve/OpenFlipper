@@ -58,15 +58,15 @@ QString FileHeightFieldPNGPlugin::getLoadFilters() {
   QString formats;
 
   if ( imageFormats.contains("jpeg")) {
-    formats += "*.jpeg;*.jpg;";
+    formats += "*.jpeg *.jpg ";
   }
 
   if ( imageFormats.contains("tiff")) {
-    formats += "*.tiff;";
+    formats += "*.tiff ";
   }
 
   if ( imageFormats.contains("tif")) {
-    formats += "*.tif;";
+    formats += "*.tif ";
   }
 
   if ( imageFormats.contains("png")) {
@@ -84,6 +84,8 @@ DataType  FileHeightFieldPNGPlugin::supportedType() {
   DataType type = DATA_TRIANGLE_MESH;
   return type;
 }
+
+
 
 int FileHeightFieldPNGPlugin::loadObject(QString _filename)
 {

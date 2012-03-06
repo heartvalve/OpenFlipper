@@ -46,11 +46,12 @@
 
 ImageDialog::ImageDialog(QImage _image, QWidget *parent) :
         QDialog(parent),
-        image_(_image)
+        image_(_image),
+        dragging_(false)
 {
   setupUi(this);
 
-  image->setPixmap(QPixmap::fromImage(image_).scaled(QSize(400,400)));
+  image->setPixmap(QPixmap::fromImage(image_).scaled(QSize(400,400),Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
   // Set the correct boundaries for the spinboxes
   minX->setMaximum(image_.width());
@@ -66,6 +67,13 @@ ImageDialog::ImageDialog(QImage _image, QWidget *parent) :
   connect(minY,SIGNAL(valueChanged(int )),this,SLOT(slidersChanged()));
   connect(maxY,SIGNAL(valueChanged(int )),this,SLOT(slidersChanged()));
 
+  connect(image,SIGNAL(mouseButtonMoveEvent ( QPoint ))   ,this,SLOT(mouseButtonMoveEvent ( QPoint )));
+  connect(image,SIGNAL(mouseButtonPressEvent ( QPoint ))  ,this,SLOT(mouseButtonPressEvent ( QPoint )));
+  connect(image,SIGNAL(mouseButtonReleaseEvent ( QPoint )),this,SLOT(mouseButtonReleaseEvent ( QPoint )));
+
+  setMouseTracking ( true);
+
+  grabMouse();
 
 }
 
@@ -98,3 +106,56 @@ void ImageDialog::slidersChanged() {
 
   image->setPixmap(buffer_.scaled(QSize(400,400),Qt::KeepAspectRatio,Qt::SmoothTransformation));
 }
+
+void ImageDialog::mouseButtonMoveEvent ( QPoint _p) {
+  if ( dragging_ ) {
+
+    // Calculate the right values for the position.
+    // The image is scaled to 400x400
+    // But the aspect ratio is kept. So we need to calculate the new sizes.
+
+    // Calculate the free space above and before the real image
+    int xoffset = (400 - image->pixmap()->width()) / 2;
+    int yoffset = (400 - image->pixmap()->height()) / 2;
+
+    // Calculate the scaling factor that is used to fit the image to the widget
+    const int scale = image_.width()/image->pixmap()->width();
+
+    int newXMin = (std::min(dragStartPoint_.x(),_p.x()) - xoffset ) * scale;
+    int newXMax = (std::max(dragStartPoint_.x(),_p.x()) - xoffset ) * scale;
+
+    int newYMin = (std::min(dragStartPoint_.y(),_p.y()) - yoffset ) * scale;
+    int newYMax = (std::max(dragStartPoint_.y(),_p.y()) - yoffset ) * scale;
+
+    minX->blockSignals(true);
+    maxX->blockSignals(true);
+    minY->blockSignals(true);
+    maxY->blockSignals(true);
+
+    minX->setValue(newXMin);
+    maxX->setValue(newXMax);
+    minY->setValue(newYMin);
+    maxY->setValue(newYMax);
+
+    minX->blockSignals(false);
+    maxX->blockSignals(false);
+    minY->blockSignals(false);
+    maxY->blockSignals(false);
+
+    slidersChanged();
+  }
+}
+
+void ImageDialog::mouseButtonPressEvent (  QPoint _p ) {
+  dragStartPoint_ = _p;
+  dragging_       = true;
+}
+
+void ImageDialog::mouseButtonReleaseEvent (  QPoint _p ) {
+  dragging_ = false;
+}
+
+
+
+
+

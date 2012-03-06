@@ -2,6 +2,12 @@
 <ui version="4.0">
  <class>ImageDialog</class>
  <widget class="QDialog" name="ImageDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,8 +16,17 @@
     <height>525</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -19,40 +34,31 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QFrame" name="frame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+        <widget class="QClickableLabel" name="image">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+         <property name="minimumSize">
+          <size>
+           <width>400</width>
+           <height>400</height>
+          </size>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="image">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>400</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Image Placeholder</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Image Placeholder</string>
+         </property>
         </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QSpinBox" name="maxY"/>
+          <widget class="QSpinBox" name="minY"/>
          </item>
          <item>
           <spacer name="verticalSpacer">
@@ -68,7 +74,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QSpinBox" name="minY"/>
+          <widget class="QSpinBox" name="maxY"/>
          </item>
         </layout>
        </item>
@@ -185,6 +191,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QClickableLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">QClickableLabel.hh</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
