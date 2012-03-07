@@ -124,8 +124,16 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
      *
      * @param _sourceId Id of the reference mesh
      * @param _targetId Id of the mesh that should be compared to the reference mesh.
+     * @param _computeDist   Compute distance between meshes
+     * @param _computeNormal Compute normal deviation between meshes
+     * @param _computeGauss  Compute gauss curvature deviation between meshes
+     * @param _computeMean   Compute mean curvature deviation between meshes
      */
-    void compare(int _sourceId,int _targetId);
+    void compare(int _sourceId,int _targetId,
+                 bool _computeDist   = true,
+                 bool _computeNormal = true,
+                 bool _computeGauss  = true ,
+                 bool _computeMean   = true);
 
     /// Get the maximal distance of the last comparison (-1, if no comparison performed so far)
     double lastMaximalDistance() { return maximalDistance_; };

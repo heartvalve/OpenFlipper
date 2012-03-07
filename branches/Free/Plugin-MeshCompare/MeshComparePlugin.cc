@@ -153,7 +153,10 @@ void MeshComparePlugin::compareButton() {
 
 
   if ( (targetObject != 0) && (sourceObject != 0)  ) {
-    compare(sourceObject->id(),targetObject->id());
+    compare(sourceObject->id(),targetObject->id(), tool_->distance->isChecked() ,
+                                                   tool_->normalAngle->isChecked(),
+                                                   tool_->gaussCurvature->isChecked(),
+                                                   tool_->meanCurvature->isChecked() );
   } else {
     emit log(LOGERR,tr("Please select one source and one target mesh to compare! Source will be the reference mesh."));
   }
@@ -189,7 +192,7 @@ void MeshComparePlugin::slotClear() {
 
 }
 
-void MeshComparePlugin::compare(int _sourceId,int _targetId) {
+void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, bool _computeNormal, bool _computeGauss , bool _computeMean) {
 
 
   TriMeshObject* source = PluginFunctions::triMeshObject(_sourceId);
@@ -235,42 +238,44 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId) {
   // Compute mean curvature on both meshes ( if plugin is available )
   // ================================================================
   bool meanCurvature = false;
-  emit pluginExists( "meancurvature" , meanCurvature  );
-
-  //
-  if ( meanCurvature ) {
-    RPC::callFunction("meancurvature","computeMeanCurvature",_sourceId);
-    RPC::callFunction("meancurvature","computeMeanCurvature",_targetId);
-  }
-
   OpenMesh::VPropHandleT< double > meanRef;
   OpenMesh::VPropHandleT< double > meanComp;
 
-  if( meanCurvature &&
-     ((!refMesh->get_property_handle(  meanRef , "Mean Curvature") ) ||
-      (!compMesh->get_property_handle( meanComp, "Mean Curvature") ))) {
-    meanCurvature = false;
+  if ( _computeMean ) {
+    emit pluginExists( "meancurvature" , meanCurvature  );
+
+    if ( meanCurvature ) {
+      RPC::callFunction("meancurvature","computeMeanCurvature",_sourceId);
+      RPC::callFunction("meancurvature","computeMeanCurvature",_targetId);
+    }
+
+    if( meanCurvature &&
+        ((!refMesh->get_property_handle(  meanRef , "Mean Curvature") ) ||
+            (!compMesh->get_property_handle( meanComp, "Mean Curvature") ))) {
+      meanCurvature = false;
+    }
   }
 
   // ================================================================
   // Compute mean curvature on both meshes ( if plugin is available )
   // ================================================================
   bool gaussCurvature = false;
-  emit pluginExists( "gausscurvature" , gaussCurvature  );
-
-  //
-  if ( gaussCurvature ) {
-    RPC::callFunction("gausscurvature","computeGaussCurvature",_sourceId);
-    RPC::callFunction("gausscurvature","computeGaussCurvature",_targetId);
-  }
-
   OpenMesh::VPropHandleT< double > gaussRef;
   OpenMesh::VPropHandleT< double > gaussComp;
 
-  if( gaussCurvature &&
-     ((!refMesh->get_property_handle(  gaussRef , "Gaussian Curvature") ) ||
-      (!compMesh->get_property_handle( gaussComp, "Gaussian Curvature") ))) {
-    gaussCurvature = false;
+  if ( _computeGauss ) {
+    emit pluginExists( "gausscurvature" , gaussCurvature  );
+
+    if ( gaussCurvature ) {
+      RPC::callFunction("gausscurvature","computeGaussCurvature",_sourceId);
+      RPC::callFunction("gausscurvature","computeGaussCurvature",_targetId);
+    }
+
+    if( gaussCurvature &&
+        ((!refMesh->get_property_handle(  gaussRef , "Gaussian Curvature") ) ||
+            (!compMesh->get_property_handle( gaussComp, "Gaussian Curvature") ))) {
+      gaussCurvature = false;
+    }
   }
 
 
