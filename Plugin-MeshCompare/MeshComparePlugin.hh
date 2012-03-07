@@ -57,6 +57,10 @@
 
 #include "MeshCompareToolbarWidget.hh"
 
+#ifdef WITH_QWT
+  #include "QwtFunctionPlot.hh"
+#endif
+
 class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, TextureInterface, RPCInterface
 {
   Q_OBJECT
@@ -147,6 +151,11 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
     /// Get the maximal gauss curvature deviation of the last comparison (-1, if no comparison performed so far)
     double lastMaximalGaussCurvatureDeviation() { return maxGaussCurvatureDev_; };
 
+  private slots:
+
+    /// If the checkbox is changed to be checked, the values in the labels will be written into the spin boxes.
+    void slotClampBox(bool _checked);
+
   private:
     /// The toolbar widget of this plugin
     MeshCompareToolbarWidget* tool_;
@@ -162,6 +171,10 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
     /// Last maximal gauss curvature deviation
     double maxGaussCurvatureDev_;
+
+    #ifdef WITH_QWT
+      QwtFunctionPlot* plot_;
+    #endif
 
 };
 

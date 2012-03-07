@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>297</width>
-    <height>258</height>
+    <width>304</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,6 +80,13 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="frame">
+     <property name="title">
+      <string>Histogramm</string>
+     </property>
     </widget>
    </item>
    <item>
