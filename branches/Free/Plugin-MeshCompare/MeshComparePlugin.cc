@@ -55,12 +55,16 @@
 #include <ACG/Scenegraph/PointNode.hh>
 #include <ACG/Utils/ColorCoder.hh>
 
+
 MeshComparePlugin::MeshComparePlugin() :
   tool_(0),
   maximalDistance_(-1),
   maxNormalDeviation_(-1),
   maxMeanCurvatureDev_(-1),
   maxGaussCurvatureDev_(-1)
+#ifdef WITH_QWT
+  ,plot_(0)
+#endif
 {
 
 }
@@ -80,6 +84,21 @@ void MeshComparePlugin::initializePlugin()
 
     QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"MeshCompare.png");
     emit addToolbox( tr("Mesh Compare") , tool_ , toolIcon);
+
+    connect(tool_->doClamp,SIGNAL(toggled( bool)),this,SLOT(slotClampBox(bool)));
+
+#ifdef WITH_QWT
+    QVBoxLayout* layout = new QVBoxLayout(tool_->frame);
+
+    plot_ = new QwtFunctionPlot(0);
+    plot_->setMinimumHeight(150);
+
+    layout->addWidget(plot_);
+#else
+
+    // Hide the extra frame
+    tool_->frame->hide();
+#endif
   }
 }
 
@@ -192,6 +211,13 @@ void MeshComparePlugin::slotClear() {
 
 }
 
+void MeshComparePlugin::slotClampBox(bool _checked) {
+  if ( _checked ) {
+    tool_->minVal->setValue(tool_->minValue->text().toDouble());
+    tool_->maxVal->setValue(tool_->maxValue->text().toDouble());
+  }
+}
+
 void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, bool _computeNormal, bool _computeGauss , bool _computeMean) {
 
 
@@ -297,30 +323,30 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
   for ( TriMesh::VertexIter v_it = refMesh->vertices_begin() ; v_it != refMesh->vertices_end(); ++ v_it) {
 
-    TriMeshObject::OMTriangleBSP::NearestNeighbor nearest = compBSP->nearest( refMesh->point(v_it) );
+    TriMeshObject::OMTriangleBSP::NearestNeighbor nearest = compBSP->nearest(refMesh->point(v_it));
     TriMesh::FaceHandle closestFace = nearest.handle;
 
     // Remember the maximal distance between the meshes
-    if ( nearest.dist > maximalDistance_ )
+    if (nearest.dist > maximalDistance_)
       maximalDistance_ = nearest.dist;
 
     // Remember distance for color coding
     distances.push_back(nearest.dist);
 
     // Get the vertices around that face and their properties
-    TriMesh::CFVIter        fv_it = compMesh->cfv_iter(closestFace);
+    TriMesh::CFVIter fv_it = compMesh->cfv_iter(closestFace);
 
-    const TriMesh::Point&        p0    = compMesh->point(fv_it);
-    const TriMesh::Normal        n0    = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v0    = fv_it.handle();
+    const TriMesh::Point& p0 = compMesh->point(fv_it);
+    const TriMesh::Normal n0 = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v0 = fv_it.handle();
 
-    const TriMesh::Point&        p1    = compMesh->point(++fv_it);
-    const TriMesh::Normal        n1    = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v1    = fv_it.handle();
+    const TriMesh::Point& p1 = compMesh->point(++fv_it);
+    const TriMesh::Normal n1 = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v1 = fv_it.handle();
 
-    const TriMesh::Point&        p2    = compMesh->point(++fv_it);
-    const TriMesh::Normal        n2    = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v2    = fv_it.handle();
+    const TriMesh::Point& p2 = compMesh->point(++fv_it);
+    const TriMesh::Normal n2 = compMesh->normal(fv_it);
+    const TriMesh::VertexHandle& v2 = fv_it.handle();
 
     // project original point to current mesh
     TriMesh::Point projectedPoint;
@@ -333,61 +359,60 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
     // compute Barycentric coordinates
     ACG::Geometry::baryCoord(projectedPoint, p0, p1, p2, projectedPoint);
 
-    // interpolate normal on the compare mesh at the projected point via barycentric coordinates.
-    TriMesh::Normal normal;
-    normal  = n0 * projectedPoint[0];
-    normal += n1 * projectedPoint[1];
-    normal += n2 * projectedPoint[2];
-    normal.normalize();
+    if ( _computeNormal) {
+      // interpolate normal on the compare mesh at the projected point via barycentric coordinates.
+      TriMesh::Normal normal;
+      normal = n0 * projectedPoint[0];
+      normal += n1 * projectedPoint[1];
+      normal += n2 * projectedPoint[2];
+      normal.normalize();
 
-    // Compute normal deviation in degrees
-    double normalDeviation = (refMesh->normal(v_it) | normal);
+      // Compute normal deviation in degrees
+      double normalDeviation = (refMesh->normal(v_it) | normal);
 
-    if (normalDeviation < -1.0)
-      normalDeviation = -1.0;
-    else if (normalDeviation > 1.0)
-      normalDeviation = 1.0;
+      if (normalDeviation < -1.0)
+        normalDeviation = -1.0;
+      else if (normalDeviation > 1.0)
+        normalDeviation = 1.0;
 
-    normalDeviation = 180.0 / M_PI * acos(normalDeviation);
+      normalDeviation = 180.0 / M_PI * acos(normalDeviation);
 
-    // Remember normal deviation for color coding
-    normalAngles.push_back(normalDeviation);
+      // Remember normal deviation for color coding
+      normalAngles.push_back(normalDeviation);
 
-    if (normalDeviation > maxNormalDeviation_)
-      maxNormalDeviation_ = normalDeviation;
-
+      if (normalDeviation > maxNormalDeviation_)
+        maxNormalDeviation_ = normalDeviation;
+    }
 
     if (meanCurvature) {
 
       TriMesh::Scalar curvature = 0.0;
-      curvature  = compMesh->property(meanComp,v0) * projectedPoint[0];
-      curvature += compMesh->property(meanComp,v1) * projectedPoint[1];
-      curvature += compMesh->property(meanComp,v2) * projectedPoint[2];
+      curvature = compMesh->property(meanComp, v0) * projectedPoint[0];
+      curvature += compMesh->property(meanComp, v1) * projectedPoint[1];
+      curvature += compMesh->property(meanComp, v2) * projectedPoint[2];
 
-      const double curvatureDev = fabs( refMesh->property(meanRef,v_it) - curvature );
+      const double curvatureDev = fabs(refMesh->property(meanRef, v_it) - curvature);
 
-      meanCurvatures.push_back( curvatureDev );
+      meanCurvatures.push_back(curvatureDev);
 
-      if ( curvatureDev > maxMeanCurvatureDev_ )
+      if (curvatureDev > maxMeanCurvatureDev_)
         maxMeanCurvatureDev_ = curvatureDev;
-
     }
 
     if (gaussCurvature) {
 
-          TriMesh::Scalar curvature = 0.0;
-          curvature  = compMesh->property(gaussComp,v0) * projectedPoint[0];
-          curvature += compMesh->property(gaussComp,v1) * projectedPoint[1];
-          curvature += compMesh->property(gaussComp,v2) * projectedPoint[2];
+      TriMesh::Scalar curvature = 0.0;
+      curvature = compMesh->property(gaussComp, v0) * projectedPoint[0];
+      curvature += compMesh->property(gaussComp, v1) * projectedPoint[1];
+      curvature += compMesh->property(gaussComp, v2) * projectedPoint[2];
 
-          const double curvatureDev = fabs( refMesh->property(gaussRef,v_it) - curvature );
+      const double curvatureDev = fabs(refMesh->property(gaussRef, v_it) - curvature);
 
-          gaussCurvatures.push_back( curvatureDev );
+      gaussCurvatures.push_back(curvatureDev);
 
-          if ( curvatureDev > maxGaussCurvatureDev_ )
-            maxGaussCurvatureDev_ = curvatureDev;
-
-        }
+      if (curvatureDev > maxGaussCurvatureDev_)
+        maxGaussCurvatureDev_ = curvatureDev;
+    }
 
   }
 
@@ -404,7 +429,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
       if ( tool_->doClamp->isChecked() ) {
         min = tool_->minVal->value();
-        max = tool_->maxVal->value();
+        max = std::min(tool_->maxVal->value(),maximalDistance_);
       } else
         max = maximalDistance_;
 
@@ -414,13 +439,19 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
         pNode->add_color(cCoder.color_float4(distances[i]));
       }
 
+      #ifdef WITH_QWT
+        plot_->setMinMax(min,max);
+        plot_->setFunction( distances );
+        plot_->replot();
+      #endif
+
 
     } else if ( tool_->normalAngle->isChecked() ) {
       tool_->maxValue->setText( QString::number(maxNormalDeviation_) );
 
       if ( tool_->doClamp->isChecked() ) {
         min = tool_->minVal->value();
-        max = tool_->maxVal->value();
+        max = std::min(tool_->maxVal->value(),maxNormalDeviation_);
       } else
         max = maxNormalDeviation_;
 
@@ -430,13 +461,19 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
         pNode->add_color(cCoder.color_float4(normalAngles[i]));
       }
 
+      #ifdef WITH_QWT
+        plot_->setMinMax(min,max);
+        plot_->setFunction( normalAngles );
+        plot_->replot();
+      #endif
+
 
     } else if ( tool_->meanCurvature->isChecked() ) {
       tool_->maxValue->setText( QString::number(maxMeanCurvatureDev_) );
 
       if ( tool_->doClamp->isChecked() ) {
         min = tool_->minVal->value();
-        max = tool_->maxVal->value();
+        max = std::min(tool_->maxVal->value(),maxMeanCurvatureDev_);
       } else
         max = maxMeanCurvatureDev_;
 
@@ -446,13 +483,18 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
         pNode->add_color(cCoder.color_float4(meanCurvatures[i]));
       }
 
+      #ifdef WITH_QWT
+        plot_->setMinMax(min,max);
+        plot_->setFunction( meanCurvatures );
+        plot_->replot();
+      #endif
 
     } else if ( tool_->gaussCurvature->isChecked() ) {
       tool_->maxValue->setText( QString::number(maxGaussCurvatureDev_) );
 
       if ( tool_->doClamp->isChecked() ) {
         min = tool_->minVal->value();
-        max = tool_->maxVal->value();
+        max = std::min(tool_->maxVal->value(),maxGaussCurvatureDev_);
       } else
         max = maxGaussCurvatureDev_;
 
@@ -462,10 +504,13 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
         pNode->add_color(cCoder.color_float4(gaussCurvatures[i]));
       }
 
+      #ifdef WITH_QWT
+        plot_->setMinMax(min,max);
+        plot_->setFunction( gaussCurvatures );
+        plot_->replot();
+      #endif
 
     }
-
-
 
     emit updateView();
   }
