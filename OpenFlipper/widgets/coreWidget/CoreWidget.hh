@@ -1036,7 +1036,7 @@ public:
 
   public slots:
     /// Display the help Browser
-    void showHelpBrowser(const QString &page = "qthelp://org.openflipper.dev/doc/index.html");
+    void showHelpBrowser(const QString &page = "qthelp://org.openflipper.user/user/index.html");
 
   signals:
    void changeHelpSite(QUrl);
