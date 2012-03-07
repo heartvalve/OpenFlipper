@@ -1628,6 +1628,7 @@ void PropertyVisPlugin::addNewProperty(MeshT* mesh)
       OpenMesh::VPropHandleT< bool > prop;
       mesh->add_property(prop, pname.toAscii().data());
     }
+    //please update the doc if you write "skin weights"-property support
   }
   else if ( ptype == tr("Edge") )
   {
