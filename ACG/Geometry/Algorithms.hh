@@ -231,15 +231,6 @@ lineIntersection( const VectorT<Scalar,2>&  _v0,
 * @{ */
 //===========================================================================     
 
-/// distance from point _p to line (_v0,_v1)
-template<class Vec>
-typename Vec::value_type
-distPointLine( const Vec& _p,
-               const Vec& _v0,
-               const Vec& _v1,
-               Vec*       _min_v=0 )
-{ return sqrt(distPointLineSquared(_p, _v0, _v1, _min_v)); }
-
 
 /// squared distance from point _p to line (_v0,_v1)
 template<class Vec>
@@ -248,6 +239,17 @@ distPointLineSquared( const Vec& _p,
                       const Vec& _v0,
                       const Vec& _v1,
                       Vec*       _min_v=0);
+
+
+
+/// distance from point _p to line (_v0,_v1)
+template<class Vec>
+typename Vec::value_type
+distPointLine( const Vec& _p,
+               const Vec& _v0,
+               const Vec& _v1,
+               Vec*       _min_v=0 )
+{ return sqrt(distPointLineSquared(_p, _v0, _v1, _min_v)); }
 
 
 /// squared distance from point _p to triangle (_v0, _v1, _v2)
