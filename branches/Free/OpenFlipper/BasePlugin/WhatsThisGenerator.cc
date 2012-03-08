@@ -12,7 +12,8 @@ plugin_name_(_plugin_name)
 
 /**	\brief generates a clickable link to the documentation for whatsThis Messages
  * @param _ref gives the section in the documentation for the action. The help-browser will jump into the section.
- *                      An example: _jump = "cube" in PrimitiveGenerator refs to the section "cube" in the Documentation and the help Browser.
+ *                      An example: _jump = "Cube" in PrimitiveGenerator refs to the section "Cube" in the Documentation and the help Browser.
+ *                      \note use the doxygen reference name (always one word), not the section name
  *
  * @param _site gives the documentation site (html-site) which you want to open.
  *                      Default is the site "index.html".
@@ -35,7 +36,8 @@ QString WhatsThisGenerator::generateLink(const QString &_ref /*= ""*/, const QSt
  * @param _msg help message for the user. This is the default Whatsthis Text which you set with QAction::setWhatsThis
  *
  * @param _ref gives the section in the documentation for the action. The help-browser will jump into the section.
- * 	                    An example: _jump = "cube" in PrimitiveGenerator refs to the section "cube" in the Documentation and the help Browser.
+ *                      An example: _jump = "Cube" in PrimitiveGenerator refs to the section "Cube" in the Documentation and the help Browser.
+ *                      \note use the doxygen reference name (always one word), not the section name
  *
  * @param _site gives the documentation site (html-site) which you want to open.
  * 	                    Default is the site "index.html".
