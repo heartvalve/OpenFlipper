@@ -1,0 +1,82 @@
+/** 
+\mainpage Documentation for Property Visualization Plugin
+
+\image html main.png ""
+
+\section Summary
+
+The property Visualization shows properties which are defined for vertices, edges, faces and half-edges.
+You can find this plugin in you toolbox.
+\li \ref prop
+\li \ref visualize_modification
+\li \ref pick_prop
+\li \ref load_save
+
+\section prop Properties
+\image html show_properties_menu.png
+In this section you select your mesh and the properties which you want to visualize.
+Click on the Button 'Visualize' to visualize them. You can modify the visualization depending on the data type of your property (see \ref visualize_modification for more information).
+\note You can select multiple properties by pressing <Ctrl> while selecting.
+
+You can dublicate or remove an entry by clicking the buttons on the right side.
+If you want to create a new property, see section \ref load_save to do this.
+
+\section visualize_modification Visualize Modification
+
+There are several visualization options for each property type:
+\li \ref bool 
+\li \ref uint 
+\li \ref int 
+\li \ref double
+\li \ref vector
+\li \ref skin_weights
+
+\note If you are going to change some values, you have to click the button 'visualize'  below the property list again to apply your changes.
+
+\subsection bool Bool
+You can set the colors for the value 'True' and 'False' by clicking on the color boxes
+\subsection uint Unsigned Integer
+\li <em>Use color coder</em>: Use an internal function for representing colors for single values
+\li <em>Fixed Range</em>: only Use colors in a defined range
+\li <em>Use random colors</em>: Don't use the property value for the representing color
+\li <em>Map value to black</em>: Show this value in black
+
+\subsection int Integer
+It has the same options like \ref uint plus the option: 
+\li <em>Use absolute values</em>: Signs of each value will be ignored.
+\subsection double Double
+It has the same options like \ref uint except of <em>Use random colors</em> and <em>Map value to black</em>.
+
+\subsection vector 3D Vector
+You can choose which color and which length your visualization vector should have.
+Select you prefered color (click on the colorful box) and the length
+There are following options for 3D Vector Properties:
+\li <em>Normalize</em>: All visualized vectors have length one
+\li <em>Scale with factor</em>: All visualized vectors lengths will be multiplied by this factor
+
+If you select \em two 3D vector properties, you can see addtional functions for visualization:
+\li <em>Don't visualize vectors, visualize vector difference</em>
+\li <em>4-Symmetric Difference (0°-45°)</em>
+\li <em>Difference in Magnitude (||a||-||b||)</em>
+\li <em>Norm the Dofference(||a - b||)</em>
+
+\subsection skin_weights Skin Weights
+\li <em>Bone</em>: Select the ID of the bone to show his skin weights
+
+\section pick_prop Pick Property
+Press the button 'Pick Property' and select in your mesh a property.
+The handle and value of this property are shown above the button.
+
+\section load_save Load/Save/Create
+You can create a new property for you selected model.
+First, you have to select the data type (bool, Integer, etc.) of you new propety and where it is attached (Vertex, Edge, etc.).
+After this step you can give you property a name and press the button 'Create New'
+\note You have to reload the property list (i.e. press the reload button) to see a new created property.
+\bug You cannot create a new 'skin weights' property yet.
+*/
+
+
+
+
+
+
