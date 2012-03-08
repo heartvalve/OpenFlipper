@@ -34,6 +34,8 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>2011 RWTH Aachen University</string>
+        <key>ForAppStore</key>
+        <string>yes</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
