@@ -46,6 +46,7 @@
 #include <QtGui>
 #include <QMenuBar>
 #include <OpenFlipper/common/Types.hh>
+#include "WhatsThisGenerator.hh"
 
 
 /** \file BaseInterface.hh
