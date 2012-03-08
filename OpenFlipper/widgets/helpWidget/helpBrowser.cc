@@ -141,6 +141,12 @@ void HelpBrowser::open(const QUrl& _url, const QString& /*_str*/, bool _skipSave
 		currentPage_ = visitedPages_.size()-1;
 	}
 
+  //jumps to a reference (Doxygen reference name and not section name)
+  //references are at the end of url after last '#'
+  QStringList Anchor = _url.toString().split("#");
+  if (Anchor.size() > 1)
+    this->scrollToAnchor(Anchor[Anchor.size()-1]);
+
 	emit urlChanged ( _url.toString() );
 }
 
