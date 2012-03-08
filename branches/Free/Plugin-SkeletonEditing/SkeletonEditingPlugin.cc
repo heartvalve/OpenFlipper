@@ -104,7 +104,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   selectJointAction_->setStatusTip(tr("Toggle the selection state of a joint."));
   selectJointAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_selectJoint.png") );
   selectJointAction_->setCheckable(true);
-  whatsThisGen.setWhatsThis(selectJointAction_,tr("Select single joints of the skeleton. You can select multiple joints at once."));
+  whatsThisGen.setWhatsThis(selectJointAction_,tr("Select single joints of the skeleton. You can select multiple joints at once."), "manipulate_joint");
   pickToolbar_->addAction(selectJointAction_);
 
   insertJointAction_ = new QAction(tr("<B>Insert Joint</B><br>Add a joint to the skeleton"), pickToolBarActions_);
@@ -117,21 +117,21 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   splitJointAction_ = new QAction(tr("<B>Split Joint</B><br>Add a Joint between two other Joints"), pickToolBarActions_);
   splitJointAction_->setStatusTip(tr("Click on a joint which will be the new child Joint."));
   splitJointAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_splitJoint.png") );
-  whatsThisGen.setWhatsThis(splitJointAction_,tr("Click on a joint to split it in the middle."));
+  whatsThisGen.setWhatsThis(splitJointAction_,tr("Click on a joint to split it in the middle."), "manipulate_joint");
   splitJointAction_->setCheckable(true);
   pickToolbar_->addAction(splitJointAction_);
 
   deleteJointAction_ = new QAction(tr("<B>Delete Joint</B><br>Remove a joint from the skeleton"), pickToolBarActions_);
   deleteJointAction_->setStatusTip(tr("<Press> to select a joint. <Release> to delete it."));
   deleteJointAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_deleteJoint.png") );
-  whatsThisGen.setWhatsThis(deleteJointAction_,tr("Delete a joint by clicking on it."));
+  whatsThisGen.setWhatsThis(deleteJointAction_,tr("Delete a joint by clicking on it."), "manipulate_joint");
   deleteJointAction_->setCheckable(true);
   pickToolbar_->addAction(deleteJointAction_);
 
   moveJointAction_ = new QAction(tr("<B>Transform Joint</B><br>Transform a joint from the skeleton"), pickToolBarActions_);
   moveJointAction_->setStatusTip(tr("Transform a joint from the skeleton."));
   moveJointAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_moveJoint.png") );
-  whatsThisGen.setWhatsThis(moveJointAction_,tr("Transform a joint (only possible in an animation). Click on a joint and transform his position and orientation with help of the manipulator"));
+  whatsThisGen.setWhatsThis(moveJointAction_,tr("Transform a joint (only possible in an animation). Click on a joint and transform his position and orientation with help of the manipulator"), "manipulate_joint");
   moveJointAction_->setCheckable(true);
   pickToolbar_->addAction(moveJointAction_);
 
@@ -141,7 +141,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   rotateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
   rotateManipAction_->setToolTip(tr("<B>Rotate manipulator</B><br> Rotates only the manipulator, not the joints. <B>Shift</B>"));
   rotateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_maniprotate.png") );
-  whatsThisGen.setWhatsThis(rotateManipAction_,tr("Rotate a joint (possible in an animation). Click on a joint and transform his orientation with help of the manipulator."));
+  whatsThisGen.setWhatsThis(rotateManipAction_,tr("Rotate a joint (possible in an animation). Click on a joint and transform his orientation with help of the manipulator."),"manipulator");
   rotateManipAction_->setCheckable(true);
   pickToolbar_->addAction(rotateManipAction_);
   connect(rotateManipAction_, SIGNAL(toggled(bool)), this, SLOT(slotRotateManipulator(bool)) );
@@ -152,7 +152,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   transformAllManipAction_->setStatusTip(tr("Apply the relative transformation to all frames of the animation."));
   transformAllManipAction_->setToolTip(tr("<B>Transform whole animation</B><br>Transform all frames of the animation simultaneously."));
   transformAllManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_manipAllFrames.png") );
-  whatsThisGen.setWhatsThis(transformAllManipAction_,tr("Transform whole animation. Changing will be applied to all frames of the current animation"));
+  whatsThisGen.setWhatsThis(transformAllManipAction_,tr("Transform whole animation. Changing will be applied to all frames of the current animation"),"transformation_modi");
   transformAllManipAction_->setCheckable(true);
   transformAllManipAction_->setChecked(transformAllFrames_);
   pickToolbar_->addAction(transformAllManipAction_);
@@ -161,7 +161,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   transformChildManipAction_->setStatusTip(tr("Apply joint transformation to child joints as well and thereby rigidly move the whole subtree."));
   transformChildManipAction_->setToolTip(tr("<B>Transform child joints</B><br>Apply joint transformation to all child joints as well."));
   transformChildManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_manipChildTransform.png") );
-  whatsThisGen.setWhatsThis(transformChildManipAction_,tr("Apply your transformation to all child joints."));
+  whatsThisGen.setWhatsThis(transformChildManipAction_,tr("Apply your transformation to all child joints."),"transformation_modi");
   transformChildManipAction_->setCheckable(true);
   transformChildManipAction_->setChecked(transformChildJoints_);
   pickToolbar_->addAction(transformChildManipAction_);
@@ -170,7 +170,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
   inverseKinematicAction_->setStatusTip(tr("Move selected joint using inverse kinematic."));
   inverseKinematicAction_->setToolTip(tr("<B>Inverse kinematic</B><br>Move selected joint using inverse kinematic."));
   inverseKinematicAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeleton_inverseKinematic.png") );
-  whatsThisGen.setWhatsThis(inverseKinematicAction_,tr("Move a joint to the position only with rotation of the previous joints."));
+  whatsThisGen.setWhatsThis(inverseKinematicAction_,tr("Move a joint to the position only with rotation of the previous joints."),"transformation_modi");
   inverseKinematicAction_->setCheckable(true);
   inverseKinematicAction_->setChecked(inverseKinematic_);
   pickToolbar_->addAction(inverseKinematicAction_);
