@@ -1,0 +1,62 @@
+/** 
+\mainpage Documentation for Skeleton Editing Plugin
+
+\image html main.png ""
+
+\section Summary
+
+You can find the tools of this plugin in the tool bar by pressing the icon: 
+\image html skeleton_editing.png "Skeleton Editing"
+
+Tools:
+\li \ref manipulate_joint
+\li \ref manipulator
+\li \ref transformation_modi
+
+\section manipulate_joint Joint Manipluation
+
+\image html skeleton_selectJoint.png "select joint" This Button allows you to select and deselect the joints. Some other manipulations will need a selected set of joints.
+
+\image html skeleton_insertJoint.png "insert joint" Activate this button and click on a joint, new joints will be childs of this, or a free space, beginning a new skeleton, to create a chain of joints.
+You can simple add more on this chain with one click on free space. Double-click for the last joint.
+
+\image html skeleton_splitJoint.png "split joint" Click on a joint and a new joint will appear between the clicked and his parent. The new joint will appear in the middle of these.
+
+\image html skeleton_deleteJoint.png "delete joint" Click on a joint to delete it. The parent of the deleted joint will be the parent of the childs. If the deleted joint was a root joint, each of his child will be a new root joint.
+
+\image html skeleton_moveJoint.png "transform joint" Click on a joint to see the manipulator. For more information see \ref manipulator .
+
+\section manipulator Manipulator
+\image html manipulator.png "The manipulator"
+You can transform a joint with the manipulator. There are some options to do this (see \ref transformation_modi for more Information).
+A joint can be rotated or translated and the manipulator follows you selected joint and you mouse.
+\note Translation is not possible in an animation.
+
+For \em translation, click on the manipulators center. Click on one of the three arrows to translate the joint in the pointed direction and backwards. If you want to change the directions, you have to press the 'Rotate manipulator'-Button (see below).
+
+For \em rotation, click on the cyrcle lines around the manipulator. The arrows show the rotation axis. If you want to change the rotation axis, you have to press the 'Rotate manipulator'-Button (see below).
+
+\image html skeleton_maniprotate.png "Rotate manipluator"
+If you activate the 'Rotate manipulator'-Button, you are able to rotate it. For doing this, press <shift> and select, as the rotation axis, an arrow or a cyrcle line of the manipulator.
+
+\note No joint will be rotated, only the manipluator
+
+\section transformation_modi Transformation Modi
+\image html skeleton_manipAllFrames.png "Transform whole Animation"
+When activated, all transformations will passed to all frames of the current animation.
+
+\image html skeleton_manipChildTransform.png "Transform child joints"
+If selected, all transformation will be applied to the child joints.
+
+\image html skeleton_inverseKinematic.png "Inverse kinematic"
+Selected joint will move to the position (if able to) only with help of previous joints rotations. By default all joints from selected one until the root will be used.
+If you select one joint, all joints from clicked until inclusive the selected one are allowed to rotate.
+\note You can use this mode to change the position of a joint in an animation easily.
+
+*/
+
+
+
+
+
+
