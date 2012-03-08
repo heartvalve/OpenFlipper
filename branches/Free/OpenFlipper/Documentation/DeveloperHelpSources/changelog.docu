@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 13888 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 14053 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -50,11 +50,13 @@
              - Halton Color generator
              - Added colorcoder generating nice colors for a given range of doubles.
              - Add basic histogram plots with colored bars to ACG
+             - Added a smart pointer header defining a namespace ptr based on the available capabilities
      - <b>Core</b>
          - General
              - Bugfix for ++ operator in UpdateType
              - Bugfix: Avoid target counter underflow when copying objects
              - Bugfix: Missing updateGL causing wrong picking buffers in some special settings
+             - Bugfix: More safety checks on startup to avoid crashes related to window states
          - Rendering
              - Rendermanager/PostprocessorManager bugfix (crash when illegal viewer id -1 was used)
              - Fixed bug in renderinfo not setting viewer to a renderer mode
@@ -67,7 +69,9 @@
              - Fixed bug where logger and toolbar where invisible
              - Modified drawmode context menu to stay open if drawmodes are combined.
          - Help
-             - Open Help browser if waht's this links are clicked.
+             - Open Help browser if what's this links are clicked.
+             - Correctly modify treewidget position when a link was clicked.
+             - Fixed help browser to correctly find resources in the virtual folder of the last opened document.
      - <b>Interfaces</b> 
          - General
              - Use const ref for passing strings where possible
@@ -112,6 +116,8 @@
          - File PLY
              - View all after loading a file to see the scene
              - Fixed conversion to 4 color components
+         - FileHeightField
+             - New simple file plugin loading an image and interpreting it a s a height field.
          - InfoSkeleton
              - Scripting functions to get information
          - MeanCurvature
@@ -127,10 +133,13 @@
              - Added conversion functions for all types of features (vertices, edges and faces)
              - Store edge selections as vertex pairs since edge ids are not stable (differ depending on the file reader).
              - Also store vertex pairs for halfedge selections instead of direct ids since they're not stable either.
+             - Readded missing function to create a new mesh from a selection.
          - MeshRepair
              - Added computation of halfedge-normals
          - Primitives Generator 
              - New plugin to generate primitives
+         - PropertyVis
+             - New plugin that can visualize various properties on meshes.
          - Remesher
              - New remesher with adaptive and uniform remeshing 
              - Feature support
@@ -174,7 +183,9 @@
          - Integrated testing framework  for file load/save testing
          - Integrated testing generators for algorithms
          - Run unittests of OpenMesh when OpenFlipper tests are run
+         - Added flags to disable OpenFlipper unittest building
      - <b>Build System</b>
+         - Build with XCode 4.3
          - Support Visual Studio 2010 and QT 4.8
          - Added option to allow in source builds (not recommended but it works)
          - Doxygen, don't warn if undocumented
@@ -186,6 +197,7 @@
          - Moved OpenMesh sources to libs_required subfolder
          - Switched to QWT 6 (and enabled it on mac)
          - Use one global doxy file to control the generation of the help files for plugins
+         - Fixed bug where debug and release qt versions where copied into MacOS bundle causing crashes.
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
