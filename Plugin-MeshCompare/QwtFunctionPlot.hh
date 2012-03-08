@@ -92,7 +92,7 @@ public:
   ~QwtFunctionPlot() {}
 
   /// set the function to plot
-  void setFunction( std::vector<double>& _values );
+  void setFunction(const std::vector<double>& _values );
 
   void setMinMax(double _min, double _max);
 

@@ -52,7 +52,6 @@
 
 #include <OpenFlipper/common/bsp/TriangleBSPT.hh>
 #include <ACG/Geometry/Algorithms.hh>
-#include <ACG/Scenegraph/PointNode.hh>
 #include <ACG/Utils/ColorCoder.hh>
 
 
@@ -95,8 +94,7 @@ void MeshComparePlugin::initializePlugin()
 
     layout->addWidget(plot_);
 #else
-
-    // Hide the extra frame
+    // Hide the extra frame as QWT is not available, we will not have an histogramm
     tool_->frame->hide();
 #endif
   }
@@ -387,7 +385,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
     if (meanCurvature) {
 
       TriMesh::Scalar curvature = 0.0;
-      curvature = compMesh->property(meanComp, v0) * projectedPoint[0];
+      curvature =  compMesh->property(meanComp, v0) * projectedPoint[0];
       curvature += compMesh->property(meanComp, v1) * projectedPoint[1];
       curvature += compMesh->property(meanComp, v2) * projectedPoint[2];
 
@@ -402,7 +400,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
     if (gaussCurvature) {
 
       TriMesh::Scalar curvature = 0.0;
-      curvature = compMesh->property(gaussComp, v0) * projectedPoint[0];
+      curvature =  compMesh->property(gaussComp, v0) * projectedPoint[0];
       curvature += compMesh->property(gaussComp, v1) * projectedPoint[1];
       curvature += compMesh->property(gaussComp, v2) * projectedPoint[2];
 
@@ -421,101 +419,49 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
     tool_->minValue->setText( QString::number(0.0) );
 
-    double min = 0.0;
-    double max = 1.0;
-
     if ( tool_->distance->isChecked() ) {
-      tool_->maxValue->setText( QString::number(maximalDistance_) );
-
-      if ( tool_->doClamp->isChecked() ) {
-        min = tool_->minVal->value();
-        max = std::min(tool_->maxVal->value(),maximalDistance_);
-      } else
-        max = maximalDistance_;
-
-
-      ACG::ColorCoder cCoder(min,max);
-      for ( unsigned int i = 0 ; i < distances.size() ; ++i) {
-        pNode->add_color(cCoder.color_float4(distances[i]));
-      }
-
-      #ifdef WITH_QWT
-        plot_->setMinMax(min,max);
-        plot_->setFunction( distances );
-        plot_->replot();
-      #endif
-
-
+      visualizeData(distances,maximalDistance_,pNode);
     } else if ( tool_->normalAngle->isChecked() ) {
-      tool_->maxValue->setText( QString::number(maxNormalDeviation_) );
-
-      if ( tool_->doClamp->isChecked() ) {
-        min = tool_->minVal->value();
-        max = std::min(tool_->maxVal->value(),maxNormalDeviation_);
-      } else
-        max = maxNormalDeviation_;
-
-      ACG::ColorCoder cCoder(min,max);
-
-      for ( unsigned int i = 0 ; i < normalAngles.size() ; ++i) {
-        pNode->add_color(cCoder.color_float4(normalAngles[i]));
-      }
-
-      #ifdef WITH_QWT
-        plot_->setMinMax(min,max);
-        plot_->setFunction( normalAngles );
-        plot_->replot();
-      #endif
-
-
+      visualizeData(normalAngles,maxNormalDeviation_,pNode);
     } else if ( tool_->meanCurvature->isChecked() ) {
-      tool_->maxValue->setText( QString::number(maxMeanCurvatureDev_) );
-
-      if ( tool_->doClamp->isChecked() ) {
-        min = tool_->minVal->value();
-        max = std::min(tool_->maxVal->value(),maxMeanCurvatureDev_);
-      } else
-        max = maxMeanCurvatureDev_;
-
-      ACG::ColorCoder cCoder(min,max);
-
-      for ( unsigned int i = 0 ; i < meanCurvatures.size() ; ++i) {
-        pNode->add_color(cCoder.color_float4(meanCurvatures[i]));
-      }
-
-      #ifdef WITH_QWT
-        plot_->setMinMax(min,max);
-        plot_->setFunction( meanCurvatures );
-        plot_->replot();
-      #endif
-
+      visualizeData(meanCurvatures,maxMeanCurvatureDev_,pNode);
     } else if ( tool_->gaussCurvature->isChecked() ) {
-      tool_->maxValue->setText( QString::number(maxGaussCurvatureDev_) );
-
-      if ( tool_->doClamp->isChecked() ) {
-        min = tool_->minVal->value();
-        max = std::min(tool_->maxVal->value(),maxGaussCurvatureDev_);
-      } else
-        max = maxGaussCurvatureDev_;
-
-      ACG::ColorCoder cCoder(min,max);
-
-      for ( unsigned int i = 0 ; i < gaussCurvatures.size() ; ++i) {
-        pNode->add_color(cCoder.color_float4(gaussCurvatures[i]));
-      }
-
-      #ifdef WITH_QWT
-        plot_->setMinMax(min,max);
-        plot_->setFunction( gaussCurvatures );
-        plot_->replot();
-      #endif
-
+      visualizeData(gaussCurvatures,maxGaussCurvatureDev_,pNode);
     }
 
     emit updateView();
   }
 
 }
+
+void MeshComparePlugin::visualizeData( const std::vector<double>& _data, double _maxValue, ACG::SceneGraph::PointNode* _pnode ) {
+
+  // Set the current real maximal value in the label to show it to the user
+  tool_->maxValue->setText( QString::number(_maxValue) );
+
+  // If the clamping check box is set, we take the values from the spin boxes
+  double min = 0.0;
+  double max = 1.0;
+  if ( tool_->doClamp->isChecked() ) {
+    min = tool_->minVal->value();
+    max = std::min(tool_->maxVal->value(),_maxValue);
+  } else
+    max = _maxValue;
+
+  ACG::ColorCoder cCoder(min,max);
+
+  for ( unsigned int i = 0 ; i < _data.size() ; ++i) {
+    _pnode->add_color(cCoder.color_float4(_data[i]));
+  }
+
+#ifdef WITH_QWT
+  plot_->setMinMax(min,max);
+  plot_->setFunction( _data );
+  plot_->replot();
+#endif
+
+}
+
 
 
 Q_EXPORT_PLUGIN2( meshcompareplugin , MeshComparePlugin );

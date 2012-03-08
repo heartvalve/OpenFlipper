@@ -55,6 +55,8 @@
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
+#include <ACG/Scenegraph/PointNode.hh>
+
 #include "MeshCompareToolbarWidget.hh"
 
 #ifdef WITH_QWT
@@ -155,6 +157,17 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
 
     /// If the checkbox is changed to be checked, the values in the labels will be written into the spin boxes.
     void slotClampBox(bool _checked);
+
+  private:
+
+    /** \brief Visualize data
+     *
+     *  This function visualizes the data via rendering points and pushes it to the histogram.
+     *
+     * @param _data     Vector of data points
+     * @param _maxValue Maximal value found in the data
+     */
+    void visualizeData( const std::vector<double>& _data, double _maxValue, ACG::SceneGraph::PointNode* _pnode);
 
   private:
     /// The toolbar widget of this plugin
