@@ -31,7 +31,7 @@ class PropertyNameListModel: public QAbstractListModel {
         class TypeInfoWrapper {
             public:
                 TypeInfoWrapper(const std::type_info & ti, const char *friendlyName) : ti(&ti), friendlyName(friendlyName) {}
-                TypeInfoWrapper(const std::type_info & ti) : ti(&ti) {}
+                TypeInfoWrapper(const std::type_info & ti) : ti(&ti),friendlyName("") {}
 
                 operator const std::type_info *() const { return ti; }
                 operator const std::type_info &() const { return *ti; }

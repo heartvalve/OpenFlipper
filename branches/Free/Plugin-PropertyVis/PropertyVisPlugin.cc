@@ -552,9 +552,6 @@ void PropertyVisPlugin::saveIniFileOptions( INIFile& _ini ) {
 
   QString sectionName = "PropertyVis";
   
-   if ( !_ini.section_exists( sectionName ) )
-     _ini.add_section( sectionName );
-
   _ini.add_entry(sectionName , "DataType" , tool_->propertyDataType->currentIndex()  );
   _ini.add_entry(sectionName , "Type"   , tool_->propertyType->currentIndex() );
 
