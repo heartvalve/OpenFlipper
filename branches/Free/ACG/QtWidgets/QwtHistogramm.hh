@@ -52,24 +52,43 @@
 class QwtIntervalData;
 class QString;
 
+/** \brief Histogram plot
+ *
+ * This plot can be used to render a plot. It provides the plot management and
+ * drawing functions for histograms. The data is supplied as QwtIntervalData
+ * via HistogramItem::setData(). Additionally you can set colors for each bar,
+ * which are provided via HistogramItem::setColors()
+ */
 class ACGDLLEXPORT Histogram: public QwtPlotItem
 {
 public:
+    /// Constructor
     explicit Histogram(const QString &title = QString::null);
+    /// Constructor
     explicit Histogram(const QwtText &title);
+    /// Destructor
     virtual ~Histogram();
 
+    /** \brief set data to render
+     *
+     * @param data data provided as QwtIntervalData
+     */
     void setData( QwtIntervalSeriesData* data);
     const QwtIntervalSeriesData* data() const;
 
+    /** \brief Set colors
+     *
+     * @param _colors A vector of colors. One for each interval in the same order.
+     */
     void setColors( std::vector< QColor >& _colors);
 
+    /// Function hat will return the datas bounding rectangle (for rendering)
     virtual QRectF boundingRect() const;
 
     virtual int rtti() const;
 
-    virtual void draw(QPainter *, const QwtScaleMap &xMap, 
-                      const QwtScaleMap &yMap, const QRectF &) const;
+    /// The actual draw function, drawing the bars inside the plot widget.
+    virtual void draw(QPainter *, const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &) const;
 
     void   setBaseline(double reference);
     double baseline() const;
@@ -84,6 +103,8 @@ public:
     bool testHistogramAttribute(HistogramAttribute) const;
 
 protected:
+
+    /// Draws a single bar
     virtual void drawBar(QPainter *, Qt::Orientation o, const QRect &) const;
 
 private:
