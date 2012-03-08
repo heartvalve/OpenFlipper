@@ -21,21 +21,22 @@ endif( NOT result_checker )
 
 # convert the space-separated string to a list
 separate_arguments( test_args )
-message( ${test_args} )
 
 # ===================================================
 # Run OpenFlipper with the given script
 # ===================================================
 
 # Execute the process with the given arguments
-# Timeout after 2 minutes
+# Timeout after 4 minutes
 execute_process(
    COMMAND ${test_cmd} ${test_args}
-   TIMEOUT 120
+   TIMEOUT 240
    RESULT_VARIABLE PROCESSRESULT
 )
 
 if ( NOT ${PROCESSRESULT} EQUAL 0 )
+    message("Problem when executing proccess. Return code was ${PROCESSRESULT}")
+    message("Test command: ${test_cmd} ${test_args}")
     message(SEND_ERROR "Process execution failed!")
 endif()
 
