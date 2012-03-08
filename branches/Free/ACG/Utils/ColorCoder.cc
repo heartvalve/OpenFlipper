@@ -49,6 +49,7 @@
 //== INCLUDES =================================================================
 
 #include <ACG/Utils/ColorCoder.hh>
+#include <QColor>
 
 //== NAMESPACES ===============================================================
 
@@ -117,6 +118,18 @@ ACG::Vec4f ColorCoder::color_float4(float _v) const
   else
     c = color_unsigned(_v);
   return (ACG::Vec4f(c[0], c[1], c[2], c[3]) / 255.f);
+}
+
+/// color coding
+QColor ColorCoder::color_qcolor(float _v) const
+{
+  ACG::Vec4uc c;
+  if (signed_mode_)
+    c = color_signed(_v);
+  else
+    c = color_unsigned(_v);
+
+  return(QColor(c[0], c[1], c[2], c[3]));
 }
 
 /// min scalar value
