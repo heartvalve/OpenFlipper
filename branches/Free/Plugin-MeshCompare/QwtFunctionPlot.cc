@@ -106,7 +106,7 @@ QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
 
 //------------------------------------------------------------------------------
 
-void QwtFunctionPlot::setFunction( std::vector<double>& _values)
+void QwtFunctionPlot::setFunction(const std::vector<double>& _values)
 {
   values_ = _values;
 }
