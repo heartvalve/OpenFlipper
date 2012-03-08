@@ -90,11 +90,10 @@ QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
 {
   setupUi( this );
 
+  qwtPlot->setAxisTitle(QwtPlot::yLeft,   "count" );
+
   plot_zoomer_ = new QwtPlotZoomer( qwtPlot->canvas());
   plot_zoomer_->initKeyPattern();
-  connect(zoomInButton, SIGNAL( clicked() ), this,SLOT( zoomIn() )  );
-  connect(zoomOutButton,SIGNAL( clicked() ), this,SLOT( zoomOut() ) );
-  connect(clampButton,  SIGNAL( clicked() ), this,SLOT( clamp() )   );
   
   QwtPlotPanner *panner = new QwtPlotPanner( qwtPlot->canvas() );
   panner->setMouseButton( Qt::MidButton );
@@ -110,30 +109,6 @@ QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
 void QwtFunctionPlot::setFunction( std::vector<double>& _values)
 {
   values_ = _values;
-}
-
-//------------------------------------------------------------------------------
-
-void QwtFunctionPlot::zoomIn()
-{
-    emit plot_zoomer_->zoom(1);
-}
-
-//------------------------------------------------------------------------------
-
-void QwtFunctionPlot::zoomOut()
-{
-    emit plot_zoomer_->zoom(-1);
-}
-
-//------------------------------------------------------------------------------
-
-void QwtFunctionPlot::clamp()
-{
-    QRectF clamped = plot_zoomer_->zoomRect();
-    clamped.setLeft( min_ );
-    clamped.setRight( max_ );
-    emit plot_zoomer_->zoom(clamped);
 }
 
 //------------------------------------------------------------------------------
@@ -198,63 +173,60 @@ void QwtFunctionPlot::replot()
   qwtPlot->setAxisScale(QwtPlot::yLeft, 0.0, maxCount);
   qwtPlot->setAxisScale(QwtPlot::xBottom, realMin, realMax);
 
-  qwtPlot->setAxisTitle(QwtPlot::yLeft,   "count" );
-  qwtPlot->setAxisTitle(QwtPlot::xBottom, "values" );
-
   //define this scaling as the zoomBase
   plot_zoomer_->setZoomBase();
 
-//  // Mark the clamp values in the histogramm
-//  if ( parameters_.clamp ) {
-//    if ( ! clampMinMarker_ ) {
-//      clampMinMarker_ = new QwtPlotMarker();
-//      minSymbol_ = new QwtSymbol(QwtSymbol::VLine);
-//      minSymbol_->setColor(QColor(255,0,0));
-//      minSymbol_->setSize(200,1000);
-//      QPen pen = minSymbol_->pen();
-//      pen.setWidth(3);
-//      minSymbol_->setPen(pen);
-//      clampMinMarker_->setSymbol(minSymbol_);
-//      clampMinMarker_->attach(qwtPlot);
-//    }
-//
-//    // Draw at left boundary if less than the minimal value we get from the function
-//    if ( parameters_.clampMin < min_ )
-//      clampMinMarker_->setXValue(min_);
-//    else
-//      clampMinMarker_->setXValue(parameters_.clampMin);
-//
-//
-//
-//    clampMinMarker_->show();
-//
-//    if ( ! clampMaxMarker_ ) {
-//      clampMaxMarker_ = new QwtPlotMarker();
-//      maxSymbol_ = new QwtSymbol(QwtSymbol::VLine);
-//      maxSymbol_->setColor(QColor(0,255,0));
-//      maxSymbol_->setSize(200,1000);
-//      QPen pen = maxSymbol_->pen();
-//      pen.setWidth(3);
-//      maxSymbol_->setPen(pen);
-//      clampMaxMarker_->setSymbol(maxSymbol_);
-//      clampMaxMarker_->attach(qwtPlot);
-//    }
+  //Mark the clamp values in the histogram.
+  if ( min_ > realMin  ) {
+    if ( ! clampMinMarker_ ) {
+      clampMinMarker_ = new QwtPlotMarker();
+      minSymbol_ = new QwtSymbol(QwtSymbol::VLine);
+      minSymbol_->setColor(cCoder.color_qcolor(std::max(min_,realMin)));
+      minSymbol_->setSize(200,1000);
+      QPen pen = minSymbol_->pen();
+      pen.setWidth(3);
+      minSymbol_->setPen(pen);
+      clampMinMarker_->setSymbol(minSymbol_);
+      clampMinMarker_->attach(qwtPlot);
+      clampMinMarker_->show();
+    }
 
-//    // Draw at right boundary if greater than the maximal value we get from the function
-//    if ( parameters_.clampMax < max_ )
-//      clampMaxMarker_->setXValue(parameters_.clampMax);
-//    else
-//      clampMaxMarker_->setXValue(max_);
-//
-//    clampMaxMarker_->show();
+    // Draw at right boundary if greater than the maximal value we get from the function
+    clampMinMarker_->setXValue(std::max(min_,realMin));
 
-//  } else {
-//    if ( clampMinMarker_ )
-//      clampMinMarker_->hide();
-//
-//    if ( clampMaxMarker_ )
-//      clampMaxMarker_->hide();
-//  }
+  } else {
+    if ( clampMinMarker_ ) {
+      clampMinMarker_->detach();
+      delete clampMinMarker_;
+      clampMinMarker_ = 0;
+    }
+  }
+
+  //Mark the clamp values in the histogram.
+  if ( max_ < realMax ) {
+    if ( ! clampMaxMarker_ ) {
+      clampMaxMarker_ = new QwtPlotMarker();
+      maxSymbol_ = new QwtSymbol(QwtSymbol::VLine);
+      maxSymbol_->setColor(cCoder.color_qcolor(std::min(max_,realMax)));
+      maxSymbol_->setSize(200,1000);
+      QPen pen = maxSymbol_->pen();
+      pen.setWidth(3);
+      maxSymbol_->setPen(pen);
+      clampMaxMarker_->setSymbol(maxSymbol_);
+      clampMaxMarker_->attach(qwtPlot);
+      clampMaxMarker_->show();
+    }
+
+    // Draw at right boundary if greater than the maximal value we get from the function
+    clampMaxMarker_->setXValue(std::min(max_,realMax));
+
+  } else {
+    if ( clampMaxMarker_ ) {
+      clampMaxMarker_->detach();
+      delete clampMaxMarker_;
+      clampMaxMarker_ = 0;
+    }
+  }
 
   // an plot it
   qwtPlot->replot();

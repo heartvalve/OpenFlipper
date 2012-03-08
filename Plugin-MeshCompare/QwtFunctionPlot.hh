@@ -97,9 +97,6 @@ public:
   void setMinMax(double _min, double _max);
 
 public slots:
-  void zoomIn();
-  void zoomOut();
-  void clamp();
   
   void replot();
 
@@ -114,7 +111,7 @@ private:
   QwtSymbol*     maxSymbol_;
 
   /// Histogram Plot
-  Histogram* histogram_;
+  Histogram*     histogram_;
 
   /// Values that will define the function to plot
   std::vector<double> values_;
