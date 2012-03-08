@@ -53,6 +53,7 @@
 
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Config/ACGDefines.hh>
+#include <QColor>
 
 //== NAMESPACES ===============================================================
 
@@ -84,6 +85,9 @@ public:
 
   /// color coding
   ACG::Vec4f color_float4(float _v) const;
+
+  /// color coding
+  QColor color_qcolor(float _v) const;
 
   /// min scalar value
   float min() const;
