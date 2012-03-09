@@ -67,7 +67,7 @@
 #include <qwt_scale_engine.h>
 #include <qwt_plot_marker.h>
 
-// qmake users have to includepc
+// qmake users have to include pc
 #include <ui_QwtFunctionPlotBase.hh>
 
 // ACGMake users have to include
