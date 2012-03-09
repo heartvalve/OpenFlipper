@@ -51,24 +51,50 @@
 class QwtIntervalData;
 class QString;
 
+/** \brief Histogram plotting widget
+ *
+ * This widget can be used to render a plot. It provides a Qt widget with
+ * histogram bars. The data is supplied as QwtIntervalData via HistogramItem::setData().
+ * Additionally you can set colors for each bar, which are provided via
+ * HistogramItem::setColors()
+ *
+ *
+ * !!!!!!!!!!! This class is deprecated !!!!!!!!!!!
+ * !!!!!!!!! Use the one from ACG/QtWidgets which is for qwt6 !!!!!!!!!!!!!!!!!!
+ */
 class HistogramItem: public QwtPlotItem
 {
 public:
+
+    /// Constructor
     explicit HistogramItem(const QString &title = QString::null);
+    /// Constructor
     explicit HistogramItem(const QwtText &title);
+
+    /// Destructor
     virtual ~HistogramItem();
 
+    /** \brief set data to render
+     *
+     * @param data data provided as QwtIntervalData
+     */
     void setData(const QwtIntervalData &data);
     const QwtIntervalData &data() const;
 
+    /** \brief Set colors
+     *
+     * @param _colors A vector of colors. One for each interval in the same order.
+     */
     void setColors( std::vector< QColor >& _colors);
 
+
+    /// Function hat will return the datas bounding rectangle (for rendering)
     virtual QwtDoubleRect boundingRect() const;
 
     virtual int rtti() const;
 
-    virtual void draw(QPainter *, const QwtScaleMap &xMap, 
-        const QwtScaleMap &yMap, const QRect &) const;
+    /// The actual draw function, drawing the bars inside the plot widget.
+    virtual void draw(QPainter *, const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRect &) const;
 
     void setBaseline(double reference);
     double baseline() const;
@@ -83,11 +109,11 @@ public:
     bool testHistogramAttribute(HistogramAttribute) const;
 
 protected:
-    virtual void drawBar(QPainter *,
-        Qt::Orientation o, const QRect &) const;
+    /// Draws a single bar
+    virtual void drawBar(QPainter *, Qt::Orientation o, const QRect &) const;
 
 private:
-    QColor color(uint i) const;
+    inline QColor color(uint i) const;
 
     void init();
 

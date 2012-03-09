@@ -139,8 +139,7 @@ QwtDoubleRect HistogramItem::boundingRect() const
 
     if ( d_data->attributes & Xfy )
     {
-        rect = QwtDoubleRect( rect.y(), rect.x(),
-            rect.height(), rect.width() );
+        rect = QwtDoubleRect( rect.y(), rect.x(), rect.height(), rect.width() );
 
         if ( rect.left() > d_data->reference )
             rect.setLeft( d_data->reference );
@@ -245,8 +244,7 @@ void HistogramItem::draw(QPainter *painter, const QwtScaleMap &xMap,
                 if ( x2 == qwtMin(xx1, xx2) )
                 {
                     const int yy2 = yMap.transform(iData.value(i+1));
-                    if ( yy2 != y0 && ( (yy2 < y0 && y2 < y0) ||
-                                    (yy2 > y0 && y2 > y0) ) )
+                    if ( yy2 != y0 && ( (yy2 < y0 && y2 < y0) || (yy2 > y0 && y2 > y0) ) )
                     {
                         // One pixel distance between neighboured bars
                         x2--;
