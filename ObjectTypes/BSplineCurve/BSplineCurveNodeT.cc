@@ -85,7 +85,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 template <class BSplineCurve>
 DrawModes::DrawMode
 BSplineCurveNodeT<BSplineCurve>::
-availableDrawModes()
+availableDrawModes() const
 {
   /*
   DrawModes::DrawMode drawModes(0);
