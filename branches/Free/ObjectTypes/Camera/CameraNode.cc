@@ -63,9 +63,12 @@ void CameraNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 
 //----------------------------------------------------------------------------
 
-DrawModes::DrawMode CameraNode::availableDrawModes() {
-    return (DrawModes::POINTS | DrawModes::WIREFRAME | DrawModes::HIDDENLINE | DrawModes::SOLID_FLAT_SHADED
-            | DrawModes::SOLID_SMOOTH_SHADED);
+DrawModes::DrawMode CameraNode::availableDrawModes() const {
+    return (DrawModes::POINTS |
+            DrawModes::WIREFRAME |
+            DrawModes::HIDDENLINE |
+            DrawModes::SOLID_FLAT_SHADED |
+            DrawModes::SOLID_SMOOTH_SHADED);
 }
 
 //----------------------------------------------------------------------------
