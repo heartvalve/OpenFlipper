@@ -95,6 +95,19 @@ public:
       elements are ordered 'column first' (like OpenGL) */
   inline GLMatrixT(const Scalar _array[16]) : Matrix4x4T<Scalar>(_array) {}
 
+  /**
+   * Initialize an affine matrix from column vectors.
+   */
+  inline GLMatrixT(const Vec3 &col1, const Vec3 &col2, const Vec3 &col3) :
+          Matrix4x4T<Scalar>((Scalar[]){
+              col1[0], col1[1], col1[2], 0,
+              col2[0], col2[1], col2[2], 0,
+              col3[0], col3[1], col3[2], 0,
+              0, 0, 0, 1
+          }) {
+  }
+
+
   /// destructor
   ~GLMatrixT() {}
 
