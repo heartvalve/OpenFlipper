@@ -60,6 +60,7 @@
 
 //== CLASS DEFINITION =========================================================
 #include <vector>
+#include <stdexcept>
 
 
 template <class BSPCore>
@@ -70,6 +71,8 @@ nearest(const Point& _p) const
   NearestNeighborData  data;
   data.ref  = _p;
   data.dist = FLT_MAX;
+  if (this->root_ == 0)
+      throw std::runtime_error("It seems like the BSP hasn't been built, yet. Did you call build(...)?");
   _nearest(this->root_, data);
   return NearestNeighbor(data.nearest, sqrt(data.dist));
 }

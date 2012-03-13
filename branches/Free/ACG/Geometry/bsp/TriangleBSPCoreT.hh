@@ -90,17 +90,31 @@ public: //---------------------------------------------------------------------
   TriangleBSPCoreT(const BSPTraits& _traits) : traits_(_traits), root_(0), nodes(0) {}
 
   /// Destructor
-  ~TriangleBSPCoreT() { delete root_; }
+  ~TriangleBSPCoreT() {
+      delete root_;
+  }
 
 
   /// Reserve memory for _n entries
   void reserve(unsigned int _n) { handles_.reserve(_n); }
   /// Add a handle to the BSP
   void push_back(Handle _h)     { handles_.push_back(_h); }
-  /// Finally build the tree
+
+  /** Build the tree.
+   *
+   * @param _max_handles Maximum number of vertices per leaf.
+   * @param _max_depth Maximum depth.
+   */
   void build(unsigned int _max_handles, unsigned int _max_depth);
   /// Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
   void visualizeTree(PolyMesh *_object, int _max_depth);
+
+private:
+  /*
+   * Noncopyable because of root_.
+   */
+  TriangleBSPCoreT(const TriangleBSPCoreT &rhs);
+  TriangleBSPCoreT &operator=(const TriangleBSPCoreT &rhs);
 
 
 private: //---------------------------------------------------------------------
