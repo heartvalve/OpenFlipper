@@ -98,6 +98,11 @@ public:
   /**
    * Initialize an affine matrix from column vectors.
    */
+#ifdef _MSC_VER
+  inline GLMatrixT(const Vec3 &col1, const Vec3 &col2, const Vec3 &col3) {
+      throw "Either use a different compiler or a different constructor.";
+  }
+#else
   inline GLMatrixT(const Vec3 &col1, const Vec3 &col2, const Vec3 &col3) :
           Matrix4x4T<Scalar>((Scalar[]){
               col1[0], col1[1], col1[2], 0,
@@ -106,6 +111,7 @@ public:
               0, 0, 0, 1
           }) {
   }
+#endif
 
 
   /// destructor
