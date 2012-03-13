@@ -172,6 +172,14 @@ struct TreeNode
             _object->add_face(face_vhandles);
         }
     }
+
+    private:
+    /*
+     * Noncopyable because of root_.
+     */
+    TreeNode(const TreeNode &rhs);
+    TreeNode &operator=(const TreeNode &rhs);
+
 };
 
 //=============================================================================
