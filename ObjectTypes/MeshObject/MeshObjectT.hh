@@ -74,7 +74,7 @@
 #include <OpenFlipper/common/BaseObjectData.hh>
 
 // -------------------- BSP
-#include <OpenFlipper/common/bsp/TriangleBSPT.hh>
+#include <ACG/Geometry/bsp/TriangleBSPT.hh>
 
 
 #include <OpenFlipper/common/BaseObjectData.hh>
