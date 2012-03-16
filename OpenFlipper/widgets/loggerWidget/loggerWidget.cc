@@ -62,12 +62,11 @@ LoggerWidget::LoggerWidget( QWidget *parent)
 
   QVBoxLayout* vlayout  = new QVBoxLayout();
   QHBoxLayout* hlayout  = new QHBoxLayout();
-  QHBoxLayout* hlayout2 = new QHBoxLayout();
   
   list_ = new QListWidget();
   
-  list_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  list_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  list_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  list_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   list_->setFocusPolicy(Qt::NoFocus);
   list_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -113,19 +112,14 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   // ============================
   // Scrollbar
   // ============================
-  scrollBar_ = new QScrollBar(Qt::Vertical);
   blockNext_ = false;
   
-  connect (scrollBar_, SIGNAL(valueChanged(int)), this, SLOT(scrollTo(int)));
   connect (list_->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(mapScrollPosition(int)));
   connect (&loggerUpdateTimer_, SIGNAL(timeout ()), this, SLOT(slotScrollUpdate()));
   
   // Single shot timer every 500 msecs
   loggerUpdateTimer_.setSingleShot(true);
   loggerUpdateTimer_.setInterval(500);
-  
-  hlayout2->addWidget(list_);
-  hlayout2->addWidget(scrollBar_);
   
   allButton_   = new QPushButton(QIcon(path + "status_all.png"),tr("All Messages"));
   allButton_->setCheckable(true);
@@ -168,7 +162,7 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   vlayout->setSpacing(0);
   vlayout->setContentsMargins (0,0,0,0);
   
-  vlayout->addLayout( hlayout2 );
+  vlayout->addWidget(list_);
   vlayout->addLayout( hlayout );
   
   setLayout( vlayout );
@@ -181,43 +175,10 @@ LoggerWidget::~LoggerWidget()
   delete warnButton_;
   delete infoButton_;
   delete allButton_;
-  delete scrollBar_;
   delete context_;
   delete list_;
 }
 
-
-//-------------------------------------------------------------------------------------
-
-/// workaround for scrolling
-void LoggerWidget::mapScrollPosition(int _pos){
- //map list_'s internal scrollbar position to our own scrollBar position
- blockNext_ = true;
- scrollBar_->setValue( floor( 100 * _pos / (double) list_->verticalScrollBar()->maximum() ) );
-}
-
-//-------------------------------------------------------------------------------------
-
-/// workaround for scrolling
-void LoggerWidget::scrollTo(int _pos){
-
-  //if the scrollEvent was triggered by list_ ignore it
-  if (blockNext_){
-    blockNext_ = false;
-    return;
-  }
-
-  // now it gets ugly ;)
-  if (_pos < 5)
-    list_->scrollToTop();
-  else if (_pos > 95)
-    list_->scrollToBottom();
-  else
-    list_->scrollToItem( list_->item( floor((list_->count()-1) * (_pos / 100.0)) ) );
-
-  list_->hide();
-  list_->show();
-}
 
 //-------------------------------------------------------------------------------------
 

@@ -94,9 +94,6 @@ class LoggerWidget : public QWidget
     
     QListWidget* list_;
     
-    //scrolling with list_'s scrollbar doesn't work correctly
-    //use separate scrollbar as workaround
-    QScrollBar* scrollBar_;
     bool blockNext_;
     
     QPushButton* allButton_;
@@ -125,10 +122,6 @@ class LoggerWidget : public QWidget
     /// update the list if a button was pressed
     void updateList();
     
-    /// workaround for scrolling
-    void scrollTo(int _pos);
-    /// map scroll position of list to scrollbar position
-    void mapScrollPosition(int _pos);
     /// copy Selected rows to clipboard
     void copySelected();
     
