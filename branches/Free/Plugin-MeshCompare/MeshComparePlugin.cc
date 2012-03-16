@@ -50,7 +50,7 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-#include <OpenFlipper/common/bsp/TriangleBSPT.hh>
+#include <ACG/Geometry/bsp/TriangleBSPT.hh>
 #include <ACG/Geometry/Algorithms.hh>
 #include <ACG/Utils/ColorCoder.hh>
 
