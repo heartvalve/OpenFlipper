@@ -48,7 +48,7 @@
 #include <ACG/Geometry/Algorithms.hh>
 
 // -------------------- BSP
-#include <OpenFlipper/common/bsp/TriangleBSPT.hh>
+#include <ACG/Geometry/bsp/TriangleBSPT.hh>
 
 /// do the remeshing
 template< class MeshT >
