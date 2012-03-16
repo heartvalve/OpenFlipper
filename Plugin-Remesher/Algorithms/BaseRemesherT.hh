@@ -54,7 +54,7 @@
 //== INCLUDES =================================================================
 
 #include <OpenMesh/Core/Utils/Property.hh>
-#include <OpenFlipper/common/bsp/TriangleBSPT.hh>
+#include <ACG/Geometry/bsp/TriangleBSPT.hh>
 
 #include "../ProgressEmitter.hh"
 
