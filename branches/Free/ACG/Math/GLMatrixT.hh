@@ -98,20 +98,39 @@ public:
   /**
    * Initialize an affine matrix from column vectors.
    */
-#ifdef _MSC_VER
   inline GLMatrixT(const Vec3 &col1, const Vec3 &col2, const Vec3 &col3) {
-      throw "Either use a different compiler or a different constructor.";
+      /*
+       * Don't try to optimize anything by hand, here. gcc -O2 does the right thing:
+       *
+       * mov    %rax,-0x70(%rsp)
+       * mov    %rdx,-0x68(%rsp)
+       * mov    %rsi,-0x50(%rsp)
+       * lea    -0x68(%rsp),%rdx
+       * mov    %rax,0x8(%rsp)
+       * mov    %rcx,-0x60(%rsp)
+       * lea    0x10(%rsp),%rsi
+       * movq   $0x0,-0x58(%rsp)
+       * mov    %rdi,-0x48(%rsp)
+       * xor    %eax,%eax
+       * mov    %r8,-0x40(%rsp)
+       * movq   $0x0,-0x38(%rsp)
+       * mov    %r9,-0x30(%rsp)
+       * mov    %r10,-0x28(%rsp)
+       * mov    %r11,-0x20(%rsp)
+       * movq   $0x0,-0x18(%rsp)
+       * movq   $0x0,-0x10(%rsp)
+       * movq   $0x0,-0x8(%rsp)
+       * movq   $0x0,(%rsp)
+       *
+       */
+      memcpy(this->mat_ + 0, col1.data(), sizeof(double) * 3);
+      this->mat_[3] = 0;
+      memcpy(this->mat_ + 4, col2.data(), sizeof(double) * 3);
+      this->mat_[7] = 0;
+      memcpy(this->mat_ + 8, col2.data(), sizeof(double) * 3);
+      for (int i = 11; i < 15; ++i) this->mat_[i] = 0;
+      this->mat_[15] = 1;
   }
-#else
-  inline GLMatrixT(const Vec3 &col1, const Vec3 &col2, const Vec3 &col3) :
-          Matrix4x4T<Scalar>((Scalar[]){
-              col1[0], col1[1], col1[2], 0,
-              col2[0], col2[1], col2[2], 0,
-              col3[0], col3[1], col3[2], 0,
-              0, 0, 0, 1
-          }) {
-  }
-#endif
 
 
   /// destructor
