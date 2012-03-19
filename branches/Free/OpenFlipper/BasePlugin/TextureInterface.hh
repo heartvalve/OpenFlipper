@@ -150,7 +150,7 @@ class TextureInterface {
        * Examples:\n
        * Pass texture without modification: abs=false,clamp=false,repeat=false,center=false,scale=false\n
        *  @param _textureName Name of your Texture
-       *  @param _mode colon seperated String describing your settings (e.g. clamp,abs )
+       *  @param _mode colon separated String describing your settings (e.g. clamp,abs )
       */
       virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
 
@@ -159,7 +159,7 @@ class TextureInterface {
        * for info about the _mode parameter see setTextureMode(QString,QString)
        *
        *  @param _textureName Name of your Texture
-       *  @param _mode colon seperated String describing your settings (e.g. clamp,abs )
+       *  @param _mode colon separated String describing your settings (e.g. clamp,abs )
        *  @param _id id of an object
        */
       virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
