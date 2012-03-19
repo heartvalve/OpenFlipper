@@ -114,6 +114,9 @@ public:
   /** setup matrix using an array of N*N scalar values.
       elements are ordered 'column first' (like OpenGL) */
   inline Matrix4x4T(const Scalar _array[16]) {
+      /*
+       * Why aren't we doing a memcpy here?
+       */
     matrixOperator(_array, mat_, =);
   }
 
@@ -251,7 +254,7 @@ public:
   inline const Scalar* raw() const { return mat_; }
   inline const Scalar* data() const { return mat_; }
 
-private:
+protected:
 
     Scalar mat_[16];
 };
