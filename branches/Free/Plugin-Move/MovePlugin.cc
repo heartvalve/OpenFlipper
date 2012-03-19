@@ -187,6 +187,7 @@ void MovePlugin::pluginsInitialized() {
 
   //TOOLBAR
   toolbar_ = new QToolBar(tr("Transform and Move"));
+  toolbar_->setObjectName("TransformAndMoveToolBar");
 
   toolBarActions_ = new QActionGroup(toolbar_);
 
@@ -206,7 +207,9 @@ void MovePlugin::pluginsInitialized() {
 
   emit addToolbar(toolbar_);
 
-  pickToolbar_ = new QToolBar(tr("Transform and Move"));
+  pickToolbar_ = new QToolBar(tr("Transform and Move PickTool bar"));
+  pickToolbar_->setObjectName("TransformAndMovePickToolBar");
+
   pickToolbar_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
   pickToolBarActions_->setExclusive (false);
