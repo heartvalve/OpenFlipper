@@ -114,7 +114,6 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   // ============================
   blockNext_ = false;
   
-  connect (list_->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(mapScrollPosition(int)));
   connect (&loggerUpdateTimer_, SIGNAL(timeout ()), this, SLOT(slotScrollUpdate()));
   
   // Single shot timer every 500 msecs
