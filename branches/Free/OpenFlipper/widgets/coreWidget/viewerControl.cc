@@ -832,13 +832,34 @@ void CoreWidget::delete_garbage() {
 }
 
 void CoreWidget::slotPasteView( ) {
-  QSize size = examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+  QSize size;
+  int toolBarWidth;
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView(&size,&toolBarWidth);
+
+  //resize the toolbox
+  if (toolBarWidth != -1)
+  {
+    QList<int> sizes = toolSplitter_->sizes();
+    bool onRight = OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool();
+    if (onRight)
+    {
+      sizes[1] = toolBarWidth;
+      sizes[0] += toolBarWidth;
+    }
+    else
+    {
+      sizes[0] = toolBarWidth;
+      sizes[1] += toolBarWidth;
+    }
+    toolSplitter_->setSizes(sizes);
+    viewerToolbar_->resize(toolBarWidth, viewerToolbar_->height());
+  }
 
   if (size.isValid())
   {
     //ask for restoring the window size
     QMessageBox msgBox;
-    msgBox.setText("Restore window size?");
+    msgBox.setText(QString("Restore window size?"));
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Ok);
 
@@ -857,6 +878,8 @@ void CoreWidget::slotPasteView( ) {
       }
     }
   }
+
+
 }
 
 void CoreWidget::slotCopyView( ) {
@@ -865,7 +888,7 @@ void CoreWidget::slotCopyView( ) {
     size = QSize(0,0);
   else
     size = QSize (width(),height());
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView(size);
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView(size,viewerToolbar_->width());
 }
 
 void CoreWidget::slotCoordSysVisibility(bool _visible){

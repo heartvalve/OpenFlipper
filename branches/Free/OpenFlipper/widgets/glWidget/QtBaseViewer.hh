@@ -265,7 +265,7 @@ public:
       if saved, the old window size will be written into _windowSize
       \note QSize(0,0) indicates that the window is maximized.
    */
-  void encodeView(QString& _view, const QSize& _windowSize = QSize(-1,-1));
+  void encodeView(QString& _view, const QSize& _windowSize = QSize(-1,-1), const int _toolBarWidth = -1);
   /** Decode and apply text representation of view encoded by encodeView().
       If \c _view was successfully decoded it will immediately be applied
       and \c true is returned, \c false is returned else.
@@ -273,7 +273,7 @@ public:
       You can save the current Window size via parameter _windowSize
       \note QSize(0,0) indicates that the window was maximized.
    */
-  bool decodeView(const QString& _view, QSize *_windowSize = NULL);
+  bool decodeView(const QString& _view, QSize *_windowSize = NULL, int* _toolBarWidth = NULL);
 
   /// initialize modelview matrix to identity
   void initModelviewMatrix();
@@ -354,11 +354,11 @@ public slots:
   /** you get the older window size (if saved) back
       \note QSize(0,0) indicates that the window is maximized.
    */
-  QSize actionPasteView();
+  void actionPasteView(QSize * _windowSize = NULL, int *_toolBarWidth = NULL);
   /** if you want to save the windowSize, use the parameter
       \note QSize(0,0) indicates that the window is maximized
    */
-  void actionCopyView(const QSize &_windowSize = QSize());
+  void actionCopyView(const QSize &_windowSize = QSize(-1,-1), const int _toolBarWidth = -1);
 
 //-------------------------------------------------------------- public signals
 signals:
