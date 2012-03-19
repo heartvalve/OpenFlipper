@@ -165,6 +165,7 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QString version() { return QString("1.0"); }; 
   
   private:
+
     /// Reader functions
     void checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes);
     
@@ -234,7 +235,6 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QString textureIndexPropertyName_;
     bool    textureIndexPropFetched_;
     std::map<int,QString> texIndexFileMap_;
-    
 };
 
 
