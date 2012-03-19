@@ -197,7 +197,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   texData->texture(_name).hidden( true );
 
   // Add to image store
-  int newImageId = imageStore().addImageFile(_name);
+  int newImageId = imageStore().addImageFile(_filename);
 
   if ( newImageId == -1 ) {
     emit log(LOGERR,imageStore().error());
