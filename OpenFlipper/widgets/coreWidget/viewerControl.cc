@@ -833,14 +833,29 @@ void CoreWidget::delete_garbage() {
 
 void CoreWidget::slotPasteView( ) {
   QSize size = examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
-  if (size == QSize(0,0))
+
+  if (size.isValid())
   {
-    showMaximized();
-  }
-  else
-  {
-    showNormal();
-    resizeApplication(size.width(),size.height());
+    //ask for restoring the window size
+    QMessageBox msgBox;
+    msgBox.setText("Restore window size?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+
+    int ret =  msgBox.exec();
+
+    if (ret == QMessageBox::Ok)
+    {
+      if (size == QSize(0,0))
+      {
+        showMaximized();
+      }
+      else
+      {
+        showNormal();
+        resizeApplication(size.width(),size.height());
+      }
+    }
   }
 }
 
