@@ -832,11 +832,25 @@ void CoreWidget::delete_garbage() {
 }
 
 void CoreWidget::slotPasteView( ) {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+  QSize size = examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+  if (size == QSize(0,0))
+  {
+    showMaximized();
+  }
+  else
+  {
+    showNormal();
+    resizeApplication(size.width(),size.height());
+  }
 }
 
 void CoreWidget::slotCopyView( ) {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
+  QSize size;
+  if (isMaximized())
+    size = QSize(0,0);
+  else
+    size = QSize (width(),height());
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView(size);
 }
 
 void CoreWidget::slotCoordSysVisibility(bool _visible){

@@ -261,13 +261,19 @@ public:
   /// map glarea coords to global coords
   QPoint glMapToGlobal( const QPoint& _pos ) const;
 
-  /// convert current view to text representation
-  void encodeView(QString& _view);
+  /** convert current view to text representation
+      if saved, the old window size will be written into _windowSize
+      \note QSize(0,0) indicates that the window was maximized or the window size was not saved
+   */
+  void encodeView(QString& _view, const QSize& _windowSize = QSize());
   /** Decode and apply text representation of view encoded by encodeView().
       If \c _view was successfully decoded it will immediately be applied
       and \c true is returned, \c false is returned else.
+
+      You can save the current Window size via parameter _windowSize
+      \note QSize(0,0) indicates that the window is maximized.
    */
-  bool decodeView(const QString& _view);
+  bool decodeView(const QString& _view, QSize *_windowSize = NULL);
 
   /// initialize modelview matrix to identity
   void initModelviewMatrix();
@@ -345,8 +351,14 @@ public slots:
   virtual void setView( const ACG::GLMatrixd& _modelview,
 			               const ACG::GLMatrixd& _inverse_modelview );
 
-  void actionPasteView();
-  void actionCopyView();
+  /** you get the older window size (if saved) back
+      \note QSize(0,0) indicates that the window was maximized or the window size was not saved
+   */
+  QSize actionPasteView();
+  /** if you want to save the windowSize, use the parameter
+      \note QSize(0,0) indicates that the window is maximized
+   */
+  void actionCopyView(const QSize &_windowSize = QSize());
 
 //-------------------------------------------------------------- public signals
 signals:
