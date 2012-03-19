@@ -980,7 +980,7 @@ void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
 
 //-----------------------------------------------------------------------------
 
-void glViewer::encodeView(QString& _view)
+void glViewer::encodeView(QString& _view, const QSize& _windowSize /*= QSize()*/)
 {
   // Get current matrices
   const ACG::GLMatrixd m = glstate_->modelview();
@@ -1000,14 +1000,14 @@ void glViewer::encodeView(QString& _view)
   _view += QString::number(p(3,0)) + " " + QString::number(p(3,1)) + " " + QString::number(p(3,2)) + " " + QString::number(p(3,3)) + "\n";
 
   // add gl width/height, current projection Mode and the ortho mode width to output
-  _view += QString::number(glWidth()) + " " +  QString::number(glHeight()) + " " + QString::number(projectionMode_) + " " + QString::number(properties_.orthoWidth()) + "\n";
+  _view += QString::number(_windowSize.width()) + " " +  QString::number(_windowSize.height()) + " " + QString::number(projectionMode_) + " " + QString::number(properties_.orthoWidth()) + "\n";
 }
 
 
 //----------------------------------------------------------------------------
 
 
-bool glViewer::decodeView(const QString& _view)
+bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/)
 {
   if (_view.left(sizeof(VIEW_MAGIC)-1) != QString(VIEW_MAGIC))
     return false;
@@ -1064,8 +1064,26 @@ bool glViewer::decodeView(const QString& _view)
   p(3,2) = split[30].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   p(3,3) = split[31].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
 
-  //int w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
-  //int h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  if (_windowSize)
+  {
+    //restore the old window size
+    int w =  split[32].toInt(&ok);
+    if ( !ok )
+    {
+      std::cerr << "No window size saved!" << std::endl;
+      w = 0;
+    }
+
+    int h =  split[33].toInt(&ok);
+    if ( !ok )
+    {
+      std::cerr << "No window size saved!" << std::endl;
+      h = 0;
+    }
+
+    *_windowSize = QSize(w,h);
+  }
+
   pMode =  split[34].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   properties_.orthoWidth( split[35].toDouble(&ok) ); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
 
@@ -1088,9 +1106,10 @@ bool glViewer::decodeView(const QString& _view)
 //-----------------------------------------------------------------------------
 
 
-void glViewer::actionCopyView()
+void glViewer::actionCopyView(const QSize &_windowSize /*=QSize()*/)
 {
-  QString view; encodeView(view);
+  QString view;
+  encodeView(view,_windowSize);
   QApplication::clipboard()->setText(view);
 }
 
@@ -1098,10 +1117,13 @@ void glViewer::actionCopyView()
 //-----------------------------------------------------------------------------
 
 
-void glViewer::actionPasteView()
+QSize glViewer::actionPasteView()
 {
-  QString view; view=QApplication::clipboard()->text();
-  decodeView(view);
+  QString view;
+  view = QApplication::clipboard()->text();
+  QSize oldSize;
+  decodeView(view,&oldSize);
+  return oldSize;
 }
 
 
