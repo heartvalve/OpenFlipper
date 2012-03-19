@@ -68,16 +68,13 @@
 
 void SplatCloudObjectSelectionPlugin::selectVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if( _vertexList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("selectVertices: unable to get object")); 
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_SPLATCLOUD)
         SplatCloudSelection::selectVertices(PluginFunctions::splatCloud(object), _vertexList);
@@ -104,16 +101,13 @@ void SplatCloudObjectSelectionPlugin::selectVertices(int _objectId, IdList _vert
 
 void SplatCloudObjectSelectionPlugin::unselectVertices(int _objectId, IdList _vertexList) {
     
-    if(_vertexList.size() == 0) return;
+    if( _vertexList.empty() ) return;
     
     BaseObjectData* object = 0;
     if (!PluginFunctions::getObject(_objectId,object)) {
         emit log(LOGERR,tr("unselectVertices: unable to get object")); 
         return;
     }
-
-    if (_vertexList.size() == 0)
-        return;
 
     if (object->dataType() == DATA_SPLATCLOUD)
         SplatCloudSelection::unselectVertices(PluginFunctions::splatCloud(object), _vertexList);
