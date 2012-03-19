@@ -97,7 +97,7 @@ signals:
 
 	//-- Base Interface --
 	void updateView();
-	void updatedObject( int _identifier, const UpdateType _type );
+	void updatedObject( int _identifier, const UpdateType& _type );
 	void nodeVisibilityChanged( int _identifier );
 	void setSlotDescription( QString _slotName, QString _slotDescription, QStringList _parameters, QStringList _descriptions );
 
