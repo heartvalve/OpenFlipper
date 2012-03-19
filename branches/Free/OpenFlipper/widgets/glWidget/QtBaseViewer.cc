@@ -1071,14 +1071,12 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/)
     if ( !ok )
     {
       std::cerr << "No window size saved!" << std::endl;
-      w = 0;
     }
 
     int h =  split[33].toInt(&ok);
     if ( !ok )
     {
       std::cerr << "No window size saved!" << std::endl;
-      h = 0;
     }
 
     *_windowSize = QSize(w,h);

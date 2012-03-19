@@ -263,15 +263,15 @@ public:
 
   /** convert current view to text representation
       if saved, the old window size will be written into _windowSize
-      \note QSize(0,0) indicates that the window was maximized or the window size was not saved
+      \note QSize(0,0) indicates that the window is maximized.
    */
-  void encodeView(QString& _view, const QSize& _windowSize = QSize());
+  void encodeView(QString& _view, const QSize& _windowSize = QSize(-1,-1));
   /** Decode and apply text representation of view encoded by encodeView().
       If \c _view was successfully decoded it will immediately be applied
       and \c true is returned, \c false is returned else.
 
       You can save the current Window size via parameter _windowSize
-      \note QSize(0,0) indicates that the window is maximized.
+      \note QSize(0,0) indicates that the window was maximized.
    */
   bool decodeView(const QString& _view, QSize *_windowSize = NULL);
 
@@ -352,7 +352,7 @@ public slots:
 			               const ACG::GLMatrixd& _inverse_modelview );
 
   /** you get the older window size (if saved) back
-      \note QSize(0,0) indicates that the window was maximized or the window size was not saved
+      \note QSize(0,0) indicates that the window is maximized.
    */
   QSize actionPasteView();
   /** if you want to save the windowSize, use the parameter
