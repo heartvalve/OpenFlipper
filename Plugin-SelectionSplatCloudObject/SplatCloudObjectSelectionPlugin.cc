@@ -170,16 +170,14 @@ void SplatCloudObjectSelectionPlugin::slotSelectionOperation( QString _operation
 		{
 			if( o_it->visible() )
 			{
-				UpdateType updateOriginalColors = addUpdateType( "OriginalColors" );
-
-				emit updatedObject( o_it->id(), updateOriginalColors );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreOriginalColors") );
 				emit createBackup ( o_it->id(), "Pre Deletion", UPDATE_ALL );
 
 				if( type & vertexType_ )
 					deleteVertexSelection( o_it->id() );
 
-				emit updatedObject( o_it->id(), updateOriginalColors );
 				emit createBackup ( o_it->id(), "Delete Selection", UPDATE_ALL );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreColormodeColors") );
 
 				emit updatedObject( o_it->id(), UPDATE_ALL );
 			}
@@ -192,16 +190,14 @@ void SplatCloudObjectSelectionPlugin::slotSelectionOperation( QString _operation
 		{
 			if( o_it->visible() )
 			{
-				UpdateType updateOriginalColors = addUpdateType( "OriginalColors" );
-
-				emit updatedObject( o_it->id(), updateOriginalColors );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreOriginalColors") );
 				emit createBackup ( o_it->id(), "Pre Colorization", UPDATE_COLOR );
 
 				if( type & vertexType_ )
 					setColorForSelection( o_it->id(), vertexType_ );
 
-				emit updatedObject( o_it->id(), updateOriginalColors );
 				emit createBackup ( o_it->id(), "Colorize Selection", UPDATE_COLOR );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreColormodeColors") );
 
 				emit updatedObject( o_it->id(), UPDATE_COLOR );
 			}
@@ -578,16 +574,14 @@ void SplatCloudObjectSelectionPlugin::slotKeyShortcutEvent( int _key, Qt::Keyboa
 		{
 			if( o_it->visible() )
 			{
-				UpdateType updateOriginalColors = addUpdateType( "OriginalColors" );
-
-				emit updatedObject( o_it->id(), updateOriginalColors );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreOriginalColors") );
 				emit createBackup ( o_it->id(), "Pre Deletion", UPDATE_ALL );
 
 				if( type & vertexType_ )
 					deleteVertexSelection( o_it->id() );
 
-				emit updatedObject( o_it->id(), updateOriginalColors );
 				emit createBackup ( o_it->id(), "Delete Selection", UPDATE_ALL );
+				emit updatedObject( o_it->id(), addUpdateType("RestoreColormodeColors") );
 
 				emit updatedObject( o_it->id(), UPDATE_ALL );
 			}
