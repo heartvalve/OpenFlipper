@@ -88,81 +88,94 @@ void MovePlugin::hideManipulator() {
 
 void MovePlugin::showProps(){
 
-    QVariant contextObject = contextAction_->data();
-    int nodeId = contextObject.toInt();
+  QVariant contextObject = contextAction_->data();
+  int nodeId = contextObject.toInt();
 
-    if ( nodeId == -1)
-	return;
+  if (nodeId == -1)
+    return;
 
-    // Get Node
-    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), nodeId );
+  // Get Node
+  ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node(PluginFunctions::getSceneGraphRootNode(), nodeId);
 
-    ACG::SceneGraph::QtTranslationManipulatorNode* mNode;
-    mNode = dynamic_cast<ACG::SceneGraph::QtTranslationManipulatorNode*>(node);
+  ACG::SceneGraph::QtTranslationManipulatorNode* mNode;
+  mNode = dynamic_cast<ACG::SceneGraph::QtTranslationManipulatorNode*>(node);
 
-    if(mNode == 0) {
-	// Not a manipulator node
-	return;
-    }
+  if (mNode == 0) {
+    // Not a manipulator node
+    return;
+  }
 
-    int objectId = mNode->getIdentifier();
+  int objectId = mNode->getIdentifier();
 
-    BaseObjectData* obj;
-    if ( ! PluginFunctions::getObject(objectId,obj) )
-        return;
+  BaseObjectData* obj;
+  if (!PluginFunctions::getObject(objectId, obj))
+    return;
 
-    // Check if the widget has been created and show it.
-    movePropsWidget* pW = getDialogWidget(obj);
-    if ( pW != 0 ) {
-      pW->show();
-      return;
-    }
-    
-    pW = new movePropsWidget(obj->id());
-    pW->setWindowTitle(QString((mNode->name()).c_str()));
-
-    connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
-    connect(pW->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
-    connect(pW->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
-    connect(pW->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
-
-    connect(pW->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
-    connect(pW->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
-    connect(pW->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
-
-    connect(pW->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
-    connect(pW->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
-
-    // Values
-    BaseObjectData* object;
-    if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-	if (  object->manipulatorNode()->visible() ) {
-	    const OpenMesh::Vec3d pos = object->manipulatorNode()->center();
-
-	    QString num;
-
-	    num = QString::number(pos[0]); pW->posx->setText(num);
-	    num = QString::number(pos[1]); pW->posy->setText(num);
-	    num = QString::number(pos[2]); pW->posz->setText(num);
-
-	    OpenMesh::Vec3d direction = object->manipulatorNode()->directionX();
-	    num = QString::number(direction[0]); pW->dirxx->setText(num);
-	    num = QString::number(direction[1]); pW->dirxy->setText(num);
-	    num = QString::number(direction[2]); pW->dirxz->setText(num);
-
-	    direction = object->manipulatorNode()->directionY();
-	    num = QString::number(direction[0]); pW->diryx->setText(num);
-	    num = QString::number(direction[1]); pW->diryy->setText(num);
-	    num = QString::number(direction[2]); pW->diryz->setText(num);
-
-	    direction = object->manipulatorNode()->directionZ();
-	    num = QString::number(direction[0]); pW->dirzx->setText(num);
-	    num = QString::number(direction[1]); pW->dirzy->setText(num);
-	    num = QString::number(direction[2]); pW->dirzz->setText(num);
-
-	}
-    }
-
+  // Check if the widget has been created and show it.
+  movePropsWidget* pW = getDialogWidget(obj);
+  if (pW != 0) {
     pW->show();
-    propsWindows_.append(pW);
+    pW->raise();
+    return;
+  }
+    
+  pW = new movePropsWidget(obj->id());
+  pW->setWindowTitle(QString((mNode->name()).c_str()));
+
+  connect(pW->posButton, SIGNAL(clicked() ), this, SLOT(slotSetPosition()));
+  connect(pW->axisAButton, SIGNAL(clicked() ), this, SLOT(slotToggleAxisA()));
+  connect(pW->axisBButton, SIGNAL(clicked() ), this, SLOT(slotToggleAxisB()));
+  connect(pW->dirButton, SIGNAL(clicked() ), this, SLOT(slotSetDirection()));
+
+  connect(pW->transButton, SIGNAL(clicked() ), this, SLOT(slotTranslation()));
+  connect(pW->rotButton, SIGNAL(clicked() ), this, SLOT(slotRotate()));
+  connect(pW->scaleButton, SIGNAL(clicked() ), this, SLOT(slotScale()));
+
+  connect(pW->projectTangentButton, SIGNAL(clicked() ), this, SLOT(slotProjectToTangentPlane()));
+  connect(pW->moveManipToCOG, SIGNAL(clicked() ), this, SLOT(slotMoveManipToCOG()));
+
+  // Values
+  BaseObjectData* object;
+  if (PluginFunctions::getObject(lastActiveManipulator_, object)) {
+    if (object->manipulatorNode()->visible()) {
+      const OpenMesh::Vec3d pos = object->manipulatorNode()->center();
+
+      QString num;
+
+      num = QString::number(pos[0]);
+      pW->posx->setText(num);
+      num = QString::number(pos[1]);
+      pW->posy->setText(num);
+      num = QString::number(pos[2]);
+      pW->posz->setText(num);
+
+      OpenMesh::Vec3d direction = object->manipulatorNode()->directionX();
+      num = QString::number(direction[0]);
+      pW->dirxx->setText(num);
+      num = QString::number(direction[1]);
+      pW->dirxy->setText(num);
+      num = QString::number(direction[2]);
+      pW->dirxz->setText(num);
+
+      direction = object->manipulatorNode()->directionY();
+      num = QString::number(direction[0]);
+      pW->diryx->setText(num);
+      num = QString::number(direction[1]);
+      pW->diryy->setText(num);
+      num = QString::number(direction[2]);
+      pW->diryz->setText(num);
+
+      direction = object->manipulatorNode()->directionZ();
+      num = QString::number(direction[0]);
+      pW->dirzx->setText(num);
+      num = QString::number(direction[1]);
+      pW->dirzy->setText(num);
+      num = QString::number(direction[2]);
+      pW->dirzz->setText(num);
+
+    }
+  }
+
+  pW->show();
+  propsWindows_.append(pW);
 }
