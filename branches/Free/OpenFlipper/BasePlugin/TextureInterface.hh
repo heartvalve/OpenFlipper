@@ -68,7 +68,7 @@ class TextureInterface {
        *  @param _dimension 1D texture ( currenty only supports 1 )
        *  @param _id id of an object
        */
-      virtual void addTexture( QString /*_name*/ , QString /*_filename*/ , uint /*_dimension*/ , int /*_id*/ ) {};
+      virtual void addTexture( QString _name , QString _filename , uint _dimension , int _id ) {};
 
       /** \brief Emit this Signal if a texture has been added (Property Name,filename,Dimension)
        *
@@ -78,7 +78,7 @@ class TextureInterface {
        *  @param _filename Filename of the texture (either local in OpenFlippers texture dir or global ( "./Textures/<name>")
        *  @param _dimension 1D texture ( currenty only supports 1 )
        */
-      virtual void addTexture( QString /*_name*/ , QString /*_filename*/ , uint /*_dimension*/ ) {};
+      virtual void addTexture( QString _name , QString _filename , uint _dimension ) {};
 
       /** \brief Emit this Signal if you want to add a texture for a multitexturing mode
        *
@@ -96,11 +96,11 @@ class TextureInterface {
        *  @param _id           Id of the object which should use that texture
        *  @param _textureId    The new internal id of the texture( This id is object related!!). Use this id in your mesh as the texture index (Use mesh->set_texture_index on the face using this texture).
        */
-      virtual void addMultiTexture( QString /*_textureGroup*/ , QString /*_name*/ , QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
+      virtual void addMultiTexture( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId ) {};
 
       /** \brief Tell Plugins to update the given texture for the given identifier
        */
-      virtual void updateTexture( QString /*_textureName*/  , int /*_identifier*/) {};
+      virtual void updateTexture( QString _textureName  , int _identifier) {};
 
       /** \brief Tell Plugins to update all textures
        */
@@ -114,11 +114,11 @@ class TextureInterface {
 
       /** \brief emit this signal if you want to switch the texture of a specific object
        */
-      virtual void switchTexture( QString /*_textureName*/ , int /*_id*/  ) {};
+      virtual void switchTexture( QString _textureName , int _id  ) {};
 
       /** \brief emit this signal if you want to switch the global texture
        */
-      virtual void switchTexture( QString /*_textureName*/ ) {};
+      virtual void switchTexture( QString _textureName ) {};
 
       /** \brief emit this signal if you want to set a special mode for this texture (Clamping,...)
        *
@@ -152,7 +152,7 @@ class TextureInterface {
        *  @param _textureName Name of your Texture
        *  @param _mode colon separated String describing your settings (e.g. clamp,abs )
       */
-      virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
+      virtual void setTextureMode(QString _textureName ,QString _mode) {};
 
       /** \brief emit this signal if you want to set a special mode for this texture (Clamping,...)
        *
@@ -162,7 +162,7 @@ class TextureInterface {
        *  @param _mode colon separated String describing your settings (e.g. clamp,abs )
        *  @param _id id of an object
        */
-      virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
+      virtual void setTextureMode(QString _textureName ,QString _mode, int _id ) {};
 
       /** \brief Change the texture image of a given texture
        *
@@ -170,14 +170,14 @@ class TextureInterface {
        *  @param _image The new image for the texture
        *  @param _id Id of the object where the texture should be changed
        */
-      virtual void textureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+      virtual void textureChangeImage( QString _textureName , QImage& _image , int _id ) {};
 
       /** \brief Change the texture image of a given global texture
        *
        *  @param _textureName The name of the texture which should be changed
        *  @param _image The new image for the texture
        */
-      virtual void textureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      virtual void textureChangeImage( QString _textureName , QImage& _image ) {};
 
       /** \brief get the texture image of a given texture
        *
@@ -185,14 +185,14 @@ class TextureInterface {
        *  @param _image reference to the image for the texture
        *  @param _id Id of the object where the texture should be fetched from
        */
-      virtual void textureGetImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+      virtual void textureGetImage( QString _textureName , QImage& _image , int _id ) {};
 
       /** \brief Get the texture image of a given global texture
        *
        *  @param _textureName The name of the texture which should be addressed
        *  @param _image reference to the image for the texture
        */
-      virtual void textureGetImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      virtual void textureGetImage( QString _textureName , QImage& _image ) {};
 
       /** \brief Get the texture index of a given texture
        *
@@ -200,7 +200,7 @@ class TextureInterface {
        *  @param _id Id of the object where the texture is defined on
        *  @param _index the index of the texture (used for multiTexturing)
        */
-      virtual void textureIndex( QString /*_textureName*/, int /*_id*/, int& /*_index*/) {};
+      virtual void textureIndex( QString _textureName, int _id, int& _index) {};
       
       /** \brief Get the name of the texture index property
        *
@@ -209,7 +209,7 @@ class TextureInterface {
        *  @param _id The id of the mesh object
        *  @param _propertyName The name of the property that holds the texture indices
        */
-      virtual void textureIndexPropertyName( int /*_id*/, QString& /*_propertyName*/) {};
+      virtual void textureIndexPropertyName( int _id, QString& _propertyName) {};
       
        /** \brief get the name of the texture with given texture index
        *
@@ -222,7 +222,7 @@ class TextureInterface {
        *  @param _textureIndex texture index of the wanted texture
        *  @param _textureName this returns the name of the texture
        */
-      virtual void textureName( int /*_id*/, int /*_textureIndex*/, QString& /*_textureName*/ ) {};
+      virtual void textureName( int _id, int _textureIndex, QString& _textureName ) {};
       
       /** \brief get the filename of the texture with given texture index
        *
@@ -233,14 +233,14 @@ class TextureInterface {
        *  @param _textureName The name of the texture whose filename will be fetched
        *  @param _textureFilename this returns the name of the texture
        */
-      virtual void textureFilename( int /*_id*/, QString /*_textureName*/, QString& /*_textureFilename*/ ) {};
+      virtual void textureFilename( int _id, QString _textureName, QString& _textureFilename ) {};
 
        /** \brief get the name of the texture which is currently enabled
        *
        *  @param _id Id of the object where the current texture should be fetched from
        *  @param _textureName this returns the name of the texture
        */
-      virtual void getCurrentTexture( int /*_id*/, QString& /*_textureName*/ ) {};
+      virtual void getCurrentTexture( int _id, QString& _textureName ) {};
       
        /** \brief get the names of all sub-textures under the given multiTexture
        *
@@ -248,7 +248,7 @@ class TextureInterface {
        *  @param _multiTextureName name of a multi texture
        *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
        */
-      virtual void getSubTextures( int /*_id*/, QString /*_multiTextureName*/, QStringList& /*_subTextures*/ ) {};
+      virtual void getSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ) {};
 
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
@@ -259,7 +259,7 @@ class TextureInterface {
        * @param _textureName Name of the Texture to be updated
        * @param _identifier The id of the object to update
       */
-      virtual void slotUpdateTexture( QString /*_textureName*/ , int /*_identifier*/) {};
+      virtual void slotUpdateTexture( QString _textureName , int _identifier) {};
 
       /** \brief update all textures provided by this plugin
        */
@@ -271,20 +271,20 @@ class TextureInterface {
        *  @param _textureName The name of the updated texture
        *  @param _identifier -1 if all objects updated, otherwise the identifier of the object
        */
-      virtual void slotTextureUpdated( QString /*_textureName*/ , int /*_identifier*/ ) {};
+      virtual void slotTextureUpdated( QString _textureName , int _identifier ) {};
 
       /** \brief This slot is called when a plugin requests to switch an objects texture
        *
        * @param _textureName Name of the Texture
        * @param _id id of an object
        */
-      virtual void slotSwitchTexture( QString /*_textureName*/, int /*_id*/ ) {};
+      virtual void slotSwitchTexture( QString _textureName, int _id ) {};
 
       /** \brief This slot is called when a plugin requests to switch to a different texture mode
        *
        * @param _textureName Name of the Texture
       */
-      virtual void slotSwitchTexture( QString /*_textureName*/ ) {};
+      virtual void slotSwitchTexture( QString _textureName ) {};
 
    public :
 
@@ -310,7 +310,7 @@ class TextureInterface {
        * @param _dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
        * @param _id id of an object
        */
-      virtual void slotTextureAdded( QString /*_textureName*/ , QString /*_filename*/ , uint /*_dimension*/, int /*_id*/ ) {};
+      virtual void slotTextureAdded( QString _textureName , QString _filename , uint _dimension, int _id ) {};
 
       /** \brief A texture has been added by a plugin.
        *
@@ -318,9 +318,9 @@ class TextureInterface {
        *
        * @param _textureName Name of the Added texture (has to be equal to the property name)
        * @param _filename Filename of the Texture Image to be used
-       * @param dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
+       * @param _dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
        */
-      virtual void slotTextureAdded( QString /*_textureName*/ , QString /*_filename*/ , uint /*dimension*/ ) {};
+      virtual void slotTextureAdded( QString _textureName , QString _filename , uint _dimension ) {};
 
       /** \brief A multiTexture has been added by a plugin.
        *
@@ -331,8 +331,8 @@ class TextureInterface {
        * @param _id Id of the object which should use the texture
        * @param _textureId    The new id of the texture( This id is object related!!)
        */
-      virtual void slotMultiTextureAdded( QString /*_textureGroup*/ , QString /*_name*/ ,
-                                          QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
+      virtual void slotMultiTextureAdded( QString _textureGroup , QString _name ,
+                                          QString _filename , int _id , int& _textureId ) {};
 
       /** \brief Texturemode for texture should be changed
        *
@@ -341,7 +341,7 @@ class TextureInterface {
        *  @param _mode New mode flags for the given texture
        *  @param _id id of an object
        */
-      virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
+      virtual void slotSetTextureMode(QString _textureName ,QString _mode, int _id ) {};
 
       /** \brief Changes the texture image of a given texture
        *
@@ -349,14 +349,14 @@ class TextureInterface {
        *  @param _image The new image for the texture
        *  @param _id Id of the object where the texture should be changed
        */
-      virtual void slotTextureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+      virtual void slotTextureChangeImage( QString _textureName , QImage& _image , int _id ) {};
 
       /** \brief Changes the texture image of a given global texture
        *
        *  @param _textureName The name of the texture which should be changed
        *  @param _image The new image for the texture
        */
-      virtual void slotTextureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      virtual void slotTextureChangeImage( QString _textureName , QImage& _image ) {};
 
       /** \brief Texturemode for texture should be changed
        *
@@ -364,7 +364,7 @@ class TextureInterface {
        *  @param _textureName The name of the updated texture
        *  @param _mode New mode flags for the given texture
        */
-      virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
+      virtual void slotSetTextureMode(QString _textureName ,QString _mode) {};
       
       /** \brief fetches the texture image of a given texture
        *
@@ -372,14 +372,14 @@ class TextureInterface {
        *  @param _image reference to the image for the texture
        *  @param _id Id of the object where the texture should be fetched from
        */
-      virtual void slotTextureGetImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+      virtual void slotTextureGetImage( QString _textureName , QImage& _image , int _id ) {};
 
       /** \brief fetches the texture image of a given global texture
        *
        *  @param _textureName The name of the texture which should be addressed
        *  @param _image reference to the image for the texture
        */
-      virtual void slotTextureGetImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      virtual void slotTextureGetImage( QString _textureName , QImage& _image ) {};
       
       /** \brief Get the texture index of a given texture
        *
@@ -387,7 +387,7 @@ class TextureInterface {
        *  @param _id Id of the object where the texture is defined on
        *  @param _index the index of the texture (used for multiTexturing)
        */
-      virtual void slotTextureIndex( QString /*_textureName*/, int /*_id*/, int& /*_index*/) {};
+      virtual void slotTextureIndex( QString _textureName, int _id, int& _index) {};
       
       /** \brief Get the name of the texture index property
        *
@@ -396,7 +396,7 @@ class TextureInterface {
        *  @param _id The id of the mesh object
        *  @param _propertyName The name of the property that holds the texture indices
        */
-      virtual void slotTextureIndexPropertyName( int /*_id*/, QString& /*_propertyName*/) {};
+      virtual void slotTextureIndexPropertyName( int _id, QString& _propertyName) {};
       
        /** \brief get the name of the texture with given texture index
        *
@@ -404,7 +404,7 @@ class TextureInterface {
        *  @param _textureIndex texture index of the wanted texture
        *  @param _textureName this returns the name of the texture
        */
-      virtual void slotTextureName( int /*_id*/, int /*_textureIndex*/, QString& /*_textureName*/ ) {};
+      virtual void slotTextureName( int _id, int _textureIndex, QString& _textureName ) {};
       
       /** \brief get the filename of the texture with given texture name
        *
@@ -416,21 +416,21 @@ class TextureInterface {
        *  @param _textureName texture name of the wanted texture
        *  @param _textureFilename this returns the filename of the texture
        */
-      virtual void slotTextureFilename( int /*_id*/, QString /*_textureName*/, QString& /*_textureFilename*/ ) {};
+      virtual void slotTextureFilename( int _id, QString _textureName, QString& _textureFilename ) {};
       
       /** \brief get the number of textures per object
        *
        *  @param _id Id of the object
        *  @param _numTextures returns the number of textures
        */
-      virtual void slotNumberOfTextures( int /*_id*/, int& /*_numTextures*/ ) {};
+      virtual void slotNumberOfTextures( int _id, int& _numTextures ) {};
 
        /** \brief fetches the name of the texture which is currently enabled
        *
        *  @param _id Id of the object where the current texture should be fetched from
        *  @param _textureName this returns the name of the texture
        */
-      virtual void slotGetCurrentTexture( int /*_id*/, QString& /*_textureName*/ ) {};
+      virtual void slotGetCurrentTexture( int _id, QString& _textureName ) {};
       
        /** \brief fetches the names of all sub-textures under the given multiTexture
        *
@@ -438,7 +438,7 @@ class TextureInterface {
        *  @param _multiTextureName name of a multi texture
        *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
        */
-      virtual void slotGetSubTextures( int /*_id*/, QString /*_multiTextureName*/, QStringList& /*_subTextures*/ ) {};
+      virtual void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ) {};
 
    /** @} */
 };

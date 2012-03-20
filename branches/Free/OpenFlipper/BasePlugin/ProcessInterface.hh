@@ -206,7 +206,7 @@ ProcessInterface::setJobState(). It gets the jobId and an int. The int is the pr
 It has to be in the values that have been given with ProcessInterface::startJob() before.
 OpenFlipper will calculate the percentage on its own and display a progress bar at the specific position.
 
-The second function is  ProcessInterface::setJobDescription() getting a desription, that can be changed
+The second function is  ProcessInterface::setJobDescription() getting a description, that can be changed
 wile the thread is running. The following example shows a simple thread slot,using these signals.
 \code
 
