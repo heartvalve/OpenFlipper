@@ -85,8 +85,9 @@ class DLLEXPORT GroupObject : public BaseObject {
     /** constructor
      *
      * @param _groupName Name of the new Group object
+     * @param _parent    The parent object of this object
      */
-    GroupObject(QString _groupName = "Group" , GroupObject *parent = 0 );
+    GroupObject(QString _groupName = "Group" , GroupObject *_parent = 0 );
 
     /// destructor
     virtual ~GroupObject();
