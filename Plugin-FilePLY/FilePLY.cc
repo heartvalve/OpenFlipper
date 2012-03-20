@@ -541,6 +541,9 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
         
         object->update();
+
+        backupTextureCoordinates(*mesh);
+
         return object->id();
         
     } else {
@@ -600,6 +603,9 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
         
         object->update();
+
+        backupTextureCoordinates(*mesh);
+
         return object->id();
         
     } else {
