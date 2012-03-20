@@ -686,6 +686,14 @@ BaseObject*& objectRoot();
  *
  * @param defaultDir If the property doesn't exist yet, defaultDir is used
  *                   as the initial location.
+ *
+ * @param parent       Parent qt widget
+ * @param caption      Caption of the dialog
+ * @param defaultDir   Default directory when dialog is shown
+ * @param filter       name filters
+ * @param selectedFilter currently selected filter
+ * @param options      filedialog options
+ *
  */
 DLLEXPORT
 QString getOpenFileName(const QString &configProperty,
@@ -702,6 +710,13 @@ QString getOpenFileName(const QString &configProperty,
  *
  * @param defaultDir If the property doesn't exist yet, defaultDir is used
  *                   as the initial location.
+ *
+ * @param parent       Parent qt widget
+ * @param caption      Caption of the dialog
+ * @param defaultDir   Default directory when dialog is shown
+ * @param filter       name filters
+ * @param selectedFilter currently selected filter
+ * @param options      filedialog options
  */
 DLLEXPORT
 QString getSaveFileName(const QString &configProperty,

@@ -76,8 +76,7 @@ class PostProcessorInterface {
 
     /** \brief announce name for the postProcessor function
      *
-     *
-     * @param _name displayed name of the postProcessor function
+     * @return The name of the post processor
      */
     virtual QString postProcessorName() = 0;
 

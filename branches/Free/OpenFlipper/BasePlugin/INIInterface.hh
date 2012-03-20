@@ -86,7 +86,7 @@ class INIInterface {
        *  @param _ini ini file
        *  @param _id Id of the object to load data for
        */
-      virtual void loadIniFile( INIFile& /*_ini*/ ,int /*_id*/ ) {};
+      virtual void loadIniFile( INIFile& _ini ,int _id ) {};
 
       /** \brief Save per object settings
        *
@@ -97,7 +97,7 @@ class INIInterface {
        * @param _ini ini file
        * @param _id Identifier of the object to save
        */
-      virtual void saveIniFile( INIFile& /*_ini*/ ,int /*_id*/) {};
+      virtual void saveIniFile( INIFile& _ini ,int _id) {};
 
     /** @} */
 
@@ -119,7 +119,7 @@ class INIInterface {
        *
        * @param _ini  ini file
        */
-      virtual void loadIniFileOptions( INIFile& /*_ini*/ ) {};
+      virtual void loadIniFileOptions( INIFile& _ini ) {};
 
       /** \brief Load per Plugin settings after objects are loaded
        *
@@ -130,7 +130,7 @@ class INIInterface {
        *
        * @param _ini  ini file
        */
-      virtual void loadIniFileOptionsLast( INIFile& /*_ini*/ ) {};
+      virtual void loadIniFileOptionsLast( INIFile& _ini ) {};
 
       /** \brief Save Plugin Options
        *  When the core is about to save an ini file this slot will be
@@ -140,7 +140,7 @@ class INIInterface {
        *
        * @param _ini ini file
        */
-      virtual void saveIniFileOptions( INIFile& /*_ini*/ ) {};
+      virtual void saveIniFileOptions( INIFile& _ini ) {};
 
       /** \brief Save per Plugin settings when application is about to quit
        *
@@ -149,7 +149,7 @@ class INIInterface {
        *
        * @param _ini ini file
        */
-      virtual void saveOnExit( INIFile& /*_ini*/ ) {};
+      virtual void saveOnExit( INIFile& _ini ) {};
 
 
    /** @} */

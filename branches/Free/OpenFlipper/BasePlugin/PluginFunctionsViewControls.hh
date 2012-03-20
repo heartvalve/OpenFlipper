@@ -182,7 +182,6 @@ void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer );
 *
 * The scene is rotated around the trackball center when using the mouse 
 *
-* @param _center Center of the trackball
 * @param _viewer Id of the viewer to use.
 *                ALL_VIEWERS    will set all viewers (Default)
 *                ACTIVE_VIEWER active viewer
@@ -199,6 +198,7 @@ const ACG::Vec3d trackBallCenter( int _viewer );
  *                ALL_VIEWERS    will set all viewers (Default)
  *                ACTIVE_VIEWER active viewer
  *                0..3 Choose viewer explicitly
+ * @param _center Center of the current scene
  */
 DLLEXPORT
 void setScenePos(const ACG::Vec3d& _center  , int _viewer = ALL_VIEWERS);
@@ -344,6 +344,8 @@ void perspectiveProjection( int _viewer = ALL_VIEWERS );
  * @param _viewer Id of the viewer to use.
  *                ACTIVE_VIEWER active viewer
  *                0..3 Choose viewer explicitly
+ *
+ * @param _mode New drawmode of the given viewer
  */
 DLLEXPORT
 void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode , int _viewer = ALL_VIEWERS);
