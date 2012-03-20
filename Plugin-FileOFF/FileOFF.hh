@@ -223,6 +223,10 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     template< class MeshT >
     bool writeASCIIData(std::ostream& _out, MeshT& _mesh );
     
+    /// backup per vertex/face texture coordinates
+    template <class MeshT>
+    void backupTextureCoordinates(MeshT& _mesh);
+
     //Option Widgets
     QWidget* loadOptions_;
     QWidget* saveOptions_;

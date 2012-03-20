@@ -1139,6 +1139,8 @@ int FileOFFPlugin::loadObject(QString _filename) {
         else
             polyMeshObj->mesh()->update_face_normals();
         
+        backupTextureCoordinates(*(polyMeshObj->mesh()));
+
         polyMeshObj->update();
         polyMeshObj->show();
     }
@@ -1153,6 +1155,8 @@ int FileOFFPlugin::loadObject(QString _filename) {
         else
             triMeshObj->mesh()->update_face_normals();  
         
+        backupTextureCoordinates(*(triMeshObj->mesh()));
+
         triMeshObj->update();
         triMeshObj->show();
     }
@@ -1241,6 +1245,36 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
         emit log(LOGERR, tr("Unable to save (object is not a compatible mesh type)"));
         ofs.close();
         return false;
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template <class MeshT>
+void FileOFFPlugin::backupTextureCoordinates(MeshT& _mesh) {
+
+    // Create a backup of the original per Vertex texture Coordinates
+    if (_mesh.has_vertex_texcoords2D()) {
+
+      OpenMesh::VPropHandleT< typename MeshT::TexCoord2D > oldVertexCoords;
+      if (!_mesh.get_property_handle(oldVertexCoords, "Original Per Vertex Texture Coords"))
+        _mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
+
+      for (typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it)
+        _mesh.property(oldVertexCoords, v_it) =  _mesh.texcoord2D(v_it);
+
+    }
+
+    // Create a backup of the original per Face texture Coordinates
+    if (_mesh.has_halfedge_texcoords2D()) {
+
+      OpenMesh::HPropHandleT< typename MeshT::TexCoord2D > oldHalfedgeCoords;
+      if (!_mesh.get_property_handle(oldHalfedgeCoords,"Original Per Face Texture Coords"))
+        _mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+
+      for (typename MeshT::HalfedgeIter he_it = _mesh.halfedges_begin(); he_it != _mesh.halfedges_end(); ++he_it)
+        _mesh.property(oldHalfedgeCoords, he_it) =  _mesh.texcoord2D(he_it);
+
     }
 }
 
