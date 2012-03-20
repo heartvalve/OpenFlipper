@@ -1034,9 +1034,12 @@ public:
   * @{ */
   //===========================================================================
 
+  private:
+    static const QString homePage_;
+
   public slots:
     /// Display the help Browser
-    void showHelpBrowser(const QString &page = "qthelp://org.openflipper.user/user/index.html");
+    void showHelpBrowser(const QString &page = homePage_);
 
   signals:
    void changeHelpSite(QUrl);

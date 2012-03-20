@@ -55,9 +55,11 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+const QString CoreWidget::homePage_ = "qthelp://org.openflipper.user/user/index.html";
+
 //== IMPLEMENTATION ==========================================================
 
-void CoreWidget::showHelpBrowser(const QString &page /*= "qthelp://org.openflipper.dev/doc/index.html"*/) {
+void CoreWidget::showHelpBrowser(const QString &page /*= homePage_*/) {
 
 	if ( OpenFlipper::Options::nogui() )
 		return;

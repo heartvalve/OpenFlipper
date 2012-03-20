@@ -617,7 +617,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Help Browser start up
   // ======================================================================
 
-  helpWidget_ = new HelpWidget(this);
+  helpWidget_ = new HelpWidget(this,homePage_);
   connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(activateLink(QUrl)));
   helpWidget_->hide();
 
