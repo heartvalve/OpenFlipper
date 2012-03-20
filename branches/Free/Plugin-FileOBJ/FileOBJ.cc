@@ -485,6 +485,26 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)
         mesh.property(indexProperty, f_it) = newMapping[ mesh.property(indexProperty, f_it) ];
 
+      // Create a backup of the original per Vertex texture Coordinates
+      if (mesh.has_vertex_texcoords2D()) {
+        OpenMesh::VPropHandleT< PolyMesh::TexCoord2D > oldVertexCoords;
+        if (!mesh.get_property_handle(oldVertexCoords, "Original Per Vertex Texture Coords"))
+          mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
+
+        for (PolyMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it)
+          mesh.property(oldVertexCoords, v_it) =  mesh.texcoord2D(v_it);
+      }
+
+      // Create a backup of the original per Face texture Coordinates
+      if (mesh.has_halfedge_texcoords2D()) {
+        OpenMesh::HPropHandleT< PolyMesh::TexCoord2D > oldHalfedgeCoords;
+        if (!mesh.get_property_handle(oldHalfedgeCoords,"Original Per Face Texture Coords"))
+          mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+
+        for (PolyMesh::HalfedgeIter he_it = mesh.halfedges_begin(); he_it != mesh.halfedges_end(); ++he_it)
+          mesh.property(oldHalfedgeCoords, he_it) =  mesh.texcoord2D(he_it);
+      }
+
       return;
     }
 
@@ -503,6 +523,26 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
 
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)
         mesh.property(indexProperty, f_it) = newMapping[ mesh.property(indexProperty, f_it) ];
+
+      // Create a backup of the original per Vertex texture Coordinates
+      if (mesh.has_vertex_texcoords2D()) {
+        OpenMesh::VPropHandleT< TriMesh::TexCoord2D > oldVertexCoords;
+        if (!mesh.get_property_handle(oldVertexCoords, "Original Per Vertex Texture Coords"))
+          mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
+
+        for (TriMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end(); ++v_it)
+          mesh.property(oldVertexCoords, v_it) =  mesh.texcoord2D(v_it);
+      }
+
+      // Create a backup of the original per Face texture Coordinates
+      if (mesh.has_halfedge_texcoords2D()) {
+        OpenMesh::HPropHandleT< TriMesh::TexCoord2D > oldHalfedgeCoords;
+        if (!mesh.get_property_handle(oldHalfedgeCoords,"Original Per Face Texture Coords"))
+          mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+
+        for (TriMesh::HalfedgeIter he_it = mesh.halfedges_begin(); he_it != mesh.halfedges_end(); ++he_it)
+          mesh.property(oldHalfedgeCoords, he_it) =  mesh.texcoord2D(he_it);
+      }
 
       return;
     }
