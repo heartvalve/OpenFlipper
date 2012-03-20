@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 14053 )</b>
+- <b>OpenFlipper 1.2 ( ?  , 14173 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -10,11 +10,13 @@
          - Geometry
              - Fixed aspect ratio function
              - compute the rotation axis as wellas the rotation angle of two given vectors
+             - Moved bsp tree from OpenFlipper comon to ACG directory
          - GL
              - Added GLPrimitives class to get rid of glut
              - Implemented missing read functions for current bound framebuffer. refs #373
          - Math
              - Added operator* for matrix * scalar multiplication, where each element of the matrix is multiplied with the scalar.
+             - Added column-wise constructor to GLMatrix
          - SceneGraph
              - General
                  - Replace usage of gluDisk/Sphere... by the GLPrimitives
@@ -57,6 +59,8 @@
              - Bugfix: Avoid target counter underflow when copying objects
              - Bugfix: Missing updateGL causing wrong picking buffers in some special settings
              - Bugfix: More safety checks on startup to avoid crashes related to window states
+         - Logger
+             - Updated widget and removed old workarounds that were required in older qt versions
          - Rendering
              - Rendermanager/PostprocessorManager bugfix (crash when illegal viewer id -1 was used)
              - Fixed bug in renderinfo not setting viewer to a renderer mode
@@ -68,6 +72,7 @@
              - Do not reset picking toolbar's position and orientation each time it is shown.
              - Fixed bug where logger and toolbar where invisible
              - Modified drawmode context menu to stay open if drawmodes are combined.
+             - Copy and paste view can now also restore the window and toolbox sizes
          - Help
              - Open Help browser if what's this links are clicked.
              - Correctly modify treewidget position when a link was clicked.
@@ -113,6 +118,7 @@
          - File OBJ
              - Bugfix: Don't try to add information when faces are not added
              - Bugfix: Prevent crash when trying to add non-manifold vertex configurations.
+             - Bugfix: Loading of mixed objs (splines, surfaces) didn't work correctly
          - File PLY
              - View all after loading a file to see the scene
              - Fixed conversion to 4 color components
@@ -136,6 +142,8 @@
              - Readded missing function to create a new mesh from a selection.
          - MeshRepair
              - Added computation of halfedge-normals
+         - Move 
+             - Allow modifiying selection when changing the manipulator via its text controls
          - Primitives Generator 
              - New plugin to generate primitives
          - PropertyVis
@@ -179,6 +187,7 @@
          - Documentation for Postprocessor Interface
          - Documentation for Render Interface
          - Added lots of documentation for plugin programming (with tikz pictures for the flow diagrams)
+         - Added what's this generator class for easier referencing documentation from plugins
      - <b>Testing</b>
          - Integrated testing framework  for file load/save testing
          - Integrated testing generators for algorithms
