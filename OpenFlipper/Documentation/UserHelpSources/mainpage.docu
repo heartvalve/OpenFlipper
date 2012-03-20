@@ -7,14 +7,10 @@
  *
  * This manual is divided into the following pages:
  * - \subpage gui "User interface concepts"
- * - \subpage shortcuts "Keyboard shortcuts"
  * - \subpage coreplugins "Core plugins"
  * - \subpage scripting "Scripting"
  * - \subpage view "View functions"
  * - \subpage tools "Tools"
- * - \subpage Plugin-Color-Doc
-*
-*
-
- * \ref Plugin-Color-Doc
+ *
+ *
  */
