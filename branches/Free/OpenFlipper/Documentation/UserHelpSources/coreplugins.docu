@@ -5,11 +5,11 @@
  * some mesh transformation operations, data selection, etc.
  *
  * Here is an overview of the core plugins:
- * - <a style="text-decoration:none;" href="../../Plugin-Color/html/main.html"><b>Color settings Plugin</b></a>
- * - <a style="text-decoration:none;" href="../../Plugin-Datacontrol/html/main.html"><b>Data Control Plugin</b></a>
- * - <a style="text-decoration:none;" href="../../Plugin-PrimitivesGenerator/html/main.html"><b>PrimitivesGenerator Plugin (Generate various standard primitives)</b></a>
- * - <a style="text-decoration:none;" href="../../Plugin-PropertyVis/html/main.html"><b>PropertyVis Plugin (Visualize arbitrary properties (normals, scalar values) on meshes)</b></a>
- * - <a style="text-decoration:none;" href="../../Plugin-SkeletonEditing/html/main.html"><b>Skeleton editing Plugin</b></a>
- * - <a style="text-decoration:none;" href="../../Plugin-Topology/html/main.html"><b>Topology Plugin (Modify the topology of triangular and polygonal meshes))</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-Color/index.html"><b>Color settings Plugin</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-Datacontrol/index.html"><b>Data Control Plugin</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-PrimitivesGenerator/index.html"><b>PrimitivesGenerator Plugin (Generate various standard primitives)</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-PropertyVis/index.html"><b>PropertyVis Plugin (Visualize arbitrary properties (normals, scalar values) on meshes)</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-SkeletonEditing/index.html"><b>Skeleton editing Plugin</b></a>
+ * - <a style="text-decoration:none;" href="../../Plugin-Topology/index.html"><b>Topology Plugin (Modify the topology of triangular and polygonal meshes)</b></a>
 
  */
