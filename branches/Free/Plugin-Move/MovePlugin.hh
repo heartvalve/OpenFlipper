@@ -458,8 +458,14 @@ public slots :
   /// translate given vertices by a vector
   void translate( int _objectId , IdList _vHandles, Vector _vector );
 
-  /// translate current selection of an Object by a given vector
-  void translateSelection( int _objectId , Vector _vector );
+  /// translate current vertex selection of an Object by a given vector
+  void translateVertexSelection( int _objectId , Vector _vector );
+
+  /// translate current face selection of an Object by a given vector
+  void translateFaceSelection( int _objectId , Vector _vector );
+
+  /// translate current edge selection of an Object by a given vector
+  void translateEdgeSelection( int _objectId , Vector _vector );
 
   /// transform an Object by a given matrix
   void transform( int _objectId , Matrix4x4 _matrix );

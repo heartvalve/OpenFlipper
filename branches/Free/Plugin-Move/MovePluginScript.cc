@@ -256,7 +256,7 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
  * @param _objectId id of an object
  * @param _vector translation vector
  */
-void MovePlugin::translateSelection( int _objectId , Vector _vector) {
+void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
@@ -322,6 +322,225 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
 }
 
 
+//------------------------------------------------------------------------------
+
+/** \brief translate face selection
+ *
+ * @param _objectId id of an object
+ * @param _vector translation vector
+ */
+void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("translate : unable to get object" ));
+    return;
+  }
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+
+    TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
+    TriMesh::FaceIter f_it  = mesh.faces_begin();
+    TriMesh::FaceIter f_end = mesh.faces_end();
+    for (; f_it!=f_end; ++f_it)
+      if ( mesh.status(f_it).selected() )
+      {
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
+          mesh.status(fv_it).set_tagged(true);
+      }
+
+    TriMesh::VertexIter v_it  = mesh.vertices_begin();
+    TriMesh::VertexIter v_end = mesh.vertices_end();
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() )
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+
+  } else if ( object->dataType( DATA_POLY_MESH ) ) {
+
+    PolyMesh&  mesh  = (*PluginFunctions::polyMesh(object));
+    PolyMesh::FaceIter f_it  = mesh.faces_begin();
+    PolyMesh::FaceIter f_end = mesh.faces_end();
+    for (; f_it!=f_end; ++f_it)
+      if ( mesh.status(f_it).selected() )
+      {
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
+          mesh.status(fv_it).set_tagged(true);
+      }
+
+    PolyMesh::VertexIter v_it  = mesh.vertices_begin();
+    PolyMesh::VertexIter v_end = mesh.vertices_end();
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() )
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+  }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+
+    TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
+    TSplineMesh::FaceIter f_it  = mesh.faces_begin();
+    TSplineMesh::FaceIter f_end = mesh.faces_end();
+    for (; f_it!=f_end; ++f_it)
+      if ( mesh.status(f_it).selected() )
+      {
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
+          mesh.status(fv_it).set_tagged(true);
+      }
+
+    TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
+    TSplineMesh::VertexIter v_end = mesh.vertices_end();
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() )
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+  }
+#endif
+
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        if ( line.vertex_selection(i) )
+          line.point(i) = line.point(i)  + _vector;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+    }
+  #endif
+
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
+
+  emit scriptInfo( "translate( ObjectId , Vector(" +
+                   QString::number( _vector[0] ) + " , " +
+                   QString::number( _vector[1] ) + " , " +
+                   QString::number( _vector[2] ) + " ) )" );
+
+  // Create backup
+  emit createBackup(_objectId, "Translation of Selection");
+}
+
+
+//------------------------------------------------------------------------------
+
+/** \brief translate edge selection
+ *
+ * @param _objectId id of an object
+ * @param _vector translation vector
+ */
+void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("translate : unable to get object" ));
+    return;
+  }
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+
+    TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
+
+    //init tags
+    TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(v_it).set_tagged(false);
+
+    TriMesh::EdgeIter e_it  = mesh.edges_begin();
+    TriMesh::EdgeIter e_end = mesh.edges_end();
+    for (; e_it!=e_end; ++e_it)
+      if ( mesh.status(e_it).selected() )
+      {
+        TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+
+        mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
+        mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
+      }
+
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() ){
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      }
+
+  } else if ( object->dataType( DATA_POLY_MESH ) ) {
+
+    PolyMesh&  mesh  = (*PluginFunctions::polyMesh(object));
+
+    //init tags
+    PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(v_it).set_tagged(false);
+
+    PolyMesh::EdgeIter e_it  = mesh.edges_begin();
+    PolyMesh::EdgeIter e_end = mesh.edges_end();
+    for (; e_it!=e_end; ++e_it)
+      if ( mesh.status(e_it).selected() )
+      {
+        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+
+        mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
+        mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
+      }
+
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() ){
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      }
+  }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+
+    TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
+
+    //init tags
+    TSplineMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(v_it).set_tagged(false);
+
+    TSplineMesh::EdgeIter e_it  = mesh.edges_begin();
+    TSplineMesh::EdgeIter e_end = mesh.edges_end();
+    for (; e_it!=e_end; ++e_it)
+      if ( mesh.status(e_it).selected() )
+      {
+        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+
+        mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
+        mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
+      }
+
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      if ( mesh.status(v_it).tagged() ){
+        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      }
+  }
+#endif
+
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        if ( line.vertex_selection(i) )
+          line.point(i) = line.point(i)  + _vector;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+    }
+  #endif
+
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
+
+  emit scriptInfo( "translate( ObjectId , Vector(" +
+                   QString::number( _vector[0] ) + " , " +
+                   QString::number( _vector[1] ) + " , " +
+                   QString::number( _vector[2] ) + " ) )" );
+
+  // Create backup
+  emit createBackup(_objectId, "Translation of Selection");
+}
 //------------------------------------------------------------------------------
 
 /** \brief tranform an object
