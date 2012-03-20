@@ -134,6 +134,9 @@ void MovePlugin::showProps(){
   connect(pW->projectTangentButton, SIGNAL(clicked() ), this, SLOT(slotProjectToTangentPlane()));
   connect(pW->moveManipToCOG, SIGNAL(clicked() ), this, SLOT(slotMoveManipToCOG()));
 
+  connect(pW->selectionRadioButton, SIGNAL(clicked()), this, SLOT(slotEnableSelectionMode()));
+  connect(pW->objectRadioButton, SIGNAL(clicked()), this, SLOT(slotEnableObjectMode()));
+
   // Values
   BaseObjectData* object;
   if (PluginFunctions::getObject(lastActiveManipulator_, object)) {
@@ -172,6 +175,11 @@ void MovePlugin::showProps(){
       pW->dirzy->setText(num);
       num = QString::number(direction[2]);
       pW->dirzz->setText(num);
+
+      if (PluginFunctions::pickMode() == "Move")
+        pW->objectRadioButton->setChecked(true);
+      else
+        pW->selectionRadioButton->setChecked(true);
 
     }
   }

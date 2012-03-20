@@ -409,6 +409,18 @@ void MovePlugin::slotKeyEvent (QKeyEvent* _event)
 
 //------------------------------------------------------------------------------
 
+void MovePlugin::slotEnableSelectionMode()
+{
+  PluginFunctions::pickMode("MoveSelecion");
+}
+
+//------------------------------------------------------------------------------
+void MovePlugin::slotEnableObjectMode()
+{
+  PluginFunctions::pickMode("Move");
+}
+//------------------------------------------------------------------------------
+
 void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
 {
   if ((_event->key() == Qt::Key_Control && manMode_ == QtTranslationManipulatorNode::Resize) ||
