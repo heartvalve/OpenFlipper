@@ -47,7 +47,7 @@
 
 /** \file LoggingInterface.hh
 *
-* Interface for sending log messages to the log widget.\ref 
+* Interface for sending log messages to the log widget. \ref loggingInterfacePage
 */
 
 /** \page loggingInterfacePage Logging Interface

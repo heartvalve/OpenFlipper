@@ -138,7 +138,7 @@ private slots:
    * This slot will be called indicating that a scenegraph node not belonging to an object
    * has been picked.
    *
-   * @param _node id of the picked node
+   * @param _nodeId id of the picked node
    */
   virtual void slotUpdateContextMenuNode( int _nodeId ) {};
 

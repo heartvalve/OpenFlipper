@@ -110,7 +110,7 @@ class ProcessInterface {
       * @param _jobId String which is used as the id of the thread
       * @param _text The text of the job's description
       */
-      virtual void setJobDescription(QString /*_jobId*/, QString /*_text*/ ) {};
+      virtual void setJobDescription(QString _jobId, QString _text ) {};
       
       /** \brief Cancel your job
        *
@@ -128,12 +128,13 @@ class ProcessInterface {
       virtual void finishJob(QString _jobId ) {};
       
       private slots :
+
         /** \brief A job has been canceled 
         *
         * This function is called when the user cancels a job. 
         * The returned name is the name of the job which has been canceled
         *
-        * @param _jobId String which is used as the id of the thread
+        * @param _job String which is used as the id of the thread
         */
         virtual void canceledJob (QString _job ) {};
       

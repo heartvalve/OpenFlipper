@@ -246,7 +246,7 @@ class TextureInterface {
        *
        *  @param _id Id of the object where the current texture should be fetched from
        *  @param _multiTextureName name of a multi texture
-       *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
+       *  @param _subTextures this returns the names of all sub textures that are combined under the given multi texture
        */
       virtual void getSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ) {};
 
@@ -324,9 +324,13 @@ class TextureInterface {
 
       /** \brief A multiTexture has been added by a plugin.
        *
-       * This slot is called when a Multi Texture has been added by a plugin.
+       * This slot is called when a multi Texture has been added by a plugin.
        *
-       * @param _name Name of the Added texture (has to be equal to the property name)
+       * A multi texture has a global name which is defined as the texture group and consists of
+       * mutliple sub textures which have their own names but are all used when the group is active.
+       *
+       * @param _textureGroup Name of the texture group that is associated with the texture.
+       * @param _name      Name of the Added texture (has to be equal to the property name)
        * @param _filename Filename of the Texture Image to be used
        * @param _id Id of the object which should use the texture
        * @param _textureId    The new id of the texture( This id is object related!!)
@@ -436,7 +440,7 @@ class TextureInterface {
        *
        *  @param _id Id of the object where the current texture should be fetched from
        *  @param _multiTextureName name of a multi texture
-       *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
+       *  @param _subTextures this returns the names of all sub textures that are combined under the given multi texture
        */
       virtual void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ) {};
 
