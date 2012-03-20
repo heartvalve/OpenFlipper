@@ -221,6 +221,10 @@ public:
     /// Scale Boundingbox Diagonal to unit size
     void slotUnifyBoundingBoxDiagonal();
 
+    void slotEnableSelectionMode();
+
+    void slotEnableObjectMode();
+
   private:
 
     /// Update the Dialog with the last clicked manipulator
