@@ -1096,3 +1096,34 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
     ofs.close();
     return true;
 }
+
+//===============================================================================================
+
+/// creates a backup of the original per vertex/face texture coordinates
+template <class MeshT>
+void FilePLYPlugin::backupTextureCoordinates(MeshT& _mesh) {
+
+    // Create a backup of the original per Vertex texture Coordinates
+    if (_mesh.has_vertex_texcoords2D()) {
+
+      OpenMesh::VPropHandleT< typename MeshT::TexCoord2D > oldVertexCoords;
+      if (!_mesh.get_property_handle(oldVertexCoords, "Original Per Vertex Texture Coords"))
+        _mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
+
+      for (typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it)
+        _mesh.property(oldVertexCoords, v_it) =  _mesh.texcoord2D(v_it);
+
+    }
+
+    // Create a backup of the original per Face texture Coordinates
+    if (_mesh.has_halfedge_texcoords2D()) {
+
+      OpenMesh::HPropHandleT< typename MeshT::TexCoord2D > oldHalfedgeCoords;
+      if (!_mesh.get_property_handle(oldHalfedgeCoords,"Original Per Face Texture Coords"))
+        _mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+
+      for (typename MeshT::HalfedgeIter he_it = _mesh.halfedges_begin(); he_it != _mesh.halfedges_end(); ++he_it)
+        _mesh.property(oldHalfedgeCoords, he_it) =  _mesh.texcoord2D(he_it);
+
+    }
+}

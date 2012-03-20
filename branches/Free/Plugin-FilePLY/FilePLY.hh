@@ -179,6 +179,9 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     template <class MeshT>
     void writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary);
     
+    template <class MeshT>
+    void backupTextureCoordinates(MeshT& _mesh);
+
     /// \brief Helper functions for writing/reading of binary data
 
     template <class T>
