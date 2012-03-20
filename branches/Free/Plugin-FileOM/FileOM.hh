@@ -125,6 +125,12 @@ class FileOMPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
     QString version() { return QString("1.0"); };
 
   private :
+
+    /// creates a backup of the original per vertex/face texture coordinates
+    template <class MeshT>
+    void backupTextureCoordinates(MeshT& _mesh);
+
+  private :
     
     //Option Widgets
     QWidget* loadOptions_;
