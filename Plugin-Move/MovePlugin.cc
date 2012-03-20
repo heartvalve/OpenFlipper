@@ -928,12 +928,29 @@ void MovePlugin::slotSetPosition() {
         ACG::GLMatrixd m;
         m.identity();
         m.translate(translation);
-        // ...and transform mesh
-        if(object->dataType() == DATA_TRIANGLE_MESH)
+        if (PluginFunctions::pickMode() == "Move")
+        {
+          // ...and transform mesh
+          if(object->dataType() == DATA_TRIANGLE_MESH)
             transformMesh(m, *PluginFunctions::triMesh(object));
-        else if(object->dataType() == DATA_POLY_MESH)
+          else if(object->dataType() == DATA_POLY_MESH)
             transformMesh(m, *PluginFunctions::polyMesh(object));
+        }
+        else if (PluginFunctions::pickMode() == "MoveSelection")
+        {
+          updateSelectionType();
+          if (selectionType_ & VERTEX) {
+            transformVertexSelection(object->id(), m);
+          }
+          if (selectionType_ & FACE) {
+            transformFaceSelection(object->id(), m);
+          }
+          if (selectionType_ & EDGE) {
+            transformEdgeSelection(object->id(), m);
+          }
+        }
         
+
         emit updatedObject(object->id(), UPDATE_GEOMETRY);
     }
 	updateManipulatorDialog();
@@ -1125,22 +1142,40 @@ void MovePlugin::slotTranslation() {
 //
 //	}
 
-        BaseObjectData* object = 0;
-        PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
 
-	if (object != 0) {
-		if (object->manipulatorNode()->visible()) {
+    if (object != 0) {
+      if (object->manipulatorNode()->visible()) {
 
-			translate(object->id(), translation);
+        object->manipulatorNode()->set_center(
+            object->manipulatorNode()->center() + translation);
 
-			object->manipulatorNode()->set_center(
-					object->manipulatorNode()->center() + translation);
-			emit createBackup(object->id(), "Translation");
-			emit updatedObject(object->id(), UPDATE_GEOMETRY);
-		}
-	} else {
-		return;
-	}
+        if (PluginFunctions::pickMode() == "Move")
+        {
+          translate(object->id(), translation);
+        }
+        else if (PluginFunctions::pickMode() == "MoveSelection")
+        {
+          updateSelectionType();
+          if (selectionType_ & VERTEX) {
+            translateVertexSelection(object->id(), translation);
+          }
+          if (selectionType_ & FACE) {
+            translateFaceSelection(object->id(), translation);
+          }
+          if (selectionType_ & EDGE) {
+            translateEdgeSelection(object->id(), translation);
+          }
+        }
+
+
+        emit createBackup(object->id(), "Translation");
+        emit updatedObject(object->id(), UPDATE_GEOMETRY);
+      }
+    } else {
+      return;
+    }
 
 
     updateManipulatorDialog();
@@ -1275,18 +1310,33 @@ void MovePlugin::slotRotate() {
 
 			object->manipulatorNode()->rotate(angle, axis);
 
-			if (object->dataType(DATA_TRIANGLE_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::triMesh(object)));
+			ACG::Matrix4x4d m = getLastManipulatorMatrix(true);
 
-			if (object->dataType(DATA_POLY_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::polyMesh(object)));
+			if (PluginFunctions::pickMode() == "Move")
+			{
+			  if (object->dataType(DATA_TRIANGLE_MESH))
+			    transformMesh(m, (*PluginFunctions::triMesh(object)));
+
+			  if (object->dataType(DATA_POLY_MESH))
+			    transformMesh(m, (*PluginFunctions::polyMesh(object)));
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-			if (object->dataType(DATA_TSPLINE_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::tsplineMesh(object)));
+			  if (object->dataType(DATA_TSPLINE_MESH))
+			    transformMesh(m, (*PluginFunctions::tsplineMesh(object)));
 #endif
+			}
+			else if (PluginFunctions::pickMode() == "MoveSelection")
+			{
+			  updateSelectionType();
+			  if (selectionType_ & VERTEX) {
+			    transformVertexSelection(object->id(), m);
+			  }
+			  if (selectionType_ & FACE) {
+			    transformFaceSelection(object->id(), m);
+			  }
+			  if (selectionType_ & EDGE) {
+			    transformEdgeSelection(object->id(), m);
+			  }
+			}
 
 			updateManipulatorDialog();
 
@@ -1351,18 +1401,32 @@ void MovePlugin::slotScale() {
 
 			object->manipulatorNode()->scale(scale);
 
-			if (object->dataType(DATA_TRIANGLE_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::triMesh(object)));
+			ACG::Matrix4x4d m = getLastManipulatorMatrix(true);
 
-			if (object->dataType(DATA_POLY_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::polyMesh(object)));
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
-			if (object->dataType(DATA_TSPLINE_MESH))
-				transformMesh(getLastManipulatorMatrix(true),
-						(*PluginFunctions::tsplineMesh(object)));
-#endif
+			if (PluginFunctions::pickMode() == "Move")
+			{
+	      if (object->dataType(DATA_TRIANGLE_MESH))
+	        transformMesh(m,(*PluginFunctions::triMesh(object)));
+	      if (object->dataType(DATA_POLY_MESH))
+	        transformMesh(m, (*PluginFunctions::polyMesh(object)));
+	#ifdef ENABLE_TSPLINEMESH_SUPPORT
+	      if (object->dataType(DATA_TSPLINE_MESH))
+	        transformMesh(m,  (*PluginFunctions::tsplineMesh(object)));
+	#endif
+			}
+			else if (PluginFunctions::pickMode() == "MoveSelection")
+			{
+			  updateSelectionType();
+			  if (selectionType_ & VERTEX) {
+			    transformVertexSelection(object->id(), m);
+			  }
+			  if (selectionType_ & FACE) {
+			    transformFaceSelection(object->id(), m);
+			  }
+			  if (selectionType_ & EDGE) {
+			    transformEdgeSelection(object->id(), m);
+			  }
+			}
 
 			updateManipulatorDialog();
 
