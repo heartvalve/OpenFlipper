@@ -730,7 +730,10 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/example/
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/example/ \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/Examples \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/Tutorial 
+
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -752,7 +755,7 @@ EXAMPLE_RECURSIVE      = NO
 
 IMAGE_PATH             = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/pics/ \
                          @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/screenshots/ \
-                         @CMAKE_SOURCE_DIR@/OpenMesh/Doc/images/ \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/images/ \
                          @CMAKE_SOURCE_DIR@/ObjectTypes/Skeleton/doc/pics/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
@@ -1497,7 +1500,7 @@ SEARCH_INCLUDES        = YES
 
 INCLUDE_PATH           = @CMAKE_SOURCE_DIR@ \
                          @CMAKE_SOURCE_DIR@/ACG \
-                         @CMAKE_SOURCE_DIR@/OpenMesh/src
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
