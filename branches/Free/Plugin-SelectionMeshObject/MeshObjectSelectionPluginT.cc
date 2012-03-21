@@ -238,19 +238,20 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG:
 
 /** \brief paint selection with a sphere
  *
- * @param _mesh a mesh
- * @param _target_idx handle of the face that was hit by the mouse picking
- * @param _hitpoint point where the mouse picking hit
+ * @param _mesh          a mesh
+ * @param _target_idx    handle of the face that was hit by the mouse picking
+ * @param _hitpoint      point where the mouse picking hit
+ * @param _radius        Radius of the selection sphere
  * @param _primitiveType primitive types to be selected
- * @param _deselection true, if entities should be deselected
+ * @param _deselection   true, if entities should be deselected
  */
 template <class MeshT>
-void MeshObjectSelectionPlugin::paintSphereSelection(MeshT* _mesh ,
-                                                     int _target_idx ,
+void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh ,
+                                                     int                   _target_idx ,
                                                      typename MeshT::Point _hitpoint,
-                                                     double _radius,
-                                                     PrimitiveType _primitiveType,
-                                                     bool _deselection) {
+                                                     double                _radius,
+                                                     PrimitiveType         _primitiveType,
+                                                     bool                  _deselection) {
 
     float sqr_radius = _radius * _radius;
     typename MeshT::FaceHandle hitface = _mesh->face_handle(_target_idx);
@@ -772,11 +773,12 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
 /** \brief Colorize a selection
  *
- * @param _mesh a mesh
+ * @param _mesh           a mesh
  * @param _primitiveTypes selection types
- * @param _red rgb color
- * @param _green rgb color
- * @param _blue rgb color
+ * @param _red            rgba color
+ * @param _green          rgba color
+ * @param _blue           rgba color
+ * @param _alpha          rgba color
  */
 template< typename MeshT >
 void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
@@ -847,8 +849,9 @@ void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
 
 /** \brief Create a new mesh from the selection
  *
- * @param _mesh    A mesh
- * @param _newMesh The resulting mesh containing only the selected elements
+ * @param _mesh          A mesh
+ * @param _newMesh       The resulting mesh containing only the selected elements
+ * @param _primitiveType Which primitive should be used for selection (vertices,faces,edges,...)
  */
 
 template<class MeshT>
