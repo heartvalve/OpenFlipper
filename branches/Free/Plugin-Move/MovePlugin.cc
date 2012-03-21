@@ -303,10 +303,6 @@ void MovePlugin::initializePlugin()
         MouseInterface implementation
  *******************************************************************************/
 
-/** \brief MouseWheel event occured
- *
- * @param _event the event that occured
- */
 void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /*_mode*/)
 {
   // Skip execution if this is not our pick mode
@@ -525,23 +521,24 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
  * current SelectionMode in SelectionPlugin.
  * If the Plugin is unable to communicate with SelectionPlugin, Vertex Selection is used.
  *
- * @param mat
- * @param _id
+ * @param _mat  Matrix that should be applied to the selection
+ * @param _id   Object id of the target object
+ * @param _type Type of mouse event ( release of the button creates a backup)
  */
-void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type) {
+void MovePlugin::moveSelection(ACG::Matrix4x4d _mat, int _id, QEvent::Type _type) {
 
     // Get currently active primitive type
     updateSelectionType();
 
-  if ( !mat.is_identity() ){
+  if ( !_mat.is_identity() ){
     if (selectionType_ & VERTEX) {
-      transformVertexSelection( _id , mat );
+      transformVertexSelection( _id , _mat );
     }
     if (selectionType_ & FACE) {
-      transformFaceSelection( _id , mat );
+      transformFaceSelection( _id , _mat );
     }
     if (selectionType_ & EDGE) {
-      transformEdgeSelection( _id , mat );
+      transformEdgeSelection( _id , _mat );
     }
 
     emit updatedObject(_id, UPDATE_GEOMETRY);
@@ -558,7 +555,6 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id, QEvent::Type _type)
  *
  * @param _mode Mode
  */
-
 void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mode)
 {
   if (_mode != manMode_)
@@ -737,7 +733,8 @@ void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node 
 
 /** \brief Place and show the Manipulator
  *
- * @param _event  mouseEvent that occured
+ * @param _event  mouseEvent that occurred
+ * @param _snap   Snap manipulator to nearest geometry primitive?
  */
 void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
     unsigned int node_idx, target_idx;
