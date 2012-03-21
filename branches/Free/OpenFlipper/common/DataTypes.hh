@@ -82,7 +82,7 @@
 * Normally we could use an unsigned int here. But QT cant register an 
 * typedef unsigned int DataType as DataType and will recognize it as unsigned int and
 * therefore DataType will still be unknown to QtScript.
-* To overcome this Problem, we reimplement a wrapper arround the int and provide additional
+* To overcome this Problem, we reimplement a wrapper around the int and provide additional
 * functionality such as returning the name of the type directly
 */ 
 class DLLEXPORT DataType  {
@@ -224,7 +224,7 @@ bool typeExists( QString _name );
 * This function will return the number of types registered to the core. You can use it to
 * iterate over all types. 
 *
-* \Note Remember that the types are organized in a bitfield!
+* \note Remember that the types are organized in a bitfield!
 */
 DLLEXPORT 
 uint typeCount();
