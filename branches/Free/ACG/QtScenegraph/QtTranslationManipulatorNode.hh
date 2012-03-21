@@ -88,6 +88,7 @@ class ACGDLLEXPORT QtTranslationManipulatorNode : public QObject , public Transl
     void manipulatorMoved( QtTranslationManipulatorNode * _node, QMouseEvent* _event);
 
     /** The visibility of this node has changed
+     * @param _node    The node whose visibility has been changed
      * @param _visible Is it now visible?
      */
     void visibilityChanged( QtTranslationManipulatorNode * _node, bool _visible );
