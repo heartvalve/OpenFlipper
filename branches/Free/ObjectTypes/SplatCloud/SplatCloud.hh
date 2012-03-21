@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 /**
- * \file SplatCloud.hh
+ * \file ObjectTypes/SplatCloud/SplatCloud.hh
  * This File contains all required includes for using SplatClouds
  */
 
