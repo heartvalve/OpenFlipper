@@ -105,7 +105,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
-    void slotObjectUpdated          ( int _identifier , const UpdateType& _type);
     void slotVisibilityChanged      ( int _identifier );
     void slotObjectSelectionChanged ( int _identifier );
     void slotObjectPropertiesChanged( int _identifier );
@@ -225,7 +224,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         ///Called by the popup menu to set material properties
         void slotMaterialProperties();
 
-        ///Called when the material properties were changed inside the material dialog
+        /** \brief Called when the material properties were changed inside the material dialog
+         *
+         * @param _node unused
+         */
         void slotNodeChanged( ACG::SceneGraph::BaseNode* _node );
         
         /// Hide/Show all light sources if checkbox has been checked

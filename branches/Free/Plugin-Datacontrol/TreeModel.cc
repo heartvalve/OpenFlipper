@@ -469,7 +469,7 @@ void TreeModel::objectChanged(int _id) {
 
 /** \brief The object with the given id has been added. add it to the internal tree
  *
- * @param id_ id of the object
+ * @param _object The added object
  */
 void TreeModel::objectAdded(BaseObject* _object){
 
@@ -504,7 +504,7 @@ void TreeModel::objectAdded(BaseObject* _object){
 
 /** \brief The object with the given id has been deleted. delete it from the internal tree
  *
- * @param id_ id of the object
+ * @param _id id of the object
  */
 void TreeModel::objectDeleted(int _id){
 
@@ -576,7 +576,7 @@ TreeItem* TreeModel::getItem(const QModelIndex &index) const
 
 /** \brief Return item-name at given index
  *
- * @param index a ModelIndex
+ * @param  index A ModelIndex
  * @return name of the item at given index
  */
 QString TreeModel::itemName(const QModelIndex &index) const
@@ -632,7 +632,9 @@ QModelIndex TreeModel::getModelIndex(TreeItem* _object, int _column ){
 
 /** \brief Recursively update a column up to the root of the tree
  *
- * @param _item item to start with
+ * @param _item    item to start with
+ * @param _column  Column that should be propagated
+ * @param _value   New value
  */
 void TreeModel::propagateUpwards(TreeItem* _item, int _column, bool _value ){
 
@@ -661,7 +663,8 @@ void TreeModel::propagateUpwards(TreeItem* _item, int _column, bool _value ){
 
 /** \brief Recursively update a column up to the root of the tree
  *
- * @param _item item to start with
+ * @param _item   Item to start with
+ * @param _column Column that should be propagated
  */
 void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
 
@@ -716,13 +719,6 @@ void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
 
 //******************************************************************************
 
-/** \brief Set Data at 'index' to 'value'
- *
- * @param index a ModelIndex defining the positin in the model
- * @param value the new value
- * @param  unused
- * @return return if the data was set successfully
- */
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
 
