@@ -75,8 +75,8 @@ InterpolationAnimationT<PointT>::InterpolationAnimationT(const InterpolationAnim
 /**
  * @brief Creates a new empty animation
  *
- * @param _hierarchy The skeleton that will hold this animation
- * @param _reference The skeletons reference pose
+ * @param _skeleton           The skeleton that will hold this animation
+ * @param _matrixManipulator  Interpolator that translates the interpolation into matrix values
  */
 template<class PointT>
 InterpolationAnimationT<PointT>::InterpolationAnimationT(Skeleton* _skeleton, MatrixManipulator *_matrixManipulator) :
@@ -115,8 +115,9 @@ PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame)
 /**
  * @brief Returns a pointer to the pose calculated for the given frame
  *
- * @param _iFrame The frame number for which the pose should be calculated.
- *                This is always from 0..#frames even if the animation starts with an input value other than 0.
+ * @param _iFrame    The frame number for which the pose should be calculated.
+ *                   This is always from 0..frames even if the animation starts with an input value other than 0.
+ * @param _reference Reference pose
  */
 template<class PointT>
 PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose* _reference)
