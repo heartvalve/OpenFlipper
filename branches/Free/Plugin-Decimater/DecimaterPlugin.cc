@@ -327,7 +327,6 @@ void DecimaterPlugin::slot_decimate()
  *
  * @param _objID id of an object
  * @param _constraints A string containing a comma separated list of constraints (distance,normal_deviation,roundness,triangles)
- * @param _values a string containing a comma separated list of constraint values suited to the _constraints parameter
  */
 void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
