@@ -55,9 +55,15 @@
 // ===  Public Slots (called by CoreWidget's File-Menu / Scripting / Plugins)    =========
 //========================================================================================
 
-/// Save an object
-/// get object with given id, find a plugin to save dataType, save!
-/// (existing files will be overwritten)
+/** \brief Save an object
+ *
+ * get object with given id, find a plugin to save dataType, save!
+ *  (existing files will be overwritten)
+ *
+ * @param _id       Id of the object that should be saved
+ * @param _filename Filename to save to
+ * @return Successful?
+ */
 bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
