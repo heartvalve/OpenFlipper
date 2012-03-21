@@ -144,7 +144,7 @@ public:
   /**
    * Returns the _derm'th derivative of a spline curve
    * \param _u the parameter
-   * \param _derm the _derm'th derivative
+   * \param _der the _derm'th derivative
    * \return the derivative
    */
   Point derivativeCurvePoint(double _u, unsigned int _der);
@@ -187,7 +187,10 @@ public:
 
   void fixNumberOfControlPoints(bool _fix) {fix_number_control_points_ = _fix;};
 
-  // TODO this is a hack actually. review
+  /** \brief projected
+   *
+   * \todo This is a hack actually. review
+   */
   bool projected() {return fix_number_control_points_;};
 
   /// Reverses the curve
