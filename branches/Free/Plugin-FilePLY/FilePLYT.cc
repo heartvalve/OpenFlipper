@@ -182,7 +182,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 
             } else if (_header.vProps[propIndex].first == "a_rgb" && vColors) {
                 sstr >> dx >> dy >> dz;
-                /// \TODO: Make this set the ambient vertex color of overlaying material node
+                /// \todo Make this set the ambient vertex color of overlaying material node
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.vProps[propIndex].first == "d_rgb" && vColors) {
@@ -208,7 +208,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 propIndex += 3;
             } else if (_header.vProps[propIndex].first == "s_rgb" && vColors) {
                 sstr >> dx >> dy >> dz;
-                /// \TODO: Make this set the specular vertex color of overlaying material node
+                /// \todo Make this set the specular vertex color of overlaying material node
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.vProps[propIndex].first == "uv" && vTexCoords) {
@@ -305,7 +305,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "a_rgb" && fColors) {
                 sstr >> dx >> dy >> dz;
-                /// \TODO: Make this set the ambient face color of overlaying material node
+                /// \todo Make this set the ambient face color of overlaying material node
                 // Go over to next property
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "d_rgb" && fColors) {
@@ -330,7 +330,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 propIndex += 3;
             } else if (_header.fProps[propIndex].first == "s_rgb" && fColors) {
                 sstr >> dx >> dy >> dz;
-                /// \TODO: Make this set the specular face color of overlaying material node
+                /// \todo Make this set the specular face color of overlaying material node
                 // Go over to next property
                 propIndex += 3;
             } else {
