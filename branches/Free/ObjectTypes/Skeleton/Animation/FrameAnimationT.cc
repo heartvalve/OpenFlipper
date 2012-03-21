@@ -68,11 +68,9 @@ FrameAnimationT<PointT>::FrameAnimationT(const PoseT<PointT> &_pose) :
 
 //-----------------------------------------------------------------------------
 
-/**
- * @brief Constructor - Creates a new empty animation
+/** \brief Constructor - Creates a new empty animation
  *
- * @param _hierarchy The skeleton that will hold this animation
- * @param _reference The skeletons reference pose
+ * @param _skeleton The skeleton that will hold this animation
  */
 template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton) :
@@ -88,9 +86,8 @@ FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton) :
  * The poses in the given number of frames will all hold identity matrices for all joints. Make sure you write
  * data to the poses before you use it.
  *
- * @param _hierarchy The skeleton that will hold this animation
- * @param _reference The skeletons reference pose
- * @param _iNumFrames The number of frames for this animation
+ * @param _skeleton    The skeleton that will hold this animation
+ * @param _iNumFrames  The number of frames for this animation
  */
 template<class PointT>
 FrameAnimationT<PointT>::FrameAnimationT(Skeleton* _skeleton, unsigned int _iNumFrames) :

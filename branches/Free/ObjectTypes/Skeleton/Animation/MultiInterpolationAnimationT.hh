@@ -84,7 +84,20 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
       * There is one pose per frame.
       */
     //@{
+
+    /** \brief get a pose
+     *
+     * @param _iFrame    Frame
+     * @return Requested pose
+     */
     virtual Pose *pose(unsigned int _iFrame);
+
+    /** \brief get a pose
+     *
+     * @param _iFrame    Frame
+     * @param _reference Reference pose
+     * @return Requested pose
+     */
     virtual Pose *pose(unsigned int _iFrame, Pose* _reference);
     virtual unsigned int frameCount();
     //@}

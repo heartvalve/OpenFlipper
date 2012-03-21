@@ -52,8 +52,7 @@
  * The pose will automatically be equipped with the right number of fields for the joints stored in the skeleton.
  * Just fill them with data.
  *
- * @param _hierarchy The skeleton that owns this pose
- * @param _reference A pointer to the reference pose used by the skeleton, used for precalculations
+ * @param _skeleton  The skeleton that owns this pose
  */
 template<typename PointT>
 PoseT<PointT>::PoseT(SkeletonT<PointT>* _skeleton) : skeleton_(_skeleton)
@@ -109,13 +108,13 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::localMatrix(unsigned
 
 //-----------------------------------------------------------------------------
 
-/**
- * @brief Sets the local coordinate system
+/** \brief Sets the local coordinate system
  *
  * The change will automatically be propagated to all children. Also the global matrices will be updated.
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @param _local The new local matrix
+ * @param _keepLocalChildPositions If true, the positions of the children will be kept
  */
 template<typename PointT>
 void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix &_local, bool _keepLocalChildPositions)
@@ -156,6 +155,7 @@ inline typename PoseT<PointT>::Vector PoseT<PointT>::localTranslation(unsigned i
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @param _position The new local translation vector
+ * @param _keepLocalChildPositions If true, the positions of the children will be kept
  */
 template<typename PointT>
 void PoseT<PointT>::setLocalTranslation(unsigned int _joint, const Vector &_position, bool _keepLocalChildPositions)
@@ -206,6 +206,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::globalMatrix(unsigne
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @param _global The new global matrix
+ * @param _keepGlobalChildPositions Do the children stay at the same position or do they move with their parent joint
  */
 template<typename PointT>
 void PoseT<PointT>::setGlobalMatrix(unsigned int _joint, const Matrix &_global, bool _keepGlobalChildPositions)
@@ -331,6 +332,7 @@ void PoseT<PointT>::removeJointAt(unsigned int _index)
  * @brief This method propagates the change in the local coordinate system to the global system and all children
  *
  * @param _joint The updated joints index
+ * @param _keepChildPositions Do the children stay at the same position or do they move with their parent joint
  */
 template<typename PointT>
 void PoseT<PointT>::updateFromLocal(unsigned int _joint, bool _keepChildPositions)
@@ -367,7 +369,8 @@ void PoseT<PointT>::updateFromLocal(unsigned int _joint, bool _keepChildPosition
  * Do not overwrite this method, instead overwrite BasePose::UpdateFromGlobalCallback. Otherwise the recursion
  * will become a problem.
  *
- * @param _joint The updated joints index
+ * @param _joint               The updated joints index
+ * @param _keepChildPositions  Do the children stay at the same global position or do they move with their parent joint
  */
 template<typename PointT>
 void PoseT<PointT>::updateFromGlobal(unsigned int _joint, bool _keepChildPositions)
