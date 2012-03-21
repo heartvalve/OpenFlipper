@@ -85,8 +85,8 @@ getFullangle( VectorT _vector1,
 
 
 /** Calculate the difference between two angles ( minimum distance )
-   @param _angle0 angle1
-   @param _angle1 angle2
+   @param angle0 angle1
+   @param angle1 angle2
    @return The difference between the angles (0..PI)
 */
 template < typename ValueT >
