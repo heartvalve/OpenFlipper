@@ -121,18 +121,18 @@ public:
   void deleteKnot(unsigned int _index);
 
 
-  /**
-   * returns a reference to the _index'th knot
-   * \param _index, _n the knot index
+  /** \brief returns a reference to the _index'th knot
+   *
+   * @param _index The knot index
    */
   inline Scalar & operator()(unsigned int _index) {
     assert (_index < knots_.size());
     return knots_[_index];
   }
 
-  /**
-   * returns a const reference to the _index'th knot
-   * \param _index, _n the knot index
+  /** \brief returns a const reference to the _index'th knot
+   *
+   * @param _index The knot index
    */
   inline const Scalar & operator()(unsigned int _index) const {
     assert (_index < knots_.size());
