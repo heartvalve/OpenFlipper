@@ -88,20 +88,27 @@ public:
   typedef typename std::vector< std::vector< Point > > ControlNet;
   typedef typename std::vector< std::vector< unsigned char > > PropertyNet;
 
-  /// Constructor
+  /** \brief Constructor
+   *
+   * @param _degm Degree in m direction
+   * @param _degn Degree in n direction
+   */
   BSplineSurfaceT(unsigned int _degm = 3, unsigned int _degn = 3);
 
-  /// Copy Constructor
+  /** \brief Copy Constructor
+   *
+   * @param _surface Original Survare
+   */
   BSplineSurfaceT(const BSplineSurfaceT& _surface);
 
   /// Destructor
   ~BSplineSurfaceT() {};
 
-  /**
-   * Resizes the spline struct. You usually shoudn't have to care about this
-   * I will probably make it private...
-   * \param _m size in m direction
-   * \param _n size in n direction
+  /** \brief Resizes the spline struct.
+   *
+   * You usually shoudn't have to care about this I will probably make it private...
+   * @param _m size in m direction
+   * @param _n size in n direction
    */
   void resize(unsigned int _m, unsigned int _n);
 
@@ -120,28 +127,51 @@ public:
   /// Get a reference to the knotvector in n direction
   Knotvector * get_knotvector_n_ref(){return &knotvector_n_;};
 
-  /// get knot i in m direction
+  /** \brief Get knot i in m direction
+   *
+   * @param _i Knot index
+   * @return Knot i
+   */
   Scalar get_knot_m(int _i) {return knotvector_m_(_i);};
-  /// get knot i in n direction
+
+  /** \brief Get knot i in n direction
+   *
+   * @param _i Knot index
+   * @return Knot i
+   */
   Scalar get_knot_n(int _i) {return knotvector_n_(_i);};
 
-  /// set the knotvector of the bspline surface in m direction
+  /** \brief Set the knotvector of the bspline surface in m direction
+   *
+   * @param _knots The new knots
+   */
   void set_knots_m(std::vector< Scalar > _knots);
-  /// set the knotvector of the bspline surface in n direction
+
+  /** \brief Set the knotvector of the bspline surface in n direction
+     *
+     * @param _knots The new knots
+     */
   void set_knots_n(std::vector< Scalar > _knots);
 
-  // insert a knot i in m direction without changing the surface
+  /** \brief Insert a knot i in m direction without changing the surface
+   *
+   * @param _t Parameter value
+   */
   void insert_knot_m(double _t);
-  // insert a knot i in n direction without changing the surface
+
+  /** \brief Insert a knot i in n direction without changing the surface
+   *
+   * @param _t Parameter value
+   */
   void insert_knot_n(double _t);
 
   /// Creates interpolating knotvectors 0...0, 1, 2, ..., n...n
   void createKnots();
 
-  /**
-   * Sets the degree of the spline surface
-   * \param _degm Degree in m direction
-   * \param _degn Degree in n direction
+  /** \brief Sets the degree of the spline surface
+   *
+   * @param _degm Degree in m direction
+   * @param _degn Degree in n direction
    */
   void set_degree(unsigned int _degm, unsigned int _degn);
 
@@ -165,10 +195,8 @@ public:
   /// Clears the control net
   void reset_control_net();
 
-
-  /**
-   * Returns a reference to the control point (m, n)
-   * \param _m, _n the control point index
+  /** \brief Returns a reference to the control point (m, n)
+   * @param _m, _n the control point index
    */
   Point& get_control_point(unsigned int _m, unsigned int _n)
   {
@@ -176,9 +204,9 @@ public:
     return control_net_[_m][_n];
   }
 
-  /**
-   * Returns a reference to the control point (m, n)
-   * \param _m, _n the control point index
+  /** \brief Returns a reference to the control point (m, n)
+   *
+   * @param _m, _n the control point index
    */
   inline Point& operator()(unsigned int _m, unsigned int _n)
   {
@@ -186,9 +214,9 @@ public:
     return control_net_[_m][_n];
   }
 
-  /**
-   * Returns a const reference to the control point (m, n)
-   * \param _m, _n the control point index
+  /** \brief Returns a const reference to the control point (m, n)
+   *
+   * @param _m, _n the control point index
    */
   inline const Point& operator()(unsigned int _m, unsigned int _n) const
   {
@@ -196,9 +224,9 @@ public:
     return control_net_[_m][_n];
   }
 
-  /**
-   * Returns a reference to the control point (m, n)
-   * \param _m, _n the control point index
+  /** \brief Returns a reference to the control point (m, n)
+   *
+   * @param _param the control point index
    */
   inline Point& operator()(Vec2i _param)
   {
@@ -206,9 +234,9 @@ public:
     return control_net_[_param[0]][_param[1]];
   }
 
-  /**
-   * Returns a const reference to the control point (m, n)
-   * \param _m, _n the control point index
+  /** \brief Returns a const reference to the control point (m, n)
+   *
+   * @param _param the control point index
    */
   inline const Point& operator()(Vec2i _param) const
   {
@@ -217,129 +245,133 @@ public:
   }
 
 
-  /**
-   * Returns an n control point vector
-   * \param _m the m'th pointvector
-   * \param _pointVector the returned pointvector
+  /** \brief Returns an n control point vector
+   *
+   * @param _m the m'th pointvector
+   * @param _control_polygon the returned pointvector
    */
   void get_vector_m(std::vector< Point> & _control_polygon, unsigned int _m);
 
-  /**
-   * Returns an m ctrPointVector
-   * \param _n the n'th pointvector
-   * \param _pointVector the returned pointvector
+  /** \brief Returns an m ctrPointVector
+   *
+   * @param _n the n'th pointvector
+   * @param _control_polygon the returned pointvector
    */
   void get_vector_n(std::vector< Point> & _control_polygon, unsigned int _n);
 
 
-  /// Adds a control point n-vector
+  /** \brief Adds a control point n-vector
+   *
+   * @param _control_polygon Additional control point vector
+   */
   void add_vector_m(const std::vector< Point> & _control_polygon);
 
-  /// Adds a control point m-vector
+  /** \brief Adds a control point m-vector
+   *
+   * @param _control_polygon Additional control point vector
+   */
   void add_vector_n(const std::vector< Point> & _control_polygon);
 
 
-  /**
-   * Inserts an n control point vector
-   * \param _m the position in m direction
-   * \param _pointVector the pointvector to be inserted
+  /** \brief Inserts an n control point vector
+   *
+   * @param _m the position in m direction
+   * @param _control_polygon the pointvector to be inserted
    */
   void insert_vector_m(const std::vector< Point> & _control_polygon, unsigned int _m);
 
-  /**
-   * Inserts an m control point vector
-   * \param _n the position in n direction
-   * \param _pointVector the pointvector to be inserted
+  /** \brief Inserts an m control point vector
+   * @param _n the position in n direction
+   * @param _control_polygon the pointvector to be inserted
    */
   void insert_vector_n(const std::vector< Point> & _control_polygon, unsigned int _n);
 
-  /**
-   * Deletes an n control point vector
-   * \param _m the m'th pointvector
+  /** \brief Deletes an n control point vector
+   *
+   * @param _m the m'th pointvector
    */
   void delete_vector_m(unsigned int _m);
 
-  /**
-   * Deletes an m control point vector
-   * \param _n the n'th pointvector
+  /** \brief Deletes an m control point vector
+   *
+   * @param _n the n'th pointvector
    */
   void delete_vector_n(unsigned int _n);
 
 
- /**
-   * Evaluates a spline surface at parameters _u and _v
-   * \param _u the parameter in u direction
-   * \param _v the parameter in v direction
+  /** \brief Evaluates a spline surface at parameters _u and _v
+   *
+   * @param _u the parameter in u direction
+   * @param _v the parameter in v direction
    * \return the surface point
   */
   Point surfacePoint(double _u, double _v);
 
 
-  /**
-   * Returns the _derm'th derivative of a spline surface
-   * \param _u the parameter in u direction
-   * \param _u the parameter in v direction
-   * \param _derm the _derm'th derivative in m
-   * \param _dern the _dern'th derivative in n
+  /** \brief Returns the _derm'th derivative of a spline surface
+   *
+   * @param _u the parameter in u direction
+   * @param _v the parameter in v direction
+   * @param _derm the _derm'th derivative in m
+   * @param _dern the _dern'th derivative in n
    * \return the derivative
    */
   Point derivativeSurfacePoint(double _u, double _v, int _derm, int _dern);
 
-  /**
-   * Returns the normal of a spline surface
-   * \param _u the parameter in u direction
-   * \param _u the parameter in v direction
+  /** \brief Returns the normal of a spline surface
+   *
+   * @param _u the parameter in u direction
+   * @param _v the parameter in v direction
    * \return the normal
    */
   Point normalSurfacePoint(double _u, double _v);
 public:
 
-  /**
-   * A Spline Basis Function
-   * \param _knotvector the knotvector
-   * \param _i the i'th basis function
-   * \param _n the spline degree
-   * \param _t the parameter
+  /** \brief A Spline Basis Function
+   *
+   * @param _knotvector the knotvector
+   * @param _i the i'th basis function
+   * @param _n the spline degree
+   * @param _t the parameter
    * Returns N_i^p(_u)
   */
   Scalar basisFunction(Knotvector & _knotvector, int _i, int _n, double _t);
 
-  /**
-   * Derivative of a Spline Basis Function
-   * \param _knotvector the knotvector
-   * \param _i the i'th basis function
-   * \param _n the spline degree
-   * \param _t the parameter
-   * \param _der the _der'th derivative
+  /** \brief Derivative of a Spline Basis Function
+   *
+   * @param _knotvector the knotvector
+   * @param _i the i'th basis function
+   * @param _n the spline degree
+   * @param _t the parameter
+   * @param _der the _der'th derivative
    */
   Scalar derivativeBasisFunction(Knotvector & _knotvector, int _i, int _n, double _t, int _der);
 
-  /**
-   * Returns the basis functions which are unequal to zero at parameter u
-   * \param _t the parameter
+  /** \brief Returns the basis functions which are unequal to zero at parameter u
+   *
+   * @param _t the parameter
    */
   ACG::Vec2i spanm(double _t);
 
-  /**
-   * Returns the basis functions which are unequal to zero at parameter v
-   * \param _t the parameter
+  /** \brief Returns the basis functions which are unequal to zero at parameter v
+   *
+   * @param _t the parameter
    */
   ACG::Vec2i spann(double _t);
 
-  /**
-   * Returns the index of the knots u and u+1 such that t in [u, u+1)
-   * \param _t the parameter
+  /** \brief Returns the index of the knots u and u+1 such that t in [u, u+1)
+   *
+   * @param _t the parameter
    */
   ACG::Vec2i interval_m(double _t);
 
-  /**
-   * Returns the index of the knots v and v+1 such that t in [v, v+1)
-   * \param _t the parameter
+  /** \brief  Returns the index of the knots v and v+1 such that t in [v, v+1)
+   *
+   * @param _t the parameter
    */
   ACG::Vec2i interval_n(double _t);
 
 
-//private: // private functions
 public:
 
   /// Returns the lower u parameter
@@ -355,16 +387,19 @@ public:
 
 public :
 
-  // request properties
+  /// request control point selection property
   void request_controlpoint_selections() { request_prop( ref_count_cpselections_, cpselections_);}
+  /// request edge selection property
   void request_edge_selections()         { request_prop( ref_count_eselections_, eselections_);}
 
-  // release properties
+  /// release control point selection property
   void release_controlpoint_selections() { release_prop( ref_count_cpselections_, cpselections_);}
+  /// release edge selection property
   void release_edge_selections()         { release_prop( ref_count_eselections_, eselections_);}
 
-  // property availability
+  /// Check if control point selection property is available
   bool controlpoint_selections_available() const {return bool(ref_count_cpselections_);}
+  /// Check if edge selection property is available
   bool edge_selections_available()         const {return bool(ref_count_eselections_);}
 
 
