@@ -90,18 +90,20 @@ public:
   
   enum CoordsysMode
   {
-    POSITION,   // Draws the Coordsys at the coordsys origin
-    SCREENPOS // Draws the Coordsys at the upper right position on the screen
+    POSITION,   ///< Draws the Coordsys at the coordsys origin
+    SCREENPOS   ///< Draws the Coordsys at the upper right position on the screen
   };
 
   /** default constructor
    * @param _parent Define the parent Node this node gets attached to
-   * @param _name Name of this Node
+   * @param _name   Name of this Node
+   * @param _mode   upper right of the screen or position based
+   * @param _projectionMode Draw an orthogonal coordinate system or also enable projection mode
    */
   CoordsysNode(
       BaseNode* _parent = 0,
-      std::string _name = "<TextNode>",
-      CoordsysMode _mode = SCREENPOS,
+      std::string    _name = "<TextNode>",
+      CoordsysMode   _mode = SCREENPOS,
       ProjectionMode _projectionMode = PERSPECTIVE_PROJECTION);
 
   /// destructor
