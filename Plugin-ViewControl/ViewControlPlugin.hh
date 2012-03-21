@@ -218,17 +218,21 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void disableShader(int _objectId, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo* _shader=0);
     
     /** Sets a shader for the object and the given drawMode( can be a combination of draw modes )
-     *  @param _id Object Id
-     *  @param _drawMode ; seperated list of drawmodes used by the shader
-     *  @param _vertexShader   File with the vertex shader code
-     *  @param _fragmentShader File with the fragment shader code
-     *  @param _pickVertexShader   File with the picking vertex shader code
-     *  @param _pickFragmentShader File with the picking fragment shader code
+     *  @param _id                 Object Id
+     *  @param _drawMode           ; separated list of drawmodes used by the shader
+     *  @param _shader             Shader information
      */
     void setShader(int _id, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo _shader);
 
-    /** Sets a Shader from the Shader directory of OpenFlipper ( Name of the one given inside the ini file )
+    /**
      *
+     */
+
+    /** Sets a Shader for a specific draw mode
+     *
+     * @param _id        Object id that should use the shader
+     * @param _drawMode  Draw mode where this shader will be active
+     * @param _name      Name of the shader that should be used
      */
     void setShader(int _id, QString _drawMode, QString _name );
 
@@ -261,7 +265,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     * This function can be used to set the drawmode for an object.
     * 
     * @param _mode DrawMode as String ( can be a list of drawmodes which will be combined to a new mode )
-    * @param _objectid Id of the object to set the draw mode
+    * @param _objectID Id of the object to set the draw mode
     * @param _force Set the draw mode even if its not directly supported by the objects nodes
     */
     void setObjectDrawMode(QString _mode, int _objectID , bool _force = true );
