@@ -51,7 +51,7 @@
 
 /** \file ContextMenuInterface.hh
 *
-* Interface for adding context menus to OpenFlippers UI from a plugin.\ref contextmenuInterfacePage
+* Interface for adding context menus to OpenFlippers UI from a plugin.\ref contextMenuInterfacePage
 */
 
 
@@ -74,7 +74,7 @@ enum ContextMenuType {
 
 /** \brief Interface class for creating custom context menus
   *
-  * \ref contextmenuInterfacePage "Detailed description" 
+  * \ref contextMenuInterfacePage "Detailed description"
   * \n
   * \n
   * Using this interface you can create custom context menus for your plugin. You
@@ -151,7 +151,7 @@ private slots:
 };
 
 
-/** \page contextmenuInterfacePage Context Menu Interface
+/** \page contextMenuInterfacePage Context Menu Interface
 \image html ContextMenuInterface.png
 \n
 The ContextMenuInterface can be used by plugins to add menu entries to OpenFlippers
