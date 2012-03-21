@@ -77,11 +77,6 @@ TreeModel::~TreeModel()
 
 //******************************************************************************
 
-/** \brief Return the number of columns
- * 
- * @param unused
- * @return return always 2
- */
 int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
 {
   // Id, Name -> 2
@@ -327,7 +322,8 @@ void TreeModel::objectAdded(BaseObject* _object){
 
 /** \brief The object with the given id has been added. add it to the internal tree
  *
- * @param id_ id of the object
+ * @param _object The added object
+ * @param _parent The new parent object
  */
 void TreeModel::objectAdded(BaseObject* _object, BaseObject* _parent){
 
