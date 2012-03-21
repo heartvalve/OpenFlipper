@@ -732,7 +732,8 @@ EXCLUDE_SYMBOLS        =
 
 EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/example/ \
                          @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/Examples \
-                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/Tutorial 
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/Tutorial \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenVolumeMesh/documentation/examples
 
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
@@ -756,6 +757,7 @@ EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/pics/ \
                          @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/screenshots/ \
                          @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/Doc/images/ \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenVolumeMesh/documentation/images/ \
                          @CMAKE_SOURCE_DIR@/ObjectTypes/Skeleton/doc/pics/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
