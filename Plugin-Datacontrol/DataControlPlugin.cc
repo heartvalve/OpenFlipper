@@ -343,17 +343,6 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
 
 //******************************************************************************
 
-/** \brief Update the model if an object was deleted
- *
- * @param _identifier id of an object
- */
-void DataControlPlugin::slotObjectUpdated( int /*_identifier*/ , const UpdateType& /*_type*/ ){
-
-}
-
-
-//******************************************************************************
-
 /** \brief Update the model if a file has been opened
  *
  * @param _id id of an object
@@ -431,8 +420,9 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 
 /** \brief emit the right updates when the model changed
  *
- * @param topLeft index in the model
- * @param _column hmm
+ * @param _id     Object id that was changed
+ * @param _column Which column changed
+ * @param _value  What is the new value?
  */
 void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& _value)
 {
@@ -473,8 +463,8 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
 
 /** \brief Gets called when an object was moved via drag n drop
  *
- * @param _id id of the object
- * @param _parentId id of the new parent
+ * @param _id          id of the object
+ * @param _newParentId id of the new parent
  */
 void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
 
@@ -681,7 +671,8 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
 
 /** \brief Recursively update a column up to the root of the tree
  *
- * @param _obj object to start with
+ * @param _obj    Object to start with
+ * @param _column Column to propagate
  */
 void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 

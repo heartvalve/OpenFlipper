@@ -102,7 +102,13 @@ public:
      */
     int columnCount(const QModelIndex &_parent = QModelIndex()) const;
 
-    /// Set the data at the given index
+    /** \brief Set Data at 'index' to 'value'
+     *
+     * @param  index a ModelIndex defining the positin in the model
+     * @param  value the new value
+     * @param  role unused
+     * @return return if the data was set successfully
+     */
     bool setData(const QModelIndex &index, const QVariant &value , int role);
 
 /** @} */
@@ -146,7 +152,7 @@ public:
     void moveItem(TreeItem* _item, TreeItem* _parent );
 private:
 
-    /// Rootitem of the tree
+    /// Root item of the tree
     TreeItem* rootItem_;
 
 
@@ -171,7 +177,15 @@ public:
     /// get the mimeData for a given ModelIndex
     QMimeData* mimeData(const QModelIndexList& indexes) const;
 
-    /// Called when mimeData is dropped somewhere
+    /** \brief This is called when mimeData is dropped
+     *
+     * @param data   The dropped data
+     * @param action The definition of the dropAction which occurred
+     * @param row    Unused
+     * @param column Unused
+     * @param parent Parent under which the drop occurred
+     * @return returns if the drop was successful
+     */
     bool dropMimeData(const QMimeData *data,
      Qt::DropAction action, int row, int column, const QModelIndex &parent);
 
