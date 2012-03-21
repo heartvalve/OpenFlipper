@@ -70,7 +70,7 @@ namespace ACG {
 
     This is an implementation of:
 
-    @techreport{kavan-06-dual,
+    techreport{kavan-06-dual,
     author = "Ladislav Kavan and Steven Collins and Carol O'Sullivan and Jiri Zara",
     series = "Technical report TCD-CS-2006-46, Trinity College Dublin",
     title = "{D}ual {Q}uaternions for {R}igid {T}ransformation {B}lending",
