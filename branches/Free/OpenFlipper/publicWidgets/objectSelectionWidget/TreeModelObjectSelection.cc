@@ -77,11 +77,7 @@ TreeModelObjectSelection::~TreeModelObjectSelection()
 
 //******************************************************************************
 
-/** \brief Return the number of columns
- * 
- * @param unused
- * @return return always 2
- */
+
 int TreeModelObjectSelection::columnCount(const QModelIndex &/*_parent*/) const
 {
   // Id, Name -> 2
@@ -316,18 +312,19 @@ void TreeModelObjectSelection::objectChanged(int _id) {
 }
 
 
-/** \brief The object with the given id has been added. add it to the internal tree
+/** \brief The object with the given id has been added. Add it to the internal tree
  *
- * @param id_ id of the object
+ * @param _object The object that has been added
  */
 void TreeModelObjectSelection::objectAdded(BaseObject* _object){
 
   objectAdded (_object, _object->parent());
 }
 
-/** \brief The object with the given id has been added. add it to the internal tree
+/** \brief The object has been added. Add it to the internal tree
  *
- * @param id_ id of the object
+ * @param _object The added object
+ * @param _parent The parent object
  */
 void TreeModelObjectSelection::objectAdded(BaseObject* _object, BaseObject* _parent){
 
@@ -362,7 +359,7 @@ void TreeModelObjectSelection::objectAdded(BaseObject* _object, BaseObject* _par
 
 /** \brief The object with the given id has been deleted. delete it from the internal tree
  *
- * @param id_ id of the object
+ * @param _id id of the object
  */
 void TreeModelObjectSelection::objectDeleted(int _id){
 
@@ -510,7 +507,9 @@ QModelIndex TreeModelObjectSelection::getModelIndex(int _id, int _column ){
 
 /** \brief Recursively update a column up to the root of the tree
  *
- * @param _item item to start with
+ * @param _item   Item to start with
+ * @param _column The column
+ * @param _value  The value that should be propagated
  */
 void TreeModelObjectSelection::propagateUpwards(TreeItemObjectSelection* _item, int _column, bool _value ){
 
@@ -540,6 +539,7 @@ void TreeModelObjectSelection::propagateUpwards(TreeItemObjectSelection* _item, 
 /** \brief Recursively update a column up to the root of the tree
  *
  * @param _item item to start with
+ * @param _column column
  */
 void TreeModelObjectSelection::propagateDownwards(TreeItemObjectSelection* _item, int _column ){
 

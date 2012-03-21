@@ -93,10 +93,20 @@ public:
     /// get the number of rows
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    /// get the number of columns
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    /** \brief Return the number of columns
+     *
+     * @param _parent unused
+     * @return return always 2
+     */
+    int columnCount(const QModelIndex &_parent = QModelIndex()) const;
 
-    /// Set the data at the given index
+    /** \brief Set Data at 'index' to 'value'
+     *
+     * @param index a ModelIndex defining the position in the model
+     * @param value the new value
+     * @param role unused
+     * @return return if the data was set successfully
+     */
     bool setData(const QModelIndex &index, const QVariant &value , int role);
 
 /** @} */
