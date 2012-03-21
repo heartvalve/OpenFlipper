@@ -100,7 +100,13 @@ public:
      */
     int columnCount(const QModelIndex &_parent = QModelIndex()) const;
 
-    /// Set the data at the given index
+    /** \brief Set Data at 'index' to 'value'
+     *
+     * @param index a ModelIndex defining the positin in the model
+     * @param value the new value
+     * @param role unused
+     * @return return if the data was set successfully
+     */
     bool setData(const QModelIndex &index, const QVariant &value , int role);
 
 /** @} */
