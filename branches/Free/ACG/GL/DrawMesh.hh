@@ -170,7 +170,7 @@ public:
 
   /** \brief binds index and vertex buffer and executes draw calls
   *
-  *   @param textureMap maps from internally texture-id to OpenGL texture id
+  *   @param _textureMap maps from internally texture-id to OpenGL texture id
   *   may be null to disable textured rendering
   */
   void draw(std::map< int, GLuint>* _textureMap);
