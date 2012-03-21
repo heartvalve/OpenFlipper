@@ -537,8 +537,11 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
 /** \brief Find closest vertex to selection
  *
- * @param _mesh Refernce to the mesh
+ * @param _mesh     Reference to the mesh
  * @param _face_idx Index of the face that has been clicked on
+ * @param _hitPoint The point that is used as the reference
+ *
+ * @return index of the closest vertex of the face to the hitpoint
  */
 
 template <class MeshT>
@@ -577,6 +580,8 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
  * @param _mesh     Reference to the mesh
  * @param _face_idx Index of the face that has been clicked on
  * @param _hitPoint The point which will be tested
+ *
+ * @return index of the closest edge in the face to the hitpoint
  */
 
 template <class MeshT>
@@ -621,8 +626,11 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
 
 /** \brief Find closest vertex on the edge (endpoint)
  *
- * @param _mesh Reference to the mesh
- * @param _face_idx Index of the edge that has been clicked on
+ * @param _mesh     Reference to the mesh
+ * @param _edge_idx Index of the edge that has been clicked on
+ * @param _hitPoint The point which will be tested
+ *
+ * @return index of the closest vertex on the edge
  */
 
 template <class MeshT>
