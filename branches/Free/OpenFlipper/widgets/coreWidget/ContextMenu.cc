@@ -512,13 +512,13 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
 
 }
 
-/** \brief Update context Menu an object has been clicked on.
+/** \brief Update popup Menu when an object has been clicked on.
  *
  * This function is called when an object has been clicked on.
  * This context menu will show all properties for the given object.
  *
  * @param _menu Pointer to the context Menu
- * @param _objectId Id of the object that has been clicked on.
+ * @param _object Object that has been clicked on.
  */
 void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) {
 

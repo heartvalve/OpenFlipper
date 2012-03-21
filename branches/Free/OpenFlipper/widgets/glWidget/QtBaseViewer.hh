@@ -136,16 +136,16 @@ public:
 
   /** Create a glViewer.
    *
-   * @param scene       The graphics scene that will be the parent of this widget
+   * @param _scene      The graphics scene that will be the parent of this widget
    * @param _glWidget   A pointer to the underlying gl widget
    * @param _properties viewerOptions controlled by PluginFunctions
    * @param _parent     The parent graphicswidget
    *
   */
-  glViewer( QGraphicsScene* _scene,
-            QGLWidget* _glWidget,
+  glViewer( QGraphicsScene*           _scene,
+            QGLWidget*                _glWidget,
             Viewer::ViewerProperties& _properties,
-            QGraphicsWidget* _parent=0);
+            QGraphicsWidget*          _parent = 0 );
 
   /// Destructor.
   virtual ~glViewer();
