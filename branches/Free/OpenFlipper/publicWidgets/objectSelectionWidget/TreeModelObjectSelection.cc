@@ -576,13 +576,6 @@ void TreeModelObjectSelection::propagateDownwards(TreeItemObjectSelection* _item
 
 //******************************************************************************
 
-/** \brief Set Data at 'index' to 'value'
- * 
- * @param index a ModelIndex defining the positin in the model
- * @param value the new value
- * @param  unused
- * @return return if the data was set successfully
- */
 bool TreeModelObjectSelection::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
 
