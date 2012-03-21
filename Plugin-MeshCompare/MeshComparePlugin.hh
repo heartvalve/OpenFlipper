@@ -166,6 +166,7 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
      *
      * @param _data     Vector of data points
      * @param _maxValue Maximal value found in the data
+     * @param _pnode    The point node that will be used to visualize the data
      */
     void visualizeData( const std::vector<double>& _data, double _maxValue, ACG::SceneGraph::PointNode* _pnode);
 
