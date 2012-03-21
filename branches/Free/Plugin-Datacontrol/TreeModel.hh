@@ -95,8 +95,12 @@ public:
     /// get the number of rows
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    /// get the number of columns
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    /** \brief Return the number of columns
+     *
+     * @param  _parent unused
+     * @return return always 4
+     */
+    int columnCount(const QModelIndex &_parent = QModelIndex()) const;
 
     /// Set the data at the given index
     bool setData(const QModelIndex &index, const QVariant &value , int role);

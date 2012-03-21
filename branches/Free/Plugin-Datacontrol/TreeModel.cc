@@ -81,11 +81,6 @@ TreeModel::~TreeModel()
 
 //******************************************************************************
 
-/** \brief Return the number of columns
- *
- * @param unused
- * @return return always 4
- */
 int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
 {
   // Name,Visible,Source,Target -> 4
