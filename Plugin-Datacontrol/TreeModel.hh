@@ -186,8 +186,7 @@ public:
      * @param parent Parent under which the drop occurred
      * @return returns if the drop was successful
      */
-    bool dropMimeData(const QMimeData *data,
-     Qt::DropAction action, int row, int column, const QModelIndex &parent);
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 
 /** @} */
 
