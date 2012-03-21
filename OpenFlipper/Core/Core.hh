@@ -697,41 +697,43 @@ public slots:
 
 public slots:
     /** \brief Scripting function to set toolboxes in a view mode
-
-      @param _modeName Name of the View Mode
-      @param _toolboxList ; separated list of toolboxes in the view mode
+     *
+     * @param _modeName Name of the View Mode
+     * @param _toolboxList ; separated list of toolboxes in the view mode
     */
     void addViewModeToolboxes(QString _modeName, QString _toolboxList);
     
     /** \brief Scripting function to set toolbars in a view mode
-    
-    @param _modeName Name of the View Mode
-    @param _toolboxList ; separated list of toolbars in the view mode
+     *
+     * @param _modeName Name of the View Mode
+     * @param _toolbarList ; separated list of toolbars in the view mode
+     *
     */
     void addViewModeToolbars(QString _modeName, QString _toolbarList);
     
     /** \brief Scripting function to set context menus in a view mode
-    
-    @param _modeName Name of the View Mode
-    @param _contextMenuList ; separated list of context menus in the view mode
+     *
+     * @param _modeName Name of the View Mode
+     * @param _contextMenuList ; separated list of context menus in the view mode
     */
     void addViewModeContextMenus(QString _modeName, QString _contextMenuList);
     
     /** \brief Scripting function to set an icon for a view mode
-      @param _modeName Name of the View Mode
-      @param _iconName Name of the Icon File. Will be taken from OpenFlippers Icon directory
+     * @param _modeName Name of the View Mode
+     * @param _iconName Name of the Icon File. Will be taken from OpenFlippers Icon directory
     */
     void addViewModeIcon(QString _modeName, QString _iconName);    
     
     /** \brief Scripting function to set the side of the main window on which the toolbox should be displayed
-    
-    @param _side The desired side (either "left" or "right")
+     *
+     * @param _side The desired side (either "left" or "right")
     */
     void setToolBoxSide(QString _side);
 
-    /** \brief Scripting function to set the side of the main window on which the toolbox should be displayed
-    
-    @param _side The desired side (either "left" or "right")
+    /** \brief Scripting function to activate or deactivate a toolbox
+     *
+     * @param _toolBoxName Name of the toolbox to manipulate
+     * @param _active      Activate or deactivate
     */
     void setToolBoxActive(QString _toolBoxName, bool _active);
     
@@ -1021,13 +1023,13 @@ private slots:
     *
     *  Writes the complete status to an ini file ( All open objects and their Information )
     *
-    * @param _filename filename of the ini file to write with full path
-    * @param _relativePaths This defines if the paths to the objects should be made relative
-    * @param _targetOnly Select if we want all open objects or only the ones which are selected as target.
+    * @param _filename           Filename of the ini file to write with full path
+    * @param _relativePaths      This defines if the paths to the objects should be made relative
+    * @param _targetOnly         Select if we want all open objects or only the ones which are selected as target.
     * @param _saveSystemSettings Choose if you also want to save system settings into the ini file.
     * @param _savePluginSettings Choose if you want to save per Plugin global settings into the ini file.
-    * @param _saveObjectInfo If you want to store information about all open objects this has to be true
-    * @param _fileMappings If multiple files have the same name, all duplicates get renamed. Mapping: Id -> new file name.
+    * @param _saveObjectInfo     If you want to store information about all open objects this has to be true
+    * @param _fileMapping        If multiple files have the same name, all duplicates get renamed. Mapping: Id -> new file name.
     */
    void writeIniFile( QString _filename,
                       bool    _relativePaths,
