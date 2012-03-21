@@ -534,10 +534,6 @@ void DataControlPlugin::slotMaterialProperties(){
 
 //******************************************************************************
 
-/** \brief Called when the material properties were changed inside the material dialog
- * 
- * @param  unused
- */
 void DataControlPlugin::slotNodeChanged( ACG::SceneGraph::BaseNode* /*_node*/ ){
   emit updateView();
 }
