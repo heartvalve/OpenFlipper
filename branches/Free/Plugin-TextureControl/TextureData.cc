@@ -226,10 +226,10 @@ bool TextureData::setImage( QString _textureName , int _id ) {
 
 //-----------------------------------------------------------------------------------
 
-/** \brief Delete a given texture
- *
- * @param _textureName name of the texture
- */
+// /** \brief Delete a given texture
+// *
+// * @param _textureName name of the texture
+// */
 // void TextureData::deleteTexture(QString _textureName)
 // {
 //   int index = getTextureIndex(_textureName);
@@ -245,11 +245,11 @@ bool TextureData::setImage( QString _textureName , int _id ) {
 
 //-----------------------------------------------------------------------------------
 
-/** \brief get parameters of a given texture
- *
- * @param _textureName name of the texture
- * @return corresponding textureParameters or invalid TexParameters
- */
+// /** \brief get parameters of a given texture
+// *
+// * @param _textureName name of the texture
+// * @return corresponding textureParameters or invalid TexParameters
+// */
 // TexParameters TextureData::textureParameters(QString _textureName)
 // {
 //   int id = getTextureIndex(_textureName);
@@ -262,11 +262,11 @@ bool TextureData::setImage( QString _textureName , int _id ) {
 
 //-----------------------------------------------------------------------------------
 
-/** \brief Set Parameters for a given texture
- *
- * @param _textureName name of the texture
- * @param _params new parameters for the texture
- */
+// /** \brief Set Parameters for a given texture
+// *
+// * @param _textureName name of the texture
+// * @param _params new parameters for the texture
+// */
 // void TextureData::setTextureParameters(QString _textureName, TexParameters _params)
 // {
 //   int id = getTextureIndex(_textureName);
