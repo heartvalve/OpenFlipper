@@ -379,7 +379,8 @@ void SkeletalAnimationPlugin::UpdateSkins(BaseObjectData *_skeletonObject, Anima
   SkeletonObjectData* skeletonData = dynamic_cast< SkeletonObjectData* >( _skeletonObject->objectData(OBJECTDATA_SKELETON) );
   
   for (unsigned int i=0; i < skeletonData->skinCount(); i++){
-    //deform all attached skin meshes
+
+    // deform all attached skin meshes
     int meshId = skeletonData->skin(i);
 
     BaseObjectData* object = 0;
