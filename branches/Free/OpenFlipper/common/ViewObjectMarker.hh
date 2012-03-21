@@ -65,7 +65,7 @@ class BaseObject;
     "true" then the object _obj will be painted with the stencil buffer
     reference _reference (has to be != 0).
 
-    There are 2 oparation modes
+    There are 2 operation modes
 
     PerNumber:
       The examiner will call blendForStencilRefNumber for each of the
@@ -76,8 +76,8 @@ class BaseObject;
       in the returned references of stencilRefForObject to ask for the blend values.
 
       PerBit handling allows to blend the object multiple times with different blend
-      values, to visualze multiple properties at once, but is limited to the number
-      of bits avaiable in the stencil buffer (usually 8).
+      values, to visualize multiple properties at once, but is limited to the number
+      of bits available in the stencil buffer (usually 8).
 
  **/
 
@@ -115,16 +115,16 @@ public:
     @param _color color used for blending
     @return should blending be berformed for this reference
   */
-  virtual bool blendForStencilRefNumber (GLuint /*_reference*/, GLenum &/*_src*/, GLenum &/*_dst*/, ACG::Vec4f &/*_color*/) { return false; };
+  virtual bool blendForStencilRefNumber (GLuint _reference, GLenum & _src, GLenum & _dst, ACG::Vec4f & _color) { return false; };
 
   /** Per reference bit blending values
     @param _refbit stencil reference bit for blending
     @param _src sfactor parameter for ACG::GLState::blendFunc function
     @param _dst dfactor parameter for ACG::GLState::blendFunc function
     @param _color color used for blending
-    @return should blending be berformed for this reference
+    @return should blending be performed for this reference
   */
-  virtual bool blendForStencilRefBit (GLuint /*_refbit*/, GLenum &/*_src*/, GLenum &/*_dst*/, ACG::Vec4f &/*_color*/) { return false; };
+  virtual bool blendForStencilRefBit (GLuint _refbit , GLenum & _src , GLenum & _dst , ACG::Vec4f & _color ) { return false; };
 
 };
 
