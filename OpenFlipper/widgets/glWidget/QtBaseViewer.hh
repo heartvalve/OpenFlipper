@@ -135,12 +135,12 @@ public:
   //--------------------------------------------------- constructor / destructor
 
   /** Create a glViewer.
-    \param _parent parent widget
-    \param _name name (qt internal, qt debugging)
-    \param _properties viewerOptions controlled by PluginFunctions
-    \param _statusBar pointer to an existing status bar for this widget,
-     if \c statusBar==0 then a \a private status bar will be created
-    \param _format OpenGL context settings, will be passed to glarea()
+   *
+   * @param scene       The graphics scene that will be the parent of this widget
+   * @param _glWidget   A pointer to the underlying gl widget
+   * @param _properties viewerOptions controlled by PluginFunctions
+   * @param _parent     The parent graphicswidget
+   *
   */
   glViewer( QGraphicsScene* _scene,
             QGLWidget* _glWidget,
@@ -149,10 +149,6 @@ public:
 
   /// Destructor.
   virtual ~glViewer();
-
-
-
-
 
   //------------------------------------------------------------- public methods
 

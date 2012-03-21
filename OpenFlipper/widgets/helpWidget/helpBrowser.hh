@@ -55,47 +55,128 @@
 #include <QTextBrowser>
 #include <QtHelp>
 
+/** \class HelpBrowser
+ *
+ * This class implements OpenFlippers help browser. The QtHelp files are loaded at startup
+ * into the help engine which is passed to this widget.
+ *
+ */
 class HelpBrowser : public QTextBrowser {
 	Q_OBJECT
 
 public:
+
+	/** \brief Constructor
+	 *
+	 * Sets up a new help widget which works on the given help engine
+	 *
+	 * @param _helpEngine  QHelpEngine
+	 * @param parent       Parent widget
+	 */
 	HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent = 0);
 
+	/// Destructor
 	virtual ~HelpBrowser();
 
+	/** \brief re implementation of the load resource function of the text browser
+	 *
+	 * This function loads a resource from the help system. It also handles jumping to
+	 * another namespace via relative links in the url
+	 *
+	 * @param _type Ignored
+	 * @param _name A filename in the help system that should be loaded (image, html document)
+	 * @return The loaded resource
+	 */
 	QVariant loadResource ( int _type, const QUrl& _name );
 
+	/** \brief Checks if we visited other pages before
+	 *
+   * @return Did we visit pages before to which we can jump back? (History)
+   */
 	bool isBackwardAvailable();
 
+	/** \brief Checks if the back button was pressed and we can go forward to the next page
+	 *
+	 * @return is a page stored in the forward list?
+	 */
 	bool isForwardAvailable();
 
 signals:
-	void urlChanged ( const QUrl& src );
-
-	void linkClicked(const QString& _link);
+  /** \brief This signal is emitted everytime an url is opened
+   *
+   * @param _src The new url that is visible in the browser
+   */
+	void urlChanged ( const QUrl& _src );
 
 public slots:
 
-	void open(const QUrl& _url);
-
 	void open(const QString& _url);
 
-	void open(const QUrl& _url, const QString& _str, bool _skipSave = false);
+	/** \brief Opens a new url from the help system in the browser
+	 *
+	 * @param _url      URL that should be opened
+	 * @param _skipSave Flag if the URL should be saved in the history
+	 */
+	void open(const QUrl& _url, bool _skipSave = false);
 
+	/** \brief Show last page stored in the history
+	 *
+	 */
 	void backward();
 
+	/** \brief Show next page stored in the history
+	   *
+	   */
 	void forward();
 
 private:
 
+	/** \brief Extract path from URL
+	 *
+	 * Removes the filename part from the url and returns only the directory component
+	 *
+	 * @param _url Input url
+	 * @return Path
+	 */
 	QUrl getCurrentDir(const QUrl& _url);
 
+	/** \brief updateNameSpaceAndFolder
+	 *
+	 * This function takes the url and extracts the virtual namespace and
+	 * folder information which are stored in the variables. These variables are used to
+	 * find the corresponding images.
+	 *
+	 * @param _url The url that should be analyzed
+	 */
+	void updateNameSpaceAndFolder (const QUrl& _url);
+
+	/** \brief Adds a new page to the history
+	 *
+	 * @param _url URL of the new page
+	 */
+	void rememberHistory (const QUrl& _url);
+
+	/// The help engine the widget is working on
 	QHelpEngine* helpEngine_;
 
-	QStringList visitedPages_;
+	/// History of the visited pages
+	QList<QUrl> visitedPages_;
+
+	/// Current position in the history
 	int currentPage_;
 
+	/** \brief The currently active virtual folder
+	 *
+	 * QT manages the different help files for the plugins in different virtual folders.
+	 * This variable will always hold the currently active one.
+	 */
 	QString currentVirtualFolder_;
+
+	/** \brief The currently active namespace
+	 *
+	 * QT manages the different help files for the plugins with different name spaces.
+	 * This variable will always hold the currently active one.
+	 */
 	QString currentNameSpace_;
 
 };
