@@ -76,7 +76,7 @@ namespace SceneGraph {
 //== CLASS DEFINITION =========================================================
 
 
-/** \class TranslationTranslationManipulatorNode TranslationTranslationManipulatorNode.hh <ACG/Scenegraph/TranslationTranslationManipulatorNode.hh>
+/** \class TranslationManipulatorNode TranslationManipulatorNode.hh <ACG/Scenegraph/TranslationManipulatorNode.hh>
     Use a manipulator to translate and scale the children of this node.
 */
 
@@ -169,7 +169,7 @@ public:
   /** \brief Enable or disable manipulator handles for specific orientations
    *
    * This enum defines which rotation axis rings will be visible and available for picking.
-   * The modes can be combined. ( e.g. ACG::SceneGraph::TranslationManipulatorNode::X_AXIS|ACG::SceneGraph::TranslationManipulatorNode::Y_AXIS )
+   * The modes can be combined.
    *
    * @param _active The activated axis
    */

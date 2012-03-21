@@ -117,15 +117,18 @@ public:
   void disableShader (DrawModes::DrawMode _drawmode);
     
   /** Sets a Shader for the given draw mode
-   * @param _drawmode Set the drawmode for which the shader should be activated
-   * @param _vertexShader filename of the Vertex Shader within the shader directory
-   * @param _fragmentShader filename of the Fragment Shader within the shader directory
+   * @param _drawmode           Set the drawmode for which the shader should be activated
+   * @param _vertexShader       filename of the Vertex Shader within the shader directory
+   * @param _fragmentShader     filename of the Fragment Shader within the shader directory
+   * @param _pickVertexShader   Vertex shader during picking
+   * @param _pickFragmentShader Fragment shader during picking
   */
+
   void setShader( DrawModes::DrawMode _drawmode ,
-                  std::string _vertexShader,
-                  std::string _fragmentShader,
-                  std::string _pickVertexShader = "",
-                  std::string _pickFragmentShader = "");
+                  std::string         _vertexShader,
+                  std::string         _fragmentShader,
+                  std::string         _pickVertexShader = "",
+                  std::string         _pickFragmentShader = "");
 
   /// Get the shader for the given drawMode
   GLSL::PtrProgram getShader( DrawModes::DrawMode _drawmode, bool _pick = false);
