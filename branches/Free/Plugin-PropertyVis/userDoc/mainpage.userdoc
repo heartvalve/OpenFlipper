@@ -13,7 +13,7 @@ You can find this plugin in you toolbox.
 \li \ref load_save
 
 \section prop Properties
-\image html show_properties_menu.png
+\image html show_properties_menu.png 
 In this section you select your mesh and the properties which you want to visualize.
 Click on the Button 'Visualize' to visualize them. You can modify the visualization depending on the data type of your property (see \ref visualize_modification for more information).
 \note You can select multiple properties by pressing <Ctrl> while selecting.
