@@ -11,13 +11,13 @@
  * 
  * Starting OpenFlipper invokes the following processes: <br><br>
  * \subsection ref1 References:
- * \ref BaseInterface::initializePlugin(),<br>\ref BaseInterface::pluginsInitialized(),<br>\ref INIInterface::loadIniFileOptions()<br>
+ * \ref BaseInterface::initializePlugin(),<br>BaseInterface::pluginsInitialized(),<br>INIInterface::loadIniFileOptions()<br>
  *
  * \image html OpenFlipperStartup.png
  *
  * \section loadSettings Load settings
  *
- * Also see \ref INIInterface
+ * Also see INIInterface
  *
  * \subsection ref2 References:
  * \ref INIInterface::loadIniFileOptions(),<br>\ref INIInterface::loadIniFile(),<br>\ref INIInterface::loadIniFileOptionsLast()<br>
@@ -27,7 +27,7 @@
  * 
  * \section saveSettings Save settings
  *
- * Also see \ref INIInterface
+ * Also see INIInterface
  *
  * \subsection ref3 References:
  * \ref INIInterface::saveIniFileOptions(),<br>\ref INIInterface::saveIniFile(),<br>
@@ -40,10 +40,10 @@
  * signal BaseInterface::updatedObject() in order to initiate the core to inform
  * all other plugins about the changes and redraw the scene.
  *
- * Also see \ref BaseInterface
+ * Also see BaseInterface
  *
  * \subsection ref4 References:
- * \ref BaseInterface::updatedObject(),<br>\ref BaseInterface::slotObjectUpdated(),<br>
+ * \ref BaseInterface::updatedObject(),<br>BaseInterface::slotObjectUpdated(),<br>
  * \image html ObjectUpdateNotification.png
  *
  *
