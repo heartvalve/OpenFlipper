@@ -300,7 +300,7 @@ delete_vector_m(unsigned int _m)
 {
   assert(_m < dimm_);
   
-  /// \TODO: Improve deletion routine for control points and knots!
+  /// \todo Improve deletion routine for control points and knots!
 
   if(control_net_.begin() + _m < control_net_.end())
       control_net_.erase(control_net_.begin() + _m);
@@ -327,7 +327,7 @@ delete_vector_n(unsigned int _n)
 {
   assert(_n < dimn_);
   
-  /// \TODO: Improve deletion routine for control points and knots!
+  /// \todo: Improve deletion routine for control points and knots!
 
   for (unsigned int i = 0; i < control_net_.size(); ++i) {
       if(control_net_[i].begin() + _n < control_net_[i].end())
