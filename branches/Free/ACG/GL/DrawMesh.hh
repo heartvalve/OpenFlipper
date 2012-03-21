@@ -312,7 +312,7 @@ private:
    * @param _dstVertexMap [out] pointer to the resulting vertex map (new -> old vertex)
    * @param _srcVertexMap [in] pointer to the previously used vertex map (new -> old vertex)
    * @param _duplicatesMap [out] maps from a duplicate vertex to it's first occurrence (OpenMesh vertex indices)
-   * @return new #vertices
+   * @return new number of vertices
    */
   unsigned int weldVertices(Vertex*             _dstVertexBuf,
                             const Vertex*       _srcVertexBuf,
@@ -591,7 +591,7 @@ private:
    *
    * @param _pOutMaxPolyVerts
    *
-   * @return #triangles
+   * @return  number of triangles
   */
   unsigned int countTris(unsigned int* _pOutMaxPolyVerts = 0);
 
