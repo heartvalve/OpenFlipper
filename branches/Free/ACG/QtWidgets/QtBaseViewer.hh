@@ -295,6 +295,8 @@ public:
       and the popup menu will be updated.<br>
       The \c sceneGraphToched() signal will be emitted (even if
       \c _root does not actually change).
+
+      @param _root The root node of the scene graph
   */
   void sceneGraph(SceneGraph::BaseNode* _root);
 
