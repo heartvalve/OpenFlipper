@@ -304,12 +304,12 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
             ++p;
             --remainingChars;
         } else if ( ( remainingChars > 0 ) && (p[0] == '4' ) ) {
-            /// \TODO: Implement extended coordinates
+            /// \todo Implement extended coordinates
             std::cerr << "Error: Extended coordinates are currently not supported!" << std::endl;
             ifs.close();
             return false;
         } else if ( ( remainingChars > 0 ) && (p[0] == 'n' ) ) {
-            /// \TODO: Implement any space dimension
+            /// \todo Implement any space dimension
             std::cerr << "Error: n-dimensional coordinates are currently not supported!" << std::endl;
             ifs.close();
             return false;
