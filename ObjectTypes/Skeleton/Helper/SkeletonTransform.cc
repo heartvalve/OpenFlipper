@@ -135,7 +135,8 @@ void SkeletonTransform::translateSkeleton(ACG::Vec3d _translation, Skeleton::Pos
  *
  * transform the skeleton in the reference pose and all animations simultanously
  *
- * @param _transform the transformation to apply
+ * @param _transformation The transformation to apply
+ * @param _pose           The pose on which the transformation should be applied
  *
  */
 void SkeletonTransform::transformSkeleton(Matrix4x4 _transformation, Skeleton::Pose* _pose) {
@@ -176,9 +177,9 @@ void SkeletonTransform::transformSkeleton(Matrix4x4 _transformation, Skeleton::P
  * to animation poses does not make much sense. Use rotateJoint to change joint positions
  * during the animation.
  *
- * @param _joint target joint
- * @param _transform the transformation to apply
- * @param _keepChildPositions keep the global positions of child joints
+ * @param _joint              Target joint
+ * @param _matrix             The transformation to apply
+ * @param _keepChildPositions Keep the global positions of child joints
  *
  */
 void SkeletonTransform::transformJoint(Skeleton::Joint* _joint, Matrix4x4 _matrix, bool _keepChildPositions) {
@@ -304,9 +305,9 @@ void SkeletonTransform::transformJoint(Skeleton::Joint* _joint, Matrix4x4 _matri
  * to animation poses does not make much sense. Use rotateJoint to change joint positions
  * during the animation.
  *
- * @param _joint target joint
- * @param _transform the transformation to apply
- * @param _keepChildPositions keep the global positions of child joints
+ * @param _joint              Target joint
+ * @param _translation        The translation to apply
+ * @param _keepChildPositions Keep the global positions of child joints
  *
  */
 void SkeletonTransform::translateJoint(Skeleton::Joint* _joint, ACG::Vec3d _translation, bool _keepChildPositions) {
@@ -319,14 +320,14 @@ void SkeletonTransform::translateJoint(Skeleton::Joint* _joint, ACG::Vec3d _tran
 
 //-----------------------------------------------------------------------------
 
-/** \brief rotate a joint in an arbitrary Pose
+/** \brief Rotate a joint in an arbitrary Pose
  *
- * rotate a joint in the given pose and with the given rotation matrix.
+ * Rotate a joint in the given pose and with the given rotation matrix.
  *
- * @param _joint target joint
- * @param _pose target pose
- * @param _matrix the rotation matrix that should be applied
- * @param _applyToWholeAnimation should the relative rotation be applied to all frames of the animation?
+ * @param _joint                 Target joint
+ * @param _pose                  Target pose
+ * @param _rotation              The rotation matrix that should be applied
+ * @param _applyToWholeAnimation Should the relative rotation be applied to all frames of the animation?
  *
  */
 void SkeletonTransform::rotateJoint(Skeleton::Joint* _joint, Skeleton::Pose* _pose, Matrix4x4 _rotation, bool _applyToWholeAnimation) {
