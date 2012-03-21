@@ -180,6 +180,9 @@ public:
       Recomputes Scene center and resets the trackball center if specified.
       The \c sceneGraphToched() signal will be emitted (even if
       \c _root does not actually change).
+
+      @param _root The root node of the scene graph
+      @param _resetTrackBall Reset the trackball center?
   */
   void sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTrackBall = false);
 
