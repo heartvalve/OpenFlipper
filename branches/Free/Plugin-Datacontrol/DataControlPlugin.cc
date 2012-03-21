@@ -730,7 +730,8 @@ void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 
 /** \brief Recursively update a column up to the root of the tree
  *
- * @param _obj object to start with
+ * @param _obj    object to start with
+ * @param _column Column to be propagated
  */
 void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
 
