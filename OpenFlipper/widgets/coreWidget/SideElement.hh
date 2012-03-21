@@ -81,9 +81,11 @@ class SideElement : public QWidget
 
   public:
     /** Create a SideElement
-      \param _parent SideArea widget that holds this widget
-      \param _w Plugin tool widget
-      \param _name Plugin name
+      @param _parent   SideArea widget that holds this widget
+      @param _w        Plugin tool widget
+      @param _name     Plugin name
+      @param _icon     An icon that should be shown in the title bar of the side element
+
     */
     SideElement (SideArea *_parent, QWidget *_w, QString _name, QIcon* _icon = 0);
 

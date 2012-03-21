@@ -1353,9 +1353,11 @@ public:
 
     /** \brief  add pick mode
      *
-     *  @param _name Name of the Pick Mode or "Separator" to insert a separator
+     *  @param _name           Name of the Pick Mode or "Separator" to insert a separator
      *  @param _mouse_tracking true: every mouse movement will emit mouse events not only when mousebutton is pressed
-     *  @param _pos position to insert the mode in the popup menu.
+     *  @param _pos            position to insert the mode in the popup menu.
+     *  @param _visible        If true, the ode will be visible in the ui, otherwise it is a hidden pick mode
+     *  @param _cursor         The cursor that should be used when the given pickmode is active
      */
     void addPickMode(const std::string& _name,
                      bool               _mouse_tracking = false,
