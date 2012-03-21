@@ -73,9 +73,9 @@ public:
 	* The constructor needs a mesh on which this node will work.
 	*
 	* @param NumTris number of triangles
-	*		 NumVerts number of vertices
-	*		 IndexSize size in bytes of one index: 1, 2, 4 supported
-	*		 pIndices [in] index buffer
+	*	@param NumVerts number of vertices
+	*	@param IndexSize size in bytes of one index: 1, 2, 4 supported
+	*	@param pIndices [in] index buffer
 	*/
 	GPUCacheOptimizer(UINT NumTris, UINT NumVerts, UINT IndexSize, const void* pIndices);
 	virtual ~GPUCacheOptimizer(void);
@@ -94,8 +94,7 @@ public:
 	* and stores the result in the given destination buffer.
 	*
 	* @param DstIndexSize size in bytes of one index in the dst buffer
-	*		 pDst [out] index buffer to store the result
-	*			         may also be the same memory as pIndices of constructor's call
+	*	@param pDst [out] index buffer to store the result may also be the same memory as pIndices of constructor's call
 	* NOTE:
 	* make sure pIndices is not modified/deleted between constructor's and this call
 	*/
@@ -103,49 +102,49 @@ public:
 
 
 	/** \brief Reorders vertex buffer to minimize memory address jumps.
-	* for best performace, use AFTER triangle remapping
-	*   
-	* see description on RemapVertices() on how to apply this map
-	*
-	*
-	* @param
-	*	pIndices [in] index buffer
-	*	pVertMap [out] vertex remap, allocate NumVerts uints before calling
-	*			   dst vertex index = pVertMap[src vertex index]
-	*				NOTE: if a vertex is not referenced by any triangle, the value 0xFFFFFFFF
-	*				will be stored as the destination index!
-	*
+	 *
+	 * for best performace, use AFTER triangle remapping
+	 * see description on RemapVertices() on how to apply this map
+	 *
+	 *
+	 * @param pIndices [in] index buffer
+	 * @param pVertMap [out] vertex remap, allocate NumVerts uints before calling
+	 *	      dst vertex index = pVertMap[src vertex index]
+	 *				NOTE: if a vertex is not referenced by any triangle, the value 0xFFFFFFFF
+	 *				will be stored as the destination index!
+	 * @param NumTris   Number of triangles
+	 * @param NumVerts  Number of vertices
+	 * @param IndexSize Size of the index
 	*/
 	static void OptimizeVertices(UINT NumTris, UINT NumVerts, UINT IndexSize,
 								 const void* pIndices, UINT* pVertMap);
 	/* this function is declared static to be able to operate on the whole model
 	instead of just a subset of it
 	example use : 1. optimize triangle list per material group
-	              2. optimize vertex buffer on whole mesh
-	     				independently of material subsets
+	              2. optimize vertex buffer on whole mesh independently of material subsets
 	*/
 
 
-	/** \brief
-	* applies the remap table of OptimizeVertices to a vertex and index buffer
-	*
-	* pseudo code (manual remapping):
-	*
-	* for each index i in IndexBuffer:
-	*   IndexBuffer[i] = VertMap[IndexBuffer[i]]
-	* TmpBuf = VertexBuffer
-	* for each vertex v in TmpBuf
-	*   if (VertMap[v] != 0xFFFFFFFF)
-	*     VertexBuffer[VertMap[v]] = TmpBuf[v]
-	*
-	* @param
-	*	pVertMap [in] vertex remap, result from OptimizeVertices()
-	*	IndexSize size in bytes of one index: 1, 2, 4 supported
-	*	pInOutIndices [in/out] (triangle list) index buffer, remapped after call
-	*	VertexStride size in bytes of one vertex
-	*	pInOutVertices [in/out] vertex buffer, remapped after call
-	*
-	*/
+	/** \brief Applies the remap table of OptimizeVertices to a vertex and index buffer
+	 *
+	 * pseudo code (manual remapping):
+	 *
+	 * for each index i in IndexBuffer:
+	 *   IndexBuffer[i] = VertMap[IndexBuffer[i]]
+	 * TmpBuf = VertexBuffer
+	 * for each vertex v in TmpBuf
+	 *   if (VertMap[v] != 0xFFFFFFFF)
+	 *     VertexBuffer[VertMap[v]] = TmpBuf[v]
+	 *
+	 * @param NumTris   Number of triangles
+   * @param NumVerts  Number of vertices
+	 * @param	pVertMap [in] vertex remap, result from OptimizeVertices()
+	 * @param	IndexSize size in bytes of one index: 1, 2, 4 supported
+	 * @param pInOutIndices [in/out] (triangle list) index buffer, remapped after call
+	 * @param VertexStride  size in bytes of one vertex
+	 * @param pInOutVertices [in/out] vertex buffer, remapped after call
+	 *
+	 */
 	static void RemapVertices(UINT NumTris, UINT NumVerts, const UINT* pVertMap,
 		UINT IndexSize, void* pInOutIndices, UINT VertexStride, void* pInOutVertices);
 
@@ -253,11 +252,15 @@ protected:
 class ACGDLLEXPORT GPUCacheOptimizerTipsify : public GPUCacheOptimizer
 {
 public:
-	/** \brief 
-		The actual computation happens here in this constructor.
-
-	 @param CacheSize number of entries in the vertex cache
+	/** \brief The actual computation happens here in this constructor.
+	 *
+	 * @param CacheSize number of entries in the vertex cache
+	 * @param NumTris   Number of triangles
+   * @param NumVerts  Number of vertices
+   * @param IndexSize size in bytes of one index: 1, 2, 4 supported
+   * @param pIndices  index buffer
 	*/
+
 	GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris, UINT NumVerts,
 		UINT IndexSize, const void* pIndices);
 
