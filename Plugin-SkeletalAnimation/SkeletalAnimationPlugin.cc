@@ -367,8 +367,8 @@ void SkeletalAnimationPlugin::changeFPS(int _fps) {
 /**
  * @brief Changes the mesh's pose to represent the frame given by the animation handle
  *
- * @param _pSkeletonObject The object holding the skeleton, it is holding the pointer to the skin object
- * @param _hAni A handle of the new pose
+ * @param _skeletonObject The object holding the skeleton, it is holding the pointer to the skin object
+ * @param _hAni           A handle of the new animation/pose
  */
 void SkeletalAnimationPlugin::UpdateSkins(BaseObjectData *_skeletonObject, AnimationHandle &_hAni)
 {
