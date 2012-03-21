@@ -188,7 +188,7 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     
     /// Get closest edge index from a face
     template< class MeshT >
-    int getClosestEdgeInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint);
+    int getClosestEdgeInFace(MeshT* _mesh, int _face_idx, const ACG::Vec3d& _hitPoint);
 
     /// Get closest vertex index from an edge
     template< class MeshT >

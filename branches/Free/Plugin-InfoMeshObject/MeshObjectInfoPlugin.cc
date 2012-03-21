@@ -574,12 +574,13 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
 
 /** \brief Find closest edge to selection
  *
- * @param _mesh Reference to the mesh
+ * @param _mesh     Reference to the mesh
  * @param _face_idx Index of the face that has been clicked on
+ * @param _hitPoint The point which will be tested
  */
 
 template <class MeshT>
-int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, ACG::Vec3d& _hitPoint) {
+int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, const ACG::Vec3d& _hitPoint) {
 
     typename MeshT::ConstFaceHalfedgeIter fh_it;
     typename MeshT::VertexHandle v1, v2;
