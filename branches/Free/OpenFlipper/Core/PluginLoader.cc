@@ -189,7 +189,8 @@ class PreloadThread : public QThread
     /** \brief Preload thread constructor
     *
     * This constructor initializes the preloading thread.
-    * @param _fileName Filename of the Plugin to be loaded.
+    *
+    * @param aggregator aggregator managing the different threads
     */
     PreloadThread(PreloadAggregator *aggregator) : aggregator_(aggregator) {
     }
