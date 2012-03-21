@@ -221,10 +221,6 @@ void SkeletonEditingPlugin::initializePlugin()
         MouseInterface implementation
  *******************************************************************************/
 
-/** \brief MouseWheel event occured
- *
- * @param _event the event that occured
- */
 void SkeletonEditingPlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /*_mode*/)
 {
   // Skip execution if this is not our pick mode
