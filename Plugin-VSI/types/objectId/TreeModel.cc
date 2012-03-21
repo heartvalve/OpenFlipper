@@ -313,7 +313,7 @@ void TreeModel::objectChanged(int _id) {
 
 /** \brief The object with the given id has been added. add it to the internal tree
  *
- * @param id_ id of the object
+ * @param _object The added object
  */
 void TreeModel::objectAdded(BaseObject* _object){
 
@@ -358,7 +358,7 @@ void TreeModel::objectAdded(BaseObject* _object, BaseObject* _parent){
 
 /** \brief The object with the given id has been deleted. delete it from the internal tree
  *
- * @param id_ id of the object
+ * @param _id id of the object
  */
 void TreeModel::objectDeleted(int _id){
 
@@ -572,13 +572,6 @@ void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
 
 //******************************************************************************
 
-/** \brief Set Data at 'index' to 'value'
- * 
- * @param index a ModelIndex defining the positin in the model
- * @param value the new value
- * @param  unused
- * @return return if the data was set successfully
- */
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
 
