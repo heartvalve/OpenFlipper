@@ -182,12 +182,13 @@ public:
   //--------------------------------------------------- constructor / destructor
 
   /** Create a QtBaseViewer.
-    \param _parent parent widget
-    \param _name name (qt internal, qt debugging)
-    \param _statusBar pointer to an existing status bar for this widget,
+    @param _parent parent widget
+    @param _name name (qt internal, qt debugging)
+    @param _statusBar pointer to an existing status bar for this widget,
      if \c statusBar==0 then a \a private status bar will be created
-    \param _format OpenGL context settings, will be passed to glarea()
-    \param _options QtBaseViewer::Options
+    @param _format OpenGL context settings, will be passed to glarea()
+    @param _share  Second base viewer for shared context
+    @param _options QtBaseViewer::Options
   */
   QtBaseViewer( QWidget* _parent=0,
 		const char* _name=0,
