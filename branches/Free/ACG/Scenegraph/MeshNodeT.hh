@@ -87,12 +87,7 @@ class MeshNodeT : public BaseNode
 
 public:
 
-  /**
-   *
-   * @param _textureMap if the mesh has a face_texture_index and a map is provided textures are switched based on the given ids
-   */
-
-  /** Default constructor
+   /** Default constructor
    *
    * @param _mesh   The mesh that should be rendered
    * @param _parent parent node
