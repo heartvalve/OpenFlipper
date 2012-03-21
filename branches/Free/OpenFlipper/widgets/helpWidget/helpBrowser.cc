@@ -61,8 +61,7 @@ HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
 	currentPage_ = 0;
 
-	connect(this, SIGNAL(linkClicked(const QString&)),
-			this, SLOT(open(const QString&)));
+	connect(this, SIGNAL(linkClicked(const QString&)), this, SLOT(open(const QString&)));
 
 }
 
@@ -70,34 +69,68 @@ HelpBrowser::~HelpBrowser() {
 
 }
 
+
+void HelpBrowser::updateNameSpaceAndFolder (const QUrl& _url) {
+
+  // Extract the global virtual folder from this link
+  QString link = _url.toString();
+  QStringList linkParts = link.split("/");
+
+  if ( linkParts.size() > 3) {
+    currentNameSpace_     = linkParts[2];
+    currentVirtualFolder_ = linkParts[3];
+  } else {
+    currentNameSpace_ = "";
+    currentVirtualFolder_ = "";
+    std::cerr << "Unable to detect virtual folder or namespace of this link" << _url.toString().toStdString() << std::endl;
+  }
+}
+
+void HelpBrowser::rememberHistory (const QUrl& _url) {
+
+  // Delete the visited pages after the current position if they exist
+  if ( currentPage_ < visitedPages_.size()-1 )
+    visitedPages_.erase((visitedPages_.begin()+currentPage_),visitedPages_.end());
+
+  visitedPages_.push_back(_url);
+  currentPage_ = visitedPages_.size()-1;
+
+}
+
 QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
 	if (_url.scheme() == "qthelp") {
 
-		// Extract the global virtual folder from this link
-		QString link = _url.toString();
-
-		QStringList linkParts = link.split("/");
-
-		if ( linkParts.size() > 3) {
-			currentNameSpace_     = linkParts[2];
-			currentVirtualFolder_ = linkParts[3];
-		} else {
-			currentNameSpace_ = "";
-			currentVirtualFolder_ = "";
-			std::cerr << "Unable to detect virtual folder or namespace of this link" << _url.toString().toStdString() << std::endl;
-		}
-
+	  updateNameSpaceAndFolder(_url);
 		return QVariant(helpEngine_->fileData(_url));
+
 	}	else {
 
-		const QString sNewUrl = "qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/" + _url.toString();
-		const QUrl newUrl = helpEngine_->findFile(QUrl(sNewUrl));
+		QUrl newUrl;
 
-		if(newUrl.isValid())
-			return QVariant(helpEngine_->fileData(newUrl));
+		if ( _url.toString().startsWith("..") ) {
+
+		  // Relative url. We jump to a new context, so we first remove the relative part
+		  QUrl tmpURL("qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/");
+		  newUrl = tmpURL.resolved(_url);
+
+		  // Update context
+		  updateNameSpaceAndFolder(newUrl);
+
+		} else {
+
+		  // Normal URL without relative parts so we can safely combine them
+		  // and stay in the current context
+		  newUrl = "qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/" + _url.toString();
+
+		}
+
+		const QUrl newFileUrl = helpEngine_->findFile(newUrl);
+
+		if(newFileUrl.isValid())
+			return QVariant(helpEngine_->fileData(newFileUrl));
 		else {
-			std::cerr << "Unable to find file at url : " << sNewUrl.toStdString() << std::endl;
+			std::cerr << "Unable to find file at url : " << newUrl.toString().toStdString() << std::endl;
 			return QVariant();
 		}
 
@@ -107,15 +140,10 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
 void HelpBrowser::open(const QString& _url) {
 
-	open(QUrl(_url), "");
+	open(QUrl(_url));
 }
 
-void HelpBrowser::open(const QUrl& _url) {
-
-	open(_url, "");
-}
-
-void HelpBrowser::open(const QUrl& _url, const QString& /*_str*/, bool _skipSave) {
+void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
 
 	QVariant data = this->loadResource(QTextDocument::HtmlResource, _url);
 
@@ -132,14 +160,10 @@ void HelpBrowser::open(const QUrl& _url, const QString& /*_str*/, bool _skipSave
 		txt = data.toString();
 	}
 
-	//std::cerr << txt.toStdString() << std::endl;
-
 	setHtml(txt);
 
-	if(!_skipSave) {
-		visitedPages_.push_back(_url.toString());
-		currentPage_ = visitedPages_.size()-1;
-	}
+	if(!_skipSave)
+	  rememberHistory(_url);
 
   //jumps to a reference (Doxygen reference name and not section name)
   //references are at the end of url after last '#'
@@ -153,7 +177,11 @@ void HelpBrowser::open(const QUrl& _url, const QString& /*_str*/, bool _skipSave
 QUrl HelpBrowser::getCurrentDir(const QUrl& _url) {
 
 	QStringList str_list = _url.toString().split("/");
-	str_list[str_list.size() - 1] = "";
+
+	if ( str_list.size() > 0  )
+	  str_list[str_list.size() - 1] = "";
+	else
+	  std::cerr << "Warning, getCurrentDir got invalid input: " << _url.toString().toStdString() << std::endl;
 
 	QString nstr = str_list.join("/");
 
@@ -174,15 +202,17 @@ void HelpBrowser::backward() {
 
 	if(isBackwardAvailable()) {
 		currentPage_--;
-		open(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		open(visitedPages_[currentPage_], true);
 	}
+
 }
 
 void HelpBrowser::forward() {
 
 	if(isForwardAvailable()) {
 		currentPage_++;
-		open(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		open(visitedPages_[currentPage_], true);
 	}
+
 }
 
