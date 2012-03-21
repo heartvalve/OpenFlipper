@@ -76,9 +76,9 @@ Receive an event if an ini file is opened by the application. ( INIInterface )\n
 
 This page gives an overview over the available interfaces which control OpenFlippers User interface.
 
-\subpage contextmenuInterfacePage
+\subpage contextMenuInterfacePage
 \image html ContextMenuInterface.png
-Add context menu entries in your plugin. ( \ref contextmenuInterfacePage )
+Add context menu entries in your plugin. ( \ref contextMenuInterfacePage )
 \n
 
 \subpage loggingInterfacePage

@@ -107,9 +107,7 @@
  * Last but not least, the method that is called each time our context menu has been clicked.
  * We get the object's id on which the user has performed a right click from the action data.
  * Then we try to get the node and its BaseObjectData handle. If successfully passed to this
- * point we hide the object by calling its hide() method. As described in \ref geometryData
- * we now have to call BaseInterface::visibilityChanged() for the core to be informed about
- * the changes.
+ * point we hide the object by calling its hide() method.
  *
  * \dontinclude MouseAndKeyPlugin.cc
  * \skip void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {

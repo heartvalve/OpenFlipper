@@ -20,7 +20,7 @@
  * Also see INIInterface
  *
  * \subsection ref2 References:
- * \ref INIInterface::loadIniFileOptions(),<br>\ref INIInterface::loadIniFile(),<br>\ref INIInterface::loadIniFileOptionsLast()<br>
+ * INIInterface::loadIniFileOptions(),<br>INIInterface::loadIniFile(),<br>INIInterface::loadIniFileOptionsLast()<br>
  *
  * \image html loadSettingsFlow.jpg
  *
@@ -30,7 +30,7 @@
  * Also see INIInterface
  *
  * \subsection ref3 References:
- * \ref INIInterface::saveIniFileOptions(),<br>\ref INIInterface::saveIniFile(),<br>
+ * INIInterface::saveIniFileOptions(),<br>INIInterface::saveIniFile(),<br>
  * \image html saveSettingsFlow.jpg
  *
  *
@@ -43,7 +43,7 @@
  * Also see BaseInterface
  *
  * \subsection ref4 References:
- * \ref BaseInterface::updatedObject(),<br>BaseInterface::slotObjectUpdated(),<br>
+ * BaseInterface::updatedObject(),<br>BaseInterface::slotObjectUpdated(),<br>
  * \image html ObjectUpdateNotification.png
  *
  *
@@ -54,7 +54,7 @@
  * Also see \ref BaseInterface
  *
  * \subsection ref5 References:
- * \ref BaseInterface::updateView(),<br>
+ * BaseInterface::updateView(),<br>
  * \image html SceneViewUpdate.png
  *
  */
