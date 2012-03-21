@@ -155,7 +155,7 @@
  * \skipline } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
  *
  * The next step is to tell the OpenFlipper core that our plugin has updated an object in the scene.
- * The affected object will then be redrawn. See \ref geometryData for information on how to handle geometry data in a plugin.
+ * The affected object will then be redrawn. 
  *
  * \dontinclude example/SmootherPlugin.cc
  * \skipline emit updatedObject( o_it->id() );

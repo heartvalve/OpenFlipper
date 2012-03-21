@@ -5,23 +5,22 @@
  * Mouse interaction (especially object picking) and keyboard shortcuts
  * form essential and often used functionality in OpenFlipper. In this
  * tutorial we will learn how to use picking modes, context menus and
- * simple keyboard shortcuts. In addition we will focus a little bit on
- * what is explained in \ref geometryData. The plugin will provide the following functions:
+ * simple keyboard shortcuts. The plugin will provide the following functions:
  *
  * - Hide object by right-clicking at it and selecting our defined action
  * - Select an object by entering user defined pick mode and double-clicking
  * 	 at object in the scene
  * - Rotate selected object by hitting the w,s,a,d keys on the keyboard
  *
- * For this purpose we will make use of the following \ref interfaces:
+ * For this purpose we will make use of the following \ref interfaces
  *
- * - \ref BaseInterface
- * - \ref MouseInterface
- * - \ref PickingInterface
- * - \ref KeyInterface
- * - \ref ContextMenuInterface
- * - \ref ToolboxInterface
- * - \ref LoggingInterface
+ * - \ref baseInterfacePage
+ * - \ref mouseInterfacePage
+ * - \ref pickingInterfacePage
+ * - \ref keyInterfacePage
+ * - \ref contextMenuInterfacePage
+ * - \ref toolboxInterfacePage
+ * - \ref loggingInterfacePage
  *
  * Since we outlined the details of overriding the BaseInterface methods
  * in the previous tutorials (\ref ex1 and \ref ex2) we can directly switch
@@ -92,7 +91,7 @@
  * object's transform node (manipulatorNode) to hold a matrix that describes
  * a rotation around the x (if w or s is pressed) or y axis (if a or d is pressed) by +/- 10 degrees.
  * We then call the method transformMesh and pass the recently calculated matrix and
- * a handle to the mesh (triangle or polygon). As said in \ref geometryData we have to
+ * a handle to the mesh (triangle or polygon). We have to
  * inform OpenFlipper's core about the changes by calling BaseInterface::updatedObject(int).
  *
  * \dontinclude MouseAndKeyPlugin.cc
@@ -118,7 +117,7 @@
  *
  * \section ex3_source The complete source code of this example
  *
- * We use the same project file as created in \ref ex1b.
+ * We use the same project file as before.
  *
  * MouseAndKeyPlugin.hh
  * \include MouseAndKeyPlugin.hh
