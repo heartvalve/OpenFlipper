@@ -111,6 +111,7 @@ void SplatCloudObjectSelectionPlugin::splatCloudToggleSelection( SplatCloud *_sp
  * @param _splatCloud a SplatCloud
  * @param _index index of vertex that was picked
  * @param _hit_point point that was picked
+ * @param _radius selection sphere radius
  * @param _primitiveType primitive types to be selected
  * @param _deselection true, if entities should be deselected
  */
@@ -169,9 +170,10 @@ bool SplatCloudObjectSelectionPlugin::splatCloudVolumeSelection( SplatCloud *_sp
  *
  * @param _splatCloud a SplatCloud
  * @param _primitiveTypes selection types
- * @param _r red rgb color-component
- * @param _g green rgb color-component
- * @param _b blue rgb color-component
+ * @param _r red   rgba color-component
+ * @param _g green rgba color-component
+ * @param _b blue  rgba color-component
+ * @param _a blue  rgba color-component
  */
 void SplatCloudObjectSelectionPlugin::splatCloudColorizeSelection( SplatCloud *_splatCloud, PrimitiveType _primitiveTypes, int _r, int _g, int _b, int _a )
 {
