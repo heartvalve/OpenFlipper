@@ -803,17 +803,11 @@ QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
 
 //******************************************************************************
 
-/** \brief this is called when mimeData is dropped
- *
- * @param data the dropped data
- * @param action the definition of the dropAction which occured
- * @param unused
- * @param unused
- * @param parent parent under which the drop occurred
- * @return returns if the drop was sucessful
- */
-bool TreeModel::dropMimeData(const QMimeData *data,
-     Qt::DropAction action, int /*row*/, int /*column*/, const QModelIndex &parent)
+bool TreeModel::dropMimeData( const QMimeData *data,
+                              Qt::DropAction action,
+                              int /*row*/,
+                              int /*column*/,
+                              const QModelIndex &parent)
 {
   if (action == Qt::IgnoreAction)
       return true;
