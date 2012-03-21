@@ -76,7 +76,7 @@ inline bool isNan(double x) {
 
 template < typename VectorT , typename ValueT >
 ValueT
-getFullangle( VectorT _vector1 , VectorT _vector2 , const VectorT& _normal , bool& skip )
+getFullangle( VectorT _vector1 , VectorT _vector2 , const VectorT& _normal , bool& _skip )
 {
    //Project vectors into tangent plane defined by _normal
    _vector1 = _vector1 - _normal * ( _vector1 | _normal );
@@ -101,7 +101,7 @@ getFullangle( VectorT _vector1 , VectorT _vector2 , const VectorT& _normal , boo
    double angle = acos(sp);
 
    // catch some possible nans
-   skip = ( isNan(right) || isNan(angle) ) ;
+   _skip = ( isNan(right) || isNan(angle) ) ;
 
    if ( right < 0 ) {
       angle = 2 * M_PI - angle;

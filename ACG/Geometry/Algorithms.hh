@@ -149,34 +149,35 @@ perpendicular( const VectorT<Scalar,3>&  _v );
 template<typename Vec>
 bool
 triangleIntersection( const Vec&  _o,
-		      const Vec&  _dir,
-		      const Vec&  _v0,
-		      const Vec&  _v1,
-		      const Vec&  _v2,
-		      typename Vec::value_type& _t,
-		      typename Vec::value_type& _u,
-		      typename Vec::value_type& _v );
+                      const Vec&  _dir,
+                      const Vec&  _v0,
+                      const Vec&  _v1,
+                      const Vec&  _v2,
+                      typename Vec::value_type& _t,
+                      typename Vec::value_type& _u,
+                      typename Vec::value_type& _v );
       
 
 /**  \brief Intersect a ray and an axis aligned bounding box
   *
   * Computes the intersection point between a ray and an axis aligned bounding box
   *
-  * @param _dir direction vector of the ray
+  * @param _o     Origin of the ray
+  * @param _dir   direction vector of the ray
   * @param _bbmin lower left front corner of the bounding box
   * @param _bbmax upper right back corner of the bounding box
   * @param _t0 if there was an intersection, this value marks the entry point
   * @param _t1 if there was an intersection, this value marks the exit point
-  * @return true if an intersection was found
+  * @return       true if an intersection was found
   */
 template<typename Vec>
 bool
 axisAlignedBBIntersection( const Vec&  _o,
-		  const Vec&  _dir,
-		  const Vec& _bbmin,
-		  const Vec& _bbmax,
-		  typename Vec::value_type& _t0,
-		  typename Vec::value_type& _t1 );
+		                       const Vec&  _dir,
+		                       const Vec& _bbmin,
+		                       const Vec& _bbmax,
+		                       typename Vec::value_type& _t0,
+		                       typename Vec::value_type& _t1 );
 
 
 //== 2D STUFF =================================================================

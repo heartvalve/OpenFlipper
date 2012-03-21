@@ -73,7 +73,7 @@ namespace Geometry {
    @param _vector1 vector pointing away from center, angle = 0
    @param _vector2 vector for which the angle should be calculated                    
    @param _normal  the normal used to compute if vector2 is left or right of vecor1
-   @param _skip    Flag to catch nan. If true nan occured and value should not be used
+   @param _skip    Flag to catch nan. If true nan occurred and value should not be used
    @return the angle (0 .. 2 * PI)
 */
 template < typename VectorT , typename ValueT >
@@ -81,7 +81,7 @@ ValueT
 getFullangle( VectorT _vector1, 
               VectorT _vector2, 
               const   VectorT& _normal, 
-              bool&   skip );
+              bool&   _skip );
 
 
 /** Calculate the difference between two angles ( minimum distance )
