@@ -26,6 +26,11 @@ separate_arguments( test_args )
 # Run OpenFlipper with the given script
 # ===================================================
 
+# clear previous test results
+if ( EXISTS ${output_test} )
+  file(REMOVE ${output_test})
+endif()
+
 # Execute the process with the given arguments
 # Timeout after 4 minutes
 execute_process(
