@@ -9,7 +9,7 @@ if(BUILD_TESTING)
   # Tests
   # ========================================================================
   # ========================================================================
-  run_single_object_file_mesh_test("fileskl" "SkeletonWithAnimation.skl" "fileSkeletonTest.ofs")
-  run_single_object_file_mesh_test("fileskl" "SkeletonWithoutAnimation.skl" "fileSkeletonTest.ofs")
+  run_single_object_file_mesh_test("fileskl" "Plugin-FileSKL/SkeletonWithAnimation.skl" "fileSkeletonTest.ofs")
+  run_single_object_file_mesh_test("fileskl" "Plugin-FileSKL/SkeletonWithoutAnimation.skl" "fileSkeletonTest.ofs")
 
 endif()
