@@ -4,16 +4,16 @@
 # This function generates a test for a mesh file plugin.
 # a single object has to be contained in the file that is loaded!
 #
-# The script name of the file plugin is the first paraeter (e.g. fileobj)
-# The second parameter is the name of the file that should be loaded fro the toplevel TestData directory.
-# If that directory or file does not exist, no test will be generated! 
+# The script name of the file plugin is the first parameter (e.g. fileobj)
+# The second parameter is the name of the file that should be loaded from the TestData directory.
+# If that directory or file does not exist, no test will be generated!
 #
 # The third parameter is the script that will be used. It will be taken from the global tests directory
 # TODO: also take local scripts!
 #
 # Used files:
 # fileMeshTest.ofs ( configured and copied script for meshes )
-# run_file_test.cmake ( Executing the test and comparing the results) 
+# run_file_test.cmake ( Executing the test and comparing the results)
 function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT  )
 
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData)
@@ -29,7 +29,11 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT  )
 
   # construct the testname from target test file and the plugin directory we are in
   string (TOUPPER ${_plugin_dir} PLUGIN_DIR)
-  set (TESTNAME "${PLUGIN_DIR}-${TEST_FILE}")
+
+  # replace possible forward slashes in TEST_FILE in order to avoid the creation
+  # of a new directory when the test script is configured
+  string (REPLACE "/" "-" TEST_FILE_NAME ${TEST_FILE})
+  set (TESTNAME "${PLUGIN_DIR}-${TEST_FILE_NAME}")
 
   set (TESTSCRIPTNAME "testscript-${TESTNAME}-${TEST_SCRIPT}")
 
@@ -112,15 +116,15 @@ function( run_algorithm_test TEST_SCRIPT INPUT_FILE INPUT_REFERENCE )
   endif()
 
   set (OPENFLIPPER_TEST_INPUT_FILE "${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_FILE}")
-  
+
   # Check if we find the reference file
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_REFERENCE} )
       message("No Reference File  ${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_REFERENCE} ")
       return()
   endif()
- 
+
   set (OPENFLIPPER_TEST_REFERENCE_FILE "${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_REFERENCE}")
-    
+
   # Check if we find the reference result file
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_REFERENCE}.info )
       message("No Result info File ${CMAKE_SOURCE_DIR}/TestData/${_plugin_dir}/${INPUT_REFERENCE}.info ")
@@ -140,15 +144,15 @@ function( run_algorithm_test TEST_SCRIPT INPUT_FILE INPUT_REFERENCE )
   if (NOT EXISTS  ${OPENFLIPPER_TEST_FILES}/${_plugin_dir})
     FILE(MAKE_DIRECTORY ${OPENFLIPPER_TEST_FILES}/${_plugin_dir} )
   endif()
-  
+
   # Configure the test script from the current directory with the given filenames and variables into the test directory
-  configure_file( ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests/${TEST_SCRIPT} 
+  configure_file( ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests/${TEST_SCRIPT}
                   ${OPENFLIPPER_TEST_FILES}/${_plugin_dir}/${TEST_FILE} )
 
   # Set the filename and path for the configured script
-  
+
   set(TESTSCRIPTNAME "${OPENFLIPPER_TEST_FILES}/${_plugin_dir}/${TEST_SCRIPT}" )
-  
+
   # Execute the script by OpenFlipper and than run the result parser which checks for correct values.
   set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
   set( args "-c -b ${TESTSCRIPTNAME}" )
