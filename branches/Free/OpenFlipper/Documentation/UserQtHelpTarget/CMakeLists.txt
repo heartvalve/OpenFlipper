@@ -24,6 +24,6 @@ IF (DOXYGEN_FOUND)
 
   # install the UserHelp on install
   # This will also install the plugin User Documentations
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}/Doc" )
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}/Help" )
 
 ENDIF(DOXYGEN_FOUND)

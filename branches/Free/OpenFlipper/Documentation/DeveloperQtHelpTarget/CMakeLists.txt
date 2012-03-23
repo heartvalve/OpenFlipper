@@ -24,6 +24,6 @@ IF (DOXYGEN_FOUND)
   add_custom_command(TARGET doc-DeveloperQtHelp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove_directory ${developer_html_doc_dir})
   
   # install the DeveloperQtHelp on install
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}/Doc" )
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}/Help" )
 
 ENDIF(DOXYGEN_FOUND)
