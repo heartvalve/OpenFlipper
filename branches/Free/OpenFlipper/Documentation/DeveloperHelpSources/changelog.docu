@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( 2012.03.23 , 14280 )</b>
+- <b>OpenFlipper 1.2 ( 2012.03.23 , 14283 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -209,6 +209,7 @@
          - Switched to QWT 6 (and enabled it on mac)
          - Use one global doxy file to control the generation of the help files for plugins
          - Fixed bug where debug and release qt versions where copied into MacOS bundle causing crashes.
+         - Fixed install directory of the qt help files
 
 - <b>OpenFlipper 1.1 ( 2011.09.26  , 12468 )</b>
      - <b>ACG</b>
