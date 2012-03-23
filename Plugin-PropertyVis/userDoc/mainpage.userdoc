@@ -16,7 +16,7 @@ You can find this plugin in you toolbox.
 \image html show_properties_menu.png 
 In this section you select your mesh and the properties which you want to visualize.
 Click on the Button 'Visualize' to visualize them. You can modify the visualization depending on the data type of your property (see \ref visualize_modification for more information).
-\note You can select multiple properties by pressing <Ctrl> while selecting.
+\note You can select multiple properties by pressing "Ctrl" while selecting.
 
 You can dublicate or remove an entry by clicking the buttons on the right side.
 If you want to create a new property, see section \ref load_save to do this.
