@@ -14,7 +14,7 @@ OpenFlipper.
 <li> GLEW (>=1.6) ( http://glew.sourceforge.net )</li>
 </ul>
 
-\section optlibs Optional libraries ( Without 
+\section optlibs Optional libraries ( Without these libraries some functionality might not be available) 
 <ul>
 <li> freetype2    ( optional, used for rendering text in the scene, http://www.freetype.org/freetype2/index.html )</li> 
 <li> ftgl         ( optional, used for rendering text in the scene, http://sourceforge.net/projects/ftgl/)</li>
