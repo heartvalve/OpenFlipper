@@ -109,7 +109,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
 
   for ( int i = 0 ; i < helpFiles.size() ; ++i ) {
-    const QString filename = helpDir.path()+ QDir::separator() + helpFiles[i];
+    const QString filename = helpDir.path()+ "/" + helpFiles[i];
 
     // Don't register files twice (stored between multiple OpenFlipper executions)
     if (documentationFiles.contains(filename))
