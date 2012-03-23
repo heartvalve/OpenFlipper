@@ -699,6 +699,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/UserHelpSources \
                          @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/src/OpenMesh/Core/Mesh/gen \
+                         @CMAKE_SOURCE_DIR@/libs_required/OpenMesh/src/OpenMesh/Apps/Unsupported \
                          @CMAKE_SOURCE_DIR@/MacOS
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
