@@ -22,8 +22,11 @@ IF (DOXYGEN_FOUND)
   # Remove temporary html files after buily
   add_custom_command(TARGET doc-UserQtHelp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove_directory ${user_html_doc_dir})
 
-  # install the UserHelp on install
-  # This will also install the plugin User Documentations
-  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}/Help" )
+    # On apple we take the whole directory, so we don't need this extra install command
+  if ( NOT APPLE ) 
+    # install the UserHelp on install
+    # This will also install the plugin User Documentations
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help" DESTINATION "${ACG_PROJECT_DATADIR}" )
+  endif()
 
 ENDIF(DOXYGEN_FOUND)
