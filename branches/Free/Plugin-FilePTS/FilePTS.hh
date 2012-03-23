@@ -63,7 +63,6 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -73,7 +72,7 @@
 //== CLASS DEFINITION ============================================
 
 
-class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface
+class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface
 {
 	Q_OBJECT
 	Q_INTERFACES( FileInterface     )
@@ -81,7 +80,6 @@ class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 	Q_INTERFACES( LoggingInterface  )
 	Q_INTERFACES( BaseInterface     )
 	Q_INTERFACES( ScriptInterface   )
-	Q_INTERFACES( INIInterface      )
 
 signals:
 

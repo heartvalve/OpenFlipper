@@ -55,6 +55,7 @@
 #include <QSettings>
 
 #include <iostream>
+#include <istream>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>

@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( ?  , 14173 )</b>
+- <b>OpenFlipper 1.2 ( 2012.03.23 , 14262 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -179,6 +179,7 @@
          - TexxtureControl
              - Switched to qwt 6
              - Fixed histogram painting
+             - Create backup of original texture coordinates in file plugins not in texturecontrol
          - VSI
              - Description for remeshing algorithms
      - <b>Documentation</b>
@@ -188,6 +189,7 @@
          - Documentation for Render Interface
          - Added lots of documentation for plugin programming (with tikz pictures for the flow diagrams)
          - Added what's this generator class for easier referencing documentation from plugins
+         - Fixed a lot of doxygen warnings
      - <b>Testing</b>
          - Integrated testing framework  for file load/save testing
          - Integrated testing generators for algorithms
