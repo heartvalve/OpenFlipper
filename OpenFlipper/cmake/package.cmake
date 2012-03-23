@@ -186,7 +186,7 @@ if (WIN32)
      install (FILES "${REDISTRIBUTABLE_FILE}"
       DESTINATION ${ACG_PROJECT_BINDIR}
     )
-    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'")
+    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q /norestart'")
 	message("Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
   else()
     message("Warning! No vcredist_x86 found. Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
