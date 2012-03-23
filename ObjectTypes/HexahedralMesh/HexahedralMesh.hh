@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 /**
- * \file HexahedralMesh.hh
+ * \file HexahedralMesh/HexahedralMesh.hh
  * This file contains all required includes for using polyhedral meshes
 */
 
