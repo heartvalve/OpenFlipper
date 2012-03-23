@@ -93,7 +93,7 @@ class PostProcessorInterface {
 };
 
 /** \page postProcessorInterfacePage Post Processor Interface
-\image html PostProcessorInterfacePage.png
+\image html PostProcessorInterface.png
 \n
 
 The PostProcessor Interface can be used to add additional image post processing functions
