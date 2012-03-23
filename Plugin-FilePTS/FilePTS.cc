@@ -54,8 +54,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include <iostream>
-#include <istream>
+#include <fstream>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
@@ -64,7 +63,7 @@
 
 //== CONSTANTS ===================================================
 
-// constants of colorrange drop down box
+// constants of color range drop down box
 static const int COLORRANGE_0_1 = 0;
 static const int COLORRANGE_0_255 = 1;
 
