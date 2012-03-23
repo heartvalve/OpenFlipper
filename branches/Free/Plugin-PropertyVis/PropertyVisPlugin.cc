@@ -118,7 +118,9 @@ void PropertyVisPlugin::initializePlugin()
   QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
   tool_->pickButton->setIcon( QIcon(iconPath + "color-picker.png") );
   
-  emit addToolbox( tr("Property Visualization") , tool_ );
+  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PropertyVisIcon.png");
+
+  emit addToolbox( tr("Property Visualization") , tool_, toolIcon );
 }
 
 //-----------------------------------------------------------------------------

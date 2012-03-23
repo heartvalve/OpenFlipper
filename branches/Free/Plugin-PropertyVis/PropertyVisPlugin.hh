@@ -106,7 +106,7 @@ signals:
   void log(QString);
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget ); 
+  void addToolbox( QString  _name  , QWidget* _widget ,QIcon* _icon);
 
   //PickingInterface
   void addHiddenPickMode( const std::string& _mode );
