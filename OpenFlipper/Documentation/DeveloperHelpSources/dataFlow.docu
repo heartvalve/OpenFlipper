@@ -11,7 +11,7 @@
  * 
  * Starting OpenFlipper invokes the following processes: <br><br>
  * \subsection ref1 References:
- * \ref BaseInterface::initializePlugin(),<br>BaseInterface::pluginsInitialized(),<br>INIInterface::loadIniFileOptions()<br>
+ * BaseInterface::initializePlugin(),<br>BaseInterface::pluginsInitialized(),<br>INIInterface::loadIniFileOptions()<br>
  *
  * \image html OpenFlipperStartup.png
  *

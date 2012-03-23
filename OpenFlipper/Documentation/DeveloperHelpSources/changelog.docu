@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( 2012.03.23 , 14272 )</b>
+- <b>OpenFlipper 1.2 ( 2012.03.23 , 14274 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
@@ -597,7 +597,7 @@
              - Pass Scene boundingbox through glstate (Allow nodes to get current boundingbox)
          - Dialogs
              - Added Dialog for texture node
-             - QtMaterialDialog (Fixed bugs and interference with round_points/smooth_line)
+             - QtMaterialDialog (Fixed bugs and interference with round_points / smooth_line)
          - BSlineCurveNode
              - Get colors from materialNode rather than setting it in the node directly
          - BSlineSurfaceNode
@@ -692,7 +692,7 @@
              - Render snapshots offscreen (Arbitrary size)
              - Added option to hide coordsys in snapshots
              - Added options to set background to alpha in snapshots
-             - Added option to enable/disable multisampling in snapshots (and adjust #points used for multisampling)
+             - Added option to enable/disable multisampling in snapshots (and adjust number of points used for multisampling)
              - Improved scripting functions for snapshots
          - PluginConnection Interface
              - Allow to connect signals and slots across plugins
