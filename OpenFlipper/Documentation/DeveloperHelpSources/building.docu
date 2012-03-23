@@ -7,14 +7,18 @@ easy cross platform development. Therefore an installed version of QT with
 at least version 4.7.3 is required. We use the cmake MakeFile generator to build 
 OpenFlipper.
 
-\section reqlibs Required and optional libraries
+\section reqlibs Required libraries
 <ul>
 <li> Qt >= 4.7.3  ( http://qt.nokia.com/downloads )</li>
 <li> GLUT         ( http://www.opengl.org/resources/libraries/glut/ )</li>
 <li> GLEW (>=1.6) ( http://glew.sourceforge.net )</li>
-<li> freetype2    ( optional http://www.freetype.org/freetype2/index.html )</li>
-<li> ftgl         ( optional http://sourceforge.net/projects/ftgl/)</li>
-<li> QWT (>=6.0)  ( optional http://qwt.sourceforge.net/)</li>
+</ul>
+
+\section optlibs Optional libraries ( Without 
+<ul>
+<li> freetype2    ( optional, used for rendering text in the scene, http://www.freetype.org/freetype2/index.html )</li> 
+<li> ftgl         ( optional, used for rendering text in the scene, http://sourceforge.net/projects/ftgl/)</li>
+<li> QWT (>=6.0)  ( optional, used for histogram plottings, http://qwt.sourceforge.net/)</li>
 </ul> 
 
 \section bs Build System
