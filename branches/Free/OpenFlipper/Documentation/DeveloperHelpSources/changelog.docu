@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.2 ( 2012.03.23 , 14271 )</b>
+- <b>OpenFlipper 1.2 ( 2012.03.23 , 14272 )</b>
      - <b>ACG</b>
          - DrawMesh
              - Fixed crash with some empty meshes
