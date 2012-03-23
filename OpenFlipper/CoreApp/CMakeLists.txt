@@ -231,7 +231,6 @@ acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Licenses" "${C
 acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
 acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Fonts")
 acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/QtHelpResources" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/DocBase" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc")
 
 if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
   if ( WIN32 ) 
@@ -305,7 +304,7 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Icons" "${ACG_PROJECT_DATADIR}/Icons")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Licenses" "${ACG_PROJECT_DATADIR}/Licenses")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${ACG_PROJECT_DATADIR}/Fonts")
- # acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
+  acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
 
   if ( WIN32 )
     # create qt config file and install it
