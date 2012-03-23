@@ -1,168 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE" sourcelanguage="en">
-<context>
-    <name></name>
-    <message>
-        <source>File</source>
-        <translation type="obsolete">Datei</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="obsolete">Ansicht</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation type="obsolete">Zubehör</translation>
-    </message>
-</context>
+<TS version="2.0" language="de_DE">
 <context>
     <name>LightWidgetBase</name>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="20"/>
         <source>Directional Light source or lightsource with position</source>
-        <translation>Gerichtete Lichtquelle oder Lichtquelle mit Position</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="23"/>
         <source>Directional Light Source</source>
-        <translation>Gerichtete Lichtquelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="30"/>
         <source>Light source fixed relatively to the viewer</source>
-        <translation>Feste Position relativ zum Betrachter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="33"/>
         <source>Fixed Position/Direction</source>
-        <translation>Feste Position/Richtung</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="49"/>
         <source>Position</source>
-        <translation>Position</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="57"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="135"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="192"/>
         <source>Y</source>
-        <translation>Y</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="67"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="122"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="179"/>
         <source>X</source>
-        <translation>X</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="77"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="148"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="205"/>
         <source>Z</source>
-        <translation>Z</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="111"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="218"/>
         <source>Direction</source>
-        <translation>Richtung</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="171"/>
         <source>Spot</source>
-        <translation>Spot</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="236"/>
         <source>Parameters</source>
-        <translation>Parameter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="245"/>
         <source>Angle</source>
-        <translation>Öffnungswinkel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="255"/>
         <source>Exponent</source>
-        <translation>Exponent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="271"/>
         <source>Colors</source>
-        <translation>Farben</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="279"/>
         <source>Brightness</source>
-        <translation>Helligkeit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="305"/>
         <source>Ambient</source>
-        <translation>Umgebungslicht</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="323"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="386"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="449"/>
         <source>R</source>
-        <translation>R</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="333"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="396"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="459"/>
         <source>G</source>
-        <translation>G</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="343"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="406"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="469"/>
         <source>B</source>
-        <translation>B</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="356"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="419"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="482"/>
         <source>A</source>
-        <translation>A</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="368"/>
         <source>Diffuse</source>
-        <translation>Diffus</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="431"/>
         <source>Specular</source>
-        <translation>Spekular</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="499"/>
         <source>Misc</source>
-        <translation>Sonstiges</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="510"/>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="513"/>
         <source>Determines the light source&apos;s radius. Note: This does not affect the standard OpenGL rendering.</source>
-        <translation>Legt den Radius der Lichtquelle fest. Hinweis: Dieser Wert wird nicht fürs OpenGL zeichnen verwendet.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../ObjectTypes/Light/lightWidget.ui" line="520"/>
         <source>Radius</source>
-        <translation>Radius</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -194,82 +179,66 @@
 <context>
     <name>Types</name>
     <message>
-        <location filename="../../common/Types.cc" line="131"/>
+        <location filename="../../common/Types.cc" line="101"/>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/Types.cc" line="135"/>
+        <location filename="../../common/Types.cc" line="105"/>
         <source>Group</source>
-        <translation>Gruppe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Triangle Mesh</source>
-        <translation type="obsolete">Dreiecks Netz</translation>
-    </message>
-    <message>
-        <source>Poly Mesh</source>
-        <translation type="obsolete">Polygonales Netz</translation>
-    </message>
-    <message>
-        <location filename="../../common/Types.cc" line="139"/>
+        <location filename="../../common/Types.cc" line="109"/>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/Types.cc" line="282"/>
-        <location filename="../../common/Types.cc" line="295"/>
+        <location filename="../../common/Types.cc" line="262"/>
+        <location filename="../../common/Types.cc" line="275"/>
         <source>Unknown Type</source>
-        <translation>Unbekannter Typ</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>glViewer</name>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1409"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1410"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1131"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1132"/>
         <source>Translate along &lt;b&gt;z-axis&lt;/b&gt;.</source>
-        <translation>In Richtung der &lt;b&gt;z-Achse&lt;/b&gt; verschieben.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1417"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1418"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1139"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1140"/>
         <source>Rotate around &lt;b&gt;y-axis&lt;/b&gt;.</source>
-        <translation>Um die &lt;b&gt;y-Achse&lt;/b&gt; rotieren.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1425"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1426"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1147"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1148"/>
         <source>Rotate around &lt;b&gt;x-axis&lt;/b&gt;.</source>
-        <translation>Um die &lt;b&gt;x-Achse&lt;/b&gt; rotieren.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2250"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1972"/>
         <source>Could not find coordsys node, thus it will appear in the snapshot anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2308"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2030"/>
         <source>Snapshot: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2310"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2032"/>
         <source>Could not save snapshot to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2310"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2032"/>
         <source> Error: </source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>snapshot: </source>
-        <translation type="obsolete">Schnappschuss: </translation>
-    </message>
-    <message>
-        <source>could not save snapshot to </source>
-        <translation type="obsolete">Kann den Schnappschuss nicht speichern </translation>
     </message>
 </context>
 </TS>
