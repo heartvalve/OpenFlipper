@@ -304,7 +304,7 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Icons" "${ACG_PROJECT_DATADIR}/Icons")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Licenses" "${ACG_PROJECT_DATADIR}/Licenses")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${ACG_PROJECT_DATADIR}/Fonts")
-  acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
+  #acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Doc" "${ACG_PROJECT_DATADIR}/Doc") Disabled as we don't want html docs inside of the binaries
 
   if ( WIN32 )
     # create qt config file and install it
