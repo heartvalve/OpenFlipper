@@ -292,7 +292,7 @@ int FileVTKPlugin::loadObject(QString _filename) {
        
      
      object->setPath( QFileInfo(_filename).absolutePath() );
-     object->setName( _filename );
+     object->setName( QFileInfo(_filename).fileName() );
      
      object->update();
      
@@ -329,7 +329,7 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
      
      object->setPath( QFileInfo(_filename).absolutePath()  );
-     object->setName( _filename );
+     object->setName( QFileInfo(_filename).fileName() );
      
      object->update();
      
