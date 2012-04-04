@@ -17,9 +17,10 @@ The manipulator helps to rotate, translate or scale objects.
 To set the manipulator in the view,
 doubleclick on preferred place or use the button in the toolbar.
 
-Rotation can be done by clicking on one of the cyrcles around the manipualator.
+Rotation can be done by clicking on one of the cyrcles around the manipualator or on one of the arrow tip.
 After this, move your mouse for rotation.
-The arrows inside of the cyrcles are for translation. Click on them to translate the object
+The rotation axis is is arrow tail of the arrow tip, or the arrow which has the same color as the cyrcle.
+The arrow tails inside the cyrcles are for translation. Click on them to translate the object
 in pointed direction or click on the center for free translation in all directions
 
 \note the translate/rotate button shown below has to be activated.
