@@ -660,22 +660,52 @@ InfoMeshObjectPlugin::
     // Only respond on mesh objects
     if((_type != DATA_TRIANGLE_MESH) && (_type != DATA_POLY_MESH)) return;
 
-    ACG::SceneGraph::PickTarget target = ACG::SceneGraph::PICK_ANYTHING;
-
-    if (info_->isHidden())
-      target = ACG::SceneGraph::PICK_ANYTHING;
-    else
-    {
-      //user has selected the pick mode manually
-      target = ACG::SceneGraph::PICK_FACE;
-      if (info_->pickMode->currentIndex() == 1 )
-        target = ACG::SceneGraph::PICK_EDGE;
-      else if (info_->pickMode->currentIndex() == 2 )
-        target = ACG::SceneGraph::PICK_VERTEX;
-    }
+    ACG::SceneGraph::PickTarget target = ACG::SceneGraph::PICK_FACE;
 
     unsigned int   node_idx, target_idx;
     ACG::Vec3d     hit_point;
+
+    if (info_->isHidden())
+    {
+      //user couldn't select the pick mode,
+      //so we have to do this
+      target = ACG::SceneGraph::PICK_ANYTHING;
+      if (!PluginFunctions::scenegraphPick(target, _clickedPoint, node_idx, target_idx, &hit_point))
+        return;
+
+      BaseObjectData* object;
+      if (!PluginFunctions::getPickedObject(node_idx, object) )
+        return;
+
+      //object is picked, now we can decide, what the user wants to pick
+      //priority: face > edge > vertex
+      if ( object->dataType(DATA_TRIANGLE_MESH) )
+      {
+        TriMesh* mesh = PluginFunctions::triMesh(object);
+        if (mesh->n_faces() != 0)
+          info_->pickMode->setCurrentIndex(0);
+        else if (mesh->n_edges() != 0)
+          info_->pickMode->setCurrentIndex(1);
+        else
+          info_->pickMode->setCurrentIndex(2);
+      }
+      else if ( object->dataType(DATA_POLY_MESH) )
+      {
+        PolyMesh* mesh = PluginFunctions::polyMesh(object);
+        if (mesh->n_faces() != 0)
+          info_->pickMode->setCurrentIndex(0);
+        else if (mesh->n_edges() != 0)
+          info_->pickMode->setCurrentIndex(1);
+        else
+          info_->pickMode->setCurrentIndex(2);
+      }
+    }
+
+    target = ACG::SceneGraph::PICK_FACE;
+    if (info_->pickMode->currentIndex() == 1 )
+      target = ACG::SceneGraph::PICK_EDGE;
+    else if (info_->pickMode->currentIndex() == 2 )
+      target = ACG::SceneGraph::PICK_VERTEX;
 
     if (PluginFunctions::scenegraphPick(target, _clickedPoint, node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
@@ -684,40 +714,11 @@ InfoMeshObjectPlugin::
 
          emit log( LOGINFO , object->getObjectinfo() );
 
-         if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) )
-         {
-           TriMesh* mesh = PluginFunctions::triMesh(object);
+         if ( object->dataType(DATA_TRIANGLE_MESH) )
+           printMeshInfo( PluginFunctions::triMesh(object) , object->id(), target_idx, hit_point );
 
-           if (info_->isHidden())
-           {
-             //we picked anything so we have to decide, which data we picked
-             if (mesh->n_faces() != 0)
-               info_->pickMode->setCurrentIndex(0);
-             else if (mesh->n_edges() != 0)
-               info_->pickMode->setCurrentIndex(1);
-             else
-               info_->pickMode->setCurrentIndex(2);
-           }
-
-           printMeshInfo( mesh , object->id(), target_idx, hit_point );
-         }
-
-         if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) )
-         {
-           PolyMesh* mesh = PluginFunctions::polyMesh(object);
-
-           if (info_->isHidden())
-           {
-             //we picked anything so we have to decide, which data we picked
-             if (mesh->n_faces() != 0)
-               info_->pickMode->setCurrentIndex(0);
-             else if (mesh->n_edges() != 0)
-               info_->pickMode->setCurrentIndex(1);
-             else
-               info_->pickMode->setCurrentIndex(2);
-           }
+         if ( object->dataType(DATA_POLY_MESH) )
            printMeshInfo( PluginFunctions::polyMesh(object) , object->id(), target_idx, hit_point );
-         }
       } else return;
     }
     else
