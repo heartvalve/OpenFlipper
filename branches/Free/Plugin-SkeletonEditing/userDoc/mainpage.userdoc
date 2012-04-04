@@ -36,6 +36,9 @@ For \em translation, click on the manipulators center. Click on one of the three
 
 For \em rotation, click on the cyrcle lines around the manipulator. The arrows show the rotation axis. If you want to change the rotation axis, you have to press the 'Rotate manipulator'-Button (see below).
 
+\note It is possible to scale the size of the manipulator by using your mouse wheel while you are over
+the center of the manipulator.
+
 \image html skeleton_maniprotate.png "Rotate manipluator"
 If you activate the 'Rotate manipulator'-Button, you are able to rotate it. For doing this, press "shift" and select, as the rotation axis, an arrow or a cyrcle line of the manipulator.
 
