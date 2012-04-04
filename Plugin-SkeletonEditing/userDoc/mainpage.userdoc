@@ -32,9 +32,9 @@ You can transform a joint with the manipulator. There are some options to do thi
 A joint can be rotated or translated and the manipulator follows you selected joint and you mouse.
 \note Translation is not possible in an animation.
 
-For \em translation, click on the manipulators center. Click on one of the three arrows to translate the joint in the pointed direction and backwards. If you want to change the directions, you have to press the 'Rotate manipulator'-Button (see below).
+For \em translation, click on the manipulators center. Click on one of the three arrow tails to translate the joint in the pointed direction and backwards. If you want to change the directions, you have to press the 'Rotate manipulator'-button (see below).
 
-For \em rotation, click on the cyrcle lines around the manipulator. The arrows show the rotation axis. If you want to change the rotation axis, you have to press the 'Rotate manipulator'-Button (see below).
+For \em rotation, click on the cyrcle lines around the manipulator or on one of the arrow tips. The arrows show with the same color describe the rotation axis. If you want to change the rotation axis, you have to press the 'Rotate manipulator'-button (see below).
 
 \note It is possible to scale the size of the manipulator by using your mouse wheel while you are over
 the center of the manipulator.
