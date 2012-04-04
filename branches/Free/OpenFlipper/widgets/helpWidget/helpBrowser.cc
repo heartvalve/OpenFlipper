@@ -61,8 +61,6 @@ HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
 	currentPage_ = 0;
 
-	connect(this, SIGNAL(linkClicked(const QString&)), this, SLOT(open(const QString&)));
-
 }
 
 HelpBrowser::~HelpBrowser() {
