@@ -5,7 +5,7 @@
 
 \section Summary
 
-The property Visualization shows properties which are defined for vertices, edges, faces and half-edges.
+The Property Visualization Plugin shows properties which are defined for vertices, edges, faces and half-edges.
 You can find this plugin in you toolbox.
 \li \ref prop
 \li \ref visualize_modification
