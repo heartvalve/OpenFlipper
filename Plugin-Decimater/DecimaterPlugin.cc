@@ -631,9 +631,12 @@ void DecimaterPlugin::slotUpdateNumVertices()
     tool_->currentNumVertices->setText (QString::number(max));
     tool_->verticesCount->setMaximum(max);
     tool_->verticesCountSlider->setMaximum(max);
-    
+
     if ( tool_->verticesCount->value() < 2 )
+    {
       tool_->verticesCount->setValue( max / 2 );
+      tool_->verticesCountSlider->setValue( max / 2);
+    }
 
     tool_->verticesCount->blockSignals(false);
     tool_->verticesCountSlider->blockSignals(false);
@@ -669,7 +672,10 @@ void DecimaterPlugin::slotUpdateNumTriangles() {
   tool_->trianglesCountSlider->setMaximum(max);
 
   if (tool_->trianglesCount->value() < 2)
-    tool_->trianglesCount->setValue(max/2);
+  {
+    tool_->trianglesCount->setValue (max / 2 );
+    tool_->trianglesCountSlider->setValue( max / 2);
+  }
 
   tool_->trianglesCount->blockSignals(false);
   tool_->trianglesCountSlider->blockSignals(false);
