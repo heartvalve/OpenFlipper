@@ -12,32 +12,32 @@ The movement can be done with a \ref Manipulator or, for more precision, the \re
 \li \ref property_window
 
 \section Manipulator
-The manipulator helps to rotate, translate or scale objects.
+The manipulator is used to rotate, translate or scale objects.
 
-To set the manipulator in the view,
-doubleclick on preferred place or use the button in the toolbar.
+To set the manipulator in the view, use the toolbar to enable the move mode.
+Then double click on the selected place (in case of translating a selected area) or anywhere on the object.
 
-Rotation can be done by clicking on one of the cyrcles around the manipualator or on one of the arrow tip.
-After this, move your mouse for rotation.
-The rotation axis is is arrow tail of the arrow tip, or the arrow which has the same color as the cyrcle.
-The arrow tails inside the cyrcles are for translation. Click on them to translate the object
-in pointed direction or click on the center for free translation in all directions
+Rotation can be done by clicking on one of the circles around the manipulator or on one of the arrow tips.
+Hold the mouse button and move the mouse to apply a rotation.
+The rotation axis is the arrow tail of the clicked axis, or the arrow which has the same color as the circle.
+The arrow tails control translations. Click on them and move the mouse to translate the object
+in arrow direction. Click on the center for translations parallel to the viewing plane.
 
 \note the translate/rotate button shown below has to be activated.
 
 \image html move-translaterotate.png "translate/rotate button"
 
 For resizing an object, press \<Control\> or the button below and then use the manipulator.
-The arrows show the direction of the scale modifing.
+The arrows show the direction of the scale modifying.
 
 \image html move-resize.png "Resize button"
 
 There are also options for manipulating the manipulator itself.
 \note No objects will be modified with these options.
 
-All operations can be done by using the toolbarbuttons and they also provide some shortcuts.
+All operations can be done by using the toolbar buttons and they also provide some shortcuts.
 
-\li Use the mousewheel while pointing on the manipulator for resizing.
+\li Use the mouse wheel while pointing on the manipulator for resizing.
 \li Press \<Shift\> to rotate it.
 \li There is no shortcut for translation, so use the button in the toolbar
 
@@ -50,7 +50,7 @@ in section "Manipulator Mode".
 \image html move-objects.png "Click on this button for moving an object"
 
 For moving a selection of an object, click on the button shown below,
-or if the \ref property_window is open, click on "Selection" in section "Manipualtor Mode".
+or if the \ref property_window is open, click on "Selection" in section "Manipulator Mode".
 \image html move-selections.png "Click on this button for moving a selection of an object"
 
 Keep in mind, you has to select some data.
@@ -61,7 +61,7 @@ The property window provides several options to set the position/direction of th
 for translation, rotation and scaling. You can manipulate the object or only a selection of it (see \ref move_mode for more information).
 It is simple to use:\n
 \li Choose the operation that should be done. They are written on the left buttons (e.g. translation).
-\li Write your values ino the edit boxes next to the buttons.
+\li Write your values into the edit boxes next to the buttons.
 Which axis/angle the edit boxes describe is shown above of the boxes (e.g. first edit box after button translation is for the x-axis).
 \li Click on the left operation button.
 */
