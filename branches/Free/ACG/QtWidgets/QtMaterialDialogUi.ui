@@ -74,6 +74,13 @@
           <property name="spacing">
            <number>6</number>
           </property>
+          <item row="0" column="0">
+           <widget class="QtColorChooserButton" name="baseColorButton">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QLabel" name="label">
             <property name="sizePolicy">
@@ -87,34 +94,8 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QSlider" name="shininessSlider">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_4">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Specular Color</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QtColorChooserButton" name="specularColorButton">
+          <item row="1" column="0">
+           <widget class="QtColorChooserButton" name="ambientColorButton">
             <property name="text">
              <string/>
             </property>
@@ -153,10 +134,23 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QtColorChooserButton" name="baseColorButton">
+          <item row="3" column="0">
+           <widget class="QtColorChooserButton" name="specularColorButton">
             <property name="text">
              <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Specular Color</string>
             </property>
            </widget>
           </item>
@@ -173,22 +167,32 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QtColorChooserButton" name="ambientColorButton">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
+          <item row="4" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QSlider" name="shininessSlider">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="shininessBox"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
-        <item row="2" column="1">
-         <spacer>
+        <item row="1" column="2">
+         <spacer name="s3">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::MinimumExpanding</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -198,10 +202,13 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="2">
-         <spacer name="s3">
+        <item row="2" column="1">
+         <spacer>
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -748,5 +755,38 @@ back is visible should be rendered.</string>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>shininessSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shininessBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shininessBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>shininessSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

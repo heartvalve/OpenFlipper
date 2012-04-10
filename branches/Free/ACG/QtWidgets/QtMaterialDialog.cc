@@ -126,6 +126,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   setButtonColor( ui_.specularColorButton, specular_ );
 
   ui_.shininessSlider->setValue((int)shine_);
+  ui_.shininessBox->setValue((int)shine_);
   ui_.pointSizeSpinBox->setValue((int)point_size_);
   ui_.lineWidthSpinBox->setValue((int)line_width_);
   ui_.roundPointsCheckBox->setChecked(round_points_);
@@ -164,6 +165,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.diffuseColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.specularColorButton, SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.shininessSlider,     SIGNAL( sliderPressed() ), this, SLOT( enableProperty() ) );
+  connect( ui_.shininessBox,        SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.pointSizeSpinBox,    SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.lineWidthSpinBox,    SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.roundPointsCheckBox, SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
@@ -182,7 +184,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
 	   this, SLOT( changeDiffuseColor(QColor) ) );
   connect( ui_.specularColorButton, SIGNAL( colorChanged(QColor) ),
 	   this, SLOT( changeSpecularColor(QColor) ) );
-  connect( ui_.shininessSlider, SIGNAL( sliderMoved(int) ),
+  connect( ui_.shininessSlider, SIGNAL( valueChanged(int) ),
 	   this, SLOT( changeShine(int) ) );
 
   connect( ui_.pointSizeSpinBox, SIGNAL( valueChanged(int) ),
@@ -713,6 +715,7 @@ QtMaterialDialog::enableProperty(int /*i*/)
   else if (sender() == ui_.diffuseColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.specularColorButton) ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessSlider)     ui_.materialActive->setChecked( true );
+  else if (sender() == ui_.shininessBox)        ui_.materialActive->setChecked( true );
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );
   else if (sender() == ui_.lineWidthSpinBox)    ui_.lineWidthActive->setChecked( true );
   else if (sender() == ui_.roundPointsCheckBox) ui_.roundPointsActive->setChecked( true );
@@ -735,6 +738,7 @@ QtMaterialDialog::enableProperty()
   else if (sender() == ui_.diffuseColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.specularColorButton) ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessSlider)     ui_.materialActive->setChecked( true );
+  else if (sender() == ui_.shininessBox)        ui_.materialActive->setChecked( true );
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );
   else if (sender() == ui_.lineWidthSpinBox)    ui_.lineWidthActive->setChecked( true );
   else if (sender() == ui_.roundPointsCheckBox) ui_.roundPointsActive->setChecked( true );
