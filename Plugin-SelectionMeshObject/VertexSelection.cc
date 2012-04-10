@@ -571,6 +571,31 @@ void MeshObjectSelectionPlugin::unselectModelingVertices(int _objectId, IdList _
     emit scriptInfo(selection);
 }
 
+// =========================================================
+
+void MeshObjectSelectionPlugin::selectVerticesByValue(int _objectId, QString _component, bool _greater, double _value ) {
+  BaseObjectData* object = 0;
+  if (!PluginFunctions::getObject(_objectId,object)) {
+    emit log(LOGERR,tr("selectVerticesByValue: unable to get object"));
+    return;
+  }
+
+  if (object->dataType() == DATA_TRIANGLE_MESH)
+    selectVerticesByValue(PluginFunctions::triMesh(object), _component,  _greater,  _value);
+  else if (object->dataType() == DATA_POLY_MESH)
+    selectVerticesByValue(PluginFunctions::polyMesh(object), _component,  _greater,  _value);
+  else{
+    emit log(LOGERR,tr("selectVerticesByValue: Unsupported object Type"));
+    return;
+  }
+
+  emit updatedObject(object->id(), UPDATE_SELECTION);
+
+  /// \todo emit scriptinfo
+
+}
+
+
 //=========================================================
 
 void MeshObjectSelectionPlugin::clearModelingVertices(int _objectId) {

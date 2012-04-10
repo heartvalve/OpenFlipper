@@ -265,6 +265,10 @@ void MeshObjectSelectionPlugin::updateSlotDescriptions() {
     emit setSlotDescription("createMeshFromVertexSelection(int)", tr("Take vertex selection and create a new mesh from it"),
                             QString("objectId").split(","), QString("Id of an object where the selection should be used to create a new mesh").split(","));
 
+    emit setSlotDescription("selectVerticesByValue(int,QString,bool,double)", tr("Select vertices based on the value of their component"),
+                                QString("objectId,component,greater,value").split(","),
+                                QString("Id of an object where the selection should be used to create a new mesh,component specification: \"x\" or \"y\" or \"z\" ,true: select vertex if component greater than value; false: select if component less than value ,value to test").split(","));
+
     emit setSlotDescription("colorizeVertexSelection(int,int,int,int)", tr("Colorize the selected vertices"),
                             QString("objectId,r,g,b").split(","), QString("Id of an object,Red,Green,Blue").split(","));
     emit setSlotDescription("selectHandleVertices(int,IdList)", tr("Add specified vertices to handle area"),
