@@ -46,20 +46,23 @@
 
 ImageDialog::ImageDialog(QImage _image, QWidget *parent) :
         QDialog(parent),
-        image_(_image),
+        imageWidth_(_image.width() ),
+        imageHeight_(_image.height() ),
         dragging_(false)
 {
   setupUi(this);
 
-  image->setPixmap(QPixmap::fromImage(image_).scaled(QSize(400,400),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+  pixmap_ = QPixmap::fromImage(_image).scaled(QSize(400,400),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
+  image->setPixmap(pixmap_);
 
   // Set the correct boundaries for the spinboxes
-  minX->setMaximum(image_.width());
-  maxX->setMaximum(image_.width());
-  maxX->setValue(image_.width());
-  minY->setMaximum(image_.height());
-  maxY->setMaximum(image_.height());
-  maxY->setValue(image_.height());
+  minX->setMaximum(imageWidth_);
+  maxX->setMaximum(imageWidth_);
+  maxX->setValue(imageWidth_);
+  minY->setMaximum(imageHeight_);
+  maxY->setMaximum(imageHeight_);
+  maxY->setValue(imageHeight_);
 
   // Connect the spin boxes
   connect(minX,SIGNAL(valueChanged(int )),this,SLOT(slidersChanged()));
@@ -81,16 +84,13 @@ ImageDialog::ImageDialog(QImage _image, QWidget *parent) :
 void ImageDialog::slidersChanged() {
 
   // Copy to internal buffer
-  buffer_ = QPixmap::fromImage(image_);
+  buffer_ = pixmap_;
 
   QPainter painter( &buffer_);
 
   QPen pen(Qt::red);
 
-  // Calculate a reasonable pen size. We scale to 400x400 (maximal)
-  // So we try to have at least two pixel line width in the result.
-  int penwidth = std::max( image_.width()/400,image_.height()/400) * 2;
-  pen.setWidth(penwidth);
+  pen.setWidth(2);
   painter.setPen( pen );
 
   painter.setBrush(QBrush(Qt::red,Qt::NoBrush));
@@ -100,11 +100,15 @@ void ImageDialog::slidersChanged() {
   const int minYVal = minY->value();
   const int maxYVal = maxY->value();
 
-  painter.drawRect( minXVal , minYVal , (maxXVal-minXVal) , (maxYVal-minYVal) );
+  // Calculate the scaling factor that is used to fit the image to the widget
+  const double scale = (double)pixmap_.width() / (double)imageWidth_;
+
+  // Working on the actual pixmap -> no offsets!
+  painter.drawRect( minXVal * scale  , minYVal  * scale , (maxXVal-minXVal)  * scale, (maxYVal-minYVal)  * scale);
 
   painter.end();
 
-  image->setPixmap(buffer_.scaled(QSize(400,400),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+  image->setPixmap(buffer_);
 }
 
 void ImageDialog::mouseButtonMoveEvent ( QPoint _p) {
@@ -114,12 +118,16 @@ void ImageDialog::mouseButtonMoveEvent ( QPoint _p) {
     // The image is scaled to 400x400
     // But the aspect ratio is kept. So we need to calculate the new sizes.
 
+
+
     // Calculate the free space above and before the real image
-    int xoffset = (400 - image->pixmap()->width()) / 2;
+    // As we are working on the pixmap widget, we need to consider these offsets to calculate
+    // coordinates inside the real pixmap.
+    int xoffset = (400 - image->pixmap()->width() ) / 2;
     int yoffset = (400 - image->pixmap()->height()) / 2;
 
     // Calculate the scaling factor that is used to fit the image to the widget
-    const int scale = image_.width()/image->pixmap()->width();
+    const double scale = (double)imageWidth_ / (double)image->pixmap()->width();
 
     int newXMin = (std::min(dragStartPoint_.x(),_p.x()) - xoffset ) * scale;
     int newXMax = (std::max(dragStartPoint_.x(),_p.x()) - xoffset ) * scale;

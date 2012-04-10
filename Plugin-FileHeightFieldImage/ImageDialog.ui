@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>496</width>
-    <height>525</height>
+    <width>482</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -47,11 +47,20 @@
            <height>400</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>400</height>
+          </size>
+         </property>
          <property name="mouseTracking">
           <bool>true</bool>
          </property>
          <property name="text">
           <string>Image Placeholder</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
