@@ -1,14 +1,27 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14317 )</b>
+- <b>OpenFlipper 1.3 ( ? , 14332 )</b>
+     - <b>ACG</b>
+         - QtWidgets
+             - Added spinbox for better control of the shininess
      - <b>Core</b>
          - Help
              - Fixed warning due to connection to non existing slot.
      - <b>Plugins</b>
+         - Decimater
+             - Bugfix: Async slider and number box after loading a new mesh
+         - FileHeightField
+             - Improved speed of the ui when selecting the load area
          - File VTK
              - vtk objects now just have the filename as a name rather than the full path
+         - MeshObjectInfo
+             - Support for point clouds represented by meshes
          - Move
              - User Documentation
+         - Scripting
+             - Sort list of available functions
+         - SelectionMeshObject
+             - Added scripting function to select vertices based on the value of one of their components
      - <b>Build System</b>
         - Fixed silent install of Visual Studio 2010 redistributable
      - <b>Testing System</b>
