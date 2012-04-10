@@ -60,7 +60,6 @@ class ImageDialog : public QDialog, public Ui::ImageDialog
     void mouseButtonReleaseEvent ( QPoint _p );
 
   private:
-    QImage  image_;
 
     int imageWidth_;
     int imageHeight_;
