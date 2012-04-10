@@ -922,3 +922,37 @@ void MeshObjectSelectionPlugin::createMeshFromSelection(MeshT& _mesh, MeshT& _ne
 
 }
 
+template<class MeshT>
+void MeshObjectSelectionPlugin::selectVerticesByValue(MeshT* _mesh, QString _component, bool _greater, double _value)
+{
+
+  //first copy vertices
+  typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
+  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it) {
+    const typename MeshT::Point p = _mesh->point(v_it);
+
+    bool select = false;
+
+    if (_component.contains("x",Qt::CaseInsensitive) ) {
+      select = (p[0] > _value);
+    } else  if (_component.contains("y",Qt::CaseInsensitive) ) {
+      select = (p[1] > _value);
+    } else if (_component.contains("z",Qt::CaseInsensitive) ) {
+      select = (p[2] > _value);
+    } else {
+      emit log(LOGERR,tr("selectVerticesByValue, undefined component ") + _component );
+    }
+
+
+    // invert if requested
+    if (! _greater )
+      select = !select;
+
+    // set selection status only if the vertex was previously unselected
+    if ( ! _mesh->status(v_it).selected() )
+      _mesh->status(v_it).set_selected(select);
+
+  }
+
+}
+

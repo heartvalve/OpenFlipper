@@ -305,6 +305,9 @@ public slots:
     /// Remove vertices from modeling area
     void unselectModelingVertices(int objectId, IdList _vertexList);
 
+    /// Select vertices by their value
+    void selectVerticesByValue(int _objectId, QString _component, bool _greater, double _value );
+
     /// Clear Modeling Area
     void clearModelingVertices(int objectId);
 
@@ -488,6 +491,10 @@ private:
     /// Create a new mesh from the selection
     template< class MeshT >
     void createMeshFromSelection( MeshT& _mesh, MeshT& _newMesh, PrimitiveType _primitiveType);
+
+    /// Select vertices by value
+    template< class MeshT >
+    void selectVerticesByValue(MeshT* _mesh, QString _component, bool _greater, double _value);
 
     /** @} */
 
