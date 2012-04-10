@@ -61,6 +61,11 @@ class ImageDialog : public QDialog, public Ui::ImageDialog
 
   private:
     QImage  image_;
+
+    int imageWidth_;
+    int imageHeight_;
+    QPixmap pixmap_;
+
     QPixmap buffer_;
 
     bool   dragging_;
