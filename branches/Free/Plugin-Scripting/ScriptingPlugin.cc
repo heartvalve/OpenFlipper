@@ -300,6 +300,9 @@ void ScriptingPlugin::showScriptWidget( ) {
 
   }
 
+  // Sort the available functions
+  scriptWidget_->functionList->sortItems ( );
+
   highlighterCurrent_->pluginPatterns_   = plugins;
   highlighterCurrent_->functionPatterns_ = functions;
   highlighterCurrent_->update();
@@ -312,11 +315,6 @@ void ScriptingPlugin::showScriptWidget( ) {
 
   // Bring it to foreground
   scriptWidget_->raise();
-
-//   highlighterList_->pluginPatterns_      = plugins;
-//   highlighterList_->functionPatterns_    = functions;
-//   highlighterList_->update();
-//   highlighterList_->rehighlight();
 
 }
 
