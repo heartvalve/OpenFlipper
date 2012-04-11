@@ -64,36 +64,36 @@ class MouseInterface {
 
   private slots :
 
-    /**  \brief Wheel Event from Main App
+    /**  \brief Wheel Event from main application
       *
-      *  This slot is called if a wheel event occured in the Viewer and is extended by
+      *  This slot is called if a wheel event occurred in the Viewer and is extended by
       *  the current Mode set in the Viewer. You can add additional Picking Modes to
       *  the Viewer by using the picking interface.
       *  This slot will only get called in pickingMode.
-      *  @param _event Mousevent
+      *  @param _event Mouse event
       *  @param _mode Name of the current Picking Mode.
     */
     virtual void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode) {};
 
-    /**  \brief Mouse Event from Main App ( Picking Mode )
+    /**  \brief Mouse Event from main application ( Picking Mode )
       *
-      *  This slot is called if a mouse event occured in the Viewer
+      *  This slot is called if a mouse event occurred in the Viewer
       *  This slot will only get called in pickingMode.
       *  Right button clicks will not be passed to the plugins as this is reserved for
       *  the context Menu.
       *
-      *  @param _event Mousevent
+      *  @param _event Mouse event
     */
     virtual void slotMouseEvent( QMouseEvent* _event ) {};
     
-    /**  \brief Mouse Event from Main App ( Light Mode )
+    /**  \brief Mouse Event from main application ( Light Mode )
       *
-      *  This slot is called if a mouse event occured in the Viewer
+      *  This slot is called if a mouse event occurred in the Viewer
       *  This slot will only get called in LightMode.
       *  Right button clicks will not be passed to the plugins as this is reserved for
       *  the context Menu.
       *
-      *  @param _event Mousevent
+      *  @param _event Mouse event
     */
     virtual void slotMouseEventLight( QMouseEvent*  _event ) {};
 
