@@ -811,7 +811,7 @@ void OBJImporter::setPath(QString _path){
 void OBJImporter::setObjectOptions(ObjectOptions _options) {
 
     while((unsigned int)currentGroup_ >= objectOptions_.size()) {
-        objectOptions_.push_back(POLYMESH);
+        objectOptions_.push_back(NONE);
     }
 
     objectOptions_[currentGroup_] = _options;
