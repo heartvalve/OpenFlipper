@@ -1207,7 +1207,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   int PolyMeshCount = 0;
   int TriMeshCount = 0;
 
-  OBJImporter::ObjectOptions options = OBJImporter::TRIMESH;
+  OBJImporter::ObjectOptions options = OBJImporter::NONE;
 
   // keeps track if faces belong to a group or the default group
   bool inGroup = false;
@@ -1301,7 +1301,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         inGroup = true;
 
         _importer.setObjectOptions( options );
-        options = OBJImporter::TRIMESH;
+        options = OBJImporter::NONE;
         faceCount = 0;
     }
 
@@ -1375,11 +1375,11 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
 
       if( verticesPerFace > 3 ) {
-        // correct the current mesh type
-        if (options == OBJImporter::TRIMESH)
-          _importer.setObjectOptions(OBJImporter::POLYMESH);
-
         options = OBJImporter::POLYMESH;
+        _importer.setObjectOptions(options);
+      } else if ( verticesPerFace == 3 ) {
+        options = OBJImporter::TRIMESH;
+        _importer.setObjectOptions(options);
       }
     }
 
