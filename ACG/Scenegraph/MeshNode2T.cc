@@ -396,10 +396,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     //         // Enable own Phong shader
     //         program->use();
 //    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
-    ACG::GLState::enable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_SMOOTH);
     ACG::GLState::depthRange(0.01, 1.0);
 
+    drawMesh_->usePerVertexNormals();
     drawMesh_->setSmoothShading();
     drawMesh_->disableColors();
 
