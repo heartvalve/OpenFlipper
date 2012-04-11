@@ -79,7 +79,7 @@
 
 /** \brief the internal DataType class
 *
-* Normally we could use an unsigned int here. But QT cant register an 
+* Normally we could use an unsigned int here. But QT can't register an
 * typedef unsigned int DataType as DataType and will recognize it as unsigned int and
 * therefore DataType will still be unknown to QtScript.
 * To overcome this Problem, we reimplement a wrapper around the int and provide additional
