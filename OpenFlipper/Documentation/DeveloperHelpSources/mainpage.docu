@@ -26,6 +26,9 @@
  * - \ref todo
  *
  * \subpage integrated_libs
+ * - \ref OpenMeshDoc
+ * - \ref OpenVolumeMeshDoc
+ * - \ref ACGDoc
  *
  * \page integrated_libs Integrated libraries
  * - \subpage OpenMeshDoc
