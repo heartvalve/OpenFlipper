@@ -29,5 +29,6 @@
  *
  * \page integrated_libs Integrated libraries
  * - \subpage OpenMeshDoc
+ * - \subpage OpenVolumeMeshDoc
  * - \subpage ACGDoc
  */
