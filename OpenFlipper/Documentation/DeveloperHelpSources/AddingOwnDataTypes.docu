@@ -14,20 +14,20 @@ Furthermore some plugins need to be added:
 - A Type plugin that registers your type inside OpenFlipper and creates raw objects of your new type
 - Possible file plugins to read or write data to disk
 
-\section File structure inside the ObjectTypes directory
+\section objectTypeFileStructure File structure inside the ObjectTypes directory
 For this documentation we take the Plane data type as an example.
 
-\subsection Data storage type
+\subsection objectTypeDataStorage Data storage type
 The underlying data type is a simple class representing a plane. It is defined in the files
 "PlaneType.(hh/cc)". The type could also be defined in an extra lib outside of OpenFlipper
 if it is more complex (e.g. OpenMesh, CGAL,...). But for smaller types they should be inside
 the ObjectType directory.
 
-\subsection Rendering nodes
+\subsection objectTypeRenderingNodes Rendering nodes
 The second set of files is the rendering node. The node usually takes a reference to the data type
 and renders the data via OpenGL. For the PointNode the implementation can be found in  "PlaneNode.(hh/cc)".
 
-\subsection Base type file
+\subsection objectTypeBaseTypeFile Base type file
 The required types are than collected in one types file which is called "PlaneTypes.hh". This file includes
 the nodes used for rendering and the underlying data type. Here you can add additional typedefs
 (e.g. if the original type would be called "planeDataType" you can typedef it to a simple "plane") to
@@ -38,19 +38,19 @@ make the code more readable.
   #include <ObjectTypes/Plane/PlaneNode.hh>
 \endcode
 
-\subsection Object Type
+\subsection objectTypeObjectTypeFile Object Type
 After the rendering and storage are defined, the actual object has to be implemented. This is done in the
 files "PlaneObject.(hh/cc)". The ObjectType has to be derived from BaseObjectData (if it will be rendered) or
 if there are no rendering nodes for that type and it is simply a storage it is derived from BaseObject.
 The ObjectType creates an instances of the data (in this case the plane) and the required rendering nodes.
 Additionally it has a function to copy the object, and handles the picking translation.
 
-\subsection PluginFunctions File
+\subsection objectTypePluginFunctionsFile PluginFunctions File
 The last block of files are "PluginFunctions.(hh/cc)". In these files the plugin functions for your type are
 implemented. They typically contain dynamic casts from the BaseObject Type to your type and node. They are
 used in the plugins to quickly convert between the management base class and the real data objects.
 
-\subsection Final Include File
+\subsection objectTypeFinalIncludeFile Final Include File
 Finally one include file has to be created that Defines the name that is used in OpenFlipper:
 \code
   #define DATA_PLANE typeId("Plane")
