@@ -366,9 +366,13 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
                 for(int i = 0; i < 2; ++i) readValue(ifs, dummy_f);
             }
         }
-        for (uint i=0; i<nF && !ifs.eof(); ++i) {
+        for (uint i=0; i<nF; ++i) {
             // Get valence of current face
             readValue(ifs, tmp_count);
+
+			if (ifs.eof())
+			  break;
+
             if(tmp_count > vertexCount) vertexCount = tmp_count;
             
             // Skip the rest
