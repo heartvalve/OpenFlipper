@@ -269,7 +269,8 @@ public:
       If \c _view was successfully decoded it will immediately be applied
       and \c true is returned, \c false is returned else.
 
-      You can save the current Window size via parameter _windowSize
+      You can save the current Window size via parameter _windowSize and one splitter size via _splitterwidth
+      These values will not be applied immediately.
       \note QSize(0,0) indicates that the window was maximized.
       \note _splitterWidth is -1 if no splitterWidth was saved
    */
