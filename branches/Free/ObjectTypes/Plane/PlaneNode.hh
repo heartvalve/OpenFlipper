@@ -46,102 +46,77 @@
 //
 //=============================================================================
 
-#ifndef ACG_PLANENODE_HH
-#define ACG_PLANENODE_HH
+#ifndef PLANENODE_HH
+#define PLANENODE_HH
 
 //== INCLUDES =================================================================
 
-#include "BaseNode.hh"
-#include "DrawModes.hh"
-#include <vector>
-#include "../Math/Matrix4x4T.hh"
+#include <ObjectTypes/Plane/PlaneType.hh>
+#include <ACG/Scenegraph/BaseNode.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/Math/Matrix4x4T.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 //== NAMESPACES ===============================================================
 
-namespace ACG {
-namespace SceneGraph {
-
 //== CLASS DEFINITION =========================================================
 
-
-/** \class PlaneNode PlaneNode.hh <ACG/Scenegraph/PlaneNode.hh>
-
-    PlaneNode renders a plane
-
-**/
-
-class ACGDLLEXPORT PlaneNode : public BaseNode
+class DLLEXPORT PlaneNode : public ACG::SceneGraph::BaseNode
 {
-
-  public:
-
-    /// constructor
-    PlaneNode( BaseNode* _parent=0, std::string _name="<PlaneNode>" )
-              : BaseNode(_parent, _name){};
+public:
+    /** \brief Construct a plane rendering node
+     *
+     * @param _parent The parent node in the scenegraph
+     * @param _name   The name of the new node (visible in the scenegraph dialogs)
+     * @param _plane  A pointer to an existing plane
+     */
+    PlaneNode(Plane& _plane, BaseNode *_parent = 0, std::string _name = "<PlaneNode>");
 
     /// destructor
-    ~PlaneNode() {};
+    ~PlaneNode();
 
     /// static name of this class
     ACG_CLASSNAME(PlaneNode);
 
     /// return available draw modes
-    DrawModes::DrawMode availableDrawModes() const;
+    ACG::SceneGraph::DrawModes::DrawMode availableDrawModes() const;
 
     /// update bounding box
-    void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
+    void boundingBox(ACG::Vec3d & _bbMin, ACG::Vec3d & _bbMax);
 
     /// draw Plane
-    void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
+    void draw(ACG::GLState & _state, const ACG::SceneGraph::DrawModes::DrawMode & _drawMode);
 
     /// draw Plane for object picking
-    void pick(GLState& _state, PickTarget _target);
-
-    /// set center position and normal of plane
-    void setPosition(const Vec3f& _position, const Vec3f& _normal);
-
-    /// set center position, local xdirection (multiplied with width)
-    /// and local ydirection (multiplied with height)
-    void setPosition(const Vec3f& _position, const Vec3f& _xDirection, const Vec3f& _yDirection);
-
-    /// tranform the plane with given matrix
-    void transform(const ACG::Matrix4x4d& _mat);
-
-    /// set plane size
-    void setSize(double _xDirection, double _yDirection);
-
-    void manipulatorVisible( bool _visible );
-
-    bool manipulatorVisible();
+    void pick(ACG::GLState & _state, ACG::SceneGraph::PickTarget _target);
 
     /// get center position of the plane
-    Vec3f position();
+    ACG::Vec3f position();
 
     /// get current normal
-    Vec3f normal();
+    ACG::Vec3f normal();
 
     /// local x direction (multiplied with width)
-    Vec3f xDirection();
+    ACG::Vec3f xDirection();
 
     /// local y direction (multiplied with height)
-    Vec3f yDirection();
+    ACG::Vec3f yDirection();
 
-  private:
+    /// Get the currently rendered plane
+    Plane& getPlane();
 
-    void drawPlane(GLState&  _state);
-    void drawManipulator(GLState&  _state);
-    void drawPlanePick(GLState&  _state);
-    void drawManipulatorPick(GLState&  _state);
+    /// Set a new plane for rendering
+    void setPlane(Plane plane);
 
-    Vec3f position_;
-    Vec3f normal_;
-    Vec3f xDirection_;
-    Vec3f yDirection_;
+private:
+    void drawPlane(ACG::GLState & _state);
+    void drawManipulator(ACG::GLState & _state);
+    void drawPlanePick(ACG::GLState & _state);
+    void drawManipulatorPick(ACG::GLState & _state);
+
+    Plane& plane_;
 };
 
-//=============================================================================
-} // namespace SceneGraph
-} // namespace ACG
 //=============================================================================
 #endif // ACG_PLANENODE_HH defined
 //=============================================================================

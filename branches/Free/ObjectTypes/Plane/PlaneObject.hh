@@ -94,8 +94,8 @@ class DLLEXPORT PlaneObject : public BaseObjectData {
 
 
   protected:
-    /// Initialise current object, including all related nodes.
-    virtual void init(PlaneNode* _plane = 0);
+    /// Initialize current object, including all related nodes.
+    virtual void init(const Plane* _plane = 0);
 
   //===========================================================================
   /** @name Name and Path handling
@@ -105,6 +105,19 @@ class DLLEXPORT PlaneObject : public BaseObjectData {
     
     /// Set the name of the Object
     void setName( QString _name );
+
+  //===========================================================================
+  /** @name Data
+   * @{ */
+  //===========================================================================
+  public:
+    Plane& plane();
+    void plane(Plane _plane);
+
+  private:
+    Plane plane_;
+
+  /** @} */
         
   //===========================================================================
   /** @name Visualization
@@ -114,23 +127,23 @@ class DLLEXPORT PlaneObject : public BaseObjectData {
   public:
     /// Get the scenegraph Node
     PlaneNode* planeNode();
-    
+
   private:
     PlaneNode* planeNode_;
 
-  /** @} */ 
-    
+  /** @} */
+
+
   //===========================================================================
   /** @name Object Information
    * @{ */
-  //===========================================================================    
+  //===========================================================================
   public:
     /// Get all Info for the Object as a string
     QString getObjectinfo();
-    
-  /** @} */  
-    
-    
+
+  /** @} */
+
   //===========================================================================
   /** @name Picking
    * @{ */

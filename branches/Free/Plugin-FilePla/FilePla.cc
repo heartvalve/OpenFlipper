@@ -108,7 +108,7 @@ int FilePlaPlugin::loadObject(QString _filename)
           yDirection[2] = settings.value("YDirection2").toDouble();
           settings.endGroup();
 
-          plane->planeNode()->setPosition(position, xDirection, yDirection);
+          plane->plane().setPlane(position, xDirection, yDirection);
 
           plane->setFromFileName(_filename);
         }
