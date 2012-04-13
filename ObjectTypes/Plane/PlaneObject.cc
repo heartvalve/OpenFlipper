@@ -83,7 +83,7 @@ PlaneObject::PlaneObject(const PlaneObject & _object) :
   BaseObjectData(_object)
 {
 
-    init(_object.planeNode_);
+    init( &_object.plane_ );
 
     setName( name() );
 }
@@ -130,19 +130,18 @@ BaseObject* PlaneObject::copy() {
 
 /** This function initalizes the plane object. It creates the scenegraph nodes.
 */
-void PlaneObject::init(PlaneNode* _plane) {
+void PlaneObject::init(const Plane* _plane) {
 
   if ( materialNode() == NULL)
     std::cerr << "Error when creating Plane Object! materialNode is NULL!" << std::endl;
 
-  planeNode_ = new PlaneNode( materialNode() , "NEW PlaneNode");
+  planeNode_ = new PlaneNode( plane_, materialNode() , "NEW PlaneNode" );
 
   if (_plane){
-    planeNode_->setPosition( _plane->position(), _plane->normal() );
-    planeNode_->setSize( _plane->xDirection().norm(), _plane->yDirection().norm() );
+    plane_ = *_plane;
   } else {
-    planeNode_->setPosition( ACG::Vec3f(0.0, 0.0, 0.0), ACG::Vec3f(0.0, 1.0, 0.0) );
-    planeNode_->setSize( 5.0, 5.0 );
+    plane_.setPlane( ACG::Vec3f(0.0, 0.0, 0.0), ACG::Vec3f(0.0, 1.0, 0.0) );
+    plane_.setSize( 5.0, 5.0 );
   }
 }
 
@@ -194,6 +193,19 @@ QString PlaneObject::getObjectinfo() {
 
   output += "========================================================================\n";
   return output;
+}
+
+
+// ===============================================================================
+// Data
+// ===============================================================================
+
+Plane& PlaneObject::plane() {
+  return plane_;
+}
+
+void PlaneObject::plane(Plane _plane) {
+  plane_ = _plane;
 }
 
 // ===============================================================================

@@ -501,7 +501,7 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
     transformSkeleton(mat , *PluginFunctions::skeleton(object) );
 #endif
   } else  if  ( object->dataType()  == DATA_PLANE ) {
-    PluginFunctions::planeNode(object)->transform(mat);
+    PluginFunctions::plane(object)->transform(mat);
   } else {
 
     emit log(LOGERR,tr("moveObject called for unsupported Object Type"));

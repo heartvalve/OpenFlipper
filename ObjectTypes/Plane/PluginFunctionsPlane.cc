@@ -86,6 +86,14 @@ PlaneNode* planeNode( BaseObjectData* _object ) {
 }
 
 
+Plane* plane( BaseObjectData* _object ) {
+  if ( _object->dataType(DATA_PLANE) ) {
+     PlaneObject* object = dynamic_cast< PlaneObject* >(_object);
+     return & object->plane();
+   } else
+     return 0;
+}
+
 PlaneObject* planeObject( BaseObjectData* _object ) {
   if ( ! _object->dataType(DATA_PLANE) )
     return 0;

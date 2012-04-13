@@ -57,12 +57,11 @@
  
 //== INCLUDES =================================================================
 
-#include <ACG/Scenegraph/PlaneNode.hh>
+#include <ObjectTypes/Plane/PlaneType.hh>
+#include <ObjectTypes/Plane/PlaneNode.hh>
 
-//== TYPEDEFS FOR SCENEGRAPH ===============================================
+//== TYPEDEFS FOR SIMPLER ACCESS ==============================================
    
-/// Simple Name for PlaneNode
-typedef  ACG::SceneGraph::PlaneNode PlaneNode;
 
 //=============================================================================
 #endif // PLANE_TYPES_HH defined

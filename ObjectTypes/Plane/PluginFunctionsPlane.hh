@@ -75,6 +75,14 @@ bool getObject(  int _identifier , PlaneObject*& _object );
 DLLEXPORT
 PlaneNode* planeNode( BaseObjectData* _object );
 
+/** \brief Get a Plane from an object.
+ *
+ * @param _object The object should be of type BaseDataObject. If the content is a plane, a
+ *                Plane will be returned. Otherwise a NULL pointer is returned.
+ */
+DLLEXPORT
+Plane* plane( BaseObjectData* _object );
+
 /** \brief Cast an BaseObject to a PlaneObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is a plane, a
