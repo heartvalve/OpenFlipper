@@ -836,25 +836,29 @@ void CoreWidget::slotPasteView( ) {
   int toolBarWidth;
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView(&size,&toolBarWidth);
 
-  //resize the toolbox
+  //resize the toolbox and splitter
   if (toolBarWidth != -1)
   {
     QList<int> sizes = toolSplitter_->sizes();
+    unsigned sum_size = sizes[0]+sizes[1];
+
     bool onRight = OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool();
     if (onRight)
     {
       sizes[1] = toolBarWidth;
-      sizes[0] += toolBarWidth;
+      sizes[0] = sum_size - toolBarWidth;
     }
     else
     {
       sizes[0] = toolBarWidth;
-      sizes[1] += toolBarWidth;
+      sizes[1] = sum_size - toolBarWidth;
     }
+
     toolSplitter_->setSizes(sizes);
     viewerToolbar_->resize(toolBarWidth, viewerToolbar_->height());
   }
 
+  //resize window
   if (size.isValid())
   {
     //ask for restoring the window size
@@ -888,7 +892,14 @@ void CoreWidget::slotCopyView( ) {
     size = QSize(0,0);
   else
     size = QSize (width(),height());
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView(size,viewerToolbar_->width());
+
+  int splitter_size = 0;
+  if (OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool())
+    splitter_size = toolSplitter_->sizes()[1];
+  else
+    splitter_size = toolSplitter_->sizes()[0];
+
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView(size,splitter_size);
 }
 
 void CoreWidget::slotCoordSysVisibility(bool _visible){
