@@ -832,6 +832,11 @@ void CoreWidget::delete_garbage() {
 }
 
 void CoreWidget::slotPasteView( ) {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+}
+
+void CoreWidget::slotPasteViewAndWindow()
+{
   QSize size;
   int splitterWidth;
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView(&size,&splitterWidth);
@@ -860,29 +865,16 @@ void CoreWidget::slotPasteView( ) {
   //resize window
   if (size.isValid())
   {
-    //ask for restoring the window size
-    QMessageBox msgBox;
-    msgBox.setText(QString("Restore window size?"));
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-
-    int ret =  msgBox.exec();
-
-    if (ret == QMessageBox::Ok)
+    if (size == QSize(0,0))
     {
-      if (size == QSize(0,0))
-      {
-        showMaximized();
-      }
-      else
-      {
-        showNormal();
-        resizeApplication(size.width(),size.height());
-      }
+      showMaximized();
+    }
+    else
+    {
+      showNormal();
+      resizeApplication(size.width(),size.height());
     }
   }
-
-
 }
 
 void CoreWidget::slotCopyView( ) {
