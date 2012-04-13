@@ -101,12 +101,12 @@ public:
 	 */
 	bool isForwardAvailable();
 
-signals:
-  /** \brief This signal is emitted everytime an url is opened
-   *
-   * @param _src The new url that is visible in the browser
-   */
-	void urlChanged ( const QUrl& _src );
+	/** \brief resolves relative urls to absolute
+	 *
+	 * @param _url relative URL which will be resolved
+	 * @return absolute url
+	 */
+	QUrl resolveUrl(const QUrl &_url);
 
 public slots:
 

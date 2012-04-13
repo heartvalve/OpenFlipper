@@ -75,8 +75,8 @@ void HelpBrowser::updateNameSpaceAndFolder (const QUrl& _url) {
   QStringList linkParts = link.split("/");
 
   if ( linkParts.size() > 3) {
-    currentNameSpace_     = linkParts[2];
     currentVirtualFolder_ = linkParts[3];
+    currentNameSpace_     = QString("org.openflipper.")+ linkParts[3].toLower() ;
   } else {
     currentNameSpace_ = "";
     currentVirtualFolder_ = "";
@@ -95,44 +95,48 @@ void HelpBrowser::rememberHistory (const QUrl& _url) {
 
 }
 
+QUrl HelpBrowser::resolveUrl(const QUrl &_url)
+{
+  if (_url.scheme() == "qthelp") {
+
+    updateNameSpaceAndFolder(_url);
+    return _url;
+
+  } else {
+
+    QUrl newUrl;
+
+    if ( _url.toString().startsWith("..") ) {
+
+      // Relative url. We jump to a new context, so we first remove the relative part
+      QUrl tmpURL("qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/");
+      newUrl = tmpURL.resolved(_url);
+
+      // Update context
+      updateNameSpaceAndFolder(newUrl);
+      return newUrl;
+
+    } else {
+
+      // Normal URL without relative parts so we can safely combine them
+      // and stay in the current context
+      return "qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/" + _url.toString();
+
+    }
+  }
+}
+
 QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
-	if (_url.scheme() == "qthelp") {
+  QUrl newUrl = resolveUrl(_url);
+  const QUrl newFileUrl = helpEngine_->findFile(newUrl);
 
-	  updateNameSpaceAndFolder(_url);
-		return QVariant(helpEngine_->fileData(_url));
-
-	}	else {
-
-		QUrl newUrl;
-
-		if ( _url.toString().startsWith("..") ) {
-
-		  // Relative url. We jump to a new context, so we first remove the relative part
-		  QUrl tmpURL("qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/");
-		  newUrl = tmpURL.resolved(_url);
-
-		  // Update context
-		  updateNameSpaceAndFolder(newUrl);
-
-		} else {
-
-		  // Normal URL without relative parts so we can safely combine them
-		  // and stay in the current context
-		  newUrl = "qthelp://" + currentNameSpace_ + "/" + currentVirtualFolder_ + "/" + _url.toString();
-
-		}
-
-		const QUrl newFileUrl = helpEngine_->findFile(newUrl);
-
-		if(newFileUrl.isValid())
-			return QVariant(helpEngine_->fileData(newFileUrl));
-		else {
-			std::cerr << "Unable to find file at url : " << newUrl.toString().toStdString() << std::endl;
-			return QVariant("Page not Found.");
-		}
-
-	}
+  if(newFileUrl.isValid())
+    return QVariant(helpEngine_->fileData(newFileUrl));
+  else {
+    std::cerr << "Unable to find file at url : " << _url.toString().toStdString() << std::endl;
+    return QVariant("Page not Found.");
+  }
 
 }
 
@@ -169,7 +173,7 @@ void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
   if (Anchor.size() > 1)
     this->scrollToAnchor(Anchor[Anchor.size()-1]);
 
-	emit urlChanged ( _url.toString() );
+  emit sourceChanged( _url );
 }
 
 QUrl HelpBrowser::getCurrentDir(const QUrl& _url) {

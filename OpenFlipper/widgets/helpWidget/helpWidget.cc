@@ -175,7 +175,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   connect(homeButton_, SIGNAL(clicked()), this, SLOT(goHome()));
 
   // Source has been reloaded
-  connect(textWindow_, SIGNAL(urlChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
+  connect(textWindow_, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
 
   // Register documentation
   // Seems to be an unneeded call!
@@ -220,15 +220,6 @@ void HelpWidget::activateLink(const QUrl& _url)
 {
 	//open and show the url
 	linkActivated(_url);
-
-	//set tree to the right entry
-	//this is _slow_, so do not use it in function "linkActivated". in "linkActivated" the entry is already selected by the user
-
-	helpEngine_->contentWidget()->hide();
-	QModelIndex modelIndex = helpEngine_->contentWidget()->indexOf(_url);
-	if (modelIndex.isValid())
-		helpEngine_->contentWidget()->setCurrentIndex( modelIndex );
-	helpEngine_->contentWidget()->show();
 }
 
 void HelpWidget::linkActivated(const QUrl& _url) {
@@ -253,9 +244,19 @@ void HelpWidget::showFoundSite(const QUrl& _url) {
   tabWidget_->setCurrentIndex(homeIndex_);
 }
 
-void HelpWidget::update(const QUrl& /* url */) {
+void HelpWidget::update(const QUrl&  _url ) {
 
   updateButtons();
+
+  //search for the entry and select the item in the contentWidget
+  //in our case, it is the treeView on the left side
+  QUrl newUrl = textWindow_->resolveUrl(_url);
+  //search for the selected url
+  QModelIndex modelIndex = helpEngine_->contentWidget()->indexOf(newUrl);
+
+  //select this url in content widget
+  if (modelIndex.isValid())
+    helpEngine_->contentWidget()->setCurrentIndex( modelIndex );
 }
 
 void HelpWidget::goForward() {
