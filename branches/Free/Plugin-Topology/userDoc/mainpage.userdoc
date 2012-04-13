@@ -8,23 +8,23 @@ creates a toolbar which can be used to access it's functionality:
 
 \image html topologyToolbar.png
 
-\section flip_edge Flipping edges
+\section flip_edge Flipping Edges
 \image html topology-edgeFlip.png
 The first button can be used to flip edges in triangular meshes. \n
 Click on the icon and then click on the edge you want to flip.
 
-\section split_edge Splitting edges
+\section split_edge Splitting Edges
 \image html topology-edgeSplit.png
 Use this button split edges in triangular and polygonal meshes. \n
 Click on the icon and then click on the edge you want to split.
 
-\section collapse_edge Collapsing edges
+\section collapse_edge Collapsing Edges
 \image html topology-edgeCollapse.png
 With this button you can collapse edges in triangular and polygonal meshes. \n
 Click on the icon and then click on the edge you want to collapse. The vertex of the edge that is 
 farther away from the clicked point will be collapsed into the vertex that is closer to the clicked position.
 
-\section add_face Adding faces
+\section add_face Adding Faces
 \image html topology-addFace.png
 This button can be used to add new faces to triangular and polygonal meshes. \n
 For triangular meshes, click on the button and then click onto the vertices that will form the new faces. 
@@ -33,12 +33,12 @@ correctly. \n
 For polygonal meshes, it works like for triangular meshes except, that the face will be created after a 
 doubleclick (as the face can have 3 or more vertices)
 
-\section delete_face Deleting faces
+\section delete_face Deleting Faces
 \image html topology-deleteFace.png
 Use this button to delete faces from triangular and polygonal meshes. \n
 Click on the button and then click on the faces you want to delete.
 
-\section split_face Splitting faces faces
+\section split_face Splitting Faces
 \image html topology-splitFace.png
 Use this button to split faces in triangular and polygonal meshes. \n
 Click on the button and then click on the face you want to split. The new vertex
