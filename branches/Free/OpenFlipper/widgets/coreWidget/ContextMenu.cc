@@ -434,7 +434,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //====================================================================================================
 
   QAction* copyView = _menu->addAction(tr("Copy View"));
-  copyView->setToolTip(tr("Copy current view to clipboard"));
+  copyView->setToolTip(tr("Copy current view, window size and toolbar size to clipboard"));
   copyView->setIcon( QIcon(iconPath+"edit-copy.png") );
   connect(copyView, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
 
@@ -444,6 +444,13 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   pasteView->setToolTip(tr("Paste current view from clipboard"));
   pasteView->setIcon( QIcon(iconPath+"edit-paste.png") );
   connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
+
+  //====================================================================================================
+
+  QAction* pasteViewAndWindow = _menu->addAction(tr("Paste View and Window Size"));
+  pasteViewAndWindow->setToolTip(tr("Paste current view, window size and the toolbox size from clipboard"));
+  pasteViewAndWindow->setIcon( QIcon(iconPath+"edit-paste.png") );
+  connect(pasteViewAndWindow, SIGNAL(triggered()), this , SLOT( slotPasteViewAndWindow( ) ) );
 
   //====================================================================================================
 
