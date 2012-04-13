@@ -833,11 +833,11 @@ void CoreWidget::delete_garbage() {
 
 void CoreWidget::slotPasteView( ) {
   QSize size;
-  int toolBarWidth;
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView(&size,&toolBarWidth);
+  int splitterWidth;
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView(&size,&splitterWidth);
 
   //resize the toolbox and splitter
-  if (toolBarWidth != -1)
+  if (splitterWidth != -1)
   {
     QList<int> sizes = toolSplitter_->sizes();
     unsigned sum_size = sizes[0]+sizes[1];
@@ -845,17 +845,16 @@ void CoreWidget::slotPasteView( ) {
     bool onRight = OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool();
     if (onRight)
     {
-      sizes[1] = toolBarWidth;
-      sizes[0] = sum_size - toolBarWidth;
+      sizes[1] = splitterWidth;
+      sizes[0] = sum_size - splitterWidth;
     }
     else
     {
-      sizes[0] = toolBarWidth;
-      sizes[1] = sum_size - toolBarWidth;
+      sizes[0] = splitterWidth;
+      sizes[1] = sum_size - splitterWidth;
     }
 
     toolSplitter_->setSizes(sizes);
-    viewerToolbar_->resize(toolBarWidth, viewerToolbar_->height());
   }
 
   //resize window
