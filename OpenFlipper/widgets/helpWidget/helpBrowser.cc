@@ -129,7 +129,7 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 			return QVariant(helpEngine_->fileData(newFileUrl));
 		else {
 			std::cerr << "Unable to find file at url : " << newUrl.toString().toStdString() << std::endl;
-			return QVariant();
+			return QVariant("Page not Found.");
 		}
 
 	}
