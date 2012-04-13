@@ -271,6 +271,7 @@ public:
 
       You can save the current Window size via parameter _windowSize
       \note QSize(0,0) indicates that the window was maximized.
+      \note _splitterWidth is -1 if no splitterWidth was saved
    */
   bool decodeView(const QString& _view, QSize *_windowSize = NULL, int* _toolBarWidth = NULL);
 
@@ -352,12 +353,13 @@ public slots:
 
   /** you get the older window size (if saved) back
       \note QSize(0,0) indicates that the window is maximized.
+      \note _splitterWidth is -1 if no splitterWidth was saved
    */
-  void actionPasteView(QSize * _windowSize = NULL, int *_toolBarWidth = NULL);
+  void actionPasteView(QSize * _windowSize = NULL, int *_splitterWidth = NULL);
   /** if you want to save the windowSize, use the parameter
       \note QSize(0,0) indicates that the window is maximized
    */
-  void actionCopyView(const QSize &_windowSize = QSize(-1,-1), const int _toolBarWidth = -1);
+  void actionCopyView(const QSize &_windowSize = QSize(-1,-1), const int _splitterWidth = -1);
 
 //-------------------------------------------------------------- public signals
 signals:
