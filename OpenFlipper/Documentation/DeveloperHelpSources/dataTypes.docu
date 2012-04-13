@@ -29,7 +29,6 @@ The following datatypes are available in OpenFlipper:
 - \subpage CameraType "Camera"
   \image html type_camera_thumb.png
 
-\subpage datatypes_adding_custom
-A description on how new data types can be added to OpenFlipper can be found here: \ref datatypes_adding_custom
+A description on how new data types can be added to OpenFlipper can be found here: \subpage datatypes_adding_custom
 
 */
