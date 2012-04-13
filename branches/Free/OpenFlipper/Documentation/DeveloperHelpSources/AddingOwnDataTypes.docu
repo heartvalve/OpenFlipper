@@ -66,6 +66,15 @@ and includes the pluginfunctions ,object and type header:
 #include <ObjectTypes/Plane/PlaneTypes.hh>
 \endcode
 
+\section objectTypeTypePlugin The Type plugin
+After fully defining the data type, we need to create a plugin that manages the new type inside OpenFlipper. The
+TypePlugin implements the TypeInterface (\ref typeInterfacePage ). The plugin will register the type in the OpenFlipper core. Additionally
+the plugin will be used to generate new objects of your type.
+
+\section objectTypeFilePlugin The File Plugins
+File plugins load data from a file into your object (or save from object to file). You can write your own custom
+file plugins. Please look at the FileInterface for further details (\ref fileInterfacePage ).
+
 
 
 */
