@@ -45,14 +45,14 @@
  * on one of the arrow tips (See image in \ref obj_translation),
  * you can rotate the object.
  * After clicking with the mouse button,hold it and move the mouse, to rotate the object.
- * The rotation axis is the arrow tail of the clicked arrow tip, or the arrow tail which is cyrcled by the pressed cyrcle.
+ * The rotation axis is the arrow tail of the clicked arrow tip, or the arrow tail which is circle by the pressed circle.
  * 
  * \subsection obj_resizing Object Resizing
  * 
  * \image html manipulator/manipulator_resize_describe.png "The Manipulator in resize mode"
  * 
  * First, enable the "resize" mode by pressing and holding the <b>\<Control></b> key or pressing the button shown below.
- * You will see, the cyrcles around the manipulatorare vanished and
+ * You will see, the circles around the manipulator vanished and
  * the arrows have two tips.
  * 
  * \image html manipulator/manipulator_resize.png "Button enables the \"resize\" mode"
@@ -74,7 +74,7 @@
  * \subsection man_translation Manipulator Translation
  * \image html manipulator/manipulator_manip_translation.png "Button enables the \"Locally translate manipulator\" mode"
  * 
- * To translate the Manipulatior, enable the "Locally translate manipulator" mode.
+ * To translate the Manipulator, enable the "Locally translate manipulator" mode.
  * This can be done by pressing the button shown above.
  * The manipulator follows the mouse. Click with the mouse button to set the manipulator
  * on the desired place.
