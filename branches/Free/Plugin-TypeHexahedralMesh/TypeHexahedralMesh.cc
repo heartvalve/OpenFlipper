@@ -69,7 +69,7 @@ void TypeHexahedralMeshPlugin::pluginsInitialized() {
 
     emit registerKey(Qt::Key_F8, Qt::ShiftModifier, "Set scaling of Hex shrinkage");
 
-    QMenu* menu = new QMenu("Hex Mesh Options");
+    QMenu* menu = new QMenu("Hexahedral Mesh Options");
 
     // scaling action in context menu
     QAction* act_scale_cells = new QAction(tr("Scale cells (Shift-F8)"), this);
