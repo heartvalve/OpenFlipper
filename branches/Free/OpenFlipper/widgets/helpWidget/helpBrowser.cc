@@ -59,7 +59,7 @@ HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 	currentVirtualFolder_(""),
 	currentNameSpace_("")
 {
-
+  connect(this, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(rememberHistory(const QUrl&)));
 }
 
 HelpBrowser::~HelpBrowser() {
@@ -85,11 +85,12 @@ void HelpBrowser::updateNameSpaceAndFolder (const QUrl& _url) {
 
 void HelpBrowser::rememberHistory (const QUrl& _url) {
 
+  QUrl newUrl = resolveUrl(_url);
   // Delete the visited pages after the current position if they exist
   if ( currentPage_ < visitedPages_.size()-1 )
     visitedPages_.erase((visitedPages_.begin()+currentPage_),visitedPages_.end());
 
-  visitedPages_.push_back(_url);
+  visitedPages_.push_back(newUrl);
   currentPage_ = visitedPages_.size()-1;
 
 }
@@ -142,7 +143,7 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 void HelpBrowser::open(const QString& _url) {
 
 	open(QUrl(_url));
-}
+}emit sourceChanged( _url );
 
 void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
 
@@ -163,16 +164,21 @@ void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
 
 	setHtml(txt);
 
-	if(!_skipSave)
-	  rememberHistory(_url);
-
   //jumps to a reference (Doxygen reference name and not section name)
   //references are at the end of url after last '#'
   QStringList Anchor = _url.toString().split("#");
   if (Anchor.size() > 1)
     this->scrollToAnchor(Anchor[Anchor.size()-1]);
 
-  emit sourceChanged( _url );
+  if (_skipSave)
+  {
+    disconnect(this,SLOT(rememberHistory(const QUrl&)));
+    emit sourceChanged( _url );
+    connect(this, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(rememberHistory(const QUrl&)));
+  }
+  else
+    emit sourceChanged( _url );
+
 }
 
 QUrl HelpBrowser::getCurrentDir(const QUrl& _url) {
@@ -203,7 +209,7 @@ void HelpBrowser::backward() {
 
 	if(isBackwardAvailable()) {
 		currentPage_--;
-		open(visitedPages_[currentPage_-1], true);
+		open(visitedPages_[currentPage_], true);
 	}
 
 }
