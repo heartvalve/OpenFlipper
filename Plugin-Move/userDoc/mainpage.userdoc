@@ -4,64 +4,26 @@
 \image html main.png ""
 
 The Move Plugin moves object or a selection of vertices, edges or faces.
-The movement can be done with a \ref Manipulator or, for more precision, the \ref property_window.
+The movement can be done with the <a href="../user/manipulator.html"><b>Manipulator</b></a>  or, for more precision, the <a href="../user/manipulator.html#property_window"><b>Property Window</b></a> .
 \section Summary
 
-\li \ref Manipulator
 \li \ref move_mode
-\li \ref property_window
-
-\section Manipulator
-The manipulator is used to rotate, translate or scale objects.
-
-To set the manipulator in the view, use the toolbar to enable the move mode.
-Then double click on the selected place (in case of translating a selected area) or anywhere on the object.
-
-Rotation can be done by clicking on one of the circles around the manipulator or on one of the arrow tips.
-Hold the mouse button and move the mouse to apply a rotation.
-The rotation axis is the arrow tail of the clicked axis, or the arrow which has the same color as the circle.
-The arrow tails control translations. Click on them and move the mouse to translate the object
-in arrow direction. Click on the center for translations parallel to the viewing plane.
-
-\note the translate/rotate button shown below has to be activated.
-
-\image html move-translaterotate.png "translate/rotate button"
-
-For resizing an object, press \<Control\> or the button below and then use the manipulator.
-The arrows show the direction of the scale modifying.
-
-\image html move-resize.png "Resize button"
-
-There are also options for manipulating the manipulator itself.
-\note No objects will be modified with these options.
-
-All operations can be done by using the toolbar buttons and they also provide some shortcuts.
-
-\li Use the mouse wheel while pointing on the manipulator for resizing.
-\li Press \<Shift\> to rotate it.
-\li There is no shortcut for translation, so use the button in the toolbar
 
 \section move_mode Move Mode
 You can move an object in 3D space or you can also move
 a selection of vertices, edges or faces of an object.
 For moving an object, press the icon shown below
-and start by using the \ref Manipulator, or if the \ref property_window is open, click on "Object"
+and start by using the <a href="../user/manipulator.html"><b>Manipulator</b></a>, or if the 
+<a href="../user/manipulator.html#property_window"><b>Property Window</b></a> is open, click on "Object"
 in section "Manipulator Mode".
 \image html move-objects.png "Click on this button for moving an object"
 
 For moving a selection of an object, click on the button shown below,
-or if the \ref property_window is open, click on "Selection" in section "Manipulator Mode".
+or if the <a href="../user/manipulator.html#property_window"><b>Property Window</b></a>  is open, click on "Selection" in section "Manipulator Mode".
 \image html move-selections.png "Click on this button for moving a selection of an object"
 
 Keep in mind, you has to select some data.
 
-\section property_window Property Window
-To open the property window, right-click on the manipulator and click on "Set Properties".
-The property window provides several options to set the position/direction of the manipulator and
-for translation, rotation and scaling. You can manipulate the object or only a selection of it (see \ref move_mode for more information).
-It is simple to use:\n
-\li Choose the operation that should be done. They are written on the left buttons (e.g. translation).
-\li Write your values into the edit boxes next to the buttons.
-Which axis/angle the edit boxes describe is shown above of the boxes (e.g. first edit box after button translation is for the x-axis).
-\li Click on the left operation button.
+\note Learn How-to use the Manipulator? <a href="../user/manipulator.html"><b>Click this link</b></a>
+
 */
