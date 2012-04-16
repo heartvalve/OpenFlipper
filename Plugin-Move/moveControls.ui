@@ -54,8 +54,12 @@
           <string>Move COG of selected objects to origin</string>
          </property>
          <property name="whatsThis">
-          <string>Moves the selected objects such that
-their center of gravity is at the origin.</string>
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Moves the selected objects such that&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;their center of gravity is at the origin. &lt;a href=&quot;index.html#move_cog&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;Click fore more information&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Move COG to origin</string>
@@ -78,8 +82,7 @@ their center of gravity is at the origin.</string>
           <string>Normalize bounding box diagonal of objects</string>
          </property>
          <property name="whatsThis">
-          <string>Rescale objects such that its bounding box
-diagonal has length one.</string>
+          <string/>
          </property>
          <property name="text">
           <string>Unify Boundingbox Diagonal</string>

@@ -300,10 +300,15 @@ void MovePlugin::initializePlugin()
 
    tool_->moveToOrigin->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "moveToCOG.png") );
    tool_->moveToOrigin->setIconSize(QSize(48,48));
+   WhatsThisGenerator whatsThis("Move");
+   tool_->moveToOrigin->setWhatsThis(QString(tr("Moves the selected objects such that their center of gravity is at the origin."))
+       +whatsThis.generateLink("move_cog"));
 
    connect(tool_->unifyBoundingBoxDiagonal,SIGNAL(clicked() ),this,SLOT(slotUnifyBoundingBoxDiagonal()));
    tool_->unifyBoundingBoxDiagonal->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "unifyBB.png") );
    tool_->unifyBoundingBoxDiagonal->setIconSize(QSize(48,48));
+   tool_->unifyBoundingBoxDiagonal->setWhatsThis(QString(tr("Rescale objects such that its bounding box diagonal has length one."))
+          +whatsThis.generateLink("unifyBB"));
 
    lastActiveManipulator_ = -1;
 
@@ -501,7 +506,7 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
     PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
 
   //change the selection mode in propety widget
-  for (std::size_t i = 0; i < propsWindows_.size(); ++i)
+  for (int i = 0; i < propsWindows_.size(); ++i)
     setPickModeProps(propsWindows_[i], _mode);
 
 }
