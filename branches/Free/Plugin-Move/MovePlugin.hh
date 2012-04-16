@@ -435,6 +435,9 @@ public:
     void slotUpdateContextMenuNode( int _nodeId );
 
     private:
+
+    void setPickModeProps(movePropsWidget* _pW, const std::string &_pickmode);
+
     /// List of properties dialogs (each corresponding to one manipulator)
     QList<movePropsWidget*> propsWindows_;
 

@@ -175,14 +175,10 @@ void MovePlugin::showProps(){
       pW->dirzy->setText(num);
       num = QString::number(direction[2]);
       pW->dirzz->setText(num);
-
-      if (PluginFunctions::pickMode() == "Move")
-        pW->objectRadioButton->setChecked(true);
-      else
-        pW->selectionRadioButton->setChecked(true);
-
     }
   }
+
+  setPickModeProps(pW,PluginFunctions::pickMode());
 
   pW->show();
   propsWindows_.append(pW);
