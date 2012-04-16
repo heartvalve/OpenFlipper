@@ -64,12 +64,36 @@ void TypePolyhedralMeshPlugin::pluginsInitialized() {
 
     emit registerKey(Qt::Key_F8, Qt::ShiftModifier, "Set scaling of cell shrinkage");
 
+    QMenu* menu = new QMenu("Polyhedral Mesh Options");
+
     // scaling action in context menu
     QAction* act_scale_cells = new QAction(tr("Scale cells (Shift-F8)"), this);
     act_scale_cells->setStatusTip(tr("Scale cells (Shift-F8)"));
     connect(act_scale_cells, SIGNAL( triggered() ), this, SLOT( slot_change_shrinkage() ));
+    menu->addAction(act_scale_cells);
 
-    emit addContextMenuItem(act_scale_cells, DATA_POLYHEDRAL_MESH, CONTEXTOBJECTMENU);
+    // Change rendering
+    render_switch_ = new QAction(tr("Render Boundary Only"), this);
+    render_switch_->setStatusTip(tr("Render Boundary Only"));
+    render_switch_->setCheckable(true);
+    render_switch_->setChecked(false);
+    connect(render_switch_, SIGNAL( triggered() ), this, SLOT( switchRendering() ));
+    menu->addAction(render_switch_);
+
+    translucency_action_ = new QAction(tr("Translucent"), this);
+    translucency_action_->setStatusTip(tr("Translucent"));
+    translucency_action_->setCheckable(true);
+    translucency_action_->setChecked(false);
+    connect(translucency_action_, SIGNAL( triggered() ), this, SLOT( switchTranslucency() ));
+    menu->addAction(translucency_action_);
+
+    translucency_factor_action_ = new QAction(tr("Set Translucency Factor"), this);
+    translucency_factor_action_->setStatusTip(tr("Set Translucency Factor"));
+    translucency_factor_action_->setCheckable(false);
+    connect(translucency_factor_action_, SIGNAL( triggered() ), this, SLOT( setTranslucencyFactor() ));
+    menu->addAction(translucency_factor_action_);
+
+    emit addContextMenuItem(menu->menuAction(), DATA_POLYHEDRAL_MESH, CONTEXTOBJECTMENU);
 }
 
 //----------------------------------------------------------------------------
@@ -159,11 +183,87 @@ void TypePolyhedralMeshPlugin::slotObjectUpdated(int _identifier) {
         slot_update_planes_in_scenegraph_node();
 }
 
+//----------------------------------------------------------------------------
+
 void TypePolyhedralMeshPlugin::objectDeleted(int _identifier) {
 
     PlaneObject* pobj;
     if (PluginFunctions::getObject(_identifier, pobj)) {
         slot_update_planes_in_scenegraph_node(_identifier);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void TypePolyhedralMeshPlugin::switchRendering() {
+
+    QVariant contextObject = render_switch_->data();
+    int objectId = contextObject.toInt();
+
+    if(objectId == -1)
+        return;
+
+    BaseObjectData* bod = 0;
+    if(!PluginFunctions::getObject(objectId, bod))
+        return;
+
+    PolyhedralMeshObject* polyMeshObject = dynamic_cast<PolyhedralMeshObject*>(bod);
+
+    if(polyMeshObject) {
+        polyMeshObject->meshNode()->set_boundary_only(render_switch_->isChecked());
+        polyMeshObject->meshNode()->set_geometry_changed(true);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void TypePolyhedralMeshPlugin::switchTranslucency() {
+
+    QVariant contextObject = translucency_action_->data();
+    int objectId = contextObject.toInt();
+
+    if(objectId == -1)
+        return;
+
+    BaseObjectData* bod = 0;
+    if(!PluginFunctions::getObject(objectId, bod))
+        return;
+
+    PolyhedralMeshObject* polyMeshObject = dynamic_cast<PolyhedralMeshObject*>(bod);
+
+    if(polyMeshObject) {
+        polyMeshObject->meshNode()->set_translucent(translucency_action_->isChecked());
+        polyMeshObject->meshNode()->set_geometry_changed(true);
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void TypePolyhedralMeshPlugin::setTranslucencyFactor() {
+
+    QVariant contextObject = translucency_factor_action_->data();
+    int objectId = contextObject.toInt();
+
+    if(objectId == -1)
+        return;
+
+    BaseObjectData* bod = 0;
+    if(!PluginFunctions::getObject(objectId, bod))
+        return;
+
+    PolyhedralMeshObject* polyMeshObject = dynamic_cast<PolyhedralMeshObject*>(bod);
+
+    if(polyMeshObject) {
+
+        bool ok;
+        float val = polyMeshObject->meshNode()->translucency_factor();
+        double factor = QInputDialog::getDouble(0, tr("Set translucency factor"), tr("Factor [0, 1]:"), val,
+                0.0, 1.0, 2, &ok);
+
+        polyMeshObject->meshNode()->set_translucency_factor((float)factor);
+        if(polyMeshObject->meshNode()->translucent()) {
+            emit updatedObject(objectId, UPDATE_GEOMETRY);
+        }
     }
 }
 

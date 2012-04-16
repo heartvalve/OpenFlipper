@@ -90,6 +90,12 @@ private slots:
 
     void slot_update_planes_in_scenegraph_node(int _deletedObject = -1);
 
+    void switchRendering();
+
+    void switchTranslucency();
+
+    void setTranslucencyFactor();
+
 public:
 
     ~TypePolyhedralMeshPlugin() {
@@ -124,6 +130,12 @@ public slots:
 private:
 
     QString get_unique_name(PolyhedralMeshObject* _object);
+
+    QAction* render_switch_;
+
+    QAction* translucency_action_;
+
+    QAction* translucency_factor_action_;
 };
 
 #endif //TYPEPOLYHEDRALMESH_HH
