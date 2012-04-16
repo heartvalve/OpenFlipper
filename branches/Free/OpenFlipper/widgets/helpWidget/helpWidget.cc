@@ -57,7 +57,7 @@
 #include <QTextStream>
 #include <QDir>
 
-HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
+HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const bool _loadHomeSite /*= true*/)
   : QMainWindow(parent),
   searchWidget_(0),
   tabWidget_(0),
@@ -212,8 +212,11 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   }
   #endif
 
-  // Load main page
-  textWindow_->open(QUrl(homeSite_));
+  if (_loadHomeSite)
+  {
+    // Load main page
+    textWindow_->open(QUrl(homeSite_));
+  }
 }
 
 void HelpWidget::activateLink(const QUrl& _url)

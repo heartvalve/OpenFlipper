@@ -202,7 +202,7 @@ bool HelpBrowser::isForwardAvailable() {
 
 bool HelpBrowser::isBackwardAvailable() {
 
-	return currentPage_ > 1;
+	return currentPage_ > 0;
 }
 
 void HelpBrowser::backward() {
