@@ -10,39 +10,32 @@ You can find the tools of this plugin in the tool bar by pressing the icon:
 
 Tools:
 \li \ref manipulate_joint
-\li \ref manipulator
 \li \ref transformation_modi
 
 \section manipulate_joint Joint Manipluation
 
-\image html skeleton_selectJoint.png "select joint" This Button allows you to select and deselect the joints. Some other manipulations will need a selected set of joints.
+\image html skeleton_selectJoint.png "select joint" 
 
-\image html skeleton_insertJoint.png "insert joint" Activate this button and click on a joint, new joints will be childs of this, or a free space, beginning a new skeleton, to create a chain of joints.
+This Button allows you to select and deselect the joints. Some other manipulations will need a selected set of joints.
+
+\image html skeleton_insertJoint.png "insert joint" 
+
+Activate this button and click on a joint, new joints will be childs of this, or a free space, beginning a new skeleton, to create a chain of joints.
 You can simple add more on this chain with one click on free space. Double-click for the last joint.
 
-\image html skeleton_splitJoint.png "split joint" Click on a joint and a new joint will appear between the clicked and his parent. The new joint will appear in the middle of these.
+\image html skeleton_splitJoint.png "split joint" 
 
-\image html skeleton_deleteJoint.png "delete joint" Click on a joint to delete it. The parent of the deleted joint will be the parent of the childs. If the deleted joint was a root joint, each of his child will be a new root joint.
+Click on a joint and a new joint will appear between the clicked and his parent. The new joint will appear in the middle of these.
 
-\image html skeleton_moveJoint.png "transform joint" Click on a joint to see the manipulator. For more information see \ref manipulator .
+\image html skeleton_deleteJoint.png "delete joint" 
 
-\section manipulator Manipulator
-\image html manipulator.png "The manipulator"
-You can transform a joint with the manipulator. There are some options to do this (see \ref transformation_modi for more Information).
-A joint can be rotated or translated and the manipulator follows you selected joint and you mouse.
-\note Translation is not possible in an animation.
+Click on a joint to delete it. The parent of the deleted joint will be the parent of the childs. If the deleted joint was a root joint, each of his child will be a new root joint.
 
-For \em translation, click on the manipulators center. Click on one of the three arrow tails to translate the joint in the pointed direction and backwards. If you want to change the directions, you have to press the 'Rotate manipulator'-button (see below).
+\image html skeleton_moveJoint.png "transform joint" 
 
-For \em rotation, click on the cyrcle lines around the manipulator or on one of the arrow tips. The arrows show with the same color describe the rotation axis. If you want to change the rotation axis, you have to press the 'Rotate manipulator'-button (see below).
+Click on a joint to see the manipulator. For more information see <a href="../user/manipulator.html"><b>Manipulator</b></a> .
 
-\note It is possible to scale the size of the manipulator by using your mouse wheel while you are over
-the center of the manipulator.
 
-\image html skeleton_maniprotate.png "Rotate manipluator"
-If you activate the 'Rotate manipulator'-Button, you are able to rotate it. For doing this, press "shift" and select, as the rotation axis, an arrow or a cyrcle line of the manipulator.
-
-\note No joint will be rotated, only the manipluator
 
 \section transformation_modi Transformation Modi
 \image html skeleton_manipAllFrames.png "Transform whole Animation"
