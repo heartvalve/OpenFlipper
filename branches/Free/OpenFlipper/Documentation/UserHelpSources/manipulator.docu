@@ -4,7 +4,7 @@
  * 
  * The Manipulator is an easy to use tool for translation, rotation, and resizing.
  * 
- * It is used by several Plugins e.g. the <a style="text-decoration:none;" href="../Plugin-Move/index.html"><b>Move Plugin</b></a>.
+ * It is used by several Plugins e.g. the <a href="../Plugin-Move/index.html"><b>Move Plugin</b></a>.
  * 
  * \section Summary
  * \ref obj_man
@@ -63,15 +63,9 @@
  * Click on the ball center for doing this. 
  * 
  * \section property_window Property Window
- * To open the property window, right-click on the manipulator and click on "Set Properties".
- * The property window provides several options to set the position/direction of the manipulator and
- * for translation, rotation and scaling.
- * It is simple to use:\n
- * \li Choose the operation that should be done. They are written on the left buttons (e.g. translation).
- * \li Write your values into the edit boxes next to the buttons.
- * Which axis/angle the edit boxes describe is shown above of the boxes (e.g. first edit box after button translation is for the x-axis).
- * \li Click on the left operation button.
- *  
+ * The Property Window is provided by the <a href="../Plugin-Move/index.html#property_window"><b>Move Plugin</b></a>.
+ * Please read the linked article for more information.
+ * However, the Property Window can be used with other Plugins. 
  * 
  * \section man_man Manipulator Manipulation
  * The following manipulations manipulates the Manipulator itself. So, no data of your mesh will

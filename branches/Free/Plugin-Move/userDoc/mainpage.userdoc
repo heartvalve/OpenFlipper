@@ -8,6 +8,7 @@ The movement can be done with the <a href="../user/manipulator.html"><b>Manipula
 \section Summary
 
 \li \ref move_mode
+\li \ref property_window
 
 \section move_mode Move Mode
 You can move an object in 3D space or you can also move
@@ -25,5 +26,20 @@ or if the <a href="../user/manipulator.html#property_window"><b>Property Window<
 Keep in mind, you has to select some data.
 
 \note Learn How-to use the Manipulator? <a href="../user/manipulator.html"><b>Click this link</b></a>
+
+\section property_window Property Window
+To open the property window, right-click on the manipulator and click on "Set Properties".
+The property window provides several options to set the position/direction of the manipulator and
+for translation, rotation and scaling.
+It is simple to use:\n
+\li Choose the operation that should be done. They are written on the left buttons (e.g. translation).
+\li Write your values into the edit boxes next to the buttons.
+Which axis/angle the edit boxes describe is shown above of the boxes (e.g. first edit box after button translation is for the x-axis).
+\li Click on the left operation button.
+
+In section "Manipulator Mode" the move mode is selectable. For more information see \ref move_mode.
+If no Manipulator Mode is selected, your current mode isn't supported by the Move-Plugin.
+\note Besides, one mode is not supported by the Move-Plugin, you can translate/rotate/scale as described above,
+if the mode supports the Manipulator.
 
 */
