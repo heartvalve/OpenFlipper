@@ -143,7 +143,7 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 void HelpBrowser::open(const QString& _url) {
 
 	open(QUrl(_url));
-}emit sourceChanged( _url );
+}
 
 void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
 
