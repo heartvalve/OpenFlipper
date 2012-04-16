@@ -439,7 +439,6 @@ void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
 
 void MovePlugin::setPickModeProps(movePropsWidget* _pW, const std::string &_pickmode)
 {
-  std::cout << "changed mode to: " <<_pickmode << std::endl;
   if (_pickmode == "Move")
   {
     _pW->objectRadioButton->setChecked(true);
