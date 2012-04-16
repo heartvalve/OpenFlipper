@@ -9,6 +9,7 @@ The movement can be done with the <a href="../user/manipulator.html"><b>Manipula
 
 \li \ref move_mode
 \li \ref property_window
+\li \ref toolbar
 
 \section move_mode Move Mode
 You can move an object in 3D space or you can also move
@@ -41,5 +42,22 @@ In section "Manipulator Mode" the move mode is selectable. For more information 
 If no Manipulator Mode is selected, your current mode isn't supported by the Move-Plugin.
 \note Besides, one mode is not supported by the Move-Plugin, you can translate/rotate/scale as described above,
 if the mode supports the Manipulator.
+
+  
+\section toolbar Toolbar Operations
+\subsection move_cog Move COG to Origin
+Move the object(s) at the position, where the position of the  center of gravity
+is the same as the origin of our coordinate system.
+\note Don't use the Manipulator for selecting the objects for this operation. Instead, use <a href="../Plugin-Datacontrol/index.html"><b>Data Control</b></a>
+to select one or more objects as targets.
+
+\subsection unifyBB Unify Boundingbox Diagonal
+
+Unifies the diagonal the bounding box.\n
+So the length of the diagonal will be 1.\n
+This operation is also possible with multiple targets.
+\note Don't use the Manipulator for selecting the objects for this operation. Instead, use <a href="../Plugin-Datacontrol/index.html"><b>Data Control</b></a>
+to select one or more objects as targets.
+
 
 */
