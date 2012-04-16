@@ -55,11 +55,10 @@ HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
 	QTextBrowser(parent),
 	helpEngine_(_helpEngine),
+	currentPage_(0),
 	currentVirtualFolder_(""),
 	currentNameSpace_("")
 {
-
-	currentPage_ = 0;
 
 }
 
@@ -197,14 +196,14 @@ bool HelpBrowser::isForwardAvailable() {
 
 bool HelpBrowser::isBackwardAvailable() {
 
-	return currentPage_ > 0;
+	return currentPage_ > 1;
 }
 
 void HelpBrowser::backward() {
 
 	if(isBackwardAvailable()) {
 		currentPage_--;
-		open(visitedPages_[currentPage_], true);
+		open(visitedPages_[currentPage_-1], true);
 	}
 
 }
