@@ -241,6 +241,50 @@ void Core::saveSettings(){
           filename += finfo.completeSuffix();
       }
 
+      // check if we have an extension for the object
+      if (QFileInfo(filename).suffix() == "") {
+
+        // get the supported extensions
+        QStringList allFilters;
+        std::vector<fileTypes> types = supportedTypes();
+        for (int i=0; i < (int)types.size(); i++) {
+          QString filters = types[i].saveFilters;
+
+          // only take the actual extensions
+          filters = filters.section("(",1).section(")",0,0);
+          if (filters.trimmed() == "")
+            continue;
+
+          QStringList separateFilters = filters.split(" ");
+          bool found = false;
+          for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+            if (separateFilters[filterId].trimmed() == "")
+              continue;
+
+            found = true;
+            allFilters.append(separateFilters[filterId]);
+          }
+
+          if (!found)
+            allFilters.append( filters );
+        }
+
+        allFilters.removeDuplicates();
+        allFilters.sort();
+
+        // show extension list for the user to choose from
+        bool ok = false;
+        QString extension = QInputDialog::getItem(coreWidget_, "Please specify a file extension for " + o_it->name(),
+                                             "File extension:", allFilters, 0, false, &ok);
+        if (ok && !allFilters.isEmpty()) {
+          // set the file type
+          extension = QFileInfo(extension).suffix();
+          filename += "." + extension;
+        } else {
+          emit log(LOGERR, tr("Unabel to save %1. No extension specified.").arg(o_it->name()));
+          continue;
+        }
+      }
 
       // decide whether to use saveObject or saveObjectTo
       if ( !QFile(filename).exists() || !askOverwrite->isChecked() )
