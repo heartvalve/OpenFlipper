@@ -1,5 +1,7 @@
 /** \page manipulator Manipulator
  * 
+ * \image html manipulator/manipulator.png
+ * 
  * The Manipulator is an easy to use tool for translation, rotation, and resizing.
  * 
  * It is used by several Plugins e.g. the <a style="text-decoration:none;" href="../Plugin-Move/index.html"><b>Move Plugin</b></a>.
