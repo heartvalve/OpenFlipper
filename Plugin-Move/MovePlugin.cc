@@ -420,7 +420,7 @@ void MovePlugin::slotKeyEvent (QKeyEvent* _event)
 
 void MovePlugin::slotEnableSelectionMode()
 {
-  PluginFunctions::pickMode("MoveSelecion");
+  PluginFunctions::pickMode("MoveSelection");
 }
 
 //------------------------------------------------------------------------------
@@ -435,6 +435,29 @@ void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
   if ((_event->key() == Qt::Key_Control && manMode_ == QtTranslationManipulatorNode::Resize) ||
       (_event->key() == Qt::Key_Shift && manMode_ == QtTranslationManipulatorNode::LocalRotation))
     setManipMode (QtTranslationManipulatorNode::TranslationRotation);
+}
+
+void MovePlugin::setPickModeProps(movePropsWidget* _pW, const std::string &_pickmode)
+{
+  std::cout << "changed mode to: " <<_pickmode << std::endl;
+  if (_pickmode == "Move")
+  {
+    _pW->objectRadioButton->setChecked(true);
+  }
+  else if (_pickmode == "MoveSelection")
+  {
+    _pW->selectionRadioButton->setChecked(true);
+  }
+  else
+  {
+    //not supported, so deselect all radio buttons
+    _pW->objectRadioButton->setAutoExclusive(false);
+    _pW->selectionRadioButton->setAutoExclusive(false);
+    _pW->objectRadioButton->setChecked(false);
+    _pW->selectionRadioButton->setChecked(false);
+    _pW->objectRadioButton->setAutoExclusive(true);
+    _pW->selectionRadioButton->setAutoExclusive(true);
+  }
 }
 
 /*******************************************************************************
@@ -477,6 +500,11 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
   }
   else
     PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+
+  //change the selection mode in propety widget
+  for (std::size_t i = 0; i < propsWindows_.size(); ++i)
+    setPickModeProps(propsWindows_[i], _mode);
+
 }
 
 
