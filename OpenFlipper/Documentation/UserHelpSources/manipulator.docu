@@ -1,0 +1,102 @@
+/** \page manipulator Manipulator
+ * 
+ * The Manipulator is an easy to use tool for translation, rotation, and resizing.
+ * 
+ * It is used by several Plugins e.g. the <a style="text-decoration:none;" href="../Plugin-Move/index.html"><b>Move Plugin</b></a>.
+ * 
+ * \section Summary
+ * \ref obj_man
+ * \li \ref obj_translation
+ * \li \ref obj_rotation
+ * \li \ref obj_resizing
+ * 
+ * \ref property_window
+ * 
+ * \ref man_man 
+ * \li \ref man_translation
+ * \li \ref man_rotation
+ * \li \ref man_resizing
+ * 
+ * \note Not every plugin provide all manipulations presented in this document
+ * 
+ * \section obj_man Object Manipulation
+ * Before you can start, you have to place the manipulator and bind it to an object.
+ * A <b>double left click</b> on the desired object resolves this problem.
+ * If you want to change the manipulated object, <b>double left click</b>
+ * on the desired place again.
+ * After placing the manipulator, you can proceed with the following manipulations.
+ * 
+ * 
+ * \subsection obj_translation Object Translation
+ * The translation can be done via the arrow tails or the ball in the center.
+ * 
+ * \image html manipulator/manipulator_trans_rot_describe.png "The Manipulator for Rotation and Translation"
+ * 
+ * Click on the ball, hold and move the to translate an object
+ * to all directions. If the directions should be limited, click
+ * on an arrow tail. Now, you can move your mouse, but the object
+ * will only be translated on the 1D axis described by the arrow.
+ * 
+ * \subsection obj_rotation Object Rotation
+ * The Manipulator in resize mode
+ * By clicking on one of the circles around the manipulator or 
+ * on one of the arrow tips (See image in \ref obj_translation),
+ * you can rotate the object.
+ * After clicking with the mouse button,hold it and move the mouse, to rotate the object.
+ * The rotation axis is the arrow tail of the clicked arrow tip, or the arrow tail which is cyrcled by the pressed cyrcle.
+ * 
+ * \subsection obj_resizing Object Resizing
+ * 
+ * \image html manipulator/manipulator_resize_describe.png "The Manipulator in resize mode"
+ * 
+ * First, enable the "resize" mode by pressing and holding the <b>\<Control></b> key or pressing the button shown below.
+ * You will see, the cyrcles around the manipulatorare vanished and
+ * the arrows have two tips.
+ * 
+ * \image html manipulator/manipulator_resize.png "Button enables the \"resize\" mode"
+ * 
+ * Now you can resize the object by pressing on one of the arrows, holding and moving
+ * the mouse. This procedure resizes the object in the arrow direction.\n
+ * It is also possible to resize the object an all dimensions.
+ * Click on the ball center for doing this. 
+ * 
+ * \section property_window Property Window
+ * To open the property window, right-click on the manipulator and click on "Set Properties".
+ * The property window provides several options to set the position/direction of the manipulator and
+ * for translation, rotation and scaling.
+ * It is simple to use:\n
+ * \li Choose the operation that should be done. They are written on the left buttons (e.g. translation).
+ * \li Write your values into the edit boxes next to the buttons.
+ * Which axis/angle the edit boxes describe is shown above of the boxes (e.g. first edit box after button translation is for the x-axis).
+ * \li Click on the left operation button.
+ *  
+ * 
+ * \section man_man Manipulator Manipulation
+ * The following manipulations manipulates the Manipulator itself. So, no data of your mesh will
+ * be harmed.
+ * 
+ * \subsection man_translation Manipulator Translation
+ * \image html manipulator/manipulator_manip_translation.png "Button enables the \"Locally translate manipulator\" mode"
+ * 
+ * To translate the Manipulatior, enable the "Locally translate manipulator" mode.
+ * This can be done by pressing the button shown above.
+ * The manipulator follows the mouse. Click with the mouse button to set the manipulator
+ * on the desired place.
+ * \note There are no existing shortcuts to enable this mode 
+ * 
+ * 
+ * \subsection man_rotation Manipulator Rotation
+ * \image html manipulator/manipulator_manip_rotate.png "Button enables \"Rotate manipulator\" mode"
+ * 
+ * The Manipulator can be rotated. For doing this,
+ * enable in the "Rotate manipulator" mode by pressing the button shown above,
+ * or by pressing and holding the <b>\<Shift\></b> key.
+ * Now, the Manipulator can be rotated as a normal object.
+ * For doing this, see \ref obj_rotation.
+ * 
+ * 
+ * 
+ * \subsection man_resizing Manipulator Resizing
+ * Use the <b>mousewheel \<up></b>and <b>mousewheel \<down\></b> to resize the manipulator.
+ */
+ 

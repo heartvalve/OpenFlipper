@@ -1,5 +1,6 @@
 /** \page tools Tools
  * 
  * \section Overview
- *
+ * OpenFlipper provides following tools:
+ * \li \subpage manipulator
  */
