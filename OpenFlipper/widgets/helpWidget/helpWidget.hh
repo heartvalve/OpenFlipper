@@ -70,7 +70,7 @@ class HelpWidget : public QMainWindow, public Ui::HelpWidget
 
   public:
 
-	  HelpWidget(QWidget* parent = 0, const QString& _homeSite = "");
+	  HelpWidget(QWidget* parent = 0, const QString& _homeSite = "", const bool _loadHomeSite = true);
 
 	  virtual ~HelpWidget();
 
