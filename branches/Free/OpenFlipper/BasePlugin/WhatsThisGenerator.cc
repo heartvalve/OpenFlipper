@@ -2,10 +2,11 @@
 
 /** Constructor for the whatsThisGenerator initializing the plugin name.
  *
- * @param _plugin_name the name of the plugin which is used \note use only the name and NOT the prefix Plugin- (e.g. SkeletonEditing for Plugin-SkeletonEditing)
+ * @param _plugin_name the name of the plugin which is used \note use only the name and NOT the prefix Plugin- (e.g. SkeletonEditing for Plugin-SkeletonEditing).
+ *  If you want to reference in the core user plugin, then _plugin = "user"
  */
 WhatsThisGenerator::WhatsThisGenerator(const QString &_plugin_name) :
-plugin_name_(_plugin_name)
+plugin_name_((_plugin_name != "user") ? QString("Plugin-")+_plugin_name : _plugin_name)
 {
 }
 
@@ -21,9 +22,9 @@ plugin_name_(_plugin_name)
  */
 QString WhatsThisGenerator::generateLink(const QString &_ref /*= ""*/, const QString &_site /*= "index.html"*/) const
 {
-  const QString baseHelpURL = QString(" <a href='qthelp://org.openflipper.plugin-")
+  const QString baseHelpURL = QString(" <a href='qthelp://org.openflipper.")
                                          + plugin_name_.toLower()
-                                         + QString("/Plugin-")
+                                         + QString("/")
                                          + plugin_name_+QString("/")
                                          + _site+QString("#")+_ref + QString("'>");
 
