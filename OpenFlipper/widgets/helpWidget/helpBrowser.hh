@@ -150,11 +150,13 @@ private:
 	 */
 	void updateNameSpaceAndFolder (const QUrl& _url);
 
+private slots:
 	/** \brief Adds a new page to the history
 	 *
 	 * @param _url URL of the new page
 	 */
 	void rememberHistory (const QUrl& _url);
+private:
 
 	/// The help engine the widget is working on
 	QHelpEngine* helpEngine_;
