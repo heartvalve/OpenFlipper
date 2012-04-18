@@ -1,3 +1,11 @@
+# - Try to find IPOPT
+# Once done this will define
+#  IPOPT_FOUND - System has IpOpt
+#  IPOPT_INCLUDE_DIRS - The IpOpt include directories
+#  IPOPT_LIBRARY_DIRS - The library directories needed to use IpOpt
+#  IPOPT_LIBRARIES    - The libraries needed to use IpOpt
+
+
 if (IPOPT_INCLUDE_DIR)
   # in cache already
   SET(IPOPT_FIND_QUIETLY TRUE)
@@ -42,36 +50,41 @@ ELSEIF(APPLE)
 
 ELSE( WIN32 )
    find_path(IPOPT_INCLUDE_DIR NAMES IpNLP.hpp
-     PATHS "/usr/include/coin"
-     ${IPOPT_INCLUDE_PATH}
+     PATHS  "$ENV{IPOPT_HOME}/include/coin"
+            "/usr/include/coin"
+    
    )
-
-#   MESSAGE(STATUS "$ENV{IPOPT_HOME}/include")
-   IF(IPOPT_INCLUDE_DIR)
-      SET(IPOPT_FOUND TRUE)
-      SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
-      
-      #wrong config under Debian workaround
-      add_definitions( -DHAVE_CSTDDEF )
-#      SET(IPOPT_LIBRARY_DIR "$ENV{IPOPT_DIR}/lib/$ENV{IPOPT_ARCH}/" CACHE PATH "Path to IPOPT Library")
-#      SET(IPOPT_LIBRARY "tao;taopetsc;taofortran" CACHE STRING "IPOPT Libraries")  
-#      MESSAGE(STATUS "${IPOPT_LIBRARY_DIR}")
-#      MESSAGE(STATUS "${IPOPT_LIBRARY}")
-    ELSE(IPOPT_INCLUDE_DIR)
-      SET(IPOPT_FOUND FALSE)
-      SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
-    ENDIF(IPOPT_INCLUDE_DIR)
 
    find_library( IPOPT_LIBRARY 
                  ipopt
-                 PATHS "/usr/lib" )
+                 PATHS "$ENV{IPOPT_HOME}/lib"
+                       "/usr/lib" )   
+    
+    #wrong config under Debian workaround
+    add_definitions( -DHAVE_CSTDDEF )
+
    
    # set optional path to HSL Solver
    find_path(IPOPT_HSL_LIBRARY_DIR NAMES libhsl.so
-     PATHS "$ENV{HOME}/opt/HSL/lib"
+     PATHS "$ENV{IPOPT_HSL_LIBRARY_PATH}"
+           "$ENV{HOME}/opt/HSL/lib"
    )
    
    IF( IPOPT_HSL_LIBRARY_DIR)
      set(IPOPT_LIBRARY_DIR ${IPOPT_HSL_LIBRARY_DIR})
    ENDIF(IPOPT_HSL_LIBRARY_DIR)
+   
+   
+   set(IPOPT_INCLUDE_DIRS "${IPOPT_INCLUDE_DIR}" )
+   set(IPOPT_LIBRARIES "${IPOPT_LIBRARY}" )
+   set(IPOPT_LIBRARY_DIRS "${IPOPT_HSL_LIBRARY_DIR}")
+
+   include(FindPackageHandleStandardArgs)
+   # handle the QUIETLY and REQUIRED arguments and set LIBCPLEX_FOUND to TRUE
+   # if all listed variables are TRUE
+   find_package_handle_standard_args(IPOPT  DEFAULT_MSG
+                                     IPOPT_LIBRARY IPOPT_INCLUDE_DIR)
+
+   mark_as_advanced(IPOPT_INCLUDE_DIR IPOPT_LIBRARY )
+   
 ENDIF()

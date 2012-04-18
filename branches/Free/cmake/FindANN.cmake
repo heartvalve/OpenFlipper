@@ -28,8 +28,8 @@ if( WIN32 )
 else (WIN32)
 
  FIND_LIBRARY( ANN_LIBRARY
-               NAMES ann
-               PATHS /lib /usr/lib /usr/local/lib )
+               NAMES ann ANN
+               PATHS /lib /usr/lib /usr/lib64 /usr/local/lib )
 
 endif( WIN32)
 

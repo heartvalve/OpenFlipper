@@ -37,15 +37,26 @@ find_path(TAO_INCLUDE_DIR NAMES "include/tao.h"
      PATHS "$ENV{TAO_DIR}"
      /usr/include/tao
    )
+   
 
 #   MESSAGE(STATUS "$ENV{TAO_HOME}/include")
    IF(TAO_INCLUDE_DIR)
       SET(TAO_FOUND TRUE)
       SET(TAO_INCLUDE_DIRS "${TAO_INCLUDE_DIR}/include;${TAO_INCLUDE_DIR}")
       SET(TAO_INCLUDE_DIR ${TAO_INCLUDE_DIR}/include;${TAO_INCLUDE_DIR} CACHE PATH "Path to TAO Includes")
-      SET(TAO_LIBRARY_DIR "$ENV{TAO_DIR}/lib/$ENV{PETSC_ARCH}/" CACHE PATH "Path to TAO Library")
-      SET(TAO_LIBRARY "tao;taopetsc;taofortran" CACHE STRING "TAO Libraries")  
-#      MESSAGE(STATUS "${TAO_LIBRARY_DIR}")
+      
+      #check VERSION 1.x or 2
+      IF(IS_DIRECTORY "$ENV{TAO_DIR}/lib/$ENV{PETSC_ARCH}/")
+#        MESSAGE(STATUS "TAO Version 1.x")
+	SET(TAO_LIBRARY_DIR "$ENV{TAO_DIR}/lib/$ENV{PETSC_ARCH}/" CACHE PATH "Path to TAO Library")
+	SET(TAO_LIBRARY "tao;taopetsc;taofortran" CACHE STRING "TAO Libraries")  
+      ELSE(IS_DIRECTORY "$ENV{TAO_DIR}/lib/$ENV{PETSC_ARCH}/") #VERSION 2
+#        MESSAGE(STATUS "TAO Version 2.x")
+	SET(TAO_LIBRARY_DIR "$ENV{TAO_DIR}/$ENV{PETSC_ARCH}/lib" CACHE PATH "Path to TAO Library")
+	SET(TAO_LIBRARY "tao" CACHE STRING "TAO Libraries")  
+      ENDIF(IS_DIRECTORY "$ENV{TAO_DIR}/lib/$ENV{PETSC_ARCH}/")
+      
+      #      MESSAGE(STATUS "${TAO_LIBRARY_DIR}")
 #      MESSAGE(STATUS "${TAO_LIBRARY}")
     ELSE(TAO_INCLUDE_DIR)
       SET(TAO_FOUND FALSE)
