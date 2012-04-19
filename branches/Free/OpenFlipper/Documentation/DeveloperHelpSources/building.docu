@@ -115,7 +115,7 @@ and generating the Visual Studio solution file. Choose then build type "Release"
      To get all required libraries you should use the macports project: http://www.macports.org/ <br />
      <br />
      Install at least the following ports: <br />
-     qt4-mac<br />
+     qt4-mac +debug<br />
      glew<br />
      glut<br />
      cmake<br />
