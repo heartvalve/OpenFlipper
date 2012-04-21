@@ -782,8 +782,12 @@ BaseObject* OBJImporter::object(int _objectID) {
 
   if(triMeshes_[_objectID] != NULL)             return triMeshes_[_objectID];
   else if(polyMeshes_[_objectID] != NULL)       return polyMeshes_[_objectID];
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
   else if(bSplineCurves_[_objectID] != NULL)    return bSplineCurves_[_objectID];
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
   else if(bSplineSurfaces_[_objectID] != NULL)  return bSplineSurfaces_[_objectID];
+#endif
 
   return NULL;
 }
