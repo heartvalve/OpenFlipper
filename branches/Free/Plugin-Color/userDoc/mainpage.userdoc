@@ -1,0 +1,20 @@
+/** 
+\mainpage Documentation for Color Plugin
+
+The Color Plugin helps you to define and select color schemes.
+There are 3 predefined color schemes: 
+\li Default Scheme
+\li Presentation Scheme
+\li Paper Scheme
+
+You can switch between the Schemes using the toolbar (picture seen below) or
+via Menu \em View -> \em Color \em Schemes.
+
+\image html toolbar.png "The toolbar of the color Plugin. "
+
+It is possible to define your own colors for the three schemes. For doing this,
+go to the OpenFlipper options via Menu \em File -> \em Options .
+In the options select the tab \em Plugins.
+Now, select \em ColorPlugin and you are able to define your own colors.
+
+*/
