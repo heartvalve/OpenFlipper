@@ -27,6 +27,7 @@
  * If you want to change the manipulated object, <b>double left click</b>
  * on the desired place again.
  * After placing the manipulator, you can proceed with the following manipulations.
+ * \note Use the <a href="../Plugin-Datacontrol/index.html"><b>Data Control Plugin</b></a> to select multiple objects as targets.
  * 
  * 
  * \subsection obj_translation Object Translation
@@ -47,13 +48,14 @@
  * After clicking with the mouse button,hold it and move the mouse, to rotate the object.
  * The rotation axis is the arrow tail of the clicked arrow tip, or the arrow tail which is circle by the pressed circle.
  * 
+ * 
  * \subsection obj_resizing Object Resizing
  * 
  * \image html manipulator/manipulator_resize_describe.png "The Manipulator in resize mode"
  * 
  * First, enable the "resize" mode by pressing and holding the <b>\<Control></b> key or pressing the button shown below.
- * You will see, the circles around the manipulator vanished and
- * the arrows have two tips.
+ * You will see, the circles around the manipulator vanished and the arrows have two tips.
+ * 
  * 
  * \image html manipulator/manipulator_resize.png "Button enables the \"resize\" mode"
  * 
@@ -88,9 +90,7 @@
  * enable in the "Rotate manipulator" mode by pressing the button shown above,
  * or by pressing and holding the <b>\<Shift\></b> key.
  * Now, the Manipulator can be rotated as a normal object.
- * For doing this, see \ref obj_rotation.
- * 
- * 
+ * For doing this, see \ref obj_rotation. 
  * 
  * \subsection man_resizing Manipulator Resizing
  * Use the <b>mousewheel \<up></b>and <b>mousewheel \<down\></b> to resize the manipulator.
