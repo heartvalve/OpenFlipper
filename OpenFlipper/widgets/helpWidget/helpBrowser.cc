@@ -87,6 +87,11 @@ void HelpBrowser::rememberHistory (const QUrl& _url) {
 
   QUrl newUrl = resolveUrl(_url);
 
+  //if the site is already the current site
+  //don't change the memory stack
+  if ((visitedPages_.size() > 0) && (newUrl == visitedPages_[currentPage_]))
+    return;
+
   // Delete the visited pages after the current position if they exist
   if ( currentPage_ < visitedPages_.size()-1 )
     visitedPages_.erase((visitedPages_.begin()+currentPage_+1),visitedPages_.end());
