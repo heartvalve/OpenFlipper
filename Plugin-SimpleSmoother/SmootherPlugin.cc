@@ -65,15 +65,20 @@ void SmootherPlugin::initializePlugin()
 {
    // Create the Toolbox Widget
    QWidget* toolBox = new QWidget();
-
    QGridLayout* layout = new QGridLayout(toolBox);
 
    QPushButton* smoothButton = new QPushButton("&Smooth",toolBox);
+   smoothButton->setToolTip(tr("Smooths an Object using Laplacian Smoothing."));
+   smoothButton->setWhatsThis(tr("Smooths an Object using Laplacian Smoothing. Use the Smooth Plugin for more options."));
+
+
 
    iterationsSpinbox_ =  new QSpinBox(toolBox) ;
    iterationsSpinbox_->setMinimum(1);
    iterationsSpinbox_->setMaximum(1000);
    iterationsSpinbox_->setSingleStep(1);
+   iterationsSpinbox_->setToolTip(tr("The number of the smooting operations."));
+   iterationsSpinbox_->setWhatsThis(tr("Give the number, how often the Laplacian Smoothing should modify the object."));
 
    QLabel* label = new QLabel("Iterations:");
 
