@@ -187,9 +187,9 @@ if (WIN32)
       DESTINATION ${ACG_PROJECT_BINDIR}
     )
     set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q /norestart'")
-	message("Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
+	message(STATUS "Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
   else()
-    message("Warning! No vcredist_x86 found. Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
+    message(WARNING "Warning: No vcredist_x86 found (Only required for creating installer package). Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
   endif ()
  
 
