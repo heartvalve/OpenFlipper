@@ -158,6 +158,9 @@ void ColorPlugin::setDefaultColor() {
   ambient_color  = 0.2f * materialColorDefault_;
   diffuse_color  = 0.6f * materialColorDefault_;
   specular_color = 0.8f * materialColorDefault_;
+  ambient_color[3] = 1.0f;
+  diffuse_color[3] = 1.0f;
+  specular_color[3] = 1.0f;
 
   // Set background color
   PluginFunctions::setBackColor( backgroundColorDefault_ );
@@ -201,6 +204,9 @@ void ColorPlugin::setPresentationColor() {
   ambient_color  = 0.2f * materialColorPresentation_;
   diffuse_color  = 0.6f * materialColorPresentation_;
   specular_color = 0.8f * materialColorPresentation_;
+  ambient_color[3] = 1.0f;
+  diffuse_color[3] = 1.0f;
+  specular_color[3] = 1.0f;
 
   // Set background color
   PluginFunctions::setBackColor( backgroundColorPresentation_ );
@@ -244,6 +250,9 @@ void ColorPlugin::setPaperColor() {
   ambient_color  = 0.2f * materialColorPaper_;
   diffuse_color  = 0.5f * materialColorPaper_;
   specular_color = 0.8f * materialColorPaper_;
+  ambient_color[3] = 1.0f;
+  diffuse_color[3] = 1.0f;
+  specular_color[3] = 1.0f;
 
   // Set background color
   PluginFunctions::setBackColor( backgroundColorPaper_ );
