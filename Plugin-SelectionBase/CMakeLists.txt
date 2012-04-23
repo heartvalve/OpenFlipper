@@ -1,3 +1,4 @@
 include (plugin)
 
-openflipper_plugin (DIRS widgets INSTALLDATA Icons)
+openflipper_plugin (DIRS widgets 
+                    INSTALLDATA Icons)
