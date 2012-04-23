@@ -97,10 +97,11 @@ void ColorPlugin::pluginsInitialized()
   // =============================================================================
   // Add Menu entries
   // =============================================================================
+  WhatsThisGenerator whatsThis("Color");
 
   QAction* AC_set_Default_color = new QAction(tr("&Default colors"), this);
   AC_set_Default_color->setStatusTip(tr("Set Default Colors"));
-  AC_set_Default_color->setWhatsThis(tr("Set colors to default colors"));
+  AC_set_Default_color->setWhatsThis(tr("Set colors to default colors. ")+whatsThis.generateLink());
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-default.png");
   AC_set_Default_color->setIcon(icon);
   connect(AC_set_Default_color, SIGNAL(triggered()), this, SLOT(setDefaultColor()));
@@ -108,7 +109,7 @@ void ColorPlugin::pluginsInitialized()
 
   QAction* AC_set_Presentation_color = new QAction(tr("&Presentation colors"), this);
   AC_set_Presentation_color->setStatusTip(tr("Set Presentation Colors"));
-  AC_set_Presentation_color->setWhatsThis(tr("Set colors to presentation colors"));
+  AC_set_Presentation_color->setWhatsThis(tr("Set colors to presentation colors. ")+whatsThis.generateLink());
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-powerpoint.png");
   AC_set_Presentation_color->setIcon(icon);
   connect(AC_set_Presentation_color, SIGNAL(triggered()), this, SLOT(setPresentationColor()));
@@ -116,7 +117,7 @@ void ColorPlugin::pluginsInitialized()
 
   QAction* AC_set_Paper_color = new QAction(tr("&Paper colors"), this);
   AC_set_Paper_color->setStatusTip(tr("Set Paper Colors"));
-  AC_set_Paper_color->setWhatsThis(tr("Set colors to colors for papers"));
+  AC_set_Paper_color->setWhatsThis(tr("Set colors to colors for papers. ")+whatsThis.generateLink());
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-paper.png");
   AC_set_Paper_color->setIcon(icon);
   connect(AC_set_Paper_color, SIGNAL(triggered()), this, SLOT(setPaperColor()));
