@@ -98,13 +98,16 @@ private slots:
 
 	void showResults(int _hits);
 
+	// updates the buttons an the content widget
+	// the content widget is synchronized with the helpBrowser
 	void update(const QUrl& url);
 
 	void openFoundSite(QListWidgetItem* _item);
 
-  private:
-
+	//updates only the buttons (for/back)
 	void updateButtons();
+
+  private:
 
 	// For the search popup
 	QDockWidget* searchWidget_;
