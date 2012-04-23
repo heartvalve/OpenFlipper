@@ -174,8 +174,11 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   // Forward button
   connect(homeButton_, SIGNAL(clicked()), this, SLOT(goHome()));
 
-  // Source has been reloaded
+  // Source has been reloaded, so the buttons need an update and the modelview
   connect(textWindow_, SIGNAL(sourceChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
+
+  // the history has changed, so the buttons need an update
+  connect(textWindow_, SIGNAL(historyChanged(const QUrl&)), this, SLOT(updateButtons()));
 
   // Register documentation
   // Seems to be an unneeded call!

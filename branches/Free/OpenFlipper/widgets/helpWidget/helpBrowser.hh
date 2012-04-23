@@ -108,6 +108,14 @@ public:
 	 */
 	QUrl resolveUrl(const QUrl &_url);
 
+signals:
+/*
+ * is emitted, when the page history was changed.
+ * it is not equal to the signal 'sourceChanged'
+ * because saving in the history can be skipped
+ */
+   void historyChanged(const QUrl&);
+
 public slots:
 
 	void open(const QString& _url);

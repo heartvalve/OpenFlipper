@@ -86,13 +86,15 @@ void HelpBrowser::updateNameSpaceAndFolder (const QUrl& _url) {
 void HelpBrowser::rememberHistory (const QUrl& _url) {
 
   QUrl newUrl = resolveUrl(_url);
+
   // Delete the visited pages after the current position if they exist
   if ( currentPage_ < visitedPages_.size()-1 )
-    visitedPages_.erase((visitedPages_.begin()+currentPage_),visitedPages_.end());
+    visitedPages_.erase((visitedPages_.begin()+currentPage_+1),visitedPages_.end());
 
   visitedPages_.push_back(newUrl);
   currentPage_ = visitedPages_.size()-1;
 
+  emit historyChanged(_url);
 }
 
 QUrl HelpBrowser::resolveUrl(const QUrl &_url)
