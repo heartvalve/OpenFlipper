@@ -246,6 +246,21 @@ public:
   /// matrix inversion (returns true on success)
   bool invert();
 
+  Scalar determinant() const {
+      return  mat_[12] * mat_[9] * mat_[6] * mat_[3] - mat_[8] * mat_[13] * mat_[6] * mat_[3] -
+              mat_[12] * mat_[5] * mat_[10] * mat_[3] + mat_[4] * mat_[13] * mat_[10] * mat_[3] +
+              mat_[8] * mat_[5] * mat_[14] * mat_[3] - mat_[4] * mat_[9] * mat_[14] * mat_[3] -
+              mat_[12] * mat_[9] * mat_[2] * mat_[7] + mat_[8] * mat_[13] * mat_[2] * mat_[7] +
+              mat_[12] * mat_[1] * mat_[10] * mat_[7] - mat_[0] * mat_[13] * mat_[10] * mat_[7] -
+              mat_[8] * mat_[1] * mat_[14] * mat_[7] + mat_[0] * mat_[9] * mat_[14] * mat_[7] +
+              mat_[12] * mat_[5] * mat_[2] * mat_[11] - mat_[4] * mat_[13] * mat_[2] * mat_[11] -
+              mat_[12] * mat_[1] * mat_[6] * mat_[11] + mat_[0] * mat_[13] * mat_[6] * mat_[11] +
+              mat_[4] * mat_[1] * mat_[14] * mat_[11] - mat_[0] * mat_[5] * mat_[14] * mat_[11] -
+              mat_[8] * mat_[5] * mat_[2] * mat_[15] + mat_[4] * mat_[9] * mat_[2] * mat_[15] +
+              mat_[8] * mat_[1] * mat_[6] * mat_[15] - mat_[0] * mat_[9] * mat_[6] * mat_[15] -
+              mat_[4] * mat_[1] * mat_[10] * mat_[15] + mat_[0] * mat_[5] * mat_[10] * mat_[15];
+  }
+
 
   /** access to data array. not very nice, but in case of 4x4 matrices
       this member can be used to pass matrices to OpenGL
