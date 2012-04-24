@@ -1133,36 +1133,44 @@ int FileOFFPlugin::loadObject(QString _filename) {
       return -1;
     }
     
+    QFileInfo file(_filename);
+
     // Handle new PolyMeshes
     PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (object);
     
     if ( polyMeshObj ){
-        
-        if ( !importer.hasVertexNormals() )
-            polyMeshObj->mesh()->update_normals();
-        else
-            polyMeshObj->mesh()->update_face_normals();
-        
-        backupTextureCoordinates(*(polyMeshObj->mesh()));
 
-        polyMeshObj->update();
-        polyMeshObj->show();
+      // Remember the path where we found the file
+      polyMeshObj->setPath(file.path());
+
+      if ( !importer.hasVertexNormals() )
+        polyMeshObj->mesh()->update_normals();
+      else
+        polyMeshObj->mesh()->update_face_normals();
+
+      backupTextureCoordinates(*(polyMeshObj->mesh()));
+
+      polyMeshObj->update();
+      polyMeshObj->show();
     }
     
     // Handle new TriMeshes
     TriMeshObject* triMeshObj = dynamic_cast< TriMeshObject* > (object);
     
     if ( triMeshObj ){
-        
-        if ( !importer.hasVertexNormals() || (userReadOptions_ & OFFImporter::FORCE_NONORMALS) )
-            triMeshObj->mesh()->update_normals();
-        else
-            triMeshObj->mesh()->update_face_normals();  
-        
-        backupTextureCoordinates(*(triMeshObj->mesh()));
 
-        triMeshObj->update();
-        triMeshObj->show();
+      // Remember the path where we found the file
+      triMeshObj->setPath(file.path());
+
+      if ( !importer.hasVertexNormals() || (userReadOptions_ & OFFImporter::FORCE_NONORMALS) )
+        triMeshObj->mesh()->update_normals();
+      else
+        triMeshObj->mesh()->update_face_normals();
+
+      backupTextureCoordinates(*(triMeshObj->mesh()));
+
+      triMeshObj->update();
+      triMeshObj->show();
     }
     
     //general stuff
