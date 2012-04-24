@@ -1636,6 +1636,8 @@ void Core::slotDeleteAllObjects( ){
   objectRoot_->deleteSubtree();
 
   slotObjectUpdated(-1);
+
+  emit allCleared();
 }
 
 //-----------------------------------------------------------------------------
