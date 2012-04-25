@@ -180,9 +180,6 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
 
             obj->setFromFileName(_filename);
 
-            // Compute top-down-adjacencies
-            obj->mesh()->update_adjacencies();
-
             // Compute face normals
             emit updatedObject(obj->id(), UPDATE_ALL);
         }
@@ -214,9 +211,6 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
                 }
             }
             obj->setFromFileName(_filename);
-
-            // Compute top-down-adjacencies
-            obj->mesh()->update_adjacencies();
 
             // Compute face normals
             emit updatedObject(obj->id(), UPDATE_ALL);
