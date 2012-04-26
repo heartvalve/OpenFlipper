@@ -891,7 +891,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_vertices(GLState& _state) {
             for(OpenVolumeMesh::CellVertexIter cv_it = mesh_.cv_iter(*c_it); cv_it.valid(); ++cv_it) {
 
                 Vec3d scaled_pos = mesh_.vertex(*cv_it) * scale_ + (1.0 - scale_) * cog;
-                _state.pick_set_name(*cv_it);
+                _state.pick_set_name(cv_it->idx());
                 glVertex3d(scaled_pos[0], scaled_pos[1], scaled_pos[2]);
             }
     }
@@ -912,7 +912,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_edges(GLState& _state, unsigned int _off
 
     for (OpenVolumeMesh::EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
 
-        _state.pick_set_name(*e_it + _offset);
+        _state.pick_set_name(e_it->idx() + _offset);
 
         Vec3d p0(mesh_.vertex(mesh_.edge(*e_it).from_vertex()));
         Vec3d p1(mesh_.vertex(mesh_.edge(*e_it).to_vertex()));
@@ -949,7 +949,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_faces(GLState& _state, unsigned int _off
             ACG::Vec3d n = normalAttrib_[*f_it];
             glNormal3d(n[0], n[1], n[2]);
 
-            _state.pick_set_name(*f_it + _offset);
+            _state.pick_set_name(f_it->idx() + _offset);
 
             for(typename std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                 he_it != hes.end(); ++he_it) {
@@ -995,7 +995,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pick_cells(GLState& _state, unsigned int _off
 
         if(all_inside) {
 
-            _state.pick_set_name(*c_it + _offset);
+            _state.pick_set_name(c_it->idx() + _offset);
 
             for(typename std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin();
                 hf_it != hfs.end(); ++hf_it) {
