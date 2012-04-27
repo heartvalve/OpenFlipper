@@ -120,6 +120,8 @@ typedef VectorT<unsigned int,3> Vec3ui;
 typedef VectorT<float,3> Vec3f;
 /** 3-double vector */
 typedef VectorT<double,3> Vec3d;
+/** 3-bool vector */
+typedef VectorT<bool,3> Vec3b;
 
 /** 4-byte signed vector */
 typedef VectorT<signed char,4> Vec4c;
