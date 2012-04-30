@@ -295,13 +295,13 @@ void Core::loadPlugins()
   QDir tempDir = QDir(OpenFlipper::Options::pluginDir());
 
   // Possible Plugin extensions
+  // Windows gets DLLs
+  // Mac and Linux use so
+  // We don't use the dylib extension on Mac at the moment.
   QStringList filter;
   if ( OpenFlipper::Options::isWindows() )
     filter << "*.dll";
-  else if ( OpenFlipper::Options::isDarwin() )
-    filter << "*.so";
-//    filter << "*.dylib";
-  else
+  else 
     filter << "*.so";
   
   // Get all files in the Plugin dir
@@ -545,13 +545,13 @@ void Core::slotLoadPlugin(){
     return;
 
   // Setup filters for possible plugin extensions
-  QString filter;
+  // Windows gets DLLs
+  // Mac and Linux use so
+  // We don't use the dylib extension on Mac at the moment.
+  QStringList filter;
   if ( OpenFlipper::Options::isWindows() )
     filter = "Plugins (*.dll)";
-  else if ( OpenFlipper::Options::isDarwin() )
-    // filter = "Plugins (*.dylib)";
-    filter = "Plugins (*.so)";
-  else
+  else 
     filter = "Plugins (*.so)";
 
   // Ask the user to select the file to load
