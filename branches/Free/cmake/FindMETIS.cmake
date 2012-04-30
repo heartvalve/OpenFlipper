@@ -14,13 +14,17 @@ find_path(METIS_INCLUDE_DIR NAMES metis.h
      PATHS "$ENV{IPOPT_HOME}/ThirdParty/Metis/metis-4.0/Lib/"
            "/usr/include/"
            "/usr/include/metis"
+           "/opt/local/include"
+           "/opt/local/include/metis"
+           
            
    )
    
 find_library( METIS_LIBRARY 
               metis coinmetis
               PATHS "$ENV{IPOPT_HOME}/lib/"
-                    "/usr/lib" )
+                    "/usr/lib"
+                    "/opt/local/lib" )
 
 set(METIS_INCLUDE_DIRS "${METIS_INCLUDE_DIR}" )
 set(METIS_LIBRARIES "${METIS_LIBRARY}" )
