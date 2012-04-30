@@ -152,7 +152,6 @@ public:
 
   //------------------------------------------------------------- public methods
 
-  virtual QSize sizeHint () const;
 
   /// Makes this widget the current widget for OpenGL operations.
   virtual void makeCurrent();
@@ -421,6 +420,10 @@ protected:
   friend class QtGLGraphicsScene;
   friend class SimpleGLGraphicsScene;
   friend class QtGLGraphicsView;
+
+
+  /// Return a resonable size hint
+  virtual QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint) const;
 
   /// initialize OpenGL states
   virtual void initializeGL();

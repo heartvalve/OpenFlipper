@@ -224,7 +224,7 @@ getShader( DrawModes::DrawMode _drawmode, bool _pick ) {
   
   if ( !_drawmode.isAtomic() ) {
     std::cerr << "getShader: Error, draw mode not atomic!" << std::endl;
-    return false;
+    return 0;
   }
   
   std::map<unsigned int,ShaderInfo>::iterator it;
