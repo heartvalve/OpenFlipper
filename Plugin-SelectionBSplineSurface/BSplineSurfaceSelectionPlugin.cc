@@ -583,7 +583,7 @@ void BSplineSurfaceSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 //==============================================================================================
 
-void BSplineSurfaceSelectionPlugin::slotLoadSelection(INIFile& _file) {
+void BSplineSurfaceSelectionPlugin::slotLoadSelection(const INIFile& _file) {
     
     // Iterate over all B-spline surfaces in the scene and save
     // the selections for all supported entity types
