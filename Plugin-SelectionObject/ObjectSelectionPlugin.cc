@@ -273,7 +273,7 @@ void ObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 //==============================================================================================
 
-void ObjectSelectionPlugin::slotLoadSelection(INIFile& _file) {
+void ObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
     
     // Iterate over all polyline objects in the scene and save
     // the selections for all supported entity types
