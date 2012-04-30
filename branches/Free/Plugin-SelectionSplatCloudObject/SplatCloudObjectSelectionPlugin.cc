@@ -357,7 +357,7 @@ void SplatCloudObjectSelectionPlugin::slotLassoSelection( QMouseEvent *_event, S
 		if( lasso_2Dpoints_.size() > 2 )
 		{
 			QRegion region( lasso_2Dpoints_ );
-			lassoSelection( region, _currentType, _deselect );
+			lassoSelect( region, _currentType, _deselect );
         }
 
         // Clear points
@@ -632,7 +632,7 @@ void SplatCloudObjectSelectionPlugin::slotKeyShortcutEvent( int _key, Qt::Keyboa
 //----------------------------------------------------------------
 
 
-void SplatCloudObjectSelectionPlugin::lassoSelection( QRegion &_region, PrimitiveType _primitiveType, bool _deselection )
+void SplatCloudObjectSelectionPlugin::lassoSelect( QRegion &_region, PrimitiveType _primitiveType, bool _deselection )
 {
 	// <object id, primitive id>
 	QList< QPair<unsigned int,unsigned int> > list;
