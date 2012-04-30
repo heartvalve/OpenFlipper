@@ -1043,7 +1043,6 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, i
   }
 
   //parse the window size if requested
-  bool ok = true;
   if (_windowSize)
   {
     //restore the old window size
