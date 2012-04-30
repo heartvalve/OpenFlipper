@@ -75,7 +75,7 @@ signals:
     void addContextMenuItem(QAction* /*_action*/, DataType /*_objectType*/, ContextMenuType /*_type*/);
 
     // BaseInterface
-    void updatedObject(int _objId, UpdateType _type);
+    void updatedObject(int _objId, const UpdateType& _type);
 
 private slots:
 
