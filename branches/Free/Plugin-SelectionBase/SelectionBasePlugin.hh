@@ -188,18 +188,18 @@ Q_INTERFACES(SelectionInterface)
         
         // ============== Selection Actions ===============
         
-        void slotToggleSelection(QMouseEvent* _event);
-        void slotLassoSelection(QMouseEvent* _event);
-        void slotVolumeLassoSelection(QMouseEvent* _event);
-        void slotSurfaceLassoSelection(QMouseEvent* _event);
-        void slotSphereSelection(QMouseEvent* _event);
-        void slotBoundarySelection(QMouseEvent* _event);
-        void slotFloodFillSelection(QMouseEvent* _event);
-        void slotComponentsSelection(QMouseEvent* _event);
-        void slotCustomSelection(QMouseEvent* _event);
+        void slotMouseToggleSelection(QMouseEvent* _event);
+        void slotMouseLassoSelection(QMouseEvent* _event);
+        void slotMouseVolumeLassoSelection(QMouseEvent* _event);
+        void slotMouseSurfaceLassoSelection(QMouseEvent* _event);
+        void slotMouseSphereSelection(QMouseEvent* _event);
+        void slotMouseBoundarySelection(QMouseEvent* _event);
+        void slotMouseFloodFillSelection(QMouseEvent* _event);
+        void slotMouseComponentsSelection(QMouseEvent* _event);
+        void slotMouseCustomSelection(QMouseEvent* _event);
         
-        void slotLoadSelection();
-        void slotSaveSelection();
+        void slotLoadSelectionButton();
+        void slotSaveSelectionButton();
         
         void slotOperationRequested();
         void slotShowAndHideOperations();

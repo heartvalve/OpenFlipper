@@ -130,8 +130,8 @@ void SelectionBasePlugin::initializePlugin() {
     tool_->resize(size);
     
     // Connect load/save buttons
-    connect(tool_->loadSelection, SIGNAL(clicked()), this, SLOT(slotLoadSelection()));
-    connect(tool_->saveSelection, SIGNAL(clicked()), this, SLOT(slotSaveSelection()));
+    connect(tool_->loadSelection, SIGNAL(clicked()), this, SLOT(slotLoadSelectionButton()));
+    connect(tool_->saveSelection, SIGNAL(clicked()), this, SLOT(slotSaveSelectionButton()));
     
     // Add toolbox to OpenFlipper main window
     toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"selection_base.png");
@@ -285,7 +285,7 @@ SelectionTypeFrameWidget* SelectionBasePlugin::createNewTypeFrame(SelectionEnvir
 
 //============================================================================================
 
-void SelectionBasePlugin::slotLoadSelection() {
+void SelectionBasePlugin::slotLoadSelectionButton() {
     // Load selection button has been clicked
 
     QString filename = QFileDialog::getOpenFileName(0, tr("Load Selection"), "selection.ini", tr("Selection files ( *.ini )"));
@@ -309,7 +309,7 @@ void SelectionBasePlugin::slotLoadSelection() {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotSaveSelection() {
+void SelectionBasePlugin::slotSaveSelectionButton() {
     // Save selection button has been clicked
     
     QString filename = QFileDialog::getSaveFileName(0, tr("Save Selection"), "selection.ini", tr("Selection files ( *.ini )"));
@@ -543,24 +543,24 @@ void SelectionBasePlugin::slotMouseEvent(QMouseEvent* _event) {
     
     // Go into appropriate pick processing
     if(currentSelectionMode_ == SB_TOGGLE) {
-        slotToggleSelection(_event);
+        slotMouseToggleSelection(_event);
     } else if (currentSelectionMode_ == SB_LASSO) {
-        slotLassoSelection(_event);
+        slotMouseLassoSelection(_event);
     } else if (currentSelectionMode_ == SB_VOLUME_LASSO) {
-        slotVolumeLassoSelection(_event);
+        slotMouseVolumeLassoSelection(_event);
     } else if (currentSelectionMode_ == SB_SURFACE_LASSO) {
-        slotSurfaceLassoSelection(_event);
+        slotMouseSurfaceLassoSelection(_event);
     } else if (currentSelectionMode_ == SB_SPHERE) {
-        slotSphereSelection(_event);
+        slotMouseSphereSelection(_event);
     } else if (currentSelectionMode_ == SB_BOUNDARY) {
-        slotBoundarySelection(_event);
+        slotMouseBoundarySelection(_event);
     } else if (currentSelectionMode_ == SB_FLOODFILL) {
-        slotFloodFillSelection(_event);
+        slotMouseFloodFillSelection(_event);
     } else if (currentSelectionMode_ == SB_COMPONENTS) {
-        slotComponentsSelection(_event);
+        slotMouseComponentsSelection(_event);
     } else {
         // Custom selection mode
-        slotCustomSelection(_event);
+        slotMouseCustomSelection(_event);
     }
 }
 
@@ -1187,7 +1187,7 @@ void SelectionBasePlugin::slotGetActivePrimitiveType(SelectionInterface::Primiti
 
 //============================================================================================
 
-void SelectionBasePlugin::slotToggleSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseToggleSelection(QMouseEvent* _event) {
     
     // Only emit toggleSelection if left mouse button was clicked
     if (_event->type() == QEvent::MouseButtonPress) {
@@ -1200,7 +1200,7 @@ void SelectionBasePlugin::slotToggleSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotLassoSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseLassoSelection(QMouseEvent* _event) {
     
     // Ignore context menu for lasso selection
     if (_event->button() == Qt::RightButton) return;
@@ -1264,7 +1264,7 @@ void SelectionBasePlugin::slotLassoSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotVolumeLassoSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseVolumeLassoSelection(QMouseEvent* _event) {
     
     // Ignore context menu for volume lasso selection
     if (_event->button() == Qt::RightButton) return;
@@ -1329,14 +1329,14 @@ void SelectionBasePlugin::slotVolumeLassoSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotSurfaceLassoSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseSurfaceLassoSelection(QMouseEvent* _event) {
     
     /* NOT IMPLEMENTED YET */
 }
 
 //============================================================================================
 
-void SelectionBasePlugin::slotSphereSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseSphereSelection(QMouseEvent* _event) {
     
     // Ignore context menu for sphere selection
     if (_event->button() == Qt::RightButton) return;
@@ -1378,7 +1378,7 @@ void SelectionBasePlugin::slotSphereSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotBoundarySelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseBoundarySelection(QMouseEvent* _event) {
     
     // Only emit toggleSelection if left mouse button was clicked
     if (_event->type() == QEvent::MouseButtonPress) {
@@ -1391,7 +1391,7 @@ void SelectionBasePlugin::slotBoundarySelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotFloodFillSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseFloodFillSelection(QMouseEvent* _event) {
     
     // Only emit toggleSelection if left mouse button was clicked
     if (_event->type() == QEvent::MouseButtonPress) {
@@ -1409,7 +1409,7 @@ void SelectionBasePlugin::slotFloodFillSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotComponentsSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseComponentsSelection(QMouseEvent* _event) {
 
     // Only emit componentsSelection if left mouse button was clicked
     if (_event->type() == QEvent::MouseButtonPress) {
@@ -1422,7 +1422,7 @@ void SelectionBasePlugin::slotComponentsSelection(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotCustomSelection(QMouseEvent* _event) {
+void SelectionBasePlugin::slotMouseCustomSelection(QMouseEvent* _event) {
  
     emit customSelection(_event, currentPrimitiveType_, currentSelectionMode_, deselection_);
 }
