@@ -197,12 +197,8 @@ void IsotropicRemesher< MeshT >::collapseShortEdges( MeshT& _mesh, const double 
 
         const double edgeLength = vec.sqrnorm();
 
-        // don't try to collapse edges that have length 0
-        if ( edgeLength < DBL_EPSILON )
-          continue;
-    
-        //edge too short?
-        if ( edgeLength < _minEdgeLengthSqr ){
+        // edge too short but don't try to collapse edges that have length 0
+        if ( (edgeLength < _minEdgeLengthSqr) && (edgeLength > DBL_EPSILON) ){
     
           //check if the collapse is ok
           const typename MeshT::Point & B = _mesh.point(v1);
