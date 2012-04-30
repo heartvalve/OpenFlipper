@@ -1094,7 +1094,7 @@ void MeshObjectSelectionPlugin::slotLassoSelection(QMouseEvent* _event, Primitiv
 
             QRegion region(lasso_2Dpoints_);
             
-            lassoSelection(region, _currentType, _deselect);
+            lassoSelect(region, _currentType, _deselect);
         }
         
         // Clear points
@@ -1615,9 +1615,9 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
     }
 }
 
-void MeshObjectSelectionPlugin::lassoSelection(QRegion&      _region,
-                                               PrimitiveType _primitiveType,
-                                               bool          _deselection) {
+void MeshObjectSelectionPlugin::lassoSelect(QRegion&      _region,
+                                            PrimitiveType _primitiveType,
+                                            bool          _deselection) {
 
     // <object id, primitive id>
     QList <QPair<unsigned int, unsigned int> > list;

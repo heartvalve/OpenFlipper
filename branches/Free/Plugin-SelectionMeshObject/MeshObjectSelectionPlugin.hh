@@ -432,13 +432,9 @@ public slots:
     void colorizeFaceSelection(int objectId, int r, int g, int b, int a);
     
     //===========================================================================
-    
-
-
-
 
     /// Lasso selection tool
-    void lassoSelection(QRegion& _region, PrimitiveType _primitiveType, bool _deselection);
+    void lassoSelect(QRegion& _region, PrimitiveType _primitiveType, bool _deselection);
 
     /** @} */
 
