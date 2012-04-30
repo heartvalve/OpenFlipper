@@ -1456,7 +1456,7 @@ void MeshObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
     }
 }
 
-void MeshObjectSelectionPlugin::slotLoadSelection(INIFile& _file) {
+void MeshObjectSelectionPlugin::slotLoadSelection(const INIFile& _file) {
     
     // Iterate over all mesh objects in the scene and save
     // the selections for all supported entity types
