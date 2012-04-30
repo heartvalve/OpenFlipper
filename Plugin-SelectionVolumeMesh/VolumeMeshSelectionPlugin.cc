@@ -643,7 +643,7 @@ void VolumeMeshSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
 
 //==============================================================================================
 
-void VolumeMeshSelectionPlugin::slotLoadSelection(INIFile& _file) {
+void VolumeMeshSelectionPlugin::slotLoadSelection(const INIFile& _file) {
 
     // Iterate over all polyhedral mesh objects in the scene and save
     // the selections for all supported entity types
