@@ -290,6 +290,7 @@ void SkeletalAnimationPlugin::slotAnimationNameChanged() {
         SkeletonObject* skeletonObject = dynamic_cast<SkeletonObject*>(baseObject);
         if(!skeletonObject) continue;
         Skeleton*             skeleton = PluginFunctions::skeleton(skeletonObject);
+        if(!skeleton) continue;
 
         AnimationHandle h = skeleton->animationHandle(pToolbox_->cbAnimation->currentText().toStdString());
         if(skeleton != 0 && h.isValid()) {
