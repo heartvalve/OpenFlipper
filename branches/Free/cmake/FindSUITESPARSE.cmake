@@ -42,7 +42,7 @@ else( WIN32 )
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
         	      PATHS  /opt/local/include/ufsparse )
 
-           FIND_PATH( SUITESPARSE_LIBRARY_DIRS
+           FIND_PATH( SUITESPARSE_LIBRARY_DIR
                       NAMES libcholmod.a 
                       PATHS /opt/local/lib )
 
