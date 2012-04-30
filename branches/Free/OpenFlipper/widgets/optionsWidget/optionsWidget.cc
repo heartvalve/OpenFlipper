@@ -202,10 +202,7 @@ void OptionsWidget::switchStackedWidget() {
     if (stereoCustomAnaglyph->isChecked()) {
         stackedWidget->setCurrentIndex(0);
         customAnaGlyphSettings->setVisible(true);
-    } else if (stereoAnaglyph->isChecked()) {
-        stackedWidget->setCurrentIndex(0);
-        customAnaGlyphSettings->setVisible(false);
-    } else {
+    } else
         stackedWidget->setCurrentIndex(0);
         customAnaGlyphSettings->setVisible(false);
     }
