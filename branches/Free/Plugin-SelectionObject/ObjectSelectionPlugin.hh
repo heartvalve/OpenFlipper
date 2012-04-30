@@ -129,7 +129,7 @@ private slots:
     void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
 
-    void slotLoadSelection(INIFile& _file);
+    void slotLoadSelection(const INIFile& _file);
     void slotSaveSelection(INIFile& _file);
     
     void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers);
