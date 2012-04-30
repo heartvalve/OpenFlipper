@@ -45,8 +45,10 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/Plane/Plane.hh>
 
-TypePolyhedralMeshPlugin::TypePolyhedralMeshPlugin() {
-
+TypePolyhedralMeshPlugin::TypePolyhedralMeshPlugin() :
+render_switch_(NULL),
+translucency_action_(NULL),
+translucency_factor_action_(NULL) {
 }
 
 bool TypePolyhedralMeshPlugin::registerType() {
