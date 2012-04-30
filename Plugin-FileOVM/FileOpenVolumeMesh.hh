@@ -137,7 +137,7 @@ public slots:
 private:
 
     template <typename MeshT>
-    void loadMesh(const char* _filename, MeshT& _mesh, bool _comp, bool _topCheck, bool _correctOrder);
+    void loadMesh(const char* _filename, MeshT& _mesh, bool _comp, bool _topCheck);
 
     template <typename MeshT>
     void saveMesh(const char* _filename, MeshT& _mesh, bool _comp);
@@ -150,7 +150,6 @@ private:
     QComboBox* typeCheck_;
 
     QCheckBox* loadCompMode_;
-    QCheckBox* loadCorrectOrder_;
     QCheckBox* loadTopCheck_;
     QCheckBox* saveCompMode_;
 

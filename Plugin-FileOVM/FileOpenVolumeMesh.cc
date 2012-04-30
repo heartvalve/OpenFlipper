@@ -64,7 +64,6 @@ loadOptions_(0),
 saveOptions_(0),
 typeCheck_(0),
 loadCompMode_(0),
-loadCorrectOrder_(0),
 loadTopCheck_(0),
 saveCompMode_(0) {
 
@@ -85,11 +84,9 @@ void FileOpenVolumeMeshPlugin::initializePlugin() {
     typeCheck_->addItem("Hexahedral Mesh");
     typeCheck_->setCurrentIndex(0);
     loadCompMode_ = new QCheckBox("Load PolyVolMesh format");
-    loadCorrectOrder_= new QCheckBox("Correct face ordering");
     loadTopCheck_ = new QCheckBox("Perform topology checks");
     llayout->addWidget(typeCheck_);
     llayout->addWidget(loadCompMode_);
-    llayout->addWidget(loadCorrectOrder_);
     llayout->addWidget(loadTopCheck_);
 
     loadOptions_->setLayout(llayout);
@@ -140,11 +137,6 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
         compatibility_mode = loadCompMode_->isChecked();
     }
 
-    bool correct_face_order = false;
-    if(!OpenFlipper::Options::nogui()) {
-        correct_face_order = loadCorrectOrder_->isChecked();
-    }
-
     bool topology_checks = true;
     if(!OpenFlipper::Options::nogui()) {
         topology_checks = loadTopCheck_->isChecked();
@@ -169,7 +161,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
             if(compatibility_mode) {
 
                 loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
-                         topology_checks, correct_face_order);
+                         topology_checks);
 
             } else {
                 if(!fileManager_.readFile(_filename.toStdString(), *(obj->mesh()),
@@ -202,7 +194,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
             if(compatibility_mode) {
 
                 loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
-                         topology_checks, correct_face_order);
+                         topology_checks);
 
             } else {
                 if(!fileManager_.readFile(_filename.toStdString(), *(obj->mesh()),
