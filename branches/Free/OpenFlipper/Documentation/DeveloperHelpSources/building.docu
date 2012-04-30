@@ -123,7 +123,7 @@ br />
      As additional ports we recommend the following<br />
      ftgl<br />
      fftw-3<br />
-     qwt-60<br />
+     qwt-60 +debug +qt4<br />
      subversion<br />
      doxygen<br />
 <li> Extract the source code or get it via svn:<br />
