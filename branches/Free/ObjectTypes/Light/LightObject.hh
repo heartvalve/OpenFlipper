@@ -93,7 +93,7 @@ class DLLEXPORT LightObject : public BaseObjectData {
 
 
   protected:
-    /// Initialise current object, including all related nodes.
+    /// Initialize current object, including all related nodes.
     virtual void init(LightNode* _light = 0, LightNode* _lightVis = 0);
 
   //===========================================================================

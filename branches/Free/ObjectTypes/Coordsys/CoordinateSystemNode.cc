@@ -120,7 +120,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 DrawModes::DrawMode
 CoordinateSystemNode::
-availableDrawModes()
+availableDrawModes() const
 {
   return ( DrawModes::SOLID_SMOOTH_SHADED );
 }
