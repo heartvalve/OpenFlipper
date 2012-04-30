@@ -70,6 +70,7 @@ public:
 public:
   AnimationT(std::string _name = "") : name_(_name), fps_(60) {}
   virtual AnimationT* copy() = 0;
+  virtual ~AnimationT() {}
 
 public:
   /**
