@@ -47,7 +47,7 @@
 //----------------------------------------------------------------------------
 
 template <typename MeshT>
-void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, bool _comp, bool _topCheck, bool _correctOrder) {
+void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, bool _comp, bool _topCheck) {
 
     // found edges in file
     bool edges_in_file = false;
@@ -220,7 +220,7 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
                 hm = dynamic_cast<HexahedralMesh*>(&_mesh);
 
                 if(hm) {
-                    hm->add_cell(hfhandles, _topCheck, _correctOrder);
+                    hm->add_cell(hfhandles, _topCheck);
                 } else {
                     _mesh.add_cell(hfhandles, _topCheck);
                 }
@@ -249,7 +249,7 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
             hm = dynamic_cast<HexahedralMesh*>(&_mesh);
 
             if(hm) {
-                hm->add_cell(hfs, _topCheck, _correctOrder);
+                hm->add_cell(hfs, _topCheck);
             } else {
                 _mesh.add_cell(hfs, _topCheck);
             }
