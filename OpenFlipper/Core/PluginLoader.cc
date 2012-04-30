@@ -548,7 +548,7 @@ void Core::slotLoadPlugin(){
   // Windows gets DLLs
   // Mac and Linux use so
   // We don't use the dylib extension on Mac at the moment.
-  QStringList filter;
+  QString filter;
   if ( OpenFlipper::Options::isWindows() )
     filter = "Plugins (*.dll)";
   else 
