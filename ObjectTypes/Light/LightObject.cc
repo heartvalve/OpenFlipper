@@ -186,7 +186,7 @@ BaseObject* LightObject::copy() {
     return dynamic_cast< BaseObject* >(object);
 }
 
-/** This function initalizes the light object. It creates the scenegraph nodes.
+/** This function initializes the light object. It creates the scenegraph nodes.
 */
 void LightObject::init(LightNode* _light, LightNode* _lightVis) {
 

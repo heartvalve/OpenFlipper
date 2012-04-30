@@ -52,7 +52,7 @@ class DLLEXPORT CameraObject : public BaseObjectData {
 
 
   protected:
-    /// Initialise current object, including all related nodes.
+    /// Initialize current object, including all related nodes.
     virtual void init(CameraNode* _plane = 0);
 
   //===========================================================================
