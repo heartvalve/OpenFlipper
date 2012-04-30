@@ -238,10 +238,10 @@ glViewer::~glViewer()
 //-----------------------------------------------------------------------------
 
 
-QSize
-glViewer::sizeHint() const
+QSizeF
+glViewer::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
-  return QSize( 600, 600 );
+  return QSizeF( 600, 600 );
 }
 
 //-----------------------------------------------------------------------------
