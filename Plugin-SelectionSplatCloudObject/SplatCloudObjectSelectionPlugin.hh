@@ -222,7 +222,7 @@ public slots:
 
 	//===========================================================================
 
-	void lassoSelection( QRegion &_region, PrimitiveType _primitiveType, bool _deselection ); /// Lasso selection tool
+	void lassoSelect( QRegion &_region, PrimitiveType _primitiveType, bool _deselection ); /// Lasso selection tool
 
 	/** @} */
 
