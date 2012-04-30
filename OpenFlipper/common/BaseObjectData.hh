@@ -113,9 +113,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
     ///destructor
     virtual ~BaseObjectData();
 
-  protected:
-    /** This function creates the scenegraph nodes */
-    virtual void init();
+  private:
+    /** This function creates the basic scenegraph nodes */
+    void initializeScenegraphNodes();
 
   /** @} */
 

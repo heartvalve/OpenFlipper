@@ -75,8 +75,8 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
     boundingBoxNode_(0),
     stencilRefNode_(0)
 {
-  // We have to create our own visualization nodes as we are a new object
-  init();
+  /// We have to create our own visualization nodes as we are a new object
+  initializeScenegraphNodes();
 }
 
 BaseObjectData::BaseObjectData() :
@@ -90,7 +90,7 @@ BaseObjectData::BaseObjectData() :
   boundingBoxNode_(0),
   stencilRefNode_(0)
 {
-  init();
+  initializeScenegraphNodes();
 }
 
 BaseObjectData::~BaseObjectData() {
@@ -117,10 +117,10 @@ void BaseObjectData::cleanup() {
 
   BaseObject::cleanup();
 
-  BaseObjectData::init();
+  initializeScenegraphNodes();
 }
 
-void BaseObjectData::init() {
+void BaseObjectData::initializeScenegraphNodes() {
   // Create seperatorNode for Object only if it does not exist.
   if ( separatorNode_ == 0 )
     separatorNode_       = new SeparatorNode((BaseNode*)rootNode_,"NEW Object");
