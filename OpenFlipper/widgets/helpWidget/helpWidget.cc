@@ -57,7 +57,7 @@
 #include <QTextStream>
 #include <QDir>
 
-#define DEBUG_HELP_CONTENTS
+//#define DEBUG_HELP_CONTENTS
 
 HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const bool _loadHomeSite /*= true*/)
   : QMainWindow(parent),
