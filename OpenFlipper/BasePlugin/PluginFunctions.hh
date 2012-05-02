@@ -258,72 +258,9 @@ bool scenegraphPick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _
 DLLEXPORT
 bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
                            const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list);
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the specified examiner context
- */
-DLLEXPORT
-bool scenegraphRegionPick( const unsigned int                         _examiner,
-                           ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list);
-
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the last active examiner context which is automatically
- * The 3d Position of each target/node element is stored in the _points vector.
- * Set by mouseevents from the core
- */
-DLLEXPORT
-bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
                            QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<ACG::Vec3d>&                       _points);
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the specified examiner context
- * The 3d Position of each target/node element is stored in the _points vector.
- */
-DLLEXPORT
-bool scenegraphRegionPick( const unsigned int                         _examiner,
-                           ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<ACG::Vec3d>&                       _points);
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the last active examiner context which is automatically
- * The depth of each target/node element is stored in the _depths vector.
- * Set by mouseevents from the core
- */
-DLLEXPORT
-bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<float>&                            _depths);
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the specified examiner context
- * The depth of each target/node element is stored in the _depths vector.
- */
-DLLEXPORT
-bool scenegraphRegionPick( const unsigned int                         _examiner,
-                           ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<float>&                            _depths);
-
-/** Execute picking operation on scenegraph
- * This picking function will pick in the last active examiner context which is automatically
- * Set by mouseevents from the core
- */
-DLLEXPORT
-bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
-                           const QRegion&                             _region,
-                           QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<float>&                            _depths,
-                           QVector<ACG::Vec3d>&                       _points);
+                           QVector<float>*                            _depths = 0,
+                           QVector<ACG::Vec3d>*                       _points = 0);
 
 /** Execute picking operation on scenegraph
  * This picking function will pick in the specified examiner context
@@ -333,9 +270,8 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
                            ACG::SceneGraph::PickTarget                _pickTarget,
                            const QRegion&                             _region,
                            QList<QPair<unsigned int, unsigned int> >& _list,
-                           QVector<float>&                            _depths,
-                           QVector<ACG::Vec3d>&                       _points);
-
+                           QVector<float>*                            _depths = 0,
+                           QVector<ACG::Vec3d>*                       _points = 0);
 
 /** Execute Scenegraph traversal with action and use the last active examiner
  *  If you are reacting on a mouseEvent you should use this function as it will
@@ -343,7 +279,6 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
  */
 DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
-
 
 /// Get the current Picking mode
 DLLEXPORT
