@@ -249,8 +249,16 @@ macro (_check_plugin_deps _prefix _optional )
               list (APPEND ${_prefix}_DEPS_LIBRARIES "${${_name}_LIBRARY}")
             endif ()
             if (DEFINED ${_name}_LINKER_FLAGS)
-              list (APPEND ${_prefix}_DEPS_LINKER_FLAGS "${${_name}_LINKER_FLAGS}")
+#              list (APPEND ${_prefix}_DEPS_LINKER_FLAGS "${${_name}_LINKER_FLAGS}")
+              # this variable is used as a string later on (not as a list!!!)
+              set( ${_prefix}_DEPS_LINKER_FLAGS "${${_prefix}_DEPS_LINKER_FLAGS} ${${_name}_LINKER_FLAGS}")              
             endif ()
+            if (DEFINED ${_name}_COMPILER_FLAGS)
+#              list (APPEND ${_prefix}_DEPS_COMPILER_FLAGS "${${_name}_COMPILER_FLAGS}")
+              # this variable is used as a string later on (not as a list!!!)
+              set( ${_prefix}_DEPS_COMPILER_FLAGS "${${_prefix}_DEPS_COMPILER_FLAGS} ${${_name}_COMPILER_FLAGS}")
+            endif ()
+
           endforeach ()
         else ()
             set (${_prefix}_HAS_DEPS FALSE)
@@ -481,9 +489,10 @@ function (_build_openflipper_plugin plugin)
     acg_set (OPENFLIPPER_${_PLUGIN}_BUILD "1")
 
     # append compiler and linker flags from plugin dependencies
+
     set_target_properties (
       Plugin-${plugin} PROPERTIES
-      COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD} ${${_PLUGIN}_LICENSE_DEFS}"
+      COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD} ${${_PLUGIN}_LICENSE_DEFS} ${${_PLUGIN}_DEPS_COMPILER_FLAGS}"
       LINK_FLAGS "${${_PLUGIN}_LDFLAGSADD} ${${_PLUGIN}_DEPS_LINKER_FLAGS}"
     )
     
