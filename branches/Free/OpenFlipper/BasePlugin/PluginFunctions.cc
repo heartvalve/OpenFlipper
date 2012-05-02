@@ -473,7 +473,7 @@ bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarge
                            const QRegion&                             _region,
                            QList<QPair<unsigned int, unsigned int> >& _list)
 {
-  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, 0 , 0);
 }
 
 bool scenegraphRegionPick( const unsigned int                         _examiner,
@@ -485,7 +485,7 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
     std::cerr << "Wrong examiner id" << std::endl;
     return false;
   }
-  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, 0, 0);
 }
 
 bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
@@ -493,7 +493,7 @@ bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarge
                            QList<QPair<unsigned int, unsigned int> >& _list,
                            QVector<ACG::Vec3d>&                       _points)
 {
-  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _points);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, 0, &_points);
 }
 
 bool scenegraphRegionPick( const unsigned int                         _examiner,
@@ -506,7 +506,7 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
     std::cerr << "Wrong examiner id" << std::endl;
     return false;
   }
-  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _points);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, 0, &_points);
 }
 
 bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
@@ -514,7 +514,7 @@ bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarge
                            QList<QPair<unsigned int, unsigned int> >& _list,
                            QVector<float>&                            _depths)
 {
-  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _depths);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, &_depths, 0);
 }
 
 bool scenegraphRegionPick( const unsigned int                         _examiner,
@@ -527,7 +527,7 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
     std::cerr << "Wrong examiner id" << std::endl;
     return false;
   }
-  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _depths);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, &_depths, 0);
 }
 
 bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
@@ -536,7 +536,7 @@ bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarge
                            QVector<float>&                            _depths,
                            QVector<ACG::Vec3d>&                       _points)
 {
-  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _depths, _points);
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, &_depths, &_points);
 }
 
 bool scenegraphRegionPick( const unsigned int                         _examiner,
@@ -550,7 +550,7 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
     std::cerr << "Wrong examiner id" << std::endl;
     return false;
   }
-  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _depths, _points);
+  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, &_depths, &_points);
 }
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
