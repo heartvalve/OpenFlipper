@@ -57,6 +57,7 @@
 #include <ACG/Geometry/Types/PlaneT.hh>
 #include <ACG/Geometry/Algorithms.hh>
 #include <ObjectTypes/PolyMesh/PolyMeshTypes.hh>
+#include <ostream>
 
 //== CLASS DEFINITION =========================================================
 
@@ -94,6 +95,10 @@ struct TreeNode
     }
     HandleIter end()   {
         return handles_.end();
+    }
+
+    size_t size() const {
+        return handles_.size();
     }
 
     Handles     handles_;
@@ -181,6 +186,20 @@ struct TreeNode
     TreeNode &operator=(const TreeNode &rhs);
 
 };
+
+template<class Mesh>
+std::ostream &operator<< (std::ostream &stream, const TreeNode<Mesh> &node) {
+    stream << "[TreeNode instance. Handles: ";
+    for (typename std::vector<typename TreeNode<Mesh>::Handle>::const_iterator it = node.handles_.begin(), it_end = node.handles_.end();
+            it != it_end; ++it) {
+        stream << it->idx();
+        if (it < it_end-1) stream << ", ";
+    }
+    stream << ", parent: " << node.parent_ << ", left_child_: " << node.left_child_
+            << ", right_child_: " << node.right_child_ << ", plane_: <not implemented>, bb_min: "
+            << node.bb_min << ", bb_max: " << node.bb_max << ", size(): " << node.size() << "]";
+    return stream;
+}
 
 //=============================================================================
 #endif // MB_BSPTREENODE_HH defined

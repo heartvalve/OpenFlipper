@@ -61,7 +61,7 @@
 
 //== CLASS DEFINITION =========================================================
 #include <vector>
-
+#include <ostream>
 
 template <class BSPCore>
 class BSPImplT : public BSPCore
@@ -118,6 +118,11 @@ private: //---------------------------------------------------------------------
     Point   ref;
     Scalar  dist;
     Handle  nearest;
+
+    friend std::ostream &operator<< (std::ostream &stream, const NearestNeighborData &data) {
+        stream << "[NearestNeghborData instance. ref: " << data.ref << ", dist: " << data.dist << ", nearest: " << data.nearest.idx() << "]";
+        return stream;
+    }
   };
   
   /// Store ray collide information
@@ -137,7 +142,6 @@ private: //---------------------------------------------------------------------
   //resursive part of raycollide()
   void _raycollision(Node* _node, RayCollisionData& _data) const;
 };
-
 
 //=============================================================================
 #if defined(OM_INCLUDE_TEMPLATES) && !defined(BSPIMPLT_C)

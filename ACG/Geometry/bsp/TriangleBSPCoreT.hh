@@ -87,7 +87,7 @@ public: //---------------------------------------------------------------------
 
   /** Constructor: need traits that define the types and 
       give us the points by traits_.point(PointHandle) */
-  TriangleBSPCoreT(const BSPTraits& _traits) : traits_(_traits), root_(0), nodes(0) {}
+  TriangleBSPCoreT(const BSPTraits& _traits) : traits_(_traits), root_(0), nodes(0), n_triangles(0) {}
 
   /// Destructor
   ~TriangleBSPCoreT() {
@@ -98,7 +98,17 @@ public: //---------------------------------------------------------------------
   /// Reserve memory for _n entries
   void reserve(unsigned int _n) { handles_.reserve(_n); }
   /// Add a handle to the BSP
-  void push_back(Handle _h)     { handles_.push_back(_h); }
+  void push_back(Handle _h)     { handles_.push_back(_h); ++n_triangles; }
+
+  /**
+   * @return size() == 0
+   */
+  bool empty()     { return n_triangles == 0; }
+
+  /**
+   * @return The number of triangles contained in the tree.
+   */
+  size_t size()     { return n_triangles; }
 
   /** Build the tree.
    *
@@ -134,7 +144,7 @@ protected: //-------------------------------------------------------------------
   BSPTraits  traits_;
   Handles    handles_;
   Node*      root_;
-  int	       nodes;
+  int	       nodes, n_triangles;
   
 };
 
