@@ -717,7 +717,7 @@ private:
 
     /** \brief Handle key events in view mode
      *
-     * This funtion is called by the BaseViewer if a key press event occured in view mode.
+     * This function is called by the BaseViewer if a key press event occured in view mode.
      * This function has to be implemented by every viewer!
      *
      * @return If the derived class handled the event it has to return true otherwise false
@@ -790,10 +790,10 @@ private:
      *
      * @param _pickTarget Select what should be picked: Faces/Vertices/...
      * @param _mousePos   The position to be used for picking
-     * @param _nodeIdx    If picking is successfull this will contain the id of the scenegraph node picked.
+     * @param _nodeIdx    If picking is successful this will contain the id of the scenegraph node picked.
      * @param _targetIdx  Special index defined by the picked Node. E.g. Facehandle/VertexHandle/.. for MeshNodes
      * @param _hitPointPtr Pointer to 3D point from picking
-     * @return Successfull?
+     * @return Successful?
      */
     bool pick( ACG::SceneGraph::PickTarget _pickTarget,
                const QPoint& _mousePos,
@@ -801,80 +801,30 @@ private:
                unsigned int& _targetIdx,
                ACG::Vec3d*   _hitPointPtr=0 );
 
-    /** Apply pick action. <br>
+  /**  \brief Perform picking action n a whole region.
+     *
+     *   Apply pick action. <br>
      *   Picks all objects in the given Region. Information about the picked primitives is stored in the
-     *   provided list. Resulting values are defined only if \c true
-     *   has been returned!
-     *  <br>
+     *   provided list. Resulting values are defined only if \c true has been returned!
      *
      * @param _pickTarget Select what should be picked: Faces/Vertices/...
      * @param _region     Area for picking
      * @param _list       List of found scenegraph objects (node/target pairs)
-     * @return Successfull?
-     */
-    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
-                      const QRegion&                             _region,
-                      QList<QPair<unsigned int, unsigned int> >& _list);
-
-
-    /** Apply pick action. <br>
-     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
-     *   provided list. Resulting values are defined only if \c true
-     *   has been returned!
-     *  <br>
-     *
-     * @param _pickTarget Select what should be picked: Faces/Vertices/...
-     * @param _region     Area for picking
-     * @param _list       List of found scenegraph objects (node/target pairs)
-     * @param _points     back projected 3d points
+     * @param _depths     depths [0,1] (Only provided, if requested)
+     * @param _points     back projected 3d points (Only provided, if requested)
      * @return Successful?
      */
     bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
                       const QRegion&                             _region,
                       QList<QPair<unsigned int, unsigned int> >& _list,
-                      QVector<ACG::Vec3d>&                       _points);
-
-    /** Apply pick action. <br>
-     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
-     *   provided list. Resulting values are defined only if \c true
-     *   has been returned!
-     *  <br>
-     *
-     * @param _pickTarget Select what should be picked: Faces/Vertices/...
-     * @param _region     Area for picking
-     * @param _list       List of found scenegraph objects (node/target pairs)
-     * @param _depths     depths [0,1]
-     * @return Successful?
-     */
-    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
-                      const QRegion&                             _region,
-                      QList<QPair<unsigned int, unsigned int> >& _list,
-                      QVector<float>&                            _depths);
-
-  /** Apply pick action. <br>
-     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
-     *   provided list. Resulting values are defined only if \c true
-     *   has been returned!
-     *  <br>
-     *
-     * @param _pickTarget Select what should be picked: Faces/Vertices/...
-     * @param _region     Area for picking
-     * @param _list       List of found scenegraph objects (node/target pairs)
-     * @param _depths     depths [0,1]
-     * @param _points     back projected 3d points
-     * @return Successful?
-     */
-    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
-                      const QRegion&                             _region,
-                      QList<QPair<unsigned int, unsigned int> >& _list,
-                      QVector<float>&                            _depths,
-                      QVector<ACG::Vec3d>&                       _points);
+                      QVector<float>*                            _depths = 0,
+                      QVector<ACG::Vec3d>*                       _points = 0);
 
 
     /** get the coordinates of the picked point by z-buffer re-projection
      * @param _mousePos The position to pick
      * @param _hitPoint The point returned by the reprojection
-     * @return Successfull?
+     * @return Successful?
      */
     bool fast_pick( const QPoint&  _mousePos,
                     ACG::Vec3d&    _hitPoint );
