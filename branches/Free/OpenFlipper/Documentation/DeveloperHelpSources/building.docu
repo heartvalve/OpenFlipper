@@ -129,7 +129,9 @@ br />
 <li> Extract the source code or get it via svn:<br />
 <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
 <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
-<li> Change to the newly created directory ( <code><b>cd build</b></code> ) and type <code><b>cmake ..</b></code> or if you want to build in release mode type <code><b> cmake -DCMAKE_BUILD_TYPE=Release ..</b></code></li>
+<li> Change to the newly created directory ( <code><b>cd build</b></code> ) and type <code><b>cmake ..</b></code> or if you want to build in release mode type <code><b> cmake -DCMAKE_BUILD_TYPE=Release ..</b></code>
+<br />
+ You can also disable bundle creation by adding -DOPENFLIPPER_CALL_FIX_BUNDLE=false to the cmake command line(If you want to create installer packages you need this step!) </li>
 <li> Now call <b>make</b> to build OpenFlipper </li>
 </ul>
 

@@ -176,8 +176,14 @@ if (WIN32 )
  
 endif(WIN32)
 
+# ========================================================================
+# Apple Mac Store Flags
+# ========================================================================
+if ( APPLE AND NOT DEFINED OPENFLIPPER_CALL_FIX_BUNDLE )
+  set( OPENFLIPPER_CALL_FIX_BUNDLE true CACHE BOOL "After building OpenFlipper, a bundle creation step is executed (which copies all dependencies into the bundle) to create a valid MacOs Bundle." )
+endif()
 
-if (APPLE)
+if (APPLE AND OPENFLIPPER_CALL_FIX_BUNDLE)
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
      "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)
