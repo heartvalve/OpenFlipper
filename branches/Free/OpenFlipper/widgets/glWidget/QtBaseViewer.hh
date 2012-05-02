@@ -423,7 +423,7 @@ protected:
 
 
   /// Return a resonable size hint
-  virtual QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint) const;
+  //virtual QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint) const;
 
   /// initialize OpenGL states
   virtual void initializeGL();
