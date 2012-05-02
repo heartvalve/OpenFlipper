@@ -127,7 +127,7 @@ public:
       this->mat_[3] = 0;
       memcpy(this->mat_ + 4, col2.data(), sizeof(double) * 3);
       this->mat_[7] = 0;
-      memcpy(this->mat_ + 8, col2.data(), sizeof(double) * 3);
+      memcpy(this->mat_ + 8, col3.data(), sizeof(double) * 3);
       for (int i = 11; i < 15; ++i) this->mat_[i] = 0;
       this->mat_[15] = 1;
   }
