@@ -193,7 +193,7 @@ DrawMeshT<Mesh>::rebuild()
     delete [] indicesTmp_;
     delete [] triToFaceMap_;
 
-    glDeleteBuffers(1, &ibo_);
+    if (ibo_) glDeleteBuffers(1, &ibo_);
     ibo_ = 0;
 
     numTris_ = newTriCount;
