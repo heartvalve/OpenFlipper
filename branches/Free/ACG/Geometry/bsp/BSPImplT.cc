@@ -61,7 +61,7 @@
 //== CLASS DEFINITION =========================================================
 #include <vector>
 #include <stdexcept>
-
+#include <limits>
 
 template <class BSPCore>
 typename BSPImplT<BSPCore>::NearestNeighbor
@@ -70,7 +70,7 @@ nearest(const Point& _p) const
 {
   NearestNeighborData  data;
   data.ref  = _p;
-  data.dist = FLT_MAX;
+  data.dist = std::numeric_limits<Scalar>::infinity();
   if (this->root_ == 0)
       throw std::runtime_error("It seems like the BSP hasn't been built, yet. Did you call build(...)?");
   _nearest(this->root_, data);

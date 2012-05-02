@@ -115,8 +115,8 @@ public:
 	//determine splitting axis
 	HandleIter it_h;
         Point p0, p1, p2, bb_min, bb_max;
-        bb_min.vectorize(FLT_MAX);
-        bb_max.vectorize(-FLT_MAX);
+        bb_min.vectorize(std::numeric_limits<typename Point::value_type>::infinity());
+        bb_max.vectorize(-std::numeric_limits<typename Point::value_type>::infinity());
 	std::list<Point> vertices;
 	
 	
