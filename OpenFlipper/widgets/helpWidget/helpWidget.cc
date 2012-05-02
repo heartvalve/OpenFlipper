@@ -57,6 +57,8 @@
 #include <QTextStream>
 #include <QDir>
 
+#define DEBUG_HELP_CONTENTS
+
 HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const bool _loadHomeSite /*= true*/)
   : QMainWindow(parent),
   searchWidget_(0),
@@ -186,7 +188,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
 
   QStringList tmp = helpEngine_->registeredDocumentations ();
 
-  #ifdef DEBUG
+  #ifdef DEBUG_HELP_CONTENTS
   for ( int i = 0 ; i < tmp.size(); ++i) {
     std::cerr << "=========================================================================================" << std::endl;
     std::cerr << "Registered namespace: " << tmp[i].toStdString() << std::endl;
