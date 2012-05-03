@@ -73,9 +73,9 @@ HaltonColors::HaltonColors()
   bases[1] = 13;
   bases[2] = 17;
 
-  inverse_bases[0] = 1.0 / bases[0];
-  inverse_bases[1] = 1.0 / bases[1];
-  inverse_bases[2] = 1.0 / bases[2];
+  inverse_bases[0] = 1.0f / bases[0];
+  inverse_bases[1] = 1.0f / bases[1];
+  inverse_bases[2] = 1.0f / bases[2];
 }
 
 float HaltonColors::halton(int index)
@@ -160,14 +160,14 @@ ACG::Vec4f HaltonColors::HSL2RGB(double h, double sl, double l)
     }
   }
 
-  return Vec4f(r, g, b, 1.0);
+  return Vec4f(r, g, b, 1.0f);
 }
 
 ACG::Vec4f HaltonColors::get_next_color()
 {
-  float h = random_interval(0, 0, 0.9); // 0.9 instead of 1.0 to suppress natural bias towards red
-  float s = random_interval(1, 0.40, 0.80); // saturation between 40% and 80%
-  float l = random_interval(2, 0.30, 0.60); // lightness between 30% and 60%
+  float h = random_interval(0, 0.0f , 0.9f ); // 0.9 instead of 1.0 to suppress natural bias towards red
+  float s = random_interval(1, 0.40f, 0.80f); // saturation between 40% and 80%
+  float l = random_interval(2, 0.30f, 0.60f); // lightness between 30% and 60%
   return HSL2RGB(h, s, l);
 }
 
