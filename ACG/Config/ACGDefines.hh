@@ -40,6 +40,11 @@
  *                                                                           *
 \*===========================================================================*/
 
+// Disable the warnings about needs to have DLL interface as we have tons of vector templates
+#ifdef WIN32
+  #pragma warning( disable: 4251 )
+#endif
+
 #ifndef ACGDLLEXPORT
 	#ifdef WIN32
 		#ifdef ACGDLL
