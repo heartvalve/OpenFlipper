@@ -61,7 +61,7 @@ PlaneNode::~PlaneNode()
 void PlaneNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax)
 {
 
-  ACG::Vec3f pos = plane_.position - plane_.xDirection * 0.5 - plane_.yDirection * 0.5;
+  ACG::Vec3d pos = plane_.position - plane_.xDirection * 0.5 - plane_.yDirection * 0.5;
 
   //add a little offset in normal direction
   ACG::Vec3d pos0 = ACG::Vec3d( pos + plane_.normal * 0.1 );
@@ -96,8 +96,8 @@ void PlaneNode::drawPlane( ACG::GLState&  /*_state*/) {
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  ACG::Vec3f origin(0.0, 0.0, 0.0);
-  ACG::Vec3f xy = plane_.xDirection + plane_.yDirection;
+  ACG::Vec3d origin(0.0, 0.0, 0.0);
+  ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
 
   //first draw the lines
   glColor3f( 1.0, 1.0, 1.0 );
@@ -105,10 +105,10 @@ void PlaneNode::drawPlane( ACG::GLState&  /*_state*/) {
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &origin[0] );
-    glVertex3fv( &plane_.xDirection[0] );
-    glVertex3fv( &xy[0] );
-    glVertex3fv( &plane_.yDirection[0] );
+    glVertex3dv( &origin[0] );
+    glVertex3dv( &plane_.xDirection[0] );
+    glVertex3dv( &xy[0] );
+    glVertex3dv( &plane_.yDirection[0] );
   glEnd();
 
 
@@ -125,10 +125,10 @@ void PlaneNode::drawPlane( ACG::GLState&  /*_state*/) {
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &origin[0] );
-    glVertex3fv( &plane_.xDirection[0] );
-    glVertex3fv( &xy[0] );
-    glVertex3fv( &plane_.yDirection[0] );
+    glVertex3dv( &origin[0] );
+    glVertex3dv( &plane_.xDirection[0] );
+    glVertex3dv( &xy[0] );
+    glVertex3dv( &plane_.yDirection[0] );
   glEnd();
 
   //finally the green back side
@@ -139,10 +139,10 @@ void PlaneNode::drawPlane( ACG::GLState&  /*_state*/) {
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &origin[0] );
-    glVertex3fv( &plane_.xDirection[0] );
-    glVertex3fv( &xy[0] );
-    glVertex3fv( &plane_.yDirection[0] );
+    glVertex3dv( &origin[0] );
+    glVertex3dv( &plane_.xDirection[0] );
+    glVertex3dv( &xy[0] );
+    glVertex3dv( &plane_.yDirection[0] );
   glEnd();
 
 }
@@ -154,15 +154,15 @@ void PlaneNode::drawPlanePick( ACG::GLState&  _state) {
   _state.pick_set_maximum(1);
   _state.pick_set_name(0);
 
-  ACG::Vec3f origin(0.0, 0.0, 0.0);
-  ACG::Vec3f xy = plane_.xDirection + plane_.yDirection;
+  ACG::Vec3d origin(0.0, 0.0, 0.0);
+  ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &origin[0] );
-    glVertex3fv( &plane_.xDirection[0] );
-    glVertex3fv( &xy[0] );
-    glVertex3fv( &plane_.yDirection[0] );
+    glVertex3dv( &origin[0] );
+    glVertex3dv( &plane_.xDirection[0] );
+    glVertex3dv( &xy[0] );
+    glVertex3dv( &plane_.yDirection[0] );
   glEnd();
 }
 
@@ -178,7 +178,7 @@ void PlaneNode::draw(ACG::GLState&  _state  , const ACG::SceneGraph::DrawModes::
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
   ACG::GLState::enable(GL_COLOR_MATERIAL);
 
-  ACG::Vec3f pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
+  ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
 
   _state.translate(pos[0], pos[1], pos[2]);
 
@@ -199,7 +199,7 @@ PlaneNode::pick(ACG::GLState& _state, ACG::SceneGraph::PickTarget _target)
 
 	  _state.push_modelview_matrix();
 	  
-	  ACG::Vec3f pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
+	  ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
 
 	  _state.translate(pos[0], pos[1], pos[2]);
 	  
@@ -211,28 +211,28 @@ PlaneNode::pick(ACG::GLState& _state, ACG::SceneGraph::PickTarget _target)
 
 //----------------------------------------------------------------
 
-ACG::Vec3f PlaneNode::position()
+ACG::Vec3d PlaneNode::position()
 {
     return plane_.position;
 }
 
 //----------------------------------------------------------------
 
-ACG::Vec3f PlaneNode::normal()
+ACG::Vec3d PlaneNode::normal()
 {
     return plane_.normal;
 }
 
 //----------------------------------------------------------------
 
-ACG::Vec3f PlaneNode::xDirection()
+ACG::Vec3d PlaneNode::xDirection()
 {
   return plane_.xDirection;
 }
 
 //----------------------------------------------------------------
 
-ACG::Vec3f PlaneNode::yDirection()
+ACG::Vec3d PlaneNode::yDirection()
 {
   return plane_.yDirection;
 }

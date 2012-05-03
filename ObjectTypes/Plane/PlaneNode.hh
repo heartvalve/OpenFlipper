@@ -91,16 +91,16 @@ public:
     void pick(ACG::GLState & _state, ACG::SceneGraph::PickTarget _target);
 
     /// get center position of the plane
-    ACG::Vec3f position();
+    ACG::Vec3d position();
 
     /// get current normal
-    ACG::Vec3f normal();
+    ACG::Vec3d normal();
 
     /// local x direction (multiplied with width)
-    ACG::Vec3f xDirection();
+    ACG::Vec3d xDirection();
 
     /// local y direction (multiplied with height)
-    ACG::Vec3f yDirection();
+    ACG::Vec3d yDirection();
 
     /// Get the currently rendered plane
     Plane& getPlane();

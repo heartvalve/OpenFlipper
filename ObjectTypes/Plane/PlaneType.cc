@@ -46,7 +46,7 @@
 //== IMPLEMENTATION ==========================================================
 
 
-void Plane::setPlane(const ACG::Vec3f& _position, const ACG::Vec3f& _xDirection, const ACG::Vec3f& _yDirection)
+void Plane::setPlane(const ACG::Vec3d& _position, const ACG::Vec3d& _xDirection, const ACG::Vec3d& _yDirection)
 {
   position   = _position;
   xDirection = _xDirection;
@@ -56,7 +56,7 @@ void Plane::setPlane(const ACG::Vec3f& _position, const ACG::Vec3f& _xDirection,
 
 //----------------------------------------------------------------
 
-void Plane::setPlane(const ACG::Vec3f& _position, const ACG::Vec3f& _normal)
+void Plane::setPlane(const ACG::Vec3d& _position, const ACG::Vec3d& _normal)
 {
 
   //find a non zero component

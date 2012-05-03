@@ -140,7 +140,7 @@ void PlaneObject::init(const Plane* _plane) {
   if (_plane){
     plane_ = *_plane;
   } else {
-    plane_.setPlane( ACG::Vec3f(0.0, 0.0, 0.0), ACG::Vec3f(0.0, 1.0, 0.0) );
+    plane_.setPlane( ACG::Vec3d(0.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0) );
     plane_.setSize( 5.0, 5.0 );
   }
 }
@@ -185,8 +185,8 @@ QString PlaneObject::getObjectinfo() {
   if ( dataType( DATA_PLANE ) )
     output += "Object Contains Plane : ";
 
-  ACG::Vec3f pos = planeNode_->position();
-  ACG::Vec3f nor = planeNode_->normal();
+  ACG::Vec3d pos = planeNode_->position();
+  ACG::Vec3d nor = planeNode_->normal();
 
   output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";
   output += " Normal ( " + QString::number(nor[0]) + ", " + QString::number(nor[1]) + ", " + QString::number(nor[2]) + ")";
