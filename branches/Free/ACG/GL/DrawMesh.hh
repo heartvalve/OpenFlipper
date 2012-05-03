@@ -136,8 +136,8 @@ private:
   struct Subset
   {
     int  materialID;
-    unsigned int startIndex;
-    unsigned int numTris;
+    unsigned long startIndex;
+    unsigned long numTris;
   };
 
   enum REBUILD_TYPE {REBUILD_NONE = 0, REBUILD_FULL = 1, REBUILD_GEOMETRY = 2, REBUILD_TOPOLOGY = 4, REBUILD_TEXTURES = 5};
