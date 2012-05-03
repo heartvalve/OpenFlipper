@@ -88,9 +88,9 @@ int FilePlaPlugin::loadObject(QString _filename)
 
       if ( fi.exists() ){
 
-        ACG::Vec3f position;
-        ACG::Vec3f xDirection;
-        ACG::Vec3f yDirection;
+        ACG::Vec3d position;
+        ACG::Vec3d xDirection;
+        ACG::Vec3d yDirection;
 
         QSettings settings(_filename, QSettings::IniFormat);
         settings.beginGroup("PLANE");

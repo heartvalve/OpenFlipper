@@ -61,9 +61,9 @@
 //== CLASS DEFINITION =========================================================
 
 
-/** \class PlaneNode PlaneNode.hh <ACG/Scenegraph/PlaneNode.hh>
+/** \class Plane PlaneType.hh <ObjectTypes/Plane/PlaneType.hh>
 
-    PlaneNode renders a plane
+    This class defines a simple plane
 
 **/
 
@@ -77,14 +77,14 @@ public:
    * @param _xDirection Vector pointing in planes x direction
    * @param _yDirection Vector pointing in planes y direction
    */
-  void setPlane(const ACG::Vec3f& _position, const ACG::Vec3f& _xDirection, const ACG::Vec3f& );
+  void setPlane(const ACG::Vec3d& _position, const ACG::Vec3d& _xDirection, const ACG::Vec3d& );
 
    /** \brief Set plane with given normal and one point
     *
     * @param _position One point on the plane. Will be used as corner point for rendering in the PlaneNode
     * @param _normal   Plane normal
     */
-  void setPlane(const ACG::Vec3f & _position, const ACG::Vec3f & _normal);
+  void setPlane(const ACG::Vec3d & _position, const ACG::Vec3d & _normal);
 
   /** \brief Set plane size
    *
@@ -104,10 +104,10 @@ public:
 
 public:
 
-  ACG::Vec3f position;
-  ACG::Vec3f normal;
-  ACG::Vec3f xDirection;
-  ACG::Vec3f yDirection;
+  ACG::Vec3d position;
+  ACG::Vec3d normal;
+  ACG::Vec3d xDirection;
+  ACG::Vec3d yDirection;
 
 };
 
