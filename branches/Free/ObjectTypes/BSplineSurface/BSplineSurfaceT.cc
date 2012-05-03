@@ -426,7 +426,7 @@ insert_knot_m(double _u)
 
   resize(n_control_points_m()+1, n_control_points_n());
 
-  for( unsigned int i = 0; i < n_control_points_m(); ++i) // for all v rows
+  for( int i = 0; i < n_control_points_m(); ++i) // for all v rows
   {
     if( i <= span[0])
       control_net_[i] = oldcpts[i];
@@ -470,7 +470,7 @@ insert_knot_n(double _v)
 
   resize(n_control_points_m(), n_control_points_n()+1);
 
-  for( unsigned int i = 0; i < n_control_points_n(); ++i) // for all v rows
+  for( int i = 0; i < n_control_points_n(); ++i) // for all v rows
   {
     if( i <= span[0])
       for( unsigned int j = 0; j < n_control_points_m(); ++j)
