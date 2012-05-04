@@ -178,8 +178,7 @@ bool FileSPHPlugin::saveObject(int _id, QString _filename)
 
       settings.endGroup();
       
-      obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-      obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+      obj->setFromFileName(_filename);
     }
   }
 
