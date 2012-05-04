@@ -133,7 +133,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
   /** @} */
 
-
+    virtual void setName(QString _name );
 
   //===========================================================================
   /** @name Object visualization

@@ -66,7 +66,6 @@
 
 BaseObjectData::BaseObjectData(const BaseObjectData& _object)
   : BaseObject(_object),
-    path_("."),
     manipPlaced_(false),
     rootNode_(_object.rootNode_),
     separatorNode_(0),
@@ -81,7 +80,6 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
 
 BaseObjectData::BaseObjectData() :
   BaseObject(),
-  path_("."),
   manipPlaced_(false),
   rootNode_( dynamic_cast< ACG::SceneGraph::SeparatorNode* > (PluginFunctions::getRootNode()) ),
   separatorNode_(0),
@@ -101,7 +99,6 @@ BaseObjectData::~BaseObjectData() {
 }
 
 void BaseObjectData::cleanup() {
-  path_       = ".";
 
   // Delete everything below the seperator node on top of the object. This will remove the complete subtree.
   if ( separatorNode_ == 0 )
@@ -343,3 +340,23 @@ bool BaseObjectData::hasAdditionalNode(QString _pluginName, QString _nodeName , 
 
 
 //=============================================================================
+
+void BaseObjectData::setName(QString _name ) {
+  BaseObject::setName(_name);
+
+  std::string nodename = std::string("SeparatorNode for object " + _name.toUtf8());
+  separatorNode_->name( nodename );
+
+  nodename = std::string("ManipulatorNode for object " + _name.toUtf8());
+  manipulatorNode_->name( nodename );
+
+  nodename = std::string("BoundingBoxNode for object " + _name.toUtf8());
+  boundingBoxNode_->name( nodename );
+
+  nodename = std::string(_name.toUtf8() + "'s Material" );
+  materialNode_->name( nodename );
+
+  nodename = std::string("StencilRefNode for object " + _name.toUtf8());
+  stencilRefNode_->name( nodename );
+}
+

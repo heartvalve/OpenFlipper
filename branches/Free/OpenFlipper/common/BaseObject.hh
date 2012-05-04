@@ -438,7 +438,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
     QString name( );
 
     /// set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
-    virtual void setName(const QString &_name );
+    virtual void setName(QString _name );
 
     /// return the filename of the object
     QString filename();

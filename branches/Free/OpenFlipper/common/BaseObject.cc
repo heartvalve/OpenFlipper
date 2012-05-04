@@ -734,7 +734,7 @@ void BaseObject::setFromFileName(const QString &_filename ) {
   setName(filename);
 }
 
-void BaseObject::setName(const QString &_name ) {
+void BaseObject::setName(QString _name ) {
   name_ = _name;
 
   // Tell plugins about the name change
