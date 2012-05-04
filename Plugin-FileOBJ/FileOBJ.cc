@@ -1785,42 +1785,40 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   //write object
   if ( object->dataType( DATA_POLY_MESH ) ) {
 
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setFromFileName(_filename);
 
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
 
     if ( writeMesh( objStream, _filename, *polyObj->mesh(), polyObj->id() ) ){
 
-      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
       return true;
 
     } else {
 
-      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + _filename);
       objStream.close();
       return false;
     }
 
   } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setFromFileName(_filename);
 
     TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
 
     if ( writeMesh( objStream, _filename, *triObj->mesh(), triObj->id() )) {
 
-      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
       return true;
 
     } else {
 
-      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + _filename );
       objStream.close();
       return false;
     }
@@ -1828,21 +1826,20 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
   } else if ( object->dataType( DATA_BSPLINE_CURVE ) ) {
 
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setFromFileName(_filename);
 
     BSplineCurveObject* bscObj = dynamic_cast<BSplineCurveObject* >( object );
 
 
     if ( writeCurve( objStream, _filename, bscObj->splineCurve()) ) {
 
-      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
       return true;
 
     } else {
 
-      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + _filename );
       objStream.close();
       return false;
     }
@@ -1851,15 +1848,14 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
   } else if ( object->dataType( DATA_BSPLINE_SURFACE ) ) {
 
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setFromFileName(_filename);
 
     BSplineSurfaceObject* bssObj = dynamic_cast<BSplineSurfaceObject* >( object );
 
 
     if ( writeSurface( objStream, _filename, bssObj->splineSurface()) ) {
 
-      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
       return true;
 
