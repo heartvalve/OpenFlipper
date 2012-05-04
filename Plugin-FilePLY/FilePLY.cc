@@ -509,10 +509,6 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header
         
         object->setFromFileName(_filename);
         
-        // call the local function to update names
-        QFileInfo f(_filename);
-        object->setName( f.fileName() );
-        
         // Get mesh
         TriMesh* mesh = object->mesh();
 
@@ -568,10 +564,6 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
         
         object->setFromFileName(_filename);
         
-        // call the local function to update names
-        QFileInfo f(_filename);
-        object->setName( f.fileName() );
-        
         // Get mesh
         PolyMesh* mesh = object->mesh();
 
@@ -623,8 +615,7 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
     
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2));
+    object->setFromFileName(_filename);
     
     bool gui = OpenFlipper::Options::gui() && (saveBinary_ != 0) /*buttons initialized?*/;
     bool binary = ((gui && saveBinary_->isChecked()) ||
@@ -636,17 +627,17 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
         
         if(binary) {
             if(!writeMeshFileBinary(_filename, polyObj->mesh())) {
-                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
-                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         } else {
             if(!writeMeshFileAscii(_filename, polyObj->mesh())) {
-                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
-                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         }
         
@@ -656,17 +647,17 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
         
         if(binary) {
             if(!writeMeshFileBinary(_filename, triObj->mesh())) {
-                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
-                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         } else {
             if(!writeMeshFileAscii(_filename, triObj->mesh())) {
-                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
-                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         }
     }
