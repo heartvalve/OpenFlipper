@@ -434,10 +434,10 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /// set the path to the object.
     void setPath(QString _path);
 
-    /// return the name of the object. The name defaults to NONAME if unset.
+    /// return the filename of the object. The name defaults to NONAME if unset.
     QString name( );
 
-    /// set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
+    /// set the filename of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
     virtual void setName( QString _name );
 
   private:
