@@ -152,9 +152,6 @@ int FileBVHPlugin::loadObject(QString _filename) {
   else
     ignoreJointScaling_ = OpenFlipperSettings().value("FileBVH/Load/JointScaling",true).toBool();
   
-  QString path = QFileInfo(_filename).absolutePath();
-  QString baseName = QFileInfo(_filename).baseName();
-  
   //setup filestream
   
   std::fstream input( _filename.toUtf8(), std::ios_base::in );
@@ -173,7 +170,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
   
   if(PluginFunctions::getObject( id, object)){
     skeleton = PluginFunctions::skeleton( object );
-    object->setName( baseName + ".bvh" );
+    object->setFromFileName(_filename);
   }
   
   if (skeleton == 0){
@@ -359,7 +356,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
       
       if (frameCount > 0){
         FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
-        animHandle = skeleton->addAnimation(baseName.toStdString(), animation);
+        animHandle = skeleton->addAnimation(object->filename().toStdString(), animation);
       }
       
       waitingFor = FRAME_TIME;
@@ -499,20 +496,19 @@ bool FileBVHPlugin::saveObject(int _id, QString _filename)
   //write object
   if ( object->dataType( DATA_SKELETON ) ) {
 
-    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setFromFileName(_filename);
 
     Skeleton* skeleton = PluginFunctions::skeleton(object);
 
     if ( writeSkeleton( stream, *skeleton ) ){
       
-      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + _filename );
       stream.close();
       return true;
 
     } else {
       
-      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + _filename);
       stream.close();
       QFile( QString(filename.c_str()) ).remove();
       return false;
