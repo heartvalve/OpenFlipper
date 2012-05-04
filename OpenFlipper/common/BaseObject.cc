@@ -709,17 +709,47 @@ QStringList BaseObject::getGroupNames() {
 }
 
 // ===============================================================================
-// Name
+// Name and path Handling
 // ===============================================================================
+
+void BaseObjectData::setFromFileName(QString _filename ) {
+  QString str = _filename;
+  path_ = str.section(QDir::separator() ,0,-2);
+  setName(str.section(QDir::separator(),-1));
+}
+
+void BaseObjectData::setName( QString _name ) {
+  name_ = _name;
+
+  // Tell plugins about the name change
+  emit objectPropertiesChanged(id());
+
+  std::string nodename = std::string("SeparatorNode for object " + _name.toUtf8());
+  separatorNode_->name( nodename );
+
+  nodename = std::string("ManipulatorNode for object " + _name.toUtf8());
+  manipulatorNode_->name( nodename );
+
+  nodename = std::string("BoundingBoxNode for object " + _name.toUtf8());
+  boundingBoxNode_->name( nodename );
+
+  nodename = std::string(_name.toUtf8() + "'s Material" );
+  materialNode_->name( nodename );
+
+  nodename = std::string("StencilRefNode for object " + _name.toUtf8());
+  stencilRefNode_->name( nodename );
+}
+
 QString BaseObject::name() {
   return name_;
 }
 
-void BaseObject::setName(QString _name ) {
-  name_ = _name;
-  
-  // Tell plugins about the name change
-  emit objectPropertiesChanged(id());
+QString BaseObjectData::path(){
+  return path_;
+}
+
+void BaseObjectData::setPath(QString _path ) {
+  path_ = _path;
 }
 
 // ===============================================================================

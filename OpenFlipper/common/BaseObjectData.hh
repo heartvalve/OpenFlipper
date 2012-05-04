@@ -130,36 +130,6 @@ class DLLEXPORT BaseObjectData : public BaseObject
       * */
     virtual void cleanup();
 
-  /** @} */
-
-  //===========================================================================
-  /** @name Name and Path handling
-   * @{ */
-  //===========================================================================
-
-  public:
-
-    /** Set the object name from a filename. The function will set the name of the
-     * object to the filename. At the same time the path is set to the one given in
-     * the parameter
-     *
-     * @param _filename path to the file.
-     */
-    void setFromFileName(QString _filename );
-
-    /// set the name of the object. ( If you overwrite it, call BaseObjectData::setName(_name ) it in your function first)
-    virtual void setName( QString _name );
-
-    /// return the path to the object ( defaults to "." if unset )
-    QString path();
-
-    /// set the path to the object.
-    void setPath(QString _path);
-
-  private:
-
-    /// path to the file from which the object is loaded ( defaults to "." )
-    QString path_;
 
   /** @} */
 
