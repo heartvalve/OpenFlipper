@@ -234,17 +234,15 @@ bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
         HexahedralMeshObject* hex_mesh_obj = PluginFunctions::hexahedralMeshObject(obj);
         if (mesh_obj) {
 
-            obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
-            obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
-
-            fileManager_.writeFile(_filename.toStdString(), *(mesh_obj->mesh()));
+          obj->setFromFileName(_filename);
+          if(!fileManager_.writeFile(_filename.toStdString(), *(mesh_obj->mesh())))
+            emit log(LOGERR, tr("Unable to save ") + _filename);
         }
         else if (hex_mesh_obj) {
 
-            obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
-            obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
-
-            fileManager_.writeFile(_filename.toStdString(), *(hex_mesh_obj->mesh()));
+          obj->setFromFileName(_filename);
+          if (!fileManager_.writeFile(_filename.toStdString(), *(hex_mesh_obj->mesh())))
+            emit log(LOGERR, tr("Unable to save ") + _filename);
         }
     }
 
