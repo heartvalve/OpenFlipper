@@ -731,7 +731,6 @@ void BaseObject::setFromFileName(const QString &_filename ) {
   setPath(file_info.path());
   QString filename = file_info.fileName();
   setFileName(filename);
-  setName(filename);
 }
 
 void BaseObject::setName(QString _name ) {

@@ -1218,6 +1218,7 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
@@ -1233,6 +1234,7 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
                 

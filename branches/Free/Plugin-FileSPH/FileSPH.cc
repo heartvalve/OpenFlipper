@@ -179,6 +179,7 @@ bool FileSPHPlugin::saveObject(int _id, QString _filename)
       settings.endGroup();
       
       obj->setFromFileName(_filename);
+      obj->setName(obj->filename());
     }
   }
 

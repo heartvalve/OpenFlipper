@@ -1670,6 +1670,8 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BaseObject* object = importer.object(i);
     if(object == NULL) continue;
 
+    object->setFromFileName(_filename);
+
     //remember the id of the first opened object
     if ( returnID == -1)
       returnID = object->id();
@@ -1707,7 +1709,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BSplineCurveObject* bscObj = dynamic_cast< BSplineCurveObject* > (object);
 
     if ( bscObj ){
-      bscObj->setPath( _filename.section(QDir::separator() ,0,-2) );
       bscObj->splineCurveNode()->updateGeometry();
     }
 #endif
@@ -1716,8 +1717,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
     //handle new BSplineCurves
     BSplineSurfaceObject* bssObj = dynamic_cast< BSplineSurfaceObject* > (object);
 
-    if ( bssObj )
-      bssObj->setPath( _filename.section(QDir::separator() ,0,-2) );
 #endif
 
     //textures
@@ -1786,6 +1785,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   if ( object->dataType( DATA_POLY_MESH ) ) {
 
     object->setFromFileName(_filename);
+    object->setName(object->filename());
 
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
@@ -1806,6 +1806,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     object->setFromFileName(_filename);
+    object->setName(object->filename());
 
     TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
@@ -1827,6 +1828,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_BSPLINE_CURVE ) ) {
 
     object->setFromFileName(_filename);
+    object->setName(object->filename());
 
     BSplineCurveObject* bscObj = dynamic_cast<BSplineCurveObject* >( object );
 
@@ -1849,6 +1851,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_BSPLINE_SURFACE ) ) {
 
     object->setFromFileName(_filename);
+    object->setName(object->filename());
 
     BSplineSurfaceObject* bssObj = dynamic_cast<BSplineSurfaceObject* >( object );
 

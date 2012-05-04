@@ -215,6 +215,7 @@ int FileSKLPlugin::loadObject(QString _filename)
     //general stuff
     obj->source( PluginFunctions::objectCount() > 4 );
     obj->setFromFileName(_filename);
+    obj->setName(obj->filename());
     emit updatedObject( obj->id(), UPDATE_ALL );
     emit openedFile( obj->id() );
     PluginFunctions::viewAll();
@@ -326,6 +327,7 @@ bool FileSKLPlugin::saveObject(int _id, QString _filename)
 		if(skel)
 		{
 		  obj->setFromFileName(_filename);
+		  obj->setName(obj->filename());
 			SaveSkeleton(skel->skeleton(), _filename);
 		}
 	}

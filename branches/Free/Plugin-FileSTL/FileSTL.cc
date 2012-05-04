@@ -105,6 +105,7 @@ int FileSTLPlugin::loadObject(QString _filename) {
             object->target(true);
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         std::string filename = std::string( _filename.toUtf8() );
         
@@ -146,6 +147,7 @@ bool FileSTLPlugin::saveObject(int _id, QString _filename)
     if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
         
