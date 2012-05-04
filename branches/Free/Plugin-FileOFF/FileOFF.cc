@@ -1133,15 +1133,12 @@ int FileOFFPlugin::loadObject(QString _filename) {
       return -1;
     }
     
-    QFileInfo file(_filename);
+    object->setFromFileName(_filename);
 
     // Handle new PolyMeshes
     PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (object);
     
     if ( polyMeshObj ){
-
-      // Remember the path where we found the file
-      polyMeshObj->setPath(file.path());
 
       if ( !importer.hasVertexNormals() )
         polyMeshObj->mesh()->update_normals();
@@ -1158,9 +1155,6 @@ int FileOFFPlugin::loadObject(QString _filename) {
     TriMeshObject* triMeshObj = dynamic_cast< TriMeshObject* > (object);
     
     if ( triMeshObj ){
-
-      // Remember the path where we found the file
-      triMeshObj->setPath(file.path());
 
       if ( !importer.hasVertexNormals() || (userReadOptions_ & OFFImporter::FORCE_NONORMALS) )
         triMeshObj->mesh()->update_normals();
@@ -1223,33 +1217,31 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
     
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setFromFileName(_filename);
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
         if (writeMesh(ofs, *polyObj->mesh())){
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;
         }else{
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            emit log(LOGERR, tr("Unable to save ") + _filename);
             ofs.close();
             return false;
         }
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setFromFileName(_filename);
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
                 
         if (writeMesh(ofs, *triObj->mesh())) {
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;
         } else {
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            emit log(LOGERR, tr("Unable to save ") + _filename );
             ofs.close();
             return false;
         }
