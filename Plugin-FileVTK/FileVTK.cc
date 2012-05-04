@@ -180,174 +180,171 @@ void FileVTKPlugin::slotSaveDefault() {
 //-----------------------------------------------------------------------------------------------------
   
 int FileVTKPlugin::loadObject(QString _filename) {
- std::cerr << "Loading vtk file" << std::endl;
- 
- QFile file(_filename);
- 
- if ( !file.open(QIODevice::ReadOnly) ) {
+  std::cerr << "Loading vtk file" << std::endl;
+
+  QFile file(_filename);
+
+  if ( !file.open(QIODevice::ReadOnly) ) {
     emit log(LOGERR,"Unable to open vtk file!");
     return -1;
- }
- 
- QTextStream in(&file);
- 
- std::cerr << "File is open!" << std::endl;
- 
- QString line = in.readLine();
- 
- std::cerr << "Got line: " << std::endl;
- std::cerr << line.toStdString() << std::endl;
- 
- QStringList header = line.split(" ",QString::SkipEmptyParts);
- 
- if ( header.size() != 5 ) {
-  emit log(LOGERR,tr("Bad VTK header? ") + line);  
-  return -1;
- }
- 
- QString version = header[4];
- 
- header.removeLast();
- 
- QString magic = header.join(" ");
- 
- if ( magic != "# vtk DataFile Version" ) {
-   emit log(LOGERR,tr("Bad VTK header magic? ") + magic);  
-   return -1;
- }
+  }
 
- QString description = in.readLine();
- 
- QString fileTypeStr = in.readLine();
- 
- fileTypeStr = fileTypeStr.simplified();
- 
- if ( fileTypeStr.toLower() == "binary" ) {
-   binary_ = true;
-   emit log(LOGINFO,tr("Loading VTK binary file of version %1.").arg(version));
-   emit log(LOGERR,tr("Not yet implemented!"));
- } else if ( fileTypeStr.toLower() == "ascii" ) {
-   binary_ = false;
-   emit log(LOGINFO,tr("Loading VTK ascii file of version %1.").arg(version));
- } else {
-   emit log(LOGERR,tr("Bad VTK type? ") + fileTypeStr);  
-   return -1;
- }
- 
- emit log(LOGINFO,description);
- 
- line = "";
- 
- while ( line.simplified() == "" )
-   line = in.readLine();
- 
- QStringList datasetList =  line.split(" ",QString::SkipEmptyParts);
- 
- if ( datasetList.size() != 2 ) {
-   emit log(LOGERR,tr("Bad dataset specification!"));  
-   return -1;
- }
- 
- Dataset dataset;
- 
- datasetList[1] = datasetList[1].simplified();
- 
- if ( datasetList[1] == "STRUCTURED_POINTS" )
-   dataset = STRUCTURED_POINTS;
- else if ( datasetList[1] == "STRUCTURED_GRID" )
-   dataset = STRUCTURED_GRID;
- else if ( datasetList[1] == "RECTILINEAR_GRID" )
-   dataset = RECTILINEAR_GRID;
- else if ( datasetList[1] == "POLYDATA" )
-   dataset = POLYDATA;
- else if ( datasetList[1] == "UNSTRUCTURED_GRID" )
-   dataset = UNSTRUCTURED_GRID;
- else {
-   emit log(LOGERR,tr("Unknown dataset specification! %1").arg(datasetList[1]));  
-   return -1;
- }
-      
- if ( forceTriangleMesh_  ){
-   
-   // add a triangle mesh
-   int id = -1;
-   emit addEmptyObject(DATA_TRIANGLE_MESH, id);
-   
-   TriMeshObject* object(0);
-   
-   if(PluginFunctions::getObject( id, object)){
-     
-     TriMesh* _mesh;
-     PluginFunctions::getMesh(id,_mesh);
-     
-     if ( _mesh != 0 ) {
-       if ( !loadMesh(in,_mesh,dataset) ) {
-         emit log(LOGERR,"Unable to load mesh!");
-         return -1;
-       }
-     } else {
+  QTextStream in(&file);
+
+  std::cerr << "File is open!" << std::endl;
+
+  QString line = in.readLine();
+
+  std::cerr << "Got line: " << std::endl;
+  std::cerr << line.toStdString() << std::endl;
+
+  QStringList header = line.split(" ",QString::SkipEmptyParts);
+
+  if ( header.size() != 5 ) {
+    emit log(LOGERR,tr("Bad VTK header? ") + line);
+    return -1;
+  }
+
+  QString version = header[4];
+
+  header.removeLast();
+
+  QString magic = header.join(" ");
+
+  if ( magic != "# vtk DataFile Version" ) {
+    emit log(LOGERR,tr("Bad VTK header magic? ") + magic);
+    return -1;
+  }
+
+  QString description = in.readLine();
+
+  QString fileTypeStr = in.readLine();
+
+  fileTypeStr = fileTypeStr.simplified();
+
+  if ( fileTypeStr.toLower() == "binary" ) {
+    binary_ = true;
+    emit log(LOGINFO,tr("Loading VTK binary file of version %1.").arg(version));
+    emit log(LOGERR,tr("Not yet implemented!"));
+  } else if ( fileTypeStr.toLower() == "ascii" ) {
+    binary_ = false;
+    emit log(LOGINFO,tr("Loading VTK ascii file of version %1.").arg(version));
+  } else {
+    emit log(LOGERR,tr("Bad VTK type? ") + fileTypeStr);
+    return -1;
+  }
+
+  emit log(LOGINFO,description);
+
+  line = "";
+
+  while ( line.simplified() == "" )
+    line = in.readLine();
+
+  QStringList datasetList =  line.split(" ",QString::SkipEmptyParts);
+
+  if ( datasetList.size() != 2 ) {
+    emit log(LOGERR,tr("Bad dataset specification!"));
+    return -1;
+  }
+
+  Dataset dataset;
+
+  datasetList[1] = datasetList[1].simplified();
+
+  if ( datasetList[1] == "STRUCTURED_POINTS" )
+    dataset = STRUCTURED_POINTS;
+  else if ( datasetList[1] == "STRUCTURED_GRID" )
+    dataset = STRUCTURED_GRID;
+  else if ( datasetList[1] == "RECTILINEAR_GRID" )
+    dataset = RECTILINEAR_GRID;
+  else if ( datasetList[1] == "POLYDATA" )
+    dataset = POLYDATA;
+  else if ( datasetList[1] == "UNSTRUCTURED_GRID" )
+    dataset = UNSTRUCTURED_GRID;
+  else {
+    emit log(LOGERR,tr("Unknown dataset specification! %1").arg(datasetList[1]));
+    return -1;
+  }
+
+  if ( forceTriangleMesh_  ){
+
+    // add a triangle mesh
+    int id = -1;
+    emit addEmptyObject(DATA_TRIANGLE_MESH, id);
+
+    TriMeshObject* object(0);
+
+    if(PluginFunctions::getObject( id, object)){
+
+      TriMesh* _mesh;
+      PluginFunctions::getMesh(id,_mesh);
+
+      if ( _mesh != 0 ) {
+        if ( !loadMesh(in,_mesh,dataset) ) {
+          emit log(LOGERR,"Unable to load mesh!");
+          return -1;
+        }
+      } else {
         emit log(LOGERR,"Unable to add empty triangle mesh!");
         return -1;
-     }
-       
-     
-     object->setPath( QFileInfo(_filename).absolutePath() );
-     object->setName( QFileInfo(_filename).fileName() );
-     
-     object->update();
-     
-     //general stuff
-     emit openedFile( object->id() );
-      
-     PluginFunctions::viewAll();
-     
-     return id;
-   }
-   
- } else {
-   
-   int id = -1;
-   emit addEmptyObject(DATA_POLY_MESH, id);
-   
-   
-   PolyMeshObject* object(0);
-   
-   if(PluginFunctions::getObject( id, object)){
-    
-     PolyMesh* _mesh;
-     PluginFunctions::getMesh(id,_mesh);
-     
-     if ( _mesh != 0 ) {
-       if ( !loadMesh(in,_mesh,dataset) ) {
-         emit log(LOGERR,"Unable to load mesh!");
-         return -1;
-       }
-     } else {
-       emit log(LOGERR,"Unable to add empty poly mesh!");
-       return -1;
-     }
+      }
 
-     
-     object->setPath( QFileInfo(_filename).absolutePath()  );
-     object->setName( QFileInfo(_filename).fileName() );
-     
-     object->update();
-     
-     //general stuff
-     emit openedFile( object->id() );
-     
-     PluginFunctions::viewAll();
-     
-     return id;
-     
-   }
-   
+      object->setFromFileName(_filename);
 
- }
- 
- emit log(LOGERR,tr("Error in load mesh!"));
- 
- return -1;
+      object->update();
+
+      //general stuff
+      emit openedFile( object->id() );
+
+      PluginFunctions::viewAll();
+
+      return id;
+    }
+
+  } else {
+
+    int id = -1;
+    emit addEmptyObject(DATA_POLY_MESH, id);
+
+
+    PolyMeshObject* object(0);
+
+    if(PluginFunctions::getObject( id, object)){
+
+      PolyMesh* _mesh;
+      PluginFunctions::getMesh(id,_mesh);
+
+      if ( _mesh != 0 ) {
+        if ( !loadMesh(in,_mesh,dataset) ) {
+          emit log(LOGERR,"Unable to load mesh!");
+          return -1;
+        }
+      } else {
+        emit log(LOGERR,"Unable to add empty poly mesh!");
+        return -1;
+      }
+
+
+      object->setFromFileName(_filename);
+
+      object->update();
+
+      //general stuff
+      emit openedFile( object->id() );
+
+      PluginFunctions::viewAll();
+
+      return id;
+
+    }
+
+
+  }
+
+  emit log(LOGERR,tr("Error in load mesh!"));
+
+  return -1;
 
 
 }
@@ -1318,33 +1315,31 @@ bool FileVTKPlugin::saveObject(int _id, QString _filename) {
     
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setFromFileName(_filename);
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
         if (writeMesh(ofs, *polyObj->mesh())){
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;
         }else{
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            emit log(LOGERR, tr("Unable to save ") + _filename);
             ofs.close();
             return false;
         }
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setFromFileName(_filename);
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
                 
         if (writeMesh(ofs, *triObj->mesh())) {
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;
         } else {
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            emit log(LOGERR, tr("Unable to save ") + _filename);
             ofs.close();
             return false;
         }
