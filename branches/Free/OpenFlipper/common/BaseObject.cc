@@ -81,7 +81,9 @@ BaseObject::BaseObject(const BaseObject& _object) :
   objectType_(_object.objectType_),
   flags_(_object.flags_),
   visible_(_object.visible_),
-  parentItem_(0)
+  parentItem_(0),
+  path_("."),
+  filename_("")
 
 {
   // Increase id generator as we created a new object
@@ -203,11 +205,12 @@ void BaseObject::persistentId( int _id ) {
 
 void BaseObject::cleanup() {
   persistentId_ = -1;
-
+  path_       = ".";
   flags_.clear();
 
   visible_    = true;
   name_       = "NONAME";
+  filename_ = "";
 }
 
 // ===============================================================================
@@ -713,43 +716,40 @@ QStringList BaseObject::getGroupNames() {
 // Name and path Handling
 // ===============================================================================
 
-void BaseObjectData::setFromFileName(QString _filename ) {
-  QFileInfo file_info(_filename);
-  path_ = file_info.path();
-  setName(file_info.fileName());
+QString BaseObject::filename()
+{
+  return filename_;
 }
 
-void BaseObjectData::setName( QString _name ) {
+void BaseObject::setFileName(const QString &_filename)
+{
+  filename_ = _filename;
+}
+
+void BaseObject::setFromFileName(const QString &_filename ) {
+  QFileInfo file_info(_filename);
+  setPath(file_info.path());
+  QString filename = file_info.fileName();
+  setFileName(filename);
+  setName(filename);
+}
+
+void BaseObject::setName(const QString &_name ) {
   name_ = _name;
 
   // Tell plugins about the name change
   emit objectPropertiesChanged(id());
-
-  std::string nodename = std::string("SeparatorNode for object " + _name.toUtf8());
-  separatorNode_->name( nodename );
-
-  nodename = std::string("ManipulatorNode for object " + _name.toUtf8());
-  manipulatorNode_->name( nodename );
-
-  nodename = std::string("BoundingBoxNode for object " + _name.toUtf8());
-  boundingBoxNode_->name( nodename );
-
-  nodename = std::string(_name.toUtf8() + "'s Material" );
-  materialNode_->name( nodename );
-
-  nodename = std::string("StencilRefNode for object " + _name.toUtf8());
-  stencilRefNode_->name( nodename );
 }
 
 QString BaseObject::name() {
   return name_;
 }
 
-QString BaseObjectData::path(){
+QString BaseObject::path(){
   return path_;
 }
 
-void BaseObjectData::setPath(QString _path ) {
+void BaseObject::setPath(const QString &_path ) {
   path_ = _path;
 }
 

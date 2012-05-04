@@ -420,30 +420,37 @@ class DLLEXPORTONLY BaseObject : public QObject {
     //===========================================================================
 
     /** Set the object name from a filename. The function will set the name of the
-     * object to the filename. At the same time the path is set to the one given in
-     * the parameter
+     * object to the filename. At the same time the path and the filename is
+     * set to the one given in the parameter
      *
      * @param _filename path to the file.
      */
-    void setFromFileName(QString _filename );
+    void setFromFileName(const QString &_filename);
 
 
     /// return the path to the object ( defaults to "." if unset )
     QString path();
 
     /// set the path to the object.
-    void setPath(QString _path);
+    void setPath(const QString &_path);
 
-    /// return the filename of the object. The name defaults to NONAME if unset.
+    /// return the name of the object. The name defaults to NONAME if unset.
     QString name( );
 
-    /// set the filename of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
-    virtual void setName( QString _name );
+    /// set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
+    virtual void setName(const QString &_name );
+
+    /// return the filename of the object
+    QString filename();
+
+    /// set the filename for this object
+    void setFileName(const QString &_filename);
 
   private:
 
     /// path to the file from which the object is loaded ( defaults to "." )
     QString path_;
+    QString filename_;
 
   signals:
     /** This signal is emitted when properties of the object have been changed like its name
