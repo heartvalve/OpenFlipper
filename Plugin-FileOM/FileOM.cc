@@ -262,6 +262,7 @@ int FileOMPlugin::loadTriMeshObject(QString _filename){
             object->target(true);
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         std::string filename = std::string( _filename.toUtf8() );
         
@@ -340,6 +341,7 @@ int FileOMPlugin::loadPolyMeshObject(QString _filename){
             object->target(true);
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         std::string filename = std::string( _filename.toUtf8() );
         
@@ -446,6 +448,7 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
@@ -459,6 +462,7 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
         

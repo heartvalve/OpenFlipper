@@ -508,6 +508,7 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header
             object->target(true);
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         // Get mesh
         TriMesh* mesh = object->mesh();
@@ -563,6 +564,7 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
             object->target(true);
         
         object->setFromFileName(_filename);
+        object->setName(object->filename());
         
         // Get mesh
         PolyMesh* mesh = object->mesh();
@@ -577,7 +579,7 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
                 emit deleteObject(id);
                 return -1;
             } else {
-                emit log(LOGINFO, tr("Successfully loaded file ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Successfully loaded file ") + _filename );
             }
         } else {
             // Read binary file
@@ -586,7 +588,7 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
                 emit deleteObject(id);
                 return -1;
             } else {
-                emit log(LOGINFO, tr("Successfully loaded file ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+                emit log(LOGINFO, tr("Successfully loaded file ") + _filename );
             }
         }
         
@@ -616,6 +618,7 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
     PluginFunctions::getObject(_id,object);
     
     object->setFromFileName(_filename);
+    object->setName(object->filename());
     
     bool gui = OpenFlipper::Options::gui() && (saveBinary_ != 0) /*buttons initialized?*/;
     bool binary = ((gui && saveBinary_->isChecked()) ||

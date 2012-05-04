@@ -171,6 +171,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
   if(PluginFunctions::getObject( id, object)){
     skeleton = PluginFunctions::skeleton( object );
     object->setFromFileName(_filename);
+    object->setName(object->filename());
   }
   
   if (skeleton == 0){
@@ -497,6 +498,7 @@ bool FileBVHPlugin::saveObject(int _id, QString _filename)
   if ( object->dataType( DATA_SKELETON ) ) {
 
     object->setFromFileName(_filename);
+    object->setName(object->filename());
 
     Skeleton* skeleton = PluginFunctions::skeleton(object);
 

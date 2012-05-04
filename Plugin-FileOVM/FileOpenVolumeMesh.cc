@@ -235,12 +235,14 @@ bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
         if (mesh_obj) {
 
           obj->setFromFileName(_filename);
+          obj->setName(obj->filename());
           if(!fileManager_.writeFile(_filename.toStdString(), *(mesh_obj->mesh())))
             emit log(LOGERR, tr("Unable to save ") + _filename);
         }
         else if (hex_mesh_obj) {
 
           obj->setFromFileName(_filename);
+          obj->setName(obj->filename());
           if (!fileManager_.writeFile(_filename.toStdString(), *(hex_mesh_obj->mesh())))
             emit log(LOGERR, tr("Unable to save ") + _filename);
         }

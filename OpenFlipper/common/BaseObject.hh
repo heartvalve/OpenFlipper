@@ -419,9 +419,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
     * @{ */
     //===========================================================================
 
-    /** Set the object name from a filename. The function will set the name of the
-     * object to the filename. At the same time the path and the filename is
-     * set to the one given in the parameter
+    /** Set the object path and filename from the given parameter.
      *
      * @param _filename path to the file.
      */
@@ -437,7 +435,10 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /// return the name of the object. The name defaults to NONAME if unset.
     QString name( );
 
-    /// set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
+
+     /* set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
+     * this is may not the filename of the given object, because one file can have multiple objects
+     */
     virtual void setName(QString _name );
 
     /// return the filename of the object
