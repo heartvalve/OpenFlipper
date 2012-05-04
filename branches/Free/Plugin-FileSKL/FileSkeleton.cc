@@ -214,8 +214,7 @@ int FileSKLPlugin::loadObject(QString _filename)
 
     //general stuff
     obj->source( PluginFunctions::objectCount() > 4 );
-    QFileInfo info(_filename);
-    obj->setName(info.fileName());
+    obj->setFromFileName(_filename);
     emit updatedObject( obj->id(), UPDATE_ALL );
     emit openedFile( obj->id() );
     PluginFunctions::viewAll();
@@ -326,9 +325,7 @@ bool FileSKLPlugin::saveObject(int _id, QString _filename)
 		SkeletonObject *skel = PluginFunctions::skeletonObject(obj);
 		if(skel)
 		{
-			obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(), -1));
-			obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2));
-
+		  obj->setFromFileName(_filename);
 			SaveSkeleton(skel->skeleton(), _filename);
 		}
 	}
