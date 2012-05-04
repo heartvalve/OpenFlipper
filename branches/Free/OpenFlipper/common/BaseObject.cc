@@ -58,6 +58,7 @@
 #include "Types.hh"
 #include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <QFileInfo>
 
 
 //== TYPEDEFS =================================================================
@@ -713,9 +714,9 @@ QStringList BaseObject::getGroupNames() {
 // ===============================================================================
 
 void BaseObjectData::setFromFileName(QString _filename ) {
-  QString str = _filename;
-  path_ = str.section(QDir::separator() ,0,-2);
-  setName(str.section(QDir::separator(),-1));
+  QFileInfo file_info(_filename);
+  path_ = file_info.path();
+  setName(file_info.fileName());
 }
 
 void BaseObjectData::setName( QString _name ) {
