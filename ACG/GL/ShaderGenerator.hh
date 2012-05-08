@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QStringList>
+#include <QString>
 #include <string>
 #include <list>
 
@@ -36,7 +38,7 @@ struct ShaderGenDesc
   bool textured;
 };
 
-typedef std::list<std::string> StringList;
+//typedef std::list<std::string> StringList;
 
 /**
 ShaderGenerator is used to collect shader io, uniforms, defines and includes.
@@ -55,7 +57,7 @@ public:
   /** 
   imports another shader, same as #include
   */
-  void addIncludeFile(const char* _fileName);
+  void addIncludeFile(QString _fileName);
 
   /**
   adds fitting vertex shader io for a given description
@@ -81,27 +83,27 @@ public:
   stores string pointer only
   example: "in vec4 inPosition;"
   */
-  void addInput(const char* _input);
+  void addInput(QString _input);
 
   /**
   add one GLSL output specifier:
   stores string pointer only
   example: "out vec4 outPosition;"
   */
-  void addOutput(const char* _output);
+  void addOutput(QString _output);
 
   /**
   add one GLSL uniform specifier
   stores string pointer only
   example: "uniform sampler2D sampAmbient;"
   */
-  void addUniform(const char* _uniform);
+  void addUniform(QString _uniform);
 
   /**
   add one define
   example: "#define SG_GOURAUD 1"
   */
-  void addDefine(const char* _uniform);
+  void addDefine(QString _uniform);
 
 
   /**
@@ -114,12 +116,12 @@ public:
   /**
   shader assembly function
   */
-  void buildShaderCode(StringList* _pMainCode);
+  void buildShaderCode(QStringList* _pMainCode);
 
   /**
   get result of buildShaderCode
   */
-  const StringList& getShaderCode();
+  const QStringList& getShaderCode();
 
   /**
   save generated shader code to text file
@@ -130,26 +132,26 @@ private:
 
   /// aborts, if string already present
   /// prefix, postfix are very primitive, only checks for occurrence disregard locations
-  void addStringToList(const char* _str, StringList* _list,
+  void addStringToList(QString _str, QStringList* _list,
     const char* _prefix = 0, const char* _postfix = 0);
 
   /** Adds command lines to the shader code.
   Eventually appends missing ';'
   */
-  void addIOToCode(const StringList& _cmds);
+  void addIOToCode(const QStringList& _cmds);
 
-  StringList code_;
+  QStringList code_;
 
 
   // glsl code imports (with #include)
-  StringList imports_;
+  QStringList imports_;
 
-  std::string version_;
+  QString version_;
 
-  StringList inputs_;
-  StringList outputs_;
-  StringList uniforms_;
-  StringList genDefines_;
+  QStringList inputs_;
+  QStringList outputs_;
+  QStringList uniforms_;
+  QStringList genDefines_;
 };
 
 /**
@@ -178,50 +180,50 @@ private:
   void buildVertexShader();
   void buildFragmentShader();
 
-  void addVertexBeginCode(StringList* _code);
-  void addVertexEndCode(StringList* _code);
+  void addVertexBeginCode(QStringList* _code);
+  void addVertexEndCode(QStringList* _code);
 
-  void addFragmentBeginCode(StringList* _code);
-  void addFragmentEndCode(StringList* _code);
+  void addFragmentBeginCode(QStringList* _code);
+  void addFragmentEndCode(QStringList* _code);
 
   /// adds lighting definition functions:
   /// LitPointLight() ...
-  void addLightingFunctions(StringList* _code);
+  void addLightingFunctions(QStringList* _code);
 
   /// adds lighting function calls to code
-  void addLightingCode(StringList* _code);
+  void addLightingCode(QStringList* _code);
 
   /// returns path to _strFileName without last slash
-  std::string getPathName(std::string _strFileName);
+  QString getPathName(QString _strFileName);
 
   /// checks if _str is an include directive
   /// eventually imports the included file to the specified generator
-  int checkForIncludes(const char* _str, ShaderGenerator* _gen, std::string _includePath);
+  int checkForIncludes(QString _str, ShaderGenerator* _gen, QString _includePath);
 
   /// provide generated defines to shader
   void initGenDefines(ShaderGenerator* _gen);
 
   static void loadLightingFunctions();
 
-  static void loadStringListFromFile(const char* _fileName, StringList* _out);
+  static void loadStringListFromFile(const char* _fileName, QStringList* _out);
 
   ShaderGenerator* vertex_;
   ShaderGenerator* fragment_;
 
 
-  StringList vertexTemplate_;
-  StringList fragmentTemplate_;
+  QStringList vertexTemplate_;
+  QStringList fragmentTemplate_;
 
 
   ShaderGenDesc desc_;
 
 
   /// path + filename to shader templates
-  std::string vertexShaderFile_;
-  std::string fragmentShaderFile_;
+  QString vertexShaderFile_;
+  QString fragmentShaderFile_;
 
 
-  static StringList lightingCode_;
+  static QStringList lightingCode_;
 };
 
 
