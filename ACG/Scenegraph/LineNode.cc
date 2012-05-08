@@ -121,89 +121,105 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
    //   glBegin(GL_LINE_STRIP);
 
 
-    // first check if (new standard) 4-channel colors are specified
-    if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors4f_.size()) )
+    if ((line_mode_ == LineSegmentsMode))
     {
-      // enable blending of lines
-      GLboolean blendb;
-      glGetBooleanv( GL_BLEND, &blendb);
-      glEnable(GL_BLEND);
-
-      // blend func to blend alpha values of lines
-      GLint sblendfunc;
-      GLint dblendfunc;
-      glGetIntegerv( GL_BLEND_SRC_ALPHA, &sblendfunc );
-      glGetIntegerv( GL_BLEND_DST_ALPHA, &dblendfunc );
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-      // blend ontop of prev. drawn mesh
-      GLboolean depthmaskb;
-      glGetBooleanv( GL_DEPTH_WRITEMASK, &depthmaskb);
-      glDepthMask(GL_FALSE);
-
-      glBegin(GL_LINES);
-
-      ConstPointIter p_it=points_.begin(), p_end=points_.end();
-      ConstColor4fIter c_it=colors4f_.begin();
-
-      Color4f c(1.0f,1.0f,1.0f,1.0f);
-      if(c_it != colors4f_.end()) {
-        c = *c_it;
-      }
-      
-      int cnt = 0;
-      for (; p_it!=p_end; ++p_it)
+      // first check if (new standard) 4-channel colors are specified
+      if( (points_.size()/2 == colors4f_.size()) )
       {
-        if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors4f_.end()) {
-          ++c_it;
+        // enable blending of lines
+        GLboolean blendb;
+        glGetBooleanv( GL_BLEND, &blendb);
+        glEnable(GL_BLEND);
+
+        // blend func to blend alpha values of lines
+        GLint sblendfunc;
+        GLint dblendfunc;
+        glGetIntegerv( GL_BLEND_SRC_ALPHA, &sblendfunc );
+        glGetIntegerv( GL_BLEND_DST_ALPHA, &dblendfunc );
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // blend ontop of prev. drawn mesh
+        GLboolean depthmaskb;
+        glGetBooleanv( GL_DEPTH_WRITEMASK, &depthmaskb);
+        glDepthMask(GL_FALSE);
+
+        glBegin(GL_LINES);
+
+        ConstPointIter p_it=points_.begin(), p_end=points_.end();
+        ConstColor4fIter c_it=colors4f_.begin();
+
+        Color4f c(1.0f,1.0f,1.0f,1.0f);
+        if(c_it != colors4f_.end()) {
           c = *c_it;
         }
-        
-        glColor(c);
-        glVertex(*p_it);
 
-        ++cnt;
+        int cnt = 0;
+        for (; p_it!=p_end; ++p_it)
+        {
+          if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors4f_.end()) {
+            ++c_it;
+            c = *c_it;
+          }
+
+          glColor(c);
+          glVertex(*p_it);
+
+          ++cnt;
+        }
+
+        glEnd();
+
+        // disable blending of lines
+        if( blendb == GL_FALSE )
+          glDisable(GL_BLEND);
+
+        // reset blend func
+        glBlendFunc( sblendfunc, dblendfunc );
+
+        // enable depth mask
+        if( depthmaskb == GL_TRUE )
+          glDepthMask(GL_TRUE);
+
       }
-      
-      glEnd();
-
-      // disable blending of lines
-      if( blendb == GL_FALSE )
-        glDisable(GL_BLEND);
-
-      // reset blend func
-      glBlendFunc( sblendfunc, dblendfunc );
-
-      // enable depth mask
-      if( depthmaskb == GL_TRUE )
-        glDepthMask(GL_TRUE);
-
-    }
-    else if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors_.size()) )
-    {
-      glBegin(GL_LINES);
-      ConstPointIter p_it=points_.begin(), p_end=points_.end();
-      ConstColorIter c_it=colors_.begin();
-
-      Color c((char)255, (char)255, (char)255);
-      if(c_it != colors_.end()) {
-        c = *c_it;
-      }
-      
-      int cnt = 0;
-      for (; p_it!=p_end; ++p_it)
+      else if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors_.size()) )
       {
-        if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors_.end()) {
-          ++c_it;
+        glBegin(GL_LINES);
+        ConstPointIter p_it=points_.begin(), p_end=points_.end();
+        ConstColorIter c_it=colors_.begin();
+
+        Color c((char)255, (char)255, (char)255);
+        if(c_it != colors_.end()) {
           c = *c_it;
         }
-        
-        glColor(c);
-        glVertex(*p_it);
 
-        ++cnt;
+        int cnt = 0;
+        for (; p_it!=p_end; ++p_it)
+        {
+          if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors_.end()) {
+            ++c_it;
+            c = *c_it;
+          }
+
+          glColor(c);
+          glVertex(*p_it);
+
+          ++cnt;
+        }
+        glEnd();
       }
-      glEnd();
+      else
+      {
+        glBegin(GL_LINES);
+
+        ConstPointIter p_it=points_.begin(), p_end=points_.end();
+
+        for (; p_it!=p_end; ++p_it)
+        {
+          glVertex(*p_it);
+        }
+
+        glEnd();
+      }
     }
     else
     {
