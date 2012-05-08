@@ -109,6 +109,8 @@ int FileSTLPlugin::loadObject(QString _filename) {
         
         std::string filename = std::string( _filename.toUtf8() );
         
+        object->mesh()->request_face_normals();
+
         // load file
         bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename );
         if (!ok)
@@ -122,11 +124,13 @@ int FileSTLPlugin::loadObject(QString _filename) {
         object->mesh()->update_normals();
         
         object->update();
-        
         object->show();
         
         emit openedFile( object->id() );
         
+        // Update viewport
+        PluginFunctions::viewAll();
+
         return object->id();
         
     } else {
