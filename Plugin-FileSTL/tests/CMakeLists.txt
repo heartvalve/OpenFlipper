@@ -9,6 +9,6 @@ if(BUILD_TESTING)
   # Tests
   # ========================================================================
   # ========================================================================
-  run_single_object_file_mesh_test("filestl" "Plugin-FileSTL/CompanionCube.stl" "fileMeshTest.ofs")
+  run_single_object_file_mesh_test("filestl" "" "fileMeshTest.ofs" "Plugin-FileSTL")
 
 endif()
