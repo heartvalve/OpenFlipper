@@ -5,18 +5,14 @@
 #include <algorithm>
 
 #include <QFile>
+#include <QFileInfo>
+#include <QDir>
 #include <QTextStream>
 
 // sprintf_s warning
 //#pragma warning(disable : 4996)
 
-// stringlist iterator
-#define FOR_EACH_STRING(lst, it) for(QStringList::iterator it=lst.begin();it!=lst.end();++it)
-#define FOR_EACH_STRING_CONST(lst, it) for(QStringList::const_iterator it=lst.begin();it!=lst.end();++it)
-
-
 #define LIGHTING_CODE_FILE "../SG_LIGHTING.GLSL"
-
 
 
 ShaderGenerator::ShaderGenerator()
@@ -157,9 +153,9 @@ void ShaderGenerator::addLight(int lightIndex_, ShaderGenLightType _light)
 
 
 void ShaderGenerator::addStringToList(QString _str, 
-                                       QStringList* _arr,
-                                       const char* _prefix,
-                                       const char* _postfix)
+                                      QStringList* _arr,
+                                      const char* _prefix,
+                                      const char* _postfix)
 {
   QString tmp;
 
@@ -181,7 +177,6 @@ void ShaderGenerator::addStringToList(QString _str,
 
   // normalize string
   //  remove tabs, double whitespace
-
   tmp = tmp.simplified();
 
 
@@ -223,12 +218,13 @@ void ShaderGenerator::addUniform(QString _uniform)
 
 void ShaderGenerator::addIOToCode(const QStringList& _cmds)
 {
-  FOR_EACH_STRING_CONST(_cmds, it)
+  QString it;
+  foreach(it, _cmds)
   {
-    code_.push_back(*it);
+    code_.push_back(it);
     // append ; eventually
 
-    if (!it->contains(";"))
+    if (!it.contains(";"))
       code_.back().append(";");
   }
 }
@@ -240,23 +236,23 @@ void ShaderGenerator::buildShaderCode(QStringList* _pMainCode)
   code_.push_back(version_);
 
   // provide defines
-  FOR_EACH_STRING(genDefines_, it)
-    code_.push_back(*it);
+  QString it;
+
+  foreach(it, genDefines_)
+    code_.push_back(it);
 
   // provide imports
-  FOR_EACH_STRING(imports_, it)
-    code_.push_back(*it);
+  foreach(it, imports_)
+    code_.push_back(it);
 
-  // io
-
+  // IO
   addIOToCode(inputs_);
   addIOToCode(outputs_);
   addIOToCode(uniforms_);
 
   // main function
-
-  FOR_EACH_STRING((*_pMainCode), it)
-    code_.push_back(*it);
+  foreach(it, (*_pMainCode))
+    code_.push_back(it);
 
 
 }
@@ -285,9 +281,9 @@ void ShaderGenerator::saveToFile(const char* _fileName)
   QFile file(_fileName);
   QTextStream fileStream(&file);
 
-
-  FOR_EACH_STRING(code_, it)
-    fileStream << *it << '\n';
+  QString it;
+  foreach(it, code_)
+    fileStream << it << '\n';
 }
 
 
@@ -296,13 +292,6 @@ const QStringList& ShaderGenerator::getShaderCode()
 {
   return code_;
 }
-
-
-
-
-
-
-
 
 
 
@@ -422,7 +411,7 @@ void ShaderProgGenerator::buildVertexShader()
 
 
 
-  // io
+  // IO
 
   // when to use vertex lights
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
@@ -431,8 +420,6 @@ void ShaderProgGenerator::buildVertexShader()
     for (int i = 0; i < desc_.numLights; ++i)
       vertex_->addLight(i, desc_.lightTypes[i]);
   }
-
-
 
 
   // assemble main function
@@ -455,23 +442,24 @@ void ShaderProgGenerator::buildVertexShader()
     // interpret loaded shader template:
     //  import #includes and replace SG_VERTEX_BEGIN/END markers
 
-    FOR_EACH_STRING(vertexTemplate_, it)
+    QString it;
+    foreach(it,vertexTemplate_)
     {
-      if (!checkForIncludes(*it, vertex_, getPathName(vertexShaderFile_)))
+      if (!checkForIncludes(it, vertex_, getPathName(vertexShaderFile_)))
       {
         // str line is no include directive
         // check for SG_ markers
 
-        if (it->contains("SG_VERTEX_BEGIN"))
+        if (it.contains("SG_VERTEX_BEGIN"))
           addVertexBeginCode(&mainCode);
         else
         {
-          if (it->contains("SG_VERTEX_END"))
+          if (it.contains("SG_VERTEX_END"))
             addVertexEndCode(&mainCode);
           else
           {
             // no SG marker
-            mainCode.push_back(*it);
+            mainCode.push_back(it);
           }
         }
 
@@ -546,9 +534,7 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
       std::cout << "wrong include syntax: " << (const char*)_str.toAscii() << std::endl;
     else
     {
-      QString fullPathToIncludeFile = _includePath;
-      fullPathToIncludeFile += "/";
-      fullPathToIncludeFile += strIncludeFile;
+      QString fullPathToIncludeFile = _includePath + QDir::separator() + strIncludeFile;
 
       _gen->addIncludeFile(fullPathToIncludeFile);
     }
@@ -612,24 +598,24 @@ void ShaderProgGenerator::buildFragmentShader()
   {
     // interpret loaded shader template:
     //  import #includes and replace SG_VERTEX_BEGIN/END markers
-
-    FOR_EACH_STRING(fragmentTemplate_, it)
+    QString it;
+    foreach(it,fragmentTemplate_)
     {
-      if (!checkForIncludes(*it, fragment_, getPathName(fragmentShaderFile_)))
+      if (!checkForIncludes(it, fragment_, getPathName(fragmentShaderFile_)))
       {
         // str line is no include directive
         // check for SG_ markers
 
-        if (it->contains("SG_FRAGMENT_BEGIN"))
+        if (it.contains("SG_FRAGMENT_BEGIN"))
           addFragmentBeginCode(&mainCode);
         else
         {
-          if (it->contains("SG_FRAGMENT_END"))
+          if (it.contains("SG_FRAGMENT_END"))
             addFragmentEndCode(&mainCode);
           else
           {
             // no SG marker
-            mainCode.push_back(*it);
+            mainCode.push_back(it);
           }
         }
 
@@ -711,11 +697,11 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
 
 
 
-
 void ShaderProgGenerator::addLightingFunctions(QStringList* _code)
 {
-  FOR_EACH_STRING(lightingCode_, it)
-    _code->push_back(*it);
+  QString it;
+  foreach(it,lightingCode_)
+    _code->push_back(it);
 }
 
 
@@ -725,7 +711,6 @@ void ShaderProgGenerator::generateShaders()
   buildVertexShader();
   buildFragmentShader();
 }
-
 
 
 
@@ -752,17 +737,6 @@ void ShaderProgGenerator::loadShaderTemplateFromFile(const char *_vertexShaderFi
 
 QString ShaderProgGenerator::getPathName(QString _strFileName)
 {
-  QString ret = _strFileName;
-
-  // find last slash
-  int lpos = _strFileName.lastIndexOf('/');
-
-  if (lpos < 0)
-    lpos = _strFileName.lastIndexOf('\\');
-
-  // erase last sequence, including slash
-  if (lpos != (int)std::string::npos)
-    ret.remove(lpos, ret.length());
-
-  return ret;
+  QFileInfo fileInfo(_strFileName);
+  return fileInfo.absolutePath();
 }
