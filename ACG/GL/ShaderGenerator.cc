@@ -263,13 +263,16 @@ void ShaderGenerator::addIncludeFile(QString _fileName)
 {
   QFile file(_fileName);
 
-  QTextStream fileStream(&file);
-
-  while (!fileStream.atEnd())
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    QString tmpLine = fileStream.readLine();
+    QTextStream fileStream(&file);
 
-    imports_.push_back(tmpLine.simplified());
+    while (!fileStream.atEnd())
+    {
+      QString tmpLine = fileStream.readLine();
+
+      imports_.push_back(tmpLine.simplified());
+    }
   }
 
 }
@@ -279,11 +282,14 @@ void ShaderGenerator::addIncludeFile(QString _fileName)
 void ShaderGenerator::saveToFile(const char* _fileName)
 {
   QFile file(_fileName);
-  QTextStream fileStream(&file);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream fileStream(&file);
 
-  QString it;
-  foreach(it, code_)
-    fileStream << it << '\n';
+    QString it;
+    foreach(it, code_)
+      fileStream << it << '\n';
+  }
 }
 
 
