@@ -399,7 +399,14 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         // Get whole line since there could be comments in it
         getCleanLine(ifs, str);
         sstr.str(str);
-        
+
+        // check if #vertices, #faces and #edges follow
+        // on the next line
+        if ( str.compare("OFF") == 0 ) {
+          getCleanLine(ifs, str);
+          sstr.str(str);
+        }
+
         // + #Vertices, #Faces, #Edges
         sstr >> nV;
         sstr >> nF;
@@ -601,6 +608,16 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     // Reserve memory
     _importer.reserve(nV, nF * _importer.maxFaceValence() /*Upper bound*/, nF);
 
+    // skip empty lines and comments
+    std::string tmp;
+    while (true) {
+      char c = _in.peek();
+      if ( (c == '\n') || (c == '#') )
+        std::getline(_in, tmp);
+      else
+        break;
+    }
+
     // read vertices: coord [hcoord] [normal] [color] [texcoord]
     for (uint i=0; i<nV && !_in.eof(); ++i) {
         
@@ -681,7 +698,16 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             }
         }
     }
-    
+
+    // skip empty lines and comments
+    while (true) {
+      char c = _in.peek();
+      if ( (c == '\n') || (c == '#') )
+        std::getline(_in, tmp);
+      else
+        break;
+    }
+
     // faces
     // #N <v1> <v2> .. <v(n-1)> [color spec]
     for (uint i=0; i<nF; ++i)
