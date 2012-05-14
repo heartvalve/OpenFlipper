@@ -5,6 +5,10 @@
 #include <string>
 #include <list>
 
+namespace ACG
+{
+
+
 // #define MAX_SHADER_INPUT_UNITS 32
 // #define MAX_SHADER_CONSTANTS 0x200
 // #define MAX_SHADER_GEN_DEFINES 0x100
@@ -36,6 +40,10 @@ struct ShaderGenDesc
 
   bool vertexColors;
   bool textured;
+
+  // optionally specify shader template file names
+  QString vertexTemplateFile;
+  QString fragmentTemplateFile;
 };
 
 //typedef std::list<std::string> StringList;
@@ -164,18 +172,28 @@ public:
   ShaderProgGenerator(ShaderGenDesc* _desc);
   virtual ~ShaderProgGenerator(void);
 
-  /**
-  loads external shader templates, that 
-  */
-  void loadShaderTemplateFromFile(const char* _vertexShaderFile,
-    const char* _fragmentShaderFile);
-
-  void generateShaders();
-
   void saveVertexShToFile(const char* _fileName);
   void saveFragmentShToFile(const char* _fileName);
 
+  /**
+  returns generated vertex shader code
+  */
+  const QStringList& getVertexShaderCode();
+
+  /**
+  returns generated fragment shader code
+  */
+  const QStringList& getFragmentShaderCode();
+
 private:
+
+  /**
+  loads external shader templates 
+  */
+  void loadShaderTemplateFromFile();
+
+  void generateShaders();
+
 
   void buildVertexShader();
   void buildFragmentShader();
@@ -205,7 +223,7 @@ private:
 
   static void loadLightingFunctions();
 
-  static void loadStringListFromFile(const char* _fileName, QStringList* _out);
+  static void loadStringListFromFile(QString _fileName, QStringList* _out);
 
   ShaderGenerator* vertex_;
   ShaderGenerator* fragment_;
@@ -227,3 +245,6 @@ private:
 };
 
 
+
+
+}
