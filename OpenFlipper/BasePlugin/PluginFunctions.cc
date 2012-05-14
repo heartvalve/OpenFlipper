@@ -800,13 +800,10 @@ ACG::Vec3d viewingDirection(int _viewer) {
 
 bool isProjectionOrthographic( int _viewer ) {
 
-  if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ){
-
-    if ( examiner_widgets_[_viewer]->projectionMode() == 0) //ORTHOGRAPHIC_PROJECTION
-      return true;
-    else
-      return false;
-
+  if ( _viewer == ACTIVE_VIEWER) {
+    return (examiner_widgets_[activeExaminer_]->projectionMode() == 0);
+  } else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ){
+    return ( examiner_widgets_[_viewer]->projectionMode() == 0); //ORTHOGRAPHIC_PROJECTION ?
   } else
     std::cerr << "Requested illegal viewer for isProjectionOrthographic!!" << std::endl;
 
