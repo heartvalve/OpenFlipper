@@ -9,8 +9,12 @@
 #include <QDir>
 #include <QTextStream>
 
-// sprintf_s warning
-//#pragma warning(disable : 4996)
+
+
+namespace ACG
+{
+
+
 
 #define LIGHTING_CODE_FILE "../SG_LIGHTING.GLSL"
 
@@ -311,6 +315,8 @@ ShaderProgGenerator::ShaderProgGenerator(ShaderGenDesc* _desc)
   memcpy(&desc_, _desc, sizeof(ShaderGenDesc));
 
   loadLightingFunctions();
+
+  generateShaders();
 }
 
 ShaderProgGenerator::~ShaderProgGenerator(void)
@@ -321,14 +327,14 @@ ShaderProgGenerator::~ShaderProgGenerator(void)
 
 
 
-void ShaderProgGenerator::loadStringListFromFile(const char* _fileName, QStringList* _out)
+void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList* _out)
 {
   QFile file(_fileName);
 
   file.open(QIODevice::ReadOnly | QIODevice::Text);
 
   if (!file.isReadable())
-    std::cout << "error: file missing -> \"" << _fileName << "\"" << std::endl;
+    std::cout << "error: file missing -> \"" << (const char*)_fileName.toAscii() << "\"" << std::endl;
 
   else
   {
@@ -714,10 +720,21 @@ void ShaderProgGenerator::addLightingFunctions(QStringList* _code)
 
 void ShaderProgGenerator::generateShaders()
 {
+  loadShaderTemplateFromFile();
   buildVertexShader();
   buildFragmentShader();
 }
 
+
+const QStringList& ShaderProgGenerator::getVertexShaderCode()
+{
+  return vertex_->getShaderCode();
+}
+
+const QStringList& ShaderProgGenerator::getFragmentShaderCode()
+{
+  return fragment_->getShaderCode();
+}
 
 
 void ShaderProgGenerator::saveVertexShToFile(const char* _fileName)
@@ -731,18 +748,24 @@ void ShaderProgGenerator::saveFragmentShToFile(const char* _fileName)
 }
 
 
-void ShaderProgGenerator::loadShaderTemplateFromFile(const char *_vertexShaderFile, 
-                                                     const char *_fragmentShaderFile)
+void ShaderProgGenerator::loadShaderTemplateFromFile()
 {
-  loadStringListFromFile(_vertexShaderFile, &vertexTemplate_);
-  loadStringListFromFile(_fragmentShaderFile, &fragmentTemplate_);
+  if (!desc_.vertexTemplateFile.isEmpty())
+    loadStringListFromFile(desc_.vertexTemplateFile, &vertexTemplate_);
+  if (!desc_.fragmentTemplateFile.isEmpty())
+    loadStringListFromFile(desc_.fragmentTemplateFile, &fragmentTemplate_);
 
-  vertexShaderFile_ = _vertexShaderFile;
-  fragmentShaderFile_ = _fragmentShaderFile;
+  vertexShaderFile_ = desc_.vertexTemplateFile;
+  fragmentShaderFile_ = desc_.fragmentTemplateFile;
 }
 
 QString ShaderProgGenerator::getPathName(QString _strFileName)
 {
   QFileInfo fileInfo(_strFileName);
   return fileInfo.absolutePath();
+}
+
+
+
+
 }
