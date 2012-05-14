@@ -94,11 +94,6 @@ void RulerPlugin::showDistance()
   textTransformNode_->translate(ACG::Vec3d(halfDist.data()[0], halfDist.data()[1], 0.0));
   textTransformNode_->scale(std::max(distVec.length()*0.2, 1.0));
 
-
-  ACG::Vec3d vec = ACG::Vec3d(1.0,0.0,0.0);
-  distVec = distVec.normalize();
-  //textTransformNode_->rotate(180*M_PI*acos( dot(vec, distVec) ), cross(vec,distVec) );
-
   emit updateView();
 }
 
@@ -130,7 +125,8 @@ void RulerPlugin::pluginsInitialized()
 void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
 {
   if ( PluginFunctions::pickMode() == pickModeName_)
-  {
+  {//set one of the points, depending on the hit state (first, second or modifying)
+
     if (_event->type() == QEvent::MouseButtonRelease )
     {
       unsigned int node_idx, target_idx;
@@ -222,7 +218,8 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       }
     }
     else if (_event->type() == QEvent::MouseButtonPress)
-    {
+    {//enable drag mode
+
       if (hitStage_ == modifyPoint)
       {
         //decides which point is the nearest one, so
@@ -245,7 +242,8 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       }
     }
     else if (_event->type() == QEvent::MouseMove && lineDrag_ >= 0)
-    {
+    {//mouse moved and drag mode is enabled
+
       unsigned int node_idx, target_idx;
       OpenMesh::Vec3d hitPoint;
 
@@ -260,7 +258,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       showDistance();
     }
     else if (_event->type() == QEvent::MouseButtonDblClick)
-    {
+    {//reset
       reset();
     }
 
