@@ -1,12 +1,17 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14504 )</b>
+- <b>OpenFlipper 1.3 ( ? , 14609 )</b>
      - <b>ACG</b>
+         - Geometry 
+             - Improving BSP tree implementation
          - GL
              - Added ShaderGenerator
          - Math
              - Matrix4x4: Added determinant method
+             - Fixed GLMatrixT constructor 
              - Added Vec3b
+         - LineNode
+             - Bug fix: LineSegment mode when no colors are specified
          - TranslationManipulatorNode
              - fix: manipulator color circles changed
          - QtWidgets
@@ -18,12 +23,19 @@
              - Fix: Help browser tree view selection will be updated if a link to another document is clicked.
              - Fix: double loading home page at the beginning
              - Fixed warning due to connection to non existing slot.
+         - IO
+             - BaseObject now stores the filename of an object from which it was loaded
+             - BaseObject now stores the path of an object from which it was loaded
          - Load/Save
              - Added a QInputDialog so that the user can choose a file extension for newly created meshes when saving the settings.
              - Bugfix: Delete all is equivalent to clear all, so emit the clear all signal as well
          - UI
              - Paste View fix: keep toolbarsize when window size is not changed
              - Paste View: Added extra button to paste view and the window size
+         - BaseViewer
+             - Get rid of the twenty region pick functions in the qtbaseviewer (Merged to one)
+         - PluginFunctions
+             - Fixed plugin function for isProjectionOrthographic which did not work for the active_viewer. (Thanks to Bengt Rosenberger for the report)
      - <b>ObjectTypes</b>
          - Plane
              - Improved implementation and Documentation
@@ -41,10 +53,15 @@
          - File OFF
              - Fix: Endless loop (moved an end-of-file check in readFileOptions so that eof is detected in time)
              - Fix: Correctly set path for the loaded objects
+             - Fix: Added some additional checks so that empty lines and comments are skipped.
+         - FileSTL
+             - View all after loading file
          - File VTK
              - vtk objects now just have the filename as a name rather than the full path
          - Isotropic Remesher
              - Fix: Added a check if we are trying to collapse an edge of length 0 in the isotropic remesher
+         - Ruler
+             - New plugin to measure the euclidean distance between objects in the 3D scene.
          - MeshObjectInfo
              - Support for point clouds represented by meshes
          - Move
