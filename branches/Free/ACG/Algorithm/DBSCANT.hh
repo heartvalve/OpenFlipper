@@ -32,6 +32,14 @@ namespace Algorithm {
  *
  * Result has to support the operation `*result++ = <int>`.
  *
+ * Example:
+ *
+ *     std::vector<Point> points;
+ *     std::vector<int> clusters;
+ *     ...
+ *     ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
+ *                            std::back_inserter(clusters), 4.0001, 3)
+ *
  * @param Input iterator to the initial position of the data set.
  * @param Input iterator to the final position of the data set.
  * @param distance_func Binary function taking two elements as arguments. Returns the distance between these elements.
