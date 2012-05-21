@@ -127,7 +127,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
   if ( PluginFunctions::pickMode() == pickModeName_)
   {//set one of the points, depending on the hit state (first, second or modifying)
 
-    if (_event->type() == QEvent::MouseButtonRelease )
+    if (_event->type() == QEvent::MouseButtonPress )
     {
       unsigned int node_idx, target_idx;
       OpenMesh::Vec3d hitPoint;
@@ -253,8 +253,10 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
         QPoint position = _event->pos();
         ACG::Vec3d viewCoords = ACG::Vec3d(position.x(), PluginFunctions::viewerProperties().glState().context_height() - position.y(), 0.5);
         hitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
+        hitPoints_[lineDrag_] = ACG::Vec3d(hitPoint.data()[0], hitPoint.data()[1], hitPoints_[lineDrag_].data()[2] );
       }
-      hitPoints_[lineDrag_] = ACG::Vec3d(hitPoint.data()[0], hitPoint.data()[1], hitPoints_[lineDrag_].data()[2] );
+      else
+        hitPoints_[lineDrag_] = hitPoint;
       showDistance();
     }
     else if (_event->type() == QEvent::MouseButtonDblClick)
@@ -269,8 +271,10 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
 void RulerPlugin::reset()
 {
   hitStage_ = firstClick;
-  lineNode_->clear_points();
-  textNode_->setText("");
+  if (lineNode_)
+    lineNode_->clear_points();
+  if (textNode_)
+    textNode_->setText("");
 }
 
 //------------------------------------------------------------------------------
