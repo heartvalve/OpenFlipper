@@ -76,6 +76,7 @@ private:
 	SplatCloud::NormalVector    *normalsBackup_;
 	SplatCloud::PointsizeVector *pointsizesBackup_;
 	SplatCloud::ColorVector     *colorsBackup_;
+	SplatCloud::IndexVector     *indicesBackup_;
 	SplatCloud::SelectionVector *selectionsBackup_;
 };
 

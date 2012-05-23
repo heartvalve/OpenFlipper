@@ -495,6 +495,16 @@ void SplatCloudObject::update( UpdateType _type )
 			splatCloudNode_->modifiedColors();
 	}
 
+	if( _type.contains( updateType("Indices") ) )
+	{
+#		ifdef REPORT_UPDATE_TYPE
+		std::cout << "SplatCloudObject::update() : UPDATE_Indices" << std::endl;
+#		endif
+
+		if( splatCloudNode_ )
+			splatCloudNode_->modifiedIndices();
+	}
+
 	if( _type.contains( UPDATE_SELECTION ) )
 	{
 #		ifdef REPORT_UPDATE_TYPE
@@ -560,6 +570,7 @@ QString SplatCloudObject::getObjectinfo()
 			output += ", normals used: ";    output += splatCloud_->hasNormals()    ? "true" : "false";
 			output += ", pointsizes used: "; output += splatCloud_->hasPointsizes() ? "true" : "false";
 			output += ", colors used: ";     output += splatCloud_->hasColors()     ? "true" : "false";
+			output += ", indices used: ";     output += splatCloud_->hasIndices()   ? "true" : "false";
 		}
 
 		output += "\n";

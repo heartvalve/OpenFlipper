@@ -142,23 +142,25 @@ private:
 	QWidget* saveOptions_;
 
 	// options in the loading menu
-	QCheckBox* loadBinaryFile_;
-	QCheckBox* loadNormals_;
-	QCheckBox* loadPointsizes_;
-	QCheckBox* loadColors_;
-	QComboBox* loadColorRange_;
-	QCheckBox* loadNormalizeSize_;
+	QCheckBox *loadBinaryFile_;
+	QCheckBox *loadNormals_;
+	QCheckBox *loadPointsizes_;
+	QCheckBox *loadColors_;
+	QComboBox *loadColorRange_;
+	QCheckBox *loadIndices_;
+	QCheckBox *loadNormalizeSize_;
 
 	// options in the saving menu
-	QCheckBox* saveBinaryFile_;
-	QCheckBox* saveNormals_;
-	QCheckBox* savePointsizes_;
-	QCheckBox* saveColors_;
-	QComboBox* saveColorRange_;
+	QCheckBox *saveBinaryFile_;
+	QCheckBox *saveNormals_;
+	QCheckBox *savePointsizes_;
+	QCheckBox *saveColors_;
+	QComboBox *saveColorRange_;
+	QCheckBox *saveIndices_;
 
 	// buttons
-	QPushButton* loadMakeDefaultButton_;
-	QPushButton* saveMakeDefaultButton_;
+	QPushButton *loadMakeDefaultButton_;
+	QPushButton *saveMakeDefaultButton_;
 
 private slots:
 
