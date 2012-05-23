@@ -351,7 +351,12 @@ void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) 
          }
          
          glLightf(lightId_, GL_SPOT_EXPONENT, 0.0f);
-         float pos[] = {backup_position[0], backup_position[1], backup_position[2], 0.0f};
+         float pos[4];
+         pos [0] = backup_position[0];
+         pos [1] = backup_position[1];
+         pos [2] = backup_position[2];
+         pos [3] = 0.0f;
+
          glLightfv(lightId_, GL_POSITION, pos);
          
          // Set colors
