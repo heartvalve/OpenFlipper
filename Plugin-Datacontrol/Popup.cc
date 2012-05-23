@@ -75,7 +75,7 @@ void DataControlPlugin::slotPopupRemove (  ) {
   QMessageBox msgBox;
   msgBox.setText(tr("Do you really want to remove the selected objects?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-  msgBox.setDefaultButton(QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::Yes);
 
   QString text;
 
