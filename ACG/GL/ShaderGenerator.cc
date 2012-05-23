@@ -309,7 +309,7 @@ const QStringList& ShaderGenerator::getShaderCode()
 QStringList ShaderProgGenerator::lightingCode_;
 
 
-ShaderProgGenerator::ShaderProgGenerator(ShaderGenDesc* _desc)
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc)
 : vertex_(0), fragment_(0)
 {
   memcpy(&desc_, _desc, sizeof(ShaderGenDesc));

@@ -169,7 +169,7 @@ ShaderProgGenerator is responsible for generating a matching pair of vertex and 
 class ShaderProgGenerator
 {
 public:
-  ShaderProgGenerator(ShaderGenDesc* _desc);
+  ShaderProgGenerator(const ShaderGenDesc* _desc);
   virtual ~ShaderProgGenerator(void);
 
   void saveVertexShToFile(const char* _fileName);
