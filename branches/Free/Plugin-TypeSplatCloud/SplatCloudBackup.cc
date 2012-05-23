@@ -62,6 +62,7 @@ SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, Up
 	normalsBackup_   ( 0 ), 
 	pointsizesBackup_( 0 ), 
 	colorsBackup_    ( 0 ), 
+	indicesBackup_   ( 0 ), 
 	selectionsBackup_( 0 ) 
 {
 #	ifdef REPORT_BACKUP
@@ -76,6 +77,7 @@ SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, Up
 		if( _type.contains( updateType("Normals")    ) ) normalsBackup_    = new SplatCloud::NormalVector   ( splatCloud->normals()    );
 		if( _type.contains( updateType("Pointsizes") ) ) pointsizesBackup_ = new SplatCloud::PointsizeVector( splatCloud->pointsizes() );
 		if( _type.contains( UPDATE_COLOR             ) ) colorsBackup_     = new SplatCloud::ColorVector    ( splatCloud->colors()     );
+		if( _type.contains( updateType("Indices")    ) ) indicesBackup_    = new SplatCloud::IndexVector    ( splatCloud->indices()    );
 		if( _type.contains( UPDATE_SELECTION         ) ) selectionsBackup_ = new SplatCloud::SelectionVector( splatCloud->selections() );
 	}
 }
@@ -94,6 +96,7 @@ SplatCloudBackup::~SplatCloudBackup()
 	delete normalsBackup_;
 	delete pointsizesBackup_;
 	delete colorsBackup_;
+	delete indicesBackup_;
 	delete selectionsBackup_;
 }
 
@@ -118,6 +121,7 @@ void SplatCloudBackup::apply()
 		if( normalsBackup_    ) splatCloud->normals()    = *normalsBackup_;
 		if( pointsizesBackup_ ) splatCloud->pointsizes() = *pointsizesBackup_;
 		if( colorsBackup_     ) splatCloud->colors()     = *colorsBackup_;
+		if( indicesBackup_    ) splatCloud->indices()    = *indicesBackup_;
 		if( selectionsBackup_ ) splatCloud->selections() = *selectionsBackup_;
 	}
 }

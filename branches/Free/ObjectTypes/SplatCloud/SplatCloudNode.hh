@@ -45,7 +45,7 @@
 //  CLASS SplatCloudNode
 //
 //    SplatCloudNode renders splats by passing points, normals, point sizes and colors (and picking colors) to the GL.
-//    These elements are internally stored in an interleaved array using an OpenGL vertex-buffer-object
+//    These elements are internally stored in an array using an OpenGL vertex-buffer-object
 //    including vertices, normals, texcoords and colors.
 //
 //================================================================
@@ -94,6 +94,7 @@ private:
 	typedef SplatCloud::Normal    Normal;
 	typedef SplatCloud::Pointsize Pointsize;
 	typedef SplatCloud::Color     Color;
+	typedef SplatCloud::Index     Index;
 	typedef SplatCloud::Selection Selection;
 
 	//----------------------------------------------------------------
@@ -131,10 +132,11 @@ public:
 	inline void modifiedNormals()    { normalsModified_    = true; }
 	inline void modifiedPointsizes() { pointsizesModified_ = true; }
 	inline void modifiedColors()     { colorsModified_     = true; }
+	inline void modifiedIndices()    { indicesModified_    = true; }
 	inline void modifiedSelections() { selectionsModified_ = true; }
 	inline void modifiedPickColors() { pickColorsModified_ = true; }
 
-	inline void modifiedAll() { modifiedPoints(); modifiedNormals(); modifiedPointsizes(); modifiedColors(); modifiedSelections(); modifiedPickColors(); }
+	inline void modifiedAll() { modifiedPoints(); modifiedNormals(); modifiedPointsizes(); modifiedColors(); modifiedIndices(); modifiedSelections(); modifiedPickColors(); }
 
 	// ---- default values ----
 
@@ -151,7 +153,8 @@ public:
 	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_.hasNormals()    ? splatCloud_.normals()   [ _index ] : defaultNormal_       ; }
 	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_.hasPointsizes() ? splatCloud_.pointsizes()[ _index ] : defaultPointsize_    ; }
 	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_.hasColors()     ? splatCloud_.colors()    [ _index ] : defaultColor_        ; }
-	inline Selection getSelection( unsigned int _index ) const { return splatCloud_.hasSelections() ? splatCloud_.selections()[ _index ] : false                ; }
+	inline Index     getIndex    ( unsigned int _index ) const { return splatCloud_.hasIndices()    ? splatCloud_.indices()   [ _index ] : Index(-1)            ; }
+	inline Selection getSelection( unsigned int _index ) const { return splatCloud_.hasSelections() ? splatCloud_.selections()[ _index ] : Selection(false)     ; }
 
 	//----------------------------------------------------------------
 
@@ -169,11 +172,12 @@ private:
 	bool normalsModified_;
 	bool pointsizesModified_;
 	bool colorsModified_;
+	bool indicesModified_;
 	bool selectionsModified_;
 	bool pickColorsModified_;
 
 	/// return true iff any of the data values in the VBO has to be changed
-	inline bool vboModified() const { return pointsModified_ || normalsModified_ || pointsizesModified_ || colorsModified_ || selectionsModified_ || pickColorsModified_; }
+	inline bool vboModified() const { return pointsModified_ || normalsModified_ || pointsizesModified_ || colorsModified_ || indicesModified_ || selectionsModified_ || pickColorsModified_; }
 
 	// ---- default values ----
 
@@ -203,6 +207,7 @@ private:
 	int vboNormalsOffset_;
 	int vboPointsizesOffset_;
 	int vboColorsOffset_;
+	int vboIndicesOffset_;
 	int vboSelectionsOffset_;
 	int vboPickColorsOffset_;
 
@@ -214,6 +219,7 @@ private:
 		       (vboNormalsOffset_    != -1) != splatCloud_.hasNormals()    || 
 		       (vboPointsizesOffset_ != -1) != splatCloud_.hasPointsizes() || 
 		       (vboColorsOffset_     != -1) != splatCloud_.hasColors()     || 
+		       (vboIndicesOffset_    != -1) != splatCloud_.hasIndices()    || 
 		       (vboSelectionsOffset_ != -1) != splatCloud_.hasSelections();
 	}
 
@@ -225,6 +231,7 @@ private:
 	void rebuildVBONormals();
 	void rebuildVBOPointsizes();
 	void rebuildVBOColors();
+	void rebuildVBOIndices();
 	void rebuildVBOSelections();
 	void rebuildVBOPickColors( GLState &_state );
 };

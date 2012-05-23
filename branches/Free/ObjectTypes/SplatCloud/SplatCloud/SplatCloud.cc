@@ -134,6 +134,7 @@ bool SplatCloud::deleteSelected()
 	bool hasNrm = hasNormals();
 	bool hasPS  = hasPointsizes();
 	bool hasCol = hasColors();
+	bool hasIdx = hasIndices();
 	bool hasSel = hasSelections();
 
 	// create new (empty) data vectors
@@ -141,6 +142,7 @@ bool SplatCloud::deleteSelected()
 	NormalVector    newNormals;
 	PointsizeVector newPointsizes;
 	ColorVector     newColors;
+	IndexVector     newIndices;
 	SelectionVector newSelections;
 
 	// reserve memory/space if data vector(s) in use
@@ -148,12 +150,14 @@ bool SplatCloud::deleteSelected()
 	if( hasNrm ) newNormals.reserve   ( newSize );
 	if( hasPS  ) newPointsizes.reserve( newSize );
 	if( hasCol ) newColors.reserve    ( newSize );
+	if( hasIdx ) newIndices.reserve   ( newSize );
 	if( hasSel ) newSelections.reserve( newSize );
 
 	PointVector::const_iterator     pointIter     = points_.begin();
 	NormalVector::const_iterator    normalIter    = normals_.begin();
 	PointsizeVector::const_iterator pointsizeIter = pointsizes_.begin();
 	ColorVector::const_iterator     colorIter     = colors_.begin();
+	IndexVector::const_iterator     indexIter     = indices_.begin();
 	SelectionVector::const_iterator selectionIter = selections_.begin();
 
 	// add old data entry to new data vector if point is *not* selected
@@ -188,6 +192,13 @@ bool SplatCloud::deleteSelected()
 			++colorIter;
 		}
 
+		if( hasIdx )
+		{
+			if( unselected )
+				newIndices.push_back   ( *indexIter     );
+			++indexIter;
+		}
+
 		if( hasSel )
 		{
 			if( unselected )
@@ -201,6 +212,7 @@ bool SplatCloud::deleteSelected()
 	normals_    = newNormals;
 	pointsizes_ = newPointsizes;
 	colors_     = newColors;
+	indices_    = newIndices;
 	selections_ = newSelections;
 
 	return true; // data has been modified
