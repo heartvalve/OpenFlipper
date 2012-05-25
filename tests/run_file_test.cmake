@@ -32,10 +32,10 @@ if ( EXISTS ${output_test} )
 endif()
 
 # Execute the process with the given arguments
-# Timeout after 4 minutes
+# Timeout after 5 minutes
 execute_process(
    COMMAND ${test_cmd} ${test_args}
-   TIMEOUT 240
+   TIMEOUT 300
    RESULT_VARIABLE PROCESSRESULT
 )
 
