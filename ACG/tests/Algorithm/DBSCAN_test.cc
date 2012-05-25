@@ -5,7 +5,8 @@
  *      Author: ebke
  */
 
-#include <gtest/gtest.h>
+//#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 #include <map>
@@ -18,9 +19,10 @@
 namespace {
 const char * const test1_map[] = {
         "                                                                                ",
-        "                                                          .                     ",
+        "                                                .   b     b .                   ",
         "                                                                                ",
         "                         a                             b                        ",
+        "                                                                                ",
         "                                                                                ",
         "                         a                       b  b  b                        ",
         "                         aa                  b   b   b                          ",
@@ -34,23 +36,25 @@ const char * const test1_map[] = {
         "                                                                                ",
         "                                                                                ",
         "                                                                                ",
-        "                    .   a                                       cc              ",
+        "                .   a   a   a   .                               cc              ",
         "                                                                cc              ",
         "                                                  ..                            ",
         "                                                   .                            ",
         "                                                                                ",
         0 };
 
+const char * const test2_map[] = { "aaaaAAaaaa", 0 };
+
 class Point {
     public:
-        Point(double x, double y, char classifier) : x(x), y(y), classifier(classifier) {}
+        Point(double x, double y, char classifier, double weight = 1.0) : x(x), y(y), weight(weight), classifier(classifier) {}
 
         double length() const {
             return std::sqrt(x*x + y*y);
         }
 
         Point operator- (const Point &rhs) const {
-            return Point(x-rhs.x, y-rhs.y, classifier);
+            return Point(x-rhs.x, y-rhs.y, classifier, weight);
         }
 
         double dist(const Point &rhs) const {
@@ -64,23 +68,31 @@ class Point {
                 }
         };
 
-        double x, y;
+        class WeightFunc {
+            public:
+                double operator() (const Point &a) const {
+                    return a.weight;
+                }
+        };
+
+        double x, y, weight;
         char classifier;
 };
 
 template<class OSTREAM>
 OSTREAM &operator<< (OSTREAM &stream, const Point &point) {
-    return stream << "(" << point.x << ", " << point.y << ", " << "'" << point.classifier << "'" << ")";
+    return stream << "(" << point.x << ", " << point.y << ", " << point.weight << ", " << "'" << point.classifier << "'" << ")";
 }
 
 template<class OUTPUT_ITERATOR>
-void parse_points(const char * const * input, OUTPUT_ITERATOR points_out) {
+void parse_points(const char * const * input, OUTPUT_ITERATOR points_out, double uc_weight = 1.0, double lc_weight = 1.0) {
     int y = 0;
     for (; *input != 0; ++input, ++y) {
         int x = 0;
         for (const char *it = *input; *it != 0; ++it, ++x) {
             if (!isspace(*it)) {
-                *points_out++ = Point(x, y, *it);
+                const double weight = islower(*it) ? lc_weight : uc_weight;
+                *points_out++ = Point(x, y, *it, weight);
             }
         }
     }
@@ -119,10 +131,40 @@ TEST(DBSCAN, manual_test_1) {
     std::vector<Point> points;
     parse_points(test1_map, std::back_inserter(points));
     std::vector<int> clusters;
+
     EXPECT_EQ(3,
               ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
-                                     std::back_inserter(clusters), 4.0001, 3));
+                                     std::back_inserter(clusters), 4.0001, 3.0));
     EXPECT_TRUE(checkClusterConsistency(points, clusters));
+
+    // Call both versions of DBSCAN.
+    EXPECT_EQ(3,
+              ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
+                                     std::back_inserter(clusters), 4.0001, 3.0,
+                                     ACG::Algorithm::_DBSCAN_PRIVATE::constant_1<std::vector<Point>::iterator::value_type>()));
+    EXPECT_TRUE(checkClusterConsistency(points, clusters));
+}
+
+TEST(DBSCAN, manual_test_2_a) {
+    std::vector<Point> points;
+    parse_points(test2_map, std::back_inserter(points), 1.0, 1.0);
+    std::vector<int> clusters;
+    EXPECT_EQ(1,
+              ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
+                                     std::back_inserter(clusters), 1.01, 1.2, Point::WeightFunc()));
+    EXPECT_THAT(clusters,
+                ::testing::ElementsAre(1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+}
+
+TEST(DBSCAN, manual_test_2_b) {
+    std::vector<Point> points;
+    parse_points(test2_map, std::back_inserter(points), 1.0, .5);
+    std::vector<int> clusters;
+    EXPECT_EQ(1,
+              ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
+                                     std::back_inserter(clusters), 1.01, 1.2, Point::WeightFunc()));
+    EXPECT_THAT(clusters,
+                ::testing::ElementsAre(0, 0, 1, 1, 1, 1, 1, 1, 0, 0));
 }
 
 }
