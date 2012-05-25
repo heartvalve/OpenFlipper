@@ -80,12 +80,12 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
          -P ${CMAKE_SOURCE_DIR}/tests/run_file_test.cmake
       )
 
-      # Timeout after 2 minutes if we have an endless loop
+      # Timeout after 3 minutes if we have an endless loop
       # Should be run serial to avoid collisons with other instances
       # Only one processor required
       set_tests_properties (
           ${TESTNAME} PROPERTIES
-          TIMEOUT 120
+          TIMEOUT 180
           RUN_SERIAL TRUE
           PROCESSORS 1
       )
@@ -131,12 +131,12 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
        -P ${CMAKE_SOURCE_DIR}/tests/run_file_test.cmake
     )
 
-    # Timeout after 2 minutes if we have an endless loop
+    # Timeout after 3 minutes if we have an endless loop
     # Should be run serial to avoid collisons with other instances
     # Only one processor required
     set_tests_properties (
         ${TESTNAME} PROPERTIES
-        TIMEOUT 120
+        TIMEOUT 180
         RUN_SERIAL TRUE
         PROCESSORS 1
     )
@@ -239,12 +239,12 @@ function( run_algorithm_test TEST_SCRIPT INPUT_FILE INPUT_REFERENCE )
      -P ${CMAKE_SOURCE_DIR}/tests/run_file_test.cmake
   )
 
-  # Timeout after 2 minutes if we have an endless loop
+  # Timeout after 3 minutes if we have an endless loop
   # Should be run serial to avoid collisons with other instances
   # Only one processor required
   set_tests_properties (
       ${TESTNAME} PROPERTIES
-      TIMEOUT 120
+      TIMEOUT 180
       RUN_SERIAL TRUE
       PROCESSORS 1
   )
