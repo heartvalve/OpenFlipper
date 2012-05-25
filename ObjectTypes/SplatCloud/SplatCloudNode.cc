@@ -225,15 +225,15 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
 			glSecondaryColor3ub( defaultColor_[0], defaultColor_[1], defaultColor_[2] );
 		}
 
-		// indices
-		if( vboIndicesOffset_ != -1 )
-		{
-			// - no indices in VBO -
-		}
-		else
-		{
-			// - no indices in VBO -
-		}
+//		// indices
+//		if( vboIndicesOffset_ != -1 )
+//		{
+//			// - no indices in VBO -
+//		}
+//		else
+//		{
+//			// - no indices in VBO -
+//		}
 
 		// selections
 		if( vboSelectionsOffset_ != -1 )
@@ -416,7 +416,7 @@ void SplatCloudNode::rebuildVBO( GLState &_state )
 	if( splatCloud_.hasNormals()    ) { normalsOffset    = size; size += numPoints * 12; }
 	if( splatCloud_.hasPointsizes() ) { pointsizesOffset = size; size += numPoints * 4;  }
 	if( splatCloud_.hasColors()     ) { colorsOffset     = size; size += numPoints * 3;  }
-	if( splatCloud_.hasIndices()    ) { } // - no indices in VBO -
+	if( splatCloud_.hasIndices()    ) { indicesOffset    = size;                         } // - no indices in VBO -
 	if( splatCloud_.hasSelections() ) { selectionsOffset = size; size += numPoints * 4;  }
 	/* has pick colors = true      */ { pickColorsOffset = size; size += numPoints * 4;  }
 
@@ -660,6 +660,7 @@ void SplatCloudNode::rebuildVBOIndices()
 	std::cout << "SplatCloudNode::rebuildVBOIndices()" << std::endl;
 #	endif
 
+	/* // - no indices in VBO -
 	// get pointer to buffer
 	unsigned char *buffer = vboData_ + vboIndicesOffset_;
 
@@ -668,10 +669,10 @@ void SplatCloudNode::rebuildVBOIndices()
 	for( i=0; i<num; ++i )
 	{
 		// add index
-		// - no indices in VBO -
-		//const Index &idx = getIndex( i );
-		//addIntToBuffer( idx, buffer );
+		const Index &idx = getIndex( i );
+		addIntToBuffer( idx, buffer );
 	}
+	*/
 }
 
 
