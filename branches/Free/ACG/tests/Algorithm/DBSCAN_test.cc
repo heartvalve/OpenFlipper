@@ -5,8 +5,7 @@
  *      Author: ebke
  */
 
-//#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include <vector>
 #include <map>
@@ -126,6 +125,21 @@ testing::AssertionResult checkClusterConsistency(const std::vector<Point> &point
     return testing::AssertionSuccess() << "All points were mapped to clusters as expected.";
 }
 
+template<class II_1, class II_2>
+testing::AssertionResult checkCollectionEquivalence(II_1 first1, II_1 last1, II_2 first2, II_2 last2) {
+    for (int index = 0; first1 != last1 && first2 != last2; ++first1, ++first2, ++index) {
+        if (*first1 != *first2)
+            return testing::AssertionFailure() << "Mismatch in element " <<  index << ".";
+    }
+
+    if (first1 != last1)
+        return testing::AssertionFailure() << "Second collection longer than first one.";
+
+    if (first2 != last2)
+        return testing::AssertionFailure() << "First collection longer than second one.";
+
+    return testing::AssertionSuccess() << "Collections are equivalent.";
+}
 
 TEST(DBSCAN, manual_test_1) {
     std::vector<Point> points;
@@ -152,8 +166,9 @@ TEST(DBSCAN, manual_test_2_a) {
     EXPECT_EQ(1,
               ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
                                      std::back_inserter(clusters), 1.01, 1.2, Point::WeightFunc()));
-    EXPECT_THAT(clusters,
-                ::testing::ElementsAre(1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+
+    const int expected[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    EXPECT_TRUE(checkCollectionEquivalence(clusters.begin(), clusters.end(), expected, expected + 10));
 }
 
 TEST(DBSCAN, manual_test_2_b) {
@@ -163,8 +178,9 @@ TEST(DBSCAN, manual_test_2_b) {
     EXPECT_EQ(1,
               ACG::Algorithm::DBSCAN(points.begin(), points.end(), Point::DistanceFunc(),
                                      std::back_inserter(clusters), 1.01, 1.2, Point::WeightFunc()));
-    EXPECT_THAT(clusters,
-                ::testing::ElementsAre(0, 0, 1, 1, 1, 1, 1, 1, 0, 0));
+
+    const int expected[] = { 0, 0, 1, 1, 1, 1, 1, 1, 0, 0 };
+    EXPECT_TRUE(checkCollectionEquivalence(clusters.begin(), clusters.end(), expected, expected + 10));
 }
 
 }
