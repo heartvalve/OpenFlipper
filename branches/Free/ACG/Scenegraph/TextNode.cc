@@ -49,16 +49,13 @@
 //
 //=============================================================================
 
-#ifdef USE_FTGL
+
 
 //== INCLUDES =================================================================
 
 #include "TextNode.hh"
 #include "../GL/gl.hh"
 #include <stdlib.h>
-#include <FTGL/ftgl.h>				//<-- if these are moved to the .hh every plugin that includes the .hh has to link with FTGL
-#include <FTGL/FTGLPixmapFont.h>
-#include <FTGL/FTGLPolygonFont.h>
 
 
 //== NAMESPACES ===============================================================
@@ -69,20 +66,18 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
+// static members
+QFont TextNode::qfont_ = QFont("Helvetica", 20);
+GLuint TextNode::texture_ = 0;
+int TextNode::imageWidth_ = 0;
+bool TextNode::initialised_ = false;
+std::map<char, unsigned int> TextNode::charToIndex_ = TextNode::createMap();
+QColor TextNode::color_ = QColor(255, 0, 0);
+
 TextNode::
 ~TextNode()
 {
-  if ( textMode_ == SCREEN_ALIGNED ) {
-    
-    if(font_ != 0)
-      delete reinterpret_cast<FTGLPixmapFont*>(font_);
-    
-  } else if ( textMode_ == OBJECT_ALIGNED ) {
-    
-    if(font_ != 0)
-      delete reinterpret_cast<FTGLPolygonFont*>(font_);
-    
-  }
+  glDeleteBuffers(1, &vbo_);
 }
 
 void
@@ -108,29 +103,16 @@ availableDrawModes() const
 //----------------------------------------------------------------------------
 
 
-void
+std::map<char, unsigned int>
 TextNode::
-draw(GLState& /* _state */ , const DrawModes::DrawMode& /*_drawMode*/)
-{
-  glRasterPos3f(0.0f, 0.0f, 0.0f);
-
-  if ( textMode_ == SCREEN_ALIGNED ) {
-    if(font_ == 0)
-      return;
-    reinterpret_cast<FTGLPixmapFont*>(font_)->Render(text_.c_str());
+createMap() {
+  std::map<char, unsigned int> m;
+  unsigned int i = 0;
+  for (char c = ' '; c < '~'; ++c, ++i) {
+    m[c] = i;
   }
 
-  if ( textMode_ == OBJECT_ALIGNED ) {
-    glScalef(0.1,0.1,0.1);
-
-    if(font_ == 0)
-      return;
-    
-    reinterpret_cast<FTGLPolygonFont*>(font_)->Render(text_.c_str());
-
-    glScalef(10.0,10.0,10.0);
-  }
-
+  return m;
 }
 
 
@@ -139,41 +121,275 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& /*_drawMode*/)
 
 void
 TextNode::
-UpdateFont() {
-  if ( textMode_ == SCREEN_ALIGNED ) {
-    
-    if(font_ != 0)
-      delete reinterpret_cast<FTGLPixmapFont*>(font_);
-    
-    font_ = reinterpret_cast<void*>(new FTGLPixmapFont(fontFile_.c_str()));
-    reinterpret_cast<FTGLPixmapFont*>(font_)->FaceSize(size_);
-    
-    if(reinterpret_cast<FTGLPixmapFont*>(font_)->Error()) {
-      std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
-      delete reinterpret_cast<FTGLPixmapFont*>(font_);
-      font_ = 0;
+enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+  // store current gl state
+  cullFaceEnabled_ = glIsEnabled(GL_CULL_FACE);
+  texture2dEnabled_ = glIsEnabled(GL_TEXTURE_2D);
+  blendEnabled_ = glIsEnabled(GL_BLEND);
+  glGetIntegerv(GL_BLEND_SRC, &blendSrc_);
+  glGetIntegerv(GL_BLEND_DST, &blendDest_);
+
+  // set texture and drawing states
+  ACG::GLState::disable(GL_CULL_FACE);
+  ACG::GLState::enable(GL_TEXTURE_2D);
+  ACG::GLState::enable(GL_BLEND);
+  ACG::GLState::blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+  if (cullFaceEnabled_)
+    ACG::GLState::enable(GL_CULL_FACE);
+  if (!texture2dEnabled_)
+    ACG::GLState::disable(GL_TEXTURE_2D);
+  if (!blendEnabled_)
+    ACG::GLState::disable(GL_BLEND);
+
+  ACG::GLState::blendFunc(blendSrc_, blendDest_);
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
+{
+  if (!text_.empty()) {
+    bindVBO();
+    if (textMode_ == SCREEN_ALIGNED) {
+      _state.push_modelview_matrix();
+      Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
+      _state.reset_modelview();
+      Vec3d unprojected = _state.unproject(projected);
+      _state.translate(unprojected);
     }
-    
-  } else if ( textMode_ == OBJECT_ALIGNED ) {
-    
-    if(font_ != 0)
-      delete reinterpret_cast<FTGLPolygonFont*>(font_);
-    
-    font_ = reinterpret_cast<void*>(new FTGLPolygonFont(fontFile_.c_str()));
-    reinterpret_cast<FTGLPolygonFont*>(font_)->FaceSize(size_);
-    
-    if(reinterpret_cast<FTGLPolygonFont*>(font_)->Error()) {
-      std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
-      delete reinterpret_cast<FTGLPolygonFont*>(font_);
-      font_ = 0;
+
+    _state.push_modelview_matrix();
+    _state.scale(size_);
+    glDrawArrays(GL_QUADS, 0, text_.size() * 4);
+    _state.pop_modelview_matrix();
+
+    if (textMode_ == SCREEN_ALIGNED) {
+      _state.pop_modelview_matrix();
     }
-          
+    unbindVBO();
   }
 }
+
+
+//----------------------------------------------------------------------------
+
+
+uint32_t
+TextNode::nearestPowerOfTwo(uint32_t num) {
+  uint32_t n = num > 0 ? num - 1 : 0;
+
+  n |= n >> 1;
+  n |= n >> 2;
+  n |= n >> 4;
+  n |= n >> 8;
+  n |= n >> 16;
+  n++;
+
+  return n;
+}
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::setFont(const QFont& _font) {
+  qfont_ = QFont(_font);
+  initialised_ = false;
+  UpdateFont();
+  updateVBO();
+}
+
+
+//----------------------------------------------------------------------------
+
+void
+TextNode::
+UpdateFont() {
+
+  if (initialised_)
+    return;
+
+  QFontMetrics metric(qfont_);
+
+  int height = metric.height();
+  int heightPow2 = nearestPowerOfTwo(height);
+  int width = metric.maxWidth();
+  int widthPow2 = nearestPowerOfTwo(width);
+  imageWidth_ = widthPow2 * numberOfChars_;
+
+  QImage finalImage(imageWidth_, heightPow2, QImage::Format_ARGB32);
+  finalImage.fill(Qt::transparent);
+  QPainter painter;
+  painter.begin(&finalImage);
+  painter.setRenderHints(QPainter::HighQualityAntialiasing
+                         | QPainter::TextAntialiasing);
+  painter.setFont(qfont_);
+  painter.setPen(color_);
+  unsigned int i = 0;
+  for (char c = ' '; c < '~'; ++c, ++i) {
+    painter.drawText(i*widthPow2, 0, widthPow2, heightPow2, Qt::AlignLeft | Qt::AlignBottom, QString(c));
+  }
+  painter.end();
+
+  finalImage = QGLWidget::convertToGLFormat(finalImage);
+
+  glDeleteTextures(1, &texture_);
+  glGenTextures(1, &texture_);
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, finalImage.width(), finalImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, finalImage.bits());
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
+
+  initialised_ = true;
+}
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+updateVBO() {
+  if (text_.size() == 0)
+    return;
+
+  vertexBuffer_.clear();
+
+  // generate a quad for each character
+  QFontMetrics metric(qfont_);
+  int maxWidth = metric.maxWidth();
+  int avgWidth = metric.averageCharWidth();
+  float lastCharRight = 0.0f;
+  for (unsigned int i = 0; i < text_.size(); ++i) {
+
+    // left and right vertex coordinates
+    float width = (float) metric.width(text_[i]) / (float) maxWidth;
+    float left, right;
+
+    if (i == 0)
+      left = 0.0f;
+    else
+      left = lastCharRight;
+
+    right = (left + width);
+    lastCharRight = right;
+
+    // left and right texture coordinates
+    int leftBearing = abs(metric.leftBearing(text_[i]));
+    int rightBearing = abs(metric.rightBearing(text_[i]));
+    int metricWidth = metric.width(text_[i]);
+
+    // QFontMetrics does not seem to always give the correct width
+    // therefore we add a margin so that characters are not cut off
+    //if ( (leftBearing == 0) && (rightBearing == 0) ) {
+    if (leftBearing + rightBearing < 0.1*maxWidth) {
+      if (metricWidth + 0.25*maxWidth < maxWidth)
+        metricWidth += 0.25*maxWidth;
+      else
+        metricWidth = maxWidth;
+    } else {
+      metricWidth += leftBearing + rightBearing;
+    }
+
+    float widthTx = (float) metricWidth / (float) imageWidth_;
+    float leftTx = ((float) charToIndex_[text_[i]] ) / (float) numberOfChars_;
+    float rightTx = leftTx + widthTx;
+
+    // bottom left
+    vertexBuffer_.push_back(left);
+    vertexBuffer_.push_back(0.0f);
+    vertexBuffer_.push_back(0.0f);
+
+    // texture coordinates
+    vertexBuffer_.push_back(leftTx);
+    vertexBuffer_.push_back(0.0f);
+
+    // top left
+    vertexBuffer_.push_back(left);
+    vertexBuffer_.push_back(avgWidth*0.15);
+    vertexBuffer_.push_back(0.0f);
+
+    // texture coordinates
+    vertexBuffer_.push_back(leftTx);
+    vertexBuffer_.push_back(1.0f);
+
+    // top right
+    vertexBuffer_.push_back(right);
+    vertexBuffer_.push_back(avgWidth*0.15);
+    vertexBuffer_.push_back(0.0f);
+
+    // texture coordinates
+    vertexBuffer_.push_back(rightTx);
+    vertexBuffer_.push_back(1.0f);
+
+    // bottom right
+    vertexBuffer_.push_back(right);
+    vertexBuffer_.push_back(0.0f);
+    vertexBuffer_.push_back(0.0f);
+
+    // texture coordinates
+    vertexBuffer_.push_back(rightTx);
+    vertexBuffer_.push_back(0.0f);
+  }
+
+  glDeleteBuffers(1, &vbo_);
+  glGenBuffers(1, &vbo_);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, vbo_);
+  glBufferData(GL_ARRAY_BUFFER, vertexBuffer_.size() * sizeof(GLfloat), &vertexBuffer_[0], GL_DYNAMIC_DRAW);
+}
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+bindVBO() {
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, vbo_);
+  ACG::GLState::vertexPointer(3, GL_FLOAT, 5*sizeof(GLfloat), 0);
+  ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+
+  ACG::GLState::activeTexture(GL_TEXTURE0);
+  ACG::GLState::texcoordPointer(2, GL_FLOAT, 5*sizeof(GLfloat), reinterpret_cast<void*>(3*sizeof(GLfloat)));
+  ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
+}
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+unbindVBO() {
+  ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
+  ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
+  ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
 
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
 //=============================================================================
-
-#endif // USE_FTGL

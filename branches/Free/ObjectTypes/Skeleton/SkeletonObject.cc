@@ -444,7 +444,7 @@ void SkeletonObject::showIndices(bool _bVisible)
         addAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str());
       }
       pTextNode->setText("  " + nameJoint);
-      pTextNode->setSize(16);
+      pTextNode->setSize(50);
       pTextNode->multipassNodeSetActive(8, true);
     #endif
   }

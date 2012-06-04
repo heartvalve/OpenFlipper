@@ -86,7 +86,7 @@ void RulerPlugin::showDistance()
   QString distanceStr = QString().number((distVec).length());
   textNode_->setText(distanceStr.toStdString());
   textNode_->multipassNodeSetActive(8, true);
-  textNode_->setSize(5);
+  textNode_->setSize(1);
 
   textTransformNode_->loadIdentity();
   textTransformNode_->translate(ACG::Vec3d(Point2.data()[0],Point2.data()[1],bbmax_.data()[2]));
