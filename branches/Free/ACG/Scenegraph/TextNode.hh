@@ -156,7 +156,7 @@ protected:
   static void UpdateFont();
 
 private:
-  static uint32_t nearestPowerOfTwo(uint32_t num);
+  static quint32 nearestPowerOfTwo(quint32 num);
   void updateVBO();
   void bindVBO();
   void unbindVBO();

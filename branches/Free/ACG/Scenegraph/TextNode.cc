@@ -189,9 +189,9 @@ draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
 //----------------------------------------------------------------------------
 
 
-uint32_t
-TextNode::nearestPowerOfTwo(uint32_t num) {
-  uint32_t n = num > 0 ? num - 1 : 0;
+quint32
+TextNode::nearestPowerOfTwo(quint32 num) {
+  quint32 n = num > 0 ? num - 1 : 0;
 
   n |= n >> 1;
   n |= n >> 2;
