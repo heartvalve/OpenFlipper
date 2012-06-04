@@ -49,8 +49,6 @@
 //
 //=============================================================================
 
-#ifdef USE_FTGL
-
 #ifndef ACG_TEXTNODE_HH
 #define ACG_TEXTNODE_HH
 
@@ -58,8 +56,14 @@
 //== INCLUDES =================================================================
 
 #include "BaseNode.hh"
+#include "TransformNode.hh"
 #include "DrawModes.hh"
 #include <vector>
+#include <QFont>
+#include <QFontMetrics>
+#include <QImage>
+#include <QPainter>
+#include <QGLWidget>
 
 //== NAMESPACES ===============================================================
 
@@ -96,12 +100,19 @@ public:
 	         std::string  _name="<TextNode>",
             TextMode     _textMode = SCREEN_ALIGNED)
             : BaseNode(_parent, _name),
-			  font_(0),
-              size_(_textMode == SCREEN_ALIGNED ? 15 : 1),
+              size_(1),
               fontFile_(_fontFile),
-              textMode_(_textMode)
+              textMode_(_textMode),
+              vbo_(0),
+              vertexBuffer_(0),
+              blendEnabled_(false),
+              texture2dEnabled_(false),
+              cullFaceEnabled_(false),
+              blendSrc_(0),
+              blendDest_(0)
   {
-	  UpdateFont();
+    UpdateFont();
+    updateVBO();
   }
 
   /// destructor
@@ -119,6 +130,12 @@ public:
   /// draw Text
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
+  /// set texture and drawing states
+  void enter(GLState& _state, const DrawModes::DrawMode& _drawmode);
+
+  /// restore texture and drawing states
+  void leave(GLState& _state, const DrawModes::DrawMode& _drawmode);
+
   /** Set the rendering mode ( see TextNode::TextMode )
    */
 
@@ -126,16 +143,26 @@ public:
 
   TextMode renderingMode() { return textMode_; };
 
-  void setText(std::string _text) {text_ = _text;};
+	/// sets the text that will be rendered
+  void setText(std::string _text) {text_ = _text; updateVBO();};
 
-  void setSize(unsigned int _size) {size_ = _size; UpdateFont();};
+	/// sets the scaling size of the TextNode
+  void setSize(unsigned int _size) {size_ = _size; updateVBO();};
+
+	/// sets the font to be used
+  void setFont(const QFont& _font);
 
 protected:
-  void UpdateFont();
+  static void UpdateFont();
 
 private:
-  void *font_;
+  static uint32_t nearestPowerOfTwo(uint32_t num);
+  void updateVBO();
+  void bindVBO();
+  void unbindVBO();
+  static std::map<char, unsigned int> createMap();
 
+private:
   unsigned int size_;
 
   std::string text_;
@@ -143,22 +170,39 @@ private:
   std::string fontFile_;
 
   TextMode textMode_;
-};
 
+  GLuint vbo_;
+
+  std::vector<GLfloat> vertexBuffer_;
+
+  bool blendEnabled_;
+
+  bool texture2dEnabled_;
+
+  bool cullFaceEnabled_;
+
+  GLint blendSrc_;
+
+  GLint blendDest_;
+
+  static std::map<char, unsigned int> charToIndex_;
+
+  static QFont qfont_;
+
+  static GLuint texture_;
+
+  static int imageWidth_;
+
+  static const int numberOfChars_ = 94;
+
+  static bool initialised_;
+
+  static QColor color_;
+};
 
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
 //=============================================================================
 #endif // ACG_TEXTNODE_HH defined
-//=============================================================================
-#else // NO USE_FTGL but header included
-
-  #ifdef WIN32
-    #pragma message ( "TextNode requires ftgl but ftgl was not found" )
-  #else
-    #warning TextNode requires ftgl but ftgl was not found
-  #endif
-
-#endif // USE_FTGL defined
 //=============================================================================
