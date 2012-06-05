@@ -432,21 +432,19 @@ void SkeletonObject::showIndices(bool _bVisible)
       pSubMatNode = new ACG::SceneGraph::MaterialNode(pTransNode, nameSubMatNode.c_str());
       addAdditionalNode(pSubMatNode, "SkeletonPlugin", nameSubMatNode.c_str());
     }
-//     pSubMatNode->set_color(skeleton_->joint(i)->color());
+    //     pSubMatNode->set_color(skeleton_->joint(i)->color());
 
-    #ifdef USE_FTGL
-      ACG::SceneGraph::TextNode *pTextNode = NULL;
-      if(!getAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str()))
-      {
-        pTextNode = new ACG::SceneGraph::TextNode(
-          (OpenFlipper::Options::fontsDirStr() + OpenFlipper::Options::dirSeparator() + "freefont" + OpenFlipper::Options::                  dirSeparator() + "FreeSans.ttf").toStdString(),
-            pSubMatNode, nameTextNode.c_str(), ACG::SceneGraph::TextNode::SCREEN_ALIGNED);
-        addAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str());
-      }
-      pTextNode->setText("  " + nameJoint);
-      pTextNode->setSize(50);
-      pTextNode->multipassNodeSetActive(8, true);
-    #endif
+    ACG::SceneGraph::TextNode *pTextNode = NULL;
+    if(!getAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str()))
+    {
+      pTextNode = new ACG::SceneGraph::TextNode(pSubMatNode,
+                                                nameTextNode.c_str(),
+                                                ACG::SceneGraph::TextNode::SCREEN_ALIGNED);
+          addAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str());
+    }
+    pTextNode->setText("  " + nameJoint);
+    pTextNode->setSize(50);
+    pTextNode->multipassNodeSetActive(8, true);
   }
   
   //update the indices with the current animationhandle

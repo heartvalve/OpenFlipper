@@ -74,11 +74,44 @@ bool TextNode::initialised_ = false;
 std::map<char, unsigned int> TextNode::charToIndex_ = TextNode::createMap();
 QColor TextNode::color_ = QColor(255, 0, 0);
 
+
+//----------------------------------------------------------------------------
+
+
+TextNode::
+TextNode( BaseNode*    _parent,
+          std::string  _name,
+          TextMode     _textMode)
+  : BaseNode(_parent, _name),
+    size_(1),
+    textMode_(_textMode),
+    vbo_(0),
+    vertexBuffer_(0),
+    blendEnabled_(false),
+    texture2dEnabled_(false),
+    cullFaceEnabled_(false),
+    blendSrc_(0),
+    blendDest_(0)
+{
+  updateFont();
+  updateVBO();
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
 TextNode::
 ~TextNode()
 {
   glDeleteBuffers(1, &vbo_);
 }
+
+
+//----------------------------------------------------------------------------
+
+
 
 void
 TextNode::
@@ -97,6 +130,49 @@ availableDrawModes() const
   return ( DrawModes::POINTS |
            DrawModes::POINTS_SHADED |
            DrawModes::POINTS_COLORED );
+}
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+setRenderingMode(TextMode _textMode) {
+  textMode_ = _textMode;
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+TextNode::TextMode
+TextNode::
+renderingMode() {
+  return textMode_;
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+setText(std::string _text) {
+  text_ = _text; updateVBO();
+}
+
+
+
+//----------------------------------------------------------------------------
+
+
+void
+TextNode::
+setSize(unsigned int _size) {
+  size_ = _size; updateVBO();
 }
 
 
@@ -144,6 +220,7 @@ enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
 void
 TextNode::
 leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+  // restore the GLState as it was when entering TextNode
   if (cullFaceEnabled_)
     ACG::GLState::enable(GL_CULL_FACE);
   if (!texture2dEnabled_)
@@ -165,6 +242,8 @@ draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
 {
   if (!text_.empty()) {
     bindVBO();
+
+    // do not rotate the quads in this case
     if (textMode_ == SCREEN_ALIGNED) {
       _state.push_modelview_matrix();
       Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
@@ -211,7 +290,7 @@ void
 TextNode::setFont(const QFont& _font) {
   qfont_ = QFont(_font);
   initialised_ = false;
-  UpdateFont();
+  updateFont();
   updateVBO();
 }
 
@@ -220,16 +299,19 @@ TextNode::setFont(const QFont& _font) {
 
 void
 TextNode::
-UpdateFont() {
+updateFont() {
 
+  // do not generate a new texture for every TextNode unless necessary
   if (initialised_)
     return;
 
   QFontMetrics metric(qfont_);
 
   int height = metric.height();
+  // ensure that the height of the texture is a power of 2
   int heightPow2 = nearestPowerOfTwo(height);
   int width = metric.maxWidth();
+  // ensure that the width of the texture is a power of 2
   int widthPow2 = nearestPowerOfTwo(width);
   imageWidth_ = widthPow2 * numberOfChars_;
 
@@ -241,14 +323,19 @@ UpdateFont() {
                          | QPainter::TextAntialiasing);
   painter.setFont(qfont_);
   painter.setPen(color_);
+
+  // characters are drawn aligned to the left into the QImage finalImage next to each other
   unsigned int i = 0;
   for (char c = ' '; c < '~'; ++c, ++i) {
     painter.drawText(i*widthPow2, 0, widthPow2, heightPow2, Qt::AlignLeft | Qt::AlignBottom, QString(c));
   }
   painter.end();
 
+  // convert finalImage to an OpenGL friendly format
   finalImage = QGLWidget::convertToGLFormat(finalImage);
 
+  // delete the old texture if it exists
+  // and generate a new texture from finalImage
   glDeleteTextures(1, &texture_);
   glGenTextures(1, &texture_);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
@@ -274,7 +361,11 @@ updateVBO() {
 
   vertexBuffer_.clear();
 
-  // generate a quad for each character
+  // generate a quad for each character next to each other
+  // *--*--*----*-*
+  // |  |  |    | |
+  // |  |  |    | |
+  // *--*--*----*-*
   QFontMetrics metric(qfont_);
   int maxWidth = metric.maxWidth();
   int avgWidth = metric.averageCharWidth();
@@ -300,7 +391,6 @@ updateVBO() {
 
     // QFontMetrics does not seem to always give the correct width
     // therefore we add a margin so that characters are not cut off
-    //if ( (leftBearing == 0) && (rightBearing == 0) ) {
     if (leftBearing + rightBearing < 0.1*maxWidth) {
       if (metricWidth + 0.25*maxWidth < maxWidth)
         metricWidth += 0.25*maxWidth;
@@ -311,6 +401,8 @@ updateVBO() {
     }
 
     float widthTx = (float) metricWidth / (float) imageWidth_;
+    // get the starting position of the character in the texture
+    // note that the characters are drawn aligned to the bottom left in in the texture
     float leftTx = ((float) charToIndex_[text_[i]] ) / (float) numberOfChars_;
     float rightTx = leftTx + widthTx;
 
