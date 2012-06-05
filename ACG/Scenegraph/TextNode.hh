@@ -34,8 +34,8 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                       *
- *   $Author$                                                      *
+ *   $Revision$                                                      *
+ *   $Author$                                                          *
  *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
@@ -75,9 +75,13 @@ namespace SceneGraph {
 
 
 /** \class TextNode TextNode.hh <ACG/Scenegraph/TextNode.hh>
-
-    TextNode renders Text.
-
+ *  TextNode can be used to display a string on quads in OpenGL. This string can be set with
+ * 	setText(std::string _text). A TextNode can be attached to a parent node by using the function
+ * 	BaseObjectData::addAdditionalNode. The quads can then be set to align to the parent by setting #textMode_
+ *	to OBJECT_ALIGNED via the setRenderingMode(TextMode _textMode) function. Alternatively the quads can be aligned
+ *	to the screen by setting #textMode_ to SCREEN_ALIGNED. The font that is used to display #text_ on the screen is stored
+ *  in #qfont_, which can be set with the setFont(const QFont& _font) function. Finally the quads can be scaled by setting #size_
+ * 	via the setSize(unsigned int _size) function.
 **/
 
 class ACGDLLEXPORT TextNode : public BaseNode
@@ -91,29 +95,12 @@ public:
 
   /** default constructor
    * @param _parent Define the parent Node this node gets attached to
-   * @param _fontfile Font File ( should include full path )
    * @param _name Name of this Node
    * @param _textMode Define the text rendering style ( see TextNode::TextMode )
    */
-  TextNode( std::string       _fontFile,
-            BaseNode*         _parent=0,
-	         std::string  _name="<TextNode>",
-            TextMode     _textMode = SCREEN_ALIGNED)
-            : BaseNode(_parent, _name),
-              size_(1),
-              fontFile_(_fontFile),
-              textMode_(_textMode),
-              vbo_(0),
-              vertexBuffer_(0),
-              blendEnabled_(false),
-              texture2dEnabled_(false),
-              cullFaceEnabled_(false),
-              blendSrc_(0),
-              blendDest_(0)
-  {
-    UpdateFont();
-    updateVBO();
-  }
+  TextNode( BaseNode*         _parent=0,
+            std::string  _name="<TextNode>",
+            TextMode     _textMode = SCREEN_ALIGNED);
 
   /// destructor
   ~TextNode();
@@ -138,65 +125,103 @@ public:
 
   /** Set the rendering mode ( see TextNode::TextMode )
    */
+  void setRenderingMode(TextMode _textMode);
 
-  void setRenderingMode(TextMode _textMode) { textMode_ = _textMode; };
+  /// returns the rendering mode (SCREEN_ALIGNED or OBJECT_ALIGNED)
+  TextMode renderingMode();
 
-  TextMode renderingMode() { return textMode_; };
+  /// sets the string that will be rendered
+  void setText(std::string _text);
 
-	/// sets the text that will be rendered
-  void setText(std::string _text) {text_ = _text; updateVBO();};
+  /// sets the size by which the quads displaying the text will be scaled
+  void setSize(unsigned int _size);
 
-	/// sets the scaling size of the TextNode
-  void setSize(unsigned int _size) {size_ = _size; updateVBO();};
-
-	/// sets the font to be used
+  /// sets the font to be used for generating a texture with most characters of the chosen font
   void setFont(const QFont& _font);
 
 protected:
-  static void UpdateFont();
+  /**
+   * Generates a texture by drawing most characters into one texture.
+   * This texture is then used to draw single characters onto quads
+   */
+  static void updateFont();
 
 private:
+  /// returns the nearest greater power of 2 to num
   static quint32 nearestPowerOfTwo(quint32 num);
+
+  /**
+   * generates a quad for each character in #text_ and also
+   * calculates the texture coordinates for each quad's character
+   */
   void updateVBO();
+
+  /// binds #vbo_ and sets the necessary OpenGL states
   void bindVBO();
+
+  /// unbinds #vbo_
   void unbindVBO();
+
+  /**
+   * Creates a map #charToIndex_ from most characters to an incrementing set of indices.
+   * These indices are used to create the texture coordinates in updateVBO().
+   */
   static std::map<char, unsigned int> createMap();
 
 private:
+
+  /// scaling factor by which the quads in #vbo_ are scaled
   unsigned int size_;
 
+  /// text to be displayed on quads in #vbo_
   std::string text_;
 
-  std::string fontFile_;
-
+  /// current display mode of #text_ (SCREEN_ALIGNED or OBJECT_ALIGNED)
   TextMode textMode_;
 
+  /**
+   * handle to the vertex buffer object, containing the quads on which the characters in
+   * #text_ are rendered
+   */
   GLuint vbo_;
 
+  /// buffer of vertex coordinates and texture coordinates of the quads
   std::vector<GLfloat> vertexBuffer_;
 
+  /// stores if GL_BLEND was enabled on entering TextNode
   bool blendEnabled_;
 
+  /// stores if GL_TEXTURE_2D was enabled on entering TextNode
   bool texture2dEnabled_;
 
+  /// stores if GL_CULL_FACE was enabled on entering TextNode
   bool cullFaceEnabled_;
 
+  /// stores the sfactor parameter of glBlendFunc on entering TextNode
   GLint blendSrc_;
 
+  /// stores the dfactor parameter of glBlendFunc on entering TextNode
   GLint blendDest_;
 
+  /// maps most readable characters to indices for texture coordinate calculation in updateVBO()
   static std::map<char, unsigned int> charToIndex_;
 
+  /// font that is used to generate the texture in updateFont()
   static QFont qfont_;
 
+  /// handle for the texture into which characters from #qfont_ are painted in updateFont()
   static GLuint texture_;
 
+  /// width of the generated texture
   static int imageWidth_;
 
+  /// number of characters that are drawn into the texture
   static const int numberOfChars_ = 94;
 
+  /// this is used to ensure that the texture is only generated once when necessary
   static bool initialised_;
 
+  /// color that is used to draw the characters into the texture in updateFont()
   static QColor color_;
 };
 
