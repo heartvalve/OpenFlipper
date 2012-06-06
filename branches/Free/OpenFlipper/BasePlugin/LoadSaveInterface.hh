@@ -77,7 +77,7 @@ class LoadSaveInterface {
        *
        * @param _filename Filename of the File to load
        * @param _type Type to be loaded
-       * @param _id Here the id of the loaded object is returned. id its -1 something went wrong
+       * @param _id Here the id of the loaded object is returned. id is -1 something went wrong
        */
       virtual void load(QString _filename, DataType _type, int& _id) {};
 
@@ -85,7 +85,7 @@ class LoadSaveInterface {
       /** Add an empty object of the given type
        *
        * @param _type Type to be created
-       * @param _id Here the id of the loaded object is returned. id its -1 something went wrong
+       * @param _id Here the id of the loaded object is returned. id is -1 something went wrong
        */
       virtual void addEmptyObject( DataType _type, int& _id) {};
 

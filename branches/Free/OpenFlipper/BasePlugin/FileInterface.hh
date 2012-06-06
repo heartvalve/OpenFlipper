@@ -153,6 +153,10 @@ public slots:
        * check if you support the given file type depending on the provided
        * filters and dataTypes ( see supportedType and getLoadFilters )\n
        *
+       * If loading fails, you have to return -1. If you created an empty
+       * object and then your load procedure fails, you should remove the newly
+       * generated object.\n
+       *
        * if you just opened a file and did not create any object, return 0 here,
        * telling the core that it was successfully loaded but no new object
        * has been created!
@@ -168,6 +172,10 @@ public slots:
        * if you just opened a file and did not create any object, return 0 here,
        * telling the core that it was successfully loaded but no new object
        * has been created!
+       *
+       * If loading fails, you have to return -1. If you created an empty
+       * object and then your load procedure fails, you should remove the newly
+       * generated object.\n
        *
        * If the Plugin is able to open the file in different DataTypes
        * one of these DataTypes can be forced with this function.
