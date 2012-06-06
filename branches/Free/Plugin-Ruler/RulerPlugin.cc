@@ -100,7 +100,7 @@ void RulerPlugin::showDistance()
 //------------------------------------------------------------------------------
 void RulerPlugin::initializePlugin()
 {
-  QToolBar *button = new QToolBar();
+  QToolBar *button = new QToolBar("Ruler");
 
   buttonAction_ = new QAction(tr("<B>Ruler</B><br> Display the distance between two points."),this);
 
