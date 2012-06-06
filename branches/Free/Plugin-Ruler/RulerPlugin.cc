@@ -158,7 +158,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
 
             if (!object->getAdditionalNode(textNode_,name(),textNodeName_.c_str()))
             {
-              textNode_ = new ACG::SceneGraph::TextNode(textTransformNode_,textNodeName_,ACG::SceneGraph::TextNode::OBJECT_ALIGNED);
+              textNode_ = new ACG::SceneGraph::TextNode(textTransformNode_,textNodeName_,ACG::SceneGraph::TextNode::SCREEN_ALIGNED);
               object->addAdditionalNode(textNode_,name(),textNodeName_.c_str());
 
             }
