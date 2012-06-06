@@ -246,10 +246,25 @@ draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // do not rotate the quads in this case
     if (textMode_ == SCREEN_ALIGNED) {
       _state.push_modelview_matrix();
+
+      // try to get the scale factor from the parent TransformNode if it exists
+      BaseNode* pParent = parent();
+      double scale = 1.0;
+      while (pParent) {
+        TransformNode* pTrans = dynamic_cast<TransformNode*>(pParent);
+        if (pTrans) {
+          scale = pTrans->scale()(0,0);
+          break;
+        }
+        pParent = pParent->parent();
+      }
+
+      // get the translation
       Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
       _state.reset_modelview();
       Vec3d unprojected = _state.unproject(projected);
       _state.translate(unprojected);
+      _state.scale(scale);
     }
 
     _state.push_modelview_matrix();
