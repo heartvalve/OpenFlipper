@@ -92,11 +92,11 @@ public:
 
 private:
 
+  void reset();
+
   void enableDragMode(const int _point);
 
   void disableDragMode();
-
-  void reset();
 
   QAction *buttonAction_;
 
@@ -135,6 +135,7 @@ private slots:
 
   void slotChangePickMode();
 
+  void slotAllCleared();
 
 
 public slots:

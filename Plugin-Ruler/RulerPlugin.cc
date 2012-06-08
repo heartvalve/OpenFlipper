@@ -45,8 +45,6 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <MeshTools/MeshFunctions.hh>
-#include <MeshTools/MeshInfoT.hh>
 //------------------------------------------------------------------------------
 RulerPlugin::RulerPlugin()
 :
@@ -302,6 +300,17 @@ void RulerPlugin::slotChangePickMode()
 void RulerPlugin::slotPickModeChanged(const std::string& _mode)
 {
   buttonAction_->setChecked(_mode == pickModeName_);
+}
+
+//------------------------------------------------------------------------------
+void RulerPlugin::slotAllCleared()
+{
+  hitStage_ = firstClick;
+  lineDrag_ = -1;
+
+  lineNode_ = 0;
+  textNode_ = 0;
+  textTransformNode_ = 0;
 }
 
 Q_EXPORT_PLUGIN2( rulerPlugin , RulerPlugin );
