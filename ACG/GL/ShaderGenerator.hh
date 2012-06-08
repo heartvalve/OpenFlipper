@@ -104,7 +104,7 @@ public:
   ShaderGenerator();
   virtual ~ShaderGenerator();
 
-  /** \brief Imports another shader, same as #include
+  /** \brief Imports another shader, same as \#include
   */
   void addIncludeFile(QString _fileName);
 
