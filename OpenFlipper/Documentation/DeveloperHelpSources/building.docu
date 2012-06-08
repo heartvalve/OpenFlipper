@@ -16,8 +16,6 @@ OpenFlipper.
 
 \section optlibs Optional libraries ( Without these libraries some functionality might not be available) 
 <ul>
-<li> freetype2    ( optional, used for rendering text in the scene, http://www.freetype.org/freetype2/index.html )</li> 
-<li> ftgl         ( optional, used for rendering text in the scene, http://sourceforge.net/projects/ftgl/)</li>
 <li> QWT (>=6.0)  ( optional, used for histogram plottings, http://qwt.sourceforge.net/)</li>
 </ul> 
 
@@ -121,7 +119,6 @@ and generating the Visual Studio solution file. Choose then build type "Release"
      cmake<br />
 br />
      As additional ports we recommend the following<br />
-     ftgl<br />
      fftw-3<br />
      qwt-60 +debug +qt4<br />
      subversion<br />
