@@ -79,7 +79,7 @@ namespace SceneGraph {
  * 	setText(std::string _text). A TextNode can be attached to a parent node by using the function
  * 	BaseObjectData::addAdditionalNode. The quads can then be set to align to the parent by setting textMode_
  *	to OBJECT_ALIGNED via the setRenderingMode(TextMode _textMode) function. Alternatively the quads can be aligned
- *	to the screen by setting #textMode_ to SCREEN_ALIGNED. The font that is used to display text_ on the screen is stored
+ *	to the screen by setting textMode_ to SCREEN_ALIGNED. The font that is used to display text_ on the screen is stored
  *  in qfont_, which can be set with the setFont(const QFont& _font) function. Finally the quads can be scaled by setting size_
  * 	via the setSize(unsigned int _size) function.
 **/
