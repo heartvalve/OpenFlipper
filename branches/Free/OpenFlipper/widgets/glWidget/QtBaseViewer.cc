@@ -333,6 +333,26 @@ void glViewer::trackMouse(bool _track)
 
 //-----------------------------------------------------------------------------
 
+void glViewer::setCoordSysProjection(ProjectionMode _mode) {
+  // Find coordsys node
+  ACG::SceneGraph::BaseNode* node = 0;
+  node = PluginFunctions::getSceneGraphRootNode()->find("Core Coordsys Node");
+
+  // set the projection mode for the coordinate system node
+  if (node != 0) {
+    ACG::SceneGraph::CoordsysNode* cnode = dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node);
+    if (_mode ==  ORTHOGRAPHIC_PROJECTION) {
+      cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION);
+    } else {
+      cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION);
+    }
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+
+
 void glViewer::perspectiveProjection()
 {
   projectionMode(PERSPECTIVE_PROJECTION);
@@ -366,6 +386,8 @@ void glViewer::projectionMode(ProjectionMode _p)
     emit projectionModeChanged( false );
 
   updateProjectionMatrix();
+
+  setCoordSysProjection(_p);
 
   emit viewChanged();
 }
