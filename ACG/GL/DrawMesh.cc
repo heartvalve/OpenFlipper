@@ -1270,7 +1270,6 @@ void DrawMeshT<Mesh>::drawVertices2(RenderObject* _objOut)
   if (numVerts_)
     _objOut->glDrawArrays(GL_POINTS, 0, numVerts_);
 
-  unbindBuffers();
 }
 
 template <class Mesh>
