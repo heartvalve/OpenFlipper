@@ -453,7 +453,7 @@ namespace GLSL {
    */
   void Program::bindAttributeLocation(unsigned int _index, const char *_name) {
     glBindAttribLocation(this->m_programId, _index, _name);
-    checkGLError2(name);
+    checkGLError2(_name);
   }
 
   /** \brief Get location of the specified attribute
