@@ -57,6 +57,7 @@
 #include "CursorPainter.hh"
 #include <ACG/QtWidgets/QtWheel.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/Scenegraph/CoordsysNode.hh>
 #include <ACG/GL/gl.hh>
 
 #include <iostream>
