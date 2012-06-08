@@ -100,7 +100,8 @@ public:
    */
   TextNode( BaseNode*         _parent=0,
             std::string  _name="<TextNode>",
-            TextMode     _textMode = SCREEN_ALIGNED);
+            TextMode     _textMode = SCREEN_ALIGNED,
+            bool         _alwaysOnTop = false);
 
   /// destructor
   ~TextNode();
@@ -126,6 +127,12 @@ public:
   /** Set the rendering mode ( see TextNode::TextMode )
    */
   void setRenderingMode(TextMode _textMode);
+
+  /// draw the text always on top
+  void setAlwaysOnTop(bool _alwaysOnTop);
+
+  /// returns wheter always on top is setted or not
+  bool alwaysOnTop();
 
   /// returns the rendering mode (SCREEN_ALIGNED or OBJECT_ALIGNED)
   TextMode renderingMode();
@@ -196,6 +203,12 @@ private:
 
   /// stores if GL_CULL_FACE was enabled on entering TextNode
   bool cullFaceEnabled_;
+
+  /// stores if GL_DEPTH_TEST was enabled on entering TextNode
+  bool depthEnabled_;
+
+  /// stores if text should be drawn always on top
+  bool alwaysOnTop_;
 
   /// stores the sfactor parameter of glBlendFunc on entering TextNode
   GLint blendSrc_;
