@@ -1,3 +1,45 @@
+/*===========================================================================*\
+ *                                                                           *
+ *                              OpenFlipper                                  *
+ *      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen      *
+ *                           www.openflipper.org                             *
+ *                                                                           *
+ *---------------------------------------------------------------------------*
+ *  This file is part of OpenFlipper.                                        *
+ *                                                                           *
+ *  OpenFlipper is free software: you can redistribute it and/or modify      *
+ *  it under the terms of the GNU Lesser General Public License as           *
+ *  published by the Free Software Foundation, either version 3 of           *
+ *  the License, or (at your option) any later version with the              *
+ *  following exceptions:                                                    *
+ *                                                                           *
+ *  If other files instantiate templates or use macros                       *
+ *  or inline functions from this file, or you compile this file and         *
+ *  link it with other files to produce an executable, this file does        *
+ *  not by itself cause the resulting executable to be covered by the        *
+ *  GNU Lesser General Public License. This exception does not however       *
+ *  invalidate any other reasons why the executable file might be            *
+ *  covered by the GNU Lesser General Public License.                        *
+ *                                                                           *
+ *  OpenFlipper is distributed in the hope that it will be useful,           *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *  GNU Lesser General Public License for more details.                      *
+ *                                                                           *
+ *  You should have received a copy of the GNU LesserGeneral Public          *
+ *  License along with OpenFlipper. If not,                                  *
+ *  see <http://www.gnu.org/licenses/>.                                      *
+ *                                                                           *
+\*===========================================================================*/
+
+/*===========================================================================*\
+ *                                                                           *
+ *   $Revision$                                                       *
+ *   $Author$                                                      *
+ *   $Date$                   *
+ *                                                                           *
+\*===========================================================================*/
+
 #include "ShaderGenerator.hh"
 #include <stdio.h>
 #include <string.h>
@@ -10,13 +52,12 @@
 #include <QTextStream>
 
 
-
 namespace ACG
 {
 
 
 
-#define LIGHTING_CODE_FILE "../SG_LIGHTING.GLSL"
+#define LIGHTING_CODE_FILE "ShaderGen/SG_LIGHTING.GLSL"
 
 
 ShaderGenerator::ShaderGenerator()
@@ -126,10 +167,6 @@ void ShaderGenerator::initDefaultUniforms()
 void ShaderGenerator::addLight(int lightIndex_, ShaderGenLightType _light)
 {
   QString sz;
-// 
-//   sprintf(sz, "g_vLightPos""_%d", lightIndex_);
-//   addUniform("uniform vec3");
-
 
   ADDLIGHT("vec3 g_cLightDiffuse");
   ADDLIGHT("vec3 g_cLightAmbient");
@@ -306,17 +343,22 @@ const QStringList& ShaderGenerator::getShaderCode()
 
 
 
+QString ShaderProgGenerator::shaderDir_;
 QStringList ShaderProgGenerator::lightingCode_;
-
 
 ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc)
 : vertex_(0), fragment_(0)
 {
-  memcpy(&desc_, _desc, sizeof(ShaderGenDesc));
+  if (shaderDir_.isEmpty())
+    std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
+  else
+  {
+    memcpy(&desc_, _desc, sizeof(ShaderGenDesc));
 
-  loadLightingFunctions();
+    loadLightingFunctions();
 
-  generateShaders();
+    generateShaders();
+  }
 }
 
 ShaderProgGenerator::~ShaderProgGenerator(void)
@@ -354,7 +396,7 @@ void ShaderProgGenerator::loadLightingFunctions()
   if (lightingCode_.size()) return;
 
   // load shader code from file
-  loadStringListFromFile(LIGHTING_CODE_FILE, &lightingCode_);
+  loadStringListFromFile(shaderDir_ + QDir::separator() + QString(LIGHTING_CODE_FILE), &lightingCode_);
 }
 
 
@@ -493,7 +535,7 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_vPosVS = g_mWV * inPosition;");
   _code->push_back("vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);");
   _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
-  _code->push_back("vec4 sg_cColor = vec4(1.0, 1.0, 1.0, 1.0);");
+  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode != SG_SHADE_UNLIT)
     _code->push_back("sg_vNormalVS = g_mWVIT * inNormal;");
@@ -646,7 +688,7 @@ void ShaderProgGenerator::buildFragmentShader()
 
 void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 {
-  _code->push_back("vec4 sg_cColor = vec4(0.0, 0.0, 0.0, 0.0);");
+  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
     desc_.shadeMode == SG_SHADE_FLAT ||
@@ -679,7 +721,7 @@ void ShaderProgGenerator::addFragmentEndCode(QStringList* _code)
 void ShaderProgGenerator::addLightingCode(QStringList* _code)
 {
   QString buf;
-
+  
   for (int i = 0; i < desc_.numLights; ++i)
   {
     ShaderGenLightType lgt = desc_.lightTypes[i];
@@ -715,8 +757,6 @@ void ShaderProgGenerator::addLightingFunctions(QStringList* _code)
   foreach(it,lightingCode_)
     _code->push_back(it);
 }
-
-
 
 void ShaderProgGenerator::generateShaders()
 {
@@ -763,6 +803,11 @@ QString ShaderProgGenerator::getPathName(QString _strFileName)
 {
   QFileInfo fileInfo(_strFileName);
   return fileInfo.absolutePath();
+}
+
+void ShaderProgGenerator::setShaderDir( QString _dir )
+{
+  shaderDir_ = _dir;
 }
 
 
