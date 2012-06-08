@@ -130,6 +130,24 @@ namespace GLSL {
     delete[] stringArray;
   }
 
+
+   /** \brief Upload the source of the shader.
+  */
+  void Shader::setSource(const QStringList& source)  {
+
+    if ( this->m_shaderId == 0 ) {
+      std::cerr << "shader not initialized" << std::endl;
+      return;
+    }
+
+    StringList strlist;
+
+    for (QStringList::const_iterator it = source.begin();it != source.end();++it)
+      strlist.push_back(std::string((const char*)it->toAscii()) + '\n');
+
+    setSource(strlist);
+  }
+
   /** \brief Compile the shader object.
   *
   * \returns True if compilation was successful, or false if it failed. Also
@@ -357,6 +375,28 @@ namespace GLSL {
     char varName[1024];
     snprintf(varName, 1024, "%s[%d]", name, index);
     setUniform(varName, value);
+  }
+
+  void Program::setUniform( const char *name, const ACG::GLMatrixf &value, bool transposed){
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, name);
+    checkGLError2(name);
+    glUniformMatrix4fv(location, 1, transposed, value.data());
+    checkGLError();
+  }
+
+  void Program::setUniformMat3( const char *name, const ACG::GLMatrixf &value, bool transposed){
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, name);
+    checkGLError2(name);
+
+    float tmp[9];
+    for (int i = 0; i < 3; ++i)
+      for (int k = 0; k < 3; ++k)
+        tmp[i*3+k] = value.data()[i*4+k];
+
+    glUniformMatrix3fv(location, 1, transposed, tmp);
+    checkGLError();
   }
 
   void Program::bindAttributeLocation(unsigned int index, const char *name) {
