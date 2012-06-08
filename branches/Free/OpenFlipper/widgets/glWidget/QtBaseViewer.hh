@@ -59,7 +59,6 @@
 
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
-#include <ACG/Scenegraph/CoordsysNode.hh>
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <ACG/ShaderUtils/GLSLShader.hh>
