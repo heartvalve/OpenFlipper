@@ -40,15 +40,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*******************************************************************************
- * GLSLShader.hh
- *
- * Utility classes for GLSL shaders.
- *
- * Lehrstuhl I8 RWTH-Aachen, http://www.graphics.rwth-aachen.de
- *
- ******************************************************************************/
-
 #ifndef GLSLSHADER_H
 #define GLSLSHADER_H
 
@@ -150,49 +141,84 @@ namespace GLSL {
       Program();
       virtual ~Program();
 
-      void attach(PtrConstShader shader);
-      void detach(PtrConstShader shader);
+
+
+      //===========================================================================
+      /** @name Compilation/Linking
+       *
+       * @{ */
+      //===========================================================================
+
+      void attach(PtrConstShader _shader);
+      void detach(PtrConstShader _shader);
       void link();
 
-      void setUniform(const char *name, GLint value);
-      void setUniform(const char *name, GLfloat value);
-      void setUniform(const char *name, const ACG::Vec2f &value);
-      void setUniform(const char *name, const ACG::Vec3f &value);
-      void setUniform(const char *name, const ACG::Vec4f &value);
+      /** @} */
 
-      void setUniform(const char *name, const ACG::GLMatrixf &value, bool transposed = false);
-      void setUniformMat3(const char *name, const ACG::GLMatrixf &value, bool transposed = false);
+      //===========================================================================
+      /** @name Localizations
+       *
+       * @{ */
+      //===========================================================================
 
-      void setUniform(const char *name, GLint *value, int count);
-      void setUniform(const char *name, GLfloat *value, int count);
+      int getAttributeLocation(const char *_name);
+      int getUniformLocation(const char *_name);
 
-      // set element of array
-      void setUniform(const char *name, int index, bool value);
-      void setUniform(const char *name, int index, int value);
-      void setUniform(const char *name, int index, float value);
+      void bindAttributeLocation(unsigned int _index, const char *_name);
 
-      void bindAttributeLocation(unsigned int index, const char *name);
-      int getAttributeLocation(const char *name);
-      int getUniformLocation(const char *name);
+      /** @} */
 
-      // geometry shader params
+      //===========================================================================
+       /** @name Uniform setters
+        *
+        * @{ */
+       //===========================================================================
 
-      // valid input types: GL_POINTS, GL_LINES, GL_LINES_ADJACENCY_EXT, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY_EXT
-      void setGeometryInputType(GLint type);
-      
-      // valid output types: GL_POINTS, GL_LINE_STRIP, GL_TRIANGLE_STRIP
-      void setGeometryOutputType(GLint type);
+       void setUniform(const char *_name, GLint _value);
+       void setUniform(const char *_name, GLfloat _value);
+       void setUniform(const char *_name, const ACG::Vec2f &_value);
+       void setUniform(const char *_name, const ACG::Vec3f &_value);
+       void setUniform(const char *_name, const ACG::Vec4f &_value);
 
-      // Sets the maximum vertex output of the geometry shader. 
-      //  query GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT to get the gpu limitation
-      void setGeometryVertexCount(GLint numVerticesOut);
 
+       void setUniform(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+       void setUniformMat3(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+
+
+       void setUniform(const char *_name, GLint *_values, int _count);
+       void setUniform(const char *_name, GLfloat *_values, int _count);
+       void setUniform(const char *_name, int _index, bool _value);
+
+       void setUniform(const char *_name, int _index, int _value);
+       void setUniform(const char *_name, int _index, float _value);
+
+       /** @} */
+
+      //===========================================================================
+       /** @name Geometry shader parameters
+        *
+        * @{ */
+      //===========================================================================
+
+      void setGeometryInputType(GLint _type);
+      void setGeometryOutputType(GLint _type);
+      void setGeometryVertexCount(GLint _numVerticesOut);
+
+      /** @} */
+
+      //===========================================================================
+      /** @name Enable/disable functions
+       *
+       * @{ */
+      //===========================================================================
 
       void use();
-
       void disable();
-
       bool isActive();
+
+      /** @} */
+
+
 
     private:
 
@@ -212,17 +238,6 @@ namespace GLSL {
   GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name);
 
 }
-
-
-//==============================================================================
-
-// Local Variables:
-// mode: C++
-// c-basic-offset: 2
-// indent-tabs-mode: nil
-// End:
-
-//==============================================================================
 
 // GLSLSHADER_H
 #endif
