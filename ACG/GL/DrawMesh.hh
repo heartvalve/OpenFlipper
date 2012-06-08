@@ -64,6 +64,8 @@
 
 #include <ACG/GL/GLState.hh>
 
+#include <ACG/GL/IRenderer.hh>
+
 //== FORWARDDECLARATIONS ======================================================
 
 
@@ -76,27 +78,27 @@ namespace ACG {
 
 /** \brief Mesh Drawing Class
  *
-  functional description:
-
-  This class prepares the OpenMesh object for efficient rendering.
-  This is done in the function Rebuild() :
-    1. Triangulation to guarantee a triangle mesh  (ConvertToTriangleMesh)
-    2. Create a big 3*NumTris vertex buffer, so that each triangle has it's own 3 vertices
-    3. Minimize this Vertex Buffer so that each vertex is unique
-    4. Fix for Flat-Shading mode:
-        OpenGL does not support Face-Normal generation on the fly, so we have to guarantee
-        that the last vertex of each triangle is not shared with any other triangle.
-        If flat shading is enabled, we need to update the vertex buffer and store the face normal
-        for each triangle in this unshared vertex.
-    5. Sort triangles by material:
-        To minimize state OpenGL state changes and draw calls, triangles are sorted by material.
-        This information is stored in Subsets
-    6. GPU-Cache-Optimization:
-        Optimize triangles for each subset for efficient gpu vertex cache usage.
-        After that reorder vertices to avoid big gpu-memory jumps when reading in vertices
-    while processing maintain the following maps:
-      vertex index in the final vertex buffer -> halfedge index in OpenMesh  (vertexMap_)
-      triangle index in the final index buffer -> face index in OpenMesh  (triToFaceMap_)
+ * Functional description:
+ *
+ * This class prepares the OpenMesh object for efficient rendering.
+ * This is done in the function Rebuild() :
+ *   1. Triangulation to guarantee a triangle mesh  (ConvertToTriangleMesh)
+ *   2. Create a big 3*NumTris vertex buffer, so that each triangle has it's own 3 vertices
+ *   3. Minimize this Vertex Buffer so that each vertex is unique
+ *   4. Fix for Flat-Shading mode:
+ *       OpenGL does not support Face-Normal generation on the fly, so we have to guarantee
+ *       that the last vertex of each triangle is not shared with any other triangle.
+ *       If flat shading is enabled, we need to update the vertex buffer and store the face normal
+ *       for each triangle in this unshared vertex.
+ *   5. Sort triangles by material:
+ *       To minimize state OpenGL state changes and draw calls, triangles are sorted by material.
+ *       This information is stored in Subsets
+ *   6. GPU-Cache-Optimization:
+ *       Optimize triangles for each subset for efficient gpu vertex cache usage.
+ *       After that reorder vertices to avoid big gpu-memory jumps when reading in vertices
+ *   while processing maintain the following maps:
+ *     vertex index in the final vertex buffer -> halfedge index in OpenMesh  (vertexMap_)
+ *     triangle index in the final index buffer -> face index in OpenMesh  (triToFaceMap_)
  */
 template <class Mesh>
 class DrawMeshT
@@ -163,7 +165,11 @@ public:
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
   void bindBuffers();
-  
+
+  /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
+  */
+  void bindBuffers2(RenderObject* _obj);
+
   /** \brief disables vertex, normal, texcoord and color pointers in OpenGL
   */
   void unbindBuffers();
@@ -175,20 +181,41 @@ public:
   */
   void draw(std::map< int, GLuint>* _textureMap);
   
+  /** \brief initializes a RenderObject for a deferred draw call
+  *
+  *   @param _objOut address of the renderobject
+  *   @param _textureMap maps from internally texture-id to OpenGL texture id
+  *   may be null to disable textured rendering
+  */
+  void draw2(RenderObject* _objOut, std::map< int, GLuint>* _textureMap);
 
   /** \brief render the mesh in wireframe mode
   */
   void drawLines();
+
+  /** \brief render the mesh in wireframe mode, deferred draw call
+  */
+  void drawLines2(RenderObject* _objOut);
 
 
   /** \brief render vertices only
   */
   void drawVertices();
 
+  /** \brief render vertices only, deferred draw call
+  */
+  void drawVertices2(RenderObject* _objOut);
+
 
   unsigned int getNumTris() const {return numTris_;}
   unsigned int getNumVerts() const {return numVerts_;}
   unsigned int getNumSubsets() const {return numSubsets_;}
+
+
+  /** \brief measures the size in bytes of allocated memory.
+  eventually prints a report to std::cout
+  */
+  unsigned int getMemoryUsage(bool _printReport = false);
 
   // The updateX functions give a hint on what to update.
   //  may perform a full rebuild internally!
@@ -672,6 +699,13 @@ private:
       this map is ambiguous and only useful for per vertex attributes rendering i.e. lines!
   */
   unsigned int* invVertexMap_;
+
+
+  /// vertex buffer layout declaration with per vertex colors
+  VertexDeclaration* vertexDeclVCol_;
+
+  /// vertex buffer layout declaration with per face colors
+  VertexDeclaration* vertexDeclFCol_;
 
 
   //========================================================================

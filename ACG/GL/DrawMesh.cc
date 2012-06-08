@@ -46,6 +46,7 @@
 
 #include "DrawMesh.hh"
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
+#include <ACG/GL/VertexDeclaration.hh>
 #include <assert.h>
 #include <math.h>
 #include <vector>
@@ -53,9 +54,13 @@
 #include <string.h>
 #include <fstream>
 
+
 //=============================================================================
 
 #define DRAW_MESH_VERTEX_CMP_EPSILON 1e-4f
+
+// print a memory usage report each draw call
+//#define DEBUG_MEM_USAGE
 
 
 namespace ACG
@@ -137,6 +142,25 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    updatePerEdgeBuffers_(1),
   updatePerHalfedgeBuffers_(1)
 {
+  vertexDeclVCol_ = new VertexDeclaration;
+  vertexDeclFCol_ = new VertexDeclaration;
+
+  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0},
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 0},
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 0},
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0}};
+
+  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0},
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 12},
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 20},
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 36}};
+
+  vertexDeclVCol_->addElements(4, elemArrayV);
+  vertexDeclFCol_->addElements(4, elemArrayF);
+
+  // VertexDeclaration computes a stride of 36 automatically
+  // force 40 bytes instead!
+  vertexDeclVCol_->setVertexStride(sizeof(Vertex)); // pad for Vertex::fcol
 }
 
 
@@ -919,10 +943,111 @@ DrawMeshT<Mesh>::~DrawMeshT(void)
 
   delete [] invVertexMap_;
 
+  delete vertexDeclFCol_;
+  delete vertexDeclVCol_;
+
   if (vbo_) glDeleteBuffersARB(1, &vbo_);
   if (ibo_) glDeleteBuffersARB(1, &ibo_);
   if (lineIBO_) glDeleteBuffersARB(1, &lineIBO_);
 }
+
+
+
+template <class Mesh>
+unsigned int DrawMeshT<Mesh>::getMemoryUsage(bool _printReport)
+{
+  unsigned int res = 0;
+  unsigned int sysBufSize = 0;
+
+  // index buffer
+  if (indices_)
+    sysBufSize += numTris_ * 3 * 4;
+
+  // vertex buffer
+  if (vertices_)
+    sysBufSize += sizeof(Vertex) * numVerts_;
+
+  // temp buffers
+  if (indicesTmp_)
+    sysBufSize += numTris_ * 3 * 4;
+
+  if (verticesTmp_)
+    sysBufSize += sizeof(Vertex) * numVerts_;
+
+  
+  
+  res += sysBufSize;
+
+  // mappings
+  unsigned int mapsSize = 0;
+ 
+  if (vertexMap_)
+    mapsSize += numVerts_ * 4;
+
+  if (triToFaceMap_)
+    res += numTris_ * 4;
+
+  if (invVertexMap_)
+    res += mesh_.n_vertices() * 4;
+
+  res += mapsSize;
+
+
+  // picking buffers
+  unsigned int pickBufSize = 0;
+
+  pickBufSize += pickVertBuf_.capacity() * sizeof(ACG::Vec3f);
+  pickBufSize += pickVertColBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+  pickBufSize += pickEdgeBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+  pickBufSize += pickFaceVertexBuf_.capacity() * sizeof(ACG::Vec3f);
+  pickBufSize += pickFaceColBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+
+  pickBufSize += pickAnyFaceColBuf_.capacity() * sizeof(ACG::Vec4uc);
+  pickBufSize += pickAnyEdgeColBuf_.capacity() * sizeof(ACG::Vec4uc);
+  pickBufSize += pickAnyVertexColBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+  res += pickBufSize;
+
+
+  // edge and halfedge vertex buffers (glDraw from sysmem)
+  unsigned int edgeBufSize = 0;
+
+  edgeBufSize += perEdgeVertexBuf_.capacity() * sizeof(ACG::Vec3f);
+  edgeBufSize += perEdgeColorBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+  edgeBufSize += perHalfedgeVertexBuf_.capacity() * sizeof(ACG::Vec3f);
+  edgeBufSize += perHalfedgeColorBuf_.capacity() * sizeof(ACG::Vec4uc);
+
+
+  res += edgeBufSize;
+
+
+  unsigned int gpuBufSize = 0;
+
+  if (ibo_)
+    gpuBufSize += numTris_ * 3 * (indexType_ == GL_UNSIGNED_INT ? 4 : 2);
+
+  if (vbo_)
+    gpuBufSize += numVerts_ * sizeof(Vertex);
+
+  if (_printReport)
+  {
+    std::cout << "\nDrawMesh memory usage in MB:\n";
+    std::cout << "Vertex+IndexBuffer (SYSMEM only): " << float(sysBufSize) / (1024 * 1024);
+    std::cout << "\nMappings: " << float(mapsSize) / (1024 * 1024);
+    std::cout << "\nPicking Buffers: " << float(pickBufSize) / (1024 * 1024);
+    std::cout << "\nEdge Buffers: " << float(edgeBufSize) / (1024 * 1024);
+    std::cout << "\nTotal SYSMEM: " << float(res) / (1024 * 1024);
+    std::cout << "\nTotal GPU: " << float(gpuBufSize) / (1024 * 1024) << std::endl;
+  }
+  
+  return res;
+}
+
+
 
 template <class Mesh>
 void DrawMeshT<Mesh>::bindBuffers()
@@ -975,6 +1100,40 @@ void DrawMeshT<Mesh>::bindBuffers()
 }
 
 template <class Mesh>
+void DrawMeshT<Mesh>::bindBuffers2(RenderObject* _obj)
+{
+  // rebuild if necessary
+  if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
+
+  if (bVBOinHalfedgeNormalMode_ != halfedgeNormalMode_) rebuild_ = REBUILD_FULL;
+
+  // if no rebuild necessary, check for smooth / flat shading switch 
+  // to update normals
+  if (rebuild_ == REBUILD_NONE)
+  {
+    if (bVBOinFlatMode_ != flatMode_ || bVBOinHalfedgeTexMode_ != textureMode_)
+      createVBO();
+  }
+  else
+    rebuild();
+
+  _obj->vertexBuffer = vbo_;
+  _obj->indexBuffer = ibo_;
+
+  _obj->indexType = indexType_;
+
+  // assign correct vertex declaration
+  _obj->vertexDecl = vertexDeclVCol_;
+
+  // prepare color mode
+  if (colorMode_)
+  {
+    if (colorMode_ != 1)
+      _obj->vertexDecl = vertexDeclFCol_;
+  }
+}
+
+template <class Mesh>
 void DrawMeshT<Mesh>::unbindBuffers()
 {
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
@@ -993,6 +1152,10 @@ template <class Mesh>
 void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 {
   bindBuffers();
+
+#ifdef DEBUG_MEM_USAGE
+  getMemoryUsage(true);
+#endif
 
   if (numTris_)
   {
@@ -1022,6 +1185,43 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
   unbindBuffers();
 }
 
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::draw2( RenderObject* _objOut, std::map< int, GLuint>* _textureMap )
+{
+  // binding buffers to opengl is obsolute here, but it keeps the vbo up to date for now
+  bindBuffers2(_objOut);
+
+  _objOut->glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+
+  if (numTris_)
+  {
+    if (_textureMap)
+    {
+      // textured mode
+
+      // subsets not supported yet
+      for (unsigned int i = 0; i < numSubsets_; ++i)
+      {
+        Subset* pSubset = subsets_ + i;
+
+        if ( _textureMap->find(pSubset->materialID) == _textureMap->end() ) {
+          std::cerr << "Illegal texture index ... trying to access " << pSubset->materialID << std::endl;
+        }
+        else
+        {
+//          ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
+          _objOut->texture = (*_textureMap)[pSubset->materialID];
+        }
+// 
+//         glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
+//           (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+      }
+    }
+  }
+}
+
+
 template <class Mesh>
 void DrawMeshT<Mesh>::drawLines()
 {
@@ -1037,6 +1237,19 @@ void DrawMeshT<Mesh>::drawLines()
   unbindBuffers();
 }
 
+
+template <class Mesh>
+void DrawMeshT<Mesh>::drawLines2(RenderObject* _objOut)
+{
+  bindBuffers2(_objOut);
+
+  if (mesh_.n_edges())
+  {
+    _objOut->indexBuffer = lineIBO_;
+    _objOut->glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+  }
+}
+
 template <class Mesh>
 void DrawMeshT<Mesh>::drawVertices()
 {
@@ -1045,6 +1258,17 @@ void DrawMeshT<Mesh>::drawVertices()
 
   if (numVerts_)
     glDrawArrays(GL_POINTS, 0, numVerts_);
+
+  unbindBuffers();
+}
+
+template <class Mesh>
+void DrawMeshT<Mesh>::drawVertices2(RenderObject* _objOut)
+{
+  bindBuffers2(_objOut);
+
+  if (numVerts_)
+    _objOut->glDrawArrays(GL_POINTS, 0, numVerts_);
 
   unbindBuffers();
 }
