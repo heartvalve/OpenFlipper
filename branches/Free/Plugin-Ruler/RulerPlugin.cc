@@ -190,7 +190,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
         //after this stage, the points can be modified by a simple click
         hitStage_ = modifyPoint;
       }
-      else if ((hitStage_ == modifyPoint))
+      else if (hitStage_ == modifyPoint)
       {
         //two modes:
         //first: no point was dragged, so we can compute and change the position
