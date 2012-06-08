@@ -59,6 +59,7 @@
 
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/Scenegraph/CoordsysNode.hh>
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <ACG/ShaderUtils/GLSLShader.hh>
@@ -493,6 +494,8 @@ private:
   void drawScene();
   // helper called by drawScene().
   void drawScene_mono();
+  /// helper function for setting the projection mode of the coordinate system node
+  void setCoordSysProjection(glViewer::ProjectionMode _mode);
 
   
 
