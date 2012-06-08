@@ -207,7 +207,7 @@ TextNode::
 createMap() {
   std::map<char, unsigned int> m;
   unsigned int i = 0;
-  for (char c = ' '; c < '~'; ++c, ++i) {
+  for (unsigned char c = ' '; c < '~'; ++c, ++i) {
     m[c] = i;
   }
 
