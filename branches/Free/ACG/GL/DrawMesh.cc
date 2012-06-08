@@ -145,15 +145,15 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
   vertexDeclVCol_ = new VertexDeclaration;
   vertexDeclFCol_ = new VertexDeclaration;
 
-  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0},
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 0},
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 0},
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0}};
+  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
 
-  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0},
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 12},
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 20},
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 36}};
+  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {12} },
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {20} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {36} } };
 
   vertexDeclVCol_->addElements(4, elemArrayV);
   vertexDeclFCol_->addElements(4, elemArrayF);
