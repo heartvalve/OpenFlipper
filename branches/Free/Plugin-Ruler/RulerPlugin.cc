@@ -111,7 +111,8 @@ void RulerPlugin::initializePlugin()
   button->addAction(buttonAction_);
   buttonAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"ruler.png"));
   buttonAction_->setCheckable(true);
-  buttonAction_->setWhatsThis(tr("Measures the distance between two points.\n<LeftClick>: define/change the position.\n<DoubleClick>: reset the ruler."));
+  WhatsThisGenerator whatsThisGen("Ruler");
+  whatsThisGen.setWhatsThis(buttonAction_,tr("Measures the distance between two points.<br><b>LeftClick</b>: define/change the position.<br><b>DoubleClick</b>: reset the ruler.<br>"));
 
   buttonAction_->setChecked(false);
 
