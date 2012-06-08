@@ -1,9 +1,53 @@
+/*===========================================================================*\
+ *                                                                           *
+ *                              OpenFlipper                                  *
+ *      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen      *
+ *                           www.openflipper.org                             *
+ *                                                                           *
+ *---------------------------------------------------------------------------*
+ *  This file is part of OpenFlipper.                                        *
+ *                                                                           *
+ *  OpenFlipper is free software: you can redistribute it and/or modify      *
+ *  it under the terms of the GNU Lesser General Public License as           *
+ *  published by the Free Software Foundation, either version 3 of           *
+ *  the License, or (at your option) any later version with the              *
+ *  following exceptions:                                                    *
+ *                                                                           *
+ *  If other files instantiate templates or use macros                       *
+ *  or inline functions from this file, or you compile this file and         *
+ *  link it with other files to produce an executable, this file does        *
+ *  not by itself cause the resulting executable to be covered by the        *
+ *  GNU Lesser General Public License. This exception does not however       *
+ *  invalidate any other reasons why the executable file might be            *
+ *  covered by the GNU Lesser General Public License.                        *
+ *                                                                           *
+ *  OpenFlipper is distributed in the hope that it will be useful,           *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *  GNU Lesser General Public License for more details.                      *
+ *                                                                           *
+ *  You should have received a copy of the GNU LesserGeneral Public          *
+ *  License along with OpenFlipper. If not,                                  *
+ *  see <http://www.gnu.org/licenses/>.                                      *
+ *                                                                           *
+\*===========================================================================*/
+
+/*===========================================================================*\
+ *                                                                           *
+ *   $Revision$                                                       *
+ *   $Author$                                                      *
+ *   $Date$                   *
+ *                                                                           *
+\*===========================================================================*/
+
 #pragma once
 
 #include <QStringList>
 #include <QString>
 #include <string>
 #include <list>
+#include <ACG/Config/ACGDefines.hh>
+
 
 namespace ACG
 {
@@ -12,7 +56,7 @@ namespace ACG
 // #define MAX_SHADER_INPUT_UNITS 32
 // #define MAX_SHADER_CONSTANTS 0x200
 // #define MAX_SHADER_GEN_DEFINES 0x100
-#define MAX_SHADER_LIGHTS 8
+#define SG_MAX_SHADER_LIGHTS 8
 
 enum ShaderGenLightType
 {
@@ -34,7 +78,7 @@ enum ShaderGenShadeMode
 struct ShaderGenDesc
 {
   int numLights;
-  ShaderGenLightType lightTypes[MAX_SHADER_LIGHTS];
+  ShaderGenLightType lightTypes[SG_MAX_SHADER_LIGHTS];
 
   ShaderGenShadeMode shadeMode;
 
@@ -46,8 +90,6 @@ struct ShaderGenDesc
   QString fragmentTemplateFile;
 };
 
-//typedef std::list<std::string> StringList;
-
 /**
 ShaderGenerator is used to collect shader io, uniforms, defines and includes.
 
@@ -55,84 +97,82 @@ The shader main-function is not generated here and must be provided
 as a parameter to the buildShaderCode function.
 */
 
-class ShaderGenerator
+class ACGDLLEXPORT ShaderGenerator
 {
 public:
 
   ShaderGenerator();
   virtual ~ShaderGenerator();
 
-  /** 
-  imports another shader, same as #include
+  /** \brief Imports another shader, same as #include
   */
   void addIncludeFile(QString _fileName);
 
-  /**
-  adds fitting vertex shader io for a given description
+  /** \brief Adds fitting vertex shader io for a given description
   */
   void initVertexShaderIO(const ShaderGenDesc* _desc);
   
-  /**
-  adds fitting fragment shader io for a given description
+  /** \brief Adds fitting fragment shader io for a given description
   */
   void initFragmentShaderIO(const ShaderGenDesc* _desc);
 
 
-  /**
-  adds frequently used uniform parameters like:
-  - world, view, projection matrices
-  - cam pos, view dir
-  - per object material names: g_cDiffuse, g_cAmbient...
+  /** \brief Adds frequently used uniform parameters
+   *
+   * Adds frequently used uniform parameters like:
+   * - world, view, projection matrices
+   * - cam pos, view dir
+   * - per object material names: g_cDiffuse, g_cAmbient...
   */
   void initDefaultUniforms();
 
-  /**
-  add one GLSL input specifier:
-  stores string pointer only
-  example: "in vec4 inPosition;"
+  /** \brief Add one GLSL input specifier
+   *
+   * Stores string pointer only
+   * Example:
+   * \code in vec4 inPosition; \endcode
   */
   void addInput(QString _input);
 
-  /**
-  add one GLSL output specifier:
-  stores string pointer only
-  example: "out vec4 outPosition;"
-  */
+  /** \brief Add one GLSL output specifier
+   *
+   * Stores string pointer only
+   * Example:
+   * \code out vec4 inPosition; \endcode
+   */
   void addOutput(QString _output);
 
-  /**
-  add one GLSL uniform specifier
-  stores string pointer only
-  example: "uniform sampler2D sampAmbient;"
-  */
+  /** \brief Add one GLSL uniform specifier
+   *
+   * Stores string pointer only
+   * Example:
+   * \code uniform sampler2D sampAmbient; \endcode
+   */
   void addUniform(QString _uniform);
 
-  /**
-  add one define
-  example: "#define SG_GOURAUD 1"
-  */
+  /** \brief Add one define
+   *
+   * Example:
+   * \code #define SG_GOURAUD 1 \endcode
+   */
   void addDefine(QString _uniform);
 
 
-  /**
-  add a light describtion to shader:
+  /** \brief Add a light description to shader:
   */
   void addLight(int lightIndex_, ShaderGenLightType _light);
 
-
-
-  /**
-  shader assembly function
+  /** \brief Shader assembly function
   */
   void buildShaderCode(QStringList* _pMainCode);
 
-  /**
-  get result of buildShaderCode
+  /** \brief Get result of buildShaderCode
   */
   const QStringList& getShaderCode();
 
-  /**
-  save generated shader code to text file
+  /** \brief Save generated shader code to text file
+   *
+   * @param _filename Where to save
   */
   void saveToFile(const char* _fileName);
 
@@ -140,8 +180,7 @@ private:
 
   /// aborts, if string already present
   /// prefix, postfix are very primitive, only checks for occurrence disregard locations
-  void addStringToList(QString _str, QStringList* _list,
-    const char* _prefix = 0, const char* _postfix = 0);
+  void addStringToList(QString _str, QStringList* _list, const char* _prefix = 0, const char* _postfix = 0);
 
   /** Adds command lines to the shader code.
   Eventually appends missing ';'
@@ -151,7 +190,7 @@ private:
   QStringList code_;
 
 
-  // glsl code imports (with #include)
+  /// glsl code imports (with #include)
   QStringList imports_;
 
   QString version_;
@@ -166,29 +205,35 @@ private:
 ShaderProgGenerator is responsible for generating a matching pair of vertex and fragment shaders.
 */
 
-class ShaderProgGenerator
+class ACGDLLEXPORT ShaderProgGenerator
 {
 public:
+
+  /**
+  The shader directory has to be defined first before making use of the generator!
+  For example: setShaderDir(OpenFlipper::Options::shaderDirStr())
+  */
+  static void setShaderDir(QString _dir);
+
+
   ShaderProgGenerator(const ShaderGenDesc* _desc);
   virtual ~ShaderProgGenerator(void);
+
 
   void saveVertexShToFile(const char* _fileName);
   void saveFragmentShToFile(const char* _fileName);
 
-  /**
-  returns generated vertex shader code
+  /** \brief Returns generated vertex shader code
   */
   const QStringList& getVertexShaderCode();
 
-  /**
-  returns generated fragment shader code
+  /** \brief Returns generated fragment shader code
   */
   const QStringList& getFragmentShaderCode();
 
 private:
 
-  /**
-  loads external shader templates 
+  /** \brief Loads external shader templates
   */
   void loadShaderTemplateFromFile();
 
@@ -204,11 +249,14 @@ private:
   void addFragmentBeginCode(QStringList* _code);
   void addFragmentEndCode(QStringList* _code);
 
-  /// adds lighting definition functions:
-  /// LitPointLight() ...
+  /** \brief Adds lighting definition functions
+   *
+   * LitPointLight() ...
+   */
   void addLightingFunctions(QStringList* _code);
 
-  /// adds lighting function calls to code
+  /** \brief Adds lighting function calls to code
+   */
   void addLightingCode(QStringList* _code);
 
   /// returns path to _strFileName without last slash
@@ -228,19 +276,17 @@ private:
   ShaderGenerator* vertex_;
   ShaderGenerator* fragment_;
 
-
   QStringList vertexTemplate_;
   QStringList fragmentTemplate_;
 
-
   ShaderGenDesc desc_;
-
 
   /// path + filename to shader templates
   QString vertexShaderFile_;
   QString fragmentShaderFile_;
 
 
+  static QString shaderDir_;
   static QStringList lightingCode_;
 };
 
