@@ -81,7 +81,8 @@ QColor TextNode::color_ = QColor(255, 0, 0);
 TextNode::
 TextNode( BaseNode*    _parent,
           std::string  _name,
-          TextMode     _textMode)
+          TextMode     _textMode,
+          bool         _alwaysOnTop)
   : BaseNode(_parent, _name),
     size_(1),
     textMode_(_textMode),
@@ -90,6 +91,8 @@ TextNode( BaseNode*    _parent,
     blendEnabled_(false),
     texture2dEnabled_(false),
     cullFaceEnabled_(false),
+    depthEnabled_(false),
+    alwaysOnTop_(_alwaysOnTop),
     blendSrc_(0),
     blendDest_(0)
 {
@@ -146,6 +149,26 @@ setRenderingMode(TextMode _textMode) {
 
 //----------------------------------------------------------------------------
 
+void
+TextNode::
+setAlwaysOnTop(bool _alwaysOnTop)
+{
+  alwaysOnTop_ = _alwaysOnTop;
+}
+
+
+//----------------------------------------------------------------------------
+
+bool
+TextNode::
+alwaysOnTop()
+{
+  return alwaysOnTop_;
+}
+
+
+//----------------------------------------------------------------------------
+
 
 TextNode::TextMode
 TextNode::
@@ -198,10 +221,15 @@ createMap() {
 void
 TextNode::
 enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+  if (text_.empty())
+    return;
+
   // store current gl state
   cullFaceEnabled_ = glIsEnabled(GL_CULL_FACE);
   texture2dEnabled_ = glIsEnabled(GL_TEXTURE_2D);
   blendEnabled_ = glIsEnabled(GL_BLEND);
+  depthEnabled_ = glIsEnabled(GL_DEPTH_TEST);
+
   glGetIntegerv(GL_BLEND_SRC, &blendSrc_);
   glGetIntegerv(GL_BLEND_DST, &blendDest_);
 
@@ -210,6 +238,8 @@ enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
   ACG::GLState::enable(GL_TEXTURE_2D);
   ACG::GLState::enable(GL_BLEND);
   ACG::GLState::blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  if (alwaysOnTop_)
+    ACG::GLState::disable(GL_DEPTH_TEST);
 }
 
 
@@ -220,6 +250,9 @@ enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
 void
 TextNode::
 leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+  if (text_.empty())
+      return;
+
   // restore the GLState as it was when entering TextNode
   if (cullFaceEnabled_)
     ACG::GLState::enable(GL_CULL_FACE);
@@ -227,6 +260,10 @@ leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
     ACG::GLState::disable(GL_TEXTURE_2D);
   if (!blendEnabled_)
     ACG::GLState::disable(GL_BLEND);
+  if (depthEnabled_)
+    ACG::GLState::enable(GL_DEPTH_TEST);
+  else
+    ACG::GLState::disable(GL_DEPTH_TEST);
 
   ACG::GLState::blendFunc(blendSrc_, blendDest_);
 }
