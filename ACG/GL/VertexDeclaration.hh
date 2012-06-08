@@ -114,21 +114,21 @@ struct VertexElement
  *
  * You would create the following VertexElements:
  * \code
- * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, 0},
- *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 0},
- *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 0},
- *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0},
- *                               {GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, "inTangent", 0},
- *                               {GL_FLOAT, 2, VERTEX_USAGE_SHADER_INPUT, "inTexcoord2", 0}
+ * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, {0} },
+ *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
+ *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
+ *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} },
+ *                               {GL_FLOAT, 4, VERTEX_USAGE_SHADER_INPUT, "inTangent", {0} },
+ *                               {GL_FLOAT, 2, VERTEX_USAGE_SHADER_INPUT, "inTexcoord2", {0}}
  *                             };
  * \endcode
  *
  * equivalent to
  * \code
- * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, 0},
- *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, 4*4},
- *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, 4*4 + 4*3},
- *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 4*4 + 4*3 + 4*2},
+ * VertexElement elemArray[] = { {GL_FLOAT, 4, VERTEX_USAGE_POSITION, 0, {0} },
+ *                               {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {4*4} },
+ *                               {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {4*4 + 4*3} },
+ *                               {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {4*4 + 4*3 + 4*2} },
  *                               ..
  *                              };
  * \endcode
