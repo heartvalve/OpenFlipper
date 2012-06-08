@@ -28,15 +28,26 @@ IF(NOT QT4_FOUND)
 ENDIF(NOT QT4_FOUND)
 
 IF( QT4_FOUND )
+
+    if ( CMAKE_GENERATOR MATCHES "Visual Studio 9*" )
+	  message("2008 generator")
+	  set( SEARCHPATH "./" )
+	endif()
+	  
+	if ( CMAKE_GENERATOR MATCHES "Visual Studio 10*" )
+	  message("2010 generator")
+	  set( SEARCHPATH "VS2010" )
+	endif()
+
 	# Is Qwt5 installed? Look for header files
 	FIND_PATH( Qwt5_INCLUDE_DIR qwt.h 
                PATHS ${QT_INCLUDE_DIR} 
 				/usr/local/qwt/include 
 				/usr/local/include 
-                                /opt/local/include
+                /opt/local/include
 				/usr/include
 				/usr/include 
-                                c:\\libs\\VS2010\\x32\\Qwt-6.0.2
+                c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2
 				c:\\libs\\Qwt-6.0.1
 				c:\\Program\ Files\\qwt\\qwt-5.2.0 
 				c:\\qwt-5.2.0 
@@ -64,14 +75,14 @@ IF( QT4_FOUND )
                 ELSEIF( WIN32 )
 		    # Find Qwt5 library linked to Qt4 Release Version
                     FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt qwt5-qt4 qwt-qt4 qwt5  PATHS 
-                                                           "c:\\libs\\VS2010\\x32\\Qwt-6.0.2\\lib"
+                               "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
 							   "c:\\libs\\Qwt-6.0.1\\lib"
-				                           "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
+				               "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
 							   "c:\\libs\\qwt-5.2.0\\lib"
 							   )
 		    # Find Qwt5 library linked to Qt4 Debug Version
 		    FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwtd qwt5d  PATHS 
-                                        "c:\\libs\\VS2010\\x32\\Qwt-6.0.2\\lib"
+                            "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
 			                "c:\\libs\\Qwt-6.0.1\\lib"
 			                "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
 							"c:\\libs\\qwt-5.2.0\\lib")
