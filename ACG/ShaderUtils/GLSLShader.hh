@@ -56,9 +56,11 @@
 
 #include "../Config/ACGDefines.hh"
 #include <ACG/Math/VectorT.hh>
+#include <ACG/Math/GLMatrixT.hh>
 
 #include <list>
 #include <string>
+#include <QStringList>
 
 //==============================================================================
 
@@ -79,6 +81,7 @@ namespace GLSL {
       Shader(GLenum shaderType);
       virtual ~Shader();
       void setSource(StringList source);
+      void setSource(const QStringList& source);
 
       // FIXME implement StringList getSource();
       bool compile();
@@ -156,6 +159,9 @@ namespace GLSL {
       void setUniform(const char *name, const ACG::Vec2f &value);
       void setUniform(const char *name, const ACG::Vec3f &value);
       void setUniform(const char *name, const ACG::Vec4f &value);
+
+      void setUniform(const char *name, const ACG::GLMatrixf &value, bool transposed = false);
+      void setUniformMat3(const char *name, const ACG::GLMatrixf &value, bool transposed = false);
 
       void setUniform(const char *name, GLint *value, int count);
       void setUniform(const char *name, GLfloat *value, int count);
