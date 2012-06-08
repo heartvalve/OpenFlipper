@@ -76,6 +76,9 @@
 
 
 namespace ACG {
+
+class IRenderer;
+
 namespace SceneGraph {
 
 
@@ -168,8 +171,27 @@ public:
   */
   virtual void enter(GLState& /*_state */, const DrawModes::DrawMode& /*_drawMode*/ ) {}
 
-  /** Draw this node using the draw modes _drawMode */
+  /** \brief Draw this node using the draw modes _drawMode
+   *
+   * This function is called when the scenegraph is traversed by the classical draw routines.
+   *
+   * In this call the node should draw it's content via OpenGL.
+   *
+   * \note Keep in mind, that you should use
+   *       the currently active state and don't change it (at least reset it the original values you got).
+   *       Otherwise nodes that are drawn after this node might get an inconsistent state.
+   */
   virtual void draw(GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
+
+  /** \brief Deferred draw call with shader based renderer.
+   *
+   * The renderer calls this function to collect the geometry that should be rendered from the nodes.
+   *
+   * Add any renderable geometry to the renderer via _renderer->addRenderObject()
+   *
+   * \note You should not draw anything yourself in this function.
+   */
+  virtual void draw2(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 
