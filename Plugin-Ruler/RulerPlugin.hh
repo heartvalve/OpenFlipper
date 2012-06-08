@@ -92,9 +92,14 @@ public:
 
 private:
 
-  QAction *buttonAction_;
+  void enableDragMode(const int _point);
+
+  void disableDragMode();
 
   void reset();
+
+  QAction *buttonAction_;
+
 
   const std::string pickModeName_;
   const std::string lineNodeName_;
@@ -117,7 +122,8 @@ private:
   //saves the index of the dragged point, if no point was dragged, it is -1
   int lineDrag_;
 
-  ACG::Vec3d bbmax_;
+  //checks if a double click was provided for resetting
+  bool dblClickCheck_;
 
 private slots:
 
