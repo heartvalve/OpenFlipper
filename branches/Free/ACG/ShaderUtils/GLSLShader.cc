@@ -40,17 +40,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*******************************************************************************
- * GLSLShader.hh
- *
- * Utility classes for GLSL shaders.
- *
- * Lehrstuhl I8 RWTH-Aachen, http://www-i8.informatik.rwth-aachen.de
- *
- ******************************************************************************/
-
-//==============================================================================
-
 #include <QApplication>
 #include <QDir>
 #include <QString>
@@ -232,36 +221,36 @@ namespace GLSL {
 
   /** \brief Attaches a shader object to the program object.
   */
-  void Program::attach(PtrConstShader shader) {
+  void Program::attach(PtrConstShader _shader) {
     if ( this->m_programId == 0 ) {
       std::cerr << "attach invalid program" << std::endl;
       return;
     }
 
-    if ( shader->m_shaderId == 0 ) {
+    if ( _shader->m_shaderId == 0 ) {
       std::cerr << "attach invalid shader" << std::endl;
       return;
     }
 
-    glAttachShader(this->m_programId, shader->m_shaderId);
-    m_linkedShaders.push_back(shader);
+    glAttachShader(this->m_programId, _shader->m_shaderId);
+    m_linkedShaders.push_back(_shader);
   }
 
   /** \brief Detaches a shader object from the program object.
   */
-  void Program::detach(PtrConstShader shader) {
+  void Program::detach(PtrConstShader _shader) {
     if ( this->m_programId == 0 ) {
       std::cerr << "detach invalid program" << std::endl;
       return;
     }
 
-    if ( shader->m_shaderId == 0 ) {
+    if ( _shader->m_shaderId == 0 ) {
       std::cerr << "detach invalid shader" << std::endl;
       return;
     }
 
-    glDetachShader(this->m_programId, shader->m_shaderId);
-    m_linkedShaders.remove(shader);
+    glDetachShader(this->m_programId, _shader->m_shaderId);
+    m_linkedShaders.remove(_shader);
   }
 
   /** \brief Links the shader objects to the program.
@@ -293,139 +282,230 @@ namespace GLSL {
     return programId == this->m_programId;
   }
 
-  /** \brief Sets a uniform variable for the program.
-  */
-  void Program::setUniform(const char *name, GLint value) {
+  /** \brief Set int uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, GLint _value) {
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform1i(location, value);
-    checkGLError2(name);
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform1i(location, _value);
+    checkGLError2(_name);
   }
 
-  /** \brief Sets a uniform variable for the program.
-  */
-  void Program::setUniform(const char *name, GLfloat value) {
+  /** \brief Set float uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, GLfloat _value) {
     checkGLError2("prev opengl error");
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform1f(location, value);
-    checkGLError2(name);
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform1f(location, _value);
+    checkGLError2(_name);
   }
 
-  /** \brief Sets a uniform variable for the program.
-  */
-  void Program::setUniform(const char *name, const ACG::Vec2f &value) {
+  /** \brief Set Vec2f uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec2f &_value) {
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform2fv(location, 1, value.data());
-    checkGLError();
-  }
-
-  /** \brief Sets a uniform variable for the program.
-  */
-  void Program::setUniform(const char *name, const ACG::Vec3f &value) {
-    checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform3fv(location, 1, value.data());
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform2fv(location, 1, _value.data());
     checkGLError();
   }
 
-  /** \brief Sets a uniform variable for the program.
-  */
-  void Program::setUniform(const char *name, const ACG::Vec4f &value) {
+  /** \brief Set Vec3f uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec3f &_value) {
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform4fv(location, 1, value.data());
-    checkGLError();
-  }
-
-  void Program::setUniform(const char *name, GLint *values, int count) {
-    checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform1iv(location, count, values);
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform3fv(location, 1, _value.data());
     checkGLError();
   }
 
-  void Program::setUniform(const char *name, GLfloat *values, int count) {
+  /** \brief Set Vec4f uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value New value of the uniform
+   */
+  void Program::setUniform(const char *_name, const ACG::Vec4f &_value) {
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniform1fv(location, count, values);
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform4fv(location, 1, _value.data());
     checkGLError();
   }
 
-  void Program::setUniform(const char *name, int index, bool value) {
+  /** \brief Set int array uniform to specified values
+   *
+   *  @param _name Name of the uniform to be set
+   *  @param _values Pointer to an array with the new values
+   *  @param _count Number of values in the given array
+   */
+  void Program::setUniform(const char *_name, GLint *_values, int _count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform1iv(location, _count, _values);
+    checkGLError();
+  }
+
+  /** \brief Set float array uniform to specified values
+   *
+   *  @param _name Name of the uniform to be set
+   *  @param _values Pointer to an array with the new values
+   *  @param _count Number of values in the given array
+   */
+  void Program::setUniform(const char *_name, GLfloat *_values, int _count) {
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniform1fv(location, _count, _values);
+    checkGLError();
+  }
+
+  /** \brief Set an entry of a bool uniform array
+   *
+   *  @param _name Name of the uniform to be set
+   *  @param _index Entry in the array
+   *  @param _value New value of the entry
+   */
+  void Program::setUniform(const char *_name, int _index, bool _value) {
     char varName[1024];
-    snprintf(varName, 1024, "%s[%d]", name, index);
-    setUniform(varName, (GLint) value);
+    snprintf(varName, 1024, "%s[%d]", _name, _index);
+    setUniform(varName, (GLint) _value);
   }
 
-  void Program::setUniform(const char *name, int index, int value) {
+  /** \brief Set an entry of a int uniform array
+   *
+   *  @param _name Name of the uniform to be set
+   *  @param _index Entry in the array
+   *  @param _value New value of the entry
+   */
+  void Program::setUniform(const char *_name, int _index, int _value) {
     char varName[1024];
-    snprintf(varName, 1024, "%s[%d]", name, index);
-    setUniform(varName, (GLint) value);
+    snprintf(varName, 1024, "%s[%d]", _name, _index);
+    setUniform(varName, (GLint) _value);
   }
 
-  void Program::setUniform(const char *name, int index, float value) {
+  /** \brief Set an entry of a float uniform array
+   *
+   *  @param _name Name of the uniform to be set
+   *  @param _index Entry in the array
+   *  @param _value New value of the entry
+   */
+  void Program::setUniform(const char *_name, int _index, float _value) {
     char varName[1024];
-    snprintf(varName, 1024, "%s[%d]", name, index);
-    setUniform(varName, value);
+    snprintf(varName, 1024, "%s[%d]", _name, _index);
+    setUniform(varName, _value);
   }
 
-  void Program::setUniform( const char *name, const ACG::GLMatrixf &value, bool transposed){
+
+  /** \brief Set 4x4fMatrix uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value Matrix to be set
+   * @param _transposed Is the matrix transposed?
+   */
+  void Program::setUniform( const char *_name, const ACG::GLMatrixf &_value, bool _transposed){
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
-    glUniformMatrix4fv(location, 1, transposed, value.data());
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniformMatrix4fv(location, 1, _transposed, _value.data());
     checkGLError();
   }
 
-  void Program::setUniformMat3( const char *name, const ACG::GLMatrixf &value, bool transposed){
+  /** \brief Set 3x3fMatrix uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value Matrix to be set
+   * @param _transposed Is the matrix transposed?
+   */
+  void Program::setUniformMat3( const char *_name, const ACG::GLMatrixf &_value, bool _transposed){
     checkGLError();
-    GLint location = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
 
     float tmp[9];
     for (int i = 0; i < 3; ++i)
       for (int k = 0; k < 3; ++k)
-        tmp[i*3+k] = value.data()[i*4+k];
+        tmp[i*3+k] = _value.data()[i*4+k];
 
-    glUniformMatrix3fv(location, 1, transposed, tmp);
+    glUniformMatrix3fv(location, 1, _transposed, tmp);
     checkGLError();
   }
 
-  void Program::bindAttributeLocation(unsigned int index, const char *name) {
-    glBindAttribLocation(this->m_programId, index, name);
+  /** \brief Bind attribute to name
+   *
+   * @param _index Index of the attribute to be bound
+   * @param _name  Name of the attribute
+   */
+  void Program::bindAttributeLocation(unsigned int _index, const char *_name) {
+    glBindAttribLocation(this->m_programId, _index, _name);
     checkGLError2(name);
   }
 
-  int Program::getAttributeLocation(const char *name) {
-    int attributeLocation = glGetAttribLocation(this->m_programId, name);
-    checkGLError2(name);
+  /** \brief Get location of the specified attribute
+   *
+   * @param _name Name of the attribute
+   * @return Attribute location
+   */
+  int Program::getAttributeLocation(const char *_name) {
+    int attributeLocation = glGetAttribLocation(this->m_programId, _name);
+    checkGLError2(_name);
     return attributeLocation;
   }
 
-  int Program::getUniformLocation(const char *name) {
-    int attributeLocation = glGetUniformLocation(this->m_programId, name);
-    checkGLError2(name);
+  /** \brief Get location of the specified uniform
+   *
+   * @param _name Name of the uniform
+   * @return Attribute uniform
+   */
+  int Program::getUniformLocation(const char *_name) {
+    int attributeLocation = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
     return attributeLocation;
   }
 
-  void Program::setGeometryInputType(GLint type) {
-    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_INPUT_TYPE_EXT, type);
+  /** \brief Set Type of Geometry
+   *
+   * valid input types: GL_POINTS, GL_LINES, GL_LINES_ADJACENCY_EXT, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY_EXT
+   *
+   * @param _type Geometry type
+   */
+  void Program::setGeometryInputType(GLint _type) {
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_INPUT_TYPE_EXT, _type);
   }
 
-  void Program::setGeometryOutputType(GLint type) {
-    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_OUTPUT_TYPE_EXT, type);
+  /** \brief Set output type of geometry
+   *
+   * valid output types: GL_POINTS, GL_LINE_STRIP, GL_TRIANGLE_STRIP
+   *
+   * @param _type Output geometry type
+   */
+  void Program::setGeometryOutputType(GLint _type) {
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_OUTPUT_TYPE_EXT, _type);
   }
 
-  void Program::setGeometryVertexCount(GLint numVerticesOut){
-    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_VERTICES_OUT_EXT, numVerticesOut);
+  /** \brief Sets the maximum vertex output of the geometry shader
+   *
+   *  Query GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT to get the gpu limitation
+   *
+   * @param _numVerticesOut Maximal number of vertices
+   */
+  void Program::setGeometryVertexCount(GLint _numVerticesOut){
+    glProgramParameteriEXT(this->m_programId, GL_GEOMETRY_VERTICES_OUT_EXT, _numVerticesOut);
   }
 
 
@@ -506,13 +586,5 @@ namespace GLSL {
 
 }
 
-
-//==============================================================================
-
-// Local Variables:
-// mode: C++
-// c-basic-offset: 2
-// indent-tabs-mode: nil
-// End:
 
 //==============================================================================
