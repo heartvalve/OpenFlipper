@@ -1,0 +1,27 @@
+/** 
+\mainpage Documentation for Ruler Plugin
+
+The Ruler Plugin helps to measure the distance between two points.
+
+You can find the Ruler Plugin in the toolbar.
+
+Enable it by clicking the icon shown below.
+
+\image html ruler.png "Click on this icon in the toolbar to enable the ruler."
+
+
+Once, the ruler tool is enabled you can use following actions:
+\li <b>Click</b> on a point on your mesh places the ruler on the mesh, click on another point to get the <b>distance</b>.
+\li <b>Doubleclick</b> for <b>resetting</b> the ruler.
+\li <b>Modify</b> the ruler simply by <b>clicking</b> on another point in your mesh. In this case, the nearest end of the ruler will go to this position.
+\li <b>Modify</b> the ruler can also be done, by clicking on an ending point and then simply <b>drag</b> this ending point to a position.
+
+\note If you click outside of your mesh, the ruler gets a reset. 
+
+*/
+
+
+
+
+
+
