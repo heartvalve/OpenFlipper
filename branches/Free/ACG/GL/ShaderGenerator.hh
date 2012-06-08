@@ -172,7 +172,7 @@ public:
 
   /** \brief Save generated shader code to text file
    *
-   * @param _filename Where to save
+   * @param _fileName Where to save
   */
   void saveToFile(const char* _fileName);
 
@@ -190,7 +190,7 @@ private:
   QStringList code_;
 
 
-  /// glsl code imports (with #include)
+  /// glsl code imports (with \#include )
   QStringList imports_;
 
   QString version_;
