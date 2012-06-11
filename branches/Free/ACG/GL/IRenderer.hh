@@ -256,6 +256,36 @@ protected:
 
 };
 
+/** \page NonFixedPipelinePage The non-fixed OpenGL rendering pipeline
+On this page we will explain how to use the non-fixed (modern) OpenGL rendering pipeline in OpenFlipper.
+First let us introduce the necessary classes.
+
+\section baseNode The BaseNode in the Scenegraph
+
+\section iRenderer The IRenderer interface
+The IRenderer interface can be derived from and used to attach a RenderObject via the addRenderObject function from within each node within the Scenegraph that is
+to be rendered.
+
+\subsection renderObject Defining RenderObjects
+The RenderObject class can be used to define the vertex buffer objects and set further information for the scene nodes.
+
+\section vertexDeclaration Defining the layout of a vertex element
+The VertexDeclaration class is used to specify the layout of a vertex element (VertexElement)
+
+\section shaderGenerator Generating GLSL shaders
+
+The ShaderGenerator class can be used to generate default GLSL shader code.
+\note The main function is not generate and must therefore be provided via the buildShaderCode function
+
+Via shader specific information stored in the ShaderGenDesc struct in the RenderObject attached to a scene node, we can specify the shader input and output
+with the functions ShaderGenerator::initVertexShaderIO and ShaderGenerator::initFragmentShaderIO.
+
+\subsection shaderCache The Shader Cache
+The ShaderCache singleton.
+
+\subsection glslShader The GLSL Shader
+The Shader class is a helper class for building and using GLSL programs
+*/
 
 //=============================================================================
 } // namespace ACG
