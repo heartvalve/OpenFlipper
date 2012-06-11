@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14609 )</b>
+- <b>OpenFlipper 1.3 ( ? , 14741 )</b>
      - <b>ACG</b>
          - Geometry 
              - Improving BSP tree implementation
@@ -10,8 +10,17 @@
              - Matrix4x4: Added determinant method
              - Fixed GLMatrixT constructor 
              - Added Vec3b
+         - LightNode
+             - Compiler fix: Work around c++0x problem with initialization of a vector
          - LineNode
              - Bug fix: LineSegment mode when no colors are specified
+         - Material2Node
+             - Removed (unused anyway and users might get confused)
+         - ShaderUtils
+             - Handle matrices as uniforms
+         - TextNode
+             - Get rid of ftgl and freetype requirements
+             - Render textured quad to be able to support higher OpenGL profiles
          - TranslationManipulatorNode
              - fix: manipulator color circles changed
          - QtWidgets
@@ -32,6 +41,8 @@
          - UI
              - Paste View fix: keep toolbarsize when window size is not changed
              - Paste View: Added extra button to paste view and the window size
+             - Default changed when removing objects (Defaults to yes now)
+             - Improvement: When switching to orthogonal mode, the coordinate system now switches to ortho projection, too
          - BaseViewer
              - Get rid of the twenty region pick functions in the qtbaseviewer (Merged to one)
          - PluginFunctions
@@ -54,6 +65,8 @@
              - Fix: Endless loop (moved an end-of-file check in readFileOptions so that eof is detected in time)
              - Fix: Correctly set path for the loaded objects
              - Fix: Added some additional checks so that empty lines and comments are skipped.
+         - FilePLY
+             - Fix: Ignore unknown properties instead of crashing
          - FileSTL
              - View all after loading file
          - File VTK
@@ -81,6 +94,7 @@
         - Win
              - Fixed silent install of Visual Studio 2010 redistributable
              - Make clear that a missing redistributable is only a warning.
+             - Fixed a problem when building VS2010 binaries containing qwt on a machine where qwt is also available but build with VS2008
         - Linux
              - Some cmake-Finder upgrades to support Fedora and to be more clean
         - General
@@ -93,6 +107,7 @@
         - Included bib files for OpenVolumeMesh
      - <b>Testing System</b>
         - Added optional 4th argument to run_single_object_file_mesh_test, which gives a directory with meshes for testing. If given, TEST_FILE argument is ignored.
+        - Increased the testing timeouts a bit (Due to heavy load on the build servers tests got marked as failed but the timeouts where caused by heavy load)
 
 
 - <b>OpenFlipper 1.2 ( 2012.03.23 , 14285 )</b>
