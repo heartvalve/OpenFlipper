@@ -229,7 +229,7 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
                     _header.hasFaceColorAlpha = true;
                     _header.vProps.push_back(PPair("rgb",dStringPType));
                 }
-            } else if(dString == "u" || dString == "v") {
+            } else if(dString == "u" || dString == "v" || dString == "texture_u" || dString == "texture_v") {
                 if(lastElement == "vertex") {
                     _header.hasVertexTexCoords = true;
                     _header.vProps.push_back(PPair("uv",dStringPType));
@@ -257,6 +257,12 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
                 } else if(lastElement == "face") {
                     _header.hasFaceColors = true;
                     _header.fProps.push_back(PPair("s_rgb",dStringPType));
+                }
+            } else {
+                if(lastElement == "vertex") {
+                    _header.vProps.push_back(PPair("unknown",dStringPType));
+                } else if(lastElement == "face") {
+                    _header.fProps.push_back(PPair("unknown",dStringPType));
                 }
             }
         } else {
