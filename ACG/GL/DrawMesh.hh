@@ -168,7 +168,7 @@ public:
 
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
-  void bindBuffers2(RenderObject* _obj);
+  void bindBuffersToRenderObject(RenderObject* _obj);
 
   /** \brief disables vertex, normal, texcoord and color pointers in OpenGL
   */
@@ -187,7 +187,7 @@ public:
   *   @param _textureMap maps from internally texture-id to OpenGL texture id
   *   may be null to disable textured rendering
   */
-  void draw2(RenderObject* _objOut, std::map< int, GLuint>* _textureMap);
+  void getTriRenderObjects(RenderObject* _objOut, std::map< int, GLuint>* _textureMap);
 
   /** \brief render the mesh in wireframe mode
   */
@@ -195,7 +195,7 @@ public:
 
   /** \brief render the mesh in wireframe mode, deferred draw call
   */
-  void drawLines2(RenderObject* _objOut);
+  void getLineRenderObjects(RenderObject* _objOut);
 
 
   /** \brief render vertices only
@@ -204,7 +204,7 @@ public:
 
   /** \brief render vertices only, deferred draw call
   */
-  void drawVertices2(RenderObject* _objOut);
+  void getPointRenderObjects(RenderObject* _objOut);
 
 
   unsigned int getNumTris() const {return numTris_;}

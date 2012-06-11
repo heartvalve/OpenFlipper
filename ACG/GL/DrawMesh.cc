@@ -1100,7 +1100,7 @@ void DrawMeshT<Mesh>::bindBuffers()
 }
 
 template <class Mesh>
-void DrawMeshT<Mesh>::bindBuffers2(RenderObject* _obj)
+void DrawMeshT<Mesh>::bindBuffersToRenderObject(RenderObject* _obj)
 {
   // rebuild if necessary
   if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
@@ -1187,10 +1187,10 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::draw2( RenderObject* _objOut, std::map< int, GLuint>* _textureMap )
+void ACG::DrawMeshT<Mesh>::getTriRenderObjects( RenderObject* _objOut, std::map< int, GLuint>* _textureMap )
 {
   // binding buffers to opengl is obsolute here, but it keeps the vbo up to date for now
-  bindBuffers2(_objOut);
+  bindBuffersToRenderObject(_objOut);
 
   _objOut->glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
 
@@ -1239,9 +1239,9 @@ void DrawMeshT<Mesh>::drawLines()
 
 
 template <class Mesh>
-void DrawMeshT<Mesh>::drawLines2(RenderObject* _objOut)
+void DrawMeshT<Mesh>::getLineRenderObjects(RenderObject* _objOut)
 {
-  bindBuffers2(_objOut);
+  bindBuffersToRenderObject(_objOut);
 
   if (mesh_.n_edges())
   {
@@ -1263,9 +1263,9 @@ void DrawMeshT<Mesh>::drawVertices()
 }
 
 template <class Mesh>
-void DrawMeshT<Mesh>::drawVertices2(RenderObject* _objOut)
+void DrawMeshT<Mesh>::getPointRenderObjects(RenderObject* _objOut)
 {
-  bindBuffers2(_objOut);
+  bindBuffersToRenderObject(_objOut);
 
   if (numVerts_)
     _objOut->glDrawArrays(GL_POINTS, 0, numVerts_);

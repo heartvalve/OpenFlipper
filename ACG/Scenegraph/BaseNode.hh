@@ -191,7 +191,7 @@ public:
    *
    * \note You should not draw anything yourself in this function.
    */
-  virtual void draw2(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
+  virtual void getRenderObjects(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 
