@@ -42,6 +42,9 @@
 *                                                                            *
 \*===========================================================================*/
 
+
+//================================================================
+//
 //  CLASS FilePTSPlugin
 //
 //    This class is the base class for loading and saving (reading/writing) SplatCloud objects from/to disc.
@@ -74,103 +77,104 @@
 
 class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface
 {
-	Q_OBJECT
-	Q_INTERFACES( FileInterface     )
-	Q_INTERFACES( LoadSaveInterface )
-	Q_INTERFACES( LoggingInterface  )
-	Q_INTERFACES( BaseInterface     )
-	Q_INTERFACES( ScriptInterface   )
+  Q_OBJECT
+  Q_INTERFACES( FileInterface     )
+  Q_INTERFACES( LoadSaveInterface )
+  Q_INTERFACES( LoggingInterface  )
+  Q_INTERFACES( BaseInterface     )
+  Q_INTERFACES( ScriptInterface   )
 
 signals:
 
-	// -- File Interface --
-	void openedFile( int _id );
+  // -- File Interface --
+  void openedFile( int _id );
 
-	// -- LoadSave Interface --
-	void addEmptyObject( DataType _type, int &_id );
-	void updatedObject( int _identifier, const UpdateType& _type);
+  // -- LoadSave Interface --
+  void addEmptyObject( DataType _type, int &_id );
+  void deleteObject( int _id );
+  void updatedObject( int _id, const UpdateType &_type );
 
-	//-- Logging Interface --
-	void log( Logtype _type, QString _message );
-	void log( QString _message );
+  //-- Logging Interface --
+  void log( Logtype _type, QString _message );
+  void log( QString _message );
 
 private slots:
 
-	// -- Base Interface --
-	void noguiSupported() { }
+  // -- Base Interface --
+  void noguiSupported() { }
 
 public:
 
-	// standard constructor/destructor
-	FilePTSPlugin();
-	~FilePTSPlugin() { }
+  // standard constructor/destructor
+  FilePTSPlugin();
+  ~FilePTSPlugin() { }
 
-	//-- Base Interface --
-	QString name() { return QString( "FilePTS" ); }
-	QString description( ) { return QString( tr( "Load/Save SplatCloud format files" ) ); }
+  //-- Base Interface --
+  QString name() { return QString( "FilePTS" ); }
+  QString description( ) { return QString( tr("Load/Save SplatCloud format files") ); }
 
-	// -- File Interface --
-	DataType supportedType() { return DATA_SPLATCLOUD; }
+  // -- File Interface --
+  DataType supportedType() { return DATA_SPLATCLOUD; }
 
-	// -- File Interface --
-	QString getSaveFilters() { return QString( tr( "SplatCloud format files ( *.pts *.bin )" ) ); }
-	QString getLoadFilters() { return QString( tr( "SplatCloud format files ( *.pts *.bin )" ) ); }
-	QWidget *saveOptionsWidget( QString /*_currentFilter*/ );
-	QWidget *loadOptionsWidget( QString /*_currentFilter*/ );
+  // -- File Interface --
+  QString getSaveFilters() { return QString( tr("SplatCloud format files ( *.pts *.bin )") ); }
+  QString getLoadFilters() { return QString( tr("SplatCloud format files ( *.pts *.bin )") ); }
+  QWidget *saveOptionsWidget( QString /*_currentFilter*/ );
+  QWidget *loadOptionsWidget( QString /*_currentFilter*/ );
 
 public slots:
 
-	// -- Base Interface --
-	QString version() { return QString( "1.0" ); }
+  // -- Base Interface --
+  QString version() { return QString( "1.0" ); }
 
-	// -- File Interface --
-	int loadObject( QString _filename );
-	bool saveObject( int _id, QString _filename );
+  // -- File Interface --
+  int loadObject( QString _filename );
+  bool saveObject( int _id, QString _filename );
 
 private:
 
-	// read binary/text file from disc to scenegraph node
-	bool readBinaryFile( std::ifstream &_instream, SplatCloud *_splatCloud );
-	bool readTextFile  ( std::ifstream &_instream, SplatCloud *_splatCloud );
+  // read binary/text file from disc to scenegraph node
+  bool readBinaryFile( const char *_filename, SplatCloud &_splatCloud ) /*const*/;
+  bool readTextFile  ( const char *_filename, SplatCloud &_splatCloud ) /*const*/;
 
-	// write binary/text file from scenegraph node to disc
-	bool writeBinaryFile( std::ofstream &_outstream, const SplatCloudNode *_splatCloudNode );
-	bool writeTextFile  ( std::ofstream &_outstream, const SplatCloudNode *_splatCloudNode );
+  // write binary/text file from scenegraph node to disc
+  bool writeBinaryFile( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/;
+  bool writeTextFile  ( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/;
 
-	// widgets
-	QWidget* loadOptions_;
-	QWidget* saveOptions_;
+  // widgets
+  QWidget *loadOptions_;
+  QWidget *saveOptions_;
 
-	// options in the loading menu
-	QCheckBox *loadBinaryFile_;
-	QCheckBox *loadNormals_;
-	QCheckBox *loadPointsizes_;
-	QCheckBox *loadColors_;
-	QComboBox *loadColorRange_;
-	QCheckBox *loadIndices_;
-	QCheckBox *loadNormalizeSize_;
+  // options in the loading menu
+  QCheckBox *loadBinaryFile_;
+  QCheckBox *loadNormals_;
+  QCheckBox *loadPointsizes_;
+  QCheckBox *loadColors_;
+  QComboBox *loadColorRange_;
+  QCheckBox *loadIndices_;
+  QCheckBox *loadNormalizeSize_;
 
-	// options in the saving menu
-	QCheckBox *saveBinaryFile_;
-	QCheckBox *saveNormals_;
-	QCheckBox *savePointsizes_;
-	QCheckBox *saveColors_;
-	QComboBox *saveColorRange_;
-	QCheckBox *saveIndices_;
+  // options in the saving menu
+  QCheckBox *saveBinaryFile_;
+  QCheckBox *saveNormals_;
+  QCheckBox *savePointsizes_;
+  QCheckBox *saveColors_;
+  QComboBox *saveColorRange_;
+  QCheckBox *saveIndices_;
 
-	// buttons
-	QPushButton *loadMakeDefaultButton_;
-	QPushButton *saveMakeDefaultButton_;
+  // buttons
+  QPushButton *loadMakeDefaultButton_;
+  QPushButton *saveMakeDefaultButton_;
 
 private slots:
 
-	// slots called when the Load/Save colors checkbox or binaryfile checkbox was clicked
-	void slotUpdateLoadColorRange();
-	void slotUpdateSaveColorRange();
+  // slots called when the Load/Save colors checkbox or binaryfile checkbox was clicked
+  void slotUpdateLoadColorRange();
+  void slotUpdateSaveColorRange();
 
-	// slots called when user wants to save the given Load/Save Options as default
-	void slotLoadMakeDefaultButtonClicked();
-	void slotSaveMakeDefaultButtonClicked();
+  // slots called when user wants to save the given Load/Save Options as default
+  void slotLoadMakeDefaultButtonClicked();
+  void slotSaveMakeDefaultButtonClicked();
 };
 
 
