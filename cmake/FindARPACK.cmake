@@ -22,7 +22,7 @@ ELSE( WIN32 )
                 PATHS /usr/lib /usr/lib64
               )
   find_library( ARPACKpp_LIBRARY arpack++
-                PATHS /usr/lib /usr/lib64
+                PATHS /usr/lib /usr/lib64 ${ARPACK_INCLUDE_DIR}/../src/.libs
               )
 
   list( APPEND ARPACK_LIBRARIES  ${ARPACK_LIBRARY} )
