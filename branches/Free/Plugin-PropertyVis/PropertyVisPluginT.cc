@@ -125,7 +125,7 @@ void PropertyVisPlugin::visualizeVector( MeshT*   _mesh, const PropertyNameListM
     }
 
   //EDGE
-  } else {
+  } else if ( currentProp.isEdgeProp()){
     //TODO check if this also works if the property is Vec3f
     OpenMesh::EPropHandleT< typename MeshT::Point > prop;
 
@@ -150,7 +150,61 @@ void PropertyVisPlugin::visualizeVector( MeshT*   _mesh, const PropertyNameListM
       lineNode->add_line( v1, (v1+v) );
       lineNode->add_color(color);
     }
+  } else if ( currentProp.isHalfedgeProp() )
+  {
+    OpenMesh::HPropHandleT< typename MeshT::Point > prop;
+
+    if ( !_mesh->get_property_handle(prop, currentProp.propName()) )
+      return;
+    for (typename MeshT::HalfedgeIter he_it = _mesh->halfedges_begin() ; he_it != _mesh->halfedges_end() ; ++he_it){
+
+      typename MeshT::VertexHandle vh0 = _mesh->from_vertex_handle( he_it.handle() );
+      typename MeshT::VertexHandle vh1 = _mesh->to_vertex_handle( he_it.handle() );
+
+      typename MeshT::Point hePBase = halfedge_point(he_it.handle(),_mesh);
+      typename MeshT::Point hePPrev = halfedge_point(_mesh->prev_halfedge_handle(he_it.handle()),_mesh);
+
+      typename MeshT::Point v1 = hePBase - (hePBase - hePPrev)*0.5;
+      typename MeshT::Point v  = _mesh->property(prop, he_it);
+      if (tool_->normalize->isChecked() && v.sqrnorm() > 1e-12)
+        v.normalize();
+
+      if(tool_->scale->isChecked())
+        v *= tool_->scaleBox->value();
+
+      lineNode->add_line( v1, (v1+v) );
+      lineNode->add_color(color);
+    }
   }
+}
+
+//------------------------------------------------------------------------------
+//computed in DrawMesh.cc
+template <class MeshT>
+typename MeshT::Point PropertyVisPlugin::halfedge_point(const typename MeshT::HalfedgeHandle _heh, const MeshT *_mesh) {
+
+  typename MeshT::Point p  = _mesh->point(_mesh->to_vertex_handle  (_heh));
+  typename MeshT::Point pp = _mesh->point(_mesh->from_vertex_handle(_heh));
+  typename MeshT::Point pn = _mesh->point(_mesh->to_vertex_handle(_mesh->next_halfedge_handle(_heh)));
+
+  //  typename Mesh::Point n  = (p-pp)%(pn-p);
+  typename MeshT::Point fn;
+  if( !_mesh->is_boundary(_heh))
+    fn = _mesh->normal(_mesh->face_handle(_heh));
+  else
+    fn = _mesh->normal(_mesh->face_handle(_mesh->opposite_halfedge_handle(_heh)));
+
+  typename MeshT::Point upd = ((fn%(pn-p)).normalize() + (fn%(p-pp)).normalize()).normalize();
+
+  upd *= ((pn-p).norm()+(p-pp).norm())*0.08;
+
+  return (p+upd);
+
+  // double alpha = 0.1;
+  // // correct weighting for concave triangles (or at concave boundaries)
+  // if( (fn | n)  < 0.0) alpha *=-1.0;
+
+  // return (p*(1.0-2.0*alpha) + pp*alpha + pn*alpha);
 }
 
 //------------------------------------------------------------------------------

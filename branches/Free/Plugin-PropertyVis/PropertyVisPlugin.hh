@@ -248,6 +248,10 @@ private:
   template< class MeshT >
   void visualizeVector( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
 
+  //compute the point for visualization
+  template< class MeshT >
+  typename MeshT::Point halfedge_point(const typename MeshT::HalfedgeHandle _heh, const MeshT *_mesh);
+
   template< class MeshT >
   void visualizeDouble( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
   
