@@ -310,11 +310,17 @@ void OBJImporter::setNormal(int _index, int _normalID){
     //handle triangle meshes
     if ( !currentTriMesh() ) return;
     
-    if ( _normalID < (int) normals_.size() ){
-    
-      if ( vertexMapTri_[currentGroup_].find( _index ) != vertexMapTri_[currentGroup_].end() ){
-        currentTriMesh()->set_normal( vertexMapTri_[currentGroup_][_index], (TriMesh::Point) normals_[ _normalID ] );
+    if ( _normalID < (int) normals_.size() )
+    {
+      if ( vertexMapTri_[currentGroup_].find( _index ) != vertexMapTri_[currentGroup_].end() )
+      {
+        TriMesh::VertexHandle vh = vertexMapTri_[currentGroup_][_index];
+        TriMesh::Normal normal =  static_cast<TriMesh::Normal>( normals_[ _normalID ] );
+        TriMesh* currentMesh = currentTriMesh();
+        currentMesh->set_normal( vh , normal );
         objectOptions_[ currentGroup_ ] |= NORMALS;
+
+        storedTriHENormals_[vh] = normal;
       }
 
     }else{
@@ -326,11 +332,17 @@ void OBJImporter::setNormal(int _index, int _normalID){
     //handle poly meshes
     if ( !currentPolyMesh() ) return;
     
-    if ( _normalID < (int) normals_.size() ){
-    
-      if ( vertexMapPoly_[currentGroup_].find( _index ) != vertexMapPoly_[currentGroup_].end() ){
-        currentPolyMesh()->set_normal( vertexMapPoly_[currentGroup_][_index], (PolyMesh::Point) normals_[ _normalID ] );
+    if ( _normalID < (int) normals_.size() )
+    {
+      if ( vertexMapPoly_[currentGroup_].find( _index ) != vertexMapPoly_[currentGroup_].end() )
+      {
+        PolyMesh::VertexHandle vh = vertexMapPoly_[currentGroup_][_index];
+        PolyMesh::Point normal =  static_cast<PolyMesh::Point>( normals_[ _normalID ] );
+        PolyMesh* currentMesh = currentPolyMesh();
+        currentMesh->set_normal( vh , normal );
         objectOptions_[ currentGroup_ ] |= NORMALS;
+
+        storedPolyHENormals_[vh] = normal;
       }
 
     }else{
@@ -342,79 +354,120 @@ void OBJImporter::setNormal(int _index, int _normalID){
 
 //-----------------------------------------------------------------------------
 
-/// add a face with indices _indices refering to vertices
-void OBJImporter::addFace(const VHandles& _indices){
-  
+bool OBJImporter::addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH, std::vector< TriMesh::VertexHandle > &_outTriVertices, std::vector< PolyMesh::VertexHandle > &_outPolyVertices)
+{
   if ( isTriangleMesh( currentObject() ) ){
-  
+
     //handle triangle meshes
-    if ( !currentTriMesh() ) return;
-    
+    if ( !currentTriMesh() ) return false;
+
     addedFacesTri_[currentGroup_].clear();
-    
-    std::vector< TriMesh::VertexHandle > vertices;
-    
+
     for (unsigned int i=0; i < _indices.size(); i++){
 
       if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
-    
-        vertices.push_back( vertexMapTri_[currentGroup_][ _indices[i] ] );
+
+        _outTriVertices.push_back( vertexMapTri_[currentGroup_][ _indices[i] ] );
 
       }else{
         std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
-        return;
+        return false;
       }
     }
-    
+
     size_t n_faces = currentTriMesh()->n_faces();
-    
-    OpenMesh::FaceHandle fh = currentTriMesh()->add_face( vertices );
-    
+
+    OpenMesh::FaceHandle fh = currentTriMesh()->add_face( _outTriVertices );
+
     //remember all new faces
     if(!fh.is_valid()) {
-    	// Store non-manifold face
-    	invalidFaces_.push_back(vertices);
+      // Store non-manifold face
+      invalidFaces_.push_back(_outTriVertices);
 
     } else {
-    	// Store recently added face
-    	for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-    		addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
+      // Store recently added face
+      for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
+        addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
+
+      //write stored normals into the half edges
+      if (!currentTriMesh()->has_halfedge_normals())
+        currentTriMesh()->request_halfedge_normals();
+
+      //iterate over all incoming haldedges of the added face
+      for (TriMesh::FaceHalfedgeIter fh_iter = currentTriMesh()->fh_begin(fh);
+          fh_iter != currentTriMesh()->fh_end(fh); ++fh_iter)
+      {
+        //and write the normals to it
+        TriMesh::HalfedgeHandle heh = fh_iter.current_halfedge_handle();
+        TriMesh::VertexHandle vh = currentTriMesh()->to_vertex_handle(heh);
+        currentTriMesh()->set_normal(heh,storedTriHENormals_[vh]);
+      }
+      storedTriHENormals_.clear();
     }
-    
-    
+
+    _outFH = fh;
+    return true;
+
   } else if ( isPolyMesh( currentObject() ) ){
-  
+
     //handle poly meshes
-    if ( !currentPolyMesh() ) return;
-    
-    std::vector< PolyMesh::VertexHandle > vertices;
-    
+    if ( !currentPolyMesh() ) return false;
+
     for (unsigned int i=0; i < _indices.size(); i++){
-      
+
       if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
-    
-        vertices.push_back( vertexMapPoly_[currentGroup_][ _indices[i] ] );
+
+        _outPolyVertices.push_back( vertexMapPoly_[currentGroup_][ _indices[i] ] );
 
       }else{
         std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
-        return;
+        return false;
       }
     }
-    
-    if(!vertexListIsManifold(vertices)) {
-        std::cerr << "Face consists of multiple occurrences of the same vertex!" << std::endl;
-        return;
+
+    if(!vertexListIsManifold(_outPolyVertices)) {
+      std::cerr << "Face consists of multiple occurrences of the same vertex!" << std::endl;
+      return false;
     }
 
-    OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
+    OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( _outPolyVertices );
 
     if(!fh.is_valid()) {
-    	// Store non-manifold face
-    	invalidFaces_.push_back(vertices);
+      // Store non-manifold face
+      invalidFaces_.push_back(_outPolyVertices);
     } else {
-    	addedFacePoly_ = fh;
+      addedFacePoly_ = fh;
+
+      //write stored normals into the half edges
+      if (!currentPolyMesh()->has_halfedge_normals())
+        currentPolyMesh()->request_halfedge_normals();
+
+      //iterate over all incoming haldedges of the added face
+      for (PolyMesh::FaceHalfedgeIter fh_iter = currentPolyMesh()->fh_begin(fh);
+          fh_iter != currentPolyMesh()->fh_end(fh); ++fh_iter)
+      {
+        //and write the normals to it
+        PolyMesh::HalfedgeHandle heh = fh_iter.current_halfedge_handle();
+        PolyMesh::VertexHandle vh = currentPolyMesh()->to_vertex_handle(heh);
+        currentPolyMesh()->set_normal(heh,storedPolyHENormals_[vh]);
+      }
+      storedPolyHENormals_.clear();
+
     }
+
+    _outFH = fh;
+    return true;
   }
+  return false;
+}
+
+/// add a face with indices _indices refering to vertices
+void OBJImporter::addFace(const VHandles& _indices){
+  OpenMesh::FaceHandle fh;
+  std::vector< TriMesh::VertexHandle > triVertices;
+  std::vector< PolyMesh::VertexHandle > polyVertices;
+  addFace(_indices,fh,triVertices,polyVertices);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -435,130 +488,71 @@ bool OBJImporter::vertexListIsManifold(const std::vector<PolyMesh::VertexHandle>
 /// add face and texture coordinates
 void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _face_texcoords){
   
-  if ( isTriangleMesh( currentObject() ) ){
   
-    //handle triangle meshes
-    if ( !currentTriMesh() ) return;
-    
-    addedFacesTri_[currentGroup_].clear();
-    
-    std::vector< TriMesh::VertexHandle > vertices;
-    
-    for (unsigned int i=0; i < _indices.size(); i++){
+  OpenMesh::FaceHandle fh;
+  std::vector< TriMesh::VertexHandle > triVertices;
+  std::vector< PolyMesh::VertexHandle > polyVertices;
+  if(!addFace(_indices, fh, triVertices, polyVertices) || !fh.is_valid())
+    return;
 
-      if ( vertexMapTri_[currentGroup_].find( _indices[i] ) != vertexMapTri_[currentGroup_].end() ){
-    
-        vertices.push_back( vertexMapTri_[currentGroup_][ _indices[i] ] );
+  if ( isTriangleMesh(currentObject()) )
+  {
+    //perhaps request texCoords for the mesh
+    if ( !currentTriMesh()->has_halfedge_texcoords2D() )
+      currentTriMesh()->request_halfedge_texcoords2D();
 
-      }else{
-        std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
-        return;
-      }
+    //now add texCoords
+
+    // get first halfedge handle
+    TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[currentGroup_][0] );
+    TriMesh::HalfedgeHandle end_heh = currentTriMesh()->prev_halfedge_handle(cur_heh);
+
+    // find start heh
+    while( currentTriMesh()->to_vertex_handle(cur_heh) != triVertices[0] && cur_heh != end_heh )
+      cur_heh = currentTriMesh()->next_halfedge_handle( cur_heh);
+
+    for(unsigned int i=0; i<_face_texcoords.size(); ++i)
+    {
+      if ( _face_texcoords[i] < (int)texCoords_.size() ){
+
+        PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+        currentTriMesh()->set_texcoord2D(cur_heh, tex);
+
+        cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
+
+      } else
+        std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
     }
-    
-    size_t n_faces = currentTriMesh()->n_faces();
-    
-    OpenMesh::FaceHandle fh = currentTriMesh()->add_face( vertices );
-    
-    //remember all new faces
-    if(!fh.is_valid()) {
-    	// Store non-manifold face
-    	invalidFaces_.push_back(vertices);
+  }else if (isPolyMesh(currentObject()))
+  {
+    addedFacePoly_ = fh;
 
-    	std::cerr << "Error: Unable to add face " << std::endl;
+    //perhaps request texCoords for the mesh
+    if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
+      currentPolyMesh()->request_halfedge_texcoords2D();
 
-    } else {
+    //now add texCoords
 
-      // Store recently added face
-      for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-        addedFacesTri_[currentGroup_].push_back( TriMesh::FaceHandle(n_faces+i) );
-
-      //perhaps request texCoords for the mesh
-      if ( !currentTriMesh()->has_halfedge_texcoords2D() )
-        currentTriMesh()->request_halfedge_texcoords2D();
-
-      //now add texCoords
-
+    if ( addedFacePoly_.is_valid() ) {
       // get first halfedge handle
-      TriMesh::HalfedgeHandle cur_heh = currentTriMesh()->halfedge_handle( addedFacesTri_[currentGroup_][0] );
-      TriMesh::HalfedgeHandle end_heh = currentTriMesh()->prev_halfedge_handle(cur_heh);
+      PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
+      PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
 
       // find start heh
-      while( currentTriMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
-        cur_heh = currentTriMesh()->next_halfedge_handle( cur_heh);
+      while( currentPolyMesh()->to_vertex_handle(cur_heh) != polyVertices[0] && cur_heh != end_heh )
+        cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
 
       for(unsigned int i=0; i<_face_texcoords.size(); ++i)
       {
         if ( _face_texcoords[i] < (int)texCoords_.size() ){
 
-          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-          currentTriMesh()->set_texcoord2D(cur_heh, tex);
+          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+          currentPolyMesh()->set_texcoord2D(cur_heh, tex);
 
-          cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
+          cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
 
-        } else
+        }else
           std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
-      }
-
-    }
-    
-    
-  } else if ( isPolyMesh( currentObject() ) ){
-
-    //handle poly meshes
-    if ( !currentPolyMesh() ) return;
-    
-    std::vector< PolyMesh::VertexHandle > vertices;
-    
-    for (unsigned int i=0; i < _indices.size(); i++) {
-
-      if ( vertexMapPoly_[currentGroup_].find( _indices[i] ) != vertexMapPoly_[currentGroup_].end() ){
-    
-        vertices.push_back( vertexMapPoly_[currentGroup_][ _indices[i] ] );
-
-      } else {
-        std::cerr << "Error: cannot add face poly mesh. undefined index(" <<  _indices[i] << ")" << std::endl;
-        std::cerr << "Vertices in index map: " << vertexMapPoly_[currentGroup_].size() << std::endl;
-        return;
-      }
-    }
-    
-    OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
-
-    if(!fh.is_valid()) {
-    	// Store non-manifold face
-    	invalidFaces_.push_back(vertices);
-    } else {
-    
-      addedFacePoly_ = fh;
-
-      //perhaps request texCoords for the mesh
-      if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
-        currentPolyMesh()->request_halfedge_texcoords2D();
-
-      //now add texCoords
-
-      if ( addedFacePoly_.is_valid() ) {
-        // get first halfedge handle
-        PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
-        PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
-
-        // find start heh
-        while( currentPolyMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
-          cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
-
-        for(unsigned int i=0; i<_face_texcoords.size(); ++i)
-        {
-          if ( _face_texcoords[i] < (int)texCoords_.size() ){
-
-            PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-            currentPolyMesh()->set_texcoord2D(cur_heh, tex);
-
-            cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
-
-          }else
-            std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
-        }
       }
     }
   }
