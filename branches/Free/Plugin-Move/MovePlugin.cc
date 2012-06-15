@@ -661,6 +661,12 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
         rotateTranslateAction_->setChecked (false);
         placeAndSnapAction_->setChecked (true);
         break;
+      case QtTranslationManipulatorNode::Rotation:
+        resizeAction_->setChecked(false);
+        rotateManipAction_->setChecked(true);
+        rotateTranslateAction_->setChecked(false);
+        placeAndSnapAction_->setChecked(false);
+        break;
     }
   }
 }
