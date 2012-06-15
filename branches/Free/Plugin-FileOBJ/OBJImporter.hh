@@ -169,6 +169,10 @@ class OBJImporter
     /// add face and texture coordinates
     void addFace(const VHandles& _indices, const std::vector<int>& _face_texcoords);
     
+  private:
+    bool addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH, std::vector< TriMesh::VertexHandle > &_outTriVertices, std::vector< PolyMesh::VertexHandle > &_outPolyVertices);
+  public:
+
     /// force all meshes to be opened with specific type
     void forceMeshType( ObjectOptions _meshType );
     
@@ -245,6 +249,13 @@ class OBJImporter
     std::vector< Vec3f > normals_;
     std::vector< Vec2f > texCoords_;
     
+    //stores half edge normals of the current face
+    std::map<TriMesh::VertexHandle,TriMesh::Normal> storedTriHENormals_;
+    std::map<TriMesh::VertexHandle,PolyMesh::Normal> storedPolyHENormals_;
+
+
+    std::size_t halfedges_write_;
+
     int degreeU_;
     int degreeV_;
     
