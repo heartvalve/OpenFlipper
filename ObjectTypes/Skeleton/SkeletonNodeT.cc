@@ -154,6 +154,16 @@ DrawModes::DrawMode SkeletonNodeT<SkeletonType>::availableDrawModes() const
 
 //----------------------------------------------------------------------------
 
+
+template <class SkeletonType>
+double SkeletonNodeT<SkeletonType>::frameSize() {
+	return fFrameSize_;
+}
+
+
+//----------------------------------------------------------------------------
+
+
 /** \brief Normalizes a coordinate frame defined by the given matrix
  * 
  */
