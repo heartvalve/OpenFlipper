@@ -329,6 +329,7 @@ void SkeletonObject::updateIndices(const AnimationHandle &_hAni)
 
     pTransNode->loadIdentity();
     pTransNode->translate(pose->globalTranslation(i));
+    pTransNode->scale(skeletonNode_->frameSize()*0.5);
   }
 
   // find and prune redundant nodes
@@ -425,6 +426,7 @@ void SkeletonObject::showIndices(bool _bVisible)
     }
     pTransNode->loadIdentity();
     pTransNode->translate(ref->globalTranslation(i));
+    pTransNode->scale(skeletonNode_->frameSize()*0.5);
 
     ACG::SceneGraph::MaterialNode *pSubMatNode;
     if(!getAdditionalNode(pSubMatNode, "SkeletonPlugin", nameSubMatNode.c_str()))
@@ -439,11 +441,12 @@ void SkeletonObject::showIndices(bool _bVisible)
     {
       pTextNode = new ACG::SceneGraph::TextNode(pSubMatNode,
                                                 nameTextNode.c_str(),
-                                                ACG::SceneGraph::TextNode::SCREEN_ALIGNED);
+                                                ACG::SceneGraph::TextNode::SCREEN_ALIGNED,
+                                                true);
           addAdditionalNode(pTextNode, "SkeletonPlugin", nameTextNode.c_str());
     }
     pTextNode->setText("  " + nameJoint);
-    pTextNode->setSize(50);
+    pTextNode->setSize(1);
     pTextNode->multipassNodeSetActive(8, true);
   }
   

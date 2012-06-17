@@ -113,6 +113,9 @@ public:
   void showCoordFrames(bool _bVisible = true);
 
   bool coordFramesVisible();
+
+	/// returns the size of the rendered coordinate system
+	double frameSize();
   
 private:
   /// Pick method for vertices
