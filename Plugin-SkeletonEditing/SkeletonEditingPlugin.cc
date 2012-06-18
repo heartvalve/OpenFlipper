@@ -97,6 +97,7 @@ void SkeletonEditingPlugin::pluginsInitialized() {
 
   pickToolbar_ = new QToolBar(tr("Skeleton Editing"));
   pickToolbar_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
+  pickToolbar_->setObjectName("Skeleton_Editing_Picking_Toolbar");
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
   pickToolBarActions_->setExclusive (false);
 
