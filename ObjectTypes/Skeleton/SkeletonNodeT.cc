@@ -330,6 +330,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
 
     //we will set the specular color, otherwise the color cannot be seen
     ACG::Vec4f oldSpecular = _state.specular_color();
+    ACG::Vec4f oldDiffuse = _state.diffuse_color();
                 
     for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
     {
@@ -381,6 +382,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
     }
 
     _state.set_specular_color(oldSpecular);
+    _state.set_diffuse_color(oldDiffuse);
 
 
     // draw the local coordinate frames

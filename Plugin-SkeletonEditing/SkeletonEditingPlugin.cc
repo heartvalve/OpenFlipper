@@ -1023,12 +1023,7 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
       Skeleton::Joint* joint = skeleton->joint( target_idx );
 
       if ( joint != 0 ){
-        //clear selection
-        for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
-          (*it)->setSelected(false);
-
         currentJoint_ = joint->id();
-        joint->setSelected(true);
       }
     }
   }
@@ -1158,19 +1153,15 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
 
           currentSkeleton_ = object->id();
 
-          Skeleton::Joint* joint = skeleton->joint( target_idx );
+          Skeleton::Joint* joint = skeleton->joint( currentJoint_ );
 
           if ( joint != 0 ){
 
-            if ( joint->selected() ){
-              //only if the joint is selected we are sure it was the same joint
-              //like on the mouse press
-              Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
-              skeleton->addJoint(joint, tmpJoint);
+            Skeleton::Joint* tmpJoint = new Skeleton::Joint(joint);
+            skeleton->addJoint(joint, tmpJoint);
 
-              currentJoint_ = tmpJoint->id();
-              jointPreview_ = true;
-            }
+            currentJoint_ = tmpJoint->id();
+            jointPreview_ = true;
           }
         }
 
@@ -1228,9 +1219,6 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
 
       if (skeleton == 0)
         return;
-
-      for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
-        (*it)->setSelected(false);
   }
 }
 
