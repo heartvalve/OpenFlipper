@@ -174,7 +174,7 @@ private:
    * Creates a map #charToIndex_ from most characters to an incrementing set of indices.
    * These indices are used to create the texture coordinates in updateVBO().
    */
-  static std::map<char, unsigned int> createMap();
+  static std::map< char, std::pair<unsigned int, unsigned int> > createMap();
 
 private:
 
@@ -218,7 +218,7 @@ private:
   GLint blendDest_;
 
   /// maps most readable characters to indices for texture coordinate calculation in updateVBO()
-  static std::map<char, unsigned int> charToIndex_;
+  static std::map< char, std::pair<unsigned int, unsigned int> > charToIndex_;
 
   /// font that is used to generate the texture in updateFont()
   static QFont qfont_;
@@ -229,8 +229,17 @@ private:
   /// width of the generated texture
   static int imageWidth_;
 
+  /// height of the generated texture
+  static int imageHeight_;
+
   /// number of characters that are drawn into the texture
   static const int numberOfChars_ = 94;
+
+  /// number of rows of characters in the texture
+  static const unsigned int rows_ = 10;
+
+  /// number of columns of characters in the texture
+  static const unsigned int columns_ = 10;
 
   /// this is used to ensure that the texture is only generated once when necessary
   static bool initialised_;
