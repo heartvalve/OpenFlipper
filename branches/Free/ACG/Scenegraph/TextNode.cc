@@ -67,11 +67,12 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 // static members
-QFont TextNode::qfont_ = QFont("Helvetica", 20);
+QFont TextNode::qfont_ = QFont("Helvetica", 30);
 GLuint TextNode::texture_ = 0;
 int TextNode::imageWidth_ = 0;
+int TextNode::imageHeight_ = 0;
 bool TextNode::initialised_ = false;
-std::map<char, unsigned int> TextNode::charToIndex_ = TextNode::createMap();
+std::map< char, std::pair<unsigned int, unsigned int> > TextNode::charToIndex_ = TextNode::createMap();
 QColor TextNode::color_ = QColor(255, 0, 0);
 
 
@@ -202,13 +203,15 @@ setSize(unsigned int _size) {
 //----------------------------------------------------------------------------
 
 
-std::map<char, unsigned int>
+std::map< char, std::pair<unsigned int, unsigned int> >
 TextNode::
 createMap() {
-  std::map<char, unsigned int> m;
-  unsigned int i = 0;
-  for (unsigned char c = ' '; c < '~'; ++c, ++i) {
-    m[c] = i;
+  std::map< char, std::pair<unsigned int, unsigned int> > m;
+  unsigned char c = ' ';
+  for (unsigned int i = 0; i < rows_; ++i) {
+    for (unsigned int j = 0; j < columns_; ++j, ++c) {
+      m[c] = std::make_pair(j, i);
+    }
   }
 
   return m;
@@ -365,9 +368,10 @@ updateFont() {
   int width = metric.maxWidth();
   // ensure that the width of the texture is a power of 2
   int widthPow2 = nearestPowerOfTwo(width);
-  imageWidth_ = widthPow2 * numberOfChars_;
+  imageWidth_ = widthPow2 * columns_;
+  imageHeight_ = heightPow2 * rows_;
 
-  QImage finalImage(imageWidth_, heightPow2, QImage::Format_ARGB32);
+  QImage finalImage(imageWidth_, imageHeight_, QImage::Format_ARGB32);
   finalImage.fill(Qt::transparent);
   QPainter painter;
   painter.begin(&finalImage);
@@ -376,10 +380,10 @@ updateFont() {
   painter.setFont(qfont_);
   painter.setPen(color_);
 
-  // characters are drawn aligned to the left into the QImage finalImage next to each other
-  unsigned int i = 0;
-  for (char c = ' '; c < '~'; ++c, ++i) {
-    painter.drawText(i*widthPow2, 0, widthPow2, heightPow2, Qt::AlignLeft | Qt::AlignBottom, QString(c));
+  // characters are drawn aligned to the left into the QImage finalImage
+  for (char c = ' '; c < '~'; ++c) {
+    std::pair<unsigned int, unsigned int> coords = charToIndex_[c];
+    painter.drawText(coords.first*widthPow2, imageHeight_ - (coords.second+1)*heightPow2, widthPow2, heightPow2, Qt::AlignLeft | Qt::AlignBottom, QString(c));
   }
   painter.end();
 
@@ -391,11 +395,12 @@ updateFont() {
   glDeleteTextures(1, &texture_);
   glGenTextures(1, &texture_);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, finalImage.width(), finalImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, finalImage.bits());
+  glGenerateMipmap(GL_TEXTURE_2D);
   ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
 
   initialised_ = true;
@@ -421,6 +426,7 @@ updateVBO() {
   QFontMetrics metric(qfont_);
   int maxWidth = metric.maxWidth();
   int avgWidth = metric.averageCharWidth();
+  int height = nearestPowerOfTwo(metric.height());
   float lastCharRight = 0.0f;
   for (unsigned int i = 0; i < text_.size(); ++i) {
 
@@ -453,10 +459,13 @@ updateVBO() {
     }
 
     float widthTx = (float) metricWidth / (float) imageWidth_;
+    float heightTx = (float) height/ (float) imageHeight_;
     // get the starting position of the character in the texture
     // note that the characters are drawn aligned to the bottom left in in the texture
-    float leftTx = ((float) charToIndex_[text_[i]] ) / (float) numberOfChars_;
+    float leftTx = ((float) charToIndex_[text_[i]].first ) / (float) columns_;
     float rightTx = leftTx + widthTx;
+    float bottomTx = charToIndex_[text_[i]].second / (float) rows_;
+    float topTx = bottomTx + heightTx;
 
     // bottom left
     vertexBuffer_.push_back(left);
@@ -465,7 +474,7 @@ updateVBO() {
 
     // texture coordinates
     vertexBuffer_.push_back(leftTx);
-    vertexBuffer_.push_back(0.0f);
+    vertexBuffer_.push_back(bottomTx);
 
     // top left
     vertexBuffer_.push_back(left);
@@ -474,7 +483,7 @@ updateVBO() {
 
     // texture coordinates
     vertexBuffer_.push_back(leftTx);
-    vertexBuffer_.push_back(1.0f);
+    vertexBuffer_.push_back(topTx);
 
     // top right
     vertexBuffer_.push_back(right);
@@ -483,7 +492,7 @@ updateVBO() {
 
     // texture coordinates
     vertexBuffer_.push_back(rightTx);
-    vertexBuffer_.push_back(1.0f);
+    vertexBuffer_.push_back(topTx);
 
     // bottom right
     vertexBuffer_.push_back(right);
@@ -492,7 +501,7 @@ updateVBO() {
 
     // texture coordinates
     vertexBuffer_.push_back(rightTx);
-    vertexBuffer_.push_back(0.0f);
+    vertexBuffer_.push_back(bottomTx);
   }
 
   glDeleteBuffers(1, &vbo_);
