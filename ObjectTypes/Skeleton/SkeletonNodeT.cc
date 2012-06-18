@@ -327,6 +327,9 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
     
     // draw all joint positions
     glPointSize(12);
+
+    //we will set the specular color, otherwise the color cannot be seen
+    ACG::Vec4f oldSpecular = _state.specular_color();
                 
     for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
     {
@@ -336,8 +339,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       if ( (*it)->selected() )
       {
       	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
-      	_state.set_ambient_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
-      	_state.set_base_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+      	_state.set_specular_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       }
       else {
         // If it is the root joint, it will get some kind of orange color
@@ -346,13 +348,11 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
         {
         	ACG::Vec4f root_color = ACG::Vec4f(1.0, 0.66, 0.0 ,1.0);
         	_state.set_diffuse_color(root_color);
-        	_state.set_ambient_color(root_color);
-        	_state.set_base_color(root_color);
+        	_state.set_specular_color(root_color);
         }
         else {
         	_state.set_diffuse_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
-        	_state.set_ambient_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
-        	_state.set_base_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
+        	_state.set_specular_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         }
       }
 
@@ -379,6 +379,8 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       sphere_->draw(_state,sphereSize,ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
 
     }
+
+    _state.set_specular_color(oldSpecular);
 
 
     // draw the local coordinate frames
