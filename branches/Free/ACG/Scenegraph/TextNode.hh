@@ -232,6 +232,9 @@ private:
   /// height of the generated texture
   static int imageHeight_;
 
+  /// max width of qfont
+  static qreal maxFontWidth_;
+
   /// number of characters that are drawn into the texture
   static const int numberOfChars_ = 94;
 

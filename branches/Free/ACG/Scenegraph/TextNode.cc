@@ -76,6 +76,7 @@ QFont TextNode::qfont_ = QFont("Helvetica", 30);
 GLuint TextNode::texture_ = 0;
 int TextNode::imageWidth_ = 0;
 int TextNode::imageHeight_ = 0;
+qreal TextNode::maxFontWidth_ = 0.0;
 bool TextNode::initialised_ = false;
 std::map< char, std::pair<unsigned int, unsigned int> > TextNode::charToIndex_ = TextNode::createMap();
 QColor TextNode::color_ = QColor(255, 0, 0);
@@ -365,14 +366,19 @@ updateFont() {
   if (initialised_)
     return;
 
-  QFontMetrics metric(qfont_);
+  // since metric.maxWidth() returns 0 for Mac we calculate it here
+  QFontMetricsF metric(qfont_);
+  for (char c = ' '; c < '~'; ++c) {
+    qreal width = metric.width(c) + abs(metric.leftBearing(c)) + abs(metric.rightBearing(c));
+    if (width > maxFontWidth_)
+      maxFontWidth_ = width;
+  }
 
-  int height = metric.height();
+  qreal height = metric.height();
   // ensure that the height of the texture is a power of 2
   int heightPow2 = nearestPowerOfTwo(height);
-  int width = metric.maxWidth();
   // ensure that the width of the texture is a power of 2
-  int widthPow2 = nearestPowerOfTwo(width);
+  int widthPow2 = nearestPowerOfTwo(maxFontWidth_);
   imageWidth_ = widthPow2 * columns_;
   imageHeight_ = heightPow2 * rows_;
 
@@ -397,7 +403,7 @@ updateFont() {
 
   // generate a new texture from finalImage
   if (!texture_)
-	glGenTextures(1, &texture_);
+    glGenTextures(1, &texture_);
 
   ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -428,15 +434,14 @@ updateVBO() {
   // |  |  |    | |
   // |  |  |    | |
   // *--*--*----*-*
-  QFontMetrics metric(qfont_);
-  int maxWidth = metric.maxWidth();
-  int avgWidth = metric.averageCharWidth();
+  QFontMetricsF metric(qfont_);
+  qreal avgWidth = metric.averageCharWidth();
   int height = nearestPowerOfTwo(metric.height());
   float lastCharRight = 0.0f;
   for (unsigned int i = 0; i < text_.size(); ++i) {
 
     // left and right vertex coordinates
-    float width = (float) metric.width(text_[i]) / (float) maxWidth;
+    float width = metric.width(text_[i]) / maxFontWidth_;
     float left, right;
 
     if (i == 0)
@@ -448,20 +453,20 @@ updateVBO() {
     lastCharRight = right;
 
     // left and right texture coordinates
-    int leftBearing = abs(metric.leftBearing(text_[i]));
-    int rightBearing = abs(metric.rightBearing(text_[i]));
-    int metricWidth = metric.width(text_[i]);
+    qreal leftBearing = abs(metric.leftBearing(text_[i]));
+    qreal rightBearing = abs(metric.rightBearing(text_[i]));
+    qreal metricWidth = metric.width(text_[i]);
 
 #ifdef WIN32
 	metricWidth += leftBearing + rightBearing;
 #else
     // QFontMetrics does not seem to always give the correct width
     // therefore we add a margin so that characters are not cut off
-    if (leftBearing + rightBearing < 0.1*maxWidth) {
-      if (metricWidth + 0.25*maxWidth < maxWidth)
-        metricWidth += 0.25*maxWidth;
+    if (leftBearing + rightBearing < 0.1*maxFontWidth_) {
+      if (metricWidth + 0.25*maxFontWidth_ < maxFontWidth_)
+        metricWidth += 0.25*maxFontWidth_;
       else
-        metricWidth = maxWidth;
+        metricWidth = maxFontWidth_;
     } else {
       metricWidth += leftBearing + rightBearing;
     }
@@ -514,7 +519,7 @@ updateVBO() {
   }
 
   if (!vbo_)
-	glGenBuffers(1, &vbo_);
+    glGenBuffers(1, &vbo_);
 
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, vbo_);
   glBufferData(GL_ARRAY_BUFFER, vertexBuffer_.size() * sizeof(GLfloat), &vertexBuffer_[0], GL_DYNAMIC_DRAW);
