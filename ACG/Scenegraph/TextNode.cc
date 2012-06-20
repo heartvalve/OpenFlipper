@@ -67,7 +67,12 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 // static members
+#ifdef WIN32
+// fonts in windows are drawn wider
+QFont TextNode::qfont_ = QFont("Helvetica", 20);
+#else
 QFont TextNode::qfont_ = QFont("Helvetica", 30);
+#endif
 GLuint TextNode::texture_ = 0;
 int TextNode::imageWidth_ = 0;
 int TextNode::imageHeight_ = 0;
@@ -390,10 +395,10 @@ updateFont() {
   // convert finalImage to an OpenGL friendly format
   finalImage = QGLWidget::convertToGLFormat(finalImage);
 
-  // delete the old texture if it exists
-  // and generate a new texture from finalImage
-  glDeleteTextures(1, &texture_);
-  glGenTextures(1, &texture_);
+  // generate a new texture from finalImage
+  if (!texture_)
+	glGenTextures(1, &texture_);
+
   ACG::GLState::bindTexture(GL_TEXTURE_2D, texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -447,6 +452,9 @@ updateVBO() {
     int rightBearing = abs(metric.rightBearing(text_[i]));
     int metricWidth = metric.width(text_[i]);
 
+#ifdef WIN32
+	metricWidth += leftBearing + rightBearing;
+#else
     // QFontMetrics does not seem to always give the correct width
     // therefore we add a margin so that characters are not cut off
     if (leftBearing + rightBearing < 0.1*maxWidth) {
@@ -457,6 +465,7 @@ updateVBO() {
     } else {
       metricWidth += leftBearing + rightBearing;
     }
+#endif
 
     float widthTx = (float) metricWidth / (float) imageWidth_;
     float heightTx = (float) height/ (float) imageHeight_;
@@ -504,8 +513,9 @@ updateVBO() {
     vertexBuffer_.push_back(bottomTx);
   }
 
-  glDeleteBuffers(1, &vbo_);
-  glGenBuffers(1, &vbo_);
+  if (!vbo_)
+	glGenBuffers(1, &vbo_);
+
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, vbo_);
   glBufferData(GL_ARRAY_BUFFER, vertexBuffer_.size() * sizeof(GLfloat), &vertexBuffer_[0], GL_DYNAMIC_DRAW);
 }
