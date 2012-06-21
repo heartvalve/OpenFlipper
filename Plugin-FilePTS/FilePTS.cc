@@ -293,7 +293,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     // read point
     {
       float pnt[3];
-      if( fscanf( file, "%16f %16f %16f", &pnt[0], &pnt[1], &pnt[2] ) != 3 )
+      if( fscanf( file, "%32f %32f %32f", &pnt[0], &pnt[1], &pnt[2] ) != 3 )
         break;
 
       SplatCloud::Point point;
@@ -308,7 +308,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     if( loadColors )
     {
       float col[3];
-      fscanf( file, "%16f %16f %16f", &col[0], &col[1], &col[2] );
+      fscanf( file, "%32f %32f %32f", &col[0], &col[1], &col[2] );
 
       SplatCloud::Color color;
 
@@ -332,7 +332,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     if( loadNormals )
     {
       float nrm[3];
-      fscanf( file, "%16f %16f %16f", &nrm[0], &nrm[1], &nrm[2] );
+      fscanf( file, "%32f %32f %32f", &nrm[0], &nrm[1], &nrm[2] );
 
       SplatCloud::Normal normal;
       normal[0] = nrm[0];
@@ -346,7 +346,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     if( loadPointsizes )
     {
       float ps = 0.0f;
-      fscanf( file, "%16f", &ps );
+      fscanf( file, "%32f", &ps );
 
       SplatCloud::Pointsize pointsize;
       pointsize = ps;
