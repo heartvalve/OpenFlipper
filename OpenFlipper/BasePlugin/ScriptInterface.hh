@@ -50,7 +50,7 @@
 * Interface for controlling OpenFlippers scripting system. \ref scriptInterfacePage
 */
 
-/** \brief Interface for all Plugins which provide scriptable Functions.\
+/** \brief Interface for all Plugins which provide scriptable Functions.
  *
  * \ref scriptInterfacePage "Detailed description"
  * \n
