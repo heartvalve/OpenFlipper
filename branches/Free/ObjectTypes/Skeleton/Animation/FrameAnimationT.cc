@@ -185,7 +185,7 @@ void FrameAnimationT<PointT>::setFrameCount(unsigned int _frames)
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Called by the skeleton as a new joint is inserted
+ * \brief Called by the skeleton as a new joint is inserted
  *
  * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
  *
@@ -202,7 +202,7 @@ void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Called by the skeleton as a joint is deleted
+ * \brief Called by the skeleton as a joint is deleted
  *
  * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
  *
@@ -218,7 +218,7 @@ void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Updates the local matrix using the global matrix
+ * \brief Updates the local matrix using the global matrix
  *
  * Called when a joints parent is changed.
  *
