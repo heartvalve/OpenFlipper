@@ -95,7 +95,7 @@ PoseT<PointT>::~PoseT()
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Returns the local matrix for the given joint
+ * \brief Returns the local matrix for the given joint
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @return The local matrix, relative to the parents coordinate system
@@ -117,7 +117,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::localMatrix(unsigned
  * @param _keepLocalChildPositions If true, the positions of the children will be kept
  */
 template<typename PointT>
-void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix &_local, bool _keepLocalChildPositions)
+void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix& _local, bool _keepLocalChildPositions)
 {
   local_[_joint] = _local;
 
@@ -127,7 +127,7 @@ void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix &_local, bo
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Returns the local translation vector
+ * \brief Returns the local translation vector
  *
  * The local translation vector describes the translation from the origin of the parent joint
  * coordinate system to the origin of the local joint coordinate system in local coordinates.
@@ -148,7 +148,7 @@ inline typename PoseT<PointT>::Vector PoseT<PointT>::localTranslation(unsigned i
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Sets the local translation vector
+ * \brief Sets the local translation vector
  *
  * The matrix is otherwise not modified. The change is automatically propagated to all children. Also the
  * global coordinate frames will be updated.
@@ -170,7 +170,7 @@ void PoseT<PointT>::setLocalTranslation(unsigned int _joint, const Vector &_posi
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Simply returns the inverse of the local matrix
+ * \brief Simply returns the inverse of the local matrix
  */
 template<typename PointT>
 typename PoseT<PointT>::Matrix PoseT<PointT>::localMatrixInv(unsigned int _joint) const
@@ -183,7 +183,7 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::localMatrixInv(unsigned int _joint
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Returns the global matrix for the given joint
+ * \brief Returns the global matrix for the given joint
  *
  * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  *
@@ -199,7 +199,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::globalMatrix(unsigne
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Sets the global coordinate system
+ * \brief Sets the global coordinate system
  *
  * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  * The change will automatically be propagated to all children. Also the local matrices will be updated.
@@ -219,7 +219,7 @@ void PoseT<PointT>::setGlobalMatrix(unsigned int _joint, const Matrix &_global, 
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Returns the global translation vector
+ * \brief Returns the global translation vector
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @return The global translation vector (the 4th column in the global matrix)
@@ -237,7 +237,7 @@ inline typename PoseT<PointT>::Vector PoseT<PointT>::globalTranslation(unsigned 
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Sets the global translation vector
+ * \brief Sets the global translation vector
  *
  * The matrix is otherwise not modified. The change is automatically propagated to all children. Also the
  * local coordinate frames will be updated.
@@ -259,7 +259,7 @@ void PoseT<PointT>::setGlobalTranslation(unsigned int _joint, const Vector &_pos
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Simply returns the inverse of the global matrix
+ * \brief Simply returns the inverse of the global matrix
  *
  * The inverse of the global Matrix defines the transformation from global world coordinates in the
  * currently active pose into bone coordinates.
@@ -279,7 +279,7 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::globalMatrixInv(unsigned int _join
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Called by the skeleton/animation as a new joint is inserted
+ * \brief Called by the skeleton/animation as a new joint is inserted
  *
  * To keep the vectors storing the matrices for the joints in sync with the joints a new entry has to be inserted
  * in exactly the same place if a new joint is added to the skeleton. This is done here. Derived classes
@@ -307,7 +307,7 @@ void PoseT<PointT>::insertJointAt(unsigned int _index)
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Called by the skeleton/animation as a joint is removed
+ * \brief Called by the skeleton/animation as a joint is removed
  *
  * To keep the vectors storing the matrices for the joints in sync with the joints exactly the same entry
  * has to be removed as a joint is removed from the skeleton. This is done here. Derived classes
@@ -443,7 +443,7 @@ inline const typename PoseT<PointT>::Quaternion& PoseT<PointT>::unifiedRotation(
 //-----------------------------------------------------------------------------
 
 /**
- * @brief Returns a dual quaternion holding the unified matrix represented as dual quaternion
+ * \brief Returns a dual quaternion holding the unified matrix represented as dual quaternion
  *
  * This is used by the Dual Quaternion blend skinning.
  *
