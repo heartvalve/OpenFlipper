@@ -253,9 +253,6 @@ class OBJImporter
     std::map<TriMesh::VertexHandle,TriMesh::Normal> storedTriHENormals_;
     std::map<TriMesh::VertexHandle,PolyMesh::Normal> storedPolyHENormals_;
 
-
-    std::size_t halfedges_write_;
-
     int degreeU_;
     int degreeV_;
     
