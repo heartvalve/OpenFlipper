@@ -289,7 +289,7 @@ int FileOMPlugin::loadTriMeshObject(QString _filename){
             
         } else {
             
-            // Let openmesh try to read everything it can
+            // Let OpenMesh try to read everything it can
             opt += OpenMesh::IO::Options::VertexNormal;
             opt += OpenMesh::IO::Options::VertexTexCoord;
             opt += OpenMesh::IO::Options::VertexColor;
