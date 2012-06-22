@@ -254,7 +254,8 @@ BSplineCurveNodeT<BSplineCurve>::
 drawFancyCurve(GLState& _state)
 {
   // draw the curve
-  double cylinderRadius = _state.line_width() * 0.05;
+//  double cylinderRadius = _state.line_width() * 0.05;
+  double cylinderRadius = _state.line_width() * 0.2;
 
   for (int i = 0; i < (int)curve_samples_.size() - 1; ++i)
   {
@@ -272,13 +273,13 @@ BSplineCurveNodeT<BSplineCurve>::
 generateHighlightColor(ACG::Vec4f _color)
 {
   float c1 = _color[0]*1.5; 
-  c1 = c1 > 255.0 ? 255 : c1;
+  c1 = c1 > 1.0 ? 1.0 : c1;
   
   float c2 = _color[1]*1.5; 
-  c2 = c2 > 255.0 ? 255 : c2;
+  c2 = c2 > 1.0 ? 1.0 : c2;
   
   float c3 = _color[2]*1.5; 
-  c3 = c3 > 255.0 ? 255 : c3;
+  c3 = c3 > 1.0 ? 1.0 : c3;
   
   return Vec4f( c1, c2, c3, _color[3]);
 }
@@ -393,7 +394,8 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
   // draw line segments
   if (_drawMode & DrawModes::WIREFRAME)
   {
-    double cylinderRadius = _state.line_width() * 0.05;
+//    double cylinderRadius = _state.line_width() * 0.05;
+    double cylinderRadius = _state.line_width() * 0.2;
     
     // draw selection
     if( bsplineCurve_.edge_selections_available())
@@ -432,7 +434,8 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
       return;
     
     // radius of sphere
-    double sphereRadius = _state.point_size() * 0.05;
+//    double sphereRadius = _state.point_size() * 0.05;
+    double sphereRadius = _state.point_size() * 0.25;
     
     // draw selection
     if( bsplineCurve_.controlpoint_selections_available())
