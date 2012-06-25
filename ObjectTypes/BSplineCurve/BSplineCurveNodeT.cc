@@ -993,6 +993,10 @@ draw_textured_nurbs( GLState& /*_state*/)
   const int numCPs = bsplineCurve_.n_control_points();
   int order        = bsplineCurve_.degree() + 1;
 
+  // gluNurbsSurface seems to crash for knots = 0
+  if (!numKnots)
+    return;
+
   // get knotvector
   GLfloat *knots = new GLfloat[numKnots];
   for (int i = 0; i < numKnots; ++i)
