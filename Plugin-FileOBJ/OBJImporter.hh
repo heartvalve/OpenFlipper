@@ -148,10 +148,12 @@ class OBJImporter
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     BSplineCurve* currentCurve();
+    unsigned int numCurves() { return bSplineCurves_.size(); }
 #endif
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     BSplineSurface* currentSurface();
+    unsigned int numSurfaces() { return bSplineSurfaces_.size(); }
 #endif
 
     /// add all vertices that are used to the mesh (in correct order)

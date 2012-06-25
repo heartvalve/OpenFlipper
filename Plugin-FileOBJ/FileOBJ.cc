@@ -1639,7 +1639,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
   int returnID = -1;
 
   //perhaps add group
-  if ( importer.numGroups() > 1 ){
+  if ( importer.numGroups() > 1){
 
     bool dataControlExists = false;
     pluginExists( "datacontrol", dataControlExists );
@@ -1660,7 +1660,17 @@ int FileOBJPlugin::loadObject(QString _filename) {
         }
       }
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+      // don't group objects if we only have one group and one bspline curve
+      if (importer.numGroups() != 2 && importer.numCurves() != 2)
+        returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
+#elif ENABLE_BSPLINESURFACE_SUPPORT
+      // don't group objects if we only have one group and one bspline surface
+      if (importer.numGroups() != 2 && importer.numSurfaces() != 2)
+        returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
+#else
       returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
+#endif
     }
   }
 
