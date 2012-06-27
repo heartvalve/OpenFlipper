@@ -276,6 +276,11 @@ namespace DrawModes {
       */      
       DrawMode( ModeFlagSet _flags );
 
+
+      //===========================================================================
+      /** @name Operators
+       * @{ */
+      //===========================================================================
       bool operator==(const DrawMode& _mode) const;
       
       DrawMode operator&(const DrawMode& _mode) const;
@@ -294,73 +299,19 @@ namespace DrawModes {
       
       DrawMode operator~( ) const;
       
-      /** \brief get an index of the current drawMode
-      *
-      * If this drawMode is a combination of different drawModes, the returned value will be 0.
-      * Otherwise the internal flag index will be returned
-      */
-      unsigned int getIndex() const;
-      
-      /** Get a description string for this DrawMode
-      * An empty string is returned if this is not a valid draw mode.
-      * this list has the format DrawModeName+DrawMOdeName+...
-      */
-      std::string description() const;
-      
-      /** \brief Check if this is an atomic draw Mode
-      *
-      * This function checks, if this is a atomic draw mode ( no combination of multiple draw modes )
-      */
-      bool isAtomic() const;
-      
-      /** \brief Check whether an Atomic DrawMode is active in this draw Mode
-      */ 
-      bool containsAtomicDrawMode( DrawMode _atomicDrawMode ) const;
-      
-      /** \brief Separates this drawMode into a list of all separate atomic draw modes
-      *
-      * A drawMode can consist of several atomic draw modes. This function returns a list of the separated
-      * atomic draw modes.
-      */
-      std::vector< DrawMode > getAtomicDrawModes() const;
-      
-      /** \brief Get the number of maximum Modes which could be handled by the current implementation
-      */
-      unsigned int maxModes() const;
-      
       operator bool() const;
 
+      /** @} */
 
-      /** \brief returns the base properties of this draw mode
-       *
-       * Base properties are the original properties that defined the DrawMode before any merge operation.
-       * They are located at layer 0, so actually this function has the same effect as getLayer(0).
-       * 
-       * Every DrawMode is property based with only two exceptions:
-       *  - NONE
-       *  - DEFAULT
-       *
-       * getDrawModeProperties returns 0 for these.
-       */
-      const DrawModeProperties* getDrawModeProperties() const;
-
-      /** \brief set the base properties of this draw mode
-       *
-       * @param _props Properties to be set
-       */
-      void setDrawModeProperties(const DrawModeProperties* _props);
-
-      /** \brief set the base properties of this draw mode
-       *
-       * @param _props Properties to be set
-       */
-      void setDrawModeProperties(const DrawModeProperties& _props);
-
+      //===========================================================================
+      /** @name Layer Management
+       * @{ */
+      //===========================================================================
 
       /** \brief add another layer on top of this drawmode
        *
        * This allows for combinations of DrawModes.
-       * The renderer will iterator over all layers of the drawmode 
+       * The renderer will iterator over all layers of the drawmode
        *  and issue a new draw call for each layer.
        * Example:
        *  layer 0 : flat shading properties
@@ -396,6 +347,70 @@ namespace DrawModes {
        * @param _prop Property that should be removed if it's available
        */
       bool removeLayer(const DrawModeProperties* _prop);
+
+      /** @} */
+
+
+      /** \brief get an index of the current drawMode
+      *
+      * If this drawMode is a combination of different drawModes, the returned value will be 0.
+      * Otherwise the internal flag index will be returned
+      */
+      unsigned int getIndex() const;
+      
+      /** Get a description string for this DrawMode
+      * An empty string is returned if this is not a valid draw mode.
+      * this list has the format DrawModeName+DrawMOdeName+...
+      */
+      std::string description() const;
+      
+      /** \brief Check if this is an atomic draw Mode
+      *
+      * This function checks, if this is a atomic draw mode ( no combination of multiple draw modes )
+      */
+      bool isAtomic() const;
+      
+      /** \brief Check whether an Atomic DrawMode is active in this draw Mode
+      */ 
+      bool containsAtomicDrawMode( DrawMode _atomicDrawMode ) const;
+      
+      /** \brief Separates this drawMode into a list of all separate atomic draw modes
+      *
+      * A drawMode can consist of several atomic draw modes. This function returns a list of the separated
+      * atomic draw modes.
+      */
+      std::vector< DrawMode > getAtomicDrawModes() const;
+      
+      /** \brief Get the number of maximum Modes which could be handled by the current implementation
+      */
+      unsigned int maxModes() const;
+      
+
+      /** \brief returns the base properties of this draw mode
+       *
+       * Base properties are the original properties that defined the DrawMode before any merge operation.
+       * They are located at layer 0, so actually this function has the same effect as getLayer(0).
+       * 
+       * Every DrawMode is property based with only two exceptions:
+       *  - NONE
+       *  - DEFAULT
+       *
+       * getDrawModeProperties returns 0 for these.
+       */
+      const DrawModeProperties* getDrawModeProperties() const;
+
+      /** \brief set the base properties of this draw mode
+       *
+       * @param _props Properties to be set
+       */
+      void setDrawModeProperties(const DrawModeProperties* _props);
+
+      /** \brief set the base properties of this draw mode
+       *
+       * @param _props Properties to be set
+       */
+      void setDrawModeProperties(const DrawModeProperties& _props);
+
 
     private:
       ModeFlagSet modeFlags_;
