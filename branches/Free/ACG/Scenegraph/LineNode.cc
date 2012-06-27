@@ -121,7 +121,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
    //   glBegin(GL_LINE_STRIP);
 
 
-    if ((line_mode_ == LineSegmentsMode))
+    if (line_mode_ == LineSegmentsMode)
     {
       // first check if (new standard) 4-channel colors are specified
       if( (points_.size()/2 == colors4f_.size()) )
