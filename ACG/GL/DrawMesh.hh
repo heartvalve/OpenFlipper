@@ -295,14 +295,13 @@ private:
   void rebuild();
 
 
-  /** \brief convert from halfedge data structure to triangle index list
+  /** \brief Convert from halfedge data structure to triangle index list
    *
-   * (only operates on indices)
+   * Only operates on indices
    *
-   * @param _dstIndexBuf [in] pointer to the resulting index buffer
+   * @param _dstIndexBuf (in) pointer to the resulting index buffer
    * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh_
-   *
-   * @return # of triangles,  also fills triToFaceMap_
+   * @return number of triangles,  also fills triToFaceMap_
    */
   unsigned int convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount);
 
