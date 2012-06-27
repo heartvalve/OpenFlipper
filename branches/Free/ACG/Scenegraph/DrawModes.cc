@@ -289,7 +289,6 @@ DrawMode DrawMode::operator^( const DrawMode& _mode2  ) const {
 
 
   // xor on properties
-  unsigned int curLayer = 0;
   const DrawModeProperties* curProps = 0;
 
   // do xor on new temporary DrawMode
