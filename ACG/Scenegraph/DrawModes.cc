@@ -167,14 +167,19 @@ static VecDrawModes registeredDrawModes_;
 static DrawMode firstFreeID_;
 
 
-
-DrawModeProperties::DrawModeProperties():
-    lighting_(true),
-    points_(false),
-    lines_(false),
-    triangles_(true)
+DrawModeProperties::DrawModeProperties(DrawModePrimitive _primitive, 
+                                       DrawModeLightStage _lightStage, 
+                                       DrawModeNormalSource _normalSource,
+                                       DrawModeColorSource _colorSource,
+                                       DrawModeTexCoordSource _texcoordSource,
+                                       bool _envMapping):
+envMapped_(_envMapping),
+primitive_(_primitive),
+lightStage_(_lightStage),
+colorSource_(_colorSource),
+texcoordSource_(_texcoordSource),
+normalSource_(_normalSource)
 {
-
 }
 
 
@@ -186,20 +191,22 @@ DrawMode::DrawMode(unsigned int _index)
   } else {
     modeFlags_.set(_index);
   }
+  layers_.resize(1);
 }
 
 DrawMode::DrawMode() {
-      
+  layers_.resize(1);
 }
     
 DrawMode::DrawMode( ModeFlagSet _flags ) {
   modeFlags_ = _flags;
+  layers_.resize(1);
 }
 
 DrawMode::operator bool() const {
   return( modeFlags_ != NONE.modeFlags_ );
 }
-
+/*
 bool DrawMode::propertyBased() const {
   if ( isAtomic() ) {
     return registeredDrawModes_[getIndex()].propertyBased();
@@ -213,13 +220,16 @@ bool DrawMode::propertyBased() const {
     return false;
   }
 }
+*/
 
-DrawModeProperties* DrawMode::drawModeProperties() {
-  if ( isAtomic() ) {
-    return &(registeredDrawModes_[getIndex()].properties());
-  } else {
-    return 0;
-  }
+void DrawMode::setDrawModeProperties(const DrawModeProperties* _props) {
+  if (!layers_.empty() && _props)
+    layers_[0] = *_props;
+}
+
+void DrawMode::setDrawModeProperties( const DrawModeProperties& _props )
+{
+  setDrawModeProperties(&_props);
 }
 
 bool DrawMode::operator==(const DrawMode& _mode) const {
@@ -247,6 +257,9 @@ DrawMode DrawMode::operator&(const DrawMode& _mode) const {
 DrawMode& DrawMode::operator|=( const DrawMode& _mode2  ) {
   modeFlags_ |= _mode2.modeFlags_;
   
+  for (unsigned int i = 0; i < _mode2.getNumLayers(); ++i)
+    addLayer(_mode2.getLayer(i));
+
   return (*this);
 }
 
@@ -257,11 +270,83 @@ DrawMode& DrawMode::operator&=( const DrawMode& _mode2  ) {
 }
 
 DrawMode DrawMode::operator|( const DrawMode& _mode2  ) const {
-  return( modeFlags_ | _mode2.modeFlags_ );
+  DrawMode combined = ( modeFlags_ | _mode2.modeFlags_ );
+
+  combined.setDrawModeProperties(getDrawModeProperties());
+
+  for (unsigned int i = 1; i < getNumLayers(); ++i)
+    combined.addLayer(getLayer(i));
+
+  for (unsigned int i = 0; i < _mode2.getNumLayers(); ++i)
+    combined.addLayer(_mode2.getLayer(i));
+
+  return combined;
 }
 
 DrawMode DrawMode::operator^( const DrawMode& _mode2  ) const {
-  return( modeFlags_ ^ _mode2.modeFlags_ );
+
+  DrawMode xorMode = ( modeFlags_ ^ _mode2.modeFlags_ );
+
+
+  // xor on properties
+  unsigned int curLayer = 0;
+  const DrawModeProperties* curProps = 0;
+
+  // do xor on new temporary DrawMode
+  //  internal layers of this and _mode2 must stay the same
+  std::vector<const DrawModeProperties*> tmpLayers;
+
+
+  // initialize tmpLayers with my own layers
+  for (unsigned int i = 0; i < getNumLayers(); ++i)
+  {
+    curProps = getLayer(i);
+
+    if (curProps)
+      tmpLayers.push_back(curProps);
+  }
+
+
+  // xor on tmpLayers
+  for (unsigned int i = 0; i < _mode2.getNumLayers(); ++i)
+  {
+    curProps = _mode2.getLayer(i);
+
+    if (!curProps) continue;
+   
+
+
+    int addToVec = 1;
+
+    // is the other layer already contained in my own list?
+    for (unsigned int k = 0; addToVec && k < tmpLayers.size(); ++k)
+    {
+      if (!memcmp(tmpLayers[k], curProps, sizeof(DrawModeProperties)))
+      {
+        // yes, remove it  (layer exists in both drawmodes)
+        tmpLayers.erase(tmpLayers.begin() + k);
+        addToVec = 0;
+      }
+    }
+
+    if (addToVec) // no, add it
+      tmpLayers.push_back(curProps);
+  }
+
+
+
+  // DrawModes equal?
+  if (tmpLayers.empty())
+    return xorMode; // return default property set to not cause exceptions
+
+  // layers not empty,
+  //  copy to temporary drawmode and return
+
+  xorMode.setDrawModeProperties(tmpLayers[0]);
+  for (unsigned int i = 0; i < tmpLayers.size(); ++i)
+    xorMode.addLayer(tmpLayers[i]);
+
+  return xorMode;
 }
 
 DrawMode DrawMode::operator~( ) const {
@@ -335,7 +420,38 @@ DrawMode::containsAtomicDrawMode( DrawMode _atomicDrawMode) const
 unsigned int DrawMode::maxModes() const {
   return (modeFlags_.size() );
 }
- 
+
+unsigned int DrawMode::getNumLayers() const {
+  return layers_.size();
+}
+
+const DrawModeProperties* DrawMode::getLayer( unsigned int i ) const {
+  return (i >= layers_.size() ? 0 : &layers_[i]);
+}
+
+
+void DrawMode::addLayer( const DrawModeProperties* _props )
+{
+  for (unsigned int i = 0; i < layers_.size(); ++i)
+  {
+    if (!memcmp(&layers_[i], _props, sizeof(DrawModeProperties)))
+      return;
+  }
+
+  layers_.push_back(*_props);
+}
+
+bool DrawMode::removeLayer( unsigned int _i )
+{
+  layers_.erase(layers_.begin() + _i);
+  return true;
+}
+
+const DrawModeProperties* DrawMode::getDrawModeProperties() const
+{
+  return getLayer(0);
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -348,6 +464,61 @@ void initializeDefaultDrawModes( void )
 	return;
 
     registeredDrawModes_.clear();
+
+    NONE.removeLayer(0u);
+    DEFAULT.removeLayer(0u);
+
+    POINTS.                     setDrawModeProperties(DrawModeProperties(PRIMITIVE_POINT));
+    POINTS_COLORED.             setDrawModeProperties(DrawModeProperties(PRIMITIVE_POINT, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_PER_VERTEX));
+    POINTS_SHADED.              setDrawModeProperties(DrawModeProperties(PRIMITIVE_POINT, LIGHTSTAGE_SMOOTH, NORMAL_PER_VERTEX));
+
+    EDGES.                      setDrawModeProperties(DrawModeProperties(PRIMITIVE_EDGE));
+    EDGES_COLORED.              setDrawModeProperties(DrawModeProperties(PRIMITIVE_EDGE, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_PER_VERTEX));
+
+    WIREFRAME.                  setDrawModeProperties(DrawModeProperties(PRIMITIVE_EDGE));
+    EDGES_COLORED.              setDrawModeProperties(DrawModeProperties(PRIMITIVE_EDGE, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_PER_VERTEX));
+
+    WIREFRAME.                  setDrawModeProperties(DrawModeProperties(PRIMITIVE_WIREFRAME));
+
+    FACES.                      setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON));
+
+    HIDDENLINE.                 setDrawModeProperties(DrawModeProperties(PRIMITIVE_HIDDENLINE));
+
+    SOLID_FLAT_SHADED.          setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE));
+    SOLID_SMOOTH_SHADED.        setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_VERTEX));
+
+    SOLID_PHONG_SHADED.         setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_PHONG, NORMAL_PER_VERTEX));
+
+    SOLID_FACES_COLORED.        setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE, COLOR_PER_FACE));
+    
+    SOLID_POINTS_COLORED.       setDrawModeProperties(DrawModeProperties(PRIMITIVE_POINT, LIGHTSTAGE_UNLIT,   NORMAL_NONE,      COLOR_PER_VERTEX));
+    SOLID_POINTS_COLORED_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POINT, LIGHTSTAGE_SMOOTH,  NORMAL_PER_FACE,  COLOR_PER_VERTEX));
+
+    SOLID_ENV_MAPPED.           setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT, NORMAL_NONE,      COLOR_NONE, TEXCOORD_PER_VERTEX, true));
+
+    SOLID_TEXTURED.             setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT,   NORMAL_NONE,      COLOR_NONE, TEXCOORD_PER_VERTEX));
+    SOLID_TEXTURED_SHADED.      setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH,  NORMAL_PER_VERTEX,COLOR_NONE, TEXCOORD_PER_VERTEX));
+
+    SOLID_1DTEXTURED.           setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT,   NORMAL_NONE,  COLOR_NONE, TEXCOORD_PER_VERTEX));
+    SOLID_1DTEXTURED_SHADED.    setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH,  NORMAL_PER_VERTEX,COLOR_NONE, TEXCOORD_PER_VERTEX));
+
+    SOLID_3DTEXTURED.           setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT,   NORMAL_NONE,  COLOR_NONE, TEXCOORD_PER_VERTEX));
+    SOLID_3DTEXTURED_SHADED.    setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH,  NORMAL_PER_VERTEX,COLOR_NONE, TEXCOORD_PER_VERTEX));
+
+    SOLID_FACES_COLORED_FLAT_SHADED.  setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE,   COLOR_PER_FACE));
+    SOLID_FACES_COLORED_SMOOTH_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_VERTEX, COLOR_PER_FACE));
+
+    SOLID_2DTEXTURED_FACE.       setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_NONE, TEXCOORD_PER_VERTEX));
+    SOLID_2DTEXTURED_FACE_SHADED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_FACE, COLOR_NONE, TEXCOORD_PER_VERTEX));
+
+    SOLID_SMOOTH_SHADED_FEATURES.setDrawModeProperties(DrawModeProperties(PRIMITIVE_POLYGON, LIGHTSTAGE_SMOOTH, NORMAL_PER_HALFEDGE));
+
+    CELLS.setDrawModeProperties(DrawModeProperties(PRIMITIVE_CELL));
+    CELLS_COLORED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_CELL, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_PER_VERTEX));
+
+    HALFEDGES.setDrawModeProperties(DrawModeProperties(PRIMITIVE_HALFEDGE));
+    HALFEDGES_COLORED.setDrawModeProperties(DrawModeProperties(PRIMITIVE_HALFEDGE, LIGHTSTAGE_UNLIT, NORMAL_NONE, COLOR_PER_HALFEDGE));
+
 
     registeredDrawModes_.push_back( DrawModeInternal( "<invalid>", NONE ) );
     registeredDrawModes_.push_back( DrawModeInternal( "Default", DEFAULT ) );

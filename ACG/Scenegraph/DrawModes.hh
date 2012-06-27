@@ -88,34 +88,167 @@ namespace SceneGraph {
     QPopupMenu.
 */
 
+
 namespace DrawModes {
+
+
+  /** \brief Lighting stage of a mesh: unlit, smooth, phong
+   *
+   *   Don't confuse this with the interpolation mode of vertex attributes.
+   *   This only says where to apply lighting, and nothing else.
+   *
+   *   Instead the interpolation mode is customizable for each attribute,
+   *   making DrawModeProperties more flexible.
+   *
+   *   flat shading can be achieved by using LIGHTSTAGE_SMOOTH
+   *   and setting the normal source to NORMAL_PER_FACE
+   */
+  enum DrawModeLightStage
+  {
+    LIGHTSTAGE_UNLIT,  /**< No lighting,  normals may be used by user defined shaders */
+    LIGHTSTAGE_SMOOTH, /**< Perform lighting in vertex shader   */
+    LIGHTSTAGE_PHONG   /**< Perform lighting in fragment shader */
+  };
+
+  /** \brief Primitive mode of a mesh.
+   *
+   *  Example: PRIMITIVE_EDGE on a polygon mesh renders only edges of the mesh.
+   */
+  enum DrawModePrimitive
+  {
+    PRIMITIVE_POINT,
+    PRIMITIVE_EDGE,
+    PRIMITIVE_HALFEDGE,
+    PRIMITIVE_WIREFRAME,
+    PRIMITIVE_HIDDENLINE,
+    PRIMITIVE_POLYGON,
+    PRIMITIVE_CELL
+  };
+
+  /** \brief Source of Primitive Colors.
+   *
+   *   This is interpreted as a per vertex diffuse and ambient color and multiplied with
+   *   the material diffuse/ambient colors.
+   */
+  enum DrawModeColorSource
+  {
+    COLOR_NONE,         /**< Use material colors only */
+    COLOR_PER_VERTEX,   /**< Load per vertex colors and modulate with material color */
+    COLOR_PER_HALFEDGE, /**< Load per halfedge colors and modulate with material color */
+    COLOR_PER_FACE      /**< Load per face colors and modulate with material color */
+  };
+
+  /** \brief Source of Texture Coordinates.
+   *
+   *   This must be specified for a textured draw.
+   */
+  enum DrawModeTexCoordSource
+  {
+    TEXCOORD_NONE,         /**< Disable texture mapping */
+    TEXCOORD_PER_VERTEX,   /**< Use per vertex texcoords for texture mapping */
+    TEXCOORD_PER_HALFEDGE, /**< Use per halfedge texcoords for texture mapping */
+    //  TEXCOORD_PER_FACE // TODO: discuss texcoords per face? is it useful?
+  };
+
+  /** \brief Source of Normals.
+   *
+   *   This must be specified if lighting is enabled.
+   */
+  enum DrawModeNormalSource
+  {
+    NORMAL_NONE,          /**< Disable lighting */
+    NORMAL_PER_VERTEX,    /**< Use per vertex normals */
+    NORMAL_PER_HALFEDGE,  /**< Use per halfedge normals */
+    NORMAL_PER_FACE       /**< Use per face normals \note per face is implicitly used in SHADE_FLAT mode  */
+  };
 
   typedef std::bitset<64> ModeFlagSet;
 
-  /** \brief This class will be used for property based draw modes.
+  /** \brief DrawModeProperties stores a set of properties that defines, how to render an object.
    *
-   * TODO: This class has to be implemented
+   * A property may be the primitive type, normal source, color source ...
+   * Each property is atomic, i.e. it can not be combined with other properties of the same type.
+   *  Example:  primitive may be PRIMITIVE_POLYGON or PRIMITIVE_POINTS, but not both at the same time.
+   *  This restriction makes a property set well defined; it is always a valid set of properties.
+   *  To have combined DrawModes i.e. flat + wireframe you have to use the layer approach of DrawMode.
    */
   class ACGDLLEXPORT DrawModeProperties {
+
   public:
-    DrawModeProperties();
+    DrawModeProperties(
+      DrawModePrimitive _primitive = PRIMITIVE_POLYGON,
+      DrawModeLightStage _lightStage = LIGHTSTAGE_UNLIT,
+      DrawModeNormalSource _normalSource = NORMAL_NONE,
+      DrawModeColorSource _colorSource = COLOR_NONE,
+      DrawModeTexCoordSource _texcoordSource = TEXCOORD_NONE,
+      bool _envMapping = false);
+
+    //===========================================================================
+      /** @name Getter/Setter of all properties
+      * @{ */
+    //===========================================================================
+
+    DrawModePrimitive primitive() const { return primitive_; }
+    void primitive(DrawModePrimitive _val) { primitive_ = _val; }
+
+    DrawModeLightStage lightStage() const { return lightStage_; }
+    void lightStage(DrawModeLightStage _val) { lightStage_ = _val; }
+
+    DrawModeColorSource colorSource() const { return colorSource_; }
+    void colorSource(DrawModeColorSource _val) { colorSource_ = _val; }
+
+    DrawModeNormalSource normalSource() const { return normalSource_; }
+    void normalSource(DrawModeNormalSource _val) { normalSource_ = _val; }
+
+    DrawModeTexCoordSource texcoordSource() const { return texcoordSource_; }
+    void texcoordSource(DrawModeTexCoordSource _val) { texcoordSource_ = _val; }
+
+    /** @} */
+
+    //===========================================================================
+      /** @name Helper functions for more convenient use in renderer
+      * @{ */
+    //===========================================================================
+
+    /// Is lighting enabled?
+    bool lighting() const { return lightStage_ != LIGHTSTAGE_UNLIT && normalSource_ != NORMAL_NONE; }
+
+    /// Is texturing enabled?
+    bool textured() const { return texcoordSource_ != TEXCOORD_NONE; }
+
+    /// Are colors used?
+    bool colored() const { return colorSource_ != COLOR_NONE; }
+
+    /// Is flat shading used (Normals per face)?
+    bool flatShaded() const { return normalSource_ == NORMAL_PER_FACE; }
+
+    /** @} */
 
   private:
 
-    // Specify lighting settings
-    bool lighting_;
+    bool envMapped_;
 
-    // Specify which primitives will get uploaded to the graphics card
-    bool points_;
-    bool lines_;
-    bool triangles_;
+    /// Specify which type of primitives will get uploaded to the graphics card
+    DrawModePrimitive primitive_;
 
-    // TODO: Shade model
-    // TODO: colors per?
+    DrawModeLightStage lightStage_;
+
+    DrawModeColorSource colorSource_;
+
+    DrawModeTexCoordSource texcoordSource_;
+
+    DrawModeNormalSource normalSource_;
+
     // TODO: Shaders
 
   };
 
+  /** \brief Specifies a DrawMode
+   *
+   * This class specifies a DrawMode. It can contain several properties and layers
+   * that define, how objects will be rendered.
+   *
+   */
   class ACGDLLEXPORT DrawMode {
     public:
       
@@ -129,6 +262,8 @@ namespace DrawModes {
       * See the list of draw modes below to check for the right numbers.
       * You should use the predefined drawModes or create new ones using the other functions
       * and ignore this constructor!
+      *
+      * @param _index Index of the new DrawMode
       */
       DrawMode(unsigned int _index);
       
@@ -136,6 +271,8 @@ namespace DrawModes {
       *
       * This constructor creates a DrawMode from a bitset.
       * This makes it easier to predefine draw modes using a bitset.
+      *
+      * @param _flags Flags for the new drawmode defined by a bitset
       */      
       DrawMode( ModeFlagSet _flags );
 
@@ -188,34 +325,89 @@ namespace DrawModes {
       std::vector< DrawMode > getAtomicDrawModes() const;
       
       /** \brief Get the number of maximum Modes which could be handled by the current implementation
-      *
       */
       unsigned int maxModes() const;
       
       operator bool() const;
 
 
-      /** \brief returns, if this DrawMode is property based
+      /** \brief returns the base properties of this draw mode
        *
-       * This function checks if the current drawmode is property based. If it is not
-       * an atomic draw mode, this function returns true if one of the drawmodes
-       * is property based.
+       * Base properties are the original properties that defined the DrawMode before any merge operation.
+       * They are located at layer 0, so actually this function has the same effect as getLayer(0).
+       * 
+       * Every DrawMode is property based with only two exceptions:
+       *  - NONE
+       *  - DEFAULT
+       *
+       * getDrawModeProperties returns 0 for these.
        */
-      bool propertyBased() const;
+      const DrawModeProperties* getDrawModeProperties() const;
 
-      /** \brief returns the properties of this draw mode
+      /** \brief set the base properties of this draw mode
        *
-       * This function will return the properties of this DrawMode.
-       * This is only valid, if the DrawMode is atomic and has been declared as
-       * property based when it was added. Otherwise a 0 pointer is returned!
+       * @param _props Properties to be set
        */
-      DrawModeProperties* drawModeProperties();
+      void setDrawModeProperties(const DrawModeProperties* _props);
+
+      /** \brief set the base properties of this draw mode
+       *
+       * @param _props Properties to be set
+       */
+      void setDrawModeProperties(const DrawModeProperties& _props);
+
+
+      /** \brief add another layer on top of this drawmode
+       *
+       * This allows for combinations of DrawModes.
+       * The renderer will iterator over all layers of the drawmode 
+       *  and issue a new draw call for each layer.
+       * Example:
+       *  layer 0 : flat shading properties
+       *  layer 1 : edge drawing properties
+       *
+       * The result will be a flat shaded object with it's wireframe on top of it.
+       * Does duplicate check, in case the property set is already in the layer list.
+       *
+       * addLayer is also called in bitwise | operator for backwards compatibility with bitset DrawModes
+       *
+       * @param _props Property that should be added
+       */
+      void addLayer(const DrawModeProperties* _props); // same as bitwise or operator
+
+      /** \brief returns the layer count
+       */
+      unsigned int getNumLayers() const;
+
+      /** \brief returns the property set at layer i
+       *
+       * @param _i Layer that is requested
+       */
+      const DrawModeProperties* getLayer(unsigned int _i) const;
+
+      /** \brief remove layer at index i
+       *
+       * @param _i Layer that is requested
+       */
+      bool removeLayer(unsigned int _i);
+
+      /** \brief remove layer if it is in list
+       *
+       * @param _prop Property that should be removed if it's available
+       */
+      bool removeLayer(const DrawModeProperties* _prop);
 
     private:
       ModeFlagSet modeFlags_;
+
+      /** vector for combined DrawModes
+      * -> holds DrawModeProperties for each layer
+      * -> original layer at index 0
+      */
+      std::vector<DrawModeProperties> layers_;
   };
   
-  
+    
   /// not a valid draw mode
   extern ACGDLLEXPORT DrawMode NONE;
   /// use the default (global) draw mode and not the node's own.
