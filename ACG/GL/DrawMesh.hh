@@ -299,7 +299,7 @@ private:
    *
    * Only operates on indices
    *
-   * @param _dstIndexBuf (in) pointer to the resulting index buffer
+   * @param _dstIndexBuf  pointer to the resulting index buffer
    * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh_
    * @return number of triangles,  also fills triToFaceMap_
    */
