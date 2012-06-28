@@ -39,22 +39,10 @@ TODO: OpenFlipper Scripting and examples.
       \endcode
 
   \section scripting_vectortype Vector data type
-    The vector data type is corresponging to the Vec3d type in C++. It does not support all
-    of its operations yet. The implementation of the scripting type is done in prototypeVec3d.
+     The Vec3d used in the C++ code is mapped to the scripting language. Details
+     can be found here:
+       \subpage scripting_vector_type
     
-    You can use the following functions:
-    \code
-       var vec = Vector(1,2,3)
-       var vec2 = Vector(10,20,30)
-
-       vec.multiply(0.5)  // Multiply vec with 0.5
-       vec.add(vec2)      // Add vec2 to vec 
-       vec.sub(vec2)      // Subtract vec2 from vec
-       
-       print(vec)         // Output the current value: 0.5,1,1.5
-    \endcode
-    
-
   \section scripting_examples Scripting Examples
     \subsection scripting_examples_qstringlist Iterating over a QStringList
 
