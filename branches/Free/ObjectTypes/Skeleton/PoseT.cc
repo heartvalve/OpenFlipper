@@ -94,8 +94,7 @@ PoseT<PointT>::~PoseT()
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Returns the local matrix for the given joint
+/** \brief Returns the local matrix for the given joint
  *
  * @param _joint The joints index, same as for SkeletonT::joints_
  * @return The local matrix, relative to the parents coordinate system
@@ -182,8 +181,7 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::localMatrixInv(unsigned int _joint
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Returns the global matrix for the given joint
+/** \brief Returns the global matrix for the given joint
  *
  * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  *
