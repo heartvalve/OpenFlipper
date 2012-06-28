@@ -47,8 +47,7 @@
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Copy constructor
+/** \brief Copy constructor
  *
  * @param _other The animation to copy from
  */
@@ -108,8 +107,8 @@ bool MultiInterpolationAnimationT<PointT>::getMaxInput(Scalar& _result) {
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Returns the number of frames that this animation can playback
+/** \brief Returns the number of frames that this animation can playback
+ *
  * Note that this is not simply the sum of all animations' frame counts, as they can (and most likely will) overlap.
  */
 template<class PointT>
