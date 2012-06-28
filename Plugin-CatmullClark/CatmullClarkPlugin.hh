@@ -30,7 +30,7 @@
 
 #include "CatmullClarkToolbar.hh"
 //#include "CatmullClarkPerObjectDataT.hh"
-#include "CatmullClarkT.hh"
+#include "OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh"
 
 
 //== CLASS DEFINITION =========================================================
