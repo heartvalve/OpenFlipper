@@ -79,11 +79,14 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     using InterpolationAnimationT<PointT>::FPS;
 
   public:
-    /**
-      * @name Frame access
-      * There is one pose per frame.
-      */
-    //@{
+
+    //===========================================================================
+    /** @name Frame access
+     *
+     * There is one pose per frame.
+     *
+     * @{ */
+    //===========================================================================
 
     /** \brief get a pose
      *
@@ -100,21 +103,23 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
      */
     virtual Pose *pose(unsigned int _iFrame, Pose* _reference);
     virtual unsigned int frameCount();
-    //@}
+    /** @} */
 
-    /**
-      * @name Synchronization
-      * Use these methods to keep the poses in sync with the number (and indices) of the joints.
-      */
-    //@{
+    //===========================================================================
+    /** @name Synchronization
+     *
+     * Use these methods to keep the poses in sync with the number (and indices) of the joints.
+     * @{ */
+    //===========================================================================
     void insertJointAt(unsigned int _index) {};
     void removeJointAt(unsigned int _index) {};
-    //@}
+    /** @} */
     
-    /**
-      * @name Animations access
-      */
-    //@{
+    //===========================================================================
+    /** @name Animations access
+     *
+     * @{ */
+    //===========================================================================
     void addInterpolationAnimation(InterpolationAnimationT<PointT> *_animation) {
       interpolationAnimations_.push_back(_animation);
     }
@@ -123,8 +128,7 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     }
     
     InterpolationAnimationT<PointT>* animation(unsigned int _index );
-    
-    //@}
+    /** @} */
     
     virtual void clearPoseCache() {
       for (uint i=0; i < interpolationAnimations_.size(); ++i) {
