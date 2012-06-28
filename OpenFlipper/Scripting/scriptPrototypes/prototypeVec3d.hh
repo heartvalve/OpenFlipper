@@ -49,7 +49,7 @@
 // Description: 
 //
 //
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
+// Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2007
 //
 
 #ifndef PROTOTYPEVEC3D_HH 
@@ -66,6 +66,16 @@ class prototypeVec3d : public QObject , public QScriptable
  public:
      prototypeVec3d(QObject *parent = 0);
 
+ public slots:
+     // Multiplies the given vector with the scalar
+     void multiply(QScriptValue _scalar);
+
+     // Adds another vector to this vector
+     void add(QScriptValue _vector);
+
+     // Subtracts another vector from this vector
+     void sub(QScriptValue _vector);
+
  public Q_SLOTS:
      QString toString() const;
 
@@ -73,3 +83,4 @@ class prototypeVec3d : public QObject , public QScriptable
  
       
 #endif // PROTOTYPEVEC3D_HH
+
