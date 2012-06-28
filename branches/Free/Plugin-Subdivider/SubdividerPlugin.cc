@@ -59,6 +59,8 @@
 #include <OpenMesh/Tools/Subdivider/Uniform/ModifiedButterFlyT.hh>
 #include <OpenMesh/Tools/Subdivider/Uniform/LongestEdgeT.hh>
 
+#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
+
 
 SubdividerPlugin::SubdividerPlugin() :
         tool_(0),
@@ -89,7 +91,7 @@ void SubdividerPlugin::pluginsInitialized()
 {
   emit setSlotDescription("subdivide(int,QString,int)", "Smooth a triangular mesh",
                           QString("object_id,algorithm,iterations").split(","),
-                          QString("id of an object, algorithm to use (linear | loop | sqrt3 | interpolating_sqrt3 | modifiedButterfly ), number of iterations").split(","));
+                          QString("id of an object, algorithm to use (linear | loop | sqrt3 | interpolating_sqrt3 | modifiedButterfly | catmullClark ), number of iterations").split(","));
 }
 
 //-----------------------------------------------------------------------------
@@ -116,6 +118,10 @@ void SubdividerPlugin::slotSubdivideUniform()
       else if ( tool_->modifiedButterfly_radioButton->isChecked()  )
       {
         subdivide(ids[i],"modifiedButterfly",tool_->subdivision_steps_spinBox->value());
+      }
+      else if ( tool_->catmullClark_radioButton->isChecked()  )
+      {
+        subdivide(ids[i],"catmullClark",tool_->subdivision_steps_spinBox->value());
       }
     }
   }
@@ -178,51 +184,90 @@ void SubdividerPlugin::simpleSubdivide(int _objectId, QString _algorithm , int _
 void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps) {
 
   BaseObjectData* object;
-  if(!test_trimesh_object(_objectId , object))
+  PluginFunctions::getObject(_objectId,object);
+  if(!object) {
+    emit log(LOGERR,"Unable to get Object in SubdividerPlugin::subdivide");
     return;
-
-  TriMesh* mesh = PluginFunctions::triMesh(object);
-
-
-  if(_algorithm.contains("loop",Qt::CaseInsensitive))
-  {
-    OpenMesh::Subdivider::Uniform::LoopT<TriMesh,double> subdivider;
-    
-    subdivider.attach(*mesh);
-    subdivider(*mesh,_steps,tool_->updatePoints->isChecked());
-    subdivider.detach();
-  }
-  else if ( _algorithm.contains("sqrt3",Qt::CaseInsensitive) )
-  {
-    OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
-    
-    subdivider.attach(*mesh);
-    subdivider(_steps,tool_->updatePoints->isChecked());
-    subdivider.detach();
-  }
-  else if ( _algorithm.contains("interpolating_sqrt(3)",Qt::CaseInsensitive)  )
-  {
-    OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
-    
-    subdivider.attach(*mesh);
-    subdivider(_steps,tool_->updatePoints->isChecked());
-    subdivider.detach();
-  }
-  else if ( _algorithm.contains("modifiedButterfly",Qt::CaseInsensitive)  )
-  {
-    OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
-    
-    subdivider.attach(*mesh);
-    subdivider(_steps,tool_->updatePoints->isChecked());
-    subdivider.detach();
   }
 
-  mesh->garbage_collection();
+  TriMesh*  mesh = PluginFunctions::triMesh(object);
+  PolyMesh* polyMesh = PluginFunctions::polyMesh(object);
 
-  mesh->update_face_normals();
-  mesh->update_vertex_normals();
-  TriMeshObject* tmo = PluginFunctions::triMeshObject(object);
-  tmo->update();
+
+  if ( mesh ) {
+    if(_algorithm.contains("loop",Qt::CaseInsensitive))
+    {
+      OpenMesh::Subdivider::Uniform::LoopT<TriMesh,double> subdivider;
+
+      subdivider.attach(*mesh);
+      subdivider(*mesh,_steps,tool_->updatePoints->isChecked());
+      subdivider.detach();
+    }
+    else if ( _algorithm.contains("sqrt3",Qt::CaseInsensitive) )
+    {
+      OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
+
+      subdivider.attach(*mesh);
+      subdivider(_steps,tool_->updatePoints->isChecked());
+      subdivider.detach();
+    }
+    else if ( _algorithm.contains("interpolating_sqrt(3)",Qt::CaseInsensitive)  )
+    {
+      OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
+
+      subdivider.attach(*mesh);
+      subdivider(_steps,tool_->updatePoints->isChecked());
+      subdivider.detach();
+    }
+    else if ( _algorithm.contains("modifiedButterfly",Qt::CaseInsensitive)  )
+    {
+      OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
+
+      subdivider.attach(*mesh);
+      subdivider(_steps,tool_->updatePoints->isChecked());
+      subdivider.detach();
+    } else {
+      emit log(LOGERR,"Unsupported or unknown subdivider for triangular meshes: " + _algorithm);
+    }
+
+    mesh->garbage_collection();
+
+    mesh->update_face_normals();
+    mesh->update_vertex_normals();
+    //TriMeshObject* tmo = PluginFunctions::triMeshObject(object);
+    //tmo->update();
+  }
+
+  if ( polyMesh ) {
+
+    if ( _algorithm.contains("catmullClark",Qt::CaseInsensitive)  )
+    {
+
+      PolyMesh* polyMesh = PluginFunctions::polyMesh(object);
+
+      if ( ! polyMesh) {
+        emit log(LOGERR,"Error: Catmull Clark only works on Poly Meshes!");
+        return;
+      }
+
+      OpenMesh::Subdivider::Uniform::CatmullClarkT<PolyMesh> subdivider;
+
+      subdivider.attach(*polyMesh);
+      subdivider(_steps,tool_->updatePoints->isChecked());
+      subdivider.detach();
+
+      polyMesh->garbage_collection();
+
+      polyMesh->update_face_normals();
+      polyMesh->update_vertex_normals();
+      //PolyMeshObject* pmo = PluginFunctions::polyMeshObject(object);
+      //pmo->update();
+
+    } else {
+      emit log(LOGERR,"Unsupported or unknown subdivider for polygonal meshes: " + _algorithm);
+    }
+
+  }
 
   // Create backup
   emit createBackup(object->id(), "Subdivider", UPDATE_TOPOLOGY);
