@@ -109,6 +109,16 @@ of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QRadioButton" name="catmullClark_radioButton">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Catmull Clark subdivision&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: Only works on quadrangular meshes!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Catmull Clark</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
