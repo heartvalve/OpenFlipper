@@ -180,9 +180,6 @@ PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose*
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Returns the number of frames stored in this pose
- */
 template<class PointT>
 unsigned int InterpolationAnimationT<PointT>::frameCount()
 {
@@ -191,14 +188,6 @@ unsigned int InterpolationAnimationT<PointT>::frameCount()
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Called by the skeleton as a new joint is inserted
- *
- * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
- *
- * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
- *                               SkeletonT::joints_.size as parameter.
- */
 template<class PointT>
 void InterpolationAnimationT<PointT>::insertJointAt(unsigned int _index)
 {

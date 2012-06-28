@@ -54,7 +54,7 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
   public:
     typedef PointT                                          Point;
     typedef typename Point::value_type                      Scalar;
-    typedef PoseT<PointT>                                   Pose;                           ///< Typedef for the pose template
+    typedef PoseT<PointT>                                   Pose;                        ///< Typedef for the pose template
     typedef InterpolationMatrixManipulatorT<Scalar>         MatrixManipulator;
     typedef InterpolationT<Scalar>                          Interpolator;
     typedef std::vector<Scalar>                             TargetType;
