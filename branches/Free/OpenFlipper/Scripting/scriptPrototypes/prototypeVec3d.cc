@@ -49,12 +49,14 @@
 // Description: 
 //
 //
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
+// Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2007
 //
 
 #define PROTOTYPEVEC3D_C 
 
 #include "prototypeVec3d.hh"
+
+#include <iostream>
  
 prototypeVec3d::prototypeVec3d(QObject *parent ) : 
     QObject(parent) 
@@ -69,3 +71,21 @@ QString prototypeVec3d::toString() const {
           thisObject().property("z").toString() + " )";
 }
       
+void prototypeVec3d::multiply(QScriptValue _scalar) {
+  thisObject().setProperty("x", QScriptValue(thisObject().property("x").toNumber() * _scalar.toNumber()));
+  thisObject().setProperty("y", QScriptValue(thisObject().property("y").toNumber() * _scalar.toNumber()));
+  thisObject().setProperty("z", QScriptValue(thisObject().property("z").toNumber() * _scalar.toNumber()));
+}
+
+void prototypeVec3d::add(QScriptValue _vector) {
+  thisObject().setProperty("x", QScriptValue(_vector.property("x").toNumber() + thisObject().property("x").toNumber()));
+  thisObject().setProperty("y", QScriptValue(_vector.property("y").toNumber() + thisObject().property("y").toNumber()));
+  thisObject().setProperty("z", QScriptValue(_vector.property("z").toNumber() + thisObject().property("z").toNumber()));
+}
+
+
+void prototypeVec3d::sub(QScriptValue _vector) {
+  thisObject().setProperty("x", QScriptValue(thisObject().property("x").toNumber() - _vector.property("x").toNumber()));
+  thisObject().setProperty("y", QScriptValue(thisObject().property("y").toNumber() - _vector.property("y").toNumber()));
+  thisObject().setProperty("z", QScriptValue(thisObject().property("z").toNumber() - _vector.property("z").toNumber()));
+}
