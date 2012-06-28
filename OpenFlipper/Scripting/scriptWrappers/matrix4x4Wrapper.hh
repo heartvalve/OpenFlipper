@@ -48,7 +48,7 @@
 // Description: 
 //
 //
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
+// Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2007
 //
 
 #ifndef WRAPPERMATRIX4X4_HH 
