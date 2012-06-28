@@ -66,10 +66,11 @@ void CatmullClarkPlugin::slotCompute()
     PolyMesh* mesh = dynamic_cast< PolyMeshObject* >( *o_it )->mesh();
     if ( mesh )
     {
-      ACG::CatmullClarkT<PolyMesh> CC(*mesh);
-      CC.prepare();
-      CC.subdivide(tool_->iters_spinBox->value());
-      CC.cleanup();
+      OpenMesh::Subdivider::Uniform::CatmullClarkT<PolyMesh> CC;
+
+      CC.attach(*mesh);
+      CC(tool_->iters_spinBox->value());
+      CC.detach();
 
       emit updatedObject( o_it->id() );
 
