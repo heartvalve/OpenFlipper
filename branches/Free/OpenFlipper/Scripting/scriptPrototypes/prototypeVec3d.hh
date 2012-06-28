@@ -52,6 +52,25 @@
 // Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2007
 //
 
+/** \page scripting_vector_type Vector data type for scripting
+ *
+ *   The vector data type is corresponding to the Vec3d type in C++. It does not support all
+ *   of its operations yet. The implementation of the scripting type is done in prototypeVec3d.
+ *
+ *   You can use the following functions:
+ *   \code
+ *      var vec = Vector(1,2,3)
+ *      var vec2 = Vector(10,20,30)
+ *
+ *      vec.multiply(0.5)  // Multiply vec with 0.5
+ *      vec.add(vec2)      // Add vec2 to vec
+ *      vec.sub(vec2)      // Subtract vec2 from vec
+ *
+ *      print(vec)         // Output the current value: 0.5,1,1.5
+ *   \endcode
+ *
+ */
+
 #ifndef PROTOTYPEVEC3D_HH 
 #define PROTOTYPEVEC3D_HH 
 
@@ -59,6 +78,13 @@
 #include <QtCore/QObject>
 #include <QtScript/QtScript>
  
+/** \class prototypeVec3d
+ *
+ * This class wraps the Vec3d to the scripting language
+ *
+ * \ref scripting_vector_type
+ *
+ */
 class prototypeVec3d : public QObject , public QScriptable
 {
      Q_OBJECT
@@ -67,13 +93,22 @@ class prototypeVec3d : public QObject , public QScriptable
      prototypeVec3d(QObject *parent = 0);
 
  public slots:
-     // Multiplies the given vector with the scalar
+     /** \brief Multiplies the given vector with the scalar
+      *
+      * @param _scalar Scalar value that gets multiplied
+      */
      void multiply(QScriptValue _scalar);
 
-     // Adds another vector to this vector
+     /** \brief Adds another vector to this vector
+      *
+      * @param _vector Vector that should be added
+      */
      void add(QScriptValue _vector);
 
-     // Subtracts another vector from this vector
+     /** \brief Subtracts another vector from this vector
+      *
+      * @param _vector Vector that should be subtracted
+      */
      void sub(QScriptValue _vector);
 
  public Q_SLOTS:
