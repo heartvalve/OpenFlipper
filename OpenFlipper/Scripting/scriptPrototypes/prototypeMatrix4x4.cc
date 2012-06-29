@@ -55,7 +55,9 @@
 #define PROTOTYPEMATRIX4X4_C 
 
 #include "prototypeMatrix4x4.hh"
- 
+#include <OpenFlipper/Scripting/scriptWrappers/vec3dWrapper.hh>
+#include <iostream>
+
 prototypeMatrix4x4::prototypeMatrix4x4(QObject *parent ) : 
     QObject(parent) 
 {
@@ -71,11 +73,51 @@ QString prototypeMatrix4x4::toString() const {
       result = result + thisObject().property(QString::number(i) + QString::number(j)).toString() + "  ";
     }
     
-    //Dont add a newline at the end of the Matrix
+    // Don't add a newline at the end of the Matrix
     if ( i != 3 )
       result += "\n";
   }
     
   return result;
+}
+
+QScriptValue prototypeMatrix4x4::transform_vector(QScriptValue _vector )
+{
+
+  // Convert from this objects properties to the matrix representation
+  Matrix4x4 matrix;
+  for ( uint i = 0 ; i < 4 ; ++i )
+    for ( uint j = 0 ; j < 4 ; ++j )
+      matrix(i,j) = thisObject().property(QString::number(i) + QString::number(j)).toNumber();
+
+  // Convert the vector from scripting representation to C++
+  ACG::Vec3d vector(_vector.property("x").toNumber(),_vector.property("y").toNumber(),_vector.property("z").toNumber());
+
+  // Calculate result vector
+  ACG::Vec3d result = matrix.transform_vector(vector);
+
+  // Transform back to scriptable vector
+  return QScriptValue( engine()->toScriptValue(result) );
+
+}
+
+QScriptValue prototypeMatrix4x4::transform_point(QScriptValue _vector )
+{
+
+  // Convert from this objects properties to the matrix representation
+  Matrix4x4 matrix;
+  for ( uint i = 0 ; i < 4 ; ++i )
+    for ( uint j = 0 ; j < 4 ; ++j )
+      matrix(i,j) = thisObject().property(QString::number(i) + QString::number(j)).toNumber();
+
+  // Convert the vector from scripting representation to C++
+  ACG::Vec3d vector(_vector.property("x").toNumber(),_vector.property("y").toNumber(),_vector.property("z").toNumber());
+
+  // Calculate result vector
+  const ACG::Vec3d result = matrix.transform_point(vector);
+
+  // Transform back to scriptable vector
+  return QScriptValue( engine()->toScriptValue(result)  );
+
 }
       

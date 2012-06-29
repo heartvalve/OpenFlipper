@@ -42,6 +42,11 @@ TODO: OpenFlipper Scripting and examples.
      The Vec3d used in the C++ code is mapped to the scripting language. Details
      can be found here:
        \subpage scripting_vector_type
+
+  \section scripting_matrixtype Matrix data type
+     The Matrix4x4T type used in the C++ code is mapped to the scripting language. Details
+     can be found here:
+       \subpage scripting_matrix_type
     
   \section scripting_examples Scripting Examples
     \subsection scripting_examples_qstringlist Iterating over a QStringList
