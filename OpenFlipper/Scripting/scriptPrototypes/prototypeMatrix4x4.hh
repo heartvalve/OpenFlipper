@@ -58,6 +58,7 @@
 /** \page scripting_matrix_type Matrix data type used for scripting
  *
  *   The matrix type Matrix4x4 is used in the scripting language to handle matrix operations.
+ *   The implementation of the type for scripting can be found in prototypeMatrix4x4 .
  *
  *   You can use the following functions:
  *   \code
@@ -66,27 +67,14 @@
  *                          0,0,1,3,
  *                          0,0,0,1 )  // Create a matrix that contains only a translation (1,2,3).
  *
- *   var vec = Vector(1,2,3)
+ *   var vec = Vector(1,2,3)  // Create a vector
  *
- *   matrix.transform_point(vec);
- *   matrix.transform_vector(vec);
+ *   matrix.transform_point(vec);  // Transforms a point by the given matrix (translation is included)
+ *   matrix.transform_vector(vec); // Transforms a vector by the given matrix (translation is omitted)
  *
  *   \endcode
  *
  */
-
-/*
-    var matrix = Matrix4x4(1,0,0,1,
-                           0,1,0,2,
-                           0,0,1,3,
-                           0,0,0,1 )
-
-var vec = Vector(1,2,3)
-
-print(matrix.multPoint(vec))
-print(matrix.multVector(vec))
-
-*/
 
 #include <QtCore/QObject>
 #include <QtScript/QtScript>
