@@ -54,19 +54,29 @@
 
 /** \page scripting_vector_type Vector data type for scripting
  *
- *   The vector data type is corresponding to the Vec3d type in C++. It does not support all
- *   of its operations yet. The implementation of the scripting type is done in prototypeVec3d.
+ *   The vector data type is corresponding to the Vec3d type in C++. The implementation of the
+ *   scripting type is done in prototypeVec3d.
  *
  *   You can use the following functions:
  *   \code
  *      var vec = Vector(1,2,3)
  *      var vec2 = Vector(10,20,30)
  *
- *      vec.multiply(0.5)  // Multiply vec with 0.5
- *      vec.add(vec2)      // Add vec2 to vec
- *      vec.sub(vec2)      // Subtract vec2 from vec
+ *      vec.multiply(0.5)           // Multiply vec with 0.5
+ *      vec.add(vec2)               // Add vec2 to vec
+ *      vec.sub(vec2)               // Subtract vec2 from vec
  *
- *      print(vec)         // Output the current value: 0.5,1,1.5
+ *      var norm    = vec.norm()    // Calculate the length of the vector
+ *      var sqrnorm = vec.sqrnorm() // Calculate the squared length of the vector
+ *
+ *      var sprod = vec.sprod(vec)  //Compute scalar product with the vector and itself
+ *
+ *      vec.normalize()             // Normalize vector
+ *
+ *      vec.zero()                  // Set all components of the vector to zero
+ *
+ *      print(vec)                  // Output vector to the console
+ *
  *   \endcode
  *
  */
@@ -110,6 +120,36 @@ class prototypeVec3d : public QObject , public QScriptable
       * @param _vector Vector that should be subtracted
       */
      void sub(QScriptValue _vector);
+
+     /** \brief Resets all components of the vector to zero
+      *
+      */
+     void zero();
+
+
+     /** \brief Calculate scalar product
+      *
+      * @param _vector Second vector for scalar product (Can be the vector itself)
+      * @return Scalar product value
+      */
+     QScriptValue sprod(QScriptValue _vector);
+
+     /** \brief Calculate the Euclidean norm of the vector
+      *
+      * @return Norm of the vector
+      */
+     QScriptValue norm();
+
+     /** \brief Calculate the squared Euclidean norm of the vector
+      *
+      * @return Squared norm of the vector
+      */
+     QScriptValue sqrnorm();
+
+
+     /** \brief Normalize the vector
+      */
+     void normalize();
 
  public Q_SLOTS:
      QString toString() const;

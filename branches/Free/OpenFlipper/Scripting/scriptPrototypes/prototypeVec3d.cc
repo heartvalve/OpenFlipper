@@ -89,3 +89,43 @@ void prototypeVec3d::sub(QScriptValue _vector) {
   thisObject().setProperty("y", QScriptValue(thisObject().property("y").toNumber() - _vector.property("y").toNumber()));
   thisObject().setProperty("z", QScriptValue(thisObject().property("z").toNumber() - _vector.property("z").toNumber()));
 }
+
+void prototypeVec3d::zero() {
+  thisObject().setProperty("x", QScriptValue(0.0));
+  thisObject().setProperty("y", QScriptValue(0.0));
+  thisObject().setProperty("z", QScriptValue(0.0));
+}
+
+QScriptValue prototypeVec3d::sprod(QScriptValue _vector) {
+  return QScriptValue( thisObject().property("x").toNumber() * _vector.property("x").toNumber() +
+                       thisObject().property("y").toNumber() * _vector.property("y").toNumber() +
+                       thisObject().property("z").toNumber() * _vector.property("z").toNumber() );
+
+}
+
+QScriptValue prototypeVec3d::norm() {
+  return QScriptValue( sqrt( thisObject().property("x").toNumber() * thisObject().property("x").toNumber() +
+                             thisObject().property("y").toNumber() * thisObject().property("y").toNumber() +
+                             thisObject().property("z").toNumber() * thisObject().property("z").toNumber() ) );
+}
+
+QScriptValue prototypeVec3d::sqrnorm() {
+  return QScriptValue( thisObject().property("x").toNumber() * thisObject().property("x").toNumber() +
+                       thisObject().property("y").toNumber() * thisObject().property("y").toNumber() +
+                       thisObject().property("z").toNumber() * thisObject().property("z").toNumber() );
+}
+
+void prototypeVec3d::normalize() {
+  double length = sqrt( thisObject().property("x").toNumber() * thisObject().property("x").toNumber() +
+                        thisObject().property("y").toNumber() * thisObject().property("y").toNumber() +
+                        thisObject().property("z").toNumber() * thisObject().property("z").toNumber() );
+
+  if ( length != 0.0 ) {
+    thisObject().setProperty("x", ( thisObject().property("x").toNumber() / length ) );
+    thisObject().setProperty("y", ( thisObject().property("y").toNumber() / length ) );
+    thisObject().setProperty("z", ( thisObject().property("z").toNumber() / length ) );
+  }
+
+
+}
+
