@@ -55,19 +55,67 @@
 #ifndef PROTOTYPEVMATRIX4X4_HH 
 #define PROTOTYPEVMATRIX4X4_HH 
 
+/** \page scripting_matrix_type Matrix data type used for scripting
+ *
+ *   The matrix type Matrix4x4 is used in the scripting language to handle matrix operations.
+ *
+ *   You can use the following functions:
+ *   \code
+ *   var matrix = Matrix4x4(1,0,0,1,
+ *                          0,1,0,2,
+ *                          0,0,1,3,
+ *                          0,0,0,1 )  // Create a matrix that contains only a translation (1,2,3).
+ *
+ *   var vec = Vector(1,2,3)
+ *
+ *   matrix.transform_point(vec);
+ *   matrix.transform_vector(vec);
+ *
+ *   \endcode
+ *
+ */
+
+/*
+    var matrix = Matrix4x4(1,0,0,1,
+                           0,1,0,2,
+                           0,0,1,3,
+                           0,0,0,1 )
+
+var vec = Vector(1,2,3)
+
+print(matrix.multPoint(vec))
+print(matrix.multVector(vec))
+
+*/
 
 #include <QtCore/QObject>
 #include <QtScript/QtScript>
+#include "OpenFlipper/common/Types.hh"
  
 class prototypeMatrix4x4 : public QObject , public QScriptable
 {
-     Q_OBJECT
- 
- public:
-     prototypeMatrix4x4(QObject *parent = 0);
 
- public Q_SLOTS:
-     QString toString() const;
+  Q_OBJECT
+
+  public:
+    prototypeMatrix4x4(QObject *parent = 0);
+
+  public slots:
+
+    /** \brief Matrix vector product
+     *
+     * Transforms a vector by the given matrix (translation is omitted)
+     */
+    QScriptValue transform_vector(QScriptValue _vector);
+
+    /** \brief Matrix vector product
+     *
+     * Transforms a point by the given matrix (translation is included)
+     */
+    QScriptValue transform_point(QScriptValue _vector);
+
+  public Q_SLOTS:
+    QString toString() const;
 
 };
  
