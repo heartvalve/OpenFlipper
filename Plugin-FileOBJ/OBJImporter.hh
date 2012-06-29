@@ -148,12 +148,30 @@ class OBJImporter
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     BSplineCurve* currentCurve();
-    unsigned int numCurves() { return bSplineCurves_.size(); }
+    /// returns the number of curves
+    unsigned int numCurves() { return curvesMap_.size(); }
+    /// maps the counted curve to a group id
+    void setCurveGroupId(const unsigned int _count, const int _id);
+    /// get the group id corresponding to the counted curve
+    int getCurveGroupId(const unsigned int _count);
+    /// sets the parent group id of the curve group
+    void setCurveParentId(const int _curveGroup, const int _parentGroup);
+    /// get the parent group id of the curve group
+    int getCurveParentId(const int _curveGroup);
 #endif
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     BSplineSurface* currentSurface();
-    unsigned int numSurfaces() { return bSplineSurfaces_.size(); }
+    /// returns the number of surfaces
+    unsigned int numSurfaces() { return surfacesMap_.size(); }
+    /// maps the counted surface to a group id
+    void setSurfaceGroupId(const unsigned int _count, const int _id);
+    /// get the group id corresponding to the counted surface
+    int getSurfaceGroupId(const unsigned int _count);
+    /// sets the parent group id of the surface group
+    void setSurfaceParentId(const int _surfaceGroup, const int _parentGroup);
+    /// get the parent group id of the surface group
+    int getSurfaceParentId(const int _surfaceGroup);
 #endif
 
     /// add all vertices that are used to the mesh (in correct order)
@@ -299,6 +317,20 @@ class OBJImporter
     // Store vertices of invalid faces due to non-manifold
     // configurations.
     std::vector< OMVHandles > invalidFaces_;
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    /// maps each counted curve to a group id
+    std::map<unsigned int, int> curvesMap_;
+    /// maps each curve group to a parent group id
+    std::map<int, int> curveParentGroupMap_;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    /// maps each counted curve to a group id
+    std::map<unsigned int, int> surfacesMap_;
+    /// maps each surface group  to a parent group id
+    std::map<int, int> surfaceParentGroupMap_;
+#endif
 
 };
 
