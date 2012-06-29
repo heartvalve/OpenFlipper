@@ -1009,6 +1009,70 @@ void OBJImporter::finish() {
 
 //-----------------------------------------------------------------------------
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+void OBJImporter::setCurveGroupId(const unsigned int _count, const int _id) {
+  curvesMap_[_count] = _id;
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+int OBJImporter::getCurveGroupId(const unsigned int _count) {
+  return curvesMap_[_count];
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+void OBJImporter::setCurveParentId(const int _curveGroup, const int _parentGroup) {
+  curveParentGroupMap_[_curveGroup] = _parentGroup;
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+int OBJImporter::getCurveParentId(const int _curveGroup) {
+  return curveParentGroupMap_[_curveGroup];
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+void OBJImporter::setSurfaceGroupId(const unsigned int _count, const int _id) {
+  surfacesMap_[_count] = _id;
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+int OBJImporter::getSurfaceGroupId(const unsigned int _count) {
+  return surfacesMap_[_count];
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+void OBJImporter::setSurfaceParentId(const int _surfaceGroup, const int _parentGroup) {
+  surfaceParentGroupMap_[_surfaceGroup] = _parentGroup;
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+int OBJImporter::getSurfaceParentId(const int _surfaceGroup) {
+  return surfaceParentGroupMap_[_surfaceGroup];
+}
+#endif
+
+//-----------------------------------------------------------------------------
+
 //used materials
 const std::vector<std::string> OBJImporter::usedMaterials(unsigned int _objectID){
 

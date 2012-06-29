@@ -948,7 +948,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       if ( keyWrd == "curv" ) {
 
-          int id = _importer.groupId(QString("spline_curve_%1").arg(curveCount));
+          //int id = _importer.groupId(QString("spline_curve_%1").arg(curveCount));
+          int id = _importer.getCurveGroupId(curveCount);
           if(id == -1) {
               std::cerr << "Error: Group has not been added before!" << std::endl;
               return;
@@ -1085,7 +1086,8 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       if ( keyWrd == "surf" ) {
 
-          int id = _importer.groupId(QString("spline_surface_%1").arg(surfaceCount));
+          //int id = _importer.groupId(QString("spline_surface_%1").arg(surfaceCount));
+          int id = _importer.getSurfaceGroupId(surfaceCount);
           if(id == -1) {
               std::cerr << "Error: Group has not been added before!" << std::endl;
               return;
@@ -1214,6 +1216,9 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   // keeps track if the first face of a mesh has been read yet or not
   bool firstFace = true;
 
+  QString currentGroupName;
+  int parentId;
+
   while( input && !input.eof() )
   {
     std::getline(input,line);
@@ -1294,6 +1299,9 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
         int id = _importer.addGroup(grpName.c_str());
+        parentId = id;
+        currentGroupName = grpName.c_str();
+        currentGroupName.remove(".obj");
         _importer.setCurrentGroup(id);
 
         // all following elements are in this group until
@@ -1401,8 +1409,30 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        int id = _importer.addGroup(QString("spline_curve_%1").arg(curveCount));
+        QString name = currentGroupName;
+        if (name.size() == 0)
+          name = "DefaultGroup";
+
+        name.append(QString("_curve_%1").arg(curveCount));
+        int id = _importer.addGroup(name);
+
+        if (_importer.numCurves() == 0) {
+          if (currentGroupName.size() == 0)
+            _importer.setGroupName(id, QString("DefaultGroup"));
+          else
+            _importer.setGroupName(id, currentGroupName);
+        }	else {
+          if (curveCount == 1) {
+            int first = _importer.getCurveGroupId(0);
+            QString tmp = _importer.groupName(first);
+            tmp.append(QString("_curve_0"));
+            _importer.setGroupName(first, tmp);
+          }
+          _importer.setGroupName(id, name);
+        }
+        _importer.setCurveParentId(id, parentId);
         _importer.setCurrentGroup(id);
+        _importer.setCurveGroupId(curveCount, id);
         curveCount++;
 
         _importer.setObjectOptions( options );
@@ -1474,8 +1504,30 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        int id = _importer.addGroup(QString("spline_surface_%1").arg(surfaceCount));
+        QString name = currentGroupName;
+        if (name.size() == 0)
+          name = "DefaultGroup";
+
+        name.append(QString("_surface_%1").arg(surfaceCount));
+        int id = _importer.addGroup(name);
+
+        if (_importer.numSurfaces() == 0) {
+          if (currentGroupName.size() == 0)
+            _importer.setGroupName(id, "DefaultGroup");
+          else
+            _importer.setGroupName(id, currentGroupName);
+        }	else {
+          if (surfaceCount == 1) {
+            int first = _importer.getSurfaceGroupId(0);
+            QString tmp = _importer.groupName(first);
+            tmp.append(QString("_surface_0"));
+            _importer.setGroupName(first, tmp);
+          }
+          _importer.setGroupName(id, name);
+        }
+        _importer.setSurfaceParentId(id, parentId);
         _importer.setCurrentGroup(id);
+        _importer.setSurfaceGroupId(surfaceCount, id);
         surfaceCount++;
 
         _importer.setObjectOptions( options );
@@ -1647,12 +1699,100 @@ int FileOBJPlugin::loadObject(QString _filename) {
     if ( dataControlExists ){
 
       std::vector<OBJImporter::ObjectOptions> options = importer.objectOptions();
+#if defined ENABLE_BSPLINECURVE_SUPPORT || defined ENABLE_BSPLINESURFACE_SUPPORT
+      std::map<int, QString> groupNames;
+#endif
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+      std::vector< std::vector<int> > curveGroups;
+      std::vector<int> curveIds;
+      int lastCurveParent = -2;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+      std::vector< std::vector<int> > surfaceGroups;
+      std::vector<int> surfaceIds;
+      int lastSurfaceParent = -2;
+#endif
       for(unsigned int i = 0; i < importer.objectCount(); i++) {
         // skip the object if it has no option
         // this can happen if the object only included other objects
         if (options[i] != NONE) {
           BaseObject* obj = importer.object(i);
           if(obj) {
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+            if (options[i] & OBJImporter::CURVE) {
+              // store the parent group name for later grouping
+              groupNames[obj->id()] = importer.groupName(importer.getCurveParentId(i));
+
+              // first curve group
+              if (lastCurveParent == -2) {
+                lastCurveParent = importer.getCurveParentId(i);
+                curveIds.push_back(obj->id());
+                BaseObject* parent = importer.object(lastCurveParent);
+                if (parent) {
+                  curveIds.push_back(parent->id());
+                  // don't group the parent in the objIDs group
+                  std::vector<int>::iterator pos = std::find(objIDs.begin(), objIDs.end(), parent->id());
+                  if (pos != objIDs.end())
+                    objIDs.erase(pos);
+                }
+              // new curve group
+              } else if (lastCurveParent != importer.getCurveParentId(i)) {
+                lastCurveParent = importer.getCurveParentId(i);
+                curveGroups.push_back(curveIds);
+                curveIds.clear();
+                curveIds.push_back(obj->id());
+                BaseObject* parent = importer.object(lastCurveParent);
+                if (parent) {
+                  curveIds.push_back(parent->id());
+                  // don't group the parent in the objIDs group
+                  std::vector<int>::iterator pos = std::find(objIDs.begin(), objIDs.end(), parent->id());
+                  if (pos != objIDs.end())
+                    objIDs.erase(pos);
+                }
+              // add curves to group
+              } else
+                curveIds.push_back(obj->id());
+            }
+
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+            if (options[i] & OBJImporter::SURFACE) {
+              // store the parent group name for later grouping
+              groupNames[obj->id()] = importer.groupName(importer.getSurfaceParentId(i));
+
+              // first surface group
+              if (lastSurfaceParent == -2) {
+                lastSurfaceParent = importer.getSurfaceParentId(i);
+                surfaceIds.push_back(obj->id());
+                BaseObject* parent = importer.object(lastSurfaceParent);
+                if (parent) {
+                  surfaceIds.push_back(parent->id());
+                  std::vector<int>::iterator pos = std::find(objIDs.begin(), objIDs.end(), parent->id());
+                  if (pos != objIDs.end())
+                    objIDs.erase(pos);
+                }
+              // new surface group
+              } else if (lastSurfaceParent != importer.getSurfaceParentId(i)) {
+                lastSurfaceParent = importer.getSurfaceParentId(i);
+                surfaceGroups.push_back(surfaceIds);
+                surfaceIds.clear();
+                surfaceIds.push_back(obj->id());
+                BaseObject* parent = importer.object(lastSurfaceParent);
+                if (parent) {
+                  surfaceIds.push_back(parent->id());
+                  std::vector<int>::iterator pos = std::find(objIDs.begin(), objIDs.end(), parent->id());
+                  if (pos != objIDs.end())
+                    objIDs.erase(pos);
+                }
+              // add surfaces to group
+              } else
+                surfaceIds.push_back(obj->id());
+
+            }
+#endif
+            if ( (options[i] & OBJImporter::TRIMESH) || (options[i] & OBJImporter::POLYMESH) )
               objIDs.push_back( obj->id() );
           } else {
               std::cerr << "Object is NULL!" << std::endl;
@@ -1660,18 +1800,31 @@ int FileOBJPlugin::loadObject(QString _filename) {
         }
       }
 
-#ifdef ENABLE_BSPLINECURVE_SUPPORT
-      // don't group objects if we only have one group and one bspline curve
-      if (importer.numGroups() != 2 && importer.numCurves() != 2)
-        returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
-#elif ENABLE_BSPLINESURFACE_SUPPORT
-      // don't group objects if we only have one group and one bspline surface
-      if (importer.numGroups() != 2 && importer.numSurfaces() != 2)
-        returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
-#else
-      returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
-#endif
+#if defined ENABLE_BSPLINECURVE_SUPPORT && defined ENABLE_BSPLINESURFACE_SUPPORT
+      // add last group
+      curveGroups.push_back(curveIds);
+      std::vector< std::vector<int> >::iterator it = curveGroups.begin();
+      for (it; it != curveGroups.end(); ++it) {
+        // only group if we have more than one curve
+        if (it->size() > 2) {
+          RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, groupNames[it->back()]);
+        }
+      }
+      // add last group
+      surfaceGroups.push_back(surfaceIds);
+      it = surfaceGroups.begin();
+      for (it; it != surfaceGroups.end(); ++it) {
+        // only group if we have more than one surface
+        if (it->size() > 2) {
+          RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, groupNames[it->back()]);
+        }
+      }
     }
+#endif
+
+      // only group if we have more than one object
+      if (objIDs.size() > 1)
+        returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
   }
 
   //check all new objects
