@@ -1216,8 +1216,10 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
   // keeps track if the first face of a mesh has been read yet or not
   bool firstFace = true;
 
+#if defined ENABLE_BSPLINECURVE_SUPPORT || defined ENABLE_BSPLINESURFACE_SUPPORT
   QString currentGroupName;
-  int parentId;
+  int parentId = -1;
+#endif
 
   while( input && !input.eof() )
   {
@@ -1299,9 +1301,11 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
         int id = _importer.addGroup(grpName.c_str());
+#if defined ENABLE_BSPLINECURVE_SUPPORT || defined ENABLE_BSPLINESURFACE_SUPPORT
         parentId = id;
         currentGroupName = grpName.c_str();
         currentGroupName.remove(".obj");
+#endif
         _importer.setCurrentGroup(id);
 
         // all following elements are in this group until
@@ -1800,31 +1804,40 @@ int FileOBJPlugin::loadObject(QString _filename) {
         }
       }
 
-#if defined ENABLE_BSPLINECURVE_SUPPORT && defined ENABLE_BSPLINESURFACE_SUPPORT
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
       // add last group
       curveGroups.push_back(curveIds);
       std::vector< std::vector<int> >::iterator it = curveGroups.begin();
       for (it; it != curveGroups.end(); ++it) {
         // only group if we have more than one curve
         if (it->size() > 2) {
-          RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, groupNames[it->back()]);
+          if (groupNames[it->back()].size() == 0)
+            RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, QFileInfo(_filename).fileName());
+          else
+            RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, groupNames[it->back()]);
         }
       }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
       // add last group
       surfaceGroups.push_back(surfaceIds);
-      it = surfaceGroups.begin();
-      for (it; it != surfaceGroups.end(); ++it) {
+      std::vector< std::vector<int> >::iterator it2 = surfaceGroups.begin();
+      for (it2; it2 != surfaceGroups.end(); ++it2) {
         // only group if we have more than one surface
-        if (it->size() > 2) {
-          RPC::callFunctionValue<int>("datacontrol","groupObjects", *it, groupNames[it->back()]);
+        if (it2->size() > 2) {
+          if (groupNames[it2->back()].size() == 0)
+            RPC::callFunctionValue<int>("datacontrol","groupObjects", *it2, QFileInfo(_filename).fileName());
+          else
+            RPC::callFunctionValue<int>("datacontrol","groupObjects", *it2, groupNames[it2->back()]);
         }
       }
-    }
 #endif
 
       // only group if we have more than one object
       if (objIDs.size() > 1)
         returnID = RPC::callFunctionValue<int>("datacontrol","groupObjects", objIDs, importer.groupName(0));
+    }
   }
 
   //check all new objects
