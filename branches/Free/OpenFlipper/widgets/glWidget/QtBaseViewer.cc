@@ -289,7 +289,7 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTra
          ( bbmin[2] > bbmax[2] )   ) {
       
       // Invalid bounding box, try to recover
-      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0, _resetTrackBall );
+      setScenePos( properties_.sceneCenter() , properties_.sceneRadius(), _resetTrackBall );
     
       // Update bounding box to match the scene geometry after recovery
       bbmin = ACG::Vec3d(-1.0,-1.0,-1.0);
