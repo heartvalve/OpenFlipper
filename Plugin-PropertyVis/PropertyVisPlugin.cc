@@ -433,81 +433,103 @@ namespace {
     };
 }
 
-void PropertyVisPlugin::slotVisualize() 
-{
+void PropertyVisPlugin::slotVisualize()  {
 
-  int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
-  BaseObjectData* object = 0;
+    int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
+    BaseObjectData* object = 0;
 
-  PluginFunctions::getObject( id, object );
+    PluginFunctions::getObject( id, object );
 
-  if (object == 0){
-    emit log(LOGERR, "Unable to get object");
-    return;
-  }
+    if (object == 0){
+        emit log(LOGERR, "Unable to get object");
+        return;
+    }
 
-  TriMesh * const triMesh = (object->dataType(DATA_TRIANGLE_MESH) ? PluginFunctions::triMesh(object) : 0);
-  PolyMesh * const polyMesh = (object->dataType(DATA_POLY_MESH) ? PluginFunctions::polyMesh(object) : 0);;
+    TriMesh * const triMesh = (object->dataType(DATA_TRIANGLE_MESH) ? PluginFunctions::triMesh(object) : 0);
+    PolyMesh * const polyMesh = (object->dataType(DATA_POLY_MESH) ? PluginFunctions::polyMesh(object) : 0);;
 
-  if (triMesh == 0 && polyMesh == 0) {
-      emit log(LOGERR,"Unable to get mesh");
-      return;
-  }
+    if (triMesh == 0 && polyMesh == 0) {
+        emit log(LOGERR,"Unable to get mesh");
+        return;
+    }
 
-  /*
-   * Visualize single properties.
-   */
-  QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-  for (QModelIndexList::const_iterator it = selectedIndices.begin(), it_end = selectedIndices.end();
-          it != it_end; ++it) {
+    // Actual Viz takes place in try-catch block to catch VizExceptions.
+    try {
 
-      const PropertyNameListModel::PROP_INFO &currentProp = propertyNameListModel_[it->row()];
+        /*
+         * Visualize single properties.
+         */
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        for (QModelIndexList::const_iterator it = selectedIndices.begin(), it_end = selectedIndices.end();
+                it != it_end; ++it) {
 
-      if (triMesh) visualizeProperty(triMesh, currentProp);
-      else if (polyMesh) visualizeProperty(polyMesh, currentProp);
-  }
+            const PropertyNameListModel::PROP_INFO &currentProp = propertyNameListModel_[it->row()];
 
-  /*
-   * Visualize composed properties.
-   */
-  if (tool_->visualizeVectorDifference_cb->isChecked()) {
+            if (triMesh)
+                visualizeProperty(triMesh, currentProp);
+            else if (polyMesh)
+                visualizeProperty(polyMesh, currentProp);
+        }
 
-      // Look for two vector properties of the same type and entity.
+        /*
+         * Visualize composed properties.
+         */
+        if (tool_->visualizeVectorDifference_cb->isChecked()) {
 
-      std::vector<const PropertyNameListModel::PROP_INFO*> propList;
+            // Look for two vector properties of the same type and entity.
 
-      QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-      for (QModelIndexList::const_iterator it = selectedIndices.begin(), it_end = selectedIndices.end();
-              it != it_end; ++it) {
-          const PropertyNameListModel::PROP_INFO &currentProp = propertyNameListModel_[it->row()];
-          if (currentProp.typeinfo() == PropertyNameListModel::proptype_Vec3d || currentProp.typeinfo() == PropertyNameListModel::proptype_Vec3f)
-              propList.push_back(&currentProp);
-      }
+            std::vector<const PropertyNameListModel::PROP_INFO*> propList;
 
-      std::sort(propList.begin(), propList.end(), PROP_INFO_TYPE_SORTER());
-      std::vector<const PropertyNameListModel::PROP_INFO*>::const_iterator it =
-              std::adjacent_find(propList.begin(), propList.end(), PROP_INFO_TYPE_EQUAL());
+            QModelIndexList selectedIndices =
+                    tool_->propertyName_lv->selectionModel()->selectedIndexes();
+            for (QModelIndexList::const_iterator it = selectedIndices.begin(), it_end =
+                    selectedIndices.end(); it != it_end; ++it) {
+                const PropertyNameListModel::PROP_INFO &currentProp =
+                        propertyNameListModel_[it->row()];
+                if (currentProp.typeinfo() == PropertyNameListModel::proptype_Vec3d
+                        || currentProp.typeinfo() == PropertyNameListModel::proptype_Vec3f)
+                    propList.push_back(&currentProp);
+            }
 
-      /*
-       * Are there two selected properties of equal vector type?
-       */
-      if (it != propList.end()) {
-          if (tool_->vecFieldDiff_norm_diff_rb->isChecked()) {
-              if (triMesh) visualizeVectorFieldDifference<TriMesh, scalarFn_norm_of_diff<TriMesh> >(triMesh, **it, **(it+1));
-              else if (polyMesh) visualizeVectorFieldDifference<PolyMesh, scalarFn_norm_of_diff<PolyMesh> >(polyMesh, **it, **(it+1));
-          } else if (tool_->vecFieldDiff_diff_norm_rb->isChecked()) {
-              if (triMesh) visualizeVectorFieldDifference<TriMesh, scalarFn_diff_of_norms<TriMesh> >(triMesh, **it, **(it+1));
-              else if (polyMesh) visualizeVectorFieldDifference<PolyMesh, scalarFn_diff_of_norms<PolyMesh> >(polyMesh, **it, **(it+1));
-          } else if (tool_->vecFieldDiff_4symm_rb->isChecked()) {
-              if (triMesh) visualizeVectorFieldDifference<TriMesh, scalarFn_4_symm_diff<TriMesh> >(triMesh, **it, **(it+1));
-              else if (polyMesh) visualizeVectorFieldDifference<PolyMesh, scalarFn_4_symm_diff<PolyMesh> >(polyMesh, **it, **(it+1));
-          } else {
-              emit log("This vector field difference mode is not implemented.");
-          }
-      }
-  }
+            std::sort(propList.begin(), propList.end(), PROP_INFO_TYPE_SORTER());
+            std::vector<const PropertyNameListModel::PROP_INFO*>::const_iterator it =
+                    std::adjacent_find(propList.begin(), propList.end(), PROP_INFO_TYPE_EQUAL());
 
-  emit updatedObject( object->id(), UPDATE_COLOR );
+            /*
+             * Are there two selected properties of equal vector type?
+             */
+            if (it != propList.end()) {
+                if (tool_->vecFieldDiff_norm_diff_rb->isChecked()) {
+                    if (triMesh)
+                        visualizeVectorFieldDifference<TriMesh, scalarFn_norm_of_diff<TriMesh> >(
+                                triMesh, **it, **(it + 1));
+                    else if (polyMesh)
+                        visualizeVectorFieldDifference<PolyMesh, scalarFn_norm_of_diff<PolyMesh> >(
+                                polyMesh, **it, **(it + 1));
+                } else if (tool_->vecFieldDiff_diff_norm_rb->isChecked()) {
+                    if (triMesh)
+                        visualizeVectorFieldDifference<TriMesh, scalarFn_diff_of_norms<TriMesh> >(
+                                triMesh, **it, **(it + 1));
+                    else if (polyMesh)
+                        visualizeVectorFieldDifference<PolyMesh, scalarFn_diff_of_norms<PolyMesh> >(
+                                polyMesh, **it, **(it + 1));
+                } else if (tool_->vecFieldDiff_4symm_rb->isChecked()) {
+                    if (triMesh)
+                        visualizeVectorFieldDifference<TriMesh, scalarFn_4_symm_diff<TriMesh> >(
+                                triMesh, **it, **(it + 1));
+                    else if (polyMesh)
+                        visualizeVectorFieldDifference<PolyMesh, scalarFn_4_symm_diff<PolyMesh> >(
+                                polyMesh, **it, **(it + 1));
+                } else {
+                    emit log("This vector field difference mode is not implemented.");
+                }
+            }
+        }
+    } catch (const VizException &e) {
+        QMessageBox::warning(this->tool_, trUtf8("Error in Visualization"), trUtf8(e.what()), QMessageBox::Cancel, QMessageBox::Cancel);
+    }
+
+    emit updatedObject( object->id(), UPDATE_COLOR );
 }
 
 

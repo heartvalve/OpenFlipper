@@ -83,8 +83,14 @@
 #include <ACG/Scenegraph/LineNode.hh>
 #include <ACG/Utils/ColorGenerator.hh>
 
+#include <stdexcept>
+
 //== CLASS DEFINITION =========================================================
 
+class VizException : public std::logic_error {
+    public:
+        VizException(const std::string &msg) : std::logic_error(msg) {}
+};
 
 class PropertyVisPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface, ScriptInterface, MouseInterface, PickingInterface, LoggingInterface, INIInterface
 {
@@ -251,6 +257,12 @@ private:
   //compute the point for visualization
   template< class MeshT >
   typename MeshT::Point halfedge_point(const typename MeshT::HalfedgeHandle _heh, const MeshT *_mesh);
+
+  template< class MeshT >
+  void visualizeVector_asStroke( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
+
+  template< class MeshT >
+  void visualizeVector_asColor( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
 
   template< class MeshT >
   void visualizeDouble( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
