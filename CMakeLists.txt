@@ -90,11 +90,12 @@ add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
 # ========================================================================
 
 # search all libs in the libs directory 
+# (required and optional libraries
 file (
   GLOB _local_libs_in
   RELATIVE "${CMAKE_SOURCE_DIR}"
-        "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
-        "${CMAKE_SOURCE_DIR}/libs_required/*/CMakeLists.txt"
+           "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
+           "${CMAKE_SOURCE_DIR}/libs_required/*/CMakeLists.txt"
 )
 
 
@@ -105,7 +106,13 @@ set( REMAINING_LOCAL_LIBS "" )
 foreach (_localLib ${_local_libs_in})
   if ( "${_localLib}" MATCHES .*CoMISo.* )
     get_filename_component (_local_lib_dir ${_localLib} PATH)
-    add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+    if ( NOT DEFINED LIB_COMISO_BUILD )
+      set( LIB_COMISO_BUILD true CACHE BOOL "Enable or disable build of COMISO Library" )
+    endif()
+
+    if ( LIB_COMISO_BUILD )
+      add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+    endif()
   else()
     LIST(APPEND REMAINING_LOCAL_LIBS ${_localLib})
   endif()
@@ -114,8 +121,29 @@ endforeach ()
 
 # add all found libs to the build
 foreach (_localLib ${REMAINING_LOCAL_LIBS})
+
   get_filename_component (_local_lib_dir ${_localLib} PATH)
-  add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+
+  # If the library is in the required folder, we have to build it anyway, so
+  # detect it here
+  SET(REQUIRED FALSE) 
+  if ( _localLib MATCHES ".*libs_required.*" )
+    SET(REQUIRED TRUE )
+  endif()
+
+  # Extract upper case library dir name for the human readable entries in the cmake config
+  string(TOUPPER ${_local_lib_dir} _local_lib_dir_upper)
+  string(REGEX REPLACE "LIBS[/\\]" "" _local_lib_dir_upper ${_local_lib_dir_upper} )
+ 
+  # Only generate setting if the lib is not required (otherwise, we will always build it)
+  if ( NOT DEFINED LIB_${_local_lib_dir_upper}_BUILD AND NOT REQUIRED)
+      set( LIB_${_local_lib_dir_upper}_BUILD true CACHE BOOL "Enable or disable build of ${_local_lib_dir_upper} Library" )
+  endif()
+
+  # Build if this library is required or if it is enabled
+  if ( LIB_${_local_lib_dir_upper}_BUILD OR REQUIRED:)
+    add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+  endif()
 endforeach ()
 
 # ========================================================================
