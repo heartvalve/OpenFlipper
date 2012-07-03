@@ -15,8 +15,6 @@ GET_FILENAME_COMPONENT(module_file_path ${CMAKE_CURRENT_LIST_FILE} PATH )
 # Look for the header file.
 FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h 
                            PATHS /usr/include
-                                 /ACG/acgdev/gcc-4.3-i686/gmm-4.1/include/
-                                 /ACG/acgdev/gcc-4.3-i686/gmm-3/include/
                                  /usr/include
                                  /usr/local/include
                                  ~/sw/gmm-4.1/include
@@ -24,6 +22,8 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                                  "c:\\libs\\gmm-3.0\\include"
 			         ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
                                  ../../External/include
+                                 /ACG/acgdev/gcc-4.3-i686/gmm-4.1/include/
+                                 /ACG/acgdev/gcc-4.3-i686/gmm-3/include/
                                  ${module_file_path}/../../../External/include)
 
 
