@@ -659,54 +659,92 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="normalize">
+       <widget class="QRadioButton" name="vectors_strokes_rb">
         <property name="text">
-         <string>Normalize</string>
+         <string>Strokes</string>
         </property>
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string>vector_buttonGroup</string>
+        </attribute>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="scale">
-          <property name="text">
-           <string>Scale with factor</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDoubleSpinBox" name="scaleBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="decimals">
-           <number>7</number>
-          </property>
-          <property name="value">
-           <double>0.200000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QWidget" name="vector_strokes_widget" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="normalize">
+           <property name="text">
+            <string>Normalize</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QCheckBox" name="scale">
+             <property name="text">
+              <string>Scale with factor</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="scaleBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>7</number>
+             </property>
+             <property name="value">
+              <double>0.200000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QtColorChooserButton" name="lineColor">
+           <property name="text">
+            <string>Line color: </string>
+           </property>
+           <property name="color" stdset="0">
+            <color>
+             <red>198</red>
+             <green>0</green>
+             <blue>3</blue>
+            </color>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
-       <widget class="QtColorChooserButton" name="lineColor">
+       <widget class="QRadioButton" name="vectors_colors_rb">
         <property name="text">
-         <string>Line color: </string>
+         <string>Colors</string>
         </property>
-        <property name="color" stdset="0">
-         <color>
-          <red>198</red>
-          <green>0</green>
-          <blue>3</blue>
-         </color>
-        </property>
+        <attribute name="buttonGroup">
+         <string>vector_buttonGroup</string>
+        </attribute>
        </widget>
       </item>
      </layout>
@@ -1007,10 +1045,8 @@
   <tabstop>vecFieldDiff_4symm_rb</tabstop>
   <tabstop>vecFieldDiff_diff_norm_rb</tabstop>
   <tabstop>vecFieldDiff_norm_diff_rb</tabstop>
-  <tabstop>normalize</tabstop>
   <tabstop>scale</tabstop>
   <tabstop>scaleBox</tabstop>
-  <tabstop>lineColor</tabstop>
   <tabstop>boneId</tabstop>
   <tabstop>pickButton</tabstop>
   <tabstop>propertyDataType</tabstop>
@@ -1254,14 +1290,33 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>192</x>
-     <y>1308</y>
+     <x>224</x>
+     <y>1348</y>
     </hint>
     <hint type="destinationlabel">
-     <x>266</x>
-     <y>1307</y>
+     <x>418</x>
+     <y>1351</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vectors_strokes_rb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>vector_strokes_widget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>1273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>29</x>
+     <y>1328</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="vector_buttonGroup"/>
+ </buttongroups>
 </ui>

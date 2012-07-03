@@ -55,9 +55,60 @@
 //------------------------------------------------------------------------------
 
 
-template< class MeshT >
-void PropertyVisPlugin::visualizeVector( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp)
-{
+template<class MeshT>
+void PropertyVisPlugin::visualizeVector(
+        MeshT* _mesh, const PropertyNameListModel::PROP_INFO &currentProp) {
+
+    if (tool_->vectors_strokes_rb->isChecked()) {
+        visualizeVector_asStroke(_mesh, currentProp);
+    } else if (tool_->vectors_colors_rb->isChecked()) {
+        visualizeVector_asColor(_mesh, currentProp);
+    } else {
+        throw VizException("Unknown vector viz mode selected.");
+    }
+}
+
+namespace {
+
+template<typename PROPTYPE, typename MeshT, typename ENTITY_IT, typename PROPINFO_TYPE>
+void visualizeVector_asColorForEntity(MeshT *mesh, const ENTITY_IT e_begin, const ENTITY_IT e_end,
+                                      const PROPINFO_TYPE &propinfo) {
+    PROPTYPE prop;
+    if (!mesh->get_property_handle(prop, propinfo.propName()))
+        throw VizException("Getting PropHandle from mesh for selected property failed.");
+    for (ENTITY_IT e_it = e_begin; e_it != e_end; ++e_it) {
+
+        typename MeshT::Point v = mesh->property(prop, e_it).normalized() * .5 + typename MeshT::Point(.5, .5, .5);
+        mesh->set_color(*e_it, typename MeshT::Color(v[0], v[1], v[2], 1.0));
+    }
+}
+
+} /* anonymous namespace */
+
+template<class MeshT>
+void PropertyVisPlugin::visualizeVector_asColor(
+        MeshT* _mesh, const PropertyNameListModel::PROP_INFO &currentProp) {
+
+    if (currentProp.isFaceProp()) {
+        visualizeVector_asColorForEntity<OpenMesh::FPropHandleT<typename MeshT::Point> >(
+                _mesh, _mesh->faces_begin(), _mesh->faces_end(), currentProp);
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    } else if (currentProp.isVertexProp()) {
+        visualizeVector_asColorForEntity<OpenMesh::VPropHandleT<typename MeshT::Point> >(
+                _mesh, _mesh->vertices_begin(), _mesh->vertices_end(), currentProp);
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    } else if (currentProp.isEdgeProp()) {
+        visualizeVector_asColorForEntity<OpenMesh::EPropHandleT<typename MeshT::Point> >(
+                _mesh, _mesh->edges_begin(), _mesh->edges_end(), currentProp);
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    } else {
+        throw VizException("PropertyVisPlugin::visualizeVector_asColor: Unknown property type.");
+    }
+}
+
+template<class MeshT>
+void PropertyVisPlugin::visualizeVector_asStroke(
+        MeshT* _mesh, const PropertyNameListModel::PROP_INFO &currentProp) {
 
   //perhaps add the node
   
