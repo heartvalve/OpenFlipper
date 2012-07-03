@@ -141,7 +141,7 @@ foreach (_localLib ${REMAINING_LOCAL_LIBS})
   endif()
 
   # Build if this library is required or if it is enabled
-  if ( LIB_${_local_lib_dir_upper}_BUILD OR REQUIRED:)
+  if ( LIB_${_local_lib_dir_upper}_BUILD OR REQUIRED)
     add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
   endif()
 endforeach ()
