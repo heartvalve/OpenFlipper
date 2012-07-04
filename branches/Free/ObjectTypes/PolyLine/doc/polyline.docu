@@ -1,4 +1,9 @@
 /** \page polyLineType Plane (DATA_POLY_LINE)
  \image html type_poly_line_thumb.png        
+
+ \section type_PolyLine_info Datatype Information
+OpenFlipper includes a datatype for representing polygonal Lines. This type can handle projection
+to meshes, smoothing and various other interactions. It is implemented in the PolyLineT class.
+
 */
 
