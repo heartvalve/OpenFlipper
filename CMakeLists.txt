@@ -151,7 +151,6 @@ endforeach ()
 # ========================================================================
 
 if ( EXISTS ${CMAKE_SOURCE_DIR}/libs/MeshIntegration ) 
-  message("FOUND POLYLINE extension")
   add_definitions( -DEXTENDED_POLY_LINE )
 endif()
 
