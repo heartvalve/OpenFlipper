@@ -87,7 +87,7 @@ int TypePolyLinePlugin::addEmpty(){
 
 QString TypePolyLinePlugin::get_unique_name(PolyLineObject* _object)
 {
-  bool name_unique = false;
+//  bool name_unique = false;
 
   int cur_idx = _object->id();
 
