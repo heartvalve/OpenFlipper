@@ -147,6 +147,15 @@ foreach (_localLib ${REMAINING_LOCAL_LIBS})
 endforeach ()
 
 # ========================================================================
+# PolyLine extension special case
+# ========================================================================
+
+if ( EXISTS ${CMAKE_SOURCE_DIR}/libs/MeshIntegration ) 
+  message("FOUND POLYLINE extension")
+  add_definitions( -DEXTENDED_POLY_LINE )
+endif()
+
+# ========================================================================
 # License Manager
 # ========================================================================
 if ( NOT DEFINED OPENFLIPPER_ENABLE_LICENSE_MANAGER )
