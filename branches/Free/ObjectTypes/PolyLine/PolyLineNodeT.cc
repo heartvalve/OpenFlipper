@@ -84,7 +84,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 template <class PolyLine>
 DrawModes::DrawMode
 PolyLineNodeT<PolyLine>::
-availableDrawModes()
+availableDrawModes() const
 {
   return (DrawModes::WIREFRAME | DrawModes::POINTS);
 }
