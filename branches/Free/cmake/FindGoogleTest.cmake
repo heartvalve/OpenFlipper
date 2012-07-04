@@ -42,22 +42,25 @@ else(GTEST_INCLUDE_DIRS AND GTEST_LIBRARIES AND GTEST_MAIN_LIBRARIES)
   else(GTEST_PREFIX)
     find_path(_GTEST_INCLUDE_DIR "gtest/gtest.h"
       PATHS
+      /ACG/acgdev/gcc-4.7-x86_64/gtest/include
       ~/sw/gtest/include
       /opt/local/include
       /usr/local/include
-	  "C:/libs/win32/gtest/include")
+      "C:/libs/win32/gtest/include")
     find_library(_GTEST_LIBRARY gtest
       PATHS
+      /ACG/acgdev/gcc-4.7-x86_64/gtest/lib
       ~/sw/gtest/lib
       /opt/local/lib
       /usr/local/lib
-	  "C:/libs/win32/gtest/lib")
+      "C:/libs/win32/gtest/lib")
     find_library(_GTEST_MAIN_LIBRARY gtest_main
       PATHS
+      /ACG/acgdev/gcc-4.7-x86_64/gtest/lib
       ~/sw/gtest/lib
       /opt/local/lib
       /usr/local/lib
-	  "C:/libs/win32/gtest/lib")
+      "C:/libs/win32/gtest/lib")
 
      if ( _GTEST_LIBRARY )
         get_filename_component(_GTEST_LIBRARY_DIR ${_GTEST_LIBRARY} PATH CACHE )
