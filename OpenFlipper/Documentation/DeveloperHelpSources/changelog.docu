@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14810 )</b>
+- <b>OpenFlipper 1.3 ( ? , 14915 )</b>
      - <b>ACG</b>
          - DrawModes
              - Implemented property based draw modes
@@ -40,9 +40,12 @@
          - Load/Save
              - Added a QInputDialog so that the user can choose a file extension for newly created meshes when saving the settings.
              - Bugfix: Delete all is equivalent to clear all, so emit the clear all signal as well
+         - Rendering
+             - Bugfix: Improved recovery of broken scene setups
          - UI
-             - Paste View fix: keep toolbarsize when window size is not changed
+             - Paste View: keep toolbarsize when window size is not changed
              - Paste View: Added extra button to paste view and the window size
+             - Paste View: Integrate the toolbox size into the copied view
              - Default changed when removing objects (Defaults to yes now)
              - Improvement: When switching to orthogonal mode, the coordinate system now switches to ortho projection, too
          - BaseViewer
@@ -55,6 +58,8 @@
              - Fixed crash with empty spline curve on windows
          - Plane
              - Improved implementation and Documentation
+         - PolyLine
+             - New objecttype representing polygonal lines (with smoothing, dragging, mesh interaction and many more features)
      - <b>Plugins</b>
          - Color
              - Documentation
@@ -67,6 +72,7 @@
              - The default group is not set to be a polymesh even if it does not have any faces
              - Added missing ifdefs for bspline curve object type
              - Single bspline-curves or bspline-surfaces in obj files that do not belong to any groups are no longer grouped in the datacontrol plugin
+             - Fix: bspline curves and bspline surfaces should be grouped correctly now
          - File OFF
              - Fix: Endless loop (moved an end-of-file check in readFileOptions so that eof is detected in time)
              - Fix: Correctly set path for the loaded objects
@@ -85,6 +91,8 @@
              - Support for point clouds represented by meshes
          - Move
              - User Documentation
+         - Plugin-PropertyVis
+             - Added color viz for vector properties
          - Scripting
              - Sort list of available functions
          - SelectionMeshObject
@@ -96,6 +104,11 @@
          - TypePolyHedralMesh
              - Added translucency rendering options to polyhedral mesh type plugin.
              - Automatically set ambient color when adding empty mesh.
+     - <b>Scripting System</b> 
+        - Vector type
+             - Added functions for add, multiply, scalar product, norm, sqrnorm, normalize and sub
+        - Matrix type
+             - Added matrix vector multiplication
      - <b>Build System</b>
         - Mac
              - Added flag OPENFLIPPER_CALL_FIX_BUNDLE to disable bundle creation on mac os
@@ -109,6 +122,8 @@
              - Allow Compiler Defines per plugin
              - Updated qt tested version to 4.8.1
              - Added Finder vor CPLEX and Metis
+             - Added option to disable libraries which are not required 
+             - Updated some finders
      - <b>Documentation</b>
         - Added Documentation about creating own data types
         - Integrated OpenVolumeMesh documentation
