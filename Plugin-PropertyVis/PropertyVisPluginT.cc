@@ -51,6 +51,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <ACG/Utils/ColorCoder.hh>
+#include <cmath>
 
 //------------------------------------------------------------------------------
 
@@ -63,9 +64,57 @@ void PropertyVisPlugin::visualizeVector(
         visualizeVector_asStroke(_mesh, currentProp);
     } else if (tool_->vectors_colors_rb->isChecked()) {
         visualizeVector_asColor(_mesh, currentProp);
+    } else if (tool_->vectors_edges_rb->isChecked()) {
+        visualizeVector_onEdges(_mesh, currentProp);
     } else {
         throw VizException("Unknown vector viz mode selected.");
     }
+}
+
+template<class MeshT>
+void PropertyVisPlugin::visualizeVector_onEdges(
+        MeshT* _mesh, const PropertyNameListModel::PROP_INFO &currentProp) {
+
+    const double thresh_1 = tool_->vectors_edges_alpha->value();
+    const double thresh_2 = std::min(thresh_1, tool_->vectors_edges_alpha->value());
+
+    if (!currentProp.isFaceProp())
+        throw VizException("Sorry, this viz mode is only available for face properties.");
+
+    OpenMesh::FPropHandleT<typename MeshT::Point> prop;
+    if (!_mesh->get_property_handle(prop, currentProp.propName()))
+        throw VizException("Getting PropHandle from mesh for selected property failed.");
+
+    if (!_mesh->has_edge_colors())
+        _mesh->request_edge_colors();
+    const ACG::Vec4f cold(0, 0, 0, 1.0), hot(0, 1, 0, 1.0), degen(1, 1, 0, 1.0);
+    for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(), e_end = _mesh->edges_end();
+            e_it != e_end; ++e_it) {
+        typename MeshT::Point p1 = _mesh->property(prop, _mesh->face_handle(_mesh->halfedge_handle(*e_it, 0)));
+        typename MeshT::Point p2 = _mesh->property(prop, _mesh->face_handle(_mesh->halfedge_handle(*e_it, 1)));
+
+        ACG::Vec4f color;
+
+        const char degenerate = ((p1.sqrnorm() < 1e-6) ? 1 : 0) | ((p2.sqrnorm() < 1e-6) ? 2 : 0);
+        if (degenerate == 3) {
+            color = cold;
+        } else if (degenerate == 0) {
+            p1.normalize(); p2.normalize();
+            const double alpha = std::min(1.0, std::abs(p1 | p2));
+            if (alpha < thresh_1)
+                color = hot;
+            else if (alpha > thresh_2)
+                color = cold;
+            else {
+                const double beta = (alpha - thresh_1) / (thresh_2 - thresh_1);
+                color = cold * beta + hot * (1.0 - beta);
+            }
+        } else {
+            color = degen;
+        }
+        _mesh->set_color(e_it, color);
+    }
+    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED | ACG::SceneGraph::DrawModes::EDGES_COLORED);
 }
 
 namespace {

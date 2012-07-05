@@ -265,6 +265,9 @@ private:
   void visualizeVector_asColor( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
 
   template< class MeshT >
+  void visualizeVector_onEdges( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
+
+  template< class MeshT >
   void visualizeDouble( MeshT*   _mesh, const PropertyNameListModel::PROP_INFO &currentProp);
   
   template< class MeshT >
