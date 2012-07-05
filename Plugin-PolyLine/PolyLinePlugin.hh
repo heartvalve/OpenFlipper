@@ -48,7 +48,7 @@
 
 /** Plugin for PolyLine Support
  */
-class PolyLinePlugin : public BaseInterface, MouseInterface,
+class PolyLinePlugin : public QObject, BaseInterface, MouseInterface,
 PickingInterface, ToolboxInterface, LoggingInterface, LoadSaveInterface, ToolbarInterface, ScriptInterface
 {
   Q_OBJECT
@@ -272,7 +272,7 @@ private:
 };
 
 #if defined(INCLUDE_TEMPLATES) && !defined(POLYLINEPLUGIN_CC)
-#define SCISSORPLUGIN_TEMPLATES
+#define POLYLINEPLUGIN_TEMPLATES
 #include "PolyLinePluginT.cc"
 #endif
 

@@ -16,6 +16,5 @@ openflipper_plugin ( OPTDEPS PhySim
 		     INSTALLDATA Icons
 		    )
 else()
-  openflipper_plugin ( LICENSEMANAGER
-                       INSTALLDATA Icons )
+  openflipper_plugin ( INSTALLDATA Icons )
 endif ()
