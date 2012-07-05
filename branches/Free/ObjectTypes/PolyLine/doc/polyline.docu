@@ -3,7 +3,7 @@
 
  \section type_PolyLine_info Datatype Information
 OpenFlipper includes a datatype for representing polygonal Lines. This type can handle projection
-to meshes, smoothing and various other interactions. It is implemented in the PolyLineT class.
+to meshes, smoothing and various other interactions. It is implemented in the ACG::PolyLineT class.
 
 */
 
