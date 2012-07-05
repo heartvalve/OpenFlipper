@@ -36,7 +36,6 @@
 #include <ObjectTypes/PolyLine/PolyLine.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
-#include <OpenFlipper/LicenseManager/LicenseManager.hh>
 
 #include "PolyLineToolbarWidget.hh"
 
@@ -49,7 +48,7 @@
 
 /** Plugin for PolyLine Support
  */
-class PolyLinePlugin : public LicenseManager, BaseInterface, MouseInterface, 
+class PolyLinePlugin : public BaseInterface, MouseInterface,
 PickingInterface, ToolboxInterface, LoggingInterface, LoadSaveInterface, ToolbarInterface, ScriptInterface
 {
   Q_OBJECT

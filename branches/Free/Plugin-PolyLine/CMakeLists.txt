@@ -12,15 +12,9 @@ endif ( WIN32 )
 if (EXISTS ${CMAKE_SOURCE_DIR}/libs/PhySim)
   add_definitions (-DUSE_PHYSIM)
 
-FIND_PACKAGE( Boost 1.42.0 COMPONENTS system filesystem regex )
-
-openflipper_plugin (LICENSEMANAGER
-		    DIRS 
-		    DEPS Qwt5 CGAL PhySim CoMISo GMP Boost
-		    OPTDEPS Taucs
-		    INSTALLDATA Icons
-	LIBRARIES
-		${Boost_LIBRARIES}
+openflipper_plugin ( DIRS 
+		     OPTDEPS PhySim  
+		     INSTALLDATA Icons
 		    )
 else()
   openflipper_plugin ( LICENSEMANAGER
