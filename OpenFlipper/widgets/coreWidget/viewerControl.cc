@@ -844,19 +844,20 @@ void CoreWidget::slotPasteViewAndWindow()
   //resize the toolbox and splitter
   if (splitterWidth != -1)
   {
-    QList<int> sizes = toolSplitter_->sizes();
-    unsigned sum_size = sizes[0]+sizes[1];
+    QList<int> sizes;
 
-    bool onRight = OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool();
+    //std::cerr << "Sizes : " << size[0] << " " << size[1] << " " << sum_size << std::endl;
+
+    bool onRight = OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool();
     if (onRight)
     {
-      sizes[1] = splitterWidth;
-      sizes[0] = sum_size - splitterWidth;
+      sizes.push_back(size.width() - splitterWidth);
+      sizes.push_back(splitterWidth);
     }
     else
     {
-      sizes[0] = splitterWidth;
-      sizes[1] = sum_size - splitterWidth;
+      sizes.push_back(splitterWidth);
+      sizes.push_back(size.width() - splitterWidth);
     }
 
     toolSplitter_->setSizes(sizes);
@@ -885,7 +886,7 @@ void CoreWidget::slotCopyView( ) {
     size = QSize (width(),height());
 
   int splitter_size = 0;
-  if (OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool())
+  if (OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool())
     splitter_size = toolSplitter_->sizes()[1];
   else
     splitter_size = toolSplitter_->sizes()[0];
