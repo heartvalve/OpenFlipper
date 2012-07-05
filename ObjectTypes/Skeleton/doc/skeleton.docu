@@ -270,7 +270,7 @@ And additionally we have to inform OpenFlipper about the changes that have been 
 \endcode
 
 <B>Note:</B> The RPC function call can be left out, but then the user has to connect skeleton and skin with the 'Attach Skin to Skeleton' Button in the Skeletal Animation Toolbox.\n\n
-The complete sourcecode of this tutorial can be found \ref skeletonSource "here".
+The complete sourcecode of this tutorial can be found \subpage skeletonSource "here".
 
 
 */
