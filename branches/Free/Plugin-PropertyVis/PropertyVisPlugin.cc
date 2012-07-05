@@ -186,12 +186,13 @@ void PropertyVisPlugin::updateGUI() {
 
 void PropertyVisPlugin::propertySelectionChanged() {
     enum TYPE {
-        T_VECTOR        = 0x01,
-        T_DOUBLE        = 0x02,
-        T_INT           = 0x04,
-        T_UINT          = 0x08,
-        T_BOOL          = 0x10,
-        T_SKIN_WEIGHTS  = 0x20,
+        T_VECTOR        = 1 << 0,
+        T_DOUBLE        = 1 << 1,
+        T_INT           = 1 << 2,
+        T_UINT          = 1 << 3,
+        T_BOOL          = 1 << 4,
+        T_SKIN_WEIGHTS  = 1 << 5,
+        T_VECTOR_EDGES  = 1 << 6,
     };
 
     int visibleMask = 0;
@@ -208,6 +209,8 @@ void PropertyVisPlugin::propertySelectionChanged() {
                 currentProp.typeinfo() == PropertyNameListModel::proptype_Vec3f) {
             visibleMask |= T_VECTOR;
             ++selectedVectors;
+            if (currentProp.entityType() == PropertyNameListModel::EF_FACE)
+                visibleMask |= T_VECTOR_EDGES;
         } else if (currentProp.typeinfo() == PropertyNameListModel::proptype_double) {
             visibleMask |= T_DOUBLE;
         } else if (currentProp.typeinfo() == PropertyNameListModel::proptype_int) {
@@ -234,6 +237,9 @@ void PropertyVisPlugin::propertySelectionChanged() {
     tool_->paramInt->setVisible(visibleMask & T_INT);
     tool_->paramBool->setVisible(visibleMask & T_BOOL);
     tool_->paramSkinWeights->setVisible(visibleMask & T_SKIN_WEIGHTS);
+    tool_->vectors_edges_rb->setVisible(visibleMask & T_VECTOR_EDGES);
+    if (tool_->vectors_edges_rb->isChecked() && (visibleMask & T_VECTOR_EDGES) == 0)
+        tool_->vectors_strokes_rb->setChecked(true);
 }
 
 
