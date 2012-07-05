@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PolyLineToolbar</class>
+ <widget class="QWidget" name="PolyLineToolbar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>388</width>
+    <height>713</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Mouse Mode</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QHBoxLayout">
+      <item>
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QRadioButton" name="rb_insert">
+          <property name="toolTip">
+           <string>Insert a new Polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Insert a new Polyline</string>
+          </property>
+          <property name="text">
+           <string>Insert</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_delete">
+          <property name="toolTip">
+           <string>Delete a Polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Delete a Polyline</string>
+          </property>
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_move">
+          <property name="toolTip">
+           <string>Move a Point of a Polyline while keeping all others fixed</string>
+          </property>
+          <property name="statusTip">
+           <string>Move a Point of a Polyline while keeping all others fixed</string>
+          </property>
+          <property name="text">
+           <string>Move Point</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QRadioButton" name="rb_smart_move">
+          <property name="toolTip">
+           <string>Move Points of a Polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Move Points of a Polyline</string>
+          </property>
+          <property name="text">
+           <string>Smart Move</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_merge">
+          <property name="toolTip">
+           <string>Merge two Polylines</string>
+          </property>
+          <property name="statusTip">
+           <string>Merge two Polylines</string>
+          </property>
+          <property name="text">
+           <string>Merge</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_split">
+          <property name="toolTip">
+           <string>Split a Polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Split a Polyline</string>
+          </property>
+          <property name="text">
+           <string>Split</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Smoothing</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Continuity:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_smooth_c0">
+          <property name="toolTip">
+           <string>C0 continuity</string>
+          </property>
+          <property name="statusTip">
+           <string>C0 continuity</string>
+          </property>
+          <property name="text">
+           <string>C0</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_smooth_c1">
+          <property name="toolTip">
+           <string>C1 continuity</string>
+          </property>
+          <property name="statusTip">
+           <string>C1 continuity</string>
+          </property>
+          <property name="text">
+           <string>C1</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_smooth_c2">
+          <property name="toolTip">
+           <string>C2 continuity</string>
+          </property>
+          <property name="statusTip">
+           <string>C2 continuity</string>
+          </property>
+          <property name="text">
+           <string>C2</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Iterations:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sb_smooth_iter">
+          <property name="toolTip">
+           <string>Smoothing Iterations</string>
+          </property>
+          <property name="statusTip">
+           <string>Smoothing Iterations</string>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_smooth">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Smooth the target polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Smooth the target polyline</string>
+          </property>
+          <property name="text">
+           <string>Smooth</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="Line" name="line_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Project</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_5">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Iterations:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sb_smooth_project_iter">
+          <property name="toolTip">
+           <string>Projection Iterations</string>
+          </property>
+          <property name="statusTip">
+           <string>Projection Iterations</string>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_project">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Project the Polyline onto the object</string>
+          </property>
+          <property name="statusTip">
+           <string>Project the Polyline onto the object</string>
+          </property>
+          <property name="text">
+           <string>Project</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_smooth_project">
+        <property name="toolTip">
+         <string>Smooth the Polyline and project onto the object</string>
+        </property>
+        <property name="statusTip">
+         <string>Smooth the Polyline and project onto the object</string>
+        </property>
+        <property name="text">
+         <string>Smooth + Project</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Resampling</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QPushButton" name="pb_resample_on_edges">
+        <property name="toolTip">
+         <string>Resample on edges</string>
+        </property>
+        <property name="statusTip">
+         <string>Resample on edges</string>
+        </property>
+        <property name="text">
+         <string>Resample on Edges</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="1">
+         <widget class="QDoubleSpinBox" name="dsb_subdivide">
+          <property name="toolTip">
+           <string>Absolute segment length</string>
+          </property>
+          <property name="statusTip">
+           <string>Absolute segment length</string>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="maximum">
+           <double>99999999.989999994635582</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.050000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="dsb_decimate">
+          <property name="toolTip">
+           <string>Absolute segment length</string>
+          </property>
+          <property name="statusTip">
+           <string>Absolute segment length</string>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="maximum">
+           <double>9999999.990000000223517</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.050000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pb_decimate">
+          <property name="toolTip">
+           <string>Decimate the target polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Decimate the target polyline</string>
+          </property>
+          <property name="text">
+           <string>Decimate</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pb_subdivide">
+          <property name="toolTip">
+           <string>Subdivide the target polyline</string>
+          </property>
+          <property name="statusTip">
+           <string>Subdivide the target polyline</string>
+          </property>
+          <property name="text">
+           <string>Subdivide</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="subdivide_relative">
+          <property name="toolTip">
+           <string>If this option is checked, interpret value as relative portion of the absolute line segment's length. If this option is unchecked, the current relative value is automatically converted to the corresponding absolute length. If this option is re-checked, the current absolute value is converted to the corresponding relative portion.</string>
+          </property>
+          <property name="text">
+           <string>Relative</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QCheckBox" name="decimate_relative">
+          <property name="toolTip">
+           <string>If this option is checked, interpret value as relative portion of the absolute line segment's length. If this option is unchecked, the current relative value is automatically converted to the corresponding absolute length. If this option is re-checked, the current absolute value is converted to the corresponding relative portion.</string>
+          </property>
+          <property name="text">
+           <string>Relative</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
