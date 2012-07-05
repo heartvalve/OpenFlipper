@@ -54,9 +54,11 @@ void
 PolyLinePlugin::
 initializePlugin()
 {
+  // Initialize the Toolbox
   tool_ = new PolyLineToolbarWidget();
   QSize size(100, 100);
   tool_->resize(size);
+  tool_->setObjectName("PolyLineToolbar");
 
   // connect signals->slots
   connect(tool_->pb_subdivide,SIGNAL(clicked() ),this,SLOT(slot_subdivide()));
@@ -108,46 +110,42 @@ PolyLinePlugin::
 slotMouseEvent( QMouseEvent* _event )
 {
   // control modifier is reserved for selcting target
-  if ( _event->modifiers()  & (Qt::ControlModifier) )
+  if (_event->modifiers() & (Qt::ControlModifier))
     return;
 
-  if ( PluginFunctions::pickMode()   == ("PolyLine") &&
-       PluginFunctions::actionMode() == Viewer::PickingMode &&
-       _event->button() != Qt::RightButton  )
-  {
+  if (PluginFunctions::pickMode() == ("PolyLine") && PluginFunctions::actionMode() == Viewer::PickingMode
+      && _event->button() != Qt::RightButton) {
     // handle mouse events depending on current mode
-    switch(mode())
-    {
+    switch (mode()) {
       case PL_INSERT:
-	me_insert( _event );
-	break;
+        me_insert(_event);
+        break;
 
       case PL_DELETE:
-	me_delete( _event );
-	break;
+        me_delete(_event);
+        break;
 
       case PL_MOVE:
-	me_move( _event );
-	break;
+        me_move(_event);
+        break;
 
       case PL_SPLIT:
-	me_split( _event );
-	break;
+        me_split(_event);
+        break;
 
       case PL_MERGE:
-	me_merge( _event );
-	break;
+        me_merge(_event);
+        break;
 
       case PL_SMART_MOVE:
-	me_smart_move( _event );
-	break;
-
+        me_smart_move(_event);
+        break;
 
       default:
-	break;
+        break;
     }
-  } else if( PluginFunctions::pickMode() == CREATE_CUT_POLYLINE ) {
-      planeSelect_->slotMouseEvent( _event );
+  } else if (PluginFunctions::pickMode() == CREATE_CUT_POLYLINE) {
+    planeSelect_->slotMouseEvent(_event);
   }
 }
 
@@ -170,22 +168,25 @@ void
 PolyLinePlugin::
 pluginsInitialized()
 {
-  emit addPickMode("Separator");
-  emit addPickMode("PolyLine");
-  emit addPickMode( CREATE_CUT_POLYLINE );
+  // Add the required Picking modes (Hidden, controlled only by the buttons)
+  emit addHiddenPickMode("PolyLine");
+  emit addHiddenPickMode( CREATE_CUT_POLYLINE );
   
-  //TOOLBAR
+  // TOOLBAR
   toolbar_ = new QToolBar(tr("PolyLine Editing"));
+  toolbar_->setObjectName("PolyLineEditingToolbar");
+
   
   toolBarActions_ = new QActionGroup(toolbar_);
   
+  // icon which enables the Modeling toolbar
   polyLineAction_ = new QAction(tr("Edit PolyLines"), toolBarActions_);
   polyLineAction_->setStatusTip(tr("Edit and create PolyLines."));
   polyLineAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"polyline_insert.png") );
   polyLineAction_->setCheckable(true);
   toolbar_->addAction(polyLineAction_);
   
-  //Cut Object
+  // icon for polyline cutting of objects
   cutAction_ = new QAction(tr("&Create polyline at intersection with plane"), this);
   cutAction_->setCheckable( true );
   cutAction_->setStatusTip(tr("Create a polyline by specifying a plane with which the object is then intersected. The polyline will be created at the intersection."));
@@ -197,9 +198,9 @@ pluginsInitialized()
   
   emit addToolbar(toolbar_);
   
-  
   // Pick Toolbar
   pickToolbar_ = new QToolBar(tr("PolyLine Editing"));
+  pickToolbar_->setObjectName("PolyLine_Editing_Toolbar");
   pickToolbar_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
   pickToolBarActions_->setExclusive (true);
@@ -261,7 +262,7 @@ pluginsInitialized()
   smart_move_timer_ = new QTimer(this);
   connect(smart_move_timer_, SIGNAL(timeout()), this, SLOT(slot_smart_move_timer()));
   
-  // Instanciate plane select object
+  // Instantiate plane select object
   planeSelect_ = new QtPlaneSelect( PluginFunctions::viewerProperties().glState() );
   connect( planeSelect_, SIGNAL( signalTriggerCut( ) ), this, SLOT( slotTriggerCutPlaneSelect() ) );
   connect( planeSelect_, SIGNAL( updateViewProxy( ) ), this, SIGNAL( updateView() ) );
@@ -286,44 +287,38 @@ void PolyLinePlugin::slotScissorButton( )
 void PolyLinePlugin::slotTriggerCutPlaneSelect( )
 {
     using ACG::SceneGraph::LineNode;
-    
-    // Iterate over all selected objects
-    bool updated = false;
-    BaseObjectData* object;
-    if ( PluginFunctions::getPickedObject( planeSelect_->getNode() , object) )
-    {
-        emit log( "Cutting object "+object->name() );
-        
-        if ( ! ( object->dataType(DATA_TRIANGLE_MESH) || object->dataType(DATA_POLY_MESH) )  ) {
-            emit log( "Only Meshes are supported at the moment ");
-            return;
-        }
-        
-        ACG::Vec3d point  = planeSelect_->getSourcePoint( );
-        ACG::Vec3d normal = planeSelect_->getNormal( );
-        
-        generatePolyLineFromCut( object->id(), point, normal );
-        
-        QString command = "generatePolyLineFromCut(" +
-        QString::number(object->id())+",Vector(" +
-        QString::number(point[0])+","+
-        QString::number(point[1])+","+
-        QString::number(point[2])+"),Vector("+
-        QString::number(normal[0])+","+
-        QString::number(normal[1])+","+
-        QString::number(normal[2])+"));";
-        emit scriptInfo( command );
-        
-        //remove all other targets
-        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-        if ( o_it->id() != object->id() ){
-            o_it->target(false);
-        }
+
+  // Iterate over all selected objects
+  bool updated = false;
+  BaseObjectData* object;
+  if (PluginFunctions::getPickedObject(planeSelect_->getNode(), object)) {
+    emit log("Cutting object " + object->name());
+
+    if (!(object->dataType(DATA_TRIANGLE_MESH) || object->dataType(DATA_POLY_MESH))) {
+      emit log("Only Meshes are supported at the moment ");
+      return;
     }
-    
-    if( updated )
-        emit updateView( );
+
+    ACG::Vec3d point = planeSelect_->getSourcePoint();
+    ACG::Vec3d normal = planeSelect_->getNormal();
+
+    generatePolyLineFromCut(object->id(), point, normal);
+
+    QString command = "generatePolyLineFromCut(" + QString::number(object->id()) + ",Vector("
+        + QString::number(point[0]) + "," + QString::number(point[1]) + "," + QString::number(point[2]) + "),Vector("
+        + QString::number(normal[0]) + "," + QString::number(normal[1]) + "," + QString::number(normal[2]) + "));";
+    emit scriptInfo(command);
+
+    //remove all other targets
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,
+        DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)); o_it != PluginFunctions::objectsEnd(); ++o_it)
+      if (o_it->id() != object->id()) {
+        o_it->target(false);
+      }
+  }
+
+  if (updated)
+    emit updateView();
 }
 
 //-----------------------------------------------------------------------------
@@ -334,18 +329,17 @@ slot_subdivide()
 {
   // get subdivision value
   double max_length = tool_->dsb_subdivide->value();
-  
+
   // safety catch
-  if( max_length == 0.0 )
+  if (max_length == 0.0)
     max_length = 1e-4;
 
   // iterate over all target polylines
-  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE );
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
 
-  for (  ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-  {
+  for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     // subdivide polyline
-    PluginFunctions::polyLineObject(*o_it)->line()->subdivide( max_length );
+    PluginFunctions::polyLineObject(*o_it)->line()->subdivide(max_length);
   }
 
   // update
@@ -358,40 +352,40 @@ slot_subdivide()
 
 void PolyLinePlugin::slot_subdivide_percent(bool _checked) {
 
-    // Get subdivision value
-    int n_active_pl = 0;
-    double total_length = 0;
+  // Get subdivision value
+  int n_active_pl = 0;
+  double total_length = 0;
 
-    // Iterate over all target polylines
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
+  // Iterate over all target polylines
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
 
-    for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-        // Add polyline length
-        total_length += PluginFunctions::polyLineObject(*o_it)->line()->length();
-        ++n_active_pl;
-    }
+  for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+    // Add polyline length
+    total_length += PluginFunctions::polyLineObject(*o_it)->line()->length();
+    ++n_active_pl;
+  }
 
-    double v = total_length / double(n_active_pl);
+  double v = total_length / double(n_active_pl);
 
-    if (_checked) {
+  if (_checked) {
 
-        // Compute current absolute length to relative portion
-        if (n_active_pl > 0) {
-            double val_new = tool_->dsb_subdivide->value() / v;
-            tool_->dsb_subdivide->setValue(val_new);
-        } else {
-            emit log(LOGWARN, "Could not find any active polyline!");
-        }
+    // Compute current absolute length to relative portion
+    if (n_active_pl > 0) {
+      double val_new = tool_->dsb_subdivide->value() / v;
+      tool_->dsb_subdivide->setValue(val_new);
     } else {
-
-        // Compute relative portion to absolute value
-        if (n_active_pl > 0) {
-            double val_new = tool_->dsb_subdivide->value() * v;
-            tool_->dsb_subdivide->setValue(val_new);
-        } else {
-            emit log(LOGWARN, "Could not find any active polyline!");
-        }
+      emit log(LOGWARN, "Could not find any active polyline!");
     }
+  } else {
+
+    // Compute relative portion to absolute value
+    if (n_active_pl > 0) {
+      double val_new = tool_->dsb_subdivide->value() * v;
+      tool_->dsb_subdivide->setValue(val_new);
+    } else {
+      emit log(LOGWARN, "Could not find any active polyline!");
+    }
+  }
 }
 
 
@@ -406,12 +400,11 @@ slot_decimate()
   double min_length = tool_->dsb_decimate->value();
 
   // iterate over all target polylines
-  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE );
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
 
-  for (  ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-  {
+  for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     // decimate polyline
-    PluginFunctions::polyLineObject(*o_it)->line()->collapse( min_length );
+    PluginFunctions::polyLineObject(*o_it)->line()->collapse(min_length);
   }
 
   // update
@@ -421,42 +414,43 @@ slot_decimate()
 //-----------------------------------------------------------------------------
 
 
-void PolyLinePlugin::slot_decimate_percent(bool _checked) {
+void PolyLinePlugin::slot_decimate_percent(bool _checked)
+{
 
-    // Get decimation value
-    int n_active_pl = 0;
-    double total_length = 0;
+  // Get decimation value
+  int n_active_pl = 0;
+  double total_length = 0;
 
-    // Iterate over all target polylines
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
+  // Iterate over all target polylines
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
 
-    for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-        // Add polyline length
-        total_length += PluginFunctions::polyLineObject(*o_it)->line()->length();
-        ++n_active_pl;
-    }
+  for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+    // Add polyline length
+    total_length += PluginFunctions::polyLineObject(*o_it)->line()->length();
+    ++n_active_pl;
+  }
 
-    double v = total_length / double(n_active_pl);
+  double v = total_length / double(n_active_pl);
 
-    if (_checked) {
+  if (_checked) {
 
-        // Compute current absolute length to relative portion
-        if (n_active_pl > 0) {
-            double val_new = tool_->dsb_subdivide->value() / v;
-            tool_->dsb_decimate->setValue(val_new);
-        } else {
-            emit log(LOGWARN, "Could not find any active polyline!");
-        }
+    // Compute current absolute length to relative portion
+    if (n_active_pl > 0) {
+      double val_new = tool_->dsb_subdivide->value() / v;
+      tool_->dsb_decimate->setValue(val_new);
     } else {
-
-        // Compute relative portion to absolute value
-        if (n_active_pl > 0) {
-            double val_new = tool_->dsb_subdivide->value() * v;
-            tool_->dsb_decimate->setValue(val_new);
-        } else {
-            emit log(LOGWARN, "Could not find any active polyline!");
-        }
+      emit log(LOGWARN, "Could not find any active polyline!");
     }
+  } else {
+
+    // Compute relative portion to absolute value
+    if (n_active_pl > 0) {
+      double val_new = tool_->dsb_subdivide->value() * v;
+      tool_->dsb_decimate->setValue(val_new);
+    } else {
+      emit log(LOGWARN, "Could not find any active polyline!");
+    }
+  }
 }
 
 
@@ -498,7 +492,7 @@ slot_resample_on_edges()
     // iterate over all target polylines
     PluginFunctions::ObjectIterator o_it2(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE );
 
-    for (  ; o_it2 != PluginFunctions::objectsEnd(); ++o_it2)
+    for (; o_it2 != PluginFunctions::objectsEnd(); ++o_it2)
     {
       std::cerr << "resample " << o_it2->name().toAscii().data() << std::endl;
       // decimate polyline
@@ -540,7 +534,6 @@ slot_smooth()
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY);
   }
 
-  //  emit updateView();
 }
 
 
@@ -552,22 +545,19 @@ PolyLinePlugin::
 slot_smooth( PolyLineObject*& _pol)
 {
   // if polyline object is valid
-  if( _pol)
-  {
-    for( int i=0; i<tool_->sb_smooth_iter->value(); ++i)
-      if( tool_->rb_smooth_c0->isChecked())
+  if (_pol) {
+    for (int i = 0; i < tool_->sb_smooth_iter->value(); ++i)
+      if (tool_->rb_smooth_c0->isChecked())
         // smooth polyline C0
         _pol->line()->smooth_uniform_laplace();
-      else
-        if( tool_->rb_smooth_c1->isChecked())
-          // smooth polyline C1
-          _pol->line()->smooth_uniform_laplace2();
-        else
-          if( tool_->rb_smooth_c2->isChecked())
-            // smooth polyline C2
-            _pol->line()->smooth_uniform_laplace3();
+      else if (tool_->rb_smooth_c1->isChecked())
+        // smooth polyline C1
+        _pol->line()->smooth_uniform_laplace2();
+      else if (tool_->rb_smooth_c2->isChecked())
+        // smooth polyline C2
+        _pol->line()->smooth_uniform_laplace3();
 
-    emit updatedObject( _pol->id(), UPDATE_GEOMETRY);
+    emit updatedObject(_pol->id(), UPDATE_GEOMETRY);
   }
 }
 
@@ -579,30 +569,28 @@ PolyLinePlugin::
 slot_project()
 {
   // create meshe and bsp vectors
-  std::vector<TriMesh*>                        meshes;
-  std::vector<OpenMeshTriangleBSPT< TriMesh>*> bsps;
+  std::vector<TriMesh*> meshes;
+  std::vector<OpenMeshTriangleBSPT<TriMesh>*> bsps;
 
-  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_TRIANGLE_MESH );
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_TRIANGLE_MESH);
 
-  for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-  {
+  for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     // get pointer to TriMeshObject
     TriMeshObject* tmesh_obj = PluginFunctions::triMeshObject(*o_it);
 
     // save meshes and bsps
-    meshes.push_back( tmesh_obj->mesh());
+    meshes.push_back(tmesh_obj->mesh());
     //    bsps.push_back(0);
-    bsps.push_back( tmesh_obj->requestTriangleBsp());
+    bsps.push_back(tmesh_obj->requestTriangleBsp());
   }
 
   // iterate over all target polylines
-  PluginFunctions::ObjectIterator o_it2(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE );
+  PluginFunctions::ObjectIterator o_it2(PluginFunctions::TARGET_OBJECTS, DATA_POLY_LINE);
 
-  for (  ; o_it2 != PluginFunctions::objectsEnd(); ++o_it2)
-  {
+  for (; o_it2 != PluginFunctions::objectsEnd(); ++o_it2) {
     // project polyline
-    PluginFunctions::polyLineObject(*o_it2)->line()->project_to_mesh( meshes, &bsps );
-    emit updatedObject( o_it2->id(), UPDATE_GEOMETRY);
+    PluginFunctions::polyLineObject(*o_it2)->line()->project_to_mesh(meshes, &bsps);
+    emit updatedObject(o_it2->id(), UPDATE_GEOMETRY);
   }
 }
 
@@ -615,27 +603,27 @@ PolyLinePlugin::
 slot_project( PolyLineObject*& _pol)
 {
   // check if polyline ok
-  if( _pol)
-  {
+  if (_pol) {
+
     // create meshes and bsp vectors
-    std::vector<TriMesh*>                        meshes;
-    std::vector<OpenMeshTriangleBSPT< TriMesh>*> bsps;
+    std::vector<TriMesh*> meshes;
+    std::vector<OpenMeshTriangleBSPT<TriMesh>*> bsps;
 
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_TRIANGLE_MESH );
+    PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DATA_TRIANGLE_MESH);
 
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
+    for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
       // get pointer to TriMeshObject
       TriMeshObject* tmesh_obj = PluginFunctions::triMeshObject(*o_it);
 
       // save meshes and bsps
-      meshes.push_back( tmesh_obj->mesh());
+      meshes.push_back(tmesh_obj->mesh());
       //    bsps.push_back(0);
-      bsps.push_back( tmesh_obj->requestTriangleBsp());
+      bsps.push_back(tmesh_obj->requestTriangleBsp());
     }
 
     // only project given PolyLine
-    _pol->line()->project_to_mesh( meshes, &bsps );
+    _pol->line()->project_to_mesh(meshes, &bsps);
   }
 
 }
@@ -650,13 +638,14 @@ slot_smooth_project()
 {
   int smooth_project_iter = tool_->sb_smooth_project_iter->value();
 
-  for(int i=0, j=1; i<smooth_project_iter; ++i, ++j)
-  {
+  for (int i = 0, j = 1; i < smooth_project_iter; ++i, ++j) {
+
     // n smoothing steps
     slot_smooth();
 
     // projection step
     slot_project();
+
   }
 }
 
@@ -666,17 +655,18 @@ slot_smooth_project()
 
 void
 PolyLinePlugin::
-slot_smooth_project( PolyLineObject*& _pol)
+slot_smooth_project(PolyLineObject*& _pol)
 {
   int smooth_project_iter = tool_->sb_smooth_project_iter->value();
 
-  for(int i=0, j=1; i<smooth_project_iter; ++i, ++j)
-  {
+  for (int i = 0, j = 1; i < smooth_project_iter; ++i, ++j) {
+
     // n smoothing steps
-    slot_smooth( _pol);
+    slot_smooth(_pol);
 
     // projection step
-    slot_project( _pol);
+    slot_project(_pol);
+
   }
 }
 
@@ -690,14 +680,10 @@ slot_smart_move_timer()
 {
   int smooth_project_iter = tool_->sb_smooth_project_iter->value();
 
-  if( smooth_project_iter)
-  {
-    slot_smooth_project( cur_smart_move_obj_ );
-  }
-  else
-    // only smooth
-    slot_smooth( cur_smart_move_obj_ );
-
+  if (smooth_project_iter)
+    slot_smooth_project(cur_smart_move_obj_);
+  else // only smooth
+    slot_smooth(cur_smart_move_obj_);
 
   emit updateView();
 }
@@ -732,84 +718,58 @@ PolyLinePlugin::
 me_insert( QMouseEvent* _event )
 {
   // Pick position
-  unsigned int     node_idx, target_idx;
-  ACG::Vec3d       hit_point;
-  if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
-  {
-    
-    switch( _event->type())
-    {
+  unsigned int node_idx, target_idx;
+  ACG::Vec3d hit_point;
+  if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
+
+    switch (_event->type()) {
       // insert new point
-      case QEvent::MouseButtonPress:
-      {
-	// new Polyline?
-	if( cur_insert_id_ == -1 || !PluginFunctions::objectRoot()->childExists( cur_insert_id_ ) )
-	{
-	  // add new polyline
-	  emit addEmptyObject(DATA_POLY_LINE,cur_insert_id_);
+      case QEvent::MouseButtonPress: {
+        // new Polyline?
+        if (cur_insert_id_ == -1 || !PluginFunctions::objectRoot()->childExists(cur_insert_id_)) {
+          // add new polyline
+          emit addEmptyObject(DATA_POLY_LINE, cur_insert_id_);
 
-	  // get current polylineobject
-	  BaseObjectData *obj = 0;
-	  PluginFunctions::getObject(cur_insert_id_, obj);
-	  // default: set as target
-	  obj->target(true);
-	  // get polyline object
-	  cur_polyline_obj_  = PluginFunctions::polyLineObject(obj);
+          // get current polylineobject
+          BaseObjectData *obj = 0;
+          PluginFunctions::getObject(cur_insert_id_, obj);
+          // default: set as target
+          obj->target(true);
+          // get polyline object
+          cur_polyline_obj_ = PluginFunctions::polyLineObject(obj);
 
-// 	  // request properties
-// 	  cur_polyline_obj_->line()->request_vertex_selections();
-// 	  cur_polyline_obj_->line()->request_edge_selections();
-// 	  cur_polyline_obj_->line()->request_vertex_vhandles();
-// 	  cur_polyline_obj_->line()->request_vertex_ehandles();
-// 	  cur_polyline_obj_->line()->request_vertex_fhandles();
+          cur_polyline_obj_->materialNode()->set_random_color();
+        }
 
+        // add new point
+        cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
 
-// 	  // set pick radius
-// 	  cur_polyline_obj_->lineNode()->set_pick_radius(0.01*PluginFunctions::sceneRadius());
+        // update
+        emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 
-// 	  // set line color
-// 	  cur_polyline_obj_->lineNode()->set_color(ACG::Vec4f(0.f, 1.f, 0.f, 1.f));
-
-	  cur_polyline_obj_->materialNode()->set_random_color();
-	}
-
-
-	// add new point
-	cur_polyline_obj_->line()->add_point( (PolyLine::Point) hit_point);
-
-	// update
-	emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-	emit updateView();
-
-	break;
+        break;
       }
 
       // finish polyline
-      case QEvent::MouseButtonDblClick:
-      {
-	// already done by first click!!!
-// 	// add last point
-// 	cur_polyline_obj_->line()->add_point( (PolyLine::Point) hit_point);
+      case QEvent::MouseButtonDblClick: {
 
-	// close polyline
-	if ( _event->modifiers() & (Qt::ShiftModifier) )
-	{
-	  cur_polyline_obj_->line()->set_closed(true);
-	}
+        // close polyline
+        if (_event->modifiers() & (Qt::ShiftModifier)) {
+          cur_polyline_obj_->line()->set_closed(true);
+        }
 
-	// update
-	emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-	emit updateView();
+        // update
+        emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 
-  // reset current variables
-  cur_insert_id_    = -1;
-  cur_polyline_obj_ =  0;
+        // reset current variables
+        cur_insert_id_ = -1;
+        cur_polyline_obj_ = 0;
 
-	break;
+        break;
       }
 
       default:
-	break;
+        break;
     }
   }
 }
@@ -823,24 +783,24 @@ PolyLinePlugin::
 me_delete( QMouseEvent* _event )
 {
   // MousePress ?
-  if( _event->type() == QEvent::MouseButtonPress)
-  {
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
-    // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(),node_idx, target_idx, &hit_point))
-    {
-      BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-        // is picked object polyline?
-        if(PluginFunctions::polyLineObject(obj))
-        {
-          emit deleteObject(obj->id());
+  if (_event->type() == QEvent::MouseButtonPress) {
 
-          emit updateView();
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
+    // pick
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+
+      BaseObjectData* obj = 0;
+
+      if (PluginFunctions::getPickedObject(node_idx, obj))
+        // is picked object polyline?
+        if (PluginFunctions::polyLineObject(obj)) {
+          emit deleteObject(obj->id());
         }
     }
+
   }
+
 }
 
 
@@ -852,47 +812,46 @@ PolyLinePlugin::
 me_move( QMouseEvent* _event )
 {
   // MousePress ? -> get eference point
-  if( _event->type() == QEvent::MouseButtonPress)
-  {
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
+  if (_event->type() == QEvent::MouseButtonPress) {
+
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point))
-    {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+
       BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-      {
-	// is picked object polyline?
-	PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-	if(cur_pol)
-	{
-	  // save references
-	  cur_move_id_    = cur_pol->id();
-	  move_point_ref_ = &(cur_pol->line()->point(target_idx));
-	}
+      if (PluginFunctions::getPickedObject(node_idx, obj)) {
+        // is picked object polyline?
+        PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+        if (cur_pol) {
+          // save references
+          cur_move_id_ = cur_pol->id();
+          move_point_ref_ = &(cur_pol->line()->point(target_idx));
+        }
       }
+
     }
+
   }
 
   // Move ? -> move reference point
-  if( _event->type() == QEvent::MouseMove)
-    if(move_point_ref_ != 0)
-    {
-      unsigned int     node_idx, target_idx;
-      ACG::Vec3d       hit_point;
-      // pick
-      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
-      {
-	(*move_point_ref_) = (PolyLine::Point)hit_point;
+  if (_event->type() == QEvent::MouseMove)
+    if (move_point_ref_ != 0) {
 
-	// update
-	emit updatedObject(cur_move_id_, UPDATE_GEOMETRY);
-	emit updateView();
+      unsigned int node_idx, target_idx;
+      ACG::Vec3d hit_point;
+
+      // pick
+      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
+        (*move_point_ref_) = (PolyLine::Point) hit_point;
+
+        // update
+        emit updatedObject(cur_move_id_, UPDATE_GEOMETRY);
       }
     }
 
   // Release ? -> release reference point
-  if( _event->type() == QEvent::MouseButtonRelease)
+  if (_event->type() == QEvent::MouseButtonRelease)
     move_point_ref_ = 0;
 
 
@@ -905,98 +864,96 @@ PolyLinePlugin::
 me_split( QMouseEvent* _event )
 {
   // MousePress ?
-  if( _event->type() == QEvent::MouseButtonPress)
-  {
+  if (_event->type() == QEvent::MouseButtonPress) {
     // release old references
     move_point_ref_ = 0;
 
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point))
-    {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx,
+        &hit_point)) {
       BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-      {
-	// is picked object polyline?
-	PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-	if(cur_pol)
-	{
-	  // splitting for CLOSED PolyLines
-	  if( cur_pol->line()->is_closed())
-	  {
-	    cur_pol->line()->split_closed( target_idx );
+      if (PluginFunctions::getPickedObject(node_idx, obj)) {
+        // is picked object polyline?
+        PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+        if (cur_pol) {
+          // splitting for CLOSED PolyLines
+          if (cur_pol->line()->is_closed()) {
+            cur_pol->line()->split_closed(target_idx);
 
-	    // save references for moving
-	    cur_move_id_    = cur_pol->id();
-	    move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices()-1));
+            // save references for moving
+            cur_move_id_ = cur_pol->id();
+            move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices() - 1));
 
-	    // emit changed objects
-	    emit updatedObject(cur_pol->id(), UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
-	  }
-	  else
-	  // splitting for OPEN PolyLines
-	  {
-	    // add new polyline
-	    int insert_id;
-	    emit addEmptyObject(DATA_POLY_LINE,insert_id);
+            // emit changed objects
+            emit updatedObject(cur_pol->id(), UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+          } else
+          // splitting for OPEN PolyLines
+          {
+            // add new polyline
+            int insert_id;
+            emit addEmptyObject(DATA_POLY_LINE, insert_id);
 
-	    // get current polylineobject
-	    BaseObjectData *obj2 = 0;
-	    // get polyline object
-	    PluginFunctions::getObject(insert_id, obj2);
+            // get current polylineobject
+            BaseObjectData *obj2 = 0;
 
-	    // default: mark as target
-	    obj2->target(true);
+            // get polyline object
+            PluginFunctions::getObject(insert_id, obj2);
 
-	    PolyLineObject* pol_obj2  = PluginFunctions::polyLineObject(obj2);
+            // default: mark as target
+            obj2->target(true);
 
-	    pol_obj2->materialNode()->set_random_color();
+            PolyLineObject* pol_obj2 = PluginFunctions::polyLineObject(obj2);
 
-	    cur_pol->line()->split( target_idx, *(pol_obj2->line()));
+            pol_obj2->materialNode()->set_random_color();
 
-	    // save references for moving
-	    cur_move_id_    = cur_pol->id();
-	    move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices()-1));
+            cur_pol->line()->split(target_idx, *(pol_obj2->line()));
 
-	    // emit changed objects
-	    emit updatedObject(insert_id, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
-	    emit updatedObject(cur_pol->id(), UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
-	  }
+            // save references for moving
+            cur_move_id_ = cur_pol->id();
+            move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices() - 1));
 
-	  // update
-	  emit updateView();
-	}
+            // emit changed objects
+            emit updatedObject(insert_id, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+            emit updatedObject(cur_pol->id(), UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+          }
+
+          // update
+          emit updateView();
+        }
       }
     }
   }
 
-
   // Move splitted ? -> move reference point
-  if( _event->type() == QEvent::MouseMove)
-    if(move_point_ref_ != 0)
-    {
-      unsigned int     node_idx, target_idx;
-      ACG::Vec3d       hit_point;
-      // pick
-      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
-      {
-	(*move_point_ref_) = (PolyLine::Point)hit_point;
+  if (_event->type() == QEvent::MouseMove)
+    if (move_point_ref_ != 0) {
 
-	// update
-	//	emit updatedObject(cur_insert_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
-	emit updateView();
+      unsigned int node_idx, target_idx;
+      ACG::Vec3d hit_point;
+      // pick
+      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
+
+        (*move_point_ref_) = (PolyLine::Point) hit_point;
+
+        // update
+        //	emit updatedObject(cur_insert_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+        emit updateView();
       }
     }
 
   // Release splitted? -> release reference point
-  if( _event->type() == QEvent::MouseButtonRelease)
-  {
-    if( cur_move_id_ != -1)
+  if (_event->type() == QEvent::MouseButtonRelease) {
+
+    if (cur_move_id_ != -1)
       emit updatedObject(cur_move_id_, UPDATE_TOPOLOGY | UPDATE_GEOMETRY);
+
     move_point_ref_ = 0;
     cur_move_id_ = -1;
+
   }
+
 }
 
 
@@ -1008,77 +965,69 @@ PolyLinePlugin::
 me_merge( QMouseEvent* _event )
 {
   // Mouse PRESS ?
-  if( _event->type() == QEvent::MouseButtonPress)
-  {
+  if (_event->type() == QEvent::MouseButtonPress) {
     // release old references
     move_point_ref_ = 0;
-    cur_merge_id_   = -1;
+    cur_merge_id_ = -1;
 
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point))
-    {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx,
+        &hit_point)) {
       BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-      {
-	// is picked object polyline?
-	PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-	if(cur_pol)
-	  if(target_idx == cur_pol->line()->n_vertices()-1 || target_idx == 0)
-	  {
-	    if( target_idx == 0)
-	    {
-	      cur_pol->line()->invert();
-	      target_idx = cur_pol->line()->n_vertices()-1;
-	    }
+      if (PluginFunctions::getPickedObject(node_idx, obj)) {
+        // is picked object polyline?
+        PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+        if (cur_pol)
+          if (target_idx == cur_pol->line()->n_vertices() - 1 || target_idx == 0) {
+            if (target_idx == 0) {
+              cur_pol->line()->invert();
+              target_idx = cur_pol->line()->n_vertices() - 1;
+            }
 
-	    // save references
-	    cur_merge_id_  = cur_pol->id();
+            // save references
+            cur_merge_id_ = cur_pol->id();
 
-	    // save reference for moving
-	    //	    cur_pol->line()->add_point( cur_pol->line()->point( cur_pol->line()->n_vertices()-1));
-	    move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices()-1));
-	  }
+            // save reference for moving
+            //	    cur_pol->line()->add_point( cur_pol->line()->point( cur_pol->line()->n_vertices()-1));
+            move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices() - 1));
+          }
       }
     }
   }
 
   // Move ? -> move reference point
-  if( _event->type() == QEvent::MouseMove && cur_merge_id_ != -1)
-    if(move_point_ref_ != 0)
-    {
-      unsigned int     node_idx, target_idx;
-      ACG::Vec3d       hit_point;
+  if (_event->type() == QEvent::MouseMove && cur_merge_id_ != -1)
+    if (move_point_ref_ != 0) {
+      unsigned int node_idx, target_idx;
+      ACG::Vec3d hit_point;
       // pick
-      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
-      {
-	(*move_point_ref_) = (PolyLine::Point)hit_point;
+      if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx,
+          &hit_point)) {
+        (*move_point_ref_) = (PolyLine::Point) hit_point;
 
-	// update
-	//	emit updatedObject(cur_merge_id_);
-	emit updateView();
+        // update
+        //	emit updatedObject(cur_merge_id_);
+        emit updateView();
       }
     }
 
-
   // Mouse RELEASE ?
-  if( _event->type() == QEvent::MouseButtonRelease && cur_merge_id_ != -1)
-  {
+  if (_event->type() == QEvent::MouseButtonRelease && cur_merge_id_ != -1) {
     PolyLine::Point p_save;
 
     // reset move references
-    if( move_point_ref_ != 0)
-    {
+    if (move_point_ref_ != 0) {
       // remove intermediate point
       // restore orig polyline
       BaseObjectData *obj = 0;
       PluginFunctions::getObject(cur_merge_id_, obj);
-      PolyLineObject* opol  = PluginFunctions::polyLineObject(obj);
+      PolyLineObject* opol = PluginFunctions::polyLineObject(obj);
 
       // store position if merging fails
       p_save = opol->line()->back();
-      opol->line()->resize( opol->line()->n_vertices()-1 );
+      opol->line()->resize(opol->line()->n_vertices() - 1);
 
       // release reference
       move_point_ref_ = 0;
@@ -1086,95 +1035,90 @@ me_merge( QMouseEvent* _event )
 
     bool merged = false;
 
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
+
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point))
-    {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+
       BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-      {
-	// is picked object polyline? -> get second polyline
-	PolyLineObject* second_pol = PluginFunctions::polyLineObject(obj);
-	if(second_pol)
-	{
-	  // restore first polyline
-	  BaseObjectData *obj2 = 0;
-	  PluginFunctions::getObject(cur_merge_id_, obj2);
-	  PolyLineObject* first_pol  = PluginFunctions::polyLineObject(obj2);
+      if (PluginFunctions::getPickedObject(node_idx, obj)) {
 
-	  // get idxs
-	  unsigned int first_idx  = first_pol->line()->n_vertices()-1;
-	  unsigned int second_idx = target_idx;
+        // is picked object polyline? -> get second polyline
+        PolyLineObject* second_pol = PluginFunctions::polyLineObject(obj);
 
-	  // both polylines open?
-	  if( first_pol->line()->is_closed() || second_pol->line()->is_closed())
-	    return;
+        if (second_pol) {
+          // restore first polyline
+          BaseObjectData *obj2 = 0;
+          PluginFunctions::getObject(cur_merge_id_, obj2);
+          PolyLineObject* first_pol = PluginFunctions::polyLineObject(obj2);
 
-	  bool inv_first(false), inv_second(false);
+          // get idxs
+          unsigned int first_idx = first_pol->line()->n_vertices() - 1;
+          unsigned int second_idx = target_idx;
 
-	  // wrong ordering first Polyline?
-	  if( first_idx == 0)
-	  {
-	    inv_first = true;
-	    first_idx = first_pol->line()->n_vertices()-1;
-	  }
+          // both polylines open?
+          if (first_pol->line()->is_closed() || second_pol->line()->is_closed())
+            return;
 
-	  // wrong ordering second Polyline?
-	  if( second_idx == second_pol->line()->n_vertices()-1)
-	  {
-	    inv_second = true;
-	    second_idx = 0;
-	  }
+          bool inv_first(false), inv_second(false);
 
-	  // two endpoints available?
-	  if( first_idx == first_pol->line()->n_vertices()-1 && second_idx == 0)
-	  {
-	    // same polyline?
-	    if( first_pol->id() == second_pol->id())
-	    {
-	      // simply close line
-	      first_pol->line()->set_closed(true);
-	    }
-	    else
-	    {
-	      // invert if necessary
-	      if(inv_first ) first_pol ->line()->invert();
-	      if(inv_second) second_pol->line()->invert();
+          // wrong ordering first Polyline?
+          if (first_idx == 0) {
+            inv_first = true;
+            first_idx = first_pol->line()->n_vertices() - 1;
+          }
 
-	      // append second polyline to first one
-	      first_pol->line()->append( *second_pol->line() );
+          // wrong ordering second Polyline?
+          if (second_idx == second_pol->line()->n_vertices() - 1) {
+            inv_second = true;
+            second_idx = 0;
+          }
 
-	      // set flag
-	      merged = true;
+          // two endpoints available?
+          if (first_idx == first_pol->line()->n_vertices() - 1 && second_idx == 0) {
+            // same polyline?
+            if (first_pol->id() == second_pol->id()) {
+              // simply close line
+              first_pol->line()->set_closed(true);
+            } else {
+              // invert if necessary
+              if (inv_first)
+                first_pol->line()->invert();
+              if (inv_second)
+                second_pol->line()->invert();
 
-	      // delete appended
-	      emit deleteObject(second_pol->id());
-	    }
+              // append second polyline to first one
+              first_pol->line()->append(*second_pol->line());
 
-	  }
-	}
+              // set flag
+              merged = true;
+
+              // delete appended
+              emit deleteObject(second_pol->id());
+            }
+
+          }
+        }
       }
 
-      if( !merged)
-      {
-	// remove intermediate point
-	// restore orig polyline
-	BaseObjectData *obj = 0;
-	PluginFunctions::getObject(cur_merge_id_, obj);
-	PolyLineObject* opol  = PluginFunctions::polyLineObject(obj);
+      if (!merged) {
+        // remove intermediate point
+        // restore orig polyline
+        BaseObjectData *obj = 0;
+        PluginFunctions::getObject(cur_merge_id_, obj);
+        PolyLineObject* opol = PluginFunctions::polyLineObject(obj);
 
-	opol->line()->add_point(p_save);
+        opol->line()->add_point(p_save);
       }
     }
 
     // update
     emit updatedObject(cur_merge_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-    emit updateView();
 
     // release old references
     move_point_ref_ = 0;
-    cur_merge_id_   = -1;
+    cur_merge_id_ = -1;
   }
 
 }
