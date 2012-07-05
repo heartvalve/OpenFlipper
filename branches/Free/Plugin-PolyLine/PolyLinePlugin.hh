@@ -85,7 +85,7 @@ signals:
   void scriptInfo( QString _functionName );
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );  
+  void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
   
   void deleteObject( int _id );
   void addEmptyObject( DataType _type, int& _id);    

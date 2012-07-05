@@ -92,7 +92,11 @@ initializePlugin()
 //   tool_->rb_smooth_c0->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_insert.svg") );
 //   tool_->rb_smooth_c1->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_c1.svg") );
 //   tool_->rb_smooth_c2->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_c2.svg") );
-  emit addToolbox( tr("PolyLine") , tool_ );
+
+
+  // Add the toolbox with the given icon
+  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cut_polyline.png");
+  emit addToolbox( tr("PolyLine") , tool_, toolIcon );
 }
 
 
