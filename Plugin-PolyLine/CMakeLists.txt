@@ -12,9 +12,10 @@ endif ( WIN32 )
 if (EXISTS ${CMAKE_SOURCE_DIR}/libs/PhySim)
   add_definitions (-DUSE_PHYSIM)
 
-openflipper_plugin ( OPTDEPS PhySim  
-		     INSTALLDATA Icons
-		    )
+  openflipper_plugin ( DEPS PhySim CGAL 
+    		       INSTALLDATA Icons
+ 		      )
 else()
-  openflipper_plugin ( INSTALLDATA Icons )
+  openflipper_plugin ( INSTALLDATA 
+                       Icons )
 endif ()
