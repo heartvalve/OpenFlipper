@@ -30,12 +30,10 @@ ENDIF(NOT QT4_FOUND)
 IF( QT4_FOUND )
 
     if ( CMAKE_GENERATOR MATCHES "Visual Studio 9*" )
-	  message("2008 generator")
 	  set( SEARCHPATH "./" )
 	endif()
 	  
 	if ( CMAKE_GENERATOR MATCHES "Visual Studio 10*" )
-	  message("2010 generator")
 	  set( SEARCHPATH "VS2010" )
 	endif()
 
