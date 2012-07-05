@@ -65,8 +65,7 @@ signals:
   
   // BaseInterface
   void updateView();
-//   void updatedObject(int);
-  void updatedObject(int _id, const UpdateType _type = UPDATE_ALL);
+  void updatedObject(int _identifier, const UpdateType& _type);
 
   // PickingInterface
   void addPickMode( const std::string& _mode );
