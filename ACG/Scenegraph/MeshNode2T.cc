@@ -574,7 +574,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 template <class Mesh>
 void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
 {
-  RenderObject ro = {0}; // zeromem
+  //RenderObject ro = {0}; // zeromem
+  // TODO : RIGHT initialization
   ro.initFromState(&_state);
  
   // shader gen setup (lighting, shademode, vertex-colors..)
