@@ -430,7 +430,26 @@ void CoreWidget::applicationSnapshotDialog() {
     }else
       snapshotCounter_++;
 
+    //grabs only the widget (espacially in windows)
+    //todo: deprecated in QT 5.0, use QScreen instead
     QPixmap pic = QPixmap::grabWindow( winId() );
+
+    QPainter painter (&pic);
+
+    //so we have to add the content from the GLContext manually
+    for (std::vector< glViewer* >::iterator iter = examiner_widgets_.begin(); iter != examiner_widgets_.end(); ++iter)
+    {
+      if (*iter)
+      {
+        QImage fillImage;
+
+        (*iter)->snapshot(fillImage, (*iter)->glWidth() , (*iter)->glHeight());
+
+        QPoint localPos = QPoint((*iter)->pos().x(),(*iter)->pos().y());
+        QPointF pos = glView_->mapTo(this,localPos);
+        painter.drawImage(pos,fillImage);
+      }
+    }
 
     pic.save(newName);
   }
