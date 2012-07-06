@@ -1387,6 +1387,8 @@ MeshNodeT<Mesh>::getMemoryUsage()
 
   if (drawMesh_)
     res += drawMesh_->getMemoryUsage();
+
+  return res;
 }
 
 
