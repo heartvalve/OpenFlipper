@@ -52,308 +52,203 @@
 
 #include "SplatCloud.hh"
 
+#include <iostream>
+
+
+//== STATIC MEMBERS ==============================================
+
+
+const SplatCloud::PositionsHandle  SplatCloud::POSITIONS_HANDLE ( "<Positions>"  );
+const SplatCloud::ColorsHandle     SplatCloud::COLORS_HANDLE    ( "<Colors>"     );
+const SplatCloud::NormalsHandle    SplatCloud::NORMALS_HANDLE   ( "<Normals>"    );
+const SplatCloud::PointsizesHandle SplatCloud::POINTSIZES_HANDLE( "<Pointsizes>" );
+const SplatCloud::IndicesHandle    SplatCloud::INDICES_HANDLE   ( "<Indices>"    );
+const SplatCloud::ViewlistsHandle  SplatCloud::VIEWLISTS_HANDLE ( "<Viewlists>"  );
+const SplatCloud::SelectionsHandle SplatCloud::SELECTIONS_HANDLE( "<Selections>" );
+
 
 //== IMPLEMENTATION ==============================================
 
 
-unsigned int SplatCloud::countSelected() const
+void SplatCloud::copySplatProperties( const SplatCloud &_splatCloud )
 {
-	unsigned int numSelected = 0;
+  // deep copy all splat-properties
+  SplatProperties::const_iterator splatPropertyIter;
+  for( splatPropertyIter = _splatCloud.splatProperties_.begin(); splatPropertyIter != _splatCloud.splatProperties_.end(); ++splatPropertyIter )
+  {
+    // create new deep copy of current splat-property
+    SplatPropertyInterface *prop = splatPropertyIter->second->clone();
 
-	SelectionVector::const_iterator selectionIter;
-	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
-	{
-		if( *selectionIter )
-			++numSelected;
-	}
+    // check if out of memory
+    if( prop == 0 )
+    {
+      std::cerr << "Out of memory for a copy of SplatCloud's Splat-Property \"" << splatPropertyIter->first << "\"." << std::endl;
+      continue;
+    }
 
-	return numSelected;
+    // insert new copy into splat-property map with same name as before
+    splatProperties_[ splatPropertyIter->first ] = prop;
+  }
+
+  // Get pointers to predefined splat-properties.
+  // These can *not* be copied because they have to point to the newly
+  // created deep copies of the properties and not to the old properties.
+  getPredefinedSplatPropertyPointers();
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::setSelections( const Selection &_selection )
+void SplatCloud::copyCloudProperties( const SplatCloud &_splatCloud )
 {
-	// select all entries...
-	SelectionVector::iterator selectionIter;
-	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
-		(*selectionIter) = _selection;
+  // deep copy all cloud-properties
+  CloudProperties::const_iterator cloudPropertyIter;
+  for( cloudPropertyIter = _splatCloud.cloudProperties_.begin(); cloudPropertyIter != _splatCloud.cloudProperties_.end(); ++cloudPropertyIter )
+  {
+    // create new deep copy of current cloud-property
+    CloudPropertyInterface *prop = cloudPropertyIter->second->clone();
+
+    // check if out of memory
+    if( prop == 0 )
+    {
+      std::cerr << "Out of memory for a copy of SplatCloud's Cloud-Property \"" << cloudPropertyIter->first << "\"." << std::endl;
+      continue;
+    }
+
+    // insert new copy into cloud-property map with same name as before
+    cloudProperties_[ cloudPropertyIter->first ] = prop;
+  }
+
+  // Get pointers to predefined cloud-properties.
+  // These can *not* be copied because they have to point to the newly
+  // created deep copies of the properties and not to the old properties.
+  getPredefinedCloudPropertyPointers();
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::setSphereSelections( const Point &_center, float _sqRadius, const Selection &_selection )
+SplatCloud::SplatCloud( const SplatCloud &_splatCloud )
 {
-	// set all selections within given radius from center
-	PointVector::const_iterator pointIter     = points_.begin();
-	SelectionVector::iterator   selectionIter = selections_.begin();
-	for( ; pointIter != points_.end(); ++pointIter, ++selectionIter )
-	{
-		const Point &point = *pointIter;
+  // copy number of splats
+  numSplats_ = _splatCloud.numSplats_;
 
-		float dx = point[0] - _center[0];
-		float dy = point[1] - _center[1];
-		float dz = point[2] - _center[2];
-
-		if( (dx*dx + dy*dy + dz*dz) <= _sqRadius )
-			*selectionIter = _selection;
-	}
+  // deep copy all properties
+  copySplatProperties( _splatCloud );
+  copyCloudProperties( _splatCloud );
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::invertSelections()
+void SplatCloud::clearSplatProperties()
 {
-	// invert all entries...
-	SelectionVector::iterator selectionIter;
-	for( selectionIter = selections_.begin(); selectionIter != selections_.end(); ++selectionIter )
-		(*selectionIter) = !(*selectionIter);
+  // free memory of all splat-properties
+  SplatProperties::const_iterator splatPropertyIter;
+  for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
+    delete splatPropertyIter->second;
+
+  // clear splat-property map
+  SplatProperties().swap( splatProperties_ );
+
+  // reset pointers to predefined splat-properties
+  resetPredefinedSplatPropertyPointers();
 }
 
 
 //----------------------------------------------------------------
 
 
-bool SplatCloud::deleteSelected()
+void SplatCloud::clearCloudProperties()
 {
-	// count number of selected points
-	unsigned int numSelected = countSelected();
+  // free memory of all cloud-properties
+  CloudProperties::const_iterator cloudPropertyIter;
+  for( cloudPropertyIter = cloudProperties_.begin(); cloudPropertyIter != cloudProperties_.end(); ++cloudPropertyIter )
+    delete cloudPropertyIter->second;
 
-	// if no point selected, abort
-	if( numSelected == 0 )
-		return false; // nothing has been modified
+  // clear cloud-property map
+  CloudProperties().swap( cloudProperties_ );
 
-	unsigned int newSize = numPoints() - numSelected;
-
-	bool hasNrm = hasNormals();
-	bool hasPS  = hasPointsizes();
-	bool hasCol = hasColors();
-	bool hasIdx = hasIndices();
-	bool hasSel = hasSelections();
-
-	// create new (empty) data vectors
-	PointVector     newPoints;
-	NormalVector    newNormals;
-	PointsizeVector newPointsizes;
-	ColorVector     newColors;
-	IndexVector     newIndices;
-	SelectionVector newSelections;
-
-	// reserve memory/space if data vector(s) in use
-	/*        */ newPoints.reserve    ( newSize );
-	if( hasNrm ) newNormals.reserve   ( newSize );
-	if( hasPS  ) newPointsizes.reserve( newSize );
-	if( hasCol ) newColors.reserve    ( newSize );
-	if( hasIdx ) newIndices.reserve   ( newSize );
-	if( hasSel ) newSelections.reserve( newSize );
-
-	PointVector::const_iterator     pointIter     = points_.begin();
-	NormalVector::const_iterator    normalIter    = normals_.begin();
-	PointsizeVector::const_iterator pointsizeIter = pointsizes_.begin();
-	ColorVector::const_iterator     colorIter     = colors_.begin();
-	IndexVector::const_iterator     indexIter     = indices_.begin();
-	SelectionVector::const_iterator selectionIter = selections_.begin();
-
-	// add old data entry to new data vector if point is *not* selected
-	while( pointIter != points_.end() )
-	{
-		bool unselected = !(*selectionIter);
-
-		{
-			if( unselected )
-				newPoints.push_back    ( *pointIter     );
-			++pointIter;
-		}
-
-		if( hasNrm )
-		{
-			if( unselected )
-				newNormals.push_back   ( *normalIter    );
-			++normalIter;
-		}
-
-		if( hasPS  )
-		{
-			if( unselected )
-				newPointsizes.push_back( *pointsizeIter );
-			++pointsizeIter;
-		}
-
-		if( hasCol )
-		{
-			if( unselected )
-				newColors.push_back    ( *colorIter     );
-			++colorIter;
-		}
-
-		if( hasIdx )
-		{
-			if( unselected )
-				newIndices.push_back   ( *indexIter     );
-			++indexIter;
-		}
-
-		if( hasSel )
-		{
-			if( unselected )
-				newSelections.push_back( *selectionIter );
-			++selectionIter;
-		}
-	}
-
-	// replace old data vectors by new ones (even when data vector was *not* in use, so new vector has the right size)
-	points_     = newPoints;
-	normals_    = newNormals;
-	pointsizes_ = newPointsizes;
-	colors_     = newColors;
-	indices_    = newIndices;
-	selections_ = newSelections;
-
-	return true; // data has been modified
+  // reset pointers to predefined cloud-properties
+  resetPredefinedCloudPropertyPointers();
 }
 
 
 //----------------------------------------------------------------
 
 
-bool SplatCloud::colorizeSelected( const Color &_color )
+void SplatCloud::clear()
 {
-	// if colors_ vector is *not* of the right size, resize
-	if( numColors() != numPoints() )
-		colors_.resize( numPoints(), Color(255,255,255) ); // initialize with white color
+  // reset number of splats
+  numSplats_ = 0;
 
-	bool modified = false;
-
-	ColorVector::iterator     colorIter     = colors_.begin();
-	SelectionVector::iterator selectionIter = selections_.begin();
-
-	// delete all selected entries (from selections_ vector and as well from points_, normals_, pointsizes_ and colors_ vectors)
-	while( selectionIter != selections_.end() )
-	{
-		if( *selectionIter )
-		{
-			(*colorIter) = _color;
-			modified = true;
-		}
-
-		++colorIter;
-		++selectionIter;
-	}
-
-	return modified;
+  // clear all properties
+  clearSplatProperties();
+  clearCloudProperties();
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::normalizeSize()
+void SplatCloud::swap( SplatCloud &_splatCloud )
 {
-	// check if there is nothing to do
-	if( !hasPoints() )
-		return;
+  // swap number of splats
+  std::swap( numSplats_,       _splatCloud.numSplats_       );
 
-	// calculate center-of-gravety
-	float cogX = 0.0f;
-	float cogY = 0.0f;
-	float cogZ = 0.0f;
-	PointVector::iterator pointIter;
-	for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
-	{
-		const Point &p = *pointIter;
+  // swap all properties
+  std::swap( splatProperties_, _splatCloud.splatProperties_ );
+  std::swap( cloudProperties_, _splatCloud.cloudProperties_ );
 
-		cogX += p[0];
-		cogY += p[1];
-		cogZ += p[2];
-	}
-
-	float rcp_count = 1.0f / (float) numPoints();
-	cogX *= rcp_count;
-	cogY *= rcp_count;
-	cogZ *= rcp_count;
-
-	translation_ = Point( -cogX, -cogY, -cogZ );
-	translate( translation_ );
-	std::cout << "SplatCloud::normalizeSize(): translating points by: " << translation_ << std::endl;
-
-	// calculate squared length
-	float sqLength = 0.0f;
-	for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
-	{
-		const Point &p = *pointIter;
-		sqLength += p[0]*p[0] + p[1]*p[1] + p[2]*p[2];
-	}
-
-	float s = (float) sqrt( sqLength * rcp_count );
-
-	if( s == 0.0f )
-	  return;
-
-	scaleFactor_ = 1.0f / s;
-	scale( scaleFactor_ );
-	std::cout << "SplatCloud::normalizeSize(): scaling points by factor: " << scaleFactor_ << std::endl;
+  // swap pointers to predefined properties
+  swapPredefinedSplatPropertyPointers( _splatCloud );
+  swapPredefinedCloudPropertyPointers( _splatCloud );
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::translate( const Point &_t )
+void SplatCloud::clearSplats()
 {
-	// translate points
-	PointVector::iterator pointIter;
-	for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
-	{
-		Point &p = *pointIter;
+  // clear data vector of all splat-properties
+  SplatProperties::const_iterator splatPropertyIter;
+  for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
+    splatPropertyIter->second->clear();
 
-		p[0] += _t[0];
-		p[1] += _t[1];
-		p[2] += _t[2];
-	}
+  // reset number of splats
+  numSplats_ = 0;
 }
 
 
 //----------------------------------------------------------------
 
 
-void SplatCloud::scale( float _s )
+void SplatCloud::pushbackSplat()
 {
-	// scale points (and pointsizes as well)
-	if( hasPointsizes() )
-	{
+  // add one element at end of data vector of all splat-properties
+  SplatProperties::const_iterator splatPropertyIter;
+  for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
+    splatPropertyIter->second->pushback();
 
-		PointsizeVector::iterator pointsizeIter = pointsizes_.begin();
-		PointVector::iterator     pointIter;
-		for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter, ++pointsizeIter )
-		{
-			Point     &p  = *pointIter;
-			Pointsize &ps = *pointsizeIter;
+  // increase number of splats
+  ++numSplats_;
+}
 
-			p[0] *= _s;
-			p[1] *= _s;
-			p[2] *= _s;
-			ps   *= _s; // scale pointsize as well
-		}
 
-	}
-	else
-	{
+//----------------------------------------------------------------
 
-		PointVector::iterator pointIter;
-		for( pointIter = points_.begin(); pointIter != points_.end(); ++pointIter )
-		{
-			Point &p = *pointIter;
 
-			p[0] *= _s;
-			p[1] *= _s;
-			p[2] *= _s;
-		}
+void SplatCloud::resizeSplats( unsigned int _num )
+{
+  // resize data vector of all splat-properties
+  SplatProperties::const_iterator splatPropertyIter;
+  for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
+    splatPropertyIter->second->resize( _num );
 
-	}	
+  // update number of splats
+  numSplats_ = _num;
 }
