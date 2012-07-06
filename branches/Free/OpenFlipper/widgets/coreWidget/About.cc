@@ -62,6 +62,7 @@
 #ifndef WIN32
   #ifndef ARCH_DARWIN
     #include <malloc.h>
+    #include <unistd.h>
   #endif
 #endif
 
