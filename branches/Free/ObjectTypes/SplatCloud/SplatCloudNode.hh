@@ -44,7 +44,7 @@
 //
 //  CLASS SplatCloudNode
 //
-//    SplatCloudNode renders splats by passing points, normals, point sizes and colors (and picking colors) to the GL.
+//    SplatCloudNode renders splats by passing positions, normals, pointsizes and colors (and picking colors) to the GL.
 //    These elements are internally stored in an array using an OpenGL vertex-buffer-object
 //    including vertices, normals, texcoords and colors.
 //
@@ -86,154 +86,177 @@ namespace SceneGraph {
 
 class DLLEXPORT SplatCloudNode : public BaseNode
 {
-private:
+public:
 
-	//-- TYPEDEFS ----------------------------------------------------
+  //-- TYPEDEFS ----------------------------------------------------
 
-	typedef SplatCloud::Point     Point;
-	typedef SplatCloud::Normal    Normal;
-	typedef SplatCloud::Pointsize Pointsize;
-	typedef SplatCloud::Color     Color;
-	typedef SplatCloud::Index     Index;
-	typedef SplatCloud::Selection Selection;
+  typedef SplatCloud::Position  Position;
+  typedef SplatCloud::Color     Color;
+  typedef SplatCloud::Normal    Normal;
+  typedef SplatCloud::Pointsize Pointsize;
+  typedef SplatCloud::Index     Index;
+  typedef SplatCloud::Viewlist  Viewlist;
+  typedef SplatCloud::Selection Selection;
 
-	//----------------------------------------------------------------
+  //----------------------------------------------------------------
 
 public:
 
-	/// constructor
-	SplatCloudNode( const SplatCloud &_splatCloud, BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" );
+  /// constructor
+  SplatCloudNode( const SplatCloud &_splatCloud, BaseNode *_parent = 0, std::string _name = "<SplatCloudNode>" );
 
-	/// destructor
-	~SplatCloudNode();
+  /// destructor
+  ~SplatCloudNode();
 
-	ACG_CLASSNAME( SplatCloudNode );
+  ACG_CLASSNAME( SplatCloudNode );
 
-	/// return available draw modes
-	inline DrawModes::DrawMode availableDrawModes() const { return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_; }
+  /// return available draw modes
+  inline DrawModes::DrawMode availableDrawModes() const { return splatsDrawMode_ | dotsDrawMode_ | pointsDrawMode_; }
 
-	/// update bounding box
-	void boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax );
+  /// update bounding box
+  void boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax );
 
-	/// draw the SplatCloud
-	void draw( GLState &_state, const DrawModes::DrawMode &_drawMode );
+  /// draw the SplatCloud
+  void draw( GLState &_state, const DrawModes::DrawMode &_drawMode );
 
-	/// picking
-	void enterPick( GLState &_state, PickTarget _target, const DrawModes::DrawMode &_drawMode );
-	void pick( GLState &_state, PickTarget _target );
+  /// picking
+  void pick( GLState &_state, PickTarget _target );
 
-	// ---- splat cloud ----
+  // TODO: hack, because pick() doesn't get a drawmode
+  inline void enterPick( GLState &_state, PickTarget _target, const DrawModes::DrawMode &_drawMode ) { pickDrawMode_ = _drawMode; }
 
-	inline const SplatCloud &splatCloud() const { return splatCloud_; }
+  // ---- splat cloud ----
 
-	// ---- modification tags ----
+  inline const SplatCloud &splatCloud() const { return splatCloud_; }
 
-	inline void modifiedPoints()     { pointsModified_     = true; }
-	inline void modifiedNormals()    { normalsModified_    = true; }
-	inline void modifiedPointsizes() { pointsizesModified_ = true; }
-	inline void modifiedColors()     { colorsModified_     = true; }
-	inline void modifiedIndices()    { indicesModified_    = true; }
-	inline void modifiedSelections() { selectionsModified_ = true; }
-	inline void modifiedPickColors() { pickColorsModified_ = true; }
+  // ---- modification tags ----
 
-	inline void modifiedAll() { modifiedPoints(); modifiedNormals(); modifiedPointsizes(); modifiedColors(); modifiedIndices(); modifiedSelections(); modifiedPickColors(); }
+  inline void modifiedPositions()  { positionsModified_  = true; }
+  inline void modifiedColors()     { colorsModified_     = true; }
+  inline void modifiedNormals()    { normalsModified_    = true; }
+  inline void modifiedPointsizes() { pointsizesModified_ = true; }
+  inline void modifiedSelections() { selectionsModified_ = true; }
+  inline void modifiedPickColors() { pickColorsModified_ = true; }
 
-	// ---- default values ----
+  inline void modifiedAll()
+  {
+    modifiedPositions();
+    modifiedColors();
+    modifiedNormals();
+    modifiedPointsizes();
+    modifiedSelections();
+    modifiedPickColors();
+  }
 
-	inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    }
-	inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; }
-	inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     }
+  // ---- default values ----
 
-	inline const Normal    &defaultNormal()    const { return defaultNormal_;    }
-	inline const Pointsize &defaultPointsize() const { return defaultPointsize_; }
-	inline const Color     &defaultColor()     const { return defaultColor_;     }
+  inline void setDefaultColor    ( const Color     &_color     ) { defaultColor_     = _color;     }
+  inline void setDefaultNormal   ( const Normal    &_normal    ) { defaultNormal_    = _normal;    }
+  inline void setDefaultPointsize( const Pointsize &_pointsize ) { defaultPointsize_ = _pointsize; }
 
-	/// if the data array exists, the entry with the given _index is returned, otherwise the default value is returned
-	inline Point     getPoint    ( unsigned int _index ) const { return splatCloud_.hasPoints()     ? splatCloud_.points()    [ _index ] : Point(0.0f,0.0f,0.0f); }
-	inline Normal    getNormal   ( unsigned int _index ) const { return splatCloud_.hasNormals()    ? splatCloud_.normals()   [ _index ] : defaultNormal_       ; }
-	inline Pointsize getPointsize( unsigned int _index ) const { return splatCloud_.hasPointsizes() ? splatCloud_.pointsizes()[ _index ] : defaultPointsize_    ; }
-	inline Color     getColor    ( unsigned int _index ) const { return splatCloud_.hasColors()     ? splatCloud_.colors()    [ _index ] : defaultColor_        ; }
-	inline Index     getIndex    ( unsigned int _index ) const { return splatCloud_.hasIndices()    ? splatCloud_.indices()   [ _index ] : Index(-1)            ; }
-	inline Selection getSelection( unsigned int _index ) const { return splatCloud_.hasSelections() ? splatCloud_.selections()[ _index ] : Selection(false)     ; }
+  inline const Color     &defaultColor()     const { return defaultColor_;     }
+  inline const Normal    &defaultNormal()    const { return defaultNormal_;    }
+  inline const Pointsize &defaultPointsize() const { return defaultPointsize_; }
 
-	//----------------------------------------------------------------
+  /// if the data array exists, the entry with the given index is returned, otherwise the default value is returned
+  inline const Position  &getPosition ( int _idx ) const { return splatCloud_.hasPositions()  ? splatCloud_.positions ( _idx ) : DEFAULT_POSITION;  }
+  inline const Color     &getColor    ( int _idx ) const { return splatCloud_.hasColors()     ? splatCloud_.colors    ( _idx ) : defaultColor_;     }
+  inline const Normal    &getNormal   ( int _idx ) const { return splatCloud_.hasNormals()    ? splatCloud_.normals   ( _idx ) : defaultNormal_;    }
+  inline const Pointsize &getPointsize( int _idx ) const { return splatCloud_.hasPointsizes() ? splatCloud_.pointsizes( _idx ) : defaultPointsize_; }
+  inline const Index     &getIndex    ( int _idx ) const { return splatCloud_.hasIndices()    ? splatCloud_.indices   ( _idx ) : DEFAULT_INDEX;     }
+  inline const Viewlist  &getViewlist ( int _idx ) const { return splatCloud_.hasViewlists()  ? splatCloud_.viewlists ( _idx ) : DEFAULT_VIEWLIST;  }
+  inline const Selection &getSelection( int _idx ) const { return splatCloud_.hasSelections() ? splatCloud_.selections( _idx ) : DEFAULT_SELECTION; }
+
+  //----------------------------------------------------------------
 
 private:
 
-	// ---- splat cloud ----
+  // ---- splat cloud ----
 
-	/// reference to class containing all the data
-	const SplatCloud &splatCloud_;
+  /// reference to class containing all the data
+  const SplatCloud &splatCloud_;
 
-	// ---- modification tags ----
+  // ---- modification tags ----
 
-	/// marks if parts of the data has been modified
-	bool pointsModified_;
-	bool normalsModified_;
-	bool pointsizesModified_;
-	bool colorsModified_;
-	bool indicesModified_;
-	bool selectionsModified_;
-	bool pickColorsModified_;
+  /// marks if parts of the data has been modified
+  bool positionsModified_;
+  bool colorsModified_;
+  bool normalsModified_;
+  bool pointsizesModified_;
+  bool selectionsModified_;
+  bool pickColorsModified_;
 
-	/// return true iff any of the data values in the VBO has to be changed
-	inline bool vboModified() const { return pointsModified_ || normalsModified_ || pointsizesModified_ || colorsModified_ || indicesModified_ || selectionsModified_ || pickColorsModified_; }
+  /// return true iff any of the data values in the VBO has to be changed
+  inline bool vboModified() const
+  {
+    return positionsModified_  ||
+           colorsModified_     ||
+           normalsModified_    ||
+           pointsizesModified_ ||
+           selectionsModified_ ||
+           pickColorsModified_;
+  }
 
-	// ---- default values ----
+  // ---- default values ----
 
-	/// the default values will be used when the specific array is not present
-	Normal    defaultNormal_;
-	Pointsize defaultPointsize_;
-	Color     defaultColor_;
+  /// the default values will be used when the specific array is not present
+  Color     defaultColor_;
+  Normal    defaultNormal_;
+  Pointsize defaultPointsize_;
 
-	// ---- draw modes ----
+  // ---- draw modes ----
 
-	DrawModes::DrawMode splatsDrawMode_;
-	DrawModes::DrawMode dotsDrawMode_;
-	DrawModes::DrawMode pointsDrawMode_;
+  DrawModes::DrawMode splatsDrawMode_;
+  DrawModes::DrawMode dotsDrawMode_;
+  DrawModes::DrawMode pointsDrawMode_;
 
-	// ---- picking base index ----
+  // ---- picking ----
 
-	unsigned int pickingBaseIndex_;
+  unsigned int pickingBaseIndex_;
 
-	// ---- vertex buffer object ----
+  // TODO: hack, see enterPick()
+  DrawModes::DrawMode pickDrawMode_;
 
-	GLuint        vboGlId_;
-	unsigned int  vboNumPoints_;
-	unsigned char *vboData_;
+  // ---- vertex buffer object ----
 
-	/// offsets relative to vboData_ or -1 if *not* present in VBO
-	int vboPointsOffset_;
-	int vboNormalsOffset_;
-	int vboPointsizesOffset_;
-	int vboColorsOffset_;
-	int vboIndicesOffset_;
-	int vboSelectionsOffset_;
-	int vboPickColorsOffset_;
+  GLuint        vboGlId_;
+  unsigned int  vboNumSplats_;
+  unsigned char *vboData_;
 
-	/// returns true iff the internal block structure of the VBO has to be changed
-	inline bool vboStructureModified() const
-	{
-		return vboNumPoints_                != splatCloud_.numPoints()     || 
-		       (vboPointsOffset_     != -1) != splatCloud_.hasPoints()     || 
-		       (vboNormalsOffset_    != -1) != splatCloud_.hasNormals()    || 
-		       (vboPointsizesOffset_ != -1) != splatCloud_.hasPointsizes() || 
-		       (vboColorsOffset_     != -1) != splatCloud_.hasColors()     || 
-		       (vboIndicesOffset_    != -1) != splatCloud_.hasIndices()    || 
-		       (vboSelectionsOffset_ != -1) != splatCloud_.hasSelections();
-	}
+  /// offsets relative to vboData_ or -1 if *not* present in VBO
+  int vboPositionsOffset_;
+  int vboColorsOffset_;
+  int vboNormalsOffset_;
+  int vboPointsizesOffset_;
+  int vboSelectionsOffset_;
+  int vboPickColorsOffset_;
 
-	void createVBO();
-	void destroyVBO();
-	void rebuildVBO( GLState &_state );
+  /// returns true iff the internal block structure of the VBO has to be changed
+  inline bool vboStructureModified() const
+  {
+    return vboNumSplats_                != splatCloud_.numSplats()     ||
+           (vboPositionsOffset_  != -1) != splatCloud_.hasPositions()  ||
+           (vboColorsOffset_     != -1) != splatCloud_.hasColors()     ||
+           (vboNormalsOffset_    != -1) != splatCloud_.hasNormals()    ||
+           (vboPointsizesOffset_ != -1) != splatCloud_.hasPointsizes() ||
+           (vboSelectionsOffset_ != -1) != splatCloud_.hasSelections();
+  }
 
-	void rebuildVBOPoints();
-	void rebuildVBONormals();
-	void rebuildVBOPointsizes();
-	void rebuildVBOColors();
-	void rebuildVBOIndices();
-	void rebuildVBOSelections();
-	void rebuildVBOPickColors( GLState &_state );
+  void createVBO();
+  void destroyVBO();
+  void rebuildVBO( GLState &_state );
+
+  void rebuildVBOPositions();
+  void rebuildVBOColors();
+  void rebuildVBONormals();
+  void rebuildVBOPointsizes();
+  void rebuildVBOSelections();
+  void rebuildVBOPickColors( GLState &_state );
+
+  static const Position  DEFAULT_POSITION;
+  static const Index     DEFAULT_INDEX;
+  static const Viewlist  DEFAULT_VIEWLIST;
+  static const Selection DEFAULT_SELECTION;
 };
 
 

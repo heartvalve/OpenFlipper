@@ -72,15 +72,15 @@ namespace PluginFunctions {
 
 bool getObject( int _identifier, SplatCloudObject *&_object )
 {
-	if( _identifier == -1 )
-	{
-		_object = 0;
-		return false;
-	}
+  if( _identifier == -1 )
+  {
+    _object = 0;
+    return false;
+  }
 
-	BaseObject *object = objectRoot()->childExists( _identifier );
-	_object = dynamic_cast<SplatCloudObject *>( object );
-	return (_object != 0);
+  BaseObject *object = objectRoot()->childExists( _identifier );
+  _object = dynamic_cast<SplatCloudObject *>( object );
+  return (_object != 0);
 }
 
 
@@ -91,18 +91,18 @@ bool getObject( int _identifier, SplatCloudObject *&_object )
 
 ShaderNode* splatShaderNode( BaseObjectData *_object )
 {
-	if( !_object )
-		return 0;
+  if( !_object )
+    return 0;
 
-	if( !_object->dataType( DATA_SPLATCLOUD ) )
-		return 0;
+  if( !_object->dataType( DATA_SPLATCLOUD ) )
+    return 0;
 
-	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+  SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
 
-	if ( object == 0 )
-	    return 0;
+  if ( object == 0 )
+    return 0;
 
-	return object->shaderNode();
+  return object->shaderNode();
 }
 
 
@@ -111,18 +111,18 @@ ShaderNode* splatShaderNode( BaseObjectData *_object )
 
 SplatCloudNode* splatCloudNode( BaseObjectData *_object )
 {
-	if( !_object )
-		return 0;
+  if( !_object )
+    return 0;
 
-	if( !_object->dataType( DATA_SPLATCLOUD ) )
-		return 0;
+  if( !_object->dataType( DATA_SPLATCLOUD ) )
+    return 0;
 
-	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+  SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
 
-	if ( object == 0 )
-	  return 0;
+  if ( object == 0 )
+    return 0;
 
-	return object->splatCloudNode();
+  return object->splatCloudNode();
 }
 
 
@@ -131,18 +131,18 @@ SplatCloudNode* splatCloudNode( BaseObjectData *_object )
 
 SplatCloud* splatCloud( BaseObjectData *_object )
 {
-	if( !_object )
-		return 0;
+  if( !_object )
+    return 0;
 
-	if( !_object->dataType( DATA_SPLATCLOUD ) )
-		return 0;
+  if( !_object->dataType( DATA_SPLATCLOUD ) )
+    return 0;
 
-	SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
+  SplatCloudObject *object = dynamic_cast<SplatCloudObject *>( _object );
 
-	if ( object == 0 )
-	  return 0;
+  if ( object == 0 )
+    return 0;
 
-	return object->splatCloud();
+  return object->splatCloud();
 }
 
 
@@ -151,13 +151,13 @@ SplatCloud* splatCloud( BaseObjectData *_object )
 
 SplatCloudObject* splatCloudObject( BaseObjectData *_object )
 {
-	if( !_object )
-		return 0;
+  if( !_object )
+    return 0;
 
-	if( !_object->dataType( DATA_SPLATCLOUD ) )
-		return 0;
+  if( !_object->dataType( DATA_SPLATCLOUD ) )
+    return 0;
 
-	return dynamic_cast<SplatCloudObject *>( _object );
+  return dynamic_cast<SplatCloudObject *>( _object );
 }
 
 

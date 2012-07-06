@@ -95,42 +95,42 @@ public:
    */
   BaseObject *copy();
 
-	/** \brief Reload standard and picking Shaders from file
-	 *
-	 *  Shader uniforms has to be updated after this!
-	 */
-	void reloadShaders();
+  /** \brief Reload standard and picking Shaders from file
+   *
+   *  Shader uniforms has to be updated after this!
+   */
+  void reloadShaders();
 
-	/** \brief Enable or disable backface culling for all Shaders
-	 */
-	void enableBackfaceCulling( bool _enable );
+  /** \brief Enable or disable backface culling for all Shaders
+   */
+  void enableBackfaceCulling( bool _enable );
 
-	/** \brief Set the scaling factor for pointsizes for all Shaders
-	 */
-	void setPointsizeScale( float _scale );
+  /** \brief Set the scaling factor for pointsizes for all Shaders
+   */
+  void setPointsizeScale( float _scale );
 
-	inline bool isBackfaceCullingEnabled() const { return backfaceCullingEnabled_; }
-	inline float pointsizeScale() const { return pointsizeScale_; }
+  inline bool isBackfaceCullingEnabled() const { return backfaceCullingEnabled_; }
+  inline float pointsizeScale() const { return pointsizeScale_; }
 
 private:
-	bool backfaceCullingEnabled_;
-	float pointsizeScale_;
+  bool  backfaceCullingEnabled_;
+  float pointsizeScale_;
 
 protected:
-    /// Initialise current Object, including all related Nodes
-	virtual void init( const SplatCloud *_splatCloud = 0 );
+  /// Initialise current Object, including all related Nodes
+  virtual void init( const SplatCloud *_splatCloud = 0 );
 
 public:
-	/// Called by the core if the object has to be updated
-	void update( UpdateType _type = UPDATE_ALL );
+  /// Called by the core if the object has to be updated
+  void update( UpdateType _type = UPDATE_ALL );
 
 //--------------------------------
 /** @name Name and Path handling
  * @{ */
 //--------------------------------
 public:
-    /// Set the name of the Object
-    void setName( QString _name );
+  /// Set the name of the Object
+  void setName( QString _name );
 
 /** @} */
 
@@ -139,12 +139,12 @@ public:
  * @{ */
 //--------------------------------
 public:
-	/// Get SplatCloud
-	inline       SplatCloud *splatCloud()       { return splatCloud_; }
-	inline const SplatCloud *splatCloud() const { return splatCloud_; }
+  /// Get SplatCloud
+  inline       SplatCloud *splatCloud()       { return splatCloud_; }
+  inline const SplatCloud *splatCloud() const { return splatCloud_; }
 
 private:
-	SplatCloud *splatCloud_;
+  SplatCloud *splatCloud_;
 
 /** @} */
 
@@ -153,17 +153,17 @@ private:
  * @{ */
 //--------------------------------
 public:
-	/// Get Shader's scenegraph Node
-	inline       ShaderNode *shaderNode()       { return shaderNode_; }
-	inline const ShaderNode *shaderNode() const { return shaderNode_; }
+  /// Get Shader's scenegraph Node
+  inline       ShaderNode *shaderNode()       { return shaderNode_; }
+  inline const ShaderNode *shaderNode() const { return shaderNode_; }
 
-	/// Get SplatCloud's scenegraph Node
-	inline       SplatCloudNode *splatCloudNode()       { return splatCloudNode_; }
-	inline const SplatCloudNode *splatCloudNode() const { return splatCloudNode_; }
+  /// Get SplatCloud's scenegraph Node
+  inline       SplatCloudNode *splatCloudNode()       { return splatCloudNode_; }
+  inline const SplatCloudNode *splatCloudNode() const { return splatCloudNode_; }
 
 private:
-	ShaderNode     *shaderNode_;
-	SplatCloudNode *splatCloudNode_;
+  ShaderNode     *shaderNode_;
+  SplatCloudNode *splatCloudNode_;
 
 /** @} */
 
@@ -172,8 +172,8 @@ private:
  * @{ */
 //--------------------------------
 public:
-    /// Get all Info for the Object as a string
-	QString getObjectinfo();
+  /// Get all Info for the Object as a string
+  QString getObjectinfo();
 
 /** @} */
 
@@ -182,14 +182,14 @@ public:
  * @{ */
 //--------------------------------
 public:
-    /// Detect if the node has been picked
-	bool picked( uint _node_idx );
+  /// Detect if the node has been picked
+  bool picked( uint _node_idx );
 
-    /// Enable or disable picking for this Object
-	void enablePicking( bool _enable );
+  /// Enable or disable picking for this Object
+  void enablePicking( bool _enable );
 
-    /// Check if picking is enabled for this Object
-	bool pickingEnabled();
+  /// Check if picking is enabled for this Object
+  bool pickingEnabled();
 
 /** @} */
 
