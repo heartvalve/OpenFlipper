@@ -165,6 +165,10 @@ struct ACGDLLEXPORT RenderObject
   bool depthTest;
   bool depthWrite;
 
+  GLenum fillMode; // GL_POINT, GL_LINE, GL_FILL,  default: GL_FILL
+
+  GLboolean colorWriteMask[4]; // {r,g,b,a},  default: all true
+
 //  GLenum shadeModel; // GL_FACE, GL_SMOOTH   obsolute in shader pipeline
   GLenum depthFunc;  //!< GL_LESS, GL_LEQUAL, GL_GREATER ..
 
@@ -227,7 +231,10 @@ struct ACGDLLEXPORT RenderObject
 
     sysmemIndexBuffer = indices;
   }
-
+  void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
+  {
+    colorWriteMask[0] = r; colorWriteMask[1] = g; colorWriteMask[2] = b; colorWriteMask[3] = a;
+  }
   
   /** \brief Initializes a RenderObject instance.
    *

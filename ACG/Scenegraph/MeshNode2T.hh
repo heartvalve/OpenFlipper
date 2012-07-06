@@ -268,7 +268,12 @@ public:
   *
   */
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
-  
+
+  /** \brief Draws the object deferred
+  *
+  */
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
+
   /** \brief return available draw modes 
   *
   * The drawmodes are constructed based on the mesh properties and the hardware capabilities
@@ -282,11 +287,16 @@ private:
   *
   */
   inline void draw_vertices();
-  
+
+  inline void add_point_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
+
   /** \brief draws all edges of the mesh
   *
   */
   inline void draw_lines();
+
+  inline void add_line_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
+
 
   /** \brief draws all halfedges of the mesh
   *
@@ -298,7 +308,8 @@ private:
   *
   */
   void draw_faces();
-  
+
+  void add_face_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
   
 private:
   
@@ -459,7 +470,10 @@ private:
 public:  
   void set_property_map( std::map< int, std::string>* _map){ };  
     
-    
+
+  /** \brief measures the size in bytes of allocated memory
+  */
+  unsigned int getMemoryUsage();
     
 
 };

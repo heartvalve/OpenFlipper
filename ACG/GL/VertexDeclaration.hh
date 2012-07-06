@@ -197,6 +197,9 @@ public:
   */
   void addElements(unsigned int _numElements, const VertexElement* _pElements);
 
+  /*! remove all vertex elements, also clears the user defined stride flag
+  */
+  void clear();
 
   /*! prepare OpenGL to use a vertex buffer with this declaration
   -> uses the fixed function pointers (glVertexPointer, glColorPointer...)

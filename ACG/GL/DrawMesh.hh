@@ -181,13 +181,14 @@ public:
   */
   void draw(std::map< int, GLuint>* _textureMap);
   
-  /** \brief initializes a RenderObject for a deferred draw call
+  /** \brief adds RenderObjects to a deferred draw call renderer
   *
-  *   @param _objOut address of the renderobject
+  *   @param _renderer renderobjects are added to this renderer
+  *   @param _baseObj address of the base renderobject with information about shader generation, gl states, matrices ..
   *   @param _textureMap maps from internally texture-id to OpenGL texture id
   *   may be null to disable textured rendering
   */
-  void getTriRenderObjects(RenderObject* _objOut, std::map< int, GLuint>* _textureMap);
+  void addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap);
 
   /** \brief render the mesh in wireframe mode
   */
@@ -195,7 +196,7 @@ public:
 
   /** \brief render the mesh in wireframe mode, deferred draw call
   */
-  void getLineRenderObjects(RenderObject* _objOut);
+  void addLineRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
 
 
   /** \brief render vertices only
@@ -204,7 +205,7 @@ public:
 
   /** \brief render vertices only, deferred draw call
   */
-  void getPointRenderObjects(RenderObject* _objOut);
+  void addPointRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj);
 
 
   unsigned int getNumTris() const {return numTris_;}
@@ -398,6 +399,11 @@ private:
    *
    */
   void createIBO();
+
+  /** \brief creates all vertex declarations needed for deferred draw call renderer
+   *
+   */
+  void createVertexDeclarations();
 
 public:
   // color picking
@@ -706,6 +712,15 @@ private:
   /// vertex buffer layout declaration with per face colors
   VertexDeclaration* vertexDeclFCol_;
 
+  /// vertex buffer layout declaration with per edge colors
+  VertexDeclaration* vertexDeclEdgeCol_;
+
+  /// vertex buffer layout declaration with per halfedge colors
+  VertexDeclaration* vertexDeclHalfedgeCol_;
+
+  /// vertex buffer layout declaration with halfedge positions only
+  VertexDeclaration* vertexDeclHalfedgePos_;
+
 
   //========================================================================
   // internal processing
@@ -789,6 +804,24 @@ public:
   * This function will return a pointer to the first element of the color buffer.
   */
   ACG::Vec4f* perHalfedgeColorBuffer();
+
+
+  /** \brief updates per edge and halfedge vertex declarations
+  */
+  void updateEdgeHalfedgeVertexDeclarations();
+
+
+  /** \brief getter for vertex declarations
+  */
+  const VertexDeclaration* getEdgeColoredVertexDeclaration() const {return vertexDeclEdgeCol_;}
+
+  /** \brief getter for vertex declarations
+  */
+  const VertexDeclaration* getHalfedgeVertexDeclaration() const {return vertexDeclHalfedgePos_;}
+
+  /** \brief getter for vertex declarations
+  */
+  const VertexDeclaration* getHalfedgeColoredVertexDeclaration() const {return vertexDeclHalfedgeCol_;}
 
 
 private:

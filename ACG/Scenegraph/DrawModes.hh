@@ -348,6 +348,13 @@ namespace DrawModes {
        */
       bool removeLayer(const DrawModeProperties* _prop);
 
+
+      /** \brief returns layer index of a property, -1 if not in list
+       *
+       * @param _prop Property to be searched for
+       */
+      int getLayerIndex(const DrawModeProperties* _prop) const;
+
       /** @} */
 
 
@@ -411,6 +418,12 @@ namespace DrawModes {
        */
       void setDrawModeProperties(const DrawModeProperties& _props);
 
+
+      /** \brief checks consistency of property layers
+       *
+       * There should only be at most one layer for each primitive type for example
+       */
+      bool checkConsistency() const;
 
     private:
       ModeFlagSet modeFlags_;

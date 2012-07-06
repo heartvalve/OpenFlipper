@@ -255,6 +255,13 @@ void LightNode::getLightSource(LightSource* _light) const
 
 //----------------------------------------------------------------------------
 
+void LightNode::getLightSourceViewSpace( LightSource* _light ) const
+{
+  memcpy(_light, &transformedLight_, sizeof(LightSource));
+}
+
+//----------------------------------------------------------------------------
+
 void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
     
     if( visualize_ && !light_.directional() ) {
@@ -526,6 +533,11 @@ void LightNode::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode *
             light_.realSpotDirection_ = light_.spotDirection_;
             //std::cerr << "New Light pos :" << light_.position << std::endl;
         }
+
+        // transform to view space for shader pipeline
+        transformedLight_ = light_;
+        transformedLight_.position_ = _state.modelview() * light_.realPosition_;
+        transformedLight_.spotDirection_ = _state.modelview().transform_vector(light_.realSpotDirection_);
 
         ACG::GLState::enable(lightId_);
         setParameters(lightId_, light_);

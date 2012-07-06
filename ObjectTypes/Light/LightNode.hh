@@ -263,6 +263,11 @@ public:
   /// Get the light source parameters
   void getLightSource(LightSource* _light) const;
 
+  /// Get transformed light source parameters
+  /// where position and direction are in view space
+  void getLightSourceViewSpace(LightSource* _light) const;
+
+
   ACG_CLASSNAME(LightNode);
 
   /// Get bounding box (for visualization purposes)
@@ -298,6 +303,9 @@ private:
 
   /// store LightSources of this node
   LightSource light_;
+
+  /// pretransformed light position and direction in view space
+  LightSource transformedLight_;
 
   /// save old LightSources
   LightSource lightSave_;

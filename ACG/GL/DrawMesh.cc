@@ -145,22 +145,11 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
   vertexDeclVCol_ = new VertexDeclaration;
   vertexDeclFCol_ = new VertexDeclaration;
 
-  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+  vertexDeclEdgeCol_ = new VertexDeclaration;
+  vertexDeclHalfedgeCol_ = new VertexDeclaration;
+  vertexDeclHalfedgePos_ = new VertexDeclaration;
 
-  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {12} },
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {20} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {36} } };
-
-  vertexDeclVCol_->addElements(4, elemArrayV);
-  vertexDeclFCol_->addElements(4, elemArrayF);
-
-  // VertexDeclaration computes a stride of 36 automatically
-  // force 40 bytes instead!
-  vertexDeclVCol_->setVertexStride(sizeof(Vertex)); // pad for Vertex::fcol
+  createVertexDeclarations();
 }
 
 
@@ -945,6 +934,9 @@ DrawMeshT<Mesh>::~DrawMeshT(void)
 
   delete vertexDeclFCol_;
   delete vertexDeclVCol_;
+  delete vertexDeclEdgeCol_;
+  delete vertexDeclHalfedgeCol_;
+  delete vertexDeclHalfedgePos_;
 
   if (vbo_) glDeleteBuffersARB(1, &vbo_);
   if (ibo_) glDeleteBuffersARB(1, &ibo_);
@@ -1187,20 +1179,17 @@ void DrawMeshT<Mesh>::draw(std::map< int, GLuint>* _textureMap)
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::getTriRenderObjects( RenderObject* _objOut, std::map< int, GLuint>* _textureMap )
+void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj, std::map< int, GLuint>* _textureMap)
 {
-  // binding buffers to opengl is obsolute here, but it keeps the vbo up to date for now
-  bindBuffersToRenderObject(_objOut);
-
-  _objOut->glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
-
   if (numTris_)
   {
-    if (_textureMap)
+    RenderObject ro = *_baseObj;
+    bindBuffersToRenderObject(&ro);
+
+    if (_textureMap && _baseObj->shaderDesc.textured)
     {
       // textured mode
 
-      // subsets not supported yet
       for (unsigned int i = 0; i < numSubsets_; ++i)
       {
         Subset* pSubset = subsets_ + i;
@@ -1211,12 +1200,21 @@ void ACG::DrawMeshT<Mesh>::getTriRenderObjects( RenderObject* _objOut, std::map<
         else
         {
 //          ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
-          _objOut->texture = (*_textureMap)[pSubset->materialID];
+          ro.texture = (*_textureMap)[pSubset->materialID];
         }
-// 
-//         glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
-//           (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+
+        
+
+        ro.glDrawElements(GL_TRIANGLES, pSubset->numTris * 3, indexType_,
+          (GLvoid*)( pSubset->startIndex * (indexType_ == GL_UNSIGNED_INT ? 4 : 2))); // offset in bytes
+        
+        _renderer->addRenderObject(&ro);
       }
+    }
+    else
+    {
+      ro.glDrawElements(GL_TRIANGLES, numTris_ * 3, indexType_, 0);
+      _renderer->addRenderObject(&ro);
     }
   }
 }
@@ -1239,14 +1237,17 @@ void DrawMeshT<Mesh>::drawLines()
 
 
 template <class Mesh>
-void DrawMeshT<Mesh>::getLineRenderObjects(RenderObject* _objOut)
+void DrawMeshT<Mesh>::addLineRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj)
 {
-  bindBuffersToRenderObject(_objOut);
+  RenderObject ro = *_baseObj;
+  bindBuffersToRenderObject(&ro);
 
   if (mesh_.n_edges())
   {
-    _objOut->indexBuffer = lineIBO_;
-    _objOut->glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+    ro.indexBuffer = lineIBO_;
+    ro.glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+    
+    _renderer->addRenderObject(&ro);
   }
 }
 
@@ -1263,13 +1264,17 @@ void DrawMeshT<Mesh>::drawVertices()
 }
 
 template <class Mesh>
-void DrawMeshT<Mesh>::getPointRenderObjects(RenderObject* _objOut)
+void DrawMeshT<Mesh>::addPointRenderObjects(IRenderer* _renderer, const RenderObject* _baseObj)
 {
-  bindBuffersToRenderObject(_objOut);
+  RenderObject ro = *_baseObj;
+  bindBuffersToRenderObject(&ro);
 
   if (numVerts_)
-    _objOut->glDrawArrays(GL_POINTS, 0, numVerts_);
+  {
+    ro.glDrawArrays(GL_POINTS, 0, numVerts_);
 
+    _renderer->addRenderObject(&ro);
+  }
 }
 
 template <class Mesh>
@@ -1357,7 +1362,7 @@ ACG::Vec3f* DrawMeshT<Mesh>::perEdgeVertexBuffer()
   // Force update of the buffers if required
   if (updatePerEdgeBuffers_)
     updatePerEdgeBuffers();
-  return &(perEdgeVertexBuf_)[0]; 
+  return perEdgeVertexBuf_.empty() ? 0 : &(perEdgeVertexBuf_[0]); 
 }
 
 template <class Mesh>
@@ -1366,7 +1371,7 @@ ACG::Vec4f* DrawMeshT<Mesh>::perEdgeColorBuffer()
   // Force update of the buffers if required
   if (updatePerEdgeBuffers_)
     updatePerEdgeBuffers();
-  return &(perEdgeColorBuf_[0]); 
+  return perEdgeColorBuf_.empty() ? 0 : &(perEdgeColorBuf_[0]); 
 }
 
 
@@ -1422,7 +1427,10 @@ void DrawMeshT<Mesh>::updatePerEdgeBuffers()
     idx += 2;
   }
 
+
   updatePerEdgeBuffers_ = 0;
+
+  updateEdgeHalfedgeVertexDeclarations();
 }
 
 template <class Mesh>
@@ -1456,7 +1464,9 @@ void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
     idx += 2;
   }
 
-  updatePerHalfedgeBuffers_ = 1;
+  updatePerHalfedgeBuffers_ = 0;
+
+  updateEdgeHalfedgeVertexDeclarations();
 }
 
 template <class Mesh>
@@ -1494,7 +1504,7 @@ ACG::Vec3f* DrawMeshT<Mesh>::perHalfedgeVertexBuffer()
   // Force update of the buffers if required
   if (updatePerHalfedgeBuffers_)
     updatePerHalfedgeBuffers();
-  return &(perHalfedgeVertexBuf_)[0]; 
+  return perHalfedgeVertexBuf_.empty() ? 0 : &(perHalfedgeVertexBuf_[0]); 
 }
 
 template <class Mesh>
@@ -1503,7 +1513,7 @@ ACG::Vec4f* DrawMeshT<Mesh>::perHalfedgeColorBuffer()
   // Force update of the buffers if required
   if (updatePerHalfedgeBuffers_)
     updatePerHalfedgeBuffers();
-  return &(perHalfedgeColorBuf_)[0]; 
+  return perHalfedgeColorBuf_.empty() ? 0 : &(perHalfedgeColorBuf_[0]); 
 }
 
 
@@ -1721,5 +1731,63 @@ DrawMeshT<Mesh>::perFaceTextureIndexAvailable() {
   // Property available
   return true;
 }
+
+
+
+
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::createVertexDeclarations()
+{
+  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+
+  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {12} },
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {20} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {36} } };
+
+  vertexDeclVCol_->addElements(4, elemArrayV);
+  vertexDeclFCol_->addElements(4, elemArrayF);
+
+  // VertexDeclaration computes a stride of 36 automatically
+  // force 40 bytes instead!
+  vertexDeclVCol_->setVertexStride(sizeof(Vertex)); // pad for Vertex::fcol
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
+{
+  VertexElement elemArrayEC[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+
+  elemArrayEC[0].pDataSrc_ = perEdgeVertexBuffer();
+  elemArrayEC[1].pDataSrc_ = perEdgeColorBuffer();
+
+  VertexElement elemArrayH =  {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} };
+  elemArrayH.pDataSrc_ = perHalfedgeVertexBuffer();
+
+  VertexElement elemArrayHC[] =  { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+  elemArrayHC[0].pDataSrc_ = perHalfedgeVertexBuffer();
+  elemArrayHC[1].pDataSrc_ = perHalfedgeColorBuffer();
+
+  vertexDeclEdgeCol_->clear();
+  vertexDeclHalfedgeCol_->clear();
+  vertexDeclHalfedgePos_->clear();
+
+  vertexDeclEdgeCol_->addElements(2, elemArrayEC);
+  vertexDeclHalfedgeCol_->addElements(2, elemArrayHC);
+  vertexDeclHalfedgePos_->addElement(&elemArrayH);
+
+  vertexDeclEdgeCol_->setVertexStride(0);
+  vertexDeclHalfedgeCol_->setVertexStride(0);
+  vertexDeclHalfedgePos_->setVertexStride(0);
+}
+
 
 }
