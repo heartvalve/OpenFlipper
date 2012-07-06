@@ -309,7 +309,7 @@ const VertexElement* VertexDeclaration::getElement(unsigned int i)
 
 unsigned int VertexDeclaration::getVertexStride()
 {
-  if (!vertexStride_)
+  if (!strideUserDefined_ && !vertexStride_)
   {
     // compute vertex stride from declaration
 
@@ -331,6 +331,14 @@ void VertexDeclaration::setVertexStride(unsigned int _stride)
 {
   strideUserDefined_ = 1;
   vertexStride_ = _stride;
+}
+
+void VertexDeclaration::clear()
+{
+  strideUserDefined_ = 0;
+  vertexStride_ = 0;
+
+  elements_.clear();
 }
 
 //=============================================================================

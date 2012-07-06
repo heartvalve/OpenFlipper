@@ -251,7 +251,23 @@ DrawMode& DrawMode::operator++() {
 }
 
 DrawMode DrawMode::operator&(const DrawMode& _mode) const {
-  return (modeFlags_ & _mode.modeFlags_);
+  DrawMode andMode = (modeFlags_ & _mode.modeFlags_);
+
+  andMode.setDrawModeProperties(getDrawModeProperties());
+
+  for (unsigned int i = 1; i < getNumLayers(); ++i)
+    andMode.addLayer(getLayer(i));
+
+  // remove all distinct layers
+  for (int i = (int)andMode.getNumLayers() - 1; i >= 0; --i)
+  {
+    int layerIndex = _mode.getLayerIndex(andMode.getLayer(i));
+
+    if (layerIndex < 0)
+      andMode.removeLayer(i);
+  }
+
+  return andMode;
 }
 
 DrawMode& DrawMode::operator|=( const DrawMode& _mode2  ) {
@@ -265,6 +281,15 @@ DrawMode& DrawMode::operator|=( const DrawMode& _mode2  ) {
 
 DrawMode& DrawMode::operator&=( const DrawMode& _mode2  ) {
   modeFlags_ &= _mode2.modeFlags_;
+
+  // remove all distinct layers
+  for (int i = (int)getNumLayers() - 1; i >= 0; --i)
+  {
+    int layerIndex2 = _mode2.getLayerIndex(getLayer(i));
+
+    if (layerIndex2 < 0)
+      removeLayer(i);
+  }
   
   return (*this);
 }
@@ -336,7 +361,10 @@ DrawMode DrawMode::operator^( const DrawMode& _mode2  ) const {
 
   // DrawModes equal?
   if (tmpLayers.empty())
+  {
+    xorMode.removeLayer(0u);
     return xorMode; // return default property set to not cause exceptions
+  }
 
   // layers not empty,
   //  copy to temporary drawmode and return
@@ -431,11 +459,8 @@ const DrawModeProperties* DrawMode::getLayer( unsigned int i ) const {
 
 void DrawMode::addLayer( const DrawModeProperties* _props )
 {
-  for (unsigned int i = 0; i < layers_.size(); ++i)
-  {
-    if (!memcmp(&layers_[i], _props, sizeof(DrawModeProperties)))
-      return;
-  }
+  if (getLayerIndex(_props) < 0)
+    return;
 
   layers_.push_back(*_props);
 }
@@ -449,6 +474,27 @@ bool DrawMode::removeLayer( unsigned int _i )
 const DrawModeProperties* DrawMode::getDrawModeProperties() const
 {
   return getLayer(0);
+}
+
+
+bool DrawMode::checkConsistency() const
+{
+  // PRIMITIVE_CELL is the last primitive count (currently)
+  int count[PRIMITIVE_CELL+1] = {0};
+
+
+
+  return true;
+}
+
+int DrawMode::getLayerIndex( const DrawModeProperties* _prop ) const
+{
+  for (unsigned int i = 0; i < layers_.size(); ++i)
+  {
+    if (!memcmp(&layers_[i], _prop, sizeof(DrawModeProperties)))
+      return (int)i;
+  }
+  return -1;
 }
 
 

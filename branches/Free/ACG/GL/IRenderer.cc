@@ -62,6 +62,10 @@ void ACG::RenderObject::initFromState( GLState* _glState )
   depthWrite = true;
   alphaTest = false;
 
+  colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
+
+  fillMode = GL_FILL;
+
   depthRange = Vec2f(0.0f, 1.0f);
   depthFunc = GL_LESS;
 
