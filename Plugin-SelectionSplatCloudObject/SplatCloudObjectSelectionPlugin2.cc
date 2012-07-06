@@ -68,13 +68,15 @@
  */
 bool SplatCloudObjectSelectionPlugin::splatCloudDeleteSelection( SplatCloud *_splatCloud, PrimitiveType _primitiveType )
 {
-	if( _primitiveType & vertexType_ )
-	{
-		_splatCloud->initSelections();
-		return _splatCloud->deleteSelected();
-	}
+  if( (_primitiveType & vertexType_) == 0 )
+    return false; // done
 
-	return false;
+  if( _splatCloud == 0 )
+    return false; // error
+
+  unsigned int numDeleted = _splatCloud->eraseSplatsByIndex( SplatCloudSelection::getVertexSelection( _splatCloud ) );
+
+  return (numDeleted != 0);
 }
 
 
@@ -90,16 +92,31 @@ bool SplatCloudObjectSelectionPlugin::splatCloudDeleteSelection( SplatCloud *_sp
  */
 void SplatCloudObjectSelectionPlugin::splatCloudToggleSelection( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point, PrimitiveType _primitiveType )
 {
-	if( _primitiveType & vertexType_ )
-	{
-		_splatCloud->initSelections();
-		_splatCloud->selections()[ _index ] = !_splatCloud->selections()[ _index ];
+  if( (_primitiveType & vertexType_) == 0 )
+    return; // done
 
-		if( _splatCloud->selections()[ _index ] )
-			emit scriptInfo( "selectVertices(ObjectId , [" + QString::number( _index ) + "])" );
-		else
-			emit scriptInfo( "unselectVertices(ObjectId , [" + QString::number( _index ) + "])" );
-    }
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( /*(_index < 0) ||*/ (_index >= _splatCloud->numSplats()) )
+    return; // error
+
+  if( !_splatCloud->hasSelections() )
+  {
+    if( !_splatCloud->requestSelections() )
+      return; // error
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->selections( i ) = false;
+  }
+
+  _splatCloud->selections( _index ) = !_splatCloud->selections( _index );
+
+  if( _splatCloud->selections( _index ) )
+    emit scriptInfo( "selectVertices(ObjectId , [" + QString::number( _index ) + "])" );
+  else
+    emit scriptInfo( "unselectVertices(ObjectId , [" + QString::number( _index ) + "])" );
 }
 
 
@@ -117,11 +134,52 @@ void SplatCloudObjectSelectionPlugin::splatCloudToggleSelection( SplatCloud *_sp
  */
 void SplatCloudObjectSelectionPlugin::splatCloudSphereSelection( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point, double _radius, PrimitiveType _primitiveType, bool _deselection )
 {
-	if( _primitiveType & vertexType_ )
-	{
-		_splatCloud->initSelections();
-		_splatCloud->setSphereSelections( _splatCloud->points()[ _index ], _radius * _radius, !_deselection );
-	}
+  if( (_primitiveType & vertexType_) == 0 )
+    return; // done
+
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( /*(_index < 0) ||*/ (_index >= _splatCloud->numSplats()) )
+    return; // error
+
+  if( !_splatCloud->hasPositions() )
+    return; // error
+
+  if( !_splatCloud->hasSelections() )
+  {
+    if( _deselection )
+      return; // done
+
+    if( !_splatCloud->requestSelections() )
+      return; // error
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->selections( i ) = false;
+  }
+
+  if( _radius < 0.0 )
+    return; // done
+
+  double sqrRadius = _radius * _radius;
+
+  SplatCloud::Selection selection = !_deselection;
+
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+  {
+    const SplatCloud::Position &pos = _splatCloud->positions( i );
+
+    double dx = pos[0] - _hit_point[0];
+    double dy = pos[1] - _hit_point[1];
+    double dz = pos[2] - _hit_point[2];
+
+    double sqrDist = dx*dx + dy*dy + dz*dz;
+
+    if( sqrDist <= sqrRadius )
+      _splatCloud->selections( i ) = selection;
+  }
 }
 
 
@@ -139,27 +197,55 @@ void SplatCloudObjectSelectionPlugin::splatCloudSphereSelection( SplatCloud *_sp
  */
 bool SplatCloudObjectSelectionPlugin::splatCloudVolumeSelection( SplatCloud *_splatCloud, ACG::GLState &_state, QRegion *_region, PrimitiveType _primitiveType, bool _deselection )
 {
-	bool rv = false;
+  if( (_primitiveType & vertexType_) == 0 )
+    return false; // done
 
-	if( _primitiveType & vertexType_ )
-	{
-		_splatCloud->initSelections();
+  if( _splatCloud == 0 )
+    return false; // error
 
-		unsigned int i, num = _splatCloud->numPoints();
-		for( i=0; i<num; ++i )
-		{
-			const SplatCloud::Point &p = _splatCloud->points()[ i ];
-			ACG::Vec3d proj = _state.project( ACG::Vec3d( p[0], p[1], p[2] ) );
+  if( !_splatCloud->hasPositions() )
+    return false; // error
 
-			if( _region->contains( QPoint( (int) proj[0], _state.context_height() - (int) proj[1] ) ) )
-			{
-				_splatCloud->selections()[ i ] = !_deselection;
-				rv = true;
-			}
-		}
-	}
+  bool modify = true;
 
-	return rv;
+  if( !_splatCloud->hasSelections() )
+  {
+    if( _deselection )
+    {
+      modify = false;
+    }
+    else
+    {
+      if( !_splatCloud->requestSelections() )
+        return false; // error
+
+      unsigned int i, num = _splatCloud->numSplats();
+      for( i=0; i<num; ++i )
+        _splatCloud->selections( i ) = false;
+    }
+  }
+
+  bool rv = false;
+
+  SplatCloud::Selection selection = !_deselection;
+
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+  {
+    const SplatCloud::Position &pos = _splatCloud->positions( i );
+
+    ACG::Vec3d proj = _state.project( ACG::Vec3d( pos[0], pos[1], pos[2] ) );
+
+    if( _region->contains( QPoint( (int) proj[0], _state.context_height() - (int) proj[1] ) ) )
+    {
+      if( modify )
+        _splatCloud->selections( i ) = selection;
+
+      rv = true;
+    }
+  }
+
+  return rv;
 }
 
 
@@ -177,9 +263,37 @@ bool SplatCloudObjectSelectionPlugin::splatCloudVolumeSelection( SplatCloud *_sp
  */
 void SplatCloudObjectSelectionPlugin::splatCloudColorizeSelection( SplatCloud *_splatCloud, PrimitiveType _primitiveTypes, int _r, int _g, int _b, int _a )
 {
-	if( _primitiveTypes & vertexType_ )
-	{
-		_splatCloud->initSelections();
-		_splatCloud->colorizeSelected( SplatCloud::Color( _r, _g, _b ) ); // alpha-component will be dropped
-    }
+  if( (_primitiveTypes & vertexType_) == 0 )
+    return; // done
+
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( !_splatCloud->hasColors() )
+  {
+    if( !_splatCloud->requestColors() )
+      return; // error
+
+    SplatCloud::Color black( 0, 0, 0 );
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->colors( i ) = black;
+  }
+
+  if( !_splatCloud->hasSelections() )
+    return; // done
+
+  unsigned char r = (_r < 0) ? 0 : (_r > 255) ? 255 : (unsigned char) _r;
+  unsigned char g = (_g < 0) ? 0 : (_g > 255) ? 255 : (unsigned char) _g;
+  unsigned char b = (_b < 0) ? 0 : (_b > 255) ? 255 : (unsigned char) _b;
+
+  SplatCloud::Color color( r, g, b ); // drop alpha
+
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+  {
+    if( _splatCloud->selections( i ) )
+      _splatCloud->colors( i ) = color;
+  }
 }

@@ -62,6 +62,7 @@
 #include <QObject>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/BasePlugin/ViewModeInterface.hh>
@@ -73,113 +74,120 @@
 //== CLASS DEFINITION ============================================
 
 
-class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, ToolboxInterface, ContextMenuInterface, ViewModeInterface, LoggingInterface
+class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, LoadSaveInterface, ToolboxInterface, ContextMenuInterface, ViewModeInterface, LoggingInterface
 {
-	Q_OBJECT
-	Q_INTERFACES( BaseInterface        )
-	Q_INTERFACES( ToolboxInterface     )
-	Q_INTERFACES( ContextMenuInterface )
-	Q_INTERFACES( ViewModeInterface    )
-	Q_INTERFACES( LoggingInterface     )
+  Q_OBJECT
+  Q_INTERFACES( BaseInterface        )
+  Q_INTERFACES( LoadSaveInterface    )
+  Q_INTERFACES( ToolboxInterface     )
+  Q_INTERFACES( ContextMenuInterface )
+  Q_INTERFACES( ViewModeInterface    )
+  Q_INTERFACES( LoggingInterface     )
 
 signals:
 
-	//-- Base Interface --
-	void updatedObject( int _identifier, const UpdateType& _type);
+  //-- Base Interface --
+  void updatedObject( int _objectId, const UpdateType &_type );
 
-	//-- Toolbox Interface --
-	void addToolbox( QString  _name, QWidget *_widget, QIcon *_icon );
+  //-- Toolbox Interface --
+  void addToolbox( QString _name, QWidget *_widget, QIcon *_icon );
 
-	//-- ContextMenu Interface--
-	void addContextMenuItem( QAction *_action, DataType _objectType, ContextMenuType _type );
+  //-- ContextMenu Interface--
+  void addContextMenuItem( QAction *_action, DataType _objectType, ContextMenuType _type );
 
-	//-- ViewMode Interface--
-	void defineViewModeToolboxes   ( QString _mode, QStringList _usedWidgets      );
-	void defineViewModeToolbars    ( QString _mode, QStringList _usedToolbars     );
-	void defineViewModeContextMenus( QString _mode, QStringList _usedContextMenus );
-	void defineViewModeIcon        ( QString _mode, QString _iconName             );
+  //-- ViewMode Interface--
+  void defineViewModeToolboxes   ( QString _mode, QStringList _usedWidgets      );
+  void defineViewModeToolbars    ( QString _mode, QStringList _usedToolbars     );
+  void defineViewModeContextMenus( QString _mode, QStringList _usedContextMenus );
+  void defineViewModeIcon        ( QString _mode, QString     _iconName         );
 
-	//-- Logging Interface --
-	void log( Logtype _type, QString _message );
-	void log( QString _message );
+  //-- Logging Interface --
+  void log(                QString _message );
+  void log( Logtype _type, QString _message );
 
 public:
 
-	SplatCloudRenderingControlPlugin();
+  SplatCloudRenderingControlPlugin();
 
-	//-- Base Interface --
-	QString name() { return QString( "SplatCloud Rendering Control Plugin" ); }
-	QString description() { return QString( "Control over rendering of SplatClouds" ); }
+  //-- Base Interface --
+  QString name()        { return QString( "SplatCloud Rendering Control Plugin"   ); }
+  QString description() { return QString( "Control over rendering of SplatClouds" ); }
 
 private:
 
-	// toolbox options
-	QDoubleSpinBox *toolboxPointsizeScale_;
-	QDoubleSpinBox *toolboxDefaultNormalX_;
-	QDoubleSpinBox *toolboxDefaultNormalY_;
-	QDoubleSpinBox *toolboxDefaultNormalZ_;
-	QDoubleSpinBox *toolboxDefaultPointsize_;
-	QSpinBox       *toolboxDefaultColorR_;
-	QSpinBox       *toolboxDefaultColorG_;
-	QSpinBox       *toolboxDefaultColorB_;
+  // toolbox options
+  QDoubleSpinBox *toolboxPointsizeScale_;
+  QSpinBox       *toolboxDefaultColorR_;
+  QSpinBox       *toolboxDefaultColorG_;
+  QSpinBox       *toolboxDefaultColorB_;
+  QDoubleSpinBox *toolboxDefaultNormalX_;
+  QDoubleSpinBox *toolboxDefaultNormalY_;
+  QDoubleSpinBox *toolboxDefaultNormalZ_;
+  QDoubleSpinBox *toolboxDefaultPointsize_;
 
-	// context menu options
-	QAction *contextScaleAction_;
-	QAction *contextCullingAction_;
-	QAction *contextDefaultsAction_;
-	QAction *contextReloadShadersAction_;
-	QAction *contextRebuildVBOAction_;
+  // context menu options
+  QAction *contextScaleAction_;
+  QAction *contextCullingAction_;
+  QAction *contextDefaultsAction_;
+  QAction *contextReloadShadersAction_;
+  QAction *contextRebuildVBOAction_;
 
-	// scale widget options
-	QWidget        *scaleWidget_;
-	QDoubleSpinBox *scaleWidgetPointsizeScale_;
+  // context menu scale widget options
+  QWidget        *contextScaleWidget_;
+  QDoubleSpinBox *contextScaleWidgetPointsizeScale_;
 
-	// defaults widget options
-	QWidget        *defaultsWidget_;
-	QDoubleSpinBox *defaultsWidgetDefaultNormalX_;
-	QDoubleSpinBox *defaultsWidgetDefaultNormalY_;
-	QDoubleSpinBox *defaultsWidgetDefaultNormalZ_;
-	QDoubleSpinBox *defaultsWidgetDefaultPointsize_;
-	QSpinBox       *defaultsWidgetDefaultColorR_;
-	QSpinBox       *defaultsWidgetDefaultColorG_;
-	QSpinBox       *defaultsWidgetDefaultColorB_;
+  // context menu defaults widget options
+  QWidget        *contextDefaultsWidget_;
+  QSpinBox       *contextDefaultsWidgetDefaultColorR_;
+  QSpinBox       *contextDefaultsWidgetDefaultColorG_;
+  QSpinBox       *contextDefaultsWidgetDefaultColorB_;
+  QDoubleSpinBox *contextDefaultsWidgetDefaultNormalX_;
+  QDoubleSpinBox *contextDefaultsWidgetDefaultNormalY_;
+  QDoubleSpinBox *contextDefaultsWidgetDefaultNormalZ_;
+  QDoubleSpinBox *contextDefaultsWidgetDefaultPointsize_;
 
 private slots:
 
-	//-- Base Interface --
-	void initializePlugin();
+  //-- Base Interface --
+  void initializePlugin();
 
-	//-- ContextMenu Interface --
-	void slotUpdateContextMenu( int _objectId );
+  //-- LoadSave Interface --
+  void addedEmptyObject( int _objectId );
 
-	// slot called when a toolbox option changed value
-	void slotToolboxPointsizeScaleValueChanged();
+  //-- ContextMenu Interface --
+  void slotUpdateContextMenu( int _objectId );
 
-	// slots called when a toolbox button was clicked
-	void slotToolboxEnableBackfaceCullingButtonClicked();
-	void slotToolboxDisableBackfaceCullingButtonClicked();
-	void slotToolboxReloadShadersButtonClicked();
-	void slotToolboxRebuildVBOsButtonClicked();
-	void slotToolboxApplyDefaultsButtonClicked();
+  // slot called when a toolbox option changed value
+  void slotToolboxPointsizeScaleValueChanged();
+  void slotToolboxDefaultColorValueChanged();
+  void slotToolboxDefaultNormalValueChanged();
+  void slotToolboxDefaultPointsizeValueChanged();
 
-	// slots called when a context menu action was triggered
-	void slotContextScaleActionTriggered();
-	void slotContextCullingActionTriggered();
-	void slotContextReloadShadersActionTriggered();
-	void slotContextRebuildVBOActionTriggered();
-	void slotContextDefaultsActionTriggered();
+  // slots called when a toolbox button was clicked
+  void slotToolboxEnableBackfaceCullingButtonClicked();
+  void slotToolboxDisableBackfaceCullingButtonClicked();
+  void slotToolboxReloadShadersButtonClicked();
+  void slotToolboxRebuildVBOsButtonClicked();
 
-	// slots called when a scale widget option changed value
-	void slotScaleWidgetPointsizeScaleValueChanged();
+  // slots called when a context menu action was triggered
+  void slotContextScaleActionTriggered();
+  void slotContextCullingActionTriggered();
+  void slotContextReloadShadersActionTriggered();
+  void slotContextRebuildVBOActionTriggered();
+  void slotContextDefaultsActionTriggered();
 
-	// slots called when a defaults widget button was clicked
-	void slotDefaultsWidgetCancelButtonClicked();
-	void slotDefaultsWidgetApplyButtonClicked();
+  // slots called when a context menu scale widget option changed value
+  void slotContextScaleWidgetPointsizeScaleValueChanged();
+
+  // slots called when a context menu defaults widget option changed value
+  void slotContextDefaultsWidgetDefaultColorValueChanged();
+  void slotContextDefaultsWidgetDefaultNormalValueChanged();
+  void slotContextDefaultsWidgetDefaultPointsizeValueChanged();
 
 public slots:
 
-	// -- Base Interface --
-	QString version() { return QString( "1.0" ); }
+  // -- Base Interface --
+  QString version() { return QString( "1.0" ); }
 };
 
 
