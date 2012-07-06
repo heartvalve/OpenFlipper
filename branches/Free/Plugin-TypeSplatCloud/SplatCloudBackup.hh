@@ -62,22 +62,16 @@ class SplatCloudBackup : public BaseBackup
 {
 public:
 
-	SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type );
-	~SplatCloudBackup();
+  SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type );
+  ~SplatCloudBackup();
 
-	//-- BaseBackup --
-	void apply();
+  //-- BaseBackup --
+  void apply();
 
 private:
 
-	SplatCloudObject *splatCloudObject_;
-
-	SplatCloud::PointVector     *pointsBackup_;
-	SplatCloud::NormalVector    *normalsBackup_;
-	SplatCloud::PointsizeVector *pointsizesBackup_;
-	SplatCloud::ColorVector     *colorsBackup_;
-	SplatCloud::IndexVector     *indicesBackup_;
-	SplatCloud::SelectionVector *selectionsBackup_;
+  SplatCloudObject *splatCloudObject_;
+  SplatCloud       *splatCloudBackup_;
 };
 
 

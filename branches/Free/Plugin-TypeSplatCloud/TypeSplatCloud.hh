@@ -72,52 +72,52 @@
 
 class TypeSplatCloudPlugin : public QObject, BaseInterface, LoggingInterface, TypeInterface
 {
-	Q_OBJECT
-	Q_INTERFACES( BaseInterface     )
-	Q_INTERFACES( LoggingInterface  )
-	Q_INTERFACES( TypeInterface     )
+  Q_OBJECT
+  Q_INTERFACES( BaseInterface     )
+  Q_INTERFACES( LoggingInterface  )
+  Q_INTERFACES( TypeInterface     )
 
 signals:
 
-	//-- Type Interface --
-	void emptyObjectAdded( int _id );
+  //-- Type Interface --
+  void emptyObjectAdded( int _objectId );
 
-	//-- Logging Interface --
-	void log( Logtype _type, QString _message );
-	void log( QString _message );
+  //-- Logging Interface --
+  void log(                QString _message );
+  void log( Logtype _type, QString _message );
 
 private slots:
 
-	// -- Base Inferface --
-	void noguiSupported() { }
-	void slotViewChanged();
+  // -- Base Inferface --
+  void noguiSupported() { }
+  void slotViewChanged();
 
 public:
 
-	// standard constructor/destructor
-	TypeSplatCloudPlugin() { }
-	~TypeSplatCloudPlugin() { }
+  // standard constructor/destructor
+  TypeSplatCloudPlugin() { }
+  ~TypeSplatCloudPlugin() { }
 
-	//-- Base Interface --
-	QString name() { return QString( "TypeSplatCloud" ); };
-	QString description() { return QString( tr( "Register SplatCloud type" ) ); };
+  //-- Base Interface --
+  QString name()        { return QString(     "TypeSplatCloud"             ); };
+  QString description() { return QString( tr( "Register SplatCloud type" ) ); };
 
-	// -- Type Interface --
-	bool registerType();
+  // -- Type Interface --
+  bool registerType();
 
 public slots:
 
-	//-- Base Interface --
-	QString version() { return QString( "1.0" ); };
+  //-- Base Interface --
+  QString version() { return QString( "1.0" ); };
 
-	//-- Type Interface --
-	int addEmpty();
-	DataType supportedType() { return DATA_SPLATCLOUD; }; 
-	void generateBackup( int _objectId, QString _name, UpdateType _type );
+  //-- Type Interface --
+  int addEmpty();
+  DataType supportedType() { return DATA_SPLATCLOUD; }; 
+  void generateBackup( int _objectId, QString _name, UpdateType _type );
 
 private:
 
-    QString get_unique_name( SplatCloudObject *_object );
+  QString get_unique_name( SplatCloudObject *_object );
 };
 
 

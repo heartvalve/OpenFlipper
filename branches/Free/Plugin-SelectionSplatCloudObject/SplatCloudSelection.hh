@@ -79,29 +79,13 @@ namespace SplatCloudSelection {
 * @{ */
 //===========================================================================
 
-/// Select given vertices of a SplatCloud
-void selectVertices(SplatCloud *_splatCloud, std::vector<int> &_vertices);
-
-/// Unselect given vertices of a SplatCloud
-void unselectVertices(SplatCloud *_splatCloud, std::vector<int> &_vertices);
-
-/// Select all vertices of a SplatCloud
-void selectAllVertices(SplatCloud *_splatCloud);
-
-/// Set all vertices to unselected
-void clearVertexSelection(SplatCloud *_splatCloud);
-
-/// Invert vertex selection
-void invertVertexSelection(SplatCloud *_splatCloud);
-
-/// Get the current vertex selection
-std::vector<int> getVertexSelection(SplatCloud *_splatCloud);
-
-/** Get the current vertex selection
- *
- * @param _invert if true : vector has been inverted to save memory )
-*/
-std::vector<int> getVertexSelection(SplatCloud *_splatCloud, bool &_invert);
+void             selectVertices       (       SplatCloud *_splatCloud, const std::vector<int> &_vertices ); /// Select given vertices.
+void             unselectVertices     (       SplatCloud *_splatCloud, const std::vector<int> &_vertices ); /// Unselect given vertices.
+void             selectAllVertices    (       SplatCloud *_splatCloud                                    ); /// Select all vertices.
+void             clearVertexSelection (       SplatCloud *_splatCloud                                    ); /// Unselect all vertices.
+void             invertVertexSelection(       SplatCloud *_splatCloud                                    ); /// Invert vertex selection.
+std::vector<int> getVertexSelection   ( const SplatCloud *_splatCloud                                    ); /// Get current vertex selection.
+std::vector<int> getVertexSelection   ( const SplatCloud *_splatCloud, bool &_inverted                   ); /// Get current vertex selection. If _inverted is true, vector is inverted to save memory.
 
 /** @} */
 

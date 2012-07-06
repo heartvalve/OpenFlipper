@@ -87,7 +87,6 @@ FilePTSPlugin::FilePTSPlugin() :
   loadColors_       ( 0 ), 
   loadColorRange_   ( 0 ), 
   loadIndices_      ( 0 ), 
-  loadNormalizeSize_( 0 ), 
   saveBinaryFile_( 0 ), 
   saveNormals_   ( 0 ), 
   savePointsizes_( 0 ), 
@@ -107,19 +106,11 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // clear splatcloud
   _splatCloud.clear();
 
-  // open file
-  FILE *file = fopen( _filename, "rb" );
-  if( !file )
-  {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
-    return false;
-  }
-
   // set default options
   bool loadNormals    = true;
   bool loadPointsizes = false;
   bool loadColors     = false;
-//  int  loadColorRange = 0;
+//int  loadColorRange = 0;
   bool loadIndices    = false;
 
   // get options
@@ -128,8 +119,31 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
     loadNormals    = loadNormals_->   isChecked();
     loadPointsizes = loadPointsizes_->isChecked();
     loadColors     = loadColors_->    isChecked();
-//    loadColorRange = loadColorRange_->currentIndex();
+//  loadColorRange = loadColorRange_->currentIndex();
     loadIndices    = loadIndices_->   isChecked();
+  }
+
+  // request properties
+  bool success = true;
+                       { if( !_splatCloud.requestPositions()  ) success = false; }
+  if( loadNormals    ) { if( !_splatCloud.requestNormals()    ) success = false; }
+  if( loadPointsizes ) { if( !_splatCloud.requestPointsizes() ) success = false; }
+  if( loadColors     ) { if( !_splatCloud.requestColors()     ) success = false; }
+  if( loadIndices    ) { if( !_splatCloud.requestIndices()    ) success = false; }
+
+  // check success of requests
+  if( !success )
+  {
+    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\"\n." ) );
+    return false; // return failure
+  }
+
+  // open file
+  FILE *file = fopen( _filename, "rb" );
+  if( !file )
+  {
+    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
+    return false;
   }
 
   // read file type
@@ -144,24 +158,27 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
     return false; // return failure
   }
 
-  // read number of points
-  unsigned int numPoints = 0;
-  fread( &numPoints, sizeof(unsigned int), 1, file );
+  // read number of splats
+  unsigned int numSplats = 0;
+  fread( &numSplats, sizeof(unsigned int), 1, file );
 
-  // read points
+  // set number of splats
+  _splatCloud.resizeSplats( numSplats );
+
+  // read positions
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
-      float pnt[3];
-      fread( pnt, sizeof(float), 3, file );
+      float pos[3];
+      fread( pos, sizeof(float), 3, file );
 
-      SplatCloud::Point point;
-      point[0] = pnt[0];
-      point[1] = pnt[1];
-      point[2] = pnt[2];
+      SplatCloud::Position position;
+      position[0] = pos[0];
+      position[1] = pos[1];
+      position[2] = pos[2];
 
-      _splatCloud.addPoint( point );
+      _splatCloud.positions( i ) = position;
     }
   }
 
@@ -169,7 +186,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   if( loadNormals )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       float nrm[3];
       fread( nrm, sizeof(float), 3, file );
@@ -179,7 +196,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
       normal[1] = nrm[1];
       normal[2] = nrm[2];
 
-      _splatCloud.addNormal( normal );
+      _splatCloud.normals( i ) = normal;
     }
   }
 
@@ -187,7 +204,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   if( loadPointsizes )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       float ps = 0.0f;
       fread( &ps, sizeof(float), 1, file );
@@ -195,7 +212,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
       SplatCloud::Pointsize pointsize;
       pointsize = ps;
 
-      _splatCloud.addPointsize( pointsize );
+      _splatCloud.pointsizes( i ) = pointsize;
     }
   }
 
@@ -203,7 +220,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   if( loadColors )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       unsigned int col = 0;
       fread( &col, sizeof(unsigned int), 1, file );
@@ -213,7 +230,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
       color[1] = (unsigned char) ((col >>  8) & 0xFF);
       color[2] = (unsigned char) ((col      ) & 0xFF);
 
-      _splatCloud.addColor( color );
+      _splatCloud.colors( i ) = color;
     }
   }
 
@@ -221,7 +238,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   if( loadIndices )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       int idx = -1;
       fread( &idx, sizeof(idx), 1, file );
@@ -229,7 +246,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
       SplatCloud::Index index;
       index = idx;
 
-      _splatCloud.addIndex( index );
+      _splatCloud.indices( i ) = index;
     }
   }
 
@@ -263,14 +280,6 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   // clear splatcloud
   _splatCloud.clear();
 
-  // open file
-  FILE *file = fopen( _filename, "rb" );
-  if( !file )
-  {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
-    return false;
-  }
-
   // set default options
   bool loadNormals    = true;
   bool loadPointsizes = false;
@@ -288,20 +297,47 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     loadIndices    = loadIndices_   ->isChecked();
   }
 
-  while( true )
+  // request properties
+  bool success = true;
+                       { if( !_splatCloud.requestPositions()  ) success = false; }
+  if( loadNormals    ) { if( !_splatCloud.requestNormals()    ) success = false; }
+  if( loadPointsizes ) { if( !_splatCloud.requestPointsizes() ) success = false; }
+  if( loadColors     ) { if( !_splatCloud.requestColors()     ) success = false; }
+  if( loadIndices    ) { if( !_splatCloud.requestIndices()    ) success = false; }
+
+  // check success of requests
+  if( !success )
   {
-    // read point
+    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\"\n." ) );
+    return false; // return failure
+  }
+
+  // open file
+  FILE *file = fopen( _filename, "rb" );
+  if( !file )
+  {
+    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
+    return false;
+  }
+
+  int splatIdx;
+  for( splatIdx = 0; ; ++splatIdx )
+  {
+    // read position
     {
-      float pnt[3];
-      if( fscanf( file, "%32f %32f %32f", &pnt[0], &pnt[1], &pnt[2] ) != 3 )
+      float pos[3];
+      if( fscanf( file, "%32f %32f %32f", &pos[0], &pos[1], &pos[2] ) != 3 )
         break;
 
-      SplatCloud::Point point;
-      point[0] = pnt[0];
-      point[1] = pnt[1];
-      point[2] = pnt[2];
+      // increase number of splats
+      _splatCloud.pushbackSplat();
 
-      _splatCloud.addPoint( point );
+      SplatCloud::Position position;
+      position[0] = pos[0];
+      position[1] = pos[1];
+      position[2] = pos[2];
+
+      _splatCloud.positions( splatIdx ) = position;
     }
 
     // read color
@@ -325,7 +361,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
         color[2] = (unsigned char) col[2];
       }
 
-      _splatCloud.addColor( color );
+      _splatCloud.colors( splatIdx ) = color;
     }
 
     // read normal
@@ -339,7 +375,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
       normal[1] = nrm[1];
       normal[2] = nrm[2];
 
-      _splatCloud.addNormal( normal );
+      _splatCloud.normals( splatIdx ) = normal;
     }
 
     // read pointsize
@@ -351,7 +387,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
       SplatCloud::Pointsize pointsize;
       pointsize = ps;
 
-      _splatCloud.addPointsize( pointsize );
+      _splatCloud.pointsizes( splatIdx ) = pointsize;
     }
 
     // read index
@@ -363,7 +399,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
       SplatCloud::Index index;
       index = idx;
 
-      _splatCloud.addIndex( index );
+      _splatCloud.indices( splatIdx ) = index;
     }
 
     // check for errors
@@ -402,6 +438,36 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
 
 bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/
 {
+  // set default options
+  bool saveNormals    = true;
+  bool savePointsizes = false;
+  bool saveColors     = false;
+//int  saveColorRange = 0;
+  bool saveIndices    = false;
+
+  // get options
+  if( OpenFlipper::Options::gui() && saveOptions_ )
+  {
+    saveNormals    = saveNormals_->   isChecked();
+    savePointsizes = savePointsizes_->isChecked();
+    saveColors     = saveColors_->    isChecked();
+//  saveColorRange = saveColorRange_->currentIndex();
+    saveIndices    = saveIndices_->   isChecked();
+  }
+
+  // use default values instead of returning a failure
+
+//// check availability
+//if( (                  !_splatCloudNode->splatCloud().hasPositions() ) ||
+//    (saveNormals    && !_splatCloudNode->splatCloud().hasNormals())  ) ||
+//    (savePointsizes && !_splatCloudNode->splatCloud().hasPointsizes()) ||
+//    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
+//    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
+//{
+//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\"\n." ) );
+//  return false; // return failure
+//}
+
   // open file
   FILE *file = fopen( _filename, "wb" );
   if( !file )
@@ -410,49 +476,27 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
     return false;
   }
 
-  // set default options
-  bool saveNormals    = true;
-  bool savePointsizes = false;
-  bool saveColors     = false;
-//  int  saveColorRange = 0;
-  bool saveIndices    = false;
-
-  // get inverse of current translation and scaling
-  float invS = _splatCloudNode->splatCloud().scaleFactor();
-  invS = (invS == 0.0f) ? 0.0f : (1.0f / invS);
-  SplatCloud::Point invT = -_splatCloudNode->splatCloud().translation();
-
-  // get options
-  if( OpenFlipper::Options::gui() && saveOptions_ )
-  {
-    saveNormals    = saveNormals_->   isChecked();
-    savePointsizes = savePointsizes_->isChecked();
-    saveColors     = saveColors_->    isChecked();
-//    saveColorRange = saveColorRange_->currentIndex();
-    saveIndices    = saveIndices_->   isChecked();
-  }
-
   // write file type
   int fileType = 1;
   fwrite( &fileType, sizeof(int), 1, file );
 
-  // write number of points
-  unsigned int numPoints = _splatCloudNode->splatCloud().numPoints();
-  fwrite( &numPoints, sizeof(unsigned int), 1, file );
+  // write number of splats
+  unsigned int numSplats = _splatCloudNode->splatCloud().numSplats();
+  fwrite( &numSplats, sizeof(unsigned int), 1, file );
 
-  // write points
+  // write positions
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
-      const SplatCloud::Point &point = _splatCloudNode->getPoint( i );
+      const SplatCloud::Position &position = _splatCloudNode->getPosition( i );
 
-      float pnt[3];
-      pnt[0] = invS * point[0] + invT[0];
-      pnt[1] = invS * point[1] + invT[1];
-      pnt[2] = invS * point[2] + invT[2];
+      float pos[3];
+      pos[0] = position[0];
+      pos[1] = position[1];
+      pos[2] = position[2];
 
-      fwrite( pnt, sizeof(float), 3, file );
+      fwrite( pos, sizeof(float), 3, file );
     }
   }
 
@@ -460,7 +504,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   if( saveNormals )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       const SplatCloud::Normal &normal = _splatCloudNode->getNormal( i );
 
@@ -477,12 +521,12 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   if( savePointsizes )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       const SplatCloud::Pointsize &pointsize = _splatCloudNode->getPointsize( i );
 
       float ps;
-      ps = invS * pointsize;
+      ps = pointsize;
 
       fwrite( &ps, sizeof(float), 1, file );
     }
@@ -492,7 +536,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   if( saveColors )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       const SplatCloud::Color &color = _splatCloudNode->getColor( i );
 
@@ -507,7 +551,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   if( saveIndices )
   {
     unsigned int i;
-    for( i=0; i<numPoints; ++i )
+    for( i=0; i<numSplats; ++i )
     {
       const SplatCloud::Index &index = _splatCloudNode->getIndex( i );
 
@@ -539,25 +583,12 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
 
 bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *_splatCloudNode ) /*const*/
 {
-  // open file
-  FILE *file = fopen( _filename, "wt" );
-  if( !file )
-  {
-    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\"\n." ) );
-    return false;
-  }
-
   // set default options
   bool saveNormals    = true;
   bool savePointsizes = false;
   bool saveColors     = false;
   int  saveColorRange = 0;
   bool saveIndices    = false;
-
-  // get inverse of current translation and scaling
-  float invS = _splatCloudNode->splatCloud().scaleFactor();
-  invS = (invS == 0.0f) ? 0.0f : (1.0f / invS);
-  SplatCloud::Point invT = -_splatCloudNode->splatCloud().translation();
 
   // get options
   if( OpenFlipper::Options::gui() && saveOptions_ )
@@ -569,20 +600,41 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
     saveIndices    = saveIndices_->   isChecked();
   }
 
-  // for all points...
-  unsigned int i, numPoints = _splatCloudNode->splatCloud().numPoints();
-  for( i=0; i<numPoints; ++i )
+  // use default values instead of returning a failure
+
+//// check availability
+//if( (                  !_splatCloudNode->splatCloud().hasPositions() ) ||
+//    (saveNormals    && !_splatCloudNode->splatCloud().hasNormals())  ) ||
+//    (savePointsizes && !_splatCloudNode->splatCloud().hasPointsizes()) ||
+//    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
+//    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
+//{
+//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\"\n." ) );
+//  return false; // return failure
+//}
+
+  // open file
+  FILE *file = fopen( _filename, "wt" );
+  if( !file )
   {
-    // write point
+    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\"\n." ) );
+    return false;
+  }
+
+  // for all splats...
+  unsigned int i, numSplats = _splatCloudNode->splatCloud().numSplats();
+  for( i=0; i<numSplats; ++i )
+  {
+    // write position
     {
-      const SplatCloud::Point &point = _splatCloudNode->getPoint( i );
+      const SplatCloud::Position &position = _splatCloudNode->getPosition( i );
 
-      float pnt[3];
-      pnt[0] = invS * point[0] + invT[0];
-      pnt[1] = invS * point[1] + invT[1];
-      pnt[2] = invS * point[2] + invT[2];
+      float pos[3];
+      pos[0] = position[0];
+      pos[1] = position[1];
+      pos[2] = position[2];
 
-      fprintf( file, "%.6g %.6g %.6g", pnt[0], pnt[1], pnt[2] );
+      fprintf( file, "%.6g %.6g %.6g", pos[0], pos[1], pos[2] );
     }
 
     // write color
@@ -631,7 +683,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
       const SplatCloud::Pointsize &pointsize = _splatCloudNode->getPointsize( i );
 
       float ps;
-      ps = invS * pointsize;
+      ps = pointsize;
 
       fprintf( file, " %.6g", ps );
     }
@@ -672,14 +724,12 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
 int FilePTSPlugin::loadObject( QString _filename )
 {
   // set default options
-  bool loadBinaryFile    = false;
-  bool loadNormalizeSize = false;
+  bool loadBinaryFile = false;
 
   // get options
   if( OpenFlipper::Options::gui() && loadOptions_ )
   {
-    loadBinaryFile    = loadBinaryFile_->   isChecked();
-    loadNormalizeSize = loadNormalizeSize_->isChecked();
+    loadBinaryFile = loadBinaryFile_->   isChecked();
   }
 
   // add a new, empty splatcloud object
@@ -704,6 +754,10 @@ int FilePTSPlugin::loadObject( QString _filename )
     emit deleteObject( id );
     return -1; // return failure
   }
+
+  // set name of splatcloud-object to filename
+  splatCloudObject->setFromFileName( _filename );
+  splatCloudObject->setName( splatCloudObject->filename() );
 
   // get splatcloud and scenegraph splatcloud-node
   SplatCloud     *splatCloud     = splatCloudObject->splatCloud();
@@ -733,13 +787,6 @@ int FilePTSPlugin::loadObject( QString _filename )
       return -1; // return failure
     }
   }
-
-  // normalize size
-  if( loadNormalizeSize )
-    splatCloud->normalizeSize();
-
-  // remember filename
-  splatCloudObject->setFromFileName( _filename );
 
   // emit signals that the object has to be updated and that a file was opened
   emit updatedObject( splatCloudObject->id(), UPDATE_ALL);
@@ -780,7 +827,7 @@ int FilePTSPlugin::loadObject( QString _filename )
 //----------------------------------------------------------------
 
 
-bool FilePTSPlugin::saveObject( int _id, QString _filename )
+bool FilePTSPlugin::saveObject( int _objectId, QString _filename )
 {
   // set default options
   bool saveBinaryFile = false;
@@ -793,12 +840,16 @@ bool FilePTSPlugin::saveObject( int _id, QString _filename )
 
   // get splatcloud-object by id
   SplatCloudObject *splatCloudObject = 0;
-  if( !PluginFunctions::getObject( _id, splatCloudObject ) )
+  if( !PluginFunctions::getObject( _objectId, splatCloudObject ) )
     return false; // return failure
 
   // check if splatcloud-object is okay
   if( !splatCloudObject )
     return false; // return failure
+
+  // change name of splatcloud-object to filename
+  splatCloudObject->setFromFileName( _filename );
+  splatCloudObject->setName( splatCloudObject->filename() );
 
   // get scenegraph splatcloud-node
   const SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
@@ -861,8 +912,6 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
     QGroupBox *loadStructureGroupBox = new QGroupBox( "Internal File Structure" );
     loadStructureGroupBox->setLayout( loadStructureLayout );
 
-    loadNormalizeSize_ = new QCheckBox( "Normalize Size" );
-
     loadMakeDefaultButton_ = new QPushButton( "Make Default" );
 
     QVBoxLayout *loadLayout = new QVBoxLayout();
@@ -870,7 +919,6 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
     loadLayout->setSpacing( 6 );
     loadLayout->addWidget( loadBinaryFile_        );
     loadLayout->addWidget( loadStructureGroupBox  );
-    loadLayout->addWidget( loadNormalizeSize_     );
     loadLayout->addWidget( loadMakeDefaultButton_ );
 
     loadOptions_ = new QWidget();
@@ -882,13 +930,12 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
     connect( loadMakeDefaultButton_, SIGNAL( clicked()         ), this, SLOT( slotLoadMakeDefaultButtonClicked() ) );
 
     // get Load Options from OpenFlipper (from disc)
-    loadBinaryFile_->   setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/BinaryFile",    true ).toBool() );
-    loadNormals_->      setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Normals",       true ).toBool() );
-    loadPointsizes_->   setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Pointsizes",    true ).toBool() );
-    loadColors_->       setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Colors",        true ).toBool() );
-    loadColorRange_->   setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Load/ColorRange",       0 ).toInt()  );
-    loadIndices_->      setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Indices",       true ).toBool() );
-    loadNormalizeSize_->setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/NormalizeSize", true ).toBool() );
+    loadBinaryFile_->   setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/BinaryFile", true ).toBool() );
+    loadNormals_->      setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Normals",    true ).toBool() );
+    loadPointsizes_->   setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Pointsizes", true ).toBool() );
+    loadColors_->       setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Colors",     true ).toBool() );
+    loadColorRange_->   setCurrentIndex( OpenFlipperSettings().value( "FilePTS/Load/ColorRange",    0 ).toInt()  );
+    loadIndices_->      setChecked     ( OpenFlipperSettings().value( "FilePTS/Load/Indices",    true ).toBool() );
   }
 
   return loadOptions_;
@@ -986,13 +1033,12 @@ void FilePTSPlugin::slotUpdateSaveColorRange()
 void FilePTSPlugin::slotLoadMakeDefaultButtonClicked()
 {
   // pass our Load Options to OpenFlipper (to disc)
-  OpenFlipperSettings().setValue( "FilePTS/Load/BinaryFile",    loadBinaryFile_->   isChecked()    );
-  OpenFlipperSettings().setValue( "FilePTS/Load/Normals",       loadNormals_->      isChecked()    );
-  OpenFlipperSettings().setValue( "FilePTS/Load/Pointsizes",    loadPointsizes_->   isChecked()    );
-  OpenFlipperSettings().setValue( "FilePTS/Load/Colors",        loadColors_->       isChecked()    );
-  OpenFlipperSettings().setValue( "FilePTS/Load/ColorRange",    loadColorRange_->   currentIndex() );
-  OpenFlipperSettings().setValue( "FilePTS/Load/Indices",       loadIndices_->      isChecked()    );
-  OpenFlipperSettings().setValue( "FilePTS/Load/NormalizeSize", loadNormalizeSize_->isChecked()    );
+  OpenFlipperSettings().setValue( "FilePTS/Load/BinaryFile", loadBinaryFile_->isChecked()    );
+  OpenFlipperSettings().setValue( "FilePTS/Load/Normals",    loadNormals_->   isChecked()    );
+  OpenFlipperSettings().setValue( "FilePTS/Load/Pointsizes", loadPointsizes_->isChecked()    );
+  OpenFlipperSettings().setValue( "FilePTS/Load/Colors",     loadColors_->    isChecked()    );
+  OpenFlipperSettings().setValue( "FilePTS/Load/ColorRange", loadColorRange_->currentIndex() );
+  OpenFlipperSettings().setValue( "FilePTS/Load/Indices",    loadIndices_->   isChecked()    );
 
 //  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }

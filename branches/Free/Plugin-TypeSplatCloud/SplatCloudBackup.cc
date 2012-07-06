@@ -45,6 +45,8 @@
 
 #include "SplatCloudBackup.hh"
 
+#include <iostream>
+
 
 //== DEFINES =====================================================
 
@@ -55,31 +57,30 @@
 //== IMPLEMENTATION ==============================================
 
 
-SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type ) : 
-	BaseBackup       ( _object, _name, _type ), 
-	splatCloudObject_( _object ), 
-	pointsBackup_    ( 0 ), 
-	normalsBackup_   ( 0 ), 
-	pointsizesBackup_( 0 ), 
-	colorsBackup_    ( 0 ), 
-	indicesBackup_   ( 0 ), 
-	selectionsBackup_( 0 ) 
+SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, UpdateType _type ) :
+  BaseBackup       ( _object, _name, _type ),
+  splatCloudObject_( _object ),
+  splatCloudBackup_( 0 )
 {
-#	ifdef REPORT_BACKUP
-	std::cerr << "Create SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
-#	endif
+# ifdef REPORT_BACKUP
+  std::cerr << "Create SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ")." << std::endl;
+# endif
 
-	const SplatCloud *splatCloud = splatCloudObject_->splatCloud();
+  const SplatCloud *splatCloud = PluginFunctions::splatCloud( _object );
 
-	if( splatCloud )
-	{
-		if( _type.contains( UPDATE_GEOMETRY          ) ) pointsBackup_     = new SplatCloud::PointVector    ( splatCloud->points()     );
-		if( _type.contains( updateType("Normals")    ) ) normalsBackup_    = new SplatCloud::NormalVector   ( splatCloud->normals()    );
-		if( _type.contains( updateType("Pointsizes") ) ) pointsizesBackup_ = new SplatCloud::PointsizeVector( splatCloud->pointsizes() );
-		if( _type.contains( UPDATE_COLOR             ) ) colorsBackup_     = new SplatCloud::ColorVector    ( splatCloud->colors()     );
-		if( _type.contains( updateType("Indices")    ) ) indicesBackup_    = new SplatCloud::IndexVector    ( splatCloud->indices()    );
-		if( _type.contains( UPDATE_SELECTION         ) ) selectionsBackup_ = new SplatCloud::SelectionVector( splatCloud->selections() );
-	}
+  if( splatCloud == 0 )
+  {
+    std::cerr << "Could not create SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ") : SplatCloud not found." << std::endl;
+    return;
+  }
+
+  splatCloudBackup_ = new SplatCloud( *splatCloud );
+
+  if( splatCloudBackup_ == 0 )
+  {
+    std::cerr << "Could not create SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ") : Out of memory." << std::endl;
+    return;
+  }
 }
 
 
@@ -88,16 +89,9 @@ SplatCloudBackup::SplatCloudBackup( SplatCloudObject *_object, QString _name, Up
 
 SplatCloudBackup::~SplatCloudBackup()
 {
-#	ifdef REPORT_BACKUP
-	std::cerr << "Delete SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
-#	endif
-
-	delete pointsBackup_;
-	delete normalsBackup_;
-	delete pointsizesBackup_;
-	delete colorsBackup_;
-	delete indicesBackup_;
-	delete selectionsBackup_;
+# ifdef REPORT_BACKUP
+  std::cerr << "Delete SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ")." << std::endl;
+# endif
 }
 
 
@@ -106,22 +100,27 @@ SplatCloudBackup::~SplatCloudBackup()
 
 void SplatCloudBackup::apply()
 {
-	// first apply the baseBackup
-	BaseBackup::apply();
+  // first apply the baseBackup
+  BaseBackup::apply();
 
-#	ifdef REPORT_BACKUP
-	std::cerr << "Apply SplatCloudBackup with name:" << name_.toStdString() << "(id : " << id_ << ")" << std::endl;
-#	endif
+# ifdef REPORT_BACKUP
+  std::cerr << "Apply SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ")." << std::endl;
+# endif
 
-	SplatCloud *splatCloud = splatCloudObject_->splatCloud();
+  SplatCloud *splatCloud = PluginFunctions::splatCloud( splatCloudObject_ );
 
-	if( splatCloud )
-	{
-		if( pointsBackup_     ) splatCloud->points()     = *pointsBackup_;
-		if( normalsBackup_    ) splatCloud->normals()    = *normalsBackup_;
-		if( pointsizesBackup_ ) splatCloud->pointsizes() = *pointsizesBackup_;
-		if( colorsBackup_     ) splatCloud->colors()     = *colorsBackup_;
-		if( indicesBackup_    ) splatCloud->indices()    = *indicesBackup_;
-		if( selectionsBackup_ ) splatCloud->selections() = *selectionsBackup_;
-	}
+  if( splatCloud == 0 )
+  {
+    std::cerr << "Could not apply SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ") : SplatCloud not found." << std::endl;
+    return;
+  }
+
+  if( splatCloudBackup_ == 0 )
+  {
+    std::cerr << "Could not apply SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ") : No backup available." << std::endl;
+    *splatCloud = SplatCloud(); // restore empty SpaltCloud
+    return;
+  }
+
+  *splatCloud = *splatCloudBackup_;
 }

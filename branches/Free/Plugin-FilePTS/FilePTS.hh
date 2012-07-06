@@ -87,16 +87,16 @@ class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 signals:
 
   // -- File Interface --
-  void openedFile( int _id );
+  void openedFile( int _objectId );
 
   // -- LoadSave Interface --
-  void addEmptyObject( DataType _type, int &_id );
-  void deleteObject( int _id );
-  void updatedObject( int _id, const UpdateType &_type );
+  void addEmptyObject( DataType _type, int &_objectId );
+  void deleteObject( int _objectId );
+  void updatedObject( int _objectId, const UpdateType &_type );
 
   //-- Logging Interface --
+  void log(                QString _message );
   void log( Logtype _type, QString _message );
-  void log( QString _message );
 
 private slots:
 
@@ -110,7 +110,7 @@ public:
   ~FilePTSPlugin() { }
 
   //-- Base Interface --
-  QString name() { return QString( "FilePTS" ); }
+  QString name()         { return QString(    "FilePTS"                            ); }
   QString description( ) { return QString( tr("Load/Save SplatCloud format files") ); }
 
   // -- File Interface --
@@ -129,7 +129,7 @@ public slots:
 
   // -- File Interface --
   int loadObject( QString _filename );
-  bool saveObject( int _id, QString _filename );
+  bool saveObject( int _objectId, QString _filename );
 
 private:
 
@@ -152,7 +152,6 @@ private:
   QCheckBox *loadColors_;
   QComboBox *loadColorRange_;
   QCheckBox *loadIndices_;
-  QCheckBox *loadNormalizeSize_;
 
   // options in the saving menu
   QCheckBox *saveBinaryFile_;

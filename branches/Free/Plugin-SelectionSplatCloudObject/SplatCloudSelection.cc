@@ -68,34 +68,60 @@ namespace SplatCloudSelection {
 //== Vertex Selection =====================================
 //=========================================================
 
-void selectVertices( SplatCloud *_splatCloud, std::vector<int> &_vertices )
-{
-	int n_vertices = (int) _splatCloud->numPoints();
 
-	unsigned int i;
-	for( i=0; i<_vertices.size(); ++i )
-	{
-		const int &v = _vertices[i];
-		if( (v >= 0) && (v < n_vertices) )
-			_splatCloud->selections()[ v ] = true;
-	}
+void selectVertices( SplatCloud *_splatCloud, const std::vector<int> &_vertices )
+{
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( _vertices.empty() )
+    return; // done
+
+  if( !_splatCloud->hasSelections() )
+  {
+    if( !_splatCloud->requestSelections() )
+      return; // error
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->selections( i ) = false;
+  }
+
+  int n_vertices = (int) _splatCloud->numSplats();
+
+  unsigned int i;
+  for( i=0; i<_vertices.size(); ++i )
+  {
+    int v = _vertices[ i ];
+    if( (v >= 0) && (v < n_vertices) )
+      _splatCloud->selections( v ) = true;
+  }
 }
 
 
 //----------------------------------------------------------------
 
 
-void unselectVertices( SplatCloud *_splatCloud, std::vector<int> &_vertices )
+void unselectVertices( SplatCloud *_splatCloud, const std::vector<int> &_vertices )
 {
-	int n_vertices = (int) _splatCloud->numPoints();
+  if( _splatCloud == 0 )
+    return; // error
 
-	unsigned int i;
-	for( i=0; i<_vertices.size(); ++i )
-	{
-		const int &v = _vertices[i];
-		if( (v >= 0) && (v < n_vertices) )
-			_splatCloud->selections()[ v ] = false;
-	}
+  if( _vertices.empty() )
+    return; // done
+
+  if( !_splatCloud->hasSelections() )
+    return; // done
+
+  int n_vertices = (int) _splatCloud->numSplats();
+
+  unsigned int i;
+  for( i=0; i<_vertices.size(); ++i )
+  {
+    int v = _vertices[ i ];
+    if( (v >= 0) && (v < n_vertices) )
+      _splatCloud->selections( v ) = false;
+  }
 }
 
 
@@ -104,7 +130,15 @@ void unselectVertices( SplatCloud *_splatCloud, std::vector<int> &_vertices )
 
 void selectAllVertices( SplatCloud *_splatCloud )
 {
-	_splatCloud->setSelections( true );
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( !_splatCloud->requestSelections() )
+    return; // error
+
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+    _splatCloud->selections( i ) = true;
 }
 
 
@@ -113,7 +147,15 @@ void selectAllVertices( SplatCloud *_splatCloud )
 
 void clearVertexSelection( SplatCloud *_splatCloud )
 {
-	_splatCloud->setSelections( false );
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( !_splatCloud->hasSelections() )
+    return; // done
+
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+    _splatCloud->selections( i ) = false;
 }
 
 
@@ -122,53 +164,117 @@ void clearVertexSelection( SplatCloud *_splatCloud )
 
 void invertVertexSelection( SplatCloud *_splatCloud )
 {
-	_splatCloud->invertSelections();
+  if( _splatCloud == 0 )
+    return; // error
+
+  if( _splatCloud->hasSelections() )
+  {
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->selections( i ) = !_splatCloud->selections( i );
+  }
+  else
+  {
+    if( !_splatCloud->requestSelections() )
+      return; // error
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+      _splatCloud->selections( i ) = true;
+  }
 }
 
 
 //----------------------------------------------------------------
 
 
-std::vector<int> getVertexSelection( SplatCloud *_splatCloud )
+static unsigned int countSelected( const SplatCloud *_splatCloud )
 {
-	std::vector<int> selection;
+  unsigned int count = 0;
 
-	unsigned int i, num = _splatCloud->numPoints();
-	for( i=0; i<num; ++i )
-	{
-		if( _splatCloud->selections()[ i ] )
-			selection.push_back( i );
-	}
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+  {
+    if( _splatCloud->selections( i ) )
+      ++count;
+  }
 
-	return selection;
+  return count;
 }
 
 
 //----------------------------------------------------------------
 
 
-std::vector<int> getVertexSelection( SplatCloud *_splatCloud, bool &_invert)
+std::vector<int> getVertexSelection( const SplatCloud *_splatCloud )
 {
-	unsigned int numSelected = 0;
+  std::vector<int> vertices;
 
-	unsigned int i, num = _splatCloud->numPoints();
-	for( i=0; i<num; ++i )
-	{
-		if( _splatCloud->selections()[ i ] )
-			++numSelected;
-	}
+  if( _splatCloud == 0 )
+    return vertices; // error
 
-	_invert = (numSelected > _splatCloud->numPoints() / 2);
+  if( !_splatCloud->hasSelections() )
+    return vertices; // done
 
-	std::vector<int> selection;
+  unsigned int numSelected = countSelected( _splatCloud );
 
-	for( i=0; i<num; ++i )
-	{
-		if( _splatCloud->selections()[ i ] ^ _invert )
-			selection.push_back( i );
-	}
+  vertices.reserve( numSelected );
 
-	return selection;
+  unsigned int i, num = _splatCloud->numSplats();
+  for( i=0; i<num; ++i )
+  {
+    if( _splatCloud->selections( i ) )
+      vertices.push_back( i );
+  }
+
+  return vertices;
+}
+
+
+//----------------------------------------------------------------
+
+
+std::vector<int> getVertexSelection( const SplatCloud *_splatCloud, bool &_inverted )
+{
+  _inverted = false;
+
+  std::vector<int> vertices;
+
+  if( _splatCloud == 0 )
+    return vertices; // error
+
+  if( !_splatCloud->hasSelections() )
+    return vertices; // done
+
+  unsigned int numSelected   = countSelected( _splatCloud );
+  unsigned int numUnselected = _splatCloud->numSplats() - numSelected;
+
+  if( numSelected <= numUnselected )
+  {
+    vertices.reserve( numSelected );
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+    {
+      if( _splatCloud->selections( i ) )
+        vertices.push_back( i );
+    }
+  }
+  else
+  {
+    _inverted = true;
+
+    vertices.reserve( numUnselected );
+
+    unsigned int i, num = _splatCloud->numSplats();
+    for( i=0; i<num; ++i )
+    {
+      if( !_splatCloud->selections( i ) )
+        vertices.push_back( i );
+    }
+  }
+
+  return vertices;
 }
 
 
