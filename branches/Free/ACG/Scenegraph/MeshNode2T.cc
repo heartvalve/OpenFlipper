@@ -574,176 +574,176 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 template <class Mesh>
 void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
 {
-  //RenderObject ro = {0}; // zeromem
-  // TODO : RIGHT initialization
-//  ro.initFromState(&_state);
-//
-//  // shader gen setup (lighting, shademode, vertex-colors..)
-//
-//  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
-//  {
-//    const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
-//
-//    // reset renderobject
-//    ro.priority = 0;
-//    ro.depthRange = Vec2f(0.0f, 1.0f);
-//    ro.depthTest = true; // some previous node disabled depth testing
-//    ro.depthWrite = true;
-//    ro.depthFunc = GL_LESS;
-//
-//    // ------------------------
-//    // 1. setup drawMesh based on property source
-//
-//
-//    if (props->flatShaded())
-//      drawMesh_->setFlatShading();
-//    else
-//      drawMesh_->setSmoothShading();
-//
-//
-//    ro.shaderDesc.vertexColors = true;
-//
-//    switch (props->colorSource())
-//    {
-//    case DrawModes::COLOR_PER_VERTEX: drawMesh_->usePerVertexColors(); break;
-//    case DrawModes::COLOR_PER_FACE: drawMesh_->usePerFaceColors(); break;
-//    default:
-//      {
-//        drawMesh_->disableColors();
-//        ro.shaderDesc.vertexColors = false;
-//      } break;
-//    }
-//
-//    switch (props->normalSource())
-//    {
-//    case DrawModes::NORMAL_PER_VERTEX: drawMesh_->usePerVertexNormals(); break;
-//    case DrawModes::NORMAL_PER_HALFEDGE: drawMesh_->usePerHalfedgeNormals(); break;
-//    default: break;
-//    }
-//
-//    ro.shaderDesc.textured = true;
-//
-//    switch (props->texcoordSource())
-//    {
-//    case DrawModes::TEXCOORD_PER_VERTEX: drawMesh_->usePerVertexTexcoords(); break;
-//    case DrawModes::TEXCOORD_PER_HALFEDGE: drawMesh_->usePerHalfedgeTexcoords(); break;
-//    default:
-//      {
-//        ro.shaderDesc.textured = false;
-//      }break;
-//    }
-//
-//    // ------------------------
-//    // 2. prepare renderobject
-//
-//
-//    // enable / disable lighting
-//    ro.shaderDesc.numLights = props->lighting() ? 0 : -1;
-//
-//    // TODO: better handling of attribute sources in shader gen
-//    if (props->flatShaded())
-//      ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
-//
-//    switch (props->lightStage())
-//    {
-//    case DrawModes::LIGHTSTAGE_SMOOTH: ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD; break;;
-//    case DrawModes::LIGHTSTAGE_PHONG: ro.shaderDesc.shadeMode = SG_SHADE_PHONG; break;;
-//    case DrawModes::LIGHTSTAGE_UNLIT: ro.shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
-//    }
-//
-//
-//    // handle 'special' primitives (wireframe, hiddenline, primitives in sysmem buffers)..
-//
-//    if (props->primitive() == DrawModes::PRIMITIVE_WIREFRAME)
-//    {
-//      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-//      drawMesh_->disableColors();
-//
-//      add_line_RenderObjects(_renderer, &ro);
-//    }
-//
-//    if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
-//    {
-//      // First:
-//      // Render all faces in background color to initialize z-buffer
-//
-//      ro.priority = -1; // priority allows sorting for layers
-//
-//      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-//
-//      // color mask = none
-//      // depth mask = enabled
-//      ro.glColorMask(0,0,0,0);
-//      ro.depthTest = true;
-//      ro.depthWrite = true;
-//      ro.depthFunc = GL_LESS;
-//
-//      ro.fillMode = GL_FILL;
-//
-//      drawMesh_->disableColors();
-//
-//      ro.depthRange = Vec2f(0.01f, 1.0f);
-//
-//      add_face_RenderObjects(_renderer, &ro);
-//
-//
-//      // Second
-//      // Render the lines. All lines not on the front will be skipped in z-test
-//      ro.priority = 0; // render after z cullers
-//
-//      ro.glColorMask(1,1,1,1);
-//      ro.depthTest = true;
-//      ro.depthWrite = true;
-//      ro.depthFunc = GL_LEQUAL;
-//
-//      ro.depthRange = Vec2f(0.0f, 1.0f);
-//
-//      add_line_RenderObjects(_renderer, &ro);
-//    }
-//
-//    if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
-//    {
-//      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-//      ro.shaderDesc.vertexColors = true;
-//
-//      // note: colored edges are in sysmem, so they are directly bound to the VertexDeclaration
-//      ro.vertexDecl = drawMesh_->getEdgeColoredVertexDeclaration();
-//      ro.glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
-//
-//      _renderer->addRenderObject(&ro);
-//
-//       // skip other edge primitives for this drawmode layer
-//      continue;
-//    }
-//
-//    if (props->primitive()  == DrawModes::PRIMITIVE_HALFEDGE)
-//    {
-//      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-//
-//      // buffers in sysmem
-//      if (props->colored())
-//        ro.vertexDecl = drawMesh_->getHalfedgeVertexDeclaration();
-//      else
-//        ro.vertexDecl = drawMesh_->getHalfedgeColoredVertexDeclaration();
-//
-//      ro.glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
-//
-//      _renderer->addRenderObject(&ro);
-//    }
-//
-//
-//    // -----------------------------------------------------
-//    // take care of all the other primitives
-//
-//    ro.depthRange = Vec2f(0.01f, 1.0f);
-//
-//    switch (props->primitive())
-//    {
-//    case DrawModes::PRIMITIVE_POINT: add_point_RenderObjects(_renderer, &ro); break;
-//    case DrawModes::PRIMITIVE_EDGE: add_line_RenderObjects(_renderer, &ro); break;
-//    case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
-//    }
-//  }
+  RenderObject ro;
+  memset(&ro, 0, sizeof(RenderObject));
+  ro.initFromState(&_state);
+ 
+  // shader gen setup (lighting, shademode, vertex-colors..)
+  
+  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
+  {
+    const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
+
+    // reset renderobject
+    ro.priority = 0;
+    ro.depthRange = Vec2f(0.0f, 1.0f);
+    ro.depthTest = true; // some previous node disabled depth testing
+    ro.depthWrite = true;
+    ro.depthFunc = GL_LESS;
+
+    // ------------------------
+    // 1. setup drawMesh based on property source
+
+
+    if (props->flatShaded())
+      drawMesh_->setFlatShading();
+    else
+      drawMesh_->setSmoothShading();
+
+
+    ro.shaderDesc.vertexColors = true;
+
+    switch (props->colorSource())
+    {
+    case DrawModes::COLOR_PER_VERTEX: drawMesh_->usePerVertexColors(); break;
+    case DrawModes::COLOR_PER_FACE: drawMesh_->usePerFaceColors(); break;
+    default:
+      {
+        drawMesh_->disableColors(); 
+        ro.shaderDesc.vertexColors = false;
+      } break;
+    }
+
+    switch (props->normalSource())
+    {
+    case DrawModes::NORMAL_PER_VERTEX: drawMesh_->usePerVertexNormals(); break;
+    case DrawModes::NORMAL_PER_HALFEDGE: drawMesh_->usePerHalfedgeNormals(); break;
+    default: break;
+    }
+
+    ro.shaderDesc.textured = true;
+
+    switch (props->texcoordSource())
+    {
+    case DrawModes::TEXCOORD_PER_VERTEX: drawMesh_->usePerVertexTexcoords(); break;
+    case DrawModes::TEXCOORD_PER_HALFEDGE: drawMesh_->usePerHalfedgeTexcoords(); break;
+    default:
+      {
+        ro.shaderDesc.textured = false;
+      }break;
+    }
+
+    // ------------------------
+    // 2. prepare renderobject
+
+
+    // enable / disable lighting
+    ro.shaderDesc.numLights = props->lighting() ? 0 : -1;
+
+    // TODO: better handling of attribute sources in shader gen
+    if (props->flatShaded())
+      ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
+
+    switch (props->lightStage())
+    {
+    case DrawModes::LIGHTSTAGE_SMOOTH: ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD; break;;
+    case DrawModes::LIGHTSTAGE_PHONG: ro.shaderDesc.shadeMode = SG_SHADE_PHONG; break;;
+    case DrawModes::LIGHTSTAGE_UNLIT: ro.shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
+    }
+
+
+    // handle 'special' primitives (wireframe, hiddenline, primitives in sysmem buffers)..
+
+    if (props->primitive() == DrawModes::PRIMITIVE_WIREFRAME)
+    {
+      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+      drawMesh_->disableColors();
+
+      add_line_RenderObjects(_renderer, &ro);
+    }
+
+    if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
+    {
+      // First:
+      // Render all faces in background color to initialize z-buffer
+
+      ro.priority = -1; // priority allows sorting for layers
+
+      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+      // color mask = none
+      // depth mask = enabled
+      ro.glColorMask(0,0,0,0);
+      ro.depthTest = true;
+      ro.depthWrite = true;
+      ro.depthFunc = GL_LESS;
+
+      ro.fillMode = GL_FILL;
+
+      drawMesh_->disableColors();
+
+      ro.depthRange = Vec2f(0.01f, 1.0f);
+
+      add_face_RenderObjects(_renderer, &ro);
+
+
+      // Second
+      // Render the lines. All lines not on the front will be skipped in z-test
+      ro.priority = 0; // render after z cullers
+
+      ro.glColorMask(1,1,1,1);
+      ro.depthTest = true;
+      ro.depthWrite = true;
+      ro.depthFunc = GL_LEQUAL;
+
+      ro.depthRange = Vec2f(0.0f, 1.0f);
+
+      add_line_RenderObjects(_renderer, &ro);
+    }
+
+    if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
+    {
+      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+      ro.shaderDesc.vertexColors = true;
+
+      // note: colored edges are in sysmem, so they are directly bound to the VertexDeclaration
+      ro.vertexDecl = drawMesh_->getEdgeColoredVertexDeclaration();
+      ro.glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+
+      _renderer->addRenderObject(&ro);
+
+       // skip other edge primitives for this drawmode layer
+      continue;
+    }  
+
+    if (props->primitive()  == DrawModes::PRIMITIVE_HALFEDGE)
+    {
+      ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+      // buffers in sysmem
+      if (props->colored())
+        ro.vertexDecl = drawMesh_->getHalfedgeVertexDeclaration();
+      else
+        ro.vertexDecl = drawMesh_->getHalfedgeColoredVertexDeclaration();
+
+      ro.glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
+
+      _renderer->addRenderObject(&ro);
+    }  
+
+
+    // -----------------------------------------------------
+    // take care of all the other primitives
+
+    ro.depthRange = Vec2f(0.01f, 1.0f);
+
+    switch (props->primitive())
+    {
+    case DrawModes::PRIMITIVE_POINT: add_point_RenderObjects(_renderer, &ro); break;
+    case DrawModes::PRIMITIVE_EDGE: add_line_RenderObjects(_renderer, &ro); break;
+    case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
+    }
+  }
 
 }
 
