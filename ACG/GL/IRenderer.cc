@@ -54,8 +54,6 @@
 
 void ACG::RenderObject::initFromState( GLState* _glState )
 {
-//  memset(this, 0, sizeof(RenderObject)); <- bad
-
   culling = true;
   blending = false;
   depthTest = true;

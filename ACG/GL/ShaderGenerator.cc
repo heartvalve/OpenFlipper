@@ -790,9 +790,9 @@ void ShaderProgGenerator::saveFragmentShToFile(const char* _fileName)
 
 void ShaderProgGenerator::loadShaderTemplateFromFile()
 {
-  if (!desc_.vertexTemplateFile.isEmpty())
+  if (desc_.vertexTemplateFile)
     loadStringListFromFile(desc_.vertexTemplateFile, &vertexTemplate_);
-  if (!desc_.fragmentTemplateFile.isEmpty())
+  if (desc_.fragmentTemplateFile)
     loadStringListFromFile(desc_.fragmentTemplateFile, &fragmentTemplate_);
 
   vertexShaderFile_ = desc_.vertexTemplateFile;

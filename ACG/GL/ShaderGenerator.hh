@@ -86,8 +86,8 @@ struct ShaderGenDesc
   bool textured;
 
   // optionally specify shader template file names
-  QString vertexTemplateFile;
-  QString fragmentTemplateFile;
+  const char* vertexTemplateFile;
+  const char* fragmentTemplateFile;
 };
 
 /**
