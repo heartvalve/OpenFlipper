@@ -549,6 +549,7 @@ void MeshRepairPlugin::updateFaceNormals(int _objectId) {
 
   if ( object == 0) {
     emit log(LOGERR,tr("updateFaceNormals: Unable to get object %1. ").arg(_objectId) );
+    return;
   }
 
   if ( object->dataType(DATA_TRIANGLE_MESH) ) {
@@ -577,6 +578,7 @@ void MeshRepairPlugin::updateHalfedgeNormals(int _objectId) {
 
   if ( object == 0) {
     emit log(LOGERR,tr("updateFaceNormals: Unable to get object %1. ").arg(_objectId) );
+    return;
   }
 
   if ( object->dataType(DATA_TRIANGLE_MESH) ) {
@@ -608,6 +610,7 @@ void MeshRepairPlugin::updateVertexNormals(int _objectId){
 
   if ( object == 0) {
     emit log(LOGERR,tr("updateVertexNormals: Unable to get object %1. ").arg(_objectId) );
+    return;
   }
 
   if ( object->dataType(DATA_TRIANGLE_MESH) ) {
@@ -634,6 +637,7 @@ void MeshRepairPlugin::updateNormals(int _objectId) {
 
   if ( object == 0) {
     emit log(LOGERR,tr("updateNormals: Unable to get object %1. ").arg(_objectId) );
+    return;
   }
 
   if ( object->dataType(DATA_TRIANGLE_MESH) ) {
