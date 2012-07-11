@@ -52,12 +52,11 @@
 
 #include <iostream>
 #include <algorithm>
+#include <utility>
 
 #include "SkeletonT.hh"
 
 #include "Animation/FrameAnimationT.hh"
-
-using namespace std;
 
 
 //-----------------------------------------------------------------------------
@@ -385,14 +384,14 @@ SkeletonT<PointT>::SkeletonT(const SkeletonT<PointT> &_other) :
   referencePose_(this)
 {
   // create a copy of the joints, not yet linked because they refer to each other using pointers
-  for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
+  for(typename std::vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
   {
     joints_.push_back(new Joint(**it));
     insert_property_at( (*it)->id() );
   }
 
   // construct the links
-  for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
+  for(typename std::vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it)
   {
     Joint *pJoint = *it;
 
@@ -406,7 +405,7 @@ SkeletonT<PointT>::SkeletonT(const SkeletonT<PointT> &_other) :
 
   names_.insert(_other.names_.begin(), _other.names_.end());
 
-  for(typename vector<Animation*>::const_iterator it = _other.animations_.begin(); it != _other.animations_.end(); ++it)
+  for(typename std::vector<Animation*>::const_iterator it = _other.animations_.begin(); it != _other.animations_.end(); ++it)
     if (*it) {
         animations_.push_back((**it).copy());
     }
@@ -430,13 +429,13 @@ SkeletonT<PointT>& SkeletonT<PointT>::operator= (const SkeletonT<PointT>& _other
     clear();
 
     // create a copy of the joints, not yet linked because they refer to each other using pointers
-    for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
+    for(typename std::vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
       joints_.push_back(new Joint(**it));
       insert_property_at( (*it)->id() );
     }
 
     // construct the links
-    for(typename vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
+    for(typename std::vector<Joint*>::const_iterator it = _other.joints_.begin(); it != _other.joints_.end(); ++it){
       Joint *pJoint = *it;
 
       if(pJoint->parent() != 0)
@@ -450,7 +449,7 @@ SkeletonT<PointT>& SkeletonT<PointT>::operator= (const SkeletonT<PointT>& _other
 
     names_.insert(_other.names_.begin(), _other.names_.end());
 
-    for(typename vector<Animation*>::const_iterator it = _other.animations_.begin(); it != _other.animations_.end(); ++it)
+    for(typename std::vector<Animation*>::const_iterator it = _other.animations_.begin(); it != _other.animations_.end(); ++it)
       if (*it)
         animations_.push_back((**it).copy());
 
@@ -510,7 +509,7 @@ void SkeletonT<PointT>::addJoint(typename SkeletonT<PointT>::Joint *_pParent, ty
   insert_property_at(newJointID);
 
   referencePose_.insertJointAt(newJointID);
-  for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
+  for(typename std::vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
       if (*it)
           (*it)->insertJointAt(newJointID);
 
@@ -540,7 +539,7 @@ void SkeletonT<PointT>::removeJoint(typename SkeletonT<PointT>::Joint *_pJoint)
   remove_property_at(_pJoint->id());
   referencePose_.removeJointAt(_pJoint->id());
 
-  for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
+  for(typename std::vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
       if (*it) (*it)->removeJointAt(_pJoint->id());
 
   // Reattach the deleted joint's children to the joint's parent
@@ -564,7 +563,7 @@ void SkeletonT<PointT>::removeJoint(typename SkeletonT<PointT>::Joint *_pJoint)
       _pJoint->parent_->children_.push_back(*c_it);
     }
 
-    if(remove(_pJoint->parent_->children_.begin(), _pJoint->parent_->children_.end(), _pJoint) != _pJoint->parent_->children_.end())	// remove the joint from its parent
+    if(std::remove(_pJoint->parent_->children_.begin(), _pJoint->parent_->children_.end(), _pJoint) != _pJoint->parent_->children_.end())	// remove the joint from its parent
       _pJoint->parent_->children_.resize(_pJoint->parent_->children_.size() - 1);
   }
 
@@ -769,7 +768,7 @@ template<typename PointT>
 AnimationHandle SkeletonT<PointT>::addAnimation(std::string _name, Animation *_animation)
 {
   // try to find an unused animation slot first
-  typename vector<Animation*>::iterator f;
+  typename std::vector<Animation*>::iterator f;
   for(f = animations_.begin(); f != animations_.end(); ++f)
     if(*f == 0)
       break;
@@ -777,11 +776,11 @@ AnimationHandle SkeletonT<PointT>::addAnimation(std::string _name, Animation *_a
   if(f == animations_.end())
   {
     // all in use, append
-    names_.insert( pair<string, unsigned int>(_name, animations_.size()) );
+    names_.insert( std::pair<std::string, unsigned int>(_name, animations_.size()) );
     animations_.push_back(_animation);
   }else{
     // found an empty one, use it
-    names_.insert( pair<string, unsigned int>(_name, f - animations_.begin()) );
+    names_.insert( std::pair<std::string, unsigned int>(_name, f - animations_.begin()) );
     *f = _animation;
   }
   
@@ -803,7 +802,7 @@ template<typename PointT>
 AnimationHandle SkeletonT<PointT>::cloneAnimation(std::string _name, const AnimationHandle &_hAni)
 {
   // try to find an unused animation slot first
-  typename vector<Animation*>::iterator f;
+  typename std::vector<Animation*>::iterator f;
   for(f = animations_.begin(); f != animations_.end(); ++f)
     if(*f == 0)
       break;
@@ -811,14 +810,14 @@ AnimationHandle SkeletonT<PointT>::cloneAnimation(std::string _name, const Anima
   if(f == animations_.end())
   {
     // all in use, append
-    names_.insert( pair<string, unsigned int>(_name, animations_.size()) );
+    names_.insert( std::pair<std::string, unsigned int>(_name, animations_.size()) );
     if(animation(_hAni) != 0)
       animations_.push_back((*animation(_hAni)).copy());
     else
       animations_.push_back(new FrameAnimationT<Point>(referencePose_));
   }else{
     // found an empty one, use it
-    names_.insert( pair<string, unsigned int>(_name, f - animations_.begin()) );
+    names_.insert( std::pair<std::string, unsigned int>(_name, f - animations_.begin()) );
     if(animation(_hAni) != 0)
       *f = (*animation(_hAni)).copy();
     else
@@ -836,7 +835,7 @@ AnimationHandle SkeletonT<PointT>::cloneAnimation(std::string _name, const Anima
 template<typename PointT>
 AnimationHandle SkeletonT<PointT>::animationHandle(std::string _name)
 {
-  map<string, unsigned int>::iterator f = names_.find(_name);
+  std::map<std::string, unsigned int>::iterator f = names_.find(_name);
   if(f == names_.end())
     return AnimationHandle();
   
@@ -851,7 +850,7 @@ AnimationHandle SkeletonT<PointT>::animationHandle(std::string _name)
 template<typename PointT>
 typename SkeletonT<PointT>::Animation *SkeletonT<PointT>::animation(std::string _name)
 {
-  map<string, unsigned int>::iterator f = names_.find(_name);
+  std::map<std::string, unsigned int>::iterator f = names_.find(_name);
   if(f == names_.end())
     return 0;
 
@@ -880,7 +879,7 @@ template<typename PointT>
 void SkeletonT<PointT>::removeAnimation(std::string _name)
 {
   // get an iterator for the animation
-  map<string, unsigned int>::iterator f = names_.find(_name);
+  std::map<std::string, unsigned int>::iterator f = names_.find(_name);
   if(f == names_.end())
     return;
 
@@ -904,7 +903,7 @@ void SkeletonT<PointT>::removeAnimation(const AnimationHandle &_hAni)
   animations_[_hAni.animationIndex()] = 0;
 
   // remove the name entry
-  for(map<string, unsigned int>::iterator it = names_.begin(); it != names_.end(); ++it)
+  for(typename std::map<std::string, unsigned int>::iterator it = names_.begin(); it != names_.end(); ++it)
   {
     if(it->second == _hAni.animationIndex())
     {
@@ -924,7 +923,7 @@ void SkeletonT<PointT>::clearAnimations()
 {
   names_.clear();
 
-  for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
+  for(typename std::vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
     delete *it;
   animations_.clear();
 }
@@ -978,7 +977,7 @@ template<typename PointT>
 const std::string &SkeletonT<PointT>::animationName(unsigned int _index)
 {
   unsigned int i = 0;
-  map<string, unsigned int>::iterator pos = names_.begin();
+  std::map<std::string, unsigned int>::iterator pos = names_.begin();
 
   while(pos->second != _index && pos != names_.end())
   {
@@ -1000,7 +999,7 @@ template<typename PointT>
 void SkeletonT<PointT>::updateFromGlobal(unsigned int _idJoint)
 {
   referencePose_.updateFromGlobal(_idJoint);
-  for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it) {
+  for(typename std::vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it) {
     if (*it)
       (*it)->updateFromGlobal(_idJoint);
   }
@@ -1039,7 +1038,7 @@ void SkeletonT<PointT>::insertJoint(typename SkeletonT<PointT>::Joint *_pChild, 
 	insert_property_at(childID);
 
 	referencePose_.insertJointAt(childID);
-	for(typename vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
+	for(typename std::vector<Animation*>::iterator it = animations_.begin(); it != animations_.end(); ++it)
 		if (*it)
 			(*it)->insertJointAt(childID);
 

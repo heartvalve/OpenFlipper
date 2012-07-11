@@ -43,9 +43,8 @@
 #define JOINTT_C
 
 #include "JointT.hh"
-#include <assert.h>
-
-using namespace std;
+#include <cassert>
+#include <algorithm>
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -133,7 +132,7 @@ inline void JointT<PointT>::setParent(Joint *_newParent, SkeletonT<PointT> &_ske
   }
 
   if(parent_ != 0)
-    if(remove(parent_->children_.begin(), parent_->children_.end(), this) != parent_->children_.end())	// remove from the last parent
+    if(std::remove(parent_->children_.begin(), parent_->children_.end(), this) != parent_->children_.end())	// remove from the last parent
       parent_->children_.resize(parent_->children_.size() - 1);
 
   parent_ = _newParent;

@@ -42,10 +42,10 @@
 
 #define PROPERTIES_C
 
-#include <assert.h>
+#include <cassert>
+#include <utility>
 #include <iostream>
 
-using namespace std;
 
 //-----------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ bool Properties::add_property(PropertyHandleT<T> &_hProp, std::string _name)
 
   // create it if not
   // find the first free entry
-  vector<BaseProperty*>::iterator it;
+  std::vector<BaseProperty*>::iterator it;
   for(it = properties_.begin(); it != properties_.end(); ++it)
     if(*it == 0)
       break;
@@ -79,12 +79,12 @@ bool Properties::add_property(PropertyHandleT<T> &_hProp, std::string _name)
   {
     // append at the end
     _hProp.idx_ = properties_.size();
-    property_names_.insert( pair<string, int>(_name, properties_.size()) );
+    property_names_.insert( std::pair<std::string, int>(_name, properties_.size()) );
     properties_.push_back(dynamic_cast<BaseProperty*>(new PropertyT<T>(size_)));		// the new one needs to have the same number of entries, to keep the correspondence
   }else{
     // insert in the free spot
     _hProp.idx_ = it - properties_.begin();
-    property_names_.insert( pair<string, int>(_name, _hProp.idx_) );
+    property_names_.insert( std::pair<std::string, int>(_name, _hProp.idx_) );
     *it = new PropertyT<T>(size_);
   }
   return true;
@@ -106,7 +106,7 @@ template<typename T>
 bool Properties::get_property(PropertyHandleT<T> &_hProp, std::string _name)
 {
   // find the name
-  map<string, int>::iterator f = property_names_.find(_name);
+  std::map<std::string, int>::iterator f = property_names_.find(_name);
   if(f == property_names_.end())
     return false;
 
@@ -139,7 +139,7 @@ bool Properties::remove_property(PropertyHandleT<T> &_hProp)
   properties_[_hProp.idx_] = 0;
 
   // find the names entry and delete it
-  for(map<string, int>::iterator it = property_names_.begin(); it != property_names_.end(); ++it)
+  for(std::map<std::string, int>::iterator it = property_names_.begin(); it != property_names_.end(); ++it)
   {
     if(it->second == _hProp.idx_)
     {

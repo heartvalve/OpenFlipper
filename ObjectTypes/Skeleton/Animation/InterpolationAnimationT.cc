@@ -45,11 +45,8 @@
 #include "AnimationT.hh"
 
 #include <vector>
-#include <assert.h>
-#include <math.h>
-
-using namespace std;
-
+#include <cassert>
+#include <cmath>
 //-----------------------------------------------------------------------------------------------------
 
 /**

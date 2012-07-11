@@ -43,9 +43,7 @@
 #define FRAMEANIMATIONT_C
 
 #include <vector>
-#include <assert.h>
-
-using namespace std;
+#include <cassert>
 
 //-----------------------------------------------------------------------------
 
@@ -112,7 +110,7 @@ FrameAnimationT<PointT>::FrameAnimationT(const FrameAnimationT<PointT> &_other) 
   AnimationT<PointT>(),
   skeleton_(_other.skeleton_)
 {
-  for(typename vector<Pose*>::const_iterator it = _other.poses_.begin(); it != _other.poses_.end(); ++it)
+  for(typename std::vector<Pose*>::const_iterator it = _other.poses_.begin(); it != _other.poses_.end(); ++it)
     poses_.push_back(new Pose(**it));
 }
 
@@ -124,7 +122,7 @@ FrameAnimationT<PointT>::FrameAnimationT(const FrameAnimationT<PointT> &_other) 
 template<class PointT>
 FrameAnimationT<PointT>::~FrameAnimationT()
 {
-  for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
+  for(typename std::vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
     delete *it;
   poses_.clear();
 }
@@ -195,7 +193,7 @@ void FrameAnimationT<PointT>::setFrameCount(unsigned int _frames)
 template<class PointT>
 void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 {
-  for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
+  for(typename std::vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
     (*it)->insertJointAt(_index);
 }
 
@@ -211,7 +209,7 @@ void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 template<class PointT>
 void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
 {
-  for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
+  for(typename std::vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
     (*it)->removeJointAt(_index);
 }
 
@@ -227,7 +225,7 @@ void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
 template<class PointT>
 void FrameAnimationT<PointT>::updateFromGlobal(unsigned int _index)
 {
-  for(typename vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
+  for(typename std::vector<Pose*>::iterator it = poses_.begin(); it != poses_.end(); ++it)
     (*it)->updateFromGlobal(_index);
 }
 
