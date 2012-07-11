@@ -127,7 +127,7 @@ PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose*
         } else {
         
           if (_iFrame == 0) {
-            interpolatedPoses_.insert( make_pair(0, new Pose(*_reference)) );
+            interpolatedPoses_.insert( std::make_pair(0, new Pose(*_reference)) );
 //             std::cerr << "Insert reference to posecache. &_reference: " << _reference << ", &cacheref: " << getPose(_iFrame, _reference) << std::endl;
             return pose(_iFrame, _reference);
           } else {
