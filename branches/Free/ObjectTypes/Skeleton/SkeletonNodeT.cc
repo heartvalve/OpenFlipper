@@ -59,7 +59,6 @@
 #include <deque>
 
 //== NAMESPACES ===============================================================
-using namespace std;
 
 namespace ACG {
 namespace SceneGraph {
