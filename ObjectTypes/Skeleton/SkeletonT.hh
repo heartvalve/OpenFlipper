@@ -102,7 +102,7 @@ public:
     // Holds the current position in the tree
     Joint *pCurrent_;
     // The stack of joints, marking a path back to the root joint
-    stack<Joint*> stJoints_;
+    std::stack<Joint*> stJoints_;
   };
 
   /**
