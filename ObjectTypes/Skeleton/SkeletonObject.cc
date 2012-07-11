@@ -317,8 +317,8 @@ void SkeletonObject::updateIndices(const AnimationHandle &_hAni)
   PoseT<OpenMesh::Vec3d> *pose = skeleton_->pose(_hAni);
   for(unsigned int i = 0; i < skeleton_->jointCount(); ++i)
   {
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "TextNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -336,8 +336,8 @@ void SkeletonObject::updateIndices(const AnimationHandle &_hAni)
   unsigned int i = skeleton_->jointCount();
   bool bAdditionalNodes = true;
   do{
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "TextNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -381,8 +381,8 @@ void SkeletonObject::showIndices(bool _bVisible)
   unsigned int i = skeleton_->jointCount();
   bool bAdditionalNodes = true;
   do{
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "TextNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -401,8 +401,8 @@ void SkeletonObject::showIndices(bool _bVisible)
   PoseT<OpenMesh::Vec3d>* ref = skeleton_->referencePose();
   for(unsigned int i = 0; i < skeleton_->jointCount(); ++i)
   {
-    stringstream buf;
-    string nameJoint, nameTextNode, nameTransformNode, nameSubMatNode;
+    std::stringstream buf;
+    std::string nameJoint, nameTextNode, nameTransformNode, nameSubMatNode;
 
     buf.str("");
     buf << i;
@@ -509,8 +509,8 @@ void SkeletonObject::updateMotionPath(const AnimationHandle &_hAni)
   for(unsigned int i = 0; i < skeleton_->jointCount(); ++i)
   {
 
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "LineNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -527,8 +527,8 @@ void SkeletonObject::updateMotionPath(const AnimationHandle &_hAni)
   unsigned int i = skeleton_->jointCount();
   bool bAdditionalNodes = true;
   do{
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "LineNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -572,8 +572,8 @@ void SkeletonObject::showMotionPath(bool _visible)
   unsigned int i = skeleton_->jointCount();
   bool bAdditionalNodes = true;
   do{
-    stringstream buf;
-    string nameTransformNode;
+    std::stringstream buf;
+    std::string nameTransformNode;
 
     buf << "LineNode " << i << " Transform";
     nameTransformNode = buf.str();
@@ -594,8 +594,8 @@ void SkeletonObject::showMotionPath(bool _visible)
 
   for(unsigned int i = 0; i < skeleton_->jointCount(); ++i)
   {
-    stringstream buf;
-    string nameJoint, nameLineNode, nameTransformNode, nameSubMatNode;
+    std::stringstream buf;
+    std::string nameJoint, nameLineNode, nameTransformNode, nameSubMatNode;
 
     buf.str("");
     buf << i;

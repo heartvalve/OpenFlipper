@@ -79,16 +79,16 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 
   unsigned int nJoints = 0;
 
-  ifstream in(_filename.toStdString().c_str(), ofstream::in);
+  std::ifstream in(_filename.toStdString().c_str(), std::ofstream::in);
 
   // read number of joints
   in >> nJoints;
 
   Pose *ref = _pSkeleton->referencePose();
   // remember parent joints
-  map<unsigned int, Joint*> parents;
+  std::map<unsigned int, Joint*> parents;
 
-  map<unsigned int, unsigned int> jointMap;
+  std::map<unsigned int, unsigned int> jointMap;
 
   for(unsigned int i = 0; i < nJoints; ++i)
   {
@@ -157,7 +157,7 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 		  in >> frameCount;
       } else {
 
-		  istringstream tmp(identifier);
+		  std::istringstream tmp(identifier);
 		  tmp >> frameCount;
 
       }
@@ -234,7 +234,7 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
   typedef  PoseT<typename Skeleton::Point>  Pose;
   typedef ACG::Matrix4x4T<typename Skeleton::Scalar> Matrix;
 
-  ofstream out(_filename.toStdString().c_str(), ofstream::out);
+  std::ofstream out(_filename.toStdString().c_str(), std::ofstream::out);
 
   // write the number of joints
   out << _pSkeleton->jointCount() << endl;
