@@ -43,6 +43,8 @@
 #ifndef BASESKIN_HH
 #define BASESKIN_HH
 
+#include <map>
+
 #include "OpenFlipper/common/perObjectData.hh"
 
 #include <ObjectTypes/Skeleton/SkeletonT.hh>
@@ -87,7 +89,7 @@ public:
    * a vertex. Therefore they are stored in a map using the joint identifier as key. The weights for one
    * vertex are supposed to sum to one.
    */
-    typedef map<unsigned int, double> SkinWeights;
+    typedef std::map<unsigned int, double> SkinWeights;
   //@}
   
   /**

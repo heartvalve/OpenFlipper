@@ -1765,7 +1765,7 @@ void PropertyVisPlugin::getPropertyValue( MeshT* _mesh , int _id, unsigned int _
           BaseSkin::SkinWeights value = _mesh->property(prop, typename MeshT::VertexHandle(closestVertex));
 
           QString text = "";
-          for (map<unsigned int, double>::iterator it = value.begin(); it != value.end(); ++it) {
+          for (std::map<unsigned int, double>::iterator it = value.begin(); it != value.end(); ++it) {
             text += "(";
             text += QString::number((*it).first);
             text += ",";

@@ -384,7 +384,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
     if ( (waitingFor == CHANNEL_DATA) ){
       
       // a vector to store all the data for this frame
-      vector<double> data(dataOffset,0.0);
+      std::vector<double> data(dataOffset,0.0);
 
       Skeleton::Pose* pose = 0;
       
@@ -461,7 +461,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
     }
 
     std::cerr << "Error: No match for keyword '" << keyWrd << "' ";
-    std::cerr << "waiting for : " << waitingFor.to_string<char,char_traits<char>,allocator<char> >() << std::endl;
+    std::cerr << "waiting for : " << waitingFor.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
   }
   
 
