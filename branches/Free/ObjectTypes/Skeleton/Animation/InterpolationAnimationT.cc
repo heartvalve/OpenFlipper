@@ -249,7 +249,7 @@ void InterpolationAnimationT<PointT>::addInterpolator(InterpolationT<double> *_i
   
   precalculations_.insert( std::pair< Interpolator*, std::vector < TargetType > >(_interpolator, valueVector) );
   
-  frames_ = max<long unsigned int>(frames_, i+1);
+  frames_ = std::max<long unsigned int>(frames_, i+1);
 }
 
 //-----------------------------------------------------------------------------------------------------
