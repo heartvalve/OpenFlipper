@@ -157,6 +157,9 @@ Q_INTERFACES(SelectionInterface)
         void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
         void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                         SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+        void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                                        SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
+                                        DataType _objectTypeRestriction);
         
         void slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type = 0u);
         
@@ -258,7 +261,7 @@ Q_INTERFACES(SelectionInterface)
         /// Use this method to show/hide standard selection actions (lasso, floodfill, sphere, etc.)
         void showSelectionMode(QString _mode, QIcon _icon, QString _desc,
                                QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes,
-                               QString& _customIdentifier, bool _custom = false);
+                               QString& _customIdentifier, bool _custom = false, DataType _objectTypeRestriction = DATA_ALL);
          
         /// Create new type frame for tabs widget
         SelectionTypeFrameWidget* createNewTypeFrame(SelectionEnvironment& _env);        
@@ -342,6 +345,9 @@ Q_INTERFACES(SelectionInterface)
         std::vector<ACG::Vec3d> linePoints_;
 
         QIcon* toolIcon_;
+
+        // Keep track of all data types in the scene
+        DataType availableObjectTypes_;
 };
 
 #endif // SELECTIONBASEPLUGIN_HH

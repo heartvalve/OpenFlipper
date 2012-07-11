@@ -258,6 +258,9 @@ signals:
    /// SelectionInterface: This signal is emitted when a custom selection mode is added
    void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                               SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
+                               DataType _objectTypeRestriction);
    
    /// SelectionInterface: This signal is used to add non-interactive operations for a specific primitive type
    void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type);
@@ -501,6 +504,9 @@ signals:
       /// SelectionInterface: Add new selection mode for specified type
       void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
+                                      DataType _objectTypeRestriction);
       
       /// SelectionInterface: Called in order to add non-interactive operations for a specific primitive type
       void slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type);

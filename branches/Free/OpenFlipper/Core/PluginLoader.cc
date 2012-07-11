@@ -1251,9 +1251,17 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
               this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
 
+    if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)") )
+      connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),
+              this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),Qt::DirectConnection);
+
     if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)" ) )
       connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
               plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)" ) )
+      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),
+              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),Qt::DirectConnection);
               
     if ( checkSignal(plugin,"addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)") )
       connect(plugin , SIGNAL(addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),
