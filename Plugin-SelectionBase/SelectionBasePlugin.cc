@@ -100,7 +100,8 @@ sphere_mat_node_(0),
 sphere_node_(0),
 line_node_(0),
 lassoSelection_(false),
-toolIcon_(0)
+toolIcon_(0),
+availableObjectTypes_(0u)
 {
     
     // Reset active pick mode
@@ -460,7 +461,7 @@ void SelectionBasePlugin::slotRegisterType(QString _handleName, DataType _type) 
 }
 
 void SelectionBasePlugin::updatePickModeToolBar() {
-    
+
     // Add newly added primitive and tool buttons
     QList<QAction*> primitivesList = primitivesBarGroup_->actions();
     
@@ -492,10 +493,10 @@ void SelectionBasePlugin::updatePickModeToolBar() {
     
     // Only activate those tools, that are available for the current
     // active primitive type
-    
+
     for(std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.begin();
         it != selectionEnvironments_.end(); ++it) {
-            
+
         // Default selection modes
         toggleSelectionAction_->setEnabled(toggleSelectionAction_->isAssociated(currentPrimitiveType_, true));
         lassoSelectionAction_->setEnabled(lassoSelectionAction_->isAssociated(currentPrimitiveType_, true));
@@ -509,10 +510,10 @@ void SelectionBasePlugin::updatePickModeToolBar() {
         // Custom selection modes
         for(std::set<HandleAction*>::iterator cit = (*it).second.customSelectionModes.begin();
             cit != (*it).second.customSelectionModes.end(); ++cit) {
-            (*cit)->setEnabled((*cit)->isAssociated(currentPrimitiveType_, true));
-        }
 
-        break;
+            (*cit)->setEnabled((availableObjectTypes_ & (*cit)->objectTypeRestriction()) &&
+                               (*cit)->isAssociated(currentPrimitiveType_, true));
+        }
     }
 }
 
@@ -926,7 +927,7 @@ void SelectionBasePlugin::slotPickModeChanged (const std::string& _pickmode) {
 
 void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString _desc, QString _handleName,
                                             bool _show, SelectionInterface::PrimitiveType _associatedTypes,
-                                            QString& _customIdentifier, bool _custom) {
+                                            QString& _customIdentifier, bool _custom, DataType _objectTypeRestriction) {
     
     // Find selection environment that is associated to _handleName
     std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.find(_handleName);
@@ -1031,7 +1032,7 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
             _customIdentifier = getUniqueIdentifierName(QString(_handleName + "_" + _mode).replace(" ", "_"));
             
             // Create action
-            HandleAction* action = new HandleAction(_icon, _desc, selectionModesGroup_);
+            HandleAction* action = new HandleAction(_icon, _desc, selectionModesGroup_, _objectTypeRestriction);
             action->setCheckable(true);
             action->selectionEnvironmentHandle(_handleName);
             action->selectionModeHandle(_customIdentifier);
@@ -1071,6 +1072,16 @@ void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QStrin
                                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier) {
     
     showSelectionMode(_modeName, _icon, _description, _handleName, true, _associatedTypes, _customIdentifier, true);
+    updatePickModeToolBar();
+}
+
+//============================================================================================
+
+void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                                                     SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
+                                                     DataType _objectTypeRestriction) {
+
+    showSelectionMode(_modeName, _icon, _description, _handleName, true, _associatedTypes, _customIdentifier, true, _objectTypeRestriction);
     updatePickModeToolBar();
 }
 
@@ -1459,6 +1470,10 @@ void SelectionBasePlugin::addedEmptyObject (int _id) {
             
             if(found) break;
         }
+
+        // Keep track of all data types in the scene
+        availableObjectTypes_ |= obj->dataType();
+
     } else {
       BaseObject* bObject = 0;
       PluginFunctions::getObject(_id, bObject);
@@ -1519,6 +1534,9 @@ void SelectionBasePlugin::objectDeleted (int _id) {
             
             if(found) break;
         }
+
+        availableObjectTypes_ = (availableObjectTypes_ & ~obj->dataType().value());
+
     } else {
         emit log(LOGERR, "Could not retrieve object type!");
         return;

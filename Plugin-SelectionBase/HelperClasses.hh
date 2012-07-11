@@ -43,6 +43,8 @@
 #ifndef HELPERCLASSES_HH_INCLUDED
 #define HELPERCLASSES_HH_INCLUDED
 
+#include <OpenFlipper/common/DataTypes.hh>
+
 #include <QAction>
 #include <QPushButton>
 #include <QGridLayout>
@@ -51,20 +53,21 @@ class HandleAction : public QAction {
     
     public:
         /// Default constructor
-        HandleAction(QIcon _icon, QString _description, QObject* _parent = 0) :
+        HandleAction(QIcon _icon, QString _description, QObject* _parent = 0, DataType _objectTypeRestriction = DATA_ALL) :
             QAction(_icon, _description, _parent),
-            associatedTypes_(0u) {};
+            associatedTypes_(0u),
+            objectTypeRestriction_(_objectTypeRestriction) {}
        
         /// Default destructor
-        ~HandleAction() {};
+        ~HandleAction() {}
         
         /// Get/Set selection environment handle name
-        void selectionEnvironmentHandle(QString _handle) { selectionEnvHandle_ = _handle; };
-        QString selectionEnvironmentHandle() { return selectionEnvHandle_; };
+        void selectionEnvironmentHandle(QString _handle) { selectionEnvHandle_ = _handle; }
+        QString selectionEnvironmentHandle() { return selectionEnvHandle_; }
         
         /// Get/Set selection mode handle name
-        void selectionModeHandle(QString _handle) { selectionModeHandle_ = _handle; };
-        QString selectionModeHandle() { return selectionModeHandle_; };
+        void selectionModeHandle(QString _handle) { selectionModeHandle_ = _handle; }
+        QString selectionModeHandle() { return selectionModeHandle_; }
         
         /// Get/Set associated primitive types
         void addAssociatedType(unsigned int _associatedType) { associatedTypes_ |= _associatedType; }
@@ -77,11 +80,21 @@ class HandleAction : public QAction {
                 return ((associatedTypes_ & _type) != 0);
         }
         
+        void objectTypeRestriction(const DataType& _type) {
+            objectTypeRestriction_ = _type;
+        }
+
+        const DataType& objectTypeRestriction() const {
+            return objectTypeRestriction_;
+        }
+
     private:
         QString selectionEnvHandle_;
         QString selectionModeHandle_;
         
         unsigned int associatedTypes_;
+
+        DataType objectTypeRestriction_;
 };
 
 class PrimitiveAction : public QAction {

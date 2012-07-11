@@ -74,6 +74,12 @@ void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QS
     emit addCustomSelectionMode(_handleName, _modeName, _description, _icon, _associatedTypes, _customIdentifier);
 }
 
+void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
+                                      DataType _objectTypeRestriction) {
+    emit addCustomSelectionMode(_handleName, _modeName, _description, _icon, _associatedTypes, _customIdentifier, _objectTypeRestriction);
+}
+
 void Core::slotAddSelectionOperations(QString _handleName,QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type) {
     emit addSelectionOperations(_handleName, _operationsList, _category, _type);
 }
