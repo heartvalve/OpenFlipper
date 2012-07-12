@@ -237,7 +237,7 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
   std::ofstream out(_filename.toStdString().c_str(), std::ofstream::out);
 
   // write the number of joints
-  out << _pSkeleton->jointCount() << endl;
+  out << _pSkeleton->jointCount() << std::endl;
 
   Pose *ref = _pSkeleton->referencePose();
   // write all the joints
@@ -264,7 +264,7 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
     for(unsigned int j = 0; j < pJoint->size(); ++j)
       out << pJoint->child(j)->id() << " ";
 
-    out << endl;
+    out << std::endl;
   }
   
   // now store animations
@@ -307,10 +307,10 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
                         out << mat(y, 3) << " ";
                 }
 
-                out << endl;
+                out << std::endl;
             }
         } else {
-            out << "0" << endl;
+            out << "0" << std::endl;
         }
     }
 
