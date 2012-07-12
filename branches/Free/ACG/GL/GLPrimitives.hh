@@ -58,6 +58,7 @@
 #include <ACG/Config/ACGDefines.hh>
 #include <ACG/GL/GLState.hh>
 #include <ACG/Math/VectorT.hh>
+#include <ACG/GL/VertexDeclaration.hh>
 
 
 //== NAMESPACES ===============================================================
@@ -75,6 +76,9 @@ public:
   // bind vbo + gl draw call
   void draw();
 
+  // add to deferred draw call to renderer
+  void addToRenderer(class IRenderer* _renderer, struct RenderObject* _ro);
+
   // triangle count must be known before updateVBO
   virtual int getNumTriangles() = 0;
 
@@ -88,6 +92,8 @@ protected:
   void addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, const ACG::Vec2f* _tex);
 
   void bindVBO();
+
+  bool checkVBO();
 
   void unBindVBO();
 
@@ -103,6 +109,8 @@ private:
   float* vboData_;
   int curTriPtr_;
 
+  VertexDeclaration vertexDecl_;
+
   unsigned int vbo_;
 };
 
@@ -115,6 +123,8 @@ public:
   ~GLSphere();
 
   void draw(GLState& _state, float _radius, const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f));
+
+  void addToRenderer(class IRenderer* _renderer, const struct RenderObject* _base, float _radius, const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f));
 
   int getNumTriangles();
 
@@ -147,6 +157,12 @@ public:
       float _height,
       const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f),
       ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f));
+
+
+  void addToRenderer(class IRenderer* _renderer, const struct RenderObject* _base, 
+    float _height,
+    const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f),
+    ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f));
 
   int getNumTriangles();
 

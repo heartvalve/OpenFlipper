@@ -40,6 +40,10 @@
  *                                                                           *
 \*===========================================================================*/
 
+
+#ifndef ACG_VERTEXDECLARATION_HH
+#define ACG_VERTEXDECLARATION_HH
+
 #include <vector>
 #include <list>
 #include <ACG/Config/ACGDefines.hh>
@@ -270,3 +274,7 @@ private:
 //=============================================================================
 } // namespace ACG
 //=============================================================================
+
+
+
+#endif // ACG_VERTEXDECLARATION_HH defined

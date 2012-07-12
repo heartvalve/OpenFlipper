@@ -120,6 +120,9 @@ public:
 
   /// draw Coordsys
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
+
+  /// add renderobjects for shader pipeline renderer
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
   
   /// draw Coordsys for object picking
   void pick(GLState& _state, PickTarget _target);
@@ -142,6 +145,7 @@ public:
   private:
 
     void drawCoordsys(GLState&  _state);
+    void drawCoordsys(IRenderer* _renderer, RenderObject* _baseRO);
     void drawCoordsysPick(GLState&  _state);
     void clearPickArea(GLState&  _state, bool _draw, GLfloat _depth);
     void boundingCircle(std::vector<Vec2f> &_in, Vec2f &_center, float &_radius);
