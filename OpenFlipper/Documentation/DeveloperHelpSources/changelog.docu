@@ -1,9 +1,11 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14915 )</b>
+- <b>OpenFlipper 1.3 ( ? , 14979 )</b>
      - <b>ACG</b>
          - DrawModes
              - Implemented property based draw modes
+         - General
+             - Ongoing work for more advanced renderer interfaces
          - Geometry 
              - Improving BSP tree implementation
          - GL
@@ -34,6 +36,7 @@
              - Fix: Help browser tree view selection will be updated if a link to another document is clicked.
              - Fix: double loading home page at the beginning
              - Fixed warning due to connection to non existing slot.
+             - Fix: Build error with gcc-4.7 due to missing include in About.cc
          - IO
              - BaseObject now stores the filename of an object from which it was loaded
              - BaseObject now stores the path of an object from which it was loaded
@@ -48,10 +51,13 @@
              - Paste View: Integrate the toolbox size into the copied view
              - Default changed when removing objects (Defaults to yes now)
              - Improvement: When switching to orthogonal mode, the coordinate system now switches to ortho projection, too
+             - Fix: Snapshot function on windows did not capture the gl widget correctly (fixes #943)
          - BaseViewer
              - Get rid of the twenty region pick functions in the qtbaseviewer (Merged to one)
          - PluginFunctions
              - Fixed plugin function for isProjectionOrthographic which did not work for the active_viewer. (Thanks to Bengt Rosenberger for the report)
+         - Process management
+             - Enable process support without GUI
      - <b>ObjectTypes</b>
          - BSplineCurve
              - Fixed colors
@@ -60,6 +66,10 @@
              - Improved implementation and Documentation
          - PolyLine
              - New objecttype representing polygonal lines (with smoothing, dragging, mesh interaction and many more features)
+         - Skeleton 
+             - Removed the using namespace part to avoid collisions (corresponding plugins have been updated too)
+         - SplatCloud
+             - New property system to append properties to the cloud and its entities like in OM
      - <b>Plugins</b>
          - Color
              - Documentation
@@ -89,12 +99,16 @@
              - New plugin to measure the euclidean distance between objects in the 3D scene.
          - MeshObjectInfo
              - Support for point clouds represented by meshes
+         - MeshRepair
+             - Fix: Don't only detect error and crash but detect error and warn about it (without crashing)
          - Move
              - User Documentation
-         - Plugin-PropertyVis
+         - PropertyVis
              - Added color viz for vector properties
          - Scripting
              - Sort list of available functions
+         - Selection Base
+             - Allow selection plugins to restrict its selection metaphors to specified data types (or all if none is given).
          - SelectionMeshObject
              - Added scripting function to select vertices based on the value of one of their components
          - Subdivider
