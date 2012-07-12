@@ -71,46 +71,49 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
   info->minSteps       = _min;
   info->maxSteps       = _max;
   info->blocking       = _blocking;
+  info->blockingWidget = 0;
 
   // Add job to local job list
   currentJobs.push_back(info);
 
-  // Don't show process status in process manager
-  // if blocking is enabled
-  if(_blocking) {
-	  // Create blocking widget
-	  BlockingWidget* widget = new BlockingWidget(_jobId, _description,
-			  _min, _max);
+  if (OpenFlipper::Options::gui()) {
+    // Don't show process status in process manager
+    // if blocking is enabled
+    if(_blocking) {
+      // Create blocking widget
+      BlockingWidget* widget = new BlockingWidget(_jobId, _description,
+              _min, _max);
 
-	  // Connect cancel button to local slot for further treatment
-	  connect(widget, 	SIGNAL(cancelRequested(QString)),
-	  		  this,     SLOT(slotJobCancelRequested(QString)));
+      // Connect cancel button to local slot for further treatment
+      connect(widget,     SIGNAL(cancelRequested(QString)),
+              this,       SLOT(slotJobCancelRequested(QString)));
 
-	  info->blockingWidget = widget;
+      info->blockingWidget = widget;
 
-    int x = (coreWidget_->width()  / 2) - (widget->width()  / 2);
-    int y = (coreWidget_->height() / 2) - (widget->height() / 2);
+      int x = (coreWidget_->width()  / 2) - (widget->width()  / 2);
+      int y = (coreWidget_->height() / 2) - (widget->height() / 2);
 
-    widget->setGeometry( x, y, widget->width(), widget->height());
+      widget->setGeometry( x, y, widget->width(), widget->height());
 
-	  // Show blocking widget
-	  widget->show();
+      // Show blocking widget
+      widget->show();
 
-  } else {
-	  // Create process manager window if it has not been created before
-	  if(!processManager_) {
-		  processManager_ = new ProcessManagerWidget();
-      
-		  // Connect cancel buttons to local slot for further treatment
-		  connect(processManager_, SIGNAL(cancelJobRequested(QString)),
-				  this,            SLOT(slotJobCancelRequested(QString)));
-	  }
+    } else {
+      // Create process manager window if it has not been created before
+      if(!processManager_) {
+          processManager_ = new ProcessManagerWidget();
 
-	  // Add new item
-	  processManager_->addJob(_jobId, _description, _min, _max);
+          // Connect cancel buttons to local slot for further treatment
+          connect(processManager_, SIGNAL(cancelJobRequested(QString)),
+                  this,            SLOT(slotJobCancelRequested(QString)));
+      }
 
-	  // Show window
-	  processManager_->show();
+      // Add new item
+      processManager_->addJob(_jobId, _description, _min, _max);
+
+      // Show window
+      processManager_->show();
+    }
   }
 }
 
@@ -138,6 +141,8 @@ void Core::slotSetJobState(QString _jobId, int _value ) {
   if (  getJob(_jobId, id) ) {
     currentJobs[id]->currentStep = _value;
 
+    if (!OpenFlipper::Options::gui())
+        return;
     // Update gui
     if(!currentJobs[id]->blocking)
     	processManager_->updateStatus(_jobId, _value);
@@ -160,6 +165,8 @@ void Core::slotSetJobName(QString _jobId, QString _name ) {
     if (  getJob(_jobId, id) ) {
         currentJobs[id]->id = _name;
 
+        if (!OpenFlipper::Options::gui())
+            return;
         // Update gui
         if(!currentJobs[id]->blocking)
         	processManager_->setJobName(_jobId, _name);
@@ -181,6 +188,8 @@ void Core::slotSetJobDescription(QString _jobId, QString _text ) {
     if (  getJob(_jobId, id) ) {
         currentJobs[id]->description = _text;
 
+        if (!OpenFlipper::Options::gui())
+            return;
         // Update gui
         if(!currentJobs[id]->blocking)
         	processManager_->setJobDescription(_jobId, _text);
@@ -202,17 +211,19 @@ void Core::slotCancelJob(QString _jobId ) {
   
   if (  getJob(_jobId, id) ) {
 
-	// Update gui
-	if(!currentJobs[id]->blocking)
-		processManager_->removeJob(_jobId);
-	else {
-		BlockingWidget* w = 0;
-		w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
-		if(w != 0) {
-			w->hide();
-			delete w;
-		}
-	}
+    if (OpenFlipper::Options::gui()) {
+        // Update gui
+        if(!currentJobs[id]->blocking)
+            processManager_->removeJob(_jobId);
+        else {
+            BlockingWidget* w = 0;
+            w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+            if(w != 0) {
+                w->hide();
+                delete w;
+            }
+        }
+    }
 
 	currentJobs.removeAt(id);
   }
@@ -226,21 +237,23 @@ void Core::slotFinishJob(QString _jobId ) {
   
   if (  getJob(_jobId, id) ) {
 
-	// Update gui
-	if(!currentJobs[id]->blocking) {
-		processManager_->removeJob(_jobId);
-        
-        // Hide widget if there's no job left
-        if(processManager_->getNumJobs() == 0) processManager_->hide();
-        
-    } else {
-		BlockingWidget* w = 0;
-		w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
-		if(w != 0) {
-			w->hide();
-			delete w;
-		}
-	}
+    if (OpenFlipper::Options::gui()) {
+        // Update gui
+        if(!currentJobs[id]->blocking) {
+            processManager_->removeJob(_jobId);
+
+            // Hide widget if there's no job left
+            if(processManager_->getNumJobs() == 0) processManager_->hide();
+
+        } else {
+            BlockingWidget* w = 0;
+            w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+            if(w != 0) {
+                w->hide();
+                delete w;
+            }
+        }
+    }
 
     currentJobs.removeAt(id);
   }
