@@ -53,6 +53,7 @@
 
 #include "CoordsysNode.hh"
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/IRenderer.hh>
 
 #include <iostream>
 #include <math.h>
@@ -176,6 +177,55 @@ drawCoordsys( GLState&  _state) {
   cone_->draw(_state,arrowLength);
   _state.pop_modelview_matrix ();
 
+}
+
+void CoordsysNode::drawCoordsys(IRenderer* _renderer, RenderObject* _baseRO)
+{
+  // save model view matrix
+  GLMatrixf mModelView = _baseRO->modelview;
+
+
+  const double arrowLength  = 0.03;
+  const double bodyLength   = 0.06;
+  const double sphereRadius = 0.01;
+
+
+  // Origin
+  _baseRO->emissive = Vec3f(1.0f, 1.0f, 1.0f);
+  sphere_->addToRenderer(_renderer, _baseRO, sphereRadius);
+
+
+  // X-Axis
+  _baseRO->emissive = Vec3f(1.0f, 0.0f, 0.0f);
+  _baseRO->modelview = mModelView;
+  _baseRO->modelview.rotate (-90, 0, 1, 0);
+  _baseRO->modelview.translate ( 0, 0, -bodyLength );
+  cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
+  
+  _baseRO->modelview.translate ( 0, 0, -arrowLength );
+  cone_->addToRenderer(_renderer, _baseRO, arrowLength);
+
+
+  // Y-Axis
+  _baseRO->emissive = Vec3f(0.0f, 1.0f, 0.0f);
+  _baseRO->modelview = mModelView;
+  _baseRO->modelview.rotate (90, 1, 0, 0);
+  _baseRO->modelview.translate ( 0, 0, -bodyLength );
+  cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
+
+  _baseRO->modelview.translate ( 0, 0, -arrowLength );
+  cone_->addToRenderer(_renderer, _baseRO, arrowLength);
+
+
+  // Z-Axis
+  _baseRO->emissive = Vec3f(0.0f, 0.0f, 1.0f);
+  _baseRO->modelview = mModelView;
+  _baseRO->modelview.rotate (180, 0, 1, 0);
+  _baseRO->modelview.translate ( 0, 0, -bodyLength );
+  cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
+
+  _baseRO->modelview.translate ( 0, 0, -arrowLength );
+  cone_->addToRenderer(_renderer, _baseRO, arrowLength);
 }
 
 //============================================================================
@@ -369,6 +419,150 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
   // Reload old configuration
   _state.pop_modelview_matrix();
 }
+
+
+
+
+
+
+void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
+{
+  // Init state - changes when mode_ != POSITION
+  Vec3d pos3D(0.0,0.0,0.0);
+
+  _state.push_modelview_matrix();
+
+
+  // init base renderobject
+  RenderObject ro;
+  memset(&ro, 0, sizeof(RenderObject));
+  ro.initFromState(&_state);
+
+
+  ro.depthTest = true;
+  ro.depthWrite = true;
+
+
+  if ( mode_ == SCREENPOS ) {
+
+    int left, bottom, width, height;
+    double aspect = _state.aspect();
+
+    _state.get_viewport(left, bottom, width, height);
+
+    // Projection reset
+    _state.push_projection_matrix();
+    _state.reset_projection();
+
+    if (projectionMode_ == PERSPECTIVE_PROJECTION)
+      _state.perspective(45.0, aspect, 0.8, 20.0);
+    else
+      _state.ortho(-0.65*aspect, 0.65*aspect, -0.65, 0.65, 0.8, 20.0);
+
+    _state.push_modelview_matrix();
+    _state.reset_modelview();
+
+    float rel_size = 50.0;
+    float projdist = sqrt ( (width*height) / rel_size );
+
+    float posx = left + width - projdist ;
+    float posy = bottom + height - projdist ;
+
+    // get our desired coordsys position in scene coordinates
+    pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
+    _state.pop_modelview_matrix();
+
+    // reset scene translation
+    // we want only the scene rotation to rotate the coordsys
+    GLMatrixd modelview = _state.modelview();
+
+    modelview(0,3) = 0.0;
+    modelview(1,3) = 0.0;
+    modelview(2,3) = 0.0;
+
+    _state.set_modelview (modelview);
+    _state.translate (pos3D[0], pos3D[1], pos3D[2], MULT_FROM_LEFT);
+
+
+    // grab new transforms
+    ro.proj = _state.projection();
+    ro.modelview = _state.modelview();
+
+    // colored by emission only
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+    ro.shaderDesc.textured = false;
+    ro.shaderDesc.vertexColors = false;
+
+
+
+    // clear the depth buffer behind the coordsys
+    ro.priority = -4;
+    ro.depthRange = Vec2f(1.0f, 1.0f);
+    ro.depthFunc = GL_ALWAYS;
+
+    drawCoordsys(_renderer, &ro);
+
+
+    // regrab of transforms needed, drawCoordsys overwrites this
+    ro.modelview = _state.modelview();
+
+    ro.priority = -3;
+    ro.depthRange = Vec2f(0.0f, 1.0f);
+    ro.depthFunc = GL_LESS;
+
+    // draw coordsys
+    drawCoordsys(_renderer, &ro);
+
+    // set depth buffer to 0 so that nothing can paint over cordsys
+    ro.modelview = _state.modelview();
+    ro.priority = -2;
+    ro.depthRange = Vec2f(0.0, 0.0);
+    ro.depthFunc = GL_ALWAYS;
+    ro.glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_renderer, &ro);
+
+    // Projection reload
+    _state.pop_projection_matrix();
+
+  } else if (mode_ == POSITION) { /* mode_ == POSITION */
+
+    GLMatrixd modelview = _state.modelview();
+
+    modelview(0,3) = 0.0;
+    modelview(1,3) = 0.0;
+    modelview(2,3) = 0.0;
+
+    _state.set_modelview (modelview);
+
+    // clear depth buffer in coordsys region
+    ACG::GLState::depthRange (1.0, 1.0);
+    ACG::GLState::depthFunc (GL_ALWAYS);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_renderer, &ro);
+
+    // draw coordsys in normal mode
+    ACG::GLState::depthRange (0.0, 1.0);
+    ACG::GLState::depthFunc (GL_LESS);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_renderer, &ro);
+
+    // set depth buffer to 0 so that nothing can paint over cordsys
+    ACG::GLState::depthRange (0.0, 0.0);
+    ACG::GLState::depthFunc (GL_ALWAYS);
+    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_renderer, &ro);
+  }
+
+
+  _state.pop_modelview_matrix();
+}
+
 
 
 void

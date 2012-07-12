@@ -41,6 +41,8 @@
  \*===========================================================================*/
 
 #include "GLPrimitives.hh"
+#include <ACG/GL/IRenderer.hh>
+
 
 namespace ACG {
 
@@ -57,6 +59,9 @@ GLPrimitive::GLPrimitive() :
         vbo_(0)
 {
 
+  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+  vertexDecl_.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
 }
 
 //------------------------------------------------------------------------
@@ -104,9 +109,33 @@ void GLPrimitive::addTriangleToVBO(const ACG::Vec3f* _p, const ACG::Vec3f* _n, c
 
 void GLPrimitive::bindVBO()
 {
+  if (checkVBO())
+  {
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+
+    glVertexPointer(3, GL_FLOAT, 32, 0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glNormalPointer(GL_FLOAT, 32, (GLvoid*) 12);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glClientActiveTexture(GL_TEXTURE0);
+    glTexCoordPointer(2, GL_FLOAT, 32, (GLvoid*) 24);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  }
+}
+
+//------------------------------------------------------------------------
+
+bool GLPrimitive::checkVBO()
+{
+  // create vbo if not done yet
+  // update vbo data and upload to gpu if needed
+  // return false iff vbo empty
+
   if (!vbo_) {
     if (!vboData_ || !numTris_)
-      return;
+      return false;
 
     // create vbo
     glGenBuffersARB(1, &vbo_);
@@ -120,19 +149,11 @@ void GLPrimitive::bindVBO()
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, numTris_ * 3 * 8 * 4, vboData_, GL_STATIC_DRAW_ARB);
     vboDataInvalid_ = false;
-  } else
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  }
 
-  glVertexPointer(3, GL_FLOAT, 32, 0);
-  glEnableClientState(GL_VERTEX_ARRAY);
-
-  glNormalPointer(GL_FLOAT, 32, (GLvoid*) 12);
-  glEnableClientState(GL_NORMAL_ARRAY);
-
-  glClientActiveTexture(GL_TEXTURE0);
-  glTexCoordPointer(2, GL_FLOAT, 32, (GLvoid*) 24);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  return true;
 }
+
 //------------------------------------------------------------------------
 
 void GLPrimitive::unBindVBO()
@@ -152,6 +173,21 @@ void GLPrimitive::draw()
   glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
 
   unBindVBO();
+}
+
+//------------------------------------------------------------------------
+
+void GLPrimitive::addToRenderer( class IRenderer* _renderer, RenderObject* _ro )
+{
+  if (checkVBO())
+  {
+    _ro->vertexBuffer = vbo_;
+    _ro->vertexDecl = &vertexDecl_;
+
+    _ro->glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
+
+    _renderer->addRenderObject(_ro);
+  }
 }
 
 //------------------------------------------------------------------------
@@ -200,6 +236,19 @@ void GLSphere::draw(GLState& _state, float _radius, const ACG::Vec3f& _center)
 
   _state.pop_modelview_matrix();
 }
+
+//------------------------------------------------------------------------
+
+void GLSphere::addToRenderer( IRenderer* _renderer, const RenderObject* _base, float _radius, const ACG::Vec3f& _center /*= ACG::Vec3f(0.0f, 0.0f, 0.0f)*/ )
+{
+  RenderObject ro = *_base;
+
+  ro.modelview.translate(_center);
+  ro.modelview.scale(_radius, _radius, _radius);
+
+  GLPrimitive::addToRenderer(_renderer, &ro);
+}
+
 
 //------------------------------------------------------------------------
 
@@ -374,6 +423,53 @@ void GLCone::draw(GLState& _state, float _height, const ACG::Vec3f& _center, ACG
   GLPrimitive::draw();
 
   _state.pop_modelview_matrix();
+}
+
+//------------------------------------------------------------------------
+
+
+void GLCone::addToRenderer(IRenderer* _renderer,
+                           const RenderObject* _base,
+                           float _height,
+                           const ACG::Vec3f& _center, 
+                           ACG::Vec3f _upDir)
+{
+  RenderObject ro = *_base;
+
+  // translate
+  ro.modelview.translate(ACG::Vec3f(_center));
+
+  _upDir.normalize();
+
+  // compute rotation matrix mAlign
+  //  such that vBindDir rotates to _upDir
+  ACG::GLMatrixd mAlign;
+  mAlign.identity();
+
+  ACG::Vec3f vBindDir(0.0f, 0.0f, 1.0f);
+
+  ACG::Vec3f vRotAxis = OpenMesh::cross(_upDir, vBindDir);
+  vRotAxis.normalize();
+
+  ACG::Vec3f vUp = OpenMesh::cross(_upDir, vRotAxis);
+
+  // rotate
+  for (int i = 0; i < 3; ++i) {
+    mAlign(i, 0) = vRotAxis[i];
+    mAlign(i, 1) = vUp[i];
+    mAlign(i, 2) = _upDir[i];
+  }
+
+  ACG::Vec3f vDelta = vBindDir - _upDir;
+  if (fabsf(OpenMesh::dot(vDelta, vDelta) < 1e-3f))
+    mAlign.identity();
+
+  // scale
+  mAlign.scale(1.0, 1.0, _height);
+
+  ro.modelview *= mAlign;
+
+  GLPrimitive::addToRenderer(_renderer, &ro);
 }
 
 //------------------------------------------------------------------------

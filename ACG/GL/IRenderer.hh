@@ -199,6 +199,8 @@ struct ACGDLLEXPORT RenderObject
   GLuint texture;
 
 
+  /// used internally for renderer debugging
+  int debugID;
 
 
 
