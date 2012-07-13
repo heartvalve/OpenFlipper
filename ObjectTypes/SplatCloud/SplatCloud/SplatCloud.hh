@@ -354,42 +354,18 @@ public:
    * 
    * \note Be careful, this method is *not* in O(1).
    * 
-   * @param[in]  _handle   A handle of the desired property.
-   *                       Do *not* use handle-strings inbetween '<' and '>'. These are reserved for predefined properties.
-   * @param[out] _property A pointer to the new property.
-   *                       If the property is already present, the pointer is set to the old property and no new property is created or added.
-   *                       Otherwise the pointer is set to the newly created property.
-   *                       If the creation fails, the pointer is set to 0 and no new property is added.
-   * @return For convenience the validity of _property is returned (i.e. _property != 0).
-   */
-  ///@{
-  template <typename T> inline bool requestSplatProperty( const PropertyHandleT<T> &_handle ) { SplatPropertyT<T> *temp; return requestSplatProperty( _handle, temp ); }
-  template <typename T> inline bool requestCloudProperty( const PropertyHandleT<T> &_handle ) { CloudPropertyT<T> *temp; return requestCloudProperty( _handle, temp ); }
-  template <typename T>        bool requestSplatProperty( const PropertyHandleT<T> &_handle, SplatPropertyT<T> *(&_property) ); // no separate methods for const pointers
-  template <typename T>        bool requestCloudProperty( const PropertyHandleT<T> &_handle, CloudPropertyT<T> *(&_property) ); //   because methods are not const anyway
-  ///@}
-
-  ///@}
-
-  //----------------
-
-  /** @name Request and set splat-properties. */
-  ///@{
-
-  /** \brief Request and set a cloud-property.
-   * 
-   * This is equivalent to the single parameter version of the requestCloudProperty() method but sets the property's data for convenience.
-   * Notice that the data is set (overwritten) either if the property is already present or not.
-   * 
-   * \note Be careful, this method is *not* in O(1).
-   * 
    * @param[in] _handle A handle of the desired property.
    *                    Do *not* use handle-strings inbetween '<' and '>'. These are reserved for predefined properties.
-   * @param[in] _data   The new data value.
-   * @return For convenience the validity of _property is returned (i.e. _property != 0).
+   * @return If the property is already present, a pointer to the old property is returned and no new property is created or added.
+   *         Otherwise a pointer to the newly created property is returned.
+   *         If the creation fails, 0 is returned and no new property is added.
    */
-  template <typename T> inline bool requestCloudProperty( const PropertyHandleT<T> &_handle, const T &_data )
-    { CloudPropertyT<T> *prop; if( requestCloudProperty( _handle, prop ) ) { prop->data() = _data; return true; } return false; }
+  ///@{
+  template <typename T>        SplatPropertyT<T> *requestSplatProperty( const PropertyHandleT<T> &_handle );
+  template <typename T>        CloudPropertyT<T> *requestCloudProperty( const PropertyHandleT<T> &_handle );
+  template <typename T> inline SplatPropertyT<T> *requestSplatProperty( const BasePropertyHandle &_handle ) { return requestSplatProperty( PropertyHandleT<T>( _handle ) ); }
+  template <typename T> inline CloudPropertyT<T> *requestCloudProperty( const BasePropertyHandle &_handle ) { return requestCloudProperty( PropertyHandleT<T>( _handle ) ); }
+  ///@}
 
   ///@}
 
@@ -404,18 +380,16 @@ public:
    * 
    * \note Be careful, this method is *not* in O(1).
    * 
-   * @param[in] _handle    A handle of the property to remove.
-   *                       Do *not* use handle-strings inbetween '<' and '>'. These are reserved for predefined properties.
-   * @param[out] _property A pointer to the old property.
-   *                       If the property is present and will *not* be removed, the pointer is set to the old property.
-   *                       Otherwise the pointer is set to 0.
-   * @return For convenience the validity of _property is returned (i.e. _property != 0).
+   * @param[in] _handle A handle of the property to remove.
+   *                    Do *not* use handle-strings inbetween '<' and '>'. These are reserved for predefined properties.
+   * @return If the property is present and will *not* be removed, a pointer to the old property is returned.
+   *         Otherwise 0 is returned.
    */
   ///@{
-  template <typename T> inline bool releaseSplatProperty( const PropertyHandleT<T> &_handle ) { SplatPropertyT<T> *temp; return releaseSplatProperty( _handle, temp ); }
-  template <typename T> inline bool releaseCloudProperty( const PropertyHandleT<T> &_handle ) { CloudPropertyT<T> *temp; return releaseCloudProperty( _handle, temp ); }
-  template <typename T> bool        releaseSplatProperty( const PropertyHandleT<T> &_handle, SplatPropertyT<T> *(&_property) );
-  template <typename T> bool        releaseCloudProperty( const PropertyHandleT<T> &_handle, CloudPropertyT<T> *(&_property) );
+  template <typename T>        SplatPropertyT<T> *releaseSplatProperty( const PropertyHandleT<T> &_handle );
+  template <typename T>        CloudPropertyT<T> *releaseCloudProperty( const PropertyHandleT<T> &_handle );
+  template <typename T> inline SplatPropertyT<T> *releaseSplatProperty( const BasePropertyHandle &_handle ) { return releaseSplatProperty( PropertyHandleT<T>( _handle ) ); }
+  template <typename T> inline CloudPropertyT<T> *releaseCloudProperty( const BasePropertyHandle &_handle ) { return releaseCloudProperty( PropertyHandleT<T>( _handle ) ); }
   ///@}
 
   ///@}
@@ -428,20 +402,20 @@ public:
   /** \brief Get a pointer to a property.
    * 
    * \note Be careful, this method is *not* in O(1).
-   *       This is the reason why there is no method returning a pointer directly and no hasSplatProperty() or hasCloudProperty() method.
-   *       If you want to check for existence, use the dual parameter version of the getSplatProperty() or getCloudProperty() method once
-   *       and then check for _property != 0 multiple times if needed.
    * 
-   * @param[in]  _handle   A handle of the desired property.
-   * @param[out] _property A pointer to the property.
-   *                       If the property is present, the pointer is set to the property.
-   *                       Otherwise the pointer is set to 0.
+   * @param[in] _handle A handle of the desired property.
+   * return If the property is present, a pointer to the property is returned.
+   *        Otherwise 0 is returned.
    */
   ///@{
-  template <typename T> void getSplatProperty( const PropertyHandleT<T> &_handle,       SplatPropertyT<T> *(&_property) );
-  template <typename T> void getSplatProperty( const PropertyHandleT<T> &_handle, const SplatPropertyT<T> *(&_property) ) const;
-  template <typename T> void getCloudProperty( const PropertyHandleT<T> &_handle,       CloudPropertyT<T> *(&_property) );
-  template <typename T> void getCloudProperty( const PropertyHandleT<T> &_handle, const CloudPropertyT<T> *(&_property) ) const;
+  template <typename T>              SplatPropertyT<T> *getSplatProperty( const PropertyHandleT<T> &_handle );
+  template <typename T>        const SplatPropertyT<T> *getSplatProperty( const PropertyHandleT<T> &_handle ) const;
+  template <typename T>              CloudPropertyT<T> *getCloudProperty( const PropertyHandleT<T> &_handle );
+  template <typename T>        const CloudPropertyT<T> *getCloudProperty( const PropertyHandleT<T> &_handle ) const;
+  template <typename T> inline       SplatPropertyT<T> *getSplatProperty( const BasePropertyHandle &_handle )       { return getSplatProperty( PropertyHandleT<T>( _handle ) ); }
+  template <typename T> inline const SplatPropertyT<T> *getSplatProperty( const BasePropertyHandle &_handle ) const { return getSplatProperty( PropertyHandleT<T>( _handle ) ); }
+  template <typename T> inline       CloudPropertyT<T> *getCloudProperty( const BasePropertyHandle &_handle )       { return getCloudProperty( PropertyHandleT<T>( _handle ) ); }
+  template <typename T> inline const CloudPropertyT<T> *getCloudProperty( const BasePropertyHandle &_handle ) const { return getCloudProperty( PropertyHandleT<T>( _handle ) ); }
   ///@}
 
   ///@}
@@ -451,19 +425,25 @@ public:
   /** @name Get property maps. */
   ///@{
 
-  /** \brief Get all splat- or cloud-properties.
+  /** \brief Get all splat-properties.
    * 
    * \note Be careful, std::map's count() method will *not* check for the appropiate type of a property.
-   *       There is no hasSplatProperty() or hasCloudProperty() method because this would *not* be in O(1).
-   *       Instead call the dual parameter version of the getSplatProperty() or getCloudProperty() method once
-   *       and then check for _property != 0 multiple times if needed.
+   *       Instead use something like SplatPropertyT<MyPropType> *myProp = mySplatCloud.getSplatProperty<MyPropType>( "MyPropName" ); once
+   *       and then check for myProp != 0 multiple times if needed.
    * 
    * @return Returns the property map as read-only reference.
    */
-  ///@{
   inline const SplatPropertyMap &splatProperties() const { return splatProperties_; }
+
+  /** \brief Get all cloud-properties.
+   * 
+   * \note Be careful, std::map's count() method will *not* check for the appropiate type of a property.
+   *       Instead use something like CloudPropertyT<MyPropType> *myProp = mySplatCloud.getCloudProperty<MyPropType>( "MyPropName" ); once
+   *       and then check for myProp != 0 multiple times if needed.
+   * 
+   * @return Returns the property map as read-only reference.
+   */
   inline const CloudPropertyMap &cloudProperties() const { return cloudProperties_; }
-  ///@}
 
   ///@}
 
@@ -563,15 +543,17 @@ public:
    * See the requestSplatProperty() or requestCloudProperty() method for more detail.
    * 
    * \note Be careful, this method is *not* in O(1).
+   * 
+   * @return Returns true if the predefined property is available, otherwise false.
    */
   ///@{
-  inline bool requestPositions()  { return requestSplatProperty( POSITIONS_HANDLE,  positionsProperty_  ); }
-  inline bool requestColors()     { return requestSplatProperty( COLORS_HANDLE,     colorsProperty_     ); }
-  inline bool requestNormals()    { return requestSplatProperty( NORMALS_HANDLE,    normalsProperty_    ); }
-  inline bool requestPointsizes() { return requestSplatProperty( POINTSIZES_HANDLE, pointsizesProperty_ ); }
-  inline bool requestIndices()    { return requestSplatProperty( INDICES_HANDLE,    indicesProperty_    ); }
-  inline bool requestViewlists()  { return requestSplatProperty( VIEWLISTS_HANDLE,  viewlistsProperty_  ); }
-  inline bool requestSelections() { return requestSplatProperty( SELECTIONS_HANDLE, selectionsProperty_ ); }
+  inline bool requestPositions()  { positionsProperty_  = requestSplatProperty( POSITIONS_HANDLE  ); return (positionsProperty_  != 0); }
+  inline bool requestColors()     { colorsProperty_     = requestSplatProperty( COLORS_HANDLE     ); return (colorsProperty_     != 0); }
+  inline bool requestNormals()    { normalsProperty_    = requestSplatProperty( NORMALS_HANDLE    ); return (normalsProperty_    != 0); }
+  inline bool requestPointsizes() { pointsizesProperty_ = requestSplatProperty( POINTSIZES_HANDLE ); return (pointsizesProperty_ != 0); }
+  inline bool requestIndices()    { indicesProperty_    = requestSplatProperty( INDICES_HANDLE    ); return (indicesProperty_    != 0); }
+  inline bool requestViewlists()  { viewlistsProperty_  = requestSplatProperty( VIEWLISTS_HANDLE  ); return (viewlistsProperty_  != 0); }
+  inline bool requestSelections() { selectionsProperty_ = requestSplatProperty( SELECTIONS_HANDLE ); return (selectionsProperty_ != 0); }
   ///@}
 
   ///@}
@@ -588,13 +570,13 @@ public:
    * \note Be careful, this method is *not* in O(1).
    */
   ///@{
-  inline bool releasePositions()  { return releaseSplatProperty( POSITIONS_HANDLE,  positionsProperty_  ); }
-  inline bool releaseColors()     { return releaseSplatProperty( COLORS_HANDLE,     colorsProperty_     ); }
-  inline bool releaseNormals()    { return releaseSplatProperty( NORMALS_HANDLE,    normalsProperty_    ); }
-  inline bool releasePointsizes() { return releaseSplatProperty( POINTSIZES_HANDLE, pointsizesProperty_ ); }
-  inline bool releaseIndices()    { return releaseSplatProperty( INDICES_HANDLE,    indicesProperty_    ); }
-  inline bool releaseViewlists()  { return releaseSplatProperty( VIEWLISTS_HANDLE,  viewlistsProperty_  ); }
-  inline bool releaseSelections() { return releaseSplatProperty( SELECTIONS_HANDLE, selectionsProperty_ ); }
+  inline void releasePositions()  { positionsProperty_  = releaseSplatProperty( POSITIONS_HANDLE  ); }
+  inline void releaseColors()     { colorsProperty_     = releaseSplatProperty( COLORS_HANDLE     ); }
+  inline void releaseNormals()    { normalsProperty_    = releaseSplatProperty( NORMALS_HANDLE    ); }
+  inline void releasePointsizes() { pointsizesProperty_ = releaseSplatProperty( POINTSIZES_HANDLE ); }
+  inline void releaseIndices()    { indicesProperty_    = releaseSplatProperty( INDICES_HANDLE    ); }
+  inline void releaseViewlists()  { viewlistsProperty_  = releaseSplatProperty( VIEWLISTS_HANDLE  ); }
+  inline void releaseSelections() { selectionsProperty_ = releaseSplatProperty( SELECTIONS_HANDLE ); }
   ///@}
 
   ///@}
@@ -675,13 +657,13 @@ private:
   /// Get pointers to predefined splat-properties.
   inline void getPredefinedSplatPropertyPointers()
   {
-    getSplatProperty( POSITIONS_HANDLE,  positionsProperty_  );
-    getSplatProperty( COLORS_HANDLE,     colorsProperty_     );
-    getSplatProperty( NORMALS_HANDLE,    normalsProperty_    );
-    getSplatProperty( POINTSIZES_HANDLE, pointsizesProperty_ );
-    getSplatProperty( INDICES_HANDLE,    indicesProperty_    );
-    getSplatProperty( VIEWLISTS_HANDLE,  viewlistsProperty_  );
-    getSplatProperty( SELECTIONS_HANDLE, selectionsProperty_ );
+    positionsProperty_  = getSplatProperty( POSITIONS_HANDLE  );
+    colorsProperty_     = getSplatProperty( COLORS_HANDLE     );
+    normalsProperty_    = getSplatProperty( NORMALS_HANDLE    );
+    pointsizesProperty_ = getSplatProperty( POINTSIZES_HANDLE );
+    indicesProperty_    = getSplatProperty( INDICES_HANDLE    );
+    viewlistsProperty_  = getSplatProperty( VIEWLISTS_HANDLE  );
+    selectionsProperty_ = getSplatProperty( SELECTIONS_HANDLE );
   }
 
   /// Get pointers to predefined cloud-properties.
