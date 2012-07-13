@@ -276,17 +276,6 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::globalMatrixInv(unsigned int _join
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Called by the skeleton/animation as a new joint is inserted
- *
- * To keep the vectors storing the matrices for the joints in sync with the joints a new entry has to be inserted
- * in exactly the same place if a new joint is added to the skeleton. This is done here. Derived classes
- * have to overwrite this method to keep their data members in sync as well. Always call the base class
- * method first.
- *
- * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
- *               SkeletonT::joints_.size as parameter.
- */
 template<typename PointT>
 void PoseT<PointT>::insertJointAt(unsigned int _index)
 {
@@ -304,17 +293,6 @@ void PoseT<PointT>::insertJointAt(unsigned int _index)
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Called by the skeleton/animation as a joint is removed
- *
- * To keep the vectors storing the matrices for the joints in sync with the joints exactly the same entry
- * has to be removed as a joint is removed from the skeleton. This is done here. Derived classes
- * have to overwrite this method to keep their data members in sync as well. Always call the base class
- * method first.
- *
- * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
- * 				 SkeletonT::joints_.size as parameter.
- */
 template<typename PointT>
 void PoseT<PointT>::removeJointAt(unsigned int _index)
 {
