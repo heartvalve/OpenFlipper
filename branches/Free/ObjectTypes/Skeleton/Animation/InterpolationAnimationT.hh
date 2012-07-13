@@ -104,7 +104,20 @@ class InterpolationAnimationT : public AnimationT<PointT>
      * @{ */
     //===========================================================================
 
+    /** \brief Returns a pointer to the pose calculated for the given frame
+      *
+      * @param _iFrame    The frame number for which the pose should be calculated.
+      *                   This is always from 0..frames even if the animation starts with an input value other than 0.
+      */
     virtual Pose* pose(unsigned int _iFrame);
+
+    /**
+     * @brief Returns a pointer to the pose calculated for the given frame
+     *
+     * @param _iFrame    The frame number for which the pose should be calculated.
+     *                   This is always from 0..frames even if the animation starts with an input value other than 0.
+     * @param _reference Reference pose
+     */
     virtual Pose* pose(unsigned int _iFrame, Pose* _reference);
 
     /**
@@ -129,6 +142,13 @@ class InterpolationAnimationT : public AnimationT<PointT>
      * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT::joints_.size as parameter.
      */
     virtual void insertJointAt(unsigned int _index);
+
+    /** \brief Called by the skeleton as a joint is deleted
+     *
+     * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+     *
+     * @param _index The index of the joint that is being deleted.
+     */
     virtual void removeJointAt(unsigned int _index);
 
     /** @} */
@@ -140,8 +160,24 @@ class InterpolationAnimationT : public AnimationT<PointT>
      * We use only interpolators with time as input.
      * @{ */
     //===========================================================================
+
+    /** \brief Add an interpolator
+     *
+     * @param _interpolator New interpolator
+     */
     void          addInterpolator(InterpolationT<double> *_interpolator);
+
+    /** \brief Get the i-th interpolator
+     *
+     * @param _index Number of the interpolator
+     * @return Interpolator
+     */
     Interpolator* interpolator(unsigned int _index);
+
+    /** \brief Get the number of interpolators
+     *
+     * @return Number of interpolators
+     */
     unsigned int  interpolatorCount();
     /** @} */
 
@@ -168,6 +204,10 @@ class InterpolationAnimationT : public AnimationT<PointT>
      * @{ */
     //===========================================================================
 
+    /** \brief Get the matrix manipulator
+     *
+     * @return MatrixManipulator
+     */
     MatrixManipulator* matrixManipulator() { return matrixManipulator_; }
 
     /** @} */
