@@ -112,19 +112,29 @@ public:
     * Use these methods to keep the pose in sync with the number (and indices) of the joints.
     * @{ */
 
-  /** \brief Called by the skeleton as a new joint is inserted
+  /**
+   * \brief Called by the skeleton/animation as a new joint is inserted
    *
-   * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
+   * To keep the vectors storing the matrices for the joints in sync with the joints a new entry has to be inserted
+   * in exactly the same place if a new joint is added to the skeleton. This is done here. Derived classes
+   * have to overwrite this method to keep their data members in sync as well. Always call the base class
+   * method first.
    *
-   * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT::joints_.size as parameter.
+   * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
+   *               SkeletonT::joints_.size as parameter.
    */
   virtual void insertJointAt(unsigned int _index);
 
-  /** \brief Called by the skeleton as a joint is deleted
+  /**
+   * \brief Called by the skeleton/animation as a joint is removed
    *
-   * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+   * To keep the vectors storing the matrices for the joints in sync with the joints exactly the same entry
+   * has to be removed as a joint is removed from the skeleton. This is done here. Derived classes
+   * have to overwrite this method to keep their data members in sync as well. Always call the base class
+   * method first.
    *
-   * @param _index The index of the joint that is being deleted.
+   * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
+   *         SkeletonT::joints_.size as parameter.
    */
   virtual void removeJointAt(unsigned int _index);
   /** @} */
