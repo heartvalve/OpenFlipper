@@ -183,13 +183,22 @@ private slots:
 //===========================================================================
 
 public slots:
+
+  /** \brief decimate an object
+   *
+   * @param _objId       Id of the object that should be decimated
+   * @param _constraints List of constraints for the decimater
+   *
+   */
   void decimate(int _objID, QVariantMap _constraints);
+
+  /** @} */
 
 public slots:
    QString version() { return QString("1.0"); };
 
 
-/** @} */
+
 
 };
 
