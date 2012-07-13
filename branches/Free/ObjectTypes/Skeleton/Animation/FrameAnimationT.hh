@@ -69,10 +69,12 @@ class FrameAnimationT : public AnimationT<PointT>
     virtual void updateFromGlobal(unsigned int _index);
 
   public:
-    /**
-      * @name Frame access
+
+    // =======================================================================================
+    /** @name Frame access
       * There is one pose per frame.
        * @{ */
+    // =======================================================================================
 
     /** \brief Returns a pointer to the pose stored in the given frame
      *
@@ -89,10 +91,12 @@ class FrameAnimationT : public AnimationT<PointT>
     void setFrameCount(unsigned int _frames);
     /** @} */
 
+    // =======================================================================================
     /** @name Synchronization
       *
       * Use these methods to keep the poses in sync with the number (and indices) of the joints.
       * @{ */
+    // =======================================================================================
 
     /** \brief Called by the skeleton as a new joint is inserted
      *

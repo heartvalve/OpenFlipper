@@ -83,10 +83,12 @@ public:
   /// Destructor
   virtual ~PoseT();
 
+  // =======================================================================================
   /** @anchor PoseEditing
     * @name   Pose editing
     * These methods update the other coordinate systems, changing the local coordinates will also change the global and vice versa.
     * @{ */
+  // =======================================================================================
   
   /// local matrix manipulation
   /// the local matrix represents a joints orientation/translation in the coordinate frame of the parent joint
@@ -105,12 +107,15 @@ public:
   void setGlobalTranslation(unsigned int _joint, const Vector &_position, bool _keepGlobalChildPositions=true);
   
   virtual Matrix globalMatrixInv(unsigned int _joint) const;
+
   /** @} */
 
+  // =======================================================================================
   /**
     * @name Synchronization
     * Use these methods to keep the pose in sync with the number (and indices) of the joints.
     * @{ */
+  // =======================================================================================
 
   /**
    * \brief Called by the skeleton/animation as a new joint is inserted
@@ -137,27 +142,36 @@ public:
    *         SkeletonT::joints_.size as parameter.
    */
   virtual void removeJointAt(unsigned int _index);
+
   /** @} */
 
 protected:
-  /**
-    * @name Coordinate system update methods
+  // =======================================================================================
+  /** @name Coordinate system update methods
     * These methods propagate the change in one of the coordinate systems into the other. This will
     * keep intact the children nodes' positions per default (by recursively updating all children.).
     * This behavior can be influenced via the _keepChildPositions parameter.
     * @{ */
+  // =======================================================================================
+
   void updateFromLocal(unsigned int _joint, bool _keepChildPositions=true);
   void updateFromGlobal(unsigned int _joint, bool _keepChildPositions=true);
+
   /** @} */
   
 public:
+
+  // =======================================================================================
   /** @anchor UnifiedMatrices
     * @name Unified Matrices
     * Use these methods to gain access to the precalculations performed by this derivation.
     * @{ */
+  // =======================================================================================
+
   inline const Matrix&         unifiedMatrix(unsigned int _joint);
   inline const Quaternion&     unifiedRotation(unsigned int _joint);
   inline const DualQuaternion& unifiedDualQuaternion(unsigned int _joint);
+
   /** @} */
 
 protected:
