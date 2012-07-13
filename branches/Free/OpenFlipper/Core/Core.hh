@@ -1249,9 +1249,20 @@ private slots:
       * @{ */
   //===========================================================================
   private slots:
+
+    /** \brief Check if a plugin exists
+     *
+     * @param _pluginName   Name of the plugin to check
+     * @param _exists       Returns if the function was found in the plugin
+     */
     void slotPluginExists( QString _pluginName , bool& _exists );
 
-
+    /** \brief Check if a function exists
+     *
+     * @param _pluginName   Name of the plugin to check
+     * @param _functionName Name of the function inside the plugin
+     * @param _exists       Returns if the function was found in the plugin
+     */
     void slotFunctionExists( QString _pluginName , QString _functionName , bool& _exists  );
 
     /** This slot executes a function of a plugin.
