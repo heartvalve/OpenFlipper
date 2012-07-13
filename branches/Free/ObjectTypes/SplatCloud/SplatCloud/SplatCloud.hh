@@ -231,7 +231,7 @@ public:
   class SplatPropertyMapEntry
   {
   public:
-    SplatPropertyMapEntry() { }                                                                                              //!< Standard constructor
+    SplatPropertyMapEntry()                                                   : property_( 0     ), numRequests_( 0    ) { } //!< Standard constructor
     SplatPropertyMapEntry( SplatPropertyInterface *_prop, unsigned int _num ) : property_( _prop ), numRequests_( _num ) { } //!< Constructor
   public:
     SplatPropertyInterface *property_;   //!< A valid pointer to a splat-property
@@ -244,7 +244,7 @@ public:
   class CloudPropertyMapEntry
   {
   public:
-    CloudPropertyMapEntry() { }                                                                                              //!< Standard constructor
+    CloudPropertyMapEntry()                                                   : property_( 0     ), numRequests_( 0    ) { } //!< Standard constructor
     CloudPropertyMapEntry( CloudPropertyInterface *_prop, unsigned int _num ) : property_( _prop ), numRequests_( _num ) { } //!< Constructor
   public:
     CloudPropertyInterface *property_;   //!< A valid pointer to a cloud-property
@@ -286,7 +286,6 @@ public:
     typedef typename std::vector<T>::const_reference ConstReference; //!< These are used because a std::vector<bool>::reference is *not* the same as a reference to bool.
   public:
     explicit inline SplatPropertyT<T>( const PropertyHandleT<T> &_handle, unsigned int _num ) : data_( _num ) { } //!< Constructor
-    inline SplatPropertyT<T>( const SplatPropertyT<T> &_property ) { data_ = _property.data_; }                   //!< Copy constructor
     inline      Reference data( int _idx )       { return data_[ _idx ]; } //!< Access the data as reference.
     inline ConstReference data( int _idx ) const { return data_[ _idx ]; } //!< Access the data as const reference.
   public:
@@ -317,8 +316,7 @@ public:
     typedef       T &      Reference; //!< These are references to T, *not* to CloudPropertyT<T>.
     typedef const T & ConstReference; //!< These are used only out of a consistency reason to the class SplatPropertyT<T>.
   public:
-    explicit inline CloudPropertyT<T>( const PropertyHandleT<T> &_handle ) { }                  //!< Constructor
-    inline CloudPropertyT<T>( const CloudPropertyT<T> &_property ) { data_ = _property.data_; } //!< Copy constructor
+    explicit inline CloudPropertyT<T>( const PropertyHandleT<T> &_handle ) { } //!< Constructor
     inline      Reference data()       { return data_; } //!< Access the data as reference.
     inline ConstReference data() const { return data_; } //!< Access the data as const reference.
   public:
