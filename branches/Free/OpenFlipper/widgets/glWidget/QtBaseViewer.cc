@@ -1078,13 +1078,9 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, i
     //*********************************************************
     //parse the splitter width for the toolboxes if requested
     //*********************************************************
-    if (_splitterWidth  )
-    {
+    if (_splitterWidth) {
       *_splitterWidth = split[34].toInt();
-    } else {
-      *_splitterWidth = -1;
     }
-
 
     //*********************************************************
     // Projection mode and orthogonal width
@@ -1122,7 +1118,9 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, i
     //*********************************************************
     // Return -1 to inform, that the value is unknown
     //*********************************************************
-    *_splitterWidth = -1;
+    if (_splitterWidth) {
+      *_splitterWidth = -1;
+    }
 
     //*********************************************************
     // Projection mode and orthogonal width
