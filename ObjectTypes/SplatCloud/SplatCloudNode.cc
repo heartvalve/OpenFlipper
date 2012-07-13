@@ -267,7 +267,7 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
     // enable "pointsize by program" depending on current rendermode
     if( rendermode == RENDERMODE_SPLATS || rendermode == RENDERMODE_DOTS )
       ACG::GLState::enable( GL_VERTEX_PROGRAM_POINT_SIZE );
-  else
+    else
       ACG::GLState::disable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
     // draw as GLpoints

@@ -133,8 +133,11 @@ void selectAllVertices( SplatCloud *_splatCloud )
   if( _splatCloud == 0 )
     return; // error
 
-  if( !_splatCloud->requestSelections() )
-    return; // error
+  if( !_splatCloud->hasSelections() )
+  {
+    if( !_splatCloud->requestSelections() )
+      return; // error
+  }
 
   unsigned int i, num = _splatCloud->numSplats();
   for( i=0; i<num; ++i )

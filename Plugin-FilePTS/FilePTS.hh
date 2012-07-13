@@ -91,7 +91,7 @@ signals:
 
   // -- LoadSave Interface --
   void addEmptyObject( DataType _type, int &_objectId );
-  void deleteObject( int _objectId );
+  void deleteObject ( int _objectId );
   void updatedObject( int _objectId, const UpdateType &_type );
 
   //-- Logging Interface --
@@ -128,7 +128,7 @@ public slots:
   QString version() { return QString( "1.0" ); }
 
   // -- File Interface --
-  int loadObject( QString _filename );
+  int  loadObject(                QString _filename );
   bool saveObject( int _objectId, QString _filename );
 
 private:
