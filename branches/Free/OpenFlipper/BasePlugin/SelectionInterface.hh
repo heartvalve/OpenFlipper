@@ -196,7 +196,7 @@ class SelectionInterface {
      * These functions are used to tell the system, that you can handle the
      * given selection metaphors in your plugin.
      *
-     * You can also add your custom seletion mode via addCustomSelectionMode().
+     * You can also add your custom selection mode via addCustomSelectionMode().
      *
      * To continue the above example, we now want to make toggle, volume lasso as well
      * a custom selection mode available for our data types:
@@ -348,6 +348,26 @@ class SelectionInterface {
      */
     virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                         PrimitiveType _associatedTypes, QString& _customIdentifier) {}
+
+    /** \brief Add a custom interactive selection mode
+     *
+     *  If a plugin should provide an interactive selection mode other than the
+     *  standard ones (which include toggle, lasso, volume lasso, sphere, closest boundary
+     *  and flood fill selection), one can add a custom interactive selection mode
+     *  via this signal. Once the custom mode is added, it will appear in the sub-menu
+     *  for the associated selection environment. If the user chooses this mode in order
+     *  to do selection, slotCustomSelection(QMouseEvent*,QString) is called.
+     *  This signal returns the added identifier for this selection mode in parameter
+     *  _identifier.
+     *
+     *  @param _handleName            The handle of the selection environment in which this mode should be available
+     *  @param _modeName              The name of this mode (also button caption)
+     *  @param _description           A brief description of what the selection mode does
+     *  @param _icon                  An icon which is used for this selection mode
+     *  @param _associatedTypes       Make this mode available only for the specified types (OR'ed)
+     *  @param _customIdentifier      Holds the identifier of the custom selection modes
+     *  @param _objectTypeRestriction Restrict the mode to this specific data type
+     */
     virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                         PrimitiveType _associatedTypes, QString& _customIdentifier,
                                         DataType _objectTypeRestriction) {}
