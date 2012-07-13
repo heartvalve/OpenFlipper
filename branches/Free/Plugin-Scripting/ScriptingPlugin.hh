@@ -147,9 +147,21 @@ private:
 //===========================================================================
 
 public slots:
+
+  /** \brief Show the script editor widget
+   *
+   */
   void showScriptWidget();
+
+  /** \brief Hide the script editor widget
+   *
+   */
   void hideScriptWidget();
 
+  /** \brief Show the given Code in the script editor
+   *
+   * @param _code Code to show
+   */
   void showScriptInEditor (QString _code);
 
   /** \brief Load Script into gui from file
