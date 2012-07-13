@@ -148,13 +148,23 @@ private slots:
 //===========================================================================
 public slots:
 
-   /// Smooth an object
+   /** \brief smooth an object
+    *
+    * @param _objectId    Id of the object that should be smoothed
+    * @param _iterations  Number of iterations
+    * @param _direction   Tangential or normal?
+    * @param _continuity  Continuity selection
+    * @param _maxDistance Maximal distance after smoothing
+    *
+    */
    void smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance = -1.0);
+
+   /** @} */
 
 public slots:
    QString version() { return QString("1.0"); };
 
-/** @} */
+
 
 private:
    typedef OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh > SmootherType;
