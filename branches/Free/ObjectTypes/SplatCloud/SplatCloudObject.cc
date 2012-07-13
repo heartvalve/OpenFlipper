@@ -564,28 +564,42 @@ QString SplatCloudObject::getObjectinfo()
     {
       output += " #Splats: " + QString::number( splatCloud_->numSplats() );
 
-      output += ", Splat-Properties:";
+      output += "; Splat-Properties: ";
       if( splatCloud_->splatProperties().empty() )
       {
-        output += " none";
+        output += "-none-";
       }
       else
       {
-        SplatCloud::SplatPropertyMap::const_iterator splatPropertyIter;
-        for( splatPropertyIter = splatCloud_->splatProperties().begin(); splatPropertyIter != splatCloud_->splatProperties().end(); ++splatPropertyIter )
-          output += QString( " " ) + splatPropertyIter->first.c_str();
+        SplatCloud::SplatPropertyMap::const_iterator splatPropertyIter = splatCloud_->splatProperties().begin();
+        while( true )
+        {
+          output += splatPropertyIter->first.c_str();
+
+          if( ++splatPropertyIter == splatCloud_->splatProperties().end() )
+            break;
+
+          output += ", ";
+        }
       }
 
-      output += ", Cloud-Properties:";
+      output += "; Cloud-Properties: ";
       if( splatCloud_->cloudProperties().empty() )
       {
-        output += " none";
+        output += "-none-";
       }
       else
       {
-        SplatCloud::CloudPropertyMap::const_iterator cloudPropertyIter;
-        for( cloudPropertyIter = splatCloud_->cloudProperties().begin(); cloudPropertyIter != splatCloud_->cloudProperties().end(); ++cloudPropertyIter )
-          output += QString( " " ) + cloudPropertyIter->first.c_str();
+        SplatCloud::CloudPropertyMap::const_iterator cloudPropertyIter = splatCloud_->cloudProperties().begin();
+        while( true )
+        {
+          output += cloudPropertyIter->first.c_str();
+
+          if( ++cloudPropertyIter == splatCloud_->cloudProperties().end() )
+            break;
+
+          output += ", ";
+        }
       }
     }
 
