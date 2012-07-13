@@ -193,13 +193,7 @@ void InterpolationAnimationT<PointT>::insertJointAt(unsigned int _index)
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Called by the skeleton as a joint is deleted
- *
- * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
- *
- * @param _index The index of the joint that is being deleted.
- */
+
 template<class PointT>
 void InterpolationAnimationT<PointT>::removeJointAt(unsigned int _index)
 {
