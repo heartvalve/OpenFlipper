@@ -92,6 +92,8 @@ SplatCloudBackup::~SplatCloudBackup()
 # ifdef REPORT_BACKUP
   std::cerr << "Delete SplatCloudBackup with name: \"" << name_.toStdString() << "\" (id: " << id_ << ")." << std::endl;
 # endif
+
+  delete splatCloudBackup_;
 }
 
 
