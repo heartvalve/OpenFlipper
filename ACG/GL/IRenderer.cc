@@ -102,3 +102,8 @@ void ACG::RenderObject::initFromState( GLState* _glState )
     shininess = _glState->shininess();
   }
 }
+
+ACG::RenderObject::RenderObject()
+{
+  memset(this, 0, sizeof(RenderObject));
+}

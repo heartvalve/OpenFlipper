@@ -80,6 +80,12 @@ class GLState;
 */
 struct ACGDLLEXPORT RenderObject
 {
+  /** default constructor
+   *   set all members to 0
+   *   keep renderobject a POD to avoid possible problems
+   */
+  RenderObject();
+
   /** \brief Priority to allow sorting of objects
    *
    * The renderer sorts objects based on priority from high to low before rendering.

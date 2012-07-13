@@ -575,7 +575,6 @@ template <class Mesh>
 void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
 {
   RenderObject ro;
-  memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
  
   // shader gen setup (lighting, shademode, vertex-colors..)
@@ -742,6 +741,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     case DrawModes::PRIMITIVE_POINT: add_point_RenderObjects(_renderer, &ro); break;
     case DrawModes::PRIMITIVE_EDGE: add_line_RenderObjects(_renderer, &ro); break;
     case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
+    default: break;
     }
   }
 
