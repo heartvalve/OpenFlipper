@@ -73,9 +73,9 @@ unsigned int SplatCloud::eraseSplatsByFlag( const std::vector<T> &_flags )
   if( numDelete != 0 )
   {
     // keep only elements with given indices in data vector of all splat-properties
-    SplatProperties::const_iterator splatPropertyIter;
+    SplatPropertyMap::const_iterator splatPropertyIter;
     for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
-      splatPropertyIter->second->crop( indices );
+      splatPropertyIter->second.property_->crop( indices );
 
     // update number of splats
     numSplats_ = indices.size();
@@ -110,16 +110,24 @@ template <typename T>
 
 
 template <typename T>
-bool SplatCloud::addSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::SplatPropertyT<T> *(&_property) )
+bool SplatCloud::requestSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::SplatPropertyT<T> *(&_property) )
 {
-  // try to find property
-  SplatProperties::iterator iter = splatProperties_.find( _handle );
+  // try to find property map entry
+  SplatPropertyMap::iterator iter = splatProperties_.find( _handle );
 
-  // if a property with the same name is already present, try to cast and abort
+  // check if a property with the same name is already present
   if( iter != splatProperties_.end() )
   {
-    _property = dynamic_cast<SplatPropertyT<T> *>( iter->second );
-    return (_property != 0);
+    // try to cast
+    _property = dynamic_cast<SplatPropertyT<T> *>( iter->second.property_ );
+
+    // check if cast failed and property in map has different type. if so, return failure (_property is 0)
+    if( _property == 0 )
+      return false;
+
+    // increase number of requests and return success (_property is a valid pointer)
+    ++iter->second.numRequests_;
+    return true;
   }
 
   // create new property
@@ -137,8 +145,8 @@ bool SplatCloud::addSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle
     return false;
   }
 
-  // insert new property and return success (_property is a valid pointer)
-  splatProperties_[ _handle ] = _property;
+  // insert new property map entry and return success (_property is a valid pointer)
+  splatProperties_[ _handle ] = SplatPropertyMapEntry( _property, 1 );
   return true;
 }
 
@@ -147,16 +155,24 @@ bool SplatCloud::addSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle
 
 
 template <typename T>
-bool SplatCloud::addCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::CloudPropertyT<T> *(&_property) )
+bool SplatCloud::requestCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::CloudPropertyT<T> *(&_property) )
 {
-  // try to find property
-  CloudProperties::iterator iter = cloudProperties_.find( _handle );
+  // try to find property map entry
+  CloudPropertyMap::iterator iter = cloudProperties_.find( _handle );
 
-  // if a property with the same name is already present, try to cast and abort
+  // check if a property with the same name is already present
   if( iter != cloudProperties_.end() )
   {
-    _property = dynamic_cast<CloudPropertyT<T> *>( iter->second );
-    return (_property != 0);
+    // try to cast
+    _property = dynamic_cast<CloudPropertyT<T> *>( iter->second.property_ );
+
+    // check if cast failed and property in map has different type. if so, return failure (_property is 0)
+    if( _property == 0 )
+      return false;
+
+    // increase number of requests and return success (_property is a valid pointer)
+    ++iter->second.numRequests_;
+    return true;
   }
 
   // create new property
@@ -166,8 +182,8 @@ bool SplatCloud::addCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle
   if( _property == 0 )
     return false;
 
-  // insert new property and return success (_property is a valid pointer)
-  cloudProperties_[ _handle ] = _property;
+  // insert new property map entry and return success (_property is a valid pointer)
+  cloudProperties_[ _handle ] = CloudPropertyMapEntry( _property, 1 );
   return true;
 }
 
@@ -176,25 +192,34 @@ bool SplatCloud::addCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle
 
 
 template <typename T>
-void SplatCloud::removeSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle )
+bool SplatCloud::releaseSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::SplatPropertyT<T> *(&_property) )
 {
-  // try to find property
-  SplatProperties::iterator iter = splatProperties_.find( _handle );
+  // try to find property map entry
+  SplatPropertyMap::iterator iter = splatProperties_.find( _handle );
 
-  // set prop to 0 if *not* found or cast fails, otherwise to a valid pointer
-  SplatPropertyT<T> *prop = (iter == splatProperties_.end()) ? 0 : dynamic_cast<SplatPropertyT<T> *>( iter->second );
+  // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
+  _property = (iter == splatProperties_.end()) ? 0 : dynamic_cast<SplatPropertyT<T> *>( iter->second.property_ );
 
   // if a property with the same name but a different type is present, do *not* remove any property
 
-  // if *not* a valid pointer, abort
-  if( prop == 0 )
-    return;
+  // if *not* a valid pointer, abort and return failure (_property is 0)
+  if( _property == 0 )
+    return false;
 
-  // free memory of property
-  delete prop;
+  // decrease number of request
+  --iter->second.numRequests_;
 
-  // remove property
+  // check if property should *not* be removed yet. if so, return success (_property is a valid pointer)
+  if( iter->second.numRequests_ != 0 )
+    return true;
+
+  // free memory of property and reset pointer
+  delete _property;
+  _property = 0;
+
+  // remove property map entry and return false because _property is 0
   splatProperties_.erase( iter );
+  return false;
 }
 
 
@@ -202,25 +227,34 @@ void SplatCloud::removeSplatProperty( const SplatCloud::PropertyHandleT<T> &_han
 
 
 template <typename T>
-void SplatCloud::removeCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle )
+bool SplatCloud::releaseCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::CloudPropertyT<T> *(&_property) )
 {
-  // try to find property
-  CloudProperties::iterator iter = cloudProperties_.find( _handle );
+  // try to find property map entry
+  CloudPropertyMap::iterator iter = cloudProperties_.find( _handle );
 
-  // set prop to 0 if *not* found or cast fails, otherwise to a valid pointer
-  CloudPropertyT<T> *prop = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<CloudPropertyT<T> *>( iter->second );
+  // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
+  _property = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<CloudPropertyT<T> *>( iter->second.property_ );
 
   // if a property with the same name but a different type is present, do *not* remove any property
 
-  // if *not* a valid pointer, abort
-  if( prop == 0 )
-    return;
+  // if *not* a valid pointer, abort and return failure (_property is 0)
+  if( _property == 0 )
+    return false;
 
-  // free memory of property
-  delete prop;
+  // decrease number of request
+  --iter->second.numRequests_;
 
-  // remove property
+  // check if property should *not* be removed yet. if so, return success (_property is a valid pointer)
+  if( iter->second.numRequests_ != 0 )
+    return true;
+
+  // free memory of property and reset pointer
+  delete _property;
+  _property = 0;
+
+  // remove property map entry and return false because _property is 0
   cloudProperties_.erase( iter );
+  return false;
 }
 
 
@@ -230,11 +264,11 @@ void SplatCloud::removeCloudProperty( const SplatCloud::PropertyHandleT<T> &_han
 template <typename T>
 void SplatCloud::getSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::SplatPropertyT<T> *(&_property) )
 {
-  // try to find property
-  SplatProperties::const_iterator iter = splatProperties_.find( _handle );
+  // try to find property map entry
+  SplatPropertyMap::const_iterator iter = splatProperties_.find( _handle );
 
   // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
-  _property = (iter == splatProperties_.end()) ? 0 : dynamic_cast<SplatPropertyT<T> *>( iter->second );
+  _property = (iter == splatProperties_.end()) ? 0 : dynamic_cast<SplatPropertyT<T> *>( iter->second.property_ );
 }
 
 
@@ -244,11 +278,11 @@ void SplatCloud::getSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle
 template <typename T>
 void SplatCloud::getSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle, const SplatCloud::SplatPropertyT<T> *(&_property) ) const
 {
-  // try to find property
-  SplatProperties::const_iterator iter = splatProperties_.find( _handle );
+  // try to find property map entry
+  SplatPropertyMap::const_iterator iter = splatProperties_.find( _handle );
 
   // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
-  _property = (iter == splatProperties_.end()) ? 0 : dynamic_cast<const SplatPropertyT<T> *>( iter->second );
+  _property = (iter == splatProperties_.end()) ? 0 : dynamic_cast<const SplatPropertyT<T> *>( iter->second.property_ );
 }
 
 
@@ -258,11 +292,11 @@ void SplatCloud::getSplatProperty( const SplatCloud::PropertyHandleT<T> &_handle
 template <typename T>
 void SplatCloud::getCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle, SplatCloud::CloudPropertyT<T> *(&_property) )
 {
-  // try to find property
-  CloudProperties::const_iterator iter = cloudProperties_.find( _handle );
+  // try to find property map entry
+  CloudPropertyMap::const_iterator iter = cloudProperties_.find( _handle );
 
   // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
-  _property = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<CloudPropertyT<T> *>( iter->second );
+  _property = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<CloudPropertyT<T> *>( iter->second.property_ );
 }
 
 
@@ -272,9 +306,9 @@ void SplatCloud::getCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle
 template <typename T>
 void SplatCloud::getCloudProperty( const SplatCloud::PropertyHandleT<T> &_handle, const SplatCloud::CloudPropertyT<T> *(&_property) ) const
 {
-  // try to find property
-  CloudProperties::const_iterator iter = cloudProperties_.find( _handle );
+  // try to find property map entry
+  CloudPropertyMap::const_iterator iter = cloudProperties_.find( _handle );
 
   // set _property to 0 if *not* found or cast fails, otherwise to a valid pointer
-  _property = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<const CloudPropertyT<T> *>( iter->second );
+  _property = (iter == cloudProperties_.end()) ? 0 : dynamic_cast<const CloudPropertyT<T> *>( iter->second.property_ );
 }

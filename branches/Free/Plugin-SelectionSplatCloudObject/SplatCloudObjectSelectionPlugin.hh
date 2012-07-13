@@ -210,18 +210,18 @@ public slots:
   // VERTEX OPERATIONS
   //==========================================
 
-  void   selectVertices         ( int _objectId, IdList _vertexList );             /// Select given vertices
-  void   unselectVertices       ( int _objectId, IdList _vertexList );             /// Unselect given vertices
-  void   selectAllVertices      ( int _objectId );                                 /// Select all vertices
-  void   clearVertexSelection   ( int _objectId );                                 /// Unselect all vertices
-  void   invertVertexSelection  ( int _objectId );                                 /// Invert the current vertex selection
-  IdList getVertexSelection     ( int _objectId );                                 /// Return a list of all selected vertices
-  void   deleteVertexSelection  ( int _objectId );                                 /// Delete vertices that are currently selected
-  void   colorizeVertexSelection( int _objectId, int _r, int _g, int _b, int _a ); /// Colorize the vertex selection
+  void   selectVertices         ( int _objectId, IdList _vertexList );             //!< Select given vertices
+  void   unselectVertices       ( int _objectId, IdList _vertexList );             //!< Unselect given vertices
+  void   selectAllVertices      ( int _objectId );                                 //!< Select all vertices
+  void   clearVertexSelection   ( int _objectId );                                 //!< Unselect all vertices
+  void   invertVertexSelection  ( int _objectId );                                 //!< Invert the current vertex selection
+  IdList getVertexSelection     ( int _objectId );                                 //!< Return a list of all selected vertices
+  void   deleteVertexSelection  ( int _objectId );                                 //!< Delete vertices that are currently selected
+  void   colorizeVertexSelection( int _objectId, int _r, int _g, int _b, int _a ); //!< Colorize the vertex selection
 
   //===========================================================================
 
-  void lassoSelect( QRegion &_region, PrimitiveType _primitiveType, bool _deselection ); /// Lasso selection tool
+  void lassoSelect( QRegion &_region, PrimitiveType _primitiveType, bool _deselection ); //!< Lasso selection tool
 
   /** @} */
 
@@ -232,11 +232,11 @@ public slots:
 
 private:
 
-  bool splatCloudDeleteSelection    ( SplatCloud *_splatCloud,                                                      PrimitiveType _primitiveType                                  ); /// Delete all selected elements of a SplatCloud
-  void splatCloudToggleSelection    ( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point,                 PrimitiveType _primitiveType                                  ); /// Toggle SplatCloud selection
-  void splatCloudSphereSelection    ( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point, double _radius, PrimitiveType _primitiveTypes, bool _deselection              ); /// Use the event to paint selection with a sphere
-  bool splatCloudVolumeSelection    ( SplatCloud *_splatCloud, ACG::GLState &_state, QRegion *_region,              PrimitiveType _primitiveTypes, bool _deselection              ); /// Surface volume selection tool
-  void splatCloudColorizeSelection  ( SplatCloud *_splatCloud,                                                      PrimitiveType _primitiveTypes, int _r, int _g, int _b, int _a ); /// Colorize the selection
+  bool splatCloudDeleteSelection    ( SplatCloud *_splatCloud,                                                      PrimitiveType _primitiveType                                  ); //!< Delete all selected elements of a SplatCloud
+  void splatCloudToggleSelection    ( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point,                 PrimitiveType _primitiveType                                  ); //!< Toggle SplatCloud selection
+  void splatCloudSphereSelection    ( SplatCloud *_splatCloud, uint _index, ACG::Vec3d &_hit_point, double _radius, PrimitiveType _primitiveTypes, bool _deselection              ); //!< Use the event to paint selection with a sphere
+  bool splatCloudVolumeSelection    ( SplatCloud *_splatCloud, ACG::GLState &_state, QRegion *_region,              PrimitiveType _primitiveTypes, bool _deselection              ); //!< Surface volume selection tool
+  void splatCloudColorizeSelection  ( SplatCloud *_splatCloud,                                                      PrimitiveType _primitiveTypes, int _r, int _g, int _b, int _a ); //!< Colorize the selection
 
   /** @} */
 
@@ -247,11 +247,11 @@ private:
 
 private:
 
-  QString                           environmentHandle_; /// Handle to selection environment
-  SelectionInterface::PrimitiveType vertexType_;        /// Primitive type handle
-  SelectionInterface::PrimitiveType allSupportedTypes_; /// Primitive type handle
-  QPolygon                          lasso_2Dpoints_;    /// Used for lasso selection tool
-  QVector<QPoint>                   volumeLassoPoints_; /// Used for volume lasso tool
+  QString                           environmentHandle_; //!< Handle to selection environment
+  SelectionInterface::PrimitiveType vertexType_;        //!< Primitive type handle
+  SelectionInterface::PrimitiveType allSupportedTypes_; //!< Primitive type handle
+  QPolygon                          lasso_2Dpoints_;    //!< Used for lasso selection tool
+  QVector<QPoint>                   volumeLassoPoints_; //!< Used for volume lasso tool
 
   /** @} */
 };
@@ -263,7 +263,12 @@ class SelectVolumeAction
 public:
 
   SelectVolumeAction( QRegion &_region, SplatCloudObjectSelectionPlugin *_plugin, unsigned int _type, bool _deselection, ACG::GLState &_state ) : 
-    state_(_state), region_(_region), plugin_(_plugin), type_(_type), deselection_(_deselection) { }
+    state_      ( _state       ),
+    region_     ( _region      ),
+    plugin_     ( _plugin      ),
+    type_       ( _type        ),
+    deselection_( _deselection )
+  { }
 
   void enter( BaseNode * /*_node*/ ) { }
   void leave( BaseNode * /*_node*/ ) { }

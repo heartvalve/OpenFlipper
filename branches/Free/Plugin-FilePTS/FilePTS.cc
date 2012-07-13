@@ -78,23 +78,23 @@ static const int COLORRANGE_0_255 = 1;
 //== IMPLEMENTATION ==============================================
 
 
-FilePTSPlugin::FilePTSPlugin() : 
-  loadOptions_( 0 ), 
-  saveOptions_( 0 ), 
-  loadBinaryFile_   ( 0 ), 
-  loadNormals_      ( 0 ), 
-  loadPointsizes_   ( 0 ), 
-  loadColors_       ( 0 ), 
-  loadColorRange_   ( 0 ), 
-  loadIndices_      ( 0 ), 
-  saveBinaryFile_( 0 ), 
-  saveNormals_   ( 0 ), 
-  savePointsizes_( 0 ), 
-  saveColors_    ( 0 ), 
-  saveColorRange_( 0 ), 
-  saveIndices_   ( 0 ), 
-  loadMakeDefaultButton_( 0 ), 
-  saveMakeDefaultButton_( 0 ) 
+FilePTSPlugin::FilePTSPlugin() :
+  loadOptions_( 0 ),
+  saveOptions_( 0 ),
+  loadBinaryFile_( 0 ),
+  loadNormals_   ( 0 ),
+  loadPointsizes_( 0 ),
+  loadColors_    ( 0 ),
+  loadColorRange_( 0 ),
+  loadIndices_   ( 0 ),
+  saveBinaryFile_( 0 ),
+  saveNormals_   ( 0 ),
+  savePointsizes_( 0 ),
+  saveColors_    ( 0 ),
+  saveColorRange_( 0 ),
+  saveIndices_   ( 0 ),
+  loadMakeDefaultButton_( 0 ),
+  saveMakeDefaultButton_( 0 )
 { }
 
 
@@ -134,7 +134,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check success of requests
   if( !success )
   {
-    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\".\n" ) );
     return false; // return failure
   }
 
@@ -142,7 +142,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   FILE *file = fopen( _filename, "rb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\".\n" ) );
     return false;
   }
 
@@ -153,7 +153,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check file type
   if( fileType != 1 && fileType != 2 )
   {
-    emit log( LOGERR, QString( "Bad filetype (" ) + QString::number( fileType ) + QString( ") in input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Bad filetype (" ) + QString::number( fileType ) + QString( ") in input file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }
@@ -253,13 +253,13 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }
   if( feof( file ) )
   {
-    emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }
@@ -308,7 +308,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   // check success of requests
   if( !success )
   {
-    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\".\n" ) );
     return false; // return failure
   }
 
@@ -316,7 +316,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   FILE *file = fopen( _filename, "rb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\".\n" ) );
     return false;
   }
 
@@ -405,13 +405,13 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     // check for errors
     if( ferror( file ) )
     {
-      emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\"\n." ) );
+      emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\".\n" ) );
       fclose( file );
       return false; // return failure
     }
     if( feof( file ) )
     {
-      emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\"\n." ) );
+      emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\".\n" ) );
       fclose( file );
       return false; // return failure
     }
@@ -420,7 +420,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   // check for errors
   if( !feof( file ) ) // if end-of-file is *not* reached, something went wrong
   {
-    emit log( LOGERR, QString( "Bad file format of input file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Bad file format of input file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }
@@ -464,7 +464,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
 //    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
 //    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
 //{
-//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\"\n." ) );
+//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\".\n" ) );
 //  return false; // return failure
 //}
 
@@ -472,7 +472,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   FILE *file = fopen( _filename, "wb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\".\n" ) );
     return false;
   }
 
@@ -565,7 +565,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }
@@ -609,7 +609,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
 //    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
 //    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
 //{
-//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\"\n." ) );
+//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\".\n" ) );
 //  return false; // return failure
 //}
 
@@ -617,7 +617,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
   FILE *file = fopen( _filename, "wt" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\".\n" ) );
     return false;
   }
 
@@ -705,7 +705,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\"\n." ) );
+    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\".\n" ) );
     fclose( file );
     return false; // return failure
   }

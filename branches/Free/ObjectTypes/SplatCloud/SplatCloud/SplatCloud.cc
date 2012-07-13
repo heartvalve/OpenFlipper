@@ -73,21 +73,21 @@ const SplatCloud::SelectionsHandle SplatCloud::SELECTIONS_HANDLE( "<Selections>"
 void SplatCloud::copySplatProperties( const SplatCloud &_splatCloud )
 {
   // deep copy all splat-properties
-  SplatProperties::const_iterator splatPropertyIter;
+  SplatPropertyMap::const_iterator splatPropertyIter;
   for( splatPropertyIter = _splatCloud.splatProperties_.begin(); splatPropertyIter != _splatCloud.splatProperties_.end(); ++splatPropertyIter )
   {
     // create new deep copy of current splat-property
-    SplatPropertyInterface *prop = splatPropertyIter->second->clone();
+    SplatPropertyInterface *prop = splatPropertyIter->second.property_->clone();
 
     // check if out of memory
     if( prop == 0 )
     {
-      std::cerr << "Out of memory for a copy of SplatCloud's Splat-Property \"" << splatPropertyIter->first << "\"." << std::endl;
+      std::cerr << "Out of memory for a copy of SplatCloud's splat-property \"" << splatPropertyIter->first << "\"." << std::endl;
       continue;
     }
 
-    // insert new copy into splat-property map with same name as before
-    splatProperties_[ splatPropertyIter->first ] = prop;
+    // insert new property map entry into splat-property map with same name as before
+    splatProperties_[ splatPropertyIter->first ] = SplatPropertyMapEntry( prop, splatPropertyIter->second.numRequests_ );
   }
 
   // Get pointers to predefined splat-properties.
@@ -103,21 +103,21 @@ void SplatCloud::copySplatProperties( const SplatCloud &_splatCloud )
 void SplatCloud::copyCloudProperties( const SplatCloud &_splatCloud )
 {
   // deep copy all cloud-properties
-  CloudProperties::const_iterator cloudPropertyIter;
+  CloudPropertyMap::const_iterator cloudPropertyIter;
   for( cloudPropertyIter = _splatCloud.cloudProperties_.begin(); cloudPropertyIter != _splatCloud.cloudProperties_.end(); ++cloudPropertyIter )
   {
     // create new deep copy of current cloud-property
-    CloudPropertyInterface *prop = cloudPropertyIter->second->clone();
+    CloudPropertyInterface *prop = cloudPropertyIter->second.property_->clone();
 
     // check if out of memory
     if( prop == 0 )
     {
-      std::cerr << "Out of memory for a copy of SplatCloud's Cloud-Property \"" << cloudPropertyIter->first << "\"." << std::endl;
+      std::cerr << "Out of memory for a copy of SplatCloud's cloud-property \"" << cloudPropertyIter->first << "\"." << std::endl;
       continue;
     }
 
-    // insert new copy into cloud-property map with same name as before
-    cloudProperties_[ cloudPropertyIter->first ] = prop;
+    // insert new property map entry into cloud-property map with same name as before
+    cloudProperties_[ cloudPropertyIter->first ] = CloudPropertyMapEntry( prop, cloudPropertyIter->second.numRequests_ );
   }
 
   // Get pointers to predefined cloud-properties.
@@ -147,12 +147,12 @@ SplatCloud::SplatCloud( const SplatCloud &_splatCloud )
 void SplatCloud::clearSplatProperties()
 {
   // free memory of all splat-properties
-  SplatProperties::const_iterator splatPropertyIter;
+  SplatPropertyMap::const_iterator splatPropertyIter;
   for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
-    delete splatPropertyIter->second;
+    delete splatPropertyIter->second.property_;
 
   // clear splat-property map
-  SplatProperties().swap( splatProperties_ );
+  SplatPropertyMap().swap( splatProperties_ );
 
   // reset pointers to predefined splat-properties
   resetPredefinedSplatPropertyPointers();
@@ -165,12 +165,12 @@ void SplatCloud::clearSplatProperties()
 void SplatCloud::clearCloudProperties()
 {
   // free memory of all cloud-properties
-  CloudProperties::const_iterator cloudPropertyIter;
+  CloudPropertyMap::const_iterator cloudPropertyIter;
   for( cloudPropertyIter = cloudProperties_.begin(); cloudPropertyIter != cloudProperties_.end(); ++cloudPropertyIter )
-    delete cloudPropertyIter->second;
+    delete cloudPropertyIter->second.property_;
 
   // clear cloud-property map
-  CloudProperties().swap( cloudProperties_ );
+  CloudPropertyMap().swap( cloudProperties_ );
 
   // reset pointers to predefined cloud-properties
   resetPredefinedCloudPropertyPointers();
@@ -215,9 +215,9 @@ void SplatCloud::swap( SplatCloud &_splatCloud )
 void SplatCloud::clearSplats()
 {
   // clear data vector of all splat-properties
-  SplatProperties::const_iterator splatPropertyIter;
+  SplatPropertyMap::const_iterator splatPropertyIter;
   for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
-    splatPropertyIter->second->clear();
+    splatPropertyIter->second.property_->clear();
 
   // reset number of splats
   numSplats_ = 0;
@@ -230,9 +230,9 @@ void SplatCloud::clearSplats()
 void SplatCloud::pushbackSplat()
 {
   // add one element at end of data vector of all splat-properties
-  SplatProperties::const_iterator splatPropertyIter;
+  SplatPropertyMap::const_iterator splatPropertyIter;
   for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
-    splatPropertyIter->second->pushback();
+    splatPropertyIter->second.property_->pushback();
 
   // increase number of splats
   ++numSplats_;
@@ -245,9 +245,9 @@ void SplatCloud::pushbackSplat()
 void SplatCloud::resizeSplats( unsigned int _num )
 {
   // resize data vector of all splat-properties
-  SplatProperties::const_iterator splatPropertyIter;
+  SplatPropertyMap::const_iterator splatPropertyIter;
   for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
-    splatPropertyIter->second->resize( _num );
+    splatPropertyIter->second.property_->resize( _num );
 
   // update number of splats
   numSplats_ = _num;

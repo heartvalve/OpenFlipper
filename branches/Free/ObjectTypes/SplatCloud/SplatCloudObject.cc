@@ -571,7 +571,7 @@ QString SplatCloudObject::getObjectinfo()
       }
       else
       {
-        SplatCloud::SplatProperties::const_iterator splatPropertyIter;
+        SplatCloud::SplatPropertyMap::const_iterator splatPropertyIter;
         for( splatPropertyIter = splatCloud_->splatProperties().begin(); splatPropertyIter != splatCloud_->splatProperties().end(); ++splatPropertyIter )
           output += QString( " " ) + splatPropertyIter->first.c_str();
       }
@@ -583,7 +583,7 @@ QString SplatCloudObject::getObjectinfo()
       }
       else
       {
-        SplatCloud::CloudProperties::const_iterator cloudPropertyIter;
+        SplatCloud::CloudPropertyMap::const_iterator cloudPropertyIter;
         for( cloudPropertyIter = splatCloud_->cloudProperties().begin(); cloudPropertyIter != splatCloud_->cloudProperties().end(); ++cloudPropertyIter )
           output += QString( " " ) + cloudPropertyIter->first.c_str();
       }
