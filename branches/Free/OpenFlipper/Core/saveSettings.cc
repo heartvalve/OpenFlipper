@@ -184,6 +184,49 @@ void Core::saveSettings(){
     // Store saved file's original names (in order to get number of duplicates)
     std::multiset<QString> originalFiles;
 
+    QString extension("");
+    bool applyToAll = false;
+    // get the supported extensions for when no extension is given
+    QStringList allFilters;
+    std::vector<fileTypes> types = supportedTypes();
+    for (int i=0; i < (int)types.size(); i++) {
+      QString filters = types[i].saveFilters;
+
+      // only take the actual extensions
+      filters = filters.section("(",1).section(")",0,0);
+      if (filters.trimmed() == "")
+        continue;
+
+      QStringList separateFilters = filters.split(" ");
+      bool found = false;
+      for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
+        if (separateFilters[filterId].trimmed() == "")
+          continue;
+
+        found = true;
+        allFilters.append(separateFilters[filterId]);
+      }
+
+      if (!found)
+        allFilters.append( filters );
+    }
+
+    allFilters.removeDuplicates();
+    allFilters.sort();
+
+    // create a dialog to set extensions if none are given once
+    QDialog extensionDialog(coreWidget_, Qt::Dialog);
+    QGridLayout extensionLayout;
+    QCheckBox extensionCheckBox("Apply extension to all Objects without preset extensions");
+    QComboBox extensionComboBox;
+    QDialogButtonBox extensionButtons(QDialogButtonBox::Ok);
+    QDialogButtonBox::connect(&extensionButtons, SIGNAL(accepted()), &extensionDialog, SLOT(accept()));
+    extensionComboBox.addItems(allFilters);
+    extensionLayout.addWidget(&extensionComboBox);
+    extensionLayout.addWidget(&extensionCheckBox);
+    extensionLayout.addWidget(&extensionButtons);
+    extensionDialog.setLayout(&extensionLayout);
+
     //Iterate over opened objects and save them
     for ( PluginFunctions::ObjectIterator o_it(restriction);
                                           o_it != PluginFunctions::objectsEnd(); ++o_it)
@@ -244,45 +287,25 @@ void Core::saveSettings(){
       // check if we have an extension for the object
       if (QFileInfo(filename).suffix() == "") {
 
-        // get the supported extensions
-        QStringList allFilters;
-        std::vector<fileTypes> types = supportedTypes();
-        for (int i=0; i < (int)types.size(); i++) {
-          QString filters = types[i].saveFilters;
+        if (!applyToAll) {
 
-          // only take the actual extensions
-          filters = filters.section("(",1).section(")",0,0);
-          if (filters.trimmed() == "")
+          extensionDialog.move(coreWidget_->width()/2 - extensionDialog.width(),
+                               coreWidget_->height()/2 - extensionDialog.height());
+
+          extensionDialog.setWindowTitle("Please specify a file extension for " + o_it->name());
+
+          if (extensionDialog.exec() && !allFilters.isEmpty()) {
+            if (extensionCheckBox.isChecked())
+              applyToAll = true;
+            extension = extensionComboBox.currentText();
+            extension = QFileInfo(extension).suffix();
+            filename += "." + extension;
+          } else {
+            emit log(LOGERR, tr("Unabel to save %1. No extension specified.").arg(o_it->name()));
             continue;
-
-          QStringList separateFilters = filters.split(" ");
-          bool found = false;
-          for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
-            if (separateFilters[filterId].trimmed() == "")
-              continue;
-
-            found = true;
-            allFilters.append(separateFilters[filterId]);
           }
-
-          if (!found)
-            allFilters.append( filters );
-        }
-
-        allFilters.removeDuplicates();
-        allFilters.sort();
-
-        // show extension list for the user to choose from
-        bool ok = false;
-        QString extension = QInputDialog::getItem(coreWidget_, "Please specify a file extension for " + o_it->name(),
-                                             "File extension:", allFilters, 0, false, &ok);
-        if (ok && !allFilters.isEmpty()) {
-          // set the file type
-          extension = QFileInfo(extension).suffix();
-          filename += "." + extension;
         } else {
-          emit log(LOGERR, tr("Unabel to save %1. No extension specified.").arg(o_it->name()));
-          continue;
+          filename += "." + extension;
         }
       }
 
