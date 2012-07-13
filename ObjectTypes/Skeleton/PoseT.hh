@@ -86,8 +86,7 @@ public:
   /** @anchor PoseEditing
     * @name   Pose editing
     * These methods update the other coordinate systems, changing the local coordinates will also change the global and vice versa.
-    */
-  //@{
+    * @{ */
   
   /// local matrix manipulation
   /// the local matrix represents a joints orientation/translation in the coordinate frame of the parent joint
@@ -106,16 +105,29 @@ public:
   void setGlobalTranslation(unsigned int _joint, const Vector &_position, bool _keepGlobalChildPositions=true);
   
   virtual Matrix globalMatrixInv(unsigned int _joint) const;
-  //@}
+  /** @} */
 
   /**
     * @name Synchronization
     * Use these methods to keep the pose in sync with the number (and indices) of the joints.
-    */
-  //@{
+    * @{ */
+
+  /** \brief Called by the skeleton as a new joint is inserted
+   *
+   * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
+   *
+   * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT::joints_.size as parameter.
+   */
   virtual void insertJointAt(unsigned int _index);
+
+  /** \brief Called by the skeleton as a joint is deleted
+   *
+   * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+   *
+   * @param _index The index of the joint that is being deleted.
+   */
   virtual void removeJointAt(unsigned int _index);
-  //@}
+  /** @} */
 
 protected:
   /**
@@ -123,23 +135,20 @@ protected:
     * These methods propagate the change in one of the coordinate systems into the other. This will
     * keep intact the children nodes' positions per default (by recursively updating all children.).
     * This behavior can be influenced via the _keepChildPositions parameter.
-    * 
-    */
-  //@{
+    * @{ */
   void updateFromLocal(unsigned int _joint, bool _keepChildPositions=true);
   void updateFromGlobal(unsigned int _joint, bool _keepChildPositions=true);
-  //@}
+  /** @} */
   
 public:
   /** @anchor UnifiedMatrices
     * @name Unified Matrices
     * Use these methods to gain access to the precalculations performed by this derivation.
-    */
-  //@{
+    * @{ */
   inline const Matrix&         unifiedMatrix(unsigned int _joint);
   inline const Quaternion&     unifiedRotation(unsigned int _joint);
   inline const DualQuaternion& unifiedDualQuaternion(unsigned int _joint);
-  //@}
+  /** @} */
 
 protected:
 
