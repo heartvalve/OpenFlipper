@@ -109,13 +109,6 @@ PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame)
 
 //-----------------------------------------------------------------------------------------------------
 
-/**
- * @brief Returns a pointer to the pose calculated for the given frame
- *
- * @param _iFrame    The frame number for which the pose should be calculated.
- *                   This is always from 0..frames even if the animation starts with an input value other than 0.
- * @param _reference Reference pose
- */
 template<class PointT>
 PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose* _reference)
 {
