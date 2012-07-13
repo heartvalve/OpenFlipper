@@ -262,6 +262,8 @@ class BaseInterface {
        *
        * This function will be used to determine the current version of your plugin.
        * Should have the form x.x.x ( you do not need to give that many subversions )
+       *
+       * @return The version string of the plugin
        */
       virtual QString version() { return QString("-1"); };
 
