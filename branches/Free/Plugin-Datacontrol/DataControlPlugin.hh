@@ -300,6 +300,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 //===========================================================================
 
       private slots:
+
+        /** This function sets the slot descriptions for this plugin
+         *  which will be visible in the script editor
+         */
         void setDescriptions();
 
       public slots:
