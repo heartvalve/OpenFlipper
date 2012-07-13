@@ -139,11 +139,7 @@ AnimationT<PointT>* FrameAnimationT<PointT>::copy() {
 
 //-----------------------------------------------------------------------------
 
-/**
- * @brief Returns a pointer to the pose stored in the given frame
- *
- * @param _iFrame The poses frame number
- */
+
 template<class PointT>
 typename FrameAnimationT<PointT>::Pose *FrameAnimationT<PointT>::pose(unsigned int _iFrame)
 {
@@ -154,9 +150,6 @@ typename FrameAnimationT<PointT>::Pose *FrameAnimationT<PointT>::pose(unsigned i
 
 //-----------------------------------------------------------------------------
 
-/**
- * @brief Returns the number of frames stored in this pose
- */
 template<class PointT>
 unsigned int FrameAnimationT<PointT>::frameCount()
 {
@@ -182,14 +175,7 @@ void FrameAnimationT<PointT>::setFrameCount(unsigned int _frames)
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Called by the skeleton as a new joint is inserted
- *
- * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
- *
- * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
- *                               SkeletonT::joints_.size as parameter.
- */
+
 template<class PointT>
 void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 {
@@ -199,13 +185,7 @@ void FrameAnimationT<PointT>::insertJointAt(unsigned int _index)
 
 //-----------------------------------------------------------------------------
 
-/**
- * \brief Called by the skeleton as a joint is deleted
- *
- * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
- *
- * @param _index The index of the joint that is being deleted.
- */
+
 template<class PointT>
 void FrameAnimationT<PointT>::removeJointAt(unsigned int _index)
 {
