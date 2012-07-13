@@ -154,6 +154,13 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0) {
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ */
 template <typename T0, typename T1>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1) {
   QScriptEngine* engine = getScriptEngine();
@@ -163,6 +170,14 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1) {
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ */
 template <typename T0, typename T1 , typename T2>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 ) {
   QScriptEngine* engine = getScriptEngine();
@@ -173,6 +188,15 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ * @param _t3           Parameter 4 passed to the function
+ */
 template <typename T0, typename T1 , typename T2,  typename T3>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 ) {
   QScriptEngine* engine = getScriptEngine();
@@ -184,6 +208,16 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ * @param _t3           Parameter 4 passed to the function
+ * @param _t4           Parameter 5 passed to the function
+ */
 template <typename T0, typename T1 , typename T2,  typename T3, typename T4>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 , T4 _t4) {
   QScriptEngine* engine = getScriptEngine();
@@ -217,6 +251,13 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName) {
   return qscriptvalue_cast< ReturnValue >( callFunction(_plugin,_functionName) );
 }
 
+/** \brief call a function in another plugin and get a return parameter
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @return value returned by the called function
+ */
 template <typename ReturnValue , typename T0>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0) {
   QScriptEngine* engine = getScriptEngine();
@@ -225,6 +266,14 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0) {
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
+/** \brief call a function in another plugin and get a return parameter
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @return value returned by the called function
+ */
 template <typename ReturnValue , typename T0, typename T1>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1) {
   QScriptEngine* engine = getScriptEngine();
@@ -234,6 +283,15 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
+/** \brief call a function in another plugin and get a return parameter
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ * @return value returned by the called function
+ */
 template <typename ReturnValue , typename T0, typename T1 , typename T2 >
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 ) {
   QScriptEngine* engine = getScriptEngine();
@@ -244,6 +302,16 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
+/** \brief call a function in another plugin and get a return parameter
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ * @param _t3           Parameter 4 passed to the function
+ * @return value returned by the called function
+ */
 template <typename ReturnValue , typename T0, typename T1 , typename T2, typename T3>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 ) {
   QScriptEngine* engine = getScriptEngine();
