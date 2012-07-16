@@ -60,7 +60,7 @@
 
 
 //-----------------------------------------------------------------------------
-// ITERATOR - IMPLEMENTATION 
+// ITERATOR - IMPLEMENTATION
 //-----------------------------------------------------------------------------
 
 /**
@@ -119,7 +119,7 @@ SkeletonT<PointT>::Iterator::~Iterator()
  * @brief Assignment Operator
  *
  * Assign values from given iterator to this iterator and also return self
- * 
+ *
  */
 template<typename PointT>
 typename SkeletonT<PointT>::Iterator &SkeletonT<PointT>::Iterator::operator=(const Iterator &other)
@@ -219,7 +219,7 @@ typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::Iterator::operator*() cons
  *
  * This way it is possible to access the joint by calling:
  * @code
- * SkeletonT::Iterator it;
+ * SkeletonT<>::Iterator it;
  * ...
  * it->method();
  * @endcode
@@ -236,7 +236,7 @@ typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::Iterator::operator->() con
  * @brief Returns false if the iterator is done iterating
  *
  * There are two ways to test if the joint iterator has reached its end. Cast it to bool and test if it is
- * false or compare it to the return value of SkeletonT::end.
+ * false or compare it to the return value of SkeletonT<>::end.
  */
 template<typename PointT>
 SkeletonT<PointT>::Iterator::operator bool() const
@@ -487,7 +487,7 @@ template<typename PointT>
 void SkeletonT<PointT>::addJoint(typename SkeletonT<PointT>::Joint *_pParent, typename SkeletonT<PointT>::Joint *_pJoint)
 {
   unsigned int newJointID;
-  
+
   if(_pParent == 0)
   {
     clear();
@@ -626,7 +626,7 @@ inline typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::root()
 /**
  * @brief Returns the joint with the given index
  *
- * JointT::id_ is always equal to _index.
+ * JointT<>::id_ is always equal to _index.
  *
  * @param _index The joints index, in the range [0, joints_.size)
  * @return Returns a pointer to the joint or 0 if the index does not exist.
@@ -667,7 +667,7 @@ unsigned int SkeletonT<PointT>::childCount(unsigned int _joint)
     std::cerr << "SkeletonT : childCount() called with non-existing joint " << _joint << std::endl;
     return 0;
   }
-  
+
   return joints_[_joint]->size();
 }
 
@@ -745,7 +745,7 @@ inline typename SkeletonT<PointT>::Pose* SkeletonT<PointT>::pose(const Animation
  * @brief Returns a pointer to the reference pose
  *
  * Use this if you need access to the special data members of the reference pose. Notice you can also
- * get the reference pose by passing AnimationHandle() to the SkeletonT::pose method:
+ * get the reference pose by passing AnimationHandle() to the SkeletonT<>::pose method:
  * @code
  *   skeleton.pose(AnimationHandle());
  * @endcode
@@ -783,7 +783,7 @@ AnimationHandle SkeletonT<PointT>::addAnimation(std::string _name, Animation *_a
     names_.insert( std::pair<std::string, unsigned int>(_name, f - animations_.begin()) );
     *f = _animation;
   }
-  
+
   if (_animation)
     _animation->setName(_name);
 
@@ -838,7 +838,7 @@ AnimationHandle SkeletonT<PointT>::animationHandle(std::string _name)
   std::map<std::string, unsigned int>::iterator f = names_.find(_name);
   if(f == names_.end())
     return AnimationHandle();
-  
+
   return AnimationHandle(f->second);
 }
 
