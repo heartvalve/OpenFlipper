@@ -126,7 +126,7 @@ public:
    * method first.
    *
    * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
-   *               SkeletonT::joints_.size as parameter.
+   *               SkeletonT<>::jointCount() as parameter.
    */
   virtual void insertJointAt(unsigned int _index);
 
@@ -139,7 +139,7 @@ public:
    * method first.
    *
    * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
-   *         SkeletonT::joints_.size as parameter.
+   *         SkeletonT<>::jointCount() as parameter.
    */
   virtual void removeJointAt(unsigned int _index);
 
