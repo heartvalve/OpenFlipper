@@ -96,7 +96,7 @@ PoseT<PointT>::~PoseT()
 
 /** \brief Returns the local matrix for the given joint
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The local matrix, relative to the parents coordinate system
  */
 template<typename PointT>
@@ -111,7 +111,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::localMatrix(unsigned
  *
  * The change will automatically be propagated to all children. Also the global matrices will be updated.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @param _local The new local matrix
  * @param _keepLocalChildPositions If true, the positions of the children will be kept
  */
