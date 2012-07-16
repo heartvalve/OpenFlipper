@@ -115,7 +115,7 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
      *
      * The call is dispatched to all poses stored in the animation. See BaseNode::insert_at for more information.
      *
-     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT<>::joints_.size as parameter.
+     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT<>::jointCount as parameter.
      */
     void insertJointAt(unsigned int _index) {};
 
