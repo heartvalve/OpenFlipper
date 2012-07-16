@@ -131,7 +131,7 @@ void PoseT<PointT>::setLocalMatrix(unsigned int _joint, const Matrix& _local, bo
  * The local translation vector describes the translation from the origin of the parent joint
  * coordinate system to the origin of the local joint coordinate system in local coordinates.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The local translation vector (the 4th column in the local matrix)
  */
 template<typename PointT>
@@ -152,7 +152,7 @@ inline typename PoseT<PointT>::Vector PoseT<PointT>::localTranslation(unsigned i
  * The matrix is otherwise not modified. The change is automatically propagated to all children. Also the
  * global coordinate frames will be updated.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @param _position The new local translation vector
  * @param _keepLocalChildPositions If true, the positions of the children will be kept
  */
@@ -185,7 +185,7 @@ typename PoseT<PointT>::Matrix PoseT<PointT>::localMatrixInv(unsigned int _joint
  *
  * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The global matrix, relative to world coordinates
  */
 template<typename PointT>
@@ -202,7 +202,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::globalMatrix(unsigne
  * The global Matrix defines the transformation from bone coordinates back into global world coordinates.
  * The change will automatically be propagated to all children. Also the local matrices will be updated.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @param _global The new global matrix
  * @param _keepGlobalChildPositions Do the children stay at the same position or do they move with their parent joint
  */
@@ -219,7 +219,7 @@ void PoseT<PointT>::setGlobalMatrix(unsigned int _joint, const Matrix &_global, 
 /**
  * \brief Returns the global translation vector
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The global translation vector (the 4th column in the global matrix)
  */
 template<typename PointT>
@@ -240,7 +240,7 @@ inline typename PoseT<PointT>::Vector PoseT<PointT>::globalTranslation(unsigned 
  * The matrix is otherwise not modified. The change is automatically propagated to all children. Also the
  * local coordinate frames will be updated.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @param _position The new global translation vector
  * @param _keepGlobalChildPositions Do the children stay at the same position or do they move with their parent joint
  */
@@ -390,7 +390,7 @@ void PoseT<PointT>::updateFromGlobal(unsigned int _joint, bool _keepChildPositio
  * coordinates will therefore follow the skeleton.
  * \f[ v_{pose} = M_{unified} \cdot v_{reference} \f]
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  */
 template<typename PointT>
 inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::unifiedMatrix(unsigned int _joint)
@@ -407,7 +407,7 @@ inline const typename PoseT<PointT>::Matrix& PoseT<PointT>::unifiedMatrix(unsign
  *
  * The rotational part of the unified matrix is stored in the real part of the dual quaternion
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The rotational part of the unified matrix
  */
 template<typename PointT>
@@ -423,7 +423,7 @@ inline const typename PoseT<PointT>::Quaternion& PoseT<PointT>::unifiedRotation(
  *
  * This is used by the Dual Quaternion blend skinning.
  *
- * @param _joint The joints index, same as for SkeletonT::joints_
+ * @param _joint The joints index, same as for SkeletonT<>::joint
  * @return The rotational part of the unified matrix
  */
 template<typename PointT>
