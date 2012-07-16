@@ -52,8 +52,8 @@
 //== INCLUDES =================================================================
 
 
-#include "SceneGraph.hh"
-#include "../GL/ColorTranslator.hh"
+#include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/GL/ColorTranslator.hh>
 
 
 //== NAMESPACES ============================================================== 
