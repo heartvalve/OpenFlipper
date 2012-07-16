@@ -170,7 +170,8 @@ void DecimaterPlugin::updateAspectRatio(double _value)
  */
 void DecimaterPlugin::slot_decimate()
 {
-  
+  RPC::callFunction ("core", "multiViewMode", 5);
+
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
@@ -323,11 +324,6 @@ void DecimaterPlugin::slot_decimate()
 
 //-----------------------------------------------------------------------------
 
-/** \brief Decimation called by Scripting
- *
- * @param _objID id of an object
- * @param _constraints A string containing a comma separated list of constraints (distance,normal_deviation,roundness,triangles)
- */
 void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
 

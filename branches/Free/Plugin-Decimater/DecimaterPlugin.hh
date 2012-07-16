@@ -186,7 +186,7 @@ public slots:
 
   /** \brief decimate an object
    *
-   * @param _objId       Id of the object that should be decimated
+   * @param _objID       Id of the object that should be decimated
    * @param _constraints List of constraints for the decimater
    *
    */
