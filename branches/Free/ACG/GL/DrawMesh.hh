@@ -180,7 +180,7 @@ public:
   *   may be null to disable textured rendering
   */
   void draw(std::map< int, GLuint>* _textureMap);
-  
+
   /** \brief adds RenderObjects to a deferred draw call renderer
   *
   *   @param _renderer renderobjects are added to this renderer
@@ -269,7 +269,7 @@ public:
   * @param _perFaceTextureCoordinatePropertyName
   */
   void setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePropertyName );
-  
+
   /** \brief Check if per Face Texture coordinates are available
   *
   * If this function returns true, a per face per vertex texture array is available
@@ -301,8 +301,8 @@ private:
    * \note Only operates on indices
    *
    * @param _dstIndexBuf pointer to the resulting index buffer
-   * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh_
-   * @return number of triangles,  also fills triToFaceMap_
+   * @param _maxFaceVertexCount maximum number of vertices per face seen in DrawMeshT<>::mesh_
+   * @return number of triangles,  also fills  DrawMeshT<>::triToFaceMap_
    */
   unsigned int convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount);
 
@@ -415,7 +415,7 @@ public:
   * @param _state
   * @param _offset
   */
-  void updatePickingVertices(ACG::GLState& _state , uint _offset = 0);    
+  void updatePickingVertices(ACG::GLState& _state , uint _offset = 0);
 
   /** \brief get a pointer to the per vertex picking color buffer
   *
@@ -450,9 +450,9 @@ public:
       return 0;
     }
   };
-  
-private:  
-  
+
+private:
+
   /// The vertex buffer used for vertex picking
   std::vector< ACG::Vec3f > pickVertBuf_;
   /// The color buffer used for vertex picking
@@ -461,7 +461,7 @@ private:
 
 
 public:
-    
+
   /**  \brief Update color picking array for edges
    *
    * Call this function to update the color picking array
@@ -471,8 +471,8 @@ public:
    * @param _state
    * @param _offset
    */
-  void updatePickingEdges(ACG::GLState& _state , uint _offset = 0 );    
-  
+  void updatePickingEdges(ACG::GLState& _state , uint _offset = 0 );
+
   /** \brief get a pointer to the per edge picking color buffer
   *
   * This function will return a pointer to the first element of the picking buffer.
@@ -489,21 +489,21 @@ public:
       return 0;
     }
   }
-  
-private:  
-  
+
+private:
+
   std::vector< ACG::Vec4uc > pickEdgeBuf_;
 
 
 
 public:
-  
+
   /**  \brief Update color picking array for faces
    *
    * @param _state
    */
-  void updatePickingFaces(ACG::GLState& _state );    
-  
+  void updatePickingFaces(ACG::GLState& _state );
+
   /** \brief get a pointer to the per face picking color buffer
   *
   * This function will return a pointer to the first element of the picking buffer.
@@ -537,8 +537,8 @@ public:
       return 0;
     }
   }
-  
-private:  
+
+private:
 
   std::vector< ACG::Vec3f > pickFaceVertexBuf_;
   std::vector< ACG::Vec4uc > pickFaceColBuf_;
@@ -552,8 +552,8 @@ public:
   *
   * @param _state OpenGL state
   */
-  void updatePickingAny(ACG::GLState& _state );    
-  
+  void updatePickingAny(ACG::GLState& _state );
+
   /** \brief get a pointer to the any picking color buffer
   *
   * This function will return a pointer to the first element of the picking buffer.
@@ -604,13 +604,13 @@ public:
       return 0;
     }
   }
-  
-private:  
-  
+
+private:
+
   std::vector< ACG::Vec4uc > pickAnyFaceColBuf_;
   std::vector< ACG::Vec4uc > pickAnyEdgeColBuf_;
   std::vector< ACG::Vec4uc > pickAnyVertexColBuf_;
-  
+
 
 private:
 
@@ -675,7 +675,7 @@ private:
   int colorMode_;
   /// flat / smooth shade mode toggle
   int flatMode_;
-  
+
   /// normals in VBO currently in flat / smooth mode
   int bVBOinFlatMode_;
 
@@ -738,19 +738,19 @@ private:
   *
   * This property is used by the mesh for texture index specification.
   * If this is invalid, then it is assumed that there is one or no active
-  * texture. This means that the generated strips will be independent of texture 
+  * texture. This means that the generated strips will be independent of texture
   * information.
-  */  
+  */
   std::string textureIndexPropertyName_;
 
   /** \brief Property for the per face texture coordinates.
   *
   * This property is used by the mesh for texture coordinate specification.
   * If this is invalid, then the strip processor will ignore per face textures during processing.
-  */  
+  */
   std::string perFaceTextureCoordinatePropertyName_;
 
-  
+
 public:
   //========================================================================
   // per edge buffers
@@ -767,13 +767,13 @@ public:
   * The updated buffers are: vertex buffer ( 2 vertices per edge ), color buffer
   */
   void updatePerEdgeBuffers();
-  
+
   /** \brief get a pointer to the per edge vertex buffer
   *
   * This function will return a pointer to the first element of the vertex buffer.
   */
   ACG::Vec3f* perEdgeVertexBuffer();
-  
+
   /** \brief get a pointer to the per edge color buffer
   *
   * This function will return a pointer to the first element of the color buffer.
@@ -792,13 +792,13 @@ public:
   * The updated buffers are: per edge vertex buffer ( 2 vertices per edge )
   */
   void updatePerHalfedgeBuffers();
-   
+
   /** \brief get a pointer to the per edge vertex buffer
   *
   * This function will return a pointer to the first element of the vertex buffer.
   */
   ACG::Vec3f* perHalfedgeVertexBuffer();
-  
+
   /** \brief get a pointer to the per edge color buffer
   *
   * This function will return a pointer to the first element of the color buffer.
