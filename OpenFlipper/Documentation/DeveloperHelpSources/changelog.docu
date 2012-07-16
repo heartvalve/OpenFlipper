@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.3 ( ? , 14979 )</b>
+- <b>OpenFlipper 1.3 ( 2012.07.16 , 15046 )</b>
      - <b>ACG</b>
          - DrawModes
              - Implemented property based draw modes
@@ -40,6 +40,7 @@
          - IO
              - BaseObject now stores the filename of an object from which it was loaded
              - BaseObject now stores the path of an object from which it was loaded
+             - added an option to the save settings input dialog for objects with no given extensions, such that a chosen extension can be applied to all object without preset types
          - Load/Save
              - Added a QInputDialog so that the user can choose a file extension for newly created meshes when saving the settings.
              - Bugfix: Delete all is equivalent to clear all, so emit the clear all signal as well
@@ -52,6 +53,7 @@
              - Default changed when removing objects (Defaults to yes now)
              - Improvement: When switching to orthogonal mode, the coordinate system now switches to ortho projection, too
              - Fix: Snapshot function on windows did not capture the gl widget correctly (fixes #943)
+             - Fix: Fixed bug where multiview layout box has not been updated correctly
          - BaseViewer
              - Get rid of the twenty region pick functions in the qtbaseviewer (Merged to one)
          - PluginFunctions
@@ -142,6 +144,7 @@
         - Added Documentation about creating own data types
         - Integrated OpenVolumeMesh documentation
         - Included bib files for OpenVolumeMesh
+        - Fixed a lot of doxygen warnings
      - <b>Testing System</b>
         - Added optional 4th argument to run_single_object_file_mesh_test, which gives a directory with meshes for testing. If given, TEST_FILE argument is ignored.
         - Increased the testing timeouts a bit (Due to heavy load on the build servers tests got marked as failed but the timeouts where caused by heavy load)
