@@ -50,8 +50,6 @@
 
 //== FORWARDDECLARATIONS ======================================================
 
-typedef unsigned int UINT;
-
 //== NAMESPACES ===============================================================
 
 namespace ACG {
@@ -77,7 +75,7 @@ public:
 	*	@param IndexSize size in bytes of one index: 1, 2, 4 supported
 	*	@param pIndices [in] index buffer
 	*/
-	GPUCacheOptimizer(UINT NumTris, UINT NumVerts, UINT IndexSize, const void* pIndices);
+	GPUCacheOptimizer(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize, const void* pIndices);
 	virtual ~GPUCacheOptimizer(void);
 
 	
@@ -88,7 +86,7 @@ public:
 	* 
 	* you can also use WriteIndexBuffer() to get the result
 	*/
-	const UINT* GetTriangleMap() const {return m_pTriMap;}
+	const unsigned int* GetTriangleMap() const {return m_pTriMap;}
 
 	/** \brief Applies the remapping on the initial pIndices constructor's param
 	* and stores the result in the given destination buffer.
@@ -98,7 +96,7 @@ public:
 	* NOTE:
 	* make sure pIndices is not modified/deleted between constructor's and this call
 	*/
-	void WriteIndexBuffer(UINT DstIndexSize, void* pDst);
+	void WriteIndexBuffer(unsigned int DstIndexSize, void* pDst);
 
 
 	/** \brief Reorders vertex buffer to minimize memory address jumps.
@@ -108,7 +106,7 @@ public:
 	 *
 	 *
 	 * @param pIndices [in] index buffer
-	 * @param pVertMap [out] vertex remap, allocate NumVerts uints before calling
+	 * @param pVertMap [out] vertex remap, allocate NumVerts unsigned ints before calling
 	 *	      dst vertex index = pVertMap[src vertex index]
 	 *				NOTE: if a vertex is not referenced by any triangle, the value 0xFFFFFFFF
 	 *				will be stored as the destination index!
@@ -116,8 +114,8 @@ public:
 	 * @param NumVerts  Number of vertices
 	 * @param IndexSize Size of the index
 	*/
-	static void OptimizeVertices(UINT NumTris, UINT NumVerts, UINT IndexSize,
-								 const void* pIndices, UINT* pVertMap);
+	static void OptimizeVertices(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize,
+								 const void* pIndices, unsigned int* pVertMap);
 	/* this function is declared static to be able to operate on the whole model
 	instead of just a subset of it
 	example use : 1. optimize triangle list per material group
@@ -138,27 +136,27 @@ public:
 	 *
 	 * @param NumTris   Number of triangles
    * @param NumVerts  Number of vertices
-	 * @param	pVertMap [in] vertex remap, result from OptimizeVertices()
+	 * @param	pVertMap  vertex remap, result from OptimizeVertices() (input)
 	 * @param	IndexSize size in bytes of one index: 1, 2, 4 supported
-	 * @param pInOutIndices [in/out] (triangle list) index buffer, remapped after call
+	 * @param pInOutIndices (triangle list) index buffer, remapped after call (input/output)
 	 * @param VertexStride  size in bytes of one vertex
-	 * @param pInOutVertices [in/out] vertex buffer, remapped after call
+	 * @param pInOutVertices vertex buffer, remapped after call (input/output)
 	 *
 	 */
-	static void RemapVertices(UINT NumTris, UINT NumVerts, const UINT* pVertMap,
-		UINT IndexSize, void* pInOutIndices, UINT VertexStride, void* pInOutVertices);
+	static void RemapVertices(unsigned int NumTris, unsigned int NumVerts, const unsigned int* pVertMap,
+		unsigned int IndexSize, void* pInOutIndices, unsigned int VertexStride, void* pInOutVertices);
 
 
 	/** \brief 
 	* Returns the total number of vertex transforms performed with a certain VertexCache.
 	*/
-	UINT ComputeNumberOfVertexTransformations(UINT VertexCacheSize = 16);
+	unsigned int ComputeNumberOfVertexTransformations(unsigned int VertexCacheSize = 16);
 
 	/** \brief Measures the efficiency use of the vertex cache.
 	*  ACMR: Average Cache Miss Ratio
 	* @return ratio: # vertex transformations / # tris
 	*/
-	float ComputeACMR(UINT VertexCacheSize = 16);
+	float ComputeACMR(unsigned int VertexCacheSize = 16);
 
 	/** \brief Measures the efficiency use of the vertex cache.
 	* ATVR: Average Transform to Vertex Ratio
@@ -166,35 +164,35 @@ public:
 	* the optimal value is 1.0 given a mesh w/o duplicate vertices
 	* @return ratio: # vertex transformations / # verts
 	*/
-	float ComputeATVR(UINT VertexCacheSize = 16);
+	float ComputeATVR(unsigned int VertexCacheSize = 16);
 
 protected:
 	// look up  m_pIndices w.r.t. index size at location 'i'
-	UINT GetIndex(UINT i) const;
+	unsigned int GetIndex(unsigned int i) const;
 
-	static UINT GetIndex(UINT i, UINT IndexSize, const void* pIB);
-	static void SetIndex(UINT i, UINT val, UINT IndexSize, void* pIB);
+	static unsigned int GetIndex(unsigned int i, unsigned int IndexSize, const void* pIB);
+	static void SetIndex(unsigned int i, unsigned int val, unsigned int IndexSize, void* pIB);
 
 	virtual void MakeAbstract() = 0;
 
 protected:
 
 
-	UINT m_NumVerts;
-	UINT m_NumTris;
+	unsigned int m_NumVerts;
+	unsigned int m_NumTris;
 	
 	/**
 	TriMap[new tri index] = old tri index
 	allocated in base class, computed in child class
 	*/
-	UINT* m_pTriMap;
+	unsigned int* m_pTriMap;
 
 private:
-	UINT m_IndexSize;
+	unsigned int m_IndexSize;
 	const void* m_pIndices;
 
 
-	UINT m_NumTransformations;
+	unsigned int m_NumTransformations;
 
 
 protected:
@@ -213,12 +211,12 @@ protected:
 		int iNumTrisTotal;
 		/// # tris left to add to final result
 		int iNumTrisLeft;
-		UINT* pTris;
+		unsigned int* pTris;
 
 		/// forsyth's score function
-		void FindScore(UINT MaxSizeVertexCache);
+		void FindScore(unsigned int MaxSizeVertexCache);
 
-		void RemoveTriFromList(UINT tri);
+		void RemoveTriFromList(unsigned int tri);
 	};
 
 	struct Opt_Tris
@@ -230,7 +228,7 @@ protected:
 		/// sum of scores of vertices
 		float fScore;
 		/// vertices of this triangle
-		UINT v[3];
+		unsigned int v[3];
 
 		inline void FindScore(const Opt_Vertex* pVertices)
 		{
@@ -252,6 +250,7 @@ protected:
 class ACGDLLEXPORT GPUCacheOptimizerTipsify : public GPUCacheOptimizer
 {
 public:
+
 	/** \brief The actual computation happens here in this constructor.
 	 *
 	 * @param CacheSize number of entries in the vertex cache
@@ -260,9 +259,8 @@ public:
    * @param IndexSize size in bytes of one index: 1, 2, 4 supported
    * @param pIndices  index buffer
 	*/
-
-	GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris, UINT NumVerts,
-		UINT IndexSize, const void* pIndices);
+	GPUCacheOptimizerTipsify(unsigned int CacheSize, unsigned int NumTris, unsigned int NumVerts,
+		unsigned int IndexSize, const void* pIndices);
 
 private:
 
@@ -272,26 +270,26 @@ private:
 	struct RingStack
 	{
 	private:
-		UINT* pStack;
-		UINT uiStart, uiLen;
-		UINT uiSize;
+		unsigned int* pStack;
+		unsigned int uiStart, uiLen;
+		unsigned int uiSize;
 
-		inline UINT pos(UINT i) const
+		inline unsigned int pos(unsigned int i) const
 		{
-			UINT t = uiStart + i;
+			unsigned int t = uiStart + i;
 			if (t >= uiLen) t -= uiLen;
 			return t;
 		}
 
 	public:
-		RingStack(UINT _uiSize) : uiStart(0), uiLen(0), uiSize(_uiSize)
-		{ pStack = new UINT[uiSize];}
+		RingStack(unsigned int _uiSize) : uiStart(0), uiLen(0), uiSize(_uiSize)
+		{ pStack = new unsigned int[uiSize];}
 		~RingStack() {delete [] pStack;}
 
-		UINT length() const {return uiLen;} // current stack length
-		UINT size() const {return uiSize;} // reserved stack size i.e. maximum length
+		unsigned int length() const {return uiLen;} // current stack length
+		unsigned int size() const {return uiSize;} // reserved stack size i.e. maximum length
 
-		inline void push(UINT v)
+		inline void push(unsigned int v)
 		{
 			if (uiLen == uiSize)
 			{
@@ -302,7 +300,7 @@ private:
 				pStack[pos(uiLen++)] = v; // pos(uiLen) gives the index of the last element + 1
 		}
 
-		inline UINT pop()
+		inline unsigned int pop()
 		{
 			if (uiSize && uiLen) return pStack[pos(--uiLen)];
 			return 0xFFFFFFFF;
@@ -317,7 +315,7 @@ private:
 class ACGDLLEXPORT GPUCacheEfficiencyTester : public GPUCacheOptimizer
 {
 public:
-	GPUCacheEfficiencyTester(UINT NumTris, UINT NumVerts, UINT IndexSize, const void* pIndices);
+	GPUCacheEfficiencyTester(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize, const void* pIndices);
 
 private:
 	void MakeAbstract(){}
