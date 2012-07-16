@@ -13,5 +13,5 @@ void main(void)
 {
 	gl_FragData[0] = texture2DRect(TempTex, gl_FragCoord.xy);
 	// for occlusion query
-	if (gl_FragData[0].a == 0) discard;
+	if (gl_FragData[0].a == 0.0) discard;
 }
