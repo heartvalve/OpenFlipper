@@ -1007,26 +1007,7 @@ void Core::multiViewMode( int _mode ) {
   if ( !OpenFlipper::Options::gui() || !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
     return;
 
-  switch (_mode)
-  {
-    case 0:
-      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::SingleView);
-      PluginFunctions::setActiveExaminer(0);
-      break;
-    case 1:
-      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::DoubleView);
-      break;
-    case 2:
-      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::Grid);
-      break;
-    case 3:
-      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::HSplit);
-      break;
-
-    default:
-      emit log(LOGERR,tr("Requested illegal multiview mode!"));
-      break;
-  }
+  coreWidget_->setViewerLayout(_mode);
 
 }
 
