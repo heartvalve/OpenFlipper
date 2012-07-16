@@ -50,6 +50,7 @@
 
 #include <map>
 
+
 class DepthPeelingPlugin : public QObject, BaseInterface, RenderInterface, LoggingInterface
 {
   Q_OBJECT
