@@ -283,7 +283,7 @@ OBJNode::read(const std::string& _filename)
     // vertex
     else if (strncmp(s, "v ", 2) == 0)
     {
-      if (sscanf(s, "v %100f %100f %100f", &x, &y, &z))
+      if (sscanf(s, "v %30f %30f %30f", &x, &y, &z))
       {
         vertices_.push_back(Vec3f(x,y,z));
       }
@@ -293,7 +293,7 @@ OBJNode::read(const std::string& _filename)
     // texture coord
     else if (strncmp(s, "vt ", 3) == 0)
     {
-      if (sscanf(s, "vt %100f %100f", &u, &v))
+      if (sscanf(s, "vt %40f %40f", &u, &v))
 	texCoords_.push_back(Vec2f(u, v));
     }
 
