@@ -628,7 +628,7 @@ inline typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::root()
  *
  * JointT<>::id_ is always equal to _index.
  *
- * @param _index The joints index, in the range [0, joints_.size)
+ * @param _index The joints index, in the range [0, SkeletonT<>::jointCount)
  * @return Returns a pointer to the joint or 0 if the index does not exist.
  */
 template<typename PointT>
