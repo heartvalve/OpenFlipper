@@ -595,11 +595,7 @@ void SkeletonObject::showMotionPath(bool _visible)
   for(unsigned int i = 0; i < skeleton_->jointCount(); ++i)
   {
     std::stringstream buf;
-    std::string nameJoint, nameLineNode, nameTransformNode, nameSubMatNode;
-
-    buf.str("");
-    buf << i;
-    nameJoint = buf.str();
+    std::string nameLineNode, nameTransformNode;
 
     buf.str("");
     buf << "LineNode " << i;
@@ -607,9 +603,6 @@ void SkeletonObject::showMotionPath(bool _visible)
 
     buf << " Transform";
     nameTransformNode = buf.str();
-
-    buf << " Material";
-    nameSubMatNode = buf.str();
 
     ACG::SceneGraph::TransformNode *pTransNode;
     if(!getAdditionalNode(pTransNode, "SkeletonPlugin", nameTransformNode.c_str()))
