@@ -207,21 +207,21 @@ public slots:
 
     // Is vertex type active? (for use in plugins that need mesh selection)
     bool vertexTypeActive() {
-        SelectionInterface::PrimitiveType t;
+        SelectionInterface::PrimitiveType t = 0u;
         emit getActivePrimitiveType(t);
         return (t & vertexType_) > 0;
     }
 
     // Is vertex type active? (for use in plugins that need mesh selection)
     bool edgeTypeActive() {
-        SelectionInterface::PrimitiveType t;
+        SelectionInterface::PrimitiveType t = 0u;
         emit getActivePrimitiveType(t);
         return (t & edgeType_) > 0;
     }
 
     // Is face type active? (for use in plugins that need mesh selection)
     bool faceTypeActive() {
-        SelectionInterface::PrimitiveType t;
+        SelectionInterface::PrimitiveType t = 0u;
         emit getActivePrimitiveType(t);
         return (t & faceType_) > 0;
     }
