@@ -100,15 +100,15 @@ class FrameAnimationT : public AnimationT<PointT>
 
     /** \brief Called by the skeleton as a new joint is inserted
      *
-     * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
+     * The call is dispatched to all poses stored in this animation. See BasePoseT<>::insert_at for more information.
      *
-     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT::joints_.size as parameter.
+     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT<>::joints_.size as parameter.
      */
     void insertJointAt(unsigned int _index);
 
     /** \brief Called by the skeleton as a joint is deleted
      *
-     * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+     * The call is dispatched to all poses stored in this animation. See BasePoseT<>::remove_at for more information.
      *
      * @param _index The index of the joint that is being deleted.
      */
@@ -119,7 +119,7 @@ class FrameAnimationT : public AnimationT<PointT>
     /// Pointer to associated skeleton
     Skeleton* skeleton_;
     /// Every entry in this vector is a frame of the animation
-    std::vector<Pose*> poses_; 
+    std::vector<Pose*> poses_;
 
 };
 
