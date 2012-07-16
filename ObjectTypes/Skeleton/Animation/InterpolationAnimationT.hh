@@ -52,7 +52,7 @@
 
 template<class PointT>
 class InterpolationAnimationT : public AnimationT<PointT>
-{ 
+{
   template<typename>
   friend class SkeletonT;
 
@@ -63,16 +63,16 @@ class InterpolationAnimationT : public AnimationT<PointT>
     typedef InterpolationMatrixManipulatorT<Scalar>         MatrixManipulator;
     typedef InterpolationT<Scalar>                          Interpolator;
     typedef std::vector<Scalar>                             TargetType;
-  
+
   public:
     InterpolationAnimationT(const InterpolationAnimationT<PointT> &_other);
     InterpolationAnimationT(Skeleton* _skeleton, MatrixManipulator *_matrixManipulator);
     virtual ~InterpolationAnimationT();
-    
+
     virtual AnimationT<PointT>* copy();
-    
+
     virtual void updateFromGlobal(unsigned int _index);
-    
+
     virtual bool getMinInput(Scalar& _result);
     virtual bool getMaxInput(Scalar& _result);
 
@@ -91,7 +91,7 @@ class InterpolationAnimationT : public AnimationT<PointT>
     std::map < unsigned int, Pose* > interpolatedPoses_;
 
     unsigned int calcAbsoluteMaxForInterpolator(uint _index);
-  
+
   public:
     static const int FPS = 60;
 
@@ -139,20 +139,20 @@ class InterpolationAnimationT : public AnimationT<PointT>
      *
      * The call is dispatched to all poses stored in the animation. See BaseNode::insert_at for more information.
      *
-     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT::joints_.size as parameter.
+     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT<>::jointCount as parameter.
      */
     virtual void insertJointAt(unsigned int _index);
 
     /** \brief Called by the skeleton as a joint is deleted
      *
-     * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+     * The call is dispatched to all poses stored in this animation. See BasePoseT<>::remove_at for more information.
      *
      * @param _index The index of the joint that is being deleted.
      */
     virtual void removeJointAt(unsigned int _index);
 
     /** @} */
-    
+
 
     //===========================================================================
     /** @name Interpolators access

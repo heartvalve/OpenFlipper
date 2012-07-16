@@ -64,11 +64,11 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     MultiInterpolationAnimationT(const MultiInterpolationAnimationT<PointT> &_other);
     MultiInterpolationAnimationT() : InterpolationAnimationT<PointT>(NULL, NULL), interpolationAnimations_() {}
     MultiInterpolationAnimationT(const InterpolationAnimations& _interpolationAnimations) : interpolationAnimations_(_interpolationAnimations) {}
-    
+
     virtual AnimationT<PointT>* copy();
-    
+
     virtual void updateFromGlobal(unsigned int _index) {/*NOOP*/};
-    
+
     virtual bool getMinInput(Scalar& _result);
     virtual bool getMaxInput(Scalar& _result);
 
@@ -111,10 +111,23 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
      * Use these methods to keep the poses in sync with the number (and indices) of the joints.
      * @{ */
     //===========================================================================
+    /** \brief Called by the skeleton as a new joint is inserted
+     *
+     * The call is dispatched to all poses stored in the animation. See BaseNode::insert_at for more information.
+     *
+     * @param _index The new joint is inserted at this position. Insert new joints at the end by passing SkeletonT<>::joints_.size as parameter.
+     */
     void insertJointAt(unsigned int _index) {};
+
+    /** \brief Called by the skeleton as a joint is deleted
+     *
+     * The call is dispatched to all poses stored in this animation. See BasePoseT<>::remove_at for more information.
+     *
+     * @param _index The index of the joint that is being deleted.
+     */
     void removeJointAt(unsigned int _index) {};
     /** @} */
-    
+
     //===========================================================================
     /** @name Animations access
      *
@@ -126,10 +139,10 @@ class MultiInterpolationAnimationT : public InterpolationAnimationT<PointT>
     unsigned int animationCount() {
       return interpolationAnimations_.size();
     }
-    
+
     InterpolationAnimationT<PointT>* animation(unsigned int _index );
     /** @} */
-    
+
     virtual void clearPoseCache() {
       for (uint i=0; i < interpolationAnimations_.size(); ++i) {
         interpolationAnimations_[i]->clearPoseCache();
