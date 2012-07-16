@@ -940,27 +940,30 @@ CoreWidget::setViewerLayout(int _idx) {
 
   if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
-  switch (_idx) {
-    case 0:
-      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-      baseLayout_->setMode(QtMultiViewLayout::SingleView);
-      break;
-    case 1:
-      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-      baseLayout_->setMode(QtMultiViewLayout::DoubleView);
-      break;
-    case 2:
-      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-      baseLayout_->setMode(QtMultiViewLayout::Grid);
-      break;
-    case 3:
-      baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-      baseLayout_->setMode(QtMultiViewLayout::HSplit);
-      break;
-  }
+    switch (_idx) {
+      case 0:
+        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+        baseLayout_->setMode(QtMultiViewLayout::SingleView);
+        break;
+      case 1:
+        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+        baseLayout_->setMode(QtMultiViewLayout::DoubleView);
+        break;
+      case 2:
+        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+        baseLayout_->setMode(QtMultiViewLayout::Grid);
+        break;
+      case 3:
+        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+        baseLayout_->setMode(QtMultiViewLayout::HSplit);
+        break;
+      default:
+        emit log(LOGERR,tr("Requested illegal multiview mode!"));
+    }
 
     viewerLayoutBox_->setCurrentIndex(_idx);
   }
+
 }
 
 void
