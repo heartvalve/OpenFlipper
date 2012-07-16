@@ -533,6 +533,23 @@ void CoreWidget::showAboutWidget( ) {
   for(int i = 0 ; i < libPaths.size() ; ++i)
     aboutWidget_->OpenFlipperAbout->append(" " + libPaths[i]);
 
+
+  // =========================================================
+  // Qt Documentation files
+  // =========================================================
+/*
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->append(tr("Currently Loaded documentations:") );
+
+  QStringList registeredDocumentations = helpEngine_->registeredDocumentations ();
+
+  for ( int i = 0 ; i < registeredDocumentations.size(); ++i) {
+    QString documentationInfo = registeredDocumentations[i];
+    documentationInfo += " ";
+    documentationInfo += helpEngine_->documentationFileName(registeredDocumentations[i]);
+    aboutWidget_->OpenFlipperAbout->append(documentationInfo);
+  }
+*/
   // =====================================================================================
   // Compiler information
   // =====================================================================================    
