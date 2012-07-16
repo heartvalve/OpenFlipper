@@ -298,7 +298,7 @@ private:
 
   /** \brief Convert from halfedge data structure to triangle index list
    *
-   * Only operates on indices
+   * \note Only operates on indices
    *
    * @param _dstIndexBuf pointer to the resulting index buffer
    * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh_
