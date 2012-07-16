@@ -49,6 +49,7 @@
 //
 //=============================================================================
 
+#ifndef DOXY_IGNORE_THIS
 #define ACG_MESHNODE_C
 
 //== INCLUDES =================================================================
@@ -1237,7 +1238,7 @@ MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
   GLenum prev_depth = _state.depthFunc();
-      
+
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
                                  v_end(mesh_.vertices_end());
   GLuint                         idx(0);
@@ -1325,7 +1326,7 @@ pick_vertices(GLState& _state, bool _front)
     glEndList ();
     glCallList (vertexList_);
   }
-  
+
   ACG::GLState::depthFunc(prev_depth);
 }
 
@@ -1337,7 +1338,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 pick_faces(GLState& _state)
-{  
+{
   typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
                                       f_end(mesh_.faces_end());
   typename Mesh::ConstFaceVertexIter  fv_it;
@@ -1424,7 +1425,7 @@ pick_faces(GLState& _state)
           pickVertexBuf_[idx] = mesh_.point(fv_it);
           pickColorBuf_[idx] = _state.pick_get_name_color (f_it.handle().idx());
         }
-        count[face] = cnt; 
+        count[face] = cnt;
       }
       ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
       ACG::GLState::enableClientState(GL_COLOR_ARRAY);
@@ -1491,7 +1492,7 @@ pick_edges(GLState& _state, bool _front)
                                       e_end(mesh_.edges_end());
 
   GLenum prev_depth = _state.depthFunc();
-  
+
   if (!_state.pick_set_maximum (mesh_.n_edges()))
   {
     omerr() << "MeshNode::pick_edges: color range too small, "
@@ -1579,7 +1580,7 @@ pick_edges(GLState& _state, bool _front)
     glEndList ();
     glCallList (edgeList_);
   }
-  
+
   ACG::GLState::depthFunc(prev_depth);
 }
 
@@ -1592,7 +1593,7 @@ MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
   GLenum prev_depth = _state.depthFunc();
-  
+
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
 
   // nothing to pick ?
@@ -1685,7 +1686,7 @@ pick_any(GLState& _state)
           pickVertexBuf_[idx] = mesh_.point(fv_it);
           pickColorBuf_[idx] = _state.pick_get_name_color (f_it.handle().idx());
         }
-        count[face] = cnt; 
+        count[face] = cnt;
       }
 
       ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
@@ -1812,9 +1813,9 @@ pick_any(GLState& _state)
       glEnd();
     }
   }
-  
+
   ACG::GLState::depthFunc(prev_depth);
-  
+
   if (anyList_)
   {
     glEndList ();
@@ -1854,4 +1855,5 @@ update_pick_buffers ()
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
+#endif // DOXY_IGNORE_THIS
 //=============================================================================
