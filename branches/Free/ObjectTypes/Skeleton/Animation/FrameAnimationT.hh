@@ -58,10 +58,45 @@ class FrameAnimationT : public AnimationT<PointT>
     typedef PoseT<PointT>                         Pose;
 
   public:
+    /**
+     * @brief Constructor - Creates a new animation consisting of a single pose
+     *
+     * The animation will hold a single frame, made up by a copy of the given pose. After this call returns the
+     * pose given by \e _pose is no longer needed and independent from this instance.
+     *
+     * You can use this operation to clone the reference pose as new instance, then modify the pose.
+     *
+     * @param _pose This pose will make up the only frame in this new animation
+     */
     FrameAnimationT(const Pose &_pose);
+
+    /** \brief Constructor - Creates a new empty animation
+     *
+     * @param _skeleton The skeleton that will hold this animation
+     */
     FrameAnimationT(Skeleton* _skeleton);
+
+    /**
+     * @brief Constructor - Creates a new animation with the given number of frames
+     *
+     * The poses in the given number of frames will all hold identity matrices for all joints. Make sure you write
+     * data to the poses before you use it.
+     *
+     * @param _skeleton    The skeleton that will hold this animation
+     * @param _iNumFrames  The number of frames for this animation
+     */
     FrameAnimationT(Skeleton* _skeleton, unsigned int _iNumFrames);
+
+    /**
+     * @brief Copy constructor
+     *
+     * This animation will copy all frames from the given animation. After the call returns they are completely
+     * independent.
+     *
+     * @param _other The animation to copy from
+     */
     FrameAnimationT(const FrameAnimationT<PointT> &_other);
+
     virtual ~FrameAnimationT();
 
     virtual AnimationT<PointT>* copy();
