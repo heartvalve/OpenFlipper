@@ -301,8 +301,8 @@ private:
    * \note Only operates on indices
    *
    * @param _dstIndexBuf pointer to the resulting index buffer
-   * @param _maxFaceVertexCount maximum number of vertices per face seen in DrawMeshT<>::mesh_
-   * @return number of triangles,  also fills  DrawMeshT<>::triToFaceMap_
+   * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh
+   * @return number of triangles,  also fills triToFaceMap
    */
   unsigned int convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount);
 
