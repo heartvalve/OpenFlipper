@@ -55,12 +55,12 @@ namespace ACG
 
 //=============================================================================
 
-GPUCacheOptimizer::GPUCacheOptimizer(UINT NumTris, UINT NumVerts, UINT IndexSize, 
+GPUCacheOptimizer::GPUCacheOptimizer(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize,
 									 const void* pIndices)
 : m_NumVerts(NumVerts), m_NumTris(NumTris), m_IndexSize(IndexSize), 
   m_pIndices(pIndices), m_NumTransformations(0)
 {
-	m_pTriMap = new UINT[m_NumTris];
+	m_pTriMap = new unsigned int[m_NumTris];
 }
 
 GPUCacheOptimizer::~GPUCacheOptimizer(void)
@@ -70,18 +70,18 @@ GPUCacheOptimizer::~GPUCacheOptimizer(void)
 
 //=============================================================================
 
-UINT GPUCacheOptimizer::GetIndex(UINT i) const
+unsigned int GPUCacheOptimizer::GetIndex(unsigned int i) const
 {
 	assert(i < m_NumTris * 3);
 
 	return GetIndex(i, m_IndexSize, m_pIndices);
 }
 
-UINT GPUCacheOptimizer::GetIndex(UINT i, UINT IndexSize, const void* pIB)
+unsigned int GPUCacheOptimizer::GetIndex(unsigned int i, unsigned int IndexSize, const void* pIB)
 {
 	switch (IndexSize)
 	{
-	case 4: return ((const UINT*)pIB)[i]; break;
+	case 4: return ((const unsigned int*)pIB)[i]; break;
 	case 2: return ((const unsigned short*)pIB)[i]; break;
 	case 1: return ((const unsigned char*)pIB)[i]; break;
 	default:
@@ -90,11 +90,11 @@ UINT GPUCacheOptimizer::GetIndex(UINT i, UINT IndexSize, const void* pIB)
 	return 0xFFFFFFFF;
 }
 
-void GPUCacheOptimizer::SetIndex(UINT i, UINT val, UINT IndexSize, void* pIB)
+void GPUCacheOptimizer::SetIndex(unsigned int i, unsigned int val, unsigned int IndexSize, void* pIB)
 {
 	switch (IndexSize)
 	{
-	case 4: ((UINT*)pIB)[i] = val; break;
+	case 4: ((unsigned int*)pIB)[i] = val; break;
 	case 2: ((unsigned short*)pIB)[i] = val; break;
 	case 1: ((unsigned char*)pIB)[i] = val; break;
 	default:
@@ -104,7 +104,7 @@ void GPUCacheOptimizer::SetIndex(UINT i, UINT val, UINT IndexSize, void* pIB)
 
 //=============================================================================
 
-void GPUCacheOptimizer::WriteIndexBuffer(UINT DstIndexSize, void* pDst)
+void GPUCacheOptimizer::WriteIndexBuffer(unsigned int DstIndexSize, void* pDst)
 {
 	assert(DstIndexSize == 1 ||DstIndexSize == 2 || DstIndexSize == 4);
 	// TODO: warning log, if DstIndexSize < m_IndexSize
@@ -121,11 +121,11 @@ void GPUCacheOptimizer::WriteIndexBuffer(UINT DstIndexSize, void* pDst)
 		bTmpCopy = 1;
 	}
 
-	for (UINT i = 0; i < m_NumTris; ++i)
+	for (unsigned int i = 0; i < m_NumTris; ++i)
 	{
 		for (int k = 0; k < 3; ++k)	
 		{
-			UINT TriVertex = GetIndex(m_pTriMap[i] * 3 + k, m_IndexSize, pSrc);
+			unsigned int TriVertex = GetIndex(m_pTriMap[i] * 3 + k, m_IndexSize, pSrc);
 
 			// copy remapped tri indices
 			SetIndex(i * 3 + k, TriVertex, DstIndexSize, pDst);
@@ -137,10 +137,10 @@ void GPUCacheOptimizer::WriteIndexBuffer(UINT DstIndexSize, void* pDst)
 
 //=============================================================================
 
-void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts, 
-									  const UINT* pVertMap, 
-									  UINT IndexSize, void* pInOutIndices,
-									  UINT VertexStride, void* pInOutVertices)
+void GPUCacheOptimizer::RemapVertices(unsigned int NumTris, unsigned int NumVerts,
+									  const unsigned int* pVertMap,
+									  unsigned int IndexSize, void* pInOutIndices,
+									  unsigned int VertexStride, void* pInOutVertices)
 {
 	if (pVertMap && pInOutIndices && pInOutVertices && VertexStride)
 	{
@@ -152,7 +152,7 @@ void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts,
 
 		// apply on vertex buffer
 
-		for (UINT i = 0; i < NumVerts; ++i)
+		for (unsigned int i = 0; i < NumVerts; ++i)
 		{
 			// some mapping destinations might be invalid
 			//  this vertex is unused,  ignore then
@@ -163,11 +163,11 @@ void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts,
 
 		// apply on index buffer
 
-		for (UINT i = 0; i < NumTris * 3; ++i)
+		for (unsigned int i = 0; i < NumTris * 3; ++i)
 		{
 			// IndexBuffer[i] = VertMap[IndexBuffer[i]]
 
-			UINT v = GetIndex(i, IndexSize, pInOutIndices);
+			unsigned int v = GetIndex(i, IndexSize, pInOutIndices);
 			SetIndex(i, pVertMap[v], IndexSize, pInOutIndices);
 		}
 
@@ -177,19 +177,19 @@ void GPUCacheOptimizer::RemapVertices(UINT NumTris, UINT NumVerts,
 
 //=============================================================================
 
-void GPUCacheOptimizer::OptimizeVertices(UINT NumTris, UINT NumVerts,
-										 UINT IndexSize, const void* pIndices,
-										 UINT* pVertMap)
+void GPUCacheOptimizer::OptimizeVertices(unsigned int NumTris, unsigned int NumVerts,
+										 unsigned int IndexSize, const void* pIndices,
+										 unsigned int* pVertMap)
 {
 	// straight forward algorithm
 	// simply iterate over indices and increment vertex location if unvisited vertex found
-	UINT uCounter = 0; // vertex counter
+	unsigned int uCounter = 0; // vertex counter
 
-	memset(pVertMap, 0xFFFFFFFF, NumVerts * sizeof(UINT));
+	memset(pVertMap, 0xFFFFFFFF, NumVerts * sizeof(unsigned int));
 
-	for (UINT i = 0; i < NumTris * 3; ++i)
+	for (unsigned int i = 0; i < NumTris * 3; ++i)
 	{
-		UINT vertex;
+		unsigned int vertex;
 
 		if (IndexSize == 2) vertex = ((const unsigned short*)pIndices)[i];
 		else vertex = ((const unsigned int*)pIndices)[i];
@@ -201,29 +201,29 @@ void GPUCacheOptimizer::OptimizeVertices(UINT NumTris, UINT NumVerts,
 
 //=============================================================================
 
-UINT GPUCacheOptimizer::ComputeNumberOfVertexTransformations(UINT VertexCacheSize)
+unsigned int GPUCacheOptimizer::ComputeNumberOfVertexTransformations(unsigned int VertexCacheSize)
 {
 	if (m_NumTransformations) return m_NumTransformations;
 
-	UINT NumIndices = 3 * m_NumTris;
+	unsigned int NumIndices = 3 * m_NumTris;
 	if (!NumIndices) return 0;
 
-	UINT* Cache = new UINT[VertexCacheSize];
-	UINT NumSlotsInUse = 0;
-	UINT LastSlot = 0;
+	unsigned int* Cache = new unsigned int[VertexCacheSize];
+	unsigned int NumSlotsInUse = 0;
+	unsigned int LastSlot = 0;
 	m_NumTransformations = 0;
 
-	for (UINT i = 0; i < m_NumTris; ++i)
+	for (unsigned int i = 0; i < m_NumTris; ++i)
 	{
-		UINT t = m_pTriMap[i];
+		unsigned int t = m_pTriMap[i];
 
 		// for each vertex of triangle t:
 		for (int k = 0; k < 3; ++k)
 		{
-			UINT Idx = GetIndex(t * 3 + k); // vertex index
+			unsigned int Idx = GetIndex(t * 3 + k); // vertex index
 
 			int bInCache = 0;
-			for (UINT k = 0; k < NumSlotsInUse && !bInCache; ++k)
+			for (unsigned int k = 0; k < NumSlotsInUse && !bInCache; ++k)
 			{
 				if (Cache[k] == Idx) bInCache = 1;
 			}
@@ -253,24 +253,24 @@ UINT GPUCacheOptimizer::ComputeNumberOfVertexTransformations(UINT VertexCacheSiz
 
 //=============================================================================
 
-float GPUCacheOptimizer::ComputeACMR(UINT VertexCacheSize)
+float GPUCacheOptimizer::ComputeACMR(unsigned int VertexCacheSize)
 {
-	UINT NumT = ComputeNumberOfVertexTransformations(VertexCacheSize);
+	unsigned int NumT = ComputeNumberOfVertexTransformations(VertexCacheSize);
 	return float(NumT) / float(m_NumTris);
 }
 
 //=============================================================================
 
-float GPUCacheOptimizer::ComputeATVR(UINT VertexCacheSize)
+float GPUCacheOptimizer::ComputeATVR(unsigned int VertexCacheSize)
 {
-	UINT NumT = ComputeNumberOfVertexTransformations(VertexCacheSize);
+	unsigned int NumT = ComputeNumberOfVertexTransformations(VertexCacheSize);
 	return float(NumT) / float(m_NumVerts);
 }
 
 //=============================================================================
 
 // forsyth's score function
-void GPUCacheOptimizer::Opt_Vertex::FindScore(UINT MaxSizeVertexCache)
+void GPUCacheOptimizer::Opt_Vertex::FindScore(unsigned int MaxSizeVertexCache)
 {
 	const float CacheDecayPower = 1.5f;
 	const float LastTriScore = 0.75f;
@@ -305,7 +305,7 @@ void GPUCacheOptimizer::Opt_Vertex::FindScore(UINT MaxSizeVertexCache)
 	fScore = fNewScore;
 }
 
-void GPUCacheOptimizer::Opt_Vertex::RemoveTriFromList(UINT tri)
+void GPUCacheOptimizer::Opt_Vertex::RemoveTriFromList(unsigned int tri)
 {
 	for (int k = 0; k < iNumTrisLeft; ++k)
 	{
@@ -322,7 +322,7 @@ void GPUCacheOptimizer::Opt_Vertex::RemoveTriFromList(UINT tri)
 //=============================================================================
 // tipsify
 
-GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris, UINT NumVerts, UINT IndexSize, const void *pIndices)
+GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize, const void *pIndices)
 : GPUCacheOptimizer(NumTris, NumVerts, IndexSize, pIndices)
 {
 	if (NumVerts < 3 || !NumTris) return;
@@ -332,7 +332,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 
 	// build adjacency, same start as in forsyth class
 
-	for (UINT i = 0; i < NumTris; ++i)
+	for (unsigned int i = 0; i < NumTris; ++i)
 	{
 		// copy vertex indices of this tri
 		Opt_Tris* pThisTri = pTris + i;
@@ -347,13 +347,13 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 	}
 
 	// create list of tris per vertex
-	for (UINT i = 0; i < NumTris; ++i)
+	for (unsigned int i = 0; i < NumTris; ++i)
 	{
 		// add this tri to per vertex tri list
 		for (int k = 0; k < 3; ++k)
 		{
 			Opt_Vertex* pV = pVerts + pTris[i].v[k];
-			if (!pV->pTris) pV->pTris = new UINT[pV->iNumTrisTotal];
+			if (!pV->pTris) pV->pTris = new unsigned int[pV->iNumTrisTotal];
 
 			// abuse <numTrisLeft> as temporal up counter 
 			// (automatically sums to numTris, exactly what we want)
@@ -369,18 +369,18 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 	// OPTIMIZATION:
 	//  push and pop on DeadEndVertexStack greatly increases processing time
 	// -> replace with fixed size ring stack
-	//	std::vector<UINT> DeadEndVertexStack;
+	//	std::vector<unsigned int> DeadEndVertexStack;
 	//	DeadEndVertexStack.reserve(2048);
 	RingStack DeadEndVertexStack(128);
 
 
 	int f = 0; // arbitrary starting index (vertex)
 	int iTimeStamp = CacheSize + 1;
-	UINT i = 1; // cursor
+	unsigned int i = 1; // cursor
 
-	UINT numTrisAdded = 0;
+	unsigned int numTrisAdded = 0;
 
-	std::vector<UINT> N; // 1-ring of next candidates
+	std::vector<unsigned int> N; // 1-ring of next candidates
 	N.reserve(2048);
 
 	while (f >= 0)
@@ -423,7 +423,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 		// Get-Next-Vertex
 		{
 			int n = -1, p = -1; // best candidate and priority
-			for (UINT k = 0; k < N.size(); ++k)
+			for (unsigned int k = 0; k < N.size(); ++k)
 			{
 				// for each vertex in N
 				Opt_Vertex* pV = pVerts + N[k];
@@ -450,9 +450,9 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 				// Skip-Dead-End
 				while (DeadEndVertexStack.length() && (n == -1))
 				{
-					//					UINT d = DeadEndVertexStack.back();
+					//					unsigned int d = DeadEndVertexStack.back();
 					//					DeadEndVertexStack.pop_back();
-					UINT d = DeadEndVertexStack.pop();
+					unsigned int d = DeadEndVertexStack.pop();
 
 					if (pVerts[d].iNumTrisLeft > 0)
 						n = d;
@@ -480,11 +480,11 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(UINT CacheSize, UINT NumTris,
 
 //=============================================================================
 
-GPUCacheEfficiencyTester::GPUCacheEfficiencyTester(UINT NumTris, UINT NumVerts, 
-												   UINT IndexSize, const void* pIndices)
+GPUCacheEfficiencyTester::GPUCacheEfficiencyTester(unsigned int NumTris, unsigned int NumVerts,
+												   unsigned int IndexSize, const void* pIndices)
 : GPUCacheOptimizer(NumTris, NumVerts, IndexSize, pIndices)
 {
-	for (UINT i = 0; i < NumTris; ++i) m_pTriMap[i] = i;
+	for (unsigned int i = 0; i < NumTris; ++i) m_pTriMap[i] = i;
 }
 
 //=============================================================================
