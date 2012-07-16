@@ -103,7 +103,7 @@ void DecimaterPlugin::initializePlugin()
 }
 
 /** \brief Initialization of the plugin when it is loaded by the core
- * 
+ *
  */
 void DecimaterPlugin::pluginsInitialized() {
 
@@ -182,12 +182,12 @@ void DecimaterPlugin::slot_decimate()
     DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( o_it->objectData(DECIMATER) );
 
     TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-  
+
     if (decimater == 0){
       decimater = new DecimaterInfo();
       o_it->setObjectData(DECIMATER, decimater);
     }
-    
+
     // constraint handles for decimation
     ModAspectRatioH     hModAspectRatio;
     ModEdgeLengthH      hModEdgeLength;
@@ -197,10 +197,10 @@ void DecimaterPlugin::slot_decimate()
     ModNormalFlippingH  hModNormalFlipping;
     ModQuadricH         hModQuadric;
     ModRoundnessH       hModRoundness;
-    
+
     // Create decimater
     DecimaterType decimater_object( *mesh );
-    
+
     // Remove old constraints
     if(decimater->distance()) {
         decimater->removeDistanceConstraint();
@@ -266,7 +266,7 @@ void DecimaterPlugin::slot_decimate()
       }
     }
 
-    if ( tool_->cbRoundness->isChecked() ) {      
+    if ( tool_->cbRoundness->isChecked() ) {
       if (  decimater_object.add( hModRoundness ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setRoundnessConstraint( tool_->roundness->value() );
           decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
@@ -310,7 +310,7 @@ void DecimaterPlugin::slot_decimate()
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();
     object->update();
-    
+
     // Create backup
     emit createBackup(o_it->id(), "Decimation");
     emit updatedObject( o_it->id() , UPDATE_TOPOLOGY );
@@ -341,12 +341,12 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( object->objectData(DECIMATER) );
 
     TriMesh* mesh = PluginFunctions::triMesh(baseObjectData);
-    
+
     if (decimater == 0){
       decimater = new DecimaterInfo();
       object->setObjectData(DECIMATER, decimater);
     }
-    
+
     // constraint handles for decimation
     ModAspectRatioH     hModAspectRatio;
     ModEdgeLengthH      hModEdgeLength;
@@ -356,7 +356,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     ModNormalFlippingH  hModNormalFlipping;
     ModQuadricH         hModQuadric;
     ModRoundnessH       hModRoundness;
-    
+
     // Create decimater
     DecimaterType decimater_object( *mesh );
 
@@ -401,7 +401,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
         case 0:
           decimater->setDecimationOrder(DecimaterInfo::DISTANCE);
           decimater_object.add( hModQuadric );
-          decimater_object.module( hModQuadric )_constraints.unset_max_err();
+          decimater_object.module( hModQuadric ).unset_max_err();
           break;
         case 1:
           decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
@@ -563,7 +563,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
     // Create backup
     emit createBackup(_objID, "Decimation");
-    
+
     // Create QVariantMap parameter string
     QString param = "("  + (_constraints.contains("decimation_order") ? tr("decimation_order =  %1").arg(_constraints["decimation_order"].toString()) : "") +
                     ", " + (_constraints.contains("distance") ? tr("distance = %1").arg(_constraints["distance"].toString()) : "") +
@@ -574,9 +574,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
                     ", " + (_constraints.contains("independent_sets") ? tr("independent_sets = %1").arg(_constraints["independent_sets"].toString()) : "") +
                     ", " + (_constraints.contains("triangles") ? tr("triangles = %1").arg(_constraints["triangles"].toString()) : "") +
                     ", " + (_constraints.contains("vertices") ? tr("vertices = %1").arg(_constraints["vertices"].toString()) : "") + ")";
-    
+
     emit scriptInfo( "decimate(" + QString::number(_objID) + ", " + param + ")" );
-    
+
     emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
 
   } else {
