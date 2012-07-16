@@ -480,7 +480,7 @@ const DrawModeProperties* DrawMode::getDrawModeProperties() const
 bool DrawMode::checkConsistency() const
 {
   // PRIMITIVE_CELL is the last primitive count (currently)
-  int count[PRIMITIVE_CELL+1] = {0};
+  //int count[PRIMITIVE_CELL+1] = {0};
 
 
 
