@@ -170,8 +170,6 @@ void DecimaterPlugin::updateAspectRatio(double _value)
  */
 void DecimaterPlugin::slot_decimate()
 {
-  RPC::callFunction ("core", "multiViewMode", 5);
-
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
@@ -326,7 +324,6 @@ void DecimaterPlugin::slot_decimate()
 
 void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
-
   BaseObjectData* baseObjectData;
   if ( ! PluginFunctions::getObject(_objID,baseObjectData) ) {
     emit log(LOGERR,tr("Unable to get Object"));
@@ -404,7 +401,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
         case 0:
           decimater->setDecimationOrder(DecimaterInfo::DISTANCE);
           decimater_object.add( hModQuadric );
-          decimater_object.module( hModQuadric ).unset_max_err();
+          decimater_object.module( hModQuadric )_constraints.unset_max_err();
           break;
         case 1:
           decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
