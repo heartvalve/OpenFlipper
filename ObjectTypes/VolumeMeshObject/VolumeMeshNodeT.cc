@@ -137,6 +137,7 @@ void VolumeMeshNodeT<VolumeMeshT>::update_geometry(GLState& _state, const DrawMo
     glEndList();
 
     geom_changed_ = false;
+    color_changed_ = false;
 }
 
 
@@ -168,6 +169,12 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertices(GLState& _state, const DrawMode
         glEnd();
     } else if (_drawMode & DrawModes::POINTS_COLORED) {
 
+        bool glLight = _state.isStateEnabled(GL_LIGHTING);
+        bool glBlend = _state.isStateEnabled(GL_BLEND);
+
+        _state.disable(GL_LIGHTING);
+        _state.disable(GL_BLEND);
+
         // Set point size
         glPointSize(materialNode_->point_size());
 
@@ -190,8 +197,16 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertices(GLState& _state, const DrawMode
                 glVertex3d(p[0], p[1], p[2]);
             }
         }
+
         glEnd();
+
+        if(glLight) _state.enable(GL_LIGHTING);
+        if(glBlend) _state.enable(GL_BLEND);
     }
+
+    // Reset color
+    const ACG::Vec4f& c = materialNode_->base_color();
+    glColor4f(c[0], c[1], c[2], c[3]);
 }
 
 //----------------------------------------------------------------------------
@@ -362,10 +377,15 @@ void VolumeMeshNodeT<VolumeMeshT>::update_selection(GLState& _state, const DrawM
 
     glNewList(selectionList_, GL_COMPILE);
 
+    glColor4f(selection_color_[0], selection_color_[1], selection_color_[2], selection_color_[3]);
+
     draw_vertex_selection(_state, _drawMode);
     draw_edge_selection(_state, _drawMode);
     draw_face_selection(_state, _drawMode);
     draw_cell_selection(_state, _drawMode);
+
+    const ACG::Vec4f& c = _state.base_color();
+    glColor4f(c[0], c[1], c[2], c[3]);
 
     glEndList();
 
@@ -380,8 +400,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertex_selection(GLState& _state, const 
     // Always draw vertex selection no matter which draw mode
 
     // Set point size
-    float p_backup = _state.point_size();
-    glPointSize(materialNode_->point_size() * 3.0f);
+    glPointSize(materialNode_->point_size());
 
     // draw all points
     glBegin(GL_POINTS);
@@ -399,8 +418,6 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertex_selection(GLState& _state, const 
         }
     }
     glEnd();
-
-    glPointSize(p_backup);
 }
 
 //----------------------------------------------------------------------------
@@ -729,17 +746,15 @@ ACG::Vec4f VolumeMeshNodeT<VolumeMeshT>::get_valence_color_code(unsigned int _va
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
-    // Update the selection if something has changed
-    if(geom_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode) {
-        update_selection(_state, _drawMode);
+    if(color_changed_ || geom_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode) {
         update_geometry(_state, _drawMode);
+        update_selection(_state, _drawMode);
     } else {
         if(selection_changed_) {
             update_selection(_state, _drawMode);
         }
     }
 
-    // Update the geometry if something has changed
     if(valence_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode)
         update_valence(_state, _drawMode);
 
@@ -752,23 +767,23 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     GLboolean depth = false;
     glGetBooleanv(GL_DEPTH_TEST, &depth);
 
-    ACG::GLState::enable(GL_LIGHTING);
-    ACG::GLState::disable(GL_COLOR_MATERIAL);
+    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::disable(GL_BLEND);
 
-    ACG::Vec4f ac = _state.ambient_color();
-    ACG::Vec4f dc = _state.diffuse_color();
-    ACG::Vec4f sc = _state.specular_color();
-    _state.set_ambient_color(selection_color_ * 0.5);
-    _state.set_diffuse_color(selection_color_ * 0.7);
-    _state.set_specular_color(selection_color_);
+//    ACG::Vec4f ac = _state.ambient_color();
+//    ACG::Vec4f dc = _state.diffuse_color();
+//    ACG::Vec4f sc = _state.specular_color();
+//    _state.set_ambient_color(selection_color_ * 0.5);
+//    _state.set_diffuse_color(selection_color_ * 0.7);
+//    _state.set_specular_color(selection_color_);
 
     glCallList(selectionList_);
 
-    _state.set_ambient_color(ac);
-    _state.set_diffuse_color(dc);
-    _state.set_specular_color(sc);
+//    _state.set_ambient_color(ac);
+//    _state.set_diffuse_color(dc);
+//    _state.set_specular_color(sc);
 
-    ACG::GLState::disable(GL_LIGHTING);
+//    ACG::GLState::disable(GL_LIGHTING);
 
     if(show_irregs_)
         glCallList(valenceList_);
@@ -789,11 +804,6 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
         ACG::GLState::disable(GL_BLEND);
         ACG::GLState::enable(GL_DEPTH_TEST);
         ACG::GLState::depthFunc(GL_LESS);
-    }
-
-    if(_drawMode & DrawModes::POINTS_COLORED) {
-        ACG::GLState::disable(GL_LIGHTING);
-        ACG::GLState::disable(GL_BLEND);
     }
 
     glCallList(geometryList_);
