@@ -116,24 +116,23 @@ public:
 	*/
 	static void OptimizeVertices(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize,
 								 const void* pIndices, unsigned int* pVertMap);
-	/* this function is declared static to be able to operate on the whole model
-	instead of just a subset of it
-	example use : 1. optimize triangle list per material group
-	              2. optimize vertex buffer on whole mesh independently of material subsets
-	*/
+	// this function is declared static to be able to operate on the whole model
+	// instead of just a subset of it
+	// example use:
+	// - optimize triangle list per material group
+  // - optimize vertex buffer on whole mesh independently of material subsets
 
 
 	/** \brief Applies the remap table of OptimizeVertices to a vertex and index buffer
 	 *
-	 * pseudo code (manual remapping):
-	 *
+	 * Pseudo code for manual remapping
 	 * \code
-	 * for each index i in IndexBuffer:
-	 *   IndexBuffer[i] = VertMap[IndexBuffer[i]]
-	 * TmpBuf = VertexBuffer
-	 * for each vertex v in TmpBuf
-	 *   if (VertMap[v] != 0xFFFFFFFF)
-	 *     VertexBuffer[VertMap[v]] = TmpBuf[v]
+	 *   for each index i in IndexBuffer:
+	 *     IndexBuffer[i] = VertMap[IndexBuffer[i]]
+	 *   TmpBuf = VertexBuffer
+	 *   for each vertex v in TmpBuf
+	 *     if (VertMap[v] != 0xFFFFFFFF)
+	 *       VertexBuffer[VertMap[v]] = TmpBuf[v]
 	 * \endcode
 	 *
 	 * @param NumTris   Number of triangles
