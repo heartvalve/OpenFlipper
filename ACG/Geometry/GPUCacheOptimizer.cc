@@ -55,12 +55,14 @@ namespace ACG
 
 //=============================================================================
 
-GPUCacheOptimizer::GPUCacheOptimizer(unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize,
-									 const void* pIndices)
-: m_NumVerts(NumVerts), m_NumTris(NumTris), m_IndexSize(IndexSize), 
-  m_pIndices(pIndices), m_NumTransformations(0)
+GPUCacheOptimizer::GPUCacheOptimizer( unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize, const void* pIndices) :
+        m_NumVerts(NumVerts),
+        m_NumTris(NumTris),
+        m_IndexSize(IndexSize),
+        m_pIndices(pIndices),
+        m_NumTransformations(0)
 {
-	m_pTriMap = new unsigned int[m_NumTris];
+  m_pTriMap = new unsigned int[m_NumTris];
 }
 
 GPUCacheOptimizer::~GPUCacheOptimizer(void)

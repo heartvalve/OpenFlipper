@@ -127,12 +127,14 @@ public:
 	 *
 	 * pseudo code (manual remapping):
 	 *
+	 * \code
 	 * for each index i in IndexBuffer:
 	 *   IndexBuffer[i] = VertMap[IndexBuffer[i]]
 	 * TmpBuf = VertexBuffer
 	 * for each vertex v in TmpBuf
 	 *   if (VertMap[v] != 0xFFFFFFFF)
 	 *     VertexBuffer[VertMap[v]] = TmpBuf[v]
+	 * \endcode
 	 *
 	 * @param NumTris   Number of triangles
    * @param NumVerts  Number of vertices
@@ -244,14 +246,14 @@ protected:
 /** \class GPUCacheOptimizerTipsify GPUCacheOptimizer.hh
 
     Implementation of "Fast Triangle Reordering for Vertex Locality and Reduced Overdraw" by Sander et. al.
-	http://www.cs.princeton.edu/gfx/pubs/Sander_2007_%3ETR/index.php
+	 http://www.cs.princeton.edu/gfx/pubs/Sander_2007_%3ETR/index.php
 */
 
 class ACGDLLEXPORT GPUCacheOptimizerTipsify : public GPUCacheOptimizer
 {
 public:
 
-	/** \brief The actual computation happens here in this constructor.
+	/** \brief The actual computation happens here in this constructor
 	 *
 	 * @param CacheSize number of entries in the vertex cache
 	 * @param NumTris   Number of triangles
@@ -259,8 +261,11 @@ public:
    * @param IndexSize size in bytes of one index: 1, 2, 4 supported
    * @param pIndices  index buffer
 	*/
-	GPUCacheOptimizerTipsify(unsigned int CacheSize, unsigned int NumTris, unsigned int NumVerts,
-		unsigned int IndexSize, const void* pIndices);
+	GPUCacheOptimizerTipsify(unsigned int CacheSize,
+	                         unsigned int NumTris,
+	                         unsigned int NumVerts,
+	                         unsigned int IndexSize,
+	                         const void* pIndices);
 
 private:
 
