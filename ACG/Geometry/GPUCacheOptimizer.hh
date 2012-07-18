@@ -135,13 +135,13 @@ public:
 	 *       VertexBuffer[VertMap[v]] = TmpBuf[v]
 	 * \endcode
 	 *
-	 * @param NumTris   Number of triangles
    * @param NumVerts  Number of vertices
 	 * @param	pVertMap  vertex remap, result from OptimizeVertices() (input)
 	 * @param	IndexSize size in bytes of one index: 1, 2, 4 supported
 	 * @param pInOutIndices (triangle list) index buffer, remapped after call (input/output)
 	 * @param VertexStride  size in bytes of one vertex
 	 * @param pInOutVertices vertex buffer, remapped after call (input/output)
+	 * @param NumTris   Number of triangles
 	 *
 	 */
 	static void RemapVertices(unsigned int NumTris, unsigned int NumVerts, const unsigned int* pVertMap,
@@ -254,12 +254,11 @@ public:
 
 	/** \brief The actual computation happens here in this constructor
 	 *
-	 *
-	 * @param CacheSize number of entries in the vertex cache
-	 * @param NumTris   Number of triangles
    * @param NumVerts  Number of vertices
    * @param IndexSize size in bytes of one index: 1, 2, 4 supported
    * @param pIndices  index buffer
+   * @param CacheSize number of entries in the vertex cache
+   * @param NumTris   Number of triangles
 	*/
 	GPUCacheOptimizerTipsify(unsigned int CacheSize,
 	                         unsigned int NumTris,
