@@ -254,6 +254,7 @@ public:
 
 	/** \brief The actual computation happens here in this constructor
 	 *
+	 *
 	 * @param CacheSize number of entries in the vertex cache
 	 * @param NumTris   Number of triangles
    * @param NumVerts  Number of vertices
