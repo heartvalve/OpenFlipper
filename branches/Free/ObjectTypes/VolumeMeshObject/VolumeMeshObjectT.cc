@@ -133,6 +133,7 @@ void VolumeMeshObject<MeshT>::init() {
     if(materialNode() == NULL)
         std::cerr << "Error when creating mesh object! Material node is NULL!" << std::endl;
 
+    materialNode()->set_point_size(12.0f);
     meshNode_->set_parent(materialNode());
 
     // Update all nodes
@@ -224,6 +225,7 @@ void VolumeMeshObject<MeshT>::updateGeometry() {
 /** Updates the color information in the mesh scenegraph node */
 template<class MeshT>
 void VolumeMeshObject<MeshT>::updateColor() {
+
     if(meshNode_)
         meshNode_->set_color_changed(true);
 }
