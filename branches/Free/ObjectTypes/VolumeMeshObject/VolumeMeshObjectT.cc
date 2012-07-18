@@ -68,7 +68,7 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
     meshNode_((OpenFlipper::Options::nogui() ?
                NULL :
                new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
-                                                           normalAttrib_, NULL, "NEW VolumeMeshNode"))) {
+                                                           normalAttrib_, materialNode(), materialNode(), "NEW VolumeMeshNode"))) {
 
     init();
 
@@ -79,12 +79,12 @@ template<class MeshT>
 VolumeMeshObject<MeshT>::VolumeMeshObject(DataType _typeId) :
     BaseObjectData(), mesh_(new MeshT()),
     statusAttrib_(*mesh_),
-    colorAttrib_(*mesh_),
+    colorAttrib_(*mesh_, ACG::Vec4f(1.0f, 1.0f, 1.0f, 1.0f) /* Default color */),
     normalAttrib_(*mesh_),
     meshNode_((OpenFlipper::Options::nogui() ?
                NULL :
                new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
-                                                           normalAttrib_, NULL, "NEW VolumeMeshNode"))) {
+                                                           normalAttrib_, materialNode(), materialNode(), "NEW VolumeMeshNode"))) {
 
     setDataType(_typeId);
     init();

@@ -47,6 +47,7 @@
 
 #include <ACG/GL/gl.hh>
 #include <ACG/Scenegraph/BaseNode.hh>
+#include <ACG/Scenegraph/MaterialNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
@@ -105,7 +106,8 @@ public:
                     OpenVolumeMesh::StatusAttrib& _statusAttrib,
                     OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                     OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
-                    BaseNode* _parent = 0, std::string _name = "<VolumeMeshNode>");
+                    const MaterialNode* _matNode, BaseNode* _parent = 0,
+                    std::string _name = "<VolumeMeshNode>");
 
     /// Destructor
     ~VolumeMeshNodeT();
@@ -278,12 +280,11 @@ private:
     // Hold color of selection
     ACG::Vec4f selection_color_;
 
-    // Store point size
-    float point_size_;
-
     OpenVolumeMesh::StatusAttrib& statusAttrib_;
     OpenVolumeMesh::ColorAttrib<Vec4f>& colorAttrib_;
     OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_;
+
+    const MaterialNode* materialNode_;
 };
 
 //=============================================================================

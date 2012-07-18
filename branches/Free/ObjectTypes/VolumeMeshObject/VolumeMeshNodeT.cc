@@ -61,7 +61,8 @@ VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(const VolumeMesh& _mesh,
                                               OpenVolumeMesh::StatusAttrib& _statusAttrib,
                                               OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                                               OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
-                                              BaseNode* _parent, std::string _name) :
+                                              const MaterialNode* _matNode, BaseNode* _parent,
+                                              std::string _name) :
 BaseNode(_parent, _name),
 mesh_(_mesh),
 scale_(1.0),
@@ -77,10 +78,10 @@ translucency_factor_(0.1),
 show_irregs_(false),
 show_outer_val2_irregs_(false),
 selection_color_(ACG::Vec4f(1.0f, 0.0f, 0.0f, 1.0f)),
-point_size_(2.0f),
 statusAttrib_(_statusAttrib),
 colorAttrib_(_colorAttrib),
-normalAttrib_(_normalAttrib) {
+normalAttrib_(_normalAttrib),
+materialNode_(_matNode) {
 
     // Initialize rendering display list
     init();
@@ -114,7 +115,7 @@ void VolumeMeshNodeT<VolumeMeshT>::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 
 template<class VolumeMeshT>
 DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
-    return (DrawModes::WIREFRAME | DrawModes::POINTS | DrawModes::SOLID_FLAT_SHADED);
+    return (DrawModes::WIREFRAME | DrawModes::POINTS | DrawModes::POINTS_COLORED | DrawModes::SOLID_FLAT_SHADED);
 }
 
 //----------------------------------------------------------------------------
@@ -147,8 +148,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertices(GLState& _state, const DrawMode
     if (_drawMode & DrawModes::POINTS) {
 
         // Set point size
-        float p_backup = _state.point_size();
-        glPointSize(point_size_);
+        glPointSize(materialNode_->point_size());
 
         // draw all points
         glBegin(GL_POINTS);
@@ -166,8 +166,31 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertices(GLState& _state, const DrawMode
             }
         }
         glEnd();
+    } else if (_drawMode & DrawModes::POINTS_COLORED) {
 
-        glPointSize(p_backup);
+        // Set point size
+        glPointSize(materialNode_->point_size());
+
+        // draw all points
+        glBegin(GL_POINTS);
+
+        int n_vertices(mesh_.n_vertices());
+        for (int i = 0; i < n_vertices; ++i) {
+            Vec3d p = mesh_.vertex(VertexHandle(i));
+
+            if(is_inside(p)) {
+
+                // Skip selected
+                if(statusAttrib_[VertexHandle(i)].selected()) continue;
+
+                const Vec4f& c = colorAttrib_[VertexHandle(i)];
+
+                glColor4f(c[0], c[1], c[2], c[3]);
+
+                glVertex3d(p[0], p[1], p[2]);
+            }
+        }
+        glEnd();
     }
 }
 
@@ -358,7 +381,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw_vertex_selection(GLState& _state, const 
 
     // Set point size
     float p_backup = _state.point_size();
-    glPointSize(point_size_ * 3.0f);
+    glPointSize(materialNode_->point_size() * 3.0f);
 
     // draw all points
     glBegin(GL_POINTS);
@@ -706,14 +729,14 @@ ACG::Vec4f VolumeMeshNodeT<VolumeMeshT>::get_valence_color_code(unsigned int _va
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
-    // Update the geometry if something has changed
-    if(geom_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode)
-        update_geometry(_state, _drawMode);
-
     // Update the selection if something has changed
-    if(selection_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode) {
+    if(geom_changed_ || BaseNode::isDirty() || lastDrawMode_ != _drawMode) {
         update_selection(_state, _drawMode);
         update_geometry(_state, _drawMode);
+    } else {
+        if(selection_changed_) {
+            update_selection(_state, _drawMode);
+        }
     }
 
     // Update the geometry if something has changed
@@ -766,6 +789,11 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
         ACG::GLState::disable(GL_BLEND);
         ACG::GLState::enable(GL_DEPTH_TEST);
         ACG::GLState::depthFunc(GL_LESS);
+    }
+
+    if(_drawMode & DrawModes::POINTS_COLORED) {
+        ACG::GLState::disable(GL_LIGHTING);
+        ACG::GLState::disable(GL_BLEND);
     }
 
     glCallList(geometryList_);
