@@ -319,16 +319,23 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
             action->setIcon(icon);
+
             action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
             action->setIcon(icon);
+
             action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
             action->setIcon(icon);
+
             action = menu.addAction(tr("Material Properties"),this,SLOT ( slotMaterialProperties() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
             action->setIcon(icon);
+
+            menu.addAction(tr("Copy Material Properties to Targeted Objects"), this, SLOT ( slotCopyMaterialToTargeted() ));
+
             menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
+
             menu.addSeparator();
             action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
@@ -482,6 +489,54 @@ void DataControlPlugin::slotRename(){
 /** \brief show the material properties dialog
  * 
  */
+void DataControlPlugin::slotCopyMaterialToTargeted() {
+    BaseObject* item = 0;
+
+    //check if it was called from object contextMenu or from the toolBox
+    QAction* action = dynamic_cast< QAction* > ( sender() );
+
+    if ( action ){
+      bool ok = false;
+
+      int id = action->data().toInt(&ok);
+
+      if ( ok && id > 0 )
+        PluginFunctions::getObject(id,item);
+    }
+
+    if ( item == 0 ){
+      // the slot was called from toolbox
+      QItemSelectionModel* selection = view_->selectionModel();
+
+      // Get all selected rows
+      QModelIndexList indexList = selection->selectedRows ( 0 );
+      int selectedRows = indexList.size();
+      if (selectedRows == 1){
+        int id = model_->itemId( indexList[0] );
+
+        if ( id > 0 )
+          PluginFunctions::getObject(id,item);
+      }
+    }
+
+    if ( item != 0 ){
+
+      BaseObjectData* itemData = dynamic_cast< BaseObjectData* > (item);
+      const ACG::SceneGraph::Material &sourceMaterial = itemData->materialNode()->material();
+
+      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS);
+              o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+          MaterialNode * const materialNode = o_it->materialNode();
+          if (materialNode) {
+              materialNode->material() = sourceMaterial;
+          }
+      }
+
+      emit updateView();
+    }
+}
+
 void DataControlPlugin::slotMaterialProperties(){
 
   BaseObject* item = 0;

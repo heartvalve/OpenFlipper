@@ -147,8 +147,11 @@ void DataControlPlugin::pluginsInitialized() {
   icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
   QAction* material = new QAction(icon, tr("Material Properties"), 0);
   connect (material, SIGNAL( triggered() ), this, SLOT ( slotMaterialProperties() ));
-
   emit addContextMenuItem(material , DATA_ALL , CONTEXTOBJECTMENU);
+
+  QAction* copyMaterial = new QAction(tr("Copy Material Properties to Targeted Objects"), 0);
+  connect (copyMaterial, SIGNAL( triggered() ), this, SLOT ( slotCopyMaterialToTargeted() ));
+  emit addContextMenuItem(copyMaterial , DATA_ALL , CONTEXTOBJECTMENU);
 
   PluginFunctions::setDefaultViewObjectMarker (&objectMarker);
   PluginFunctions::setViewObjectMarker (&objectMarker);
