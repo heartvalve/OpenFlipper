@@ -224,6 +224,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         ///Called by the popup menu to set material properties
         void slotMaterialProperties();
 
+        ///Called by the popup menu to copy material properties
+        void slotCopyMaterialToTargeted();
+
         /** \brief Called when the material properties were changed inside the material dialog
          *
          * @param _node unused
