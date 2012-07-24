@@ -63,13 +63,14 @@ PrimitivesGeneratorPlugin::~PrimitivesGeneratorPlugin()
 
 void PrimitivesGeneratorPlugin::initializePlugin()
 {
-  emit setSlotDescription("addTetrahedron()"     ,tr("Generates a tetrahedron (ObjectId is returned)")  ,QStringList(), QStringList());
-  emit setSlotDescription("addTriangulatedCube()",tr("Generates a cube (ObjectId is returned)")         ,QStringList(), QStringList());
-  emit setSlotDescription("addIcosahedron()"     ,tr("Generates an icosahedron (ObjectId is returned)") ,QStringList(), QStringList());
-  emit setSlotDescription("addPyramid()"         ,tr("Generates a pyramid (ObjectId is returned)")      ,QStringList(), QStringList());
-  emit setSlotDescription("addOctahedron()"      ,tr("Generates an octahedron (ObjectId is returned)")  ,QStringList(), QStringList());
-  emit setSlotDescription("addDodecahedron()"    ,tr("Generates a dodecahedron (ObjectId is returned)") ,QStringList(), QStringList());
-  emit setSlotDescription("addSphere()"          ,tr("Generates a sphere (ObjectId is returned)")       ,QStringList(), QStringList());
+  emit setSlotDescription("addTetrahedron()"          ,tr("Generates a tetrahedron (ObjectId is returned)")            ,QStringList(), QStringList());
+  emit setSlotDescription("addTriangulatedCube()"     ,tr("Generates a cube (ObjectId is returned)")                   ,QStringList(), QStringList());
+  emit setSlotDescription("addIcosahedron()"          ,tr("Generates an icosahedron (ObjectId is returned)")           ,QStringList(), QStringList());
+  emit setSlotDescription("addPyramid()"              ,tr("Generates a pyramid (ObjectId is returned)")                ,QStringList(), QStringList());
+  emit setSlotDescription("addOctahedron()"           ,tr("Generates an octahedron (ObjectId is returned)")            ,QStringList(), QStringList());
+  emit setSlotDescription("addDodecahedron()"         ,tr("Generates a dodecahedron (ObjectId is returned)")           ,QStringList(), QStringList());
+  emit setSlotDescription("addSphere()"               ,tr("Generates a sphere (ObjectId is returned)")                 ,QStringList(), QStringList());
+  emit setSlotDescription("addTriangulatedCylinder()" ,tr("Generates a triangulated cylinder (ObjectId is returned)")  ,QStringList(), QStringList());
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -110,6 +111,10 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action->setIcon(*icon);
     whatsThisGen.setWhatsThis(action,tr("Create a Pyramid."),"Pyramid");
 
+    action = primitivesMenu->addAction("Cylinder (Triangle Mesh)"       ,this,SLOT(addTriangulatedCylinder()));
+    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cylinder.png");
+    action->setIcon(*icon);
+
     action = primitivesMenu->addAction("Sphere",this,SLOT(addSphere()));
     icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png");
     action->setIcon(*icon);
@@ -122,7 +127,6 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
   }
 
 }
-
 
 
 int PrimitivesGeneratorPlugin::addTriMesh() {
@@ -253,8 +257,142 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube() {
 }
 
 //========================================================================
+// Cylinder
+//========================================================================
+
+
+ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(int _sliceNumber, int _stackNumber)
+{
+  ACG::Vec3d position;
+
+  const double height     = 5.0;
+  const double ringRadius = 1.0;
+
+  //double alpha = (M_PI / double(stacks_)) * double(_stackNumber);
+  double beta = ((2.0 * M_PI) / double(slices_)) * double(_sliceNumber);
+
+  if ( _sliceNumber == 0 &&  _stackNumber == 0) {
+    position[0] = 0.0;
+    position[1] = 0.0;
+    position[2] = height;
+  } else  if ( _sliceNumber == slices_ &&  _stackNumber == stacks_ ) {
+    position[0] = 0.0;
+    position[1] = 0.0;
+    position[2] = 0.0;
+  } else {
+    position[0] = sin(beta) * ringRadius;
+    position[1] = cos(beta) * ringRadius;
+    position[2] = height * double(stacks_ - _stackNumber -1 ) / double(stacks_-2);
+  }
+
+  return position;
+}
+
+
+int PrimitivesGeneratorPlugin::addTriangulatedCylinder() {
+
+  int newObject = addTriMesh();
+
+  TriMeshObject* object;
+  if (!PluginFunctions::getObject(newObject, object)) {
+    emit log(LOGERR, "Unable to create new Object");
+    return -1;
+  } else {
+
+    object->setName( "Cylinder " + QString::number(newObject) );
+
+    triMesh_ = object->mesh();
+
+    triMesh_->clear();
+
+    //triMesh_->request_vertex_texcoords2D();
+
+    TriMesh::VertexHandle vh;
+
+    vh = triMesh_->add_vertex(positionOnCylinder(0, 0));
+    //triMesh_->set_texcoord2D(vh, texCoordOnSphere(0, 0));
+
+    for (int st = 1; st < stacks_; ++st) {
+      for (int sl = 0; sl < slices_; ++sl) {
+        vh = triMesh_->add_vertex(positionOnCylinder(sl, st));
+        //triMesh_->set_texcoord2D(vh, texCoordOnSphere(sl, st));
+      }
+    }
+
+    vh = triMesh_->add_vertex(positionOnCylinder(slices_, stacks_));
+    //triMesh_->set_texcoord2D(vh, texCoordOnSphere(slices_, stacks_));
+
+    std::vector<TriMesh::VertexHandle> vhandles;
+
+    // Add top triangle fan ( Vertex index is shifted by one for the first slice )
+    for (int sl = 1; sl < slices_ + 1; ++sl) {
+
+      vhandles.clear();
+
+      vhandles.push_back(triMesh_->vertex_handle(sl));
+      vhandles.push_back(triMesh_->vertex_handle(0));
+      vhandles.push_back(triMesh_->vertex_handle(1 * 1 + (sl % slices_)));
+
+      triMesh_->add_face(vhandles);
+    }
+
+    for (int st = 0; st < stacks_ - 2; ++st) {
+
+      // Move around one slice
+      for (int sl = 0; sl < slices_; ++sl) {
+
+        // Offset 1 because of singular vertex
+        unsigned int startTop = 1 + slices_ * st;
+        unsigned int startBottom = 1 + slices_ * (st + 1);
+
+        vhandles.clear();
+
+        vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + sl));
+
+        triMesh_->add_face(vhandles);
+
+        vhandles.clear();
+
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + sl));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(startBottom + ((sl + 1) % slices_)));
+
+        triMesh_->add_face(vhandles);
+      }
+
+    }
+
+    const int startTop     = 1 + (stacks_ - 2) * slices_;
+    const int bottomVertex = 1 + (stacks_ - 1) * slices_;
+
+    // Add bottom triangle fan
+    for (int sl = 0; sl < slices_; ++sl) {
+
+      vhandles.clear();
+
+      vhandles.push_back(triMesh_->vertex_handle(bottomVertex));
+      vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
+      vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+
+      triMesh_->add_face(vhandles);
+    }
+
+    triMesh_->update_normals();
+
+    emit updatedObject(newObject,UPDATE_ALL);
+
+    return object->id();
+  }
+
+}
+
+
+//========================================================================
 // Sphere
 //========================================================================
+
 
 
 ACG::Vec3d PrimitivesGeneratorPlugin::positionOnSphere(int _sliceNumber, int _stackNumber)
@@ -284,6 +422,7 @@ ACG::Vec2f PrimitivesGeneratorPlugin::texCoordOnSphere(int _sliceNumber, int _st
 
   return texCoord;
 }
+
 
 //------------------------------------------------------------------------
 
