@@ -44,6 +44,11 @@ triangle mesh.
 Click on the button 'Pyramid' in Menu 'Primitives' to generate a pyramid. The pyramid is modeled by a
 triangle mesh.
 
+\subsection Cylinder
+\image html primitive_cylinder.png "Cylinder generator"
+Click on the button 'Cylinder(Triangle Mesh)' in Menu 'Primitives' to generate a cylinder. The cylinder is modeled by a
+triangle mesh.
+
 \subsection Sphere
 \image html primitive_sphere.png "Sphere generator"
 Click on the button 'Sphere' in Menu 'Primitives' to generate a sphere. The sphere is modeled by a
