@@ -89,7 +89,10 @@ bool getObject(  int _identifier , TriMeshObject*& _object ) {
     return false;
   }
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
+
   _object = dynamic_cast< TriMeshObject* >(object);
   return ( _object != 0 );
 }
@@ -105,7 +108,9 @@ bool getMesh(  int _identifier , TriMesh*& _mesh ) {
     return false;
   }
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
 
   // Unable to find object
   if ( object == 0)
@@ -162,7 +167,9 @@ TriMeshObject* triMeshObject( int _objectId ) {
   if  (_objectId == -1)
     return 0;
   
-  BaseObject* object = objectRoot()->childExists( _objectId );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId,object);
   
   if ( object == 0 )
     return 0;
