@@ -499,16 +499,6 @@ private:
 };
 
 
-/** \brief Find a node in the scene graph
- *
- *
- * Traverse scenegraph starting at _root, looking for a node whose id
- * is _node_idx . Returns 0 if node wasn't found.
- *
- * @param _root     The root node where the traversal starts (not necessary the root node of the scenegraph)
- * @param _node_idx The node index this function should look for
- * @return 0 if the node was not found, otherwise a pointer to the node.
-**/
 ACGDLLEXPORT
 BaseNode* find_node( BaseNode* _root, unsigned int _node_idx );
 

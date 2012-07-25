@@ -64,13 +64,6 @@ namespace SceneGraph {
 
 //== FORWARDDECLARATIONS ======================================================
 
-/** \brief Analyze the SceneGraph <ACG/Scenegraph/BaseNode.hh>
- *
- * @param _root       Root node of the scenegraph
- * @param _maxPasses  Returns the maximal number of render passes
- * @param _bbmin      Returns lower left of the bounding box
- * @param _bbmax      Returns upper right of the bounding box
- */
 ACGDLLEXPORT
 void analyzeSceneGraph(ACG::SceneGraph::BaseNode* _root,
                        unsigned int&              _maxPasses,
@@ -81,4 +74,4 @@ void analyzeSceneGraph(ACG::SceneGraph::BaseNode* _root,
 } // namespace SceneGraph
 } // namespace ACG
 //=============================================================================
-#endif
+#endif //SCENEGRAPHANALYSIS_HH

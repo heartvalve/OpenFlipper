@@ -92,7 +92,6 @@ public:
   
 };
 
-/// Compare function for sorting Strips depending on their texture index
 bool ACGDLLEXPORT stripTextureCompare(const Strip& i,const Strip& j);
 
 class ACGDLLEXPORT TextureRenderInfo {
