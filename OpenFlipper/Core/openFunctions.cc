@@ -163,6 +163,8 @@ void Core::slotExecuteAfterStartup() {
     slotCall( "scripting" ,"clearEditor()",ok);
   }
 
+  OpenFlipper::Options::loadingSettings(true);
+
   // Open all files given at the commandline
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
 
@@ -180,6 +182,8 @@ void Core::slotExecuteAfterStartup() {
       loadObject(QString::fromStdString(commandLineFileNames_[i].first));
     }
   }
+
+  OpenFlipper::Options::loadingSettings(false);
 
   // If we have scripting support, execute the scripts given at the commandline.
   if ( scriptingSupport )
