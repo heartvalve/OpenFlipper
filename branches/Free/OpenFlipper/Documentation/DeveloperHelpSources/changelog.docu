@@ -1,5 +1,34 @@
 /*! \page changelog Changelog
 
+- <b>OpenFlipper 1.4 ( ?? , 15095 )</b>
+     - <b>Significant interface changes<b>
+         - Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused!)
+     - <b>ACG</b>
+         - Added simple scenegraph analysis function to get bounding box and multipass number
+     - <b>Core</b>
+         - Speedup getObject in Pluginfunctions, as most functions used the slow recursive version instead of the std map accelerated version in PluginFunctions   
+         - Speedup: Modified the resetScenegraph stuff which ran the bounding box and multipass actions too often (Approx. factor 4 speedup in this function)
+         - Speedup: Block updates wile loading files from the command line
+         - Speedup: Reset drawmodes only when not locked
+     - <b>ObjectTypes</b>
+         - VolumeMesh
+             - Added draw mode for colored vertices
+     - <b>Plugins</b>
+         - Datacontrol
+             - Added context menu item to copy material to targeted objects.
+         - File Bundler
+             - New Plugin
+             - Read output from bundler (SplatCloud, Cameras)
+         - Primitives Generator
+             - Added cylinder generator 
+         - Render DepthPeeling
+             - Fixed shader not working correctly on mac
+     - <b>Documentation</b>
+         - Removed example path from doxyfiles for user documentation
+         - Added colored point rendering stuff.
+
+
+
 - <b>OpenFlipper 1.3 ( 2012.07.16 , 15046 )</b>
      - <b>ACG</b>
          - DrawModes
