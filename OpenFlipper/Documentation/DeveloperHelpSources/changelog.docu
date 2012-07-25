@@ -1,7 +1,7 @@
 /*! \page changelog Changelog
 
 - <b>OpenFlipper 1.4 ( ?? , 15095 )</b>
-     - <b>Significant interface changes<b>
+     - <b>Significant interface changes</b>
          - Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused!)
      - <b>ACG</b>
          - Added simple scenegraph analysis function to get bounding box and multipass number
