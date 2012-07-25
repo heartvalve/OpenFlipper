@@ -83,7 +83,7 @@ public:
   ~PrimitivesGeneratorPlugin();
 
   // BaseInterface
-  QString name() { return (QString("Primitives Generator Plugin"));  } ;
+  QString name() { return (QString("Primitives Generator"));  } ;
   QString description() {  return (QString("Plugin used for generating basic primitives")); } ;
 
 private slots:
