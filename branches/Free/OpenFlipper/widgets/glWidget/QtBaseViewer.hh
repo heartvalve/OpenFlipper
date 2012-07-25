@@ -183,8 +183,11 @@ public:
       @param _root The root node of the scene graph
       @param _resetTrackBall Reset the trackball center?
   */
-  void sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTrackBall = false);
-
+  void sceneGraph(ACG::SceneGraph::BaseNode* _root,
+                  unsigned int               _maxPasses,
+                  ACG::Vec3d                 _bbmin,
+                  ACG::Vec3d                 _bbmax,
+                  const bool _resetTrackBall = false);
 
    /// projection mode
   enum ProjectionMode {

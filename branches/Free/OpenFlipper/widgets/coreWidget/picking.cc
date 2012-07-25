@@ -57,6 +57,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
+#include <ACG/Scenegraph/SceneGraphAnalysis.hh>
 
 //-----------------------------------------------------------------------------
 
@@ -127,10 +128,14 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         break;
     }
 
+    unsigned int maxPases = 1;
+    ACG::Vec3d bbmin,bbmax;
+    ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
+
     //update Viewers
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
 
-      examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+      examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax );
       examiner_widgets_[i]->trackMouse(false);
 
       if(_am == Viewer::PickingMode) {
