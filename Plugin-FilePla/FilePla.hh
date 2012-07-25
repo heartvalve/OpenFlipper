@@ -78,9 +78,6 @@ class FilePlaPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
-
   public :
 
      ~FilePlaPlugin() {};

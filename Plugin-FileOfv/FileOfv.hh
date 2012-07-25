@@ -79,9 +79,6 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
-
   public :
 
      ~FileViewPlugin() {};

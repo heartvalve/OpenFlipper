@@ -44,11 +44,6 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
     void initializePlugin();
 
-  public slots:
-    
-    // Deprecated
-    int addEmpty() { return -1; };
-    
   public :
 
      ~FilePolyLinePlugin() {};

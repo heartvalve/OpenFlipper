@@ -97,9 +97,6 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
 
     int loadObject(QString _filename);
     
-    /// No objects are added by this Plugin so ignore the addEmpty call
-    int addEmpty(){ return -1; };
-    
     /// No objects are saved by this Plugin so ignore the saveObject call
     bool saveObject(int /*_id*/, QString /*_filename*/) { return false;}
 
