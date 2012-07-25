@@ -71,7 +71,10 @@ void PrimitivesGeneratorPlugin::initializePlugin()
   emit setSlotDescription("addOctahedron()"           ,tr("Generates an octahedron (ObjectId is returned)")            ,QStringList(), QStringList());
   emit setSlotDescription("addDodecahedron()"         ,tr("Generates a dodecahedron (ObjectId is returned)")           ,QStringList(), QStringList());
   emit setSlotDescription("addSphere()"               ,tr("Generates a sphere (ObjectId is returned)")                 ,QStringList(), QStringList());
-  emit setSlotDescription("addTriangulatedCylinder()" ,tr("Generates a triangulated cylinder (ObjectId is returned)")  ,QStringList(), QStringList());
+  emit setSlotDescription("addTriangulatedCylinder(Vector,Vector,double,double)",
+                          tr("Generates a triangulated cylinder (ObjectId is returned)")  ,
+                          QStringList("position,Axis,Radius,Height"),
+                          QStringList("Bottom center vertex position,Center axis,radius,height"));
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -262,43 +265,40 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube() {
 //========================================================================
 
 
-ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(int _sliceNumber, int _stackNumber)
+ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(const int _sliceNumber,
+                                                         const int _stackNumber,
+                                                         const Vector _position,
+                                                         const Vector _axis,
+                                                         const double _radius,
+                                                         const double _height)
 {
   ACG::Vec3d position;
 
-  const double height     = 5.0;
-  const double ringRadius = 1.0;
+  const ACG::Vec3d right = (ACG::Geometry::perpendicular(_axis)).normalized();
+  const ACG::Vec3d left  = (cross( _axis, right)).normalized();
 
-  const ACG::Vec3d bottomPosition(0.0,0.0,0.0);
-  const ACG::Vec3d axis(1.0,0.0,0.0);
-  const ACG::Vec3d right = ACG::Geometry::perpendicular(axis);
-  const ACG::Vec3d left  = cross( axis, right);
-
-
-  //double alpha = (M_PI / double(stacks_)) * double(_stackNumber);
   double beta = ((2.0 * M_PI) / double(slices_)) * double(_sliceNumber);
 
   if ( _sliceNumber == 0 &&  _stackNumber == 0) {
     position[0] = 0.0;
     position[1] = 0.0;
-    position[2] = height;
+    position[2] = _height;
   } else  if ( _sliceNumber == slices_ &&  _stackNumber == stacks_ ) {
     position[0] = 0.0;
     position[1] = 0.0;
     position[2] = 0.0;
   } else {
-    position[0] = sin(beta) * ringRadius;
-    position[1] = cos(beta) * ringRadius;
-    position[2] = height * double(stacks_ - _stackNumber -1 ) / double(stacks_-2);
+    position[0] = sin(beta) * _radius;
+    position[1] = cos(beta) * _radius;
+    position[2] = _height * double(stacks_ - _stackNumber -1 ) / double(stacks_-2);
   }
 
-  position = bottomPosition + position[0] * right + position[1] * left + position[2] * axis ;
+  position = _position + position[0] * right + position[1] * left + position[2] * _axis ;
 
   return position;
 }
 
-
-int PrimitivesGeneratorPlugin::addTriangulatedCylinder() {
+int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector _axis, double _radius, double _height) {
 
   // TODO: Generate texture coordinates for cylinder (Glu compatible)
   int newObject = addTriMesh();
@@ -319,17 +319,17 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder() {
 
     TriMesh::VertexHandle vh;
 
-    vh = triMesh_->add_vertex(positionOnCylinder(0, 0));
+    vh = triMesh_->add_vertex(positionOnCylinder(0, 0,_position,_axis,_radius,_height));
     //triMesh_->set_texcoord2D(vh, texCoordOnSphere(0, 0));
 
     for (int st = 1; st < stacks_; ++st) {
       for (int sl = 0; sl < slices_; ++sl) {
-        vh = triMesh_->add_vertex(positionOnCylinder(sl, st));
+        vh = triMesh_->add_vertex(positionOnCylinder(sl, st,_position,_axis,_radius,_height));
         //triMesh_->set_texcoord2D(vh, texCoordOnSphere(sl, st));
       }
     }
 
-    vh = triMesh_->add_vertex(positionOnCylinder(slices_, stacks_));
+    vh = triMesh_->add_vertex(positionOnCylinder(slices_, stacks_,_position,_axis,_radius,_height));
     //triMesh_->set_texcoord2D(vh, texCoordOnSphere(slices_, stacks_));
 
     std::vector<TriMesh::VertexHandle> vhandles;
