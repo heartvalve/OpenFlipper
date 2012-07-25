@@ -109,7 +109,7 @@ enum PickTarget
 };
 
 
-/// Convinience macro that sets up the BaseNode::className() function
+/// Convenience macro that sets up the BaseNode::className() function
 #define ACG_CLASSNAME(_className) \
  virtual const std::string& className() const { \
   static std::string cname( #_className ); return cname; \
@@ -544,7 +544,8 @@ private:
 
   /// Copy constructor. Disabled.
   BaseNode(const BaseNode&);
-  /// Assigment operator. Disabled.
+
+  /// Assignment operator. Disabled.
   void operator=(const BaseNode&);
 
   

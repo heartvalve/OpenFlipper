@@ -122,7 +122,7 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
 /** \brief find a vector that's perpendicular to _v
  *
  * This function takes a vector and  generates a new arbitrary
- * vecor that is perpendicular to the input vector.
+ * vector that is perpendicular to the input vector.
  *
  * @param _v Input vector
  * @return Perpendicular vector

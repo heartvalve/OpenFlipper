@@ -47,6 +47,14 @@
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
 
+
+/** \file SceneGraphAnalysis.hh
+ *
+ *   This file contains some convenience functions to traverse the scenegraph and
+ *   collect various of its properties
+ *
+ */
+
 //== INCLUDES =================================================================
 
 //== NAMESPACES ===============================================================
@@ -56,7 +64,7 @@ namespace SceneGraph {
 
 //== FORWARDDECLARATIONS ======================================================
 
-/** \brief Analyze the SceneGraph
+/** \brief Analyze the SceneGraph <ACG/Scenegraph/BaseNode.hh>
  *
  * @param _root       Root node of the scenegraph
  * @param _maxPasses  Returns the maximal number of render passes
