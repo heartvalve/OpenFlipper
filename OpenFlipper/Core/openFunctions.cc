@@ -77,11 +77,9 @@ void Core::resetScenegraph( bool _resetTrackBall  ) {
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
 
+    coreWidget_->slotUpdateGlobalDrawMenu();
   }
 
-  // Update the draw Modes Menu
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->slotUpdateGlobalDrawMenu();
 }
 
 //========================================================================================
@@ -184,6 +182,9 @@ void Core::slotExecuteAfterStartup() {
   }
 
   OpenFlipper::Options::loadingSettings(false);
+
+  // Reset the scenegraph once to make sure everything is fine
+  resetScenegraph( true );
 
   // If we have scripting support, execute the scripts given at the commandline.
   if ( scriptingSupport )
