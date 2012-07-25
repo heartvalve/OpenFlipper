@@ -73,8 +73,8 @@ void PrimitivesGeneratorPlugin::initializePlugin()
   emit setSlotDescription("addSphere()"               ,tr("Generates a sphere (ObjectId is returned)")                 ,QStringList(), QStringList());
   emit setSlotDescription("addTriangulatedCylinder(Vector,Vector,double,double)",
                           tr("Generates a triangulated cylinder (ObjectId is returned)")  ,
-                          QStringList("position,Axis,Radius,Height"),
-                          QStringList("Bottom center vertex position,Center axis,radius,height"));
+                          QString("position,Axis,Radius,Height,Top,Bottom").split(","),
+                          QString("Bottom center vertex position,Center axis,radius,height,add top vertex,add bottom vertex").split(","));
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -298,7 +298,7 @@ ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(const int _sliceNumber,
   return position;
 }
 
-int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector _axis, double _radius, double _height) {
+int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector _axis, double _radius, double _height, bool _top, bool   _bottom ) {
 
   // TODO: Generate texture coordinates for cylinder (Glu compatible)
   int newObject = addTriMesh();
@@ -318,8 +318,7 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector 
     //triMesh_->request_vertex_texcoords2D();
 
     TriMesh::VertexHandle vh;
-
-    vh = triMesh_->add_vertex(positionOnCylinder(0, 0,_position,_axis,_radius,_height));
+    TriMesh::VertexHandle top = triMesh_->add_vertex(positionOnCylinder(0, 0,_position,_axis,_radius,_height));
     //triMesh_->set_texcoord2D(vh, texCoordOnSphere(0, 0));
 
     for (int st = 1; st < stacks_; ++st) {
@@ -329,21 +328,26 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector 
       }
     }
 
-    vh = triMesh_->add_vertex(positionOnCylinder(slices_, stacks_,_position,_axis,_radius,_height));
+    TriMesh::VertexHandle bottom = triMesh_->add_vertex(positionOnCylinder(slices_, stacks_,_position,_axis,_radius,_height));
     //triMesh_->set_texcoord2D(vh, texCoordOnSphere(slices_, stacks_));
 
     std::vector<TriMesh::VertexHandle> vhandles;
 
     // Add top triangle fan ( Vertex index is shifted by one for the first slice )
-    for (int sl = 1; sl < slices_ + 1; ++sl) {
+    if ( _top ) {
+      for (int sl = 1; sl < slices_ + 1; ++sl) {
 
-      vhandles.clear();
+        vhandles.clear();
 
-      vhandles.push_back(triMesh_->vertex_handle(sl));
-      vhandles.push_back(triMesh_->vertex_handle(0));
-      vhandles.push_back(triMesh_->vertex_handle(1 * 1 + (sl % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(sl));
+        vhandles.push_back(triMesh_->vertex_handle(0));
+        vhandles.push_back(triMesh_->vertex_handle(1 * 1 + (sl % slices_)));
 
-      triMesh_->add_face(vhandles);
+        triMesh_->add_face(vhandles);
+      }
+    } else {
+      triMesh_->delete_vertex(top);
+      std::cerr << "Removed top" << std::endl;
     }
 
     for (int st = 0; st < stacks_ - 2; ++st) {
@@ -378,16 +382,23 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector 
     const int bottomVertex = 1 + (stacks_ - 1) * slices_;
 
     // Add bottom triangle fan
-    for (int sl = 0; sl < slices_; ++sl) {
+    if ( _bottom) {
+      for (int sl = 0; sl < slices_; ++sl) {
 
-      vhandles.clear();
+        vhandles.clear();
 
-      vhandles.push_back(triMesh_->vertex_handle(bottomVertex));
-      vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
-      vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
+        vhandles.push_back(triMesh_->vertex_handle(bottomVertex));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + sl));
+        vhandles.push_back(triMesh_->vertex_handle(startTop + ((sl + 1) % slices_)));
 
-      triMesh_->add_face(vhandles);
+        triMesh_->add_face(vhandles);
+      }
+    } else {
+      triMesh_->delete_vertex(bottom);
     }
+
+    // Cleanup if bottom or top vertex is missing
+    triMesh_->garbage_collection();
 
     triMesh_->update_normals();
 
