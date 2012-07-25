@@ -97,7 +97,10 @@ bool getObject(  int _identifier , CameraObject*& _object ) {
     return false;
   }
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
+
   _object = dynamic_cast< CameraObject* >(object);
   return ( _object != 0 );
 }
@@ -108,7 +111,10 @@ CameraObject* cameraObject( int _objectId ) {
     return 0;
   }
   
-  BaseObject* object = objectRoot()->childExists( _objectId );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId,object);
+
   CameraObject* cam  = dynamic_cast< CameraObject* >(object);
   return cam;
 }

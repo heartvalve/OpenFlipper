@@ -63,7 +63,10 @@ bool getObject(  int _identifier , SkeletonObject*& _object ) {
   if  (_identifier == -1)
     return false;
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
+
   _object = dynamic_cast< SkeletonObject* >(object);
   return ( _object != 0 );
 }
