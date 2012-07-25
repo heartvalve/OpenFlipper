@@ -46,6 +46,7 @@
 
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <ACG/Geometry/Algorithms.hh>
 
 PrimitivesGeneratorPlugin::PrimitivesGeneratorPlugin() :
         triMesh_(0),
@@ -268,6 +269,12 @@ ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(int _sliceNumber, int _
   const double height     = 5.0;
   const double ringRadius = 1.0;
 
+  const ACG::Vec3d bottomPosition(0.0,0.0,0.0);
+  const ACG::Vec3d axis(1.0,0.0,0.0);
+  const ACG::Vec3d right = ACG::Geometry::perpendicular(axis);
+  const ACG::Vec3d left  = cross( axis, right);
+
+
   //double alpha = (M_PI / double(stacks_)) * double(_stackNumber);
   double beta = ((2.0 * M_PI) / double(slices_)) * double(_sliceNumber);
 
@@ -284,6 +291,8 @@ ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(int _sliceNumber, int _
     position[1] = cos(beta) * ringRadius;
     position[2] = height * double(stacks_ - _stackNumber -1 ) / double(stacks_-2);
   }
+
+  position = bottomPosition + position[0] * right + position[1] * left + position[2] * axis ;
 
   return position;
 }
