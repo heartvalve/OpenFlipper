@@ -55,7 +55,9 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/Scenegraph/SceneGraphAnalysis.hh>
 #include "simpleGLGraphicsScene.hh"
+
 
 #include "simpleViewer.hh"
 
@@ -123,7 +125,11 @@ void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidge
   mainWidget_->setGeometry (QRect(QPoint(0, 0), size()));
   setFrameStyle(QFrame::NoFrame);
 
-  mainWidget_->sceneGraph (PluginFunctions::getSceneGraphRootNode (), true);
+  unsigned int maxPases = 1;
+  ACG::Vec3d bbmin,bbmax;
+  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
+
+  mainWidget_->sceneGraph ( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax,true);
 
   props_.drawMode (OpenFlipper::Options::defaultDrawMode(0));
 }

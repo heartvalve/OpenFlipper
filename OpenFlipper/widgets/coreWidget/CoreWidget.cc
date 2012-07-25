@@ -66,6 +66,8 @@
 
 #include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
 
+#include <ACG/Scenegraph/SceneGraphAnalysis.hh>
+
 // -------------------- Qt event Includes
 #include <QEvent>
 #include <QWhatsThisClickedEvent>
@@ -304,6 +306,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Create examiner
   // ======================================================================
 
+  // First we analyze the scenegraph
+  unsigned int maxPases = 1;
+  ACG::Vec3d bbmin,bbmax;
+  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
+
   if ( !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
     glViewer* examinerWidget = new glViewer(glScene_,
@@ -313,7 +320,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     examiner_widgets_.push_back(examinerWidget);
 
-    examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+    examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax );
 
     baseLayout_->addItem(examinerWidget, 0);
 
@@ -345,7 +352,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     // Initialize all examiners
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+      examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax );
       cursorPainter_->registerViewer (examiner_widgets_[i]);
     }
 

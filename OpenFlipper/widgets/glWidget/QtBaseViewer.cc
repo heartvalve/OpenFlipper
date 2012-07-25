@@ -55,9 +55,11 @@
 #include "QtBaseViewer.hh"
 #include "QtGLViewerLayout.hh"
 #include "CursorPainter.hh"
+
 #include <ACG/QtWidgets/QtWheel.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/Scenegraph/CoordsysNode.hh>
+#include <ACG/Scenegraph/SceneGraphAnalysis.hh>
 #include <ACG/GL/gl.hh>
 
 #include <iostream>
@@ -259,60 +261,49 @@ void glViewer::swapBuffers() {
 
 //-----------------------------------------------------------------------------
 
-
-void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTrackBall)
+void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root,
+                          unsigned int               _maxPasses,
+                          ACG::Vec3d                 _bbmin,
+                          ACG::Vec3d                 _bbmax,
+                          const bool _resetTrackBall)
 {
   sceneGraphRoot_ = _root;
 
   if (sceneGraphRoot_ )
   {
-    
+
     // set max number of render pass
-    // Single pass action, this info is static during multipass
-    ACG::SceneGraph::MultiPassInfoAction info_act;
-    ACG::SceneGraph::traverse(sceneGraphRoot_, info_act);
+    glstate_->set_max_render_passes(_maxPasses);
     
-    glstate_->set_max_render_passes(info_act.getMaxPasses());
-    
-    // get scene size
-    // Single pass action, as the bounding box is not influenced by multipass traversal
-    ACG::SceneGraph::BoundingBoxAction act;
-    ACG::SceneGraph::traverse(sceneGraphRoot_, act);
-
-    ACG::Vec3d bbmin = (ACG::Vec3d) act.bbMin();
-    ACG::Vec3d bbmax = (ACG::Vec3d) act.bbMax();
-    
-    
-
-    if ( ( bbmin[0] > bbmax[0] ) ||
-         ( bbmin[1] > bbmax[1] ) ||
-         ( bbmin[2] > bbmax[2] )   ) {
+    if ( ( _bbmin[0] > _bbmax[0] ) ||
+         ( _bbmin[1] > _bbmax[1] ) ||
+         ( _bbmin[2] > _bbmax[2] )   ) {
       
       // Invalid bounding box, try to recover
       setScenePos( properties_.sceneCenter() , properties_.sceneRadius(), _resetTrackBall );
     
       // Update bounding box to match the scene geometry after recovery
-      bbmin = ACG::Vec3d(-1.0,-1.0,-1.0);
-      bbmax = ACG::Vec3d( 1.0, 1.0, 1.0);
+      _bbmin = ACG::Vec3d(-1.0,-1.0,-1.0);
+      _bbmax = ACG::Vec3d( 1.0, 1.0, 1.0);
     } else {
       
       // For very small scenes, we set the scene radius to 0.1
       // otherwise we take the real radius
-      if ( ( bbmax - bbmin ).max() < OpenFlipperSettings().value("Core/Gui/glViewer/minimalSceneSize",0.1).toDouble() )  {
-        setScenePos( ( bbmin + bbmax )        * 0.5,
+      if ( ( _bbmax - _bbmin ).max() < OpenFlipperSettings().value("Core/Gui/glViewer/minimalSceneSize",0.1).toDouble() )  {
+        setScenePos( ( _bbmin + _bbmax )        * 0.5,
                      OpenFlipperSettings().value("Core/Gui/glViewer/minimalSceneSize",0.1).toDouble(),
                      _resetTrackBall);
                    
       } else {
-        setScenePos( ( bbmin + bbmax )        * 0.5,
-                     ( bbmax - bbmin ).norm() * 0.5,
+        setScenePos( ( _bbmin + _bbmax )        * 0.5,
+                     ( _bbmax - _bbmin ).norm() * 0.5,
                      _resetTrackBall); 
       }
                    
     }
                    
     // remember the new bounding box for the state
-    glstate_->set_bounding_box(bbmin,bbmax);
+    glstate_->set_bounding_box(_bbmin,_bbmax);
     
   }
   
@@ -835,7 +826,11 @@ void glViewer::viewAll()
   if (aspect > 1.0)
     properties_.orthoWidth( aspect * properties_.orthoWidth() ) ;
 
-  sceneGraph(PluginFunctions::getSceneGraphRootNode(), true);
+  unsigned int maxPases = 1;
+  ACG::Vec3d bbmin,bbmax;
+  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
+
+  sceneGraph ( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax,true);
 
   properties_.unLockUpdate();
   updateProjectionMatrix();
@@ -913,8 +908,13 @@ void glViewer::initializeGL()
 
   if (sceneGraphRoot_)
   {
-    sceneGraph(sceneGraphRoot_, true);
-    viewAll ();
+    unsigned int maxPases = 1;
+    ACG::Vec3d bbmin,bbmax;
+    ACG::SceneGraph::analyzeSceneGraph(sceneGraphRoot_,maxPases,bbmin,bbmax);
+
+    sceneGraph ( sceneGraphRoot_, maxPases,bbmin,bbmax,true);
+
+    viewAll();
   }
 }
 

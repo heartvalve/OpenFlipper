@@ -47,6 +47,7 @@
 #include "Core.hh"
 
 #include <ACG/QtWidgets/QtFileDialog.hh>
+#include <ACG/Scenegraph/SceneGraphAnalysis.hh>
 
 #include "OpenFlipper/common/GlobalOptions.hh"
 #include <OpenFlipper/common/RecentFiles.hh>
@@ -61,12 +62,17 @@
 #include <OpenFlipper/common/DataTypes.hh>
 
 void Core::resetScenegraph( bool _resetTrackBall  ) {
+
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
+
+    unsigned int maxPases = 1;
+    ACG::Vec3d bbmin,bbmax;
+    ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       // update scene graph (get new bounding box and set projection right, including near and far plane)
       PluginFunctions::viewerProperties(i).lockUpdate();
-      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_, _resetTrackBall );
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_,maxPases,bbmin,bbmax, _resetTrackBall );
       PluginFunctions::viewerProperties(i).unLockUpdate();
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
