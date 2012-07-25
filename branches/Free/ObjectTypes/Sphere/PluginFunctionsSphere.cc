@@ -68,7 +68,10 @@ bool getObject(  int _identifier , SphereObject*& _object ) {
     return false;
   }
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
+
   _object = dynamic_cast< SphereObject* >(object);
   return ( _object != 0 );
 }
@@ -79,7 +82,10 @@ SphereObject* sphereObject( int _objectId ) {
     return 0;
   }
   
-  BaseObject* object = objectRoot()->childExists( _objectId );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId,object);
+
   SphereObject* sphereObject = dynamic_cast< SphereObject* >(object);
   return sphereObject;
   

@@ -66,7 +66,10 @@ bool getObject(  int _identifier , CoordsysObject*& _object ) {
     return false;
   }
 
-  BaseObject* object = objectRoot()->childExists( _identifier );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_identifier,object);
+
   _object = dynamic_cast< CoordsysObject* >(object);
   return ( _object != 0 );
 }
@@ -97,7 +100,9 @@ CoordsysObject* coordsysObject( int _objectId ) {
     return 0;
   }
 
-  BaseObject* object = objectRoot()->childExists( _objectId );
+  // Get object by using the map accelerated plugin function
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(_objectId,object);
 
   return dynamic_cast< CoordsysObject* >(object);
 }
