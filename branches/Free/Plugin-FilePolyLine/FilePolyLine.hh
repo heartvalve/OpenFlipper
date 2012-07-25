@@ -65,8 +65,6 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
     bool saveObject(int _id, QString _filename);
 
-    int addNewPolyLine();
-
     QString version() { return QString("1.01"); };
 
   private :
