@@ -102,7 +102,9 @@ public slots:
   int addTriangulatedCylinder(Vector _position = Vector(0.0,0.0,0.0),
                               Vector _axis     = Vector(0.0,0.0,1.0),
                               double _radius   = 1.0,
-                              double _height   = 5.0);
+                              double _height   = 5.0,
+                              bool   _top      = true,
+                              bool   _bottom   = true);
   int addSphere();
   int addTetrahedron();
   int addPyramid();
