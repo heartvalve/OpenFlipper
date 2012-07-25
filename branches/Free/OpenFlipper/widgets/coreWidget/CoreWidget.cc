@@ -314,9 +314,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   if ( !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
     glViewer* examinerWidget = new glViewer(glScene_,
-					    glWidget_,
-                                            PluginFunctions::viewerProperties(0),
-					    centerWidget_);
+					                                  glWidget_,
+					                                  PluginFunctions::viewerProperties(0),
+					                                  centerWidget_);
 
     examiner_widgets_.push_back(examinerWidget);
 
@@ -332,9 +332,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     // Create examiners
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       glViewer* newWidget = new glViewer(glScene_,
-					 glWidget_,
+					                               glWidget_,
                                          PluginFunctions::viewerProperties(i),
-					 centerWidget_);
+                                         centerWidget_);
 
       examiner_widgets_.push_back(newWidget);
 
