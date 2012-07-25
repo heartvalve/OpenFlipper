@@ -99,8 +99,6 @@ class FilePlaPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     bool saveObject(int _id, QString _filename);
 
-    int addNewPlane();
-
     QString version() { return QString("1.0"); };
 
   private :
