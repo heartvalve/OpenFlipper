@@ -347,7 +347,6 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(Vector _position, Vector 
       }
     } else {
       triMesh_->delete_vertex(top);
-      std::cerr << "Removed top" << std::endl;
     }
 
     for (int st = 0; st < stacks_ - 2; ++st) {
