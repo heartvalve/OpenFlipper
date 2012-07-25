@@ -239,6 +239,7 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 
  * @param _t2           Parameter 3 passed to the function
  * @param _t3           Parameter 4 passed to the function
  * @param _t4           Parameter 5 passed to the function
+ * @param _t5           Parameter 6 passed to the function
  */
 template <typename T0, typename T1 , typename T2,  typename T3, typename T4, typename T5>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 , T4 _t4, T5 _t5) {
