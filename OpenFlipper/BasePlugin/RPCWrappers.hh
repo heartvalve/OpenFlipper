@@ -230,6 +230,29 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 
   callFunction(_plugin,_functionName,parameters);
 }
 
+/** \brief call a function in another plugin
+ *
+ * @param _plugin       Plugin name ( Scripting name of the plugin )
+ * @param _functionName Name of the remote function
+ * @param _t0           Parameter 1 passed to the function
+ * @param _t1           Parameter 2 passed to the function
+ * @param _t2           Parameter 3 passed to the function
+ * @param _t3           Parameter 4 passed to the function
+ * @param _t4           Parameter 5 passed to the function
+ */
+template <typename T0, typename T1 , typename T2,  typename T3, typename T4, typename T5>
+void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 , T4 _t4, T5 _t5) {
+  QScriptEngine* engine = getScriptEngine();
+  std::vector< QScriptValue > parameters;
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
+  parameters.push_back( engine->toScriptValue( _t2 ) );
+  parameters.push_back( engine->toScriptValue( _t3 ) );
+  parameters.push_back( engine->toScriptValue( _t4 ) );
+  parameters.push_back( engine->toScriptValue( _t5 ) );
+  callFunction(_plugin,_functionName,parameters);
+}
+
 /** @} */
 
 //===========================================================================
