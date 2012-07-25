@@ -378,25 +378,18 @@ int Core::loadObject( DataType _type, QString _filename) {
 
 int Core::addEmptyObject( DataType _type ) {
   // Iterate over all plugins. The first plugin supporting the addEmpty function for the
-  // specified type will be used to create the new object.
+  // specified type will be used to create the new object. If adding the object failed,
+  // we iterate over the remaining plugins.
   
-  int retCode = -1;
-  
-  // Type plugins
+  // Iterate over type plugins
   for (int i=0; i < (int)supportedDataTypes_.size(); i++)
-    if ( supportedDataTypes_[i].type & _type )
-      retCode = supportedDataTypes_[i].plugin->addEmpty();
-  
-  if(retCode != -1) return retCode;
-    
-  // File plugins
-  for (int i=0; i < (int)supportedTypes().size(); i++)
-    if ( supportedTypes()[i].type & _type ) {
-      emit log(LOGERR, tr("File Plugins are not allowed to create empty objects anymore! Use the addEmpty call instead!") );
-      retCode = supportedTypes()[i].plugin->addEmpty();
+    if ( supportedDataTypes_[i].type & _type ) {
+      int retCode = supportedDataTypes_[i].plugin->addEmpty();
+      if ( retCode != -1 )
+        return retCode;
     }
   
-  return retCode; // -1 if no plugin found
+  return -1; // no plugin found
 }
 
 //========================================================================================
