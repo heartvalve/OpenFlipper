@@ -99,7 +99,10 @@ public slots:
 
   QString version() { return QString("1.0"); };
 
-  int addTriangulatedCylinder();
+  int addTriangulatedCylinder(Vector _position = Vector(0.0,0.0,0.0),
+                              Vector _axis     = Vector(0.0,0.0,1.0),
+                              double _radius   = 1.0,
+                              double _height   = 5.0);
   int addSphere();
   int addTetrahedron();
   int addPyramid();
@@ -116,7 +119,13 @@ private:
 
   inline void add_face( int _vh1 , int _vh2, int _vh3, int _vh4 , int _vh5 );
 
-  inline ACG::Vec3d positionOnCylinder(int _sliceNumber, int _stackNumber);
+  inline ACG::Vec3d positionOnCylinder(const int _sliceNumber,
+                                       const int _stackNumber,
+                                       const Vector _position ,
+                                       const Vector _axis,
+                                       const double _radius,
+                                       const double _height);
+
   inline ACG::Vec3d positionOnSphere(int _sliceNumber, int _stackNumber);
   inline ACG::Vec2f texCoordOnSphere(int _sliceNumber, int _stackNumber);
 
