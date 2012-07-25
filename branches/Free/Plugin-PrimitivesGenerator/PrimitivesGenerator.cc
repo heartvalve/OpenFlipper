@@ -291,6 +291,7 @@ ACG::Vec3d PrimitivesGeneratorPlugin::positionOnCylinder(int _sliceNumber, int _
 
 int PrimitivesGeneratorPlugin::addTriangulatedCylinder() {
 
+  // TODO: Generate texture coordinates for cylinder (Glu compatible)
   int newObject = addTriMesh();
 
   TriMeshObject* object;
