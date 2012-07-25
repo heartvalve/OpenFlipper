@@ -80,9 +80,6 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
-
   public :
 
      ~FileSPHPlugin() {};
@@ -103,8 +100,6 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     int loadObject(QString _filename);
 
     bool saveObject(int _id, QString _filename);
-
-    int addNewSphere();
 
     QString version() { return QString("1.0"); };
 

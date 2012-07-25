@@ -80,9 +80,6 @@ class FileLightPlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
-
   public :
 
      ~FileLightPlugin() {};
@@ -103,8 +100,6 @@ class FileLightPlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
     int loadObject(QString _filename);
 
     bool saveObject(int _id, QString _filename);
-
-    int addNewLight();
 
     QString version() { return QString("1.0"); };
 

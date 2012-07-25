@@ -105,8 +105,6 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     bool saveObject(int _id, QString _filename);
 
-    int addNewSkeleton();
-
   private :
 	  template<typename Skeleton> bool LoadSkeleton(Skeleton *_pSkeleton, QString _filename);
 	  template<typename Skeleton> bool SaveSkeleton(Skeleton *_pSkeleton, QString _filename);

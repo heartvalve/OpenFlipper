@@ -86,9 +86,6 @@ class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
-    
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
     
