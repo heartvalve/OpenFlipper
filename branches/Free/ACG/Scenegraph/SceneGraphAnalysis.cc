@@ -45,7 +45,13 @@
 namespace ACG {
 namespace SceneGraph {
 
-
+/** \brief Analyze the SceneGraph <ACG/Scenegraph/SceneGraphAnalysis.hh>
+ *
+ * @param _root       Root node of the scenegraph
+ * @param _maxPasses  Returns the maximal number of render passes
+ * @param _bbmin      Returns lower left of the bounding box
+ * @param _bbmax      Returns upper right of the bounding box
+ */
 void analyzeSceneGraph(ACG::SceneGraph::BaseNode* _root,
                        unsigned int&              _maxPasses,
                        ACG::Vec3d&                _bbmin,

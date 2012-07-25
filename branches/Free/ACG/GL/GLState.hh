@@ -79,7 +79,7 @@ namespace ACG {
 //== CLASS DEFINITION =========================================================
 
 
-/** \class GLState GLState.hh <ACG/Scenegraph/GLState.hh>
+/** \class GLState <ACG/GL/GLState.hh>
 
     This class stores all relevant OpenGL states and can therefore
     provide some nice and efficient functions like projecting,
