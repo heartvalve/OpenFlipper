@@ -179,8 +179,13 @@ public:
       Recomputes Scene center and resets the trackball center if specified.
       The \c sceneGraphToched() signal will be emitted (even if
       \c _root does not actually change).
+      Use the ACG::SceneGraph::analyzeSceneGraph() function to get the required
+      bounding box and pass information.
 
-      @param _root The root node of the scene graph
+      @param _root           The root node of the scene graph
+      @param _maxPasses      The maximal number of passes required to render the scenegraph
+      @param _bbmin          Lower left of the scenegraph bounding box
+      @param _bbmax          Upper right of the scenegraph bounding box
       @param _resetTrackBall Reset the trackball center?
   */
   void sceneGraph(ACG::SceneGraph::BaseNode* _root,
