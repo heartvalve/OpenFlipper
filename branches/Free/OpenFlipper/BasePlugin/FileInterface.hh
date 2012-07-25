@@ -138,15 +138,6 @@ signals:
 
 public slots:
 
-      /** \brief Create an empty object
-       *
-       * When this slot is called you have to create an object of your supported type.
-       * @return Id of the new Object
-       * \todo Add an addEmpty function with a given type as an attribute. The plugin should then create only an
-       * empty object of the given type. It can be assumed that there is only one type given at a time.
-       */
-      virtual int addEmpty() { return -1; };
-
       /** \brief Load an object from the given file
        *
        * The Core will call this slot if you should load a file. The core will
