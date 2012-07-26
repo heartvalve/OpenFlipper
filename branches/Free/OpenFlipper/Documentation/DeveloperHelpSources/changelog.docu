@@ -1,8 +1,12 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15095 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15115 )</b>
      - <b>Significant interface changes</b>
          - Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
+         - Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
+             - sceneGraphUpdatesBlocked()
+             - blockSceneGraphUpdates()
+             - unblockSceneGraphUpdates()
      - <b>ACG</b>
          - Added simple scenegraph analysis function to get bounding box and multipass number
      - <b>Core</b>
@@ -11,6 +15,8 @@
          - Speedup: Block updates wile loading files from the command line
          - Speedup: Reset drawmodes only when not locked
      - <b>ObjectTypes</b>
+         - General
+             - Speedup: Removed the get_unique_name functions when adding any object, as this would cause linear time when adding new objects.
          - VolumeMesh
              - Added draw mode for colored vertices
      - <b>Plugins</b>
@@ -20,7 +26,7 @@
              - New Plugin
              - Read output from bundler (SplatCloud, Cameras)
          - Primitives Generator
-             - Added cylinder generator 
+             - Added cylinder generator (with scriptable parameters)
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
      - <b>Documentation</b>
