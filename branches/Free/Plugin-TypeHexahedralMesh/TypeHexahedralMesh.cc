@@ -128,7 +128,7 @@ int TypeHexahedralMeshPlugin::addEmpty() {
     if (PluginFunctions::targetCount() == 0)
         object->target(true);
 
-    QString name = get_unique_name(object);
+    QString name = QString(tr("New Hexahedral Mesh %1.ovm").arg( object->id() ));
 
     // call the local function to update names
     QFileInfo f(name);
@@ -156,33 +156,6 @@ int TypeHexahedralMeshPlugin::addEmpty() {
 }
 
 //----------------------------------------------------------------------------
-
-QString TypeHexahedralMeshPlugin::get_unique_name(HexahedralMeshObject* _object) {
-
-    bool name_unique = false;
-
-    int cur_idx = _object->id();
-
-    while (!name_unique) {
-        name_unique = true;
-
-        QString cur_name = QString(tr("Mesh HexahedralMesh %1.ovm").arg(cur_idx));
-
-        PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_HEXAHEDRAL_MESH);
-        for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-            if (o_it->name() == cur_name) {
-                name_unique = false;
-                cur_idx += 10;
-                break;
-            }
-        }
-    }
-
-    return QString(tr("Mesh HexahedralMesh %1.ovm").arg(cur_idx));
-}
-
-//----------------------------------------------------------------------------
-
 
 void TypeHexahedralMeshPlugin::slotKeyEvent(QKeyEvent* _event) {
 

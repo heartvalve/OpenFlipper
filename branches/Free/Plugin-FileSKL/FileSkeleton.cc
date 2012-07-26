@@ -367,32 +367,5 @@ void FileSKLPlugin::saveIniFile( INIFile& _ini ,int _id) {
 }
 
 
-QString FileSKLPlugin::get_unique_name(SkeletonObject* _object)
-{
-  bool name_unique = false;
-
-  int cur_idx = _object->id();
-
-  while(!name_unique)
-  {
-    name_unique = true;
-
-    QString cur_name = QString("Skeleton " + QString::number( cur_idx ) + ".skl");
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_SKELETON );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-        name_unique = false;
-        cur_idx += 10;
-        break;
-      }
-    }
-  }
-
-  return QString("Skeleton " + QString::number( cur_idx ) + ".skl");
-}
-
 Q_EXPORT_PLUGIN2( filesklplugin , FileSKLPlugin );
 

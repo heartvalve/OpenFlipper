@@ -129,8 +129,6 @@ public slots:
 
 private:
 
-    QString get_unique_name(PolyhedralMeshObject* _object);
-
     QAction* render_switch_;
 
     QAction* translucency_action_;

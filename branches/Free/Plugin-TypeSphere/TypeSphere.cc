@@ -67,7 +67,7 @@ int TypeSpherePlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("New Sphere %1.sph").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -80,33 +80,6 @@ int TypeSpherePlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
 
   return object->id();
-}
-
-QString TypeSpherePlugin::get_unique_name(SphereObject* _object)
-{
-  bool name_unique = false;
-
-  int cur_idx = _object->id();
-
-  while(!name_unique)
-  {
-    name_unique = true;
-
-    QString cur_name = QString(tr("Sphere %1.sph").arg( cur_idx ));
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_SPHERE );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-        name_unique = false;
-        cur_idx += 10;
-        break;
-      }
-    }
-  }
-
-  return QString(tr("Sphere %1.sph").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( typesphereplugin , TypeSpherePlugin );

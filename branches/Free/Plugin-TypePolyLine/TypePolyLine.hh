@@ -90,11 +90,6 @@ class TypePolyLinePlugin : public QObject, BaseInterface, LoadSaveInterface, Log
     // Type Interface
     int addEmpty();
     DataType supportedType() { return DATA_POLY_LINE; }; 
-    
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(PolyLineObject* _object);
 
 };
 

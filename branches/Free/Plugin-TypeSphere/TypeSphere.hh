@@ -94,11 +94,6 @@ class TypeSpherePlugin : public QObject, BaseInterface, LoadSaveInterface, Loggi
     int addEmpty();
     DataType supportedType() { return DATA_SPHERE; }; 
     
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(SphereObject* _object);
-
 };
 
 #endif //TYPESPHEREPLUGIN_HH

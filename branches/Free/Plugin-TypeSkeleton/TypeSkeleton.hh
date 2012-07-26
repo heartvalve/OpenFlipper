@@ -114,11 +114,6 @@ class TypeSkeletonPlugin : public QObject, BaseInterface, LoadSaveInterface, Log
     // Type Interface
     void generateBackup( int _id, QString _name, UpdateType _type );
     
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(SkeletonObject* _object);
-
 };
 
 #endif //TYPESKELETONPLUGIN_HH

@@ -192,7 +192,7 @@ int TypeSkeletonPlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("New Skeleton %1.skl").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -205,14 +205,6 @@ int TypeSkeletonPlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
 
   return object->id();
-}
-
-QString TypeSkeletonPlugin::get_unique_name(SkeletonObject* _object)
-{
-
-  int cur_idx = _object->id();
-
-  return QString(tr("Skeleton new %1.off").arg( cur_idx  ));
 }
 
 void TypeSkeletonPlugin::generateBackup( int _id, QString _name, UpdateType _type ){

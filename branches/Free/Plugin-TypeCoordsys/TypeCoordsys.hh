@@ -94,11 +94,6 @@ class TypeCoordsysPlugin : public QObject, BaseInterface, LoggingInterface, Type
 
     DataType supportedType() { return DATA_COORDSYS; };
     
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(CoordsysObject* _object);
-
 };
 
 #endif //TYPECOORDSYSPLUGIN_HH

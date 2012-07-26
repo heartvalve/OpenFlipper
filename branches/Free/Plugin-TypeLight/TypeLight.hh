@@ -173,9 +173,6 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
   private:
     
-    /// Return unique name for object
-    QString get_unique_name(LightObject* _object);
-    
     /// Find depth of nearest light source
     float findDepth();
     

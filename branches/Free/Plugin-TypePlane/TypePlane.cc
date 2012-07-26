@@ -66,7 +66,7 @@ int TypePlanePlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("New Plane %1.pla").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -79,13 +79,6 @@ int TypePlanePlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
 
   return object->id();
-}
-
-QString TypePlanePlugin::get_unique_name(PlaneObject* _object)
-{
-  int cur_idx = _object->id();
-
-  return QString(tr("Plane new %1.pla").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( typeplaneplugin , TypePlanePlugin );

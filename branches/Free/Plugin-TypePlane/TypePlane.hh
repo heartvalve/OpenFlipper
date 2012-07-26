@@ -94,11 +94,6 @@ class TypePlanePlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     int addEmpty();
     DataType supportedType() { return DATA_PLANE; }; 
     
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(PlaneObject* _object);
-
 };
 
 #endif //TYPEPLANEPLUGIN_HH

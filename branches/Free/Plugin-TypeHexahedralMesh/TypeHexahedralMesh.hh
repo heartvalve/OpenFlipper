@@ -140,8 +140,6 @@ public slots:
 
 private:
 
-    QString get_unique_name(HexahedralMeshObject* _object);
-
     QAction* render_switch_;
 
     QAction* translucency_action_;

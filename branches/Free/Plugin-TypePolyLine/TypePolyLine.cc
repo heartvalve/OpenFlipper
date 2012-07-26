@@ -66,9 +66,7 @@ int TypePolyLinePlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
   
-  // Unique name is too slow as it iterates over all objects!
-//   QString name = get_unique_name(object);
-  QString name = tr("PolyLine New %1.pol").arg( object->id() );
+  QString name = tr("New PolyLine %1.pol").arg( object->id() );
 
   // call the local function to update names
   QFileInfo f(name);
@@ -83,15 +81,6 @@ int TypePolyLinePlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
   
   return object->id();
-}
-
-QString TypePolyLinePlugin::get_unique_name(PolyLineObject* _object)
-{
-//  bool name_unique = false;
-
-  int cur_idx = _object->id();
-
-  return QString(tr("PolyLine new %1.pol").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( typepolylineplugin , TypePolyLinePlugin );

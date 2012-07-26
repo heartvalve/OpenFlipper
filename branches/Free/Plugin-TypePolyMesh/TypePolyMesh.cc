@@ -75,7 +75,7 @@ int TypePolyMeshPlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("New PolyMesh %1.off").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -88,17 +88,6 @@ int TypePolyMeshPlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
 
   return object->id();
-}
-
-//-----------------------------------------------------------------------------
-
-QString TypePolyMeshPlugin::get_unique_name(PolyMeshObject* _object)
-{
-  int cur_idx = _object->id();
-
-  QString cur_name = QString(tr("PolyMesh new %1.off").arg( cur_idx + 1 ));
-
-  return QString(tr("PolyMesh new %1.off").arg( cur_idx + 1 ));
 }
 
 //-----------------------------------------------------------------------------
