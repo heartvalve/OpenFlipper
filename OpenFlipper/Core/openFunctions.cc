@@ -63,7 +63,7 @@
 
 void Core::resetScenegraph( bool _resetTrackBall  ) {
 
-  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
+  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::sceneGraphUpdatesBlocked() ) {
 
     unsigned int maxPases = 1;
     ACG::Vec3d bbmin,bbmax;
@@ -161,7 +161,7 @@ void Core::slotExecuteAfterStartup() {
     slotCall( "scripting" ,"clearEditor()",ok);
   }
 
-  OpenFlipper::Options::loadingSettings(true);
+  OpenFlipper::Options::blockSceneGraphUpdates();
 
   // Open all files given at the commandline
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
@@ -181,7 +181,7 @@ void Core::slotExecuteAfterStartup() {
     }
   }
 
-  OpenFlipper::Options::loadingSettings(false);
+  OpenFlipper::Options::unblockSceneGraphUpdates();
 
   // Reset the scenegraph once to make sure everything is fine
   resetScenegraph( true );
@@ -258,7 +258,7 @@ int Core::loadObject ( QString _filename ) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
-        if ( !OpenFlipper::Options::loadingSettings() )
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
 
@@ -286,7 +286,7 @@ int Core::loadObject ( QString _filename ) {
         } else
           coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
-        if ( !OpenFlipper::Options::loadingSettings() )
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
           coreWidget_->setStatus(ApplicationStatus::READY );
       }
 
@@ -347,7 +347,7 @@ int Core::loadObject( DataType _type, QString _filename) {
       
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
-        if ( !OpenFlipper::Options::loadingSettings() )
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
 
@@ -374,7 +374,7 @@ int Core::loadObject( DataType _type, QString _filename) {
         } else
           coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
-        if ( !OpenFlipper::Options::loadingSettings() )
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
           coreWidget_->setStatus(ApplicationStatus::READY );
       }
 
@@ -469,7 +469,7 @@ void Core::slotLoad(QString _filename, int _pluginID) {
 
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
-    if ( !OpenFlipper::Options::loadingSettings() )
+    if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
       coreWidget_->setStatus(ApplicationStatus::PROCESSING );
   }
 
@@ -482,7 +482,7 @@ void Core::slotLoad(QString _filename, int _pluginID) {
     else
       coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
-    if ( !OpenFlipper::Options::loadingSettings() )
+    if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
       coreWidget_->setStatus(ApplicationStatus::READY );
   }
   
@@ -592,7 +592,7 @@ void Core::slotFileOpened ( int _id ) {
   // ================================================================================
   // if this is the first object opend, reset the global view
   // ================================================================================
-  if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
+  if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       coreWidget_->examiner_widgets_[i]->viewAll();
     }

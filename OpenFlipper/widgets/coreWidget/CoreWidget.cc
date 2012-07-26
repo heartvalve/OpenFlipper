@@ -833,7 +833,7 @@ void
 CoreWidget::addRecent(QString _filename, DataType _type)
 {
   //dont add objects to recentMenu while loadind Settings
-  if ( OpenFlipper::Options::loadingSettings() ) return;
+  if ( OpenFlipper::Options::sceneGraphUpdatesBlocked() ) return;
 
   OpenFlipper::Options::addRecentFile(_filename, _type);
 

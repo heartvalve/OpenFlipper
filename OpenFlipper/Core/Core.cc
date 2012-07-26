@@ -865,7 +865,7 @@ void Core::updateView()
 
   redrawTime_->restart();
 
-  if (!OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled()) {
+  if (!OpenFlipper::Options::sceneGraphUpdatesBlocked() && !OpenFlipper::Options::redrawDisabled()) {
 
     for (unsigned int i = 0; i < OpenFlipper::Options::examinerWidgets(); ++i)
       coreWidget_->examiner_widgets_[i]->updateGL();
