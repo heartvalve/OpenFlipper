@@ -269,7 +269,7 @@ int FileOMPlugin::loadTriMeshObject(QString _filename){
         //set options
         OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
         
-        if ( !OpenFlipper::Options::loadingSettings() &&
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() &&
             !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
             
             if (loadVertexNormal_->isChecked())
@@ -348,7 +348,7 @@ int FileOMPlugin::loadPolyMeshObject(QString _filename){
         //set options
         OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
         
-        if ( !OpenFlipper::Options::loadingSettings() &&
+        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() &&
             !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
             
             if (loadVertexNormal_->isChecked())

@@ -420,7 +420,7 @@ void Core::openIniFile( QString _filename,
   }
 
   // Tell plugins that we are currently reading an ini file
-  OpenFlipper::Options::loadingSettings(true);
+  OpenFlipper::Options::blockSceneGraphUpdates();
 
   // Load Core settings only if requested
   if ( _coreSettings )
@@ -525,7 +525,7 @@ void Core::openIniFile( QString _filename,
   ini.disconnect();
 
   // As the reading has been completed, tell plugins that we do not read an ini file anymore.
-  OpenFlipper::Options::loadingSettings(false);
+  OpenFlipper::Options::unblockSceneGraphUpdates();
 
   // Reset scenegraph and reset trackball center
   // This will also recompute the bounding boxes as well as the near and far plane

@@ -638,18 +638,32 @@ QString helpDirStr();
 
 /** @} */
 
+  //===========================================================================
+  /** @name Update blocking
+   *
+   * Used to speedup system when creating/removing a lot of objects.
+   * This disables the analysis of the scenegraph used for rendering.
+  * @{ */
+  //===========================================================================
+
+  /// Block updates
+  DLLEXPORT
+  void blockSceneGraphUpdates( );
+
+  /// unblockUpdates
+  DLLEXPORT
+  void unblockSceneGraphUpdates();
+
+  /// Updates currently blocked?
+  DLLEXPORT
+  bool sceneGraphUpdatesBlocked( );
+
+  /** @} */
+
 //===========================================================================
 /** @name Settings
 * @{ */
 //===========================================================================
-
-  /// currently loading Settings ?
-  DLLEXPORT
-  bool loadingSettings( );
-
-  /// currently loading Settings ?
-  DLLEXPORT
-  void loadingSettings(bool _loadingSettings );
 
   /// currently saving Settings ?
   DLLEXPORT

@@ -9,8 +9,6 @@ Qt ( >= 4.7.3 ) http://www.qtsoftware.com/downloads
 OpenGL          http://www.opengl.org
 GLUT            http://www.opengl.org/resources/libraries/glut
 GLEW            http://glew.sourceforge.net
-freetype2       optional http://www.freetype.org/freetype2/index.html 
-ftgl            optional http://sourceforge.net/projects/ftgl/
 qwt ( >=6.0 )   optional http://qwt.sourceforge.net/
 
 Compiling OpenFlipper:

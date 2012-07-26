@@ -103,7 +103,7 @@ void MeshComparePlugin::initializePlugin()
 void MeshComparePlugin::pluginsInitialized() {
     
   //===========================================================
-  // Describe scrpting slots
+  // Describe scripting slots
   //===========================================================
   emit setSlotDescription(tr("compare(int,int)"), tr("Compare two meshes. Use lastMaximalDistance() and lastMaximalNormalDeviation() to get the results."),
       QStringList(tr("ObjectId,ObjectId")), QStringList(tr("Id of the reference mesh, Id of the comparison mesh")));

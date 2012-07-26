@@ -189,8 +189,8 @@ static QString lastDataType_ = "Triangle Mesh";
 /// Should backups be enabled
 static bool enableBackup_ = true;
 
-/// Currently loading Settings?
-static bool loadingSettings_ = false;
+/// Updates currently blocked?
+static int sceneGraphUpdatesBlocked_ = 0;
 
 /// Currently loading recent file?
 static bool loadingRecentFile_ = false;
@@ -665,12 +665,22 @@ void enableBackup(bool _enableBackup ) {
   enableBackup_ = _enableBackup;
 }
 
-bool loadingSettings( ) {
-  return loadingSettings_;
+void blockSceneGraphUpdates( ) {
+  ++sceneGraphUpdatesBlocked_;
 }
 
-void loadingSettings(bool _loadingSettings ) {
-  loadingSettings_ = _loadingSettings;
+void unblockSceneGraphUpdates() {
+  if ( sceneGraphUpdatesBlocked_ <= 0)
+      std::cerr << "Error: More unblocks than blocks! Ignoring this request" << std::endl;
+  else
+    --sceneGraphUpdatesBlocked_;
+}
+
+bool sceneGraphUpdatesBlocked( ) {
+  if ( sceneGraphUpdatesBlocked_ < 0)
+    std::cerr << "Error: updates blocked < 0 ... more unblocks than blocks" << std::endl;
+
+  return (sceneGraphUpdatesBlocked_ > 0);
 }
 
 bool savingSettings( ) {
