@@ -109,7 +109,6 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 	  template<typename Skeleton> bool LoadSkeleton(Skeleton *_pSkeleton, QString _filename);
 	  template<typename Skeleton> bool SaveSkeleton(Skeleton *_pSkeleton, QString _filename);
 
-  QString get_unique_name(SkeletonObject* _object);
 };
 
 #endif //FILESKLPLUGIN_HH

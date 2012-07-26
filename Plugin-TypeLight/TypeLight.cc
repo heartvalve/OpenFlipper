@@ -368,7 +368,7 @@ int TypeLightPlugin::addEmpty() {
   // new object data struct
   LightObject * object = new LightObject();
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("New Light %1.lgt").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -416,13 +416,6 @@ void TypeLightPlugin::objectDeleted(int _id) {
         addDefaultLights();
     }
     
-}
-
-QString TypeLightPlugin::get_unique_name(LightObject* _object) {
-    
-  int cur_idx = _object->id();
-
-  return QString(tr("Light new %1.lgt").arg( cur_idx ));
 }
 
 float TypeLightPlugin::findDepth() {

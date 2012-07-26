@@ -67,9 +67,6 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
     QString version() { return QString("1.01"); };
 
-  private :
-
-  QString get_unique_name(PolyLineObject* _object);
 };
 
 #endif //FILEPOLYLINEPLUGIN_HH

@@ -103,9 +103,6 @@ class FileLightPlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
 
     QString version() { return QString("1.0"); };
 
-  private :
-
-    QString get_unique_name(LightObject* _object);
 };
 
 #endif //FILELIGHTPLUGIN_HH

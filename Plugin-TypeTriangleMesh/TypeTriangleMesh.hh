@@ -98,11 +98,6 @@ class TypeTriangleMeshPlugin : public QObject, BaseInterface, LoadSaveInterface,
     // Type Interface
     void generateBackup( int _id, QString _name, UpdateType _type );
 
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(TriMeshObject* _object);
-
 };
 
 #endif //TYPETRIANGLEMESHPLUGIN_HH

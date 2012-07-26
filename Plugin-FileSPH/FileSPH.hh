@@ -103,9 +103,6 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     QString version() { return QString("1.0"); };
 
-  private :
-
-    QString get_unique_name(SphereObject* _object);
 };
 
 #endif //FILESPHPLUGIN_HH

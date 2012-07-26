@@ -98,11 +98,6 @@ class TypePolyMeshPlugin : public QObject, BaseInterface, LoadSaveInterface, Log
     // Type Interface
     void generateBackup( int _id, QString _name, UpdateType _type );
 
-  private:
-    
-    /// Return unique name for object
-    QString get_unique_name(PolyMeshObject* _object);
-
 };
 
 #endif //TYPEPOLYMESHPLUGIN_HH

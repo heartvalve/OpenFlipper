@@ -115,9 +115,6 @@ public slots:
   DataType supportedType() { return DATA_SPLATCLOUD; }; 
   void generateBackup( int _objectId, QString _name, UpdateType _type );
 
-private:
-
-  QString get_unique_name( SplatCloudObject *_object );
 };
 
 

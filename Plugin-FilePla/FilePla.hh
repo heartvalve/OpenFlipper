@@ -101,9 +101,6 @@ class FilePlaPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     QString version() { return QString("1.0"); };
 
-  private :
-
-    QString get_unique_name(PlaneObject* _object);
 };
 
 #endif //FILEPLAPLUGIN_HH

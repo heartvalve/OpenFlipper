@@ -109,9 +109,6 @@ class TypeCameraPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggi
     void contextMenuClicked(QAction* _contextAction);
     
   private:
-    
-    /// Return unique name for object
-    QString get_unique_name(CameraObject* _object);
 
     QMenu* contextMenu_;
 

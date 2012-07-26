@@ -106,33 +106,5 @@ void FilePolyLinePlugin::saveIniFile( INIFile& _ini ,int _id) {
   }
 }
 
-
-QString FilePolyLinePlugin::get_unique_name(PolyLineObject* _object)
-{
-  bool name_unique = false;
-
-  int cur_idx = _object->id();
-
-  while(!name_unique)
-  {
-    name_unique = true;
-
-    QString cur_name = QString(tr("PolyLine %1.pol").arg( cur_idx ));
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_POLY_LINE );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-	name_unique = false;
-	cur_idx += 10;
-	break;
-      }
-    }
-  }
-
-  return QString(tr("PolyLine %1.pol").arg( cur_idx ));
-}
-
 Q_EXPORT_PLUGIN2( filepolylineplugin , FilePolyLinePlugin );
 

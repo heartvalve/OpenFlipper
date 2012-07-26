@@ -74,7 +74,7 @@ int TypeTriangleMeshPlugin::addEmpty(){
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
-  QString name = get_unique_name(object);
+  QString name = QString(tr("TriangleMesh new %1.off").arg( object->id() ));
 
   // call the local function to update names
   QFileInfo f(name);
@@ -87,15 +87,6 @@ int TypeTriangleMeshPlugin::addEmpty(){
   emit emptyObjectAdded (object->id() );
 
   return object->id();
-}
-
-//-----------------------------------------------------------------------------
-
-QString TypeTriangleMeshPlugin::get_unique_name(TriMeshObject* _object)
-{
-  int cur_idx = _object->id();
-
-  return QString(tr("TriangleMesh new %1.off").arg( cur_idx ));
 }
 
 //-----------------------------------------------------------------------------

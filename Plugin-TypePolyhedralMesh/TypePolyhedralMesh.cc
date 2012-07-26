@@ -111,7 +111,7 @@ int TypePolyhedralMeshPlugin::addEmpty() {
     if (PluginFunctions::targetCount() == 0)
         object->target(true);
 
-    QString name = get_unique_name(object);
+    QString name = QString(tr("New PolyHedral Mesh %1.ovm").arg( object->id() ));
 
     // call the local function to update names
     QFileInfo f(name);
@@ -135,30 +135,6 @@ int TypePolyhedralMeshPlugin::addEmpty() {
     emit emptyObjectAdded(object->id());
 
     return object->id();
-}
-
-QString TypePolyhedralMeshPlugin::get_unique_name(PolyhedralMeshObject* _object) {
-
-    bool name_unique = false;
-
-    int cur_idx = _object->id();
-
-    while (!name_unique) {
-        name_unique = true;
-
-        QString cur_name = QString(tr("Polyhedral Mesh %1.ovm").arg(cur_idx));
-
-        PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_POLYHEDRAL_MESH);
-        for (; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-            if (o_it->name() == cur_name) {
-                name_unique = false;
-                cur_idx += 10;
-                break;
-            }
-        }
-    }
-
-    return QString(tr("Polyhedral Mesh %1.ovm").arg(cur_idx));
 }
 
 //----------------------------------------------------------------------------
