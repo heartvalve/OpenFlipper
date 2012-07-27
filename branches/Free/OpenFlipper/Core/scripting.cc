@@ -217,6 +217,25 @@ void Core::setToolBoxSide(QString _side) {
 
 //-----------------------------------------------------------------------------
 
+QWidget *Core::getToolbox(QString _pluginName, QString _toolboxName) {
+    std::vector<PluginInfo>::const_iterator pluginIt = plugins_.end();
+    for (std::vector<PluginInfo>::const_iterator it = plugins_.begin(), it_end = plugins_.end(); it != it_end; ++it) {
+        if (it->name == _pluginName) {
+            pluginIt = it;
+        }
+    }
+    if (pluginIt == plugins_.end()) return 0;
+
+    std::vector<std::pair<QString , QWidget*> >::const_iterator widgetIt;
+    for (std::vector<std::pair<QString , QWidget*> >::const_iterator it = pluginIt->toolboxWidgets.begin(), it_end = pluginIt->toolboxWidgets.end();
+            it != it_end; ++it) {
+        if (it->first == _toolboxName)
+            return it->second;
+    }
+
+    return 0;
+}
+
 void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 

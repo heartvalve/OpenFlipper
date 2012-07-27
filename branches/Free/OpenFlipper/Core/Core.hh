@@ -948,6 +948,15 @@ private slots:
     /// Add a Toolbox from a plugin or from scripting (with icon)
      void addToolbox(QString _name ,QWidget* _widget, QIcon* _icon);
 
+     /**
+      * Get a toolbox.
+      *
+      * @param _pluginName The plugin which the requested toolbox belongs tp.
+      * @param _toolboxName The name of the requested toolbox.
+      * @return A pointer to the requested widget if it was found, nullptr, otherwise.
+      */
+     QWidget *getToolbox(QString _pluginName, QString _toolboxName);
+
    private :
 
    //===========================================================================
