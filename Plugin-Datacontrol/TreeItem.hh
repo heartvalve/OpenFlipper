@@ -55,6 +55,8 @@ class TreeItem {
 
     TreeItem(int _id, QString _name, DataType _type, TreeItem* _parent);
 
+    ~TreeItem();
+
   // static members
   public:
     /// id
@@ -138,9 +140,6 @@ class TreeItem {
 
     /// Check if the element exists in the subtree of this element
     TreeItem* childExists(int _objectId);
-
-    /// Check if the element exists in the subtree of this element
-    TreeItem* childExists(QString _name);
 
     /// add a child to this node
     void appendChild(TreeItem *child);

@@ -42,6 +42,9 @@
 
 #include "TreeItem.hh"
 
+/// Acceleration map
+static QMap<int,TreeItem*> treeMap_;
+
 //--------------------------------------------------------------------------------
 
 TreeItem::TreeItem(int _id, QString _name, DataType _type, TreeItem* _parent) :
@@ -53,6 +56,19 @@ TreeItem::TreeItem(int _id, QString _name, DataType _type, TreeItem* _parent) :
   name_(_name),
   parentItem_(_parent)
 {
+  // Remember ourself ;-)
+  treeMap_[_id] = this;
+}
+
+
+TreeItem::~TreeItem() {
+  // Remove itself from map
+  QMap<int,TreeItem*>::iterator iter = treeMap_.find( id() );
+  if( iter != treeMap_.end() ) {
+    treeMap_.erase(iter);
+  } else {
+    std::cerr << "Map accelerator destructor in DataControl: Currently removing object that is not in the map!" << std::endl;
+  }
 }
 
 
@@ -87,7 +103,7 @@ int TreeItem::group() {
   if ( parent() == 0 )
     return -1;
 
-  // Dont count root node as a group
+  // Don't count root node as a group
   if ( parent()->parent() == 0 )
     return -1;
 
@@ -234,7 +250,8 @@ void TreeItem::setParent(TreeItem* _parent) {
 
 void TreeItem::appendChild(TreeItem *item)
 {
-    childItems_.append(item);
+  treeMap_[item->id()] = item;
+  childItems_.append(item);
 }
 
 //--------------------------------------------------------------------------------
@@ -259,31 +276,32 @@ TreeItem* TreeItem::childExists(int _objectId) {
   if ( id_ == _objectId )
     return this;
 
-  // search in children
-  for ( int i = 0 ; i < childItems_.size(); ++i ) {
-    TreeItem* tmp = childItems_[i]->childExists(_objectId);
-    if ( tmp != 0)
-      return tmp;
+  // Check the map, for the item
+  QMap<int,TreeItem*>::const_iterator iter = treeMap_.find(_objectId);
+
+  // Not found -> return 0
+  if( iter == treeMap_.end() ) {
+    return 0;
   }
 
-  return 0;
-}
+  // Move the tree up and check if we are in the line to the root
+  TreeItem* current = *iter;
 
-//--------------------------------------------------------------------------------
+  while ( true ) {
 
-TreeItem* TreeItem::childExists(QString _name) {
+    // Current item is a parent of the found one
+    if ( current == this ) {
+      return *iter;
+    }
 
-  // Check if this object has the requested id
-  if ( name() == _name )
-    return this;
-
-  // search in children
-  for ( int i = 0 ; i < childItems_.size(); ++i ) {
-    TreeItem* tmp = childItems_[i]->childExists(_name);
-    if ( tmp != 0)
-      return tmp;
+    // Move to parent or if there is no parent, we return 0
+    if ( current->parent() != 0) {
+      current = current->parent();
+    } else
+      return 0;
   }
 
+  // Not in the line, so child does not exist
   return 0;
 }
 
