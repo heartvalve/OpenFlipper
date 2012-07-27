@@ -951,9 +951,9 @@ private slots:
      /**
       * Get a toolbox.
       *
-      * @param _pluginName The plugin which the requested toolbox belongs tp.
+      * @param _pluginName The plugin which the requested toolbox belongs to.
       * @param _toolboxName The name of the requested toolbox.
-      * @return A pointer to the requested widget if it was found, nullptr, otherwise.
+      * @return A pointer to the requested toolbox widget if it was found, nullptr, otherwise.
       */
      QWidget *getToolbox(QString _pluginName, QString _toolboxName);
 

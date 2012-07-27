@@ -1568,6 +1568,10 @@ void Core::setDescriptions(){
 
   emit setSlotDescription("setToolBoxSide(QString)", tr("Determine whether the toolboxes should be displayed on the right or on the left side."),
                           QStringList(tr("side")), QStringList(tr("The desired side of the toolboxes (either 'left' or 'right')")));
+
+  emit setSlotDescription("getToolbox(QString,QString)", tr("Returns a pointer to the requested toolbox widget if it was found, nullptr, otherwise."),
+                          tr("Plugin Name\rToolbox Name").split("\r"),
+                          tr("The plugin which the requested toolbox belongs to.\rThe name of the requested toolbox.").split("\r"));
 }
 
 void Core::deleteObject( int _id ){
