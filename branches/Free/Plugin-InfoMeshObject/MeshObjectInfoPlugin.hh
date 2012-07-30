@@ -59,6 +59,7 @@
 
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
@@ -73,13 +74,14 @@
  
   Plugin to visualize information about objects in the scene
 */
-class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface, LoggingInterface, StatusbarInterface
+class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface, LoggingInterface, StatusbarInterface, LoadSaveInterface
 {
   Q_OBJECT
       Q_INTERFACES(BaseInterface)
       Q_INTERFACES(InformationInterface)
       Q_INTERFACES(LoggingInterface)
       Q_INTERFACES(StatusbarInterface)
+      Q_INTERFACES(LoadSaveInterface)
 
 
   signals:
@@ -95,6 +97,7 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     void addWidgetToStatusbar(QWidget* _widget);
 
   private slots :
+
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
@@ -102,6 +105,11 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     void slotObjectSelectionChanged( int _identifier );
     void slotAllCleared();
     
+    //LoadSaveInterface
+    void addedEmptyObject(int _id);
+    void objectDeleted(int _id);
+
+
     void noguiSupported( ) {} ;
 
     // InformationInterface
@@ -110,23 +118,25 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
 
   public :
 
-  // default constructor
-      InfoMeshObjectPlugin(): info_(0),infoBar_(0) {};
+    // default constructor
+    InfoMeshObjectPlugin();
 
-  // default destructor
-      ~InfoMeshObjectPlugin() {};
+    // default destructor
+    ~InfoMeshObjectPlugin() {};
 
-      /// Name of the Plugin
-      QString name(){ return (QString("InfoMeshObject")); };
+    /// Name of the Plugin
+    QString name(){ return (QString("InfoMeshObject")); };
 
-      /// Description of the Plugin
-      QString description() { return (QString(tr("Provides Information on Mesh Objects"))); };
+    /// Description of the Plugin
+    QString description() { return (QString(tr("Provides Information on Mesh Objects"))); };
 
   private :
     InfoDialog* info_;
 
     InfoBar* infoBar_;
     
+    QSet<int> targetMeshes_;
+
     template< class MeshT >
     void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face, ACG::Vec3d& _hitPoint );
 
