@@ -119,7 +119,9 @@ void Core::viewUpdated( ) {
   if ( capture_ )
     captureVideo();
 
-  emit pluginViewChanged();
+  // Only call the view updates, if the scenegraph updates are not currently locked!
+  if ( ! OpenFlipper::Options::sceneGraphUpdatesBlocked() )
+    emit pluginViewChanged();
 }
 
 
