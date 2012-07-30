@@ -126,7 +126,7 @@ public slots:
 
   void UpdateUI();
   void setComboBoxPosition(unsigned int _animationIndex);
-  void checkObjectSelection();
+  void checkObjectSelection(const int _objectId);
 
   void slotAnimationNameChanged();
 
@@ -183,5 +183,4 @@ private:
   int animationOffset_;     ///< This frame was selected as the animation was started
   
   std::vector< int > activeSkeletons_;
-  std::vector< int > activeMeshes_;
 };

@@ -158,7 +158,6 @@ void SkeletalAnimationPlugin::exit()
 void SkeletalAnimationPlugin::slotAllCleared()
 {
   activeSkeletons_.clear();
-  activeMeshes_.clear();
 
   slotAnimationIndexChanged(0);
 }
@@ -168,9 +167,9 @@ void SkeletalAnimationPlugin::slotAllCleared()
 /** \brief Update ui when the object selection changes
  *
  */
-void SkeletalAnimationPlugin::slotObjectSelectionChanged(int /*_id*/)
+void SkeletalAnimationPlugin::slotObjectSelectionChanged(int _id)
 {
-  checkObjectSelection();
+  checkObjectSelection(_id);
 }
 
 //------------------------------------------------------------------------------
@@ -178,8 +177,8 @@ void SkeletalAnimationPlugin::slotObjectSelectionChanged(int /*_id*/)
 /** \brief Update ui when the object is loaded
  *
  */
-void SkeletalAnimationPlugin::fileOpened( int /*_id*/) {
-  checkObjectSelection();
+void SkeletalAnimationPlugin::fileOpened( int _id) {
+  checkObjectSelection(_id);
 }
 
 //------------------------------------------------------------------------------
@@ -187,8 +186,9 @@ void SkeletalAnimationPlugin::fileOpened( int /*_id*/) {
 /** \brief Update ui when the object is added
  *
  */
-void SkeletalAnimationPlugin::addedEmptyObject(int /*_id*/) {
-  checkObjectSelection();
+void SkeletalAnimationPlugin::addedEmptyObject(int _id) {
+
+  checkObjectSelection(_id);
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ void SkeletalAnimationPlugin::addedEmptyObject(int /*_id*/) {
  */
 void SkeletalAnimationPlugin::objectDeleted(int _id) {
 
-    checkObjectSelection();
+    checkObjectSelection(_id);
 
     // Check for skin that is to be cleared
     BaseObjectData* bod = 0;
@@ -231,34 +231,32 @@ void SkeletalAnimationPlugin::objectDeleted(int _id) {
 /** \brief Check source/target selection of objects
  *
  */
-void SkeletalAnimationPlugin::checkObjectSelection(){
+void SkeletalAnimationPlugin::checkObjectSelection(const int _objectId){
 
-  activeSkeletons_.clear();
-  activeMeshes_.clear();
-  
-  // get target skeletons
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    activeSkeletons_.push_back( o_it->id() );
+  BaseObject* object;
+  PluginFunctions::getObject(_objectId,object);
 
-  // if no target skeleton there check if there is only one skeleton
-  if ( activeSkeletons_.empty() ){
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-      activeSkeletons_.push_back( o_it->id() );
-
-    if (activeSkeletons_.size() != 1)
-      activeSkeletons_.clear();
+  if ( !object ) {
+    std::cerr << "SkeletalAnimationPlugin::checkObjectSelection : unable to get object! " << std::endl;
+    return;
   }
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_TRIANGLE_MESH|DATA_POLY_MESH)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    activeMeshes_.push_back( o_it->id() );
+  if ( object->dataType() == DataType(DATA_SKELETON) ) {
+    activeSkeletons_.clear();
 
-  // if no target mesh there check if there is only one mesh
-  if ( activeMeshes_.empty() ){
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_TRIANGLE_MESH|DATA_POLY_MESH)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-      activeMeshes_.push_back( o_it->id() );
+    // get target skeletons
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+      activeSkeletons_.push_back( o_it->id() );
 
-    if (activeMeshes_.size() != 1)
-      activeMeshes_.clear();
+    // if no target skeleton there check if there is only one skeleton
+    if ( activeSkeletons_.empty() ){
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DataType(DATA_SKELETON)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+        activeSkeletons_.push_back( o_it->id() );
+
+      if (activeSkeletons_.size() != 1)
+        activeSkeletons_.clear();
+    }
+
   }
 
   UpdateUI();
