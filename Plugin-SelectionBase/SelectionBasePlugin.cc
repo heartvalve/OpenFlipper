@@ -1493,6 +1493,14 @@ void SelectionBasePlugin::addedEmptyObject (int _id) {
       (*it).second.tabWidget->setEnabled(true);
     }
     
+    // Increase the number of available objects for that type
+    QMap<DataType, int>::iterator iterator = typeCounter_.find(obj->dataType());
+    if ( iterator != typeCounter_.end() ) {
+      typeCounter_[obj->dataType()] = typeCounter_[obj->dataType()] + 1;
+    } else {
+      typeCounter_[obj->dataType()] = 1;
+    }
+
     updatePickModeToolBar();
 
     updateTabsOrder();
@@ -1564,6 +1572,20 @@ void SelectionBasePlugin::objectDeleted (int _id) {
         (*it).second.tabWidget->setEnabled(atLeastOne);
     }
     
+    // Decrease the number of available objects for that type
+    // We track that here because otherwise we had to iterate over all objects
+    // which would cause a linear runtime which is bad for high object counts.
+    QMap<DataType, int>::iterator iterator = typeCounter_.find(obj->dataType());
+    if ( iterator != typeCounter_.end() ) {
+      typeCounter_[obj->dataType()] = typeCounter_[obj->dataType()] - 1;
+      if ( typeCounter_[obj->dataType()] < 0 ) {
+        std::cerr << "====== ERROR =======" << std::endl;
+        std::cerr << "Negative counter for type  " << obj->dataType().name().toStdString() << std::endl;
+      }
+    } else {
+      std::cerr << "Error: No counter for type  " << obj->dataType().name().toStdString() << std::endl;
+    }
+
     updatePickModeToolBar();
 
     updateTabsOrder();
@@ -1669,19 +1691,56 @@ QString SelectionBasePlugin::getUniqueHandleName(QString _name, int _num) {
 //============================================================================================
 
 bool SelectionBasePlugin::typeExists(DataType _type, int _excludeId) {
-    // Search for other objects with data type _type
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, _type);
-    
-    if(_excludeId != -1) {
-        for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-            if(o_it->id() != _excludeId) return true;
-    } else {
-        if(o_it != PluginFunctions::objectsEnd()) {
-            // An object of type _type has been found
-            return true;
+
+  // Check the number of available objects for that type
+  QMap<DataType, int>::iterator iterator = typeCounter_.find(_type);
+  if ( iterator != typeCounter_.end() ) {
+
+    // We count objects of a specific type and decrease the number by one
+    // which basically happens, if we are about to remove an object.
+    if ( _excludeId != -1 ) {
+
+      // Sanity check. If the object is of a different type, something went wrong.
+      BaseObject* object;
+      PluginFunctions::getObject(_excludeId,object);
+
+      if ( object == 0 ) {
+        std::cerr << "Unable to get Object for type exists" << std::endl;
+      } else {
+        if (_type !=  object->dataType()) {
+          std::cerr << "typeExists mismatch" << std::endl;
         }
+      }
+
+      // Check the counter of the type
+      if ( typeCounter_[_type] - 1 > 0) {
+        return true; // At least one object of this type exists if we delete the excluded one
+      } else if ( typeCounter_[_type] - 1 == 0 ){
+        return false;  // No object of this type exists if we delete the excluded one
+      } else {
+        std::cerr << "Type exists Error  " << _type.name().toStdString() <<  " negative count" << std::endl;
+        return false;
+      }
+    } else {
+
+      // If we don't exclude items, we directly take the number we found.
+      if ( typeCounter_[_type] > 0) {
+        return true; // At least one object of this type exists
+      } else if ( typeCounter_[_type] == 0 ){
+        return false; // No object of this type exists
+      } else {
+        std::cerr << "Type exists Error  " << _type.name().toStdString() <<  " negative count" << std::endl;
+        return false;
+      }
     }
+
+  } else {
+    // No counter available, which basically means it is equal to zero
     return false;
+  }
+
+  // This should never be reached!
+  return false;
 }
 
 //============================================================================================
