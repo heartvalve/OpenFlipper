@@ -257,6 +257,9 @@ Q_INTERFACES(SelectionInterface)
         /// Test if at least one object of type _type is in the scene graph
         bool typeExists(DataType _type, int _excludeId = -1);
         
+        /// Caches the number of available elements of a certain data type for the typeExists function
+        QMap<DataType,int> typeCounter_;
+
         /// Show standard selection mode
         /// Use this method to show/hide standard selection actions (lasso, floodfill, sphere, etc.)
         void showSelectionMode(QString _mode, QIcon _icon, QString _desc,
