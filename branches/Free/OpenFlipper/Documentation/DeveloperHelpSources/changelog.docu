@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15115 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15138 )</b>
      - <b>Significant interface changes</b>
          - Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -22,13 +22,22 @@
      - <b>Plugins</b>
          - Datacontrol
              - Added context menu item to copy material to targeted objects.
+             - Accellerate Treeitem lookup for child by a map. This should speedup large object count handling significantly.
          - File Bundler
              - New Plugin
              - Read output from bundler (SplatCloud, Cameras)
+         - Info Mesh Object
+             - Use a hash map to cash the target objects to avoid linear time lookup for the targets
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters)
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
+         - SelectionBase
+             - Speedup selection base plugin by caching the number of objects of the specific types (no linear time check anymore)
+         - Skeletal Animation
+             - Speedup Skeletal Animation Plugin by only caching skeletons.
+     - <b>Scripting</b>
+         - Core: Added getToolbox method to scripting interface.
      - <b>Documentation</b>
          - Removed example path from doxyfiles for user documentation
          - Added colored point rendering stuff.
