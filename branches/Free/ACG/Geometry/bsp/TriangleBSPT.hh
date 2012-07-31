@@ -58,9 +58,6 @@
 #include "BSPTreeNode.hh"
 #include "TriangleBSPCoreT.hh"
 #include "BSPImplT.hh"
-//#include "Distance.hh"
-#include <ACG/Geometry/Algorithms.hh>
-
 
 //== CLASS DEFINITION =========================================================
 #include <list>
@@ -80,114 +77,116 @@ class OpenMeshTriangleBSPTraits
 {
 public:
 
-    typedef typename Mesh::Scalar	Scalar;
-    typedef typename Mesh::Point	Point;
-    typedef typename Mesh::FaceHandle	Handle;
-    typedef std::vector<Handle>		Handles;
-    typedef typename Handles::iterator	HandleIter;
-    typedef TreeNode<Mesh>		Node;    
-     
-    OpenMeshTriangleBSPTraits(const Mesh& _mesh) : mesh_(_mesh) {}
+  typedef typename Mesh::Scalar	Scalar;
+  typedef typename Mesh::Point	Point;
+  typedef typename Mesh::FaceHandle	Handle;
+  typedef std::vector<Handle>		Handles;
+  typedef typename Handles::iterator	HandleIter;
+  typedef TreeNode<Mesh>		Node;
 
-    /// Returns the points belonging to the face handle _h
-    inline void points(const Handle _h, Point& _p0, Point& _p1, Point& _p2) const
-    {
-        typename Mesh::CFVIter fv_it(mesh_.cfv_iter(_h));
-        _p0 = mesh_.point(fv_it);
-        ++fv_it;
-        _p1 = mesh_.point(fv_it);
-        ++fv_it;
-        _p2 = mesh_.point(fv_it);
-    }
+  OpenMeshTriangleBSPTraits(const Mesh& _mesh) : mesh_(_mesh) {}
 
-    Scalar sqrdist(const Handle _h, const Point& _p) const
-    {
-        Point p0, p1, p2, q;
-        points(_h, p0, p1, p2);
-        return ACG::Geometry::distPointTriangleSquared(_p, p0, p1, p2, q);
-    }
-    
-    void calculateBoundingBox(
-        Node* _node,
-        Point& median,
-	int& axis)
-    {	
-	//determine splitting axis
-	HandleIter it_h;
-        Point p0, p1, p2, bb_min, bb_max;
-        bb_min.vectorize(std::numeric_limits<typename Point::value_type>::infinity());
-        bb_max.vectorize(-std::numeric_limits<typename Point::value_type>::infinity());
-	std::list<Point> vertices;
-	
-	
-        for (it_h=_node->begin(); it_h!=_node->end(); ++it_h)
-        {
-            points(*it_h, p0, p1, p2);
-            /*
-	    bb_min.minimize(p0);
-            bb_min.minimize(p1);
-            bb_min.minimize(p2);
-            bb_max.maximize(p0);
-            bb_max.maximize(p1);
-            bb_max.maximize(p2);*/
-	    
-	    vertices.push_back (p0);
-	    vertices.push_back (p1);
-	    vertices.push_back (p2);
-        }
-	bb_min = _node->bb_min;
-	bb_max = _node->bb_max;
-	
-        // split longest side of bounding box
-        Point   bb     = bb_max - bb_min;
-        Scalar  length = bb[0];
-	axis = 0;
-        if (bb[1] > length) length = bb[ (axis=1) ];
-        if (bb[2] > length) length = bb[ (axis=2) ];
-	
-	//calculate the median value in axis-direction
-	switch (axis) {
-	  case 0: vertices.sort (x_sort() ); break;
-	  case 1: vertices.sort (y_sort() ); break;
-	  case 2: vertices.sort (z_sort() ); break; }
-	vertices.unique(); ///todo: does this work with Points?!
-	
-	int size = vertices.size();
-	typename std::list<Point>::iterator it_v;
-	it_v = vertices.begin();
-	std::advance(it_v, size/2);
-	median = *it_v;
-	
-    }
+  /// Returns the points belonging to the face handle _h
+  inline void points(const Handle _h, Point& _p0, Point& _p1, Point& _p2) const
+  {
+    typename Mesh::CFVIter fv_it(mesh_.cfv_iter(_h));
+    _p0 = mesh_.point(fv_it);
+    ++fv_it;
+    _p1 = mesh_.point(fv_it);
+    ++fv_it;
+    _p2 = mesh_.point(fv_it);
+  }
 
-    void calculateBoundingBoxRoot(
-        Node* _node)
-    {
-        HandleIter it;
-        Point p0, p1, p2, bb_min, bb_max;
-        bb_min.vectorize(FLT_MAX);
-        bb_max.vectorize(-FLT_MAX);
-        for (it=_node->begin(); it!=_node->end(); ++it)
-        {
-            points(*it, p0, p1, p2);
-            bb_min.minimize(p0);
-            bb_min.minimize(p1);
-            bb_min.minimize(p2);
-            bb_max.maximize(p0);
-            bb_max.maximize(p1);
-            bb_max.maximize(p2);
-        }
-        _node->bb_min = bb_min;
-        _node->bb_max = bb_max;
+  Scalar sqrdist(const Handle _h, const Point& _p) const
+  {
+    Point p0, p1, p2, q;
+    points(_h, p0, p1, p2);
+    return ACG::Geometry::distPointTriangleSquared(_p, p0, p1, p2, q);
+  }
+
+  void calculateBoundingBox(Node* _node, Point& median, int& axis)
+  {
+    //determine splitting axis
+    HandleIter it_h;
+    Point p0, p1, p2, bb_min, bb_max;
+    bb_min.vectorize(std::numeric_limits<typename Point::value_type>::infinity());
+    bb_max.vectorize(-std::numeric_limits<typename Point::value_type>::infinity());
+    std::list<Point> vertices;
+
+    for (it_h = _node->begin(); it_h != _node->end(); ++it_h) {
+      points(*it_h, p0, p1, p2);
+      /*
+       bb_min.minimize(p0);
+       bb_min.minimize(p1);
+       bb_min.minimize(p2);
+       bb_max.maximize(p0);
+       bb_max.maximize(p1);
+       bb_max.maximize(p2);*/
+
+      vertices.push_back(p0);
+      vertices.push_back(p1);
+      vertices.push_back(p2);
     }
+    bb_min = _node->bb_min;
+    bb_max = _node->bb_max;
+
+    // split longest side of bounding box
+    Point bb = bb_max - bb_min;
+    Scalar length = bb[0];
+    axis = 0;
+    if (bb[1] > length)
+      length = bb[(axis = 1)];
+    if (bb[2] > length)
+      length = bb[(axis = 2)];
+
+    //calculate the median value in axis-direction
+    switch (axis) {
+      case 0:
+        vertices.sort(x_sort());
+        break;
+      case 1:
+        vertices.sort(y_sort());
+        break;
+      case 2:
+        vertices.sort(z_sort());
+        break;
+    }
+    vertices.unique(); ///todo: does this work with Points?!
+
+    int size = vertices.size();
+    typename std::list<Point>::iterator it_v;
+    it_v = vertices.begin();
+    std::advance(it_v, size / 2);
+    median = *it_v;
+
+  }
+
+  void calculateBoundingBoxRoot(Node* _node)
+  {
+    HandleIter it;
+    Point p0, p1, p2, bb_min, bb_max;
+    bb_min.vectorize(FLT_MAX);
+    bb_max.vectorize(-FLT_MAX);
+    for (it = _node->begin(); it != _node->end(); ++it) {
+      points(*it, p0, p1, p2);
+      bb_min.minimize(p0);
+      bb_min.minimize(p1);
+      bb_min.minimize(p2);
+      bb_max.maximize(p0);
+      bb_max.maximize(p1);
+      bb_max.maximize(p2);
+    }
+    _node->bb_min = bb_min;
+    _node->bb_max = bb_max;
+  }
 
 private:
 
-    const Mesh& mesh_;
-    //functors for sorting in different directions
-    struct x_sort { bool operator()(const Point& first, const Point& second) { return (first[0] < second[0]); }  };
-    struct y_sort { bool operator()(const Point& first, const Point& second) { return (first[1] < second[1]); }  };
-    struct z_sort { bool operator()(const Point& first, const Point& second) { return (first[2] < second[2]); }  };
+  const Mesh& mesh_;
+  //functors for sorting in different directions
+  struct x_sort { bool operator()(const Point& first, const Point& second) { return (first[0] < second[0]); }  };
+  struct y_sort { bool operator()(const Point& first, const Point& second) { return (first[1] < second[1]); }  };
+  struct z_sort { bool operator()(const Point& first, const Point& second) { return (first[2] < second[2]); }  };
 };
 
 

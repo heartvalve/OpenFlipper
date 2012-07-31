@@ -72,7 +72,7 @@ nearest(const Point& _p) const
   data.ref  = _p;
   data.dist = std::numeric_limits<Scalar>::infinity();
   if (this->root_ == 0)
-      throw std::runtime_error("It seems like the BSP hasn't been built, yet. Did you call build(...)?");
+    throw std::runtime_error("It seems like the BSP hasn't been built, yet. Did you call build(...)?");
   _nearest(this->root_, data);
   return NearestNeighbor(data.nearest, sqrt(data.dist));
 }
@@ -90,34 +90,34 @@ _nearest(Node* _node, NearestNeighborData& _data) const
   if (!_node->left_child_)
   {
     Scalar dist;
-    
+
     for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
     {
       dist = this->traits_.sqrdist(*it, _data.ref);
       if (dist < _data.dist)
       {
-	_data.dist = dist;
-	_data.nearest = *it;
+        _data.dist = dist;
+        _data.nearest = *it;
       }
     }
   }
-  
+
   // non-terminal node
   else
   {
     Scalar dist = _node->plane_.distance(_data.ref);
-    
+
     if (dist > 0.0)
     {
       _nearest(_node->left_child_, _data);
       if (dist*dist < _data.dist)
-	_nearest(_node->right_child_, _data);
+        _nearest(_node->right_child_, _data);
     }
     else
     {
       _nearest(_node->right_child_, _data);
       if (dist*dist < _data.dist)
-	_nearest(_node->left_child_, _data);
+        _nearest(_node->left_child_, _data);
     }    
   }
 }
@@ -129,14 +129,32 @@ typename BSPImplT<BSPCore>::RayCollision
 BSPImplT<BSPCore>::
 raycollision(const Point& _p, const Point& _r) const
 {
+  // Prepare the struct for returning the data
   RayCollisionData  data;
   data.ref  = _p;
   data.dist = FLT_MAX;
   data.ray  = _r;
   data.hit_vertices.clear();
   
-  _raycollision(this->root_, data);
+  _raycollision_non_directional(this->root_, data);
   return RayCollision(data.nearest, data.dist, data.hit_vertices);
+}
+
+template <class BSPCore>
+typename BSPImplT<BSPCore>::RayCollision
+BSPImplT<BSPCore>::
+directionalRaycollision(const Point& _p, const Point& _r) const {
+
+  // Prepare the struct for returning the data
+  RayCollisionData  data;
+  data.ref  = _p;
+  data.dist = FLT_MAX;
+  data.ray  = _r;
+  data.hit_vertices.clear();
+
+  _raycollision_directional(this->root_, data);
+  return RayCollision(data.nearest, data.dist, data.hit_vertices);
+
 }
 
 
@@ -146,44 +164,94 @@ raycollision(const Point& _p, const Point& _r) const
 template <class BSPCore>
 void
 BSPImplT<BSPCore>::
-_raycollision(Node* _node, RayCollisionData& _data) const
+_raycollision_non_directional(Node* _node, RayCollisionData& _data) const
 {
-    // terminal node
-    if (!_node->left_child_)
-    {
-        Scalar dist;
-        Point v0, v1, v2;
-	Scalar u, v;
+  // terminal node
+  if (!_node->left_child_)
+  {
+    Scalar dist;
+    Point v0, v1, v2;
+    Scalar u, v;
 
-        for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
+    for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
+    {
+      this->traits_.points(*it, v0, v1, v2);
+      if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
+
+        _data.hit_vertices.push_back(*it);
+
+        // face intersects with ray. But is it closer than any that we have found so far?
+        if ( fabs(dist) < _data.dist)
         {
-            this->traits_.points(*it, v0, v1, v2);
-            if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
-	      
-		_data.hit_vertices.push_back(*it);
-	      
-                //face intersects with ray. But is it closer than any that we have found so far?
-                if (dist < _data.dist)
-                {
-                    _data.dist = dist;
-                    _data.nearest = *it;
-                }
-            }
+          _data.dist    = fabs(dist);
+          _data.nearest = *it;
         }
+      }
     }
-  
+  }
+
   // non-terminal node
   else
-    {
-        Scalar tmin, tmax;
-	bool used = false;
-        if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
-            _raycollision(_node->left_child_, _data);
-        }
-	if ( _node->right_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->right_child_->bb_min, _node->right_child_->bb_max, tmin, tmax)) {
-            _raycollision(_node->right_child_, _data);
-        }
+  {
+    Scalar tmin, tmax;
+    bool used = false;
+    if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
+      _raycollision_non_directional(_node->left_child_, _data);
     }
+    if ( _node->right_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->right_child_->bb_min, _node->right_child_->bb_max, tmin, tmax)) {
+      _raycollision_non_directional(_node->right_child_, _data);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+
+template <class BSPCore>
+void
+BSPImplT<BSPCore>::
+_raycollision_directional(Node* _node, RayCollisionData& _data) const
+{
+  // terminal node
+  if (!_node->left_child_)
+  {
+    Scalar dist;
+    Point v0, v1, v2;
+    Scalar u, v;
+
+    for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
+    {
+      this->traits_.points(*it, v0, v1, v2);
+      if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
+
+        if ( dist < 0.0 )
+          continue;
+
+        _data.hit_vertices.push_back(*it);
+
+        // face intersects with ray. But is it closer than any that we have found so far?
+        // Note as we rely on the direction of the hit, so we will never get negative directions here
+        if ( dist < _data.dist)
+        {
+          _data.dist    = fabs(dist);
+          _data.nearest = *it;
+        }
+      }
+    }
+  }
+
+  // non-terminal node
+  else
+  {
+    Scalar tmin, tmax;
+    bool used = false;
+    if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
+      _raycollision_directional(_node->left_child_, _data);
+    }
+    if ( _node->right_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->right_child_->bb_min, _node->right_child_->bb_max, tmin, tmax)) {
+      _raycollision_directional(_node->right_child_, _data);
+    }
+  }
 }
 
 

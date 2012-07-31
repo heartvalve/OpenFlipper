@@ -97,8 +97,8 @@ public: //---------------------------------------------------------------------
   {
     RayCollision() {}
     RayCollision(Handle _h, Scalar _d, std::vector<Handle> _v) : handle(_h), dist(_d), hit_vertices(_v) {}
-    Handle  handle;
-    Scalar  dist;
+    Handle              handle;
+    Scalar              dist;
     std::vector<Handle> hit_vertices;
   };
 
@@ -107,14 +107,27 @@ public: //---------------------------------------------------------------------
   
   /** \brief intersect mesh with ray
    *
-   * This function shots a ray through the ray and collects all intersected triangles and
-   * the handle of the closest face
+   * This function shots a ray through the mesh and collects all intersected triangles and
+   * the handle of the closest face ( non-directional, so no matter of the ray direction, the
+   * closest face handle is returned in either direction)
    *
    * @param _p Start point of the ray
    * @param _r Ray direction
+   * @return   Collision information
    */
   RayCollision raycollision (const Point& _p, const Point& _r) const;
   
+  /** \brief intersect mesh with ray
+   *
+   * This function shots a ray through the mesh and collects all intersected triangles and
+   * the handle of the closest face ( directional, so the ray direction is taken into account!)
+   *
+   * @param _p Start point of the ray
+   * @param _r Ray direction
+   * @return   Collision information
+   */
+  RayCollision directionalRaycollision (const Point& _p, const Point& _r) const;
+
 
 private: //---------------------------------------------------------------------
 
@@ -146,8 +159,19 @@ private: //---------------------------------------------------------------------
   // Recursive part of nearest()
   void _nearest(Node* _node, NearestNeighborData& _data) const;
   
-  //resursive part of raycollide()
-  void _raycollision(Node* _node, RayCollisionData& _data) const;
+  /**  \brief recursive part of raycollision()
+   *
+   * @param _node The current node in the tree
+   * @param _data Data pointer, used to collect the collision information
+   */
+  void _raycollision_non_directional(Node* _node, RayCollisionData& _data) const;
+
+  /**  \brief recursive part of directionalRaycollision()
+   *
+   * @param _node The current node in the tree
+   * @param _data Data pointer, used to collect the collision information
+   */
+  void _raycollision_directional(Node* _node, RayCollisionData& _data) const;
 };
 
 //=============================================================================
