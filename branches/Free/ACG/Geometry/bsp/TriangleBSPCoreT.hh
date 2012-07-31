@@ -59,7 +59,6 @@
 #include <vector>
 #include <ACG/Geometry/Types/PlaneT.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-#include <ObjectTypes/PolyMesh/PolyMeshTypes.hh>
 
 #include "TriangleBSPT.hh"
 
@@ -113,10 +112,15 @@ public: //---------------------------------------------------------------------
   /** Build the tree.
    *
    * @param _max_handles Maximum number of vertices per leaf.
-   * @param _max_depth Maximum depth.
+   * @param _max_depth   Maximum depth.
    */
   void build(unsigned int _max_handles, unsigned int _max_depth);
-  /// Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
+
+  /** \brief Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
+   *
+   * @param _object     The output mesh which the tree will be written into
+   * @param _max_depth  The maximal depth that will be visualized
+   */
   void visualizeTree(PolyMesh *_object, int _max_depth);
 
 private:
