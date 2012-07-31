@@ -105,77 +105,78 @@ struct TreeNode
     Plane       plane_;
     Point	bb_min, bb_max;
     
-//    /// This visualizes the bounding boxes
-//    void visualizeTree(PolyMesh *_object, int _max_depth)
-//    {
-//        if (_max_depth > 0 && (left_child_ || right_child_) )
-//        {
-//            if (left_child_)
-//                left_child_->visualizeTree(_object, _max_depth-1);
-//            if (right_child_)
-//                right_child_->visualizeTree(_object, _max_depth-1);
-//        }
-//        else
-//        {
-//            Point size_ = bb_max - bb_min;
-//
-//            std::vector<VertexHandle> vhandle(8);
-//            vhandle[0] = _object->add_vertex(bb_min+Point(0.0,0.0,size_[2]));
-//            vhandle[1] = _object->add_vertex(bb_min+Point(size_[0],0.0,size_[2]));
-//            vhandle[2] = _object->add_vertex(bb_min+Point(size_[0],size_[1],size_[2]));
-//            vhandle[3] = _object->add_vertex(bb_min+Point(0.0,size_[1],size_[2]));
-//            vhandle[4] = _object->add_vertex(bb_min+Point(0.0,0.0,0.0));
-//            vhandle[5] = _object->add_vertex(bb_min+Point(size_[0],0.0,0.0));
-//            vhandle[6] = _object->add_vertex(bb_min+Point(size_[0],size_[1],0.0));
-//            vhandle[7] = _object->add_vertex(bb_min+Point(0.0,size_[1],0.0));
-//
-//
-//            // generate (quadrilateral) faces
-//            std::vector<VertexHandle>  face_vhandles;
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[0]);
-//            face_vhandles.push_back(vhandle[1]);
-//            face_vhandles.push_back(vhandle[2]);
-//            face_vhandles.push_back(vhandle[3]);
-//            _object->add_face(face_vhandles);
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[7]);
-//            face_vhandles.push_back(vhandle[6]);
-//            face_vhandles.push_back(vhandle[5]);
-//            face_vhandles.push_back(vhandle[4]);
-//            _object->add_face(face_vhandles);
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[1]);
-//            face_vhandles.push_back(vhandle[0]);
-//            face_vhandles.push_back(vhandle[4]);
-//            face_vhandles.push_back(vhandle[5]);
-//            _object->add_face(face_vhandles);
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[2]);
-//            face_vhandles.push_back(vhandle[1]);
-//            face_vhandles.push_back(vhandle[5]);
-//            face_vhandles.push_back(vhandle[6]);
-//            _object->add_face(face_vhandles);
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[3]);
-//            face_vhandles.push_back(vhandle[2]);
-//            face_vhandles.push_back(vhandle[6]);
-//            face_vhandles.push_back(vhandle[7]);
-//            _object->add_face(face_vhandles);
-//
-//            face_vhandles.clear();
-//            face_vhandles.push_back(vhandle[0]);
-//            face_vhandles.push_back(vhandle[3]);
-//            face_vhandles.push_back(vhandle[7]);
-//            face_vhandles.push_back(vhandle[4]);
-//            _object->add_face(face_vhandles);
-//        }
-//    }
+    /// This visualizes the bounding boxes
+    template< typename MeshT >
+    void visualizeTree(MeshT *_object, int _max_depth)
+    {
+        if (_max_depth > 0 && (left_child_ || right_child_) )
+        {
+            if (left_child_)
+                left_child_->visualizeTree(_object, _max_depth-1);
+            if (right_child_)
+                right_child_->visualizeTree(_object, _max_depth-1);
+        }
+        else
+        {
+            Point size_ = bb_max - bb_min;
+
+            std::vector<VertexHandle> vhandle(8);
+            vhandle[0] = _object->add_vertex(bb_min+Point(0.0,0.0,size_[2]));
+            vhandle[1] = _object->add_vertex(bb_min+Point(size_[0],0.0,size_[2]));
+            vhandle[2] = _object->add_vertex(bb_min+Point(size_[0],size_[1],size_[2]));
+            vhandle[3] = _object->add_vertex(bb_min+Point(0.0,size_[1],size_[2]));
+            vhandle[4] = _object->add_vertex(bb_min+Point(0.0,0.0,0.0));
+            vhandle[5] = _object->add_vertex(bb_min+Point(size_[0],0.0,0.0));
+            vhandle[6] = _object->add_vertex(bb_min+Point(size_[0],size_[1],0.0));
+            vhandle[7] = _object->add_vertex(bb_min+Point(0.0,size_[1],0.0));
+
+
+            // generate (quadrilateral) faces
+            std::vector<VertexHandle>  face_vhandles;
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[3]);
+            _object->add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[4]);
+            _object->add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[4]);
+            face_vhandles.push_back(vhandle[5]);
+            _object->add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[1]);
+            face_vhandles.push_back(vhandle[5]);
+            face_vhandles.push_back(vhandle[6]);
+            _object->add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[2]);
+            face_vhandles.push_back(vhandle[6]);
+            face_vhandles.push_back(vhandle[7]);
+            _object->add_face(face_vhandles);
+
+            face_vhandles.clear();
+            face_vhandles.push_back(vhandle[0]);
+            face_vhandles.push_back(vhandle[3]);
+            face_vhandles.push_back(vhandle[7]);
+            face_vhandles.push_back(vhandle[4]);
+            _object->add_face(face_vhandles);
+        }
+    }
 
     private:
     /*

@@ -154,3 +154,4 @@ target_link_libraries ( ACG  OpenMeshCore
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
+
