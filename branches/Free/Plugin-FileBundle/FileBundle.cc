@@ -63,6 +63,8 @@
 
 #include <OpenMesh/Core/IO/IOManager.hh>
 
+#include <ObjectTypes/Camera/Camera.hh>
+
 #include <string>
 
 #include <vector>
@@ -362,86 +364,183 @@ bool FileBundlePlugin::writeBundleFile( const char *_filename, const SplatCloud 
 //----------------------------------------------------------------
 
 
-int FileBundlePlugin::loadObject( QString _filename )
+int FileBundlePlugin::addCameras( const CameraVector &_cameras )
 {
-  // add a new, empty splatcloud-object
-  int id = -1;
-  emit addEmptyObject( DATA_SPLATCLOUD, id );
+  // create a list of ids
+  IdList objectIDs;
+  objectIDs.reserve( _cameras.size() );
 
-  // check id
-  if( id == -1 )
-    return -1; // return failure
+  // disable updating of scenegraph
+  OpenFlipper::Options::blockSceneGraphUpdates();
 
-  // get splatcloud-object by id
-  SplatCloudObject *splatCloudObject = 0;
-  if( !PluginFunctions::getObject( id, splatCloudObject ) )
+  // add cameras to list of ids
+  CameraVector::const_iterator cameraIter;
+  for( cameraIter = _cameras.begin(); cameraIter != _cameras.end(); ++cameraIter )
   {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
+    const Camera &camera = *cameraIter;
 
-  // check if splatcloud-object is okay
-  if( !splatCloudObject )
-  {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
+    // set up matrix
+    ACG::GLMatrixd matrix;
+    matrix(0,0) = camera.r_[0][0]; matrix(0,1) = camera.r_[1][0]; matrix(0,2) = camera.r_[2][0];
+    matrix(1,0) = camera.r_[0][1]; matrix(1,1) = camera.r_[1][1]; matrix(1,2) = camera.r_[2][1];
+    matrix(2,0) = camera.r_[0][2]; matrix(2,1) = camera.r_[1][2]; matrix(2,2) = camera.r_[2][2];
+    matrix(0,3) = -(camera.r_[0][0]*camera.t_[0] + camera.r_[1][0]*camera.t_[1] + camera.r_[2][0]*camera.t_[2]);
+    matrix(1,3) = -(camera.r_[0][1]*camera.t_[0] + camera.r_[1][1]*camera.t_[1] + camera.r_[2][1]*camera.t_[2]);
+    matrix(2,3) = -(camera.r_[0][2]*camera.t_[0] + camera.r_[1][2]*camera.t_[1] + camera.r_[2][2]*camera.t_[2]);
+    matrix(3,0) = 0.0; matrix(3,1) = 0.0; matrix(3,2) = 0.0; matrix(3,3) = 1.0;
 
-  // set name of splatcloud-object to filename
-  splatCloudObject->setFromFileName( _filename );
-  splatCloudObject->setName( splatCloudObject->filename() );
-
-  // get splatcloud and scenegraph splatcloud-node
-  SplatCloud     *splatCloud     = splatCloudObject->splatCloud();
-  SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
-
-  // check if splatcloud-node if okay
-  if( !splatCloud || !splatCloudNode )
-  {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
-
-  // read splatcloud from disk
-  if( !readBundleFile( _filename.toLatin1(), *splatCloud ) )
-  {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
-
-  // emit signals that the object has to be updated and that a file was opened
-  emit updatedObject( splatCloudObject->id(), UPDATE_ALL );
-  emit openedFile( splatCloudObject->id() );
-
-  // get drawmodes
-  ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
-  ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
-  ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
-
-  // if drawmodes don't exist something went wrong
-  if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-      dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
-      pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
-  {
-    emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
-  }
-  else
-  {
-    // get global drawmode
-    ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
-
-    // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
-    if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
-        !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
-        !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
+    // create a new, empty camera-object
+    int cameraObjectId = -1;
+    emit addEmptyObject( DATA_CAMERA, cameraObjectId );
+    if( cameraObjectId != -1 )
     {
-      drawmode |= pointsDrawMode;
-      PluginFunctions::setDrawMode( drawmode );
+      // add id of camera-object to list of ids
+      objectIDs.push_back( cameraObjectId );
+
+      // get camera-object by id
+      CameraObject *cameraObject = 0;
+      if( PluginFunctions::getObject( cameraObjectId, cameraObject ) )
+      {
+        // set name of camera-object
+        cameraObject->setName( camera.imagePath_.c_str() );
+
+        // get camera
+        CameraNode *cameraNode = cameraObject->cameraNode();
+        if( cameraNode != 0 )
+        {
+
+          // set camera parameters
+          cameraNode->setModelView( matrix );
+          cameraNode->setSize( 1, 1 ); // FIXME
+
+          // emit signal that the camera-object has to be updated
+          emit updatedObject( cameraObjectId, UPDATE_ALL );
+
+          // everything is okay, so continue with next camera
+          continue;
+        }
+      }
+    }
+
+    // something went wrong, so break
+    break;
+  }
+
+  // enable updating of scenegraph
+  OpenFlipper::Options::unblockSceneGraphUpdates();
+
+  // check if everything is okay so far
+  if( cameraIter == _cameras.end() )
+  {
+    // group objects
+    int groupObjectId = RPC::callFunctionValue<int>( "datacontrol", "groupObjects", objectIDs, QString( "Cameras" ) );
+    if( groupObjectId != -1 )
+    {
+      // everything is okay, so return id of group-object
+      return groupObjectId;
     }
   }
 
-  // return the id of the new splatcloud object
-  return id;
+  // something went wrong, so delete objects
+  unsigned int i, num = objectIDs.size();
+  for( i=0; i<num; ++i )
+    emit deleteObject( objectIDs[ i ] );
+
+  // return failure
+  return -1;
+}
+
+
+//----------------------------------------------------------------
+
+
+int FileBundlePlugin::loadObject( QString _filename )
+{
+  // add a new, empty splatcloud-object
+  int splatcloudObjectId = -1;
+  emit addEmptyObject( DATA_SPLATCLOUD, splatcloudObjectId );
+  if( splatcloudObjectId != -1 )
+  {
+    // create list of ids and add id of splatcloud-object
+    IdList objectIDs;
+    objectIDs.push_back( splatcloudObjectId );
+
+    // get splatcloud-object by id
+    SplatCloudObject *splatCloudObject = 0;
+    if( PluginFunctions::getObject( splatcloudObjectId, splatCloudObject ) )
+    {
+      // set name of splatcloud-object to filename
+      splatCloudObject->setFromFileName( _filename );
+      splatCloudObject->setName( splatCloudObject->filename() );
+
+      // get splatcloud and scenegraph splatcloud-node
+      SplatCloud     *splatCloud     = splatCloudObject->splatCloud();
+      SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
+      if( (splatCloud != 0) && (splatCloudNode != 0) )
+      {
+        // read splatcloud from disk
+        if( readBundleFile( _filename.toLatin1(), *splatCloud ) )
+        {
+          // emit signals that the splatcloud-object has to be updated and that a file was opened
+          emit updatedObject( splatcloudObjectId, UPDATE_ALL );
+          emit openedFile( splatcloudObjectId );
+
+          // get drawmodes
+          ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
+          ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
+          ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
+
+          // if drawmodes don't exist something went wrong
+          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
+              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+              pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
+          {
+            emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
+          }
+          else
+          {
+            // get global drawmode
+            ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
+
+            // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
+            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
+                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
+                !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
+            {
+              drawmode |= pointsDrawMode;
+              PluginFunctions::setDrawMode( drawmode );
+            }
+          }
+
+          // add cameras-object
+          const SplatCloud::CloudPropertyT<CameraVector> *camerasProp = splatCloud->getCloudProperty<CameraVector>( "Cameras" );
+          int camerasObjectId = (camerasProp == 0) ? -1 : addCameras( camerasProp->data() );
+          if( (camerasProp == 0) || (camerasObjectId != -1) )
+          {
+            // add id of cameras-object to list of ids
+            if( camerasObjectId != -1 )
+              objectIDs.push_back( camerasObjectId );
+
+            // group objects
+            int groupObjectId = RPC::callFunctionValue<int>( "datacontrol", "groupObjects", objectIDs );
+            if( groupObjectId != -1 )
+            {
+              // everything is okay, so return id of group-object
+              return groupObjectId;
+            }
+          }
+        }
+      }
+    }
+
+    // something went wrong, so delete objects
+    unsigned int i, num = objectIDs.size();
+    for( i=0; i<num; ++i )
+      emit deleteObject( objectIDs[ i ] );
+  }
+
+  // return failure
+  return -1;
 }
 
 
@@ -452,30 +551,27 @@ bool FileBundlePlugin::saveObject( int _objectId, QString _filename )
 {
   // get splatcloud-object by id
   SplatCloudObject *splatCloudObject = 0;
-  if( !PluginFunctions::getObject( _objectId, splatCloudObject ) )
-    return false; // return failure
+  if( PluginFunctions::getObject( _objectId, splatCloudObject ) )
+  {
+    // change name of splatcloud-object to filename
+    splatCloudObject->setFromFileName( _filename );
+    splatCloudObject->setName( splatCloudObject->filename() );
 
-  // check if splatcloud-object is okay
-  if( !splatCloudObject )
-    return false; // return failure
+    // get splatcloud
+    SplatCloud *splatCloud = splatCloudObject->splatCloud();
+    if( splatCloud != 0 )
+    {
+      // write splatcloud to disk
+      if( writeBundleFile( _filename.toLatin1(), *splatCloud ) )
+      {
+        // return success
+        return true;
+      }
+    }
+  }
 
-  // change name of splatcloud-object to filename
-  splatCloudObject->setFromFileName( _filename );
-  splatCloudObject->setName( splatCloudObject->filename() );
-
-  // get splatcloud
-  SplatCloud *splatCloud = splatCloudObject->splatCloud();
-
-  // check if splatcloud is okay
-  if( !splatCloud )
-    return false; // return failure
-
-  // write splatcloud to disk
-  if( !writeBundleFile( _filename.toLatin1(), *splatCloud ) )
-    return false; // return failure
-
-  // return success
-  return true;
+  // return failure
+  return false;
 }
 
 
