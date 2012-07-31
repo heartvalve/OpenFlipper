@@ -696,6 +696,12 @@ public slots:
     /// return the list of available object that has the given selection and type
     QList<int> objectList (QString _selection, QStringList _types);
 
+    /// Block the scenegraph updates
+    void blockSceneGraphUpdates();
+
+    /// Unblock the scenegraph updates
+    void unblockSceneGraphUpdates();
+
    //===========================================================================
     /** @name Scripting functions for controlling view modes
     * @{ */

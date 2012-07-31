@@ -1572,6 +1572,10 @@ void Core::setDescriptions(){
   emit setSlotDescription("getToolbox(QString,QString)", tr("Returns a pointer to the requested toolbox widget if it was found, nullptr, otherwise."),
                           tr("Plugin Name\rToolbox Name").split("\r"),
                           tr("The plugin which the requested toolbox belongs to.\rThe name of the requested toolbox.").split("\r"));
+
+  emit setSlotDescription("blockSceneGraphUpdates()", tr("Disable Scenegraph Updates (e.g. before loading or adding a large number of files)"),QStringList(), QStringList());
+  emit setSlotDescription("unblockSceneGraphUpdates()", tr("Enable Scenegraph Updates (e.g. before loading or adding a large number of files)"),QStringList(), QStringList());
+
 }
 
 void Core::deleteObject( int _id ){
