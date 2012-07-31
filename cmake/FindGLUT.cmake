@@ -30,6 +30,9 @@ IF (WIN32)
     ${GLUT_ROOT_PATH}/Release
     "C:/libs/glut-3.7/lib"
     )
+
+  GET_FILENAME_COMPONENT( GLUT_LIBRARY_DIR ${GLUT_glut_LIBRARY} PATH ) 
+ 
 ELSE (WIN32)
   
   IF (APPLE)
