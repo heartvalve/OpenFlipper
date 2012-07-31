@@ -42,6 +42,8 @@
 
 #include "TreeItem.hh"
 
+/// Acceleration map
+static QMap<int,TreeItem*> treeMap_;
 
 //--------------------------------------------------------------------------------
 
