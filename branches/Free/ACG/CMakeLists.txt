@@ -75,6 +75,31 @@ link_directories (
   ${GLUT_LIBRARY_DIR}
 )
 
+#===================================================================
+# Setting up the unit tests
+#===================================================================
+find_package(GoogleTest)
+if (GTEST_FOUND)
+  enable_testing()
+  file(GLOB_RECURSE TEST_SOURCES tests/*.cc)
+  set(TESTED_SOURCES
+        Algorithm/DBSCANT.cc
+     )
+  include_directories(${GTEST_INCLUDE_DIRS} ${OPENMESH_INCLUDE_DIR})
+  link_directories ( ${GTEST_LIBRARY_DIR})
+
+  add_executable (ACG_tests ${TEST_SOURCES})
+  target_link_libraries(ACG_tests
+        ${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}
+  )
+
+  add_test(AllTestsIn_ACG_tests ACG_tests)
+endif(GTEST_FOUND)
+
+#===================================================================
+# ACG Library setup
+#===================================================================
+
 # source code directories
 set (directories 
   .
@@ -122,7 +147,6 @@ endif ()
 # display results
 acg_print_configure_header (ACG "ACG")
 
-
 target_link_libraries ( ACG  OpenMeshCore
                              OpenMeshTools
                              ${QT_LIBRARIES}
@@ -130,25 +154,3 @@ target_link_libraries ( ACG  OpenMeshCore
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
-
-find_package(GoogleTest)
-if (GTEST_FOUND)
-  enable_testing()
-  file(GLOB_RECURSE TEST_SOURCES tests/*.cc)
-  set(TESTED_SOURCES
-                	Algorithm/DBSCANT.cc
-     )
-  include_directories(${GTEST_INCLUDE_DIRS} ${OPENMESH_INCLUDE_DIR})
-  if(WIN32)
-    link_directories ( ${GTEST_LIBRARY_DIR} ${GLUT_LIBRARY_DIR})
-  else()
-    link_directories ( ${GTEST_LIBRARY_DIR})
-  endif()
-    
-  add_executable (ACG_tests ${TEST_SOURCES})
-  target_link_libraries(ACG_tests
-  	${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}
-  )
-
-  add_test(AllTestsIn_ACG_tests ACG_tests)
-endif(GTEST_FOUND)
