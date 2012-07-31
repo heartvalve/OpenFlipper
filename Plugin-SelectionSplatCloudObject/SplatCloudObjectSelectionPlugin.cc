@@ -136,14 +136,14 @@ void SplatCloudObjectSelectionPlugin::pluginsInitialized()
 
 void SplatCloudObjectSelectionPlugin::updateSlotDescriptions()
 {
-  emit setSlotDescription( "selectVertices(int,IdList)",                tr("Select the specified vertices"),                         QString    ( "objectId,vertexList" ).split( "," ), QString    ( "Id of object,List of vertices"          ).split( "," ) );
-  emit setSlotDescription( "unselectVertices(int,IdList)",              tr("Unselect the specified vertices"),                       QString    ( "objectId,vertexList" ).split( "," ), QString    ( "Id of object,List of vertices"          ).split( "," ) );
-  emit setSlotDescription( "selectAllVertices(int)",                    tr("Select all vertices of an object"),                      QStringList( "objectId" ),                         QStringList( "Id of object"    )                                     );
-  emit setSlotDescription( "clearVertexSelection(int)",                 tr("Clear vertex selection of an object"),                   QStringList( "objectId" ),                         QStringList( "Id of an object" )                                     );
-  emit setSlotDescription( "invertVertexSelection(int)",                tr("Invert vertex selection of an object"),                  QStringList( "objectId" ),                         QStringList( "Id of an object" )                                     );
-  emit setSlotDescription( "deleteVertexSelection(int)",                tr("Delete selected vertices"),                              QStringList( "objectId" ),                         QStringList( "Id of an object" )                                     );
-  emit setSlotDescription( "colorizeVertexSelection(int,int,int,int)",  tr("Colorize the selected vertices"),                        QString    ( "objectId,r,g,b"      ).split( "," ), QString    ( "Id of an object,Red,Green,Blue"         ).split( "," ) );
-  emit setSlotDescription( "loadSelection(int,QString)",                tr("Load selection from selection file"),                    QString    ( "objectId,filename"   ).split( "," ), QString    ( "Id of an object,Selection file"         ).split( "," ) );
+  emit setSlotDescription( "selectVertices(int,IdList)",               tr("Select the specified vertices"       ), QString    ( "objectId,vertexList" ).split( "," ), QString    ( "Id of object,List of vertices"  ).split( "," ) );
+  emit setSlotDescription( "unselectVertices(int,IdList)",             tr("Unselect the specified vertices"     ), QString    ( "objectId,vertexList" ).split( "," ), QString    ( "Id of object,List of vertices"  ).split( "," ) );
+  emit setSlotDescription( "selectAllVertices(int)",                   tr("Select all vertices of an object"    ), QStringList( "objectId" ),                         QStringList( "Id of object"    )                             );
+  emit setSlotDescription( "clearVertexSelection(int)",                tr("Clear vertex selection of an object" ), QStringList( "objectId" ),                         QStringList( "Id of an object" )                             );
+  emit setSlotDescription( "invertVertexSelection(int)",               tr("Invert vertex selection of an object"), QStringList( "objectId" ),                         QStringList( "Id of an object" )                             );
+  emit setSlotDescription( "deleteVertexSelection(int)",               tr("Delete selected vertices"            ), QStringList( "objectId" ),                         QStringList( "Id of an object" )                             );
+  emit setSlotDescription( "colorizeVertexSelection(int,int,int,int)", tr("Colorize the selected vertices"      ), QString    ( "objectId,r,g,b"      ).split( "," ), QString    ( "Id of an object,Red,Green,Blue" ).split( "," ) );
+  emit setSlotDescription( "loadSelection(int,QString)",               tr("Load selection from selection file"  ), QString    ( "objectId,filename"   ).split( "," ), QString    ( "Id of an object,Selection file" ).split( "," ) );
 }
 
 
