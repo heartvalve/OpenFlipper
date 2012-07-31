@@ -105,7 +105,14 @@ public: //---------------------------------------------------------------------
   /// Return handle of the nearest neighbor face
   NearestNeighbor nearest(const Point& _p) const;
   
-  /// Return handles of all hit collided faces, and the handle of the nearest collided face
+  /** \brief intersect mesh with ray
+   *
+   * This function shots a ray through the ray and collects all intersected triangles and
+   * the handle of the closest face
+   *
+   * @param _p Start point of the ray
+   * @param _r Ray direction
+   */
   RayCollision raycollision (const Point& _p, const Point& _r) const;
   
 
