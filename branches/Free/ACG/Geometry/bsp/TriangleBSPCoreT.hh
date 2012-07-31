@@ -122,12 +122,11 @@ public: //---------------------------------------------------------------------
      * @param _max_depth  The maximal depth that will be visualized
      */
   template <typename MeshT>
-  void
-  visualizeTree(MeshT *_object, int _max_depth)
-    {
-      root_->visualizeTree(_object, _max_depth-1);
-      _object->update_normals();
-    }
+  void visualizeTree(MeshT *_object, int _max_depth)
+  {
+    root_->visualizeTree(_object, _max_depth-1);
+    _object->update_normals();
+  }
 
 private:
   /*
