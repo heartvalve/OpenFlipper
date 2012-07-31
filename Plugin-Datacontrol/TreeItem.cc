@@ -42,8 +42,6 @@
 
 #include "TreeItem.hh"
 
-/// Acceleration map
-static QMap<int,TreeItem*> treeMap_;
 
 //--------------------------------------------------------------------------------
 
@@ -191,8 +189,9 @@ TreeItem* TreeItem::next() {
     while ( parentPointer ) {
 
       // If there is an unvisited child of the parent, return this one
-      if ( parentPointer->childCount() > ( thisPointer->row() + 1) ) {
-        return parentPointer->childItems_[ thisPointer->row() + 1 ];
+      const int position = (thisPointer->row() + 1);
+      if ( parentPointer->childCount() > ( position ) ) {
+        return parentPointer->childItems_[ position ];
       }
 
       // Go to the next level
