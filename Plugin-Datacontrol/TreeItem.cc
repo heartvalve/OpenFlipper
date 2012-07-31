@@ -42,8 +42,7 @@
 
 #include "TreeItem.hh"
 
-/// Acceleration map
-static QMap<int,TreeItem*> treeMap_;
+QMap<int,TreeItem*> TreeItem::kTreeMap_;
 
 //--------------------------------------------------------------------------------
 
@@ -54,18 +53,19 @@ TreeItem::TreeItem(int _id, QString _name, DataType _type, TreeItem* _parent) :
   source_(false),
   visible_(true),
   name_(_name),
-  parentItem_(_parent)
+  parentItem_(_parent),
+  row_(0)
 {
   // Remember ourself ;-)
-  treeMap_[_id] = this;
+  kTreeMap_[_id] = this;
 }
 
 
 TreeItem::~TreeItem() {
   // Remove itself from map
-  QMap<int,TreeItem*>::iterator iter = treeMap_.find( id() );
-  if( iter != treeMap_.end() ) {
-    treeMap_.erase(iter);
+  QMap<int,TreeItem*>::iterator iter = kTreeMap_.find( id() );
+  if( iter != kTreeMap_.end() ) {
+    kTreeMap_.erase(iter);
   } else {
     std::cerr << "Map accelerator destructor in DataControl: Currently removing object that is not in the map!" << std::endl;
   }
@@ -191,8 +191,8 @@ TreeItem* TreeItem::next() {
     while ( parentPointer ) {
 
       // If there is an unvisited child of the parent, return this one
-      const int position = (thisPointer->row() + 1);
-      if ( parentPointer->childCount() >  position ) {
+      int position = thisPointer->row() + 1;
+      if ( parentPointer->childCount() > position ) {
         return parentPointer->childItems_[ position ];
       }
 
@@ -228,10 +228,7 @@ int TreeItem::level() {
 
 int TreeItem::row() const
 {
-    if (parentItem_)
-        return parentItem_->childItems_.indexOf(const_cast<TreeItem*>(this));
-
-    return 0;
+  return row_;
 }
 
 //--------------------------------------------------------------------------------
@@ -251,8 +248,9 @@ void TreeItem::setParent(TreeItem* _parent) {
 
 void TreeItem::appendChild(TreeItem *item)
 {
-  treeMap_[item->id()] = item;
+  kTreeMap_[item->id()] = item;
   childItems_.append(item);
+  item->row_ = childItems_.size() - 1;
 }
 
 //--------------------------------------------------------------------------------
@@ -278,10 +276,10 @@ TreeItem* TreeItem::childExists(int _objectId) {
     return this;
 
   // Check the map, for the item
-  QMap<int,TreeItem*>::const_iterator iter = treeMap_.find(_objectId);
+  QMap<int,TreeItem*>::const_iterator iter = kTreeMap_.find(_objectId);
 
   // Not found -> return 0
-  if( iter == treeMap_.end() ) {
+  if( iter == kTreeMap_.end() ) {
     return 0;
   }
 
@@ -310,21 +308,18 @@ TreeItem* TreeItem::childExists(int _objectId) {
 
 void TreeItem::removeChild( TreeItem* _item ) {
 
-  bool found = false;
-  QList<TreeItem*>::iterator i;
-  for (i = childItems_.begin(); i != childItems_.end(); ++i) {
-     if ( *i == _item ) {
-        found = true;
-        break;
-     }
-  }
+  int idx = (_item != 0) ? _item->row_ : -1;
 
-  if ( !found ) {
+  if ( (idx < 0) || (idx >= childItems_.size()) || (childItems_[idx] != _item) ) {
     std::cerr << "TreeItem: Illegal remove request" << std::endl;
     return;
   }
 
-  childItems_.erase(i);
+  childItems_.removeAt(idx);
+
+  for ( ; idx < childItems_.size(); ++idx ) {
+    --(childItems_[idx]->row_);
+  }
 }
 
 //--------------------------------------------------------------------------------
