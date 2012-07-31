@@ -190,7 +190,7 @@ TreeItem* TreeItem::next() {
 
       // If there is an unvisited child of the parent, return this one
       const int position = (thisPointer->row() + 1);
-      if ( parentPointer->childCount() > ( position ) ) {
+      if ( parentPointer->childCount() >  position ) {
         return parentPointer->childItems_[ position ];
       }
 
