@@ -224,7 +224,9 @@ _raycollision_directional(Node* _node, RayCollisionData& _data) const
       this->traits_.points(*it, v0, v1, v2);
       if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
 
-        if ( dist < 0.0 )
+        // We shoot into direction of the ray
+        // The first intersection should not be on the starting point
+        if ( dist <= 0.0 )
           continue;
 
         _data.hit_vertices.push_back(*it);

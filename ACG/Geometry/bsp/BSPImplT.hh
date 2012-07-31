@@ -120,7 +120,9 @@ public: //---------------------------------------------------------------------
   /** \brief intersect mesh with ray
    *
    * This function shots a ray through the mesh and collects all intersected triangles and
-   * the handle of the closest face ( directional, so the ray direction is taken into account!)
+   * the handle of the closest face ( directional, so the ray direction is taken into account!).
+   *
+   * Only hits with a distance > 0.0 to the point p will be collected (_p will be skipped!)
    *
    * @param _p Start point of the ray
    * @param _r Ray direction
