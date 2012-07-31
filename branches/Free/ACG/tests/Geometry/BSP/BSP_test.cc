@@ -165,8 +165,8 @@ class BSP_CUBE_BASE : public testing::Test {
             // build Triangle BSP
             bsp_->reserve(mesh_.n_faces());
 
-            typename Mesh::FIter f_it  = mesh_.faces_begin();
-            typename Mesh::FIter f_end = mesh_.faces_end();
+            Mesh::FIter f_it  = mesh_.faces_begin();
+            Mesh::FIter f_end = mesh_.faces_end();
 
             for (; f_it!=f_end; ++f_it)
               bsp_->push_back(f_it.handle());
