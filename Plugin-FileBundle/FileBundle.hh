@@ -66,6 +66,7 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -75,7 +76,7 @@
 //== CLASS DEFINITION ============================================
 
 
-class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface
+class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES( FileInterface     )
@@ -83,6 +84,7 @@ class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
   Q_INTERFACES( LoggingInterface  )
   Q_INTERFACES( BaseInterface     )
   Q_INTERFACES( ScriptInterface   )
+  Q_INTERFACES( RPCInterface      )
 
 signals:
 
@@ -151,6 +153,9 @@ private:
 
   // write bundle file from scenegraph node to disc
   bool writeBundleFile( const char *_filename, const SplatCloud &_splatCloud ) /*const*/;
+
+  // add cameras to object
+  int addCameras( const CameraVector &_cameras );
 };
 
 
