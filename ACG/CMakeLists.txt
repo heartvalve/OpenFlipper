@@ -143,5 +143,6 @@ if (GTEST_FOUND)
     target_link_libraries(ACG_tests
     	${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}
     )
+    message("ACG linking libraries for test : ${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}")
 	add_test(AllTestsIn_ACG_tests ACG_tests)
 endif(GTEST_FOUND)
