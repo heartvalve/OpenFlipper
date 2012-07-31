@@ -323,6 +323,17 @@ void Core::setToolBoxActive(QString _toolBoxName, bool _active)
   }
 }
 
+/// Block the scenegraph updates
+void Core::blockSceneGraphUpdates() {
+  OpenFlipper::Options::blockSceneGraphUpdates();
+}
+
+/// Unblock the scenegraph updates
+void Core::unblockSceneGraphUpdates() {
+  OpenFlipper::Options::unblockSceneGraphUpdates();
+}
+
+
 //=============================================================================
 //== Script Special Functions =================================================
 //=============================================================================
