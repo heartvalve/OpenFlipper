@@ -190,6 +190,20 @@ void TypeSplatCloudPlugin::slotViewChanged()
 //----------------------------------------------------------------
 
 
+void TypeSplatCloudPlugin::slotObjectPropertiesChanged( int _objectId )
+{
+  SplatCloudObject *splatCloudObject;
+  if( !PluginFunctions::getObject( _objectId, splatCloudObject ) )
+    return;
+
+  if( (splatCloudObject->parent() != 0) && splatCloudObject->parent()->isGroup() )
+    splatCloudObject->parent()->setName( splatCloudObject->name() );
+}
+
+
+//----------------------------------------------------------------
+
+
 bool TypeSplatCloudPlugin::registerType()
 {
   addDataType( "SplatCloud", tr( "SplatCloud" ) );
