@@ -110,11 +110,17 @@ class TreeItem {
     int level();
 
   private:
-    /// Parent item or 0 if rootnode
+    /// Parent item or 0 if root node
     TreeItem *parentItem_;
+
+    /// Index of this node in parent's childen
+    int row_;
 
     /// Children of this node
     QList<TreeItem*> childItems_;
+
+    /// Acceleration map
+    static QMap<int,TreeItem*> kTreeMap_;
 
   public:
     //===========================================================================
@@ -125,7 +131,7 @@ class TreeItem {
     /// get the row of this item from the parent
     int row() const;
 
-    /// Get the parent item ( 0 if rootitem )
+    /// Get the parent item ( 0 if root item )
     TreeItem *parent();
 
     /// Set the parent pointer
