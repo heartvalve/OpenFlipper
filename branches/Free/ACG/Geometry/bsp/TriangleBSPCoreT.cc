@@ -162,18 +162,4 @@ _build(Node*         _node,
   _build(_node->right_child_, _max_handles, _depth-1);
 }
 
-
-//=============================================================================
-
-
-template <class BSPTraits>
-void
-TriangleBSPCoreT<BSPTraits>::
-visualizeTree(PolyMesh *_object, int _max_depth)
-  {
-    root_->visualizeTree(_object, _max_depth-1);
-    _object->update_normals();
-  }
-
-
 //=============================================================================

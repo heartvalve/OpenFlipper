@@ -116,12 +116,12 @@ public: //---------------------------------------------------------------------
    */
   void build(unsigned int _max_handles, unsigned int _max_depth);
 
-  /** \brief Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
-   *
-   * @param _object     The output mesh which the tree will be written into
-   * @param _max_depth  The maximal depth that will be visualized
-   */
-  void visualizeTree(PolyMesh *_object, int _max_depth);
+  //  /** \brief Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
+  //   *
+  //   * @param _object     The output mesh which the tree will be written into
+  //   * @param _max_depth  The maximal depth that will be visualized
+  //   */
+  //void visualizeTree(PolyMesh *_object, int _max_depth);
 
 private:
   /*
