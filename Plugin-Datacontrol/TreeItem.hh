@@ -116,6 +116,9 @@ class TreeItem {
     /// Children of this node
     QList<TreeItem*> childItems_;
 
+    /// Cache all children of this item to get their row efficiently
+    QMap<TreeItem*,int> childMap_;
+
     /// Acceleration map
     static QMap<int,TreeItem*> treeMap_;
 
