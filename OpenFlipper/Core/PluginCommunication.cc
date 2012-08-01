@@ -98,28 +98,10 @@ void Core::slotObjectUpdated(int _identifier, const UpdateType& _type) {
     }
   }
 
+  // just inform the plugins as we dont do anything else (Do deprecated and new updatedObjects here)
+  emit signalObjectUpdated(_identifier);
+  emit signalObjectUpdated(_identifier, _type);
 
-  // If the identifier is -1 we force an update of all objects in the scene (Bad idea for scenes with many objects)
-  if ( _identifier == -1 ) {
-
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_ALL ) ;  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-
-      // just inform the plugins as we don't do anything else (Do deprecated and new updatedObjects here)
-      emit signalObjectUpdated(o_it->id());
-      emit signalObjectUpdated(o_it->id(), _type);
-
-      // Call the objects update function
-      o_it->update();
-
-    }
-  } else {
-    // just inform the plugins as we don't do anything else (Do deprecated and new updatedObjects here)
-    emit signalObjectUpdated(_identifier);
-    emit signalObjectUpdated(_identifier, _type);
-  }
-
-
-  // If we have an single object, call it's update function
   if ( object != 0 )
     object->update(_type);
 
