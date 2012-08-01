@@ -492,9 +492,9 @@ void TreeModel::objectAdded(BaseObject* _object){
 
     beginInsertRows(parentIndex, parent->childCount(), parent->childCount()); //insert at the bottom
 
-      TreeItem* item = new TreeItem( _object->id(), _object->name(), _object->dataType(), parent);
+    TreeItem* item = new TreeItem( _object->id(), _object->name(), _object->dataType(), parent);
 
-      parent->appendChild( item );
+    parent->appendChild( item );
 
     endInsertRows();
   }
