@@ -9,6 +9,7 @@
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <ACG/Geometry/bsp/TriangleBSPT.hh>
+#include <ACG/Geometry/Algorithms.hh>
 
 
 struct CustomTraits : public OpenMesh::DefaultTraits {
@@ -451,16 +452,40 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_1 ) {
   // x ======== x         -------> x
 
   Mesh::Point yDirection(0.0,1.0,0.0);
-  Mesh::Point p1(-0.5,-2.0,0.0);
-  BSP::RayCollision rc = bsp_->directionalRaycollision(p1,yDirection);
+  Mesh::Point origin(-0.5,-2.0,0.0);
+  BSP::RayCollision rc = bsp_->directionalRaycollision(origin,yDirection);
 
   EXPECT_EQ(2u, rc.hit_handles.size() )      << "Wrong number of hit faces in ray collision test 1";
   if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
     EXPECT_EQ(4, rc.hit_handles[0].idx() )   << "Wrong handle of first face in ray collision test 1";
     EXPECT_EQ(9, rc.hit_handles[1].idx() )   << "Wrong handle of second face in ray collision test 1";
+
+
+    // Some intersection test to see, if we really have something usefull here:
+    Mesh::FaceVertexIter fv_it =  Mesh::FaceVertexIter(mesh_, rc.hit_handles[0]);
+
+    float distance,u,v;
+    Mesh::Point p1 = mesh_.point(fv_it);
+    Mesh::Point p2 = mesh_.point(++fv_it);
+    Mesh::Point p3 = mesh_.point(++fv_it);
+
+    ACG::Geometry::triangleIntersection(origin,
+                                        yDirection,
+                                        p1,
+                                        p2,
+                                        p3,
+                                        distance,
+                                        u,
+                                        v);
+
+    EXPECT_EQ(1.0f, distance ) << "Wrong distance";
+    EXPECT_EQ(0.25f, u )       << "Wrong u";
+    EXPECT_EQ(0.5f , v )       << "Wrong v";
+
   }
 
   EXPECT_EQ(4,  rc.handle.idx() )             << "Wrong handle of closest face in ray collision test 1";
+
 }
 
 TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_NegativeDirection_1 ) {
@@ -490,5 +515,6 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_NegativeDi
 
   EXPECT_EQ(0u, rc.hit_handles.size() ) << "Wrong number of hit faces in ray collision test 1";
   EXPECT_FALSE( rc.handle.is_valid() )   << "Wrong handle of closest face in ray collision test 1";
+
 }
 
