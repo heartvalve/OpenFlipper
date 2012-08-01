@@ -321,10 +321,10 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_NonDirectionalFunction_1 ) {
   Mesh::Point p1(-0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->raycollision(p1,yDirection);
 
-  EXPECT_EQ(2u, rc.hit_vertices.size() ) << "Wrong number of hit faces in ray collision test 1";
-  if ( rc.hit_vertices.size() == 2u ) { // Don't crash on wrong size
-    EXPECT_EQ(4, rc.hit_vertices[0].idx() )         << "Wrong handle of first face in ray collision test 1";
-    EXPECT_EQ(9, rc.hit_vertices[1].idx() )         << "Wrong handle of second face in ray collision test 1";
+  EXPECT_EQ(2u, rc.hit_handles.size() ) << "Wrong number of hit faces in ray collision test 1";
+  if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
+    EXPECT_EQ(4, rc.hit_handles[0].idx() )         << "Wrong handle of first face in ray collision test 1";
+    EXPECT_EQ(9, rc.hit_handles[1].idx() )         << "Wrong handle of second face in ray collision test 1";
   }
 
   EXPECT_EQ(4,  rc.handle.idx() )         << "Wrong handle of closest face in ray collision test 1";
@@ -355,10 +355,10 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_NonDirectionalFunction_Negativ
   Mesh::Point p1(-0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->raycollision(p1,nyDirection);
 
-  EXPECT_EQ(2u, rc.hit_vertices.size() )       << "Wrong number of hit faces in ray collision test 1";
-  if ( rc.hit_vertices.size() == 2u ) { // Don't crash on wrong size
-    EXPECT_EQ(4, rc.hit_vertices[0].idx() )    << "Wrong handle of first face in ray collision test 1";
-    EXPECT_EQ(9, rc.hit_vertices[1].idx() )    << "Wrong handle of second face in ray collision test 1";
+  EXPECT_EQ(2u, rc.hit_handles.size() )       << "Wrong number of hit faces in ray collision test 1";
+  if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
+    EXPECT_EQ(4, rc.hit_handles[0].idx() )    << "Wrong handle of first face in ray collision test 1";
+    EXPECT_EQ(9, rc.hit_handles[1].idx() )    << "Wrong handle of second face in ray collision test 1";
   }
 
   EXPECT_EQ(4,  rc.handle.idx() )              << "Wrong handle of closest face in ray collision test 1";
@@ -385,10 +385,10 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_NonDirectionalFunction_2 ) {
   Mesh::Point p1(0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->raycollision(p1,yDirection);
 
-  EXPECT_EQ(2u, rc.hit_vertices.size() )     << "Wrong number of hit faces in ray collision test 2";
-  if ( rc.hit_vertices.size() == 2u ) { // Don't crash on wrong size
-    EXPECT_EQ(5, rc.hit_vertices[0].idx() )  << "Wrong handle of first face in ray collision test 2";
-    EXPECT_EQ(8, rc.hit_vertices[1].idx() )  << "Wrong handle of second face in ray collision test 2";
+  EXPECT_EQ(2u, rc.hit_handles.size() )     << "Wrong number of hit faces in ray collision test 2";
+  if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
+    EXPECT_EQ(5, rc.hit_handles[0].idx() )  << "Wrong handle of first face in ray collision test 2";
+    EXPECT_EQ(8, rc.hit_handles[1].idx() )  << "Wrong handle of second face in ray collision test 2";
   }
 
   EXPECT_EQ(5,  rc.handle.idx() )            << "Wrong handle of closest face in ray collision test 2";
@@ -416,10 +416,10 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_NonDirectionalFunction_Negativ
   Mesh::Point p1(0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->raycollision(p1,nyDirection);
 
-  EXPECT_EQ(2u, rc.hit_vertices.size() )      << "Wrong number of hit faces in ray collision test 2";
-  if ( rc.hit_vertices.size() == 2u ) { // Don't crash on wrong size
-    EXPECT_EQ(5, rc.hit_vertices[0].idx() )   << "Wrong handle of first face in ray collision test 2";
-    EXPECT_EQ(8, rc.hit_vertices[1].idx() )   << "Wrong handle of second face in ray collision test 2";
+  EXPECT_EQ(2u, rc.hit_handles.size() )      << "Wrong number of hit faces in ray collision test 2";
+  if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
+    EXPECT_EQ(5, rc.hit_handles[0].idx() )   << "Wrong handle of first face in ray collision test 2";
+    EXPECT_EQ(8, rc.hit_handles[1].idx() )   << "Wrong handle of second face in ray collision test 2";
   }
 
   EXPECT_EQ(5,  rc.handle.idx() )             << "Wrong handle of closest face in ray collision test 2";
@@ -454,10 +454,10 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_1 ) {
   Mesh::Point p1(-0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->directionalRaycollision(p1,yDirection);
 
-  EXPECT_EQ(2u, rc.hit_vertices.size() )      << "Wrong number of hit faces in ray collision test 1";
-  if ( rc.hit_vertices.size() == 2u ) { // Don't crash on wrong size
-    EXPECT_EQ(4, rc.hit_vertices[0].idx() )   << "Wrong handle of first face in ray collision test 1";
-    EXPECT_EQ(9, rc.hit_vertices[1].idx() )   << "Wrong handle of second face in ray collision test 1";
+  EXPECT_EQ(2u, rc.hit_handles.size() )      << "Wrong number of hit faces in ray collision test 1";
+  if ( rc.hit_handles.size() == 2u ) { // Don't crash on wrong size
+    EXPECT_EQ(4, rc.hit_handles[0].idx() )   << "Wrong handle of first face in ray collision test 1";
+    EXPECT_EQ(9, rc.hit_handles[1].idx() )   << "Wrong handle of second face in ray collision test 1";
   }
 
   EXPECT_EQ(4,  rc.handle.idx() )             << "Wrong handle of closest face in ray collision test 1";
@@ -488,7 +488,7 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_NegativeDi
   Mesh::Point p1(-0.5,-2.0,0.0);
   BSP::RayCollision rc = bsp_->directionalRaycollision(p1,nyDirection);
 
-  EXPECT_EQ(0u, rc.hit_vertices.size() ) << "Wrong number of hit faces in ray collision test 1";
+  EXPECT_EQ(0u, rc.hit_handles.size() ) << "Wrong number of hit faces in ray collision test 1";
   EXPECT_FALSE( rc.handle.is_valid() )   << "Wrong handle of closest face in ray collision test 1";
 }
 

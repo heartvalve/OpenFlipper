@@ -134,10 +134,10 @@ raycollision(const Point& _p, const Point& _r) const
   data.ref  = _p;
   data.dist = FLT_MAX;
   data.ray  = _r;
-  data.hit_vertices.clear();
+  data.hit_handles.clear();
   
   _raycollision_non_directional(this->root_, data);
-  return RayCollision(data.nearest, data.dist, data.hit_vertices);
+  return RayCollision(data.nearest, data.dist, data.hit_handles);
 }
 
 template <class BSPCore>
@@ -150,10 +150,10 @@ directionalRaycollision(const Point& _p, const Point& _r) const {
   data.ref  = _p;
   data.dist = FLT_MAX;
   data.ray  = _r;
-  data.hit_vertices.clear();
+  data.hit_handles.clear();
 
   _raycollision_directional(this->root_, data);
-  return RayCollision(data.nearest, data.dist, data.hit_vertices);
+  return RayCollision(data.nearest, data.dist, data.hit_handles);
 
 }
 
@@ -178,7 +178,7 @@ _raycollision_non_directional(Node* _node, RayCollisionData& _data) const
       this->traits_.points(*it, v0, v1, v2);
       if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
 
-        _data.hit_vertices.push_back(*it);
+        _data.hit_handles.push_back(*it);
 
         // face intersects with ray. But is it closer than any that we have found so far?
         if ( fabs(dist) < _data.dist)
@@ -229,7 +229,7 @@ _raycollision_directional(Node* _node, RayCollisionData& _data) const
         if ( dist <= 0.0 )
           continue;
 
-        _data.hit_vertices.push_back(*it);
+        _data.hit_handles.push_back(*it);
 
         // face intersects with ray. But is it closer than any that we have found so far?
         // Note as we rely on the direction of the hit, so we will never get negative directions here
