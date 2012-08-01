@@ -60,9 +60,6 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <QFileInfo>
 
-#ifdef USE_OPENMP
-#include <omp.h>
-#endif
 
 //== TYPEDEFS =================================================================
 
@@ -85,10 +82,8 @@ BaseObject::BaseObject(const BaseObject& _object) :
   flags_(_object.flags_),
   visible_(_object.visible_),
   parentItem_(0),
-  row_(0),
   path_("."),
   filename_("")
-
 
 {
   // Increase id generator as we created a new object
@@ -145,7 +140,6 @@ BaseObject::BaseObject(BaseObject* _parent) :
   flags_(),
   visible_(true),
   parentItem_(_parent),
-  row_(0),
   name_("NONAME")
 {
   id_ = idGenerator;
@@ -464,7 +458,10 @@ int BaseObject::level() {
 
 int BaseObject::row() const
 {
-  return row_;
+    if (parentItem_)
+        return parentItem_->childItems_.indexOf(const_cast<BaseObject*>(this));
+
+    return 0;
 }
 
 BaseObject* BaseObject::parent()
@@ -496,10 +493,9 @@ void BaseObject::setParent(BaseObject* _parent) {
 
 void BaseObject::appendChild(BaseObject *item)
 {
-  if ( !childItems_.contains(item) ) {
+  if ( !childItems_.contains(item) )
     childItems_.append(item);
-    item->row_ = childItems_.size() - 1;
-  } else
+  else 
     std::cerr << "Warning! Trying to append a child twice! Remove the append calls from your File plugin!" << std::endl;
 }
 
@@ -547,22 +543,21 @@ BaseObject* BaseObject::childExists(QString _name) {
 
 void BaseObject::removeChild( BaseObject* _item ) {
 
-  int idx = (_item != 0) ? _item->row_ : -1;
+  bool found = false;
+  QList<BaseObject*>::iterator i;
+  for (i = childItems_.begin(); i != childItems_.end(); ++i) {
+     if ( *i == _item ) {
+        found = true;
+        break;
+     }
+  }
 
-  if ( (idx < 0) || (idx >= childItems_.size()) || (childItems_[idx] != _item) ) {
-    std::cerr << "BaseObject: Illegal removeChild request" << std::endl;
+  if ( !found ) {
+    std::cerr << "Illegal remove request" << std::endl;
     return;
   }
 
-  childItems_.removeAt(idx);
-
-  #ifdef USE_OPENMP
-  #pragma omp parallel for
-  #endif
-  for ( int i = idx ; i < childItems_.size(); ++i ) {
-    --(childItems_[idx]->row_);
-  }
-
+  childItems_.erase(i);
 }
 
 QList< BaseObject* > BaseObject::getLeafs() {
@@ -595,7 +590,6 @@ void BaseObject::deleteSubtree() {
   // clear the array
   childItems_.clear();
 }
-
 
 // ===============================================================================
 // Grouping
