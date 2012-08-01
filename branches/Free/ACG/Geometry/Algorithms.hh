@@ -134,14 +134,16 @@ perpendicular( const VectorT<Scalar,3>&  _v );
 
 /**  \brief Intersect a ray and a triangle.
   *
-  * Computes the intersection point between a ray and a triangle.
+  * Computes the intersection point between a ray and a triangle. The orientation of the triangle
+  * does not matter. The distance returned in t will be negative if the triangle is not in the
+  * direction given but in the opposite direction.
   *
   * @param _o origin of the ray
   * @param _dir direction vector of the ray
   * @param _v0 first point of the triangle
   * @param _v1 second point of the triangle
   * @param _v2 third point of the triangle
-  * @param _t returned distance from the origin to the intersection, in units of _dir
+  * @param _t returned distance from the origin to the intersection, in units of _dir ( negative if before origin!)
   * @param _u returned first barycentric coordinate of the intersection point in the triangle
   * @param _v returned second barycentric coordinate of the intersection point in the triangle
   * @return true if an intersection was found
