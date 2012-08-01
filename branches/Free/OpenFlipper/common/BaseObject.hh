@@ -339,6 +339,11 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /// Set the parent pointer
     void setParent(BaseObject* _parent);
 
+  private:
+
+    // Cache the row in the parents array for speed efficiency
+    int row_;
+
     /** @} */
 
     //===========================================================================
