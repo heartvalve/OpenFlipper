@@ -77,7 +77,6 @@ void Core::resetScenegraph( bool _resetTrackBall  ) {
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
 
-    coreWidget_->slotUpdateGlobalDrawMenu();
   }
 
 }
