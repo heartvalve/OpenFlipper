@@ -1707,8 +1707,17 @@ bool SelectionBasePlugin::typeExists(DataType _type, int _excludeId) {
       if ( object == 0 ) {
         std::cerr << "Unable to get Object for type exists" << std::endl;
       } else {
+        // mismatching exclude type
         if (_type !=  object->dataType()) {
-          std::cerr << "typeExists mismatch" << std::endl;
+          // return as if not excluded
+          if ( typeCounter_[_type] > 0) {
+            return true; // At least one object of this type exists
+          } else if ( typeCounter_[_type] == 0 ){
+            return false; // No object of this type exists
+          } else {
+            std::cerr << "Type exists Error after mismatch exclude:  " << _type.name().toStdString() <<  " negative count" << std::endl;
+            return false;
+          }
         }
       }
 
