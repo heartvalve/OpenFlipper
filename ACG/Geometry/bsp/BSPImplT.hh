@@ -96,10 +96,10 @@ public: //---------------------------------------------------------------------
   struct RayCollision
   {
     RayCollision() {}
-    RayCollision(Handle _h, Scalar _d, std::vector<Handle> _v) : handle(_h), dist(_d), hit_vertices(_v) {}
-    Handle              handle;
-    Scalar              dist;
-    std::vector<Handle> hit_vertices;
+    RayCollision(Handle _h, Scalar _d, std::vector<Handle> _v) : handle(_h), dist(_d), hit_handles(_v) {}
+    Handle              handle;         //!< Handle of the closest object
+    Scalar              dist;           //!< Distance to the closest handle
+    std::vector<Handle> hit_handles;    //!< Vector of all handles that have been hit
   };
 
   /// Return handle of the nearest neighbor face
@@ -154,7 +154,7 @@ private: //---------------------------------------------------------------------
     Point   ray;
     Scalar  dist;
     Handle  nearest;
-    std::vector<Handle> hit_vertices;
+    std::vector<Handle> hit_handles;
   };
 
 
