@@ -418,8 +418,9 @@ BaseObject* BaseObject::next() {
     while ( parentPointer ) {
 
       // If there is an unvisited child of the parent, return this one
-      if ( parentPointer->childCount() > ( thisPointer->row() + 1) ) {
-        return parentPointer->childItems_[ thisPointer->row() + 1 ];
+      int nextIndex = ( thisPointer->row() + 1);
+      if ( parentPointer->childCount() > nextIndex ) {
+        return parentPointer->childItems_[ nextIndex ];
       }
 
       // Go to the next level
