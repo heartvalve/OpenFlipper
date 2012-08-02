@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>PropertyVisToolbarBase</class>
  <widget class="QWidget" name="PropertyVisToolbarBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>485</width>
+    <height>1683</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Property Visualization</string>
   </property>
@@ -667,7 +675,7 @@
          <bool>true</bool>
         </property>
         <attribute name="buttonGroup">
-         <string>vector_buttonGroup</string>
+         <string notr="true">vector_buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -713,6 +721,9 @@
              <property name="decimals">
               <number>7</number>
              </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
              <property name="value">
               <double>0.200000000000000</double>
              </property>
@@ -743,7 +754,7 @@
          <string>Colors</string>
         </property>
         <attribute name="buttonGroup">
-         <string>vector_buttonGroup</string>
+         <string notr="true">vector_buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -753,14 +764,14 @@
          <string>Color Edges According to Angle btw. Vectors</string>
         </property>
         <attribute name="buttonGroup">
-         <string>vector_buttonGroup</string>
+         <string notr="true">vector_buttonGroup</string>
         </attribute>
        </widget>
       </item>
       <item>
        <widget class="QWidget" name="vector_edgeColors_widget" native="true">
         <property name="visible">
-          <bool>false</bool>
+         <bool>false</bool>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_15">
          <property name="topMargin">
