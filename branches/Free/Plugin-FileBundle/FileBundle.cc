@@ -457,17 +457,17 @@ int FileBundlePlugin::addCameras( const CameraVector &_cameras )
 int FileBundlePlugin::loadObject( QString _filename )
 {
   // add a new, empty splatcloud-object
-  int splatcloudObjectId = -1;
-  emit addEmptyObject( DATA_SPLATCLOUD, splatcloudObjectId );
-  if( splatcloudObjectId != -1 )
+  int splatCloudObjectId = -1;
+  emit addEmptyObject( DATA_SPLATCLOUD, splatCloudObjectId );
+  if( splatCloudObjectId != -1 )
   {
     // create list of ids and add id of splatcloud-object
     IdList objectIDs;
-    objectIDs.push_back( splatcloudObjectId );
+    objectIDs.push_back( splatCloudObjectId );
 
     // get splatcloud-object by id
     SplatCloudObject *splatCloudObject = 0;
-    if( PluginFunctions::getObject( splatcloudObjectId, splatCloudObject ) )
+    if( PluginFunctions::getObject( splatCloudObjectId, splatCloudObject ) )
     {
       // set name of splatcloud-object to filename
       splatCloudObject->setFromFileName( _filename );
@@ -482,8 +482,8 @@ int FileBundlePlugin::loadObject( QString _filename )
         if( readBundleFile( _filename.toLatin1(), *splatCloud ) )
         {
           // emit signals that the splatcloud-object has to be updated and that a file was opened
-          emit updatedObject( splatcloudObjectId, UPDATE_ALL );
-          emit openedFile( splatcloudObjectId );
+          emit updatedObject( splatCloudObjectId, UPDATE_ALL );
+          emit openedFile( splatCloudObjectId );
 
           // get drawmodes
           ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
