@@ -183,7 +183,7 @@ _raycollision_non_directional(Node* _node, RayCollisionData& _data) const
         // face intersects with ray. But is it closer than any that we have found so far?
         if ( fabs(dist) < _data.dist)
         {
-          _data.dist    = fabs(dist);
+          _data.dist    = dist;
           _data.nearest = *it;
         }
       }
