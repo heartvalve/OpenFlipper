@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>286</width>
+    <width>289</width>
     <height>286</height>
    </rect>
   </property>
@@ -72,6 +72,9 @@
          <widget class="QDoubleSpinBox" name="targetEdgeLength">
           <property name="decimals">
            <number>6</number>
+          </property>
+          <property name="maximum">
+           <double>100000.000000000000000</double>
           </property>
          </widget>
         </item>
