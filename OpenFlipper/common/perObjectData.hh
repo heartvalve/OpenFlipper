@@ -103,9 +103,9 @@ class DLLEXPORT PerObjectData {
 class DLLEXPORT _CLASS : public PerObjectData {                              \
                                                                              \
   public:                                                                    \
-    inline _CLASS() : data_( _VALUE() ) { }                                  \
+    inline _CLASS()                 : data_( 0) { }                          \
     inline _CLASS(const _VALUE& _x) : data_(_x) { }                          \
-    inline ~_CLASS() { }                                                     \
+    inline virtual ~_CLASS() { }                                             \
     inline virtual _CLASS* copyPerObjectData() { return new _CLASS(data_); } \
     inline       _VALUE& data()       { return data_; }                      \
     inline const _VALUE& data() const { return data_; }                      \
@@ -117,7 +117,9 @@ class DLLEXPORT _CLASS : public PerObjectData {                              \
 
 PER_OBJECT_DATA(BoolPerObjectData,   bool         );
 PER_OBJECT_DATA(CharPerObjectData,   char         );
+PER_OBJECT_DATA(UCharPerObjectData,  unsigned char);
 PER_OBJECT_DATA(IntPerObjectData,    int          );
+PER_OBJECT_DATA(UIntPerObjectData,   unsigned int );
 PER_OBJECT_DATA(FloatPerObjectData,  float        );
 PER_OBJECT_DATA(DoublePerObjectData, double       );
 
