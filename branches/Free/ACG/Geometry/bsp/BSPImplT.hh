@@ -93,14 +93,7 @@ public: //---------------------------------------------------------------------
   };
   
   /// Store nearest neighbor information
-  struct RayCollision
-  {
-    RayCollision() {}
-    RayCollision(Handle _h, Scalar _d, std::vector<Handle> _v) : handle(_h), dist(_d), hit_handles(_v) {}
-    Handle              handle;         //!< Handle of the closest object
-    Scalar              dist;           //!< Distance to the closest handle
-    std::vector<Handle> hit_handles;    //!< Vector of all handles that have been hit
-  };
+  typedef  std::vector< std::pair<Handle,Scalar> > RayCollision;
 
   /// Return handle of the nearest neighbor face
   NearestNeighbor nearest(const Point& _p) const;
@@ -152,9 +145,7 @@ private: //---------------------------------------------------------------------
   {
     Point   ref;
     Point   ray;
-    Scalar  dist;
-    Handle  nearest;
-    std::vector<Handle> hit_handles;
+    RayCollision hit_handles;
   };
 
 
@@ -174,6 +165,14 @@ private: //---------------------------------------------------------------------
    * @param _data Data pointer, used to collect the collision information
    */
   void _raycollision_directional(Node* _node, RayCollisionData& _data) const;
+
+  template<typename T,typename U>
+  struct less_pair_second: public std::binary_function<T,U,bool> {
+      bool operator()(const std::pair<T,U> &left, const std::pair<T,U> &right) {
+          return (fabs(left.second) < fabs(right.second));
+      }
+  };
+
 };
 
 //=============================================================================
