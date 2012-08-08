@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15205 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15246 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -8,7 +8,7 @@
              - blockSceneGraphUpdates()
              - unblockSceneGraphUpdates()
          - Bugfix: Fixed undirected shooting function returning wrong nearest triangle (was always the one with the most negative distance)
-         - Interface: Renamed the hit_vertices in tree to hit_handles for the RayCollision struct
+         - Interface: RayCollision is now a sorted vector conbining standard pairs of the hit handles and their distance to the hit
      - <b>ACG</b>
          - General
              - Added simple scenegraph analysis function to get bounding box and multipass number
@@ -16,7 +16,7 @@
              - Removed dependency from bsp to OpenFlipper (not required and causes unnecessary linking)
              - Added directional BSP ray shooting including unit tests
              - Fixed undirected shooting function returning wrong nearest triangle (was always the one with the most negative distance)
-             - Renamed the hit_vertices in tree to hit_handles for the RayCollision struct
+             - Interface: RayCollision is now a sorted vector combining standard pairs of the hit handles and their distance to the hit              
          - Unittests
              - Unittests for BSP
              - Unittests for algorithms
@@ -28,6 +28,8 @@
          - Speedup: Don't send view updates to plugin, if scenegraph updates are locked
          - Speedup: Removed unnecessary update function from resetSceneGraph (already updated on demand)
          - Speedup: Removed redundant call in BaseObjects next function
+         - PerObjectData
+             - Added set of standard per object datas
      - <b>Interfaces</b>
          - RPC Interface
              - Support for rpc calls with return value and up to 6 parameters
@@ -45,10 +47,14 @@
          - File Bundler
              - New Plugin
              - Read output from bundler (SplatCloud, Cameras)
+         - Isotropic Remesher
+             - Increased toolbox maximum
          - Info Mesh Object
              - Use a hash map to cash the target objects to avoid linear time lookup for the targets
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters)
+         - Property Vis
+             - Increased maximal allowed scaling factor for vectors
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
          - SelectionBase
