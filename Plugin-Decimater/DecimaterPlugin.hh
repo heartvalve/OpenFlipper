@@ -146,14 +146,14 @@ private :
   
   typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
   
-  typedef OpenMesh::Decimater::ModAspectRatioT< DecimaterType >::Handle     ModAspectRatioH;
-  typedef OpenMesh::Decimater::ModEdgeLengthT< DecimaterType >::Handle      ModEdgeLengthH;
-  typedef OpenMesh::Decimater::ModHausdorffT< DecimaterType >::Handle       ModHausdorffH;
-  typedef OpenMesh::Decimater::ModIndependentSetsT< DecimaterType >::Handle ModIndependentH;
-  typedef OpenMesh::Decimater::ModNormalDeviationT< DecimaterType >::Handle ModNormalDeviationH;
-  typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle  ModNormalFlippingH;
-  typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle         ModQuadricH;
-  typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle       ModRoundnessH;
+  typedef OpenMesh::Decimater::ModAspectRatioT< TriMesh >::Handle     ModAspectRatioH;
+  typedef OpenMesh::Decimater::ModEdgeLengthT< TriMesh >::Handle      ModEdgeLengthH;
+  typedef OpenMesh::Decimater::ModHausdorffT< TriMesh >::Handle       ModHausdorffH;
+  typedef OpenMesh::Decimater::ModIndependentSetsT< TriMesh >::Handle ModIndependentH;
+  typedef OpenMesh::Decimater::ModNormalDeviationT< TriMesh >::Handle ModNormalDeviationH;
+  typedef OpenMesh::Decimater::ModNormalFlippingT< TriMesh >::Handle  ModNormalFlippingH;
+  typedef OpenMesh::Decimater::ModQuadricT< TriMesh >::Handle         ModQuadricH;
+  typedef OpenMesh::Decimater::ModRoundnessT< TriMesh >::Handle       ModRoundnessH;
   
 private slots:
 
