@@ -59,6 +59,8 @@
 
 #include <ACG/GL/GLState.hh>
 
+#include <ObjectTypes/Camera/Camera.hh>
+
 
 //== IMPLEMENTATION ==============================================
 
@@ -192,12 +194,130 @@ void TypeSplatCloudPlugin::slotViewChanged()
 
 void TypeSplatCloudPlugin::slotObjectPropertiesChanged( int _objectId )
 {
-  SplatCloudObject *splatCloudObject;
-  if( !PluginFunctions::getObject( _objectId, splatCloudObject ) )
+  // get splatcloud-object by id
+  SplatCloudObject *splatCloudObject = 0;
+  if( PluginFunctions::getObject( _objectId, splatCloudObject ) )
+  {
+    // get parent and check if parent is a group
+    BaseObject *parent = splatCloudObject->parent();
+    if( (parent != 0) && parent->isGroup() )
+    {
+      // update name of group
+      parent->setName( splatCloudObject->name() );
+    }
+  }
+}
+
+
+//----------------------------------------------------------------
+
+
+void TypeSplatCloudPlugin::objectDeleted( int _objectId )
+{
+  // get object by id
+  BaseObject *object = 0;
+  if( !PluginFunctions::getObject( _objectId, object ) )
     return;
 
-  if( (splatCloudObject->parent() != 0) && splatCloudObject->parent()->isGroup() )
-    splatCloudObject->parent()->setName( splatCloudObject->name() );
+  // check if object is a splatcloud-object
+  /*const*/ SplatCloudObject *splatCloudObject = PluginFunctions::splatCloudObject( static_cast<BaseObjectData *>( object ) );
+  if( splatCloudObject != 0 )
+  {
+    // get splatcloud
+    /*const*/ SplatCloud *splatCloud = PluginFunctions::splatCloud( splatCloudObject );
+    if( splatCloud != 0 )
+    {
+      // remove all camera-objects
+      /*const*/ SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
+      if( camerasProp != 0 )
+      {
+        // get cameras
+        /*const*/ SplatCloud_Cameras &cameras = camerasProp->data();
+
+        // iterate over all cameras
+        SplatCloud_Cameras::/*const_*/iterator cameraIter;
+        for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter )
+        {
+          // get camera-object by id
+          CameraObject *cameraObject = 0;
+          if( PluginFunctions::getObject( cameraIter->objectId_, cameraObject ) )
+          {
+            // remove splatcloud-reference from current camera-object
+            cameraObject->clearObjectData( "SplatCloudObjectId" );
+          }
+        }
+      }
+    }
+  }
+
+  // check if object is a camera-object
+  CameraObject *cameraObject = PluginFunctions::cameraObject( static_cast<BaseObjectData *>( object ) );
+  if( cameraObject != 0 )
+  {
+    // get per-object-data
+    IntPerObjectData *pod = dynamic_cast<IntPerObjectData *>( cameraObject->objectData( "SplatCloudObjectId" ) );
+    if( pod != 0 )
+    {
+      // get splatcloud-object id
+      int splatCloudObjectId = pod->data();
+
+      // get splatcloud-object by id
+      SplatCloudObject *splatCloudObject = 0;
+      if( PluginFunctions::getObject( splatCloudObjectId, splatCloudObject ) )
+      {
+        // get splatcloud
+        SplatCloud *splatCloud = PluginFunctions::splatCloud( splatCloudObject );
+        if( splatCloud != 0 )
+        {
+          // delete camera from cameras vector
+          SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
+          if( camerasProp != 0 )
+          {
+            // get cameras
+            SplatCloud_Cameras &cameras = camerasProp->data();
+
+            // iterate over all cameras
+            SplatCloud_Cameras::iterator cameraIter;
+            for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter )
+            {
+              // check if camera should be deleted
+              if( cameraIter->objectId_ == _objectId )
+              {
+                // delete current camera
+                cameras.erase( cameraIter );
+                break; // there is only one camera with this object id, so break
+              }
+            }
+          }
+
+          // delete camera from viewlists
+          if( splatCloud->hasViewlists() )
+          {
+            // iterate over all splats
+            unsigned int splatIdx, numSplats = splatCloud->numSplats();
+            for( splatIdx = 0; splatIdx < numSplats; ++splatIdx )
+            {
+              // get viewlist
+              SplatCloud::Viewlist &viewlist = splatCloud->viewlists( splatIdx );
+
+              // iterate over all views
+              SplatCloud::Viewlist::iterator viewIter;
+              for( viewIter = viewlist.begin(); viewIter != viewlist.end(); ++viewIter )
+              {
+                // check if view should be deleted
+                if( viewIter->cameraObjectId_ == _objectId )
+                {
+                  // delete current view
+                  viewlist.erase( viewIter );
+                  break; // there is only one view with this object id, so break
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 

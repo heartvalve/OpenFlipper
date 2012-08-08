@@ -482,10 +482,10 @@ public:
   /** View type */
   typedef struct
   {
-    int   cameraIdx_;  //!< Camera index
-    int   featureIdx_; //!< SIFT-feature index
-    float x_;          //!< x-coordinate of pixel position
-    float y_;          //!< y-coordinate of pixel position
+    int   cameraObjectId_; //!< Camera-object id
+    int   featureIdx_;     //!< SIFT-feature index
+    float x_;              //!< x-coordinate of pixel position
+    float y_;              //!< y-coordinate of pixel position
   } View;
 
   //----------------

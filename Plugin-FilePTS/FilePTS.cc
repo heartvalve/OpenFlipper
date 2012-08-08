@@ -134,7 +134,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check success of requests
   if( !success )
   {
-    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Out of memory for input file \"%1\".\n").arg( _filename ) );
     return false; // return failure
   }
 
@@ -142,7 +142,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   FILE *file = fopen( _filename, "rb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not open input file \"%1\".\n").arg( _filename ) );
     return false;
   }
 
@@ -153,7 +153,7 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check file type
   if( fileType != 1 && fileType != 2 )
   {
-    emit log( LOGERR, QString( "Bad filetype (" ) + QString::number( fileType ) + QString( ") in input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Bad filetype (%1) in input file \"%2\".\n").arg( QString::number( fileType ), _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -253,13 +253,13 @@ bool FilePTSPlugin::readBinaryFile( const char *_filename, SplatCloud &_splatClo
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not read input file \"%1\".\n").arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
   if( feof( file ) )
   {
-    emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Unexpected end in input file \"%1\".\n").arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -308,7 +308,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   // check success of requests
   if( !success )
   {
-    emit log( LOGERR, QString( "Out of memory for input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Out of memory for input file \"%1\".\n").arg( _filename ) );
     return false; // return failure
   }
 
@@ -316,7 +316,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   FILE *file = fopen( _filename, "rb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not open input file \"%1\".\n").arg( _filename ) );
     return false;
   }
 
@@ -405,13 +405,13 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
     // check for errors
     if( ferror( file ) )
     {
-      emit log( LOGERR, QString( "Could not read input file \"" ) + _filename + QString( "\".\n" ) );
+      emit log( LOGERR, tr("Could not read input file \"%1\".\n").arg( _filename ) );
       fclose( file );
       return false; // return failure
     }
     if( feof( file ) )
     {
-      emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\".\n" ) );
+      emit log( LOGERR, tr("Unexpected end in input file \"%1\".\n").arg( _filename ) );
       fclose( file );
       return false; // return failure
     }
@@ -420,7 +420,7 @@ bool FilePTSPlugin::readTextFile( const char *_filename, SplatCloud &_splatCloud
   // check for errors
   if( !feof( file ) ) // if end-of-file is *not* reached, something went wrong
   {
-    emit log( LOGERR, QString( "Bad file format of input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Bad file format of input file \"%1\".\n").arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -464,7 +464,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
 //    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
 //    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
 //{
-//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\".\n" ) );
+//  emit log( LOGERR, tr("Desired properties not available for output file \"%1\".\n").arg( _filename ) );
 //  return false; // return failure
 //}
 
@@ -472,7 +472,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   FILE *file = fopen( _filename, "wb" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not open output file \"%1\".\n").arg( _filename ) );
     return false;
   }
 
@@ -565,7 +565,7 @@ bool FilePTSPlugin::writeBinaryFile( const char *_filename, const SplatCloudNode
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not write output file \"%1\".\n").arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -609,7 +609,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
 //    (saveColors     && !_splatCloudNode->splatCloud().hasColors()    ) ||
 //    (saveIndices    && !_splatCloudNode->splatCloud().hasIndices()   )
 //{
-//  emit log( LOGERR, QString( "Desired properties not available for output file \"" ) + _filename + QString( "\".\n" ) );
+//  emit log( LOGERR, tr("Desired properties not available for output file \"%1\".\n").arg( _filename) );
 //  return false; // return failure
 //}
 
@@ -617,7 +617,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
   FILE *file = fopen( _filename, "wt" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open output file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not open output file \"%1\".\n").arg( _filename ) );
     return false;
   }
 
@@ -705,7 +705,7 @@ bool FilePTSPlugin::writeTextFile( const char *_filename, const SplatCloudNode *
   // check for errors
   if( ferror( file ) )
   {
-    emit log( LOGERR, QString( "Could not write output file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not write output file \"%1\".\n").arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -729,98 +729,84 @@ int FilePTSPlugin::loadObject( QString _filename )
   // get options
   if( OpenFlipper::Options::gui() && loadOptions_ )
   {
-    loadBinaryFile = loadBinaryFile_->   isChecked();
+    loadBinaryFile = loadBinaryFile_->isChecked();
   }
 
-  // add a new, empty splatcloud object
-  int id = -1;
-  emit addEmptyObject( DATA_SPLATCLOUD, id );
-
-  // check id
-  if( id == -1 )
-    return -1; // return failure
-
-  // get splatcloud-object by id
-  SplatCloudObject *splatCloudObject = 0;
-  if( !PluginFunctions::getObject( id, splatCloudObject ) )
+  // add a new, empty splatcloud-object
+  int splatCloudObjectId = -1;
+  emit addEmptyObject( DATA_SPLATCLOUD, splatCloudObjectId );
+  if( splatCloudObjectId != -1 )
   {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
+    // create list of ids and add id of splatcloud-object
+    IdList objectIDs;
+    objectIDs.push_back( splatCloudObjectId );
 
-  // check if splatcloud-object is okay
-  if( !splatCloudObject )
-  {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
-
-  // set name of splatcloud-object to filename
-  splatCloudObject->setFromFileName( _filename );
-  splatCloudObject->setName( splatCloudObject->filename() );
-
-  // get splatcloud and scenegraph splatcloud-node
-  SplatCloud     *splatCloud     = splatCloudObject->splatCloud();
-  SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
-
-  // check if splatcloud-node if okay
-  if( !splatCloud || !splatCloudNode )
-  {
-    emit deleteObject( id );
-    return -1; // return failure
-  }
-
-  // read file
-  if( loadBinaryFile )
-  {
-    if( !readBinaryFile( _filename.toLatin1(), *splatCloud ) )
+    // get splatcloud-object by id
+    SplatCloudObject *splatCloudObject = 0;
+    if( PluginFunctions::getObject( splatCloudObjectId, splatCloudObject ) )
     {
-      emit deleteObject( id );
-      return -1; // return failure
+      // set name of splatcloud-object to filename
+      splatCloudObject->setFromFileName( _filename );
+      splatCloudObject->setName( splatCloudObject->filename() );
+
+      // get splatcloud and scenegraph splatcloud-node
+      SplatCloud     *splatCloud     = splatCloudObject->splatCloud();
+      SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
+      if( (splatCloud != 0) && (splatCloudNode != 0) )
+      {
+        // read splatcloud from disk
+        if( loadBinaryFile ? readBinaryFile( _filename.toLatin1(), *splatCloud ) : readTextFile( _filename.toLatin1(), *splatCloud ) )
+        {
+          // emit signals that the object has to be updated and that a file was opened
+          emit updatedObject( splatCloudObjectId, UPDATE_ALL );
+          emit openedFile( splatCloudObjectId );
+
+          // get drawmodes
+          ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
+          ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
+          ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
+
+          // if drawmodes don't exist something went wrong
+          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
+              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+              pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
+          {
+            emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
+          }
+          else
+          {
+            // get global drawmode
+            ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
+
+            // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
+            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
+                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
+                !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
+            {
+              drawmode |= pointsDrawMode;
+              PluginFunctions::setDrawMode( drawmode );
+            }
+          }
+
+          // group objects
+          int groupObjectId = RPC::callFunctionValue<int>( "datacontrol", "groupObjects", objectIDs );
+          if( groupObjectId != -1 )
+          {
+            // everything is okay, so return id of group-object
+            return groupObjectId;
+          }
+        }
+      }
     }
-  }
-  else
-  {
-    if( !readTextFile( _filename.toLatin1(), *splatCloud ) )
-    {
-      emit deleteObject( id );
-      return -1; // return failure
-    }
+
+    // something went wrong, so delete objects
+    unsigned int i, num = objectIDs.size();
+    for( i=0; i<num; ++i )
+      emit deleteObject( objectIDs[ i ] );
   }
 
-  // emit signals that the object has to be updated and that a file was opened
-  emit updatedObject( splatCloudObject->id(), UPDATE_ALL);
-  emit openedFile   ( splatCloudObject->id()            );
-
-  // get drawmodes
-  ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
-  ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
-  ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
-
-  // if drawmodes don't exist something went wrong
-  if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-      dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
-      pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
-  {
-    emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
-  }
-  else
-  {
-    // get global drawmode
-    ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
-
-    // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
-    if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
-        !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
-        !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
-    {
-      drawmode |= pointsDrawMode;
-      PluginFunctions::setDrawMode( drawmode );
-    }
-  }
-
-  // return the id of the new splatcloud object
-  return id;
+  // return failure
+  return -1;
 }
 
 
@@ -840,38 +826,27 @@ bool FilePTSPlugin::saveObject( int _objectId, QString _filename )
 
   // get splatcloud-object by id
   SplatCloudObject *splatCloudObject = 0;
-  if( !PluginFunctions::getObject( _objectId, splatCloudObject ) )
-    return false; // return failure
-
-  // check if splatcloud-object is okay
-  if( !splatCloudObject )
-    return false; // return failure
-
-  // change name of splatcloud-object to filename
-  splatCloudObject->setFromFileName( _filename );
-  splatCloudObject->setName( splatCloudObject->filename() );
-
-  // get scenegraph splatcloud-node
-  const SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
-
-  // check if splatcloud-node if okay
-  if( !splatCloudNode )
-    return false; // return failure
-
-  // write file
-  if( saveBinaryFile )
+  if( PluginFunctions::getObject( _objectId, splatCloudObject ) )
   {
-    if( !writeBinaryFile( _filename.toLatin1(), splatCloudNode ) )
-      return false; // return failure
-  }
-  else
-  {
-    if( !writeTextFile( _filename.toLatin1(), splatCloudNode ) )
-      return false; // return failure
+    // change name of splatcloud-object to filename
+    splatCloudObject->setFromFileName( _filename );
+    splatCloudObject->setName( splatCloudObject->filename() );
+
+    // get splatcloud-node
+    const SplatCloudNode *splatCloudNode = splatCloudObject->splatCloudNode();
+    if( splatCloudNode != 0 )
+    {
+      // write splatcloud to disk
+      if( saveBinaryFile ? writeBinaryFile( _filename.toLatin1(), splatCloudNode ) : writeTextFile( _filename.toLatin1(), splatCloudNode ) )
+      {
+        // return success
+        return true;
+      }
+    }
   }
 
-  // return success
-  return true;
+  // return failure
+  return false;
 }
 
 
@@ -884,11 +859,11 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
   {
     // create new widget (including Load Options and buttons)
 
-    loadBinaryFile_ = new QCheckBox( "Load as Binary File" );
+    loadBinaryFile_ = new QCheckBox( tr("Load as Binary File") );
 
-    loadNormals_    = new QCheckBox( "Contains Normals"    );
-    loadPointsizes_ = new QCheckBox( "Contains Pointsizes" );
-    loadColors_     = new QCheckBox( "Contains Colors"     );
+    loadNormals_    = new QCheckBox( tr("Contains Normals")    );
+    loadPointsizes_ = new QCheckBox( tr("Contains Pointsizes") );
+    loadColors_     = new QCheckBox( tr("Contains Colors")     );
 
     loadColorRange_ = new QComboBox();
     loadColorRange_->addItem( "[0..1]"   );
@@ -900,7 +875,7 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
     loadColorsLayout->addWidget( loadColors_     );
     loadColorsLayout->addWidget( loadColorRange_ );
 
-    loadIndices_ = new QCheckBox( "Contains Indices" );
+    loadIndices_ = new QCheckBox( tr("Contains Indices") );
 
     QVBoxLayout *loadStructureLayout = new QVBoxLayout();
     loadStructureLayout->setSpacing( 6 );
@@ -909,10 +884,10 @@ QWidget *FilePTSPlugin::loadOptionsWidget( QString /*_currentFilter*/ )
     loadStructureLayout->addItem  ( loadColorsLayout );
     loadStructureLayout->addWidget( loadIndices_     );
 
-    QGroupBox *loadStructureGroupBox = new QGroupBox( "Internal File Structure" );
+    QGroupBox *loadStructureGroupBox = new QGroupBox( tr("Internal File Structure") );
     loadStructureGroupBox->setLayout( loadStructureLayout );
 
-    loadMakeDefaultButton_ = new QPushButton( "Make Default" );
+    loadMakeDefaultButton_ = new QPushButton( tr("Make Default") );
 
     QVBoxLayout *loadLayout = new QVBoxLayout();
     loadLayout->setAlignment( Qt::AlignTop );
@@ -951,11 +926,11 @@ QWidget *FilePTSPlugin::saveOptionsWidget( QString _currentFilter )
   {
     // create new widget (including Save Options and buttons)
 
-    saveBinaryFile_ = new QCheckBox( "Save as Binary File" );
+    saveBinaryFile_ = new QCheckBox( tr("Save as Binary File") );
 
-    saveNormals_    = new QCheckBox( "Save Normals"        );
-    savePointsizes_ = new QCheckBox( "Save Pointsizes"     );
-    saveColors_     = new QCheckBox( "Save Colors"         );
+    saveNormals_    = new QCheckBox( tr("Save Normals")        );
+    savePointsizes_ = new QCheckBox( tr("Save Pointsizes")     );
+    saveColors_     = new QCheckBox( tr("Save Colors")         );
 
     saveColorRange_ = new QComboBox();
     saveColorRange_->addItem( "[0..1]"   );
@@ -967,7 +942,7 @@ QWidget *FilePTSPlugin::saveOptionsWidget( QString _currentFilter )
     saveColorsLayout->addWidget( saveColors_     );
     saveColorsLayout->addWidget( saveColorRange_ );
 
-    saveIndices_ = new QCheckBox( "Save Indices" );
+    saveIndices_ = new QCheckBox( tr("Save Indices") );
 
     QVBoxLayout *saveStructureLayout = new QVBoxLayout();
     saveStructureLayout->setSpacing( 6 );
@@ -976,10 +951,10 @@ QWidget *FilePTSPlugin::saveOptionsWidget( QString _currentFilter )
     saveStructureLayout->addItem  ( saveColorsLayout );
     saveStructureLayout->addWidget( saveIndices_     );
 
-    QGroupBox *saveStructureGroupBox = new QGroupBox( "Internal File Structure" );
+    QGroupBox *saveStructureGroupBox = new QGroupBox( tr("Internal File Structure") );
     saveStructureGroupBox->setLayout( saveStructureLayout );
 
-    saveMakeDefaultButton_ = new QPushButton( "Make Default" );
+    saveMakeDefaultButton_ = new QPushButton( tr("Make Default") );
 
     QVBoxLayout *saveLayout = new QVBoxLayout();
     saveLayout->setAlignment( Qt::AlignTop );
