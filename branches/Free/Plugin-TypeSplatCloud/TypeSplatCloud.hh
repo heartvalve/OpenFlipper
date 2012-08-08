@@ -59,6 +59,7 @@
 #include <QObject>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 
@@ -70,10 +71,11 @@
 //== CLASS DEFINITION ============================================
 
 
-class TypeSplatCloudPlugin : public QObject, BaseInterface, LoggingInterface, TypeInterface
+class TypeSplatCloudPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface
 {
   Q_OBJECT
   Q_INTERFACES( BaseInterface     )
+  Q_INTERFACES( LoadSaveInterface )
   Q_INTERFACES( LoggingInterface  )
   Q_INTERFACES( TypeInterface     )
 
@@ -82,9 +84,22 @@ signals:
   //-- Type Interface --
   void emptyObjectAdded( int _objectId );
 
+  //-- LoadSave Interface --
+  void deleteObject( int _objectId );
+
   //-- Logging Interface --
   void log(                QString _message );
   void log( Logtype _type, QString _message );
+
+public slots:
+
+  //-- Base Interface --
+  QString version() { return QString( "1.0" ); };
+
+  //-- Type Interface --
+  int addEmpty();
+  DataType supportedType() { return DATA_SPLATCLOUD; }; 
+  void generateBackup( int _objectId, QString _name, UpdateType _type );
 
 private slots:
 
@@ -92,6 +107,9 @@ private slots:
   void noguiSupported() { }
   void slotViewChanged();
   void slotObjectPropertiesChanged( int _objectId );
+
+  //-- LoadSave Interface --
+  void objectDeleted( int _objectId );
 
 public:
 
@@ -105,17 +123,6 @@ public:
 
   // -- Type Interface --
   bool registerType();
-
-public slots:
-
-  //-- Base Interface --
-  QString version() { return QString( "1.0" ); };
-
-  //-- Type Interface --
-  int addEmpty();
-  DataType supportedType() { return DATA_SPLATCLOUD; }; 
-  void generateBackup( int _objectId, QString _name, UpdateType _type );
-
 };
 
 

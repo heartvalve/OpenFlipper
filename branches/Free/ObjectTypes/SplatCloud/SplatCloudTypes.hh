@@ -63,6 +63,8 @@
 #include <ACG/Scenegraph/ShaderNode.hh>
 #include "SplatCloudNode.hh"
 
+#include "SplatCloudExtensions.hh"
+
 
 //== TYPEDEFS FOR SCENEGRAPH =====================================
 
