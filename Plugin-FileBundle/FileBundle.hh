@@ -72,6 +72,8 @@
 
 #include <ObjectTypes/SplatCloud/SplatCloud.hh>
 
+#include <Plugin-TypeSplatCloud/TypeSplatCloud.hh>
+
 
 //== CLASS DEFINITION ============================================
 
@@ -131,31 +133,23 @@ public slots:
 
 private:
 
-  typedef struct
-  {
-    double      f_, k1_, k2_;
-    double      r_[3][3];
-    double      t_[3];
-    std::string imagePath_;
-  } Camera;
-
-  typedef std::vector<Camera> CameraVector;
-
-  typedef std::vector<std::string> StringVector;
+  // add/remove multiple objects
+  bool addEmptyObjects( unsigned int _num, const DataType &_datatype, std::vector<int> &_objectIDs );
+  void deleteObjects( std::vector<int> &_objectIDs );
 
   // read image list file from disc
-  bool readImagelistFile( const char *_filename, StringVector &_imagePaths ) /*const*/;
+  bool readImagelistFile( const char *_filename, std::vector<std::string> &_imagePaths ) /*const*/;
 
   // read bundle file from disc to scenegraph node
-  void readCameras( FILE *_file, CameraVector &_cameras    ) /*const*/;
-  void readPoints ( FILE *_file, SplatCloud   &_splatCloud ) /*const*/;
+  void readCameras( FILE *_file, const std::vector<int> &_cameraObjectIDs, SplatCloud_Cameras &_cameras    ) /*const*/;
+  void readPoints ( FILE *_file, const std::vector<int> &_cameraObjectIDs, SplatCloud         &_splatCloud ) /*const*/;
   bool readBundleFile( const char *_filename, SplatCloud &_splatCloud ) /*const*/;
 
   // write bundle file from scenegraph node to disc
   bool writeBundleFile( const char *_filename, const SplatCloud &_splatCloud ) /*const*/;
 
   // add cameras to object
-  int addCameras( const CameraVector &_cameras );
+  int addCameras( const SplatCloud_Cameras &_cameras, int _splatCloudObjectId );
 };
 
 

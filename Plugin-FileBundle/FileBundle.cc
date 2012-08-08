@@ -142,14 +142,59 @@ static void splitFilename( const std::string &_str, std::string &_path, std::str
 //----------------------------------------------------------------
 
 
-bool FileBundlePlugin::readImagelistFile( const char *_filename, StringVector &_imagePaths ) /*const*/
+bool FileBundlePlugin::addEmptyObjects( unsigned int _num, const DataType &_datatype, std::vector<int> &_objectIDs )
+{
+  deleteObjects( _objectIDs );
+  _objectIDs.reserve( _num );
+
+  OpenFlipper::Options::blockSceneGraphUpdates();
+
+  unsigned int i;
+  for( i=0; i<_num; ++i )
+  {
+    int objectId = -1;
+    emit addEmptyObject( _datatype, objectId );
+
+    if( objectId == -1 )
+      break;
+
+    _objectIDs.push_back( objectId );
+  }
+
+  OpenFlipper::Options::unblockSceneGraphUpdates();
+
+  if( i == _num )
+    return true;
+
+  deleteObjects( _objectIDs );
+  return false;
+}
+
+
+//----------------------------------------------------------------
+
+
+void FileBundlePlugin::deleteObjects( std::vector<int> &_objectIDs )
+{
+  unsigned int i, num = _objectIDs.size();
+  for( i=0; i<num; ++i )
+    emit deleteObject( _objectIDs[ i ] );
+
+  _objectIDs.clear();
+}
+
+
+//----------------------------------------------------------------
+
+
+bool FileBundlePlugin::readImagelistFile( const char *_filename, std::vector<std::string> &_imagePaths ) /*const*/
 {
   _imagePaths.clear();
 
   FILE *file = fopen( _filename, "rt" );
   if( !file )
   {
-    emit log( LOGINFO, QString( "Could not open imagelist file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGINFO, tr("Could not open imagelist file \"%1\".\n").arg( _filename ) );
     return false;
   }
 
@@ -170,7 +215,7 @@ bool FileBundlePlugin::readImagelistFile( const char *_filename, StringVector &_
 
   fclose( file );
 
-  emit log( LOGINFO, QString( "Using image list file \"" ) + _filename + QString( "\".\n" ) );
+  emit log( LOGINFO, tr("Using imagelist file \"%1\".\n").arg( _filename ) );
   return true;
 }
 
@@ -178,30 +223,34 @@ bool FileBundlePlugin::readImagelistFile( const char *_filename, StringVector &_
 //----------------------------------------------------------------
 
 
-void FileBundlePlugin::readCameras( FILE *_file, CameraVector &_cameras ) /*const*/
+void FileBundlePlugin::readCameras( FILE *_file, const std::vector<int> &_cameraObjectIDs, SplatCloud_Cameras &_cameras ) /*const*/
 {
   char str[256];
 
-  CameraVector::iterator cameraIter;
-  for( cameraIter = _cameras.begin(); cameraIter != _cameras.end(); ++cameraIter )
+  unsigned int cameraIdx = 0;
+  SplatCloud_Cameras::iterator cameraIter;
+  for( cameraIter = _cameras.begin(); cameraIter != _cameras.end(); ++cameraIter, ++cameraIdx )
   {
-    Camera &camera = *cameraIter;
+    SplatCloud_Camera &camera = *cameraIter;
 
-    fscanf( _file, "%32s", str ); camera.f_       = atof( str );
-    fscanf( _file, "%32s", str ); camera.k1_      = atof( str );
-    fscanf( _file, "%32s", str ); camera.k2_      = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[0][0] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[0][1] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[0][2] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[1][0] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[1][1] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[1][2] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[2][0] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[2][1] = atof( str );
-    fscanf( _file, "%32s", str ); camera.r_[2][2] = atof( str );
-    fscanf( _file, "%32s", str ); camera.t_[0]    = atof( str );
-    fscanf( _file, "%32s", str ); camera.t_[1]    = atof( str );
-    fscanf( _file, "%32s", str ); camera.t_[2]    = atof( str );
+    camera.objectId_ = _cameraObjectIDs[ cameraIdx ];
+
+    SplatCloud_Projection &proj = camera.projection_;
+    fscanf( _file, "%32s", str ); proj.f_       = atof( str );
+    fscanf( _file, "%32s", str ); proj.k1_      = atof( str );
+    fscanf( _file, "%32s", str ); proj.k2_      = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[0][0] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[0][1] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[0][2] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[1][0] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[1][1] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[1][2] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[2][0] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[2][1] = atof( str );
+    fscanf( _file, "%32s", str ); proj.r_[2][2] = atof( str );
+    fscanf( _file, "%32s", str ); proj.t_[0]    = atof( str );
+    fscanf( _file, "%32s", str ); proj.t_[1]    = atof( str );
+    fscanf( _file, "%32s", str ); proj.t_[2]    = atof( str );
 
     camera.imagePath_ = "";
   }
@@ -211,28 +260,28 @@ void FileBundlePlugin::readCameras( FILE *_file, CameraVector &_cameras ) /*cons
 //----------------------------------------------------------------
 
 
-void FileBundlePlugin::readPoints( FILE *_file, SplatCloud &_splatCloud ) /*const*/
+void FileBundlePlugin::readPoints( FILE *_file, const std::vector<int> &_cameraObjectIDs, SplatCloud &_splatCloud ) /*const*/
 {
   char str[256];
+
+  int maxCamObjId = _cameraObjectIDs.size() - 1;
 
   unsigned int splatIdx;
   for( splatIdx = 0; splatIdx < _splatCloud.numSplats(); ++splatIdx )
   {
     {
-      SplatCloud::Position &position = _splatCloud.positions( splatIdx );
-
-      fscanf( _file, "%32s", str ); position[0] = atof( str );
-      fscanf( _file, "%32s", str ); position[1] = atof( str );
-      fscanf( _file, "%32s", str ); position[2] = atof( str );
+      SplatCloud::Position &pos = _splatCloud.positions( splatIdx );
+      fscanf( _file, "%32s", str ); pos[0] = atof( str );
+      fscanf( _file, "%32s", str ); pos[1] = atof( str );
+      fscanf( _file, "%32s", str ); pos[2] = atof( str );
     }
 
     {
-      SplatCloud::Color &color = _splatCloud.colors( splatIdx );
-
+      SplatCloud::Color &col = _splatCloud.colors( splatIdx );
       unsigned int r=0, g=0, b=0;
-      fscanf( _file, "%16u", &r ); color[0] = r;
-      fscanf( _file, "%16u", &g ); color[1] = g;
-      fscanf( _file, "%16u", &b ); color[2] = b;
+      fscanf( _file, "%16u", &r ); col[0] = r;
+      fscanf( _file, "%16u", &g ); col[1] = g;
+      fscanf( _file, "%16u", &b ); col[2] = b;
     }
 
     {
@@ -248,10 +297,10 @@ void FileBundlePlugin::readPoints( FILE *_file, SplatCloud &_splatCloud ) /*cons
       {
         int i = -1;
         int j = -1;
-        fscanf( _file, "%16i", &i  ); viewIter->cameraIdx_  = i;
-        fscanf( _file, "%16i", &j  ); viewIter->featureIdx_ = j;
-        fscanf( _file, "%32s", str ); viewIter->x_          = atof( str );
-        fscanf( _file, "%32s", str ); viewIter->y_          = atof( str );
+        fscanf( _file, "%16i", &i  ); viewIter->cameraObjectId_ = ((i >= 0) && (i <= maxCamObjId)) ? _cameraObjectIDs[ i ] : -1;
+        fscanf( _file, "%16i", &j  ); viewIter->featureIdx_     = j;
+        fscanf( _file, "%32s", str ); viewIter->x_              = atof( str );
+        fscanf( _file, "%32s", str ); viewIter->y_              = atof( str );
       }
     }
   }
@@ -270,7 +319,7 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
   FILE *file = fopen( _filename, "rt" );
   if( !file )
   {
-    emit log( LOGERR, QString( "Could not open input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Could not open input file \"%1\".\n").arg( _filename ) );
     return false; // return failure
   }
 
@@ -278,7 +327,7 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
   std::string magicAndVersion = readLine( file );
   if( magicAndVersion.compare( "# Bundle file v0.3" ) != 0 )
   {
-    emit log( LOGERR, QString( "Bad magic/version \"" ) + magicAndVersion.c_str() + QString( "\" in input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Bad magic/version \"%1\" in input file \"%2\".\n").arg( magicAndVersion.c_str(), _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -289,14 +338,23 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
   fscanf( file, "%16u", &numCameras );
   fscanf( file, "%16u", &numPoints  );
 
+  // create camera object IDs
+  std::vector<int> cameraObjectIDs;
+  if( !addEmptyObjects( numCameras, DATA_CAMERA, cameraObjectIDs ) )
+  {
+    emit log( LOGERR, tr("Unable to add %1 cameras for input file \"%2\".\n").arg( QString::number( numCameras ), _filename ) );
+    fclose( file );
+    return false; // return failure
+  }
+
   // read cameras data block
   if( numCameras != 0 )
   {
-    CameraVector &cameras = _splatCloud.requestCloudProperty<CameraVector>( "Cameras" )->data();
+    SplatCloud_Cameras &cameras = _splatCloud.requestCloudProperty( SPLATCLOUD_CAMERAS_HANDLE )->data();
 
     cameras.resize( numCameras );
 
-    readCameras( file, cameras );
+    readCameras( file, cameraObjectIDs, cameras );
 
     // set image paths
     {
@@ -312,12 +370,13 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
 
       if( hasImg )
       {
-        unsigned int cameraIdx;
-        for( cameraIdx = 0; cameraIdx < cameras.size(); ++cameraIdx )
-          cameras[ cameraIdx ].imagePath_ = imagePaths[ cameraIdx ];
+        unsigned int cameraIdx = 0;
+        SplatCloud_Cameras::iterator cameraIter;
+        for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter, ++cameraIdx )
+          cameraIter->imagePath_ = imagePaths[ cameraIdx ];
       }
 
-      _splatCloud.requestCloudProperty<bool>( "CameraHasImagepath" )->data() = hasImg;
+      _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_CAMERA_HAS_IMAGEPATH_FLAG, hasImg );
     }
   }
 
@@ -330,16 +389,16 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
     _splatCloud.requestColors();
     _splatCloud.requestViewlists();
 
-    readPoints( file, _splatCloud );
+    readPoints( file, cameraObjectIDs, _splatCloud );
 
-    _splatCloud.requestCloudProperty<bool>( "SplatViewlistHasFeatureindices"     )->data() = true;
-    _splatCloud.requestCloudProperty<bool>( "SplatViewlistCoordinatesNormalized" )->data() = false;
+    _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_SPLAT_VIEWLIST_HAS_FEATURE_INDICES_FLAG, true  );
+    _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_SPLAT_VIEWLIST_COORDS_NORMALIZED_FLAG,   false );
   }
 
   // check if reading error occured
   if( feof( file ) )
   {
-    emit log( LOGERR, QString( "Unexpected end in input file \"" ) + _filename + QString( "\".\n" ) );
+    emit log( LOGERR, tr("Unexpected end in input file \"%1\".\n" ).arg( _filename ) );
     fclose( file );
     return false; // return failure
   }
@@ -364,34 +423,36 @@ bool FileBundlePlugin::writeBundleFile( const char *_filename, const SplatCloud 
 //----------------------------------------------------------------
 
 
-int FileBundlePlugin::addCameras( const CameraVector &_cameras )
+int FileBundlePlugin::addCameras( const SplatCloud_Cameras &_cameras, int _splatCloudObjectId )
 {
   // create a list of ids
   IdList objectIDs;
   objectIDs.reserve( _cameras.size() );
 
-  // disable updating of scenegraph
+  // disable update of scenegraph
   OpenFlipper::Options::blockSceneGraphUpdates();
 
   // add cameras to list of ids
-  CameraVector::const_iterator cameraIter;
+  SplatCloud_Cameras::const_iterator cameraIter;
   for( cameraIter = _cameras.begin(); cameraIter != _cameras.end(); ++cameraIter )
   {
-    const Camera &camera = *cameraIter;
+    const SplatCloud_Camera &camera = *cameraIter;
 
     // set up matrix
     ACG::GLMatrixd matrix;
-    matrix(0,0) = camera.r_[0][0]; matrix(0,1) = camera.r_[1][0]; matrix(0,2) = camera.r_[2][0];
-    matrix(1,0) = camera.r_[0][1]; matrix(1,1) = camera.r_[1][1]; matrix(1,2) = camera.r_[2][1];
-    matrix(2,0) = camera.r_[0][2]; matrix(2,1) = camera.r_[1][2]; matrix(2,2) = camera.r_[2][2];
-    matrix(0,3) = -(camera.r_[0][0]*camera.t_[0] + camera.r_[1][0]*camera.t_[1] + camera.r_[2][0]*camera.t_[2]);
-    matrix(1,3) = -(camera.r_[0][1]*camera.t_[0] + camera.r_[1][1]*camera.t_[1] + camera.r_[2][1]*camera.t_[2]);
-    matrix(2,3) = -(camera.r_[0][2]*camera.t_[0] + camera.r_[1][2]*camera.t_[1] + camera.r_[2][2]*camera.t_[2]);
-    matrix(3,0) = 0.0; matrix(3,1) = 0.0; matrix(3,2) = 0.0; matrix(3,3) = 1.0;
+    {
+      const SplatCloud_Projection &proj = camera.projection_;
+      matrix(0,0) = proj.r_[0][0]; matrix(0,1) = proj.r_[1][0]; matrix(0,2) = proj.r_[2][0];
+      matrix(1,0) = proj.r_[0][1]; matrix(1,1) = proj.r_[1][1]; matrix(1,2) = proj.r_[2][1];
+      matrix(2,0) = proj.r_[0][2]; matrix(2,1) = proj.r_[1][2]; matrix(2,2) = proj.r_[2][2];
+      matrix(0,3) = -(proj.r_[0][0]*proj.t_[0] + proj.r_[1][0]*proj.t_[1] + proj.r_[2][0]*proj.t_[2]);
+      matrix(1,3) = -(proj.r_[0][1]*proj.t_[0] + proj.r_[1][1]*proj.t_[1] + proj.r_[2][1]*proj.t_[2]);
+      matrix(2,3) = -(proj.r_[0][2]*proj.t_[0] + proj.r_[1][2]*proj.t_[1] + proj.r_[2][2]*proj.t_[2]);
+      matrix(3,0) = 0.0; matrix(3,1) = 0.0; matrix(3,2) = 0.0; matrix(3,3) = 1.0;
+    }
 
-    // create a new, empty camera-object
-    int cameraObjectId = -1;
-    emit addEmptyObject( DATA_CAMERA, cameraObjectId );
+    // get camera-object id
+    int cameraObjectId = camera.objectId_;
     if( cameraObjectId != -1 )
     {
       // add id of camera-object to list of ids
@@ -401,6 +462,9 @@ int FileBundlePlugin::addCameras( const CameraVector &_cameras )
       CameraObject *cameraObject = 0;
       if( PluginFunctions::getObject( cameraObjectId, cameraObject ) )
       {
+        // remember splatcloud-object id
+        cameraObject->setObjectData( "SplatCloudObjectId", new IntPerObjectData( _splatCloudObjectId ) );
+
         // set name of camera-object
         cameraObject->setName( camera.imagePath_.c_str() );
 
@@ -426,7 +490,7 @@ int FileBundlePlugin::addCameras( const CameraVector &_cameras )
     break;
   }
 
-  // enable updating of scenegraph
+  // enable update of scenegraph
   OpenFlipper::Options::unblockSceneGraphUpdates();
 
   // check if everything is okay so far
@@ -513,8 +577,8 @@ int FileBundlePlugin::loadObject( QString _filename )
           }
 
           // add cameras-object
-          const SplatCloud::CloudPropertyT<CameraVector> *camerasProp = splatCloud->getCloudProperty<CameraVector>( "Cameras" );
-          int camerasObjectId = (camerasProp == 0) ? -1 : addCameras( camerasProp->data() );
+          const SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
+          int camerasObjectId = (camerasProp == 0) ? -1 : addCameras( camerasProp->data(), splatCloudObjectId );
           if( (camerasProp == 0) || (camerasObjectId != -1) )
           {
             // add id of cameras-object to list of ids
