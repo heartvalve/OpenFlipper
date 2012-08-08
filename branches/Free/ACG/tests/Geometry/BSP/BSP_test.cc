@@ -507,7 +507,6 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_NegativeDi
   BSP::RayCollision rc = bsp_->directionalRaycollision(p1,nyDirection);
 
   EXPECT_EQ(0u, rc.size() ) << "Wrong number of hit faces in ray collision test 1";
-  EXPECT_FALSE( rc[0].first.is_valid() )   << "Wrong handle of closest face in ray collision test 1";
 
 }
 
