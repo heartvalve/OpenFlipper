@@ -132,6 +132,40 @@ unsigned int SplatCloud::eraseSplatsByFlag( const std::vector<T> &_flags )
 
 
 template <typename T>
+void SplatCloud::cropSplats( const T &_indices )
+{
+  int maxIdx = numSplats_ - 1;
+
+  // create vector of valid indices
+  std::vector<int> validIndices;
+  validIndices.reserve( _indices.size() );
+
+  // set valid indices
+  typename T::const_iterator idxIter;
+  for( idxIter = _indices.begin(); idxIter != _indices.end(); ++idxIter )
+  {
+    // convert index to int
+    int idx = static_cast<int>( *idxIter );
+
+    // if index is valid, add index to valid indices
+    if( (idx >= 0) && (idx <= maxIdx) )
+      validIndices.push_back( idx );
+  }
+
+  // keep only elements with given indices in data vector of all splat-properties
+  SplatPropertyMap::const_iterator splatPropertyIter;
+  for( splatPropertyIter = splatProperties_.begin(); splatPropertyIter != splatProperties_.end(); ++splatPropertyIter )
+    splatPropertyIter->second.property_->crop( validIndices );
+
+  // update number of splats
+  numSplats_ = validIndices.size();
+}
+
+
+//----------------------------------------------------------------
+
+
+template <typename T>
 /*virtual*/ void SplatCloud::SplatPropertyT<T>::crop( const std::vector<int> &_indices )
 {
   // create new data vector
