@@ -159,6 +159,18 @@ public:
 
   //----------------
 
+  /** \brief Keep only the elements with given indices in the data vector of all splat-properties. The splats will be rearranged depending on the order of the indices.
+   * 
+   * Use std::vector<T2> / std::list<T2> / std::deque<T2> / ... for T and int / unsigned int / ... for T2.
+   *
+   * \note The number of splats will be updated accordingly.
+   *
+   * @param[in] _indices Indices of the elements to be kept in the order given by the indices.
+   */
+  template <typename T> void cropSplats( const T &_indices );
+
+  //----------------
+
   /** \brief Get the number of splats.
    *
    * @return Returns the number of splats.
