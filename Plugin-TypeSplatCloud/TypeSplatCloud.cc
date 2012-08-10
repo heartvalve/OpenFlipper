@@ -228,15 +228,15 @@ void TypeSplatCloudPlugin::objectDeleted( int _objectId )
     if( splatCloud != 0 )
     {
       // remove all camera-objects
-      /*const*/ SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
-      if( camerasProp != 0 )
+      /*const*/ SplatCloud_CameraManagerProperty *cameraManagerProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE );
+      if( cameraManagerProp != 0 )
       {
-        // get cameras
-        /*const*/ SplatCloud_Cameras &cameras = camerasProp->data();
+        // get camera-manager
+        /*const*/ SplatCloud_CameraManager &cameraManager = cameraManagerProp->data();
 
         // iterate over all cameras
         SplatCloud_Cameras::/*const_*/iterator cameraIter;
-        for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter )
+        for( cameraIter = cameraManager.cameras_.begin(); cameraIter != cameraManager.cameras_.end(); ++cameraIter )
         {
           // get camera-object by id
           CameraObject *cameraObject = 0;
@@ -270,21 +270,21 @@ void TypeSplatCloudPlugin::objectDeleted( int _objectId )
         if( splatCloud != 0 )
         {
           // delete camera from cameras vector
-          SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
-          if( camerasProp != 0 )
+          SplatCloud_CameraManagerProperty *cameraManagerProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE );
+          if( cameraManagerProp != 0 )
           {
-            // get cameras
-            SplatCloud_Cameras &cameras = camerasProp->data();
+            // get camera-manager
+            SplatCloud_CameraManager &cameraManager = cameraManagerProp->data();
 
             // iterate over all cameras
             SplatCloud_Cameras::iterator cameraIter;
-            for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter )
+            for( cameraIter = cameraManager.cameras_.begin(); cameraIter != cameraManager.cameras_.end(); ++cameraIter )
             {
               // check if camera should be deleted
               if( cameraIter->objectId_ == _objectId )
               {
                 // delete current camera
-                cameras.erase( cameraIter );
+                cameraManager.cameras_.erase( cameraIter );
                 break; // there is only one camera with this object id, so break
               }
             }
