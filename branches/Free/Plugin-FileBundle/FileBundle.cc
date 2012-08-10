@@ -350,11 +350,11 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
   // read cameras data block
   if( numCameras != 0 )
   {
-    SplatCloud_Cameras &cameras = _splatCloud.requestCloudProperty( SPLATCLOUD_CAMERAS_HANDLE )->data();
+    SplatCloud_CameraManager &cameraManager = _splatCloud.requestCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE )->data();
 
-    cameras.resize( numCameras );
+    cameraManager.cameras_.resize( numCameras );
 
-    readCameras( file, cameraObjectIDs, cameras );
+    readCameras( file, cameraObjectIDs, cameraManager.cameras_ );
 
     // set image paths
     {
@@ -366,17 +366,17 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
       if( !readImagelistFile( (path + name + IMAGELIST_SUFFIX).c_str(), imagePaths ) )
            readImagelistFile( (path + IMAGELIST_FALLBACK     ).c_str(), imagePaths );
 
-      bool hasImg = (cameras.size() <= imagePaths.size());
+      bool hasImg = (cameraManager.cameras_.size() <= imagePaths.size());
 
       if( hasImg )
       {
         unsigned int cameraIdx = 0;
         SplatCloud_Cameras::iterator cameraIter;
-        for( cameraIter = cameras.begin(); cameraIter != cameras.end(); ++cameraIter, ++cameraIdx )
+        for( cameraIter = cameraManager.cameras_.begin(); cameraIter != cameraManager.cameras_.end(); ++cameraIter, ++cameraIdx )
           cameraIter->imagePath_ = imagePaths[ cameraIdx ];
       }
 
-      _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_CAMERA_HAS_IMAGEPATH_FLAG, hasImg );
+      _splatCloud.requestCloudProperty( SPLATCLOUD_GENERALMANAGER_HANDLE )->data().flags_.set( SPLATCLOUD_CAMERA_HAS_IMAGEPATH_FLAG, hasImg );
     }
   }
 
@@ -391,8 +391,8 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
 
     readPoints( file, cameraObjectIDs, _splatCloud );
 
-    _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_SPLAT_VIEWLIST_HAS_FEATURE_INDICES_FLAG, true  );
-    _splatCloud.requestCloudProperty( SPLATCLOUD_FLAGS_HANDLE )->data().set( SPLATCLOUD_SPLAT_VIEWLIST_COORDS_NORMALIZED_FLAG,   false );
+    _splatCloud.requestCloudProperty( SPLATCLOUD_GENERALMANAGER_HANDLE )->data().flags_.set( SPLATCLOUD_SPLAT_VIEWLIST_HAS_FEATURE_INDICES_FLAG, true  );
+    _splatCloud.requestCloudProperty( SPLATCLOUD_GENERALMANAGER_HANDLE )->data().flags_.set( SPLATCLOUD_SPLAT_VIEWLIST_COORDS_NORMALIZED_FLAG,   false );
   }
 
   // check if reading error occured
@@ -577,9 +577,9 @@ int FileBundlePlugin::loadObject( QString _filename )
           }
 
           // add cameras-object
-          const SplatCloud_CamerasProperty *camerasProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAS_HANDLE );
-          int camerasObjectId = (camerasProp == 0) ? -1 : addCameras( camerasProp->data(), splatCloudObjectId );
-          if( (camerasProp == 0) || (camerasObjectId != -1) )
+          const SplatCloud_CameraManagerProperty *cameraManagerProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE );
+          int camerasObjectId = (cameraManagerProp != 0) ? addCameras( cameraManagerProp->data().cameras_, splatCloudObjectId ) : -1;
+          if( (cameraManagerProp == 0) || (camerasObjectId != -1) )
           {
             // add id of cameras-object to list of ids
             if( camerasObjectId != -1 )

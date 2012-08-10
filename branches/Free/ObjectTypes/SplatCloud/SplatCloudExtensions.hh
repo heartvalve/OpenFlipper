@@ -36,7 +36,7 @@ typedef struct
 
 typedef struct
 {
-  ACG::Vec3f vertices_[4];
+  ACG::Vec3d vertices_[4];
 } SplatCloud_Quad;
 
 
@@ -49,20 +49,37 @@ typedef struct
 
 typedef std::vector<SplatCloud_Camera>  SplatCloud_Cameras;
 typedef std::vector<SplatCloud_Cluster> SplatCloud_Clusters;
-typedef SplatCloud_Surface              SplatCloud_Unclustered;
-typedef std::bitset<8>                  SplatCloud_Flags;
+typedef std::bitset<8>                  SplatCloud_Flags; 
 
 
-typedef SplatCloud::CloudPropertyT<SplatCloud_Cameras>     SplatCloud_CamerasProperty;
-typedef SplatCloud::CloudPropertyT<SplatCloud_Clusters>    SplatCloud_ClustersProperty;
-typedef SplatCloud::CloudPropertyT<SplatCloud_Unclustered> SplatCloud_UnclusteredProperty;
-typedef SplatCloud::CloudPropertyT<SplatCloud_Flags>       SplatCloud_FlagsProperty;
+typedef struct
+{
+  SplatCloud_Cameras cameras_;
+} SplatCloud_CameraManager;
 
 
-static const SplatCloud::PropertyHandleT<SplatCloud_Cameras>     SPLATCLOUD_CAMERAS_HANDLE    ( "_Cameras_"     );
-static const SplatCloud::PropertyHandleT<SplatCloud_Clusters>    SPLATCLOUD_CLUSTERS_HANDLE   ( "_Clusters_"    );
-static const SplatCloud::PropertyHandleT<SplatCloud_Unclustered> SPLATCLOUD_UNCLUSTERED_HANDLE( "_Unclustered_" );
-static const SplatCloud::PropertyHandleT<SplatCloud_Flags>       SPLATCLOUD_FLAGS_HANDLE      ( "_Flags_"       );
+typedef struct
+{
+  int                 objectId_;
+  SplatCloud_Surface  unclustered_;
+  SplatCloud_Clusters clusters_;
+} SplatCloud_ClusterManager;
+
+
+typedef struct
+{
+  SplatCloud_Flags flags_;
+} SplatCloud_GeneralManager;
+
+
+typedef SplatCloud::CloudPropertyT<SplatCloud_CameraManager>  SplatCloud_CameraManagerProperty;
+typedef SplatCloud::CloudPropertyT<SplatCloud_ClusterManager> SplatCloud_ClusterManagerProperty;
+typedef SplatCloud::CloudPropertyT<SplatCloud_GeneralManager> SplatCloud_GeneralManagerProperty;
+
+
+static const SplatCloud::PropertyHandleT<SplatCloud_CameraManager>  SPLATCLOUD_CAMERAMANAGER_HANDLE ( "CameraManager"  );
+static const SplatCloud::PropertyHandleT<SplatCloud_ClusterManager> SPLATCLOUD_CLUSTERMANAGER_HANDLE( "ClusterManager" );
+static const SplatCloud::PropertyHandleT<SplatCloud_GeneralManager> SPLATCLOUD_GENERALMANAGER_HANDLE( "GeneralManager" );
 
 
 static const unsigned int SPLATCLOUD_CAMERA_HAS_IMAGEPATH_FLAG               = 0;
