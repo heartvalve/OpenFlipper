@@ -219,8 +219,10 @@ void PropertyVisPlugin::propertySelectionChanged() {
             visibleMask |= T_UINT;
         } else if (currentProp.typeinfo() == PropertyNameListModel::proptype_bool) {
             visibleMask |= T_BOOL;
+#ifdef ENABLE_SKELETON_SUPPORT
         } else if (currentProp.typeinfo() == PropertyNameListModel::proptype_SkinWeights) {
             visibleMask |= T_SKIN_WEIGHTS;
+#endif
         }
 
     }
@@ -236,7 +238,9 @@ void PropertyVisPlugin::propertySelectionChanged() {
     tool_->paramUint->setVisible(visibleMask & T_UINT);
     tool_->paramInt->setVisible(visibleMask & T_INT);
     tool_->paramBool->setVisible(visibleMask & T_BOOL);
+#ifdef ENABLE_SKELETON_SUPPORT
     tool_->paramSkinWeights->setVisible(visibleMask & T_SKIN_WEIGHTS);
+#endif
     tool_->vectors_edges_rb->setVisible(visibleMask & T_VECTOR_EDGES);
     if (tool_->vectors_edges_rb->isChecked() && (visibleMask & T_VECTOR_EDGES) == 0)
         tool_->vectors_strokes_rb->setChecked(true);
@@ -292,9 +296,11 @@ void PropertyVisPlugin::visualizeProperty(MeshT *mesh, const PropertyNameListMod
     //BOOL
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_bool)
         visualizeBool(mesh, currentProp);
+#ifdef ENABLE_SKELETON_SUPPORT
     //SKIN WEIGHTS
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_SkinWeights)
         visualizeSkinWeights(mesh, tool_->boneId->value(), currentProp);
+#endif
 }
 
 
@@ -2006,8 +2012,10 @@ void PropertyVisPlugin::duplicateProperty(MeshT *mesh, const PropertyNameListMod
         duplicateProperty_stage1<MeshT, int>(*mesh, currentProp);
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_bool)
         duplicateProperty_stage1<MeshT, bool>(*mesh, currentProp);
+#ifdef ENABLE_SKELETON_SUPPORT
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_SkinWeights)
         duplicateProperty_stage1<MeshT, BaseSkin::SkinWeights>(*mesh, currentProp);
+#endif
 }
 
 template<typename MeshT>
@@ -2023,8 +2031,10 @@ void PropertyVisPlugin::removeProperty(MeshT *mesh, const PropertyNameListModel:
         removeProperty_stage1<MeshT, int>(*mesh, currentProp);
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_bool)
         removeProperty_stage1<MeshT, bool>(*mesh, currentProp);
+#ifdef ENABLE_SKELETON_SUPPORT
     else if (currentProp.typeinfo() == PropertyNameListModel::proptype_SkinWeights)
         removeProperty_stage1<MeshT, BaseSkin::SkinWeights>(*mesh, currentProp);
+#endif
 }
 
 Q_EXPORT_PLUGIN2( propertyvisplugin , PropertyVisPlugin );

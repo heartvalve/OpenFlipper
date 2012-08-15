@@ -811,6 +811,7 @@ void PropertyVisPlugin::visualizeInteger( MeshT*   _mesh, const PropertyNameList
 
 //------------------------------------------------------------------------------
 
+#ifdef ENABLE_SKELETON_SUPPORT
 template< class MeshT >
 void PropertyVisPlugin::visualizeSkinWeights( MeshT*   _mesh, int _boneId, const PropertyNameListModel::PROP_INFO &currentProp) {
 
@@ -847,6 +848,7 @@ void PropertyVisPlugin::visualizeSkinWeights( MeshT*   _mesh, int _boneId, const
 
   PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 }
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -1747,7 +1749,8 @@ void PropertyVisPlugin::getPropertyValue( MeshT* _mesh , int _id, unsigned int _
       }
 
     }
-    
+   
+#ifdef ENABLE_SKELETON_SUPPORT 
     //==================================================================
     //Skin Weights
     //==================================================================
@@ -1781,6 +1784,7 @@ void PropertyVisPlugin::getPropertyValue( MeshT* _mesh , int _id, unsigned int _
         }
 
     }
+#endif
   }
 
 }
