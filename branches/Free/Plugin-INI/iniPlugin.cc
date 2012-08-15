@@ -46,7 +46,6 @@
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/Light/Light.hh>
-#include <ObjectTypes/Sphere/Sphere.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
