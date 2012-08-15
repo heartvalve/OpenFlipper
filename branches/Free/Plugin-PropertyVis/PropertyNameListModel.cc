@@ -52,7 +52,6 @@
 
 #include <OpenMesh/Core/Utils/Property.hh>
 #include <ACG/Math/VectorT.hh>
-#include <ObjectTypes/Skeleton/BaseSkin.hh>
 
 #include <map>
 #include <vector>
@@ -69,8 +68,12 @@ const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec
         PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3d>), "Vec3d");
 const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_Vec3f =
         PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f");
-const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_SkinWeights =
+
+#ifdef ENABLE_SKELETON_SUPPORT
+  #include <ObjectTypes/Skeleton/BaseSkin.hh>
+  const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::proptype_SkinWeights =
         PropertyNameListModel::TypeInfoWrapper(typeid(OpenMesh::PropertyT<BaseSkin::SkinWeights>), "SkinWeights");
+#endif
 
 /*
  * I'd love to do this with boost::assign but I'm not allowed to. :-(
@@ -83,7 +86,9 @@ const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::prop_types[]
                                                               proptype_double,
                                                               proptype_Vec3d,
                                                               proptype_Vec3f,
+#ifdef ENABLE_SKELETON_SUPPORT
                                                               proptype_SkinWeights,
+#endif
 };
 
 const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 7);

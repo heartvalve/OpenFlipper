@@ -74,7 +74,10 @@
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/Skeleton/BaseSkin.hh>
+
+#ifdef ENABLE_SKELETON_SUPPORT
+  #include <ObjectTypes/Skeleton/BaseSkin.hh>
+#endif
 
 #include "PropertyVisToolbar.hh"
 #include "PropertyNameListModel.hh"
