@@ -246,13 +246,6 @@ public:
   /// clear buffers viewport rectangle
   void clearBuffers ();
 
-
-  /// use this instead of glPushAttrib
-  static void pushAttrib();
-  
-  /// use this instead of glPushAttrib
-  static void popAttrib();
-
   //===========================================================================
   /** @name glEnable / glDisable functionality
   * @{ */
