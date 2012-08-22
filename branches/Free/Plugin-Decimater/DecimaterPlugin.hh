@@ -65,6 +65,8 @@
 #include "DecimaterToolbarWidget.hh"
 
 #include <OpenMesh/Tools/Decimater/DecimaterT.hh>
+#include <OpenMesh/Tools/Decimater/McDecimaterT.hh>
+#include <OpenMesh/Tools/Decimater/MixedDecimaterT.hh>
 #include <OpenMesh/Tools/Decimater/ModQuadricT.hh>
 #include <OpenMesh/Tools/Decimater/ModNormalFlippingT.hh>
 #include <OpenMesh/Tools/Decimater/ModHausdorffT.hh>
@@ -144,7 +146,10 @@ private :
   DecimaterToolbarWidget* tool_;
   QIcon* toolIcon_;
   
-  typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
+  typedef OpenMesh::Decimater::BaseDecimaterT< TriMesh >              BaseDecimaterType;
+  typedef OpenMesh::Decimater::DecimaterT< TriMesh >                  DecimaterType;
+  typedef OpenMesh::Decimater::McDecimaterT< TriMesh >                McDecimaterType;
+  typedef OpenMesh::Decimater::MixedDecimaterT< TriMesh >             MixedDecimaterType;
   
   typedef OpenMesh::Decimater::ModAspectRatioT< TriMesh >::Handle     ModAspectRatioH;
   typedef OpenMesh::Decimater::ModEdgeLengthT< TriMesh >::Handle      ModEdgeLengthH;
@@ -176,6 +181,9 @@ private slots:
   /// update number of vertices information
   void slotUpdateNumVertices();
   void slotUpdateNumTriangles();
+
+  void slotMixedCounterValueChanged(double);
+  void slotMixedSliderValueChanged(int);
 
 //===========================================================================
 /** @name Scripting Functions
