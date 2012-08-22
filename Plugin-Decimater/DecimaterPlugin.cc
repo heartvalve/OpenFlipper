@@ -51,6 +51,7 @@
 //== INCLUDES =================================================================
 
 #include <QtGui>
+#include <memory>
 
 #include "DecimaterPlugin.hh"
 
@@ -58,6 +59,7 @@
 #include <ACG/GL/GLState.hh>
 #include <QStringList>
 #include <ACG/Scenegraph/ManipulatorNode.hh>
+#include <ACG/Utils/SmartPointer.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -97,6 +99,8 @@ void DecimaterPlugin::initializePlugin()
   // Force update if the Toolbox gets visible
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumTriangles() ) );
+  connect(tool_->mixedFactorCounter, SIGNAL(valueChanged(double)), this, SLOT(slotMixedCounterValueChanged(double)) );
+  connect(tool_->mixedFactorSlider, SIGNAL(valueChanged(int)), this, SLOT(slotMixedSliderValueChanged(int)) );
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
   emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
@@ -110,6 +114,8 @@ void DecimaterPlugin::pluginsInitialized() {
   emit setSlotDescription("decimate(int,QVariantMap)",tr("Decimate a given object"),
                           QString(tr("objectId,constraints")).split(","),
                           QString(tr("ID of an object; Object that can has one or more constraint properties (decimation_order,distance,edge_length,normal_deviation,roundness,aspect_ratio,independent_sets,vertices,triangles)")).split(";"));
+
+  tool_->decTypeOps->setVisible(false);
 }
 
 
@@ -125,6 +131,16 @@ void DecimaterPlugin::updateRoundness(int _value)
   tool_->cbRoundness->setChecked (true);
 }
 
+void DecimaterPlugin::slotMixedCounterValueChanged(double _value)
+{
+  tool_->mixedFactorLabel->setText(QString::number(100-_value)+QString("%"));
+  tool_->mixedFactorSlider->setValue(100-_value);
+}
+void DecimaterPlugin::slotMixedSliderValueChanged(int _value)
+{
+  tool_->mixedFactorLabel->setText(QString::number(_value)+QString("%"));
+  tool_->mixedFactorCounter->setValue(100.0-_value);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -199,113 +215,155 @@ void DecimaterPlugin::slot_decimate()
     ModRoundnessH       hModRoundness;
 
     // Create decimater
-    DecimaterType decimater_object( *mesh );
+
+    ptr::shared_ptr<BaseDecimaterType> decimater_object;
+    if (tool_->rbUseDecimater->isChecked())
+      decimater_object = ptr::shared_ptr<DecimaterType>(new DecimaterType(*mesh));
+    else if(tool_->rbUseMC->isChecked())
+      decimater_object = ptr::shared_ptr<McDecimaterType>(new McDecimaterType(*mesh));
+    else if(tool_->rbUseMixed->isChecked())
+      decimater_object = ptr::shared_ptr<MixedDecimaterType>(new MixedDecimaterType(*mesh));
+
 
     // Remove old constraints
     if(decimater->distance()) {
         decimater->removeDistanceConstraint();
-        decimater_object.remove(hModHausdorff);
+        decimater_object->remove(hModHausdorff);
     }
     if(decimater->normalDeviation()) {
         decimater->removeNormalDeviationConstraint();
-        decimater_object.remove(hModNormalDeviation);
+        decimater_object->remove(hModNormalDeviation);
     }
     if(decimater->normalFlipping()) {
         decimater->removeNormalFlippingConstraint();
-        decimater_object.remove(hModNormalFlipping);
+        decimater_object->remove(hModNormalFlipping);
     }
     if(decimater->roundness()) {
         decimater->removeRoundnessConstraint();
-        decimater_object.remove(hModRoundness);
+        decimater_object->remove(hModRoundness);
     }
     if(decimater->aspectRatio()) {
       decimater->removeAspectRatioConstraint();
-      decimater_object.remove(hModAspectRatio);
+      decimater_object->remove(hModAspectRatio);
     }
     if(decimater->edgeLength()) {
       decimater->removeEdgeLengthConstraint();
-      decimater_object.remove(hModEdgeLength);
+      decimater_object->remove(hModEdgeLength);
     }
     if(decimater->independentSets()) {
       decimater->removeIndependentSetsConstraint();
-      decimater_object.remove(hModIndependent);
+      decimater_object->remove(hModIndependent);
     }
 
     // set priority module: quadric, normal deviation or edge length
     if (tool_->rbByDistance->isChecked()) {
       decimater->setDecimationOrder(DecimaterInfo::DISTANCE);
-      decimater_object.add( hModQuadric );
-      decimater_object.module( hModQuadric ).unset_max_err();
+      decimater_object->add( hModQuadric );
+      decimater_object->module( hModQuadric ).unset_max_err();
     } else if (tool_->rbByNormalDeviation->isChecked()) {
       decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
-      decimater_object.add(hModNormalDeviation);
-      decimater_object.module(hModNormalDeviation).set_binary(false);
+      std::cout << "add module" << std::endl;
+      decimater_object->add(hModNormalDeviation);
+      std::cout << "get module" << std::endl;
+      decimater_object->module(hModNormalDeviation).set_binary(false);
+      std::cout << "getted module" << std::endl;
     } else if (tool_->rbByEdgeLength->isChecked()) {
       decimater->setDecimationOrder(DecimaterInfo::EDGELENGTH);
-      decimater_object.add(hModEdgeLength);
-      decimater_object.module(hModEdgeLength).set_binary(false);
+      decimater_object->add(hModEdgeLength);
+      decimater_object->module(hModEdgeLength).set_binary(false);
     }
 
     // and set new constraints
     if ( tool_->cbDistance->isChecked() ) {
-      if (  decimater_object.add( hModHausdorff ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( hModHausdorff ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setDistanceConstraint( tool_->distance->value() );
-          decimater_object.module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
+          decimater_object->module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
       }
     }
 
     if ( tool_->cbNormalDev->isChecked() ) {
-      if (  decimater_object.add( hModNormalDeviation ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( hModNormalDeviation ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setNormalDeviationConstraint( tool_->normalDeviation->value() );
-          decimater_object.module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
+          decimater_object->module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
       }
     } else {
-      if ( decimater_object.add( hModNormalFlipping ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( hModNormalFlipping ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setNormalFlippingConstraint();
-          // decimater_object.module( hModNormalFlipping ).set_max_normal_deviation( decimater->normalDeviationValue() ); ?
       }
     }
 
     if ( tool_->cbRoundness->isChecked() ) {
-      if (  decimater_object.add( hModRoundness ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( hModRoundness ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setRoundnessConstraint( tool_->roundness->value() );
-          decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+          decimater_object->module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
       }
     }
 
     if ( tool_->cbAspectRatio->isChecked() ) {
-      if ( decimater_object.add( hModAspectRatio ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( hModAspectRatio ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setAspectRatioConstraint( tool_->aspectRatio->value() );
-          decimater_object.module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
+          decimater_object->module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
       }
     }
 
     if ( tool_->cbEdgeLength->isChecked() ) {
-      if ( decimater_object.add( hModEdgeLength ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( hModEdgeLength ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setEdgeLengthConstraint( tool_->edgeLength->value() );
-          decimater_object.module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
+          decimater_object->module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
       }
     }
 
     if ( tool_->cbIndependentSets->isChecked() ) {
-      if ( decimater_object.add( hModIndependent ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( hModIndependent ) || tool_->rbConstraintsOnly->isChecked() ) {
           decimater->setIndependentSetsConstraint();
       }
     }
 
-    // Initialize the decimater
-    if( ! decimater_object.initialize() ){
-      emit log(LOGWARN, tr("Decimater could not be initialized"));
-      continue;
-    }
 
-    //decimate
-    if ( tool_->rbVertices->isChecked() )
-        decimater_object.decimate_to(tool_->verticesCount->value());
-    else if (tool_->rbTriangles->isChecked() )
-        decimater_object.decimate_to_faces(0, tool_->trianglesCount->value());
-    else // constraints only
-        decimater_object.decimate_to_faces(0, 1);
+    if (tool_->rbUseDecimater)
+    {
+      // Initialize the decimater
+      if( ! decimater_object->initialize() ){
+        emit log(LOGWARN, tr("Decimater could not be initialized"));
+        continue;
+      }
+
+      //decimate
+      if(tool_->rbUseDecimater->isChecked())
+      {
+        DecimaterType* dec = dynamic_cast<DecimaterType*>(decimater_object.get());
+        if ( tool_->rbVertices->isChecked() )
+          dec->decimate_to(tool_->verticesCount->value());
+        else if (tool_->rbTriangles->isChecked() )
+          dec->decimate_to_faces(0, tool_->trianglesCount->value());
+        else // constraints only
+          dec->decimate_to_faces(0, 1);
+      }
+      else if (tool_->rbUseMC)
+      {
+        McDecimaterType* dec = dynamic_cast<McDecimaterType*>(decimater_object.get());
+        dec->set_samples(tool_->randomSamplesCounter->value());
+        if ( tool_->rbVertices->isChecked() )
+          dec->decimate_to(tool_->verticesCount->value());
+        else if (tool_->rbTriangles->isChecked() )
+          dec->decimate_to_faces(0, tool_->trianglesCount->value());
+        else // constraints only
+          dec->decimate_to_faces(0, 1);
+      }
+      else if (tool_->rbUseMixed)
+      {
+        MixedDecimaterType* dec = dynamic_cast<MixedDecimaterType*>(decimater_object.get());
+        float mc_factor = 1.0 - (tool_->mixedFactorCounter->value()*0.01);
+        dec->set_samples(tool_->randomSamplesCounter->value());
+
+        if ( tool_->rbVertices->isChecked() )
+          dec->decimate_to(tool_->verticesCount->value(),mc_factor);
+        else if (tool_->rbTriangles->isChecked() )
+          dec->decimate_to_faces(0, tool_->trianglesCount->value(),mc_factor);
+        else // constraints only
+        dec->decimate_to_faces(0, 1,mc_factor);
+      }
+    }
 
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();

@@ -7,13 +7,161 @@
     <x>0</x>
     <y>0</y>
     <width>378</width>
-    <height>580</height>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Decimater</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QRadioButton" name="rbUseDecimater">
+        <property name="toolTip">
+         <string>More accurate but slower</string>
+        </property>
+        <property name="text">
+         <string>Incremental</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbUseMC">
+        <property name="toolTip">
+         <string>Less accurate but faster</string>
+        </property>
+        <property name="text">
+         <string>Multiple Choice</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbUseMixed">
+        <property name="toolTip">
+         <string>Uses Multiple Choise Decimater and Incremental Decimater to get good and fast results.</string>
+        </property>
+        <property name="text">
+         <string>Mixed</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="decTypeOps" native="true">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="mcSamplesLabel">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Random Samples</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QSpinBox" name="randomSamplesCounter">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>50</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QWidget" name="widget" native="true">
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="3">
+             <widget class="QLabel" name="mixedFactorLabel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>80%</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QDoubleSpinBox" name="mixedFactorCounter">
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>20.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="mixedMCSliderLabel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Multiple Choice</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="mixedSliderLabel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Incremental</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="5">
+             <widget class="QSlider" name="mixedFactorSlider">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="minimum">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>80</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -435,66 +583,18 @@ p, li { white-space: pre-wrap; }
  <resources/>
  <connections>
   <connection>
-   <sender>normalDeviationSlider</sender>
+   <sender>verticesCount</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>normalDeviation</receiver>
+   <receiver>verticesCountSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>235</x>
-     <y>211</y>
+     <x>359</x>
+     <y>639</y>
     </hint>
     <hint type="destinationlabel">
-     <x>344</x>
-     <y>212</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normalDeviation</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>normalDeviationSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>344</x>
-     <y>212</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>235</x>
-     <y>211</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>trianglesCountSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>trianglesCount</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>201</x>
-     <y>365</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>295</x>
-     <y>367</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>trianglesCount</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>trianglesCountSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>291</x>
-     <y>362</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>365</y>
+     <x>276</x>
+     <y>637</y>
     </hint>
    </hints>
   </connection>
@@ -505,28 +605,156 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>390</y>
+     <x>276</x>
+     <y>637</y>
     </hint>
     <hint type="destinationlabel">
-     <x>312</x>
-     <y>399</y>
+     <x>359</x>
+     <y>639</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>verticesCount</sender>
+   <sender>trianglesCount</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>verticesCountSlider</receiver>
+   <receiver>trianglesCountSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>317</x>
-     <y>388</y>
+     <x>359</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>228</x>
-     <y>398</y>
+     <x>276</x>
+     <y>607</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>trianglesCountSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>trianglesCount</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>276</x>
+     <y>607</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normalDeviation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>normalDeviationSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normalDeviationSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>normalDeviation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbUseMC</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>decTypeOps</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>117</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbUseMixed</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>decTypeOps</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbUseMixed</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>168</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbUseMC</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>widget</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbUseDecimater</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>decTypeOps</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>225</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
