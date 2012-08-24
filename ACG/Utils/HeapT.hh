@@ -151,7 +151,7 @@ public:
   { return interface_.get_heap_position(_h) != -1; }
 
   /// insert the entry _h
-  void insert(HeapEntry _h)  { push_back(_h); upheap(size()-1); }
+  void insert(HeapEntry _h)  { this->push_back(_h); upheap(size()-1); }
 
   /// get the first entry
   HeapEntry front() { assert(!empty()); return entry(0); }
