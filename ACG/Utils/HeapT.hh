@@ -164,10 +164,10 @@ public:
     if (size() > 1)
     {
       entry(0, entry(size()-1));
-      resize(size()-1);
+      this->resize(size()-1);
       downheap(0);
     }
-    else resize(size()-1);
+    else this->resize(size()-1);
   }
 
   /// remove an entry
