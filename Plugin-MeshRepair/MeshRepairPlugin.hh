@@ -214,10 +214,22 @@ private:
     */
     void selectionEdgeLength(int _objectId, double _length, bool _larger);
 
+
+    template<typename MeshT>
+    void flipOrientationSelected(MeshT *_mesh);
+
+    template<typename MeshT>
+    inline unsigned n_verticesPerFace();
+
 public slots:
     QString version() {
         return QString("1.2");
     };
 };
+
+#if defined(INCLUDE_TEMPLATES) && !defined(MESHREPAIRPLUGINT_CC)
+#define MESHREPAIRPLUGIN_TEMPLATES
+#include "MeshRepairPluginT.cc"
+#endif
 
 #endif //MESHREPAIRPLUGIN_HH
