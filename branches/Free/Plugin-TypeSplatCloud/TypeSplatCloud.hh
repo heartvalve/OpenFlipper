@@ -62,22 +62,26 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
 #include <ObjectTypes/SplatCloud/SplatCloud.hh>
+#include <ObjectTypes/Camera/Camera.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
 
 //== CLASS DEFINITION ============================================
 
 
-class TypeSplatCloudPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface
+class TypeSplatCloudPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES( BaseInterface     )
   Q_INTERFACES( LoadSaveInterface )
   Q_INTERFACES( LoggingInterface  )
   Q_INTERFACES( TypeInterface     )
+  Q_INTERFACES( RPCInterface      )
 
 signals:
 
@@ -85,6 +89,7 @@ signals:
   void emptyObjectAdded( int _objectId );
 
   //-- LoadSave Interface --
+  void addEmptyObject( DataType _type, int &_objectId );
   void deleteObject( int _objectId );
 
   //-- Logging Interface --
@@ -107,6 +112,7 @@ private slots:
   void noguiSupported() { }
   void slotViewChanged();
   void slotObjectPropertiesChanged( int _objectId );
+  void slotObjectUpdated          ( int _objectId, const UpdateType &_updateType );
 
   //-- LoadSave Interface --
   void objectDeleted( int _objectId );
@@ -123,6 +129,34 @@ public:
 
   // -- Type Interface --
   bool registerType();
+
+private:
+
+  // ungroup group-object
+  void ungroupGroupObject( GroupObject *_groupObject );
+
+  // get group-objects
+  GroupObject *getCamerasGroupObject ( const SplatCloud_CameraManager  &_cameraManager  );
+  GroupObject *getClustersGroupObject( const SplatCloud_ClusterManager &_clusterManager );
+
+  // ungroup objects
+  void ungroupCameraObjects ( const SplatCloud_CameraManager  &_cameraManager  );
+  void ungroupClusterObjects( const SplatCloud_ClusterManager &_clusterManager );
+
+  // group objects
+  void groupCameraObjects ( const SplatCloud_CameraManager  &_cameraManager  );
+  void groupClusterObjects( const SplatCloud_ClusterManager &_clusterManager );
+
+  // add objects
+  void addCameraObjects  ( SplatCloudObject *_splatCloudObject );
+  void addClusterObjects ( SplatCloudObject *_splatCloudObject );
+
+  // free objects
+  void freeCameraObjects ( SplatCloudObject *_splatCloudObject );
+  void freeClusterObjects( SplatCloudObject *_splatCloudObject );
+
+  // erase camera
+  void eraseCamera( CameraObject *_cameraObject );
 };
 
 
