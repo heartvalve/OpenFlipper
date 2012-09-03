@@ -40,6 +40,9 @@
 *                                                                            *
 \*===========================================================================*/
 
+#ifndef ANIMATIONHANDLE_HH
+#define ANIMATIONHANDLE_HH
+
 /**
  * @brief A handle used to refer to an animation or to a specific frame in an animation
  */
@@ -76,3 +79,5 @@ private:
   /// The frame number
   unsigned int iFrame;
 };
+
+#endif // ANIMATIONHANDLE_HH
