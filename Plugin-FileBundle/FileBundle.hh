@@ -66,7 +66,6 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -78,7 +77,7 @@
 //== CLASS DEFINITION ============================================
 
 
-class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, RPCInterface
+class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface
 {
   Q_OBJECT
   Q_INTERFACES( FileInterface     )
@@ -86,7 +85,6 @@ class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
   Q_INTERFACES( LoggingInterface  )
   Q_INTERFACES( BaseInterface     )
   Q_INTERFACES( ScriptInterface   )
-  Q_INTERFACES( RPCInterface      )
 
 signals:
 
@@ -101,6 +99,15 @@ signals:
   //-- Logging Interface --
   void log(                QString _message );
   void log( Logtype _type, QString _message );
+
+public slots:
+
+  // -- Base Interface --
+  QString version() { return QString( "1.0" ); }
+
+  // -- File Interface --
+  int  loadObject(                QString _filename );
+  bool saveObject( int _objectId, QString _filename );
 
 private slots:
 
@@ -122,19 +129,10 @@ public:
   QWidget *saveOptionsWidget( QString /*_currentFilter*/ );
   QWidget *loadOptionsWidget( QString /*_currentFilter*/ );
 
-public slots:
-
-  // -- Base Interface --
-  QString version() { return QString( "1.0" ); }
-
-  // -- File Interface --
-  int  loadObject(                QString _filename );
-  bool saveObject( int _objectId, QString _filename );
-
 private:
 
   // add/remove multiple objects
-  bool addEmptyObjects( unsigned int _num, const DataType &_datatype, std::vector<int> &_objectIDs );
+  bool addEmptyObjects( unsigned int _num, const DataType &_dataType, std::vector<int> &_objectIDs );
   void deleteObjects( std::vector<int> &_objectIDs );
 
   // read image list file from disc
@@ -147,9 +145,6 @@ private:
 
   // write bundle file from scenegraph node to disc
   bool writeBundleFile( const char *_filename, const SplatCloud &_splatCloud ) /*const*/;
-
-  // add cameras to object
-  int addCameras( const SplatCloud_Cameras &_cameras, int _splatCloudObjectId );
 };
 
 

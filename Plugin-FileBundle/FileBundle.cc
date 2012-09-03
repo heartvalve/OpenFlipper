@@ -142,7 +142,7 @@ static void splitFilename( const std::string &_str, std::string &_path, std::str
 //----------------------------------------------------------------
 
 
-bool FileBundlePlugin::addEmptyObjects( unsigned int _num, const DataType &_datatype, std::vector<int> &_objectIDs )
+bool FileBundlePlugin::addEmptyObjects( unsigned int _num, const DataType &_dataType, std::vector<int> &_objectIDs )
 {
   deleteObjects( _objectIDs );
   _objectIDs.reserve( _num );
@@ -153,7 +153,7 @@ bool FileBundlePlugin::addEmptyObjects( unsigned int _num, const DataType &_data
   for( i=0; i<_num; ++i )
   {
     int objectId = -1;
-    emit addEmptyObject( _datatype, objectId );
+    emit addEmptyObject( _dataType, objectId );
 
     if( objectId == -1 )
       break;
@@ -253,6 +253,9 @@ void FileBundlePlugin::readCameras( FILE *_file, const std::vector<int> &_camera
     fscanf( _file, "%32s", str ); proj.t_[2]    = atof( str );
 
     camera.imagePath_ = "";
+
+    camera.imageWidth_  = 0;
+    camera.imageHeight_ = 0;
   }
 }
 
@@ -353,7 +356,6 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
     SplatCloud_CameraManager &cameraManager = _splatCloud.requestCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE )->data();
 
     cameraManager.cameras_.resize( numCameras );
-
     readCameras( file, cameraObjectIDs, cameraManager.cameras_ );
 
     // set image paths
@@ -384,11 +386,9 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
   if( numPoints != 0 )
   {
     _splatCloud.resizeSplats( numPoints );
-
     _splatCloud.requestPositions();
     _splatCloud.requestColors();
     _splatCloud.requestViewlists();
-
     readPoints( file, cameraObjectIDs, _splatCloud );
 
     _splatCloud.requestCloudProperty( SPLATCLOUD_GENERALMANAGER_HANDLE )->data().flags_.set( SPLATCLOUD_SPLAT_VIEWLIST_HAS_FEATURE_INDICES_FLAG, true  );
@@ -423,101 +423,6 @@ bool FileBundlePlugin::writeBundleFile( const char *_filename, const SplatCloud 
 //----------------------------------------------------------------
 
 
-int FileBundlePlugin::addCameras( const SplatCloud_Cameras &_cameras, int _splatCloudObjectId )
-{
-  // create a list of ids
-  IdList objectIDs;
-  objectIDs.reserve( _cameras.size() );
-
-  // disable update of scenegraph
-  OpenFlipper::Options::blockSceneGraphUpdates();
-
-  // add cameras to list of ids
-  SplatCloud_Cameras::const_iterator cameraIter;
-  for( cameraIter = _cameras.begin(); cameraIter != _cameras.end(); ++cameraIter )
-  {
-    const SplatCloud_Camera &camera = *cameraIter;
-
-    // set up matrix
-    ACG::GLMatrixd matrix;
-    {
-      const SplatCloud_Projection &proj = camera.projection_;
-      matrix(0,0) = proj.r_[0][0]; matrix(0,1) = proj.r_[1][0]; matrix(0,2) = proj.r_[2][0];
-      matrix(1,0) = proj.r_[0][1]; matrix(1,1) = proj.r_[1][1]; matrix(1,2) = proj.r_[2][1];
-      matrix(2,0) = proj.r_[0][2]; matrix(2,1) = proj.r_[1][2]; matrix(2,2) = proj.r_[2][2];
-      matrix(0,3) = -(proj.r_[0][0]*proj.t_[0] + proj.r_[1][0]*proj.t_[1] + proj.r_[2][0]*proj.t_[2]);
-      matrix(1,3) = -(proj.r_[0][1]*proj.t_[0] + proj.r_[1][1]*proj.t_[1] + proj.r_[2][1]*proj.t_[2]);
-      matrix(2,3) = -(proj.r_[0][2]*proj.t_[0] + proj.r_[1][2]*proj.t_[1] + proj.r_[2][2]*proj.t_[2]);
-      matrix(3,0) = 0.0; matrix(3,1) = 0.0; matrix(3,2) = 0.0; matrix(3,3) = 1.0;
-    }
-
-    // get camera-object id
-    int cameraObjectId = camera.objectId_;
-    if( cameraObjectId != -1 )
-    {
-      // add id of camera-object to list of ids
-      objectIDs.push_back( cameraObjectId );
-
-      // get camera-object by id
-      CameraObject *cameraObject = 0;
-      if( PluginFunctions::getObject( cameraObjectId, cameraObject ) )
-      {
-        // remember splatcloud-object id
-        cameraObject->setObjectData( "SplatCloudObjectId", new IntPerObjectData( _splatCloudObjectId ) );
-
-        // set name of camera-object
-        cameraObject->setName( camera.imagePath_.c_str() );
-
-        // get camera
-        CameraNode *cameraNode = cameraObject->cameraNode();
-        if( cameraNode != 0 )
-        {
-
-          // set camera parameters
-          cameraNode->setModelView( matrix );
-          cameraNode->setSize( 1, 1 ); // FIXME
-
-          // emit signal that the camera-object has to be updated
-          emit updatedObject( cameraObjectId, UPDATE_ALL );
-
-          // everything is okay, so continue with next camera
-          continue;
-        }
-      }
-    }
-
-    // something went wrong, so break
-    break;
-  }
-
-  // enable update of scenegraph
-  OpenFlipper::Options::unblockSceneGraphUpdates();
-
-  // check if everything is okay so far
-  if( cameraIter == _cameras.end() )
-  {
-    // group objects
-    int groupObjectId = RPC::callFunctionValue<int>( "datacontrol", "groupObjects", objectIDs, QString( "Cameras" ) );
-    if( groupObjectId != -1 )
-    {
-      // everything is okay, so return id of group-object
-      return groupObjectId;
-    }
-  }
-
-  // something went wrong, so delete objects
-  unsigned int i, num = objectIDs.size();
-  for( i=0; i<num; ++i )
-    emit deleteObject( objectIDs[ i ] );
-
-  // return failure
-  return -1;
-}
-
-
-//----------------------------------------------------------------
-
-
 int FileBundlePlugin::loadObject( QString _filename )
 {
   // add a new, empty splatcloud-object
@@ -525,10 +430,6 @@ int FileBundlePlugin::loadObject( QString _filename )
   emit addEmptyObject( DATA_SPLATCLOUD, splatCloudObjectId );
   if( splatCloudObjectId != -1 )
   {
-    // create list of ids and add id of splatcloud-object
-    IdList objectIDs;
-    objectIDs.push_back( splatCloudObjectId );
-
     // get splatcloud-object by id
     SplatCloudObject *splatCloudObject = 0;
     if( PluginFunctions::getObject( splatCloudObjectId, splatCloudObject ) )
@@ -576,31 +477,11 @@ int FileBundlePlugin::loadObject( QString _filename )
             }
           }
 
-          // add cameras-object
-          const SplatCloud_CameraManagerProperty *cameraManagerProp = splatCloud->getCloudProperty( SPLATCLOUD_CAMERAMANAGER_HANDLE );
-          int camerasObjectId = (cameraManagerProp != 0) ? addCameras( cameraManagerProp->data().cameras_, splatCloudObjectId ) : -1;
-          if( (cameraManagerProp == 0) || (camerasObjectId != -1) )
-          {
-            // add id of cameras-object to list of ids
-            if( camerasObjectId != -1 )
-              objectIDs.push_back( camerasObjectId );
-
-            // group objects
-            int groupObjectId = RPC::callFunctionValue<int>( "datacontrol", "groupObjects", objectIDs );
-            if( groupObjectId != -1 )
-            {
-              // everything is okay, so return id of group-object
-              return groupObjectId;
-            }
-          }
+          // return success
+          return splatCloudObjectId;
         }
       }
     }
-
-    // something went wrong, so delete objects
-    unsigned int i, num = objectIDs.size();
-    for( i=0; i<num; ++i )
-      emit deleteObject( objectIDs[ i ] );
   }
 
   // return failure
