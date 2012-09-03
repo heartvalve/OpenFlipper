@@ -17,6 +17,7 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                            PATHS /usr/include
                                  /usr/include
                                  /usr/local/include
+                                 ~/sw/gmm-4.2/include
                                  ~/sw/gmm-4.1/include
 				 "c:\\libs\\gmm-4.1\\include"
                                  "c:\\libs\\gmm-3.0\\include"
