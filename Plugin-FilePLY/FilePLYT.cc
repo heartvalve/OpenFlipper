@@ -926,7 +926,7 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
         // Write vertex color
         if(vColors) {
             c = _mesh->color(v_it);
-            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3i>(c);
+            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
         }
         
         // Write vertex texcoord
@@ -961,7 +961,7 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
         // Write face color
         if(fColors) {
             c = _mesh->color(f_it);
-            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3i>(c);
+            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
         }
         
         ofs << "\n";
