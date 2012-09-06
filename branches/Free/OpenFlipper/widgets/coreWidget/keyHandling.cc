@@ -555,14 +555,29 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
   if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
     if ( _e->type() == QEvent::KeyPress ) {
-      setActionMode( Viewer::ExamineMode );
+
+      if ( lastActionMode() == actionMode()) {
+        if (actionMode() == Viewer::PickingMode)
+          setActionMode( Viewer::ExamineMode );
+        else
+          setActionMode( Viewer::PickingMode );
+      } else
+        setActionMode( lastActionMode() );
+
+
     }
   }
 
   if ( ( _e->key() == Qt::Key_Alt ) && ! OpenFlipper::Options::isLinux() ) {
     if ( _e->type() == QEvent::KeyPress ) {
       //emit log(LOGERR,"Switch to examine mode");
-      setActionMode( Viewer::ExamineMode );
+      if ( lastActionMode() == actionMode()) {
+        if (actionMode() == Viewer::PickingMode)
+          setActionMode( Viewer::ExamineMode );
+        else
+          setActionMode( Viewer::PickingMode );
+      } else
+        setActionMode( lastActionMode() );
     }
   }
 
