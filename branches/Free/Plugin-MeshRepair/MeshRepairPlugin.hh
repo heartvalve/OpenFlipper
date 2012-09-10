@@ -162,6 +162,9 @@ private slots:
     /// Button slot
     void slotDetectFlatValence3Vertices();
 
+    /// Button slot
+    void slotSnapBoundary();
+
     //Scripting functions:
 public slots:
 
@@ -204,6 +207,8 @@ public slots:
     /// Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
     void detectFlatValence3Vertices(int _objectId, double _angle);
 
+    void snapBoundary(int _objectId, double _eps);
+
 private:
     /** \brief select edges based on length
     *
@@ -215,11 +220,33 @@ private:
     void selectionEdgeLength(int _objectId, double _length, bool _larger);
 
 
+    /** \brief flip orientation of selected faces.
+     *
+     * flips the orientation of selected faces.
+     * for correct topology, some vertices are added
+     * @param _mesh target mesh
+     *
+     */
     template<typename MeshT>
     void flipOrientationSelected(MeshT *_mesh);
 
     template<typename MeshT>
     inline unsigned n_verticesPerFace();
+
+    /** \brief snaps boundary vertices
+     *
+     * snaps selected boundary vertices where the vertices
+     * distance is not greater than a given distance
+     * @param _mesh target mesh
+     * @param _eps max Distance between 2 boundary vertices
+     *
+     */
+    template<typename MeshT>
+    void snapBoundary(MeshT *_mesh, double _eps);
+
+    template<typename MeshT>
+    static bool sort_less_pair_second(const std::pair<typename MeshT::VertexHandle,double> &lhs,const std::pair<typename MeshT::VertexHandle,double> &rhs);
+
 
 public slots:
     QString version() {

@@ -75,6 +75,7 @@ initializePlugin()
   // Vertex Selection/Removal
   connect(tool_->valenceThreeButton, SIGNAL(clicked()), this, SLOT(slotDetectFlatValence3Vertices()) );
   connect(tool_->repairRemoveVButton, SIGNAL(clicked()), this, SLOT(slotRemoveSelectedVal3Vertices()) );
+  connect(tool_->snapBoundaryButton, SIGNAL(clicked()), this, SLOT(slotSnapBoundary()) );
 
   // Edge Selection/Repairing
   connect(tool_->detectEShorterButton, SIGNAL(clicked()), this, SLOT(slotDetectEdgesShorter()) );
@@ -244,6 +245,16 @@ void MeshRepairPlugin::slotDetectFlatValence3Vertices() {
   emit updateView();
 }
 
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::slotSnapBoundary()
+{
+  double eps = tool_->snapBoundarySpinBox->value();
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+      snapBoundary(o_it->id(), eps);
+  emit updateView();
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -303,6 +314,9 @@ void MeshRepairPlugin::pluginsInitialized() {
   emit setSlotDescription("detectSkinnyTriangleByAngle(int,double,bool)",tr("Select or remove skinny triangles. Whether a triangle is skinny is determined by a minimum angle threshold."),
                           QString(tr("objectId,angle,remove")).split(","),
                           QString(tr("ID of an object;Minimum angle threshold")).split(";"));
+  emit setSlotDescription("snapBoundary(int,double)",tr("Snaps selected and boundary vertices if the distance is less than the given max. distance."),
+                          QString(tr("objectId,epsilon")).split(","),
+                          QString(tr("ID of an object;Max Distance")).split(";"));
 
 }
 
@@ -311,6 +325,28 @@ void MeshRepairPlugin::pluginsInitialized() {
 //===========================================================================
 // Scriptable functions
 //===========================================================================
+
+void MeshRepairPlugin::snapBoundary(int _objectId, double _eps)
+{
+  TriMesh* triMesh = 0;
+  PolyMesh* polyMesh = 0;
+
+  PluginFunctions::getMesh(_objectId, triMesh);
+  PluginFunctions::getMesh(_objectId, polyMesh);
+  if (triMesh)
+    snapBoundary(triMesh,_eps);
+  else if (polyMesh)
+    snapBoundary(polyMesh,_eps);
+  else
+  {
+    emit log(LOGERR, tr("Unsupported Object Type."));
+    return;
+  }
+
+  emit updatedObject(_objectId, UPDATE_ALL);
+  emit createBackup(_objectId, "snapBoundary", UPDATE_ALL);
+  emit scriptInfo("snapBoundary(" + QString::number(_objectId) + ", " + QString::number(_eps) +")");
+}
 
 void MeshRepairPlugin::removeSelectedVal3Vertices(int _objectId) {
 
