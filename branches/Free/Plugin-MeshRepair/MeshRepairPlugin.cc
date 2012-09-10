@@ -88,6 +88,7 @@ initializePlugin()
   //Face operations
   connect(tool_->triangleAspectButton,SIGNAL(clicked()),this,SLOT(slotDetectTriangleAspect()));
   connect(tool_->flipOrientation,SIGNAL(clicked()),this,SLOT(slotFlipOrientation()));
+  connect(tool_->fixMeshButton,SIGNAL(clicked()),this,SLOT(slotFixMesh()));
 
   //Normal operations
   connect(tool_->computeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateNormals()));
@@ -255,6 +256,15 @@ void MeshRepairPlugin::slotSnapBoundary()
   emit updateView();
 }
 
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::slotFixMesh()
+{
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+    fixTopology(o_it->id());
+  emit updateView();
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -346,6 +356,29 @@ void MeshRepairPlugin::snapBoundary(int _objectId, double _eps)
   emit updatedObject(_objectId, UPDATE_ALL);
   emit createBackup(_objectId, "snapBoundary", UPDATE_ALL);
   emit scriptInfo("snapBoundary(" + QString::number(_objectId) + ", " + QString::number(_eps) +")");
+}
+
+
+void MeshRepairPlugin::fixTopology(int _objectId)
+{
+  TriMesh* triMesh = 0;
+  PolyMesh* polyMesh = 0;
+
+  PluginFunctions::getMesh(_objectId, triMesh);
+  PluginFunctions::getMesh(_objectId, polyMesh);
+  if (triMesh)
+    fixTopology(triMesh);
+  else if (polyMesh)
+    fixTopology(polyMesh);
+  else
+  {
+    emit log(LOGERR, tr("Unsupported Object Type."));
+    return;
+  }
+
+  emit updatedObject(_objectId, UPDATE_ALL);
+  emit createBackup(_objectId, "fixTopology", UPDATE_ALL);
+  emit scriptInfo("fixTopology(" + QString::number(_objectId) + ")");
 }
 
 void MeshRepairPlugin::removeSelectedVal3Vertices(int _objectId) {
