@@ -6,14 +6,15 @@
  * OpenFlipper is a flexible geometry modeling and processing system.
  * OpenFlipper consists of the core application and a set of plugins. Only
  * the minimal required functionality is implemented inside the core. Plugins
- * can be written to extend OpenFlipper and provide new data types, 
+ * can be written to extend OpenFlipper and provide new data types,
  * processing functions or user interface modifications. All these plugins
  * are managed by the core. This manual describes how OpenFlipper plugins
- * can be created and how they can communicate with the core. There are of 
+ * can be created and how they can communicate with the core. There are of
  * course examples for a quickstart into OpenFlippers plugin interface.
  *
  * This manual is divided into the following pages:
  * - \subpage uiconcept "User Interface Concepts"
+ * - \subpage shortcuts "Keyboard shortcuts"
  * - \subpage buildingOpenFlipper "Building OpenFlipper"
  * - \subpage pluginProgramming "Plugin Programming"
  * - \subpage datatypes "Integrated Datatypes"
