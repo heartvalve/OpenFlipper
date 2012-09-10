@@ -57,11 +57,11 @@ MouseAndKeyPlugin::MouseAndKeyPlugin() :
 void MouseAndKeyPlugin::initializePlugin() {
 
 	// Register keys
-	emit registerKey(Qt::Key_W,	Qt::NoModifier, "Rotate object down");
-	emit registerKey(Qt::Key_S,	Qt::NoModifier, "Rotate object up");
-	emit registerKey(Qt::Key_A,	Qt::NoModifier, "Rotate object left");
-	emit registerKey(Qt::Key_D,	Qt::NoModifier, "Rotate object right");
-        
+	emit registerKey(Qt::Key_J,	Qt::NoModifier, "Rotate object down");
+	emit registerKey(Qt::Key_K,	Qt::NoModifier, "Rotate object up");
+	emit registerKey(Qt::Key_H,	Qt::NoModifier, "Rotate object left");
+	emit registerKey(Qt::Key_L,	Qt::NoModifier, "Rotate object right");
+
   tool_ = new QWidget();
   QSize size(300, 300);
   tool_->resize(size);
@@ -199,7 +199,7 @@ void MouseAndKeyPlugin::slotMouseEvent(QMouseEvent* _event) {
 		}
 
 		// Continue traversing scene graph
-		ACG::SceneGraph::MouseEventAction action(_event);
+		ACG::SceneGraph::MouseEventAction action(_event, PluginFunctions::viewerProperties().glState());
 		PluginFunctions::traverse(action);
 	}
 
@@ -218,28 +218,28 @@ void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
 		// Switch pressed keys
 		switch (_event->key())
 		{
-			case Qt::Key_W:
+			case Qt::Key_J:
 
 				object->manipulatorNode()->loadIdentity();
 				object->manipulatorNode()->rotate(10.0, axis_x_);
 
 				break;
 
-			case Qt::Key_S :
+			case Qt::Key_K :
 
 				object->manipulatorNode()->loadIdentity();
 				object->manipulatorNode()->rotate(-10.0, axis_x_);
 
 				break;
 
-			case Qt::Key_A :
+			case Qt::Key_H :
 
 				object->manipulatorNode()->loadIdentity();
 				object->manipulatorNode()->rotate(10.0, axis_y_);
 
 				break;
 
-			case Qt::Key_D :
+			case Qt::Key_L :
 
 				object->manipulatorNode()->loadIdentity();
 				object->manipulatorNode()->rotate(-10.0, axis_y_);
@@ -257,7 +257,7 @@ void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
 			transformMesh(object->manipulatorNode()->matrix(), (*PluginFunctions::polyMesh(object)));
 
 		// Tell core that object has been modified
-		updatedObject(object->id());
+		emit updatedObject(object->id(), UPDATE_GEOMETRY);
 
 		// Update view
 		emit updateView();

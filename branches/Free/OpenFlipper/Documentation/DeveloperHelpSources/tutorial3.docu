@@ -10,7 +10,7 @@
  * - Hide object by right-clicking at it and selecting our defined action
  * - Select an object by entering user defined pick mode and double-clicking
  * 	 at object in the scene
- * - Rotate selected object by hitting the w,s,a,d keys on the keyboard
+ * - Rotate selected object by hitting the j,k,h,l keys on the keyboard
  *
  * For this purpose we will make use of the following \ref interfaces
  *
@@ -27,7 +27,7 @@
  * over to what happens within these methods. When initializing our plugin
  * we set the active object identifier to -1 since no object has been selected yet.
  * We initialize the axis vectors that we'll need for the rotation later on.
- * Then we tell OpenFlipper that we will use the w, a, s and d key on the
+ * Then we tell OpenFlipper that we will use the j, k, h and l key on the
  * keyboard (so it'll call slotKeyEvent() each time one of
  * the keys has been pressed). Note: OpenFlipper will show up a warning message in the log
  * widget if the desired keys are already assigned to another plugin or core function.
@@ -84,15 +84,16 @@
  * \skip void MouseAndKeyPlugin::slotMouseEvent(QMouseEvent* _event) {
  * \until } // End slotMouseEvent
  *
- * Next method is called whenever any of the keys w, s, a or d is pressed. If an object has
+ * Next method is called whenever any of the keys j, k, h or l is pressed. If an object has
  * been selected (accordingly the member variable activeObject_ holds a valid objects
  * identifier -as described before-) we try to get its handle by calling
  * PluginFunctions::getPickedObject(). We then set the rotation matrix of the selected
  * object's transform node (manipulatorNode) to hold a matrix that describes
- * a rotation around the x (if w or s is pressed) or y axis (if a or d is pressed) by +/- 10 degrees.
+ * a rotation around the x (if j or k is pressed) or y axis (if h or l is pressed) by +/- 10 degrees.
  * We then call the method transformMesh and pass the recently calculated matrix and
  * a handle to the mesh (triangle or polygon). We have to
- * inform OpenFlipper's core about the changes by calling BaseInterface::updatedObject(int).
+ * inform OpenFlipper's core about the changes by emitting the updatedObject signal and specifying
+ * that the geometry has changed.
  *
  * \dontinclude MouseAndKeyPlugin.cc
  * \skip void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
