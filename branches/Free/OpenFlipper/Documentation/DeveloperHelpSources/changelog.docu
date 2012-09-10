@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15246 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15424 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -17,6 +17,8 @@
              - Added directional BSP ray shooting including unit tests
              - Fixed undirected shooting function returning wrong nearest triangle (was always the one with the most negative distance)
              - Interface: RayCollision is now a sorted vector combining standard pairs of the hit handles and their distance to the hit              
+         - Heap 
+             - gcc-4.7 build fixes
          - Unittests
              - Unittests for BSP
              - Unittests for algorithms
@@ -28,6 +30,7 @@
          - Speedup: Don't send view updates to plugin, if scenegraph updates are locked
          - Speedup: Removed unnecessary update function from resetSceneGraph (already updated on demand)
          - Speedup: Removed redundant call in BaseObjects next function
+         - Fix: Fixed action mode toggling via meta or alt keys (only worked, if already switched between modes before hitting the keys)
          - PerObjectData
              - Added set of standard per object datas
      - <b>Interfaces</b>
@@ -36,6 +39,8 @@
      - <b>ObjectTypes</b>
          - General
              - Speedup: Removed the get_unique_name functions when adding any object, as this would cause linear time when adding new objects.
+         - Skeleton
+             - Added include guard to AnimationHandle class
          - VolumeMesh
              - Added draw mode for colored vertices
      - <b>Plugins</b>
@@ -44,21 +49,31 @@
              - Speedup: Accellerate Treeitem lookup for child by a map. This should speedup large object count handling significantly.
              - Speedup: Remove duplicate function calls
              - Speedup: Only handle lightsources in file opened, if they are added
+         - Decimater
+             - Added multiple choice decimater (up to 4 times faster but with less accuracy)
          - File Bundler
              - New Plugin
              - Read output from bundler (SplatCloud, Cameras)
+         - File PLY
+             - Fixed wrong casting of colors ( written files contained only black and white colors
          - Isotropic Remesher
              - Increased toolbox maximum
          - Info Mesh Object
              - Use a hash map to cash the target objects to avoid linear time lookup for the targets
+         - MeshRepair
+             - Fix: flip orientation does not produce holes anymore
+             - New snap boundary function 
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters)
          - Property Vis
              - Increased maximal allowed scaling factor for vectors
+             - Support build without skeleton data type
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
          - SelectionBase
              - Speedup selection base plugin by caching the number of objects of the specific types (no linear time check anymore)
+         - SelectionMeshObject
+             - Fixed action mode toggling via meta or alt keys
          - Skeletal Animation
              - Speedup Skeletal Animation Plugin by only caching skeletons.
          - Type Splat Cloud
@@ -67,6 +82,7 @@
          - Core: Added getToolbox method to scripting interface.
          - Core: Added scipting functions to block and unblock the scenegraph (speedup while handling large object counts)
      - <b>Documentation</b>
+         - Added documentation about core keys
          - Removed example path from doxyfiles for user documentation
          - Added colored point rendering stuff.
      - <b>Build system</b>
