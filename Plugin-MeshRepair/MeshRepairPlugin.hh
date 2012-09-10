@@ -165,6 +165,9 @@ private slots:
     /// Button slot
     void slotSnapBoundary();
 
+    /// Button slot
+    void slotFixMesh();
+
     //Scripting functions:
 public slots:
 
@@ -209,6 +212,8 @@ public slots:
 
     void snapBoundary(int _objectId, double _eps);
 
+    void fixTopology(int _objectId);
+
 private:
     /** \brief select edges based on length
     *
@@ -247,6 +252,12 @@ private:
     template<typename MeshT>
     static bool sort_less_pair_second(const std::pair<typename MeshT::VertexHandle,double> &lhs,const std::pair<typename MeshT::VertexHandle,double> &rhs);
 
+    /** \brief fixes the orientation and non-manifold problems in a mesh.
+     * @param _mesh target mesh
+     *
+     */
+    template<typename MeshT>
+    void fixTopology(MeshT *_mesh);
 
 public slots:
     QString version() {
