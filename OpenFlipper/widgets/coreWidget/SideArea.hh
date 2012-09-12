@@ -93,7 +93,7 @@ class SideArea : public QWidget {
 
     /// clears the whole tool widget area
     void clear ();
-    
+
     //expand all elements
     void expandAll();
 
@@ -105,10 +105,10 @@ class SideArea : public QWidget {
 
     /// set the active state of given element
     void setElementActive(QString _name, bool _active);
-    
+
     /// Move a toolbox widget to a given position
     void moveItemToPosition(const QString& _name, int _position);
-    
+
     /// Get number of widgets
     int getNumberOfWidgets() const;
 

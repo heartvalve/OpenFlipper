@@ -94,15 +94,18 @@ class SideElement : public QWidget
 
     /// Set the element as active
     void setActive(bool _active);
-    
+
     /// saves the current state
     void saveState (QSettings &_settings);
 
     /// restores the state
     void restoreState (QSettings &_settings);
-    
+
     /// return the name
     const QString& name();
+
+    /// returns the pointer to the plugin tool widget
+    QWidget const * widget();
 
   private:
 
@@ -119,7 +122,7 @@ class SideElement : public QWidget
 
     /// Called on mouse press
     void labelPress ();
-    
+
   private slots:
 
     /// Called if the detach button was pressed
@@ -155,7 +158,7 @@ class SideElement : public QWidget
     // detach button & action
     QToolButton *detachButton_;
     QAction *detachAction_;
-    
+
     // dialog for detached widget
     QDialog *dialog_;
 };

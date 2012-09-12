@@ -111,7 +111,7 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
 
     vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
     vm->visibleContextMenus = QString("ALL_THAT_EXIST").split(" ");
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -157,7 +157,7 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
     vm->icon   = "Unknown.png";
 
     vm->visibleContextMenus = QString("ALL_THAT_EXIST").split(" ");
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -173,15 +173,15 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
   } else {
     vm = viewModes_[id];
   }
-  
+
   // Always add the viewer Toolbar
   if ( ! _usedToolbars.contains("Viewer Toolbar") )
   _usedToolbars.prepend("Viewer Toolbar");
-  
+
   // Always add the main Toolbar
   if ( ! _usedToolbars.contains("Main Toolbar") )
     _usedToolbars.prepend("Main Toolbar");
-  
+
   vm->visibleToolbars = _usedToolbars;
 
   initViewModes();
@@ -211,7 +211,7 @@ void CoreWidget::slotAddViewModeContextMenus(QString _mode, bool _custom, QStrin
     vm->icon   = "Unknown.png";
 
     vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -228,7 +228,7 @@ void CoreWidget::slotAddViewModeContextMenus(QString _mode, bool _custom, QStrin
   } else {
     vm = viewModes_[id];
   }
-  
+
   vm->visibleContextMenus = _usedContextMenus;
 
   initViewModes();
@@ -359,17 +359,21 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
         _toolbars       = viewModes_[i]->visibleToolbars;
         _contextmenus	  = viewModes_[i]->visibleContextMenus;
       }
-  
-  // Remove all toolbox entries
-  toolBox_->clear ();
+
+
+  // Remove all toolbox entries if the view has changed
+  if (_mode != OpenFlipper::Options::currentViewMode())
+    toolBox_->clear();
 
   //find all widgets that should be visible
   for (int i=0; i < _toolboxWidgets.size(); i++)
     for (uint p=0; p < plugins_.size(); p++){
       for ( uint j = 0 ; j < plugins_[p].toolboxWidgets.size(); ++j )
-        if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first )
+        if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first ) {
           toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first, plugins_[p].toolboxIcons[j] );
+        }
     }
+
 
   if (_expandAll)
     toolBox_->expandAll();
@@ -402,7 +406,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 }
 
 void CoreWidget::moveToolBoxToTop(QString _name) {
-  
+
   toolBox_->moveItemToPosition(_name, 0);
 }
 
