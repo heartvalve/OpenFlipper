@@ -60,6 +60,10 @@
 
 #include <QDir>
 #include <QStringList>
+#include <QString>
+#include <QComboBox>
+#include <QFileDialog>
+#include <stdexcept>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -90,8 +94,64 @@ namespace Options {
    */
   DLLEXPORT
   QStringList getRecentItems(const QString &propName);
-    
-/** @} */      
+
+  /**
+   * Update combo box text. At the same time, store text in recent items list.
+   *
+   * @param cb The combo box to update.
+   * @param value The value to update the combo box with.
+   * @param propName The name of the recent item property.
+   */
+  DLLEXPORT
+  inline static void updateComboBox(QComboBox *cb, const QString &value, const char *propName) {
+      if (propName != 0) {
+          cb->clear();
+          if (value.length() > 0)
+              rememberRecentItem(QString::fromUtf8(propName), value);
+          const QStringList content = getRecentItems(QString::fromUtf8(propName));
+          cb->insertItems(0, content);
+      }
+      cb->setEditText(value);
+  }
+
+  enum DialogType {
+      DT_OPEN,
+      DT_SAVE,
+      DT_CHOOSE_PATH,
+  };
+
+  /**
+   * Obtain a path name from the user. Update the specified
+   * combo box with that path name and remember it in the specified
+   * recent items property.
+   *
+   * @param dialog_type The type of dialog to prompt the user with.
+   * @return The chosen path name.
+   */
+  DLLEXPORT
+  inline static QString obtainPathName(QComboBox *cb, const char *title, const char *filters,
+                                       const char *propName, DialogType dialog_type = DT_OPEN) {
+      QString result;
+      switch (dialog_type) {
+          case DT_OPEN:
+              result = QFileDialog::getOpenFileName(0, QObject::tr(title), cb->currentText(), QObject::tr(filters));
+              break;
+          case DT_SAVE:
+              result = QFileDialog::getSaveFileName(0, QObject::tr(title), cb->currentText(), QObject::tr(filters));
+              break;
+          case DT_CHOOSE_PATH:
+              result = QFileDialog::getExistingDirectory(0, QObject::tr(title), cb->currentText());
+              break;
+          default:
+              throw std::logic_error("Unknown value for dialog_type.");
+      }
+
+      if (result.length() > 0)
+          updateComboBox(cb, result, propName);
+
+      return result;
+  }
+/** @} */
   
   
 }
