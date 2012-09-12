@@ -102,7 +102,6 @@ namespace Options {
    * @param value The value to update the combo box with.
    * @param propName The name of the recent item property.
    */
-  DLLEXPORT
   inline static void updateComboBox(QComboBox *cb, const QString &value, const char *propName) {
       if (propName != 0) {
           cb->clear();
@@ -128,7 +127,6 @@ namespace Options {
    * @param dialog_type The type of dialog to prompt the user with.
    * @return The chosen path name.
    */
-  DLLEXPORT
   inline static QString obtainPathName(QComboBox *cb, const char *title, const char *filters,
                                        const char *propName, DialogType dialog_type = DT_OPEN) {
       QString result;
