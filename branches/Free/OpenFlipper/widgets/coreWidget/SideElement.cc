@@ -96,16 +96,16 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name, QIcon* 
   hl->addStretch (1);
   hl->addWidget (detachButton_);
 
-  
+
   QIcon detachIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach.png");
   detachIcon.addPixmap(QPixmap(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach_over.png"), QIcon::Active);
   detachIcon.addPixmap(QPixmap(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach_over.png"), QIcon::Selected);
-  
+
   detachAction_ = new QAction ( detachIcon, "", this);
   detachAction_->setToolTip( tr("Show as separate window") );
   detachAction_->setCheckable (true);
   detachButton_->setDefaultAction (detachAction_);
- 
+
   connect (detachAction_, SIGNAL (triggered (bool)), this, SLOT (detachPressed (bool)));
 
   tra->setLayout (hl);
@@ -281,7 +281,13 @@ const QString& SideElement::name(){
 }
 
 //-----------------------------------------------------------------------------
-    
+
+QWidget const * SideElement::widget() {
+  return widget_;
+}
+
+//-----------------------------------------------------------------------------
+
 SideElement::TopArea::TopArea (SideElement *_e) :
   e_ (_e)
 {

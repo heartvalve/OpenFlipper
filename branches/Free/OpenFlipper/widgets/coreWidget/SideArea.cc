@@ -69,36 +69,61 @@ SideArea::SideArea (QWidget *_parent) :
 
 void SideArea::addItem (QWidget *_w, QString _name, QIcon *_icon)
 {
+  bool contains = false;
+  QVector<SideElement*>::iterator it = items_.begin();
+  for(; it != items_.end(); ++it) {
+    if ((*it)->widget() == _w) {
+      contains = true;
+      break;
+    }
+  }
 
-  SideElement *e = new SideElement (this, _w, _name, _icon);
-  layout_->addWidget (e);
-  items_.push_back (e);
+  if (contains) {
+    return;
+  } else {
+    SideElement *e = new SideElement (this, _w, _name, _icon);
+    layout_->addWidget (e);
+    items_.push_back (e);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void SideArea::addItem (QWidget *_w, QString _name)
 {
-  SideElement *e = new SideElement (this, _w, _name);
-  layout_->addWidget (e);
-  items_.push_back (e);
+  bool contains = false;
+  QVector<SideElement*>::iterator it = items_.begin();
+  for(; it != items_.end(); ++it) {
+    if ((*it)->widget() == _w) {
+      contains = true;
+      break;
+    }
+  }
+
+  if (contains) {
+    return;
+  } else {
+    SideElement *e = new SideElement (this, _w, _name);
+    layout_->addWidget (e);
+    items_.push_back (e);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void SideArea::moveItemToPosition(const QString& _name, int _position) {
-    
+
     // Position is in valid range
     if(_position < 0 || _position >= items_.size())
         return;
-    
+
     // Search item
     QVector<SideElement*>::iterator it = items_.begin();
     for(; it != items_.end(); ++it) {
         if((*it)->name() == _name)
             break;
     }
-    
+
     if(it != items_.end()) {
         layout_->removeWidget(*it);
         layout_->insertWidget(_position, (*it));
@@ -134,7 +159,7 @@ void SideArea::expandAll()
 }
 
 //-----------------------------------------------------------------------------
-    
+
 void SideArea::saveState (QSettings &_settings)
 {
   _settings.beginGroup ("SideArea");
@@ -164,9 +189,11 @@ void SideArea::setElementActive(QString _name, bool _active)
   for (int i=0; i < items_.count(); i++)
     if ( items_[i]->name() == _name ){
       items_[i]->setActive(_active);
+
       return;
     }
 }
+
 
 //=============================================================================
 //=============================================================================
