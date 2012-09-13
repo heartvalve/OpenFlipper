@@ -49,10 +49,12 @@
 #include "SideArea.hh"
 #include "SideElement.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <iostream>
 //== IMPLEMENTATION ==========================================================
 
 SideArea::SideArea (QWidget *_parent) :
-  QWidget (_parent)
+  QWidget (_parent),
+  lastPos_(0)
 {
 
   layout_ = new QVBoxLayout;
@@ -67,46 +69,24 @@ SideArea::SideArea (QWidget *_parent) :
 
 //-----------------------------------------------------------------------------
 
-void SideArea::addItem (QWidget *_w, QString _name, QIcon *_icon)
+void SideArea::addItem (QObject const * const _plugin, QWidget *_w, QString _name, QIcon *_icon)
 {
-  bool contains = false;
-  QVector<SideElement*>::iterator it = items_.begin();
-  for(; it != items_.end(); ++it) {
-    if ((*it)->widget() == _w) {
-      contains = true;
-      break;
-    }
-  }
-
-  if (contains) {
-    return;
-  } else {
-    SideElement *e = new SideElement (this, _w, _name, _icon);
-    layout_->addWidget (e);
-    items_.push_back (e);
-  }
+  SideElement *e = new SideElement (this, _w, _name, _icon);
+  layout_->addWidget (e);
+  items_.push_back (e);
+  plugins_.push_back(_plugin);
+  itemNames_.push_back(_name);
 }
 
 //-----------------------------------------------------------------------------
 
-void SideArea::addItem (QWidget *_w, QString _name)
+void SideArea::addItem (QObject const * const _plugin, QWidget *_w, QString _name)
 {
-  bool contains = false;
-  QVector<SideElement*>::iterator it = items_.begin();
-  for(; it != items_.end(); ++it) {
-    if ((*it)->widget() == _w) {
-      contains = true;
-      break;
-    }
-  }
-
-  if (contains) {
-    return;
-  } else {
-    SideElement *e = new SideElement (this, _w, _name);
-    layout_->addWidget (e);
-    items_.push_back (e);
-  }
+  SideElement *e = new SideElement (this, _w, _name);
+  layout_->addWidget (e);
+  items_.push_back (e);
+  plugins_.push_back(_plugin);
+  itemNames_.push_back(_name);
 }
 
 //-----------------------------------------------------------------------------
@@ -120,13 +100,40 @@ void SideArea::moveItemToPosition(const QString& _name, int _position) {
     // Search item
     QVector<SideElement*>::iterator it = items_.begin();
     for(; it != items_.end(); ++it) {
-        if((*it)->name() == _name)
+        if( (*it)->name() == _name )
             break;
     }
 
     if(it != items_.end()) {
         layout_->removeWidget(*it);
         layout_->insertWidget(_position, (*it));
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void SideArea::moveItemToPosition(QObject const * const _plugin, const QString& _name, int _position) {
+
+    // Position is in valid range
+    if(_position < 0 || _position >= items_.size())
+        return;
+
+    // Search item
+    QVector<SideElement*>::iterator it = items_.begin();
+    int i = 0;
+    for(; it != items_.end(); ++it, ++i) {
+        if(   ((*it)->name() == _name)
+           && (plugins_[i] == _plugin)   )
+            break;
+    }
+
+    bool active = (*it)->active();
+
+    if(it != items_.end()) {
+        layout_->removeWidget(*it);
+        layout_->insertWidget(_position, (*it));
+        if (active)
+          (*it)->show();
     }
 }
 
@@ -146,6 +153,9 @@ void SideArea::clear ()
     delete e;
   }
   items_.clear ();
+  plugins_.clear();
+  itemNames_.clear();
+  lastPos_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -192,6 +202,18 @@ void SideArea::setElementActive(QString _name, bool _active)
 
       return;
     }
+}
+
+//-----------------------------------------------------------------------------
+
+const QList<const QObject *>& SideArea::plugins() {
+  return plugins_;
+}
+
+//-----------------------------------------------------------------------------
+
+const QStringList& SideArea::names() {
+  return itemNames_;
 }
 
 

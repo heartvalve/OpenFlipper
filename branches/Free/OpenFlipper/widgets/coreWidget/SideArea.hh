@@ -79,17 +79,19 @@ class SideArea : public QWidget {
     SideArea (QWidget *_parent = 0);
 
     /** Adds a plugin tool widget
+      \param _plugin plugin corresponding to the widget
       \param _w Plugin widget
       \param _name Plugin name
     */
-    void addItem (QWidget *_w, QString _name);
+    void addItem (QObject const * const _plugin, QWidget *_w, QString _name);
 
     /** Adds a plugin tool widget
+      \param _plugin plugin corresponding to the widget
       \param _w Plugin widget
       \param _name Plugin name
       \param _icon an icon
     */
-    void addItem (QWidget *_w, QString _name, QIcon* _icon);
+    void addItem (QObject const * const _plugin, QWidget *_w, QString _name, QIcon* _icon);
 
     /// clears the whole tool widget area
     void clear ();
@@ -109,12 +111,30 @@ class SideArea : public QWidget {
     /// Move a toolbox widget to a given position
     void moveItemToPosition(const QString& _name, int _position);
 
+    /// Move a toolbox widget to a given position
+    void moveItemToPosition(QObject const * const _plugin, const QString& _name, int _position);
+
     /// Get number of widgets
     int getNumberOfWidgets() const;
+
+    /// Get plugins in side area
+    const QList<const QObject *>& plugins();
+
+    /// Get item names
+    const QStringList& names();
+
+    // position of the last added item
+    int lastPos_;
 
   private:
     // elements
     QVector<SideElement *> items_;
+
+    // plugins in side area
+    QList<const QObject *> plugins_;
+
+    // item names
+    QStringList itemNames_;
 
     // main layout
     QVBoxLayout *layout_;

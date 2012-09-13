@@ -104,6 +104,9 @@ class SideElement : public QWidget
     /// return the name
     const QString& name();
 
+    /// returns if the SideElement is active
+    bool active();
+
     /// returns the pointer to the plugin tool widget
     QWidget const * widget();
 

@@ -57,6 +57,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include "SideElement.hh"
+#include <iostream>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -243,7 +244,7 @@ void SideElement::dialogClosed ()
 void SideElement::saveState (QSettings &_settings)
 {
   _settings.beginGroup (name_);
-  _settings.setValue ("Active", active_);
+  _settings.setValue ("Active", active());
   _settings.setValue ("Detached", (dialog_ != 0));
   _settings.setValue ("DialogGeometry", (dialog_) ? dialog_->saveGeometry (): QByteArray());
   _settings.endGroup ();
@@ -278,6 +279,12 @@ void SideElement::restoreState (QSettings &_settings)
 
 const QString& SideElement::name(){
   return name_;
+}
+
+//-----------------------------------------------------------------------------
+
+bool SideElement::active(){
+  return widget_->isVisible();
 }
 
 //-----------------------------------------------------------------------------
