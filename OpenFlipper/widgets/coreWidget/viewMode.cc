@@ -366,13 +366,54 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
     toolBox_->clear();
 
   //find all widgets that should be visible
-  for (int i=0; i < _toolboxWidgets.size(); i++)
+  for (int i=0; i < _toolboxWidgets.size(); i++) {
     for (uint p=0; p < plugins_.size(); p++){
       for ( uint j = 0 ; j < plugins_[p].toolboxWidgets.size(); ++j )
         if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first ) {
-          toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first, plugins_[p].toolboxIcons[j] );
+
+          bool skip = false;
+          if (toolBox_->plugins().contains(plugins_[p].plugin)) {
+            // account for the case, where a plugin can have several
+            // toolboxes, for example 'Scripting'
+            if (toolBox_->names().contains(_toolboxWidgets[i]))
+              skip = true;
+          }
+
+          // only add items that have not been added yet
+          if (!skip) {
+            toolBox_->addItem (plugins_[p].plugin, plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first, plugins_[p].toolboxIcons[j] );
+
+            // move item to the correct position
+            if (i < toolBox_->lastPos_) {
+              toolBox_->moveItemToPosition(plugins_[p].plugin, _toolboxWidgets[i], i);
+            } else
+              toolBox_->lastPos_ = i;
+
+            // check if we have to restore the state
+            // of toolboxes added via scripts
+            if (plugins_[p].name == "Scripting") {
+
+              QFile statesFile(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat");
+
+              if (statesFile.exists() ) {
+                QSettings windowStates(OpenFlipper::Options::configDirStr()  + OpenFlipper::Options::dirSeparator() + "WindowStates.dat", QSettings::IniFormat);
+
+
+                windowStates.beginGroup ("Core");
+                windowStates.beginGroup("SideArea");
+                windowStates.beginGroup(_toolboxWidgets[i]);
+                bool active = windowStates.value ("Active", false).toBool();
+                windowStates.endGroup();
+                windowStates.endGroup();
+                windowStates.endGroup();
+
+                toolBox_->setElementActive(_toolboxWidgets[i], active);
+              }
+            }
+          }
         }
     }
+  }
 
 
   if (_expandAll)
