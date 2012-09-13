@@ -49,7 +49,6 @@
 #include "SideArea.hh"
 #include "SideElement.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
-#include <iostream>
 //== IMPLEMENTATION ==========================================================
 
 SideArea::SideArea (QWidget *_parent) :
@@ -190,6 +189,22 @@ void SideArea::restoreState (QSettings &_settings)
     e->restoreState (_settings);
   }
   _settings.endGroup ();
+}
+
+//-----------------------------------------------------------------------------
+
+void SideArea::saveViewModeState(const QString& _viewMode) {
+  foreach (SideElement *e, items_) {
+    sideElementState_[_viewMode + e->name()] = e->active();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void SideArea::restoreViewModeState(const QString& _viewMode) {
+  foreach (SideElement *e, items_) {
+    e->setActive(sideElementState_[_viewMode + e->name()]);
+  }
 }
 
 //-----------------------------------------------------------------------------

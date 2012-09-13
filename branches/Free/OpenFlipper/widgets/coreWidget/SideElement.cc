@@ -57,7 +57,6 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include "SideElement.hh"
-#include <iostream>
 
 //== IMPLEMENTATION ==========================================================
 
