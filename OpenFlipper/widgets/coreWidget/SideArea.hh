@@ -102,8 +102,14 @@ class SideArea : public QWidget {
     /// returns the current state
     void saveState (QSettings &_settings);
 
+    /// saves the active state of _viewMode
+    void saveViewModeState(const QString& _viewMode);
+
     /// restores the state
     void restoreState (QSettings &_settings);
+
+    /// restores the active state of _viewMode
+    void restoreViewModeState(const QString& _viewMode);
 
     /// set the active state of given element
     void setElementActive(QString _name, bool _active);
@@ -135,6 +141,9 @@ class SideArea : public QWidget {
 
     // item names
     QStringList itemNames_;
+
+    // saves active state of each SideElement in each view
+    QMap<QString, bool> sideElementState_;
 
     // main layout
     QVBoxLayout *layout_;

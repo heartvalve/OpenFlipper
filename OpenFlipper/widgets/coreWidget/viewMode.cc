@@ -362,8 +362,10 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 
 
   // Remove all toolbox entries if the view has changed
-  if (_mode != OpenFlipper::Options::currentViewMode())
+  if (_mode != OpenFlipper::Options::currentViewMode()) {
+    toolBox_->saveViewModeState(OpenFlipper::Options::currentViewMode());
     toolBox_->clear();
+  }
 
   //find all widgets that should be visible
   for (int i=0; i < _toolboxWidgets.size(); i++) {
@@ -415,6 +417,9 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
     }
   }
 
+  if (_mode != OpenFlipper::Options::currentViewMode()) {
+    toolBox_->restoreViewModeState(_mode);
+  }
 
   if (_expandAll)
     toolBox_->expandAll();
