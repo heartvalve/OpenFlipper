@@ -176,6 +176,20 @@ if ( COMISO_INCLUDE_DIR )
    list (APPEND  COMISO_OPT_DEPS "CPLEX")
 
   endif()
+  
+  STRING(REGEX MATCH "\#define COMISO_Eigen3_AVAILABLE 1" COMISO_Eigen3_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+
+  if ( COMISO_Eigen3_BUILD_TIME_AVAILABLE )
+                                                                          
+   find_package(Eigen3)
+                                                                          
+   if ( NOT Eigen3_FOUND )
+     message(ERROR "COMISO configured with Eigen3 but Eigen3 not available")
+   endif()
+                                                                          
+   list (APPEND  COMISO_OPT_DEPS "Eigen3")
+                                                                          
+  endif()
 
   add_definitions (-DCOMISODLL -DUSECOMISO )
 
