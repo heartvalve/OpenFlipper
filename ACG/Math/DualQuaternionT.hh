@@ -164,6 +164,9 @@ public:
   /// dualQuaternion *= dualQuaternion
   DualQuaternion& operator*=(const DualQuaternion& _q);
 
+  /// Access as one big vector
+  Scalar& operator [](const unsigned int& b);
+
   /// linear interpolation of dual quaternions. Result is normalized afterwards
   static DualQuaternion interpolate(std::vector<double>& _weights, const std::vector<DualQuaternion>& _dualQuaternions);
   
