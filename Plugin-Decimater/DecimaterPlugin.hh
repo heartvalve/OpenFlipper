@@ -55,6 +55,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -78,12 +79,15 @@
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#include <ACG/Utils/SmartPointer.hh>
+#include <vector>
+
 
 //== CLASS DEFINITION =========================================================
 
 /** Plugin for Decimater Support
  */
-class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface
+class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface, LoadSaveInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -92,6 +96,7 @@ class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, Logging
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(RPCInterface)
+  Q_INTERFACES(LoadSaveInterface)
 
 signals:
 
@@ -126,6 +131,8 @@ private slots:
     void slotObjectUpdated( int _identifier , const UpdateType& _type ); // BaseInterface
     void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
+    void objectDeleted(int _id); //LoadSaveInterface
+
 public :
 
   /// Default constructor
@@ -142,10 +149,6 @@ public :
 
 private :
 
-  /// Widget for Toolbox
-  DecimaterToolbarWidget* tool_;
-  QIcon* toolIcon_;
-  
   typedef OpenMesh::Decimater::BaseDecimaterT< TriMesh >              BaseDecimaterType;
   typedef OpenMesh::Decimater::DecimaterT< TriMesh >                  DecimaterType;
   typedef OpenMesh::Decimater::McDecimaterT< TriMesh >                McDecimaterType;
@@ -159,11 +162,21 @@ private :
   typedef OpenMesh::Decimater::ModNormalFlippingT< TriMesh >::Handle  ModNormalFlippingH;
   typedef OpenMesh::Decimater::ModQuadricT< TriMesh >::Handle         ModQuadricH;
   typedef OpenMesh::Decimater::ModRoundnessT< TriMesh >::Handle       ModRoundnessH;
-  
+
+  /// Widget for Toolbox
+  DecimaterToolbarWidget* tool_;
+
+  //saves the decimater and the object id
+  std::vector< std::pair<ptr::shared_ptr<BaseDecimaterType>, int > > decimater_objects_;
+  QIcon* toolIcon_;
+
 private slots:
 
   /// decimating called from button in toolbox
   void slot_decimate();
+
+  /// init called from button in toolbox
+  void slot_initialize();
 
   /// roundness slider - spinbox sync
   void updateRoundness(int    _value);
