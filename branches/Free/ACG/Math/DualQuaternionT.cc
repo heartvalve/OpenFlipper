@@ -205,15 +205,16 @@ namespace ACG {
   template <typename Scalar>
   void DualQuaternionT<Scalar>::normalize() {
     
-    double magn = 1.0/real_.norm();
-    double magnSqr = 1.0/real_.sqrnorm();
+    const double magn = 1.0/real_.norm();
+    const double magnSqr = 1.0/real_.sqrnorm();
     
-    //normalize rotation
+    // normalize rotation
     real_ *= magn;
     dual_ *= magn;
 
-    //normalize the rest
+    // normalize the rest
     dual_ -= ((real_| dual_)* magnSqr) * real_;
+
   }
   
   //-----------------------------------------------------------------------------
@@ -301,6 +302,22 @@ namespace ACG {
     
     return q;
   }
+
+  //-----------------------------------------------------------------------------
+
+  template <typename Scalar>
+  Scalar& DualQuaternionT<Scalar>::operator [](const unsigned int& b) {
+    if ( b < 4 ) {
+      return real_[b];
+    } else if ( b < 8 ) {
+      return dual_[b - 4];
+    } else {
+      // Invalid operation, write error and return anything.
+      std::cerr << "Error in Dualquaternion operator[], index b out of range [0...7]" << std::endl;
+      return real_[0];
+    }
+  }
+
 
   //-----------------------------------------------------------------------------
 
