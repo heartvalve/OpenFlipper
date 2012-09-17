@@ -156,9 +156,14 @@ macro (_check_plugin_deps _prefix _optional )
             if ( ${_REC_DEP}_FOUND )
               list (APPEND CURRENT_DEPENDENCY_LIST ${_rec_dep} )
               add_definitions( -DENABLE_${_REC_DEP} )
+            elseif ( ${_rec_dep}_FOUND )
+             # Lower case definition workaround
+		list (APPEND CURRENT_DEPENDENCY_LIST ${_rec_dep} )
+                add_definitions( -DENABLE_${_REC_DEP} )
             else()
               add_definitions( -DDISABLE_${_REC_DEP} )
 	    endif()
+
           endforeach()
        endif()
 
