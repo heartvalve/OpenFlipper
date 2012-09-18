@@ -168,7 +168,8 @@ public:
   Scalar& operator [](const unsigned int& b);
 
   /// linear interpolation of dual quaternions. Result is normalized afterwards
-  static DualQuaternion interpolate(std::vector<double>& _weights, const std::vector<DualQuaternion>& _dualQuaternions);
+  template <typename VectorType>
+  static DualQuaternion interpolate(VectorType& _weights, const std::vector<DualQuaternion>& _dualQuaternions);
   
   /// Transform a point with the dual quaternion
   Vec3 transform_point(const Vec3& _point) const;
