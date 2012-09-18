@@ -263,11 +263,8 @@ void DecimaterPlugin::slot_initialize()
       decimater_object->module( hModQuadric ).unset_max_err();
     } else if (tool_->rbByNormalDeviation->isChecked()) {
       decimater->setDecimationOrder(DecimaterInfo::NORMALDEV);
-      std::cout << "add module" << std::endl;
       decimater_object->add(hModNormalDeviation);
-      std::cout << "get module" << std::endl;
       decimater_object->module(hModNormalDeviation).set_binary(false);
-      std::cout << "getted module" << std::endl;
     } else if (tool_->rbByEdgeLength->isChecked()) {
       decimater->setDecimationOrder(DecimaterInfo::EDGELENGTH);
       decimater_object->add(hModEdgeLength);
