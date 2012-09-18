@@ -322,8 +322,8 @@ namespace ACG {
   //-----------------------------------------------------------------------------
 
   /// linear interpolation of dual quaternions. Result is normalized afterwards.
-  template <typename Scalar>
-  DualQuaternionT<Scalar> DualQuaternionT<Scalar>::interpolate(std::vector<double>& _weights, const std::vector<DualQuaternion>& _dualQuaternions)
+  template <typename Scalar> template<typename VectorType>
+  DualQuaternionT<Scalar> DualQuaternionT<Scalar>::interpolate(VectorType& _weights, const std::vector<DualQuaternion>& _dualQuaternions)
   {
     if ( (_weights.size() != _dualQuaternions.size()) || (_weights.size() == 0) ){
       std::cerr << "Cannot interpolate dual quaternions ( weights: " << _weights.size() << ", DQs: " << _dualQuaternions.size() << std::endl;
