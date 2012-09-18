@@ -89,6 +89,8 @@ if (GTEST_FOUND)
   link_directories ( ${GTEST_LIBRARY_DIR})
 
   add_executable (ACG_tests ${TEST_SOURCES})
+  set_target_properties(ACG_tests PROPERTIES
+  		COMPILE_FLAGS "-UNDEBUG")
   target_link_libraries(ACG_tests
         ${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}
   )
