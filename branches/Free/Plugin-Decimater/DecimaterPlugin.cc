@@ -341,7 +341,7 @@ void DecimaterPlugin::slot_decimate()
     McDecimaterType* mcDec = dynamic_cast<McDecimaterType*>(decIter->first.get());
     MixedDecimaterType* mixedDec = dynamic_cast<MixedDecimaterType*>(decIter->first.get());
 
-    if(dec)
+    if(dec && tool_->rbUseDecimater->isChecked())
     {
       if ( tool_->rbVertices->isChecked() )
         dec->decimate_to(tool_->verticesCount->value());
@@ -350,7 +350,7 @@ void DecimaterPlugin::slot_decimate()
       else // constraints only
         dec->decimate_to_faces(0, 1);
     }
-    else if (mcDec)
+    else if (mcDec && tool_->rbUseMC->isChecked())
     {
       mcDec->set_samples(tool_->randomSamplesCounter->value());
       if ( tool_->rbVertices->isChecked() )
@@ -360,7 +360,7 @@ void DecimaterPlugin::slot_decimate()
       else // constraints only
         mcDec->decimate_to_faces(0, 1);
     }
-    else if (mixedDec)
+    else if (mixedDec && tool_->rbUseMixed->isChecked())
     {
       float mc_factor = 1.0 - (tool_->mixedFactorCounter->value()*0.01);
       mixedDec->set_samples(tool_->randomSamplesCounter->value());
