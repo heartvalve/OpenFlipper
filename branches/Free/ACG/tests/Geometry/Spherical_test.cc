@@ -10,7 +10,6 @@
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Math/GLMatrixT.hh>
 #include <ACG/Geometry/Spherical.hh>
-#include <boost/assign.hpp>
 
 namespace {
 
@@ -66,11 +65,11 @@ TEST_F(Spherical, sphericalInnerAngleSum_zeroTriangle) {
 }
 
 TEST_F(Spherical, sphericalPolyhedralGaussCurv_pointPolyhedral) {
-    std::vector<Vec3d> normals = boost::assign::list_of<Vec3d>
-    (Vec3d(1, 0, 0))
-    (Vec3d(1, 0, 0))
-    (Vec3d(1, 0, 0))
-    (Vec3d(1, 0, 0));
+    std::vector<Vec3d> normals;
+    normals.push_back(Vec3d(1, 0, 0));
+    normals.push_back(Vec3d(1, 0, 0));
+    normals.push_back(Vec3d(1, 0, 0));
+    normals.push_back(Vec3d(1, 0, 0));
 
     EXPECT_NEAR(0, ACG::Geometry::sphericalPolyhedralGaussCurv<Vec3d>(normals.begin(), normals.end()), 1e-6);
 
@@ -88,25 +87,25 @@ TEST_F(Spherical, sphericalPolyhedralGaussCurv_linePolyhedral) {
     const Vec3d n1 = Vec3d(4, 5, 6).normalized();
     const Vec3d axis = (n1 % Vec3d(3, 1, 2)).normalized();
 
-    const std::vector<Vec3d> normals = boost::assign::list_of<Vec3d>
-    (rot(n1, axis, .1))
-    (rot(n1, axis, .2))
-    (rot(n1, axis, .05))
-    (rot(n1, axis, .09))
-    (rot(n1, axis, -.2))
-    (rot(n1, axis, .01))
-    (rot(n1, axis, -.1))
-    (rot(n1, axis, -.2));
+    std::vector<Vec3d> normals;
+    normals.push_back(rot(n1, axis, .1));
+    normals.push_back(rot(n1, axis, .2));
+    normals.push_back(rot(n1, axis, .05));
+    normals.push_back(rot(n1, axis, .09));
+    normals.push_back(rot(n1, axis, -.2));
+    normals.push_back(rot(n1, axis, .01));
+    normals.push_back(rot(n1, axis, -.1));
+    normals.push_back(rot(n1, axis, -.2));
 
     EXPECT_NEAR(0, ACG::Geometry::sphericalPolyhedralGaussCurv<Vec3d>(normals.begin(), normals.end()), 1e-6);
 }
 
 TEST_F(Spherical, sphericalPolyhedralGaussCurv_cubeCorner) {
     {
-        std::vector<Vec3d> normals = boost::assign::list_of<Vec3d>
-        (Vec3d(1, 0, 0))
-        (Vec3d(0, 1, 0))
-        (Vec3d(0, 0, 1));
+        std::vector<Vec3d> normals;
+        normals.push_back(Vec3d(1, 0, 0));
+        normals.push_back(Vec3d(0, 1, 0));
+        normals.push_back(Vec3d(0, 0, 1));
 
         EXPECT_NEAR(M_PI_2, ACG::Geometry::sphericalPolyhedralGaussCurv<Vec3d>(normals.begin(), normals.end()), 1e-6);
     }
@@ -114,12 +113,12 @@ TEST_F(Spherical, sphericalPolyhedralGaussCurv_cubeCorner) {
 
 
 TEST_F(Spherical, sphericalPolyhedralGaussCurv_houseCorner) {
-    std::vector<Vec3d> normals = boost::assign::list_of<Vec3d>
-    (Vec3d(0, 0, 1))
-    (Vec3d(0, 1, 0))
-    (Vec3d(0, 1, 0))
-    (Vec3d(0, 1, 0))
-    (Vec3d(1, 0, 0));
+    std::vector<Vec3d> normals;
+    normals.push_back(Vec3d(0, 0, 1));
+    normals.push_back(Vec3d(0, 1, 0));
+    normals.push_back(Vec3d(0, 1, 0));
+    normals.push_back(Vec3d(0, 1, 0));
+    normals.push_back(Vec3d(1, 0, 0));
 
     EXPECT_NEAR(-M_PI_2, ACG::Geometry::sphericalPolyhedralGaussCurv<Vec3d>(normals.begin(), normals.end()), 1e-6);
 }
