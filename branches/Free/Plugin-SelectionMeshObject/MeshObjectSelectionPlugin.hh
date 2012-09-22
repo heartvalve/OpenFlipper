@@ -438,6 +438,8 @@ public slots:
 
     /** @} */
 
+    void conversion(const QString& _from, const QString& _to, bool _deselect);
+
     //===========================================================================
     /** @name Template Functions
     * @{ */
