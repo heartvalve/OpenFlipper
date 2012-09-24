@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin (OpenVolumeMesh)
+openflipper_plugin (DEPS OpenVolumeMesh)
