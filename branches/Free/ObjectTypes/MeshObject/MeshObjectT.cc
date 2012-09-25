@@ -500,14 +500,21 @@
   /** Shows or hides the areas on the object
    */
   template < class MeshT  >
-  void  MeshObject< MeshT >::hideAreas( bool _hide ) {
+  void  MeshObject< MeshT >::hideArea( StatusBits _bit, bool _hide ) {
+    ACG::SceneGraph::BaseNode::StatusMode status;
+
     if ( _hide ) {
-      areaNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
-      handleNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
-    } else {
-      areaNode_->set_status( ACG::SceneGraph::BaseNode::Active );
-      handleNode_->set_status( ACG::SceneGraph::BaseNode::Active );
+      status = ACG::SceneGraph::BaseNode::HideNode;
+    }else
+      status = ACG::SceneGraph::BaseNode::Active;
+
+    if ( _bit & AREA ) {
+      areaNode_->set_status( status );
     }
+
+    if ( _bit & HANDLEAREA )
+      handleNode_->set_status( status );
+
   }
 
   template < class MeshT  >
@@ -516,8 +523,16 @@
   }
 
   template < class MeshT  >
-  bool MeshObject< MeshT >::areasVisible() {
-    return ( areaNode_->status() == ACG::SceneGraph::BaseNode::Active );
+  bool MeshObject< MeshT >::areaVisible( StatusBits _bit ) {
+    bool status = true;
+
+    if ( _bit & AREA )
+      status &= ( areaNode_->status()   == ACG::SceneGraph::BaseNode::Active );
+
+    if ( _bit & HANDLEAREA )
+      status &= ( handleNode_->status() == ACG::SceneGraph::BaseNode::Active );
+
+    return status;
   }
 
   /** Returns a pointer to the mesh node
