@@ -314,6 +314,32 @@ void ViewControlPlugin::contextMenuTriggered(QAction* _action){
     emit updateView();
   }
 
+  if ( _action->text() == SHOW_AREA) {
+
+    QVariant contextObject = _action->data();
+    int objectId = contextObject.toInt();
+
+    if ( objectId == -1)
+      return;
+
+    showAreas( AREA, objectId, !areasVisible(AREA,objectId) );
+
+    emit updateView();
+  }
+
+  if ( _action->text() == SHOW_HANDLE) {
+
+    QVariant contextObject = _action->data();
+    int objectId = contextObject.toInt();
+
+    if ( objectId == -1)
+      return;
+
+    showAreas( HANDLEAREA, objectId, !areasVisible(HANDLEAREA,objectId) );
+
+    emit updateView();
+  }
+
    if ( _action->text() == SHOW_FEATURES) {
 
     QVariant contextObject = _action->data();
@@ -416,9 +442,7 @@ bool ViewControlPlugin::areasVisible( StatusBits _bits, int _id ) {
 }
 
 bool ViewControlPlugin::modelingAreasVisible( int _id ) {
-
   return areasVisible(StatusBits(HANDLEAREA | AREA), _id);
-
 }
 
 void ViewControlPlugin::showAreas(  StatusBits _bits, int _id , bool _state  ) {
@@ -433,21 +457,19 @@ void ViewControlPlugin::showAreas(  StatusBits _bits, int _id , bool _state  ) {
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
     if ( triMeshObject )
-      triMeshObject->hideArea(  StatusBits(HANDLEAREA | AREA), !_state);
+      triMeshObject->hideArea( _bits, !_state);
   }
 
   if ( object->dataType( DATA_POLY_MESH ) ) {
     PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
     if ( polyMeshObject )
-      polyMeshObject->hideArea(  StatusBits(HANDLEAREA | AREA), !_state);
+      polyMeshObject->hideArea( _bits, !_state);
   }
 
 }
 
 void ViewControlPlugin::showModelingAreas( int _id , bool _state  ) {
-
   showAreas(StatusBits(HANDLEAREA | AREA) , _id, _state );
-
 }
 
 
@@ -510,6 +532,9 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
         act->setChecked( polyMeshObject->selectionVisible() );
     }
 
+    // ============================================
+    // Action for all modeling areas
+    // ============================================
     act = viewControlMenu_->addAction( SHOW_AREAS );
     act->setCheckable(true);
 
@@ -526,6 +551,52 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
       if ( polyMeshObject )
         act->setChecked( polyMeshObject->areaVisible(  StatusBits(HANDLEAREA | AREA)  ) );
     }
+
+
+    // ============================================
+    // Action for handle areas
+    // ============================================
+    act = viewControlMenu_->addAction( SHOW_HANDLE );
+    act->setCheckable(true);
+
+    act->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"handleSelection.png"));
+
+    if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+      TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+      if ( triMeshObject )
+        act->setChecked( triMeshObject->areaVisible( HANDLEAREA   ) );
+    }
+
+    if ( object->dataType( DATA_POLY_MESH ) ) {
+      PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+      if ( polyMeshObject )
+        act->setChecked( polyMeshObject->areaVisible( HANDLEAREA  ) );
+    }
+
+    // ============================================
+    // Action for modeling areas
+    // ============================================
+    act = viewControlMenu_->addAction( SHOW_AREA );
+    act->setCheckable(true);
+
+    act->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"modelingSelection.png"));
+
+    if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+      TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+      if ( triMeshObject )
+        act->setChecked( triMeshObject->areaVisible( AREA ) );
+    }
+
+    if ( object->dataType( DATA_POLY_MESH ) ) {
+      PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+      if ( polyMeshObject )
+        act->setChecked( polyMeshObject->areaVisible( AREA ) );
+    }
+
+    // ============================================
+    // Action for features
+    // ============================================
+
 
     act = viewControlMenu_->addAction( SHOW_FEATURES );
     act->setCheckable(true);
