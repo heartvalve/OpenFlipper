@@ -200,10 +200,17 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     bool featuresVisible( );
 
     /// Hide or show the area Nodes of the object
-    void hideAreas( bool _hide );
+    void hideArea(  StatusBits _bit, bool _hide );
 
-    /// return if the areas are currently visible
-    bool areasVisible();
+    /** \brief Return if the selected areas are currently visible
+     *
+     * \note If the bits contain multiple area bits, than only if all are visible,
+     *       this function will return true
+     *
+     *  @param _bit Status bit to check
+     *  @return All visible?
+     */
+    bool areaVisible( StatusBits _bit );
 
     /// Get the Scenegraph Mesh Node
     ACG::SceneGraph::MeshNodeT<MeshT>* meshNode();
