@@ -51,11 +51,13 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <ACG/Scenegraph/CoordsysNode.hh>
 
-#define SHOW_SELECTION "Selections"
-#define SHOW_AREAS "Modeling Areas"
-#define SHOW_FEATURES "Feature Selection"
+#define SHOW_SELECTION    "Selections"
+#define SHOW_AREAS        "Modeling Areas"
+#define SHOW_AREA         "Modeling Area"
+#define SHOW_HANDLE       "Handle   Area"
+#define SHOW_FEATURES     "Feature Selection"
 #define USEGLOBALDRAWMODE "Use Global DrawMode"
-#define SETSHADERS "Set Shader"
+#define SETSHADERS        "Set Shader"
 
 ViewControlPlugin::ViewControlPlugin():
 viewControlMenu_(0),
@@ -387,10 +389,10 @@ bool ViewControlPlugin::selectionVisible( int _id ) {
   return false;
 }
 
-bool ViewControlPlugin::modelingAreasVisible( int _id ) {
+bool ViewControlPlugin::areasVisible( StatusBits _bits, int _id ) {
 
   if ( _id == -1)
-      return false;
+    return false;
 
   BaseObjectData* object = 0;
   if ( ! PluginFunctions::getObject(_id,object) )
@@ -398,21 +400,28 @@ bool ViewControlPlugin::modelingAreasVisible( int _id ) {
 
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
-    if ( triMeshObject )
-      return triMeshObject->areasVisible();
+    if ( triMeshObject ) {
+      return triMeshObject->areaVisible( _bits );
+    }
   }
 
   if ( object->dataType( DATA_POLY_MESH ) ) {
     PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
     if ( polyMeshObject )
-      return( polyMeshObject->areasVisible() );
+      return( polyMeshObject->areaVisible( _bits ) );
   }
 
   return false;
 
 }
 
-void ViewControlPlugin::showModelingAreas( int _id , bool _state  ) {
+bool ViewControlPlugin::modelingAreasVisible( int _id ) {
+
+  return areasVisible(StatusBits(HANDLEAREA | AREA), _id);
+
+}
+
+void ViewControlPlugin::showAreas(  StatusBits _bits, int _id , bool _state  ) {
 
   if ( _id == -1)
       return;
@@ -424,14 +433,20 @@ void ViewControlPlugin::showModelingAreas( int _id , bool _state  ) {
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
     if ( triMeshObject )
-      triMeshObject->hideAreas( !_state);
+      triMeshObject->hideArea(  StatusBits(HANDLEAREA | AREA), !_state);
   }
 
   if ( object->dataType( DATA_POLY_MESH ) ) {
     PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
     if ( polyMeshObject )
-      polyMeshObject->hideAreas( !_state);
+      polyMeshObject->hideArea(  StatusBits(HANDLEAREA | AREA), !_state);
   }
+
+}
+
+void ViewControlPlugin::showModelingAreas( int _id , bool _state  ) {
+
+  showAreas(StatusBits(HANDLEAREA | AREA) , _id, _state );
 
 }
 
@@ -503,13 +518,13 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
     if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
       TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
       if ( triMeshObject )
-        act->setChecked( triMeshObject->areasVisible() );
+        act->setChecked( triMeshObject->areaVisible(  StatusBits(HANDLEAREA | AREA)  ) );
     }
 
     if ( object->dataType( DATA_POLY_MESH ) ) {
       PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
       if ( polyMeshObject )
-        act->setChecked( polyMeshObject->areasVisible() );
+        act->setChecked( polyMeshObject->areaVisible(  StatusBits(HANDLEAREA | AREA)  ) );
     }
 
     act = viewControlMenu_->addAction( SHOW_FEATURES );
