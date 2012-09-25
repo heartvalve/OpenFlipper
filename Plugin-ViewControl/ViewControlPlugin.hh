@@ -194,6 +194,22 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     // Announce local slots
     void setDescriptions();
 
+    /** \brief Return of all of the given modeling areas are visible
+     *
+     * @param _bits  Which areas to test
+     * @param _id    Id of the object
+     * @return       All areas visible?
+     */
+    bool areasVisible( StatusBits _bits, int _id );
+
+    /** \brief Show or hide modeling areas
+     *
+     * @param _bits   Which areas to test
+     * @param _id     Id of the object
+     * @param _state  Show or hide?
+     */
+    void showAreas(  StatusBits _bits, int _id , bool _state  );
+
 
   public slots:
     /// For meshes returns if the selection for this object is visible
