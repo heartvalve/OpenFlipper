@@ -73,6 +73,9 @@ void MovePlugin::setDescriptions(){
   emit setSlotDescription("translateEdgeSelection(int,Vector)",tr("Translate current edge selection of an object by given vector."),
                           QString(tr("objectId,Vector")).split(","), QString(tr("ID of an object, translation vector")).split(","));
 
+  emit setSlotDescription("transformHandleRegion(int,Matrix4x4)",tr("Transform handle region using the specified matrix."),
+                          QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
+
   emit setSlotDescription("transform(int,Matrix4x4)",tr("transform object by given matrix."),
                           QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
 
@@ -541,6 +544,32 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
   // Create backup
   emit createBackup(_objectId, "Translation of Selection");
 }
+//------------------------------------------------------------------------------
+
+void MovePlugin::transformHandleRegion(int _objectId, Matrix4x4 _matrix) {
+
+  BaseObjectData* object = NULL;
+  if (!PluginFunctions::getObject(_objectId, object)) {
+    emit log(LOGERR, tr("transformHandleRegion: Unable to get object!"));
+    return;
+  }
+
+  if(object->dataType(DATA_TRIANGLE_MESH)) {
+
+    TriMesh& mesh = (*PluginFunctions::triMesh(object));
+
+    MeshFunctions::transformHandleVertices(_matrix, mesh);
+
+  } else if(object->dataType(DATA_POLY_MESH)) {
+
+    PolyMesh& mesh = (*PluginFunctions::polyMesh(object));
+
+    MeshFunctions::transformHandleVertices(_matrix, mesh);
+  }
+
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
+}
+
 //------------------------------------------------------------------------------
 
 /** \brief tranform an object
