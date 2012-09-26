@@ -489,6 +489,9 @@ public slots :
   /// transform current selection of an Object by a given matrix
   void transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
 
+  /// Transform handle region using the given transformation matrix
+  void transformHandleRegion(int _objectId, Matrix4x4 _matrix);
+
   /// Set the position of the manipulator
   void setManipulatorPosition( int _objectId , Vector _position );
 
