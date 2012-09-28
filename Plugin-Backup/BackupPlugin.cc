@@ -74,13 +74,13 @@ void BackupPlugin::pluginsInitialized() {
     backupsEnabledAction_ = new QAction("Backups Enabled",0);
     backupsEnabledAction_->setCheckable(true);
     connect (backupsEnabledAction_, SIGNAL(triggered(bool)), this, SLOT(slotEnableDisableBackups()) );
-    
+
     undoMenuAction_ = new QAction(tr("&Undo"), this);
     undoMenuAction_->setEnabled(false);
     undoMenuAction_->setStatusTip(tr("Undo the last action."));
     undoMenuAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-undo.png") );
     connect(undoMenuAction_, SIGNAL(triggered()), this, SIGNAL( undo() ) );
-    
+
     redoMenuAction_ = new QAction(tr("&Redo"), this);
     redoMenuAction_->setEnabled(false);
     redoMenuAction_->setStatusTip(tr("Redo the last action"));
@@ -94,7 +94,7 @@ void BackupPlugin::pluginsInitialized() {
 
     // Add a backup Toolbar
     QToolBar* toolbar = new QToolBar("Backup Toolbar");
-    
+
     //Undo
     undoToolAction_ = new QAction(tr("&Undo"), this);
     undoToolAction_->setEnabled(false);
@@ -102,7 +102,7 @@ void BackupPlugin::pluginsInitialized() {
     undoToolAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-undo.png") );
     connect(undoToolAction_, SIGNAL(triggered()), this, SIGNAL( undo() ) );
     toolbar->addAction(undoToolAction_);
-    
+
     //Redo
     redoToolAction_ = new QAction(tr("&Redo"), this);
     redoToolAction_->setEnabled(false);
@@ -110,13 +110,13 @@ void BackupPlugin::pluginsInitialized() {
     redoToolAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-redo.png") );
     connect(redoToolAction_, SIGNAL(triggered()), this, SIGNAL( redo() ) );
     toolbar->addAction(redoToolAction_);
-  
+
     emit addToolbar( toolbar );
-    
+
     //the release event does not contain the modifier
     emit registerKey(Qt::Key_Z,  Qt::ControlModifier, tr("Undo Action"));
     emit registerKey(Qt::Key_Z, (Qt::ControlModifier | Qt::ShiftModifier),   tr("Redo Action"));
-    
+
     //add actions for the context menu
     undoContextAction_ = new QAction(tr("&Undo"), this);
     undoContextAction_->setEnabled(false);
@@ -143,7 +143,7 @@ void BackupPlugin::slotAllCleared(){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::updateButtons() {
-  
+
   if ( globalBackup_.undoAvailable() ){
     undoMenuAction_->setText( tr("Undo '%1'").arg( globalBackup_.undoName() ) );
     undoMenuAction_->setEnabled(true);
@@ -239,7 +239,7 @@ void BackupPlugin::slotUpdateContextMenu( int _objectId ){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::slotObjectUndo(){
-  
+
   int id = undoContextAction_->data().toInt();
   emit undo(id);
 }
@@ -247,7 +247,7 @@ void BackupPlugin::slotObjectUndo(){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::slotObjectRedo(){
-  
+
   int id = undoContextAction_->data().toInt();
   emit redo(id);
 }
@@ -255,7 +255,7 @@ void BackupPlugin::slotObjectRedo(){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::slotCreateBackup( int _objectid, QString _name, UpdateType _type){
-  
+
   if ( !OpenFlipper::Options::backupEnabled() )
     return;
 
@@ -300,7 +300,7 @@ void BackupPlugin::slotCreateBackup( IdList _objectids , QString _name, std::vec
     return;
 
   IdList groupIds;
-  
+
   if ( _objectids.size() != _types.size() ){
     emit log(LOGWARN,"Unable to create backup sizes of ids and updateTypes do not match!");
     return;
@@ -323,7 +323,7 @@ void BackupPlugin::slotCreateBackup( IdList _objectids , QString _name, std::vec
 
   //add global backup
   if ( ! groupIds.empty() ){
-    
+
     GroupBackup* backup = new GroupBackup(groupIds, _name);
     globalBackup_.storeBackup( backup );
 
@@ -347,10 +347,15 @@ void BackupPlugin::slotUndo(int _objectid){
 //-----------------------------------------------------------------------------
 
 void BackupPlugin::slotUndo(){
+  GroupBackup* group = dynamic_cast< GroupBackup* >( globalBackup_.currentState() );
+
+  IdList ids = group->objectIDs();
+  IdList::const_iterator it, end;
+  for (it = ids.begin(), end = ids.end(); it != end; ++it)
+    emit aboutToRestore(*it);
+
   globalBackup_.undo();
 
-  GroupBackup* group = dynamic_cast< GroupBackup* >( globalBackup_.currentState() );
-    
   if ( group != 0)
     for (unsigned int i=0; i < group->objectIDs().size(); i++)
       emit updatedObject(group->objectIDs()[i], UPDATE_ALL);
