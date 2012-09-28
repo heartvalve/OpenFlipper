@@ -769,6 +769,13 @@ void DecimaterPlugin::objectDeleted(int _id)
 
 //-----------------------------------------------------------------------------
 
+void DecimaterPlugin::slotAboutToRestore(int _id)
+{
+  decimater_objects_.clear();
+}
+
+//-----------------------------------------------------------------------------
+
 void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType& _type )
 {
   if ( _type.contains(UPDATE_TOPOLOGY) ) {
