@@ -23,7 +23,7 @@
       <item>
        <widget class="QRadioButton" name="rbUseDecimater">
         <property name="toolTip">
-         <string>More accurate but slower</string>
+         <string>Incremental decimater (highest accuracy, slower)</string>
         </property>
         <property name="text">
          <string>Incremental</string>
@@ -36,7 +36,12 @@
       <item>
        <widget class="QRadioButton" name="rbUseMC">
         <property name="toolTip">
-         <string>Less accurate but faster</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Multiple choice decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is faster than the incremental decimater but as it is randomized, the result is not guarantied to be the best, but still inside the specified constraints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="whatsThis">
+         <string>Multiple choice decimater
+
+The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is faster than the incremental decimater but as it is randomized, the result is not guarantied to be the best, but still inside the specified constraints.</string>
         </property>
         <property name="text">
          <string>Multiple Choice</string>
@@ -46,7 +51,12 @@
       <item>
        <widget class="QRadioButton" name="rbUseMixed">
         <property name="toolTip">
-         <string>Uses Multiple Choise Decimater and Incremental Decimater to get good and fast results.</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mixed Decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Uses Multiple Choice Decimater and Incremental Decimater to get good and fast results as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="whatsThis">
+         <string>Mixed Decimater
+
+Uses Multiple Choice Decimater and Incremental Decimater to get good and fast results as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.</string>
         </property>
         <property name="text">
          <string>Mixed</string>
@@ -74,6 +84,12 @@
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="toolTip">
+            <string>Number of Random samples used by the Multiple Choice Decimater</string>
+           </property>
+           <property name="whatsThis">
+            <string>Number of Random samples used by the Multiple Choice Decimater</string>
+           </property>
            <property name="minimum">
             <number>1</number>
            </property>
@@ -81,7 +97,7 @@
             <number>50</number>
            </property>
            <property name="value">
-            <number>10</number>
+            <number>8</number>
            </property>
           </widget>
          </item>
@@ -103,6 +119,12 @@
             </item>
             <item row="0" column="0">
              <widget class="QDoubleSpinBox" name="mixedFactorCounter">
+              <property name="toolTip">
+               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+              </property>
+              <property name="whatsThis">
+               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+              </property>
               <property name="maximum">
                <double>100.000000000000000</double>
               </property>
@@ -138,6 +160,12 @@
              <widget class="QSlider" name="mixedFactorSlider">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+              </property>
+              <property name="whatsThis">
+               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
               </property>
               <property name="minimum">
                <number>0</number>
@@ -211,6 +239,9 @@
           <property name="text">
            <string>Distance</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item row="0" column="2">
@@ -228,7 +259,7 @@
            <double>1.000000000000000</double>
           </property>
           <property name="value">
-           <double>0.000000000000000</double>
+           <double>0.050000000000000</double>
           </property>
          </widget>
         </item>
@@ -292,7 +323,7 @@ p, li { white-space: pre-wrap; }
            <number>180</number>
           </property>
           <property name="value">
-           <number>10</number>
+           <number>5</number>
           </property>
          </widget>
         </item>
