@@ -113,13 +113,13 @@ signals:
   // RPC Interface
   void pluginExists( QString _pluginName , bool& _exists  ) ;
   void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
-  
+
   // ToolboxInterface
   void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
-  
+
   // ScriptInterface
   void scriptInfo( QString _functionName );
-  
+
   // BackupInterface
   void createBackup( int _id , QString _name, UpdateType _type = UPDATE_ALL );
 
@@ -127,11 +127,13 @@ private slots:
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
-    
+
     void slotObjectUpdated( int _identifier , const UpdateType& _type ); // BaseInterface
     void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
     void objectDeleted(int _id); //LoadSaveInterface
+
+    void slotAboutToRestore(int _id); //BackupInterface
 
 public :
 
@@ -153,7 +155,7 @@ private :
   typedef OpenMesh::Decimater::DecimaterT< TriMesh >                  DecimaterType;
   typedef OpenMesh::Decimater::McDecimaterT< TriMesh >                McDecimaterType;
   typedef OpenMesh::Decimater::MixedDecimaterT< TriMesh >             MixedDecimaterType;
-  
+
   typedef OpenMesh::Decimater::ModAspectRatioT< TriMesh >::Handle     ModAspectRatioH;
   typedef OpenMesh::Decimater::ModEdgeLengthT< TriMesh >::Handle      ModEdgeLengthH;
   typedef OpenMesh::Decimater::ModHausdorffT< TriMesh >::Handle       ModHausdorffH;
