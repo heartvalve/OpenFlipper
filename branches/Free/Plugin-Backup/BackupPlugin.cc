@@ -349,18 +349,20 @@ void BackupPlugin::slotUndo(int _objectid){
 void BackupPlugin::slotUndo(){
   GroupBackup* group = dynamic_cast< GroupBackup* >( globalBackup_.currentState() );
 
-  IdList ids = group->objectIDs();
-  IdList::const_iterator it, end;
-  for (it = ids.begin(), end = ids.end(); it != end; ++it)
-    emit aboutToRestore(*it);
+  if (group) {
+    IdList ids = group->objectIDs();
+    IdList::const_iterator it, end;
+    for (it = ids.begin(), end = ids.end(); it != end; ++it)
+      emit aboutToRestore(*it);
 
-  globalBackup_.undo();
+    globalBackup_.undo();
 
-  if ( group != 0)
     for (unsigned int i=0; i < group->objectIDs().size(); i++)
       emit updatedObject(group->objectIDs()[i], UPDATE_ALL);
 
-  updateButtons();
+    updateButtons();
+  } else
+    emit log(LOGWARN,"Unable to find the current GroupBackup");
 }
 
 //-----------------------------------------------------------------------------
