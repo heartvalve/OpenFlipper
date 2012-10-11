@@ -147,26 +147,25 @@ void MeshRepairPlugin::snapBoundary(MeshT *_mesh, double _eps)
     double min = _eps;
     typename MeshT::VertexHandle v_old;//will be replaced by v_new
     typename MeshT::VertexHandle v_new;
-    typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator used_vertex = vertexDistMap.end();
+    typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator v_oldIter = vertexDistMap.end();
+    typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator v_newIter;
 
     //find next min pair
     for (typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator vd_iter = vertexDistMap.begin(); vd_iter != vertexDistMap.end(); ++vd_iter)
     {
       typename MeshT::VertexHandle v_1 = vd_iter->first;
-
-      if (v_1.is_valid() && !_mesh->status(v_1).deleted() && _mesh->is_boundary(v_1))
+      if (v_1.is_valid() && !_mesh->status(v_1).deleted() && vertexVertexMap.find(v_1) != vertexVertexMap.end())
       {
         typename MeshT::VertexHandle v_2;
         std::vector<std::pair<typename MeshT::VertexHandle,double> >& verticesInRange = vertexVertexMap[v_1];
 
         bool validPair = false;
 
-        unsigned i = 0;
-        while(i < verticesInRange.size() && !validPair)
+        for (typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator iter = verticesInRange.begin(); iter != verticesInRange.end(); ++iter)
         {
           //check if v_2 shares a face with v_1
           //if so, it is not usable
-          v_2 = verticesInRange[i].first;
+          v_2 = iter->first;
 
           for(typename MeshT::VertexFaceIter vf_iter = _mesh->vf_begin(v_1); vf_iter && v_2.is_valid(); ++vf_iter)
             for (typename MeshT::FaceVertexIter fv_iter = _mesh->fv_begin(vf_iter.handle()); fv_iter && v_2.is_valid(); ++fv_iter)
@@ -176,38 +175,30 @@ void MeshRepairPlugin::snapBoundary(MeshT *_mesh, double _eps)
           validPair = v_2.is_valid() && !_mesh->status(v_2).deleted() && _mesh->is_boundary(v_2);
 
           //if v_2 is valid, save it, or erase it if not, because v_2 will not be valid in the future
-          if (validPair)
+          if (validPair && iter->second <= min)
           {
-            if(verticesInRange[i].second <= min)
-            {
-              //new min pair found
-              min = verticesInRange[i].second;
-              v_old = v_1;
-              v_new = v_2;
-              finished = false;
-              used_vertex = vd_iter;
-            }
-            ++i;
+            //new min pair found
+            min = iter->second;
+            v_old = v_1;
+            v_new = v_2;
+            finished = false;
+            v_oldIter = vd_iter;
+            v_newIter = iter;
           }
-          else
-            verticesInRange.erase(verticesInRange.begin()+i);
         }
       }
+
     }
-
-    //erase the entry, because the vertex will be erased when it is merged
-    if (used_vertex != vertexDistMap.end())
-      vertexDistMap.erase(used_vertex);
-
     //merge, if not finished (pair found)
     if (!finished)
     {
+      //remove the vertex since we will proceed with it
+      vertexVertexMap[v_old].erase(v_newIter);
       //save all faces, because faces will be added/deleted
       std::vector<typename MeshT::FaceHandle> faces;
       for (typename MeshT::VertexFaceIter vf_iter = _mesh->vf_begin(v_old); vf_iter; ++vf_iter)
         if (!_mesh->status(vf_iter).deleted())
           faces.push_back(vf_iter);
-
 
       //replace v_old with v_new by creating new faces with v_new instead of v_old if possible
       for (typename std::vector<typename MeshT::FaceHandle>::iterator f_iter = faces.begin(); f_iter !=faces.end(); ++f_iter)
@@ -233,17 +224,19 @@ void MeshRepairPlugin::snapBoundary(MeshT *_mesh, double _eps)
           //failed, try reverse direction
           std::reverse(newFace_vertices.begin(),newFace_vertices.end());
           faceH = _mesh->add_face(newFace_vertices);
-
           if (!faceH.is_valid())
+          {
             //failed, so add the old one
             _mesh->add_face(f_vertices);
+          }
         }
       }
-      //erase the vertex
-      if (_mesh->is_isolated(v_old))
-        _mesh->delete_vertex(v_old);
     }
+    vertexDistMap.erase(v_oldIter);
+    //todo: delete vertex before proceed. Now, they will be deleted at the end resulting worse snap
   }
+  _mesh->delete_isolated_vertices();
+
   _mesh->garbage_collection();
 
 }
