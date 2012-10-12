@@ -44,11 +44,14 @@
 #include "MaterialPicker.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
+#include <sstream>
 
 //------------------------------------------------------------------------------
 MaterialPicker::MaterialPicker()
   :
   pickModeName_("MaterialPicker"),
+  propName_("MaterialPicker/Materials"),
   pickMaterialButton_(0),
   fillMaterialButton_(0),
   materialListWidget_(0),
@@ -81,6 +84,47 @@ void MaterialPicker::initializePlugin() {
 
    materialListWidget_ = new QListWidget(toolBox);
 
+   materials_ = OpenFlipperSettings().value( propName_, QStringList() ).toStringList();
+
+   for (int i = 0; i < materials_.size(); ++i)
+   {
+     QStringList savedString = materials_[i].split(";");
+     std::stringstream stream;
+     MaterialInfo materialInfo;
+     stream << savedString[1].toStdString();
+     stream >> materialInfo.color_material;
+     stream.str("");
+     stream.clear();
+     stream << savedString[2].toStdString();
+     stream >> materialInfo.base_color;
+     stream.str("");
+     stream.clear();
+     stream << savedString[3].toStdString();
+     stream >> materialInfo.ambient_color;
+     stream.str("");
+     stream.clear();
+     stream << savedString[4].toStdString();
+     stream >> materialInfo.diffuse_color;
+     stream.str("");
+     stream.clear();
+     stream << savedString[5].toStdString();
+     stream >> materialInfo.specular_color;
+     stream.str("");
+     stream.clear();
+     stream << savedString[6].toStdString();
+     stream >> materialInfo.shininess;
+     stream.str("");
+     stream.clear();
+     stream << savedString[7].toStdString();
+     stream >> materialInfo.reflectance;
+
+
+     materialListWidget_->addItem( savedString[0] );
+     materialList_.push_back(materialInfo);
+   }
+   if (materials_.size())
+     materialListWidget_->setCurrentItem(materialListWidget_->item(0));
+
    layout->addWidget(materials);
    layout->addWidget(materialListWidget_);
    layout->addWidget(clearListButton);
@@ -93,6 +137,7 @@ void MaterialPicker::initializePlugin() {
    connect(fillMaterialButton_, SIGNAL(clicked()), this, SLOT(slotFillMaterialMode()));
    connect(clearListButton, SIGNAL(clicked()), this, SLOT(clearList()));
    connect(materialListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(editMode(QListWidgetItem*)));
+   connect(materialListWidget_,SIGNAL(itemChanged ( QListWidgetItem*)), this, SLOT(assignNewName(QListWidgetItem*)));
 
    emit addToolbox( tr("Material Picker"), toolBox);
 }
@@ -102,6 +147,8 @@ void MaterialPicker::initializePlugin() {
 void MaterialPicker::clearList() {
   materialListWidget_->clear();
   materialList_.clear();
+  materials_.clear();
+  OpenFlipperSettings().setValue(propName_, materials_);
 }
 
 //------------------------------------------------------------------------------
@@ -166,11 +213,25 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
             materialInfo.reflectance = material->reflectance();
 
             // update list widget and material list
-            materialListWidget_->addItem( QString("material id: %1").arg(material->id()) );
+            QString name = QString("material id: %1").arg(material->id());
+            materialListWidget_->addItem( name );
             materialListWidget_->setCurrentItem( materialListWidget_->item(materialListWidget_->count() - 1) );
 
             materialList_.push_back(materialInfo);
 
+            std::stringstream stream;
+            stream << name.toStdString();
+            stream << ";" << materialInfo.color_material;
+            stream << ";" << materialInfo.base_color;
+            stream << ";" << materialInfo.ambient_color;
+            stream << ";" << materialInfo.diffuse_color;
+            stream << ";" << materialInfo.specular_color;
+            stream << ";" << materialInfo.shininess;
+            stream << ";" << materialInfo.reflectance;
+
+            QString materialString = stream.str().c_str();
+            materials_.push_back(materialString);
+            OpenFlipperSettings().setValue(propName_, materials_);
           }
 
         // apply material from current item in list widget to picked object
@@ -179,14 +240,17 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
 
           if (material) {
 
-            int row = materialListWidget_->currentRow();
-            material->colorMaterial(materialList_[row].color_material);
-            material->set_base_color(materialList_[row].base_color);
-            material->set_ambient_color(materialList_[row].ambient_color);
-            material->set_diffuse_color(materialList_[row].diffuse_color);
-            material->set_specular_color(materialList_[row].specular_color);
-            material->set_shininess(materialList_[row].shininess);
-            material->set_reflectance(materialList_[row].reflectance);
+            if (materialListWidget_->count() > 0)
+            {
+              int row = materialListWidget_->currentRow();
+              material->colorMaterial(materialList_[row].color_material);
+              material->set_base_color(materialList_[row].base_color);
+              material->set_ambient_color(materialList_[row].ambient_color);
+              material->set_diffuse_color(materialList_[row].diffuse_color);
+              material->set_specular_color(materialList_[row].specular_color);
+              material->set_shininess(materialList_[row].shininess);
+              material->set_reflectance(materialList_[row].reflectance);
+            }
 
           }
         }
@@ -202,6 +266,21 @@ void MaterialPicker::editMode(QListWidgetItem* _item) {
   materialListWidget_->editItem(_item);
 }
 
+//------------------------------------------------------------------------------
+void MaterialPicker::assignNewName(QListWidgetItem* _item)
+{
+  unsigned index = materialListWidget_->row(_item);
+  QString str = materials_[index];
+  QStringList strList = str.split(";");
+  strList[0] = _item->text();
+  str = "";
+  for (int i = 0; i < strList.size()-1; ++i)
+    str += strList[i] + ";";
+  str += strList[strList.size()-1];
+  materials_[index] = str;
+  OpenFlipperSettings().setValue(propName_, materials_);
+
+}
 //------------------------------------------------------------------------------
 
 void MaterialPicker::slotPickModeChanged(const std::string& _mode) {
