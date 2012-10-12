@@ -96,10 +96,12 @@ public:
 private:
 
   const std::string pickModeName_;
+  const QString propName_;
 
   QPushButton* pickMaterialButton_;
   QPushButton* fillMaterialButton_;
   QListWidget* materialListWidget_;
+  QStringList materials_;
 
   QVector<MaterialInfo> materialList_;
 
@@ -120,6 +122,9 @@ private slots:
 
   /// items can be renamed by double clicking them
   void editMode(QListWidgetItem* _item);
+
+  /// saves the new material name
+  void assignNewName(QListWidgetItem* _item);
 
   void clearList();
 
