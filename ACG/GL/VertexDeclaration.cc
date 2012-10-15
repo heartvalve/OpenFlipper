@@ -214,7 +214,6 @@ void VertexDeclaration::activateFixedFunction()
   {
     const VertexElement* pElem = getElement(i);
 
-#ifndef SIMULATE_ONLY
     switch (pElem->usage_)
     {
     case VERTEX_USAGE_POSITION:
@@ -243,8 +242,9 @@ void VertexDeclaration::activateFixedFunction()
         ACG::GLState::normalPointer(pElem->type_, vertexStride, pElem->pDataSrc_);
         ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
       } break;
+
+    default: break;
     }
-#endif // SIMULATE_ONLY
 
     
   }
