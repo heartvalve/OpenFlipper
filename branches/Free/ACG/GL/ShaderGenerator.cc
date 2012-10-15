@@ -55,9 +55,15 @@
 namespace ACG
 {
 
-
-
 #define LIGHTING_CODE_FILE "ShaderGen/SG_LIGHTING.GLSL"
+
+
+
+
+
+int ShaderProgGenerator::numModifiers_ = 0;
+ShaderModifier* ShaderProgGenerator::modifiers_[32] = {0};
+
 
 
 ShaderGenerator::ShaderGenerator()
@@ -74,6 +80,8 @@ ShaderGenerator::~ShaderGenerator()
 void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 {
   addInput("vec4 inPosition");
+  addOutput("vec4 outPosCS");
+
 
   if (_desc->shadeMode != SG_SHADE_UNLIT)
     addInput("vec3 inNormal");
@@ -116,6 +124,7 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
   if (_desc->textured)
     addInput("vec2 outTexCoord");
 
+  addInput("vec4 outPosCS");
 
   std::string strColorOut = "";
 
@@ -346,8 +355,9 @@ const QStringList& ShaderGenerator::getShaderCode()
 QString ShaderProgGenerator::shaderDir_;
 QStringList ShaderProgGenerator::lightingCode_;
 
-ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc)
-: vertex_(0), fragment_(0)
+ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
+                                         unsigned int _usage)
+: vertex_(0), fragment_(0), usage_(_usage)
 {
   if (shaderDir_.isEmpty())
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
@@ -457,8 +467,16 @@ void ShaderProgGenerator::buildVertexShader()
 
 //  vertex_->initDefaultVertexShaderIO();
   vertex_->initVertexShaderIO(&desc_);
-  
+
   vertex_->initDefaultUniforms();
+
+
+  // apply i/o modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyVertexIO(vertex_);
+  }
 
 
   initGenDefines(vertex_);
@@ -555,12 +573,20 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   }
 
 
+
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyVertexBeginCode(_code);
+  }
 }
 
 
 void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
 {
   _code->push_back("gl_Position = sg_vPosPS;");
+  _code->push_back("outPosCS = sg_vPosPS;");
 
   if (desc_.textured)
     _code->push_back("outTexCoord = sg_vTexCoord;");
@@ -574,6 +600,15 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
   {
     _code->push_back("outNormal = sg_vNormalVS;");
     _code->push_back("outPosVS = sg_vPosVS;");
+  }
+
+
+
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyVertexEndCode(_code);
   }
 }
 
@@ -608,12 +643,20 @@ void ShaderProgGenerator::buildFragmentShader()
 
   fragment_->initFragmentShaderIO(&desc_);
 
+
   fragment_->initDefaultUniforms();
 
 
   // texture sampler id
   if (desc_.textured)
     fragment_->addUniform("sampler2D g_Texture0");
+
+  // apply i/o modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyFragmentIO(fragment_);
+  }
 
 
   initGenDefines(fragment_);
@@ -688,6 +731,16 @@ void ShaderProgGenerator::buildFragmentShader()
 
 void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 {
+  // support for projective texture mapping
+  _code->push_back("vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);");
+
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyFragmentBeginCode(_code);
+  }
+
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
@@ -714,6 +767,13 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 void ShaderProgGenerator::addFragmentEndCode(QStringList* _code)
 {
   _code->push_back("outFragment = sg_cColor;");
+
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyFragmentEndCode(_code);
+  }
 }
 
 
@@ -810,7 +870,36 @@ void ShaderProgGenerator::setShaderDir( QString _dir )
   shaderDir_ = _dir;
 }
 
+unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
+{
+  if (!_modifier) return 0;
+
+  // redundancy check
+  for (unsigned int i = 0; i < 32; ++i)
+  {
+    if (modifiers_[i] == _modifier) 
+      return i;
+  }
+
+  if (numModifiers_ == 32) 
+    return 0;
+
+  modifiers_[numModifiers_++] = _modifier;
+
+  _modifier->modifierID_ = (unsigned int)numModifiers_;
+  return _modifier->modifierID_;
+}
+
 
 //=============================================================================
+
+ShaderModifier::ShaderModifier( void )
+: modifierID_(0)
+{}
+
+ShaderModifier::~ShaderModifier( void )
+{}
+
+
 } // namespace ACG
 //=============================================================================

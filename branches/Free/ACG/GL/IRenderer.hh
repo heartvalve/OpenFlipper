@@ -50,8 +50,17 @@
 namespace ACG
 {
 
+
+// forward declaration
 class VertexDeclaration;
 class GLState;
+
+namespace SceneGraph {
+  namespace DrawModes {
+    class DrawModeProperties;
+  }
+}
+
 
 /** \brief Interface class between scenegraph and renderer
  *
@@ -193,7 +202,6 @@ struct ACGDLLEXPORT RenderObject
         shininess;
 
 
-
   /** \brief Texture to be used
    *
    * eventually a more flexible texture system with user defined:
@@ -208,6 +216,8 @@ struct ACGDLLEXPORT RenderObject
   /// used internally for renderer debugging
   int debugID;
 
+  /// may be used internally by the renderer
+  unsigned int internalFlags_;
 
 
   // opengl style helper function interface: 
@@ -249,6 +259,10 @@ struct ACGDLLEXPORT RenderObject
    * Grabs material and transforms automatically if a GLState is provided.
   */
   void initFromState(GLState* _glState);
+
+  /** \brief Fills out ShaderGenDesc parameters based on Drawmode properties
+  */
+  void setupShaderGenFromDrawmode(const SceneGraph::DrawModes::DrawModeProperties* _props);
 };
 
 
@@ -267,7 +281,6 @@ public:
   */
   virtual void addRenderObject(RenderObject* _renderObject) = 0;
 
-protected:
 
 };
 

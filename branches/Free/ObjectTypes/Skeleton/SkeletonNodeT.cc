@@ -55,6 +55,7 @@
 
 #include "SkeletonNodeT.hh"
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/IRenderer.hh>
 #include <vector>
 #include <deque>
 
@@ -646,6 +647,56 @@ void SkeletonNodeT<SkeletonType>::draw_bone(GLState &_state, DrawModes::DrawMode
 
 //----------------------------------------------------------------------------
 
+
+/** \brief Helper function to create a renderobject for bones
+ * 
+ */
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::addBoneToRenderer(IRenderer* _renderer, RenderObject& _base, const Point& _parent, const Point& _axis)
+{
+  // save previous modelview transform
+  GLMatrixf prevTransform = _base.modelview;
+
+  Point midPoint = _parent + 0.1 * _axis;
+  
+  _base.modelview.translate(midPoint[0], midPoint[1], midPoint[2]);
+
+  Point  direction = _axis;
+  Point  z_axis(0,0,1);
+  Point  rot_normal;
+  double rot_angle;
+
+  direction.normalize();
+  rot_angle  = acos((z_axis | direction))*180/M_PI;
+  rot_normal = ((z_axis % direction).normalize());
+
+
+  if(fabs(rot_angle) > 0.0001 && fabs(180-rot_angle) > 0.0001)
+    _base.modelview.rotate(rot_angle, rot_normal[0], rot_normal[1], rot_normal[2]);
+  else
+    _base.modelview.rotate(rot_angle, 1, 0, 0);
+
+  double boneLength = _axis.norm();
+  double radius     = boneLength * 0.07;
+  
+  //draw the large cone from midPoint to the end of the bone
+  cone_->setBottomRadius(1.0f);
+  cone_->setTopRadius(0.0f);
+
+  _base.modelview.scale(radius, radius, 1.0f);
+  cone_->addToRenderer(_renderer, &_base, boneLength*0.9);
+
+  //rotate 180.0 and draw the the small cone from midPoint to the start
+  _base.modelview.rotate(180.0, 1, 0, 0);  
+  cone_->addToRenderer(_renderer, &_base, boneLength*0.1);
+
+
+  _base.modelview = prevTransform;
+}
+
+
+//----------------------------------------------------------------------------
+
 /**
  * @brief Selects the active pose
  *
@@ -692,6 +743,106 @@ bool SkeletonNodeT<SkeletonType>::coordFramesVisible()
 {
   return bCoordFramesVisible_;
 }
+
+
+//----------------------------------------------------------------------------
+
+/**
+ * @brief Generates renderobjects instead of direct draw calls for better rendering management.
+ */
+
+template <class SkeletonType>
+void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer, 
+                                                   GLState& _state,
+                                                   const DrawModes::DrawMode& _drawMode)
+{
+  RenderObject ro;
+  ro.initFromState(&_state);
+
+
+  // render states
+  ro.depthTest = true;
+  ro.depthWrite = true;
+  
+  ro.culling = true;
+  ro.blending = false;
+
+
+  Pose *pose = skeleton_.pose(hAni_);
+  typename SkeletonType::Iterator it;
+
+
+
+  // draw bones
+  //
+//   if ( (_drawMode == DrawModes::WIREFRAME)
+//     || (_drawMode == DrawModes::SOLID_FLAT_SHADED)
+//     || (_drawMode == DrawModes::SOLID_FACES_COLORED)
+//     || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
+  {
+
+    Vec4f baseColor = _state.base_color();
+
+    ro.setupShaderGenFromDrawmode(_drawMode.getDrawModeProperties());
+
+    // draw the bones
+    for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
+
+      //joint is the (unique) tail joint of the bone
+      Joint* joint  = *it;
+      Joint* parent = joint->parent();
+
+      // root can be ignored
+      // we only want to draw bones from (parent -> joint)
+      if (parent == 0)
+        continue;
+
+      //select joint color
+      ro.emissive = Vec3f(baseColor[0], baseColor[1], baseColor[2]);
+
+      Vec3d parentPos = pose->globalTranslation(parent->id());
+      Vec3d jointPos  = pose->globalTranslation(joint->id());
+
+      Vec3d boneVector = (jointPos - parentPos);
+
+      addBoneToRenderer(_renderer, ro, parentPos, boneVector);
+    }
+
+// 
+//     // draw the local coordinate frames
+//     if(bCoordFramesVisible_)
+//     {
+//       ACG::GLState::disable(GL_COLOR_MATERIAL);
+//       ACG::GLState::disable(GL_LIGHTING);
+// 
+//       glLineWidth(3.0);
+//       glBegin(GL_LINES);
+//       for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+//       {
+//         unsigned int index = (*it)->id();
+//         typename SkeletonType::Matrix global = pose->globalMatrix(index);
+//         NormalizeCoordinateFrame(global);
+//         glColor3f(0.8, 0.2, 0.2);
+//         glVertex( pose->globalTranslation(index));
+//         glVertex( global.transform_point(Point(fFrameSize_, 0, 0)) );
+//         glColor3f(0.2, 0.8, 0.2);
+//         glVertex( pose->globalTranslation(index));
+//         glVertex( global.transform_point(Point(0, fFrameSize_, 0)) );
+//         glColor3f(0.2, 0.2, 0.8);
+//         glVertex( pose->globalTranslation(index));
+//         glVertex( global.transform_point(Point(0, 0, fFrameSize_)) );
+//       }
+//       glEnd();
+//       glLineWidth(_state.line_width());
+//     }
+  }
+
+
+}
+
+
+
+
 
 
 //=============================================================================
