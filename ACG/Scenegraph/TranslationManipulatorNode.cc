@@ -57,6 +57,8 @@
 #include "../Math/GLMatrixT.hh"
 #include "../GL/gl.hh"
 
+#include <ACG/GL/IRenderer.hh>
+
 #include <QMouseEvent>
 #include <QEvent>
 #include <float.h>
@@ -132,7 +134,9 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     dirX_(1.0,0.0,0.0),
     dirY_(0.0,1.0,0.0),
     dirZ_(0.0,0.0,1.0),
-    axis_(0),
+    axisBottom_(0),
+    axisCenter_(0),
+    axisTop_(0),
     circle_(0),
     sphere_(0),
     manipulator_radius_(20.0),
@@ -158,9 +162,16 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
   localTransformation_.identity();
 
   // Create GLPrimitives
-  axis_ = new ACG::GLCone(manipulator_slices_, manipulator_stacks_,
+  axisBottom_ = new ACG::GLCone(manipulator_slices_, manipulator_stacks_,
       (1.0 - resize_current_) * manipulator_radius_,
       (1.0 + resize_current_) * manipulator_radius_, false, true);
+  axisCenter_ = new ACG::GLCone(manipulator_slices_, manipulator_stacks_,
+    (1.0 - resize_current_) * manipulator_radius_,
+    (1.0 + resize_current_) * manipulator_radius_, false, true);
+  axisTop_ = new ACG::GLCone(manipulator_slices_, manipulator_stacks_,
+    (1.0 - resize_current_) * manipulator_radius_,
+    (1.0 + resize_current_) * manipulator_radius_, false, true);
+
   sphere_ = new ACG::GLSphere(manipulator_slices_, manipulator_stacks_);
   circle_ = new ACG::GLDisk(30, 30, 2.0f*manipulator_height_ - manipulator_height_/4.0f, 2.0f*manipulator_height_);
 
@@ -187,15 +198,13 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
 
 TranslationManipulatorNode::~TranslationManipulatorNode() {
 
-  if (axis_)
-    delete axis_;
+  delete axisBottom_;
+  delete axisCenter_;
+  delete axisTop_;
 
-  if (sphere_)
-    delete sphere_;
+  delete sphere_;
 
-	if (circle_)
-	  delete circle_;
-
+  delete circle_;
 }
 
 
@@ -380,48 +389,55 @@ void TranslationManipulatorNode::updateTargetColors ()
 
 bool TranslationManipulatorNode::updateCurrentColors (GLState& _state)
 {
-    bool rv = false;
+  bool rv = false;
 
-    float value = (float)_state.msSinceLastRedraw () / 1000.0;
+  float value = (float)_state.msSinceLastRedraw () / 1000.0;
 
-    if (ignoreTime_)
-    {
-      value = 0;
-      ignoreTime_ = false;
-    }
+  if (ignoreTime_)
+  {
+    value = 0;
+    ignoreTime_ = false;
+  }
 
-    for (unsigned int i = 0; i < NumElements; i++)
-    {
-	Vec4f diff = element_[i].active_target_color_ -
-                     element_[i].active_current_color_;
-	for (unsigned int j = 0; j < 4; j++)
-	    if (diff[j] > value)
-		diff[j] = value;
-	    else if (diff[j] < -value)
-		diff[j] = -value;
-	element_[i].active_current_color_ += diff;
-	diff = element_[i].inactive_target_color_ -
-               element_[i].inactive_current_color_;
-	for (unsigned int j = 0; j < 4; j++)
-	    if (diff[j] > value)
-		diff[j] = value;
-	    else if (diff[j] < -value)
-		diff[j] = -value;
-	element_[i].inactive_current_color_ += diff;
+  for (unsigned int i = 0; i < NumElements; i++)
+  {
+    Vec4f diff = element_[i].active_target_color_ -
+      element_[i].active_current_color_;
 
-	rv |= element_[i].active_target_color_ != element_[i].active_current_color_ ||
-	      element_[i].inactive_target_color_ != element_[i].inactive_current_color_;
-    }
+    for (unsigned int j = 0; j < 4; j++)
+      if (diff[j] > value)
+        diff[j] = value;
+      else if (diff[j] < -value)
+        diff[j] = -value;
 
-    float diff = ((mode_ == Resize) ? 1.0 : 0.0) - resize_current_;
-    if (diff > value)
-      diff = value;
-    else if (diff < -value)
-      diff = -value;
-    resize_current_ += diff;
-    rv |= resize_current_ != ((mode_ == Resize) ? 1.0 : 0.0);
+    element_[i].active_current_color_ += diff;
+    
+    diff = element_[i].inactive_target_color_ -
+      element_[i].inactive_current_color_;
+    
+    for (unsigned int j = 0; j < 4; j++)
+      if (diff[j] > value)
+        diff[j] = value;
+      else if (diff[j] < -value)
+        diff[j] = -value;
+    
+    element_[i].inactive_current_color_ += diff;
 
-    return rv;
+    rv |= element_[i].active_target_color_ != element_[i].active_current_color_ ||
+      element_[i].inactive_target_color_ != element_[i].inactive_current_color_;
+  }
+
+  float diff = ((mode_ == Resize) ? 1.0 : 0.0) - resize_current_;
+  
+  if (diff > value)
+    diff = value;
+  else if (diff < -value)
+    diff = -value;
+  
+  resize_current_ += diff;
+  rv |= resize_current_ != ((mode_ == Resize) ? 1.0 : 0.0);
+
+  return rv;
 }
 
 //----------------------------------------------------------------------------
@@ -469,16 +485,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of z-axis
-  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
-  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisBottom_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axisBottom_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axisBottom_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of z-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  axis_->setBottomRadius(manipulator_radius_);
-  axis_->setTopRadius(manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisCenter_->setBottomRadius(manipulator_radius_);
+  axisCenter_->setTopRadius(manipulator_radius_);
+  axisCenter_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of z-axis
@@ -492,9 +508,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  axis_->setBottomRadius(manipulator_radius_*2.0);
-  axis_->setTopRadius(0.0);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisTop_->setBottomRadius(manipulator_radius_*2.0);
+  axisTop_->setTopRadius(0.0);
+  axisTop_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
   //================================================================================================
@@ -511,16 +527,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of y-axis
-  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
-  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisBottom_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axisBottom_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axisBottom_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of y-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  axis_->setBottomRadius(manipulator_radius_);
-  axis_->setTopRadius(manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisCenter_->setBottomRadius(manipulator_radius_);
+  axisCenter_->setTopRadius(manipulator_radius_);
+  axisCenter_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of y-axis
@@ -534,9 +550,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  axis_->setBottomRadius(manipulator_radius_*2.0);
-  axis_->setTopRadius(0.0);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisTop_->setBottomRadius(manipulator_radius_*2.0);
+  axisTop_->setTopRadius(0.0);
+  axisTop_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
 
@@ -554,16 +570,16 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   // Draw Bottom of x-axis
-  axis_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
-  axis_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisBottom_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axisBottom_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axisBottom_->draw(_state, manipulator_height_/2.0);
 
   // Draw center of x-axis
   _state.translate(0.0, 0.0, manipulator_height_/2);
 
-  axis_->setBottomRadius(manipulator_radius_);
-  axis_->setTopRadius(manipulator_radius_);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisCenter_->setBottomRadius(manipulator_radius_);
+  axisCenter_->setTopRadius(manipulator_radius_);
+  axisCenter_->draw(_state, manipulator_height_/2.0);
 
 
   // Draw Top of x-axis
@@ -577,9 +593,9 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
   }
 
   _state.translate(0.0, 0.0, manipulator_height_/2);
-  axis_->setBottomRadius(manipulator_radius_*2.0);
-  axis_->setTopRadius(0.0);
-  axis_->draw(_state, manipulator_height_/2.0);
+  axisTop_->setBottomRadius(manipulator_radius_*2.0);
+  axisTop_->setTopRadius(0.0);
+  axisTop_->draw(_state, manipulator_height_/2.0);
   _state.translate(0.0, 0.0, -manipulator_height_);
 
   //=================================================================================================
@@ -729,6 +745,189 @@ TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* 
     
     ACG::GLState::depthFunc(prev_depth);
   }
+}
+
+//----------------------------------------------------------------------------
+
+GLMatrixd TranslationManipulatorNode::computeWorldMatrix()
+{
+  GLMatrixd world;
+  world.identity();
+
+  world.translate(center()[0], center()[1], center()[2]); // Follow translation of parent node
+  world *= inverse_scale();
+
+  // revert global transformation as we want to use our own
+  world *= inverse_rotation();
+
+  // apply local transformation to adjust our coordinate system
+  world *= localTransformation_;
+
+  return world;
+}
+
+//----------------------------------------------------------------------------
+
+void TranslationManipulatorNode::getRenderObjects(IRenderer* _renderer,
+                                                  GLState& _state,
+                                                  const DrawModes::DrawMode& _drawMode)
+{
+  if (draw_manipulator_)
+  {
+    RenderObject ro;
+    ro.initFromState(&_state);
+
+    // compute model-view matrix for the center of manipulator
+    ro.modelview *= computeWorldMatrix();
+    updateSize(_state);
+
+    updateTargetColors ();
+    if (updateCurrentColors (_state))
+      setDirty ();
+
+
+    // unlit, use emissive color only
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+    ro.shaderDesc.vertexColors = false;
+    ro.shaderDesc.textured = false;
+
+    // we need the scene zbuffer for the transparent overdraw effect
+    // -> defer as long as possible
+    ro.priority = 1000;
+
+    // 1st pass
+    // draw occluded areas on top via alpha blending
+    ro.depthTest = true;
+    ro.depthFunc = GL_GREATER;
+    ro.depthWrite = false;
+
+    ro.blending = true;
+    ro.blendSrc = GL_SRC_ALPHA;
+    ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
+    ro.alpha = 0.5f;
+
+    addManipulatorToRenderer(_renderer, &ro, false);
+
+    // 2nd pass
+    // draw rest as usual
+    ro.priority = 1001;
+    ro.blending = false;
+    ro.depthFunc = GL_LEQUAL;
+    ro.depthWrite = true;
+    addManipulatorToRenderer(_renderer, &ro, true);
+  }
+}
+
+//----------------------------------------------------------------------------
+
+void TranslationManipulatorNode::addAxisToRenderer (IRenderer* _renderer, RenderObject* _baseRO, bool _active, int _axis)
+{
+  assert(_axis >= XAxis && _axis - 3 >= 0 && _axis <= ZAxis);
+
+  for (int i = 0; i < 3; ++i)
+    _baseRO->emissive[i] = _active ? element_[_axis].active_current_color_[i] : element_[_axis].inactive_current_color_[i];
+
+  // Draw Bottom
+  axisBottom_->setBottomRadius((1.0 - resize_current_) * manipulator_radius_);
+  axisBottom_->setTopRadius((1.0 + resize_current_) * manipulator_radius_);
+  axisBottom_->addToRenderer(_renderer, _baseRO, manipulator_height_/2.0f);
+
+  // Draw center
+  _baseRO->modelview.translate(0.0, 0.0, manipulator_height_/2);
+
+  axisCenter_->setBottomRadius(manipulator_radius_);
+  axisCenter_->setTopRadius(manipulator_radius_);
+  axisCenter_->addToRenderer(_renderer, _baseRO, manipulator_height_/2.0f);
+
+
+  // Draw top
+  
+  // _axis - 3 computes id of axis-top in 'Elements' enum
+  for (int i = 0; i < 3; ++i)
+    _baseRO->emissive[i] = _active ? (element_[_axis-3].active_current_color_[i]) : (element_[_axis-3].inactive_current_color_[i]);
+
+  _baseRO->modelview.translate(0.0, 0.0, manipulator_height_/2);
+  axisTop_->setBottomRadius(manipulator_radius_*2.0);
+  axisTop_->setTopRadius(0.0);
+  axisTop_->addToRenderer(_renderer, _baseRO, manipulator_height_/2.0f);
+  _baseRO->modelview.translate(0.0, 0.0, -manipulator_height_);
+
+}
+
+//----------------------------------------------------------------------------
+
+void TranslationManipulatorNode::addManipulatorToRenderer (IRenderer* _renderer, RenderObject* _baseRO, bool _active)
+{
+  _baseRO->culling = false;
+
+  GLMatrixf oldModelview = _baseRO->modelview;
+
+  //================================================================================================
+  // Z-Axis
+  //================================================================================================
+  // gluCylinder draws into z direction so z-Axis first
+
+  addAxisToRenderer(_renderer, _baseRO, _active, ZAxis);
+
+  //================================================================================================
+  // Y-Axis
+  //================================================================================================
+
+  _baseRO->modelview.rotate(-90, 1.0, 0.0, 0.0);
+  addAxisToRenderer(_renderer, _baseRO, _active, YAxis);
+
+  //================================================================================================
+  // X-Axis
+  //================================================================================================
+
+  _baseRO->modelview.rotate(90, 0.0, 1.0, 0.0);
+  addAxisToRenderer(_renderer, _baseRO, _active, XAxis);
+
+  //=================================================================================================
+  // Sphere
+  //=================================================================================================
+
+  for (int i = 0; i < 3; ++i)
+    _baseRO->emissive[i] = _active ? (element_[Origin].active_current_color_[i]) : (element_[Origin].inactive_current_color_[i]);
+
+  sphere_->addToRenderer(_renderer, _baseRO, manipulator_radius_ * 2.0f);
+
+  //=================================================================================================
+  // Outer-Rings
+  //=================================================================================================
+
+//  _baseRO->blending = true;
+
+  // update circle size
+  circle_->setInnerRadius(2.0f*manipulator_height_ - manipulator_height_/4.0f);
+  circle_->setOuterRadius(2.0f*manipulator_height_);
+
+  if ( activeRotations_ & X_AXIS) 
+  {
+    for (int i = 0; i < 3; ++i)
+      _baseRO->emissive[i] = _active ? (element_[XRing].active_current_color_[i]) : (element_[XRing].inactive_current_color_[i]);
+
+    circle_->addToRenderer(_renderer, _baseRO);
+  }
+
+
+  _baseRO->modelview.rotate(90, 0.0, 1.0, 0.0);
+  if ( activeRotations_ & Y_AXIS) 
+  {
+    for (int i = 0; i < 3; ++i)
+      _baseRO->emissive[i] = _active ? (element_[YRing].active_current_color_[i]) : (element_[YRing].inactive_current_color_[i]);
+    circle_->addToRenderer(_renderer, _baseRO);
+  }
+
+  _baseRO->modelview.rotate(90, 1.0, 0.0, 0.0);
+  if ( activeRotations_ & Z_AXIS) 
+  {
+    for (int i = 0; i < 3; ++i)
+      _baseRO->emissive[i] = _active ? (element_[ZRing].active_current_color_[i]) : (element_[ZRing].inactive_current_color_[i]);
+    circle_->addToRenderer(_renderer, _baseRO);
+  }
+
+  _baseRO->modelview = oldModelview;
 }
 
 //----------------------------------------------------------------------------
@@ -1795,15 +1994,15 @@ pick(GLState& _state, PickTarget _target)
       //================================================================================================
       // gluCylinder draws into z direction so z-Axis first
 
-      axis_->setBottomRadius(manipulator_radius_);
-      axis_->setTopRadius(manipulator_radius_);
-      axis_->draw(_state, manipulator_height_);
+      axisBottom_->setBottomRadius(manipulator_radius_);
+      axisBottom_->setTopRadius(manipulator_radius_);
+      axisBottom_->draw(_state, manipulator_height_);
 
       // Draw Top of z-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      axis_->setBottomRadius(manipulator_radius_*2.0);
-      axis_->setTopRadius(manipulator_radius_*2.0);
-      axis_->draw(_state, manipulator_height_/2.0);
+      axisTop_->setBottomRadius(manipulator_radius_*2.0);
+      axisTop_->setTopRadius(manipulator_radius_*2.0);
+      axisTop_->draw(_state, manipulator_height_/2.0);
       _state.translate(0.0, 0.0, -manipulator_height_);
 
       _state.pick_set_name(1);
@@ -1811,15 +2010,15 @@ pick(GLState& _state, PickTarget _target)
       // Y-Axis
       //================================================================================================
       _state.rotate(-90, 1.0, 0.0, 0.0);
-      axis_->setBottomRadius(manipulator_radius_);
-      axis_->setTopRadius(manipulator_radius_);
-      axis_->draw(_state, manipulator_height_);
+      axisBottom_->setBottomRadius(manipulator_radius_);
+      axisBottom_->setTopRadius(manipulator_radius_);
+      axisBottom_->draw(_state, manipulator_height_);
 
       // Draw Top of y-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      axis_->setBottomRadius(manipulator_radius_*2.0);
-      axis_->setTopRadius(manipulator_radius_*2.0);
-      axis_->draw(_state, manipulator_height_/2.0);
+      axisTop_->setBottomRadius(manipulator_radius_*2.0);
+      axisTop_->setTopRadius(manipulator_radius_*2.0);
+      axisTop_->draw(_state, manipulator_height_/2.0);
       _state.translate(0.0, 0.0, -manipulator_height_);
 
 
@@ -1829,15 +2028,15 @@ pick(GLState& _state, PickTarget _target)
       //================================================================================================
       _state.rotate(90, 0.0, 1.0, 0.0);
 
-      axis_->setBottomRadius(manipulator_radius_);
-      axis_->setTopRadius(manipulator_radius_);
-      axis_->draw(_state, manipulator_height_);
+      axisBottom_->setBottomRadius(manipulator_radius_);
+      axisBottom_->setTopRadius(manipulator_radius_);
+      axisBottom_->draw(_state, manipulator_height_);
 
       // Draw Top of x-axis
       _state.translate(0.0, 0.0, manipulator_height_);
-      axis_->setBottomRadius(manipulator_radius_*2.0);
-      axis_->setTopRadius(manipulator_radius_*2.0);
-      axis_->draw(_state, manipulator_height_/2.0);
+      axisTop_->setBottomRadius(manipulator_radius_*2.0);
+      axisTop_->setTopRadius(manipulator_radius_*2.0);
+      axisTop_->draw(_state, manipulator_height_/2.0);
 
       _state.translate(0.0, 0.0, -manipulator_height_);
 
