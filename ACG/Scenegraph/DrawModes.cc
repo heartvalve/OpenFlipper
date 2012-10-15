@@ -276,6 +276,8 @@ DrawMode& DrawMode::operator|=( const DrawMode& _mode2  ) {
   for (unsigned int i = 0; i < _mode2.getNumLayers(); ++i)
     addLayer(_mode2.getLayer(i));
 
+  assert(checkConsistency());
+
   return (*this);
 }
 
@@ -290,6 +292,8 @@ DrawMode& DrawMode::operator&=( const DrawMode& _mode2  ) {
     if (layerIndex2 < 0)
       removeLayer(i);
   }
+
+  assert(checkConsistency());
   
   return (*this);
 }
@@ -370,8 +374,11 @@ DrawMode DrawMode::operator^( const DrawMode& _mode2  ) const {
   //  copy to temporary drawmode and return
 
   xorMode.setDrawModeProperties(tmpLayers[0]);
-  for (unsigned int i = 0; i < tmpLayers.size(); ++i)
+  for (unsigned int i = 1; i < tmpLayers.size(); ++i)
     xorMode.addLayer(tmpLayers[i]);
+
+
+//  assert(xorMode.checkConsistency());
 
   return xorMode;
 }
@@ -407,6 +414,36 @@ std::string DrawMode::description() const
   }
   
   return text;
+}
+
+//----------------------------------------------------------------------------
+
+void DrawMode::filter( DrawMode _filter )
+{
+  modeFlags_ = (modeFlags_ | _filter.modeFlags_) ^ _filter.modeFlags_;
+
+  for (unsigned int i = 0; i < _filter.getNumLayers(); ++i)
+  {
+    int idx = getLayerIndex(_filter.getLayer(i));
+
+    removeLayer((unsigned int)idx);
+  }
+}
+
+
+
+//----------------------------------------------------------------------------
+
+void DrawMode::combine( DrawMode _mode )
+{
+  // XOR on bitflag
+  modeFlags_ = (modeFlags_ ^ _mode.modeFlags_);
+
+  // addLayer does redundancy check here
+  for (unsigned int i = 0; i < _mode.getNumLayers(); ++i)
+    addLayer(_mode.getLayer(i));
+
+//  assert(checkConsistency());
 }
 
 //----------------------------------------------------------------------------
@@ -467,8 +504,13 @@ void DrawMode::addLayer( const DrawModeProperties* _props )
 
 bool DrawMode::removeLayer( unsigned int _i )
 {
-  layers_.erase(layers_.begin() + _i);
-  return true;
+  if (_i < layers_.size())
+  {
+    layers_.erase(layers_.begin() + _i);
+    return true;
+  }
+
+  return false;
 }
 
 const DrawModeProperties* DrawMode::getDrawModeProperties() const
@@ -479,10 +521,14 @@ const DrawModeProperties* DrawMode::getDrawModeProperties() const
 
 bool DrawMode::checkConsistency() const
 {
-  // PRIMITIVE_CELL is the last primitive count (currently)
-  //int count[PRIMITIVE_CELL+1] = {0};
-
-
+  for (unsigned int i = 0; i < layers_.size(); ++i)
+  {
+    for (unsigned int k = i+1; k < layers_.size(); ++k)
+    {
+      if (layers_[i].primitive() == layers_[k].primitive())
+        return false;
+    }
+  }
 
   return true;
 }
