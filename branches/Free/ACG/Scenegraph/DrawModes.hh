@@ -364,6 +364,17 @@ namespace DrawModes {
       * Otherwise the internal flag index will be returned
       */
       unsigned int getIndex() const;
+
+      /** \brief filter out one drawmode
+      *
+      * This removes one or more drawmodes if this drawode is not atomic.
+      */
+      void filter( DrawMode _filter );
+
+
+      /** \brief combine with another drawmode
+      */
+      void combine( DrawMode _mode );
       
       /** Get a description string for this DrawMode
       * An empty string is returned if this is not a valid draw mode.

@@ -697,12 +697,12 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   //======================================================================================
   if ( _action->text() != USEGLOBALDRAWMODE ) {
     // As this is not the global draw mode, filter out default as draw mode or it will interfere with the other modes!
-    activeDrawModes_ = ( ( activeDrawModes_ | ACG::SceneGraph::DrawModes::DEFAULT ) ^ ACG::SceneGraph::DrawModes::DEFAULT );
+    activeDrawModes_.filter(ACG::SceneGraph::DrawModes::DEFAULT);
     
     // If shift is pressed, we combine the modes (and toggle therefore xor)
     // Otherwise we directly take the new mode
     if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
-      activeDrawModes_ = ( activeDrawModes_ ^ mode);
+      activeDrawModes_.combine(mode);
     else
     {
       emit hideContextMenu();
