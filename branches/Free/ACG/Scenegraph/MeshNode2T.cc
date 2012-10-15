@@ -590,6 +590,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.depthWrite = true;
     ro.depthFunc = GL_LESS;
 
+
     // ------------------------
     // 1. setup drawMesh based on property source
 
@@ -640,8 +641,6 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.shaderDesc.numLights = props->lighting() ? 0 : -1;
 
     // TODO: better handling of attribute sources in shader gen
-    if (props->flatShaded())
-      ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
 
     switch (props->lightStage())
     {
@@ -650,6 +649,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     case DrawModes::LIGHTSTAGE_UNLIT: ro.shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
     }
 
+    if (props->flatShaded())
+      ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
 
     // handle 'special' primitives (wireframe, hiddenline, primitives in sysmem buffers)..
 
