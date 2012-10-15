@@ -80,7 +80,7 @@ int FilePlaPlugin::loadObject(QString _filename)
 
   PlaneObject* plane = 0;
   if(PluginFunctions::getObject( id, plane))
-  {    
+  {
     if( plane )
     {
 
@@ -123,7 +123,7 @@ int FilePlaPlugin::loadObject(QString _filename)
   return id;
 };
 
-bool FilePlaPlugin::saveObject(int _id, QString _filename)
+bool FilePlaPlugin::saveObject(int _id, QString _filename, std::streamsize /*_precision*/)
 {
 
   BaseObjectData*     obj(0);

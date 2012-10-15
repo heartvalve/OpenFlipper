@@ -52,24 +52,24 @@
 
 template <class MeshT>
 bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLYHeader& _header) {
-    
+
     std::string line;
     std::istringstream sstr;
-    
+
     std::string dString = "";
     int         dInt;
     uint        du, dv;
     double      dx, dy, dz;
     double      alpha;
-    
+
     PolyMesh::VertexHandle currentVertex;
     std::vector<PolyMesh::VertexHandle> vertexIndices;
-    
+
     // Parse file
     std::ifstream ifs(_filename.toUtf8());
 
     if (!ifs.is_open() || !ifs.good() || ifs.eof()) {
-        
+
         emit log(LOGERR, tr("Error: Could not read PLY data! Aborting."));
         return false;
     }
@@ -82,7 +82,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
         sstr >> dString;
         if(dString == "end_header") break;
     }
-    
+
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (loadVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -96,7 +96,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                         (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceNormal",true).toBool()));
     bool fColors    =  ((gui && loadFaceColor_->isChecked()) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()));
-    
+
     // Request properties
     if(vNormals)
         _mesh->request_vertex_normals();
@@ -108,31 +108,31 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
         _mesh->request_face_normals();
     if(fColors)
         _mesh->request_face_colors();
-    
+
     unsigned int propIndex;
     bool next;
-    
+
     // Reserve enough space for all vertices to avoid resizing and save time
     vertexIndices.reserve(_header.numVertices);
 
     // Parse vertices
     for(int i = 0; i < _header.numVertices; ++i) {
-        
+
         // Get line
         sstr.clear();
         std::getline(ifs, line);
         sstr.str(line);
-        
+
         propIndex = 0;
         next = false;
-        
+
         while(!next) {
-            
+
             if(propIndex >= _header.vProps.size())  {
                 next = true;
                 break;
             }
-            
+
             if(_header.vProps[propIndex].first == "xyz") {
                 // Parse xyz-coordinates
                 sstr >> dx >> dy >> dz;
@@ -154,7 +154,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 if (getTypeSize(_header.vProps[propIndex].second) == 1 ||
                     getTypeSize(_header.vProps[propIndex].second) == 4)
                   divide = true;
-                
+
                 // Parse vertex colors
                 sstr >> dx >> dy >> dz;
 
@@ -179,7 +179,7 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
 
                 // Go over to next property
                 propIndex += 3;
-                
+
             } else if (_header.vProps[propIndex].first == "a_rgb" && vColors) {
                 sstr >> dx >> dy >> dz;
                 /// \todo Make this set the ambient vertex color of overlaying material node
@@ -225,19 +225,19 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
             }
         }
     }
-    
+
     std::vector<typename MeshT::VertexHandle> vlist;
     int index;
     typename MeshT::FaceHandle currentFace;
-    
+
     // Parse faces
     for(int i = 0; i < _header.numFaces; ++i) {
-        
+
         // Get line
         sstr.clear();
         std::getline(ifs, line);
         sstr.str(line);
-        
+
         // Get number of vertices per face
         sstr >> dInt;
         vlist.clear();
@@ -251,21 +251,21 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
               return false;
             }
         }
-        
+
         // Add face
         currentFace = _mesh->add_face(vlist);
-        
+
         propIndex = 0;
         next = false;
-        
+
         // Search for further props in same line
         while(!next || _header.fProps.size() != 0) {
-            
+
             if(propIndex >= _header.fProps.size())  {
                 next = true;
                 break;
             }
-            
+
             if (_header.fProps[propIndex].first == "n_xyz" && fNormals) {
                 // Parse face normal coordinates
                 sstr >> dx >> dy >> dz;
@@ -339,12 +339,12 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
                 break;
             }
         }
-    }       
-    
+    }
+
     // Update normals if we do not have them or did not read them
     if ( !_header.hasFaceNormals || !vNormals)
       _mesh->update_normals();
-    
+
     ifs.close();
     return true;
 }
@@ -353,14 +353,14 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
 
 template <class MeshT>
 bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PLYHeader& _header) {
-    
+
     std::string line;
     std::istringstream sstr;
-    
+
     std::string dString = "";
-    
+
     std::vector<PolyMesh::VertexHandle> vertexIndices;
-    
+
     // Data types
     OpenMesh::Vec3f     v3f;
     OpenMesh::Vec3d     v3d;
@@ -371,12 +371,12 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
     OpenMesh::Vec2i     v2i;
     OpenMesh::Vec2f     v2f;
     OpenMesh::Vec2d     v2d;
-    
+
     // Open file stream as binary
     std::ifstream ifs(_filename.toUtf8(), std::ios_base::binary);
 
     if (!ifs.is_open() || !ifs.good() || ifs.eof()) {
-        
+
         emit log(LOGERR, tr("Error: Could not read PLY data! Aborting."));
         return false;
     }
@@ -391,7 +391,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             break;
         }
     }
-    
+
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (loadVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -405,7 +405,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                         (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceNormal",true).toBool()));
     bool fColors    =  ((gui && loadFaceColor_->isChecked()) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()));
-    
+
     // Request properties
     if(vNormals)
         _mesh->request_vertex_normals();
@@ -421,15 +421,15 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
     unsigned int propIndex;
     unsigned int numProps = _header.vProps.size();
     typename MeshT::VertexHandle currentVertex;
-    
+
     // Reserve enough space for all vertices to avoid resizing and save time
     vertexIndices.reserve(_header.numVertices);
 
     // Read in vertices
     for(int i = 0; i < _header.numVertices; ++i) {
-        
+
         propIndex = 0;
-        
+
         while(propIndex < numProps) {
             if(_header.vProps[propIndex].first == "xyz") {
                 // Get x-, y-, z-coordinates
@@ -550,7 +550,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
                         }
 
                         if(vColors) _mesh->set_color(currentVertex, v4f );
-                    }                    
+                    }
                     propIndex += 3;
                 } else {
                     emit log(LOGERR, tr("Vertex colors have unsupported data size in binary PLY file. Aborting!"));
@@ -610,20 +610,20 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             }
         }
     }
-    
+
     numProps = _header.fProps.size();
     uint val;
     uint index;
-    
+
     uchar v_uc;
     uchar i_uc;
-    
+
     std::vector<typename MeshT::VertexHandle> vertex_list;
     typename MeshT::FaceHandle currentFace;
-    
+
     // Read in faces
     for(int i = 0; i < _header.numFaces; ++i) {
-        
+
         // Read in face valence
         vertex_list.clear();
         if(getTypeSize(_header.valenceType) == 1) {
@@ -636,7 +636,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             ifs.close();
             return false;
         }
-        
+
         for(uint j = 0; j < val; ++j) {
             // Read vertex index
             if(getTypeSize(_header.indexType) == 1) {
@@ -657,9 +657,9 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
               return false;
             }
         }
-        
+
         currentFace = _mesh->add_face(vertex_list);
-        
+
         // Read in face properties
         propIndex = 0;
         while(propIndex < numProps) {
@@ -788,7 +788,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
             }
         }
     }
-    
+
     // Update normals if we do not have them or did not read them
     if ( !_header.hasFaceNormals || !vNormals)
       _mesh->update_normals();
@@ -801,7 +801,7 @@ bool FilePLYPlugin::readMeshFileBinary(QString _filename, MeshT* _mesh, const PL
 
 template <class MeshT>
 void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) {
-    
+
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -815,7 +815,7 @@ void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) 
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool()));
     bool fColors    = _mesh->has_face_colors() && (((gui && saveFaceColor_->isChecked())) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool()));
-    
+
     // Write general information
     _os << "ply\n";
     _os << "format " << (_binary ? "binary_little_endian" : "ascii") << " 1.0\n";
@@ -823,56 +823,56 @@ void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) 
     _os << "comment Exported via OpenFlipper " << OpenFlipper::Options::coreVersion().toStdString() << "\n";
     _os << "comment www.openflipper.org\n";
     _os << "comment =================================\n";
-    
+
     // Vertex block
     _os << "element vertex " << _mesh->n_vertices() << "\n";
-    
+
     // Vertex coordinates
     _os << "property float x\n";
     _os << "property float y\n";
     _os << "property float z\n";
-    
+
     // Vertex normals
     if(vNormals) _os << "property float nx\n";
     if(vNormals) _os << "property float ny\n";
     if(vNormals) _os << "property float nz\n";
-    
+
     // Vertex colors
     if(vColors) _os << "property uchar red\n";
     if(vColors) _os << "property uchar green\n";
     if(vColors) _os << "property uchar blue\n";
-    
+
     // Vertex texcoords
     if(vTexCoords) _os << "property int32 u\n";
     if(vTexCoords) _os << "property int32 v\n";
-    
+
     // Face block
     _os << "element face " << _mesh->n_faces() << "\n";
-    
+
     // Vertex index list
     _os << "property list uchar int32 vertex_index\n";
-    
+
     // Face normals
     if(fNormals) _os << "property float nx\n";
     if(fNormals) _os << "property float ny\n";
     if(fNormals) _os << "property float nz\n";
-    
+
     // Face colors
     if(fColors) _os << "property uchar red\n";
     if(fColors) _os << "property uchar green\n";
     if(fColors) _os << "property uchar blue\n";
-    
+
     // End of header
     _os << "end_header\n";
 }
 
 //===============================================================================================
-    
+
 template <class MeshT>
-bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
-    
+bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh, std::streamsize _precision) {
+
     std::string filename = std::string(_filename.toUtf8());
-    
+
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -886,98 +886,100 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool()));
     bool fColors    = _mesh->has_face_colors() && (((gui && saveFaceColor_->isChecked())) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool()));
-    
+
     // Open file stream
     std::ofstream ofs(_filename.toUtf8());
 
     if (!ofs.is_open() || !ofs.good()) {
-        
+
         emit log(LOGERR, tr("Error: Could not open PLY file for writing! Check permissions."));
         return false;
     }
-    
+
+    ofs.precision(_precision);
+
     // Write out header
     writeHeader(ofs, _mesh, false);
-    
+
     // Create map: VertexHandle -> int (line number in file)
     std::map<typename MeshT::VertexHandle,unsigned int> vMap;
-    
+
     // Temporary types
     typename MeshT::Point       p;
     typename MeshT::Normal      n;
     typename MeshT::Color       c;
     typename MeshT::TexCoord2D  t;
-    
+
     // Write vertices and properties
     unsigned int i = 0;
     for(typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
-        
+
         p = _mesh->point(v_it);
-        
+
         // Write vertex coords
         ofs << p;
-        
+
         // Write vertex normal coords
         if(vNormals) {
             n = _mesh->normal(v_it);
             ofs << " " << n;
         }
-        
+
         // Write vertex color
         if(vColors) {
             c = _mesh->color(v_it);
             ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
         }
-        
+
         // Write vertex texcoord
         if(vTexCoords) {
             t = _mesh->texcoord2D(v_it);
             ofs << " " << t;
         }
-        
+
         ofs << "\n";
-        
+
         vMap.insert(std::pair<typename MeshT::VertexHandle,unsigned int>(v_it, i));
         ++i;
     }
-    
+
     // Write faces and properties
     for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
-        
+
         // Write face valence
         ofs << _mesh->valence(f_it);
-        
+
         // Write vertex indices
         for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it); fv_it; ++fv_it) {
             ofs << " " << vMap[fv_it.handle()];
         }
-        
+
         // Write face normal
         if(fNormals) {
             n = _mesh->normal(f_it);
             ofs << " " << n;
         }
-        
+
         // Write face color
         if(fColors) {
             c = _mesh->color(f_it);
             ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
         }
-        
+
         ofs << "\n";
     }
-    
+
     ofs.close();
     return true;
 }
-    
+
 //===============================================================================================
-    
+
 template <class MeshT>
-bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
-    
+bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh, std::streamsize _precision) {
+
     std::string filename = std::string(_filename.toUtf8());
-    
+
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -991,108 +993,110 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool()));
     bool fColors    = _mesh->has_face_colors() && (((gui && saveFaceColor_->isChecked())) ||
                         (!gui && OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool()));
-    
+
     // Open file stream as binary
     std::ofstream ofs(_filename.toUtf8(), std::ios_base::binary);
 
     if (!ofs.is_open() || !ofs.good()) {
-        
+
         emit log(LOGERR, tr("Error: Could not open PLY file for writing! Check permissions."));
         return false;
     }
-                        
+
+    ofs.precision(_precision);
+
     writeHeader(ofs, _mesh, true);
-    
+
     // Create map: VertexHandle -> int (line number in file)
     std::map<typename MeshT::VertexHandle,int> vMap;
-    
+
     // Temporary types
     typename MeshT::Point       p;
     typename MeshT::Normal      n;
     typename MeshT::Color       c;
     typename MeshT::TexCoord2D  t;
     OpenMesh::Vec3uc            v3uc;
-    
+
     // Write vertices and properties
     int i = 0;
     for(typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
-        
+
         p = _mesh->point(v_it);
-        
+
         // Write coordinates
         writeValue(ofs, (float)p[0]);
         writeValue(ofs, (float)p[1]);
         writeValue(ofs, (float)p[2]);
-        
+
         // Write normals
         if(vNormals) {
             n = _mesh->normal(v_it);
-        
+
             // Write coordinates
             writeValue(ofs, (float)n[0]);
             writeValue(ofs, (float)n[1]);
             writeValue(ofs, (float)n[2]);
         }
-        
+
         // Write colors
         if(vColors) {
             c = _mesh->color(v_it);
-            
+
             v3uc = OpenMesh::vector_cast<OpenMesh::Vec3uc>(c);
-            
+
             // Write coordinates
             writeValue(ofs, v3uc[0]);
             writeValue(ofs, v3uc[1]);
             writeValue(ofs, v3uc[2]);
         }
-        
+
         // Write texture coords
         if(vTexCoords) {
             t = _mesh->texcoord2D(v_it);
-        
+
             // Write coordinates
             writeValue(ofs, (uint)t[0]);
             writeValue(ofs, (uint)t[1]);
         }
-        
+
         vMap.insert(std::pair<typename MeshT::VertexHandle,int>(v_it, i));
         ++i;
     }
-    
+
     // Write faces and properties
     for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
-        
+
         // Write face valence
         writeValue(ofs, (uchar)_mesh->valence(f_it));
-        
+
         // Write vertex indices
         for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it); fv_it; ++fv_it) {
             writeValue(ofs, vMap[fv_it.handle()]);
         }
-        
+
         // Write face normal
         if(fNormals) {
             n = _mesh->normal(f_it);
-        
+
             // Write coordinates
             writeValue(ofs, (float)n[0]);
             writeValue(ofs, (float)n[1]);
             writeValue(ofs, (float)n[2]);
         }
-        
+
         // Write face color
         if(fColors) {
             c = _mesh->color(f_it);
-            
+
             v3uc = OpenMesh::vector_cast<OpenMesh::Vec3uc>(c);
-            
+
             // Write coordinates
             writeValue(ofs, v3uc[0]);
             writeValue(ofs, v3uc[1]);
             writeValue(ofs, v3uc[2]);
         }
     }
-                
+
     ofs.close();
     return true;
 }

@@ -67,10 +67,10 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
     // log Interface
     void log(Logtype _type, QString _message);
     void log(QString _message);
-    
+
     // RPC Interface
     void pluginExists (QString _pluginName, bool& _exists) ;
-    void functionExists (QString _pluginName, QString _functionName, bool& _exists);    
+    void functionExists (QString _pluginName, QString _functionName, bool& _exists);
 
   private slots:
 
@@ -87,7 +87,7 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
 
      QString getSaveFilters();
      QString getLoadFilters();
-     
+
 
 
      QWidget* saveOptionsWidget(QString /*_currentFilter*/) { return 0; };
@@ -96,9 +96,9 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
   public slots:
 
     int loadObject(QString _filename);
-    
+
     /// No objects are saved by this Plugin so ignore the saveObject call
-    bool saveObject(int /*_id*/, QString /*_filename*/) { return false;}
+    bool saveObject(int /*_id*/, QString /*_filename*/, std::streamsize /*_precision*/) { return false;}
 
     QString version() { return QString("1.0"); };
 

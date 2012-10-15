@@ -414,7 +414,7 @@ bool FileBundlePlugin::readBundleFile( const char *_filename, SplatCloud &_splat
 //----------------------------------------------------------------
 
 
-bool FileBundlePlugin::writeBundleFile( const char *_filename, const SplatCloud &_splatCloud ) /*const*/
+bool FileBundlePlugin::writeBundleFile( const char *_filename, const SplatCloud &_splatCloud, std::streamsize _precision ) /*const*/
 {
   return false;
 }
@@ -456,8 +456,8 @@ int FileBundlePlugin::loadObject( QString _filename )
           ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
 
           // if drawmodes don't exist something went wrong
-          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE ||
+              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE ||
               pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
           {
             emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
@@ -468,8 +468,8 @@ int FileBundlePlugin::loadObject( QString _filename )
             ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
 
             // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
-            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
-                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
+            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) &&
+                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) &&
                 !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
             {
               drawmode |= pointsDrawMode;
@@ -492,7 +492,7 @@ int FileBundlePlugin::loadObject( QString _filename )
 //----------------------------------------------------------------
 
 
-bool FileBundlePlugin::saveObject( int _objectId, QString _filename )
+bool FileBundlePlugin::saveObject( int _objectId, QString _filename, std::streamsize _precision )
 {
   // get splatcloud-object by id
   SplatCloudObject *splatCloudObject = 0;
@@ -507,7 +507,7 @@ bool FileBundlePlugin::saveObject( int _objectId, QString _filename )
     if( splatCloud != 0 )
     {
       // write splatcloud to disk
-      if( writeBundleFile( _filename.toLatin1(), *splatCloud ) )
+      if( writeBundleFile( _filename.toLatin1(), *splatCloud, _precision ) )
       {
         // return success
         return true;

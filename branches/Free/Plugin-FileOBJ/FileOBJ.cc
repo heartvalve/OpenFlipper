@@ -78,6 +78,8 @@ FileOBJPlugin::FileOBJPlugin()
   saveCopyTextures_(0),
   saveCreateTexFolder_(0),
   saveDefaultButton_(0),
+  precisionLabel_(0),
+  savePrecision_(0),
   triMeshHandling_(0),
   loadVertexColor_(0),
   loadFaceColor_(0),
@@ -1940,7 +1942,7 @@ int FileOBJPlugin::loadObject(QString _filename, DataType _type){
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileOBJPlugin::saveObject(int _id, QString _filename)
+bool FileOBJPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
 {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
@@ -1966,7 +1968,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
 
-    if ( writeMesh( objStream, _filename, *polyObj->mesh(), polyObj->id() ) ){
+    if ( writeMesh( objStream, _filename, *polyObj->mesh(), polyObj->id(), _precision ) ){
 
       emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
@@ -1987,7 +1989,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
 
-    if ( writeMesh( objStream, _filename, *triObj->mesh(), triObj->id() )) {
+    if ( writeMesh( objStream, _filename, *triObj->mesh(), triObj->id() , _precision )) {
 
       emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
@@ -2009,7 +2011,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     BSplineCurveObject* bscObj = dynamic_cast<BSplineCurveObject* >( object );
 
 
-    if ( writeCurve( objStream, _filename, bscObj->splineCurve()) ) {
+    if ( writeCurve( objStream, _filename, bscObj->splineCurve(), _precision ) ) {
 
       emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
@@ -2032,7 +2034,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     BSplineSurfaceObject* bssObj = dynamic_cast<BSplineSurfaceObject* >( object );
 
 
-    if ( writeSurface( objStream, _filename, bssObj->splineSurface()) ) {
+    if ( writeSurface( objStream, _filename, bssObj->splineSurface(), _precision ) ) {
 
       emit log(LOGINFO, tr("Saved object to ") + _filename );
       objStream.close();
@@ -2094,6 +2096,14 @@ QWidget* FileOBJPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
 
         saveCreateTexFolder_ = new QCheckBox("Create Textures Folder");
         layout->addWidget(saveCreateTexFolder_);
+
+        precisionLabel_ = new QLabel("Writer Precision:");
+        layout->addWidget(precisionLabel_);
+        savePrecision_ = new QSpinBox(saveOptions_);
+        savePrecision_->setMinimum(1);
+        savePrecision_->setMaximum(10);
+        savePrecision_->setValue(6);
+        layout->addWidget(savePrecision_);
 
         saveDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(saveDefaultButton_);

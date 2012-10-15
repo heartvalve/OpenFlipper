@@ -100,14 +100,14 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void updateView();
 
     void deleteObject( int _id );
-    
+
     // StatusbarInterface
     void showStatusMessage(QString _message, int _timeout = 0);
     void setStatus( ApplicationStatus::applicationStatus _status);
 
     //RPCInterface
     void pluginExists( QString _pluginName , bool& _exists  );
-    
+
     //TextureInterface
     void setTextureMode(QString _textureName, QString _mode, int _id );
     void switchTexture( QString _textureName, int _id );
@@ -118,7 +118,7 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void textureName (int, int, QString &);
     void getSubTextures (int, QString, QStringList &);
     void textureIndexPropertyName(int, QString&);
-    
+
   private slots:
 
     void fileOpened( int /*_id*/ ){};
@@ -126,17 +126,17 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-    
+
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
-    
+
     void slotHandleCheckBoxes(bool _checked);
 
   public :
-    
+
      FileOBJPlugin();
 
      ~FileOBJPlugin() {};
@@ -159,16 +159,16 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// load object and force type
     int loadObject(QString _filename, DataType _type);
-    
-    bool saveObject(int _id, QString _filename);
-    
-    QString version() { return QString("1.0"); }; 
-  
+
+    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
+
+    QString version() { return QString("1.0"); };
+
   private:
 
     /// Reader functions
     void checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes);
-    
+
     bool readMaterial(QString _filename, OBJImporter& _importer);
     void readOBJFile(QString _filename, OBJImporter& _importer);
     void createAllGroupObjects(OBJImporter& _importer);
@@ -176,10 +176,10 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     template <class MeshT>
     void backupTextureCoordinates(MeshT& _mesh);
     void addTextures(OBJImporter& _importer, int _objectID );
-    
+
     /// Convert non-valid filenames (e.g. of groups that end with .jpg) to valid .objs.
     void convertToOBJName(QString& _name);
-    
+
   private :
 
     /// List that contains the material properties
@@ -187,29 +187,29 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     template< class MeshT >
     Material& getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _fh, int _objId);
-    
+
     ///writer functions
     template< class MeshT >
     bool writeMaterial(QString _filename, MeshT& _mesh, int _objId );
-    
+
     template< class MeshT >
-    bool writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh, int _objId );
-    
+    bool writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh, int _objId, std::streamsize _precision );
+
     #ifdef ENABLE_BSPLINECURVE_SUPPORT
-    bool writeCurve(std::ostream& _out, QString _filename, BSplineCurve* _curve );
+    bool writeCurve(std::ostream& _out, QString _filename, BSplineCurve* _curve, std::streamsize _precision );
     #endif
 
     #ifdef ENABLE_BSPLINESURFACE_SUPPORT
-    bool writeSurface(std::ostream& _out, QString _filename, BSplineSurface* _surface );
+    bool writeSurface(std::ostream& _out, QString _filename, BSplineSurface* _surface, std::streamsize _precision );
     #endif
-    
-    
+
+
   private:
-    
+
     //Option Widgets
     QWidget* loadOptions_;
     QWidget* saveOptions_;
-    
+
     QCheckBox*   saveBinary_;
     QCheckBox*   saveVertexColor_;
     QCheckBox*   saveFaceColor_;
@@ -220,7 +220,9 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   saveCopyTextures_;
     QCheckBox*   saveCreateTexFolder_;
     QPushButton* saveDefaultButton_;
-    
+    QLabel*      precisionLabel_;
+    QSpinBox*    savePrecision_;
+
 
     QComboBox*   triMeshHandling_;
     QCheckBox*   loadVertexColor_;
@@ -230,10 +232,10 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadTexCoords_;
     QCheckBox*   loadTextures_;
     QPushButton* loadDefaultButton_;
-    
+
     bool forceTriangleMesh_;
     bool forcePolyMesh_;
-    
+
     QString textureIndexPropertyName_;
     bool    textureIndexPropFetched_;
     std::map<int,QString> texIndexFileMap_;

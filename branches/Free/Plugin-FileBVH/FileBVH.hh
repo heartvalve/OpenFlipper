@@ -86,7 +86,7 @@ class FileBVHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void initializePlugin();
 
   public :
-    
+
      FileBVHPlugin();
 
      ~FileBVHPlugin() {};
@@ -103,29 +103,29 @@ class FileBVHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
      QWidget* loadOptionsWidget(QString /*_currentFilter*/);
 
   private:
-    
+
     bool writeSkeleton( std::ostream& _out, Skeleton& _skeleton );
 
     ACG::Vec3d convertToAxisRotation(ACG::Matrix4x4d& _rotationMatrix);
-    
+
     bool ignoreJointScaling_;
 
     QWidget*     loadOptions_;
     QCheckBox*   checkJointScaling_;
     QPushButton* loadDefaultButton_;
-    
+
   public slots:
 
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Loads Object
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename);
+    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
 
     QString version() { return QString("1.0"); };
-  
+
 };
 
 #endif //FILEBVHPLUGIN_HH

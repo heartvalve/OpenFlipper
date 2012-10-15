@@ -68,7 +68,7 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
     void save(int _id , QString _filename );
     void log(Logtype _type, QString _message);
     void log(QString _message);
-    
+
     void updateView();
 
   private slots:
@@ -78,7 +78,7 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-    
+
   public :
 
      ~FileViewPlugin() {};
@@ -98,7 +98,7 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
 
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename);
+    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
 
     QString version() { return QString("1.0"); };
 };

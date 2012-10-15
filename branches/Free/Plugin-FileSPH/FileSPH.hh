@@ -69,7 +69,7 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void save(int _id , QString _filename );
     void log(Logtype _type, QString _message);
     void log(QString _message);
-    
+
     void updatedObject(int _id, const UpdateType& _type);
 
   private slots:
@@ -79,7 +79,7 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-    
+
   public :
 
      ~FileSPHPlugin() {};
@@ -99,7 +99,7 @@ class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename);
+    bool saveObject(int _id, QString _filename, std::streamsize /*_precision*/);
 
     QString version() { return QString("1.0"); };
 

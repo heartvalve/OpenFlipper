@@ -84,16 +84,16 @@ class FileOMPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
 
     void noguiSupported( ) {} ;
 
-    void initializePlugin();  
-    
+    void initializePlugin();
+
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
 
   public :
-    
+
      FileOMPlugin();
 
      ~FileOMPlugin() {};
@@ -113,14 +113,14 @@ class FileOMPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
 
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
-    
+
     /// Always loads mesh as polymesh
     int loadPolyMeshObject(QString _filename);
-    
+
     /// Loads a triangle mesh
     int loadTriMeshObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename);
+    bool saveObject(int _id, QString _filename, std::streamsize _precision);
 
     QString version() { return QString("1.0"); };
 
@@ -131,20 +131,22 @@ class FileOMPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
     void backupTextureCoordinates(MeshT& _mesh);
 
   private :
-    
+
     //Option Widgets
     QWidget* loadOptions_;
     QWidget* saveOptions_;
-    
+
     QCheckBox*   saveBinary_;
-    
+
     QCheckBox*   saveVertexNormal_;
     QCheckBox*   saveVertexTexCoord_;
     QCheckBox*   saveVertexColor_;
     QCheckBox*   saveFaceColor_;
     QCheckBox*   saveFaceNormal_;
     QPushButton* saveDefaultButton_;
-    
+    QLabel*      precisionLabel_;
+    QSpinBox*    savePrecision_;
+
     QComboBox*   triMeshHandling_;
     QCheckBox*   loadVertexNormal_;
     QCheckBox*   loadVertexTexCoord_;
