@@ -767,8 +767,8 @@ int FilePTSPlugin::loadObject( QString _filename )
           ACG::SceneGraph::DrawModes::DrawMode pointsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Points" );
 
           // if drawmodes don't exist something went wrong
-          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE || 
+          if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE ||
+              dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE ||
               pointsDrawMode == ACG::SceneGraph::DrawModes::NONE )
           {
             emit log( LOGERR, tr("Shader DrawModes for SplatCloud not existent!") );
@@ -779,8 +779,8 @@ int FilePTSPlugin::loadObject( QString _filename )
             ACG::SceneGraph::DrawModes::DrawMode drawmode = PluginFunctions::drawMode();
 
             // if global drawmode does *not* contain any of 'Splats', 'Dots' or 'Points' drawmode, add 'Points'
-            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) && 
-                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) && 
+            if( !drawmode.containsAtomicDrawMode( splatsDrawMode ) &&
+                !drawmode.containsAtomicDrawMode( dotsDrawMode   ) &&
                 !drawmode.containsAtomicDrawMode( pointsDrawMode ) )
             {
               drawmode |= pointsDrawMode;
@@ -813,7 +813,7 @@ int FilePTSPlugin::loadObject( QString _filename )
 //----------------------------------------------------------------
 
 
-bool FilePTSPlugin::saveObject( int _objectId, QString _filename )
+bool FilePTSPlugin::saveObject( int _objectId, QString _filename, std::streamsize /*_precision*/ )
 {
   // set default options
   bool saveBinaryFile = false;

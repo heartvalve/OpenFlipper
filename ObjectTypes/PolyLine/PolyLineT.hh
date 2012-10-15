@@ -160,7 +160,7 @@ public:
   const Point& back() const { return points_[n_vertices()-1];}
 
   /// \brief get the i-th oriented edge vector
-  Point edge_vector(unsigned int _i) const 
+  Point edge_vector(unsigned int _i) const
   { return(point((_i+1)%n_vertices())-point(_i));}
 
   /** \brief Compute the length of the polyline (in future cached method)
@@ -289,7 +289,7 @@ public:
   void load( const char* _filename);
 
   /// \brief Save polyline to a file
-  void save( const char* _filename) const;
+  void save( const char* _filename, std::streamsize _precision = 6) const;
 
   //  ############################### Standard Property Handling #############################
 
@@ -341,7 +341,7 @@ public:
   // property access ( no range or availability check! )
         Point& vertex_normal(unsigned int _i)       { return vnormals_[_i];}
   const Point& vertex_normal(unsigned int _i) const { return vnormals_[_i];}
-  
+
         Point& vertex_binormal(unsigned int _i)       { return vbinormals_[_i];}
   const Point& vertex_binormal(unsigned int _i) const { return vbinormals_[_i];}
 
@@ -376,13 +376,13 @@ public:
   const unsigned char& edge_selection(unsigned int _i) const {return eselections_[_i];}
 
   // ############################### SelectionWrappers  ############################
-  
+
   bool vertex_selected(unsigned int _i) { return (_i < vselections_.size() ? vertex_selection(_i) == 1 : false); }
   bool edge_selected(unsigned int _i) { return (_i < eselections_.size() ? edge_selection(_i) == 1 : false); }
-  
+
   void select_vertex(unsigned int _i) { if(_i < vselections_.size()) vertex_selection(_i) = 1; }
   void select_edge(unsigned int _i) { if(_i < eselections_.size()) edge_selection(_i) = 1; }
-  
+
   void deselect_vertex(unsigned int _i) { if(_i < vselections_.size()) vertex_selection(_i) = 0; }
   void deselect_edge(unsigned int _i) { if(_i < eselections_.size()) edge_selection(_i) = 0; }
 

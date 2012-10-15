@@ -117,7 +117,7 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
     _pSkeleton->addJoint(pParent, pJoint);
 
     jointMap[ id ] = pJoint->id();
-    
+
     // save the joints position
     ref->setGlobalMatrix(jointMap[ id ], mat);
 
@@ -134,7 +134,7 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
       parents[idChild] = pJoint;
     }
   }
-  
+
   unsigned int num_anim = 0;
   while(in.good()) {
 
@@ -147,7 +147,7 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 
 	  //read animation
       unsigned int frameCount = 0;
-	  
+
 
       if(identifier == "animation") {
           std::getline(in, animationName);
@@ -204,7 +204,7 @@ int FileSKLPlugin::loadObject(QString _filename)
 {
   int id = -1;
   emit addEmptyObject(DATA_SKELETON, id);
-  
+
   BaseObjectData *obj(0);
   if(PluginFunctions::getObject(id, obj))
   {
@@ -222,13 +222,13 @@ int FileSKLPlugin::loadObject(QString _filename)
   } else {
     emit log(LOGERR,tr("Unable to add empty skeleton"));
   }
-    
+
 
   return id;
 };
 
 template<typename Skeleton>
-bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
+bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename, std::streamsize _precision)
 {
   typedef JointT<typename Skeleton::Point> Joint;
   typedef  PoseT<typename Skeleton::Point>  Pose;
@@ -236,13 +236,15 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
 
   std::ofstream out(_filename.toStdString().c_str(), std::ofstream::out);
 
+  out.precision(_precision);
+
   // write the number of joints
   out << _pSkeleton->jointCount() << std::endl;
 
   Pose *ref = _pSkeleton->referencePose();
   // write all the joints
   for (typename Skeleton::Iterator it = _pSkeleton->begin(); it != _pSkeleton->end(); ++it ){
-  
+
     unsigned int i = (*it)->id();
     Joint *pJoint   = *it;
 
@@ -266,7 +268,7 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
 
     out << std::endl;
   }
-  
+
   // now store animations
   AnimationT<ACG::Vec3d>* animation = 0;
 
@@ -318,7 +320,7 @@ bool FileSKLPlugin::SaveSkeleton(Skeleton *_pSkeleton, QString _filename)
   return !out.fail();
 }
 
-bool FileSKLPlugin::saveObject(int _id, QString _filename)
+bool FileSKLPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
 {
 	BaseObjectData *obj(0);
 	if(PluginFunctions::getObject(_id, obj))
@@ -328,7 +330,7 @@ bool FileSKLPlugin::saveObject(int _id, QString _filename)
 		{
 		  obj->setFromFileName(_filename);
 		  obj->setName(obj->filename());
-			SaveSkeleton(skel->skeleton(), _filename);
+			SaveSkeleton(skel->skeleton(), _filename, _precision);
 		}
 	}
 

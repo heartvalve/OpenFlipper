@@ -84,7 +84,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void updateView();
 
     void deleteObject( int _id );
-    
+
     // StatusbarInterface
     void showStatusMessage(QString _message, int _timeout = 0);
     void setStatus( ApplicationStatus::applicationStatus _status);
@@ -96,16 +96,16 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-    
-    
+
+
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
 
   public :
-    
+
      FileOFFPlugin();
 
      ~FileOFFPlugin() {};
@@ -128,77 +128,77 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Loads Object with given datatype
     int loadObject(QString _filename, DataType _type);
-    
-    bool saveObject(int _id, QString _filename);
+
+    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
 
     QString version() { return QString("1.1"); };
 
   private:
-    
+
     /// Before Parsing the actual file, read all features supported
     bool readFileOptions(QString _filename, OFFImporter& _importer);
-      
+
     /// Read OFF file and parse it
     bool readOFFFile(QString _filename, OFFImporter& _importer);
-      
+
     /// Parse ascii OFF file
     bool parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName);
-     
+
     /// Parse binary OFF file
     bool parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName);
-    
+
     /// Get color type
     int getColorType(std::string& _line, bool _texCoordsAvailable);
-    
+
     /// Update user options depending on which options have been selected
     /// on the load dialog
     void updateUserOptions();
-    
+
     /// Test if there are face color components (_nV is the initial face valence)
     bool extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF, int _nB) const;
-    
+
     // Binary reader and writer helpers
     void readValue(std::istream& _in, float& _value) const {
         float tmp;
-        
+
         OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
         _value = tmp;
     }
-    
+
     void readValue(std::istream& _in, int& _value) const {
         OpenMesh::IO::int32_t tmp;
-        
+
         OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
         _value = tmp;
     }
-    
+
     void readValue(std::istream& _in, unsigned int& _value) const {
         OpenMesh::IO::uint32_t tmp;
-        
+
         OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
         _value = tmp;
     }
-    
+
     void writeValue(std::ostream& _out, int value) const {
-        
+
         OpenMesh::IO::uint32_t tmp = value;
         OpenMesh::IO::store(_out, tmp, false);
     }
-    
+
     void writeValue(std::ostream& _out, unsigned int value) const {
-        
+
         OpenMesh::IO::uint32_t tmp = value;
         OpenMesh::IO::store(_out, tmp, false);
     }
-    
+
     void writeValue(std::ostream& _out, float value) const {
-        
+
         float tmp = value;
         OpenMesh::IO::store(_out, tmp, false);
     }
-    
+
     void trimString( std::string& _string);
-    
+
     /** \brief Function to retrieve next line
      *
      * @param ifs             The input stream we operate on
@@ -210,19 +210,19 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Check for degenerate faces before adding them
     bool checkDegenerateFace(const std::vector<VertexHandle>& _v);
-    
+
     /// Writer function
     template< class MeshT >
     bool writeMesh(std::ostream& _out, MeshT& _mesh );
-    
+
     /// Write binary mesh data to file
     template< class MeshT >
     bool writeBinaryData(std::ostream& _out, MeshT& _mesh );
-    
+
     /// Write ASCII mesh data to file
     template< class MeshT >
     bool writeASCIIData(std::ostream& _out, MeshT& _mesh );
-    
+
     /// backup per vertex/face texture coordinates
     template <class MeshT>
     void backupTextureCoordinates(MeshT& _mesh);
@@ -230,7 +230,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     //Option Widgets
     QWidget* loadOptions_;
     QWidget* saveOptions_;
-    
+
     QCheckBox*   saveBinary_;
     QCheckBox*   saveVertexColor_;
     QCheckBox*   saveFaceColor_;
@@ -238,7 +238,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   saveNormals_;
     QCheckBox*   saveTexCoords_;
     QPushButton* saveDefaultButton_;
-    
+    QLabel*      precisionLabel_;
+    QSpinBox*    savePrecision_;
+
 
     QComboBox*   triMeshHandling_;
     QCheckBox*   loadVertexColor_;
@@ -248,10 +250,10 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadTexCoords_;
     QCheckBox*   loadCheckManifold_;
     QPushButton* loadDefaultButton_;
-    
+
     unsigned int userReadOptions_;
     unsigned int userWriteOptions_;
-    
+
     bool forceTriangleMesh_;
     bool forcePolyMesh_;
     bool readColorComp_;
