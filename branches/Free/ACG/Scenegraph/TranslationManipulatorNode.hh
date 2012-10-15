@@ -194,6 +194,12 @@ public:
   /// draw the cylinder (if enabled)
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
+  /// create renderobjects for shaderpipeline renderer
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
+
+  /// computes world matrix, transforms from model to world space
+  GLMatrixd computeWorldMatrix();
+
   /// leave node
   // void leave(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
@@ -259,6 +265,10 @@ private:
 
   void drawManipulator (GLState& _state, bool _active);
 
+  void addManipulatorToRenderer (IRenderer* _renderer, RenderObject* _baseRO, bool _active);
+  void addAxisToRenderer (IRenderer* _renderer, RenderObject* _baseRO, bool _active, int _axis);
+
+
   bool mapToCylinder (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
   bool mapToCylinderTop (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
 
@@ -278,7 +288,9 @@ private:
   Vec3d              dirY_;
   Vec3d              dirZ_;
 
-  ACG::GLCone*       axis_;
+  ACG::GLCone*       axisBottom_; // axis split up for deferred draw call rendering,
+  ACG::GLCone*       axisCenter_; // cone vbo data must be consistent within one frame
+  ACG::GLCone*       axisTop_;
   ACG::GLDisk*       circle_;
   ACG::GLSphere*     sphere_;
 
