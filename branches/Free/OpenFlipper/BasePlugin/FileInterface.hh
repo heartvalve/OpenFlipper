@@ -70,7 +70,7 @@ class FileInterface {
   public:
 
     /// Destructor
-    virtual ~FileInterface() {};
+    virtual ~FileInterface() {};  
 
     /** You can provide a special widget showing options for saving your file types
       *  depending on the current filter
@@ -184,7 +184,7 @@ public slots:
        * provided dataTypes ( see supportedType ).
        * Additionally to the filename you get the id of the object to save
        */
-      virtual bool saveObject(int _id, QString _filename, std::streamsize _precision = 6) = 0;
+      virtual bool saveObject(int _id, QString _filename) = 0;
 
       /** \brief Save multiple objects to one file
        *

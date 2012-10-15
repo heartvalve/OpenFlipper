@@ -225,7 +225,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
 //----------------------------------------------------------------------------
 
 
-bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename, std::streamsize /*_precision*/) {
+bool FileOpenVolumeMeshPlugin::saveObject(int _id, QString _filename) {
 
     BaseObjectData* obj(0);
     if (PluginFunctions::getObject(_id, obj)) {

@@ -200,7 +200,7 @@ void FileHeightFieldPNGPlugin::loadImageAsTriangleMesh(QImage& _image,TriMesh* _
 }
 
 
-bool FileHeightFieldPNGPlugin::saveObject(int _id, QString _filename, std::streamsize _precision) {
+bool FileHeightFieldPNGPlugin::saveObject(int _id, QString _filename) {
   return false;
 }
 

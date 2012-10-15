@@ -67,21 +67,21 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
       optionCreateTexFolder = saveCreateTexFolder_->isChecked();
   }
   // \TODO Fetch options from ini states if dialog box is not available
-
+  
   std::fstream matStream( _filename.toStdString().c_str(), std::ios_base::out );
 
   if ( !matStream ){
-
+    
     emit log(LOGERR, tr("writeMaterial : cannot not open file %1").arg(_filename) );
-    return false;
+    return false; 
   }
-
+    
   // \TODO Implement setting of all colors (diffuse, ambient and specular)
   // There's only diffuse colors so far
   OpenMesh::Vec4f c;
 
   materials_.clear();
-
+  
   //iterate over faces
   typename MeshT::FaceIter f_it;
   typename MeshT::FaceIter f_end = _mesh.faces_end();
@@ -102,7 +102,7 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
           matStream << "Tr " << mat.Tr() << std::endl;
       }
       matStream << "illum 1" << std::endl;
-
+      
       // Write out texture info
       if(optionTextures && mat.has_Texture()) {
           if(optionCopyTextures) {
@@ -121,7 +121,7 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
               matStream << "map_Kd " << mat.map_Kd() << std::endl;
           }
       }
-
+      
       matStream << std::endl;
   }
 
@@ -140,15 +140,15 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0)
         optionColorAlpha = saveAlpha_->isChecked();
     // \TODO Fetch options from ini states if dialog box is not available
-
+    
     OpenMesh::Vec4f c = _mesh.color( _fh );
-
+    
     // First off, try to fetch texture index of current face/object...
     if(!textureIndexPropFetched_) {
         emit textureIndexPropertyName(_objId, textureIndexPropertyName_);
         textureIndexPropFetched_ = true;
     }
-
+    
     int texIndex = -1;
     OpenMesh::FPropHandleT< int > texture_index_property;
     if ( _mesh.get_property_handle(texture_index_property, textureIndexPropertyName_.toStdString()) ) {
@@ -162,15 +162,15 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
         emit getCurrentTexture(_objId, texName);
         emit textureIndex(texName, _objId, texIndex);
     }
-
+    
     QString filename;
     bool hasTexture = false;
-
+     
     if(texIndex != -1) {
-
+    
         // Search for texture index in local map
         std::map<int,QString>::iterator it = texIndexFileMap_.find(texIndex);
-
+        
         if(it != texIndexFileMap_.end()) {
             // We already know this file
             filename = (*it).second;
@@ -179,7 +179,7 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
             // A new texture file has been found
             QString texName;
             emit textureName(_objId, texIndex, texName);
-
+            
             if(texName != "NOT_FOUND") {
                 emit textureFilename( _objId, texName, filename );
                 // => Add to local map
@@ -188,9 +188,9 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
             }
         }
     }
-
+    
     for (MaterialList::iterator it = materials_.begin(); it != materials_.end(); ++it) {
-
+    
         // No texture has been found
         if(!hasTexture) {
             // ... just look for diffuse color in materials list
@@ -217,7 +217,7 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     // Set texture info
     if(hasTexture)
         mat.set_map_Kd(filename.toStdString(), texIndex);
-
+    
     materials_.insert(std::pair<std::string, Material>("Material" + mat.material_number(), mat));
     MaterialList::iterator it = materials_.end();
     it--;
@@ -230,8 +230,8 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
 //-----------------------------------------------------------------------------------------------------
 
 template< class MeshT >
-bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh, int _objId, std::streamsize _precision ){
-
+bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh, int _objId ){
+  
   unsigned int i, nV, idx;
   Vec3f v, n;
   Vec2f t(0.0f,0.0f);
@@ -247,10 +247,9 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   bool optionTextures        = false;
   bool optionCopyTextures    = false;
   bool optionCreateTexFolder = false;
-  std::streamsize precision  = _precision;
-
+  
   QFileInfo fi(_filename);
-
+  
   // check options
   if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0) {
     optionFaceColors      = saveFaceColor_->isChecked();
@@ -260,16 +259,12 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     optionCopyTextures    = saveCopyTextures_->isChecked();
     optionCreateTexFolder = saveCreateTexFolder_->isChecked();
     optionColorAlpha      = saveAlpha_->isChecked();
-    precision             = savePrecision_->value();
   }
-
-  _out.precision(precision);
-
   // \TODO Fetch options from ini states if dialog box is not available
 
   //create material file if needed
   if ( optionFaceColors || optionTextures ){
-
+    
     QString matFile = fi.absolutePath() + QDir::separator() + fi.baseName() + ".mtl";
 
     useMaterial = writeMaterial(matFile, _mesh, _objId);
@@ -287,7 +282,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   // they can easily be referenced for face definitions
   // later on
   std::map<typename MeshT::VertexHandle, int> vtMapV;
-
+  
   int cf = 1;
   // vertex data (point, normals, texcoords)
   for (i=0, nV=_mesh.n_vertices(); i<nV; ++i)
@@ -295,7 +290,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     vh = typename MeshT::VertexHandle(i);
     v  = _mesh.point(vh);
     n  = _mesh.normal(vh);
-
+    
     if ( _mesh.has_vertex_texcoords2D() && !_mesh.has_halfedge_texcoords2D() )
       t  = _mesh.texcoord2D(vh);
 
@@ -313,16 +308,16 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
       cf++;
     }
   }
-
+  
   typename MeshT::FaceVertexIter fv_it;
   typename MeshT::FaceHalfedgeIter fh_it;
   typename MeshT::FaceIter f_it;
-
+  
   // Store indices of vertex coordinate (in obj-file)
   // in map such that the corresponding halfedge
   // can easily be found later on
   std::map<typename MeshT::HalfedgeHandle, int> vtMap;
-
+  
   // If mesh has halfedge tex coords, write them out instead of vertex texcoords
   if(_mesh.has_halfedge_texcoords2D()) {
       int count = 1;
@@ -337,11 +332,11 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   }
 
   Material lastMat;
-
+  
   for (f_it = _mesh.faces_begin(); f_it != _mesh.faces_end(); ++f_it){
 
     if (useMaterial && optionFaceColors) {
-
+       
         Material& material = getMaterial(_mesh, f_it.handle(), _objId);
 
         // If we are ina a new material block, specify in the file which material to use
@@ -355,7 +350,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
     // Write out face information
     for(fh_it=_mesh.fh_iter(f_it.handle()); fh_it; ++fh_it) {
-
+      
         // Write vertex index
         idx = _mesh.to_vertex_handle(fh_it.handle()).idx() + 1;
         _out << " " << idx;
@@ -383,10 +378,10 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
         if ( optionVertexNormals )
         _out << idx;
     }
-
+    
     _out << std::endl;
   }
-
+  
   // Copy texture files (if demanded)
   if(optionCopyTextures) {
       // Only test existence of folder once
@@ -394,12 +389,12 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
       bool testedOnce = false;
       for(MaterialList::iterator it = materials_.begin(); it != materials_.end(); ++it) {
           Material& mat = (*it).second;
-
+          
           if(!mat.has_Texture()) continue;
 
           QImage img(mat.map_Kd().c_str());
           QFileInfo img_f(mat.map_Kd().c_str());
-
+          
           if(img.isNull()) {
               // Something happened wrong
               emit log(LOGERR, tr("An error occurred when trying to copy a texture file."));
@@ -416,7 +411,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
                       img.save(fi.absolutePath() + QDir::separator() + fi.baseName() + "_textures" + QDir::separator() + img_f.fileName());
                       testedOnce = true;
                   }
-
+                  
               } else {
                   img.save(fi.absolutePath() + QDir::separator() + img_f.fileName());
               }
@@ -429,8 +424,8 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   textureIndexPropFetched_ = false;
 
   return true;
-}
-
-
-
-
+}  
+  
+  
+  
+  

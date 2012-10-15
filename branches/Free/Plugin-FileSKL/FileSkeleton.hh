@@ -81,7 +81,7 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void saveIniFile( INIFile& _ini ,int _id);
 
     void noguiSupported( ) {} ;
-
+    
     void initializePlugin();
 
   public :
@@ -103,11 +103,11 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
+    bool saveObject(int _id, QString _filename);
 
   private :
 	  template<typename Skeleton> bool LoadSkeleton(Skeleton *_pSkeleton, QString _filename);
-	  template<typename Skeleton> bool SaveSkeleton(Skeleton *_pSkeleton, QString _filename, std::streamsize _precision);
+	  template<typename Skeleton> bool SaveSkeleton(Skeleton *_pSkeleton, QString _filename);
 
 };
 

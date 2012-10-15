@@ -666,93 +666,101 @@ void
 BaseRemesherT<Mesh>::
 flip_edges()
 {
-  typename Mesh::EIter     e_it, e_end;
-  typename Mesh::VIter     v_it, v_end;
-  typename Mesh::VHandle   v0, v1, v2, v3, vh;
-  typename Mesh::HHandle   hh;
-  typename Mesh::Point     p;
-  typename Mesh::FHandle   fh;
+  typename Mesh::EIter e_it, e_end;
+  typename Mesh::VIter v_it, v_end;
+  typename Mesh::VHandle v0, v1, v2, v3, vh;
+  typename Mesh::HHandle hh;
+  typename Mesh::Point p;
+  typename Mesh::FHandle fh;
 
-  int             val0, val1, val2, val3;
-  int             val_opt0, val_opt1, val_opt2, val_opt3;
-  int             ve0, ve1, ve2, ve3, ve_before, ve_after;
-  bool            ok;
-  int             i;
-
-
-
+  int val0, val1, val2, val3;
+  int val_opt0, val_opt1, val_opt2, val_opt3;
+  int ve0, ve1, ve2, ve3, ve_before, ve_after;
+  bool ok;
+  int i;
 
   // compute vertex valences
-  for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end();
-       v_it!=v_end; ++v_it)
+  for (v_it = mesh_.vertices_begin(), v_end = mesh_.vertices_end(); v_it != v_end; ++v_it)
     mesh_.property(valences_, v_it) = mesh_.valence(v_it);
 
-
   // flip all edges
-  for (ok=false, i=0; !ok && i<100; ++i)
-  {
+  for (ok = false, i = 0; !ok && i < 100; ++i) {
     ok = true;
 
-    for (e_it=mesh_.edges_begin(), e_end=mesh_.edges_end();
-	 e_it!=e_end; ++e_it)
-    {
-      if (!mesh_.status(e_it).locked() && !mesh_.status(e_it).feature())
-      {
-	hh = mesh_.halfedge_handle(e_it, 0);
-	v0 = mesh_.to_vertex_handle(hh);
-	v2 = mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh));
-	hh = mesh_.halfedge_handle(e_it, 1);
-	v1 = mesh_.to_vertex_handle(hh);
-	v3 = mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh));
+    for (e_it = mesh_.edges_begin(), e_end = mesh_.edges_end(); e_it != e_end; ++e_it) {
+      if (!mesh_.status(e_it).locked() && !mesh_.status(e_it).feature()) {
+        hh = mesh_.halfedge_handle(e_it, 0);
+        v0 = mesh_.to_vertex_handle(hh);
+        v2 = mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh));
+        if ( !mesh_.next_halfedge_handle(hh).is_valid() ) {
+          std::cerr << "Error v2" << std::endl;
+          continue;
+        }
+        hh = mesh_.halfedge_handle(e_it, 1);
+        v1 = mesh_.to_vertex_handle(hh);
+        v3 = mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh));
+        if ( !mesh_.next_halfedge_handle(hh).is_valid() ) {
+          std::cerr << "Error v3" << std::endl;
+          continue;
+        }
 
-	if (!mesh_.status(v0).locked() &&
-	    !mesh_.status(v1).locked() &&
-	    !mesh_.status(v2).locked() &&
-	    !mesh_.status(v3).locked())
-	{
-	  val0 = mesh_.property(valences_, v0);
-	  val1 = mesh_.property(valences_, v1);
-	  val2 = mesh_.property(valences_, v2);
-	  val3 = mesh_.property(valences_, v3);
+        if ( !v2.is_valid())
+          continue;
 
-	  val_opt0 = (mesh_.is_boundary(v0) ? 4 : 6);
-	  val_opt1 = (mesh_.is_boundary(v1) ? 4 : 6);
-	  val_opt2 = (mesh_.is_boundary(v2) ? 4 : 6);
-	  val_opt3 = (mesh_.is_boundary(v3) ? 4 : 6);
+        if (!mesh_.status(v0).locked() && !mesh_.status(v1).locked() && !mesh_.status(v2).locked()
+            && !mesh_.status(v3).locked()) {
+          val0 = mesh_.property(valences_, v0);
+          val1 = mesh_.property(valences_, v1);
+          val2 = mesh_.property(valences_, v2);
+          val3 = mesh_.property(valences_, v3);
 
-	  ve0 = (val0 - val_opt0);  ve0 *= ve0;
-	  ve1 = (val1 - val_opt1);  ve1 *= ve1;
-	  ve2 = (val2 - val_opt2);  ve2 *= ve2;
-	  ve3 = (val3 - val_opt3);  ve3 *= ve3;
+          val_opt0 = (mesh_.is_boundary(v0) ? 4 : 6);
+          val_opt1 = (mesh_.is_boundary(v1) ? 4 : 6);
+          val_opt2 = (mesh_.is_boundary(v2) ? 4 : 6);
+          val_opt3 = (mesh_.is_boundary(v3) ? 4 : 6);
 
-	  ve_before = ve0 + ve1 + ve2 + ve3;
+          ve0 = (val0 - val_opt0);
+          ve0 *= ve0;
+          ve1 = (val1 - val_opt1);
+          ve1 *= ve1;
+          ve2 = (val2 - val_opt2);
+          ve2 *= ve2;
+          ve3 = (val3 - val_opt3);
+          ve3 *= ve3;
 
-	  --val0;  --val1;
-	  ++val2;  ++val3;
+          ve_before = ve0 + ve1 + ve2 + ve3;
 
-	  ve0 = (val0 - val_opt0);  ve0 *= ve0;
-	  ve1 = (val1 - val_opt1);  ve1 *= ve1;
-	  ve2 = (val2 - val_opt2);  ve2 *= ve2;
-	  ve3 = (val3 - val_opt3);  ve3 *= ve3;
+          --val0;
+          --val1;
+          ++val2;
+          ++val3;
 
+          ve0 = (val0 - val_opt0);
+          ve0 *= ve0;
+          ve1 = (val1 - val_opt1);
+          ve1 *= ve1;
+          ve2 = (val2 - val_opt2);
+          ve2 *= ve2;
+          ve3 = (val3 - val_opt3);
+          ve3 *= ve3;
 
-	  ve_after = ve0 + ve1 + ve2 + ve3;
+          ve_after = ve0 + ve1 + ve2 + ve3;
 
-	  if (ve_before > ve_after && mesh_.is_flip_ok(e_it))
-	  {
-	    mesh_.flip(e_it);
-	    --mesh_.property(valences_, v0);
-	    --mesh_.property(valences_, v1);
-	    ++mesh_.property(valences_, v2);
-	    ++mesh_.property(valences_, v3);
-	    ok = false;
-	  }
-	}
+          if (ve_before > ve_after && mesh_.is_flip_ok(e_it)) {
+            mesh_.flip(e_it);
+            --mesh_.property(valences_, v0);
+            --mesh_.property(valences_, v1);
+            ++mesh_.property(valences_, v2);
+            ++mesh_.property(valences_, v3);
+            ok = false;
+          }
+        }
       }
     }
   }
 
-  if (i==100) omlog() << "flip break\n";
+  if (i == 100)
+    omlog() << "flip break\n";
 }
 
 

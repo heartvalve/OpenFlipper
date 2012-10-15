@@ -81,7 +81,7 @@ int FileSPHPlugin::loadObject(QString _filename)
 
   SphereObject* sphereObject = 0;
   if(PluginFunctions::getObject( id, sphereObject))
-  {
+  {    
     if( sphereObject )
     {
 
@@ -91,52 +91,52 @@ int FileSPHPlugin::loadObject(QString _filename)
         SphereNode* sphere = PluginFunctions::sphereNode(sphereObject);
 
         QString name = sphereObject->name();
-
+        
         QSettings settings(_filename, QSettings::IniFormat);
         settings.beginGroup("SPHERE");
-
+        
         if ( settings.contains("Name") ) {
-
+          
           QString name = settings.value("Name").toString();
-
+          
           sphereObject->setName( name );
         } else {
           sphereObject->setFromFileName(_filename);
-        }
+        }        
+        
 
-
-
+        
         if ( settings.contains("PositionX") ) {
 
           ACG::Vec3d position;
           position[0] = settings.value("PositionX").toDouble();
           position[1] = settings.value("PositionY").toDouble();
           position[2] = settings.value("PositionZ").toDouble();
-
+          
           sphere->get_primitive(0).position = position;
         }
-
+        
         if ( settings.contains("Size") ){
-
+          
           double size = settings.value("Size").toDouble();
-
+          
           sphere->get_primitive(0).size = size;
         }
-
+        
         if ( settings.contains("Slices") ){
-
+          
           int slices = settings.value("Slices").toDouble();
-
+          
           sphere->get_primitive(0).slices = slices;
         }
-
+        
         if ( settings.contains("Stacks") ){
-
+          
           int stacks = settings.value("Stacks").toDouble();
-
+          
           sphere->get_primitive(0).stacks = stacks;
         }
-
+        
         settings.endGroup();
       }
 
@@ -152,7 +152,7 @@ int FileSPHPlugin::loadObject(QString _filename)
 };
 
 
-bool FileSPHPlugin::saveObject(int _id, QString _filename, std::streamsize /*_precision*/)
+bool FileSPHPlugin::saveObject(int _id, QString _filename)
 {
 
   BaseObjectData*     obj(0);
@@ -167,7 +167,7 @@ bool FileSPHPlugin::saveObject(int _id, QString _filename, std::streamsize /*_pr
       settings.beginGroup("SPHERE");
 
       settings.setValue("Name",sphereObject->name());
-
+      
       settings.setValue("PositionX", sphere->get_primitive(0).position[0]);
       settings.setValue("PositionY", sphere->get_primitive(0).position[1]);
       settings.setValue("PositionZ", sphere->get_primitive(0).position[2]);
@@ -177,7 +177,7 @@ bool FileSPHPlugin::saveObject(int _id, QString _filename, std::streamsize /*_pr
       settings.setValue("Stacks", sphere->get_primitive(0).stacks);
 
       settings.endGroup();
-
+      
       obj->setFromFileName(_filename);
       obj->setName(obj->filename());
     }
