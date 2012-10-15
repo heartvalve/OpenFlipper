@@ -205,6 +205,36 @@ private:
 ShaderProgGenerator is responsible for generating a matching pair of vertex and fragment shaders.
 */
 
+// A shader modifier can modify uniforms, in/outputs 
+// and glsl code of vertex and fragment shaders.
+// This is useful for global effects like shadow mapping
+// and depth peeling, where only a little changes in code are necessary.
+
+class ACGDLLEXPORT ShaderModifier
+{
+  friend class ShaderProgGenerator;
+
+public:
+  ShaderModifier(void);
+  virtual ~ShaderModifier(void);
+
+  virtual void modifyVertexIO(ShaderGenerator* _shader) {}
+  virtual void modifyVertexBeginCode(QStringList* _code) {}
+  virtual void modifyVertexEndCode(QStringList* _code) {}
+
+  virtual void modifyFragmentIO(ShaderGenerator* _shader) {}
+  virtual void modifyFragmentBeginCode(QStringList* _code) {}
+  virtual void modifyFragmentEndCode(QStringList* _code) {}
+
+
+  unsigned int getID() {return modifierID_;}
+
+  operator unsigned int() const {return modifierID_;}
+
+private:
+  unsigned int modifierID_;
+};
+
 class ACGDLLEXPORT ShaderProgGenerator
 {
 public:
@@ -215,8 +245,7 @@ public:
   */
   static void setShaderDir(QString _dir);
 
-
-  ShaderProgGenerator(const ShaderGenDesc* _desc);
+  ShaderProgGenerator(const ShaderGenDesc* _desc, unsigned int _modifierFlags = 0);
   virtual ~ShaderProgGenerator(void);
 
 
@@ -230,6 +259,10 @@ public:
   /** \brief Returns generated fragment shader code
   */
   const QStringList& getFragmentShaderCode();
+
+
+
+  static unsigned int registerModifier(ShaderModifier* _modifier);
 
 private:
 
@@ -279,7 +312,13 @@ private:
   QStringList vertexTemplate_;
   QStringList fragmentTemplate_;
 
-  ShaderGenDesc desc_;
+  ShaderGenDesc   desc_;
+  unsigned int usage_;
+
+
+  /// registered shader modifier
+  static int numModifiers_;
+  static ShaderModifier* modifiers_[32];
 
   /// path + filename to shader templates
   QString vertexShaderFile_;
@@ -288,6 +327,8 @@ private:
 
   static QString shaderDir_;
   static QStringList lightingCode_;
+
+  
 };
 
 

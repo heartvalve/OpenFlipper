@@ -104,6 +104,9 @@ public:
   /// Renders the node in picking mode, restricted to the node components given by \e _target
   void pick(GLState& _state, PickTarget _target);
 
+  /// Adds renderobjects to renderer for flexible shader pipeline
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
+
   /// Set the pose which should be rendered
   void setActivePose(const AnimationHandle &_hAni);
   /// Get the pose that is used for rendering
@@ -126,6 +129,10 @@ private:
   /// Helper function to draw the bones
   void draw_bone(GLState &_state, DrawModes::DrawMode _drawMode, const Point& _parent, const Point& _axis);
  
+  /// Helper function to create a renderobject for bones
+  void addBoneToRenderer(IRenderer* _renderer, RenderObject& _base, const Point& _parent, const Point& _axis);
+
+
   /// Normalizes a coordinate frame defined by the given matrix
   void NormalizeCoordinateFrame(Matrix &_mat);
 

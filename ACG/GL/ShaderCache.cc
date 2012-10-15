@@ -86,17 +86,22 @@ ShaderCache* ACG::ShaderCache::getInstance()
 // - modify compareShaderGenDescs s.t. it defines an order
 // or generate a hash key from ShaderGenDesc
 
-GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc )
+GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigned int _usage )
 {
+  CacheEntry newEntry;
+  newEntry.desc = *_desc;
+  newEntry.usage = _usage;
+
+
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
   {
-    if (!compareShaderGenDescs(&it->first, _desc))
+    if (!compareShaderGenDescs(&it->first, &newEntry))
       return it->second;
   }
 
   // glsl program not in cache, generate shaders
 
-  ShaderProgGenerator progGen(_desc);
+  ShaderProgGenerator progGen(_desc, _usage);
 
 #ifdef SG_DEBUG_OUTPUT
   progGen.saveFragmentShToFile("../../../dbg_frag.glsl");
@@ -121,36 +126,41 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc )
   prog->link();
   glCheckErrors();
 
-
-  cache_.push_back(std::pair<ShaderGenDesc, GLSL::Program*>(*_desc, prog));
+  cache_.push_back(std::pair<CacheEntry, GLSL::Program*>(newEntry, prog));
 
   return prog;
 }
 
 
 
-int ACG::ShaderCache::compareShaderGenDescs( const ShaderGenDesc* _a, const ShaderGenDesc* _b )
+int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEntry* _b )
 {
-  if (_a->numLights != _b->numLights)
+  if (_a->usage != _b->usage) 
     return -1;
 
-  if (_a->shadeMode != _b->shadeMode)
+  const ShaderGenDesc* a = &_a->desc;
+  const ShaderGenDesc* b = &_b->desc;
+
+  if (a->numLights != b->numLights)
     return -1;
 
-  if (_a->vertexColors != _b->vertexColors)
+  if (a->shadeMode != b->shadeMode)
     return -1;
 
-  if (_a->textured != _b->textured)
+  if (a->vertexColors != b->vertexColors)
     return -1;
 
-  if (_a->vertexTemplateFile != _b->vertexTemplateFile)
+  if (a->textured != b->textured)
     return -1;
 
-  if (_a->fragmentTemplateFile != _b->fragmentTemplateFile)
+  if (a->vertexTemplateFile != b->vertexTemplateFile)
     return -1;
 
-  if (_a->numLights)
-    return memcmp(_a->lightTypes, _b->lightTypes, _a->numLights * sizeof(ShaderGenLightType));
+  if (a->fragmentTemplateFile != b->fragmentTemplateFile)
+    return -1;
+
+  if (a->numLights)
+    return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
 
   return 0;
 }

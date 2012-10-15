@@ -51,8 +51,17 @@
 
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/GLState.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 
-void ACG::RenderObject::initFromState( GLState* _glState )
+
+namespace ACG
+{
+
+using namespace SceneGraph;
+
+
+
+void RenderObject::initFromState( GLState* _glState )
 {
   culling = true;
   blending = false;
@@ -69,6 +78,8 @@ void ACG::RenderObject::initFromState( GLState* _glState )
 
   blendSrc = GL_ONE;
   blendDest = GL_ZERO;
+
+  alpha = 1.0f;
 
   if (_glState)
   {
@@ -103,7 +114,38 @@ void ACG::RenderObject::initFromState( GLState* _glState )
   }
 }
 
-ACG::RenderObject::RenderObject()
+void RenderObject::setupShaderGenFromDrawmode( const DrawModes::DrawModeProperties* _props )
+{
+  if (_props)
+  {
+    shaderDesc.vertexColors = _props->colored();
+    shaderDesc.textured = _props->textured();
+    shaderDesc.numLights = _props->lighting() ? 0 : -1;
+
+    switch (_props->lightStage())
+    {
+    case DrawModes::LIGHTSTAGE_SMOOTH: shaderDesc.shadeMode = SG_SHADE_GOURAUD; break;;
+    case DrawModes::LIGHTSTAGE_PHONG: shaderDesc.shadeMode = SG_SHADE_PHONG; break;;
+    case DrawModes::LIGHTSTAGE_UNLIT: shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
+    default: break;
+    }
+
+    if (_props->flatShaded())
+      shaderDesc.shadeMode = SG_SHADE_FLAT;
+
+    if (_props->primitive() == DrawModes::PRIMITIVE_WIREFRAME ||
+      _props->primitive() == DrawModes::PRIMITIVE_HIDDENLINE ||
+      _props->primitive() == DrawModes::PRIMITIVE_EDGE ||
+      _props->primitive() == DrawModes::PRIMITIVE_HALFEDGE)
+      shaderDesc.shadeMode = SG_SHADE_UNLIT;
+  }
+}
+
+RenderObject::RenderObject()
 {
   memset(this, 0, sizeof(RenderObject));
 }
+
+
+
+} // namespace ACG end

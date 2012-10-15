@@ -45,6 +45,7 @@
 
 #include <list>
 #include <ACG/Config/ACGDefines.hh>
+#include <ACG/GL/ShaderGenerator.hh>
 
 // forward declaration
 namespace GLSL
@@ -54,8 +55,6 @@ namespace GLSL
 
 
 namespace ACG {
-
-struct ShaderGenDesc;
 
 
 /** \brief Cache for shaders
@@ -75,16 +74,23 @@ public:
   static ShaderCache* getInstance();
 
 
-  GLSL::Program* getProgram(const ShaderGenDesc* _desc);
+  GLSL::Program* getProgram(const ShaderGenDesc* _desc, unsigned int _usage = 0);
 
 protected:
   ShaderCache();
 
 
-  int compareShaderGenDescs(const ShaderGenDesc* _a, const ShaderGenDesc* _b);
+
+  struct CacheEntry
+  {
+    ShaderGenDesc desc;
+    unsigned int  usage;
+  };
+
+  int compareShaderGenDescs(const CacheEntry* _a, const CacheEntry* _b);
 
 
-  typedef std::list<std::pair<ShaderGenDesc, GLSL::Program*> > CacheList;
+  typedef std::list<std::pair<CacheEntry, GLSL::Program*> > CacheList;
   CacheList cache_;
 };
 
