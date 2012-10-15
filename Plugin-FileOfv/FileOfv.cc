@@ -82,14 +82,14 @@ int FileViewPlugin::loadObject(QString _filename) {
     ACG::Vec3d  up(1.0,0.0,0.0);
 //    float       fovy = 0;
     ACG::Vec4f  background;
-
+    
     //bool e_widthAndHeight = false;
     bool e_eye = false;
     bool e_center = false;
     bool e_up = false;
 //    bool e_fovy = false;
     bool e_background = false;
-
+    
     QSettings settings(_filename, QSettings::IniFormat);
     settings.beginGroup("VIEW");
 
@@ -99,7 +99,7 @@ int FileViewPlugin::loadObject(QString _filename) {
         std::cerr << "Setting new viewport to " << width << "x" << height << std::endl;
         //e_widthAndHeight = true;
     }
-
+    
     if(settings.contains("EyeX")) {
         eye[0] = settings.value("EyeX").toDouble();
         eye[1] = settings.value("EyeY").toDouble();
@@ -107,7 +107,7 @@ int FileViewPlugin::loadObject(QString _filename) {
         std::cerr << "Setting new eye position to " << eye << std::endl;
         e_eye = true;
     }
-
+    
     if(settings.contains("CenterX")) {
         center[0] = settings.value("CenterX").toDouble();
         center[1] = settings.value("CenterY").toDouble();
@@ -115,7 +115,7 @@ int FileViewPlugin::loadObject(QString _filename) {
         std::cerr << "Setting new scene center to " << center << std::endl;
         e_center = true;
     }
-
+    
     if(settings.contains("UpX")) {
         up[0] = settings.value("UpX").toDouble();
         up[1] = settings.value("UpY").toDouble();
@@ -123,13 +123,13 @@ int FileViewPlugin::loadObject(QString _filename) {
         std::cerr << "Setting new up vector to " << up << std::endl;
         e_up = true;
     }
-
+    
 //    if(settings.contains("Fovy")) {
 //        fovy = settings.value("Fovy").toDouble();
 //        std::cerr << "Setting fovy to " << fovy << std::endl;
 //        e_fovy = true;
 //    }
-
+    
     if(settings.contains("BackgroundR")) {
         background[0] = settings.value("BackgroundR").toDouble();
         background[1] = settings.value("BackgroundG").toDouble();
@@ -140,17 +140,17 @@ int FileViewPlugin::loadObject(QString _filename) {
     }
 
     settings.endGroup();
-
+    
     // Now set new projection and view
-
+    
     // Get number of viewers
     int viewers = PluginFunctions::viewers();
-
+    
     for(int i = 0; i < viewers; ++i) {
-
+        
         Viewer::ViewerProperties& props = PluginFunctions::viewerProperties(i);
         ACG::GLState& state = props.glState();
-
+        
 //        // Perspective update
 //        double aspect = 0.0;
 //        if(e_widthAndHeight) aspect = width / height;
@@ -159,33 +159,33 @@ int FileViewPlugin::loadObject(QString _filename) {
         // Set projection matrix
         //if(e_fovy)
         //    state.perspective(fovy, aspect, near, far);
-
+    
         // Viewport
         //if(e_widthAndHeight)
         //    state.viewport(0, 0, width, height);
-
+        
         //std::cerr << "Fovy: " << state.fovy() << std::endl;
     }
-
+    
     // LookAt
     ACG::Vec3d new_eye = e_eye ? eye : PluginFunctions::eyePos();
     ACG::Vec3d new_center = e_center ? center : PluginFunctions::sceneCenter();
     ACG::Vec3d new_up = e_up ? up : PluginFunctions::upVector();
-
+        
     PluginFunctions::lookAt(new_eye, new_center, new_up);
-
+        
     // Background color
     if(e_background) {
         PluginFunctions::setBackColor(background);
      }
-
+    
     emit updateView();
-
+  
     return 0;
 };
 
-bool FileViewPlugin::saveObject(int /*_id*/, QString /*_filename*/, std::streamsize /*_precision*/) {
-
+bool FileViewPlugin::saveObject(int /*_id*/, QString /*_filename*/) {
+  
   return true;
 }
 

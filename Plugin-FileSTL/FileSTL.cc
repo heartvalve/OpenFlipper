@@ -97,18 +97,18 @@ int FileSTLPlugin::loadObject(QString _filename) {
 
     int id = -1;
     emit addEmptyObject(DATA_TRIANGLE_MESH, id);
-
+    
     TriMeshObject* object(0);
     if(PluginFunctions::getObject( id, object)) {
-
+        
         if (PluginFunctions::objectCount() == 1 )
             object->target(true);
-
+        
         object->setFromFileName(_filename);
         object->setName(object->filename());
-
+        
         std::string filename = std::string( _filename.toUtf8() );
-
+        
         object->mesh()->request_face_normals();
 
         // load file
@@ -118,21 +118,21 @@ int FileSTLPlugin::loadObject(QString _filename) {
             std::cerr << "Plugin FileSTL : Read error for stl mesh.\n";
             emit deleteObject( object->id() );
             return -1;
-
+            
         }
-
+        
         object->mesh()->update_normals();
-
+        
         object->update();
         object->show();
-
+        
         emit openedFile( object->id() );
-
+        
         // Update viewport
         PluginFunctions::viewAll();
 
         return object->id();
-
+        
     } else {
         emit log(LOGERR,"Error : Could not create new triangle mesh object.");
         return -1;
@@ -141,33 +141,30 @@ int FileSTLPlugin::loadObject(QString _filename) {
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileSTLPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
+bool FileSTLPlugin::saveObject(int _id, QString _filename)
 {
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
-
+    
     std::string filename = std::string( _filename.toUtf8() );
-
+    
     if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-
+        
         object->setFromFileName(_filename);
         object->setName(object->filename());
-
+        
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
-
+        
         OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-
+        
         if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
-
+            
             if (!OpenFlipper::Options::nogui() && saveBinary_->isChecked())
                 opt += OpenMesh::IO::Options::Binary;
-
-            if (OpenFlipper::Options::gui())
-                _precision = savePrecision_->value();
-
+            
         }
-
-        if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(), opt, _precision) ) {
+        
+        if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(), opt) ) {
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             return true;
         } else {
@@ -183,63 +180,55 @@ bool FileSTLPlugin::saveObject(int _id, QString _filename, std::streamsize _prec
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileSTLPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
-
+    
     if (saveOptions_ == 0){
         //generate widget
         saveOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-
+        
         saveBinary_ = new QCheckBox("Save Binary");
         layout->addWidget(saveBinary_);
-
-        precisionLabel_ = new QLabel("Writer Precision:");
-        layout->addWidget(precisionLabel_);
-        savePrecision_ = new QSpinBox(saveOptions_);
-        savePrecision_->setMinimum(1);
-        savePrecision_->setMaximum(10);
-        savePrecision_->setValue(6);
-        layout->addWidget(savePrecision_);
-
+                
         saveDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(saveDefaultButton_);
-
+        
         saveOptions_->setLayout(layout);
-
+        
         saveBinary_->setChecked( OpenFlipperSettings().value( "FileSTL/Save/Binary", false ).toBool() );
-
+        
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
-
+        
     }
-
+    
     return saveOptions_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileSTLPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
-
+    
     if (loadOptions_ == 0){
         //generate widget
         loadOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-
+        
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
-
+        
         loadOptions_->setLayout(layout);
-
+        
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
     }
-
+    
     return loadOptions_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void FileSTLPlugin::slotLoadDefault() {
-  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
+  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );    
 }
 
 //-----------------------------------------------------------------------------------------------------

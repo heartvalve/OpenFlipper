@@ -110,7 +110,7 @@ DataType  FilePLYPlugin::supportedType() {
 //-----------------------------------------------------------------------------------------------------
 
 size_t FilePLYPlugin::getTypeSize(std::string _type) {
-
+    
     if(_type == "char" || _type == "uchar")
         return sizeof(char);
     else if(_type == "short" || _type == "ushort")
@@ -123,7 +123,7 @@ size_t FilePLYPlugin::getTypeSize(std::string _type) {
         return sizeof(double);
     else
         std::cerr << "Unable to parse SizeType. I got " << _type << std::endl;
-
+    
     // We don't support long type since its size differs depending on
     // the host architecture
     return 0;
@@ -132,31 +132,31 @@ size_t FilePLYPlugin::getTypeSize(std::string _type) {
 //-----------------------------------------------------------------------------------------------------
 
 bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
-
+    
     std::ifstream ifs(_filename.toUtf8());
-
+    
     if (!ifs.is_open() || !ifs.good() || ifs.eof()) {
-
+        
         emit log(LOGERR, tr("Error: Could not read header data of specified PLY-file! Aborting."));
         return false;
     }
-
+    
     std::string line;
     std::istringstream sstr;
-
+    
     std::string dString = "";
     std::string dStringPType = "";
     int         dInt;
     std::string lastElement = "";
-
+    
     while(dString != "end_header" && !ifs.eof()) {
-
+        
         // Get whole line
         sstr.clear();
         std::getline(ifs, line);
         sstr.str(line);
         sstr >> dString;
-
+        
         if(dString == "ply") {
             continue;
         } else if(dString == "format") {
@@ -269,7 +269,7 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
             continue;
         }
     }
-
+    
     // Now we're at 'end_header'
     // We skip the next numVertices lines in order to
     // get to the face definitions (unless there are any)
@@ -280,26 +280,26 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
         // We're done here
         return true;
     }
-
+    
     for(int i = 0; i < _header.numVertices; ++i) {
         std::getline(ifs, line);
     }
-
+    
     std::getline(ifs, line);
-
+    
     if(ifs.eof()) {
         emit log(LOGERR, "Could not read face valence. Something is wrong with your file!");
         ifs.close();
         return false;
     }
-
+    
     sstr.clear();
     sstr.str(line);
     // Get number of vertices per face
     sstr >> dInt;
-
+    
     _header.isTriangleMesh = (dInt == 3);
-
+    
     ifs.close();
     return true;
 }
@@ -361,7 +361,7 @@ int FilePLYPlugin::loadObject(QString _filename, DataType _type) {
 int FilePLYPlugin::loadObject(QString _filename) {
 
     int triMeshControl = TYPEAUTODETECT; // 0 == Auto-Detect
-
+    
     if ( OpenFlipper::Options::gui() ){
         if ( triMeshHandling_ != 0 ){
           triMeshControl = triMeshHandling_->currentIndex();
@@ -369,43 +369,43 @@ int FilePLYPlugin::loadObject(QString _filename) {
           triMeshControl = TYPEAUTODETECT;
         }
     }
-
+    
     // Create header and initialize with binary zeros
     PLYHeader header = {0,false,0,0,0,0,0,0,std::vector<PPair>(),
                         0,0,0,0,"","",std::vector<PPair>()};
-
+    
     // Parse header in order to extract important information
     if(!parseHeader(_filename, header)) {
         return -1;
     }
-
+    
     int objectId = -1;
-
+    
     if(triMeshControl == TYPEAUTODETECT) {
-
+        
         if(header.isTriangleMesh) {
             // Load as trianglemesh
             objectId = loadTriMeshObject(_filename, header);
-
+        
             TriMeshObject* object(0);
             if(PluginFunctions::getObject( objectId, object )) {
-
+                
                 object->show();
                 emit openedFile( objectId );
             }
-
+            
             // Update viewport
             PluginFunctions::viewAll();
 
             return objectId;
-
+            
         } else {
             // Load as polymesh
             objectId = loadPolyMeshObject(_filename, header);
-
+            
             PolyMeshObject* object(0);
             if(PluginFunctions::getObject( objectId, object )) {
-
+                
                 object->show();
                 emit openedFile( objectId );
             }
@@ -415,29 +415,29 @@ int FilePLYPlugin::loadObject(QString _filename) {
 
             return objectId;
         }
-
-    } else if (triMeshControl == TYPEASK) {
+        
+    } else if (triMeshControl == TYPEASK) {      
 
         // If Ask is selected -> show dialog
         QMessageBox msgBox;
         QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
 //         QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
         QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
-
+        
         msgBox.setWindowTitle( tr("Mesh types in file") );
         msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
         msgBox.setDefaultButton( detectButton );
         msgBox.exec();
-
+        
         if ((msgBox.clickedButton() == polyButton) ||
             (msgBox.clickedButton() == detectButton && !header.isTriangleMesh)) {
-
+            
             // Detection requested and detected as polymesh
             objectId = loadPolyMeshObject(_filename, header);
-
+            
             PolyMeshObject* object(0);
             if(PluginFunctions::getObject( objectId, object )) {
-
+                
                 object->show();
                 emit openedFile( objectId );
             }
@@ -447,55 +447,55 @@ int FilePLYPlugin::loadObject(QString _filename) {
 
             return objectId;
         }
-
+                                                                     
     } else if (triMeshControl == TYPEPOLY) {
         // If always open as PolyMesh is selected
-
+        
         objectId = loadPolyMeshObject(_filename, header);
-
+        
         PolyMeshObject* object(0);
         if(PluginFunctions::getObject( objectId, object )) {
-
+            
             object->show();
             emit openedFile( objectId );
         }
-
+        
         // Update viewport
         PluginFunctions::viewAll();
 
         return objectId;
     } else {
         // If always open as TriMesh is selected
-
+        
         objectId = loadTriMeshObject(_filename, header);
-
+        
         TriMeshObject* object(0);
         if(PluginFunctions::getObject( objectId, object )) {
-
+            
             object->show();
             emit openedFile( objectId );
         }
-
+        
         // Update viewport
         PluginFunctions::viewAll();
 
         return objectId;
     }
-
+    
     // Load object as triangle mesh
-
+    
     objectId = loadTriMeshObject(_filename, header);
-
+    
     TriMeshObject* object(0);
     if(PluginFunctions::getObject( objectId, object )) {
-
+        
         object->show();
         emit openedFile( objectId );
 
         // Update viewport
         PluginFunctions::viewAll();
     }
-
+    
     return objectId;
 };
 
@@ -506,16 +506,16 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header
 
     int id = -1;
     emit addEmptyObject(DATA_TRIANGLE_MESH, id);
-
+    
     TriMeshObject* object(0);
     if(PluginFunctions::getObject( id, object)) {
-
+        
         if ( PluginFunctions::objectCount() == 1 )
             object->target(true);
-
+        
         object->setFromFileName(_filename);
         object->setName(object->filename());
-
+        
         // Get mesh
         TriMesh* mesh = object->mesh();
 
@@ -538,17 +538,17 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader& _header
                 return -1;
             }
         }
-
+        
         // Switch to point mode if mesh does not contain one single face
         if(_header.numFaces == 0)
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
-
+        
         object->update();
 
         backupTextureCoordinates(*mesh);
 
         return object->id();
-
+        
     } else {
         emit log(LOGERR,"Error : Could not create new triangle mesh object.");
         return -1;
@@ -562,22 +562,22 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
 
     int id = -1;
     emit addEmptyObject(DATA_POLY_MESH, id);
-
+    
     PolyMeshObject* object(0);
     if(PluginFunctions::getObject(id, object)) {
-
+        
         if (PluginFunctions::objectCount() == 1 )
             object->target(true);
-
+        
         object->setFromFileName(_filename);
         object->setName(object->filename());
-
+        
         // Get mesh
         PolyMesh* mesh = object->mesh();
 
         // Reserve Memory to speed up loading
         mesh->reserve(_header.numVertices,_header.numVertices * 4,_header.numFaces);
-
+    
         if(!_header.binary) {
             // Read ASCII file
             if(!readMeshFileAscii(_filename, mesh, _header)) {
@@ -597,74 +597,72 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader& _heade
                 emit log(LOGINFO, tr("Successfully loaded file ") + _filename );
             }
         }
-
+        
         // Switch to point mode if mesh does not contain one single face
         if(_header.numFaces == 0)
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
-
+        
         object->update();
 
         backupTextureCoordinates(*mesh);
 
         return object->id();
-
+        
     } else {
         emit log(LOGERR,"Error : Could not create new poly mesh object.");
         return -1;
     }
-
+    
     return id;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FilePLYPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
+bool FilePLYPlugin::saveObject(int _id, QString _filename)
 {
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
-
+    
     object->setFromFileName(_filename);
     object->setName(object->filename());
-
+    
     bool gui = OpenFlipper::Options::gui() && (saveBinary_ != 0) /*buttons initialized?*/;
     bool binary = ((gui && saveBinary_->isChecked()) ||
                     OpenFlipperSettings().value("FilePLY/Save/Binary",false).toBool());
-    if (gui)
-      _precision = savePrecision_->value();
-
+    
     if ( object->dataType(DATA_POLY_MESH) ) {
-
+        
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject*>(object);
-
+        
         if(binary) {
-            if(!writeMeshFileBinary(_filename, polyObj->mesh(), _precision)) {
+            if(!writeMeshFileBinary(_filename, polyObj->mesh())) {
                 emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
                 emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         } else {
-            if(!writeMeshFileAscii(_filename, polyObj->mesh(), _precision)) {
+            if(!writeMeshFileAscii(_filename, polyObj->mesh())) {
                 emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
                 emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         }
-
+        
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-
+        
         TriMeshObject* triObj = dynamic_cast<TriMeshObject*>(object);
-
+        
         if(binary) {
-            if(!writeMeshFileBinary(_filename, triObj->mesh(), _precision)) {
+            if(!writeMeshFileBinary(_filename, triObj->mesh())) {
                 emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
                 emit log(LOGINFO, tr("Saved object to ") + _filename );
             }
         } else {
-            if(!writeMeshFileAscii(_filename, triObj->mesh(), _precision)) {
+            if(!writeMeshFileAscii(_filename, triObj->mesh())) {
                 emit log(LOGERR, tr("Unable to save ") + _filename);
                 return false;
             } else {
@@ -672,123 +670,115 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename, std::streamsize _prec
             }
         }
     }
-
+    
     return true;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FilePLYPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
-
+    
     if (saveOptions_ == 0){
         //generate widget
         saveOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-
+        
         saveBinary_ = new QCheckBox("Save Binary");
         layout->addWidget(saveBinary_);
-
+        
         saveVertexNormal_ = new QCheckBox("Save Vertex Normals");
         layout->addWidget(saveVertexNormal_);
-
+        
         saveVertexColor_ = new QCheckBox("Save Vertex Colors");
         layout->addWidget(saveVertexColor_);
-
+        
         saveVertexTexCoord_ = new QCheckBox("Save Vertex TexCoords");
         layout->addWidget(saveVertexTexCoord_);
-
+        
         saveFaceNormal_ = new QCheckBox("Save Face Normals");
         layout->addWidget(saveFaceNormal_);
-
+        
         saveFaceColor_ = new QCheckBox("Save Face Colors");
         layout->addWidget(saveFaceColor_);
-
-        precisionLabel_ = new QLabel("Writer Precision:");
-        layout->addWidget(precisionLabel_);
-        savePrecision_ = new QSpinBox(saveOptions_);
-        savePrecision_->setMinimum(1);
-        savePrecision_->setMaximum(10);
-        savePrecision_->setValue(6);
-        layout->addWidget(savePrecision_);
-
+        
         saveDefaultButton_ = new QPushButton("Make Default");
-        layout->addWidget(saveDefaultButton_);
-
+        layout->addWidget(saveDefaultButton_);       
+        
         saveOptions_->setLayout(layout);
-
+        
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
-
+        
         saveBinary_->setChecked( OpenFlipperSettings().value("FilePLY/Save/Binary",true).toBool() );
         saveVertexNormal_->setChecked( OpenFlipperSettings().value("FilePLY/Save/Normals",true).toBool() );
         saveVertexColor_->setChecked( OpenFlipperSettings().value("FilePLY/Save/VertexColor",true).toBool() );
         saveVertexTexCoord_->setChecked( OpenFlipperSettings().value("FilePLY/Save/TexCoords",true).toBool() );
         saveFaceNormal_->setChecked( OpenFlipperSettings().value("FilePLY/Save/FaceNormal",true).toBool() );
         saveFaceColor_->setChecked( OpenFlipperSettings().value("FilePLY/Save/FaceColor",true).toBool() );
-    }
-
+    } 
+    
     return saveOptions_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FilePLYPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
-
+    
     if (loadOptions_ == 0){
         //generate widget
         loadOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-
+        
         QLabel* label = new QLabel(tr("If PolyMesh is a Triangle Mesh:"));
-
+        
         layout->addWidget(label);
-
+        
         triMeshHandling_ = new QComboBox();
         triMeshHandling_->addItem( tr("Auto-Detect") );
         triMeshHandling_->addItem( tr("Ask") );
         triMeshHandling_->addItem( tr("Always open as PolyMesh") );
         triMeshHandling_->addItem( tr("Always open as TriangleMesh") );
-
+        
         layout->addWidget(triMeshHandling_);
-
+        
         loadVertexNormal_ = new QCheckBox("Load Vertex Normals");
         layout->addWidget(loadVertexNormal_);
-
+                
         loadVertexColor_ = new QCheckBox("Load Vertex Colors");
         layout->addWidget(loadVertexColor_);
-
+        
         loadVertexTexCoord_ = new QCheckBox("Load Vertex TexCoords");
         layout->addWidget(loadVertexTexCoord_);
-
+        
         loadFaceNormal_ = new QCheckBox("Load Face Normals");
         layout->addWidget(loadFaceNormal_);
-
+        
         loadFaceColor_ = new QCheckBox("Load Face Colors");
         layout->addWidget(loadFaceColor_);
-
+        
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
-
+        
         loadOptions_->setLayout(layout);
-
+        
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
-
-
+        
+        
         triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FilePLY/Load/TriMeshHandling",TYPEAUTODETECT).toInt() );
-
+        
         loadVertexNormal_->setChecked( OpenFlipperSettings().value("FilePLY/Load/Normals",true).toBool()  );
         loadVertexColor_->setChecked( OpenFlipperSettings().value("FilePLY/Load/VertexColor",true).toBool() );
         loadVertexTexCoord_->setChecked( OpenFlipperSettings().value("FilePLY/Load/TexCoords",true).toBool()  );
         loadFaceNormal_->setChecked( OpenFlipperSettings().value("FilePLY/Load/FaceNormal",true).toBool()  );
         loadFaceColor_->setChecked( OpenFlipperSettings().value("FilePLY/Load/FaceColor",true).toBool()  );
     }
-
+    
     return loadOptions_;
 }
 
 void FilePLYPlugin::slotLoadDefault() {
-
+    
     OpenFlipperSettings().setValue( "FilePLY/Load/Normals",     loadVertexNormal_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Load/VertexColor", loadVertexColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Load/TexCoords",   loadVertexTexCoord_->isChecked()  );
@@ -796,13 +786,13 @@ void FilePLYPlugin::slotLoadDefault() {
     OpenFlipperSettings().setValue( "FilePLY/Load/FaceColor",   loadFaceColor_->isChecked()  );
 
     OpenFlipperSettings().setValue( "FilePLY/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
-
+    
     OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
 
 void FilePLYPlugin::slotSaveDefault() {
-
+    
     OpenFlipperSettings().setValue( "FilePLY/Save/Binary",      saveBinary_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/TexCoords",   saveVertexTexCoord_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/Normals",     saveVertexNormal_->isChecked()  );

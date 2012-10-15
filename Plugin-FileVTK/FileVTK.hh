@@ -93,14 +93,14 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void emptyObjectAdded( int _id );
     void deleteObject( int _id );
-
+    
     // StatusbarInterface
     void showStatusMessage(QString _message, int _timeout = 0);
     void setStatus( ApplicationStatus::applicationStatus _status);
 
     //RPCInterface
     void pluginExists( QString _pluginName , bool& _exists  );
-
+    
     //TextureInterface
     void setTextureMode(QString _textureName, QString _mode, int _id );
     void switchTexture( QString _textureName, int _id );
@@ -111,7 +111,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void textureName (int, int, QString &);
     void getSubTextures (int, QString, QStringList &);
     void textureIndexPropertyName(int, QString&);
-
+    
   private slots:
 
     void fileOpened( int /*_id*/ ){};
@@ -145,9 +145,9 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
      QString getSaveFilters();
      QString getLoadFilters();
-
+     
      QWidget* loadOptionsWidget(QString /*_currentFilter*/);
-     QWidget* saveOptionsWidget(QString /*_currentFilter*/);
+     QWidget* saveOptionsWidget(QString /*_currentFilter*/); 
 
   public slots:
 
@@ -156,26 +156,24 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// load object and force type
     int loadObject(QString _filename, DataType _type);
-
-    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
-
-    QString version() { return QString("1.0"); };
+    
+    bool saveObject(int _id, QString _filename);
+    
+    QString version() { return QString("1.0"); }; 
 
   private:
-
+    
     bool forceTriangleMesh_;
     bool forcePolyMesh_;
-
+    
     QWidget* saveOptions_;
-
+    
     QCheckBox*   saveBinary_;
     QCheckBox*   saveFaceNormals_;
     QCheckBox*   saveVertexNormals_;
     QCheckBox*   saveVertexTexCoords_;
     QPushButton* saveDefaultButton_;
-    QLabel*      precisionLabel_;
-    QSpinBox*    savePrecision_;
-
+    
     /// Reading binary file?
     bool binary_;
     unsigned int userWriteOptions_;
@@ -183,10 +181,10 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// Update user options depending on which options have been selected
     /// on the save dialog
     void updateUserOptions();
-
+    
     template <typename MeshT>
     bool loadMesh(QTextStream& _stream,MeshT*& _mesh, Dataset _type);
-
+    
     /** \brief Reads points from the stream and adds them to the mesh
     *
     * @param _spec Line containing the POINTS header
@@ -195,7 +193,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshPoints(QString _spec,QTextStream& _in,MeshT*& _mesh);
-
+    
     /** \brief Reads lines from the stream and adds them to the mesh
     *
     *
@@ -205,7 +203,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshLines(QString _spec,QTextStream& _in,MeshT*& _mesh);
-
+    
     /** \brief Reads polygons from the stream and adds them to the mesh
     *
     *
@@ -215,8 +213,8 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mesh);
-
-    /** \brief Helper function for loadMeshPolygons() that takes care of adding non-manifold faces
+    
+    /** \brief Helper function for loadMeshPolygons() that takes care of adding non-manifold faces 
     *
     *
     * @param _mesh Mesh to work on
@@ -224,7 +222,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     void add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::VertexHandle >& _vhandles);
-
+    
     /** \brief Reads triangle strips from the stream and adds them to the mesh
     *
     *
@@ -234,7 +232,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh);
-
+ 
     /** \brief Reads unstructured grid data from the stream and adds it to the mesh
     *
     *
@@ -244,7 +242,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh);
-
+    
     /** \brief Reads Normals from the stream and adds them to the mesh
     *
     *
@@ -256,7 +254,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     */
     template <typename MeshT>
     bool loadMeshNormals(QString _spec,QTextStream& _in,MeshT*& _mesh,bool _pointNormal, quint32 _count);
-
+    
     /** \brief Writes the header of the VTK file, then calls writeASCIIData (binary VTK is currently unsupported)
     *
     *

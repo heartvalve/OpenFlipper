@@ -131,7 +131,7 @@ public slots:
 
   // -- File Interface --
   int  loadObject(                QString _filename );
-  bool saveObject( int _objectId, QString _filename, std::streamsize _precision = 6 );
+  bool saveObject( int _objectId, QString _filename );
 
 private:
 

@@ -107,7 +107,7 @@ public slots:
 
   // -- File Interface --
   int  loadObject(                QString _filename );
-  bool saveObject( int _objectId, QString _filename, std::streamsize _precision = 6);
+  bool saveObject( int _objectId, QString _filename );
 
 private slots:
 
@@ -144,7 +144,7 @@ private:
   bool readBundleFile( const char *_filename, SplatCloud &_splatCloud ) /*const*/;
 
   // write bundle file from scenegraph node to disc
-  bool writeBundleFile( const char *_filename, const SplatCloud &_splatCloud, std::streamsize _precision ) /*const*/;
+  bool writeBundleFile( const char *_filename, const SplatCloud &_splatCloud ) /*const*/;
 };
 
 

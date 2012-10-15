@@ -128,7 +128,7 @@ public slots:
 
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename, std::streamsize _precision = 6);
+    bool saveObject(int _id, QString _filename);
 
     QString version() {
         return QString("1.0");

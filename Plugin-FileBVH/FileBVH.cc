@@ -146,34 +146,34 @@ void trimString( std::string& _string) {
 //-----------------------------------------------------------------------------------------------------
 
 int FileBVHPlugin::loadObject(QString _filename) {
-
+  
   if ( checkJointScaling_ != 0 )
     ignoreJointScaling_ = checkJointScaling_->isChecked();
   else
     ignoreJointScaling_ = OpenFlipperSettings().value("FileBVH/Load/JointScaling",true).toBool();
-
+  
   //setup filestream
-
+  
   std::fstream input( _filename.toUtf8(), std::ios_base::in );
-
+  
   if ( !input.is_open() || !input.good() ){
     emit log(LOGERR, tr("Error: cannot open file %1").arg(_filename) );
     return -1;
   }
-
+  
   //add a skeleton
   int id = -1;
   emit addEmptyObject(DATA_SKELETON, id);
-
+  
   BaseObjectData* object = 0;
   Skeleton* skeleton = 0;
-
+  
   if(PluginFunctions::getObject( id, object)){
     skeleton = PluginFunctions::skeleton( object );
     object->setFromFileName(_filename);
     object->setName(object->filename());
   }
-
+  
   if (skeleton == 0){
     emit log(LOGERR, tr("Error: Unable to add skeleton!"));
     return -1;
@@ -181,20 +181,20 @@ int FileBVHPlugin::loadObject(QString _filename) {
 
   Skeleton::Joint* currentParent = 0;
   Skeleton::Pose* refPose = skeleton->referencePose();
-
+  
 
   std::string line;
   std::string keyWrd;
   std::bitset<4> waitingFor = HIERARCHY;
-
+  
   std::map< Skeleton::Joint* , JointInfo> jointInfos;
 
   uint dataOffset = 0; //Offset of the current channel in the frame data
-
+  
   AnimationHandle animHandle;
   uint currentFrame = 0;
   uint frameCount = 0;
-
+  
   while( input && !input.eof() )
   {
     std::getline(input,line);
@@ -205,7 +205,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
 
     // Trim Both leading and trailing spaces
     trimString(line);
-
+    
     // ignore empty lines
     if ( line.size() == 0 )
       continue;
@@ -220,10 +220,10 @@ int FileBVHPlugin::loadObject(QString _filename) {
       waitingFor = ROOT_DEFINITION;
       continue;
     }
-
+    
     //ROOT_DEFINITION
     if ( (waitingFor == ROOT_DEFINITION) && (keyWrd == "ROOT") ){
-
+      
       std::string name;
       stream >> name;
 
@@ -236,7 +236,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
       waitingFor = OPENED_BRACKET;
       continue;
     }
-
+    
     //OPENED_BRACKET
     if ( (waitingFor == OPENED_BRACKET) && (keyWrd == "{") ){
 
@@ -257,23 +257,23 @@ int FileBVHPlugin::loadObject(QString _filename) {
       currentParent = currentParent->parent();
       continue;
     }
-
+    
     //JOINT
     if ( (!(waitingFor&JOINT).none()) && (keyWrd == "JOINT") ){
 
       std::string name;
       stream >> name;
-
+      
       Skeleton::Joint* newJoint = new Skeleton::Joint(currentParent, name);
       skeleton->addJoint(currentParent, newJoint);
       JointInfo info; //we found a new Joint, hence we need an ne JointInfo to store the channel inforamtions.
       jointInfos[newJoint]=info; //store Joint info for later use in case of CHANNELS
       currentParent = newJoint;
-
+      
       waitingFor = OPENED_BRACKET;
       continue;
     }
-
+    
     //OFFSET
     if ( (!(waitingFor&OFFSET).none()) && (keyWrd == "OFFSET") ){
 
@@ -282,18 +282,18 @@ int FileBVHPlugin::loadObject(QString _filename) {
       stream >> translation[0];
       stream >> translation[1];
       stream >> translation[2];
-
+      
       refPose->setLocalTranslation(currentParent->id(), translation );
 
       continue;
     }
-
+    
     //CHANNELS
     if ( (!(waitingFor&CHANNELS).none()) && (keyWrd == "CHANNELS") ){
 
       uint channelCount;
       stream >> channelCount;
-
+      
       JointInfo& info=jointInfos[ currentParent ];
 
       if(channelCount>6) //well somethings wrong here...
@@ -316,9 +316,9 @@ int FileBVHPlugin::loadObject(QString _filename) {
          info.dataChannels[info.channelOffset]=YR;
         else if (channelType == "Zrotation")
          info.dataChannels[info.channelOffset]=ZR;
-        else
+        else 
           {std::cerr << "Error: Unknown channelType. Ignoring." << std::endl;}
-
+       
         if(info.dataChannels[info.channelOffset]!=NotGiven){  //if there is a channel assigned
             info.dataOffset[info.channelOffset]=dataOffset; //the value for this channel will be found this data position
             info.channelOffset++;                           //write next info into the next index
@@ -327,7 +327,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
       }
       continue;
     }
-
+    
     // ENDSITE
     if ( (!(waitingFor&ENDSITE).none()) && (keyWrd == "End") ){
 
@@ -335,38 +335,38 @@ int FileBVHPlugin::loadObject(QString _filename) {
        stream >> site;
 
       std::string name = "End";
-
+      
       Skeleton::Joint* newJoint = new Skeleton::Joint(currentParent, currentParent->name() + name);
       skeleton->addJoint(currentParent, newJoint);
       currentParent = newJoint;
-
+      
       waitingFor = OPENED_BRACKET;
       continue;
     }
-
+    
     //MOTION
     if ( (waitingFor == MOTION) && (keyWrd == "MOTION") ){
       waitingFor = FRAMES;
       continue;
     }
-
+    
     //Frames
     if ( (waitingFor == FRAMES) && (keyWrd == "Frames:") ){
-
+      
       stream >> frameCount;
-
+      
       if (frameCount > 0){
         FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
         animHandle = skeleton->addAnimation(object->filename().toStdString(), animation);
       }
-
+      
       waitingFor = FRAME_TIME;
       continue;
     }
-
+    
     //Frame Time
     if ( (waitingFor == FRAME_TIME) && (keyWrd == "Frame") ){
-
+      
       std::string time;
       stream >> time;
 
@@ -382,12 +382,12 @@ int FileBVHPlugin::loadObject(QString _filename) {
 
     //Channel Data
     if ( (waitingFor == CHANNEL_DATA) ){
-
+      
       // a vector to store all the data for this frame
       std::vector<double> data(dataOffset,0.0);
 
       Skeleton::Pose* pose = 0;
-
+      
       if ( currentFrame < frameCount ){
         animHandle.setFrame( currentFrame );
         pose = skeleton->pose(animHandle);
@@ -408,9 +408,9 @@ int FileBVHPlugin::loadObject(QString _filename) {
 
       if ( currentFrame < frameCount )
       for (unsigned long jointID=0; jointID < skeleton->jointCount(); jointID++ ){
-
+                
         Skeleton::Joint* joint = skeleton->joint( jointID );
-
+        
         // special case: end-effector joints
         // they don't have animation data
         if ( jointInfos.find(joint) == jointInfos.end() ){
@@ -420,7 +420,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
         }
 
         JointInfo& info=jointInfos[joint]; //get the cahnnels info for the current joint
-
+         
         ACG::Vec3d translation(0.0,0.0,0.0); //setup translation
 
         ACG::GLMatrixd matRot; //setup rotation
@@ -431,7 +431,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
             if(info.dataChannels[i]==NotGiven) break; //stop at the first empty channel
 
             double val=data[info.dataOffset[i]];  //read one value from the data
-
+            
             switch(info.dataChannels[i]){         //apply the transformation
               case XP: translation[0]=val; break; //translation (order doesnt matter)
               case YP: translation[1]=val; break;
@@ -439,23 +439,23 @@ int FileBVHPlugin::loadObject(QString _filename) {
               case XR: matRot.rotateX(val); break; //rotation (order does matter)
               case YR: matRot.rotateY(val); break;
               case ZR: matRot.rotateZ(val); break;
-              default: break;                      //stop at the first empty channel
+              default: break;                      //stop at the first empty channel 
             }
           }
 
         ACG::GLMatrixd matTrans;
         matTrans.identity();
-
+        
         if (  (!ignoreJointScaling_) || //translate only if there is no need to preserve the scale
               (joint->parent() == 0) ) //or if the joint is the rootjoint
           matTrans.translate(translation);
 
-        ACG::Matrix4x4d matRef = refPose->localMatrix(jointID);
+        ACG::Matrix4x4d matRef = refPose->localMatrix(jointID); 
         pose->setLocalMatrix(jointID, matRef * matTrans * matRot);
       }
-
+      
       currentFrame++;
-
+      
       continue;
 
     }
@@ -463,7 +463,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
     std::cerr << "Error: No match for keyword '" << keyWrd << "' ";
     std::cerr << "waiting for : " << waitingFor.to_string<char,std::char_traits<char>,std::allocator<char> >() << std::endl;
   }
-
+  
 
   //general stuff
   object->source( PluginFunctions::objectCount() > 4 );
@@ -476,7 +476,7 @@ int FileBVHPlugin::loadObject(QString _filename) {
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileBVHPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
+bool FileBVHPlugin::saveObject(int _id, QString _filename)
 {
 
   BaseObjectData* object;
@@ -494,8 +494,6 @@ bool FileBVHPlugin::saveObject(int _id, QString _filename, std::streamsize _prec
     return false;
   }
 
-  stream.precision(_precision);
-
   //write object
   if ( object->dataType( DATA_SKELETON ) ) {
 
@@ -505,21 +503,21 @@ bool FileBVHPlugin::saveObject(int _id, QString _filename, std::streamsize _prec
     Skeleton* skeleton = PluginFunctions::skeleton(object);
 
     if ( writeSkeleton( stream, *skeleton ) ){
-
+      
       emit log(LOGINFO, tr("Saved object to ") + _filename );
       stream.close();
       return true;
 
     } else {
-
+      
       emit log(LOGERR, tr("Unable to save ") + _filename);
       stream.close();
       QFile( QString(filename.c_str()) ).remove();
       return false;
     }
-
+    
   } else {
-
+    
     emit log(LOGERR, tr("Unable to save (object is not a skeleton)"));
     stream.close();
     QFile( QString(filename.c_str()) ).remove();
@@ -556,15 +554,15 @@ ACG::Vec3d MatrixToEuler(ACG::Matrix4x4d _matrix){
 //-----------------------------------------------------------------------------------------------------
 
 bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
-
+  
   Skeleton::Pose* refPose = _skeleton.referencePose();
-
+  
   _out << "HIERARCHY" << std::endl;
-
+  
   std::string indent = "";
-
+  
   Skeleton::Joint* lastJoint = 0;
-
+  
   for (Skeleton::Iterator it = _skeleton.begin(); it != _skeleton.end(); ++it )
   {
 
@@ -575,27 +573,27 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
 
       lastJoint = lastJoint->parent();
     }
-
+    
     ACG::Vec3d translation;
-
+    
     if ( (*it)->parent() == 0 ){
       //ROOT Joint
       _out << "ROOT " << (*it)->name() << std::endl;
-
+      
       translation = refPose->globalTranslation( (*it)->id() );
-
+      
     } else if ( (*it)->size() > 0 ){
-
+      
       //normal joint
       _out << indent << "JOINT " << (*it)->name() << std::endl;
 
       translation = refPose->globalTranslation( (*it)->id() ) - refPose->globalTranslation( (*it)->parent()->id() );
-
+      
     } else {
-
+      
       //end-effector
       _out << indent << "End Site" << std::endl;
-
+      
       translation = refPose->globalTranslation( (*it)->id() ) - refPose->globalTranslation( (*it)->parent()->id() );
     }
 
@@ -603,23 +601,23 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
     indent += "\t";
 
     _out << indent << "OFFSET " << translation[0] << " " << translation[1] << " " << translation[2] << std::endl;
-
+    
     if ( (*it)->size() > 0 ){ //end-effectors have no channel
-
+      
       if ( (*it)->parent() == 0)
         _out << indent << "CHANNELS 6 Xposition Yposition Zposition Zrotation Yrotation Xrotation" << std::endl;
       else
         _out << indent << "CHANNELS 3 Zrotation Yrotation Xrotation" << std::endl;
 
       lastJoint = *it;
-
+      
     } else {
       indent = indent.substr(0, indent.size()-1);
       _out << indent << "}" << std::endl;
       lastJoint = (*it)->parent();
     }
   }
-
+  
   //close brackets
   while ( lastJoint->parent() != 0 ){
     indent = indent.substr(0, indent.size()-1);
@@ -628,7 +626,7 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
     lastJoint = lastJoint->parent();
   }
   _out << "}" << std::endl;
-
+  
   //now hierarchy is set up
   // save the motion
   AnimationT<ACG::Vec3d>* animation = 0;
@@ -636,7 +634,7 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
   //get first animation with name
   for (uint i = 0; i < _skeleton.animationCount(); i++){
     animation = _skeleton.animation( AnimationHandle(i, 0 ) );
-
+    
     if (animation->name() == "")
       animation = 0;
     else{
@@ -650,10 +648,10 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
     _out << "MOTION"          << std::endl;
     _out << "Frames: 0"       << std::endl;
     _out << "Frame Time: 0.1" << std::endl;
-
+    
     return true;
   }
-
+  
   _out << "MOTION" << std::endl;
   _out << "Frames: " << animation->frameCount() << std::endl;
   _out << "Frame Time: " << animation->fps() / 1000.0 << std::endl;
@@ -661,15 +659,15 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
   std::string name = _skeleton.animationName(iAnimation);
   AnimationHandle animHandle = _skeleton.animationHandle(name);
 
-
+ 
   // and every frame of that animation
   for(unsigned long k = 0; k < animation->frameCount(); ++k)
   {
-
+    
     animHandle.setFrame(k);
-
+    
     Skeleton::Pose* pose = _skeleton.pose( animHandle );
-
+    
     for (Skeleton::Iterator it = _skeleton.begin(); it != _skeleton.end(); ++it )
     {
       //skip end-effectors
@@ -682,23 +680,23 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
 
         _out << translation[0] << " " << translation[1] << " " << translation[2];
       }
-
+      
       ACG::Matrix4x4d rotMat = _skeleton.referencePose()->localMatrixInv( (*it)->id() ) * pose->localMatrix( (*it)->id() );
 
       ACG::Vec3d angles = convertToAxisRotation(rotMat);
-
+      
       _out << " " << angles[2] << " " << angles[1] << " " << angles[0];
-
+      
 //       ACG::GLMatrixd testMat( _skeleton.referencePose()->localMatrix( (*it)->id() ).raw() );
-//
+//       
 //       if ( (*it)->isRoot() )
 //         testMat.translate( pose->globalTranslation( (*it)->id() ) );
-//
+//       
 //       testMat.rotateZ( angles[2] );
 //       testMat.rotateY( angles[1] );
 //       testMat.rotateX( angles[0] );
-//
-//
+//       
+//       
 //       if ( testMat != pose->localMatrix( (*it)->id() ) ){
 //         std::cerr << "Decomposition failed (frame : " << k << " joint: " << (*it)->id() << ")" << std::endl;
 //         std::cerr << "Original:" << pose->localMatrix( (*it)->id() ) << std::endl;
@@ -707,7 +705,7 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
     }
     _out << std::endl;
   }
-
+  
   return true;
 }
 
@@ -746,7 +744,7 @@ ACG::Vec3d FileBVHPlugin::convertToAxisRotation(ACG::Matrix4x4d& _rotationMatrix
   double cosY = sqrt(matrix(0,0)*matrix(0,0)+matrix(1,0)*matrix(1,0));
 
   ACG::Vec3d result;
-
+  
   if (cosY > 16 * FLT_EPSILON) {
     result[0] = atan2( 1.0*matrix(2,1), matrix(2,2));
     result[1] = atan2(-1.0*matrix(2,0), cosY);
@@ -774,33 +772,33 @@ QWidget* FileBVHPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileBVHPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
-
+    
     if (loadOptions_ == 0){
         //generate widget
         loadOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-
+        
         checkJointScaling_ = new QCheckBox("Ignore Joint Scaling");
         layout->addWidget(checkJointScaling_);
 
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
-
+        
         loadOptions_->setLayout(layout);
-
+        
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
-
+        
         checkJointScaling_->setChecked( OpenFlipperSettings().value("FileBVH/Load/JointScaling",true).toBool() );
     }
-
+    
     return loadOptions_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void FileBVHPlugin::slotLoadDefault() {
-
+    
     OpenFlipperSettings().setValue( "FileBVH/Load/JointScaling", checkJointScaling_->isChecked() );
 
     OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );

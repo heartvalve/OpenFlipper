@@ -245,7 +245,7 @@ add_point(const Point& _p)
   // add available properties
   if( vertex_normals_available() )
     vnormals_.push_back( Point(0,0,0));
-
+  
   if( vertex_binormals_available() )
     vbinormals_.push_back( Point(0,0,0));
 
@@ -288,14 +288,14 @@ PolyLineT<PointT>::
 insert_point(int _idx, const Point& _p)
 {
   assert(_idx < (int)n_vertices() );
-
+  
   // insert new point
   points_.insert(points_.begin()+_idx, _p);
 
   // insert available properties
   if( vertex_normals_available() )
     vnormals_.insert(vnormals_.begin()+_idx, Point(0,0,0));
-
+  
   if( vertex_binormals_available() )
     vbinormals_.insert(vbinormals_.begin()+_idx, Point(0,0,0));
 
@@ -332,7 +332,7 @@ insert_point(int _idx, const Point& _p)
 
 
 //-----------------------------------------------------------------------------
-
+  
 
 template <class PointT>
 void
@@ -348,7 +348,7 @@ delete_point(int _idx)
   // delete available properties
   if( vertex_normals_available() )
     vnormals_.erase(vnormals_.begin()+_idx);
-
+  
   if( vertex_binormals_available() )
     vbinormals_.erase(vbinormals_.begin()+_idx);
 
@@ -1029,7 +1029,7 @@ load(const char* _filename)
     }
     else if(token == "VEHANDLES")
     {
-	if(!vertex_ehandles_available()) request_vertex_ehandles();
+	if(!vertex_ehandles_available()) request_vertex_ehandles(); 
 	for(unsigned int i=0; i<n_vertices(); ++i)
 	  fin >> vertex_ehandle(i);
     }
@@ -1071,11 +1071,9 @@ load(const char* _filename)
 template <class PointT>
 void
 PolyLineT<PointT>::
-save(const char* _filename, std::streamsize _precision) const
+save(const char* _filename) const
 {
   std::ofstream fout(_filename, std::ios::out);
-
-  fout.precision(_precision);
 
   //  is polyline closed?
   fout << closed_ << std::endl;
@@ -1119,7 +1117,7 @@ save(const char* _filename, std::streamsize _precision) const
     for( unsigned int i=0; i<n_vertices(); ++i)
       fout << vertex_fhandle(i) << std::endl;
   }
-
+  
   if(vertex_normals_available())
   {
     fout << "VNORMALS" << std::endl;
@@ -1130,7 +1128,7 @@ save(const char* _filename, std::streamsize _precision) const
       fout << vnormals_[i][2] << std::endl;
     }
   }
-
+  
   if(vertex_binormals_available())
   {
     fout << "VBINORMALS" << std::endl;
@@ -1208,7 +1206,7 @@ copy_vertex_complete(const PolyLineT<PointT>& _pl, unsigned int _i, unsigned int
   if( _pl.vertex_normals_available())
     if(   vertex_normals_available())
       vertex_normal(_j) = _pl.vertex_normal(_i);
-
+    
   if( _pl.vertex_binormals_available())
     if(   vertex_binormals_available())
       vertex_binormal(_j) = _pl.vertex_binormal(_i);

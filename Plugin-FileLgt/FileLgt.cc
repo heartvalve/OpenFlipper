@@ -80,7 +80,7 @@ int FileLightPlugin::loadObject(QString _filename)
 
   LightObject* lightObject = 0;
   if(PluginFunctions::getObject( id, lightObject))
-  {
+  {    
     if( lightObject )
     {
 
@@ -95,14 +95,14 @@ int FileLightPlugin::loadObject(QString _filename)
         settings.beginGroup("LIGHT");
 
         if ( settings.contains("Name") ) {
-
+          
           QString name = settings.value("Name").toString();
-
+          
           lightObject->setName( name );
         } else {
           lightObject->setFromFileName(_filename);
-        }
-
+        }        
+        
         if (settings.contains("PositionX")) {
           ACG::Vec3d position;
           position[0] = settings.value("PositionX").toDouble();
@@ -224,7 +224,7 @@ int FileLightPlugin::loadObject(QString _filename)
 
           enabled ? light->enable() : light->disable();
         }
-
+        
         settings.endGroup();
       }
 
@@ -238,7 +238,7 @@ int FileLightPlugin::loadObject(QString _filename)
   return id;
 };
 
-bool FileLightPlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
+bool FileLightPlugin::saveObject(int _id, QString _filename)
 {
 
   BaseObjectData*     obj(0);
@@ -253,7 +253,7 @@ bool FileLightPlugin::saveObject(int _id, QString _filename, std::streamsize _pr
         settings.beginGroup("LIGHT");
 
         settings.setValue("Name",lightObject->name());
-
+        
         if(!light->directional()) {
             settings.setValue("PositionX", light->position()[0]);
             settings.setValue("PositionY", light->position()[1]);
@@ -267,40 +267,40 @@ bool FileLightPlugin::saveObject(int _id, QString _filename, std::streamsize _pr
         settings.setValue("SpotDirectionX", light->spotDirection()[0]);
         settings.setValue("SpotDirectionY", light->spotDirection()[1]);
         settings.setValue("SpotDirectionZ", light->spotDirection()[2]);
-
+        
         settings.setValue("AmbientColorR", light->ambientColor()[0]);
         settings.setValue("AmbientColorG", light->ambientColor()[1]);
         settings.setValue("AmbientColorB", light->ambientColor()[2]);
         settings.setValue("AmbientColorA", light->ambientColor()[3]);
-
+        
         settings.setValue("DiffuseColorR", light->diffuseColor()[0]);
         settings.setValue("DiffuseColorG", light->diffuseColor()[1]);
         settings.setValue("DiffuseColorB", light->diffuseColor()[2]);
         settings.setValue("DiffuseColorA", light->diffuseColor()[3]);
-
+        
         settings.setValue("SpecularColorR", light->specularColor()[0]);
         settings.setValue("SpecularColorG", light->specularColor()[1]);
         settings.setValue("SpecularColorB", light->specularColor()[2]);
         settings.setValue("SpecularColorA", light->specularColor()[3]);
-
+        
         settings.setValue("FixedPosition", light->fixedPosition());
-
+        
         settings.setValue("SpotExponent", light->spotExponent());
-
+        
         settings.setValue("SpotCutOff", light->spotCutoff());
-
+        
         settings.setValue("ConstantAttenuation", light->constantAttenuation());
-
+        
         settings.setValue("LinearAttenuation", light->linearAttenuation());
-
+        
         settings.setValue("QuadraticAttenuation", light->quadraticAttenuation());
-
+        
         settings.setValue("Radius", light->radius());
-
+        
         settings.setValue("Enabled", light->enabled());
-
+                
         settings.endGroup();
-
+        
         obj->setFromFileName(_filename);
         obj->setName(obj->filename());
     }

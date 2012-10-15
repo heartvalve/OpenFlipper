@@ -51,7 +51,7 @@ int FilePolyLinePlugin::loadObject(QString _filename)
   return id;
 };
 
-bool FilePolyLinePlugin::saveObject(int _id, QString _filename, std::streamsize _precision)
+bool FilePolyLinePlugin::saveObject(int _id, QString _filename)
 {
   BaseObjectData*     obj(0);
   if(PluginFunctions::getObject( _id, obj))
@@ -65,7 +65,7 @@ bool FilePolyLinePlugin::saveObject(int _id, QString _filename, std::streamsize 
       obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
       obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
-      pol->line()->save((const char*) _filename.toAscii(), _precision);
+      pol->line()->save((const char*) _filename.toAscii());
     }
   }
 
