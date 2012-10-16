@@ -1912,6 +1912,15 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       // Get the name of the renderer
       QMetaObject::invokeMethod(plugin,"rendererName", Qt::DirectConnection,   Q_RETURN_ARG(QString,rendererNameString) ) ;
 
+      // Let the plugin check its OpenGL support requirements
+      QString openGLCheck = "";
+      QMetaObject::invokeMethod(plugin,"checkOpenGL", Qt::DirectConnection,   Q_RETURN_ARG(QString,openGLCheck) ) ;
+
+      if ( openGLCheck != "" ) {
+        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities!"));
+        emit log(LOGERR,openGLCheck);
+      }
+
       // Check if it already exists and add it if not.
       RendererInfo* rendererInfo = 0;
       if ( ! renderManager().rendererExists(rendererNameString) ) {
@@ -1919,6 +1928,9 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       } else {
         emit log(LOGERR,tr("Error: Renderer Plugin %1 already exists").arg(rendererNameString));
       }
+
+
+
 
       // Retrieve and store renderer information
       if ( rendererInfo != 0) {

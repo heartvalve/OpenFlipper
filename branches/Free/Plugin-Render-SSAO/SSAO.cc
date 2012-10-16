@@ -45,6 +45,8 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#include <QGLFormat>
+
 // shader debug mode triggers a shader reload after resizing the view window
 //#define SSAO_SHADER_DEBUG_MODE
 
@@ -705,6 +707,31 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
 
 
   glPopAttrib();
+}
+
+QString SSAOPlugin::checkOpenGL() {
+
+  // TODO: Correctly configure the following requirements!
+
+  // Get version and check
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_0) )
+    return QString("Insufficient OpenGL Version! OpenGL 2.0 or higher required");
+
+  //Get OpenGL extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+
+  // Collect missing extension
+  QString missing = "";
+
+//  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
+//    missing += "Missing Extension GL_ARB_vertex_buffer_object\n";
+//
+//  if ( !glExtensions.contains("GL_ARB_vertex_program") )
+//    missing += "Missing Extension GL_ARB_vertex_program\n";
+
+  return missing;
+
 }
 
 Q_EXPORT_PLUGIN2( ssaoplugin , SSAOPlugin );

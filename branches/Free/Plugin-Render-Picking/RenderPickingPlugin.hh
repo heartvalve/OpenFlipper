@@ -77,6 +77,7 @@ class RenderPickingPlugin : public QObject, BaseInterface, RenderInterface
     void render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
     QString rendererName();
     void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode);
+    QString checkOpenGL();
 
 
     // The picking target has been changed
