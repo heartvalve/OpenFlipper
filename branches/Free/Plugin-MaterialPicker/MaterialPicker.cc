@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2012 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 14395 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2012-04-16 14:46:02 +0200 (Mon, 16 Apr 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -139,7 +139,8 @@ void MaterialPicker::initializePlugin() {
    connect(materialListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(editMode(QListWidgetItem*)));
    connect(materialListWidget_,SIGNAL(itemChanged ( QListWidgetItem*)), this, SLOT(assignNewName(QListWidgetItem*)));
 
-   emit addToolbox( tr("Material Picker"), toolBox);
+   QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"material_picker.png");
+   emit addToolbox( tr("Material Picker"), toolBox, toolIcon);
 }
 
 //------------------------------------------------------------------------------

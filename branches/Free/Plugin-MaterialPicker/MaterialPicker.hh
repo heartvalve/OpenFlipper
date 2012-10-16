@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2012 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 14388 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2012-04-16 12:55:37 +0200 (Mon, 16 Apr 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -77,7 +77,7 @@ signals:
 
   void updateView();
 
-  void addToolbox(QString _name, QWidget* _widget);
+  void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
 
 public slots:
 
