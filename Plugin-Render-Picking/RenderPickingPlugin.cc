@@ -50,6 +50,8 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QGLFormat>
+
 void RenderPickingPlugin::initializePlugin()
 {
   pickRendererMode_ = ACG::SceneGraph::PICK_ANYTHING;
@@ -160,6 +162,25 @@ void RenderPickingPlugin::render(ACG::GLState* _glState, Viewer::ViewerPropertie
 
   ACG::GLState::enable(GL_LIGHTING);
   ACG::GLState::enable(GL_BLEND);
+
+}
+
+QString RenderPickingPlugin::checkOpenGL() {
+
+  // TODO: Correctly configure the following requirements!
+
+  // Get version and check
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_0) )
+    return QString("Insufficient OpenGL Version! OpenGL 2.0 or higher required");
+
+  //Get OpenGL extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+
+  // Collect missing extension
+  QString missing = "";
+
+  return missing;
 
 }
 
