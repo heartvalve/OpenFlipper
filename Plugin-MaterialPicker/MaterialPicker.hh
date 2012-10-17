@@ -50,27 +50,19 @@
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/PickingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
+#include <OpenFlipper/BasePlugin/KeyInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
-struct MaterialInfo
-{
-   bool color_material;
-   ACG::Vec4f base_color;
-   ACG::Vec4f ambient_color;
-   ACG::Vec4f diffuse_color;
-   ACG::Vec4f specular_color;
-   float shininess;
-   double reflectance;
-};
 
-class MaterialPicker : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface
+class MaterialPicker : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, KeyInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(MouseInterface)
   Q_INTERFACES(PickingInterface)
   Q_INTERFACES(ToolboxInterface)
+  Q_INTERFACES(KeyInterface)
 
 signals:
   void addPickMode(const std::string &_mode);
@@ -79,11 +71,15 @@ signals:
 
   void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
 
+  void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+
 public slots:
 
   void slotMouseEvent(QMouseEvent* _event);
 
   void slotPickModeChanged(const std::string& _mode);
+
+  void slotKeyEvent (QKeyEvent* _event);
 
 public:
 
@@ -95,6 +91,17 @@ public:
 
 private:
 
+  struct MaterialInfo
+  {
+     bool color_material;
+     ACG::Vec4f base_color;
+     ACG::Vec4f ambient_color;
+     ACG::Vec4f diffuse_color;
+     ACG::Vec4f specular_color;
+     float shininess;
+     double reflectance;
+  };
+
   const std::string pickModeName_;
   const QString propName_;
 
@@ -104,6 +111,7 @@ private:
   QStringList materialString_;//hold materials as a String (saves/load the material at the beginning)
 
   QVector<MaterialInfo> materialList_;
+  std::map<int,size_t> shortKeyRow_;
 
   /// stores the state of the pick material button
   bool pickMaterial_;
@@ -126,7 +134,7 @@ private slots:
   void editMode(QListWidgetItem* _item);
 
   /// saves the new material name
-  void assignNewName(QListWidgetItem* _item);
+  void saveNewName(QListWidgetItem* _item);
 
   void clearList();
 
