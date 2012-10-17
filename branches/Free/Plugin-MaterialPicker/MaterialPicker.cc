@@ -51,7 +51,7 @@
 MaterialPicker::MaterialPicker()
   :
   pickModeName_("MaterialPicker"),
-  propName_("MaterialPicker/Materials"),
+  propName_("MaterialPickerPlugin/Materials"),
   pickMaterialButton_(0),
   fillMaterialButton_(0),
   materialListWidget_(0),
@@ -84,7 +84,7 @@ void MaterialPicker::initializePlugin() {
    materialListWidget_ = new QListWidget(toolBox);
 
    //load saved materials
-   materialString_ = OpenFlipperSettings().value("MaterialPickerPlugin/Materials", QStringList()).toStringList();
+   materialString_ = OpenFlipperSettings().value(propName_, QStringList()).toStringList();
 
    for (int i = 0; i < materialString_.size(); ++i)
    {
@@ -117,7 +117,16 @@ void MaterialPicker::initializePlugin() {
      stream.clear();
      stream << savedString[7].toStdString();
      stream >> materialInfo.reflectance;
+     stream.str("");
+     stream.clear();
+     int key;
+     if (savedString.size() < 9)
+       savedString.push_back(QString::number(Qt::Key_unknown));
+     stream << savedString[8].toStdString();
+     stream >> key;
 
+     if (key != Qt::Key_unknown)
+       shortKeyRow_[key] = materialListWidget_->count();
 
      materialListWidget_->addItem( savedString[0] );
      materialList_.push_back(materialInfo);
@@ -148,7 +157,7 @@ void MaterialPicker::initializePlugin() {
    connect(fillMaterialButton_, SIGNAL(clicked()), this, SLOT(slotFillMaterialMode()));
    connect(clearListButton, SIGNAL(clicked()), this, SLOT(clearList()));
    connect(materialListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(editMode(QListWidgetItem*)));
-   connect(materialListWidget_,SIGNAL(itemChanged ( QListWidgetItem*)), this, SLOT(assignNewName(QListWidgetItem*)));
+   connect(materialListWidget_,SIGNAL(itemChanged ( QListWidgetItem*)), this, SLOT(saveNewName(QListWidgetItem*)));
    connect(removeItemButton, SIGNAL(clicked()), this, SLOT(slotRemoveCurrentItem()));
 
    QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"material_picker.png");
@@ -211,6 +220,9 @@ void MaterialPicker::slotFillMaterialMode() {
 
 void MaterialPicker::pluginsInitialized() {
   emit addPickMode(pickModeName_);
+  emit registerKey (Qt::Key_1, Qt::ControlModifier, tr("Material 1"), false);
+  emit registerKey (Qt::Key_2, Qt::ControlModifier, tr("Material 2"), false);
+  emit registerKey (Qt::Key_3, Qt::ControlModifier, tr("Material 3"), false);
 }
 
 //------------------------------------------------------------------------------
@@ -244,6 +256,13 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
             materialInfo.shininess = material->shininess();
             materialInfo.reflectance = material->reflectance();
 
+            int key = Qt::Key_unknown;
+            if (shortKeyRow_.size() < 3)
+            {
+              shortKeyRow_[Qt::Key_1+shortKeyRow_.size()] = materialListWidget_->count();
+              key = Qt::Key_1+shortKeyRow_.size();
+            }
+
             // update list widget and material list
             QString name = QString("material id: %1").arg(material->id());
             materialListWidget_->addItem( name );
@@ -261,6 +280,7 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
             stream << ";" << materialInfo.specular_color;
             stream << ";" << materialInfo.shininess;
             stream << ";" << materialInfo.reflectance;
+            stream << ";" << key;
 
             QString materialString = stream.str().c_str();
             materialString_.push_back(materialString);
@@ -301,12 +321,16 @@ void MaterialPicker::editMode(QListWidgetItem* _item) {
 }
 
 //------------------------------------------------------------------------------
-void MaterialPicker::assignNewName(QListWidgetItem* _item)
+void MaterialPicker::saveNewName(QListWidgetItem* _item)
 {
   unsigned index = materialListWidget_->row(_item);
   QString str = materialString_[index];
   QStringList strList = str.split(";");
+
+  //pass name
   strList[0] = _item->text();
+
+  //create new String to save
   str = "";
   for (int i = 0; i < strList.size()-1; ++i)
     str += strList[i] + ";";
@@ -322,4 +346,28 @@ void MaterialPicker::slotPickModeChanged(const std::string& _mode) {
   fillMaterialButton_->setChecked( _mode == pickModeName_ && fillMaterial_ );
 }
 
+void MaterialPicker::slotKeyEvent(QKeyEvent* _event)
+{
+  if (_event->key() == Qt::Key_1 && _event->modifiers() == Qt::ControlModifier)
+  {
+    if (shortKeyRow_.find(Qt::Key_1) == shortKeyRow_.end())
+      return;
+    slotFillMaterialMode();
+    materialListWidget_->setCurrentRow(shortKeyRow_[Qt::Key_1]);
+  }
+  if (_event->key() == Qt::Key_2 && _event->modifiers() == Qt::ControlModifier)
+  {
+    if (shortKeyRow_.find(Qt::Key_2) == shortKeyRow_.end())
+      return;
+    slotFillMaterialMode();
+    materialListWidget_->setCurrentRow(shortKeyRow_[Qt::Key_2]);
+  }
+  if (_event->key() == Qt::Key_3 && _event->modifiers() == Qt::ControlModifier)
+  {
+    if (shortKeyRow_.find(Qt::Key_3) == shortKeyRow_.end())
+      return;
+    slotFillMaterialMode();
+    materialListWidget_->setCurrentRow(shortKeyRow_[Qt::Key_3]);
+  }
+}
 Q_EXPORT_PLUGIN2( materialPicker , MaterialPicker );
