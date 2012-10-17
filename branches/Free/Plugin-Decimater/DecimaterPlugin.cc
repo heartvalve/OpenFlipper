@@ -101,6 +101,21 @@ void DecimaterPlugin::initializePlugin()
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumTriangles() ) );
   connect(tool_->mixedFactorCounter, SIGNAL(valueChanged(double)), this, SLOT(slotMixedCounterValueChanged(double)) );
   connect(tool_->mixedFactorSlider, SIGNAL(valueChanged(int)), this, SLOT(slotMixedSliderValueChanged(int)) );
+  connect(tool_->cbDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->cbNormalDev, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->cbEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->cbIndependentSets, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->cbRoundness, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->cbAspectRatio, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbByDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbByEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbByNormalDeviation, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbConstraintsOnly, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbTriangles, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbUseDecimater, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbUseMC, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbUseMixed, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+  connect(tool_->rbVertices, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
   emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
@@ -272,47 +287,48 @@ void DecimaterPlugin::slot_initialize()
     }
 
     // and set new constraints
+    ptr::shared_ptr<DecimaterInit> decInit (new DecimaterInit);
     if ( tool_->cbDistance->isChecked() ) {
-      if (  decimater_object->add( hModHausdorff ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( decInit->hModHausdorff ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setDistanceConstraint( tool_->distance->value() );
-        decimater_object->module( hModHausdorff ).set_tolerance( decimater->distanceValue() );
+        decimater_object->module( decInit->hModHausdorff ).set_tolerance( decimater->distanceValue() );
       }
     }
 
     if ( tool_->cbNormalDev->isChecked() ) {
-      if (  decimater_object->add( hModNormalDeviation ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( decInit->hModNormalDeviation ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setNormalDeviationConstraint( tool_->normalDeviation->value() );
-        decimater_object->module( hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
+        decimater_object->module( decInit->hModNormalDeviation ).set_normal_deviation( decimater->normalDeviationValue() );
       }
     } else {
-      if ( decimater_object->add( hModNormalFlipping ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( decInit->hModNormalFlipping ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setNormalFlippingConstraint();
       }
     }
 
     if ( tool_->cbRoundness->isChecked() ) {
-      if (  decimater_object->add( hModRoundness ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if (  decimater_object->add( decInit->hModRoundness ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setRoundnessConstraint( tool_->roundness->value() );
-        decimater_object->module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+        decimater_object->module( decInit->hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
       }
     }
 
     if ( tool_->cbAspectRatio->isChecked() ) {
-      if ( decimater_object->add( hModAspectRatio ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( decInit->hModAspectRatio ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setAspectRatioConstraint( tool_->aspectRatio->value() );
-        decimater_object->module( hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
+        decimater_object->module( decInit->hModAspectRatio ).set_aspect_ratio( decimater->aspectRatioValue() );
       }
     }
 
     if ( tool_->cbEdgeLength->isChecked() ) {
-      if ( decimater_object->add( hModEdgeLength ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( decInit->hModEdgeLength ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setEdgeLengthConstraint( tool_->edgeLength->value() );
-        decimater_object->module( hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
+        decimater_object->module( decInit->hModEdgeLength ).set_edge_length( decimater->edgeLengthValue() );
       }
     }
 
     if ( tool_->cbIndependentSets->isChecked() ) {
-      if ( decimater_object->add( hModIndependent ) || tool_->rbConstraintsOnly->isChecked() ) {
+      if ( decimater_object->add( decInit->hModIndependent ) || tool_->rbConstraintsOnly->isChecked() ) {
         decimater->setIndependentSetsConstraint();
       }
     }
@@ -323,7 +339,11 @@ void DecimaterPlugin::slot_initialize()
       emit log(LOGWARN, tr("Decimater could not be initialized"));
       continue;
     }
-    decimater_objects_.push_back(std::make_pair(decimater_object,o_it->id()));
+
+    decInit->decimater = decimater_object;
+    decInit->objId = o_it->id();
+
+    decimater_objects_.push_back(decInit);
   }
   tool_->pbDecimate->setEnabled(true);
 }
@@ -333,13 +353,38 @@ void DecimaterPlugin::slot_initialize()
  */
 void DecimaterPlugin::slot_decimate()
 {
+
   //decimate
-  for (std::vector< std::pair<ptr::shared_ptr<BaseDecimaterType>, int > >::iterator decIter = decimater_objects_.begin();
+  for (std::vector< ptr::shared_ptr<DecimaterInit> >::iterator decIter = decimater_objects_.begin();
       decIter != decimater_objects_.end(); ++decIter)
   {
-    DecimaterType* dec = dynamic_cast<DecimaterType*>(decIter->first.get());
-    McDecimaterType* mcDec = dynamic_cast<McDecimaterType*>(decIter->first.get());
-    MixedDecimaterType* mixedDec = dynamic_cast<MixedDecimaterType*>(decIter->first.get());
+    ptr::shared_ptr<DecimaterInit> decInit = *decIter;
+    ptr::shared_ptr<BaseDecimaterType> decimater = decInit->decimater;
+
+    // set values for constraints
+    if ( tool_->cbDistance->isChecked() ) {
+        decimater->module( decInit->hModHausdorff ).set_tolerance( tool_->distance->value() );
+    }
+
+    if ( tool_->cbNormalDev->isChecked() ) {
+      decimater->module( decInit->hModNormalDeviation ).set_normal_deviation( tool_->normalDeviation->value() );
+    }
+
+    if ( tool_->cbRoundness->isChecked() ) {
+      decimater->module( decInit->hModRoundness ).set_min_roundness( tool_->roundness->value(), true );
+    }
+
+    if ( tool_->cbAspectRatio->isChecked() ) {
+      decimater->module( decInit->hModAspectRatio ).set_aspect_ratio( tool_->aspectRatio->value() );
+    }
+
+    if ( tool_->cbEdgeLength->isChecked() ) {
+      decimater->module( decInit->hModEdgeLength ).set_edge_length( tool_->edgeLength->value() );
+    }
+
+    DecimaterType* dec = dynamic_cast<DecimaterType*>(decimater.get());
+    McDecimaterType* mcDec = dynamic_cast<McDecimaterType*>(decimater.get());
+    MixedDecimaterType* mixedDec = dynamic_cast<MixedDecimaterType*>(decimater.get());
 
     if(dec && tool_->rbUseDecimater->isChecked())
     {
@@ -348,7 +393,7 @@ void DecimaterPlugin::slot_decimate()
       else if (tool_->rbTriangles->isChecked() )
         dec->decimate_to_faces(0, tool_->trianglesCount->value());
       else // constraints only
-        dec->decimate_to_faces(0, 1);
+      dec->decimate_to_faces(0, 1);
     }
     else if (mcDec && tool_->rbUseMC->isChecked())
     {
@@ -371,19 +416,20 @@ void DecimaterPlugin::slot_decimate()
         mixedDec->decimate_to_faces(0, tool_->trianglesCount->value(),mc_factor);
       else // constraints only
         mixedDec->decimate_to_faces(0, 1,mc_factor);
+    }else
+    {
+      emit log(LOGERR,tr("Could not find Decimater Type"));
     }
 
-    int objId = decIter->second;
+    TriMeshObject* object = PluginFunctions::triMeshObject(decInit->objId);
 
-    TriMeshObject* object = PluginFunctions::triMeshObject(objId);
-
-    decIter->first->mesh().garbage_collection();
-    decIter->first->mesh().update_normals();
+    decInit->decimater->mesh().garbage_collection();
+    decInit->decimater->mesh().update_normals();
     object->update();
 
     // Create backup
-    emit createBackup(objId, "Decimation");
-    emit updatedObject( objId , UPDATE_TOPOLOGY );
+    emit createBackup(decInit->objId, "Decimation");
+    emit updatedObject( decInit->objId , UPDATE_TOPOLOGY );
   }
 
   emit updateView();
@@ -755,23 +801,22 @@ void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
 
 void DecimaterPlugin::objectDeleted(int _id)
 {
-  for (size_t i = 0; i < decimater_objects_.size();)
-  {
-    if (decimater_objects_[i].second == _id )
-      decimater_objects_.erase(decimater_objects_.begin()+i);
-    else
-      ++i;
-  }
-
-  if (decimater_objects_.empty())
-    tool_->pbDecimate->setEnabled(false);
+  slotDisableDecimation();
 }
 
 //-----------------------------------------------------------------------------
 
 void DecimaterPlugin::slotAboutToRestore(int _id)
 {
+  slotDisableDecimation();
+}
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::slotDisableDecimation()
+{
   decimater_objects_.clear();
+  tool_->pbDecimate->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -823,8 +868,6 @@ void DecimaterPlugin::updateDistance()
 {
   tool_->cbDistance->setChecked (true);
 }
-
-//-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2(DecimaterPlugin , DecimaterPlugin );
 
