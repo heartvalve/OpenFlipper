@@ -192,15 +192,18 @@ DrawMode::DrawMode(unsigned int _index)
     modeFlags_.set(_index);
   }
   layers_.resize(1);
+  layers_[0] = DrawModeProperties();
 }
 
 DrawMode::DrawMode() {
   layers_.resize(1);
+  layers_[0] = DrawModeProperties();
 }
     
 DrawMode::DrawMode( ModeFlagSet _flags ) {
   modeFlags_ = _flags;
   layers_.resize(1);
+  layers_[0] = DrawModeProperties();
 }
 
 DrawMode::operator bool() const {
@@ -276,7 +279,7 @@ DrawMode& DrawMode::operator|=( const DrawMode& _mode2  ) {
   for (unsigned int i = 0; i < _mode2.getNumLayers(); ++i)
     addLayer(_mode2.getLayer(i));
 
-  assert(checkConsistency());
+//  assert(checkConsistency());
 
   return (*this);
 }
@@ -293,7 +296,7 @@ DrawMode& DrawMode::operator&=( const DrawMode& _mode2  ) {
       removeLayer(i);
   }
 
-  assert(checkConsistency());
+//  assert(checkConsistency());
   
   return (*this);
 }
@@ -497,9 +500,7 @@ const DrawModeProperties* DrawMode::getLayer( unsigned int i ) const {
 void DrawMode::addLayer( const DrawModeProperties* _props )
 {
   if (getLayerIndex(_props) < 0)
-    return;
-
-  layers_.push_back(*_props);
+    layers_.push_back(*_props);
 }
 
 bool DrawMode::removeLayer( unsigned int _i )
