@@ -169,7 +169,20 @@ private :
   DecimaterToolbarWidget* tool_;
 
   //saves the decimater and the object id
-  std::vector< std::pair<ptr::shared_ptr<BaseDecimaterType>, int > > decimater_objects_;
+  struct DecimaterInit
+  {
+    ptr::shared_ptr<BaseDecimaterType> decimater;
+    int objId;
+    ModAspectRatioH     hModAspectRatio;
+    ModEdgeLengthH      hModEdgeLength;
+    ModHausdorffH       hModHausdorff;
+    ModIndependentH     hModIndependent;
+    ModNormalDeviationH hModNormalDeviation;
+    ModNormalFlippingH  hModNormalFlipping;
+    ModQuadricH         hModQuadric;
+    ModRoundnessH       hModRoundness;
+  };
+  std::vector< ptr::shared_ptr<DecimaterInit> > decimater_objects_;
   QIcon* toolIcon_;
 
 private slots:
@@ -199,6 +212,7 @@ private slots:
 
   void slotMixedCounterValueChanged(double);
   void slotMixedSliderValueChanged(int);
+  void slotDisableDecimation();
 
 //===========================================================================
 /** @name Scripting Functions
