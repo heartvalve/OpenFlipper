@@ -70,12 +70,11 @@ MaterialPicker::~MaterialPicker() {
 
 void MaterialPicker::initializePlugin() {
    QWidget* toolBox = new QWidget();
-   QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, toolBox);
-   QGridLayout* grid = new QGridLayout();
 
    pickMaterialButton_ = new QPushButton("&pick Material", toolBox);
    fillMaterialButton_ = new QPushButton("&fill Material", toolBox);
-   QPushButton* clearListButton =  new QPushButton("clear list", toolBox);
+   QPushButton* clearListButton =  new QPushButton("Clear List", toolBox);
+   QPushButton* removeItemButton = new QPushButton("Remove", toolBox);
 
    pickMaterialButton_->setCheckable(true);
    fillMaterialButton_->setCheckable(true);
@@ -84,11 +83,12 @@ void MaterialPicker::initializePlugin() {
 
    materialListWidget_ = new QListWidget(toolBox);
 
-   materials_ = OpenFlipperSettings().value( propName_, QStringList() ).toStringList();
+   //load saved materials
+   materialString_ = OpenFlipperSettings().value("MaterialPickerPlugin/Materials", QStringList()).toStringList();
 
-   for (int i = 0; i < materials_.size(); ++i)
+   for (int i = 0; i < materialString_.size(); ++i)
    {
-     QStringList savedString = materials_[i].split(";");
+     QStringList savedString = materialString_[i].split(";");
      std::stringstream stream;
      MaterialInfo materialInfo;
      stream << savedString[1].toStdString();
@@ -122,25 +122,48 @@ void MaterialPicker::initializePlugin() {
      materialListWidget_->addItem( savedString[0] );
      materialList_.push_back(materialInfo);
    }
-   if (materials_.size())
-     materialListWidget_->setCurrentItem(materialListWidget_->item(0));
 
+   //if material was saved, set first as current
+   if (materialString_.size())
+     materialListWidget_->setCurrentItem(materialListWidget_->item(0));
+   else
+     fillMaterialButton_->setEnabled(false);
+
+   QGridLayout* removeGrid = new QGridLayout();
+   removeGrid->addWidget(removeItemButton,0,0);
+   removeGrid->addWidget(clearListButton,0,1);
+
+   QGridLayout* pickGrid = new QGridLayout();
+   pickGrid->addWidget(pickMaterialButton_, 0, 0);
+   pickGrid->addWidget(fillMaterialButton_, 0, 1);
+
+   QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, toolBox);
    layout->addWidget(materials);
    layout->addWidget(materialListWidget_);
-   layout->addWidget(clearListButton);
-   grid->addWidget(pickMaterialButton_, 0, 0);
-   grid->addWidget(fillMaterialButton_, 0, 1);
 
-   layout->addLayout(grid);
+   layout->addLayout(removeGrid);
+   layout->addLayout(pickGrid);
 
    connect(pickMaterialButton_, SIGNAL(clicked()), this, SLOT(slotPickMaterialMode()));
    connect(fillMaterialButton_, SIGNAL(clicked()), this, SLOT(slotFillMaterialMode()));
    connect(clearListButton, SIGNAL(clicked()), this, SLOT(clearList()));
    connect(materialListWidget_, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(editMode(QListWidgetItem*)));
    connect(materialListWidget_,SIGNAL(itemChanged ( QListWidgetItem*)), this, SLOT(assignNewName(QListWidgetItem*)));
+   connect(removeItemButton, SIGNAL(clicked()), this, SLOT(slotRemoveCurrentItem()));
 
    QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"material_picker.png");
    emit addToolbox( tr("Material Picker"), toolBox, toolIcon);
+}
+//------------------------------------------------------------------------------
+
+void MaterialPicker::removeItem(QListWidgetItem* _item)
+{
+  unsigned index = materialListWidget_->row(_item);
+  materialListWidget_->takeItem(index);
+  materialList_.erase(materialList_.begin()+index);
+  materialString_.erase(materialString_.begin()+index);
+  OpenFlipperSettings().setValue(propName_, materialString_);
+  fillMaterialButton_->setEnabled(materialListWidget_->count());
 }
 
 //------------------------------------------------------------------------------
@@ -148,10 +171,18 @@ void MaterialPicker::initializePlugin() {
 void MaterialPicker::clearList() {
   materialListWidget_->clear();
   materialList_.clear();
-  materials_.clear();
-  OpenFlipperSettings().setValue(propName_, materials_);
+  materialString_.clear();
+  OpenFlipperSettings().setValue(propName_, materialString_);
+  fillMaterialButton_->setEnabled(false);
 }
 
+//------------------------------------------------------------------------------
+
+void MaterialPicker::slotRemoveCurrentItem()
+{
+  if (materialListWidget_->count())
+    removeItem(materialListWidget_->currentItem());
+}
 //------------------------------------------------------------------------------
 
 void MaterialPicker::slotPickMaterialMode() {
@@ -220,6 +251,7 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
 
             materialList_.push_back(materialInfo);
 
+            //save new material
             std::stringstream stream;
             stream << name.toStdString();
             stream << ";" << materialInfo.color_material;
@@ -231,8 +263,9 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
             stream << ";" << materialInfo.reflectance;
 
             QString materialString = stream.str().c_str();
-            materials_.push_back(materialString);
-            OpenFlipperSettings().setValue(propName_, materials_);
+            materialString_.push_back(materialString);
+            fillMaterialButton_->setEnabled(true);
+            OpenFlipperSettings().setValue(propName_, materialString_);
           }
 
         // apply material from current item in list widget to picked object
@@ -271,15 +304,15 @@ void MaterialPicker::editMode(QListWidgetItem* _item) {
 void MaterialPicker::assignNewName(QListWidgetItem* _item)
 {
   unsigned index = materialListWidget_->row(_item);
-  QString str = materials_[index];
+  QString str = materialString_[index];
   QStringList strList = str.split(";");
   strList[0] = _item->text();
   str = "";
   for (int i = 0; i < strList.size()-1; ++i)
     str += strList[i] + ";";
   str += strList[strList.size()-1];
-  materials_[index] = str;
-  OpenFlipperSettings().setValue(propName_, materials_);
+  materialString_[index] = str;
+  OpenFlipperSettings().setValue(propName_, materialString_);
 
 }
 //------------------------------------------------------------------------------

@@ -101,7 +101,7 @@ private:
   QPushButton* pickMaterialButton_;
   QPushButton* fillMaterialButton_;
   QListWidget* materialListWidget_;
-  QStringList materials_;
+  QStringList materialString_;//hold materials as a String (saves/load the material at the beginning)
 
   QVector<MaterialInfo> materialList_;
 
@@ -120,6 +120,8 @@ private slots:
 
   void slotFillMaterialMode();
 
+  void slotRemoveCurrentItem();
+
   /// items can be renamed by double clicking them
   void editMode(QListWidgetItem* _item);
 
@@ -127,6 +129,8 @@ private slots:
   void assignNewName(QListWidgetItem* _item);
 
   void clearList();
+
+  void removeItem(QListWidgetItem* _item);
 
 public slots:
   QString version(){ return QString("1.0"); }
