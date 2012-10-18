@@ -1514,8 +1514,6 @@ void DepthPeelingPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties
 
 QString DepthPeelingPlugin::checkOpenGL() {
 
-  // TODO: Correctly configure the following requirements!
-
   // Get version and check
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
   if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_0) )
@@ -1527,11 +1525,11 @@ QString DepthPeelingPlugin::checkOpenGL() {
   // Collect missing extension
   QString missing = "";
 
-//  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
-//    missing += "Missing Extension GL_ARB_vertex_buffer_object\n";
-//
-//  if ( !glExtensions.contains("GL_ARB_vertex_program") )
-//    missing += "Missing Extension GL_ARB_vertex_program\n";
+  if ( !glExtensions.contains("GL_ARB_geometry_shader4") )
+    missing += "Missing Extension GL_ARB_geometry_shader4\n";
+
+  if ( !glExtensions.contains("GL_ARB_vertex_program") )
+    missing += "Missing Extension GL_ARB_vertex_program\n";
 
   return missing;
 
