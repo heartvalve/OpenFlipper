@@ -223,6 +223,10 @@ public:
   /// \brief Cubic laplacian smoothing
   void smooth_uniform_laplace3();
 
+
+  /// \brief creating a circle with center _center and radius _radius lying in tangent plane specified by _normal
+  void set_to_circle(const PointT _center, const PointT _normal, double _radius, unsigned int _n_samples = 100);
+
   /** \brief Project polyline points to nearest surface points (use spatial search!!!)
    *
    * \note The points of the polyline are updated in place!
