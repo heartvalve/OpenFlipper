@@ -783,7 +783,7 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
 //    _state.set_diffuse_color(dc);
 //    _state.set_specular_color(sc);
 
-//    ACG::GLState::disable(GL_LIGHTING);
+    ACG::GLState::disable(GL_LIGHTING);
 
     if(show_irregs_)
         glCallList(valenceList_);
