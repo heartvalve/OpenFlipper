@@ -67,7 +67,7 @@ namespace curvature {
 
 //== IMPLEMENTATION ==========================================================
 
-/*! compute consistent dirscrete gaussian curvature (vertex is a small sphere patch, edges are small cylinders)
+/*! compute consistent discrete gaussian curvature (vertex is a small sphere patch, edges are small cylinders)
 */
 template< typename MeshT >
 double
@@ -75,7 +75,11 @@ gauss_curvature(MeshT& _mesh, const typename MeshT::VertexHandle& _vh) {
    if (_mesh.status(_vh).deleted())
      return 0.0;
   
-  double gauss_curv( 2.0*M_PI);
+  double gauss_curv = 2.0 * M_PI;
+
+  // If the vertex is a boundary vertex
+  if ( _mesh.is_boundary(_vh) )
+    gauss_curv = M_PI;
 
   const typename MeshT::Point p0 = _mesh.point(_vh);
 
