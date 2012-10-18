@@ -710,6 +710,31 @@ smooth_uniform_laplace3()
 
 
 template <class PointT>
+void
+PolyLineT<PointT>::
+set_to_circle(const PointT _center, const PointT _normal, double _radius, unsigned int _n_samples)
+{
+  this->clear();
+  this->set_closed(true);
+
+  // get local basis vectors
+  PointT n = _normal; n.normalize();
+  PointT u = ACG::Geometry::perpendicular(_normal); u*=_radius/u.norm();
+  PointT v = n % u;
+
+  for(unsigned int i=0; i<_n_samples; ++i)
+  {
+    double alpha = double(i)*2.0*M_PI/double(_n_samples);
+
+    this->add_point(_center + u*cos(alpha) + v*sin(alpha));
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+template <class PointT>
 template <class MeshT, class SpatialSearchT>
 void
 PolyLineT<PointT>::
