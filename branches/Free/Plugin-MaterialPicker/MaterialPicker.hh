@@ -53,6 +53,7 @@
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
+#include <ACG/Utils/SmartPointer.hh>
 
 
 class MaterialPicker : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, KeyInterface
@@ -100,23 +101,33 @@ private:
      ACG::Vec4f specular_color;
      float shininess;
      double reflectance;
+     int key;
   };
 
   const std::string pickModeName_;
   const QString propName_;
+  static const unsigned supportedKeys_ = 3;
 
   QPushButton* pickMaterialButton_;
   QPushButton* fillMaterialButton_;
-  QListWidget* materialListWidget_;
-  QStringList materialString_;//hold materials as a String (saves/load the material at the beginning)
 
+  //all these lists are synchronized:
+  QListWidget* materialListWidget_;
   QVector<MaterialInfo> materialList_;
+  QStringList materialStrings_;//hold materials as a String (saves/load the material at the beginning)
+
+  //key = hotKey, value = index for lists
   std::map<int,size_t> shortKeyRow_;
+
+  ptr::shared_ptr<MaterialNode> materialNode_;
 
   /// stores the state of the pick material button
   bool pickMaterial_;
   /// stores the state of the fill material button
   bool fillMaterial_;
+
+private:
+  QString itemName(const QString &_name, int _key);
 
 private slots:
 
@@ -133,12 +144,33 @@ private slots:
   /// items can be renamed by double clicking them
   void editMode(QListWidgetItem* _item);
 
-  /// saves the new material name
-  void saveNewName(QListWidgetItem* _item);
+  void editModeCurrent();
+
+  /// saves the new material name with hotkey hint
+  void saveNewName ( QWidget * _editor, QAbstractItemDelegate::EndEditHint _hint );
+  void saveNewName (QListWidgetItem* _item);
+
+  /// returns the plain name of the material without hotkey hint (if setted)
+  QString plainName(const QString &string, int index);
+
+  /// returns a formatted string for saving
+  QString materialString(const MaterialInfo& _mat, const QString &_name);
 
   void clearList();
 
   void removeItem(QListWidgetItem* _item);
+
+  /// creates context menu on current item (current is the item at mouse position)
+  void createContextMenu(const QPoint& _point);
+
+  /// change specified HotKey to current item
+  void changeHotKey(const int &_key);
+
+  void slotMaterialProperties();
+
+  void slotEnableListWidget(int _save);
+
+  void slotSaveAll();
 
 public slots:
   QString version(){ return QString("1.0"); }
