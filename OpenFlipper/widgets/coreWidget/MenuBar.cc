@@ -831,8 +831,7 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
   ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
   availableGlobalDrawModes_ = actionAvailable.drawModes();
 
-  // Get currently active drawModes (first viewer only )
-  // TODO: create combination from all viewers!
+  // Get currently active drawModes
   activeDrawModes_ = PluginFunctions::drawMode(0);
   for ( int i = 1 ; i < PluginFunctions::viewers(); ++i )
     activeDrawModes_ &= PluginFunctions::drawMode(i);

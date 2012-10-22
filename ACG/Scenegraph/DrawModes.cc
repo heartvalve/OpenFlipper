@@ -547,8 +547,11 @@ int DrawMode::getLayerIndex( const DrawModeProperties* _prop ) const
 
   for (unsigned int i = 0; i < layers_.size(); ++i)
   {
-    if (!memcmp(&layers_[i], _prop, sizeof(DrawModeProperties)))
+    if ( layers_[i] != *_prop )
       return (int)i;
+
+    //    if (!memcmp(&layers_[i], &bla, sizeof(DrawModeProperties)))
+    //      return (int)i;
   }
   return -1;
 }
