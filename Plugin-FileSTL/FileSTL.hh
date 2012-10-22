@@ -85,15 +85,15 @@ class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-    
+
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
 
   public :
-    
+
      FileSTLPlugin();
 
      ~FileSTLPlugin() {};
@@ -113,19 +113,21 @@ class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Loads Object as triangle mesh
     int loadObject(QString _filename);
-    
+
     bool saveObject(int _id, QString _filename);
 
     QString version() { return QString("1.0"); };
 
   private :
-    
+
     //Option Widgets
     QWidget* saveOptions_;
     QWidget* loadOptions_;
-    
+
     QCheckBox* saveBinary_;
-    
+    QLabel*    savePrecisionLabel_;
+    QSpinBox*  savePrecision_;
+
     QPushButton* saveDefaultButton_;
     QPushButton* loadDefaultButton_;
 };

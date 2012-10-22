@@ -46,9 +46,12 @@
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
 bool FileOBJPlugin::writeCurve(std::ostream& _out, QString _filename, BSplineCurve* _curve )
 {
+  if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0) {
+    _out.precision(savePrecision_->value());
+  }
 
   _out << "# " << _filename.toStdString() << "\n";
-  
+
   // save control points (coordinates)
   for (uint i = 0; i < _curve->n_control_points(); ++i){
     ACG::Vec3d cp = _curve->get_control_point(i);
@@ -80,6 +83,9 @@ bool FileOBJPlugin::writeCurve(std::ostream& _out, QString _filename, BSplineCur
 
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 bool FileOBJPlugin::writeSurface(std::ostream& _out, QString _filename, BSplineSurface* _surface ){
+  if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0) {
+    _out.precision(savePrecision_->value());
+  }
 
   _out << "# " << _filename.toStdString() << "\n";
 

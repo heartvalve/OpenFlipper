@@ -77,6 +77,8 @@ FileOBJPlugin::FileOBJPlugin()
   saveTextures_(0),
   saveCopyTextures_(0),
   saveCreateTexFolder_(0),
+  savePrecisionLabel_(0),
+  savePrecision_(0),
   saveDefaultButton_(0),
   triMeshHandling_(0),
   loadVertexColor_(0),
@@ -2094,6 +2096,15 @@ QWidget* FileOBJPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
 
         saveCreateTexFolder_ = new QCheckBox("Create Textures Folder");
         layout->addWidget(saveCreateTexFolder_);
+
+        savePrecisionLabel_ = new QLabel("Writer Precision");
+        layout->addWidget(savePrecisionLabel_);
+
+        savePrecision_ = new QSpinBox();
+        savePrecision_->setMinimum(1);
+        savePrecision_->setMaximum(12);
+        savePrecision_->setValue(6);
+        layout->addWidget(savePrecision_);
 
         saveDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(saveDefaultButton_);
