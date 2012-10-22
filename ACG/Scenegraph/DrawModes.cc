@@ -512,7 +512,7 @@ void DrawMode::addLayer( const DrawModeProperties* _props )
 
 bool DrawMode::removeLayer( unsigned int _i )
 {
-  if (_i < layers_.size() && _i >= 0)
+  if (_i < layers_.size() )
   {
     layers_.erase(layers_.begin() + _i);
     return true;
