@@ -76,6 +76,8 @@ FileOFFPlugin::FileOFFPlugin()
   saveAlpha_(0),
   saveNormals_(0),
   saveTexCoords_(0),
+  savePrecisionLabel_(0),
+  savePrecision_(0),
   saveDefaultButton_(0),
   triMeshHandling_(0),
   loadVertexColor_(0),
@@ -95,7 +97,7 @@ FileOFFPlugin::FileOFFPlugin()
 //-----------------------------------------------------------------------------------------------------
 
 void FileOFFPlugin::initializePlugin() {
-    
+
     // Initialize standard options that can then be changed in the file dialogs
     if(OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool())
         userReadOptions_ |= OFFImporter::VERTEXCOLOR;
@@ -107,7 +109,7 @@ void FileOFFPlugin::initializePlugin() {
         userReadOptions_ |= OFFImporter::VERTEXNORMAL;
     if(OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool())
         userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
-    
+
     if(OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool())
         userWriteOptions_ |= OFFImporter::BINARY;
     if(OpenFlipperSettings().value("FileOff/Save/VertexColor",true).toBool())
@@ -120,7 +122,7 @@ void FileOFFPlugin::initializePlugin() {
         userWriteOptions_ |= OFFImporter::VERTEXNORMAL;
     if(OpenFlipperSettings().value("FileOff/Save/TexCoords",true).toBool())
         userWriteOptions_ |= OFFImporter::VERTEXTEXCOORDS;
-    
+
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -146,10 +148,10 @@ DataType FileOFFPlugin::supportedType() {
 
 void FileOFFPlugin::trimString( std::string& _string) {
     // Trim Both leading and trailing spaces
-    
+
     size_t start = _string.find_first_not_of(" \t\r\n");
     size_t end   = _string.find_last_not_of(" \t\r\n");
-    
+
     if(( std::string::npos == start ) || ( std::string::npos == end))
         _string = "";
     else
@@ -196,13 +198,13 @@ bool FileOFFPlugin::getCleanLine( std::istream& ifs , std::string& _string, bool
 //-----------------------------------------------------------------------------------------------------
 
 void FileOFFPlugin::updateUserOptions() {
-    
+
     // If the options dialog has not been initialized, keep
     // the initial values
-    
+
     if( OpenFlipper::Options::nogui() )
         return;
-    
+
     // Load options
     if(loadVertexColor_) {
         if(loadVertexColor_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXCOLOR;
@@ -224,7 +226,7 @@ void FileOFFPlugin::updateUserOptions() {
         if(loadTexCoords_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
         else { if(userReadOptions_ & OFFImporter::VERTEXTEXCOORDS) userReadOptions_ -= OFFImporter::VERTEXTEXCOORDS; }
     }
-    
+
     // Save options
     if(saveBinary_) {
         if(saveBinary_->isChecked()) userWriteOptions_ |= OFFImporter::BINARY;
@@ -255,7 +257,7 @@ void FileOFFPlugin::updateUserOptions() {
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
-    
+
     /* Constitution of an OFF-file
        ==================================================================
        [ST] [C] [N] [4][n]OFF [BINARY] # comment
@@ -266,28 +268,28 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
        ...
        ==================================================================
     */
-    
+
     const unsigned int LINE_LEN = 4096;
-    
-    
+
+
     std::ifstream ifs(_filename.toUtf8());
-    
+
     if ( (!ifs.is_open()) || (!ifs.good())) {
-        
+
         emit log(LOGERR, tr("Error: Could not read file options of specified OFF-file! Aborting."));
         return false;
     }
-    
+
     // read 1st line
     char line[LINE_LEN], *p;
     ifs.getline(line, LINE_LEN);
     p = line;
-    
+
     int remainingChars = ifs.gcount();
 
     // check header: [ST][C][N][4][n]OFF BINARY
     while(remainingChars > 0) {
-    
+
         if ( ( remainingChars > 1 ) && ( p[0] == 'S' && p[1] == 'T') ) {
             _importer.addOption(OFFImporter::VERTEXTEXCOORDS);
             p += 2;
@@ -330,38 +332,38 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
             --remainingChars;
         }
     }
-    
+
     // Now extract data type by iterating over
     // the face valences
-    
+
     unsigned int nV, nF, dummy_uint;
     unsigned int vertexCount = 0;
     unsigned int tmp_count = 0;
     std::string trash;
     std::string str;
     std::istringstream sstr;
-       
+
     if(_importer.isBinary()) {
         // Parse BINARY file
         float dummy_f;
-        
+
         // + #Vertices, #Faces, #Edges
         readValue(ifs, nV);
         readValue(ifs, nF);
         readValue(ifs, dummy_uint);
-        
+
         for (uint i=0; i<nV && !ifs.eof(); ++i) {
             // Skip vertices
             for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
-            
+
             if ( _importer.hasVertexNormals() ) {
                 for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
             }
-            
+
             if ( _importer.hasVertexColors() ) {
                 for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
             }
-            
+
             if ( _importer.hasTextureCoords() ) {
                 for(int i = 0; i < 2; ++i) readValue(ifs, dummy_f);
             }
@@ -374,28 +376,28 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
 			  break;
 
             if(tmp_count > vertexCount) vertexCount = tmp_count;
-            
+
             // Skip the rest
-            
+
             // Vertex indices
             for(uint i = 0; i < tmp_count; ++i) readValue(ifs, dummy_uint);
-            
+
             // Get number of color components
             readValue(ifs, tmp_count);
-            
+
             if(!_importer.hasFaceColors() && tmp_count > 0) {
                 _importer.addOption(OFFImporter::FACECOLOR);
             }
-            
+
             // Face color
             for (uint i = 0; i < tmp_count; ++i) {
                 readValue(ifs, dummy_f);
             }
         }
-        
+
     } else {
         // Parse ASCII file
-        
+
         // Get whole line since there could be comments in it
         getCleanLine(ifs, str);
         sstr.str(str);
@@ -411,29 +413,29 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         sstr >> nV;
         sstr >> nF;
         sstr >> dummy_uint;
-        
+
         // Skip vertices
         for(unsigned int i = 0; i < nV; ++i) {
           getCleanLine(ifs, trash);
         }
-        
+
         trash = "";
-        
+
         // Count vertices per face
         for(unsigned int i = 0; i < nF; ++i) {
             sstr.clear();
             getCleanLine(ifs, trash);
             sstr.str(trash);
-            
+
             sstr >> tmp_count;
-            
+
             if(tmp_count > vertexCount) vertexCount = tmp_count;
-            
+
             // Skip vertex indices
             for(uint i = 0; i < tmp_count; ++i) {
                 sstr >> dummy_uint;
             }
-            
+
             // Look if there's at least one face color specified
             // Note: Comments should not be here, so don't treat them
             if(!_importer.hasFaceColors()) {
@@ -443,9 +445,9 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
             }
         }
     }
-    
+
     ifs.close();
-    
+
     _importer.maxFaceValence(vertexCount);
 
     if(vertexCount == 3) {
@@ -458,19 +460,19 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
         _importer.addOption(OFFImporter::POLYMESH);
         _importer.removeOption(OFFImporter::TRIMESH);
     }
-    
+
     return true;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
-    
+
   if ( !QFile(_filename).exists() ){
-    emit log(LOGERR, tr("Unable to load OFF file. File not found!")); 
+    emit log(LOGERR, tr("Unable to load OFF file. File not found!"));
     return false;
   }
-  
+
   if(!readFileOptions(_filename, _importer)) {
       return false;
   }
@@ -504,7 +506,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
 
   if ( forcePolyMesh_ )
     triMeshControl = TYPEPOLY;
- 
+
   DataType type = DATA_TRIANGLE_MESH;
 
   switch (triMeshControl) {
@@ -512,7 +514,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
       // Auto-detect
       type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
       break;
-      
+
     case TYPEASK:
         if( !OpenFlipper::Options::nogui() ) {
             // Create message box
@@ -520,48 +522,48 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
             QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
             QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
             QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
-            
+
             msgBox.setWindowTitle( tr("Mesh types in file") );
             msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
             msgBox.setDefaultButton( detectButton );
             msgBox.exec();
-      
+
             if (msgBox.clickedButton() == triButton)
                 type = DATA_TRIANGLE_MESH;
             else if (msgBox.clickedButton() == polyButton)
                 type = DATA_POLY_MESH;
             else
                 type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
-            
+
         } else {
             // No gui mode
             type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
         }
-      
+
         break;
-      
+
     case TYPEPOLY:
       // Always load as PolyMesh
       type = DATA_POLY_MESH;
       break;
-      
+
     case TYPETRIANGLE:
       // Always load as TriangleMesh
       type = DATA_TRIANGLE_MESH;
       break;
-      
+
     default:
       break;
-      
+
   }
-  
+
   return _importer.isBinary() ? parseBinary(ifile, _importer, type, _filename) : parseASCII(ifile, _importer, type, _filename);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName) {
-    
+
     unsigned int                idx;
     unsigned int                nV, nF, dummy;
     OpenMesh::Vec3f             v, n;
@@ -573,29 +575,29 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     std::vector<VertexHandle>   vhandles;
     VertexHandle                vh;
     FaceHandle                  fh;
-    
+
     int objectId = -1;
     emit addEmptyObject(_type, objectId);
-    
+
     BaseObject* object(0);
     if(!PluginFunctions::getObject( objectId, object )) {
         emit log(LOGERR, tr("Could not create new object!"));
         return false;
     }
-    
+
     // Set object's name to match file name
     QFileInfo f(_objectName);
     object->setName(f.fileName());
-    
+
     // Set initial object
     _importer.addObject(object);
-    
+
     std::string line;
     std::istringstream sstr;
-    
+
     // read header line
     getCleanLine(_in, line);
-    
+
     // + #Vertices, #Faces, #Edges
     // Note: We use a stringstream because there
     // could be comments in the line
@@ -604,7 +606,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     sstr >> nV;
     sstr >> nF;
     sstr >> dummy;
-    
+
     // Reserve memory
     _importer.reserve(nV, nF * _importer.maxFaceValence() /*Upper bound*/, nF);
 
@@ -620,34 +622,34 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
 
     // read vertices: coord [hcoord] [normal] [color] [texcoord]
     for (uint i=0; i<nV && !_in.eof(); ++i) {
-        
+
         // Always read VERTEX
         _in >> v[0] >> v[1] >> v[2];
-        
+
         vh = _importer.addVertex(v);
-        
+
         // perhaps read NORMAL
         if ( _importer.hasVertexNormals() ){
-            
+
             _in >> n[0] >> n[1] >> n[2];
-            
+
             if(userReadOptions_ & OFFImporter::VERTEXNORMAL) {
                 int nid = _importer.addNormal(n);
                 _importer.setNormal(vh, nid);
             }
         }
-        
+
         sstr.clear();
         getCleanLine(_in, line, false);
         sstr.str(line);
-        
+
         int colorType = getColorType(line, _importer.hasTextureCoords() );
-        
+
         //perhaps read COLOR
         if ( _importer.hasVertexColors() ){
-            
+
             std::string trash;
-            
+
             switch (colorType){
               case 0 : break; //no color
               case 1 : sstr >> trash; break; //one int (isn't handled atm)
@@ -688,7 +690,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 break;
             }
         }
-        
+
         //perhaps read TEXTURE COORDS
         if ( _importer.hasTextureCoords() ){
             sstr >> t[0]; sstr >> t[1];
@@ -714,7 +716,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     {
         // nV = number of Vertices for current face
         _in >> nV;
-        
+
         // If number of faces < 3, we have a degenerated face
         // which we don't allow and thus skip
         if (nV < 3) {
@@ -723,18 +725,18 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
           // Proceed reading
           continue;
         }
-        
+
         vhandles.clear();
         for (uint i=0; i<nV; ++i) {
             _in >> idx;
             vhandles.push_back(VertexHandle(idx));
         }
-        
+
         bool checkManifold = true;
         if(!OpenFlipper::Options::nogui() && loadCheckManifold_ != 0) {
             checkManifold = loadCheckManifold_->isChecked();
         }
-        
+
         // Check for degenerate faces if specified in gui
         if(checkManifold) {
             if(checkDegenerateFace(vhandles)) {
@@ -745,19 +747,19 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
         } else {
             fh = _importer.addFace(vhandles);
         }
-        
+
         //perhaps read face COLOR
         if ( _importer.hasFaceColors() ){
-            
+
             //take the rest of the line and check how colors are defined
             sstr.clear();
             getCleanLine(_in, line, false);
             sstr.str(line);
-            
+
             int colorType = getColorType(line, false);
-            
+
             std::string trash;
-            
+
             switch (colorType){
                 case 0 : break; //no color
                 case 1 : sstr >> trash; break; //one int (isn't handled atm)
@@ -792,14 +794,14 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                     _importer.addOption(OFFImporter::COLORALPHA);
                 }
                 break;
-                
+
                 default:
                     std::cerr << "Error in file format (colorType = " << colorType << ")\n";
                     break;
             }
         }
     }
-    
+
     // File was successfully parsed.
     return true;
 }
@@ -807,7 +809,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::checkDegenerateFace(const std::vector<VertexHandle>& _v) {
-    
+
     bool check = true;
     int size = _v.size();
     // Check if at least two elements in the list have the same value
@@ -831,33 +833,33 @@ int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) {
     5 : 3 floats
     6 : 4 floats
     */
-        
+
     // Check if we have any additional information here
     if ( _line.size() < 1 )
         return 0;
-    
+
     //first remove spaces at start/end of the line
     trimString(_line);
 
     //count the remaining items in the line
     size_t found;
     int count = 0;
-    
+
     found=_line.find_first_of(" ");
     while (found!=std::string::npos){
         count++;
         found=_line.find_first_of(" ",found+1);
     }
-    
+
     if (!_line.empty()) count++;
-    
+
     if (_texCoordsAvailable) count -= 2;
-    
+
     if (count == 3 || count == 4){
         //get first item
         found = _line.find(" ");
         std::string c1 = _line.substr (0,found);
-        
+
         if (c1.find(".") != std::string::npos){
    if (count == 3)
        count = 5;
@@ -871,7 +873,7 @@ int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) {
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName) {
-    
+
     unsigned int                idx;
     unsigned int                nV, nF, dummy;
     float                       dummy_f;
@@ -882,32 +884,32 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     std::vector<VertexHandle>   vhandles;
     VertexHandle                vh;
     FaceHandle                  fh;
-    
+
     int objectId = -1;
     emit addEmptyObject(_type, objectId);
-        
+
     BaseObject* object(0);
     if(!PluginFunctions::getObject( objectId, object )) {
         emit log(LOGERR, tr("Could not create new object!"));
         return false;
     }
-    
+
     // Set object's name to match file name
     QFileInfo f(_objectName);
     object->setName(f.fileName());
-    
+
     // Set initial object
     _importer.addObject(object);
-    
+
     // read header line
     std::string header;
     getCleanLine(_in,header);
-    
+
     // + #Vertices, #Faces, #Edges
     readValue(_in, nV);
     readValue(_in, nF);
     readValue(_in, dummy);
-    
+
     // Reserve memory
     _importer.reserve(nV, nF * _importer.maxFaceValence() /*Upper bound*/, nF);
 
@@ -918,27 +920,27 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         readValue(_in, v[0]);
         readValue(_in, v[1]);
         readValue(_in, v[2]);
-        
+
         vh = _importer.addVertex(v);
-        
+
         if ( _importer.hasVertexNormals() ) {
             readValue(_in, n[0]);
             readValue(_in, n[1]);
             readValue(_in, n[2]);
-            
+
             if ( userReadOptions_ & OFFImporter::VERTEXNORMAL ) {
                 int nidx = _importer.addNormal(n);
                 _importer.setNormal(vh, nidx);
             }
         }
-        
+
         if ( _importer.hasVertexColors() ) {
             // Vertex colors are always without alpha
             readValue(_in, c[0]);
             readValue(_in, c[1]);
             readValue(_in, c[2]);
             c[3] = 1.0;
-                
+
             if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
                 int cidx = _importer.addColor( c );
                 _importer.setVertexColor(vh, cidx);
@@ -948,17 +950,17 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         if ( _importer.hasTextureCoords() ) {
             readValue(_in, t[0]);
             readValue(_in, t[1]);
-            
+
             if ( userReadOptions_ & OFFImporter::VERTEXTEXCOORDS ) {
                 int tcidx = _importer.addTexCoord(t);
                 _importer.setVertexTexCoord(vh, tcidx);
             }
         }
     }
-    
+
     int pos = 0;
     int nB = 0;
-    
+
     // faces
     // #N <v1> <v2> .. <v(n-1)> [color spec]
     for (uint i = 0; i<nF && !_in.eof(); ++i)
@@ -972,9 +974,9 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             _in.seekg(pos);
             // nB now holds the total number of bytes to be read
         }
-        
+
         readValue(_in, nV);
-        
+
         // Now that we have the initial face valence
         // we check, if there could possibly be colors
         // after the face specs by checking if
@@ -992,9 +994,9 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
                 // Cut down number of bytes to number
                 // of elements to be read
                 nB /= 4;
-                
+
                 nB -= nF + nF*nV;
-                
+
                 if(nB <= 0) {
                     // We don't have additional color components
                     // Case nB < 0: Face valence is not constant
@@ -1009,7 +1011,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
                 }
             }
         }
-        
+
         // Check if the face has at least valence 3
         // if not, skip the current face
         if (nV < 3) {
@@ -1029,14 +1031,14 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             // Proceed reading
             continue;
         }
-        
+
         // Read vertex indices of current face
         vhandles.clear();
         for (uint j = 0; j < nV; ++j) {
             readValue(_in, idx);
             vhandles.push_back(VertexHandle(idx));
         }
-                
+
         fh = _importer.addFace(vhandles);
 
         if ( !readColorComp_ ) {
@@ -1049,21 +1051,21 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             // nV now holds the number of color components
             readValue(_in, nV);
         }
-        
+
         // valid face color:
         if ( nV == 3 || nV == 4 ) {
-            
+
             // Read standard rgb color
             for(uint k = 0; k < 3; ++k) {
                 readValue(_in, c[k]);
                 --nV;
             }
-            
+
             // Color has additional alpha value
             if(nV == 1) {
                 readValue(_in, alpha);
             }
-            
+
             if(userReadOptions_ & OFFImporter::FACECOLOR) {
                 if(userReadOptions_ & OFFImporter::COLORALPHA) {
                     int cidx = _importer.addColor(OpenMesh::Vec4f(c[0], c[1], c[2], alpha));
@@ -1081,7 +1083,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             }
         }
     }
-    
+
     // File was successfully parsed.
     return true;
 }
@@ -1089,7 +1091,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
 //-----------------------------------------------------------------------------------------------------
 
 bool FileOFFPlugin::extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF, int _nB) const {
-    
+
     // Perform the extended and even more reliable color
     // component test. Read an integer n (starting with the face
     // valence) and skip n*4 bytes. Repeat this nF times.
@@ -1110,29 +1112,29 @@ bool FileOFFPlugin::extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF,
 
     // Get current file pointer
     int pos = _in.tellg();
-    
+
     for(uint k = 0; k < _nF; ++k) {
         // Remember: The first nV has already been read
         if(k != 0)
             readValue(_in, nV);
-        
+
         // Skip the following nV values
         for(uint z = 0; z < nV; ++z) {
             readValue(_in, dummy);
         }
     }
-    
+
     // Get position after all the reading has been done
     int currPos = _in.tellg();
-    
+
     // Reset read pointer to where we were
     _in.seekg(pos);
-    
+
     if(_nB - currPos == 0) {
         // No additional face colors have been specified
         return false;
     }
-    
+
     // We actually have face colors
     return true;
 }
@@ -1142,28 +1144,28 @@ bool FileOFFPlugin::extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF,
 int FileOFFPlugin::loadObject(QString _filename) {
 
     OFFImporter importer;
-    
+
     // Parse file
     readOFFFile( _filename, importer );
-    
+
     // Finish importing
     importer.finish();
-    
+
     BaseObject* object = importer.getObject();
-    
+
     if(!object){
-      
+
       forceTriangleMesh_ = false;
       forcePolyMesh_     = false;
-      
+
       return -1;
     }
-    
+
     object->setFromFileName(_filename);
 
     // Handle new PolyMeshes
     PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (object);
-    
+
     if ( polyMeshObj ){
 
       if ( !importer.hasVertexNormals() )
@@ -1176,10 +1178,10 @@ int FileOFFPlugin::loadObject(QString _filename) {
       polyMeshObj->update();
       polyMeshObj->show();
     }
-    
+
     // Handle new TriMeshes
     TriMeshObject* triMeshObj = dynamic_cast< TriMeshObject* > (object);
-    
+
     if ( triMeshObj ){
 
       if ( !importer.hasVertexNormals() || (userReadOptions_ & OFFImporter::FORCE_NONORMALS) )
@@ -1192,33 +1194,33 @@ int FileOFFPlugin::loadObject(QString _filename) {
       triMeshObj->update();
       triMeshObj->show();
     }
-    
+
     //general stuff
     emit openedFile( object->id() );
-    
+
     // Update viewport
     PluginFunctions::viewAll();
-    
+
     forceTriangleMesh_ = false;
     forcePolyMesh_     = false;
-    
+
     return object->id();
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 int FileOFFPlugin::loadObject(QString _filename, DataType _type) {
-  
+
   forceTriangleMesh_ = false;
   forcePolyMesh_     = false;
-  
+
   if ( _type == DATA_TRIANGLE_MESH )
     forceTriangleMesh_ = true;
   else if ( _type == DATA_POLY_MESH )
     forcePolyMesh_ = true;
 
   return loadObject(_filename);
-  
+
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -1227,27 +1229,27 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
 {
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
-    
+
     std::string filename = std::string( _filename.toUtf8() );
-    
+
     std::fstream ofs( filename.c_str(), std::ios_base::out );
-    
+
     if (!ofs) {
-        
+
         emit log(LOGERR, tr("saveObject : Cannot not open file %1 for writing!").arg(_filename) );
         return false;
     }
-    
+
     // Get user specified options
     updateUserOptions();
-    
+
     if ( object->dataType( DATA_POLY_MESH ) ) {
-        
+
         object->setFromFileName(_filename);
         object->setName(object->filename());
-        
+
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
-        
+
         if (writeMesh(ofs, *polyObj->mesh())){
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
@@ -1258,12 +1260,12 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
             return false;
         }
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-        
+
         object->setFromFileName(_filename);
         object->setName(object->filename());
-        
+
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
-                
+
         if (writeMesh(ofs, *triObj->mesh())) {
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
@@ -1313,106 +1315,116 @@ void FileOFFPlugin::backupTextureCoordinates(MeshT& _mesh) {
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileOFFPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
-    
+
     if (saveOptions_ == 0){
         //generate widget
         saveOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-        
+
         saveBinary_ = new QCheckBox("Save Binary");
         layout->addWidget(saveBinary_);
-        
+
         saveVertexColor_ = new QCheckBox("Save Vertex Colors");
         layout->addWidget(saveVertexColor_);
-        
+
         saveFaceColor_ = new QCheckBox("Save Face Colors");
         layout->addWidget(saveFaceColor_);
-        
+
         saveAlpha_ = new QCheckBox("Save Color Alpha");
         layout->addWidget(saveAlpha_);
-        
+
         saveNormals_ = new QCheckBox("Save Normals");
         layout->addWidget(saveNormals_);
-        
+
         saveTexCoords_ = new QCheckBox("Save TexCoords");
         layout->addWidget(saveTexCoords_);
-        
+
+        savePrecisionLabel_ = new QLabel("Writer Precision");
+        layout->addWidget(savePrecisionLabel_);
+
+        savePrecision_ = new QSpinBox();
+        savePrecision_->setMinimum(1);
+        savePrecision_->setMaximum(12);
+        savePrecision_->setValue(6);
+        layout->addWidget(savePrecision_);
+
         saveDefaultButton_ = new QPushButton("Make Default");
-        layout->addWidget(saveDefaultButton_);       
-        
+        layout->addWidget(saveDefaultButton_);
+
         saveOptions_->setLayout(layout);
-        
+
+        connect(saveBinary_, SIGNAL(clicked(bool)), savePrecision_, SLOT(setDisabled(bool)));
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
-        
+
         saveBinary_->setChecked( OpenFlipperSettings().value("FileOff/Save/Binary",false).toBool() );
         saveVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/VertexColor",true).toBool() );
         saveFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/FaceColor",true).toBool() );
         saveAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Save/Alpha",true).toBool() );
         saveNormals_->setChecked( OpenFlipperSettings().value("FileOff/Save/Normals",true).toBool() );
         saveTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Save/TexCoords",true).toBool() );
-        
-    } 
-    
+
+    }
+
     return saveOptions_;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
-    
+
     if (loadOptions_ == 0){
         //generate widget
         loadOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-        
+
         QLabel* label = new QLabel(tr("If PolyMesh is a Triangle Mesh:"));
-        
+
         layout->addWidget(label);
-        
+
         triMeshHandling_ = new QComboBox();
         triMeshHandling_->addItem( tr("Auto-Detect") );
         triMeshHandling_->addItem( tr("Ask") );
         triMeshHandling_->addItem( tr("Always open as PolyMesh") );
         triMeshHandling_->addItem( tr("Always open as TriangleMesh") );
-        
+
         layout->addWidget(triMeshHandling_);
-        
+
         loadVertexColor_ = new QCheckBox("Load Vertex Colors");
         layout->addWidget(loadVertexColor_);
-        
+
         loadFaceColor_ = new QCheckBox("Load Face Colors");
         layout->addWidget(loadFaceColor_);
-        
+
         loadAlpha_ = new QCheckBox("Load Color Alpha");
         layout->addWidget(loadAlpha_);
-        
+
         loadNormals_ = new QCheckBox("Load Normals");
         layout->addWidget(loadNormals_);
-        
+
         loadTexCoords_ = new QCheckBox("Load TexCoords");
         layout->addWidget(loadTexCoords_);
-        
+
         loadCheckManifold_ = new QCheckBox("Check for manifold configurations");
         layout->addWidget(loadCheckManifold_);
- 
+
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
-        
+
         loadOptions_->setLayout(layout);
-        
+
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
-        
+
         triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileOff/Load/TriMeshHandling",TYPEAUTODETECT ).toInt() );
-        
+
         loadVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool() );
         loadFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/FaceColor",true).toBool()  );
         loadAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
         loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
     }
-    
+
     return loadOptions_;
 }
 
@@ -1424,7 +1436,7 @@ void FileOFFPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileOff/Load/TexCoords",   loadTexCoords_->isChecked()  );
 
   OpenFlipperSettings().setValue("FileOff/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
-  
+
   OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 

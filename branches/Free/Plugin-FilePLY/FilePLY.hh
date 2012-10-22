@@ -84,16 +84,16 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void noguiSupported( ) {} ;
 
-    void initializePlugin();  
-    
+    void initializePlugin();
+
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
-    
+
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
 
   public :
-    
+
     FilePLYPlugin();
 
     ~FilePLYPlugin() {};
@@ -108,16 +108,16 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     QWidget* saveOptionsWidget(QString /*_currentFilter*/);
     QWidget* loadOptionsWidget(QString /*_currentFilter*/);
-     
+
   private:
-     
+
     // Helper class that stores general file information
     typedef std::pair<std::string,std::string> PPair;
     struct PLYHeader {
         bool    binary;
         bool    bigEndian;
         bool    isTriangleMesh;
-        
+
         int     numVertices;
         bool    hasVertexNormals;
         bool    hasVertexColors;
@@ -125,7 +125,7 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
         // If true, colors are separated in ambient, diffuse and specular
         bool    hasVertexTexCoords;
         std::vector<PPair> vProps;
-        
+
         int     numFaces;
         bool    hasFaceNormals;
         bool    hasFaceColors;
@@ -135,7 +135,7 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
         // If true, colors are separated in ambient, diffuse and specular
         std::vector<PPair> fProps;
     };
-    
+
     // Get data type size in bytes
     size_t getTypeSize(std::string _type);
 
@@ -143,13 +143,13 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
-    
+
     /// Loads object with forcing the given datatype
     int loadObject(QString _filename, DataType _type);
 
     /// Always loads mesh as polymesh
     int loadPolyMeshObject(QString _filename, const PLYHeader& _header);
-    
+
     /// Loads a triangle mesh
     int loadTriMeshObject(QString _filename, const PLYHeader& _header);
 
@@ -158,27 +158,27 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QString version() { return QString("1.0"); };
 
   private:
-    
+
     // Parse header of PLY file
     bool parseHeader(QString _filename, PLYHeader& _header);
-    
+
     // Template functions
-    
+
     template <class MeshT>
     bool readMeshFileAscii(QString _filename, MeshT* _mesh, const PLYHeader& _header);
-    
+
     template <class MeshT>
     bool readMeshFileBinary(QString _filename, MeshT* _mesh, const PLYHeader& _header);
-    
+
     template <class MeshT>
     bool writeMeshFileAscii(QString _filename, MeshT* _mesh);
-    
+
     template <class MeshT>
     bool writeMeshFileBinary(QString _filename, MeshT* _mesh);
-    
+
     template <class MeshT>
     void writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary);
-    
+
     template <class MeshT>
     void backupTextureCoordinates(MeshT& _mesh);
 
@@ -186,30 +186,32 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     template <class T>
     void readValue(std::istream& _in, T& _value, bool _bigEndian) const {
-        T tmp;    
+        T tmp;
         OpenMesh::IO::restore(_in , tmp, _bigEndian); //assuming LSB byte order
         _value = tmp;
     }
-    
+
     template <class T>
     void writeValue(std::ostream& _out, T value, bool _bigEndian = false) const {
         T tmp = value;
         OpenMesh::IO::store(_out, tmp, _bigEndian);
     }
-    
-    
+
+
     //Option Widgets
     QWidget* loadOptions_;
     QWidget* saveOptions_;
-    
+
     QCheckBox*   saveBinary_;
     QCheckBox*   saveVertexNormal_;
     QCheckBox*   saveVertexColor_;
     QCheckBox*   saveVertexTexCoord_;
     QCheckBox*   saveFaceNormal_;
     QCheckBox*   saveFaceColor_;
+    QLabel*      savePrecisionLabel_;
+    QSpinBox*    savePrecision_;
     QPushButton* saveDefaultButton_;
-    
+
     QComboBox*   triMeshHandling_;
     QCheckBox*   loadVertexNormal_;
     QCheckBox*   loadVertexColor_;

@@ -83,6 +83,8 @@ FileVTKPlugin::FileVTKPlugin():
   saveFaceNormals_(0),
   saveVertexNormals_(0),
   saveVertexTexCoords_(0),
+  savePrecisionLabel_(0),
+  savePrecision_(0),
   saveDefaultButton_(),
   binary_(false),
   userWriteOptions_(0)
@@ -92,7 +94,7 @@ FileVTKPlugin::FileVTKPlugin():
 //-----------------------------------------------------------------------------------------------------
 
 void FileVTKPlugin::initializePlugin() {
-    
+
     if(OpenFlipperSettings().value("FileVtk/Save/Binary",false).toBool())
         userWriteOptions_ |= BINARY; //currently unsupported
     if(OpenFlipperSettings().value("FileVtk/Save/FaceNormals",true).toBool())
@@ -132,39 +134,49 @@ QWidget* FileVTKPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
 //-----------------------------------------------------------------------------------------------------
 
 QWidget* FileVTKPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
-    
+
     if (saveOptions_ == 0){
         //generate widget
         saveOptions_ = new QWidget();
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
-        
+
         saveBinary_ = new QCheckBox("Save Binary");
         layout->addWidget(saveBinary_);
         saveBinary_->setCheckable(false);
-        
+
         saveFaceNormals_ = new QCheckBox("Save Face Normals");
         layout->addWidget(saveFaceNormals_);
-        
+
         saveVertexNormals_ = new QCheckBox("Save Vertex Normals");
         layout->addWidget(saveVertexNormals_);
-        
+
         saveVertexTexCoords_ = new QCheckBox("Save Vertex TexCoords");
         layout->addWidget(saveVertexTexCoords_);
-        
+
+        savePrecisionLabel_ = new QLabel("Writer Precision");
+        layout->addWidget(savePrecisionLabel_);
+
+        savePrecision_ = new QSpinBox();
+        savePrecision_->setMinimum(1);
+        savePrecision_->setMaximum(12);
+        savePrecision_->setValue(6);
+        layout->addWidget(savePrecision_);
+
         saveDefaultButton_ = new QPushButton("Make Default");
-        layout->addWidget(saveDefaultButton_);     
-        
+        layout->addWidget(saveDefaultButton_);
+
         saveOptions_->setLayout(layout);
-        
+
+        connect(saveBinary_, SIGNAL(clicked(bool)), savePrecision_, SLOT(setDisabled(bool)));
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
-        
+
         saveBinary_->setChecked( OpenFlipperSettings().value("FileVtk/Save/Binary",false).toBool() );
         saveFaceNormals_->setChecked( OpenFlipperSettings().value("FileVtk/Save/FaceNormals",true).toBool() );
         saveVertexNormals_->setChecked( OpenFlipperSettings().value("FileVtk/Save/VertexNormals",true).toBool() );
         saveVertexTexCoords_->setChecked( OpenFlipperSettings().value("FileVtk/Save/VertexTexCoords",true).toBool() );
-    } 
-    
+    }
+
     return saveOptions_;
 }
 
@@ -178,7 +190,7 @@ void FileVTKPlugin::slotSaveDefault() {
 }
 
 //-----------------------------------------------------------------------------------------------------
-  
+
 int FileVTKPlugin::loadObject(QString _filename) {
   std::cerr << "Loading vtk file" << std::endl;
 
@@ -353,37 +365,37 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
 template <typename MeshT>
 bool FileVTKPlugin::loadMeshPoints(QString _spec, QTextStream& _in,MeshT*& _mesh){
-  
+
   std::cerr << "loadMeshPoints" << std::endl;
-  
+
   bool ok = true;
-  
+
   // Split the header line into components
   QStringList pointsLine = _spec.split(" ",QString::SkipEmptyParts);
-  
+
   // It has to contain the Keyword POINTS , the number of points to read and the datatype of the points
   if ( pointsLine.size() != 3 ) {
     emit log(LOGERR,tr("Expected to get Points line with exactly 3 entries, but %1 found!").arg(pointsLine.size()));
     return false;
   }
-  
+
   // Get the number of points to read
   quint32 points = pointsLine[1].toUInt(&ok);
-  
+
   if ( ! ok) {
     emit log(LOGERR,tr("Expected to get number of points, but read %1 !").arg(pointsLine[1]));
     return false;
   }
-  
+
   // In OpenMesh we use doubles for the point representation
   OpenMesh::Vec3d vec;
-  
+
   quint32 read = 0;
   while ( read < points ) {
-    
-    
+
+
     if ( binary_ ) {
-    
+
       // Read binary float values
       if ( pointsLine[2] == "float" ) {
         // Read floats
@@ -391,122 +403,122 @@ bool FileVTKPlugin::loadMeshPoints(QString _spec, QTextStream& _in,MeshT*& _mesh
         _in.device()->read((char*)&vecf[0],sizeof(float));
         _in.device()->read((char*)&vecf[1],sizeof(float));
         _in.device()->read((char*)&vecf[2],sizeof(float));
-        
+
         // convert
         vec = vecf;
       } else {
         emit log(LOGERR,tr("Not implemented data type %1 !").arg(pointsLine[2]));
-        return false; 
+        return false;
       }
-      
+
     } else {
       // Don't care about original type, as we read text and convert it anyway.
       _in >> vec[0] >> vec[1] >> vec[2];
     }
-  
+
     // Next point to read
     ++read;
-    
+
     // Check if the stream is still ok
     if ( _in.status() == QTextStream::Ok ) {
-      _mesh->add_vertex(vec); 
+      _mesh->add_vertex(vec);
     } else {
       emit log(LOGERR,tr("Read corrupted point data!"));
-      return false;     
+      return false;
     }
-  
+
   }
-  
+
   if (binary_) {
     if ( pointsLine[2] == "float" ) {
       // Reposition text stream. We read points * 3 * sizeof(float)
       // For the text stream we calculate the position in charactersso convert it witth 1.0 / sizeof(char)
-      _in.seek(_in.pos() + read * 3 * sizeof(float) / sizeof(char) ); 
+      _in.seek(_in.pos() + read * 3 * sizeof(float) / sizeof(char) );
     }
   }
 
-  
+
   return true;
-  
+
 }
 
 template <typename MeshT>
 bool FileVTKPlugin::loadMeshLines(QString _spec,QTextStream& _in,MeshT*& _mesh) {
   std::cerr << "loadMeshLines" << std::endl;
-  
+
   bool ok = true;
-  
+
   // Split the header line into components
   QStringList linesLine = _spec.split(" ",QString::SkipEmptyParts);
-  
-  // It has to contain the Keyword LINES , the number of polygons to read and the total number of values to read ( each line: 1 + valence ) 
+
+  // It has to contain the Keyword LINES , the number of polygons to read and the total number of values to read ( each line: 1 + valence )
   if ( linesLine.size() != 3 ) {
     emit log(LOGERR,tr("Expected to get LINES line with exactly 3 entries, but %1 found!").arg(linesLine.size()));
     return false;
   }
-  
+
   // umber of lines to read
   quint32 linecount = linesLine[1].toUInt(&ok);
-  
+
   // number of ints in the whole line description!
   quint32 entrycount = linesLine[2].toUInt(&ok);
-  
+
   if ( ! ok) {
     emit log(LOGERR,tr("Expected to get number of lines and entries, but read %1 !").arg(linesLine.join(" ")));
     return false;
   }
-  
+
   quint32 read = 0;
-  
+
   while ( read < linecount) {
-    
+
     // Read first integer describing number of indizes in the current line
     quint32 valence;
-    
+
     if ( !binary_ )
       _in >> valence;
     else
       _in.device()->read((char*)&valence,sizeof(quint32));
-    
-    
+
+
     quint32 index;
-    
+
     if ( _in.status() == QTextStream::Ok ) {
       std::vector< OpenMesh::VertexHandle > handles;
-      
+
       if ( !binary_ ) {
-        for ( unsigned int i = 0 ; i < valence; ++i ) 
+        for ( unsigned int i = 0 ; i < valence; ++i )
           _in >> index;
       } else {
-        for ( unsigned int i = 0 ; i < valence; ++i ) 
+        for ( unsigned int i = 0 ; i < valence; ++i )
           _in.device()->read((char*)&valence,sizeof(quint32));
       }
-      
+
       if ( _in.status() == QTextStream::Ok ) {
         // TODO : Generate lines here!
-        
-        //_mesh->add_edge(handles); 
+
+        //_mesh->add_edge(handles);
       } else {
         emit log(LOGERR,tr("Read corrupted face data!"));
-        return false;     
+        return false;
       }
-      
+
     } else {
       emit log(LOGERR,tr("Read corrupted POLYGONS data!"));
-      return false;     
+      return false;
     }
-    
+
     ++read;
   }
-  
+
   if ( binary_ ) {
     // Reposition text stream. We read entrycount * sizeof(quint32) .
-    // For the text stream we calculate the position in charactersso convert it witth 1.0 / sizeof(char)            
+    // For the text stream we calculate the position in charactersso convert it witth 1.0 / sizeof(char)
     _in.seek(_in.pos() + entrycount * sizeof(quint32) / sizeof(char) );
   }
-  
+
   emit log(LOGWARN,tr("Lines not supported yet ... skipped!"));
-  
+
   return true;
 }
 
@@ -620,7 +632,7 @@ void FileVTKPlugin::add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::
     OpenMesh::VPropHandleT< OpenMesh::VertexHandle > originalVertexIdx;
     if (! _mesh->get_property_handle(originalVertexIdx,"FileVTKPlugin_originalVertexIdx")) {
         _mesh->add_property( originalVertexIdx, "FileVTKPlugin_originalVertexIdx" );
-        
+
         //mark all vertices
         typename MeshT::VertexIter vit = _mesh->vertices_begin();
         typename MeshT::VertexIter vend = _mesh->vertices_end();
@@ -665,102 +677,102 @@ void FileVTKPlugin::add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::
 template <typename MeshT>
 bool FileVTKPlugin::loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh) {
   std::cerr << "loadMeshTriangleStrips" << std::endl;
-  
+
   bool ok = true;
-  
+
   // Split the header line into components
   QStringList triStripsLine = _spec.split(" ",QString::SkipEmptyParts);
-  
-  // It has to contain the Keyword TRIANGLE_STRIPS , the number of strips to read and the total number of values to read ( each strip: 1 + valence ) 
+
+  // It has to contain the Keyword TRIANGLE_STRIPS , the number of strips to read and the total number of values to read ( each strip: 1 + valence )
   if ( triStripsLine.size() != 3 ) {
     emit log(LOGERR,tr("Expected to get TRIANGLE_STRIPS line with exactly 3 entries, but %1 found!").arg(triStripsLine.size()));
     return false;
   }
-  
+
   // Number of polygons to read
   quint32 stripcount = triStripsLine[1].toUInt(&ok);
-  
+
   // number of ints in the whole polygon description
   quint32 entrycount = triStripsLine[2].toUInt(&ok);
-  
+
   if ( ! ok) {
     emit log(LOGERR,tr("Expected to get number of strips and entries, but read %1 !").arg(triStripsLine.join(" ")));
     return false;
   }
-  
+
   quint32 read = 0;
   while ( read < stripcount) {
-    
+
     // Read first integer describing number of indizes in the strip
     quint32 valence;
     if ( !binary_ )
       _in >> valence;
     else
       _in.device()->read((char*)&valence,sizeof(quint32));
-    
-    
+
+
     quint32 index;
     QList< OpenMesh::VertexHandle > handles;
-    
+
     // Read first two of strip:
     for ( unsigned int i = 0 ; i < 2; ++i ) {
-      
+
       // Read one index
       if ( !binary_ )
         _in >> index;
       else
         _in.device()->read((char*)&valence,sizeof(quint32));
-      
+
       // Remember it
       handles.push_back( _mesh->vertex_handle(index) );
     }
-    
+
     // Read rest of strip while adding faces
     for ( unsigned int i = 2 ; i < valence; ++i ) {
-      
+
       // Read one index
       if ( !binary_ )
         _in >> index;
       else
         _in.device()->read((char*)&valence,sizeof(quint32));
-      
+
       // Remember it
       handles.push_back( _mesh->vertex_handle(index) );
-      
+
       if ( _in.status() == QTextStream::Ok ) {
         // TODO : handle non manifold cases!
         if ( i % 2 == 0 )
-          _mesh->add_face(handles[i],handles[i-1],handles[i-2]); 
+          _mesh->add_face(handles[i],handles[i-1],handles[i-2]);
         else
-          _mesh->add_face(handles[i],handles[i-2],handles[i-1]); 
+          _mesh->add_face(handles[i],handles[i-2],handles[i-1]);
       } else {
         emit log(LOGERR,tr("Read corrupted face data!"));
-        return false;     
+        return false;
       }
-      
+
 
     }
-   
+
     ++read;
   }
-  
-  
+
+
   if (binary_) {
     // Reposition text stream. We read entrycount * sizeof(qint32)
     // For the text stream we calculate the position in charactersso convert it witth 1.0 / sizeof(char)
-    _in.seek(_in.pos() + entrycount * sizeof(qint32) / sizeof(char) ); 
+    _in.seek(_in.pos() + entrycount * sizeof(qint32) / sizeof(char) );
   }
-  
+
   return true;
 }
 
 template <typename MeshT>
 bool FileVTKPlugin::loadMeshNormals(QString _spec,QTextStream& _in,MeshT*& _mesh,bool _pointNormal, quint32 _count) {
   std::cerr << "loadMeshNormals" << std::endl;
-  
+
   // Split the header line into components
   QStringList normalsLine = _spec.split(" ",QString::SkipEmptyParts);
-  
+
   // It has to contain the Keyword NORMALS , the name of the dataset and the datatype
   if ( normalsLine.size() != 3 ) {
     emit log(LOGERR,tr("Expected to get NORMALS line with exactly 3 entries, but %1 found!").arg(normalsLine.size()));
@@ -769,202 +781,202 @@ bool FileVTKPlugin::loadMeshNormals(QString _spec,QTextStream& _in,MeshT*& _mesh
 
   // In OpenMesh we use doubles for the normal representation
   OpenMesh::Vec3d normal;
-  
+
   quint32 read = 0;
   while ( read < _count) {
-    
+
     if ( binary_ ) {
-      
+
       // Read binary float values
       if ( normalsLine[2] == "float" ) {
-        
+
         // Read floats
         OpenMesh::Vec3f vecf;
         _in.device()->read((char*)&vecf[0],sizeof(float));
         _in.device()->read((char*)&vecf[1],sizeof(float));
         _in.device()->read((char*)&vecf[2],sizeof(float));
-        
+
         // convert
         normal = vecf;
       } else {
         emit log(LOGERR,tr("Not implemented data type %1 !").arg(normalsLine[2]));
-        return false; 
+        return false;
       }
-      
+
     } else {
       // Don't care about original type, as we read text and convert it anyway.
       _in >> normal[0] >> normal[1] >> normal[2];
     }
-    
+
     // Check if the stream is still ok
     if ( _in.status() == QTextStream::Ok ) {
-      
+
       if ( _pointNormal ) {
-        
+
         OpenMesh::VertexHandle vh = _mesh->vertex_handle(read);
         if ( vh.is_valid() )
-          _mesh->set_normal( vh , normal ); 
-        
+          _mesh->set_normal( vh , normal );
+
       } else {
-        
+
         OpenMesh::FaceHandle fh = _mesh->face_handle(read);
         if ( fh.is_valid() )
-           _mesh->set_normal( fh, normal ); 
-        
+           _mesh->set_normal( fh, normal );
+
       }
-        
+
     } else {
       emit log(LOGERR,tr("Read corrupted point data!"));
-      return false;     
+      return false;
     }
-    
+
     // Next normal to read
     ++read;
   }
-  
+
   if (binary_) {
     if ( normalsLine[2] == "float" ) {
       // Reposition text stream. We read points * 3 * sizeof(float)
       // For the text stream we calculate the position in charactersso convert it with 1.0 / sizeof(char)
-      _in.seek(_in.pos() + read * 3 * sizeof(float) / sizeof(char) ); 
+      _in.seek(_in.pos() + read * 3 * sizeof(float) / sizeof(char) );
     }
   }
-  
+
   //iterate over all contained vertices and set the normals
   OpenMesh::VPropHandleT< OpenMesh::VertexHandle > originalVertexIdx;
   if (! _mesh->get_property_handle(originalVertexIdx,"FileVTKPlugin_originalVertexIdx")) {
     _mesh->add_property( originalVertexIdx, "FileVTKPlugin_originalVertexIdx" );
   }
-  
+
   typename MeshT::VertexIter vit = _mesh->vertices_begin();
   typename MeshT::VertexIter vend = _mesh->vertices_end();
-    
+
   for(; vit != vend; ++vit) {
     if ( _mesh->property(originalVertexIdx, vit).is_valid() ) {
         //copied vertex found
         _mesh->set_normal( vit, _mesh->normal(_mesh->property (originalVertexIdx, vit) ) );
     }
   }
-  
+
   return true;
 }
 
 template <typename MeshT>
 bool FileVTKPlugin::loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh) {
-  
+
   std::cerr << "loadMeshCells" << std::endl;
-  
+
   // Split the header line into components
   QStringList cellLine = _spec.split(" ",QString::SkipEmptyParts);
-  
-  // It has to contain the Keyword CELLS , the number of cells to read and the total number of values to read ( each cell: 1 + valence ) 
+
+  // It has to contain the Keyword CELLS , the number of cells to read and the total number of values to read ( each cell: 1 + valence )
   if ( cellLine.size() != 3 ) {
     emit log(LOGERR,tr("Expected to get CELLS line with exactly 3 entries, but %1 found!").arg(cellLine.size()));
     return false;
   }
-  
+
   bool ok = true;
-  
+
   // Number of cells to read
   quint32 cellCount = cellLine[1].toUInt(&ok);
-  
+
   // number of ints in the whole cell description
   quint32 entryCount = cellLine[2].toUInt(&ok);
-  
-  
+
+
   if ( ! ok) {
     emit log(LOGERR,tr("Expected to get number of cells and entries, but read %1 !").arg(cellLine.join(" ")));
     return false;
   }
-  
+
   std::vector< CellType > cells;
-  
-  
+
+
   quint32 read = 0;
   while ( read < cellCount) {
-    
+
     CellType currentCell;
-    
+
     // Read first integer describing number of indizes
     quint32 valence;
     if ( !binary_ )
       _in >> valence;
     else
       _in.device()->read((char*)&valence,sizeof(quint32));
-    
-    
+
+
     quint32 index;
-    
+
     for ( unsigned int i = 0 ; i < valence; ++i ) {
-      
+
       // Read one index
       if ( !binary_ )
         _in >> index;
       else
         _in.device()->read((char*)&valence,sizeof(quint32));
-      
+
       // Remember it
       currentCell.indices.push_back( _mesh->vertex_handle(index) );
     }
-    
+
     if ( _in.status() == QTextStream::Ok ) {
       cells.push_back(currentCell);
     } else {
       emit log(LOGERR,tr("Read corrupted face data!"));
-      return false;     
+      return false;
     }
     ++read;
-    
+
   }
-  
+
   if (binary_) {
     // Reposition text stream. We read  entryCount * sizeof(quint32)
     // For the text stream we calculate the position in charactersso convert it with 1.0 / sizeof(char)
-    _in.seek(_in.pos() + entryCount * sizeof(quint32) / sizeof(char) ); 
+    _in.seek(_in.pos() + entryCount * sizeof(quint32) / sizeof(char) );
   }
-  
-  
+
+
   //=================================================================================
   //=================================================================================
   // Read the cell types now
   //=================================================================================
   //=================================================================================
   _spec ="";
-  
+
   // Read lines until we get something usefull
   while ( _spec.simplified().size() == 0 ) {
-    
+
     // stop at end of file!
     if ( _in.atEnd() ) {
       emit log(LOGERR,tr("File end when reading cell specification!"));
       return false;
     }
-    
+
     _spec = _in.readLine();
   }
-  
+
   if ( ! _spec.contains("CELL_TYPES") ) {
     emit log(LOGERR,tr("Wrong token! Expected CELL_TYPES but got : %1").arg(_spec));
     return false;
   }
-  
+
   // Split the header line into components
   cellLine = _spec.split(" ",QString::SkipEmptyParts);
-  
-  // It has to contain the Keyword CELL_TYPES , the number of cells to read 
+
+  // It has to contain the Keyword CELL_TYPES , the number of cells to read
   if ( cellLine.size() != 2 ) {
     emit log(LOGERR,tr("Expected to get CELL_TYPES line with exactly 3 entries, but %1 found!").arg(cellLine.size()));
     return false;
   }
-  
+
   // Number of cells to read
   quint32 cellCountTypes = cellLine[1].toUInt(&ok);
-  
+
   if ( ! ok) {
     emit log(LOGERR,tr("Expected to get number of cell types, but read %1 !").arg(cellLine[1]));
     return false;
   }
-  
+
   if (cellCountTypes != cellCount ) {
     emit log(LOGERR,tr("cellCountTypes != cellCount !").arg(cellLine.size()));
     return false;
@@ -972,21 +984,21 @@ bool FileVTKPlugin::loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh) 
 
   read = 0;
   while ( read < cellCount) {
-    
+
     // Read first integer describing number of indizes
     quint32 type;
     if ( !binary_ )
       _in >> type;
     else
       _in.device()->read((char*)&type,sizeof(quint32));
-    
-    
+
+
     // Remember it
     cells[read].type = type;
-    
+
     if ( ! _in.status() == QTextStream::Ok ) {
       emit log(LOGERR,tr("Read corrupted cell type data!"));
-      return false;     
+      return false;
     }
     ++read;
   }
@@ -994,10 +1006,10 @@ bool FileVTKPlugin::loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh) 
   if (binary_) {
     // Reposition text stream. We read cells * sizeof(quint32)
     // For the text stream we calculate the position in charactersso convert it with 1.0 / sizeof(char)
-    _in.seek(_in.pos() + read * sizeof(quint32) / sizeof(char) ); 
+    _in.seek(_in.pos() + read * sizeof(quint32) / sizeof(char) );
   }
-  
-  
+
+
   //=================================================================================
   //=================================================================================
   // Now add the cells
@@ -1005,239 +1017,239 @@ bool FileVTKPlugin::loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh) 
   //=================================================================================
   for ( unsigned int i = 0 ; i < cells.size() ; ++i ) {
     if ( cells[i].type == 1 ) {
-      
+
       //VERTEX
       // Nothing to do for meshes ... already added as vertex
-      
+
     } else if ( cells[i].type == 2 ) {
-      
+
       //POLY_VERTEX
       // Nothing to do for meshes ... already added as vertex
-      
+
     } else if ( cells[i].type == 3 ) {
-      
+
       //LINE
       emit log(LOGWARN,tr("Unsupported Cell Type LINE") );
-      
+
     } else if ( cells[i].type == 4 ) {
       //POLY_LINE
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type POLY_LINE") );
-      
+
     } else if ( cells[i].type == 5 ) {
       //TRIANGLE
-      
-      
+
+
       OpenMesh::FaceHandle fh = _mesh->add_face(cells[i].indices);
-      
+
       // Try the other direction
       if ( ! fh.is_valid() ) {
-        
+
         std::vector< OpenMesh::VertexHandle > inverseHandles;
         for ( int j = cells[i].indices.size()-1 ; j > 0 ; --j)
           inverseHandles.push_back(cells[i].indices[j]);
-        
+
         fh = _mesh->add_face(inverseHandles);
-        
+
         if ( !fh.is_valid() ) {
           emit log(LOGERR,tr("Unable to add non-manifold triangle configuration!"));
-          
+
           // TODO : handle complex non manifold cases!
         }
       }
-      
+
     } else if ( cells[i].type == 6 ) {
       //TRIANGLE_STRIP
-      
+
       for ( unsigned int j = 2 ; j < cells[i].indices.size() ; ++j) {
         if ( (j % 2) == 0 )
           _mesh->add_face(cells[i].indices[j-2],cells[i].indices[j],cells[i].indices[j-1]);
         else
           _mesh->add_face(cells[i].indices[j-2],cells[i].indices[j-1],cells[i].indices[j]);
       }
-      
+
       //TODO : handle non manifold cases!
-      
+
     } else if ( cells[i].type == 7 ) {
       //POLYGON
-      
+
       OpenMesh::FaceHandle fh = _mesh->add_face(cells[i].indices);
-      
+
       // Try the other direction
       if ( ! fh.is_valid() ) {
-        
+
         std::vector< OpenMesh::VertexHandle > inverseHandles;
         for ( int j = cells[i].indices.size()-1 ; j > 0 ; --j)
           inverseHandles.push_back(cells[i].indices[j]);
-        
+
         fh = _mesh->add_face(inverseHandles);
-        
+
         if ( !fh.is_valid() ) {
           emit log(LOGERR,tr("Unable to add non-manifold polygon configuration!"));
-          
+
           // TODO : handle complex non manifold cases!
         }
       }
-      
+
     } else if ( cells[i].type == 8 ) {
       //PIXEL
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type PIXEL") );
-      
+
     } else if ( cells[i].type == 9 ) {
       //QUAD
-      
+
       OpenMesh::FaceHandle fh = _mesh->add_face(cells[i].indices);
-      
+
       // Try the other direction
       if ( ! fh.is_valid() ) {
-        
+
         std::vector< OpenMesh::VertexHandle > inverseHandles;
         for ( int j = cells[i].indices.size()-1 ; j > 0 ; --j)
           inverseHandles.push_back(cells[i].indices[j]);
-        
+
         fh = _mesh->add_face(inverseHandles);
-        
+
         if ( !fh.is_valid() ) {
           emit log(LOGERR,tr("Unable to add non-manifold quad configuration!"));
-          
+
           // TODO : handle complex non manifold cases!
         }
       }
-        
+
     } else if ( cells[i].type == 10 ) {
       //Tetra
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type Tetra") );
-      
+
     } else if ( cells[i].type == 11 ) {
       //VOXEL
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type VOXEL") );
-      
+
     } else if ( cells[i].type == 12 ) {
       //HEXAHEDRON
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type HEXAHEDRON") );
     } else if ( cells[i].type == 13 ) {
       //WEDGE
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type WEDGE") );
     } else if ( cells[i].type == 14 ) {
       //PYRAMID
-      
+
       emit log(LOGWARN,tr("Unsupported Cell Type PYRAMID") );
     } else {
       emit log(LOGERR,tr("Unknown cell type").arg(cells[i].type) );
     }
   }
-  
+
   std::cerr << "Read " << read << "Cells " << std::endl;
   std::cerr << "Vector has size: " << cells.size() << std::endl;
-  
-  
+
+
   return true;
 }
 
 
 template <typename MeshT>
 bool FileVTKPlugin::loadMesh(QTextStream& _in,MeshT*& _mesh, Dataset _type){
-  
-  
+
+
   if ( _type != POLYDATA && _type != UNSTRUCTURED_GRID ) {
     emit log(LOGERR,"Unsupported DATASET" );
     return false;
   }
-  
+
   QString line = "";
-  
+
   bool ok = true;
-  
+
   // Flag if normals have been read from files
   bool pointNormalsRead = false;
   bool faceNormalsRead = false;
-  
+
   // flag if we are in Point data mode
   bool pointData = false;
-  
+
   // Size of the point data
   quint32 pointDataSize = 0;
-  
+
   // flag if we are in cell data mode
   bool cellData = false;
-  
+
   // Size of the cell data
   quint32 cellDataSize = 0;
-  
+
   while (ok) {
 
     line = _in.readLine();
-    
+
     // Read lines until we get something usefull
     while ( line.simplified().size() == 0 ) {
-      
+
       // stop at end of file!
       if ( _in.atEnd() ) {
         ok = false;
         std::cerr << "atEnd" << std::endl;
         break;
       }
-      
+
       line = _in.readLine();
     }
-    
+
     // Stop if something is wrong or we are at the end of the file
     if ( !ok )
       break;
-    
+
     std::cerr << "Line is: " << line.toStdString() << std::endl;
-    
+
     // if we got a points token:
     if ( line.contains("POINTS") ) {
-      
+
       ok = loadMeshPoints(line,_in,_mesh);
     } else if ( line.contains("POINT_DATA") ) {
-        
+
         bool ok = true;
-        
+
         // Split the header line into components
         QStringList pointDataLine = line.split(" ",QString::SkipEmptyParts);
-        
-        // It has to contain the Keyword POINT_DATA , and the number of datasets 
+
+        // It has to contain the Keyword POINT_DATA , and the number of datasets
         if ( pointDataLine.size() != 2 ) {
           emit log(LOGERR,tr("Expected to get POINT_DATA line with exactly 2 entries, but %1 found!").arg(line.size()));
           return false;
         }
-        
+
         // Number of polygons to read
         pointDataSize = pointDataLine[1].toUInt(&ok);
-        
+
         pointData = true;
         cellData  = false;
-        
+
         std::cerr <<  "Point data mode with " << pointDataSize << "Elements" << std::endl;
-        
+
     } else if ( line.contains("CELL_DATA") ) {
-      
+
       bool ok = true;
-      
+
       // Split the header line into components
       QStringList cellDataLine = line.split(" ",QString::SkipEmptyParts);
-      
-      // It has to contain the Keyword CELL_DATA , and the number of datasets 
+
+      // It has to contain the Keyword CELL_DATA , and the number of datasets
       if ( cellDataLine.size() != 2 ) {
         emit log(LOGERR,tr("Expected to get CELL_DATA line with exactly 2 entries, but %1 found!").arg(line.size()));
         return false;
       }
-      
+
       // Number of polygons to read
       cellDataSize = cellDataLine[1].toUInt(&ok);
-      
+
       cellData  = true;
       pointData = false;
-      
-      std::cerr <<  "Cell data mode with " << cellDataSize << "Elements" << std::endl; 
-      
+
+      std::cerr <<  "Cell data mode with " << cellDataSize << "Elements" << std::endl;
+
     } else if ( line.contains("VERTICES") ) {
       std::cerr << "Vertices will be skipped as they are already added!" << std::endl;
     } else if ( line.contains("LINES") ) {
@@ -1251,28 +1263,28 @@ bool FileVTKPlugin::loadMesh(QTextStream& _in,MeshT*& _mesh, Dataset _type){
     } else  if ( line.contains("NORMALS") ) {
       // load per point normals or per face normals
       if ( pointData ) {
-        ok = loadMeshNormals(line,_in,_mesh,true,pointDataSize);  
+        ok = loadMeshNormals(line,_in,_mesh,true,pointDataSize);
         pointNormalsRead = true;
       } else if (cellData) {
-        ok = loadMeshNormals(line,_in,_mesh,false,cellDataSize);  
+        ok = loadMeshNormals(line,_in,_mesh,false,cellDataSize);
         faceNormalsRead = true;
       } else {
         emit log(LOGERR,tr("Got normals keyword but we are neither in pointdata nor celldata mode") );
         return false;
       }
-      
+
     } else {
       std::cerr << "Unrecognized keyword : " << line.toStdString() << std::endl;
     }
-    
+
   }
-    
-  if ( !faceNormalsRead ) 
-    _mesh->update_face_normals(); 
-  
+
+  if ( !faceNormalsRead )
+    _mesh->update_face_normals();
+
   if ( !pointNormalsRead )
     _mesh->update_vertex_normals();
-  
+
   //if we added this property temporarily, we need to remove it now
   OpenMesh::VPropHandleT< OpenMesh::VertexHandle > originalVertexIdx;
   if (! _mesh->get_property_handle(originalVertexIdx,"FileVTKPlugin_originalVertexIdx")) {
@@ -1286,42 +1298,42 @@ bool FileVTKPlugin::loadMesh(QTextStream& _in,MeshT*& _mesh, Dataset _type){
 
 /// load a obj and force mesh datatype
 int FileVTKPlugin::loadObject(QString _filename, DataType _type){
-  
+
   if ( _type == DATA_TRIANGLE_MESH )
     forceTriangleMesh_ = true;
   else if ( _type == DATA_POLY_MESH )
       forcePolyMesh_ = true;
-      
+
   return loadObject(_filename);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 bool FileVTKPlugin::saveObject(int _id, QString _filename) {
-    
+
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
-    
+
     std::string filename = std::string( _filename.toUtf8() );
-    
+
     std::fstream ofs( filename.c_str(), std::ios_base::out );
-    
+
     if (!ofs) {
-        
+
         emit log(LOGERR, tr("saveObject : Cannot not open file %1 for writing!").arg(_filename) );
         return false;
     }
-    
+
     // Get user specified options
     updateUserOptions();
-    
+
     if ( object->dataType( DATA_POLY_MESH ) ) {
-        
+
         object->setFromFileName(_filename);
         object->setName(object->filename());
-        
+
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
-        
+
         if (writeMesh(ofs, *polyObj->mesh())){
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
@@ -1332,12 +1344,12 @@ bool FileVTKPlugin::saveObject(int _id, QString _filename) {
             return false;
         }
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-        
+
         object->setFromFileName(_filename);
         object->setName(object->filename());
-        
+
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
-                
+
         if (writeMesh(ofs, *triObj->mesh())) {
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
@@ -1358,7 +1370,7 @@ bool FileVTKPlugin::saveObject(int _id, QString _filename) {
 
 template< class MeshT >
 bool FileVTKPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ) {
-        
+
     /*****************
     * HEADER
     ******************/
@@ -1368,11 +1380,11 @@ bool FileVTKPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ) {
     _out << "Mesh saved from OpenFlipper - www.openflipper.org\n";
     //only ASCII is supported right now
     _out << "ASCII\n";
-    
+
     /*****************
     * DATA
     ******************/
-    
+
     // Call corresponding write routine
     return writeASCIIData(_out, _mesh);
 }
@@ -1381,6 +1393,9 @@ bool FileVTKPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ) {
 
 template< class MeshT >
 bool FileVTKPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
+
+    if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0)
+        _out.precision(savePrecision_->value());
 
     _out << "DATASET POLYDATA\n";
 
@@ -1467,13 +1482,13 @@ bool FileVTKPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
     return true;
 }
 void FileVTKPlugin::updateUserOptions() {
-   
+
     // If the options dialog has not been initialized, keep
     // the initial values
-    
+
     if( OpenFlipper::Options::nogui() )
         return;
-    
+
     // Save options
     if(saveBinary_) {
         if(saveBinary_->isChecked()) userWriteOptions_ |= BINARY;
