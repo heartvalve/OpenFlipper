@@ -226,8 +226,15 @@ bool DrawMode::propertyBased() const {
 */
 
 void DrawMode::setDrawModeProperties(const DrawModeProperties* _props) {
-  if (!layers_.empty() && _props)
-    layers_[0] = *_props;
+  if (_props)
+  {
+    if (layers_.empty())
+      layers_.push_back(*_props);
+    else
+      layers_[0] = *_props;
+  }
+  else
+    layers_.erase(layers_.begin());
 }
 
 void DrawMode::setDrawModeProperties( const DrawModeProperties& _props )
@@ -499,13 +506,13 @@ const DrawModeProperties* DrawMode::getLayer( unsigned int i ) const {
 
 void DrawMode::addLayer( const DrawModeProperties* _props )
 {
-  if (getLayerIndex(_props) < 0)
+  if (getLayerIndex(_props) < 0 && _props)
     layers_.push_back(*_props);
 }
 
 bool DrawMode::removeLayer( unsigned int _i )
 {
-  if (_i < layers_.size())
+  if (_i < layers_.size() && _i >= 0)
   {
     layers_.erase(layers_.begin() + _i);
     return true;
@@ -536,6 +543,8 @@ bool DrawMode::checkConsistency() const
 
 int DrawMode::getLayerIndex( const DrawModeProperties* _prop ) const
 {
+  if (!_prop) return -1;
+
   for (unsigned int i = 0; i < layers_.size(); ++i)
   {
     if (!memcmp(&layers_[i], _prop, sizeof(DrawModeProperties)))
