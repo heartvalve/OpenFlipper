@@ -140,6 +140,8 @@ private:
   int slices_;
   int stacks_;
 
+  QMenu* primitivesMenu_;
+
 };
 
 #endif //PRIMITIVESGENERATORPLUGIN_HH

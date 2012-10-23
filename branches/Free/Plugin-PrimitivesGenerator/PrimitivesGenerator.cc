@@ -52,13 +52,18 @@ PrimitivesGeneratorPlugin::PrimitivesGeneratorPlugin() :
         triMesh_(0),
         polyMesh_(0),
         slices_(50),
-        stacks_(50)
+        stacks_(50),
+        primitivesMenu_(0)
 {
 
 }
 
 PrimitivesGeneratorPlugin::~PrimitivesGeneratorPlugin()
 {
+
+  if ( OpenFlipper::Options::gui()) {
+    delete primitivesMenu_;
+  }
 
 }
 
@@ -80,53 +85,42 @@ void PrimitivesGeneratorPlugin::initializePlugin()
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
 
   if ( OpenFlipper::Options::gui()) {
-    // Primitives Menu
-    QMenu *primitivesMenu;
 
-    emit getMenubarMenu(tr("&Primitives"), primitivesMenu, true );
+    emit getMenubarMenu(tr("&Primitives"), primitivesMenu_, true );
 
-    QIcon* icon;
     QAction* action;
 
-    action = primitivesMenu->addAction("Cube (Triangle Mesh)"       ,this,SLOT(addTriangulatedCube()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Cube (Triangle Mesh)"       ,this,SLOT(addTriangulatedCube()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png"));
 
     WhatsThisGenerator whatsThisGen("PrimitivesGenerator");
     whatsThisGen.setWhatsThis(action,tr("Create a Cube."),"Cube");
 
-    action = primitivesMenu->addAction("Dodecahedron"               ,this,SLOT(addDodecahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Dodecahedron"               ,this,SLOT(addDodecahedron()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_dodecahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Dodecahedron."), "Dodecahedron");
 
-    action = primitivesMenu->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Icosahedron"                ,this,SLOT(addIcosahedron()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_icosahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Icosahedron.","Icosahedron"));
 
-    action = primitivesMenu->addAction("Octahedron"                  ,this,SLOT(addOctahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_octahedron.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Octahedron"                  ,this,SLOT(addOctahedron()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_octahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create an Octahedron."),"Octahedron");
 
-    action = primitivesMenu->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Pyramid"                    ,this,SLOT(addPyramid()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_pyramid.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Pyramid."),"Pyramid");
 
-    action = primitivesMenu->addAction("Cylinder (Triangle Mesh)"       ,this,SLOT(addTriangulatedCylinder()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cylinder.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Cylinder (Triangle Mesh)"       ,this,SLOT(addTriangulatedCylinder()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cylinder.png"));
 
-    action = primitivesMenu->addAction("Sphere",this,SLOT(addSphere()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Sphere",this,SLOT(addSphere()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Sphere. "),"Sphere");
 
-    action = primitivesMenu->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
-    icon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png");
-    action->setIcon(*icon);
+    action = primitivesMenu_->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedron."),"Tetrahedron");
   }
 

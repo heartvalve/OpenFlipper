@@ -76,6 +76,15 @@ InfoMeshObjectPlugin::InfoMeshObjectPlugin() :
 {
 }
 
+InfoMeshObjectPlugin::~InfoMeshObjectPlugin() {
+
+  if ( OpenFlipper::Options::gui()) {
+    delete infoBar_;
+    delete info_;
+  }
+
+}
+
 
 void InfoMeshObjectPlugin::initializePlugin() {
 

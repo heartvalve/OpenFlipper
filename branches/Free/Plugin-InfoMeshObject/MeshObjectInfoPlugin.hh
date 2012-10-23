@@ -122,7 +122,7 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
     InfoMeshObjectPlugin();
 
     // default destructor
-    ~InfoMeshObjectPlugin() {};
+    ~InfoMeshObjectPlugin();
 
     /// Name of the Plugin
     QString name(){ return (QString("InfoMeshObject")); };

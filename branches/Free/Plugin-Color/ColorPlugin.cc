@@ -89,9 +89,8 @@ void ColorPlugin::pluginsInitialized()
   // Add a Menu for color selection
   // =============================================================================
   QMenu *colorMenu = new QMenu(tr("&Color schemes"));
-  QIcon icon;
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"format-stroke-color.png");
-  colorMenu->setIcon(icon);
+
+  colorMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"format-stroke-color.png"));
   emit addMenubarAction(colorMenu->menuAction(), VIEWMENU );
 
   // =============================================================================
@@ -102,24 +101,21 @@ void ColorPlugin::pluginsInitialized()
   QAction* AC_set_Default_color = new QAction(tr("&Default colors"), this);
   AC_set_Default_color->setStatusTip(tr("Set Default Colors"));
   AC_set_Default_color->setWhatsThis(tr("Set colors to default colors. ")+whatsThis.generateLink());
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-default.png");
-  AC_set_Default_color->setIcon(icon);
+  AC_set_Default_color->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-default.png"));
   connect(AC_set_Default_color, SIGNAL(triggered()), this, SLOT(setDefaultColor()));
   colorMenu->addAction(AC_set_Default_color);
 
   QAction* AC_set_Presentation_color = new QAction(tr("&Presentation colors"), this);
   AC_set_Presentation_color->setStatusTip(tr("Set Presentation Colors"));
   AC_set_Presentation_color->setWhatsThis(tr("Set colors to presentation colors. ")+whatsThis.generateLink());
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-powerpoint.png");
-  AC_set_Presentation_color->setIcon(icon);
+  AC_set_Presentation_color->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-powerpoint.png"));
   connect(AC_set_Presentation_color, SIGNAL(triggered()), this, SLOT(setPresentationColor()));
   colorMenu->addAction(AC_set_Presentation_color);
 
   QAction* AC_set_Paper_color = new QAction(tr("&Paper colors"), this);
   AC_set_Paper_color->setStatusTip(tr("Set Paper Colors"));
   AC_set_Paper_color->setWhatsThis(tr("Set colors to colors for papers. ")+whatsThis.generateLink());
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-paper.png");
-  AC_set_Paper_color->setIcon(icon);
+  AC_set_Paper_color->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-paper.png"));
   connect(AC_set_Paper_color, SIGNAL(triggered()), this, SLOT(setPaperColor()));
   colorMenu->addAction(AC_set_Paper_color);
 
