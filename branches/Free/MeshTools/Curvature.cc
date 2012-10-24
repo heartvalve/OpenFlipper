@@ -77,9 +77,15 @@ gauss_curvature(MeshT& _mesh, const typename MeshT::VertexHandle& _vh) {
   
   double gauss_curv = 2.0 * M_PI;
 
-  // If the vertex is a boundary vertex
+  /*
+
+  TODO: Check the boundary case.
+
+  If the vertex is a boundary vertex
   if ( _mesh.is_boundary(_vh) )
     gauss_curv = M_PI;
+
+  */
 
   const typename MeshT::Point p0 = _mesh.point(_vh);
 
