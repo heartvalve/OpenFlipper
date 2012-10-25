@@ -191,12 +191,6 @@ public slots:
     /// Detect folded-over configurations
     void detectFoldover(int _objectId, float _angle);
 
-    /// Detect triangle with aspect of _aspect and select candidates
-    void detectTriangleAspect(int _objectId, float _aspect);
-
-    /// Flips the normals of all faces by changing the vertex order
-    void flipOrientation(int _objectId);
-
     /// Selects all edges of an object which are shorter than the given length
     void selectEdgesShorterThan(int _objectId,double _length);
 
@@ -206,6 +200,22 @@ public slots:
     /// Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
     void detectFlatValence3Vertices(int _objectId, double _angle);
 
+    // ==================================================
+    // Face operations
+    // ==================================================
+
+    /** \brief Detect triangles with aspect ratio greater than _aspect and select them
+     *
+     * @param _objectId Id of the object
+     * @param _aspect   Minimal aspect ratio to select
+     */
+    void detectTriangleAspect(int _objectId, float _aspect);
+
+    /** \brief Flips the normals of all selected faces by changing the vertex order
+     *
+     * @param _objectId Id of the object
+     */
+    void flipOrientation(int _objectId);
 
     // ==================================================
     // Normal recomputations
@@ -267,7 +277,6 @@ public slots:
      */
     void fixMesh(int _objectId, double _epsilon);
 
-
     /** @} */
 
 private:
@@ -280,7 +289,6 @@ private:
     */
     void selectionEdgeLength(int _objectId, double _length, bool _larger);
 
-
     /** \brief flip orientation of selected faces.
      *
      * flips the orientation of selected faces.
@@ -291,13 +299,9 @@ private:
     template<typename MeshT>
     void flipOrientationSelected(MeshT *_mesh);
 
-    template<typename MeshT>
-    inline unsigned n_verticesPerFace();
 
 public slots:
-    QString version() {
-        return QString("1.2");
-    };
+    QString version() { return QString("1.3"); };
 };
 
 #if defined(INCLUDE_TEMPLATES) && !defined(MESHREPAIRPLUGINT_CC)

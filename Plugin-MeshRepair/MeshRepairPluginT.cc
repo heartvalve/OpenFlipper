@@ -2,24 +2,6 @@
 
 #include "MeshRepairPlugin.hh"
 
-
-//-----------------------------------------------------------------------------
-
-template<typename MeshT>
-inline unsigned MeshRepairPlugin::n_verticesPerFace()
-{
-  // Reserve for a quad mesh, might be to small!
-  return 4;
-}
-
-//-----------------------------------------------------------------------------
-
-template<>
-inline unsigned MeshRepairPlugin::n_verticesPerFace<TriMesh>()
-{
-  return 3;
-}
-
 //-----------------------------------------------------------------------------
 
 template<typename MeshT>
@@ -30,7 +12,9 @@ void MeshRepairPlugin::flipOrientationSelected(MeshT *_mesh)
   std::vector< typename MeshT::VertexHandle > handles;
   std::vector< uint > valence;
 
-  handles.reserve( _mesh->n_faces() * n_verticesPerFace<MeshT>() );
+  const unsigned int n_VerticesPerFace = _mesh->is_trimesh() ? 3 : 4;
+
+  handles.reserve( _mesh->n_faces() * n_VerticesPerFace );
   valence.reserve( _mesh->n_faces() );
 
   OpenMesh::FPropHandleT< bool > orientation; //inidcates the orientation. true = new orientation. false = old orientation
