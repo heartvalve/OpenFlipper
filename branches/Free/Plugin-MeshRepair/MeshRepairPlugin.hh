@@ -207,14 +207,6 @@ public slots:
     void detectFlatValence3Vertices(int _objectId, double _angle);
 
 
-
-
-
-
-
-
-
-
     // ==================================================
     // Normal recomputations
     // ==================================================
@@ -243,12 +235,19 @@ public slots:
      */
     void updateNormals(int _objectId);
 
-
     // ==================================================
     // General
     // ==================================================
 
-
+    /** \brief Snaps selected vertices at boundaries
+     *
+     * Snaps selected boundary vertices together if they are closer than the given
+     * distance. No new vertices will be introduced on either edge, so they are just
+     * snapped to existing ones.
+     *
+     * @param _objectId Id of the object
+     * @param _eps      Distance of vertices to snap
+     */
     void snapBoundary(int _objectId, double _eps);
 
     /** \brief remove non-manifold vertices by duplicating them

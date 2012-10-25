@@ -61,6 +61,8 @@
  * distance. No new vertices will be introduced on either edge, so they are just
  * snapped to existing ones.
  *
+ * If vertices in the interior are selected, they will also get snapped to the
+ * opposite boundary, if in range.
  */
 template<class MeshT>
 class BoundarySnappingT {

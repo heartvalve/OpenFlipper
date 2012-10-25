@@ -338,11 +338,6 @@ void MeshRepairPlugin::pluginsInitialized() {
                           QString(tr("objectId,angle,remove")).split(","),
                           QString(tr("ID of an object;Minimum angle threshold")).split(";"));
 
-  emit setSlotDescription("snapBoundary(int,double)",tr("Snaps selected and boundary vertices if the distance is less than the given max. distance."),
-                          QString(tr("objectId,epsilon")).split(","),
-                          QString(tr("ID of an object;Max Distance")).split(";"));
-
-
 
 
 
@@ -370,6 +365,10 @@ void MeshRepairPlugin::pluginsInitialized() {
   // ===============================
   // General Mesh fixing
   // ===============================
+
+  emit setSlotDescription("snapBoundary(int,double)",tr("Snaps selected boundary vertices if the distance is less than the given maximal distance."),
+                           QString(tr("objectId,epsilon")).split(","),
+                           QString(tr("ID of an object;Max Distance")).split(";"));
 
   emit setSlotDescription("(int)",tr("Fixes non manifold vertices."),
                             QString(tr("objectId")).split(","),
