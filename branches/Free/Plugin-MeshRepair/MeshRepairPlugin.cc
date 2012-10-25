@@ -47,7 +47,6 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "OpenFlipper/INIFile/INIFile.hh"
 
-#include <MeshTools/MeshSelectionT.hh>
 #include <ACG/Geometry/Algorithms.hh>
 #include <Math_Tools/Math_Tools.hh>
 
