@@ -243,6 +243,7 @@ void MeshRepairPlugin::snapBoundary(MeshT *_mesh, double _eps)
       }
     }
     vertexDistMap.erase(v_oldIter);
+
     //todo: delete vertex before proceed. Now, they will be deleted at the end resulting worse snap
   }
   _mesh->delete_isolated_vertices();
@@ -252,8 +253,9 @@ void MeshRepairPlugin::snapBoundary(MeshT *_mesh, double _eps)
 }
 
 //-----------------------------------------------------------------------------
+
 template<typename MeshT>
-void MeshRepairPlugin::fixTopology(MeshT *_mesh)
+void MeshRepairPlugin::fixNonManifoldVertices(MeshT *_mesh)
 {
   OpenMesh::FPropHandleT< size_t > component;
   if ( !_mesh->get_property_handle(component,"component") )
@@ -269,7 +271,7 @@ void MeshRepairPlugin::fixTopology(MeshT *_mesh)
 
 
     //search and isolate new components
-    //shared vertices will be doublicated
+    //shared vertices will be duplicated
     for (typename MeshT::VertexFaceIter vf_iter = _mesh->vf_begin(v_iter); vf_iter; ++vf_iter)
     {
       //get the first face in the component
@@ -280,8 +282,8 @@ void MeshRepairPlugin::fixTopology(MeshT *_mesh)
         checkNeighbour.push_back(vf_iter.handle());
       }
 
-      //if a reference face was found, it exists a new component
-      //and a new vertex is required (except for the first component)
+      // if a reference face was found, a new component exists
+      // and a new vertex is required (except for the first component)
       typename MeshT::VertexHandle v_new;
       if (componentCount > 1 && !checkNeighbour.empty())
       {
@@ -289,20 +291,20 @@ void MeshRepairPlugin::fixTopology(MeshT *_mesh)
         v_new = _mesh->add_vertex(p);
       }
 
-      //check all adjacent faces of our reference
+      // check all adjacent faces of our reference
       while(!checkNeighbour.empty())
       {
         typename MeshT::FaceHandle face = checkNeighbour.back();
         checkNeighbour.pop_back();
 
         std::vector<typename MeshT::VertexHandle> f_vertices;
-        //get all neighbour faces of face
+        // get all neighbor faces of face
         for (typename MeshT::FaceVertexIter fv_iter = _mesh->fv_begin(face); fv_iter; ++fv_iter)
         {
           f_vertices.push_back(fv_iter.handle());
           if (fv_iter.handle() != v_iter)
           {
-            //find the next neighbour face over edge v_iter and fv_iter
+            //find the next neighbor face over edge v_iter and fv_iter
             typename MeshT::FaceHandle nf;
             for (typename MeshT::VertexFaceIter nf_iter = _mesh->vf_begin(v_iter); nf_iter && !nf.is_valid(); ++nf_iter)
             {
@@ -321,7 +323,7 @@ void MeshRepairPlugin::fixTopology(MeshT *_mesh)
           }
         }
 
-        //if one face wasn't found in the component = 1 run, then it is a new component, due split it
+        //if one face wasn't found in the component = 1 run, then it is a new component, due to split
         if (componentCount > 1 && v_new.is_valid())
         {
           std::replace(f_vertices.begin(),f_vertices.end(),v_iter.handle(),v_new);
@@ -332,8 +334,8 @@ void MeshRepairPlugin::fixTopology(MeshT *_mesh)
         }
       }
 
-      //all faces which belongs to v_iter and inside same component found
-      //the next face will be in a new component
+      // all faces which belong to v_iter and inside same component found
+      // the next face will be in a new component
       ++componentCount;
     }
   }

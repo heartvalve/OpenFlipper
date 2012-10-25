@@ -295,7 +295,7 @@ int MeshFixing<MeshT>::neighbor(unsigned int _f, unsigned int _v0, unsigned int 
   return neighborFace;
 }
 
-/**
+/** Tries to ensure that all faces in one component have the same orientation.
  *
  */
 template<class MeshT>
@@ -303,7 +303,6 @@ void MeshFixing<MeshT>::fix_orientation()
 {
   // We need faces to work on!
   if (faces_.empty()) return;
-
 
   int   fh = 0;
 

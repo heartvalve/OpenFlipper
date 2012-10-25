@@ -169,9 +169,14 @@ private slots:
     void slotSnapBoundary();
 
     /// Button slot
-    void slotFixTopology();
+    void slotFixNonManifoldVertices();
 
-    //Scripting functions:
+
+    //===========================================================================
+    /** @name Scripting functions
+    * @{ */
+    //===========================================================================
+
 public slots:
 
     /// Remove all selected valence 3 vertices
@@ -189,23 +194,12 @@ public slots:
     /// Detect triangle with aspect of _aspect and select candidates
     void detectTriangleAspect(int _objectId, float _aspect);
 
-    /// Recomputes the face normals of an object
-    void updateFaceNormals(int _objectId);
 
-    /// Recomputes the halfedge normals of an object
-    void updateHalfedgeNormals(int _objectId);
-
-    /// Recomputes the vertex normals of an object
-    void updateVertexNormals(int _objectId);
-
-    /// Recomputes the face and vertex normals of an object
-    void updateNormals(int _objectId);
 
     /// Flips the normals of all faces by changing the vertex order
     void flipOrientation(int _objectId);
 
-    /// Fix a mesh
-    void fixMesh(int _objectId, double _epsilon);
+
 
     /// Selects all edges of an object which are shorter than the given length
     void selectEdgesShorterThan(int _objectId,double _length);
@@ -218,7 +212,52 @@ public slots:
 
     void snapBoundary(int _objectId, double _eps);
 
-    void fixTopology(int _objectId);
+
+
+
+
+
+
+    // ==================================================
+    // Normal recomputations
+    // ==================================================
+
+    /// Recomputes the face normals of an object
+    void updateFaceNormals(int _objectId);
+
+    /// Recomputes the halfedge normals of an object
+    void updateHalfedgeNormals(int _objectId);
+
+    /// Recomputes the vertex normals of an object
+    void updateVertexNormals(int _objectId);
+
+    /// Recomputes the face and vertex normals of an object
+    void updateNormals(int _objectId);
+
+
+    // ==================================================
+    // General
+    // ==================================================
+
+    /** \brief remove non-manifold vertices by duplicating them
+     *
+     * @param _objectId Id of the mesh to fix
+     */
+    void fixNonManifoldVertices(int _objectId);
+
+    /** \brief Fix a mesh
+     *
+     * Degenerated faces will be removed and all vertices which are closer than the given distance
+     * will be collapsed. Non-manifold configurations at vertices will be removed and all faces of
+     * each component will be updated to have the same orientation.
+     *
+     * @param _objectId Id of the object to fix
+     * @param _epsilon  Snapping distance
+     */
+    void fixMesh(int _objectId, double _epsilon);
+
+
+    /** @} */
 
 private:
     /** \brief select edges based on length
@@ -258,12 +297,20 @@ private:
     template<typename MeshT>
     static bool sort_less_pair_second(const std::pair<typename MeshT::VertexHandle,double> &lhs,const std::pair<typename MeshT::VertexHandle,double> &rhs);
 
-    /** \brief fixes the orientation and non-manifold problems in a mesh.
-     * @param _mesh target mesh
+
+
+
+
+
+
+    /** \brief Removes non-manifold vertices by duplicating them
      *
+     * @param _mesh target mesh
      */
     template<typename MeshT>
-    void fixTopology(MeshT *_mesh);
+    void fixNonManifoldVertices(MeshT *_mesh);
+
+    // Checked from here
 
 public slots:
     QString version() {
