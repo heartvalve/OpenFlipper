@@ -232,7 +232,7 @@ namespace DrawModes {
      *
      * @param _other Right hand side
      */
-    bool operator!=( const DrawModeProperties _other ) const {
+    bool operator!=( const DrawModeProperties& _other ) const {
       return ( (envMapped_      != _other.envMapped_)      ||
                (primitive_      != _other.primitive_)      ||
                (lightStage_     != _other.lightStage_)     ||
