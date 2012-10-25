@@ -45,6 +45,7 @@
 
 
 #include "MeshRepairPlugin.hh"
+#include <MeshTools/MeshSelectionT.hh>
 
 //-----------------------------------------------------------------------------
 
