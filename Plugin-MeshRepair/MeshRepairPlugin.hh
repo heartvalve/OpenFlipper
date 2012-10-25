@@ -297,21 +297,6 @@ private:
     template<typename MeshT>
     static bool sort_less_pair_second(const std::pair<typename MeshT::VertexHandle,double> &lhs,const std::pair<typename MeshT::VertexHandle,double> &rhs);
 
-
-
-
-
-
-
-    /** \brief Removes non-manifold vertices by duplicating them
-     *
-     * @param _mesh target mesh
-     */
-    template<typename MeshT>
-    void fixNonManifoldVertices(MeshT *_mesh);
-
-    // Checked from here
-
 public slots:
     QString version() {
         return QString("1.2");
