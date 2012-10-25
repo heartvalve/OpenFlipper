@@ -489,7 +489,7 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
             <item>
              <widget class="QPushButton" name="triangleAspectButton">
               <property name="toolTip">
-               <string>Selects all triangles with an aspect ratio greater than the given ratio. If this ratio is very large, only very skinny triangles will be selected.</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selects all triangles with an aspect ratio greater than the given one. If this ratio is very large, only very skinny triangles will be selected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Select triangles</string>
@@ -538,7 +538,7 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
           <item>
            <widget class="QPushButton" name="flipOrientation">
             <property name="toolTip">
-             <string>Flip the normals of all selected faces on the target meshes. This can be used to manually fix foldovers detected in &quot;Edge operations&quot;.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flip the normals of all selected faces on the target meshes by reversing the vertex order. This can be used to manually fix foldovers detected in &amp;quot;Edge operations&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="statusTip">
              <string>Flip the normals of all target meshes</string>

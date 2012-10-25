@@ -179,26 +179,57 @@ private slots:
 
 public slots:
 
+    // ==================================================
+    // Vertex operations
+    // ==================================================
+
+    /** \brief Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
+     *
+     */
+    void detectFlatValence3Vertices(int _objectId, double _angle);
+
     /// Remove all selected valence 3 vertices
     void removeSelectedVal3Vertices(int _objectId);
 
-    /// Removes all selected edges
-    void removeSelectedEdges(int _objectId);
+    // ==================================================
+    // Edge operations
+    // ==================================================
 
-    /// Detect/Remove edges where neighboring faces form angle > _angle degrees
-    void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
-
-    /// Detect folded-over configurations
-    void detectFoldover(int _objectId, float _angle);
-
-    /// Selects all edges of an object which are shorter than the given length
+    /** \brief Selects all edges of an object which are shorter than the given length
+     *
+     * @param _objectId Id of the object
+     * @param _length   maximal edge length to select
+     */
     void selectEdgesShorterThan(int _objectId,double _length);
 
-    /// Selects all edges of an object which are larger than the given length
+    /** \brief Selects all edges of an object which are larger than the given length
+     *
+     * @param _objectId Id of the object
+     * @param _length   Minimal edge length to select
+     */
     void selectEdgesLongerThan(int _objectId,double _length);
 
-    /// Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
-    void detectFlatValence3Vertices(int _objectId, double _angle);
+    /** \brief Removes all selected edges
+     *
+     * @param _objectId Id of the object
+     */
+    void removeSelectedEdges(int _objectId);
+
+    /** \brief  Detect/Remove edges where neighboring faces form angle > _angle degrees
+     *
+     * @param _objectId Id of the object
+     * @param _angle    minimal angle to detect
+     * @param _remove   Detect them or also remove them?
+     */
+    void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
+
+    /** \brief Detect folded-over configurations by the dihedral angle
+     *
+     * @param _objectId Id of the object
+     * @param _angle    Minimal dihedral angle that will be selected
+     */
+    void detectFoldover(int _objectId, float _angle);
+
 
     // ==================================================
     // Face operations
