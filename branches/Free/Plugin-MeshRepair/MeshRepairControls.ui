@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>803</height>
+    <width>432</width>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,151 +19,117 @@
      <property name="title">
       <string>Vertex operations</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
+     <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Detect flat triangles (with valence 3 vertices):</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
-         <spacer name="horizontalSpacer_9">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_11">
-          <item>
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Detect flat triangles (with valence 3 vertices):</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QPushButton" name="valenceThreeButton">
-              <property name="toolTip">
-               <string>Select all vertices of valence three which don't make the mesh much more detailed. This is indicated by very similar adjacent face normals: the area around the vertex is nearly planar.
+         <widget class="QPushButton" name="valenceThreeButton">
+          <property name="toolTip">
+           <string>Select all vertices of valence three which don't make the mesh much more detailed. This is indicated by very similar adjacent face normals: the area around the vertex is nearly planar.
 
 These vertices can usually be removed without destroying the features of the mesh.</string>
-              </property>
-              <property name="text">
-               <string>Select vertices</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>with angle difference &lt; </string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="valenceThreeSpinbox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>80</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="suffix">
-               <string>°</string>
-              </property>
-              <property name="maximum">
-               <double>180.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-              <property name="value">
-               <double>30.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
-            <item>
-             <widget class="QPushButton" name="repairRemoveVButton">
-              <property name="toolTip">
-               <string>Repair the mesh by collapsing the previously selected valence 3 vertices.</string>
-              </property>
-              <property name="text">
-               <string>Collapse selected vertices</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Snap Boundary:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_13">
-            <item>
-             <widget class="QPushButton" name="snapBoundaryButton">
-              <property name="toolTip">
-               <string>Snaps selected boundary vertices together.</string>
-              </property>
-              <property name="text">
-               <string>Snap</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>max. Distance</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="snapBoundarySpinBox">
-              <property name="decimals">
-               <number>6</number>
-              </property>
-              <property name="minimum">
-               <double>0.500000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+          </property>
+          <property name="text">
+           <string>Select vertices</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_10">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>with angle difference &lt; </string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="valenceThreeSpinbox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>80</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </spacer>
+          <property name="suffix">
+           <string>°</string>
+          </property>
+          <property name="maximum">
+           <double>180.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>30.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <widget class="QPushButton" name="repairRemoveVButton">
+          <property name="toolTip">
+           <string>Repair the mesh by collapsing the previously selected valence 3 vertices.</string>
+          </property>
+          <property name="text">
+           <string>Collapse selected vertices</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QPushButton" name="snapBoundaryButton">
+          <property name="toolTip">
+           <string>Snaps selected boundary vertices together.</string>
+          </property>
+          <property name="text">
+           <string>Snap Boundary</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>max. Distance</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="snapBoundarySpinBox">
+          <property name="decimals">
+           <number>6</number>
+          </property>
+          <property name="minimum">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -630,7 +596,7 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="fixMeshButton">
+           <widget class="QPushButton" name="fixTopologyButton">
             <property name="text">
              <string>Fix Topology</string>
             </property>
@@ -716,6 +682,49 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
           </property>
           <property name="text">
            <string>Face</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="title">
+      <string>General</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_7">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <item>
+         <widget class="QPushButton" name="fixMeshButton">
+          <property name="text">
+           <string>Fix Triangle Mesh</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>distance</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="fixMeshBox">
+          <property name="decimals">
+           <number>6</number>
+          </property>
+          <property name="minimum">
+           <double>0.000010000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.010000000000000</double>
           </property>
          </widget>
         </item>
