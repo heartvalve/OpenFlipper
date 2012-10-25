@@ -297,8 +297,6 @@ void MeshRepairPlugin::slotFixNonManifoldVertices()
  */
 void MeshRepairPlugin::pluginsInitialized() {
 
-  // TODO: Check and update
-
   // ===============================
   // Vertex Operations
   // ===============================
