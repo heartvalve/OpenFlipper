@@ -150,7 +150,7 @@ private slots:
   void saveNewName ( QWidget * _editor, QAbstractItemDelegate::EndEditHint _hint );
   void saveNewName (QListWidgetItem* _item);
 
-  /// returns the plain name of the material without hotkey hint (if setted)
+  /// returns the plain name of the material without hotkey hint
   QString plainName(const QString &string, int index);
 
   /// returns a formatted string for saving
@@ -170,7 +170,7 @@ private slots:
 
   void slotEnableListWidget(int _save);
 
-  void slotSaveAll();
+  void slotMaterialChanged();
 
 public slots:
   QString version(){ return QString("1.0"); }

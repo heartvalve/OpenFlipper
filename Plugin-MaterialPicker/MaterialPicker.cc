@@ -52,7 +52,7 @@
 MaterialPicker::MaterialPicker()
   :
   pickModeName_("MaterialPicker"),
-  propName_("MaterialPickerPlugin/Materials"),
+  propName_(name()+QString("/Material/Materials")),
   pickMaterialButton_(0),
   fillMaterialButton_(0),
   materialListWidget_(0),
@@ -123,8 +123,7 @@ void MaterialPicker::initializePlugin() {
      stream >> materialInfo.reflectance;
      stream.str("");
      stream.clear();
-     if (savedString.size() < 9)
-       savedString.push_back(QString::number(Qt::Key_unknown));
+     savedString.push_back(QString::number(Qt::Key_unknown));
      stream << savedString[8].toStdString();
      stream >> materialInfo.key;
 
@@ -178,6 +177,18 @@ void MaterialPicker::removeItem(QListWidgetItem* _item)
   materialStrings_.erase(materialStrings_.begin()+index);
   OpenFlipperSettings().setValue(propName_, materialStrings_);
   fillMaterialButton_->setEnabled(materialListWidget_->count());
+
+  //update hotkey table
+  std::map<int,size_t>::iterator eraseIter = shortKeyRow_.end();
+  for (std::map<int,size_t>::iterator iter = shortKeyRow_.begin(); iter != shortKeyRow_.end(); ++iter)
+  {
+    if (iter->second > index)
+      --(iter->second);
+    else if (iter->second == index)
+      eraseIter = iter;
+  }
+  if (eraseIter != shortKeyRow_.end())
+    shortKeyRow_.erase(eraseIter);
 }
 
 //------------------------------------------------------------------------------
@@ -194,8 +205,17 @@ void MaterialPicker::clearList() {
 
 void MaterialPicker::slotRemoveCurrentItem()
 {
-  if (materialListWidget_->count())
-    removeItem(materialListWidget_->currentItem());
+  if (!materialListWidget_->count())
+    return;
+  QMessageBox msgBox;
+  QListWidgetItem* item = materialListWidget_->currentItem();
+  msgBox.setText(tr("Remove ")+plainName(item->text(),materialListWidget_->currentRow())+tr("?"));
+  msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  msgBox.setDefaultButton(QMessageBox::Ok);
+  int ret = msgBox.exec();
+
+  if (ret == QMessageBox::Ok)
+  removeItem(materialListWidget_->currentItem());
 }
 //------------------------------------------------------------------------------
 
@@ -392,16 +412,18 @@ void MaterialPicker::slotKeyEvent(QKeyEvent* _event)
 void MaterialPicker::changeHotKey(const int &_key)
 {
   std::map<int,size_t>::iterator iter = shortKeyRow_.find(_key);
-  if (iter == shortKeyRow_.end())
-    return;
 
-  size_t oldIndex = iter->second;
-  QListWidgetItem* oldItem = materialListWidget_->item(oldIndex);
-  //remove name
-  oldItem->setText( plainName(oldItem->text(),oldIndex) );
-  materialList_[oldIndex].key = Qt::Key_unknown; //unregister key after rename, otherwise the renaming will fail
-  materialStrings_[oldIndex] = materialString(materialList_[oldIndex],oldItem->text());
-  saveNewName(oldItem);
+  if (iter != shortKeyRow_.end())
+  {
+    //remove old key
+    size_t oldIndex = iter->second;
+    QListWidgetItem* oldItem = materialListWidget_->item(oldIndex);
+    //remove name
+    oldItem->setText( plainName(oldItem->text(),oldIndex) );
+    materialList_[oldIndex].key = Qt::Key_unknown; //unregister key after rename, otherwise the renaming will fail
+    materialStrings_[oldIndex] = materialString(materialList_[oldIndex],oldItem->text());
+    saveNewName(oldItem);
+  }
 
   //set the new item (save and hint)
   size_t newIndex = materialListWidget_->currentRow();
@@ -453,7 +475,7 @@ void MaterialPicker::slotMaterialProperties()
   dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
 
   connect(dialog,SIGNAL(finished(int)),this,SLOT(slotEnableListWidget(int)));
-  connect(dialog,SIGNAL(accepted()),this,SLOT(slotSaveAll()));
+  connect(dialog,SIGNAL(accepted()),this,SLOT(slotMaterialChanged()));
 
   dialog->setWindowIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png"));
 
@@ -461,7 +483,7 @@ void MaterialPicker::slotMaterialProperties()
 
 }
 //------------------------------------------------------------------------------
-void MaterialPicker::slotSaveAll()
+void MaterialPicker::slotMaterialChanged()
 {
   if (materialNode_)
     {
@@ -488,7 +510,7 @@ void MaterialPicker::slotSaveAll()
 void MaterialPicker::slotEnableListWidget(int _save){
   materialListWidget_->setEnabled(true);
   if (_save == QDialog::Accepted)
-    slotSaveAll();
+    slotMaterialChanged();
   materialNode_.reset();
 }
 
@@ -497,14 +519,18 @@ void MaterialPicker::createContextMenu(const QPoint& _point)
 {
   QMenu *menu = new QMenu(materialListWidget_);
 
-  QAction* action = menu->addAction(tr("Rename"));
-  connect(action,SIGNAL(triggered(bool)),this,SLOT(editModeCurrent()));
-  action = menu->addAction(tr("Material Properties"));
+  QAction* action = menu->addAction(tr("Material Properties"));
   QIcon icon;
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
   action->setIcon(icon);
   action->setEnabled(true);
   connect(action,SIGNAL(triggered(bool)),this,SLOT(slotMaterialProperties()));
+
+  action = menu->addAction(tr("Rename"));
+  connect(action,SIGNAL(triggered(bool)),this,SLOT(editModeCurrent()));
+
+  action = menu->addAction(tr("Remove"));
+  connect(action, SIGNAL(triggered(bool)),this,SLOT(slotRemoveCurrentItem()));
 
   menu->addSeparator();
 
