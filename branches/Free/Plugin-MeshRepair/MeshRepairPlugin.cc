@@ -299,13 +299,6 @@ void MeshRepairPlugin::pluginsInitialized() {
   // TODO: Check and update
 
 
-
-  emit setSlotDescription("flipOrientation(int)",tr("Flips the normals of all faces by changing the vertex order in each face"),
-                          QStringList(tr("objectId")),
-                          QStringList(tr("ID of an object")));
-
-
-
   emit setSlotDescription("removeSelectedEdges(int)",tr("Remove the selected edges"),
                           QStringList(tr("objectId")),
                           QStringList(tr("ID of an object")));
@@ -318,9 +311,7 @@ void MeshRepairPlugin::pluginsInitialized() {
                           QString(tr("objectId,angle")).split(","),
                           QString(tr("ID of an object;Minimum threshold angle for fold-overs")).split(";"));
 
-  emit setSlotDescription("detectTriangleAspect(int,float)",tr("Selects all vertices that have a minimum aspect."),
-                          QString(tr("objectId,aspect")).split(","),
-                          QString(tr("ID of an object;The minimum aspect ratio")).split(";"));
+
 
   emit setSlotDescription("selectEdgesShorterThan(int,double)",tr("Selects all edges of an object which are shorter than the given length"),
                           QString(tr("objectId,length")).split(","),
@@ -339,6 +330,22 @@ void MeshRepairPlugin::pluginsInitialized() {
                           QString(tr("ID of an object;Minimum angle threshold")).split(";"));
 
 
+  // ===============================
+  // Edge Operations
+  // ===============================
+
+
+  // ===============================
+  // Face Operations
+  // ===============================
+
+  emit setSlotDescription("detectTriangleAspect(int,float)",tr("Selects all faces that have a larger aspect ratio than the given one."),
+                           QString(tr("objectId,aspect")).split(","),
+                           QString(tr("ID of an object;The minimal aspect ratio to select")).split(";"));
+
+  emit setSlotDescription("flipOrientation(int)",tr("Flips the normals of all faces by changing the vertex order in each face"),
+                           QStringList(tr("objectId")),
+                           QStringList(tr("ID of an object")));
 
 
   // ===============================
