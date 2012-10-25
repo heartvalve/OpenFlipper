@@ -33,6 +33,9 @@ void MeshRepairPlugin::flipOrientationSelected(MeshT *_mesh)
   handles.reserve( _mesh->n_faces() * n_verticesPerFace<MeshT>() );
   valence.reserve( _mesh->n_faces() );
 
+  OpenMesh::FPropHandleT< bool > orientation; //inidcates the orientation. true = new orientation. false = old orientation
+  if ( !_mesh->get_property_handle(orientation,"orientation") )
+      _mesh->add_property(orientation, "orientation");
 
   for (f_it = _mesh->faces_begin(); f_it != f_end ; ++f_it) {
 
@@ -51,35 +54,42 @@ void MeshRepairPlugin::flipOrientationSelected(MeshT *_mesh)
       // delete the corresponding face
       _mesh->delete_face(f_it, false);
     }
+    else
+    {
+      _mesh->property(orientation,f_it) = false;
+    }
   }
 
   // clean the mesh
   _mesh->garbage_collection();
 
   // read the faces
-  uint pos = 0;
-  for (uint i=0; i < valence.size(); i++) {
+  std::size_t pos = 0;
+
+  for (std::size_t i=0; i < valence.size(); i++) {
 
     std::vector< typename MeshT::VertexHandle > faceVertices;
 
     pos += valence[i];
 
     // add valence vertices in the inverse order
-    for (uint j = 1 ; j <= valence[i] ; ++j )
+    for (unsigned j = 1 ; j <= valence[i] ; ++j )
     {
       typename MeshT::VertexHandle handle = handles[pos - j];
 
-      //if vertex is not isolated, it has a face and we have to add a new vertex to prevent holes
-      //between the old flipped and not flipped faces
-      if (!_mesh->is_isolated(handle))
-        handle = _mesh->add_vertex(_mesh->point(handle));
+      //check, if orientation problems exists. If so, add a new vertex avoiding them
+        if(_mesh->vf_begin(handle) && !_mesh->property(orientation,_mesh->vf_begin(handle)))
+          handle = _mesh->add_vertex(_mesh->point(handle));
 
       faceVertices.push_back(handle);
     }
 
-    _mesh->add_face(faceVertices);
+    typename MeshT::FaceHandle fh = _mesh->add_face(faceVertices);
+    _mesh->property(orientation,fh) = true;
+
   }
 
+  _mesh->remove_property(orientation);
   _mesh->update_normals();
 }
 
