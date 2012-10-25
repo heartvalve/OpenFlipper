@@ -73,7 +73,7 @@ void MeshRepairPlugin::flipOrientationSelected(MeshT *_mesh)
     pos += valence[i];
 
     // add valence vertices in the inverse order
-    for (unsigned j = 1 ; j <= valence[i] ; ++j )
+    for (unsigned int j = 1 ; j <= valence[i] ; ++j )
     {
       typename MeshT::VertexHandle handle = handles[pos - j];
 
