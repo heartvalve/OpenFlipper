@@ -959,6 +959,7 @@ void MeshRepairPlugin::detectFlatValence3Vertices(int _objectId, double _angle) 
 
 }
 
+
 void
 MeshRepairPlugin::fixMesh(int _objectId, double _epsilon) {
   // get the target mesh
