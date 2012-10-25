@@ -194,12 +194,8 @@ public slots:
     /// Detect triangle with aspect of _aspect and select candidates
     void detectTriangleAspect(int _objectId, float _aspect);
 
-
-
     /// Flips the normals of all faces by changing the vertex order
     void flipOrientation(int _objectId);
-
-
 
     /// Selects all edges of an object which are shorter than the given length
     void selectEdgesShorterThan(int _objectId,double _length);
@@ -210,7 +206,8 @@ public slots:
     /// Detect valence 3 vertices with faces that lie in the plane of their adjacent triangles
     void detectFlatValence3Vertices(int _objectId, double _angle);
 
-    void snapBoundary(int _objectId, double _eps);
+
+
 
 
 
@@ -222,22 +219,37 @@ public slots:
     // Normal recomputations
     // ==================================================
 
-    /// Recomputes the face normals of an object
+    /** \brief  Recomputes the face normals of an object
+     *
+     * @param _objectId Id of the object
+     */
     void updateFaceNormals(int _objectId);
 
-    /// Recomputes the halfedge normals of an object
+    /** \brief Recomputes the halfedge normals of an object
+     *
+     * @param _objectId Id of the object
+     */
     void updateHalfedgeNormals(int _objectId);
 
-    /// Recomputes the vertex normals of an object
+    /** \brief Recomputes the vertex normals of an object
+     *
+     * @param _objectId Id of the object
+     */
     void updateVertexNormals(int _objectId);
 
-    /// Recomputes the face and vertex normals of an object
+    /** \brief  Recomputes the face and vertex normals of an object
+     *
+     * @param _objectId Id of the object
+     */
     void updateNormals(int _objectId);
 
 
     // ==================================================
     // General
     // ==================================================
+
+
+    void snapBoundary(int _objectId, double _eps);
 
     /** \brief remove non-manifold vertices by duplicating them
      *
@@ -282,20 +294,6 @@ private:
 
     template<typename MeshT>
     inline unsigned n_verticesPerFace();
-
-    /** \brief snaps boundary vertices
-     *
-     * snaps selected boundary vertices where the vertices
-     * distance is not greater than a given distance
-     * @param _mesh target mesh
-     * @param _eps max Distance between 2 boundary vertices
-     *
-     */
-    template<typename MeshT>
-    void snapBoundary(MeshT *_mesh, double _eps);
-
-    template<typename MeshT>
-    static bool sort_less_pair_second(const std::pair<typename MeshT::VertexHandle,double> &lhs,const std::pair<typename MeshT::VertexHandle,double> &rhs);
 
 public slots:
     QString version() {

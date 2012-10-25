@@ -47,7 +47,34 @@
 #include "MeshRepairPlugin.hh"
 #include "MeshFixingT.hh"
 #include "NonManifoldVertexFixingT.hh"
+#include "BoundarySnappingT.hh"
 
+//-----------------------------------------------------------------------------
+
+void MeshRepairPlugin::snapBoundary(int _objectId, double _eps)
+{
+  TriMesh* triMesh = 0;
+  PolyMesh* polyMesh = 0;
+
+  PluginFunctions::getMesh(_objectId, triMesh);
+  PluginFunctions::getMesh(_objectId, polyMesh);
+  if (triMesh) {
+    BoundarySnappingT<TriMesh> snapper(*triMesh);
+    snapper.snap(_eps);
+  }
+  else if (polyMesh) {
+    BoundarySnappingT<PolyMesh> snapper(*polyMesh);
+    snapper.snap(_eps);
+  } else
+  {
+    emit log(LOGERR, tr("Unsupported Object Type."));
+    return;
+  }
+
+  emit updatedObject(_objectId, UPDATE_ALL);
+  emit createBackup(_objectId, "snapBoundary", UPDATE_ALL);
+  emit scriptInfo("snapBoundary(" + QString::number(_objectId) + ", " + QString::number(_eps) +")");
+}
 
 //-----------------------------------------------------------------------------
 

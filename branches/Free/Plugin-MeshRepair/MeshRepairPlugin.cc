@@ -44,8 +44,6 @@
 
 #include "MeshRepairPlugin.hh"
 
-#include <iostream>
-
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "OpenFlipper/INIFile/INIFile.hh"
 
@@ -388,29 +386,6 @@ void MeshRepairPlugin::pluginsInitialized() {
 //===========================================================================
 // Scriptable functions
 //===========================================================================
-
-void MeshRepairPlugin::snapBoundary(int _objectId, double _eps)
-{
-  TriMesh* triMesh = 0;
-  PolyMesh* polyMesh = 0;
-
-  PluginFunctions::getMesh(_objectId, triMesh);
-  PluginFunctions::getMesh(_objectId, polyMesh);
-  if (triMesh)
-    snapBoundary(triMesh,_eps);
-  else if (polyMesh)
-    snapBoundary(polyMesh,_eps);
-  else
-  {
-    emit log(LOGERR, tr("Unsupported Object Type."));
-    return;
-  }
-
-  emit updatedObject(_objectId, UPDATE_ALL);
-  emit createBackup(_objectId, "snapBoundary", UPDATE_ALL);
-  emit scriptInfo("snapBoundary(" + QString::number(_objectId) + ", " + QString::number(_eps) +")");
-}
-
 
 
 
