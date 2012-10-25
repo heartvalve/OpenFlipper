@@ -647,7 +647,7 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
         <item>
          <widget class="QPushButton" name="snapBoundaryButton">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Snaps selected boundary vertices together if they are closer than the given distance. No new vertices will be introduced on either edge, so they are just snapped to existing ones.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Snaps selected boundary vertices if they are closer than the given distance. No new vertices will be introduced on either boundary side, so they are just snapped to existing ones.&lt;/p&gt;&lt;p&gt;If vertices in the interior are selected, they will also get snapped to the opposite boundary, if in range.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>Snap Boundary</string>
