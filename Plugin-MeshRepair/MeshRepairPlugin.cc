@@ -52,7 +52,6 @@
 #include <MeshTools/MeshSelectionT.hh>
 #include <ACG/Geometry/Algorithms.hh>
 #include <Math_Tools/Math_Tools.hh>
-#include "MeshFixingT.hh"
 
 //-----------------------------------------------------------------------------
 
@@ -89,16 +88,26 @@ initializePlugin()
   //Face operations
   connect(tool_->triangleAspectButton,SIGNAL(clicked()),this,SLOT(slotDetectTriangleAspect()));
   connect(tool_->flipOrientation,SIGNAL(clicked()),this,SLOT(slotFlipOrientation()));
-  connect(tool_->fixTopologyButton,SIGNAL(clicked()),this,SLOT(slotFixTopology()));
 
+
+
+
+  // General Operations
+  connect(tool_->fixMeshButton,SIGNAL(clicked()),this,SLOT(slotFixMesh()));
+
+
+  //==================
   //Normal operations
+  //==================
   connect(tool_->computeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateNormals()));
   connect(tool_->computeVertexNormals,SIGNAL(clicked()),this,SLOT(slotUpdateVertexNormals()));
   connect(tool_->computeFaceNormals,SIGNAL(clicked()),this,SLOT(slotUpdateFaceNormals()));
   connect(tool_->computeHalfedgeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateHalfedgeNormals()));
 
-  // General Operations
-  connect(tool_->fixMeshButton,SIGNAL(clicked()),this,SLOT(slotFixMesh()));
+  //==================
+  // General
+  //==================
+  connect(tool_->fixNonManifoldVerticesButton,SIGNAL(clicked()),this,SLOT(slotFixNonManifoldVertices()));
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"meshrepair-toolbox.png");
   tool_->repairCollapseEButton->setIcon(*toolIcon_);
@@ -274,10 +283,10 @@ void MeshRepairPlugin::slotSnapBoundary()
 
 //-----------------------------------------------------------------------------
 
-void MeshRepairPlugin::slotFixTopology()
+void MeshRepairPlugin::slotFixNonManifoldVertices()
 {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
-    fixTopology(o_it->id());
+    fixNonManifoldVertices(o_it->id());
   emit updateView();
 }
 
@@ -289,29 +298,15 @@ void MeshRepairPlugin::slotFixTopology()
  */
 void MeshRepairPlugin::pluginsInitialized() {
 
-  emit setSlotDescription("updateFaceNormals(int)",tr("Recompute Face normals"),
-                          QStringList(tr("objectId")),
-                          QStringList(tr("ID of an object")));
+  // TODO: Check and update
 
-  emit setSlotDescription("updateHalfedgeNormals(int)",tr("Recompute Halfedge normals"),
-                          QStringList(tr("objectId")),
-                          QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("updateVertexNormals(int)",tr("Recompute Vertex normals"),
-                          QStringList(tr("objectId")),
-                          QStringList(tr("ID of an object")));
-
-  emit setSlotDescription("updateNormals(int)",tr("Recompute Face and Vertex normals"),
-                          QStringList(tr("objectId")),
-                          QStringList(tr("ID of an object")));
 
   emit setSlotDescription("flipOrientation(int)",tr("Flips the normals of all faces by changing the vertex order in each face"),
                           QStringList(tr("objectId")),
                           QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("fixMesh(int,double)",tr("Fixes a mesh."),
-                          QString(tr("objectId,distance")).split(","),
-                          QString(tr("ID of an object;Vertices with distance lower than epsilon will be treated as one")).split(";"));
+
 
   emit setSlotDescription("removeSelectedEdges(int)",tr("Remove the selected edges"),
                           QStringList(tr("objectId")),
@@ -344,9 +339,47 @@ void MeshRepairPlugin::pluginsInitialized() {
   emit setSlotDescription("detectSkinnyTriangleByAngle(int,double,bool)",tr("Select or remove skinny triangles. Whether a triangle is skinny is determined by a minimum angle threshold."),
                           QString(tr("objectId,angle,remove")).split(","),
                           QString(tr("ID of an object;Minimum angle threshold")).split(";"));
+
   emit setSlotDescription("snapBoundary(int,double)",tr("Snaps selected and boundary vertices if the distance is less than the given max. distance."),
                           QString(tr("objectId,epsilon")).split(","),
                           QString(tr("ID of an object;Max Distance")).split(";"));
+
+
+
+
+
+  // ===============================
+  // Normal Fixing
+  // ===============================
+
+  emit setSlotDescription("updateFaceNormals(int)",tr("Recompute Face normals"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("updateHalfedgeNormals(int)",tr("Recompute Halfedge normals"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("updateVertexNormals(int)",tr("Recompute Vertex normals"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("updateNormals(int)",tr("Recompute Face and Vertex normals"),
+                          QStringList(tr("objectId")),
+                          QStringList(tr("ID of an object")));
+
+
+  // ===============================
+  // General Mesh fixing
+  // ===============================
+
+  emit setSlotDescription("(int)",tr("Fixes non manifold vertices."),
+                            QString(tr("objectId")).split(","),
+                            QString(tr("ID of an object;Non manifold vertices are splitted.")).split(";"));
+
+  emit setSlotDescription("fixMesh(int,double)",tr("Fixes a mesh."),
+                          QString(tr("objectId,distance")).split(","),
+                          QString(tr("ID of an object;Vertices with distance lower than epsilon will be treated as one.")).split(";"));
 
 }
 
@@ -379,27 +412,7 @@ void MeshRepairPlugin::snapBoundary(int _objectId, double _eps)
 }
 
 
-void MeshRepairPlugin::fixTopology(int _objectId)
-{
-  TriMesh* triMesh = 0;
-  PolyMesh* polyMesh = 0;
 
-  PluginFunctions::getMesh(_objectId, triMesh);
-  PluginFunctions::getMesh(_objectId, polyMesh);
-  if (triMesh)
-    fixTopology(triMesh);
-  else if (polyMesh)
-    fixTopology(polyMesh);
-  else
-  {
-    emit log(LOGERR, tr("Unsupported Object Type."));
-    return;
-  }
-
-  emit updatedObject(_objectId, UPDATE_ALL);
-  emit createBackup(_objectId, "fixTopology", UPDATE_ALL);
-  emit scriptInfo("fixTopology(" + QString::number(_objectId) + ")");
-}
 
 void MeshRepairPlugin::removeSelectedVal3Vertices(int _objectId) {
 
@@ -630,118 +643,7 @@ void MeshRepairPlugin::detectFoldover(int _objectId, float _angle) {
   + " with angle greater than " + QString::number(_angle) + ".");
 }
 
-//-----------------------------------------------------------------------------
 
-void MeshRepairPlugin::updateFaceNormals(int _objectId) {
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject(_objectId,object);
-
-  if ( object == 0) {
-    emit log(LOGERR,tr("updateFaceNormals: Unable to get object %1. ").arg(_objectId) );
-    return;
-  }
-
-  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-    TriMesh* mesh = PluginFunctions::triMesh(object);
-    mesh->update_face_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
-    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
-  } else if ( object->dataType(DATA_POLY_MESH) ) {
-    PolyMesh* mesh = PluginFunctions::polyMesh(object);
-    mesh->update_face_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
-    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
-  } else
-    emit log(LOGERR,tr("updateFaceNormals: MeshRepair only works on triangle and poly meshes!") );
-
-}
-
-
-//-----------------------------------------------------------------------------
-
-void MeshRepairPlugin::updateHalfedgeNormals(int _objectId) {
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject(_objectId,object);
-
-  if ( object == 0) {
-    emit log(LOGERR,tr("updateFaceNormals: Unable to get object %1. ").arg(_objectId) );
-    return;
-  }
-
-  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-    TriMesh* mesh = PluginFunctions::triMesh(object);
-    mesh->request_halfedge_normals();
-    mesh->update_halfedge_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
-    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
-  } else if ( object->dataType(DATA_POLY_MESH) ) {
-    PolyMesh* mesh = PluginFunctions::polyMesh(object);
-    mesh->request_halfedge_normals();
-    mesh->update_halfedge_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Face Normals", UPDATE_ALL);
-    emit scriptInfo( "updateFaceNormals(" + QString::number(_objectId) + ")" );
-  } else
-    emit log(LOGERR,tr("updateFaceNormals: MeshRepair only works on triangle and poly meshes!") );
-
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void MeshRepairPlugin::updateVertexNormals(int _objectId){
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject(_objectId,object);
-
-  if ( object == 0) {
-    emit log(LOGERR,tr("updateVertexNormals: Unable to get object %1. ").arg(_objectId) );
-    return;
-  }
-
-  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-    TriMesh* mesh = PluginFunctions::triMesh(object);
-    mesh->update_vertex_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Vertex Normals", UPDATE_ALL);
-    emit scriptInfo( "updateVertexNormals(" + QString::number(_objectId) + ")" );
-  } else if ( object->dataType(DATA_POLY_MESH) ) {
-    PolyMesh* mesh = PluginFunctions::polyMesh(object);
-    mesh->update_vertex_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated Vertex Normals", UPDATE_ALL);
-    emit scriptInfo( "updateVertexNormals(" + QString::number(_objectId) + ")" );
-  } else
-    emit log(LOGERR,tr("updateVertexNormals: MeshRepair only works on triangle and poly meshes!") );
-}
-
-//-----------------------------------------------------------------------------
-
-void MeshRepairPlugin::updateNormals(int _objectId) {
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject(_objectId,object);
-
-  if ( object == 0) {
-    emit log(LOGERR,tr("updateNormals: Unable to get object %1. ").arg(_objectId) );
-    return;
-  }
-
-  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-    TriMesh* mesh = PluginFunctions::triMesh(object);
-    mesh->update_normals();
-    emit scriptInfo( "updateNormals(" + QString::number(_objectId) + ")" );
-  } else if ( object->dataType(DATA_POLY_MESH) ) {
-    PolyMesh* mesh = PluginFunctions::polyMesh(object);
-    mesh->update_normals();
-    emit updatedObject(_objectId, UPDATE_ALL);
-    emit createBackup( _objectId, "Updated All Normals", UPDATE_ALL);
-    emit scriptInfo( "updateNormals(" + QString::number(_objectId) + ")" );
-  } else
-    emit log(LOGERR,tr("updateNormals: MeshRepair only works on triangle and poly meshes!") );
-}
 
 //-----------------------------------------------------------------------------
 
@@ -960,32 +862,6 @@ void MeshRepairPlugin::detectFlatValence3Vertices(int _objectId, double _angle) 
 }
 
 
-void
-MeshRepairPlugin::fixMesh(int _objectId, double _epsilon) {
-  // get the target mesh
-   TriMesh* triMesh = 0;
 
-   PluginFunctions::getMesh(_objectId,triMesh);
-
-   if (triMesh) {
-     MeshFixing<TriMesh> fixer(*triMesh,_epsilon);
-
-     if ( !fixer.fix() )
-       emit log(LOGERR, "Fixmesh encountered Problems! Object: " + QString::number(_objectId) + ".");
-
-     // Recompute normals
-     triMesh->update_normals();
-
-     emit updatedObject(_objectId, UPDATE_ALL);
-     emit createBackup(_objectId, "Fixed mesh", UPDATE_ALL);
-
-     emit scriptInfo( "fixMesh(" + QString::number(_objectId) + ", " + QString::number(_epsilon) + ")" );
-
-   } else
-     emit log( LOGERR,tr("Unsupported Object Type for mesh fixing!") );
-
-}
-
-//-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( meshrepairplugin , MeshRepairPlugin );
