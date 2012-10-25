@@ -142,6 +142,9 @@ private slots:
     void slotFlipOrientation();
 
     /// Button slot
+    void slotFixMesh();
+
+    /// Button slot
     void slotUpdateVertexNormals();
 
     /// Button slot
@@ -166,7 +169,7 @@ private slots:
     void slotSnapBoundary();
 
     /// Button slot
-    void slotFixMesh();
+    void slotFixTopology();
 
     //Scripting functions:
 public slots:
@@ -200,6 +203,9 @@ public slots:
 
     /// Flips the normals of all faces by changing the vertex order
     void flipOrientation(int _objectId);
+
+    /// Fix a mesh
+    void fixMesh(int _objectId, double _epsilon);
 
     /// Selects all edges of an object which are shorter than the given length
     void selectEdgesShorterThan(int _objectId,double _length);

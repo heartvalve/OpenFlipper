@@ -52,6 +52,7 @@
 #include <MeshTools/MeshSelectionT.hh>
 #include <ACG/Geometry/Algorithms.hh>
 #include <Math_Tools/Math_Tools.hh>
+#include "MeshFixingT.hh"
 
 //-----------------------------------------------------------------------------
 
@@ -88,13 +89,16 @@ initializePlugin()
   //Face operations
   connect(tool_->triangleAspectButton,SIGNAL(clicked()),this,SLOT(slotDetectTriangleAspect()));
   connect(tool_->flipOrientation,SIGNAL(clicked()),this,SLOT(slotFlipOrientation()));
-  connect(tool_->fixMeshButton,SIGNAL(clicked()),this,SLOT(slotFixMesh()));
+  connect(tool_->fixTopologyButton,SIGNAL(clicked()),this,SLOT(slotFixTopology()));
 
   //Normal operations
   connect(tool_->computeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateNormals()));
   connect(tool_->computeVertexNormals,SIGNAL(clicked()),this,SLOT(slotUpdateVertexNormals()));
   connect(tool_->computeFaceNormals,SIGNAL(clicked()),this,SLOT(slotUpdateFaceNormals()));
   connect(tool_->computeHalfedgeNormals,SIGNAL(clicked()),this,SLOT(slotUpdateHalfedgeNormals()));
+
+  // General Operations
+  connect(tool_->fixMeshButton,SIGNAL(clicked()),this,SLOT(slotFixMesh()));
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"meshrepair-toolbox.png");
   tool_->repairCollapseEButton->setIcon(*toolIcon_);
@@ -179,6 +183,18 @@ void MeshRepairPlugin::slotFlipOrientation(){
 
 //-----------------------------------------------------------------------------
 
+void MeshRepairPlugin::slotFixMesh() {
+
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
+    fixMesh(o_it->id() , tool_->fixMeshBox->value() );
+
+  emit updateView();
+
+}
+
+//-----------------------------------------------------------------------------
+
 void MeshRepairPlugin::slotUpdateVertexNormals() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
     updateVertexNormals(o_it->id());
@@ -258,7 +274,7 @@ void MeshRepairPlugin::slotSnapBoundary()
 
 //-----------------------------------------------------------------------------
 
-void MeshRepairPlugin::slotFixMesh()
+void MeshRepairPlugin::slotFixTopology()
 {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ) );  o_it != PluginFunctions::objectsEnd(); ++o_it)
     fixTopology(o_it->id());
@@ -292,6 +308,10 @@ void MeshRepairPlugin::pluginsInitialized() {
   emit setSlotDescription("flipOrientation(int)",tr("Flips the normals of all faces by changing the vertex order in each face"),
                           QStringList(tr("objectId")),
                           QStringList(tr("ID of an object")));
+
+  emit setSlotDescription("fixMesh(int,double)",tr("Fixes a mesh."),
+                          QString(tr("objectId,distance")).split(","),
+                          QString(tr("ID of an object;Vertices with distance lower than epsilon will be treated as one")).split(";"));
 
   emit setSlotDescription("removeSelectedEdges(int)",tr("Remove the selected edges"),
                           QStringList(tr("objectId")),
@@ -939,7 +959,31 @@ void MeshRepairPlugin::detectFlatValence3Vertices(int _objectId, double _angle) 
 
 }
 
+void
+MeshRepairPlugin::fixMesh(int _objectId, double _epsilon) {
+  // get the target mesh
+   TriMesh* triMesh = 0;
 
+   PluginFunctions::getMesh(_objectId,triMesh);
+
+   if (triMesh) {
+     MeshFixing<TriMesh> fixer(*triMesh,_epsilon);
+
+     if ( !fixer.fix() )
+       emit log(LOGERR, "Fixmesh encountered Problems! Object: " + QString::number(_objectId) + ".");
+
+     // Recompute normals
+     triMesh->update_normals();
+
+     emit updatedObject(_objectId, UPDATE_ALL);
+     emit createBackup(_objectId, "Fixed mesh", UPDATE_ALL);
+
+     emit scriptInfo( "fixMesh(" + QString::number(_objectId) + ", " + QString::number(_epsilon) + ")" );
+
+   } else
+     emit log( LOGERR,tr("Unsupported Object Type for mesh fixing!") );
+
+}
 
 //-----------------------------------------------------------------------------
 
