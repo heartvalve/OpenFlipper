@@ -235,7 +235,14 @@ lineIntersection( const VectorT<Scalar,2>&  _v0,
 //===========================================================================     
 
 
-/// squared distance from point _p to line (_v0,_v1)
+/** \brief squared distance from point _p to line segment (_v0,_v1)
+ *
+ * @param _p     Point to test
+ * @param _v0    Start of line segment
+ * @param _v1    End of line segment
+ * @param _min_v Pointer to vector, to get the closest point or 0 if it's not required
+ * @return Distance to line segment
+ */
 template<class Vec>
 typename Vec::value_type
 distPointLineSquared( const Vec& _p,
@@ -245,7 +252,17 @@ distPointLineSquared( const Vec& _p,
 
 
 
-/// distance from point _p to line (_v0,_v1)
+/** \brief Compute distance from point to line segment
+ *
+ * Compute the distance from a point p to a line segment and possibly return
+ * closest point on segment
+ *
+ * @param _p   Point to test
+ * @param _v0  Start of line segment
+ * @param _v1  End of line segment
+ * @param _min_v Pointer to vector, to get the closest point or 0 if it's not required
+ * @return Distance to line segment
+ */
 template<class Vec>
 typename Vec::value_type
 distPointLine( const Vec& _p,
