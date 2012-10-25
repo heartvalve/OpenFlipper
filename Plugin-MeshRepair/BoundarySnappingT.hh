@@ -40,12 +40,12 @@
 \*===========================================================================*/
 
 
-#ifndef NONMANIFOLDVERTEXFIXING_HH
-#define NONMANIFOLDVERTEXFIXING_HH
+#ifndef BOUNDARYSNAPPING_HH
+#define BOUNDARYSNAPPING_HH
 
 //=============================================================================
 //
-//  CLASS NonManifoldVertexFixingT
+//  CLASS BoundarySnappingT
 //
 //=============================================================================
 
@@ -55,20 +55,29 @@
 
 //== CLASS DEFINITION =========================================================
 
-/** \brief Removed non-manifold vertices from a mesh by duplicating them
+/** \brief Snaps selected vertices at boundaries
  *
- *
+ * Snaps selected boundary vertices together if they are closer than the given
+ * distance. No new vertices will be introduced on either edge, so they are just
+ * snapped to existing ones.
  *
  */
 template<class MeshT>
-class NonManifoldVertexFixingT {
+class BoundarySnappingT {
 
 public:
 
-  NonManifoldVertexFixingT(MeshT& _mesh );
+  BoundarySnappingT(MeshT& _mesh );
 
-  void fix();
-
+  /** \brief snaps boundary vertices
+   *
+   * snaps selected boundary vertices where the vertices
+   * distance is not greater than the given distance
+   *
+   * @param _epsilon max Distance between 2 boundary vertices
+   *
+   */
+  void snap(double _epsilon);
 
 private:
 
@@ -76,9 +85,9 @@ private:
 
 };
 
-#if defined(INCLUDE_TEMPLATES) && !defined(NONMANIFOLDVERTEXFIXING_CC)
-#define NONMANIFOLDVERTEXFIXING_TEMPLATES
-#include "NonManifoldVertexFixingT.cc"
+#if defined(INCLUDE_TEMPLATES) && !defined(BOUNDARYSNAPPING_CC)
+#define BOUNDARYSNAPPING_TEMPLATES
+#include "BoundarySnappingT.cc"
 #endif
 
 #endif
