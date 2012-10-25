@@ -46,30 +46,34 @@
 
 #include "MeshRepairPlugin.hh"
 #include "MeshFixingT.hh"
+#include "NonManifoldVertexFixingT.hh"
 
 
 //-----------------------------------------------------------------------------
 
 void MeshRepairPlugin::fixNonManifoldVertices(int _objectId)
 {
-  TriMesh* triMesh = 0;
+  TriMesh*  triMesh = 0;
   PolyMesh* polyMesh = 0;
 
   PluginFunctions::getMesh(_objectId, triMesh);
   PluginFunctions::getMesh(_objectId, polyMesh);
-  if (triMesh)
-    fixNonManifoldVertices(triMesh);
-  else if (polyMesh)
-    fixNonManifoldVertices(polyMesh);
-  else
+  if (triMesh) {
+    NonManifoldVertexFixingT<TriMesh> fixer(*triMesh);
+    fixer.fix();
+  }
+  else if (polyMesh) {
+    NonManifoldVertexFixingT<PolyMesh> fixer(*polyMesh);
+    fixer.fix();
+  } else
   {
     emit log(LOGERR, tr("Unsupported Object Type."));
     return;
   }
 
   emit updatedObject(_objectId, UPDATE_ALL);
-  emit createBackup(_objectId, "fixTopology", UPDATE_ALL);
-  emit scriptInfo("fixTopology(" + QString::number(_objectId) + ")");
+  emit createBackup(_objectId, "fixNonManifoldVertices", UPDATE_ALL);
+  emit scriptInfo("fixNonManifoldVertices(" + QString::number(_objectId) + ")");
 }
 
 //-----------------------------------------------------------------------------
