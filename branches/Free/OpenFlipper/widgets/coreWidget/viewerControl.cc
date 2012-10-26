@@ -480,7 +480,7 @@ void CoreWidget::applicationSnapshot() {
   suggest += format;
 
   // Write image asynchronously
-  QPixmap* pic = new QPixmap(QPixmap::grabWindow( winId() ));
+  QImage* pic = new QImage(QPixmap::grabWindow( winId() ).toImage());
   writeImageAsynchronously(pic, suggest);
 }
 
@@ -788,25 +788,6 @@ void CoreWidget::applicationSnapshotName(QString _name) {
   snapshotName_ = _name;
   snapshotCounter_ = 0;
 }
-
-void writeImageQPixmap(QPixmap* _pixmap, const QString _name) {
-
-    _pixmap->save(_name);
-    delete _pixmap;
-}
-
-void CoreWidget::writeImageAsynchronously(QPixmap* _pixmap, const QString _name) {
-
-    QFuture<void>* future = new QFuture<void>();
-    *future = QtConcurrent::run(writeImageQPixmap, _pixmap, _name);
-    QFutureWatcher<void>* watcher = new QFutureWatcher<void>();
-    watcher->setFuture(*future);
-
-    watcher_garbage_.insert(std::pair<QFutureWatcher<void>*,QFuture<void>*>(watcher, future));
-
-    connect(watcher, SIGNAL(finished()), this, SLOT(delete_garbage()));
-}
-
 
 
 void writeImageQImage(QImage* _image, const QString _name) {
