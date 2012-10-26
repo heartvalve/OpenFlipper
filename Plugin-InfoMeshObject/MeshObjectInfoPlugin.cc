@@ -356,7 +356,12 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   chi += _mesh->n_faces(); // chi = Euler characteristic
   // chi + n_holes = 2(n_components - genus) => genus = n_components - (chi + n_holes)/2;
   float genus = compo_count - 0.5*(chi + boundary_count);
-  info_->genus->setText( QString::number(genus) );
+  if(compo_count == 1 && boundary_count == 0)
+    info_->genus->setText( QString::number(genus) );
+  else if(compo_count != 1)
+    info_->genus->setText( "(multiple components)" );
+  else
+    info_->genus->setText( "(not manifold)" );
 
   // Coordinates
   typename MeshT::VertexIter v_it;
