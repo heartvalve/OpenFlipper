@@ -123,7 +123,6 @@ void MaterialPicker::initializePlugin() {
      stream >> materialInfo.reflectance;
      stream.str("");
      stream.clear();
-     savedString.push_back(QString::number(Qt::Key_unknown));
      stream << savedString[8].toStdString();
      stream >> materialInfo.key;
 
@@ -201,8 +200,9 @@ void MaterialPicker::clearList() {
   materialListWidget_->clear();
   materialList_.clear();
   materialStrings_.clear();
-  OpenFlipperSettings().setValue(propName_, materialStrings_);
   fillMaterialButton_->setEnabled(false);
+
+  //setting value empty instead of removing will cause an error at start up
   OpenFlipperSettings().remove(propName_);
 }
 
@@ -212,6 +212,7 @@ void MaterialPicker::slotRemoveCurrentItem()
 {
   if (!materialListWidget_->count())
     return;
+
   QMessageBox msgBox;
   QListWidgetItem* item = materialListWidget_->currentItem();
   msgBox.setText(tr("Remove ")+plainName(item->text(),materialListWidget_->currentRow())+tr("?"));
@@ -357,6 +358,7 @@ QString MaterialPicker::plainName(const QString &string, int index)
 {
   if (materialList_[index].key == Qt::Key_unknown)
     return string;
+
   QString str(string);
   return str.remove(0,4);
 }
