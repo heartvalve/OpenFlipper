@@ -127,7 +127,11 @@ private:
   bool fillMaterial_;
 
 private:
+  /// returns the item name with hotkey hint
   QString itemName(const QString &_name, int _key);
+
+  /// returns the plain name of the material without hotkey hint
+  QString plainName(const QString &string, int index);
 
 private slots:
 
@@ -149,9 +153,6 @@ private slots:
   /// saves the new material name with hotkey hint
   void saveNewName ( QWidget * _editor, QAbstractItemDelegate::EndEditHint _hint );
   void saveNewName (QListWidgetItem* _item);
-
-  /// returns the plain name of the material without hotkey hint
-  QString plainName(const QString &string, int index);
 
   /// returns a formatted string for saving
   QString materialString(const MaterialInfo& _mat, const QString &_name);
