@@ -23,10 +23,10 @@
       <item>
        <widget class="QRadioButton" name="rbUseDecimater">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The incremental decimater checks and takes each iteration the best collapse.&lt;/p&gt;&lt;p&gt;So, this decimater is the first choice for the &lt;span style=&quot; font-weight:600;&quot;&gt;best results&lt;/span&gt;, but might be slow.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The incremental decimater takes the best collapse in each iteration (based on the given order).&lt;/p&gt;&lt;p&gt;So, this decimater is the first choice for optimal&lt;span style=&quot; font-weight:600;&quot;&gt; results&lt;/span&gt;, but might be slow.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The incremental decimater checks and takes each iteration the best collapse.&lt;/p&gt;&lt;p&gt;So, this decimater is the first choice for the &lt;span style=&quot; font-weight:600;&quot;&gt;best results&lt;/span&gt;, but might be slow.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The incremental decimater takes the best collapse in each iteration (based on the given order).&lt;/p&gt;&lt;p&gt;So, this decimater is the first choice for optimal&lt;span style=&quot; font-weight:600;&quot;&gt; results&lt;/span&gt;, but might be slow.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Incremental</string>
@@ -39,10 +39,10 @@
       <item>
        <widget class="QRadioButton" name="rbUseMC">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Multiple choice decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is &lt;span style=&quot; font-weight:600;&quot;&gt;faster&lt;/span&gt; than the incremental decimater but as it is randomized, the result is not guarantied to be the best, but still inside the specified constraints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Multiple choice decimater&lt;/p&gt;&lt;p&gt;The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is &lt;span style=&quot; font-weight:600;&quot;&gt;faster&lt;/span&gt; than the incremental decimater but as it is randomized, the result is not guaranteed to be the best, but still inside the specified constraints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Multiple choice decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is &lt;span style=&quot; font-weight:600;&quot;&gt;faster&lt;/span&gt; than the incremental decimater but as it is randomized, the result is not guarantied to be the best, but still inside the specified constraints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Multiple choice decimater&lt;/p&gt;&lt;p&gt;The multiple choice decimater checks #Random Samples and takes the best one for the next collapse. As there is no heap involved, this is &lt;span style=&quot; font-weight:600;&quot;&gt;faster&lt;/span&gt; than the incremental decimater but as it is randomized, the result is not guaranteed to be the best, but still inside the specified constraints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Multiple Choice</string>
@@ -52,10 +52,10 @@
       <item>
        <widget class="QRadioButton" name="rbUseMixed">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mixed Decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Uses Multiple Choice Decimater and Incremental Decimater to get &lt;span style=&quot; font-weight:600;&quot;&gt;good and fast results&lt;/span&gt; as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mixed Decimater&lt;/p&gt;&lt;p&gt;Uses Multiple Choice Decimater and Incremental Decimater to get as &lt;span style=&quot; font-weight:600;&quot;&gt;good and fast results&lt;/span&gt; as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mixed Decimater&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Uses Multiple Choice Decimater and Incremental Decimater to get &lt;span style=&quot; font-weight:600;&quot;&gt;good and fast results&lt;/span&gt; as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mixed Decimater&lt;/p&gt;&lt;p&gt;Uses Multiple Choice Decimater and Incremental Decimater to get as &lt;span style=&quot; font-weight:600;&quot;&gt;good and fast results&lt;/span&gt; as possible. This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold. When 80% of the maximal error are reached or 80% of the collapses have been performed, it switches back to the Incremental Decimater to do the rest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Mixed</string>
@@ -119,13 +119,13 @@
             <item row="0" column="0">
              <widget class="QDoubleSpinBox" name="mixedFactorCounter">
               <property name="toolTip">
-               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify what percentage of the decimation should be performed by which decimater.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="statusTip">
-               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+               <string>Specify what percentage of the decimation should be performed by which decimater.</string>
               </property>
               <property name="whatsThis">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify how many percent of the decimation should be performed by the Incremental Decimater&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify what percentage of the decimation should be performed by which decimater.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="maximum">
                <double>100.000000000000000</double>
@@ -164,10 +164,10 @@
                <bool>true</bool>
               </property>
               <property name="toolTip">
-               <string>Specify how many percent of the decimation should be performed by which decimater.</string>
+               <string>Specify what percentage of the decimation should be performed by which decimater.</string>
               </property>
               <property name="whatsThis">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify the workload for each Decimater.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify what percentage of the decimation should be performed by which decimater.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="minimum">
                <number>0</number>
@@ -201,10 +201,10 @@
       <item>
        <widget class="QRadioButton" name="rbByDistance">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the Hausdorff distance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the distance to the original surface (Quadrics).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the Hausdorff distance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the distance to the original surface (Quadrics).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>by Distance</string>
@@ -227,10 +227,10 @@
       <item>
        <widget class="QRadioButton" name="rbByEdgeLength">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the distance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the edge length.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the distance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the collapse priority to the edge length.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>by Edge length</string>
@@ -547,10 +547,10 @@ p, li { white-space: pre-wrap; }
          <item row="0" column="0">
           <widget class="QRadioButton" name="rbTriangles">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of triangles, or constraint limit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of triangles is reached, or constraint limits would be violated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="whatsThis">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of triangles, or maximal error is reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of triangles is reached, or constraint limits would be violated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>#Triangles</string>
@@ -595,10 +595,10 @@ p, li { white-space: pre-wrap; }
          <item row="1" column="0">
           <widget class="QRadioButton" name="rbVertices">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of vertices, or constraint limit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of vertices is reached, or constraint limits would be violated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="whatsThis">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of vertices, or maximal error is reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the given number of vertices is reached, or constraint limits would be violated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>#Vertices</string>
@@ -649,10 +649,10 @@ p, li { white-space: pre-wrap; }
          <item row="2" column="0">
           <widget class="QRadioButton" name="rbConstraintsOnly">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until constraint limit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until constraint limits would be violated by any further collapse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="whatsThis">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until the maximal error is reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decimate until constraint limits would be violated by any further collapse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Constraints only</string>
@@ -670,7 +670,7 @@ p, li { white-space: pre-wrap; }
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Initialize&lt;/span&gt; decimaters for all target meshes with the given values and modules. &lt;/p&gt;&lt;p&gt;Initialization saves the error quadrics per vertex until &lt;span style=&quot; font-style:italic;&quot;&gt;Initialize&lt;/span&gt; will be pressed again. So, if you don't reinitialize, you can decimate multiple times with the original errors. &lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize updates&lt;/span&gt; the errors according to the decimated mesh.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize&lt;/span&gt; is &lt;span style=&quot; font-weight:600;&quot;&gt;needed&lt;/span&gt;, if you change the &lt;span style=&quot; font-weight:600;&quot;&gt;Decimater&lt;/span&gt; (not the parameter for the decimater e.g. &amp;quot;Random Samples&amp;quot; for Multiple Choice), &lt;span style=&quot; font-weight:600;&quot;&gt;Decimation Order&lt;/span&gt; or add/remove a &lt;span style=&quot; font-weight:600;&quot;&gt;Constraint&lt;/span&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="whatsThis">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Initialize&lt;/span&gt; decimaters for all target meshes with the given values and modules. &lt;/p&gt;&lt;p&gt;Initialization saves the error quadrics per vertex until &lt;span style=&quot; font-style:italic;&quot;&gt;Initialize&lt;/span&gt; will be pressed again. So, if you don't reinitialize, you can decimate multiple times with the original errors. &lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize updates&lt;/span&gt; the errors according to the decimated mesh.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize&lt;/span&gt; is &lt;span style=&quot; font-weight:600;&quot;&gt;needed&lt;/span&gt;, if you change the &lt;span style=&quot; font-weight:600;&quot;&gt;Decimater&lt;/span&gt; (not the parameter for the decimater e.g. &amp;quot;Random Samples&amp;quot; for Multiple Choice), &lt;span style=&quot; font-weight:600;&quot;&gt;Decimation Order&lt;/span&gt; or add/remove a &lt;span style=&quot; font-weight:600;&quot;&gt;Constraint&lt;/span&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Initialize&lt;/span&gt; decimaters for all target meshes with the given values and modules. &lt;/p&gt;&lt;p&gt;Initialization saves the error quadrics per vertex until &lt;span style=&quot; font-style:italic;&quot;&gt;Initialize&lt;/span&gt; will be pressed again. So, if you don't reinitialize, you can decimate multiple times with the original errors. &lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize updates&lt;/span&gt; the errors according to the current decimated mesh.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Reinitialize&lt;/span&gt; is &lt;span style=&quot; font-weight:600;&quot;&gt;needed&lt;/span&gt;, if you change the &lt;span style=&quot; font-weight:600;&quot;&gt;Decimater&lt;/span&gt; (not the parameter for the decimater e.g. &amp;quot;Random Samples&amp;quot; for Multiple Choice), &lt;span style=&quot; font-weight:600;&quot;&gt;Decimation Order&lt;/span&gt; or add/remove a &lt;span style=&quot; font-weight:600;&quot;&gt;Constraint&lt;/span&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>Initialize</string>
