@@ -52,7 +52,7 @@
 MaterialPicker::MaterialPicker()
   :
   pickModeName_("MaterialPicker"),
-  propName_(name()+QString("/Material/Materials")),
+  propName_(name()+QString("/Materials")),
   pickMaterialButton_(0),
   fillMaterialButton_(0),
   materialListWidget_(0),
@@ -175,7 +175,10 @@ void MaterialPicker::removeItem(QListWidgetItem* _item)
   materialListWidget_->takeItem(index);
   materialList_.erase(materialList_.begin()+index);
   materialStrings_.erase(materialStrings_.begin()+index);
-  OpenFlipperSettings().setValue(propName_, materialStrings_);
+  if (materialStrings_.isEmpty())
+    OpenFlipperSettings().remove(propName_);
+  else
+    OpenFlipperSettings().setValue(propName_, materialStrings_);
   fillMaterialButton_->setEnabled(materialListWidget_->count());
 
   //update hotkey table
@@ -189,6 +192,7 @@ void MaterialPicker::removeItem(QListWidgetItem* _item)
   }
   if (eraseIter != shortKeyRow_.end())
     shortKeyRow_.erase(eraseIter);
+
 }
 
 //------------------------------------------------------------------------------
@@ -199,6 +203,7 @@ void MaterialPicker::clearList() {
   materialStrings_.clear();
   OpenFlipperSettings().setValue(propName_, materialStrings_);
   fillMaterialButton_->setEnabled(false);
+  OpenFlipperSettings().remove(propName_);
 }
 
 //------------------------------------------------------------------------------
