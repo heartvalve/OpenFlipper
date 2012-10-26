@@ -272,7 +272,7 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     const unsigned int LINE_LEN = 4096;
 
 
-    std::ifstream ifs(_filename.toUtf8());
+    std::ifstream ifs(_filename.toUtf8(), std::ios_base::binary);
 
     if ( (!ifs.is_open()) || (!ifs.good())) {
 
@@ -1232,7 +1232,8 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
 
     std::string filename = std::string( _filename.toUtf8() );
 
-    std::fstream ofs( filename.c_str(), std::ios_base::out );
+    bool binary = userWriteOptions_ & OFFImporter::BINARY;
+    std::fstream ofs( filename.c_str(), (binary ? std::ios_base::out | std::ios_base::binary : std::ios_base::out));
 
     if (!ofs) {
 
