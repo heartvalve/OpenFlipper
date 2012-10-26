@@ -988,7 +988,6 @@ public:
 
   public:
 
-    void writeImageAsynchronously(QPixmap* _pixmap, const QString _name);
     void writeImageAsynchronously(QImage* _image, const QString _name);
 
   private:
