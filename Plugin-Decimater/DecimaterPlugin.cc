@@ -119,6 +119,36 @@ void DecimaterPlugin::initializePlugin()
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
   emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
+
+  WhatsThisGenerator generator("Decimater");
+
+  tool_->pbDecimate->setWhatsThis(tool_->pbDecimate->whatsThis()+generator.generateLink("quick_tutorial"));
+  tool_->pbInitialize->setWhatsThis(tool_->pbInitialize->whatsThis()+generator.generateLink("quick_tutorial"));
+  tool_->rbUseDecimater->setWhatsThis(tool_->rbUseDecimater->whatsThis()+generator.generateLink("incremental"));
+  tool_->rbUseMC->setWhatsThis(tool_->rbUseMC->whatsThis()+generator.generateLink("multiple_choice"));
+  tool_->rbUseMixed->setWhatsThis(tool_->rbUseMixed->whatsThis()+generator.generateLink("mixed"));
+  tool_->cbDistance->setWhatsThis(tool_->cbDistance->whatsThis()+generator.generateLink());
+  tool_->cbNormalDev->setWhatsThis(tool_->cbNormalDev->whatsThis()+generator.generateLink());
+  tool_->cbEdgeLength->setWhatsThis(tool_->cbEdgeLength->whatsThis()+generator.generateLink());
+  tool_->cbIndependentSets->setWhatsThis(tool_->cbIndependentSets->whatsThis()+generator.generateLink());
+  tool_->cbRoundness->setWhatsThis(tool_->cbRoundness->whatsThis()+generator.generateLink());
+  tool_->cbAspectRatio->setWhatsThis(tool_->cbAspectRatio->whatsThis()+generator.generateLink());
+  tool_->rbByDistance->setWhatsThis(tool_->rbByDistance->whatsThis()+generator.generateLink());
+  tool_->rbByEdgeLength->setWhatsThis(tool_->rbByEdgeLength->whatsThis()+generator.generateLink());
+  tool_->rbByNormalDeviation->setWhatsThis(tool_->rbByNormalDeviation->whatsThis()+generator.generateLink());
+  tool_->rbConstraintsOnly->setWhatsThis(tool_->rbConstraintsOnly->whatsThis()+generator.generateLink());
+  tool_->rbTriangles->setWhatsThis(tool_->rbTriangles->whatsThis()+generator.generateLink());
+  tool_->rbVertices->setWhatsThis(tool_->rbVertices->whatsThis()+generator.generateLink());
+
+
+  tool_->randomSamplesCounter->setWhatsThis(tool_->randomSamplesCounter->whatsThis()+generator.generateLink("multiple_choice"));
+  tool_->mixedFactorCounter->setWhatsThis(tool_->mixedFactorCounter->whatsThis()+generator.generateLink("mixed"));
+  tool_->roundness->setWhatsThis(tool_->roundness->whatsThis()+generator.generateLink());
+  tool_->aspectRatio->setWhatsThis(tool_->aspectRatio->whatsThis()+generator.generateLink());
+  tool_->distance->setWhatsThis(tool_->distance->whatsThis()+generator.generateLink());
+  tool_->edgeLength->setWhatsThis(tool_->edgeLength->whatsThis()+generator.generateLink());
+  tool_->normalDeviation->setWhatsThis(tool_->normalDeviation->whatsThis()+generator.generateLink());
+
 }
 
 /** \brief Initialization of the plugin when it is loaded by the core

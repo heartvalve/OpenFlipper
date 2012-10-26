@@ -1,0 +1,58 @@
+/** 
+\mainpage Documentation for Decimater Plugin
+
+\section Summary
+
+Decimates a given mesh to a low poly mesh.
+
+\ref quick_tutorial
+
+\ref decimater :
+\li \ref incremental
+\li \ref multiple_choice
+\li \ref mixed
+
+\section quick_tutorial Quick Tutorial
+First select one of the \ref decimater .
+The \ref incremental provides the best quality, while
+the \multiple_choice is the fastest one.
+Now, you can choose your constraints and the decimation order.
+Don't forget to define stop conditions.
+
+If done, press <i>Initialize</i> and then <i>Decimate</i>.
+After pressing "Initialize" or <i>Decimate</i>, it is possible to
+change the constraints' values and decimate again having 
+the original error quadrics of you mesh.
+Otherwise, by adding or removing contraints, you have to reinitialize
+the decimater. This will update the error quadrics, so the next decimatation
+might be less accurate.
+Also, changing the <b>\ref decimater</b>, or the <b>Decimition Order</b>, will
+cause a reinitialization.
+
+\note The <b>Initialization</b> saves the error quadric of each vertex.
+They will not be updated, until <i>Initialize</i> is pressed again.
+
+
+
+
+\section decimater Decimater
+
+\subsection incremental Incremental Decimater
+
+The incremental decimater checks and takes each iteration the best collapse.
+So, this decimater is the first choice for the <b>best results</b>, but might be slow.
+Use \ref multiple_choice or \ref mixed to get faster, but less accurate results.
+
+\subsection multiple_choice Multiple Choice Decimater
+
+The multiple choice decimater checks #Random Samples and takes the best one for the next collapse.
+As there is no heap involved, this is <b>faster</b> than the incremental decimater but as it is randomized,
+the result is not guarantied to be the best, but still inside the specified constraints.
+
+\subsection mixed Mixed Decimater
+
+Uses Multiple Choice Decimater and Incremental Decimater to get <b>good and fast results</b> as possible.
+This decimater uses several steps of the Multiple Choice Decimater with increasing constraint threshold.
+When 80% of the maximal error are reached or 80% of the collapses have been performed,
+it switches back to the Incremental Decimater to do the rest.
+*/ 
