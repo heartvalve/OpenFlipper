@@ -322,13 +322,14 @@ private:
 
     /** \brief flip orientation of selected faces.
      *
-     * flips the orientation of selected faces.
-     * for correct topology, some vertices are added
+     * flips the orientation of selected faces or if nothing is selected, the whole mesh is flipped
+     * for correct topology, some vertices may be duplicated
+     *
      * @param _mesh target mesh
      *
      */
     template<typename MeshT>
-    void flipOrientationSelected(MeshT *_mesh);
+    void flipOrientation(MeshT& _mesh);
 
 
 public slots:

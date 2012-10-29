@@ -106,9 +106,9 @@ MeshRepairPlugin::flipOrientation(int _objectId) {
   PluginFunctions::getMesh(_objectId,polyMesh);
 
   if (triMesh)
-    flipOrientationSelected(triMesh);
+    flipOrientation(*triMesh);
   else if (polyMesh)
-    flipOrientationSelected(polyMesh);
+    flipOrientation(*polyMesh);
   else
     emit log( LOGERR,tr("Unsupported Object Type for normal flipping!") );
 
