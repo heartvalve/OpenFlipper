@@ -538,13 +538,13 @@ There is no automatic algorithm to fix these foldovers here. So you will have to
           <item>
            <widget class="QPushButton" name="flipOrientation">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flip the normals of all selected faces on the target meshes by reversing the vertex order. This can be used to manually fix foldovers detected in &amp;quot;Edge operations&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flip the normals of all selected faces on the target meshes by reversing the vertex order. This can be used to manually fix foldovers detected in &amp;quot;Edge operations&amp;quot;. It either inverts the whole mesh or, if faces are selected, only the selection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="statusTip">
              <string>Flip the normals of all target meshes</string>
             </property>
             <property name="text">
-             <string>Flip selected face orientation</string>
+             <string>Flip face orientation</string>
             </property>
            </widget>
           </item>
