@@ -122,10 +122,16 @@ public:
         backfaceCulling_(_m.backfaceCulling_),
         multiSampling_(_m.multiSampling_) {};
         
-    /// set color (base, ambient, diffuse, specular) based on _c
+    /** \brief Set color based on _c
+     *
+     *  Basecolor (which is the emitted color is set to zero)
+     *  The other colors are based on the given color _c
+     *
+     *  @param _c Sample color used to compute the other color components (ambient, diffuse, specular)
+     */
     void color(const Vec4f& _c) {
-        Vec4f c;
-        baseColor(_c);
+        Vec4f c(0.0,0.0,0.0,1.0);
+        baseColor(c);
         c = _c * 0.2f;  c[3]=_c[3];  ambientColor(c);
         c = _c * 0.6f;  c[3]=_c[3];  diffuseColor(c);
         c = _c * 0.8f;  c[3]=_c[3];  specularColor(c);
@@ -134,9 +140,9 @@ public:
     /// Creates a randomized color and sets it
     void generateRandomColor() {
       color( Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
-             0.2 + double(rand())/double(RAND_MAX)*0.8,
-             0.2 + double(rand())/double(RAND_MAX)*0.8,
-             1.0));
+                   0.2 + double(rand())/double(RAND_MAX)*0.8,
+                   0.2 + double(rand())/double(RAND_MAX)*0.8,
+                   1.0));
     }
 
     /// set the base color

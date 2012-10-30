@@ -560,21 +560,21 @@ QString helpDirStr();
   DLLEXPORT
   void windowTitle( QString _titel );
 
-  /// Default base color
+  /// Default color for objects
   DLLEXPORT
-  void defaultBaseColor( QColor _color );
+  void defaultColor( QColor _color );
 
-  /// Default base color
+  /// Default color for objects
   DLLEXPORT
-  QColor defaultBaseColor();
+  QColor defaultColor();
 
-  /// use randomized base color
+  /// use randomized color as default for objects
   DLLEXPORT
-  void randomBaseColor(bool _random);
+  void randomDefaultColor(bool _random);
 
-  /// use randomized base color
+  /// use randomized color as default for objects
   DLLEXPORT
-  bool randomBaseColor();
+  bool randomDefaultColor();
 
 /** @} */
 

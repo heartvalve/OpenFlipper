@@ -637,9 +637,9 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="baseColorButton">
+                 <widget class="QPushButton" name="defaultColorButton">
                   <property name="text">
-                   <string>Default base color</string>
+                   <string>Default color</string>
                   </property>
                  </widget>
                 </item>
@@ -659,9 +659,9 @@
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="randomBaseColor">
+               <widget class="QCheckBox" name="randomDefaultColor">
                 <property name="text">
-                 <string>Use random base color</string>
+                 <string>Use random default color for objects</string>
                 </property>
                </widget>
               </item>

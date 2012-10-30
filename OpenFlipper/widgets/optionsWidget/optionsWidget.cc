@@ -137,7 +137,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   //colordialog
   connect(backgroundButton, SIGNAL(clicked()), this, SLOT(getBackgroundColor()) );
-  connect(baseColorButton, SIGNAL(clicked()), this, SLOT(getBaseColor()) );
+  connect(defaultColorButton, SIGNAL(clicked()), this, SLOT(getDefaultColor()) );
   
   // Clear settings and ini buttons
   connect(clearSettingsButton, SIGNAL(clicked()), this, SLOT(slotClearSettings()));
@@ -160,14 +160,14 @@ void OptionsWidget::getBackgroundColor(){
   backgroundButton->setIcon( QIcon(color) );
 }
 
-void OptionsWidget::getBaseColor(){
-  QColor newColor = QColorDialog::getColor ( OpenFlipper::Options::defaultBaseColor() );
+void OptionsWidget::getDefaultColor(){
+  QColor newColor = QColorDialog::getColor ( OpenFlipper::Options::defaultColor() );
 
-  OpenFlipper::Options::defaultBaseColor( newColor) ;
+  OpenFlipper::Options::defaultColor( newColor) ;
 
   QPixmap color(16,16);
-  color.fill( OpenFlipper::Options::defaultBaseColor() );
-  baseColorButton->setIcon( QIcon(color) );
+  color.fill( OpenFlipper::Options::defaultColor() );
+  defaultColorButton->setIcon( QIcon(color) );
 }
 
 void OptionsWidget::viewerSettingsChanged(QListWidgetItem* /*_item*/){
@@ -370,10 +370,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   backgroundColor_ = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
   backgroundButton->setIcon( QIcon(color) );
 
-  color.fill( OpenFlipper::Options::defaultBaseColor() );
-  baseColorButton->setIcon( QIcon(color) );
+  color.fill( OpenFlipper::Options::defaultColor() );
+  defaultColorButton->setIcon( QIcon(color) );
 
-  randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
+  randomDefaultColor->setChecked( OpenFlipper::Options::randomDefaultColor() );
 
   viewerList->setCurrentRow(0);
 
@@ -606,7 +606,7 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate", restrictFPS->isChecked());
   OpenFlipperSettings().setValue("Core/Gui/glViewer/maxFrameRate", FPS->value() );
 
-  OpenFlipper::Options::randomBaseColor( randomBaseColor->isChecked() );
+  OpenFlipper::Options::randomDefaultColor( randomDefaultColor->isChecked() );
 
   //stereo
   if (stereoCustomAnaglyph->isChecked ())
