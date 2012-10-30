@@ -76,6 +76,15 @@
           </property>
           <item row="0" column="0">
            <widget class="QtColorChooserButton" name="baseColorButton">
+            <property name="toolTip">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
+            <property name="statusTip">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
+            <property name="whatsThis">
+             <string>Emitted color (Independent of light sources)</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -96,6 +105,18 @@
           </item>
           <item row="1" column="0">
            <widget class="QtColorChooserButton" name="ambientColorButton">
+            <property name="toolTip">
+             <string>Ambient color</string>
+            </property>
+            <property name="statusTip">
+             <string>Ambient color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Ambient color</string>
+            </property>
+            <property name="accessibleName">
+             <string/>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -116,6 +137,15 @@
           </item>
           <item row="2" column="0">
            <widget class="QtColorChooserButton" name="diffuseColorButton">
+            <property name="toolTip">
+             <string>Diffuse color</string>
+            </property>
+            <property name="statusTip">
+             <string>Diffuse color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Diffuse color</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -136,6 +166,15 @@
           </item>
           <item row="3" column="0">
            <widget class="QtColorChooserButton" name="specularColorButton">
+            <property name="toolTip">
+             <string>Specular color</string>
+            </property>
+            <property name="statusTip">
+             <string>Specular color</string>
+            </property>
+            <property name="whatsThis">
+             <string>Specular color</string>
+            </property>
             <property name="text">
              <string/>
             </property>
