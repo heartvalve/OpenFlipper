@@ -241,6 +241,20 @@ namespace DrawModes {
                (normalSource_   != _other.normalSource_)
               );
     }
+    
+    /** \brief compare two properties
+     *
+     * @param _other Right hand side
+     */
+    bool operator==( const DrawModeProperties& _other ) const {
+      return ( (envMapped_      == _other.envMapped_)      &&
+               (primitive_      == _other.primitive_)      &&
+               (lightStage_     == _other.lightStage_)     &&
+               (colorSource_    == _other.colorSource_)    &&
+               (texcoordSource_ == _other.texcoordSource_) &&
+               (normalSource_   == _other.normalSource_)
+              );
+    }
 
     /** @} */
 
@@ -301,8 +315,10 @@ namespace DrawModes {
       /** @name Operators
        * @{ */
       //===========================================================================
+      void operator = (const DrawMode& _mode );
+
       bool operator==(const DrawMode& _mode) const;
-      
+
       DrawMode operator&(const DrawMode& _mode) const;
       
       DrawMode& operator++();

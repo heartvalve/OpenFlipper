@@ -246,6 +246,13 @@ bool DrawMode::operator==(const DrawMode& _mode) const {
   return ((modeFlags_ & _mode.modeFlags_).any());
 }
 
+void DrawMode::operator =(const DrawMode& _mode) {
+  modeFlags_ = _mode.modeFlags_;
+  layers_ = _mode.layers_;
+
+//  checkConsistency();
+}
+
 bool DrawMode::operator!=( const DrawMode& _mode2  ) const {
   return (modeFlags_ != _mode2.modeFlags_);
 }
@@ -304,7 +311,7 @@ DrawMode& DrawMode::operator&=( const DrawMode& _mode2  ) {
   }
 
 //  assert(checkConsistency());
-  
+
   return (*this);
 }
 
@@ -453,6 +460,7 @@ void DrawMode::combine( DrawMode _mode )
   for (unsigned int i = 0; i < _mode.getNumLayers(); ++i)
     addLayer(_mode.getLayer(i));
 
+//  checkConsistency();
 //  assert(checkConsistency());
 }
 
@@ -529,6 +537,8 @@ const DrawModeProperties* DrawMode::getDrawModeProperties() const
 
 bool DrawMode::checkConsistency() const
 {
+
+  // allow at most one layer per primitive
   for (unsigned int i = 0; i < layers_.size(); ++i)
   {
     for (unsigned int k = i+1; k < layers_.size(); ++k)
@@ -537,6 +547,28 @@ bool DrawMode::checkConsistency() const
         return false;
     }
   }
+
+
+
+  // bitflag -> layer parallelism
+
+  // points-mode in bitflag => point layer expected
+
+  if (*this & DrawModes::POINTS ||
+      *this & DrawModes::POINTS_COLORED ||
+      *this & DrawModes::POINTS_SHADED)
+  {
+    int pointsLayer = 0;
+    for (unsigned int k = 0; k < layers_.size(); ++k)
+    {
+      if (layers_[k].primitive() == PRIMITIVE_POINT)
+        pointsLayer++;
+    }
+
+    if (!pointsLayer)
+      return false;
+  } 
+
 
   return true;
 }
@@ -547,7 +579,7 @@ int DrawMode::getLayerIndex( const DrawModeProperties* _prop ) const
 
   for (unsigned int i = 0; i < layers_.size(); ++i)
   {
-    if ( layers_[i] != *_prop )
+    if ( layers_[i] == *_prop )
       return (int)i;
 
     //    if (!memcmp(&layers_[i], &bla, sizeof(DrawModeProperties)))
