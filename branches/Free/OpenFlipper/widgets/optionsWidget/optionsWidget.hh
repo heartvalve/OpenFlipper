@@ -89,7 +89,7 @@ private slots:
 
    /// open a dialog to determine the color
    void getBackgroundColor();
-   void getBaseColor();
+   void getDefaultColor();
 
    /// keyBinding TreeWidget-Item changed
    void keyTreeItemChanged( QTreeWidgetItem* current, QTreeWidgetItem* previous );

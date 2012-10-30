@@ -160,9 +160,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the random base color setting
     //============================================================================
-    bool random_base_color = false;
-    if ( _ini.get_entry( random_base_color, "Options" , "RandomBaseColor") )
-      OpenFlipper::Options::randomBaseColor( random_base_color );
+    bool random_default_color = false;
+    if ( _ini.get_entry( random_default_color, "Options" , "RandomDefaultColor") )
+      OpenFlipper::Options::randomDefaultColor( random_default_color );
 
     //============================================================================
     // Load the synchronization setting
@@ -217,9 +217,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the setting for the object color option
     //============================================================================
-    uint baseColor = 0;
-    if ( _ini.get_entry( baseColor, "Options" , "DefaultBaseColor") )
-      OpenFlipper::Options::defaultBaseColor(QRgb(baseColor));
+    unsigned int defaultColor = 0;
+    if ( _ini.get_entry( defaultColor, "Options" , "DefaultColor") )
+      OpenFlipper::Options::defaultColor(QRgb(defaultColor));
 
     //============================================================================
     // Load the setting for the default Toolbox mode
@@ -258,7 +258,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     // ViewerProperties
     //============================================================================
 
-    uint viewerCount = 0;
+    unsigned int viewerCount = 0;
     if( _ini.get_entry(viewerCount, "Options", "ViewerCount") ){
     }
 
@@ -362,7 +362,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   QString current_texture_dir = OpenFlipper::Options::currentTextureDirStr().toUtf8();
   _ini.add_entry("Options","CurrentTextureDir",current_texture_dir);
 
-  _ini.add_entry("Options","RandomBaseColor", OpenFlipper::Options::randomBaseColor() );
+  _ini.add_entry("Options","RandomDefaultColor", OpenFlipper::Options::randomDefaultColor() );
 
   if ( OpenFlipper::Options::gui() ) {
 
@@ -390,7 +390,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     }
 
-    _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
+    _ini.add_entry("Options","DefaultColor", (uint)OpenFlipper::Options::defaultColor().rgba ()  );
 
     _ini.add_entry("Options", "StereoMode",OpenFlipper::Options::stereoMode() );
 

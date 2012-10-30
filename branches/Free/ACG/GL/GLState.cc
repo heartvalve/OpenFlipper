@@ -209,13 +209,13 @@ void GLState::setState ()
   glClearColor(clear_color_[0], clear_color_[1], clear_color_[2], clear_color_[3]);
 
   // base color
-  glColor4fv(base_color_.data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ambient_color_.data());
 
   // ambient color
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_color_.data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT , ambient_color_.data());
 
-  // diffuaw color
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_color_.data());
+  // diffuse color
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE , diffuse_color_.data());
 
   // specular color
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_color_.data());
@@ -685,7 +685,7 @@ void GLState::set_base_color(const Vec4f& _col)
   if (updateGL_)
   {
     makeCurrent();
-    glColor4fv(_col.data());
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _col.data());
   }
 }
 

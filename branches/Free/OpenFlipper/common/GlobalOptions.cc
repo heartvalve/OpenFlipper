@@ -166,10 +166,10 @@ static QString currentViewMode_ = "";
 static QString title_ = "OpenFlipper v?";
 
 /// default base color
-static QColor defaultBaseColor_ = QColor("white");
+static QColor defaultColor_ = QColor("white");
 
 /// use random base color
-static bool randomBaseColor_ = false;
+static bool randomDefaultColor_ = false;
 
 /// Scripting status
 static bool scripting_ = false;
@@ -607,20 +607,20 @@ void windowTitle( QString _titel ) {
   title_ = _titel;
 }
 
-void defaultBaseColor( QColor _color ) {
-  defaultBaseColor_ = _color;
+void defaultColor( QColor _color ) {
+  defaultColor_ = _color;
 }
 
-QColor defaultBaseColor() {
-  return defaultBaseColor_;
+QColor defaultColor() {
+  return defaultColor_;
 }
 
-void randomBaseColor(bool _random) {
-  randomBaseColor_ = _random;
+void randomDefaultColor(bool _random) {
+  randomDefaultColor_ = _random;
 }
 
-bool randomBaseColor() {
-  return randomBaseColor_;
+bool randomDefaultColor() {
+  return randomDefaultColor_;
 }
 
 /// return last used dataType

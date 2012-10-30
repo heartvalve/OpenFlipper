@@ -148,7 +148,7 @@ void BaseObjectData::initializeScenegraphNodes() {
     
     QColor color;
     
-    if ( OpenFlipper::Options::randomBaseColor() ){
+    if ( OpenFlipper::Options::randomDefaultColor() ){
 
       QColor bckgrnd = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
       int diff;
@@ -162,7 +162,7 @@ void BaseObjectData::initializeScenegraphNodes() {
       } while (diff < 70000);
     }
     else{
-      color = OpenFlipper::Options::defaultBaseColor();
+      color = OpenFlipper::Options::defaultColor();
     }
     
     ACG::Vec4f colorV;
