@@ -689,6 +689,21 @@ void GLState::set_base_color(const Vec4f& _col)
   }
 }
 
+//-----------------------------------------------------------------------------
+
+
+void GLState::set_color(const Vec4f& _col)
+{
+  color_ = _col;
+
+  if (updateGL_)
+  {
+    makeCurrent();
+    glColor(color_);
+  }
+}
+
+
 
 //-----------------------------------------------------------------------------
 

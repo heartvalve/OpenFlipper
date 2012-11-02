@@ -824,6 +824,12 @@ public:
   static const float default_shininess;
 
 
+  /// set color
+  void set_color(const Vec4f& _col);
+
+  /// set color
+  const Vec4f& color(const Vec4f& _col) { return color_; };
+
   /// set background color
   void set_clear_color(const Vec4f& _col);
   /// get background color
@@ -1071,6 +1077,7 @@ private: //--------------------------------------------------------------------
 
   // colors & materials
   Vec4f   clear_color_,
+          color_,
           base_color_,
           ambient_color_,
           diffuse_color_,

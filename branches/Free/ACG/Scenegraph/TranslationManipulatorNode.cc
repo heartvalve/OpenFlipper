@@ -629,12 +629,12 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     {
       _state.set_diffuse_color(element_[XRing].active_current_color_);
       _state.set_ambient_color(element_[XRing].active_current_color_);
-      _state.set_base_color(element_[XRing].active_current_color_);
+      _state.set_color(element_[XRing].active_current_color_);
 
     } else {
       _state.set_diffuse_color(element_[XRing].inactive_current_color_);
       _state.set_ambient_color(element_[XRing].inactive_current_color_);
-      _state.set_base_color(element_[XRing].inactive_current_color_);
+      _state.set_color(element_[XRing].inactive_current_color_);
 
     }
 
@@ -648,12 +648,12 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     {
       _state.set_diffuse_color(element_[YRing].active_current_color_);
       _state.set_ambient_color(element_[YRing].active_current_color_);
-      _state.set_base_color(element_[YRing].active_current_color_);
+      _state.set_color(element_[YRing].active_current_color_);
 
     } else {
       _state.set_diffuse_color(element_[YRing].inactive_current_color_);
       _state.set_ambient_color(element_[YRing].inactive_current_color_);
-      _state.set_base_color(element_[YRing].inactive_current_color_);
+      _state.set_color(element_[YRing].inactive_current_color_);
 
     }
 
@@ -666,12 +666,12 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     {
       _state.set_diffuse_color(element_[ZRing].active_current_color_);
       _state.set_ambient_color(element_[ZRing].active_current_color_);
-      _state.set_base_color(element_[ZRing].active_current_color_);
+      _state.set_color(element_[ZRing].active_current_color_);
 
     } else {
       _state.set_diffuse_color(element_[ZRing].inactive_current_color_);
       _state.set_ambient_color(element_[ZRing].inactive_current_color_);
-      _state.set_base_color(element_[ZRing].inactive_current_color_);
+      _state.set_color(element_[ZRing].inactive_current_color_);
 
     }
 
