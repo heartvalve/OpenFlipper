@@ -108,7 +108,7 @@ enter(GLState& _state , const DrawModes::DrawMode& _drawMode)
 
 void
 LineNode::
-draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
+draw(GLState&  _state  , const DrawModes::DrawMode& _drawMode)
 {
   if (_drawMode & DrawModes::WIREFRAME)
   {
@@ -223,6 +223,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
     }
     else
     {
+      _state.set_color(_state.base_color());
       glBegin(GL_LINE_STRIP);
       ConstPointIter p_it=points_.begin(), p_end=points_.end();
       for (; p_it!=p_end; ++p_it)
