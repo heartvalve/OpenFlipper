@@ -82,8 +82,9 @@ class ACGDLLEXPORT QtTranslationManipulatorNode : public QObject , public Transl
   Q_OBJECT
 
   signals:
-    /** This signal is emitted everytime the manipulator is moved
-     * Do not traverse Scenegraph when called by this function!!!!!!!
+    /** \brief This signal is emitted every time the manipulator is moved by the user via mouse
+     *
+     * \note Do not traverse Scenegraph when called by this function or you end up in an endless loop!!
      */
     void manipulatorMoved( QtTranslationManipulatorNode * _node, QMouseEvent* _event);
 
@@ -93,7 +94,10 @@ class ACGDLLEXPORT QtTranslationManipulatorNode : public QObject , public Transl
      */
     void visibilityChanged( QtTranslationManipulatorNode * _node, bool _visible );
 
-    /** this signal is emited every time the position of the manipulator is changed
+    /** \brief This signal is emitted every time the position of the manipulator is changed
+     *
+     * This slot is only triggered, when the center of the manipulator has been changed.
+     * Changes in orientation are not triggering this signal
      */
     void positionChanged( QtTranslationManipulatorNode * _node );
 
