@@ -249,10 +249,12 @@ void SelectionBasePlugin::pluginsInitialized() {
     
     nodeName = std::string( tr("Selection Base Plugin: Lasso Selection Line").toUtf8() );
     line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode, 0, nodeName );
-    PluginFunctions::addGlobalNode(line_node_);                                              
+    PluginFunctions::addGlobalNode(line_node_);
     line_node_->set_line_width (2.0);
     line_node_->alwaysOnTop() = true;
     line_node_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
+    line_node_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+    line_node_->set_base_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
     line_node_->hide();
 }
 
@@ -1245,10 +1247,13 @@ void SelectionBasePlugin::slotMouseLassoSelection(QMouseEvent* _event) {
 
         if(!lassoSelection_) return;
         
-        if (deselection_)
-            line_node_->set_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
-        else
-            line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+        if (deselection_) {
+          line_node_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+          line_node_->set_base_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+        } else {
+          line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+          line_node_->set_base_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+        }
 
         line_node_->clear();
         for (std::vector< ACG::Vec3d >::iterator it = linePoints_.begin(); it != linePoints_.end(); ++it)
@@ -1310,10 +1315,13 @@ void SelectionBasePlugin::slotMouseVolumeLassoSelection(QMouseEvent* _event) {
 
         if(!lassoSelection_) return;
         
-        if (deselection_)
-            line_node_->set_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
-        else
-            line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+        if (deselection_) {
+          line_node_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+          line_node_->set_base_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+        } else {
+          line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+          line_node_->set_base_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+        }
         
         line_node_->clear();
         for (std::vector< ACG::Vec3d >::iterator it = linePoints_.begin(); it != linePoints_.end(); ++it)
