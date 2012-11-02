@@ -227,6 +227,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
+    _state.set_color( _state.specular_color() );
+
     ACG::GLState::shadeModel(GL_FLAT);
     
     if ( _drawMode & DrawModes::POINTS_SHADED  ) {
@@ -260,7 +262,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if (_drawMode & DrawModes::WIREFRAME)
   {
 //    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
-    glColor( _state.specular_color() );
+    _state.set_color( _state.specular_color() );
 
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
@@ -285,7 +287,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     Vec4f  clear_color  = _state.clear_color();
     clear_color[3] = 1.0;
-    glColor( clear_color );
+    _state.set_color( clear_color );
 
     ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
@@ -296,7 +298,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 //    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
     ACG::GLState::depthFunc(GL_LEQUAL);
 
-    glColor( _state.specular_color() );
+    _state.set_color( _state.specular_color() );
 
     draw_lines();
     
@@ -316,7 +318,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
   if (_drawMode & DrawModes::HALFEDGES)
   {
-    glColor( _state.specular_color() );
+    _state.set_color( _state.specular_color() );
 
     enable_arrays( PER_HALFEDGE_VERTEX_ARRAY);
     ACG::GLState::disable(GL_LIGHTING);
@@ -1006,7 +1008,7 @@ pick_vertices(GLState& _state, bool _front)
     clear_color[3] = 1.0;
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    _state.set_base_color(clear_color);
+    glColor(clear_color);
     
     ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
@@ -1014,7 +1016,7 @@ pick_vertices(GLState& _state, bool _front)
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     ACG::GLState::depthFunc(GL_LEQUAL);
-    _state.set_base_color(base_color);
+    glColor(base_color);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
@@ -1083,7 +1085,7 @@ pick_edges(GLState& _state, bool _front)
     clear_color[3] = 1.0;
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    _state.set_base_color(clear_color);
+    glColor(clear_color);
     
     ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
@@ -1091,7 +1093,7 @@ pick_edges(GLState& _state, bool _front)
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     ACG::GLState::depthFunc(GL_LEQUAL);
-    _state.set_base_color(base_color);
+    glColor(base_color);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
