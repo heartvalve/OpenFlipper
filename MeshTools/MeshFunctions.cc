@@ -200,7 +200,7 @@ calc_area( const MeshT& _mesh)
      area += ((vertex1 - vertex2) % (vertex3-vertex2)).norm();
    }
    
-  return area;
+  return (0.5 * area);
   
 }
 
