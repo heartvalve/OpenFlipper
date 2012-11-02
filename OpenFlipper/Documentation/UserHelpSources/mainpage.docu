@@ -1,17 +1,17 @@
-/** @mainpage OpenFlipper General User Documentation
- * @image html splash.png
- * @section intro_sec Introduction
+/**\mainpage  OpenFlipper General User Documentation
+ * \image html splash.png
+ * \section intro_sec Introduction
  *
  * This is the user documentation for the OpenFlipper project.
  * OpenFlipper is a flexible geometry modeling and processing system.
  *
  * This manual is divided into the following pages:
- * - \subpage gui "User interface concepts"
- * - \subpage shortcuts "Keyboard shortcuts"
- * - \subpage coreplugins "Core plugins"
- * - \subpage scripting "Scripting"
- * - \subpage view "View functions"
- * - \subpage tools "Tools"
+ * \li \subpage gui "User interface concepts"
+ * \li \subpage shortcuts "Keyboard shortcuts"
+ * \li \subpage coreplugins "Core plugins"
+ * \li \subpage scripting "Scripting"
+ * \li \subpage view "View functions"
+ * \li \subpage tools "Tools"
  *
  *
  */

@@ -78,12 +78,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   QDir helpDir = QDir(OpenFlipper::Options::helpDirStr());
   QStringList helpFiles = helpDir.entryList(QStringList("*.qch"),QDir::Files);
 
-  QString iconPath = QString(OpenFlipper::Options::iconDirStr());
-#ifdef WIN32
-  iconPath += "\\";
-#else
-  iconPath += "/";
-#endif
+  QString iconPath = QString(OpenFlipper::Options::iconDirStr())+QString(OpenFlipper::Options::dirSeparator());
 
   // Set Buttons
   backButton_->setIcon(QIcon(iconPath+"arrow-left.png"));
@@ -102,7 +97,6 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   // Get all currently registered nameSpaces
   QStringList registeredNamespaces =helpEngine_->registeredDocumentations();
 
-
   QStringList documentationFiles;
 
   // Get a list of all loaded documentation files from the namespaces
@@ -116,6 +110,12 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
     // Don't register files twice (stored between multiple OpenFlipper executions)
     if (documentationFiles.contains(filename))
       continue;
+
+    // re-register documentation if location changed
+    int index = registeredNamespaces.indexOf(helpEngine_->namespaceName(filename));
+    if (index != -1)
+      helpEngine_->unregisterDocumentation(registeredNamespaces[i]);
+      
 
     // Try to register the file
     if ( !helpEngine_->registerDocumentation( filename ) ) {

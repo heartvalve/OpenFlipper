@@ -55,7 +55,11 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#ifdef WIN32
+const QString CoreWidget::homePage_ = "qthelp://org.openflipper.user/user/main.html";
+#else
 const QString CoreWidget::homePage_ = "qthelp://org.openflipper.user/user/index.html";
+#endif
 
 //== IMPLEMENTATION ==========================================================
 
