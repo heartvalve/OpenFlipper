@@ -120,6 +120,10 @@ MovePlugin::~MovePlugin() {
 		delete contextAction_;
 	}
 
+  if(contextActionHide_) {
+    delete contextActionHide_;
+  }
+
 	if(toAllTargets_) {
 		delete toAllTargets_;
 	}
