@@ -260,6 +260,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   if (_drawMode & DrawModes::WIREFRAME)
   {
 //    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
+    glColor( _state.specular_color() );
+
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
 
@@ -274,18 +276,17 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     
     // First:
     // Render all faces in background color to initialize z-buffer
-    Vec4f  clear_color = _state.clear_color();
-    Vec4f  base_color  = _state.base_color();
-    clear_color[3] = 1.0;
-    
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    _state.set_base_color(clear_color);
 
 //    drawMesh_->SetFlatShading();
     drawMesh_->disableColors();
-    
+
+    Vec4f  clear_color  = _state.clear_color();
+    clear_color[3] = 1.0;
+    glColor( clear_color );
+
     ACG::GLState::depthRange(0.01, 1.0);
     draw_faces();
     ACG::GLState::depthRange(0.0, 1.0);
@@ -294,7 +295,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     // Render the lines. All lines not on the front will be skipped in z-test
 //    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
     ACG::GLState::depthFunc(GL_LEQUAL);
-    _state.set_base_color(base_color);
+
+    glColor( _state.specular_color() );
+
     draw_lines();
     
     //restore depth buffer comparison function for the next draw calls inside this function
@@ -313,6 +316,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
   if (_drawMode & DrawModes::HALFEDGES)
   {
+    glColor( _state.specular_color() );
+
     enable_arrays( PER_HALFEDGE_VERTEX_ARRAY);
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
