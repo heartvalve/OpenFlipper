@@ -71,7 +71,6 @@
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
 
-
 //== NAMESPACES ===============================================================
 
 
@@ -81,6 +80,8 @@ class IRenderer;
 
 namespace SceneGraph {
 
+// prototype declaration to avoid include-loop
+class Material;
 
 //== CLASS DEFINITION =========================================================
 
@@ -189,9 +190,12 @@ public:
    *
    * Add any renderable geometry to the renderer via _renderer->addRenderObject()
    *
+   * The material is fetched from the last active material node and may be used to setup Renderobjects,
+   * but may as well be ignored.
+   *
    * \note You should not draw anything yourself in this function.
    */
-  virtual void getRenderObjects(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
+  virtual void getRenderObjects(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */, const Material* /*_mat*/)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 

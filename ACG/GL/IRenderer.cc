@@ -52,7 +52,7 @@
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
-
+#include <ACG/Scenegraph/MaterialNode.hh>
 
 namespace ACG
 {
@@ -140,6 +140,20 @@ void RenderObject::setupShaderGenFromDrawmode( const DrawModes::DrawModeProperti
       shaderDesc.shadeMode = SG_SHADE_UNLIT;
   }
 }
+
+void RenderObject::setMaterial( const SceneGraph::Material* _mat )
+{
+  for (int i = 0; i < 3; ++i)
+  {
+    diffuse[i] = _mat->diffuseColor()[i];
+    ambient[i] = _mat->ambientColor()[i];
+    specular[i] = _mat->specularColor()[i];
+    emissive[i] = _mat->baseColor()[i];
+  }
+  shininess = _mat->shininess();
+  alpha = _mat->diffuseColor()[3];
+}
+
 
 RenderObject::RenderObject()
 {

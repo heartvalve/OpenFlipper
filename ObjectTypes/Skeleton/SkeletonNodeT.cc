@@ -754,7 +754,8 @@ bool SkeletonNodeT<SkeletonType>::coordFramesVisible()
 template <class SkeletonType>
 void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer, 
                                                    GLState& _state,
-                                                   const DrawModes::DrawMode& _drawMode)
+                                                   const DrawModes::DrawMode& _drawMode,
+                                                   const Material* _mat)
 {
   RenderObject ro;
   ro.initFromState(&_state);
@@ -772,70 +773,111 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
   typename SkeletonType::Iterator it;
 
 
+  Vec4f jointColor;
+  getJointColor(_state.base_color(), jointColor);
 
-  // draw bones
-  //
-//   if ( (_drawMode == DrawModes::WIREFRAME)
-//     || (_drawMode == DrawModes::SOLID_FLAT_SHADED)
-//     || (_drawMode == DrawModes::SOLID_FACES_COLORED)
-//     || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
+
+  // draw points
+
+  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
   {
+    const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
 
-    Vec4f baseColor = _state.base_color();
+    ro.setupShaderGenFromDrawmode(props);
 
-    ro.setupShaderGenFromDrawmode(_drawMode.getDrawModeProperties());
+    switch (props->primitive())
+    {
 
-    // draw the bones
-    for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
+    case DrawModes::PRIMITIVE_POINT:
+      {
+        Vec3f oldSpecular = ro.specular;
+        Vec3f oldDiffuse = ro.diffuse;
 
-      //joint is the (unique) tail joint of the bone
-      Joint* joint  = *it;
-      Joint* parent = joint->parent();
+        for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+        {
+          // If the vertex is selected, it will be always red
+          // If it is not selected,
+          if ( (*it)->selected() )
+          {
+            ro.diffuse = Vec3f(1.0f, 0.0f, 0.0f);
+            ro.specular = Vec3f(1.0f, 0.0f, 0.0f);
+          }
+          else {
+            // If it is the root joint, it will get some kind of orange color
+            // Otherwise the the Base color is used
+            if ( (*it)->isRoot() )
+            {
+              ro.diffuse = Vec3f(1.0f, 0.66f, 0.0f);
+              ro.specular = Vec3f(1.0f, 0.66f, 0.0f);
+            }
+            else {
+              ro.diffuse = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+              ro.specular = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+            }
+          }
 
-      // root can be ignored
-      // we only want to draw bones from (parent -> joint)
-      if (parent == 0)
-        continue;
+          //---------------------------------------------------
+          // Simulate glPointSize(12) with a sphere
+          //---------------------------------------------------
 
-      //select joint color
-      ro.emissive = Vec3f(baseColor[0], baseColor[1], baseColor[2]);
+          // 1. Project point to screen
+          ACG::Vec3d projected = _state.project( pose->globalTranslation( (*it)->id() ) );
 
-      Vec3d parentPos = pose->globalTranslation(parent->id());
-      Vec3d jointPos  = pose->globalTranslation(joint->id());
+          // 2. Shift it by the requested point size
+          //    glPointSize defines the diameter but we want the radius, so we divide it by two
+          ACG::Vec3d shifted = projected;
+          shifted[0] = shifted[0] + (double)_state.point_size() / 2.0 ;
 
-      Vec3d boneVector = (jointPos - parentPos);
+          // 3. un-project into 3D
+          ACG::Vec3d unProjectedShifted = _state.unproject( shifted );
 
-      addBoneToRenderer(_renderer, ro, parentPos, boneVector);
+          // 4. The difference vector defines the radius in 3D for the sphere
+          ACG::Vec3d difference = unProjectedShifted - pose->globalTranslation( (*it)->id() );
+
+          const double sphereSize = difference.norm();
+
+          sphere_->addToRenderer(_renderer, &ro, sphereSize, ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
+        }
+
+        // reset material colors in case skeleton polygons are rendered later
+        ro.specular = oldSpecular;
+        ro.diffuse = oldDiffuse;
+
+      } break;
+
+
+    default:
+      {
+        Vec4f baseColor = _state.base_color();
+
+        // draw the bones
+        for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
+
+          //joint is the (unique) tail joint of the bone
+          Joint* joint  = *it;
+          Joint* parent = joint->parent();
+
+          // root can be ignored
+          // we only want to draw bones from (parent -> joint)
+          if (parent == 0)
+            continue;
+
+          //select joint color
+          ro.emissive = Vec3f(baseColor[0], baseColor[1], baseColor[2]);
+
+          Vec3d parentPos = pose->globalTranslation(parent->id());
+          Vec3d jointPos  = pose->globalTranslation(joint->id());
+
+          Vec3d boneVector = (jointPos - parentPos);
+
+          addBoneToRenderer(_renderer, ro, parentPos, boneVector);
+        }
+
+
+      }
     }
-
-// 
-//     // draw the local coordinate frames
-//     if(bCoordFramesVisible_)
-//     {
-//       ACG::GLState::disable(GL_COLOR_MATERIAL);
-//       ACG::GLState::disable(GL_LIGHTING);
-// 
-//       glLineWidth(3.0);
-//       glBegin(GL_LINES);
-//       for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
-//       {
-//         unsigned int index = (*it)->id();
-//         typename SkeletonType::Matrix global = pose->globalMatrix(index);
-//         NormalizeCoordinateFrame(global);
-//         glColor3f(0.8, 0.2, 0.2);
-//         glVertex( pose->globalTranslation(index));
-//         glVertex( global.transform_point(Point(fFrameSize_, 0, 0)) );
-//         glColor3f(0.2, 0.8, 0.2);
-//         glVertex( pose->globalTranslation(index));
-//         glVertex( global.transform_point(Point(0, fFrameSize_, 0)) );
-//         glColor3f(0.2, 0.2, 0.8);
-//         glVertex( pose->globalTranslation(index));
-//         glVertex( global.transform_point(Point(0, 0, fFrameSize_)) );
-//       }
-//       glEnd();
-//       glLineWidth(_state.line_width());
-//     }
   }
+
 
 
 }
