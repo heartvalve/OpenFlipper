@@ -1,0 +1,1730 @@
+Index: INIFile/INIFile.hh
+===================================================================
+--- INIFile/INIFile.hh	(revision 15108)
++++ INIFile/INIFile.hh	(working copy)
+@@ -51,6 +51,7 @@
+ #include <QFile>
+ #include <map>
+ #include <vector>
++#include <QSettings>
+ 
+ 
+ //! Class for the handling of simple configuration files.
+@@ -93,8 +94,9 @@
+   \until }
+   \until }
+   \until }
+-
+ */
++
++
+ class DLLEXPORT INIFile
+ {
+ public :
+@@ -107,16 +109,16 @@
+ 
+     //! Connect INIFile object with given filename
+     bool connect( const QString& name,
+-		  const bool create );
++		              const bool create );
+ 
+     //! Remove connection of this object to a file
+     void disconnect();
+ 
+     //! Check if object is connected to  file
+-    bool is_connected() const { return mf_isConnected; }
++    bool is_connected() const { return (content_ != 0); }
+ 
+     //! Access to name of connected file
+-    const QString& name() const { return m_filename; }
++    const QString& name() const { return filename_; }
+ 
+ 
+     // ---------------------------------------- check if something is there
+@@ -128,39 +130,34 @@
+     bool section_exists(const QString & _section) const;
+ 
+     //! Check if given entry esists in the current INI file
+-    bool entry_exists(const QString & _section, const QString & _key) const;
++    bool entry_exists(const QString & _section, const QString & _key);
+ 
+     //! Same as entry_exists() (for backward compatibility)
+     bool entry_in_section(const QString & _section,
+-			  const QString & _key) const
+-	{ return entry_exists( _section, _key ); }
++			                    const QString & _key)
++	     { return entry_exists( _section, _key ); }
+ 
+     // ---------------------------------------- section manipulation
+ 
+     /*! \name Addition of entities */
+     //@{
+ 
+-    //! Addition of a section
+-    /* \deprecated This function is not needed any more. New sections are
+-       implicitly created upon calls to add_entry().
+-    */
+-    void add_section(const QString & _sectionname);
+ 
+     //! Addition / modification of a string entry
+     void add_entry( const QString & _section,
+-		    const QString & _key,
+-		    const QString & _value );
++		                const QString & _key,
++		                const QString & _value );
+ 
+     //! Addition / modification of a string entry, given as char array
+     void add_entry( const QString & _section,
+-		  const QString & _key,
+-		  const char * _value )
+-	{ add_entry( _section, _key, QString(_value) ); }
++		                const QString & _key,
++	              	  const char * _value )
++	  { add_entry( _section, _key, QString(_value) ); }
+ 
+     //! Addition / modification of a double entry
+     void add_entry( const QString & _section,
+-		    const QString & _key,
+-		    const double & _value);
++		                const QString & _key,
++		                const double & _value);
+ 
+     //! Addition / modification of a double entry
+     void add_entry( const QString & _section,
+@@ -312,68 +309,46 @@
+     template < typename VectorT >
+     bool get_entryVecd ( VectorT & _val ,
+                          const QString & _section,
+-                         const QString & _key ) const;
++                         const QString & _key );
+ 
+         //! Get a Vec_n_i (int)
+     template < typename VectorT >
+     bool get_entryVecf ( VectorT & _val ,
+                          const QString & _section,
+-                         const QString & _key ) const;
++                         const QString & _key );
+ 
+     //! Get a Vec_n_i (int)
+     template < typename VectorT >
+     bool get_entryVeci ( VectorT & _val ,
+                          const QString & _section,
+-                         const QString & _key ) const;
++                         const QString & _key );
+ 
+     //! Get a Vec_n_d
+     template < typename VectorT >
+     bool get_entryVecd (std::vector< VectorT > & _val ,
+                        const QString & _section,
+-                       const QString & _key ) const;
++                       const QString & _key );
+ 
+     //! Get a Vec_n_f
+     template < typename VectorT >
+-        bool get_entryVecf (std::vector< VectorT > & _val ,
++    bool get_entryVecf (std::vector< VectorT > & _val ,
+                            const QString & _section,
+-                           const QString & _key ) const;
++                           const QString & _key );
+ 
+     //! Get a Vec_n_i
+     template < typename VectorT >
+     bool get_entryVeci (std::vector< VectorT > & _val ,
+                         const QString & _section,
+-                        const QString & _key ) const;
++                        const QString & _key );
+ 
+ 
+ private: // data
+ 
+-
+-    //! Type for map of contained entries
+-    typedef std::map< QString, QString > EntryMap;
+-
+-
+-    //! Type for map of contained sections
+-    typedef std::map< QString, EntryMap > SectionMap;
+-
+-
+-    /////////////////////////////////////////////////////////////////
+-    /////////////////////////////////////////////////////////////////
+-
+-    //! Read content of an INI file
+-    bool parseFile( QFile & _inputStream );
+-
+-    //! Write data to file we are currently connected to
+-    bool writeFile( void );
+-
+     //! Name of current INI file
+-    QString m_filename;
++    QString filename_;
+ 
+-    //! Flag: this object is connected to an INI file
+-    bool mf_isConnected;
+ 
+-
+-    //! Stored data of an INI file
+-    SectionMap m_iniData;
++    QSettings* content_;
+ };
+ 
+ 
+Index: INIFile/INIFile.cc
+===================================================================
+--- INIFile/INIFile.cc	(revision 15108)
++++ INIFile/INIFile.cc	(working copy)
+@@ -59,11 +59,13 @@
+ #include <QTextStream>
+ #include <QStringList>
+ 
++const int versionID=2;
+ // -----------------------------------------------------------------------------
+ 
+-INIFile::INIFile()
++INIFile::INIFile() :
++        filename_(""),
++        content_(0)
+ {
+-  mf_isConnected = false;
+ }
+ 
+ 
+@@ -78,24 +80,28 @@
+ // -----------------------------------------------------------------------------
+ 
+ bool INIFile::connect( const QString& _filename,
+-		       const bool _create )
++		                   const bool _create )
+ {
++
+   QFile inputFile( _filename );
+ 
+   if( is_connected() )
+     disconnect();
+ 
+   // open given file for reading
+-  if ( inputFile.exists() &&  inputFile.open(QIODevice::ReadOnly | QIODevice::Text) )  {
++  if ( inputFile.exists() )  {
++    content_ = new QSettings(_filename,QSettings::IniFormat);
+ 
+-    // Successfull?
+-    m_filename = _filename;
++    filename_ = _filename;
+ 
+-    // try to parse the INI file
+-    mf_isConnected = parseFile( inputFile );
++    // Try to get the version of our ini file compatibility flag
++    if ( content_->contains("FileVersion") ) {
++      int fileVersion = content_->value("FileVersion").toInt();
++      if ( fileVersion != versionID ) {
++        std::cerr << "Incompatible ini file version version detected!" << std::endl;
++      }
++    }
+ 
+-    inputFile.close();
+-
+   } else if( _create ) {
+ 
+     // file does not exist yet, but user wants to create it.
+@@ -106,23 +112,24 @@
+                           QIODevice::WriteOnly |
+                           QIODevice::Truncate ) )  {
+ 
+-      mf_isConnected = true;
+-      m_filename = _filename;
+       outputFile.close();
+ 
+-    } else {
++      content_ = new QSettings(_filename,QSettings::IniFormat);
+ 
+-      std::cerr << "Unable to create File : " << std::endl;
+-      mf_isConnected = false;
++      filename_ = _filename;
+ 
++      // Set the file version
++      content_->setValue("FileVersion",versionID);
++
++    } else {
++      std::cerr << "Failed to connect!" << std::endl;
+     }
+ 
+   } else {
+     std::cerr << "Unable to open File : " << std::endl;
+-    mf_isConnected = false;
+   }
+ 
+-  return mf_isConnected;
++  return is_connected();
+ }
+ 
+ 
+@@ -131,133 +138,39 @@
+ 
+ void INIFile::disconnect()
+ {
+-  writeFile();
+-  mf_isConnected = false;
+-}
+-
+-
+-// -----------------------------------------------------------------------------
+-
+-bool INIFile::parseFile( QFile & _inputStream )
+-{
+-  QString line, section;
+-  bool inSection = false;
+-
+-  // read file line by line
+-  while( !_inputStream.atEnd()  ) {
+-
+-    // get new line
+-    QByteArray lineBuffer = _inputStream.readLine();
+-    line = QString(lineBuffer);
+-    line = line.trimmed();
+-
+-    if( line.isEmpty() || line[ 0 ] == '#' )
+-      continue;
+-
+-    // does line contain the start of a section?
+-    if( line[ 0 ] == '[' && line[ line.length()-1 ] == ']' ) {
+-
+-      // yes
+-      section = line.mid( 1, line.length() - 2 );
+-      inSection = true;
+-
+-    } else if( inSection ) {
+-      // try to split line into a key and a value
+-      QString key, value;
+-
+-      int pos;
+-      pos = line.indexOf( '=' );
+-
+-      if( pos != -1 )
+-      {
+-        key = line.mid( 0, pos );
+-        key = key.trimmed();
+-        value = line.mid( pos + 1, line.length() - 1 );
+-        value = value.trimmed();
+-
+-        if( key.isEmpty() || value.isEmpty() )
+-            continue;
+-
+-        // store value in string-map
+-        m_iniData[ section ][ key ] = value;
+-      }
+-
+-    }
++  if ( content_) {
++    content_->sync();
++    delete(content_);
++    content_ = 0;
++    filename_ = "";
+   }
+-
+-  return true;
+ }
+ 
+-
+ // -----------------------------------------------------------------------------
+ 
+ 
+-bool INIFile::writeFile( void )
++bool INIFile::section_exists( const QString & _section ) const
+ {
+-  if( !mf_isConnected )
+-      return false;
+-
+-  // open file for writing
+-  QFile outputFile(m_filename);
+-
+-  if ( ! outputFile.open( QIODevice::WriteOnly ) )
+-    return false;
+-
+-  QTextStream out(&outputFile);
+-
+-  // file is open, start writing of data
+-  SectionMap::const_iterator sIter, sEnd;
+-  EntryMap::const_iterator eIter, eEnd;
+-
+-  sEnd = m_iniData.end();
+-  for( sIter = m_iniData.begin(); sIter != sEnd; ++sIter ) {
+-    // write name of current section
+-    out << "[" << sIter->first << "]\n";
+-
+-    eEnd = sIter->second.end();
+-    for( eIter = sIter->second.begin(); eIter != eEnd; ++eIter ) {
+-      out << eIter->first << "=";
+-      out << eIter->second;
+-      out << "\n";
+-    }
+-
+-    out << "\n\n";
+-  }
+-
+-  outputFile.close();
+-
+-  return true;
++  return( content_->childGroups().contains(_section) );
+ }
+ 
+ 
+-
+ // -----------------------------------------------------------------------------
+ 
+ 
+-bool INIFile::section_exists( const QString & _section ) const
++bool INIFile::entry_exists(const QString & _section, const QString & _key)
+ {
+-  return( m_iniData.find( _section ) != m_iniData.end() );
+-}
+ 
++  bool exists = false;
+ 
+-// -----------------------------------------------------------------------------
++  content_->beginGroup(_section);
+ 
++  exists = content_->childKeys().contains(_key);
+ 
+-bool INIFile::entry_exists(const QString & _section, const QString & _key) const
+-{
+-  static SectionMap::const_iterator mapIter;
++  content_->endGroup();
+ 
+-  return( (mapIter = m_iniData.find( _section )) != m_iniData.end()
+-          && mapIter->second.find( _key ) != mapIter->second.end() );
+-}
+ 
+-
+-// -----------------------------------------------------------------------------
+-
+-void INIFile::add_section( const QString & _sectionname )
+-{
+-  if( m_iniData.find( _sectionname ) == m_iniData.end() )
+-      m_iniData[ _sectionname ] = EntryMap();
++  return( exists );
+ }
+ 
+ 
+@@ -265,10 +178,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key,
+-			 const QString & _value )
++			                   const QString & _key,
++			                   const QString & _value )
+ {
+-  m_iniData[ _section ][ _key ] = _value;
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -276,10 +191,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key,
+-			 const double & _value)
++			                   const QString & _key,
++			                   const double & _value)
+ {
+-  m_iniData[ _section ][ _key ] = QString::number( _value );
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -287,10 +204,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key,
+-			 const float & _value)
++			                   const QString & _key,
++			                   const float & _value)
+ {
+-  m_iniData[ _section ][ _key ] = QString::number( _value );
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -298,10 +217,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key ,
+-			 const int & _value)
++			                   const QString & _key ,
++			                   const int & _value)
+ {
+-  m_iniData[ _section ][ _key ] = QString::number( _value );
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -309,10 +230,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key ,
+-			 const unsigned int & _value)
++			                   const QString & _key ,
++			                   const unsigned int & _value)
+ {
+-  m_iniData[ _section ][ _key ] = QString::number( _value );
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -320,10 +243,12 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key ,
+-			 const bool & _value)
++			                   const QString & _key ,
++			                   const bool & _value)
+ {
+-  m_iniData[ _section ][ _key ] = (_value ? "true" : "false");
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -331,14 +256,16 @@
+ 
+ 
+ void INIFile::add_entry( const QString & _section,
+-			 const QString & _key,
+-			 const std::vector<float> & _value)
++                         const QString & _key,
++                         const std::vector<float> & _value)
+ {
+-  QString list;
+-  std::vector<float>::const_iterator viter;
+-  for(viter = _value.begin();viter!=_value.end();++viter)
+-    list += QString::number( *viter ) + ";";
+-  m_iniData[ _section ][ _key ] = list;
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    list.append(_value[i]);
++
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -349,11 +276,13 @@
+                          const QString & _key,
+                          const std::vector<double> & _value)
+ {
+-  QString list;
+-  std::vector<double>::const_iterator viter;
+-  for(viter = _value.begin();viter!=_value.end();++viter)
+-    list += QString::number( *viter ) + ";";
+-  m_iniData[ _section ][ _key ] = list;
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    list.append(_value[i]);
++
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -364,53 +293,55 @@
+                          const QString & _key,
+                          const std::vector<bool> & _value)
+ {
+-  QString list;
+-  std::vector<bool>::const_iterator viter;
+-  for(viter = _value.begin();viter!=_value.end();++viter){
+-    if (*viter == true)
+-      list += "true;";
+-    else
+-      list += "false;";
+-  }
+-  m_iniData[ _section ][ _key ] = list;
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    list.append(_value[i]);
++
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ 
+ // -----------------------------------------------------------------------------
+ 
+ void INIFile::add_entry( const QString & _section,
+-          const QString & _key,
+-          const std::vector<int> & _value)
++                         const QString & _key,
++                         const std::vector<int> & _value)
+ {
+-  QString list;
+-  std::vector<int>::const_iterator viter;
+-  for(viter = _value.begin();viter!=_value.end();++viter)
+-    list += QString::number( *viter ) + ";";
+-  m_iniData[ _section ][ _key ] = list;
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    list.append(_value[i]);
++
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ // -----------------------------------------------------------------------------
+ 
+ void INIFile::add_entry( const QString & _section,
+-          const QString & _key,
+-          const std::vector<QString> & _value)
++                         const QString & _key,
++                         const std::vector<QString> & _value)
+ {
+-  QString list;
+-  std::vector<QString>::const_iterator viter;
+-  for(viter = _value.begin();viter!=_value.end();++viter) {
+-    list += *viter + ";";
+-  }
+-  m_iniData[ _section ][ _key ] = list;
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    list.append(_value[i]);
++
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ // -----------------------------------------------------------------------------
+ 
+ void INIFile::add_entry( const QString & _section,
+-          const QString & _key,
+-          const QStringList & _value)
++                         const QString & _key,
++                         const QStringList & _value)
+ {
+-  QString list = _value.join(";");
+-  m_iniData[ _section ][ _key ] = list;
++  content_->beginGroup(_section);
++  content_->setValue(_key,_value);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -418,14 +349,9 @@
+ 
+ void INIFile::delete_entry( const QString & _section, const QString & _key )
+ {
+-  SectionMap::iterator sIter;
+-  EntryMap::iterator eIter;
+-
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-      return;
+-
+-  if( (eIter = sIter->second.find( _key )) != sIter->second.end() )
+-      sIter->second.erase( eIter );
++  content_->beginGroup(_section);
++  content_->remove(_key);
++  content_->endGroup();
+ }
+ 
+ 
+@@ -433,7 +359,7 @@
+ 
+ void INIFile::delete_section( const QString & _sectionname )
+ {
+-  m_iniData.erase( _sectionname );
++  content_->remove(_sectionname);
+ }
+ 
+ 
+@@ -441,22 +367,22 @@
+ 
+ 
+ bool INIFile::get_entry( QString & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++			                   const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  _val = eIter->second;
+-  return true;
++  if ( content_->contains(_key)) {
++    found = true;
++    _val = content_->value(_key).toString();
++  }
++
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ 
+@@ -464,23 +390,22 @@
+ 
+ 
+ bool INIFile::get_entry( double & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++			                   const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  bool ok;
+-  _val = eIter->second.toDouble(&ok);
+-  return( ok );
++  if ( content_->contains(_key)) {
++    found = true;
++    _val = content_->value(_key).toFloat(&found);
++  }
++
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ 
+@@ -488,23 +413,22 @@
+ 
+ 
+ bool INIFile::get_entry( float & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++			                   const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   content_->beginGroup(_section);
+ 
+-  bool ok;
+-  _val = eIter->second.toFloat(&ok);
+-  return( ok );
++   if ( content_->contains(_key)) {
++     found = true;
++     _val = content_->value(_key).toFloat(&found);
++   }
++
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+@@ -512,46 +436,44 @@
+ 
+ 
+ bool INIFile::get_entry( int & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++		                  	 const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   content_->beginGroup(_section);
+ 
+-  bool ok;
+-  _val = eIter->second.toInt(&ok);
+-  return( ok );
++   if ( content_->contains(_key)) {
++     found = true;
++     _val = content_->value(_key).toInt(&found);
++   }
++
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+ // -----------------------------------------------------------------------------
+ 
+ bool INIFile::get_entry( unsigned int & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++			                   const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   content_->beginGroup(_section);
+ 
+-  bool ok;
+-  _val = eIter->second.toUInt(&ok);
+-  return( ok );
++   if ( content_->contains(_key)) {
++     found = true;
++     _val = content_->value(_key).toUInt(&found);
++   }
++
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+@@ -559,26 +481,22 @@
+ 
+ 
+ bool INIFile::get_entry( bool & _val,
+-			 const QString & _section,
+-			 const QString & _key) const
++			                   const QString & _section,
++			                   const QString & _key) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  if( eIter->second == "true" || eIter->second == "false" ) {
+-    _val = (eIter->second == "true");
+-    return true;
+-  } else {
+-    return false;
++  if ( content_->contains(_key)) {
++    found = true;
++    _val = content_->value(_key).toBool();
+   }
++
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ 
+@@ -586,34 +504,34 @@
+ 
+ 
+ bool INIFile::get_entry( std::vector<float> & _val,
+-			 const QString & _section,
+-			 const QString & _key ) const
++		                  	 const QString & _section,
++			                   const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  QStringList list = eIter->second.split(';');
++  QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); ++i) {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
+-    _val.push_back(list[i].toFloat(&tmpOk));
+-    ok &= tmpOk;
++  if ( content_->contains(_key)) {
++    found = true;
++    list  = content_->value(_key).value< QList<QVariant> >();
+   }
+ 
+-  return ok;
++  if ( found ) {
++
++    for ( int i = 0 ; i <  list.size() ; ++i )
++      _val.push_back(list[i].toFloat());
++
++  }
++
++  content_->endGroup();
++
++  return found;
++
+ }
+ 
+ 
+@@ -624,31 +542,29 @@
+                          const QString & _section,
+                          const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++    bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++    content_->beginGroup(_section);
+ 
+-  QStringList list = eIter->second.split(';');
++    QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); ++i) {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
+-    _val.push_back(list[i].toDouble(&tmpOk));
+-    ok &= tmpOk;
+-  }
++    if ( content_->contains(_key)) {
++      found = true;
++      list  = content_->value(_key).value< QList<QVariant> >();
++    }
+ 
+-  return ok;
++    if ( found ) {
++
++      for ( int i = 0 ; i <  list.size() ; ++i )
++        _val.push_back(list[i].toDouble());
++
++    }
++
++    content_->endGroup();
++
++    return found;
+ }
+ 
+ 
+@@ -659,32 +575,29 @@
+                          const QString & _section,
+                          const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++    bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++    content_->beginGroup(_section);
+ 
+-  QStringList list = eIter->second.split(';');
++    QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); ++i) {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    if (list[i] == "true")
+-      _val.push_back(true);
+-    else
+-      _val.push_back(false);
+-  }
++    if ( content_->contains(_key)) {
++      found = true;
++      list  = content_->value(_key).value< QList<QVariant> >();
++    }
+ 
+-  return ok;
++    if ( found ) {
++
++      for ( int i = 0 ; i <  list.size() ; ++i )
++        _val.push_back(list[i].toBool());
++
++    }
++
++    content_->endGroup();
++
++    return found;
+ }
+ 
+ 
+@@ -695,31 +608,29 @@
+           const QString & _section,
+           const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  QStringList list = eIter->second.split(';');
++  QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); ++i) {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
+-    _val.push_back(list[i].toInt(&tmpOk));
+-    ok &= tmpOk;
++  if ( content_->contains(_key)) {
++    found = true;
++    list  = content_->value(_key).value< QList<QVariant> >();
+   }
+ 
+-  return ok;
++  if ( found ) {
++
++    for ( int i = 0 ; i <  list.size() ; ++i )
++      _val.push_back(list[i].toInt());
++
++  }
++
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ 
+@@ -730,29 +641,29 @@
+                          const QString & _section,
+                          const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++    bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++    content_->beginGroup(_section);
+ 
+-  QStringList list = eIter->second.split(';');
++    QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); ++i) {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    _val.push_back(list[i]);
+-  }
++    if ( content_->contains(_key)) {
++      found = true;
++      list  = content_->value(_key).value< QList<QVariant> >();
++    }
+ 
+-  return ok;
++    if ( found ) {
++
++      for ( int i = 0 ; i <  list.size() ; ++i )
++        _val.push_back(list[i].toString());
++
++    }
++
++    content_->endGroup();
++
++    return found;
+ }
+ 
+ 
+@@ -763,26 +674,20 @@
+                          const QString & _section,
+                          const QString & _key ) const
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  bool found = false;
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  content_->beginGroup(_section);
+ 
+-  _val = eIter->second.split(';');
++  if ( content_->contains(_key)) {
++    found = true;
++    _val = content_->value(_key).toStringList();
++  }
+ 
+-  bool ok = true;
+-  if ( _val.isEmpty() )
+-    ok = false;
++  content_->endGroup();
+ 
+-  return ok;
++  return found;
+ }
+ 
+ 
+Index: INIFile/INIFileT.cc
+===================================================================
+--- INIFile/INIFileT.cc	(revision 15108)
++++ INIFile/INIFileT.cc	(working copy)
+@@ -77,38 +77,32 @@
+ INIFile::
+ get_entryVeci ( VectorT & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  _val.clear();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  const size_t vectorDim = _val.dim();
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++  bool found = false;
+ 
+-  // get dimension of requested vector
+-  VectorT tmp;
+-  int dim = tmp.dim();
++  content_->beginGroup(_section);
+ 
+-  if ( list.size() != dim ) {
+-    std::cerr << "Differet size when reading Vector" << std::endl;
+-    return false;
++  QList<QVariant> list;
++
++  if ( content_->contains(_key)) {
++    found = true;
++    list  = content_->value(_key).value< QList<QVariant> >();
+   }
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < dim; ++i) {
+-    bool tmpOk = false;
+-    _val[i] = (typename VectorT::value_type) list[i].toInt(&tmpOk);
+-    ok &= tmpOk;
++  if ( found ) {
++    for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++      _val[j] = list[j].toInt(&found);
+   }
+ 
+-  return ok;
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ // -----------------------------------------------------------------------------
+@@ -119,38 +113,31 @@
+ INIFile::
+ get_entryVecd ( VectorT & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
++  _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  const size_t vectorDim = _val.dim();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  bool found = false;
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++  content_->beginGroup(_section);
+ 
+-  // get dimension of requested vector
+-  VectorT tmp;
+-  int dim = tmp.dim();
++  QList<QVariant> list;
+ 
+-  if ( list.size() != dim ) {
+-    std::cerr << "Differet size when reading Vector" << std::endl;
+-    return false;
++  if ( content_->contains(_key)) {
++    found = true;
++    list  = content_->value(_key).value< QList<QVariant> >();
+   }
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < dim; ++i) {
+-    bool tmpOk = false;
+-    _val[i] = (typename VectorT::value_type) list[i].toDouble(&tmpOk);
+-    ok &= tmpOk;
++  if ( found ) {
++    for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++      _val[j] = list[j].toDouble(&found);
+   }
+ 
+-  return ok;
++  content_->endGroup();
++
++  return found;
+ }
+ 
+ // -----------------------------------------------------------------------------
+@@ -161,38 +148,31 @@
+ INIFile::
+ get_entryVecf ( VectorT & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++  const size_t vectorDim = _val.dim();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++  bool found = false;
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++  content_->beginGroup(_section);
+ 
+-  // get dimension of requested vector
+-  VectorT tmp;
+-  int dim = tmp.dim();
++  QList<QVariant> list;
+ 
+-  if ( list.size() != dim ) {
+-    std::cerr << "Differet size when reading Vector" << std::endl;
+-    return false;
++  if ( content_->contains(_key)) {
++    found = true;
++    list  = content_->value(_key).value< QList<QVariant> >();
+   }
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < dim; ++i) {
+-    bool tmpOk = false;
+-    _val[i] = (typename VectorT::value_type) list[i].toFloat(&tmpOk);
+-    ok &= tmpOk;
++  if ( found ) {
++    for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++      _val[j] = list[j].toFloat(&found);
+   }
+ 
+-  return ok;
++  content_->endGroup();
++
++  return found;
++
+ }
+ 
+ // -----------------------------------------------------------------------------
+@@ -203,18 +183,18 @@
+ INIFile::
+ add_entryVec ( const QString & _section,
+                const QString & _key,
+-               const VectorT  & _value)
++               const VectorT & _value)
+ {
+ 
+-  // get dimension of stored vectors
+-  VectorT tmp;
+-  int dim = tmp.dim();
++  const size_t vectorDim = _value.dim();
+ 
+-  QString list;
+-  for (int j = 0; j < dim; ++j)
+-    list +=  QString::number( _value[j] ) + ";";
++  QList<QVariant> list;
++  for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++    list.append(_value[j]);
+ 
+-  m_iniData[ _section ][ _key ] = list;
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+ 
+ // -----------------------------------------------------------------------------
+@@ -224,52 +204,39 @@
+ INIFile::
+ get_entryVecd ( std::vector< VectorT > & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   const size_t vectorDim = _val[0].dim();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   bool found = false;
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++   content_->beginGroup(_section);
+ 
+-  // get dimension of stored vectors
+-  VectorT tmp;
+-  int dim = tmp.dim();
++   QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); )
+-  {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
++   if ( content_->contains(_key)) {
++     found = true;
++     list  = content_->value(_key).value< QList<QVariant> >();
++   }
+ 
+-    std::vector<double> tmp;
++   if ( found ) {
++     const size_t enries = list.size() / vectorDim;
+ 
+-    for (int j = 0; j < dim; ++j)
+-    {
+-      // check data type
+-      tmp.push_back( list[i].toDouble(&tmpOk) );
+-      ++i;
+-    }
++     for ( unsigned int i = 0 ; i <  enries ; ++i ) {
++       VectorT tmp;
++       for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++          tmp[j] = list[i*vectorDim+j].toDouble(&found);
+ 
+-    VectorT vec;
+-    for (int j = 0; j < dim; ++j)
+-      vec[j] = (typename VectorT::value_type)(tmp[j]);
++       _val.push_back(tmp);
++     }
+ 
+-    _val.push_back(vec);
+-    ok &= tmpOk;
+-  }
++   }
+ 
+-  return ok;
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+@@ -280,52 +247,39 @@
+ INIFile::
+ get_entryVecf ( std::vector< VectorT > & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   const size_t vectorDim = _val[0].dim();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   bool found = false;
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++   content_->beginGroup(_section);
+ 
+-  // get dimension of stored vectors
+-  VectorT tmp;
+-  int dim = tmp.dim();
++   QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); )
+-  {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
++   if ( content_->contains(_key)) {
++     found = true;
++     list  = content_->value(_key).value< QList<QVariant> >();
++   }
+ 
+-    std::vector<double> tmp;
++   if ( found ) {
++     const size_t enries = list.size() / vectorDim;
+ 
+-    for (int j = 0; j < dim; ++j)
+-    {
+-      // check data type
+-      tmp.push_back( list[i].toFloat(&tmpOk) );
+-      ++i;
+-    }
++     for ( unsigned int i = 0 ; i <  enries ; ++i ) {
++       VectorT tmp;
++       for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++          tmp[j] = list[i*vectorDim+j].toFloat(&found);
+ 
+-    VectorT vec;
+-    for (int j = 0; j < dim; ++j)
+-      vec[j] = (typename VectorT::value_type)(tmp[j]);
++       _val.push_back(tmp);
++     }
+ 
+-    _val.push_back(vec);
+-    ok &= tmpOk;
+-  }
++   }
+ 
+-  return ok;
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+@@ -336,52 +290,39 @@
+ INIFile::
+ get_entryVeci ( std::vector< VectorT > & _val ,
+                 const QString & _section,
+-                const QString & _key ) const
++                const QString & _key )
+ {
+-  SectionMap::const_iterator sIter;
+-  EntryMap::const_iterator eIter;
+-
+   _val.clear();
+ 
+-  // does the given section exist?
+-  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+-    return false;
++   const size_t vectorDim = _val[0].dim();
+ 
+-  // does the given entry exist?
+-  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+-    return false;
++   bool found = false;
+ 
+-  QStringList list = eIter->second.split(';',QString::SkipEmptyParts);
++   content_->beginGroup(_section);
+ 
+-  // get dimension of stored vectors
+-  VectorT tmp;
+-  int dim = tmp.dim();
++   QList<QVariant> list;
+ 
+-  bool ok = true;
+-  for ( int i = 0 ; i < list.size(); )
+-  {
+-    if ( list[i].isEmpty() )
+-      continue;
+-    bool tmpOk = false;
++   if ( content_->contains(_key)) {
++     found = true;
++     list  = content_->value(_key).value< QList<QVariant> >();
++   }
+ 
+-    std::vector<double> tmp;
++   if ( found ) {
++     const size_t enries = list.size() / vectorDim;
+ 
+-    for (int j = 0; j < dim; ++j)
+-    {
+-      // check data type
+-      tmp.push_back( list[i].toInt(&tmpOk) );
+-      ++i;
+-    }
++     for ( unsigned int i = 0 ; i <  enries ; ++i ) {
++       VectorT tmp;
++       for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++          tmp[j] = list[i*vectorDim+j].toInt(&found);
+ 
+-    VectorT vec;
+-    for (int j = 0; j < dim; ++j)
+-      vec[j] = (typename VectorT::value_type)(tmp[j]);
++       _val.push_back(tmp);
++     }
+ 
+-    _val.push_back(vec);
+-    ok &= tmpOk;
+-  }
++   }
+ 
+-  return ok;
++   content_->endGroup();
++
++   return found;
+ }
+ 
+ 
+@@ -395,16 +336,13 @@
+                const QString & _key,
+                const std::vector< VectorT > & _value)
+ {
+-  QString list;
+-  typename std::vector< VectorT >::const_iterator viter;
++  const size_t vectorDim = _value[0].dim();
++  QList<QVariant> list;
++  for ( unsigned int i = 0 ; i <  _value.size() ; ++i )
++    for ( unsigned int j = 0 ; j <  vectorDim; ++j )
++      list.append(_value[i][j]);
+ 
+-  VectorT tmp;
+-
+-  for(viter = _value.begin();viter!=_value.end();++viter)
+-  {
+-    for (int i = 0; i < tmp.dim(); ++i)
+-      list += QString::number( (*viter)[i] ) + ";";
+-  }
+-
+-  m_iniData[ _section ][ _key ] = list;
++  content_->beginGroup(_section);
++  content_->setValue(_key,list);
++  content_->endGroup();
+ }
+Index: Core/ParseIni.cc
+===================================================================
+--- Core/ParseIni.cc	(revision 15108)
++++ Core/ParseIni.cc	(working copy)
+@@ -80,29 +80,18 @@
+   if ( _ini.section_exists("Options") ) {
+ 
+     // load ViewModes
+-    int viewModeCount;
+-    if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
+-      for (int i=0; i < viewModeCount; i++){
++    if ( OpenFlipperSettings().contains("Core/ViewModeCount") ) {
+ 
+-        QString entryToolbars;
+-        QString entryToolboxes;
+-        QString entryContextMenus;
+-        QString entryIcon;
++      int viewModeCount = OpenFlipperSettings().value("Core/ViewModeCount",0).toInt();
+ 
+-        QString keyToolbars     = "ViewModeToolbars"     + QString::number(i);
+-        QString keyToolboxes    = "ViewModeToolboxes"    + QString::number(i);
+-        QString keyContextMenus = "ViewModeContextMenus" + QString::number(i);
+-        QString keyIcon         = "ViewModeIcon"         + QString::number(i);
++      for ( int i=0; i < viewModeCount ; i++){
+ 
+-        // Read the entries
+-        if ( !_ini.get_entry( entryToolbars     , "Options" , keyToolbars ) )     continue;
+-        if ( !_ini.get_entry( entryToolboxes    , "Options" , keyToolboxes ) )    continue;
+-        if ( !_ini.get_entry( entryContextMenus , "Options" , keyContextMenus ) ) continue;
+-        if ( !_ini.get_entry( entryIcon         , "Options" , keyIcon ) )         continue;
++        OpenFlipperSettings().beginGroup("Core/viewMode"+ QString::number(i));
+ 
+-        QStringList toolBars     = entryToolbars.split(";");
+-        QStringList toolBoxes    = entryToolboxes.split(";");
+-        QStringList contextMenus = entryContextMenus.split(";");
++        QStringList toolBars     = OpenFlipperSettings().value("ViewModeToolbars").toString().split(";");
++        QStringList toolBoxes    = OpenFlipperSettings().value("ViewModeToolboxes").toString().split(";");
++        QStringList contextMenus = OpenFlipperSettings().value("ViewModeContextMenus").toString().split(";");
++        QString entryIcon        = OpenFlipperSettings().value("ViewModeIcon").toString();;
+ 
+         // Get Mode name ( prepended to all toolbox/toolbar/context menu lists )
+         QString mode = toolBoxes.first();
+@@ -129,7 +118,10 @@
+           viewModes_.push_back(vm);
+         }
+ 
++        OpenFlipperSettings().endGroup();
++
+       }
++    }
+ 
+     //load default dataType
+     QString type;
+@@ -296,15 +288,15 @@
+   QVector< QString > contextmenus;
+   QVector< QString > icons;
+ 
+-  if ( OpenFlipper::Options::gui() )
+-    for (int i=0; i < coreWidget_->viewModes_.size(); i++)
+-      if (coreWidget_->viewModes_[i]->custom){
++  if (OpenFlipper::Options::gui())
++    for (int i = 0; i < coreWidget_->viewModes_.size(); i++)
++      if (coreWidget_->viewModes_[i]->custom) {
+ 
+         //store name
+         QString entryToolboxes = coreWidget_->viewModes_[i]->name;
+ 
+         //store widgets
+-        for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolboxes.size(); j++)
++        for (int j = 0; j < coreWidget_->viewModes_[i]->visibleToolboxes.size(); j++)
+           entryToolboxes += ";" + coreWidget_->viewModes_[i]->visibleToolboxes[j];
+ 
+         toolboxes.push_back(entryToolboxes);
+@@ -313,15 +305,15 @@
+         QString entryToolbars = coreWidget_->viewModes_[i]->name;
+ 
+         //store widgets
+-        for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolbars.size(); j++)
++        for (int j = 0; j < coreWidget_->viewModes_[i]->visibleToolbars.size(); j++)
+           entryToolbars += ";" + coreWidget_->viewModes_[i]->visibleToolbars[j];
+ 
+         toolbars.push_back(entryToolbars);
+-	
+-	QString entryContextMenus = coreWidget_->viewModes_[i]->name;
+ 
++        QString entryContextMenus = coreWidget_->viewModes_[i]->name;
++
+         //store widgets
+-        for (int j=0; j < coreWidget_->viewModes_[i]->visibleContextMenus.size(); j++)
++        for (int j = 0; j < coreWidget_->viewModes_[i]->visibleContextMenus.size(); j++)
+           entryContextMenus += ";" + coreWidget_->viewModes_[i]->visibleContextMenus[j];
+ 
+         contextmenus.push_back(entryContextMenus);
+@@ -329,13 +321,14 @@
+         icons.push_back(coreWidget_->viewModes_[i]->icon);
+       }
+ 
+-  //save viewmodes to ini
+-  _ini.add_entry("Options","ViewModeCount" ,toolboxes.size());
+-  for (int i=0; i < toolboxes.size(); i++) {
+-    _ini.add_entry("Options","ViewModeToolboxes"     + QString::number(i) ,toolboxes[i]);
+-    _ini.add_entry("Options","ViewModeToolbars"      + QString::number(i) ,toolbars[i] );
+-    _ini.add_entry("Options","ViewModeContextMenus"  + QString::number(i) ,contextmenus[i] );
+-    _ini.add_entry("Options","ViewModeIcon"          + QString::number(i) ,icons[i] );
++  // save to internal storage
++  OpenFlipperSettings().setValue("Core/ViewModeCount", toolboxes.size());
++
++  for (int i = 0; i < toolboxes.size(); i++) {
++    OpenFlipperSettings().setValue("Core/viewMode"+ QString::number(i) +"/ViewModeToolboxes", toolboxes[i]);
++    OpenFlipperSettings().setValue("Core/viewMode"+ QString::number(i) +"/ViewModeToolbars", toolbars[i]);
++    OpenFlipperSettings().setValue("Core/viewMode"+ QString::number(i) +"/ViewModeContextMenus", contextmenus[i]);
++    OpenFlipperSettings().setValue("Core/viewMode"+ QString::number(i) +"/ViewModeIcon", icons[i]);
+   }
+ 
+   //save KeyBindings
+@@ -420,7 +413,7 @@
+   }
+ 
+   // Tell plugins that we are currently reading an ini file
+-  OpenFlipper::Options::loadingSettings(true);
++  OpenFlipper::Options::blockSceneGraphUpdates();
+ 
+   // Load Core settings only if requested
+   if ( _coreSettings )
+@@ -525,7 +518,7 @@
+   ini.disconnect();
+ 
+   // As the reading has been completed, tell plugins that we do not read an ini file anymore.
+-  OpenFlipper::Options::loadingSettings(false);
++  OpenFlipper::Options::unblockSceneGraphUpdates();
+ 
+   // Reset scenegraph and reset trackball center
+   // This will also recompute the bounding boxes as well as the near and far plane
