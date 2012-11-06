@@ -109,7 +109,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
   ACG::GLState::vertexPointer( &(polyline_.points())[0] );   
   ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
-  ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+
+  ACG::Vec4f color = _state.ambient_color()  + _state.diffuse_color();
 
   // draw points
   if (_drawMode & DrawModes::POINTS)
@@ -119,9 +120,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     if( polyline_.vertex_selections_available())
     {
       // save old values
-      Vec4f base_color_old = _state.base_color();
       float point_size_old = _state.point_size();
-      _state.set_base_color(Vec4f(1,0,0,1));
+      _state.set_color( Vec4f(1,0,0,1) );
       _state.set_point_size(point_size_old+4);
 
       glBegin(GL_POINTS);
@@ -130,95 +130,88 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
           glArrayElement(i);
       glEnd();
 
-      _state.set_base_color(base_color_old);
       _state.set_point_size(point_size_old);
     }
 
-    // Draw all vertices (don't care about selection
+    _state.set_color( color );
+
+    // Draw all vertices (don't care about selection)
     glDrawArrays(GL_POINTS,0,polyline_.n_vertices());
     
   }
 
 
   // draw line segments
-  if (_drawMode & DrawModes::WIREFRAME)
-  {
+  if (_drawMode & DrawModes::WIREFRAME) {
+
     // draw selection
-    if( polyline_.edge_selections_available())
-    {
+    if (polyline_.edge_selections_available()) {
       // save old values
-      Vec4f base_color_old = _state.base_color();
       float line_width_old = _state.line_width();
-      _state.set_base_color(Vec4f(1,0,0,1));
-      _state.set_line_width(2*line_width_old);
+      _state.set_color(Vec4f(1, 0, 0, 1));
+      _state.set_line_width(2 * line_width_old);
 
       glBegin(GL_LINES);
       // draw possibly closed PolyLine
-      for (unsigned int i=0; i< polyline_.n_edges(); ++i)
-      {
-	if( polyline_.edge_selection(i))
-	{
-          glArrayElement( i    % polyline_.n_vertices()  );
-          glArrayElement( (i+1) % polyline_.n_vertices() );
-	}
+      for (unsigned int i = 0; i < polyline_.n_edges(); ++i) {
+        if (polyline_.edge_selection(i)) {
+          glArrayElement(i % polyline_.n_vertices());
+          glArrayElement((i + 1) % polyline_.n_vertices());
+        }
       }
       glEnd();
 
-      _state.set_base_color(base_color_old);
       _state.set_line_width(line_width_old);
     }
 
+    _state.set_color( color );
+
     // draw all line segments
     glBegin(GL_LINE_STRIP);
-      // draw possibly closed PolyLine
-      if( polyline_.n_vertices())
-        glArrayElement(0);
-      for (unsigned int i=0; i< polyline_.n_edges(); ++i)
-        glArrayElement( (i+1) % polyline_.n_vertices() );
+
+    // draw possibly closed PolyLine
+    if (polyline_.n_vertices())
+      glArrayElement(0);
+    for (unsigned int i = 0; i < polyline_.n_edges(); ++i)
+      glArrayElement((i + 1) % polyline_.n_vertices());
     glEnd();
+
   }
-  
+
   // draw normals
-  if (polyline_.vertex_normals_available())
-  {
+  if (polyline_.vertex_normals_available()) {
     double avg_len = polyline_.n_edges() > 0 ? (polyline_.length() / polyline_.n_edges() * 0.75) : 0;
     std::vector<Point> ps;
-    for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
-    {
+    for (unsigned int i = 0; i < polyline_.n_vertices(); ++i) {
       ps.push_back(polyline_.point(i));
-      ps.push_back(polyline_.point(i)+polyline_.vertex_normal(i)*avg_len);
-      if(polyline_.vertex_binormals_available())
-	ps.push_back(polyline_.point(i)+polyline_.vertex_binormal(i)*avg_len);
+      ps.push_back(polyline_.point(i) + polyline_.vertex_normal(i) * avg_len);
+      if (polyline_.vertex_binormals_available())
+        ps.push_back(polyline_.point(i) + polyline_.vertex_binormal(i) * avg_len);
     }
-    ACG::GLState::vertexPointer( &ps[0] );   
-  
-    Vec4f base_color_old = _state.base_color();
+    ACG::GLState::vertexPointer(&ps[0]);
+
     float line_width_old = _state.line_width();
-    _state.set_base_color(Vec4f(0.8,0,0,1));
+    _state.set_color( Vec4f(0.8, 0, 0, 1) );
     _state.set_line_width(1);
 
     int stride = polyline_.vertex_binormals_available() ? 3 : 2;
     glBegin(GL_LINES);
-    for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
-    {
-      glArrayElement( stride*i );
-      glArrayElement( stride*i+1 );
+    for (unsigned int i = 0; i < polyline_.n_vertices(); ++i) {
+      glArrayElement(stride * i);
+      glArrayElement(stride * i + 1);
     }
     glEnd();
-    
-    if (polyline_.vertex_binormals_available())
-    {
-      _state.set_base_color(Vec4f(0,0,0.8,1));
+
+    if (polyline_.vertex_binormals_available()) {
+      _state.set_color( Vec4f(0, 0, 0.8, 1) );
       glBegin(GL_LINES);
-      for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
-      {
-	glArrayElement( stride*i );
-	glArrayElement( stride*i+2 );
+      for (unsigned int i = 0; i < polyline_.n_vertices(); ++i) {
+        glArrayElement(stride * i);
+        glArrayElement(stride * i + 2);
       }
       glEnd();
     }
 
-    _state.set_base_color(base_color_old);
     _state.set_line_width(line_width_old);
   }
   
