@@ -770,7 +770,8 @@ GLMatrixd TranslationManipulatorNode::computeWorldMatrix()
 
 void TranslationManipulatorNode::getRenderObjects(IRenderer* _renderer,
                                                   GLState& _state,
-                                                  const DrawModes::DrawMode& _drawMode)
+                                                  const DrawModes::DrawMode& _drawMode,
+                                                  const Material* _mat)
 {
   if (draw_manipulator_)
   {

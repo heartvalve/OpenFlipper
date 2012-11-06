@@ -579,7 +579,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
 
 template <class Mesh>
-void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
+void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat )
 {
   RenderObject ro;
   ro.initFromState(&_state);
@@ -596,6 +596,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.depthTest = true; // some previous node disabled depth testing
     ro.depthWrite = true;
     ro.depthFunc = GL_LESS;
+    ro.setMaterial(_mat);
 
 
     // ------------------------
@@ -666,6 +667,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
       drawMesh_->disableColors();
 
+      // use specular color for lines
+      ro.emissive = ro.specular;
+
       add_line_RenderObjects(_renderer, &ro);
     }
 
@@ -705,6 +709,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       ro.depthRange = Vec2f(0.0f, 1.0f);
 
+      // use specular color for lines
+      ro.emissive = ro.specular;
+
       add_line_RenderObjects(_renderer, &ro);
     }
 
@@ -716,6 +723,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       // note: colored edges are in sysmem, so they are directly bound to the VertexDeclaration
       ro.vertexDecl = drawMesh_->getEdgeColoredVertexDeclaration();
       ro.glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+
+      // use specular color for lines
+      ro.emissive = ro.specular;
 
       _renderer->addRenderObject(&ro);
 
@@ -733,6 +743,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       else
         ro.vertexDecl = drawMesh_->getHalfedgeColoredVertexDeclaration();
 
+      // use specular color for lines
+      ro.emissive = ro.specular;
+
       ro.glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
 
       _renderer->addRenderObject(&ro);
@@ -747,7 +760,12 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     switch (props->primitive())
     {
     case DrawModes::PRIMITIVE_POINT: add_point_RenderObjects(_renderer, &ro); break;
-    case DrawModes::PRIMITIVE_EDGE: add_line_RenderObjects(_renderer, &ro); break;
+    case DrawModes::PRIMITIVE_EDGE:
+      {
+        // use specular color for lines
+        ro.emissive = ro.specular;
+        add_line_RenderObjects(_renderer, &ro);
+      } break;
     case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
     default: break;
     }

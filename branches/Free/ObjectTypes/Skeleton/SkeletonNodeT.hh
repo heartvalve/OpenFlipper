@@ -105,7 +105,7 @@ public:
   void pick(GLState& _state, PickTarget _target);
 
   /// Adds renderobjects to renderer for flexible shader pipeline
-  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat);
 
   /// Set the pose which should be rendered
   void setActivePose(const AnimationHandle &_hAni);

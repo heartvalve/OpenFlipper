@@ -425,7 +425,7 @@ draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 
 
 
-void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode )
+void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat )
 {
   // Init state - changes when mode_ != POSITION
   Vec3d pos3D(0.0,0.0,0.0);
@@ -437,6 +437,7 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
   RenderObject ro;
   memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
+  ro.setMaterial(_mat);
 
 
   ro.depthTest = true;

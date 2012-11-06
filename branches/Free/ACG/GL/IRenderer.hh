@@ -59,6 +59,7 @@ namespace SceneGraph {
   namespace DrawModes {
     class DrawModeProperties;
   }
+  class Material;
 }
 
 
@@ -259,6 +260,8 @@ struct ACGDLLEXPORT RenderObject
    * Grabs material and transforms automatically if a GLState is provided.
   */
   void initFromState(GLState* _glState);
+
+  void setMaterial(const SceneGraph::Material* _mat);
 
   /** \brief Fills out ShaderGenDesc parameters based on Drawmode properties
   */

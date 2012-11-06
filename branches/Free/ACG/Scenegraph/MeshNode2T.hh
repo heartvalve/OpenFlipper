@@ -272,7 +272,7 @@ public:
   /** \brief Draws the object deferred
   *
   */
-  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode);
+  void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat);
 
   /** \brief return available draw modes 
   *
