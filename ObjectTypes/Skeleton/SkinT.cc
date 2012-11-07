@@ -79,8 +79,8 @@ void SkinT<MeshT>::deformSkin()
  * SkeletonT::PrepareSkin.
  *
  * Two algorithms are implemented:
- * - Linear Blend Skinning (LBS) or Skeletal Space Deformation (SSD), e.g. see \cite LCF00 "[2]", \cite RLN06 "[3]"
- * - Spherical Blend Skinning (SBS), see \cite KZ05 "[1]"
+ * - Linear Blend Skinning (LBS) or Skeletal Space Deformation (SSD)
+ * - Spherical Blend Skinning (SBS), Ladislav Kavan and Jiri Zara: Spherical blend skinning, a real-time deformation of articulated models
  *
  * @par Linear Blend Skinning
  * Every vertex will be transformed by every joint with a non-null weight. First

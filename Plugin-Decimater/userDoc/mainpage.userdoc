@@ -15,7 +15,7 @@ Decimates a given mesh to a low poly mesh.
 \section quick_tutorial Quick Tutorial
 First select one of the \ref decimaters .
 The \ref incremental provides the best quality, while
-the \multiple_choice is the fastest one.
+the \ref multiple_choice is the fastest one.
 Now, you can choose your constraints and the decimation order.
 Don't forget to define stop conditions.
 
@@ -35,7 +35,7 @@ They will not be updated, until <i>Initialize</i> is pressed again.
 
 
 
-\section decimater Decimater
+\section decimaters Decimaters
 
 \subsection incremental Incremental Decimater
 
@@ -45,7 +45,7 @@ Use \ref multiple_choice or \ref mixed to get faster, but less accurate results.
 
 \subsection multiple_choice Multiple Choice Decimater
 
-The multiple choice decimater checks #Random Samples and takes the best one for the next collapse.
+The multiple choice decimater checks Nuber of Random Samples and takes the best one for the next collapse.
 As there is no heap involved, this is usually <b>faster</b> than the incremental approach but as it is randomized,
 the result is not guarantied to be the best, but still inside the specified constraints.
 
