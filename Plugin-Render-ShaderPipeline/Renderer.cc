@@ -508,7 +508,7 @@ void Renderer::bindObjectVBO(ACG::RenderObject* _obj,
 
 
   // activate vertex declaration
-  (const_cast<VertexDeclaration*>(_obj->vertexDecl))->activateShaderPipeline(_prog);
+  _obj->vertexDecl->activateShaderPipeline(_prog);
 }
 
 
@@ -759,7 +759,7 @@ void Renderer::collectLightNodes( ACG::SceneGraph::BaseNode* _node )
   traverseLightNodes(_node);
 }
 
-int Renderer::getNumRenderObjects()
+int Renderer::getNumRenderObjects() const
 {
 //   int i = 0;
 //   for (InternalRenderObject* r = renderObjects_; r; ++i, r = r->next);
@@ -1004,6 +1004,24 @@ void Renderer::drawProjQuad(GLSL::Program* _prog)
 QString Renderer::checkOpenGL()
 {
   return QString("");
+}
+
+void Renderer::dumpRenderObjectsToText(const char* _fileName, RenderObject** _sortedList) const
+{
+  QFile fileOut(_fileName);
+  if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    QTextStream outStrm(&fileOut);
+    for (int i = 0; i < getNumRenderObjects(); ++i)
+    {
+      if (_sortedList)
+        outStrm << "\n" << _sortedList[i]->toString();
+      else
+        outStrm << "\n" << renderObjects_[i].toString();
+    }
+
+    fileOut.close();
+  }
 }
 
 

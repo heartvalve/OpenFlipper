@@ -178,7 +178,15 @@ protected:
   void traverseLightNodes(ACG::SceneGraph::BaseNode* _node);
 
 
-  int getNumRenderObjects();
+  int getNumRenderObjects() const;
+
+
+  /**
+  Dump list of renderobjects to text file.
+  @param _fileName name of text file to write to
+  @param _sortedList dump sorted renderobjects in order, may be 0 to use the unsorted list instead
+  */
+  void dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList = 0) const;
 
 
 
