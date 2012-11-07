@@ -900,6 +900,60 @@ ShaderModifier::ShaderModifier( void )
 ShaderModifier::~ShaderModifier( void )
 {}
 
+//=============================================================================
+
+
+QString ShaderGenDesc::toString() const
+{
+  // mapping (int)ShaderGenMode -> string
+  const char* shadeModeString[] = 
+  {
+    "SG_SHADE_UNLIT",
+    "SG_SHADE_FLAT",
+    "SG_SHADE_GOURAUD",
+    "SG_SHADE_PHONG"
+  };
+
+  QString res;
+  QTextStream resStrm(&res);
+
+  resStrm << "shaderDesc.numLights: " << numLights;
+
+  if (numLights)
+  {
+    resStrm << "\nshaderDesc.lightTypes[]: {";
+
+    for (int i = 0; i < numLights; ++i)
+    {
+      switch (lightTypes[i]) 
+      {
+      case SG_LIGHT_DIRECTIONAL: resStrm << "DIRECTIONAL"; break;
+      case SG_LIGHT_POINT: resStrm << "POINT"; break;
+      case SG_LIGHT_SPOT: resStrm << "SPOT"; break;
+      default: resStrm << "UNDEFINED"; break;
+      }
+
+      if (i + 1 < numLights)
+        resStrm << ", ";
+      else
+        resStrm << "}";
+    }
+  }
+
+
+  resStrm << "\nshaderDesc.shadeMode: " << shadeModeString[shadeMode];
+  resStrm << "\nshaderDesc.vertexColors: " << vertexColors;
+  resStrm << "\nshaderDesc.textured: " << textured;
+
+  if (vertexTemplateFile)
+    resStrm << "\nshaderDesc.vertexTemplateFile: " << vertexTemplateFile;
+
+  if (fragmentTemplateFile)
+    resStrm << "\nshaderDesc.fragmentTemplateFile: " << fragmentTemplateFile;
+
+  return res;
+}
+
 
 } // namespace ACG
 //=============================================================================

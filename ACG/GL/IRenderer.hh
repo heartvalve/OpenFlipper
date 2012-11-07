@@ -216,6 +216,7 @@ struct ACGDLLEXPORT RenderObject
 
   /// used internally for renderer debugging
   int debugID;
+  const char* debugName;
 
   /// may be used internally by the renderer
   unsigned int internalFlags_;
@@ -266,6 +267,11 @@ struct ACGDLLEXPORT RenderObject
   /** \brief Fills out ShaderGenDesc parameters based on Drawmode properties
   */
   void setupShaderGenFromDrawmode(const SceneGraph::DrawModes::DrawModeProperties* _props);
+
+
+  /** Returns a text representation of the RenderObject for debugging purposes.
+  */
+  QString toString() const;
 };
 
 
