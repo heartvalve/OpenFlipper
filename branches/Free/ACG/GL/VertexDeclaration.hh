@@ -46,6 +46,7 @@
 
 #include <vector>
 #include <list>
+#include <QString>
 #include <ACG/Config/ACGDefines.hh>
 
 namespace GLSL
@@ -213,7 +214,7 @@ public:
   /*! prepare OpenGL to use a vertex buffer with this declaration
   -> uses shader attribute pointers ( glVertexAttribPointer )
   */
-  void activateShaderPipeline(GLSL::Program* _prog);
+  void activateShaderPipeline(GLSL::Program* _prog) const;
 
 
   /*! disables this vertex declaration to prevent any draw related crashes
@@ -229,7 +230,7 @@ public:
 
   /*! get vertex size
   */
-  unsigned int getVertexStride();
+  unsigned int getVertexStride() const;
 
   /*! get num of vertex elements
   */
@@ -237,7 +238,7 @@ public:
 
   /*! get the i'th vertex element desc
   */
-  const VertexElement* getElement(unsigned int i);
+  const VertexElement* getElement(unsigned int i) const;
 
   /*! get size of GL_FLOAT, GL_INT ...
   */
@@ -246,6 +247,11 @@ public:
   /*! get size of one vertex element
   */
   static unsigned int getElementSize(const VertexElement* _pElement);
+
+
+  /*! Returns a string describing the vertex format for debugging purpose.
+  */
+  QString toString() const;
 
 private:
 
