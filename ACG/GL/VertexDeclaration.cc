@@ -46,6 +46,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <QTextStream>
 
 #include "VertexDeclaration.hh"
 
@@ -99,10 +100,22 @@ void VertexDeclaration::addElements(unsigned int _numElements, const VertexEleme
     elements_.push_back(tmp);
   }
 
-  if (!strideUserDefined_)
-    vertexStride_ = 0; // because of new elements, stride must be recomputed
-
   updateOffsets();
+
+  if (!strideUserDefined_)
+  {
+    // recompute vertex stride from declaration (based on last element)
+
+    unsigned int n = getNumElements();
+
+    if (n)
+    {
+      const VertexElement* pLastElement = getElement(n-1);
+
+      vertexStride_ = pLastElement->byteOffset_ + getElementSize( pLastElement );
+    }
+  }
+
 }
 
 
@@ -252,7 +265,7 @@ void VertexDeclaration::activateFixedFunction()
 
 
 
-void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog)
+void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
 {
   // setup correct attribute locations as specified
 
@@ -301,28 +314,14 @@ void VertexDeclaration::deactivateShaderPipeline( GLSL::Program* _prog ) const
 
 
 
-const VertexElement* VertexDeclaration::getElement(unsigned int i)
+const VertexElement* VertexDeclaration::getElement(unsigned int i) const
 {
   return &elements_[i];
 }
 
 
-unsigned int VertexDeclaration::getVertexStride()
+unsigned int VertexDeclaration::getVertexStride() const
 {
-  if (!strideUserDefined_ && !vertexStride_)
-  {
-    // compute vertex stride from declaration
-
-    unsigned int n = getNumElements();
-
-    if (n)
-    {
-      const VertexElement* pLastElement = getElement(n-1);
-
-      vertexStride_ = pLastElement->byteOffset_ + getElementSize( pLastElement );
-    }
-  }
-
   return vertexStride_;
 }
 
@@ -339,6 +338,62 @@ void VertexDeclaration::clear()
   vertexStride_ = 0;
 
   elements_.clear();
+}
+
+
+QString VertexDeclaration::toString() const
+{
+  // maps VERTEX_USAGE -> string
+  const char* usageStrings[] = 
+  {
+    "POSITION",
+    "NORMAL",
+    "TEXCOORD",
+    "COLOR",
+    "BLENDWEIGHTS",
+    "BLENDINDICES"
+  };
+
+  QString result;
+
+  QTextStream resultStrm(&result);
+  resultStrm << "stride = " << getVertexStride() << "\n";
+
+
+  for (unsigned int i = 0; i < getNumElements(); ++i)
+  {
+    const VertexElement* el = getElement(i);
+
+    // convert element-type GLEnum to string
+    const char* typeString = "";
+
+    switch (el->type_)
+    {
+    case GL_FLOAT: typeString = "GL_FLOAT"; break;
+    case GL_DOUBLE: typeString = "GL_DOUBLE"; break;
+
+    case GL_INT: typeString = "GL_INT"; break;
+    case GL_UNSIGNED_INT: typeString = "GL_UNSIGNED_INT"; break;
+
+    case GL_SHORT: typeString = "GL_SHORT"; break;
+    case GL_UNSIGNED_SHORT: typeString = "GL_UNSIGNED_SHORT"; break;
+
+    case GL_BYTE: typeString = "GL_BYTE"; break;
+    case GL_UNSIGNED_BYTE: typeString = "GL_UNSIGNED_BYTE"; break;
+    default: typeString = "unknown"; break;
+    }
+
+    // get usage in string form
+    const char* usage = (el->usage_ < VERTEX_USAGE_SHADER_INPUT) ? usageStrings[el->usage_] : el->shaderInputName_;
+
+    resultStrm << "element " << i
+               << " - [type: " << usage
+               << ", count: " << el->numElements_
+               << ", usage: " << usage
+               << ", offset: " << el->byteOffset_ << "]\n";
+  }
+
+  return result;
 }
 
 //=============================================================================
