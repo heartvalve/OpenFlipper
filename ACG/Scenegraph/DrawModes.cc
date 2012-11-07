@@ -246,11 +246,12 @@ bool DrawMode::operator==(const DrawMode& _mode) const {
   return ((modeFlags_ & _mode.modeFlags_).any());
 }
 
-void DrawMode::operator =(const DrawMode& _mode) {
+DrawMode & DrawMode::operator =(const DrawMode& _mode) {
   modeFlags_ = _mode.modeFlags_;
-  layers_ = _mode.layers_;
+  layers_    = _mode.layers_;
 
-//  checkConsistency();
+  //  checkConsistency();
+  return (*this);
 }
 
 bool DrawMode::operator!=( const DrawMode& _mode2  ) const {
