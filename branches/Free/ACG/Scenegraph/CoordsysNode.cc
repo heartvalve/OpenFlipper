@@ -515,10 +515,10 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
     drawCoordsys(_renderer, &ro);
 
     // set depth buffer to 0 so that nothing can paint over cordsys
-    ro.modelview = _state.modelview();
-    ro.priority = -2;
+    ro.modelview  = _state.modelview();
+    ro.priority   = -2;
     ro.depthRange = Vec2f(0.0, 0.0);
-    ro.depthFunc = GL_ALWAYS;
+    ro.depthFunc  = GL_ALWAYS;
     ro.glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
     // Koordinatensystem zeichnen

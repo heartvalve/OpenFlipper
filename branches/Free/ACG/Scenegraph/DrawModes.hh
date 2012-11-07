@@ -315,7 +315,7 @@ namespace DrawModes {
       /** @name Operators
        * @{ */
       //===========================================================================
-      void operator = (const DrawMode& _mode );
+      DrawMode & operator = (const DrawMode& _mode );
 
       bool operator==(const DrawMode& _mode) const;
 

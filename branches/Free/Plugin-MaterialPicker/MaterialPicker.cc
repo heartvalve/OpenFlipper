@@ -464,7 +464,7 @@ void MaterialPicker::slotMaterialProperties()
   if (materialNode_)
     return;
 
-  QListWidgetItem* item = materialListWidget_->currentItem();
+  //QListWidgetItem* item = materialListWidget_->currentItem();
   materialListWidget_->setDisabled(true);
 
   materialNode_.reset(new MaterialNode());
