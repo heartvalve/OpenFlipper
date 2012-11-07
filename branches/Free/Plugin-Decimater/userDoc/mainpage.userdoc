@@ -7,7 +7,7 @@ Decimates a given mesh to a low poly mesh.
 
 \ref quick_tutorial
 
-\ref decimater :
+\ref decimaters :
 \li \ref incremental
 \li \ref multiple_choice
 \li \ref mixed
@@ -26,7 +26,7 @@ the original error quadrics of your mesh.
 Otherwise, by adding or removing constraints, you have to reinitialize
 the decimater. This will update the error quadrics, so the next decimation will 
 be based on the errors to the current mesh, and not the original mesh.
-Also, changing the <b>\ref decimater</b>, or the <b>Decimation Order</b>, will
+Also, changing the <b>\ref decimaters</b>, or the <b>Decimation Order</b>, will
 cause a re-initialization.
 
 \note The <b>Initialization</b> saves the error quadric of each vertex.
