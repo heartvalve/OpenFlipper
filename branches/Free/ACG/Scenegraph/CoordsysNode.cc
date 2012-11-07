@@ -191,39 +191,46 @@ void CoordsysNode::drawCoordsys(IRenderer* _renderer, RenderObject* _baseRO)
 
 
   // Origin
+  _baseRO->debugName = "coordsys.sphere";
   _baseRO->emissive = Vec3f(1.0f, 1.0f, 1.0f);
   sphere_->addToRenderer(_renderer, _baseRO, sphereRadius);
 
 
   // X-Axis
+  _baseRO->debugName = "coordsys.x.axis";
   _baseRO->emissive = Vec3f(1.0f, 0.0f, 0.0f);
   _baseRO->modelview = mModelView;
   _baseRO->modelview.rotate (-90, 0, 1, 0);
   _baseRO->modelview.translate ( 0, 0, -bodyLength );
   cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
   
+  _baseRO->debugName = "coordsys.x.head";
   _baseRO->modelview.translate ( 0, 0, -arrowLength );
   cone_->addToRenderer(_renderer, _baseRO, arrowLength);
 
 
   // Y-Axis
+  _baseRO->debugName = "coordsys.y.axis";
   _baseRO->emissive = Vec3f(0.0f, 1.0f, 0.0f);
   _baseRO->modelview = mModelView;
   _baseRO->modelview.rotate (90, 1, 0, 0);
   _baseRO->modelview.translate ( 0, 0, -bodyLength );
   cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
 
+  _baseRO->debugName = "coordsys.y.head";
   _baseRO->modelview.translate ( 0, 0, -arrowLength );
   cone_->addToRenderer(_renderer, _baseRO, arrowLength);
 
 
   // Z-Axis
+  _baseRO->debugName = "coordsys.z.axis";
   _baseRO->emissive = Vec3f(0.0f, 0.0f, 1.0f);
   _baseRO->modelview = mModelView;
   _baseRO->modelview.rotate (180, 0, 1, 0);
   _baseRO->modelview.translate ( 0, 0, -bodyLength );
   cylinder_->addToRenderer(_renderer, _baseRO, bodyLength);
 
+  _baseRO->debugName = "coordsys.z.head";
   _baseRO->modelview.translate ( 0, 0, -arrowLength );
   cone_->addToRenderer(_renderer, _baseRO, arrowLength);
 }

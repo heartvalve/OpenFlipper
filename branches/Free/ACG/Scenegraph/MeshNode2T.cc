@@ -583,7 +583,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 {
   RenderObject ro;
   ro.initFromState(&_state);
- 
+
+  ro.debugName = "MeshNode";
+   
   // shader gen setup (lighting, shademode, vertex-colors..)
   
   for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
