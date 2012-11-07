@@ -102,7 +102,14 @@ void Core::slotObjectUpdated(int _identifier, const UpdateType& _type) {
   // If the identifier is -1 we force an update of all objects in the scene (Bad idea for scenes with many objects)
   if ( _identifier == -1 ) {
 
-    std::cerr << "Warning, updated object called with -1" << std::endl;
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGWARN,"updatedObject( " + QString::number(_identifier) + ", " + updateTypeName(_type)
+            + tr(" ) called by ") + QString( sender()->metaObject()->className() + tr(" which is inefficient)") ) );
+      }
+    } else {
+      emit log(LOGWARN,"updatedObject( " + QString::number(_identifier) + ", " + updateTypeName(_type) + tr(" ) called by Core, which is inefficient!") );
+    }
 
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_ALL ) ;  o_it != PluginFunctions::objectsEnd(); ++o_it) {
 
