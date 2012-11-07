@@ -23,9 +23,11 @@ vec3 LitPointLight(vec3 vPosition,
 	// diffuse
 	float ldotn = clamp(dot(vLightDir, vNormal), 0.0, 1.0);
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
-
+ 
 	// specular
-	cLight += (floor(ldotn + 0.9) * pow(ldotn, SHININESS) ) * cLightSpecular * g_cSpecular;
+	vec3 h = normalize(vec3(0, 0, 1) + vLightDir);
+	float hdotn = max(dot(h, vNormal), 0.0);
+	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
 	
 	
 	// attenuate
@@ -49,8 +51,10 @@ vec3 LitDirLight(vec3 vNormal,
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
 
 	// specular
-	cLight += (floor(ldotn + 0.9) * pow(ldotn, SHININESS) ) * cLightSpecular * g_cSpecular;
-	
+	vec3 h = normalize(vec3(0, 0, 1) + vLightDir);
+	float hdotn = max(dot(h, vNormal), 0.0);
+	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
+
 	return cLight;
 }
 
@@ -80,7 +84,10 @@ vec3 LitSpotLight(vec3 vPosition,
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
 
 	// specular
-	cLight += (floor(ldotn + 0.9) * pow(ldotn, SHININESS) ) * cLightSpecular * g_cSpecular;
+	vec3 h = normalize(vec3(0, 0, 1) + vLightDir);
+	float hdotn = max(dot(h, vNormal), 0.0);
+	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
+
 	
 	
 	// attenuate
