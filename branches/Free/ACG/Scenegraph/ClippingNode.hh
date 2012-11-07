@@ -86,7 +86,13 @@ public:
     : BaseNode(_parent, _name),
       slice_width_(0),
       offset_(0)
-  {}
+  {
+    offset_plane0_[0] = 0.0;
+    offset_plane0_[1] = 0.0;
+    offset_plane0_[2] = 0.0;
+    offset_plane0_[3] = 0.0;
+
+  }
 
 
   /// Destructor.
@@ -131,4 +137,3 @@ private:
 //=============================================================================
 #endif // ACG_CLIPPING_NODE_HH defined
 //=============================================================================
-
