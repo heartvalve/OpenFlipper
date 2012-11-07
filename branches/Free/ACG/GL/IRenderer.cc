@@ -44,6 +44,7 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
+#include <QTextStream>
 
 #include <ACG/GL/gl.hh>
 
@@ -158,6 +159,90 @@ void RenderObject::setMaterial( const SceneGraph::Material* _mat )
 RenderObject::RenderObject()
 {
   memset(this, 0, sizeof(RenderObject));
+}
+
+
+QString RenderObject::toString() const
+{
+  // several mappings: (int)GLEnum -> string
+
+  const char* primitiveString[] = 
+  {
+    "GL_POINTS",
+    "GL_LINES",
+    "GL_LINE_LOOP",
+    "GL_LINE_STRIP",
+    "GL_TRIANGLES",
+    "GL_TRIANGLE_STRIP",
+    "GL_TRIANGLE_FAN",
+    "GL_QUADS",
+    "GL_QUAD_STRIP",
+    "GL_POLYGON"
+  };
+
+  const char* fillModeString[] = 
+  {
+    "GL_POINT",
+    "GL_LINE",
+    "GL_FILL"
+  };
+
+  const char* depthFunString[] =
+  {
+    "GL_NEVER",
+    "GL_LESS",
+    "GL_EQUAL",
+    "GL_LEQUAL",
+    "GL_GREATER",
+    "GL_NOTEQUAL",
+    "GL_GEQUAL",
+    "GL_ALWAYS"
+  };
+
+  QString result;
+  QTextStream resultStrm(&result);
+
+  resultStrm << "name: " << debugName
+             << "\ndebugID: " << debugID
+             << "\npriority: " << priority
+
+             << "\nprimitiveMode: " << (primitiveMode <= GL_POLYGON ? primitiveString[primitiveMode] : "undefined")
+
+             << "\nfillMode: " << fillModeString[fillMode - GL_POINT]
+             << "\nnumIndices: " << numIndices
+             << "\nindexOffset: " << indexOffset;
+
+
+  resultStrm << "\n" << shaderDesc.toString();
+
+
+  resultStrm << "\nculling: " << culling
+    << "\nblending: " << blending
+    << "\nalphaTest: " << alphaTest;
+
+
+  resultStrm << "\ndepthTest: " << depthTest
+    << "\ndepthWrite: " << depthWrite
+    << "\ndepthFunc: " << depthFunString[depthFunc - GL_NEVER]
+    << "\ndepthRange: [" << depthRange[0] << ", " << depthRange[1] << "]"
+    << "\ncolorWriteMask: " << colorWriteMask[0] << ", " << colorWriteMask[1] << ", "<< colorWriteMask[2] << ", "<< colorWriteMask[2];
+
+
+  resultStrm << "\ndiffuse: [" << diffuse[0] << ", " << diffuse[1] << ", " << diffuse[2] << "]";
+  resultStrm << "\nambient: [" << ambient[0] << ", " << ambient[1] << ", " << ambient[2] << "]";
+  resultStrm << "\nspecular: [" << specular[0] << ", " << specular[1] << ", " << specular[2] << "]";
+  resultStrm << "\nemissive: [" << emissive[0] << ", " << emissive[1] << ", " << emissive[2] << "]";
+
+  resultStrm << "\nshininess: " << shininess;
+  resultStrm << "\nalpha: " << alpha;
+
+  resultStrm << "\ninternalFlags: " << internalFlags_;
+
+  if (vertexDecl)
+    resultStrm << "\n" << vertexDecl->toString();
+
+
+  return result;
 }
 
 

@@ -88,6 +88,10 @@ struct ShaderGenDesc
   // optionally specify shader template file names
   const char* vertexTemplateFile;
   const char* fragmentTemplateFile;
+
+
+  /// convert ShaderGenDesc to string format for debugging
+  QString toString() const;
 };
 
 /**
