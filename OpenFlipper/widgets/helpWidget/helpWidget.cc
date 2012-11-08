@@ -53,6 +53,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <iostream>
+#include <algorithm>
 
 #include <QTextStream>
 #include <QDir>
