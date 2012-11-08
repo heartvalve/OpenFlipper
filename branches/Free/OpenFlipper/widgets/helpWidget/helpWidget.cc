@@ -76,7 +76,6 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   filename += "Help.qhc";
     
   QDir helpDir = QDir(OpenFlipper::Options::helpDirStr());
-  QStringList helpFiles = helpDir.entryList(QStringList("*.qch"),QDir::Files);
 
   QString iconPath = QString(OpenFlipper::Options::iconDirStr())+QString(OpenFlipper::Options::dirSeparator());
 
@@ -100,22 +99,30 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   QStringList documentationFiles;
 
   // Get a list of all loaded documentation files from the namespaces
-  for ( int i = 0; i < registeredNamespaces.size() ; ++i)
-    documentationFiles.push_back( helpEngine_->documentationFileName(registeredNamespaces[i]) );
+  QStringList helpFiles = helpDir.entryList(QStringList("*.qch"),QDir::Files);
 
+  // Write absolute path into filenames
+  for (QStringList::iterator iter = helpFiles.begin(); iter != helpFiles.end(); ++iter)
+    *iter = helpDir.path()+ OpenFlipper::Options::dirSeparator() + *iter;
+
+  for ( int i = 0; i < registeredNamespaces.size() ; ++i)
+  {
+    QString registredFilename (helpEngine_->documentationFileName(registeredNamespaces[i]));
+    QStringList::iterator iter = std::find(helpFiles.begin(),helpFiles.end(),registredFilename);
+
+    // re-register documentation if location changed
+    if (iter != helpFiles.end())
+      documentationFiles.push_back( registredFilename );
+    else
+      helpEngine_->unregisterDocumentation(registeredNamespaces[i]);
+  }
 
   for ( int i = 0 ; i < helpFiles.size() ; ++i ) {
-    const QString filename = helpDir.path()+ "/" + helpFiles[i];
+    const QString filename = helpFiles[i];
 
     // Don't register files twice (stored between multiple OpenFlipper executions)
     if (documentationFiles.contains(filename))
       continue;
-
-    // re-register documentation if location changed
-    int index = registeredNamespaces.indexOf(helpEngine_->namespaceName(filename));
-    if (index != -1)
-      helpEngine_->unregisterDocumentation(registeredNamespaces[i]);
-      
 
     // Try to register the file
     if ( !helpEngine_->registerDocumentation( filename ) ) {
