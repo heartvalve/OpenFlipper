@@ -53,7 +53,6 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <iostream>
-#include <algorithm>
 
 #include <QTextStream>
 #include <QDir>
@@ -109,10 +108,9 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite /*=""*/, const 
   for ( int i = 0; i < registeredNamespaces.size() ; ++i)
   {
     QString registredFilename (helpEngine_->documentationFileName(registeredNamespaces[i]));
-    QStringList::iterator iter = std::find(helpFiles.begin(),helpFiles.end(),registredFilename);
 
     // re-register documentation if location changed
-    if (iter != helpFiles.end())
+    if (helpFiles.indexOf(registredFilename) != -1)
       documentationFiles.push_back( registredFilename );
     else
       helpEngine_->unregisterDocumentation(registeredNamespaces[i]);
