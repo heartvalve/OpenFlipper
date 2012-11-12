@@ -70,7 +70,11 @@
 // ===             Object List Communication                       =======================
 //========================================================================================
 
-/** This function is called by a plugin if it changed something in the object list (source,target,...). The information is passed to all plugins.
+/** \brief Handle object updates by plugins
+ *
+ * This function is called by a plugin if it changed something in the object list (source,target, or other properties ).
+ * The information is passed to all plugins.
+ *
  * @param _identifier Id of the updated object
  * @param _type       What part of the object has been updated
  */

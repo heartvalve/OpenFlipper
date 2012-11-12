@@ -72,7 +72,7 @@ class SelectionInterface {
     typedef unsigned int          PrimitiveType;
 
     /// Destructor
-    virtual ~SelectionInterface() {}
+    virtual ~SelectionInterface() {};
 
     //===========================================================================
     /** @name Registering Selection Environments and primitives
@@ -152,7 +152,7 @@ class SelectionInterface {
      *  @param _icon        The icon for this mode (basically a type icon)
      *  @param _handleName  The handle of the recently added selection environment. Needed for referencing
      */
-    virtual void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {}
+    virtual void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {};
 
     /** \brief Register data type for a selection environment
      *
@@ -164,7 +164,7 @@ class SelectionInterface {
      *  @param _handleName  The handle of the selection environment for this type
      *  @param _type        The data type that should be added
      */
-    virtual void registerType(QString _handleName, DataType _type) {}
+    virtual void registerType(QString _handleName, DataType _type) {};
 
     /** \brief Provide selection for primitives other than the standard ones
      *
@@ -177,7 +177,7 @@ class SelectionInterface {
      *  @param _icon        The icon for the primitive type
      *  @param _typeHandle  The returned handle to the added primitive type
      */
-    virtual void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {}
+    virtual void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {};
 
     /** @} */
 
@@ -235,7 +235,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showToggleSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showToggleSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show lasso selection mode in a specified selection environment
      *
@@ -248,7 +248,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show volume lasso selection mode in a specified selection environment
      *
@@ -261,7 +261,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showVolumeLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showVolumeLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show surface lasso selection mode in a specified selection environment
      *
@@ -274,7 +274,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showSurfaceLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showSurfaceLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show sphere selection mode in a specified selection environment
      *
@@ -287,7 +287,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showSphereSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showSphereSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show closest boundary selection mode in a specified selection environment
      *
@@ -300,7 +300,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showClosestBoundarySelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showClosestBoundarySelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show flood fill selection mode in a specified selection environment
      *
@@ -313,7 +313,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Show connected components selection mode in a specified selection environment
      *
@@ -326,7 +326,7 @@ class SelectionInterface {
      *  @param _show            Indicates whether the mode should be available or not
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      */
-    virtual void showComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+    virtual void showComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
     /** \brief Add a custom interactive selection mode
      *
@@ -347,7 +347,7 @@ class SelectionInterface {
      *  @param _customIdentifier Holds the identifier of the custom selection modes
      */
     virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
-                                        PrimitiveType _associatedTypes, QString& _customIdentifier) {}
+                                        PrimitiveType _associatedTypes, QString& _customIdentifier) {};
 
     /** \brief Add a custom interactive selection mode
      *
@@ -370,7 +370,7 @@ class SelectionInterface {
      */
     virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                         PrimitiveType _associatedTypes, QString& _customIdentifier,
-                                        DataType _objectTypeRestriction) {}
+                                        DataType _objectTypeRestriction) {};
 
     /** @} */
 
@@ -393,7 +393,7 @@ class SelectionInterface {
      *
      *  @param _types The list of currently active data types
      */
-    virtual void getActiveDataTypes(TypeList& _types) {}
+    virtual void getActiveDataTypes(TypeList& _types) {};
 
     /** \brief Get the primitive type that is selected
      *
@@ -401,7 +401,7 @@ class SelectionInterface {
      *
      *  @param _type Id of selected primitive type
      */
-    virtual void getActivePrimitiveType(PrimitiveType& _type) {}
+    virtual void getActivePrimitiveType(PrimitiveType& _type) {};
 
     /** \brief Indicates whether selection should be performed on target objects only
      *
@@ -409,7 +409,7 @@ class SelectionInterface {
      *
      *  @param _targetsOnly True if selection should restrict to target objects
      */
-    virtual void targetObjectsOnly(bool& _targetsOnly) {}
+    virtual void targetObjectsOnly(bool& _targetsOnly) {};
 
     /** @} */
 
@@ -462,7 +462,7 @@ class SelectionInterface {
     *
     *  @param _file The file from which one can read the selection data
     */ 
-    virtual void slotLoadSelection(const INIFile& _file) {}
+    virtual void slotLoadSelection(const INIFile& _file) {};
     
     /** \brief Save selection for all objects in the scene
     *
@@ -472,7 +472,7 @@ class SelectionInterface {
     *
     *  @param _file The file into which one can store selection data
     */
-    virtual void slotSaveSelection(INIFile& _file) {}
+    virtual void slotSaveSelection(INIFile& _file) {};
 
     public slots:
 
@@ -483,7 +483,7 @@ class SelectionInterface {
     *  @param _objId    The target object's id
     *  @param _filename The file in which the data is stored
     */
-    virtual void loadSelection(int _objId, const QString& _filename) {}
+    virtual void loadSelection(int _objId, const QString& _filename) {};
 
     /** @} */
 
@@ -545,7 +545,7 @@ class SelectionInterface {
      *  @param _key       Key to register
      *  @param _modifiers Key modifiers (i.e. shift, control, meta keys, defaults to none)
      */
-    virtual void registerKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier) {}
+    virtual void registerKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier) {};
 
 
     private slots:
@@ -559,7 +559,7 @@ class SelectionInterface {
     *  @param _key       The pressed key
     *  @param _modifiers Indicates whether mod-keys have been pressed synchronously
     */  
-    virtual void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers) {}
+    virtual void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers) {};
 
     /** @} */
 
@@ -643,7 +643,7 @@ class SelectionInterface {
      *  @param _category        The category under which the specified operations will be listed
      *  @param _type            The primitive type for which the specified operations will be available (0u if operation should always be available)
      */
-    virtual void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, PrimitiveType _type = 0u) {}
+    virtual void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, PrimitiveType _type = 0u) {};
 
     private slots:
 
@@ -654,7 +654,7 @@ class SelectionInterface {
     *
     *  @param _operation The identifier of the operation just as registered via addSelectionOperations
     */
-    virtual void slotSelectionOperation(QString _operation) {}
+    virtual void slotSelectionOperation(QString _operation) {};
 
 
     /** @} */
@@ -711,7 +711,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotToggleSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotToggleSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a lasso selection
     *
@@ -724,7 +724,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a volume lasso selection
     *
@@ -737,7 +737,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotVolumeLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotVolumeLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a surface lasso selection
     *
@@ -751,7 +751,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotSurfaceLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotSurfaceLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a sphere selection
     *
@@ -765,7 +765,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotSphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotSphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a closest boundary selection
     *
@@ -778,7 +778,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotClosestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotClosestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a flood fill selection
     *
@@ -792,7 +792,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a connected components selection
     *
@@ -804,7 +804,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotComponentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void slotComponentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Called whenever the user performs a custom selection
     *
@@ -816,7 +816,7 @@ class SelectionInterface {
     *  @param _customIdentifier Holds the identifier of the custom selection modes
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void slotCustomSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {}
+   virtual void slotCustomSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {};
 
 
    /** @} */
@@ -840,7 +840,7 @@ class SelectionInterface {
     *
     *  @param _operation The name of the requested operation
     */
-   virtual void selectionOperation(QString _operation) {}
+   virtual void selectionOperation(QString _operation) {};
 
 
    /** \brief Emitted by selection base plugin whenever the user performs a toggle selection
@@ -852,7 +852,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void toggleSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void toggleSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a lasso selection
     *
@@ -863,7 +863,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void lassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void lassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a volume lasso selection
     *
@@ -874,7 +874,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void volumeLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void volumeLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a surface lasso selection
     *
@@ -885,7 +885,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void surfaceLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void surfaceLassoSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a sphere selection
     *
@@ -897,7 +897,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void sphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {}
+   virtual void sphereSelection(QMouseEvent* _event, double _radius, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a closest boundary selection
     *
@@ -908,7 +908,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void closestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void closestBoundarySelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a flood fill selection
     *
@@ -920,7 +920,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void floodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {}
+   virtual void floodFillSelection(QMouseEvent* _event, double _maxAngle, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a connected components selection
     *
@@ -931,7 +931,7 @@ class SelectionInterface {
     *  @param _currentType         The currently active primitive type
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void componentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {}
+   virtual void componentsSelection(QMouseEvent* _event, PrimitiveType _currentType, bool _deselect) {};
 
    /** \brief Emitted by selection base plugin whenever the user performs a custom selection
     *
@@ -943,7 +943,7 @@ class SelectionInterface {
     *  @param _customIdentifier    Holds the identifier of the custom selection modes
     *  @param _deselect            True if entities should be deselected
     */
-   virtual void customSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {}
+   virtual void customSelection(QMouseEvent* _event, PrimitiveType _currentType, QString _customIdentifier, bool _deselect) {};
 
    /** \brief Load selections from ini-file
     *
@@ -954,7 +954,7 @@ class SelectionInterface {
     *
     *  @param _file The ini-file handle
     */
-   virtual void loadSelection(const INIFile& _file) {}
+   virtual void loadSelection(const INIFile& _file) {};
 
    /** \brief Save selections into ini-file
     *
@@ -965,7 +965,7 @@ class SelectionInterface {
     *
     *  @param _file The ini-file handle
     */
-   virtual void saveSelection(INIFile& _file) {}
+   virtual void saveSelection(INIFile& _file) {};
 
    /** \brief Key shortcut event happened
     *
@@ -974,7 +974,7 @@ class SelectionInterface {
     *  @param _key       Key to register
     *  @param _modifiers Key modifiers (i.e. shift, control, meta keys, defaults to none)
     */
-   virtual void keyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier) {}
+   virtual void keyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers = Qt::NoModifier) {};
 
 
    /** @} */
@@ -989,11 +989,36 @@ class SelectionInterface {
 
    private slots:
 
-   virtual void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {}
-   virtual void slotRegisterType(QString _handleName, DataType _type) {}
-   virtual void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {}
+   /** \brief Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _modeName               User visible name of the selection mode
+    * @param _description            Description of the mode
+    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _handleName             Handle of the selection mode
+    */
+   virtual void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {};
 
-   /** \brief Don't use! Implemented in SelectionBasePlugin
+   /** \brief Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName             Handle of the selection mode
+    * @param _type                   Datatype to register
+    */
+   virtual void slotRegisterType(QString _handleName, DataType _type) {};
+
+   /** \brief Do not use. Implemented in SelectionBasePlugin
+    *
+    * Do not use! Implemented in SelectionBasePlugin
+    *
+    * @param _handleName             Handle of the selection mode
+    * @param _name                   User visible name of the selection mode
+    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _typeHandle             Handle for the type
+    */
+   virtual void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {};
+
+   /** \brief Do not use. Implemented in SelectionBasePlugin
+    *
+    * Do not use! Implemented in SelectionBasePlugin
     *
     * @param _handleName             Handle of the selection mode
     * @param _modeName               User visible name of the selection mode
@@ -1003,9 +1028,9 @@ class SelectionInterface {
     * @param _customIdentifier       Identifier of this mode
     */
    virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
-                                           PrimitiveType _associatedTypes, QString& _customIdentifier) {}
+                                           PrimitiveType _associatedTypes, QString& _customIdentifier) {};
 
-   /** \brief Don't use! Implemented in SelectionBasePlugin
+   /** \brief Do not use. Implemented in SelectionBasePlugin
     *
     * @param _handleName             Handle of the selection mode
     * @param _modeName               User visible name of the selection mode
@@ -1017,26 +1042,105 @@ class SelectionInterface {
     */
    virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                            PrimitiveType _associatedTypes, QString& _customIdentifier,
-                                           DataType _objectTypeRestriction) {}
+                                           DataType _objectTypeRestriction) {};
 
+   /**  Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowToggleSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
-   virtual void slotShowToggleSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowVolumeLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowSurfaceLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowSphereSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotShowFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
-   virtual void slotComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {}
+   /**  Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
-   virtual void slotRegisterKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers) {}
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowVolumeLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
-   virtual void slotGetActiveDataTypes(TypeList& _types) {}
-   virtual void slotGetActivePrimitiveType(PrimitiveType& _type) {}
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowSurfaceLassoSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
-   virtual void slotTargetObjectsOnly(bool& _targetsOnly) {}
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowSphereSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
 
-   virtual void slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, PrimitiveType _type) {}
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotShowFloodFillSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _show             Hide or show it
+    * @param _associatedTypes  Types associated with this mode
+    */
+   virtual void slotComponentsSelectionMode(QString _handleName, bool _show, PrimitiveType _associatedTypes) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _key       Key to use
+    * @param _modifiers Modifier for this key
+    */
+   virtual void slotRegisterKeyShortcut(int _key, Qt::KeyboardModifiers _modifiers) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _types Returns the active types
+    */
+   virtual void slotGetActiveDataTypes(TypeList& _types) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _type Returns the active primitive types
+    */
+   virtual void slotGetActivePrimitiveType(PrimitiveType& _type) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _targetsOnly use target objects only
+    */
+   virtual void slotTargetObjectsOnly(bool& _targetsOnly) {};
+
+   /** Do not use. Implemented in SelectionBasePlugin
+    *
+    * @param _handleName       handle of the mode
+    * @param _operationsList   List of operations
+    * @param _category         Category
+    * @param _type             primitive types
+    */
+   virtual void slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, PrimitiveType _type) {};
 
 
    /** @} */
