@@ -102,13 +102,13 @@ signals:
     void scriptInfo(QString _functionName);
 
     // SelectionInterface
-    void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName);
+    void addSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName);
     void registerType(QString _handleName, DataType _type);
-    void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
+    void addPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle);
     void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type = 0u);
     void showToggleSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     void showVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
-    void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+    void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
            SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
 
     void getActiveDataTypes(SelectionInterface::TypeList& _types);

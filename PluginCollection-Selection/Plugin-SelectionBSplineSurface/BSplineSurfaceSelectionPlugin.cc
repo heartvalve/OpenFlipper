@@ -97,13 +97,13 @@ void BSplineSurfaceSelectionPlugin::pluginsInitialized() {
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     
     emit addSelectionEnvironment("B-Spline Surface Selections", "Select B-Spline surface primitives.",
-                                 QIcon(iconPath + "bsplinesurface.png"), environmentHandle_);
+                                 iconPath + "bsplinesurface.png", environmentHandle_);
 
     // Register mesh object types
     emit registerType(environmentHandle_, DATA_BSPLINE_SURFACE);
     
-    emit addPrimitiveType(environmentHandle_, "Select Control Points", QIcon(iconPath + CONTROL_POINT_TYPE), controlPointType_);
-    emit addPrimitiveType(environmentHandle_, "Select Knots", QIcon(iconPath + KNOT_TYPE), knotType_);
+    emit addPrimitiveType(environmentHandle_, "Select Control Points", iconPath + CONTROL_POINT_TYPE, controlPointType_);
+    emit addPrimitiveType(environmentHandle_, "Select Knots", iconPath + KNOT_TYPE, knotType_);
     
     allSupportedTypes_ = controlPointType_ | knotType_;
     

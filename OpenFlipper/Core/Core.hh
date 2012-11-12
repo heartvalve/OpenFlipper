@@ -247,18 +247,18 @@ signals:
    void getSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
    
    /// SelectionInterface: This signal is emitted when a new toolbutton should be added
-   void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName);
+   void addSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName);
    
    /// SelectionInterface: This signal is emitted when a data type should be registered for a selection mode
    void registerType(QString _handleName, DataType _type);
    
    /// SelectionInterface: This signal is emitted when a selection plugin should handle a new primitive type
-   void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
+   void addPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle);
    
    /// SelectionInterface: This signal is emitted when a custom selection mode is added
-   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
-   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+   void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
                                DataType _objectTypeRestriction);
    
@@ -491,13 +491,13 @@ signals:
       void slotEmptyObjectAdded ( int _id );
   
       /// SelectionInterface: Called when a new selection type button should be added to the toolbar
-      void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName);
+      void slotAddSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName);
 
       /// SelectionInterface: Called when a data type is added for a specific selection type
       void slotRegisterType(QString _handleName, DataType _type);
 
       /// SelectionInterface: Called when a new, non-standard primitive type should be handled
-      void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
+      void slotAddPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle);
 
       /** \brief SelectionInterface: Add new selection mode for specified type
        *
@@ -508,7 +508,7 @@ signals:
        * @param _associatedTypes        primitive types supported by this mode
        * @param _customIdentifier       Identifier of this mode
        */
-      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
 
       /** \brief  SelectionInterface: Add new selection mode for specified type
@@ -521,7 +521,7 @@ signals:
        * @param _customIdentifier       Identifier of this mode
        * @param _objectTypeRestriction  Object types supported by this mode
        */
-      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+      void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
                                       DataType _objectTypeRestriction);
       

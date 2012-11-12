@@ -384,7 +384,8 @@ void SelectionBasePlugin::slotKeyReleaseEvent(QKeyEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {
+void SelectionBasePlugin::slotAddSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName) {
+
     /*
     A new selection environment is to be added. We first test if the
     associated selection environment already exists. If not, we create
@@ -406,14 +407,18 @@ void SelectionBasePlugin::slotAddSelectionEnvironment(QString _modeName, QString
     
     SelectionTypeFrameWidget* tab = createNewTypeFrame(env);
     
-    // Add type frame to tab widget
-    int index = tool_->typeTabWidget->addTab(tab, _icon, _modeName);
-    env.tabWidget = tool_->typeTabWidget->widget(index);
-    
-    // Disable type frame unless there's at least one
-    // object of the desired type in the scene
-    tool_->typeTabWidget->setTabEnabled(index, false);
-    tool_->typeTabWidget->widget(index)->setEnabled(false);
+    if ( OpenFlipper::Options::gui () ) {
+
+      // Add type frame to tab widget
+      int index = tool_->typeTabWidget->addTab(tab, QIcon(_icon), _modeName);
+      env.tabWidget = tool_->typeTabWidget->widget(index);
+
+      // Disable type frame unless there's at least one
+      // object of the desired type in the scene
+      tool_->typeTabWidget->setTabEnabled(index, false);
+      tool_->typeTabWidget->widget(index)->setEnabled(false);
+
+    }
     
     // Create a unique handle name for this selection environment
     _handleName = getUniqueHandleName("h_" + _modeName.replace(" ", "_"));
@@ -569,7 +574,7 @@ void SelectionBasePlugin::slotMouseEvent(QMouseEvent* _event) {
 
 //============================================================================================
 
-void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle) {
+void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle) {
     
   if (  OpenFlipper::Options::nogui() )
     return;
@@ -602,7 +607,7 @@ void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _nam
     }
     
     // Add custom primitive type
-    PrimitiveAction* action = new PrimitiveAction(_icon, _name, env.primitiveActions);
+    PrimitiveAction* action = new PrimitiveAction(QIcon(_icon), _name, env.primitiveActions);
     action->setCheckable(true);
     action->selectionEnvironmentHandle(_handleName);
     primitivesBarGroup_->addAction(action);
@@ -930,7 +935,7 @@ void SelectionBasePlugin::slotPickModeChanged (const std::string& _pickmode) {
 
 //============================================================================================
 
-void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString _desc, QString _handleName,
+void SelectionBasePlugin::showSelectionMode(QString _mode, QString _icon, QString _desc, QString _handleName,
                                             bool _show, SelectionInterface::PrimitiveType _associatedTypes,
                                             QString& _customIdentifier, bool _custom, DataType _objectTypeRestriction) {
     
@@ -1040,7 +1045,7 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
       _customIdentifier = getUniqueIdentifierName(QString(_handleName + "_" + _mode).replace(" ", "_"));
 
       // Create action
-      HandleAction* action = new HandleAction(_icon, _desc, selectionModesGroup_, _objectTypeRestriction);
+      HandleAction* action = new HandleAction(QIcon(_icon), _desc, selectionModesGroup_, _objectTypeRestriction);
       action->setCheckable(true);
       action->selectionEnvironmentHandle(_handleName);
       action->selectionModeHandle(_customIdentifier);
@@ -1076,7 +1081,7 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
 
 //============================================================================================
 
-void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier) {
     
     showSelectionMode(_modeName, _icon, _description, _handleName, true, _associatedTypes, _customIdentifier, true);
@@ -1085,7 +1090,7 @@ void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QStrin
 
 //============================================================================================
 
-void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                                      SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
                                                      DataType _objectTypeRestriction) {
 
@@ -1098,9 +1103,8 @@ void SelectionBasePlugin::slotAddCustomSelectionMode(QString _handleName, QStrin
 void SelectionBasePlugin::slotShowToggleSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + TOGGLE_IMG);
     QString dummy;
-    showSelectionMode(SB_TOGGLE, icon, TOGGLE_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_TOGGLE, iconPath + TOGGLE_IMG, TOGGLE_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1109,9 +1113,8 @@ void SelectionBasePlugin::slotShowToggleSelectionMode(QString _handleName, bool 
 void SelectionBasePlugin::slotShowLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + LASSO_IMG);
     QString dummy;
-    showSelectionMode(SB_LASSO, icon, LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_LASSO, iconPath + LASSO_IMG, LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1120,9 +1123,8 @@ void SelectionBasePlugin::slotShowLassoSelectionMode(QString _handleName, bool _
 void SelectionBasePlugin::slotShowVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + VOLUME_LASSO_IMG);
     QString dummy;
-    showSelectionMode(SB_VOLUME_LASSO, icon, VOLUME_LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_VOLUME_LASSO, iconPath + VOLUME_LASSO_IMG, VOLUME_LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1131,9 +1133,8 @@ void SelectionBasePlugin::slotShowVolumeLassoSelectionMode(QString _handleName, 
 void SelectionBasePlugin::slotShowSurfaceLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + SURFACE_LASSO_IMG);
     QString dummy;
-    showSelectionMode(SB_SURFACE_LASSO, icon, SURFACE_LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_SURFACE_LASSO, iconPath + SURFACE_LASSO_IMG, SURFACE_LASSO_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1142,9 +1143,8 @@ void SelectionBasePlugin::slotShowSurfaceLassoSelectionMode(QString _handleName,
 void SelectionBasePlugin::slotShowSphereSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + SPHERE_IMG);
     QString dummy;
-    showSelectionMode(SB_SPHERE, icon, SPHERE_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_SPHERE, iconPath + SPHERE_IMG, SPHERE_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1153,9 +1153,8 @@ void SelectionBasePlugin::slotShowSphereSelectionMode(QString _handleName, bool 
 void SelectionBasePlugin::slotShowClosestBoundarySelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + BOUNDARY_IMG);
     QString dummy;
-    showSelectionMode(SB_BOUNDARY, icon, BOUNDARY_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_BOUNDARY, iconPath + BOUNDARY_IMG, BOUNDARY_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1164,9 +1163,8 @@ void SelectionBasePlugin::slotShowClosestBoundarySelectionMode(QString _handleNa
 void SelectionBasePlugin::slotShowFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
     
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + FLOODFILL_IMG);
     QString dummy;
-    showSelectionMode(SB_FLOODFILL, icon, FLOODFILL_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_FLOODFILL, iconPath + FLOODFILL_IMG, FLOODFILL_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 
@@ -1175,9 +1173,8 @@ void SelectionBasePlugin::slotShowFloodFillSelectionMode(QString _handleName, bo
 void SelectionBasePlugin::slotShowComponentsSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes) {
 
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    QIcon icon(iconPath + COMPONENTS_IMG);
     QString dummy;
-    showSelectionMode(SB_COMPONENTS, icon, COMPONENTS_DESC, _handleName, _show, _associatedTypes, dummy);
+    showSelectionMode(SB_COMPONENTS, iconPath + COMPONENTS_IMG, COMPONENTS_DESC, _handleName, _show, _associatedTypes, dummy);
     updatePickModeToolBar();
 }
 

@@ -82,12 +82,12 @@ void ObjectSelectionPlugin::pluginsInitialized() {
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     
     emit addSelectionEnvironment("Object Selections", "Select objects.",
-                                 QIcon(iconPath + OBJECT_TYPE), environmentHandle_);
+                                 iconPath + OBJECT_TYPE, environmentHandle_);
 
     // Register mesh object types
     emit registerType(environmentHandle_, DATA_ALL);
     
-    emit addPrimitiveType(environmentHandle_, "Select Objects", QIcon(iconPath + OBJECT_TYPE), objectType_);
+    emit addPrimitiveType(environmentHandle_, "Select Objects", iconPath + OBJECT_TYPE, objectType_);
     
     // Determine, which selection modes are requested
     emit showToggleSelectionMode(environmentHandle_, true, objectType_);

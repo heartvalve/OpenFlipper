@@ -90,13 +90,13 @@ void PolyLineSelectionPlugin::pluginsInitialized() {
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     
     emit addSelectionEnvironment("PolyLine Selections", "Select polyline primitives.",
-                                 QIcon(iconPath + "polyline_type.png"), environmentHandle_);
+                                 iconPath + "polyline_type.png", environmentHandle_);
 
     // Register mesh object types
     emit registerType(environmentHandle_, DATA_POLY_LINE);
     
-    emit addPrimitiveType(environmentHandle_, "Select Polyline Vertices", QIcon(iconPath + VERTEX_TYPE), vertexType_);
-    emit addPrimitiveType(environmentHandle_, "Select Polyline Edges", QIcon(iconPath + EDGE_TYPE), edgeType_);
+    emit addPrimitiveType(environmentHandle_, "Select Polyline Vertices", iconPath + VERTEX_TYPE, vertexType_);
+    emit addPrimitiveType(environmentHandle_, "Select Polyline Edges", iconPath + EDGE_TYPE, edgeType_);
     
     allSupportedTypes_ = vertexType_ | edgeType_;
     

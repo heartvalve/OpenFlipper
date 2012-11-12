@@ -97,7 +97,7 @@ class SelectionInterface {
      \code
      
      emit addSelectionEnvironment("Mesh Object Selections", "Select Triangle Mesh Primitives.",
-                                 QIcon(someIconPath + "mesh_selection.png"), environmentHandle_);
+                                 someIconPath + "mesh_selection.png", environmentHandle_);
      \endcode
      * Now, our handle to the newly created environment is in environmentHandle_.
      * We should now see a new tab widget in the selection base tool box
@@ -118,9 +118,9 @@ class SelectionInterface {
      * we want to enable selection for the three of them:
      \code
      
-     emit addPrimitiveType(environmentHandle_, "Select Vertices", QIcon(iconPath + "vertexType.png"), vertexType_);
-     emit addPrimitiveType(environmentHandle_, "Select Edges",    QIcon(iconPath + "edgeType.png"),   edgeType_);
-     emit addPrimitiveType(environmentHandle_, "Select Faces",    QIcon(iconPath + "faceType.png"),   faceType_);
+     emit addPrimitiveType(environmentHandle_, "Select Vertices", iconPath + "vertexType.png", vertexType_);
+     emit addPrimitiveType(environmentHandle_, "Select Edges",    iconPath + "edgeType.png",   edgeType_);
+     emit addPrimitiveType(environmentHandle_, "Select Faces",    iconPath + "faceType.png",   faceType_);
      
      \endcode
      *
@@ -149,10 +149,10 @@ class SelectionInterface {
      *
      *  @param _modeName    The name of the selection mode, e.g. "Mesh Selection"
      *  @param _description The description for the selection mode (also tooltip)
-     *  @param _icon        The icon for this mode (basically a type icon)
+     *  @param _icon        Path to the icon for this mode (basically a type icon)
      *  @param _handleName  The handle of the recently added selection environment. Needed for referencing
      */
-    virtual void addSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {};
+    virtual void addSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName) {};
 
     /** \brief Register data type for a selection environment
      *
@@ -174,10 +174,10 @@ class SelectionInterface {
      *
      *  @param _handleName  The handle of the selection environment to which this type should be added
      *  @param _name        The name of the primitive type, e.g. "B-Spline Surface Control Point"
-     *  @param _icon        The icon for the primitive type
+     *  @param _icon        Path to the icon for the primitive type
      *  @param _typeHandle  The returned handle to the added primitive type
      */
-    virtual void addPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {};
+    virtual void addPrimitiveType(QString _handleName, QString _name, QString _icon, PrimitiveType& _typeHandle) {};
 
     /** @} */
 
@@ -205,7 +205,7 @@ class SelectionInterface {
      emit showToggleSelectionMode(environmentHandle_,      true, vertexType_ | edgeType_ | faceType_);
      emit showVolumeLassoSelectionMode(environmentHandle_, true, vertexType_ | edgeType_ | faceType_);
      
-     emit addCustomSelectionMode(environmentHandle_, "My Custom Selection", "Description of my mode", QIcon(someIconFile), vertexType_ | edgeType_);
+     emit addCustomSelectionMode(environmentHandle_, "My Custom Selection", "Description of my mode", someIconFile, vertexType_ | edgeType_);
      
      \endcode
      *
@@ -342,11 +342,11 @@ class SelectionInterface {
      *  @param _handleName      The handle of the selection environment in which this mode should be available
      *  @param _modeName        The name of this mode (also button caption)
      *  @param _description     A brief description of what the selection mode does
-     *  @param _icon            An icon which is used for this selection mode
+     *  @param _icon            Path to an icon which is used for this selection mode
      *  @param _associatedTypes Make this mode available only for the specified types (OR'ed)
      *  @param _customIdentifier Holds the identifier of the custom selection modes
      */
-    virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+    virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                         PrimitiveType _associatedTypes, QString& _customIdentifier) {};
 
     /** \brief Add a custom interactive selection mode
@@ -363,12 +363,12 @@ class SelectionInterface {
      *  @param _handleName            The handle of the selection environment in which this mode should be available
      *  @param _modeName              The name of this mode (also button caption)
      *  @param _description           A brief description of what the selection mode does
-     *  @param _icon                  An icon which is used for this selection mode
+     *  @param _icon                  Path to an icon which is used for this selection mode
      *  @param _associatedTypes       Make this mode available only for the specified types (OR'ed)
      *  @param _customIdentifier      Holds the identifier of the custom selection modes
      *  @param _objectTypeRestriction Restrict the mode to this specific data type
      */
-    virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+    virtual void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                         PrimitiveType _associatedTypes, QString& _customIdentifier,
                                         DataType _objectTypeRestriction) {};
 
@@ -993,10 +993,10 @@ class SelectionInterface {
     *
     * @param _modeName               User visible name of the selection mode
     * @param _description            Description of the mode
-    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _icon                   Path to an icon displayed in the selection toolbar
     * @param _handleName             Handle of the selection mode
     */
-   virtual void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {};
+   virtual void slotAddSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName) {};
 
    /** \brief Do not use. Implemented in SelectionBasePlugin
     *
@@ -1011,10 +1011,10 @@ class SelectionInterface {
     *
     * @param _handleName             Handle of the selection mode
     * @param _name                   User visible name of the selection mode
-    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _icon                   Path to an icon displayed in the selection toolbar
     * @param _typeHandle             Handle for the type
     */
-   virtual void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {};
+   virtual void slotAddPrimitiveType(QString _handleName, QString _name, QString _icon, PrimitiveType& _typeHandle) {};
 
    /** \brief Do not use. Implemented in SelectionBasePlugin
     *
@@ -1023,11 +1023,11 @@ class SelectionInterface {
     * @param _handleName             Handle of the selection mode
     * @param _modeName               User visible name of the selection mode
     * @param _description            Description of the mode
-    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _icon                   Path to an icon displayed in the selection toolbar
     * @param _associatedTypes        primitive types supported by this mode
     * @param _customIdentifier       Identifier of this mode
     */
-   virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+   virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                            PrimitiveType _associatedTypes, QString& _customIdentifier) {};
 
    /** \brief Do not use. Implemented in SelectionBasePlugin
@@ -1035,12 +1035,12 @@ class SelectionInterface {
     * @param _handleName             Handle of the selection mode
     * @param _modeName               User visible name of the selection mode
     * @param _description            Description of the mode
-    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _icon                   Path to an icon displayed in the selection toolbar
     * @param _associatedTypes        primitive types supported by this mode
     * @param _customIdentifier       Identifier of this mode
     * @param _objectTypeRestriction  Object types supported by this mode
     */
-   virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+   virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                            PrimitiveType _associatedTypes, QString& _customIdentifier,
                                            DataType _objectTypeRestriction) {};
 
@@ -1187,6 +1187,6 @@ all UI control elements and and the rendering of the selection tools whereas the
 type selection plugins manage the real selection of their entities as well as scripting functions.
 */
 
-Q_DECLARE_INTERFACE(SelectionInterface,"OpenFlipper.SelectionInterface/1.0")
+Q_DECLARE_INTERFACE(SelectionInterface,"OpenFlipper.SelectionInterface/1.1")
 
 #endif // SELECTIONINTERFACE_HH
