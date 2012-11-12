@@ -32,30 +32,53 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#include "Utils.hh"
 
-#define PROPERTYVISPLUGIN_CC
+#include <QPushButton>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+const char* PropertyInfo::entity2str(ENTITY_FILTER entity) {
+    switch (entity) {
+        case EF_EDGE:
+            return "→";
+        case EF_FACE:
+            return "△";
+        case EF_HALFEDGE:
+            return "⇀";
+        case EF_VERTEX:
+            return "•";
+        case EF_CELL:
+            return "C";
+        case EF_HALFFACE:
+            return "HF";
+        default:
+            return "error";
+    }
+}
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
 
-//------------------------------------------------------------------------------
+NewNameMessageBox::NewNameMessageBox(QString propName)
+    :
+      QMessageBox(),
+      propName(propName),
+      replace(false),
+      rename(false),
+      cancel(false)
+{
+    setWindowTitle("Name Selection");
 
+    setText(tr("The name %1 is already in use.\nWould you like to choose a different name, replace the old property or cancel loading?").arg(propName));
 
-//------------------------------------------------------------------------------
+    buttonRename = new QPushButton("Rename");
+    buttonReplace = new QPushButton("Replace");
+    buttonCancel = new QPushButton("Cancel");
 
-//-----------------------------------------------------------------------------
+    addButton(buttonRename, QMessageBox::AcceptRole);
+    addButton(buttonCancel, QMessageBox::RejectRole);
+    addButton(buttonReplace, QMessageBox::YesRole);
+
+    connect(buttonRename,  SIGNAL(clicked()), this, SLOT(slotRename()));
+    connect(buttonReplace, SIGNAL(clicked()), this, SLOT(slotReplace()));
+    connect(buttonCancel,  SIGNAL(clicked()), this, SLOT(slotCancel()));
+
+    setModal(true);
+}

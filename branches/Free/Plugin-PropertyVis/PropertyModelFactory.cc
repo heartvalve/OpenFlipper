@@ -32,30 +32,74 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
-
-#define PROPERTYVISPLUGIN_CC
-
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
-
-//------------------------------------------------------------------------------
+#include "PropertyModelFactory.hh"
 
 
-//------------------------------------------------------------------------------
+#include "OpenMesh/OMPropertyModel.hh"
 
-//-----------------------------------------------------------------------------
+#ifdef ENABLE_OPENVOLUMEMESH
+    #include "OpenVolumeMesh/OVMPropertyModel.hh"
+#endif /* ENABLE_OPENVOLUMEMESH */
+
+
+/**
+ * @brief Returns the PropertyModel
+ *
+ * @param objectID The index of the object for which we want to get the
+ * property model
+ * @return The PropertyModel.
+ *
+ * For the given objectID this method finds out which type the object has
+ * and creates and return the PropertyModel for that type of object.
+ *
+ * Currently supported are TriMesh, PolyMesh and - if found - also
+ * PolyhedralMesh and HexahedralMesh.
+ * For an unrecognized object a PropertyModel with no functionality will
+ * be returned.
+ */
+PropertyModel* __PropertyModelFactory::getModel(int objectID)
+{
+    PropertyModelMap::iterator it = propertyModelMap.find(objectID);
+    if (it != propertyModelMap.end())
+        return it->second;
+
+    BaseObjectData* object = 0;
+
+    PluginFunctions::getObject( objectID, object );
+
+    PropertyModel* propertyModel;
+
+    if (object == 0) {
+        return new PropertyModel();
+    }
+
+    if ( object->dataType(DATA_TRIANGLE_MESH) )
+    {
+        TriMesh* mesh = PluginFunctions::triMesh(object);
+        propertyModel = new OMPropertyModel<TriMesh>(mesh, objectID);
+    }
+    else if ( object->dataType(DATA_POLY_MESH) )
+    {
+        PolyMesh* mesh = PluginFunctions::polyMesh(object);
+        propertyModel = new OMPropertyModel<PolyMesh>(mesh, objectID);
+    }
+#ifdef ENABLE_OPENVOLUMEMESH
+    else if ( object->dataType(DATA_POLYHEDRAL_MESH) )
+    {
+        PolyhedralMesh* mesh = PluginFunctions::polyhedralMesh(object);
+        propertyModel = new OVMPropertyModel<PolyhedralMesh>(mesh, objectID);
+    }
+    else if ( object->dataType(DATA_HEXAHEDRAL_MESH) )
+    {
+        HexahedralMesh* mesh = PluginFunctions::hexahedralMesh(object);
+        propertyModel = new OVMPropertyModel<HexahedralMesh>(mesh, objectID);
+    }
+#endif /* ENABLE_OPENVOLUMEMESH */
+    else
+    {
+        propertyModel = new PropertyModel();
+    }
+
+    propertyModelMap.insert(std::pair<int, PropertyModel*>(objectID, propertyModel));
+    return propertyModel;
+}

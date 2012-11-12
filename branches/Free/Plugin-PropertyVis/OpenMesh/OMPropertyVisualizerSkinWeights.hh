@@ -32,30 +32,49 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifdef ENABLE_SKELETON_SUPPORT
 
-#define PROPERTYVISPLUGIN_CC
+#ifndef OM_PROPERTY_VISUALIZER_SKIN_WEIGHTS_HH
+#define OM_PROPERTY_VISUALIZER_SKIN_WEIGHTS_HH
 
-#include "PropertyVisPlugin.hh"
+#include "OMPropertyVisualizer.hh"
+
+#include "Widgets/SkinWeightsWidget.hh"
+
+#include <ObjectTypes/Skeleton/BaseSkin.hh>
+
 #include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+template <typename MeshT>
+class OMPropertyVisualizerSkinWeights: public OMPropertyVisualizer<MeshT>{
 
-//------------------------------------------------------------------------------
+public:
+    OMPropertyVisualizerSkinWeights(MeshT* _mesh, PropertyInfo _propertyInfo);
+    virtual ~OMPropertyVisualizerSkinWeights(){}
 
+protected:
 
-//------------------------------------------------------------------------------
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
 
-//-----------------------------------------------------------------------------
+    QString getPropertyText(unsigned int index);
+
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+
+    virtual void removeProperty();
+    virtual void duplicateProperty();
+
+};
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_SKIN_WEIGHTS_CC)
+#include "OMPropertyVisualizerSkinWeightsT.cc"
+#endif
+
+#endif /* OM_PROPERTY_VISUALIZER_SKIN_WEIGHTS_HH */
+
+#endif /* ENABLE_SKELETON_SUPPORT */
