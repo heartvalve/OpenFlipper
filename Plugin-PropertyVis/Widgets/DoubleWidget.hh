@@ -32,30 +32,30 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef DOUBLE_WIDGET_HH
+#define DOUBLE_WIDGET_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "ui_DoubleWidget.hh"
+#include <QtGui>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class DoubleWidget : public QWidget, public Ui::DoubleWidget
+{
+  Q_OBJECT
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+public:
+  DoubleWidget(QWidget * parent = 0)
+    : QWidget(parent)
+  {
+    setupUi(this);
+  }
+  
+  signals:
+    void widgetShown();
+        
+  protected:
+    void showEvent ( QShowEvent* /*event*/ ) {
+      emit widgetShown();
+    }
+};
 
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
+#endif // DOUBLE_WIDGET_HH

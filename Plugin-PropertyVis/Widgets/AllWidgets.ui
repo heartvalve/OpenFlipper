@@ -1,0 +1,1292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PropertyVisToolbarBase</class>
+ <widget class="QWidget" name="PropertyVisToolbarBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>473</width>
+    <height>1727</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Property Visualization</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Properties</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="7" column="0">
+       <widget class="QPushButton" name="visualizeButton">
+        <property name="text">
+         <string>Visualize</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QPushButton" name="clearButton">
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QListView" name="propertyName_lv">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>192</height>
+           </size>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="refresh_property_names_tb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>37</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Reload property list.</string>
+            </property>
+            <property name="text">
+             <string>⟲</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="duplicate_property_tb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>37</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Duplicate selected properties.</string>
+            </property>
+            <property name="text">
+             <string>dup</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="remove_property_tb">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>37</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Remove selected properties.</string>
+            </property>
+            <property name="text">
+             <string>rem</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Mesh:</string>
+          </property>
+          <property name="buddy">
+           <cstring>meshNames</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="meshNames">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="hint_gb">
+     <property name="title">
+      <string>Hint</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Select more than one property of the same types in order to see additional functions.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramBool">
+     <property name="title">
+      <string>Bool Parameters</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QtColorChooserButton" name="colorTrue">
+        <property name="text">
+         <string>True color:</string>
+        </property>
+        <property name="color" stdset="0">
+         <color>
+          <red>255</red>
+          <green>0</green>
+          <blue>4</blue>
+         </color>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QtColorChooserButton" name="colorFalse">
+        <property name="text">
+         <string>False color:</string>
+        </property>
+        <property name="color" stdset="0">
+         <color>
+          <red>0</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramUint">
+     <property name="title">
+      <string>Usigned Integer Parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="uintColorCoder">
+        <property name="text">
+         <string>Use color coder</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QtColorChooserButton" name="uintMin">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Min Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>0</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QtColorChooserButton" name="uintMax">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Max Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>255</red>
+            <green>0</green>
+            <blue>4</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QCheckBox" name="uintFixedRange">
+          <property name="text">
+           <string>Fixed Range</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="uintFixedRangeMin">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="uintFixedRangeMax">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="uintRandom">
+        <property name="text">
+         <string>Use random colors</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QCheckBox" name="uintMapBlack">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Map value to black</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="uintMapBlackValue">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimum">
+           <number>-100</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramInt">
+     <property name="title">
+      <string>Integer Parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="intColorCoder">
+        <property name="text">
+         <string>Use color coder</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QtColorChooserButton" name="intMin">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Min Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>0</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QtColorChooserButton" name="intMax">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Max Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>255</red>
+            <green>0</green>
+            <blue>0</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="intFixedRange">
+          <property name="text">
+           <string>Fixed Range</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="intFixedRangeMin">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="intFixedRangeMax">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="intAbsolute">
+        <property name="text">
+         <string>Use absolute values</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="intRandom">
+        <property name="text">
+         <string>Use random colors</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="intMapBlack">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Map value to black</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="intMapBlackValue">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimum">
+           <number>-100</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramDouble">
+     <property name="title">
+      <string>Double Parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="doubleColorCoder">
+        <property name="text">
+         <string>Use color coder</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <widget class="QtColorChooserButton" name="doubleMin">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Min Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>0</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QtColorChooserButton" name="doubleMax">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Max Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>255</red>
+            <green>0</green>
+            <blue>0</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QCheckBox" name="doubleFixedRange">
+          <property name="text">
+           <string>Fixed Range</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleFixedRangeMin">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleFixedRangeMax">
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="doubleAbsolute">
+        <property name="text">
+         <string>Use absolute values</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="vectorFieldDifference_gb">
+     <property name="title">
+      <string>Vector Field Difference</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <item>
+       <widget class="QCheckBox" name="visualizeVectorDifference_cb">
+        <property name="toolTip">
+         <string>This will only have effect if two properties of the same type (primitive and data) are selected.</string>
+        </property>
+        <property name="text">
+         <string>Don't visualize vectors, visualize vector difference instead.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_4symm_rb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>4-Symmetric Difference (0° – 45°)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_diff_norm_rb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Difference in Magnitude (|∥a∥-∥b∥|)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_norm_diff_rb">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Norm of Difference (∥a-b∥)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramVector">
+     <property name="title">
+      <string>3D Vector Parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="normalize">
+        <property name="text">
+         <string>Normalize</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="scale">
+          <property name="text">
+           <string>Scale with factor</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="scaleBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="decimals">
+           <number>7</number>
+          </property>
+          <property name="value">
+           <double>0.200000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QtColorChooserButton" name="lineColor">
+        <property name="text">
+         <string>Line color: </string>
+        </property>
+        <property name="color" stdset="0">
+         <color>
+          <red>198</red>
+          <green>0</green>
+          <blue>3</blue>
+         </color>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="paramSkinWeights">
+     <property name="title">
+      <string>Skin Weights</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Bone</string>
+          </property>
+          <property name="buddy">
+           <cstring>boneId</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="boneId"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="pickProp">
+     <property name="title">
+      <string>Pick Property</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>55</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Handle:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="pickedHandle">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Value:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="pickedValue">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pickButton">
+        <property name="text">
+         <string>Pick Property</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="test">
+     <property name="title">
+      <string>GroupBox</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_12">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_11"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Load/Save/Create</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Property Type:</string>
+          </property>
+          <property name="buddy">
+           <cstring>propertyDataType</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="propertyDataType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>Bool</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Unsigned Integer</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Integer</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Double</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3D Vector</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Skin Weights</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="propertyType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Vertex</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Edge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Face</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HalfEdge</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="createNewButton">
+        <property name="text">
+         <string>Create New</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLineEdit" name="property_name_le">
+        <property name="placeholderText">
+         <string>New Property's Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="load_property">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Load</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="save_property">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="binary_cb">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>binary</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtColorChooserButton</class>
+   <extends>QPushButton</extends>
+   <header>ACG/QtWidgets/QtColorChooserButton.hh</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>meshNames</tabstop>
+  <tabstop>propertyName_lv</tabstop>
+  <tabstop>visualizeButton</tabstop>
+  <tabstop>clearButton</tabstop>
+  <tabstop>colorTrue</tabstop>
+  <tabstop>colorFalse</tabstop>
+  <tabstop>uintFixedRange</tabstop>
+  <tabstop>uintFixedRangeMin</tabstop>
+  <tabstop>uintFixedRangeMax</tabstop>
+  <tabstop>uintRandom</tabstop>
+  <tabstop>uintMapBlack</tabstop>
+  <tabstop>uintMapBlackValue</tabstop>
+  <tabstop>intFixedRange</tabstop>
+  <tabstop>intFixedRangeMin</tabstop>
+  <tabstop>intFixedRangeMax</tabstop>
+  <tabstop>intAbsolute</tabstop>
+  <tabstop>intRandom</tabstop>
+  <tabstop>intMapBlack</tabstop>
+  <tabstop>intMapBlackValue</tabstop>
+  <tabstop>doubleFixedRange</tabstop>
+  <tabstop>doubleFixedRangeMin</tabstop>
+  <tabstop>doubleFixedRangeMax</tabstop>
+  <tabstop>doubleAbsolute</tabstop>
+  <tabstop>visualizeVectorDifference_cb</tabstop>
+  <tabstop>vecFieldDiff_4symm_rb</tabstop>
+  <tabstop>vecFieldDiff_diff_norm_rb</tabstop>
+  <tabstop>vecFieldDiff_norm_diff_rb</tabstop>
+  <tabstop>scale</tabstop>
+  <tabstop>scaleBox</tabstop>
+  <tabstop>lineColor</tabstop>
+  <tabstop>boneId</tabstop>
+  <tabstop>pickButton</tabstop>
+  <tabstop>propertyDataType</tabstop>
+  <tabstop>propertyType</tabstop>
+  <tabstop>property_name_le</tabstop>
+  <tabstop>createNewButton</tabstop>
+  <tabstop>load_property</tabstop>
+  <tabstop>save_property</tabstop>
+  <tabstop>binary_cb</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>intRandom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMin</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>856</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>219</x>
+     <y>758</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>intRandom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMax</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>856</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>758</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>intRandom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMapBlack</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>856</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>889</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>intRandom</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMapBlackValue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>856</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>892</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>visualizeVectorDifference_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>paramVector</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>1129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>1308</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>visualizeVectorDifference_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>vecFieldDiff_4symm_rb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>1129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>86</x>
+     <y>1159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>visualizeVectorDifference_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>vecFieldDiff_diff_norm_rb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>109</x>
+     <y>1129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>1189</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>visualizeVectorDifference_cb</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>vecFieldDiff_norm_diff_rb</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>1129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>1219</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uintColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>uintMin</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>122</x>
+     <y>513</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>537</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uintColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>uintMax</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>505</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>538</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>intColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMin</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>718</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>106</x>
+     <y>742</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>intColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>intMax</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>176</x>
+     <y>706</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>737</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleMin</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>947</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>976</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleMax</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>954</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>973</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>scale</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>scaleBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>1308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>266</x>
+     <y>1307</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

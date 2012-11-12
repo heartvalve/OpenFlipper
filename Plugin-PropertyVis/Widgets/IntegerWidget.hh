@@ -32,30 +32,30 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef INTEGER_WIDGET_HH
+#define INTEGER_WIDGET_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "ui_IntegerWidget.hh"
+#include <QtGui>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class IntegerWidget : public QWidget, public Ui::IntegerWidget
+{
+  Q_OBJECT
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+public:
+  IntegerWidget(QWidget * parent = 0)
+    : QWidget(parent)
+  {
+    setupUi(this);
+  }
+  
+  signals:
+    void widgetShown();
+        
+  protected:
+    void showEvent ( QShowEvent* /*event*/ ) {
+      emit widgetShown();
+    }
+};
 
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
+#endif // INTEGER_WIDGET_HH

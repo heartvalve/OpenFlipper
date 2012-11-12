@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VectorFieldDifferenceWidget</class>
+ <widget class="QWidget" name="VectorFieldDifferenceWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>449</width>
+    <height>126</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Property Visualization</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="paramVectorFieldDifference">
+     <property name="title">
+      <string>Vector Field Difference</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_4symm_rb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>4-Symmetric Difference (0° – 45°)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_diff_norm_rb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Difference in Magnitude (|∥a∥-∥b∥|)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="vecFieldDiff_norm_diff_rb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Norm of Difference (∥a-b∥)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>vecFieldDiff_4symm_rb</tabstop>
+  <tabstop>vecFieldDiff_diff_norm_rb</tabstop>
+  <tabstop>vecFieldDiff_norm_diff_rb</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
