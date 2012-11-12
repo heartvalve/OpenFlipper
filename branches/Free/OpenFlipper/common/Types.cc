@@ -225,28 +225,30 @@ QIcon& typeIcon(DataType _id) {
 /// Set the icon for a given dataType
 void setTypeIcon( DataType _id   , QString _icon ) {
 
-  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  if (  OpenFlipper::Options::gui() ) {
+    std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
-  if ( index != typeToTypeInfo.end() ) {
-    types[ index->second ].iconName = _icon;
-    types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
-  } else
-    std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
+    if ( index != typeToTypeInfo.end() ) {
+      types[ index->second ].iconName = _icon;
+      types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
+    } else
+      std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
+  }
 }
 
 /// Set the icon for a given dataType
 void setTypeIcon( QString  _name , QString _icon ) {
 
-  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+  if (  OpenFlipper::Options::gui() ) {
+    std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
 
-  if ( index != stringToTypeInfo.end() ) {
-    types[ index->second ].iconName = _icon;
-    types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
-  } else
-    std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
+    if ( index != stringToTypeInfo.end() ) {
+      types[ index->second ].iconName = _icon;
+      types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
+    } else
+      std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
+  }
 }
-
-
 
 
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
