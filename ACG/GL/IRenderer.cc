@@ -58,10 +58,6 @@
 namespace ACG
 {
 
-using namespace SceneGraph;
-
-
-
 void RenderObject::initFromState( GLState* _glState )
 {
   culling = true;
@@ -115,7 +111,7 @@ void RenderObject::initFromState( GLState* _glState )
   }
 }
 
-void RenderObject::setupShaderGenFromDrawmode( const DrawModes::DrawModeProperties* _props )
+void RenderObject::setupShaderGenFromDrawmode( const SceneGraph::DrawModes::DrawModeProperties* _props )
 {
   if (_props)
   {
@@ -123,21 +119,27 @@ void RenderObject::setupShaderGenFromDrawmode( const DrawModes::DrawModeProperti
     shaderDesc.textured = _props->textured();
     shaderDesc.numLights = _props->lighting() ? 0 : -1;
 
-    switch (_props->lightStage())
-    {
-    case DrawModes::LIGHTSTAGE_SMOOTH: shaderDesc.shadeMode = SG_SHADE_GOURAUD; break;;
-    case DrawModes::LIGHTSTAGE_PHONG: shaderDesc.shadeMode = SG_SHADE_PHONG; break;;
-    case DrawModes::LIGHTSTAGE_UNLIT: shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
-    default: break;
+    switch (_props->lightStage()) {
+      case SceneGraph::DrawModes::LIGHTSTAGE_SMOOTH:
+        shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+        break;
+      case SceneGraph::DrawModes::LIGHTSTAGE_PHONG:
+        shaderDesc.shadeMode = SG_SHADE_PHONG;
+        break;
+      case SceneGraph::DrawModes::LIGHTSTAGE_UNLIT:
+        shaderDesc.shadeMode = SG_SHADE_UNLIT;
+        break;
+      default:
+        break;
     }
 
     if (_props->flatShaded())
       shaderDesc.shadeMode = SG_SHADE_FLAT;
 
-    if (_props->primitive() == DrawModes::PRIMITIVE_WIREFRAME ||
-      _props->primitive() == DrawModes::PRIMITIVE_HIDDENLINE ||
-      _props->primitive() == DrawModes::PRIMITIVE_EDGE ||
-      _props->primitive() == DrawModes::PRIMITIVE_HALFEDGE)
+    if (_props->primitive() == SceneGraph::DrawModes::PRIMITIVE_WIREFRAME ||
+        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_HIDDENLINE ||
+        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_EDGE ||
+        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_HALFEDGE)
       shaderDesc.shadeMode = SG_SHADE_UNLIT;
   }
 }
@@ -248,3 +250,4 @@ QString RenderObject::toString() const
 
 
 } // namespace ACG end
+
