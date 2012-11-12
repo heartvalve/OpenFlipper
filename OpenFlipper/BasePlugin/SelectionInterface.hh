@@ -992,8 +992,29 @@ class SelectionInterface {
    virtual void slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {}
    virtual void slotRegisterType(QString _handleName, DataType _type) {}
    virtual void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, PrimitiveType& _typeHandle) {}
+
+   /** \brief Don't use! Implemented in SelectionBasePlugin
+    *
+    * @param _handleName             Handle of the selection mode
+    * @param _modeName               User visible name of the selection mode
+    * @param _description            Description of the mode
+    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _associatedTypes        primitive types supported by this mode
+    * @param _customIdentifier       Identifier of this mode
+    */
    virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                            PrimitiveType _associatedTypes, QString& _customIdentifier) {}
+
+   /** \brief Don't use! Implemented in SelectionBasePlugin
+    *
+    * @param _handleName             Handle of the selection mode
+    * @param _modeName               User visible name of the selection mode
+    * @param _description            Description of the mode
+    * @param _icon                   Icon displayed in the selection toolbar
+    * @param _associatedTypes        primitive types supported by this mode
+    * @param _customIdentifier       Identifier of this mode
+    * @param _objectTypeRestriction  Object types supported by this mode
+    */
    virtual void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                            PrimitiveType _associatedTypes, QString& _customIdentifier,
                                            DataType _objectTypeRestriction) {}
