@@ -387,7 +387,7 @@ QString VertexDeclaration::toString() const
     const char* usage = (el->usage_ < VERTEX_USAGE_SHADER_INPUT) ? usageStrings[el->usage_] : el->shaderInputName_;
 
     resultStrm << "element " << i
-               << " - [type: " << usage
+               << " - [type: " << typeString
                << ", count: " << el->numElements_
                << ", usage: " << usage
                << ", offset: " << el->byteOffset_ << "]\n";
