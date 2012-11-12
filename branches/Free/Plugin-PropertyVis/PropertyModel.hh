@@ -163,7 +163,7 @@ protected:
      * @brief Parses the property file header.
      *
      * @param header The header.
-     * @param[out] propViz The PropertyVisualizer that will visualize the new property.
+     * @param[out] propVis The PropertyVisualizer that will visualize the new property.
      * @param[out] n The number of values stored in the file
      * @return True if parsing was successfull, False if not.
      *
