@@ -407,7 +407,7 @@ void SelectionBasePlugin::slotAddSelectionEnvironment(QString _modeName, QString
     
     SelectionTypeFrameWidget* tab = createNewTypeFrame(env);
     
-    if ( OpenFlipper::Options::gui () ) {
+    if ( OpenFlipper::Options::gui() ) {
 
       // Add type frame to tab widget
       int index = tool_->typeTabWidget->addTab(tab, QIcon(_icon), _modeName);
@@ -576,67 +576,67 @@ void SelectionBasePlugin::slotMouseEvent(QMouseEvent* _event) {
 
 void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle) {
     
-  if (  OpenFlipper::Options::nogui() )
+  if (  !OpenFlipper::Options::gui() )
     return;
 
-    // Get selection environment
-    std::map<QString,SelectionEnvironment>::iterator it =
-        selectionEnvironments_.find(_handleName);
-        
-    if(it == selectionEnvironments_.end()) {
-        emit log(LOGERR, QString("Could not find selection environment width handle '%1'!").arg(_handleName));
-        return;
-    }
-    
-    SelectionEnvironment& env = (*it).second;
-    
-    // Test if there's a free primitive type available
-    // Note: This is actually limited to 31
-    if(nextFreePrimitiveType_ > nextFreePrimitiveType_ << 1) {
-        emit log(LOGERR, "Maximum number of custom primitive types for selection reached!");
-        return;
-    }
-    
-    // Test if there's a custom type with the same name already
-    QList<QAction*>::const_iterator a_it = env.primitiveActions->actions().constBegin();
-    for(; a_it != env.primitiveActions->actions().constEnd(); ++a_it) {
-        if((*a_it)->text() == _name) {
-            emit log(LOGERR, QString("A custom primitive type with name \"%1\" already exists!").arg(_name));
-            return;
-        }
-    }
-    
-    // Add custom primitive type
-    PrimitiveAction* action = new PrimitiveAction(QIcon(_icon), _name, env.primitiveActions);
-    action->setCheckable(true);
-    action->selectionEnvironmentHandle(_handleName);
-    primitivesBarGroup_->addAction(action);
-    pickModeToolBar_->clear();
-    pickModeToolBar_->addActions(primitivesBarGroup_->actions());
-    pickModeToolBar_->addSeparator();
-    pickModeToolBar_->addActions(selectionModesGroup_->actions());
+  // Get selection environment
+  std::map<QString,SelectionEnvironment>::iterator it =
+      selectionEnvironments_.find(_handleName);
 
-    // Also add type button to tool box of environment tab
-    ActionButton* button = new ActionButton(action);
-    button->setMinimumSize(QSize(32,32));
-    button->setMaximumSize(QSize(64,64));
-    env.primitivesBar->addWidget(button);
-    
-    _typeHandle = nextFreePrimitiveType_;
-    action->primitiveType(_typeHandle);
-    
-    // Add primitive type to environment
-    env.primitiveTypes |= _typeHandle;
-    
-    primitiveTypeButtons_.insert(std::pair<PrimitiveType,QAction*>(_typeHandle,action));
-    
-    // Go over to next free primitive type
-    nextFreePrimitiveType_ <<= 1;
-    
-    // Connect action to local slot in order to keep track of active primitive types
-    connect(action, SIGNAL(toggled(bool)), this, SLOT(updateActivePrimitiveTypes(bool)));
-    
-    updatePickModeToolBar();
+  if(it == selectionEnvironments_.end()) {
+    emit log(LOGERR, QString("Could not find selection environment width handle '%1'!").arg(_handleName));
+    return;
+  }
+
+  SelectionEnvironment& env = (*it).second;
+
+  // Test if there's a free primitive type available
+  // Note: This is actually limited to 31
+  if(nextFreePrimitiveType_ > nextFreePrimitiveType_ << 1) {
+    emit log(LOGERR, "Maximum number of custom primitive types for selection reached!");
+    return;
+  }
+
+  // Test if there's a custom type with the same name already
+  QList<QAction*>::const_iterator a_it = env.primitiveActions->actions().constBegin();
+  for(; a_it != env.primitiveActions->actions().constEnd(); ++a_it) {
+    if((*a_it)->text() == _name) {
+      emit log(LOGERR, QString("A custom primitive type with name \"%1\" already exists!").arg(_name));
+      return;
+    }
+  }
+
+  // Add custom primitive type
+  PrimitiveAction* action = new PrimitiveAction(QIcon(_icon), _name, env.primitiveActions);
+  action->setCheckable(true);
+  action->selectionEnvironmentHandle(_handleName);
+  primitivesBarGroup_->addAction(action);
+  pickModeToolBar_->clear();
+  pickModeToolBar_->addActions(primitivesBarGroup_->actions());
+  pickModeToolBar_->addSeparator();
+  pickModeToolBar_->addActions(selectionModesGroup_->actions());
+
+  // Also add type button to tool box of environment tab
+  ActionButton* button = new ActionButton(action);
+  button->setMinimumSize(QSize(32,32));
+  button->setMaximumSize(QSize(64,64));
+  env.primitivesBar->addWidget(button);
+
+  _typeHandle = nextFreePrimitiveType_;
+  action->primitiveType(_typeHandle);
+
+  // Add primitive type to environment
+  env.primitiveTypes |= _typeHandle;
+
+  primitiveTypeButtons_.insert(std::pair<PrimitiveType,QAction*>(_typeHandle,action));
+
+  // Go over to next free primitive type
+  nextFreePrimitiveType_ <<= 1;
+
+  // Connect action to local slot in order to keep track of active primitive types
+  connect(action, SIGNAL(toggled(bool)), this, SLOT(updateActivePrimitiveTypes(bool)));
+
+  updatePickModeToolBar();
 }
 
 //============================================================================================
@@ -939,7 +939,7 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QString _icon, QStrin
                                             bool _show, SelectionInterface::PrimitiveType _associatedTypes,
                                             QString& _customIdentifier, bool _custom, DataType _objectTypeRestriction) {
     
-  if (  OpenFlipper::Options::nogui() )
+  if ( !OpenFlipper::Options::gui() )
     return;
 
   // Find selection environment that is associated to _handleName
