@@ -369,19 +369,21 @@ void TranslationManipulatorNode::updateTargetColors ()
       return;
     }
 
-  if (mode_ != Resize)
-  for (unsigned int i = 0; i < 3; i++)
-    if (element_[i + XRing].clicked_)
-    {
-      element_[i + XRing].active_target_color_ = colors[i+1][2];
-      element_[i + XRing].inactive_target_color_ = colors[i+1][5];
-      return;
-    } else if (element_[i + XRing].over_)
-    {
-      element_[i + XRing].active_target_color_ = colors[i+1][1];
-      element_[i + XRing].inactive_target_color_ = colors[i+1][4];
-      return;
+  if (mode_ != Resize) {
+    for (unsigned int i = 0; i < 3; i++) {
+      if (element_[i + XRing].clicked_)
+      {
+        element_[i + XRing].active_target_color_ = colors[i+1][2];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][5];
+        return;
+      } else if (element_[i + XRing].over_)
+      {
+        element_[i + XRing].active_target_color_ = colors[i+1][1];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][4];
+        return;
+      }
     }
+  }
 
 }
 
