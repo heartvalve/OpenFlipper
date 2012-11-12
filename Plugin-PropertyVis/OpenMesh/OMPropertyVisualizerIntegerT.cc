@@ -441,7 +441,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::setFacePropertyFromText(unsigned int
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cout << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
 
 
     typename MeshT::FaceHandle fh = mesh->face_handle(index);
@@ -457,7 +457,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::setEdgePropertyFromText(unsigned int
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cout << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
 
 
     typename MeshT::EdgeHandle eh = mesh->edge_handle(index);
@@ -473,7 +473,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::setHalfedgePropertyFromText(unsigned
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cout << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
 
 
     typename MeshT::HalfedgeHandle heh = mesh->halfedge_handle(index);
@@ -489,7 +489,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::setVertexPropertyFromText(unsigned i
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cout << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
 
 
     typename MeshT::VertexHandle vh = mesh->vertex_handle(index);

@@ -144,7 +144,7 @@ void OMPropertyVisualizerSkinWeights<MeshT>::setVertexPropertyFromText(unsigned 
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cout << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
 
     typename MeshT::VertexHandle vh = mesh->vertex_handle(index);
 

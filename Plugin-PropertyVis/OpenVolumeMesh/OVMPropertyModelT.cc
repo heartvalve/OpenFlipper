@@ -233,7 +233,7 @@ bool OVMPropertyModel<MeshT>::parseHeader(QString header, PropertyVisualizer*& p
 
         if (n != nExpected)
         {
-            std::cout << "unexpected number of entities" << std::endl;
+            std::cerr << "unexpected number of entities" << std::endl;
             return false;
         }
 
@@ -241,7 +241,7 @@ bool OVMPropertyModel<MeshT>::parseHeader(QString header, PropertyVisualizer*& p
 
         if (!isSupported(friendlyName))
         {
-            std::cout << "unsupported property type " << friendlyName.toStdString() << std::endl;
+            std::cerr << "unsupported property type " << friendlyName.toStdString() << std::endl;
             return false;
         }
 
@@ -280,7 +280,7 @@ bool OVMPropertyModel<MeshT>::parseHeader(QString header, PropertyVisualizer*& p
     }
     else
     {
-        std::cout << "unsupported header format" << std::endl;
+        std::cerr << "unsupported header format" << std::endl;
         return false;
     }
 }
@@ -502,7 +502,7 @@ TypeInfoWrapper OVMPropertyModel<MeshT>::getSupportedTypeInfoWrapper(OpenVolumeM
         return *propIt;
     else
     {
-        std::cout << "error" << std::endl;
+        std::cerr << "error" << std::endl;
         return *propIt;
     }
 }
