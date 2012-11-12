@@ -571,6 +571,9 @@ void SelectionBasePlugin::slotMouseEvent(QMouseEvent* _event) {
 
 void SelectionBasePlugin::slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle) {
     
+  if (  OpenFlipper::Options::nogui() )
+    return;
+
     // Get selection environment
     std::map<QString,SelectionEnvironment>::iterator it =
         selectionEnvironments_.find(_handleName);
@@ -931,141 +934,144 @@ void SelectionBasePlugin::showSelectionMode(QString _mode, QIcon _icon, QString 
                                             bool _show, SelectionInterface::PrimitiveType _associatedTypes,
                                             QString& _customIdentifier, bool _custom, DataType _objectTypeRestriction) {
     
-    // Find selection environment that is associated to _handleName
-    std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.find(_handleName);
-    
-    // Return if the requested selection environment was not found
-    if(it == selectionEnvironments_.end()) return;
-    
-    if(!_custom) {
-        if(_mode == SB_TOGGLE) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(toggleSelectionAction_);
-                toggleSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(toggleSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    toggleSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_LASSO) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(lassoSelectionAction_);
-                lassoSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(lassoSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    lassoSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_VOLUME_LASSO) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(volumeLassoSelectionAction_);
-                volumeLassoSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(volumeLassoSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    volumeLassoSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_SURFACE_LASSO) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(surfaceLassoSelectionAction_);
-                surfaceLassoSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(surfaceLassoSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    surfaceLassoSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_SPHERE) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(sphereSelectionAction_);
-                sphereSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(sphereSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    sphereSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_BOUNDARY) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(boundarySelectionAction_);
-                boundarySelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(boundarySelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    boundarySelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_FLOODFILL) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(floodFillSelectionAction_);
-                floodFillSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(floodFillSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    floodFillSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        } else if (_mode == SB_COMPONENTS) {
-            if(_show) {
-                (*it).second.defaultSelectionModes.insert(componentsSelectionAction_);
-                componentsSelectionAction_->addAssociatedType(_associatedTypes);
-            } else {
-                std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(componentsSelectionAction_);
-                if(e != (*it).second.defaultSelectionModes.end()) {
-                    (*it).second.defaultSelectionModes.erase(e);
-                    componentsSelectionAction_->removeAssociatedType(_associatedTypes);
-                }
-            }
-        }
-    } else {
-        if(_show) {
-            // Create custom function
-            // Create action for associated function
-            _customIdentifier = getUniqueIdentifierName(QString(_handleName + "_" + _mode).replace(" ", "_"));
-            
-            // Create action
-            HandleAction* action = new HandleAction(_icon, _desc, selectionModesGroup_, _objectTypeRestriction);
-            action->setCheckable(true);
-            action->selectionEnvironmentHandle(_handleName);
-            action->selectionModeHandle(_customIdentifier);
-            action->addAssociatedType(_associatedTypes);
-            
-            // Add action to tools bar
-            selectionModesGroup_->addAction(action);
-            pickModeToolBar_->clear();
-            pickModeToolBar_->addActions(primitivesBarGroup_->actions());
-            pickModeToolBar_->addSeparator();
-            pickModeToolBar_->addActions(selectionModesGroup_->actions());
+  if (  OpenFlipper::Options::nogui() )
+    return;
 
-            // Add pickmode name and button to selection environment's container
-            (*it).second.customSelectionModes.insert(action);
-            
-            connect(action, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
-        } else {
-            // Search custom selection mode
-            std::set<HandleAction*>::iterator e = (*it).second.customSelectionModes.begin();
-            for(; e != (*it).second.customSelectionModes.end(); ++e) {
-                if((*e)->selectionEnvironmentHandle() == _handleName)
-                    break;
-            }
-            
-            // Delete action from list
-            if(e != (*it).second.customSelectionModes.end()) {
-                (*e)->removeAssociatedType(_associatedTypes);
-                (*it).second.customSelectionModes.erase(e);
-            }
+  // Find selection environment that is associated to _handleName
+  std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.find(_handleName);
+
+  // Return if the requested selection environment was not found
+  if(it == selectionEnvironments_.end()) return;
+
+  if(!_custom) {
+    if(_mode == SB_TOGGLE) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(toggleSelectionAction_);
+        toggleSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(toggleSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          toggleSelectionAction_->removeAssociatedType(_associatedTypes);
         }
+      }
+    } else if (_mode == SB_LASSO) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(lassoSelectionAction_);
+        lassoSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(lassoSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          lassoSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_VOLUME_LASSO) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(volumeLassoSelectionAction_);
+        volumeLassoSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(volumeLassoSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          volumeLassoSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_SURFACE_LASSO) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(surfaceLassoSelectionAction_);
+        surfaceLassoSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(surfaceLassoSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          surfaceLassoSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_SPHERE) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(sphereSelectionAction_);
+        sphereSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(sphereSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          sphereSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_BOUNDARY) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(boundarySelectionAction_);
+        boundarySelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(boundarySelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          boundarySelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_FLOODFILL) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(floodFillSelectionAction_);
+        floodFillSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(floodFillSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          floodFillSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
+    } else if (_mode == SB_COMPONENTS) {
+      if(_show) {
+        (*it).second.defaultSelectionModes.insert(componentsSelectionAction_);
+        componentsSelectionAction_->addAssociatedType(_associatedTypes);
+      } else {
+        std::set<HandleAction*>::iterator e = (*it).second.defaultSelectionModes.find(componentsSelectionAction_);
+        if(e != (*it).second.defaultSelectionModes.end()) {
+          (*it).second.defaultSelectionModes.erase(e);
+          componentsSelectionAction_->removeAssociatedType(_associatedTypes);
+        }
+      }
     }
+  } else {
+    if(_show) {
+      // Create custom function
+      // Create action for associated function
+      _customIdentifier = getUniqueIdentifierName(QString(_handleName + "_" + _mode).replace(" ", "_"));
+
+      // Create action
+      HandleAction* action = new HandleAction(_icon, _desc, selectionModesGroup_, _objectTypeRestriction);
+      action->setCheckable(true);
+      action->selectionEnvironmentHandle(_handleName);
+      action->selectionModeHandle(_customIdentifier);
+      action->addAssociatedType(_associatedTypes);
+
+      // Add action to tools bar
+      selectionModesGroup_->addAction(action);
+      pickModeToolBar_->clear();
+      pickModeToolBar_->addActions(primitivesBarGroup_->actions());
+      pickModeToolBar_->addSeparator();
+      pickModeToolBar_->addActions(selectionModesGroup_->actions());
+
+      // Add pickmode name and button to selection environment's container
+      (*it).second.customSelectionModes.insert(action);
+
+      connect(action, SIGNAL(triggered(bool)), this, SLOT(slotEnterSelectionMode(bool)));
+    } else {
+      // Search custom selection mode
+      std::set<HandleAction*>::iterator e = (*it).second.customSelectionModes.begin();
+      for(; e != (*it).second.customSelectionModes.end(); ++e) {
+        if((*e)->selectionEnvironmentHandle() == _handleName)
+          break;
+      }
+
+      // Delete action from list
+      if(e != (*it).second.customSelectionModes.end()) {
+        (*e)->removeAssociatedType(_associatedTypes);
+        (*it).second.customSelectionModes.erase(e);
+      }
+    }
+  }
 }
 
 //============================================================================================
