@@ -145,17 +145,17 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     
     emit addSelectionEnvironment("Mesh Object Selections", "Select mesh object primitives such as vertices, (half-)edges and faces.",
-                                 QIcon(iconPath + "selections.png"), environmentHandle_);
+                                 iconPath + "selections.png", environmentHandle_);
 
     // Register mesh object types
     emit registerType(environmentHandle_, DATA_POLY_MESH);
     emit registerType(environmentHandle_, DATA_TRIANGLE_MESH);
     
     // Register mesh primitive types
-    emit addPrimitiveType(environmentHandle_, "Select Vertices",     QIcon(iconPath + VERTEX_TYPE), vertexType_);
-    emit addPrimitiveType(environmentHandle_, "Select Edges",        QIcon(iconPath + EDGE_TYPE),   edgeType_);
-    emit addPrimitiveType(environmentHandle_, "Select Halfedges",    QIcon(iconPath + HEDGE_TYPE),  halfedgeType_);
-    emit addPrimitiveType(environmentHandle_, "Select Faces",        QIcon(iconPath + FACE_TYPE),   faceType_);
+    emit addPrimitiveType(environmentHandle_, "Select Vertices",     iconPath + VERTEX_TYPE, vertexType_);
+    emit addPrimitiveType(environmentHandle_, "Select Edges",        iconPath + EDGE_TYPE,   edgeType_);
+    emit addPrimitiveType(environmentHandle_, "Select Halfedges",    iconPath + HEDGE_TYPE,  halfedgeType_);
+    emit addPrimitiveType(environmentHandle_, "Select Faces",        iconPath + FACE_TYPE,   faceType_);
     
     // Combine all supported types
     allSupportedTypes_ = (vertexType_ | edgeType_ | halfedgeType_ | faceType_);

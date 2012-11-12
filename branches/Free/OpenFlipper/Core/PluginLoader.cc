@@ -1224,45 +1224,90 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
     supported = supported + "SelectionBase ";
     
     if ( checkSignal(plugin,"addSelectionEnvironment(QString,QString,QIcon,QString&)") )
-      connect(plugin , SIGNAL(addSelectionEnvironment(QString,QString,QIcon,QString&)),
-              this   , SLOT(slotAddSelectionEnvironment(QString,QString,QIcon,QString&)),Qt::DirectConnection);
+      log(LOGERR,tr("Plugin uses deprecated addSelectionEnvironment(QString,QString,QIcon,QString&) , Replace the qicon by the path to the icon!"));
 
-    if ( checkSlot( plugin , "slotAddSelectionEnvironment(QString,QString,QIcon,QString&)" ) )
-      connect(this   , SIGNAL(addSelectionEnvironment(QString,QString,QIcon,QString&)),
-              plugin , SLOT(slotAddSelectionEnvironment(QString,QString,QIcon,QString&)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"addSelectionEnvironment(QString,QString,QString,QString&)") )
+      connect(plugin , SIGNAL(addSelectionEnvironment(QString,QString,QString,QString&)),
+              this   , SLOT(slotAddSelectionEnvironment(QString,QString,QString,QString&)),Qt::DirectConnection);
+
+    // ===============
+
+    if ( checkSlot(plugin,"slotAddSelectionEnvironment(QString,QString,QIcon,QString&)") )
+          log(LOGERR,tr("Plugin uses deprecated slotAddSelectionEnvironment(QString,QString,QIcon,QString&) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSlot( plugin , "slotAddSelectionEnvironment(QString,QString,QString,QString&)" ) )
+      connect(this   , SIGNAL(addSelectionEnvironment(QString,QString,QString,QString&)),
+              plugin , SLOT(slotAddSelectionEnvironment(QString,QString,QString,QString&)),Qt::DirectConnection);
+
+    // ===============
               
     if ( checkSignal(plugin,"registerType(QString,DataType)") )
       connect(plugin , SIGNAL(registerType(QString,DataType)),
               this   , SLOT(slotRegisterType(QString,DataType)),Qt::DirectConnection);
 
+    // ===============
+
     if ( checkSlot( plugin , "slotRegisterType(QString,DataType)" ) )
       connect(this   , SIGNAL(registerType(QString,DataType)),
               plugin , SLOT(slotRegisterType(QString,DataType)),Qt::DirectConnection);
 
-    if ( checkSignal(plugin,"addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)") )
-      connect(plugin , SIGNAL(addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),
-              this   , SLOT(slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+    // ===============
 
-    if ( checkSlot( plugin , "slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)" ) )
-      connect(this   , SIGNAL(addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),
-              plugin , SLOT(slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
-              
+    if ( checkSignal(plugin,"addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)") )
+              log(LOGERR,tr("Plugin uses deprecated addPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSignal(plugin,"addPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)") )
+      connect(plugin , SIGNAL(addPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)),
+              this   , SLOT(slotAddPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+
+    // ===============
+
+    if ( checkSlot(plugin,"slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&)") )
+              log(LOGERR,tr("Plugin uses deprecated slotAddPrimitiveType(QString,QString,QIcon,SelectionInterface::PrimitiveType&) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSlot( plugin , "slotAddPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)" ) )
+      connect(this   , SIGNAL(addPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)),
+              plugin , SLOT(slotAddPrimitiveType(QString,QString,QString,SelectionInterface::PrimitiveType&)),Qt::DirectConnection);
+
+    // ===============
+
     if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)") )
-      connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
-              this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+              log(LOGERR,tr("Plugin uses deprecated addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)") )
+      connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)),
+              this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+
+    // ===============
+
+    if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)") )
+              log(LOGERR,tr("Plugin uses deprecated addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType) , Replace the qicon by the path to the icon!"));
 
     if ( checkSignal(plugin,"addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)") )
       connect(plugin , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),
               this   , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),Qt::DirectConnection);
 
-    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)" ) )
-      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),
-              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+    // ===============
 
-    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)" ) )
-      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),
-              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)),Qt::DirectConnection);
+    if ( checkSlot(plugin,"slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&)") )
+              log(LOGERR,tr("Plugin uses deprecated slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)" ) )
+      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)),
+              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&)),Qt::DirectConnection);
+
+    // ===============
+
+    if ( checkSlot(plugin,"slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType)") )
+              log(LOGERR,tr("Plugin uses deprecated slotAddCustomSelectionMode(QString,QString,QString,QIcon,SelectionInterface::PrimitiveType,QString&,DataType) , Replace the qicon by the path to the icon!"));
+
+    if ( checkSlot( plugin , "slotAddCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&,DataType)" ) )
+      connect(this   , SIGNAL(addCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&,DataType)),
+              plugin , SLOT(slotAddCustomSelectionMode(QString,QString,QString,QString,SelectionInterface::PrimitiveType,QString&,DataType)),Qt::DirectConnection);
               
+    // ===============
+
+
     if ( checkSignal(plugin,"addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)") )
       connect(plugin , SIGNAL(addSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),
               this   , SLOT(slotAddSelectionOperations(QString,QStringList,QString,SelectionInterface::PrimitiveType)),Qt::DirectConnection);

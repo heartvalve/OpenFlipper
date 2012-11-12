@@ -105,7 +105,7 @@ void VolumeMeshSelectionPlugin::pluginsInitialized() {
 
     emit
     addSelectionEnvironment("VolumeMesh Selections", "Select volume mesh primitives.",
-                            QIcon(iconPath + "datacontrol-boundingBox.png"), environmentHandle_);
+                            iconPath + "datacontrol-boundingBox.png", environmentHandle_);
 
     // Register mesh object types
     emit
@@ -113,22 +113,17 @@ void VolumeMeshSelectionPlugin::pluginsInitialized() {
     emit
     registerType(environmentHandle_, DATA_HEXAHEDRAL_MESH);
 
-    emit
-    addPrimitiveType(environmentHandle_, "Select Volume Mesh Vertices", QIcon(iconPath + VERTEX_TYPE), vertexType_);
-    emit
-    addPrimitiveType(environmentHandle_, "Select Volume Mesh Edges", QIcon(iconPath + EDGE_TYPE), edgeType_);
-    emit
-    addPrimitiveType(environmentHandle_, "Select Volume Mesh Faces", QIcon(iconPath + FACE_TYPE), faceType_);
-    emit
-    addPrimitiveType(environmentHandle_, "Select Volume Mesh Cells", QIcon(iconPath + CELL_TYPE), cellType_);
+    emit addPrimitiveType(environmentHandle_, "Select Volume Mesh Vertices", iconPath + VERTEX_TYPE, vertexType_);
+    emit addPrimitiveType(environmentHandle_, "Select Volume Mesh Edges", iconPath + EDGE_TYPE, edgeType_);
+    emit addPrimitiveType(environmentHandle_, "Select Volume Mesh Faces", iconPath + FACE_TYPE, faceType_);
+    emit addPrimitiveType(environmentHandle_, "Select Volume Mesh Cells", iconPath + CELL_TYPE, cellType_);
 
-    emit
-    addCustomSelectionMode(environmentHandle_, "Column Selection", "Select entire column of cells",
-                           QIcon(iconPath + COLUMN_SELECTION), cellType_, columnSelectionHandle_);
+    emit addCustomSelectionMode(environmentHandle_, "Column Selection", "Select entire column of cells",
+                           iconPath + COLUMN_SELECTION, cellType_, columnSelectionHandle_);
 
     emit
     addCustomSelectionMode(environmentHandle_, "Sheet Selection", "Select entire sheet of cells",
-                           QIcon(iconPath + SHEET_SELECTION), cellType_, sheetSelectionHandle_);
+                           iconPath + SHEET_SELECTION, cellType_, sheetSelectionHandle_);
 
     allSupportedTypes_ = vertexType_ | edgeType_ | faceType_ | cellType_;
 

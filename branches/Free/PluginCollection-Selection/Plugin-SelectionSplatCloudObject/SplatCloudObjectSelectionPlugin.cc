@@ -96,13 +96,13 @@ void SplatCloudObjectSelectionPlugin::pluginsInitialized()
 
   QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
 
-  emit addSelectionEnvironment( "SplatCloud Object Selections", "Select SplatCloud object primitives (vertices/points).", QIcon( iconPath + "selections.png" ), environmentHandle_ );
+  emit addSelectionEnvironment( "SplatCloud Object Selections", "Select SplatCloud object primitives (vertices/points).",  iconPath + "selections.png" , environmentHandle_ );
 
   // Register SplatCloud object type
   emit registerType( environmentHandle_, DATA_SPLATCLOUD );
 
   // Register SplatCloud primitive types
-  emit addPrimitiveType( environmentHandle_, "Select Splats", QIcon( iconPath + VERTEX_TYPE ), vertexType_ );
+  emit addPrimitiveType( environmentHandle_, "Select Splats",  iconPath + VERTEX_TYPE , vertexType_ );
 
   // Combine all supported types
   allSupportedTypes_ = vertexType_;

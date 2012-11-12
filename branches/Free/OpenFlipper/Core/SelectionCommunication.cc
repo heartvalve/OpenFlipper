@@ -57,7 +57,7 @@
 // ===             Selection Communication                    ============================
 //========================================================================================
 
-void Core::slotAddSelectionEnvironment(QString _modeName, QString _description, QIcon _icon, QString& _handleName) {
+void Core::slotAddSelectionEnvironment(QString _modeName, QString _description, QString _icon, QString& _handleName) {
     emit addSelectionEnvironment(_modeName, _description, _icon, _handleName);
 }
 
@@ -65,16 +65,16 @@ void Core::slotRegisterType(QString _handleName, DataType _type) {
     emit registerType(_handleName, _type);
 }
 
-void Core::slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle) {
+void Core::slotAddPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle) {
     emit addPrimitiveType(_handleName, _name, _icon, _typeHandle);
 }
 
-void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier) {
     emit addCustomSelectionMode(_handleName, _modeName, _description, _icon, _associatedTypes, _customIdentifier);
 }
 
-void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
+void Core::slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
                                       DataType _objectTypeRestriction) {
     emit addCustomSelectionMode(_handleName, _modeName, _description, _icon, _associatedTypes, _customIdentifier, _objectTypeRestriction);

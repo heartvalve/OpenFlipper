@@ -91,45 +91,45 @@ void BSplineCurveSelectionPlugin::initializePlugin() {
 void BSplineCurveSelectionPlugin::pluginsInitialized() {
     // Create new selection environment for skeletons
     // and register skeleton data type for the environment.
-    
+
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    
+
     emit addSelectionEnvironment("B-Spline Curve Selections", "Select B-Spline curve primitives.",
-                                 QIcon(iconPath + "bsplinecurve.png"), environmentHandle_);
+                                 iconPath + "bsplinecurve.png", environmentHandle_);
 
     // Register mesh object types
     emit registerType(environmentHandle_, DATA_BSPLINE_CURVE);
-    
-    emit addPrimitiveType(environmentHandle_, "Select Control Points", QIcon(iconPath + CONTROL_POINT_TYPE), controlPointType_);
-    emit addPrimitiveType(environmentHandle_, "Select Knots", QIcon(iconPath + KNOT_TYPE), knotType_);
-    
+
+    emit addPrimitiveType(environmentHandle_, "Select Control Points", iconPath + CONTROL_POINT_TYPE, controlPointType_);
+    emit addPrimitiveType(environmentHandle_, "Select Knots", iconPath + KNOT_TYPE, knotType_);
+
     allSupportedTypes_ = controlPointType_ | knotType_;
-    
+
     // Determine, which selection modes are requested
     emit showToggleSelectionMode(environmentHandle_, true, allSupportedTypes_);
     emit showVolumeLassoSelectionMode(environmentHandle_, true, allSupportedTypes_);
-    
+
     QStringList generalOperations;
     generalOperations.append(G_CP_MODE);
     generalOperations.append(G_K_MODE);
-    
+
     // Define control point and knot operations
     QStringList controlPointOperations;
     controlPointOperations.append(CP_SELECT_ALL);
     controlPointOperations.append(CP_DESELECT_ALL);
     controlPointOperations.append(CP_INVERT);
     controlPointOperations.append(CP_DELETE);
-    
+
     QStringList knotOperations;
     knotOperations.append(K_SELECT_ALL);
     knotOperations.append(K_DESELECT_ALL);
     knotOperations.append(K_INVERT);
     knotOperations.append(K_DELETE);
-    
+
     emit addSelectionOperations(environmentHandle_, generalOperations, "Selection Operations");
     emit addSelectionOperations(environmentHandle_, controlPointOperations,  "Control Point Operations",   controlPointType_);
     emit addSelectionOperations(environmentHandle_, knotOperations,  "Knot Operations",   knotType_);
-    
+
     // Register key shortcuts:
     
     // Select (a)ll
