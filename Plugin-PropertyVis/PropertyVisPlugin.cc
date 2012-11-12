@@ -76,30 +76,32 @@ propertyModel_(0)
 
 void PropertyVisPlugin::initializePlugin()
 {
-  tool_ = new PropertyVisToolbar();
-  
-  QSize size(300,300);
-  tool_->resize(size);
-  
-  // connect toolbox elements
-  connect(tool_->meshNames,       SIGNAL( currentIndexChanged(int) ), this, SLOT( slotMeshChanged(int) ) );
+  if ( OpenFlipper::Options::gui() ) {
+    tool_ = new PropertyVisToolbar();
 
-  connect(tool_->visualizeButton, SIGNAL( clicked() ), this, SLOT( slotVisualize() ) );
-  connect(tool_->clearButton,     SIGNAL( clicked() ), this, SLOT( slotAllCleared() ) );
+    QSize size(300,300);
+    tool_->resize(size);
 
-  connect(tool_->refresh_property_names_tb, SIGNAL( clicked() ), this, SLOT( slotMeshChanged() ) );
-  connect(tool_->duplicate_property_tb, SIGNAL( clicked() ), this, SLOT( slotDuplicateProperty() ) );
-  connect(tool_->remove_property_tb, SIGNAL( clicked() ), this, SLOT( slotRemoveProperty() ) );
+    // connect toolbox elements
+    connect(tool_->meshNames,       SIGNAL( currentIndexChanged(int) ), this, SLOT( slotMeshChanged(int) ) );
 
-  connect(tool_, SIGNAL( widgetShown() ), this, SLOT( updateGUI() ) );
+    connect(tool_->visualizeButton, SIGNAL( clicked() ), this, SLOT( slotVisualize() ) );
+    connect(tool_->clearButton,     SIGNAL( clicked() ), this, SLOT( slotAllCleared() ) );
 
-  tool_->meshNames->setModel(&objectListItemModel_);
+    connect(tool_->refresh_property_names_tb, SIGNAL( clicked() ), this, SLOT( slotMeshChanged() ) );
+    connect(tool_->duplicate_property_tb, SIGNAL( clicked() ), this, SLOT( slotDuplicateProperty() ) );
+    connect(tool_->remove_property_tb, SIGNAL( clicked() ), this, SLOT( slotRemoveProperty() ) );
 
-  emit addHiddenPickMode( PROP_VIS );
+    connect(tool_, SIGNAL( widgetShown() ), this, SLOT( updateGUI() ) );
 
-  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PropertyVisIcon.png");
+    tool_->meshNames->setModel(&objectListItemModel_);
 
-  emit addToolbox( tr("Property Visualization") , tool_, toolIcon );
+    emit addHiddenPickMode( PROP_VIS );
+
+    QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PropertyVisIcon.png");
+
+    emit addToolbox( tr("Property Visualization") , tool_, toolIcon );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -129,7 +131,7 @@ void PropertyVisPlugin::slotAllCleared()
 
 void PropertyVisPlugin::slotObjectUpdated( int _identifier, const UpdateType& _type )
 {
-    if( tool_->isVisible() )
+    if( OpenFlipper::Options::gui() && tool_->isVisible() )
         updateGUI();
 }
 
