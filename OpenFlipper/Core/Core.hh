@@ -400,9 +400,7 @@ signals:
    //===========================================================================
    private slots :
 
-      /** Called by the plugins if they changed something in the object list (deleted, added,...)
-       * @param _identifier Id of the object
-       */
+      /// Called by the plugins if they changed something in the object list (deleted, added, or other property changes)
       void slotObjectUpdated(int _identifier, const UpdateType& _type = UPDATE_ALL);
 
       /// Called when a plugin changes the visibility of an object
@@ -501,9 +499,28 @@ signals:
       /// SelectionInterface: Called when a new, non-standard primitive type should be handled
       void slotAddPrimitiveType(QString _handleName, QString _name, QIcon _icon, SelectionInterface::PrimitiveType& _typeHandle);
 
-      /// SelectionInterface: Add new selection mode for specified type
+      /** \brief SelectionInterface: Add new selection mode for specified type
+       *
+       * @param _handleName             Handle of the selection mode
+       * @param _modeName               User visible name of the selection mode
+       * @param _description            Description of the mode
+       * @param _icon                   Icon displayed in the selection toolbar
+       * @param _associatedTypes        primitive types supported by this mode
+       * @param _customIdentifier       Identifier of this mode
+       */
       void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
+
+      /** \brief  SelectionInterface: Add new selection mode for specified type
+       *
+       * @param _handleName             Handle of the selection mode
+       * @param _modeName               User visible name of the selection mode
+       * @param _description            Description of the mode
+       * @param _icon                   Icon displayed in the selection toolbar
+       * @param _associatedTypes        primitive types supported by this mode
+       * @param _customIdentifier       Identifier of this mode
+       * @param _objectTypeRestriction  Object types supported by this mode
+       */
       void slotAddCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QIcon _icon,
                                       SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier,
                                       DataType _objectTypeRestriction);
