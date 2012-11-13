@@ -50,6 +50,7 @@
 
 #include <ACG/Scenegraph/TransformNode.hh>
 #include <ACG/Scenegraph/LineNode.hh>
+#include <ObjectTypes/Plane/PlaneNode.hh>
 
 #include <qnamespace.h>
 #include <qgl.h>
@@ -113,10 +114,10 @@ class DLLEXPORT QtPlaneSelect : public QObject
         unsigned int        targetIdx_;
         bool                isDragging;
 
-        ACG::SceneGraph::TransformNode*     transformNode;
-        ACG::SceneGraph::TransformNode*     transformNodeSource;
-        ACG::SceneGraph::TransformNode*     transformNodeDrag;
-        ACG::SceneGraph::LineNode*          lineNode;
+        PlaneNode*         planeNode_;
+
+    private:
+        Plane plane_;
 };
 
 
