@@ -71,9 +71,6 @@
 
 #include <ObjectTypes/SplatCloud/SplatCloud.hh>
 
-#include <Plugin-TypeSplatCloud/TypeSplatCloud.hh>
-
-
 //== CLASS DEFINITION ============================================
 
 
