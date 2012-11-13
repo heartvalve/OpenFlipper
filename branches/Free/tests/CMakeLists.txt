@@ -78,6 +78,7 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
     GLOB _local_tests_in
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/*/CMakeLists.txt"
+        
   )
 
   # add all found tests to the build
@@ -116,11 +117,11 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
   # ========================================================================
   # ========================================================================
 
-
   file (
       GLOB _plugins_in
       RELATIVE "${CMAKE_SOURCE_DIR}"
       "${CMAKE_SOURCE_DIR}/Plugin-*/CMakeLists.txt"
+      "${CMAKE_SOURCE_DIR}/PluginCollection-*/Plugin-*/CMakeLists.txt"
   )
 
   foreach (_plugin ${_plugins_in})
