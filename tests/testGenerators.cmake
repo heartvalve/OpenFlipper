@@ -25,7 +25,9 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
   endif()
 
   # construct the testname from target test file and the plugin directory we are in
-  string (TOUPPER ${_plugin_dir} PLUGIN_DIR)
+  # Use only the plugin name and not the collection before it
+  string (REGEX MATCH "Plugin-.+[/\\]?$" PLUGIN_DIR ${_plugin_dir})
+  string (TOUPPER ${PLUGIN_DIR} PLUGIN_DIR)
 
   list( LENGTH ARGN opt_arg_length )
   # handle a whole directory with test files
@@ -63,9 +65,12 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
 
       set (TEST_FILE ${dir}/${filename})
 
+      # Only get the plugins name without possible collection stuff:
+      string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir}) 
+
       # Configure the test script from the current directory with the given filenames and variables into the test directory
       configure_file(${CMAKE_SOURCE_DIR}/tests/${TEST_SCRIPT}
-       ${CMAKE_BINARY_DIR}/tests/${_plugin_dir}/${TESTSCRIPTNAME} @ONLY )
+       ${CMAKE_BINARY_DIR}/tests/${_plugin_name}/${TESTSCRIPTNAME} @ONLY )
 
       # Execute the script by OpenFlipper and than run the result parser which checks for correct values.
       set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
@@ -114,9 +119,12 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
     # set file containing the information about the file to be checked
     set (TEST_FILE_INFO ${CMAKE_SOURCE_DIR}/TestData/${TEST_FILE}.info  )
 
+    # Only get the plugins name without possible collection stuff:
+    string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir})
+
     # Configure the test script from the current directory with the given filenames and variables into the test directory
     configure_file(${CMAKE_SOURCE_DIR}/tests/${TEST_SCRIPT}
-     ${CMAKE_BINARY_DIR}/tests/${_plugin_dir}/${TESTSCRIPTNAME} @ONLY )
+     ${CMAKE_BINARY_DIR}/tests/${_plugin_name}/${TESTSCRIPTNAME} @ONLY )
 
     # Execute the script by OpenFlipper and than run the result parser which checks for correct values.
     set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
@@ -165,15 +173,17 @@ endfunction()
 #
 function( run_algorithm_test TEST_SCRIPT INPUT_FILE INPUT_REFERENCE )
 
-  #Get the plugin name:
-  string (TOUPPER ${_plugin_dir} PLUGIN_DIR)
+  # Get the plugin name:
+  # construct the testname from target test file and the plugin directory we are in
+  # Use only the plugin name and not the collection before it
+  string (REGEX MATCH "Plugin-.+[/\\]?$" PLUGIN_DIR ${_plugin_dir})
+  string (TOUPPER ${PLUGIN_DIR} PLUGIN_DIR)
+
 
   # check if we have the testData directory
   if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/TestData)
       return()
   endif()
-
-
 
  # Check if we find the script file
  if ( NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT} )
@@ -218,9 +228,12 @@ function( run_algorithm_test TEST_SCRIPT INPUT_FILE INPUT_REFERENCE )
     FILE(MAKE_DIRECTORY ${OPENFLIPPER_TEST_FILES}/${_plugin_dir} )
   endif()
 
+  # Only get the plugins name without possible collection stuff:
+  string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir})
+
   # Configure the test script from the current directory with the given filenames and variables into the test directory
   configure_file( ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests/${TEST_SCRIPT}
-                  ${OPENFLIPPER_TEST_FILES}/${_plugin_dir}/${TEST_FILE} )
+                  ${OPENFLIPPER_TEST_FILES}/${_plugin_name}/${TEST_FILE} )
 
   # Set the filename and path for the configured script
 

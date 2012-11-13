@@ -130,7 +130,11 @@ SET (CTEST_DROP_SITE_CDASH FALSE)
 
      # If a test subdir exists, we add it here
     if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests)
-      add_subdirectory(${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests ${CMAKE_BINARY_DIR}/tests/${_plugin_dir} )
+
+      # Only get the plugins name without possible collection:
+      string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir})
+
+      add_subdirectory(${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests ${CMAKE_BINARY_DIR}/tests/${_plugin_name} )
     endif()
 
    endforeach ()
