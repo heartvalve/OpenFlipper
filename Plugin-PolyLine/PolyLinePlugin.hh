@@ -39,7 +39,7 @@
 
 #include "PolyLineToolbarWidget.hh"
 
-#include "QtPlaneSelect.hh"
+#include <ObjectTypes/Plane/QtPlaneSelect.hh>
 
 #define CREATE_CUT_POLYLINE "Create Polyline"
 
