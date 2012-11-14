@@ -72,13 +72,10 @@
 #include <omp.h>
 #endif
 
-
 // Includes for windows debugging console
 #ifdef WIN32
-  #ifndef NDEBUG
-    #include <fcntl.h>
-    #include <io.h>
-  #endif
+  #include <fcntl.h>
+  #include <io.h>
 #endif
 
 
@@ -229,7 +226,6 @@ void segfaultHandling (int) {
 }
 
 #ifdef WIN32
-  #ifndef NDEBUG
     void getConsole() {
       //Create a console for this application
       AllocConsole();
@@ -252,7 +248,6 @@ void segfaultHandling (int) {
       *stdin = *CInputHandle;
       setvbuf(stdin, NULL, _IONBF, 0);
     }
-  #endif
 #endif
 
 bool openPolyMeshes = false;
@@ -319,12 +314,6 @@ bool parseCommandLineOptions(CSimpleOpt& args){
 int main(int argc, char **argv)
 {
 
-  #ifdef WIN32
-    #ifndef NDEBUG
-      getConsole();
-    #endif
-  #endif
-  
   // Remove -psn_0_xxxxx argument which is automatically
   // attached by MacOSX
   for (int i = 0; i < argc; i++) {
@@ -333,8 +322,8 @@ int main(int argc, char **argv)
         ( (argv[i])[1] == 'p' ) &&
         ( (argv[i])[2] == 's' ) &&
         ( (argv[i])[3] == 'n' ) ) {
-	 argc--;
-	 argv[i] = (char *)"";
+        argc--;
+        argv[i] = (char *)"";
       }
     }
   }
@@ -360,6 +349,12 @@ int main(int argc, char **argv)
 // #endif
 
   OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
+
+  #ifdef WIN32
+    #ifndef NDEBUG
+      getConsole();
+    #endif
+  #endif
 
   if ( !OpenFlipper::Options::nogui() ) {
 
