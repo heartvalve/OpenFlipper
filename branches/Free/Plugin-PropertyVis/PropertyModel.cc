@@ -70,7 +70,7 @@ void PropertyModel::removeProperty(QModelIndexList selectedIndices)
         delete propertyVisualizers[it->row()];
         deleteIndices.push_back(it->row());
     }
-    for (std::vector<unsigned int>::reverse_iterator rit = deleteIndices.rbegin(); rit != deleteIndices.rend(); rit++){
+    for (std::vector<unsigned int>::reverse_iterator rit = deleteIndices.rbegin(); rit != deleteIndices.rend(); ++rit){
         propertyVisualizers.erase(propertyVisualizers.begin() + *rit);
     }
 }
