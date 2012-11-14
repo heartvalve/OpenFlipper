@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DoubleWidget</class>
+ <widget class="QWidget" name="DoubleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>404</width>
+    <height>172</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Property Visualization</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="paramDouble">
+     <property name="title">
+      <string>Double Parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QCheckBox" name="doubleColorCoder">
+        <property name="text">
+         <string>Use color coder</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <widget class="QtColorChooserButton" name="doubleMin">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Min Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>0</red>
+            <green>0</green>
+            <blue>255</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QtColorChooserButton" name="doubleMax">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Max Col.: </string>
+          </property>
+          <property name="color" stdset="0">
+           <color>
+            <red>255</red>
+            <green>0</green>
+            <blue>0</blue>
+           </color>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QCheckBox" name="doubleFixedRange">
+          <property name="text">
+           <string>Fixed Range</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleFixedRangeMin">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleFixedRangeMax">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="doubleAbsolute">
+        <property name="text">
+         <string>Use absolute values</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtColorChooserButton</class>
+   <extends>QPushButton</extends>
+   <header>ACG/QtWidgets/QtColorChooserButton.hh</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>doubleFixedRange</tabstop>
+  <tabstop>doubleFixedRangeMin</tabstop>
+  <tabstop>doubleFixedRangeMax</tabstop>
+  <tabstop>doubleAbsolute</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>doubleColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleMin</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>947</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>976</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleColorCoder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleMax</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>954</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>973</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

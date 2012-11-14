@@ -32,30 +32,50 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
 
-#define PROPERTYVISPLUGIN_CC
+#ifndef OVM_PROPERTY_VISUALIZER_DOUBLE_HH
+#define OVM_PROPERTY_VISUALIZER_DOUBLE_HH
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include "OVMPropertyVisualizer.hh"
+
+#include "Widgets/DoubleWidget.hh"
+
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
-
-//------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+#include <iostream>
+
+template <typename MeshT>
+class OVMPropertyVisualizerDouble: public OVMPropertyVisualizer<MeshT>{
+
+public:
+    OVMPropertyVisualizerDouble(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo);
+    virtual ~OVMPropertyVisualizerDouble(){}
+
+protected:
+
+    template <typename PropType, typename EntityIterator>
+    void visualizeProp(PropType prop, EntityIterator e_begin, EntityIterator e_end);
+    virtual void duplicateProperty();
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+    virtual void visualizeCellProp();
+    virtual void visualizeHalffaceProp();
+
+    virtual QString getPropertyText(unsigned int index);
+};
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_VISUALIZER_DOUBLE_CC)
+#include "OVMPropertyVisualizerDoubleT.cc"
+#endif
+
+#endif /* OVM_PROPERTY_VISUALIZER_DOUBLE_HH */
+
+#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

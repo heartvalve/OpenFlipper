@@ -32,30 +32,30 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef PICK_WIDGET_HH
+#define PICK_WIDGET_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "ui_PickWidget.hh"
+#include <QtGui>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class PickWidget : public QWidget, public Ui::PickWidget
+{
+  Q_OBJECT
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+public:
+  PickWidget(QWidget * parent = 0)
+    : QWidget(parent)
+  {
+    setupUi(this);
+  }
+  
+  signals:
+    void widgetShown();
+        
+  protected:
+    void showEvent ( QShowEvent* /*event*/ ) {
+      emit widgetShown();
+    }
+};
 
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
+#endif // PICK_WIDGET_HH

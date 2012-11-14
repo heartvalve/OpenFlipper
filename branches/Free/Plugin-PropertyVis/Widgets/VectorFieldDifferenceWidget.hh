@@ -32,30 +32,30 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef VECTOR_FIELD_DIFFERENCE_WIDGET_HH
+#define VECTOR_FIELD_DIFFERENCE_WIDGET_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "ui_VectorFieldDifferenceWidget.hh"
+#include <QtGui>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class VectorFieldDifferenceWidget : public QWidget, public Ui::VectorFieldDifferenceWidget
+{
+  Q_OBJECT
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+public:
+  VectorFieldDifferenceWidget(QWidget * parent = 0)
+    : QWidget(parent)
+  {
+    setupUi(this);
+  }
+  
+  signals:
+    void widgetShown();
+        
+  protected:
+    void showEvent ( QShowEvent* /*event*/ ) {
+      emit widgetShown();
+    }
+};
 
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
+#endif // VECTOR_FIELD_DIFFERENCE_WIDGET_HH

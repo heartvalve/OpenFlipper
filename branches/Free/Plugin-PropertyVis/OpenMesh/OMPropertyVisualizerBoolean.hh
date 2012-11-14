@@ -32,30 +32,44 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef OM_PROPERTY_VISUALIZER_BOOLEAN_HH
+#define OM_PROPERTY_VISUALIZER_BOOLEAN_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "OMPropertyVisualizer.hh"
 
-#include "PropertyVisPlugin.hh"
+#include "Widgets/BooleanWidget.hh"
+
 #include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+template <typename MeshT>
+class OMPropertyVisualizerBoolean: public OMPropertyVisualizer<MeshT>{
 
-//------------------------------------------------------------------------------
+public:
+    OMPropertyVisualizerBoolean(MeshT* _mesh, PropertyInfo _propertyInfo);
+    virtual ~OMPropertyVisualizerBoolean(){}
+
+protected:
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+
+    virtual void removeProperty();
+    virtual void duplicateProperty();
+
+    virtual QString getPropertyText(unsigned int index);
+
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+};
 
 
-//------------------------------------------------------------------------------
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_BOOLEAN_CC)
+#include "OMPropertyVisualizerBooleanT.cc"
+#endif
 
-//-----------------------------------------------------------------------------
+
+#endif /* OM_PROPERTY_VISUALIZER_BOOLEAN_HH */

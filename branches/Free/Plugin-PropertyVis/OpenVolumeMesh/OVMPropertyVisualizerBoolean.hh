@@ -32,30 +32,62 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
 
-#define PROPERTYVISPLUGIN_CC
+#ifndef OVM_PROPERTY_VISUALIZER_BOOLEAN_HH
+#define OVM_PROPERTY_VISUALIZER_BOOLEAN_HH
 
-#include "PropertyVisPlugin.hh"
+#include "OVMPropertyVisualizer.hh"
+
+#include "Widgets/BooleanWidget.hh"
+
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+
 #include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+template <typename MeshT>
+class OVMPropertyVisualizerBoolean: public OVMPropertyVisualizer<MeshT>{
 
-//------------------------------------------------------------------------------
+public:
+    OVMPropertyVisualizerBoolean(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo);
+    virtual ~OVMPropertyVisualizerBoolean(){}
+
+protected:
+
+    template <typename PropType, typename EntityIterator>
+    void visualizeProp(PropType prop, EntityIterator e_begin, EntityIterator e_end);
+    virtual void duplicateProperty();
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+    virtual void visualizeCellProp();
+    virtual void visualizeHalffaceProp();
+
+    virtual QString getCellPropertyText(unsigned int index);
+    virtual QString getFacePropertyText(unsigned int index);
+    virtual QString getHalffacePropertyText(unsigned int index);
+    virtual QString getEdgePropertyText(unsigned int index);
+    virtual QString getHalfedgePropertyText(unsigned int index);
+    virtual QString getVertexPropertyText(unsigned int index);
+
+    virtual void setCellPropertyFromText(unsigned int index, QString text);
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setHalffacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
 
 
-//------------------------------------------------------------------------------
+    virtual QString getPropertyText(unsigned int index);
+};
 
-//-----------------------------------------------------------------------------
+#if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_VISUALIZER_BOOLEAN_CC)
+#include "OVMPropertyVisualizerBooleanT.cc"
+#endif
+
+#endif /* OVM_PROPERTY_VISUALIZER_BOOLEAN_HH */
+
+#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

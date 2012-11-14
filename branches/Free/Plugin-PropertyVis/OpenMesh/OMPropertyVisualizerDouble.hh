@@ -32,30 +32,56 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef OM_PROPERTY_VISUALIZER_DOUBLE_HH
+#define OM_PROPERTY_VISUALIZER_DOUBLE_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "OMPropertyVisualizer.hh"
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include "Widgets/DoubleWidget.hh"
+
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
-
-//------------------------------------------------------------------------------
 
 
-//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+#include <iostream>
+
+template <typename MeshT>
+class OMPropertyVisualizerDouble: public OMPropertyVisualizer<MeshT>{
+
+public:
+    OMPropertyVisualizerDouble(MeshT* _mesh, PropertyInfo _propertyInfo);
+    virtual ~OMPropertyVisualizerDouble(){}
+
+protected:
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+
+    virtual void removeProperty();
+    virtual void duplicateProperty();
+
+    virtual QString getPropertyText(unsigned int index);
+
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+};
+
+
+template <typename MeshT>
+QString OMPropertyVisualizerDouble<MeshT>::getPropertyText(unsigned int index)
+{
+    return OMPropertyVisualizer<MeshT>::template getPropertyText_<double>(index);
+}
+
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_DOUBLE_CC)
+#include "OMPropertyVisualizerDoubleT.cc"
+#endif
+
+#endif /* OM_PROPERTY_VISUALIZER_DOUBLE_HH */
