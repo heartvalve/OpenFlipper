@@ -32,30 +32,51 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef OM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH
+#define OM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "OMPropertyVisualizer.hh"
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include <ACG/Scenegraph/LineNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
+#include "Widgets/VectorFieldDifferenceWidget.hh"
+
+#include <iostream>
+
 #include <cmath>
 
-//------------------------------------------------------------------------------
+
+template <typename MeshT>
+class OMPropertyVisualizerVectorFieldDifference: public OMPropertyVisualizer<MeshT>{
+
+public:
+    OMPropertyVisualizerVectorFieldDifference(MeshT* _mesh, PropertyInfo _propertyInfo1, PropertyInfo _propertyInfo2);
+    virtual ~OMPropertyVisualizerVectorFieldDifference(){}
+
+    virtual QString getName() { return QObject::tr("Combination of %1 and %2").arg(PropertyVisualizer::propertyInfo.propName().c_str()).arg(propertyInfo2.propName().c_str()); }
 
 
-//------------------------------------------------------------------------------
+protected:
 
-//-----------------------------------------------------------------------------
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+
+    virtual void removeProperty(){} //no need to delete a property
+    virtual void duplciateProperty(){ emit OMPropertyVisualizer<MeshT>::log("combined properties cannot be duplicated");}
+
+
+    virtual QString getPropertyText(unsigned int index);
+
+private:
+    PropertyInfo propertyInfo2;
+
+};
+
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_CC)
+#include "OMPropertyVisualizerVectorFieldDifferenceT.cc"
+#endif
+#endif /* OM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH */

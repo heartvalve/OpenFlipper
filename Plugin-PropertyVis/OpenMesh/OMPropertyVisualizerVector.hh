@@ -32,30 +32,61 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef OM_PROPERTY_VISUALIZER_VECTOR_HH
+#define OM_PROPERTY_VISUALIZER_VECTOR_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "OMPropertyVisualizer.hh"
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include <ACG/Scenegraph/LineNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
+#include "Widgets/VectorWidget.hh"
+
+#include <iostream>
+
+
 #include <cmath>
 
-//------------------------------------------------------------------------------
+template <typename MeshT>
+class OMPropertyVisualizerVector: public OMPropertyVisualizer<MeshT>{
+
+public:
+    OMPropertyVisualizerVector(MeshT* _mesh, PropertyInfo _propertyInfo);
+    virtual ~OMPropertyVisualizerVector(){clear();}
+
+    virtual void clear();
+
+protected:
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+
+    virtual void visualizeFacePropOnEdges();
+
+    virtual void visualizeFacePropAsStrokes();
+    virtual void visualizeEdgePropAsStrokes();
+    virtual void visualizeHalfedgePropAsStrokes();
+    virtual void visualizeVertexPropAsStrokes();
+
+    virtual void removeProperty();
+    virtual void duplicateProperty();
+
+    virtual QString getPropertyText(unsigned int index);
+
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+
+    ACG::SceneGraph::LineNode*  lineNode;
+
+};
 
 
-//------------------------------------------------------------------------------
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_VECTOR_CC)
+#include "OMPropertyVisualizerVectorT.cc"
+#endif
 
-//-----------------------------------------------------------------------------
+#endif /* OM_PROPERTY_VISUALIZER_VECTOR_HH */

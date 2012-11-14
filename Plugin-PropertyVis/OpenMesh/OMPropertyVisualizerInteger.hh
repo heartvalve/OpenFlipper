@@ -32,30 +32,60 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef OM_PROPERTY_VISUALIZER_INTEGER_HH
+#define OM_PROPERTY_VISUALIZER_INTEGER_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "OMPropertyVisualizer.hh"
 
-#include "PropertyVisPlugin.hh"
+#include "Widgets/IntegerWidget.hh"
+
+#include <ACG/Utils/ColorGenerator.hh>
+
 #include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+template <typename MeshT, typename T>
+class OMPropertyVisualizerInteger: public OMPropertyVisualizer<MeshT>{
 
-//------------------------------------------------------------------------------
+public:
+    OMPropertyVisualizerInteger(MeshT* _mesh, PropertyInfo _propertyInfo, bool isUnsigned);
+    virtual ~OMPropertyVisualizerInteger(){}
+
+protected:
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+
+    virtual void removeProperty();
+    virtual void duplicateProperty();
+
+    virtual T getValue(OpenMesh::FPropHandleT< T > prop, typename MeshT::FaceIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
+    virtual T getValue(OpenMesh::EPropHandleT< T > prop, typename MeshT::EdgeIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
+    virtual T getValue(OpenMesh::HPropHandleT< T > prop, typename MeshT::HalfedgeIter iter) { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
+    virtual T getValue(OpenMesh::VPropHandleT< T > prop, typename MeshT::VertexIter iter)  { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
+
+    virtual QString getPropertyText(unsigned int index);
+
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+
+    inline int             strToT   (QString str, int)             { return this->strToInt(str);  }
+    inline unsigned int    strToT   (QString str, unsigned int)    { return this->strToUInt(str); }
+    inline QString         TToStr   (int i)                        { return this->intToStr(i);    }
+    inline QString         TToStr   (unsigned int i)               { return this->uintToStr(i);   }
 
 
-//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+    ACG::ColorGenerator mColorGenerator;
+
+};
+
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OM_PROPERTY_VISUALIZER_INTEGER_CC)
+#include "OMPropertyVisualizerIntegerT.cc"
+#endif
+
+#endif /* OM_PROPERTY_VISUALIZER_INTEGER_HH */

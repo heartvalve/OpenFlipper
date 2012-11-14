@@ -32,30 +32,56 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
 
-#define PROPERTYVISPLUGIN_CC
+#ifndef OVM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH
+#define OVM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include "OVMPropertyVisualizer.hh"
+
+#include <ACG/Scenegraph/LineNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
+#include "Widgets/VectorFieldDifferenceWidget.hh"
+
+#include <iostream>
+
 #include <cmath>
 
-//------------------------------------------------------------------------------
+
+template <typename MeshT>
+class OVMPropertyVisualizerVectorFieldDifference: public OVMPropertyVisualizer<MeshT>{
+
+public:
+    OVMPropertyVisualizerVectorFieldDifference(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo1, PropertyInfo _propertyInfo2);
+
+    virtual ~OVMPropertyVisualizerVectorFieldDifference(){}
+
+    virtual QString getName() { return QObject::tr("COVMbination of %1 and %2").arg(PropertyVisualizer::propertyInfo.propName().c_str()).arg(propertyInfo2.propName().c_str()); }
 
 
-//------------------------------------------------------------------------------
+protected:
 
-//-----------------------------------------------------------------------------
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+    virtual void visualizeCellProp();
+    virtual void visualizeHalffaceProp();
+
+
+    virtual void duplciateProperty(){ emit OVMPropertyVisualizer<MeshT>::log("combined properties cannot be duplicated");}
+
+private:
+    PropertyInfo propertyInfo2;
+
+};
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_CC)
+#include "OVMPropertyVisualizerVectorFieldDifferenceT.cc"
+#endif
+
+
+#endif /* OVM_PROPERTY_VISUALIZER_VECTOR_FIELD_DIFFERENCE_HH */
+
+#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

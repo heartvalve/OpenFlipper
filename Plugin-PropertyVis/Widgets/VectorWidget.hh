@@ -32,30 +32,30 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifndef VECTOR_WIDGET_HH
+#define VECTOR_WIDGET_HH
 
-#define PROPERTYVISPLUGIN_CC
+#include "ui_VectorWidget.hh"
+#include <QtGui>
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class VectorWidget : public QWidget, public Ui::VectorWidget
+{
+  Q_OBJECT
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+public:
+  VectorWidget(QWidget * parent = 0)
+    : QWidget(parent)
+  {
+    setupUi(this);
+  }
+  
+  signals:
+    void widgetShown();
+        
+  protected:
+    void showEvent ( QShowEvent* /*event*/ ) {
+      emit widgetShown();
+    }
+};
 
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
+#endif // VECTOR_WIDGET_HH

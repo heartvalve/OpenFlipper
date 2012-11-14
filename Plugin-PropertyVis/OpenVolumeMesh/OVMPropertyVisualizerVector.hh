@@ -32,30 +32,65 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*===========================================================================*\
-*                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
-*                                                                            *
-\*===========================================================================*/
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
 
-#define PROPERTYVISPLUGIN_CC
+#ifndef OVM_PROPERTY_VISUALIZER_VECTOR_HH
+#define OVM_PROPERTY_VISUALIZER_VECTOR_HH
 
-#include "PropertyVisPlugin.hh"
-#include <iostream>
-#include <typeinfo>
-#include <limits>
-#include <math.h>
-#include <time.h>
+#include "OVMPropertyVisualizer.hh"
+
+#include <ACG/Scenegraph/LineNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
+#include <OpenVolumeMesh/Core/BaseEntities.hh>
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
 
-//------------------------------------------------------------------------------
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
 
+#include "Widgets/VectorWidget.hh"
 
-//------------------------------------------------------------------------------
+#include <iostream>
 
-//-----------------------------------------------------------------------------
+template <typename MeshT>
+class OVMPropertyVisualizerVector: public OVMPropertyVisualizer<MeshT>{
+
+public:
+    OVMPropertyVisualizerVector(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo);
+    virtual ~OVMPropertyVisualizerVector(){}
+
+    virtual void clear();
+
+protected:
+
+    template<typename PropType, typename EntityIterator>
+    void visualizeVectorAsColorForEntity(PropType prop, EntityIterator e_begin, EntityIterator e_end);
+    virtual void duplicateProperty();
+
+    virtual void visualizeFacePropAsStrokes();
+    virtual void visualizeEdgePropAsStrokes();
+    virtual void visualizeHalfedgePropAsStrokes();
+    virtual void visualizeVertexPropAsStrokes();
+    virtual void visualizeCellPropAsStrokes();
+    virtual void visualizeHalffacePropAsStrokes();
+
+    virtual void visualizeFaceProp();
+    virtual void visualizeEdgeProp();
+    virtual void visualizeHalfedgeProp();
+    virtual void visualizeVertexProp();
+    virtual void visualizeCellProp();
+    virtual void visualizeHalffaceProp();
+
+    virtual QString getPropertyText(unsigned int index);
+
+    ACG::SceneGraph::LineNode*  lineNode;
+
+};
+
+#if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_VISUALIZER_VECTOR_CC)
+#include "OVMPropertyVisualizerVectorT.cc"
+#endif
+
+#endif /* OVM_PROPERTY_VISUALIZER_VECTOR_HH */
+
+#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
