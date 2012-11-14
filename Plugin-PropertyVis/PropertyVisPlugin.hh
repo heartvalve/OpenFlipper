@@ -75,8 +75,6 @@
 #include "PropertyModel.hh"
 #include "PropertyModelFactory.hh"
 
-#include <stdexcept>
-
 //== CLASS DEFINITION =========================================================
 
 class PropertyVisPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface, ScriptInterface, MouseInterface, PickingInterface, LoggingInterface
