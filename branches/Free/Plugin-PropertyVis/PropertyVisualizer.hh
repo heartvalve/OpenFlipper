@@ -99,9 +99,9 @@ public:
     virtual void clear();
 
     /**
-     * @brief Returns a beatiful name.
+     * @brief Returns a beautiful name.
      *
-     * The beatiful name consists of a symbol representing the entity type, the property's
+     * The beautiful name consists of a symbol representing the entity type, the property's
      * name and the property's type.
      */
     virtual QString getName() { return propertyInfo.toString(); }

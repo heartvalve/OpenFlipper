@@ -69,8 +69,6 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
-
 #include "PropertyVisToolbar.hh"
 #include "ObjectListItemModel.hh"
 
