@@ -817,15 +817,21 @@ me_move( QMouseEvent* _event )
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
 
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
         if (cur_pol) {
+
+          // Check if we got a line segment or a vertex
+          if ( target_idx >= cur_pol->line()->n_vertices() )
+            return;
+
           // save references
           cur_move_id_ = cur_pol->id();
+
           move_point_ref_ = &(cur_pol->line()->point(target_idx));
         }
       }
@@ -871,13 +877,19 @@ me_split( QMouseEvent* _event )
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx,
-        &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+
         if (cur_pol) {
+
+          // Check if we got a line segment or a vertex
+          if ( target_idx >= cur_pol->line()->n_vertices() )
+            return;
+
           // splitting for CLOSED PolyLines
           if (cur_pol->line()->is_closed()) {
             cur_pol->line()->split_closed(target_idx);
@@ -973,13 +985,17 @@ me_merge( QMouseEvent* _event )
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx,
-        &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
         if (cur_pol)
+
+          // Check if we got a line segment or a vertex
+          if ( target_idx >= cur_pol->line()->n_vertices() )
+            return;
+
           if (target_idx == cur_pol->line()->n_vertices() - 1 || target_idx == 0) {
             if (target_idx == 0) {
               cur_pol->line()->invert();
@@ -1039,7 +1055,7 @@ me_merge( QMouseEvent* _event )
     ACG::Vec3d hit_point;
 
     // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
 
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
@@ -1048,6 +1064,11 @@ me_merge( QMouseEvent* _event )
         PolyLineObject* second_pol = PluginFunctions::polyLineObject(obj);
 
         if (second_pol) {
+
+          // Check if we got a line segment or a vertex
+          if ( target_idx >= second_pol->line()->n_vertices() )
+            return;
+
           // restore first polyline
           BaseObjectData *obj2 = 0;
           PluginFunctions::getObject(cur_merge_id_, obj2);
@@ -1132,37 +1153,41 @@ PolyLinePlugin::
 me_smart_move( QMouseEvent* _event )
 {
   // MousePress ? -> select vertex and start timer
-  if( _event->type() == QEvent::MouseButtonPress)
-  {
-    unsigned int     node_idx, target_idx;
-    ACG::Vec3d       hit_point;
-    // pick
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point))
-    {
-      BaseObjectData* obj = 0;
-      if ( PluginFunctions::getPickedObject(node_idx, obj) )
-      {
-	// is picked object polyline?
-	PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-	if(cur_pol)
-	{
-	  // save references
-	  cur_smart_move_obj_ = cur_pol; 
-	  if( cur_pol->line()->vertex_selections_available())
-	  {
-	    if ( !(_event->modifiers() & (Qt::ShiftModifier)) )
-	      cur_pol->line()->vertex_selection(target_idx) = true;
-	    else
-	    {
-	      cur_pol->line()->vertex_selection(target_idx) = false;
-	      emit updateView();
-	    }
-	  }
-	}
+  if (_event->type() == QEvent::MouseButtonPress) {
 
-	// start timer
-	if ( !(_event->modifiers() & (Qt::ShiftModifier)) )
-	  smart_move_timer_->start(20);
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
+
+    // pick
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
+
+      BaseObjectData* obj = 0;
+      if (PluginFunctions::getPickedObject(node_idx, obj)) {
+
+        // is picked object polyline?
+        PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+        if (cur_pol) {
+
+          // Check if we got a line segment or a vertex
+          if ( target_idx >= cur_pol->line()->n_vertices() )
+            return;
+
+          // save references
+          cur_smart_move_obj_ = cur_pol;
+          if (cur_pol->line()->vertex_selections_available()) {
+            if (!(_event->modifiers() & (Qt::ShiftModifier)))
+              cur_pol->line()->vertex_selection(target_idx) = true;
+            else {
+              cur_pol->line()->vertex_selection(target_idx) = false;
+              emit updateView();
+            }
+          }
+
+        }
+
+        // start timer
+        if (!(_event->modifiers() & (Qt::ShiftModifier)))
+          smart_move_timer_->start(20);
       }
     }
   }
