@@ -398,10 +398,6 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   RenderObject ro;
   memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
-  ro.setMaterial(_mat);
-
-
-
 
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {
@@ -412,14 +408,12 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
      ro.modelview = _state.modelview();
      _state.pop_modelview_matrix();
 
-     Material localMaterial;
+     Material localMaterial = *_mat;
      localMaterial.color(primitives_[i].color);
      localMaterial.ambientColor(primitives_[i].color);
      localMaterial.diffuseColor(primitives_[i].color);
 
      ro.setMaterial(&localMaterial);
-
-
 
     switch (primitives_[i].type) {
       case SPHERE:
@@ -433,6 +427,7 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
       default:
         // TODO: The other glut primitives are not yet supported by the advanced renderers
+        std::cerr << "Sorry, but the glut renderer objects are not available for this renderer yet!" << std::endl;
         break;
     }
 
