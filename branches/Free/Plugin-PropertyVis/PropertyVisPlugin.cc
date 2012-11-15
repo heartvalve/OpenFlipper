@@ -63,6 +63,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Utils/ColorCoder.hh>
 
+#include "PropertyModelFactory.hh"
 
 //== IMPLEMENTATION ==========================================================
 
@@ -109,6 +110,8 @@ void PropertyVisPlugin::pluginsInitialized()
         connect(tool_->remove_property_tb, SIGNAL( clicked() ), this, SLOT( slotRemoveProperty() ) );
 
         connect(tool_, SIGNAL( widgetShown() ), this, SLOT( updateGUI() ) );
+
+        setNewPropertyModel(-1); //to avoid problems with uninitialized propertyModel_ it is set to a dummy property model without functionality
     }
 }
 

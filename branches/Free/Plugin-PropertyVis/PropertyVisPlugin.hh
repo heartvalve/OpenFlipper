@@ -73,7 +73,6 @@
 #include "ObjectListItemModel.hh"
 
 #include "PropertyModel.hh"
-#include "PropertyModelFactory.hh"
 
 //== CLASS DEFINITION =========================================================
 
