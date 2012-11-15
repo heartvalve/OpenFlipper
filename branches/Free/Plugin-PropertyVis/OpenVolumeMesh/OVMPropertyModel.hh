@@ -167,31 +167,11 @@ private:
     /// Adds a new property to the mesh.
     void addProperty(QString propName, QString friendlyTypeName, PropertyInfo::ENTITY_FILTER filter);
 
+    void initializeSupportedPropertyTypes();
+    
     MeshT* mesh_;
 
     int objectID_;
-
-#define DECLARE_PROPTYPES(primitive)                                              \
-    static const TypeInfoWrapper proptype_##primitive##_bool;                     \
-    static const TypeInfoWrapper proptype_##primitive##_int;                      \
-    static const TypeInfoWrapper proptype_##primitive##_uint;                     \
-    static const TypeInfoWrapper proptype_##primitive##_double;                   \
-    static const TypeInfoWrapper proptype_##primitive##_Vec3d;                    \
-    static const TypeInfoWrapper proptype_##primitive##_Vec3f;
-
-    DECLARE_PROPTYPES(Cell)
-    DECLARE_PROPTYPES(Face)
-    DECLARE_PROPTYPES(HalfFace)
-    DECLARE_PROPTYPES(Edge)
-    DECLARE_PROPTYPES(HalfEdge)
-    DECLARE_PROPTYPES(Vertex)
-
-#undef DECLARE_PROPTYPES
-
-
-    typedef std::set<TypeInfoWrapper> TypeInfoWrapperSet;
-    static const TypeInfoWrapper propertyTypes[];
-    static const TypeInfoWrapperSet supportedPropertyTypes;
 
     QPushButton bCombine;
     const PropertyInfo* mCombineProperty1;
@@ -205,62 +185,28 @@ private:
     std::string lastPickMode;
     Viewer::ActionMode lastActionMode;
 
+#define DECLARE_PROPTYPES(primitive)                                 \
+    TypeInfoWrapper proptype_##primitive##_bool;                     \
+    TypeInfoWrapper proptype_##primitive##_int;                      \
+    TypeInfoWrapper proptype_##primitive##_uint;                     \
+    TypeInfoWrapper proptype_##primitive##_double;                   \
+    TypeInfoWrapper proptype_##primitive##_Vec3d;                    \
+    TypeInfoWrapper proptype_##primitive##_Vec3f;
+
+    DECLARE_PROPTYPES(Cell)
+    DECLARE_PROPTYPES(Face)
+    DECLARE_PROPTYPES(HalfFace)
+    DECLARE_PROPTYPES(Edge)
+    DECLARE_PROPTYPES(HalfEdge)
+    DECLARE_PROPTYPES(Vertex)
+
+#undef DECLARE_PROPTYPES
+
+
+    typedef std::set<TypeInfoWrapper> TypeInfoWrapperSet;
+    TypeInfoWrapperSet supportedPropertyTypes;
+
 };
-
-
-#define INITIALIZE_PROPTYPES(primitive)                                                                 \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_bool =                            \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<bool>), "bool");                    \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_int =                             \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<int>), "int");                      \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_uint =                            \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<unsigned int>), "unsigned int");    \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_double =                          \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<double>), "double");                \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_Vec3d =                           \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<ACG::Vec3d>), "Vec3d");             \
-template <typename MeshT>                                                                               \
-const TypeInfoWrapper OVMPropertyModel<MeshT>::proptype_##primitive##_Vec3f =                           \
-        TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<ACG::Vec3f>), "Vec3f");
-
-INITIALIZE_PROPTYPES(Cell)
-INITIALIZE_PROPTYPES(Face)
-INITIALIZE_PROPTYPES(HalfFace)
-INITIALIZE_PROPTYPES(Edge)
-INITIALIZE_PROPTYPES(HalfEdge)
-INITIALIZE_PROPTYPES(Vertex)
-
-#undef INITIALIZE_PROPTYPES
-
-
-#define LIST_PROPTYPES(primitive)                       \
-OVMPropertyModel<MeshT>::proptype_##primitive##_bool,   \
-OVMPropertyModel<MeshT>::proptype_##primitive##_int,    \
-OVMPropertyModel<MeshT>::proptype_##primitive##_uint,   \
-OVMPropertyModel<MeshT>::proptype_##primitive##_double, \
-OVMPropertyModel<MeshT>::proptype_##primitive##_Vec3d,  \
-OVMPropertyModel<MeshT>::proptype_##primitive##_Vec3f
-
-
-template <typename MeshT>
-const TypeInfoWrapper OVMPropertyModel<MeshT>::propertyTypes[] = { LIST_PROPTYPES(Cell),
-                                                                   LIST_PROPTYPES(Face),
-                                                                   LIST_PROPTYPES(HalfFace),
-                                                                   LIST_PROPTYPES(Edge),
-                                                                   LIST_PROPTYPES(HalfEdge),
-                                                                   LIST_PROPTYPES(Vertex)
-                                                                };
-
-#undef LIST_PROPTYPES
-
-
-template <typename MeshT>
-const typename OVMPropertyModel<MeshT>::TypeInfoWrapperSet OVMPropertyModel<MeshT>::supportedPropertyTypes(propertyTypes, propertyTypes + (6/*num of primitves*/ * 6/*num of types per primitive*/));
 
 
 #if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_MODEL_CC)
