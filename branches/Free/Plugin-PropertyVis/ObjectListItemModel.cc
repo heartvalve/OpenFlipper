@@ -40,13 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*
- * ObjectListItemModel.cc
- *
- *  Created on: Feb 29, 2012
- *      Author: ebke
- */
-
 #include "ObjectListItemModel.hh"
 
 #include <algorithm>

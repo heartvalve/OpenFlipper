@@ -40,13 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*
- * ObjectListItemModel.hh
- *
- *  Created on: Feb 29, 2012
- *      Author: ebke
- */
-
 #ifndef OBJECTLISTITEMMODEL_HH_
 #define OBJECTLISTITEMMODEL_HH_
 
