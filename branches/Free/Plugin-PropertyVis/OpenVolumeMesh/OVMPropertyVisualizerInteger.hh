@@ -51,10 +51,6 @@
 
 #include <ACG/Utils/ColorGenerator.hh>
 
-
-#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
-#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
-
 #include <iostream>
 
 template <typename MeshT, typename T>

@@ -44,6 +44,13 @@
 
 #define OVM_PROPERTY_VISUALIZER_CC
 
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+
 #include "OVMPropertyVisualizer.hh"
 
 template <typename MeshT>

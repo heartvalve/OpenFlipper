@@ -53,9 +53,6 @@
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
 #include <OpenVolumeMesh/Core/BaseProperty.hh>
 
-#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
-#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
-
 #include "Widgets/VectorWidget.hh"
 
 #include <iostream>

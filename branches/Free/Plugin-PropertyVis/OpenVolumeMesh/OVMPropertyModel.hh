@@ -55,7 +55,6 @@
 
 #include "../Utils.hh"
 #include <OpenVolumeMesh/Core/BaseProperty.hh>
-#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
 
 #include "Widgets/LoadSaveWidget.hh"
 #include "Widgets/PickWidget.hh"

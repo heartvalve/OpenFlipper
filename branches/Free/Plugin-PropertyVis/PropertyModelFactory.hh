@@ -47,15 +47,6 @@
 
 #include "PropertyModel.hh"
 
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-
-#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
-    #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
-    #include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
-#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
 
 class PropertyVisPlugin;
 

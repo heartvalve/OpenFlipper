@@ -42,12 +42,23 @@
 
 #include "PropertyModelFactory.hh"
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include "OpenMesh/OMPropertyModel.hh"
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
 #ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
     #include "OpenVolumeMesh/OVMPropertyModel.hh"
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif /* ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT */
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    #include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif /* ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT */
 
 
 /**
@@ -91,18 +102,20 @@ PropertyModel* __PropertyModelFactory::getModel(int objectID)
         PolyMesh* mesh = PluginFunctions::polyMesh(object);
         propertyModel = new OMPropertyModel<PolyMesh>(mesh, objectID);
     }
-#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
     else if ( object->dataType(DATA_POLYHEDRAL_MESH) )
     {
         PolyhedralMesh* mesh = PluginFunctions::polyhedralMesh(object);
         propertyModel = new OVMPropertyModel<PolyhedralMesh>(mesh, objectID);
     }
+#endif /* ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT */
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
     else if ( object->dataType(DATA_HEXAHEDRAL_MESH) )
     {
         HexahedralMesh* mesh = PluginFunctions::hexahedralMesh(object);
         propertyModel = new OVMPropertyModel<HexahedralMesh>(mesh, objectID);
     }
-#endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
+#endif /* ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT */
     else
     {
         propertyModel = new PropertyModel();

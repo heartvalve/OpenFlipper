@@ -65,6 +65,16 @@
 
 #include "PropertyModelFactory.hh"
 
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    #include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+
 //== IMPLEMENTATION ==========================================================
 
 #define PROP_VIS "PropertyVisualization"
@@ -144,8 +154,11 @@ void PropertyVisPlugin::slotObjectUpdated( int _identifier, const UpdateType& _t
 void PropertyVisPlugin::updateGUI()
 {
     DataType datatype = DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH);
-#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
-    datatype |= DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH);
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    datatype |= DataType(DATA_POLYHEDRAL_MESH);
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    datatype |= DataType(DATA_HEXAHEDRAL_MESH);
 #endif
     objectListItemModel_.refresh(datatype);
 }
