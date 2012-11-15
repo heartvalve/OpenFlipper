@@ -194,8 +194,13 @@ public:
    * but may as well be ignored.
    *
    * \note You should not draw anything yourself in this function.
+   *
+   * @param _renderer The renderer which will be used. Add your geometry into this class
+   * @param _state    The current GL State when this object is called
+   * @param _drawMode The active draw mode
+   * @param _mat      Current material
    */
-  virtual void getRenderObjects(IRenderer* /*_renderer*/, GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */, const Material* /*_mat*/)  {}
+  virtual void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 
