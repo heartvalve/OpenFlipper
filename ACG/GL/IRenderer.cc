@@ -215,7 +215,26 @@ QString RenderObject::toString() const
              << "\nindexOffset: " << indexOffset;
 
 
+  resultStrm << "\nvbo-id: " << vertexBuffer
+             << "\nibo-id: " << indexBuffer
+             << "\nsysmemIndexBuffer: " << sysmemIndexBuffer;
+
+
+
   resultStrm << "\n" << shaderDesc.toString();
+
+
+  resultStrm << "\nmodelview: " 
+    << "{" << modelview(0, 0) << ", " << modelview(0, 1) << ", " << modelview(0, 2) << ", " << modelview(0, 3) << "} "
+    << "{" << modelview(1, 0) << ", " << modelview(1, 1) << ", " << modelview(1, 2) << ", " << modelview(1, 3) << "} "
+    << "{" << modelview(2, 0) << ", " << modelview(2, 1) << ", " << modelview(2, 2) << ", " << modelview(2, 3) << "} "
+    << "{" << modelview(3, 0) << ", " << modelview(3, 1) << ", " << modelview(3, 2) << ", " << modelview(3, 3) << "} ";
+
+  resultStrm << "\nproj: " 
+    << "{" << proj(0, 0) << ", " << proj(0, 1) << ", " << proj(0, 2) << ", " << proj(0, 3) << "} "
+    << "{" << proj(1, 0) << ", " << proj(1, 1) << ", " << proj(1, 2) << ", " << proj(1, 3) << "} "
+    << "{" << proj(2, 0) << ", " << proj(2, 1) << ", " << proj(2, 2) << ", " << proj(2, 3) << "} "
+    << "{" << proj(3, 0) << ", " << proj(3, 1) << ", " << proj(3, 2) << ", " << proj(3, 3) << "} ";
 
 
   resultStrm << "\nculling: " << culling
