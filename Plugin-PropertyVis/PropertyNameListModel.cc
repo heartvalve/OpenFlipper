@@ -40,14 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-/*
- * PropertyNameListModel.cc
- *
- *  Created on: Feb 29, 2012
- *      Author: ebke
- */
-
 #include "PropertyNameListModel.hh"
 
 #include <OpenMesh/Core/Utils/Property.hh>

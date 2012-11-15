@@ -40,13 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-/*
- * PropertyNameListModel.hh
- *
- *  Created on: Feb 29, 2012
- *      Author: ebke
- */
-
 #ifndef PROPERTYNAMELISTMODEL_HH_
 #define PROPERTYNAMELISTMODEL_HH_
 
