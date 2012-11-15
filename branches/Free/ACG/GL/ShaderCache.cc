@@ -104,8 +104,35 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   ShaderProgGenerator progGen(_desc, _usage);
 
 #ifdef SG_DEBUG_OUTPUT
-  progGen.saveFragmentShToFile("../../../dbg_frag.glsl");
-  progGen.saveVertexShToFile("../../../dbg_vert.glsl");
+  {
+    static int counter = 0;
+
+    char fileName[0x100];
+    sprintf(fileName, "../../shader_%02d.glsl", counter++);
+
+    QFile fileOut(fileName);
+    if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
+    {
+      QTextStream outStrm(&fileOut);
+
+      outStrm << _desc->toString();
+      outStrm << "\nusage: " << _usage << "\n";
+
+
+      outStrm << "\n---------------------vertex-shader--------------------\n\n";
+      
+      for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
+        outStrm << progGen.getVertexShaderCode()[i] << "\n";
+
+      outStrm << "\n---------------------fragment-shader--------------------\n\n";
+
+      for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
+        outStrm << progGen.getFragmentShaderCode()[i] << "\n";
+
+
+      fileOut.close();
+    }
+  }
 #endif
 
   GLSL::FragmentShader* fragShader = new GLSL::FragmentShader();
