@@ -289,7 +289,6 @@ void PolyLinePlugin::slotTriggerCutPlaneSelect( )
     using ACG::SceneGraph::LineNode;
 
   // Iterate over all selected objects
-  bool updated = false;
   BaseObjectData* object;
   if (PluginFunctions::getPickedObject(planeSelect_->getNode(), object)) {
     emit log("Cutting object " + object->name());
@@ -302,7 +301,7 @@ void PolyLinePlugin::slotTriggerCutPlaneSelect( )
     ACG::Vec3d point = planeSelect_->getSourcePoint();
     ACG::Vec3d normal = planeSelect_->getNormal();
 
-    generatePolyLineFromCut(object->id(), point, normal);
+    int objectId = generatePolyLineFromCut(object->id(), point, normal);
 
     QString command = "generatePolyLineFromCut(" + QString::number(object->id()) + ",Vector("
         + QString::number(point[0]) + "," + QString::number(point[1]) + "," + QString::number(point[2]) + "),Vector("
@@ -311,14 +310,18 @@ void PolyLinePlugin::slotTriggerCutPlaneSelect( )
 
     //remove all other targets
     for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,
-        DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)); o_it != PluginFunctions::objectsEnd(); ++o_it)
+         DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)); o_it != PluginFunctions::objectsEnd(); ++o_it) {
       if (o_it->id() != object->id()) {
         o_it->target(false);
       }
+    }
+
+    // If we successfully created the polyline, we can inform the core about it.
+    if ( objectId != -1)
+      emit updatedObject(objectId,UPDATE_ALL);
+
   }
 
-  if (updated)
-    emit updateView();
 }
 
 //-----------------------------------------------------------------------------
