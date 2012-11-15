@@ -60,6 +60,8 @@
 #include "DrawModes.hh"
 #include <string>
 
+#include <ACG/GL/GLPrimitives.hh>
+
 
 //== NAMESPACES ===============================================================
 
@@ -165,22 +167,12 @@ public:
   
   
   GlutPrimitiveNode( BaseNode*         _parent=0,
-                     std::string       _name="<GlutPrimitive>" )
-    : BaseNode(_parent, _name),
-      setColor_(true)
-  {};
+                     std::string       _name="<GlutPrimitive>" );
 
 
   GlutPrimitiveNode( GlutPrimitiveType _type,
                      BaseNode*         _parent=0,
-                     std::string       _name="<GlutPrimitive>" )
-    : BaseNode(_parent, _name),
-      setColor_(true)
-  {
-    // add a single primitive of the given type
-    Primitive p(_type);
-    primitives_.push_back(p);
-  }
+                     std::string       _name="<GlutPrimitive>" );
 
 
   /// destructor
@@ -225,12 +217,24 @@ public:
   */
   void setColorInternal(bool _set) { setColor_ = _set; };
 
+  /** \brief Add the objects to the given renderer
+   *
+   * @param _renderer The renderer which will be used. Add your geometry into this class
+   * @param _state    The current GL State when this object is called
+   * @param _drawMode The active draw mode
+   * @param _mat      Current material
+   */
+  void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat);
+
 private:
   
   std::vector<Primitive> primitives_;
   
   bool setColor_;
   
+  // Sphere rendering
+  ACG::GLSphere*   sphere_;
+
 };
 
 

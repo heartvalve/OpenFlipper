@@ -53,7 +53,11 @@
 //== INCLUDES =================================================================
 
 #include "GlutPrimitiveNode.hh"
-#include "../GL/gl.hh"
+#include <ACG/GL/gl.hh>
+
+#include <ACG/GL/IRenderer.hh>
+
+#include <ACG/Scenegraph/MaterialNode.hh>
 
 
 //== NAMESPACES ===============================================================
@@ -63,6 +67,35 @@ namespace SceneGraph {
 
 
 //== IMPLEMENTATION ========================================================== 
+
+GlutPrimitiveNode::GlutPrimitiveNode( BaseNode*         _parent,
+                                      std::string       _name )
+  : BaseNode(_parent, _name),
+    setColor_(true)
+{
+  const int slices = 20;
+  const int stacks = 20;
+
+  sphere_   = new ACG::GLSphere(slices,stacks);
+};
+
+//----------------------------------------------------------------------------
+
+GlutPrimitiveNode::GlutPrimitiveNode(GlutPrimitiveType _type,
+                                     BaseNode* _parent,
+                                     std::string _name) :
+        BaseNode(_parent, _name),
+        setColor_(true)
+{
+  const int slices = 20;
+  const int stacks = 20;
+
+  // add a single primitive of the given type
+  Primitive p(_type);
+  primitives_.push_back(p);
+
+  sphere_ = new ACG::GLSphere(slices, stacks);
+}
 
 void 
 GlutPrimitiveNode::
@@ -351,6 +384,61 @@ pick(GLState& _state , PickTarget _target)
     default:
       break;
   }      
+}
+
+//----------------------------------------------------------------------------
+
+void
+GlutPrimitiveNode::
+getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat) {
+
+  // TODO: Color is incorrect!
+
+  // init base render object
+  RenderObject ro;
+  memset(&ro, 0, sizeof(RenderObject));
+  ro.initFromState(&_state);
+  ro.setMaterial(_mat);
+
+
+
+
+  for (int i = 0; i < (int)primitives_.size(); ++i)
+  {
+
+     // Set the right position
+     _state.push_modelview_matrix();
+     _state.translate(primitives_[i].position);
+     ro.modelview = _state.modelview();
+     _state.pop_modelview_matrix();
+
+     Material localMaterial;
+     localMaterial.color(primitives_[i].color);
+     localMaterial.ambientColor(primitives_[i].color);
+     localMaterial.diffuseColor(primitives_[i].color);
+
+     ro.setMaterial(&localMaterial);
+
+
+
+    switch (primitives_[i].type) {
+      case SPHERE:
+        // Sphere
+        ro.debugName = "glutprimitive.sphere";
+
+        //ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
+        sphere_->addToRenderer(_renderer, &ro, primitives_[i].size);
+
+        break;
+
+      default:
+        // TODO: The other glut primitives are not yet supported by the advanced renderers
+        break;
+    }
+
+
+  }
+
 }
 
 
