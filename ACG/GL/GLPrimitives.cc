@@ -62,15 +62,9 @@ GLPrimitive::GLPrimitive() :
         vbo_(0)
 {
 
-  VertexElement elemArray[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {12} },
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {24} }};
-
-  vertexDecl_.addElements(3, elemArray);
-
-//  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-//  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
-//  vertexDecl_.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
+  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+  vertexDecl_.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
 }
 
 //------------------------------------------------------------------------

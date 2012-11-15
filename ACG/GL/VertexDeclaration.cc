@@ -79,13 +79,16 @@ void VertexDeclaration::addElement(unsigned int _type,
                                    const char* _shaderInputName, 
                                    unsigned int _byteOffset)
 {
-  VertexElement ve;
-  ve.type_ = _type;
-  ve.numElements_ = _numElements;
-  ve.usage_ = _usage;
-  ve.shaderInputName_ = _shaderInputName;
-  ve.byteOffset_ = _byteOffset;
-  addElement(&ve);
+  VertexElement* ve = new VertexElement();
+
+  ve->type_ = _type;
+  ve->numElements_ = _numElements;
+  ve->usage_ = _usage;
+  ve->shaderInputName_ = _shaderInputName;
+  ve->byteOffset_ = _byteOffset;
+  addElement(ve);
+
+  delete ve;
 }
 
 
@@ -272,7 +275,7 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
   unsigned int numElements = getNumElements();
   unsigned int vertexStride = getVertexStride();
 
-  for (unsigned int i = 0; i < 1; ++i)
+  for (unsigned int i = 0; i < numElements; ++i)
   {
     const VertexElement* pElem = &elements_[i];
 
