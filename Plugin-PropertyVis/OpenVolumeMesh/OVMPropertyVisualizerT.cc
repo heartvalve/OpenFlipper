@@ -50,7 +50,6 @@ template <typename MeshT>
 template <typename InnerType>
 QString OVMPropertyVisualizer<MeshT>::getPropertyText_(unsigned int index)
 {
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
     if (PropertyVisualizer::propertyInfo.isCellProp())
     {
         OpenVolumeMesh::CellPropertyT<InnerType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_cell_property<InnerType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
@@ -187,7 +186,7 @@ unsigned int OVMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fa
     double min_distance = DBL_MAX;
     OpenVolumeMesh::HalfEdgeHandle closestHalfEdgeHandle;
 
-    for (std::vector<OpenVolumeMesh::HalfEdgeHandle>::const_iterator he_it = halfedges.begin(); he_it != halfedges.end(); he_it++)
+    for (std::vector<OpenVolumeMesh::HalfEdgeHandle>::const_iterator he_it = halfedges.begin(); he_it != halfedges.end(); ++he_it)
     {
         OpenVolumeMesh::OpenVolumeMeshEdge edge = OVMPropertyVisualizer<MeshT>::mesh->halfedge(*he_it);
         ACG::Vec3d v1 = mesh->vertex(edge.from_vertex());
