@@ -272,7 +272,7 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
   unsigned int numElements = getNumElements();
   unsigned int vertexStride = getVertexStride();
 
-  for (unsigned int i = 0; i < numElements; ++i)
+  for (unsigned int i = 0; i < 1; ++i)
   {
     const VertexElement* pElem = &elements_[i];
 
@@ -291,7 +291,6 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
       glEnableVertexAttribArray(loc);
 
     }
-
   }
 }
 
@@ -390,6 +389,7 @@ QString VertexDeclaration::toString() const
                << " - [type: " << typeString
                << ", count: " << el->numElements_
                << ", usage: " << usage
+               << ", shader-input: " << el->shaderInputName_
                << ", offset: " << el->byteOffset_ << "]\n";
   }
 

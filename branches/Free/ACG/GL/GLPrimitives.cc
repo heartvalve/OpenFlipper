@@ -40,6 +40,9 @@
  *                                                                            *
  \*===========================================================================*/
 
+#include <iostream>
+#include <stdio.h>
+
 #include "GLPrimitives.hh"
 #include <ACG/GL/IRenderer.hh>
 
@@ -59,9 +62,15 @@ GLPrimitive::GLPrimitive() :
         vbo_(0)
 {
 
-  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
-  vertexDecl_.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
+  VertexElement elemArray[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
+                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {12} },
+                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {24} }};
+
+  vertexDecl_.addElements(3, elemArray);
+
+//  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+//  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+//  vertexDecl_.addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
 }
 
 //------------------------------------------------------------------------
@@ -127,6 +136,7 @@ void GLPrimitive::bindVBO()
 
 //------------------------------------------------------------------------
 
+
 bool GLPrimitive::checkVBO()
 {
   // create vbo if not done yet
@@ -141,6 +151,7 @@ bool GLPrimitive::checkVBO()
     glGenBuffersARB(1, &vbo_);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, numTris_ * 3 * 8 * 4, vboData_, GL_STATIC_DRAW_ARB);
+
 
     delete[] vboData_;
     vboData_ = 0;
@@ -185,6 +196,7 @@ void GLPrimitive::addToRenderer( class IRenderer* _renderer, RenderObject* _ro )
     _ro->vertexDecl = &vertexDecl_;
 
     _ro->glDrawArrays(GL_TRIANGLES, 0, getNumTriangles() * 3);
+
 
     _renderer->addRenderObject(_ro);
   }
