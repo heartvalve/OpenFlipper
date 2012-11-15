@@ -146,25 +146,13 @@ private:
 
     /// Adds a new property to the mesh.
     void addProperty(QString propName, QString friendlyTypeName, PropertyInfo::ENTITY_FILTER filter);
+    
+    void initializeSupportedPropertyTypes();
 
 private:
     MeshT* mesh_;
 
     int objectID_;
-
-    static const TypeInfoWrapper proptype_bool;
-    static const TypeInfoWrapper proptype_int;
-    static const TypeInfoWrapper proptype_uint;
-    static const TypeInfoWrapper proptype_double;
-    static const TypeInfoWrapper proptype_Vec3d;
-    static const TypeInfoWrapper proptype_Vec3f;
-#ifdef ENABLE_SKELETON_SUPPORT
-    static const TypeInfoWrapper proptype_SkinWeights;
-#endif
-
-    typedef std::set<TypeInfoWrapper> TypeInfoWrapperSet;
-    static const TypeInfoWrapper propertyTypes[];
-    static const TypeInfoWrapperSet supportedPropertyTypes;
 
     QPushButton bCombine;
     const PropertyInfo* mCombineProperty1;
@@ -177,6 +165,19 @@ private:
     std::string lastPickMode;
     Viewer::ActionMode lastActionMode;
 
+
+    TypeInfoWrapper proptype_bool;
+    TypeInfoWrapper proptype_int;
+    TypeInfoWrapper proptype_uint;
+    TypeInfoWrapper proptype_double;
+    TypeInfoWrapper proptype_Vec3d;
+    TypeInfoWrapper proptype_Vec3f;
+#ifdef ENABLE_SKELETON_SUPPORT
+    TypeInfoWrapper proptype_SkinWeights;
+#endif
+
+    typedef std::set<TypeInfoWrapper> TypeInfoWrapperSet;
+    TypeInfoWrapperSet supportedPropertyTypes;
 
 };
 

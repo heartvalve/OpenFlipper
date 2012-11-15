@@ -59,7 +59,16 @@ OMPropertyModel<MeshT>::OMPropertyModel(MeshT* mesh, int objectID, QObject *pare
       objectID_(objectID),
       mCombineProperty1(0),
       mCombineProperty2(0),
-      pickModeActive(false)
+      pickModeActive(false),
+      proptype_bool(TypeInfoWrapper(typeid(OpenMesh::PropertyT<bool>), "bool")),
+      proptype_int(TypeInfoWrapper(typeid(OpenMesh::PropertyT<int>), "int")),
+      proptype_uint(TypeInfoWrapper(typeid(OpenMesh::PropertyT<unsigned int>), "unsigned int")),
+      proptype_double(TypeInfoWrapper(typeid(OpenMesh::PropertyT<double>), "double")),
+      proptype_Vec3d(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3d>), "Vec3d")),
+      proptype_Vec3f(TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f"))
+#ifdef ENABLE_SKELETON_SUPPORT
+      ,proptype_SkinWeights(TypeInfoWrapper(typeid(OpenMesh::PropertyT<BaseSkin::SkinWeights>), "SkinWeights"))
+#endif
 {
     gatherProperties();
     bCombine.setText(tr("Combine"));
@@ -85,6 +94,8 @@ OMPropertyModel<MeshT>::OMPropertyModel(MeshT* mesh, int objectID, QObject *pare
 
     lastPickMode   = PluginFunctions::pickMode();
     lastActionMode = PluginFunctions::actionMode();
+    
+    initializeSupportedPropertyTypes();
 
 }
 
@@ -682,53 +693,33 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
 }
 
 
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_bool =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<bool>), "bool");
-
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_int =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<int>), "int");
-
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_uint =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<unsigned int>), "unsigned int");
-
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_double =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<double>), "double");
-
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_Vec3d =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3d>), "Vec3d");
-
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_Vec3f =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<ACG::Vec3f>), "Vec3f");
-
+template<typename MeshT>
+void OMPropertyModel<MeshT>::initializeSupportedPropertyTypes()
+{
+    
+    
+    supportedPropertyTypes.insert(proptype_bool);
+    supportedPropertyTypes.insert(proptype_int);
+    supportedPropertyTypes.insert(proptype_uint);
+    supportedPropertyTypes.insert(proptype_double);
+    supportedPropertyTypes.insert(proptype_Vec3d);
+    supportedPropertyTypes.insert(proptype_Vec3f);
+    
 #ifdef ENABLE_SKELETON_SUPPORT
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::proptype_SkinWeights =
-        TypeInfoWrapper(typeid(OpenMesh::PropertyT<BaseSkin::SkinWeights>), "SkinWeights");
+    supportedPropertyTypes.insert(proptype_SkinWeights);
 #endif
+    
+//#ifdef ENABLE_SKELETON_SUPPORT
+//    //template <typename MeshT>
+//    //const typename OMPropertyModel<MeshT>::TypeInfoWrapperSet OMPropertyModel<MeshT>::supportedPropertyTypes =
+//    //        (OpenFlipper::Options::nogui() ? typename OMPropertyModel<MeshT>::TypeInfoWrapperSet() : typename OMPropertyModel<MeshT>::TypeInfoWrapperSet(propertyTypes, propertyTypes + 7));
+//    supportedPropertyTypes = typename OMPropertyModel<MeshT>::TypeInfoWrapperSet();
+//#else
+//    //const typename OMPropertyModel<MeshT>::TypeInfoWrapperSet OMPropertyModel<MeshT>::supportedPropertyTypes =
+//    //        (OpenFlipper::Options::nogui() ? typename OMPropertyModel<MeshT>::TypeInfoWrapperSet() : typename OMPropertyModel<MeshT>::TypeInfoWrapperSet(propertyTypes, propertyTypes + 6));
+//    supportedPropertyTypes = typename OMPropertyModel<MeshT>::TypeInfoWrapperSet();
+//#endif
+    
+}
 
-template <typename MeshT>
-const TypeInfoWrapper OMPropertyModel<MeshT>::propertyTypes[] = { OMPropertyModel<MeshT>::proptype_bool,
-                                                                  OMPropertyModel<MeshT>::proptype_int,
-                                                                  OMPropertyModel<MeshT>::proptype_uint,
-                                                                  OMPropertyModel<MeshT>::proptype_double,
-                                                                  OMPropertyModel<MeshT>::proptype_Vec3d,
-                                                                  OMPropertyModel<MeshT>::proptype_Vec3f,
-                                                              #ifdef ENABLE_SKELETON_SUPPORT
-                                                                  OMPropertyModel<MeshT>::proptype_SkinWeights,
-                                                              #endif
-                                                                };
 
-
-#ifdef ENABLE_SKELETON_SUPPORT
-template <typename MeshT>
-const typename OMPropertyModel<MeshT>::TypeInfoWrapperSet OMPropertyModel<MeshT>::supportedPropertyTypes(propertyTypes, propertyTypes + 7);
-#else
-template <typename MeshT>
-const typename OMPropertyModel<MeshT>::TypeInfoWrapperSet OMPropertyModel<MeshT>::supportedPropertyTypes(propertyTypes, propertyTypes + 6);
-#endif

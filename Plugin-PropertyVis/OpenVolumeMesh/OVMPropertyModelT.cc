@@ -38,13 +38,28 @@
 
 #include "OVMPropertyModel.hh"
 
+#define INITIALIZE_PROPTYPES(primitive)                                                                                       \
+    proptype_##primitive##_bool(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<bool>), "bool")),                 \
+    proptype_##primitive##_int(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<int>), "int")),                     \
+    proptype_##primitive##_uint(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<unsigned int>), "unsigned int")),   \
+    proptype_##primitive##_double(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<double>), "double")),             \
+    proptype_##primitive##_Vec3d(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<ACG::Vec3d>), "Vec3d")),           \
+    proptype_##primitive##_Vec3f(TypeInfoWrapper(typeid(OpenVolumeMesh::primitive##PropertyT<ACG::Vec3f>), "Vec3f"))
+
+
 template <typename MeshT>
 OVMPropertyModel<MeshT>::OVMPropertyModel(MeshT* mesh, int objectID, QObject *parent)
     : OVMPropertyModelSubclass(parent),
       mesh_(mesh),
       objectID_(objectID),
       mCombineProperty1(0),
-      mCombineProperty2(0)
+      mCombineProperty2(0),
+      INITIALIZE_PROPTYPES(Cell),
+      INITIALIZE_PROPTYPES(Face),
+      INITIALIZE_PROPTYPES(HalfFace),
+      INITIALIZE_PROPTYPES(Edge),
+      INITIALIZE_PROPTYPES(HalfEdge),
+      INITIALIZE_PROPTYPES(Vertex)
 {
     gatherProperties();
     bCombine.setText(tr("Combine"));
@@ -67,7 +82,11 @@ OVMPropertyModel<MeshT>::OVMPropertyModel(MeshT* mesh, int objectID, QObject *pa
     mPickWidget.hide();
     QString iconPath = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
     mPickWidget.pickButton->setIcon( QIcon(iconPath + "color-picker.png") );
+
+    initializeSupportedPropertyTypes();
 }
+
+#undef INITIALIZE_PROPTYPES
 
 template <typename MeshT>
 void OVMPropertyModel<MeshT>::updateWidget(const QModelIndexList& selectedIndices)
@@ -815,6 +834,31 @@ void OVMPropertyModel<MeshT>::addProperty(QString propName, QString friendlyType
         }
     }
 
+}
+
+template <typename MeshT>
+void OVMPropertyModel<MeshT>::initializeSupportedPropertyTypes()
+{
+    
+#define INSERT_PROPTYPES(primitive) \
+supportedPropertyTypes.insert(proptype_##primitive##_bool);   \
+supportedPropertyTypes.insert(proptype_##primitive##_int);    \
+supportedPropertyTypes.insert(proptype_##primitive##_uint);   \
+supportedPropertyTypes.insert(proptype_##primitive##_double); \
+supportedPropertyTypes.insert(proptype_##primitive##_Vec3d);  \
+supportedPropertyTypes.insert(proptype_##primitive##_Vec3f);  \
+
+    INSERT_PROPTYPES(Cell)
+    INSERT_PROPTYPES(Face)
+    INSERT_PROPTYPES(HalfFace)
+    INSERT_PROPTYPES(Edge)
+    INSERT_PROPTYPES(HalfEdge)
+    INSERT_PROPTYPES(Vertex)
+
+#undef INITIALIZE_PROPTYPES
+
+    
+    
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
