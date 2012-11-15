@@ -115,7 +115,7 @@ public:
   A renderobject is a collection of opengl states, buffers and parameters,
   that correspond to exactly one draw call.
   */
-  void addRenderObject(ACG::RenderObject* _renderObject);
+  virtual void addRenderObject(ACG::RenderObject* _renderObject);
 
 protected:
 
@@ -200,85 +200,6 @@ protected:
   /// array of renderobjects, filled by addRenderObject
   std::vector<ACG::RenderObject> renderObjects_;
 
-
-
-
-
-  // draw a projected quad in [-1, -1] - [1, 1] range
-  void drawProjQuad(GLSL::Program* _prog);
-
-  /// vbo containing a quad in projection space
-  GLuint screenQuadVBO_;
-  ACG::VertexDeclaration* screenQuadDecl_;
-
-
-  // single layer depth peeling
-
-  struct PeelLayer
-  {
-    /// target framebuffer for colorTex and depthTex
-    GLuint fbo;
-
-    /// color rendertarget
-    GLuint colorTex;
-    /// depth-buf rendertarget
-    GLuint depthTex;
-  };
-
-  /// is depth peeling supported
-  bool depthPeelingSupport_;
-
-  /// blends one depth-layer into the current scene target
-  GLSL::Program* peelBlend_;
-
-  /// final copy into back-buffer
-  GLSL::Program* peelFinal_;
-
-  /** 
-  Copy depth-texture of first layer into hardware z-buffer.
-  This is needed for post-processing or renderobjects with low priority.
-  */
-  GLSL::Program* peelDepthCopy_;
-
-  /// occlusion query determining end of peeling (last layer)
-  GLuint peelQueryID_;
-
-
-  /// Collection of framebuffers for each viewport
-  struct ViewerResources
-  {
-    ViewerResources();
-
-    /// viewer window width
-    unsigned int glWidth_;
-
-    /// viewer window height
-    unsigned int glHeight_;
-
-
-    // depth peeling textures
-
-    /// ping pong between two consecutive layers
-    PeelLayer peelTargets_[2];
-
-    GLuint peelBlendTex_;
-    GLuint peelBlendFbo_;
-  };
-
-
-
-
-  /// Allocate framebuffers and load shaders for depth-peeling.
-  void initDepthPeeling();
-
-  /// Change viewport size for allocated rendertargets.
-  void updateViewerResources(int _viewerId, unsigned int _newWidth, unsigned int _newHeight);
-
-  /**
-  Stores framebuffer resources for each viewport.
-  Mapping: viewerID -> ViewerResources
-  */
-  std::map<int, ViewerResources> viewerRes_;
 
 };
 
