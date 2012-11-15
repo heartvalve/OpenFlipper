@@ -188,7 +188,7 @@ QString OMPropertyVisualizer<MeshT>::getHeader()
  * @brief Returns the ID of the closest primitive.
  *
  * @param _face The face that was hit.
- * @param _hitpoint The position where the face was hit.
+ * @param _hitPoint The position where the face was hit.
  * @return The ID of the primitive that is closest to the hitpoint.
  *
  * This method is used for picking. For some entities it might be convenient to not pick them
