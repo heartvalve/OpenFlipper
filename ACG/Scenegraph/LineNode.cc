@@ -52,8 +52,9 @@
 //== INCLUDES =================================================================
 
 #include "LineNode.hh"
-#include "../GL/gl.hh"
-
+#include <ACG/GL/gl.hh>
+#include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/VertexDeclaration.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -249,6 +250,75 @@ leave(GLState& _state , const DrawModes::DrawMode& _drawMode)
   MaterialNode::leave(_state, _drawMode);
 }
 
+//----------------------------------------------------------------------------
+
+void
+LineNode::
+getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
+
+  // TODO: Implement in Line Node
+
+  // init base render object
+  RenderObject ro;
+  memset(&ro, 0, sizeof(RenderObject));
+  ro.initFromState(&_state);
+  ro.setMaterial(_mat);
+
+  if (line_mode_ == LineSegmentsMode)
+  {
+
+    if( (points_.size()/2 == colors4f_.size()) ) {
+      // One color entry per line segment (alpha channel available
+
+
+    } else if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors_.size()) ) {
+      // One color entry per line segment (no alpha channel available and uchars as colors)
+
+    } else {
+      // No colors. Just draw the segments
+    }
+
+
+  } else {
+    // No colors (Use material) and one continuous line
+
+    // create vbo
+    if (!vbo_)
+      glGenBuffersARB(1, &vbo_);
+
+    if ( vboData_) {
+      delete vboData_;
+      vboData_ = 0;
+    }
+
+    vboData_ = new float[3 * points_.size() * 4];
+
+    float* pPoints = &vboData_[0];
+
+    for (unsigned int  i = 0 ; i < points_.size(); ++i) {
+      for ( unsigned int j = 0 ; j < 3 ; ++j) {
+        *(pPoints++) = points_[i][j];
+      }
+    }
+
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * points_.size() * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+
+    ro.vertexBuffer = vbo_;
+
+    VertexDeclaration vertexDecl;
+    vertexDecl.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+
+    ro.vertexDecl = &vertexDecl;
+
+    ro.glDrawArrays(GL_LINE_STRIP, 0, points_.size() );
+
+    _renderer->addRenderObject(&ro);
+
+
+  }
+
+}
 
 //=============================================================================
 } // namespace SceneGraph
