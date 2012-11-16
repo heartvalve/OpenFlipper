@@ -423,10 +423,10 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
     switch (primitives_[i].type) {
       case SPHERE:
+
         // Sphere
         ro.debugName = "glutprimitive.sphere";
 
-        //ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
         sphere_->addToRenderer(_renderer, &ro, primitives_[i].size);
 
         break;
