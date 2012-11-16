@@ -56,7 +56,7 @@
 
 //== INCLUDES =================================================================
 
-#include "MaterialNode.hh"
+#include <ACG/Scenegraph/MaterialNode.hh>
 #include "DrawModes.hh"
 #include <vector>
 
@@ -110,13 +110,21 @@ public:
 		 MaterialNode::LineWidth),
     line_mode_(_mode),
     draw_always_on_top (false),
-    prev_depth_(GL_LESS)
+    prev_depth_(GL_LESS),
+    vbo_(0),
+    vboData_(0)
   {
     drawMode(DrawModes::WIREFRAME);
   }
 
   /// destructor
-  ~LineNode() {}
+  ~LineNode() {
+    if (vbo_)
+      glDeleteBuffersARB(1, &vbo_);
+
+    if ( vboData_)
+      delete vboData_;
+  }
 
 
   /// set line mode (see LineNode::LineMode)
@@ -197,6 +205,14 @@ public:
   typedef Vec3d&        reference;
   typedef const Vec3d&  const_reference;
 
+  /** \brief Add the objects to the given renderer
+   *
+   * @param _renderer The renderer which will be used. Add your geometry into this class
+   * @param _state    The current GL State when this object is called
+   * @param _drawMode The active draw mode
+   * @param _mat      Current material
+   */
+  void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
 protected:
 
@@ -208,6 +224,10 @@ protected:
   
   bool	       draw_always_on_top;
   GLint	       prev_depth_;
+
+
+  unsigned int vbo_;
+  float*       vboData_;
 };
 
 
