@@ -399,6 +399,13 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
 
+  // the selection sphere uses alpha blending against scene meshes
+  //  set priority-order > 0 to draw this after meshes
+  ro.priority = 1;
+
+  // enable depth-test
+  ro.depthTest = true;
+
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {
 
@@ -412,6 +419,7 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
      localMaterial.color(primitives_[i].color);
      localMaterial.ambientColor(primitives_[i].color);
      localMaterial.diffuseColor(primitives_[i].color);
+     localMaterial.baseColor(primitives_[i].color);
 
      ro.setMaterial(&localMaterial);
 
