@@ -102,33 +102,14 @@ public:
 
   /// default constructor
   LineNode( LineMode     _mode,
-	    BaseNode*    _parent=0,
-	    std::string  _name="<LineNode>" ) :
-    MaterialNode(_parent,
-		 _name,
-		 MaterialNode::BaseColor |
-		 MaterialNode::LineWidth),
-    line_mode_(_mode),
-    draw_always_on_top (false),
-    prev_depth_(GL_LESS),
-    vbo_(0),
-    vboData_(0)
-  {
-    drawMode(DrawModes::WIREFRAME);
-  }
+	          BaseNode*    _parent=0,
+	          std::string  _name="<LineNode>" );
 
   /// destructor
-  ~LineNode() {
-    if (vbo_)
-      glDeleteBuffersARB(1, &vbo_);
-
-    if ( vboData_)
-      delete vboData_;
-  }
-
+  ~LineNode();
 
   /// set line mode (see LineNode::LineMode)
-  void set_line_mode(LineMode _mode) { line_mode_ = _mode; }
+  void set_line_mode(LineMode _mode);
 
 
   /// static name of this class
@@ -157,50 +138,53 @@ public:
   void reserve_points(unsigned int _n) { points_.reserve(_n); }
 
   /// clear points/lines and colors
-  void clear() { clear_points(); clear_colors(); }
+  void clear();
+
   /// clear points/lines
-  void clear_points() { points_.clear(); }
+  void clear_points();
+
   /// clear colors
-  void clear_colors() { colors_.clear(); colors4f_.clear(); }
+  void clear_colors();
   
   /// Override material node's set color function in order to locally add color
-  void set_color(const Vec4f& _c) {
-      clear_colors();
-      add_color(ACG::Vec3uc((char)(((int)_c[0])*255),
-                            (char)(((int)_c[1])*255),
-                            (char)(((int)_c[2])*255)));
-      MaterialNode::set_color(_c);
-  }
-
+  void set_color(const Vec4f& _c);
 
   /// add point (for LineMode == PolygonMode)
-  void add_point(const Vec3d& _v) { points_.push_back(_v); }
+  void add_point(const Vec3d& _v);
 
   /// add line (for LineMode == LineSegmentsMode)
-  void add_line(const Vec3d& _v0, const Vec3d& _v1) {
-    add_point(_v0);  add_point(_v1);
-  }
+  void add_line(const Vec3d& _v0, const Vec3d& _v1);
+
   /// add color (only for LineMode == LineSegmentsMode)
-  void add_color(const ACG::Vec3uc& _c) { colors_.push_back(_c); }
+  void add_color(const ACG::Vec3uc& _c);
 
   /// add color 4f (only for LineMode == LineSegmentsMode)
-  void add_color(const Color4f _c) { colors4f_.push_back(_c); }
+  void add_color(const Color4f _c);
 
   /// number of points
   unsigned int n_points() const { return points_.size(); }
 
-  /// return reference to point vector
+  /**\brief return reference to point vector
+   *
+   * If you change something here, you need to call updateVBO() in order
+   * to tell the system, that your data arrays changed
+   */
   const PointVector& points() const { return points_; }
 
-  /// get and set color container
+  /**\brief get and set color container
+   *
+   * If you change something here, you need to call updateVBO() in order
+   * to tell the system, that your data arrays changed
+   */
   ColorVector& colors() { return colors_; }
   
   /// get and set always on top
-  bool& alwaysOnTop() { return draw_always_on_top; }
+  bool& alwaysOnTop() { return draw_always_on_top; updateVBO_ = true; }
 
+  void updateVBO() { updateVBO_ = true; };
 
   /// STL conformance
-  void push_back(const Vec3d& _v) { points_.push_back(_v); }
+  void push_back(const Vec3d& _v) { points_.push_back(_v); updateVBO_ = true; }
   typedef Vec3d         value_type;
   typedef Vec3d&        reference;
   typedef const Vec3d&  const_reference;
@@ -225,9 +209,11 @@ protected:
   bool	       draw_always_on_top;
   GLint	       prev_depth_;
 
-
+  // Vertex buffer object used in this node
   unsigned int vbo_;
-  float*       vboData_;
+
+  // True if points changed and the vbo has to be updated
+  bool         updateVBO_;
 };
 
 

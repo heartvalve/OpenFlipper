@@ -63,6 +63,123 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
+LineNode::LineNode( LineMode     _mode,
+                    BaseNode*    _parent,
+                     std::string  _name ) :
+   MaterialNode(_parent, _name, MaterialNode::BaseColor | MaterialNode::LineWidth),
+   line_mode_(_mode),
+   draw_always_on_top (false),
+   prev_depth_(GL_LESS),
+   vbo_(0),
+   vboData_(0),
+   updateVBO_(true)
+{
+  drawMode(DrawModes::WIREFRAME);
+}
+
+//----------------------------------------------------------------------------
+
+LineNode::~LineNode() {
+  if (vbo_)
+    glDeleteBuffersARB(1, &vbo_);
+
+  if ( vboData_)
+    delete vboData_;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::set_line_mode(LineMode _mode)
+{
+  // Set the new line mode
+  line_mode_ = _mode;
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::clear()
+{
+  clear_points();
+  clear_colors();
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::clear_points()
+{
+  points_.clear();
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::clear_colors()
+{
+  colors_.clear();
+  colors4f_.clear();
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::set_color(const Vec4f& _c)
+{
+  clear_colors();
+  add_color(ACG::Vec3uc((char) (((int) _c[0]) * 255),
+                        (char) (((int) _c[1]) * 255),
+                        (char) (((int) _c[2]) * 255)));
+  MaterialNode::set_color(_c);
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::add_point(const Vec3d& _v)
+{
+  points_.push_back(_v);
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::add_line(const Vec3d& _v0, const Vec3d& _v1)
+{
+  add_point(_v0);
+  add_point(_v1);
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::add_color(const ACG::Vec3uc& _c)
+{
+  colors_.push_back(_c);
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+void LineNode::add_color(const Color4f _c)
+{
+  colors4f_.push_back(_c);
+
+  // Force an update of the vbo
+  updateVBO_ = true;
+}
+
+//----------------------------------------------------------------------------
 
 void
 LineNode::
@@ -282,27 +399,39 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   } else {
     // No colors (Use material) and one continuous line
 
-    // create vbo
+
+    // create vbo if it does not exist
     if (!vbo_)
       glGenBuffersARB(1, &vbo_);
 
-    if ( vboData_) {
-      delete vboData_;
-      vboData_ = 0;
-    }
+    float*       vboData_ = NULL;
 
-    vboData_ = new float[3 * points_.size() * 4];
+    // Update the vbo only if required.
+    if ( updateVBO_ ) {
 
-    float* pPoints = &vboData_[0];
+      // Create the required array
+      vboData_ = new float[3 * points_.size() * 4];
 
-    for (unsigned int  i = 0 ; i < points_.size(); ++i) {
-      for ( unsigned int j = 0 ; j < 3 ; ++j) {
-        *(pPoints++) = points_[i][j];
+      // Pointer to it for easier copy operation
+      float* pPoints = &vboData_[0];
+
+      // Copy from internal storage to vbo in memory
+      for (unsigned int  i = 0 ; i < points_.size(); ++i) {
+        for ( unsigned int j = 0 ; j < 3 ; ++j) {
+          *(pPoints++) = points_[i][j];
+        }
       }
-    }
 
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * points_.size() * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+      // Move data to the buffer
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * points_.size() * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+
+      // Remove the local storage
+      delete(vboData_);
+
+      // Update done.
+      updateVBO_ = false;
+    }
 
     ro.vertexBuffer = vbo_;
 
