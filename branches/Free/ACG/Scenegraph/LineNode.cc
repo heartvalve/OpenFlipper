@@ -71,7 +71,6 @@ LineNode::LineNode( LineMode     _mode,
    draw_always_on_top (false),
    prev_depth_(GL_LESS),
    vbo_(0),
-   vboData_(0),
    updateVBO_(true)
 {
   drawMode(DrawModes::WIREFRAME);
@@ -83,8 +82,6 @@ LineNode::~LineNode() {
   if (vbo_)
     glDeleteBuffersARB(1, &vbo_);
 
-  if ( vboData_)
-    delete vboData_;
 }
 
 //----------------------------------------------------------------------------
