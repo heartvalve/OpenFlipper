@@ -392,8 +392,6 @@ void
 GlutPrimitiveNode::
 getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat) {
 
-  // TODO: Color is incorrect!
-
   // init base render object
   RenderObject ro;
   memset(&ro, 0, sizeof(RenderObject));
@@ -409,19 +407,19 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {
 
-     // Set the right position
-     _state.push_modelview_matrix();
-     _state.translate(primitives_[i].position);
-     ro.modelview = _state.modelview();
-     _state.pop_modelview_matrix();
+    // Set the right position
+    _state.push_modelview_matrix();
+    _state.translate(primitives_[i].position);
+    ro.modelview = _state.modelview();
+    _state.pop_modelview_matrix();
 
-     Material localMaterial = *_mat;
-     localMaterial.color(primitives_[i].color);
-     localMaterial.ambientColor(primitives_[i].color);
-     localMaterial.diffuseColor(primitives_[i].color);
-     localMaterial.baseColor(primitives_[i].color);
+    Material localMaterial = *_mat;
+    localMaterial.color(primitives_[i].color);
+    localMaterial.ambientColor(primitives_[i].color);
+    localMaterial.diffuseColor(primitives_[i].color);
+    localMaterial.baseColor(primitives_[i].color);
 
-     ro.setMaterial(&localMaterial);
+    ro.setMaterial(&localMaterial);
 
     switch (primitives_[i].type) {
       case SPHERE:
