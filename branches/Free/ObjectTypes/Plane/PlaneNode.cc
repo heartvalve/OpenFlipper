@@ -44,18 +44,24 @@
 #include <ACG/GL/gl.hh>
 #include <iostream>
 #include <math.h>
+#include <ACG/Scenegraph/MaterialNode.hh>
 
 //== IMPLEMENTATION ==========================================================
 
 
 PlaneNode::PlaneNode(Plane& _plane, BaseNode *_parent, std::string _name)
 :BaseNode(_parent, _name),
- plane_(_plane)
+ plane_(_plane),
+ vbo_(0)
 {
+  vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
 }
 
 PlaneNode::~PlaneNode()
 {
+  if ( vbo_)
+    glDeleteBuffers(1,&vbo_);
+
 }
 
 void PlaneNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax)
@@ -92,58 +98,52 @@ PlaneNode::availableDrawModes() const
 
 //----------------------------------------------------------------------------
 
-void PlaneNode::drawPlane( ACG::GLState&  /*_state*/) {
+
+
+//----------------------------------------------------------------------------
+
+void PlaneNode::drawPlane( ACG::GLState&  _state) {
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  ACG::Vec3d origin(0.0, 0.0, 0.0);
-  ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
+  const ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
+
+  // Array of coordinates for the plane
+  float vboData_[4* 3 ] = { 0.0,0.0,0.0,
+                            (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+                            (float)xy[0],(float)xy[1],(float)xy[2],
+                            (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2] };
+
+   // Enable the arrays
+  _state.enableClientState(GL_VERTEX_ARRAY);
+  _state.vertexPointer(3,GL_FLOAT,0,&vboData_[0]);
 
   //first draw the lines
   glColor3f( 1.0, 1.0, 1.0 );
   glLineWidth(2.0);
 
-  //draw the plane
-  glBegin(GL_QUADS);
-    glVertex3dv( &origin[0] );
-    glVertex3dv( &plane_.xDirection[0] );
-    glVertex3dv( &xy[0] );
-    glVertex3dv( &plane_.yDirection[0] );
-  glEnd();
-
+  glDrawArrays(GL_QUADS,0,4);
 
   glLineWidth(1.0);
 
   //then the red front side
-
   ACG::GLState::enable (GL_BLEND);
   ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glPolygonMode(GL_FRONT, GL_FILL);
-
   glColor4f( 0.6, 0.15, 0.2, 0.5 );
 
-  //draw the plane
-  glBegin(GL_QUADS);
-    glVertex3dv( &origin[0] );
-    glVertex3dv( &plane_.xDirection[0] );
-    glVertex3dv( &xy[0] );
-    glVertex3dv( &plane_.yDirection[0] );
-  glEnd();
+  glDrawArrays(GL_QUADS,0,4);
+
 
   //finally the green back side
-
   glPolygonMode(GL_BACK, GL_FILL);
-
   glColor4f( 0.1, 0.8, 0.2, 0.5 );
 
-  //draw the plane
-  glBegin(GL_QUADS);
-    glVertex3dv( &origin[0] );
-    glVertex3dv( &plane_.xDirection[0] );
-    glVertex3dv( &xy[0] );
-    glVertex3dv( &plane_.yDirection[0] );
-  glEnd();
+  glDrawArrays(GL_QUADS,0,4);
+
+  // deactivate vertex arrays after drawing
+  _state.disableClientState(GL_VERTEX_ARRAY);
 
 }
 
@@ -154,16 +154,23 @@ void PlaneNode::drawPlanePick( ACG::GLState&  _state) {
   _state.pick_set_maximum(1);
   _state.pick_set_name(0);
 
-  ACG::Vec3d origin(0.0, 0.0, 0.0);
-  ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
+  const ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
 
-  //draw the plane
-  glBegin(GL_QUADS);
-    glVertex3dv( &origin[0] );
-    glVertex3dv( &plane_.xDirection[0] );
-    glVertex3dv( &xy[0] );
-    glVertex3dv( &plane_.yDirection[0] );
-  glEnd();
+  // Array of coordinates for the plane
+  float vboData_[4* 3 ] = { 0.0,0.0,0.0,
+                            (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+                            (float)xy[0],(float)xy[1],(float)xy[2],
+                            (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2] };
+
+   // Enable the arrays
+  _state.enableClientState(GL_VERTEX_ARRAY);
+  _state.vertexPointer(3,GL_FLOAT,0,&vboData_[0]);
+
+  glDrawArrays(GL_QUADS,0,4);
+
+  // deactivate vertex arrays after drawing
+  _state.disableClientState(GL_VERTEX_ARRAY);
+
 }
 
 //----------------------------------------------------------------
@@ -178,10 +185,14 @@ void PlaneNode::draw(ACG::GLState&  _state  , const ACG::SceneGraph::DrawModes::
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
   ACG::GLState::enable(GL_COLOR_MATERIAL);
 
+  // plane_.position represents the center of the plane.
+  // Compute the corner position
   ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
 
+  // translate to corner position
   _state.translate(pos[0], pos[1], pos[2]);
 
+  // draw the plane
   drawPlane(_state);
 
   glPopAttrib();
@@ -249,6 +260,89 @@ Plane& PlaneNode::getPlane()
 void PlaneNode::setPlane(Plane plane)
 {
     plane_ = plane;
+}
+
+//----------------------------------------------------------------------------
+
+void
+PlaneNode::
+getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
+
+//  // init base render object
+//  ACG::RenderObject ro;
+//  memset(&ro, 0, sizeof(ACG::RenderObject));
+//
+//_state.enable(GL_COLOR_MATERIAL);
+//_state.disable(GL_LIGHTING);
+//  ro.initFromState(&_state);
+//
+//
+////   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
+////   ACG::GLState::enable(GL_COLOR_MATERIAL);
+//
+//  // plane_.position represents the center of the plane.
+//  // Compute the corner position
+//  const ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
+//
+//  // translate to corner position and store that in renderer
+//  _state.push_modelview_matrix();
+//  _state.translate(pos[0], pos[1], pos[2]);
+//  ro.modelview = _state.modelview();
+//  _state.pop_modelview_matrix();
+//
+//
+//  // Set the local material
+//  ACG::SceneGraph::Material localMaterial = *_mat;
+//  localMaterial.baseColor(ACG::Vec4f(1.0,0.0,0.0,1.0));
+//  localMaterial.ambientColor(ACG::Vec4f(1.0,0.0,0.0,1.0));
+//  localMaterial.diffuseColor(ACG::Vec4f(1.0,0.0,0.0,1.0));
+//  localMaterial.specularColor(ACG::Vec4f(1.0,0.0,0.0,1.0));
+////  localMaterial.disableBackfaceCulling();
+////  localMaterial.enableColorMaterial();
+//
+//  ro.setMaterial(_mat);
+//
+//
+//  // draw the plane
+//
+//  const ACG::Vec3d xy = plane_.xDirection + plane_.yDirection;
+//
+//  // Array of coordinates for the plane ( duplicated due to front and back rendering )
+//  float vboData_[8 * 3 ] = { 0.0,0.0,0.0,
+//                            (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+//                            (float)xy[0],(float)xy[1],(float)xy[2],
+//                            (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
+//                            (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
+//                            (float)xy[0],(float)xy[1],(float)xy[2],
+//                            (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+//                            0.0,0.0,0.0 };
+//
+//  // Create buffer for vertex coordinates if necessary
+//  if ( ! vbo_ ) {
+//    glGenBuffersARB(1, &vbo_);
+//  }
+//
+//  // Bind buffer
+//  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+//
+//  // Upload to buffer ( 4 vertices with 3 coordinates of 4 byte sized floats)
+//  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 8 * 3 * 4, &vboData_[0], GL_STATIC_DRAW_ARB);
+//
+//
+//  ro.vertexBuffer = vbo_;
+//  ro.vertexDecl   = &vertexDecl_;
+//
+////  ro.culling   = false;
+////  ro.blending  = false;
+////  ro.depthTest =false;
+//
+//  ro.glDrawArrays(GL_QUADS, 0, 8);
+//
+//  ro.debugName = "PlaneNode.plane";
+//
+//  _renderer->addRenderObject(&ro);
+
+
 }
 
 

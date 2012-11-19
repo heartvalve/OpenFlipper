@@ -56,6 +56,8 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/Math/Matrix4x4T.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/IRenderer.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -108,6 +110,15 @@ public:
     /// Set a new plane for rendering
     void setPlane(Plane plane);
 
+    /** \brief Add the objects to the given renderer
+     *
+     * @param _renderer The renderer which will be used. Add your geometry into this class
+     * @param _state    The current GL State when this object is called
+     * @param _drawMode The active draw mode
+     * @param _mat      Current material
+     */
+    void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
+
 private:
     void drawPlane(ACG::GLState & _state);
     void drawManipulator(ACG::GLState & _state);
@@ -115,6 +126,11 @@ private:
     void drawManipulatorPick(ACG::GLState & _state);
 
     Plane& plane_;
+
+    unsigned int vbo_;
+
+    ACG::VertexDeclaration vertexDecl_;
+
 };
 
 //=============================================================================
