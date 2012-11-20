@@ -1602,7 +1602,6 @@ void Core::deleteObject( int _id ){
   // delete it
   delete object;
 
-  slotObjectUpdated(-1);
 }
 
 void Core::slotDeleteAllObjects( ){
