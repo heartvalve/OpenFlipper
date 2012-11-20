@@ -11,6 +11,7 @@
          - Interface: RayCollision is now a sorted vector conbining standard pairs of the hit handles and their distance to the hit
          - Interface: Render Interface: Implemented capabilities check for renderer interface
          - Interface: ACG, Renamed the basecolor functions in the core to defaultColor
+         - Logic: if an object gets deleted, no updatedObject (-1) signal will be emitted now. Use the objectDeleted slot from LoadSaveInterface.
          - Build: Default to relesae build type by default 
      - <b>ACG</b>
          - General
