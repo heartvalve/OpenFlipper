@@ -516,7 +516,15 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.emissive = ACG::Vec3f(1.0f, 0.0f, 0.0f);
 
   pointVertexDecl_.clear();
-  pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, (unsigned int)mesh_.points());
+
+  VertexElement el;
+  el.type_ = GL_DOUBLE;
+  el.numElements_ = 3;
+  el.usage_ = VERTEX_USAGE_POSITION;
+  el.shaderInputName_ = 0;
+  el.pDataSrc_ = mesh_.points();
+//  pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, reinterpret_cast<unsigned int>(mesh_.points()));
+  pointVertexDecl_.addElement(&el);
 
   // draw status later than scene
   ro.priority = 1;
@@ -546,7 +554,14 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   if (halfedges && !he_points_.empty())
   {
     halfedgeVertexDecl_.clear();
-    halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, (unsigned int)&he_points_[0]);
+    VertexElement el;
+    el.type_ = GL_DOUBLE;
+    el.numElements_ = 3;
+    el.usage_ = VERTEX_USAGE_POSITION;
+    el.shaderInputName_ = 0;
+    el.pDataSrc_ = &he_points_[0];
+//    halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, reinterpret_cast<unsigned int>(&he_points_[0]));
+    halfedgeVertexDecl_.addElement(&el);
 
     ro.vertexDecl = &halfedgeVertexDecl_;
 
