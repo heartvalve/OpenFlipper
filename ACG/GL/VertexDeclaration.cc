@@ -115,7 +115,7 @@ void VertexDeclaration::addElements(unsigned int _numElements, const VertexEleme
     {
       const VertexElement* pLastElement = getElement(n-1);
 
-      vertexStride_ = pLastElement->byteOffset_ + getElementSize( pLastElement );
+      vertexStride_ = pLastElement->byteOffset_ + getElementSize( pLastElement ) - getElement(0)->byteOffset_;
     }
   }
 
