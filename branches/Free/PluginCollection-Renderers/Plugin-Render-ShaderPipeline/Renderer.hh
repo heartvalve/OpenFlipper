@@ -182,9 +182,9 @@ protected:
 
 
   /**
-  Dump list of renderobjects to text file.
+  Dump list of render objects to text file.
   @param _fileName name of text file to write to
-  @param _sortedList dump sorted renderobjects in order, may be 0 to use the unsorted list instead
+  @param _sortedList dump sorted render objects in order, may be 0 to use the unsorted list instead
   */
   void dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList = 0) const;
 

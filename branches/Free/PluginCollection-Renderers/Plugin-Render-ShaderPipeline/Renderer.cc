@@ -113,13 +113,14 @@ void Renderer::traverseRenderableNodes( GLState* _glState, SceneGraph::DrawModes
         _node->enter(*_glState, _drawMode);
 
 
-      if (_node->status() != SceneGraph::BaseNode::HideNode)
-        _node->getRenderObjects(this, *_glState, nodeDM, _mat);
-
-      // fetch material
+      // fetch material (Node itself can be a material node, so we have to
+      // set that in front of the nodes own rendering
       SceneGraph::MaterialNode* matNode = dynamic_cast<SceneGraph::MaterialNode*>(_node);
       if (matNode)
         _mat = &matNode->material();
+
+      if (_node->status() != SceneGraph::BaseNode::HideNode)
+        _node->getRenderObjects(this, *_glState, nodeDM, _mat);
 
       if (process_children)
       {
