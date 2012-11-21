@@ -210,6 +210,7 @@
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
     statusNode_->set_point_size(4.0);
     statusNode_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+    statusNode_->set_base_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
 
     // Node showing modeling region
     areaNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, AreaNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW AreaNode for mesh ");
@@ -233,6 +234,7 @@
     featureNode_->set_line_width(2.0);
     featureNode_->set_point_size(7.0);
     featureNode_->set_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
+    featureNode_->set_base_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
 
 
     if ( materialNode() == NULL)
