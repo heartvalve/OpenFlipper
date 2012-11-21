@@ -512,8 +512,8 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.depthTest = true;
   ro.depthFunc = GL_LEQUAL;
 
+  // Use the material from the underlying materialnode
   ro.setMaterial(_mat);
-  ro.emissive = ACG::Vec3f(1.0f, 0.0f, 0.0f);
 
   pointVertexDecl_.clear();
 
@@ -572,7 +572,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
 
   if (faces && !f_cache_.empty())
   {
-    if (mesh_.is_trimesh()) 
+    if (mesh_.is_trimesh())
     {
       ro.vertexDecl = &pointVertexDecl_;
 
