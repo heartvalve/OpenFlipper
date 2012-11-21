@@ -192,7 +192,7 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
 
 
   // size of a rendered point is set in vertex-shader via gl_PointSize
-  glEnable(GL_PROGRAM_POINT_SIZE);
+  glEnable(GL_PROGRAM_POINT_SIZE_ARB);
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
