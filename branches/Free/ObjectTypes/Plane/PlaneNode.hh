@@ -58,6 +58,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/GLPrimitives.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -125,11 +126,16 @@ private:
     void drawPlanePick(ACG::GLState & _state);
     void drawManipulatorPick(ACG::GLState & _state);
 
+
+    void addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, ACG::RenderObject* _ro);
+
     Plane& plane_;
 
     unsigned int vbo_;
 
     ACG::VertexDeclaration vertexDecl_;
+
+    ACG::GLSphere* sphere_;
 
 };
 
