@@ -179,7 +179,7 @@ public:
   ColorVector& colors() { return colors_; }
   
   /// get and set always on top
-  bool& alwaysOnTop() { return draw_always_on_top; updateVBO_ = true; }
+  bool& alwaysOnTop() { updateVBO_ = true; return draw_always_on_top;  }
 
   void updateVBO() { updateVBO_ = true; };
 

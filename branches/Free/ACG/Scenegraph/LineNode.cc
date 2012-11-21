@@ -384,12 +384,15 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
     if( (points_.size()/2 == colors4f_.size()) ) {
       // One color entry per line segment (alpha channel available
 
-
+      // TODO : Implement this mode
     } else if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors_.size()) ) {
       // One color entry per line segment (no alpha channel available and uchars as colors)
 
+      // TODO : Implement this mode
     } else {
       // No colors. Just draw the segments
+
+      // TODO : Implement this mode
     }
 
 
@@ -424,7 +427,7 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * points_.size() * 4 , vboData_ , GL_STATIC_DRAW_ARB);
 
       // Remove the local storage
-      delete(vboData_);
+      delete[] vboData_;
 
       // Update done.
       updateVBO_ = false;
