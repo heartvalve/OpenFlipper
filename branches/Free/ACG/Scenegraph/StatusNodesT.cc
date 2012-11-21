@@ -138,6 +138,95 @@ update_cache()
     invalidGeometry_  = false;
   }
 
+
+  // Update the indices for selected vertices
+  if ( vertexIndexInvalid_ ) {
+
+    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
+      v_end(mesh_.vertices_end());
+
+    v_cache_.clear();
+    for (; v_it!=v_end; ++v_it) {
+      if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
+        v_cache_.push_back(v_it.handle().idx());
+      }
+    }
+
+    vertexIndexInvalid_ = false;
+  }
+
+  // Update index list of selected edges
+  if ( edgeIndexInvalid_ ) {
+
+    typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
+      e_end(mesh_.edges_end());
+    typename Mesh::VertexHandle   vh;
+
+    e_cache_.clear();
+    for (; e_it!=e_end; ++e_it) {
+      if (Mod::is_edge_selected(mesh_, e_it)) {
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
+        e_cache_.push_back(vh.idx());
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
+        e_cache_.push_back(vh.idx());
+      }
+    }
+
+    edgeIndexInvalid_ = false;
+  }
+
+
+  // Update index list of selected halfedges
+  if ( halfedgeCacheInvalid_) {
+
+    typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
+      he_end(mesh_.halfedges_end());
+
+    he_points_.clear();
+    he_normals_.clear();
+    for (; he_it!=he_end; ++he_it) {
+      if (Mod::is_halfedge_selected(mesh_, he_it))  {
+        // add vertices
+        he_points_.push_back( halfedge_point(he_it));
+        he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
+
+        // add normals
+        FaceHandle fh;
+        if(!mesh_.is_boundary(he_it))
+          fh = mesh_.face_handle(he_it);
+        else
+          fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
+
+        he_normals_.push_back( mesh_.normal(fh));
+        he_normals_.push_back( mesh_.normal(fh));
+      }
+    }
+
+    halfedgeCacheInvalid_ = false;
+  }
+
+
+  // update index list of selected faces
+  if ( faceIndexInvalid_ ) {
+
+    typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
+      f_end(mesh_.faces_end());
+    typename Mesh::ConstFaceVertexIter   fv_it;
+
+    f_cache_.clear();
+    fh_cache_.clear();
+    for (; f_it!=f_end; ++f_it) {
+      if (Mod::is_face_selected(mesh_, f_it)) {
+        fv_it = mesh_.cfv_iter(f_it);
+        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
+        f_cache_.push_back(fv_it.handle().idx());
+        fh_cache_.push_back(f_it);
+      }
+    }
+    faceIndexInvalid_ = false;
+  }
+
 }
 
 
@@ -251,23 +340,6 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_points()
 {
-
-  // Update the indices for selected vertices
-  if ( vertexIndexInvalid_ ) {
-
-    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
-        v_end(mesh_.vertices_end());
-
-    v_cache_.clear();
-    for (; v_it!=v_end; ++v_it) {
-      if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
-        v_cache_.push_back(v_it.handle().idx());
-      }
-    }
-
-    vertexIndexInvalid_ = false;
-  }
-
   if ( !v_cache_.empty() )
     glDrawElements(GL_POINTS,
   		             v_cache_.size(),
@@ -284,26 +356,6 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_edges()
 {
-  // Update index list of selected edges
-  if ( edgeIndexInvalid_ ) {
-
-    typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
-                                  e_end(mesh_.edges_end());
-    typename Mesh::VertexHandle   vh;
-
-    e_cache_.clear();
-    for (; e_it!=e_end; ++e_it) {
-      if (Mod::is_edge_selected(mesh_, e_it)) {
-        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
-        e_cache_.push_back(vh.idx());
-        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
-        e_cache_.push_back(vh.idx());
-      }
-    }
-
-    edgeIndexInvalid_ = false;
-  }
-
   if ( !e_cache_.empty() )
     glDrawElements(GL_LINES,
   		             e_cache_.size(),
@@ -319,38 +371,6 @@ template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
 draw_halfedges() {
-
-  // Update index list of selected halfedges
-  if ( halfedgeCacheInvalid_) {
-
-    typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
-                                      he_end(mesh_.halfedges_end());
-
-    he_points_.clear();
-    he_normals_.clear();
-    for (; he_it!=he_end; ++he_it) {
-      if (Mod::is_halfedge_selected(mesh_, he_it))  {
-        // add vertices
-        he_points_.push_back( halfedge_point(he_it));
-        he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
-
-        // add normals
-        FaceHandle fh;
-        if(!mesh_.is_boundary(he_it))
-          fh = mesh_.face_handle(he_it);
-        else
-          fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
-
-        he_normals_.push_back( mesh_.normal(fh));
-        he_normals_.push_back( mesh_.normal(fh));
-      }
-    }
-
-    halfedgeCacheInvalid_ = false;
-  }
-
-
-
   if ( !he_points_.empty()) {
     ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
@@ -373,28 +393,6 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_faces(bool _per_vertex)
 {
-
-  // update index list of selected faces
-  if ( faceIndexInvalid_ ) {
-
-    typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
-                                  f_end(mesh_.faces_end());
-    typename Mesh::ConstFaceVertexIter   fv_it;
-
-    f_cache_.clear();
-    fh_cache_.clear();
-    for (; f_it!=f_end; ++f_it) {
-      if (Mod::is_face_selected(mesh_, f_it)) {
-        fv_it = mesh_.cfv_iter(f_it);
-        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-        f_cache_.push_back(fv_it.handle().idx());
-        fh_cache_.push_back(f_it);
-      }
-    }
-    faceIndexInvalid_ = false;
-  }
-
   typename std::vector<FaceHandle>::const_iterator  fh_it(fh_cache_.begin()),
                                                     fh_end(fh_cache_.end());
   typename Mesh::CFVIter                            fv_it;
@@ -484,10 +482,103 @@ halfedge_point(const HalfedgeHandle _heh)
   // return (p*(1.0-2.0*alpha) + pp*alpha + pn*alpha);
 }
 
+//----------------------------------------------------------------------------
+
+template <class Mesh, class Mod>
+void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
+                                              GLState& _state,
+                                              const DrawModes::DrawMode& _drawMode,
+                                              const class Material* _mat)
+{
+  // Call updater function before doing anything
+  update_cache();
+
+  bool points = ((drawMode() == DrawModes::DEFAULT) |
+    (_drawMode & DrawModes::POINTS));
+
+  bool edges = ((drawMode() == DrawModes::DEFAULT) |
+    (_drawMode & DrawModes::WIREFRAME));
+
+  bool halfedges = ((drawMode() == DrawModes::DEFAULT) |
+    (_drawMode & DrawModes::WIREFRAME));
+
+  bool faces = ((drawMode() == DrawModes::DEFAULT) |
+    (_drawMode & DrawModes::SOLID_FLAT_SHADED));
+
+  RenderObject ro;
+  ro.debugName = "StatusNode";
+  ro.initFromState(&_state);
+
+  ro.depthTest = true;
+  ro.depthFunc = GL_LEQUAL;
+
+  ro.setMaterial(_mat);
+  ro.emissive = ACG::Vec3f(1.0f, 0.0f, 0.0f);
+
+  pointVertexDecl_.clear();
+  pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, (unsigned int)mesh_.points());
+
+  // draw status later than scene
+  ro.priority = 1;
+
+
+
+  // point list
+  if (points && !v_cache_.empty())
+  {
+    ro.vertexDecl = &pointVertexDecl_;
+    
+    ro.glDrawElements(GL_POINTS, v_cache_.size(), GL_UNSIGNED_INT, &v_cache_[0]);
+    _renderer->addRenderObject(&ro);
+  }
+
+  // edge list
+  if (edges && !e_cache_.empty())
+  {
+    ro.vertexDecl = &pointVertexDecl_;
+
+    ro.glDrawElements(GL_LINES, e_cache_.size(), GL_UNSIGNED_INT, &e_cache_[0]);
+    _renderer->addRenderObject(&ro);
+  }
+
+
+  // halfedge list
+  if (halfedges && !he_points_.empty())
+  {
+    halfedgeVertexDecl_.clear();
+    halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, (unsigned int)&he_points_[0]);
+
+    ro.vertexDecl = &halfedgeVertexDecl_;
+
+    ro.glDrawArrays(GL_LINES, 0, he_points_.size() );
+    _renderer->addRenderObject(&ro);
+  }
+
+
+  if (faces && !f_cache_.empty())
+  {
+    if (mesh_.is_trimesh()) 
+    {
+      ro.vertexDecl = &pointVertexDecl_;
+
+      ro.glDrawElements(GL_TRIANGLES,  f_cache_.size(), GL_UNSIGNED_INT,  &f_cache_[0]);
+      _renderer->addRenderObject(&ro);
+    }
+    else
+    {
+      // implement polygon drawing
+    }
+  }
+}
+
+
+//----------------------------------------------------------------------------
+
 template <class Mesh, class Mod>
 void StatusNodeT<Mesh, Mod>::updateGeometry() {
   invalidGeometry_ = true;
 }
+
 
 template <class Mesh, class Mod>
 void StatusNodeT<Mesh, Mod>::updateTopology() {
