@@ -269,7 +269,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
 
     }
 
-    if(_primitiveType & edgeType_) {
+    if( (_primitiveType & edgeType_) || ( _primitiveType & halfedgeType_ )) {
         //reset tagged status
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
