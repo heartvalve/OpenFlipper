@@ -470,6 +470,8 @@ void ShaderProgGenerator::buildVertexShader()
 
   vertex_->initDefaultUniforms();
 
+  vertex_->addUniform("float g_PointSize");
+
 
   // apply i/o modifiers
   for (int i = 0; i < numModifiers_; ++i)
@@ -549,6 +551,9 @@ void ShaderProgGenerator::buildVertexShader()
 
 void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
 {
+  // size in pixel of rendered point-lists, set by user via uniform
+  _code->push_back("gl_PointSize = g_PointSize;");
+
   _code->push_back("vec4 sg_vPosPS = g_mWVP * inPosition;");
   _code->push_back("vec4 sg_vPosVS = g_mWV * inPosition;");
   _code->push_back("vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);");

@@ -62,6 +62,9 @@
 #include "MaterialNode.hh"
 #include "DrawModes.hh"
 
+#include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/IRenderer.hh>
+
 #include <vector>
 
 
@@ -107,6 +110,15 @@ public:
   /** \brief set selection invalid (Only selection changed, rest is kept)
     */
   void updateSelection();
+
+
+  /** \brief support for shader-pipeline
+  @param _renderer Render-Interface, collector for Renderobjects
+  @param _state current OpenGL state
+  @param _drawMode active Drawmode
+  @param _mat active Material
+  */
+  void getRenderObjects(IRenderer* _renderer, GLState&  _state, const DrawModes::DrawMode&  _drawMode, const class Material* _mat);
 
 
   DrawModes::DrawMode  availableDrawModes() const;
@@ -161,6 +173,10 @@ private:
   bool edgeIndexInvalid_;
   bool faceIndexInvalid_;
 
+
+  // vertex-formats for new renderer
+  VertexDeclaration pointVertexDecl_;
+  VertexDeclaration halfedgeVertexDecl_;
 };
 
 

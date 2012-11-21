@@ -191,6 +191,9 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
   glDisableClientState(GL_INDEX_ARRAY);
 
 
+  // size of a rendered point is set in vertex-shader via gl_PointSize
+  glEnable(GL_PROGRAM_POINT_SIZE);
+
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -274,6 +277,8 @@ void Renderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _prog
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _obj->texture);
   _prog->setUniform("g_Texture0", 0);
+
+  _prog->setUniform("g_PointSize", 5.0f);
 
 
   // lights
