@@ -128,12 +128,14 @@ BaseObject* PlaneObject::copy() {
     return dynamic_cast< BaseObject* >(object);
 }
 
-/** This function initalizes the plane object. It creates the scenegraph nodes.
+/** This function initializes the plane object. It creates the scenegraph nodes.
 */
 void PlaneObject::init(const Plane* _plane) {
 
-  if ( materialNode() == NULL)
+  if ( materialNode() == NULL) {
     std::cerr << "Error when creating Plane Object! materialNode is NULL!" << std::endl;
+    return;
+  }
 
   planeNode_ = new PlaneNode( plane_, materialNode() , "NEW PlaneNode" );
 
@@ -143,6 +145,8 @@ void PlaneObject::init(const Plane* _plane) {
     plane_.setPlane( ACG::Vec3d(0.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0) );
     plane_.setSize( 5.0, 5.0 );
   }
+
+  materialNode()->set_point_size(3.0);
 }
 
 // ===============================================================================
