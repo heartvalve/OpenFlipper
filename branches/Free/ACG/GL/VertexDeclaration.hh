@@ -79,15 +79,7 @@ struct VertexElement
   unsigned int numElements_;    //!< how many elements of type_
   VERTEX_USAGE usage_;          //!< position, normal, shader input ..
   const char* shaderInputName_; //!< set shader input name, if usage_ = VERTEX_USAGE_USER_DEFINED otherwise this is set automatically, if usage_ != VERTEX_USAGE_USER_DEFINED
-  union
-  {
-    /// offset in bytes to the first instance of this element in vertex buffer (data padding allowed)
-    unsigned int byteOffset_;      
-
-    /// if vertex buffer data is in separate memory chunks, this is the pointer to the first vertex element
-    const void* pDataSrc_;
-  };
-  
+  const void* pointer_;         //!< Offset in bytes to the first instance of this element in vertex buffer; Or address to vertex data in system memory
 };
 
 /** \brief Class to define the layout of a vertex element
@@ -196,8 +188,12 @@ public:
 
   /*! append one element to declarations, direct method
   */
-  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage,  const char* _shaderInputName = 0, unsigned int _byteOffset = 0);
+  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, const void* _pointer, const char* _shaderInputName = 0);
   
+  /*! append one element to declarations, direct method
+  */
+  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, unsigned int _byteOffset = 0, const char* _shaderInputName = 0);
+
   /*! append multiple element declarations
   */
   void addElements(unsigned int _numElements, const VertexElement* _pElements);

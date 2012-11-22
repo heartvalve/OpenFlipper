@@ -155,7 +155,7 @@ private:
 private:
 
   const Mesh&                mesh_;
-  std::vector<unsigned int>  v_cache_, e_cache_, f_cache_;
+  std::vector<unsigned int>  v_cache_, e_cache_, f_cache_, poly_cache;
   std::vector<FaceHandle>    fh_cache_;
 
   std::vector<Point>  he_points_;

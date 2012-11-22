@@ -1740,22 +1740,20 @@ DrawMeshT<Mesh>::perFaceTextureIndexAvailable() {
 template <class Mesh>
 void ACG::DrawMeshT<Mesh>::createVertexDeclarations()
 {
-  VertexElement elemArrayV[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {0} },
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {0} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
-
-  VertexElement elemArrayF[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 0, {12} },
-                                 {GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 0, {20} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {36} } };
-
-  vertexDeclVCol_->addElements(4, elemArrayV);
-  vertexDeclFCol_->addElements(4, elemArrayF);
+  vertexDeclVCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  vertexDeclVCol_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
+  vertexDeclVCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+  vertexDeclVCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR);
 
   // VertexDeclaration computes a stride of 36 automatically
   // force 40 bytes instead!
   vertexDeclVCol_->setVertexStride(sizeof(Vertex)); // pad for Vertex::fcol
+
+
+  vertexDeclFCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  vertexDeclFCol_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 12);
+  vertexDeclFCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 20);
+  vertexDeclFCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 36);
 }
 
 
@@ -1765,16 +1763,16 @@ void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
   VertexElement elemArrayEC[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
                                  {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
 
-  elemArrayEC[0].pDataSrc_ = perEdgeVertexBuffer();
-  elemArrayEC[1].pDataSrc_ = perEdgeColorBuffer();
+  elemArrayEC[0].pointer_ = perEdgeVertexBuffer();
+  elemArrayEC[1].pointer_ = perEdgeColorBuffer();
 
   VertexElement elemArrayH =  {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} };
-  elemArrayH.pDataSrc_ = perHalfedgeVertexBuffer();
+  elemArrayH.pointer_ = perHalfedgeVertexBuffer();
 
   VertexElement elemArrayHC[] =  { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
                                  {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
-  elemArrayHC[0].pDataSrc_ = perHalfedgeVertexBuffer();
-  elemArrayHC[1].pDataSrc_ = perHalfedgeColorBuffer();
+  elemArrayHC[0].pointer_ = perHalfedgeVertexBuffer();
+  elemArrayHC[1].pointer_ = perHalfedgeColorBuffer();
 
   vertexDeclEdgeCol_->clear();
   vertexDeclHalfedgeCol_->clear();
