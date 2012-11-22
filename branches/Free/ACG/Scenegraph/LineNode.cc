@@ -382,15 +382,18 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   {
 
     if( (points_.size()/2 == colors4f_.size()) ) {
-      // One color entry per line segment (alpha channel available
+      // One color entry per line segment (alpha channel available )
 
       // TODO : Implement this mode
-    } else if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors_.size()) ) {
+    } else if ( points_.size()/2 == colors_.size() ) {
       // One color entry per line segment (no alpha channel available and uchars as colors)
 
+      std::cerr << "Todo with old style colors" <<std::endl;
       // TODO : Implement this mode
     } else {
       // No colors. Just draw the segments
+
+      std::cerr << "Todo without colors" <<std::endl;
 
       // TODO : Implement this mode
     }
