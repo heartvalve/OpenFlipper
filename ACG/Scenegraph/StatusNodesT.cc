@@ -530,7 +530,6 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.priority = 1;
 
 
-
   // point list
   if (points && !v_cache_.empty())
   {
