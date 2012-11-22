@@ -1760,17 +1760,17 @@ void ACG::DrawMeshT<Mesh>::createVertexDeclarations()
 template <class Mesh>
 void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
 {
-  VertexElement elemArrayEC[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+  VertexElement elemArrayEC[] = { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0 } };
 
   elemArrayEC[0].pointer_ = perEdgeVertexBuffer();
   elemArrayEC[1].pointer_ = perEdgeColorBuffer();
 
-  VertexElement elemArrayH =  {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} };
+  VertexElement elemArrayH =  {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 };
   elemArrayH.pointer_ = perHalfedgeVertexBuffer();
 
-  VertexElement elemArrayHC[] =  { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, {0} },
-                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, {0} } };
+  VertexElement elemArrayHC[] =  { {GL_FLOAT, 3, VERTEX_USAGE_POSITION, 0, 0 },
+                                 {GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 0, 0 } };
   elemArrayHC[0].pointer_ = perHalfedgeVertexBuffer();
   elemArrayHC[1].pointer_ = perHalfedgeColorBuffer();
 
