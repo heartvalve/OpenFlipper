@@ -76,8 +76,8 @@ void VertexDeclaration::addElement(const VertexElement* _pElement)
 void VertexDeclaration::addElement(unsigned int _type,
                                    unsigned int _numElements,
                                    VERTEX_USAGE _usage,
-                                   const char* _shaderInputName, 
-                                   unsigned int _byteOffset)
+                                   const void* _pointer,
+                                   const char* _shaderInputName)
 {
   VertexElement* ve = new VertexElement();
 
@@ -85,7 +85,25 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->numElements_ = _numElements;
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
-  ve->byteOffset_ = _byteOffset;
+  ve->pointer_ = _pointer;
+  addElement(ve);
+
+  delete ve;
+}
+
+void VertexDeclaration::addElement(unsigned int _type,
+                                   unsigned int _numElements,
+                                   VERTEX_USAGE _usage, 
+                                   unsigned int _byteOffset,
+                                   const char* _shaderInputName)
+{
+  VertexElement* ve = new VertexElement();
+
+  ve->type_ = _type;
+  ve->numElements_ = _numElements;
+  ve->usage_ = _usage;
+  ve->shaderInputName_ = _shaderInputName;
+  ve->pointer_ = (void*)_byteOffset;
   addElement(ve);
 
   delete ve;
@@ -113,9 +131,21 @@ void VertexDeclaration::addElements(unsigned int _numElements, const VertexEleme
 
     if (n)
     {
-      const VertexElement* pLastElement = getElement(n-1);
+      // stride = offset of last element + sizeof last element - offset of first element
 
-      vertexStride_ = pLastElement->byteOffset_ + getElementSize( pLastElement ) - getElement(0)->byteOffset_;
+      // union instead of reinterpret_cast for cross-platform compatibility
+      union ptr2uint
+      {
+        unsigned long u;
+        const void* p;
+      } lastOffset, firstOffset;
+
+      firstOffset.p = getElement(0)->pointer_;
+      
+      const VertexElement* pLastElement = getElement(n-1);
+      lastOffset.p = pLastElement->pointer_;
+
+      vertexStride_ = static_cast<unsigned int>(lastOffset.u + getElementSize( pLastElement ) - firstOffset.u);
     }
   }
 
@@ -129,17 +159,26 @@ void VertexDeclaration::updateOffsets()
 
   if (!numElements) return;
 
-  unsigned int curOffset = elements_[0].byteOffset_;
+
+  // union instead of reinterpret_cast for cross-platform compatibility
+  union ptr2uint
+  {
+    unsigned long u;
+    const void* p;
+  };
+
+  ptr2uint curOffset;
+  curOffset.p = elements_[0].pointer_;
 
   for (unsigned int i = 1; i < numElements; ++i)
   {
-    if (elements_[i].byteOffset_)
-      curOffset = elements_[i].byteOffset_;
+    if (elements_[i].pointer_)
+      curOffset.p = elements_[i].pointer_;
 
     else
-      curOffset += getElementSize(&elements_[i-1]);
+      curOffset.u += getElementSize(&elements_[i-1]);
 
-    elements_[i].byteOffset_ = curOffset;
+    elements_[i].pointer_ = curOffset.p;
   }
 }
 
@@ -234,20 +273,20 @@ void VertexDeclaration::activateFixedFunction()
     {
     case VERTEX_USAGE_POSITION:
       {
-        ACG::GLState::vertexPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pDataSrc_);
+        ACG::GLState::vertexPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pointer_);
         ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
       } break;
 
     case VERTEX_USAGE_COLOR:
       {
-        ACG::GLState::colorPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pDataSrc_);
+        ACG::GLState::colorPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pointer_);
         ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       } break;
 
     case VERTEX_USAGE_TEXCOORD:
       {
         glClientActiveTexture(GL_TEXTURE0);
-        ACG::GLState::texcoordPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pDataSrc_);
+        ACG::GLState::texcoordPointer(pElem->numElements_, pElem->type_, vertexStride, pElem->pointer_);
         ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
       } break;
 
@@ -255,7 +294,7 @@ void VertexDeclaration::activateFixedFunction()
       {
         assert(pElem->numElements_ == 3);
 
-        ACG::GLState::normalPointer(pElem->type_, vertexStride, pElem->pDataSrc_);
+        ACG::GLState::normalPointer(pElem->type_, vertexStride, pElem->pointer_);
         ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
       } break;
 
@@ -290,7 +329,7 @@ void VertexDeclaration::activateShaderPipeline(GLSL::Program* _prog) const
       if (pElem->usage_ == VERTEX_USAGE_BLENDINDICES)
         normalizeElem = GL_FALSE;
 
-      glVertexAttribPointer(loc, pElem->numElements_,  pElem->type_, normalizeElem, vertexStride, pElem->pDataSrc_);
+      glVertexAttribPointer(loc, pElem->numElements_,  pElem->type_, normalizeElem, vertexStride, pElem->pointer_);
       glEnableVertexAttribArray(loc);
 
     }
@@ -393,7 +432,7 @@ QString VertexDeclaration::toString() const
                << ", count: " << el->numElements_
                << ", usage: " << usage
                << ", shader-input: " << el->shaderInputName_
-               << ", offset: " << el->byteOffset_ << "]\n";
+               << ", offset: " << el->pointer_ << "]\n";
   }
 
   return result;

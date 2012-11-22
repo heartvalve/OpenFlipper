@@ -224,6 +224,41 @@ update_cache()
         fh_cache_.push_back(f_it);
       }
     }
+
+
+    if (!mesh_.is_trimesh())
+    {
+      // triangulate poly-list
+      poly_cache.resize(0);
+
+      typename std::vector<FaceHandle>::const_iterator  fh_it(fh_cache_.begin()),
+        fh_end(fh_cache_.end());
+      typename Mesh::CFVIter                            fv_it;
+
+      for (; fh_it!=fh_end; ++fh_it) 
+      {
+        fv_it = mesh_.cfv_iter(*fh_it);
+
+        // 1. polygon vertex
+        unsigned int v0 = fv_it.handle().idx();
+
+        // go to next vertex
+        ++fv_it;
+        unsigned int vPrev = fv_it.handle().idx();
+
+        // create triangle fans pointing towards v0
+        for (; fv_it; ++fv_it) 
+        {
+          poly_cache.push_back(v0);
+          poly_cache.push_back(vPrev);
+
+          vPrev = fv_it.handle().idx();
+          poly_cache.push_back(vPrev);
+        }
+      }
+    }
+
+
     faceIndexInvalid_ = false;
   }
 
@@ -493,6 +528,12 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   // Call updater function before doing anything
   update_cache();
 
+  bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
+			       DrawModes::SOLID_SMOOTH_SHADED |
+			       DrawModes::SOLID_PHONG_SHADED |
+			       DrawModes::SOLID_TEXTURED_SHADED |
+			       DrawModes::POINTS_SHADED ));
+
   bool points = ((drawMode() == DrawModes::DEFAULT) |
     (_drawMode & DrawModes::POINTS));
 
@@ -516,15 +557,13 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.setMaterial(_mat);
 
   pointVertexDecl_.clear();
+  pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, mesh_.points());
 
-  VertexElement el;
-  el.type_ = GL_DOUBLE;
-  el.numElements_ = 3;
-  el.usage_ = VERTEX_USAGE_POSITION;
-  el.shaderInputName_ = 0;
-  el.pDataSrc_ = mesh_.points();
-//  pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, reinterpret_cast<unsigned int>(mesh_.points()));
-  pointVertexDecl_.addElement(&el);
+  if (shaded && mesh_.has_vertex_normals()) 
+    pointVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_NORMAL, mesh_.vertex_normals());
+
+  pointVertexDecl_.setVertexStride(24); // separated buffers, double3:  24 bytes
+
 
   // draw status later than scene
   ro.priority = 1;
@@ -549,18 +588,30 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   }
 
 
+  if (faces && !f_cache_.empty())
+  {
+    ro.vertexDecl = &pointVertexDecl_;
+
+    if (mesh_.is_trimesh()) 
+    {
+      ro.glDrawElements(GL_TRIANGLES,  f_cache_.size(), GL_UNSIGNED_INT,  &f_cache_[0]);
+      _renderer->addRenderObject(&ro);
+    }
+    else
+    {
+      ro.glDrawElements(GL_TRIANGLES,  poly_cache.size(), GL_UNSIGNED_INT,  &poly_cache[0]);
+      _renderer->addRenderObject(&ro);
+    }
+  }
+
+
   // halfedge list
   if (halfedges && !he_points_.empty())
   {
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
     halfedgeVertexDecl_.clear();
-    VertexElement el;
-    el.type_ = GL_DOUBLE;
-    el.numElements_ = 3;
-    el.usage_ = VERTEX_USAGE_POSITION;
-    el.shaderInputName_ = 0;
-    el.pDataSrc_ = &he_points_[0];
-//    halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, 0, reinterpret_cast<unsigned int>(&he_points_[0]));
-    halfedgeVertexDecl_.addElement(&el);
+    halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, &he_points_[0]);
 
     ro.vertexDecl = &halfedgeVertexDecl_;
 
@@ -569,20 +620,6 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   }
 
 
-  if (faces && !f_cache_.empty())
-  {
-    if (mesh_.is_trimesh())
-    {
-      ro.vertexDecl = &pointVertexDecl_;
-
-      ro.glDrawElements(GL_TRIANGLES,  f_cache_.size(), GL_UNSIGNED_INT,  &f_cache_[0]);
-      _renderer->addRenderObject(&ro);
-    }
-    else
-    {
-      // implement polygon drawing
-    }
-  }
 }
 
 
