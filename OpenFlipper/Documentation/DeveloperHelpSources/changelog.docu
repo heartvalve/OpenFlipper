@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15755 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15858 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -11,8 +11,11 @@
          - Interface: RayCollision is now a sorted vector conbining standard pairs of the hit handles and their distance to the hit
          - Interface: Render Interface: Implemented capabilities check for renderer interface
          - Interface: ACG, Renamed the basecolor functions in the core to defaultColor
+         - Bugfix: Emit object updates for all objects in scene, if -1 is given as updated object. (Should not be used, as it is very slow for a large object count!)
          - Logic: if an object gets deleted, no updatedObject (-1) signal will be emitted now. Use the objectDeleted slot from LoadSaveInterface.
          - Build: Default to relesae build type by default 
+         - Interface: Changed selection interface the qicons have been replaced by QString. The path to the icon has to be given now This avoids the problem of qpixmap creation in the selection plugins, when no gui is present Added deprecation warning, to informa about deprecated plugin interface usage
+         - Interface: Don't emit updatedObject(-1) anymore if an object gets deleted. Use the slot objectDeleted from LoadSaveInterface instead.
      - <b>ACG</b>
          - General
              - Added simple scenegraph analysis function to get bounding box and multipass number
@@ -58,6 +61,8 @@
          - Help Browser:
              - Unregister old doc files correctly
              - Fixed startpage for windows
+             - fix: does not unregister help files if unnecessary
+         - Fix: Don't create icons, when no gui is available
      - <b>Interfaces</b>
          - RPC Interface
              - Support for rpc calls with return value and up to 6 parameters
@@ -66,8 +71,13 @@
      - <b>ObjectTypes</b>
          - General
              - Speedup: Removed the get_unique_name functions when adding any object, as this would cause linear time when adding new objects.
+             - Merged the two implementations of QtPlaneSelect.
+         - Plane
+             - Get rid of immidiate mode when rendering
          - PolyLine
              - Added function to create circles
+             - Follow new color spec in polyline nodes
+             - Fixed picking through object when using polyline interaction.
          - Skeleton
              - Added include guard to AnimationHandle class
          - VolumeMesh
@@ -109,9 +119,16 @@
              - Added scripting function for the transformation of handle vertices.
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters)
+         - Render Shader Pipeline
+             - New renderrer, based on a shader replacement of the standard pipeline
          - Property Vis
              - Increased maximal allowed scaling factor for vectors
              - Support build without skeleton data type
+             - Refactored, new features:
+	         - Changed plugin's architecture so that it can now be extended to support generic object types (implementation for OpenVolumeMesh has been added).
+                 - Read/write properties from/into files. Also reading props into existing properties is now supported.
+                 - Multiple properties can be selected (multiple toolboxes appear) and combined.
+                 - Documentation has been added.
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
          - SelectionBase
@@ -119,8 +136,11 @@
          - SelectionMeshObject
              - Fixed action mode toggling via meta or alt keys
              - Made conversion function scriptable
+             - Fixed bug in selection plugin when switching between halfedge and edge selection with sphere
          - Skeletal Animation
              - Speedup Skeletal Animation Plugin by only caching skeletons.
+         - Type PolyLine
+             - Only add frounding math, if cgal is actually used
          - Type Splat Cloud
              - Name group after splatcloud
          - ViewControl
