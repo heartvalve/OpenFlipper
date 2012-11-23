@@ -99,6 +99,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
     if (w->vectors_edges_rb->isChecked()) visualizeFacePropOnEdges();
     else if (w->vectors_colors_rb->isChecked())
     {
+        if ( !OMPropertyVisualizer<MeshT>::mesh->has_face_colors() )
+            OMPropertyVisualizer<MeshT>::mesh->request_face_colors();
         visualizeVectorAsColorForEntity<OpenMesh::FPropHandleT<typename MeshT::Point> >(
                     OMPropertyVisualizer<MeshT>::mesh,
                     OMPropertyVisualizer<MeshT>::mesh->faces_begin(),
@@ -115,6 +117,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
     {
+        if ( !OMPropertyVisualizer<MeshT>::mesh->has_edge_colors() )
+            OMPropertyVisualizer<MeshT>::mesh->request_edge_colors();
         MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
         if ( !mesh->has_edge_colors() )
             mesh->request_edge_colors();
@@ -130,6 +134,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
     {
+        if ( !OMPropertyVisualizer<MeshT>::mesh->has_halfedge_colors() )
+            OMPropertyVisualizer<MeshT>::mesh->request_halfedge_colors();
         MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
         if ( ! mesh->has_halfedge_colors() )
             mesh->request_halfedge_colors();
@@ -145,6 +151,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
     {
+        if ( !OMPropertyVisualizer<MeshT>::mesh->has_vertex_colors() )
+            OMPropertyVisualizer<MeshT>::mesh->request_vertex_colors();
         visualizeVectorAsColorForEntity<OpenMesh::VPropHandleT<typename MeshT::Point> >(
                     OMPropertyVisualizer<MeshT>::mesh,
                     OMPropertyVisualizer<MeshT>::mesh->vertices_begin(),
