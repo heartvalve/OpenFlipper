@@ -100,7 +100,6 @@ ShaderGenerator is used to collect shader io, uniforms, defines and includes.
 The shader main-function is not generated here and must be provided
 as a parameter to the buildShaderCode function.
 */
-
 class ACGDLLEXPORT ShaderGenerator
 {
 public:
@@ -205,15 +204,15 @@ private:
   QStringList genDefines_;
 };
 
+
+
 /**
-ShaderProgGenerator is responsible for generating a matching pair of vertex and fragment shaders.
-*/
-
-// A shader modifier can modify uniforms, in/outputs 
-// and glsl code of vertex and fragment shaders.
-// This is useful for global effects like shadow mapping
-// and depth peeling, where only a little changes in code are necessary.
-
+ *
+ * A shader modifier can modify uniforms, in/outputs
+ * and glsl code of vertex and fragment shaders.
+ * This is useful for global effects like shadow mapping
+ * and depth peeling, where only a little changes in code are necessary.
+ */
 class ACGDLLEXPORT ShaderModifier
 {
   friend class ShaderProgGenerator;
@@ -230,7 +229,6 @@ public:
   virtual void modifyFragmentBeginCode(QStringList* _code) {}
   virtual void modifyFragmentEndCode(QStringList* _code) {}
 
-
   unsigned int getID() {return modifierID_;}
 
   operator unsigned int() const {return modifierID_;}
@@ -239,6 +237,10 @@ private:
   unsigned int modifierID_;
 };
 
+
+/**
+ShaderProgGenerator is responsible for generating a matching pair of vertex and fragment shaders.
+*/
 class ACGDLLEXPORT ShaderProgGenerator
 {
 public:

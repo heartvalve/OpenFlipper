@@ -103,10 +103,10 @@ MeshNodeT(const Mesh&  _mesh,
     bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
     bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
-  faceList_ = glGenLists (1);
+  faceList_   = glGenLists (1);
   vertexList_ = glGenLists (1);
-  edgeList_ = glGenLists (1);
-  anyList_ = glGenLists (3);
+  edgeList_   = glGenLists (1);
+  anyList_    = glGenLists (3);
 }
 
 
