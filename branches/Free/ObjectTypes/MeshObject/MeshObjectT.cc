@@ -185,6 +185,7 @@
     else
       mesh_ = new MeshT(*_mesh);
 
+    // Prepare mesh and request required properties
     mesh_->request_vertex_normals();
     mesh_->request_face_normals();
     mesh_->request_vertex_status();
@@ -193,18 +194,53 @@
     mesh_->request_edge_status();
     mesh_->request_vertex_colors();
     mesh_->request_face_colors();
-//     mesh_->request_vertex_texcoords2D();
-//     mesh_->request_halfedge_texcoords2D();
-//     mesh_->request_face_texture_index();
-
 
     // Only initialize scenegraph nodes when we initialized a gui!!
     if ( OpenFlipper::Options::nogui() )
       return;
 
-
+    // This should never happen!
     if ( manipulatorNode() == NULL)
-          std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
+      std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
+
+
+    textureNode_ = new ACG::SceneGraph::EnvMapNode(materialNode(),"NEW TextureNode for ", true, GL_LINEAR_MIPMAP_LINEAR );
+
+    shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode() , "NEW ShaderNode for ");
+
+    meshNode_    = new ACG::SceneGraph::MeshNodeT<MeshT>(*mesh_, shaderNode_, "NEW MeshNode");
+
+    QString shaderDir = OpenFlipper::Options::shaderDirStr() + OpenFlipper::Options::dirSeparator();
+
+    std::string shaderDirectory = std::string( shaderDir.toUtf8() );
+    shaderNode_->setShaderDir( shaderDirectory );
+
+
+    if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() )
+      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED,"Phong/Vertex.glsl" , "Phong/Fragment.glsl" );
+    else
+      std::cerr << "Shader Files for Phong not found!" << std::endl;
+
+     if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
+
+       shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER, "Ward/Vertex.glsl" , "Ward/Fragment.glsl" );
+
+       // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
+       GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
+       if ( shader == 0 ) {
+         std::cerr << "Unable to get shader for shader mode" << std::endl;
+       } else {
+         shader->use();
+
+         shader->setUniform("ward_specular" , 0.5f);
+         shader->setUniform("ward_diffuse"  , 3.0f);
+         shader->setUniform("ward_alpha"    , 0.2f);
+
+         shader->disable();
+       }
+
+     } else
+       std::cerr << "Shader Files for Ward not found!!" << std::endl;
 
     // Node showing selection
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
@@ -237,52 +273,7 @@
     featureNode_->set_base_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
 
 
-    if ( materialNode() == NULL)
-		std::cerr << "Error when creating Mesh Object! materialNode is NULL!" << std::endl;
 
-    textureNode_ = new ACG::SceneGraph::EnvMapNode(materialNode(),"NEW TextureNode for ", true, GL_LINEAR_MIPMAP_LINEAR );
-
-    shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode() , "NEW ShaderNode for ");
-
-    meshNode_    = new ACG::SceneGraph::MeshNodeT<MeshT>(*mesh_, shaderNode_, "NEW MeshNode");
-
-    QString shaderDir = OpenFlipper::Options::shaderDirStr() +
-                        OpenFlipper::Options::dirSeparator();
-
-    std::string shaderDirectory = std::string( shaderDir.toUtf8() );
-    shaderNode_->setShaderDir( shaderDirectory );
-
-
-
-    if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() ) {
-      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED,
-                            "Phong/Vertex.glsl" ,
-                            "Phong/Fragment.glsl" );
-    } else
-      std::cerr << "Shader Files for Phong not found!" << std::endl;
-
-    if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
-
-      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER,
-                              "Ward/Vertex.glsl" ,
-                              "Ward/Fragment.glsl" );
-
-      // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
-      GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
-      if ( shader == 0 ) {
-        std::cerr << "Unable to get shader for shader mode" << std::endl;
-      } else {
-        shader->use();
-
-        shader->setUniform("ward_specular" , 0.5f);
-        shader->setUniform("ward_diffuse"  , 3.0f);
-        shader->setUniform("ward_alpha"    , 0.2f);
-
-        shader->disable();
-      }
-
-    } else
-        std::cerr << "Shader Files for Ward not found!!" << std::endl;
 
     // Update all nodes
     update();
@@ -381,6 +372,7 @@
   /** Updates the selection scenegraph nodes */
   template < class MeshT  >
   void MeshObject< MeshT >::updateSelection() {
+
     if ( statusNode_ )
       statusNode_->updateSelection();
   }
