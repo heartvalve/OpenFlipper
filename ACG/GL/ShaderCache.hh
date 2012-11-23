@@ -59,21 +59,35 @@ namespace ACG {
 
 /** \brief Cache for shaders
  *
- * This class is a singleton
  *
- * Query a GLSL::Program via getProgram by specifying a ShaderGenDesc.
- * Generates and compiles the shader eventually.
+ * This class provides a cache for shaders. You can query a GLSL::Program via getProgram
+ * by specifying a ShaderGenDesc. If the program has already been compiled, it is returned
+ * from the cache. Otherwise it will be compiled and linked, added to the cache and returned.
+ * This ensures, that the shader is not compiled and linked every time, it is used.
+ *
+ * \note This class is a singleton
+ *
 */
 class ACGDLLEXPORT ShaderCache
 {
 public:
 
+  /// Destructor
   virtual ~ShaderCache();
 
-
+  /** \brief Return instance of the ShaderCache singleton
+   *
+   * @return Instance
+   */
   static ShaderCache* getInstance();
 
 
+  /** \brief Query a program from cache
+   *
+   * @param _desc  Shader description
+   * @param _usage Additional usage identifier
+   * @return The program (Either from cache or newly compiled and linked)
+   */
   GLSL::Program* getProgram(const ShaderGenDesc* _desc, unsigned int _usage = 0);
 
 protected:

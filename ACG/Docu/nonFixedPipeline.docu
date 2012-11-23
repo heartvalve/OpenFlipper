@@ -22,8 +22,13 @@ The ShaderGenerator class can be used to generate default GLSL shader code.
 Via shader specific information stored in the ShaderGenDesc struct in the RenderObject attached to a scene node, we can specify the shader input and output
 with the functions ShaderGenerator::initVertexShaderIO and ShaderGenerator::initFragmentShaderIO.
 
+
 \subsection shaderCache The Shader Cache
-The ShaderCache singleton.
+The Shader Cache singleton class should be used to manage the used shaders. You can query a shader
+from the cache via a shader description. If it is already available, it will be returned from
+the cache. Otherwise, it is compiled and linked. This ensures more efficient and
+redundancy free shader management. ( ACG::ShaderCache )
+
 
 \subsection glslShader The GLSL Shader
 The Shader class is a helper class for building and using GLSL programs
