@@ -569,6 +569,10 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   ro.priority = 1;
 
 
+  // enable lighting
+  if (shaded)
+    ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+
   // point list
   if (points && !v_cache_.empty())
   {
