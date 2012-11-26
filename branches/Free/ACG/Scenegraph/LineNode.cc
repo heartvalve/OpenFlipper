@@ -374,9 +374,13 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
   // init base render object
   RenderObject ro;
-  memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
   ro.setMaterial(_mat);
+
+  ro.debugName = "LineNode";
+
+  // draw after scene-meshes
+  ro.priority = 1;
 
   if (line_mode_ == LineSegmentsMode)
   {
@@ -438,7 +442,9 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
     ro.vertexBuffer = vbo_;
 
-    VertexDeclaration vertexDecl;
+    // decl must be static or member,  renderer does not make a copy
+    static VertexDeclaration vertexDecl;
+    vertexDecl.clear();
     vertexDecl.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
 
     ro.vertexDecl = &vertexDecl;
