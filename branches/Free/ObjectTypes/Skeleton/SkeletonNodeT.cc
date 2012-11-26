@@ -773,7 +773,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
 
   Vec4f jointColor;
-  getJointColor(_state.base_color(), jointColor);
+  getJointColor(_mat->baseColor(), jointColor);
 
 
   // draw points
@@ -782,44 +782,27 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
   {
     const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
 
-    ro.setupShaderGenFromDrawmode(props);
-
     switch (props->primitive())
     {
 
     case DrawModes::PRIMITIVE_POINT:
       {
-        ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
-
         ro.debugName = "SkeletonNode.point";
-
-        Vec3f oldSpecular = ro.specular;
-        Vec3f oldDiffuse = ro.diffuse;
+        ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
         for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
         {
           // If the vertex is selected, it will be always red
           // If it is not selected,
           if ( (*it)->selected() )
-          {
-            ro.diffuse = Vec3f(1.0f, 0.0f, 0.0f);
-            ro.specular = Vec3f(1.0f, 0.0f, 0.0f);
             ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
-          }
           else {
             // If it is the root joint, it will get some kind of orange color
             // Otherwise the the Base color is used
             if ( (*it)->isRoot() )
-            {
-              ro.diffuse = Vec3f(1.0f, 0.66f, 0.0f);
-              ro.specular = Vec3f(1.0f, 0.66f, 0.0f);
               ro.emissive = Vec3f(1.0f,0.66f, 0.0f);
-            }
-            else {
-              ro.diffuse = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
-              ro.specular = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+            else
               ro.emissive = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
-            }
           }
 
           //---------------------------------------------------
@@ -845,18 +828,16 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
           sphere_->addToRenderer(_renderer, &ro, sphereSize, ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
         }
 
-        // reset material colors in case skeleton polygons are rendered later
-        ro.specular = oldSpecular;
-        ro.diffuse = oldDiffuse;
-
       } break;
 
 
     default:
       {
         ro.debugName = "SkeletonNode.bone";
+        
+        ro.setupShaderGenFromDrawmode(props);
 
-        Vec4f baseColor = _state.base_color();
+        Vec4f baseColor = _mat->baseColor();
 
         // draw the bones
         for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
