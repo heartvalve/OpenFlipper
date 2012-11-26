@@ -303,7 +303,6 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   // init base render object
   ACG::RenderObject ro;
-  memset(&ro, 0, sizeof(ACG::RenderObject));
 
   _state.enable(GL_COLOR_MATERIAL);
   _state.disable(GL_LIGHTING);
