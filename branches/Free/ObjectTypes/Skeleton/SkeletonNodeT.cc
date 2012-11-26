@@ -760,7 +760,6 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
   RenderObject ro;
   ro.initFromState(&_state);
 
-
   // render states
   ro.depthTest = true;
   ro.depthWrite = true;
@@ -790,6 +789,10 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
     case DrawModes::PRIMITIVE_POINT:
       {
+        ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+
+        ro.debugName = "SkeletonNode.point";
+
         Vec3f oldSpecular = ro.specular;
         Vec3f oldDiffuse = ro.diffuse;
 
@@ -801,6 +804,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
           {
             ro.diffuse = Vec3f(1.0f, 0.0f, 0.0f);
             ro.specular = Vec3f(1.0f, 0.0f, 0.0f);
+            ro.emissive = Vec3f(1.0f, 0.0f, 0.0f);
           }
           else {
             // If it is the root joint, it will get some kind of orange color
@@ -809,10 +813,12 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
             {
               ro.diffuse = Vec3f(1.0f, 0.66f, 0.0f);
               ro.specular = Vec3f(1.0f, 0.66f, 0.0f);
+              ro.emissive = Vec3f(1.0f,0.66f, 0.0f);
             }
             else {
               ro.diffuse = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
               ro.specular = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
+              ro.emissive = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
             }
           }
 
@@ -848,6 +854,8 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
     default:
       {
+        ro.debugName = "SkeletonNode.bone";
+
         Vec4f baseColor = _state.base_color();
 
         // draw the bones
@@ -864,6 +872,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
           //select joint color
           ro.emissive = Vec3f(baseColor[0], baseColor[1], baseColor[2]);
+          ro.specular = Vec3f(0.0f, 0.0f, 0.0f);
 
           Vec3d parentPos = pose->globalTranslation(parent->id());
           Vec3d jointPos  = pose->globalTranslation(joint->id());
