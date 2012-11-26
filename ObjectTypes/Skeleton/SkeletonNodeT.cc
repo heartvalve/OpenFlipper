@@ -323,14 +323,14 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
   if (_drawMode == DrawModes::POINTS)
   {
     Vec4f jointColor;
-    getJointColor(_state.base_color(), jointColor);
+    getJointColor(_state.ambient_color(), jointColor);
     
     // draw all joint positions
     glPointSize(12);
 
     //we will set the specular color, otherwise the color cannot be seen
     ACG::Vec4f oldSpecular = _state.specular_color();
-    ACG::Vec4f oldDiffuse = _state.diffuse_color();
+    ACG::Vec4f oldDiffuse  = _state.diffuse_color();
                 
     for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
     {
@@ -348,10 +348,13 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
         if ( (*it)->isRoot() )
         {
         	ACG::Vec4f root_color = ACG::Vec4f(1.0, 0.66, 0.0 ,1.0);
+        	_state.set_color(root_color);
         	_state.set_diffuse_color(root_color);
         	_state.set_specular_color(root_color);
         }
         else {
+        	_state.set_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
+        	_state.set_ambient_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         	_state.set_diffuse_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         	_state.set_specular_color(ACG::Vec4f(jointColor[0], jointColor[1] , jointColor[2], 1.0));
         }
@@ -416,7 +419,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
     || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
   {
     
-    Vec4f baseColor = _state.base_color();
+    Vec4f baseColor = _state.ambient_color();
     
     if ( (_drawMode == DrawModes::SOLID_FLAT_SHADED)
       || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ){
@@ -773,7 +776,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
 
   Vec4f jointColor;
-  getJointColor(_mat->baseColor(), jointColor);
+  getJointColor(_mat->specularColor(), jointColor);
 
 
   // draw points
@@ -837,7 +840,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         
         ro.setupShaderGenFromDrawmode(props);
 
-        Vec4f baseColor = _mat->baseColor();
+        Vec4f baseColor = _mat->ambientColor();
 
         // draw the bones
         for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
@@ -864,6 +867,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         }
 
 
+        break;
       }
     }
   }
