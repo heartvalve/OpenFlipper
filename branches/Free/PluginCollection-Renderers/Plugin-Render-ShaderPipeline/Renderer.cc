@@ -211,7 +211,7 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
     renderObject(sortedObjects[i]);
 
 
-  // restore commmon opengl state
+  // restore common opengl state
   // log window remains hidden otherwise
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
