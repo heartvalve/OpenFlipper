@@ -368,29 +368,37 @@ void Renderer::bindObjectRenderStates(ACG::RenderObject* _obj)
 
 void Renderer::drawObject(ACG::RenderObject* _obj)
 {
-  // indexed drawing?
-  bool noIndices = true;
-  if (_obj->indexBuffer || _obj->sysmemIndexBuffer)
-    noIndices = false;
+  if (_obj->numIndices)
+  {
+    // indexed drawing?
+    bool noIndices = true;
+    if (_obj->indexBuffer || _obj->sysmemIndexBuffer)
+      noIndices = false;
 
-  glPolygonMode(GL_FRONT_AND_BACK, _obj->fillMode);
+    glPolygonMode(GL_FRONT_AND_BACK, _obj->fillMode);
 
-  if (noIndices)
-    glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+    if (noIndices)
+      glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+    else
+    {
+      // ------------------------------------------
+      // index offset stuff not tested
+      int indexSize = 0;
+      switch (_obj->indexType)
+      {
+      case GL_UNSIGNED_INT: indexSize = 4; break;
+      case GL_UNSIGNED_SHORT: indexSize = 2; break;
+      default: indexSize = 1; break;
+      }
+
+      glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
+        ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
+    }
+  }
   else
   {
-    // ------------------------------------------
-    // index offset stuff not tested
-    int indexSize = 0;
-    switch (_obj->indexType)
-    {
-    case GL_UNSIGNED_INT: indexSize = 4; break;
-    case GL_UNSIGNED_SHORT: indexSize = 2; break;
-    default: indexSize = 1; break;
-    }
-
-    glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
-      ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
+    // user defined draw-call
+    _obj->executeImmediateMode();
   }
 }
 

@@ -269,6 +269,14 @@ struct ACGDLLEXPORT RenderObject
   void setupShaderGenFromDrawmode(const SceneGraph::DrawModes::DrawModeProperties* _props);
 
 
+  /** \brief Whenever the need for glBegin() glEnd() immediate mode arises,
+       this can be implemented by a deriving class of RenderObject.
+       Also it gets called only if numIndices is set to 0.
+       glBegin and glEnd have to be called in here.
+  */
+  virtual void executeImmediateMode();
+
+
   /** Returns a text representation of the RenderObject for debugging purposes.
   */
   QString toString() const;
