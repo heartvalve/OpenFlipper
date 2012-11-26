@@ -159,10 +159,44 @@ void RenderObject::setMaterial( const SceneGraph::Material* _mat )
 
 
 RenderObject::RenderObject()
+: priority(0),
+  vertexBuffer(0), indexBuffer(0), sysmemIndexBuffer(0),
+  primitiveMode(GL_TRIANGLES), numIndices(0), indexOffset(0), indexType(GL_UNSIGNED_INT),
+  vertexDecl(0), 
+  culling(true), blending(false), alphaTest(false),
+  depthTest(true), depthWrite(true),
+  fillMode(GL_FILL), depthFunc(GL_LESS), 
+  blendSrc(GL_SRC_ALPHA), blendDest(GL_ONE_MINUS_SRC_ALPHA),
+  depthRange(0.0f, 1.0f), 
+
+  diffuse(0.6f, 0.6f, 0.6f), ambient(0.1f, 0.1f, 0.1f),
+  specular(0.0f, 0.0f, 0.0f), emissive(0.05f, 0.05f, 0.05f),
+  alpha(1.0f), shininess(100.0f),
+
+  texture(0), 
+  
+  debugID(0), debugName(0),
+  internalFlags_(0)
+
 {
-  memset(this, 0, sizeof(RenderObject));
+
+  // set modelview and proj to identity
+  float I[16] = {1.0f, .0f, .0f, .0f,
+                 .0f, 1.0f, .0f, .0f,
+                 .0f, .0f, 1.0f, .0f,
+                 .0f, .0f, .0f, 1.0f};
+
+  modelview = GLMatrixf(I);
+  proj = modelview;
+
+  memset(&shaderDesc, 0, sizeof(shaderDesc));
+  colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
 }
 
+void RenderObject::executeImmediateMode()
+{
+  // implemented by deriving class
+}
 
 QString RenderObject::toString() const
 {
