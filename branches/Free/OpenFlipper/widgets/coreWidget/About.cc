@@ -435,7 +435,6 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->append(tr("OpenGL Specific Info:"));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
-
   QString vendor = QString((const char*)glGetString(GL_VENDOR));
   aboutWidget_->OpenFlipperAbout->append(tr("Vendor:\t") + vendor);
   QString renderer = QString((const char*)glGetString(GL_RENDERER));
@@ -467,10 +466,30 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================
   // OpenGL Extensions
   // =====================================================================================
+  aboutWidget_->OpenFlipperAbout->append("\n");
   aboutWidget_->OpenFlipperAbout->append(tr("Supported Extensions:"));
   QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
   aboutWidget_->OpenFlipperAbout->append(glExtensions);
   
+
+  // =====================================================================================
+  // OpenGL Properties
+  // =====================================================================================
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("OpenGL Values:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
+  GLint getBuffer[2];
+  glGetIntegerv(GL_MAX_VIEWPORT_DIMS,  &getBuffer[0] );
+  aboutWidget_->OpenFlipperAbout->append(tr("Maximal Viewport size(GL_MAX_VIEWPORT_DIMS):\t\t\t\t ") + QString::number(getBuffer[0]) + "x" + QString::number(getBuffer[1]) );
+
+  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,  &getBuffer[0] );
+  aboutWidget_->OpenFlipperAbout->append(tr("Maximum supported texture image units(GL_MAX_TEXTURE_IMAGE_UNITS):\t") + QString::number(getBuffer[0]) );
+
+
+
+
+
   
   // =====================================================================================
   // glu Information
