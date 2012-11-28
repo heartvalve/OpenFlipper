@@ -739,13 +739,6 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
   // support for projective texture mapping
   _code->push_back("vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);");
 
-  // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyFragmentBeginCode(_code);
-  }
-
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
@@ -766,6 +759,14 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
   {
     _code->push_back("vec4 sg_cTex = texture(g_Texture0, outTexCoord);");
     _code->push_back("sg_cColor *= sg_cTex;");
+  }
+
+  
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyFragmentBeginCode(_code);
   }
 }
 
