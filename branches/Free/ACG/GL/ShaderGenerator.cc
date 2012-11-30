@@ -796,7 +796,7 @@ void ShaderProgGenerator::addLightingCode(QStringList* _code)
     switch (lgt)
     {
     case SG_LIGHT_DIRECTIONAL:
-      buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vNormalVS, g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d);", i, i, i, i);
+      buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d);", i, i, i, i);
       break;
 
     case SG_LIGHT_POINT:
