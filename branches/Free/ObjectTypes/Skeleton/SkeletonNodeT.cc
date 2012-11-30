@@ -776,11 +776,9 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
 
   Vec4f jointColor;
-  getJointColor(_mat->specularColor(), jointColor);
-
+  getJointColor(_mat->diffuseColor(), jointColor);
 
   // draw points
-
   for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
   {
     const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
@@ -840,7 +838,7 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         
         ro.setupShaderGenFromDrawmode(props);
 
-        Vec4f baseColor = _mat->ambientColor();
+        ro.setMaterial(_mat);
 
         // draw the bones
         for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
@@ -853,10 +851,6 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
           // we only want to draw bones from (parent -> joint)
           if (parent == 0)
             continue;
-
-          //select joint color
-          ro.emissive = Vec3f(baseColor[0], baseColor[1], baseColor[2]);
-          ro.specular = Vec3f(0.0f, 0.0f, 0.0f);
 
           Vec3d parentPos = pose->globalTranslation(parent->id());
           Vec3d jointPos  = pose->globalTranslation(joint->id());
