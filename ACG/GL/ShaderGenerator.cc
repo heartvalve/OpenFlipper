@@ -561,7 +561,7 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode != SG_SHADE_UNLIT)
-    _code->push_back("sg_vNormalVS = g_mWVIT * inNormal;");
+    _code->push_back("sg_vNormalVS = normalize(g_mWVIT * inNormal);");
 
   if (desc_.textured)
     _code->push_back("sg_vTexCoord = inTexCoord;");
