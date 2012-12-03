@@ -96,99 +96,118 @@ struct ShaderGenDesc
 
 
 
-/*
-list of automatically generated shader uniforms:
+/** \page ShaderGenerator_page Shader Generator
 
-mat4 g_mWVP  - world-view-projection transform
-mat4 g_mWV   - world-view transform
-mat4 g_mWVIT - inverse transpose of world view matrix
-mat4 g_mP    - projection matrix
+\section ShaderGenerator_auto_shader_uniforms Automatically generated Shader Uniforms
 
-vec3 g_cDiffuse - diffuse color
-vec3 g_cAmbient - ambient color
-vec3 g_cEmissive - emissive color
-vec3 g_cSpecular - specular color
-vec4 g_vMaterial - vec4(shininess, alpha, unused, unused)
+\subsection Matrix
+\code
+  mat4 g_mWVP  - world-view-projection transform
+  mat4 g_mWV   - world-view transform
+  mat4 g_mWVIT - inverse transpose of world view matrix
+  mat4 g_mP    - projection matrix
+\endcode
 
-
-- light parameters denoted by zero-based index i
-vec3 g_cLightDiffuse_i   - diffuse color
-vec3 g_cLightAmbient_i   - ambient color
-vec3 g_cLightSpecular_i  - specular color
-vec3 g_vLightPos_i       - position in view space (for point and spot lights only)
-vec3 g_vLightAtten_i     - [constant, linear, quadratic] attenuation factors (for point and spot lights only)
-vec3 g_vLightDir_i       - light direction in view space (for spot and directional lights only)
-vec2 g_vLightAngleExp_i  - [cos(spotCutOffAngle), spot exponent] (for spot lights only)
-
-sampler2D g_Texture0     - texture sampler (if textured is enabled in ShaderGenDesc)
+\subsection Color
+\code
+  vec3 g_cDiffuse - diffuse color
+  vec3 g_cAmbient - ambient color
+  vec3 g_cEmissive - emissive color
+  vec3 g_cSpecular - specular color
+  vec4 g_vMaterial - vec4(shininess, alpha, unused, unused)
+\endcode
 
 
+\subsection Lighting
 
-------------------
+\code
+  // light parameters denoted by zero-based index i
+  vec3 g_cLightDiffuse_i   - diffuse color
+  vec3 g_cLightAmbient_i   - ambient color
+  vec3 g_cLightSpecular_i  - specular color
+  vec3 g_vLightPos_i       - position in view space (for point and spot lights only)
+  vec3 g_vLightAtten_i     - [constant, linear, quadratic] attenuation factors (for point and spot lights only)
+  vec3 g_vLightDir_i       - light direction in view space (for spot and directional lights only)
+  vec2 g_vLightAngleExp_i  - [cos(spotCutOffAngle), spot exponent] (for spot lights only)
+\endcode
 
-list of automatically generated shader input/output:
-
-- vertex shader IO
-
-in vec4 inPosition - vertex position in model space
-
-in vec3 inNormal   - vertex normal (only if ShaderGenDesc.shadeMode != unlit)
-in vec4 inColor    - vertex color (only if ShaderGenDesc.vertexColors == true)
-in vec2 inTexCoord - texture coordinate (only if ShaderGenDesc.textured == true)
-
-out vec4 outPosCS  - position in clip space
-out vec3 outNormal - normal in view space (only if ShaderGenDesc.shadeMode == phong)
-out vec4 outPosVS  - position in view space (only if ShaderGenDesc.shadeMode == phong)
-out vec4 outColor  - vertex color after lighting (only if ShaderGenDesc.shadeMode == flat or gouraud)
-out vec2 outTexCoord - texture coordinate (only if ShaderGenDesc.textured == true)
-
-insert input/outpus added from modifiers here
+\subsection Texturing
+\code
+  sampler2D g_Texture0     - texture sampler (if textured is enabled in ShaderGenDesc)
+\endcode
 
 
-- fragment shader IO
+
+\section ShaderGenerator_auto_shader_inout Automatically generated shader input/output:
+
+\subsection  ShaderGenerator_vertex_shader_io Vertex shader IO
+
+\code
+  in vec4 inPosition - vertex position in model space
+
+  in vec3 inNormal   - vertex normal (only if ShaderGenDesc.shadeMode != unlit)
+  in vec4 inColor    - vertex color (only if ShaderGenDesc.vertexColors == true)
+  in vec2 inTexCoord - texture coordinate (only if ShaderGenDesc.textured == true)
+
+  out vec4 outPosCS  - position in clip space
+  out vec3 outNormal - normal in view space (only if ShaderGenDesc.shadeMode == phong)
+  out vec4 outPosVS  - position in view space (only if ShaderGenDesc.shadeMode == phong)
+  out vec4 outColor  - vertex color after lighting (only if ShaderGenDesc.shadeMode == flat or gouraud)
+  out vec2 outTexCoord - texture coordinate (only if ShaderGenDesc.textured == true)
+
+  // insert input/outputs added from modifiers here
+\endcode
+
+\subsection ShaderGenerator_fragment_shader_io Fragment shader IO
 
 See vertex shader outputs for fragment inputs.
+\code
+  out vec4 outFragment - fragment color
 
-out vec4 outFragment - fragment color
+  // insert input/outputs added from modifiers here
+\endcode
 
-insert input/outpus added from modifiers here
 
-
------------------
-
-list of automatically generated shader defines:
-
+\section ShaderGenerator_auto_shader_defines Automatically generated shader defines
 These come in handy when you need to keep compatibility with custom shaders.
 
 Depending on the shademode of ShaderGenDesc, exactly one of the following defines is active.
-SG_GOURAUD, SG_FLAT, SG_UNLIT, SG_PHONG
-
-SG_TEXTURE  - defined if ShaderGenDesc.textured == true
-SG_VERTEX_COLOR - defined if ShaderGenDesc.vertexColors == true
-
-SG_NUM_LIGHTS - number of lights
-
-for each light i:
-SG_LIGHT_TYPE_i  - determine the type of light i; set to one of {SG_LIGHT_DIRECTIONAL, SG_LIGHT_POINT, SG_LIGHT_SPOT}
-
-ex. 
-#define SG_LIGHT_TYPE_0 SG_LIGHT_DIRECTIONAL
-#define SG_LIGHT_TYPE_1 SG_LIGHT_DIRECTIONAL
-#define SG_LIGHT_TYPE_2 SG_LIGHT_POINT
+ - SG_GOURAUD
+ - SG_FLAT
+ - SG_UNLIT
+ - SG_PHONG
 
 
+Additional defines:
+\code
+SG_TEXTURE      // defined if ShaderGenDesc.textured     == true
+SG_VERTEX_COLOR // defined if ShaderGenDesc.vertexColors == true
 
----------------------------------------------------------------------------------------
+\endcode
 
-Vertex shader generation structure:
+Lighting:
+\code
+ SG_NUM_LIGHTS   // number of lights
 
+  //for each light i:
+  SG_LIGHT_TYPE_i // Determine the type of light i; set to one of {SG_LIGHT_DIRECTIONAL, SG_LIGHT_POINT, SG_LIGHT_SPOT}
+
+  // Example:
+  #define SG_LIGHT_TYPE_0 SG_LIGHT_DIRECTIONAL
+  #define SG_LIGHT_TYPE_1 SG_LIGHT_DIRECTIONAL
+  #define SG_LIGHT_TYPE_2 SG_LIGHT_POINT
+\endcode
+
+\section ShaderGenerator_general_vertex_shader_structure Vertex shader generation structure
+
+\code
 void main()
 {
-  vec4 sg_vPosPS = g_mWVP * inPosition;
-  vec4 sg_vPosVS = g_mWV * inPosition;
+  vec4 sg_vPosPS    = g_mWVP * inPosition;
+  vec4 sg_vPosVS    = g_mWV  * inPosition;
   vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);
   vec2 sg_vTexCoord = vec2(0.0, 0.0);
-  vec4 sg_cColor = vec4(g_cEmissive, ALPHA);
+  vec4 sg_cColor    = vec4(g_cEmissive, ALPHA);
 
 #if normals available
   sg_vNormalVS = g_mWVIT * inNormal;
@@ -205,20 +224,13 @@ void main()
 
 
   // -------------------------------------------------------------------------
-
   // begin customized code
-
-  - insert registered begin-code modifiers, that ideally operate on generated sg_* variables
-
-  - loaded code from template file is added here
-
+  // - insert registered begin-code modifiers, that ideally operate on generated sg_* variables
+  // - loaded code from template file is added here
   // make sure to use #ifdef #endif if you make use of conditional inputs such as normals, texcoords..
-
   // end of customized code
-
   // -------------------------------------------------------------------------
   
-
   gl_Position = sv_vPosPS;
   outPosCS = sg_vPosPS;
 
@@ -232,18 +244,21 @@ void main()
   outNormal = sg_vNormalVS;
   outPosVS = sg_vPosVS;
 
-
-  end-code modifiers
+  // end-code modifiers
 }
+
+\endcode
 
 
 ---------------------------------------------------------------------------------------
 
-Fragment shader generation structure:
+\section ShaderGenerator_general_fragment_shader_structure Fragment shader generation structure
 
 
+\code
 void main()
 {
+
   // compute screen-projected coordinates, useful for various post-processing effects
   vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);
   
@@ -262,38 +277,24 @@ void main()
   vec4 sg_cTex = texture(g_Texture0, outTexCoord);
   sg_cColor *= sg_cTex;
 
-
-
   // -------------------------------------------------------------------------
-
   // begin customized code
-
-  - insert registered begin-code modifiers, that ideally operate on generated sg_* variables
-
-  - loaded code from template file is added here
-
+  // - insert registered begin-code modifiers, that ideally operate on generated sg_* variables
+  // - loaded code from template file is added here
   // make sure to use #ifdef #endif if you make use of conditional inputs such as normals, texcoords..
-
   // end of customized code
-
   // -------------------------------------------------------------------------
-
 
   outFragment = sg_cColor;
 
-
-  end-code modifiers
+  // end-code modifiers
 }
-
-
-
+\endcode
 
 */
 
-
-
 /**
-ShaderGenerator is used to collect shader io, uniforms, defines and includes.
+The ShaderGenerator is used to collect shader io, uniforms, defines and includes.
 
 The shader main-function is not generated here and must be provided
 as a parameter to the buildShaderCode function.
@@ -317,13 +318,12 @@ public:
   */
   void initFragmentShaderIO(const ShaderGenDesc* _desc);
 
-
   /** \brief Adds frequently used uniform parameters
    *
    * Adds frequently used uniform parameters like:
-   * - world, view, projection matrices
-   * - cam pos, view dir
-   * - per object material names: g_cDiffuse, g_cAmbient...
+   *  - world, view, projection matrices
+   *  - cam pos, view dir
+   *  - per object material names: g_cDiffuse, g_cAmbient...
   */
   void initDefaultUniforms();
 
@@ -331,7 +331,9 @@ public:
    *
    * Stores string pointer only
    * Example:
-   * \code in vec4 inPosition; \endcode
+   * \code
+   *   in vec4 inPosition;
+   * \endcode
   */
   void addInput(QString _input);
 
@@ -339,7 +341,9 @@ public:
    *
    * Stores string pointer only
    * Example:
-   * \code out vec4 inPosition; \endcode
+   * \code
+   *   out vec4 inPosition;
+   *   \endcode
    */
   void addOutput(QString _output);
 
@@ -347,14 +351,18 @@ public:
    *
    * Stores string pointer only
    * Example:
-   * \code uniform sampler2D sampAmbient; \endcode
+   * \code
+   *   uniform sampler2D sampAmbient;
+   * \endcode
    */
   void addUniform(QString _uniform);
 
   /** \brief Add one define
    *
    * Example:
-   * \code #define SG_GOURAUD 1 \endcode
+   * \code
+   *   #define SG_GOURAUD 1
+   * \endcode
    */
   void addDefine(QString _uniform);
 
@@ -379,8 +387,10 @@ public:
 
 private:
 
-  /// aborts, if string already present
-  /// prefix, postfix are very primitive, only checks for occurrence disregard locations
+  /** aborts, if string already present
+   *  prefix, postfix are very primitive,
+   *  only checks for occurrence disregard locations
+   */
   void addStringToList(QString _str, QStringList* _list, const char* _prefix = 0, const char* _postfix = 0);
 
   /** Adds command lines to the shader code.
@@ -412,9 +422,9 @@ private:
  * and depth peeling, where only a little changes in code are necessary.
  *
  * Usage:
- * 1. Derive a new subclass of ShaderModifier and implement necessary modify functions.
- * 2. Allocate a static instance of your modifier and register it to ShaderProgGenerator to get it's modifier-ID
- * 3. Create ShaderProgGenerator with a bitwise combination of modifier IDs to activate them.
+ *  -# Derive a new subclass of ShaderModifier and implement necessary modify functions.
+ *  -# Allocate a static instance of your modifier and register it to ShaderProgGenerator to get it's modifier-ID
+ *  -# Create ShaderProgGenerator with a bitwise combination of modifier IDs to activate them.
  */
 class ACGDLLEXPORT ShaderModifier
 {
@@ -424,65 +434,92 @@ public:
   ShaderModifier(void);
   virtual ~ShaderModifier(void);
 
-  /** Add your own inputs/outputs to the vertex shader.
-  
-  your implementation may look like this:
-
-  _shader->addInput("vec4 inTangent");
-  _shader->addUniform("vec4 shaderParam");
-  ..
-
-  @param _shader shader interface
+  /** \brief Add your own inputs/outputs to the vertex shader.
+  *
+  * Your implementation may look like this:
+  *
+  * \code
+  *   _shader->addInput("vec4 inTangent");
+  *   _shader->addUniform("vec4 shaderParam");
+  * \endcode
+  *
+  * @param _shader shader interface
   */
   virtual void modifyVertexIO(ShaderGenerator* _shader) {}
 
-  /** Append code the the vertex shader. Refer to the generation structure to see where
-      your code is added and which variables you can modify.
-      Use _code->push_back("..."); to insert your code here
-
-  @param _code string list of shader code.
+  /** \brief Append code the the vertex shader.
+   *
+   * Refer to the generation structure (\ref ShaderGenerator_page ) to see where
+   * your code is added and which variables you can modify.
+   * Use
+   * \code
+   *   _code->push_back("...");
+   * \endcode
+   * to insert your code here.
+   *
+   * @param _code string list of shader code.
   */
   virtual void modifyVertexBeginCode(QStringList* _code) {}
 
-  /** Append code the the vertex shader. Refer to the generation structure to see where
-      your code is added and which variables you can modify.
-      Use _code->push_back("..."); to insert your code here
-
-  @param _code string list of shader code.
-  */
+  /** \brief  Append code the the vertex shader
+   *
+   * Refer to the generation structure (\ref ShaderGenerator_page ) to see
+   * where your code is added and which variables you can modify.
+   * Use
+   *
+   * \code
+   *   _code->push_back("...");
+   * \endcode
+   * to insert your code here
+   *
+   * @param _code string list of shader code.
+   */
   virtual void modifyVertexEndCode(QStringList* _code) {}
 
 
-
-  /** Add your own inputs/outputs to the fragment shader.
-  
-  your implementation may look like this:
-
-  _shader->addInput("sampler2D depthSampler");
-  _shader->addUniform("vec4 shaderParam");
-  ..
-
-  @param _shader shader interface
+  /** \brief Add your own inputs/outputs to the fragment shader.
+   *
+   * your implementation may look like this:
+   *
+   * \code
+   * _shader->addInput("sampler2D depthSampler");
+   * _shader->addUniform("vec4 shaderParam");
+   * \endcode
+   *
+   * @param _shader shader interface
   */
   virtual void modifyFragmentIO(ShaderGenerator* _shader) {}
 
-  /** Append code the the fragment shader. Refer to the generation structure to see where
-      your code is added and which variables you can modify.
-      Use _code->push_back("..."); to insert your code here
-
-  @param _code string list of shader code.
+  /** \brief Append code the the fragment shader.
+   *
+   * Refer to the generation structure (\ref ShaderGenerator_page ) to see where
+   * your code is added and which variables you can modify.
+   * Use
+   * \code
+   *   _code->push_back("...");
+   * \endcode
+   * to insert your code here
+   *
+   * @param _code string list of shader code.
   */
   virtual void modifyFragmentBeginCode(QStringList* _code) {}
 
-  /** Append code the the vertex shader. Refer to the generation structure to see where
-      your code is added and which variables you can modify.
-      Use _code->push_back("..."); to insert your code here
-
-  @param _code string list of shader code.
+  /** \brief Append code the the vertex shader.
+   *
+   *  Refer to the generation structure (\ref ShaderGenerator_page )
+   *  to see where your code is added and which variables you can modify.
+   *  Use
+   *  \code
+   *    _code->push_back("...");
+   *  \endcode
+   *  to insert your code here.
+   * @param _code string list of shader code.
   */
   virtual void modifyFragmentEndCode(QStringList* _code) {}
 
-  /** Returns the modifier ID
+  /** \brief Returns the modifier ID
+   *
+   * @return Id of the modifier
   */
   unsigned int getID() {return modifierID_;}
 
