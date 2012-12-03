@@ -244,7 +244,7 @@ void main()
   outNormal = sg_vNormalVS;
   outPosVS = sg_vPosVS;
 
-  // end-code modifiers
+  // end-code modifiers are added here
 }
 
 \endcode
@@ -287,7 +287,7 @@ void main()
 
   outFragment = sg_cColor;
 
-  // end-code modifiers
+  // end-code modifiers are added here
 }
 \endcode
 
