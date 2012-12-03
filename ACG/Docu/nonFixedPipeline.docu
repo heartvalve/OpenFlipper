@@ -16,8 +16,8 @@ The VertexDeclaration class is used to specify the layout of a vertex element (V
 
 \section shaderGenerator Generating GLSL shaders
 
-The ShaderGenerator class can be used to generate default GLSL shader code.
-\note The main function is not generate and must therefore be provided via the buildShaderCode function
+The \subpage ShaderGenerator_page class can be used to generate default GLSL shader code.
+\note The main function is not generated and must therefore be provided via the buildShaderCode function
 
 Via shader specific information stored in the ShaderGenDesc struct in the RenderObject attached to a scene node, we can specify the shader input and output
 with the functions ShaderGenerator::initVertexShaderIO and ShaderGenerator::initFragmentShaderIO.
