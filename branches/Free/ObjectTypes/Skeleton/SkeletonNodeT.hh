@@ -144,6 +144,11 @@ private:
   /// Convert RGB color to HSV
   void RGBtoHSV(const Vec4f& _RGB, Vec4f& _HSV);
   
+
+  /// Simulate glPointSize(12) with a sphere
+  double unprojectPointSize(double _pointSize, const Vec3d& _point, GLState& _state);
+
+
 private:
   /// Coordinate frames are visible if this is true, not visible if false
   bool bCoordFramesVisible_;
@@ -160,6 +165,7 @@ private:
 
   ACG::GLSphere* sphere_;
   ACG::GLCone* cone_;
+  ACG::GLCylinder* cylinder_;
 };
 
 

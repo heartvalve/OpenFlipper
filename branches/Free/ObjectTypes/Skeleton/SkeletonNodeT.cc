@@ -84,6 +84,7 @@ SkeletonNodeT<SkeletonType>::SkeletonNodeT(SkeletonType &_skeleton, BaseNode *_p
 
   sphere_ = new ACG::GLSphere(10, 10);
   cone_ = new ACG::GLCone(slices_, stacks_, 1.0f, 0.0f, false, false);
+  cylinder_ = new ACG::GLCylinder(10, 2, 1.0f, true, true);
 }
 
 
@@ -100,6 +101,9 @@ SkeletonNodeT<SkeletonType>::~SkeletonNodeT()
 
   if (cone_)
     delete cone_;
+
+  if (cylinder_)
+    delete cylinder_;
 }
 
 
@@ -747,6 +751,31 @@ bool SkeletonNodeT<SkeletonType>::coordFramesVisible()
   return bCoordFramesVisible_;
 }
 
+//----------------------------------------------------------------------------
+
+/** \brief Compute the radius of a sphere simulating glPointSize after projection.
+ * 
+ */
+template <class SkeletonType>
+double SkeletonNodeT<SkeletonType>::unprojectPointSize(double _pointSize, const Vec3d& _point, GLState& _state)
+{
+  // 1. Project point to screen
+  ACG::Vec3d projected = _state.project( _point );
+
+  // 2. Shift it by the requested point size
+  //    glPointSize defines the diameter but we want the radius, so we divide it by two
+  ACG::Vec3d shifted = projected;
+  shifted[0] = shifted[0] + _pointSize / 2.0 ;
+
+  // 3. un-project into 3D
+  ACG::Vec3d unProjectedShifted = _state.unproject( shifted );
+
+  // 4. The difference vector defines the radius in 3D for the sphere
+  ACG::Vec3d difference = unProjectedShifted - _point;
+
+  return difference.norm();
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -774,9 +803,9 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
   Pose *pose = skeleton_.pose(hAni_);
   typename SkeletonType::Iterator it;
 
-
   Vec4f jointColor;
   getJointColor(_mat->diffuseColor(), jointColor);
+
 
   // draw points
   for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
@@ -806,25 +835,12 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
               ro.emissive = Vec3f(jointColor[0], jointColor[1] , jointColor[2]);
           }
 
-          //---------------------------------------------------
-          // Simulate glPointSize(12) with a sphere
-          //---------------------------------------------------
 
-          // 1. Project point to screen
-          ACG::Vec3d projected = _state.project( pose->globalTranslation( (*it)->id() ) );
+          // simulate glPointSize( ) with sphere
 
-          // 2. Shift it by the requested point size
-          //    glPointSize defines the diameter but we want the radius, so we divide it by two
-          ACG::Vec3d shifted = projected;
-          shifted[0] = shifted[0] + (double)_state.point_size() / 2.0 ;
-
-          // 3. un-project into 3D
-          ACG::Vec3d unProjectedShifted = _state.unproject( shifted );
-
-          // 4. The difference vector defines the radius in 3D for the sphere
-          ACG::Vec3d difference = unProjectedShifted - pose->globalTranslation( (*it)->id() );
-
-          const double sphereSize = difference.norm();
+          const double sphereSize = unprojectPointSize((double)_state.point_size(), 
+            pose->globalTranslation( (*it)->id() ),
+            _state);
 
           sphere_->addToRenderer(_renderer, &ro, sphereSize, ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
         }
@@ -832,10 +848,10 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
       } break;
 
 
-    default:
+    case DrawModes::PRIMITIVE_POLYGON:
       {
-        ro.debugName = "SkeletonNode.bone";
-        
+        ro.debugName = "SkeletonNode.bone"; 
+
         ro.setupShaderGenFromDrawmode(props);
 
         ro.setMaterial(_mat);
@@ -859,13 +875,65 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
 
           addBoneToRenderer(_renderer, ro, parentPos, boneVector);
         }
+      } break;
 
-
-        break;
-      }
+    default: break;
     }
   }
 
+
+  // draw coordframes
+
+  if (bCoordFramesVisible_)
+  {
+    ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+    for(it = skeleton_.begin(); it != skeleton_.end(); ++it)
+    {
+      unsigned int index = (*it)->id();
+      typename SkeletonType::Matrix global = pose->globalMatrix(index);
+      NormalizeCoordinateFrame(global);
+
+      // color for each arrow
+      Vec3f colors[] = {
+        Vec3f(0.8f, 0.2f, 0.2f),
+        Vec3f(0.2f, 0.8f, 0.2f),
+        Vec3f(0.2f, 0.2f, 0.8f)
+      };
+
+      Point points[] = {
+        Point(fFrameSize_, 0, 0),
+        Point(0, fFrameSize_, 0),
+        Point(0, 0, fFrameSize_)
+      };
+
+
+      // simulate glLineWidth(3) with cylinder
+      float lineWidth = (float)unprojectPointSize(3.0f, pose->globalTranslation(index), _state);
+
+      // glPointSize(6)
+      float sphereSize = (float)unprojectPointSize(6.0f, pose->globalTranslation(index), _state);
+
+      // draw coordframe arrows
+      for (int i = 0; i < 3; ++i)
+      {
+        ro.emissive = colors[i];
+
+        // cylinder start and end points
+        Vec3f vstart = (Vec3f)pose->globalTranslation(index);
+        Vec3f vend = (Vec3f)global.transform_point(points[i]);
+
+        Vec3f vdir = vend - vstart;
+        float height = vdir.length();
+
+        cylinder_->addToRenderer(_renderer, &ro, height, vstart, vdir, lineWidth);
+        sphere_->addToRenderer(_renderer, &ro, sphereSize, vend);
+      }
+    }
+
+
+
+  }
 
 
 }

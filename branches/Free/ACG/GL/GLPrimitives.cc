@@ -438,7 +438,8 @@ void GLCone::addToRenderer(IRenderer* _renderer,
                            const RenderObject* _base,
                            float _height,
                            const ACG::Vec3f& _center, 
-                           ACG::Vec3f _upDir)
+                           ACG::Vec3f _upDir,
+                           float _radiusScale)
 {
   RenderObject ro = *_base;
 
@@ -471,7 +472,7 @@ void GLCone::addToRenderer(IRenderer* _renderer,
     mAlign.identity();
 
   // scale
-  mAlign.scale(1.0, 1.0, _height);
+  mAlign.scale(_radiusScale, _radiusScale, _height);
 
   ro.modelview *= mAlign;
 
