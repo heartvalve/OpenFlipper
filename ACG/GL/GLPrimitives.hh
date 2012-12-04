@@ -162,7 +162,8 @@ public:
   void addToRenderer(class IRenderer* _renderer, const struct RenderObject* _base, 
     float _height,
     const ACG::Vec3f& _center = ACG::Vec3f(0.0f, 0.0f, 0.0f),
-    ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f));
+    ACG::Vec3f _upDir = ACG::Vec3f(0.0f, 0.0f, 1.0f),
+    float _radiusScale = 1.0f);
 
   int getNumTriangles();
 
