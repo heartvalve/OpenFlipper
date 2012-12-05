@@ -674,8 +674,8 @@ void Core::slotUnBlockPlugin(const QString &_name)
 }
 
 /** @brief Load a Plugin with given filename
- *  @param filename complete path + filename of the plugin
- *  @param silent if 'true': user isn't asked what to do if a plugin is already loaded
+ *  @param _filename complete path + filename of the plugin
+ *  @param _silent if 'true': user isn't asked what to do if a plugin is already loaded
  *  @param _licenseErrors String will be epty when no license issues occured, otherwise it contains the required information for obtaining a license
  *  @param _plugin You can provide a preloaded plugin here. If this is 0 the filename will be used to load the plugin.
  */
