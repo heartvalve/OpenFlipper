@@ -1620,6 +1620,57 @@ void MeshObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModif
     }
 }
 
+void MeshObjectSelectionPlugin::slotMouseWheelEvent(QWheelEvent* event, std::string const& mode) {
+
+  // Get currently active primitive type
+  SelectionInterface::PrimitiveType type = 0u;
+  emit getActivePrimitiveType(type);
+
+  // Only handle supported primitive types
+  if((type & allSupportedTypes_) == 0) {
+    // No supported type is active
+    return;
+  }
+
+  // Decide, if all or only target objects should be handled
+  bool targetsOnly = false;
+  emit targetObjectsOnly(targetsOnly);
+  PluginFunctions::IteratorRestriction restriction =
+      (targetsOnly ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS);
+
+  if(event->modifiers() == Qt::ShiftModifier) {
+
+    if (event->delta() > 0) {
+      for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH));
+          o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        if (o_it->visible()) {
+
+          if(type & vertexType_)
+            growVertexSelection(o_it->id());
+          if(type & faceType_)
+            growFaceSelection(o_it->id());
+        }
+        emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        emit createBackup(o_it->id(), "Grow Selection", UPDATE_SELECTION);
+      }
+    } else {
+
+      for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH));
+          o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        if (o_it->visible()) {
+
+          if(type & vertexType_)
+            shrinkVertexSelection(o_it->id());
+          if(type & faceType_)
+            shrinkFaceSelection(o_it->id());
+        }
+        emit updatedObject(o_it->id(), UPDATE_SELECTION);
+        emit createBackup(o_it->id(), "Shrink Selection", UPDATE_SELECTION);
+      }
+    }
+  }
+}
+
 void MeshObjectSelectionPlugin::lassoSelect(QRegion&      _region,
                                             PrimitiveType _primitiveType,
                                             bool          _deselection) {
