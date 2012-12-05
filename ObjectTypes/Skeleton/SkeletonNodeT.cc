@@ -327,7 +327,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
   if (_drawMode == DrawModes::POINTS)
   {
     Vec4f jointColor;
-    getJointColor(_state.ambient_color(), jointColor);
+    getJointColor(_state.diffuse_color(), jointColor);
     
     // draw all joint positions
     glPointSize(12);
@@ -340,9 +340,9 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
     {
 
       // If the vertex is selected, it will be always red
-      // If it is not selected,
       if ( (*it)->selected() )
       {
+        _state.set_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       	_state.set_specular_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
       }
@@ -364,25 +364,11 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
         }
       }
 
-      //---------------------------------------------------
-      // Simulate glPointSize(12) with a sphere
-      //---------------------------------------------------
 
-      // 1. Project point to screen
-      ACG::Vec3d projected = _state.project( pose->globalTranslation( (*it)->id() ) );
+      // Simulate glPointSize() with a sphere
 
-      // 2. Shift it by the requested point size
-      //    glPointSize defines the diameter but we want the radius, so we divide it by two
-      ACG::Vec3d shifted = projected;
-      shifted[0] = shifted[0] + (double)_state.point_size() / 2.0 ;
-
-      // 3. un-project into 3D
-      ACG::Vec3d unProjectedShifted = _state.unproject( shifted );
-
-      // 4. The difference vector defines the radius in 3D for the sphere
-      ACG::Vec3d difference = unProjectedShifted - pose->globalTranslation( (*it)->id() );
-
-      const double sphereSize = difference.norm();
+      const double sphereSize = unprojectPointSize((double)_state.point_size(),
+                  pose->globalTranslation( (*it)->id() ), _state);
 
       sphere_->draw(_state,sphereSize,ACG::Vec3f(pose->globalTranslation( (*it)->id() )));
 
