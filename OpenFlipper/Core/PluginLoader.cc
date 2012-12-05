@@ -717,24 +717,15 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   }
   
   // Check if a plugin has been loaded
-  PluginInfo* info;
-  bool alreadyLoaded = false;
-  for (uint k=0; k < plugins_.size(); k++)
+  PluginInfo info;
+  int alreadyLoadedAt = -1;
+  for (int k=0; k < plugins_.size(); k++)
   {
     if (plugins_[k].path == _filename)
-    {
-      info = &plugins_[k];
-      alreadyLoaded = true;
-      break;
-    }
+      alreadyLoadedAt = k;
   }
-  if (!alreadyLoaded)
-  {
-    plugins_.push_back(PluginInfo());
-    info = &plugins_.back();
-  }
-  info->status = PluginInfo::FAILED;
-  info->path = _filename;
+  info.status = PluginInfo::FAILED;
+  info.path = _filename;
   QString supported;
 
   emit log(LOGOUT,tr("Location : \t %1").arg( _filename) );
@@ -744,12 +735,12 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   if ( basePlugin ) {
 
     //set basic information about plugin
-    info->name = basePlugin->name();
-    info->rpcName = info->name.remove(" ").toLower();
-    info->description = basePlugin->description();
+    info.name = basePlugin->name();
+    info.rpcName = info.name.remove(" ").toLower();
+    info.description = basePlugin->description();
 
     QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins", QStringList()).toStringList();
-    info->buildIn = !additionalPlugins.contains(info->path);
+    info.buildIn = !additionalPlugins.contains(info.path);
 
     emit log(LOGOUT,tr("Found Plugin : \t %1").arg(basePlugin->name()) );
 
@@ -768,7 +759,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
           if (_silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
             emit log(LOGWARN, tr("\t\t\t Already loaded from %1").arg( plugins_[k].path) );
             emit log(LOGOUT,"================================================================================");
-            info->description = basePlugin->description() + tr(" *Already loaded.*");
+            info.description = basePlugin->description() + tr(" *Already loaded.*");
             return;
         }else{ //ask the user
           int ret = QMessageBox::question(coreWidget_,
@@ -781,7 +772,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
           {
             emit log(LOGWARN, tr("\t\t\t Already loaded from %1.").arg( plugins_[k].path));
             emit log(LOGOUT,"================================================================================");
-            info->description = basePlugin->description() + tr(" *Already loaded.*");
+            info.description = basePlugin->description() + tr(" *Already loaded.*");
             return;
           }
         }
@@ -793,7 +784,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     if ( dontLoadPlugins.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
       emit log(LOGWARN,tr("OpenFlipper.ini prevented Plugin %1 from being loaded! ").arg( basePlugin->name() ));
       emit log(LOGOUT,"================================================================================");
-      info->status = PluginInfo::BLOCKED;
+      info.status = PluginInfo::BLOCKED;
       return;
     }
 
@@ -814,7 +805,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
       else {
         emit log(LOGERR,tr("... failed. Plugin access denied."));
         emit log(LOGOUT,"================================================================================");
-        info->description = basePlugin->description() + tr(" *Plugin access denied.*");
+        info.description = basePlugin->description() + tr(" *Plugin access denied.*");
         // Abort here, as the plugin will not do anything else until correct authentication.
         return;
       }
@@ -825,11 +816,11 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
 
     supported = "BaseInterface ";
 
-    info->plugin        = plugin;
+    info.plugin        = plugin;
     if ( checkSlot(plugin,"version()") )
-      info->version = basePlugin->version();
+      info.version = basePlugin->version();
     else
-      info->version = QString::number(-1);
+      info.version = QString::number(-1);
 
     if ( OpenFlipper::Options::nogui() ) {
 
@@ -971,7 +962,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     supported = supported + "Logging ";
 
     // Create intermediate logger class which will mangle the output
-    PluginLogger* newlog = new PluginLogger(info->name);
+    PluginLogger* newlog = new PluginLogger(info.name);
     loggers_.push_back(newlog);
     connect(plugin,SIGNAL(log(Logtype, QString )),newlog,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
     connect(plugin,SIGNAL(log(QString )),newlog,SLOT(slotLog(QString )),Qt::DirectConnection);
@@ -1082,7 +1073,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
 
     QWidget* widget = 0;
     if ( optionsPlugin->initializeOptionsWidget( widget ) ) {
-          info->optionsWidget = widget;
+          info.optionsWidget = widget;
 
           if ( checkSlot(plugin,"applyOptions()") )
             connect(coreWidget_ , SIGNAL( applyOptions() ),
@@ -2069,7 +2060,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
                                                           );
 
   // Make plugin available for scripting
-  QString scriptingName = info->name.remove(" ").toLower();
+  QString scriptingName = info.rpcName;
 
   scriptEngine_.globalObject().setProperty(scriptingName, scriptInstance);
 
@@ -2081,7 +2072,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     if ( checkSignal( plugin, it.name().toAscii() ) )
       continue;
 
-    info->rpcFunctions.push_back( it.name() );
+    info.rpcFunctions.push_back( it.name() );
 
     scriptingFunctions_.push_back( scriptingName + "." + it.name() );
 
@@ -2093,7 +2084,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     supported = supported + "Scripting ";
 
     // Create intermediate wrapper class which will mangle the call information
-    ScriptingWrapper* newScript = new ScriptingWrapper(info->rpcName);
+    ScriptingWrapper* newScript = new ScriptingWrapper(info.rpcName);
     scriptingWrappers_.push_back(newScript);
 
     //========= Part one, Scriptinfos via wrapper to core and than to scipting Plugin ==========
@@ -2159,7 +2150,11 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   //========================================================================================
   //========================================================================================
 
-  info->status = PluginInfo::LOADED;
+  info.status = PluginInfo::LOADED;
+  if (alreadyLoadedAt != -1)
+    plugins_[alreadyLoadedAt] = info;
+  else
+    plugins_.push_back(info);
 
   // Initialize Plugin
   if ( basePlugin ) {
