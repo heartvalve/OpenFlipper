@@ -719,10 +719,10 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   // Check if a plugin has been loaded
   PluginInfo info;
   int alreadyLoadedAt = -1;
-  for (int k=0; k < plugins_.size(); k++)
+  for (unsigned k=0; k < plugins_.size(); k++)
   {
     if (plugins_[k].path == _filename)
-      alreadyLoadedAt = k;
+      alreadyLoadedAt = static_cast<int>(k);
   }
   info.status = PluginInfo::FAILED;
   info.path = _filename;
