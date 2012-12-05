@@ -47,6 +47,11 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+const QColor PluginDialog::blockColor_  = QColor(228, 155, 18);
+const QColor PluginDialog::unloadColor_ = QColor(172, 172, 172);
+const QColor PluginDialog::loadedBuiltInColor_ = QColor(208, 240, 192);
+const QColor PluginDialog::failColor_ = Qt::red;
+const QColor PluginDialog::loadedExternalColor_ = QColor(152, 255, 152);
 
 PluginDialog::PluginDialog(std::vector<PluginInfo>& _plugins, QWidget *parent)
     : QDialog(parent),
@@ -54,17 +59,18 @@ PluginDialog::PluginDialog(std::vector<PluginInfo>& _plugins, QWidget *parent)
 {
   setupUi(this);
 
+  list->setContextMenuPolicy(Qt::CustomContextMenu);
+
   connect(closeButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(loadButton, SIGNAL(clicked()), this, SIGNAL(loadPlugin()));
   connect(loadButton, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(unloadButton, SIGNAL(clicked()), this, SLOT(slotUnload()));
+  connect(list,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(slotContextMenu(const QPoint&)));
 
   //set icons
   QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
   closeButton->setIcon( QIcon(iconPath + "window-close.png"));
   loadButton->setIcon( QIcon(iconPath + "network-connect.png"));
-  unloadButton->setIcon( QIcon(iconPath + "network-disconnect.png"));
 
 }
 
@@ -97,6 +103,7 @@ int PluginDialog::exec()
     QVBoxLayout* vlayout = new QVBoxLayout;
 
     QLabel* description = new QLabel( plugins_[i].description );
+    descriptions_.push_back(description);
 
     vlayout->addLayout(hlayout,20);
     vlayout->addWidget(description);
@@ -105,6 +112,32 @@ int PluginDialog::exec()
     QListWidgetItem *item = new QListWidgetItem("");
     frames_.push_back(frame);
     item->setSizeHint( QSize (100,50) );
+
+    //set color depending on the current status
+    switch(plugins_[i].status)
+    {
+      case PluginInfo::LOADED:
+        if (plugins_[i].buildIn)
+          item->setBackground(loadedBuiltInColor_);
+        else
+        {
+          item->setBackground(loadedExternalColor_);
+          description->setText(description->text()+tr(" *EXTERNAL*"));
+        }
+        break;
+      case PluginInfo::FAILED:
+        item->setBackground(failColor_);
+        description->setText(description->text()+tr(" *FAILED*"));
+        break;
+      case PluginInfo::BLOCKED:
+        item->setBackground(blockColor_);
+        description->setText(description->text()+tr(" *BLOCKED*"));
+        break;
+      case PluginInfo::UNLOADED:
+        item->setBackground(unloadColor_);
+        description->setText(description->text()+tr(" *UNLOADED*"));
+        break;
+    }
     list->addItem(item);
     list->setItemWidget(item, frame);
   }
@@ -117,41 +150,100 @@ int PluginDialog::exec()
   return ret;
 }
 
-void PluginDialog::slotUnload()
+void PluginDialog::slotBlockPlugin()
 {
-  int buttonState = QMessageBox::No;
-  
-  for (int i=0; i < list->selectedItems().size(); i++){
+  for (int i=0; i < list->selectedItems().size(); ++i)
+  {
+    QListWidgetItem* widget = list->selectedItems()[i];
+    widget->setBackground(blockColor_);
 
-    QString name = plugins_[ list->row( list->selectedItems()[i] ) ].rpcName;
-    
-    if (list->selectedItems().size() == 1){
-      //show messageBox without YESTOALL / NOTOALL
-      buttonState = QMessageBox::question(this, tr("Prevent Plugin Loading"),
-                   tr("Do you want to prevent OpenFlipper from loading this plugin on the next start?"),
-                   QMessageBox::Yes | QMessageBox::No,
-                   QMessageBox::No);
-    }else{
-      //show messageBox with YESTOALL / NOTOALL
-      if (buttonState == QMessageBox::Yes || buttonState == QMessageBox::No)
-      buttonState = QMessageBox::question(this, tr("Prevent Plugin Loading"),
-                   tr("Do you want to prevent OpenFlipper from loading this plugin on the next start?"),
-                   QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll ,
-                   QMessageBox::No);
+    PluginInfo* plugin = &plugins_[ list->row( widget ) ];
+    descriptions_[list->row( widget )]->setText(plugin->description + tr(" *BLOCKED*"));
+
+    emit blockPlugin(plugin->name);
+  }
+}
+void PluginDialog::slotUnBlockPlugin()
+{
+  for (int i=0; i < list->selectedItems().size(); ++i)
+  {
+    QListWidgetItem* widget = list->selectedItems()[i];
+    widget->setBackground(unloadColor_);
+
+    PluginInfo* plugin = &plugins_[ list->row( widget ) ];
+    descriptions_[list->row( widget )]->setText(plugin->description);
+
+    emit unBlockPlugin(plugin->name);
+  }
+}
+
+void PluginDialog::slotLoadPlugin()
+{
+  for (int i=0; i < list->selectedItems().size(); ++i)
+  {
+    QListWidgetItem* widget = list->selectedItems()[i];
+
+    PluginInfo* plugin = &plugins_[ list->row( widget ) ];
+
+    if (plugin->status == PluginInfo::BLOCKED)
+    {
+      QMessageBox msgBox;
+      msgBox.setText("Plugin is blocked. Unblock it?");
+      msgBox.setWindowTitle("Plugin blocked");
+      msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox.setDefaultButton(QMessageBox::Yes);
+      int rep = msgBox.exec();
+      if ( rep == QMessageBox::Yes)
+        emit unBlockPlugin(plugin->name);
     }
 
-    // Store the new setting and remove plugin from all lists
-    if (buttonState == QMessageBox::Yes || buttonState == QMessageBox::YesToAll) {
-      QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames",QStringList()).toStringList();
-      if ( !dontLoadPlugins.contains(name) ){
-        dontLoadPlugins << name;
-        OpenFlipperSettings().setValue("PluginControl/DontLoadNames",dontLoadPlugins);
-      }
-    }
+    if (plugin->buildIn)
+      widget->setBackground(loadedBuiltInColor_);
+    else
+      widget->setBackground(loadedExternalColor_);
 
-    //unload plugin
-    emit unloadPlugin(name);
+    descriptions_[list->row( widget )]->setText(plugin->description);
+
+    QString licenseErros;
+    emit loadPlugin(plugin->path,false,licenseErros,plugin->plugin);
+
+    if (plugin->status == PluginInfo::FAILED)
+    {
+      descriptions_[list->row( widget )]->setText(plugin->description + tr(" *FAILED*"));
+      widget->setBackground(failColor_);
+    }else
+    {
+      plugin->status = PluginInfo::LOADED;
+    }
+  }
+}
+
+void PluginDialog::slotContextMenu(const QPoint& _point)
+{
+  if (!list->count())
+    return;
+
+  QMenu *menu = new QMenu(list);
+  QAction* action = 0;
+
+  PluginInfo* plugin = &plugins_[list->currentRow()];
+
+  if ( plugin->status != PluginInfo::BLOCKED)//not blocked
+  {
+    action = menu->addAction(tr("Block Plugin"));
+    connect(action,SIGNAL(triggered(bool)),this,SLOT(slotBlockPlugin()));
+  }else//blocked
+  {
+    action = menu->addAction(tr("Unblock Plugin"));
+    connect(action,SIGNAL(triggered(bool)),this,SLOT(slotUnBlockPlugin()));
   }
 
-  reject();
+  if ( plugin->status != PluginInfo::LOADED)
+  {
+    action = menu->addAction(tr("Load Plugin"));
+    connect(action,SIGNAL(triggered(bool)),this,SLOT(slotLoadPlugin()));
+  }
+
+  menu->exec(list->mapToGlobal(_point),0);
+
 }

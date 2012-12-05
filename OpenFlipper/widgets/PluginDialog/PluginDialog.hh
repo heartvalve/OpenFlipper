@@ -56,16 +56,28 @@ class PluginDialog : public QDialog, public Ui::PluginDialog
 
   private:
     std::vector<PluginInfo>& plugins_;
+    std::vector<QLabel*> descriptions_;
     QVector< QFrame* > frames_;
 
+    static const QColor blockColor_;
+    static const QColor unloadColor_;
+    static const QColor loadedBuiltInColor_;
+    static const QColor loadedExternalColor_;
+    static const QColor failColor_;
+
   private slots:
-    void slotUnload();
+    void slotContextMenu(const QPoint& _point);
+    void slotLoadPlugin();
+    void slotBlockPlugin();
+    void slotUnBlockPlugin();
 
   protected:
     void closeEvent(QCloseEvent *event);
 
   signals:
-    void unloadPlugin(QString _name);
+    void blockPlugin(const QString &_name);
+    void unBlockPlugin(const QString &_name);
     void loadPlugin();
+    void loadPlugin(const QString& _filename, bool _silent, QString& _licenseErrors, QObject* _plugin);
 };
 
