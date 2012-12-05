@@ -103,7 +103,10 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->numElements_ = _numElements;
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
-  ve->pointer_ = (void*)_byteOffset;
+
+  // uint to ptr (without warning on 32 and 64bit)
+  ve->pointer_ = 0;
+  memcpy(&ve->pointer_, &_byteOffset, sizeof(unsigned int));
   addElement(ve);
 
   delete ve;
