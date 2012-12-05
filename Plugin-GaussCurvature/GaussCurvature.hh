@@ -70,6 +70,9 @@ class GaussCurvaturePlugin : public QObject, BaseInterface, TextureInterface
     void slotUpdateTexture( QString _textureName  , int _identifier);
     void pluginsInitialized();
 
+    // Tell system that this plugin runs without ui
+    void noguiSupported( ) {} ;
+
   public :
 
     GaussCurvaturePlugin();
@@ -77,6 +80,8 @@ class GaussCurvaturePlugin : public QObject, BaseInterface, TextureInterface
 
     QString name() { return (QString("GaussCurvature")); };
     QString description( ) { return (QString("Generates Gauss Curvature information")); };
+
+
 
   public slots:
 

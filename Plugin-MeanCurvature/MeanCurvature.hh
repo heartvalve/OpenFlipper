@@ -75,6 +75,9 @@ class MeanCurvaturePlugin : public QObject, BaseInterface, TextureInterface
 
     void pluginsInitialized();
 
+    // Tell system that this plugin runs without ui
+    void noguiSupported( ) {} ;
+
   public slots:
 
     /** \brief Scripting slot to trigger computation of mean curvature
