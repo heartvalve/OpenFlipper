@@ -150,7 +150,7 @@ void discrete_mean_curv_op( const MeshT&                        _m,
 	if ( OpenMesh::is_zero(cotw) )
 		continue;
 #else
-    if ( OpenMesh::is_zero(cotw) || isinf(cotw) )
+    if ( OpenMesh::is_zero(cotw) || std::isinf(cotw) )
 		continue;
 #endif
 
@@ -171,7 +171,7 @@ void discrete_mean_curv_op( const MeshT&                        _m,
 	  if ( OpenMesh::is_zero(tmp) )
 		continue;
 #else
-      if ( OpenMesh::is_zero(tmp) || isinf(tmp) )
+      if ( OpenMesh::is_zero(tmp) || std::isinf(tmp) )
 		continue;
 #endif
 
