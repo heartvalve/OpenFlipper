@@ -47,6 +47,7 @@
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
+#include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
@@ -66,11 +67,13 @@
 #include "ConversionDialog.hh"
 
 class MeshObjectSelectionPlugin : public QObject, BaseInterface, KeyInterface, LoadSaveInterface,
-            INIInterface, BackupInterface, ScriptInterface, LoggingInterface, SelectionInterface
+            INIInterface, BackupInterface, ScriptInterface, LoggingInterface, SelectionInterface,
+            MouseInterface
 {
     Q_OBJECT
     Q_INTERFACES(BaseInterface)
     Q_INTERFACES(KeyInterface)
+    Q_INTERFACES(MouseInterface)
     Q_INTERFACES(INIInterface)
     Q_INTERFACES(BackupInterface)
     Q_INTERFACES(ScriptInterface)
@@ -162,6 +165,9 @@ private slots:
     void slotSaveSelection(INIFile& _file);
     
     void slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers _modifiers);
+
+    // MouseInterface
+    void slotMouseWheelEvent(QWheelEvent* event, std::string const& mode);
 
 public:
 
