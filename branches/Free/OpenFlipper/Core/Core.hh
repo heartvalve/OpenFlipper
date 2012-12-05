@@ -1157,20 +1157,23 @@ private slots:
     /// Index of Plugins toolbox widget
     int toolboxindex_;
 
-    /// Function for loading Plugins
-    void loadPlugin(QString filename, bool silent, QString& _licenseErrors , QObject* _plugin = 0 );
-
     /// Load all plugins from default plugin directory and from INI-File
     void loadPlugins();
   private slots:
     /// Show Plugins Dialog
     void slotShowPlugins();
 
-    /// Function for unloading Plugins
-    void unloadPlugin(QString name);
+    /// Function for loading Plugins
+    void loadPlugin(const QString& _filename,const bool _silent, QString& _licenseErrors , QObject* _plugin = 0 );
 
     /// Load Plugins from menu
     void slotLoadPlugin();
+
+    /// Function for Blocking Plugins. Blocked plugins will unloaded and not loaded wthin the next starts
+    void slotBlockPlugin(const QString &_rpcName);
+
+    /// Function for UnBlocking Plugins. Plugins will not loaded automatically
+    void slotUnBlockPlugin(const QString &_rpcName);
 
   /** @} */
 

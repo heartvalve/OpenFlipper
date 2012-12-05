@@ -44,7 +44,6 @@
 #ifndef PLUGININFO_HH
 #define PLUGININFO_HH
 
-#include <Qt>
 #include <QString>
 #include <QObject>
 #include <QStringList>
@@ -86,6 +85,8 @@ class PluginInfo{
      toolbars.clear();
      contextMenus.clear();
      optionsWidget = 0;
+     buildIn = true;
+     status = FAILED;
   }
 
 
@@ -105,6 +106,8 @@ class PluginInfo{
      toolbars = _i.toolbars;
      contextMenus = _i.contextMenus;
      optionsWidget = _i.optionsWidget;
+     buildIn = _i.buildIn;
+     status = _i.status;
   }
 
   /// Pointer to the loaded plugin (Already casted when loading it)
@@ -148,6 +151,20 @@ class PluginInfo{
 
   /// Pointer to plugins options widget (if available)
   QWidget* optionsWidget;
+
+  /// Indicates, if the plugin is a built in Plugin (in Plugin directory)
+  bool buildIn;
+
+  /// current status of the plugin
+  enum StatusType
+  {
+    LOADED = 0,
+    BLOCKED,
+    UNLOADED,
+    FAILED
+  }status;
+
+
 };
 
 #endif //PLUGININFO_HH
