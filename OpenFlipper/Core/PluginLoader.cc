@@ -719,7 +719,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   // Check if a plugin has been loaded
   PluginInfo info;
   int alreadyLoadedAt = -1;
-  for (unsigned k=0; k < plugins_.size(); k++)
+  for (unsigned int k=0; k < plugins_.size(); k++)
   {
     if (plugins_[k].path == _filename)
       alreadyLoadedAt = static_cast<int>(k);
@@ -750,7 +750,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     }
 
     //Check if plugin is already loaded
-    for (uint k=0; k < plugins_.size(); k++){
+    for (unsigned int k=0; k < plugins_.size(); k++){
 
         QString name_nospace =  basePlugin->name();
         name_nospace.remove(" ");
@@ -1178,12 +1178,12 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
               this,SLOT(slotAddHiddenPickMode( const std::string& )),Qt::DirectConnection);
 
     if ( checkSignal(plugin,"setPickModeCursor(const std::string&,QCursor)") )
-      for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
         connect(plugin,SIGNAL(setPickModeCursor( const std::string& ,QCursor)),
                 coreWidget_,SLOT(setPickModeCursor( const std::string& ,QCursor)),Qt::DirectConnection);
 
     if ( checkSignal(plugin,"setPickModeMouseTracking(const std::string&,bool)") )
-      for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
         connect(plugin,SIGNAL(setPickModeMouseTracking( const std::string& ,bool)),
                 coreWidget_,SLOT(setPickModeMouseTracking( const std::string& ,bool)),Qt::DirectConnection);
 
