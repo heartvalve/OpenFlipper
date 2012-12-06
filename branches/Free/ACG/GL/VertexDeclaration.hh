@@ -192,7 +192,7 @@ public:
   
   /*! append one element to declarations, direct method
   */
-  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, unsigned int _byteOffset = 0, const char* _shaderInputName = 0);
+  void addElement(unsigned int _type, unsigned int _numElements, VERTEX_USAGE _usage, size_t _byteOffset = 0, const char* _shaderInputName = 0);
 
   /*! append multiple element declarations
   */
