@@ -104,9 +104,11 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
 
-  // uint to ptr (without warning on 32 and 64bit)
-  ve->pointer_ = 0;
-  memcpy(&ve->pointer_, &_byteOffset, sizeof(unsigned int));
+  // unsigned int to ptr (without warning on 32 and 64bit)
+  char* tmp    = NULL;
+  tmp          = tmp + _byteOffset;
+  ve->pointer_ = static_cast<void*>(tmp);
+
   addElement(ve);
 
   delete ve;
