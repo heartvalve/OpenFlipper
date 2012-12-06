@@ -94,7 +94,7 @@ void VertexDeclaration::addElement(unsigned int _type,
 void VertexDeclaration::addElement(unsigned int _type,
                                    unsigned int _numElements,
                                    VERTEX_USAGE _usage, 
-                                   unsigned int _byteOffset,
+                                   size_t _byteOffset,
                                    const char* _shaderInputName)
 {
   VertexElement* ve = new VertexElement();
@@ -103,11 +103,7 @@ void VertexDeclaration::addElement(unsigned int _type,
   ve->numElements_ = _numElements;
   ve->usage_ = _usage;
   ve->shaderInputName_ = _shaderInputName;
-
-  // unsigned int to ptr (without warning on 32 and 64bit)
-  char* tmp    = NULL;
-  tmp          = tmp + _byteOffset;
-  ve->pointer_ = static_cast<void*>(tmp);
+  ve->pointer_ = (void*)_byteOffset;
 
   addElement(ve);
 
