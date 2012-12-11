@@ -274,6 +274,12 @@ public:
   */
   void getRenderObjects(IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat);
 
+
+  /** \brief Get DrawMesh instance
+  */
+  DrawMeshT<Mesh>* getDrawMesh();
+
+
   /** \brief return available draw modes 
   *
   * The drawmodes are constructed based on the mesh properties and the hardware capabilities
@@ -490,4 +496,3 @@ public:
 //=============================================================================
 #endif // ACG_MESHNODE_HH defined
 //=============================================================================
-

@@ -1421,6 +1421,12 @@ MeshNodeT<Mesh>::getMemoryUsage()
 }
 
 
+template<class Mesh>
+DrawMeshT<Mesh>*
+MeshNodeT<Mesh>::getDrawMesh()
+{
+  return drawMesh_;
+}
 
 
 //=============================================================================

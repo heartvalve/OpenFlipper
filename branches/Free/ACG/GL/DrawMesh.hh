@@ -166,6 +166,26 @@ public:
   */
   void bindBuffers();
 
+  /** \brief get opengl vertex buffer id
+  */
+  GLuint getVBO();
+
+  /** \brief get opengl index buffer id
+  */
+  GLuint getIBO();
+
+
+  /** \brief get vertex declaration used for per-vertex color rendering
+  */
+  VertexDeclaration* getVertexDeclaration();
+
+  /** \brief map from vertex index of the original mesh point buffer to the corresponding vertex index inside the VBO.
+  @param _v vertex index into mesh points
+  @return vertex index into VBO
+  */
+  unsigned int mapVertexToVBOIndex(unsigned int _v);
+
+
   /** \brief eventually rebuilds buffers used for rendering and binds index and vertex buffer
   */
   void bindBuffersToRenderObject(RenderObject* _obj);
@@ -389,6 +409,11 @@ private:
                      unsigned int*       _inOutIndexBuf,
                      const unsigned int* _srcVertexMap);
 
+
+  /** \brief  eventually update vertex and index buffers
+   *
+   */
+  void updateGPUBuffers();
 
   /** \brief  stores the vertex buffer on the gpu
    *

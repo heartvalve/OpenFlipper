@@ -373,8 +373,12 @@
   template < class MeshT  >
   void MeshObject< MeshT >::updateSelection() {
 
-    if ( statusNode_ )
+    if ( statusNode_ ){
       statusNode_->updateSelection();
+
+      if (meshNode_)
+        statusNode_->setDrawMesh(meshNode_->getDrawMesh());
+    }
   }
 
   /** Updates the geometry information in the mesh scenegraph node */
