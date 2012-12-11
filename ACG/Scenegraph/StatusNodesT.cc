@@ -75,6 +75,7 @@ StatusNodeT( const Mesh&         _mesh,
              BaseNode*           _parent,
              const std::string&  _name )
   : MaterialNode(_parent, _name), mesh_(_mesh),
+  drawMesh_(0),
   bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
   bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX),
   invalidGeometry_(true),
@@ -148,7 +149,14 @@ update_cache()
     v_cache_.clear();
     for (; v_it!=v_end; ++v_it) {
       if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
-        v_cache_.push_back(v_it.handle().idx());
+
+        unsigned int vertexIndex = v_it.handle().idx();
+
+        // use correct index for vbo, if available
+        if (drawMesh_)
+          vertexIndex = drawMesh_->mapVertexToVBOIndex(vertexIndex);
+
+        v_cache_.push_back(vertexIndex);
       }
     }
 
@@ -166,9 +174,14 @@ update_cache()
     for (; e_it!=e_end; ++e_it) {
       if (Mod::is_edge_selected(mesh_, e_it)) {
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
-        e_cache_.push_back(vh.idx());
+        unsigned int vidx = vh.idx();
+
+        e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
+
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
-        e_cache_.push_back(vh.idx());
+        vidx = vh.idx();
+
+        e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
       }
     }
 
@@ -218,9 +231,11 @@ update_cache()
     for (; f_it!=f_end; ++f_it) {
       if (Mod::is_face_selected(mesh_, f_it)) {
         fv_it = mesh_.cfv_iter(f_it);
-        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-        f_cache_.push_back(fv_it.handle().idx()); ++fv_it;
-        f_cache_.push_back(fv_it.handle().idx());
+        unsigned int vidx = fv_it.handle().idx();
+
+        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it; vidx = fv_it.handle().idx();
+        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it; vidx = fv_it.handle().idx();
+        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
         fh_cache_.push_back(f_it);
       }
     }
@@ -249,11 +264,11 @@ update_cache()
         // create triangle fans pointing towards v0
         for (; fv_it; ++fv_it) 
         {
-          poly_cache.push_back(v0);
-          poly_cache.push_back(vPrev);
+          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
+          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
 
           vPrev = fv_it.handle().idx();
-          poly_cache.push_back(vPrev);
+          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
         }
       }
     }
@@ -313,14 +328,26 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   else         ACG::GLState::shadeModel(GL_FLAT);
 
 
-  if (shaded && mesh_.has_vertex_normals()) {
-    ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
-    ACG::GLState::normalPointer(mesh_.vertex_normals());
+  if (drawMesh_)
+  {
+    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, drawMesh_->getVBO());
+    drawMesh_->getVertexDeclaration()->activateFixedFunction();
+
+    // disable unwanted attributes from drawmesh vbo
+    ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+    ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
   }
+  else
+  {
+    // use buffers from openmesh
+    if (shaded && mesh_.has_vertex_normals()) {
+      ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
+      ACG::GLState::normalPointer(mesh_.vertex_normals());
+    }
 
-
-  ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
-  ACG::GLState::vertexPointer(mesh_.points());
+    ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
+    ACG::GLState::vertexPointer(mesh_.points());
+  }
   
 
   // points
@@ -356,6 +383,11 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     }
   }
 
+  // disable gpu buffer for halfedges
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
+  ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
+
+
   // half edges
   if (halfedges)
     draw_halfedges();
@@ -364,6 +396,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   
   ACG::GLState::depthFunc(prev_depth);
+
 }
 
 
@@ -474,7 +507,11 @@ draw_faces(bool _per_vertex)
         glBegin(GL_POLYGON);
         for (fv_it=mesh_.cfv_iter(*fh_it); fv_it; ++fv_it) {
           glNormal(mesh_.normal(fv_it));
-          glArrayElement(fv_it.handle().idx());
+
+          if (drawMesh_) // map to vbo index
+            glArrayElement(drawMesh_->mapVertexToVBOIndex(fv_it.handle().idx()));
+          else
+            glArrayElement(fv_it.handle().idx());
         }
         glEnd();
       }
@@ -573,11 +610,17 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   if (shaded)
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
+  if (drawMesh_)
+  {
+    ro.vertexBuffer = drawMesh_->getVBO();
+    ro.vertexDecl = drawMesh_->getVertexDeclaration();
+  }
+  else
+    ro.vertexDecl = &pointVertexDecl_;
+
   // point list
   if (points && !v_cache_.empty())
   {
-    ro.vertexDecl = &pointVertexDecl_;
-    
     ro.glDrawElements(GL_POINTS, v_cache_.size(), GL_UNSIGNED_INT, &v_cache_[0]);
     _renderer->addRenderObject(&ro);
   }
@@ -585,8 +628,6 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   // edge list
   if (edges && !e_cache_.empty())
   {
-    ro.vertexDecl = &pointVertexDecl_;
-
     ro.glDrawElements(GL_LINES, e_cache_.size(), GL_UNSIGNED_INT, &e_cache_[0]);
     _renderer->addRenderObject(&ro);
   }
@@ -594,8 +635,6 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
 
   if (faces && !f_cache_.empty())
   {
-    ro.vertexDecl = &pointVertexDecl_;
-
     if (mesh_.is_trimesh()) 
     {
       ro.glDrawElements(GL_TRIANGLES,  f_cache_.size(), GL_UNSIGNED_INT,  &f_cache_[0]);
@@ -617,6 +656,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
     halfedgeVertexDecl_.clear();
     halfedgeVertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, &he_points_[0]);
 
+    ro.vertexBuffer = 0;
     ro.vertexDecl = &halfedgeVertexDecl_;
 
     ro.glDrawArrays(GL_LINES, 0, he_points_.size() );
@@ -651,6 +691,11 @@ void StatusNodeT<Mesh, Mod>::updateSelection() {
   edgeIndexInvalid_     = true;
   faceIndexInvalid_     = true;
 
+}
+
+template <class Mesh, class Mod>
+void StatusNodeT<Mesh, Mod>::setDrawMesh(DrawMeshT<Mesh>* _drawmesh){
+  drawMesh_ = _drawmesh;
 }
 
 

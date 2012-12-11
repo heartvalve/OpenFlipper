@@ -64,6 +64,7 @@
 
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/DrawMesh.hh>
 
 #include <vector>
 
@@ -111,6 +112,10 @@ public:
     */
   void updateSelection();
 
+  /** \brief set drawmesh, selections are then rendered with gpu buffers for improved performance
+  */
+  void setDrawMesh(DrawMeshT<Mesh>* _drawmesh);
+
 
   /** \brief support for shader-pipeline
   @param _renderer Render-Interface, collector for Renderobjects
@@ -155,6 +160,8 @@ private:
 private:
 
   const Mesh&                mesh_;
+  DrawMeshT<Mesh>*           drawMesh_;
+
   std::vector<unsigned int>  v_cache_, e_cache_, f_cache_, poly_cache;
   std::vector<FaceHandle>    fh_cache_;
 

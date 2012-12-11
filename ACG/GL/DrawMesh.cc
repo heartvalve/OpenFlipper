@@ -1040,9 +1040,8 @@ unsigned int DrawMeshT<Mesh>::getMemoryUsage(bool _printReport)
 }
 
 
-
 template <class Mesh>
-void DrawMeshT<Mesh>::bindBuffers()
+void DrawMeshT<Mesh>::updateGPUBuffers()
 {
   // rebuild if necessary
   if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
@@ -1058,6 +1057,36 @@ void DrawMeshT<Mesh>::bindBuffers()
   }
   else
     rebuild();
+}
+
+
+template <class Mesh>
+GLuint DrawMeshT<Mesh>::getVBO()
+{
+  updateGPUBuffers();
+  return vbo_;
+}
+
+template <class Mesh>
+GLuint DrawMeshT<Mesh>::getIBO()
+{
+  updateGPUBuffers();
+  return ibo_;
+}
+
+template <class Mesh>
+unsigned int DrawMeshT<Mesh>::mapVertexToVBOIndex(unsigned int _v)
+{
+  if (_v < mesh_.n_vertices())
+    return invVertexMap_[_v];
+
+  return (unsigned int)-1;
+}
+
+template <class Mesh>
+void DrawMeshT<Mesh>::bindBuffers()
+{
+  updateGPUBuffers();
 
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, vbo_);
 
@@ -1094,20 +1123,7 @@ void DrawMeshT<Mesh>::bindBuffers()
 template <class Mesh>
 void DrawMeshT<Mesh>::bindBuffersToRenderObject(RenderObject* _obj)
 {
-  // rebuild if necessary
-  if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
-
-  if (bVBOinHalfedgeNormalMode_ != halfedgeNormalMode_) rebuild_ = REBUILD_FULL;
-
-  // if no rebuild necessary, check for smooth / flat shading switch 
-  // to update normals
-  if (rebuild_ == REBUILD_NONE)
-  {
-    if (bVBOinFlatMode_ != flatMode_ || bVBOinHalfedgeTexMode_ != textureMode_)
-      createVBO();
-  }
-  else
-    rebuild();
+  updateGPUBuffers();
 
   _obj->vertexBuffer = vbo_;
   _obj->indexBuffer = ibo_;
@@ -1785,6 +1801,12 @@ void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
   vertexDeclEdgeCol_->setVertexStride(0);
   vertexDeclHalfedgeCol_->setVertexStride(0);
   vertexDeclHalfedgePos_->setVertexStride(0);
+}
+
+template <class Mesh>
+VertexDeclaration* ACG::DrawMeshT<Mesh>::getVertexDeclaration()
+{
+  return  vertexDeclVCol_;
 }
 
 

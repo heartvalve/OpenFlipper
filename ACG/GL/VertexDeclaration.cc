@@ -261,7 +261,7 @@ unsigned int VertexDeclaration::getElementSize(const VertexElement* _pElement)
 
 
 
-void VertexDeclaration::activateFixedFunction()
+void VertexDeclaration::activateFixedFunction() const
 {
   unsigned int numElements = getNumElements();
   unsigned int vertexStride = getVertexStride();
@@ -303,6 +303,27 @@ void VertexDeclaration::activateFixedFunction()
     }
 
     
+  }
+}
+
+
+void VertexDeclaration::deactivateFixedFunction() const
+{
+  unsigned int numElements = getNumElements();
+
+  for (unsigned int i = 0; i < numElements; ++i)
+  {
+    const VertexElement* pElem = getElement(i);
+
+    switch (pElem->usage_)
+    {
+    case VERTEX_USAGE_POSITION: ACG::GLState::disableClientState(GL_VERTEX_ARRAY); break;
+    case VERTEX_USAGE_COLOR: ACG::GLState::disableClientState(GL_COLOR_ARRAY); break;
+    case VERTEX_USAGE_TEXCOORD: ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY); break;
+    case VERTEX_USAGE_NORMAL: ACG::GLState::disableClientState(GL_NORMAL_ARRAY); break;
+
+    default: break;
+    }
   }
 }
 

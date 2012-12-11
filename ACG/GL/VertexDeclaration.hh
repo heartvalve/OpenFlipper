@@ -205,7 +205,12 @@ public:
   /*! prepare OpenGL to use a vertex buffer with this declaration
   -> uses the fixed function pointers (glVertexPointer, glColorPointer...)
   */
-  void activateFixedFunction();
+  void activateFixedFunction() const;
+
+  /*! disables vertex attributes to prevent any draw related crashes
+  */
+  void deactivateFixedFunction() const;
+
 
   /*! prepare OpenGL to use a vertex buffer with this declaration
   -> uses shader attribute pointers ( glVertexAttribPointer )
