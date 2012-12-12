@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15858 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15931 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -35,6 +35,8 @@
              - Dual Quaternion: Made interpolate function a template to allow other vector types than std::vector
          - Scenegraph:
              - translationManipulator: Added support for render objects 
+             - Added functions for new rendering interface, replacing the opengl standard pipeline
+             - StatusNodes can now use the buffers of a drawmesh (reuse them to use less memory and faster rendering)
          - Unittests
              - Unittests for BSP
              - Unittests for algorithms
@@ -58,6 +60,7 @@
              - Feature : State of toolboxes added via script is restored
              - Fix : States of toolboxes is remembered when changing views
              - Default changed: Set pick toolbars to default in scene again
+             - Improved Plugin Info Dialog
          - Help Browser:
              - Unregister old doc files correctly
              - Fixed startpage for windows
@@ -137,6 +140,7 @@
              - Fixed action mode toggling via meta or alt keys
              - Made conversion function scriptable
              - Fixed bug in selection plugin when switching between halfedge and edge selection with sphere
+             - Use Mousewheel + shift to grow or shrink selections
          - Skeletal Animation
              - Speedup Skeletal Animation Plugin by only caching skeletons.
          - Type PolyLine
