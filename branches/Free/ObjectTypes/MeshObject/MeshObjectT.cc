@@ -272,6 +272,13 @@
     featureNode_->set_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
     featureNode_->set_base_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
 
+    // Link the status nodes to the draw mesh of the mesh below them to reuse its buffers
+    if (meshNode_) {
+      statusNode_->setDrawMesh(meshNode_->getDrawMesh());
+      featureNode_->setDrawMesh(meshNode_->getDrawMesh());
+      areaNode_->setDrawMesh(meshNode_->getDrawMesh());
+      handleNode_->setDrawMesh(meshNode_->getDrawMesh());
+    }
 
 
 
@@ -375,9 +382,6 @@
 
     if ( statusNode_ ){
       statusNode_->updateSelection();
-
-      if (meshNode_)
-        statusNode_->setDrawMesh(meshNode_->getDrawMesh());
     }
   }
 
@@ -395,6 +399,7 @@
       featureNode_->updateGeometry();
       areaNode_->updateGeometry();
       handleNode_->updateGeometry();
+
     }
 
     invalidateTriangleBsp();
