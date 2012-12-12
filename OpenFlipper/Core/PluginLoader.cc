@@ -2210,5 +2210,5 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   }
 
   emit log(LOGOUT,"================================================================================");
-  
+
 }
