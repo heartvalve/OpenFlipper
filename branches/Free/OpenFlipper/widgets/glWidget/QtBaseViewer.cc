@@ -2070,12 +2070,12 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
 }
 
 
-void glViewer::snapshot( int _width, int _height, bool _alpha, bool _hideCoordsys)
+void glViewer::snapshot( int _width, int _height, bool _alpha, bool _hideCoordsys, int samples)
 {
    QImage image;
    
    // Capture image
-   snapshot(image, _width, _height, _alpha, _hideCoordsys);
+   snapshot(image, _width, _height, _alpha, _hideCoordsys, samples);
    
    QFileInfo fi(properties_.snapshotName());
 
