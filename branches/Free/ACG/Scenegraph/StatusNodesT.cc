@@ -124,30 +124,28 @@ void
 StatusNodeT<Mesh, Mod>::
 update_cache()
 {
-  if ( invalidGeometry_ ) {
-    bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
+  if (invalidGeometry_) {
+    bbMin_ = Vec3d(FLT_MAX, FLT_MAX, FLT_MAX);
     bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
-        v_end(mesh_.vertices_end());
+    typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
 
-    for (; v_it!=v_end; ++v_it) {
+    for (; v_it != v_end; ++v_it) {
       bbMin_.minimize(mesh_.point(v_it));
       bbMax_.maximize(mesh_.point(v_it));
     }
 
-    invalidGeometry_  = false;
+    invalidGeometry_ = false;
   }
 
 
   // Update the indices for selected vertices
-  if ( vertexIndexInvalid_ ) {
+  if (vertexIndexInvalid_) {
 
-    typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
-      v_end(mesh_.vertices_end());
+    typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
 
     v_cache_.clear();
-    for (; v_it!=v_end; ++v_it) {
+    for (; v_it != v_end; ++v_it) {
       if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
 
         unsigned int vertexIndex = v_it.handle().idx();
@@ -164,14 +162,13 @@ update_cache()
   }
 
   // Update index list of selected edges
-  if ( edgeIndexInvalid_ ) {
+  if (edgeIndexInvalid_) {
 
-    typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()),
-      e_end(mesh_.edges_end());
-    typename Mesh::VertexHandle   vh;
+    typename Mesh::ConstEdgeIter e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
+    typename Mesh::VertexHandle vh;
 
     e_cache_.clear();
-    for (; e_it!=e_end; ++e_it) {
+    for (; e_it != e_end; ++e_it) {
       if (Mod::is_edge_selected(mesh_, e_it)) {
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
         unsigned int vidx = vh.idx();
@@ -190,28 +187,27 @@ update_cache()
 
 
   // Update index list of selected halfedges
-  if ( halfedgeCacheInvalid_) {
+  if (halfedgeCacheInvalid_) {
 
-    typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
-      he_end(mesh_.halfedges_end());
+    typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
 
     he_points_.clear();
     he_normals_.clear();
-    for (; he_it!=he_end; ++he_it) {
-      if (Mod::is_halfedge_selected(mesh_, he_it))  {
+    for (; he_it != he_end; ++he_it) {
+      if (Mod::is_halfedge_selected(mesh_, he_it)) {
         // add vertices
-        he_points_.push_back( halfedge_point(he_it));
-        he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
+        he_points_.push_back(halfedge_point(he_it));
+        he_points_.push_back(halfedge_point(mesh_.prev_halfedge_handle(he_it)));
 
         // add normals
         FaceHandle fh;
-        if(!mesh_.is_boundary(he_it))
+        if (!mesh_.is_boundary(he_it))
           fh = mesh_.face_handle(he_it);
         else
           fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
 
-        he_normals_.push_back( mesh_.normal(fh));
-        he_normals_.push_back( mesh_.normal(fh));
+        he_normals_.push_back(mesh_.normal(fh));
+        he_normals_.push_back(mesh_.normal(fh));
       }
     }
 
@@ -220,38 +216,38 @@ update_cache()
 
 
   // update index list of selected faces
-  if ( faceIndexInvalid_ ) {
+  if (faceIndexInvalid_) {
 
-    typename Mesh::ConstFaceIter  f_it(mesh_.faces_sbegin()),
-      f_end(mesh_.faces_end());
-    typename Mesh::ConstFaceVertexIter   fv_it;
+    typename Mesh::ConstFaceIter f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
+    typename Mesh::ConstFaceVertexIter fv_it;
 
     f_cache_.clear();
     fh_cache_.clear();
-    for (; f_it!=f_end; ++f_it) {
+    for (; f_it != f_end; ++f_it) {
       if (Mod::is_face_selected(mesh_, f_it)) {
         fv_it = mesh_.cfv_iter(f_it);
         unsigned int vidx = fv_it.handle().idx();
 
-        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it; vidx = fv_it.handle().idx();
-        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it; vidx = fv_it.handle().idx();
+        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+        vidx = fv_it.handle().idx();
+
+        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+        vidx = fv_it.handle().idx();
+
         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
         fh_cache_.push_back(f_it);
       }
     }
 
 
-    if (!mesh_.is_trimesh())
-    {
+    if (!mesh_.is_trimesh()) {
       // triangulate poly-list
       poly_cache.resize(0);
 
-      typename std::vector<FaceHandle>::const_iterator  fh_it(fh_cache_.begin()),
-        fh_end(fh_cache_.end());
-      typename Mesh::CFVIter                            fv_it;
+      typename std::vector<FaceHandle>::const_iterator fh_it(fh_cache_.begin()), fh_end(fh_cache_.end());
+      typename Mesh::CFVIter fv_it;
 
-      for (; fh_it!=fh_end; ++fh_it) 
-      {
+      for (; fh_it != fh_end; ++fh_it) {
         fv_it = mesh_.cfv_iter(*fh_it);
 
         // 1. polygon vertex
@@ -262,8 +258,7 @@ update_cache()
         unsigned int vPrev = fv_it.handle().idx();
 
         // create triangle fans pointing towards v0
-        for (; fv_it; ++fv_it) 
-        {
+        for (; fv_it; ++fv_it) {
           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
 
@@ -339,7 +334,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   }
   else
   {
-    // use buffers from openmesh
+    // use buffers from open mesh
     if (shaded && mesh_.has_vertex_normals()) {
       ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
       ACG::GLState::normalPointer(mesh_.vertex_normals());
