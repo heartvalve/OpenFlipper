@@ -75,7 +75,7 @@ StatusNodeT( const Mesh&         _mesh,
              BaseNode*           _parent,
              const std::string&  _name )
   : MaterialNode(_parent, _name), mesh_(_mesh),
-  drawMesh_(0),
+  drawMesh_(NULL),
   bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
   bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX),
   invalidGeometry_(true),
