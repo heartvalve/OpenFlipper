@@ -112,7 +112,11 @@ public:
     */
   void updateSelection();
 
-  /** \brief set drawmesh, selections are then rendered with gpu buffers for improved performance
+  /** \brief Set drawmesh
+   *
+   * Selections are then rendered with gpu buffers gathered fro the meshnode for improved performance
+   *
+   * @param _drawmesh Pointer to the drawmesh for which this status node will work
   */
   void setDrawMesh(DrawMeshT<Mesh>* _drawmesh);
 
