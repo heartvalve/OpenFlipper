@@ -394,7 +394,6 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
   // init base render object
   RenderObject ro;
-  memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
 
   // the selection sphere uses alpha blending against scene meshes

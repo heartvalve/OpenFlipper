@@ -442,7 +442,6 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
 
   // init base renderobject
   RenderObject ro;
-  memset(&ro, 0, sizeof(RenderObject));
   ro.initFromState(&_state);
   ro.setMaterial(_mat);
 
