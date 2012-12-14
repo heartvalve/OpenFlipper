@@ -103,6 +103,8 @@
 #include <OpenFlipper/common/BaseObjectCore.hh>
 #include <OpenFlipper/common/TypesInternal.hh>
 
+#include <OpenFlipper/common/RendererInfo.hh>
+
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
 
@@ -528,6 +530,7 @@ Core::init() {
     else
       coreWidget_->setViewMode("All");
 
+    // Set the renderer to the one stored in the settings or to default
     for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEvent(QMouseEvent*)),
               this                              , SLOT(slotMouseEvent(QMouseEvent*)));
@@ -543,6 +546,47 @@ Core::init() {
 
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewChanged() ),
                coreWidget_->examiner_widgets_[i], SLOT( updateGL() ) ,Qt::DirectConnection);
+
+      // ====================================================
+      // Set renderer
+      // ====================================================
+
+      QString defaultRendererKey  = "Viewer" + QString::number(i)+"/DefaultRenderer";
+      QString defaultRendererName = OpenFlipperSettings().value(defaultRendererKey,"Default Classical Renderer").toString();
+
+      // Check if the renderer is there
+      int defaultRendererId = renderManager().getRendererId(defaultRendererName);
+
+      if ( defaultRendererId == -1 ) {
+        emit log(LOGERR,tr("Stored default renderer \"") + defaultRendererName + tr("\" is not available, trying Classical!"));
+
+        // Check if the renderer is there
+        defaultRendererId = renderManager().getRendererId("Default Classical Renderer");
+
+        // Classical available?
+        if ( defaultRendererId != -1 ) {
+          renderManager().setActive(defaultRendererId,i);
+        } else {
+          emit log(LOGERR,tr("Default classical renderer is also not available. Trying to use any other renderer i can find!"));
+        }
+
+      } else {
+        renderManager().setActive(defaultRendererId,i);
+      }
+
+    }
+
+    // Warn the user in the log and via messagebox, that he is using the build in renderer only
+    if ( renderManager().available() == 1 ) {
+      emit log(LOGERR,tr("No external plugin renderers available!"));
+      emit log(LOGERR,tr("The build in renderer is only a very limited one and is missing many features!"));
+      emit log(LOGERR,tr("You should build and use the other renderers!"));
+
+      QMessageBox msgBox;
+      msgBox.setText("No external plugin renderers available!");
+      msgBox.setInformativeText("The build in renderer is only a very limited one and is missing many features.\nYou should build and use the other free renderers shipped with OpenFlipper.");
+      msgBox.setIcon(QMessageBox::Warning);
+      int ret = msgBox.exec();
     }
 
   }
