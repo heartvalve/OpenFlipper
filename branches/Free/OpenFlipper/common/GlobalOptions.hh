@@ -112,6 +112,7 @@
 * * Viewer<viewer>/BackfaceCulling           true: enabled, false: disabled (bool)\n
 * * Viewer<viewer>/TwoSidedLighting          true: enabled, false: disabled (bool)\n
 * * Viewer<viewer>/BackgroundColor           Color of the viewer background (QColor)\n
+* * Viewer<viewer>/DefaultRenderer           Name of the default Renderer   (QString)\n
 *
 * <b>File Handling</b>\n
 * * Core/CurrentDir                          The current Directory of the Application \n
