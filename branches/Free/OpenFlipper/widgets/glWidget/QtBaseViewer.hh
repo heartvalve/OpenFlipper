@@ -644,11 +644,6 @@ private:
    * @{ */
   //===========================================================================
 
-  public slots:
-
-    /// enable/disable stereo mode
-    virtual void setStereoMode(bool _b);
-
   private:
     
     /// helper called by drawScene() when stereo viewing is active.
