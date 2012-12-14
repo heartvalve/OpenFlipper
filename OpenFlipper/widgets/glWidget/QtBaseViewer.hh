@@ -678,8 +678,6 @@ private:
 
   private:
 
-    bool stereo_;
-
     // custom anaglyph stuff
     int    agTexWidth_;
     int    agTexHeight_;

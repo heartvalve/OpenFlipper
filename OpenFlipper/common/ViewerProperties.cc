@@ -82,6 +82,7 @@ namespace Viewer {
     sceneRadius_(1.0),
     trackballCenter_(ACG::Vec3d( 0.0, 0.0, 0.0 )),
     trackballRadius_(1.0),
+    stereo_(false),
     viewerId_(_id)
   {
     settingsSection_ = "Viewer" + QString::number(_id) + "/";
