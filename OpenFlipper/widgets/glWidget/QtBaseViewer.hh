@@ -556,15 +556,6 @@ private:
   // Used to calculate the time passed between redraws
   QTime redrawTime_;
 
-  // Used to draw the current cursor in the scene
-  CursorPainter *cursorPainter_;
-
-  // position of the cursor picked into the scenegraph
-  ACG::Vec3d cursorPoint3D_;
-
-  // indicates that we successfully mapped the cursor into the scene
-  bool cursorPositionValid_;
-
   //===========================================================================
   /** @name Wheels
    * @{ */

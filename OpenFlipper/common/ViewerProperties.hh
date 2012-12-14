@@ -66,6 +66,7 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/GLState.hh>
+#include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
 
 // forward declaration
 class ViewObjectMarker;
@@ -514,6 +515,36 @@ namespace Viewer {
       /// Flag if stereo should be enabled for the current viewer
       bool stereo_;
 
+
+    /** @} */
+
+    //===========================================================================
+    //===========================================================================
+    /** @name Stereo Settings
+     * @{ */
+    //===========================================================================
+    //===========================================================================
+
+    public:
+      CursorPainter* cursorPainter() { return cursorPainter_; };
+      void cursorPainter( CursorPainter* _painter ) { cursorPainter_ = _painter; };
+
+      ACG::Vec3d cursorPoint3D() { return cursorPoint3D_; };
+      void cursorPoint3D(ACG::Vec3d _pos) { cursorPoint3D_ = _pos; };
+
+      bool cursorPositionValid() {return cursorPositionValid_; };
+      void cursorPositionValid(bool _valid) { cursorPositionValid_ = _valid;  };
+
+    private:
+
+      // Used to draw the current cursor in the scene
+      CursorPainter *cursorPainter_;
+
+      // position of the cursor picked into the scenegraph
+      ACG::Vec3d cursorPoint3D_;
+
+      // indicates that we successfully mapped the cursor into the scene
+      bool cursorPositionValid_;
 
     /** @} */
 

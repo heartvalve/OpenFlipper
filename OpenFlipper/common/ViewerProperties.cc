@@ -83,6 +83,9 @@ namespace Viewer {
     trackballCenter_(ACG::Vec3d( 0.0, 0.0, 0.0 )),
     trackballRadius_(1.0),
     stereo_(false),
+    cursorPainter_(0),
+    cursorPoint3D_(ACG::Vec3d(0.0,0.0,0.0)),
+    cursorPositionValid_(false),
     viewerId_(_id)
   {
     settingsSection_ = "Viewer" + QString::number(_id) + "/";
