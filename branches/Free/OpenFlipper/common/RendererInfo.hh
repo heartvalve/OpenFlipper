@@ -95,6 +95,13 @@ class DLLEXPORT RenderManager {
      */
     RendererInfo* newRenderer(QString _name);
 
+    /** \brief get renderer id with the given name
+     *
+     * @param _name Name of the renderer
+     * @return Id of the renderer or -1 if it does not exist
+     */
+    int getRendererId(QString _name);
+
     /** \brief get renderer with the given name
      *
      * @param _name Name of the renderer
@@ -134,8 +141,8 @@ class DLLEXPORT RenderManager {
 
     /** \brief set the active renderer
     *
-    * @param _id viewer id
     * @param _active name of the renderer
+    * @param _id viewer id
     */
     void setActive(QString _active, int _id);
 
