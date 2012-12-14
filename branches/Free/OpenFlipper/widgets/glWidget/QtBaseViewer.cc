@@ -2106,7 +2106,6 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
   if (!initialized_ || !sceneGraphRoot_ || !isVisible ())
     return;
 
-  unsigned int nodeIdx, targetIdx;
   ACG::Vec3d tmp;
 
   // ignore cursor if we are outside of our window
