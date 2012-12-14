@@ -91,9 +91,9 @@ static const char* customAnaglyphProg = {
 void
 glViewer::setStereoMode(bool _b)
 {
-  stereo_ = _b;
+  properties_.stereo(_b);
 
-  if (!stereo_) {
+  if (! properties_.stereo()) {
     makeCurrent();
     ACG::GLState::drawBuffer(GL_BACK);
   }

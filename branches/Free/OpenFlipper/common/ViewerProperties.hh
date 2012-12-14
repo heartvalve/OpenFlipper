@@ -497,7 +497,25 @@ namespace Viewer {
       double trackballRadius_;
       
     /** @} */
+
+    //===========================================================================
+    //===========================================================================
+    /** @name Stereo Settings
+     * @{ */
+    //===========================================================================
+    //===========================================================================
     
+    public:
+
+      void stereo(bool _stereo) { stereo_ = _stereo; emit updated(); };
+      bool stereo() {return stereo_; };
+
+    private:
+      /// Flag if stereo should be enabled for the current viewer
+      bool stereo_;
+
+
+    /** @} */
 
     signals:
 

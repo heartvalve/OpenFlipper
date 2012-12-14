@@ -182,9 +182,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
   trackMouse_ = false;
 
-  // stereo
-  stereo_ = false;
-
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
 
@@ -422,7 +419,7 @@ void glViewer::updateProjectionMatrix()
   glstate_->reset_projection();
 
   // In stereo mode we have to use a perspective matrix
-  if (stereo_ || projectionMode_ == PERSPECTIVE_PROJECTION)
+  if ( properties_.stereo() || projectionMode_ == PERSPECTIVE_PROJECTION)
   {
     double aspect;
 
@@ -597,7 +594,7 @@ void glViewer::drawScene()
 
   // Check if we use build in default renderers
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
-    if (stereo_) drawScene_stereo();
+    if ( properties_.stereo()) drawScene_stereo();
     else         drawScene_mono();
   } else {
     renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
@@ -954,7 +951,7 @@ void glViewer::paintGL()
     glColor4f(1.0,0.0,0.0,1.0);
 
     // clear (stereo mode clears buffers on its own)
-    if (!stereo_)
+    if (! properties_.stereo())
       glstate_->clearBuffers ();
 
     properties_.unLockUpdate();
@@ -1872,7 +1869,7 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   if (_event->modifiers() == Qt::ShiftModifier)
     factor = properties_.wheelZoomFactorShift();
 
-  if (projectionMode() == PERSPECTIVE_PROJECTION || stereo_)
+  if (projectionMode() == PERSPECTIVE_PROJECTION ||  properties_.stereo())
   {
     double d = -(double)_event->delta() / 120.0 * 0.2 * factor * properties_.trackballRadius() / 3.0;
     translate( ACG::Vec3d(0.0, 0.0, d) );
@@ -2161,7 +2158,7 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
     cursorPositionValid_ = false;
   }
   // only do real pick in stereo mode
-  else if (stereo_ && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
+  else if ( properties_.stereo() && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
            pick (ACG::SceneGraph::PICK_ANYTHING, _scenePos.toPoint(), nodeIdx, targetIdx, &tmp))
   {
     // the point we get back will contain the view transformation and we have to revert it
