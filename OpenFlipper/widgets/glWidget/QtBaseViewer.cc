@@ -1953,6 +1953,14 @@ void glViewer::applyProperties() {
   else
     ACG::GLState::disable( GL_CULL_FACE );
 
+  // Make sure the right buffer is used in non stereo setup
+  if (! properties_.stereo()) {
+    makeCurrent();
+    ACG::GLState::drawBuffer(GL_BACK);
+  }
+
+  // Required for stereo toggling
+  updateProjectionMatrix ();
 }
 
 void glViewer::slotPropertiesUpdated() {

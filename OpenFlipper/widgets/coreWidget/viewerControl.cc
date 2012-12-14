@@ -78,7 +78,7 @@ void CoreWidget::slotToggleStereoMode()
   cursorPainter_->setEnabled (stereoActive_);
 
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    examiner_widgets_[i]->setStereoMode(stereoActive_);
+    examiner_widgets_[i]->properties()->stereo(stereoActive_);
 }
 
 void CoreWidget::slotSetGlobalBackgroundColor() {

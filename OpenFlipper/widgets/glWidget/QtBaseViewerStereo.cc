@@ -87,25 +87,6 @@ static const char* customAnaglyphProg = {
 
 //-----------------------------------------------------------------------------
 
-
-void
-glViewer::setStereoMode(bool _b)
-{
-  properties_.stereo(_b);
-
-  if (! properties_.stereo()) {
-    makeCurrent();
-    ACG::GLState::drawBuffer(GL_BACK);
-  }
-
-  updateProjectionMatrix ();
-
-  updateGL();
-}
-
-//-----------------------------------------------------------------------------
-
-
 void
 glViewer::drawScene_glStereo()
 {
