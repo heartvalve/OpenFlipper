@@ -147,8 +147,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
   projectionUpdateLocked_(false),
   glScene_(_scene),
   glWidget_(_glWidget),
-  cursorPainter_(0),
-  cursorPositionValid_(false),
   pickCache_(0),
   updatePickCache_(true),
   pickCacheSupported_(true),
@@ -735,15 +733,15 @@ void glViewer::drawScene_mono()
 
   }
 
-  if (cursorPainter_ && cursorPainter_->enabled () && cursorPositionValid_)
+  if (properties_.cursorPainter() && properties_.cursorPainter()->enabled () && properties_.cursorPositionValid() )
   {
     glstate_->push_modelview_matrix ();
     // reset view transformation
     glstate_->reset_modelview ();
     // translate cursor position to 0,0
-    glstate_->translate (cursorPoint3D_[0], cursorPoint3D_[1], cursorPoint3D_[2]);
+    glstate_->translate ( properties_.cursorPoint3D() );
     // paint cursor
-    cursorPainter_->paintCursor (glstate_);
+    properties_.cursorPainter()->paintCursor (glstate_);
     glstate_->pop_modelview_matrix ();
   }
 
@@ -1327,8 +1325,8 @@ void glViewer::grabGLArea()
 {
   glareaGrabbed_ = true;
 
-  if (cursorPainter_) {
-    cursorPainter_->setCursor(Qt::BlankCursor);
+  if (properties_.cursorPainter()) {
+    properties_.cursorPainter()->setCursor(Qt::BlankCursor);
     std::cerr << "grabGLArea: Blanking cursorpainter  cursor" << std::endl; 
   } else {
     setCursor(Qt::BlankCursor);
@@ -1345,8 +1343,8 @@ void glViewer::releaseGLArea()
   ungrabMouse();
   ungrabKeyboard();
 
-  if (cursorPainter_) {
-    cursorPainter_->setCursor(Qt::ArrowCursor);
+  if (properties_.cursorPainter()) {
+    properties_.cursorPainter()->setCursor(Qt::ArrowCursor);
     std::cerr << "grabGLArea: Setting cursorPainter cursor to arrow" << std::endl;
   } else {
     setCursor(Qt::ArrowCursor);
@@ -2147,7 +2145,7 @@ void glViewer::slotClickTimeout()
 
 void glViewer::setCursorPainter (CursorPainter *_cursorPainter)
 {
-  cursorPainter_ = _cursorPainter;
+  properties_.cursorPainter( _cursorPainter );
 }
 
 //-----------------------------------------------------------------------------
@@ -2161,18 +2159,18 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
   ACG::Vec3d tmp;
 
   // ignore cursor if we are outside of our window
-  if (!mapRectToScene(boundingRect ()).intersects (cursorPainter_->cursorBoundingBox().translated(_scenePos)))
+  if (!mapRectToScene(boundingRect ()).intersects (properties_.cursorPainter()->cursorBoundingBox().translated(_scenePos)))
   {
-    cursorPositionValid_ = false;
+    properties_.cursorPositionValid( false );
   }
   // only do real pick in stereo mode
   else if ( properties_.stereo() && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
            pick (ACG::SceneGraph::PICK_ANYTHING, _scenePos.toPoint(), nodeIdx, targetIdx, &tmp))
   {
     // the point we get back will contain the view transformation and we have to revert it
-    cursorPoint3D_ = glstate_->modelview ().transform_point (tmp);
+    properties_.cursorPoint3D( glstate_->modelview ().transform_point (tmp) );
 
-    cursorPositionValid_ = true;
+    properties_.cursorPositionValid(true);
   }
   else
   {
@@ -2187,10 +2185,11 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
     ACG::Vec3d zerod = glstate_->project (ACG::Vec3d (0.0, 0.0, -zerop));
 
     // unproject the cursor into the scene
-    tmp = glstate_->unproject (ACG::Vec3d (_scenePos.x(), scene()->height () - _scenePos.y(), zerod[2]));
-    cursorPoint3D_ = tmp;
-    glstate_->pop_modelview_matrix ();
-    cursorPositionValid_ = true;
+    properties_.cursorPoint3D( glstate_->unproject (ACG::Vec3d (_scenePos.x(), scene()->height () - _scenePos.y(), zerod[2])) );
+
+    glstate_->pop_modelview_matrix();
+
+    properties_.cursorPositionValid(true);
   }
 }
 
