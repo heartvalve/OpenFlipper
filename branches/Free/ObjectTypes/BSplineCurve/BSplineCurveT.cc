@@ -311,7 +311,7 @@ derivativeCurvePoint(double _u, unsigned int _der)
 
   for (int i = 0; i < n; i++)
   {
-    double bf = derivativeBasisFunction(i, p, _u, _der);
+    typename BSplineCurveT<PointT>::Scalar bf = derivativeBasisFunction(i, p, _u, _der);
 //     std::cout << "i = " << i << ": p_i = " << get_control_point(i) << ", derivative BF = " << bf << std::endl;
     point += get_control_point(i) * bf;
 //     point += get_control_point(i) * derivativeBasisFunction(i, p, _u, _der);
@@ -340,8 +340,8 @@ basisFunction(int _i, int _n, double _t)
       return 0.0;
   }
 
-  double Nin1 = basisFunction(_i,   _n-1, _t);
-  double Nin2 = basisFunction(_i+1, _n-1, _t);
+  typename BSplineCurveT<PointT>::Scalar Nin1 = basisFunction(_i,   _n-1, _t);
+  typename BSplineCurveT<PointT>::Scalar Nin2 = basisFunction(_i+1, _n-1, _t);
 
   double fac1 = 0;
   if ((knotvector_(_i+_n)-knotvector_(_i)) !=0 )
@@ -369,8 +369,8 @@ derivativeBasisFunction(int _i, int _n, double _t, int _der)
   if (_der == 0)
     return basisFunction(_i, _n, _t);
 
-  double Nin1 = derivativeBasisFunction(_i,   _n-1, _t, _der-1);
-  double Nin2 = derivativeBasisFunction(_i+1, _n-1, _t, _der-1);
+  typename BSplineCurveT<PointT>::Scalar Nin1 = derivativeBasisFunction(_i,   _n-1, _t, _der-1);
+  typename BSplineCurveT<PointT>::Scalar Nin2 = derivativeBasisFunction(_i+1, _n-1, _t, _der-1);
 //   std::cout << "der = " << _der << ", i = " << _i << ", n = " << _n << ", t = " << _t << "   ===>   " << Nin1 << " , " << Nin2 << std::endl;
 //   std::cout << "Nin1 = " << Nin1 << ", Nin2 = " << Nin2 << std::endl;
 

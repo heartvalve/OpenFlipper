@@ -396,7 +396,7 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
   {
 //    double cylinderRadius = _state.line_width() * 0.05;
     double cylinderRadius = _state.line_width() * 0.2;
-    
+
     // draw selection
     if( bsplineCurve_.edge_selections_available())
     {
@@ -436,7 +436,7 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
     // radius of sphere
 //    double sphereRadius = _state.point_size() * 0.05;
     double sphereRadius = _state.point_size() * 0.25;
-    
+
     // draw selection
     if( bsplineCurve_.controlpoint_selections_available())
     {
