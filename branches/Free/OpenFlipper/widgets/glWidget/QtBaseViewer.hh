@@ -286,14 +286,11 @@ public:
   /// initialize modelview matrix to identity
   void initModelviewMatrix();
 
-  // get all Mouse & Key Events for GlWidget
+  /// get all Mouse & Key Events for GlWidget
   void grabGLArea();
 
-  // undo grabbing GLArea
+  /// undo grabbing GLArea
   void releaseGLArea();
-
-  /// One or two pass Drawing
-  void drawBlendedObjects(bool _status) { blending_ = _status; }
 
   /// translate the scene and update modelview matrix
   void translate(const ACG::Vec3d& trans);
@@ -543,7 +540,6 @@ private:
   ACG::SceneGraph::BaseNode*   sceneGraphRoot_;
 
   bool                         projectionUpdateLocked_;
-  bool                         blending_;
 
   // graphics scene used to paint gl context and widgets
   QGraphicsScene* glScene_;
@@ -652,38 +648,35 @@ private:
 
     /// enable/disable stereo mode
     virtual void setStereoMode(bool _b);
-    
+
   private:
     
     /// helper called by drawScene() when stereo viewing is active.
     void drawScene_stereo();
-    
+
     /// helper called by drawScene_stereo() when opengl stereo viewing is active.
     void drawScene_glStereo();
-    
+
     /// helper called by drawScene_stereo() when anaglyph stereo viewing is active.
     void drawScene_anaglyphStereo();
-    
+
     /// helper called by drawScene_stereo() when custom anaglyph stereo viewing is active.
     void drawScene_customAnaglyphStereo();
-    
+
     /// helper called to initialize/update custom anaglyph stereo
     void updateCustomAnaglyphStereo();
-    
+
     /// helper called to cleanup custom anaglyph stereo
     void finiCustomAnaglyphStereo();
-    
+
     /// Draws the scene for a philips stereo display ( Header, left color image, right depth map )
     void drawScenePhilipsStereo();
-    
+
     /// Updates the scene for a philips stereo display
     void updateScenePhilipsStereo();
-    
+
 
   private:
-    
-    /// Stereo enabled?
-    bool                         stereo_;
 
     // custom anaglyph stuff
     int    agTexWidth_;
