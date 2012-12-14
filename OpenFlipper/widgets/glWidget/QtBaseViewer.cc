@@ -145,7 +145,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
   QGraphicsWidget(_parent),
   glareaGrabbed_(false),
   projectionUpdateLocked_(false),
-  blending_(true),
   glScene_(_scene),
   glWidget_(_glWidget),
   cursorPainter_(0),
@@ -656,14 +655,13 @@ void glViewer::drawScene_mono()
       }
     }
 
-    ACG::SceneGraph::DrawAction action( properties_.drawMode(), *glstate_ , false);
-    ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
+    // First pass
+    ACG::SceneGraph::DrawAction pass1( properties_.drawMode(), *glstate_ , false);
+    ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, pass1, *glstate_, properties_.drawMode() );
 
-    if( blending_ )
-    {
-      ACG::SceneGraph::DrawAction action(properties_.drawMode(), *glstate_, true);
-      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
-    }
+    // Second Pass for Blending operations
+    ACG::SceneGraph::DrawAction pass2(properties_.drawMode(), *glstate_, true);
+    ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, pass2, *glstate_, properties_.drawMode());
 
     if (oM)
     {
