@@ -436,31 +436,62 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
   QString vendor = QString((const char*)glGetString(GL_VENDOR));
-  aboutWidget_->OpenFlipperAbout->append(tr("Vendor:\t") + vendor);
+  aboutWidget_->OpenFlipperAbout->append(tr("Qt reports Vendor:\t\t") + vendor);
   QString renderer = QString((const char*)glGetString(GL_RENDERER));
-  aboutWidget_->OpenFlipperAbout->append(tr("Renderer:\t") + renderer);
+  aboutWidget_->OpenFlipperAbout->append(tr("Qt reports Renderer:\t\t") + renderer);
   
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
 
-  if ( flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t3.0 or higher") );
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_2_1))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t2.1 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_2_0))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t2.0 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_5))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t1.5 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_4))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t1.4 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_3))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t1.3 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_2))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t1.2 or higher" ));
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_1))
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\t1.1 or higher" ));
-  else
-    aboutWidget_->OpenFlipperAbout->append(tr("Version:\tUNKNOWN!" ));
+  QString openGLQtVersion = tr("Qt reports Version:\t\t");
 
+  if ( flags.testFlag(QGLFormat::OpenGL_Version_4_0) )
+    openGLQtVersion += tr("4.0 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_3))
+    openGLQtVersion += tr("3.3 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_2))
+    openGLQtVersion += tr("3.2 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_1))
+    openGLQtVersion += tr("3.1 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
+    openGLQtVersion += tr("3.0 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
+    openGLQtVersion += tr("3.0 or higher") ;
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_2_1))
+    openGLQtVersion += tr("2.1 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_2_0))
+    openGLQtVersion += tr("2.0 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_5))
+    openGLQtVersion += tr("1.5 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_4))
+    openGLQtVersion += tr("1.4 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_3))
+    openGLQtVersion += tr("1.3 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_2))
+    openGLQtVersion += tr("1.2 or higher" );
+  else if (flags.testFlag(QGLFormat::OpenGL_Version_1_1))
+    openGLQtVersion += tr("1.1 or higher" );
+  else
+    openGLQtVersion += tr("Version:\tUNKNOWN!" );
+
+  aboutWidget_->OpenFlipperAbout->append(openGLQtVersion);
+
+  aboutWidget_->OpenFlipperAbout->append("\n");
+
+  QString openGLVendor = tr("GL reports Vendor:\t\t");
+  openGLVendor += QString((const char*)glGetString(GL_VENDOR));
+  aboutWidget_->OpenFlipperAbout->append(openGLVendor);
+
+  QString openGLRenderer = tr("GL reports Renderer:\t\t");
+  openGLRenderer += QString((const char*)glGetString(GL_RENDERER));
+  aboutWidget_->OpenFlipperAbout->append(openGLRenderer);
+
+  QString openGLGLVersion = tr("GL reports Version:\t\t");
+  openGLGLVersion += QString((const char*)glGetString(GL_VERSION));
+  aboutWidget_->OpenFlipperAbout->append(openGLGLVersion);
+
+  QString openGLShadingLanguageVersion = tr("GL reports Shading Language Version:\t");
+  openGLShadingLanguageVersion += QString((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+  aboutWidget_->OpenFlipperAbout->append(openGLShadingLanguageVersion);
 
 
   // =====================================================================================
