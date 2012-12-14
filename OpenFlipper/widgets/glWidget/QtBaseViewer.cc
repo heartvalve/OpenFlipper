@@ -209,14 +209,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
   setHome();
 
-  // initialize custom anaglyph stereo
-  agTexWidth_ = 0;
-  agTexHeight_ = 0;
-  agTexture_[0] = 0;
-  agTexture_[1] = 0;
-  agProgram_ = 0;
-  customAnaglyphSupported_ = false;
-
   clickTimer_.setSingleShot (true);
   connect (&clickTimer_, SIGNAL(timeout ()), this, SLOT(slotClickTimeout ()));
 }
@@ -227,7 +219,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
 glViewer::~glViewer()
 {
-  finiCustomAnaglyphStereo ();
   delete glstate_;
 }
 
@@ -417,7 +408,7 @@ void glViewer::updateProjectionMatrix()
   glstate_->reset_projection();
 
   // In stereo mode we have to use a perspective matrix
-  if ( properties_.stereo() || projectionMode_ == PERSPECTIVE_PROJECTION)
+  if ( projectionMode_ == PERSPECTIVE_PROJECTION)
   {
     double aspect;
 
@@ -590,10 +581,9 @@ void glViewer::drawScene()
   // draw mono or stereo
   makeCurrent();
 
-  // Check if we use build in default renderers
+  // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
-    if ( properties_.stereo()) drawScene_stereo();
-    else         drawScene_mono();
+    drawScene_mono();
   } else {
     renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
   }
@@ -747,34 +737,6 @@ void glViewer::drawScene_mono()
 
 }
 
-
-//-----------------------------------------------------------------------------
-
-
-void
-glViewer::drawScene_stereo()
-{
-  if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::OpenGL && OpenFlipper::Options::glStereo ())
-  {
-    drawScene_glStereo ();
-    return;
-  }
-  else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::AnaglyphCustom && customAnaglyphSupported_)
-  {
-    drawScene_customAnaglyphStereo ();
-
-    // if somthing went wrong, fallback to normal anaglyph
-    if (customAnaglyphSupported_)
-      return;
-  }
-
-  drawScene_anaglyphStereo ();
-}
-
-
-//-----------------------------------------------------------------------------
-
-
 void glViewer::setHome()
 {
   home_modelview_          = glstate_->modelview();
@@ -799,9 +761,7 @@ void glViewer::home()
 
 }
 
-
 //-----------------------------------------------------------------------------
-
 
 void glViewer::viewAll()
 {
@@ -892,11 +852,6 @@ void glViewer::initializeGL()
   // unlock update (we started locked)
   properties_.unLockUpdate();
 
-  customAnaglyphSupported_ = ACG::checkExtensionSupported("GL_ARB_fragment_program") &&
-                            (ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ||
-                             ACG::checkExtensionSupported("GL_EXT_texture_rectangle") ||
-                             ACG::checkExtensionSupported("GL_NV_texture_rectangle"));
-
   initialized_ = true;
 
   if (sceneGraphRoot_)
@@ -948,9 +903,7 @@ void glViewer::paintGL()
 
     glColor4f(1.0,0.0,0.0,1.0);
 
-    // clear (stereo mode clears buffers on its own)
-    if (! properties_.stereo())
-      glstate_->clearBuffers ();
+    glstate_->clearBuffers ();
 
     properties_.unLockUpdate();
 
@@ -1867,7 +1820,7 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   if (_event->modifiers() == Qt::ShiftModifier)
     factor = properties_.wheelZoomFactorShift();
 
-  if (projectionMode() == PERSPECTIVE_PROJECTION ||  properties_.stereo())
+  if (projectionMode() == PERSPECTIVE_PROJECTION )
   {
     double d = -(double)_event->delta() / 120.0 * 0.2 * factor * properties_.trackballRadius() / 3.0;
     translate( ACG::Vec3d(0.0, 0.0, d) );
@@ -1952,10 +1905,8 @@ void glViewer::applyProperties() {
     ACG::GLState::disable( GL_CULL_FACE );
 
   // Make sure the right buffer is used in non stereo setup
-  if (! properties_.stereo()) {
-    makeCurrent();
-    ACG::GLState::drawBuffer(GL_BACK);
-  }
+  makeCurrent();
+  ACG::GLState::drawBuffer(GL_BACK);
 
   // Required for stereo toggling
   updateProjectionMatrix ();
@@ -2164,14 +2115,6 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
     properties_.cursorPositionValid( false );
   }
   // only do real pick in stereo mode
-  else if ( properties_.stereo() && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
-           pick (ACG::SceneGraph::PICK_ANYTHING, _scenePos.toPoint(), nodeIdx, targetIdx, &tmp))
-  {
-    // the point we get back will contain the view transformation and we have to revert it
-    properties_.cursorPoint3D( glstate_->modelview ().transform_point (tmp) );
-
-    properties_.cursorPositionValid(true);
-  }
   else
   {
     glstate_->push_modelview_matrix ();
