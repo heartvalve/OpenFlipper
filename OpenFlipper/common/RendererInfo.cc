@@ -109,6 +109,15 @@ RendererInfo* RenderManager::getRenderer(QString _name) {
   return 0;
 }
 
+int RenderManager::getRendererId(QString _name) {
+
+  for ( unsigned int i = 0 ; i < availableRenderers_.size() ; ++i)
+    if ( availableRenderers_[i].name == _name)
+      return i;
+
+  return -1;
+}
+
 int RenderManager::countRenderers(ACG::SceneGraph::DrawModes::DrawMode _mode) {
 
   int renderers = 0;
