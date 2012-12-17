@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 15931 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 15962 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -65,6 +65,16 @@
              - Unregister old doc files correctly
              - Fixed startpage for windows
              - fix: does not unregister help files if unnecessary
+         - Rendering
+             - Removed most of the Rendering Code and moved it into The Classic Rendering Plugin
+         - RendererManager
+             - Added function to get renderer id from name
+         - GLWidget
+             - Moved stereo flag into ViewerProperties
+             - Removed unused blending flag
+             - Moved cursor painter to ViewerProperties
+         - About Dialog
+             - Display more information about the OpenGL and Shader Versions
          - Fix: Don't create icons, when no gui is available
      - <b>Interfaces</b>
          - RPC Interface
@@ -75,6 +85,8 @@
          - General
              - Speedup: Removed the get_unique_name functions when adding any object, as this would cause linear time when adding new objects.
              - Merged the two implementations of QtPlaneSelect.
+         - BSplineCurve
+             - Make proper use of templates to enable different data types
          - Plane
              - Get rid of immidiate mode when rendering
          - PolyLine
@@ -118,12 +130,15 @@
              - New snap boundary function 
              - Added fix topology function
              - Added a function to fix a mesh by snapping vertices in a specific range into one vertex
+             - Increased maximal values for the spin boxes
          - Move 
              - Added scripting function for the transformation of handle vertices.
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters)
          - Render Shader Pipeline
              - New renderrer, based on a shader replacement of the standard pipeline
+         - Render Classic
+             - The classical Renderer taken from the core and moved into a plugin ( Important step to use the new Renderers via Core Profiles)
          - Property Vis
              - Increased maximal allowed scaling factor for vectors
              - Support build without skeleton data type
