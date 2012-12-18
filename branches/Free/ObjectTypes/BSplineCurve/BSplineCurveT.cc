@@ -229,7 +229,7 @@ delete_control_point(int _idx)
 template <class PointT>
 void
 BSplineCurveT<PointT>::
-set_control_point(int _idx, Point& _cp)
+set_control_point(int _idx, const Point& _cp)
 {
   assert(_idx < (int)control_polygon_.size());
   control_polygon_[_idx] = _cp;
