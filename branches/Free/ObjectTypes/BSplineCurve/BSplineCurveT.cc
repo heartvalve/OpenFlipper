@@ -300,7 +300,7 @@ curvePoint(double _u)
 template <class PointT>
 PointT
 BSplineCurveT<PointT>::
-derivativeCurvePoint(double _u, unsigned int _der)
+derivativeCurvePoint(Scalar _u, unsigned int _der)
 {
   assert(_u >= lower() && _u <= upper());
 
@@ -325,7 +325,7 @@ derivativeCurvePoint(double _u, unsigned int _der)
 template <class PointT>
 typename BSplineCurveT<PointT>::Scalar
 BSplineCurveT<PointT>::
-basisFunction(int _i, int _n, double _t)
+basisFunction(int _i, int _n, Scalar _t)
 {
   int m = knotvector_.size() - 1;
   
@@ -343,11 +343,11 @@ basisFunction(int _i, int _n, double _t)
   typename BSplineCurveT<PointT>::Scalar Nin1 = basisFunction(_i,   _n-1, _t);
   typename BSplineCurveT<PointT>::Scalar Nin2 = basisFunction(_i+1, _n-1, _t);
 
-  double fac1 = 0;
+  Scalar fac1 = 0;
   if ((knotvector_(_i+_n)-knotvector_(_i)) !=0 )
     fac1 = (_t - knotvector_(_i)) / (knotvector_(_i+_n) - knotvector_(_i)) ;
 
-  double fac2 = 0;
+  Scalar fac2 = 0;
   if ( (knotvector_(_i+1+_n)-knotvector_(_i+1)) !=0 )
     fac2 = (knotvector_(_i+1+_n) - _t)/ (knotvector_(_i+1+_n) - knotvector_(_i+1));
 
@@ -364,7 +364,7 @@ basisFunction(int _i, int _n, double _t)
 template <class PointT>
 typename BSplineCurveT<PointT>::Scalar
 BSplineCurveT<PointT>::
-derivativeBasisFunction(int _i, int _n, double _t, int _der)
+derivativeBasisFunction(int _i, int _n, Scalar _t, int _der)
 {
   if (_der == 0)
     return basisFunction(_i, _n, _t);

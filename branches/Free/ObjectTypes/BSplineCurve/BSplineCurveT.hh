@@ -147,7 +147,7 @@ public:
    * \param _der the _derm'th derivative
    * \return the derivative
    */
-  Point derivativeCurvePoint(double _u, unsigned int _der);
+  Point derivativeCurvePoint(Scalar _u, unsigned int _der);
 
   /**
    * Evaluates the curve at parameter u using deBoor algorithm.
@@ -206,7 +206,7 @@ public:
    * \param _t the parameter
    * Returns N_i^p(_u)
    */
-  Scalar basisFunction(int _i, int _n, double _t);
+  Scalar basisFunction(int _i, int _n, Scalar _t);
 
   /**
    * Derivative of a Spline Basis Function
@@ -215,7 +215,7 @@ public:
    * \param _t the parameter
    * \param _der the _der'th derivative
    */
-  Scalar derivativeBasisFunction(int _i, int _n, double _t, int _der);
+  Scalar derivativeBasisFunction(int _i, int _n, Scalar _t, int _der);
 
 
 private: // private functions
