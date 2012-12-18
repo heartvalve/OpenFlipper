@@ -123,7 +123,7 @@ public:
   void delete_control_point(int _idx);
 
   /// reset a control point
-  void set_control_point(int _idx, Point& _cp);
+  void set_control_point(int _idx, const Point& _cp);
 
   /// set whole control polygon
   void set_control_polygon(std::vector< Point> & _control_polygon);
