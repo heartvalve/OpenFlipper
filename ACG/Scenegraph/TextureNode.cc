@@ -161,6 +161,7 @@ TextureNode::applyTextureParameters( int _id )
       
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_filter_ );
+      glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
       
   } else if(texture_filter_ == GL_LINEAR) {
       
