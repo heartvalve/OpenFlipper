@@ -97,7 +97,7 @@ class LoadSaveInterface {
       virtual void copyObject( int _oldId, int& _newId) {};
 
 
-      /** \brief DEPRECATED! Emit this signal if an empty object has been created
+      /** \brief DEPRECATED HERE (Moved to Type Interface)! Emit this signal if an empty object has been created
        *
        * Deprecated! Objects are added by the Type Plugins and this is signal is in the TypeInterface now
        *
