@@ -93,7 +93,7 @@ public:
   BSplineCurveT(const BSplineCurveT& _curve);
 
   /// Destructor
-  ~BSplineCurveT() {};
+  ~BSplineCurveT() {}
 
   /// get the knotvector of the bspline curve
   std::vector< Scalar >& get_knots() {return knotvector_.getKnotvector();};
@@ -139,7 +139,7 @@ public:
    * \param _u the parameter
    * \return the curve point
    */
-  Point curvePoint( double _u );
+  Point curvePoint( Scalar _u );
 
   /**
    * Returns the _derm'th derivative of a spline curve

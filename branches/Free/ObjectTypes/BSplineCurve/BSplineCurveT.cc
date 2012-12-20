@@ -275,9 +275,9 @@ reset_control_polygon()
 template <class PointT>
 PointT
 BSplineCurveT<PointT>::
-curvePoint(double _u)
+curvePoint(Scalar _u)
 {
-  double epsilon = 0.0000001;
+  Scalar epsilon = 0.0000001;
 
   if (_u > upper() && _u < upper()+epsilon)
     _u = upper();
