@@ -24,16 +24,19 @@ find_path(CPLEX_CONCERT_INCLUDE_DIR
 find_library( CPLEX_LIBRARY 
               cplex
               PATHS "$ENV{CPLEX_DIR}/cplex/lib/x86-64_sles10_4.1/static_pic" 
+                    "$ENV{CPLEX_DIR}/cplex/lib/x86-64_darwin/static_pic/"
               )
 
 find_library( CPLEX_ILO_LIBRARY 
               ilocplex
               PATHS "$ENV{CPLEX_DIR}/cplex/lib/x86-64_sles10_4.1/static_pic" 
+                    "$ENV{CPLEX_DIR}/cplex/lib/x86-64_darwin/static_pic/"
               )
 
 find_library( CPLEX_CONCERT_LIBRARY 
               concert
               PATHS "$ENV{CPLEX_DIR}/concert/lib/x86-64_sles10_4.1/static_pic" 
+                    "$ENV{CPLEX_DIR}/concert/lib/x86-64_darwin/static_pic/"
               )     
                  
 
