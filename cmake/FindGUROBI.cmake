@@ -25,11 +25,13 @@ ELSEIF(APPLE)
    find_path(GUROBI_INCLUDE_DIR NAMES gurobi_c++.h
 	     PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
 	     	   ${GUROBI_INCLUDE_PATH}
+               "${GUROBI_HOME}/include"
             )
 
    find_library( GUROBI_LIBRARY 
-                 SuperLU
-                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40")
+                 gurobi
+                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
+                 "${GUROBI_HOME}/lib")
 
 ELSE( WIN32 )
    find_path(GUROBI_INCLUDE_DIR NAMES gurobi_c++.h
@@ -65,6 +67,8 @@ IF(GUROBI_INCLUDE_DIR AND NOT GUROBI_LIBRARY)
   ELSEIF(EXISTS "${GUROBI_LIBRARY_DIR}/libgurobi46.so")
     SET(GUROBI_LIBRARY "gurobi46;gurobi_c++;pthread" CACHE STRING "GUROBI Libraries")  
   ELSEIF(EXISTS "${GUROBI_LIBRARY_DIR}/libgurobi50.so")
+    SET(GUROBI_LIBRARY "gurobi50;gurobi_c++;pthread" CACHE STRING "GUROBI Libraries")  
+  ELSEIF(EXISTS "${GUROBI_LIBRARY_DIR}/libgurobi50.dylib")
     SET(GUROBI_LIBRARY "gurobi50;gurobi_c++;pthread" CACHE STRING "GUROBI Libraries")  
   ELSE()
     message(FATAL_ERROR "Couldn't find a gurobi lib in ${GUROBI_LIBRARY_DIR}. Maybe it's a version I don't know about, yet.")
