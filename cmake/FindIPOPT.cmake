@@ -37,17 +37,6 @@ if (WIN32)
       SET(IPOPT_INCLUDE_DIR ${IPOPT_INCLUDE_DIR})
     ENDIF(IPOPT_INCLUDE_DIR)
 
-ELSEIF(APPLE)
-
-   find_path(IPOPT_INCLUDE_DIR NAMES gurobi_c++.h
-	     PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
-	     	   ${IPOPT_INCLUDE_PATH}
-            )
-
-   find_library( IPOPT_LIBRARY 
-                 SuperLU
-                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40")
-
 ELSE( WIN32 )
    find_path(IPOPT_INCLUDE_DIR NAMES IpNLP.hpp
      PATHS  "$ENV{IPOPT_HOME}/include/coin"
@@ -65,9 +54,11 @@ ELSE( WIN32 )
 
    
    # set optional path to HSL Solver
-   find_path(IPOPT_HSL_LIBRARY_DIR NAMES libhsl.so
-     PATHS "$ENV{IPOPT_HSL_LIBRARY_PATH}"
-           "$ENV{HOME}/opt/HSL/lib"
+   find_path(IPOPT_HSL_LIBRARY_DIR 
+             NAMES libhsl.so
+                   libhsl.dylib
+             PATHS "$ENV{IPOPT_HSL_LIBRARY_PATH}"
+                   "$ENV{HOME}/opt/HSL/lib"
    )
    
    IF( IPOPT_HSL_LIBRARY_DIR)
