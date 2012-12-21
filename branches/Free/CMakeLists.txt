@@ -228,7 +228,9 @@ if (APPLE AND OPENFLIPPER_CALL_FIX_BUNDLE)
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
      "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)
-  add_custom_target (fixbundle ALL
+  
+  # Don't call every time! add_custom_target (fixbundle ALL
+  add_custom_target (fixbundle 
     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
   )
   # let bundle generation depend on all targets
