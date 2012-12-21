@@ -263,12 +263,6 @@ if (NOT WIN32 AND NOT APPLE)
 endif ()
 
 
-#Add dependency to fixbundle on APPLE when creating the package
-if ( APPLE )
-  add_dependencies(package fixbundle)
-endif()
-
-
 # cmake doesn't create a source package target, so we have to add our own
 if (EXISTS "${CMAKE_BINARY_DIR}/CPackSourceConfig.cmake")
   add_custom_target (PACKAGE_SOURCE
