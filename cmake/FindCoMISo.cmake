@@ -5,17 +5,7 @@
 #  COMISO_INCLUDE_DIR  - the COMISO include directory
 #  COMISO_LIBRARY_DIR  - where the libraries are
 #  COMISO_LIBRARY      - Link these to use COMISO
-#  COMISO_DEPS         - List of COMISO dependencies
-#  COMISO_OPT_DEPS     - List of optional COMISO dependencies
-#   
 
-#if (COMISO_INCLUDE_DIR)
-#  # in cache already
-#  set(COMISO_FOUND TRUE)
-# SET( COMISO_LIBRARY_DIR "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}" )
-# SET( COMISO_LIBRARY "CoMISo")
-#  add_definitions (-DCOMISODLL -DUSECOMISO )
-# else (COMISO_INCLUDE_DIR)
 
 IF (COMISO_INCLUDE_DIR)
   # Already in cache, be silent
@@ -52,7 +42,7 @@ if ( COMISO_INCLUDE_DIR )
 
   if ( COMISO_BOOST_BUILD_TIME_AVAILABLE )
    
-   find_package( Boost 1.42.0 COMPONENTS system filesystem regex )
+   find_package( Boost 1.42.0 COMPONENTS system filesystem regex QUIET)
 
    if ( NOT Boost_FOUND )
      message(ERROR "COMISO configured with Boost but Boost not available")
