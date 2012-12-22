@@ -17,15 +17,16 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                            PATHS /usr/include
                                  /usr/include
                                  /usr/local/include
+                                 ~/sw/gmm-4.1/include                                 
                                  ~/sw/gmm-4.2/include
-                                 ~/sw/gmm-4.1/include
 				 "c:\\libs\\gmm-4.1\\include"
                                  "c:\\libs\\gmm-3.0\\include"
 			         ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
                                  ../../External/include
                                  /ACG/acgdev/gcc-4.3-i686/gmm-4.1/include/
                                  /ACG/acgdev/gcc-4.3-i686/gmm-3/include/
-                                 ${module_file_path}/../../../External/include)
+                                 ${module_file_path}/../../../External/include
+                                 $ENV{HOME}/opt/gmm/gmm-4.2/include)
 
 
 # Copy the results to the output variables.

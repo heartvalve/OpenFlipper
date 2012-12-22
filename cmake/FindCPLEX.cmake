@@ -50,8 +50,8 @@ include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBCPLEX_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(CPLEX  DEFAULT_MSG
-                                  CPLEX_LIBRARY CPLEX_INCLUDE_DIR)
+                                  CPLEX_LIBRARY CPLEX_INCLUDE_DIR CPLEX_CONCERT_INCLUDE_DIR CPLEX_ILO_LIBRARY CPLEX_CONCERT_LIBRARY)
 
-mark_as_advanced(CPLEX_INCLUDE_DIR CPLEX_LIBRARY )
+mark_as_advanced(CPLEX_INCLUDE_DIR CPLEX_LIBRARY CPLEX_CONCERT_INCLUDE_DIR CPLEX_ILO_LIBRARY CPLEX_CONCERT_LIBRARY)
 
 endif(CPLEX_INCLUDE_DIR)

@@ -5,12 +5,17 @@
 #  COMISO_INCLUDE_DIR  - the COMISO include directory
 #  COMISO_LIBRARY_DIR  - where the libraries are
 #  COMISO_LIBRARY      - Link these to use COMISO
+#  COMISO_DEPS         - List of COMISO dependencies
+#  COMISO_OPT_DEPS     - List of optional COMISO dependencies
 #   
 
-IF (COMISO_INCLUDE_DIR)
-  # Already in cache, be silent
-  SET(COMISO_FIND_QUIETLY TRUE)
-ENDIF (COMISO_INCLUDE_DIR)
+if (COMISO_INCLUDE_DIR)
+  # in cache already
+  set(COMISO_FOUND TRUE)
+  SET( COMISO_LIBRARY_DIR "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}" )
+  SET( COMISO_LIBRARY "CoMISo")
+
+else (COMISO_INCLUDE_DIR)
 
 # Find CoMISo config file
 FIND_PATH( COMISO_INCLUDE_DIR CoMISo/Config/config.hh
@@ -36,6 +41,21 @@ if ( COMISO_INCLUDE_DIR )
    list (APPEND  COMISO_OPT_DEPS "MPI")
 
   endif()
+
+  STRING(REGEX MATCH "\#define COMISO_BOOST_AVAILABLE 1" COMISO_BOOST_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+
+  if ( COMISO_BOOST_BUILD_TIME_AVAILABLE )
+   
+   find_package( Boost 1.42.0 COMPONENTS system filesystem regex )
+
+   if ( NOT Boost_FOUND )
+     message(ERROR "COMISO configured with Boost but Boost not available")
+   endif()
+
+   list (APPEND  COMISO_OPT_DEPS "Boost")
+
+  endif()
+
 
   STRING(REGEX MATCH "\#define COMISO_SUITESPARSE_AVAILABLE 1" COMISO_SUITESPARSE_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
@@ -196,12 +216,18 @@ if ( COMISO_INCLUDE_DIR )
 endif(COMISO_INCLUDE_DIR)
 
 IF (COMISO_INCLUDE_DIR)
+  include(FindPackageHandleStandardArgs)
   SET(COMISO_FOUND TRUE)
   SET( COMISO_LIBRARY_DIR "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}" )
   SET( COMISO_LIBRARY "CoMISo")
-  SET( COMISO_DEPS "GMM;BLAS;SUITESPARSE" )
+#  SET( COMISO_DEPS "GMM;BLAS;SUITESPARSE" )
+  SET( COMISO_DEPS "GMM" CACHE STRING "Comiso dependecies")
+  SET( COMISO_OPT_DEPS ${COMISO_OPT_DEPS} CACHE STRING "Comiso optional dependecies")
+  mark_as_advanced(COMISO_DEPS COMISO_OPT_DEPS)
 ELSE (COMISO_INCLUDE_DIR)
   SET( COMISO_FOUND FALSE )
   SET( COMISO_LIBRARY_DIR )
 ENDIF (COMISO_INCLUDE_DIR)
+
+endif (COMISO_INCLUDE_DIR)
 

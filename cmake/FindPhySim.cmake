@@ -6,7 +6,6 @@
 #  PHYSIM_LIBRARY_DIR  - where the libraries are
 #  PHYSIM_LIBRARY      - Link these to use PHYSIM
 #   
-
 IF (PHYSIM_INCLUDE_DIRS)
   # Already in cache, be silent
   SET(PHYSIM_FIND_QUIETLY TRUE)
