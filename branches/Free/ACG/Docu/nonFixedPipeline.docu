@@ -72,5 +72,56 @@ we can fill out a DrawModeProperties struct for that purpose and call DrawMode::
 A scenegraph node can iterate over each layer of a Drawmode via getNumLayers() and getLayer()
 and draw its object according to the properties of that layer.
 
+Example:
+Draw with gouraud shading:
+
+\code
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_SMOOTH); // lighting should be done in vertex shader
+props.normalSource(NORMAL_PER_VERTEX); // use smooth vertex normals
+
+drawMode.setDrawModeProperties(props); // assign to layer 0
+\code
+
+
+Draw with phong lighting:
+
+\code
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_PHONG); // lighting should be done in fragment shader
+props.normalSource(NORMAL_PER_VERTEX); // use smooth vertex normals
+
+drawMode.setDrawModeProperties(props); // assign to layer 0
+\code
+
+
+Draw with flat shading and wireframe (2 layers):
+
+\code
+// define flat shading properties
+DrawModeProperties props;
+props.lightStage(LIGHTSTAGE_SMOOTH); // lighting should be done in vertex shader
+props.normalSource(NORMAL_PER_FACE); // use per face normals
+
+drawMode.setDrawModeProperties(props); // assign flat shading to layer 0
+
+// define unlit properties for wireframe rendering
+props.primitive(PRIMITIVE_WIREFRAME); // use wireframe instead of solid faces
+props.lightStage(LIGHTSTAGE_UNLIT); // no lighting 
+
+drawMode.addLayer(&props); // assign wireframe to layer 1
+\code
+
+The object is then rendered in two passes (one for each layer) with different shader programs.
+Note that the light stage tells the shader generator whether to do the lighting in vertex or fragment shader or to skip it entirely.
+Then a combination of lighting functions are added to the shader code based on the light configuration in the ShaderGenDesc structure.
+
+Example based on a DIRECTIONAL, DIRECTIONAL, POINTLIGHT configuration:
+\code
+sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_0,  g_cLightAmbient_0,  g_cLightDiffuse_0,  g_cLightSpecular_0);
+sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_1,  g_cLightAmbient_1,  g_cLightDiffuse_1,  g_cLightSpecular_1);
+sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_2,  g_cLightAmbient_2,  g_cLightDiffuse_2,  g_cLightSpecular_2, g_vLightAtten_2);
+\code
+
 
 */
