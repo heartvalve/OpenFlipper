@@ -83,6 +83,11 @@ void CoreWidget::setupStatusBar()
   statusIcon_->setPixmap(pix.scaled(12,12,Qt::KeepAspectRatio,Qt::SmoothTransformation));
   
   statusBar_->addPermanentWidget(statusIcon_);
+
+  if ( ! OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool() )
+    statusBar()->show();
+  else
+    statusBar()->hide();
 }
 
 //=============================================================================

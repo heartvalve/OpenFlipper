@@ -676,7 +676,8 @@ CoreWidget::toggleFullscreen() {
       //hide the menubar
       menuBar()->hide();
 
-      //hide the statusbar
+      // hide the statusbar but don't change its last state, as this is only the large fullscreen mode
+      // that hides everything.
       statusBar()->hide();
 
       break;
@@ -692,8 +693,10 @@ CoreWidget::toggleFullscreen() {
       //show the menubar
       menuBar()->show();
 
-      //show the statusbar
-      statusBar()->show();
+      // show the statusbar if this is the requested state
+      // stored in the properties
+      if ( ! OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool() )
+        statusBar()->show();
 
       break;
 
