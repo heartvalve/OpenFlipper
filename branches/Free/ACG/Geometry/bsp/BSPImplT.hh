@@ -79,7 +79,9 @@ public: //---------------------------------------------------------------------
 
 public: //---------------------------------------------------------------------
 
-  BSPImplT(const Traits& _traits) : BSPCore(_traits) {}
+  BSPImplT(const Traits& _traits, const Scalar _infinity = std::numeric_limits<Scalar>::infinity()) :
+      BSPCore(_traits),
+      infinity_(_infinity) {}
   ~BSPImplT() {}
 
 
@@ -172,6 +174,8 @@ private: //---------------------------------------------------------------------
           return (fabs(left.second) < fabs(right.second));
       }
   };
+
+  const Scalar infinity_;
 
 };
 
