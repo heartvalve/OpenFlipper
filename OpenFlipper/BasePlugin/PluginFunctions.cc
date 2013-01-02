@@ -354,7 +354,7 @@ bool getAllMeshes( std::vector<int>& _identifiers  ) {
   return (!_identifiers.empty());
 }
 
-bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
+bool getAllObjectIdentifiers( std::vector<int>& _identifiers  ) {
 
   _identifiers.clear();
 
