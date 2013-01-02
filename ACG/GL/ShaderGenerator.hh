@@ -180,6 +180,7 @@ Depending on the shademode of ShaderGenDesc, exactly one of the following define
 
 Additional defines:
 \code
+SG_NORMALS      // defined if vertex normals are available
 SG_TEXTURE      // defined if ShaderGenDesc.textured     == true
 SG_VERTEX_COLOR // defined if ShaderGenDesc.vertexColors == true
 
