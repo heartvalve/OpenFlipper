@@ -203,7 +203,7 @@ distPointTriangleSquared( const Vec& _p,
   Vec v0v1 = _v1 - _v0;
   Vec v0v2 = _v2 - _v0;
   Vec n = v0v1 % v0v2; // not normalized !
-  double d = n.sqrnorm();
+  typename Vec::value_type d = n.sqrnorm();
 
   
   // Check if the triangle is degenerated
@@ -211,22 +211,22 @@ distPointTriangleSquared( const Vec& _p,
     std::cerr << "distPointTriangleSquared: Degenerated triangle !\n";
     return -1.0;
   }
-  double invD = 1.0 / d;
+  typename Vec::value_type invD = 1.0 / d;
 
   
   // these are not needed for every point, should still perform
   // better with many points against one triangle
   Vec v1v2 = _v2 - _v1;
-  double inv_v0v2_2 = 1.0 / v0v2.sqrnorm();
-  double inv_v0v1_2 = 1.0 / v0v1.sqrnorm();
-  double inv_v1v2_2 = 1.0 / v1v2.sqrnorm();
+  typename Vec::value_type inv_v0v2_2 = 1.0 / v0v2.sqrnorm();
+  typename Vec::value_type inv_v0v1_2 = 1.0 / v0v1.sqrnorm();
+  typename Vec::value_type inv_v1v2_2 = 1.0 / v1v2.sqrnorm();
 
   
   Vec v0p = _p - _v0;
   Vec t = v0p % n;
-  double  s01, s02, s12;
-  double a = (t | v0v2) * -invD;
-  double b = (t | v0v1) * invD;
+  typename Vec::value_type  s01, s02, s12;
+  typename Vec::value_type a = (t | v0v2) * -invD;
+  typename Vec::value_type b = (t | v0v1) * invD;
 
   
   if (a < 0)
