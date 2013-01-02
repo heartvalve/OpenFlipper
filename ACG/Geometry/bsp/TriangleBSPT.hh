@@ -67,7 +67,9 @@ class TriangleBSPT : public BSPImplT< TriangleBSPCoreT<BSPTraits> >
 {
 public:
   typedef BSPImplT< TriangleBSPCoreT<BSPTraits> > Base;
-  TriangleBSPT(const BSPTraits& _traits) : Base(_traits) {}
+  typedef typename Base::Scalar Scalar;
+  TriangleBSPT(const BSPTraits& _traits,
+               const Scalar _infinity = std::numeric_limits<Scalar>::infinity()) : Base(_traits, _infinity) {}
 };
 
 //== CLASS DEFINITION =========================================================
@@ -200,7 +202,9 @@ class OpenMeshTriangleBSPT
 public:
   typedef OpenMeshTriangleBSPTraits<Mesh>  Traits;
   typedef TriangleBSPT<Traits>             Base;
-  OpenMeshTriangleBSPT(const Mesh& _mesh) : Base(Traits(_mesh)) {}
+  typedef typename Traits::Scalar Scalar;
+  OpenMeshTriangleBSPT(const Mesh& _mesh,
+                       const Scalar _infinity = std::numeric_limits<Scalar>::infinity()) : Base(Traits(_mesh), _infinity) {}
 };
 
 //=============================================================================

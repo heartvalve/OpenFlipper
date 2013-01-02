@@ -70,7 +70,7 @@ nearest(const Point& _p) const
 {
   NearestNeighborData  data;
   data.ref  = _p;
-  data.dist = std::numeric_limits<Scalar>::infinity();
+  data.dist = infinity_;
   if (this->root_ == 0)
     throw std::runtime_error("It seems like the BSP hasn't been built, yet. Did you call build(...)?");
   _nearest(this->root_, data);
@@ -89,8 +89,7 @@ _nearest(Node* _node, NearestNeighborData& _data) const
   // terminal node
   if (!_node->left_child_)
   {
-    Scalar dist;
-
+    Scalar dist(0);
     for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
     {
       dist = this->traits_.sqrdist(*it, _data.ref);
@@ -106,7 +105,6 @@ _nearest(Node* _node, NearestNeighborData& _data) const
   else
   {
     Scalar dist = _node->plane_.distance(_data.ref);
-
     if (dist > 0.0)
     {
       _nearest(_node->left_child_, _data);
