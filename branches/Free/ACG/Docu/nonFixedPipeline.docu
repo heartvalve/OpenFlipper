@@ -17,10 +17,30 @@ The VertexDeclaration class is used to specify the layout of a vertex element (V
 \section shaderGenerator Generating GLSL shaders
 
 The \subpage ShaderGenerator_page class can be used to generate default GLSL shader code.
-\note The main function is not generated and must therefore be provided via the buildShaderCode function
+It is possible to have the complete shader generated with typical shading options such as phong or flat shading.
+Alternatively the main function can be fully customized via template files or ShaderModifiers.
+Template files are specified in ShaderGenDesc::vertexTemplateFile and ShaderGenDesc::fragmentTemplateFile and 
+they extend the generated code by a user defined main function. Shader vertex I/O attributes and uniforms can also be
+user defined; however, make sure that there is no name conflict with the generated shader code.
+Example: A vertex offset operation based on normals is accomplished with the following template file:
+\code
+void main()
+{
+  // default vertex transforms are handled by the generator by replacing the SG_VERTEX_BEGIN with generated code
+  SG_VERTEX_BEGIN
+  
+#ifdef SG_NORMALS
+  sg_vPosPS = g_mWVP * (inPosition + vec4(inNormal, 0));
+#endif
+  
+  SG_VERTEX_END
+}
+\endcode
 
-Via shader specific information stored in the ShaderGenDesc struct in the RenderObject attached to a scene node, we can specify the shader input and output
-with the functions ShaderGenerator::initVertexShaderIO and ShaderGenerator::initFragmentShaderIO.
+But templates are optional and are not needed to generate shaders for mimicking the fixed function pipeline.
+Alternatively, ShaderModifiers are useful for global shading effects which only change few code lines
+and are also combinable with each other allowing a more dynamic shader customization.
+The Depth-Peeling renderer shows how to use these modifiers.
 
 
 \subsection shaderCache The Shader Cache
@@ -32,4 +52,25 @@ redundancy free shader management. ( ACG::ShaderCache )
 
 \subsection glslShader The GLSL Shader
 The Shader class is a helper class for building and using GLSL programs
+
+
+\subsection Draw Modes
+
+A DrawMode is a set of properties that describe how to present an object (i.e. wireframe, textured, flat-shaded...).
+There are two types of Drawmodes: bitflags and property-based.
+Bitflags are a combination of predefined Drawmodes such as SOLID_SMOOTH_SHADED and WIREFRAME.
+Afterwards it can be tested with the bitwise & operator whether it contains such an atomic DrawMode.
+
+Property-based draw modes use a different approach by defining a set of properties for an atomic DrawMode.
+These settings are stored in the DrawModeProperties structure.
+Support for combined drawmodes is possible by adding a new layer for each atomic drawmode.
+Each layer is represented by one atomic DrawModeProperties structure.
+Initially each property-based draw mode consists of exactly one layer which is equivalent to an atomic draw mode.
+If we also want to render the wireframe or halfedge representation of an object in combination with a solid mode,
+we can fill out a DrawModeProperties struct for that purpose and call DrawMode::addLayer() to combine wireframe and solid mode.
+
+A scenegraph node can iterate over each layer of a Drawmode via getNumLayers() and getLayer()
+and draw its object according to the properties of that layer.
+
+
 */

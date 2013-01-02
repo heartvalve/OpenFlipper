@@ -434,6 +434,9 @@ void ShaderProgGenerator::initGenDefines(ShaderGenerator* _gen)
   if (desc_.vertexColors)
     _gen->addDefine("SG_VERTEX_COLOR 1");
 
+  if (desc_.shadeMode != SG_SHADE_UNLIT)
+    _gen->addDefine("SG_NORMALS 1");
+
   // # lights define
   QString strNumLights;
   strNumLights.sprintf("SG_NUM_LIGHTS %d", desc_.numLights);
