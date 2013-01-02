@@ -112,6 +112,14 @@ bool getSourceIdentifiers( std::vector<int>& _identifiers  );
 DLLEXPORT
 bool getTargetIdentifiers( std::vector<int>& _identifiers  );
 
+/** \brief Get identifiers of all objects
+ *
+ * @param _identifiers ( vector returning the identifiers )
+ * @return false, if no object is found
+*/
+DLLEXPORT
+bool getAllObjectIdentifiers( std::vector<int>& _identifiers  );
+
 /** \brief Get identifiers of all meshes
  *
  * @param _identifiers ( vector returning the identifiers )
@@ -119,15 +127,6 @@ bool getTargetIdentifiers( std::vector<int>& _identifiers  );
 */
 DLLEXPORT
 bool getAllMeshes( std::vector<int>& _identifiers  );
-
-/** \brief Get identifiers of all objects
- *
- * @param _identifiers ( vector returning the identifiers )
- * @return false, if no mesh is found
-*/
-DLLEXPORT
-bool getAllObjectIdentifiers( std::vector<int>& _identifiers  );
-
 
 /** \brief Get the object which has the given identifier.
  *
@@ -143,7 +142,7 @@ DLLEXPORT
 bool getObject(  const int _identifier , BaseObject*& _object );
 
 /** This functions returns the object with the given id regardless of the type of object.
- * See get_object(  int _identifier , ject*& _object ) for more details.
+ * See getObject(  const int _identifier , BaseObject*& _object ) for more details.
  */
 DLLEXPORT
 bool getObject(  const int _identifier , BaseObjectData*& _object );
