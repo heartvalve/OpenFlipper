@@ -100,6 +100,9 @@ void INIPlugin::parseIniFile(INIFile& _ini, BaseObjectData* _object) {
     if ( _ini.get_entryVecf( col, _object->name() , "SpecularColor" ) )
       _object->materialNode()->set_specular_color(col);
     
+    if ( _ini.get_entryVecf( col, _object->name() , "OverlayColor" ) )
+      _object->materialNode()->set_overlay_color(col);
+
     double shininess;
     if ( _ini.get_entry( shininess, _object->name() , "Shininess" ) )
       _object->materialNode()->set_shininess(shininess);
@@ -141,6 +144,9 @@ void INIPlugin::saveIniFile(INIFile& _ini, BaseObjectData* _object) {
         _ini.add_entryVec( _object->name() ,
             "SpecularColor" ,
             _object->materialNode()->specular_color());
+        _ini.add_entryVec( _object->name() ,
+            "OverlayColor" ,
+            _object->materialNode()->overlay_color());
         _ini.add_entry( _object->name() ,
             "Shininess" ,
             _object->materialNode()->shininess());

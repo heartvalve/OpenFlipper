@@ -261,8 +261,14 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   /// \todo We can render also wireframe shaded and with vertex colors
   if (_drawMode & DrawModes::WIREFRAME)
   {
-//    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
-    _state.set_color( _state.specular_color() );
+
+    const Vec4f oldColor = _state.color();
+
+    // If the mode is atomic, we use the specular, otherwise we take the overlay color
+    if (_drawMode.isAtomic() )
+      _state.set_color( _state.specular_color() );
+    else
+      _state.set_color( _state.overlay_color() );
 
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::shadeModel(GL_FLAT);
@@ -270,6 +276,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->disableColors();
 
     draw_lines();
+
+    _state.set_color(oldColor);
   }  
   
   if (_drawMode & DrawModes::HIDDENLINE)
@@ -670,7 +678,11 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       drawMesh_->disableColors();
 
       // use specular color for lines
-      ro.emissive = ro.specular;
+      if (_drawMode.isAtomic() )
+        ro.emissive = ro.specular;
+      else
+        ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
+
 
       add_line_RenderObjects(_renderer, &ro);
     }

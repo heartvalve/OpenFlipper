@@ -67,7 +67,8 @@ const Vec4f    GLState::default_base_color(0.0, 0.0, 0.0, 1.0);
 const Vec4f    GLState::default_ambient_color(0.2, 0.2, 0.2, 1.0);
 const Vec4f    GLState::default_diffuse_color(0.50, 0.53, 0.6, 1.0);
 const Vec4f    GLState::default_specular_color(0.75, 0.8, 0.85, 1.0);
-const float  GLState::default_shininess(100.0);
+const Vec4f    GLState::default_overlay_color(0.0, 0.0, 0.0, 1.0);
+const float    GLState::default_shininess(100.0);
 
 
 //-----------------------------------------------------------------------------
@@ -171,6 +172,7 @@ void GLState::initialize()
   set_ambient_color(default_ambient_color);
   set_diffuse_color(default_diffuse_color);
   set_specular_color(default_specular_color);
+  set_overlay_color(default_overlay_color);
   set_shininess(default_shininess);
 
 
@@ -209,7 +211,7 @@ void GLState::setState ()
   glClearColor(clear_color_[0], clear_color_[1], clear_color_[2], clear_color_[3]);
 
   // base color
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, ambient_color_.data());
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, base_color_.data());
 
   // ambient color
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT , ambient_color_.data());
@@ -632,11 +634,11 @@ void GLState::mult_matrix( const GLMatrixd& _m, const GLMatrixd& _inv_m,
 
 void GLState::update_matrices()
 {
-  forward_projection_ =  window2viewport_;
-  forward_projection_ *= projection_;
-  forward_projection_ *= modelview_;
+  forward_projection_   = window2viewport_;
+  forward_projection_  *= projection_;
+  forward_projection_  *= modelview_;
 
-  backward_projection_ = inverse_modelview_;
+  backward_projection_  = inverse_modelview_;
   backward_projection_ *= inverse_projection_;
   backward_projection_ *= inverse_window2viewport_;
 }
@@ -747,6 +749,15 @@ void GLState::set_specular_color(const Vec4f& _col)
     makeCurrent();
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _col.data());
   }
+
+}
+
+//-----------------------------------------------------------------------------
+
+
+void GLState::set_overlay_color(const Vec4f& _col)
+{
+  overlay_color_ = _col;
 }
 
 

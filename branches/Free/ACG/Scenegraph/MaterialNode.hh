@@ -83,6 +83,7 @@ public:
         ambientColor_(GLState::default_ambient_color),
         diffuseColor_(GLState::default_diffuse_color),
         specularColor_(GLState::default_specular_color),
+        overlayColor_(GLState::default_overlay_color),
         shininess_(GLState::default_shininess),
         reflectance_(0.0),
         pointSize_(1.0),
@@ -107,6 +108,7 @@ public:
         ambientColor_(_m.ambientColor_),
         diffuseColor_(_m.diffuseColor_),
         specularColor_(_m.specularColor_),
+        overlayColor_(_m.overlayColor_),
         shininess_(_m.shininess_),
         reflectance_(_m.reflectance_),
         pointSize_(_m.pointSize_),
@@ -132,6 +134,7 @@ public:
     void color(const Vec4f& _c) {
         Vec4f c(0.0,0.0,0.0,1.0);
         baseColor(c);
+        overlayColor(c);
         c = _c * 0.2f;  c[3]=_c[3];  ambientColor(c);
         c = _c * 0.6f;  c[3]=_c[3];  diffuseColor(c);
         c = _c * 0.8f;  c[3]=_c[3];  specularColor(c);
@@ -164,6 +167,11 @@ public:
     void specularColor(const Vec4f& _s) { specularColor_ = _s; }
     /// get the specular color
     const Vec4f& specularColor() const { return specularColor_; }
+
+    /// set the overlay color (This can be used to render overlays e.g. additional wireframes in a different color)
+    void overlayColor(const Vec4f& _s) { overlayColor_ = _s; }
+    /// get the overlay color (This can be used to render overlays e.g. additional wireframes in a different color)
+    const Vec4f& overlayColor() const { return overlayColor_; }
 
     /// Set colorMaterial
     void colorMaterial( const bool _cm) { colorMaterial_ = _cm; }
@@ -263,6 +271,7 @@ protected:
     Vec4f    ambientColor_;
     Vec4f    diffuseColor_;
     Vec4f    specularColor_;
+    Vec4f    overlayColor_;
     
     float    shininess_;
     double   reflectance_;
@@ -395,6 +404,11 @@ public:
     void set_specular_color(const Vec4f& _s) { material_.specularColor(_s); }
     /// get the specular color
     const Vec4f& specular_color() const { return material_.specularColor(); }
+
+    /// set the overlay color
+    void set_overlay_color(const Vec4f& _s) { material_.overlayColor(_s); }
+    /// get the overlay color
+    const Vec4f& overlay_color() const { return material_.overlayColor(); }
 
     /// Set colorMaterial
     void colorMaterial( const bool _cm) { material_.colorMaterial(_cm); }

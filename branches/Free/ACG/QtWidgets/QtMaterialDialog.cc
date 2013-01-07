@@ -88,6 +88,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ambient_         = bak_ambient_         = node_->ambient_color();
   diffuse_         = bak_diffuse_         = node_->diffuse_color();
   specular_        = bak_specular_        = node_->specular_color();
+  overlay_         = bak_overlay_         = node_->overlay_color();
   shine_           = bak_shine_           = node_->shininess();
   point_size_      = bak_point_size_      = node_->point_size();
   line_width_      = bak_line_width_      = node_->line_width();
@@ -120,10 +121,11 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
     ui_.alpha    ->setEnabled(false);
   }
 
-  setButtonColor( ui_.baseColorButton, color_ );
-  setButtonColor( ui_.ambientColorButton, ambient_ );
-  setButtonColor( ui_.diffuseColorButton, diffuse_ );
+  setButtonColor( ui_.baseColorButton,     color_ );
+  setButtonColor( ui_.ambientColorButton,  ambient_ );
+  setButtonColor( ui_.diffuseColorButton,  diffuse_ );
   setButtonColor( ui_.specularColorButton, specular_ );
+  setButtonColor( ui_.overlayColorButton,  overlay_ );
 
   ui_.shininessSlider->setValue((int)shine_);
   ui_.shininessBox->setValue((int)shine_);
@@ -164,6 +166,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.ambientColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.diffuseColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.specularColorButton, SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
+  connect( ui_.overlayColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.shininessSlider,     SIGNAL( sliderPressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.shininessBox,        SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.pointSizeSpinBox,    SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
@@ -184,6 +187,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
 	   this, SLOT( changeDiffuseColor(QColor) ) );
   connect( ui_.specularColorButton, SIGNAL( colorChanged(QColor) ),
 	   this, SLOT( changeSpecularColor(QColor) ) );
+  connect( ui_.overlayColorButton, SIGNAL( colorChanged(QColor) ),
+     this, SLOT( changeOverlayColor(QColor) ) );
   connect( ui_.shininessSlider, SIGNAL( valueChanged(int) ),
 	   this, SLOT( changeShine(int) ) );
 
@@ -342,6 +347,7 @@ void QtMaterialDialog::applyChanges()
   node_->set_ambient_color(ambient_);
   node_->set_diffuse_color(diffuse_);
   node_->set_specular_color(specular_);
+  node_->set_overlay_color(overlay_);
   node_->set_shininess(shine_);
   node_->set_point_size(point_size_);
   node_->set_line_width(line_width_);
@@ -379,10 +385,11 @@ void QtMaterialDialog::applyChanges()
   // else
   //   node_->disable_alpha_test();
 
-  setButtonColor( ui_.diffuseColorButton, diffuse_ );
-  setButtonColor( ui_.ambientColorButton, ambient_ );
+  setButtonColor( ui_.diffuseColorButton,  diffuse_ );
+  setButtonColor( ui_.ambientColorButton,  ambient_ );
   setButtonColor( ui_.specularColorButton, specular_ );
-  setButtonColor( ui_.baseColorButton, color_ );
+  setButtonColor( ui_.overlayColorButton,  overlay_ );
+  setButtonColor( ui_.baseColorButton,     color_ );
 
   emit signalNodeChanged(node_);
 }
@@ -414,6 +421,7 @@ void QtMaterialDialog::undoChanges()
   node_->set_ambient_color(bak_ambient_);
   node_->set_diffuse_color(bak_diffuse_);
   node_->set_specular_color(bak_specular_);
+  node_->set_overlay_color(bak_overlay_);
   node_->set_shininess(bak_shine_);
   node_->set_point_size(bak_point_size_);
   node_->set_line_width(bak_line_width_);
@@ -445,10 +453,11 @@ void QtMaterialDialog::undoChanges()
   else
     node_->disable_multisampling();
 
-  setButtonColor( ui_.diffuseColorButton, diffuse_ );
-  setButtonColor( ui_.ambientColorButton, ambient_ );
+  setButtonColor( ui_.diffuseColorButton,  diffuse_ );
+  setButtonColor( ui_.ambientColorButton,  ambient_ );
   setButtonColor( ui_.specularColorButton, specular_ );
-  setButtonColor( ui_.baseColorButton, color_ );
+  setButtonColor( ui_.overlayColorButton,  overlay_ );
+  setButtonColor( ui_.baseColorButton,     color_ );
 
   emit signalNodeChanged(node_);
 }
@@ -481,6 +490,15 @@ void QtMaterialDialog::changeAmbientColor(QColor _newColor)
 void QtMaterialDialog::changeSpecularColor(QColor _newColor)
 {
   specular_ = convertColor( _newColor );
+  applyChanges();
+}
+
+//-----------------------------------------------------------------------------
+
+
+void QtMaterialDialog::changeOverlayColor(QColor _newColor)
+{
+  overlay_ = convertColor( _newColor );
   applyChanges();
 }
 
@@ -714,6 +732,7 @@ QtMaterialDialog::enableProperty(int /*i*/)
   else if (sender() == ui_.ambientColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.diffuseColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.specularColorButton) ui_.materialActive->setChecked( true );
+  else if (sender() == ui_.overlayColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessSlider)     ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessBox)        ui_.materialActive->setChecked( true );
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );
@@ -737,6 +756,7 @@ QtMaterialDialog::enableProperty()
   else if (sender() == ui_.ambientColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.diffuseColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.specularColorButton) ui_.materialActive->setChecked( true );
+  else if (sender() == ui_.overlayColorButton)  ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessSlider)     ui_.materialActive->setChecked( true );
   else if (sender() == ui_.shininessBox)        ui_.materialActive->setChecked( true );
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );

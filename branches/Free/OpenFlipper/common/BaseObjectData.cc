@@ -174,6 +174,8 @@ void BaseObjectData::initializeScenegraphNodes() {
     materialNode_->set_base_color(colorV);
     materialNode_->set_color(colorV);
     
+    // We take the brightest color component for overlays to get best contrast
+    materialNode_->set_overlay_color(materialNode_->specular_color());
   }
 }
 
