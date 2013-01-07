@@ -1076,12 +1076,12 @@ private: //--------------------------------------------------------------------
   double near_plane_, far_plane_;
 
   // colors & materials
-  Vec4f   clear_color_,
-          color_,
-          base_color_,
-          ambient_color_,
-          diffuse_color_,
-          specular_color_;
+  Vec4f   clear_color_;    //< The scenes clear color
+  Vec4f   color_;
+  Vec4f   base_color_;     //< The emitted color of an Object
+  Vec4f   ambient_color_;  //< The ambient color of an Object
+  Vec4f   diffuse_color_;  //< The diffuse color of an Object
+  Vec4f   specular_color_; //< The specular color of an Object
 
   float shininess_;
 
