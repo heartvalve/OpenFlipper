@@ -91,11 +91,13 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
     materialBackup_.ambientColor_  = _state.ambient_color();
     materialBackup_.diffuseColor_  = _state.diffuse_color();
     materialBackup_.specularColor_ = _state.specular_color();
-    materialBackup_.shininess_      = _state.shininess();
+    materialBackup_.overlayColor_  = _state.overlay_color();
+    materialBackup_.shininess_     = _state.shininess();
 
     _state.set_ambient_color(material_.ambientColor_);
     _state.set_diffuse_color(material_.diffuseColor_);
     _state.set_specular_color(material_.specularColor_);
+    _state.set_overlay_color(material_.overlayColor_);
     _state.set_shininess(material_.shininess_);
   }
 
@@ -254,6 +256,7 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
     _state.set_ambient_color(materialBackup_.ambientColor_);
     _state.set_diffuse_color(materialBackup_.diffuseColor_);
     _state.set_specular_color(materialBackup_.specularColor_);
+    _state.set_overlay_color(materialBackup_.overlayColor_);
     _state.set_shininess(materialBackup_.shininess_);
   }
 
@@ -393,6 +396,14 @@ MaterialNode::read(std::istream& _is)
 
       if (buffer.good()) {
         material_.specularColor(Vec4f(x, y, z, u));
+      }
+    }
+    // OverlayColor
+    else if (specifier == "OverlayColor") {
+      buffer >> x >> y >> z >> u;
+
+      if (buffer.good()) {
+        material_.overlayColor(Vec4f(x, y, z, u));
       }
     }
     // Shininess

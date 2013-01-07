@@ -116,6 +116,7 @@ private slots:
   void changeAmbientColor(QColor _newColor);
   void changeDiffuseColor(QColor _newColor);
   void changeSpecularColor(QColor _newColor);
+  void changeOverlayColor(QColor _newColor);
   void changeShine(int _new);
   void changePointSize(int _new);
   void changeLineWidth(int _new);
@@ -151,7 +152,8 @@ private:
   Vec4f    color_,            bak_color_,
            ambient_,          bak_ambient_,
            diffuse_,          bak_diffuse_,
-           specular_,         bak_specular_;
+           specular_,         bak_specular_,
+           overlay_,          bak_overlay_;
   float    shine_,            bak_shine_;
   float    point_size_,       bak_point_size_;
   float    line_width_,       bak_line_width_;

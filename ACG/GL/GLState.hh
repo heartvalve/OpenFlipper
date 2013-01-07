@@ -818,8 +818,10 @@ public:
   static const Vec4f default_ambient_color;
   /// default value for diffuse color
   static const Vec4f default_diffuse_color;
-  /// default value for speculat color
+  /// default value for specular color
   static const Vec4f default_specular_color;
+  /// default value for overlay color
+  static const Vec4f default_overlay_color;
   /// default value for shininess
   static const float default_shininess;
 
@@ -828,7 +830,7 @@ public:
   void set_color(const Vec4f& _col);
 
   /// set color
-  const Vec4f& color(const Vec4f& _col) { return color_; };
+  const Vec4f& color() { return color_; };
 
   /// set background color
   void set_clear_color(const Vec4f& _col);
@@ -854,6 +856,20 @@ public:
   void set_specular_color(const Vec4f& _col);
   /// get specular color
   const Vec4f& specular_color() const { return specular_color_; }
+
+  /** \brief set overlay color
+   *
+   * This color does not set an opengl state but can be used to store an additional
+   * color for a wireframe
+   */
+  void set_overlay_color(const Vec4f& _col);
+
+  /** \brief Get overlay color
+   *
+   * This color does not set an opengl state but can be used to store an additional
+   * color for a wireframe.
+   */
+  const Vec4f& overlay_color() const { return overlay_color_; }
 
   /// set specular shininess (must be in [0, 128])
   void set_shininess(float _shininess);
@@ -1082,6 +1098,8 @@ private: //--------------------------------------------------------------------
   Vec4f   ambient_color_;  //< The ambient color of an Object
   Vec4f   diffuse_color_;  //< The diffuse color of an Object
   Vec4f   specular_color_; //< The specular color of an Object
+  Vec4f   overlay_color_;  //< An additional color that can be used to color e.g. a wireframe overlay
+
 
   float shininess_;
 
