@@ -1303,12 +1303,12 @@ void MovePlugin::slotMoveManipToCOG() {
 	if (  object->manipulatorNode()->visible() ){
 
 	    if ( object->dataType( DATA_TRIANGLE_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(object)) );
+	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::triMesh(object)) );
 	    else if ( object->dataType( DATA_POLY_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(object)) );
+	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::polyMesh(object)) );
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 	    else if ( object->dataType( DATA_TSPLINE_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::tsplineMesh(object)) );
+	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::tsplineMesh(object)) );
 #endif
 
 	    updateManipulatorDialog();
@@ -1528,15 +1528,15 @@ void MovePlugin::slotMoveToOrigin() {
       // Compute cog for all objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
         if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
-          TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
-          cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
-          vertexCount += double(mesh.n_vertices());
+          TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+          cog += MeshInfo::cog(mesh) * double(mesh->n_vertices());
+          vertexCount += double(mesh->n_vertices());
         }
 
         if ( o_it->dataType( DATA_POLY_MESH )) {
-          PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
-          cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
-          vertexCount += double(mesh.n_vertices());
+          PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
+          cog += MeshInfo::cog(mesh) * double(mesh->n_vertices());
+          vertexCount += double(mesh->n_vertices());
         }
 
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -1555,25 +1555,25 @@ void MovePlugin::slotMoveToOrigin() {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
-        TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
+        TriMesh* mesh = PluginFunctions::triMesh(*o_it);
 
         if ( !useCommonCOG )
           cog = MeshInfo::cog(mesh);
 
-        for ( TriMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
-          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
+        for ( TriMesh::VertexIter v_it = mesh->vertices_begin(); v_it != mesh->vertices_end() ; ++v_it)
+          mesh->set_point(v_it , ( mesh->point(v_it) ) - cog );
 
         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
     }
 
     if ( o_it->dataType( DATA_POLY_MESH )) {
-        PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
+        PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
 
         if ( !useCommonCOG )
           cog = MeshInfo::cog(mesh);
 
-        for ( PolyMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
-          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
+        for ( PolyMesh::VertexIter v_it = mesh->vertices_begin(); v_it != mesh->vertices_end() ; ++v_it)
+          mesh->set_point(v_it , ( mesh->point(v_it) ) - cog );
 
         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
 
@@ -1581,13 +1581,13 @@ void MovePlugin::slotMoveToOrigin() {
 
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
     if ( o_it->dataType( DATA_TSPLINE_MESH )) {
-        TSplineMesh& mesh = *PluginFunctions::tsplineMesh(*o_it);
+        TSplineMesh* mesh = PluginFunctions::tsplineMesh(*o_it);
 
         if ( !useCommonCOG )
           cog = MeshInfo::cog(mesh);
 
-        for ( TSplineMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
-          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
+        for ( TSplineMesh::VertexIter v_it = mesh->vertices_begin(); v_it != mesh->vertices_end() ; ++v_it)
+          mesh->set_point(v_it , ( mesh->point(v_it) ) - cog );
 
         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
 

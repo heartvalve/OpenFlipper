@@ -69,7 +69,7 @@ namespace MeshSelection {
 
 template< typename MeshT >
 inline
-void selectVertices(MeshT* _mesh, std::vector< int >& _vertices) {
+void selectVertices(MeshT* _mesh, const std::vector< int >& _vertices) {
   const int n_vertices = (int)_mesh->n_vertices();
 
   for ( uint i = 0 ; i < _vertices.size() ; ++i )
@@ -83,7 +83,7 @@ void selectVertices(MeshT* _mesh, std::vector< int >& _vertices) {
 
 template< typename MeshT >
 inline
-void unselectVertices(MeshT* _mesh, std::vector< int >& _vertices) {
+void unselectVertices(MeshT* _mesh, const std::vector< int >& _vertices) {
   const int n_vertices = (int)_mesh->n_vertices();
 
   for ( uint i = 0 ; i < _vertices.size() ; ++i )
@@ -237,7 +237,7 @@ std::vector< int > getVertexSelection(MeshT* _mesh, bool& _invert) {
 
 template< typename MeshT >
 inline
-void selectBoundaryVertices(MeshT* _mesh, typename MeshT::VertexHandle& _vh){
+void selectBoundaryVertices(MeshT* _mesh, const typename MeshT::VertexHandle& _vh){
 
   OpenMesh::VPropHandleT< bool > visited;
   _mesh->add_property(visited, "Visited Vertices");
@@ -271,9 +271,9 @@ void selectBoundaryVertices(MeshT* _mesh, typename MeshT::VertexHandle& _vh){
 
 template< typename MeshT >
 inline
-void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices) {
+void convertVertexToEdgeSelection(MeshT* _mesh, const std::vector< int >& _vertices) {
 
-  for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
+  for ( std::vector<int>::const_iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
 
     typename MeshT::VertexHandle vh(*v);
     typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(vh);
@@ -282,7 +282,7 @@ void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices) {
       // test if both incident vertices are in _vertices
       typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
       // search for ovh in _vertices
-      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+      for(std::vector<int>::const_iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
         if((*it) == ovh.idx()) {
           _mesh->status(_mesh->edge_handle(ohe_iter.handle())).set_selected(true);
           break;
@@ -314,9 +314,9 @@ void convertVertexToEdgeSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertVertexToHalfedgeSelection(MeshT* _mesh, std::vector< int >& _vertices) {
+void convertVertexToHalfedgeSelection(MeshT* _mesh, const std::vector< int >& _vertices) {
 
-  for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
+  for (std::vector<int>::const_iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
 
     typename MeshT::VertexHandle vh(*v);
     typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(vh);
@@ -325,7 +325,7 @@ void convertVertexToHalfedgeSelection(MeshT* _mesh, std::vector< int >& _vertice
       // test if both incident vertices are in _vertices
       typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
       // search for ovh in _vertices
-      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+      for(std::vector<int>::const_iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
         if((*it) == ovh.idx()) {
           _mesh->status(ohe_iter.handle()).set_selected(true);
           _mesh->status(_mesh->opposite_halfedge_handle(ohe_iter.handle())).set_selected(true);
@@ -362,7 +362,7 @@ void convertVertexToHalfedgeSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices) {
+void convertVertexToFaceSelection(MeshT* _mesh, const std::vector< int >& _vertices) {
 
   for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
     typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it);
@@ -371,7 +371,7 @@ void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices) {
     for(; fv_it; ++fv_it) {
       // search fv_it in _vertices
       bool onefound = false;
-      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+      for(std::vector<int>::const_iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
         if((*it) == fv_it.handle().idx()) { onefound = true; break; }
       }
       if(!onefound) {
@@ -454,7 +454,7 @@ void clearFeatureVertices(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void setArea(MeshT* _mesh, std::vector< int >& _vertices , unsigned int _type, bool _state) {
+void setArea(MeshT* _mesh, const std::vector< int >& _vertices , unsigned int _type, bool _state) {
   for ( uint i = 0 ; i < _vertices.size() ; ++i ) {
     if ( _vertices[i] > (int)_mesh->n_vertices() )
       continue;
@@ -513,7 +513,7 @@ std::vector< int > getArea(MeshT* _mesh, unsigned int _type , bool& _invert) {
 
 template< typename MeshT >
 inline
-void selectEdges(MeshT* _mesh, std::vector< int >& _edges) {
+void selectEdges(MeshT* _mesh, const std::vector< int >& _edges) {
   const int n_edges = (int)_mesh->n_edges();
 
   for ( uint i = 0 ; i < _edges.size() ; ++i )
@@ -527,7 +527,7 @@ void selectEdges(MeshT* _mesh, std::vector< int >& _edges) {
 
 template< typename MeshT >
 inline
-void unselectEdges(MeshT* _mesh, std::vector< int >& _edges) {
+void unselectEdges(MeshT* _mesh, const std::vector< int >& _edges) {
   const int n_edges = (int)_mesh->n_edges();
 
   for ( uint i = 0 ; i < _edges.size() ; ++i )
@@ -625,9 +625,9 @@ std::vector< int > getEdgeSelection(MeshT* _mesh, bool& _invert) {
 
 template< typename MeshT >
 inline
-void convertEdgeToVertexSelection(MeshT* _mesh, std::vector< int >& _edges) {
+void convertEdgeToVertexSelection(MeshT* _mesh, const std::vector< int >& _edges) {
 
-	for (std::vector<int>::iterator e = _edges.begin(); e != _edges.end(); ++e) {
+	for (std::vector<int>::const_iterator e = _edges.begin(); e != _edges.end(); ++e) {
 
 		typename MeshT::EdgeHandle eh(*e);
 		typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(eh, 0);
@@ -660,7 +660,7 @@ void convertEdgeToVertexSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
+void convertEdgeToFaceSelection(MeshT* _mesh, const std::vector< int >& _edges) {
 
   for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
     typename MeshT::FaceEdgeIter fe_it = _mesh->fe_iter(f_it);
@@ -669,7 +669,7 @@ void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
     for(; fe_it; ++fe_it) {
       // search fe_it in _edges
       bool onefound = false;
-      for(std::vector<int>::iterator it = _edges.begin(); it != _edges.end(); ++it) {
+      for(std::vector<int>::const_iterator it = _edges.begin(); it != _edges.end(); ++it) {
         if((*it) == fe_it.handle().idx()) { onefound = true; break; }
       }
       if(!onefound) {
@@ -765,7 +765,7 @@ void clearFeatureEdges(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
+void selectHalfedges(MeshT* _mesh, const std::vector< int >& _halfedges) {
   const int n_halfedges = (int)_mesh->n_halfedges();
 
   for ( uint i = 0 ; i < _halfedges.size() ; ++i )
@@ -779,7 +779,7 @@ void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
 
 template< typename MeshT >
 inline
-void unselectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
+void unselectHalfedges(MeshT* _mesh, const std::vector< int >& _halfedges) {
   const int n_halfedges = (int)_mesh->n_halfedges();
 
   for ( uint i = 0 ; i < _halfedges.size() ; ++i )
@@ -895,7 +895,7 @@ void convertHalfedgeToFaceSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void selectFaces(MeshT* _mesh, IdList& _faces) {
+void selectFaces(MeshT* _mesh, const IdList& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )
@@ -909,7 +909,7 @@ void selectFaces(MeshT* _mesh, IdList& _faces) {
 
 template< typename MeshT >
 inline
-void unselectFaces(MeshT* _mesh, IdList& _faces) {
+void unselectFaces(MeshT* _mesh, const IdList& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )
@@ -1072,9 +1072,9 @@ std::vector< int > getFaceSelection(MeshT* _mesh, bool& _invert) {
 
 template< typename MeshT >
 inline
-void convertFaceToVertexSelection(MeshT* _mesh, std::vector< int >& _faces) {
+void convertFaceToVertexSelection(MeshT* _mesh, const std::vector< int >& _faces) {
 
-	for (std::vector<int>::iterator f = _faces.begin(); f != _faces.end(); ++f) {
+	for (std::vector<int>::const_iterator f = _faces.begin(); f != _faces.end(); ++f) {
 
 		typename MeshT::FaceHandle fh(*f);
 
@@ -1103,9 +1103,9 @@ void convertFaceToVertexSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void convertFaceToEdgeSelection(MeshT* _mesh, std::vector< int >& _faces) {
+void convertFaceToEdgeSelection(MeshT* _mesh, const std::vector< int >& _faces) {
 
-	for (std::vector<int>::iterator f = _faces.begin(); f != _faces.end(); ++f) {
+	for (std::vector<int>::const_iterator f = _faces.begin(); f != _faces.end(); ++f) {
 
 		typename MeshT::FaceHandle fh(*f);
 
