@@ -521,7 +521,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   //Calculate Bounding Box(min,max,cog)
   ACG::Vec3d min;
   ACG::Vec3d max;
-  MeshInfo::getBoundingBox(*_mesh, min, max);
+  MeshInfo::getBoundingBox(_mesh, min, max);
 
   //Bounding Box Size
   ACG::Vec3d diff = max-min;
@@ -539,7 +539,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   info_->bbSizeZ->setText( QString::number(diff[2],'f') );
 
   //COG
-  ACG::Vec3d cog = MeshInfo::cog(*_mesh);
+  ACG::Vec3d cog = MeshInfo::cog(_mesh);
 
   info_->cogX->setText( QString::number(cog[0],'f') );
   info_->cogY->setText( QString::number(cog[1],'f') );

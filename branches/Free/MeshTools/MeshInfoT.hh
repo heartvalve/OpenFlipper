@@ -96,7 +96,7 @@ int componentCount(MeshT* _mesh );
 */ 
 template < typename MeshT >
 inline    
-void getBoundingBox( MeshT&   _mesh, 
+void getBoundingBox( MeshT*   _mesh,
                      typename MeshT::Point& _min , 
                      typename MeshT::Point& _max);
 
@@ -107,7 +107,7 @@ void getBoundingBox( MeshT&   _mesh,
 template < typename MeshT >
 inline    
 typename MeshT::Point
-cog ( const MeshT& _mesh );    
+cog ( const MeshT* _mesh );
 
 //=============================================================================
 } // MeshInfo Namespace 

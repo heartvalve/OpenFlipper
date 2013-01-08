@@ -392,7 +392,7 @@ Vector InfoMeshObjectPlugin::cog(int _id)
       return Vector();
     }
 
-    return MeshInfo::cog(*mesh);
+    return MeshInfo::cog(mesh);
 
   } else {
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
@@ -402,7 +402,7 @@ Vector InfoMeshObjectPlugin::cog(int _id)
       return Vector();
     }
 
-    return MeshInfo::cog(*mesh);
+    return MeshInfo::cog(mesh);
   }
 }
 
@@ -436,7 +436,7 @@ Vector InfoMeshObjectPlugin::boundingBoxMin(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return min;
 
@@ -450,7 +450,7 @@ Vector InfoMeshObjectPlugin::boundingBoxMin(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return min;
   }
@@ -486,7 +486,7 @@ Vector InfoMeshObjectPlugin::boundingBoxMax(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return max;
 
@@ -500,7 +500,7 @@ Vector InfoMeshObjectPlugin::boundingBoxMax(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return max;
   }
@@ -536,7 +536,7 @@ Vector InfoMeshObjectPlugin::boundingBoxSize(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return (max - min);
 
@@ -550,7 +550,7 @@ Vector InfoMeshObjectPlugin::boundingBoxSize(int _id)
 
     ACG::Vec3d min;
     ACG::Vec3d max;
-    MeshInfo::getBoundingBox(*mesh, min, max);
+    MeshInfo::getBoundingBox(mesh, min, max);
 
     return (max - min);
   }

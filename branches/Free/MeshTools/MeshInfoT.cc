@@ -171,19 +171,19 @@ int componentCount(MeshT* _mesh ) {
 
 template < typename MeshT >
 inline    
-void getBoundingBox( MeshT&   _mesh, 
+void getBoundingBox( MeshT*   _mesh,
                      typename MeshT::Point& _min , 
                      typename MeshT::Point& _max) {
-  if ( _mesh.n_vertices() == 0 ) {
+  if ( _mesh->n_vertices() == 0 ) {
     std::cerr << "Unable to compute Bounding Box: No points in Mesh!" << std::endl; 
   }
   // Use any point as initial value                       
-  _min = _mesh.point(_mesh.vertex_handle(0));
-  _max = _mesh.point(_mesh.vertex_handle(0));
+  _min = _mesh->point(_mesh->vertex_handle(0));
+  _max = _mesh->point(_mesh->vertex_handle(0));
   
-  for (typename MeshT::VertexIter v_it = _mesh.vertices_begin() ; v_it != _mesh.vertices_end() ; ++v_it ) {
-    _min.minimize( _mesh.point(v_it.handle()) );
-    _max.maximize( _mesh.point(v_it.handle()) );
+  for (typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end() ; ++v_it ) {
+    _min.minimize( _mesh->point(v_it.handle()) );
+    _max.maximize( _mesh->point(v_it.handle()) );
   }
   
 }
@@ -193,13 +193,13 @@ void getBoundingBox( MeshT&   _mesh,
 template < typename MeshT >
 inline    
 typename MeshT::Point
-cog ( const MeshT& _mesh ) {
-      typename MeshT::ConstVertexIter v_it, v_end=_mesh.vertices_end();
+cog ( const MeshT* _mesh ) {
+      typename MeshT::ConstVertexIter v_it, v_end=_mesh->vertices_end();
       typename MeshT::Point cog(0.0,0.0,0.0);
       
-      for (v_it = _mesh.vertices_begin(); v_it != v_end ; ++v_it) 
-         cog += _mesh.point(v_it);
-      cog = 1.0 / (typename MeshT::Scalar)_mesh.n_vertices()  * cog;
+      for (v_it = _mesh->vertices_begin(); v_it != v_end ; ++v_it)
+         cog += _mesh->point(v_it);
+      cog = 1.0 / (typename MeshT::Scalar)_mesh->n_vertices()  * cog;
       
       return cog;
 }

@@ -78,12 +78,12 @@ namespace MeshSelection {
 /// Select given vertices of a mesh
 template< typename MeshT >
 inline
-void selectVertices(MeshT* _mesh, std::vector< int >& _vertices);
+void selectVertices(MeshT* _mesh, const std::vector< int >& _vertices);
 
 /// Unselect given vertices of a mesh
 template< typename MeshT >
 inline
-void unselectVertices(MeshT* _mesh, std::vector< int >& _vertices);
+void unselectVertices(MeshT* _mesh, const std::vector< int >& _vertices);
 
 /// Select all vertices of a mesh
 template< typename MeshT >
@@ -136,7 +136,7 @@ std::vector< int > getVertexSelection(MeshT* _mesh, bool& _invert);
  */
 template< typename MeshT >
 inline
-void selectBoundaryVertices(MeshT* _mesh, typename MeshT::VertexHandle& _vh);
+void selectBoundaryVertices(MeshT* _mesh, const typename MeshT::VertexHandle& _vh);
 
 /**
  * Select for each vertex in _vertices all incident edges
@@ -144,7 +144,7 @@ void selectBoundaryVertices(MeshT* _mesh, typename MeshT::VertexHandle& _vh);
  */
 template< typename MeshT >
 inline
-void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices);
+void convertVertexToEdgeSelection(MeshT* _mesh, const std::vector< int >& _vertices);
 
 /**
  * For each selected vertex select all incident edges
@@ -159,7 +159,7 @@ void convertVertexToEdgeSelection(MeshT* _mesh);
  */
 template< typename MeshT >
 inline
-void convertVertexToHalfedgeSelection(MeshT* _mesh, std::vector< int >& _vertices);
+void convertVertexToHalfedgeSelection(MeshT* _mesh, const std::vector< int >& _vertices);
 
 /**
  * For each selected vertex select all incident halfedges
@@ -174,7 +174,7 @@ void convertVertexToHalfedgeSelection(MeshT* _mesh);
  */
 template< typename MeshT >
 inline
-void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices);
+void convertVertexToFaceSelection(MeshT* _mesh, const std::vector< int >& _vertices);
 
 /**
  * For each selected vertex select all adjacent faces
@@ -217,7 +217,7 @@ void clearFeatureVertices(MeshT* _mesh);
  * */
 template< typename MeshT >
 inline
-void setArea(MeshT* _mesh, std::vector< int >& _vertices , unsigned int _type, bool _state);
+void setArea(MeshT* _mesh, const std::vector< int >& _vertices , unsigned int _type, bool _state);
 
 /** Reset Modeling Status for vertices
  *
@@ -249,12 +249,12 @@ std::vector< int > getArea(MeshT* _mesh, unsigned int _type , bool& _invert);
 /// Select given edges of a mesh
 template< typename MeshT >
 inline
-void selectEdges(MeshT* _mesh, std::vector< int >& _edges);
+void selectEdges(MeshT* _mesh, const std::vector< int >& _edges);
 
 /// Unselect given edges of a mesh
 template< typename MeshT >
 inline
-void unselectEdges(MeshT* _mesh, std::vector< int >& _edges);
+void unselectEdges(MeshT* _mesh, const std::vector< int >& _edges);
 
 /// Select all edges of a mesh
 template< typename MeshT >
@@ -294,7 +294,7 @@ std::vector< int > getEdgeSelection(MeshT* _mesh, bool& _invert);
  */
 template< typename MeshT >
 inline
-void convertEdgeToVertexSelection(MeshT* _mesh, std::vector< int >& _edges);
+void convertEdgeToVertexSelection(MeshT* _mesh, const std::vector< int >& _edges);
 
 /**
  * For each selected edge select all incident vertices
@@ -309,7 +309,7 @@ void convertEdgeToVertexSelection(MeshT* _mesh);
  */
 template< typename MeshT >
 inline
-void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges);
+void convertEdgeToFaceSelection(MeshT* _mesh, const std::vector< int >& _edges);
 
 /**
  * For each selected edge select all adjacent faces
@@ -357,12 +357,12 @@ void clearFeatureEdges(MeshT* _mesh);
 /// Select given edges of a mesh
 template< typename MeshT >
 inline
-void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges);
+void selectHalfedges(MeshT* _mesh, const std::vector< int >& _halfedges);
 
 /// Unselect given edges of a mesh
 template< typename MeshT >
 inline
-void unselectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges);
+void unselectHalfedges(MeshT* _mesh, const std::vector< int >& _halfedges);
 
 /// Select all edges of a mesh
 template< typename MeshT >
@@ -418,12 +418,12 @@ void convertHalfedgeToFaceSelection(MeshT* _mesh);
 /// Select given faces of a mesh
 template< typename MeshT >
 inline
-void selectFaces(MeshT* _mesh, std::vector< int >& _faces );
+void selectFaces(MeshT* _mesh, const std::vector< int >& _faces );
 
 /// Unselect given faces of a mesh
 template< typename MeshT >
 inline
-void unselectFaces(MeshT* _mesh, std::vector< int >& _faces );
+void unselectFaces(MeshT* _mesh, const std::vector< int >& _faces );
 
 /// Select all faces of a mesh
 template< typename MeshT >
@@ -479,7 +479,7 @@ std::vector< int > getFaceSelection(MeshT* _mesh, bool& _invert);
  */
 template< typename MeshT >
 inline
-void convertFaceToVertexSelection(MeshT* _mesh, std::vector< int >& _faces);
+void convertFaceToVertexSelection(MeshT* _mesh, const std::vector< int >& _faces);
 
 /**
  * For each selected face select all adjacent vertices
