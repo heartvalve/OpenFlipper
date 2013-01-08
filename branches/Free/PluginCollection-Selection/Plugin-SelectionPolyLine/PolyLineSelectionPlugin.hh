@@ -75,9 +75,6 @@ class PolyLineSelectionPlugin : public QObject, BaseInterface, KeyInterface,
 
 public:
     
-    /// IdList type
-    typedef std::vector<int> IdList;
-    
     /// Default constructor
     PolyLineSelectionPlugin();
 
