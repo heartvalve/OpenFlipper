@@ -131,8 +131,13 @@ template< typename MeshT >
 inline
 std::vector< int > getVertexSelection(MeshT* _mesh, bool& _invert);
 
-/** Get the vertices connected to a given boundary edge
- * @param _vh handle of a boundary-edge
+/** Select all vertices belonging to the same boundary as _vh
+ *
+ * This function gets one vertex that has to be on a boundary.
+ * Than the function will follow the boundary and mark all vertices
+ * at it as selected.
+ *
+ * @param _vh handle of a boundary vertex
  */
 template< typename MeshT >
 inline
