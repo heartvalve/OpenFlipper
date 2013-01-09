@@ -82,7 +82,7 @@ public:
   Renderer();
   ~Renderer();
 
-  QString name() { return (QString("Renderer Plugin")); };
+  QString name() { return (QString("Shader Pipeline Renderer Plugin")); };
   QString description( ) { return (QString(tr("Shader Based Rendering Pipeline (Alpha Version!)"))); };
 
 public slots:
