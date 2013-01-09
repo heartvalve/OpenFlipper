@@ -993,7 +993,7 @@ me_merge( QMouseEvent* _event )
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-        if (cur_pol)
+        if (cur_pol) {
 
           // Check if we got a line segment or a vertex
           if ( target_idx >= cur_pol->line()->n_vertices() )
@@ -1012,6 +1012,8 @@ me_merge( QMouseEvent* _event )
             //	    cur_pol->line()->add_point( cur_pol->line()->point( cur_pol->line()->n_vertices()-1));
             move_point_ref_ = &(cur_pol->line()->point(cur_pol->line()->n_vertices() - 1));
           }
+        }
+
       }
     }
   }
