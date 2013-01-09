@@ -456,22 +456,22 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
 
   ACG::Vec3d c = glstate_->modelview().transform_point(properties_.sceneCenter());
 
-  double near = std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius()));
-  double far  = std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius()));
+  double nearPlane = std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius()));
+  double farPlane  = std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius()));
 
    // Safety check, if near < 0
-   if ( near <= 0.0 ) {
+   if ( nearPlane <= 0.0 ) {
      std::cerr << "Error in BaseViewer drawScene, nearplane <= 0.0" << std::endl;
-     near = 0.000000000000001;
+     nearPlane = 0.000000000000001;
    }
 
   // Safety check. Make sure that they are in the right order
-  if ( near > far ) {
+  if ( near > farPlane ) {
     std::cerr << "Error in BaseViewer setScenePos, Nearplane > Farplane" << std::endl;
-    std::swap(near,far);
+    std::swap(nearPlane,farPlane);
   }
 
-  properties_.setPlanes(near,far);
+  properties_.setPlanes(nearPlane,farPlane);
 
   updateProjectionMatrix();
   updateGL();
@@ -578,22 +578,22 @@ void glViewer::drawScene()
   // Far plane
   ACG::Vec3d c = glstate_->modelview().transform_point(properties_.sceneCenter());
 
-  double near = std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius()));
-  double far  = std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius()));
+  double nearPlane = std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius()));
+  double farPlane  = std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius()));
 
   // Safety check, if near < 0
-  if ( near <= 0.0 ) {
+  if ( nearPlane <= 0.0 ) {
     std::cerr << "Error in BaseViewer drawScene, nearplane < 0" << std::endl;
-    near = 0.000000000000001;
+    nearPlane = 0.000000000000001;
   }
 
   // Safety check. Make sure that they are in the right order
-  if ( near > far ) {
+  if ( nearPlane > farPlane ) {
     std::cerr << "Error in BaseViewer drawScene, Nearplane > Farplane" << std::endl;
-    std::swap(near,far);
+    std::swap(nearPlane,farPlane);
   }
 
-  properties_.setPlanes(near,far);
+  properties_.setPlanes(nearPlane,farPlane);
 
   updateProjectionMatrix();
 
