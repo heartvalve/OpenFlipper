@@ -212,7 +212,7 @@ void MeshObjectSelectionPlugin::selectBoundaryVertices(int _objectId) {
 
 //=========================================================
 
-void MeshObjectSelectionPlugin::selectClosestBoundaryVertices(int _objectId, int VertexId) {
+void MeshObjectSelectionPlugin::selectClosestBoundaryVertices(int _objectId, int _vertexId) {
   
     BaseObjectData* object;
     if (!PluginFunctions::getObject(_objectId,object)) {
@@ -221,11 +221,9 @@ void MeshObjectSelectionPlugin::selectClosestBoundaryVertices(int _objectId, int
     }
 
     if (object->dataType() == DATA_TRIANGLE_MESH) {
-        // \TODO: Adapt implementation
-        //closestBoundarySelection(PluginFunctions::triMesh(object), VertexId, VERTEX);
+        closestBoundarySelection(PluginFunctions::triMesh(object),_vertexId, vertexType_, false);
     } else if (object->dataType() == DATA_POLY_MESH) {
-        // \TODO: Adapt implementation
-        //closestBoundarySelection(PluginFunctions::polyMesh(object), VertexId, VERTEX);
+        closestBoundarySelection(PluginFunctions::polyMesh(object),_vertexId, vertexType_, false);
     } else {
         emit log(LOGERR,tr("selectClosestBoundaryVertices: Unsupported object Type")); 
         return;
