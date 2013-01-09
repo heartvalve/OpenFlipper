@@ -735,7 +735,7 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
     if(allTargets_) {
       for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
           != PluginFunctions::objectsEnd(); ++o_it) {
-        if ((o_it->id() != objectId) && !o_it->manipulatorNode()->visible()) { // If it has its own manipulator active, dont move it
+        if ((o_it->id() != objectId) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
 
           // move the object which corresponds to the manipulator
           if (PluginFunctions::pickMode() == "Move")
