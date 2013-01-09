@@ -1236,6 +1236,35 @@ void MovePlugin::slotTranslation() {
 
         emit createBackup(object->id(), "Translation");
         emit updatedObject(object->id(), UPDATE_GEOMETRY);
+
+
+        // move all other targets without manipulator
+        if(allTargets_) {
+
+          for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
+               != PluginFunctions::objectsEnd(); ++o_it) {
+            if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
+              if (PluginFunctions::pickMode() == "Move") {
+                translate(o_it->id(), translation);
+              } else if (PluginFunctions::pickMode() == "MoveSelection") {
+                updateSelectionType();
+                if (selectionType_ & VERTEX) {
+                  translateVertexSelection(o_it->id(), translation);
+                }
+                if (selectionType_ & FACE) {
+                  translateFaceSelection(o_it->id(), translation);
+                }
+                if (selectionType_ & EDGE) {
+                  translateEdgeSelection(o_it->id(), translation);
+                }
+              }
+
+              emit createBackup(o_it->id(), "Translation");
+              emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
+            }
+          }
+
+        }
       }
     } else {
       return;
@@ -1402,11 +1431,52 @@ void MovePlugin::slotRotate() {
 			  }
 			}
 
-			updateManipulatorDialog();
+      // move all other targets without manipulator
+      if(allTargets_) {
 
-			emit createBackup(object->id(), "Rotation");
-			emit updatedObject(object->id(), UPDATE_GEOMETRY);
-		}
+        for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
+             != PluginFunctions::objectsEnd(); ++o_it) {
+          if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
+
+            if (PluginFunctions::pickMode() == "Move")
+            {
+              if (o_it->dataType(DATA_TRIANGLE_MESH))
+                transformMesh(m, (*PluginFunctions::triMesh(o_it)));
+
+              if (o_it->dataType(DATA_POLY_MESH))
+                transformMesh(m, (*PluginFunctions::polyMesh(o_it)));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+              if (o_it->dataType(DATA_TSPLINE_MESH))
+                transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
+#endif
+            }
+            else if (PluginFunctions::pickMode() == "MoveSelection")
+            {
+              updateSelectionType();
+              if (selectionType_ & VERTEX) {
+                transformVertexSelection(o_it->id(), m);
+              }
+              if (selectionType_ & FACE) {
+                transformFaceSelection(o_it->id(), m);
+              }
+              if (selectionType_ & EDGE) {
+                transformEdgeSelection(o_it->id(), m);
+              }
+            }
+
+            emit createBackup(o_it->id(), "Translation");
+            emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
+          }
+        }
+
+      }
+
+      updateManipulatorDialog();
+
+      emit createBackup(object->id(), "Rotation");
+      emit updatedObject(object->id(), UPDATE_GEOMETRY);
+
+    }
 	}
 
 	emit scriptInfo(QString("slotRotate()"));
@@ -1490,7 +1560,47 @@ void MovePlugin::slotScale() {
 			  if (selectionType_ & EDGE) {
 			    transformEdgeSelection(object->id(), m);
 			  }
-			}
+      }
+
+      // move all other targets without manipulator
+      if(allTargets_) {
+
+        for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
+             != PluginFunctions::objectsEnd(); ++o_it) {
+          if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
+
+            if (PluginFunctions::pickMode() == "Move")
+            {
+              if (o_it->dataType(DATA_TRIANGLE_MESH))
+                transformMesh(m, (*PluginFunctions::triMesh(o_it)));
+
+              if (o_it->dataType(DATA_POLY_MESH))
+                transformMesh(m, (*PluginFunctions::polyMesh(o_it)));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+              if (o_it->dataType(DATA_TSPLINE_MESH))
+                transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
+#endif
+            }
+            else if (PluginFunctions::pickMode() == "MoveSelection")
+            {
+              updateSelectionType();
+              if (selectionType_ & VERTEX) {
+                transformVertexSelection(o_it->id(), m);
+              }
+              if (selectionType_ & FACE) {
+                transformFaceSelection(o_it->id(), m);
+              }
+              if (selectionType_ & EDGE) {
+                transformEdgeSelection(o_it->id(), m);
+              }
+            }
+
+            emit createBackup(o_it->id(), "Translation");
+            emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
+          }
+        }
+
+      }
 
 			updateManipulatorDialog();
 
