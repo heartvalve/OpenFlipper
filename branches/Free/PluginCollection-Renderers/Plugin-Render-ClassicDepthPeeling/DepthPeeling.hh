@@ -70,7 +70,7 @@ public :
   DepthPeelingPlugin();
   ~DepthPeelingPlugin();
 
-  QString name() { return (QString("Dual Depth Peeling Plugin")); };
+  QString name() { return (QString("Dual Depth Peeling Plugin using classic rendering pipeling")); };
   QString description( ) { return (QString(tr("Order independent transparency renderer"))); };
 
 public slots:
