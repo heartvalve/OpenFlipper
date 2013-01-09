@@ -466,7 +466,7 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
    }
 
   // Safety check. Make sure that they are in the right order
-  if ( near > farPlane ) {
+  if ( nearPlane > farPlane ) {
     std::cerr << "Error in BaseViewer setScenePos, Nearplane > Farplane" << std::endl;
     std::swap(nearPlane,farPlane);
   }
