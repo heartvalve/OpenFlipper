@@ -436,16 +436,11 @@ namespace Viewer {
       /// Return distance to near Plane
       double nearPlane(){ return nearPlane_;};
       
-      /// set new near Plane distance
-      void nearPlane(double _near){nearPlane_ = _near; emit updated(); };
-      
+      /// Set near and far plane at the same time
+      void setPlanes( double _near, double _far  ) {nearPlane_ = _near; farPlane_ = _far; emit updated();} ;
       
       /// Return distance to far Plane
       double farPlane(){ return farPlane_;};
-      
-      /// set new near Plane distance
-      void farPlane(double _far){farPlane_ = _far; emit updated(); };
-      
       
       /// Get current scene center (rendering center)
       ACG::Vec3d sceneCenter(){ return sceneCenter_; };
