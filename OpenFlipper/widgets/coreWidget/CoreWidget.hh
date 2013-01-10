@@ -494,6 +494,12 @@ public:
     /// Hide or show toolbox area
     void toggleToolbox();
 
+    /// Hide or show menu bar
+    void toogleMenuBar();
+
+    //Hide or show current toolbar
+    void toggleToolbar();
+
     /// Change visibility of the Status Bar
     void toggleStatusBar();
 

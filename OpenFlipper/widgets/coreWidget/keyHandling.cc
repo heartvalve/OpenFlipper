@@ -527,6 +527,8 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_T      , Qt::ControlModifier, "Show/Hide Toolbox");
   emit registerKey(Qt::Key_F      , Qt::ControlModifier, "Toggle Fullscreen");
   emit registerKey(Qt::Key_B      , Qt::ControlModifier, "Show/Hide StatusBar");
+  emit registerKey(Qt::Key_Z      , Qt::ControlModifier, "Show/Hide ToolBar");
+  emit registerKey(Qt::Key_M      , Qt::ControlModifier, "Show/Hide MenuBar");
 
 
   if ( OpenFlipper::Options::isLinux() ) {
@@ -600,12 +602,19 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
           toggleToolbox();
         return;
 
+      case Qt::Key_M :
+        toogleMenuBar();
+        return;
+
+      case Qt::Key_Z:
+          toggleToolbar();
+        return;
+
       case Qt::Key_O :
         loadMenu();
 
       case Qt::Key_S :
         saveMenu();
-
       default:
         return;
     }
