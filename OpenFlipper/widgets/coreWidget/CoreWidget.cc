@@ -766,6 +766,7 @@ CoreWidget::toggleToolbox() {
 
   //toggle
   showToolbox( OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool() );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -784,11 +785,7 @@ CoreWidget::showToolbox( bool _state ) {
     toolBoxArea_->setVisible(false);
 
   }else{
-    //reset last ViewMode
-    if (OpenFlipper::Options::currentViewMode().trimmed() == "")
-      setViewMode("All");
-    else
-      setViewMode( OpenFlipper::Options::currentViewMode() );
+    //show last view mode
     toolBoxArea_->setVisible(true);
   }
 }
