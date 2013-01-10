@@ -30,9 +30,11 @@ set_target_properties(qjson PROPERTIES
                       FRAMEWORK ${OSX_FRAMEWORK}
                       )
 
-set_target_properties(qjson PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/lib/OpenFlipper"
-    )
+if (NOT APPLE)
+  set_target_properties(qjson PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/lib/OpenFlipper"
+      )
+endif()
 
 #INSTALL(TARGETS qjson EXPORT qjson-export
 #   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
