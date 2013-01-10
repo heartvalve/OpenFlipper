@@ -56,13 +56,13 @@ set(QJSON_LIB_VERSION_STRING "${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSI
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" )
 
 # pkg-config
-IF (NOT WIN32)
-  CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
-                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
-                  @ONLY)
-  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
-           DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
-ENDIF (NOT WIN32)
+#IF (NOT WIN32)
+#  CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
+#                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+#                  @ONLY)
+#  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+#           DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+#ENDIF (NOT WIN32)
 
 # Subdirs
 ADD_SUBDIRECTORY(src)
@@ -76,7 +76,7 @@ CONFIGURE_FILE(
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
-INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSONTargets.cmake)
+#INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSONTargets.cmake)
 
 # figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
 # runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
@@ -90,9 +90,9 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfig.cmake.in
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfigVersion.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
                @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
-        DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
+#INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
+#              ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+#        DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
 
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
