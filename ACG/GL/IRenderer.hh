@@ -46,10 +46,19 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/Math/GLMatrixT.hh>
 #include <ACG/GL/ShaderGenerator.hh>
+#include <ACG/GL/RenderObject.hh>
+
+#include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/Scenegraph/MaterialNode.hh>
+
+
+
+namespace GLSL{
+  class Program;
+}
 
 namespace ACG
 {
-
 
 // forward declaration
 class VertexDeclaration;
@@ -62,242 +71,219 @@ namespace SceneGraph {
   class Material;
 }
 
-
-/** \brief Interface class between scenegraph and renderer
- *
- * RenderObject is the primary interface between scenegraph and renderer.
- *
- * Scenegraph nodes have to declare any renderable geometry objects by providing:
- * - geometry type (triangles, lines, points, triangle strips, ...)
- * - geometry buffers (vertex/index buffers,  vbo, ibo, sysmem and non-indexed supported )
- * - vertex buffer layout ( via vertex declaration, eventually declare sysmem vertex buffer here )
- * - draw mode
- * - OpenGL render states
- * - material properties
- * - texture
- *
- * Quick initialization for default values is recommended.
- * RenderObject::initFromState() grabs transforms, material and render states from a GLState.
- *
- * An OpenGL style interface for geometry setup is available via:
- * RenderObject::glBindBuffer()
- * RenderObject::glDrawArrays()
- * RenderObject::glDrawArrayElements()
- *
- * You still have to create the VertexDeclaration on your own first though.
- *
- * Note that each RenderObject corresponds to exactly one deferred draw call.
-*/
-struct ACGDLLEXPORT RenderObject
-{
-  /** default constructor
-   *   set all members to 0
-   *   keep renderobject a POD to avoid possible problems
-   */
-  RenderObject();
-
-  /** \brief Priority to allow sorting of objects
-   *
-   * The renderer sorts objects based on priority from high to low before rendering.
-   *
-   * \note negative values allowed
-   */
-  int priority;
-
-
-  /// Modelview transform
-  GLMatrixf modelview;
-
-  /// Projection transform
-  GLMatrixf proj;
-
-
-  //===========================================================================
-  /** @name Geometry definition
-   *
-   * @{ */
-  //===========================================================================
-
-  /// VBO, IBO ids
-  GLuint vertexBuffer,
-         indexBuffer;
-
-  /** \brief Use system memory index buffer
-   *
-   * If you don't want to use an IBO, simply assign your sysmem indexbuffer address here.
-   * If both indexBuffer and sysmemIndexBuffer are 0, the renderer will treat this
-   * RenderObject like an unfolded vertex buffer (e.g. 3 * nTris vertex buffer for GL_TRIANGLES)
-   *
-   * \note  It is also possible to specify a sysmem vertex buffer by setting up the VertexDeclaration accordingly use numIndices
-   */
-  const void* sysmemIndexBuffer;
-
-  /** \brief Primitive type
-   *
-   *  PrimitiveType must be one of the following:
-   *  GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP,
-   *  GL_TRIANGLE_FAN, GL_TRIANGLES, GL_QUAD_STRIP, GL_QUADS, GL_POLYGON
-   */
-  GLenum primitiveMode;
-
-  /// Number indices to render
-  unsigned int numIndices;
-
-  /// Offset to first index in the index buffer or vertex buffer respectively
-  unsigned int indexOffset;
-
-  /** \brief Index element type
-   *
-   * Has to be GL_UNSIGNED_SHORT or GL_UNSIGNED_INT
-   */
-  GLenum indexType;
-
-
-  /// Defines the vertex buffer layout
-  const VertexDeclaration* vertexDecl;
-
-  /** @} */
-
-
-
-  /** \brief Drawmode and other shader params
-   *
-   * - setup the shade mode :                         shaderDesc.shadeMode = ..  (necessary)
-   * - enable lighting with all lights in the scene:  shaderDesc.numLights =  0  (recommended)
-   * - disable lighting(only removes lighting code):  shaderDesc.numLights = -1
-   * - manual lighting setup:                         shaderDesc.numLights = n
-   *                                                  shaderDesc.lightTypes[i] = ..
-   * - enable / disable texturing :                   shaderDesc.textured = ..
-   * ...
-   *
-   */
-  ShaderGenDesc shaderDesc;
-
-  // opengl states
-  //  queried from glState in initFromState()
-  bool culling;
-  bool blending;
-  bool alphaTest;
-  bool depthTest;
-  bool depthWrite;
-
-  GLenum fillMode; // GL_POINT, GL_LINE, GL_FILL,  default: GL_FILL
-
-  GLboolean colorWriteMask[4]; // {r,g,b,a},  default: all true
-
-//  GLenum shadeModel; // GL_FACE, GL_SMOOTH   obsolute in shader pipeline
-  GLenum depthFunc;  //!< GL_LESS, GL_LEQUAL, GL_GREATER ..
-
-  GLenum blendSrc, blendDest; //!< glBlendFunc: GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA ...
-
-  Vec2f depthRange; //!< glDepthRange: (znear, zmax)
-
-  // ---------------------------
-  /// material definitions
-  Vec3f diffuse,
-        ambient,
-        specular,
-        emissive;
-
-  float alpha,
-        shininess;
-
-
-  /** \brief Texture to be used
-   *
-   * eventually a more flexible texture system with user defined:
-   * - texture stage binding slot (0 .. 16)
-   * - texture type (1D, 2D, 3D, rect, cube)
-   * - array of textures
-   * assumes binding slot 0 and 2D for now
-   */
-  GLuint texture;
-
-
-  /// used internally for renderer debugging
-  int debugID;
-  const char* debugName;
-
-  /// may be used internally by the renderer
-  unsigned int internalFlags_;
-
-
-  // opengl style helper function interface: 
-  // provided for easier setup of RenderObjects,
-  //  usage is not necessary
-  void glBindBuffer(GLenum target, GLuint buffer)
-  {
-    switch (target)
-    {
-    case GL_ARRAY_BUFFER: vertexBuffer = buffer; break;
-    case GL_ELEMENT_ARRAY_BUFFER: indexBuffer = buffer; break;
-    }
-  }
-  void glDrawArrays(GLenum mode, GLint first, GLsizei count)
-  {
-    indexBuffer = 0;
-    sysmemIndexBuffer = 0;
-
-
-    primitiveMode = mode;
-    indexOffset = first;
-    numIndices = count;
-  }
-  void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
-  {
-    primitiveMode = mode;
-    numIndices = count;
-    indexType = type;
-
-    sysmemIndexBuffer = indices;
-  }
-  void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
-  {
-    colorWriteMask[0] = r; colorWriteMask[1] = g; colorWriteMask[2] = b; colorWriteMask[3] = a;
-  }
-  
-  /** \brief Initializes a RenderObject instance.
-   *
-   * Grabs material and transforms automatically if a GLState is provided.
-  */
-  void initFromState(GLState* _glState);
-
-  void setMaterial(const SceneGraph::Material* _mat);
-
-  /** \brief Fills out ShaderGenDesc parameters based on Drawmode properties
-  */
-  void setupShaderGenFromDrawmode(const SceneGraph::DrawModes::DrawModeProperties* _props);
-
-
-  /** \brief Whenever the need for glBegin() glEnd() immediate mode arises,
-       this can be implemented by a deriving class of RenderObject.
-       Also it gets called only if numIndices is set to 0.
-       glBegin and glEnd have to be called in here.
-  */
-  virtual void executeImmediateMode();
-
-
-  /** Returns a text representation of the RenderObject for debugging purposes.
-  */
-  QString toString() const;
-};
-
-
-
-class IRenderer
+class ACGDLLEXPORT IRenderer
 {
 public:
-  IRenderer(){}
-  virtual ~IRenderer(){}
+  IRenderer();
+  virtual ~IRenderer();
 
 
-  /** \brief Adds a render object to the current list.
+public:
+  //=========================================================================
+  // Callbacks for the scenegraph nodes
+  //=========================================================================
+
+  /** \brief Callback for the scenegraph nodes, which send new render objects via this function.
+   *
+   * AddRenderObject is typically called by a scenegraph nodes during the collection of renderable
+   * objects. A renderobject is a collection of opengl states, buffers and parameters,
+   * that correspond to exactly one draw call.
+   *
    * Creates another RenderObject instance internally, safe for temporary local RenderObject instances.
-   * However, the VertexDeclaration address must be permanently valid.
-   * This function gets called from within the Scenegraph nodes.
+   *
+   * \note The VertexDeclaration address must be permanently valid.
+   *
+   * @param _renderObject Newly added render object
   */
-  virtual void addRenderObject(RenderObject* _renderObject) = 0;
+  virtual void addRenderObject(RenderObject* _renderObject);
 
+  struct LightData
+  {
+    LightData()
+      : ltype(ACG::SG_LIGHT_DIRECTIONAL),
+      diffuse(1.0f, 1.0f, 1.0f), ambient(1.0f, 1.0f, 1.0f), specular(1.0f, 1.0f, 1.0f),
+      pos(0.0f, 0.0f, 0.0f), dir(1.0f, 0.0f, 0.0f), atten(1.0f, 0.0f, 0.0f), 
+      spotCutoffExponent(0.0f, 0.0f)
+    { }
+
+    ACG::ShaderGenLightType ltype; // directional, spot- or pointlight
+    ACG::Vec3f diffuse, ambient, specular; // light color factor
+    ACG::Vec3f pos, dir; // position, direction in view-space
+    ACG::Vec3f atten; // (constant, linear, quadratic) attenuation
+    ACG::Vec2f spotCutoffExponent; // (cutoff angle, exponent) for spotlights
+  };
+
+  /** \brief Callback for the scenegraph nodes, which send new lights to the renderer via this function
+   *
+   * Scenegraph nodes are able to add new light sources to the renderer with this function.
+   * To so, the node should implement getRenderObjects() and call addLight in there.
+   * LightNodes use this for example.
+   *
+   * @param _light Newly added light
+  */
+  virtual void addLight(const LightData& _light);
+
+  //=========================================================================
+  // Render object collection and OpenGL setup for shader-based rendering
+  //=========================================================================
+protected:
+  /** \brief Prepares renderer and OpenGL for any draw-related calls including
+   *
+   * Prepares renderer and OpenGL for any draw-related calls including:
+   *  - collecting renderobjects ( collectRenderObjects() )
+   *  - sorting renderobjects ( sortRenderObjects() )
+   *  - resetting OpenGL state machine for shader-based rendering
+  */
+  virtual void prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot);
+
+  /** \brief Traverse the scenegraph to collect render information
+   *
+   * Traverses the scenegraph and calls the getRenderObject function of each node.
+   * Each node can then add multiple renderobjects via addRenderObject to this renderer.
+   *
+   * Also collects all light sources in the scenegraph.
+   * The currently active list of renderobjects is invalidated too.
+   */
+  virtual void collectRenderObjects(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _sceneGraphRoot);
+
+
+  /** Calls getRenderObjects on each node of the scenegraph recursively.
+    */
+
+  /** \brief Scene graph traversal for render object collection
+   *
+   * Calls getRenderObjects on each node of the scenegraph recursively. Each node then triggers the callbacks.
+   */
+  void traverseRenderableNodes(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _node, const ACG::SceneGraph::Material* _mat);
+
+
+
+  //=========================================================================
+  // Sorting
+  //=========================================================================
+protected:
+
+    /** \brief Compare priority of render objects
+     *
+     * compare function for qsort. This is required to compare render objects based
+     * on their prioerity and render them in the right order
+    */
+    static int cmpPriority(const void*, const void*);
+
+
+    /** \brief Sort the renderobjects by priority
+     *
+     * Sort array of renderobjects by priority and store the result in sortedObjects_.
+    */
+    virtual void sortRenderObjects();
+
+
+  //=========================================================================
+  // Rendering
+  //=========================================================================
+protected:
+
+  /** \brief Render one renderobject
+   *
+   * Fully prepares opengl for a renderobject and executes the draw call.
+   * This combines bindObjectVBO, bindObjectUniforms...
+   *
+   * Optionally render-states may not be changed, in case depth-peeling or
+   * similar global shader operations may require a fixed state setting.
+   */
+  virtual void renderObject(ACG::RenderObject* _obj, GLSL::Program* _prog = 0, bool _constRenderStates = false);
+
+  /** \brief Binding VBOs (First state function)
+   *
+   * This is the first function called by renderObject().
+   *
+   * It binds vertex, index buffer and vertex format of a
+   * render object.
+   */
+  virtual void bindObjectVBO(ACG::RenderObject* _obj,
+      GLSL::Program*     _prog);
+
+  /** \brief Binding Uniforms (Second state function)
+   *
+   * This is the second function called by renderObject().
+   *
+   * Set common shader constants like model-view-projection matrix,
+   * material colors and light params.
+   */
+  virtual void bindObjectUniforms(ACG::RenderObject* _obj,
+      GLSL::Program*     _prog);
+
+  /** \brief Binding Render state (Third state function)
+   *
+   * This is the third function called by renderObject().
+   *
+   * Prepare the opengl state machine for a renderobject draw call.
+   *
+   * This includes any glEnable/glDisable states, depth-cmp functions, blend equation..
+   */
+  virtual void bindObjectRenderStates(ACG::RenderObject* _obj);
+
+
+  /** \brief Executes the opengl draw call for one object (Fourth function)
+   *
+   * This is the fourth function called by renderObject().
+   *
+   * Executes one draw call for the given render object
+   */
+  virtual void drawObject(ACG::RenderObject* _obj);
+
+  //=========================================================================
+  // Restore OpenGL State
+  //=========================================================================
+
+protected:
+
+
+  /** \brief Reset OpenGL state
+   *
+   * Resets critical OpenGL states to default to prevent crashes.
+   * - deactivate framebuffer
+   * - disable shaders
+   * - disable vbo
+  */
+  virtual void finishRenderingPipeline();
+
+  //=========================================================================
+  // Debugging
+  //=========================================================================
+private:
+
+  /** \brief Debugging function to dump list of render objects into a file
+   *
+   * Dump list of render objects to text file.
+   * @param _fileName name of text file to write to
+   * @param _sortedList dump sorted render objects in order, may be 0 to use the unsorted list instead
+   */
+  void dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList = 0) const;
+
+
+  //=========================================================================
+  // Variables
+  //=========================================================================
+protected:
+
+  /// Get the number of current light sources
+  int getNumRenderObjects() const;
+
+protected:
+
+  /// Number of Lights
+  int numLights_;
+
+  /// Light sources ( Filled by addLight() )
+  LightData lights_[SG_MAX_SHADER_LIGHTS];
+
+  /// array of renderobjects, filled by addRenderObject()
+  std::vector<ACG::RenderObject> renderObjects_;
+
+
+  /// sorted list of renderobjects (sorted in rendering order)
+  std::vector<ACG::RenderObject*> sortedObjects_;
 
 };
 

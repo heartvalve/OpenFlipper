@@ -54,6 +54,7 @@
 
 
 #include "LightNode.hh"
+#include <ACG/GL/IRenderer.hh>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -635,6 +636,41 @@ void LightNode::getParameters(GLenum _index, LightSource& _light)
   glGetLightfv(_index, GL_LINEAR_ATTENUATION,  &_light.linearAttenuation_);
   glGetLightfv(_index, GL_QUADRATIC_ATTENUATION,  &_light.quadraticAttenuation_);
 }
+
+
+void LightNode::getRenderObjects( IRenderer* _renderer, GLState& _state , const DrawModes::DrawMode& _drawMode , const Material* _mat )
+{
+
+  // fill IRenderer light struct with light data in view-space
+  IRenderer::LightData light;
+
+  if (transformedLight_.directional())
+    light.ltype = ACG::SG_LIGHT_DIRECTIONAL;
+  else if (transformedLight_.spotCutoff() > 179.5f)
+    light.ltype = ACG::SG_LIGHT_POINT;
+  else
+    light.ltype = ACG::SG_LIGHT_SPOT;
+
+#define V4toV3(v) (ACG::Vec3f(v[0], v[1], v[2]))
+
+  light.diffuse = V4toV3(transformedLight_.diffuseColor());
+  light.ambient = V4toV3(transformedLight_.ambientColor());
+  light.specular = V4toV3(transformedLight_.specularColor());
+  
+  light.pos = V4toV3(transformedLight_.position());
+  light.dir = V4toV3(transformedLight_.direction());
+
+  light.atten[0] = transformedLight_.constantAttenuation();
+  light.atten[1] = transformedLight_.linearAttenuation();
+  light.atten[2] = transformedLight_.quadraticAttenuation();
+
+  light.spotCutoffExponent[0] = transformedLight_.spotCutoff();
+  light.spotCutoffExponent[1] = transformedLight_.spotExponent();
+
+  _renderer->addLight(light);
+
+}
+
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
