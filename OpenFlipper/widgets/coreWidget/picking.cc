@@ -109,10 +109,6 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
 
     // Update pickmode toolbar
     switch ( _am ) {
-    case Viewer::ExamineMode:
-      hidePickToolBar();
-      break;
-
     case Viewer::PickingMode:
       // Show the pickMode Toolbar for this picking mode if it is set
       if (pick_mode_idx_ != -1) {
@@ -124,6 +120,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       break;
 
     default:
+      hidePickToolBar();
       break;
     }
 
