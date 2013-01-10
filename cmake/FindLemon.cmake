@@ -31,7 +31,4 @@ find_library(LEMON_LIBRARY
 set(LEMON_INCLUDE_DIRS "${LEMON_INCLUDE_DIR}" )
 set(LEMON_LIBRARIES "${LEMON_LIBRARY}" )
 
-message("Found lemon include directory: " ${LEMON_INCLUDE_DIR})
-message("Found lemon library: " ${LEMON_LIBRARY})
-
 endif(LEMON_INCLUDE_DIR)
