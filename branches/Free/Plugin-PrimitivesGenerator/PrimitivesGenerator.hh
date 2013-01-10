@@ -66,7 +66,6 @@ class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface
   void updatedObject(int _id, const UpdateType& _type);
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
-  refs #1378
   //LoggingInterface
   void log(Logtype _type, QString _message);
   void log(QString _message);
