@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include "DepthPeeling.hh"
+#include "ClassicDepthPeeling.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/Light/LightNode.hh>
 
