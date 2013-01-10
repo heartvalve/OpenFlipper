@@ -527,7 +527,7 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_T      , Qt::ControlModifier, "Show/Hide Toolbox");
   emit registerKey(Qt::Key_F      , Qt::ControlModifier, "Toggle Fullscreen");
   emit registerKey(Qt::Key_B      , Qt::ControlModifier, "Show/Hide StatusBar");
-  emit registerKey(Qt::Key_Z      , Qt::ControlModifier, "Show/Hide ToolBar");
+  emit registerKey(Qt::Key_N      , Qt::ControlModifier, "Show/Hide ToolBar");
   emit registerKey(Qt::Key_M      , Qt::ControlModifier, "Show/Hide MenuBar");
 
 
@@ -606,7 +606,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
         toogleMenuBar();
         return;
 
-      case Qt::Key_Z:
+      case Qt::Key_N:
           toggleToolbar();
         return;
 
