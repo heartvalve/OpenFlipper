@@ -414,6 +414,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   moveButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"transform-move.png") );
   moveButton_->setMinimumSize( 16, 16 );
   moveButton_->setMaximumSize( 32, 32 );
+  moveButton_->setCheckable(true);
   moveButton_->setToolTip( tr("Switch to <b>move</b> mode.") );
   moveButton_->setWhatsThis(tr(
                   "Switch to <b>move</b> mode.<br>"
@@ -427,13 +428,14 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
             this, SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );*/
 
   viewerToolbar_->addWidget( moveButton_ )->setText(tr("Move"));
-  moveButton_->setDown(true);
+  moveButton_->setChecked(true);
 
   
   pickButton_ = new QToolButton( viewerToolbar_ );
   pickButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pick.png") );
   pickButton_->setMinimumSize( 16, 16 );
   pickButton_->setMaximumSize( 32, 32 );
+  pickButton_->setCheckable(true);
   pickButton_->setToolTip(tr("Switch to <b>picking</b> mode."));
   pickButton_->setWhatsThis(tr(
                   "Switch to <b>picking</b> mode.<br>"
@@ -448,6 +450,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   questionButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png") );
   questionButton_->setMinimumSize( 16, 16 );
   questionButton_->setMaximumSize( 32, 32 );
+  questionButton_->setCheckable(true);
   questionButton_->setToolTip(tr("Switch to <b>identification</b> mode."));
   questionButton_->setWhatsThis(tr(
                   "Switch to <b>identification</b> mode.<br>"
