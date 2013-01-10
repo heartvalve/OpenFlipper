@@ -694,7 +694,8 @@ CoreWidget::toggleFullscreen() {
       setViewMode( OpenFlipper::Options::currentViewMode() );
 
       //show the menubar
-      menuBar()->show();
+      if ( ! OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool())
+        menuBar()->show();
 
       // show the statusbar if this is the requested state
       // stored in the properties
@@ -787,6 +788,46 @@ CoreWidget::showToolbox( bool _state ) {
   }else{
     //show last view mode
     toolBoxArea_->setVisible(true);
+  }
+}
+//-----------------------------------------------------------------------------
+/// Hide or show menu bar
+void CoreWidget::toogleMenuBar()
+{
+  bool hidden = OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool();
+  if ( hidden )
+    menuBar()->show();
+  else
+    menuBar()->hide();
+  OpenFlipperSettings().setValue("Core/Gui/MenuBar/hidden",!hidden);
+}
+
+//-----------------------------------------------------------------------------
+/// Hide or show current toolbar
+void CoreWidget::toggleToolbar()
+{
+  bool hidden = OpenFlipperSettings().value("Core/Gui/Toolbar/hidden",false).toBool();
+  OpenFlipperSettings().setValue("Core/Gui/Toolbar/hidden",!hidden);
+  if ( !hidden )
+  {
+    //hide main toolbar
+    if ( ! mainToolbar_->isFloating() )
+      mainToolbar_->hide();
+
+    //hide viewer toolbar
+    if ( ! viewerToolbar_->isFloating() )
+      viewerToolbar_->hide();
+
+    for (uint p=0; p < plugins_.size(); p++)
+      for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j ) {
+        if ( ! plugins_[p].toolbars[j].second->isFloating() )
+          plugins_[p].toolbars[j].second->hide();
+      }
+  }
+  else
+  {
+    //show toolbars
+    setViewMode( OpenFlipper::Options::currentViewMode() );
   }
 }
 

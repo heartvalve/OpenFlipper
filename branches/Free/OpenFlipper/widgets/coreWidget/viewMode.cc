@@ -424,26 +424,29 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
   if (_expandAll)
     toolBox_->expandAll();
 
-  //find all Toolbars that should be visible and hide the others
-  for (uint p=0; p < plugins_.size(); p++)
-    for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j )
-      if (_toolbars.contains( plugins_[p].toolbars[j].first ) )
-        plugins_[p].toolbars[j].second->show();
-      else
-        plugins_[p].toolbars[j].second->hide();
+  if ( ! OpenFlipperSettings().value("Core/Gui/Toolbar/hidden",false).toBool())
+  {
+    //find all Toolbars that should be visible and hide the others
+    for (uint p=0; p < plugins_.size(); p++)
+      for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j )
+        if (_toolbars.contains( plugins_[p].toolbars[j].first ) )
+          plugins_[p].toolbars[j].second->show();
+        else
+          plugins_[p].toolbars[j].second->hide();
 
 
-  // Check the Main Toolbar:
-  if ( _toolbars.contains(tr("Main Toolbar")) )
-    mainToolbar_->show();
-  else
-    mainToolbar_->hide();
+    // Check the Main Toolbar:
+    if ( _toolbars.contains(tr("Main Toolbar")) )
+      mainToolbar_->show();
+    else
+      mainToolbar_->hide();
 
-  // Check the Main Toolbar:
-  if ( _toolbars.contains(tr("Viewer Toolbar")) )
-    viewerToolbar_->show();
-  else
-    viewerToolbar_->hide();
+    // Check the Main Toolbar:
+    if ( _toolbars.contains(tr("Viewer Toolbar")) )
+      viewerToolbar_->show();
+    else
+      viewerToolbar_->hide();
+  }
 
 
   if (_mode != "")
