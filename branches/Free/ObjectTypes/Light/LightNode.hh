@@ -291,6 +291,11 @@ public:
   /// Set whether node should be visualized
   void visualize(bool _visualize) { visualize_ = _visualize; }
 
+
+  /// Add this light to shader render interface
+  void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat);
+
+
 private:
 
   /// set _light Options in OpenGL for GL_LIGHT#_index

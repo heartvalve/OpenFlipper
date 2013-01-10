@@ -44,6 +44,7 @@
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
+#include <QFile>
 #include <QTextStream>
 
 #include <ACG/GL/gl.hh>
@@ -55,250 +56,454 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/Scenegraph/MaterialNode.hh>
 
+#include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/ShaderCache.hh>
+
+
+
 namespace ACG
 {
 
-void RenderObject::initFromState( GLState* _glState )
+IRenderer::IRenderer()
+: numLights_(0), renderObjects_(0)
 {
-  culling = true;
-  blending = false;
-  depthTest = true;
-  depthWrite = true;
-  alphaTest = false;
+}
 
-  colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
 
-  fillMode = GL_FILL;
+IRenderer::~IRenderer()
+{
+}
 
-  depthRange = Vec2f(0.0f, 1.0f);
-  depthFunc = GL_LESS;
-
-  blendSrc = GL_ONE;
-  blendDest = GL_ZERO;
-
-  alpha = 1.0f;
-
-  if (_glState)
+void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
+{
+  // do some more checks for error detection
+  if (!_renderObject->vertexDecl)
+    std::cout << "error: missing vertex declaration" << std::endl;
+  else
   {
-    modelview = _glState->modelview();
-    proj = _glState->projection();
-
-    culling =_glState->isStateEnabled(GL_CULL_FACE);
-    blending = _glState->isStateEnabled(GL_BLEND);
-    depthTest = _glState->isStateEnabled(GL_DEPTH_TEST);
-
-//    shadeModel = _glState->getShadeModel();
-
-    _glState->getBlendFunc(&blendSrc, &blendDest);
-
-    GLclampd zn, zf;
-    _glState->getDepthRange(&zn, &zf);
-    depthRange = Vec2f(zn, zf);
-
-    depthFunc = _glState->depthFunc();
+    renderObjects_.push_back(*_renderObject);
 
 
-    alphaTest = _glState->isStateEnabled(GL_ALPHA_TEST);
+    ACG::RenderObject* p = &renderObjects_.back();
 
-    for (int i = 0; i < 3; ++i)
+    if (!p->shaderDesc.numLights)
+      p->shaderDesc.numLights = numLights_;
+
+    else if (p->shaderDesc.numLights < 0 || p->shaderDesc.numLights >= SG_MAX_SHADER_LIGHTS)
+      p->shaderDesc.numLights = 0;
+
+    p->internalFlags_ = 0;
+
+
+    // precompile shader
+    ACG::ShaderCache::getInstance()->getProgram(&p->shaderDesc);
+
+  }
+}
+
+
+
+
+void IRenderer::collectRenderObjects( ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _sceneGraphRoot )
+{
+  // collect light sources
+//  collectLightNodes(_sceneGraphRoot);
+  numLights_ = 0; // reset light counter
+
+  // flush render objects
+  // clear() may actually free memory, resulting in capacity = 0
+  renderObjects_.resize(0);
+
+
+  // default material needed
+  ACG::SceneGraph::Material defMat;
+  defMat.baseColor(ACG::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+  defMat.ambientColor(ACG::Vec4f(0.2f, 0.2f, 0.2f, 1.0f));
+  defMat.diffuseColor(ACG::Vec4f(0.6f, 0.6f, 0.6f, 1.0f));
+  defMat.specularColor(ACG::Vec4f(0.0f, 0.0f, 0.0f, 1.0f));
+  defMat.shininess(1.0f);
+  //  defMat.alphaValue(1.0f);
+
+  // collect renderables
+  traverseRenderableNodes(_glState, _drawMode, _sceneGraphRoot, &defMat);
+}
+
+
+
+
+
+void IRenderer::traverseRenderableNodes( ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _node, const ACG::SceneGraph::Material* _mat )
+{
+  if (_node)
+  {
+    ACG::SceneGraph::BaseNode::StatusMode status(_node->status());
+    bool process_children(status != ACG::SceneGraph::BaseNode::HideChildren);
+
+    ACG::SceneGraph::DrawModes::DrawMode nodeDM = _node->drawMode();
+
+    if (nodeDM == ACG::SceneGraph::DrawModes::DEFAULT)
+      nodeDM = _drawMode;
+
+
+    // If the subtree is hidden, ignore this node and its children while rendering
+    if (status != ACG::SceneGraph::BaseNode::HideSubtree)
     {
-      diffuse[i] = _glState->diffuse_color()[i];
-      ambient[i] = _glState->ambient_color()[i];
-      specular[i] = _glState->specular_color()[i];
-      emissive[i] = _glState->base_color()[i];
+
+      if ( _node->status() != ACG::SceneGraph::BaseNode::HideNode )
+        _node->enter(*_glState, _drawMode);
+
+
+      // fetch material (Node itself can be a material node, so we have to
+      // set that in front of the nodes own rendering
+      ACG::SceneGraph::MaterialNode* matNode = dynamic_cast<ACG::SceneGraph::MaterialNode*>(_node);
+      if (matNode)
+        _mat = &matNode->material();
+
+      if (_node->status() != ACG::SceneGraph::BaseNode::HideNode)
+        _node->getRenderObjects(this, *_glState, nodeDM, _mat);
+
+      if (process_children)
+      {
+
+        ACG::SceneGraph::BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+
+        // Process all children which are not second pass
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & ACG::SceneGraph::BaseNode::SecondPass)
+            traverseRenderableNodes( _glState, _drawMode, *cIt, _mat);
+
+        // Process all children which are second pass
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & ACG::SceneGraph::BaseNode::SecondPass)
+            traverseRenderableNodes( _glState, _drawMode, *cIt, _mat);
+
+      }
+
+
+      if (_node->status() != ACG::SceneGraph::BaseNode::HideNode )
+        _node->leave(*_glState, nodeDM);
     }
-    shininess = _glState->shininess();
   }
 }
 
-void RenderObject::setupShaderGenFromDrawmode( const SceneGraph::DrawModes::DrawModeProperties* _props )
-{
-  if (_props)
-  {
-    shaderDesc.vertexColors = _props->colored();
-    shaderDesc.textured = _props->textured();
-    shaderDesc.numLights = _props->lighting() ? 0 : -1;
 
-    switch (_props->lightStage()) {
-      case SceneGraph::DrawModes::LIGHTSTAGE_SMOOTH:
-        shaderDesc.shadeMode = SG_SHADE_GOURAUD;
-        break;
-      case SceneGraph::DrawModes::LIGHTSTAGE_PHONG:
-        shaderDesc.shadeMode = SG_SHADE_PHONG;
-        break;
-      case SceneGraph::DrawModes::LIGHTSTAGE_UNLIT:
-        shaderDesc.shadeMode = SG_SHADE_UNLIT;
-        break;
-      default:
-        break;
+int IRenderer::cmpPriority(const void* _a, const void* _b)
+{
+  const ACG::RenderObject* a = *(const ACG::RenderObject**)_a;
+  const ACG::RenderObject* b = *(const ACG::RenderObject**)_b;
+
+  return a->priority - b->priority;
+}
+
+
+
+
+void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot)
+{
+  // First, all render objects get collected.
+  collectRenderObjects(_glState, _drawMode, _scenegraphRoot);
+
+  // Check if there is anything to render
+  if (renderObjects_.empty())
+    return;
+
+
+  // ==========================================================
+  // Sort renderable objects based on their priority
+  // ==========================================================
+
+  const size_t numRenderObjects = getNumRenderObjects();
+
+  // sort for priority
+  if (sortedObjects_.size() < numRenderObjects)
+    sortedObjects_.resize(numRenderObjects);
+
+  // init sorted objects array
+  for (size_t i = 0; i < numRenderObjects; ++i)
+    sortedObjects_[i] = &renderObjects_[i];
+
+  sortRenderObjects();
+
+
+  // ---------------------------
+  // Initialize the render state
+  // ---------------------------
+  // gl cleanup
+
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_INDEX_ARRAY);
+
+
+  // size of a rendered point is set in vertex-shader via gl_PointSize
+  #ifndef __APPLE__
+    glEnable(GL_PROGRAM_POINT_SIZE_ARB);
+  #endif
+
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glDepthMask(GL_TRUE);
+}
+
+
+
+void IRenderer::finishRenderingPipeline()
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDrawBuffer(GL_BACK);
+
+  glDepthMask(1);
+  glColorMask(1,1,1,1);
+
+  glUseProgram(0);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+
+void IRenderer::sortRenderObjects()
+{
+  qsort(&sortedObjects_[0], getNumRenderObjects(), sizeof(ACG::RenderObject*), cmpPriority);
+}
+
+
+
+void IRenderer::bindObjectVBO(ACG::RenderObject* _obj,
+                                       GLSL::Program*     _prog)
+{
+  _prog->use();
+
+  //////////////////////////////////////////////////////////////////////////
+  // NOTE:
+  //  always bind buffers before glVertexAttribPointer calls!!
+  //  freeze in glDrawElements guaranteed (with no error message whatsoever)
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, _obj->vertexBuffer);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, _obj->indexBuffer);
+
+
+  // activate vertex declaration
+  _obj->vertexDecl->activateShaderPipeline(_prog);
+}
+
+
+void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _prog )
+{
+  // transforms
+  ACG::GLMatrixf mvp = _obj->proj * _obj->modelview;
+  ACG::GLMatrixf mvIT = _obj->modelview;
+  mvIT.invert();
+  mvIT.transpose();
+
+  _prog->setUniform("g_mWVP", mvp);
+  _prog->setUniform("g_mWV", _obj->modelview);
+  _prog->setUniformMat3("g_mWVIT", mvIT);
+  _prog->setUniform("g_mP", _obj->proj);
+
+
+  // material
+  _prog->setUniform("g_cDiffuse", _obj->diffuse);
+  _prog->setUniform("g_cAmbient", _obj->ambient);
+  _prog->setUniform("g_cEmissive", _obj->emissive);
+  _prog->setUniform("g_cSpecular", _obj->specular);
+
+  ACG::Vec4f materialParams(_obj->shininess, _obj->alpha, 0.0f, 0.0f);
+  _prog->setUniform("g_vMaterial", materialParams);
+
+
+
+  // texture
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, _obj->texture);
+  _prog->setUniform("g_Texture0", 0);
+
+  _prog->setUniform("g_PointSize", 5.0f);
+
+
+  // lights
+  for (int i = 0; i < numLights_; ++i)
+  {
+    LightData* lgt = lights_ + i;
+
+    char szUniformName[256];
+
+    sprintf(szUniformName, "g_cLightDiffuse_%d", i);
+    _prog->setUniform(szUniformName, lgt->diffuse);
+
+    sprintf(szUniformName, "g_cLightAmbient_%d", i);
+    _prog->setUniform(szUniformName, lgt->ambient);
+
+    sprintf(szUniformName, "g_cLightSpecular_%d", i);
+    _prog->setUniform(szUniformName, lgt->specular);
+
+
+    if (lgt->ltype == ACG::SG_LIGHT_POINT || lgt->ltype == ACG::SG_LIGHT_SPOT)
+    {
+      sprintf(szUniformName, "g_vLightPos_%d", i);
+      _prog->setUniform(szUniformName, lgt->pos);
+
+      sprintf(szUniformName, "g_vLightAtten_%d", i);
+      _prog->setUniform(szUniformName, lgt->atten);
     }
 
-    if (_props->flatShaded())
-      shaderDesc.shadeMode = SG_SHADE_FLAT;
+    if (lgt->ltype == ACG::SG_LIGHT_DIRECTIONAL || lgt->ltype == ACG::SG_LIGHT_SPOT)
+    {
+      sprintf(szUniformName, "g_vLightDir_%d", i);
+      _prog->setUniform(szUniformName, lgt->dir);
+    }
 
-    if (_props->primitive() == SceneGraph::DrawModes::PRIMITIVE_WIREFRAME ||
-        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_HIDDENLINE ||
-        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_EDGE ||
-        _props->primitive() == SceneGraph::DrawModes::PRIMITIVE_HALFEDGE)
-      shaderDesc.shadeMode = SG_SHADE_UNLIT;
+    if (lgt->ltype == ACG::SG_LIGHT_SPOT)
+    {
+      sprintf(szUniformName, "g_vLightAngleExp_%d", i);
+      _prog->setUniform(szUniformName, lgt->spotCutoffExponent);
+    }
   }
 }
 
-void RenderObject::setMaterial( const SceneGraph::Material* _mat )
+void IRenderer::bindObjectRenderStates(ACG::RenderObject* _obj)
 {
-  for (int i = 0; i < 3; ++i)
+  if (_obj->culling)
+    glEnable(GL_CULL_FACE);
+  else
+    glDisable(GL_CULL_FACE);
+
+  if (_obj->blending)
+    glEnable(GL_BLEND);
+  else
+    glDisable(GL_BLEND);
+
+  if (_obj->alphaTest)
+    glEnable(GL_ALPHA_TEST);
+  else
+    glDisable(GL_ALPHA_TEST);
+
+  if (_obj->depthTest)
+    glEnable(GL_DEPTH_TEST);
+  else
+    glDisable(GL_DEPTH_TEST);
+
+
+  glDepthMask(_obj->depthWrite ? GL_TRUE : GL_FALSE);
+
+  glColorMask(_obj->colorWriteMask[0], _obj->colorWriteMask[1], _obj->colorWriteMask[2], _obj->colorWriteMask[3]);
+
+  glDepthFunc(_obj->depthFunc);
+
+  //  ACG::GLState::shadeModel(_obj->shadeModel);
+
+  glBlendFunc(_obj->blendSrc, _obj->blendDest);
+}
+
+void IRenderer::drawObject(ACG::RenderObject* _obj)
+{
+  if (_obj->numIndices)
   {
-    diffuse[i] = _mat->diffuseColor()[i];
-    ambient[i] = _mat->ambientColor()[i];
-    specular[i] = _mat->specularColor()[i];
-    emissive[i] = _mat->baseColor()[i];
+    // indexed drawing?
+    bool noIndices = true;
+    if (_obj->indexBuffer || _obj->sysmemIndexBuffer)
+      noIndices = false;
+
+    glPolygonMode(GL_FRONT_AND_BACK, _obj->fillMode);
+
+    if (noIndices)
+      glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+    else
+    {
+      // ------------------------------------------
+      // index offset stuff not tested
+      int indexSize = 0;
+      switch (_obj->indexType)
+      {
+      case GL_UNSIGNED_INT: indexSize = 4; break;
+      case GL_UNSIGNED_SHORT: indexSize = 2; break;
+      default: indexSize = 1; break;
+      }
+
+      glDrawElements(_obj->primitiveMode, _obj->numIndices, _obj->indexType,
+        ((const char*)_obj->sysmemIndexBuffer) + _obj->indexOffset * indexSize);
+    }
   }
-  shininess = _mat->shininess();
-  alpha = _mat->diffuseColor()[3];
-}
-
-
-RenderObject::RenderObject()
-: priority(0),
-  vertexBuffer(0), indexBuffer(0), sysmemIndexBuffer(0),
-  primitiveMode(GL_TRIANGLES), numIndices(0), indexOffset(0), indexType(GL_UNSIGNED_INT),
-  vertexDecl(0), 
-  culling(true), blending(false), alphaTest(false),
-  depthTest(true), depthWrite(true),
-  fillMode(GL_FILL), depthFunc(GL_LESS), 
-  blendSrc(GL_SRC_ALPHA), blendDest(GL_ONE_MINUS_SRC_ALPHA),
-  depthRange(0.0f, 1.0f), 
-
-  diffuse(0.6f, 0.6f, 0.6f), ambient(0.1f, 0.1f, 0.1f),
-  specular(0.0f, 0.0f, 0.0f), emissive(0.05f, 0.05f, 0.05f),
-  alpha(1.0f), shininess(100.0f),
-
-  texture(0), 
-  
-  debugID(0), debugName(0),
-  internalFlags_(0)
-
-{
-
-  // set modelview and proj to identity
-  float I[16] = {1.0f, .0f, .0f, .0f,
-                 .0f, 1.0f, .0f, .0f,
-                 .0f, .0f, 1.0f, .0f,
-                 .0f, .0f, .0f, 1.0f};
-
-  modelview = GLMatrixf(I);
-  proj = modelview;
-
-  memset(&shaderDesc, 0, sizeof(shaderDesc));
-  colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
-}
-
-void RenderObject::executeImmediateMode()
-{
-  // implemented by deriving class
-}
-
-QString RenderObject::toString() const
-{
-  // several mappings: (int)GLEnum -> string
-
-  const char* primitiveString[] = 
+  else
   {
-    "GL_POINTS",
-    "GL_LINES",
-    "GL_LINE_LOOP",
-    "GL_LINE_STRIP",
-    "GL_TRIANGLES",
-    "GL_TRIANGLE_STRIP",
-    "GL_TRIANGLE_FAN",
-    "GL_QUADS",
-    "GL_QUAD_STRIP",
-    "GL_POLYGON"
-  };
-
-  const char* fillModeString[] = 
-  {
-    "GL_POINT",
-    "GL_LINE",
-    "GL_FILL"
-  };
-
-  const char* depthFunString[] =
-  {
-    "GL_NEVER",
-    "GL_LESS",
-    "GL_EQUAL",
-    "GL_LEQUAL",
-    "GL_GREATER",
-    "GL_NOTEQUAL",
-    "GL_GEQUAL",
-    "GL_ALWAYS"
-  };
-
-  QString result;
-  QTextStream resultStrm(&result);
-
-  resultStrm << "name: " << debugName
-             << "\ndebugID: " << debugID
-             << "\npriority: " << priority
-
-             << "\nprimitiveMode: " << (primitiveMode <= GL_POLYGON ? primitiveString[primitiveMode] : "undefined")
-
-             << "\nfillMode: " << fillModeString[fillMode - GL_POINT]
-             << "\nnumIndices: " << numIndices
-             << "\nindexOffset: " << indexOffset;
-
-
-  resultStrm << "\nvbo-id: " << vertexBuffer
-             << "\nibo-id: " << indexBuffer
-             << "\nsysmemIndexBuffer: " << sysmemIndexBuffer;
-
-
-
-  resultStrm << "\n" << shaderDesc.toString();
-
-
-  resultStrm << "\nmodelview: " 
-    << "{" << modelview(0, 0) << ", " << modelview(0, 1) << ", " << modelview(0, 2) << ", " << modelview(0, 3) << "} "
-    << "{" << modelview(1, 0) << ", " << modelview(1, 1) << ", " << modelview(1, 2) << ", " << modelview(1, 3) << "} "
-    << "{" << modelview(2, 0) << ", " << modelview(2, 1) << ", " << modelview(2, 2) << ", " << modelview(2, 3) << "} "
-    << "{" << modelview(3, 0) << ", " << modelview(3, 1) << ", " << modelview(3, 2) << ", " << modelview(3, 3) << "} ";
-
-  resultStrm << "\nproj: " 
-    << "{" << proj(0, 0) << ", " << proj(0, 1) << ", " << proj(0, 2) << ", " << proj(0, 3) << "} "
-    << "{" << proj(1, 0) << ", " << proj(1, 1) << ", " << proj(1, 2) << ", " << proj(1, 3) << "} "
-    << "{" << proj(2, 0) << ", " << proj(2, 1) << ", " << proj(2, 2) << ", " << proj(2, 3) << "} "
-    << "{" << proj(3, 0) << ", " << proj(3, 1) << ", " << proj(3, 2) << ", " << proj(3, 3) << "} ";
-
-
-  resultStrm << "\nculling: " << culling
-    << "\nblending: " << blending
-    << "\nalphaTest: " << alphaTest;
-
-
-  resultStrm << "\ndepthTest: " << depthTest
-    << "\ndepthWrite: " << depthWrite
-    << "\ndepthFunc: " << depthFunString[depthFunc - GL_NEVER]
-    << "\ndepthRange: [" << depthRange[0] << ", " << depthRange[1] << "]"
-    << "\ncolorWriteMask: " << colorWriteMask[0] << ", " << colorWriteMask[1] << ", "<< colorWriteMask[2] << ", "<< colorWriteMask[2];
-
-
-  resultStrm << "\ndiffuse: [" << diffuse[0] << ", " << diffuse[1] << ", " << diffuse[2] << "]";
-  resultStrm << "\nambient: [" << ambient[0] << ", " << ambient[1] << ", " << ambient[2] << "]";
-  resultStrm << "\nspecular: [" << specular[0] << ", " << specular[1] << ", " << specular[2] << "]";
-  resultStrm << "\nemissive: [" << emissive[0] << ", " << emissive[1] << ", " << emissive[2] << "]";
-
-  resultStrm << "\nshininess: " << shininess;
-  resultStrm << "\nalpha: " << alpha;
-
-  resultStrm << "\ninternalFlags: " << internalFlags_;
-
-  if (vertexDecl)
-    resultStrm << "\n" << vertexDecl->toString();
-
-
-  return result;
+    // user defined draw-call
+    _obj->executeImmediateMode();
+  }
 }
+
+void IRenderer::renderObject(ACG::RenderObject* _obj, 
+                                      GLSL::Program* _prog,
+                                      bool _constRenderStates)
+{
+  // select shader from cache
+  GLSL::Program* prog = _prog ? _prog : ACG::ShaderCache::getInstance()->getProgram(&_obj->shaderDesc);
+
+
+  bindObjectVBO(_obj, prog);
+
+  // ---------------------------------------
+  // set shader uniforms
+
+  bindObjectUniforms(_obj, prog);
+
+  // render states
+
+  if (!_constRenderStates)
+    bindObjectRenderStates(_obj);
+
+  // ----------------------------
+  // OpenGL draw call
+
+  drawObject(_obj);
+
+
+  ACG::glCheckErrors();
+
+  // deactivate vertex declaration to avoid errors
+  _obj->vertexDecl->deactivateShaderPipeline(prog);
+
+}
+
+
+void IRenderer::addLight(const LightData& _light)
+{
+  if (numLights_ < SG_MAX_SHADER_LIGHTS)
+    lights_[numLights_++] = _light;
+}
+
+
+int IRenderer::getNumRenderObjects() const
+{
+  return renderObjects_.size();
+}
+
+
+void IRenderer::dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList) const
+{
+  QFile fileOut(_fileName);
+  if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
+  {
+    QTextStream outStrm(&fileOut);
+    for (int i = 0; i < getNumRenderObjects(); ++i)
+    {
+      if (_sortedList)
+        outStrm << "\n" << _sortedList[i]->toString();
+      else
+        outStrm << "\n" << renderObjects_[i].toString();
+    }
+
+    fileOut.close();
+  }
+}
+
+
+
+
+
+
+
 
 
 

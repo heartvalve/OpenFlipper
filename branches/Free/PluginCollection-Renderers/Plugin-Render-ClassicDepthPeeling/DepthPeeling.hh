@@ -71,7 +71,7 @@ public :
   ~DepthPeelingPlugin();
 
   QString name() { return (QString("Dual Depth Peeling Plugin using classic rendering pipeling")); };
-  QString description( ) { return (QString(tr("Order independent transparency renderer"))); };
+  QString description( ) { return (QString(tr("Order independent transparency renderer (classic pipeline)"))); };
 
 public slots:
   QString version() { return QString("1.0"); };
