@@ -66,7 +66,7 @@ class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface
   void updatedObject(int _id, const UpdateType& _type);
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
-
+  refs #1378
   //LoggingInterface
   void log(Logtype _type, QString _message);
   void log(QString _message);
@@ -99,19 +99,33 @@ public slots:
 
   QString version() { return QString("1.0"); };
 
-  int addTriangulatedCylinder(Vector _position = Vector(0.0,0.0,0.0),
-                              Vector _axis     = Vector(0.0,0.0,1.0),
-                              double _radius   = 1.0,
-                              double _height   = 5.0,
-                              bool   _top      = true,
-                              bool   _bottom   = true);
-  int addSphere();
-  int addTetrahedron();
-  int addPyramid();
-  int addTriangulatedCube();
-  int addIcosahedron();
-  int addOctahedron();
-  int addDodecahedron();
+  int addTriangulatedCylinder(const Vector& _position = Vector(0.0,0.0,0.0),
+                              const Vector& _axis     = Vector(0.0,0.0,1.0),
+                              const double _radius   = 1.0,
+                              const double _height   = 5.0,
+                              const bool   _top      = true,
+                              const bool   _bottom   = true);
+
+  int addSphere(const Vector& _position = Vector(0.0,0.0,0.0),
+                const double _radius = 1.0);
+
+  int addTetrahedron(const Vector& _position = Vector(0.0,0.0,0.0),
+                const double _length = 2.0);
+
+  int addPyramid(const Vector& _position = Vector(0.0,0.0,0.0),
+                 const double _length = 2.0);
+
+  int addTriangulatedCube(const Vector& _position = Vector(0.0,0.0,0.0),
+                          const double _length = 2.0);
+
+  int addIcosahedron(const Vector& _position = Vector(0.0,0.0,0.0),
+                     const double _length = 2.0);
+
+  int addOctahedron(const Vector& _position = Vector(0.0,0.0,0.0),
+                    const double _length = 2.0);
+
+  int addDodecahedron(const Vector& _position = Vector(0.0,0.0,0.0),
+                      const double _length = 2.0);
 
 private:
   int addTriMesh();
@@ -128,7 +142,7 @@ private:
                                        const double _radius,
                                        const double _height);
 
-  inline ACG::Vec3d positionOnSphere(int _sliceNumber, int _stackNumber);
+  inline ACG::Vec3d positionOnSphere(int _sliceNumber, int _stackNumber, const double _radius, const Vector& _position);
   inline ACG::Vec2f texCoordOnSphere(int _sliceNumber, int _stackNumber);
 
   std::vector<TriMesh::VertexHandle> vhandles_;
