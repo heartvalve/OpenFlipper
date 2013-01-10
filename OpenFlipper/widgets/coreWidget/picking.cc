@@ -62,70 +62,69 @@
 //-----------------------------------------------------------------------------
 
 void CoreWidget::setActionMode(const Viewer::ActionMode _am){
+
+  // update Buttons
+  moveButton_->setChecked(false);
+  pickButton_->setChecked(false);
+  questionButton_->setChecked(false);
+
+  switch (_am)
+  {
+  case Viewer::ExamineMode:
+    moveButton_->setChecked(true);
+    break;
+  case Viewer::LightMode:
+    break;
+  case Viewer::PickingMode:
+    pickButton_->setChecked(true);
+    break;
+  case Viewer::QuestionMode:
+    questionButton_->setChecked(true);
+    break;
+  }
+
   if (_am != actionMode_) {
     lastActionMode_ = actionMode_;
     actionMode_ = _am;
 
-
-    // update Buttons
-
-    moveButton_->setDown(false);
-    pickButton_->setDown(false);
-    questionButton_->setDown(false);
-
-    switch (_am)
-    {
-      case Viewer::ExamineMode:
-        moveButton_->setDown(true);
-        break;
-      case Viewer::LightMode:
-        break;
-      case Viewer::PickingMode:
-        pickButton_->setDown(true);
-        break;
-      case Viewer::QuestionMode:
-        questionButton_->setDown(true);
-        break;
-    }
-
     // update cursor
     switch ( _am )
     {
-      case Viewer::ExamineMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_move.png"  ) ,0,0 ));
-        break;
-      case Viewer::LightMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  ) ,0,0 ));
-        break;
-      case Viewer::PickingMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  ) ,0,0 ));
-        if (pick_mode_idx_ != -1) {
-          cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor() );
-        }
-        break;
-      case Viewer::QuestionMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  ) ,0,0 ));
-        break;
+    case Viewer::ExamineMode:
+      cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_move.png"  ) ,0,0 ));
+      break;
+    case Viewer::LightMode:
+      cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  ) ,0,0 ));
+      break;
+    case Viewer::PickingMode:
+      cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  ) ,0,0 ));
+      if (pick_mode_idx_ != -1) {
+        cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor() );
+      }
+      break;
+    case Viewer::QuestionMode:
+      cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  ) ,0,0 ));
+      break;
     }
 
     // Update pickmode toolbar
     switch ( _am ) {
-      case Viewer::ExamineMode:
-        hidePickToolBar();
-        break;
+    case Viewer::ExamineMode:
+      hidePickToolBar();
+      break;
 
-      case Viewer::PickingMode:
-        // Show the pickMode Toolbar for this picking mode if it is set
-        if (pick_mode_idx_ != -1) {
-          if (pick_modes_[pick_mode_idx_].toolbar() )
-            setActivePickToolBar(pick_modes_[pick_mode_idx_].toolbar());
-          else
-            hidePickToolBar();
-        }
-        break;
+    case Viewer::PickingMode:
+      // Show the pickMode Toolbar for this picking mode if it is set
+      if (pick_mode_idx_ != -1) {
+        if (pick_modes_[pick_mode_idx_].toolbar() )
+          setActivePickToolBar(pick_modes_[pick_mode_idx_].toolbar());
+        else
+          hidePickToolBar();
+      }
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
 
     unsigned int maxPases = 1;
@@ -139,9 +138,9 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       examiner_widgets_[i]->trackMouse(false);
 
       if(_am == Viewer::PickingMode) {
-          if (pick_mode_idx_ != -1) {
-                examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking() );
-          }
+        if (pick_mode_idx_ != -1) {
+          examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking() );
+        }
       }
     }
 
