@@ -46,6 +46,7 @@
 
 #include <OpenMesh/Core/Utils/color_cast.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
+#include <sstream>
 
 
 template< class MeshT >
@@ -79,6 +80,21 @@ bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ){
     }
 
     _out << "\n";
+
+
+    /*
+     * Comment
+     */
+    OpenMesh::MPropHandleT<std::string> mp_comment;
+    if (_mesh.get_property_handle(mp_comment, "COMMENT")) {
+        _out << "# %% BEGIN OPENFLIPPER_COMMENT %%" << std::endl;
+        std::istringstream comment(_mesh.property(mp_comment));
+        std::string commentLine;
+        while (std::getline(comment, commentLine)) {
+            _out << "# " << commentLine << std::endl;
+        }
+        _out << "# %% END OPENFLIPPER_COMMENT %%" << std::endl;
+    }
 
     /*****************
     * DATA
