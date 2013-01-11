@@ -330,7 +330,7 @@ int getObjectId( const QString& _name ) {
 // ===============================================================================
 // ===============================================================================
 
-bool object_exists(  const int _identifier ) {
+bool objectExists(  const int _identifier ) {
 
   if ( _identifier == -1 )
     return false;
