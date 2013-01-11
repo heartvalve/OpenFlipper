@@ -530,6 +530,13 @@ void CoreWidget::viewerSnapshotDialog() {
     }else
       snapshotCounter_++;
     
+    QString comments;
+    if (dialog.metaData_storeComments_cb->isChecked()) {
+        comments = PluginFunctions::collectObjectComments(
+                dialog.metaData_comments_visibleOnly_cb->isChecked(),
+                dialog.metaData_comments_targetedOnly_cb->isChecked()).join("\n");
+    }
+
     //now take the snapshot
     switch ( baseLayout_->mode() ){
 
@@ -542,6 +549,8 @@ void CoreWidget::viewerSnapshotDialog() {
             dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked(),
             dialog.multisampling->isChecked() ? dialog.num_samples->value() : 1);
 
+        if (!comments.isEmpty())
+            finalImage.setText("Mesh Comments", comments);
         finalImage.save(newName);
 
         break;
@@ -570,6 +579,8 @@ void CoreWidget::viewerSnapshotDialog() {
     	painter.drawImage(QRectF(img[0].width()+2,         0, img[1].width(), img[1].height()),img[1],
     	                  QRectF(           0,             0, img[1].width(), img[1].height()) );
 
+        if (!comments.isEmpty())
+            finalImage.setText("Mesh Comments", comments);
     	finalImage.save(newName);
 
     	break;
@@ -611,6 +622,8 @@ void CoreWidget::viewerSnapshotDialog() {
         painter.drawImage(QRectF(img0.width()+2, img0.height()+2, img3.width(), img3.height()),img3,
                           QRectF(           0,             0, img3.width(), img3.height()) );
 
+        if (!comments.isEmpty())
+            finalImage.setText("Mesh Comments", comments);
         finalImage.save(newName);
 
         break;
@@ -653,6 +666,8 @@ void CoreWidget::viewerSnapshotDialog() {
         painter.drawImage(QRectF(img0.width()+2, img1.height()+img2.height()+4, img3.width(),img3.height()),img3,
                           QRectF(           0,             0, img3.width(), img3.height()) );
 
+        if (!comments.isEmpty())
+            finalImage.setText("Mesh Comments", comments);
         finalImage.save(newName);
 
         break;
