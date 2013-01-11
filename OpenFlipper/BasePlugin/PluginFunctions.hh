@@ -385,6 +385,11 @@ void setViewObjectMarker (ViewObjectMarker *_marker);
 DLLEXPORT
 void setDefaultViewObjectMarker (ViewObjectMarker *_marker);
 
+/** Collect and return COMMENT properties of all meshes.
+ */
+DLLEXPORT
+QStringList collectObjectComments(bool visibleOnly, bool targetedOnly);
+
 /// Get the default ViewObjectMarker
 DLLEXPORT
 ViewObjectMarker* defaultViewObjectMarker ();
