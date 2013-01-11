@@ -514,7 +514,7 @@ void CoreWidget::viewerSnapshotDialog() {
   int h = glView_->height();
   
   SnapshotDialog dialog(suggest, true, w, h, 0);
-  
+
   bool ok = dialog.exec();
 
   if (ok){
@@ -551,6 +551,23 @@ void CoreWidget::viewerSnapshotDialog() {
 
         if (!comments.isEmpty())
             finalImage.setText("Mesh Comments", comments);
+        if (dialog.metaData_storeView_cb->isChecked()) {
+            QSize window_size;
+            if (isMaximized())
+              window_size = QSize(0,0);
+            else
+              window_size = QSize (width(),height());
+
+            int splitter_size = 0;
+            if (OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool())
+              splitter_size = toolSplitter_->sizes()[1];
+            else
+              splitter_size = toolSplitter_->sizes()[0];
+
+            QString view;
+            examiner_widgets_[PluginFunctions::activeExaminer()]->encodeView(view, window_size, splitter_size);
+            finalImage.setText("View", view);
+        }
         finalImage.save(newName);
 
         break;
