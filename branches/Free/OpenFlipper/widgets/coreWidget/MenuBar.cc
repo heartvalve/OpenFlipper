@@ -514,7 +514,15 @@ void CoreWidget::setupMenuBar()
   connect(this,SIGNAL(toolBarVisChanged(bool)),AC_ShowToolBar,SLOT(setChecked(bool)));
   windowMenu_->addAction(AC_ShowToolBar);
 
-  
+  // Enable or Disable Fullscreen Mode
+  QAction* AC_Fullscreen = new QAction(tr("Fullscreen"), this);
+  AC_Fullscreen->setStatusTip(tr("Enable or Disable the Fullscreen"));
+  AC_Fullscreen->setWhatsThis(tr("Enable or Disable the Fullscreen"));
+  AC_Fullscreen->setCheckable(true);
+  AC_Fullscreen->setChecked( OpenFlipperSettings().value("Core/Gui/fullscreen", false ).toBool() );
+  connect(AC_Fullscreen,SIGNAL(triggered()),this,SLOT(toggleFullscreen()));
+  connect(this,SIGNAL(fullScreenChanged(bool)),AC_Fullscreen,SLOT(setChecked(bool)));
+  windowMenu_->addAction(AC_Fullscreen);
 
   // ======================================================================
   // Algorithms Menu
