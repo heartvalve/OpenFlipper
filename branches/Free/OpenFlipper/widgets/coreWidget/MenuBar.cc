@@ -474,14 +474,46 @@ void CoreWidget::setupMenuBar()
   windowMenu_->addAction(AC_ShowViewModeControls_);
   
   // Show or Hide the View Mode Controls
-  AC_ShowToolbox_ = new QAction(tr("Show Toolboxes"), this);
-  AC_ShowToolbox_->setStatusTip(tr("Show or Hide the Toolbox Widget"));
+  QAction* AC_ShowToolbox = new QAction(tr("Show Toolboxes"), this);
+  AC_ShowToolbox->setStatusTip(tr("Show or Hide the Toolbox Widget"));
   //   AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
-  AC_ShowToolbox_->setWhatsThis(tr("Show or Hide the Toolbox Widget"));
-  AC_ShowToolbox_->setCheckable(true);
-  AC_ShowToolbox_->setChecked( ! OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool()  );
-  connect(AC_ShowToolbox_, SIGNAL( toggled( bool )), this, SLOT(showToolbox(bool)));
-  windowMenu_->addAction(AC_ShowToolbox_);
+  AC_ShowToolbox->setWhatsThis(tr("Show or Hide the Toolbox Widget"));
+  AC_ShowToolbox->setCheckable(true);
+  AC_ShowToolbox->setChecked( ! OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool()  );
+  connect(AC_ShowToolbox, SIGNAL( triggered()), this, SLOT(toggleToolbox()));
+  connect(this,SIGNAL(toolBoxVisChanged(bool)),AC_ShowToolbox,SLOT(setChecked(bool)));
+  windowMenu_->addAction(AC_ShowToolbox);
+
+  // Show or Hide the Status bar
+  QAction* AC_ShowStatusBar = new QAction(tr("Show Statusbar"), this);
+  AC_ShowStatusBar->setStatusTip(tr("Show or Hide the Statusbar"));
+  AC_ShowStatusBar->setWhatsThis(tr("Show or Hide the Statusbar"));
+  AC_ShowStatusBar->setCheckable(true);
+  AC_ShowStatusBar->setChecked( !OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool());
+  connect(AC_ShowStatusBar,SIGNAL(triggered()),this,SLOT(toggleStatusBar()));
+  connect(this,SIGNAL(statusBarVisChanged(bool)),AC_ShowStatusBar,SLOT(setChecked(bool)));
+  windowMenu_->addAction(AC_ShowStatusBar);
+
+  // Show or Hide the Menu bar
+  QAction* AC_ShowMenuBar = new QAction(tr("Show Menubar"), this);
+  AC_ShowMenuBar->setStatusTip(tr("Show or Hide the Menubar"));
+  AC_ShowMenuBar->setWhatsThis(tr("Show or Hide the Menubar"));
+  AC_ShowMenuBar->setCheckable(true);
+  AC_ShowMenuBar->setChecked( !OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool());
+  connect(AC_ShowMenuBar,SIGNAL(triggered()),this,SLOT(toggleMenuBar()));
+  connect(this,SIGNAL(menuBarVisChanged(bool)),AC_ShowMenuBar,SLOT(setChecked(bool)));
+  windowMenu_->addAction(AC_ShowMenuBar);
+
+  // Show or Hide the Tool bar
+  QAction* AC_ShowToolBar = new QAction(tr("Show Toolbar"), this);
+  AC_ShowToolBar->setStatusTip(tr("Show or Hide the Toolbar"));
+  AC_ShowToolBar->setWhatsThis(tr("Show or Hide the Toolbar"));
+  AC_ShowToolBar->setCheckable(true);
+  AC_ShowToolBar->setChecked( !OpenFlipperSettings().value("Core/Gui/ToolBar/hidden",false).toBool());
+  connect(AC_ShowToolBar,SIGNAL(triggered()),this,SLOT(toggleToolBar()));
+  connect(this,SIGNAL(toolBarVisChanged(bool)),AC_ShowToolBar,SLOT(setChecked(bool)));
+  windowMenu_->addAction(AC_ShowToolBar);
+
   
 
   // ======================================================================

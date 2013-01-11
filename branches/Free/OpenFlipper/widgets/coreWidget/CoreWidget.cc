@@ -151,7 +151,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   helpMenu_(0),
   windowMenu_(0),
   AC_ShowViewModeControls_(0),
-  AC_ShowToolbox_(0),
   pickToolBarExternal_(0),
   cursorPainter_(0),
   sceneGraphDialog_(0),
@@ -789,26 +788,30 @@ CoreWidget::showToolbox( bool _state ) {
     //show last view mode
     toolBoxArea_->setVisible(true);
   }
+  emit toolBoxVisChanged(_state);
 }
 //-----------------------------------------------------------------------------
-/// Hide or show menu bar
-void CoreWidget::toogleMenuBar()
+void CoreWidget::showMenuBar( bool _state )
 {
-  bool hidden = OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool();
-  if ( hidden )
-    menuBar()->show();
-  else
-    menuBar()->hide();
-  OpenFlipperSettings().setValue("Core/Gui/MenuBar/hidden",!hidden);
-}
+  OpenFlipperSettings().setValue("Core/Gui/MenuBar/hidden",!_state);
 
+  if ( _state ){
+
+    //hide ViewMode Selection Widget
+    menuBar()->show();
+
+  }else{
+    //show last view mode
+    menuBar()->hide();
+  }
+  emit menuBarVisChanged(_state);
+}
 //-----------------------------------------------------------------------------
-/// Hide or show current toolbar
-void CoreWidget::toggleToolbar()
+/// Show or hide toolbar
+void CoreWidget::showToolBar( bool _state )
 {
-  bool hidden = OpenFlipperSettings().value("Core/Gui/Toolbar/hidden",false).toBool();
-  OpenFlipperSettings().setValue("Core/Gui/Toolbar/hidden",!hidden);
-  if ( !hidden )
+  OpenFlipperSettings().setValue("Core/Gui/Toolbar/hidden",!_state);
+  if ( !_state )
   {
     //hide main toolbar
     if ( ! mainToolbar_->isFloating() )
@@ -829,6 +832,22 @@ void CoreWidget::toggleToolbar()
     //show toolbars
     setViewMode( OpenFlipper::Options::currentViewMode() );
   }
+  emit toolBarVisChanged(_state);
+}
+//-----------------------------------------------------------------------------
+/// Hide or show menubar
+void CoreWidget::toggleMenuBar()
+{
+  bool hidden = OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool();
+  showMenuBar( hidden );
+}
+
+//-----------------------------------------------------------------------------
+/// Hide or show current toolbar
+void CoreWidget::toggleToolBar()
+{
+  bool hidden = OpenFlipperSettings().value("Core/Gui/Toolbar/hidden",false).toBool();
+  showToolBar( hidden );
 }
 
 
