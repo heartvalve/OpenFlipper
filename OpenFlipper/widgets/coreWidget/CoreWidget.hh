@@ -473,6 +473,20 @@ public:
   //===========================================================================
 
   public :
+
+    /// Show logger in splitter or not
+    void showLoggerInSplitView(bool _show);
+
+    /// Set in-scene logger geometry right
+    void updateInSceneLoggerGeometry();
+
+    /// Use native or gl painted cursor
+    void setForceNativeCursor ( bool _state );
+
+    QSize defaultIconSize();
+
+  public slots:
+
     /// Set application to Fullscreen and back
     void toggleFullscreen();
 
@@ -485,36 +499,41 @@ public:
     /// Change visibility of the logger
     void showLogger(OpenFlipper::Options::LoggerState _state);
 
-    /// Show logger in splitter or not
-    void showLoggerInSplitView(bool _show);
-
-    /// Set in-scene logger geometry right
-    void updateInSceneLoggerGeometry();
-
     /// Hide or show toolbox area
     void toggleToolbox();
-
-    /// Hide or show menu bar
-    void toogleMenuBar();
-
-    //Hide or show current toolbar
-    void toggleToolbar();
-
-    /// Change visibility of the Status Bar
-    void toggleStatusBar();
-
-    /// Use native or gl painted cursor
-    void setForceNativeCursor ( bool _state );
-
-    QSize defaultIconSize();
-
-  public slots:
     
     /// Show or hide toolbox
     void showToolbox( bool _state );
 
+    /// Change visibility of the Status Bar
+    void toggleStatusBar();
+
     /// Show or hide status bar
     void showStatusBar( bool _state );
+
+    /// Show or hide menubar
+    void showMenuBar( bool _state );
+
+    /// Hide or show menu bar
+    void toggleMenuBar();
+
+    /// Hide or show current toolbar
+    void toggleToolBar();
+
+    /// Show or hide toolbar, emits toolBarToggled( bool _state )
+    void showToolBar( bool _state );
+  signals:
+    /// will be emitted if the visibility of the toolbar is changed
+    void toolBarVisChanged( bool _state );
+
+    /// will be emitted if the visibility of the toolbox is changed
+    void toolBoxVisChanged( bool _state );
+
+    /// will be emitted if the visibility of the statusbar is changed
+    void statusBarVisChanged( bool _state );
+
+    /// will be emitted if the visibility of the menubar is changed
+    void menuBarVisChanged( bool _state );
 
   private:
     OpenFlipper::Options::LoggerState loggerState_;
@@ -653,9 +672,6 @@ public:
     
     /// Action for View Mode Widget Conrol in Menu
     QAction* AC_ShowViewModeControls_;
-
-    /// Action for View Mode Widget Conrol in Menu
-    QAction* AC_ShowToolbox_;
     
     /// gl widget used as drawing area to paint the graphics scene
     QGLWidget* glWidget_;

@@ -603,11 +603,11 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
         return;
 
       case Qt::Key_M :
-        toogleMenuBar();
+        toggleMenuBar();
         return;
 
       case Qt::Key_N:
-          toggleToolbar();
+          toggleToolBar();
         return;
 
       case Qt::Key_O :

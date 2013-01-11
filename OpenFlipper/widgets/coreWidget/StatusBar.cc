@@ -162,6 +162,7 @@ CoreWidget::showStatusBar( bool _state ) {
   }else{
     statusBar_->setVisible(true);
   }
+  emit statusBarVisChanged(_state);
 }
 
 //=============================================================================
