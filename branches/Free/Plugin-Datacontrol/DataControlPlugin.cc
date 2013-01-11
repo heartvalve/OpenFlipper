@@ -231,7 +231,6 @@ void DataControlPlugin::initializePlugin()
  */
 void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 {
-  
   if ( ! OpenFlipper::Options::gui())
     return;
 
@@ -777,7 +776,7 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
         break;
     }
 
-    if ( changed && current->isGroup() ){
+    if ( changed || current->isGroup() ){
       propagateDownwards(current, _column);
 
     }
