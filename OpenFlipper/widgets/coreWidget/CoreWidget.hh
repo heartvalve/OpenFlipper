@@ -535,10 +535,11 @@ public:
     /// will be emitted if the visibility of the menubar is changed
     void menuBarVisChanged( bool _state );
 
+    /// will be emitted if the fullscreen state is changed (_state = true => in fullscreen)
+    void fullScreenChanged( bool _state );
+
   private:
     OpenFlipper::Options::LoggerState loggerState_;
-
-    uint fullscreenState_;
     
     QSize defaultIconSize_;
 

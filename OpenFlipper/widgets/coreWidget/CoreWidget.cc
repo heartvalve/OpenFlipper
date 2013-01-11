@@ -141,7 +141,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   QMainWindow(),
   coreSlots_(_coreSlots),
   shiftPressed_(false),
-  fullscreenState_(0),
   viewModes_(_viewModes),
   viewModeButton_(0),
   viewModeMenu_(0),
@@ -647,69 +646,9 @@ CoreWidget::~CoreWidget() {
 void
 CoreWidget::toggleFullscreen() {
 
-  switch (fullscreenState_){
+  bool fullScreen = OpenFlipperSettings().value("Core/Gui/fullscreen", false ).toBool();
 
-    case 0:
-      //switch to fullscreen
-      setWindowState( windowState() | Qt::WindowFullScreen);
-      break;
-
-    case 1:
-
-      //fullscreen without toolbars
-      if ( ! (windowState() & Qt::WindowFullScreen) )
-        setWindowState( windowState() | Qt::WindowFullScreen);
-
-      //hide plugin toolbars
-      for (uint p=0; p < plugins_.size(); p++)
-        for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j ) {
-          if ( ! plugins_[p].toolbars[j].second->isFloating() )
-            plugins_[p].toolbars[j].second->hide();
-        }
-
-      //hide main toolbar
-      if ( ! mainToolbar_->isFloating() )
-        mainToolbar_->hide();
-
-      //hide viewer toolbar
-      if ( ! viewerToolbar_->isFloating() )
-        viewerToolbar_->hide();
-
-      //hide the menubar
-      menuBar()->hide();
-
-      // hide the statusbar but don't change its last state, as this is only the large fullscreen mode
-      // that hides everything.
-      statusBar()->hide();
-
-      break;
-
-    default:
-      //disable fullscreen
-      if ( windowState() & Qt::WindowFullScreen )
-        setWindowState( windowState() ^  Qt::WindowFullScreen);
-
-      //show toolbars
-      setViewMode( OpenFlipper::Options::currentViewMode() );
-
-      //show the menubar
-      if ( ! OpenFlipperSettings().value("Core/Gui/MenuBar/hidden",false).toBool())
-        menuBar()->show();
-
-      // show the statusbar if this is the requested state
-      // stored in the properties
-      if ( ! OpenFlipperSettings().value("Core/Gui/StatusBar/hidden",false).toBool() )
-        statusBar()->show();
-
-      break;
-
-  }
-
-  fullscreenState_ = (fullscreenState_ + 1) % 3;
-  
-  OpenFlipperSettings().setValue("Core/Gui/fullscreen", bool( windowState() & Qt::WindowFullScreen) );
-
-  show();
+  setFullscreen( !fullScreen );
 }
 
 //-----------------------------------------------------------------------------
@@ -725,11 +664,11 @@ CoreWidget::setFullscreen(bool _state ) {
       setWindowState( windowState() ^  Qt::WindowFullScreen);
   }
 
-  fullscreenState_ = (uint) _state;
-
   OpenFlipperSettings().setValue("Core/Gui/fullscreen", bool( windowState() & Qt::WindowFullScreen) );
 
   show();
+
+  emit fullScreenChanged( _state );
 }
 
 //-----------------------------------------------------------------------------
