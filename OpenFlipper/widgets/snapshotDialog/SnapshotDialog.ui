@@ -230,10 +230,10 @@ Allowed values: any number between 2 and 16.</string>
    <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="toolTip">
-      <string>Use e.g. ImageMagick (&quot;identify --verbose &lt;filename&gt;&quot;) to display the image file's meta data.</string>
+      <string>Use e.g. ImageMagick (&quot;identify -verbose &lt;filename&gt;&quot;) to display the image file's meta data.</string>
      </property>
      <property name="title">
-      <string>Image Meta Data</string>
+      <string>Image Meta Data*</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -250,7 +250,7 @@ Allowed values: any number between 2 and 16.</string>
        <widget class="QWidget" name="widget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="leftMargin">
-          <number>9</number>
+          <number>16</number>
          </property>
          <property name="topMargin">
           <number>0</number>
@@ -279,6 +279,37 @@ Allowed values: any number between 2 and 16.</string>
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="metaData_storeView_cb">
+        <property name="text">
+         <string>Store View Settings</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>* If you have ImageMagick use &quot;identify -verbose &lt;file&gt;&quot; to display meta data.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
