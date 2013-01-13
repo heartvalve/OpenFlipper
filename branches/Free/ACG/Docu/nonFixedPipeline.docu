@@ -124,4 +124,140 @@ sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_2,  g_c
 \endcode
 
 
+
+\section Creating new renderer plugins
+
+The rendering pipeline is fully customizable via external plugins.
+Each shader-based renderer is represented by a subclass of RenderInterface and ACG::IRenderer, 
+where RenderInterface enables the renderer to be selected in the viewport of OpenFlipper (right-click on coordinate-axis -> Renderers -> "renderer-name").
+and ACG::IRenderer provides the connection of scenegraph-nodes to the renderer.
+Additionally further helper-functions are already implemented in IRenderer such as
+the collection and sorting of RenderObjects and basic rendering procedures of RenderObjects,
+but the scene rendering routine must be implemented in the plugin.
+Plugin-Render-ShaderPipeline is a minimal example of a simple rendering-plugin.
+
+Rendering code is implemented in the render() function inherited by RenderInterface and should always look like this:
+
+\code
+void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
+{
+  // collect renderobjects + prepare OpenGL state
+  prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
+
+  // clear back buffer
+  ACG::Vec4f clearColor = _properties.backgroundColor();
+  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+  // render every object
+  for (int i = 0; i < getNumRenderObjects(); ++i)
+    renderObject(sortedObjects_[i]);
+
+  // restore common opengl state
+  // log window remains hidden otherwise
+  finishRenderingPipeline();
+}
+\endcode
+
+
+The code begins and ends by calling prepareRenderingPipeline() and finishRenderingPipeline() 
+which are helper-functions of IRenderer.
+Here, prepareRenderingPipeline traverses the scenegraph to collect render-objects, sorts them
+by priority in ascending order.
+The sorted list of renderobjects is then stored in the sortedObjects_ array, inherited of IRenderer.
+We then proceed to clear the back buffer and render each object with another helper-function: renderObject().
+renderObject() prepares OpenGL states (vertex/index source, boolean glEnable states..), 
+sets shader uniforms according the data in the RenderObject structure and executes the draw call.
+Furthermore it is possible to force the use of a shader or disallow any changes made via glEnable/glDisable
+by specifying the 2nd and 3rd parameter of renderObject().
+Note that renderObject() is only a helper-function and may also be ignored and implemented on your own.
+Finally, finishRenderingPipeline() resets the OpenGL state machine such that it does not
+interfere with following draw-calls made by Qt.
+
+The depth-peeling renderer plugin is a more complex example, but showcases the flexibility of the renderer interface.
+It makes use of global shader effects which are fully integrated to the shader-generation pipeline.
+Only small changes to an existing shader have to be made in order to implement depth peeling and
+thus the concept of ShaderModifiers is used here.
+Take a look at the PeelShaderModifier for example:
+
+\code
+class PeelLayerModifier : public ShaderModifier
+{
+public:
+
+
+  void modifyFragmentIO(ShaderGenerator* _shader)
+  {
+    _shader->addUniform("sampler2D g_DepthLayer");
+  }
+
+  void modifyFragmentBeginCode(QStringList* _code)
+  {
+    // compare current depth with previous layer
+    _code->push_back("float dp_prevDepth = texture(g_DepthLayer, sg_vScreenPos).x;");
+    _code->push_back("if (gl_FragCoord.z <= dp_prevDepth) discard;");
+  }
+
+  void modifyFragmentEndCode(QStringList* _code)
+  {
+    _code->push_back("outFragment = vec4(sg_cColor.rgb * sg_cColor.a, sg_cColor.a);");
+  }
+
+  static PeelLayerModifier instance;
+};
+\endcode
+
+Applying this modifier to the shader generator will result in a new uniform in the
+fragment shader (sampler2D g_DepthLayer) and a slightly modified fragment shader.
+modifyFragmentBeginCode() adds shader-code before the fragment lighting stage and 
+modifyFragmentEndCode() adds shader-code at the end of the main() function of the shader.
+Obviously, these code excerpts have to comply to the naming convention of the shader-generator.
+
+We have to register each modifier to the shader generator:
+
+\code
+ShaderProgGenerator::registerModifier(&PeelLayerModifier::instance);
+\endcode
+
+Later in the render() function we can make use of this modifier via getProgram() of ShaderCache:
+
+\code
+GLSL::Program* peelProg = ShaderCache::getInstance()->getProgram(&sortedObjects_[k]->shaderDesc, PeelLayerModifier::instance);
+peelProg->use();
+peelProg->setUniform("g_DepthLayer", 4);
+
+renderObject(sortedObjects_[k], peelProg, true);
+\endcode
+
+Multiple shader modifiers can be applied to one shader, but the order of modifiers is undefined.
+
+\code
+ShaderCache::getInstance()->getProgram(&shaderDesc, ModifierA_ID | ModifierB_ID);
+\endcode
+
+
+\section Debugging tips and tricks
+
+
+The most important function for debugging dumpRenderObjects() is provided by ACG::IRenderer.
+This can be called after call to prepareRenderingPipeline() and it creates a text file
+containing a full data dump of all render objects with all states and shader codes for each.
+
+\code
+dumpRenderObjectsToText("../../dump_ro.txt", &sortedObjects_[0]);
+\encode
+
+Often encountered errors:
+- lighting disabled in ShaderGenDesc and black emission color (use different emission color)
+- wrong depth-buffer states
+- color write disabled
+- wrong vertex declaration format
+- temporary vertex declaration (it should be a static or member variable)
+   The address set to the render object has to be valid after the call to getRenderObject().
+
+
+If the whole scene seems to be rendered wrong, it is possible that one draw-call causes problems in the OpenGL state machine.
+Try to render only a selection of renderobjects until the problematic one is found.
+
 */
