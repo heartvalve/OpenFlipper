@@ -83,7 +83,8 @@ BaseObject::BaseObject(const BaseObject& _object) :
   visible_(_object.visible_),
   parentItem_(0),
   path_("."),
-  filename_("")
+  filename_(""),
+  commentsByKey_(_object.commentsByKey_)
 
 {
   // Increase id generator as we created a new object
