@@ -123,6 +123,9 @@ public:
         colorMaterial_(_m.colorMaterial_),
         backfaceCulling_(_m.backfaceCulling_),
         multiSampling_(_m.multiSampling_) {};
+
+    QString serializeToJson() const;
+    void deserializeFromJson(const QString &json);
         
     /** \brief Set color based on _c
      *
