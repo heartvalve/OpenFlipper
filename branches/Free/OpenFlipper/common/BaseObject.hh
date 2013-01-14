@@ -109,13 +109,13 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /** return the unique id of the object. These ids will be generated every time an object is created.
      * It will stay valid during the runtime of the application.
      */
-    int id();
+    int id() const;
 
     /** return the persistent id of an object ( This id can be managed by a database ). It should
      * be persistent across program starts. It will be -1 if the object has not been registered by
      * a database. This id will only be set if a database plugin manages it.
      */
-    int persistentId();
+    int persistentId() const;
 
     /** set the persistent id of the object
      */
@@ -145,11 +145,11 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /** Check the if the object is of the given type
      * @param _type checks, if the object is of the given type
      */
-    bool dataType(DataType _type);
+    bool dataType(DataType _type) const;
 
     /** return the dataType of the object
      */
-    DataType dataType();
+    DataType dataType() const;
 
     /** set the object type
      * @param _type the type of the object (if it has a type defined, it will output a warning)
@@ -335,6 +335,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
     /// Get the parent item ( 0 if rootitem )
     BaseObject *parent();
+    const BaseObject *parent() const;
 
     /// Set the parent pointer
     void setParent(BaseObject* _parent);
@@ -386,22 +387,22 @@ class DLLEXPORTONLY BaseObject : public QObject {
      * Groups of groups are only suppurted via the other functions.
      * @return Primary group of this object or -1
      */
-    int group();
+    int group() const;
 
     /// Check if object is a group
-    bool isGroup();
+    bool isGroup() const;
 
     /** Check if this item belongs to a group with this id
      *
      *  @param _id id of the group
      */
-    bool isInGroup( int _id );
+    bool isInGroup( int _id ) const;
 
     /** Check if this item belongs to a group with this name
       *
       * @param _name Name of the group
       */
-    bool isInGroup( QString _name );
+    bool isInGroup( QString _name ) const;
 
     /** Get a vector of all Group ids this object belongs to ( this function omits the root object )
     */
@@ -427,13 +428,13 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
 
     /// return the path to the object ( defaults to "." if unset )
-    QString path();
+    QString path() const;
 
     /// set the path to the object.
     void setPath(const QString &_path);
 
     /// return the name of the object. The name defaults to NONAME if unset.
-    QString name( );
+    QString name( ) const;
 
 
      /* set the name of the object. ( If you overwrite it, call BaseObject::setName(_name ) it in your funtion first)
@@ -442,7 +443,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
     virtual void setName(QString _name );
 
     /// return the filename of the object
-    QString filename();
+    QString filename() const;
 
     /// set the filename for this object
     void setFileName(const QString &_filename);
@@ -515,7 +516,67 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
     QMap<QString, PerObjectData* > dataMap_;
 
-  /** @} */
+    /** @} */
+
+    //===========================================================================
+    /** @name Object Comment
+    * @{ */
+    //===========================================================================
+
+  public:
+    /** \brief Get comment for the specified key.
+    *
+    * If no comment with the specified exists, an empty
+    * one is created.
+    */
+    QString &getCommentByKey(const QString &key) {
+        return commentsByKey_[key];
+    }
+
+    /** \brief Get comment for the specified key.
+    *
+    * If no comment with the specified exists, an empty comment
+    * is returned (but not inserted into the map).
+    */
+    const QString getCommentByKey(const QString &key) const {
+        return commentsByKey_.value(key);
+    }
+
+    /** Returns true if a comment for the specified key exists, false otherwise. */
+    bool hasCommentForKey(const QString &key) const {
+        return commentsByKey_.contains(key);
+    }
+
+    /** Indicates whether any comment has been supplied for this object. */
+    bool hasComments() const {
+        return !commentsByKey_.empty();
+    }
+
+    /** Returns a reference to all comments. */
+    const QMap<QString, QString> &getAllComments() const {
+        return commentsByKey_;
+    }
+
+    /** Returns a flat, human readable representation of all comments. */
+    const QString getAllCommentsFlat() const {
+        QStringList result;
+
+        result.append(QString("BEGIN Comments for object \"%1\"").arg(name()));
+
+        for (QMap<QString, QString>::const_iterator it = commentsByKey_.begin(), it_end = commentsByKey_.end();
+                it != it_end; ++it) {
+            result.append(QString("%1: %2").arg(it.key(), it.value()));
+        }
+
+        result.append(QString("END Comments for object \"%1\"\n").arg(name()));
+
+        return result.join("\n");
+    }
+
+  private:
+    QMap<QString, QString> commentsByKey_;
+
+    /** @} */
 
 };
 

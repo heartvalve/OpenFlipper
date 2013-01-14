@@ -50,7 +50,7 @@
 
 
 template< class MeshT >
-bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ){
+bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh, BaseObject &_baseObj){
 
     /*****************
     * HEADER
@@ -86,9 +86,10 @@ bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ){
      * Comment
      */
     OpenMesh::MPropHandleT<std::string> mp_comment;
-    if (_mesh.get_property_handle(mp_comment, "COMMENT")) {
+
+    if (_baseObj.hasComments()) {
         _out << "# %% BEGIN OPENFLIPPER_COMMENT %%" << std::endl;
-        std::istringstream comment(_mesh.property(mp_comment));
+        std::istringstream comment(_baseObj.getAllCommentsFlat().toStdString());
         std::string commentLine;
         while (std::getline(comment, commentLine)) {
             _out << "# " << commentLine << std::endl;

@@ -1251,7 +1251,7 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
 
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
-        if (writeMesh(ofs, *polyObj->mesh())){
+        if (writeMesh(ofs, *polyObj->mesh(), *polyObj)){
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;
@@ -1267,7 +1267,7 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
 
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
-        if (writeMesh(ofs, *triObj->mesh())) {
+        if (writeMesh(ofs, *triObj->mesh(), *triObj)) {
             emit log(LOGINFO, tr("Saved object to ") + _filename );
             ofs.close();
             return true;

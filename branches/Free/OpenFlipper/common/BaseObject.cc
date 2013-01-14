@@ -186,11 +186,11 @@ BaseObject::~BaseObject() {
 // Object Identification
 // ===============================================================================
 
-int BaseObject::id() {
+int BaseObject::id() const {
   return id_;
 }
 
-int BaseObject::persistentId() {
+int BaseObject::persistentId() const {
   return persistentId_;
 }
 
@@ -217,7 +217,7 @@ void BaseObject::cleanup() {
 // Data Type Handling
 // ===============================================================================
 
-bool BaseObject::dataType(DataType _type) {
+bool BaseObject::dataType(DataType _type) const {
   if ( _type == DATA_ALL ) {
     return true;
   }
@@ -225,7 +225,7 @@ bool BaseObject::dataType(DataType _type) {
   return ( objectType_ & _type);
 }
 
-DataType BaseObject::dataType() {
+DataType BaseObject::dataType() const {
   return BaseObject::objectType_;
 }
 
@@ -469,6 +469,11 @@ BaseObject* BaseObject::parent()
   return parentItem_;
 }
 
+const BaseObject* BaseObject::parent() const
+{
+  return parentItem_;
+}
+
 /// Set the parent pointer
 void BaseObject::setParent(BaseObject* _parent) {
   // remove this child from the old parents list
@@ -594,7 +599,7 @@ void BaseObject::deleteSubtree() {
 // ===============================================================================
 // Grouping
 // ===============================================================================
-int BaseObject::group() {
+int BaseObject::group() const {
   // Skip root node
   if ( parent() == 0 )
     return -1;
@@ -612,14 +617,14 @@ int BaseObject::group() {
 
 }
 
-bool BaseObject::isGroup() {
+bool BaseObject::isGroup() const {
 //   return ( (childItems_.size() > 0) || dataType(DATA_GROUP) ) ;
   return ( dataType(DATA_GROUP) ) ;
 };
 
 
-bool BaseObject::isInGroup( int _id ) {
-  BaseObject* current = this;
+bool BaseObject::isInGroup( int _id ) const {
+  const BaseObject* current = this;
 
   // Go up and check for the group id
   do {
@@ -635,8 +640,8 @@ bool BaseObject::isInGroup( int _id ) {
   return false;
 }
 
-bool BaseObject::isInGroup( QString _name ) {
-  BaseObject* current = this;
+bool BaseObject::isInGroup( QString _name ) const {
+  const BaseObject* current = this;
 
   // Go up and check for the group name
   do {
@@ -699,7 +704,7 @@ QStringList BaseObject::getGroupNames() {
 // Name and path Handling
 // ===============================================================================
 
-QString BaseObject::filename()
+QString BaseObject::filename() const
 {
   return filename_;
 }
@@ -723,11 +728,11 @@ void BaseObject::setName(QString _name ) {
   emit objectPropertiesChanged(id());
 }
 
-QString BaseObject::name() {
+QString BaseObject::name() const {
   return name_;
 }
 
-QString BaseObject::path(){
+QString BaseObject::path() const {
   return path_;
 }
 

@@ -1102,26 +1102,7 @@ QStringList collectObjectComments(bool visibleOnly, bool targetedOnly) {
 
         if (visibleOnly && !o_it->visible()) continue;
 
-        OpenMesh::BaseKernel *mesh = 0;
-        {
-            TriMeshObject * const triMeshObj = dynamic_cast<TriMeshObject*>(*o_it);
-            if (triMeshObj) {
-                mesh = triMeshObj->mesh();
-            }
-            PolyMeshObject * const polyMeshObj = dynamic_cast<PolyMeshObject*>(*o_it);
-            if (polyMeshObj) {
-                mesh = polyMeshObj->mesh();
-            }
-        }
-
-        if (mesh) {
-            OpenMesh::MPropHandleT<std::string> mp_comment;
-            if (mesh->get_property_handle(mp_comment, "COMMENT")) {
-                result.append(QString("Object \"%1\" Comment Begin\n%2\nObject \"%1\" Comment End\n")
-                              .arg((*o_it)->name())
-                              .arg(QString::fromStdString(mesh->property(mp_comment))));
-            }
-        }
+        result.append(o_it->getAllCommentsFlat());
     }
     return result;
 }
