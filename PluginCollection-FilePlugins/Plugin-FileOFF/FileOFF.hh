@@ -213,7 +213,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Writer function
     template< class MeshT >
-    bool writeMesh(std::ostream& _out, MeshT& _mesh );
+    bool writeMesh(std::ostream& _out, MeshT& _mesh, BaseObject &_baseObj);
 
     /// Write binary mesh data to file
     template< class MeshT >
