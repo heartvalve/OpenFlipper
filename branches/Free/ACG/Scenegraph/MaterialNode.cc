@@ -67,6 +67,73 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
+static inline QVariantList col2vl(const Vec4f &col) {
+    return QVariantList() << col[0] << col[1] << col[2] << col[3];
+}
+
+static inline Vec4f vl2col(const QVariantList &vl) {
+    if (vl.size() < 4) return Vec4f();
+    return Vec4f(vl[0].toFloat(), vl[1].toFloat(), vl[2].toFloat(), vl[3].toFloat());
+}
+
+QString Material::serializeToJson() const {
+    QVariantMap matMap;
+
+    matMap["baseColor"] = col2vl(baseColor_);
+    matMap["ambientColor"] = col2vl(ambientColor_);
+    matMap["diffuseColor"] = col2vl(diffuseColor_);
+    matMap["specularColor"] = col2vl(specularColor_);
+    matMap["overlayColor"] = col2vl(overlayColor_);
+    matMap["shininess"] = shininess_;
+    matMap["reflectance"] = reflectance_;
+    matMap["pointSize"] = pointSize_;
+    matMap["lineWidth"] = lineWidth_;
+    matMap["roundPoints"] = roundPoints_;
+    matMap["linesSmooth"] = linesSmooth_;
+    matMap["alphaTest"] = alphaTest_;
+    matMap["alphaClip"] = alphaClip_;
+    matMap["blending"] = blending_;
+    matMap["blendParam1"] = blendParam1_;
+    matMap["blendParam2"] = blendParam2_;
+    matMap["colorMaterial"] = colorMaterial_;
+    matMap["backfaceCulling"] = backfaceCulling_;
+    matMap["multiSampling"] = multiSampling_;
+
+    //QJson::Serializer serializer;
+    //QByteArray bytes = serializer.serialize(matMap);
+    //return QString::fromUtf8(bytes.constData(), bytes.size());
+
+    return QString("<No suitable serializer at the moment. Sorry.>");
+}
+
+void Material::deserializeFromJson(const QString &json) {
+    //QJson::Parser parser;
+    //bool ok;
+    //QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
+    //if (!ok) return;
+    QVariantMap matMap;
+
+    if (matMap.contains("baseColor")) baseColor_ = vl2col(matMap["baseColor"].toList());
+    if (matMap.contains("ambientColor")) ambientColor_ = vl2col(matMap["ambientColor"].toList());
+    if (matMap.contains("diffuseColor")) diffuseColor_ = vl2col(matMap["diffuseColor"].toList());
+    if (matMap.contains("specularColor")) specularColor_ = vl2col(matMap["specularColor"].toList());
+    if (matMap.contains("overlayColor")) overlayColor_ = vl2col(matMap["overlayColor"].toList());
+    if (matMap.contains("shininess")) shininess_ = matMap["shininess"].toFloat();
+    if (matMap.contains("reflectance")) reflectance_ = matMap["reflectance"].toDouble();
+    if (matMap.contains("pointSize")) pointSize_ = matMap["pointSize"].toFloat();
+    if (matMap.contains("lineWidth")) lineWidth_ = matMap["lineWidth"].toFloat();
+    if (matMap.contains("roundPoints")) roundPoints_ = matMap["roundPoints"].toBool();
+    if (matMap.contains("linesSmooth")) linesSmooth_ = matMap["linesSmooth"].toBool();
+    if (matMap.contains("alphaTest")) alphaTest_ = matMap["alphaTest"].toBool();
+    if (matMap.contains("alphaClip")) alphaClip_ = matMap["alphaClip"].toFloat();
+    if (matMap.contains("blending")) blending_ = matMap["blending"].toBool();
+    if (matMap.contains("blendParam1")) blendParam1_ = matMap["blendParam1"].toUInt();
+    if (matMap.contains("blendParam2")) blendParam2_ = matMap["blendParam2"].toUInt();
+    if (matMap.contains("colorMaterial")) colorMaterial_ = matMap["colorMaterial"].toBool();
+    if (matMap.contains("backfaceCulling")) backfaceCulling_ = matMap["backfaceCulling"].toBool();
+    if (matMap.contains("multiSampling")) multiSampling_ = matMap["multiSampling"].toBool();
+}
+
 MaterialNode::MaterialNode( BaseNode*            _parent,
 			    const std::string&   _name,
 			    unsigned int         _applyProperties )
