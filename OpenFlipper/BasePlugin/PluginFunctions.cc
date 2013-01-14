@@ -1098,7 +1098,7 @@ QString getSaveFileName(const QString &configProperty,
 
 QStringList collectObjectComments(bool visibleOnly, bool targetedOnly) {
     QStringList result;
-    for (ObjectIterator o_it(targetedOnly ? TARGET_OBJECTS : ALL_OBJECTS, DATA_TRIANGLE_MESH|DATA_POLY_MESH) ; o_it != objectsEnd(); ++o_it) {
+    for (ObjectIterator o_it(targetedOnly ? TARGET_OBJECTS : ALL_OBJECTS, DATA_ALL) ; o_it != objectsEnd(); ++o_it) {
 
         if (visibleOnly && !o_it->visible()) continue;
 
