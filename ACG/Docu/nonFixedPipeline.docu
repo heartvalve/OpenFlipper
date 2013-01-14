@@ -125,7 +125,7 @@ sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_2,  g_c
 
 
 
-\section Creating new renderer plugins
+\section creating_new_renderer_plugins Creating new renderer plugins
 
 The rendering pipeline is fully customizable via external plugins.
 Each shader-based renderer is represented by a subclass of RenderInterface and ACG::IRenderer, 
@@ -237,16 +237,14 @@ ShaderCache::getInstance()->getProgram(&shaderDesc, ModifierA_ID | ModifierB_ID)
 \endcode
 
 
-\section Debugging tips and tricks
+\section acg_debugging_tips_and_tricks Debugging tips and tricks
 
 
 The most important function for debugging dumpRenderObjects() is provided by ACG::IRenderer.
 This can be called after call to prepareRenderingPipeline() and it creates a text file
 containing a full data dump of all render objects with all states and shader codes for each.
-
-\code
-dumpRenderObjectsToText("../../dump_ro.txt", &sortedObjects_[0]);
-\encode
+You can just call the dumpRenderObjectsToTexxt() function with a filename and a pointer to the
+sortedObjects_.
 
 Often encountered errors:
 - lighting disabled in ShaderGenDesc and black emission color (use different emission color)
