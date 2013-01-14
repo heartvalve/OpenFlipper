@@ -60,12 +60,12 @@ namespace ACG {
 //== CLASS IMPLEMENTATION =========================================================
 
 
-HaltonColors::HaltonColors()
+HaltonColors::HaltonColors(int skip)
 {
   // skip first 250 sequence elements to lower discrepancy even further.
-  current[0] = 250;
-  current[1] = 250;
-  current[2] = 250;
+  current[0] = skip;
+  current[1] = skip;
+  current[2] = skip;
 
   // initialize prime bases for H,S,L. Especially the first should be small such that already
   // small numbers of generated colors are distributed over the whole color circle.

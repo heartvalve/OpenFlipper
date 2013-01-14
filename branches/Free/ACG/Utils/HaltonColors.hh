@@ -74,7 +74,7 @@ class ACGDLLEXPORT HaltonColors {
 public:
 
   /// Default constructor
-  HaltonColors();
+  HaltonColors(int skip = 250);
 
   /// Generate the next color
   ACG::Vec4f get_next_color();
