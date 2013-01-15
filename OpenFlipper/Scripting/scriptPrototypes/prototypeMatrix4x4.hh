@@ -69,8 +69,8 @@
  *
  *   var vec = Vector(1,2,3)  // Create a vector
  *
- *   matrix.transform_point(vec);  // Transforms a point by the given matrix (translation is included)
- *   matrix.transform_vector(vec); // Transforms a vector by the given matrix (translation is omitted)
+ *   var vec2 = matrix.transform_point(vec);  // Transforms a point by the given matrix (translation is included)
+ *   var vec3 = matrix.transform_vector(vec); // Transforms a vector by the given matrix (translation is omitted)
  *
  *   \endcode
  *
