@@ -200,6 +200,7 @@ public:
 
 
 
+  /*
   /// get matrix for mult from right (Qr = q*r)
   Matrix right_mult_matrix() const
   {
@@ -220,6 +221,29 @@ public:
     m(1,0) =  X; m(1,1) =  W; m(1,2) =  Z; m(1,3) = -Y;
     m(2,0) =  Y; m(2,1) = -Z; m(2,2) =  W; m(2,3) =  X;
     m(3,0) =  Z; m(3,1) =  Y; m(3,2) = -X; m(3,3) =  W;
+    return m;
+  }
+  */
+  /// get matrix for mult from right (p*q = Qp)
+  Matrix right_mult_matrix() const
+  {
+    Matrix m;
+    m(0,0) =  W; m(0,1) = -X; m(0,2) = -Y; m(0,3) = -Z;
+    m(1,0) =  X; m(1,1) =  W; m(1,2) =  Z; m(1,3) = -Y;
+    m(2,0) =  Y; m(2,1) = -Z; m(2,2) =  W; m(2,3) =  X;
+    m(3,0) =  Z; m(3,1) =  Y; m(3,2) = -X; m(3,3) =  W;
+    return m;
+  }
+
+
+  /// get matrix for mult from left (q*p = Qp)
+  Matrix left_mult_matrix() const
+  {
+    Matrix m;
+    m(0,0) =  W; m(0,1) = -X; m(0,2) = -Y; m(0,3) = -Z;
+    m(1,0) =  X; m(1,1) =  W; m(1,2) = -Z; m(1,3) =  Y;
+    m(2,0) =  Y; m(2,1) =  Z; m(2,2) =  W; m(2,3) = -X;
+    m(3,0) =  Z; m(3,1) = -Y; m(3,2) =  X; m(3,3) =  W;
     return m;
   }
 
