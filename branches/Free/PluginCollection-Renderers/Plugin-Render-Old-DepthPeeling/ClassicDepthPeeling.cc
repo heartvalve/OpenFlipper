@@ -530,7 +530,7 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     "   ",
     "   VPosVS = (gl_PositionIn[0] + gl_PositionIn[1] + gl_PositionIn[2]) / 3.0;",
     "   VPosVS = gl_ModelViewMatrix * VPosVS; // triangle center in view space needed for point and spot lights",
-    "   vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);",
+    "   vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.diffuse.a);",
     ""};
 
   const char* szGeometryShaderEnd[] = {
@@ -636,7 +636,7 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
   if (!_phong && !_flatShaded && !_wireFrame)
   {
     // lighting code:
-    _strVertexShaderOut->push_back("\nvec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);");
+    _strVertexShaderOut->push_back("\nvec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.diffuse.a);");
     _strVertexShaderOut->push_back("\nvec3 normal = vNormal;\n");
 
     std::string::size_type curPos = 0;
@@ -692,13 +692,13 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     {
       _strFragmentShaderOut->push_back("  vec3 normal = normalize(vNormal);\n");
 //      _strFragmentShaderOut->push_back("  vec3 normal = normalize(cross(dFdx(vPosVS.xyz), dFdy(vPosVS.xyz)));\n");
-      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
+      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.diffuse.a);\n");
       if (_textured)
         _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, vTexCoord); color.a *= diffColor.a;\n");
     }
     else
     {
-      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.ambient.a);\n");
+      _strFragmentShaderOut->push_back("  vec4 color = vec4(gl_FrontMaterial.emission.rgb, gl_FrontMaterial.diffuse.a);\n");
       _strFragmentShaderOut->push_back("  vec4 vColor = VColor;\n");
       if (_textured)
         _strFragmentShaderOut->push_back(" vec4 diffColor = texture2D(DiffuseTex, VTexCoord); color.a *= diffColor.a;\n");
@@ -725,7 +725,7 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
     }
   }
   else // wireframe: no shading necessary
-    _strFragmentShaderOut->push_back("  vec4 color = vec4(1.0, 1.0, 1.0, gl_FrontMaterial.ambient.a);\n");
+    _strFragmentShaderOut->push_back("  vec4 color = vec4(1.0, 1.0, 1.0, gl_FrontMaterial.diffuse.a);\n");
 
   for (unsigned int i = 0; i < sizeof(szFragmentShaderEnd) / sizeof(char*); ++i)
   {
