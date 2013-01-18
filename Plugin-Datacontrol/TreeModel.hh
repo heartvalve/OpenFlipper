@@ -75,18 +75,18 @@ public:
 public:
 
     /// Get the data of the corresponding entry
-    QVariant data(const QModelIndex &index, int role) const;
+    QVariant data(const QModelIndex &_index,const int _role) const;
 
     /// return the types of the corresponding entry
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex &_index) const;
 
     /// return the header data of the model
-    QVariant headerData(int section, 
-                        Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const;
+    QVariant headerData(const int _section,
+                        const Qt::Orientation _orientation,
+                        const int _role = Qt::DisplayRole) const;
 
     /// Get the ModelIndex at given row,column
-    QModelIndex index(int row, int column,
+    QModelIndex index(const int row,const int column,
                       const QModelIndex &parent = QModelIndex()) const;
 
     /// Get the parent ModelIndex
@@ -130,26 +130,27 @@ public:
     bool getObjectName(TreeItem* _object , QString& _name);
 
     /// Get the TreeItem corresponding to a given ModelIndex
-    TreeItem *getItem(const QModelIndex &index) const;
+    TreeItem *getItem(const QModelIndex &_index) const;
 
     /// Get the name of a TreeItem corresponding to a given ModelIndex
-    QString itemName(const QModelIndex &index) const;
+    QString itemName(const QModelIndex &_index) const;
 
     /// Get the id of a TreeItem corresponding to a given ModelIndex
-    int itemId(const QModelIndex &index) const;
+    int itemId(const QModelIndex &_index) const;
 
 
     /// The object with the given id has been changed. Check if model also has to be changed
-    void objectChanged(int id_);
+    void objectChanged(int _id);
 
     /// The object with the given id has been added. add it to the internal tree
     void objectAdded(BaseObject* _object);
 
     /// The object with the given id has been deleted. delete it from the internal tree
-    void objectDeleted(int id_);
+    void objectDeleted(int _id);
 
     /// move the item to a new parent
     void moveItem(TreeItem* _item, TreeItem* _parent );
+
 private:
 
     /// Root item of the tree
