@@ -239,37 +239,36 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
   if ( PluginFunctions::getObject( _identifier, obj) )
     updateBoundingBox (obj);
 
-  // if onlyUp_ > 0 --> _identifier is a group and the selection
-  // does not have to be applied
-  if (onlyUp_ == 0)
-    model_->objectChanged( _identifier );
+  model_->objectChanged( _identifier );
 
   
   //check for changes in the tree
   BaseObject* object = 0;
 
   if ( PluginFunctions::getObject( _identifier, object) ){
-    
-      // if we are allowed to propagate up
-      if ( onlyDown_ == 0 ){
-  
-        onlyUp_++;
-    
-        propagateUpwards(object->parent(), 2); // 2 = source-target
 
-        onlyUp_--;
-      }
-    
-      // if we are allowed to propagate down
-      if ( onlyUp_ == 0 ){
+    // if we are allowed to propagate down
+    if ( onlyUp_ == 0 ){
 
-        onlyDown_++;
+      onlyDown_++;
 
-        if ( object->isGroup() )
-          propagateDownwards(object, 2); // 2 = source-target
+      if ( object->isGroup() )
+        propagateDownwards(object, 2); // 2 = source-target
+
+      onlyDown_--;
+    }
+
+    // if we are allowed to propagate up
+    if ( onlyDown_ == 0 ){
+
+      onlyUp_++;
+
+      propagateUpwards(object->parent(), 2); // 2 = source-target
+
+      onlyUp_--;
+    }
+
       
-        onlyDown_--;
-      }
   }
 }
 
