@@ -406,11 +406,7 @@ void TreeModel::objectChanged(int _id) {
         if ( index0.isValid() && index1.isValid() ){
           //the whole row has to be updated because of the grey background-color
           emit dataChanged( index0, index1);
-          propagateUpwards(item->parent(), 1, obj->visible() );
         }
-
-        if ( obj->isGroup() )
-          propagateDownwards(item, 1 );
       }
 
       //update source flag
@@ -425,11 +421,7 @@ void TreeModel::objectChanged(int _id) {
         if ( index0.isValid() && index1.isValid() ){
           //the whole row has to be updated because of the grey background-color
           emit dataChanged( index0, index1);
-          propagateUpwards(item->parent(), 2, false );
         }
-
-        if ( obj->isGroup() )
-          propagateDownwards(item, 2 );
       }
 
       //update target flag
@@ -444,11 +436,7 @@ void TreeModel::objectChanged(int _id) {
         if ( index0.isValid() && index1.isValid() ){
           //the whole row has to be updated because of the grey background-color
           emit dataChanged( index0, index1);
-          propagateUpwards(item->parent(), 3, false );
         }
-
-        if ( obj->isGroup() )
-          propagateDownwards(item, 3 );
       }
 
       //update parent
@@ -462,8 +450,10 @@ void TreeModel::objectChanged(int _id) {
         if (parent != 0)
           moveItem(item, parent );
       }
+
     }
   }
+
 }
 
 
@@ -625,96 +615,6 @@ QModelIndex TreeModel::getModelIndex(TreeItem* _object, int _column ){
   QModelIndex index = createIndex(_object->row(), _column, _object);
 
   return index;
-}
-
-
-//******************************************************************************
-
-/** \brief Recursively update a column up to the root of the tree
- *
- * @param _item    item to start with
- * @param _column  Column that should be propagated
- * @param _value   New value
- */
-void TreeModel::propagateUpwards(TreeItem* _item, int _column, bool _value ){
-
-  if ( isRoot(_item) || (!_item->isGroup()) )
-    return;
-
-  if (_column == 1){ //visibility
-    _item->visible( _value );
-
-    //the whole row has to be updated because of the grey background-color
-    QModelIndex index0 = getModelIndex(_item,0);
-    QModelIndex index1 = getModelIndex(_item,3);
-
-    emit dataChanged( index0, index1);
-
-  } else {
-
-    QModelIndex index = getModelIndex(_item,_column);
-    emit dataChanged(index, index);
-  }
-
-  propagateUpwards( _item->parent(), _column, _value );
-}
-
-//******************************************************************************
-
-/** \brief Recursively update a column up to the root of the tree
- *
- * @param _item   Item to start with
- * @param _column Column that should be propagated
- */
-void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
-
-  for (int i=0; i < _item->childCount(); i++){
-
-    TreeItem* current = _item->child(i);
-
-    bool changed = false;
-
-    switch ( _column ){
-
-      case 1: //VISIBILTY
-
-        if ( current->visible() != _item->visible() ){
-
-          current->visible( _item->visible() );
-          changed = true;
-        }
-        break;
-
-      case 2: //SOURCE
-
-        if ( current->source() != _item->source() ){
-
-          current->source( _item->source() );
-          changed = true;
-        }
-        break;
-
-      case 3: //TARGET
-
-        if ( current->target() != _item->target() ){
-
-          current->target( _item->target() );
-          changed = true;
-        }
-        break;
-
-      default:
-        break;
-    }
-
-    if (changed){
-      QModelIndex index = getModelIndex(current,_column);
-      emit dataChanged(index, index);
-    }
-
-    if ( current->isGroup() )
-      propagateDownwards(current, _column);
-  }
 }
 
 //******************************************************************************

@@ -155,10 +155,6 @@ private:
     /// Root item of the tree
     TreeItem* rootItem_;
 
-
-    void propagateUpwards(TreeItem* _obj,   int _column, bool _value );
-    void propagateDownwards(TreeItem* _obj, int _column );
-
 /** @} */
 
 //===========================================================================
