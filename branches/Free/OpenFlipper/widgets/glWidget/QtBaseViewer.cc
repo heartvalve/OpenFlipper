@@ -2130,10 +2130,22 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
 
   ACG::Vec3d tmp;
 
+  unsigned int nodeIdx   = 0;
+  unsigned int targetIdx = 0;
+
+
   // ignore cursor if we are outside of our window
   if (!mapRectToScene(boundingRect ()).intersects (properties_.cursorPainter()->cursorBoundingBox().translated(_scenePos)))
   {
     properties_.cursorPositionValid( false );
+  }
+  // only do real pick in stereo mode
+  else if ( properties_.stereo() && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
+            pick (ACG::SceneGraph::PICK_ANYTHING, _scenePos.toPoint(), nodeIdx, targetIdx, &tmp))
+   {
+    // the point we get back will contain the view transformation and we have to revert it
+    properties_.cursorPoint3D(glstate_->modelview().transform_point(tmp));
+    properties_.cursorPositionValid(true);
   }
   // only do real pick in stereo mode
   else
