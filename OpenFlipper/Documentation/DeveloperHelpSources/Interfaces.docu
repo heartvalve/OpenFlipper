@@ -125,6 +125,9 @@ Provides a function to add toolbar buttons. ( \ref toolbarInterfacePage  )
 \image html ViewModeInterface.png
 Specify own view modes setting which toolboxes/toolbars/context menus will be visible( \ref viewModeInterfacePage )
 
+\subpage AboutInfoInterfacePage
+\image html AboutInfoInterface.png
+Add own information to OpenFlippers abouot dialog
 */
 
 /** \page pluginInterfacesDataHandling Object and Data Handling

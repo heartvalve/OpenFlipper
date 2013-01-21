@@ -629,6 +629,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   connect(this, SIGNAL(changeHelpSite(QUrl)), helpWidget_, SLOT(activateLink(QUrl)));
   helpWidget_->hide();
 
+
+  // Add the core license information about used libraries
+  addCoreLicenseInfo();
+
 }
 
 

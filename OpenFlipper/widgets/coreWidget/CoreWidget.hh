@@ -1105,9 +1105,26 @@ public:
     /// Display the about widget
     void showAboutWidget();
 
+    /** \brief Adds an entry to the about dialog
+     *
+     * @param _text     Content of the tab
+     * @param _tabName  Header of the tab
+     */
+    void addAboutInfo(QString _text, QString _tabName );
+
+  private:
+    /** \brief Add license information about core parts
+     *
+     * Adds the license information to the about dialog for used libraries.
+     */
+    void addCoreLicenseInfo();
+
   private:
     /// Pointer to the about widget
     AboutWidget* aboutWidget_;
+
+    /// Additional tab information, that could be provided by plugins
+    QMap<QString,QString> additionalAboutTabs_;
 
   /** @} */
 

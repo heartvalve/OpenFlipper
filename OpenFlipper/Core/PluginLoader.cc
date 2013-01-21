@@ -67,6 +67,7 @@
 
 #include <QPluginLoader>
 #include "OpenFlipper/BasePlugin/BaseInterface.hh"
+#include "OpenFlipper/BasePlugin/AboutInfoInterface.hh"
 #include "OpenFlipper/BasePlugin/KeyInterface.hh"
 #include "OpenFlipper/BasePlugin/BackupInterface.hh"
 #include "OpenFlipper/BasePlugin/LoggingInterface.hh"
@@ -2047,6 +2048,16 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     } else {
       emit log(LOGERR,tr("Error: PostProcessor Plugin without postProcessorName Function?!"));
     }
+  }
+
+  //Check if the plugin supports AboutInfo-Interface
+  AboutInfoInterface* aboutInfoPlugin = qobject_cast< AboutInfoInterface * >(plugin);
+  if ( aboutInfoPlugin && OpenFlipper::Options::gui() ) {
+    supported = supported + "AboutInfo ";
+
+    if ( checkSignal(plugin,"addAboutInfo(QString,QString)") )
+      connect(plugin      , SIGNAL(addAboutInfo(QString,QString)),
+              coreWidget_ , SLOT(addAboutInfo(QString,QString)),Qt::DirectConnection);
   }
 
   //========================================================================================
