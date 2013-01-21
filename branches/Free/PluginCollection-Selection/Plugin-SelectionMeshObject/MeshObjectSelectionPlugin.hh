@@ -463,7 +463,7 @@ private:
 
     /// Toggle mesh selection
     template<typename MeshT>
-    void toggleMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType);
+    void toggleMeshSelection(int _objectId, MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType);
 
     /// Use the event to paint selection with a sphere
     template<typename MeshT>

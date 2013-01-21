@@ -1063,7 +1063,7 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, Selecti
             if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_TRIANGLE_MESH)) {
-                    toggleMeshSelection(PluginFunctions::triMesh(object), target_idx, hit_point, _currentType);
+                    toggleMeshSelection(object->id(), PluginFunctions::triMesh(object), target_idx, hit_point, _currentType);
                 }
             }
         } else if (object->dataType() == DATA_POLY_MESH) {
@@ -1071,7 +1071,7 @@ void MeshObjectSelectionPlugin::slotToggleSelection(QMouseEvent* _event, Selecti
             if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_POLY_MESH)) {
-                    toggleMeshSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _currentType);
+                    toggleMeshSelection(object->id(), PluginFunctions::polyMesh(object), target_idx, hit_point, _currentType);
                 }
             }
         }

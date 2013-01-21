@@ -72,7 +72,7 @@ void MeshObjectSelectionPlugin::selectFaces(int objectId , IdList _faceList) {
         return;
     }
 
-    QString selection = "selectFaces(ObjectId , [ " + QString::number(_faceList[0]);
+    QString selection = "selectFaces(ObjectId(" + QString::number(objectId) + ") , [ " + QString::number(_faceList[0]);
 
     for (uint i = 1 ; i < _faceList.size(); ++i) {
         selection +=  " , " + QString::number(_faceList[i]);
@@ -105,7 +105,7 @@ void MeshObjectSelectionPlugin::unselectFaces(int objectId , IdList _faceList) {
         return;
     }
 
-    QString selection = "unselectFaces(ObjectId , [ " + QString::number(_faceList[0]);
+    QString selection = "unselectFaces(ObjectId(" + QString::number(objectId) + ") , [ " + QString::number(_faceList[0]);
 
     for (uint i = 1 ; i < _faceList.size(); ++i) {
         selection +=  " , " + QString::number(_faceList[i]);
@@ -137,7 +137,7 @@ void MeshObjectSelectionPlugin::selectAllFaces(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("selectAllFaces(ObjectId)");
+    emit scriptInfo("selectAllFaces(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -160,7 +160,7 @@ void MeshObjectSelectionPlugin::clearFaceSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("clearFaceSelection(ObjectId)");
+    emit scriptInfo("clearFaceSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -183,7 +183,7 @@ void MeshObjectSelectionPlugin::invertFaceSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("invertFaceSelection(ObjectId)");
+    emit scriptInfo("invertFaceSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -206,7 +206,7 @@ void MeshObjectSelectionPlugin::deleteFaceSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("deleteFaceSelection(ObjectId)");
+    emit scriptInfo("deleteFaceSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -235,7 +235,7 @@ void MeshObjectSelectionPlugin::selectBoundaryFaces(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("selectBoundaryFaces(ObjectId)");
+    emit scriptInfo("selectBoundaryFaces(ObjectId(" + QString::number(objectId) + "))");
 }
 
 
@@ -259,7 +259,7 @@ void MeshObjectSelectionPlugin::shrinkFaceSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("shrinkFaceSelection(ObjectId)");
+    emit scriptInfo("shrinkFaceSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -282,7 +282,7 @@ void MeshObjectSelectionPlugin::growFaceSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
-    emit scriptInfo("growFaceSelection(ObjectId)");
+    emit scriptInfo("growFaceSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -295,7 +295,7 @@ IdList MeshObjectSelectionPlugin::getFaceSelection(int objectId) {
         return IdList(0);
     }
 
-    emit scriptInfo("getFaceSelection(ObjectId)");
+    emit scriptInfo("getFaceSelection(ObjectId(" + QString::number(objectId) + "))");
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         return MeshSelection::getFaceSelection(PluginFunctions::triMesh(object));
@@ -328,7 +328,7 @@ void MeshObjectSelectionPlugin::colorizeFaceSelection(int objectId, int r, int g
     }
 
 
-    emit scriptInfo("colorizeFaceSelection(ObjectId, "
+    emit scriptInfo("colorizeFaceSelection(ObjectId(" + QString::number(objectId) + "), "
                      + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + ")");
 
     emit updatedObject(objectId, UPDATE_COLOR);
