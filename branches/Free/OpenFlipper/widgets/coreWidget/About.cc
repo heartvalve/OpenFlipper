@@ -73,7 +73,9 @@
 
 //== IMPLEMENTATION ==========================================================
 
-
+void CoreWidget::addAboutInfo(QString _text, QString _tabName ) {
+  additionalAboutTabs_[_tabName] = _text;
+}
 
 void CoreWidget::showAboutWidget( ) {
 
@@ -82,6 +84,18 @@ void CoreWidget::showAboutWidget( ) {
   
   if ( aboutWidget_ == 0 ) {
     aboutWidget_ = new AboutWidget( this );
+
+
+    // Add all additional tabs
+    QMap<QString, QString>::const_iterator it = additionalAboutTabs_.constBegin();
+    while (it != additionalAboutTabs_.constEnd()) {
+      QTextEdit* tmp =  new QTextEdit();
+      tmp->insertHtml( it.value() );
+
+      aboutWidget_->About->addTab( tmp, it.key()  );
+      ++it;
+    }
+
   } else {
     aboutWidget_->OpenFlipperAbout->clear();
   }
