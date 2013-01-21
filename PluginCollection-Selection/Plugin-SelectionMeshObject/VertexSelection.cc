@@ -71,7 +71,7 @@ void MeshObjectSelectionPlugin::selectVertices(int _objectId, IdList _vertexList
         return;
     }
 
-    QString selection = "selectVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "selectVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -104,7 +104,7 @@ void MeshObjectSelectionPlugin::unselectVertices(int _objectId, IdList _vertexLi
         return;
     }
 
-    QString selection = "unselectVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "unselectVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -138,7 +138,7 @@ void MeshObjectSelectionPlugin::selectAllVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("selectAllVertices(ObjectId)");
+    emit scriptInfo("selectAllVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -161,7 +161,7 @@ void MeshObjectSelectionPlugin::clearVertexSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("clearVertexSelection(ObjectId)");
+    emit scriptInfo("clearVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -184,7 +184,7 @@ void MeshObjectSelectionPlugin::invertVertexSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("invertVertexSelection(ObjectId)");
+    emit scriptInfo("invertVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -207,7 +207,7 @@ void MeshObjectSelectionPlugin::selectBoundaryVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("selectBoundaryVertices(ObjectId)");
+    emit scriptInfo("selectBoundaryVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -230,7 +230,7 @@ void MeshObjectSelectionPlugin::selectClosestBoundaryVertices(int _objectId, int
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("selectClosestBoundaryVertices(ObjectId, VertexId)");
+    emit scriptInfo("selectClosestBoundaryVertices(ObjectId(" + QString::number(_objectId) + "), VertexId)");
 }
 
 //=========================================================
@@ -253,7 +253,7 @@ void MeshObjectSelectionPlugin::shrinkVertexSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("shrinkVertexSelection(ObjectId)");
+    emit scriptInfo("shrinkVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -276,7 +276,7 @@ void MeshObjectSelectionPlugin::growVertexSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
-    emit scriptInfo("growVertexSelection(ObjectId)");
+    emit scriptInfo("growVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -289,7 +289,7 @@ IdList MeshObjectSelectionPlugin::getVertexSelection(int _objectId) {
         return IdList(0);
     }
 
-    emit scriptInfo("getVertexSelection(ObjectId)");
+    emit scriptInfo("getVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         return MeshSelection::getVertexSelection(PluginFunctions::triMesh(object));
@@ -323,7 +323,7 @@ void MeshObjectSelectionPlugin::deleteVertexSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("deleteVertexSelection(ObjectId)");
+    emit scriptInfo("deleteVertexSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -352,7 +352,7 @@ void MeshObjectSelectionPlugin::colorizeVertexSelection(int _objectId, int r, in
         return;
     }
 
-    emit scriptInfo("colorizeVertexSelection(ObjectId, "
+    emit scriptInfo("colorizeVertexSelection(ObjectId(" + QString::number(_objectId) + "), "
               + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + ")");
 
     emit updatedObject(_objectId, UPDATE_COLOR);
@@ -384,7 +384,7 @@ void MeshObjectSelectionPlugin::selectHandleVertices(int _objectId, IdList _vert
         return;
     }
 
-    QString selection = "selectHandleVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "selectHandleVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -417,7 +417,7 @@ void MeshObjectSelectionPlugin::unselectHandleVertices(int _objectId, IdList _ve
         return;
     }
 
-    QString selection = "unselectHandleVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "unselectHandleVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -449,7 +449,7 @@ void MeshObjectSelectionPlugin::clearHandleVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("clearHandleVertices(ObjectId)");
+    emit scriptInfo("clearHandleVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -472,7 +472,7 @@ void MeshObjectSelectionPlugin::setAllHandleVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("setAllHandleVertices(ObjectId)");
+    emit scriptInfo("setAllHandleVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -485,7 +485,7 @@ IdList MeshObjectSelectionPlugin::getHandleVertices(int _objectId) {
         return IdList(0);
     }
 
-    emit scriptInfo("getHandleVertices(ObjectId)");  
+    emit scriptInfo("getHandleVertices(ObjectId(" + QString::number(_objectId) + "))");
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         return MeshSelection::getArea(PluginFunctions::triMesh(object), HANDLEAREA);
@@ -524,7 +524,7 @@ void MeshObjectSelectionPlugin::selectModelingVertices(int _objectId, IdList _ve
         return;
     }
 
-    QString selection = "selectModelingVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "selectModelingVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -557,7 +557,7 @@ void MeshObjectSelectionPlugin::unselectModelingVertices(int _objectId, IdList _
         return;
     }
 
-    QString selection = "unselectModelingVertices(ObjectId, [ " + QString::number(_vertexList[0]);
+    QString selection = "unselectModelingVertices(ObjectId(" + QString::number(_objectId) + "), [ " + QString::number(_vertexList[0]);
 
     for (uint i = 1 ; i < _vertexList.size(); ++i) {
         selection +=  ", " + QString::number(_vertexList[i]);
@@ -614,7 +614,7 @@ void MeshObjectSelectionPlugin::clearModelingVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("clearModelingVertices(ObjectId)");
+    emit scriptInfo("clearModelingVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -637,7 +637,7 @@ void MeshObjectSelectionPlugin::setAllModelingVertices(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("setAllModelingVertices(ObjectId)");
+    emit scriptInfo("setAllModelingVertices(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -648,7 +648,7 @@ IdList MeshObjectSelectionPlugin::getModelingVertices(int _objectId) {
     return IdList(0);
   }
 
-  emit scriptInfo("getModelingVertices(ObjectId)");
+  emit scriptInfo("getModelingVertices(ObjectId(" + QString::number(_objectId) + "))");
 
   if (object->dataType() == DATA_TRIANGLE_MESH)
       return MeshSelection::getArea(PluginFunctions::triMesh(object), AREA);

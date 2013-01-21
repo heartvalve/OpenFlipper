@@ -71,7 +71,7 @@ void MeshObjectSelectionPlugin::selectHalfedges(int objectId , IdList _halfedgeL
         return;
     }
 
-    QString selection = "selectHalfedges(ObjectId , [ " + QString::number(_halfedgeList[0]);
+    QString selection = "selectHalfedges(ObjectId(" + QString::number(objectId) + ") , [ " + QString::number(_halfedgeList[0]);
 
     for (uint i = 1 ; i < _halfedgeList.size(); ++i) {
         selection +=  " , " + QString::number(_halfedgeList[i]);
@@ -104,7 +104,7 @@ void MeshObjectSelectionPlugin::unselectHalfedges(int objectId , IdList _halfedg
         return;
     }
 
-    QString selection = "unselectVertices(ObjectId , [ " + QString::number(_halfedgeList[0]);
+    QString selection = "unselectVertices(ObjectId(" + QString::number(objectId) + ") , [ " + QString::number(_halfedgeList[0]);
 
     for (uint i = 1 ; i < _halfedgeList.size(); ++i) {
         selection +=  " , " + QString::number(_halfedgeList[i]);
@@ -136,7 +136,7 @@ void MeshObjectSelectionPlugin::selectAllHalfedges(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo("selectAllHalfedges(ObjectId)");
+    emit scriptInfo("selectAllHalfedges(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -159,7 +159,7 @@ void MeshObjectSelectionPlugin::clearHalfedgeSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo("clearHalfedgeSelection(ObjectId)");
+    emit scriptInfo("clearHalfedgeSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -182,7 +182,7 @@ void MeshObjectSelectionPlugin::invertHalfedgeSelection(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo("invertHalfedgeSelection(ObjectId)");
+    emit scriptInfo("invertHalfedgeSelection(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -205,7 +205,7 @@ void MeshObjectSelectionPlugin::selectBoundaryHalfedges(int objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo("selectBoundaryHalfedges(ObjectId)");
+    emit scriptInfo("selectBoundaryHalfedges(ObjectId(" + QString::number(objectId) + "))");
 }
 
 //=========================================================
@@ -218,7 +218,7 @@ IdList MeshObjectSelectionPlugin::getHalfedgeSelection(int objectId) {
         return IdList(0);
     }
 
-    emit scriptInfo("getHalfedgeSelection(ObjectId)");
+    emit scriptInfo("getHalfedgeSelection(ObjectId(" + QString::number(objectId) + "))");
 
     if (object->dataType() == DATA_TRIANGLE_MESH)
         return MeshSelection::getHalfedgeSelection(PluginFunctions::triMesh(object));
@@ -364,7 +364,7 @@ void MeshObjectSelectionPlugin::colorizeHalfedgeSelection(int objectId, int r, i
         return;
     }
 
-    emit scriptInfo("colorizeHalfedgeSelection(ObjectId, "
+    emit scriptInfo("colorizeHalfedgeSelection(ObjectId(" + QString::number(objectId) + "), "
                      + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + ")");
 
     emit updatedObject(object->id(), UPDATE_COLOR);

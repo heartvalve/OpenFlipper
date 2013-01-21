@@ -71,7 +71,7 @@ void MeshObjectSelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
         return;
     }
 
-    QString selection = "selectEdges( ObjectId , [ " + QString::number(_edgeList[0]);
+    QString selection = "selectEdges( ObjectId(" + QString::number(objectId) + ") , [ " + QString::number(_edgeList[0]);
 
     for ( uint i = 1 ; i < _edgeList.size(); ++i) {
         selection +=  " , " + QString::number(_edgeList[i]);
@@ -104,7 +104,7 @@ void MeshObjectSelectionPlugin::unselectEdges( int objectId , IdList _edgeList )
         return;
     }
 
-    QString selection = "unselectVertices( ObjectId , [ " + QString::number(_edgeList[0]);
+    QString selection = "unselectVertices( ObjectId(" + QString::number(objectId) +") , [ " + QString::number(_edgeList[0]);
 
     for ( uint i = 1 ; i < _edgeList.size(); ++i) {
         selection +=  " , " + QString::number(_edgeList[i]);
@@ -136,7 +136,7 @@ void MeshObjectSelectionPlugin::selectAllEdges( int objectId ) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo( "selectAllEdges( ObjectId )" );
+    emit scriptInfo( "selectAllEdges( ObjectId(" + QString::number(objectId) + ") )" );
 }
 
 //=========================================================
@@ -159,7 +159,7 @@ void MeshObjectSelectionPlugin::clearEdgeSelection( int objectId ) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo( "clearEdgeSelection( ObjectId )" );
+    emit scriptInfo( "clearEdgeSelection( ObjectId(" + QString::number(objectId) + ") )" );
 }
 
 //=========================================================
@@ -182,7 +182,7 @@ void MeshObjectSelectionPlugin::invertEdgeSelection( int objectId ) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo( "invertEdgeSelection( ObjectId )" );
+    emit scriptInfo( "invertEdgeSelection( ObjectId(" + QString::number(objectId) + ") )" );
 }
 
 //=========================================================
@@ -205,7 +205,7 @@ void MeshObjectSelectionPlugin::selectBoundaryEdges( int objectId ) {
     }
 
     emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
-    emit scriptInfo( "selectBoundaryEdges( ObjectId )" );
+    emit scriptInfo( "selectBoundaryEdges( ObjectId(" + QString::number(objectId) + ") )" );
 }
 
 //=========================================================
@@ -228,7 +228,7 @@ void MeshObjectSelectionPlugin::deleteEdgeSelection(int _objectId) {
     }
 
     emit updatedObject(object->id(), UPDATE_ALL);
-    emit scriptInfo("deleteEdgeSelection(ObjectId)");
+    emit scriptInfo("deleteEdgeSelection(ObjectId(" + QString::number(_objectId) + "))");
 }
 
 //=========================================================
@@ -247,7 +247,7 @@ IdList MeshObjectSelectionPlugin::getEdgeSelection( int objectId ) {
         return IdList(0);
     }
 
-    emit scriptInfo( "getEdgeSelection( ObjectId )" );
+    emit scriptInfo( "getEdgeSelection( ObjectId(" + QString::number(objectId) + ") )" );
 
     if ( object->dataType() == DATA_TRIANGLE_MESH )
         return MeshSelection::getEdgeSelection(PluginFunctions::triMesh(object));
@@ -392,7 +392,7 @@ void MeshObjectSelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g
         return;
     }
 
-    emit scriptInfo( "colorizeEdgeSelection( ObjectId, "
+    emit scriptInfo( "colorizeEdgeSelection( ObjectId(" + QString::number(objectId) + "), "
                      + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
 
     emit updatedObject(object->id(), UPDATE_COLOR);

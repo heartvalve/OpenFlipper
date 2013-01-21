@@ -143,7 +143,7 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
  * @param _primitiveType primitive types to be selected
  */
 template<class MeshT>
-void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType) {
+void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType) {
 
     typename MeshT::FaceHandle fh = _mesh->face_handle(_fh);
 
@@ -170,9 +170,9 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG:
         _mesh->status(closest).set_selected(!_mesh->status(closest).selected());
 
         if(_mesh->status(closest).selected())
-            emit scriptInfo("selectVertices(ObjectId , [" + QString::number(closest.idx())+ "])");
+            emit scriptInfo("selectVertices(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
         else
-            emit scriptInfo("unselectVertices(ObjectId , [" + QString::number(closest.idx())+ "])");
+            emit scriptInfo("unselectVertices(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
     }
 
     //Edge Selection
@@ -210,16 +210,16 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG:
             _mesh->status(closest_eh).set_selected(!_mesh->status(closest_eh).selected());
 
             if(_mesh->status(closest_eh).selected())
-                emit scriptInfo("selectEdges(ObjectId , [" + QString::number(closest_eh.idx())+ "])");
+                emit scriptInfo("selectEdges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest_eh.idx())+ "])");
             else
-                emit scriptInfo("unselectEdges(ObjectId , [" + QString::number(closest_eh.idx())+ "])");
+                emit scriptInfo("unselectEdges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest_eh.idx())+ "])");
         } else {
             _mesh->status(closest).set_selected(!_mesh->status(closest).selected());
 
             if(_mesh->status(closest).selected())
-                emit scriptInfo("selectHalfedges(ObjectId , [" + QString::number(closest.idx())+ "])");
+                emit scriptInfo("selectHalfedges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
             else
-                emit scriptInfo("unselectHalfedges(ObjectId , [" + QString::number(closest.idx())+ "])");
+                emit scriptInfo("unselectHalfedges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
         }
     }
 
@@ -228,9 +228,9 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG:
         _mesh->status(fh).set_selected(!_mesh->status(fh).selected());
 
         if(_mesh->status(fh).selected())
-            emit scriptInfo("selectFaces(ObjectId , [" + QString::number(fh.idx())+ "])");
+            emit scriptInfo("selectFaces(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(fh.idx())+ "])");
         else
-            emit scriptInfo("unselectFaces(ObjectId , [" + QString::number(fh.idx())+ "])");
+            emit scriptInfo("unselectFaces(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(fh.idx())+ "])");
     }
 }
 
