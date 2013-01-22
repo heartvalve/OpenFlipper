@@ -99,6 +99,11 @@ protected:
   {
     ShaderGenDesc desc;
     unsigned int  usage;
+
+    // string-pointer in ShaderGenDesc may not be permanent,
+    // so copy string data here
+    std::string strVertexTemplate; 
+    std::string strFragmentTemplate;
   };
 
   int compareShaderGenDescs(const CacheEntry* _a, const CacheEntry* _b);

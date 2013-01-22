@@ -92,6 +92,11 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   newEntry.desc = *_desc;
   newEntry.usage = _usage;
 
+  if (_desc->fragmentTemplateFile)
+    newEntry.strFragmentTemplate = _desc->fragmentTemplateFile;
+
+  if (_desc->vertexTemplateFile)
+    newEntry.strVertexTemplate = _desc->vertexTemplateFile;
 
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
   {
@@ -180,10 +185,10 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   if (a->textured != b->textured)
     return -1;
 
-  if (a->vertexTemplateFile != b->vertexTemplateFile)
+  if (_a->strFragmentTemplate != _b->strFragmentTemplate)
     return -1;
 
-  if (a->fragmentTemplateFile != b->fragmentTemplateFile)
+  if (_a->strVertexTemplate != _b->strVertexTemplate)
     return -1;
 
   if (a->numLights)
