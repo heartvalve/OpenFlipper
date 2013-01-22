@@ -236,6 +236,64 @@ Multiple shader modifiers can be applied to one shader, but the order of modifie
 ShaderCache::getInstance()->getProgram(&shaderDesc, ModifierA_ID | ModifierB_ID);
 \endcode
 
+\section shader_template_files Shader template files
+
+Shader generation can be controlled with shader template files.
+These template files contain custom shader code and are later extended by the ShaderGenerator.
+Obviously, only one template at a time can be used by the ShaderGenerator, so render-plugins
+should prefer modifiers to retain combinational flexibility.
+
+
+Example template:
+The depth-peeling effect can also be achieved with templates instead of shader-modifiers.
+
+\code
+// declare custom uniforms
+uniform sampler2D g_DepthLayer;
+
+// the generator takes care of all essential uniforms
+
+void main()
+{
+  // At first, the generator calculates sg_vScreenPos and sg_cColor for us here
+  SG_FRAGMENT_BEGIN; // begin code marker, insert generated code here
+
+  
+  
+  // customized peeling code
+  float dp_prevDepth = texture(g_DepthLayer, sg_vScreenPos).x;
+  if (gl_FragCoord.z <= dp_prevDepth) discard;
+
+  
+  // end of fragment shader
+  SG_FRAGMENT_END; // end code marker
+
+  
+  // overwrite color output of generator for peel-layer blending
+  outFragment = vec4(sg_cColor.rgb * sg_cColor.a, sg_cColor.a);
+}
+\endcode
+
+Assume that this template file is stored at  ShaderDir/DepthPeeling/peelLayer.template,
+then the peel shader is assembled as follows:
+
+\code
+// QString to fragment shader template
+QString qstrInitTemplate = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString("DepthPeeling/peelLayer.template");
+
+// make temp-copy of ShaderGenDesc 
+ShaderGenDesc peelDesc = sortedObjects_[k]->shaderDesc;
+
+// specify template string
+std::string strTemplateFile = qstrInitTemplate.toStdString();
+peelDesc.fragmentTemplateFile = strTemplateFile.c_str();
+
+// query shader-program from cache
+GLSL::Program* peelProg = ShaderCache::getInstance()->getProgram(&peelDesc);
+\endcode
+
+Keep in mind that this technique eventually overwrites any template set by scenegraph-nodes.
+
 
 \section acg_debugging_tips_and_tricks Debugging tips and tricks
 
