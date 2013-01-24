@@ -811,38 +811,6 @@ bool InfoMeshObjectPlugin::getEdgeLengths(int _id, double &min, double &max, dou
   return false;
 }
 
-////------------------------------------------------------------------------------
-
-void InfoMeshObjectPlugin::addedEmptyObject(int _id) {
-  BaseObject* object;
-  PluginFunctions::getObject(_id,object);
-  if( object ) {
-    if ( (object->dataType() == DATA_TRIANGLE_MESH || object->dataType() == DATA_POLY_MESH) &&
-          object->target()
-       )
-      targetMeshes_.insert(_id);
-  } else {
-    std::cerr << "MeshObject Info Plugin: Unable to get Object after adding!" << std::endl;
-  }
-}
-
-//------------------------------------------------------------------------------
-
-void InfoMeshObjectPlugin::objectDeleted(int _id) {
-  BaseObject* object;
-  PluginFunctions::getObject(_id,object);
-  if( object ) {
-    if ( object->dataType() == DATA_TRIANGLE_MESH || object->dataType() == DATA_POLY_MESH) {
-      QSet<int>::iterator iter = targetMeshes_.find(_id);
-      if ( iter != targetMeshes_.end() ) {
-        targetMeshes_.erase(iter);
-      }
-    }
-  } else {
-    std::cerr << "MeshObject Info Plugin: Unable to get Object after adding!" << std::endl;
-  }
-}
-
 //------------------------------------------------------------------------------
 
 void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType& _type){
@@ -851,10 +819,15 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
     return;
   }
 
-  if ( targetMeshes_.count() == 1) {
+  // We only show the information in the status bar if one target mesh is selected.
+  if ( PluginFunctions::targetCount() ==1 ) {
+
     BaseObjectData* object;
-    PluginFunctions::getObject((*targetMeshes_.begin()),object);
-    if( object ) {
+    PluginFunctions::getObject(_identifier,object);
+
+    // We only need to update something, if the updated object is the target object
+    if (object->target() ) {
+
       if (object->dataType(DATA_TRIANGLE_MESH)){
 
         TriMesh* mesh = PluginFunctions::triMesh(object);
@@ -881,6 +854,7 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
       }
 
     }
+
   } else {
     // Display only count information
     if ( PluginFunctions::targetCount() > 0 ) {
@@ -894,30 +868,12 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
 //------------------------------------------------------------------------------
 
 void InfoMeshObjectPlugin::slotObjectSelectionChanged( int _identifier ){
-  BaseObject* object;
-  PluginFunctions::getObject(_identifier,object);
-  if( object ) {
-    if ( object->dataType() == DATA_TRIANGLE_MESH || object->dataType() == DATA_POLY_MESH) {
-      if ( ! object->target() ) {
-
-        QSet<int>::iterator iter = targetMeshes_.find(_identifier);
-        if ( iter != targetMeshes_.end() )
-          targetMeshes_.erase(iter);
-
-      } else
-        targetMeshes_.insert(_identifier);
-    }
-  } else {
-    std::cerr << "MeshObject Info Plugin: Unable to get Object after adding!" << std::endl;
-  }
-
   slotObjectUpdated( _identifier , UPDATE_ALL );
 }
 
 //------------------------------------------------------------------------------
 
 void InfoMeshObjectPlugin::slotAllCleared(){
-  targetMeshes_.clear();
   if ( infoBar_ )
     infoBar_->hideCounts();
 }
