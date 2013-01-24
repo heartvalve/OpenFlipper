@@ -96,7 +96,7 @@ int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
  * @param _role defines the kind of data requested
  * @return requested data
  */
-QVariant TreeModel::data(const QModelIndex &_index,const int _role) const
+QVariant TreeModel::data(const QModelIndex &_index, int _role) const
 {
 
   // Skip invalid requests
@@ -146,52 +146,43 @@ QVariant TreeModel::data(const QModelIndex &_index,const int _role) const
     // Visible
     case 1 :
       if (_role == Qt::CheckStateRole ) {
-        bool visibility = false;
-        // visiblity group
-        if (item->isGroup()){
+        bool visible = false;
+        // target group
+        if (item->isGroup() && item->childCount() > 0)
+        {
           QList< TreeItem* > children = item->getLeafs();
-          bool initRound = true;
-          for (int i=0; i < children.size() ; i++){
-            if (initRound){
-              visibility = children[i]->visible();
-              initRound = false;
-            }else if (visibility != children[i]->visible())
+
+          visible = children[0]->visible();
+          for (int i=0; i < children.size() ; ++i)
+          {
+            if (visible != children[i]->visible())
               return QVariant(Qt::PartiallyChecked);
           }
-        }else
-          //visibility item
-          visibility = item->visible();
-        if (visibility)
-          return QVariant(Qt::Checked);
+        }
         else
-          return QVariant(Qt::Unchecked);
+          visible = item->visible();
+        return (visible) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
       return QVariant();
-
-      break;
     // Source
     case 2 :
       if (_role == Qt::CheckStateRole ) {
         bool source = false;
-        // source group
-        if (item->isGroup()){
+        // target group
+        if (item->isGroup() && item->childCount() > 0)
+        {
           QList< TreeItem* > children = item->getLeafs();
 
-          bool initRound = true;
-          for (int i=0; i < children.size() ; i++){
-            if (initRound){
-              source = children[i]->source();
-              initRound = false;
-            }else if (source != children[i]->source())
+          source = children[0]->source();
+          for (int i=0; i < children.size() ; ++i)
+          {
+            if (source != children[i]->source())
               return QVariant(Qt::PartiallyChecked);
           }
-        }else
-          //source item
-          source = item->source();
-        if (source)
-          return QVariant(Qt::Checked);
+        }
         else
-          return QVariant(Qt::Unchecked);
+          source = item->source();
+        return (source) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
       return QVariant();
 
@@ -200,32 +191,27 @@ QVariant TreeModel::data(const QModelIndex &_index,const int _role) const
       if (_role == Qt::CheckStateRole ) {
         bool target = false;
         // target group
-        if (item->isGroup()){
+        if (item->isGroup() && item->childCount() > 0)
+        {
           QList< TreeItem* > children = item->getLeafs();
 
-          bool initRound = true;
-          for (int i=0; i < children.size() ; i++){
-            if (initRound){
-              target = children[i]->target();
-              initRound = false;
-            }else if (target != children[i]->target())
+          target = children[0]->target();
+          for (int i=0; i < children.size() ; ++i)
+          {
+            if (target != children[i]->target())
               return QVariant(Qt::PartiallyChecked);
           }
-        }else
-          //target item
-          target = item->target();
-        if (target)
-          return QVariant(Qt::Checked);
+        }
         else
-          return QVariant(Qt::Unchecked);
+          target = item->target();
+        return (target) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
       return QVariant();
-
-      break;
 
     default:
       return QVariant();
   }
+  return QVariant();
 
 }
 
@@ -274,8 +260,8 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &_index) const
  * @param _role the role that defines the type of data
  * @return the requested data
  */
-QVariant TreeModel::headerData(const int _section,const Qt::Orientation _orientation,
-                                const int _role) const
+QVariant TreeModel::headerData(int _section, Qt::Orientation _orientation,
+                                int _role) const
 {
     if (_orientation == Qt::Horizontal && _role == Qt::DisplayRole) {
 
@@ -301,7 +287,7 @@ QVariant TreeModel::headerData(const int _section,const Qt::Orientation _orienta
  * @param _parent parent item
  * @return corresponding ModelIndex
  */
-QModelIndex TreeModel::index(const int _row,const int _column, const QModelIndex &_parent) const
+QModelIndex TreeModel::index(int _row, int _column,const QModelIndex &_parent) const
 {
 //     if (!hasIndex(row, column, _parent))
 //         return QModelIndex();
@@ -381,52 +367,35 @@ void TreeModel::objectChanged(int _id) {
     //if internal and external representation are both valid
     if (obj != 0 && item != 0){
       //update the name
+      bool updateRow = false;
       if ( obj->name() != item->name() ){
 
         item->name( obj->name() );
-
-        //TODO actually we do not need to update the whole row but single column somehow doesn't work
-        QModelIndex index0 = getModelIndex(item,0);
-        QModelIndex index1 = getModelIndex(item,3);
-
-        if ( index0.isValid() && index1.isValid() )
-          emit dataChanged( index0, index1);
+        updateRow = true;
       }
 
       //update visibility
       if ( obj->visible() != item->visible() ){
 
         item->visible( obj->visible() );
-
-        QModelIndex index0 = getModelIndex(item,0);
-        QModelIndex index1 = getModelIndex(item,3);
-
-        if ( index0.isValid() && index1.isValid() ){
-          //the whole row has to be updated because of the grey background-color
-          emit dataChanged( index0, index1);
-        }
+        updateRow = true;
       }
 
       //update source flag
       if ( obj->source() != item->source() ){
 
         item->source( obj->source() );
-
-        //TODO actually we do not need to update the whole row but single column somehow doesn't work
-        QModelIndex index0 = getModelIndex(item,0);
-        QModelIndex index1 = getModelIndex(item,3);
-
-        if ( index0.isValid() && index1.isValid() ){
-          //the whole row has to be updated because of the grey background-color
-          emit dataChanged( index0, index1);
-        }
+        updateRow = true;
       }
 
       //update target flag
       if ( obj->target() != item->target() ){
 
         item->target( obj->target() );
-
+        updateRow = true;
+      }
+      if (updateRow)
+      {
         //TODO actually we do not need to update the whole row but single column somehow doesn't work
         QModelIndex index0 = getModelIndex(item,0);
         QModelIndex index1 = getModelIndex(item,3);
@@ -527,20 +496,11 @@ void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
   QModelIndex oldParentIndex = itemIndex.parent();
   QModelIndex newParentIndex = getModelIndex(_parent, 0);
 
-  //delete everything at the old location
-  beginRemoveRows( oldParentIndex, itemIndex.row(), itemIndex.row() );
-
+  beginMoveRows ( oldParentIndex, itemIndex.row(), itemIndex.row(), newParentIndex,0 );
     _item->parent()->removeChild(_item);
-
-  endRemoveRows();
-
-  //insert it at the new location
-  beginInsertRows(newParentIndex, _parent->childCount(), _parent->childCount() ); //insert at the bottom
     _item->setParent( _parent );
     _parent->appendChild( _item );
-  endInsertRows();
-
-  emit layoutChanged();
+  endMoveRows();
 }
 
 //******************************************************************************
