@@ -55,7 +55,7 @@ class TreeModel : public QAbstractItemModel
 
 signals:
    // the connected TreeView changed data
-   void dataChangedInside(int _id, int _column, const QVariant& _value);
+   void dataChangedInside(int _id, int _column,const QVariant& _value);
    // an object was moved via dragNdrop
    void moveBaseObject(int _id, int _newParentId);
 
@@ -75,25 +75,25 @@ public:
 public:
 
     /// Get the data of the corresponding entry
-    QVariant data(const QModelIndex &_index,const int _role) const;
+    QVariant data(const QModelIndex &_index,int _role) const;
 
     /// return the types of the corresponding entry
     Qt::ItemFlags flags(const QModelIndex &_index) const;
 
     /// return the header data of the model
-    QVariant headerData(const int _section,
-                        const Qt::Orientation _orientation,
-                        const int _role = Qt::DisplayRole) const;
+    QVariant headerData(int _section,
+                        Qt::Orientation _orientation,
+                        int _role = Qt::DisplayRole) const;
 
     /// Get the ModelIndex at given row,column
-    QModelIndex index(const int row,const int column,
-                      const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex index(int _row, int _column,
+                      const QModelIndex &_parent = QModelIndex()) const;
 
     /// Get the parent ModelIndex
-    QModelIndex parent(const QModelIndex &index) const;
+    QModelIndex parent(const QModelIndex &_index) const;
 
     /// get the number of rows
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int rowCount(const QModelIndex &_parent = QModelIndex()) const;
 
     /** \brief Return the number of columns
      *
@@ -104,12 +104,12 @@ public:
 
     /** \brief Set Data at 'index' to 'value'
      *
-     * @param  index a ModelIndex defining the positin in the model
-     * @param  value the new value
-     * @param  role unused
+     * @param  _index a ModelIndex defining the positin in the model
+     * @param  _value the new value
+     * @param  _role unused
      * @return return if the data was set successfully
      */
-    bool setData(const QModelIndex &index, const QVariant &value , int role);
+    bool setData(const QModelIndex &_index, const QVariant &_value , int _role);
 
 /** @} */
 

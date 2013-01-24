@@ -73,25 +73,25 @@ class TreeModel : public QAbstractItemModel
 public:
 
     /// Get the data of the corresponding entry
-    QVariant data(const QModelIndex &index, int role) const;
+    QVariant data(const QModelIndex &_index, int _role) const;
 
     /// return the types of the corresponding entry
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex &_index) const;
 
     /// return the header data of the model
-    QVariant headerData(int section, 
-                        Qt::Orientation orientation,
-                        int role = Qt::DisplayRole) const;
+    QVariant headerData(int _section,
+                        Qt::Orientation _orientation,
+                        int _role = Qt::DisplayRole) const;
 
     /// Get the ModelIndex at given row,column
-    QModelIndex index(int row, int column,
-                      const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex index(int _row, int _column,
+                      const QModelIndex &_parent = QModelIndex()) const;
 
     /// Get the parent ModelIndex
-    QModelIndex parent(const QModelIndex &index) const;
+    QModelIndex parent(const QModelIndex &_index) const;
 
     /// get the number of rows
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int rowCount(const QModelIndex &_parent = QModelIndex()) const;
 
     /** \brief Return the number of columns
      *
@@ -102,12 +102,12 @@ public:
 
     /** \brief Set Data at 'index' to 'value'
      *
-     * @param index a ModelIndex defining the positin in the model
-     * @param value the new value
-     * @param role unused
+     * @param _index a ModelIndex defining the positin in the model
+     * @param _value the new value
+     * @param _role unused
      * @return return if the data was set successfully
      */
-    bool setData(const QModelIndex &index, const QVariant &value , int role);
+    bool setData(const QModelIndex &_index, const QVariant &_value , int _role);
 
 /** @} */
 
@@ -131,13 +131,13 @@ public:
     bool getObjectName(TreeItem* _object , QString& _name);
 
     /// Get the TreeItem corresponding to a given ModelIndex
-    TreeItem *getItem(const QModelIndex &index) const;
+    TreeItem *getItem(const QModelIndex &_index) const;
 
     /// Get the name of a TreeItem corresponding to a given ModelIndex
-    QString itemName(const QModelIndex &index) const;
+    QString itemName(const QModelIndex &_index) const;
 
     /// Get the id of a TreeItem corresponding to a given ModelIndex
-    int itemId(const QModelIndex &index) const;
+    int itemId(const QModelIndex &_index) const;
 
 
     /// The object with the given id has been changed. Check if model also has to be changed
