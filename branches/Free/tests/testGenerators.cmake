@@ -66,7 +66,7 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
       set (TEST_FILE ${dir}/${filename})
 
       # Only get the plugins name without possible collection stuff:
-      string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir}) 
+      string (REGEX MATCH "Plugin-.+[/\\]?$" _plugin_name ${_plugin_dir})
 
       # Configure the test script from the current directory with the given filenames and variables into the test directory
       configure_file(${CMAKE_SOURCE_DIR}/tests/${TEST_SCRIPT}
@@ -153,6 +153,82 @@ function( run_single_object_file_mesh_test FILEPLUGIN TEST_FILE TEST_SCRIPT )
 endfunction()
 
 
+# This function generates a test for a plugin with a local script.
+# If TEST_SCRIPT does not exist in the tests directory of the plugin, no test will be generated!
+
+function( run_local_script_test TEST_SCRIPT )
+
+  # check if TEST_SCRIPT is at the correct place
+  if ( NOT EXISTS ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests/${TEST_SCRIPT})
+      return()
+  endif()
+
+  # generate TEST_NAME and TEST_SCRIPT_NAME
+  generate_test_name( ${TEST_SCRIPT} TEST_NAME TEST_SCRIPT_NAME )
+
+  # Configure the test script from the current directory with the given filenames and variables into the test directory
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/${_plugin_dir}/tests/${TEST_SCRIPT}
+    ${CMAKE_BINARY_DIR}/tests/${_plugin_name}/${TEST_SCRIPT_NAME} @ONLY
+  )
+
+  # Execute the script by OpenFlipper
+  set( test_cmd ${OPENFLIPPER_EXECUTABLE} )
+  set( args "-c -b ${TEST_SCRIPT_NAME}" )
+
+  add_test(
+    ${TEST_NAME}
+    ${CMAKE_COMMAND}
+    -D test_cmd=${test_cmd}
+    -D test_args:string=${args}
+    -P ${CMAKE_SOURCE_DIR}/tests/run_script_test.cmake
+  )
+
+  # Timeout after 3 minutes if we have an endless loop
+  # Should be run serial to avoid collisons with other instances
+  # Only one processor required
+  set_tests_properties (
+    ${TEST_NAME} PROPERTIES
+    TIMEOUT 180
+    RUN_SERIAL TRUE
+    PROCESSORS 1
+  )
+
+endfunction()
+
+# This function generates a TEST_NAME and a TEST_SCRIPT_NAME
+# from the input parameters TEST_FILE and TEST_SCRIPT
+function( generate_test_name TEST_FILE TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
+
+  # construct the testname from target test file and the plugin directory we are in
+  # Use only the plugin name and not the collection before it
+  string (REGEX MATCH "Plugin-.+[/\\]?$" PLUGIN_DIR ${_plugin_dir})
+  string (TOUPPER ${PLUGIN_DIR} PLUGIN_DIR)
+
+  # replace possible forward slashes in TEST_FILE in order to avoid the creation
+  # of a new directory when the test script is configured
+  string (REPLACE "/" "-" TEST_FILE_NAME ${TEST_FILE})
+
+  # set output paramters
+  set (${TEST_NAME} "${PLUGIN_DIR}-${TEST_FILE_NAME}" PARENT_SCOPE)
+  set (${TEST_SCRIPT_NAME} "testscript-${TEST_NAME}" PARENT_SCOPE)
+
+endfunction()
+
+# This function generates a TEST_NAME and a TEST_SCRIPT_NAME
+# from the input parameter TEST_SCRIPT
+function( generate_test_name TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
+
+  # construct the testname from target test file and the plugin directory we are in
+  # Use only the plugin name and not the collection before it
+  string (REGEX MATCH "Plugin-.+[/\\]?$" PLUGIN_DIR ${_plugin_dir})
+  string (TOUPPER ${PLUGIN_DIR} PLUGIN_DIR)
+
+  # set output paramters
+  set (${TEST_NAME} "${PLUGIN_DIR}-${TEST_SCRIPT}" PARENT_SCOPE)
+  set (${TEST_SCRIPT_NAME} "testscript-${TESTNAME}-${TEST_SCRIPT}" PARENT_SCOPE)
+
+endfunction()
 
 
 # This function generates a test for algorithmic plugins.
