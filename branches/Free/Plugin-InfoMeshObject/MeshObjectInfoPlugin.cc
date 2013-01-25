@@ -826,7 +826,7 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
     PluginFunctions::getObject(_identifier,object);
 
     // We only need to update something, if the updated object is the target object
-    if (object->target() ) {
+    if (object && object->target() ) {
 
       if (object->dataType(DATA_TRIANGLE_MESH)){
 
