@@ -207,7 +207,7 @@ public slots:
   /// Marks the current time as the frame start ( Use wait sleepFrameLength to wait until _mseconds have passed since frameStart )
   void frameStart( );
 
-  /// wait until _mseconds have passed since frameStart (if more time has passed, it will return immediatly)
+  /// wait until _mseconds have passed since frameStart (if more time has passed, it will return immediately)
   void waitFrameEnd( int _mseconds );
 
 /** @} */
