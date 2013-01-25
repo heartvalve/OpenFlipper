@@ -1179,9 +1179,16 @@ void Core::slotExit() {
 
 void Core::exitFailure() {
 
+  // Call clearAll() before closing application
+  // in order to call all object's destructors...
+  clearAll();
+
+  // Cleanup the widgets here
+  delete coreWidget_;
+
   // Kill application with an error
   // No need to clean up here anyway
-  exit(EXIT_FAILURE);
+  qApp->exit(EXIT_FAILURE);
 
 }
 
