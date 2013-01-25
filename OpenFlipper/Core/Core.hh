@@ -645,9 +645,6 @@ public slots:
     /// Called to delete an object
     void deleteObject( int _id );
 
-    /// exit the current application
-    void exitApplication();
-
     /// set fullscreen mode
     void fullscreen( bool _state );
     
@@ -1407,7 +1404,26 @@ private slots:
     void deletedObject(int _objectId);    
     
   /** @} */
+
+  //===========================================================================
+  /** @name Exit functions
+    * @{ */
+  //===========================================================================
+
+  public slots:
+
+    /// exit the current application
+    void exitApplication();
   
+    /** \brief Aborts the application with an error code
+     *
+     * Use this function in unit tests, if you detected a failure. Therefore the
+     * test functions will recognize that something went wrong.
+     */
+    void exitFailure();
+
+
+  /** @} */
   
   private:
     /** \brief OpenGL capability check 

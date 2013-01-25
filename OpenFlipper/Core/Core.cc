@@ -1089,6 +1089,7 @@ Core::slotRecentOpen(QAction* _action)
 
 }
 
+//-----------------------------------------------------------------------------
 
 void
 Core::writeOnExit() {
@@ -1132,6 +1133,8 @@ Core::writeOnExit() {
    }
 }
 
+//-----------------------------------------------------------------------------
+
 void Core::slotExit() {
   // Write all information on application exit
   writeOnExit();
@@ -1171,6 +1174,18 @@ void Core::slotExit() {
   
   qApp->quit();
 }
+
+//-----------------------------------------------------------------------------
+
+void Core::exitFailure() {
+
+  // Kill application with an error
+  // No need to clean up here anyway
+  exit(EXIT_FAILURE);
+
+}
+
+//-----------------------------------------------------------------------------
 
 /// log to file
 void Core::slotLogToFile(Logtype _type, QString _message){
@@ -1719,7 +1734,7 @@ bool Core::checkLibraryVersions()  {
     }
     
     // Unsafe operation, so quit the application
-    exit(1);
+    exitFailure();
     
   } else if ( warn ) {
     
@@ -1807,7 +1822,7 @@ bool Core::checkOpenGLCapabilities()  {
     
     // Unsafe operation, so quit the application
     if ( button == QMessageBox::Abort )
-      exit(1);
+      exitFailure();
     else 
       QMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
     
@@ -1831,5 +1846,7 @@ bool Core::checkOpenGLCapabilities()  {
   
   return ok;
 }
+
+
 
 //=============================================================================
