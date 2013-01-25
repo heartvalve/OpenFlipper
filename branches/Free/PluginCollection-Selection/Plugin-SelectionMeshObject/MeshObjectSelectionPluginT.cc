@@ -137,6 +137,7 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
 
 /** \brief Toggle the selection state of mesh primitives
  *
+ * @param _objectId id of the object that encapsulates the mesh
  * @param _mesh a mesh
  * @param _fh handle of the face that was picked
  * @param _hit_point point that was picked
