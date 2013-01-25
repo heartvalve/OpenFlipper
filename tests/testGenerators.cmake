@@ -196,9 +196,9 @@ function( run_local_script_test TEST_SCRIPT )
 
 endfunction()
 
-# This function generates a TEST_NAME and a TEST_SCRIPT_NAME
-# from the input parameters TEST_FILE and TEST_SCRIPT
-function( generate_test_name TEST_FILE TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
+# This function generates a TESTNAME and a TESTSCRIPTNAME
+# from the input parameters TESTFILE and TESTSCRIPT
+function( generate_test_name TESTFILE TESTSCRIPT TESTNAME TESTSCRIPTNAME )
 
   # construct the testname from target test file and the plugin directory we are in
   # Use only the plugin name and not the collection before it
@@ -207,17 +207,18 @@ function( generate_test_name TEST_FILE TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
 
   # replace possible forward slashes in TEST_FILE in order to avoid the creation
   # of a new directory when the test script is configured
-  string (REPLACE "/" "-" TEST_FILE_NAME ${TEST_FILE})
+  string (REPLACE "/" "-" TEST_FILE_NAME ${TESTFILE})
 
   # set output paramters
-  set (${TEST_NAME} "${PLUGIN_DIR}-${TEST_FILE_NAME}" PARENT_SCOPE)
-  set (${TEST_SCRIPT_NAME} "testscript-${TEST_NAME}" PARENT_SCOPE)
+  set (TMP_TEST_NAME "${PLUGIN_DIR}-${TESTFILENAME}")
+  set (${TESTNAME} ${TMP_TEST_NAME} PARENT_SCOPE)
+  set (${TESTSCRIPTNAME} "testscript-${TMP_TEST_NAME}-${TESTSCRIPT}" PARENT_SCOPE)
 
 endfunction()
 
-# This function generates a TEST_NAME and a TEST_SCRIPT_NAME
-# from the input parameter TEST_SCRIPT
-function( generate_test_name TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
+# This function generates a TESTNAME and a TESTSCRIPTNAME
+# from the input parameter TESTSCRIPT
+function( generate_test_name TESTSCRIPT TESTNAME TESTSCRIPTNAME )
 
   # construct the testname from target test file and the plugin directory we are in
   # Use only the plugin name and not the collection before it
@@ -225,8 +226,9 @@ function( generate_test_name TEST_SCRIPT TEST_NAME TEST_SCRIPT_NAME )
   string (TOUPPER ${PLUGIN_DIR} PLUGIN_DIR)
 
   # set output paramters
-  set (${TEST_NAME} "${PLUGIN_DIR}-${TEST_SCRIPT}" PARENT_SCOPE)
-  set (${TEST_SCRIPT_NAME} "testscript-${TESTNAME}-${TEST_SCRIPT}" PARENT_SCOPE)
+  set (TMP_TEST_NAME "${PLUGIN_DIR}-${TESTSCRIPT}")
+  set (${TESTNAME} ${TMP_TEST_NAME} PARENT_SCOPE)
+  set (${TESTSCRIPTNAME} "testscript-${TMP_TEST_NAME}" PARENT_SCOPE)
 
 endfunction()
 
