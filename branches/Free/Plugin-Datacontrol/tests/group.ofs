@@ -1,0 +1,39 @@
+
+//Group 20 Objects
+for (i=0; i < 20;++i)
+	primitivesgenerator.addSphere()
+datacontrol.setAllTarget()
+var list = datacontrol.getTargetObjects(DataType("TriangleMesh"));
+groupid = datacontrol.groupObjects(list)
+if (datacontrol.groupCount() != 1)
+{
+	print("unexpected group count")
+	print("number of groups: " + datacontrol.groupCount())
+	print("expected number of groups: 1") 
+	core.exitFailure()
+}
+datacontrol.clearAllTarget()
+
+//Group Object and Group
+id = primitivesgenerator.addSphere()
+list = [groupid,id]
+datacontrol.groupObjects(list)
+if (datacontrol.groupCount() != 2)
+{
+	print("unexpected group count")
+	print("number of groups: " + datacontrol.groupCount())
+	print("expected number of groups: 2") 
+	core.exitFailure()
+}
+datacontrol.clearAllTarget()
+
+//Group multiple Groups
+id = primitivesgenerator.addSphere()
+id2 = primitivesgenerator.addSphere()
+list = [id2,id]
+groupid2 = datacontrol.groupObjects(list)
+
+print("unexpected group count")
+print("number of groups: " + datacontrol.groupCount())
+print("expected number of groups: 2") 
+core.exitFailure()
