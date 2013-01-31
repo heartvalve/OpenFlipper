@@ -1653,6 +1653,7 @@ void Core::setDescriptions(){
 
   emit setSlotDescription("blockSceneGraphUpdates()", tr("Disable Scenegraph Updates (e.g. before loading or adding a large number of files)"),QStringList(), QStringList());
   emit setSlotDescription("unblockSceneGraphUpdates()", tr("Enable Scenegraph Updates (e.g. before loading or adding a large number of files)"),QStringList(), QStringList());
+  emit setSlotDescription("setView", tr("Set the encoded view for the primary viewport."), QStringList(tr("view")), QStringList(tr("The encoded view. (You can obtain one through \"Copy View\" in the context menu of the coordinates.)")));
 
 }
 
