@@ -366,6 +366,8 @@ public slots:
    */
   void actionCopyView(const QSize &_windowSize = QSize(-1,-1), const int _splitterWidth = -1);
 
+  void actionSetView(QString view);
+
 //-------------------------------------------------------------- public signals
 signals:
 

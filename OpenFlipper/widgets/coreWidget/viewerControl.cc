@@ -867,6 +867,10 @@ void CoreWidget::slotPasteView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
 }
 
+void CoreWidget::slotSetView( QString view ) {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionSetView(view);
+}
+
 void CoreWidget::slotPasteViewAndWindow()
 {
   QSize size;

@@ -1138,6 +1138,9 @@ void glViewer::actionPasteView(QSize * _windowSize /*= NULL*/, int *_splitterWid
   decodeView(view,_windowSize,_splitterWidth);
 }
 
+void glViewer::actionSetView(QString view) {
+    decodeView(view, 0, 0);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -2050,7 +2053,17 @@ void glViewer::snapshot( int _width, int _height, bool _alpha, bool _hideCoordsy
    
    // Capture image
    snapshot(image, _width, _height, _alpha, _hideCoordsys, samples);
-   
+
+   /*
+    * Meta data
+    */
+   QString comments = PluginFunctions::collectObjectComments(true, false).join("\n");
+   if (!comments.isEmpty())
+       image.setText("Mesh Comments", comments);
+   QString view;
+   encodeView(view);
+   image.setText("View", view);
+
    QFileInfo fi(properties_.snapshotName());
 
    QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()).rightJustified(7,'0') + "." + properties_.snapshotFileType().toLower();

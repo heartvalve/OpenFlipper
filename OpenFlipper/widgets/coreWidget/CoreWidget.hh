@@ -908,6 +908,9 @@ public:
     /// Paste the view, the window and toolbox size to the last active examiner
     void slotPasteViewAndWindow( );
 
+    /// Set the supplied serialized view
+    void slotSetView( QString view );
+
     /// Copy view from the last active examiner
     void slotCopyView( );
 

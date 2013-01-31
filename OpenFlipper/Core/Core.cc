@@ -1682,6 +1682,47 @@ void Core::deleteObject( int _id ){
 
 }
 
+
+void Core::setObjectComment(int _id, QString key, QString comment) {
+    if ( _id == -1 ) return;
+
+    BaseObject* object = objectRoot_->childExists(_id);
+
+    if (!object || object == objectRoot_) {
+        std::cerr << "No such object." << std::endl;
+        return;
+    }
+
+    object->getCommentByKey(key) = comment;
+}
+
+void Core::clearObjectComment(int _id, QString key) {
+    if ( _id == -1 ) return;
+
+    BaseObject* object = objectRoot_->childExists(_id);
+
+    if (!object || object == objectRoot_) {
+        std::cerr << "No such object." << std::endl;
+        return;
+    }
+
+    object->clearComment(key);
+}
+
+void Core::clearAllComments(int _id) {
+    if ( _id == -1 ) return;
+
+    BaseObject* object = objectRoot_->childExists(_id);
+
+    if (!object || object == objectRoot_) {
+        std::cerr << "No such object." << std::endl;
+        return;
+    }
+
+    object->clearAllComments();
+}
+
+
 void Core::slotDeleteAllObjects( ){
 
   // Remember ids

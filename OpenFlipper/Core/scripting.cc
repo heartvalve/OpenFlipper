@@ -333,6 +333,9 @@ void Core::unblockSceneGraphUpdates() {
   OpenFlipper::Options::unblockSceneGraphUpdates();
 }
 
+void Core::setView(QString view) {
+    coreWidget_->slotSetView(view);
+}
 
 //=============================================================================
 //== Script Special Functions =================================================
