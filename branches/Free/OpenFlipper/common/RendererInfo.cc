@@ -277,20 +277,20 @@ unsigned int PostProcessorManager::available() {
   return availablePostProcessors_.size();
 }
 
-void PostProcessorManager::setActive(unsigned int _active, int _id ) {
+void PostProcessorManager::setActive(unsigned int _active, int _viewerId ) {
 
   // Temporary viewer with no fixed id
-  if ( _id < 0 ) {
-    std::cerr << "PostProcessorManager::setActive illegal viewer id: " << _id << std::endl;
+  if ( _viewerId < 0 ) {
+    std::cerr << "PostProcessorManager::setActive illegal viewer id: " << _viewerId << std::endl;
     return;
   }
 
   // Increase vector size
-  if ( _id >= (int)activePostProcessors_.size() )
-    activePostProcessors_.resize(_id +1 );
+  if ( _viewerId >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_viewerId +1 );
 
   if ( _active <  availablePostProcessors_.size() )
-    activePostProcessors_[_id] = _active;
+    activePostProcessors_[_viewerId] = _active;
   else
     std::cerr << "Out of range error when setting active post processor" << std::endl;
 }
