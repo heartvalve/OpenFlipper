@@ -193,17 +193,17 @@ if ( COMISO_INCLUDE_DIR )
 
   endif()
   
-  STRING(REGEX MATCH "\#define COMISO_Eigen3_AVAILABLE 1" COMISO_Eigen3_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
+  STRING(REGEX MATCH "\#define COMISO_EIGEN3_AVAILABLE 1" COMISO_EIGEN3_BUILD_TIME_AVAILABLE ${CURRENT_COMISO_CONFIG} )
 
-  if ( COMISO_Eigen3_BUILD_TIME_AVAILABLE )
+  if ( COMISO_EIGEN3_BUILD_TIME_AVAILABLE )
                                                                           
-   find_package(Eigen3)
+   find_package(EIGEN3)
                                                                           
-   if ( NOT Eigen3_FOUND )
-     message(ERROR "COMISO configured with Eigen3 but Eigen3 not available")
+   if ( NOT EIGEN3_FOUND )
+     message(ERROR "COMISO configured with EIGEN3 but EIGEN3 not available")
    endif()
                                                                           
-   list (APPEND  COMISO_OPT_DEPS "Eigen3")
+   list (APPEND  COMISO_OPT_DEPS "EIGEN3")
                                                                           
   endif()
 
