@@ -645,6 +645,10 @@ public slots:
     /// Called to delete an object
     void deleteObject( int _id );
 
+    void setObjectComment(int objId, QString key, QString comment);
+    void clearObjectComment(int objId, QString key);
+    void clearAllComments(int objId);
+
     /// set fullscreen mode
     void fullscreen( bool _state );
     
@@ -715,6 +719,8 @@ public slots:
 
     /// Unblock the scenegraph updates
     void unblockSceneGraphUpdates();
+
+    void setView(QString view);
 
    //===========================================================================
     /** @name Scripting functions for controlling view modes

@@ -552,6 +552,14 @@ class DLLEXPORTONLY BaseObject : public QObject {
         return !commentsByKey_.empty();
     }
 
+    void clearComment(const QString &key) {
+        commentsByKey_.remove(key);
+    }
+
+    void clearAllComments() {
+        commentsByKey_.clear();
+    }
+
     /** Returns a reference to all comments. */
     const QMap<QString, QString> &getAllComments() const {
         return commentsByKey_;
