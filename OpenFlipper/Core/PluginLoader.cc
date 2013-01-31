@@ -2034,7 +2034,10 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
 
       // Retrieve and store PostProcessor information
       if ( postProcessorInfo != 0) {
-        postProcessorInfo->plugin = postProcessorPlugin;
+        postProcessorInfo->plugin        = postProcessorPlugin;
+        postProcessorInfo->name          = basePlugin->name();
+        postProcessorInfo->version       = basePlugin->version();
+        postProcessorInfo->description   = basePlugin->description();
 
         if ( checkSlot( plugin , "optionsAction()" ) ) {
           //Get an action for the post processor options

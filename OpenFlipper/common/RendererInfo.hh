@@ -47,6 +47,7 @@
 #include <QString>
 #include <QObject>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
 #include <OpenFlipper/BasePlugin/RenderInterface.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
@@ -189,7 +190,13 @@ class DLLEXPORT PostProcessorInfo{
     PostProcessorInterface*    plugin;
 
     /// Name of the plugin ( requested from the plugin on load)
-    QString     name;
+    QString name;
+
+    /// Description of the plugin
+    QString description;
+
+    /// Version of the plugin
+    QString version;
 
     /// Possible action to add an options action or menu to the system.
     QAction* optionsAction;
@@ -239,10 +246,10 @@ class DLLEXPORT PostProcessorManager {
 
     /** \brief set the active post processor for viewer
     *
-    * @param _id viewer id
-    * @param _active id of the post processor
+    * @param _viewerId viewer id
+    * @param _active   id of the post processor
     */
-    void setActive(unsigned int _active, int _id);
+    void setActive(unsigned int _active, int _viewerId);
 
     /** \brief set the active post processor for viewer
     *
