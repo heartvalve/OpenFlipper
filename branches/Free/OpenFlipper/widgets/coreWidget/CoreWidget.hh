@@ -94,6 +94,7 @@
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpWidget/helpWidget.hh>
 #include <OpenFlipper/widgets/stereoSettingsWidget/stereoSettingsWidget.hh>
+#include <OpenFlipper/widgets/postProcessorWidget/postProcessorWidget.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -1075,6 +1076,21 @@ public:
   private:
     /// Pointer to the help Browser
     HelpWidget* helpWidget_;
+
+  /** @} */
+
+  //===========================================================================
+  /** @name PostProcessor dialog
+   * @{ */
+  //===========================================================================
+
+
+  public slots:
+
+    void slotShowPostProcessorManager();
+
+  private:
+    PostProcessorDialog* postProcessorDialog_;
 
   /** @} */
 

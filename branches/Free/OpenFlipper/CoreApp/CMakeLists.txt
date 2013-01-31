@@ -60,6 +60,7 @@ set (directories
   ../widgets/videoCaptureDialog
   ../widgets/snapshotDialog
   ../widgets/stereoSettingsWidget
+  ../widgets/postProcessorWidget
 )
 
 # collect all header,source and ui files

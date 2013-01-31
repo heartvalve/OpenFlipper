@@ -277,9 +277,14 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     // Get the options action for the currently active postprocessor
     if( postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() )]->optionsAction != 0 ) {
       postProcessorMenu->addAction(postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() ) ]->optionsAction );
-      postProcessorMenu->addSeparator();
     }
 
+    QAction* showPostProcessorDialog = new QAction(tr("Show post processor manager"),this);
+
+    connect(showPostProcessorDialog,SIGNAL(triggered()),this,SLOT(slotShowPostProcessorManager()));
+
+    postProcessorMenu->addAction(showPostProcessorDialog);
+    postProcessorMenu->addSeparator();
 
 
     // Now add the processor chooser
