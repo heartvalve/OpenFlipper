@@ -32,10 +32,10 @@ set(GMM_INCLUDE_DIRS "${GMM_INCLUDE_DIR}" )
 
 # use c++ headers as default
 IF (WIN32)
-  set(GMM_COMPILER_FLAGS "-D_SCL_SECURE_NO_DEPRECATE" CACHE STRING "GMM Compiler Flags")
+  set(GMM_COMPILE_DEFINITIONS "-D_SCL_SECURE_NO_DEPRECATE" CACHE STRING "GMM Compiler Definitions")
 #  add_definitions(-D_SCL_SECURE_NO_DEPRECATE)
 ELSE(WIN32)
-  set(GMM_COMPILER_FLAGS "" CACHE STRING "GMM Compiler Flags")
+  set(GMM_COMPILE_DEFINITIONS "" CACHE STRING "GMM Compiler Definitions")
 ENDIF(WIN32)
 
 include(FindPackageHandleStandardArgs)
@@ -44,7 +44,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GMM  DEFAULT_MSG
                                   GMM_INCLUDE_DIR)
 
-mark_as_advanced(GMM_INCLUDE_DIR GMM_COMPILER_FLAGS)
+mark_as_advanced(GMM_INCLUDE_DIR GMM_COMPILE_DEFINITIONS)
 
 endif(GMM_INCLUDE_DIR)
 
