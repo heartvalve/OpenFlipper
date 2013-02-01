@@ -235,6 +235,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         
         /// Hide/Show all light sources if checkbox has been checked
         void slotShowLightSources( int _state );
+        void slotShowLightSources();
 
       private :
         /// Index where a popup has been opened
