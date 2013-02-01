@@ -1,16 +1,27 @@
+core.clearAll()
 //Group 20 Objects
 for (i=0; i < 20;++i)
-	primitivesgenerator.addSphere()
+{
+  primitivesgenerator.addSphere()
+}
 datacontrol.setAllTarget()
 var list = datacontrol.getTargetObjects(DataType("TriangleMesh"));
+
+//Check, if group was created
 groupid = datacontrol.groupObjects(list)
+if (groupid == -1)
+{
+  print("unable to create a group with 20 objects")
+  core.exitFailure()
+}
+
 if (datacontrol.groupCount() != 1)
 {
   print("Group 20 Objects failed")
-	print("unexpected group count")
-	print("number of groups: " + datacontrol.groupCount())
-	print("expected number of groups: 1") 
-	core.exitFailure()
+  print("unexpected group count")
+  print("number of groups: " + datacontrol.groupCount())
+  print("expected number of groups: 1") 
+  core.exitFailure()
 }
 datacontrol.clearAllTarget()
 
@@ -21,10 +32,10 @@ datacontrol.groupObjects(list)
 if (datacontrol.groupCount() != 2)
 {
   print("Group Object and Group failed")
-	print("unexpected group count")
-	print("number of groups: " + datacontrol.groupCount())
-	print("expected number of groups: 2") 
-	core.exitFailure()
+  print("unexpected group count")
+  print("number of groups: " + datacontrol.groupCount())
+  print("expected number of groups: 2") 
+  core.exitFailure()
 }
 datacontrol.clearAllTarget()
 
@@ -52,4 +63,29 @@ if (datacontrol.groupCount() != 2)
   print("number of groups: " + datacontrol.groupCount())
   print("expected number of groups: 2") 
   core.exitFailure()
+}
+
+//add object to existing group
+core.clearAll()
+id1 = primitivesgenerator.addSphere()
+id2 = primitivesgenerator.addSphere()
+id3 = primitivesgenerator.addSphere()
+
+groupid = datacontrol.groupObjects([id1,id2])
+datacontrol.groupObject(id3,groupid)
+
+datacontrol.groupObjects([id1,id2,id3])//Can be done, if all objects are in the same group
+if (datacontrol.groupCount() != 2)
+{
+  print("Add to Group failed.")
+  print("unexpected group count")
+  print("number of groups: " + datacontrol.groupCount())
+  print("expected number of groups: 2") 
+  core.exitFailure()
+}
+
+if (datacontrol.groupObject(id3,id2))
+{
+  print("Could add an object to an object which is not a Group.")
+  core.exitFailure();
 }
