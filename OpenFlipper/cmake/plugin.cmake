@@ -266,12 +266,12 @@ macro (_check_plugin_deps _prefix _optional )
               set( ${_prefix}_DEPS_COMPILER_FLAGS "${${_prefix}_DEPS_COMPILER_FLAGS} ${${_name}_COMPILER_FLAGS}")
             endif ()
             if (DEFINED ${_name}_COMPILER_DEFINITIONS)
-              # this variable is used as a string later on (not as a list!!!)
-              set( ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_prefix}_DEPS_COMPILE_DEFINITIONS} ${${_name}_COMPILER_DEFINITIONS}")
+              list (APPEND ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_name}_COMPILER_DEFINITIONS}")
+              list(REMOVE_DUPLICATES ${_prefix}_DEPS_COMPILE_DEFINITIONS )
             endif ()
             if (DEFINED ${_name}_COMPILE_DEFINITIONS)
-              # this variable is used as a string later on (not as a list!!!)
-              set( ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_prefix}_DEPS_COMPILE_DEFINITIONS} ${${_name}_COMPILE_DEFINITIONS}")
+              list (APPEND ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_name}_COMPILE_DEFINITIONS}")
+              list(REMOVE_DUPLICATES ${_prefix}_DEPS_COMPILE_DEFINITIONS )
             endif ()
           endforeach ()
         else ()
@@ -355,6 +355,7 @@ function (_build_openflipper_plugin plugin)
   acg_unset (_${_PLUGIN}_MISSING_DEPS)
   set (${_PLUGIN}_HAS_DEPS)
   _check_plugin_deps (${_PLUGIN} FALSE ${${_PLUGIN}_DEPS})
+
 
   #============================================================================================
   # Remember Lib dirs for bundle generation
@@ -504,10 +505,12 @@ function (_build_openflipper_plugin plugin)
 
     # append compiler and linker flags from plugin dependencies
 
+    list(APPEND ${_PLUGIN}_DEPS_COMPILE_DEFINITIONS ${${_PLUGIN}_CDEFINITIONSADD} )
+
     set_target_properties (
       Plugin-${plugin} PROPERTIES
       COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD} ${${_PLUGIN}_LICENSE_DEFS} ${${_PLUGIN}_DEPS_COMPILER_FLAGS}"
-      COMPILE_DEFINITIONS  "${${_PLUGIN}_CDEFINITIONSADD} ${${_PLUGIN}_DEPS_COMPILE_DEFINITIONS}" 
+      COMPILE_DEFINITIONS  "${${_PLUGIN}_DEPS_COMPILE_DEFINITIONS}" 
       LINK_FLAGS "${${_PLUGIN}_LDFLAGSADD} ${${_PLUGIN}_DEPS_LINKER_FLAGS}"
     )
  
