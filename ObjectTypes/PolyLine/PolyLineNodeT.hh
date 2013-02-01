@@ -122,7 +122,6 @@ public:
     */
   void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
-
   /// Trigger an update of the vbo
   void update() { updateVBO_ = true; };
 
@@ -140,11 +139,16 @@ private:
   /// Buffer organization
   ACG::VertexDeclaration vertexDecl_;
 
-  /// Update the vbo
+  /** \brief Trigger an update of the vbo
+   *
+   * If the polyLine is changed, you have to call this function to update the buffers.
+   *
+   */
   void updateVBO();
 
 private:
 
+  /// The associated poly line
   PolyLine& polyline_;
 
   /// VBO used to render the poly line
