@@ -131,6 +131,7 @@ private:
 
     Plane& plane_;
 
+    /// VBO used to render the plane
     unsigned int vbo_;
 
     ACG::VertexDeclaration vertexDecl_;
