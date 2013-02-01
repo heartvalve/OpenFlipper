@@ -76,8 +76,19 @@ class DLLEXPORT PolyLineObject : public BaseObjectData {
   //===========================================================================
     
   public:
+
     /// return a pointer to the line
     PolyLine* line(); 
+
+    /** \brief  This function is called to update the object
+     *
+     * If the object changes, the core will call this function. Normally this will update
+     * the corresponding scenegraph nodes or trigger other data handling which has to be done
+     * when the object changes.
+     *
+     * \note Do not call this function yourself to avoid unnecessary overhead(the core will call it when it is required)
+     */
+    virtual void update(UpdateType _type = UPDATE_ALL );
     
   private:
     PolyLine*           line_;

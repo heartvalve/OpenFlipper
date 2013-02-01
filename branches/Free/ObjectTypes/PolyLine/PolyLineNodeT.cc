@@ -65,6 +65,26 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
+
+
+
+
+/// Constructor
+template <class PolyLine>
+PolyLineNodeT<PolyLine>::PolyLineNodeT(PolyLine& _pl, BaseNode* _parent, std::string _name) :
+        BaseNode(_parent, _name),
+        polyline_(_pl),
+        vbo_(0),
+        updateVBO_(true)
+{
+  drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
+
+  // We will just issue positions
+  vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
+}
+
+//----------------------------------------------------------------------------
+
 template <class PolyLine>
 void
 PolyLineNodeT<PolyLine>::
@@ -102,12 +122,16 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if ( polyline_.n_vertices() == 0 ) 
     return;
 
+  // Update the vbo only if required.
+  if ( updateVBO_ )
+    updateVBO();
+
   ACG::GLState::disable(GL_LIGHTING);
   ACG::GLState::disable(GL_TEXTURE_2D);
   
   // Bind the vertex array
-  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-  ACG::GLState::vertexPointer( &(polyline_.points())[0] );   
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, vbo_);
+  ACG::GLState::vertexPointer(3, GL_FLOAT , 0, 0);
   ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
 
   ACG::Vec4f color = _state.ambient_color()  + _state.diffuse_color();
@@ -124,11 +148,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
       _state.set_color( Vec4f(1,0,0,1) );
       _state.set_point_size(point_size_old+4);
 
-      glBegin(GL_POINTS);
-      for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
-        if( polyline_.vertex_selection(i))
-          glArrayElement(i);
-      glEnd();
+      glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
 
       _state.set_point_size(point_size_old);
     }
@@ -151,32 +171,20 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
       _state.set_color(Vec4f(1, 0, 0, 1));
       _state.set_line_width(2 * line_width_old);
 
-      glBegin(GL_LINES);
-      // draw possibly closed PolyLine
-      for (unsigned int i = 0; i < polyline_.n_edges(); ++i) {
-        if (polyline_.edge_selection(i)) {
-          glArrayElement(i % polyline_.n_vertices());
-          glArrayElement((i + 1) % polyline_.n_vertices());
-        }
-      }
-      glEnd();
+      glDrawElements(GL_LINES, selectedEdgeIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedEdgeIndexBuffer_[0]));
 
       _state.set_line_width(line_width_old);
     }
 
     _state.set_color( color );
 
-    // draw all line segments
-    glBegin(GL_LINE_STRIP);
-
-    // draw possibly closed PolyLine
-    if (polyline_.n_vertices())
-      glArrayElement(0);
-    for (unsigned int i = 0; i < polyline_.n_edges(); ++i)
-      glArrayElement((i + 1) % polyline_.n_vertices());
-    glEnd();
+    if ( polyline_.is_closed() )
+      glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices() + 1);
+    else
+      glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices());
 
   }
+
 
   // draw normals
   if (polyline_.vertex_normals_available()) {
@@ -215,6 +223,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     _state.set_line_width(line_width_old);
   }
   
+  ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+
   //Disable the vertex array
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
 }
@@ -344,6 +354,176 @@ pick_edges( GLState& _state, unsigned int _offset)
   _state.set_line_width(line_width_old);
 }
 
+//----------------------------------------------------------------------------
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+updateVBO() {
+
+  // create vbo if it does not exist
+  if (!vbo_)
+    glGenBuffersARB(1, &vbo_);
+
+  // Temporary float array we need to convert doubles to this type
+  float*       vboData_ = NULL;
+
+  // Number of points in buffer
+  const unsigned int bufferPoints =  polyline_.n_vertices() + 1;
+
+  // Create the required array ( 3 coordinates of 4 floats per vertex )
+  // First vertex is replicated for closed loop polylines
+  vboData_ = new float[3 * (bufferPoints) * 4];
+
+  // Pointer to it for easier copy operation
+  float* pPoints = &vboData_[0];
+
+  // Index buffer for selected vertices
+  selectedVertexIndexBuffer_.clear();
+
+  // Index buffer for selected vertices
+  selectedEdgeIndexBuffer_.clear();
+
+  for (unsigned int  i = 0 ; i < polyline_.n_vertices(); ++i) {
+
+    // Copy from internal storage to vbo in cpu memory
+    for ( unsigned int j = 0 ; j < 3 ; ++j) {
+      *(pPoints++) = polyline_.point(i)[j];
+    }
+
+    // Create an ibo in system memory for vertex selection
+    if ( polyline_.vertex_selections_available() && polyline_.vertex_selected(i) )
+      selectedVertexIndexBuffer_.push_back(i);
+
+    // Create an ibo in system memory for edge selection
+    if ( polyline_.edge_selections_available() && polyline_.edge_selected(i) ) {
+      selectedEdgeIndexBuffer_.push_back(i);
+      selectedEdgeIndexBuffer_.push_back( (i + 1) % polyline_.n_vertices() );
+    }
+
+  }
+
+  // First point is added to the end for a closed loop
+  for ( unsigned int j = 0 ; j < 3 ; ++j)
+    *(pPoints++) = polyline_.point(0)[j];
+
+  // Move data to the buffer in gpu memory
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * bufferPoints * 4 , vboData_ , GL_STATIC_DRAW_ARB);
+
+  // Remove the local storage
+  delete[] vboData_;
+
+  // Update done.
+  updateVBO_ = false;
+}
+
+//----------------------------------------------------------------------------
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
+
+  // Block if we do not have any vertices
+  if ( polyline_.n_vertices() == 0 )
+    return;
+
+  // init base render object
+  ACG::RenderObject ro;
+
+  _state.enable(GL_COLOR_MATERIAL);
+  _state.enable(GL_LIGHTING);
+  ro.initFromState(&_state);
+
+  ro.setMaterial(_mat);
+
+  // draw after scene-meshes
+  ro.priority = 1;
+
+  // Update the vbo only if required.
+  if ( updateVBO_ )
+    updateVBO();
+
+  // Set to the right vbo
+  ro.vertexBuffer = vbo_;
+
+  // decl must be static or member,  renderer does not make a copy
+  ro.vertexDecl = &vertexDecl_;
+
+  // Set style
+  ro.debugName = "PolyLine";
+  ro.blending = false;
+  ro.depthTest = true;
+
+  // Default color
+  ACG::Vec4f defaultColor   = _state.ambient_color()  + _state.diffuse_color();
+  ACG::Vec4f selectionColor = ACG::Vec4f(1.0,0.0,0.0,1.0);
+
+  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i) {
+    ACG::SceneGraph::Material localMaterial = *_mat;
+
+    const ACG::SceneGraph::DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
+
+    ro.setupShaderGenFromDrawmode(props);
+    ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
+
+    //---------------------------------------------------
+    // No lighting!
+    // Therefore we need some emissive color
+    //---------------------------------------------------
+    localMaterial.baseColor(defaultColor);
+    ro.setMaterial(&localMaterial);
+
+
+    switch (props->primitive()) {
+
+      case ACG::SceneGraph::DrawModes::PRIMITIVE_POINT:
+
+        // Render all vertices which are selected via an index buffer
+        ro.debugName = "polyline.Points.selected";
+        localMaterial.baseColor(selectionColor);
+        ro.setMaterial(&localMaterial);
+        ro.glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
+        _renderer->addRenderObject(&ro);
+
+        // Render all vertices (ignore selection here!
+        ro.debugName = "polyline.Points";
+        localMaterial.baseColor(defaultColor);
+        ro.setMaterial(&localMaterial);
+        ro.glDrawArrays(GL_POINTS, 0, polyline_.n_vertices());
+        _renderer->addRenderObject(&ro);
+
+        break;
+      case ACG::SceneGraph::DrawModes::PRIMITIVE_WIREFRAME:
+
+        // Render all edges which are selected via an index buffer
+        ro.debugName = "polyline.Wireframe.selected";
+        localMaterial.baseColor(selectionColor);
+        ro.setMaterial(&localMaterial);
+        ro.glDrawElements(GL_LINES, selectedEdgeIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedEdgeIndexBuffer_[0]));
+        _renderer->addRenderObject(&ro);
+
+        ro.debugName = "polyline.Wireframe";
+        localMaterial.baseColor(defaultColor);
+        ro.setMaterial(&localMaterial);
+        // The first point is mapped to an additional last point in buffer, so we can
+        // just Render one point more to get a closed line
+        if ( polyline_.is_closed() )
+          ro.glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices() + 1);
+        else
+          ro.glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices());
+
+        _renderer->addRenderObject(&ro);
+
+        break;
+      default:
+        break;
+    }
+
+  }
+
+}
 
 
 //=============================================================================
