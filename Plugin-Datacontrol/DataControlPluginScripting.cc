@@ -52,6 +52,12 @@
 
 void DataControlPlugin::setDescriptions(){
 
+  emit setSlotDescription("getSourceObjects(DataType)",tr("Returns the IdList of all source objects with given DataType."),
+                            QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
+
+  emit setSlotDescription("getTargetObjects(DataType)",tr("Returns the IdList of all target objects with given DataType."),
+                              QStringList(tr("Datatype")), QStringList(tr("Datatype of the objects")));
+
   emit setSlotDescription("getObject(QString)",tr("Returns the id of an object with given name."),
                           QStringList(tr("Name")), QStringList(tr("Name of an object")));
 
@@ -79,11 +85,11 @@ void DataControlPlugin::setDescriptions(){
                           QString(tr("ObjectId,name")).split(","),
                           QString(tr("id of the object, the new name")).split(","));
 
-  emit setSlotDescription("groupObjects(idList,QString)",tr("Group given Objects together."),
+  emit setSlotDescription("groupObjects(IdList,QString)",tr("Group given Objects together."),
                           QString(tr("objectIds,groupName")).split(","),
                           QString(tr("List of objects that should be grouped., Name of the group.")).split(","));
 
-  emit setSlotDescription("groupObjects(idList)",tr("Group given Objects together."),
+  emit setSlotDescription("groupObjects(IdList)",tr("Group given Objects together."),
                           QStringList(tr("objectIds")), QStringList(tr("List of objects that should be grouped.")));
 
   emit setSlotDescription("groupCount()",tr("Returns the number of group objects."),
@@ -536,7 +542,7 @@ IdList DataControlPlugin::getTargetObjects(DataType _type) {
   
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, _type); o_it != PluginFunctions::objectsEnd(); ++o_it)
     list.push_back( o_it->id() );
-    
+
   return list;
 }
 
