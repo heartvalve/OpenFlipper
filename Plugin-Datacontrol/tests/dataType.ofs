@@ -1,0 +1,64 @@
+core.clearAll()
+defaultLights = 3 //define the default lights
+//create triangle mesh´
+id = primitivesgenerator.addSphere()
+if (datacontrol.dataType(id) != "TriangleMesh")
+{
+  print("DataType failed.")
+  print("Object is a "+datacontrol.dataType(id)+". Expected was \"TriangleMesh\"")
+  core.exitFailure()
+}
+//target triangle mesh
+datacontrol.setTarget(id,true)
+targetMeshes = datacontrol.getTargetObjects(DataType("TriangleMesh")).length
+if (targetMeshes!= 1)
+{
+  print("Unexpected number of TriangleMeshes")
+  print("Expected was 1, the results is "+targetMeshes)
+  core.exitFailure()
+}
+
+//create lights
+lightId = typelight.addDefaultLight("MyLight")
+lightId2 =typelight.addDefaultLight("MyLight2")
+if (lightId == -1 || lightId2 == -1)
+{
+  print("Unable to create default lights")
+  core.exitFailure()
+}
+if (datacontrol.dataType(lightId) != "Light")
+{
+  print("DataType failed.")
+  print("Object is a "+datacontrol.dataType(lightId)+". Expected was \"Light\"")
+  core.exitFailure()
+}
+
+//target light mesh
+datacontrol.setAllTarget() 
+targetLights = datacontrol.getTargetObjects(DataType("Light")).length
+if (targetLights != 2+defaultLights)
+{
+  print("Unexpected number of lights")
+  print("Expected was 2, the results is "+targetLights)
+  core.exitFailure()
+}
+
+//delete one light and one triangle mesh
+datacontrol.objectDelete(id)
+datacontrol.objectDelete(lightId)
+
+//target again
+targetLights = datacontrol.getTargetObjects(DataType("Light")).length
+if (targetLights != 1+defaultLights)
+{
+  print("Unexpected number of lights")
+  print("Expected was 1, the results is "+targetLights)
+  core.exitFailure()
+}
+targetMeshes = datacontrol.getTargetObjects(DataType("TriangleMesh")).length
+if (targetMeshes != 0)
+{
+  print("Unexpected number of TriangleMeshes")
+  print("Expected was 0, the results is "+targetMeshes)
+  core.exitFailure()
+}
