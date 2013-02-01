@@ -122,6 +122,10 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("printObjectInfoToLog()",tr("Print info about all objects to log"),
                             QStringList(), QStringList());
 
+  emit setSlotDescription("groupObject(int,int)",tr("Add an Object to an existing group"),
+                            QStringList(tr("objectId,groupId").split(",")),
+                            QStringList(tr("ID of an object.,ID of an group where the object has to be added.").split(",")));
+
 }
 
 
@@ -380,7 +384,6 @@ bool DataControlPlugin::unGroupObject(int _id) {
       emit log( LOGERR, tr( "Unable to get Object with id %1 for ungrouping").arg(_id) );
     return false;
   }
- 
 }
 
 
@@ -598,3 +601,34 @@ QStringList DataControlPlugin::availableDataTypeNames() const {
 }
 
 //******************************************************************************
+/** \brief add an object to an existing group
+ *
+ * add the object with _objectId to the group with _groupId
+ *
+ * @return success
+*/
+bool DataControlPlugin::groupObject(int _objectId, int _groupId)
+{
+  BaseObject* obj = 0;
+  BaseObject* group = 0;
+
+  PluginFunctions::getObject(_objectId,obj);
+  PluginFunctions::getObject(_groupId,group);
+
+   if ( obj && group)
+   {
+     if (group->isGroup())
+     {
+       obj->setParent(group);
+       return true;
+     }
+     else
+       emit log( LOGERR, tr(" Object with id %1 is not a group").arg(_groupId));
+   } else {
+       if (!obj)
+         emit log( LOGERR, tr( "Unable to get Object with id %1").arg(_objectId) );
+       if (!_groupId)
+         emit log( LOGERR, tr( "Unable to get Group with id %1").arg(_groupId) );
+   }
+   return false;
+}
