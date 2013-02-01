@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin ( INSTALLDATA Shaders)
+openflipper_plugin ()
