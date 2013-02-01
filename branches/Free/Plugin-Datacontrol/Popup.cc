@@ -113,20 +113,7 @@ void DataControlPlugin::slotUngroup (  ) {
 
   //get the object
   int id = model_->itemId( indexList[0] );
-  BaseObject* group = 0;
-
-  if ( id > 0 && PluginFunctions::getObject(id, group ) ){
-    //iterate over children
-    for (int i=group->childCount()-1; i >= 0; i--){
-      BaseObject* child = group->child(i);
-
-      // then change the parent
-      child->setParent(group->parent());
-    }
-
-    //delete the group
-    emit deleteObject( group->id() );
-  }
+  unGroupObject(id);
 }
 
 
@@ -172,57 +159,14 @@ void DataControlPlugin::slotGroup() {
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows ( 0 );
 
-  //check if all objects have the same parent
-  //abort if the parents differ
 
-  int id = model_->itemId( indexList[0] );
-  BaseObject* obj0 = 0;
+  //get object ids
+  IdList ids;
+  for (int i = 0; i < indexList.size(); ++i)
+    ids.push_back( model_->itemId(indexList[i]) );
 
-  if (id == -1 || !PluginFunctions::getObject(id, obj0) ){
-    std::cerr << "Group Objects: Unable to get object" << std::endl;
-    return;
-  }
-
-  BaseObject* parent = obj0->parent();
-
-  for ( int i = 1 ; i < indexList.size() ; ++i) {
-
-    //get an object
-    id = model_->itemId( indexList[i] );
-    BaseObject* item = 0;
-
-    PluginFunctions::getObject(id, item );
-
-    //compare parent
-    if ( parent != item->parent() ){
-      emit log(tr("Cannot group Objects with different parents"));
-      return;
-    }
-
-  }
-
-  //create new group
-  if (parent == 0)
-    parent = PluginFunctions::objectRoot();
-  GroupObject* groupItem = new GroupObject( tr("newGroup"), dynamic_cast< GroupObject* >(parent));
-  groupItem->setName(tr("newGroup ") + QString::number(groupItem->id()));
-  groupItem->setParent( parent );
-
-  emit emptyObjectAdded( groupItem->id() );
-
-  //append new children to group
-  for ( int i = 0 ; i < indexList.size() ; ++i) {
-
-    //get an object
-    id = model_->itemId( indexList[i] );
-    BaseObject* item = 0;
-
-    PluginFunctions::getObject(id, item );
-
-    //and move it into the group
-    item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
-  }
-
+  //group all objects
+  groupObjects(ids);
 }
 
 

@@ -356,15 +356,28 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
 }
 
 bool DataControlPlugin::unGroupObject(int _id) {
-  BaseObject* obj = 0;
+  BaseObject* group = 0;
   
-  PluginFunctions::getObject(_id,obj);
+  PluginFunctions::getObject(_id,group);
  
-  if ( obj ) {
-    obj->setParent( PluginFunctions::objectRoot() );
+  if ( group && group->isGroup())
+  {
+    //iterate over children
+    for (int i=group->childCount()-1; i >= 0; --i){
+      BaseObject* child = group->child(i);
+
+      // then change the parent
+      child->setParent(group->parent());
+    }
+    //delete the group
+    emit deleteObject( group->id() );
+
     return true;
   } else {
-    emit log( LOGERR, tr( "Unable to get Object with id %1 for ungrouping").arg(_id) );
+    if (group)
+      emit log( LOGERR, tr("Cannot Ungroup. Object with id %1 is not a group").arg(_id));
+    else
+      emit log( LOGERR, tr( "Unable to get Object with id %1 for ungrouping").arg(_id) );
     return false;
   }
  

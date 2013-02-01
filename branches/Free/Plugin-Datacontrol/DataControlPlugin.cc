@@ -157,7 +157,8 @@ void DataControlPlugin::pluginsInitialized() {
   PluginFunctions::setViewObjectMarker (&objectMarker);
   
   connect(tool_->lightSources, SIGNAL(stateChanged(int)), this, SLOT(slotShowLightSources(int)));
-  slotShowLightSources(tool_->lightSources->checkState());
+  //update light visibility, if layout was changed
+  connect(model_, SIGNAL(layoutChanged ()), this, SLOT(slotShowLightSources()) );
 }
 
 
@@ -498,15 +499,23 @@ void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
 void DataControlPlugin::slotShowLightSources( int _state ) {
 
     int rows = model_->rowCount();
-    
+
     for(int i = 0; i < rows; ++i) {
         TreeItem* item = model_->getItem(model_->index(i,0));
         if(item->dataType() == DATA_LIGHT) {
-            view_->setRowHidden(i, model_->parent(model_->index(i,0)), !(_state == Qt::Checked));
+          view_->setRowHidden(i, model_->parent(model_->index(i,0)), !(_state == Qt::Checked));
+        }else{
+          //always show, if it is not a light
+          view_->setRowHidden(i, model_->parent(model_->index(i,0)), false);
         }
     }
 }
 
+
+void DataControlPlugin::slotShowLightSources()
+{
+  slotShowLightSources( tool_->lightSources->checkState() );
+}
 //******************************************************************************
 
 /** \brief Load Groups from ini file
