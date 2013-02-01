@@ -122,7 +122,7 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("printObjectInfoToLog()",tr("Print info about all objects to log"),
                             QStringList(), QStringList());
 
-  emit setSlotDescription("groupObject(int,int)",tr("Add an Object to an existing group"),
+  emit setSlotDescription("addObjectToGroup(int,int)",tr("Add an Object to an existing group"),
                             QStringList(tr("objectId,groupId").split(",")),
                             QStringList(tr("ID of an object.,ID of an group where the object has to be added.").split(",")));
 
@@ -607,7 +607,7 @@ QStringList DataControlPlugin::availableDataTypeNames() const {
  *
  * @return success
 */
-bool DataControlPlugin::groupObject(int _objectId, int _groupId)
+bool DataControlPlugin::addObjectToGroup(int _objectId, int _groupId)
 {
   BaseObject* obj = 0;
   BaseObject* group = 0;

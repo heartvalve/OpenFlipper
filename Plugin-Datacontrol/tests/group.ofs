@@ -72,7 +72,7 @@ id2 = primitivesgenerator.addSphere()
 id3 = primitivesgenerator.addSphere()
 
 groupid = datacontrol.groupObjects([id1,id2])
-datacontrol.groupObject(id3,groupid)
+datacontrol.addObjectToGroup(id3,groupid)
 
 datacontrol.groupObjects([id1,id2,id3])//Can be done, if all objects are in the same group
 if (datacontrol.groupCount() != 2)
@@ -84,7 +84,7 @@ if (datacontrol.groupCount() != 2)
   core.exitFailure()
 }
 
-if (datacontrol.groupObject(id3,id2))
+if (datacontrol.addObjectToGroup(id3,id2))
 {
   print("Could add an object to an object which is not a Group.")
   core.exitFailure();

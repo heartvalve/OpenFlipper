@@ -366,7 +366,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         int groupObjects(IdList _objectIDs, QString _groupName = "");
         
         /// add an object to an existing group
-        bool groupObject(int _objectId, int _groupId);
+        bool addObjectToGroup(int _objectId, int _groupId);
 
         /** remove an object from its group and place it at the toplevel group
         *
