@@ -1186,9 +1186,14 @@ void Core::exitFailure() {
   // Cleanup the widgets here
   delete coreWidget_;
 
+
+  //stop qt event loop
+  //this function does return to the caller
+  qApp->exit(EXIT_FAILURE);
+
   // Kill application with an error
   // No need to clean up here anyway
-  qApp->exit(EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 
 }
 

@@ -33,7 +33,10 @@ id2 = primitivesgenerator.addSphere()
 list = [id2,id]
 groupid2 = datacontrol.groupObjects(list)
 
-print("unexpected group count")
-print("number of groups: " + datacontrol.groupCount())
-print("expected number of groups: 2") 
-core.exitFailure()
+if (datacontrol.groupCount() != 3)
+{
+  print("unexpected group count")
+  print("number of groups: " + datacontrol.groupCount())
+  print("expected number of groups: 3") 
+  core.exitFailure()
+}
