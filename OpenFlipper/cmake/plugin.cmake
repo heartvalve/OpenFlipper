@@ -5,6 +5,7 @@
 #                      [OPTDEPS dep1 dep2 ...]
 #                      [LDFLAGSADD flag1 flag2 ...]
 #                      [CFLAGSADD flag1 flag2 ...]
+#                      [CDEFINITIONSADD definition1 definition2 ...]
 #                      [LIBRARIES lib1 lib2 ...]
 #                      [LIBDIRS dir1 dir2 ...]
 #                      [INCDIRS dir1 dir2 ...]
@@ -14,16 +15,17 @@
 #                      [TRANSLATION_ADDFILES file1 file2 ...]
 #                      [LICENSEMANAGER])
 #
-# DIRS        = additional directories with source files
-# DEPS        = required dependencies for find_package macro
-# OPTDEPS     = optional dependencies for find_package macro, if found, a define ENABLE_<Depname> will be added automatically
-# LDFLAGSADD  = flags added to the link command
-# CFLAGSADD   = flags added to the compile command
-# LIBRARIES   = libraries added to link command
-# LIBDIRS     = additional link directories
-# INCDIRS     = additional include directories
-# ADDSRC      = additional source files
-# INSTALLDATA = directories that will be installed into the openflipper data directory
+# DIRS            = additional directories with source files
+# DEPS            = required dependencies for find_package macro
+# OPTDEPS         = optional dependencies for find_package macro, if found, a define ENABLE_<Depname> will be added automatically
+# LDFLAGSADD      = flags added to the link command
+# CFLAGSADD       = flags added to the compile command
+# CDEFINITIONSADD = definitions added to the compile command
+# LIBRARIES       = libraries added to link command
+# LIBDIRS         = additional link directories
+# INCDIRS         = additional include directories
+# ADDSRC          = additional source files
+# INSTALLDATA     = directories that will be installed into the openflipper data directory
 #
 # TRANSLATION_LANGUAGES = language codes for translation
 # TRANSLATION_ADDFILES  = additional files that should be included into the translation files
@@ -60,7 +62,7 @@ endmacro ()
 # parse plugin macro parameter
 macro (_get_plugin_parameters _prefix)
     set (_current_var _foo)
-    set (_supported_var DIRS DEPS OPTDEPS LDFLAGSADD CFLAGSADD LIBRARIES LIBDIRS INCDIRS ADDSRC INSTALLDATA TRANSLATION_LANGUAGES TRANSLATION_ADDFILES)
+    set (_supported_var DIRS DEPS OPTDEPS LDFLAGSADD CFLAGSADD CDEFINITIONSADD LIBRARIES LIBDIRS INCDIRS ADDSRC INSTALLDATA TRANSLATION_LANGUAGES TRANSLATION_ADDFILES)
     set (_supported_flags LICENSEMANAGER)
     foreach (_val ${_supported_var})
         set (${_prefix}_${_val})
@@ -263,7 +265,14 @@ macro (_check_plugin_deps _prefix _optional )
               # this variable is used as a string later on (not as a list!!!)
               set( ${_prefix}_DEPS_COMPILER_FLAGS "${${_prefix}_DEPS_COMPILER_FLAGS} ${${_name}_COMPILER_FLAGS}")
             endif ()
-
+            if (DEFINED ${_name}_COMPILER_DEFINITIONS)
+              # this variable is used as a string later on (not as a list!!!)
+              set( ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_prefix}_DEPS_COMPILE_DEFINITIONS} ${${_name}_COMPILER_DEFINITIONS}")
+            endif ()
+            if (DEFINED ${_name}_COMPILE_DEFINITIONS)
+              # this variable is used as a string later on (not as a list!!!)
+              set( ${_prefix}_DEPS_COMPILE_DEFINITIONS "${${_prefix}_DEPS_COMPILE_DEFINITIONS} ${${_name}_COMPILE_DEFINITIONS}")
+            endif ()
           endforeach ()
         else ()
             set (${_prefix}_HAS_DEPS FALSE)
@@ -498,9 +507,10 @@ function (_build_openflipper_plugin plugin)
     set_target_properties (
       Plugin-${plugin} PROPERTIES
       COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD} ${${_PLUGIN}_LICENSE_DEFS} ${${_PLUGIN}_DEPS_COMPILER_FLAGS}"
+      COMPILE_DEFINITIONS  "${${_PLUGIN}_CDEFINITIONSADD} ${${_PLUGIN}_DEPS_COMPILE_DEFINITIONS}" 
       LINK_FLAGS "${${_PLUGIN}_LDFLAGSADD} ${${_PLUGIN}_DEPS_LINKER_FLAGS}"
     )
-    
+ 
     if (WIN32)
       # Visual studio requires our plugins to link with GLUT
       find_package (GLUT)
