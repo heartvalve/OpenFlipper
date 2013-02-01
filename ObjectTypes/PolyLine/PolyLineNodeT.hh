@@ -60,6 +60,8 @@
 
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/IRenderer.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -89,14 +91,7 @@ public:
   typedef typename PolyLine::Point Point;
 
   /// Constructor
-  PolyLineNodeT(PolyLine&    _pl,
-                BaseNode*    _parent=0,
-                std::string  _name="<PolyLineNode>" ) :
-                BaseNode(_parent,_name),
-                polyline_(_pl)
-  {
-    drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
-  }
+  PolyLineNodeT(PolyLine& _pl, BaseNode* _parent = 0, std::string _name = "<PolyLineNode>");
 
   /// Destructor
   ~PolyLineNodeT() {}
@@ -118,6 +113,18 @@ public:
   /// picking
   void pick(GLState& _state, PickTarget _target);
 
+  /** \brief Add the objects to the given renderer
+    *
+    * @param _renderer The renderer which will be used. Add your geometry into this class
+    * @param _state    The current GL State when this object is called
+    * @param _drawMode The active draw mode
+    * @param _mat      Current material
+    */
+  void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
+
+
+  /// Trigger an update of the vbo
+  void update() { updateVBO_ = true; };
 
 private:
 
@@ -130,9 +137,27 @@ private:
   /// Assignment operator (not used)
   PolyLineNodeT& operator=(const PolyLineNodeT& _rhs);
 
+  /// Buffer organization
+  ACG::VertexDeclaration vertexDecl_;
+
+  /// Update the vbo
+  void updateVBO();
+
 private:
 
   PolyLine& polyline_;
+
+  /// VBO used to render the poly line
+  unsigned int vbo_;
+
+  /// Index buffer for selected vertices
+  std::vector<unsigned int> selectedVertexIndexBuffer_;
+
+  /// Index buffer for selected edges
+  std::vector<unsigned int> selectedEdgeIndexBuffer_;
+
+  /// Flag to trigger update of vbo
+  bool updateVBO_;
 };
 
 

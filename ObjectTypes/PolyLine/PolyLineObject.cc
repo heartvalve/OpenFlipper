@@ -157,6 +157,11 @@ PolyLine* PolyLineObject::line() {
   return line_;
 }
 
+
+void PolyLineObject::update(UpdateType _type) {
+  lineNode_->update();
+}
+
 // ===============================================================================
 // Visualization
 // ===============================================================================
