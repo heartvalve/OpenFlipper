@@ -408,8 +408,9 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
 
     glPolygonMode(GL_FRONT_AND_BACK, _obj->fillMode);
 
-    if (noIndices)
+    if (noIndices) {
       glDrawArrays(_obj->primitiveMode, _obj->indexOffset, _obj->numIndices);
+    }
     else
     {
       // ------------------------------------------
@@ -480,7 +481,7 @@ int IRenderer::getNumRenderObjects() const
 }
 
 
-void IRenderer::dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList) const
+void IRenderer::dumpRenderObjectsToFile(const char* _fileName, ACG::RenderObject** _sortedList) const
 {
   QFile fileOut(_fileName);
   if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
@@ -499,12 +500,21 @@ void IRenderer::dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject
 }
 
 
+QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list) {
 
+  QString objectString;
 
+  QTextStream outStrm(&objectString);
+  for (int i = 0; i < getNumRenderObjects(); ++i)
+  {
+    if (_list)
+      outStrm << "\n" << _list[i]->toString();
+    else
+      outStrm << "\n" << renderObjects_[i].toString();
+  }
 
-
-
-
+  return objectString;
+}
 
 
 } // namespace ACG end

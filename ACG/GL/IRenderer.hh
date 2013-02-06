@@ -251,7 +251,7 @@ protected:
   //=========================================================================
   // Debugging
   //=========================================================================
-private:
+public:
 
   /** \brief Debugging function to dump list of render objects into a file
    *
@@ -259,8 +259,13 @@ private:
    * @param _fileName name of text file to write to
    * @param _sortedList dump sorted render objects in order, may be 0 to use the unsorted list instead
    */
-  void dumpRenderObjectsToText(const char* _fileName, ACG::RenderObject** _sortedList = 0) const;
+  void dumpRenderObjectsToFile(const char* _fileName, ACG::RenderObject** _sortedList = 0) const;
 
+  /** \brief Outputs the current render objects to the string
+   *
+   * @return Render object data
+   */
+  virtual QString dumpCurrentRenderObjectsToString(ACG::RenderObject** _list = 0);
 
   //=========================================================================
   // Variables
