@@ -68,4 +68,17 @@ void CoreWidget::slotShowRenderManager() {
 
 }
 
+void CoreWidget::slotShowRenderObjectWidget() {
+
+  if ( OpenFlipper::Options::nogui() )
+    return;
+
+  if ( ! rendererObjectWidget_ ) {
+    rendererObjectWidget_ = new RendererObjectWidget();
+  }
+
+  rendererObjectWidget_->show();
+
+}
+
 //=============================================================================
