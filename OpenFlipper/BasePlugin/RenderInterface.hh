@@ -144,6 +144,18 @@ class RenderInterface {
      */
     virtual QAction* optionsAction() { return 0; };
 
+    /** \brief Return a qstring of the current render objects
+     *
+     * In this function your plugin should return a list of the render objects
+     * (possibly with additional information). It can be used  for debugging purposes.
+     *
+     * The IRenderer class already has a function called dumpCurrentRenderObjectsToString()
+     * which can be used to implement this function.
+     *
+     * @return string of render objects
+     */
+    virtual QString renderObjectsInfo() { return QString("Render object inforation not implemented in this plugin"); };
+
 
 
 };
