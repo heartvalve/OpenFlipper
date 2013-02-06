@@ -241,6 +241,10 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     connect(showRendererDialog,SIGNAL(triggered()),this,SLOT(slotShowRenderManager()));
     rendererMenu->addAction(showRendererDialog);
 
+    QAction* showRendererObjectWidget = new QAction(tr("Show render objects"),this);
+    connect(showRendererObjectWidget,SIGNAL(triggered()),this,SLOT(slotShowRenderObjectWidget()));
+    rendererMenu->addAction(showRendererObjectWidget);
+
     rendererMenu->addSeparator();
 
     for ( unsigned int i = 0 ; i < renderManager().available() ; ++i) {

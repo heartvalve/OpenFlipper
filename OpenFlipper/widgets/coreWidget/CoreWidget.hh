@@ -96,6 +96,7 @@
 #include <OpenFlipper/widgets/stereoSettingsWidget/stereoSettingsWidget.hh>
 #include <OpenFlipper/widgets/postProcessorWidget/postProcessorWidget.hh>
 #include <OpenFlipper/widgets/rendererWidget/rendererWidget.hh>
+#include <OpenFlipper/widgets/rendererWidget/rendererObjectWidget.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -1103,10 +1104,15 @@ public:
 
     public slots:
 
+      /// shows the widget for the rendermanager
       void slotShowRenderManager();
 
+      /// Shows the widget containing the current render objects
+      void slotShowRenderObjectWidget();
+
     private:
-      RendererDialog* rendererDialog_;
+      RendererDialog*       rendererDialog_;
+      RendererObjectWidget* rendererObjectWidget_;
 
     /** @} */
 
