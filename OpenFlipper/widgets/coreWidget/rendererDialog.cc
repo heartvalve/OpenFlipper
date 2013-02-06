@@ -55,16 +55,16 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void CoreWidget::slotShowPostProcessorManager() {
+void CoreWidget::slotShowRenderManager() {
 
 	if ( OpenFlipper::Options::nogui() )
 		return;
 
-	if ( ! postProcessorDialog_ ) {
-	  postProcessorDialog_ = new PostProcessorDialog();
+	if ( ! rendererDialog_ ) {
+	  rendererDialog_ = new RendererDialog();
 	}
 
-	postProcessorDialog_->show();
+	rendererDialog_->show();
 
 }
 

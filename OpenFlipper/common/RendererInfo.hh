@@ -69,6 +69,12 @@ class DLLEXPORT RendererInfo{
     /// Name of the plugin ( requested from the plugin on load)
     QString     name;
 
+    /// Version of the plugin ( requested from the plugin on load)
+    QString     version;
+
+    /// Description of the plugin ( requested from the plugin on load)
+    QString     description;
+
     /// Supported DrawModes
     ACG::SceneGraph::DrawModes::DrawMode modes;
 

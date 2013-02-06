@@ -1990,6 +1990,9 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
       // Retrieve and store renderer information
       if ( rendererInfo != 0) {
         rendererInfo->plugin = renderPlugin;
+        rendererInfo->name          = basePlugin->name();
+        rendererInfo->version       = basePlugin->version();
+        rendererInfo->description   = basePlugin->description();
 
         ACG::SceneGraph::DrawModes::DrawMode supportedModes;
 
