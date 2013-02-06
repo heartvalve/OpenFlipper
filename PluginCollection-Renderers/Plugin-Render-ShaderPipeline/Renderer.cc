@@ -48,7 +48,7 @@ void Renderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _propert
   // log window remains hidden otherwise
   finishRenderingPipeline();
 
-//  dumpRenderObjectsToText("../../dump_ro.txt", &sortedObjects_[0]);
+//  dumpRenderObjectsToFile("../../dump_ro.txt", &sortedObjects_[0]);
 }
 
 
