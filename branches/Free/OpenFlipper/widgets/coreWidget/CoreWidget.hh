@@ -95,6 +95,7 @@
 #include <OpenFlipper/widgets/helpWidget/helpWidget.hh>
 #include <OpenFlipper/widgets/stereoSettingsWidget/stereoSettingsWidget.hh>
 #include <OpenFlipper/widgets/postProcessorWidget/postProcessorWidget.hh>
+#include <OpenFlipper/widgets/rendererWidget/rendererWidget.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -1093,6 +1094,21 @@ public:
     PostProcessorDialog* postProcessorDialog_;
 
   /** @} */
+
+  //===========================================================================
+  /** @name Renderer dialog
+   * @{ */
+    //===========================================================================
+
+
+    public slots:
+
+      void slotShowRenderManager();
+
+    private:
+      RendererDialog* rendererDialog_;
+
+    /** @} */
 
   //===========================================================================
   /** @name Stereo View Mode

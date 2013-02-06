@@ -234,8 +234,14 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     // Get the options action for the currently active renderer
     if( renderManager()[ renderManager().activeId(PluginFunctions::activeExaminer() )]->optionsAction != 0 ) {
       rendererMenu->addAction(renderManager()[ renderManager().activeId(PluginFunctions::activeExaminer() ) ]->optionsAction );
-      rendererMenu->addSeparator();
+
     }
+
+    QAction* showRendererDialog = new QAction(tr("Show renderer manager"),this);
+    connect(showRendererDialog,SIGNAL(triggered()),this,SLOT(slotShowRenderManager()));
+    rendererMenu->addAction(showRendererDialog);
+
+    rendererMenu->addSeparator();
 
     for ( unsigned int i = 0 ; i < renderManager().available() ; ++i) {
 
@@ -280,10 +286,9 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
     }
 
     QAction* showPostProcessorDialog = new QAction(tr("Show post processor manager"),this);
-
     connect(showPostProcessorDialog,SIGNAL(triggered()),this,SLOT(slotShowPostProcessorManager()));
-
     postProcessorMenu->addAction(showPostProcessorDialog);
+
     postProcessorMenu->addSeparator();
 
 

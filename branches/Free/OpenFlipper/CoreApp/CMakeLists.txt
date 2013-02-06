@@ -61,6 +61,7 @@ set (directories
   ../widgets/snapshotDialog
   ../widgets/stereoSettingsWidget
   ../widgets/postProcessorWidget
+  ../widgets/rendererWidget
 )
 
 # collect all header,source and ui files
