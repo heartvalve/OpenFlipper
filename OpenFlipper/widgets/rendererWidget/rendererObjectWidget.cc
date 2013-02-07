@@ -86,7 +86,9 @@ void RendererObjectWidget::update()
     textBrowser->insertPlainText(tr("Version:          ") + renderer->version + "\n" );
     textBrowser->insertPlainText("\n" );
 
-    textBrowser->insertPlainText(renderer->plugin->renderObjectsInfo());
+
+    if (  renderManager().activeId(PluginFunctions::activeExaminer()) != 0 )
+      textBrowser->insertPlainText(renderer->plugin->renderObjectsInfo());
 
   } else {
     textBrowser->setText("Unable to get renderer!");
