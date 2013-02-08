@@ -89,3 +89,27 @@ if (datacontrol.addObjectToGroup(id3,id2))
   print("Could add an object to an object which is not a Group.")
   core.exitFailure();
 }
+
+//Get group elements
+id1 = primitivesgenerator.addSphere()
+id2 = primitivesgenerator.addSphere()
+elements = [id1,id2]
+groupid = datacontrol.groupObjects(elements)
+resuldList = datacontrol.getGroupElements(groupid)
+
+if (resuldList.length != elements.length)
+{
+  print("error: getGroupElements")
+  print("number of received elements is: "+elements.length+" expected was: "+resuldList.length)
+  core.exitFailure();
+}
+for (i = 0; i < resultId; ++i)
+{
+   if (resuldList[i] != groupId[i])
+  {
+    print("error: getGroupElements")
+    print("id of received object differs")
+    print("expected was: "+groupId[i]+" result is: "+resuldIdList[i])
+    core.exitFailure();
+  }
+}

@@ -101,6 +101,9 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("objectDelete(int)",tr("Delete an object"),
                           QStringList(tr("objectId")), QStringList(tr("Delete the given object.")));
 
+  emit setSlotDescription("getGroupElements(int)",tr("Get elements of a group"),
+                           QStringList(tr("groupId")), QStringList(tr("Id of the group.")));
+
   emit setSlotDescription("copyObject(int)",tr("Create a copy of an object"),
                           QStringList(tr("objectId")), QStringList(tr("Object to copy.")));
 
@@ -637,4 +640,24 @@ bool DataControlPlugin::addObjectToGroup(int _objectId, int _groupId)
          emit log( LOGERR, tr( "Unable to get Group with id %1").arg(_groupId) );
    }
    return false;
+}
+
+//******************************************************************************
+/** \brief get all objects of an given group
+ *
+ * get all objects of an given group with id _groupId
+ *
+ * @return id list of group elements
+*/
+
+IdList DataControlPlugin::getGroupElements(int _groupId)
+{
+  BaseObject* group = 0;
+  PluginFunctions::getObject(_groupId,group);
+  IdList result;
+
+  for (int i = 0; i < group->childCount(); ++i)
+    result.push_back(group->child(i)->id());
+
+  return result;
 }
