@@ -149,7 +149,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
 
       if (progprogGen.hasGeometryShader() )
         for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-          outStrm << progGen.getVertexShaderCode()[i] << "\n";
+          outStrm << progGen.getGeometryShaderCode()[i] << "\n";
 
       outStrm << "\n---------------------fragment-shader--------------------\n\n";
 

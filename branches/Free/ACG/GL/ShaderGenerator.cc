@@ -729,7 +729,7 @@ void ShaderProgGenerator::buildGeometryShader()
 //  addLightingFunctions(&mainCode);
 //
 //
-  if (!fragmentTemplate_.size())
+  if (!geometryTemplate_.size())
   {
     mainCode.push_back("void main()");
     mainCode.push_back("{");
@@ -1060,9 +1060,12 @@ void ShaderProgGenerator::loadShaderTemplateFromFile()
     loadStringListFromFile(desc_.vertexTemplateFile, &vertexTemplate_);
   if (desc_.fragmentTemplateFile)
     loadStringListFromFile(desc_.fragmentTemplateFile, &fragmentTemplate_);
+  if (desc_.geometryTemplateFile)
+     loadStringListFromFile(desc_.geometryTemplateFile, &geometryTemplate_);
 
   vertexShaderFile_ = desc_.vertexTemplateFile;
   fragmentShaderFile_ = desc_.fragmentTemplateFile;
+  geometryShaderFile_ = desc_.geometryTemplateFile;
 }
 
 QString ShaderProgGenerator::getPathName(QString _strFileName)
