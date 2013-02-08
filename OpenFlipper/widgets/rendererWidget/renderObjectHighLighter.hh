@@ -74,16 +74,36 @@ class RenderObjectHighlighter : public QSyntaxHighlighter
       QTextCharFormat format;
     };
 
+
+
+    // Single line rules
+    QStringList keywordPatterns_;
+    QStringList typePatterns_;
+
+    // All single line rules combined with their format
     QVector<HighlightingRule> highlightingRules_;
 
+    // Multi line rules
     QRegExp vertexShaderStartExpression_;
     QRegExp vertexShaderEndExpression_;
+
+    QRegExp geometryShaderStartExpression_;
+    QRegExp geometryShaderEndExpression_;
 
     QRegExp fragmentShaderStartExpression_;
     QRegExp fragmentShaderEndExpression_;
 
-    QTextCharFormat VertexShaderFormat_;
-    QTextCharFormat FragmentShaderFormat_;
+    // Single formats
+    QTextCharFormat keywordFormat_;
+    QTextCharFormat defineFormat_;
+    QTextCharFormat typeFormat_;
+
+    QTextCharFormat singleLineCommentFormat_;
+
+    // Multi Line formats
+    QTextCharFormat vertexShaderFormat_;
+    QTextCharFormat geometryShaderFormat_;
+    QTextCharFormat fragmentShaderFormat_;
 
 };
 

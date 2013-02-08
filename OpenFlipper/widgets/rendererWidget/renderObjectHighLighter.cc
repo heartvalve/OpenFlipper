@@ -58,96 +58,136 @@ RenderObjectHighlighter::RenderObjectHighlighter(QTextEdit *parent)
 
 void RenderObjectHighlighter::init() {
    // Set the basic format styles
-  VertexShaderFormat_.setForeground(Qt::darkGreen);
-  VertexShaderFormat_.setFontWeight(QFont::Bold);
-
-  FragmentShaderFormat_.setForeground(Qt::darkRed);
-  FragmentShaderFormat_.setFontWeight(QFont::Bold);
+  vertexShaderFormat_.setBackground(Qt::green);
+  vertexShaderFormat_.setFontWeight(QFont::Bold);
 
   vertexShaderStartExpression_ = QRegExp("---------------------vertex-shader--------------------");
   vertexShaderEndExpression_   = QRegExp("---------------------end-vertex-shader--------------------");
 
+  geometryShaderFormat_.setBackground(Qt::blue);
+  geometryShaderFormat_.setFontWeight(QFont::Bold);
+
+  geometryShaderStartExpression_ = QRegExp("---------------------geometry-shader--------------------");;
+  geometryShaderEndExpression_   = QRegExp("---------------------end-geometry-shader--------------------");;
+
+
+  fragmentShaderFormat_.setBackground(Qt::red);
+  fragmentShaderFormat_.setFontWeight(QFont::Bold);
+
   fragmentShaderStartExpression_ = QRegExp("---------------------fragment-shader--------------------");
   fragmentShaderEndExpression_   = QRegExp("---------------------end-fragment-shader--------------------");
 
-  update();
+  // match whole line containing the define
+  defineFormat_.setForeground(Qt::green);
+  defineFormat_.setFontWeight(QFont::Bold);
 
-   //   classFormat.setFontWeight(QFont::Bold);
-   //   classFormat.setForeground(Qt::darkMagenta);
-   //   rule.pattern = QRegExp("\\bQ[A-Za-z]+\\b");
-   //   rule.format = classFormat;
-   //   highlightingRules.append(rule);
-   //
+  // Single line comments
+  singleLineCommentFormat_.setForeground(Qt::red);
+
+  // Set the basic format styles
+  keywordFormat_.setForeground(Qt::darkGreen);
+  keywordFormat_.setFontWeight(QFont::Bold);
+
+  // Define basic keywords
+  keywordPatterns_ << "main" << "while" << "for" << "if" << "dot" << "sqrt" << "max" << "pow" << "return" << "normalize";
+  keywordPatterns_ << "min" << "clamp" << "step";
+
+  typeFormat_.setForeground(Qt::darkMagenta);
+  typeFormat_.setFontWeight(QFont::Bold);
+
+  // Types
+  typePatterns_ << "in" << "out" << "mat3" << "mat4" << "vec2" << "vec3" << "vec4" << "float" << "double" <<"uniform" ;
+
+  update();
 }
 
 void RenderObjectHighlighter::update() {
 
   highlightingRules_.clear();
 
-//  HighlightingRule rule;
-//
-//  // Create Rules for keywords
-//  foreach (QString pattern, keywordPatterns_) {
-//    rule.pattern = QRegExp("\\b" + pattern + "\\b" );
-//    rule.format = keywordFormat_;
-//    highlightingRules_.append(rule);
-//  }
+  HighlightingRule rule;
+
+  // Define rule
+  rule.pattern = QRegExp("#define.*");
+  rule.format =  defineFormat_;
+  highlightingRules_.append(rule);
+
+  // Rule for single line comments
+  rule.pattern = QRegExp("//[^\n]*");
+  rule.format = singleLineCommentFormat_;
+  highlightingRules_.append(rule);
+
+  // Create Rules for keywords
+  foreach (QString pattern, keywordPatterns_) {
+    rule.pattern = QRegExp("\\b" + pattern + "\\b" );
+    rule.format = keywordFormat_;
+    highlightingRules_.append(rule);
+  }
+
+  // Create Rules for types
+  foreach (QString pattern, typePatterns_ ) {
+    rule.pattern = QRegExp("\\b" + pattern + "\\b" );
+    rule.format = typeFormat_;
+    highlightingRules_.append(rule);
+  }
+
 }
 
 void RenderObjectHighlighter::highlightBlock(const QString &text)
 {
 
-//   foreach (HighlightingRule rule, highlightingRules_) {
-//    QRegExp expression(rule.pattern);
-//    int index = text.indexOf(expression);
-//    while (index >= 0) {
-//      int length = expression.matchedLength();
-//      setFormat(index, length, rule.format);
-//      index = text.indexOf(expression, index + length);
-//    }
-//  }
+  // Single word highlighting
+  foreach (HighlightingRule rule, highlightingRules_) {
+    QRegExp expression(rule.pattern);
+    int index = text.indexOf(expression);
+    while (index >= 0) {
+      int length = expression.matchedLength();
+      setFormat(index, length, rule.format);
+      index = text.indexOf(expression, index + length);
+    }
+  }
 
   // Blockstate -1,0 : nothing
   // Blockstate  1   : vertexShader Code
   // Blockstate  2   : geometryShader Code
   // Blockstate  3   : fragment Shader Code
 
-  setCurrentBlockState(0);
-
-  // Vertex shader block
-  int startIndex = 0;
-  if (previousBlockState() != 1)
-    startIndex = text.indexOf(vertexShaderStartExpression_);
-
-  while (startIndex >= 0) {
-    int endIndex = text.indexOf(vertexShaderEndExpression_, startIndex);
-    int commentLength;
-    if (endIndex == -1) {
-      setCurrentBlockState(1);
-      commentLength = text.length() - startIndex;
-    } else {
-      commentLength = endIndex - startIndex + vertexShaderEndExpression_.matchedLength();
-    }
-    setFormat(startIndex, commentLength, VertexShaderFormat_);
-    startIndex = text.indexOf(vertexShaderStartExpression_, startIndex + commentLength);
-  }
-
-  // Fragment shader block
-  startIndex = 0;
-  if (previousBlockState() != 3)
-    startIndex = text.indexOf(fragmentShaderStartExpression_);
-
-  while (startIndex >= 0) {
-    int endIndex = text.indexOf(fragmentShaderEndExpression_, startIndex);
-    int commentLength;
-    if (endIndex == -1) {
-      setCurrentBlockState(3);
-      commentLength = text.length() - startIndex;
-    } else {
-      commentLength = endIndex - startIndex + fragmentShaderEndExpression_.matchedLength();
-    }
-    setFormat(startIndex, commentLength, FragmentShaderFormat_);
-    startIndex = text.indexOf(fragmentShaderStartExpression_, startIndex + commentLength);
-  }
+//  setCurrentBlockState(0);
+//
+//  // Vertex shader block
+//  int startIndex = 0;
+//  if (previousBlockState() != 1)
+//    startIndex = text.indexOf(vertexShaderStartExpression_);
+//
+//  while (startIndex >= 0) {
+//    int endIndex = text.indexOf(vertexShaderEndExpression_, startIndex);
+//    int commentLength;
+//    if (endIndex == -1) {
+//      setCurrentBlockState(1);
+//      commentLength = text.length() - startIndex;
+//    } else {
+//      commentLength = endIndex - startIndex + vertexShaderEndExpression_.matchedLength();
+//    }
+//    setFormat(startIndex, commentLength, vertexShaderFormat_);
+//    startIndex = text.indexOf(vertexShaderStartExpression_, startIndex + commentLength);
+//  }
+//
+//  // Fragment shader block
+//  startIndex = 0;
+//  if (previousBlockState() != 3)
+//    startIndex = text.indexOf(fragmentShaderStartExpression_);
+//
+//  while (startIndex >= 0) {
+//    int endIndex = text.indexOf(fragmentShaderEndExpression_, startIndex);
+//    int commentLength;
+//    if (endIndex == -1) {
+//      setCurrentBlockState(3);
+//      commentLength = text.length() - startIndex;
+//    } else {
+//      commentLength = endIndex - startIndex + fragmentShaderEndExpression_.matchedLength();
+//    }
+//    setFormat(startIndex, commentLength, fragmentShaderFormat_);
+//    startIndex = text.indexOf(fragmentShaderStartExpression_, startIndex + commentLength);
+//  }
 
 }

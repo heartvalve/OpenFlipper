@@ -59,10 +59,10 @@ class RendererObjectWidget : public QDialog, public Ui::RendererObjectWidget
 
     void showEvent ( QShowEvent * );
 
-  private:
-
+  private slots:
     void update();
 
+  private:
     RenderObjectHighlighter* highlighter_;
 
 };
