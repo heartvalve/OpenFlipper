@@ -133,9 +133,14 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
       for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
         outStrm << progGen.getVertexShaderCode()[i] << "\n";
 
+      outStrm << "\n---------------------geometry-shader--------------------\n\n";
+
+      for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+        outStrm << progGen.getVertexShaderCode()[i] << "\n";
+
       outStrm << "\n---------------------fragment-shader--------------------\n\n";
 
-      for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
+      for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
         outStrm << progGen.getFragmentShaderCode()[i] << "\n";
 
 
@@ -144,21 +149,26 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   }
 #endif
 
-  // TODO: Geometry shader handling if supported!
+  // TODO: Build geometry shader only if supported!
 
   GLSL::FragmentShader* fragShader = new GLSL::FragmentShader();
-  GLSL::VertexShader* vertShader = new GLSL::VertexShader();
+//  GLSL::GeometryShader* geomShader = new GLSL::GeometryShader();
+  GLSL::VertexShader* vertShader   = new GLSL::VertexShader();
 
   vertShader->setSource(progGen.getVertexShaderCode());
+  progGen.getGeometryShaderCode();
+  //geomShader->setSource(progGen.getGeometryShaderCode());
   fragShader->setSource(progGen.getFragmentShaderCode());
 
   vertShader->compile();
+  //geomShader->compile();
   fragShader->compile();
 
 
   GLSL::Program* prog = new GLSL::Program();
 
   prog->attach(vertShader);
+  //prog->attach(geomShader);
   prog->attach(fragShader);
 
   prog->link();
