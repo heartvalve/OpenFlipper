@@ -514,6 +514,9 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
         outStrm << "\n";
 
+        // TODO: Remove!!!
+        _list[i]->shaderDesc.geometryShader = true;
+
         outStrm << _list[i]->shaderDesc.toString();
 
         ShaderProgGenerator progGen(&(_list[i]->shaderDesc));
@@ -526,7 +529,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n---------------------geometry-shader--------------------\n\n";
         if ( progGen.hasGeometryShader() )
           for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-            outStrm << progGen.getGeometryShaderCode()[i] << "";
+            outStrm << progGen.getGeometryShaderCode()[i] << "\n";
         else
           outStrm << "No geometry shader\n";
         outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
@@ -545,6 +548,9 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
       if ( _outputShaders ) {
 
         outStrm << "\n";
+
+        // TODO: Remove!!!
+        _list[i]->shaderDesc.geometryShader = true;
 
         outStrm << renderObjects_[i].shaderDesc.toString();
 

@@ -58,8 +58,6 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
 
-#include <QGLFormat>
-
 namespace ACG
 {
 
@@ -67,16 +65,6 @@ namespace ACG
 
 ShaderCache::ShaderCache()
 {
-  // Check for geometry shader support on creation
-
-  // We need at least version 2.0 or higher
-  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-
-  geometryShaderSupported_ = flags.testFlag(QGLFormat::OpenGL_Version_3_2);
-
-  if ( geometryShaderSupported_ )
-    std::cerr << "ok" << std::endl;
-
 }
 
 ShaderCache::~ShaderCache()
@@ -121,7 +109,6 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   }
 
   // glsl program not in cache, generate shaders
-
   ShaderProgGenerator progGen(_desc, _usage);
 
 #ifdef SG_DEBUG_OUTPUT
@@ -178,7 +165,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   prog->attach(fragShader);
 
   // Check if we have a geometry shader and if we have support for it, enable it here
-  if ( geometryShaderSupported_ && progGen.hasGeometryShader() ) {
+  if ( progGen.hasGeometryShader() ) {
     GLSL::GeometryShader* geomShader = new GLSL::GeometryShader();
     geomShader->setSource(progGen.getGeometryShaderCode());
     geomShader->compile();
