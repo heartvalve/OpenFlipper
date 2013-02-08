@@ -102,10 +102,12 @@ protected:
 
     // string-pointer in ShaderGenDesc may not be permanent,
     // so copy string data here
-    std::string strVertexTemplate; 
+    std::string strVertexTemplate;
+    std::string strGeometryTemplate;
     std::string strFragmentTemplate;
   };
 
+  /// \brief Returns true, if the shaders are not equal
   int compareShaderGenDescs(const CacheEntry* _a, const CacheEntry* _b);
 
 

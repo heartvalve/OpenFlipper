@@ -500,17 +500,60 @@ void IRenderer::dumpRenderObjectsToFile(const char* _fileName, ACG::RenderObject
 }
 
 
-QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list) {
+QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, bool _outputShaders ) {
 
   QString objectString;
 
   QTextStream outStrm(&objectString);
   for (int i = 0; i < getNumRenderObjects(); ++i)
   {
-    if (_list)
+    if (_list) {
       outStrm << "\n" << _list[i]->toString();
-    else
+
+      if ( _outputShaders ) {
+
+        outStrm << "\n";
+
+        outStrm << _list[i]->shaderDesc.toString();
+
+        ShaderProgGenerator progGen(&(_list[i]->shaderDesc));
+
+        outStrm << "\n---------------------vertex-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
+          outStrm << progGen.getVertexShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
+
+        outStrm << "\n---------------------fragment-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
+          outStrm << progGen.getFragmentShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-fragment-shader--------------------\n\n";
+      }
+
+    } else {
       outStrm << "\n" << renderObjects_[i].toString();
+
+
+      if ( _outputShaders ) {
+
+        outStrm << "\n";
+
+        outStrm << _list[i]->shaderDesc.toString();
+
+        ShaderProgGenerator progGen(&(_list[i]->shaderDesc));
+
+        outStrm << "\n---------------------vertex-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
+          outStrm << progGen.getVertexShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
+
+        outStrm << "\n---------------------fragment-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
+          outStrm << progGen.getFragmentShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-fragment-shader--------------------\n\n";
+
+      }
+    }
+
   }
 
   return objectString;
