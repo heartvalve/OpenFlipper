@@ -75,6 +75,14 @@ enum ShaderGenShadeMode
   SG_SHADE_FORCE_DWORD = 0xFFFFFFFF
 };
 
+enum GeometryShaderInput {
+  SG_GEOMETRY_IN_TRIANGLES = 0,
+  SG_GEOMETRY_IN_TRIANGLES_ADJACENCY,
+  SG_GEOMETRY_IN_LINES,
+  SG_GEOMETRY_IN_LINES_ADJACENCY,
+  SG_GEOMETRY_IN_POINTS
+};
+
 enum GeometryShaderOutput {
   SG_GEOMETRY_OUT_TRIANGLE_STRIP = 0,
   SG_GEOMETRY_OUT_LINE_STRIP,
@@ -101,6 +109,9 @@ struct ShaderGenDesc
 
   /// Flag setting, if we want a geometry shader
   bool geometryShader;
+
+  /// Defines what kind of primitives are the input by the geometry shader
+  GeometryShaderInput geometryShaderInput;
 
   /// Defines what kind of primitives are created by the geometry shader
   GeometryShaderOutput geometryShaderOutput;

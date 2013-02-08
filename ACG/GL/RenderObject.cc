@@ -304,6 +304,52 @@ QString RenderObject::toString() const
   return result;
 }
 
+void RenderObject::setGeometryShaderInputFromDrawCall(GLenum _mode) {
+
+  switch (_mode) {
+    case GL_POINTS:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_POINTS;
+      break;
+    case GL_LINE_STRIP:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+      break;
+    case GL_LINE_LOOP:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+      break;
+    case GL_LINES:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+      break;
+    case GL_LINES_ADJACENCY:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES_ADJACENCY;
+      break;
+    case GL_TRIANGLE_STRIP:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    case GL_TRIANGLE_FAN:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    case GL_TRIANGLES:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    case GL_TRIANGLES_ADJACENCY:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES_ADJACENCY;
+      break;
+    case GL_QUAD_STRIP:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    case GL_QUADS:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    case GL_POLYGON:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      break;
+    default:
+      std::cerr << "setGeometryShaderInputFromDrawCall : Unknown enum for primitive type!" << std::endl;
+      break;
+  }
+
+}
+
 
 } // namespace ACG end
 

@@ -116,11 +116,25 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 }
 
 void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
-  /// TODO
 
-  // TODO: Add shader description point to define geometry shader input
-  // Must match the input data in the draw call!
-  addStringToList("layout(triangles)", &inputs_, "", " in;");
+  // Define input of the geometry shader
+  switch (_desc->geometryShaderInput) {
+    case SG_GEOMETRY_IN_TRIANGLES: // 3 points of the triangle
+      addStringToList("layout(triangles)", &inputs_, "", " in;");
+      break;
+    case SG_GEOMETRY_IN_TRIANGLES_ADJACENCY: // 6 points (defining 3 triangles , one before, current, one after)
+      addStringToList("layout(triangles_adjacency)", &inputs_, "", " in;");
+      break;
+    case SG_GEOMETRY_IN_LINES: // 2 Points describing the line
+      addStringToList("layout(lines)", &inputs_, "", " in;");
+      break;
+    case SG_GEOMETRY_IN_LINES_ADJACENCY: // 4 points ( 1 before, middle two defining line, last one
+      addStringToList("layout(lines_adjacency)", &inputs_, "", " in;");
+      break;
+    case SG_GEOMETRY_IN_POINTS: // Single points
+      addStringToList("layout(points)", &inputs_, "", " in;");
+      break;
+  }
 
   // Define output of geometry shader
   switch (_desc->geometryShaderOutput) {
@@ -791,12 +805,12 @@ void ShaderProgGenerator::addGeometryBeginCode(QStringList* _code)
 //  }
 //
 //
-//  // apply modifiers
-//  for (int i = 0; i < numModifiers_; ++i)
-//  {
-//    if (usage_ & (1 << i))
-//      modifiers_[i]->modifyFragmentBeginCode(_code);
-//  }
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyGeometryBeginCode(_code);
+  }
 }
 
 void ShaderProgGenerator::addGeometryEndCode(QStringList* _code)
@@ -805,12 +819,12 @@ void ShaderProgGenerator::addGeometryEndCode(QStringList* _code)
 
 //  _code->push_back("outFragment = sg_cColor;");
 //
-//  // apply modifiers
-//  for (int i = 0; i < numModifiers_; ++i)
-//  {
-//    if (usage_ & (1 << i))
-//      modifiers_[i]->modifyFragmentEndCode(_code);
-//  }
+  // apply modifiers
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      modifiers_[i]->modifyGeometryEndCode(_code);
+  }
 }
 
 
