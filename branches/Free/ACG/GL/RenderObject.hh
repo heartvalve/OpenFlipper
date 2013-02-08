@@ -144,7 +144,8 @@ struct ACGDLLEXPORT RenderObject
    *
    *  PrimitiveType must be one of the following:
    *  GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP,
-   *  GL_TRIANGLE_FAN, GL_TRIANGLES, GL_QUAD_STRIP, GL_QUADS, GL_POLYGON
+   *  GL_TRIANGLE_FAN, GL_TRIANGLES, GL_QUAD_STRIP, GL_QUADS, GL_POLYGON,
+   *  GL_TRIANGLES_ADJACENCY, GL_LINES_ADJACENCY
    */
   GLenum primitiveMode;
 
@@ -241,6 +242,7 @@ struct ACGDLLEXPORT RenderObject
     case GL_ELEMENT_ARRAY_BUFFER: indexBuffer = buffer; break;
     }
   }
+
   void glDrawArrays(GLenum mode, GLint first, GLsizei count)
   {
     indexBuffer = 0;
@@ -250,7 +252,10 @@ struct ACGDLLEXPORT RenderObject
     primitiveMode = mode;
     indexOffset = first;
     numIndices = count;
+
+    setGeometryShaderInputFromDrawCall(mode);
   }
+
   void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
   {
     primitiveMode = mode;
@@ -258,7 +263,9 @@ struct ACGDLLEXPORT RenderObject
     indexType = type;
 
     sysmemIndexBuffer = indices;
+    setGeometryShaderInputFromDrawCall(mode);
   }
+
   void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
   {
     colorWriteMask[0] = r; colorWriteMask[1] = g; colorWriteMask[2] = b; colorWriteMask[3] = a;
@@ -284,10 +291,14 @@ struct ACGDLLEXPORT RenderObject
   */
   virtual void executeImmediateMode();
 
-
   /** Returns a text representation of the RenderObject for debugging purposes.
   */
   QString toString() const;
+
+  /** Used by the draw functions. Sets the correct input primitive type for the geometry shader.
+   *
+   */
+  void setGeometryShaderInputFromDrawCall(GLenum _mode);
 };
 
 //=============================================================================
