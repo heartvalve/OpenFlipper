@@ -337,7 +337,7 @@ void RenderObject::setGeometryShaderInputFromDrawCall(GLenum _mode) {
     case GL_POLYGON:
       shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
       break;
-#ifndef APPLE
+#ifndef ARCH_DARWIN
     case GL_LINES_ADJACENCY:
       shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES_ADJACENCY;
       break;
