@@ -105,7 +105,7 @@ if (resuldList.length != elements.length)
 }
 for (i = 0; i < resultId; ++i)
 {
-   if (resuldList[i] != groupId[i])
+   if (!resuldList.hasObject(groupId[i]))
   {
     print("error: getGroupElements")
     print("id of received object differs")
