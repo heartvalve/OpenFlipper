@@ -177,7 +177,6 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   prog->attach(vertShader);
   prog->attach(fragShader);
 
-
   // Check if we have a geometry shader and if we have support for it, enable it here
   if ( geometryShaderSupported_ && progGen.hasGeometryShader() ) {
     GLSL::GeometryShader* geomShader = new GLSL::GeometryShader();
