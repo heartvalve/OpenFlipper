@@ -50,6 +50,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#include <QGLFormat>
 
 
 namespace ACG
@@ -103,12 +104,12 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
   std::string strColorOut = "";
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat out vec4 outColor;";
+    strColorOut = "flat out vec4 outVertexColor;";
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorOut = "vec4 outColor";
+      strColorOut = "vec4 outVertexColor";
   }
 
   if (strColorOut.size())
@@ -149,6 +150,9 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
       break;
   }
 
+  addInput("outVertexColor[]");
+  addOutput("outGeometryColor");
+
   // TODO: Correctly pass information about the available data
 //  addStringToList("VertexData {", &inputs_, "in ", "");
 //  addStringToList("vec2 texCoord;", &inputs_, "", "");
@@ -169,13 +173,20 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
 
   std::string strColorOut = "";
 
+
+  std::string inputColorName = "outVertexColor";
+
+  if ( _desc->geometryShader ) {
+    inputColorName = "outGeometryColor";
+  }
+
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat in vec4 outColor;";
+    strColorOut = "flat in vec4 " + inputColorName + ";";
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorOut = "vec4 outColor";
+      strColorOut = "vec4 " + inputColorName + ";";
   }
 
   if (strColorOut.size())
@@ -403,6 +414,10 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
   {
     memcpy(&desc_, _desc, sizeof(ShaderGenDesc));
 
+    // We need at least version 2.0 or higher to support geometry shaders
+    QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+    desc_.geometryShader &= flags.testFlag(QGLFormat::OpenGL_Version_3_2);
+
     loadLightingFunctions();
 
     generateShaders();
@@ -583,8 +598,6 @@ void ShaderProgGenerator::buildVertexShader()
 
   }
 
-
-
   vertex_->buildShaderCode(&mainCode);
 
 }
@@ -640,7 +653,7 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
     desc_.shadeMode == SG_SHADE_FLAT ||
     desc_.vertexColors)
-    _code->push_back("outColor = sg_cColor;");
+    _code->push_back("outVertexColor = sg_cColor;");
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
@@ -931,9 +944,14 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-    desc_.shadeMode == SG_SHADE_FLAT ||
-    desc_.vertexColors)
-    _code->push_back("sg_cColor = outColor;");
+      desc_.shadeMode == SG_SHADE_FLAT    ||
+      desc_.vertexColors)
+  {
+    if ( desc_.geometryShader )
+      _code->push_back("sg_cColor = outGeometryColor;");
+    else
+      _code->push_back("sg_cColor = outVertexColor;");
+  }
 
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
