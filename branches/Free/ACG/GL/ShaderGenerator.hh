@@ -90,9 +90,12 @@ struct ShaderGenDesc
   const char* geometryTemplateFile;
   const char* fragmentTemplateFile;
 
-
   /// convert ShaderGenDesc to string format for debugging
   QString toString() const;
+
+  /// Flag setting, if we want a geometry shader
+  bool geometryShader;
+
 };
 
 
@@ -621,6 +624,8 @@ public:
   @return modifier ID
   */
   static unsigned int registerModifier(ShaderModifier* _modifier);
+
+  bool hasGeometryShader() { return desc_.geometryShader; };
 
 private:
 

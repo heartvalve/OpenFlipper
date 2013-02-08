@@ -663,6 +663,10 @@ void ShaderProgGenerator::buildGeometryShader()
 
   delete geometry_;
 
+  // Only build a geometry shader if enabled
+  if ( !desc_.geometryShader )
+    return;
+
   geometry_  = new ShaderGenerator();
 
 
