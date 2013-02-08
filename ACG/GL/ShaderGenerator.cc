@@ -447,7 +447,7 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
     std::cout << "error: call ShaderProgGenerator::setShaderDir() first!" << std::endl;
   else
   {
-    memcpy(&desc_, _desc, sizeof(ShaderGenDesc));
+    desc_ = *_desc;
 
     // We need at least version 2.0 or higher to support geometry shaders
     QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
@@ -914,9 +914,6 @@ void ShaderProgGenerator::buildFragmentShader()
       fragment_->addLight(i, desc_.lightTypes[i]);
   }
 
-
-
-
   // assemble main function
   QStringList mainCode;
 
@@ -1112,16 +1109,17 @@ void ShaderProgGenerator::saveFragmentShToFile(const char* _fileName)
 
 void ShaderProgGenerator::loadShaderTemplateFromFile()
 {
-  if (desc_.vertexTemplateFile)
+  if (!desc_.vertexTemplateFile.isEmpty())
     loadStringListFromFile(desc_.vertexTemplateFile, &vertexTemplate_);
-  if (desc_.fragmentTemplateFile)
+  if (!desc_.fragmentTemplateFile.isEmpty())
     loadStringListFromFile(desc_.fragmentTemplateFile, &fragmentTemplate_);
-  if (desc_.geometryTemplateFile)
-     loadStringListFromFile(desc_.geometryTemplateFile, &geometryTemplate_);
+  if (!desc_.geometryTemplateFile.isEmpty())
+    loadStringListFromFile(desc_.geometryTemplateFile, &geometryTemplate_);
 
-  vertexShaderFile_ = desc_.vertexTemplateFile;
-  fragmentShaderFile_ = desc_.fragmentTemplateFile;
+  vertexShaderFile_   = desc_.vertexTemplateFile;
   geometryShaderFile_ = desc_.geometryTemplateFile;
+  fragmentShaderFile_ = desc_.fragmentTemplateFile;
+
 }
 
 QString ShaderProgGenerator::getPathName(QString _strFileName)
@@ -1210,10 +1208,13 @@ QString ShaderGenDesc::toString() const
   resStrm << "\nshaderDesc.vertexColors: " << vertexColors;
   resStrm << "\nshaderDesc.textured: " << textured;
 
-  if (vertexTemplateFile)
+  if (!vertexTemplateFile.isEmpty())
     resStrm << "\nshaderDesc.vertexTemplateFile: " << vertexTemplateFile;
 
-  if (fragmentTemplateFile)
+  if (!geometryTemplateFile.isEmpty())
+    resStrm << "\nshaderDesc.geometryTemplateFile: " << geometryTemplateFile;
+
+  if (!fragmentTemplateFile.isEmpty())
     resStrm << "\nshaderDesc.fragmentTemplateFile: " << fragmentTemplateFile;
 
   return res;

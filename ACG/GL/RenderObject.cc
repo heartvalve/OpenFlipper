@@ -193,7 +193,6 @@ RenderObject::RenderObject()
   modelview = GLMatrixf(I);
   proj = modelview;
 
-  memset(&shaderDesc, 0, sizeof(shaderDesc));
   colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
 }
 

@@ -89,8 +89,50 @@ enum GeometryShaderOutput {
   SG_GEOMETRY_OUT_POINTS
 };
 
-struct ShaderGenDesc
+class ShaderGenDesc
 {
+
+public:
+  ShaderGenDesc() :
+    numLights(0),
+    shadeMode(SG_SHADE_UNLIT),
+    vertexColors(false),
+    textured(false),
+    vertexTemplateFile(""),
+    geometryTemplateFile(""),
+    fragmentTemplateFile(""),
+    geometryShader(false),
+    geometryShaderInput(SG_GEOMETRY_IN_TRIANGLES),
+    geometryShaderOutput(SG_GEOMETRY_OUT_TRIANGLE_STRIP),
+    geometryShaderMaxOutputPrimitives(3)
+  {
+    for ( unsigned int i = 0 ; i < SG_MAX_SHADER_LIGHTS ; ++i)
+      lightTypes[i] = SG_LIGHT_DIRECTIONAL;
+
+  }
+
+//  In case, something crashes with the light types, try this hammer ;-)
+//  const ShaderGenDesc& operator= (const ShaderGenDesc& _rhs) {
+//
+//    numLights                         = _rhs.numLights;
+//
+//    std::copy(_rhs.lightTypes,_rhs.lightTypes+SG_MAX_SHADER_LIGHTS,lightTypes);
+//
+//    shadeMode                         = _rhs.shadeMode;
+//    vertexColors                      = _rhs.vertexColors;
+//    textured                          = _rhs.textured;
+//    vertexTemplateFile                = _rhs.vertexTemplateFile;
+//    geometryTemplateFile              = _rhs.geometryTemplateFile;
+//    fragmentTemplateFile              = _rhs.fragmentTemplateFile;
+//    geometryShader                    = _rhs.geometryShader;
+//    geometryShaderInput               = _rhs.geometryShaderInput;
+//    geometryShaderOutput              = _rhs.geometryShaderOutput;
+//    geometryShaderMaxOutputPrimitives = _rhs.geometryShaderMaxOutputPrimitives;
+//
+//    return *this;
+//  }
+
+
   int numLights;
   ShaderGenLightType lightTypes[SG_MAX_SHADER_LIGHTS];
 
@@ -100,9 +142,9 @@ struct ShaderGenDesc
   bool textured;
 
   // optionally specify shader template file names
-  const char* vertexTemplateFile;
-  const char* geometryTemplateFile;
-  const char* fragmentTemplateFile;
+  QString vertexTemplateFile;
+  QString geometryTemplateFile;
+  QString fragmentTemplateFile;
 
   /// convert ShaderGenDesc to string format for debugging
   QString toString() const;
