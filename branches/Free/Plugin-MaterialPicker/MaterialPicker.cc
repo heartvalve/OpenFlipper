@@ -541,6 +541,7 @@ void MaterialPicker::createContextMenu(const QPoint& _point)
 
   menu->addSeparator();
 
+  //add hotkey selectors
   QSignalMapper* signalMapper = new QSignalMapper(menu);
   for (unsigned i = 0; i < supportedKeys_; ++i)
   {
@@ -548,6 +549,8 @@ void MaterialPicker::createContextMenu(const QPoint& _point)
     connect(action,SIGNAL(triggered(bool)),signalMapper,SLOT(map()));
     signalMapper->setMapping(action,Qt::Key_1+i);
     std::map<int,size_t>::iterator iter = shortKeyRow_.find(Qt::Key_1+i);
+
+    //Disable already selected hotkey number
     if (iter != shortKeyRow_.end() && iter->second == static_cast<size_t>(materialListWidget_->currentRow()))
       action->setDisabled(true);
   }

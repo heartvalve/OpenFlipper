@@ -132,6 +132,9 @@ public:
     /// Get the TreeItem corresponding to a given ModelIndex
     TreeItem *getItem(const QModelIndex &_index) const;
 
+    /// Get the TreeItem corresponding to a given OpenFlipper ObjectID
+    TreeItem *getItem(const int _id) const;
+
     /// Get the name of a TreeItem corresponding to a given ModelIndex
     QString itemName(const QModelIndex &_index) const;
 

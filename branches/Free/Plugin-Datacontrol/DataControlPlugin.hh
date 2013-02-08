@@ -186,7 +186,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     //variables to restrict propagation direction
     int onlyDown_;
     int onlyUp_;
-    
+    //defines, which selection column needs an update if not -1
+    // 2: source 3: target
+    int columnFromGUI_;
+
 /** @} */
 
 //===========================================================================
