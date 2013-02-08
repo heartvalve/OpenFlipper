@@ -515,7 +515,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n";
 
         // TODO: Remove!!!
-        _list[i]->shaderDesc.geometryShader = true;
+//        _list[i]->shaderDesc.geometryShader = true;
 
         outStrm << _list[i]->shaderDesc.toString();
 
@@ -550,7 +550,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n";
 
         // TODO: Remove!!!
-        _list[i]->shaderDesc.geometryShader = true;
+        //_list[i]->shaderDesc.geometryShader = true;
 
         outStrm << renderObjects_[i].shaderDesc.toString();
 
