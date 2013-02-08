@@ -392,6 +392,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Print information about all open objects to the console
         void printObjectInfoToLog();
 
+        /// Get all elements of the given group
+        IdList getGroupElements(int _groupId);
+
 /** @} */
 
   public slots:
