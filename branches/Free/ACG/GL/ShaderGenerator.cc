@@ -104,12 +104,12 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
   std::string strColorOut = "";
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat out vec4 outVertexColor;";
+    strColorOut = "flat out vec4 outColor;";
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorOut = "vec4 outVertexColor";
+      strColorOut = "vec4 outColor";
   }
 
   if (strColorOut.size())
@@ -173,20 +173,13 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
 
   std::string strColorOut = "";
 
-
-  std::string inputColorName = "outVertexColor";
-
-  if ( _desc->geometryShader ) {
-    inputColorName = "outGeometryColor";
-  }
-
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat in vec4 " + inputColorName + ";";
+    strColorOut = "flat in vec4 outColor;";
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorOut = "vec4 " + inputColorName + ";";
+      strColorOut = "vec4 outColor;";
   }
 
   if (strColorOut.size())
@@ -653,7 +646,7 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
     desc_.shadeMode == SG_SHADE_FLAT ||
     desc_.vertexColors)
-    _code->push_back("outVertexColor = sg_cColor;");
+    _code->push_back("outColor = sg_cColor;");
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
@@ -947,10 +940,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
       desc_.shadeMode == SG_SHADE_FLAT    ||
       desc_.vertexColors)
   {
-    if ( desc_.geometryShader )
-      _code->push_back("sg_cColor = outGeometryColor;");
-    else
-      _code->push_back("sg_cColor = outVertexColor;");
+    _code->push_back("sg_cColor = outColor;");
   }
 
 
