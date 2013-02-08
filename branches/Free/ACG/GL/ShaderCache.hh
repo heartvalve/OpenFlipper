@@ -100,9 +100,9 @@ protected:
 
     // string-pointer in ShaderGenDesc may not be permanent,
     // so copy string data here
-    std::string strVertexTemplate;
-    std::string strGeometryTemplate;
-    std::string strFragmentTemplate;
+    QString strVertexTemplate;
+    QString strGeometryTemplate;
+    QString strFragmentTemplate;
   };
 
   /// \brief Returns true, if the shaders are not equal

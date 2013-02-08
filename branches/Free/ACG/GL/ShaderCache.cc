@@ -92,13 +92,13 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   newEntry.desc = *_desc;
   newEntry.usage = _usage;
 
-  if (_desc->fragmentTemplateFile)
+  if (!_desc->fragmentTemplateFile.isEmpty())
     newEntry.strFragmentTemplate = _desc->fragmentTemplateFile;
 
-  if (_desc->geometryTemplateFile)
+  if (!_desc->geometryTemplateFile.isEmpty())
       newEntry.strGeometryTemplate = _desc->geometryTemplateFile;
 
-  if (_desc->vertexTemplateFile)
+  if (!_desc->vertexTemplateFile.isEmpty())
     newEntry.strVertexTemplate = _desc->vertexTemplateFile;
 
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
