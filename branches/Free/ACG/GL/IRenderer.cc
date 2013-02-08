@@ -523,6 +523,12 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
           outStrm << progGen.getVertexShaderCode()[i] << "\n";
         outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
 
+        outStrm << "\n---------------------geometry-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+          outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
+
+
         outStrm << "\n---------------------fragment-shader--------------------\n\n";
         for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
           outStrm << progGen.getFragmentShaderCode()[i] << "\n";
@@ -537,14 +543,19 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
         outStrm << "\n";
 
-        outStrm << _list[i]->shaderDesc.toString();
+        outStrm << renderObjects_[i].shaderDesc.toString();
 
-        ShaderProgGenerator progGen(&(_list[i]->shaderDesc));
+        ShaderProgGenerator progGen(&(renderObjects_[i].shaderDesc));
 
         outStrm << "\n---------------------vertex-shader--------------------\n\n";
         for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
           outStrm << progGen.getVertexShaderCode()[i] << "\n";
         outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
+
+        outStrm << "\n---------------------geometry-shader--------------------\n\n";
+        for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+          outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+        outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
 
         outStrm << "\n---------------------fragment-shader--------------------\n\n";
         for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)

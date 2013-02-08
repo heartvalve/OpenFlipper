@@ -316,6 +316,10 @@ public:
   */
   void initVertexShaderIO(const ShaderGenDesc* _desc);
   
+  /** \brief Adds fitting vertex shader io for a given description
+  */
+  void initGeometryShaderIO(const ShaderGenDesc* _desc);
+
   /** \brief Adds fitting fragment shader io for a given description
   */
   void initFragmentShaderIO(const ShaderGenDesc* _desc);
@@ -478,6 +482,46 @@ public:
    */
   virtual void modifyVertexEndCode(QStringList* _code) {}
 
+  /** \brief Add your own inputs/outputs to the geometry shader.
+   *
+   * your implementation may look like this:
+   *
+   * \code
+   * _shader->addInput("sampler2D depthSampler");
+   * _shader->addUniform("vec4 shaderParam");
+   * \endcode
+   *
+   * @param _shader shader interface
+  */
+  virtual void modifyGeometryIO(ShaderGenerator* _shader) {}
+
+  /** \brief Append code the the geometry shader.
+   *
+   * Refer to the generation structure (\ref ShaderGenerator_page ) to see where
+   * your code is added and which variables you can modify.
+   * Use
+   * \code
+   *   _code->push_back("...");
+   * \endcode
+   * to insert your code here
+   *
+   * @param _code string list of shader code.
+  */
+  virtual void modifyGeometryBeginCode(QStringList* _code) {}
+
+  /** \brief Append code the the geometry shader.
+   *
+   *  Refer to the generation structure (\ref ShaderGenerator_page )
+   *  to see where your code is added and which variables you can modify.
+   *  Use
+   *  \code
+   *    _code->push_back("...");
+   *  \endcode
+   *  to insert your code here.
+   * @param _code string list of shader code.
+  */
+  virtual void modifyGeometryEndCode(QStringList* _code) {}
+
 
   /** \brief Add your own inputs/outputs to the fragment shader.
    *
@@ -506,7 +550,7 @@ public:
   */
   virtual void modifyFragmentBeginCode(QStringList* _code) {}
 
-  /** \brief Append code the the vertex shader.
+  /** \brief Append code the the fragment shader.
    *
    *  Refer to the generation structure (\ref ShaderGenerator_page )
    *  to see where your code is added and which variables you can modify.
@@ -554,11 +598,16 @@ public:
 
 
   void saveVertexShToFile(const char* _fileName);
+  void saveGeometryShToFile(const char* _fileName);
   void saveFragmentShToFile(const char* _fileName);
 
   /** \brief Returns generated vertex shader code
   */
   const QStringList& getVertexShaderCode();
+
+  /** \brief Returns generated geometry shader code
+  */
+  const QStringList& getGeometryShaderCode();
 
   /** \brief Returns generated fragment shader code
   */
@@ -581,12 +630,15 @@ private:
 
   void generateShaders();
 
-
   void buildVertexShader();
+  void buildGeometryShader();
   void buildFragmentShader();
 
   void addVertexBeginCode(QStringList* _code);
   void addVertexEndCode(QStringList* _code);
+
+  void addGeometryBeginCode(QStringList* _code);
+  void addGeometryEndCode(QStringList* _code);
 
   void addFragmentBeginCode(QStringList* _code);
   void addFragmentEndCode(QStringList* _code);
@@ -616,9 +668,11 @@ private:
   static void loadStringListFromFile(QString _fileName, QStringList* _out);
 
   ShaderGenerator* vertex_;
+  ShaderGenerator* geometry_;
   ShaderGenerator* fragment_;
 
   QStringList vertexTemplate_;
+  QStringList geometryTemplate_;
   QStringList fragmentTemplate_;
 
   ShaderGenDesc   desc_;
@@ -631,6 +685,7 @@ private:
 
   /// path + filename to shader templates
   QString vertexShaderFile_;
+  QString geometryShaderFile_;
   QString fragmentShaderFile_;
 
 
