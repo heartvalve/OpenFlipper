@@ -96,7 +96,7 @@ void RenderObjectHighlighter::init() {
   typeFormat_.setFontWeight(QFont::Bold);
 
   // Types
-  typePatterns_ << "in" << "out" << "mat3" << "mat4" << "vec2" << "vec3" << "vec4" << "float" << "double" <<"uniform" ;
+  typePatterns_ << "in" << "out" << "mat3" << "mat4" << "vec2" << "vec3" << "vec4" << "float" << "double" <<"uniform" << "layout" ;
 
   update();
 }
@@ -109,6 +109,11 @@ void RenderObjectHighlighter::update() {
 
   // Define rule
   rule.pattern = QRegExp("#define.*");
+  rule.format =  defineFormat_;
+  highlightingRules_.append(rule);
+
+  // version rule
+  rule.pattern = QRegExp("#version.*");
   rule.format =  defineFormat_;
   highlightingRules_.append(rule);
 
