@@ -78,8 +78,10 @@ ShaderGenerator::~ShaderGenerator()
 
 void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 {
+
+
   addInput("vec4 inPosition");
-  addOutput("vec4 outPosCS");
+  addOutput("vec4 outVertexPosCS");
 
 
   if (_desc->shadeMode != SG_SHADE_UNLIT)
@@ -88,7 +90,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
   if (_desc->textured)
   {
     addInput("vec2 inTexCoord");
-    addOutput("vec2 outTexCoord");
+    addOutput("vec2 outVertexTexCoord");
   }
   if (_desc->vertexColors)
     addInput("vec4 inColor");
@@ -96,20 +98,21 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 
   if (_desc->shadeMode == SG_SHADE_PHONG)
   {
-    addOutput("vec3 outNormal");
-    addOutput("vec4 outPosVS");
+    addOutput("vec3 outVertexNormal");
+    addOutput("vec4 outVertexPosVS");
   }
 
 
   std::string strColorOut = "";
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat out vec4 outColor;";
-  else
-  {
-    if (_desc->shadeMode == SG_SHADE_GOURAUD ||
-      _desc->vertexColors)
-      strColorOut = "vec4 outColor";
+    if (_desc->geometryShader)
+      strColorOut = "out vec4 outVertexColor;";
+    else
+      strColorOut = "flat out vec4 outVertexColor;";
+  else {
+    if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors)
+      strColorOut = "vec4 outVertexColor";
   }
 
   if (strColorOut.size())
@@ -150,8 +153,40 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
       break;
   }
 
-  addInput("outVertexColor[]");
-  addOutput("outGeometryColor");
+  addInput("vec4 outVertexPosCS[]");
+  addOutput("vec4 outGeometryPosCS");
+
+  if (_desc->textured) {
+    addInput("vec2 outVertexTexCoord[]");
+    addOutput("vec2 outGeometryTexCoord");
+  }
+
+
+  if (_desc->shadeMode == SG_SHADE_PHONG)
+  {
+    addInput("vec3 outVertexNormal[]");
+    addInput("vec4 outVertexPosVS[]");
+
+    addOutput("vec3 outGeometryNormal");
+    addOutput("vec4 outGeometryPosVS");
+  }
+
+  QString strColorOut = "";
+
+  if (_desc->shadeMode == SG_SHADE_FLAT || _desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors) {
+    addInput("vec4 outVertexColor[]");
+
+
+    if (_desc->shadeMode == SG_SHADE_FLAT)
+      strColorOut = "flat out vec4 outGeometryColor;";
+    else {
+      if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors)
+        strColorOut = "vec4 outGeometryColor";
+    }
+
+    addOutput(strColorOut);
+  }
+
 
   // TODO: Correctly pass information about the available data
 //  addStringToList("VertexData {", &inputs_, "in ", "");
@@ -166,30 +201,37 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
 
 void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
 {
+
+  QString inputShader = "Vertex";
+
+  if ( _desc->geometryShader )
+    inputShader = "Geometry";
+
+
   if (_desc->textured)
-    addInput("vec2 outTexCoord");
+    addInput("vec2 out"+inputShader+"TexCoord");
 
-  addInput("vec4 outPosCS");
+  addInput("vec4 out"+inputShader+"PosCS");
 
-  std::string strColorOut = "";
+  QString strColorIn = "";
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorOut = "flat in vec4 outColor;";
+    strColorIn = "flat in vec4 out"+inputShader+"Color;";
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorOut = "vec4 outColor;";
+      strColorIn = "vec4 out"+inputShader+"Color;";
   }
 
-  if (strColorOut.size())
-    addInput(strColorOut.c_str());
+  if (strColorIn.size())
+    addInput(strColorIn);
 
 
   if (_desc->shadeMode == SG_SHADE_PHONG)
   {
-    addInput("vec3 outNormal");
-    addInput("vec4 outPosVS");
+    addInput("vec3 out"+inputShader+"Normal");
+    addInput("vec4 out"+inputShader+"PosVS");
   }
 
   addOutput("vec4 outFragment");
@@ -638,20 +680,20 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
 void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
 {
   _code->push_back("gl_Position = sg_vPosPS;");
-  _code->push_back("outPosCS = sg_vPosPS;");
+  _code->push_back("outVertexPosCS = sg_vPosPS;");
 
   if (desc_.textured)
-    _code->push_back("outTexCoord = sg_vTexCoord;");
+    _code->push_back("outVertexTexCoord = sg_vTexCoord;");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
     desc_.shadeMode == SG_SHADE_FLAT ||
     desc_.vertexColors)
-    _code->push_back("outColor = sg_cColor;");
+    _code->push_back("outVertexColor = sg_cColor;");
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
-    _code->push_back("outNormal = sg_vNormalVS;");
-    _code->push_back("outPosVS = sg_vPosVS;");
+    _code->push_back("outVertexNormal = sg_vNormalVS;");
+    _code->push_back("outVertexPosVS  = sg_vPosVS;");
   }
 
 
@@ -931,8 +973,14 @@ void ShaderProgGenerator::buildFragmentShader()
 
 void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 {
+
+  QString inputShader = "Vertex";
+
+  if ( desc_.geometryShader )
+    inputShader = "Geometry";
+
   // support for projective texture mapping
-  _code->push_back("vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);");
+  _code->push_back("vec2 sg_vScreenPos = out" + inputShader + "PosCS.xy / out" + inputShader + "PosCS.w * 0.5 + vec2(0.5, 0.5);");
 
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
@@ -940,21 +988,21 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
       desc_.shadeMode == SG_SHADE_FLAT    ||
       desc_.vertexColors)
   {
-    _code->push_back("sg_cColor = outColor;");
+    _code->push_back("sg_cColor = out" + inputShader + "Color;");
   }
 
 
   if (desc_.shadeMode == SG_SHADE_PHONG)
   {
-    _code->push_back("vec4 sg_vPosVS = outPosVS;");
-    _code->push_back("vec3 sg_vNormalVS = outNormal;");
+    _code->push_back("vec4 sg_vPosVS = out" + inputShader + "PosVS;");
+    _code->push_back("vec3 sg_vNormalVS = out" + inputShader + "Normal;");
 
     addLightingCode(_code);
   }
 
   if (desc_.textured)
   {
-    _code->push_back("vec4 sg_cTex = texture(g_Texture0, outTexCoord);");
+    _code->push_back("vec4 sg_cTex = texture(g_Texture0, out" + inputShader + "TexCoord);");
     _code->push_back("sg_cColor *= sg_cTex;");
   }
 
