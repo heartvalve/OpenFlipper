@@ -93,7 +93,10 @@ public:
 protected:
   ShaderCache();
 
-
+  /** Flag if geometry shaders are supported
+   *  set in constructor
+   */
+  bool geometryShaderSupported_;
 
   struct CacheEntry
   {

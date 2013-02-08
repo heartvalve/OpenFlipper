@@ -49,6 +49,7 @@
 #include <iostream>
 #include <algorithm>
 
+
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
@@ -57,6 +58,8 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
 
+#include <QGLFormat>
+
 namespace ACG
 {
 
@@ -64,6 +67,15 @@ namespace ACG
 
 ShaderCache::ShaderCache()
 {
+  // Check for geometry shader support on creation
+
+  // We need at least version 2.0 or higher
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+
+  geometryShaderSupported_ = flags.testFlag(QGLFormat::OpenGL_Version_3_2);
+
+  if ( geometryShaderSupported_ )
+    std::cerr << "ok" << std::endl;
 
 }
 
@@ -135,8 +147,9 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
 
       outStrm << "\n---------------------geometry-shader--------------------\n\n";
 
-      for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-        outStrm << progGen.getVertexShaderCode()[i] << "\n";
+      if (progprogGen.hasGeometryShader() )
+        for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+          outStrm << progGen.getVertexShaderCode()[i] << "\n";
 
       outStrm << "\n---------------------fragment-shader--------------------\n\n";
 
@@ -152,24 +165,26 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   // TODO: Build geometry shader only if supported!
 
   GLSL::FragmentShader* fragShader = new GLSL::FragmentShader();
-//  GLSL::GeometryShader* geomShader = new GLSL::GeometryShader();
   GLSL::VertexShader* vertShader   = new GLSL::VertexShader();
 
   vertShader->setSource(progGen.getVertexShaderCode());
-  progGen.getGeometryShaderCode();
-  //geomShader->setSource(progGen.getGeometryShaderCode());
   fragShader->setSource(progGen.getFragmentShaderCode());
 
   vertShader->compile();
-  //geomShader->compile();
   fragShader->compile();
 
-
   GLSL::Program* prog = new GLSL::Program();
-
   prog->attach(vertShader);
-  //prog->attach(geomShader);
   prog->attach(fragShader);
+
+
+  // Check if we have a geometry shader and if we have support for it, enable it here
+  if ( geometryShaderSupported_ && progGen.hasGeometryShader() ) {
+    GLSL::GeometryShader* geomShader = new GLSL::GeometryShader();
+    geomShader->setSource(progGen.getGeometryShaderCode());
+    geomShader->compile();
+    prog->attach(geomShader);
+  }
 
   prog->link();
   glCheckErrors();

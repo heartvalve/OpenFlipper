@@ -524,8 +524,11 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
 
         outStrm << "\n---------------------geometry-shader--------------------\n\n";
-        for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-          outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+        if ( progGen.hasGeometryShader() )
+          for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+            outStrm << progGen.getGeometryShaderCode()[i] << "";
+        else
+          outStrm << "No geometry shader\n";
         outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
 
 
@@ -553,8 +556,11 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
         outStrm << "\n---------------------end-vertex-shader--------------------\n\n";
 
         outStrm << "\n---------------------geometry-shader--------------------\n\n";
-        for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
-          outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+        if ( progGen.hasGeometryShader() )
+          for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+            outStrm << progGen.getGeometryShaderCode()[i] << "\n";
+        else
+          outStrm << "No geometry shader\n";
         outStrm << "\n---------------------end-geometry-shader--------------------\n\n";
 
         outStrm << "\n---------------------fragment-shader--------------------\n\n";
