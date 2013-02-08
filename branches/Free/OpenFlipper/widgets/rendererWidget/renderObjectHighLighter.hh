@@ -34,63 +34,56 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13374 $                                                       *
+*   $Revision: 12438 $                                                       *
 *   $LastChangedBy: moebius $                                                *
-*   $Date: 2012-01-13 09:38:16 +0100 (Fri, 13 Jan 2012) $                     *
+*   $Date: 2011-09-22 17:16:17 +0200 (Do, 22 Sep 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-
 #pragma once
 
+#include <QSyntaxHighlighter>
 
-#include <QObject>
+#include <QHash>
+#include <QTextCharFormat>
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/RenderInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+class QTextDocument;
 
-#include <ACG/GL/IRenderer.hh>
-
-class Renderer : public QObject, BaseInterface, RenderInterface, LoggingInterface, ACG::IRenderer
+class RenderObjectHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
-    Q_INTERFACES(BaseInterface)
-    Q_INTERFACES(RenderInterface)
-    Q_INTERFACES(LoggingInterface)
 
-signals:
-  // LoggingInterface
-  void log(Logtype _type, QString _message);
-  void log(QString _message);
+  public:
+    RenderObjectHighlighter( QTextDocument* parent = 0);
+    RenderObjectHighlighter( QTextEdit* parent = 0);
 
+    /// Updates the highlighter with the current rule set defined in the patterns
+    void update();
 
-public:
-  Renderer();
-  ~Renderer();
+  protected:
 
-  QString name() { return (QString("Shader Pipeline Renderer Plugin")); };
-  QString description( ) { return (QString(tr("Shader Based Rendering Pipeline (Alpha Version!)"))); };
+    void highlightBlock(const QString &text);
 
-public slots:
-  QString version() { return QString("1.0"); };
+  private:
+    /// common initializer function called by the constructors
+    void init();
 
-  QString renderObjectsInfo(bool _outputShaderInfo) { return dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo); };
+    struct HighlightingRule
+    {
+      QRegExp pattern;
+      QTextCharFormat format;
+    };
 
-private slots:
+    QVector<HighlightingRule> highlightingRules_;
 
-  //BaseInterface
-  void initializePlugin();
-  void exit(){}
+    QRegExp vertexShaderStartExpression_;
+    QRegExp vertexShaderEndExpression_;
 
-  // RenderInterface
-  void render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
-  QString rendererName() {return QString("Alpha_Version_ShaderPipeline");}
-  void supportedDrawModes(ACG::SceneGraph::DrawModes::DrawMode& _mode) {_mode = ACG::SceneGraph::DrawModes::DEFAULT;}
-  
-  QString checkOpenGL();
+    QRegExp fragmentShaderStartExpression_;
+    QRegExp fragmentShaderEndExpression_;
 
-
+    QTextCharFormat VertexShaderFormat_;
+    QTextCharFormat FragmentShaderFormat_;
 
 };
 

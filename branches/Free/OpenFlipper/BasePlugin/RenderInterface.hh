@@ -152,9 +152,10 @@ class RenderInterface {
      * The IRenderer class already has a function called dumpCurrentRenderObjectsToString()
      * which can be used to implement this function.
      *
+     * @param _outputShaderInfo Output shader code along with the render objects
      * @return string of render objects
      */
-    virtual QString renderObjectsInfo() { return QString("Render object inforation not implemented in this plugin"); };
+    virtual QString renderObjectsInfo(bool _outputShaderInfo) { return QString("Render object inforation not implemented in this plugin"); };
 
 
 

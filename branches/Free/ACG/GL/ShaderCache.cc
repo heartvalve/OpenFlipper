@@ -95,11 +95,15 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   if (_desc->fragmentTemplateFile)
     newEntry.strFragmentTemplate = _desc->fragmentTemplateFile;
 
+  if (_desc->geometryTemplateFile)
+      newEntry.strGeometryTemplate = _desc->geometryTemplateFile;
+
   if (_desc->vertexTemplateFile)
     newEntry.strVertexTemplate = _desc->vertexTemplateFile;
 
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
   {
+    // If the shaders are equal, we return the cached entry
     if (!compareShaderGenDescs(&it->first, &newEntry))
       return it->second;
   }
@@ -139,6 +143,8 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
     }
   }
 #endif
+
+  // TODO: Geometry shader handling if supported!
 
   GLSL::FragmentShader* fragShader = new GLSL::FragmentShader();
   GLSL::VertexShader* vertShader = new GLSL::VertexShader();
@@ -188,13 +194,16 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   if (_a->strFragmentTemplate != _b->strFragmentTemplate)
     return -1;
 
+  if (_a->strGeometryTemplate != _b->strGeometryTemplate)
+      return -1;
+
   if (_a->strVertexTemplate != _b->strVertexTemplate)
     return -1;
 
   if (a->numLights)
     return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
 
-  return 0;
+  return 0; // false
 }
 
 

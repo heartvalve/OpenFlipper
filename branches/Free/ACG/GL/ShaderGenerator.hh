@@ -87,6 +87,7 @@ struct ShaderGenDesc
 
   // optionally specify shader template file names
   const char* vertexTemplateFile;
+  const char* geometryTemplateFile;
   const char* fragmentTemplateFile;
 
 

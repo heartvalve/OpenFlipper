@@ -263,9 +263,11 @@ public:
 
   /** \brief Outputs the current render objects to the string
    *
-   * @return Render object data
+   * @param _list          Pointer to a list of render objects used for output (defaults to unsorted internal list)
+   * @param _outputShaders Output the shaders used for the objects?
+   * @return Render object data in a QString
    */
-  virtual QString dumpCurrentRenderObjectsToString(ACG::RenderObject** _list = 0);
+  virtual QString dumpCurrentRenderObjectsToString(ACG::RenderObject** _list = 0, bool _outputShaders = false);
 
   //=========================================================================
   // Variables

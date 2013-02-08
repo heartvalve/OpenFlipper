@@ -74,7 +74,7 @@ public:
 public slots:
   QString version() { return QString("1.0"); };
 
-  QString renderObjectsInfo() { return dumpCurrentRenderObjectsToString(&sortedObjects_[0]); };
+  QString renderObjectsInfo(bool _outputShaderInfo) { return dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo); };
 
 
 private slots:

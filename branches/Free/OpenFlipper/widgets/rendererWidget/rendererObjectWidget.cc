@@ -50,7 +50,8 @@
 
 
 RendererObjectWidget::RendererObjectWidget(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent),
+      highlighter_(0)
 {
   setupUi(this);
 
@@ -61,6 +62,7 @@ RendererObjectWidget::RendererObjectWidget(QWidget *parent)
 
   closeButton->setIcon( QIcon(iconPath + "window-close.png"));
 
+  highlighter_ = new RenderObjectHighlighter( textBrowser->document() );
 }
 
 void RendererObjectWidget::closeEvent(QCloseEvent *event)
@@ -86,9 +88,9 @@ void RendererObjectWidget::update()
     textBrowser->insertPlainText(tr("Version:          ") + renderer->version + "\n" );
     textBrowser->insertPlainText("\n" );
 
-
+    //TODO: Flag for shader output activate/deactivate
     if (  renderManager().activeId(PluginFunctions::activeExaminer()) != 0 )
-      textBrowser->insertPlainText(renderer->plugin->renderObjectsInfo());
+      textBrowser->insertPlainText(renderer->plugin->renderObjectsInfo(true));
 
   } else {
     textBrowser->setText("Unable to get renderer!");

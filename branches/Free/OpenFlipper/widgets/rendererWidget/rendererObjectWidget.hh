@@ -44,6 +44,7 @@
 #include <QtGui>
 
 #include <OpenFlipper/common/RendererInfo.hh>
+#include "renderObjectHighLighter.hh"
 
 class RendererObjectWidget : public QDialog, public Ui::RendererObjectWidget
 {
@@ -61,6 +62,8 @@ class RendererObjectWidget : public QDialog, public Ui::RendererObjectWidget
   private:
 
     void update();
+
+    RenderObjectHighlighter* highlighter_;
 
 };
 
