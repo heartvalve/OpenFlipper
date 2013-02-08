@@ -293,9 +293,7 @@ bool BaseObject::source() {
 }
 
 void BaseObject::source(bool _source) {
-  if ( source() != _source ) {
-    setFlag("source", _source);
-  }
+  setFlag("source", _source);
 }
 
 bool BaseObject::flag(QString _flag)

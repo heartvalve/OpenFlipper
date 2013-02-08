@@ -120,96 +120,95 @@ QVariant TreeModel::data(const QModelIndex &_index, int _role) const
 
 
   switch (_index.column() ) {
-    // Name
-    case 0 :
+  // Name
+  case 0 :
 
-      // If we are setting the name, also add the icon
-      if ( _role == Qt::DecorationRole ) {
-	  if (item->dataType() == DATA_LIGHT)
-	  {
-	    LightObject* light = 0;
-	    if (item->id() != -1 && PluginFunctions::getObject( item->id(), light ) ) {
-		if (light != 0 && !light->lightSource()->enabled())
-		    return QVariant (QIcon (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightOff.png"));
-	    }
-	  }
-	  
-	  return QVariant( typeIcon(item->dataType()) );
+    // If we are setting the name, also add the icon
+    if ( _role == Qt::DecorationRole ) {
+      if (item->dataType() == DATA_LIGHT)
+      {
+        LightObject* light = 0;
+        if (item->id() != -1 && PluginFunctions::getObject( item->id(), light ) ) {
+          if (light != 0 && !light->lightSource()->enabled())
+            return QVariant (QIcon (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightOff.png"));
+        }
       }
+      return QVariant( typeIcon(item->dataType()) );
+    }
 
-      if (_role != Qt::DisplayRole && _role != Qt::EditRole )
-        return QVariant();
+    if (_role != Qt::DisplayRole && _role != Qt::EditRole )
+      return QVariant();
 
-      return QVariant(item->name());
+    return QVariant(item->name());
 
-      break;
+    break;
     // Visible
-    case 1 :
-      if (_role == Qt::CheckStateRole ) {
-        bool visible = false;
-        // target group
-        if (item->isGroup() && item->childCount() > 0)
-        {
-          QList< TreeItem* > children = item->getLeafs();
+  case 1 :
+    if (_role == Qt::CheckStateRole ) {
+      bool visible = false;
+      // target group
+      if (item->isGroup() && item->childCount() > 0)
+      {
+        QList< TreeItem* > children = item->getLeafs();
 
-          visible = children[0]->visible();
-          for (int i=0; i < children.size() ; ++i)
-          {
-            if (visible != children[i]->visible())
-              return QVariant(Qt::PartiallyChecked);
-          }
+        visible = children[0]->visible();
+        for (int i=0; i < children.size() ; ++i)
+        {
+          if (visible != children[i]->visible())
+            return QVariant(Qt::PartiallyChecked);
         }
-        else
-          visible = item->visible();
-        return (visible) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
-      return QVariant();
+      else
+        visible = item->visible();
+      return (visible) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
+    }
+    return QVariant();
     // Source
-    case 2 :
-      if (_role == Qt::CheckStateRole ) {
-        bool source = false;
-        // target group
-        if (item->isGroup() && item->childCount() > 0)
-        {
-          QList< TreeItem* > children = item->getLeafs();
+  case 2 :
+    if (_role == Qt::CheckStateRole ) {
+      bool source = false;
+      // target group
+      if (item->isGroup() && item->childCount() > 0)
+      {
+        QList< TreeItem* > children = item->getLeafs();
 
-          source = children[0]->source();
-          for (int i=0; i < children.size() ; ++i)
-          {
-            if (source != children[i]->source())
-              return QVariant(Qt::PartiallyChecked);
-          }
+        source = children[0]->source();
+        for (int i=0; i < children.size() ; ++i)
+        {
+          if (source != children[i]->source())
+            return QVariant(Qt::PartiallyChecked);
         }
-        else
-          source = item->source();
-        return (source) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
-      return QVariant();
+      else
+        source = item->source();
+      return (source) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
+    }
+    return QVariant();
 
     // Target
-    case 3 :
-      if (_role == Qt::CheckStateRole ) {
-        bool target = false;
-        // target group
-        if (item->isGroup() && item->childCount() > 0)
+  case 3 :
+    if (_role == Qt::CheckStateRole ) {
+      bool target = false;
+      // target group
+      if (item->isGroup() && item->childCount() > 0)
+      {
+        QList< TreeItem* > children = item->getLeafs();
+
+        target = children[0]->target();
+        for (int i=0; i < children.size() ; ++i)
         {
-          QList< TreeItem* > children = item->getLeafs();
-
-          target = children[0]->target();
-          for (int i=0; i < children.size() ; ++i)
-          {
-            if (target != children[i]->target())
-              return QVariant(Qt::PartiallyChecked);
-          }
+          if (target != children[i]->target())
+            return QVariant(Qt::PartiallyChecked);
         }
-        else
-          target = item->target();
-        return (target) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
       }
-      return QVariant();
+      else
+        target = item->target();
+      return (target) ? QVariant(Qt::Checked) : QVariant(Qt::Unchecked);
+    }
+    return QVariant();
 
-    default:
-      return QVariant();
+  default:
+    return QVariant();
   }
   return QVariant();
 
@@ -703,3 +702,8 @@ bool TreeModel::dropMimeData( const QMimeData *_data,
   return true;
 
  }
+//******************************************************************************
+TreeItem *TreeModel::getItem(const int _id) const
+{
+  return rootItem_->childExists(_id);
+}

@@ -87,6 +87,7 @@ DataControlPlugin::DataControlPlugin() :
         viewHeader_(0),
         onlyDown_(0),
         onlyUp_(0),
+        columnFromGUI_(-1),
         headerPopupType_(0),
         targetAction_(0),
         sourceAction_(0),
@@ -240,36 +241,48 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
   if ( PluginFunctions::getObject( _identifier, obj) )
     updateBoundingBox (obj);
 
+  BaseObject* object = 0;
+  if ( !PluginFunctions::getObject( _identifier, object) )
+    return;
+
+  //check for changes
+  int column = columnFromGUI_;//if GUI has set the column, use this information
+  if (column == -1)//otherwise, try to get the column
+  {
+    TreeItem* item = model_->getItem(_identifier);
+    if ( !item )
+      return;
+
+    if (item->source() != object->source())
+      column = 2;
+    else if (item->target() != object->target())
+      column = 3;
+    else
+      return;//could not decide, which column needs a update, discard
+  }
+
+
   model_->objectChanged( _identifier );
 
-  
-  //check for changes in the tree
-  BaseObject* object = 0;
+  // if we are allowed to propagate down
+  if ( onlyUp_ == 0 ){
 
-  if ( PluginFunctions::getObject( _identifier, object) ){
+    onlyDown_++;
 
-    // if we are allowed to propagate down
-    if ( onlyUp_ == 0 ){
+    if ( object->isGroup() )
+      propagateDownwards(object, column); // 2: source 3: target
 
-      onlyDown_++;
+    onlyDown_--;
+  }
 
-      if ( object->isGroup() )
-        propagateDownwards(object, 2); // 2 = source-target
+  // if we are allowed to propagate up
+  if ( onlyDown_ == 0 ){
 
-      onlyDown_--;
-    }
+    onlyUp_++;
 
-    // if we are allowed to propagate up
-    if ( onlyDown_ == 0 ){
+    propagateUpwards(object->parent(), column); // 2: source 3: target
 
-      onlyUp_++;
-
-      propagateUpwards(object->parent(), 2); // 2 = source-target
-
-      onlyUp_--;
-    }
-
-      
+    onlyUp_--;
   }
 }
 
@@ -450,12 +463,16 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
 
     // source
     case 2:
+      columnFromGUI_ = 2;//set information, which information will be changed
       obj->source( _value.toBool() );
+      columnFromGUI_ = -1;
       break;
 
     // target
     case 3:
+      columnFromGUI_ = 3;//set information, which information will be changed
       obj->target( _value.toBool() );
+      columnFromGUI_ = -1;
       break;
 
     default:
@@ -696,7 +713,6 @@ void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
   QList< BaseObject* > children = _obj->getLeafs();
   bool changed = false;
   bool value    = false;
-  bool value2   = false;
 
 
   switch ( _column ){
@@ -712,20 +728,26 @@ void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 
       break;
 
-    case 2: //SOURCE-TARGET
+    case 2: //SOURCE
 
       for (int i=0; i < children.size(); i++){
         value  |= children[i]->source();
-        value2 |= children[i]->target();
       }
 
       if (_obj->source() != value){
         _obj->source( value );
         changed = true;
       }
+      break;
 
-      if (_obj->target() != value2){
-        _obj->target( value2 );
+    case 3: //TARGET
+
+      for (int i=0; i < children.size(); i++){
+        value  |= children[i]->target();
+      }
+
+      if (_obj->target() != value){
+        _obj->target( value );
         changed = true;
       }
 
@@ -761,21 +783,20 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
         if ( current->visible() != _obj->visible() ){
 
           current->visible( _obj->visible() );
-
-          changed = true;
         }
         break;
 
-      case 2: //SOURCE-TARGET
+      case 2: //SOURCE
 
         if ( current->source() != _obj->source() ){
           current->source( _obj->source() );
-          changed = true;
         }
+        break;
+
+      case 3: //TARGET
 
         if ( current->target() != _obj->target() ){
           current->target( _obj->target() );
-          changed = true;
         }
 
         break;
@@ -784,7 +805,7 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
         break;
     }
 
-    if ( changed || current->isGroup() ){
+    if ( current->isGroup() ){
       propagateDownwards(current, _column);
 
     }
