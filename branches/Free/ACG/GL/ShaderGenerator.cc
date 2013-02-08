@@ -119,11 +119,21 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
   /// TODO
 
   // TODO: Add shader description point to define geometry shader input
+  // Must match the input data in the draw call!
   addStringToList("layout(triangles)", &inputs_, "", " in;");
 
-  // TODO: Add shader description point to define geometry shader output
-  addStringToList("layout(triangle_strip, max_vertices = 6)", &outputs_, "", " out;");
-
+  // Define output of geometry shader
+  switch (_desc->geometryShaderOutput) {
+    case SG_GEOMETRY_OUT_TRIANGLE_STRIP:
+      addStringToList("layout(triangle_strip, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
+      break;
+    case SG_GEOMETRY_OUT_LINE_STRIP:
+      addStringToList("layout(line_strip, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
+      break;
+    case SG_GEOMETRY_OUT_POINTS:
+      addStringToList("layout(points, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
+      break;
+  }
 
   // TODO: Correctly pass information about the available data
 //  addStringToList("VertexData {", &inputs_, "in ", "");
