@@ -428,7 +428,7 @@ public:
    *   uniform sampler2D sampAmbient;
    * \endcode
    */
-  void addUniform(QString _uniform);
+  void addUniform(QString _uniform, QString _comment = "");
 
   /** \brief Add one define
    *
@@ -464,7 +464,7 @@ private:
    *  prefix, postfix are very primitive,
    *  only checks for occurrence disregard locations
    */
-  void addStringToList(QString _str, QStringList* _list, const char* _prefix = 0, const char* _postfix = 0);
+  void addStringToList(QString _str, QStringList* _list, QString _prefix = "", QString _postfix = "");
 
   /** Adds command lines to the shader code.
   Eventually appends missing ';'

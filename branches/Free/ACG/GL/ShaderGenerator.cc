@@ -105,11 +105,14 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 
   std::string strColorOut = "";
 
+
   if (_desc->shadeMode == SG_SHADE_FLAT)
     if (_desc->geometryShader)
-      strColorOut = "out vec4 outVertexColor;";
-    else
-      strColorOut = "flat out vec4 outVertexColor;";
+      strColorOut = "vec4 outVertexColor";
+    else {
+      // Bypass the output setter, as we have to set that directly with the flat.
+      addStringToList("vec4 outVertexColor", &outputs_, "flat out ", ";");
+    }
   else {
     if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors)
       strColorOut = "vec4 outVertexColor";
@@ -178,23 +181,16 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
 
 
     if (_desc->shadeMode == SG_SHADE_FLAT)
-      strColorOut = "flat out vec4 outGeometryColor;";
+      addStringToList("vec4 outGeometryColor", &outputs_, "flat out ", ";");
     else {
       if (_desc->shadeMode == SG_SHADE_GOURAUD || _desc->vertexColors)
         strColorOut = "vec4 outGeometryColor";
     }
 
-    addOutput(strColorOut);
+    if ( !strColorOut.isEmpty() )
+      addOutput(strColorOut);
   }
 
-
-  // TODO: Correctly pass information about the available data
-//  addStringToList("VertexData {", &inputs_, "in ", "");
-//  addStringToList("vec2 texCoord;", &inputs_, "", "");
-//  addStringToList("vec3 normal;", &inputs_, "", "");
-//  addStringToList("} VertexIn[3];", &inputs_, "", "");
-
-  std::cerr << "TODO : initGeometryShaderIO" << std::endl;
 }
 
 
@@ -216,7 +212,7 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
   QString strColorIn = "";
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    strColorIn = "flat in vec4 out"+inputShader+"Color;";
+    addStringToList("vec4 out"+inputShader+"Color", &inputs_, "flat in ", ";");
   else
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
@@ -242,10 +238,10 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
 
 void ShaderGenerator::initDefaultUniforms()
 {
-  addUniform("mat4 g_mWVP");
-  addUniform("mat4 g_mWV");
-  addUniform("mat3 g_mWVIT");
-  addUniform("mat4 g_mP");
+  addUniform("mat4 g_mWVP" , "  // Projection * Modelview");       // Transforms directly from Object space to NDC
+  addUniform("mat4 g_mWV" , "   // Modelview matrix");             // Modelview transforms from Object to World to View coordinates
+  addUniform("mat3 g_mWVIT" , " // Modelview inverse transposed"); // Modelview inverse transposed, transforms from view across World into Object coordinates
+  addUniform("mat4 g_mP", "     // Projection matrix");            // Projection Matrix
 
   addUniform("vec3 g_vCamPos");
   addUniform("vec3 g_vCamDir");
@@ -288,32 +284,15 @@ void ShaderGenerator::addLight(int lightIndex_, ShaderGenLightType _light)
 
 void ShaderGenerator::addStringToList(QString _str, 
                                       QStringList* _arr,
-                                      const char* _prefix,
-                                      const char* _postfix)
+                                      QString _prefix,
+                                      QString _postfix)
 {
-  QString tmp;
-
-
-  if (_prefix)
-  {
-    // set prefix, if wanted
-    if (!_str.contains(_prefix))
-      tmp += _prefix;
-
-    tmp += _str;
-  }
-
-  if (_postfix)
-  {
-    if (!_str.contains(_postfix))
-      tmp += _postfix;
-  }
+  // Construct the whole string
+  QString tmp = _prefix + _str + _postfix;
 
   // normalize string
   //  remove tabs, double whitespace
   tmp = tmp.simplified();
-
-
 
   // avoid duplicates
   if (!_arr->contains(tmp))
@@ -343,9 +322,9 @@ void ShaderGenerator::addDefine(QString _def)
 
 
 
-void ShaderGenerator::addUniform(QString _uniform)
+void ShaderGenerator::addUniform(QString _uniform, QString _comment)
 {
-  addStringToList(_uniform, &uniforms_, "uniform ", ";");
+  addStringToList(_uniform, &uniforms_, "uniform ", "; " + _comment );
 }
 
 
@@ -744,9 +723,9 @@ void ShaderProgGenerator::buildGeometryShader()
 
   geometry_->initGeometryShaderIO(&desc_);
 
-//
-//  geometry_->initDefaultUniforms();
-//
+
+  geometry_->initDefaultUniforms();
+
 
   // apply i/o modifiers
   for (int i = 0; i < numModifiers_; ++i)
