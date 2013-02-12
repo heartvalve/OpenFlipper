@@ -340,6 +340,9 @@ void RenderObject::setGeometryShaderInputFromDrawCall(GLenum _mode) {
     case GL_LINES_ADJACENCY:
       shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES_ADJACENCY;
       break;
+    case GL_LINE_STRIP_ADJACENCY:
+      shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES_ADJACENCY;
+      break;
     case GL_TRIANGLES_ADJACENCY:
       shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES_ADJACENCY;
       break;
