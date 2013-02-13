@@ -774,8 +774,6 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
 
     BaseObject* current = _obj->child(i);
 
-    bool changed = false;
-
     switch ( _column ){
 
       case 1: //VISIBILTY
