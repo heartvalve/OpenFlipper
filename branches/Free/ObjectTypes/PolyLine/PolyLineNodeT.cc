@@ -79,8 +79,6 @@ PolyLineNodeT<PolyLine>::PolyLineNodeT(PolyLine& _pl, BaseNode* _parent, std::st
 {
   drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
 
-  // We will just issue positions
-  vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
 }
 
 //----------------------------------------------------------------------------
@@ -361,6 +359,16 @@ void
 PolyLineNodeT<PolyLine>::
 updateVBO() {
 
+  // Update the vertex declaration based on the input data:
+  vertexDecl_.clear();
+
+  // We always output vertex positions
+  vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
+
+  // Use the normals if available
+  if ( polyline_.vertex_normals_available() )
+    vertexDecl_.addElement(GL_FLOAT, 3 , ACG::VERTEX_USAGE_NORMAL);
+
   // create vbo if it does not exist
   if (!vbo_)
     glGenBuffersARB(1, &vbo_);
@@ -368,15 +376,19 @@ updateVBO() {
   // Temporary float array we need to convert doubles to this type
   float*       vboData_ = NULL;
 
-  // Number of points in buffer
-  const unsigned int bufferPoints =  polyline_.n_vertices() + 1;
+  // Number of points in buffer (Initialized without normals)
+  unsigned int bufferPoints =  polyline_.n_vertices() + 1;
+
+  // We need twice as much space, as we need to store the normals along with the points
+  if ( polyline_.vertex_normals_available()  )
+    bufferPoints *= 2;
 
   // Create the required array ( 3 coordinates of 4 floats per vertex )
   // First vertex is replicated for closed loop polylines
   vboData_ = new float[3 * (bufferPoints) * 4];
 
   // Pointer to it for easier copy operation
-  float* pPoints = &vboData_[0];
+  float* pBuffer = &vboData_[0];
 
   // Index buffer for selected vertices
   selectedVertexIndexBuffer_.clear();
@@ -386,10 +398,14 @@ updateVBO() {
 
   for (unsigned int  i = 0 ; i < polyline_.n_vertices(); ++i) {
 
-    // Copy from internal storage to vbo in cpu memory
-    for ( unsigned int j = 0 ; j < 3 ; ++j) {
-      *(pPoints++) = polyline_.point(i)[j];
-    }
+    // Copy from internal storage to VBO in CPU memory
+    for ( unsigned int j = 0 ; j < 3 ; ++j)
+      *(pBuffer++) = polyline_.point(i)[j];
+
+    // Also write normal into buffer if available
+    if ( polyline_.vertex_normals_available()  )
+      for ( unsigned int j = 0 ; j < 3 ; ++j)
+        *(pBuffer++) = polyline_.vertex_normal(i)[j];
 
     // Create an ibo in system memory for vertex selection
     if ( polyline_.vertex_selections_available() && polyline_.vertex_selected(i) )
@@ -405,7 +421,12 @@ updateVBO() {
 
   // First point is added to the end for a closed loop
   for ( unsigned int j = 0 ; j < 3 ; ++j)
-    *(pPoints++) = polyline_.point(0)[j];
+    *(pBuffer++) = polyline_.point(0)[j];
+
+  // First normal is added to the end for a closed loop
+  if ( polyline_.vertex_normals_available()  )
+    for ( unsigned int j = 0 ; j < 3 ; ++j)
+      *(pBuffer++) = polyline_.vertex_normal(0)[j];
 
   // Move data to the buffer in gpu memory
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
@@ -487,7 +508,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.glDrawElements(GL_POINTS, selectedVertexIndexBuffer_.size(), GL_UNSIGNED_INT, &(selectedVertexIndexBuffer_[0]));
         _renderer->addRenderObject(&ro);
 
-        // Render all vertices (ignore selection here!
+        // Render all vertices (ignore selection here!)
         ro.debugName = "polyline.Points";
         localMaterial.baseColor(defaultColor);
         ro.setMaterial(&localMaterial);
