@@ -203,6 +203,7 @@ void VertexDeclaration::updateShaderInputName(VertexElement* _pElem)
 
     default:
       std::cerr << "VertexDeclaration::updateShaderInputName - unknown vertex usage - " << _pElem->usage_ << std::endl;
+      break;
     }
 
     _pElem->shaderInputName_ = sz;
@@ -242,6 +243,7 @@ unsigned int VertexDeclaration::getGLTypeSize(unsigned int _type)
 
   default:
     std::cerr << "VertexDeclaration::getElementSize - unknown type - " << _type << std::endl;
+    break;
   }
 
   return size;
