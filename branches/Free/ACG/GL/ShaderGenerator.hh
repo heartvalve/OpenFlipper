@@ -498,6 +498,49 @@ private:
  *  -# Derive a new subclass of ShaderModifier and implement necessary modify functions.
  *  -# Allocate a static instance of your modifier and register it to ShaderProgGenerator to get it's modifier-ID
  *  -# Create ShaderProgGenerator with a bitwise combination of modifier IDs to activate them.
+ *
+ * Example:
+ * \code
+ *
+ *   // First modifier
+ *   class VertexShaderModifier1 : public ACG::ShaderModifier {
+ *   public:
+ *     void modifyVertexEndCode(QStringList* _code) {
+ *       _code->push_back("// Vertex End Code Modifier begin");
+ *       _code->push_back("<Some glsl code>  ");
+ *       _code->push_back("// Vertex End Code Modifier end");
+ *     }
+ *
+ *     static VertexShaderModifier1 instance;
+ *   };
+ *
+ *   // Static instance required!
+ *   VertexShaderModifier YarnVertexShaderModifier::instance;
+ *
+ *
+ *   class VertexShaderModifier2 : public ACG::ShaderModifier {
+ *   public:
+ *     void modifyVertexEndCode(QStringList* _code) {
+ *       _code->push_back("// Vertex End Code Modifier 2 begin");
+ *       _code->push_back("<Some glsl code>  ");
+ *       _code->push_back("// Vertex End Code Modifier 2 end");
+ *     }
+ *
+ *     static VertexShaderModifier2 instance;
+ *   };
+ *
+ *   VertexShaderModifier2 VertexShaderModifier2::instance;
+ * \endcode
+ *
+ * To use the modifiers, you have to register them to the shader generator:
+ * \code
+ *  // Register the modifiers
+ *  ACG::ShaderProgGenerator::registerModifier(&VertexShaderModifier::instance);
+ *  ACG::ShaderProgGenerator::registerModifier(&VertexShaderModifier2::instance);
+ *
+ *  // Use them via the shader cache
+ *  GLSL::Program* prog = ACG::ShaderCache::getInstance()->getProgram(&shDesc,(VertexShaderModifier::instance.getID() | VertexShaderModifier2::instance.getID() ));
+ * \endcode
  */
 class ACGDLLEXPORT ShaderModifier
 {
