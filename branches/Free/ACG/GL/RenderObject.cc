@@ -216,7 +216,11 @@ QString RenderObject::toString() const
     "GL_TRIANGLE_FAN",
     "GL_QUADS",
     "GL_QUAD_STRIP",
-    "GL_POLYGON"
+    "GL_POLYGON",
+    "GL_LINES_ADJACENCY",
+    "GL_LINE_STRIP_ADJACENCY",
+    "GL_TRIANGLES_ADJACENCY",
+    "GL_TRIANGLE_STRIP_ADJACENCY"
   };
 
   const char* fillModeString[] = 
@@ -245,7 +249,11 @@ QString RenderObject::toString() const
              << "\ndebugID: " << debugID
              << "\npriority: " << priority
 
+#ifdef ARCH_DARWIN
              << "\nprimitiveMode: " << (primitiveMode <= GL_POLYGON ? primitiveString[primitiveMode] : "undefined")
+#else
+             << "\nprimitiveMode: " << (primitiveMode <= GL_TRIANGLE_STRIP_ADJACENCY ? primitiveString[primitiveMode] : "undefined")
+#endif
 
              << "\nfillMode: " << fillModeString[fillMode - GL_POINT]
              << "\nnumIndices: " << numIndices
