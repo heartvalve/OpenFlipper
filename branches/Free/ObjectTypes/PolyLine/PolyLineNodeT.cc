@@ -129,7 +129,17 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   
   // Bind the vertex array
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, vbo_);
-  ACG::GLState::vertexPointer(3, GL_FLOAT , 0, 0);
+
+  // We have to define the correct stride here, as the array ay be interleaved with normals
+  // or binormals
+  int stride = 0;
+
+  if ( polyline_.vertex_normals_available() )
+    stride = 24;
+
+  ACG::GLState::vertexPointer(3, GL_FLOAT , stride, 0);
+
+
   ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
 
   ACG::Vec4f color = _state.ambient_color()  + _state.diffuse_color();
@@ -194,6 +204,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
       if (polyline_.vertex_binormals_available())
         ps.push_back(polyline_.point(i) + polyline_.vertex_binormal(i) * avg_len);
     }
+
+    // Disable the big buffer and switch to in memory buffer
+    ACG::GLState::bindBuffer(GL_ARRAY_BUFFER_ARB, 0);
     ACG::GLState::vertexPointer(&ps[0]);
 
     float line_width_old = _state.line_width();
