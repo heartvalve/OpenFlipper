@@ -258,7 +258,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
 
             TriMesh::FaceVertexIter fv_it(m,fh);
             TriMesh::VertexHandle closest = fv_it.handle();
-            // float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
+            float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
 
             ++fv_it;
             if ( (m.point(fv_it.handle() ) - hit_point).sqrnorm() < shortest_distance ) {
