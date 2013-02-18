@@ -210,8 +210,10 @@ drawCurve(GLState& /*_state*/)
   const int numCPs = bsplineCurve_.n_control_points();
   
   // check for incomplete curve
-  if (numCPs < (int)bsplineCurve_.degree() + 1)
+  if (numCPs < (int)bsplineCurve_.degree() + 1) {
+    delete[] knots;
     return;
+  }
 
   GLfloat *ctlpoints = new GLfloat[numCPs * 3];
   for (int i = 0; i < numCPs; ++i)
