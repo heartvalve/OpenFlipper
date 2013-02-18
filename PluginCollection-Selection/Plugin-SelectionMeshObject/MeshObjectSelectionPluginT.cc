@@ -339,13 +339,15 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
                 for(uint i=0; i <vertex_handles.size(); i++)
                     _mesh->status(vertex_handles[i]).set_tagged(true);
 
-                if(vertex_handles.size()> 0)tagged = true;
+                if( ! vertex_handles.empty() )
+                  tagged = true;
             }
             if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_)) {
                 for(uint i=0; i <edge_handles.size(); i++)
                     _mesh->status(edge_handles[i]).set_tagged(true);
 
-                if(edge_handles.size()> 0)tagged = true;
+                if( !edge_handles.empty() )
+                  tagged = true;
             }
             if(_primitiveType & faceType_) {
                 if(vertex_handles.size()== fVertices) {
@@ -662,7 +664,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
         std::set<typename MeshT::VertexHandle> unprocessed;
         unprocessed.insert(current);
 
-        while(unprocessed.size() > 0) {
+        while( !unprocessed.empty() ) {
 
             // Select current vertex
             current = *unprocessed.begin();
@@ -704,7 +706,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
         if(!firstEdge.is_valid()) return;
         bool selected = _mesh->status(firstEdge).selected();
 
-        while(unprocessed.size() > 0) {
+        while( !unprocessed.empty() ) {
 
             // Select all edges incident to current face
             current = *unprocessed.begin();
@@ -750,7 +752,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
         std::set<typename MeshT::FaceHandle> unprocessed;
         unprocessed.insert(current);
 
-        while(unprocessed.size() > 0) {
+        while( !unprocessed.empty() ) {
 
             // Select all edges incident to current face
             current = *unprocessed.begin();

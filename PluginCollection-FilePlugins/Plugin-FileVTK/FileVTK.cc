@@ -484,7 +484,6 @@ bool FileVTKPlugin::loadMeshLines(QString _spec,QTextStream& _in,MeshT*& _mesh) 
     quint32 index;
 
     if ( _in.status() == QTextStream::Ok ) {
-      std::vector< OpenMesh::VertexHandle > handles;
 
       if ( !binary_ ) {
         for ( unsigned int i = 0 ; i < valence; ++i )
@@ -529,7 +528,6 @@ bool FileVTKPlugin::loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mes
     std::cerr << "loadMeshPolygons" << std::endl;
 
     bool ok = true;
-    std::vector< std::vector< OpenMesh::VertexHandle > > invalidFaces;
 
     // Split the header line into components
     QStringList polygonsLine = _spec.split(" ",QString::SkipEmptyParts);

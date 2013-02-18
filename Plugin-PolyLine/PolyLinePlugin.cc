@@ -1002,7 +1002,7 @@ me_merge( QMouseEvent* _event )
           if (target_idx == cur_pol->line()->n_vertices() - 1 || target_idx == 0) {
             if (target_idx == 0) {
               cur_pol->line()->invert();
-              target_idx = cur_pol->line()->n_vertices() - 1;
+              //target_idx = cur_pol->line()->n_vertices() - 1;
             }
 
             // save references

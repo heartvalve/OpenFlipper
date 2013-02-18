@@ -369,13 +369,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
   float maxX = FLT_MIN;
   float minX = FLT_MAX;
-  float sumX = 0.0;
+  //float sumX = 0.0;
   float maxY = FLT_MIN;
   float minY = FLT_MAX;
-  float sumY = 0.0;
+  //float sumY = 0.0;
   float maxZ = FLT_MIN;
   float minZ = FLT_MAX;
-  float sumZ = 0.0;
+  //float sumZ = 0.0;
   int minV = 999;
   int maxV = 0;
   int sumV = 0;
@@ -388,13 +388,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     typename MeshT::Point p = _mesh->point( v_it.handle() );
     if (p[0] < minX) minX = p[0];
     if (p[0] > maxX) maxX = p[0];
-    sumX += p[0];
+    //sumX += p[0];
     if (p[1] < minY) minY = p[1];
     if (p[1] > maxY) maxY = p[1];
-    sumY += p[1];
+    //sumY += p[1];
     if (p[2] < minZ) minZ = p[2];
     if (p[2] > maxZ) maxZ = p[2];
-    sumZ += p[2];
+    //sumZ += p[2];
 
 
 
@@ -439,7 +439,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   float sumA = 0.0;
   float maxI = FLT_MIN;
   float minI = FLT_MAX;
-  float sumI = 0.0;
+  //float sumI = 0.0;
   float maxD = FLT_MIN;
   float minD = FLT_MAX;
   float sumD = 0.0;
@@ -467,19 +467,19 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
     if (angle < minI) minI = angle;
     if (angle > maxI) maxI = angle;
-    sumI += angle;
+    //sumI += angle;
 
     angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(v2 - v1) | MathTools::sane_normalized(v0 - v1) )));
 
     if (angle < minI) minI = angle;
     if (angle > maxI) maxI = angle;
-    sumI += angle;
+    //sumI += angle;
 
     angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(v1 - v2) | MathTools::sane_normalized(v0 - v2) )));
 
     if (angle < minI) minI = angle;
     if (angle > maxI) maxI = angle;
-    sumI += angle;
+    //sumI += angle;
 
     //compute dihedral angles
     typename MeshT::FaceFaceIter ff_it;

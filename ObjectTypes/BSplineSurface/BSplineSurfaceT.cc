@@ -599,10 +599,6 @@ normalSurfacePoint(double _u, double _v)
   assert(_u >= loweru() && _u <= upperu());
   assert(_v >= lowerv() && _v <= upperv());
 
-  int pn = degree_n();
-  int pm = degree_m();
-
-
   Point derivu( derivativeSurfacePoint(_u,_v,1,0));
   Point derivv( derivativeSurfacePoint(_u,_v,0,1));
 

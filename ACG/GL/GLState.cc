@@ -131,7 +131,7 @@ GLState::GLState(bool _updateGL)
     colorPicking_(true)
 {
 
-  if (stateStack_.size() == 0)
+  if ( stateStack_.empty() )
   {
     stateStack_.push_back(GLStateContext());
 

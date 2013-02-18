@@ -47,12 +47,13 @@ template< typename MeshT >
 void TextureControlPlugin::getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
                                                 int _textureid, MeshT& _mesh,
                                                 OpenMesh::VPropHandleT< double > _texProp) {
-  _x.clear();
-  _y.clear();
-
-  for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
-    double value = _mesh.property(_texProp, v_it);
-  }
+// TODO: That did not make any sense here
+//  _x.clear();
+//  _y.clear();
+//
+//  for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
+//    double value = _mesh.property(_texProp, v_it);
+//  }
 
 }
 

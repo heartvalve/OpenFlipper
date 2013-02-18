@@ -213,8 +213,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     
   GLenum prev_depth = _state.depthFunc();
   
-  unsigned int arrays = NONE;
-  
   glPushAttrib(GL_ENABLE_BIT);
 
   /// get bound texture buffer and target

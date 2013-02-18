@@ -187,7 +187,6 @@ _raycollision_non_directional(Node* _node, RayCollisionData& _data) const
   else
   {
     Scalar tmin, tmax;
-    bool used = false;
     if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
       _raycollision_non_directional(_node->left_child_, _data);
     }
@@ -227,7 +226,6 @@ _raycollision_directional(Node* _node, RayCollisionData& _data) const
   else
   {
     Scalar tmin, tmax;
-    bool used = false;
     if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
       _raycollision_directional(_node->left_child_, _data);
     }

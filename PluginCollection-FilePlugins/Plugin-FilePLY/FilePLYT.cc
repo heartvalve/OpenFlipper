@@ -871,8 +871,6 @@ void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) 
 template <class MeshT>
 bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
 
-    std::string filename = std::string(_filename.toUtf8());
-
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
     // If in no gui mode -> request as much as possible
@@ -979,8 +977,6 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
 
 template <class MeshT>
 bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
-
-    std::string filename = std::string(_filename.toUtf8());
 
     // Get desired properties
     bool gui = OpenFlipper::Options::gui() && (saveVertexNormal_ != 0) /*buttons initialized*/;
