@@ -845,7 +845,6 @@ balanace_area(unsigned int _iters, bool _use_projection)
   typename Mesh::CVVIter   vv_it;
   typename Mesh::Scalar    w, ww;
   typename Mesh::Point     u, n;
-  bool                     omit;
 
 
   DiffGeoT<Mesh>  diffgeo(mesh_);
@@ -902,7 +901,6 @@ balanace_area(unsigned int _iters, bool _use_projection)
 	{
 	  u.vectorize(0.0);
 	  ww   = 0;
-	  omit = false;
 
 	  for (vv_it=mesh_.cvv_iter(v_it); vv_it; ++vv_it)
 	  {

@@ -323,7 +323,6 @@ void DepthPeelingPlugin::drawQuadProj(float x0, float y0, float w, float h)
 
 void DepthPeelingPlugin::traverseLightNodes( BaseNode* _node)
 {
-  std::vector<int> pLightTypes;
 
   if (_node)
   {
@@ -948,7 +947,7 @@ DepthPeelingPlugin::traverseDraw( BaseNode* _node, Action& _action, ACG::SceneGr
       // If its hidden, ignore it.
       // If it should not be rendered in this pass, ignore it too.
       if ( (_node->traverseMode() & BaseNode::ChildrenFirst ) && (_node->status() != BaseNode::HideNode) && _node->multipassNodeActive(_pass) )
-        process_children &= traverseDrawApplyAction(_node, _action, _globalDrawMode, _pass, _peelPass);
+        traverseDrawApplyAction(_node, _action, _globalDrawMode, _pass, _peelPass);
 
       // Call the leave function of the node (if available and active in multipass).
       if ( _node->multipassStatusActive(_pass) )

@@ -258,17 +258,17 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
 
             TriMesh::FaceVertexIter fv_it(m,fh);
             TriMesh::VertexHandle closest = fv_it.handle();
-            float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
+            // float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
 
             ++fv_it;
             if ( (m.point(fv_it.handle() ) - hit_point).sqrnorm() < shortest_distance ) {
-               shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
+              // shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
                closest = fv_it.handle();
             }
 
             ++fv_it;
             if ( (m.point(fv_it.handle() ) - hit_point).sqrnorm() < shortest_distance ) {
-               shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
+               // shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
                closest = fv_it.handle();
             }
 
@@ -610,16 +610,16 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
             ++fe_it;
             TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
 
-            double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
+            const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::EdgeHandle closest_edge = m.edge_handle(e1);
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )), m.point(m.from_vertex_handle( e2 ))) < min_dist ) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
                closest_edge = m.edge_handle(e2);
             }
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 ))) < min_dist) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
                closest_edge = m.edge_handle(e3);
             }
 
@@ -673,16 +673,16 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
             ++fe_it;
             TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
 
-            double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
+            const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::HalfedgeHandle closest_edge = e1;
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )), m.point(m.from_vertex_handle( e2 ))) < min_dist ) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
                closest_edge = e2;
             }
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 ))) < min_dist) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
                closest_edge = e3;
             }
 
@@ -784,16 +784,16 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
             ++fe_it;
             TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
 
-            double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
+            const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::EdgeHandle closest_edge = m.edge_handle(e1);
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )), m.point(m.from_vertex_handle( e2 ))) < min_dist ) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e2 )),m.point(m.from_vertex_handle( e2 )));
                closest_edge = m.edge_handle(e2);
             }
 
             if ( ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 ))) < min_dist) {
-               min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
+               // min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e3 )),m.point(m.from_vertex_handle( e3 )));
                closest_edge = m.edge_handle(e3);
             }
 

@@ -586,7 +586,7 @@ Core::init() {
       msgBox.setText("No external plugin renderers available!");
       msgBox.setInformativeText("The build in renderer is only a very limited one and is missing many features.\nYou should build and use the other free renderers shipped with OpenFlipper.");
       msgBox.setIcon(QMessageBox::Warning);
-      int ret = msgBox.exec();
+      msgBox.exec();
     }
 
   }

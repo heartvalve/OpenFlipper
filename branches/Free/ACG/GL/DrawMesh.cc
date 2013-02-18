@@ -1579,9 +1579,6 @@ void DrawMeshT<Mesh>::updatePickingFaces(ACG::GLState& _state )
   pickFaceVertexBuf_.resize(3 * numTris_);
   pickFaceColBuf_.resize(3 * numTris_);
 
-  // Index to the current buffer position
-  unsigned int bufferIndex = 0;
-
   for (unsigned int i = 0; i < numTris_; ++i)
   {
     const Vec4uc pickColor = _state.pick_get_name_color ( triToFaceMap_[i] );
@@ -1609,9 +1606,6 @@ void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
   
   pickFaceVertexBuf_.resize(3 * numTris_);
   pickAnyFaceColBuf_.resize(3 * numTris_);
-
-  // Index to the current buffer position
-  unsigned int bufferIndex = 0;
 
   for (unsigned int i = 0; i < numTris_; ++i)
   {

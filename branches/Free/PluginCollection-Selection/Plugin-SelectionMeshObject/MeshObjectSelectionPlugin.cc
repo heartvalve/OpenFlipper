@@ -1442,8 +1442,6 @@ void MeshObjectSelectionPlugin::saveIniFile(INIFile& _ini, int _id) {
         return;
     }
 
-    std::vector<int> ids;
-
     // The objects section should already exist
     QString sectionName = object->name();
     if(!_ini.section_exists(sectionName)) {

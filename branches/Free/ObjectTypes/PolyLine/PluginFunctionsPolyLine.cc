@@ -62,7 +62,7 @@ bool getSourcePolylines( std::vector<PolyLine*>& _polylines  )
       std::cerr << "ERROR: Polyine get_source_polylines fatal error\n";
   }
 
-  return (_polylines.size() > 0 );
+  return ( !_polylines.empty() );
 }
 
 
@@ -82,7 +82,7 @@ bool getTargetPolylines( std::vector<PolyLine*>& _polylines  )
       std::cerr << "ERROR: Polyine getTargetPolylines fatal error\n";
   }
 
-  return (_polylines.size() > 0 );
+  return ( !_polylines.empty() );
 }
 
 

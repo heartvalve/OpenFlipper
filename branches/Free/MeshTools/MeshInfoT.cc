@@ -148,7 +148,7 @@ int componentCount(MeshT* _mesh ) {
     handles.push_back( vh );
 
     //grow from found vertex
-    while( handles.size() > 0 ){
+    while( ! handles.empty() ){
       typename MeshT::VertexHandle current = handles.back();
       handles.pop_back();
 
