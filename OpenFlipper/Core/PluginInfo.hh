@@ -70,44 +70,47 @@ class PluginInfo{
 
   public :
 
-  PluginInfo() {
-     plugin = 0;
-     name = "";
-     description = "";
-     version = "";
-     path = "";
-     rpcName = "";
-     rpcFunctions.clear();
-     slotInfos.clear();
-     keys.clear();
-     toolboxWidgets.clear();
-     toolboxIcons.clear();
-     toolbars.clear();
-     contextMenus.clear();
-     optionsWidget = 0;
-     buildIn = true;
-     status = FAILED;
+  PluginInfo() :
+  plugin(0),
+  name(""),
+  description(""),
+  version(""),
+  path(""),
+  rpcName(""),
+  optionsWidget(0),
+  buildIn(true),
+  status(FAILED)
+  {
+    rpcFunctions.clear();
+    slotInfos.clear();
+    keys.clear();
+    toolboxWidgets.clear();
+    toolboxIcons.clear();
+    toolbars.clear();
+    contextMenus.clear();
   }
 
 
 
-  PluginInfo( const PluginInfo& _i) {
-     plugin = _i.plugin;
-     name = _i.name;
-     description = _i.description;
-     version = _i.version;
-     path = _i.path;
-     rpcName = _i.rpcName;
-     rpcFunctions = _i.rpcFunctions;
-     slotInfos = _i.slotInfos;
-     keys = _i.keys;
-     toolboxWidgets = _i.toolboxWidgets;
-     toolboxIcons = _i.toolboxIcons;
-     toolbars = _i.toolbars;
-     contextMenus = _i.contextMenus;
-     optionsWidget = _i.optionsWidget;
-     buildIn = _i.buildIn;
-     status = _i.status;
+  PluginInfo( const PluginInfo& _i) :
+      plugin(_i.plugin),
+      name(_i.name),
+      description(_i.description),
+      version(_i.version),
+      path(_i.path),
+      rpcName(_i.rpcName),
+      rpcFunctions(_i.rpcFunctions),
+      slotInfos(_i.slotInfos),
+      keys(_i.keys),
+      toolboxWidgets(_i.toolboxWidgets),
+      toolboxIcons(_i.toolboxIcons),
+      toolbars(_i.toolbars),
+      contextMenus(_i.contextMenus),
+      optionsWidget(_i.optionsWidget),
+      buildIn(_i.buildIn),
+      status(_i.status)
+  {
+
   }
 
   /// Pointer to the loaded plugin (Already casted when loading it)
