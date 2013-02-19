@@ -226,7 +226,6 @@ QWidget *Core::getToolbox(QString _pluginName, QString _toolboxName) {
     }
     if (pluginIt == plugins_.end()) return 0;
 
-    std::vector<std::pair<QString , QWidget*> >::const_iterator widgetIt;
     for (std::vector<std::pair<QString , QWidget*> >::const_iterator it = pluginIt->toolboxWidgets.begin(), it_end = pluginIt->toolboxWidgets.end();
             it != it_end; ++it) {
         if (it->first == _toolboxName)

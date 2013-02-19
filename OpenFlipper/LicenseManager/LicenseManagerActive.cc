@@ -333,11 +333,13 @@ bool LicenseManager::authenticate() {
   // Get windows product id
   // =============================================================================================== 
   
-  QString productId = "-";
   
+
   #ifdef WIN32
     QSettings registryProduct("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", QSettings::NativeFormat);
-    productId = registryProduct.value( "ProductId", "Unknown" ).toString();
+    QString productId = registryProduct.value( "ProductId", "Unknown" ).toString();
+  #else
+    QString productId = "-";
   #endif
   
   QString productHash = QCryptographicHash::hash ( productId.toAscii()  , QCryptographicHash::Sha1 ).toHex();

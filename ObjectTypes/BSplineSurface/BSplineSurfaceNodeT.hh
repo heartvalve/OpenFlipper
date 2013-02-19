@@ -89,31 +89,36 @@ class BSplineSurfaceNodeT : public BaseNode
                       BaseNode*    _parent=0,
                       std::string  _name="<BSplineSurfaceNode>" ) :
     BaseNode(_parent, _name),
-    bsplineSurface_(_bss)
+    bsplineSurface_(_bss),
+    bspline_draw_mode_(NORMAL),
+    bspline_selection_draw_mode_(NONE),
+    pick_radius_(1.0),
+    resolution_(16),
+    controlnet_color_( Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0) ),
+    controlnet_highlight_color_( Vec4f(1.0, 1.0, 1.0, 1.0) ),
+    surface_color_( Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0) ),
+    surface_highlight_color_( Vec4f(1.0, 1.0, 1.0, 1.0) ),
+    render_control_net_(false),
+    render_bspline_surface_(true),
+    adaptive_sampling_(false),
+    controlPointSelectionTexture_valid_(false),
+    knotVectorSelectionTexture_valid_(false),
+    pick_texture_idx_(0),
+    pick_texture_res_(256),
+    pick_texture_baseidx_(0),
+    cp_selection_texture_idx_(0),
+    cp_selection_texture_res_(256),
+    knot_selection_texture_idx_(0),
+    knot_selection_texture_res_(256),
+    arb_texture_idx_(0),
+    arb_texture_used_(false),
+    arb_texture_repeat_(false),
+    arb_texture_repeat_u_(1.0),
+    arb_texture_repeat_v_(1.0)
+
   {
-    resolution_ = 16;
-    render_control_net_     = false;
-    render_bspline_surface_ = true;
-    adaptive_sampling_      = false;
-
-    controlnet_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
-    controlnet_highlight_color_ = Vec4f(1.0, 1.0, 1.0, 1.0);
-    surface_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
-    surface_highlight_color_   = Vec4f(1.0, 1.0, 1.0, 1.0);
-    
-    bspline_draw_mode_           = NORMAL;
-    bspline_selection_draw_mode_ = NONE;
-    
-    cp_selection_texture_res_   = 256;
-    knot_selection_texture_res_ = 256;
-    
-    cp_selection_texture_idx_ = 0;
-    knot_selection_texture_idx_ = 0;
-    pick_texture_idx_ = 0;  
-    arb_texture_idx_ = 0;
-
-    cylinder_ = new GLCylinder(16, 1, 1.0f, true, true);
-    sphere_ = new GLSphere(5, 5);
+    cylinder_    = new GLCylinder(16, 1, 1.0f, true, true);
+    sphere_      = new GLSphere(5, 5);
     fancySphere_ = new GLSphere(16, 16);
   }
 
