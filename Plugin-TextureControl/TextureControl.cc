@@ -190,7 +190,6 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   slotTextureAdded( _name , _filename , 2 , _id);
 
   // Get the id of the new texture
-  _textureId = -1;
   _textureId = texData->texture(_name).id();
 
   //hide the texture (its accessible through the multiTexture)

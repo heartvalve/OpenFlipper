@@ -193,33 +193,30 @@ void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
 }
 
 void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
-    
-    BaseObjectData* baseObject;
-    if ( !PluginFunctions::getObject(_id,baseObject) ) {
-        emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
-        return;
-    }
-    
-    PolyMeshObject* polyObject(0);
-    TriMeshObject*  triObject(0);
-    LightObject*    lightObject(0);
-    
-    // Save all data from baseobjectdata part
-    saveIniFile(_ini,baseObject);
-    
-    if(baseObject->dataType() == DATA_POLY_MESH) {
-        polyObject = PluginFunctions::polyMeshObject(baseObject);
-        saveIniFileT(_ini, polyObject);
-    } else if ( baseObject->dataType() == DATA_TRIANGLE_MESH) {
-        triObject = PluginFunctions::triMeshObject(baseObject);
-        saveIniFileT(_ini, triObject);
-    } else if ( baseObject->dataType() == DATA_LIGHT ) {
-        lightObject = PluginFunctions::lightObject(baseObject);
-        saveIniFileT(_ini, lightObject);
-    } else {
-      // Unhandled data type
-      emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
-    }
+
+  BaseObjectData* baseObject;
+  if (!PluginFunctions::getObject(_id, baseObject)) {
+    emit log(LOGERR, tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile"));
+    return;
+  }
+
+  // Save all data from baseobjectdata part
+  saveIniFile(_ini, baseObject);
+
+  if (baseObject->dataType() == DATA_POLY_MESH) {
+    PolyMeshObject* polyObject = PluginFunctions::polyMeshObject(baseObject);
+    saveIniFileT(_ini, polyObject);
+  } else if (baseObject->dataType() == DATA_TRIANGLE_MESH) {
+    TriMeshObject* triObject = PluginFunctions::triMeshObject(baseObject);
+    saveIniFileT(_ini, triObject);
+  } else if (baseObject->dataType() == DATA_LIGHT) {
+    LightObject* lightObject = PluginFunctions::lightObject(baseObject);
+    saveIniFileT(_ini, lightObject);
+  } else {
+    // Unhandled data type
+    emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
+  }
+
 }
 
 

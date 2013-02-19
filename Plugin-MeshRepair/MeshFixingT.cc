@@ -135,7 +135,6 @@ template<class MeshT>
 void MeshFixing<MeshT>::fix_topology()
 {
   int component;
-  int nf;
 
   const unsigned int numberOfVertices = vertices_.size();
 

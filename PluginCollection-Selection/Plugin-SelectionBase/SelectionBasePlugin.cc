@@ -1531,8 +1531,6 @@ void SelectionBasePlugin::objectDeleted (int _id) {
     bool found = false;
     DataType t;
     
-    std::vector<DataType> typeVec;
-    
     BaseObjectData* obj;
     PluginFunctions::getObject(_id, obj);
     if (obj) {
