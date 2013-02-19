@@ -384,10 +384,9 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
     if (meanCurvature) {
 
-      TriMesh::Scalar curvature = 0.0;
-      curvature =  compMesh->property(meanComp, v0) * projectedPoint[0];
-      curvature += compMesh->property(meanComp, v1) * projectedPoint[1];
-      curvature += compMesh->property(meanComp, v2) * projectedPoint[2];
+      TriMesh::Scalar curvature =  compMesh->property(meanComp, v0) * projectedPoint[0] +
+                                   compMesh->property(meanComp, v1) * projectedPoint[1] +
+                                   compMesh->property(meanComp, v2) * projectedPoint[2];
 
       const double curvatureDev = fabs(refMesh->property(meanRef, v_it) - curvature);
 
@@ -399,10 +398,9 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
     if (gaussCurvature) {
 
-      TriMesh::Scalar curvature = 0.0;
-      curvature =  compMesh->property(gaussComp, v0) * projectedPoint[0];
-      curvature += compMesh->property(gaussComp, v1) * projectedPoint[1];
-      curvature += compMesh->property(gaussComp, v2) * projectedPoint[2];
+      TriMesh::Scalar curvature = compMesh->property(gaussComp, v0) * projectedPoint[0] +
+                                  compMesh->property(gaussComp, v1) * projectedPoint[1] +
+                                  compMesh->property(gaussComp, v2) * projectedPoint[2];
 
       const double curvatureDev = fabs(refMesh->property(gaussRef, v_it) - curvature);
 

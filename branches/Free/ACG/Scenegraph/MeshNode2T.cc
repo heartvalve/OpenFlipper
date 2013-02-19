@@ -1242,7 +1242,7 @@ pick_any(GLState& _state)
   }
   
   // nothing to pick ?
-  if (numElements <= 0) {
+  if (numElements == 0) {
     std::cerr << "pick_any: Number of elements : 0 " << std::endl;
     return;
   }

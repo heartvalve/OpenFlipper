@@ -231,6 +231,7 @@ private :
   QString       lastFile_;
 
   QAction*      debuggerButton_;
+
 #ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngineDebugger* debugger_;
 #endif

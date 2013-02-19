@@ -1054,15 +1054,16 @@ me_merge( QMouseEvent* _event )
       move_point_ref_ = 0;
     }
 
-    bool merged = false;
-
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
 
     // pick
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
 
+      bool merged = false;
+
       BaseObjectData* obj = 0;
+
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
 
         // is picked object polyline? -> get second polyline
