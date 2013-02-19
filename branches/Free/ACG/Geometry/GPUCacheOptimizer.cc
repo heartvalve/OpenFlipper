@@ -274,10 +274,8 @@ float GPUCacheOptimizer::ComputeATVR(unsigned int VertexCacheSize)
 // forsyth's score function
 void GPUCacheOptimizer::Opt_Vertex::FindScore(unsigned int MaxSizeVertexCache)
 {
-	const float CacheDecayPower = 1.5f;
-	const float LastTriScore = 0.75f;
-	const float ValenceBoostScale = 2.0f;
-	const float ValenceBoostPower = 0.5f;
+
+
 
 	float fNewScore = -1.0f; // -1 : vertex unused
 	if (iNumTrisLeft > 0)
@@ -285,6 +283,10 @@ void GPUCacheOptimizer::Opt_Vertex::FindScore(unsigned int MaxSizeVertexCache)
 		if (iCachePos < 0) fNewScore = 0.0f; // not in FIFO
 		else
 		{
+
+		  const float CacheDecayPower = 1.5f;
+		  const float LastTriScore = 0.75f;
+
 			if (iCachePos < 3) // last tri => fixed score
 				fNewScore = LastTriScore;
 			else
@@ -299,6 +301,9 @@ void GPUCacheOptimizer::Opt_Vertex::FindScore(unsigned int MaxSizeVertexCache)
 
 		// Bonus points for having a low number of tris still to
 		// use the vert, so we get rid of lone verts quickly.
+
+	  const float ValenceBoostScale = 2.0f;
+	  const float ValenceBoostPower = 0.5f;
 
 		float ValenceBoost = powf( float(iNumTrisLeft), -float(ValenceBoostPower));
 		fNewScore += ValenceBoostScale * ValenceBoost;

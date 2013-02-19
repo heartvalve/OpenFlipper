@@ -214,11 +214,10 @@ void BackupPlugin::slotUpdateContextMenu( int _objectId ){
 
   if ( object != 0 ){
 
-    //get backup object data
-    BackupData* backupData = 0;
-
     if ( object->hasObjectData( OBJECT_BACKUPS ) ){
-      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+
+      //get backup object data
+      BackupData* backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
 
       if ( backupData->undoAvailable() ){
         undoContextAction_->setData(_objectId);

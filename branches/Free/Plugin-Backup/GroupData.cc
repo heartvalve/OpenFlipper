@@ -43,10 +43,11 @@ void GroupData::undo(){
 
     if ( object != 0 ){
 
-      //get backup object data
-      BackupData* backupData = 0;
-
       if ( object->hasObjectData( OBJECT_BACKUPS ) ){
+
+        //get backup object data
+        BackupData* backupData = 0;
+
         backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
         backupData->undo();
       }
@@ -91,10 +92,11 @@ void GroupData::redo(){
 
     if ( object != 0 ){
 
-      //get backup object data
-      BackupData* backupData = 0;
-
       if ( object->hasObjectData( OBJECT_BACKUPS ) ){
+
+        //get backup object data
+        BackupData* backupData = 0;
+
         backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
         backupData->redo();
       }
@@ -202,11 +204,10 @@ void GroupData::undo(int _objectid){
 
   if ( object != 0 ){
 
-    //get backup object data
-    BackupData* backupData = 0;
-
     if ( object->hasObjectData( OBJECT_BACKUPS ) ){
-      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+
+      //get backup object data
+      BackupData* backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
 
       if ( !backupData->undoBlocked() ){
         backupData->undo();
@@ -227,11 +228,12 @@ void GroupData::redo(int _objectid){
 
   if ( object != 0 ){
 
-    //get backup object data
-    BackupData* backupData = 0;
+
 
     if ( object->hasObjectData( OBJECT_BACKUPS ) ){
-      backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
+
+      //get backup object data
+      BackupData* backupData = dynamic_cast< BackupData* >(object->objectData(OBJECT_BACKUPS));
 
       if ( !backupData->redoBlocked() ){
         backupData->redo();
