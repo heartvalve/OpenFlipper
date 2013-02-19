@@ -203,9 +203,9 @@ bool FileBundlePlugin::readImagelistFile( const char *_filename, std::vector<std
 
   while( true )
   {
-    fscanf( file, "%4096s", path );
-    fscanf( file, "%32s",   temp );
-    fscanf( file, "%32s",   temp );
+    fscanf( file, "%4095s", path );
+    fscanf( file, "%31s",   temp );
+    fscanf( file, "%31s",   temp );
 
     if( feof( file ) )
       break;
