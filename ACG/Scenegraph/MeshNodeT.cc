@@ -1597,7 +1597,7 @@ pick_any(GLState& _state)
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
 
   // nothing to pick ?
-  if (numElements <= 0)
+  if (numElements == 0)
     return;
 
   if (!_state.pick_set_maximum (numElements))
