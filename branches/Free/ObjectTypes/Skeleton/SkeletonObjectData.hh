@@ -60,9 +60,9 @@ public:
   }
 
   SkeletonObjectData(const SkeletonObjectData& _copy) :
-    PerObjectData()
+    PerObjectData(),
+    skins_(_copy.skins_)
   {
-    skins_         = _copy.skins_;
   }
 
   ~SkeletonObjectData(){

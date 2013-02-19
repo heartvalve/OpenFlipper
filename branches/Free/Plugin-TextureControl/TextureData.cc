@@ -188,8 +188,7 @@ int TextureData::addTexture ( Texture _texture, GLuint _glName ) {
 }
 
 bool TextureData::addMultiTexture( QString _textureName ) {
-  int textureid = -1;
-  textureid = getTextureIndex(_textureName);
+  int textureid = getTextureIndex(_textureName);
 
   if ( textureid != -1) {
     std::cerr << "Texture exists!" << std::endl;
@@ -212,8 +211,7 @@ bool TextureData::addMultiTexture( QString _textureName ) {
 
 /// Stores the given image in the texture information
 bool TextureData::setImage( QString _textureName , int _id ) {
-  int textureid = -1;
-  textureid = getTextureIndex(_textureName);
+  int textureid = getTextureIndex(_textureName);
 
   if ( textureid == -1) {
     std::cerr << "setImage: Unknown Texture!" << std::endl;

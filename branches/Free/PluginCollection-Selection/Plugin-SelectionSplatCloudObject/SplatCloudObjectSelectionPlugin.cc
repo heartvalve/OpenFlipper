@@ -435,7 +435,6 @@ void SplatCloudObjectSelectionPlugin::loadIniFile( INIFile &_ini, int _objectId 
   }
 
   std::vector<int> ids;
-  bool invert = false;
 
   bool updated_selection = false;
   bool updated_modeling_regions = false;
@@ -444,7 +443,7 @@ void SplatCloudObjectSelectionPlugin::loadIniFile( INIFile &_ini, int _objectId 
 
   if( _ini.get_entry( ids, sectionName, "VertexSelection" ) )
   {
-    invert = false;
+    bool invert = false;
     _ini.get_entry( invert, sectionName, "InvertVertexSelection" );
 
     if( invert )
@@ -488,8 +487,6 @@ void SplatCloudObjectSelectionPlugin::saveIniFile( INIFile &_ini, int _objectId 
     emit log( LOGERR, tr("Cannot find object for id ") + QString::number( _objectId ) + tr(" in saveFile") );
     return;
   }
-
-  std::vector<int> ids;
 
   // The objects section should already exist
   QString sectionName = object->name();

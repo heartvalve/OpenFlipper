@@ -200,8 +200,9 @@ DrawMode::DrawMode() {
   layers_[0] = DrawModeProperties();
 }
     
-DrawMode::DrawMode( ModeFlagSet _flags ) {
-  modeFlags_ = _flags;
+DrawMode::DrawMode(ModeFlagSet _flags) :
+        modeFlags_(_flags)
+{
   layers_.resize(1);
   layers_[0] = DrawModeProperties();
 }
