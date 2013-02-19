@@ -697,10 +697,12 @@ void Core::slotAddEmptyObjectMenu() {
     ++currentType;
   }
   
-  static addEmptyWidget* widget = 0;
   
+
   if (supportedTypes().size() != 0) {
     
+    static addEmptyWidget* widget = 0;
+
     if ( !widget ){
       widget = new addEmptyWidget(types,typeNames);
       widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );

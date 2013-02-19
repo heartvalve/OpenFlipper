@@ -89,33 +89,34 @@ public:
 		    BaseNode*    _parent=0,
 		    std::string  _name="<BSplineCurveNode>" ) :
     BaseNode(_parent, _name),
-    bsplineCurve_(_bsc)
+    bsplineCurve_(_bsc),
+    pick_radius_(0.1),
+    resolution_(16),
+    polygon_color_( Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0) ),
+    polygon_highlight_color_( Vec4f(1.0, 1.0, 0.0, 1.0) ),
+    curve_color_( Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0) ),
+    curve_highlight_color_( Vec4f(1.0, 1.0, 1.0, 1.0) ),
+    render_control_polygon_(true),
+    render_bspline_curve_(true),
+    bspline_draw_mode_(NORMAL),
+    bspline_selection_draw_mode_(NONE),
+    pick_texture_idx_(0),
+    pick_texture_res_(256),
+    pick_texture_baseidx_(0),
+    cp_selection_texture_idx_(0),
+    cp_selection_texture_res_(256),
+    knot_selection_texture_idx_(0),
+    knot_selection_texture_res_(256),
+    controlPointSelectionTexture_valid_(false),
+    knotVectorSelectionTexture_valid_(false)
   {
     drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
-    resolution_  = 16;
-    pick_radius_ = 0.1;
-    render_control_polygon_      = true;
-    render_bspline_curve_        = true;
-//     bspline_draw_mode_           = DIRECT;
-    bspline_draw_mode_           = NORMAL;
-    bspline_selection_draw_mode_ = NONE;
 
-    polygon_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
-    polygon_highlight_color_ = Vec4f(1.0, 1.0, 0.0, 1.0);
-    curve_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
-    curve_highlight_color_   = Vec4f(1.0, 1.0, 1.0, 1.0);
-    
-    cp_selection_texture_res_   = 256;
-    knot_selection_texture_res_ = 256;
-    
-    cp_selection_texture_idx_ = 0;
-    knot_selection_texture_idx_ = 0;
-    pick_texture_idx_ = 0;
-
-    cylinder_ = new GLCylinder(16, 1, 1.0f, true, true);
-    sphere_ = new GLSphere(5, 5);
+    cylinder_    = new GLCylinder(16, 1, 1.0f, true, true);
+    sphere_      = new GLSphere(5, 5);
     fancySphere_ = new GLSphere(16, 16);
   }
+
 
   /// Destructor
   ~BSplineCurveNodeT()

@@ -180,9 +180,10 @@ void ObjectPickDialog::slotMouseEventClick(QMouseEvent * _event, bool /*_double*
 {
   unsigned int nodeIdx, targetIdx;
 
-  BaseObjectData *obj;
+
   if (viewer_->viewer()->pick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), nodeIdx, targetIdx))
   {
+    BaseObjectData *obj = 0;
     if (PluginFunctions::getPickedObject (nodeIdx, obj))
     {
       if (!obj->flag ("vsi_objectId_disabled"))
@@ -204,10 +205,12 @@ unsigned int ObjectPickDialog::selectedId()
 
 void ObjectPickDialog::selectedId(unsigned int _id)
 {
-  BaseObject *obj = 0, *obj2 = 0;
+  BaseObject* obj = 0;
 
   if (PluginFunctions::getObject(_id, obj))
   {
+    BaseObject* obj2 = 0;
+
     if (selectedId_ != _id && PluginFunctions::getObject(selectedId_, obj2))
     {
       obj2->setFlag ("vsi_objectId_selected", false);

@@ -168,32 +168,28 @@ void INIPlugin::saveIniFile(INIFile& _ini, BaseObjectData* _object) {
 
 void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
     
-    BaseObjectData* baseObject;
-    if ( !PluginFunctions::getObject(_id,baseObject) ) {
-        emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
-        return;
-    }
-    
-    PolyMeshObject* polyObject(0);
-    TriMeshObject*  triObject(0);
-    LightObject*    lightObject(0);
-    
-    // Load all data from baseobjectdata part
-    parseIniFile(_ini,baseObject);
-    
-    if(baseObject->dataType() == DATA_POLY_MESH) {
-        polyObject = PluginFunctions::polyMeshObject(baseObject);
-        parseIniFileT(_ini, polyObject);
-    } else if ( baseObject->dataType() == DATA_TRIANGLE_MESH) {
-        triObject = PluginFunctions::triMeshObject(baseObject);
-        parseIniFileT(_ini, triObject);
-    }  else if ( baseObject->dataType() == DATA_LIGHT ) {
-      lightObject = PluginFunctions::lightObject(baseObject);
-      parseIniFileT(_ini, lightObject);
-    } else {
-        // Unhandled data type
-        emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
-    }
+  BaseObjectData* baseObject;
+  if (!PluginFunctions::getObject(_id, baseObject)) {
+    emit log(LOGERR, tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile"));
+    return;
+  }
+
+  // Load all data from baseobjectdata part
+  parseIniFile(_ini, baseObject);
+
+  if (baseObject->dataType() == DATA_POLY_MESH) {
+    PolyMeshObject* polyObject = PluginFunctions::polyMeshObject(baseObject);
+    parseIniFileT(_ini, polyObject);
+  } else if (baseObject->dataType() == DATA_TRIANGLE_MESH) {
+    TriMeshObject* triObject = PluginFunctions::triMeshObject(baseObject);
+    parseIniFileT(_ini, triObject);
+  } else if (baseObject->dataType() == DATA_LIGHT) {
+    LightObject* lightObject = PluginFunctions::lightObject(baseObject);
+    parseIniFileT(_ini, lightObject);
+  } else {
+    // Unhandled data type
+    emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
+  }
 }
 
 void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
