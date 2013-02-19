@@ -658,8 +658,6 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
 template <class MeshT>
 int InfoMeshObjectPlugin::getClosestVertexFromEdge(MeshT* _mesh, int _edge_idx, ACG::Vec3d& _hitPoint) {
 
-    int closest_v_idx = 0;
-
     ACG::Vec3d toVertex   = _mesh->point( _mesh->to_vertex_handle(   _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 )) );
     ACG::Vec3d fromVertex = _mesh->point( _mesh->from_vertex_handle( _mesh->halfedge_handle(_mesh->edge_handle(_edge_idx),0 )) );
 

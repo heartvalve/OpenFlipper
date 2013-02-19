@@ -404,7 +404,7 @@ bool QtExaminerViewer::mapToSphere(const QPoint& _v2D, Vec3d& _v3D) const
 
 void QtExaminerViewer::slotAnimation()
 {
-  static int msecs=0, count=0;
+
   QTime t;
   t.start();
   makeCurrent();
@@ -412,6 +412,9 @@ void QtExaminerViewer::slotAnimation()
   updateGL();
 
   if (!isUpdateLocked()) {
+
+    static int msecs=0, count=0;
+
     msecs += t.elapsed();
     if (count==10) {
       assert(statusbar_!=0);

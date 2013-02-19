@@ -1095,14 +1095,14 @@ void DepthPeelingPlugin::updatePeelingShaderSet()
 
 #ifdef DEPTHPEELING_SHADER_EXPORT
       char szFileName[256];
-      sprintf(szFileName, "peel_vertex_%02d.glsl", i);
+      sprintf(szFileName, "peel_vertex_%02u.glsl", i);
       FILE* pShaderOut = fopen(szFileName, "wt");
       for (GLSL::StringList::iterator it = strVertexShader.begin(); it != strVertexShader.end(); ++it)
         fprintf(pShaderOut, it->c_str());
       fclose(pShaderOut);
 
 
-      sprintf(szFileName, "peel_frag%02d.glsl", i);
+      sprintf(szFileName, "peel_frag%02u.glsl", i);
       pShaderOut = fopen(szFileName, "wt");
       for (GLSL::StringList::iterator it = strFragmentShader.begin(); it != strFragmentShader.end(); ++it)
         fprintf(pShaderOut, it->c_str());
@@ -1110,7 +1110,7 @@ void DepthPeelingPlugin::updatePeelingShaderSet()
 
       if (flatDrawMode)
       {
-        sprintf(szFileName, "peel_geom%02d.glsl", i);
+        sprintf(szFileName, "peel_geom%02u.glsl", i);
         pShaderOut = fopen(szFileName, "wt");
         for (GLSL::StringList::iterator it = strGeometryShader.begin(); it != strGeometryShader.end(); ++it)
           fprintf(pShaderOut, it->c_str());

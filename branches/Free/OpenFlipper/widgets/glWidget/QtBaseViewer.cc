@@ -600,8 +600,33 @@ void glViewer::drawScene()
   // store time since last repaint in gl state and restart timer
   glstate_->set_msSinceLastRedraw (redrawTime_.restart ());
 
-  // draw mono or stereo
   makeCurrent();
+
+  // draw mono or stereo
+  // If stereo mode is selected, we have to provide multiple ways of rendering.
+
+  // 1. Default internal pipeline : Directly to output buffer (no stereo support!)
+  // 2. Non default : Non-stereo Directly to output buffer (no stereo support!)
+  //
+  //
+
+//  if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::OpenGL && OpenFlipper::Options::glStereo ())
+//  {
+//    // Stereo      : Hardware support (OpenGL stereo : left and right buffer with offset eyes)
+//
+//    return;
+//  }
+//  else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::AnaglyphCustom && customAnaglyphSupported_)
+//  {
+//    //Stereo      : No Hardware support (Left and right frame buffer with offset eyes)
+//  } else {
+//
+//  }
+
+
+//  QGLFramebufferObject fbo( glstate_->viewport_width(),glstate_->viewport_height(),QGLFramebufferObject::CombinedDepthStencil );
+//
+//  fbo.bind();
 
   // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
@@ -609,11 +634,22 @@ void glViewer::drawScene()
   } else {
     renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
   }
-  
+
+
   if ( postProcessorManager().activeId( properties_.viewerId() ) != 0 ) {
     postProcessorManager().active( properties_.viewerId() )->plugin->postProcess(glstate_);
   }
   
+//  fbo.release();
+//
+//  QRect blitRect(0,0,glstate_->viewport_width(),glstate_->viewport_height());
+//
+//  //
+//  //QTime time;
+//  //time.restart();
+//  QGLFramebufferObject::blitFramebuffer( 0 , blitRect, &fbo, blitRect , GL_COLOR_BUFFER_BIT );
+//  //std::cerr << "Elapsed for blit: " << time.elapsed() << std::endl;
+
   glFinish();
 
   frame_time_ = timer.elapsed();
@@ -1892,13 +1928,14 @@ bool glViewer::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D) const
 
 void glViewer::slotAnimation()
 {
-  static int msecs=0, count=0;
-
   makeCurrent();
   rotate( lastRotationAxis_, lastRotationAngle_ );
   updateGL();
 
   if (!properties_.updateLocked()) {
+
+    static int msecs=0, count=0;
+
     msecs += frame_time_;
     if (count >= 10 && msecs >= 500) {
       char s[100];

@@ -163,7 +163,7 @@ void OMPropertyVisualizerSkinWeights<MeshT>::setVertexPropertyFromText(unsigned 
 
     QStringList slAll = text.split(")(");
 
-    for (QStringList::iterator it = slAll.begin(); it != slAll.end(); it++)
+    for (QStringList::iterator it = slAll.begin(); it != slAll.end(); ++it)
     {
         QStringList slCurrent = it->split(",");
         sw.insert(std::pair<int, double>(slCurrent.at(0).toInt(), slCurrent.at(1).toDouble()));
