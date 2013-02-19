@@ -204,7 +204,7 @@ public:
   typedef TriangleBSPT<Traits>             Base;
   typedef typename Traits::Scalar Scalar;
   OpenMeshTriangleBSPT(const Mesh& _mesh,
-                       const Scalar _infinity = std::numeric_limits<Scalar>::infinity()) : Base(Traits(_mesh), _infinity) {}
+                       const Scalar& _infinity = std::numeric_limits<Scalar>::infinity()) : Base(Traits(_mesh), _infinity) {}
 };
 
 //=============================================================================

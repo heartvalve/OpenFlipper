@@ -138,7 +138,7 @@ namespace QtWidgets {
 // copy qt event
 template <class SomeEvent>
 static QEvent* clone_event(QEvent* _event) 
-{ return (QEvent*) new SomeEvent(*(SomeEvent*) _event); }
+{ return dynamic_cast<QEvent*>(new SomeEvent(*(SomeEvent*) _event)); }
 
 
 //-----------------------------------------------------------------------------

@@ -87,7 +87,7 @@ public:
  
   /// construct from other matrix type
   template <class OtherScalar>
-  inline GLMatrixT(const GLMatrixT<OtherScalar> _rhs) 
+  inline GLMatrixT(const GLMatrixT<OtherScalar>& _rhs)
     : Matrix4x4T<Scalar>(_rhs)
   {}
 

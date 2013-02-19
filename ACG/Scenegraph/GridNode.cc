@@ -178,10 +178,8 @@ GridNode::draw(GLState&  _state  , const DrawModes::DrawMode& /* _drawMode */ )
     // The factor is means the following
     // If the viewer is farther away than the minRefinementDistance_, the factor is 0 and no refinement will take place
     // If the viewer goes closer to the grid, the grid will be refined. 
-    int factor =  0.0;
-    
     // Block negative distances (grid behind us)
-    factor = floor( minRefinementDistance_ / distance) - 1;
+    int factor = floor( minRefinementDistance_ / distance) - 1;
     
     int vertical   = verticalLines_;
     int horizontal = horizontalLines_;

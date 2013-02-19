@@ -155,7 +155,7 @@ void SplatCloudNode::boundingBox( ACG::Vec3d &_bbMin, ACG::Vec3d &_bbMax )
 
 void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode )
 {
-  static const int RENDERMODE_POINTS = 0;
+
   static const int RENDERMODE_DOTS   = 1;
   static const int RENDERMODE_SPLATS = 2;
 
@@ -165,10 +165,11 @@ void SplatCloudNode::draw( GLState &_state, const DrawModes::DrawMode &_drawMode
     rendermode = RENDERMODE_SPLATS;
   else if( _drawMode.containsAtomicDrawMode( dotsDrawMode_ ) )
     rendermode = RENDERMODE_DOTS;
-  else if( _drawMode.containsAtomicDrawMode( pointsDrawMode_ ) )
+  else if( _drawMode.containsAtomicDrawMode( pointsDrawMode_ ) ) {
+    static const int RENDERMODE_POINTS = 0;
     rendermode = RENDERMODE_POINTS;
-  else
-    return;
+  } else
+     return;
 
   // set desired depth function
   ACG::GLState::depthFunc( _state.depthFunc() );

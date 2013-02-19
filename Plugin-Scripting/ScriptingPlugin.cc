@@ -73,9 +73,7 @@ ScriptingPlugin::ScriptingPlugin() :
    lastFile_(""),
    debuggerButton_(0)
 #ifdef ENABLE_SCRIPT_DEBUGGER
-  #ifdef QT_SCRIPTTOOLS_LIB
    ,debugger_(0)
-  #endif
 #endif
 {
 

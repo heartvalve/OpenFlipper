@@ -107,7 +107,7 @@ public:
  
   /// construct from other matrix type
   template <class OtherScalar>
-  inline Matrix4x4T(const Matrix4x4T<OtherScalar> _rhs) {
+  inline Matrix4x4T(const Matrix4x4T<OtherScalar>& _rhs) {
     operator=(_rhs);
   }
   
