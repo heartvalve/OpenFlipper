@@ -220,7 +220,7 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
 
     materials_.insert(std::pair<std::string, Material>("Material" + mat.material_number(), mat));
     MaterialList::iterator it = materials_.end();
-    it--;
+    --it;
     return (*it).second;
 }
 
@@ -236,7 +236,6 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   Vec3f v, n;
   Vec2f t(0.0f,0.0f);
   typename MeshT::VertexHandle vh;
-  std::vector<typename MeshT::VertexHandle> vhandles;
   bool useMaterial = false;
   OpenMesh::Vec4f c;
 
