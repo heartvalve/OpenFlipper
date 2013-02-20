@@ -134,13 +134,13 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
 
       outStrm << "\n---------------------geometry-shader--------------------\n\n";
 
-      if (progprogGen.hasGeometryShader() )
+      if (progGen.hasGeometryShader() )
         for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
           outStrm << progGen.getGeometryShaderCode()[i] << "\n";
 
       outStrm << "\n---------------------fragment-shader--------------------\n\n";
 
-      for (int i = 0; i < progGen.getGeometryShaderCode().size(); ++i)
+      for (int i = 0; i < progGen.getFragmentShaderCode().size(); ++i)
         outStrm << progGen.getFragmentShaderCode()[i] << "\n";
 
 

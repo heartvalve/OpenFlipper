@@ -217,7 +217,7 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
   {
     if (_desc->shadeMode == SG_SHADE_GOURAUD ||
       _desc->vertexColors)
-      strColorIn = "vec4 out"+inputShader+"Color;";
+      strColorIn = "vec4 out"+inputShader+"Color";
   }
 
   if (strColorIn.size())
