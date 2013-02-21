@@ -20,3 +20,6 @@ uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/Topology
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:507
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:509
 
+// OpenFlipper Core: False positives due to undetected dependencies
+unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:81
+unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:87
