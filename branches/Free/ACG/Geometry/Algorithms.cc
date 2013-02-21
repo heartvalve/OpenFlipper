@@ -54,8 +54,10 @@
 //== INCLUDES =================================================================
 
 #include "Algorithms.hh"
-#include "../Utils/NumLimitsT.hh"
+#include <ACG/Utils/NumLimitsT.hh>
+#include <ACG/Utils/VSToolsT.hh>
 #include <math.h>
+
 
 #ifdef max
 #  undef max
