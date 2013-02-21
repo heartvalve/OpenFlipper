@@ -11,6 +11,9 @@ cppcheck  --xml  \
           --suppress=missingInclude  \
           --suppress=ConfigurationNotChecked \
           --suppress=negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:39 \
+          --suppress=negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:40 \
+          --suppress=arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:42 \
+          --suppress=arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:43 \
           --enable=style \
           --enable=performance \
           --enable=portability \
