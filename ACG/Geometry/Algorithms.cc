@@ -180,7 +180,7 @@ distPointLineSquared( const Vec& _p,
 		      Vec*       _min_v )
 {
   Vec d1(_p-_v0), d2(_v1-_v0), min_v(_v0);
-  typename Vec::value_type t = (d1|d2)/(d2|d2);
+  typename Vec::value_type t = (d1|d2)/ d2.sqrnorm();
 
   if (t >  1.0)       d1 = _p - (min_v = _v1);
   else if (t > 0.0)   d1 = _p - (min_v = _v0 + d2*t);
@@ -820,7 +820,7 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
     _axis = (v0 % v1).normalize();
 
     // Is nan?
-    if (_axis != _axis) {
+    if ( _axis != _axis ) {
         return false;
     }
 
@@ -828,7 +828,7 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
     _angle = acos(v0 | v1);
 
     // Is nan?
-    if (_angle != _angle)
+    if ( std::isnan(_angle) )
         _angle = 0.0;
 
     // Convert to degree
