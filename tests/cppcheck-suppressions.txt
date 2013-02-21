@@ -2,6 +2,7 @@
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:39
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:40
 bufferAccessOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:41
+memsetZeroBytes:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:41
 arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:42
 arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:43
 bufferAccessOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:38
@@ -13,12 +14,16 @@ arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/Polynom
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:37
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:75
 memsetZeroBytes:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl
+negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.h:37
 
 // OpenVolumeMesh: False positives
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:479
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:480
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:507
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:509
+
+// OpenMesh: Tutorial warnings
+redundantAssignment:libs_required/OpenMesh/Doc/Tutorial/09-persistence/fill_props.hh
 
 // OpenFlipper Core: False positives due to undetected dependencies
 unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:81
