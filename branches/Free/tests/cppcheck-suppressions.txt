@@ -12,3 +12,4 @@ bufferAccessOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/Polyn
 arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:296
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:37
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:75
+memsetZeroBytes:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl
