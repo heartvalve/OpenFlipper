@@ -1,4 +1,4 @@
-// Poisson Plugin suppressions
+// Plugin-PoissonReconstruction General suppressions
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:39
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:40
 bufferAccessOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/BSplineData.h:41
@@ -13,3 +13,10 @@ arrayIndexOutOfBounds:Plugin-PoissonReconstruction/PoissonReconstruction/Polynom
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:37
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:75
 memsetZeroBytes:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl
+
+// OpenVolumeMesh: False positives
+uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:479
+uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:480
+uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:507
+uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:509
+
