@@ -867,6 +867,7 @@ private:
     double                       lastRotationAngle_;
     QTime                        lastMoveTime_;
     QTimer*                      timer_;
+    double                       fovyModifier_;
 
     QTimer                       clickTimer_;
     QTime                        clickTime_;
