@@ -314,6 +314,24 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
   _prog->setUniform("g_vMaterial", materialParams);
 
 
+  // Additional Uniforms defined in the render Object
+  for ( QMap<QString, QPair<unsigned int, QVariant> >::iterator additionalUniformsIter = _obj->additionalUniforms_.begin();
+      additionalUniformsIter != _obj->additionalUniforms_.end(); ++additionalUniformsIter ) {
+
+    switch (additionalUniformsIter.value().first) {
+      case GL_FLOAT:
+        _prog->setUniform(additionalUniformsIter.key().toAscii(),additionalUniformsIter.value().second.toFloat());
+        break;
+      case GL_INT:
+        _prog->setUniform(additionalUniformsIter.key().toAscii(),additionalUniformsIter.value().second.toInt());
+        break;
+      default:
+        std::cerr << "IRenderer Error: Additional Uniform data type not supported" << std::endl;
+        break;
+    }
+
+  }
+
 
   // texture
   glActiveTexture(GL_TEXTURE0);

@@ -299,6 +299,19 @@ struct ACGDLLEXPORT RenderObject
    *
    */
   void setGeometryShaderInputFromDrawCall(GLenum _mode);
+
+  /** \brief set values for uniforms
+   *
+   * @param _uniformName Name of uniform in shader
+   * @param _dataType    Type of value (GL_INT, GL_FLOAT)
+   * @param _value       QVariant encapsuled value of the type
+   *
+   */
+  void addUniformValue(QString _uniformName, unsigned int _dataType, QVariant value) {
+    additionalUniforms_[_uniformName] = QPair<unsigned int, QVariant>( _dataType, value );
+  }
+
+  QMap<QString, QPair<unsigned int, QVariant> > additionalUniforms_;
 };
 
 //=============================================================================
