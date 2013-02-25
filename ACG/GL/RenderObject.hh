@@ -307,8 +307,8 @@ struct ACGDLLEXPORT RenderObject
    * @param _value       QVariant encapsuled value of the type
    *
    */
-  void addUniformValue(QString _uniformName, unsigned int _dataType, QVariant value) {
-    additionalUniforms_[_uniformName] = QPair<unsigned int, QVariant>( _dataType, value );
+  void addUniformValue(QString _uniformName, unsigned int _dataType, QVariant _value) {
+    additionalUniforms_[_uniformName] = QPair<unsigned int, QVariant>( _dataType, _value );
   }
 
   QMap<QString, QPair<unsigned int, QVariant> > additionalUniforms_;
