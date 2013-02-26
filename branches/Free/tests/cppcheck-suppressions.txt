@@ -28,3 +28,4 @@ redundantAssignment:libs_required/OpenMesh/Doc/Tutorial/09-persistence/fill_prop
 // OpenFlipper Core: False positives due to undetected dependencies
 unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:81
 unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:87
+redundantAssignment:OpenFlipper/LicenseManager/LicenseManagerActive.cc:310
