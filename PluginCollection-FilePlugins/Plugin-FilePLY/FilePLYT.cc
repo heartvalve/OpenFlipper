@@ -843,14 +843,14 @@ void FilePLYPlugin::writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary) 
     if(vColors) _os << "property uchar blue\n";
 
     // Vertex texcoords
-    if(vTexCoords) _os << "property int32 u\n";
-    if(vTexCoords) _os << "property int32 v\n";
+    if(vTexCoords) _os << "property int u\n";
+    if(vTexCoords) _os << "property int v\n";
 
     // Face block
     _os << "element face " << _mesh->n_faces() << "\n";
 
     // Vertex index list
-    _os << "property list uchar int32 vertex_index\n";
+    _os << "property list uchar int vertex_index\n";
 
     // Face normals
     if(fNormals) _os << "property float nx\n";
@@ -928,7 +928,8 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
         // Write vertex color
         if(vColors) {
             c = _mesh->color(v_it);
-            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
+            OpenMesh::Vec3uc castedColor = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
+            ofs << " " << (unsigned int)castedColor[0] << " " << (unsigned int)castedColor[1] << " " << (unsigned int)castedColor[2];
         }
 
         // Write vertex texcoord
@@ -963,7 +964,8 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
         // Write face color
         if(fColors) {
             c = _mesh->color(f_it);
-            ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
+            OpenMesh::Vec3uc castedColor = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
+            ofs << " " << (unsigned int)castedColor[0] << " " << (unsigned int)castedColor[1] << " " << (unsigned int)castedColor[2];
         }
 
         ofs << "\n";
@@ -1038,7 +1040,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
         if(vColors) {
             c = _mesh->color(v_it);
 
-            v3uc = OpenMesh::vector_cast<OpenMesh::Vec3uc>(c);
+            v3uc = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
 
             // Write coordinates
             writeValue(ofs, v3uc[0]);
@@ -1084,7 +1086,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
         if(fColors) {
             c = _mesh->color(f_it);
 
-            v3uc = OpenMesh::vector_cast<OpenMesh::Vec3uc>(c);
+            v3uc = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
 
             // Write coordinates
             writeValue(ofs, v3uc[0]);
