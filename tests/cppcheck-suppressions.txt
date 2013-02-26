@@ -16,6 +16,10 @@ negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl:
 memsetZeroBytes:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.inl
 negativeIndex:Plugin-PoissonReconstruction/PoissonReconstruction/Polynomial.h:37
 
+// Plugin-FileOBJ: False positives in branches without spline support
+unusedVariable:PluginCollection-FilePlugins/Plugin-FileOBJ/FileOBJ.cc:584
+unusedVariable:PluginCollection-FilePlugins/Plugin-FileOBJ/FileOBJ.cc:585
+
 // OpenVolumeMesh: False positives
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:479
 uselessCallsRemove:libs_required/OpenVolumeMesh/src/OpenVolumeMesh/Core/TopologyKernel.cc:480
