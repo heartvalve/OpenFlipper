@@ -284,13 +284,15 @@ void GPUCacheOptimizer::Opt_Vertex::FindScore(unsigned int MaxSizeVertexCache)
 		else
 		{
 
-		  const float CacheDecayPower = 1.5f;
-		  const float LastTriScore = 0.75f;
+			if (iCachePos < 3){ // last tri => fixed score
 
-			if (iCachePos < 3) // last tri => fixed score
+			  const float LastTriScore = 0.75f;
 				fNewScore = LastTriScore;
-			else
+
+			} else
 			{
+			  const float CacheDecayPower = 1.5f;
+
 				// check for cache_pos < MaxSizeCachePos here..
 				// Points for being high in the cache.
 				const float Scaler = 1.0f / (MaxSizeVertexCache - 3);
