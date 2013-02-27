@@ -102,6 +102,7 @@ void TypePolyhedralMeshPlugin::pluginsInitialized() {
 
 int TypePolyhedralMeshPlugin::addEmpty() {
 
+
     // new object data struct
     PolyhedralMeshObject* object = new PolyhedralMeshObject(DATA_POLYHEDRAL_MESH);
 
@@ -123,12 +124,17 @@ int TypePolyhedralMeshPlugin::addEmpty() {
     object->materialNode()->set_ambient_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
 
     // Set rendering props
-    object->meshNode()->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-    object->meshNode()->set_scaling(0.8);
 
-    object->update();
+    if(OpenFlipper::Options::gui())
+    {
+        object->meshNode()->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 
-    object->show();
+        object->meshNode()->set_scaling(0.8);
+        object->update();
+
+        object->show();
+    }
+
 
     emit log(LOGINFO, object->getObjectinfo());
 
