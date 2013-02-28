@@ -40,13 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-//=============================================================================
-//
-// CLASS InfoMeshObjectPlugin
-//
-// Author:  David Bommes <bommes@cs.rwth-aachen.de>
-//=============================================================================
-
 #ifndef INFOPLUGIN_HH
 #define INFOPLUGIN_HH
 
@@ -55,13 +48,8 @@
 #include <QObject>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/InformationInterface.hh>
-
-#include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/common/Types.hh>
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 //== CLASS DEFINITION =========================================================
 
@@ -70,13 +58,11 @@
  
   Plugin to visualize information about open volume meshs in the scene
 */
-class InfoVolumeMeshObjectPlugin : public QObject, BaseInterface, /*InformationInterface,*/ LoggingInterface/*, StatusbarInterface*/
+class InfoVolumeMeshObjectPlugin : public QObject, BaseInterface, LoggingInterface
 {
   Q_OBJECT
       Q_INTERFACES(BaseInterface)
-//      Q_INTERFACES(InformationInterface)
       Q_INTERFACES(LoggingInterface)
-//      Q_INTERFACES(StatusbarInterface)
 
 
   signals:
@@ -88,9 +74,6 @@ class InfoVolumeMeshObjectPlugin : public QObject, BaseInterface, /*InformationI
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
-//    // StatusbarInterface
-//    void addWidgetToStatusbar(QWidget* _widget);
-
   private slots :
 
     // BaseInterface
@@ -101,10 +84,6 @@ class InfoVolumeMeshObjectPlugin : public QObject, BaseInterface, /*InformationI
     void slotAllCleared();
     
     void noguiSupported( ) {}
-
-    // InformationInterface
-    void slotInformationRequested(const QPoint _clickedPoint, DataType _type);
-    DataType supportedDataTypes();
 
   public :
 

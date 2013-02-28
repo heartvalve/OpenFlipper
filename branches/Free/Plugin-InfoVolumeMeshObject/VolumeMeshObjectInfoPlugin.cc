@@ -81,22 +81,6 @@ void InfoVolumeMeshObjectPlugin::pluginsInitialized() {
   
 }
 
-//-----------------------------------------------------------------------------
-
-//DataType InfoVolumeMeshObjectPlugin::supportedDataTypes() {
-//    return DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH);
-//}
-
-//----------------------------------------------------------------------------------------------
-
-void
-InfoVolumeMeshObjectPlugin::
-  slotInformationRequested(const QPoint _clickedPoint, DataType _type) {
-
-    // not implemented yet
-
-}
-
 //------------------------------------------------------------------------------
 
 void InfoVolumeMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType& _type)
