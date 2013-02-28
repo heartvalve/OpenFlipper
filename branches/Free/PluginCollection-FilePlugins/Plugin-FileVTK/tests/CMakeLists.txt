@@ -12,7 +12,9 @@ if(BUILD_TESTING)
   run_single_object_file_mesh_test("filevtk" "Plugin-FileVTK/triangle_mesh_ascii.vtk" "fileMeshTest.ofs")
 
   if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/PolyhedralMesh)
-    run_single_object_file_mesh_test("filevtk" "Plugin-FileVTK/vtk_ascii_volume_mesh_test_file.vtk" "fileVolumeMeshTest.ofs")
+    if (EXISTS ${CMAKE_SOURCE_DIR}/Plugin-InfoVolumeMeshObject)
+      run_single_object_file_mesh_test("filevtk" "Plugin-FileVTK/vtk_ascii_volume_mesh_test_file.vtk" "fileVolumeMeshTest.ofs")
+    endif ()
   endif ()
 
 endif()
