@@ -277,7 +277,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @return             index of the first added primitive
     */
     template <typename MeshT>
-    int addFaceToOpenMesh(MeshT*& _mesh, std::vector<quint32> indices);
+    int addFaceToOpenMesh(MeshT*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a face to the mesh.
     *
@@ -361,7 +361,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addTetraCell(TriMesh*& _mesh, std::vector<quint32> indices);
+    int addTetraCell(TriMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a tetra cell to the mesh. (Does nothing, yet)
     *
@@ -371,7 +371,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addTetraCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+    int addTetraCell(PolyMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a hexa cell to the mesh. (Does nothing, yet)
     *
@@ -381,7 +381,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addHexaCell(TriMesh*& _mesh, std::vector<quint32> indices);
+    int addHexaCell(TriMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a hexa cell to the mesh. (Does nothing, yet)
     *
@@ -391,7 +391,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addHexaCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+    int addHexaCell(PolyMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a wedge cell to the mesh. (Does nothing, yet)
     *
@@ -401,7 +401,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addWedgeCell(TriMesh*& _mesh, std::vector<quint32> indices);
+    int addWedgeCell(TriMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a wedge cell to the mesh. (Does nothing, yet)
     *
@@ -411,7 +411,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addWedgeCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+    int addWedgeCell(PolyMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a pyramid cell to the mesh. (Does nothing, yet)
     *
@@ -421,7 +421,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addPyramidCell(TriMesh*& _mesh, std::vector<quint32> indices);
+    int addPyramidCell(TriMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a pyramid cell to the mesh. (Does nothing, yet)
     *
@@ -431,7 +431,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addPyramidCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+    int addPyramidCell(PolyMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a face to the mesh.
     *
@@ -441,7 +441,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addFace(TriMesh*& _mesh, std::vector<quint32> indices);
+    int addFace(TriMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a face to the mesh.
     *
@@ -451,7 +451,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @return             index of the first added primitive
     */
-    int addFace(PolyMesh*& _mesh, std::vector<quint32> indices);
+    int addFace(PolyMesh*& _mesh, std::vector<quint32> _indices);
 
     /** \brief Adds a face to the mesh.
     *
@@ -1001,6 +1001,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _spec        Line containing the CELL header
     * @param _in          Textstream (after reading the CELL header)
     * @param _mesh        Mesh to work on
+    * @param _cells       Cell descriptions
     */
     template <typename MeshT>
     bool loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells);
@@ -1011,6 +1012,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _spec        Line containing the NORMALS header
     * @param _in          Textstream (after reading the NORMALS header)
     * @param _mesh        Mesh to work on
+    * @param _cells       Cell descriptions
     * @param _pointNormal point or face normals?
     * @param _count       Number of primitives to read
     */
