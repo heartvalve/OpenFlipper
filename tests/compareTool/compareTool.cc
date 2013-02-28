@@ -115,7 +115,8 @@ bool compareString(QString _key ,QVariant _result, QVariant _reference) {
 
 int main(int argv, char **args)
 {
-
+  std::cout << "============================================================\n" ;
+  std::cout << "Executing compare tool\n";
   std::cout << "Comparing results to reference:\n" ;
 
   // Flag if everything went fine
@@ -134,13 +135,14 @@ int main(int argv, char **args)
 
   QFileInfo resultFileInfo(file1);
   if ( !resultFileInfo.exists() ) {
-	std::cerr << "Result file: " << file1.toStdString() << " does not exist!\n";
+    std::cerr << "ERROR! Result file: " << file1.toStdString() << " does not exist!\n";
+
     return 1;
   }
 
   QFileInfo referenceFileInfo(file2);
   if ( !referenceFileInfo.exists() ) {
-    std::cerr << "Reference file: " << file2.toStdString() << " does not exist!\n";
+    std::cerr << "ERROR! Reference file: " << file2.toStdString() << " does not exist!\n";
     return 1;
   }
 
