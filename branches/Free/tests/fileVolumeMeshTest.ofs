@@ -1,0 +1,18 @@
+var file = @FILEPLUGIN@.loadObject("@OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
+
+var name           = datacontrol.getObjectName(file);
+var vertexCount    = infovolumemeshobject.vertexCount(file);
+var edgeCount      = infovolumemeshobject.edgeCount(file);
+var faceCount      = infovolumemeshobject.faceCount(file);
+var cellCount      = infovolumemeshobject.cellCount(file)
+
+
+printToFile("@OUTPUT_TEST_DATA_FILE@","TESTNAME=@TESTNAME@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","LOADEDFILE=@OPENFLIPPER_TEST_FILES@/@TEST_FILE@");
+printToFile("@OUTPUT_TEST_DATA_FILE@","OBJECTNAME=",name);
+printToFile("@OUTPUT_TEST_DATA_FILE@","VERTEXCOUNT=",vertexCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","EDGECOUNT=",edgeCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","FACECOUNT=",faceCount);
+printToFile("@OUTPUT_TEST_DATA_FILE@","CELLCOUNT=",cellCount);
+
+core.exitApplication();
