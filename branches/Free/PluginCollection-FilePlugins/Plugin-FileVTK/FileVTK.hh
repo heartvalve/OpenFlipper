@@ -60,6 +60,13 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+
 enum Dataset {
   STRUCTURED_POINTS,
   STRUCTURED_GRID,
@@ -71,6 +78,26 @@ enum Dataset {
 class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
     LoggingInterface, ScriptInterface, INIInterface, StatusbarInterface, RPCInterface, TextureInterface
 {
+    class CellType {
+
+    public:
+
+      CellType() :
+              type(0),
+              index(-1)
+      {
+      }
+
+      // The type of the cell
+      unsigned int type;
+
+      // The index of the primitiv in the mesh that was created from this cell
+      unsigned int index;
+
+      // list of indices in the cell
+      std::vector<quint32> indices;
+    };
+
    Q_OBJECT
    Q_INTERFACES(FileInterface)
    Q_INTERFACES(LoadSaveInterface)
@@ -184,6 +211,737 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// on the save dialog
     void updateUserOptions();
 
+
+    /** \brief Adds a normal to the cell.
+    *
+    * The cell may refer to any kind of primitves described by the vtk standard
+    * (vertex, face, triangle strip, etc)
+    *
+    * @param _mesh        Mesh to work on
+    * @param _cell        Description of the cell including its type and its index in the mesh
+    * @param _normal      The normal
+    */
+    template <typename MeshT>
+    void addCellNormal(MeshT*& _mesh, CellType _cell, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a tetra cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addTetraCellToOpenMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a hexa cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addHexaCellToOpenMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a wedge cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addWedgeCellToOpenMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a pyramid cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addPyramidCellToOpenMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addFaceToOpenMesh(MeshT*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addFaceToOpenMesh(MeshT*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Updates face normals.
+    *
+    *
+    * @param _mesh        Mesh whose face normals should be updated
+    */
+    template <typename MeshT>
+    void updateFaceNormalsOfOpenMesh(MeshT*& _mesh);
+
+    /** \brief Updates vertex normals.
+    *
+    *
+    * @param _mesh        Mesh whose vertex normals should be updated
+    */
+    template <typename MeshT>
+    void updateVertexNormalsOfOpenMesh(MeshT*& _mesh);
+
+    /** \brief Removed temporary properties that might have been added during file reading.
+    *
+    *
+    * @param _mesh        Mesh whose temporary properties should be removed
+    */
+    template <typename MeshT>
+    void removeTemporaryPropertiesOfOpenMesh(MeshT*& _mesh);
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    template <typename MeshT>
+    void addVertexNormalToOpenMesh(MeshT _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    template <typename MeshT>
+    void addFaceNormalToOpenMesh(MeshT _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Sets normals of duplicated vertices that were created for non-manifold meshes.
+    *
+    *
+    * @param _mesh        Mesh to work on
+    */
+    template <typename MeshT>
+    void setNormalsOfDuplicatedVerticesOfOpenMesh(MeshT*& _mesh);
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    template< class MeshT >
+    bool writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh );
+
+    /** \brief Adds a tetra cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addTetraCell(TriMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a tetra cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addTetraCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a hexa cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addHexaCell(TriMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a hexa cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addHexaCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a wedge cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addWedgeCell(TriMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a wedge cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addWedgeCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a pyramid cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addPyramidCell(TriMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a pyramid cell to the mesh. (Does nothing, yet)
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addPyramidCell(PolyMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(TriMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(PolyMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(TriMesh*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(PolyMesh*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Updates face normals.
+    *
+    *
+    * @param _mesh        Mesh whose face normals should be updated
+    */
+    void updateFaceNormals(TriMesh*& _mesh);
+
+    /** \brief Updates face normals.
+    *
+    *
+    * @param _mesh        Mesh whose face normals should be updated
+    */
+    void updateFaceNormals(PolyMesh*& _mesh);
+
+    /** \brief Updates vertex normals.
+    *
+    *
+    * @param _mesh        Mesh whose vertex normals should be updated
+    */
+    void updateVertexNormals(TriMesh*& _mesh);
+
+    /** \brief Updates vertex normals.
+    *
+    *
+    * @param _mesh        Mesh whose vertex normals should be updated
+    */
+    void updateVertexNormals(PolyMesh*& _mesh);
+
+    /** \brief Removed temporary properties that might have been added during file reading.
+    *
+    *
+    * @param _mesh        Mesh whose temporary properties should be removed
+    */
+    void removeTemporaryProperties(TriMesh*& _mesh);
+
+    /** \brief Removed temporary properties that might have been added during file reading.
+    *
+    *
+    * @param _mesh        Mesh whose temporary properties should be removed
+    */
+    void removeTemporaryProperties(PolyMesh*& _mesh);
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    void addVertexNormal(TriMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    void addVertexNormal(PolyMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    void addFaceNormal(TriMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    void addFaceNormal(PolyMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Sets normals of duplicated vertices that were created for non-manifold meshes.
+    *
+    *
+    * @param _mesh        Mesh to work on
+    */
+    void setNormalsOfDuplicatedVertices(TriMesh*& _mesh);
+
+    /** \brief Sets normals of duplicated vertices that were created for non-manifold meshes.
+    *
+    *
+    * @param _mesh        Mesh to work on
+    */
+    void setNormalsOfDuplicatedVertices(PolyMesh*& _mesh);
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    bool writeASCIIData(std::ostream& _out, TriMesh& _mesh);
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    bool writeASCIIData(std::ostream& _out, PolyMesh& _mesh);
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /** \brief Adds a tetra cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addTetraCellToOpenVolumeMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a hexa cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addHexaCellToOpenVolumeMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a wedge cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addWedgeCellToOpenVolumeMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a pyramid cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addPyramidCellToOpenVolumeMesh(MeshT _mesh, std::vector<quint32> _indices);
+
+    /** \brief Adds a face to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addFaceToOpenVolumeMesh(MeshT*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    template <typename MeshT>
+    int addFaceToOpenVolumeMesh(MeshT*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    template <typename MeshT>
+    void addVertexNormalToOpenVolumeMesh(MeshT _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    template <typename MeshT>
+    void addFaceNormalToOpenVolumeMesh(MeshT _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    template< class MeshT >
+    bool writeASCIIDataOfOpenVolumeMesh(std::ostream& _out, MeshT& _mesh );
+#endif //ENABLE_OPENVOLUMEMESH_SUPPORT
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    /** \brief Adds a tetra cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addTetraCell(HexahedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a hexa cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addHexaCell(HexahedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a wedge cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addWedgeCell(HexahedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a pyramid cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addPyramidCell(HexahedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(HexahedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(HexahedralMesh*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Updates face normals.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose face normals should be updated
+    */
+    void updateFaceNormals(HexahedralMesh*& _mesh){/* don't need to be updated */};
+
+    /** \brief Updates vertex normals.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose vertex normals should be updated
+    */
+    void updateVertexNormals(HexahedralMesh*& _mesh){/* don't need to be updated */};
+
+    /** \brief Removed temporary properties that might have been added during file reading.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose temporary properties should be removed
+    */
+    void removeTemporaryProperties(HexahedralMesh*& _mesh){/* don't need to be removed */};
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    void addVertexNormal(HexahedralMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    void addFaceNormal(HexahedralMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Sets normals of duplicated vertices that were created for non-manifold meshes.
+    *
+    * Does nothing because volume mesh does not need to add vertices for non-manifold meshes.
+    * Only added for compatibility.
+    *
+    * @param _mesh        Mesh to work on
+    */
+    void setNormalsOfDuplicatedVertices(HexahedralMesh*& _mesh){/* we didn't duplicate any vertices */};
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    bool writeASCIIData(std::ostream& _out, HexahedralMesh& _mesh);
+#endif //ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    /** \brief Adds a tetra cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addTetraCell(PolyhedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a hexa cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addHexaCell(PolyhedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a wedge cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addWedgeCell(PolyhedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a pyramid cell to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the cell is added to
+    * @param _indices     Indices of the vertices of the cell, ordered according to vtk standard
+    *
+    * @return             index of the first added primitive
+    */
+    int addPyramidCell(PolyhedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _indices     Indices of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(PolyhedralMesh*& _mesh, std::vector<quint32> indices);
+
+    /** \brief Adds a face to the volume mesh.
+    *
+    *
+    * @param _mesh        Mesh the face is added to
+    * @param _index1      First index of the vertices of the face, counter clockwise order
+    * @param _index2      Second index of the vertices of the face, counter clockwise order
+    * @param _index3      Third index of the vertices of the face, counter clockwise order
+    *
+    * @return             index of the first added primitive
+    */
+    int addFace(PolyhedralMesh*& _mesh, quint32 _index1, quint32 _index2, quint32 _index3);
+
+    /** \brief Updates face normals.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose face normals should be updated
+    */
+    void updateFaceNormals(PolyhedralMesh*& _mesh){/* don't need to be updated */};
+
+    /** \brief Updates vertex normals.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose vertex normals should be updated
+    */
+    void updateVertexNormals(PolyhedralMesh*& _mesh){/* don't need to be updated */};
+
+    /** \brief Removed temporary properties that might have been added during file reading.
+    *
+    * Does nothing. Only added for compatibility.
+    *
+    * @param _mesh        Mesh whose temporary properties should be removed
+    */
+    void removeTemporaryProperties(PolyhedralMesh*& _mesh){/* don't need to be removed */};
+
+    /** \brief Adds a vertex normal.
+    *
+    *
+    * @param _mesh        Mesh the vertex normal is added to
+    * @param _index       Index of the vertex
+    * @param _normal      Normal that is added
+    */
+    void addVertexNormal(PolyhedralMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Adds a face normal.
+    *
+    *
+    * @param _mesh        Mesh the face normal is added to
+    * @param _index       Index of the face
+    * @param _normal      Normal that is added
+    */
+    void addFaceNormal(PolyhedralMesh*& _mesh, quint32 _index, OpenMesh::Vec3d _normal);
+
+    /** \brief Sets normals of duplicated vertices that were created for non-manifold meshes.
+    *
+    * Does nothing because volume mesh does not need to add vertices for non-manifold meshes.
+    * Only added for compatibility.
+    *
+    * @param _mesh        Mesh to work on
+    */
+    void setNormalsOfDuplicatedVertices(PolyhedralMesh*& _mesh){/* we didn't duplicate any vertices */};
+
+    /** \brief Writes the data of the VTK file in ASCII format
+    *
+    *
+    * @param _out         Textstream to write the file
+    * @param _mesh        Mesh to work on
+    */
+    bool writeASCIIData(std::ostream& _out, PolyhedralMesh& _mesh);
+#endif //ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+
+
+    enum BestMeshType {
+        BMT_None           = 0,
+        BMT_TriMesh        = 1,
+        BMT_PolyMesh       = 1 << 1,
+        BMT_HexahedralMesh = 1 << 2,
+        BMT_PolyhedralMesh = 1 << 3
+    };
+
+    /// Reads the file to check for present primitives and returns the object type that fits best
+    BestMeshType findBestObjectType(QString _filename);
+
     template <typename MeshT>
     bool loadMesh(QTextStream& _stream,MeshT*& _mesh, Dataset _type);
 
@@ -221,9 +979,11 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     *
     * @param _mesh Mesh to work on
     * @param _vhandles Non-manifold face to be added
+    *
+    * @return idx of first added face
     */
     template <typename MeshT>
-    void add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::VertexHandle >& _vhandles);
+    int add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::VertexHandle >& _vhandles);
 
     /** \brief Reads triangle strips from the stream and adds them to the mesh
     *
@@ -243,7 +1003,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _mesh        Mesh to work on
     */
     template <typename MeshT>
-    bool loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh);
+    bool loadMeshCells(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells);
 
     /** \brief Reads Normals from the stream and adds them to the mesh
     *
@@ -255,7 +1015,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _count       Number of primitives to read
     */
     template <typename MeshT>
-    bool loadMeshNormals(QString _spec,QTextStream& _in,MeshT*& _mesh,bool _pointNormal, quint32 _count);
+    bool loadMeshNormals(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells, bool _pointNormal, quint32 _count);
 
     /** \brief Writes the header of the VTK file, then calls writeASCIIData (binary VTK is currently unsupported)
     *
@@ -266,14 +1026,6 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     template< class MeshT >
     bool writeMesh(std::ostream& _out, MeshT& _mesh );
 
-    /** \brief Writes the data of the VTK file in ASCII format
-    *
-    *
-    * @param _out         Textstream to write the file
-    * @param _mesh        Mesh to work on
-    */
-    template< class MeshT >
-    bool writeASCIIData(std::ostream& _out, MeshT& _mesh );
 };
 
 
