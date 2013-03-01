@@ -218,36 +218,42 @@ if (WIN32 )
 endif(WIN32)
 
 # ========================================================================
-# Apple Mac Store Flags
+# Custom command to create a bundle and a package on mac
 # ========================================================================
-if ( APPLE AND NOT DEFINED OPENFLIPPER_CALL_FIX_BUNDLE )
-  set( OPENFLIPPER_CALL_FIX_BUNDLE true CACHE BOOL "After building OpenFlipper, a bundle creation step is executed (which copies all dependencies into the bundle) to create a valid MacOs Bundle." )
-endif()
 
-if (APPLE AND OPENFLIPPER_CALL_FIX_BUNDLE)
+if ( APPLE )
+
+   # Configuration option about fixbundle
+   if ( APPLE AND NOT DEFINED OPENFLIPPER_CALL_FIX_BUNDLE )
+     set( OPENFLIPPER_CALL_FIX_BUNDLE false CACHE BOOL "After building OpenFlipper, a bundle creation step is executed (which copies all dependencies into the bundle) to create a valid MacOs Bundle. This step is only necessary if creating a package." )
+   endif()
+
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
-     "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)
-  
-  # Don't call every time! add_custom_target (fixbundle ALL
-  add_custom_target (fixbundle ALL 
-    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
-  )
+     "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)   
+
+  # Fixbundle is only necessary, when we wan't a shippable package.
+  # Otherwise the original rpaths are used 
+  if ( OPENFLIPPER_CALL_FIX_BUNDLE )
+    # Call fixbundle every time   
+    add_custom_target (fixbundle ALL 
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
+    )
+  else()
+    # Call fixbundle only as a dependency
+    add_custom_target (fixbundle 
+      COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
+    )
+  endif()
+
   # let bundle generation depend on all targets
   add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
 
   # install bundle
   install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .
            USE_SOURCE_PERMISSIONS)
-endif ()
 
-
-# ========================================================================
-# Custom command to create a package
-# ========================================================================
-
-if ( WIN32 OR APPLE )
-
+  # Extra target for building an OpenFlipper package on mac
   # Call fixbundle first
   # afterwards we call make package as an external command, as we can't
   # add a dependency on build in targets of cake
