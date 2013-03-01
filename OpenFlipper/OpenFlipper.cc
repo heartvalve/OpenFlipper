@@ -88,7 +88,7 @@
 //   struct rusage resource_usage;
 //   if (getrusage(RUSAGE_SELF, &resource_usage))
 //   {
-//     //error - call to getrusage failed - handle it
+//     //error - call to getrusage failed - handle itf
 //     std::cerr << "Unable to get process information" << std::endl;
 //   }
 //   else
@@ -373,7 +373,9 @@ int main(int argc, char **argv)
       return -1;
     }
 
+#ifndef __APPLE__
     glutInit(&argc,argv);
+#endif
 
     // create core ( this also reads the ini files )
     Core * w = new Core( );
