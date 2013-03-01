@@ -241,6 +241,23 @@ if (APPLE AND OPENFLIPPER_CALL_FIX_BUNDLE)
            USE_SOURCE_PERMISSIONS)
 endif ()
 
+
+# ========================================================================
+# Custom command to create a package
+# ========================================================================
+
+if ( WIN32 OR APPLE )
+
+  # Call fixbundle first
+  # afterwards we call make package as an external command, as we can't
+  # add a dependency on build in targets of cake
+  add_custom_target (OpenFlipper_package
+    DEPENDS fixbundle
+    COMMAND make package
+  )
+
+endif()
+
 # ========================================================================
 # Output log information
 # ========================================================================
