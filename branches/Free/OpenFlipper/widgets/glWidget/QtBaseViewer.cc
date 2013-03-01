@@ -1886,27 +1886,35 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   if (projectionMode() == PERSPECTIVE_PROJECTION )
   {
 
-    // Old style zoom (bad as it does not modify the projection but the modelview,
-    // which kills e.g. Sky Boxes
-    //double d = -(double)_event->delta() / 120.0 * 0.2 * factor * properties_.trackballRadius() / 3.0;
-    //translate( ACG::Vec3d(0.0, 0.0, d) );
+    // Control key : Modify field of view. Otherwise translate
+    if ( _event->modifiers() &  Qt::ControlModifier ) {
 
-    // Most mouse types work in steps of 15 degrees, in which case the delta value is a
-    // multiple of 120; i.e., 120 units * 1/8 = 15 degrees
-    double numDegrees = double(_event->delta()) / 8.0;
-    double numSteps = numDegrees / 15.0;
+      // Most mouse types work in steps of 15 degrees, in which case the delta value is a
+      // multiple of 120; i.e., 120 units * 1/8 = 15 degrees
+      double numDegrees = double(_event->delta()) / 8.0;
+      double numSteps = numDegrees / 15.0;
 
-    // Update the fovy modifier
-    // This modifier will be added to the default fov to get the zoom
-    fovyModifier_ += numSteps * factor ;
+      // Update the fovy modifier
+      // This modifier will be added to the default fov to get the zoom
+      fovyModifier_ += numSteps * factor ;
 
-    // Clamp to minimum
-    if ( (OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() + fovyModifier_) < 1.0 )
-      fovyModifier_ = 1.0 -OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+      // Clamp to minimum
+      if ( (OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() + fovyModifier_) < 1.0 )
+        fovyModifier_ = 1.0 -OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
 
-    // Clamp to maximum
-    if ( (OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() + fovyModifier_) > 179.0 )
-      fovyModifier_ = 179.0-OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+      // Clamp to maximum
+      if ( (OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() + fovyModifier_) > 179.0 )
+        fovyModifier_ = 179.0-OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+    } else {
+
+
+      // Old style zoom (bad as it does not modify the projection but the modelview,
+      // which kills e.g. Sky Boxes
+      double d = -(double)_event->delta() / 120.0 * 0.2 * factor * properties_.trackballRadius() / 3.0;
+      translate( ACG::Vec3d(0.0, 0.0, d) );
+    }
+
+
 
     updateGL();
   }
