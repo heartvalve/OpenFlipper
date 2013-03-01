@@ -1,9 +1,18 @@
-cmake_minimum_required (VERSION 2.8.4)
+make_minimum_required (VERSION 2.8.4)
 
 if (NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type selected, default to Release")
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
+
+
+IF ( APPLE )
+	IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+	    message("WARNING: Mac Debug mode mixes debug and release libraries (Webkit, ...), which causes strange errors.")
+	    message("WARNING: It might work but is currently not supported.")
+	ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+endif()
+
 
 project (OpenFlipper)
 
