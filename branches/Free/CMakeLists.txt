@@ -8,8 +8,8 @@ endif()
 
 IF ( APPLE )
 	IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
-	    message("WARNING: Mac Debug mode mixes debug and release libraries (Webkit, ...), which causes strange errors.")
-	    message("WARNING: It might work but is currently not supported.")
+	    message(WARNING "WARNING: Mac Debug mode mixes debug and release libraries (Webkit, ...), which causes strange errors.")
+	    message(WARNING "WARNING: It might work but is currently not supported.")
 	ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 endif()
 
