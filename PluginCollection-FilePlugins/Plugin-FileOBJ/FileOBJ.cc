@@ -1177,6 +1177,19 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 #endif
 
   }
+
+  // we have only read points so far and no faces
+  // treat them as a polymesh
+  if (keyWrd == "v" && faceCount == 0 && currentVertexCount != 0 && !inGroup) {
+    _importer.setCurrentGroup(0);
+    _importer.forceMeshType( OBJImporter::POLYMESH );
+    vhandles.clear();
+    for (int i = 0; i < currentVertexCount; ++i)
+      vhandles.push_back(i);
+
+    _importer.addFace(vhandles);
+    faceCount++;
+  }
 }
 
 ///check file types and read general info like vertices
@@ -1589,12 +1602,25 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     // Mesh does not contain any faces
     PolyMeshCount++;
     if (keyWrd != "call") {
-      unsigned int currentOptions = _importer.objectOptions()[_importer.currentObject()];
-      // this is only a triangle mesh if the object is not a curve and not a surface
-      // also ignore if it is set to NONE
-      if (!(currentOptions & OBJImporter::CURVE) && !(currentOptions
-          & OBJImporter::SURFACE) && (currentOptions != OBJImporter::NONE))
-        _importer.setObjectOptions(OBJImporter::TRIMESH);
+      // we only have vertices and no faces
+      if (keyWrd == "v" && !inGroup) {
+        _importer.setCurrentGroup(0);
+        // treat the file as a polymesh
+        forceTriangleMesh_ = false;
+        forcePolyMesh_ = true;
+        _importer.setObjectOptions(OBJImporter::POLYMESH);
+        _importer.forceMeshType( OBJImporter::POLYMESH );
+        for (unsigned int i = 0; i < _importer.n_vertices(); ++i)
+          _importer.useVertex(i);
+      } else {
+        unsigned int currentOptions = _importer.objectOptions()[_importer.currentObject()];
+        // this is only a triangle mesh if the object is not a curve and not a surface
+        // also ignore if it is set to NONE
+        if (!(currentOptions & OBJImporter::CURVE) &&
+            !(currentOptions & OBJImporter::SURFACE) &&
+            (currentOptions != OBJImporter::NONE))
+          _importer.setObjectOptions(OBJImporter::TRIMESH);
+      }
     }
   }
 
