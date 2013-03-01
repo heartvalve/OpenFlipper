@@ -128,12 +128,13 @@ br />
 <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
 <li> Change to the newly created directory ( <code><b>cd build</b></code> ) and type <code><b>cmake ..</b></code> or if you want to build in release mode type <code><b> cmake -DCMAKE_BUILD_TYPE=Release ..</b></code>
 <br />
- You can also disable bundle creation by adding <code><b>-DOPENFLIPPER_CALL_FIX_BUNDLE=false</b></code> to the cmake command line(If you want to create installer packages you need this step!) </li>
+ You can also enable bundle creation by adding <code><b>-DOPENFLIPPER_CALL_FIX_BUNDLE=true</b></code> to the cmake command line (If you want a bundle containing all required libraries. Otherwise, the libraries will be used at their original locations.) </li>
 <li> Now call <b>make</b> to build OpenFlipper </li>
 </ul>
 
-The created application bundle (that contains binaries, libs and shared files) can be found in the <b>Build</b>
-directory.
+The created application bundle can be found in the <b>Build</b> directory. If you build with <code><b>-DOPENFLIPPER_CALL_FIX_BUNDLE=true</b></code>, the bundle will contain all required libraries. 
+
+You can also create a drag and drop installer for mac by calling <code><b>make OpenFlipper_package</b></code>. This will also call fixbundle on your Bundle. <b>Note: When fixbundle has been called, the rpaths will be switched to local libraries. Concurrent builds, will still reference the global ones, which will cause inconsistencies and crashes! You have to call fixbundle after each build if it has been called once.</b>
 
 \section cmake_plugin Building OpenFlipper Plugins with CMake
 
