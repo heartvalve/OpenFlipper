@@ -1,4 +1,4 @@
-make_minimum_required (VERSION 2.8.4)
+cmake_minimum_required (VERSION 2.8.4)
 
 if (NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type selected, default to Release")
