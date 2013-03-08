@@ -1,0 +1,19 @@
+<OpenFlipper>
+
+    <element name="color_backgound">
+    <category>Colors</category>
+    <short>Background Color</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="color" type="Vector">
+        <short>Color</short>
+        <long>Desired background color</long>
+        <precision>0.00001</precision>
+      </input>
+    </inputs>
+    <code>
+	colorplugin.setBackgroundColor([input="color"])      
+    </code>
+  </element>
+
+</OpenFlipper>
