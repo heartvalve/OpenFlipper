@@ -83,9 +83,11 @@
 
 // Prototypes for scripting
 #include "OpenFlipper/Scripting/scriptPrototypes/prototypeVec3d.hh"
+#include "OpenFlipper/Scripting/scriptPrototypes/prototypeVec4d.hh"
 #include "OpenFlipper/Scripting/scriptPrototypes/prototypeMatrix4x4.hh"
 #include "OpenFlipper/Scripting/scriptPrototypes/prototypeDataType.hh"
 #include <OpenFlipper/Scripting/scriptWrappers/vec3dWrapper.hh>
+#include <OpenFlipper/Scripting/scriptWrappers/vec4dWrapper.hh>
 #include <OpenFlipper/Scripting/scriptWrappers/matrix4x4Wrapper.hh>
 #include <OpenFlipper/Scripting/scriptWrappers/DataTypeWrapper.hh>
 // #include <OpenFlipper/Scripting/scriptWrappers/ObjectIdWrapper.hh>
@@ -1235,6 +1237,9 @@ private slots:
     /// Prototype for the Vector type
     prototypeVec3d vec3dPrototype_;
     
+    /// Prototype for the Vector type
+    prototypeVec4d vec4dPrototype_;
+
     /// Prototype for the DataType
     prototypeDataType DataTypePrototype_;
 

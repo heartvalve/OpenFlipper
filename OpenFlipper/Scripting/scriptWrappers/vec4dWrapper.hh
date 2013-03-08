@@ -34,47 +34,47 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 14817 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2012-06-28 15:29:23 +0200 (Do, 28 Jun 2012) $                     *
 *                                                                            *
 \*===========================================================================*/
 
 
 
 //
-// C++ Interface: vec3dWrapper.hh
+// C++ Interface: vec4dWrapper.hh
 //
 // Description: 
 //
 //
-// Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2007
+// Author: Jan Möbius <moebius@cs.rwth-aachen.de>, (C) 2013
 //
 
-#ifndef WRAPPERVEC3D_HH 
-#define WRAPPERVEC3D_HH 
+#ifndef WRAPPERVEC4D_HH
+#define WRAPPERVEC4D_HH
 
 #include "OpenFlipper/common/Types.hh"
 
 #include <QtScript/QtScript>
 
 //===========================================================================
-/** @name Script Wrappers for Vector class ( ACG::Vec3d )
+/** @name Script Wrappers for Vector class ( ACG::Vec4d )
   * @{ */
 //===========================================================================
 
 /// Convert Vector to script value
-QScriptValue toScriptValueVector(QScriptEngine *engine, const Vector &s);
+QScriptValue toScriptValueVector4(QScriptEngine *engine, const Vector4 &s);
     
 /// Convert script value to Vector
-void fromScriptValueVector(const QScriptValue &obj, Vector &s);
+void fromScriptValueVector4(const QScriptValue &obj, Vector4 &s);
 
 /// Create an Vector in Scripting environment
-QScriptValue createVector(QScriptContext *, QScriptEngine *engine);
+QScriptValue createVector4(QScriptContext *, QScriptEngine *engine);
 
-QScriptValue VectorToString(QScriptContext *context, QScriptEngine *engine);
+QScriptValue Vector4ToString(QScriptContext *context, QScriptEngine *engine);
 
 /** @} */  
  
       
-#endif // WRAPPERVEC3D_HH
+#endif // WRAPPERVEC4D_HH
