@@ -289,4 +289,25 @@
       [output="sqrt2"] = Math.SQRT2;
     </code>
   </element>
+
+  <element name="math_constant_bool">
+    <category>Constants</category>
+    <short>Boolean constants</short>
+    <long>Boolean constants</long>
+    <outputs>
+      <output name="out_true" type="Bool">
+        <short>true</short>
+        <long>true</long>
+      </output>
+     <output name="out_false" type="Bool">
+        <short>false</short>
+        <long>false</long>
+      </output>
+    </outputs>
+    <code>
+      [output="out_true"]  = true;
+      [output="out_false"] = false;
+    </code>
+  </element>
+
 </OpenFlipper>

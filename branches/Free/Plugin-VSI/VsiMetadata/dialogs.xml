@@ -1,7 +1,7 @@
 <OpenFlipper>
  
   <element name="message_box">
-    <category>Widgets</category>
+    <category>Widgets and UI</category>
     <short>Message box</short>
     <long>Shows a message box</long>
     <dataflow>true</dataflow>
@@ -36,7 +36,7 @@
   </element>
 
   <element name="question_box">
-    <category>Widgets</category>
+    <category>Widgets and UI</category>
     <short>Yes/No box</short>
     <long>Shows a message box with Yes and No buttons</long>
     <dataflow>true</dataflow>
@@ -59,7 +59,7 @@
   </element>
 
   <element name="question_box_with_inputs">
-    <category>Widgets</category>
+    <category>Widgets and UI</category>
     <short>Yes/No with Inputs</short>
     <long>Shows a message box with Yes and No buttons</long>
     <dataflow>true</dataflow>
@@ -98,5 +98,26 @@
       [output="ret"] = visualscripting.questionBox (message);
     </code>
   </element>
+
+  <element name="update_view">
+    <category>Widgets and UI</category>
+    <short>Update View</short>
+    <long>Calls cores update view function</long>
+    <dataflow>true</dataflow>
+    <code>
+      core.updateView();
+    </code>
+  </element>
+
+  <element name="update_ui">
+    <category>Widgets and UI</category>
+    <short>Update UI</short>
+    <long>Refresh user interface</long>
+    <dataflow>true</dataflow>
+    <code>
+      core.updateUI();
+    </code>
+  </element>
+
 
 </OpenFlipper>
