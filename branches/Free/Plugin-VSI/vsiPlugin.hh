@@ -109,6 +109,9 @@ class VsiPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface,
     /// Scripting function, that displays a Yes/No message box
     bool questionBox (QString _message);
 
+    /// Shows a non blocking stop box for use inside loops
+    bool continueBox(QString _message);
+
     QString version () { return QString("1.0"); };
 
   private slots:
@@ -131,6 +134,39 @@ class VsiPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface,
 
     VSI::Context *context_;
     VSI::BaseWidget *baseWidget_;
+};
+
+//=============================================================================
+
+class QContinueBox : public QWidget {
+  Q_OBJECT
+
+public:
+  QContinueBox(QString _message,QWidget* _parent = 0) :
+    QWidget(_parent),
+    continue_(true)
+  {
+    QPushButton* stopButton = new QPushButton("Stop",this);
+    QHBoxLayout* layout = new QHBoxLayout(this);
+
+    this->setWindowTitle(_message);
+
+    layout->addWidget(stopButton);
+    this->setLayout(layout);
+
+    connect(stopButton,SIGNAL(clicked()), this, SLOT(clicked()));
+  }
+
+public slots:
+  void clicked( ) {
+    continue_ = false;
+  }
+
+public:
+  bool continueBox() { return continue_; };
+
+private:
+  bool continue_;
 };
 
 
