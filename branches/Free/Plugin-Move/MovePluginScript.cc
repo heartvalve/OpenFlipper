@@ -103,6 +103,25 @@ void MovePlugin::setDescriptions(){
 
   emit setSlotDescription("manipulatorDirectionZ(int)",tr("Returns the z-direction of an object's manipulator."),
                           QStringList(tr("objectId")), QStringList(tr("ID of an object")));
+
+
+  emit setSlotDescription("objectRenderingMatrixIdentity(int)",tr("Resets  the objects rendering matrix to identity."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
+
+
+  emit setSlotDescription("objectRenderingMatrixScale(int,double)",tr("Adds a scaling factor to the Object rendering Matrix in the scenegraph."),
+                          QStringList(tr("objectId;Scaling Factor").split(";")), QStringList(tr("ID of an object; Scaling factor").split(";")));
+
+  emit setSlotDescription("objectRenderingMatrixTranslate(int,Vector)",tr("Adds a translation to the Object rendering Matrix in the scenegraph."),
+                          QStringList(tr("objectId;translation vector").split(";")), QStringList(tr("ID of an object;Translation vector").split(";")));
+
+  emit setSlotDescription("objectRenderingMatrixRotate(int,Vector,double)",tr("Adds a Rotation to the Object rendering Matrix in the scenegraph."),
+                          QStringList(tr("objectId;rotation axis;angle").split(";")), QStringList(tr("ID of an object;Rotation axis;angle").split(";")));
+
+  emit setSlotDescription("getObjectRenderingMatrix(int)",tr("Returns the current object transformation matrix from the scenegraph."),
+                            QStringList(tr("objectId").split(";")), QStringList(tr("ID of an object").split(";")));
+
+
 }
 
 
@@ -1213,3 +1232,77 @@ Vector MovePlugin::manipulatorDirectionZ( int _objectId ){
 
   return (Vector) object->manipulatorNode()->directionZ();
 }
+
+//------------------------------------------------------------------------------
+
+void MovePlugin::objectRenderingMatrixIdentity(int _objectId) {
+  BaseObjectData* object;
+
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("objectRenderingMatrixIdentity : unable to get object" ));
+    return ;
+  }
+
+  object->manipulatorNode()->loadIdentity();
+
+  emit updatedObject(_objectId,UPDATE_VISIBILITY);
+}
+
+//------------------------------------------------------------------------------
+
+void MovePlugin::objectRenderingMatrixScale(int _objectId, double _s) {
+  BaseObjectData* object;
+
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("objectRenderingMatrixScale : unable to get object" ));
+    return ;
+  }
+
+  object->manipulatorNode()->scale(_s);
+
+  emit updatedObject(_objectId,UPDATE_VISIBILITY);
+}
+
+//------------------------------------------------------------------------------
+
+void MovePlugin::objectRenderingMatrixTranslate(int _objectId, Vector _translation) {
+  BaseObjectData* object;
+
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("objectRenderingMatrixTranslate : unable to get object" ));
+    return ;
+  }
+
+  object->manipulatorNode()->translate(_translation);
+
+  emit updatedObject(_objectId,UPDATE_VISIBILITY);
+}
+
+//------------------------------------------------------------------------------
+
+void MovePlugin::objectRenderingMatrixRotate(int _objectId, Vector _axis, double _angle) {
+  BaseObjectData* object;
+
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("objectRenderingMatrixRotate : unable to get object" ));
+    return ;
+  }
+
+  object->manipulatorNode()->rotate(_angle,_axis);
+
+  emit updatedObject(_objectId,UPDATE_VISIBILITY);
+}
+
+//------------------------------------------------------------------------------
+
+Matrix4x4 MovePlugin::getObjectRenderingMatrix(int _objectId) {
+  BaseObjectData* object;
+
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("getObjectRenderingMatrix : unable to get object" ));
+    return Matrix4x4();
+  }
+
+  return object->manipulatorNode()->matrix();
+}
+

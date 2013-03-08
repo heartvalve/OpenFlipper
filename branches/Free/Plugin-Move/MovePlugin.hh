@@ -509,6 +509,43 @@ public slots :
 
   /// Get the z-direction of the manipulator
   Vector manipulatorDirectionZ( int _objectId );
+
+  /** \brief Sets the Object Matrix in the scenegraph to identity
+   */
+  void objectRenderingMatrixIdentity(int _objectId);
+
+  /** \brief Adds a scaling factor to the Object rendering Matrix in the scenegraph
+   *
+   *  @param _objectId Id of the object to modify
+   *  @param _s        Scaling factor
+   */
+  void objectRenderingMatrixScale(int _objectId, double _s);
+
+  /** \brief Adds a scaling factor to the Object rendering Matrix in the scenegraph
+   *
+   *  @param _objectId    Id of the object to modify
+   *  @param _translation Translation vector
+   */
+  void objectRenderingMatrixTranslate(int _objectId, Vector _translation);
+
+  /** \brief Adds a scaling factor to the Object rendering Matrix in the scenegraph
+     *
+     *  @param _objectId Id of the object to modify
+     *  @param _axis     Rotation axis
+     *  @param _angle    Rotation angle
+     */
+  void objectRenderingMatrixRotate(int _objectId, Vector _axis, double _angle);
+
+  /** \brief Gets the Object Matrix in the scenegraph
+   *
+   *  The object itself is not modified b< this matrix. Only the transformation matrix applied to the object
+   *  coordinates before rendering gets modified.
+   *
+   *  @param _objectId Id of the object to modify
+   *  @return Current Matrix of the object
+   */
+  Matrix4x4 getObjectRenderingMatrix(int _objectId);
+
 /** @} */
 
   public slots:
