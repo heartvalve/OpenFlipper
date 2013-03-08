@@ -12,4 +12,5 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/Skeleton)
   add_definitions (-DENABLE_SKELETON_SUPPORT)
 endif ()
 
-openflipper_plugin ( TSplineMesh TRANSLATION_LANGUAGES de_DE INSTALLDATA Icons  )
+openflipper_plugin ( TRANSLATION_LANGUAGES de_DE 
+                     INSTALLDATA Icons VsiMetadata  )

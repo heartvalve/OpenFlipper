@@ -1,0 +1,108 @@
+<OpenFlipper>  
+  <element name="move_translate">
+    <category>Object Manipulation</category>
+    <short>Move/rotate</short>
+    <long>Translates and transforms all vertices of an object.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="vec" type="Vector">
+        <short>Translation vector</short>
+        <long>Vector to translate with</long>
+      </input>
+      <input name="mat" type="Matrix">
+        <short>Transformation matrix</short>
+        <long>Matrix to transform with</long>
+      </input>
+    </inputs>
+    <code>
+	move.translate([input="obj"], [input="vec"]);
+	move.transform([input="obj"], [input="mat"]);
+    </code>
+  </element>
+
+
+  <element name="move_rendering_matrixi_identity">
+      <category>Object Manipulation</category>
+      <short>Scenegraph matrix identity</short>
+      <long>Resets the scenegraph matrix used for rendering to identity</long>
+      <dataflow>true</dataflow>
+      <inputs>
+        <input name="obj" type="ObjectId">
+          <short>ID</short>
+          <long>ID of an object</long>
+        </input>
+      </inputs>
+      <code>
+        move.objectRenderingMatrixIdentity([input="obj"]);
+      </code>
+  </element>
+
+  <element name="move_rendering_matrix_scale">
+      <category>Object Manipulation</category>
+      <short>Scenegraph matrix scale</short>
+      <long>Adds a scaling factor to the scenegraph matrix used for rendering</long>
+      <dataflow>true</dataflow>
+      <inputs>
+        <input name="obj" type="ObjectId">
+          <short>ID</short>
+          <long>ID of an object</long>
+        </input>
+        <input name="factor" type="Number">
+          <short>scaling factor</short>
+          <long>Scaling factor</long>
+        </input>
+      </inputs>
+      <code>
+        move.objectRenderingMatrixScale([input="obj"],[input="factor"]);
+      </code>
+  </element>
+
+  <element name="move_rendering_matrix_translate">
+      <category>Object Manipulation</category>
+      <short>Scenegraph matrix translate</short>
+      <long>Adds a translation to the scenegraph matrix used for rendering</long>
+      <dataflow>true</dataflow>
+      <inputs>
+        <input name="obj" type="ObjectId">
+          <short>ID</short>
+          <long>ID of an object</long>
+        </input>
+        <input name="translation" type="Vector">
+          <short>translation vector</short>
+          <long>translation vector</long>
+        </input>
+      </inputs>
+      <code>
+        move.objectRenderingMatrixTranslate([input="obj"],[input="translation"]);
+      </code>
+  </element>
+
+  <element name="move_rendering_matrix_rotate">
+      <category>Object Manipulation</category>
+      <short>Scenegraph matrix rotate</short>
+      <long>Adds a rotation to the scenegraph matrix used for rendering</long>
+      <dataflow>true</dataflow>
+      <inputs>
+        <input name="obj" type="ObjectId">
+          <short>ID</short>
+          <long>ID of an object</long>
+        </input>
+        <input name="axis" type="Vector">
+          <short>rotation axis</short>
+          <long>rotation axis</long>
+        </input>
+        <input name="angle" type="Number">
+          <short>rotation anlge</short>
+          <long>rotation ange</long>
+        </input>
+      </inputs>
+      <code>
+        move.objectRenderingMatrixrotate([input="obj"],[input="axis"],[input="angle"]);
+      </code>
+  </element>
+
+</OpenFlipper>
