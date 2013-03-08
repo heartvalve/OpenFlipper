@@ -639,6 +639,9 @@ public slots:
     /// Called when a  plugin requests an update in the viewer
     void updateView();
 
+    /// process events during script execution to keep the ui alive
+    void updateUI();
+
     /// Clear all data objects
     void clearAll();
 
