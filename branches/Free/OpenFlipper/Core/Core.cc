@@ -459,8 +459,20 @@ Core::init() {
                           scriptEngine_.newQObject(&vec3dPrototype_));
                           
   // set a constructor to allow creation via Vector(x,y,z)
-  QScriptValue ctor = scriptEngine_.newFunction(createVector);
-  scriptEngine_.globalObject().setProperty("Vector", ctor);
+  QScriptValue ctorVec3 = scriptEngine_.newFunction(createVector);
+  scriptEngine_.globalObject().setProperty("Vector", ctorVec3);
+
+  //==========================================================================
+  // Register the 4d Vector Type to the core ( is Vec4d )
+  //==========================================================================
+  qScriptRegisterMetaType(&scriptEngine_,
+                          toScriptValueVector,
+                          fromScriptValueVector,
+                          scriptEngine_.newQObject(&vec4dPrototype_));
+
+  // set a constructor to allow creation via Vector(x,y,z)
+  QScriptValue ctorVec4 = scriptEngine_.newFunction(createVector4);
+  scriptEngine_.globalObject().setProperty("Vector4", ctorVec4);
                           
   //==========================================================================
   // Register the DataType Class to the core
