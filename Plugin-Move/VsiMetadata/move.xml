@@ -101,7 +101,7 @@
         </input>
       </inputs>
       <code>
-        move.objectRenderingMatrixrotate([input="obj"],[input="axis"],[input="angle"]);
+        move.objectRenderingMatrixRotate([input="obj"],[input="axis"],[input="angle"]);
       </code>
   </element>
 
