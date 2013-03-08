@@ -339,4 +339,37 @@
     </code>
   </element>
 
+  <element name="compose_vector4">
+    <category>Math</category>
+    <short>Compose Vector4</short>
+    <long>Compose Vector4 of scalars</long>
+    <outputs>
+      <output name="out_vec" type="Vector4">
+        <short>Vector4</short>
+        <long>Vector4 composed of the input scalars</long>
+      </output>
+    </outputs>
+    <inputs>
+      <input name="x" type="Number">
+        <short>x</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="y" type="Number">
+        <short>y</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="z" type="Number">
+        <short>z</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="w" type="Number">
+        <short>w</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <code>
+      [output="out_vec"]  = Vector4([input="x"],[input="y"],[input="z"],[input="w"]);
+    </code>
+  </element>
+
 </OpenFlipper>
