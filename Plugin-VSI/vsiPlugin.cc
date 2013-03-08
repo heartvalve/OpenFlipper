@@ -257,4 +257,26 @@ bool VsiPlugin::questionBox (QString _message)
   return false;
 }
 
+/// Non blocking box which can be used inside scripting loops to stop on clicks
+bool VsiPlugin::continueBox (QString _message)
+{
+  static QContinueBox* msgBox = NULL;
+
+  if ( !msgBox ) {
+    msgBox = new QContinueBox(_message);
+    msgBox->show();
+  } else {
+
+    if ( msgBox->continueBox() ) {
+      return true;
+    } else {
+      delete msgBox;
+      msgBox = NULL;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 //------------------------------------------------------------------------------

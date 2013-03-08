@@ -119,5 +119,27 @@
     </code>
   </element>
 
+  <element name="dialog_Continue_box">
+    <category>Widgets and UI</category>
+    <short>Continue box</short>
+    <long>Deliver true until the user clicks on the stop button</long>
+    <dataflow>true</dataflow>
+    <input name="message" type="String" external="false" runtime="false">
+      <short>Displayed message</short>
+      <long>Displayed message.</long>
+      <default>Stop?</default>
+    </input>
+    <outputs>
+      <output name="continue" type="Bool">
+        <short>continue</short>
+        <long>Delivers true until stop button is pressed.</long>
+      </output>
+    </outputs>
+    <code>
+      var dialog_stop_box_message = [input="message"];
+
+      [output="continue"] = visualscripting.continueBox(dialog_stop_box_message);
+    </code>
+  </element>
 
 </OpenFlipper>
