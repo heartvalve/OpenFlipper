@@ -289,6 +289,19 @@ void ColorPlugin::setBackgroundColor( Vector _color ) {
   PluginFunctions::setBackColor(color);
 }
 
+//-----------------------------------------------------------------------------
+
+void ColorPlugin::setObjectEmissiveColor(int _objectId , Vector4 _color) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    return;
+  }
+
+  OpenMesh::Vec4f tmp = OpenMesh::Vec4f(_color);
+  object->materialNode()->set_base_color(tmp);
+
+}
 
 //-----------------------------------------------------------------------------
 
