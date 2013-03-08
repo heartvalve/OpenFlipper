@@ -44,7 +44,7 @@
 
 //=============================================================================
 //
-//  Wrapper for Vector ( Vec3d ) - IMPLEMENTATION
+//  Wrapper for Vector ( Vec4d ) - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -55,7 +55,7 @@
 
 //== IMPLEMENTATION ========================================================== 
 
-//=== Vector ( = Vec3d) =======================================================
+//=== Vector4 ( = Vec4d) =======================================================
 
 QScriptValue toScriptValueVector4(QScriptEngine *engine, const Vector4 &s)
 {
@@ -107,7 +107,7 @@ void fromScriptValueVector4(const QScriptValue &obj, Vector4 &s)
 
 QScriptValue createVector4(QScriptContext *context, QScriptEngine *engine)
 {     
-  Vector s;
+  Vector4 s;
   
   QScriptValue callee = context->callee();
   
@@ -130,7 +130,7 @@ QScriptValue createVector4(QScriptContext *context, QScriptEngine *engine)
 
 QScriptValue Vector4ToString(QScriptContext *context, QScriptEngine *engine)
 {
-  QString result = "Vector : ( " + 
+  QString result = "Vector4 : ( " +
                    context->thisObject().property("x").toString() + "," +
                    context->thisObject().property("y").toString() + "," +
                    context->thisObject().property("z").toString() + ","+

@@ -59,8 +59,8 @@
  *
  *   You can use the following functions:
  *   \code
- *      var vec = Vector(1,2,3,4)
- *      var vec2 = Vector(10,20,30,4)
+ *      var vec = Vector4(1,2,3,4)
+ *      var vec2 = Vector4(10,20,30,4)
  *
  *      vec.multiply(0.5)           // Multiply vec with 0.5
  *      vec.add(vec2)               // Add vec2 to vec

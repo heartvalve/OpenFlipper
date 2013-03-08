@@ -466,8 +466,8 @@ Core::init() {
   // Register the 4d Vector Type to the core ( is Vec4d )
   //==========================================================================
   qScriptRegisterMetaType(&scriptEngine_,
-                          toScriptValueVector,
-                          fromScriptValueVector,
+                          toScriptValueVector4,
+                          fromScriptValueVector4,
                           scriptEngine_.newQObject(&vec4dPrototype_));
 
   // set a constructor to allow creation via Vector(x,y,z)
