@@ -620,8 +620,8 @@ QString GraphicsScene::generateCode (QString &errors, bool _codeOnly)
       QString dName = "ask_user_output_" + found->variableId();
       QString dInputs = "";
 
-      // replace all inputs that are not connectet with user defined value or prepare for asking during execution
-      foreach (ElementInput *i, found->inputs ())
+      // replace all inputs that are not connected with user defined value or prepare for asking during execution
+      foreach (ElementInput *i, found->inputs ()){
         if (i->isSet ())
         {
           found->replaceCodeBlock ("is_set", i->inOut ()->name (), "true");
@@ -645,6 +645,13 @@ QString GraphicsScene::generateCode (QString &errors, bool _codeOnly)
             dInputs += i->inOut ()->name () + ",";
           }
         }
+
+        // Replace the is_connected block for inputs as well.
+        if (i->connections ().isEmpty ())
+          found->replaceCodeBlock ("is_connected", i->inOut ()->name (), "false");
+        else
+          found->replaceCodeBlock ("is_connected", i->inOut ()->name (), "true");
+      }
 
       foreach (ElementFunction *ef, found->functions ())
         found->replaceCodeBlock ("function", ef->function ()->name (), "func_" + found->variableId () + "_" + ef->function ()->name ());
