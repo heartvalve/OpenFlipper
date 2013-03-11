@@ -92,7 +92,7 @@ Vec4DWidget::Vec4DWidget(QMap< QString, QString > &_hints, QString _typeName, QW
   hL->addWidget (fields_[1]);
   hL->addWidget (new QLabel (","));
   hL->addWidget (fields_[2]);
-  hL->addWidget (new QLabel (")"));
+  hL->addWidget (new QLabel (","));
   hL->addWidget (fields_[3]);
   hL->addWidget (new QLabel (")"));
 
