@@ -99,7 +99,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Base Color</string>
+             <string>Emissive Color</string>
             </property>
            </widget>
           </item>
