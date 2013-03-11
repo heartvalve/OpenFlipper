@@ -310,6 +310,57 @@ void ColorPlugin::setObjectEmissiveColor(int _objectId , Vector4 _color) {
 
 //-----------------------------------------------------------------------------
 
+/** Sets the ambient color of an object
+ *
+ * @param _objectId  Id of an Object
+ * @param _color     Color to be set
+ */
+void ColorPlugin::setObjectAmbientColor(int _objectId , Vector4 _color) {
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    return;
+  }
+
+  OpenMesh::Vec4f tmp = OpenMesh::Vec4f(_color);
+  object->materialNode()->set_ambient_color(tmp);
+}
+
+//-----------------------------------------------------------------------------
+
+/** Sets the diffuse color of an object
+ *
+ * @param _objectId  Id of an Object
+ * @param _color     Color to be set
+ */
+void ColorPlugin::setObjectDiffuseColor(int _objectId , Vector4 _color) {
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    return;
+  }
+
+  OpenMesh::Vec4f tmp = OpenMesh::Vec4f(_color);
+  object->materialNode()->set_diffuse_color(tmp);
+}
+
+//-----------------------------------------------------------------------------
+
+/** Sets the specular color of an object
+ *
+ * @param _objectId  Id of an Object
+ * @param _color     Color to be set
+ */
+void ColorPlugin::setObjectSpecularColor(int _objectId , Vector4 _color) {
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    return;
+  }
+
+  OpenMesh::Vec4f tmp = OpenMesh::Vec4f(_color);
+  object->materialNode()->set_specular_color(tmp);
+}
+
+//-----------------------------------------------------------------------------
+
 /** \brief Generate an icon with given color
  *
  * @param _color a color vector
