@@ -181,10 +181,8 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
     */
     void setBackgroundColor( Vector _color );
 
-    /** Sets the emissive color of an object
-     *
-     * @param _objectId  Id of an Object
-     * @param _color     Color to be set
+    /**
+     * Sets the emissive color of an object
      */
     void setObjectEmissiveColor(int _objectId , Vector4 _color);
 

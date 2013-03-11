@@ -291,6 +291,11 @@ void ColorPlugin::setBackgroundColor( Vector _color ) {
 
 //-----------------------------------------------------------------------------
 
+/** Sets the emissive color of an object
+ *
+ * @param _objectId  Id of an Object
+ * @param _color     Color to be set
+ */
 void ColorPlugin::setObjectEmissiveColor(int _objectId , Vector4 _color) {
 
   BaseObjectData* object;

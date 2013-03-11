@@ -16,4 +16,26 @@
     </code>
   </element>
 
+
+    <element name="color_object_emissive">
+    <category>Colors</category>
+    <short>Emissive Color</short>
+    <long>Set Emissive Color of an object</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="color" type="Vector4">
+        <short>Color</short>
+        <long>Desired emissive color</long>
+        <precision>0.00001</precision>
+      </input>
+    </inputs>
+    <code>
+        colorplugin.setObjectEmissiveColor([input="obj"],[input="color"])
+    </code>
+  </element>
+
 </OpenFlipper>
