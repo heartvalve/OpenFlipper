@@ -61,6 +61,7 @@
 #include "types/filename.hh"
 #include "types/selection.hh"
 #include "types/vec3d.hh"
+#include "types/vec4d.hh"
 #include "types/matrix4x4.hh"
 #include "types/objectId/objectId.hh"
 #include "types/any.hh"
@@ -124,6 +125,7 @@ Context::Context (QScriptEngine *_engine) :
   registerType (new TypeFilename ());
   registerType (new TypeSelection ());
   registerType (new TypeVec3D ());
+  registerType (new TypeVec4D ());
   registerType (new TypeMatrix4x4 ());
   registerType (new TypeObjectId ());
   registerType (new TypeAny ());
