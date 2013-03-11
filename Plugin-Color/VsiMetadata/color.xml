@@ -17,24 +17,49 @@
   </element>
 
 
-    <element name="color_object_emissive">
+    <element name="color_object">
     <category>Colors</category>
-    <short>Emissive Color</short>
-    <long>Set Emissive Color of an object</long>
+    <short>Object Color</short>
+    <long>Set Color of an object</long>
     <dataflow>true</dataflow>
     <inputs>
       <input name="obj" type="ObjectId">
         <short>ID</short>
         <long>ID of an object</long>
       </input>
-      <input name="color" type="Vector4">
-        <short>Color</short>
+      <input name="color_emissive" type="Vector4" optional="true">
+        <short>Emissive</short>
         <long>Desired emissive color</long>
+        <precision>0.00001</precision>
+      </input>
+      <input name="color_ambient" type="Vector4" optional="true">
+        <short>Ambient</short>
+        <long>Desired ambient color</long>
+        <precision>0.00001</precision>
+      </input>
+      <input name="color_diffuse" type="Vector4" optional="true">
+        <short>Diffuse</short>
+        <long>Desired diffuse color</long>
+        <precision>0.00001</precision>
+      </input>
+      <input name="color_specular" type="Vector4" optional="true">
+        <short>Specular</short>
+        <long>Desired specular color</long>
         <precision>0.00001</precision>
       </input>
     </inputs>
     <code>
-        colorplugin.setObjectEmissiveColor([input="obj"],[input="color"])
+        if ([is_connected="color_emissive"])
+	  colorplugin.setObjectEmissiveColor([input="obj"],[input="color_emissive"]);
+
+        if ([is_connected="color_ambient"])
+	  colorplugin.setObjectAmbientColor([input="obj"],[input="color_ambient"]);
+
+        if ([is_connected="color_diffuse"])
+	  colorplugin.setObjectDiffuseColor([input="obj"],[input="color_diffuse"]);
+
+        if ([is_connected="color_specular"])
+	  colorplugin.setObjectSpecularColor([input="obj"],[input="color_specular"]);
     </code>
   </element>
 
