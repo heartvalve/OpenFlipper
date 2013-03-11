@@ -186,6 +186,21 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
      */
     void setObjectEmissiveColor(int _objectId , Vector4 _color);
 
+    /**
+     * Sets the ambient color of an object
+     */
+    void setObjectAmbientColor(int _objectId , Vector4 _color);
+
+    /**
+     * Sets the diffuse color of an object
+     */
+    void setObjectDiffuseColor(int _objectId , Vector4 _color);
+
+    /**
+     * Sets the specular color of an object
+     */
+    void setObjectSpecularColor(int _objectId , Vector4 _color);
+
   /** @} */
 
   //===========================================================================
