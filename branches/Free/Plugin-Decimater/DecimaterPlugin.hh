@@ -135,6 +135,9 @@ private slots:
 
     void slotAboutToRestore(int _id); //BackupInterface
 
+    // Tell system that this plugin runs without ui
+    void noguiSupported( ) {} ;
+
 public :
 
   /// Default constructor
@@ -194,17 +197,17 @@ private slots:
   void slot_initialize();
 
   /// roundness slider - spinbox sync
-  void updateRoundness(int    _value);
-  void updateRoundness(double _value);
-  void updateAspectRatio(int _value);
-  void updateAspectRatio(double _value);
+  void slotUpdateRoundness(int    _value);
+  void slotUpdateRoundness(double _value);
+  void slotUpdateAspectRatio(int _value);
+  void slotUpdateAspectRatio(double _value);
 
   /// slider / spinbox updates
-  void updateDistance ();
-  void updateNormalDev ();
-  void updateVertices ();
-  void updateTriangles ();
-  void updateEdgeLength ();
+  void slotUpdateDistance ();
+  void slotUpdateNormalDev ();
+  void slotUpdateVertices ();
+  void slotUpdateTriangles ();
+  void slotUpdateEdgeLength ();
 
   /// update number of vertices information
   void slotUpdateNumVertices();

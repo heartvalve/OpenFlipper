@@ -75,79 +75,82 @@ DecimaterPlugin::DecimaterPlugin() :
 
 void DecimaterPlugin::initializePlugin()
 {
-  tool_ = new DecimaterToolbarWidget();
-  QSize size(100, 100);
-  tool_->resize(size);
 
-  // connect signals->slots
-  connect(tool_->pbDecimate,SIGNAL(clicked() ),this,SLOT(slot_decimate()));
-  connect(tool_->pbInitialize,SIGNAL(clicked() ), this, SLOT(slot_initialize()));
+  if ( OpenFlipper::Options::gui()) {
+    tool_ = new DecimaterToolbarWidget();
+    QSize size(100, 100);
+    tool_->resize(size);
 
-  connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(updateRoundness(double)) );
-  connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateRoundness(int)) );
-  connect(tool_->aspectRatio,SIGNAL(valueChanged(double) ),this,SLOT(updateAspectRatio(double)) );
-  connect(tool_->aspectRatioSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateAspectRatio(int)) );
-  connect(tool_->distance,SIGNAL(valueChanged(double) ),this,SLOT(updateDistance()) );
-  connect(tool_->edgeLength,SIGNAL(valueChanged(double) ),this,SLOT(updateEdgeLength()) );
-  connect(tool_->normalDeviation,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
-  connect(tool_->normalDeviationSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
-  connect(tool_->verticesCount,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
-  connect(tool_->verticesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
-  connect(tool_->trianglesCount,SIGNAL(valueChanged(int) ),this,SLOT(updateTriangles()) );
-  connect(tool_->trianglesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateTriangles()) );
+    // connect signals->slots
+    connect(tool_->pbDecimate,SIGNAL(clicked() ),this,SLOT(slot_decimate()));
+    connect(tool_->pbInitialize,SIGNAL(clicked() ), this, SLOT(slot_initialize()));
 
-  // Force update if the Toolbox gets visible
-  connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
-  connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumTriangles() ) );
-  connect(tool_->mixedFactorCounter, SIGNAL(valueChanged(double)), this, SLOT(slotMixedCounterValueChanged(double)) );
-  connect(tool_->mixedFactorSlider, SIGNAL(valueChanged(int)), this, SLOT(slotMixedSliderValueChanged(int)) );
-  connect(tool_->cbDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->cbNormalDev, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->cbEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->cbIndependentSets, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->cbRoundness, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->cbAspectRatio, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbByDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbByEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbByNormalDeviation, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbConstraintsOnly, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbTriangles, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbUseDecimater, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbUseMC, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbUseMixed, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
-  connect(tool_->rbVertices, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(slotUpdateRoundness(double)) );
+    connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateRoundness(int)) );
+    connect(tool_->aspectRatio,SIGNAL(valueChanged(double) ),this,SLOT(slotUpdateAspectRatio(double)) );
+    connect(tool_->aspectRatioSlider,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateAspectRatio(int)) );
+    connect(tool_->distance,SIGNAL(valueChanged(double) ),this,SLOT(slotUpdateDistance()) );
+    connect(tool_->edgeLength,SIGNAL(valueChanged(double) ),this,SLOT(slotUpdateEdgeLength()) );
+    connect(tool_->normalDeviation,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateNormalDev()) );
+    connect(tool_->normalDeviationSlider,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateNormalDev()) );
+    connect(tool_->verticesCount,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateVertices()) );
+    connect(tool_->verticesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateVertices()) );
+    connect(tool_->trianglesCount,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateTriangles()) );
+    connect(tool_->trianglesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(slotUpdateTriangles()) );
 
-  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
-  emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
+    // Force update if the Toolbox gets visible
+    connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
+    connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumTriangles() ) );
+    connect(tool_->mixedFactorCounter, SIGNAL(valueChanged(double)), this, SLOT(slotMixedCounterValueChanged(double)) );
+    connect(tool_->mixedFactorSlider, SIGNAL(valueChanged(int)), this, SLOT(slotMixedSliderValueChanged(int)) );
+    connect(tool_->cbDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->cbNormalDev, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->cbEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->cbIndependentSets, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->cbRoundness, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->cbAspectRatio, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbByDistance, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbByEdgeLength, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbByNormalDeviation, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbConstraintsOnly, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbTriangles, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbUseDecimater, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbUseMC, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbUseMixed, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
+    connect(tool_->rbVertices, SIGNAL(toggled(bool)), this, SLOT(slotDisableDecimation()));
 
-  WhatsThisGenerator generator("Decimater");
+    toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
+    emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
 
-  tool_->pbDecimate->setWhatsThis(tool_->pbDecimate->whatsThis()+generator.generateLink("quick_tutorial"));
-  tool_->pbInitialize->setWhatsThis(tool_->pbInitialize->whatsThis()+generator.generateLink("quick_tutorial"));
-  tool_->rbUseDecimater->setWhatsThis(tool_->rbUseDecimater->whatsThis()+generator.generateLink("incremental"));
-  tool_->rbUseMC->setWhatsThis(tool_->rbUseMC->whatsThis()+generator.generateLink("multiple_choice"));
-  tool_->rbUseMixed->setWhatsThis(tool_->rbUseMixed->whatsThis()+generator.generateLink("mixed"));
-  tool_->cbDistance->setWhatsThis(tool_->cbDistance->whatsThis()+generator.generateLink());
-  tool_->cbNormalDev->setWhatsThis(tool_->cbNormalDev->whatsThis()+generator.generateLink());
-  tool_->cbEdgeLength->setWhatsThis(tool_->cbEdgeLength->whatsThis()+generator.generateLink());
-  tool_->cbIndependentSets->setWhatsThis(tool_->cbIndependentSets->whatsThis()+generator.generateLink());
-  tool_->cbRoundness->setWhatsThis(tool_->cbRoundness->whatsThis()+generator.generateLink());
-  tool_->cbAspectRatio->setWhatsThis(tool_->cbAspectRatio->whatsThis()+generator.generateLink());
-  tool_->rbByDistance->setWhatsThis(tool_->rbByDistance->whatsThis()+generator.generateLink());
-  tool_->rbByEdgeLength->setWhatsThis(tool_->rbByEdgeLength->whatsThis()+generator.generateLink());
-  tool_->rbByNormalDeviation->setWhatsThis(tool_->rbByNormalDeviation->whatsThis()+generator.generateLink());
-  tool_->rbConstraintsOnly->setWhatsThis(tool_->rbConstraintsOnly->whatsThis()+generator.generateLink());
-  tool_->rbTriangles->setWhatsThis(tool_->rbTriangles->whatsThis()+generator.generateLink());
-  tool_->rbVertices->setWhatsThis(tool_->rbVertices->whatsThis()+generator.generateLink());
+    WhatsThisGenerator generator("Decimater");
+
+    tool_->pbDecimate->setWhatsThis(tool_->pbDecimate->whatsThis()+generator.generateLink("quick_tutorial"));
+    tool_->pbInitialize->setWhatsThis(tool_->pbInitialize->whatsThis()+generator.generateLink("quick_tutorial"));
+    tool_->rbUseDecimater->setWhatsThis(tool_->rbUseDecimater->whatsThis()+generator.generateLink("incremental"));
+    tool_->rbUseMC->setWhatsThis(tool_->rbUseMC->whatsThis()+generator.generateLink("multiple_choice"));
+    tool_->rbUseMixed->setWhatsThis(tool_->rbUseMixed->whatsThis()+generator.generateLink("mixed"));
+    tool_->cbDistance->setWhatsThis(tool_->cbDistance->whatsThis()+generator.generateLink());
+    tool_->cbNormalDev->setWhatsThis(tool_->cbNormalDev->whatsThis()+generator.generateLink());
+    tool_->cbEdgeLength->setWhatsThis(tool_->cbEdgeLength->whatsThis()+generator.generateLink());
+    tool_->cbIndependentSets->setWhatsThis(tool_->cbIndependentSets->whatsThis()+generator.generateLink());
+    tool_->cbRoundness->setWhatsThis(tool_->cbRoundness->whatsThis()+generator.generateLink());
+    tool_->cbAspectRatio->setWhatsThis(tool_->cbAspectRatio->whatsThis()+generator.generateLink());
+    tool_->rbByDistance->setWhatsThis(tool_->rbByDistance->whatsThis()+generator.generateLink());
+    tool_->rbByEdgeLength->setWhatsThis(tool_->rbByEdgeLength->whatsThis()+generator.generateLink());
+    tool_->rbByNormalDeviation->setWhatsThis(tool_->rbByNormalDeviation->whatsThis()+generator.generateLink());
+    tool_->rbConstraintsOnly->setWhatsThis(tool_->rbConstraintsOnly->whatsThis()+generator.generateLink());
+    tool_->rbTriangles->setWhatsThis(tool_->rbTriangles->whatsThis()+generator.generateLink());
+    tool_->rbVertices->setWhatsThis(tool_->rbVertices->whatsThis()+generator.generateLink());
 
 
-  tool_->randomSamplesCounter->setWhatsThis(tool_->randomSamplesCounter->whatsThis()+generator.generateLink("multiple_choice"));
-  tool_->mixedFactorCounter->setWhatsThis(tool_->mixedFactorCounter->whatsThis()+generator.generateLink("mixed"));
-  tool_->roundness->setWhatsThis(tool_->roundness->whatsThis()+generator.generateLink());
-  tool_->aspectRatio->setWhatsThis(tool_->aspectRatio->whatsThis()+generator.generateLink());
-  tool_->distance->setWhatsThis(tool_->distance->whatsThis()+generator.generateLink());
-  tool_->edgeLength->setWhatsThis(tool_->edgeLength->whatsThis()+generator.generateLink());
-  tool_->normalDeviation->setWhatsThis(tool_->normalDeviation->whatsThis()+generator.generateLink());
+    tool_->randomSamplesCounter->setWhatsThis(tool_->randomSamplesCounter->whatsThis()+generator.generateLink("multiple_choice"));
+    tool_->mixedFactorCounter->setWhatsThis(tool_->mixedFactorCounter->whatsThis()+generator.generateLink("mixed"));
+    tool_->roundness->setWhatsThis(tool_->roundness->whatsThis()+generator.generateLink());
+    tool_->aspectRatio->setWhatsThis(tool_->aspectRatio->whatsThis()+generator.generateLink());
+    tool_->distance->setWhatsThis(tool_->distance->whatsThis()+generator.generateLink());
+    tool_->edgeLength->setWhatsThis(tool_->edgeLength->whatsThis()+generator.generateLink());
+    tool_->normalDeviation->setWhatsThis(tool_->normalDeviation->whatsThis()+generator.generateLink());
+  }
 
 }
 
@@ -160,7 +163,9 @@ void DecimaterPlugin::pluginsInitialized() {
                           QString(tr("objectId,constraints")).split(","),
                           QString(tr("ID of an object; Object that can has one or more constraint properties (decimation_order,distance,edge_length,normal_deviation,roundness,aspect_ratio,independent_sets,vertices,triangles)")).split(";"));
 
-  tool_->decTypeOps->setVisible(false);
+  if ( OpenFlipper::Options::gui()) {
+    tool_->decTypeOps->setVisible(false);
+  }
 }
 
 
@@ -170,7 +175,7 @@ void DecimaterPlugin::pluginsInitialized() {
  *
  * @param _value new roundness value
  */
-void DecimaterPlugin::updateRoundness(int _value)
+void DecimaterPlugin::slotUpdateRoundness(int _value)
 {
   tool_->roundness->setValue( (double) _value / 100.0 );
   tool_->cbRoundness->setChecked (true);
@@ -193,7 +198,7 @@ void DecimaterPlugin::slotMixedSliderValueChanged(int _value)
  *
  * @param _value new roundness value
  */
-void DecimaterPlugin::updateRoundness(double _value)
+void DecimaterPlugin::slotUpdateRoundness(double _value)
 {
   tool_->roundnessSlider->setValue( (int) (_value * 100) );
   tool_->cbRoundness->setChecked (true);
@@ -206,7 +211,7 @@ void DecimaterPlugin::updateRoundness(double _value)
  *
  * @param _value new aspect ratio value
  */
-void DecimaterPlugin::updateAspectRatio(int _value)
+void DecimaterPlugin::slotUpdateAspectRatio(int _value)
 {
   tool_->aspectRatio->setValue( (double) _value / 100.0 );
   tool_->cbAspectRatio->setChecked (true);
@@ -219,7 +224,7 @@ void DecimaterPlugin::updateAspectRatio(int _value)
  *
  * @param _value new aspect ratio value
  */
-void DecimaterPlugin::updateAspectRatio(double _value)
+void DecimaterPlugin::slotUpdateAspectRatio(double _value)
 {
   tool_->aspectRatioSlider->setValue( (int) (_value * 100) );
   tool_->cbAspectRatio->setChecked (true);
@@ -230,6 +235,9 @@ void DecimaterPlugin::updateAspectRatio(double _value)
  */
 void DecimaterPlugin::slot_initialize()
 {
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   decimater_objects_.clear();
 
@@ -383,6 +391,9 @@ void DecimaterPlugin::slot_initialize()
  */
 void DecimaterPlugin::slot_decimate()
 {
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   //decimate
   for (std::vector< ptr::shared_ptr<DecimaterInit> >::iterator decIter = decimater_objects_.begin();
@@ -738,7 +749,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 void DecimaterPlugin::slotUpdateNumVertices()
 {
   // Only update if tool is visible
-  if ( !tool_->isVisible() ) {
+  if ( !OpenFlipper::Options::gui() || !tool_->isVisible() ) {
     return;
   }
 
@@ -789,7 +800,7 @@ void DecimaterPlugin::slotUpdateNumVertices()
  */
 void DecimaterPlugin::slotUpdateNumTriangles() {
   // only update if the tool is visible
-  if (!tool_->isVisible())
+  if (!OpenFlipper::Options::gui() || !tool_->isVisible())
     return;
 
   uint max = 0;
@@ -845,6 +856,9 @@ void DecimaterPlugin::slotAboutToRestore(int _id)
 
 void DecimaterPlugin::slotDisableDecimation()
 {
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   decimater_objects_.clear();
   tool_->pbDecimate->setEnabled(false);
 }
@@ -862,7 +876,7 @@ void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , const UpdateType& 
 //-----------------------------------------------------------------------------
 
 // activate checkbox if value has changed
-void DecimaterPlugin::updateVertices()
+void DecimaterPlugin::slotUpdateVertices()
 {
   tool_->rbVertices->setChecked (true);
 }
@@ -870,7 +884,7 @@ void DecimaterPlugin::updateVertices()
 //-----------------------------------------------------------------------------
 
 // activate checkbox if value has changed
-void DecimaterPlugin::updateTriangles()
+void DecimaterPlugin::slotUpdateTriangles()
 {
   tool_->rbTriangles->setChecked (true);
 }
@@ -878,7 +892,7 @@ void DecimaterPlugin::updateTriangles()
 //-----------------------------------------------------------------------------
 
 // activate checkbox if value has changed
-void DecimaterPlugin::updateNormalDev()
+void DecimaterPlugin::slotUpdateNormalDev()
 {
   tool_->cbNormalDev->setChecked (true);
 }
@@ -886,7 +900,7 @@ void DecimaterPlugin::updateNormalDev()
 //-----------------------------------------------------------------------------
 
 // activate checkbox if value has changed
-void DecimaterPlugin::updateEdgeLength()
+void DecimaterPlugin::slotUpdateEdgeLength()
 {
   tool_->cbEdgeLength->setChecked (true);
 }
@@ -894,7 +908,7 @@ void DecimaterPlugin::updateEdgeLength()
 //-----------------------------------------------------------------------------
 
 // activate checkbox if value has changed
-void DecimaterPlugin::updateDistance()
+void DecimaterPlugin::slotUpdateDistance()
 {
   tool_->cbDistance->setChecked (true);
 }
