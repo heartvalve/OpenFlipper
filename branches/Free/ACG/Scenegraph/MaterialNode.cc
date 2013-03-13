@@ -260,8 +260,7 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
   }
 
-  if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
-                                                 (_drawmode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED) ) )
+  if ( ( applyProperties_ & ColorMaterial ) && (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
   {
     materialBackup_.colorMaterial_ = glIsEnabled(GL_COLOR_MATERIAL);
 
@@ -399,8 +398,7 @@ void MaterialNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode )
       ACG::GLState::disable( GL_CULL_FACE );
  }
 
-  if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
-                                                 (_drawmode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED) ) )
+  if ( ( applyProperties_ & ColorMaterial ) && ( _drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED )  )
   {
     if (materialBackup_.colorMaterial_ ) {
       ACG::GLState::enable( GL_COLOR_MATERIAL );
