@@ -382,7 +382,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::depthRange(0.0, 1.0);
   }
   
-  
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals() )
   {
     ACG::GLState::enable(GL_LIGHTING);
@@ -495,9 +494,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     _state.set_base_color(base_color_backup);
   }
   
-  // Rebind the previous texture
-  ACG::GLState::bindTexture(lastTarget,lastBuffer);
-  
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
     ///\todo enableTexCoords_
@@ -547,34 +543,41 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->disableColors();
     drawMesh_->usePerHalfedgeTexcoords();
 
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
+
     draw_faces();
     ACG::GLState::depthRange(0.0, 1.0);
     
     ACG::GLState::disable(GL_TEXTURE_2D);
   }
   
+
   // Textured by using coordinates stored in halfedges
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_face_normals()  && mesh_.n_faces() > 0)
   {
+
     ACG::GLState::enable(GL_TEXTURE_2D);
-    
-//    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
+
+    //    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
 
     ACG::GLState::enable(GL_LIGHTING);
-    ACG::GLState::shadeModel(GL_SMOOTH);
+    ACG::GLState::shadeModel(GL_FLAT);
     ACG::GLState::depthRange(0.01, 1.0);
 
-    drawMesh_->usePerVertexNormals();
-    drawMesh_->setSmoothShading();
+    drawMesh_->setFlatShading();
     drawMesh_->disableColors();
     drawMesh_->usePerHalfedgeTexcoords();
 
     draw_faces();
     ACG::GLState::depthRange(0.0, 1.0);
     ACG::GLState::disable(GL_TEXTURE_2D);
-    
+
   }
-  
+
+
+  // Rebind the previous texture
+  ACG::GLState::bindTexture(lastTarget,lastBuffer);
+
   enable_arrays(0);
   
   // Unbind all remaining buffers
