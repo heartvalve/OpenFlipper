@@ -163,8 +163,10 @@ namespace GLSL {
 
       int getAttributeLocation(const char *_name);
       int getUniformLocation(const char *_name);
+      int getFragDataLocation(const char* _name);
 
       void bindAttributeLocation(unsigned int _index, const char *_name);
+      void bindFragDataLocation(unsigned int _index, const char *_name);
 
       /** @} */
 

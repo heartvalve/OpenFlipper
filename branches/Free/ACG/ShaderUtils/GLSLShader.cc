@@ -456,6 +456,16 @@ namespace GLSL {
     checkGLError2(_name);
   }
 
+  /** \brief Bind fragment output data to name
+   *
+   * @param _index Index of the fragment output to be bound
+   * @param _name  Name of the fragment output data
+   */
+  void Program::bindFragDataLocation(unsigned int _index, const char *_name) {
+    glBindFragDataLocationEXT(this->m_programId, _index, _name);
+    checkGLError2(_name);
+  }
+
   /** \brief Get location of the specified attribute
    *
    * @param _name Name of the attribute
@@ -474,6 +484,17 @@ namespace GLSL {
    */
   int Program::getUniformLocation(const char *_name) {
     int attributeLocation = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    return attributeLocation;
+  }
+
+  /** \brief Get location of the fragment data output
+   *
+   * @param _name Name of the fragment data output
+   * @return Fragment data location
+   */
+  int Program::getFragDataLocation(const char *_name) {
+    int attributeLocation = glGetFragDataLocationEXT(this->m_programId, _name);
     checkGLError2(_name);
     return attributeLocation;
   }
