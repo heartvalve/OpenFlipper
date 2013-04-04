@@ -341,10 +341,10 @@ private:
    * @param _hh corresponding halfedge handle of this vertex
    * @param _fh corresponding face handle of this vertex
    */
-  void readVertex(Vertex*                       _pDst,
-                  typename Mesh::VertexHandle   _vh,
-                  typename Mesh::HalfedgeHandle _hh,
-                  typename Mesh::FaceHandle     _fh);
+  void readVertex(Vertex*                             _pDst,
+                  const typename Mesh::VertexHandle   _vh,
+                  const typename Mesh::HalfedgeHandle _hh,
+                  const typename Mesh::FaceHandle     _fh);
 
   /** \brief
    *
