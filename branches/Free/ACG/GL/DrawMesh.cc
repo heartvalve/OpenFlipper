@@ -246,8 +246,10 @@ DrawMeshT<Mesh>::rebuild()
   {
     // only update vertices, i.e. update values of vertices
 
-    #ifdef USE_OPENMP
-    #pragma omp parallel for
+    #ifndef WIN32
+      #ifdef USE_OPENMP
+        #pragma omp parallel for
+      #endif
     #endif
     for (unsigned int i = 0; i < numVerts_; ++i)
     {
