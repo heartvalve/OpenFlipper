@@ -54,6 +54,9 @@
 #include <string.h>
 #include <fstream>
 
+#ifdef USE_OPENMP
+#include <omp.h>
+#endif
 
 //=============================================================================
 
@@ -242,17 +245,20 @@ DrawMeshT<Mesh>::rebuild()
   if (!bTriangleRebuild && !bVertexRebuild && rebuild_ == REBUILD_GEOMETRY)
   {
     // only update vertices, i.e. update values of vertices
-    
+
+    #ifdef USE_OPENMP
+    #pragma omp parallel for
+    #endif
     for (unsigned int i = 0; i < numVerts_; ++i)
     {
-      unsigned int MeshHalfedge = vertexMap_[i];
+      const unsigned int MeshHalfedge = vertexMap_[i];
 
 //      Mesh::VertexHandle vh = mesh_.vertex_handle(MeshVertex);
 
       // just pick one face, srews up face colors here so color updates need a full rebuild
-      typename Mesh::HalfedgeHandle hh = mesh_.halfedge_handle(MeshHalfedge);
-      typename Mesh::VertexHandle vh = mesh_.to_vertex_handle(hh);
-      typename Mesh::FaceHandle fh = mesh_.face_handle(hh);
+      const typename Mesh::HalfedgeHandle hh = mesh_.halfedge_handle(MeshHalfedge);
+      const typename Mesh::VertexHandle   vh = mesh_.to_vertex_handle(hh);
+      const typename Mesh::FaceHandle     fh = mesh_.face_handle(hh);
 
       readVertex(vertices_ + i, vh, hh, fh);
     }
@@ -416,10 +422,13 @@ DrawMeshT<Mesh>::convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int 
 template <class Mesh>
 void
 DrawMeshT<Mesh>::readVertex(Vertex* _pV,
-                            typename Mesh::VertexHandle _vh,
-                            typename Mesh::HalfedgeHandle _hh,
-                            typename Mesh::FaceHandle _fh)
+                            const typename Mesh::VertexHandle _vh,
+                            const typename Mesh::HalfedgeHandle _hh,
+                            const typename Mesh::FaceHandle _fh)
 {
+  static const typename Mesh::HalfedgeHandle invalidHEH(-1);
+  static const typename Mesh::FaceHandle     invalidFH(-1);
+
   for (int m = 0; m < 3; ++m)
   {
     _pV->pos[m] = mesh_.point(_vh)[m];
@@ -427,7 +436,7 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
       _pV->n[m] = mesh_.normal(_vh)[m];
     else if (halfedgeNormalMode_ && 
-      mesh_.has_halfedge_normals() && _hh != (typename Mesh::HalfedgeHandle)(-1))
+      mesh_.has_halfedge_normals() && _hh != invalidHEH)
       _pV->n[m] = mesh_.normal(_hh)[m];
     else _pV->n[m] = 0.0f;
 
@@ -435,7 +444,7 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     {
       if (mesh_.has_halfedge_texcoords2D())
       {
-        if (_hh != (typename Mesh::HalfedgeHandle)(-1))
+        if (_hh != invalidHEH)
           _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
       }
       else _pV->tex[m] = 0.0f;
@@ -449,7 +458,7 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     typename Mesh::Color vecCol(255, 255, 255, 255);
 
     if (col == 0 && mesh_.has_vertex_colors()) vecCol = OpenMesh::color_cast<Vec4uc,typename Mesh::Color>(mesh_.color(_vh));
-    if ((_fh != (typename Mesh::FaceHandle)(-1)))
+    if (_fh != invalidFH)
     {
       if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
         vecCol = OpenMesh::color_cast<Vec4uc,typename Mesh::Color>(mesh_.color(_fh));
