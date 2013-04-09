@@ -44,7 +44,7 @@
 #define VOLUME_MESH_OBJECT_HH
 
 // Includes
-#include <memory>
+#include <ACG/Utils/SmartPointer.hh>
 
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SeparatorNode.hh>
@@ -141,7 +141,7 @@ public:
     NormalAttrib& normals() { return normalAttrib_; }
 
   private:
-    std::auto_ptr<MeshT> mesh_;
+    ptr::shared_ptr<MeshT> mesh_;
 
     StatusAttrib statusAttrib_;
 
