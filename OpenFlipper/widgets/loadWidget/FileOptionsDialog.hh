@@ -61,14 +61,24 @@ class FileOptionsDialog : public QDialog
   private slots:
     void slotPluginChanged(QString _name);
 
+    void slotPluginDefault(int _state);
+
   signals:
     void setPluginForExtension(QString _extension, int _pluginId );
     
   public slots:
     int exec();
+
+    bool makePluginDefault();
     
   private:
     bool loadMode_;
+
+    QString currentName_;
+
+    QString currentExtension_;
     
     QVector< QComboBox* > boxes_;
+
+    QCheckBox* defaultPluginBox_;
 };
