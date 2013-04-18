@@ -309,7 +309,8 @@ int Core::loadObject( DataType _type, QString _filename) {
 
   QFileInfo fi(_filename);
   
-  for (int i=0; i < (int)supportedTypes().size(); i++)
+  std::vector<int> typeIds;
+  for (int i=0; i < (int)supportedTypes().size(); i++) {
     if (supportedTypes()[i].type & _type || supportedTypes()[i].type == _type) {
 
       QString filters = supportedTypes()[i].plugin->getLoadFilters();
@@ -320,69 +321,96 @@ int Core::loadObject( DataType _type, QString _filename) {
       // Split into blocks
       QStringList separateFilters = filters.split(" ");
 
-      bool found = false;
-
       // for all filters associated with this plugin
       for ( int filterId = 0 ; filterId < separateFilters.size(); ++filterId ) {
         separateFilters[filterId] = separateFilters[filterId].trimmed();
 
         //check extension
         if ( separateFilters[filterId].endsWith( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
-          found = true;
-          break;
+          typeIds.push_back(i);
+          continue;
         }
 
         if (  separateFilters[filterId].endsWith( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
-          found = true;
+          typeIds.push_back(i);
           emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!");
-          break;
+          continue;
+        }
+      }
+    }
+  }
+
+  // load file with plugins
+  int nPlugins = typeIds.size();
+  if (nPlugins > 0) {
+
+    int i = -1;
+
+    // several plugins can load this type
+    if (nPlugins > 1) {
+      // let the user choose the plugin for loading
+      if ( OpenFlipper::Options::gui() ) {
+        QStringList items;
+        for (int j = 0; j < nPlugins; ++j) {
+          items << supportedTypes()[typeIds[j]].name;
         }
 
-      }
-
-      // continue processing only if found
-      if ( ! found )
-        continue;
-      
-      if ( OpenFlipper::Options::gui() ) {
-        coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
-        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
-          coreWidget_->setStatus(ApplicationStatus::PROCESSING );
-      }
-
-      int id = -1;
-
-      //load file
-      if ( checkSlot( supportedTypes()[i].object , "loadObject(QString,DataType)" ) )
-        id = supportedTypes()[i].plugin->loadObject(_filename, _type);
-      else
-        id = supportedTypes()[i].plugin->loadObject(_filename);
-
-      if ( OpenFlipper::Options::gui() ) {
-        if ( id != -1 ) {
-          coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
-          
-          // Get the object to figure out the data type
-          BaseObject* object;
-          PluginFunctions::getObject(id,object);
-          
-          // Add to recent files with the given datatype
-          if ( OpenFlipper::Options::gui() )
-            coreWidget_->addRecent(_filename, object->dataType());
-          
+        bool ok;
+        QString item = QInputDialog::getItem(coreWidget_, tr("File Plugins"),
+                                             tr("Please choose a plugin for loading:"), items, 0, false, &ok);
+        if (!ok) {
+          emit log(LOGERR, tr("Unable to load object. No suitable plugin found!") );
+          return -1; //no plugin found
         } else
-          coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
-
-        if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
-          coreWidget_->setStatus(ApplicationStatus::READY );
+          i = typeIds[items.indexOf(item)];
       }
+      // if there is no gui just take the first one for now
+      else {
+        i = 0;
+      }
+    } else
+      i = typeIds[0];
 
-      return id;
+    if ( OpenFlipper::Options::gui() ) {
+      coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
+      if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
+        coreWidget_->setStatus(ApplicationStatus::PROCESSING );
     }
-    
-  emit log(LOGERR, tr("Unable to load object. No suitable plugin found!") );
-    
-  return -1; //no plugin found
+
+    int id = -1;
+
+    //load file
+    if ( checkSlot( supportedTypes()[i].object , "loadObject(QString,DataType)" ) )
+      id = supportedTypes()[i].plugin->loadObject(_filename, _type);
+    else
+      id = supportedTypes()[i].plugin->loadObject(_filename);
+
+    if ( OpenFlipper::Options::gui() ) {
+      if ( id != -1 ) {
+        coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
+
+        // Get the object to figure out the data type
+        BaseObject* object;
+        PluginFunctions::getObject(id,object);
+
+        // Add to recent files with the given datatype
+        if ( OpenFlipper::Options::gui() )
+          coreWidget_->addRecent(_filename, object->dataType());
+
+      } else
+        coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
+
+      if ( !OpenFlipper::Options::sceneGraphUpdatesBlocked() )
+        coreWidget_->setStatus(ApplicationStatus::READY );
+    }
+
+    return id;
+  } else {
+
+    emit log(LOGERR, tr("Unable to load object. No suitable plugin found!") );
+
+    return -1; //no plugin found
+  }
 }
 
 

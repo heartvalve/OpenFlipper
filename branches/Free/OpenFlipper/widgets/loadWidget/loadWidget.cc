@@ -246,6 +246,7 @@ void LoadWidget::loadFile(){
       return;
   }
 
+
   //load the selected files
   for (int i=0; i < files.size(); i++){
     
@@ -257,11 +258,27 @@ void LoadWidget::loadFile(){
     if (fi.isDir() || !file.exists()) continue; //do nothing if its a not a valid file
     QString ext = fi.suffix();
 
+    // if the default options should be used find the default plugin
+    if (optionsBox_->isChecked()) {
+      QString pluginName = OpenFlipperSettings().value(QString("Core/File/DefaultLoader/").append(ext)).toString();
+
+      // find the id of the plugin
+      bool found = false;
+      unsigned int j;
+      for (j = 0; j < supportedTypes_.size(); ++j) {
+        if (supportedTypes_[j].name == pluginName) {
+          found = true;
+          break;
+        }
+      }
+
+      if (found)
+        pluginForExtension_[ ext ] = j;
+    }
 
     //emit load signal
-    if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() ){
-
-      emit load(filename, pluginForExtension_[ fi.suffix() ]);
+    if ( pluginForExtension_.find( ext ) != pluginForExtension_.end() ){
+      emit load(filename, pluginForExtension_[ ext ]);
     }
   }
 }

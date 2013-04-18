@@ -51,7 +51,8 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
   : QDialog(parent),
     ext_(_extensions),
     supportedTypes_(_supportedTypes),
-    loadMode_(_loadMode)
+    loadMode_(_loadMode),
+    defaultPluginBox_(NULL)
 {
 
   ext_.removeDuplicates();
@@ -98,14 +99,21 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
     if (count > 1){
       QLabel*  label = new QLabel( tr("For *.%1 use plugin ").arg(ext_[i]) );
       QComboBox* box = new QComboBox();
+
+      defaultPluginBox_ = new QCheckBox(tr("Make this plugin the default"));
       
       box->addItems(names);
       box->setAccessibleName(ext_[i]);
 
+      currentName_ = box->currentText();
+      currentExtension_ = ext_[i];
+
       grid->addWidget(label, grid->rowCount(), 0);
       grid->addWidget(box,   grid->rowCount()-1, 1);
+      grid->addWidget(defaultPluginBox_, grid->rowCount()+1, 0);
       
       connect(box, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotPluginChanged(QString)) );
+      connect(defaultPluginBox_, SIGNAL(stateChanged(int)), this, SLOT(slotPluginDefault(int)) );
       boxes_.push_back(box);
     }
   }
@@ -191,8 +199,16 @@ int FileOptionsDialog::exec(){
   
   if ( tabs_.count() == 0 && boxes_.count() == 0 )
     return QDialog::Accepted;
-  else
+  else {
     return QDialog::exec();
+  }
+}
+
+bool FileOptionsDialog::makePluginDefault() {
+  if (!defaultPluginBox_)
+    return false;
+
+  return defaultPluginBox_->isChecked();
 }
 
 void FileOptionsDialog::slotPluginChanged(QString _name){
@@ -201,9 +217,25 @@ void FileOptionsDialog::slotPluginChanged(QString _name){
 
   for (unsigned int t=0; t < supportedTypes_.size(); t++)
     if ( supportedTypes_[t].name == _name ){
+
+      currentName_ = _name;
+      currentExtension_ = box->accessibleName();
+
+      if (makePluginDefault()) {
+        OpenFlipperSettings().setValue(QString("Core/File/DefaultLoader/").append(currentExtension_), currentName_);
+      }
+
       emit setPluginForExtension(box->accessibleName(), t ); //accessibleName contains the extension
       break;
     }
 }
 
+void FileOptionsDialog::slotPluginDefault(int _state) {
+  // store the name of the default plugin for loading
+  if (_state == Qt::Checked) {
+    OpenFlipperSettings().setValue(QString("Core/File/DefaultLoader/").append(currentExtension_), currentName_);
+  } else {
+    OpenFlipperSettings().setValue(QString("Core/File/DefaultLoader/").append(currentExtension_), "");
+  }
+}
 
