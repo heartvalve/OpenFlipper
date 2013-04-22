@@ -94,7 +94,16 @@ private slots:
 
 private:
 
-    // draw a projected quad in [-1, -1] - [1, 1] range
+
+  /// peel the scene from front to back, one layer per pass
+  void renderFrontPeeling(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
+
+  /// peel the scene with dual depth peeling, two layers per pass
+  void renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
+
+
+
+  /// draw a projected quad in [-1, -1] - [1, 1] range
   void drawProjQuad(GLSL::Program* _prog);
 
   /// vbo containing a quad in projection space
@@ -105,13 +114,15 @@ private:
   // single layer depth peeling
   struct PeelLayer
   {
-    /// target framebuffer for colorTex and depthTex
+    /// target framebuffer for colorTex and depthBuf
     GLuint fbo;
 
     /// color rendertarget
     GLuint colorTex;
-    /// depth-buf rendertarget
-    GLuint depthTex;
+    /// hardware depth buffer
+    GLuint depthBuf;
+    /// depth-buffer rendertarget
+    GLuint depthTex; // encountered gpu-model specific problems when reading from depthBuf directly
   };
 
   /// blends one depth-layer into the current scene target
@@ -128,6 +139,12 @@ private:
 
   /// occlusion query determining end of peeling (last layer)
   GLuint peelQueryID_;
+
+
+  /// dual depth peeling shaders
+  GLSL::Program* peelBlendDual_;
+  GLSL::Program* peelFinalDual_;
+  GLSL::Program* peelInitDual_;
 
 
   /// Collection of framebuffers for each viewport
@@ -149,17 +166,38 @@ private:
 
     GLuint peelBlendTex_;
     GLuint peelBlendFbo_;
+
+
+
+    // dual depth peeling textures
+    //  ping-pong buffer for (depth, front, back) targets
+    GLuint dualDepthTex_[2]; // float2: (-minDepth, maxDepth)
+    GLuint dualFrontTex_[2]; // rgba: color of front-peeled layer
+    GLuint dualBackTex_[2];  // rgba: color of back-peeled layer
+    GLuint dualBlendTex_;    // rgb:  color accumulation buffer
+    GLuint dualFbo_; // targets: {depth0, front0, back0,  depth1, front1, back1,  blend}
   };
 
   /// Allocate framebuffers and load shaders for depth-peeling.
   void initDepthPeeling();
 
+  /// Allocate framebuffers and load shaders for dual-depth-peeling.
+  void initDualDepthPeeling();
+
   /// Change viewport size for allocated rendertargets.
-  void updateViewerResources(int _viewerId, unsigned int _newWidth, unsigned int _newHeight);
+  void updateViewerResources(bool _dualPeeling, int _viewerId, unsigned int _newWidth, unsigned int _newHeight);
 
   /**
   * Stores framebuffer resources for each viewport.
   * Mapping: viewerID -> ViewerResources
   */
   std::map<int, ViewerResources> viewerRes_;
+
+
+
+
+  // debug functions
+//   GLSL::Program* dbgProg_;
+// 
+//   void dbgDrawTex(GLuint _texID);
 };
