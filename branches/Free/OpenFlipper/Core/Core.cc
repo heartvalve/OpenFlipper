@@ -543,7 +543,7 @@ Core::init() {
       coreWidget_->setViewMode("All");
 
     // Set the renderer to the one stored in the settings or to default
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEvent(QMouseEvent*)),
               this                              , SLOT(slotMouseEvent(QMouseEvent*)));
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEventIdentify(QMouseEvent*)),
@@ -564,7 +564,7 @@ Core::init() {
       // ====================================================
 
       QString defaultRendererKey  = "Viewer" + QString::number(i)+"/DefaultRenderer";
-      QString defaultRendererName = OpenFlipperSettings().value(defaultRendererKey,"Default Classical Renderer").toString();
+      QString defaultRendererName = OpenFlipperSettings().value(defaultRendererKey,"Default Classical Renderer Plugin").toString();
 
       // Check if the renderer is there
       int defaultRendererId = renderManager().getRendererId(defaultRendererName);
@@ -573,7 +573,7 @@ Core::init() {
         emit log(LOGERR,tr("Stored default renderer \"") + defaultRendererName + tr("\" is not available, trying Classical!"));
 
         // Check if the renderer is there
-        defaultRendererId = renderManager().getRendererId("Default Classical Renderer");
+        defaultRendererId = renderManager().getRendererId("Default Classical Renderer Plugin");
 
         // Classical available?
         if ( defaultRendererId != -1 ) {
