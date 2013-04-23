@@ -1972,7 +1972,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
       QMetaObject::invokeMethod(plugin,"checkOpenGL", Qt::DirectConnection,   Q_RETURN_ARG(QString,openGLCheck) ) ;
 
       if ( openGLCheck != "" ) {
-        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities!"));
+        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities in Plugin") + rendererNameString + " !");
         emit log(LOGERR,openGLCheck);
       }
 
