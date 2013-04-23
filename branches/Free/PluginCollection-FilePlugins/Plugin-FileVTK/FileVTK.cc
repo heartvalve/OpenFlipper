@@ -1664,6 +1664,8 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
             object->update();
 
+            object->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
+
             //general stuff
             emit openedFile( object->id() );
 
@@ -1703,6 +1705,8 @@ int FileVTKPlugin::loadObject(QString _filename) {
             object->setName(object->filename());
 
             object->update();
+
+            object->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
 
             //general stuff
             emit openedFile( object->id() );

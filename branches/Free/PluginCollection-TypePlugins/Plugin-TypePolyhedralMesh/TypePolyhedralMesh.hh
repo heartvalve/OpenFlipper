@@ -92,8 +92,6 @@ private slots:
 
     void switchRendering();
 
-    void switchTranslucency();
-
     void setTranslucencyFactor();
 
 public:
@@ -130,8 +128,6 @@ public slots:
 private:
 
     QAction* render_switch_;
-
-    QAction* translucency_action_;
 
     QAction* translucency_factor_action_;
 };
