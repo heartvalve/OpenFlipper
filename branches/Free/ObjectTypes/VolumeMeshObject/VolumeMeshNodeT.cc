@@ -1262,7 +1262,7 @@ void VolumeMeshNodeT<VolumeMeshT>::set_scaling(double _scale)
 }
 
 template<class VolumeMeshT>
-void VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT::set_boundary_only(bool _boundary)
+void VolumeMeshNodeT<VolumeMeshT>::set_boundary_only(bool _boundary)
 {
     boundary_only_ = _boundary;
 

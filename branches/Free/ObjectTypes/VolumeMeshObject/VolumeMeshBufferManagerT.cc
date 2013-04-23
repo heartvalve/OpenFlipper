@@ -158,7 +158,7 @@ void VolumeMeshBufferManager<VolumeMesh>::addPositionToBuffer(ACG::Vec3d _positi
  *
  * @param _color The color that should be inserted
  * @param _buffer A pointer to the start of the buffer
- * @param _pos The offset (in number of vertices) to the place the color should be inserted
+ * @param _offset The offset (in number of vertices) to the place the color should be inserted
  */
 template <class VolumeMesh>
 void VolumeMeshBufferManager<VolumeMesh>::addColorToBuffer(ACG::Vec4uc _color, unsigned char* _buffer, unsigned int _offset)
@@ -198,7 +198,7 @@ void VolumeMeshBufferManager<VolumeMesh>::addColorToBuffer(ACG::Vec4f _color, un
  * This method should be called after the size of a vertex and the normal offset within a vertex
  * was calculated using calculateVertexDeclaration()
  *
- * @param _color The color that should be inserted
+ * @param _normal The normal that should be inserted
  * @param _buffer A pointer to the start of the buffer
  * @param _offset The offset (in number of vertices) to the place the normal should inserted
  */
@@ -1548,7 +1548,7 @@ void VolumeMeshBufferManager<VolumeMesh>::buildColorBuffer(unsigned char* _buffe
             addColorToBuffer(color, _buffer, pos++);
         }
     }
-    else if ((mPrimitiveMode == PM_IRREGULAR_EDGES))
+    else if ( mPrimitiveMode == PM_IRREGULAR_EDGES )
     {
         OpenVolumeMesh::EdgeIter e_begin(mMesh.edges_begin()), e_end(mMesh.edges_end());
         for (OpenVolumeMesh::EdgeIter e_it = e_begin; e_it != e_end; ++e_it)
