@@ -101,10 +101,6 @@ private slots:
 
     void setTranslucencyFactor();
 
-    void switchShowIrregs();
-
-    void switchShowOuterValTwo();
-
 public:
 
     ~TypeHexahedralMeshPlugin() {
