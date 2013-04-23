@@ -580,6 +580,12 @@ Core::init() {
           renderManager().setActive(defaultRendererId,i);
         } else {
           emit log(LOGERR,tr("Default classical renderer is also not available. Trying to use any other renderer i can find!"));
+
+          // debug information for this case, print renderer count and their names
+          const unsigned int rendererCount = renderManager().available();
+          emit log(LOGERR,tr("Currently ") + QString::number(rendererCount) + tr(" renderers are available:") );
+          for (unsigned int i = 0 ; i < rendererCount ; ++i )
+            emit log(LOGERR, tr("Renderer ") + QString::number(i) + ": " + renderManager()[i]->name );
         }
 
       } else {
