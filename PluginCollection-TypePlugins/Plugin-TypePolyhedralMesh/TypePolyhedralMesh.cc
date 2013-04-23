@@ -47,8 +47,8 @@
 
 TypePolyhedralMeshPlugin::TypePolyhedralMeshPlugin() :
 render_switch_(NULL),
-translucency_action_(NULL),
-translucency_factor_action_(NULL) {
+translucency_factor_action_(NULL)
+{
 }
 
 bool TypePolyhedralMeshPlugin::registerType() {
@@ -81,13 +81,6 @@ void TypePolyhedralMeshPlugin::pluginsInitialized() {
     render_switch_->setChecked(false);
     connect(render_switch_, SIGNAL( triggered() ), this, SLOT( switchRendering() ));
     menu->addAction(render_switch_);
-
-    translucency_action_ = new QAction(tr("Translucent"), this);
-    translucency_action_->setStatusTip(tr("Translucent"));
-    translucency_action_->setCheckable(true);
-    translucency_action_->setChecked(false);
-    connect(translucency_action_, SIGNAL( triggered() ), this, SLOT( switchTranslucency() ));
-    menu->addAction(translucency_action_);
 
     translucency_factor_action_ = new QAction(tr("Set Translucency Factor"), this);
     translucency_factor_action_->setStatusTip(tr("Set Translucency Factor"));
@@ -201,28 +194,6 @@ void TypePolyhedralMeshPlugin::switchRendering() {
 
 //----------------------------------------------------------------------------
 
-void TypePolyhedralMeshPlugin::switchTranslucency() {
-
-    QVariant contextObject = translucency_action_->data();
-    int objectId = contextObject.toInt();
-
-    if(objectId == -1)
-        return;
-
-    BaseObjectData* bod = 0;
-    if(!PluginFunctions::getObject(objectId, bod))
-        return;
-
-    PolyhedralMeshObject* polyMeshObject = dynamic_cast<PolyhedralMeshObject*>(bod);
-
-    if(polyMeshObject) {
-        polyMeshObject->meshNode()->set_translucent(translucency_action_->isChecked());
-        polyMeshObject->meshNode()->set_geometry_changed(true);
-    }
-}
-
-//----------------------------------------------------------------------------
-
 void TypePolyhedralMeshPlugin::setTranslucencyFactor() {
 
     QVariant contextObject = translucency_factor_action_->data();
@@ -245,9 +216,6 @@ void TypePolyhedralMeshPlugin::setTranslucencyFactor() {
                 0.0, 1.0, 2, &ok);
 
         polyMeshObject->meshNode()->set_translucency_factor((float)factor);
-        if(polyMeshObject->meshNode()->translucent()) {
-            emit updatedObject(objectId, UPDATE_GEOMETRY);
-        }
     }
 }
 

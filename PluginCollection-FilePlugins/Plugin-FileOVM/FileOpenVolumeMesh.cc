@@ -179,7 +179,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
         emit openedFile(obj->id());
 
         // Go into solid flat shaded mode
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED, PluginFunctions::activeExaminer());
+        obj->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
 
         // Scale polyhedra a bit
         obj->meshNode()->set_scaling(0.8);
@@ -211,7 +211,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
         emit openedFile(obj->id());
 
         // Go into solid flat shaded mode
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED, PluginFunctions::activeExaminer());
+        obj->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
 
         // Scale polyhedra a bit
         obj->meshNode()->set_scaling(0.8);

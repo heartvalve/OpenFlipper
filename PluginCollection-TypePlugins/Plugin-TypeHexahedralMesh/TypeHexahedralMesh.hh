@@ -99,8 +99,6 @@ private slots:
 
     void switchRendering();
 
-    void switchTranslucency();
-
     void setTranslucencyFactor();
 
     void switchShowIrregs();
@@ -142,13 +140,8 @@ private:
 
     QAction* render_switch_;
 
-    QAction* translucency_action_;
-
     QAction* translucency_factor_action_;
 
-    QAction* show_irregs_action_;
-
-    QAction* show_outer_val_two_action_;
 };
 
 #endif //TYPEHEXAHEDRALMESH_HH

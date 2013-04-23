@@ -162,7 +162,7 @@ namespace DrawModes {
     NORMAL_PER_FACE       /**< Use per face normals \note per face is implicitly used in SHADE_FLAT mode  */
   };
 
-  typedef std::bitset<64> ModeFlagSet;
+  typedef std::bitset<128> ModeFlagSet;
 
   /** \brief DrawModeProperties stores a set of properties that defines, how to render an object.
    *
