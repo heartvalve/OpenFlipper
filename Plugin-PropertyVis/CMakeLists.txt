@@ -14,4 +14,4 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/HexahedralMesh)
     add_definitions (-DENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT)
 endif()
 
-openflipper_plugin (INSTALLDATA Icons DIRS OpenMesh OpenVolumeMesh Widgets)
+openflipper_plugin (INSTALLDATA Icons DIRS OpenMesh OpenVolumeMesh Widgets DEPS OpenMesh OpenVolumeMesh)
