@@ -117,11 +117,8 @@ int TypePolyhedralMeshPlugin::addEmpty() {
     object->materialNode()->set_ambient_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
 
     // Set rendering props
-
     if(OpenFlipper::Options::gui())
     {
-        object->meshNode()->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-
         object->meshNode()->set_scaling(0.8);
         object->update();
 
