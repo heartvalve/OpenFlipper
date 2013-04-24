@@ -18,4 +18,4 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/PolyhedralMesh)
     add_definitions (-DENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT)
 endif ()
 
-openflipper_plugin ()
+openflipper_plugin (DEPS OpenMesh OpenVolumeMesh)
