@@ -282,7 +282,7 @@ public:
     void clearCutPlanes();
 
     /// Adds a cut plane
-    void addCutPlane(const Plane& _p);
+    void addCutPlane(const typename VolumeMeshBufferManager<VolumeMesh>::Plane& _p);
 
     /// Adds a cut plane
     void addCutPlane(const ACG::Vec3d& _p, const ACG::Vec3d& _n, const ACG::Vec3d& _xsize, const ACG::Vec3d& _ysize);
