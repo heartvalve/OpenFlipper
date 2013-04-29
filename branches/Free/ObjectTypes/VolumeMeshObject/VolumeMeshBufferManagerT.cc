@@ -396,7 +396,7 @@ void VolumeMeshBufferManager<VolumeMesh>::clearCutPlanes()
 * @param _p The plane that is added.
 */
 template <class VolumeMesh>
-void VolumeMeshBufferManager<VolumeMesh>::addCutPlane(const VolumeMeshBufferManager::Plane &_p)
+void VolumeMeshBufferManager<VolumeMesh>::addCutPlane(const VolumeMeshBufferManager<VolumeMesh>::Plane &_p)
 {
     cut_planes_.push_back(_p);
     invalidateGeometry();
