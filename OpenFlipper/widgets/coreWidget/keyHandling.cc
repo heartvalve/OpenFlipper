@@ -310,8 +310,8 @@ void CoreWidget::slotRegisterSlotKeyBindings(){
 
     coreKeys_.push_back( kb );
 
-    keys_.insert( std::make_pair( std::make_pair(-1, 0) , std::make_pair ((QObject*)0, coreKeys_.size()-1 ) )) ;
-    invKeys_.insert( std::make_pair( std::make_pair ((QObject*)0, coreKeys_.size()-1 ) , std::make_pair(-1, 0) ) );
+    keys_.insert( std::make_pair( std::make_pair(-1, (QFlags<Qt::KeyboardModifier>)0) , std::make_pair ((QObject*)0, coreKeys_.size()-1 ) )) ;
+    invKeys_.insert( std::make_pair( std::make_pair ((QObject*)0, coreKeys_.size()-1 ) , std::make_pair(-1, (QFlags<Qt::KeyboardModifier>)0) ) );
   }
 
   //check all plugins
@@ -333,8 +333,8 @@ void CoreWidget::slotRegisterSlotKeyBindings(){
 
       plugins_[i].keys.append( kb );
 
-      keys_.insert( std::make_pair( std::make_pair(-1, 0) , std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) ) );
-      invKeys_.insert( std::make_pair( std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) , std::make_pair(-1, 0) ) );
+      keys_.insert( std::make_pair( std::make_pair(-1, (QFlags<Qt::KeyboardModifier>)0) , std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) ) );
+      invKeys_.insert( std::make_pair( std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) , std::make_pair(-1, (QFlags<Qt::KeyboardModifier>)0) ) );
     }
 }
 
