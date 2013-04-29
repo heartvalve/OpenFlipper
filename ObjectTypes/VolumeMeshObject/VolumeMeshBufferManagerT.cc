@@ -66,7 +66,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mDrawModes(),
       mPrimitiveMode(PM_NONE),
       mNormalMode(NM_NONE),
-      mColorMode(CM_NONE),
+      //mColorMode(CM_NONE),
       mSkipUnselected(false),
       mShowIrregularInnerEdges(false),
       mShowIrregularOuterValence2Edges(false),
@@ -74,7 +74,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mBoundaryOnly(false),
       mCurrentPrimitiveMode(PM_NONE),
       mCurrentNormalMode(NM_NONE),
-      mCurrentColorMode(CM_NONE),
+      //mCurrentColorMode(CM_NONE),
       mCurrentSkipUnselected(false),
       mCurrentShowIrregularInnerEdges(false),
       mCurrentShowIrregularOuterValence2Edges(false),
@@ -241,12 +241,14 @@ void VolumeMeshBufferManager<VolumeMesh>::calculateVertexDeclaration()
         currentOffset += 3*sizeof(float);
     }
 
+    /*
     if ((mColorMode != CM_NONE) || mShowIrregularInnerEdges || mShowIrregularOuterValence2Edges)
     {
         mColorOffset = currentOffset;
         mVertexDeclaration.addElement(GL_UNSIGNED_BYTE, 4, ACG::VERTEX_USAGE_COLOR, reinterpret_cast<GLuint*>(currentOffset));
         currentOffset += 4*sizeof(char);
     }
+    */
 
     if ((mTexCoordMode != TCM_NONE))
     {
@@ -319,8 +321,8 @@ void VolumeMeshBufferManager<VolumeMesh>::setOptionsFromDrawMode(ACG::SceneGraph
                           mDrawModes.halffacesColoredPerVertex | mDrawModes.edgesColoredPerEdge |
                           mDrawModes.verticesColored))
         enablePerVertexColors();
-    else
-        disableColors();
+    /*else
+        disableColors();*/
 
     //normals
     if (_drawMode & (mDrawModes.cellsFlatShaded | mDrawModes.halffacesFlatShaded))

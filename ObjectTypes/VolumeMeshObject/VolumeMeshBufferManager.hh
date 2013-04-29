@@ -101,7 +101,7 @@ public:
 
     enum ColorMode
     {
-        CM_NONE,
+        //CM_NONE,
         CM_CELL,
         CM_FACE,
         CM_HALFFACE,
@@ -198,7 +198,7 @@ public:
 
 
     /// Disables colors
-    void disableColors()            { mColorMode  = CM_NONE;     }
+    //void disableColors()            { mColorMode  = CM_NONE;     }
 
     /// Enables per cell colors
     void enablePerCellColors()      { mColorMode  = CM_CELL;     }
