@@ -56,6 +56,8 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mNormalAttrib(normalAttrib_),
       mNumOfVertices(-1),
       mCurrentNumOfVertices(-1),
+      mColorOffset(-1),
+      mNormalOffset(-1),
       mScale(0.8),
       mBuffer(0),
       mCurrentPickOffset(-1),
@@ -66,7 +68,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mDrawModes(),
       mPrimitiveMode(PM_NONE),
       mNormalMode(NM_NONE),
-      //mColorMode(CM_NONE),
+      mColorMode(CM_NO_COLORS),
       mSkipUnselected(false),
       mShowIrregularInnerEdges(false),
       mShowIrregularOuterValence2Edges(false),
@@ -74,7 +76,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mBoundaryOnly(false),
       mCurrentPrimitiveMode(PM_NONE),
       mCurrentNormalMode(NM_NONE),
-      //mCurrentColorMode(CM_NONE),
+      mCurrentColorMode(CM_NO_COLORS),
       mCurrentSkipUnselected(false),
       mCurrentShowIrregularInnerEdges(false),
       mCurrentShowIrregularOuterValence2Edges(false),
@@ -241,14 +243,12 @@ void VolumeMeshBufferManager<VolumeMesh>::calculateVertexDeclaration()
         currentOffset += 3*sizeof(float);
     }
 
-    /*
-    if ((mColorMode != CM_NONE) || mShowIrregularInnerEdges || mShowIrregularOuterValence2Edges)
+    if ((mColorMode != CM_NO_COLORS) || mShowIrregularInnerEdges || mShowIrregularOuterValence2Edges)
     {
         mColorOffset = currentOffset;
         mVertexDeclaration.addElement(GL_UNSIGNED_BYTE, 4, ACG::VERTEX_USAGE_COLOR, reinterpret_cast<GLuint*>(currentOffset));
         currentOffset += 4*sizeof(char);
     }
-    */
 
     if ((mTexCoordMode != TCM_NONE))
     {
@@ -258,7 +258,7 @@ void VolumeMeshBufferManager<VolumeMesh>::calculateVertexDeclaration()
             numOfCoords = 1;
         else if (mTexCoordMode == TCM_VERTEX_2D)
             numOfCoords = 2;
-       // mVertexDeclaration.addElement(GL_FLOAT, numOfCoords, VERTEX_USAGE_TEXCOORD, reinterpret_cast<GLuint*>(currentOffset));
+        mVertexDeclaration.addElement(GL_FLOAT, numOfCoords, ACG::VERTEX_USAGE_TEXCOORD, reinterpret_cast<GLuint*>(currentOffset));
         currentOffset += numOfCoords * sizeof(float);
     }
 

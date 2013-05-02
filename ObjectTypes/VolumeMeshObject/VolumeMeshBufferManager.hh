@@ -101,7 +101,7 @@ public:
 
     enum ColorMode
     {
-        //CM_NONE,
+        CM_NO_COLORS,
         CM_CELL,
         CM_FACE,
         CM_HALFFACE,
@@ -406,8 +406,8 @@ private:
     unsigned int mVertexSize;
     ACG::VertexDeclaration mVertexDeclaration;
 
-    unsigned int mColorOffset;
-    unsigned int mNormalOffset;
+    int mColorOffset;
+    int mNormalOffset;
 
     double mScale;
 
