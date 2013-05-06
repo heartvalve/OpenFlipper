@@ -260,7 +260,7 @@ void MaterialNode::enter(GLState& _state, const DrawModes::DrawMode&  _drawmode 
 
   }
 
-  if ( ( applyProperties_ & ColorMaterial ) && (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
+  if ( ( applyProperties_ & ColorMaterial ) && (_drawmode & (DrawModes::SOLID_FACES_COLORED_FLAT_SHADED|DrawModes::SOLID_FACES_COLORED_SMOOTH_SHADED)) )
   {
     materialBackup_.colorMaterial_ = glIsEnabled(GL_COLOR_MATERIAL);
 
