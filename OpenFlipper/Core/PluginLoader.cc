@@ -2185,17 +2185,34 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
   if ( filePlugin ){
     supported = supported + "File ";
 
+    QStringList loadFilters = filePlugin->getLoadFilters().split(";;");
+    QStringList saveFilters = filePlugin->getSaveFilters().split(";;");
+
     // Collect supported Data from file plugin
-    fileTypes ft;
-    ft.name = basePlugin->name();
-    ft.type = filePlugin->supportedType();
-    ft.loadFilters = filePlugin->getLoadFilters();
-    ft.saveFilters = filePlugin->getSaveFilters();
-    ft.plugin = filePlugin;
-    ft.object = plugin;
-    ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
-    
-    supportedTypes().push_back(ft);
+    for (int i = 0; i < loadFilters.size(); ++i) {
+      fileTypes ft;
+      ft.name = basePlugin->name();
+      ft.type = filePlugin->supportedType();
+      ft.loadFilters = loadFilters[i];
+      ft.saveFilters = "";
+      ft.plugin = filePlugin;
+      ft.object = plugin;
+      ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
+
+      supportedTypes().push_back(ft);
+    }
+    for (int i = 0; i < saveFilters.size(); ++i) {
+      fileTypes ft;
+      ft.name = basePlugin->name();
+      ft.type = filePlugin->supportedType();
+      ft.loadFilters = "";
+      ft.saveFilters = saveFilters[i];
+      ft.plugin = filePlugin;
+      ft.object = plugin;
+      ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
+
+      supportedTypes().push_back(ft);
+    }
 
 
     if ( checkSignal(plugin,"openedFile(int)" ) )
