@@ -223,7 +223,7 @@ int Core::loadObject ( QString _filename ) {
 
     for (int i=0; i < (int)supportedTypes().size(); i++){
 
-      QString filters = supportedTypes()[i].plugin->getLoadFilters();
+      QString filters = supportedTypes()[i].loadFilters;
 
       // Only take the parts inside the brackets
       filters = filters.section("(",1).section(")",0,0);
@@ -313,7 +313,7 @@ int Core::loadObject( DataType _type, QString _filename) {
   for (int i=0; i < (int)supportedTypes().size(); i++) {
     if (supportedTypes()[i].type & _type || supportedTypes()[i].type == _type) {
 
-      QString filters = supportedTypes()[i].plugin->getLoadFilters();
+      QString filters = supportedTypes()[i].loadFilters;
 
       // Only take the parts inside the brackets
       filters = filters.section("(",1).section(")",0,0);
@@ -352,7 +352,9 @@ int Core::loadObject( DataType _type, QString _filename) {
       if ( OpenFlipper::Options::gui() ) {
         QStringList items;
         for (int j = 0; j < nPlugins; ++j) {
-          items << supportedTypes()[typeIds[j]].name;
+          // only add the plugin name if it does not already exist in the itemlist
+          if (items.indexOf(supportedTypes()[typeIds[j]].name) == -1)
+            items << supportedTypes()[typeIds[j]].name;
         }
 
         bool ok;
