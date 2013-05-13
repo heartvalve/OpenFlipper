@@ -457,9 +457,9 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
   unsigned int byteCol[2];
   for (int col = 0; col < 2; ++col)
   {
-    typename Mesh::Color vecCol(255, 255, 255, 255);
+    Vec4uc vecCol(255, 255, 255, 255);
 
-    if (col == 0 && mesh_.has_vertex_colors()) vecCol = OpenMesh::color_cast<Vec4uc,typename Mesh::Color>(mesh_.color(_vh));
+    if (col == 0 && mesh_.has_vertex_colors()) vecCol = OpenMesh::color_cast<Vec4uc, typename Mesh::Color>(mesh_.color(_vh));
     if (_fh != invalidFH)
     {
       if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
