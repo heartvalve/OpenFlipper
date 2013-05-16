@@ -130,6 +130,7 @@ TranslationManipulatorNode::Element::Element () :
 TranslationManipulatorNode::
 TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
   : TransformNode(_parent, _name),
+    touched_(false),
     draw_manipulator_(false),
     dirX_(1.0,0.0,0.0),
     dirY_(0.0,1.0,0.0),
@@ -1021,6 +1022,11 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       oldPoint2D_ = newPoint2D;
       currentScale_ = Vec3d(1.0, 1.0, 1.0);
       ignoreTime_ = true;
+
+      touched_ =    element_[Origin].clicked_
+                 || any_top_clicked_
+                 || any_axis_clicked_
+                 || outer_ring_clicked_;
       break;
     }
 
@@ -1028,8 +1034,16 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     case QEvent::MouseButtonRelease: {
 
       for (i = 0; i < NumElements; i++) {
+        if (element_[i].clicked_)
+          touched_ = true;
         element_[i].clicked_ = false;
       }
+
+      touched_ =    touched_
+                 || any_top_clicked_
+                 || any_axis_clicked_
+                 || outer_ring_clicked_;
+
       any_axis_clicked_ = false;
       any_top_clicked_ = false;
       outer_ring_clicked_ = false;
@@ -1045,8 +1059,10 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // All real manipulation is done here
     case QEvent::MouseMove: {
-      if (!draw_manipulator_)
+      if (!draw_manipulator_) {
+        touched_ = false;
         return; // Avoid manipulation if manipulator is invisible
+      }
 
       // Get pressed modifiers
       Qt::KeyboardModifiers mods = Qt::ShiftModifier | Qt::ControlModifier;
@@ -1177,6 +1193,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
           scale(currentScale_);
         }
+
+        touched_ = true;
       }
 
       // x axis clicked apply translation along axis
@@ -1247,6 +1265,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         } else
           //translation
           translate(ntrans);
+
+        touched_ = true;
       }
 
       // y axis clicked change translation along axis
@@ -1318,6 +1338,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         } else
           //translation
           translate(ntrans);
+
+        touched_ = true;
       }
 
       // z axis clicked change translation along axis
@@ -1389,6 +1411,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         } else
           //translation
           translate(ntrans);
+
+        touched_ = true;
       }
 
       // x top clicked: rotate around x axis
@@ -1435,6 +1459,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           _state.pop_modelview_matrix();
         }
 
+        touched_ = true;
       }
 
       // y top clicked: rotate around y axis
@@ -1477,6 +1502,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
           _state.pop_modelview_matrix();
         }
+
+        touched_ = true;
       }
 
       // z top clicked: rotate around z axis
@@ -1520,6 +1547,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           _state.pop_modelview_matrix();
         }
 
+        touched_ = true;
       }
 
       break;

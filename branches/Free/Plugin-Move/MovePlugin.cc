@@ -106,7 +106,9 @@ contextActionHide_(0),
 toAllTargets_(0),
 hide_(true),
 allTargets_(false),
-placeMode_(false)
+placeMode_(false),
+noneSelected_(true),
+transformedSelected_(false)
 {
 
 }
@@ -575,27 +577,35 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
  * @param _type Type of mouse event ( release of the button creates a backup)
  */
 void MovePlugin::moveSelection(ACG::Matrix4x4d _mat, int _id, QEvent::Type _type) {
-
-    // Get currently active primitive type
-    updateSelectionType();
+  // Get currently active primitive type
+  updateSelectionType();
 
   if ( !_mat.is_identity() ){
+    noneSelected_ = true;
+    transformedSelected_ = false;
+
     if (selectionType_ & VERTEX) {
       transformVertexSelection( _id , _mat );
+      transformedSelected_ = true;
     }
     if (selectionType_ & FACE) {
       transformFaceSelection( _id , _mat );
+      transformedSelected_ = true;
     }
     if (selectionType_ & EDGE) {
       transformEdgeSelection( _id , _mat );
+      transformedSelected_ = true;
     }
+
+    transformedSelected_ = transformedSelected_ && !noneSelected_;
 
     emit updatedObject(_id, UPDATE_GEOMETRY);
   }
 
-  //only create backups on mouseRelease
-  if ( _type == QEvent::MouseButtonRelease )
+  //only create backups on mouseRelease and something has to have been selected and transformed
+  if ( _type == QEvent::MouseButtonRelease && transformedSelected_ )
     emit createBackup(_id,"Move Selection", UPDATE_GEOMETRY);
+
 }
 
 //------------------------------------------------------------------------------
