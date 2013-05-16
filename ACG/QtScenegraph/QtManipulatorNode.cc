@@ -77,7 +77,10 @@ void
 QtManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 {
   ManipulatorNode::mouseEvent( _state, _event );
-  emit manipulatorMoved( this , _event);
+  if (touched())
+    emit manipulatorMoved( this , _event);
+
+  reset_touched();
 }
 
 QtManipulatorNode::~QtManipulatorNode() {

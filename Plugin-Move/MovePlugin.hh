@@ -557,6 +557,12 @@ public slots :
     bool allTargets_;
 
     bool placeMode_;
+
+    /// stores if any elements were selected at all
+    bool noneSelected_;
+
+    /// stores if any selected elements where transformed
+    bool transformedSelected_;
 };
 
 #endif //MOVEPLUGIN_HH

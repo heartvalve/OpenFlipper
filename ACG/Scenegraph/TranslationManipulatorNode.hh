@@ -219,6 +219,10 @@ public:
   ManipulatorMode getMode () const { return mode_; };
 
 
+protected:
+  /// stores if this manipulator was used in order to avoid emitting manipulatorMoved unnecessarily
+  bool touched_;
+
 private:
 
   enum StateUpdates {
