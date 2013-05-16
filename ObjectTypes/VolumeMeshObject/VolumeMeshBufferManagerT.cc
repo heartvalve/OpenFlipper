@@ -456,7 +456,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const ACG::Vec3d& _p)
 template <class VolumeMesh>
 bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const VertexHandle& _vh)
 {
-    if (cut_planes_.size() == 0) return true;
+    if ( cut_planes_.empty() ) return true;
     return is_inside(mMesh.vertex(_vh));
 }
 
@@ -472,7 +472,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const VertexHandle& _vh)
 template <class VolumeMesh>
 bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const HalfEdgeHandle& _heh)
 {
-    if (cut_planes_.size() == 0) return true;
+    if ( cut_planes_.empty() ) return true;
     Edge e(mMesh.halfedge(_heh));
     return is_inside(mMesh.vertex(e.from_vertex())) && is_inside(mMesh.vertex(e.to_vertex()));
 }
@@ -489,7 +489,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const HalfEdgeHandle& _heh)
 template <class VolumeMesh>
 bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const EdgeHandle& _eh)
 {
-    if (cut_planes_.size() == 0) return true;
+    if ( cut_planes_.empty() ) return true;
     Edge e(mMesh.edge(_eh));
     return is_inside(mMesh.vertex(e.from_vertex())) && is_inside(mMesh.vertex(e.to_vertex()));
 }
@@ -506,7 +506,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const EdgeHandle& _eh)
 template <class VolumeMesh>
 bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const HalfFaceHandle& _hfh)
 {
-    if (cut_planes_.size() == 0) return true;
+    if ( cut_planes_.empty() ) return true;
     for (OpenVolumeMesh::HalfFaceVertexIter hfv_it = mMesh.hfv_iter(_hfh); hfv_it; ++hfv_it)
         if (!is_inside(*hfv_it)) return false;
 
@@ -525,7 +525,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const HalfFaceHandle& _hfh)
 template <class VolumeMesh>
 bool VolumeMeshBufferManager<VolumeMesh>::is_inside(const FaceHandle& _fh)
 {
-    if (cut_planes_.size() == 0) return true;
+    if ( cut_planes_.empty() ) return true;
     return is_inside(mMesh.halfface_handle(_fh,0));
 }
 
@@ -567,7 +567,7 @@ void VolumeMeshBufferManager<VolumeMesh>::calculateCellInsideness()
         CellHandle ch = CellHandle(i);
         bool inside;
         ACG::Vec3d cog = getCOG(ch);
-        if (cut_planes_.size() == 0)
+        if ( cut_planes_.empty() )
             inside = true;
         else
         {
