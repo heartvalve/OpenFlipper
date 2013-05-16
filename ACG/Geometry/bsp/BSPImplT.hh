@@ -75,7 +75,7 @@ public: //---------------------------------------------------------------------
   typedef typename BSPCore::Node        Node;
   typedef typename BSPCore::Handles     Handles;
   typedef typename BSPCore::HandleIter  HandleIter;
-  
+
 
 public: //---------------------------------------------------------------------
 
@@ -93,13 +93,13 @@ public: //---------------------------------------------------------------------
     Handle  handle;
     Scalar  dist;
   };
-  
+
   /// Store nearest neighbor information
   typedef  std::vector< std::pair<Handle,Scalar> > RayCollision;
 
   /// Return handle of the nearest neighbor face
   NearestNeighbor nearest(const Point& _p) const;
-  
+
   /** \brief intersect mesh with ray
    *
    * This function shots a ray through the mesh and collects all intersected triangles and
@@ -111,7 +111,7 @@ public: //---------------------------------------------------------------------
    * @return   Collision information
    */
   RayCollision raycollision (const Point& _p, const Point& _r) const;
-  
+
   /** \brief intersect mesh with ray
    *
    * This function shots a ray through the mesh and collects all intersected triangles and
@@ -125,6 +125,19 @@ public: //---------------------------------------------------------------------
    */
   RayCollision directionalRaycollision (const Point& _p, const Point& _r) const;
 
+  /** \brief intersect mesh with ray
+   *
+   * This function shots a ray through the mesh and determines the first intersected triangle and
+   * the handle of the closest face ( directional, so the ray direction is taken into account!).
+   *
+   * Only hits with a distance > 0.0 to the point p will be collected (_p will be skipped!).
+   * Note that for compatibility reasons the return type is still a vector of collisions.
+   *
+   * @param _p Start point of the ray
+   * @param _r Ray direction
+   * @return   Collision information
+   */
+	RayCollision nearestRaycollision(const Point& _p, const Point& _r) const;
 
 private: //---------------------------------------------------------------------
 
@@ -141,7 +154,7 @@ private: //---------------------------------------------------------------------
         return stream;
     }
   };
-  
+
   /// Store ray collide information
   struct RayCollisionData
   {
@@ -153,7 +166,7 @@ private: //---------------------------------------------------------------------
 
   // Recursive part of nearest()
   void _nearest(Node* _node, NearestNeighborData& _data) const;
-  
+
   /**  \brief recursive part of raycollision()
    *
    * @param _node The current node in the tree
@@ -167,6 +180,8 @@ private: //---------------------------------------------------------------------
    * @param _data Data pointer, used to collect the collision information
    */
   void _raycollision_directional(Node* _node, RayCollisionData& _data) const;
+
+	void _raycollision_nearest_directional(Node* _node, RayCollisionData& _data) const;
 
   template<typename T,typename U>
   struct less_pair_second: public std::binary_function<T,U,bool> {

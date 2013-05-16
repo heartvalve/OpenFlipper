@@ -116,7 +116,7 @@ _nearest(Node* _node, NearestNeighborData& _data) const
       _nearest(_node->right_child_, _data);
       if (dist*dist < _data.dist)
         _nearest(_node->left_child_, _data);
-    }    
+    }
   }
 }
 
@@ -132,7 +132,7 @@ raycollision(const Point& _p, const Point& _r) const
   data.ref  = _p;
   data.ray  = _r;
   data.hit_handles.clear();
-  
+
   _raycollision_non_directional(this->root_, data);
 
   std::sort(data.hit_handles.begin(), data.hit_handles.end(), less_pair_second<Handle,Scalar>());
@@ -157,6 +157,21 @@ directionalRaycollision(const Point& _p, const Point& _r) const {
 
 }
 
+template <class BSPCore>
+typename BSPImplT<BSPCore>::RayCollision
+BSPImplT<BSPCore>::
+nearestRaycollision(const Point& _p, const Point& _r) const {
+
+  // Prepare the struct for returning the data
+  RayCollisionData  data;
+  data.ref  = _p;
+  data.ray  = _r;
+  data.hit_handles.clear();
+
+  _raycollision_nearest_directional(this->root_, data);
+
+  return RayCollision(data.hit_handles);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -233,6 +248,61 @@ _raycollision_directional(Node* _node, RayCollisionData& _data) const
       _raycollision_directional(_node->right_child_, _data);
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+
+template <class BSPCore>
+void
+BSPImplT<BSPCore>::
+_raycollision_nearest_directional(Node* _node, RayCollisionData& _data) const
+{
+  // terminal node
+  if (!_node->left_child_)
+  {
+    Scalar dist;
+    Point v0, v1, v2;
+    Scalar u, v;
+
+    for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
+    {
+      this->traits_.points(*it, v0, v1, v2);
+      if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
+        if (dist > 0.0){
+          _data.hit_handles.push_back(std::pair<Handle,Scalar>(*it, dist));
+        }
+      }
+    }
+		// only return the closest hit
+		if(!_data.hit_handles.empty()) {
+			std::partial_sort(_data.hit_handles.begin(), _data.hit_handles.begin() + 1, _data.hit_handles.end(), less_pair_second<Handle, Scalar>());
+			_data.hit_handles.resize(1);
+		}
+  }
+
+  // non-terminal node
+  else
+	{
+		// determine order of traversal
+		Node* first_node = _node->left_child_, *second_node = _node->right_child_;
+		if (!_node->plane_(_data.ref)) {
+			std::swap(first_node, second_node);
+		}
+
+		Scalar tmin, tmax;
+		if ( first_node && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, first_node->bb_min, first_node->bb_max, tmin, tmax) ) {
+			_raycollision_nearest_directional(first_node, _data);
+		}
+		// if the second node is further away than the closeset hit skip it
+		Scalar dist = ACG::NumLimitsT<Scalar>::max();
+		if(!_data.hit_handles.empty()) {
+			dist = _data.hit_handles.front().second;
+		}
+		if ( second_node && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, second_node->bb_min, second_node->bb_max, tmin, tmax) && (tmin < dist) ) {
+			_raycollision_nearest_directional(second_node, _data);
+		}
+	}
 }
 
 
