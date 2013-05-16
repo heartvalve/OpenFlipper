@@ -333,6 +333,11 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
   Material lastMat;
 
+  // we do not want to write seperators if we only write vertex indices
+  bool vertexOnly =     !(optionVertexTexCoords && _mesh.has_halfedge_texcoords2D())
+                    &&  !(optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D())
+                    &&  !(optionVertexNormals);
+
   for (f_it = _mesh.faces_begin(); f_it != _mesh.faces_end(); ++f_it){
 
     if (useMaterial && optionFaceColors) {
@@ -355,28 +360,32 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
         idx = _mesh.to_vertex_handle(fh_it.handle()).idx() + 1;
         _out << " " << idx;
 
-        // Write separator
-        _out << "/" ;
+        if (!vertexOnly) {
 
-        // Write vertex texture coordinate index
-        if ( optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
+          // Write separator
+          _out << "/" ;
+
+          // Write vertex texture coordinate index
+          if ( optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
             // Refer to halfedge texture coordinates
             typename std::map<typename MeshT::HalfedgeHandle, int>::iterator it = vtMap.find(fh_it.handle());
             if(it != vtMap.end())
-                _out  << (*it).second;
-        } else if (optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D()) {
+              _out  << (*it).second;
+          } else if (optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D()) {
             // Refer to vertex texture coordinates
             typename std::map<typename MeshT::VertexHandle, int>::iterator it = vtMapV.find(_mesh.to_vertex_handle(fh_it.handle()));
             if(it != vtMapV.end())
-                _out  << (*it).second;
+              _out  << (*it).second;
+          }
+
+          // Write vertex normal index
+          if ( optionVertexNormals ) {
+            // Write separator
+            _out << "/" ;
+
+            _out << idx;
+          }
         }
-
-        // Write separator
-        _out << "/" ;
-
-        // Write vertex normal index
-        if ( optionVertexNormals )
-        _out << idx;
     }
 
     _out << std::endl;
