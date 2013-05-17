@@ -107,7 +107,6 @@ toAllTargets_(0),
 hide_(true),
 allTargets_(false),
 placeMode_(false),
-noneSelected_(true),
 transformedSelected_(false)
 {
 
@@ -581,23 +580,15 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d _mat, int _id, QEvent::Type _type
   updateSelectionType();
 
   if ( !_mat.is_identity() ){
-    noneSelected_ = true;
-    transformedSelected_ = false;
-
     if (selectionType_ & VERTEX) {
-      transformVertexSelection( _id , _mat );
-      transformedSelected_ = true;
+      transformedSelected_ = transformVertexSelection( _id , _mat );
     }
     if (selectionType_ & FACE) {
-      transformFaceSelection( _id , _mat );
-      transformedSelected_ = true;
+      transformedSelected_ = transformFaceSelection( _id , _mat );
     }
     if (selectionType_ & EDGE) {
-      transformEdgeSelection( _id , _mat );
-      transformedSelected_ = true;
+      transformedSelected_ = transformEdgeSelection( _id , _mat );
     }
-
-    transformedSelected_ = transformedSelected_ && !noneSelected_;
 
     emit updatedObject(_id, UPDATE_GEOMETRY);
   }

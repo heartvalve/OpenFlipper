@@ -481,13 +481,13 @@ public slots :
   void transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix );
 
   /// transform current selection of an Object by a given matrix
-  void transformVertexSelection( int _objectId , Matrix4x4 _matrix );
+  bool transformVertexSelection( int _objectId , Matrix4x4 _matrix );
 
   /// transform current selection of an Object by a given matrix
-  void transformFaceSelection( int _objectId , Matrix4x4 _matrix );
+  bool transformFaceSelection( int _objectId , Matrix4x4 _matrix );
 
   /// transform current selection of an Object by a given matrix
-  void transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
+  bool transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
 
   /// Transform handle region using the given transformation matrix
   void transformHandleRegion(int _objectId, Matrix4x4 _matrix);
@@ -557,9 +557,6 @@ public slots :
     bool allTargets_;
 
     bool placeMode_;
-
-    /// stores if any elements were selected at all
-    bool noneSelected_;
 
     /// stores if any selected elements where transformed
     bool transformedSelected_;
