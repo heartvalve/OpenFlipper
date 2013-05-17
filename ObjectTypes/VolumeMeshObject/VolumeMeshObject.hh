@@ -49,6 +49,7 @@
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SeparatorNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
+#include <ACG/Scenegraph/ShaderNode.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/BaseObjectData.hh>
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshNode.hh>
@@ -158,6 +159,9 @@ public:
 
   public:
 
+    /// Return pointer to the shader node
+    ACG::SceneGraph::ShaderNode* shaderNode();
+
     /// Get the Scenegraph Mesh Node
     ACG::SceneGraph::VolumeMeshNodeT<MeshT>* meshNode();
 
@@ -170,6 +174,9 @@ public:
 
     /// Scenegraph Mesh Node
     ACG::SceneGraph::VolumeMeshNodeT<MeshT>* meshNode_;
+
+    /// Scenegraph Shader Node
+    ACG::SceneGraph::ShaderNode* shaderNode_;
 
   /** @} */
 

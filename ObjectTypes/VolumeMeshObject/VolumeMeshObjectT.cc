@@ -55,6 +55,8 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#include "VolumeMeshDrawModesContainer.hh"
+
 //== TYPEDEFS =================================================================
 
 //== CLASS DEFINITION =========================================================
@@ -65,10 +67,9 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
     statusAttrib_(*mesh_),
     colorAttrib_(*mesh_),
     normalAttrib_(*mesh_),
-    meshNode_((OpenFlipper::Options::nogui() ?
-               NULL :
-               new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
-                                                           normalAttrib_, materialNode(), materialNode(), "NEW VolumeMeshNode"))) {
+    meshNode_(NULL),
+    shaderNode_(NULL)
+{
 
     init();
 
@@ -81,10 +82,9 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(DataType _typeId) :
     statusAttrib_(*mesh_),
     colorAttrib_(*mesh_, ACG::Vec4f(1.0f, 1.0f, 1.0f, 1.0f) /* Default color */),
     normalAttrib_(*mesh_),
-    meshNode_((OpenFlipper::Options::nogui() ?
-               NULL :
-               new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
-                                                           normalAttrib_, materialNode(), materialNode(), "NEW VolumeMeshNode"))) {
+    meshNode_(NULL),
+    shaderNode_(NULL)
+{
 
     setDataType(_typeId);
     init();
@@ -102,6 +102,7 @@ VolumeMeshObject<MeshT>::~VolumeMeshObject() {
 
     // No need to delete the scenegraph nodes as this will be managed by baseplugin
     meshNode_ = 0;
+    shaderNode_ = 0;
 }
 
 /** Cleanup function for mesh objects. Deletes the contents of the whole object and
@@ -113,6 +114,7 @@ void VolumeMeshObject<MeshT>::cleanup() {
     BaseObjectData::cleanup();
 
     meshNode_ = 0;
+    shaderNode_ = 0;
 
     init();
 }
@@ -127,6 +129,11 @@ void VolumeMeshObject<MeshT>::init() {
     if(OpenFlipper::Options::nogui())
         return;
 
+    shaderNode_  = new ACG::SceneGraph::ShaderNode(materialNode() , "NEW ShaderNode for ");
+
+    meshNode_ = new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
+                                                            normalAttrib_, materialNode(), shaderNode(), "NEW VolumeMeshNode");
+
     if(manipulatorNode() == NULL)
         std::cerr << "Error when creating volume mesh object! Manipulator node is NULL!" << std::endl;
 
@@ -134,7 +141,22 @@ void VolumeMeshObject<MeshT>::init() {
         std::cerr << "Error when creating mesh object! Material node is NULL!" << std::endl;
 
     materialNode()->set_point_size(12.0f);
-    meshNode_->set_parent(materialNode());
+
+    QString shaderDir = OpenFlipper::Options::shaderDirStr() + OpenFlipper::Options::dirSeparator();
+
+    std::string shaderDirectory = std::string( shaderDir.toUtf8() );
+    shaderNode_->setShaderDir( shaderDirectory );
+
+    VolumeMeshDrawModesContainer drawModes;
+    if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() )
+    {
+        shaderNode_->setShader(drawModes.cellsPhongShaded,    "Phong/Vertex.glsl" , "Phong/Fragment.glsl" );
+        shaderNode_->setShader(drawModes.facesPhongShaded,    "Phong/Vertex.glsl" , "Phong/Fragment.glsl" );
+        shaderNode_->setShader(drawModes.halffacesPhongShaded,"Phong/Vertex.glsl" , "Phong/Fragment.glsl" );
+    }
+    else
+      std::cerr << "Shader Files for Phong not found!" << std::endl;
+
 
     // Update all nodes
     update();
@@ -155,8 +177,11 @@ void VolumeMeshObject<MeshT>::setName(QString _name) {
     if(OpenFlipper::Options::nogui())
         return;
 
-    std::string nodename = std::string("VolumeMeshNode for mesh " + _name.toUtf8());
-    meshNode_->name(nodename);
+    std::string meshnodename = std::string("VolumeMeshNode for mesh " + _name.toUtf8());
+    meshNode_->name(meshnodename);
+
+    std::string shadernodename = std::string("Shadernode for mesh " + _name.toUtf8());
+    shaderNode_->name(shadernodename);
 }
 
 // ===============================================================================
@@ -244,6 +269,12 @@ BaseObject* VolumeMeshObject<MeshT>::copy() {
     return dynamic_cast<BaseObject*> (object);
 }
 
+template<class MeshT>
+ACG::SceneGraph::ShaderNode* VolumeMeshObject<MeshT>::shaderNode()
+{
+    return shaderNode_;
+}
+
 // ===============================================================================
 // Visualization
 // ===============================================================================
@@ -305,7 +336,7 @@ QString VolumeMeshObject<MeshT>::getObjectinfo() {
 // Picking
 // ===============================================================================
 
-/** Given an node index from PluginFunctions::scenegraphPick this function can be used to
+/** Given a node index from PluginFunctions::scenegraphPick this function can be used to
  * check if the meshNode of the object has been picked.
  *
  * @param _node_idx Index of the picked mesh node
@@ -322,6 +353,7 @@ void VolumeMeshObject<MeshT>::enablePicking(bool _enable) {
         return;
 
     meshNode_->enablePicking(_enable);
+    shaderNode_->enablePicking(_enable);
 }
 
 template<class MeshT>
