@@ -766,14 +766,17 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
  *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
+ *
+ * @return returns true if selected elements were transformed
  */
-void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
+bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
     emit log(LOGERR,tr("transform : unable to get object") );
-    return;
+    return false;
   }
 
+  bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
@@ -782,8 +785,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     for (; v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
@@ -796,8 +798,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     for (; v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
@@ -811,8 +812,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     for (; v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
@@ -826,8 +826,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       
       for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
         if ( line.vertex_selection(i) ) {
-          if (noneSelected_)
-            noneSelected_ = false;
+          noneSelected = false;
           line.point(i) = _matrix.transform_point( line.point(i) );
         }
     }
@@ -837,6 +836,9 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       std::cerr << "Todo : transform BSplineCurve" << std::endl;
     }
   #endif
+
+  if (noneSelected)
+    return false;
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -851,8 +853,10 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
 
   // Create backup if there was a change
   // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) && !noneSelected_ )
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Vertex Selection");
+
+  return true;
 }
 
 
@@ -862,14 +866,17 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
  *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
+ *
+ * @return returns true if selected elements were transformed
  */
-void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
+bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
     emit log(LOGERR,tr("transform : unable to get object") );
-    return;
+    return false;
   }
 
+  bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
@@ -884,8 +891,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(f_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
           mesh.status(fv_it).set_tagged(true);
       }
@@ -910,8 +916,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(f_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         for(PolyMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
           mesh.status(fv_it).set_tagged(true);
       }
@@ -937,8 +942,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(f_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         for(TSplineMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
           mesh.status(fv_it).set_tagged(true);
       }
@@ -951,6 +955,8 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
   }
 #endif
 
+  if (noneSelected)
+    return false;
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -965,8 +971,10 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
   
   // Create backup if there was a change
   // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) && !noneSelected_)
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Face Selection");
+
+  return true;
 }
 
 
@@ -976,14 +984,17 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
  *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
+ *
+ * @return returns true if selected elements were transformed
  */
-void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
+bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
     emit log(LOGERR,tr("transform : unable to get object" ) );
-    return;
+    return false;
   }
 
+  bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
@@ -998,8 +1009,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(e_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
@@ -1026,8 +1036,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(e_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
@@ -1055,8 +1064,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(e_it).selected() )
       {
-        if (noneSelected_)
-          noneSelected_ = false;
+        noneSelected = false;
         TSplineMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
@@ -1082,6 +1090,9 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     }
   #endif
 
+  if (noneSelected)
+    return false;
+
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
@@ -1095,8 +1106,10 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   
   // Create backup if there was a change
   // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) && !noneSelected_)
+  if ( !_matrix.is_identity() && (sender() == 0) )
     emit createBackup(_objectId, "Transformation of Edge Selection");
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
