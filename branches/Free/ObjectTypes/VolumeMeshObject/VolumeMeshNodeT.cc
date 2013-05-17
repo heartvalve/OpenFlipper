@@ -149,7 +149,7 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
         if (normalAttrib_.face_normals_available())
             result |= drawModes_.cellsFlatShaded;
         if (normalAttrib_.vertex_normals_available())
-            result |= drawModes_.cellsSmoothShaded;
+            result |= (drawModes_.cellsSmoothShaded | drawModes_.cellsPhongShaded);
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.cellsColoredPerVertex;
         if (colorAttrib_.halfface_colors_available())
@@ -165,7 +165,7 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
         if (normalAttrib_.face_normals_available())
             result |= drawModes_.facesFlatShaded;
         if (normalAttrib_.vertex_normals_available())
-            result |= drawModes_.facesSmoothShaded;
+            result |= (drawModes_.facesSmoothShaded | drawModes_.facesPhongShaded);
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.facesColoredPerVertex;
         if (colorAttrib_.face_colors_available())
@@ -177,7 +177,7 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
         if (normalAttrib_.face_normals_available())
             result |= drawModes_.halffacesFlatShaded;
         if (normalAttrib_.vertex_normals_available())
-            result |= drawModes_.halffacesSmoothShaded;
+            result |= (drawModes_.halffacesSmoothShaded | drawModes_.halffacesPhongShaded);
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.halffacesColoredPerVertex;
         if (colorAttrib_.halfface_colors_available())
@@ -443,6 +443,12 @@ template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
 
+    //save current shader
+    GLint currentProgramm;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgramm);
+    //disable shader for drawing of the selecttion
+    glUseProgram(0);
+
     GLState::enable(GL_DEPTH_TEST);
     GLState::depthFunc(GL_LEQUAL);
     _state.set_color( selection_color_ );
@@ -502,6 +508,8 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
 
 
     glLineWidth(_state.line_width());
+
+    glUseProgram(currentProgramm);
 
 }
 

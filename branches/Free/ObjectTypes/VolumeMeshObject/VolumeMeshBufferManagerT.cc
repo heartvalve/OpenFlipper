@@ -329,7 +329,8 @@ void VolumeMeshBufferManager<VolumeMesh>::setOptionsFromDrawMode(ACG::SceneGraph
         enablePerHalffaceNormals();
     else if (_drawMode & (mDrawModes.facesFlatShaded))
         enablePerFaceNormals();
-    else if (_drawMode & (mDrawModes.cellsSmoothShaded | mDrawModes.facesSmoothShaded | mDrawModes.halffacesSmoothShaded))
+    else if (_drawMode & (mDrawModes.cellsSmoothShaded | mDrawModes.facesSmoothShaded | mDrawModes.halffacesSmoothShaded |
+                          mDrawModes.cellsPhongShaded  | mDrawModes.facesPhongShaded  | mDrawModes.halffacesPhongShaded))
         enablePerVertexNormals();
     else
         disableNormals();

@@ -56,6 +56,7 @@ public:
         :
           cellsFlatShaded(ACG::SceneGraph::DrawModes::addDrawMode("Cells (flat shaded)", true)),
           cellsSmoothShaded(ACG::SceneGraph::DrawModes::addDrawMode("Cells (smooth shaded)")),
+          cellsPhongShaded(ACG::SceneGraph::DrawModes::addDrawMode("Cells (phong shaded)")),
           cellsColoredPerCell(ACG::SceneGraph::DrawModes::addDrawMode("Cells (colored per cell)")),
           cellsColoredPerFace(ACG::SceneGraph::DrawModes::addDrawMode("Cells (colored per face)")),
           cellsColoredPerHalfface(ACG::SceneGraph::DrawModes::addDrawMode("Cells (colored per halfface)")),
@@ -64,6 +65,7 @@ public:
 
           facesFlatShaded(ACG::SceneGraph::DrawModes::addDrawMode("Faces (flat shaded)")),
           facesSmoothShaded(ACG::SceneGraph::DrawModes::addDrawMode("Faces (smooth shaded)")),
+          facesPhongShaded(ACG::SceneGraph::DrawModes::addDrawMode("Faces (phong shaded)")),
           facesColoredPerFace(ACG::SceneGraph::DrawModes::addDrawMode("Faces (colored per face)")),
           facesColoredPerVertex(ACG::SceneGraph::DrawModes::addDrawMode("Faces (colored per vertex)")),
           facesOnCells(ACG::SceneGraph::DrawModes::addDrawMode("Faces (on cells)")),
@@ -71,6 +73,7 @@ public:
 
           halffacesFlatShaded(ACG::SceneGraph::DrawModes::addDrawMode("Halffaces (flat shaded)")),
           halffacesSmoothShaded(ACG::SceneGraph::DrawModes::addDrawMode("Halffaces (smooth shaded)")),
+          halffacesPhongShaded(ACG::SceneGraph::DrawModes::addDrawMode("Halffaces (phong shaded)")),
           halffacesColoredPerHalfface(ACG::SceneGraph::DrawModes::addDrawMode("Halffaces (colored per halfface)")),
           halffacesColoredPerVertex(ACG::SceneGraph::DrawModes::addDrawMode("Halffaces (colored per vertex)")),
 
@@ -90,10 +93,10 @@ public:
           irregularInnerEdges(ACG::SceneGraph::DrawModes::addDrawMode("Irregular edges")),
           irregularOuterEdges(ACG::SceneGraph::DrawModes::addDrawMode("Irregular outer valence 2 edges")),
 
-          cellBasedDrawModes(cellsFlatShaded | cellsSmoothShaded | cellsColoredPerCell | cellsColoredPerFace
+          cellBasedDrawModes(cellsFlatShaded | cellsSmoothShaded | cellsPhongShaded | cellsColoredPerCell | cellsColoredPerFace
                              | cellsColoredPerHalfface | cellsColoredPerVertex | cellsTransparent),
-          faceBasedDrawModes(facesFlatShaded | facesSmoothShaded | facesColoredPerFace | facesColoredPerVertex | hiddenLineBackgroundFaces),
-          halffaceBasedDrawModes(halffacesFlatShaded | halffacesSmoothShaded | halffacesColoredPerHalfface
+          faceBasedDrawModes(facesFlatShaded | facesSmoothShaded | facesPhongShaded | facesColoredPerFace | facesColoredPerVertex | hiddenLineBackgroundFaces),
+          halffaceBasedDrawModes(halffacesFlatShaded | halffacesSmoothShaded | halffacesPhongShaded | halffacesColoredPerHalfface
                              | halffacesColoredPerVertex),
           edgeBasedDrawModes(edgesWireframe | edgesHiddenLine | edgesColoredPerEdge | irregularInnerEdges | irregularOuterEdges | edgesOnCells),
           halfedgeBasedDrawModes(halfedgesWireframe | halfedgesHiddenLine | halfedgesColoredPerHalfedge),
@@ -104,6 +107,7 @@ public:
 
     ACG::SceneGraph::DrawModes::DrawMode cellsFlatShaded;
     ACG::SceneGraph::DrawModes::DrawMode cellsSmoothShaded;
+    ACG::SceneGraph::DrawModes::DrawMode cellsPhongShaded;
     ACG::SceneGraph::DrawModes::DrawMode cellsColoredPerCell;
     ACG::SceneGraph::DrawModes::DrawMode cellsColoredPerFace;
     ACG::SceneGraph::DrawModes::DrawMode cellsColoredPerHalfface;
@@ -112,6 +116,7 @@ public:
 
     ACG::SceneGraph::DrawModes::DrawMode facesFlatShaded;
     ACG::SceneGraph::DrawModes::DrawMode facesSmoothShaded;
+    ACG::SceneGraph::DrawModes::DrawMode facesPhongShaded;
     ACG::SceneGraph::DrawModes::DrawMode facesColoredPerFace;
     ACG::SceneGraph::DrawModes::DrawMode facesColoredPerVertex;
     ACG::SceneGraph::DrawModes::DrawMode facesOnCells;
@@ -119,6 +124,7 @@ public:
 
     ACG::SceneGraph::DrawModes::DrawMode halffacesFlatShaded;
     ACG::SceneGraph::DrawModes::DrawMode halffacesSmoothShaded;
+    ACG::SceneGraph::DrawModes::DrawMode halffacesPhongShaded;
     ACG::SceneGraph::DrawModes::DrawMode halffacesColoredPerHalfface;
     ACG::SceneGraph::DrawModes::DrawMode halffacesColoredPerVertex;
 
@@ -155,6 +161,7 @@ public:
     {
         if (cellsFlatShaded             & _drawMode) return cellsFlatShaded;
         if (cellsSmoothShaded           & _drawMode) return cellsSmoothShaded;
+        if (cellsPhongShaded            & _drawMode) return cellsPhongShaded;
         if (cellsColoredPerCell         & _drawMode) return cellsColoredPerCell;
         if (cellsColoredPerFace         & _drawMode) return cellsColoredPerFace;
         if (cellsColoredPerHalfface     & _drawMode) return cellsColoredPerHalfface;
@@ -172,12 +179,14 @@ public:
     {
         if (facesFlatShaded             & _drawMode) return facesFlatShaded;
         if (facesSmoothShaded           & _drawMode) return facesSmoothShaded;
+        if (facesPhongShaded            & _drawMode) return facesPhongShaded;
         if (facesColoredPerFace         & _drawMode) return facesColoredPerFace;
         if (facesColoredPerFace         & _drawMode) return facesColoredPerFace;
         if (facesColoredPerVertex       & _drawMode) return facesColoredPerVertex;
 
         if (halffacesFlatShaded         & _drawMode) return halffacesFlatShaded;
         if (halffacesSmoothShaded       & _drawMode) return halffacesSmoothShaded;
+        if (halffacesPhongShaded        & _drawMode) return halffacesPhongShaded;
         if (halffacesColoredPerHalfface & _drawMode) return halffacesColoredPerHalfface;
         if (halffacesColoredPerVertex   & _drawMode) return halffacesColoredPerVertex;
 
