@@ -54,6 +54,7 @@ OVMPropertyVisualizerBoolean<MeshT>::OVMPropertyVisualizerBoolean(MeshT* _mesh, 
     BooleanWidget* w = new BooleanWidget();
     w->paramBool->setTitle(QString("Boolean Parameters of ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
     PropertyVisualizer::widget = w;
+
 }
 
 template <typename MeshT>
@@ -78,96 +79,12 @@ void OVMPropertyVisualizerBoolean<MeshT>::visualizeProp(PropType prop, EntityIte
         else
             object->colors()[*e_it] = colorFalse;
 }
-CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerBoolean<MeshT>, typename MeshT)
+CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerBoolean<MeshT>, typename MeshT, bool)
 
 template <typename MeshT>
 void OVMPropertyVisualizerBoolean<MeshT>::duplicateProperty()
 {
     OVMPropertyVisualizer<MeshT>::template duplicateProperty_stage1<bool>();
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getCellPropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::CellPropertyT<bool> prop = mesh->template request_cell_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::CellHandle ch(index);
-
-    return this->toStr(prop[ch]);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getFacePropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::FacePropertyT<bool> prop = mesh->template request_face_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::FaceHandle fh(index);
-
-    return this->toStr(prop[fh]);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getHalffacePropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::HalfFacePropertyT<bool> prop = mesh->template request_halfface_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::HalfFaceHandle hfh(index);
-
-    return this->toStr(prop[hfh]);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getEdgePropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::EdgePropertyT<bool> prop = mesh->template request_edge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::EdgeHandle eh(index);
-
-    return this->toStr(prop[eh]);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getHalfedgePropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::HalfEdgePropertyT<bool> prop = mesh->template request_halfedge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::HalfEdgeHandle heh(index);
-
-    return this->toStr(prop[heh]);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizerBoolean<MeshT>::getVertexPropertyText(unsigned int index)
-{
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
-    OpenVolumeMesh::VertexPropertyT<bool> prop = mesh->template request_vertex_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
-    if ( !prop )
-        return QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str());;
-
-    OpenVolumeMesh::VertexHandle vh(index);
-
-    return this->toStr(prop[vh]);
 }
 
 template <typename MeshT>
@@ -178,7 +95,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setCellPropertyFromText(unsigned int i
     OpenVolumeMesh::CellPropertyT<bool> prop = mesh->template request_cell_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-        //emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 
@@ -195,7 +112,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setFacePropertyFromText(unsigned int i
     OpenVolumeMesh::FacePropertyT<bool> prop = mesh->template request_face_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-       // emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 
@@ -212,7 +129,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setHalffacePropertyFromText(unsigned i
     OpenVolumeMesh::HalfFacePropertyT<bool> prop = mesh->template request_halfface_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-       // emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 
@@ -229,7 +146,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setEdgePropertyFromText(unsigned int i
     OpenVolumeMesh::EdgePropertyT<bool> prop = mesh->template request_edge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-       // emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 
@@ -246,7 +163,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setHalfedgePropertyFromText(unsigned i
     OpenVolumeMesh::HalfEdgePropertyT<bool> prop = mesh->template request_halfedge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-        //emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 
@@ -263,7 +180,7 @@ void OVMPropertyVisualizerBoolean<MeshT>::setVertexPropertyFromText(unsigned int
     OpenVolumeMesh::VertexPropertyT<bool> prop = mesh->template request_vertex_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
     if ( !prop )
     {
-       // emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
         return;
     }
 

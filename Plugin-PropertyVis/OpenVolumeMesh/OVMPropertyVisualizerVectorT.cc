@@ -83,7 +83,6 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeVectorAsColorForEntity(PropTyp
     PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
     for (EntityIterator e_it = e_begin; e_it != e_end; ++e_it) {
         ACG::Vec3d v = prop[*e_it].normalized() * .5 + ACG::Vec3d(.5, .5, .5);
-
         object->colors()[*e_it] = ACG::Vec4f(v[0], v[1], v[2], 1.0);
     }
 }
@@ -98,7 +97,9 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeCellProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->cells_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->cells_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::CELLS_COLORED);
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);
     }
     else visualizeCellPropAsStrokes();
 }
@@ -113,7 +114,9 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->faces_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->faces_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);
     }
     else visualizeFacePropAsStrokes();
 }
@@ -129,9 +132,11 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeHalffaceProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->halffaces_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->halffaces_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED); //todo: halffaces draw mode
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);
     }
-    else visualizeVertexPropAsStrokes();
+    else visualizeHalffacePropAsStrokes();
 }
 
 template <typename MeshT>
@@ -144,7 +149,9 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->edges_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->edges_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);
     }
     else visualizeEdgePropAsStrokes();
 }
@@ -159,7 +166,9 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->halfedges_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->halfedges_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);
     }
     else visualizeHalfedgePropAsStrokes();
 }
@@ -174,7 +183,9 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->vertices_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->vertices_end());
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);
     }
     else visualizeVertexPropAsStrokes();
 }
@@ -403,6 +414,109 @@ template <typename MeshT>
 QString OVMPropertyVisualizerVector<MeshT>::getPropertyText(unsigned int index)
 {
     return OVMPropertyVisualizer<MeshT>::template getPropertyText_<ACG::Vec3d>(index);
+}
+
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setCellPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::CellPropertyT<ACG::Vec3d> prop = mesh->template request_cell_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::CellHandle ch(index);
+
+    prop[ch] = this->strToVec3d(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setFacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::FacePropertyT<ACG::Vec3d> prop = mesh->template request_face_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::FaceHandle fh(index);
+
+    prop[fh] = this->strToVec3d(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setHalffacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfFacePropertyT<ACG::Vec3d> prop = mesh->template request_halfface_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfFaceHandle hfh(index);
+
+    prop[hfh] = this->strToVec3d(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setEdgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::EdgePropertyT<ACG::Vec3d> prop = mesh->template request_edge_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::EdgeHandle eh(index);
+
+    prop[eh] = this->strToVec3d(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setHalfedgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfEdgePropertyT<ACG::Vec3d> prop = mesh->template request_halfedge_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfEdgeHandle heh(index);
+
+    prop[heh] = this->strToVec3d(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerVector<MeshT>::setVertexPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::VertexPropertyT<ACG::Vec3d> prop = mesh->template request_vertex_property<ACG::Vec3d>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::VertexHandle vh(index);
+
+    prop[vh] = this->strToVec3d(text);
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

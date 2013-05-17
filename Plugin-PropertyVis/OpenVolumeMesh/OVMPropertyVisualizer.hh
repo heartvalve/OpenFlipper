@@ -51,6 +51,8 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 
+#include <ObjectTypes/VolumeMeshObject/VolumeMeshDrawModesContainer.hh>
+
 #include <iostream>
 
 template <typename MeshT>
@@ -60,10 +62,11 @@ public:
     OVMPropertyVisualizer(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo)
         : PropertyVisualizer(_propertyInfo),
           mesh(_mesh),
-          mObjectID(objectID)
+          mObjectID(objectID),
+          drawModes()
     {}
 
-    virtual ~OVMPropertyVisualizer(){}
+    virtual ~OVMPropertyVisualizer(){ clear(); }
 
     /// Visualizes a property.
     virtual void visualize();
@@ -82,7 +85,7 @@ public:
     /// Clears a property.
     virtual void clear();
 
-    virtual QString getPropertyText(unsigned int index);
+    virtual QString getPropertyText(unsigned int index)=0;
 
     /// Returns the ID of the closest primitive.
     unsigned int getClosestPrimitiveId(unsigned int _face, ACG::Vec3d &_hitPoint);
@@ -105,13 +108,6 @@ protected:
     template <typename InnerType>
     QString getPropertyText_(unsigned int index);
 
-    virtual QString getCellPropertyText(unsigned int index);
-    virtual QString getFacePropertyText(unsigned int index);
-    virtual QString getHalffacePropertyText(unsigned int index);
-    virtual QString getEdgePropertyText(unsigned int index);
-    virtual QString getHalfedgePropertyText(unsigned int index);
-    virtual QString getVertexPropertyText(unsigned int index);
-
     virtual void setCellPropertyFromText(unsigned int index, QString text);
     virtual void setFacePropertyFromText(unsigned int index, QString text);
     virtual void setHalffacePropertyFromText(unsigned int index, QString text);
@@ -132,10 +128,9 @@ protected:
     unsigned int getClosestHalfedgeId(unsigned int _face, ACG::Vec3d& _hitPoint);
     unsigned int getClosestVertexId(unsigned int _face, ACG::Vec3d& _hitPoint);
 
-    template <typename EntityIterator>
-    void clearEntityProperty(VolumeMeshObject<MeshT>* object, EntityIterator e_begin, EntityIterator e_end);
-
     int mObjectID;
+
+    VolumeMeshDrawModesContainer drawModes;
 
 private:
 
@@ -158,48 +153,60 @@ private:
     };
 };
 
-#define CALLS_TO_VISUALIZE_PROP(Classname, Template) \
+#define CALLS_TO_VISUALIZE_PROP(Classname, Template, PropType) \
 template <Template> \
 void Classname::visualizeCellProp() \
 {\
-    OpenVolumeMesh::CellPropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_cell_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::CellPropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_cell_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->cells_begin(), OVMPropertyVisualizer<MeshT>::mesh->cells_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::CELLS_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);\
 }\
 template <Template>\
 void Classname::visualizeFaceProp()\
 {\
-    OpenVolumeMesh::FacePropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_face_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::FacePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_face_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->faces_begin(), OVMPropertyVisualizer<MeshT>::mesh->faces_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);\
 }\
 template <Template>\
 void Classname::visualizeHalffaceProp()\
 {\
-    OpenVolumeMesh::HalfFacePropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfface_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::HalfFacePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfface_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->halffaces_begin(), OVMPropertyVisualizer<MeshT>::mesh->halffaces_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);\
 }\
 template <Template>\
 void Classname::visualizeEdgeProp()\
 {\
-    OpenVolumeMesh::EdgePropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_edge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::EdgePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_edge_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->edges_begin(), OVMPropertyVisualizer<MeshT>::mesh->edges_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);\
 }\
 template <Template>\
 void Classname::visualizeHalfedgeProp()\
 {\
-    OpenVolumeMesh::HalfEdgePropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfedge_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::HalfEdgePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfedge_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->halfedges_begin(), OVMPropertyVisualizer<MeshT>::mesh->halfedges_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);\
 }\
 template <Template>\
 void Classname::visualizeVertexProp()\
 {\
-    OpenVolumeMesh::VertexPropertyT<bool> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_vertex_property<bool>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
+    OpenVolumeMesh::VertexPropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_vertex_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->vertices_begin(), OVMPropertyVisualizer<MeshT>::mesh->vertices_end());\
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);\
+    VolumeMeshObject<MeshT>* object;\
+    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);\
 }\
 
 

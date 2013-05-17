@@ -53,14 +53,18 @@ PropertyModel::PropertyModel(QObject *parent)
     widgets->setLayout(layout);
 }
 
-PropertyModel::~PropertyModel() {
+PropertyModel::~PropertyModel()
+{
+    for (unsigned int i = 0; i < propertyVisualizers.size(); i++)
+        delete propertyVisualizers[i];
 }
 
 /**
  * @brief Visualizes the selected properties.
  * @param selectedIndices The
  */
-void PropertyModel::visualize(QModelIndexList selectedIndices) {
+void PropertyModel::visualize(QModelIndexList selectedIndices)
+{
     for (QModelIndexList::Iterator it = selectedIndices.begin(); it != selectedIndices.end(); ++it)
     {
         propertyVisualizers[it->row()]->visualize();

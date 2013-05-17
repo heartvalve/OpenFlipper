@@ -84,8 +84,8 @@ void OVMPropertyVisualizerInteger<MeshT, T>::visualizeProp(PropType prop, Entity
     if ( integerWidget->intRandom->isChecked() && integerWidget->intMapBlack->isChecked() )
         randomColor[ integerWidget->intMapBlackValue->value() ] = ACG::Vec4f(0.0, 0.0, 0.0,  1.0);
 
-    T min = mNumericLimitMin;
-    T max = mNumericLimitMax;
+    T min = mNumericLimitMax;
+    T max = mNumericLimitMin;
 
     for (EntityIterator e_it = e_begin; e_it != e_end; ++e_it)
     {
@@ -93,6 +93,19 @@ void OVMPropertyVisualizerInteger<MeshT, T>::visualizeProp(PropType prop, Entity
         min = std::min( min, value);
         max = std::max( max, value);
     }
+
+    if( integerWidget->intFixedRange->isChecked())
+    {
+        min = integerWidget->intFixedRangeMin->value();
+        max = integerWidget->intFixedRangeMax->value();
+    }
+    else
+    {
+        integerWidget->intFixedRangeMin->setValue(min);
+        integerWidget->intFixedRangeMax->setValue(max);
+    }
+
+    ACG::ColorCoder cc;
 
     unsigned int range = max - min;
     VolumeMeshObject<MeshT>* object;
@@ -106,6 +119,11 @@ void OVMPropertyVisualizerInteger<MeshT, T>::visualizeProp(PropType prop, Entity
             T value = prop[*e_it];
             double pos = (value - min) / (double) range;
             ACG::Vec4f color;
+            if (integerWidget->intColorCoder->isChecked())
+            {
+                color = cc.color_float4(pos);
+            }
+            else
             if ( !integerWidget->intRandom->isChecked() )
             {
                 color[0] = colorMin[0] * (1-pos) + pos * colorMax[0];
@@ -123,13 +141,14 @@ void OVMPropertyVisualizerInteger<MeshT, T>::visualizeProp(PropType prop, Entity
                 }
                 color = randomColor[ value ];
             }
+
             object->colors()[*e_it] = color;
         }
     }
 
 }
 #define KOMMA ,
-CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerInteger<MeshT KOMMA T>, typename MeshT KOMMA typename T)
+CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerInteger<MeshT KOMMA T>, typename MeshT KOMMA typename T, T)
 #undef KOMMA
 
 template <typename MeshT, typename T>
@@ -142,6 +161,108 @@ template <typename MeshT, typename T>
 QString OVMPropertyVisualizerInteger<MeshT, T>::getPropertyText(unsigned int index)
 {
     return OVMPropertyVisualizer<MeshT>::template getPropertyText_<T>(index);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setCellPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::CellPropertyT<int> prop = mesh->template request_cell_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::CellHandle ch(index);
+
+    prop[ch] = this->strToInt(text);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setFacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::FacePropertyT<int> prop = mesh->template request_face_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::FaceHandle fh(index);
+
+    prop[fh] = this->strToInt(text);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setHalffacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfFacePropertyT<int> prop = mesh->template request_halfface_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfFaceHandle hfh(index);
+
+    prop[hfh] = this->strToInt(text);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setEdgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::EdgePropertyT<int> prop = mesh->template request_edge_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::EdgeHandle eh(index);
+
+    prop[eh] = this->strToInt(text);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setHalfedgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfEdgePropertyT<int> prop = mesh->template request_halfedge_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfEdgeHandle heh(index);
+
+    prop[heh] = this->strToInt(text);
+}
+
+template <typename MeshT, typename T>
+void OVMPropertyVisualizerInteger<MeshT, T>::setVertexPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::VertexPropertyT<int> prop = mesh->template request_vertex_property<int>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::VertexHandle vh(index);
+
+    prop[vh] = this->strToInt(text);
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

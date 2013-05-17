@@ -62,6 +62,7 @@
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
@@ -76,10 +77,11 @@
 
 //== CLASS DEFINITION =========================================================
 
-class PropertyVisPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface, ScriptInterface, MouseInterface, PickingInterface, LoggingInterface
+class PropertyVisPlugin : public QObject, BaseInterface, LoadSaveInterface, ToolboxInterface, KeyInterface, ScriptInterface, MouseInterface, PickingInterface, LoggingInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
+  Q_INTERFACES(LoadSaveInterface)
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(KeyInterface)
   Q_INTERFACES(ScriptInterface)
@@ -107,6 +109,9 @@ private slots:
   void slotObjectUpdated( int _identifier, const UpdateType& _type );
   void slotAllCleared();
   
+  // LoadSaveInterface
+  void objectDeleted( int _id );
+
   // initialization functions
   void initializePlugin();
   void pluginsInitialized();

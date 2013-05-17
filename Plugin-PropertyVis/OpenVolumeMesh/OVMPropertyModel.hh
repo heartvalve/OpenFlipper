@@ -157,7 +157,7 @@ private:
     TypeInfoWrapper getSupportedTypeInfoWrapper(OpenVolumeMesh::BaseProperty* const baseProp) const;
 
     /// Returns the TypeInfoWrapper for the type of property if it is supported.
-    TypeInfoWrapper getSupportedTypeInfoWrapper(QString friendlyName) const;
+    TypeInfoWrapper getSupportedTypeInfoWrapper(QString friendlyName, PropertyInfo::ENTITY_FILTER filter) const;
 
     bool isBoolType(const PropertyInfo& propInfo) const;
     bool isIntType(const PropertyInfo& propInfo) const;
@@ -167,6 +167,8 @@ private:
     bool isVec3fType(const PropertyInfo& propInfo) const;
     bool isVectorType(const PropertyInfo& propInfo) const;
     bool isVectorType(const TypeInfoWrapper& typeInfo) const;
+
+    bool isEntityType(const TypeInfoWrapper& typeInfo, PropertyInfo::ENTITY_FILTER entity_type) const;
 
     /// Adds a new PropertyVisualizer.
     void addPropertyVisualizer(OpenVolumeMesh::BaseProperty* const baseProp, MeshT* mesh, PropertyInfo::ENTITY_FILTER filter);

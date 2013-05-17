@@ -65,7 +65,7 @@ public:
 
     virtual ~OVMPropertyVisualizerVectorFieldDifference(){}
 
-    virtual QString getName() { return QObject::tr("COVMbination of %1 and %2").arg(PropertyVisualizer::propertyInfo.propName().c_str()).arg(propertyInfo2.propName().c_str()); }
+    virtual QString getName() { return QObject::tr("Combination of %1 and %2").arg(PropertyVisualizer::propertyInfo.propName().c_str()).arg(propertyInfo2.propName().c_str()); }
 
 
 protected:
@@ -79,6 +79,8 @@ protected:
 
 
     virtual void duplciateProperty(){ emit OVMPropertyVisualizer<MeshT>::log("combined properties cannot be duplicated");}
+
+    virtual QString getPropertyText(unsigned int index) { return ""; };
 
 private:
     PropertyInfo propertyInfo2;

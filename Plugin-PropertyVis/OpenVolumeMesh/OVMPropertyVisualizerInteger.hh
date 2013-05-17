@@ -75,6 +75,13 @@ protected:
 
     virtual QString getPropertyText(unsigned int index);
 
+    virtual void setCellPropertyFromText(unsigned int index, QString text);
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setHalffacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
+
     T mNumericLimitMax;
     T mNumericLimitMin;
 

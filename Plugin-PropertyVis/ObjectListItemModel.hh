@@ -54,6 +54,8 @@ class ObjectListItemModel: public QAbstractListModel {
         virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
         virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
 
+        void removeObject(int _id);
+
         void refresh(const DataType &datatype);
 
     protected:

@@ -68,7 +68,7 @@ void OVMPropertyVisualizerDouble<MeshT>::visualizeProp(PropType prop, EntityIter
     colorMin = OVMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMin->color());
     colorMax = OVMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMax->color());
 
-    // color codern in [0,1]
+    // color coder in [0,1]
     ACG::ColorCoder cc;
 
     double min, max;
@@ -82,7 +82,7 @@ void OVMPropertyVisualizerDouble<MeshT>::visualizeProp(PropType prop, EntityIter
     }
 
     for (EntityIterator e_it = e_begin; e_it != e_end; ++e_it){
-        double value = prop[e_it];
+        double value = prop[*e_it];
         if ( doubleWidget->doubleAbsolute->isChecked() ){
             min = std::min( min, fabs(value));
             max = std::max( max, fabs(value));
@@ -114,7 +114,7 @@ void OVMPropertyVisualizerDouble<MeshT>::visualizeProp(PropType prop, EntityIter
             object->colors()[*e_it] = colorMin;
         else {
 
-            double value = prop[e_it];
+            double value = prop[*e_it];
 
             // absolut value?
             if ( doubleWidget->doubleAbsolute->isChecked())
@@ -139,7 +139,7 @@ void OVMPropertyVisualizerDouble<MeshT>::visualizeProp(PropType prop, EntityIter
         }
     }
 }
-CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerDouble<MeshT>, typename MeshT)
+CALLS_TO_VISUALIZE_PROP(OVMPropertyVisualizerDouble<MeshT>, typename MeshT, double)
 
 template <typename MeshT>
 void OVMPropertyVisualizerDouble<MeshT>::duplicateProperty()
@@ -151,6 +151,108 @@ template <typename MeshT>
 QString OVMPropertyVisualizerDouble<MeshT>::getPropertyText(unsigned int index)
 {
     return OVMPropertyVisualizer<MeshT>::template getPropertyText_<double>(index);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setCellPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::CellPropertyT<double> prop = mesh->template request_cell_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::CellHandle ch(index);
+
+    prop[ch] = this->strToDouble(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setFacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::FacePropertyT<double> prop = mesh->template request_face_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::FaceHandle fh(index);
+
+    prop[fh] = this->strToDouble(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setHalffacePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfFacePropertyT<double> prop = mesh->template request_halfface_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfFaceHandle hfh(index);
+
+    prop[hfh] = this->strToDouble(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setEdgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::EdgePropertyT<double> prop = mesh->template request_edge_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::EdgeHandle eh(index);
+
+    prop[eh] = this->strToDouble(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setHalfedgePropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::HalfEdgePropertyT<double> prop = mesh->template request_halfedge_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::HalfEdgeHandle heh(index);
+
+    prop[heh] = this->strToDouble(text);
+}
+
+template <typename MeshT>
+void OVMPropertyVisualizerDouble<MeshT>::setVertexPropertyFromText(unsigned int index, QString text)
+{
+    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
+
+    OpenVolumeMesh::VertexPropertyT<double> prop = mesh->template request_vertex_property<double>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());
+    if ( !prop )
+    {
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
+        return;
+    }
+
+    OpenVolumeMesh::VertexHandle vh(index);
+
+    prop[vh] = this->strToDouble(text);
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */

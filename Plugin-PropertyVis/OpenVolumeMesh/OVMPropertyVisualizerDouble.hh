@@ -78,6 +78,13 @@ protected:
     virtual void visualizeHalffaceProp();
 
     virtual QString getPropertyText(unsigned int index);
+
+    virtual void setCellPropertyFromText(unsigned int index, QString text);
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setHalffacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
 };
 
 #if defined(INCLUDE_TEMPLATES) && !defined(OVM_PROPERTY_VISUALIZER_DOUBLE_CC)
