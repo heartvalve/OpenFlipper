@@ -69,6 +69,17 @@ QVariant ObjectListItemModel::data(const QModelIndex & index, int role) const {
     }
 }
 
+void ObjectListItemModel::removeObject(int _id)
+{
+    beginResetModel();
+    for (int i = (int)objects_.size()-1; i>=0; i--)
+    {
+        if (objects_[i].getId() == _id)
+            objects_.erase(objects_.begin()+i);
+    }
+    endResetModel();
+}
+
 void ObjectListItemModel::refresh(const DataType &datatype) {
     std::vector<ObjectInfo> objects;
     for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, datatype);

@@ -74,6 +74,9 @@ public:
     /// Returns the PropertyModel.
     PropertyModel* getModel(int objectID);
 
+    /// Deletes the PropertyModel.
+    void deleteModel(int objectID);
+
 private:
     __PropertyModelFactory(){}
     __PropertyModelFactory(__PropertyModelFactory&){}

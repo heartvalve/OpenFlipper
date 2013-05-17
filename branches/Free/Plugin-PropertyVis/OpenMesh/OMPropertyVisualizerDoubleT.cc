@@ -63,7 +63,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp()
     colorMin = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMin->color());
     colorMax = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMax->color());
 
-    // color codern in [0,1]
+    // color coder in [0,1]
     ACG::ColorCoder cc;
 
     OpenMesh::FPropHandleT< double > prop;
@@ -150,7 +150,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp()
     colorMin = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMin->color());
     colorMax = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMax->color());
 
-    // color codern in [0,1]
+    // color coder in [0,1]
     ACG::ColorCoder cc;
 
 
@@ -242,7 +242,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp()
     colorMin = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMin->color());
     colorMax = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMax->color());
 
-    // color codern in [0,1]
+    // color coder in [0,1]
     ACG::ColorCoder cc;
 
 
@@ -331,7 +331,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp()
     colorMin = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMin->color());
     colorMax = OMPropertyVisualizer<MeshT>::convertColor(doubleWidget->doubleMax->color());
 
-    // color codern in [0,1]
+    // color coder in [0,1]
     ACG::ColorCoder cc;
 
     //TODO check if this also works if the property is Vec3d
@@ -418,7 +418,7 @@ void OMPropertyVisualizerDouble<MeshT>::setFacePropertyFromText(unsigned int ind
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
 
 
     typename MeshT::FaceHandle fh = mesh->face_handle(index);
@@ -433,7 +433,7 @@ void OMPropertyVisualizerDouble<MeshT>::setEdgePropertyFromText(unsigned int ind
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
 
 
     typename MeshT::EdgeHandle eh = mesh->edge_handle(index);
@@ -448,7 +448,7 @@ void OMPropertyVisualizerDouble<MeshT>::setHalfedgePropertyFromText(unsigned int
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
 
 
     typename MeshT::HalfedgeHandle heh = mesh->halfedge_handle(index);
@@ -463,7 +463,7 @@ void OMPropertyVisualizerDouble<MeshT>::setVertexPropertyFromText(unsigned int i
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
 
     if ( !mesh->get_property_handle(prop, PropertyVisualizer::propertyInfo.propName() ) )
-        std::cerr << "Error: No property with name " <<  PropertyVisualizer::propertyInfo.propName().c_str() << std::endl;
+        emit this->log(LOGERR, QObject::tr("Error: No property with name ").append(PropertyVisualizer::propertyInfo.propName().c_str()));
 
 
     typename MeshT::VertexHandle vh = mesh->vertex_handle(index);

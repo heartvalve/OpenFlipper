@@ -89,7 +89,7 @@ PropertyModel* __PropertyModelFactory::getModel(int objectID)
     PropertyModel* propertyModel;
 
     if (object == 0) {
-        return new PropertyModel();
+        return 0;
     }
 
     if ( object->dataType(DATA_TRIANGLE_MESH) )
@@ -118,9 +118,18 @@ PropertyModel* __PropertyModelFactory::getModel(int objectID)
 #endif /* ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT */
     else
     {
-        propertyModel = new PropertyModel();
+        return 0;
     }
 
     propertyModelMap.insert(std::pair<int, PropertyModel*>(objectID, propertyModel));
     return propertyModel;
+}
+
+void __PropertyModelFactory::deleteModel(int objectID)
+{
+    if (propertyModelMap.find(objectID) != propertyModelMap.end())
+    {
+        delete getModel(objectID);
+        propertyModelMap.erase(objectID);
+    }
 }

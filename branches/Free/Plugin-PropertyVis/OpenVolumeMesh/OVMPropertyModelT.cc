@@ -273,7 +273,7 @@ bool OVMPropertyModel<MeshT>::parseHeader(QString header, PropertyVisualizer*& p
         }
 
 
-        TypeInfoWrapper typeInfo = getSupportedTypeInfoWrapper(friendlyName);
+        TypeInfoWrapper typeInfo = getSupportedTypeInfoWrapper(friendlyName, filter);
 
         QString propName = QInputDialog::getText(0, "Property Name", "Please enter name.",QLineEdit::Normal,headerParts[4]);
         if (propName == "") return false;
@@ -535,21 +535,22 @@ TypeInfoWrapper OVMPropertyModel<MeshT>::getSupportedTypeInfoWrapper(OpenVolumeM
 }
 
 /**
- * @brief Returns the TypeInfoWrapper for the type of property if it is supported.
+ * @brief Returns the TypeInfoWrapper for the type of property and entity if it is supported.
  *
  * @param friendlyName The type we want to visualize in text form.
+ * @param filter The type of the entity
  *
  * @return A TypeInfoWrapper containing all the type information for the property type.
  */
 template<typename MeshT>
-TypeInfoWrapper OVMPropertyModel<MeshT>::getSupportedTypeInfoWrapper(QString friendlyName) const
+TypeInfoWrapper OVMPropertyModel<MeshT>::getSupportedTypeInfoWrapper(QString friendlyName, PropertyInfo::ENTITY_FILTER filter) const
 {
 
     for (TypeInfoWrapperSet::const_iterator it =  supportedPropertyTypes.begin();
                                             it != supportedPropertyTypes.end();
                                           ++it )
     {
-        if (friendlyName.toStdString().compare(it->getName()) == 0)
+        if ((friendlyName.toStdString().compare(it->getName()) == 0) && isEntityType(*it, filter))
             return *it;
     }
     throw std::exception();
@@ -626,6 +627,68 @@ bool OVMPropertyModel<MeshT>::isVectorType(const PropertyInfo& propInfo) const
 {
     return isVec3fType(propInfo) || isVec3dType(propInfo);
 }
+
+template<typename MeshT>
+bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, PropertyInfo::ENTITY_FILTER entity_type) const
+{
+    bool result = false;
+    if (entity_type & PropertyInfo::EF_CELL)
+    {
+        result |=    (typeInfo == proptype_Cell_bool)
+                  || (typeInfo == proptype_Cell_int)
+                  || (typeInfo == proptype_Cell_double)
+                  || (typeInfo == proptype_Cell_uint)
+                  || (typeInfo == proptype_Cell_Vec3d)
+                  || (typeInfo == proptype_Cell_Vec3d);
+    }
+    if (entity_type & PropertyInfo::EF_FACE)
+    {
+        result |=    (typeInfo == proptype_Face_bool)
+                  || (typeInfo == proptype_Face_int)
+                  || (typeInfo == proptype_Face_double)
+                  || (typeInfo == proptype_Face_uint)
+                  || (typeInfo == proptype_Face_Vec3d)
+                  || (typeInfo == proptype_Face_Vec3d);
+    }
+    if (entity_type & PropertyInfo::EF_HALFFACE)
+    {
+        result |=    (typeInfo == proptype_HalfFace_bool)
+                  || (typeInfo == proptype_HalfFace_int)
+                  || (typeInfo == proptype_HalfFace_double)
+                  || (typeInfo == proptype_HalfFace_uint)
+                  || (typeInfo == proptype_HalfFace_Vec3d)
+                  || (typeInfo == proptype_HalfFace_Vec3d);
+    }
+    if (entity_type & PropertyInfo::EF_EDGE)
+    {
+        result |=    (typeInfo == proptype_Edge_bool)
+                  || (typeInfo == proptype_Edge_int)
+                  || (typeInfo == proptype_Edge_double)
+                  || (typeInfo == proptype_Edge_uint)
+                  || (typeInfo == proptype_Edge_Vec3d)
+                  || (typeInfo == proptype_Edge_Vec3d);
+    }
+    if (entity_type & PropertyInfo::EF_HALFEDGE)
+    {
+        result |=    (typeInfo == proptype_HalfEdge_bool)
+                  || (typeInfo == proptype_HalfEdge_int)
+                  || (typeInfo == proptype_HalfEdge_double)
+                  || (typeInfo == proptype_HalfEdge_uint)
+                  || (typeInfo == proptype_HalfEdge_Vec3d)
+                  || (typeInfo == proptype_HalfEdge_Vec3d);
+    }
+    if (entity_type & PropertyInfo::EF_VERTEX)
+    {
+        result |=    (typeInfo == proptype_Vertex_bool)
+                  || (typeInfo == proptype_Vertex_int)
+                  || (typeInfo == proptype_Vertex_double)
+                  || (typeInfo == proptype_Vertex_uint)
+                  || (typeInfo == proptype_Vertex_Vec3d)
+                  || (typeInfo == proptype_Vertex_Vec3d);
+    }
+    return result;
+}
+
 
 /**
  * @brief Adds a new PropertyVisualizer.

@@ -129,17 +129,30 @@ void PropertyVisPlugin::pluginsInitialized()
 
 void PropertyVisPlugin::slotPickModeChanged( const std::string& _mode)
 {
-    propertyModel_->pickModeChanged(_mode);
+    if (propertyModel_ != 0)
+        propertyModel_->pickModeChanged(_mode);
 }
 
 //-----------------------------------------------------------------------------
 
 void PropertyVisPlugin::slotAllCleared()
 {
-    QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-    propertyModel_->clear(selectedIndices);
+    if (propertyModel_  != 0)
+    {
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        propertyModel_->clear(selectedIndices);
 
-    emit updateView();
+        emit updateView();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void PropertyVisPlugin::objectDeleted(int _id)
+{
+    if( OpenFlipper::Options::gui() )
+        objectListItemModel_.removeObject(_id);
+    PropertyModelFactory::Instance().deleteModel(_id);
 }
 
 //-----------------------------------------------------------------------------
@@ -165,9 +178,13 @@ void PropertyVisPlugin::updateGUI()
 
 //-----------------------------------------------------------------------------
 
-void PropertyVisPlugin::propertySelectionChanged() {
-    QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-    propertyModel_->updateWidget(selectedIndices);
+void PropertyVisPlugin::propertySelectionChanged()
+{
+    if (propertyModel_ != 0)
+    {
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        propertyModel_->updateWidget(selectedIndices);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -190,18 +207,26 @@ void PropertyVisPlugin::setNewPropertyModel(int id)
         disconnect(propertyModel_, SIGNAL(log(QString)), this, SLOT(slotLog(QString)));
     }
     propertyModel_ = PropertyModelFactory::Instance().getModel(id);
-    tool_->propertyName_lv->setModel(propertyModel_);
-    connect(propertyModel_, SIGNAL( modelReset() ), this, SLOT( propertySelectionChanged() ));
-    connect(tool_->propertyName_lv->selectionModel(),
-            SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
-            this,
-            SLOT( propertySelectionChanged() ));
-    QWidget* widget = propertyModel_->getWidget();
-    tool_->tester->addWidget(widget);
-    widget->show();
-    propertyModel_->gatherProperties();
-    connect(propertyModel_, SIGNAL(log(Logtype,QString)), this, SLOT(slotLog(Logtype,QString)));
-    connect(propertyModel_, SIGNAL(log(QString)), this, SLOT(slotLog(QString)));
+    if (propertyModel_ != 0)
+    {
+
+        tool_->propertyName_lv->setModel(propertyModel_);
+        connect(propertyModel_, SIGNAL( modelReset() ), this, SLOT( propertySelectionChanged() ));
+        connect(tool_->propertyName_lv->selectionModel(),
+                SIGNAL( selectionChanged(const QItemSelection &, const QItemSelection &) ),
+                this,
+                SLOT( propertySelectionChanged() ));
+        QWidget* widget = propertyModel_->getWidget();
+        tool_->propertyWidgets->addWidget(widget);
+        widget->show();
+        propertyModel_->gatherProperties();
+        connect(propertyModel_, SIGNAL(log(Logtype,QString)), this, SLOT(slotLog(Logtype,QString)));
+        connect(propertyModel_, SIGNAL(log(QString)), this, SLOT(slotLog(QString)));
+    }
+    else
+    {
+        tool_->propertyName_lv->setModel(0);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -219,42 +244,51 @@ void PropertyVisPlugin::slotMeshChanged(int /*_index*/)
 
 void PropertyVisPlugin::slotVisualize()
 {
-    QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-    propertyModel_->visualize(selectedIndices);
+    if (propertyModel_ != 0)
+    {
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        propertyModel_->visualize(selectedIndices);
 
-    emit updateView();
-    int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
-    emit updatedObject( id, UPDATE_COLOR );
+        emit updateView();
+        int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
+        emit updatedObject( id, UPDATE_COLOR );
+    }
 }
 
 //-----------------------------------------------------------------------------
 
 void PropertyVisPlugin::slotMouseEvent( QMouseEvent* _event ) {
-    propertyModel_->mouseEvent(_event);
+    if (propertyModel_ != 0)
+        propertyModel_->mouseEvent(_event);
 }
 
 //-----------------------------------------------------------------------------
 
 void PropertyVisPlugin::slotDuplicateProperty() {
-    QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-    propertyModel_->duplicateProperty(selectedIndices);
+    if (propertyModel_ != 0)
+    {
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        propertyModel_->duplicateProperty(selectedIndices);
 
-    emit updateView();
-    int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
-    slotMeshChanged();
-    emit updatedObject( id, UPDATE_ALL );
+        emit updateView();
+        int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
+        slotMeshChanged();
+        emit updatedObject( id, UPDATE_ALL );
+    }
 }
 
 void PropertyVisPlugin::slotRemoveProperty()
 {
+    if (propertyModel_ != 0)
+    {
+        QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
+        propertyModel_->removeProperty(selectedIndices);
 
-    QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
-    propertyModel_->removeProperty(selectedIndices);
-
-    emit updateView();
-    int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
-    slotMeshChanged();
-    emit updatedObject( id, UPDATE_ALL );
+        emit updateView();
+        int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
+        slotMeshChanged();
+        emit updatedObject( id, UPDATE_ALL );
+    }
 }
 
 Q_EXPORT_PLUGIN2( propertyvisplugin , PropertyVisPlugin );

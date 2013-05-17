@@ -90,23 +90,6 @@ QString OVMPropertyVisualizer<MeshT>::getPropertyText_(unsigned int index)
 }
 
 template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getPropertyText(unsigned int index)
-{
-    if (propertyInfo.isCellProp())
-        return getCellPropertyText(index);
-    else if (propertyInfo.isFaceProp())
-        return getFacePropertyText(index);
-    else if (propertyInfo.isHalffaceProp())
-        return getHalffacePropertyText(index);
-    else if (propertyInfo.isEdgeProp())
-        return getEdgePropertyText(index);
-    else if (propertyInfo.isHalfedgeProp())
-        return getHalfedgePropertyText(index);
-    else //if (propertyInfo.isVertexProp())
-        return getVertexPropertyText(index);
-}
-
-template <typename MeshT>
 void OVMPropertyVisualizer<MeshT>::setPropertyFromText(unsigned int index, QString text)
 {
     if (propertyInfo.isCellProp())
@@ -357,17 +340,6 @@ inline void OVMPropertyVisualizer<MeshT>::duplicateProperty_stage1() {
     }
 }
 
-
-template <typename MeshT>
-template <typename EntityIterator>
-void OVMPropertyVisualizer<MeshT>::clearEntityProperty(VolumeMeshObject<MeshT>* object, EntityIterator e_begin, EntityIterator e_end)
-{
-    for (EntityIterator e_it = e_begin; e_it != e_end; ++e_it){
-        object->colors()[*e_it] = ACG::Vec4f(0.0, 0.0, 0.0, 0.0);
-    }
-}
-
-
 template <typename MeshT>
 void OVMPropertyVisualizer<MeshT>::clear()
 {
@@ -377,63 +349,20 @@ void OVMPropertyVisualizer<MeshT>::clear()
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
     if (propertyInfo.isCellProp())
-        clearEntityProperty(object, mesh->cells_begin(), mesh->cells_end());
+        object->colors().clear_cell_colors();
     else if (propertyInfo.isFaceProp())
-        clearEntityProperty(object, mesh->faces_begin(), mesh->faces_end());
+        object->colors().clear_face_colors();
     else if (propertyInfo.isHalffaceProp())
-        clearEntityProperty(object, mesh->halffaces_begin(), mesh->halffaces_end());
+        object->colors().clear_halfface_colors();
     else if (propertyInfo.isEdgeProp())
-        clearEntityProperty(object, mesh->edges_begin(), mesh->edges_end());
+        object->colors().clear_edge_colors();
     else if (propertyInfo.isHalfedgeProp())
-        clearEntityProperty(object, mesh->halfedges_begin(), mesh->halfedges_end());
+        object->colors().clear_halfedge_colors();
     else if (propertyInfo.isVertexProp())
-        clearEntityProperty(object, mesh->vertices_begin(), mesh->vertices_end());
+        object->colors().clear_vertex_colors();
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+    object->setObjectDrawMode(drawModes.cellsFlatShaded);
 }
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getCellPropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting cell property");
-    return QObject::tr("CellProp %1").arg(index);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getFacePropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting face property");
-    return QObject::tr("FaceProp %1").arg(index);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getHalffacePropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting halfface property");
-    return QObject::tr("HalffaceProp %1").arg(index);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getEdgePropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting edge property");
-    return QObject::tr("EdgeProp %1").arg(index);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getHalfedgePropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting halfedge property");
-    return QObject::tr("HalfedgeProp %1").arg(index);
-}
-
-template <typename MeshT>
-QString OVMPropertyVisualizer<MeshT>::getVertexPropertyText(unsigned int index)
-{
-    emit log(LOGERR, "Getting vertex property");
-    return QObject::tr("VertexProp %1").arg(index);
-}
-
 
 template <typename MeshT>
 void OVMPropertyVisualizer<MeshT>::setCellPropertyFromText(unsigned int /*index*/, QString /*text*/)

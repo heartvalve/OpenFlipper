@@ -62,7 +62,7 @@ class OVMPropertyVisualizerVector: public OVMPropertyVisualizer<MeshT>{
 
 public:
     OVMPropertyVisualizerVector(MeshT* _mesh, int objectID, PropertyInfo _propertyInfo);
-    virtual ~OVMPropertyVisualizerVector(){}
+    virtual ~OVMPropertyVisualizerVector(){ clear(); }
 
     virtual void clear();
 
@@ -87,6 +87,13 @@ protected:
     virtual void visualizeHalffaceProp();
 
     virtual QString getPropertyText(unsigned int index);
+
+    virtual void setCellPropertyFromText(unsigned int index, QString text);
+    virtual void setFacePropertyFromText(unsigned int index, QString text);
+    virtual void setHalffacePropertyFromText(unsigned int index, QString text);
+    virtual void setEdgePropertyFromText(unsigned int index, QString text);
+    virtual void setHalfedgePropertyFromText(unsigned int index, QString text);
+    virtual void setVertexPropertyFromText(unsigned int index, QString text);
 
     ACG::SceneGraph::LineNode*  lineNode;
 

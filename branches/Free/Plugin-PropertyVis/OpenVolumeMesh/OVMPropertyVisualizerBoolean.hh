@@ -71,13 +71,6 @@ protected:
     virtual void visualizeCellProp();
     virtual void visualizeHalffaceProp();
 
-    virtual QString getCellPropertyText(unsigned int index);
-    virtual QString getFacePropertyText(unsigned int index);
-    virtual QString getHalffacePropertyText(unsigned int index);
-    virtual QString getEdgePropertyText(unsigned int index);
-    virtual QString getHalfedgePropertyText(unsigned int index);
-    virtual QString getVertexPropertyText(unsigned int index);
-
     virtual void setCellPropertyFromText(unsigned int index, QString text);
     virtual void setFacePropertyFromText(unsigned int index, QString text);
     virtual void setHalffacePropertyFromText(unsigned int index, QString text);
