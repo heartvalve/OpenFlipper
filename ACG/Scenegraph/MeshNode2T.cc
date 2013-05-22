@@ -495,7 +495,10 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
 
     _state.set_base_color(base_color_backup);
   }
-  
+
+  // Rebind the previous texture
+  ACG::GLState::bindTexture(lastTarget,lastBuffer);
+
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
     ///\todo enableTexCoords_
@@ -574,9 +577,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     ACG::GLState::disable(GL_TEXTURE_2D);
 
   }
-
-  // Rebind the previous texture
-  ACG::GLState::bindTexture(lastTarget,lastBuffer);
 
   enable_arrays(0);
   
