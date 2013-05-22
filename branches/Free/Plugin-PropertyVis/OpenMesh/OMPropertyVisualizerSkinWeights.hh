@@ -62,10 +62,10 @@ public:
 
 protected:
 
-    virtual void visualizeFaceProp();
-    virtual void visualizeEdgeProp();
-    virtual void visualizeHalfedgeProp();
-    virtual void visualizeVertexProp();
+    virtual void visualizeFaceProp(bool _setDrawMode = true);
+    virtual void visualizeEdgeProp(bool _setDrawMode = true);
+    virtual void visualizeHalfedgeProp(bool _setDrawMode = true);
+    virtual void visualizeVertexProp(bool _setDrawMode = true);
 
     QString getPropertyText(unsigned int index);
 

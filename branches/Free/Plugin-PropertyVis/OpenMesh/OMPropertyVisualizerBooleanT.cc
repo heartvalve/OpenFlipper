@@ -61,7 +61,7 @@ QString OMPropertyVisualizerBoolean<MeshT>::getPropertyText(unsigned int index)
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerBoolean<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizerBoolean<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     BooleanWidget* booleanWidget = static_cast<BooleanWidget*>(PropertyVisualizer::widget);
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
@@ -84,12 +84,13 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeFaceProp()
         else
             mesh->set_color(f_it, colorFalse);
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
 
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerBoolean<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizerBoolean<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     BooleanWidget* booleanWidget = static_cast<BooleanWidget*>(PropertyVisualizer::widget);
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
@@ -112,11 +113,12 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeEdgeProp()
         else
             mesh->set_color(e_it, colorFalse);
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerBoolean<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizerBoolean<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     BooleanWidget* booleanWidget = static_cast<BooleanWidget*>(PropertyVisualizer::widget);
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
@@ -139,12 +141,13 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeHalfedgeProp()
         else
             mesh->set_color(he_it, colorFalse);
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
 
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerBoolean<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizerBoolean<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     BooleanWidget* booleanWidget = static_cast<BooleanWidget*>(PropertyVisualizer::widget);
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
@@ -167,7 +170,8 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeVertexProp()
         else
             mesh->set_color(v_it, colorFalse);
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 
 }
 

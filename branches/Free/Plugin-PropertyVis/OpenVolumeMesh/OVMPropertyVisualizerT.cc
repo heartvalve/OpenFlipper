@@ -196,20 +196,20 @@ unsigned int OVMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fa
 
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualize()
+void OVMPropertyVisualizer<MeshT>::visualize(bool _setDrawMode)
 {
     if (propertyInfo.isCellProp())
-        visualizeCellProp();
+        visualizeCellProp(_setDrawMode);
     else if (propertyInfo.isFaceProp())
-        visualizeFaceProp();
+        visualizeFaceProp(_setDrawMode);
     else if (propertyInfo.isHalffaceProp())
-        visualizeHalffaceProp();
+        visualizeHalffaceProp(_setDrawMode);
     else if (propertyInfo.isEdgeProp())
-        visualizeEdgeProp();
+        visualizeEdgeProp(_setDrawMode);
     else if (propertyInfo.isHalfedgeProp())
-        visualizeHalfedgeProp();
+        visualizeHalfedgeProp(_setDrawMode);
     else if (propertyInfo.isVertexProp())
-        visualizeVertexProp();
+        visualizeVertexProp(_setDrawMode);
 }
 
 template <typename MeshT>
@@ -226,37 +226,37 @@ OpenMesh::Vec4f OVMPropertyVisualizer<MeshT>::convertColor(const QColor _color){
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeFaceProp()
+void OVMPropertyVisualizer<MeshT>::visualizeFaceProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing FaceProp not implemented");
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeEdgeProp()
+void OVMPropertyVisualizer<MeshT>::visualizeEdgeProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing EdgeProp not implemented");
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeHalfedgeProp()
+void OVMPropertyVisualizer<MeshT>::visualizeHalfedgeProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing HalfedgeProp not implemented");
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeVertexProp()
+void OVMPropertyVisualizer<MeshT>::visualizeVertexProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing VertexProp not implemented");
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeCellProp()
+void OVMPropertyVisualizer<MeshT>::visualizeCellProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing CellProp not implemented");
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizer<MeshT>::visualizeHalffaceProp()
+void OVMPropertyVisualizer<MeshT>::visualizeHalffaceProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing HalffaceProp not implemented");
 }

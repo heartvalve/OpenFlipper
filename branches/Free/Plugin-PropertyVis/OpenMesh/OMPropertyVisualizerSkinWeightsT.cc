@@ -64,25 +64,25 @@ QString OMPropertyVisualizerSkinWeights<MeshT>::getPropertyText(unsigned int ind
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerSkinWeights<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizerSkinWeights<MeshT>::visualizeFaceProp(bool /*_setDrawMode*/)
 {
     OMPropertyVisualizer<MeshT>::log("Visualizing SkinWeights for faces not supported.");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerSkinWeights<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizerSkinWeights<MeshT>::visualizeEdgeProp(bool /*_setDrawMode*/)
 {
     OMPropertyVisualizer<MeshT>::log("Visualizing SkinWeights for edges not supported.");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerSkinWeights<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizerSkinWeights<MeshT>::visualizeHalfedgeProp(bool /*_setDrawMode*/)
 {
     OMPropertyVisualizer<MeshT>::log("Visualizing SkinWeights for halfedges not supported.");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerSkinWeights<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizerSkinWeights<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     SkinWeightsWidget* skinWeightsWidget = static_cast<SkinWeightsWidget*>(PropertyVisualizer::widget);
 
@@ -111,7 +111,8 @@ void OMPropertyVisualizerSkinWeights<MeshT>::visualizeVertexProp()
         OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, color);
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 }
 
 template<typename MeshT>

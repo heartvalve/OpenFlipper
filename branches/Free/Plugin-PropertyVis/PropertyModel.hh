@@ -93,6 +93,9 @@ public:
     virtual QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+    /// Revisualizes visualized properties.
+    virtual void objectUpdated();
+
     /// Visualizes the selected properties.
     virtual void visualize(QModelIndexList selectedIndices);
 
@@ -184,7 +187,8 @@ protected:
     std::vector<PropertyVisualizer*> propertyVisualizers;
     QWidget* widgets;
 
-    QModelIndexList currentIndices;
+    QModelIndexList currentlySelectedIndices;
+    std::vector<unsigned int> currentlyVisualizedIndices;
 };
 
 #endif /* PROPERTY_MODEL_H */

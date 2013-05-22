@@ -121,7 +121,7 @@ void PropertyVisPlugin::pluginsInitialized()
 
         connect(tool_, SIGNAL( widgetShown() ), this, SLOT( updateGUI() ) );
 
-        setNewPropertyModel(-1); //to avoid problems with uninitialized propertyModel_ it is set to a dummy property model without functionality
+        setNewPropertyModel(-1);
     }
 }
 
@@ -141,6 +141,7 @@ void PropertyVisPlugin::slotAllCleared()
     {
         QModelIndexList selectedIndices = tool_->propertyName_lv->selectionModel()->selectedIndexes();
         propertyModel_->clear(selectedIndices);
+        propertyModel_->objectUpdated();
 
         emit updateView();
     }
@@ -160,8 +161,18 @@ void PropertyVisPlugin::objectDeleted(int _id)
 void PropertyVisPlugin::slotObjectUpdated( int _identifier, const UpdateType& _type )
 {
     if( OpenFlipper::Options::gui() )
+    {
         if ( tool_->isVisible() )
             updateGUI();
+        PropertyModel* propertyModel = PropertyModelFactory::Instance().getModel(_identifier);
+        if (propertyModel)
+        {
+            if (_type == UPDATE_ALL)
+                propertyModel->gatherProperties();
+            if (_type == (UPDATE_ALL | UPDATE_GEOMETRY))
+                propertyModel->objectUpdated();
+        }
+    }
 }
 
 void PropertyVisPlugin::updateGUI()
@@ -286,7 +297,6 @@ void PropertyVisPlugin::slotRemoveProperty()
 
         emit updateView();
         int id = tool_->meshNames->itemData( tool_->meshNames->currentIndex() ).toInt();
-        slotMeshChanged();
         emit updatedObject( id, UPDATE_ALL );
     }
 }

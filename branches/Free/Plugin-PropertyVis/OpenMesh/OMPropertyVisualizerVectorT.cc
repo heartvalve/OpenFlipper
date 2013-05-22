@@ -93,7 +93,7 @@ void visualizeVectorAsColorForEntity(MeshT *mesh, const ENTITY_IT e_begin, const
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizerVector<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_edges_rb->isChecked()) visualizeFacePropOnEdges();
@@ -106,13 +106,14 @@ void OMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
                     OMPropertyVisualizer<MeshT>::mesh->faces_begin(),
                     OMPropertyVisualizer<MeshT>::mesh->faces_end(),
                     PropertyVisualizer::propertyInfo);
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+        if (_setDrawMode)
+            PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
     }
     else visualizeFacePropAsStrokes();
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizerVector<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -123,13 +124,14 @@ void OMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
         if ( !mesh->has_edge_colors() )
             mesh->request_edge_colors();
         visualizeVectorAsColorForEntity<OpenMesh::EPropHandleT<typename MeshT::Point> >(mesh,mesh->edges_begin(),mesh->edges_end(), PropertyVisualizer::propertyInfo);
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+        if (_setDrawMode)
+            PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
     }
     else visualizeEdgePropAsStrokes();
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -140,13 +142,15 @@ void OMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
         if ( ! mesh->has_halfedge_colors() )
             mesh->request_halfedge_colors();
         visualizeVectorAsColorForEntity<OpenMesh::HPropHandleT<typename MeshT::Point> >(mesh,mesh->halfedges_begin(),mesh->halfedges_end(),PropertyVisualizer::propertyInfo);
-        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+
+        if (_setDrawMode)
+            PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
     }
     else visualizeHalfedgePropAsStrokes();
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizerVector<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -158,7 +162,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
                     OMPropertyVisualizer<MeshT>::mesh->vertices_begin(),
                     OMPropertyVisualizer<MeshT>::mesh->vertices_end(),
                     PropertyVisualizer::propertyInfo);
-                PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+        if (_setDrawMode)
+            PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
     }
     else visualizeVertexPropAsStrokes();
 }

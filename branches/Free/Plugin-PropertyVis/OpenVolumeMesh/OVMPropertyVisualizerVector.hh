@@ -79,12 +79,12 @@ protected:
     virtual void visualizeCellPropAsStrokes();
     virtual void visualizeHalffacePropAsStrokes();
 
-    virtual void visualizeFaceProp();
-    virtual void visualizeEdgeProp();
-    virtual void visualizeHalfedgeProp();
-    virtual void visualizeVertexProp();
-    virtual void visualizeCellProp();
-    virtual void visualizeHalffaceProp();
+    virtual void visualizeFaceProp(bool _setDrawMode = true);
+    virtual void visualizeEdgeProp(bool _setDrawMode = true);
+    virtual void visualizeHalfedgeProp(bool _setDrawMode = true);
+    virtual void visualizeVertexProp(bool _setDrawMode = true);
+    virtual void visualizeCellProp(bool _setDrawMode = true);
+    virtual void visualizeHalffaceProp(bool _setDrawMode = true);
 
     virtual QString getPropertyText(unsigned int index);
 

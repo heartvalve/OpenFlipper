@@ -67,7 +67,7 @@ QString OMPropertyVisualizerInteger<MeshT, T>::getPropertyText(unsigned int inde
 }
 
 template <typename MeshT, typename T>
-void OMPropertyVisualizerInteger<MeshT, T>::visualizeFaceProp()
+void OMPropertyVisualizerInteger<MeshT, T>::visualizeFaceProp(bool _setDrawMode)
 {
     IntegerWidget* integerWidget = static_cast<IntegerWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -152,11 +152,12 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeFaceProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
 }
 
 template <typename MeshT, typename T>
-void OMPropertyVisualizerInteger<MeshT, T>::visualizeEdgeProp()
+void OMPropertyVisualizerInteger<MeshT, T>::visualizeEdgeProp(bool _setDrawMode)
 {
     IntegerWidget* integerWidget = static_cast<IntegerWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -241,12 +242,13 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeEdgeProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
 
 }
 
 template <typename MeshT, typename T>
-void OMPropertyVisualizerInteger<MeshT, T>::visualizeHalfedgeProp()
+void OMPropertyVisualizerInteger<MeshT, T>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     IntegerWidget* integerWidget = static_cast<IntegerWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -331,11 +333,12 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeHalfedgeProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
 }
 
 template <typename MeshT, typename T>
-void OMPropertyVisualizerInteger<MeshT, T>::visualizeVertexProp()
+void OMPropertyVisualizerInteger<MeshT, T>::visualizeVertexProp(bool _setDrawMode)
 {
     IntegerWidget* integerWidget = static_cast<IntegerWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -422,7 +425,8 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeVertexProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 
 }
 

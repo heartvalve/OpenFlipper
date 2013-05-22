@@ -92,10 +92,10 @@ public:
     }
 
     /// Destructor
-    virtual ~PropertyVisualizer(){delete widget;}
+    virtual ~PropertyVisualizer(){delete widget; }
 
     /// Visualizes the property.
-    virtual void visualize();
+    virtual void visualize(bool _setDrawMode = true);
 
     /// Removes the property.
     virtual void removeProperty();

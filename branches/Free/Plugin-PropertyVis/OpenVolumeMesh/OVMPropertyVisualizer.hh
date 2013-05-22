@@ -69,7 +69,7 @@ public:
     virtual ~OVMPropertyVisualizer(){ clear(); }
 
     /// Visualizes a property.
-    virtual void visualize();
+    virtual void visualize(bool _setDrawMode = true);
 
     /**
      * @brief Should remove the property.
@@ -93,12 +93,12 @@ public:
 protected:
     MeshT* mesh;
 
-    virtual void visualizeFaceProp();
-    virtual void visualizeEdgeProp();
-    virtual void visualizeHalfedgeProp();
-    virtual void visualizeVertexProp();
-    virtual void visualizeCellProp();
-    virtual void visualizeHalffaceProp();
+    virtual void visualizeFaceProp(bool _setDrawMode = true);
+    virtual void visualizeEdgeProp(bool _setDrawMode = true);
+    virtual void visualizeHalfedgeProp(bool _setDrawMode = true);
+    virtual void visualizeVertexProp(bool _setDrawMode = true);
+    virtual void visualizeCellProp(bool _setDrawMode = true);
+    virtual void visualizeHalffaceProp(bool _setDrawMode = true);
 
     template<typename PropType>
     void duplicateProperty_stage1();
@@ -155,58 +155,76 @@ private:
 
 #define CALLS_TO_VISUALIZE_PROP(Classname, Template, PropType) \
 template <Template> \
-void Classname::visualizeCellProp() \
+void Classname::visualizeCellProp(bool _setDrawMode) \
 {\
     OpenVolumeMesh::CellPropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_cell_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->cells_begin(), OVMPropertyVisualizer<MeshT>::mesh->cells_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);\
+    }\
 }\
 template <Template>\
-void Classname::visualizeFaceProp()\
+void Classname::visualizeFaceProp(bool _setDrawMode)\
 {\
     OpenVolumeMesh::FacePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_face_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->faces_begin(), OVMPropertyVisualizer<MeshT>::mesh->faces_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);\
+    }\
 }\
 template <Template>\
-void Classname::visualizeHalffaceProp()\
+void Classname::visualizeHalffaceProp(bool _setDrawMode)\
 {\
     OpenVolumeMesh::HalfFacePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfface_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->halffaces_begin(), OVMPropertyVisualizer<MeshT>::mesh->halffaces_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);\
+    }\
 }\
 template <Template>\
-void Classname::visualizeEdgeProp()\
+void Classname::visualizeEdgeProp(bool _setDrawMode)\
 {\
     OpenVolumeMesh::EdgePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_edge_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->edges_begin(), OVMPropertyVisualizer<MeshT>::mesh->edges_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);\
+    }\
 }\
 template <Template>\
-void Classname::visualizeHalfedgeProp()\
+void Classname::visualizeHalfedgeProp(bool _setDrawMode)\
 {\
     OpenVolumeMesh::HalfEdgePropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_halfedge_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->halfedges_begin(), OVMPropertyVisualizer<MeshT>::mesh->halfedges_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);\
+    }\
 }\
 template <Template>\
-void Classname::visualizeVertexProp()\
+void Classname::visualizeVertexProp(bool _setDrawMode)\
 {\
     OpenVolumeMesh::VertexPropertyT<PropType> prop = OVMPropertyVisualizer<MeshT>::mesh->template request_vertex_property<PropType>(OVMPropertyVisualizer<MeshT>::propertyInfo.propName());\
     visualizeProp(prop, OVMPropertyVisualizer<MeshT>::mesh->vertices_begin(), OVMPropertyVisualizer<MeshT>::mesh->vertices_end());\
-    VolumeMeshObject<MeshT>* object;\
-    PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
-    object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);\
+    if (_setDrawMode)\
+    {\
+        VolumeMeshObject<MeshT>* object;\
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);\
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);\
+    }\
 }\
 
 

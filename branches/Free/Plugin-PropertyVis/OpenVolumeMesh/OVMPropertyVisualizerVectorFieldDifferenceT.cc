@@ -156,7 +156,7 @@ void colorElements(int objectID,
 
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeCellProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeCellProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -171,11 +171,16 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeCellProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::CellIter, OpenVolumeMesh::CellPropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->cells_begin(), mesh->cells_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::CellIter, OpenVolumeMesh::CellPropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->cells_begin(), mesh->cells_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);
+    }
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -190,11 +195,16 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::FaceIter, OpenVolumeMesh::FacePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->faces_begin(), mesh->faces_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::FaceIter, OpenVolumeMesh::FacePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->faces_begin(), mesh->faces_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);
+    }
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalffaceProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalffaceProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -209,11 +219,16 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalffaceProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::HalfFaceIter, OpenVolumeMesh::HalfFacePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->halffaces_begin(), mesh->halffaces_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::HalfFaceIter, OpenVolumeMesh::HalfFacePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->halffaces_begin(), mesh->halffaces_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);
+    }
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -228,11 +243,16 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::EdgeIter, OpenVolumeMesh::EdgePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->edges_begin(), mesh->edges_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::EdgeIter, OpenVolumeMesh::EdgePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->edges_begin(), mesh->edges_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);
+    }
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -247,11 +267,16 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::HalfEdgeIter, OpenVolumeMesh::HalfEdgePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->halfedges_begin(), mesh->halfedges_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::HalfEdgeIter, OpenVolumeMesh::HalfEdgePropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->halfedges_begin(), mesh->halfedges_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);
+    }
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp()
+void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
 
@@ -266,7 +291,12 @@ void OVMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp()
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::VertexIter, OpenVolumeMesh::VertexPropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_diff_of_norms<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->vertices_begin(), mesh->vertices_end());
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OVMPVVFD::colorElements< MeshT, OpenVolumeMesh::VertexIter, OpenVolumeMesh::VertexPropertyT<ACG::Vec3d>, OVMPVVFD::scalarFn_norm_of_diff<MeshT> >(OVMPropertyVisualizer<MeshT>::mObjectID, prop1, prop2, mesh->vertices_begin(), mesh->vertices_end());
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+    {
+        VolumeMeshObject<MeshT>* object;
+        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);
+    }
 }
 
 #endif /* ENABLE_OPENVOLUMEMESH_SUPPORT */
