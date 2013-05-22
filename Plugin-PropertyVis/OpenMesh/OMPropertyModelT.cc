@@ -213,7 +213,7 @@ bool OMPropertyModel<MeshT>::combinable(PropertyVisualizer* propertyVisualizer1,
 template<typename MeshT>
 void OMPropertyModel<MeshT>::saveProperty()
 {
-    for (QModelIndexList::const_iterator it = currentIndices.begin(), it_end = currentIndices.end();
+    for (QModelIndexList::const_iterator it = currentlySelectedIndices.begin(), it_end = currentlySelectedIndices.end();
                 it != it_end; ++it) {
         PropertyModel::saveProperty(it->row());
     }
@@ -390,7 +390,7 @@ void OMPropertyModel<MeshT>::mouseEvent(QMouseEvent* _event)
 
             if (object->id() == objectID_)
             {
-                OMPropertyVisualizer<MeshT>* viz = (OMPropertyVisualizer<MeshT>*) propertyVisualizers[currentIndices.first().row()];
+                OMPropertyVisualizer<MeshT>* viz = (OMPropertyVisualizer<MeshT>*) propertyVisualizers[currentlySelectedIndices.first().row()];
                 unsigned int primitiveId = viz->getClosestPrimitiveId(face_idx, hit_point);
                 mPickWidget.pickedHandle->setText(tr("%1").arg(primitiveId));
                 mPickWidget.pickedValue->setText(viz->getPropertyText(primitiveId));

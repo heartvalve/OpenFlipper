@@ -158,7 +158,7 @@ void colorElements(MeshT *mesh, const PropertyInfo &p1,
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
     const PropertyInfo p1 = PropertyVisualizer::propertyInfo;
@@ -174,11 +174,12 @@ void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeFaceProp()
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OMPVVFD::colorElements<MeshT, typename MeshT::FaceIter, OpenMesh::FPropHandleT<typename MeshT::Point>, OMPVVFD::scalarFn_norm_of_diff<MeshT> >(mesh, p1, p2, mesh->faces_begin(), mesh->faces_end());
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
     const PropertyInfo p1 = PropertyVisualizer::propertyInfo;
@@ -194,11 +195,12 @@ void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeEdgeProp()
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OMPVVFD::colorElements<MeshT, typename MeshT::EdgeIter, OpenMesh::EPropHandleT<typename MeshT::Point>, OMPVVFD::scalarFn_norm_of_diff<MeshT> >(mesh, p1, p2, mesh->edges_begin(), mesh->edges_end());
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
     const PropertyInfo p1 = PropertyVisualizer::propertyInfo;
@@ -214,11 +216,12 @@ void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeHalfedgeProp()
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OMPVVFD::colorElements<MeshT, typename MeshT::HalfedgeIter, OpenMesh::HPropHandleT<typename MeshT::Point>, OMPVVFD::scalarFn_norm_of_diff<MeshT> >(mesh, p1, p2, mesh->halfedges_begin(), mesh->halfedges_end());
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     MeshT* mesh = OMPropertyVisualizer<MeshT>::mesh;
     const PropertyInfo p1 = PropertyVisualizer::propertyInfo;
@@ -234,5 +237,6 @@ void OMPropertyVisualizerVectorFieldDifference<MeshT>::visualizeVertexProp()
     if (w->vecFieldDiff_norm_diff_rb->isChecked())
         OMPVVFD::colorElements<MeshT, typename MeshT::VertexIter, OpenMesh::VPropHandleT<typename MeshT::Point>, OMPVVFD::scalarFn_norm_of_diff<MeshT> >(mesh, p1, p2, mesh->vertices_begin(), mesh->vertices_end());
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 }

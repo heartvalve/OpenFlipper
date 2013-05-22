@@ -63,7 +63,7 @@ public:
 
 
     /// Visualizes the property.
-    virtual void visualize();
+    virtual void visualize(bool _setDrawMode = true);
 
     /**
      * @brief Removes the property.
@@ -91,10 +91,10 @@ public:
 protected:
     MeshT* mesh;
 
-    virtual void visualizeFaceProp();
-    virtual void visualizeEdgeProp();
-    virtual void visualizeHalfedgeProp();
-    virtual void visualizeVertexProp();
+    virtual void visualizeFaceProp(bool _setDrawMode = true);
+    virtual void visualizeEdgeProp(bool _setDrawMode = true);
+    virtual void visualizeHalfedgeProp(bool _setDrawMode = true);
+    virtual void visualizeVertexProp(bool _setDrawMode = true);
 
     template <typename PropType>
     void removeProperty_stage1();

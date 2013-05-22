@@ -180,7 +180,7 @@ template <typename MeshT>
 void OVMPropertyModel<MeshT>::mouseEvent(QMouseEvent* _event)
 {
     if (!pickModeActive) return;
-    if (currentIndices.size() < 1) return;
+    if (currentlySelectedIndices.size() < 1) return;
 
     if (_event->type() == QEvent::MouseButtonPress)
     {
@@ -188,7 +188,7 @@ void OVMPropertyModel<MeshT>::mouseEvent(QMouseEvent* _event)
         ACG::Vec3d     hit_point;
 
 
-        OVMPropertyVisualizer<MeshT>* viz = (OVMPropertyVisualizer<MeshT>*) propertyVisualizers[currentIndices.first().row()];
+        OVMPropertyVisualizer<MeshT>* viz = (OVMPropertyVisualizer<MeshT>*) propertyVisualizers[currentlySelectedIndices.first().row()];
         unsigned int entityId = 0;
 
         ACG::SceneGraph::PickTarget pickTarget;
@@ -383,7 +383,7 @@ void OVMPropertyModel<MeshT>::combine()
 template<typename MeshT>
 void OVMPropertyModel<MeshT>::saveProperty()
 {
-    for (QModelIndexList::const_iterator it = currentIndices.begin(), it_end = currentIndices.end();
+    for (QModelIndexList::const_iterator it = currentlySelectedIndices.begin(), it_end = currentlySelectedIndices.end();
                 it != it_end; ++it) {
         PropertyModel::saveProperty(it->row());
     }

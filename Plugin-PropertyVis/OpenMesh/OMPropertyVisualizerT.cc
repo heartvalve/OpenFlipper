@@ -301,16 +301,16 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestVertexId(unsigned int _face,
  * type of the property.
  */
 template <typename MeshT>
-void OMPropertyVisualizer<MeshT>::visualize()
+void OMPropertyVisualizer<MeshT>::visualize(bool _setDrawMode)
 {
     if (propertyInfo.isFaceProp())
-        visualizeFaceProp();
+        visualizeFaceProp(_setDrawMode);
     else if (propertyInfo.isEdgeProp())
-        visualizeEdgeProp();
+        visualizeEdgeProp(_setDrawMode);
     else if (propertyInfo.isHalfedgeProp())
-        visualizeHalfedgeProp();
+        visualizeHalfedgeProp(_setDrawMode);
     else if (propertyInfo.isVertexProp())
-        visualizeVertexProp();
+        visualizeVertexProp(_setDrawMode);
 }
 
 /**
@@ -348,25 +348,25 @@ OpenMesh::Vec4f OMPropertyVisualizer<MeshT>::convertColor(const QColor _color){
 }
 
 template <typename MeshT>
-void OMPropertyVisualizer<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizer<MeshT>::visualizeFaceProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing FaceProp not implemented");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizer<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizer<MeshT>::visualizeEdgeProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing EdgeProp not implemented");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizer<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizer<MeshT>::visualizeHalfedgeProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing HalfedgeProp not implemented");
 }
 
 template <typename MeshT>
-void OMPropertyVisualizer<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizer<MeshT>::visualizeVertexProp(bool /*_setDrawMode*/)
 {
     emit log(LOGERR, "Visualizing VertexProp not implemented");
 }

@@ -88,7 +88,7 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeVectorAsColorForEntity(PropTyp
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeCellProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeCellProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -97,15 +97,18 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeCellProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->cells_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->cells_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.cellsColoredPerCell);
+        }
     }
     else visualizeCellPropAsStrokes();
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -114,16 +117,19 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeFaceProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->faces_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->faces_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.facesColoredPerFace);
+        }
     }
     else visualizeFacePropAsStrokes();
 }
 
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeHalffaceProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeHalffaceProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -132,15 +138,18 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeHalffaceProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->halffaces_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->halffaces_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halffacesColoredPerHalfface);
+        }
     }
     else visualizeHalffacePropAsStrokes();
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -149,15 +158,18 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeEdgeProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->edges_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->edges_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.edgesColoredPerEdge);
+        }
     }
     else visualizeEdgePropAsStrokes();
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -166,15 +178,18 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeHalfedgeProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->halfedges_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->halfedges_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.halfedgesColoredPerHalfedge);
+        }
     }
     else visualizeHalfedgePropAsStrokes();
 }
 
 template <typename MeshT>
-void OVMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
+void OVMPropertyVisualizerVector<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     VectorWidget* w = (VectorWidget*)PropertyVisualizer::widget;
     if (w->vectors_colors_rb->isChecked())
@@ -183,9 +198,12 @@ void OVMPropertyVisualizerVector<MeshT>::visualizeVertexProp()
         visualizeVectorAsColorForEntity(prop,
                                         OVMPropertyVisualizer<MeshT>::mesh->vertices_begin(),
                                         OVMPropertyVisualizer<MeshT>::mesh->vertices_end());
-        VolumeMeshObject<MeshT>* object;
-        PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
-        object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);
+        if (_setDrawMode)
+        {
+            VolumeMeshObject<MeshT>* object;
+            PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
+            object->setObjectDrawMode(OVMPropertyVisualizer<MeshT>::drawModes.verticesColored);
+        }
     }
     else visualizeVertexPropAsStrokes();
 }

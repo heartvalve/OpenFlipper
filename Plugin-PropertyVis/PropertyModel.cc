@@ -42,10 +42,13 @@
 
 #include "PropertyModel.hh"
 
+#include <algorithm>
+
 PropertyModel::PropertyModel(QObject *parent)
     : QAbstractListModel(parent),
       widgets(0),
-      currentIndices()
+      currentlySelectedIndices(),
+      currentlyVisualizedIndices()
 {
     gatherProperties();
     QVBoxLayout* layout = new QVBoxLayout();
@@ -68,12 +71,17 @@ void PropertyModel::visualize(QModelIndexList selectedIndices)
     for (QModelIndexList::Iterator it = selectedIndices.begin(); it != selectedIndices.end(); ++it)
     {
         propertyVisualizers[it->row()]->visualize();
+        //delete index and reinsert so it is the last element.
+        std::vector<unsigned int>& vec = currentlyVisualizedIndices;
+        vec.erase(std::remove(vec.begin(), vec.end(), it->row()), vec.end());
+        vec.push_back(it->row());
     }
 }
 
 void PropertyModel::removeProperty(QModelIndexList selectedIndices)
 {
     std::vector<unsigned int> deleteIndices;
+
     for (QModelIndexList::Iterator it = selectedIndices.begin(); it != selectedIndices.end(); ++it)
     {
         propertyVisualizers[it->row()]->removeProperty();
@@ -82,8 +90,25 @@ void PropertyModel::removeProperty(QModelIndexList selectedIndices)
         delete propertyVisualizers[it->row()];
         deleteIndices.push_back(it->row());
     }
-    for (std::vector<unsigned int>::reverse_iterator rit = deleteIndices.rbegin(); rit != deleteIndices.rend(); ++rit){
-        propertyVisualizers.erase(propertyVisualizers.begin() + *rit);
+
+    std::sort(deleteIndices.begin(), deleteIndices.end());
+
+    for (int i = deleteIndices.size()-1; i >= 0; i--)
+    {
+        for (int j = currentlyVisualizedIndices.size()-1; j >= 0; j--)
+        {
+            if (currentlyVisualizedIndices[j] == deleteIndices[i])
+                //erase so the deleted property will not be revisualized on updateObject
+                currentlyVisualizedIndices.erase(currentlyVisualizedIndices.begin() + j);
+            else if (currentlyVisualizedIndices[j] > deleteIndices[i])
+                //decrease index by one since the index of all property visualizers in propertyVisualizers
+                //shifts by one for each property visualizer that gets deleted in front of them
+                currentlyVisualizedIndices[j]--;
+        }
+    }
+
+    for (int i = deleteIndices.size()-1; i >= 0; i--){
+        propertyVisualizers.erase(propertyVisualizers.begin() + deleteIndices[i]);
     }
 }
 
@@ -97,6 +122,8 @@ void PropertyModel::clear(QModelIndexList selectedIndices) {
     for (QModelIndexList::Iterator it = selectedIndices.begin(); it != selectedIndices.end(); ++it)
     {
         propertyVisualizers[it->row()]->clear();
+        std::vector<unsigned int>& vec = currentlyVisualizedIndices;
+        vec.erase(std::remove(vec.begin(), vec.end(), it->row()), vec.end());
     }
 }
 
@@ -104,7 +131,7 @@ void PropertyModel::updateWidget(const QModelIndexList& selectedIndices)
 {
     QLayout* layout = widgets->layout();
 
-    currentIndices = selectedIndices;
+    currentlySelectedIndices = selectedIndices;
 
     for (unsigned int i = 0; i < propertyVisualizers.size(); i++)
     {
@@ -149,6 +176,13 @@ QVariant PropertyModel::headerData(int section, Qt::Orientation orientation, int
     }
 }
 
+void PropertyModel::objectUpdated()
+{
+    for (unsigned int i = 0; i < currentlyVisualizedIndices.size(); i++)
+    {
+        propertyVisualizers[currentlyVisualizedIndices[i]]->visualize(false);
+    }
+}
 
 QString PropertyModel::getLoadFilename()
 {
@@ -156,7 +190,6 @@ QString PropertyModel::getLoadFilename()
 
   QString fileName = QFileDialog::getOpenFileName(0, tr("Load Property"), QString(), filter);
 
-  filter = tr("HalfEdge Property (*.hprop);; All Files (*.*)");
   return fileName;
 }
 

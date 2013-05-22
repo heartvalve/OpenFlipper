@@ -55,7 +55,7 @@ OMPropertyVisualizerDouble<MeshT>::OMPropertyVisualizerDouble(MeshT* _mesh, Prop
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp()
+void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp(bool _setDrawMode)
 {
     DoubleWidget* doubleWidget = static_cast<DoubleWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -138,11 +138,12 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp()
+void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 {
     DoubleWidget* doubleWidget = static_cast<DoubleWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -229,12 +230,14 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
+
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
 
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp()
+void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 {
     DoubleWidget* doubleWidget = static_cast<DoubleWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -319,11 +322,12 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp()
             OMPropertyVisualizer<MeshT>::mesh->set_color(he_it, color);
         }
     }
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
 }
 
 template <typename MeshT>
-void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp()
+void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp(bool _setDrawMode)
 {
     DoubleWidget* doubleWidget = static_cast<DoubleWidget*>(PropertyVisualizer::widget);
     typename MeshT::Color colorMin, colorMax;
@@ -408,7 +412,8 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp()
         }
     }
 
-    PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
+    if (_setDrawMode)
+        PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);
 }
 
 template <typename MeshT>
