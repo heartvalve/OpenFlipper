@@ -415,7 +415,7 @@ void GLCone::draw(GLState& _state, float _height, const ACG::Vec3f& _center, ACG
   }
 
   ACG::Vec3f vDelta = vBindDir - _upDir;
-  if (fabsf(OpenMesh::dot(vDelta, vDelta) < 1e-3f))
+  if ( fabsf(OpenMesh::dot(vDelta, vDelta)) < 1e-3f)
     mAlign.identity();
 
   // scale
@@ -468,7 +468,7 @@ void GLCone::addToRenderer(IRenderer* _renderer,
   }
 
   ACG::Vec3f vDelta = vBindDir - _upDir;
-  if (fabsf(OpenMesh::dot(vDelta, vDelta) < 1e-3f))
+  if ( fabsf(OpenMesh::dot(vDelta, vDelta)) < 1e-3f)
     mAlign.identity();
 
   // scale
@@ -812,7 +812,7 @@ void GLPartialDisk::draw( GLState& _state, const ACG::Vec3f& _center, ACG::Vec3f
   }
 
   ACG::Vec3f vDelta = vBindDir - _upDir;
-  if (fabsf(OpenMesh::dot(vDelta, vDelta) < 1e-3f))
+  if ( fabsf(OpenMesh::dot(vDelta, vDelta)) < 1e-3f)
     mAlign.identity();
 
   ACG::GLMatrixd mAlignInv(mAlign);
