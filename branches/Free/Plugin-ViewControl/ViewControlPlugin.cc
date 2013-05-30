@@ -1307,8 +1307,11 @@ void ViewControlPlugin::setView(QAction* _action) {
 
 //-----------------------------------------------------------------------------
 
-void ViewControlPlugin::setEyePosition(Vector /*_eye*/){
-  emit log(LOGERR, "not yet implemented");
+void ViewControlPlugin::setEyePosition(Vector _eye){
+  PluginFunctions::lookAt(_eye,
+                          PluginFunctions::sceneCenter(PluginFunctions::ACTIVE_VIEWER),
+                          PluginFunctions::upVector(PluginFunctions::ACTIVE_VIEWER),
+                          PluginFunctions::ACTIVE_VIEWER);
 }
 
 
