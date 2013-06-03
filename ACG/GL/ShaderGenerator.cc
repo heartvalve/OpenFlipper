@@ -881,7 +881,7 @@ void ShaderProgGenerator::buildFragmentShader()
         case GL_TEXTURE_2D: type = "sampler2D"; break;
         case GL_TEXTURE_3D: type = "sampler3D"; break;
         case GL_TEXTURE_CUBE_MAP: type = "samplerCube​"; break;
-#if defined(ARCH_DARWIN)
+#if !defined(ARCH_DARWIN)
         case GL_TEXTURE_RECTANGLE: type = "sampler2DRect"; break;
         case GL_TEXTURE_BUFFER: type = "samplerBuffer​"; break;
         case GL_TEXTURE_1D_ARRAY: type = "sampler1DArray"; break;
@@ -1232,7 +1232,7 @@ QString ShaderGenDesc::toString() const
         case GL_TEXTURE_2D: resStrm << "GL_TEXTURE_2D"; break;
         case GL_TEXTURE_3D: resStrm << "GL_TEXTURE_3D"; break;
         case GL_TEXTURE_CUBE_MAP: resStrm << "GL_TEXTURE_CUBE_MAP​"; break;
-#if defined(ARCH_DARWIN)
+#if !defined(ARCH_DARWIN)
         case GL_TEXTURE_RECTANGLE: resStrm << "GL_TEXTURE_RECTANGLE"; break;
         case GL_TEXTURE_BUFFER: resStrm << "GL_TEXTURE_BUFFER​"; break;
         case GL_TEXTURE_1D_ARRAY: resStrm << "GL_TEXTURE_1D_ARRAY"; break;
