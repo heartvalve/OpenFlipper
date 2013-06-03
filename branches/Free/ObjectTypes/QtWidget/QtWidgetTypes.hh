@@ -48,7 +48,7 @@
 //=============================================================================
 
 /**
- * \file WidgetTypes.hh
+ * \file QtWidgetTypes.hh
  * This File contains the required types and typedefs for using Lights
  */
 
