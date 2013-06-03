@@ -160,6 +160,7 @@ class DLLEXPORT QtWidgetObject : public BaseObjectData {
     /// Check if picking is enabled for this Object
     bool pickingEnabled();
 
+    /// send a special Mouse event to the widget
     void mouseEvent(QMouseEvent* _event){widgetNode_->mouseEvent(_event);}
 
   /** @} */
