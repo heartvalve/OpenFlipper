@@ -1,0 +1,39 @@
+/** \page QtWidgetType QtWidget (DATA_QT_WIDGET)
+This type allows rendering QWidgets directly into the scene using the shader pipline renderer.
+At this time, only the left button and MouseMoveevents are supported since
+the right click is reserved for context menus.
+An example:
+\code
+
+//create your own QWidget
+//you can also use slots/signal to connect e.g. clicked() signal from the QPushButton
+QWidget* emptyWidget = new QWidget();
+QBoxLayout* layout = new QBoxLayout(QBoxLayout::LeftToRight);
+emptyWidget->setLayout(layout);
+
+//create a QtWidgetType
+int id;
+addEmptyObject(DATA_QT_WIDGET,id);
+QtWidgetObject* qtObj;
+PluginFunctions::getObject(id,qtObj);
+
+//assign the QWidget to the QtWidgetType and update it
+qtObj->setWidget(emptyWidget);
+emit updatedObject(id);
+\endcode
+
+It is also possible to create a QtWidgetNode
+and assign it manually to one of you object.
+Ensure to inform the node about Mouse Events, when using the plain node.
+One example method is to pass the event directly to the node.
+Another method is to traverse the whole scenegraph like this:
+\code
+void PluginName::slotMouseEvent(QMouseEvent* _event)
+{
+  ACG::SceneGraph::MouseEventAction action(_event,PluginFunctions::viewerProperties().glState());
+  PluginFunctions::traverse(action);
+}
+\endcode
+
+*/
+
