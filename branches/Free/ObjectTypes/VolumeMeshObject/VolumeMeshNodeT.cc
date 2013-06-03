@@ -647,7 +647,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getCellRenderObjects(IRenderer* _renderer, GL
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
@@ -711,7 +711,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getFaceRenderObjects(IRenderer* _renderer, GL
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
@@ -774,7 +774,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getEdgeRenderObjects(IRenderer* _renderer, GL
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
@@ -826,7 +826,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getVertexRenderObjects(IRenderer* _renderer, 
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
@@ -875,7 +875,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     ro.depthTest = true;
     ro.depthFunc = GL_LEQUAL;
 
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
     ro.shaderDesc.vertexColors = false;
     ro.shaderDesc.numLights = -1;
     ro.shaderDesc.shadeMode = SG_SHADE_FLAT;
