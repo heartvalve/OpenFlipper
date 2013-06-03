@@ -497,7 +497,7 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
 
     // colored by emission only
     ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
     ro.shaderDesc.vertexColors = false;
 
 

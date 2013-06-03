@@ -334,9 +334,19 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
 
   // texture
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _obj->texture);
-  _prog->setUniform("g_Texture0", 0);
+  for (std::map<unsigned,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
+      iter != _obj->textures().end();++iter)
+  {
+    //check for valid texture id
+    const unsigned texture_stage = iter->first;
+    const RenderObject::Texture tex = iter->second;
+    if (!tex.id)
+      continue;
+
+    glActiveTexture(GL_TEXTURE0 +texture_stage);
+    glBindTexture(iter->second.type, tex.id);
+    _prog->setUniform(QString("g_Texture%1").arg(texture_stage).toStdString().c_str(), (int)texture_stage);
+  }
 
   _prog->setUniform("g_PointSize", 5.0f);
 

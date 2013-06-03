@@ -640,7 +640,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     default: break;
     }
 
-    ro.shaderDesc.textured = true;
+    ro.shaderDesc.addTextureType(GL_TEXTURE_2D,false,0);
 
     switch (props->texcoordSource())
     {
@@ -648,7 +648,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     case DrawModes::TEXCOORD_PER_HALFEDGE: drawMesh_->usePerHalfedgeTexcoords(); break;
     default:
       {
-        ro.shaderDesc.textured = false;
+        ro.shaderDesc.clearTextures();
       }break;
     }
 
