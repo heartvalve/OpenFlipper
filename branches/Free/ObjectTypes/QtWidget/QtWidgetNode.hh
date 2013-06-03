@@ -34,78 +34,132 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision: 8876 $                                                       *
- *   $Author: dekkers $                                                      *
- *   $Date: 2010-04-01 14:31:02 +0200 (Do, 01. Apr 2010) $                   *
+ *   $Revision: 16232 $                                                         *
+ *   $Author: moebius $                                                      *
+ *   $Date: 2013-02-01 16:14:37 +0100 (Fri, 01 Feb 2013) $                   *
  *                                                                           *
 \*===========================================================================*/
 
-
-
-
 //=============================================================================
 //
-//  CLASS QtWidgetNode - IMPLEMENTATION
+//  CLASS QtWidgetNode
 //
 //=============================================================================
+
+#ifndef QT_WIDGET_NODE_HH
+#define QT_WIDGET_NODE_HH
 
 //== INCLUDES =================================================================
 
-#include "QtWidgetNode.hh"
-#include <ACG/GL/gl.hh>
+#include <ObjectTypes/Plane/PlaneType.hh>
+#include <ACG/Scenegraph/BaseNode.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/GLPrimitives.hh>
+
+#include <QObject>
+#include <QWidget>
 
 //== NAMESPACES ===============================================================
 
 namespace ACG {
 namespace SceneGraph {
 
+//== CLASS DEFINITION =========================================================
 
-//== IMPLEMENTATION ========================================================== 
-
-
-// Example test code
-// QWidget* testwidget = new QWidget();
-// QPushButton* button = new QPushButton(testwidget);
-// button->setText("Testbutton");
-// ACG::SceneGraph::QtWidgetNode* node = new ACG::SceneGraph::QtWidgetNode(testwidget,glScene_,PluginFunctions::getSceneGraphRootNode());
-
-void
-QtWidgetNode::
-boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
+class DLLEXPORT QtWidgetNode : public BaseNode
 {
-  // No bounding box as this experiment is not really in the scene but above it
-}
+public:
+    /** \brief Construct a plane rendering node
+     *
+     * @param _parent The parent node in the scenegraph
+     * @param _name   The name of the new node (visible in the scenegraph dialogs)
+     * @param _plane  A pointer to an existing plane
+     */
+    QtWidgetNode(QWidget* _widget, BaseNode *_parent = 0, std::string _name = "<QtWidgetNode>");
+
+    /// destructor
+    ~QtWidgetNode();
+
+    /// static name of this class
+    ACG_CLASSNAME(QtWidgetNode);
+
+    /// return available draw modes
+    ACG::SceneGraph::DrawModes::DrawMode availableDrawModes() const;
+
+    /// update bounding box
+    void boundingBox(ACG::Vec3d & _bbMin, ACG::Vec3d & _bbMax);
+
+    /** \brief Add the objects to the given renderer
+     *
+     * @param _renderer The renderer which will be used. Add your geometry into this class
+     * @param _state    The current GL State when this object is called
+     * @param _drawMode The active draw mode
+     * @param _mat      Current material
+     */
+    void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
 
-//----------------------------------------------------------------------------
+    void mouseEvent(GLState& _state, QMouseEvent* _event);
+    void mouseEvent(QMouseEvent* _event);
 
-  
-DrawModes::DrawMode 
-QtWidgetNode::
-availableDrawModes() const
-{
-  return ( DrawModes::SOLID_FLAT_SHADED );
-}
+    QWidget* widget()const{return widget_;}
+    /// set a new widget at the current widgets position (if last widget wasn't zero)
+    void setWidget(QWidget* _w);
 
+private:
+    class NodeEventFilter : public QObject
+    {
+    public:
+      NodeEventFilter(QtWidgetNode* p){node_ = p;}
+    protected:
+      bool eventFilter(QObject *obj, QEvent *event);
+    private:
+      QtWidgetNode *node_;
+    } *ef_;
 
-//----------------------------------------------------------------------------
+    friend class NodeEventFilter;
 
+    /// create and update the widget texture
+    void createTexture();
 
-void
-QtWidgetNode::
-draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
-{
-  // Project 3d point onto screen 
-  ACG::Vec3d projected = _state.project(position_);
-  
-  // Translate widget position to be at the correct position
-  QTransform transform;
-  transform.translate(projected[0],_state.viewport_height() - projected[1]);
-  item_->setTransform(transform);
-  
-}
+    /// widgetgeometry will be screen aligned. the width/height and position is in respect to the _state projection matrix
+    void createGeometry(GLState& _state);
+
+    /// update geometry on current position with old projection/view matrix
+    void updateGeometry();
+
+    /// upload widget plane data to graphics card
+    void uploadPlane();
+
+    /// VBO used to render the plane
+    unsigned int vbo_;
+    GLuint texID_;
+    ACG::VertexDeclaration vertexDecl_;
+
+    /// current widget
+    QWidget* widget_;
+
+    /// initial widgetHeight/Width. Is 0, if widget is 0 or if plane wasn't initialized with current view/projMatrix
+    int oldWidgetWidth_;
+    int oldWidgetHeight_;
+
+    /// plane position and dimensions
+    Plane plane_;
+    bool planeCreated_;
+
+    /// last state
+    GLState* state_;
+
+    bool anisotropicSupport_;
+
+};
 
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
+
+//=============================================================================
+#endif // QT_WIDGET_NODE_HH defined
 //=============================================================================
