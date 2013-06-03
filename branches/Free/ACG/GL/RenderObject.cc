@@ -40,10 +40,10 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <QFile>
 #include <QTextStream>
 
@@ -120,7 +120,10 @@ void RenderObject::setupShaderGenFromDrawmode( const SceneGraph::DrawModes::Draw
   if (_props)
   {
     shaderDesc.vertexColors = _props->colored();
-    shaderDesc.textured = _props->textured();
+    if (_props->textured())
+      shaderDesc.addTextureType(GL_TEXTURE_2D,false,0);
+    else
+      shaderDesc.clearTextures();
     shaderDesc.numLights = _props->lighting() ? 0 : -1;
 
     switch (_props->lightStage()) {
@@ -176,8 +179,6 @@ RenderObject::RenderObject()
   diffuse(0.6f, 0.6f, 0.6f), ambient(0.1f, 0.1f, 0.1f),
   specular(0.0f, 0.0f, 0.0f), emissive(0.05f, 0.05f, 0.05f),
   alpha(1.0f), shininess(100.0f),
-
-  texture(0), 
   
   debugID(0), debugName(0),
   internalFlags_(0)

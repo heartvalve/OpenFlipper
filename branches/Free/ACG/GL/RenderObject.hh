@@ -50,6 +50,7 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/Scenegraph/MaterialNode.hh>
 
+#include <map>
 
 
 namespace GLSL{
@@ -220,7 +221,49 @@ struct ACGDLLEXPORT RenderObject
    * - array of textures
    * assumes binding slot 0 and 2D for now
    */
-  GLuint texture;
+  struct Texture
+  {
+    GLuint id;
+    GLenum type;
+    bool shadow;
+    Texture():
+      id(0),
+      type(GL_TEXTURE_2D),
+      shadow(false){}
+  };
+
+
+  /// adds a texture to stage RenderObjects::numTextures()
+  void addTexture(const Texture& _t)
+  {
+    addTexture(_t,numTextures());
+  }
+
+  /**
+   * adds a texture to an specific stage and enables texture support in shaderDesc
+   */
+  void addTexture(const Texture& _t,const unsigned int _stage)
+  {
+    if (GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS < numTextures())
+    {
+      std::cerr << "Texturestage " << _stage << " is too big. Allowed stages: "<< GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS << std::endl;
+      return;
+    }
+    textures_[_stage] = _t;
+    shaderDesc.addTextureType(_t.type,_t.shadow,_stage);
+  }
+
+  ///clear all textures. Also affected on shaderDesc
+  void clearTextures() {textures_.clear(); shaderDesc.clearTextures();}
+
+  const std::map<unsigned,Texture>& textures(){return textures_;}
+
+  size_t numTextures()  {return textures_.size();}
+
+private:
+  /// holds the textures (second) and the stage id (first)
+  std::map<unsigned,Texture> textures_;
+public:
 
 
   /// used internally for renderer debugging

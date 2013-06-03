@@ -1213,7 +1213,7 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
     RenderObject ro = *_baseObj;
     bindBuffersToRenderObject(&ro);
 
-    if (_textureMap && _baseObj->shaderDesc.textured)
+    if (_textureMap && _baseObj->shaderDesc.textured())
     {
       // textured mode
 
@@ -1226,8 +1226,10 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
         }
         else
         {
-//          ACG::GLState::bindTexture(GL_TEXTURE_2D, (*_textureMap)[pSubset->materialID]);
-          ro.texture = (*_textureMap)[pSubset->materialID];
+          RenderObject::Texture tex;
+          tex.type = GL_TEXTURE_2D;
+          tex.id = (*_textureMap)[pSubset->materialID];
+          ro.addTexture(tex,0);
         }
 
         

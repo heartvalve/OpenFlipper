@@ -793,7 +793,7 @@ void TranslationManipulatorNode::getRenderObjects(IRenderer* _renderer,
     // unlit, use emissive color only
     ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
     ro.shaderDesc.vertexColors = false;
-    ro.shaderDesc.textured = false;
+    ro.shaderDesc.clearTextures();
 
     // we need the scene zbuffer for the transparent overdraw effect
     // -> defer as long as possible

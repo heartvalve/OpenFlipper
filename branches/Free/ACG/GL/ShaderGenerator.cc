@@ -41,8 +41,8 @@
 \*===========================================================================*/
 
 #include "ShaderGenerator.hh"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 
@@ -51,7 +51,6 @@
 #include <QDir>
 #include <QTextStream>
 #include <QGLFormat>
-
 
 namespace ACG
 {
@@ -87,7 +86,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
   if (_desc->shadeMode != SG_SHADE_UNLIT)
     addInput("vec3 inNormal");
 
-  if (_desc->textured)
+  if (_desc->textured())
   {
     addInput("vec2 inTexCoord");
     addOutput("vec2 outVertexTexCoord");
@@ -159,7 +158,7 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
   addInput("vec4 outVertexPosCS[]");
   addOutput("vec4 outGeometryPosCS");
 
-  if (_desc->textured) {
+  if (_desc->textured()) {
     addInput("vec2 outVertexTexCoord[]");
     addOutput("vec2 outGeometryTexCoord");
   }
@@ -204,7 +203,7 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
     inputShader = "Geometry";
 
 
-  if (_desc->textured)
+  if (_desc->textured())
     addInput("vec2 out"+inputShader+"TexCoord");
 
   addInput("vec4 out"+inputShader+"PosCS");
@@ -495,7 +494,7 @@ void ShaderProgGenerator::initGenDefines(ShaderGenerator* _gen)
     std::cout << __FUNCTION__ << " -> unknown shade mode: " << desc_.shadeMode << std::endl;
   }
 
-  if (desc_.textured)
+  if (desc_.textured())
     _gen->addDefine("SG_TEXTURED 1");
 
   if (desc_.vertexColors)
@@ -631,7 +630,7 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   if (desc_.shadeMode != SG_SHADE_UNLIT)
     _code->push_back("sg_vNormalVS = normalize(g_mWVIT * inNormal);");
 
-  if (desc_.textured)
+  if (desc_.textured())
     _code->push_back("sg_vTexCoord = inTexCoord;");
 
   if (desc_.vertexColors)
@@ -661,7 +660,7 @@ void ShaderProgGenerator::addVertexEndCode(QStringList* _code)
   _code->push_back("gl_Position = sg_vPosPS;");
   _code->push_back("outVertexPosCS = sg_vPosPS;");
 
-  if (desc_.textured)
+  if (desc_.textured())
     _code->push_back("outVertexTexCoord = sg_vTexCoord;");
 
   if (desc_.shadeMode == SG_SHADE_GOURAUD ||
@@ -825,7 +824,7 @@ void ShaderProgGenerator::addGeometryBeginCode(QStringList* _code)
 //    addLightingCode(_code);
 //  }
 //
-//  if (desc_.textured)
+//  if (desc_.textured())
 //  {
 //    _code->push_back("vec4 sg_cTex = texture(g_Texture0, outTexCoord);");
 //    _code->push_back("sg_cColor *= sg_cTex;");
@@ -869,8 +868,35 @@ void ShaderProgGenerator::buildFragmentShader()
 
 
   // texture sampler id
-  if (desc_.textured)
-    fragment_->addUniform("sampler2D g_Texture0");
+  if (desc_.textured())
+  {
+    for (std::map<unsigned,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
+        iter != desc_.textureTypes().end(); ++iter)
+    {
+      QString name = QString("g_Texture%1").arg(iter->first);
+      QString type = "";
+      switch (iter->second.type)
+      {
+        case GL_TEXTURE_1D: type = "sampler1D"; break;
+        case GL_TEXTURE_2D: type = "sampler2D"; break;
+        case GL_TEXTURE_3D: type = "sampler3D"; break;
+        case GL_TEXTURE_RECTANGLE: type = "sampler2DRect"; break;
+        case GL_TEXTURE_BUFFER: type = "samplerBuffer​"; break;
+        case GL_TEXTURE_CUBE_MAP: type = "samplerCube​"; break;
+        case GL_TEXTURE_1D_ARRAY: type = "sampler1DArray"; break;
+        case GL_TEXTURE_2D_ARRAY: type = "sampler2DArray"; break;
+        case GL_TEXTURE_CUBE_MAP_ARRAY: type = "samplerCubeArray"; break;
+        case GL_TEXTURE_2D_MULTISAMPLE: type = "sampler2DMS"; break;
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: type = "sampler2DMSArray​"; break;
+
+        default: std::cerr << "Texture Type not supported "<< iter->second.type << std::endl; break;
+      }
+      // todo: check if texture type supports shadowtype
+      if (iter->second.shadow)
+        type += "Shadow";
+      fragment_->addUniform(type + " " + name);
+    }
+  }
 
   // apply i/o modifiers
   for (int i = 0; i < numModifiers_; ++i)
@@ -976,9 +1002,17 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
     addLightingCode(_code);
   }
 
-  if (desc_.textured)
+  if (desc_.textured())
   {
-    _code->push_back("vec4 sg_cTex = texture(g_Texture0, out" + inputShader + "TexCoord);");
+    std::map<unsigned,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
+    _code->push_back("vec4 sg_cTex = texture(g_Texture"+QString::number(iter->first)+", out" + inputShader + "TexCoord);");
+
+    for (++iter; iter != desc_.textureTypes().end(); ++iter)
+      _code->push_back("sg_cTex += texture(g_Texture"+QString::number(iter->first)+", out" + inputShader + "TexCoord);");
+
+    if (desc_.textureTypes().size() > 1 && desc_.normalizeTexColors)
+      _code->push_back("sg_cTex = sg_cTex * 1.0/" + QString::number(desc_.textureTypes().size()) +".0 ;");
+
     _code->push_back("sg_cColor *= sg_cTex;");
   }
 
@@ -1185,7 +1219,30 @@ QString ShaderGenDesc::toString() const
 
   resStrm << "\nshaderDesc.shadeMode: " << shadeModeString[shadeMode];
   resStrm << "\nshaderDesc.vertexColors: " << vertexColors;
-  resStrm << "\nshaderDesc.textured: " << textured;
+  resStrm << "\nshaderDesc.textured(): " << textured();
+  for (std::map<unsigned,TextureType>::const_iterator iter = textureTypes_.begin(); iter != textureTypes_.end();++iter)
+  {
+    resStrm << "\nTexture stage: " << iter->first;
+    resStrm << "\nTexture Type: ";
+    switch (iter->second.type)
+    {
+        case GL_TEXTURE_1D: resStrm << "GL_TEXTURE_1D"; break;
+        case GL_TEXTURE_2D: resStrm << "GL_TEXTURE_2D"; break;
+        case GL_TEXTURE_3D: resStrm << "GL_TEXTURE_3D"; break;
+        case GL_TEXTURE_RECTANGLE: resStrm << "GL_TEXTURE_RECTANGLE"; break;
+        case GL_TEXTURE_BUFFER: resStrm << "GL_TEXTURE_BUFFER​"; break;
+        case GL_TEXTURE_CUBE_MAP: resStrm << "GL_TEXTURE_CUBE_MAP​"; break;
+        case GL_TEXTURE_1D_ARRAY: resStrm << "GL_TEXTURE_1D_ARRAY"; break;
+        case GL_TEXTURE_2D_ARRAY: resStrm << "GL_TEXTURE_2D_ARRAY"; break;
+        case GL_TEXTURE_CUBE_MAP_ARRAY: resStrm << "GL_TEXTURE_CUBE_MAP_ARRAY"; break;
+        case GL_TEXTURE_2D_MULTISAMPLE: resStrm << "GL_TEXTURE_2D_MULTISAMPLE"; break;
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: resStrm << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY​"; break;
+
+        default: std::cerr << "Texture Type with number "<< iter->second.type << " on stage "<< iter->first << " is not supported "  << std::endl; break;
+    }
+
+    resStrm  << "\nShadowTexture: " <<  iter->second.shadow;
+  }
 
   if (!vertexTemplateFile.isEmpty())
     resStrm << "\nshaderDesc.vertexTemplateFile: " << vertexTemplateFile;

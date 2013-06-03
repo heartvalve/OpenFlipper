@@ -199,7 +199,7 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   if (a->vertexColors != b->vertexColors)
     return -1;
 
-  if (a->textured != b->textured)
+  if (a->textured() != b->textured())
     return -1;
 
   if (a->geometryShader != b->geometryShader)
