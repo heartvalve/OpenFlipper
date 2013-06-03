@@ -880,14 +880,16 @@ void ShaderProgGenerator::buildFragmentShader()
         case GL_TEXTURE_1D: type = "sampler1D"; break;
         case GL_TEXTURE_2D: type = "sampler2D"; break;
         case GL_TEXTURE_3D: type = "sampler3D"; break;
+        case GL_TEXTURE_CUBE_MAP: type = "samplerCube​"; break;
+#if defined(ARCH_DARWIN)
         case GL_TEXTURE_RECTANGLE: type = "sampler2DRect"; break;
         case GL_TEXTURE_BUFFER: type = "samplerBuffer​"; break;
-        case GL_TEXTURE_CUBE_MAP: type = "samplerCube​"; break;
         case GL_TEXTURE_1D_ARRAY: type = "sampler1DArray"; break;
         case GL_TEXTURE_2D_ARRAY: type = "sampler2DArray"; break;
         case GL_TEXTURE_CUBE_MAP_ARRAY: type = "samplerCubeArray"; break;
         case GL_TEXTURE_2D_MULTISAMPLE: type = "sampler2DMS"; break;
         case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: type = "sampler2DMSArray​"; break;
+#endif //defined(ARCH_DARWIN)
 
         default: std::cerr << "Texture Type not supported "<< iter->second.type << std::endl; break;
       }
@@ -1229,14 +1231,16 @@ QString ShaderGenDesc::toString() const
         case GL_TEXTURE_1D: resStrm << "GL_TEXTURE_1D"; break;
         case GL_TEXTURE_2D: resStrm << "GL_TEXTURE_2D"; break;
         case GL_TEXTURE_3D: resStrm << "GL_TEXTURE_3D"; break;
+        case GL_TEXTURE_CUBE_MAP: resStrm << "GL_TEXTURE_CUBE_MAP​"; break;
+#if defined(ARCH_DARWIN)
         case GL_TEXTURE_RECTANGLE: resStrm << "GL_TEXTURE_RECTANGLE"; break;
         case GL_TEXTURE_BUFFER: resStrm << "GL_TEXTURE_BUFFER​"; break;
-        case GL_TEXTURE_CUBE_MAP: resStrm << "GL_TEXTURE_CUBE_MAP​"; break;
         case GL_TEXTURE_1D_ARRAY: resStrm << "GL_TEXTURE_1D_ARRAY"; break;
         case GL_TEXTURE_2D_ARRAY: resStrm << "GL_TEXTURE_2D_ARRAY"; break;
         case GL_TEXTURE_CUBE_MAP_ARRAY: resStrm << "GL_TEXTURE_CUBE_MAP_ARRAY"; break;
         case GL_TEXTURE_2D_MULTISAMPLE: resStrm << "GL_TEXTURE_2D_MULTISAMPLE"; break;
         case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: resStrm << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY​"; break;
+#endif //defined(ARCH_DARWIN)
 
         default: std::cerr << "Texture Type with number "<< iter->second.type << " on stage "<< iter->first << " is not supported "  << std::endl; break;
     }
