@@ -194,8 +194,8 @@ QString QtWidgetObject::getObjectinfo() {
 /** Given an node index from PluginFunctions::scenegraphPick this function can be used to
 * check if the lightNode of the object has been picked.
 *
-* @param _node_idx Index of the picked light node
-* @return bool if the lightNode of this object is the picking target.
+* @param _node_idx Index of the picked QtWidget node
+* @return bool if the widgetNode of this object is the picking target.
 */
 bool QtWidgetObject::picked( uint _node_idx ) {
   return ( _node_idx == widgetNode_->id() );
