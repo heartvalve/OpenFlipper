@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision: 16232 $                                                         *
- *   $Author: moebius $                                                      *
- *   $Date: 2013-02-01 16:14:37 +0100 (Fri, 01 Feb 2013) $                   *
+ *   $Revision$                                                         *
+ *   $Author$                                                      *
+ *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -71,11 +71,11 @@ namespace SceneGraph {
 class DLLEXPORT QtWidgetNode : public BaseNode
 {
 public:
-    /** \brief Construct a plane rendering node
+    /** \brief Construct a QtWidget Node
      *
+     * @param _widget The widget which will be rendered in the viewport
      * @param _parent The parent node in the scenegraph
      * @param _name   The name of the new node (visible in the scenegraph dialogs)
-     * @param _plane  A pointer to an existing plane
      */
     QtWidgetNode(QWidget* _widget, BaseNode *_parent = 0, std::string _name = "<QtWidgetNode>");
 
