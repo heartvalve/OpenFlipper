@@ -683,6 +683,12 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
   if ( OpenFlipper::Options::nogui() )
     return;
 
+  /*
+   * this is called from the VSI plugin
+   * we do not want to overwrite any previously opened scripts
+   */
+  lastFile_ = "";
+
   showScriptWidget ();
 
   scriptWidget_->currentScript->setPlainText(_code);
