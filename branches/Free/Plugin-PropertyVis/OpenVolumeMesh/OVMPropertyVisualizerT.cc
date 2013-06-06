@@ -346,8 +346,6 @@ void OVMPropertyVisualizer<MeshT>::clear()
     VolumeMeshObject<MeshT>* object;
     PluginFunctions::getObject(OVMPropertyVisualizer<MeshT>::mObjectID, object);
 
-    MeshT* mesh = OVMPropertyVisualizer<MeshT>::mesh;
-
     if (propertyInfo.isCellProp())
         object->colors().clear_cell_colors();
     else if (propertyInfo.isFaceProp())

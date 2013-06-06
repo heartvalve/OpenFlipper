@@ -639,7 +639,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_Cell_double)
                   || (typeInfo == proptype_Cell_uint)
                   || (typeInfo == proptype_Cell_Vec3d)
-                  || (typeInfo == proptype_Cell_Vec3d);
+                  || (typeInfo == proptype_Cell_Vec3f);
     }
     if (entity_type & PropertyInfo::EF_FACE)
     {
@@ -648,7 +648,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_Face_double)
                   || (typeInfo == proptype_Face_uint)
                   || (typeInfo == proptype_Face_Vec3d)
-                  || (typeInfo == proptype_Face_Vec3d);
+                  || (typeInfo == proptype_Face_Vec3f);
     }
     if (entity_type & PropertyInfo::EF_HALFFACE)
     {
@@ -657,7 +657,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_HalfFace_double)
                   || (typeInfo == proptype_HalfFace_uint)
                   || (typeInfo == proptype_HalfFace_Vec3d)
-                  || (typeInfo == proptype_HalfFace_Vec3d);
+                  || (typeInfo == proptype_HalfFace_Vec3f);
     }
     if (entity_type & PropertyInfo::EF_EDGE)
     {
@@ -666,7 +666,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_Edge_double)
                   || (typeInfo == proptype_Edge_uint)
                   || (typeInfo == proptype_Edge_Vec3d)
-                  || (typeInfo == proptype_Edge_Vec3d);
+                  || (typeInfo == proptype_Edge_Vec3f);
     }
     if (entity_type & PropertyInfo::EF_HALFEDGE)
     {
@@ -675,7 +675,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_HalfEdge_double)
                   || (typeInfo == proptype_HalfEdge_uint)
                   || (typeInfo == proptype_HalfEdge_Vec3d)
-                  || (typeInfo == proptype_HalfEdge_Vec3d);
+                  || (typeInfo == proptype_HalfEdge_Vec3f);
     }
     if (entity_type & PropertyInfo::EF_VERTEX)
     {
@@ -684,7 +684,7 @@ bool OVMPropertyModel<MeshT>::isEntityType(const TypeInfoWrapper& typeInfo, Prop
                   || (typeInfo == proptype_Vertex_double)
                   || (typeInfo == proptype_Vertex_uint)
                   || (typeInfo == proptype_Vertex_Vec3d)
-                  || (typeInfo == proptype_Vertex_Vec3d);
+                  || (typeInfo == proptype_Vertex_Vec3f);
     }
     return result;
 }
