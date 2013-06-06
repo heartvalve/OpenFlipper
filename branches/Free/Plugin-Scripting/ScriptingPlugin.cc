@@ -400,9 +400,6 @@ void ScriptingPlugin::slotExecuteFileScript( QString _filename ) {
     if ( OpenFlipper::Options::gui() )
       scriptWidget_->currentScript->setPlainText(script);
 
-    // Set lastfilename to the opened file
-    lastFile_ = _filename;
-
     slotExecuteScript(script);
 
   } else
