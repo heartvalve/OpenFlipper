@@ -612,7 +612,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
 
   if (alwaysOnTop_)
-    ro.depthTest = false;
+    ro.priority = 1;//draw after scene meshes
 
   // Set the buffers for rendering
   ro.vertexBuffer = vbo_;
