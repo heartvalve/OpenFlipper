@@ -822,7 +822,7 @@ rotationOfTwoVectors( const VectorT<Scalar,3>&  _v0,
     _axis = (v0 % v1).normalize();
 
     // Is nan?
-    if ( _axis != _axis ) {
+    if ( std::isnan(_axis[0]) || std::isnan(_axis[1]) || std::isnan(_axis[2])  ) {
         return false;
     }
 
