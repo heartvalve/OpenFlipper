@@ -527,7 +527,7 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
       targetBuffer[0] = GL_COLOR_ATTACHMENT0 + bufID;
       targetBuffer[1] = GL_COLOR_ATTACHMENT1 + bufID;
       targetBuffer[2] = GL_COLOR_ATTACHMENT2 + bufID;
-      GLenum sourceBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+//      GLenum sourceBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
 
       // clear target colors
       glDrawBuffers(2, targetBuffer + 1);

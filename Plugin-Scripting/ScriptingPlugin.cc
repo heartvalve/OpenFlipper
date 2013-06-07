@@ -73,7 +73,9 @@ ScriptingPlugin::ScriptingPlugin() :
    lastFile_(""),
    debuggerButton_(0)
 #ifdef ENABLE_SCRIPT_DEBUGGER
+  #ifdef QT_SCRIPTTOOLS_LIB
    ,debugger_(0)
+  #endif
 #endif
 {
 
@@ -219,12 +221,14 @@ void ScriptingPlugin::pluginsInitialized() {
   // ==================================================================
 
 #ifdef ENABLE_SCRIPT_DEBUGGER
+ #ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngine* engine;
   emit getScriptingEngine( engine  );
   debugger_ = new QScriptEngineDebugger;
 
   if ( OpenFlipperSettings().value("Scripting/QtScriptDebugger",false).toBool() )
     debugger_->attachTo(engine);
+ #endif
 #endif
 }
 
@@ -413,6 +417,7 @@ void ScriptingPlugin::slotExecuteScriptButton() {
 void ScriptingPlugin::slotDebuggerButton() {
 
 #ifdef ENABLE_SCRIPT_DEBUGGER
+ #ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngine* engine;
   emit getScriptingEngine( engine  );
 
@@ -423,7 +428,7 @@ void ScriptingPlugin::slotDebuggerButton() {
   }
 
   OpenFlipperSettings().setValue("Scripting/QtScriptDebugger",debuggerButton_->isChecked());
-
+ #endif
 #endif
 
 }
