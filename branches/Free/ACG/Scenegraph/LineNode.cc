@@ -71,8 +71,7 @@ LineNode::LineNode( LineMode     _mode,
    draw_always_on_top (false),
    prev_depth_(GL_LESS),
    vbo_(0),
-   updateVBO_(true),
-   colored_(false)
+   updateVBO_(true)
 {
   drawMode(DrawModes::WIREFRAME);
 }
@@ -376,6 +375,9 @@ void LineNode::createVBO()
   if (!vbo_)
     glGenBuffersARB(1, &vbo_);
 
+  vertexDecl_.clear();
+  vertexDecl_.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+
   //3 coordinates per vertex
   std::vector<float> vboData(3*points_.size(),0.f);
 
@@ -384,8 +386,7 @@ void LineNode::createVBO()
     if( (points_.size()/2 == colors4f_.size()) )
     {
       //   === One color entry per line segment (alpha channel available ) ===
-      colored_ = true;
-
+      vertexDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR);
       vboData.resize(vboData.size() + 4 * points_.size());
       float* vboPtr = &vboData[0];
 
@@ -422,7 +423,7 @@ void LineNode::createVBO()
     } else if ( points_.size()/2 == colors_.size() )
     {
       //=== One color entry per line segment (no alpha channel available and uchars as colors) ===
-      colored_ = true;
+      vertexDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR);
       //add 4 colors for each vertex
       vboData.resize(vboData.size() + 4 * points_.size());
       float* vboPtr = &vboData[0];
@@ -461,7 +462,6 @@ void LineNode::createVBO()
     } else
     {
       //=== No colors. Just draw the segments ===
-      colored_ = false;
       ConstPointIter p_it=points_.begin(), p_end=points_.end();
       float* vboPtr = &vboData[0];
 
@@ -479,8 +479,6 @@ void LineNode::createVBO()
   else
   {
     // === No colors (Use material) and one continuous line ===
-    colored_ = false;
-
     // Pointer to it for easier copy operation
     float* pPoints = &vboData[0];
 
@@ -529,19 +527,12 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
   createVBO();
   ro.vertexBuffer = vbo_;
+  // vertexDecl is defined in createVBO
+  ro.vertexDecl = &vertexDecl_;
 
-  // decl must be static or member,  renderer does not make a copy
-  static VertexDeclaration vertexDecl;
-  vertexDecl.clear();
-  vertexDecl.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-  if (colored_)
-  {
-    vertexDecl.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR);
+  //besides of the position, colors are saved so we can show them
+  if (vertexDecl_.getNumElements() > 1)
     ro.shaderDesc.vertexColors = true;
-  }
-  ro.vertexDecl = &vertexDecl;
-
-  _state.set_line_width(_mat->lineWidth());
 
 
   if (line_mode_ == LineSegmentsMode)
