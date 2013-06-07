@@ -144,7 +144,6 @@ private:
   /// dual depth peeling shaders
   GLSL::Program* peelBlendDual_;
   GLSL::Program* peelFinalDual_;
-  GLSL::Program* peelInitDual_;
 
 
   /// Collection of framebuffers for each viewport

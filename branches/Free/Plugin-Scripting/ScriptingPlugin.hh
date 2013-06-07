@@ -232,8 +232,10 @@ private :
 
   QAction*      debuggerButton_;
 
-#ifdef QT_SCRIPTTOOLS_LIB
+#ifdef ENABLE_SCRIPT_DEBUGGER
+ #ifdef QT_SCRIPTTOOLS_LIB
   QScriptEngineDebugger* debugger_;
+ #endif
 #endif
 
 
