@@ -360,12 +360,13 @@ void QtWidgetNode::getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _s
 
   // init base render object
   state_ = &_state;
-  if (BaseNode::hidden() || !widget_)
+  if (!widget_)
     return;
 
   ACG::RenderObject ro;
 
   ro.initFromState(&_state);
+  ro.debugName = "QtWidgetNode";
 
   if (!planeCreated_)
   {
