@@ -598,6 +598,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   _state.push_modelview_matrix();
   _state.scale(size_);
+  ro.modelview = _state.modelview();
   _state.pop_modelview_matrix();
 
   if (textMode_ == SCREEN_ALIGNED)

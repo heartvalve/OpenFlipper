@@ -81,6 +81,7 @@ void RulerPlugin::showDistance()
   lineNode_->set_color(OpenMesh::Vec4f(1.0f,0.0f,0.0f,1.0f));
   lineNode_->set_line_width(3);
   lineNode_->add_line(Point1,Point2);
+  lineNode_->alwaysOnTop() = true;
 
   //set params for the text
   ACG::Vec3d distVec = Point1 - Point2;
