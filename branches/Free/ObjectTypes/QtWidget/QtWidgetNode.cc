@@ -366,7 +366,7 @@ void QtWidgetNode::getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _s
   ACG::RenderObject ro;
 
   ro.initFromState(&_state);
-  ro.debugName = "QtWidgetNode";
+  ro.debugName = (std::string("QtWidgetNode: ")+name()).c_str();
 
   if (!planeCreated_)
   {
