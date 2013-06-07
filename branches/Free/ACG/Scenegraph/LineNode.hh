@@ -199,6 +199,8 @@ public:
   void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
 protected:
+  /// creates the vbo only if update was requested
+  void createVBO();
 
   PointVector   points_;
   ColorVector   colors_;
@@ -214,6 +216,10 @@ protected:
 
   // True if points changed and the vbo has to be updated
   bool         updateVBO_;
+
+  //True if color information are saved inside the vbo
+  bool colored_;
+
 };
 
 

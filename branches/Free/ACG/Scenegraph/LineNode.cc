@@ -71,7 +71,8 @@ LineNode::LineNode( LineMode     _mode,
    draw_always_on_top (false),
    prev_depth_(GL_LESS),
    vbo_(0),
-   updateVBO_(true)
+   updateVBO_(true),
+   colored_(false)
 {
   drawMode(DrawModes::WIREFRAME);
 }
@@ -366,95 +367,189 @@ leave(GLState& _state , const DrawModes::DrawMode& _drawMode)
 
 //----------------------------------------------------------------------------
 
+void LineNode::createVBO()
+{
+  if (!updateVBO_)
+    return;
+
+  // create vbo if it does not exist
+  if (!vbo_)
+    glGenBuffersARB(1, &vbo_);
+
+  //3 coordinates per vertex
+  std::vector<float> vboData(3*points_.size(),0.f);
+
+  if (line_mode_ == LineSegmentsMode)
+  {
+    if( (points_.size()/2 == colors4f_.size()) )
+    {
+      //   === One color entry per line segment (alpha channel available ) ===
+      colored_ = true;
+
+      vboData.resize(vboData.size() + 4 * points_.size());
+      float* vboPtr = &vboData[0];
+
+      ConstPointIter p_it=points_.begin(), p_end=points_.end();
+      ConstColor4fIter c_it=colors4f_.begin();
+
+      Color4f c(1.0f,1.0f,1.0f,1.0f);
+      if(c_it != colors4f_.end()) {
+        c = *c_it;
+      }
+
+      int cnt = 0;
+      for (; p_it!=p_end; ++p_it)
+      {
+        if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors4f_.end()) {
+          ++c_it;
+          c = *c_it;
+        }
+        //add position information
+        *(vboPtr++) = (*p_it)[0];
+        *(vboPtr++) = (*p_it)[1];
+        *(vboPtr++) = (*p_it)[2];
+
+        //add color information
+        *(vboPtr++) = c[0];
+        *(vboPtr++) = c[1];
+        *(vboPtr++) = c[2];
+        *(vboPtr++) = c[3];
+
+        ++cnt;
+      }
+
+      //====================
+    } else if ( points_.size()/2 == colors_.size() )
+    {
+      //=== One color entry per line segment (no alpha channel available and uchars as colors) ===
+      colored_ = true;
+      //add 4 colors for each vertex
+      vboData.resize(vboData.size() + 4 * points_.size());
+      float* vboPtr = &vboData[0];
+
+      ConstPointIter p_it=points_.begin(), p_end=points_.end();
+      ConstColorIter c_it=colors_.begin();
+
+      Color c((char)255, (char)255, (char)255);
+      if(c_it != colors_.end()) {
+        c = *c_it;
+      }
+
+      int cnt = 0;
+      for (; p_it!=p_end; ++p_it)
+      {
+        if ((cnt > 0) && (cnt % 2 == 0) && (c_it+1) != colors_.end()) {
+          ++c_it;
+          c = *c_it;
+        }
+
+        //add position information
+        *(vboPtr++) = (*p_it)[0];
+        *(vboPtr++) = (*p_it)[1];
+        *(vboPtr++) = (*p_it)[2];
+
+        //add color information
+        *(vboPtr++) = c[0]/255.f;
+        *(vboPtr++) = c[1]/255.f;
+        *(vboPtr++) = c[2]/255.f;
+        *(vboPtr++) = 1.f;
+
+        ++cnt;
+      }
+
+      //===========
+    } else
+    {
+      //=== No colors. Just draw the segments ===
+      colored_ = false;
+      ConstPointIter p_it=points_.begin(), p_end=points_.end();
+      float* vboPtr = &vboData[0];
+
+      for (; p_it!=p_end; ++p_it)
+      {
+        *(vboPtr++) = (*p_it)[0];
+        *(vboPtr++) = (*p_it)[1];
+        *(vboPtr++) = (*p_it)[2];
+      }
+      //===========
+    }
+
+
+  }
+  else
+  {
+    // === No colors (Use material) and one continuous line ===
+    colored_ = false;
+
+    // Pointer to it for easier copy operation
+    float* pPoints = &vboData[0];
+
+    // Copy from internal storage to vbo in memory
+    for (unsigned int  i = 0 ; i < points_.size(); ++i) {
+      for ( unsigned int j = 0 ; j < 3 ; ++j) {
+        *(pPoints++) = points_[i][j];
+      }
+    }
+  }
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboData.size()*sizeof(float) , &vboData[0] , GL_STATIC_DRAW_ARB);
+
+  // Update done.
+  updateVBO_ = false;
+
+}
+
 void
 LineNode::
 getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
 
-  // TODO: Implement in Line Node
+  if (!points_.size())
+    return;
 
   // init base render object
+
   RenderObject ro;
   ro.initFromState(&_state);
   ro.setMaterial(_mat);
 
-  ro.debugName = "LineNode";
+  ro.debugName = (std::string("LineNode: ")+name()).c_str();
 
   // draw after scene-meshes
-  ro.priority = 1;
+  if (draw_always_on_top)
+    ro.priority = 1;
+
+  //set blending
+  if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors4f_.size()))
+  {
+    ro.blending = true;
+    ro.blendSrc = GL_SRC_ALPHA;
+    ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
+  }
+
+  createVBO();
+  ro.vertexBuffer = vbo_;
+
+  // decl must be static or member,  renderer does not make a copy
+  static VertexDeclaration vertexDecl;
+  vertexDecl.clear();
+  vertexDecl.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  if (colored_)
+  {
+    vertexDecl.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR);
+    ro.shaderDesc.vertexColors = true;
+  }
+  ro.vertexDecl = &vertexDecl;
+
+  _state.set_line_width(_mat->lineWidth());
+
 
   if (line_mode_ == LineSegmentsMode)
-  {
+    ro.glDrawArrays(GL_LINES, 0, points_.size());
+  else
+    ro.glDrawArrays(GL_LINE_STRIP, 0, points_.size());
 
-    if( (points_.size()/2 == colors4f_.size()) ) {
-      // One color entry per line segment (alpha channel available )
-
-      // TODO : Implement this mode
-    } else if ( points_.size()/2 == colors_.size() ) {
-      // One color entry per line segment (no alpha channel available and uchars as colors)
-
-      std::cerr << "Todo with old style colors" <<std::endl;
-      // TODO : Implement this mode
-    } else {
-      // No colors. Just draw the segments
-
-      std::cerr << "Todo without colors" <<std::endl;
-
-      // TODO : Implement this mode
-    }
-
-
-  } else {
-    // No colors (Use material) and one continuous line
-
-
-    // create vbo if it does not exist
-    if (!vbo_)
-      glGenBuffersARB(1, &vbo_);
-
-    float*       vboData_ = NULL;
-
-    // Update the vbo only if required.
-    if ( updateVBO_ ) {
-
-      // Create the required array
-      vboData_ = new float[3 * points_.size() * 4];
-
-      // Pointer to it for easier copy operation
-      float* pPoints = &vboData_[0];
-
-      // Copy from internal storage to vbo in memory
-      for (unsigned int  i = 0 ; i < points_.size(); ++i) {
-        for ( unsigned int j = 0 ; j < 3 ; ++j) {
-          *(pPoints++) = points_[i][j];
-        }
-      }
-
-      // Move data to the buffer
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, 3 * points_.size() * 4 , vboData_ , GL_STATIC_DRAW_ARB);
-
-      // Remove the local storage
-      delete[] vboData_;
-
-      // Update done.
-      updateVBO_ = false;
-    }
-
-    ro.vertexBuffer = vbo_;
-
-    // decl must be static or member,  renderer does not make a copy
-    static VertexDeclaration vertexDecl;
-    vertexDecl.clear();
-    vertexDecl.addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-
-    ro.vertexDecl = &vertexDecl;
-
-    ro.glDrawArrays(GL_LINE_STRIP, 0, points_.size() );
-
-    _renderer->addRenderObject(&ro);
-
-
-  }
+  _renderer->addRenderObject(&ro);
 
 }
 
