@@ -400,14 +400,14 @@ void QtWidgetNode::getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _s
 
   // Set shading
   ro.shaderDesc.vertexColors = false;
-  ro.shaderDesc.shadeMode = SG_SHADE_PHONG;
+  ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
   ACG::SceneGraph::Material localMaterial;
 
   localMaterial.baseColor(ACG::Vec4f(1.0, 1.0, 1.0, 1.0 ));
-  localMaterial.ambientColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.5 ));
-  localMaterial.diffuseColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.5 ));
-  localMaterial.specularColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.5 ));
+  localMaterial.ambientColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  localMaterial.diffuseColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  localMaterial.specularColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
   ro.setMaterial(&localMaterial);
 
 
