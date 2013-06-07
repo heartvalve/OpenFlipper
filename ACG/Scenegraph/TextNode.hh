@@ -58,6 +58,8 @@
 #include "BaseNode.hh"
 #include "TransformNode.hh"
 #include "DrawModes.hh"
+#include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/VertexDeclaration.hh>
 #include <vector>
 #include <QFont>
 #include <QFontMetrics>
@@ -124,6 +126,9 @@ public:
 
   /// restore texture and drawing states
   void leave(GLState& _state, const DrawModes::DrawMode& _drawmode);
+
+  /// set RenderObject for Shader pipeline renderer
+  void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
   /** Set the rendering mode ( see TextNode::TextMode )
    */
@@ -216,6 +221,9 @@ private:
 
   /// stores the dfactor parameter of glBlendFunc on entering TextNode
   GLint blendDest_;
+
+  /// stores the vertex declaration
+  ACG::VertexDeclaration vertexDecl_;
 
   /// maps most readable characters to indices for texture coordinate calculation in updateVBO()
   static std::map< char, std::pair<unsigned int, unsigned int> > charToIndex_;

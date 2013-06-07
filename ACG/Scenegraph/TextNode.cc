@@ -104,6 +104,8 @@ TextNode( BaseNode*    _parent,
     blendDest_(0)
 {
   updateFont();
+  vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
+  vertexDecl_.addElement(GL_FLOAT, 2, ACG::VERTEX_USAGE_TEXCOORD);
   updateVBO();
 }
 
@@ -556,6 +558,87 @@ unbindVBO() {
   ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+//----------------------------------------------------------------------------
+
+void
+TextNode::
+getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat)
+{
+  // init base render object
+  ACG::RenderObject ro;
+
+  ro.initFromState(&_state);
+
+  // do not rotate the quads in this case
+  if (textMode_ == SCREEN_ALIGNED)
+  {
+    _state.push_modelview_matrix();
+
+    // try to get the scale factor from the parent TransformNode if it exists
+    BaseNode* pParent = parent();
+    double scale = 1.0;
+    while (pParent) {
+      TransformNode* pTrans = dynamic_cast<TransformNode*>(pParent);
+      if (pTrans) {
+        scale = pTrans->scale()(0,0);
+        break;
+      }
+      pParent = pParent->parent();
+    }
+
+    // get the translation
+    Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
+    _state.reset_modelview();
+    Vec3d unprojected = _state.unproject(projected);
+    _state.translate(unprojected);
+    _state.scale(scale);
+  }
+
+  _state.push_modelview_matrix();
+  _state.scale(size_);
+  _state.pop_modelview_matrix();
+
+  if (textMode_ == SCREEN_ALIGNED)
+  {
+    _state.pop_modelview_matrix();
+  }
+
+  ro.culling = false;
+  ro.blending = true;
+
+  ro.blendSrc = GL_SRC_ALPHA;
+  ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
+
+  if (alwaysOnTop_)
+    ro.depthTest = false;
+
+  // Set the buffers for rendering
+  ro.vertexBuffer = vbo_;
+  ro.vertexDecl   = &vertexDecl_;
+
+  // Set Texture
+  RenderObject::Texture texture;
+  texture.id = texture_;
+  texture.type = GL_TEXTURE_2D;
+  texture.shadow = false;
+  ro.addTexture(texture);
+
+  // Set shading
+  ro.shaderDesc.vertexColors = false;
+  ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+
+  ACG::SceneGraph::Material localMaterial;
+
+  localMaterial.baseColor(ACG::Vec4f(1.0, 1.0, 1.0, 1.0 ));
+  localMaterial.ambientColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  localMaterial.diffuseColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  localMaterial.specularColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  ro.setMaterial(&localMaterial);
+
+
+  ro.glDrawArrays(GL_QUADS, 0, text_.size() * 4);
+  _renderer->addRenderObject(&ro);
+}
 
 //=============================================================================
 } // namespace SceneGraph
