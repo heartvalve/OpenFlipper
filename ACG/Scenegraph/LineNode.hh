@@ -58,6 +58,7 @@
 
 #include <ACG/Scenegraph/MaterialNode.hh>
 #include "DrawModes.hh"
+#include <ACG/GL/VertexDeclaration.hh>
 #include <vector>
 
 //== NAMESPACES ===============================================================
@@ -217,8 +218,7 @@ protected:
   // True if points changed and the vbo has to be updated
   bool         updateVBO_;
 
-  //True if color information are saved inside the vbo
-  bool colored_;
+  ACG::VertexDeclaration vertexDecl_;
 
 };
 
