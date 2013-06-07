@@ -502,7 +502,7 @@ void
 LineNode::
 getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
 
-  if (!points_.size())
+  if (points_.empty())
     return;
 
   // init base render object
