@@ -158,16 +158,7 @@ void HelpBrowser::open(const QUrl& _url, bool _skipSave) {
 
 	QString txt;
 
-	if (data.type() == QVariant::String) {
-		txt = data.toString();
-	} else if (data.type() == QVariant::ByteArray) {
-
-		QByteArray ba = data.toByteArray();
-		QTextCodec *codec = Qt::codecForHtml(ba);
-		txt = codec->toUnicode(ba);
-
-		txt = data.toString();
-	}
+	txt = data.toString();
 
 	setHtml(txt);
 
