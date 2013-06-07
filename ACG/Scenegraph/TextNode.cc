@@ -569,7 +569,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   ro.initFromState(&_state);
 
-  ro.debugName = "TextNode";
+  ro.debugName = (std::string("TextNode: ")+name()).c_str();
 
   // do not rotate the quads in this case
   if (textMode_ == SCREEN_ALIGNED)
