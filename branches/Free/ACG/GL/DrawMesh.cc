@@ -47,11 +47,11 @@
 #include "DrawMesh.hh"
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 #include <ACG/GL/VertexDeclaration.hh>
-#include <assert.h>
-#include <math.h>
+#include <cassert>
+#include <cmath>
 #include <vector>
 #include <map>
-#include <string.h>
+#include <cstring>
 #include <fstream>
 
 #ifdef USE_OPENMP

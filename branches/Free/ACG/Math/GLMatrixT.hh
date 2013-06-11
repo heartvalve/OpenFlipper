@@ -58,7 +58,7 @@
 
 #include "Matrix4x4T.hh"
 #include "../Config/ACGDefines.hh"
-#include <math.h>
+#include <cmath>
 
 
 namespace ACG {

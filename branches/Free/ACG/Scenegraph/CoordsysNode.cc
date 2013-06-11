@@ -56,7 +56,7 @@
 #include <ACG/GL/IRenderer.hh>
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 
 //== NAMESPACES ===============================================================

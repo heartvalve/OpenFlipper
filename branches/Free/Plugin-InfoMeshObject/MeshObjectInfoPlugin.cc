@@ -65,7 +65,7 @@
 
 #include <Math_Tools/Math_Tools.hh>
 
-#include <float.h>
+#include <cfloat>
 
 //== IMPLEMENTATION ==========================================================
 

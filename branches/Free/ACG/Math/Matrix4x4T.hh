@@ -56,7 +56,7 @@
 //== INCLUDES =================================================================
 
 #include "VectorT.hh"
-#include <math.h>
+#include <cmath>
 #include "../Config/ACGDefines.hh"
 #include <iostream>
 

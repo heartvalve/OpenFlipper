@@ -60,8 +60,8 @@
 
 //== INCLUDES =================================================================
 
-#include <limits.h>
-#include <float.h>
+#include <climits>
+#include <cfloat>
 #include "../Config/ACGDefines.hh"
 
 //== NAMESPEACES ==============================================================

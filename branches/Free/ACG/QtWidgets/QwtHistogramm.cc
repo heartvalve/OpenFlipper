@@ -53,8 +53,8 @@
 #include <qwt_painter.h>
 #include <qwt_scale_map.h>
 
-#include <qstring.h>
-#include <qpainter.h>
+#include <QString>
+#include <QPainter>
 
 #include <iostream>
 

@@ -50,8 +50,8 @@
 #ifndef QTCOLORCHOOSERBUTTON_HH_
 #define QTCOLORCHOOSERBUTTON_HH_
 
-#include <qpushbutton.h>
-#include <qcolor.h>
+#include <QPushButton>
+#include <QColor>
 #include "../Config/ACGDefines.hh"
 
 class ACGDLLEXPORT QtColorChooserButton: public QPushButton {

@@ -50,9 +50,9 @@
 
 #include "QtColorChooserButton.hh"
 
-#include <qstyleoption.h>
-#include <qstylepainter.h>
-#include <qcolordialog.h>
+#include <QStyleOption>
+#include <QStylePainter>
+#include <QColorDialog>
 
 #include <iostream>
 

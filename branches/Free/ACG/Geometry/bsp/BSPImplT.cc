@@ -55,7 +55,7 @@
 
 
 #include "BSPImplT.hh"
-#include <float.h>
+#include <cfloat>
 
 
 //== CLASS DEFINITION =========================================================

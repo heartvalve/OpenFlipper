@@ -45,7 +45,7 @@
 
 #include "textureProperties.hh"
 
-#include <float.h>
+#include <cfloat>
 
 #include <QtGui>
 #include <OpenFlipper/common/GlobalOptions.hh>

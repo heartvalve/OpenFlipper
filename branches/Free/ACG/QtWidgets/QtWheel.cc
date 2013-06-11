@@ -52,8 +52,8 @@
 
 #include "QtWheel.hh"
 
-#include <math.h>
-#include <float.h>
+#include <cmath>
+#include <cfloat>
 #include <iostream>
 #include <algorithm>
 

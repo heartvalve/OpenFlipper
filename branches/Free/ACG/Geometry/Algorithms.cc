@@ -56,7 +56,7 @@
 #include "Algorithms.hh"
 #include <ACG/Utils/NumLimitsT.hh>
 #include <ACG/Utils/VSToolsT.hh>
-#include <math.h>
+#include <cmath>
 
 
 #ifdef max

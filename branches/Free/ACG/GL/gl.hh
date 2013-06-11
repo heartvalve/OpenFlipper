@@ -52,7 +52,7 @@
 
 //== INCLUDES =================================================================
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <sstream>
 
 

@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "TextureParameters.hh"
-#include <float.h>
+#include <cfloat>
 
 TexParameters::TexParameters() :
         abs(false),

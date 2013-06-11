@@ -59,7 +59,7 @@
 
 #include <QMouseEvent>
 #include <QEvent>
-#include <float.h>
+#include <cfloat>
 
 
 //== NAMESPACES ===============================================================

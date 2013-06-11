@@ -43,10 +43,10 @@
 //=============================================================================
 
 #include "GPUCacheOptimizer.hh"
-#include <assert.h>
-#include <math.h>
+#include <cassert>
+#include <cmath>
 #include <vector>
-#include <string.h>
+#include <cstring>
 
 //=============================================================================
 

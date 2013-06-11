@@ -52,7 +52,7 @@
 
 
 #include "GlutViewer.hh"
-#include <stdio.h>
+#include <cstdio>
 
 
 //== NAMESPACES ===============================================================

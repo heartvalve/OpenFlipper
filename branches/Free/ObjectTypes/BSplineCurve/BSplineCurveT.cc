@@ -59,7 +59,7 @@
 
 #include "BSplineCurve.hh"
 
-#include <float.h>
+#include <cfloat>
 #include <ACG/Geometry/Algorithms.hh>
 
 //== NAMESPACES ===============================================================

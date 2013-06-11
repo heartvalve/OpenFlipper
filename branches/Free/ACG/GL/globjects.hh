@@ -64,8 +64,8 @@
 #include <string>
 
 // C
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #ifdef max
 #  undef max

@@ -47,7 +47,7 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #include <OpenMesh/Core/System/omstream.hh>
 

@@ -51,7 +51,7 @@
 #include <ACG/GL/gl.hh>
 #include <vector>
 #include <map>
-#include <float.h>
+#include <cfloat>
 
 
 enum TextureType { UNSET         = 1 << 0,

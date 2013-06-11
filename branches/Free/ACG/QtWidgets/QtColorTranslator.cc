@@ -53,7 +53,7 @@
 
 #include "QtColorTranslator.hh"
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 
 
 //== NAMESPACES ===============================================================

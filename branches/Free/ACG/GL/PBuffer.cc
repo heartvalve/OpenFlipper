@@ -55,7 +55,7 @@
 
 #include "PBuffer.hh"
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 
 //== IMPLEMENTATION ==========================================================

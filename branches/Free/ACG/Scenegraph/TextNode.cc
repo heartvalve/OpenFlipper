@@ -55,7 +55,7 @@
 
 #include "TextNode.hh"
 #include "../GL/gl.hh"
-#include <stdlib.h>
+#include <cstdlib>
 
 
 //== NAMESPACES ===============================================================

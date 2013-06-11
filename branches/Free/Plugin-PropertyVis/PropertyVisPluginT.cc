@@ -46,12 +46,11 @@
 #include <iostream>
 #include <typeinfo>
 #include <limits>
-#include <math.h>
-#include <time.h>
+#include <cmath>
+#include <ctime>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <ACG/Utils/ColorCoder.hh>
-#include <cmath>
 
 //------------------------------------------------------------------------------
 

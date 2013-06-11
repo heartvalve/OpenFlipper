@@ -44,7 +44,7 @@
 #define HISTOGRAM_H
 
 #include <qglobal.h>
-#include <qcolor.h>
+#include <QColor>
 #include <ACG/Config/ACGDefines.hh>
 
 #include "qwt_plot_item.h" 

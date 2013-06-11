@@ -43,7 +43,7 @@
 #include "ColorGenerator.hh"
 
 #include <cmath>
-#include <qcolor.h>
+#include <QColor>
 
 namespace ACG {
 

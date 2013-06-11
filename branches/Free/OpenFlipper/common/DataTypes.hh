@@ -65,7 +65,7 @@
 
 #include <ACG/Math/Matrix4x4T.hh>
 #include <ACG/Math/VectorT.hh>
-#include <limits.h>
+#include <climits>
 #include <QIcon>
 #include <QMetaType>
 

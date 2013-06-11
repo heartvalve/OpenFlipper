@@ -54,9 +54,9 @@
 #include "QtCoordFrameDialog.hh"
 #include "../Scenegraph/CoordFrameNode.hh"
 
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <qgroupbox.h>
+#include <QComboBox>
+#include <QPushButton>
+#include <QGroupBox>
 
 
 //== NAMESPACES ============================================================== 
