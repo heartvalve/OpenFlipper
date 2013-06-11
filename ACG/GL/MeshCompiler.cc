@@ -436,11 +436,6 @@ void MeshCompiler::forceUnsharedFaceVertex()
   //  that each triangle makes use of the face-specific vertex
 
 
-  //////
-  // validation code
-  std::vector<int> validationBuf;
-  //
-
   std::vector<int> sharedVertices;
   sharedVertices.resize(maxFaceCorners_);
 
@@ -550,9 +545,8 @@ void MeshCompiler::getInputFaceVertex( int i, int j, int* _out )
 
 
 MeshCompiler::MeshCompiler(const VertexDeclaration& _decl)
+: decl_(_decl)
 {
-  decl_ = _decl;
-
   faceInput_ = 0;
   deleteFaceInputeData_ = false;
 
@@ -560,6 +554,10 @@ MeshCompiler::MeshCompiler(const VertexDeclaration& _decl)
   numSubsets_ = 0;
   numIndices_ = 0;
   numTris_ = 0;
+
+  numFaces_ = 0;
+  interleavedInput_ = 0;
+  curFaceInputPos_ = 0;
 
   indices_ = 0;
 
@@ -1381,15 +1379,35 @@ void MeshCompiler::setFaceVerts( int _i, int _numEdges, int* _v )
   setFaceAttrib(_i, _numEdges, _v, inputIDPos_);
 }
 
+void MeshCompiler::setFaceVerts( int _i, int _v0, int _v1, int _v2 )
+{
+  int tmp[] = {_v0, _v1, _v2};
+  setFaceAttrib(_i, 3, tmp, inputIDPos_);
+}
+
 void MeshCompiler::setFaceNormals( int _i, int _numEdges, int* _v )
 {
   setFaceAttrib(_i, _numEdges, _v, inputIDNorm_);
 }
 
+void MeshCompiler::setFaceNormals( int _i, int _v0, int _v1, int _v2 )
+{
+  int tmp[] = {_v0, _v1, _v2};
+  setFaceAttrib(_i, 3, tmp, inputIDNorm_);
+}
+
+
 void MeshCompiler::setFaceTexCoords( int _i, int _numEdges, int* _v )
 {
   setFaceAttrib(_i, _numEdges, _v, inputIDTexC_);
 }
+
+void MeshCompiler::setFaceTexCoords( int _i, int _v0, int _v1, int _v2 )
+{
+  int tmp[] = {_v0, _v1, _v2};
+  setFaceAttrib(_i, 3, tmp, inputIDTexC_);
+}
+
 
 int MeshCompiler::getNumTriangles() const
 {
