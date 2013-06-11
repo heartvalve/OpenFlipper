@@ -61,7 +61,7 @@
 
 #include <iostream>
 #include <string>
-#include <assert.h>
+#include <cassert>
 
 #include <QMimeData>
 #include <QToolButton>

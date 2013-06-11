@@ -47,7 +47,7 @@
 #include "OpenFlipper/Core/Core.hh"
 
 // Qt
-#include <qapplication.h>
+#include <QApplication>
 #include <qgl.h>
 
 // stdc++

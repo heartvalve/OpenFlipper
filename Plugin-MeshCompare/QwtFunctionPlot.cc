@@ -57,9 +57,9 @@
 
 #include <QPen>
 
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpainter.h>
+#include <QLineEdit>
+#include <QLabel>
+#include <QPainter>
 #include <qwt_curve_fitter.h>
 #include <qwt_plot_panner.h>
 #include <qwt_symbol.h>
@@ -68,8 +68,8 @@
 #include <ACG/Utils/ColorCoder.hh>
 
 
-#include <float.h>
-#include <math.h>
+#include <cfloat>
+#include <cmath>
 
 //== NAMESPACES ===============================================================
 

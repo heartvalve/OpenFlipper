@@ -55,8 +55,8 @@
 #include "GridNode.hh"
 #include "SceneGraph.hh"
 #include "../GL/gl.hh"
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 
 //== NAMESPACES ===============================================================
 

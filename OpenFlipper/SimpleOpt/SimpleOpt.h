@@ -202,8 +202,8 @@ ShowFiles(args.FileCount(), args.Files());
 #ifdef SO_MAX_ARGS
 # define SO_STATICBUF   SO_MAX_ARGS
 #else
-# include <stdlib.h>    // malloc, free
-# include <string.h>    // memcpy
+# include <cstdlib>    // malloc, free
+# include <cstring>    // memcpy
 # define SO_STATICBUF   50
 #endif
 
@@ -321,7 +321,7 @@ typedef enum _ESOArgType {
 #  include <crtdbg.h>
 #  define SO_ASSERT(b)  _ASSERTE(b)
 # else
-#  include <assert.h>
+#  include <cassert>
 #  define SO_ASSERT(b)  assert(b)
 # endif
 #else

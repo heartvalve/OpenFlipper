@@ -61,7 +61,7 @@
 
 #include <QMouseEvent>
 #include <QEvent>
-#include <float.h>
+#include <cfloat>
 
 #include <Math_Tools/Math_Tools.hh>
 #include <OpenMesh/Core/Geometry/MathDefs.hh>

@@ -49,7 +49,7 @@
 
 //== INCLUDES =================================================================
 
-#include <float.h>
+#include <cfloat>
 #include <ACG/Math/VectorT.hh>
 
 

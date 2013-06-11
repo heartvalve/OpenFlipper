@@ -55,7 +55,7 @@
 #define FACE_DELETE_POPUP "<B>Delete Face</B><br>Remove a clicked face."
 
 #include <OpenMesh/Core/System/omstream.hh>
-#include <float.h>
+#include <cfloat>
 
 //******************************************************************************
 

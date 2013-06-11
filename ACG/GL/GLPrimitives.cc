@@ -41,7 +41,7 @@
  \*===========================================================================*/
 
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 
 #include "GLPrimitives.hh"
 #include <ACG/GL/IRenderer.hh>

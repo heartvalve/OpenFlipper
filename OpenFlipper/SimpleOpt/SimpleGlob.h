@@ -173,7 +173,7 @@ enum SG_Error {
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <glob.h>
-# include <limits.h>
+# include <climits>
 # define MAX_PATH           PATH_MAX
 # define sg_strchr          ::strchr
 # define sg_strrchr         ::strrchr
@@ -184,9 +184,9 @@ enum SG_Error {
 # define SOCHAR_T           char
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-#include <wchar.h>
+#include <cstdlib>
+#include <cstring>
+#include <cwchar>
 
 // use assertions to test the input data
 #ifdef _DEBUG
@@ -194,7 +194,7 @@ enum SG_Error {
 #  include <crtdbg.h>
 #  define SG_ASSERT(b)    _ASSERTE(b)
 # else
-#  include <assert.h>
+#  include <cassert>
 #  define SG_ASSERT(b)    assert(b)
 # endif
 #else

@@ -44,8 +44,8 @@
 #include "ShaderCache.hh"
 #include "ShaderGenerator.hh"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
 

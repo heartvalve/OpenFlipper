@@ -57,7 +57,7 @@
 #include "BaseNode.hh"
 
 #include <string>
-#include <qimage.h>
+#include <QImage>
 
 
 //=============================================================================

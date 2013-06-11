@@ -43,7 +43,7 @@
 #include "PlaneNode.hh"
 #include <ACG/GL/gl.hh>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <ACG/Scenegraph/MaterialNode.hh>
 
 //== IMPLEMENTATION ==========================================================

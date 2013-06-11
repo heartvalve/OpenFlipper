@@ -17,7 +17,7 @@
 //== INCLUDES =================================================================
 
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <ACG/GL/gl.hh>
 

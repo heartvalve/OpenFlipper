@@ -44,7 +44,7 @@
 #include <ACG/GL/GLState.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
 
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <QTextStream>
 

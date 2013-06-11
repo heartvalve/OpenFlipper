@@ -60,11 +60,11 @@
 
 #include "PolyLineT.hh"
 
-#include <float.h>
+#include <cfloat>
 #include <ACG/Geometry/Algorithms.hh>
 
 #ifndef WIN32
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 #ifdef USE_OPENMP

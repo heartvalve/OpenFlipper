@@ -44,7 +44,7 @@
 #define HISTOGRAM_ITEM_H
 
 #include <qglobal.h>
-#include <qcolor.h>
+#include <QColor>
 
 #include "qwt_plot_item.h" 
 

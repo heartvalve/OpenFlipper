@@ -63,8 +63,8 @@
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
 // QT INCLUDES
-#include <qvariant.h>
-#include <qmainwindow.h>
+#include <QVariant>
+#include <QMainWindow>
 #include <QToolBox>
 #include <QStackedWidget>
 #include <QSplashScreen>

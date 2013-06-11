@@ -58,7 +58,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <assert.h>
+#include <cassert>
 
 
 //== FORWARDDECLARATIONS ======================================================

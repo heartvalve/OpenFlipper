@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QtGui>
 #include <QFile>
 #include <QMessageBox>

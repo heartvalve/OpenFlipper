@@ -52,7 +52,7 @@
 #include <QDir>
 
 #include "GlobalOptions.hh"
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>

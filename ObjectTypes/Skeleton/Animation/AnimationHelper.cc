@@ -43,8 +43,8 @@
 #define ANIMATIONHELPER_CC
 
 #include "AnimationHelper.hh"
-#include <math.h>
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 
 #define APPROXIMATION_EPSILON 1.0e-09
 #define VERYSMALL 1.0e-20

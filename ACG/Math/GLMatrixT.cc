@@ -56,7 +56,7 @@
 
 
 #include "GLMatrixT.hh"
-#include <math.h>
+#include <cmath>
 
 
 //== IMPLEMENTATION ========================================================== 

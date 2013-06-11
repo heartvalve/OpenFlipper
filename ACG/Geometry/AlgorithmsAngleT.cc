@@ -57,7 +57,7 @@
 
 #include <OpenMesh/Core/Geometry/MathDefs.hh>
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 
 

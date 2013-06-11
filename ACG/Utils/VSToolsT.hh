@@ -55,7 +55,7 @@
     header but are named different. So this wrapper makes them standard compatible.
     */
 #ifdef WIN32
- #include <float.h>
+ #include <cfloat>
 
  namespace std {
 

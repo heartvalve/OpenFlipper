@@ -58,7 +58,7 @@
 #include "../GL/gltext.hh"
 #include "../GL/stipple_alpha.hh"
 
-#include <stdio.h>
+#include <cstdio>
 
 
 //== NAMESPACES ===============================================================

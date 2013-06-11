@@ -42,7 +42,7 @@
 
 #include "TextureMath.hh"
 
-#include <math.h>
+#include <cmath>
 
 TextureMath::TextureMath(const bool   _abs,
                          const bool   _clamp,
