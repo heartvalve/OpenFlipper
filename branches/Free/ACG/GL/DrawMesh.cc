@@ -54,6 +54,8 @@
 #include <cstring>
 #include <fstream>
 
+#include <ACG/GL/MeshCompiler.hh>
+
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
@@ -372,6 +374,63 @@ DrawMeshT<Mesh>::rebuild()
   rebuild_ = REBUILD_NONE;
 
   // picking buffers update
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/// test MeshCompiler
+
+
+
+
+
+
+MeshCompiler test(*getVertexDeclaration());
+
+
+
+test.setVertices(getNumVerts(), vertices_, sizeof(Vertex));
+test.setNormals(getNumVerts(), (const char*)vertices_ + 5*4, sizeof(Vertex));
+test.setTexCoords(getNumVerts(), (const char*)vertices_ + 3*4, sizeof(Vertex));
+
+
+test.setNumFaces(getNumTris(), getNumTris() * 3);
+
+for (int i = 0; i < getNumTris(); ++i)
+{
+  test.setFaceVerts(i, indices_[i*3], indices_[i*3+1], indices_[i*3+2]);
+  test.setFaceNormals(i, indices_[i*3], indices_[i*3+1], indices_[i*3+2]);
+  test.setFaceTexCoords(i, indices_[i*3], indices_[i*3+1], indices_[i*3+2]);
+}
+
+test.build();
+
+
+test.dbgdumpObj("../../meshcompiler_out.obj");
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
