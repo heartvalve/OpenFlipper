@@ -80,8 +80,6 @@ QtTranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   TranslationManipulatorNode::mouseEvent( _state, _event );
   if (touched_)
     emit manipulatorMoved( this , _event);
-
-  touched_ = false;
 }
 
 QtTranslationManipulatorNode::~QtTranslationManipulatorNode() {
