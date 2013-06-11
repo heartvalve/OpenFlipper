@@ -511,9 +511,17 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
     drawMesh_->disableColors();
     drawMesh_->usePerVertexTexcoords();
 
+
+    // texture environment: fragment color = texture sample
+    GLint prevTexEnvMode = 0;
+    glGetTexEnviv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &prevTexEnvMode);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
     draw_faces();
     ACG::GLState::depthRange(0.0, 1.0);
     ACG::GLState::disable(GL_TEXTURE_2D);
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, prevTexEnvMode);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
