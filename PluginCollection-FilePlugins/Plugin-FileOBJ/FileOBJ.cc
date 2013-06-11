@@ -1836,7 +1836,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
       // add last group
       curveGroups.push_back(curveIds);
       std::vector< std::vector<int> >::iterator it = curveGroups.begin();
-      for (it; it != curveGroups.end(); ++it) {
+      for (; it != curveGroups.end(); ++it) {
         // only group if we have more than one curve
         if (it->size() > 2) {
           if (groupNames[it->back()].size() == 0)
@@ -1851,7 +1851,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
       // add last group
       surfaceGroups.push_back(surfaceIds);
       std::vector< std::vector<int> >::iterator it2 = surfaceGroups.begin();
-      for (it2; it2 != surfaceGroups.end(); ++it2) {
+      for (; it2 != surfaceGroups.end(); ++it2) {
         // only group if we have more than one surface
         if (it2->size() > 2) {
           if (groupNames[it2->back()].size() == 0)

@@ -239,7 +239,7 @@ remesh(unsigned int           _iters,
         prepare();
         remeshh(_iters, _area_iters, _use_projection);
     }
-    catch (std::bad_alloc)
+    catch (std::bad_alloc&)
     {
     mesh_.clear();
     omerr() << "Remeshig: Out of memory\n";
