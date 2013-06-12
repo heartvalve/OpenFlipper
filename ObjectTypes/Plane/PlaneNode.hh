@@ -125,6 +125,8 @@ private:
     void drawManipulator(ACG::GLState & _state);
     void drawPlanePick(ACG::GLState & _state);
     void drawManipulatorPick(ACG::GLState & _state);
+    /// create and update VBO
+    void updateVBO();
 
 
     void addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, ACG::RenderObject* _ro);
