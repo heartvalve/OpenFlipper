@@ -83,7 +83,11 @@ const PropertyNameListModel::TypeInfoWrapper PropertyNameListModel::prop_types[]
 #endif
 };
 
+#ifdef ENABLE_SKELETON_SUPPORT
 const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 7);
+#else
+const PropertyNameListModel::TYPE_INFO_SET PropertyNameListModel::sane_prop_types(prop_types, prop_types + 6);
+#endif
 
 const char *PropertyNameListModel::entity2str(ENTITY_FILTER entity) {
     switch (entity) {
