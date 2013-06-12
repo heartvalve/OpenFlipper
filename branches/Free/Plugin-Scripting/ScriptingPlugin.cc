@@ -71,6 +71,7 @@ ScriptingPlugin::ScriptingPlugin() :
    highlighterLive_(0),
    highlighterList_(0),
    lastFile_(""),
+   scriptPath_(""),
    debuggerButton_(0)
 #ifdef ENABLE_SCRIPT_DEBUGGER
   #ifdef QT_SCRIPTTOOLS_LIB
@@ -351,9 +352,8 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
   /// Switch scripting mode on
   OpenFlipper::Options::scripting(true);
 
-
   // Get the filename of the script and set it in the scripting environment
-  engine->globalObject().setProperty("ScriptPath",QScriptValue(engine,lastFile_.section(OpenFlipper::Options::dirSeparator(), 0, -2)));
+  engine->globalObject().setProperty("ScriptPath",OpenFlipper::Options::currentScriptDirStr());
 
   // Execute the script
   engine->evaluate( _script );
@@ -403,6 +403,9 @@ void ScriptingPlugin::slotExecuteFileScript( QString _filename ) {
 
     if ( OpenFlipper::Options::gui() )
       scriptWidget_->currentScript->setPlainText(script);
+
+    // Set the correct execution environment
+    OpenFlipper::Options::currentScriptDir( _filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) );
 
     slotExecuteScript(script);
 
@@ -590,7 +593,7 @@ void ScriptingPlugin::slotSaveScript(){
 
 void ScriptingPlugin::slotSaveScriptAs(){
   QString filename = QFileDialog::getSaveFileName(scriptWidget_,
-     tr("Save Script"),OpenFlipper::Options::currentScriptDirStr(), tr("Script Files (*.ofs)"));
+      tr("Save Script"),OpenFlipper::Options::currentScriptDirStr(), tr("Script Files (*.ofs)"));
 
   if (filename == "") return;
 
@@ -609,11 +612,11 @@ void ScriptingPlugin::slotSaveScriptAs(){
   if (data.open(QFile::WriteOnly)) {
     QTextStream output(&data);
     output << scriptWidget_->currentScript->toPlainText();
- }
+  }
 
- lastFile_ = filename;
-
+  lastFile_ = filename;
   OpenFlipper::Options::currentScriptDir( QFileInfo(filename).absolutePath() );
+
   scriptWidget_->actionSave_Script->setEnabled( false );
 }
 
@@ -689,10 +692,11 @@ void ScriptingPlugin::showScriptInEditor(QString _code)
     return;
 
   /*
-   * this is called from the VSI plugin
+   * This is called from the VSI and other plugins with pure code
    * we do not want to overwrite any previously opened scripts
    */
   lastFile_ = "";
+  OpenFlipper::Options::currentScriptDir( "" );
 
   showScriptWidget ();
 
