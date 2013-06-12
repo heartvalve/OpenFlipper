@@ -309,8 +309,8 @@ void PlaneNode::updateVBO()
   // Array of coordinates for the plane ( duplicated due to front and back rendering )
   // Interleaved with normals
   // 8 vertices with (3 float for position + 3 float for normal)
-  size_t vboSize = 8 * (3+3);
-  float vboData_[vboSize] = { 0.0,0.0,0.0,
+  const size_t vboSize = 8 * (3+3);
+  float vboData[vboSize] = { 0.0,0.0,0.0,
       (float)normal[0],(float)normal[1],(float)normal[2],
       (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
       (float)normal[0],(float)normal[1],(float)normal[2],
@@ -334,7 +334,7 @@ void PlaneNode::updateVBO()
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   // Upload to buffer
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData_[0], GL_STATIC_DRAW_ARB);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData[0], GL_STATIC_DRAW_ARB);
 }
 
 void
@@ -416,7 +416,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( front )
         //---------------------------------------------------
-        ro.debugName = std::string("PlaneNode.plane_front")+name();
+        ro.debugName = (std::string("PlaneNode.plane_front")+name()).c_str();
         localMaterial.ambientColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
         localMaterial.diffuseColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
         localMaterial.specularColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
@@ -427,7 +427,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( back )
         //---------------------------------------------------
-        ro.debugName = std::string("PlaneNode.plane_back")+name();
+        ro.debugName = (std::string("PlaneNode.plane_back")+name()).c_str();
         localMaterial.ambientColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
         localMaterial.diffuseColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
         localMaterial.specularColor(ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
