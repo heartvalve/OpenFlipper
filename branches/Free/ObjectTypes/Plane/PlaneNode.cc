@@ -59,6 +59,7 @@ PlaneNode::PlaneNode(Plane& _plane, BaseNode *_parent, std::string _name)
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_NORMAL);
 
   sphere_ = new ACG::GLSphere(10, 10);
+  setPlane(_plane);
 }
 
 PlaneNode::~PlaneNode()
@@ -269,6 +270,7 @@ Plane& PlaneNode::getPlane()
 void PlaneNode::setPlane(Plane plane)
 {
     plane_ = plane;
+    updateVBO();
 }
 
 //----------------------------------------------------------------------------
@@ -297,6 +299,44 @@ addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, A
 
 //----------------------------------------------------------------------------
 
+void PlaneNode::updateVBO()
+{
+  if ( vbo_ )
+    glGenBuffersARB(1, &vbo_);
+  const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
+  const ACG::Vec3d normal = (plane_.xDirection % plane_.yDirection).normalized();
+
+  // Array of coordinates for the plane ( duplicated due to front and back rendering )
+  // Interleaved with normals
+  // 8 vertices with (3 float for position + 3 float for normal)
+  size_t vboSize = 8 * (3+3);
+  float vboData_[vboSize] = { 0.0,0.0,0.0,
+      (float)normal[0],(float)normal[1],(float)normal[2],
+      (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+      (float)normal[0],(float)normal[1],(float)normal[2],
+      (float)xy[0],(float)xy[1],(float)xy[2],
+      (float)normal[0],(float)normal[1],(float)normal[2],
+      (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
+      (float)normal[0],(float)normal[1],(float)normal[2],
+      (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
+      (float)-normal[0],(float)-normal[1],(float)-normal[2],
+      (float)xy[0],(float)xy[1],(float)xy[2],
+      (float)-normal[0],(float)-normal[1],(float)-normal[2],
+      (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
+      (float)-normal[0],(float)-normal[1],(float)-normal[2],
+      0.0,0.0,0.0,
+      (float)-normal[0],(float)-normal[1],(float)-normal[2]};
+
+  // Create buffer for vertex coordinates if necessary
+
+
+  // Bind buffer
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+
+  // Upload to buffer
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData_[0], GL_STATIC_DRAW_ARB);
+}
+
 void
 PlaneNode::
 getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
@@ -311,6 +351,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   // plane_.position represents the center of the plane.
   // Compute the corner position
   const ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
+  const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
 
   // translate to corner position and store that in renderer
   _state.push_modelview_matrix();
@@ -318,43 +359,12 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.modelview = _state.modelview();
   _state.pop_modelview_matrix();
 
-
   // Render with depth test enabled
   ro.depthTest = true;
 
-  // Compute the plane normal and outer corner
-  const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
-  const ACG::Vec3d normal = (plane_.xDirection % plane_.yDirection).normalized();
-
-  // Array of coordinates for the plane ( duplicated due to front and back rendering )
-  // Interleaved with normals
-  float vboData_[8 * 3 * 2 ] = { 0.0,0.0,0.0,
-                                 (float)normal[0],(float)normal[1],(float)normal[2],
-                                 (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
-                                 (float)normal[0],(float)normal[1],(float)normal[2],
-                                 (float)xy[0],(float)xy[1],(float)xy[2],
-                                 (float)normal[0],(float)normal[1],(float)normal[2],
-                                 (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
-                                 (float)normal[0],(float)normal[1],(float)normal[2],
-                                 (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
-                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-                                 (float)xy[0],(float)xy[1],(float)xy[2],
-                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-                                 (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
-                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-                                 0.0,0.0,0.0,
-                                 (float)-normal[0],(float)-normal[1],(float)-normal[2]};
-
-  // Create buffer for vertex coordinates if necessary
-  if ( ! vbo_ ) {
-    glGenBuffersARB(1, &vbo_);
-  }
-
-  // Bind buffer
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-
-  // Upload to buffer ( 4 vertices with 3 coordinates for point and normal of 4 byte sized floats)
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 8 * 3 * 2 * 4, &vboData_[0], GL_STATIC_DRAW_ARB);
+  //if vbo wasn't created, create new one
+  if (vbo_)
+    updateVBO();
 
   // Set the buffers for rendering
   ro.vertexBuffer = vbo_;
@@ -406,7 +416,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( front )
         //---------------------------------------------------
-        ro.debugName = "PlaneNode.plane_front";
+        ro.debugName = std::string("PlaneNode.plane_front")+name();
         localMaterial.ambientColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
         localMaterial.diffuseColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
         localMaterial.specularColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
@@ -417,7 +427,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( back )
         //---------------------------------------------------
-        ro.debugName = "PlaneNode.plane_back";
+        ro.debugName = std::string("PlaneNode.plane_back")+name();
         localMaterial.ambientColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
         localMaterial.diffuseColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
         localMaterial.specularColor(ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
