@@ -803,7 +803,7 @@ void DecimaterPlugin::slotUpdateNumTriangles() {
   if (!OpenFlipper::Options::gui() || !tool_->isVisible())
     return;
 
-  uint max = 0;
+  size_t max = 0;
   int meshN = 0;
 
   for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_TRIANGLE_MESH));

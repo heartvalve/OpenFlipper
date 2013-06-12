@@ -162,11 +162,11 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   // ID
   info_->id->setText( locale.toString(_id) );
   // Vertices
-  info_->vertices->setText( locale.toString( _mesh->n_vertices() ) );
+  info_->vertices->setText( locale.toString( qulonglong(_mesh->n_vertices() ) ) );
   // Faces
-  info_->faces->setText( locale.toString( _mesh->n_faces() ) );
+  info_->faces->setText( locale.toString( qulonglong( _mesh->n_faces() ) ) );
   // Edges
-  info_->edges->setText( locale.toString( _mesh->n_edges() ) );
+  info_->edges->setText( locale.toString( qulonglong( _mesh->n_edges() ) ) );
 
   if ( face ) {
 
@@ -830,9 +830,9 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
 
         TriMesh* mesh = PluginFunctions::triMesh(object);
 
-        infoBar_->vertices->setText( QLocale::system().toString( mesh->n_vertices() ) );
-        infoBar_->edges->setText( QLocale::system().toString( mesh->n_edges() ) );
-        infoBar_->faces->setText( QLocale::system().toString( mesh->n_faces() ) );
+        infoBar_->vertices->setText( QLocale::system().toString( qulonglong(mesh->n_vertices()) ) );
+        infoBar_->edges->setText( QLocale::system().toString( qulonglong(mesh->n_edges()) ) );
+        infoBar_->faces->setText( QLocale::system().toString( qulonglong(mesh->n_faces()) ) );
 
         infoBar_->showCounts();
 
@@ -843,9 +843,9 @@ void InfoMeshObjectPlugin::slotObjectUpdated( int _identifier , const UpdateType
 
         PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
-        infoBar_->vertices->setText( QLocale::system().toString( mesh->n_vertices() ) );
-        infoBar_->edges->setText( QLocale::system().toString( mesh->n_edges() ) );
-        infoBar_->faces->setText( QLocale::system().toString( mesh->n_faces() ) );
+        infoBar_->vertices->setText( QLocale::system().toString( qulonglong(mesh->n_vertices()) ) );
+        infoBar_->edges->setText( QLocale::system().toString( qulonglong(mesh->n_edges()) ) );
+        infoBar_->faces->setText( QLocale::system().toString( qulonglong(mesh->n_faces()) ) );
 
         infoBar_->showCounts();
         return;
