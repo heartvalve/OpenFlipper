@@ -230,6 +230,11 @@ private :
 
   QString       lastFile_;
 
+  /** Path to the directory where the current script is executed.
+   *  This might be empty, if a script is not saved!
+   */
+  QString       scriptPath_;
+
   QAction*      debuggerButton_;
 
 #ifdef ENABLE_SCRIPT_DEBUGGER
