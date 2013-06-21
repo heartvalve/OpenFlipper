@@ -242,7 +242,7 @@ DrawMeshT<Mesh>::rebuild()
   }
 
   // support faster update by only updating vertices
-  if (!bTriangleRebuild && !bVertexRebuild && rebuild_ == REBUILD_GEOMETRY)
+  if (!bTriangleRebuild && !bVertexRebuild && (rebuild_ & REBUILD_GEOMETRY))
   {
     // only update vertices, i.e. update values of vertices
 

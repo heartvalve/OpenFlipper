@@ -141,6 +141,10 @@ update_cache()
 
   // Update the indices for selected vertices
   if (vertexIndexInvalid_) {
+    /*
+     * Hack: Force rebuild of buffers so that mapVertexToVBOIndex call doesn't SEGFAULT.
+     */
+    if (drawMesh_) drawMesh_->getVBO();
 
     typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
 
@@ -163,6 +167,11 @@ update_cache()
 
   // Update index list of selected edges
   if (edgeIndexInvalid_) {
+
+    /*
+     * Hack: Force rebuild of buffers so that mapVertexToVBOIndex call doesn't SEGFAULT.
+     */
+    if (drawMesh_) drawMesh_->getVBO();
 
     typename Mesh::ConstEdgeIter e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
     typename Mesh::VertexHandle vh;
@@ -188,6 +197,11 @@ update_cache()
 
   // Update index list of selected halfedges
   if (halfedgeCacheInvalid_) {
+
+    /*
+     * Hack: Force rebuild of buffers so that mapVertexToVBOIndex call doesn't SEGFAULT.
+     */
+    if (drawMesh_) drawMesh_->getVBO();
 
     typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
 
@@ -217,6 +231,11 @@ update_cache()
 
   // update index list of selected faces
   if (faceIndexInvalid_) {
+
+    /*
+     * Hack: Force rebuild of buffers so that mapVertexToVBOIndex call doesn't SEGFAULT.
+     */
+    if (drawMesh_) drawMesh_->getVBO();
 
     typename Mesh::ConstFaceIter f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
     typename Mesh::ConstFaceVertexIter fv_it;
