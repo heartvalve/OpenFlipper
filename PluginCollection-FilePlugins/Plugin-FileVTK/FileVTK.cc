@@ -1265,7 +1265,7 @@ FileVTKPlugin::BestMeshType FileVTKPlugin::findBestObjectType(QString _filename)
     }
 
 
-    if (dataset & (STRUCTURED_POINTS | STRUCTURED_GRID | RECTILINEAR_GRID) )
+    if ((dataset == STRUCTURED_POINTS) || (dataset == STRUCTURED_GRID) || (dataset == RECTILINEAR_GRID) )
     {
         // Just points so every type is ok. Just use TriMesh. (Apperently these aren't even supported.)
         return BMT_TriMesh;
@@ -1388,14 +1388,16 @@ FileVTKPlugin::BestMeshType FileVTKPlugin::findBestObjectType(QString _filename)
 
         bool triMeshPossible = true;
         bool polyMeshPossible = true;
-        bool hexahedralMeshPossible = true;
-        bool polyhedralMeshPossible = true;
 
 #ifndef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
-        hexahedralMeshPossible = false;
+        bool hexahedralMeshPossible = false;
+#else
+        bool hexahedralMeshPossible = true;
 #endif
 #ifndef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
-        polyhedralMeshPossible = false;
+        bool polyhedralMeshPossible = false;
+#else
+        bool polyhedralMeshPossible = true;
 #endif
 
         quint32 read = 0;
