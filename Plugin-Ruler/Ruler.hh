@@ -34,102 +34,55 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 14388 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2012-04-16 12:55:37 +0200 (Mon, 16 Apr 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
-
-#ifndef RULERPLUGIN_HH
-#define RULERPLUGIN_HH
-
 #include <QObject>
 #include <QString>
 
-#include <ACG/Utils/SmartPointer.hh>
+#include <ACG/Scenegraph/LineNode.hh>
+#include <ACG/Scenegraph/TextNode.hh>
+#include <OpenFlipper/common/BaseObjectData.hh>
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/MouseInterface.hh>
-#include <OpenFlipper/BasePlugin/PickingInterface.hh>
-#include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
-#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
-
-#include <OpenFlipper/common/Types.hh>
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
-
-#include "Ruler.hh"
-
-class RulerPlugin : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolbarInterface, LoadSaveInterface
+class Ruler : public QObject
 {
   Q_OBJECT
-  Q_INTERFACES(BaseInterface)
-  Q_INTERFACES(MouseInterface)
-  Q_INTERFACES(PickingInterface)
-  Q_INTERFACES(ToolbarInterface)
-  Q_INTERFACES(LoadSaveInterface)
-
 signals:
-  void addToolbar(QToolBar *_toolbar);
-
-  void addPickMode(const std::string &_mode);
-
   void updateView();
 
-  void setPickModeMouseTracking  ( const std::string &_mode, bool  _mouseTracking);
-
-public slots:
-
-  void slotPickModeChanged(const std::string& _mode);
-
-  void slotMouseEvent(QMouseEvent* _event);
-
-
 public:
+  /**
+   * creates a new ruler on a given object
+   * @param _obj Object where additional nodes are added
+   * @param _pluginName name of the plugin
+   * @param _index the current index of the ruler. If you create multiple rulers, you can use this parameter to avoid identical nodenames
+   */
+  Ruler(BaseObjectData *_obj,const QString &_pluginName, unsigned _index);
+  ~Ruler();
 
-  RulerPlugin();
-  ~RulerPlugin();
+  void setPoints(const ACG::Vec3d& _start,const ACG::Vec3d& _end);
+  void setStartPoint(const ACG::Vec3d& _start);
+  void setEndPoint(const ACG::Vec3d& _end);
 
-  QString name(){return QString("RulerPlugin");}
-  QString description(){return QString("Measure the distance between two points.");}
+  const ACG::Vec3d* points() const{return points_;}
+
+  const BaseObject* getBaseObj(){return obj_;}
 
 private:
 
-  void reset();
+  void updateNodes();
 
-  void enableDragMode(const int _point);
+  const QString pluginName_;
+  const std::string lineNodeName_;
+  const std::string textNodeName_;
+  const std::string textTransformNodeName_;
 
-  void disableDragMode();
+  ACG::SceneGraph::LineNode* lineNode_;
+  ACG::SceneGraph::TextNode* textNode_;
+  ACG::SceneGraph::TransformNode* textTransformNode_;
 
-  bool dragModeActive(){return lineDrag_ >= 0;}
-
-  QAction *buttonAction_;
-
-  const std::string pickModeName_;
-
-  //saves the index of the dragged point, if no point was dragged, it is -1
-  int lineDrag_;
-
-  //checks if a double click was provided for resetting
-  bool dblClickCheck_;
-
-  ptr::shared_ptr<Ruler> currentRuler_;
-private slots:
-
-  void initializePlugin();
-
-  void pluginsInitialized();
-
-  void slotChangePickMode();
-
-  void slotAllCleared();
-
-  void objectDeleted(int _id);
-
-
-public slots:
-  QString version(){ return QString("1.0"); }
+  ACG::Vec3d points_[2];
+  BaseObjectData* obj_;
 };
-
-
-#endif //RULERPLUGIN_HH
