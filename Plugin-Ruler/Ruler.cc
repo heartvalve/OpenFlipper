@@ -29,7 +29,7 @@ Ruler::Ruler(BaseObjectData* _obj,const QString &_pluginName, unsigned index)
 
   if (!_obj->getAdditionalNode(textNode_,_pluginName,textNodeName_.c_str()))
   {
-    textNode_ = new ACG::SceneGraph::TextNode(textTransformNode_,textNodeName_,ACG::SceneGraph::TextNode::SCREEN_ALIGNED,true);
+    textNode_ = new ACG::SceneGraph::TextNode(textTransformNode_,textNodeName_,ACG::SceneGraph::TextNode::SCREEN_ALIGNED_STATIC_SIZE,true);
     _obj->addAdditionalNode(textNode_,_pluginName,textNodeName_.c_str());
 
   }
@@ -88,14 +88,13 @@ void Ruler::updateNodes()
   QString distanceStr = QString().number((distVec).length());
   textNode_->setText(distanceStr.toStdString());
   textNode_->multipassNodeSetActive(8, true);
-  textNode_->setSize(1);
 
   //translate and scale text
   textTransformNode_->loadIdentity();
   textTransformNode_->translate(Point1);
   ACG::Vec3d halfDist = distVec/2.f;
   textTransformNode_->translate(-halfDist);
-  textTransformNode_->scale(distVec.length()*0.125);
+  textTransformNode_->scale(0.025);
 
   emit updateView();
 }

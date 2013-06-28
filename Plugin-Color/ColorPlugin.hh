@@ -111,7 +111,7 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
     QString name() { return (QString("Color Plugin")); };
     QString description( ) { return (tr("Sets the Default colors e.g. for slides, paper,... snapshots")); };
 
-    /// Constructor
+    /// ConstructorOptionsInterface
     ColorPlugin();
 
 

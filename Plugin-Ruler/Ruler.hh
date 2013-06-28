@@ -70,6 +70,10 @@ public:
 
   const BaseObject* getBaseObj(){return obj_;}
 
+public slots:
+
+  void setTextSize(const unsigned _size){textNode_->setSize(_size*0.1); emit updateView();}
+
 private:
 
   void updateNodes();

@@ -18,6 +18,8 @@ Once, the ruler tool is enabled you can use following actions:
 
 \note If you click outside of your mesh, the ruler gets a reset. 
 
+The <b>textsize</b> can be customized in the Pluginoptions under \a File -> \a Options -> \a Plugins -> \a RulerPlugin
+
 */
 
 
