@@ -50,17 +50,8 @@ RulerPlugin::RulerPlugin()
 :
 buttonAction_(0),
 pickModeName_("MeasureDistance"),
-lineNodeName_("Ruler-Plugin LineNode"),
-textNodeName_("Ruler-Plugin TextNode"),
-textTransformNodeName_("Ruler-Plugin TransformNode"),
-hitStage_(firstClick),
-hitPoints_( ),
-lineNode_(0),
-textNode_(0),
-textTransformNode_(0),
 lineDrag_(-1),
 dblClickCheck_(false)
-
 {
 
 }
@@ -68,38 +59,8 @@ dblClickCheck_(false)
 //------------------------------------------------------------------------------
 RulerPlugin::~RulerPlugin()
 {
-
+  reset();
 }
-//------------------------------------------------------------------------------
-void RulerPlugin::showDistance()
-{
-  ACG::Vec3d Point1 = hitPoints_[0];
-  ACG::Vec3d Point2 = hitPoints_[1];
-
-  //creates the line
-  lineNode_->clear_points();
-  lineNode_->set_color(OpenMesh::Vec4f(1.0f,0.0f,0.0f,1.0f));
-  lineNode_->set_line_width(3);
-  lineNode_->add_line(Point1,Point2);
-  lineNode_->alwaysOnTop() = true;
-
-  //set params for the text
-  ACG::Vec3d distVec = Point1 - Point2;
-  QString distanceStr = QString().number((distVec).length());
-  textNode_->setText(distanceStr.toStdString());
-  textNode_->multipassNodeSetActive(8, true);
-  textNode_->setSize(1);
-
-  //translate and scale text
-  textTransformNode_->loadIdentity();
-  textTransformNode_->translate(Point1);
-  ACG::Vec3d halfDist = distVec/2.f;
-  textTransformNode_->translate(-halfDist);
-  textTransformNode_->scale(distVec.length()*0.125);
-
-  emit updateView();
-}
-
 //------------------------------------------------------------------------------
 void RulerPlugin::initializePlugin()
 {
@@ -131,8 +92,8 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
   if ( PluginFunctions::pickMode() != pickModeName_)
     return;
 
-  //set one of the points, depending on the hit state (first, second or modifying)
-
+//////create or change ruler/////////
+//set one of the points, depending on the hit state (first, second or modifying)
   if (_event->type() == QEvent::MouseButtonRelease )
   {
     unsigned int node_idx, target_idx;
@@ -141,75 +102,41 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
     // Get picked object's identifier by picking in scenegraph
     if ( PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING ,_event->pos(), node_idx, target_idx, &hitPoint) && !dblClickCheck_)
     {
-      if (hitStage_ == firstClick)
+      if (!currentRuler_)
       {
-        //get or create the line
+        //create a new Ruler
         BaseObjectData* object;
         if ( PluginFunctions::getPickedObject(node_idx, object) )
         {
+          currentRuler_.reset(new Ruler(object,name(),0));
+          connect(currentRuler_.get(),SIGNAL(updateView()),this,SIGNAL(updateView()));
+          currentRuler_->setPoints(hitPoint,hitPoint);
+          enableDragMode(1);
+        }
 
-          //create line, point, text and transformation nodes
-          if (!object->getAdditionalNode(lineNode_,name(),lineNodeName_.c_str()))
-          {
-            lineNode_ = new ACG::SceneGraph::LineNode(ACG::SceneGraph::LineNode::LineSegmentsMode,
-                object->manipulatorNode(),lineNodeName_);
-            object->addAdditionalNode(lineNode_,name(),lineNodeName_.c_str());
-          }
-
-          if (!object->getAdditionalNode(textTransformNode_,name(),textTransformNodeName_.c_str()))
-          {
-            textTransformNode_ = new ACG::SceneGraph::TransformNode(lineNode_,textTransformNodeName_.c_str());
-            object->addAdditionalNode(textTransformNode_,name(),textTransformNodeName_.c_str());
-          }
-
-          if (!object->getAdditionalNode(textNode_,name(),textNodeName_.c_str()))
-          {
-            textNode_ = new ACG::SceneGraph::TextNode(textTransformNode_,textNodeName_,ACG::SceneGraph::TextNode::SCREEN_ALIGNED,true);
-            object->addAdditionalNode(textNode_,name(),textNodeName_.c_str());
-
-          }
-
-        }//end creating nodes
-
-        hitPoints_[1] = hitPoints_[0] = hitPoint;
-        hitStage_ = secondClick;
-
-        enableDragMode(1);
-        showDistance();
       }
-      else if (hitStage_ == secondClick)
+      else
       {
-        disableDragMode();
-        //second position was clicked, so distance can be computed and displayed
-        hitPoints_[1] = hitPoint;
-
-        // show picked object
-        showDistance();
-
-        //after this stage, the points can be modified by a simple click
-        hitStage_ = modifyPoint;
-      }
-      else if (hitStage_ == modifyPoint)
-      {
-        //two modes:
-        //first: no point was dragged, so we can compute and change the position
-        //of the nearest one
-        if (lineDrag_ < 0)
+        //Ruler was created -> change position of a point
+        if (!dragModeActive())
         {
-          float firstDist = (hitPoints_[0] - hitPoint).length();
-          float secondDist = (hitPoints_[1] - hitPoint).length();
-          if (firstDist < secondDist)
-            hitPoints_[0] = hitPoint;
+          //dragmode is disabled ->  update position of nearest point
+          float distToStart = (currentRuler_->points()[0] - hitPoint).length();
+          float distToEnd = (currentRuler_->points()[1] - hitPoint).length();
+          if (distToStart < distToEnd)
+            currentRuler_->setStartPoint(hitPoint);
           else
-            hitPoints_[1] = hitPoint;
+            currentRuler_->setEndPoint(hitPoint);
         }
         else
-          //second: drag mode is enabled so we can easily update the position
         {
-          hitPoints_[lineDrag_] = hitPoint;
+          //second: drag mode is enabled so we can easily update the position
+          if (lineDrag_ == 0)
+            currentRuler_->setStartPoint(hitPoint);
+          else
+            currentRuler_->setEndPoint(hitPoint);
           disableDragMode();
         }
-        showDistance();
       }
     }
     else // if nothing was picked
@@ -217,10 +144,12 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       reset();
     }
   }
+
+//////enable drag mode//////
   else if (_event->type() == QEvent::MouseButtonPress)
   {//enable drag mode
 
-    if (hitStage_ == modifyPoint)
+    if (currentRuler_)
     {
       //decides which point is the nearest one, so
       //it can be dragged
@@ -230,18 +159,20 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       // Get picked object's identifier by picking in scenegraph
       if ( PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING ,_event->pos(), node_idx, target_idx, &hitPoint) )
       {
-        float firstDist = (hitPoints_[0] - hitPoint).length();
-        float secondDist = (hitPoints_[1] - hitPoint).length();
-        enableDragMode( (firstDist < secondDist)? 0 : 1);
-        showDistance();
+        float distToStart = (currentRuler_->points()[0] - hitPoint).length();
+        float distToEnd = (currentRuler_->points()[1] - hitPoint).length();
+        enableDragMode( (distToStart < distToEnd)? 0 : 1);
       }
     }
   }
-  else if (_event->type() == QEvent::MouseMove && lineDrag_ >= 0)
+////////modify ruler of drag mode was enabled/////////
+  else if (_event->type() == QEvent::MouseMove && dragModeActive())
   {//mouse moved and drag mode is enabled
 
     unsigned int node_idx, target_idx;
     OpenMesh::Vec3d hitPoint;
+    ACG::Vec3d hitPoints[2];
+    std::copy(currentRuler_->points(),currentRuler_->points()+2,hitPoints);
 
     // Get picked object's identifier by picking in scenegraph
     if ( !PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING ,_event->pos(), node_idx, target_idx, &hitPoint) )
@@ -250,12 +181,15 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
       QPoint position = _event->pos();
       ACG::Vec3d viewCoords = ACG::Vec3d(position.x(), PluginFunctions::viewerProperties().glState().context_height() - position.y(), 0.5);
       hitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
-      hitPoints_[lineDrag_] = ACG::Vec3d(hitPoint.data()[0], hitPoint.data()[1], hitPoints_[lineDrag_].data()[2] );
+      hitPoints[lineDrag_] = ACG::Vec3d(hitPoint.data()[0], hitPoint.data()[1], hitPoints[lineDrag_].data()[2] );
     }
     else
-      hitPoints_[lineDrag_] = hitPoint;
-    showDistance();
+      hitPoints[lineDrag_] = hitPoint;
+
+    currentRuler_->setPoints(hitPoints[0],hitPoints[1]);
   }
+
+
   else if (_event->type() == QEvent::MouseButtonDblClick)
   {//reset
     reset();
@@ -268,12 +202,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
 //------------------------------------------------------------------------------
 void RulerPlugin::reset()
 {
-  hitStage_ = firstClick;
   lineDrag_ = -1;
-  if (lineNode_)
-    lineNode_->clear_points();
-  if (textNode_)
-    textNode_->setText("");
 }
 //------------------------------------------------------------------------------
 void RulerPlugin::enableDragMode(const int _point)
@@ -306,12 +235,20 @@ void RulerPlugin::slotPickModeChanged(const std::string& _mode)
 //------------------------------------------------------------------------------
 void RulerPlugin::slotAllCleared()
 {
-  hitStage_ = firstClick;
-  lineDrag_ = -1;
+  disableDragMode();
+}
 
-  lineNode_ = 0;
-  textNode_ = 0;
-  textTransformNode_ = 0;
+void RulerPlugin::objectDeleted(int _id)
+{
+  if (!currentRuler_)
+    return;
+
+  disableDragMode();
+  if (_id == currentRuler_->getBaseObj()->id())
+  {
+    disconnect(currentRuler_.get(),SIGNAL(updateView()),this,SIGNAL(updateView()));
+    currentRuler_.reset();
+  }
 }
 
 Q_EXPORT_PLUGIN2( rulerPlugin , RulerPlugin );
