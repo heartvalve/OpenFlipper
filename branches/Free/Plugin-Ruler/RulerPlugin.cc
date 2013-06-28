@@ -44,6 +44,7 @@
 #include "RulerPlugin.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 //------------------------------------------------------------------------------
 RulerPlugin::RulerPlugin()
@@ -51,7 +52,9 @@ RulerPlugin::RulerPlugin()
 buttonAction_(0),
 pickModeName_("MeasureDistance"),
 lineDrag_(-1),
-dblClickCheck_(false)
+dblClickCheck_(false),
+optionsWidget_(0),
+textSizeSettingName_(name()+QString("/TextSize"))
 {
 
 }
@@ -110,6 +113,8 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
         {
           currentRuler_.reset(new Ruler(object,name(),0));
           connect(currentRuler_.get(),SIGNAL(updateView()),this,SIGNAL(updateView()));
+          unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,10).toUInt();
+          currentRuler_->setTextSize(textSize);
           currentRuler_->setPoints(hitPoint,hitPoint);
           enableDragMode(1);
         }
@@ -249,6 +254,27 @@ void RulerPlugin::objectDeleted(int _id)
     disconnect(currentRuler_.get(),SIGNAL(updateView()),this,SIGNAL(updateView()));
     currentRuler_.reset();
   }
+}
+//------------------------------------------------------------------------------
+bool RulerPlugin::initializeOptionsWidget(QWidget*& _widget)
+{
+  if (!optionsWidget_)
+  {
+    optionsWidget_ = new RulerOptions();
+  }
+
+  unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,10).toUInt();
+  optionsWidget_->textSizeSpinBox->setValue(textSize);
+  _widget = optionsWidget_;
+  return true;
+}
+//------------------------------------------------------------------------------
+void RulerPlugin::applyOptions()
+{
+  int textSize = optionsWidget_->textSizeSpinBox->value();
+  if (currentRuler_)
+    currentRuler_->setTextSize(textSize);
+  OpenFlipperSettings().setValue(textSizeSettingName_,textSize);
 }
 
 Q_EXPORT_PLUGIN2( rulerPlugin , RulerPlugin );

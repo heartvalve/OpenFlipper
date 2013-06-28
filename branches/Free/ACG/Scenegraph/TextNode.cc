@@ -91,7 +91,7 @@ TextNode( BaseNode*    _parent,
           TextMode     _textMode,
           bool         _alwaysOnTop)
   : BaseNode(_parent, _name),
-    size_(1),
+    size_(1.0),
     textMode_(_textMode),
     vbo_(0),
     vertexBuffer_(0),
@@ -203,7 +203,7 @@ setText(std::string _text) {
 
 void
 TextNode::
-setSize(unsigned int _size) {
+setSize(double _size) {
   size_ = _size; updateVBO();
 }
 
@@ -292,35 +292,16 @@ draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     bindVBO();
 
     // do not rotate the quads in this case
-    if (textMode_ == SCREEN_ALIGNED) {
-      _state.push_modelview_matrix();
+    if (textMode_ == SCREEN_ALIGNED || textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
+      applyScreenAligned(_state);
 
-      // try to get the scale factor from the parent TransformNode if it exists
-      BaseNode* pParent = parent();
-      double scale = 1.0;
-      while (pParent) {
-        TransformNode* pTrans = dynamic_cast<TransformNode*>(pParent);
-        if (pTrans) {
-          scale = pTrans->scale()(0,0);
-          break;
-        }
-        pParent = pParent->parent();
-      }
-
-      // get the translation
-      Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
-      _state.reset_modelview();
-      Vec3d unprojected = _state.unproject(projected);
-      _state.translate(unprojected);
-      _state.scale(scale);
-    }
 
     _state.push_modelview_matrix();
     _state.scale(size_);
     glDrawArrays(GL_QUADS, 0, text_.size() * 4);
     _state.pop_modelview_matrix();
 
-    if (textMode_ == SCREEN_ALIGNED) {
+    if (textMode_ == SCREEN_ALIGNED || textMode_ == SCREEN_ALIGNED_STATIC_SIZE) {
       _state.pop_modelview_matrix();
     }
     unbindVBO();
@@ -572,36 +553,15 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.debugName = (std::string("TextNode: ")+name()).c_str();
 
   // do not rotate the quads in this case
-  if (textMode_ == SCREEN_ALIGNED)
-  {
-    _state.push_modelview_matrix();
-
-    // try to get the scale factor from the parent TransformNode if it exists
-    BaseNode* pParent = parent();
-    double scale = 1.0;
-    while (pParent) {
-      TransformNode* pTrans = dynamic_cast<TransformNode*>(pParent);
-      if (pTrans) {
-        scale = pTrans->scale()(0,0);
-        break;
-      }
-      pParent = pParent->parent();
-    }
-
-    // get the translation
-    Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
-    _state.reset_modelview();
-    Vec3d unprojected = _state.unproject(projected);
-    _state.translate(unprojected);
-    _state.scale(scale);
-  }
+  if (textMode_ == SCREEN_ALIGNED || textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
+    applyScreenAligned(_state);
 
   _state.push_modelview_matrix();
   _state.scale(size_);
   ro.modelview = _state.modelview();
   _state.pop_modelview_matrix();
 
-  if (textMode_ == SCREEN_ALIGNED)
+  if (textMode_ == SCREEN_ALIGNED || textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
   {
     _state.pop_modelview_matrix();
   }
@@ -642,6 +602,36 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.glDrawArrays(GL_QUADS, 0, text_.size() * 4);
   _renderer->addRenderObject(&ro);
 }
+
+//----------------------------------------------------------------------------
+void TextNode::applyScreenAligned(GLState &_state)
+{
+  _state.push_modelview_matrix();
+
+  // try to get the scale factor from the parent TransformNode if it exists
+  BaseNode* pParent = parent();
+  double scale = 1.0;
+  while (pParent) {
+    TransformNode* pTrans = dynamic_cast<TransformNode*>(pParent);
+    if (pTrans) {
+      scale = pTrans->scale()(0,0);
+      break;
+    }
+    pParent = pParent->parent();
+  }
+
+  // get the translation
+  Vec3d projected = _state.project(Vec3d(0.0, 0.0, 0.0));
+  _state.reset_modelview();
+  Vec3d unprojected = _state.unproject(projected);
+
+  if (textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
+    scale *= (unprojected - _state.eye()).length();
+
+  _state.translate(unprojected);
+  _state.scale(scale);
+}
+
 
 //=============================================================================
 } // namespace SceneGraph

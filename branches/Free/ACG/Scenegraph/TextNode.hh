@@ -92,6 +92,7 @@ public:
 
   enum TextMode {
     SCREEN_ALIGNED, /// Text will always stay parallel to screen
+    SCREEN_ALIGNED_STATIC_SIZE, /// Text will always stay parallel to screen (like SCREEN_ALIGNED) and text has static size, independent of the camera position
     OBJECT_ALIGNED  /// Text will be transformed and projected by Modelview and projection matrix
   };
 
@@ -147,7 +148,7 @@ public:
   void setText(std::string _text);
 
   /// sets the size by which the quads displaying the text will be scaled
-  void setSize(unsigned int _size);
+  void setSize(double _size);
 
   /// sets the font to be used for generating a texture with most characters of the chosen font
   void setFont(const QFont& _font);
@@ -175,6 +176,9 @@ private:
   /// unbinds #vbo_
   void unbindVBO();
 
+  /// modifies _state so that the modelviewmatrix will be screenaligned. remember to call "_state.pop_modelview_matrix();" twice
+  void applyScreenAligned(GLState &_state);
+
   /**
    * Creates a map #charToIndex_ from most characters to an incrementing set of indices.
    * These indices are used to create the texture coordinates in updateVBO().
@@ -184,7 +188,7 @@ private:
 private:
 
   /// scaling factor by which the quads in #vbo_ are scaled
-  unsigned int size_;
+  double size_;
 
   /// text to be displayed on quads in #vbo_
   std::string text_;
