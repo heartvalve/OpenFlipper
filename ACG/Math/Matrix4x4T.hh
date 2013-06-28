@@ -59,6 +59,8 @@
 #include <cmath>
 #include "../Config/ACGDefines.hh"
 #include <iostream>
+#include <algorithm>
+#include <functional>
 
 
 //== NAMESPACES  ==============================================================
@@ -68,18 +70,6 @@ namespace ACG {
 
 
 //== MACROS / HELPERS =========================================================
-
-	      
-#define matrixOperator(src, dst, op) { \
-    Scalar *_a = dst;\
-    const Scalar *_b = src;\
-    *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; \
-    *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; \
-    *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; \
-    *_a++ op *_b++; *_a++ op *_b++; *_a++ op *_b++; *_a   op *_b  ; \
-}
-  
-#define MAT(m,r,c) ((m)[(r)+((c)<<2)])
 
 template<typename Scalar> inline bool checkEpsilon(Scalar x) {
   return fabs(x) < (1e-6);
@@ -101,7 +91,7 @@ template <class Scalar>
 class Matrix4x4T
 {
 public:
-   
+
   /// constructor: uninitialized values
   Matrix4x4T() {}
  
@@ -114,10 +104,7 @@ public:
   /** setup matrix using an array of N*N scalar values.
       elements are ordered 'column first' (like OpenGL) */
   inline Matrix4x4T(const Scalar _array[16]) {
-      /*
-       * Why aren't we doing a memcpy here?
-       */
-    matrixOperator(_array, mat_, =);
+    std::copy(_array,_array+16, mat_);
   }
 
   /// destructor
@@ -127,9 +114,7 @@ public:
   /// assignment from other matrix type
   template<typename otherScalar>
   inline Matrix4x4T<Scalar>& operator=(const Matrix4x4T<otherScalar>& _rhs) {
-    for (int i=0; i<4; ++i)
-      for (int j=0; j<4; ++j)
-	operator()(i,j) = _rhs(i,j);
+    std::copy(_rhs.data(),_rhs.data()+16,mat_);
     return *this;
   }
 
@@ -137,12 +122,12 @@ public:
 
   /// access operator (read and write)
   inline Scalar& operator()(unsigned int row, unsigned int col) {
-    return MAT(mat_,row,col);
+    return  mat_[(row)+((col)<<2)];
   }
 
   /// access operator (read only)
   inline const Scalar& operator()(unsigned int row, unsigned int col) const {
-    return MAT(mat_,row,col);
+    return mat_[(row)+((col)<<2)];
   }
 
 
@@ -164,17 +149,15 @@ public:
 
 
   /// self + _rhs
-  inline Matrix4x4T operator+ (const Matrix4x4T<Scalar>& _rhs) const {
-    Matrix4x4T<Scalar> m(_rhs);
-    matrixOperator(mat_, m.mat_, += );
-    return m;
+  inline Matrix4x4T operator+ (Matrix4x4T<Scalar> _rhs) const {
+    std::transform(mat_,mat_+16, _rhs.mat_, _rhs.mat_, std::plus<Scalar>());
+    return _rhs;
   }
 
   /// self - _rhs
-  inline Matrix4x4T operator- (const Matrix4x4T<Scalar>& _rhs) const {
-    Matrix4x4T<Scalar> m(*this);
-    matrixOperator(_rhs.mat_, m.mat_, -= );
-    return m;
+  inline Matrix4x4T operator- (Matrix4x4T<Scalar> _rhs) const {
+    std::transform(mat_,mat_+16, _rhs.mat_, _rhs.mat_, std::minus<Scalar>());
+    return _rhs;
   }
 
   /// self * _rhs
@@ -186,13 +169,13 @@ public:
 
   /// self += _rhs
   inline Matrix4x4T& operator+= ( const Matrix4x4T<Scalar>& _rhs) {
-    matrixOperator(_rhs.mat_, mat_, += );
+    std::transform(mat_,mat_+16,_rhs.mat_, mat_, std::plus<Scalar>());
     return *this;
   }
 
   /// self -= _rhs
   inline Matrix4x4T& operator-= ( const Matrix4x4T<Scalar>& _rhs) {
-    matrixOperator(_rhs.mat_, mat_, -= );
+    std::transform(mat_,mat_+16, _rhs.mat_, mat_, std::minus<Scalar>());
     return *this;
   }
 
@@ -311,12 +294,6 @@ operator>>(std::istream& is, Matrix4x4T<Scalar>& m)
       is >> m(i,j);
   return is;
 }
-
-
-//=============================================================================
-
-#undef matrixOperator
-#undef MAT
 
 //=============================================================================
 } // namespace ACG
