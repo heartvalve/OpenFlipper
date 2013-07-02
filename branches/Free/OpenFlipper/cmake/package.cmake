@@ -175,10 +175,17 @@ if (WIN32)
     DESTINATION ${ACG_PROJECT_BINDIR}
   )
 
+# check for generator
+#  message(STATUS "CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
+
   if ( CMAKE_GENERATOR MATCHES "^Visual Studio 9 2008.*" )
     SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2008/vcredist_x86.exe")
   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 10.*" )
-    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2010/vcredist_x86.exe") 
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2010/vcredist_x86.exe")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2012/vcredist_x64.exe")	 
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )	 
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2012/vcredist_x86.exe")
   endif()
   
   # append dll's to installed package
