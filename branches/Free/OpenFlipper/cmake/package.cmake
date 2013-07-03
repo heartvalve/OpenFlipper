@@ -183,9 +183,9 @@ if (WIN32)
   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 10.*" )
     SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2010/vcredist_x86.exe")
   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
-    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2012/vcredist_x64.exe")	 
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2012/vcredist_x64.exe")	 
   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )	 
-    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2012/vcredist_x86.exe")
+    SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2012/vcredist_x86.exe")
   endif()
   
   # append dll's to installed package
@@ -193,10 +193,17 @@ if (WIN32)
      install (FILES "${REDISTRIBUTABLE_FILE}"
       DESTINATION ${ACG_PROJECT_BINDIR}
     )
-    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q /norestart'")
-	message(STATUS "Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
+
+    if ( CMAKE_GENERATOR MATCHES "^.*Win64" )    
+      set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x64.exe\\\" /q /norestart'")
+  	message(STATUS "Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
+    else()
+       set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q /norestart'")  
+   	message(STATUS "Using Redistributable found here: ${REDISTRIBUTABLE_FILE}")
+    endif()
+
   else()
-    message(WARNING "Warning: No vcredist_x86 found (Only required for creating installer package). Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
+    message(WARNING "Warning: No vcredist_x86 or vcredist_x64 found (Only required for creating installer package). Please copy it to a directory called win in your source tree: ${REDISTRIBUTABLE_FILE}")
   endif ()
  
 
