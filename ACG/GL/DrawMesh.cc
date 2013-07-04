@@ -241,8 +241,8 @@ DrawMeshT<Mesh>::rebuild()
     prevNumVerts_ = mesh_.n_vertices();
   }
 
-  // support faster update by only updating vertices
-  if (!bTriangleRebuild && !bVertexRebuild && (rebuild_ & REBUILD_GEOMETRY))
+  // support faster update by only updating vertices (do a complete update if the textures have to be rebuild)
+  if (!bTriangleRebuild && !bVertexRebuild && (rebuild_ & REBUILD_GEOMETRY) && !(rebuild_ & REBUILD_TEXTURES))
   {
     // only update vertices, i.e. update values of vertices
 
