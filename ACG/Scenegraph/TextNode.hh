@@ -83,7 +83,7 @@ namespace SceneGraph {
  *	via the setRenderingMode(TextMode _textMode) function. Alternatively the quads can be aligned
  *	to the screen (SCREEN_ALIGNED). The font that is used to display text on the screen
  *  can be set with the setFont(const QFont& _font) function. Finally the quads can be scaled
- * 	via the setSize(unsigned int _size) function.
+ * 	via the setSize(double _size) function.
 **/
 
 class ACGDLLEXPORT TextNode : public BaseNode
@@ -148,7 +148,10 @@ public:
   void setText(std::string _text);
 
   /// sets the size by which the quads displaying the text will be scaled
-  void setSize(double _size);
+  void setSize(const double _size);
+
+  /// sets the pixelsize of the text (only available for the SCREEN_ALIGNED_STATIC_SIZE mode and only works, if scaling is 1)
+  void setPixelSize(const unsigned int _size);
 
   /// sets the font to be used for generating a texture with most characters of the chosen font
   void setFont(const QFont& _font);
@@ -190,10 +193,13 @@ private:
   /// scaling factor by which the quads in #vbo_ are scaled
   double size_;
 
+  /// pixelSize of the text for the SCREEN_ALIGNED_STATIC_SIZE mode
+  unsigned pixelSize_;
+
   /// text to be displayed on quads in #vbo_
   std::string text_;
 
-  /// current display mode of #text_ (SCREEN_ALIGNED or OBJECT_ALIGNED)
+  /// current display mode of #text_ (SCREEN_ALIGNED, SCREEN_ALIGNED_STATIC_SIZE or OBJECT_ALIGNED)
   TextMode textMode_;
 
   /**

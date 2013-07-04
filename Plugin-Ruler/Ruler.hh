@@ -72,7 +72,7 @@ public:
 
 public slots:
 
-  void setTextSize(const unsigned _size){textNode_->setSize(_size*0.1); emit updateView();}
+  void setTextSize(const unsigned _size){textNode_->setPixelSize(_size); emit updateView();}
 
 private:
 

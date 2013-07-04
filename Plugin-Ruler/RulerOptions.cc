@@ -46,4 +46,5 @@ RulerOptions::RulerOptions(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
+    textSizeSpinBox->setSuffix(" px");
 }

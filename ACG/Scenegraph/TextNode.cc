@@ -92,6 +92,7 @@ TextNode( BaseNode*    _parent,
           bool         _alwaysOnTop)
   : BaseNode(_parent, _name),
     size_(1.0),
+    pixelSize_(12),
     textMode_(_textMode),
     vbo_(0),
     vertexBuffer_(0),
@@ -102,6 +103,7 @@ TextNode( BaseNode*    _parent,
     alwaysOnTop_(_alwaysOnTop),
     blendSrc_(0),
     blendDest_(0)
+
 {
   updateFont();
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
@@ -203,7 +205,7 @@ setText(std::string _text) {
 
 void
 TextNode::
-setSize(double _size) {
+setSize(const double _size) {
   size_ = _size; updateVBO();
 }
 
@@ -625,13 +627,23 @@ void TextNode::applyScreenAligned(GLState &_state)
   _state.reset_modelview();
   Vec3d unprojected = _state.unproject(projected);
 
-  if (textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
-    scale *= (unprojected - _state.eye()).length();
-
   _state.translate(unprojected);
+
+  if (textMode_ == SCREEN_ALIGNED_STATIC_SIZE)
+  {
+    ACG::Vec3d nullProj = _state.project(Vec3d(0.0,0.0,0.0));
+    ACG::Vec3d nullUnproj = _state.unproject(nullProj);
+    ACG::Vec3d heightUnproj = _state.unproject(nullProj+ACG::Vec3d(0.0,pixelSize_,0.0));
+    scale *= heightUnproj.length();
+  }
+
   _state.scale(scale);
 }
-
+//----------------------------------------------------------------------------
+void TextNode::setPixelSize(const unsigned int _size)
+{
+  pixelSize_ = _size;
+}
 
 //=============================================================================
 } // namespace SceneGraph
