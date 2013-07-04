@@ -113,7 +113,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
         {
           currentRuler_.reset(new Ruler(object,name(),0));
           connect(currentRuler_.get(),SIGNAL(updateView()),this,SIGNAL(updateView()));
-          unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,10).toUInt();
+          unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,16).toUInt();
           currentRuler_->setTextSize(textSize);
           currentRuler_->setPoints(hitPoint,hitPoint);
           enableDragMode(1);
@@ -263,7 +263,7 @@ bool RulerPlugin::initializeOptionsWidget(QWidget*& _widget)
     optionsWidget_ = new RulerOptions();
   }
 
-  unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,10).toUInt();
+  unsigned textSize = OpenFlipperSettings().value(textSizeSettingName_,16).toUInt();
   optionsWidget_->textSizeSpinBox->setValue(textSize);
   _widget = optionsWidget_;
   return true;

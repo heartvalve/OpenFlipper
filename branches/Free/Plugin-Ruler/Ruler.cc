@@ -85,7 +85,7 @@ void Ruler::updateNodes()
 
   //set params for the text
   ACG::Vec3d distVec = Point1 - Point2;
-  QString distanceStr = QString().number((distVec).length());
+  QString distanceStr = QString().number(distVec.length());
   textNode_->setText(distanceStr.toStdString());
   textNode_->multipassNodeSetActive(8, true);
 
@@ -94,7 +94,6 @@ void Ruler::updateNodes()
   textTransformNode_->translate(Point1);
   ACG::Vec3d halfDist = distVec/2.f;
   textTransformNode_->translate(-halfDist);
-  textTransformNode_->scale(0.025);
 
   emit updateView();
 }
