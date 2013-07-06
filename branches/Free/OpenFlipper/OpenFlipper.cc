@@ -78,7 +78,6 @@
   #include <io.h>
 #endif
 
-
 // #ifndef WIN32
 //
 // #include <sys/resource.h>
@@ -348,7 +347,7 @@ int main(int argc, char **argv)
   std::signal(SIGSEGV, segfaultHandling);
 // #endif
 
-  OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
+  OpenFlipper::Options::windowTitle(TOSTRING(PRODUCT_STRING)" v" + OpenFlipper::Options::coreVersion());
 
   #ifdef WIN32
     #ifndef NDEBUG
