@@ -167,6 +167,15 @@ void SideArea::expandAll()
   }
 }
 
+void SideArea::expand(QWidget *sideElementWidget, bool expand)
+{
+  foreach (SideElement *e, items_)
+  {
+    if (e->widget() == sideElementWidget)
+        e->setActive(expand);
+  }
+}
+
 //-----------------------------------------------------------------------------
 
 void SideArea::saveState (QSettings &_settings)
