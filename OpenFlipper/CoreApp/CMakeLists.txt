@@ -188,8 +188,14 @@ if (APPLE)
   else()
 
     IF ( NOT APPLE_BUNDLE_ICON )
+
         # option to set the used Icon for OpenFlipper
-        set ( APPLE_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
+        if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/Icons/OpenFlipper_Icon.icns )
+          set ( APPLE_BUNDLE_ICON " ${CMAKE_SOURCE_DIR}/branding/Icons/OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
+        else()
+          set ( APPLE_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
+        endif()
+
     ENDIF(NOT APPLE_BUNDLE_ICON )
 
     IF ( NOT APPLE_INFO_PLIST )
@@ -315,14 +321,16 @@ if (NOT APPLE)
 	acg_install_dir ("${CMAKE_BINARY_DIR}/Build/QtPlugins/" "${ACG_PROJECT_DATADIR}/QtPlugins")
   endif(WIN32)
   
-  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/win )
     if ( WIN32 ) 
       acg_install_dir ( "${CMAKE_SOURCE_DIR}/branding/win" "${ACG_PROJECT_DATADIR}/Icons")
      endif()
   endif()
 
-
-#todo install splash file for windows and Linux branding
 endif ()
 
 
+if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/Icons )
+  # Overwrite generic Icons with branded ones.
+  acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+endif()
