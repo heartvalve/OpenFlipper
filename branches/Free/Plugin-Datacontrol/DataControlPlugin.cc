@@ -863,6 +863,13 @@ void DataControlPlugin::saveOnExit(INIFile& _ini){
   _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
 }
 
+void DataControlPlugin::showReducedUi(bool reduced) {
+    tool_->boundingBoxWidget->setVisible(!reduced);
+    tool_->boundingBoxBtn->setVisible(!reduced);
+    tool_->line_2->setVisible(!reduced);
+    tool_->visibleDataWidget->setVisible(!reduced);
+    tool_->visibleDataBtn->setVisible(!reduced);
+}
 
 Q_EXPORT_PLUGIN2( datacontrolplugin , DataControlPlugin );
 
