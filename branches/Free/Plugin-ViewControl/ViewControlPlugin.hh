@@ -342,6 +342,8 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Perspective or orthogonal
     void setCoordsysProjection(bool _orthogonal);
 
+    void setTwoSidedLighting(bool _enabled);
+
 };
 
 #endif //ViewControlPlugin_HH

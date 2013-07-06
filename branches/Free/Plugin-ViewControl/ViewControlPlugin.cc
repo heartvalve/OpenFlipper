@@ -1379,6 +1379,11 @@ void ViewControlPlugin::setCoordsysProjection(bool _orthogonal) {
   
 }
 
+void ViewControlPlugin::setTwoSidedLighting(bool _enabled) {
+    PluginFunctions::viewerProperties().twoSidedLighting(_enabled);
+}
+
+
 void ViewControlPlugin::setDescriptions() {
   emit setSlotDescription("translate(Vector,int)", "Translate Scene",
                           QString("TranslationVector,Viewer").split(","),
@@ -1460,6 +1465,9 @@ void ViewControlPlugin::setDescriptions() {
 
   emit setSlotDescription("viewingDirection(int)", "Get the current viewingDirection of a specific viewer.",
                             QStringList("ViewerId"), QStringList("Id of the viewer"));
+
+  emit setSlotDescription("setTwoSidedLighting(bool)", "Enable or disable two sided lighting.",
+                            QStringList("enabled"), QStringList("Specifies whether to enable or disable two sided lighting."));
                           
 }
 
