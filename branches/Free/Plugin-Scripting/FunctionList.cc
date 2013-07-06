@@ -90,7 +90,7 @@ void FunctionList::filter(QString _filter){
 
     emit getDescription(fnName, slotDescription, params, descriptions);
 
-    if ( fnName.contains(_filter) || slotDescription.contains(_filter) )
+    if ( fnName.contains(_filter,Qt::CaseInsensitive) || slotDescription.contains(_filter,Qt::CaseInsensitive) )
       item(i)->setHidden(false);
     else
       item(i)->setHidden(true);
