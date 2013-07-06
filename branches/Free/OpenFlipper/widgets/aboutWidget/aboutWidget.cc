@@ -56,6 +56,11 @@ AboutWidget::AboutWidget(QWidget *parent )
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"window-close.png");
   actionClose->setIcon(icon);
 
+  setWindowTitle(tr("About %1").arg(TOSTRING(PRODUCT_NAME)));
+  const int idx = About->indexOf(tab_2);
+  About->setTabText(idx, tr(TOSTRING(PRODUCT_NAME), "about box tab title"));
+  OpenFlipperLicense->setHtml(OpenFlipperLicense->toHtml().arg(TOSTRING(PRODUCT_NAME)));
+
   connect( actionClose , SIGNAL(triggered() ) , this, SLOT(hide()) );
   connect( closeButton , SIGNAL(clicked()   ) , this, SLOT(hide()) );
 }
