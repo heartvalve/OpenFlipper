@@ -242,11 +242,11 @@ acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/
 
 if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
   if ( WIN32 ) 
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/win" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/win/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   elseif( APPLE )
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/mac" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/mac/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   elseif()
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/linux" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/linux/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   endif()
 endif()
 
