@@ -420,6 +420,8 @@ public:
     ///Store current key assignments to a given INI file
     void saveKeyBindings(INIFile& _ini);
 
+    void showReducedMenuBar(bool reduced);
+
   private:
     /// Store the state of the shift key
     bool shiftPressed_;
@@ -563,7 +565,7 @@ public:
 
     private:
 
-      QPushButton* viewModeButton_;
+      QAction* viewModeButton_;
 
       /// Submenu holding all ViewMode actions
       QMenu* viewModeMenu_;
@@ -1461,6 +1463,8 @@ public:
      */
     void pickMode( int _id );
 
+    void expandToolBoxWidget(QWidget *widget, bool expand);
+
   public slots:
 
     /** Switch to given picking mode
@@ -1532,6 +1536,11 @@ public:
     /** Index of current pickMode
      */
     int                    pick_mode_idx_;
+
+    /**
+     * Actions that are hidden in reduced mode.
+     */
+    std::vector<QAction*> extended_actions;
 
 
     /// update pick mode menu

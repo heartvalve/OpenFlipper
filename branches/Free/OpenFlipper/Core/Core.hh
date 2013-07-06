@@ -773,7 +773,7 @@ public slots:
      * @param _active      Activate or deactivate
     */
     void setToolBoxActive(QString _toolBoxName, bool _active);
-    
+
     /** @} */
 
    //===========================================================================
@@ -987,6 +987,8 @@ private slots:
       * @return A pointer to the requested toolbox widget if it was found, nullptr, otherwise.
       */
      QWidget *getToolbox(QString _pluginName, QString _toolboxName);
+
+     void activateToolbox(QString _pluginName, QString _toolboxName, bool activate);
 
    private :
 
@@ -1224,6 +1226,8 @@ private slots:
     /// Move selected toolbox to bottom of side area
     void moveToolBoxToBottom(QString _name);
 
+    void showReducedMenuBar(bool reduced);
+
   private :
     /// Core scripting engine
     QScriptEngine scriptEngine_;
@@ -1435,6 +1439,8 @@ private slots:
      * test functions will recognize that something went wrong.
      */
     void exitFailure();
+
+    void finishSplash();
 
 
   /** @} */

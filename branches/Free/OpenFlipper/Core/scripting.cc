@@ -235,6 +235,11 @@ QWidget *Core::getToolbox(QString _pluginName, QString _toolboxName) {
     return 0;
 }
 
+void Core::activateToolbox(QString _pluginName, QString _toolboxName, bool activate) {
+    QWidget *toolbox = Core::getToolbox(_pluginName, _toolboxName);
+    coreWidget_->expandToolBoxWidget(toolbox, activate);
+}
+
 void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 

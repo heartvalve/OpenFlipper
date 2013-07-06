@@ -480,6 +480,10 @@ void CoreWidget::clearPickModes()
 
 //-----------------------------------------------------------------------------
 
+void CoreWidget::expandToolBoxWidget(QWidget *widget, bool expand) {
+    toolBox_->expand(widget, expand);
+}
+
 
 const std::string& CoreWidget::pickMode() const
 {

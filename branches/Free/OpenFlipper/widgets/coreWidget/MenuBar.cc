@@ -123,6 +123,12 @@ bool CoreWidget::eventFilter(QObject *_obj, QEvent *_event)
 
 //=============================================================================
 
+void CoreWidget::showReducedMenuBar(bool reduced) {
+    for (std::vector<QAction*>::iterator it = extended_actions.begin(); it != extended_actions.end(); ++it) {
+        (*it)->setVisible(!reduced);
+    }
+}
+
 void CoreWidget::setupMenuBar()
 {
 
@@ -158,8 +164,8 @@ void CoreWidget::setupMenuBar()
   AC_AddEmpty->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"add-empty-object.png"));
   connect(AC_AddEmpty, SIGNAL(triggered()), this, SIGNAL(addEmptyObjectMenu()));
   fileMenu_->addAction(AC_AddEmpty);
-
-  fileMenu_->addSeparator();
+  extended_actions.push_back(AC_AddEmpty);
+  extended_actions.push_back(fileMenu_->addSeparator());
 
   //Save object
   QAction* AC_Save = new QAction(tr("Save Objects"), this);
@@ -169,6 +175,7 @@ void CoreWidget::setupMenuBar()
   AC_Save->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png"));
   connect(AC_Save, SIGNAL(triggered()), this, SIGNAL(saveMenu()));
   fileMenu_->addAction(AC_Save);
+  extended_actions.push_back(AC_Save);
 
   //Save object to
   QAction* AC_Save_to = new QAction(tr("Save Objects to"), this);
@@ -178,7 +185,7 @@ void CoreWidget::setupMenuBar()
   connect(AC_Save_to, SIGNAL(triggered()), this, SIGNAL(saveToMenu()));
   fileMenu_->addAction(AC_Save_to);
 
-  fileMenu_->addSeparator();
+  extended_actions.push_back(fileMenu_->addSeparator());
 
   //Load ini
   QAction* AC_load_ini = new QAction(tr("Load Settings"), this);
@@ -187,6 +194,7 @@ void CoreWidget::setupMenuBar()
   AC_load_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"load-settings.png"));
   connect(AC_load_ini, SIGNAL(triggered()), this, SIGNAL(loadIniMenu()));
   fileMenu_->addAction(AC_load_ini);
+  extended_actions.push_back(AC_load_ini);
 
   //Save ini
   QAction* AC_save_ini = new QAction(tr("Save Settings"), this);
@@ -195,8 +203,9 @@ void CoreWidget::setupMenuBar()
   AC_save_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"save-settings.png"));
   connect(AC_save_ini, SIGNAL(triggered()), this, SIGNAL(saveIniMenu()));
   fileMenu_->addAction(AC_save_ini);
+  extended_actions.push_back(AC_save_ini);
 
-  fileMenu_->addSeparator();
+  extended_actions.push_back(fileMenu_->addSeparator());
 
   //Options
   QAction* AC_Options = new QAction(tr("Options"), this);
@@ -235,7 +244,8 @@ void CoreWidget::setupMenuBar()
   menus_[tr("View")] = viewMenu_;
 
   slotUpdateGlobalDrawMenu();
-  viewMenu_->addMenu(globalDrawMenu_);
+  extended_actions.push_back(
+          viewMenu_->addMenu(globalDrawMenu_));
 
   //============================================================================================================
   // Rendering options Menu
@@ -243,7 +253,8 @@ void CoreWidget::setupMenuBar()
 
   QMenu* renderingOptionsMenu = new QMenu(tr("Global Rendering Options"),viewMenu_);
   renderingOptionsMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_renderingOptions.png") );
-  viewMenu_->addMenu(renderingOptionsMenu);
+  extended_actions.push_back(
+          viewMenu_->addMenu(renderingOptionsMenu));
 
   orthogonalProjectionAction_ = new QAction( tr("Switch Viewers to Orthogonal Projection"), renderingOptionsMenu );;
   orthogonalProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
@@ -320,6 +331,7 @@ void CoreWidget::setupMenuBar()
 
   connect( navigationSwitchAction, SIGNAL( toggled(bool) ), this, SLOT( slotSwitchNavigation(bool) ) );
   viewMenu_->addAction( navigationSwitchAction);
+  extended_actions.push_back(navigationSwitchAction);
 
   viewMenu_->addSeparator();
 
@@ -425,6 +437,7 @@ void CoreWidget::setupMenuBar()
   QObject::connect( sceneGraphAction, SIGNAL( triggered() ),
                     this,             SLOT( slotShowSceneGraphDialog() ) );
   toolsMenu_->addAction( sceneGraphAction);
+  extended_actions.push_back(sceneGraphAction);
 
   toolsMenu_->addSeparator();
 
@@ -445,6 +458,9 @@ void CoreWidget::setupMenuBar()
   toolsMenu_->addAction( stopVideoCaptureAction);
   connect(stopVideoCaptureAction, SIGNAL(triggered()), this, SIGNAL(stopVideoCapture()) );
   
+  extended_actions.push_back(startVideoCaptureAction);
+  extended_actions.push_back(stopVideoCaptureAction);
+
   toolsMenu_->addSeparator();
   
   //show plugins
@@ -472,6 +488,7 @@ void CoreWidget::setupMenuBar()
   AC_ShowViewModeControls_->setChecked( ! OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool()  );
   connect(AC_ShowViewModeControls_, SIGNAL(toggled( bool )), this, SLOT(showViewModeControls(bool)));
   windowMenu_->addAction(AC_ShowViewModeControls_);
+  extended_actions.push_back(AC_ShowViewModeControls_);
   
   // Show or Hide the View Mode Controls
   QAction* AC_ShowToolbox = new QAction(tr("Show Toolboxes"), this);
@@ -503,6 +520,7 @@ void CoreWidget::setupMenuBar()
   connect(AC_ShowMenuBar,SIGNAL(triggered()),this,SLOT(toggleMenuBar()));
   connect(this,SIGNAL(menuBarVisChanged(bool)),AC_ShowMenuBar,SLOT(setChecked(bool)));
   windowMenu_->addAction(AC_ShowMenuBar);
+  extended_actions.push_back(AC_ShowMenuBar);
 
   // Show or Hide the Tool bar
   QAction* AC_ShowToolBar = new QAction(tr("Show Toolbar"), this);
@@ -711,7 +729,7 @@ void CoreWidget::slotUpdateRendererMenu() {
 
     rendererMenu_ = new QMenu(tr("Global Renderer"),viewMenu_);
     rendererMenu_->setIcon(QIcon(iconPath+"renderers.png"));
-    viewMenu_->addMenu(rendererMenu_);
+    extended_actions.push_back(viewMenu_->addMenu(rendererMenu_));
 
 
     connect(rendererMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateRendererMenu() ) );
@@ -781,7 +799,7 @@ void CoreWidget::slotUpdatePostProcessorMenu() {
 
     postprocessorMenu_ = new QMenu(tr("Global Post Processor"),viewMenu_);
     postprocessorMenu_->setIcon(QIcon(iconPath+"postprocessors.png"));
-    viewMenu_->addMenu(postprocessorMenu_);
+    extended_actions.push_back(viewMenu_->addMenu(postprocessorMenu_));
 
     connect(postprocessorMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdatePostProcessorMenu() ) );
   }
