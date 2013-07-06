@@ -190,6 +190,10 @@ void TypeLightPlugin::addDefaultLights() {
     defaultLights_ = true;
 }
 
+void TypeLightPlugin::showReducedUi(bool reduced) {
+    viewerToolbarAction_->setVisible(!reduced);
+}
+
 void TypeLightPlugin::pluginsInitialized(){
   
   if ( OpenFlipper::Options::gui() ){
@@ -232,9 +236,10 @@ void TypeLightPlugin::pluginsInitialized(){
       
         // And append light mode button if found.
         if (pickAction)
-            viewerToolbar->insertWidget( pickAction, toolbar_ )->setText(tr("Light"));
+            viewerToolbarAction_ = viewerToolbar->insertWidget( pickAction, toolbar_ );
         else
-            viewerToolbar->addWidget( toolbar_ )->setText(tr("Light"));
+            viewerToolbarAction_ = viewerToolbar->addWidget( toolbar_ );
+        viewerToolbarAction_->setText(tr("Light"));
         
     }
     
