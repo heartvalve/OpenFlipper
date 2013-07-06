@@ -59,10 +59,6 @@
 #include <QDir>
 #include <QCoreApplication>
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x) 
-
-
 namespace OpenFlipper {
 namespace Options {
 
@@ -163,7 +159,7 @@ static bool drawModesInContextMenu_ = true;
 /// Current view mode
 static QString currentViewMode_ = "";
 
-static QString title_ = "OpenFlipper v?";
+static QString title_ = TOSTRING(PRODUCT_NAME)" v?";
 
 /// default base color
 static QColor defaultColor_ = QColor("white");
@@ -746,6 +742,8 @@ QString coreVersion() {
   return QString(CORE_VERSION);
 }
 
+static const char * const CONFIG_DIR = "." TOSTRING(PRODUCT_STRING);
+
 bool initializeSettings() {
   
   #if defined(__INTEL_COMPILER)
@@ -786,11 +784,11 @@ bool initializeSettings() {
     }
   #else
     configDir_ = QDir::home();
-    if ( ! configDir_.cd(".OpenFlipper") ) {
-      std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
-      configDir_.mkdir(".OpenFlipper");
-      if ( ! configDir_.cd(".OpenFlipper") ) {
-        std::cerr << "Unable to create config dir ~/.OpenFlipper" << std::endl;
+    if ( ! configDir_.cd(CONFIG_DIR) ) {
+      std::cerr << "Creating config Dir ~/" << CONFIG_DIR << std::endl;;
+      configDir_.mkdir(CONFIG_DIR);
+      if ( ! configDir_.cd(CONFIG_DIR) ) {
+        std::cerr << "Unable to create config dir ~/" << CONFIG_DIR << std::endl;
         return false;
       }
     }
@@ -819,7 +817,7 @@ bool initializeSettings() {
   // Create a personal Icon cache dir to save for example user added icons
   if ( ! configDir_.exists("Icons") ){
     configDir_.mkdir("Icons");
-    std::cerr << "Creating Icon Cache Dir ~/.OpenFlipper/Icons" << std::endl;    
+    std::cerr << "Creating Icon Cache Dir ~/" << CONFIG_DIR << "/Icons" << std::endl;
   }
   
   //==================================================================================================
