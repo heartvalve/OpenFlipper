@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 16459 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 16997 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -31,6 +31,7 @@
              - Fixed undirected shooting function returning wrong nearest triangle (was always the one with the most negative distance)
              - Interface: RayCollision is now a sorted vector combining standard pairs of the hit handles and their distance to the hit              
              - Integrated optional infinity override for custom types that do not have std::numeric_limits<Type>::infinity()
+             - Added function to BSP that only returns the closest ray collision
          - Geometry/Spherical
              - New functions
          - Geometry
@@ -50,6 +51,9 @@
              - Added functions for new rendering interface, replacing the opengl standard pipeline
              - StatusNodes can now use the buffers of a drawmesh (reuse them to use less memory and faster rendering)
              - PolyLineNode: Implementation of new rendering interface
+             - ManipulatorNode : manipulatorMoved should now only be emitted for manipulator objects that were actually touched
+         - Shader Utils
+             - Added functions to bind and get Fragment data locations
          - Unittests
              - Unittests for BSP
              - Unittests for algorithms
@@ -88,6 +92,9 @@
              - Unregister old doc files correctly
              - Fixed startpage for windows
              - fix: does not unregister help files if unnecessary
+         - Load/Save
+             - Adjusted the openFunctions and loadWidget to handle several plugins than can load the same file format
+             - A default plugin choice for each file format can also be saved via OpenFlipperSettings
          - Rendering
              - Removed most of the Rendering Code and moved it into The Classic Rendering Plugin
          - RendererManager
@@ -107,9 +114,15 @@
 	     - Change getBoundingBox to get a pointer to the mesh
          - Snapshots
              - Optionally store mesh comments as metadata in screenshots.
+         - General
+             - Improved VS 2012 compatibility (Thanks to Duncan Paterson for the patch)
+             - changed some c header includes to c++ pendant
      - <b>Interfaces</b>
          - About Interface
              - New Interface to allow plugins to add e.g. License information to OpenFlippers about dialog
+         - File Interface
+             - load and save filters from file plugins can now contain several file formats seperated by ";;" (for example: "Alias/Wavefront ( *.obj );;AutoCAD DXF ( *.dxf )"
+             - 
          - RPC Interface
              - Support for rpc calls with return value and up to 6 parameters
          - Render Interface
@@ -128,6 +141,7 @@
              - Getting const ref as point parameter
          - Plane
              - Get rid of immidiate mode when rendering
+             - Update buffers only when necessary
          - PolyLine
              - Added function to create circles
              - Follow new color spec in polyline nodes
@@ -137,9 +151,14 @@
              - Added include guard to AnimationHandle class
          - VolumeMesh
              - Added draw mode for colored vertices
+             - Phong rendering
      - <b>Plugins</b> 
          - Backup 
              - Fix: Now the signal aboutToRestore is also correctly emitted in slotUndo()
+         - Color
+             - Added Vector4 Scripting datatype
+             - VSI Meta data for color plugin
+             - Scripting functions to set object color
          - Datacontrol
              - Added context menu item to copy material to targeted objects.
              - Speedup: Accellerate Treeitem lookup for child by a map. This should speedup large object count handling significantly.
@@ -152,6 +171,7 @@
              - Added multiple choice decimater (up to 4 times faster but with less accuracy)
              - Add init button for keeping initialization
              - Fix: Decimater objects are cleared before an undo happens
+             - Nogui support
          - All File Plugins
              - Added option to set output precision of numbers in ascii based file formats
          - File Bundler
@@ -162,10 +182,14 @@
              - Adjusted PLY writer to be dataformat compliant
          - File OBJ
              - Fixed OBJ reader crash on files with only points (points are treated as vertices of a polymesh now)
+             - Fixed writing face indices in different configurations regarding vertex texture coordinates and vertex normals
          - File Off
              - Fixed reading of some binary files, which were not opened correctly
+             - fix: alphacolor per face is saved only once
+             - fix: removed spaces in OFF Header
          - File VTK
              - Added open volume mesh support for vtk reader
+             - VTK files with polydata will be loaded correctly now and not loaded like e.g structed points
          - Isotropic Remesher
              - Increased toolbox maximum
          - Info Mesh Object
@@ -185,6 +209,7 @@
          - Move 
              - Added scripting function for the transformation of handle vertices.
              - fixed a problem with applying the manipulator transformation to all targets
+             - moveSelection should now only store backups if elements were actually selected and transformed
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters) 
              - Add size and position parameters to all add** slot and script functions
@@ -200,8 +225,15 @@
                  - Read/write properties from/into files. Also reading props into existing properties is now supported.
                  - Multiple properties can be selected (multiple toolboxes appear) and combined.
                  - Documentation has been added.
+             - plugin is now informed about object deletion
+             - 
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
+         - Ruler Plugin
+             - Some function and class change for better readability and multi ruler support
+         - Scripting Plugin
+             - The filename of the script is now no longer saved when a script is executed.
+             - fixed a bug where using the VSI plugin could cause an accidental overwrite of the previously saved script
          - SelectionBase
              - Speedup selection base plugin by caching the number of objects of the specific types (no linear time check anymore)
          - SelectionMeshObject
@@ -218,6 +250,17 @@
              - Name group after splatcloud
          - ViewControl
              - Feature to check and disable modeling areas seperatly
+             - Implemented the setEyePosition function for the ViewControl plugin
+         - VSI 
+             - Moved VsiMetadata for move into move plugin
+             - Added scripting functions to modify the scenegraph matrix
+             - Added scripting funcrion to update ui while in scripting mode
+             - Update view and update ui vsi meta data
+             - Additional scipting function to jump out of loop
+             - Added compose vector function
+             - Added Vector4 Scripting datatype
+             - Added compose Vector4 VSI block
+             - Handle is_connected for inputs as well
      - <b>Scripting</b>
          - Core: Added getToolbox method to scripting interface.
          - Core: Added scipting functions to block and unblock the scenegraph (speedup while handling large object counts)
@@ -239,6 +282,8 @@
          - Added option to pass definitions from finder directly via plugin dependencies
          - Added target OpenFlipper_package on mac, which calls fixbundle first.
          - fixbundle is no longer called automatically on mac.
+         - Identify clang in the compiler settings
+         - Improved branding support
 
 - <b>OpenFlipper 1.3 ( 2012.07.16 , 15046 )</b>
      - <b>ACG</b>
