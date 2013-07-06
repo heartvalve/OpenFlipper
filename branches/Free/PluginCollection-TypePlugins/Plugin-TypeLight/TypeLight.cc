@@ -60,6 +60,7 @@ TypeLightPlugin::TypeLightPlugin() :
         translateMode_(0),
         rotateMode_(0),
         allLightsMode_(0),
+        viewerToolbarAction_(0),
         onlyTargets_(false),
         planeDepth_(0.0f),
         transVec_(0.0),
