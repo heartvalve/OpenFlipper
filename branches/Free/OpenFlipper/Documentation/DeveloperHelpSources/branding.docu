@@ -7,8 +7,13 @@
   Configurations made in this directory will overwrite some icons, settings and configurations.  
   \code
     SourceDir/branding/branding.cmake  // General cmake file for branding flags
-    
   \endcode
+  
+  \section cmake_options CMake Options
+    \code
+      OPENFLIPPER_PRODUCT_NAME   // Name of the Product found in all visible places
+      OPENFLIPPER_PRODUCT_STRING // String of the Product without space,... used for config dir and others
+    \endcode
   
   \section branding_icons Application internal icons
     If you want to replace the icon set of OpenFlipper (partially or complete), you can override them
