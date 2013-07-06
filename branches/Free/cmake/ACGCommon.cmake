@@ -43,7 +43,9 @@ endif()
 
 # read version from file
 macro (acg_get_version)
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION")
+      file (READ "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION" _file)
+    elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION" _file)
     else ()
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" _file)
