@@ -164,6 +164,8 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Add default light
     int addDefaultLight(QString _name);
     
+    void showReducedUi(bool reduced);
+
   private slots:
     
     void slotLightModeRequest(bool _checked);
@@ -204,6 +206,7 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     QAction* rotateMode_;
     
     QAction* allLightsMode_;
+    QAction* viewerToolbarAction_;
     
     // True if only target lights should be transformed
     bool onlyTargets_;
