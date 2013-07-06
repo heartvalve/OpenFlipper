@@ -245,7 +245,7 @@ Core::init() {
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       QPixmap splashPixmap(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "splash.png");
 
-      splash_ = new QSplashScreen(splashPixmap);
+      splash_ = new QSplashScreen(splashPixmap, Qt::WindowStaysOnTopHint);
       splash_->show();
 
       splash_->showMessage(tr("Initializing mainwindow") ,
@@ -675,7 +675,8 @@ Core::init() {
     }
 
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
-      splash_->finish(coreWidget_);
+        splash_->raise();
+        QTimer::singleShot(2000, this, SLOT(finishSplash()));
     }
 
     // start checking for scenegraph changes
@@ -1925,6 +1926,13 @@ bool Core::checkOpenGLCapabilities()  {
   return ok;
 }
 
+void Core::showReducedMenuBar(bool reduced) {
+    coreWidget_->showReducedMenuBar(reduced);
+}
+
+void Core::finishSplash() {
+    splash_->finish(coreWidget_);
+}
 
 
 //=============================================================================

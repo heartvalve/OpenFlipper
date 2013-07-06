@@ -56,7 +56,7 @@ void CoreWidget::initViewModes(){
   //init viewMode subMenu
   if (!viewModeMenu_){
     viewModeMenu_ = new QMenu(tr("View Modes"));
-    viewMenu_->addMenu(viewModeMenu_);
+    viewModeButton_ = viewMenu_->addMenu(viewModeMenu_);
     viewGroup_ = new QActionGroup(0);
     viewGroup_->setExclusive(true);
     connect( viewGroup_, SIGNAL( triggered( QAction* ) ), this, SLOT( slotSetViewMode( QAction* ) ) );
@@ -85,6 +85,10 @@ void CoreWidget::initViewModes(){
       viewModeMenu_->addSeparator();
   }
 
+
+  if ( OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool() ) {
+      viewModeButton_->setVisible(false);
+  }
 }
 
 void CoreWidget::slotAddViewModeToolboxes(QString _mode, QStringList _usedWidgets){

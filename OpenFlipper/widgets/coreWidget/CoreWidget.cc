@@ -486,9 +486,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   connect( viewerLayoutBox_,SIGNAL( activated(int) ), this, SLOT( setViewerLayout(int) ) );
 
-  viewerToolbar_->addWidget( viewerLayoutBox_ );
+  extended_actions.push_back(viewerToolbar_->addWidget( viewerLayoutBox_ ));
 
-  viewerToolbar_->addSeparator();
+  extended_actions.push_back(viewerToolbar_->addSeparator());
 
   if (OpenFlipper::Options::stereo())
   {
@@ -509,7 +509,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     connect( stereoButton_, SIGNAL( clicked() ), this , SLOT( slotToggleStereoMode() ) );
     // Custom context menu
     connect( stereoButton_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(stereoButtonContextMenu(const QPoint &)));
-    viewerToolbar_->addWidget( stereoButton_ )->setText( tr("Stereo"));
+    QAction *stereoAction = viewerToolbar_->addWidget( stereoButton_ );
+    stereoAction->setText( tr("Stereo"));
+    extended_actions.push_back(stereoAction);
   }
 
 
@@ -554,8 +556,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   vLayout->addWidget(viewModeControlBox_);
   vLayout->addWidget(toolBoxScroll_);
   
-  if ( OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool() )
+  if ( OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool() ) {
     viewModeControlBox_->hide();
+    if (viewModeButton_)
+        viewModeButton_->setVisible(false);
+  }
 
   toolBoxArea_->setLayout (vLayout);
 
@@ -695,8 +700,10 @@ CoreWidget::showViewModeControls(bool _show) {
     
     if ( _show ) {
       viewModeControlBox_->show();
+      viewModeButton_->setVisible(true);
     } else {
       viewModeControlBox_->hide();
+      viewModeButton_->setVisible(false);
     }
     
   }
