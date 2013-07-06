@@ -105,7 +105,7 @@ void CoreWidget::showAboutWidget( ) {
   boldFont.setBold(true);
 
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
-  aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Core Version: ") + OpenFlipper::Options::coreVersion() ) ;
+  aboutWidget_->OpenFlipperAbout->append(tr("%1 Core Version: %2", "PRODUCT_NAME Core Version:").arg(TOSTRING(PRODUCT_NAME)).arg(OpenFlipper::Options::coreVersion()) ) ;
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
   // =====================================================================================
@@ -113,7 +113,7 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
-  aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Directories:"));
+  aboutWidget_->OpenFlipperAbout->append(tr("%1 Directories:").arg(TOSTRING(PRODUCT_NAME)));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
   // Get the dataDir
@@ -135,7 +135,7 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
-  aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper configuration files:"));
+  aboutWidget_->OpenFlipperAbout->append(tr("%1 configuration files:").arg(TOSTRING(PRODUCT_NAME)));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
   aboutWidget_->OpenFlipperAbout->append(tr("ConfigDir:\t\t\t") +   OpenFlipper::Options::configDirStr() );
