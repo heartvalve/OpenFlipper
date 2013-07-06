@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>dctoolbox</class>
  <widget class="QWidget" name="dctoolbox">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>268</width>
-    <height>456</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
