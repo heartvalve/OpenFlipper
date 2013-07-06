@@ -1,0 +1,34 @@
+/*!
+\page branding OpenFlipper Branding
+
+  OpenFlipper supports branding of the UI and several components by an integrated branding mechanism.
+  Generally you need to create a branding directory in the toplevel source directory.
+  
+  Configurations made in this directory will overwrite some icons, settings and configurations.  
+  \code
+    SourceDir/branding/branding.cmake  // General cmake file for branding flags
+    
+  \endcode
+  
+  \section branding_icons Application internal icons
+    If you want to replace the icon set of OpenFlipper (partially or complete), you can override them
+    with icon sets for linux, win, mac or all at once.
+    
+    \code
+      SourceDir/branding/linux/Icons // Linux specific icons
+      SourceDir/branding/mac/Icons   // Mac specific icons
+      SourceDir/branding/win/Icons   // Windows specific icons
+      SourceDir/branding/Icons       // Toplevel icon directory overwriting also the OS specific icons
+    \endcode
+
+  \section branding_mac Mac Specific bundle branding
+    For Mac OS several special options are available to configure the final bundle.
+    
+    The files used for the bungle are:
+    \code
+      SourceDir/branding/mac/OpenFlipper_Icon.icns  // Bundle icon
+      SourceDir/branding/mac/Info.plist             // Plist file
+    \endcode
+    
+    
+ */
