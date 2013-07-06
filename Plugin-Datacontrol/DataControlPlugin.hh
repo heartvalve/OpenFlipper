@@ -395,6 +395,8 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Get all elements of the given group
         IdList getGroupElements(int _groupId);
 
+        void showReducedUi(bool reduced);
+
 /** @} */
 
   public slots:
