@@ -99,6 +99,8 @@ class SideArea : public QWidget {
     //expand all elements
     void expandAll();
 
+    void expand(QWidget *sideElementWidget, bool expand);
+
     /// returns the current state
     void saveState (QSettings &_settings);
 
