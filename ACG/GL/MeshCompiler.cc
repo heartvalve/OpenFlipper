@@ -5,7 +5,7 @@
 #include <list>
 #include <cassert>
 #include <iostream>
-
+#include <sstream>
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 
@@ -329,8 +329,8 @@ void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _
       // copy elementwise because of striding
       for (int i = 0; i < _num; ++i)
       {
-        memcpy(inbuf->internalBuf + size * i,
-          (const char*)_data + _stride * i,
+        memcpy(inbuf->internalBuf + (size_t)(size * i),
+          (const char*)_data + (size_t)(_stride * i),
           size);
       }
     }
@@ -389,7 +389,7 @@ void MeshCompiler::splitVertices()
     int fsize = getFaceSize(i);
     curOffset += fsize;
 
-    maxFaceCorners_ = std::max(maxFaceCorners_, fsize);
+    maxFaceCorners_ = std::max((int)maxFaceCorners_, fsize);
   }
 
   delete splitter_;
@@ -397,7 +397,6 @@ void MeshCompiler::splitVertices()
                                  input_[inputIDPos_].count,
                                  adjacencyVert_.bufSize);
 
-  numIndices_ = faceInput_->getNumIndices();
   faceBufSplit_.resize(numIndices_, -1);
 
   // count # vertices after splitting
@@ -534,7 +533,7 @@ void MeshCompiler::forceUnsharedFaceVertex()
 
 }
 
-void MeshCompiler::getInputFaceVertex( int i, int j, int* _out )
+void MeshCompiler::getInputFaceVertex( int i, int j, int* _out ) const
 {
   for (unsigned int k = 0; k < decl_.getNumElements(); ++k)
     _out[k] = getInputIndex(i, j, k);
@@ -556,7 +555,6 @@ MeshCompiler::MeshCompiler(const VertexDeclaration& _decl)
   numTris_ = 0;
 
   numFaces_ = 0;
-  interleavedInput_ = 0;
   curFaceInputPos_ = 0;
 
   indices_ = 0;
@@ -664,10 +662,6 @@ void MeshCompiler::setNumFaces( const int _numFaces, const int _numIndices )
   faceInput_ = internalInput;
   deleteFaceInputeData_ = true;
 
-  // internal face-offset buffer required for mesh processing
-  faceStart_.resize(_numFaces, -1);
-  faceSize_.resize(_numFaces, 0);
-
 }
 
 
@@ -683,12 +677,6 @@ void MeshCompiler::setFaceAttrib( int _i, int _numEdges, int* _v, int _attrID )
   {
     input->setFaceData(_i, _numEdges, _v, _attrID);
   }
-
-  if (faceSize_.empty())
-    faceSize_.resize(numFaces_, 0);
-
-  faceSize_[_i] = (short)_numEdges;
-
 }
 
 void MeshCompiler::setFaceAttrib( int _i, int _v0, int _v1, int _v2, int _attrID )
@@ -1059,6 +1047,9 @@ void MeshCompiler::optimize()
 
 void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
 {
+  // array allocation/copy data/validation check etc.
+  prepareData();
+
   /*
   1. step
   Split vertices s.t. we can create an interleaved vertex buffer.
@@ -1174,7 +1165,7 @@ void MeshCompiler::setAttrib( int _attrIdx, int _v, const void* _data )
 
   assert(inbuf->count > _v);
 
-  memcpy(inbuf->internalBuf + _v * inbuf->stride, _data, inbuf->attrSize);
+  memcpy(inbuf->internalBuf + (size_t)(_v * inbuf->stride), _data, inbuf->attrSize);
 }
 
 
@@ -1233,8 +1224,6 @@ void MeshCompiler::dbgdump(const char* _filename) const
     fprintf(file, "\n\n");
 
     fprintf(file, "faces %d\nindices %d\n", numFaces_, numIndices_);
-
-    fprintf(file, "interleavedInput %d\n\n", interleavedInput_);
 
     for (size_t i = 0; i < faceBufSplit_.size(); ++i)
       fprintf(file, "faceBufSplit_[%d] = %d\n", (int)i, faceBufSplit_[i]);
@@ -1316,7 +1305,7 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst) cons
   assert(_idx >= 0);
   assert(_idx < count);
 
-  memcpy(_dst, data + _idx * stride, attrSize);
+  memcpy(_dst, data + (size_t)(_idx * stride), attrSize);
 }
 
 
@@ -1511,8 +1500,8 @@ void MeshCompiler::dbgdumpAdjList( const char* _filename ) const
 
 void MeshCompiler::setFaceGroup( int _i, int _groupID )
 {
-  if ((int)faceGroupIDs_.size() < numFaces_)
-    faceGroupIDs_.resize(numFaces_, -1);
+  if ((int)faceGroupIDs_.size() <= std::max(numFaces_,_i))
+    faceGroupIDs_.resize(std::max(numFaces_,_i+1), -1);
 
   faceGroupIDs_[_i] = _groupID;
 }
@@ -1568,7 +1557,7 @@ int MeshCompiler::mapToDrawTriID( const int _faceID, const int _k /*= 0*/, int* 
   return faceToTriMap_[offset + _k];
 }
 
-int MeshCompiler::getMemoryUsage() const
+size_t MeshCompiler::getMemoryUsage() const
 {
   size_t usage = faceStart_.size() * 4;
   usage += faceSize_.size() * 2;
@@ -1597,6 +1586,105 @@ int MeshCompiler::getMemoryUsage() const
   usage += numTris_ * 3 * 4; // indices_
 
   return usage;
+}
+
+std::string MeshCompiler::checkInputData() const
+{
+  std::stringstream strm;
+
+  int faceV[16];
+
+  for (int i = 0; i < numFaces_; ++i)
+  {
+    std::map<int, int> facePositions;
+
+    for (int k = 0; k < getFaceSize(i); ++k)
+    {
+      getInputFaceVertex(i, k, faceV);
+
+      for (int a = 0; a < numAttributes_; ++a)
+      {
+        // index boundary check
+        if (faceV[a] >= input_[a].count)
+          strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << " >= buffer size (" << input_[a].count << ")\n";
+        if (faceV[a] < 0)
+          strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << "\n";
+      }
+
+      if (numAttributes_)
+        facePositions[faceV[0]] = k;
+    }
+
+    // degenerate check
+    if ((int)facePositions.size() != getFaceSize(i))
+      strm << "Warning: degenerate face " << i << "\n";
+
+    // empty face
+    if (!getFaceSize(i))
+      strm << "Warning: empty face " << i << "\n";
+  }
+
+  return strm.str();
+}
+
+void MeshCompiler::prepareData()
+{
+  // update face count, in case not provided by user
+  numFaces_ = faceInput_->getNumFaces();
+  numIndices_ = faceInput_->getNumIndices();
+
+  // clip empty faces from the end (user estimated too many faces)
+  for (int i = numFaces_-1; i >= 0 && !faceInput_->getFaceSize(i); --i)
+    --numFaces_;
+
+  // internal face-offset buffer required for mesh processing
+  faceStart_.resize(numFaces_, -1);
+  faceSize_.resize(numFaces_, 0);
+
+  for (int i = 0; i < numFaces_; ++i)
+  {
+    faceSize_[i] = (short)faceInput_->getFaceSize(i);
+    numIndices_ += faceSize_[i];
+  }
+}
+
+void MeshCompiler::setFaceInput( MeshCompilerFaceInput* _faceInput )
+{
+  faceInput_ = _faceInput;
+}
+
+void MeshCompiler::setIndexBufferInterleaved( int _numTris, int _indexSize, const void* _indices )
+{
+  assert(_indices);
+  assert(_indexSize);
+
+  setNumFaces(_numTris, _numTris * 3);
+
+  for (int i = 0; i < _numTris; ++i)
+  {
+    int tri[3] = {-1, -1, -1};
+
+    for (int k = 0; k < 3; ++k)
+    {
+      int offs = i * 3 + k;
+
+      switch(_indexSize)
+      {
+      case 1: tri[k] = ((char*)_indices)[offs]; break;
+      case 2: tri[k] = ((short*)_indices)[offs]; break;
+      case 4: tri[k] = ((int*)_indices)[offs]; break;
+      case 8: tri[k] = (int)((long long*)_indices)[offs]; break;
+      default: break;
+      }
+    }
+
+    setFaceVerts(i, 3, tri);
+  }
+}
+
+int MeshCompiler::getNumFaces() const
+{
+  return numFaces_;
 }
 
 
@@ -1646,11 +1734,23 @@ int MeshCompilerDefaultFaceInput::getSingleFaceAttr( int _faceID, int _faceCorne
   int offset = faceOffset_[_faceID];
   assert(_faceCorner < getFaceSize(_faceID));
 
+
+  if (faceData_[_attrID].empty())
+  {
+    // try to use index from base vertex element (usually position)
+    return faceData_[0][offset + _faceCorner];
+  }
+
   return faceData_[_attrID][offset + _faceCorner];
 }
 
 void MeshCompilerDefaultFaceInput::setFaceData( int _faceID, int _size, int* _data, int _attrID /*= 0*/ )
 {
+  // update face count
+  if (numFaces_ <= _faceID)
+    numFaces_ = _faceID + 1;
+
+  // reserve mem
   if (faceData_[_attrID].capacity() == 0)
     faceData_[_attrID].reserve(numIndices_);
 
