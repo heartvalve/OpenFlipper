@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <cstdio>
+#include <string>
 
 /*
 
@@ -167,6 +168,11 @@ public:
 
   virtual ~MeshCompiler();
 
+//===========================================================================
+/** @name Vertex Data Input
+* @{ */
+//===========================================================================  
+
   /** set input vertex positions
    *
    * @param _num Number of vertex positions
@@ -204,11 +210,36 @@ public:
 
   void setAttrib(int _attrIdx, int _v, const void* _data);
 
+/** @} */  
 
-  /** set number of faces and indices
+
+//===========================================================================
+/** @name Flexible Face Data Input
+* @{ */
+//===========================================================================  
+
+  /** Set Face data input
    *
-   * @param _numFaces Number of faces.
-   * @param _numIndices Number of indices, i.e. 3 * numFaces for triangle meshes. Value 0 accepted if unknown (performance hit)
+   * Making use of the MeshCompilerFaceInput interface completly overrides the default input behavior.
+   * Any subsequent call to default input data functions such as setNumFaces(), setFaceVerts() etc. will be ignored
+   *
+   * @param _faceInput user defined face input (no internal copy made, do not delete while using MeshCompiler)
+   */
+  void setFaceInput(MeshCompilerFaceInput* _faceInput);
+
+/** @} */  
+
+//===========================================================================
+/** @name Default Face Data Input
+* @{ */
+//===========================================================================  
+
+  /** Set number of faces and indices if known by user
+   *
+   * User may give a rough estimate of face/index count. 
+   * A more accurate estimation improves efficiency: too low numbers result in performance hit, too high numbers in memory consumption
+   * @param _numFaces Number of faces. Value 0 accepted at cost of performance
+   * @param _numIndices Number of indices, i.e. 3 * numFaces for triangle meshes. Value 0 accepted at cost of performance
    */
   void setNumFaces(const int _numFaces, const int _numIndices);
 
@@ -222,20 +253,85 @@ public:
    */
   void setIndexBufferInterleaved(int _numTris, int _indexSize, const void* _indices);
 
+  /** Set vertex ids per triangle.
+   *
+   * @param _i Face ID
+   * @param _v0 1st vertex id
+   * @param _v1 2nd vertex id
+   * @param _v2 3rd vertex id
+   */
   void setFaceVerts(int _i, int _v0, int _v1, int _v2);
-  void setFaceVerts(int _i, int _numEdges, int* _v);
 
+  /** Set vertex ids per face.
+   *
+   * @param _i Face id
+   * @param _faceSize Size of face, ie. number of vertices of face
+   * @param _v Vertex ids
+   */
+  void setFaceVerts(int _i, int _faceSize, int* _v);
+
+  /** Set normal ids per triangle.
+   *
+   * @param _i Face ID
+   * @param _v0 1st normal id
+   * @param _v1 2nd normal id
+   * @param _v2 3rd normal id
+   */
   void setFaceNormals(int _i, int _v0, int _v1, int _v2);
-  void setFaceNormals(int _i, int _numEdges, int* _v);
+  
+  /** Set normal ids per face.
+   *
+   * @param _i Face id
+   * @param _faceSize Size of face, ie. number of vertices of face
+   * @param _v Normal ids
+   */
+  void setFaceNormals(int _i, int _faceSize, int* _v);
 
+  /** Set texcoord ids per triangle.
+   *
+   * @param _i Face ID
+   * @param _v0 1st texcoord id
+   * @param _v1 2nd texcoord id
+   * @param _v2 3rd texcoord id
+   */
   void setFaceTexCoords(int _i, int _v0, int _v1, int _v2);
-  void setFaceTexCoords(int _i, int _numEdges, int* _v);
 
+  /** Set texcoord ids per face.
+   *
+   * @param _i Face id
+   * @param _faceSize Size of face, ie. number of vertices of face
+   * @param _v Texcoord ids
+   */
+  void setFaceTexCoords(int _i, int _faceSize, int* _v);
+
+
+  /** Set attribute ids per triangle.
+   *
+   * @param _i Face id
+   * @param _v0 1st element id
+   * @param _v1 2nd element id
+   * @param _v2 3rd element id
+   * @param _attrID Which attribute: index of VertexDeclaration element array
+   */
   void setFaceAttrib(int _i, int _v0, int _v1, int _v2, int _attrID);
-  void setFaceAttrib(int _i, int _numEdges, int* _v, int _attrID);
 
-  void setFaceInterleaved(int _it, int _v0, int _v1, int _v2);
-  void setFaceInterleaved(int _it, int _numEdges, int* _v);
+  /** Set attribute ids per face.
+   *
+   * @param _i Face id
+   * @param _faceSize Size of face, ie. number of vertices of face
+   * @param _v Element ids
+   * @param _attrID Which attribute: index of VertexDeclaration element array
+   */
+  void setFaceAttrib(int _i, int _faceSize, int* _v, int _attrID);
+
+
+/** @} */  
+
+//===========================================================================
+/** @name Face Grouping and Subsets
+* @{ */
+//===========================================================================  
+
 
   /** Specify face groups.
    *
@@ -246,18 +342,39 @@ public:
    */
   void setFaceGroup(int _i, int _groupID);
 
-
-  inline int getFaceSize(const int _i) const
+  // subset/group management
+  struct Subset
   {
-//    return faceInput_->getFaceSize(_i);
-    return faceSize_[_i];
-  }
+    int id; // subset id
+    unsigned int startIndex; // 1st occurrence of group in index buffer
+    unsigned int numTris; // number of tris belonging to subset in index buffer
+
+    unsigned int numFaces; // number of faces belonging to subset
+    unsigned int startFace; // index into sorted list of faces
+  };
+
+  /// get subset ID of a group
+  int findGroupSubset(int _groupID);
+
+  int getFaceGroup(int _faceID) const;
+  int getTriGroup(int _triID) const;
+
+  int getNumSubsets() const {return (int)subsets_.size();}
+  const Subset* getSubset(int _i) const;
 
 
-  /* \brief Build draw vertex + index buffer.
+/** @} */  
+
+//===========================================================================
+/** @name Mesh Compilation
+* @{ */
+//===========================================================================  
+
+
+  /* \brief Build vertex + index buffer.
    * 
-   * @param _optimizeVCache Reorder faces for optimized vcache usage. Low performance hit
-   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. Big performance hit
+   * @param _optimizeVCache Reorder faces for optimized vcache usage. Low performance hit on build() execution time
+   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. High performance hit on execution time
   */
   void build(bool _optimizeVCache = true, bool _needPerFaceAttribute = false);
 
@@ -273,15 +390,23 @@ public:
   void getVertexBuffer(void* _dst, const int _offset = 0, const int _range = -1);
 
   /* Get index buffer ready for rendering.
-   *
-   * @param _dst Pointer to memory address where the index buffer should be copied to
   */
-  void getIndexBuffer(void* _dst) const;
-
+  int* getIndexBuffer() const {return indices_;}
 
   /** Get number of triangles in final buffer.
   */
   int getNumTriangles() const;
+
+  /** Get number of input faces.
+  */
+  int getNumFaces() const;
+
+  /** Get size of input face
+  */
+  inline int getFaceSize(const int _i) const
+  {
+    return faceSize_[_i];
+  }
 
   /** Get vertex in final draw vertex buffer.
   */
@@ -290,6 +415,17 @@ public:
   /** Get index in final draw index buffer.
   */
   int getIndex(int _i) const;
+
+
+/** @} */  
+
+
+
+//===========================================================================
+/** @name Input/Output ID mapping
+* @{ */
+//===========================================================================  
+
 
   /** Mapping from draw vertex id -> input vertex id
    *
@@ -325,39 +461,19 @@ public:
   */
   int mapToDrawTriID(const int _faceID, const int _k = 0, int* _numTrisOut = 0) const;
 
-  // fast update functions if input data changed
-  void updateFace(int _faceID);
-  void updateFaces();
+
+/** @} */  
 
 
 
-
-
-  // subset/group management
-  struct Subset
-  {
-    int id;
-    unsigned int startIndex;
-    unsigned int numTris;
-
-    unsigned int numFaces;
-    unsigned int startFace; // index into sorted list
-  };
-
-  /// get subset ID of a group
-  int findGroupSubset(int _groupID);
-  
-  int getFaceGroup(int _faceID) const;
-  int getTriGroup(int _triID) const;
-
-  int getNumSubsets() const {return subsets_.size();}
-  const Subset* getSubset(int _i) const;
 
 
 private:
 
+  // compute adjacency information: vertex -> neighboring faces, face -> neighboring faces
   void computeAdjacency();
 
+  // convert per-face vertices to unique ids
   void splitVertices();
 
 private:
@@ -368,7 +484,7 @@ private:
       j: corner index
       _out: output vertex (index for each attribute)
   */
-  void getInputFaceVertex(int _face, int _corner, int* _out);
+  void getInputFaceVertex(int _face, int _corner, int* _out) const;
 
   int getInputIndex(const int _face, const int _corner, const int _attrId) const;
 
@@ -424,10 +540,9 @@ private:
 
   int   numFaces_, 
         numIndices_;
-  bool  interleavedInput_;         // is input vertex buffer interleaved
   std::vector<int>  faceStart_;    // start position in buf for each face
   std::vector<short> faceSize_;    // face size, copy of faceInput_->getFaceSize() for better performance
-  int   maxFaceCorners_;           // max(faceCorners_)
+  size_t   maxFaceCorners_;           // max(faceCorners_)
   std::vector<int>  faceGroupIDs_; // group id for each face (optional input)
   int   curFaceInputPos_;          // current # indices set by user
 
@@ -556,26 +671,46 @@ private:
 
   int getInputIndexOffset(const int _face, const int _corner, const bool _rotation = true) const;
 
+
+  /// build() preparation
+  void prepareData();
+
+  // make sure each face has one vertex id without any references by neighboring faces
+  // split vertices when necessary
   void forceUnsharedFaceVertex();
 
+  // convert n-poly -> tris (triangle fans)
   void triangulate();
 
+  // sort input faces by group ids
   void sortFacesByGroup();
 
+  // v-cache optimization + vertex reorder
   void optimize();
 
-
+  // create vertex mapping: input id <-> final buffer id
   void createVertexMap();
+
+  // create face mapping: input id <-> final tri id
   void createFaceMap();
 
-  // debugging tools
 public:
+  // debugging tools
+
+  /// dump mesh info to text file
   void dbgdump(const char* _filename) const;
+
+  /// dump mesh in wavefront obj format
   void dbgdumpObj(const char* _filename) const;
+
+  /// dump adjacency list to text file
   void dbgdumpAdjList(const char* _filename) const;
 
-  int getMemoryUsage() const;
+  /// return memory consumption in bytes
+  size_t getMemoryUsage() const;
 
+  /// check for errors in input data
+  std::string checkInputData() const;
 };
 
 
