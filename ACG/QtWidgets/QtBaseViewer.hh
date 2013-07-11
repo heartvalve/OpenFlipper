@@ -343,6 +343,8 @@ public:
   */
   double scene_radius() const { return scene_radius_; }
   
+  void scene_radius(double radius) { scene_radius_ = radius; }
+  
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
   
