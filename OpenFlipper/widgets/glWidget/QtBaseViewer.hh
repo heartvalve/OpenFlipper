@@ -629,7 +629,7 @@ private:
     */
     double scene_radius() const { return properties_.sceneRadius(); }
     
-    void setSceneRadius() { properties_.sceneRadius(_radius); }
+    void setSceneRadius(double _radius) { properties_.sceneRadius(_radius); }
   
   /** @} */
 
