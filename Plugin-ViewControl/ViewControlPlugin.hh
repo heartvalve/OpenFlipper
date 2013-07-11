@@ -267,6 +267,9 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Set the viewing direction
     void setViewingDirection( Vector _direction, Vector _upvector , int _viewer = PluginFunctions::ALL_VIEWERS );
 
+    /// Set scene radius
+    void setSceneRadius( double _radius , int _viewer = PluginFunctions::ALL_VIEWERS );
+
     /// Rotate Scene
     void rotate( Vector _axis, double _angle, Vector _center , int _viewer = PluginFunctions::ALL_VIEWERS );
 

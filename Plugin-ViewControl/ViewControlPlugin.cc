@@ -1171,6 +1171,12 @@ void ViewControlPlugin::setViewingDirection( Vector _direction, Vector _upvector
 
 //-----------------------------------------------------------------------------
 
+void ViewControlPlugin::setSceneRadius( double _radius , int _viewer){
+  PluginFunctions::setSceneRadius(_radius, _viewer);
+}
+
+//-----------------------------------------------------------------------------
+
 void ViewControlPlugin::rotate( Vector _axis, double _angle, Vector _center , int _viewer) {
   PluginFunctions::rotate( _axis, _angle, _center ,_viewer);
 }
