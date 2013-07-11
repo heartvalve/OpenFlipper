@@ -626,9 +626,10 @@ private:
     */
     const ACG::Vec3d scene_center() const { return properties_.sceneCenter(); }
     /** Get scene's radius
-    \see setScenePos()
     */
     double scene_radius() const { return properties_.sceneRadius(); }
+    
+    void setSceneRadius() { properties_.sceneRadius(_radius); }
   
   /** @} */
 
