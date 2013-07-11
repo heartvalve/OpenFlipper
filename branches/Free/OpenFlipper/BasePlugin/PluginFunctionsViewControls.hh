@@ -224,6 +224,9 @@ DLLEXPORT
 */
 double sceneRadius( int _viewer );
 
+DLLEXPORT
+void setSceneRadius(double _radius , int _viewer = ALL_VIEWERS);
+
 /** \brief Translate viewer pos by given vector
  *
  * Translates the scene by a given vector. ( This is only a view transformation and does not
