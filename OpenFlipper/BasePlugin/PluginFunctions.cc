@@ -738,12 +738,12 @@ double sceneRadius( int _viewer ) {
 
 void setSceneRadius(double _radius, int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
-    examiner_widgets_[activeExaminer_]->scene_radius(_radius);
+    examiner_widgets_[activeExaminer_]->setSceneRadius(_radius);
   } else if ( _viewer == ALL_VIEWERS )
     for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
-      examiner_widgets_[i]->scene_radius(_radius);
+      examiner_widgets_[i]->setSceneRadius(_radius);
   else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
-    examiner_widgets_[_viewer]->scene_radius(_radius);
+    examiner_widgets_[_viewer]->setSceneRadius(_radius);
   else
     std::cerr << "Requested illegal viewer for translate!!" << std::endl;
 }
