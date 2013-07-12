@@ -56,6 +56,10 @@
 #include "OpenFlipper/common/GlobalOptions.hh"
 #include "ImageStorage.hh"
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+#include "ObjectTypes/VolumeMeshObject/VolumeMeshDrawModesContainer.hh"
+#endif
+
 #define TEXTUREDATA "TextureData"
  
 
@@ -113,6 +117,15 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 
   if ( obj->dataType( DATA_POLY_MESH ) )
     glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newId,0));
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) )
+    glName = PluginFunctions::hexahedralMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newId,0));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  if ( obj->dataType( DATA_POLYHEDRAL_MESH ) )
+    glName = PluginFunctions::polyhedralMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newId,0));
+#endif
 
   // ================================================================================
   // Store texture information in objects metadata
@@ -216,7 +229,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 }
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
-  
+
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -225,7 +238,15 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
   }
   
   // Check if we support this kind of data
-  if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
+  if ( !obj->dataType(DATA_TRIANGLE_MESH)   && !obj->dataType(DATA_POLY_MESH)
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+       && !obj->dataType(DATA_HEXAHEDRAL_MESH)
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+       && !obj->dataType(DATA_POLYHEDRAL_MESH)
+#endif
+     )
+  {
     return;
   }
   
@@ -255,9 +276,18 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
     //inform textureNode about the new texture
     if( obj->dataType( DATA_TRIANGLE_MESH ) )
       glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
-    
+
     if ( obj->dataType( DATA_POLY_MESH ) )
       glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    if( obj->dataType( DATA_HEXAHEDRAL_MESH ) )
+      glName = PluginFunctions::hexahedralMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    if ( obj->dataType( DATA_POLYHEDRAL_MESH ) )
+      glName = PluginFunctions::polyhedralMeshObject(obj)->textureNode()->add_texture(imageStore().getImage(newImageId,0));
+#endif
     
     // ================================================================================
     // Store texture information in objects metadata
@@ -281,7 +311,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
       PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
     }
-    
+
     if ( obj->dataType( DATA_POLY_MESH ) ){
       PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
     }
@@ -310,6 +340,18 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
 
 }
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+template< typename VolumeMeshObjectT >
+void TextureControlPlugin::handleFileOpenTexturesOVM( VolumeMeshObjectT* _obj, int _objectId ) {
+
+  if ( _obj->texcoords().vertex_texcoords_available() ){
+    slotTextureAdded("Original Per Vertex Texture Coords","unknown.png",2,_objectId);
+    slotSetTextureMode("Original Per Vertex Texture Coords","type=vertexbased",_objectId);
+  }
+
+}
+#endif
+
 void TextureControlPlugin::fileOpened( int _id ) {
   // TODO:: Store original texture coords in a new property!
 
@@ -321,7 +363,15 @@ void TextureControlPlugin::fileOpened( int _id ) {
   }
 
   // Check if we support this kind of data
-  if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
+  if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH)
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+       && !obj->dataType(DATA_HEXAHEDRAL_MESH)
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+       && !obj->dataType(DATA_POLYHEDRAL_MESH)
+#endif
+     )
+  {
       return;
   }
 
@@ -342,6 +392,18 @@ void TextureControlPlugin::fileOpened( int _id ) {
     if ( mesh )
       handleFileOpenTextures(mesh,_id);
   }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+    HexahedralMeshObject* ovm_obj = PluginFunctions::hexahedralMeshObject(_id);
+    handleFileOpenTexturesOVM(ovm_obj, _id);
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_POLYHEDRAL_MESH ) ) {
+    PolyhedralMeshObject* ovm_obj = PluginFunctions::polyhedralMeshObject(_id);
+    handleFileOpenTexturesOVM(ovm_obj, _id);
+  }
+#endif
 
 }
 
@@ -385,6 +447,16 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
   }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+    PluginFunctions::hexahedralMeshObject(obj)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_POLYHEDRAL_MESH ) ) {
+    PluginFunctions::polyhedralMeshObject(obj)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+  }
+#endif
 
   emit updateView();
 
@@ -427,6 +499,16 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
           } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
             PluginFunctions::triMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
           }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          else if ( o_it->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+            PluginFunctions::hexahedralMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+          }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+          else if ( o_it->dataType( DATA_POLYHEDRAL_MESH ) ) {
+            PluginFunctions::polyhedralMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+          }
+#endif
       }
   }
 
@@ -435,7 +517,7 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
 }
 
 void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _image, int _id ){
-  
+
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -467,7 +549,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
 
 
 void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _image ){
-  
+
   if ( ! globalTextures_.textureExists(_textureName) ) {
     emit log(LOGERR,"slotTextureGetImage: Global texture does not exist: " + _textureName);
     return;
@@ -480,7 +562,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
 }
 
 void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int& _index){
-  
+
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -508,7 +590,7 @@ void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int&
 }
 
 void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _propertyName) {
-    
+
     // Get the object
     BaseObjectData* obj;
     if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -519,7 +601,7 @@ void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _prope
     // Get texture index property name
     if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
         _propertyName = PluginFunctions::triMeshObject(obj)->meshNode()->indexPropertyName().c_str();
-    } else if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+    } else if( obj->dataType( DATA_POLY_MESH ) ) {
         _propertyName = PluginFunctions::polyMeshObject(obj)->meshNode()->indexPropertyName().c_str();
     } else {
         emit log(LOGERR,"slotTextureIndexPropertyName: Unable to access mesh for object with id " + QString::number(_id) );
@@ -527,7 +609,7 @@ void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _prope
 }
 
 void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString& _textureName){
-  
+
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -555,7 +637,7 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
 }
 
 void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, QString& _textureFilename){
-  
+
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -596,7 +678,7 @@ void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, Q
 }
 
 void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName ){
-  
+
   _textureName = "NONE";
   
   // Get the object
@@ -677,7 +759,14 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   }
 
   //skip object if its not a mesh
-  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+  if(   !obj->dataType( DATA_TRIANGLE_MESH )   && !obj->dataType( DATA_POLY_MESH )
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+     && !obj->dataType( DATA_HEXAHEDRAL_MESH )
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+     && !obj->dataType( DATA_POLYHEDRAL_MESH )
+#endif
+    )
     return;
 
   // ================================================================================
@@ -723,6 +812,28 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(texData->texture(_textureName).glName() );
     PluginFunctions::polyMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
   }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+    HexahedralMesh* mesh = PluginFunctions::hexahedralMesh(obj);
+    HexahedralMeshObject* meshObj = PluginFunctions::hexahedralMeshObject(obj);
+    doUpdateTextureOVM(texData->texture(_textureName), *mesh, *meshObj);
+    // Texture has been bound to that object by slotAddTexture.. directly or by fileOpened from global texture
+    // Just activate it
+    PluginFunctions::hexahedralMeshObject(obj)->textureNode()->activateTexture(texData->texture(_textureName).glName() );
+    PluginFunctions::hexahedralMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_POLYHEDRAL_MESH ) ) {
+    PolyhedralMesh* mesh = PluginFunctions::polyhedralMesh(obj);
+    PolyhedralMeshObject* meshObj = PluginFunctions::polyhedralMeshObject(obj);
+    doUpdateTextureOVM(texData->texture(_textureName), *mesh, *meshObj);
+    // Texture has been bound to that object by slotAddTexture.. directly or by fileOpened from global texture
+    // Just activate it
+    PluginFunctions::polyhedralMeshObject(obj)->textureNode()->activateTexture(texData->texture(_textureName).glName() );
+    PluginFunctions::polyhedralMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
+  }
+#endif
 
   // ================================================================================
   // Mark texture as not dirty
@@ -808,13 +919,67 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
 }
 
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+template< typename VolumeMeshT, typename VolumeMeshObjectT >
+void TextureControlPlugin::doUpdateTextureOVM ( Texture& _texture, VolumeMeshT& _mesh, VolumeMeshObjectT& _obj )
+{
+  if ( _texture.type() == VERTEXBASED ) {
+    if ( _texture.dimension() == 1 ) {
+
+      if (!_mesh.template vertex_property_exists<double>(_texture.name().toStdString())){
+        emit log(LOGERR,tr("doUpdateTexture: VERTEXBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
+        return;
+      }
+
+      OpenVolumeMesh::VertexPropertyT< double > texture = _mesh.template request_vertex_property<double>(_texture.name().toStdString());
+      copyTexture(_texture, _mesh, _obj, texture);
+
+      VolumeMeshDrawModesContainer drawModes;
+      _obj.setObjectDrawMode(drawModes.facesTextured);
+
+    }
+    else if ( _texture.dimension() == 2 )
+    {
+
+        if (!_mesh.template vertex_property_exists<ACG::Vec2d>(_texture.name().toStdString())){
+          emit log(LOGERR,tr("doUpdateTexture: VERTEXBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
+          return;
+        }
+        OpenVolumeMesh::VertexPropertyT< ACG::Vec2d > texture = _mesh.template request_vertex_property<ACG::Vec2d>(_texture.name().toStdString());
+        copyTexture(_texture, _mesh, _obj, texture);
+
+        VolumeMeshDrawModesContainer drawModes;
+        _obj.setObjectDrawMode(drawModes.facesTextured);
+
+    }
+    else
+      emit log(LOGERR, "doUpdateTexture: Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
+
+  } else
+    emit log(LOGERR, "doUpdateTexture: Unsupported Texture type");
+
+}
+#endif
+
 void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
+
+#ifdef ENABLE_OPENVLUMEMESH_SUPPORT
+  VolumeMeshDrawModesContainer drawModes;
+#endif
 
   // Only update if we have a relevant draw mode
   if (! ( ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED ) ||
-          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED) || 
+          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED) ||
           ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE) ||
-          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED) )) {
+          ( PluginFunctions::drawMode(_viewerId) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED)
+
+#ifdef ENABLE_OPENVLUMEMESH_SUPPORT
+          ||
+          ( PluginFunctions::drawMode(_viewerId) &= drawModes.facesTextured) ||
+          ( PluginFunctions::drawMode(_viewerId) &= drawModes.facesTexturedShaded)
+#endif
+          )) {
     return;
   }
 
@@ -844,7 +1009,7 @@ void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
 }
 
 void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType& _type)
-{  
+{
     if( !_type.contains(UPDATE_ALL) && !_type.contains(UPDATE_GEOMETRY) && !_type.contains(UPDATE_TOPOLOGY) )
         return;
     
@@ -859,7 +1024,14 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType& 
     return;
 
   //skip object if its not a mesh
-  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+  if( !obj->dataType( DATA_TRIANGLE_MESH )   && !obj->dataType( DATA_POLY_MESH )
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          && !obj->dataType( DATA_HEXAHEDRAL_MESH )
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+          && !obj->dataType( DATA_POLYHEDRAL_MESH )
+#endif
+    )
     return;
 
   // ================================================================================
@@ -885,6 +1057,12 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier, const UpdateType& 
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE );
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+       VolumeMeshDrawModesContainer ovmDrawModes;
+       update |= ( PluginFunctions::drawMode(j) &= ovmDrawModes.facesTextured );
+       update |= ( PluginFunctions::drawMode(j) &= ovmDrawModes.facesTexturedShaded );
+#endif
     }
 
     if ( update && texData->textures()[i].enabled() )
@@ -1181,6 +1359,12 @@ void TextureControlPlugin::pluginsInitialized() {
   emit addContextMenuItem(contextMenu_->menuAction() ,DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
   emit addContextMenuItem(contextMenu_->menuAction() ,DATA_POLY_MESH     , CONTEXTOBJECTMENU );
 
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  emit addContextMenuItem(contextMenu_->menuAction() ,DATA_HEXAHEDRAL_MESH , CONTEXTOBJECTMENU );
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  emit addContextMenuItem(contextMenu_->menuAction() ,DATA_POLYHEDRAL_MESH , CONTEXTOBJECTMENU );
+#endif
 
   slotTextureAdded("Reflection Lines","reflection_map.png",2);
   slotSetTextureMode("Reflection Lines","type=environmentmap");
@@ -1214,6 +1398,16 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
     } else  if ( obj->dataType( DATA_POLY_MESH ) ) {
       PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture(imageStore().getImage(texture.textureImageId(),0) , texture.glName() );
     }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    else if( obj->dataType( DATA_HEXAHEDRAL_MESH ) ){
+      PluginFunctions::hexahedralMeshObject(obj)->textureNode()->set_texture(imageStore().getImage(texture.textureImageId(),0) , texture.glName() );
+    }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    else  if ( obj->dataType( DATA_POLYHEDRAL_MESH ) ) {
+      PluginFunctions::polyhedralMeshObject(obj)->textureNode()->set_texture(imageStore().getImage(texture.textureImageId(),0) , texture.glName() );
+    }
+#endif
 
     // Always mark texture as dirty
     _texData->texture( _textureName ).setDirty();
@@ -1380,7 +1574,22 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
           doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
         } else if( obj->dataType( DATA_POLY_MESH ) ) {
           doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
-        } else {
+        }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+        else if( obj->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+          HexahedralMesh* mesh = PluginFunctions::hexahedralMesh(obj);
+          HexahedralMeshObject* meshObj = PluginFunctions::hexahedralMeshObject(obj);
+          doUpdateTextureOVM(texData->texture(_textureName), *mesh, *meshObj);
+        }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+        else if( obj->dataType( DATA_POLYHEDRAL_MESH ) ) {
+          PolyhedralMesh* mesh = PluginFunctions::polyhedralMesh(obj);
+          PolyhedralMeshObject* meshObj = PluginFunctions::polyhedralMeshObject(obj);
+          doUpdateTextureOVM(texData->texture(_textureName), *mesh, *meshObj);
+        }
+#endif
+        else {
           emit log(LOGERR, "doSwitchTexture: HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
         }
       }
@@ -1449,16 +1658,28 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
-      
-      
+
       if ( texData->texture(_textureName).type() == HALFEDGEBASED ) {
         // We set it to the standard name here, as we copy user texture coordinates to the global representation
-        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
+        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");
       } else {
-        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");      
+        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");
       }
-      
-    } else {
+
+    }
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    else if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) ){
+      // Activate the requested texture in texture node
+      PluginFunctions::hexahedralMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+    }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    else if ( obj->dataType( DATA_POLYHEDRAL_MESH ) ){
+      // Activate the requested texture in texture node
+      PluginFunctions::polyhedralMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+    }
+#endif
+    else {
       emit log(LOGERR, "doSwitchTexture: Texture Error ( mesh required) for Texture: " + _textureName );
     }
   }
@@ -1543,7 +1764,15 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
   }
 
   //skip object if its not a mesh
-  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) ) {
+  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH )
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          && !obj->dataType( DATA_HEXAHEDRAL_MESH )
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          && !obj->dataType( DATA_POLYHEDRAL_MESH )
+#endif
+    )
+  {
     contextMenu_->clear();
     return;
   }
@@ -1698,14 +1927,14 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
     } // end of if halfedge based for tri meshes
     
   } // end of if tri mesh
-  else if ( obj->dataType( DATA_POLY_MESH ) ) 
+  else if ( obj->dataType( DATA_POLY_MESH ) )
   {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
 
     if ( texData->texture(_textureName).type() == VERTEXBASED )
     {
       OpenMesh::VPropHandleT< double > coordProp;
-    
+
       if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
       {
         emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
@@ -1715,10 +1944,10 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
       for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
         _x.push_back( mesh->property(coordProp,v_it) );
     } // end of if vertex based for poly meshes
-    else if ( texData->texture(_textureName).type() == HALFEDGEBASED ) 
+    else if ( texData->texture(_textureName).type() == HALFEDGEBASED )
     {
       OpenMesh::HPropHandleT< double > coordProp;
-    
+
       if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) )
       {
         emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
@@ -1729,6 +1958,55 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
         _x.push_back( mesh->property(coordProp,h_it) );
     } // end of if halfedge based for poly meshes
   }// end of if poly mesh
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_HEXAHEDRAL_MESH ) )
+  {
+    HexahedralMesh* mesh = PluginFunctions::hexahedralMesh(obj);
+
+    if ( texData->texture(_textureName).type() == VERTEXBASED )
+    {
+      if ( !mesh->vertex_property_exists<double>(_textureName.toStdString()) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
+
+      OpenVolumeMesh::VertexPropertyT<double> coordProp = mesh->request_vertex_property<double>(_textureName.toStdString());
+
+      for ( OpenVolumeMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+        _x.push_back( coordProp[v_it] );
+    }
+    else
+    {
+        emit log(LOGERR,tr("getCoordinates1D: Only VERTEXBASED texture type supported for OpenVolumeMesh") );
+    }
+  }// end of if hexahedral mesh
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( obj->dataType( DATA_POLYHEDRAL_MESH ) )
+  {
+    PolyhedralMesh* mesh = PluginFunctions::polyhedralMesh(obj);
+
+    if ( texData->texture(_textureName).type() == VERTEXBASED )
+    {
+
+      if ( !mesh->vertex_property_exists<double>(_textureName.toStdString()) )
+      {
+        emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
+        return;
+      }
+
+      OpenVolumeMesh::VertexPropertyT<double> coordProp = mesh->request_vertex_property<double>(_textureName.toStdString());
+
+      for ( OpenVolumeMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+        _x.push_back( coordProp[v_it] );
+    }
+    else
+    {
+        emit log(LOGERR,tr("getCoordinates1D: Only VERTEXBASED texture type supported for OpenVolumeMesh") );
+    }
+  }// end of if polyhedral mesh
+#endif
   
 }
 
@@ -1741,7 +2019,7 @@ void TextureControlPlugin::slotAboutToRestore( int _objectid ) {
   if (! PluginFunctions::getObject(  _objectid , obj ) ) {
     emit log(LOGERR,"slotAboutToRestore: Unable to get Object for id " + QString::number(_objectid) );
   }
-  
+
   // ================================================================================
   // Get Texture data for current object
   // ================================================================================
@@ -1750,7 +2028,7 @@ void TextureControlPlugin::slotAboutToRestore( int _objectid ) {
     // Nothing to do
     return;
   }
-  
+
   // ================================================================================
   // Disable the Texture mapping in the current objects Meshnode
   // This will prevent the renderer to crash if the map is wrong after the restore

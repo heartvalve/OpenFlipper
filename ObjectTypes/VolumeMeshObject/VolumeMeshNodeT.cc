@@ -72,6 +72,7 @@ VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(const VolumeMesh& _mesh,
                                               OpenVolumeMesh::StatusAttrib& _statusAttrib,
                                               OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                                               OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
+                                              OpenVolumeMesh::TexCoordAttrib<Vec2f>& _texcoordAttrib,
                                               const MaterialNode* _matNode, BaseNode* _parent,
                                               std::string _name) :
   BaseNode(_parent, _name),
@@ -83,22 +84,23 @@ VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(const VolumeMesh& _mesh,
   statusAttrib_(_statusAttrib),
   colorAttrib_(_colorAttrib),
   normalAttrib_(_normalAttrib),
+  texcoordAttrib_(_texcoordAttrib),
   materialNode_(_matNode),
 
-  cellsBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  facesBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  edgesBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  verticesBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
+  cellsBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  facesBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  edgesBufferManager_   (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  verticesBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
 
-  cellSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  faceSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  edgeSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  vertexSelectionBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
+  cellSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  faceSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  edgeSelectionBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  vertexSelectionBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
 
-  cellPickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  facePickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  edgePickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
-  vertexPickBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib),
+  cellPickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  facePickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  edgePickBufferManager_  (_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
+  vertexPickBufferManager_(_mesh, _statusAttrib, _colorAttrib, _normalAttrib, _texcoordAttrib),
 
   drawModes_(),
   lastDrawMode_      (DrawModes::NONE),
@@ -170,6 +172,10 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
             result |= drawModes_.facesColoredPerVertex;
         if (colorAttrib_.face_colors_available())
             result |= drawModes_.facesColoredPerFace;
+        if (texcoordAttrib_.vertex_texcoords_available())
+            result |= drawModes_.facesTextured;
+        if (texcoordAttrib_.vertex_texcoords_available() && normalAttrib_.vertex_normals_available())
+            result |= drawModes_.facesTexturedShaded;
     }
 
     if (mesh_.n_halffaces() > 0)
@@ -334,6 +340,35 @@ void VolumeMeshNodeT<VolumeMeshT>::drawFaces(GLState& _state, const DrawModes::D
         GLState::disable(GL_LIGHTING);
         GLState::shadeModel(GL_SMOOTH);
     }
+    else if (_drawMode & (drawModes_.facesTexturedShaded) )
+    {
+        glClientActiveTexture(GL_TEXTURE0);
+        ACG::GLState::texcoordPointer(2, GL_FLOAT, facesBufferManager_.getStride(), reinterpret_cast<GLvoid*>(facesBufferManager_.getTexCoordOffset()));
+        ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        GLState::enable(GL_LIGHTING);
+        GLState::disableClientState(GL_COLOR_ARRAY);
+
+        GLState::enableClientState(GL_NORMAL_ARRAY);
+        GLState::normalPointer(GL_FLOAT, facesBufferManager_.getStride(), reinterpret_cast<GLvoid*>(facesBufferManager_.getNormalOffset()));
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        GLState::shadeModel(GL_SMOOTH);
+    }
+    else if (_drawMode & (drawModes_.facesTextured) )
+    {
+        glClientActiveTexture(GL_TEXTURE0);
+        ACG::GLState::texcoordPointer(2, GL_FLOAT, facesBufferManager_.getStride(), reinterpret_cast<GLvoid*>(facesBufferManager_.getTexCoordOffset()));
+        ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        GLState::disableClientState(GL_COLOR_ARRAY);
+        GLState::disableClientState(GL_NORMAL_ARRAY);
+
+        GLState::disable(GL_LIGHTING);
+        GLState::shadeModel(GL_SMOOTH);
+
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    }
     else
     {
         GLState::enable(GL_LIGHTING);
@@ -459,6 +494,8 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
     GLState::disableClientState(GL_NORMAL_ARRAY);
     GLState::disableClientState(GL_COLOR_ARRAY);
 
+    GLState::disable(GL_TEXTURE_2D);
+
     GLState::enableClientState(GL_VERTEX_ARRAY);
 
     if ((_drawMode & drawModes_.cellBasedDrawModes) && !(_drawMode & drawModes_.vertexBasedDrawModes))
@@ -565,6 +602,10 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     glGetBooleanv(GL_CULL_FACE, &cullFace);
     GLint cullFaceMode;
     glGetIntegerv(GL_CULL_FACE_MODE, &cullFaceMode);
+    GLint texmode;
+    glGetTexEnviv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &texmode);
+    GLboolean texturing;
+    glGetBooleanv(GL_TEXTURE_2D,  &texturing);
     const Vec4f oldColor = _state.color();
 
     DrawModes::DrawMode cellDrawMode   = drawModes_.getFirstCellDrawMode(_drawMode);
@@ -626,6 +667,11 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     else
         ACG::GLState::disable(GL_CULL_FACE);
     ACG::GLState::cullFace(cullFaceMode);
+    if(texturing)
+        ACG::GLState::enable(GL_TEXTURE_2D);
+    else
+        ACG::GLState::disable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, texmode);
     _state.set_color(oldColor);
 }
 
@@ -1310,11 +1356,23 @@ void VolumeMeshNodeT<VolumeMeshT>::set_color_changed(bool _color_changed)
 {
     if (_color_changed)
     {
-        //Todo: only invalidate if currently in color mode
         cellsBufferManager_.invalidateColors();
         facesBufferManager_.invalidateColors();
         edgesBufferManager_.invalidateColors();
         verticesBufferManager_.invalidateColors();
+    }
+
+}
+
+template<class VolumeMeshT>
+void VolumeMeshNodeT<VolumeMeshT>::set_texture_changed(bool _texture_changed)
+{
+    if (_texture_changed)
+    {
+        cellsBufferManager_.invalidateTexCoords();
+        facesBufferManager_.invalidateTexCoords();
+        edgesBufferManager_.invalidateTexCoords();
+        verticesBufferManager_.invalidateTexCoords();
     }
 
 }

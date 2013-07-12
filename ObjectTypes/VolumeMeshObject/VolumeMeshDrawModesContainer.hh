@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13867 $                                                       *
-*   $LastChangedBy: kremer $                                                 *
-*   $Date: 2012-02-23 09:15:26 +0100 (Thu, 23 Feb 2012) $                    *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                 *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 
@@ -68,6 +68,8 @@ public:
           facesPhongShaded(ACG::SceneGraph::DrawModes::addDrawMode("Faces (phong shaded)")),
           facesColoredPerFace(ACG::SceneGraph::DrawModes::addDrawMode("Faces (colored per face)")),
           facesColoredPerVertex(ACG::SceneGraph::DrawModes::addDrawMode("Faces (colored per vertex)")),
+          facesTextured(ACG::SceneGraph::DrawModes::addDrawMode("Faces (textured)")),
+          facesTexturedShaded(ACG::SceneGraph::DrawModes::addDrawMode("Faces (textured and shaded)")),
           facesOnCells(ACG::SceneGraph::DrawModes::addDrawMode("Faces (on cells)")),
           hiddenLineBackgroundFaces(ACG::SceneGraph::DrawModes::addDrawMode("Hidden line (background colored faces)")),
 
@@ -95,7 +97,8 @@ public:
 
           cellBasedDrawModes(cellsFlatShaded | cellsSmoothShaded | cellsPhongShaded | cellsColoredPerCell | cellsColoredPerFace
                              | cellsColoredPerHalfface | cellsColoredPerVertex | cellsTransparent),
-          faceBasedDrawModes(facesFlatShaded | facesSmoothShaded | facesPhongShaded | facesColoredPerFace | facesColoredPerVertex | hiddenLineBackgroundFaces),
+          faceBasedDrawModes(facesFlatShaded | facesSmoothShaded | facesPhongShaded | facesColoredPerFace |
+                             facesColoredPerVertex | facesTextured | facesTexturedShaded | hiddenLineBackgroundFaces),
           halffaceBasedDrawModes(halffacesFlatShaded | halffacesSmoothShaded | halffacesPhongShaded | halffacesColoredPerHalfface
                              | halffacesColoredPerVertex),
           edgeBasedDrawModes(edgesWireframe | edgesHiddenLine | edgesColoredPerEdge | irregularInnerEdges | irregularOuterEdges | edgesOnCells),
@@ -119,6 +122,8 @@ public:
     ACG::SceneGraph::DrawModes::DrawMode facesPhongShaded;
     ACG::SceneGraph::DrawModes::DrawMode facesColoredPerFace;
     ACG::SceneGraph::DrawModes::DrawMode facesColoredPerVertex;
+    ACG::SceneGraph::DrawModes::DrawMode facesTextured;
+    ACG::SceneGraph::DrawModes::DrawMode facesTexturedShaded;
     ACG::SceneGraph::DrawModes::DrawMode facesOnCells;
     ACG::SceneGraph::DrawModes::DrawMode hiddenLineBackgroundFaces;
 
@@ -183,6 +188,8 @@ public:
         if (facesColoredPerFace         & _drawMode) return facesColoredPerFace;
         if (facesColoredPerFace         & _drawMode) return facesColoredPerFace;
         if (facesColoredPerVertex       & _drawMode) return facesColoredPerVertex;
+        if (facesTextured               & _drawMode) return facesTextured;
+        if (facesTexturedShaded         & _drawMode) return facesTexturedShaded;
 
         if (halffacesFlatShaded         & _drawMode) return halffacesFlatShaded;
         if (halffacesSmoothShaded       & _drawMode) return halffacesSmoothShaded;

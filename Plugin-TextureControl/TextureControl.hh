@@ -61,6 +61,13 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    #include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+
 #include <OpenFlipper/common/Types.hh>
 #include "textureProperties.hh"
 
@@ -178,6 +185,12 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     template< typename MeshT >
     void doUpdateTexture ( Texture& _texture , MeshT& _mesh);
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /// Calls the correct \a copyTexture() function to copy the texture property into the displayed OVM property
+    template< typename VolumeMeshT, typename VolumeMeshObjectT >
+    void doUpdateTextureOVM ( Texture& _texture , VolumeMeshT& _mesh, VolumeMeshObjectT& meshObj);
+#endif
+
     template< typename MeshT >
     void getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
                               int _textureid, MeshT& _mesh,
@@ -186,6 +199,12 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     /// Handles data stored in new opened files ( e.g. Texture Information )
     template< typename MeshT >
     void handleFileOpenTextures( MeshT*& _mesh  , int _objectId );
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /// Handles data stored in new opened files ( e.g. Texture Information )
+    template< typename VolumeMeshObjectT >
+    void handleFileOpenTexturesOVM( VolumeMeshObjectT* _obj, int _id );
+#endif
 
     /** \brief parse texture mode settings
      * Parses the string _mode and changes the settings in _texture according to the string.
@@ -206,6 +225,12 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     template< typename MeshT >
     void copyTexture(Texture& _texture , MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /// Copy the supplied 1D vertex property to both coordinates of the 2D vertex OVM texture property
+    template< typename VolumeMeshT, typename VolumeMeshObjectT >
+    void copyTexture(Texture& _texture , VolumeMeshT& _mesh, VolumeMeshObjectT& _obj, OpenVolumeMesh::VertexPropertyT< double > _texProp );
+#endif
+
     /** @} */
 
     //===========================================================================
@@ -220,6 +245,12 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     /// Copy the supplied 2D halfedge property to the 2D halfedge OM property
     template< typename MeshT >
     void copyTexture(Texture& _texture, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /// Copy the supplied 2D vertex property to the 2D vertex OVM property
+    template< typename VolumeMeshT, typename VolumeMeshObjectT >
+    void copyTexture(Texture& _texture, VolumeMeshT& _mesh, VolumeMeshObjectT& _obj, OpenVolumeMesh::VertexPropertyT< ACG::Vec2d > _texProp );
+#endif
 
     /** @} */
 
@@ -281,6 +312,18 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
 #if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_2D_TEXTURE_HANDLING_C)
 #define TEXTURECONTROL_2D_TEXTURE_HANDLING_TEMPLATES
 #include "TextureControl2DTextureHandlingT.cc"
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+  #if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_1D_TEXTURE_HANDLING_OVM_C)
+  #define TEXTURECONTROL_1D_TEXTURE_HANDLING_OVM_TEMPLATES
+  #include "TextureControl1DTextureHandlingOVMT.cc"
+  #endif
+
+  #if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_2D_TEXTURE_HANDLING_OVM_C)
+  #define TEXTURECONTROL_2D_TEXTURE_HANDLING_OVM_TEMPLATES
+  #include "TextureControl2DTextureHandlingOVMT.cc"
+  #endif
 #endif
 
 #if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_HISTOGRAMS_C)
