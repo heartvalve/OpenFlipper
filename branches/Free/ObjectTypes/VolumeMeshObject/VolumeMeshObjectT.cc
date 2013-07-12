@@ -50,6 +50,8 @@
 
 //== INCLUDES =================================================================
 
+#include "VolumeMeshObject.hh"
+
 #include <OpenFlipper/common/Types.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
@@ -67,8 +69,10 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(const VolumeMeshObject& _object) :
     statusAttrib_(*mesh_),
     colorAttrib_(*mesh_),
     normalAttrib_(*mesh_),
+    texcoordAttrib_(*mesh_),
     meshNode_(NULL),
-    shaderNode_(NULL)
+    shaderNode_(NULL),
+    textureNode_(NULL)
 {
 
     init();
@@ -82,8 +86,10 @@ VolumeMeshObject<MeshT>::VolumeMeshObject(DataType _typeId) :
     statusAttrib_(*mesh_),
     colorAttrib_(*mesh_, ACG::Vec4f(1.0f, 1.0f, 1.0f, 1.0f) /* Default color */),
     normalAttrib_(*mesh_),
+    texcoordAttrib_(*mesh_),
     meshNode_(NULL),
-    shaderNode_(NULL)
+    shaderNode_(NULL),
+    textureNode_(NULL)
 {
 
     setDataType(_typeId);
@@ -103,6 +109,7 @@ VolumeMeshObject<MeshT>::~VolumeMeshObject() {
     // No need to delete the scenegraph nodes as this will be managed by baseplugin
     meshNode_ = 0;
     shaderNode_ = 0;
+    textureNode_ = 0;
 }
 
 /** Cleanup function for mesh objects. Deletes the contents of the whole object and
@@ -115,6 +122,7 @@ void VolumeMeshObject<MeshT>::cleanup() {
 
     meshNode_ = 0;
     shaderNode_ = 0;
+    textureNode_ = 0;
 
     init();
 }
@@ -129,10 +137,11 @@ void VolumeMeshObject<MeshT>::init() {
     if(OpenFlipper::Options::nogui())
         return;
 
-    shaderNode_  = new ACG::SceneGraph::ShaderNode(materialNode() , "NEW ShaderNode for ");
+    textureNode_  = new ACG::SceneGraph::TextureNode(materialNode() , "NEW TextureNode for ");
 
-    meshNode_ = new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_,
-                                                            normalAttrib_, materialNode(), shaderNode(), "NEW VolumeMeshNode");
+    shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode_ , "NEW ShaderNode for ");
+
+    meshNode_ = new ACG::SceneGraph::VolumeMeshNodeT<MeshT>(*mesh_, statusAttrib_, colorAttrib_, normalAttrib_, texcoordAttrib_, materialNode(), shaderNode_, "NEW VolumeMeshNode");
 
     if(manipulatorNode() == NULL)
         std::cerr << "Error when creating volume mesh object! Manipulator node is NULL!" << std::endl;
@@ -180,8 +189,11 @@ void VolumeMeshObject<MeshT>::setName(QString _name) {
     std::string meshnodename = std::string("VolumeMeshNode for mesh " + _name.toUtf8());
     meshNode_->name(meshnodename);
 
-    std::string shadernodename = std::string("Shadernode for mesh " + _name.toUtf8());
+    std::string shadernodename = std::string("ShaderNode for mesh " + _name.toUtf8());
     shaderNode_->name(shadernodename);
+
+    std::string texturenodename = std::string("TextureNode for mesh " + _name.toUtf8());
+    textureNode_->name(texturenodename);
 }
 
 // ===============================================================================
@@ -224,6 +236,9 @@ void VolumeMeshObject<MeshT>::update(UpdateType _type) {
         if(_type.contains(UPDATE_COLOR)) {
             updateColor();
         }
+        if (_type.contains(UPDATE_TEXTURE)){
+            updateTexture();
+        }
     }
 }
 
@@ -255,6 +270,15 @@ void VolumeMeshObject<MeshT>::updateColor() {
         meshNode_->set_color_changed(true);
 }
 
+/** Updates the texture information in the mesh scenegraph node */
+template<class MeshT>
+void VolumeMeshObject<MeshT>::updateTexture()
+{
+    if(meshNode_)
+        meshNode_->set_texture_changed(true);
+
+}
+
 /** Updates the topology information in the mesh scenegraph node */
 template<class MeshT>
 void VolumeMeshObject<MeshT>::updateTopology() {
@@ -273,6 +297,12 @@ template<class MeshT>
 ACG::SceneGraph::ShaderNode* VolumeMeshObject<MeshT>::shaderNode()
 {
     return shaderNode_;
+}
+
+template<class MeshT>
+ACG::SceneGraph::TextureNode* VolumeMeshObject<MeshT>::textureNode()
+{
+    return textureNode_;
 }
 
 // ===============================================================================

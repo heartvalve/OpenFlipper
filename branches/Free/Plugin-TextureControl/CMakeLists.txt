@@ -8,3 +8,13 @@ if(Qwt5_Qt4_FOUND)
 else()
   openflipper_plugin()
 endif()
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/PolyhedralMesh)
+    add_definitions (-DENABLE_OPENVOLUMEMESH_SUPPORT)
+    add_definitions (-DENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT)
+endif()
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/HexahedralMesh)
+    add_definitions (-DENABLE_OPENVOLUMEMESH_SUPPORT)
+    add_definitions (-DENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT)
+endif()

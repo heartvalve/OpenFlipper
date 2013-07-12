@@ -513,7 +513,11 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
                       DrawModes::SOLID_ENV_MAPPED |
                       DrawModes::SOLID_2DTEXTURED_FACE |
                       DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
-                      DrawModes::SOLID_SHADER))
+                      DrawModes::SOLID_SHADER |
+
+                      //OpenVolumeMesh DrawModes
+                      DrawModes::getDrawMode("Faces (textured)") |
+                      DrawModes::getDrawMode("Faces (textured and shaded)") ))
    {
       ACG::GLState::enable( GL_TEXTURE_2D );
       
@@ -533,7 +537,7 @@ void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
       if ( !textures_.empty() ) {
         ACG::GLState::bindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
       }
-      glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_ );
+      glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_ );
    }
 }
 
@@ -548,7 +552,11 @@ void TextureNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& _draw
                       DrawModes::SOLID_ENV_MAPPED |
                       DrawModes::SOLID_2DTEXTURED_FACE |
                       DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
-                      DrawModes::SOLID_SHADER))
+                      DrawModes::SOLID_SHADER |
+
+                      //OpenVolumeMesh DrawModes
+                      DrawModes::getDrawMode("Faces (textured)") |
+                      DrawModes::getDrawMode("Faces (textured and shaded)") ))
    {
       ACG::GLState::bindTexture( GL_TEXTURE_2D, 0 );
       ACG::GLState::disable( GL_TEXTURE_2D );

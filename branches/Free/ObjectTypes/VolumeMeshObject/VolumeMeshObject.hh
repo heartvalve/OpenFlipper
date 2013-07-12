@@ -50,6 +50,7 @@
 #include <ACG/Scenegraph/SeparatorNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
 #include <ACG/Scenegraph/ShaderNode.hh>
+#include <ACG/Scenegraph/TextureNode.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/BaseObjectData.hh>
 #include <ObjectTypes/VolumeMeshObject/VolumeMeshNode.hh>
@@ -57,6 +58,8 @@
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 #include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
 #include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
+#include <OpenVolumeMesh/Attribs/TexCoordAttrib.hh>
+
 
 template<class MeshT>
 class DLLEXPORTONLY VolumeMeshObject : public BaseObjectData {
@@ -120,6 +123,9 @@ public:
     /// Update Colors of all data structures
     void updateColor();
 
+    /// Update Texture of all data structures
+    void updateTexture();
+
     /// Update Topology of all data structures
     void updateTopology();
 
@@ -131,6 +137,7 @@ public:
     typedef OpenVolumeMesh::ColorAttrib<ACG::Vec4f> ColorAttrib;
     typedef OpenVolumeMesh::NormalAttrib<MeshT> NormalAttrib;
     typedef OpenVolumeMesh::StatusAttrib StatusAttrib;
+    typedef OpenVolumeMesh::TexCoordAttrib<ACG::Vec2f> TexCoordAttrib;
 
     const StatusAttrib& status() const { return statusAttrib_; }
     StatusAttrib& status() { return statusAttrib_; }
@@ -141,6 +148,9 @@ public:
     const NormalAttrib& normals() const { return normalAttrib_; }
     NormalAttrib& normals() { return normalAttrib_; }
 
+    const TexCoordAttrib& texcoords() const { return texcoordAttrib_; }
+    TexCoordAttrib& texcoords() { return texcoordAttrib_; }
+
   private:
     ptr::shared_ptr<MeshT> mesh_;
 
@@ -150,6 +160,8 @@ public:
 
     NormalAttrib normalAttrib_;
 
+    TexCoordAttrib texcoordAttrib_;
+
   /** @} */
 
   //===========================================================================
@@ -158,6 +170,9 @@ public:
   //===========================================================================
 
   public:
+
+    /// Return pointer to the texture node
+    ACG::SceneGraph::TextureNode* textureNode();
 
     /// Return pointer to the shader node
     ACG::SceneGraph::ShaderNode* shaderNode();
@@ -177,6 +192,9 @@ public:
 
     /// Scenegraph Shader Node
     ACG::SceneGraph::ShaderNode* shaderNode_;
+
+    /// Scenegraph Texture Node
+    ACG::SceneGraph::TextureNode* textureNode_;
 
   /** @} */
 

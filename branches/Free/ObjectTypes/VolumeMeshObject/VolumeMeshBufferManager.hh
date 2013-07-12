@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13867 $                                                       *
-*   $LastChangedBy: kremer $                                                 *
-*   $Date: 2012-02-23 09:15:26 +0100 (Thu, 23 Feb 2012) $                    *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                 *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 
@@ -53,6 +53,7 @@
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 #include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
 #include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
+#include <OpenVolumeMesh/Attribs/TexCoordAttrib.hh>
 
 /*! \class VolumeMeshBufferManager
  *  \brief This class creates buffers that can be used to render open volume meshs.
@@ -114,8 +115,7 @@ public:
     enum TexCoordMode
     {
         TCM_NONE,
-        TCM_VERTEX_1D,
-        TCM_VERTEX_2D
+        TCM_SINGLE_2D
     };
 
     class Plane {
@@ -135,8 +135,9 @@ public:
     };
 
     VolumeMeshBufferManager(const VolumeMesh &mesh_, OpenVolumeMesh::StatusAttrib& statusAttrib_,
-                                               OpenVolumeMesh::ColorAttrib<ACG::Vec4f>& colorAttrib_,
-                                               OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_);
+                                                     OpenVolumeMesh::ColorAttrib<ACG::Vec4f>& colorAttrib_,
+                                                     OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_,
+                                                     OpenVolumeMesh::TexCoordAttrib<ACG::Vec2f>& texcoordAttrib_);
     virtual ~VolumeMeshBufferManager(){ free(); }
 
 
@@ -155,6 +156,9 @@ public:
 
     /// Returns the normal's offset within the buffer
     unsigned char getNormalOffset() { return mNormalOffset; }
+
+    /// Returns the texcoord's offset within the buffer
+    unsigned char getTexCoordOffset() { return mTexCoordOffset; }
 
 
     /// Returns a VertexDeclaration for the vertices stored in the buffer
@@ -180,6 +184,9 @@ public:
     /// Invalidates normals
     void invalidateNormals();
 
+    /// Invalidates texture coordinates
+    void invalidateTexCoords();
+
 
     /// Deletes the buffers on the GPU
     void free();
@@ -198,7 +205,7 @@ public:
 
 
     /// Disables colors
-    //void disableColors()            { mColorMode  = CM_NONE;     }
+    void disableColors()            { mColorMode  = CM_NO_COLORS;     }
 
     /// Enables per cell colors
     void enablePerCellColors()      { mColorMode  = CM_CELL;     }
@@ -271,6 +278,14 @@ public:
     /// Enables vertex primitives that are drawn on the cells
     void enableVertexOnCellPrimitives()   { mPrimitiveMode = PM_VERTICES_ON_CELLS;  }
 
+
+    /// Disables textures
+    void disableTextures()                { mTexCoordMode = TCM_NONE;       }
+
+    /// Enables textures
+    void enableTextureSingle()            { mTexCoordMode = TCM_SINGLE_2D;  }
+
+
     /// Checks whether only selected primitives should be added to the buffer
     bool selectionOnly()                       { return mSkipUnselected;            }
 
@@ -342,6 +357,9 @@ private:
     /// Adds a normal to the buffer
     void addNormalToBuffer(ACG::Vec3d _normal, unsigned char *_buffer, unsigned int _offset);
 
+    /// Adds a texture coordnate to the buffer
+    void addTexCoordToBuffer(ACG::Vec2f _texCoord, unsigned char* _buffer, unsigned int _offset);
+
 
     /// Constructs a VertexDeclaration, the size and the offsets for the vertices stored in the buffer
     void calculateVertexDeclaration();
@@ -355,6 +373,9 @@ private:
 
     /// Adds all colors to the buffer
     void buildColorBuffer(unsigned char* _buffer);
+
+    /// Adds texture coordinates to the buffer
+    void buildTexCoordBuffer(unsigned char* _buffer);
 
     /// Adds all picking colors to the buffer
     void buildPickColorBuffer(ACG::GLState &_state, unsigned int _offset, unsigned char* _buffer);
@@ -389,6 +410,9 @@ private:
     /// Checks whether colors need to be rebuild
     bool colorsNeedRebuild();
 
+    /// Checks whether texture coordinates need to be rebuild
+    bool texCoordsNeedRebuild();
+
     /// Checks whether normals need to be rebuild
     bool normalsNeedRebuild();
 
@@ -399,6 +423,7 @@ private:
     OpenVolumeMesh::StatusAttrib& mStatusAttrib;
     OpenVolumeMesh::ColorAttrib<ACG::Vec4f>& mColorAttrib;
     OpenVolumeMesh::NormalAttrib<VolumeMesh>& mNormalAttrib;
+    OpenVolumeMesh::TexCoordAttrib<ACG::Vec2f>& mTexcoordAttrib;
 
     int mNumOfVertices;
     int mCurrentNumOfVertices;
@@ -419,6 +444,7 @@ private:
     bool mGeometryChanged;
     bool mNormalsChanged;
     bool mColorsChanged;
+    bool mTexCoordsChanged;
 
     //draw modes
     VolumeMeshDrawModesContainer mDrawModes;
@@ -455,13 +481,10 @@ private:
     std::vector<bool> mCellInsideness;
     bool mCellInsidenessValid;
 
-    bool mMultiTexturing;
     TexCoordMode mTexCoordMode;
     TexCoordMode mCurrentTexCoordMode;
     unsigned char mTexCoordOffset;
     unsigned char mCurrentTexCoordOffset;
-
-
 
 };
 

@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13867 $                                                       *
-*   $LastChangedBy: kremer $                                                 *
-*   $Date: 2012-02-23 09:15:26 +0100 (Thu, 23 Feb 2012) $                    *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                 *
+*   $Date$                    *
 *                                                                            *
 \*===========================================================================*/
 
@@ -46,17 +46,20 @@
 
 template <class VolumeMesh>
 VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &mesh_, OpenVolumeMesh::StatusAttrib& statusAttrib_,
-                                                                                OpenVolumeMesh::ColorAttrib<ACG::Vec4f>& colorAttrib_,
-                                                                                OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_)
+                                                                                      OpenVolumeMesh::ColorAttrib<ACG::Vec4f>& colorAttrib_,
+                                                                                      OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_,
+                                                                                      OpenVolumeMesh::TexCoordAttrib<ACG::Vec2f>& texcoordAttrib_)
     :
       mDefaultColor(ACG::Vec4f(0.0,0.0,0.0,1.0)),
       mMesh(mesh_),
       mStatusAttrib(statusAttrib_),
       mColorAttrib(colorAttrib_),
       mNormalAttrib(normalAttrib_),
+      mTexcoordAttrib(texcoordAttrib_),
       mNumOfVertices(-1),
       mCurrentNumOfVertices(-1),
       mVertexSize(0),
+      mVertexDeclaration(),
       mColorOffset(-1),
       mNormalOffset(-1),
       mScale(0.8),
@@ -66,6 +69,7 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mGeometryChanged(true),
       mNormalsChanged(true),
       mColorsChanged(true),
+      mTexCoordsChanged(true),
       mDrawModes(),
       mPrimitiveMode(PM_NONE),
       mNormalMode(NM_NONE),
@@ -88,7 +92,6 @@ VolumeMeshBufferManager<VolumeMesh>::VolumeMeshBufferManager(const VolumeMesh &m
       mCurrentColorOffset(0),
       mCogsValid(false),
       mCellInsidenessValid(),
-      mMultiTexturing(false),
       mTexCoordMode(TCM_NONE),
       mCurrentTexCoordMode(TCM_NONE),
       mTexCoordOffset(0),
@@ -215,6 +218,24 @@ void VolumeMeshBufferManager<VolumeMesh>::addNormalToBuffer(ACG::Vec3d _normal, 
     addFloatToBuffer(_normal[2], buffer);
 }
 
+/**
+ * @brief Adds a texture coordnate to the buffer
+ *
+ * This method should be called after the size of a vertex and the normal offset within a vertex
+ * was calculated using calculateVertexDeclaration()
+ *
+ * @param _texCoord The texture coordinate that should be inserted
+ * @param _buffer A pointer to the start of the buffer
+ * @param _offset The offset (in number of vertices) to the place the texture coordinate should inserted
+ */
+template <class VolumeMesh>
+void VolumeMeshBufferManager<VolumeMesh>::addTexCoordToBuffer(ACG::Vec2f _texCoord, unsigned char* _buffer, unsigned int _offset)
+{
+    unsigned char* buffer = _buffer + _offset*mVertexSize + mTexCoordOffset;
+    addFloatToBuffer(_texCoord[0], buffer);
+    addFloatToBuffer(_texCoord[1], buffer);
+}
+
 
 /**
  * @brief Constructs a VertexDeclaration, the size and the offsets for the vertices stored in the buffer
@@ -256,9 +277,7 @@ void VolumeMeshBufferManager<VolumeMesh>::calculateVertexDeclaration()
     {
         mTexCoordOffset = currentOffset;
         unsigned char numOfCoords = 0;
-        if (mTexCoordMode == TCM_VERTEX_1D)
-            numOfCoords = 1;
-        else if (mTexCoordMode == TCM_VERTEX_2D)
+        if (mTexCoordMode == TCM_SINGLE_2D)
             numOfCoords = 2;
         mVertexDeclaration.addElement(GL_FLOAT, numOfCoords, ACG::VERTEX_USAGE_TEXCOORD, reinterpret_cast<GLuint*>(currentOffset));
         currentOffset += numOfCoords * sizeof(float);
@@ -323,13 +342,13 @@ void VolumeMeshBufferManager<VolumeMesh>::setOptionsFromDrawMode(ACG::SceneGraph
                           mDrawModes.halffacesColoredPerVertex | mDrawModes.edgesColoredPerEdge |
                           mDrawModes.verticesColored))
         enablePerVertexColors();
-    /*else
-        disableColors();*/
+    else
+        disableColors();
 
     //normals
     if (_drawMode & (mDrawModes.cellsFlatShaded | mDrawModes.halffacesFlatShaded))
         enablePerHalffaceNormals();
-    else if (_drawMode & (mDrawModes.facesFlatShaded))
+    else if (_drawMode & (mDrawModes.facesFlatShaded | mDrawModes.facesTexturedShaded))
         enablePerFaceNormals();
     else if (_drawMode & (mDrawModes.cellsSmoothShaded | mDrawModes.facesSmoothShaded | mDrawModes.halffacesSmoothShaded |
                           mDrawModes.cellsPhongShaded  | mDrawModes.facesPhongShaded  | mDrawModes.halffacesPhongShaded))
@@ -352,6 +371,14 @@ void VolumeMeshBufferManager<VolumeMesh>::setOptionsFromDrawMode(ACG::SceneGraph
     else
         mSkipRegularEdges = true;
 
+
+    //  textures
+    if (_drawMode & (mDrawModes.facesTextured | mDrawModes.facesTexturedShaded))
+        mTexCoordMode = TCM_SINGLE_2D;
+    else
+        mTexCoordMode = TCM_NONE;
+
+    // primiive mode
     if (_drawMode & (mDrawModes.cellBasedDrawModes))
         mPrimitiveMode = PM_CELLS;
     else if (_drawMode & (mDrawModes.facesOnCells))
@@ -374,6 +401,8 @@ void VolumeMeshBufferManager<VolumeMesh>::setOptionsFromDrawMode(ACG::SceneGraph
         mPrimitiveMode = PM_VERTICES;
     else
         mPrimitiveMode = PM_NONE;
+
+
 }
 
 
@@ -967,6 +996,22 @@ bool VolumeMeshBufferManager<VolumeMesh>::colorsNeedRebuild()
             (mColorMode     != mCurrentColorMode)     ||
             (mShowIrregularInnerEdges != mCurrentShowIrregularInnerEdges) ||
             (mShowIrregularOuterValence2Edges != mCurrentShowIrregularOuterValence2Edges);
+}
+
+/**
+ * @brief Checks whether texture coordinates need to be rebuild
+ *
+ * @return True iff colors need to be rebuild
+ */
+template <class VolumeMesh>
+bool VolumeMeshBufferManager<VolumeMesh>::texCoordsNeedRebuild()
+{
+    return  (mTexCoordsChanged)                       ||
+            (mVertexSize    != mCurrentVertexSize)    ||
+            (mNumOfVertices != mCurrentNumOfVertices) ||
+            (mPrimitiveMode != mCurrentPrimitiveMode) ||
+            (mTexCoordOffset!= mCurrentTexCoordOffset)||
+            (mTexCoordMode  != mTexCoordMode);
 }
 
 /**
@@ -1602,6 +1647,65 @@ void VolumeMeshBufferManager<VolumeMesh>::buildColorBuffer(unsigned char* _buffe
 }
 
 /**
+ * @brief Adds texture coordinates to the buffer
+ *
+ * @param _buffer Pointer to the start of the buffer
+ */
+template <class VolumeMesh>
+void VolumeMeshBufferManager<VolumeMesh>::buildTexCoordBuffer(unsigned char* _buffer)
+{
+
+    unsigned int pos = 0;
+
+    if (mTexCoordMode == TCM_NONE)
+        return;
+
+    if (mPrimitiveMode == PM_FACES)
+    {
+        std::vector<ACG::Vec2f> texCoords;
+        OpenVolumeMesh::FaceIter f_begin(mMesh.faces_begin()), f_end(mMesh.faces_end());
+        for (OpenVolumeMesh::FaceIter f_it = f_begin; f_it != f_end; ++f_it)
+        {
+            if (mBoundaryOnly && !mMesh.is_boundary(*f_it)) continue;
+            if (!is_inside(*f_it)) continue;
+            texCoords.clear();
+
+            for (OpenVolumeMesh::HalfFaceVertexIter hfv_it = mMesh.hfv_iter(mMesh.halfface_handle(*f_it,0)); hfv_it; ++hfv_it)
+                texCoords.push_back(mTexcoordAttrib[*hfv_it]);
+
+            for (unsigned int i = 0; i < (texCoords.size()-2); i++)
+            {
+                addTexCoordToBuffer(texCoords[0], _buffer, pos++);
+                addTexCoordToBuffer(texCoords[i+1], _buffer, pos++);
+                addTexCoordToBuffer(texCoords[i+2], _buffer, pos++);
+            }
+        }
+    }
+    else if (mPrimitiveMode == PM_HALFFACES)
+    {
+        std::vector<ACG::Vec2f> texCoords;
+        OpenVolumeMesh::HalfFaceIter hf_begin(mMesh.halffaces_begin()), hf_end(mMesh.halffaces_end());
+        for (OpenVolumeMesh::HalfFaceIter hf_it = hf_begin; hf_it != hf_end; ++hf_it)
+        {
+            if (mBoundaryOnly && !mMesh.is_boundary(*hf_it)) continue;
+            if (!is_inside(*hf_it)) continue;
+            texCoords.clear();
+
+            for (OpenVolumeMesh::HalfFaceVertexIter hfv_it = mMesh.hfv_iter(*hf_it); hfv_it; ++hfv_it)
+                texCoords.push_back(mTexcoordAttrib[*hfv_it]);
+
+            for (unsigned int i = 0; i < (texCoords.size()-2); i++)
+            {
+                addTexCoordToBuffer(texCoords[0], _buffer, pos++);
+                addTexCoordToBuffer(texCoords[i+1], _buffer, pos++);
+                addTexCoordToBuffer(texCoords[i+2], _buffer, pos++);
+            }
+        }
+    }
+
+}
+
+/**
  * @brief Adds all picking colors to the buffer
  *
  * @param _state The current state which provides the picking colors.
@@ -1760,6 +1864,8 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
                     buildNormalBuffer(buffer);
                 if (colorsNeedRebuild())
                     buildColorBuffer(buffer);
+                if (texCoordsNeedRebuild())
+                    buildTexCoordBuffer(buffer);
 
 
                 glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -1775,10 +1881,11 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getBuffer()
         }
 
         saveOptions();
-        mInvalidated     = false;
-        mGeometryChanged = false;
-        mColorsChanged   = false;
-        mNormalsChanged  = false;
+        mInvalidated      = false;
+        mGeometryChanged  = false;
+        mColorsChanged    = false;
+        mNormalsChanged   = false;
+        mTexCoordsChanged = false;
 
     }
 
@@ -1843,9 +1950,10 @@ GLuint VolumeMeshBufferManager<VolumeMesh>::getPickBuffer(ACG::GLState &_state, 
 
         mCurrentPickOffset = _offset;
         saveOptions();
-        mInvalidated = false;
-        mGeometryChanged = false;
-        mColorsChanged   = false;
+        mInvalidated      = false;
+        mGeometryChanged  = false;
+        mColorsChanged    = false;
+        mTexCoordsChanged = false;
 
     }
 
@@ -1873,6 +1981,7 @@ void VolumeMeshBufferManager<VolumeMesh>::invalidateGeometry()
     mNumOfVertices       = -1;
     mGeometryChanged     = true;
     mColorsChanged       = true;
+    mTexCoordsChanged    = true;
     mNormalsChanged      = true;
     mCogsValid           = false;
     mCellInsidenessValid = false;
@@ -1896,6 +2005,16 @@ void VolumeMeshBufferManager<VolumeMesh>::invalidateNormals()
 {
     mInvalidated    = true;
     mNormalsChanged = true;
+}
+
+/**
+ * @brief Invalidates texture coordinates
+ */
+template <class VolumeMesh>
+void VolumeMeshBufferManager<VolumeMesh>::invalidateTexCoords()
+{
+    mInvalidated      = true;
+    mTexCoordsChanged = true;
 }
 
 /**

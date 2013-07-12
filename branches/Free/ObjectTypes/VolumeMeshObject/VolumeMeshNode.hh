@@ -54,6 +54,7 @@
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 #include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
 #include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
+#include <OpenVolumeMesh/Attribs/TexCoordAttrib.hh>
 
 #include "VolumeMeshBufferManager.hh"
 #include "VolumeMeshDrawModesContainer.hh"
@@ -101,6 +102,7 @@ public:
                     OpenVolumeMesh::StatusAttrib& _statusAttrib,
                     OpenVolumeMesh::ColorAttrib<Vec4f>& _colorAttrib,
                     OpenVolumeMesh::NormalAttrib<VolumeMesh>& _normalAttrib,
+                    OpenVolumeMesh::TexCoordAttrib<Vec2f> &_texcoordAttrib,
                     const MaterialNode* _matNode, BaseNode* _parent = 0,
                     std::string _name = "<VolumeMeshNode>");
 
@@ -156,6 +158,9 @@ public:
 
     // Set whether to update the color in next render pass
     void set_color_changed(bool _color_changed);
+
+    // Set whether to update the texture in next render pass
+    void set_texture_changed(bool _texture_changed);
 
     // Set whether to update the selectopm in next render pass
     void set_selection_changed(bool _selection_changed);
@@ -227,6 +232,7 @@ private:
     OpenVolumeMesh::StatusAttrib& statusAttrib_;
     OpenVolumeMesh::ColorAttrib<Vec4f>& colorAttrib_;
     OpenVolumeMesh::NormalAttrib<VolumeMesh>& normalAttrib_;
+    OpenVolumeMesh::TexCoordAttrib<Vec2f>& texcoordAttrib_;
 
     const MaterialNode* materialNode_;
 
