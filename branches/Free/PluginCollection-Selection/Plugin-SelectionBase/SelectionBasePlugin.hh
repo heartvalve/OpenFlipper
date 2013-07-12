@@ -217,6 +217,12 @@ Q_INTERFACES(SelectionInterface)
         
     public slots:
         QString version() { return QString("1.0"); };
+
+        /// Enables setting the selection metaphor (e.g. "sb_sphere") via scripting
+        void setSelectionMetaphor(QString _metaphor);
+
+        /// Enables setting the selection primitive (e.g. "Select Faces") via scripting
+        void setSelectionPrimitiveType(QString _primitive);
         
     private:
         
