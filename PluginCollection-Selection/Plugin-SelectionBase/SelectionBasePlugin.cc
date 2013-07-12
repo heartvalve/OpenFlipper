@@ -720,6 +720,56 @@ void SelectionBasePlugin::updateActivePrimitiveTypes(bool _checked) {
 
 //============================================================================================
 
+void SelectionBasePlugin::setSelectionMetaphor(QString _metaphor) {
+  if (_metaphor == SB_TOGGLE)
+    toggleSelectionAction_->trigger();
+  else if (_metaphor == SB_LASSO)
+    lassoSelectionAction_->trigger();
+  else if (_metaphor == SB_VOLUME_LASSO)
+    volumeLassoSelectionAction_->trigger();
+  else if (_metaphor == SB_SURFACE_LASSO)
+    surfaceLassoSelectionAction_->trigger();
+  else if (_metaphor == SB_SPHERE)
+    sphereSelectionAction_->trigger();
+  else if (_metaphor == SB_BOUNDARY)
+    boundarySelectionAction_->trigger();
+  else if (_metaphor == SB_FLOODFILL)
+    floodFillSelectionAction_->trigger();
+  else if (_metaphor == SB_COMPONENTS)
+    componentsSelectionAction_->trigger();
+  else {
+    // check custom selection modes and pick the first one that matches
+    std::map<QString,SelectionEnvironment>::iterator it = selectionEnvironments_.begin();
+    bool found(false);
+    for (; it != selectionEnvironments_.end() && !found; ++it) {
+      std::set<HandleAction*>::iterator e = it->second.customSelectionModes.begin();
+      for(; e != it->second.customSelectionModes.end(); ++e) {
+        // build fancy custom selection mode string that is used when adding custom selections
+        QString customModeName = QString((*e)->selectionEnvironmentHandle() + "_" + _metaphor).replace(" ", "_");
+        if((*e)->selectionModeHandle().contains(customModeName)) {
+          (*e)->trigger();
+          found = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+//============================================================================================
+
+void SelectionBasePlugin::setSelectionPrimitiveType(QString _primitive) {
+  QList<QAction*>::iterator a_it = primitivesBarGroup_->actions().begin();
+  for(; a_it != primitivesBarGroup_->actions().end(); ++a_it) {
+    if((*a_it)->text() == _primitive) {
+      (*a_it)->trigger();
+      break;
+    }
+  }
+}
+
+//============================================================================================
+
 void SelectionBasePlugin::slotAddSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, PrimitiveType _type) {
     
     // Get selection environment
