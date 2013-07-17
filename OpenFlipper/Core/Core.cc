@@ -629,7 +629,8 @@ Core::init() {
     openIniFile( optionFiles[i] ,false,true,false);
   }
 
-  splash_->clearMessage();
+  if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() )
+      splash_->clearMessage();
 
   // ===============================================================================================
   // Load Settings from configuration files
