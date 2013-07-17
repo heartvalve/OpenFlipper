@@ -991,6 +991,9 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     if ( checkSignal(plugin,"addMenubarAction(QAction*,QString)") )
       connect(plugin      , SIGNAL(addMenubarAction(QAction*,QString)),
               coreWidget_ , SLOT(slotAddMenubarAction(QAction*,QString)),Qt::DirectConnection);
+    if ( checkSignal(plugin,"addMenubarActions(std::vector<QAction*>, QString)") )
+      connect(plugin      , SIGNAL(addMenubarActions(std::vector<QAction*>,QString)),
+              coreWidget_ , SLOT(slotAddMenubarActions(std::vector<QAction*>,QString)),Qt::DirectConnection);
     if ( checkSignal(plugin,"getMenubarMenu (QString,QMenu*&,bool)") )
       connect(plugin      , SIGNAL(getMenubarMenu (QString,QMenu*&,bool)),
               coreWidget_ , SLOT(slotGetMenubarMenu (QString,QMenu*&,bool)),Qt::DirectConnection);

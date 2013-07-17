@@ -64,8 +64,6 @@ void Core::saveSettings(){
   // generate the saveSettings-Dialog
   // ========================================================================================
 
-  QString complete_name;
-
   QFileDialog fileDialog( coreWidget_,
                           tr("Save Settings"),
                           OpenFlipperSettings().value("Core/CurrentDir").toString(),
@@ -138,7 +136,7 @@ void Core::saveSettings(){
     return;
   }
 
-  complete_name = fileNames[0];
+  QString complete_name = fileNames[0];
 
   //check the extension if its a known one
   if ( !complete_name.endsWith(".ini", Qt::CaseInsensitive) && !complete_name.endsWith(".obj", Qt::CaseInsensitive) ){
@@ -151,6 +149,18 @@ void Core::saveSettings(){
 
   }
 
+  bool is_saveObjectInfo = saveObjectInfo->isChecked();
+  bool is_targetOnly = targetOnly->isChecked();
+  bool is_saveAll = saveAllBox->isChecked();
+  bool is_askOverwrite = askOverwrite->isChecked();
+  bool is_saveProgramSettings = saveProgramSettings->isChecked();
+  bool is_savePluginSettings = savePluginSettings->isChecked();
+
+  saveSettings(complete_name, is_saveObjectInfo, is_targetOnly, is_saveAll, is_askOverwrite, is_saveProgramSettings, is_savePluginSettings);
+}
+
+void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_targetOnly, bool is_saveAll,
+                        bool is_askOverwrite, bool is_saveProgramSettings, bool is_savePluginSettings){
   // Get the chosen directory and remember it.
   QFileInfo fileInfo(complete_name);
   OpenFlipperSettings().setValue("Core/CurrentDir", fileInfo.absolutePath() );
@@ -173,10 +183,10 @@ void Core::saveSettings(){
   // Memorize saved files new file names
   std::map<int,QString> savedFiles;
 
-  if ( saveObjectInfo->isChecked() ) {
+  if ( is_saveObjectInfo ) {
 
     PluginFunctions::IteratorRestriction restriction;
-    if ( targetOnly->isChecked() )
+    if ( is_targetOnly )
       restriction = PluginFunctions::TARGET_OBJECTS;
     else
       restriction = PluginFunctions::ALL_OBJECTS;
@@ -233,7 +243,7 @@ void Core::saveSettings(){
     {
       QString filename;
 
-      if ( saveAllBox->isChecked() )
+      if ( is_saveAll )
       {
         // Use path of settings file for all objects
         filename = fileInfo.absolutePath() + OpenFlipper::Options::dirSeparator() + o_it->name();
@@ -310,7 +320,7 @@ void Core::saveSettings(){
       }
 
       // decide whether to use saveObject or saveObjectTo
-      if ( !QFile(filename).exists() || !askOverwrite->isChecked() )
+      if ( !QFile(filename).exists() || !is_askOverwrite )
         saveObject( o_it->id(), filename);
       else
         saveObjectTo(o_it->id(), filename);
@@ -325,22 +335,20 @@ void Core::saveSettings(){
   // ========================================================================================
   // Finally save all Settings
   // ========================================================================================
-  if ( complete_name.endsWith("ini") ) {
-
-    // write to ini
-    writeIniFile( complete_name,
-                  saveAllBox->isChecked(),
-                  targetOnly->isChecked(),
-                  saveProgramSettings->isChecked(),
-                  savePluginSettings->isChecked(),
-                  saveObjectInfo->isChecked(),
-                  savedFiles);
-
-  } else if ( complete_name.endsWith("obj") ) {
+  if ( complete_name.endsWith("obj") ) {
 
     //write to obj
-    writeObjFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked(), savedFiles);
+    writeObjFile(complete_name, is_saveAll, is_targetOnly, savedFiles);
 
+  } else {
+      // write to ini
+      writeIniFile( complete_name,
+                    is_saveAll,
+                    is_targetOnly,
+                    is_saveProgramSettings,
+                    is_savePluginSettings,
+                    is_saveObjectInfo,
+                    savedFiles);
   }
 
   // update status
