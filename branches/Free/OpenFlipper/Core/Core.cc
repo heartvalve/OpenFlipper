@@ -245,7 +245,7 @@ Core::init() {
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       QPixmap splashPixmap(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "splash.png");
 
-      splash_ = new QSplashScreen(splashPixmap, Qt::WindowStaysOnTopHint);
+      splash_ = new QSplashScreen(splashPixmap, Qt::SplashScreen | Qt::WindowStaysOnTopHint);
       splash_->show();
 
       splash_->showMessage(tr("Initializing mainwindow") ,
@@ -617,7 +617,7 @@ Core::init() {
   for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
 
     if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
-      splash_->showMessage(tr("Loading Configuration File ") + QString::number(i) + "/"  + QString::number(optionFiles.size()) ,
+      splash_->showMessage(tr("Loading Configuration File %1/%2").arg(i+1).arg(optionFiles.size()),
                            Qt::AlignBottom | Qt::AlignLeft , Qt::white);
     }
 
@@ -628,6 +628,8 @@ Core::init() {
 
     openIniFile( optionFiles[i] ,false,true,false);
   }
+
+  splash_->clearMessage();
 
   // ===============================================================================================
   // Load Settings from configuration files
@@ -676,6 +678,7 @@ Core::init() {
 
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
         splash_->raise();
+        splash_->showMessage(tr("Ready."), Qt::AlignBottom | Qt::AlignLeft , Qt::white);
         QTimer::singleShot(2000, this, SLOT(finishSplash()));
     }
 
