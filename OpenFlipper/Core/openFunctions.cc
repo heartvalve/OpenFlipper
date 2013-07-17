@@ -863,13 +863,12 @@ void Core::loadSettings(QString _filename){
   QString newpath = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2);
   OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
-  if ( _filename.endsWith("ini",Qt::CaseInsensitive) ) {
+  if ( _filename.endsWith("obj",Qt::CaseInsensitive) ) {
+    loadObject(_filename);
+    applyOptions();
+  } else {
     // Loaded function for recent files. Load everything.
     openIniFile(_filename,true,true,true);
     applyOptions();
-  } else if ( _filename.endsWith("obj",Qt::CaseInsensitive) ) {
-    loadObject(_filename);
-    applyOptions();
   }
-
 }

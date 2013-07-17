@@ -924,6 +924,10 @@ private slots:
     /// Save current status to a settings file. Solicit file name through dialog.
     void saveSettings();
 
+    /// Save current status to a the provided settings file
+    void saveSettings(QString filePath, bool is_saveObjectInfo, bool is_targetOnly, bool is_saveAll,
+                      bool is_askOverwrite, bool is_saveProgramSettings, bool is_savePluginSettings);
+
     /// Open Load Widget
     void loadObject();
 

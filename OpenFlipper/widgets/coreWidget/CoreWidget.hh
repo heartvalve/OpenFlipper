@@ -760,6 +760,7 @@ public:
   private slots :
 
     void slotAddMenubarAction( QAction* _action , QString _name );
+    void slotAddMenubarActions( std::vector<QAction*> _actions , QString _name );
     void slotGetMenubarMenu (QString _name, QMenu *& _menu, bool _create);
 
   private:

@@ -82,6 +82,30 @@ void CoreWidget::slotAddMenubarAction( QAction* _action , QString _name ) {
 
 }
 
+void CoreWidget::slotAddMenubarActions( std::vector<QAction*> _actions , QString _name ) {
+
+  if (!menus_.contains(_name))
+    return;
+
+  if (_name == FILEMENU) {
+    fileMenu_->insertSeparator(fileMenuEnd_);
+    for (std::vector<QAction*>::iterator it = _actions.begin(); it != _actions.end(); ++it )
+        fileMenu_->insertAction(fileMenuEnd_, *it);
+  } else if (_name == ALGORITHMMENU) {
+
+    // We insert the algorithms menu if it is not available yet
+    if ( menuBar()->actions().contains(helpMenu_->menuAction()) )
+      menuBar()->insertMenu(helpMenu_->menuAction(), algorithmMenu_);
+
+    for (std::vector<QAction*>::iterator it = _actions.begin(); it != _actions.end(); ++it )
+        menus_[_name]->addAction(*it);
+  } else {
+      for (std::vector<QAction*>::iterator it = _actions.begin(); it != _actions.end(); ++it )
+          menus_[_name]->addAction(*it);
+  }
+
+}
+
 //=============================================================================
 
 void CoreWidget::slotGetMenubarMenu (QString _name, QMenu *& _menu, bool _create)
