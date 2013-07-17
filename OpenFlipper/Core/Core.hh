@@ -921,7 +921,7 @@ private slots:
     /// Slot for saving objects to a new location
     void saveAllObjectsTo();
 
-    /// Save current status to a settings file
+    /// Save current status to a settings file. Solicit file name through dialog.
     void saveSettings();
 
     /// Open Load Widget
