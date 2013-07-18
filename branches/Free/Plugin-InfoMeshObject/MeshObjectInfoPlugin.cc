@@ -78,25 +78,12 @@ InfoMeshObjectPlugin::InfoMeshObjectPlugin() :
 
 InfoMeshObjectPlugin::~InfoMeshObjectPlugin() {
 
-  if ( OpenFlipper::Options::gui()) {
-    delete infoBar_;
-    delete info_;
-  }
-
+  //Info bar and dialog will be deleted by core widget
 }
 
 
 void InfoMeshObjectPlugin::initializePlugin() {
 
-  if ( OpenFlipper::Options::gui()) {
-    infoBar_ = new InfoBar();
-
-    // Create info dialog
-    info_ = new InfoDialog();
-
-    // Set default pick mode in dialog box
-    info_->pickMode->setCurrentIndex(0); // PICK_FACES
-  }
 }
 
 /// initialize the plugin
@@ -106,6 +93,16 @@ void InfoMeshObjectPlugin::pluginsInitialized() {
   setDescriptions();
 
   if ( OpenFlipper::Options::gui()) {
+
+    // Create info bar
+    infoBar_ = new InfoBar();
+
+    // Create info dialog
+    info_ = new InfoDialog();
+
+    // Set default pick mode in dialog box
+    info_->pickMode->setCurrentIndex(0); // PICK_FACES
+
     emit addWidgetToStatusbar(infoBar_);
     infoBar_->hideCounts();
   }
