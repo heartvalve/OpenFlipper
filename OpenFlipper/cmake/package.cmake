@@ -147,7 +147,7 @@ if (WIN32)
   # window NSIS installer
   set (CPACK_GENERATOR "NSIS")
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
-  set (CPACK_NSIS_DISPLAY_NAME "OpenFlipper v${CPACK_PACKAGE_VERSION}")
+  set (CPACK_NSIS_DISPLAY_NAME "${OPENFLIPPER_PRODUCT_STRING} v${CPACK_PACKAGE_VERSION}")
 
   set (CPACK_NSIS_MUI_ICON ${WINDOWS_INSTALLER_ICON} )
   # we need a real uninstaller icon here and we have to define both to make the installer icon work
@@ -164,10 +164,10 @@ if (WIN32)
   # set (CPACK_NSIS_CONTACT "")
 
   set (CPACK_NSIS_CREATE_ICONS
-       "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\OpenFlipper.lnk\\\" \\\"$INSTDIR\\\\OpenFlipper.exe\\\""
+       "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${OPENFLIPPER_PRODUCT_STRING}.lnk\\\" \\\"$INSTDIR\\\\${OPENFLIPPER_PRODUCT_STRING}.exe\\\""
       )
   set (CPACK_NSIS_DELETE_ICONS
-       "Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\OpenFlipper.lnk\\\""
+       "Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\${OPENFLIPPER_PRODUCT_STRING}.lnk\\\""
       )
     
   file (GLOB _files "${CMAKE_BINARY_DIR}/Build/*.dll")
