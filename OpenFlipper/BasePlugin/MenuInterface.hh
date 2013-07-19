@@ -116,8 +116,11 @@ signals:
    *
    * Does the same as multiple calls to addMenubarAction except
    * it doesn't insert a separator between the individual items.
+   *
+   * @param _actions Vector of pointers to the new actions.
+   * @param _name Name of the menu.
    */
-  virtual void addMenubarActions(std::vector<QAction*> &_action, QString _name ) {};
+  virtual void addMenubarActions(std::vector<QAction*> &_actions, QString _name ) {};
 };
 
 
