@@ -112,7 +112,8 @@ signals:
   */
   virtual void addMenubarAction(QAction* _action, QString _name ) {};
 
-  /**
+  /** \brief Add multiple actions to the menu bar.
+   *
    * Does the same as multiple calls to addMenubarAction except
    * it doesn't insert a separator between the individual items.
    */
