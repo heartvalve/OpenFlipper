@@ -44,7 +44,12 @@
 #define SLICEPLUGIN_HH
 
 #include <QObject>
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
@@ -61,6 +66,10 @@ Q_OBJECT
 Q_INTERFACES(BaseInterface)
 Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
+
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Slice")
+#endif
 
 //BaseInterface
 signals:

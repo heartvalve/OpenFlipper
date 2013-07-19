@@ -43,7 +43,13 @@
 #ifndef ISOTROPICREMESHERPLUGIN_HH
 #define ISOTROPICREMESHERPLUGIN_HH
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
@@ -71,6 +77,10 @@ Q_INTERFACES(RPCInterface)
 Q_INTERFACES(ProcessInterface)
 Q_INTERFACES(ScriptInterface)
 Q_INTERFACES(BackupInterface)
+
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-IsotropicRemesher")
+#endif
 
 
 signals:

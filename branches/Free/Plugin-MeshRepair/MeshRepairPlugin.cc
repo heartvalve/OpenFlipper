@@ -40,7 +40,12 @@
  *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 #include "MeshRepairPlugin.hh"
 
@@ -385,4 +390,8 @@ void MeshRepairPlugin::pluginsInitialized() {
 
 }
 
-Q_EXPORT_PLUGIN2( meshrepairplugin , MeshRepairPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( meshrepairplugin , MeshRepairPlugin );
+#endif
+
+

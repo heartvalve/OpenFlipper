@@ -63,6 +63,10 @@ Q_INTERFACES(KeyInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(ContextMenuInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypeHexahedralMesh")
+#endif
+
 signals:
     // Logging interface
     void log(Logtype _type, QString _message);

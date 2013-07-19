@@ -44,7 +44,13 @@
 #define VECTOR_FIELD_DIFFERENCE_WIDGET_HH
 
 #include "ui_VectorFieldDifferenceWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class VectorFieldDifferenceWidget : public QWidget, public Ui::VectorFieldDifferenceWidget
 {

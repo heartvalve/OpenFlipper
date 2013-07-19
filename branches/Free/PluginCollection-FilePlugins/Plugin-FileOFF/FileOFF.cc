@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 #include <QPushButton>
@@ -1451,5 +1457,8 @@ void FileOFFPlugin::slotSaveDefault() {
   OpenFlipperSettings().setValue( "FileOff/Save/TexCoords",   saveTexCoords_->isChecked()  );
 }
 
-Q_EXPORT_PLUGIN2( fileoffplugin , FileOFFPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( fileoffplugin , FileOFFPlugin );
+#endif
+
 

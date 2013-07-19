@@ -233,5 +233,7 @@ void TypeSkeletonPlugin::generateBackup( int _id, QString _name, UpdateType _typ
   }
 }
 
-Q_EXPORT_PLUGIN2( typeskeletonplugin , TypeSkeletonPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typeskeletonplugin , TypeSkeletonPlugin );
+#endif
 

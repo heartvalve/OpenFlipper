@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "SnapshotDialog.hh"
-#include <QtGui>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFileInfo>

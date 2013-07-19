@@ -49,7 +49,13 @@
 
 //== INCLUDES =================================================================
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "SmootherPlugin.hh"
 
@@ -341,5 +347,7 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
 //-----------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( SmootherPlugin , SmootherPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( SmootherPlugin , SmootherPlugin );
+#endif
 

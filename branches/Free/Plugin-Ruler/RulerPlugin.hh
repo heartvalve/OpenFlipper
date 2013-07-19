@@ -72,6 +72,10 @@ class RulerPlugin : public QObject, BaseInterface, MouseInterface, PickingInterf
   Q_INTERFACES(LoadSaveInterface)
   Q_INTERFACES(OptionsInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Ruler")
+#endif
+
 signals:
   void addToolbar(QToolBar *_toolbar);
 

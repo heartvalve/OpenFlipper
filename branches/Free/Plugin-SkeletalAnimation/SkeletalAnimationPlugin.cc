@@ -1059,4 +1059,8 @@ void SkeletalAnimationPlugin::setComboBoxPosition(unsigned int _animationIndex)
 
 //------------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2(skeletalAnimationplugin, SkeletalAnimationPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(skeletalAnimationplugin, SkeletalAnimationPlugin);
+#endif
+
+

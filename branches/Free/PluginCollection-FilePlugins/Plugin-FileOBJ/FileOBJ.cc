@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 #include <QPushButton>
@@ -2228,5 +2234,8 @@ void FileOBJPlugin::slotSaveDefault() {
 
 }
 
-Q_EXPORT_PLUGIN2( fileobjplugin , FileOBJPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( fileobjplugin , FileOBJPlugin );
+#endif
+
 

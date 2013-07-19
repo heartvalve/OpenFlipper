@@ -75,6 +75,10 @@ class TypeBSplineSurfacePlugin : public QObject, BaseInterface, TypeInterface, L
    Q_INTERFACES(LoadSaveInterface)
    Q_INTERFACES(ContextMenuInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypeBSplineSurface")
+#endif
+
   signals:
 
     void log(Logtype _type, QString _message);

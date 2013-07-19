@@ -83,5 +83,7 @@ int TypePolyLinePlugin::addEmpty(){
   return object->id();
 }
 
-Q_EXPORT_PLUGIN2( typepolylineplugin , TypePolyLinePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typepolylineplugin , TypePolyLinePlugin );
+#endif
 

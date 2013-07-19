@@ -44,7 +44,13 @@
 #define DOUBLE_WIDGET_HH
 
 #include "ui_DoubleWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class DoubleWidget : public QWidget, public Ui::DoubleWidget
 {

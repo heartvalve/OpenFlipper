@@ -1914,4 +1914,8 @@ int MeshObjectSelectionPlugin::createMeshFromSelection(int _objectId, PrimitiveT
 }
 
 
-Q_EXPORT_PLUGIN2(meshobjectselectionplugin, MeshObjectSelectionPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(meshobjectselectionplugin, MeshObjectSelectionPlugin);
+#endif
+
+

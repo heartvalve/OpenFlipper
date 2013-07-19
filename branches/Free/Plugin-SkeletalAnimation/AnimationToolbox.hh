@@ -1,5 +1,11 @@
 #include <ui_animationControls.hh>
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class AnimationToolboxWidget : public QWidget, public Ui::AnimationControls
 {

@@ -43,9 +43,15 @@
 #ifndef VIEWINTERFACE_HH
 #define VIEWINTERFACE_HH
 
- #include <QtGui>
- #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
+ 
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
+#include <QMenuBar>
+#include <OpenFlipper/common/Types.hh>
 
  /**
    This Interface should be used by plugins which will provide an additional view widget.

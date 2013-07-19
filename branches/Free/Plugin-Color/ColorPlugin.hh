@@ -73,6 +73,10 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
   Q_INTERFACES(OptionsInterface)
   Q_INTERFACES(INIInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Color")
+#endif
+
   signals:
     // BaseInterface
     void updateView();

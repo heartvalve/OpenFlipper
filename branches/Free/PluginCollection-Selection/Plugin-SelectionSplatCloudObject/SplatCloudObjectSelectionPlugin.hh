@@ -87,6 +87,10 @@ class SplatCloudObjectSelectionPlugin : public QObject, BaseInterface, BackupInt
   Q_INTERFACES( KeyInterface       )
   Q_INTERFACES( ScriptInterface    )
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SelectionSplatCloudObject")
+#endif
+
 public:
   /// Default constructor
   SplatCloudObjectSelectionPlugin() : vertexType_( 0 ), allSupportedTypes_( 0 ) { }

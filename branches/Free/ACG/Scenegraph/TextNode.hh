@@ -65,7 +65,9 @@
 #include <QFontMetrics>
 #include <QImage>
 #include <QPainter>
+#undef QT_NO_OPENGL
 #include <QGLWidget>
+#define QT_NO_OPENGL
 
 //== NAMESPACES ===============================================================
 

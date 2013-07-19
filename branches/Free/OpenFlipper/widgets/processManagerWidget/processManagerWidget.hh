@@ -51,10 +51,14 @@
 #ifndef PROCESSMANAGERWIDGET_HH_
 #define PROCESSMANAGERWIDGET_HH_
 
-#include <QtGui>
-#include <QWidget>
 
 #include "ui_processManagerWidget.hh"
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 // A button class that additionally stores
 // an attached job's id.

@@ -57,6 +57,10 @@ class FileHeightFieldPNGPlugin : public QObject, BaseInterface, FileInterface, L
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileHeightFieldImage")
+#endif
+
   signals:
     void openedFile( int _id );
     void addEmptyObject( DataType _type, int& _id);

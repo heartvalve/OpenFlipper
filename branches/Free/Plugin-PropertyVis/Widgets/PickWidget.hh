@@ -44,7 +44,13 @@
 #define PICK_WIDGET_HH
 
 #include "ui_PickWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class PickWidget : public QWidget, public Ui::PickWidget
 {

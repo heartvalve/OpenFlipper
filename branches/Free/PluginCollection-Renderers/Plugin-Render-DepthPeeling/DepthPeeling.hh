@@ -53,6 +53,10 @@ class DepthPeeling : public QObject, BaseInterface, RenderInterface, LoggingInte
     Q_INTERFACES(RenderInterface)
     Q_INTERFACES(LoggingInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Render-DepthPeeling")
+#endif
+
 signals:
   // LoggingInterface
   void log(Logtype _type, QString _message);

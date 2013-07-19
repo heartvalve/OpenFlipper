@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "PluginDialog.hh"
-#include <QtGui>
+
 #include <QMessageBox>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>

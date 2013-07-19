@@ -277,4 +277,7 @@ void RulerPlugin::applyOptions()
   OpenFlipperSettings().setValue(textSizeSettingName_,textSize);
 }
 
-Q_EXPORT_PLUGIN2( rulerPlugin , RulerPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( rulerPlugin , RulerPlugin );
+#endif
+

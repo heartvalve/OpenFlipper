@@ -58,7 +58,11 @@ class INIPlugin : public QObject, BaseInterface, LoggingInterface, ScriptInterfa
     Q_INTERFACES(BaseInterface)
     Q_INTERFACES(ScriptInterface)
     Q_INTERFACES(INIInterface)
-    
+
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-INI")
+#endif
+
     signals:
         void log(Logtype _type, QString _message);
         void log(QString _message);

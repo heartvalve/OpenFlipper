@@ -41,7 +41,13 @@
 \*===========================================================================*/
 
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 
@@ -308,6 +314,8 @@ bool FileLightPlugin::saveObject(int _id, QString _filename)
 
   return true;
 }
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filelightplugin , FileLightPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( filelightplugin , FileLightPlugin );
 

@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include "ViewControlPlugin.hh"
 #include <iostream>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -1478,5 +1484,7 @@ void ViewControlPlugin::setDescriptions() {
 }
 
 
-Q_EXPORT_PLUGIN2( viewcontrolplugin , ViewControlPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( viewcontrolplugin , ViewControlPlugin );
+#endif
 

@@ -344,4 +344,8 @@ void ObjectSelectionPlugin::slotKeyShortcutEvent(int _key, Qt::KeyboardModifiers
 
 //==============================================================================================
 
-Q_EXPORT_PLUGIN2(objectselectionplugin, ObjectSelectionPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(objectselectionplugin, ObjectSelectionPlugin);
+#endif
+
+

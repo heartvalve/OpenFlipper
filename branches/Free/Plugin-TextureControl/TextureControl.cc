@@ -41,10 +41,12 @@
 \*===========================================================================*/
 
 
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
-
-
-#include <QtGui>
 
 #include "TextureControl.hh"
 
@@ -2054,5 +2056,7 @@ void TextureControlPlugin::slotRestored( int _objectid ) {
   slotSwitchTexture(currentTexture,_objectid);
 }
 
-Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
+#endif
 

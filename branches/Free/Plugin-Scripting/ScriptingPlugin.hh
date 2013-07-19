@@ -72,6 +72,10 @@ Q_INTERFACES(ScriptInterface)
 Q_INTERFACES(RPCInterface)
 Q_INTERFACES(LoggingInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Scripting")
+#endif
+
 signals:
   void updateView();
 

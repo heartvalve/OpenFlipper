@@ -4,7 +4,9 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 
 // =================================================
@@ -62,5 +64,8 @@ QString Renderer::checkOpenGL()
   return "";
 }
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( shaderrenderer , Renderer );
+#endif
 
-Q_EXPORT_PLUGIN2( shaderrenderer , Renderer );
+

@@ -220,5 +220,7 @@ void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
 }
 
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( iniplugin , INIPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( iniplugin , INIPlugin );

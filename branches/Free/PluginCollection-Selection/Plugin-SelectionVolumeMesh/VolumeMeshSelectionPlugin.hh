@@ -74,6 +74,10 @@ class VolumeMeshSelectionPlugin : public QObject, BaseInterface, KeyInterface,
     Q_INTERFACES(ScriptInterface)    
     Q_INTERFACES(SelectionInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SelectionVolumeMesh")
+#endif
+
 public:
     
     /// Default constructor

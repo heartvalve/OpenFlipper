@@ -40,7 +40,15 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
+#include <QPrintDialog>
+#include <QPrinter>
 
 #include "PrintPlugin.hh"
 
@@ -112,5 +120,7 @@ void PrintPlugin::slotKeyEvent( QKeyEvent* _event ) {
 }
 
 
-Q_EXPORT_PLUGIN2( printplugin , PrintPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( printplugin , PrintPlugin );
+#endif
 

@@ -59,6 +59,10 @@ class MeanCurvaturePlugin : public QObject, BaseInterface, TextureInterface
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(TextureInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-MeanCurvature")
+#endif
+
   signals:
 
     // Texture Interface

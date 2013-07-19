@@ -84,6 +84,10 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
   Q_INTERFACES(ContextMenuInterface)
   Q_INTERFACES(BackupInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TextureControl")
+#endif
+
   public:
 
   signals:

@@ -538,4 +538,9 @@ Renderer::drawScene_customAnaglyphStereo(ACG::GLState* _glState, Viewer::ViewerP
 
 }
 
-Q_EXPORT_PLUGIN2( classicalrenderer , Renderer );
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( classicalrenderer , Renderer );
+#endif
+
+

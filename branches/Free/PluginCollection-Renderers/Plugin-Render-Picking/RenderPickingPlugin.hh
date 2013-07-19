@@ -54,6 +54,10 @@ class RenderPickingPlugin : public QObject, BaseInterface, RenderInterface
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(RenderInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Render-Picking")
+#endif
+
   
   public :
     RenderPickingPlugin() : pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING) {};

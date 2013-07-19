@@ -63,6 +63,10 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
    Q_INTERFACES(ScriptInterface)
    Q_INTERFACES(RPCInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileScript")
+#endif
+
   signals:
     // log Interface
     void log(Logtype _type, QString _message);

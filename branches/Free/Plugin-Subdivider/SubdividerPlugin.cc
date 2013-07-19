@@ -41,7 +41,12 @@
 \*===========================================================================*/
 
 
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "SubdividerPlugin.hh"
 
@@ -294,4 +299,8 @@ bool SubdividerPlugin::test_trimesh_object(int _identifier, BaseObjectData*& _ob
   return true;
 }
 
-Q_EXPORT_PLUGIN2( subdividerplugin , SubdividerPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( subdividerplugin , SubdividerPlugin );
+#endif
+
+

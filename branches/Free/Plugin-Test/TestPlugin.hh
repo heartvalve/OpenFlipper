@@ -52,6 +52,10 @@ class TestPlugin: public QObject, BaseInterface, LoggingInterface {
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(LoggingInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Test")
+#endif
+
   signals:
   //BaseInterface
   void updateView();

@@ -44,7 +44,9 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/Light/LightNode.hh>
 
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 
 // this define enables a shader export of the generated peel shader for debugging purpose
@@ -1534,5 +1536,8 @@ QString DepthPeelingPlugin::checkOpenGL() {
 
 }
 
-Q_EXPORT_PLUGIN2( depthpeelingplugin , DepthPeelingPlugin );
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( depthpeelingplugin , DepthPeelingPlugin );
+#endif
 

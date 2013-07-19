@@ -44,7 +44,13 @@
 #define INTEGER_WIDGET_HH
 
 #include "ui_IntegerWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class IntegerWidget : public QWidget, public Ui::IntegerWidget
 {

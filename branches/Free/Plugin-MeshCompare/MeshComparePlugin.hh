@@ -74,6 +74,10 @@ class MeshComparePlugin : public QObject, BaseInterface, ToolboxInterface, Loggi
   Q_INTERFACES(TextureInterface)
   Q_INTERFACES(RPCInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-MeshCompare")
+#endif
+
   signals:
     //BaseInterface
     void updateView();

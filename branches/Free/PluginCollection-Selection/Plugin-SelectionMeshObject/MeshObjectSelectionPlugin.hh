@@ -81,6 +81,10 @@ class MeshObjectSelectionPlugin : public QObject, BaseInterface, KeyInterface, L
     Q_INTERFACES(LoadSaveInterface)
     Q_INTERFACES(SelectionInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SelectionMeshObject")
+#endif
+
 public:
     /// Default constructor
     MeshObjectSelectionPlugin();

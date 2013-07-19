@@ -40,7 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 
@@ -252,6 +257,8 @@ void FileSTLPlugin::slotLoadDefault() {
 void FileSTLPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileSTL/Save/Binary",      saveBinary_->isChecked()  );
 }
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filestlplugin , FileSTLPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( filestlplugin , FileSTLPlugin );
 

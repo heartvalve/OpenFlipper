@@ -23,6 +23,10 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
    Q_INTERFACES(ScriptInterface)
    Q_INTERFACES(INIInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FilePolyLine")
+#endif
+
   signals:
     void openedFile( int _id );
     void addEmptyObject( DataType _type, int& _id);

@@ -67,6 +67,10 @@ class FileOMPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileOM")
+#endif
+
   signals:
     void openedFile( int _id );
     void addEmptyObject( DataType _type, int& _id);

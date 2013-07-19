@@ -3,7 +3,9 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 
 #include <ACG/GL/gl.hh>
@@ -1246,5 +1248,7 @@ void DepthPeeling::drawProjQuad(GLSL::Program* _prog)
 
 
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( depthpeelingshaderrenderer , DepthPeeling );
+#endif
 
-Q_EXPORT_PLUGIN2( depthpeelingshaderrenderer , DepthPeeling );

@@ -40,7 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "RenderPickingPlugin.hh"
 
@@ -50,7 +55,9 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 void RenderPickingPlugin::initializePlugin()
 {
@@ -184,5 +191,8 @@ QString RenderPickingPlugin::checkOpenGL() {
 
 }
 
-Q_EXPORT_PLUGIN2( renderpickingplugin , RenderPickingPlugin );
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( renderpickingplugin , RenderPickingPlugin );
+#endif
 

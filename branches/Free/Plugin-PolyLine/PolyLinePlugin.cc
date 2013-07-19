@@ -7,7 +7,13 @@
 
 //== INCLUDES =================================================================
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "PolyLinePlugin.hh"
 
@@ -1280,5 +1286,7 @@ slotEnablePickMode(QString _name)
 //-----------------------------------------------------------------------------
 
 
-Q_EXPORT_PLUGIN2( PolyLinePlugin , PolyLinePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( PolyLinePlugin , PolyLinePlugin );
+#endif
 

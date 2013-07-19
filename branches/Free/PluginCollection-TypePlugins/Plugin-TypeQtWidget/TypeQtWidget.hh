@@ -64,6 +64,10 @@ class TypeQtWidgetPlugin : public QObject, BaseInterface, TypeInterface, MouseIn
   Q_INTERFACES(MouseInterface)
   Q_INTERFACES(LoadSaveInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypeQtWidget")
+#endif
+
   signals:
 
   // LoadSave Interface

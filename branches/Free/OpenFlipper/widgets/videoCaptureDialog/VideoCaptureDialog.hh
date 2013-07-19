@@ -41,7 +41,12 @@
 \*===========================================================================*/
 
 #include "ui_VideoCaptureDialog.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 class VideoCaptureDialog : public QDialog, public Ui::VideoCaptureDialog
 {

@@ -49,7 +49,13 @@
 
 //== INCLUDES =================================================================
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "SkeletonObjectInfoPlugin.hh"
 
@@ -227,7 +233,7 @@ void InfoSkeletonObjectPlugin::slotInformationRequested(const QPoint _clickedPoi
     }
 }
 
-
-Q_EXPORT_PLUGIN2( infoskeletonobjectplugin , InfoSkeletonObjectPlugin );
-
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( infoskeletonobjectplugin , InfoSkeletonObjectPlugin );
+#endif
 

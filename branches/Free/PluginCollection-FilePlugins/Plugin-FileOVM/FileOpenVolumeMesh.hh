@@ -75,7 +75,9 @@ Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(BaseInterface)
 Q_INTERFACES(ScriptInterface)
 Q_INTERFACES(INIInterface)
-
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileOVM")
+#endif
 public:
     // Default constructor
     FileOpenVolumeMeshPlugin();

@@ -77,6 +77,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(LoadSaveInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-DataControl")
+#endif
+
   signals:
     // BaseInterface
     void updateView();

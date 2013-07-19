@@ -85,7 +85,9 @@ class FilePTSPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
   Q_INTERFACES( BaseInterface     )
   Q_INTERFACES( ScriptInterface   )
   Q_INTERFACES( RPCInterface      )
-
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FilePTS")
+#endif
 signals:
 
   // -- File Interface --

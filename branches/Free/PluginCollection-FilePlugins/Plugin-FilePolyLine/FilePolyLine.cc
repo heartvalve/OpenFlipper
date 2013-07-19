@@ -1,5 +1,9 @@
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
-#include <QtGui>
 #include <QFileInfo>
 
 #include "FilePolyLine.hh"
@@ -105,6 +109,8 @@ void FilePolyLinePlugin::saveIniFile( INIFile& _ini ,int _id) {
                          object->materialNode()->base_color() ) ;
   }
 }
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filepolylineplugin , FilePolyLinePlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( filepolylineplugin , FilePolyLinePlugin );
 

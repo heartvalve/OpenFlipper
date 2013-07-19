@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 
@@ -84,6 +90,7 @@ int FileScriptPlugin::loadObject(QString _filename)
   
   return 0;
 };
-
-Q_EXPORT_PLUGIN2( filescriptplugin , FileScriptPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filescriptplugin , FileScriptPlugin );
+#endif
 

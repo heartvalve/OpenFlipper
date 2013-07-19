@@ -200,5 +200,7 @@ void SlicePlugin::getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax){
 
 }
 
-Q_EXPORT_PLUGIN2( slicePlugin , SlicePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( slicePlugin , SlicePlugin );
+#endif
 

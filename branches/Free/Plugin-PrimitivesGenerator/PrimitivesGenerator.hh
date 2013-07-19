@@ -59,6 +59,10 @@ class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface
   Q_INTERFACES(MenuInterface)
   Q_INTERFACES(LoadSaveInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PrimitiveGenerator")
+#endif
+
   signals:
 
   //BaseInterface

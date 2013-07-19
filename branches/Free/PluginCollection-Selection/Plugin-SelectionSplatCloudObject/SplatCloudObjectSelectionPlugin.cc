@@ -697,5 +697,7 @@ bool SelectVolumeAction::operator()( BaseNode *_node )
 
 //----------------------------------------------------------------
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( splatcloudobjectselectionplugin, SplatCloudObjectSelectionPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( splatcloudobjectselectionplugin, SplatCloudObjectSelectionPlugin );

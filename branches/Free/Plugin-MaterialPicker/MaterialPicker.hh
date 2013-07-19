@@ -65,6 +65,10 @@ class MaterialPicker : public QObject, BaseInterface, MouseInterface, PickingInt
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(KeyInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-MaterialPicker")
+#endif
+
 signals:
   void addPickMode(const std::string &_mode);
 

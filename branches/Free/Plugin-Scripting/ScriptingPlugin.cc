@@ -40,8 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
-#include <QtGui>
 
 #include "ScriptingPlugin.hh"
 
@@ -710,5 +714,7 @@ void ScriptingPlugin::clearEditor() {
   scriptWidget_->currentScript->clear();
 }
 
-Q_EXPORT_PLUGIN2( skriptingplugin , ScriptingPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( skriptingplugin , ScriptingPlugin );
+#endif
 

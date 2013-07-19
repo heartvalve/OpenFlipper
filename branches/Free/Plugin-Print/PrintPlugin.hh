@@ -58,6 +58,10 @@ class PrintPlugin : public QObject, BaseInterface, MenuInterface, KeyInterface
    Q_INTERFACES(MenuInterface)
    Q_INTERFACES(KeyInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Print")
+#endif
+
   signals:
      void addMenubarAction(QAction* _action, QString _type );
 

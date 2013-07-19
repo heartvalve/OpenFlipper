@@ -43,7 +43,6 @@
 
 
 #include "aboutWidget.hh"
-#include <QtGui>
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 

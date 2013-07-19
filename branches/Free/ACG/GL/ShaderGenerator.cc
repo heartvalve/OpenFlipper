@@ -50,7 +50,9 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 namespace ACG
 {

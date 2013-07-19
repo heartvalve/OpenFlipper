@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include "PostProcessorPhilipsStereo.hh"
 
@@ -477,5 +483,7 @@ void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate) {
 
 }
 
-Q_EXPORT_PLUGIN2( postprocessorphilipsstereoplugin , PostProcessorPhilipsStereoPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( postprocessorphilipsstereoplugin , PostProcessorPhilipsStereoPlugin );
+#endif
 

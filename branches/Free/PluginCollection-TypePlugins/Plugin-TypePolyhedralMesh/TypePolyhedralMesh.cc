@@ -272,5 +272,9 @@ void TypePolyhedralMeshPlugin::slot_change_shrinkage() {
     }
 }
 
-Q_EXPORT_PLUGIN2( typepolyhedralmeshplugin , TypePolyhedralMeshPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typepolyhedralmeshplugin , TypePolyhedralMeshPlugin );
+#endif
+
+
 
