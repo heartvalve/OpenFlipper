@@ -23,6 +23,19 @@ include (ACGCommon)
 
 acg_get_version (OpenFlipper)
 
+# ========================================================================
+# Branding Flags
+# ========================================================================
+
+if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/branding.cmake )
+	include(${CMAKE_SOURCE_DIR}/branding/branding.cmake)
+endif()
+
+set( OPENFLIPPER_PRODUCT_STRING "OpenFlipper" CACHE String "Product string used e.g. to determine the config file path. Should only contain alphanumeric characters (no spaces)." )
+set( OPENFLIPPER_PRODUCT_NAME "OpenFlipper" CACHE String "Product name used in all visible places (e.g. about box)." )
+add_definitions(-DPRODUCT_STRING=${OPENFLIPPER_PRODUCT_STRING})
+add_definitions(-DPRODUCT_NAME=${OPENFLIPPER_PRODUCT_NAME})
+
 include (package)
 include (ACGOutput)
 
@@ -86,19 +99,6 @@ SET(OPENFLIPPER_TEST_RESULTS  ${CMAKE_BINARY_DIR}/tests/testResults )
 SET(OPENFLIPPER_TEST_BINARIES ${CMAKE_BINARY_DIR}/tests/testBinaries )
 
 enable_testing()
-
-# ========================================================================
-# Branding Flags
-# ========================================================================
-
-if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/branding.cmake )
-	include(${CMAKE_SOURCE_DIR}/branding/branding.cmake)
-endif()
-
-set( OPENFLIPPER_PRODUCT_STRING "OpenFlipper" CACHE String "Product string used e.g. to determine the config file path. Should only contain alphanumeric characters (no spaces)." )
-set( OPENFLIPPER_PRODUCT_NAME "OpenFlipper" CACHE String "Product name used in all visible places (e.g. about box)." )
-add_definitions(-DPRODUCT_STRING=${OPENFLIPPER_PRODUCT_STRING})
-add_definitions(-DPRODUCT_NAME=${OPENFLIPPER_PRODUCT_NAME})
 
 # ========================================================================
 # Core Library Components (Except the Core application)
