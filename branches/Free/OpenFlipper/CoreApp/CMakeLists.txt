@@ -345,4 +345,5 @@ endif ()
 if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/Icons )
   # Overwrite generic Icons with branded ones.
   acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_SOURCE_DIR}/branding/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+  acg_install_dir ("${CMAKE_SOURCE_DIR}/branding/Icons" "${ACG_PROJECT_DATADIR}/Icons")
 endif()
