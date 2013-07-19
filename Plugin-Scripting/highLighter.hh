@@ -56,7 +56,7 @@ class Highlighter : public QSyntaxHighlighter
 
   public:
     Highlighter( QTextDocument* parent = 0);
-    Highlighter( QTextEdit* parent = 0);
+    Highlighter( QTextEdit* parent);
 
     /// Updates the highlighter with the current rule set defined in the patterns
     void update();
