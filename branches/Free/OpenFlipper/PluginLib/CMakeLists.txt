@@ -42,7 +42,7 @@ link_directories (
 # generate dllexport macros on windows
 if (WIN32)
   add_definitions (
-    -DPLUGINLIBDLL 
+    -DPLUGINLIBDLL
     -DACGDLL
     -DUSEACG
   )
@@ -66,7 +66,7 @@ if ( NOT DEFINED OPENFLIPPER_SETTINGS_DEBUG )
 endif()
 
 if ( OPENFLIPPER_SETTINGS_DEBUG )
- add_definitions(-DOPENFLIPPER_SETTINGS_DEBUG ) 
+ add_definitions(-DOPENFLIPPER_SETTINGS_DEBUG )
 endif()
 
 #=======================================================
@@ -74,13 +74,13 @@ endif()
 #=======================================================
 
 # source code directories
-set (directories 
-  ../BasePlugin 
-  ../ACGHelper 
-  ../common 
+set (directories
+  ../BasePlugin
+  ../ACGHelper
+  ../common
   ../threads
-  ../common/bsp  
-  ../INIFile 
+  ../common/bsp
+  ../INIFile
   ../widgets/glWidget
   ../publicWidgets/objectSelectionWidget
 )
@@ -99,17 +99,27 @@ acg_append_files_recursive (ui "*.ui" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_drop_templates (sources)
 
 # genereate uic and moc targets
-acg_qt4_autouic (uic_targets ${ui})
-acg_qt4_automoc (moc_targets ${headers})
+if (QT5_FOUND)
+  acg_qt5_autouic (uic_targets ${ui})
+  acg_qt5_automoc (moc_targets ${headers})
+elseif (QT4_FOUND)
+  acg_qt4_autouic (uic_targets ${ui})
+  acg_qt4_automoc (moc_targets ${headers})
+endif ()
 
 #=======================================================
 # Create library
 #=======================================================
 
-acg_add_library (OpenFlipperPluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+if (QT5_FOUND)
+  acg_add_library (OpenFlipperPluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+elseif (QT4_FOUND)
+  acg_add_library (OpenFlipperPluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+endif ()
+
 if( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS )
   set_target_properties (
-    OpenFlipperPluginLib PROPERTIES 
+    OpenFlipperPluginLib PROPERTIES
     COMPILE_FLAGS ${ADDITIONAL_PLUGINLIB_COMPILER_FLAGS}
   )
 endif()

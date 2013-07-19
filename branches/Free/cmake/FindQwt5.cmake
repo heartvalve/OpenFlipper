@@ -1,4 +1,5 @@
-# Find the Qwt 5.x includes and library, either the version linked to Qt3 or the version linked to Qt4
+# Find the Qwt 5.x includes and library, either the version linked to Qt3, Qt4
+# or Qt5
 #
 # On Windows it makes these assumptions:
 #    - the Qwt DLL is where the other DLLs for Qt are (QT_DIR\bin) or in the path
@@ -6,9 +7,12 @@
 #    - the Qwt .lib is where the other LIBs for Qt are (QT_DIR\lib) or in the path
 #
 # Qwt5_INCLUDE_DIR - where to find qwt.h if Qwt
+# Qwt5_Qt5_LIBRARY - The Qwt5 library linked against Qt5 (if it exists)#
+# Qwt5_Qt5_LIBRARY_DIR
 # Qwt5_Qt4_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)#
-# Qwt5_Qt4_LIBRARY_DIR 
+# Qwt5_Qt4_LIBRARY_DIR
 # Qwt5_Qt3_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)
+# Qwt5_Qt5_FOUND   - Qwt5 was found and uses Qt5
 # Qwt5_Qt4_FOUND   - Qwt5 was found and uses Qt4
 # Qwt5_Qt3_FOUND   - Qwt5 was found and uses Qt3
 # Qwt5_FOUND - Set to TRUE if Qwt5 was found (linked either to Qt3 or Qt4)
@@ -23,32 +27,36 @@ IF(Qwt5_Qt4_LIBRARY OR Qwt5_Qt3_LIBRARY AND Qwt5_INCLUDE_DIR)
     SET(Qwt5_FIND_QUIETLY TRUE)
 ENDIF(Qwt5_Qt4_LIBRARY OR Qwt5_Qt3_LIBRARY AND Qwt5_INCLUDE_DIR)
 
-IF(NOT QT4_FOUND)
+IF(NOT QT5_FOUND AND NOT FORCE_QT4)
+        FIND_PACKAGE( Qt5Widgets REQUIRED QUIET )
+ELSEIF(NOT QT5_FOUND AND NOT QT4_FOUND)
 	FIND_PACKAGE( Qt4 REQUIRED QUIET )
-ENDIF(NOT QT4_FOUND)
+ENDIF()
 
-IF( QT4_FOUND )
+IF( QT5_FOUND )
+
+ELSEIF( QT4_FOUND )
     if ( CMAKE_GENERATOR MATCHES "Visual Studio 9*" )
 	  set( SEARCHPATH "./" )
 	endif()
-	  
+
 	if ( CMAKE_GENERATOR MATCHES "Visual Studio 10*" )
 	  set( SEARCHPATH "VS2010" )
 	endif()
 
 	# Is Qwt5 installed? Look for header files
-	FIND_PATH( Qwt5_INCLUDE_DIR qwt.h 
-               PATHS ${QT_INCLUDE_DIR} 
-				/usr/local/qwt/include 
-				/usr/local/include 
+	FIND_PATH( Qwt5_INCLUDE_DIR qwt.h
+               PATHS ${QT_INCLUDE_DIR}
+				/usr/local/qwt/include
+				/usr/local/include
                                 /opt/local/include
                                 /opt/local/include/qwt
 				/usr/include
-				/usr/include 
+				/usr/include
                                 c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2
 				c:\\libs\\Qwt-6.0.1
-				c:\\Program\ Files\\qwt\\qwt-5.2.0 
-				c:\\qwt-5.2.0 
+				c:\\Program\ Files\\qwt\\qwt-5.2.0
+				c:\\qwt-5.2.0
 				C:\\libs\\qwt-5.2.0
                PATH_SUFFIXES qwt qwt5 qwt-qt4 qwt5-qt4 qwt-qt3 qwt5-qt3 include qwt/include qwt5/include qwt-qt4/include qwt5-qt4/include qwt-qt3/include qwt5-qt3/include ENV PATH)
 
@@ -56,7 +64,7 @@ IF( QT4_FOUND )
 	IF( Qwt5_INCLUDE_DIR )
 		FILE( READ ${Qwt5_INCLUDE_DIR}/qwt_global.h QWT_GLOBAL_H )
 		STRING( REGEX MATCH "#define *QWT_VERSION *(0x05*)" QWT_IS_VERSION_5 ${QWT_GLOBAL_H})
-		
+
 		IF( QWT_IS_VERSION_5 )
 		STRING(REGEX REPLACE ".*#define[\\t\\ ]+QWT_VERSION_STR[\\t\\ ]+\"([0-9]+\\.[0-9]+\\.[0-9]+)\".*" "\\1" Qwt_VERSION "${QWT_GLOBAL_H}")
 
@@ -68,26 +76,26 @@ IF( QT4_FOUND )
 
                     get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE} PATH)
                     set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
- 
+
                     if ( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE AND Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG )
                       set ( Qwt5_Qt4_TENTATIVE_LIBRARY "optimized;${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE};debug;${Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG}")
                     else()
                       set ( Qwt5_Qt4_TENTATIVE_LIBRARY "${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE}")
                     endif()
- 
+
                 ELSEIF( WIN32 )
 		    # Find Qwt5 library linked to Qt4 Release Version
-                    FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt qwt5-qt4 qwt-qt4 qwt5  PATHS 
+                    FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt qwt5-qt4 qwt-qt4 qwt5  PATHS
                                "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
 							   "c:\\libs\\Qwt-6.0.1\\lib"
-				               "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
+				               "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib"
 							   "c:\\libs\\qwt-5.2.0\\lib"
 							   )
 		    # Find Qwt5 library linked to Qt4 Debug Version
-		    FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwtd qwt5d  PATHS 
+		    FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwtd qwt5d  PATHS
                             "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
 			                "c:\\libs\\Qwt-6.0.1\\lib"
-			                "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" 
+			                "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib"
 							"c:\\libs\\qwt-5.2.0\\lib")
 
                     set ( Qwt5_Qt4_TENTATIVE_LIBRARY "optimized;${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE};debug;${Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG}")
@@ -137,7 +145,7 @@ IF( QT4_FOUND )
 
 		ENDIF( UNIX AND NOT CYGWIN AND NOT APPLE)
 
-		
+
                 IF ( NOT APPLE )
 			# Find Qwt5 library linked to Qt3
 			FIND_LIBRARY( Qwt5_Qt3_TENTATIVE_LIBRARY NAMES qwt-qt3 qwt qwt5-qt3 qwt5 qwt )
@@ -162,13 +170,13 @@ IF( QT4_FOUND )
 				ENDIF (NOT Qwt5_FIND_QUIETLY)
 			ENDIF( UNIX AND NOT CYGWIN )
 		ENDIF( NOT APPLE )
-		
+
 		ENDIF( QWT_IS_VERSION_5 )
-		
+
 		IF( Qwt5_Qt4_FOUND OR Qwt5_Qt3_FOUND )
 			SET( Qwt5_FOUND TRUE )
 		ENDIF( Qwt5_Qt4_FOUND OR Qwt5_Qt3_FOUND )
-		
+
 		MARK_AS_ADVANCED( Qwt5_INCLUDE_DIR Qwt5_Qt4_LIBRARY Qwt5_Qt3_LIBRARY )
 	ENDIF( Qwt5_INCLUDE_DIR )
 
@@ -176,4 +184,4 @@ IF( QT4_FOUND )
       		MESSAGE(FATAL_ERROR "Could not find Qwt 5.x")
    	ENDIF (NOT Qwt5_FOUND AND Qwt5_FIND_REQUIRED)
 
-ENDIF( QT4_FOUND )
+ENDIF( )
