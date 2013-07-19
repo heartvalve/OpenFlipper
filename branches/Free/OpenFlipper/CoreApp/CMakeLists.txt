@@ -82,16 +82,23 @@ acg_qt4_autouic (uic_targets ${ui})
 acg_qt4_automoc (moc_targets ${headers})
 endif()
 
+set(RC_SRC "")
+
+if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/branding.qrc )
+  	QT4_ADD_RESOURCES(BRANDING_RC_SRC "${CMAKE_SOURCE_DIR}/branding/branding.qrc")
+  	list(APPEND RC_SRC ${BRANDING_RC_SRC})
+endif()
+
 if (WIN32)
   # add app icon rc file to windows build
-  acg_add_executable (OpenFlipper WIN32 ${CMAKE_CURRENT_SOURCE_DIR}/CoreApp.rc ${uic_targets} ${sources} ${headers} ${moc_targets})
+  acg_add_executable (OpenFlipper WIN32 ${CMAKE_CURRENT_SOURCE_DIR}/CoreApp.rc ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
   # link to qtmain library to get WinMain function for a non terminal app
   target_link_libraries (OpenFlipper ${QT_QTMAIN_LIBRARY})
 elseif (APPLE)
   # generate bundle on mac
-  acg_add_executable (OpenFlipper MACOSX_BUNDLE ${uic_targets} ${sources} ${headers} ${moc_targets})
+  acg_add_executable (OpenFlipper MACOSX_BUNDLE ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
 else ()
-  acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
+  acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
 endif ()
 
 # Mark this build part as building OpenFlippers Core

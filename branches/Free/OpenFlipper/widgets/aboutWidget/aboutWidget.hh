@@ -56,5 +56,7 @@ class AboutWidget : public QMainWindow, public Ui::AboutWidget
 
   public:
     AboutWidget(QWidget *parent = 0);
+
+    void keyPressEvent(QKeyEvent * event);
 };
 

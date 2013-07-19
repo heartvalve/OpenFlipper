@@ -46,6 +46,8 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <iostream>
+
 AboutWidget::AboutWidget(QWidget *parent )
     : QMainWindow(parent)
 {
@@ -58,8 +60,25 @@ AboutWidget::AboutWidget(QWidget *parent )
   setWindowTitle(tr("About %1").arg(TOSTRING(PRODUCT_NAME)));
   const int idx = About->indexOf(tab_2);
   About->setTabText(idx, tr(TOSTRING(PRODUCT_NAME), "about box tab title"));
-  OpenFlipperLicense->setHtml(OpenFlipperLicense->toHtml().arg(TOSTRING(PRODUCT_NAME)));
+
+  if (QFile::exists(":/branding/license_text.html")) {
+      OpenFlipperLicense->setText("");
+      QFile licenseTextFile(":/branding/license_text.html");
+      licenseTextFile.open(QFile::ReadOnly);
+      QByteArray licenseTextBA = licenseTextFile.readAll();
+      QString licenseText = QString::fromUtf8(licenseTextBA.data(), licenseTextBA.size());
+      OpenFlipperLicense->setHtml(licenseText.arg(TOSTRING(PRODUCT_NAME)));
+  } else {
+      OpenFlipperLicense->setHtml(OpenFlipperLicense->toHtml().arg(TOSTRING(PRODUCT_NAME)));
+  }
 
   connect( actionClose , SIGNAL(triggered() ) , this, SLOT(hide()) );
   connect( closeButton , SIGNAL(clicked()   ) , this, SLOT(hide()) );
+  closeButton->setFocus();
+}
+
+void AboutWidget::keyPressEvent(QKeyEvent * event) {
+    if (event->key() == Qt::Key_Escape || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space) {
+        hide();
+    }
 }
