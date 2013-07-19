@@ -247,7 +247,7 @@ if (WIN32 )
     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.win.cmake" )
 
   # let bundle generation depend on all targets
-  add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
+  add_dependencies (fixbundle ${OPENFLIPPER_PRODUCT_STRING} PluginLib ${OPENFLIPPER_PLUGINS})
 
 endif(WIN32)
 
@@ -281,7 +281,7 @@ if ( APPLE )
   endif()
 
   # let bundle generation depend on all targets
-  add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
+  add_dependencies (fixbundle ${OPENFLIPPER_PRODUCT_STRING} PluginLib ${OPENFLIPPER_PLUGINS})
 
   # install bundle
   install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .
