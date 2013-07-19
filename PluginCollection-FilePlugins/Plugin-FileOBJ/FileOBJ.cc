@@ -587,8 +587,10 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   std::vector<int>          face_texcoords;
   std::string               matname;
 
+#if defined (ENABLE_BSPLINECURVE_SUPPORT) || defined (ENABLE_BSPLINESURFACE_SUPPORT)
   std::vector< int > cpIndices;
   std::vector< double > knotsU,knotsV;
+#endif
 
   int faceCount = 0;
 
