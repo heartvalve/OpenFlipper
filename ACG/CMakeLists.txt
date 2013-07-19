@@ -8,7 +8,23 @@ if ( ${PROJECT_NAME} MATCHES "OpenFlipper")
 endif()
 
 
-acg_qt4 (REQUIRED 4.5)
+
+if (NOT FORCE_QT4)
+  # try to use QT5 if possible otherwise stick to QT4
+  acg_qt5 ()  
+else()
+  set (QT_MAX_VERSION 4.9.9)
+  set (QT5_FOUND false)
+endif()
+
+
+if (NOT QT5_FOUND)
+  message(STATUS "Using QT4 for ACG")
+  acg_qt4 (REQUIRED 4.5)
+else ()
+  message(STATUS "Using QT5 for ACG")
+endif ()
+
 acg_openmp ()
 acg_ftgl ()
 
@@ -48,10 +64,10 @@ find_package(Qwt5)
 if(Qwt5_Qt4_FOUND)
   add_definitions(-DWITH_QWT)
   set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
-  set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})  
+  set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
 endif()
 
-find_package( Freetype) 
+find_package( Freetype)
 if (NOT FREETYPE_FOUND)
   message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
 else (NOT FREETYPE_FOUND)
@@ -60,7 +76,7 @@ else (NOT FREETYPE_FOUND)
     message (MESSAGE "FTGL not found! Disabled ftgl support!")
   else ()
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
-    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )  
+    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )
   endif ()
 
 endif ()
@@ -103,7 +119,7 @@ endif(GTEST_FOUND)
 #===================================================================
 
 # source code directories
-set (directories 
+set (directories
   .
   Geometry
   Config
@@ -133,10 +149,20 @@ acg_append_files (ui "*.ui" ${directories})
 acg_drop_templates (sources)
 
 # genereate uic and moc targets
-acg_qt4_autouic (uic_targets ${ui})
-acg_qt4_automoc (moc_targets ${headers})
+if (QT5_FOUND)
+  acg_qt5_autouic (uic_targets ${ui})
+  acg_qt5_automoc (moc_targets ${headers})
+elseif (QT4_FOUND)
+  acg_qt4_autouic (uic_targets ${ui})
+  acg_qt4_automoc (moc_targets ${headers})
+endif()
 
-acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+
+if (QT5_FOUND)
+  acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+elseif (QT4_FOUND)
+  acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
+endif()
 if ( NOT WIN32 )
   set_target_properties (ACG PROPERTIES VERSION ${ACG_VERSION_MAJOR}.${ACG_VERSION_MINOR}
                                       SOVERSION ${ACG_VERSION_MAJOR}.${ACG_VERSION_MINOR})
@@ -156,4 +182,3 @@ target_link_libraries ( ACG  OpenMeshCore
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
-

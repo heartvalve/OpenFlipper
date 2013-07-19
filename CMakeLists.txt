@@ -26,8 +26,23 @@ acg_get_version (OpenFlipper)
 include (package)
 include (ACGOutput)
 
+# try to use QT5 if possible otherwise stick to QT4
+set (FORCE_QT4 ON CACHE BOOL "Use Qt4 even if Qt5 was found")
 
-acg_qt4 (4.7.0)
+if (NOT FORCE_QT4)
+  acg_qt5 ()
+else()
+  set (QT5_FOUND false)
+endif()
+
+
+if (NOT QT5_FOUND)
+  message(STATUS "Using QT4 for OpenFlipper")
+  acg_qt4 (4.7.0)
+else ()
+  message(STATUS "Using QT5 for OpenFlipper")
+endif ()
+
 acg_openmp ()
 acg_ftgl ()
 
@@ -97,12 +112,12 @@ add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (tests)
 
 # ========================================================================
-# Documentation generators  
+# Documentation generators
 # ========================================================================
 
 # Create dirs to make doxygen happy
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc ) 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help ) 
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc )
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help )
 
 # Add the deocumentation targets
 add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
@@ -110,12 +125,11 @@ add_subdirectory (OpenFlipper/Documentation/DeveloperQtHelpTarget)
 add_subdirectory (OpenFlipper/Documentation/UserTarget)
 add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
 
-
 # ========================================================================
-# Build all additional libraries  
+# Build all additional libraries
 # ========================================================================
 
-# search all libs in the libs directory 
+# search all libs in the libs directory
 # (required and optional libraries
 file (
   GLOB _local_libs_in
@@ -152,7 +166,7 @@ foreach (_localLib ${REMAINING_LOCAL_LIBS})
 
   # If the library is in the required folder, we have to build it anyway, so
   # detect it here
-  SET(REQUIRED FALSE) 
+  SET(REQUIRED FALSE)
   if ( _localLib MATCHES ".*libs_required.*" )
     SET(REQUIRED TRUE )
   endif()
@@ -160,7 +174,7 @@ foreach (_localLib ${REMAINING_LOCAL_LIBS})
   # Extract upper case library dir name for the human readable entries in the cmake config
   string(TOUPPER ${_local_lib_dir} _local_lib_dir_upper)
   string(REGEX REPLACE "LIBS[/\\]" "" _local_lib_dir_upper ${_local_lib_dir_upper} )
- 
+
   # Only generate setting if the lib is not required (otherwise, we will always build it)
   if ( NOT DEFINED LIB_${_local_lib_dir_upper}_BUILD AND NOT REQUIRED)
       set( LIB_${_local_lib_dir_upper}_BUILD true CACHE BOOL "Enable or disable build of ${_local_lib_dir_upper} Library" )
@@ -176,7 +190,7 @@ endforeach ()
 # PolyLine extension special case
 # ========================================================================
 
-if ( EXISTS ${CMAKE_SOURCE_DIR}/libs/MeshIntegration ) 
+if ( EXISTS ${CMAKE_SOURCE_DIR}/libs/MeshIntegration )
   add_definitions( -DEXTENDED_POLY_LINE )
 endif()
 
@@ -217,10 +231,10 @@ add_subdirectory (OpenFlipper/CoreApp)
 
 if (WIN32 )
 
-  # Plugins collected a list of required libdirs for getting 
+  # Plugins collected a list of required libdirs for getting
   # their DLLS on windows:
   get_property( WINDOWS_COPY_LIBDIRS GLOBAL PROPERTY WINDOWS_LIBRARY_DIR_LIST )
-  
+
   if ( WINDOWS_COPY_LIBDIRS )
     list(REMOVE_DUPLICATES WINDOWS_COPY_LIBDIRS)
   endif()
@@ -234,7 +248,7 @@ if (WIN32 )
 
   # let bundle generation depend on all targets
   add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
- 
+
 endif(WIN32)
 
 # ========================================================================
@@ -250,18 +264,18 @@ if ( APPLE )
 
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
-     "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)   
+     "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)
 
   # Fixbundle is only necessary, when we wan't a shippable package.
-  # Otherwise the original rpaths are used 
+  # Otherwise the original rpaths are used
   if ( OPENFLIPPER_CALL_FIX_BUNDLE )
-    # Call fixbundle every time   
-    add_custom_target (fixbundle ALL 
+    # Call fixbundle every time
+    add_custom_target (fixbundle ALL
       COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
     )
   else()
     # Call fixbundle only as a dependency
-    add_custom_target (fixbundle 
+    add_custom_target (fixbundle
       COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
     )
   endif()

@@ -43,9 +43,7 @@ endif()
 
 # read version from file
 macro (acg_get_version)
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION")
-      file (READ "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION" _file)
-    elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION" _file)
     else ()
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" _file)
@@ -184,7 +182,7 @@ add_definitions (-DINCLUDE_TEMPLATES)
 macro (acg_qt4)
   if (NOT QT4_FOUND)
 
-    set (QT_MIN_VERSION ${ARGN}) 
+    set (QT_MIN_VERSION ${ARGN})
 
     find_package (Qt4 COMPONENTS QtCore QtGui )
 
@@ -206,6 +204,89 @@ macro (acg_qt4)
   endif ()
 endmacro ()
 
+macro (acg_qt5)
+  #if (NOT QT5_FOUND)
+
+    #set (QT_MIN_VERSION ${ARGN})
+
+    #for custom installation of qt5, dont use any of these variables
+    set (QT5_INSTALL_PATH "" CACHE String "Path to qt5 lib and include folder")
+    set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
+    set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+
+    find_package (Qt5Core REQUIRED)
+    find_package (Qt5Declarative REQUIRED)
+    find_package (Qt5Widgets REQUIRED)
+    find_package (Qt5Gui REQUIRED)
+    find_package (Qt5OpenGL REQUIRED)
+    find_package (Qt5Network REQUIRED)
+    find_package (Qt5Script REQUIRED)
+    find_package (Qt5ScriptTools REQUIRED)
+    find_package (Qt5Sql REQUIRED)
+    find_package (Qt5Xml REQUIRED)
+    find_package (Qt5XmlPatterns REQUIRED)
+    find_package (Qt5Help REQUIRED)
+    find_package (Qt5WebKit REQUIRED)
+    find_package (Qt5UiTools REQUIRED)
+    find_package (Qt5Concurrent REQUIRED)
+    find_package (Qt5PrintSupport REQUIRED)
+    
+
+    set (QT5_FOUND ${Qt5Core_FOUND} AND ${Qt5Declarative} ${Qt5Widgets_FOUND}
+      AND ${Qt5Gui_FOUND} AND ${Qt5OpenGL_FOUND} AND ${Qt5Network_FOUND}
+      AND ${Qt5Script_FOUND} AND ${Qt5ScriptTools_FOUND} AND ${Qt5Sql_FOUND}
+      AND ${Qt5Xml_FOUND} AND ${Qt5XmlPatterns_FOUND} AND ${Qt5Help_FOUND}
+      AND ${Qt5WebKit_FOUND} AND ${Qt5UiTools_FOUND} AND ${Qt5Concurrent_FOUND}
+      AND ${Qt5PrintSupport_FOUND})
+
+    if (QT5_FOUND)
+      include_directories(${Qt5Core_INCLUDE_DIRS})
+      include_directories(${Qt5Declarative_INCLUDE_DIRS})
+      include_directories(${Qt5Widgets_INCLUDE_DIRS})
+      include_directories(${Qt5Gui_INCLUDE_DIRS})
+      include_directories(${Qt5OpenGL_INCLUDE_DIRS})
+      include_directories(${Qt5Network_INCLUDE_DIRS})
+      include_directories(${Qt5Script_INCLUDE_DIRS})
+      include_directories(${Qt5ScriptTools_INCLUDE_DIRS})
+      include_directories(${Qt5Sql_INCLUDE_DIRS})
+      include_directories(${Qt5Xml_INCLUDE_DIRS})
+      include_directories(${Qt5XmlPatterns_INCLUDE_DIRS})
+      include_directories(${Qt5Help_INCLUDE_DIRS})
+      include_directories(${Qt5WebKit_INCLUDE_DIRS})
+      include_directories(${Qt5UiTools_INCLUDE_DIRS})
+      include_directories(${Qt5Concurrent_INCLUDE_DIRS})
+      include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
+      add_definitions(${Qt5Core_DEFINITIONS})
+      add_definitions(${Qt5Widgets_DEFINITIONS})
+      add_definitions(${Qt5Gui_DEFINITIONS})
+      add_definitions(${Qt5OpenGL_DEFINITIONS})
+      add_definitions(${Qt5Network_DEFINITIONS})
+      add_definitions(${Qt5Script_DEFINITIONS})
+      add_definitions(${Qt5ScriptTools_DEFINITIONS})
+      add_definitions(${Qt5Sql_DEFINITIONS})
+      add_definitions(${Qt5Xml_DEFINITIONS})
+      add_definitions(${Qt5XmlPatterns_DEFINITIONS})
+      add_definitions(${Qt5Help_DEFINITIONS})
+      add_definitions(${Qt5WebKit_DEFINITIONS})
+      add_definitions(${Qt5UiTools_DEFINITIONS})
+      add_definitions(${Qt5Concurrent_DEFINITIONS})
+      add_definitions(${Qt5PrintSupport_DEFINITIONS})
+
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
+      set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Declarative_LIBRARIES} ${Qt5Widgets_LIBRARIES}
+        ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES}
+        ${Qt5Script_LIBRARIES} ${Qt5ScriptTools_LIBRARIES} ${Qt5Sql_LIBRARIES}
+        ${Qt5Xml_LIBRARIES} ${Qt5XmlPatterns_LIBRARIES} ${Qt5Help_LIBRARIES}
+        ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} ${Qt5PrintSupport_LIBARIES})
+
+      add_definitions(-DQT_NO_OPENGL)
+    endif ()
+
+    #endif ()
+endmacro ()
+
 # unsets the given variable
 macro (acg_unset var)
     set (${var} "" CACHE INTERNAL "")
@@ -221,7 +302,7 @@ macro (acg_openmp)
   if (NOT OPENMP_NOTFOUND)
     # Set off OpenMP on Darwin architectures
     # since it causes crashes sometimes
-#    if(NOT APPLE)    
+#    if(NOT APPLE)
         find_package(OpenMP)
       if (OPENMP_FOUND)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
@@ -326,7 +407,50 @@ macro (acg_qt4_automoc moc_SRCS)
 
             add_file_dependencies (${_abs_FILE} ${_moc})
             set (${moc_SRCS} ${${moc_SRCS}} ${_moc})
-            
+
+        endif ()
+     endif ()
+  endforeach ()
+endmacro ()
+
+# generate moc targets for sources in list
+macro (acg_qt5_automoc moc_SRCS)
+  qt5_get_moc_flags (_moc_INCS)
+
+  set (_matching_FILES )
+  foreach (_current_FILE ${ARGN})
+
+     get_filename_component (_abs_FILE ${_current_FILE} ABSOLUTE)
+     # if "SKIP_AUTOMOC" is set to true, we will not handle this file here.
+     # here. this is required to make bouic work correctly:
+     # we need to add generated .cpp files to the sources (to compile them),
+     # but we cannot let automoc handle them, as the .cpp files don't exist yet when
+     # cmake is run for the very first time on them -> however the .cpp files might
+     # exist at a later run. at that time we need to skip them, so that we don't add two
+     # different rules for the same moc file
+     get_source_file_property (_skip ${_abs_FILE} SKIP_AUTOMOC)
+
+     if ( NOT _skip AND EXISTS ${_abs_FILE} )
+
+        file (READ ${_abs_FILE} _contents)
+
+        get_filename_component (_abs_PATH ${_abs_FILE} PATH)
+
+        string (REGEX MATCHALL "Q_OBJECT" _match "${_contents}")
+        if (_match)
+            get_filename_component (_basename ${_current_FILE} NAME_WE)
+            set (_header ${_abs_FILE})
+            set (_moc    ${CMAKE_CURRENT_BINARY_DIR}/moc_${_basename}.cpp)
+
+            add_custom_command (OUTPUT ${_moc}
+                COMMAND ${QT_MOC_EXECUTABLE}
+                ARGS ${_moc_INCS} ${_header} -o ${_moc}
+                DEPENDS ${_header}
+            )
+
+            add_file_dependencies (${_abs_FILE} ${_moc})
+            set (${moc_SRCS} ${${moc_SRCS}} ${_moc})
+
         endif ()
      endif ()
   endforeach ()
@@ -351,7 +475,7 @@ macro (acg_qt4_autouic uic_SRCS)
         set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/ui_${_basename}.hh)
         set (_header ${_basename}.hh)
         set (_source ${_abs_PATH}/${_cbasename}.cc)
-        
+
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${QT_UIC_EXECUTABLE}
             ARGS -o ${_outfile} ${_abs_FILE}
@@ -359,11 +483,42 @@ macro (acg_qt4_autouic uic_SRCS)
 
         add_file_dependencies (${_source} ${_outfile})
         set (${uic_SRCS} ${${uic_SRCS}} ${_outfile})
-            
+
      endif ()
   endforeach ()
 endmacro ()
 
+# generate uic targets for sources in list
+macro (acg_qt5_autouic uic_SRCS)
+
+  set (_matching_FILES )
+  foreach (_current_FILE ${ARGN})
+
+     get_filename_component (_abs_FILE ${_current_FILE} ABSOLUTE)
+
+     if ( EXISTS ${_abs_FILE} )
+
+        file (READ ${_abs_FILE} _contents)
+
+        get_filename_component (_abs_PATH ${_abs_FILE} PATH)
+
+        get_filename_component (_basename ${_current_FILE} NAME_WE)
+        string (REGEX REPLACE "Ui$" "" _cbasename ${_basename})
+        set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/ui_${_basename}.hh)
+        set (_header ${_basename}.hh)
+        set (_source ${_abs_PATH}/${_cbasename}.cc)
+
+        add_custom_command (OUTPUT ${_outfile}
+            COMMAND ${Qt5Widgets_UIC_EXECUTABLE}
+            ARGS -o ${_outfile} ${_abs_FILE}
+            DEPENDS ${_abs_FILE})
+
+        add_file_dependencies (${_source} ${_outfile})
+        set (${uic_SRCS} ${${uic_SRCS}} ${_outfile})
+
+     endif ()
+  endforeach ()
+endmacro ()
 
 # generate qrc targets for sources in list
 macro (acg_qt4_autoqrc qrc_SRCS)
@@ -381,11 +536,40 @@ macro (acg_qt4_autoqrc qrc_SRCS)
 
         get_filename_component (_basename ${_current_FILE} NAME_WE)
         set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${_basename}.cpp)
-        
+
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${QT_RCC_EXECUTABLE}
             ARGS -o ${_outfile}  ${_abs_FILE}
-            DEPENDS ${_abs_FILE}) 
+            DEPENDS ${_abs_FILE})
+
+        add_file_dependencies (${_source} ${_outfile})
+        set (${qrc_SRCS} ${${qrc_SRCS}} ${_outfile})
+
+     endif ()
+  endforeach ()
+endmacro ()
+
+# generate qrc targets for sources in list
+macro (acg_qt5_autoqrc qrc_SRCS)
+
+  set (_matching_FILES )
+  foreach (_current_FILE ${ARGN})
+
+     get_filename_component (_abs_FILE ${_current_FILE} ABSOLUTE)
+
+     if ( EXISTS ${_abs_FILE} )
+
+        file (READ ${_abs_FILE} _contents)
+
+        get_filename_component (_abs_PATH ${_abs_FILE} PATH)
+
+        get_filename_component (_basename ${_current_FILE} NAME_WE)
+        set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${_basename}.cpp)
+
+        add_custom_command (OUTPUT ${_outfile}
+            COMMAND ${QT_RCC_EXECUTABLE}
+            ARGS -o ${_outfile}  ${_abs_FILE}
+            DEPENDS ${_abs_FILE})
 
         add_file_dependencies (${_source} ${_outfile})
         set (${qrc_SRCS} ${${qrc_SRCS}} ${_outfile})
@@ -464,7 +648,7 @@ function (acg_add_library _target _libtype)
       set (_and_static 1)
     else ()
       set (_and_static 0)
-    endif ()    
+    endif ()
   else ()
     set (_type ${_libtype})
     set (_and_static 0)
@@ -480,9 +664,9 @@ function (acg_add_library _target _libtype)
 
     # set common target properties defined in common.cmake
     acg_set_target_props (${_target}Static)
-    
+
     if (NOT APPLE)
-      set_target_properties (${_target}Static PROPERTIES 
+      set_target_properties (${_target}Static PROPERTIES
                              LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
                             )
     endif ()
@@ -568,10 +752,10 @@ function (acg_add_library _target _libtype)
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}/lib${fullname}.a)
 
   endif ()
- 
+
 
   # Block installation of libraries by setting ACG_NO_LIBRARY_INSTALL
-  if ( NOT ACG_NO_LIBRARY_INSTALL ) 
+  if ( NOT ACG_NO_LIBRARY_INSTALL )
     if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
       if (${_type} STREQUAL SHARED OR ${_type} STREQUAL STATIC )
         install (TARGETS ${_target}
@@ -614,11 +798,19 @@ function (acg_add_translations _target _languages _sources)
 
   set (_qm_files)
   if ( _new_ts_files )
-    qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
+    if (QT5_FOUND)
+      #qt5_create_translation(_qm_files ${_sources} ${_new_ts_files})
+    elseif (QT4_FOUND)
+      qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
+    endif()
   endif ()
 
   if ( _ts_files )
-    qt4_add_translation(_qm_files2 ${_ts_files})
+    if (QT5_FOUND)
+      #qt5_add_translation(_qm_files2 ${_ts_files})
+    elseif (QT4_FOUND)
+      qt4_add_translation(_qm_files2 ${_ts_files})
+    endif()
     list (APPEND _qm_files ${_qm_files2})
   endif ()
 
@@ -653,7 +845,7 @@ function (generate_qhp_file files_loc plugin_name)
     set(qhp_file "${files_loc}/${plugin_name}.qhp")
     # Read in template file
     file(STRINGS "${CMAKE_SOURCE_DIR}/OpenFlipper/Documentation/QtHelpResources/QtHelpProject.qhp" qhp_template)
-    
+
     # Initialize new project file
     file(WRITE ${qhp_file} "")
     foreach (_line ${qhp_template})
