@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "ui_rendererObjectWidget.hh"
-#include <QtGui>
+#include <QDialog>
 
 #include <OpenFlipper/common/RendererInfo.hh>
 #include "renderObjectHighLighter.hh"

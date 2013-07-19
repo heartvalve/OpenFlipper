@@ -111,7 +111,7 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
               if(optionCreateTexFolder) {
                   QFileInfo materialFilename(_filename);
 
-                  matStream << "map_Kd " << materialFilename.baseName().toStdString() << "_textures" << QDir::separator().toAscii()
+                  matStream << "map_Kd " << materialFilename.baseName().toStdString() << "_textures" << QDir::separator().toLatin1()
                       << file.fileName().toStdString() << std::endl;
               } else {
                   matStream << "map_Kd " << file.fileName().toStdString() << std::endl;

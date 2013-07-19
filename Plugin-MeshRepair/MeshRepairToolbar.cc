@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "MeshRepairToolbar.hh"
-#include <QtGui>
 
 MeshRepairToolbarWidget::MeshRepairToolbarWidget(QWidget *parent)
     : QWidget(parent)

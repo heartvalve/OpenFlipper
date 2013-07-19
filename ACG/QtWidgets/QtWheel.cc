@@ -70,6 +70,7 @@
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QMouseEvent>
+#include <qdrawutil.h>
 
 
 //== NAMESPACES ===============================================================

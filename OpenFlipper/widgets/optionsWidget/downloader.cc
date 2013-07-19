@@ -50,14 +50,6 @@
 void OptionsWidget::startDownload( QString _url ) {
    QUrl url(_url);
 
-   // If username or passowrd are supplied, use them
-   if ( ! updateUser->text().isEmpty() )
-    url.setUserName(updateUser->text());
-
-  if ( ! updatePass->text().isEmpty() )
-    url.setPassword(updatePass->text());
-
-
   QFileInfo urlInfo(_url);
 
   // Download the file to the Home Directory
@@ -77,11 +69,8 @@ void OptionsWidget::startDownload( QString _url ) {
     file = 0;
     checkUpdateButton->setEnabled(true);
   } else {
-    QHttp::ConnectionMode mode = url.scheme().toLower() == "https" ? QHttp::ConnectionModeHttps : QHttp::ConnectionModeHttp;
-    http->setHost(url.host(), mode, url.port() == -1 ? 0 : url.port());
-
-    if (!url.userName().isEmpty())
-        http->setUser(url.userName(), url.password());
+    QNetworkRequest req;
+    req.setUrl(url);
 
     httpRequestAborted = false;
     QByteArray path = QUrl::toPercentEncoding(url.path(), "!$&'()*+,;=:@/");
@@ -94,96 +83,95 @@ void OptionsWidget::startDownload( QString _url ) {
     progressDialog->setLabelText(tr("Downloading %1.").arg(fileName));
     progressDialog->show();
 
-    httpGetId = http->get(path, file);
+    downloadRep_ = networkMan_->get(req);
+
+    connect(downloadRep_, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(showError(QNetworkReply::NetworkError)));
+    connect(downloadRep_,SIGNAL(downloadProgress(qint64 , qint64 )),
+            this,SLOT(updateDataReadProgress(qint64 , qint64 )));
 
     checkUpdateButton->setEnabled(false);
   }
 
 }
 
-void OptionsWidget::httpRequestFinished(int requestId, bool error)
+void OptionsWidget::authentication  ( QNetworkReply* _reply, QAuthenticator* _authenticator )
 {
-    if (requestId != httpGetId)
-        return;
-    if (httpRequestAborted) {
-        if (file) {
-            file->close();
-            file->remove();
-            delete file;
-            file = 0;
-        }
+  if ( ! updateUser->text().isEmpty() )
+    _authenticator->setUser(updateUser->text());
 
-        progressDialog->hide();
-        checkUpdateButton->setEnabled(true);
-        return;
-    }
-
-    if (requestId != httpGetId)
-        return;
-
-    progressDialog->hide();
-    file->close();
-
-    if (error) {
-        file->remove();
-        statusLabel->setText(tr("Download failed: %1.").arg(http->errorString()));
-        QMessageBox::information(this, tr("HTTP"),
-                                  tr("Download failed: %1.")
-                                  .arg(http->errorString()) + file->fileName() );
-    } else {
-        QString fileName = QFileInfo(QUrl(updateURL->text()).path()).fileName();
-        statusLabel->setText(tr("Downloaded %1").arg(file->fileName() ));
-    }
-
-    checkUpdateButton->setEnabled(true);
-    delete file;
-    file = 0;
-
-    if ( !error ) {
-      if ( downloadType == VERSIONS_FILE )
-         compareVersions();
-      if ( downloadType == PLUGIN )
-         updateComponent();
-    }
+  if ( ! updatePass->text().isEmpty() )
+    _authenticator->setPassword(updatePass->text());
 }
 
-void OptionsWidget::readResponseHeader(const QHttpResponseHeader &responseHeader)
+void OptionsWidget::httpRequestFinished(QNetworkReply* _qnr)
 {
-  switch (responseHeader.statusCode()) {
-  case 200:                   // Ok
-  case 301:                   // Moved Permanently
-  case 302:                   // Found
-  case 303:                   // See Other
-  case 307:                   // Temporary Redirect
-    // these are not error conditions
-    break;
+  if (_qnr != downloadRep_)
+    return;
 
-  default:
-    QMessageBox::information(this, tr("HTTP"),
-                              tr("Download failed: %1.")
-                              .arg(responseHeader.reasonPhrase()));
-    statusLabel->setText(tr("Download failed: ") + responseHeader.reasonPhrase());
-    httpRequestAborted = true;
+  QNetworkReply::NetworkError error = _qnr->error();
+
+  if (httpRequestAborted) {
+    if (file) {
+      file->close();
+      file->remove();
+      delete file;
+      file = 0;
+    }
+
     progressDialog->hide();
-    http->abort();
+    checkUpdateButton->setEnabled(true);
+    return;
   }
- }
+
+  progressDialog->hide();
+  file->close();
+
+  if (error != QNetworkReply::NoError) {
+    file->remove();
+  } else {
+    QString fileName = QFileInfo(QUrl(updateURL->text()).path()).fileName();
+    statusLabel->setText(tr("Downloaded %1").arg(file->fileName() ));
+  }
+
+  checkUpdateButton->setEnabled(true);
+  delete file;
+  file = 0;
+
+  if ( error == QNetworkReply::NoError ) {
+    if ( downloadType == VERSIONS_FILE )
+      compareVersions();
+    if ( downloadType == PLUGIN )
+      updateComponent();
+  }
+}
 
 void OptionsWidget::cancelDownload()
 {
   statusLabel->setText(tr("download canceled."));
   httpRequestAborted = true;
-  http->abort();
+  if (downloadRep_)
+    downloadRep_->abort();
   checkUpdateButton->setEnabled(true);
 }
 
-void OptionsWidget::updateDataReadProgress(int bytesRead, int totalBytes)
+void OptionsWidget::updateDataReadProgress(qint64 _bytesReceived, qint64 _bytesTotal)
 {
   if (httpRequestAborted)
     return;
 
-  progressDialog->setMaximum(totalBytes);
-  progressDialog->setValue(bytesRead);
+  progressDialog->setMaximum(_bytesTotal);
+  progressDialog->setValue(_bytesReceived);
+}
+
+void OptionsWidget::showError(QNetworkReply::NetworkError _error)
+{
+  if (_error == QNetworkReply::NoError)
+    return;
+  statusLabel->setText(tr("Download failed: %1.").arg(downloadRep_->errorString()));
+  QMessageBox::information(this, tr("HTTP Error"),
+      tr("Download failed: %1.")
+      .arg(downloadRep_->errorString()) + file->fileName() );
 }
 
 

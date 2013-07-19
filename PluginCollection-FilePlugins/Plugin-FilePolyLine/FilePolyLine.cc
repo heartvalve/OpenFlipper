@@ -39,7 +39,7 @@ int FilePolyLinePlugin::loadObject(QString _filename)
   PolyLineObject* pol(0);
   if(PluginFunctions::getObject( id, pol))
   {
-    pol->line()->load(_filename.toAscii());
+    pol->line()->load(_filename.toLatin1());
 
     pol->setFromFileName(_filename);
 
@@ -60,12 +60,12 @@ bool FilePolyLinePlugin::saveObject(int _id, QString _filename)
     if( pol)
     {
       std::cerr << "call Line Function\n";
-      std::cerr << (const char*) _filename.toAscii() << std::endl;
+      std::cerr << (const char*) _filename.toLatin1() << std::endl;
 
       obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
       obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
-      pol->line()->save((const char*) _filename.toAscii());
+      pol->line()->save((const char*) _filename.toLatin1());
     }
   }
 

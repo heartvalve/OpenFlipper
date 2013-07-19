@@ -452,7 +452,7 @@ void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList*
   file.open(QIODevice::ReadOnly | QIODevice::Text);
 
   if (!file.isReadable())
-    std::cout << "error: file missing -> \"" << (const char*)_fileName.toAscii() << "\"" << std::endl;
+    std::cout << "error: file missing -> \"" << _fileName.toStdString() << "\"" << std::endl;
 
   else
   {
@@ -692,7 +692,7 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
     QString strIncludeFile = _str.remove("#include ").remove('\"').remove('<').remove('>').trimmed();
 
     if (strIncludeFile.isEmpty())
-      std::cout << "wrong include syntax: " << (const char*)_str.toAscii() << std::endl;
+      std::cout << "wrong include syntax: " << _str.toStdString() << std::endl;
     else
     {
       QString fullPathToIncludeFile = _includePath + QDir::separator() + strIncludeFile;

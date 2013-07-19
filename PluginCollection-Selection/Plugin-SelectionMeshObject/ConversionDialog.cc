@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "ConversionDialog.hh"
-#include <QtGui>
+
 
 ConversionDialog::ConversionDialog(QWidget* _parent)
     : QWidget(_parent) {

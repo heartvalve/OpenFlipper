@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "MeshCompareToolbarWidget.hh"
-#include <QtGui>
+
 
 MeshCompareToolbarWidget::MeshCompareToolbarWidget(QWidget *parent)
     : QWidget(parent)

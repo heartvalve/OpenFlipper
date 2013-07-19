@@ -46,6 +46,8 @@
 
 #include <QHash>
 #include <QTextCharFormat>
+#include <QTextEdit>
+#include <QTextDocument>
 
 class QTextDocument;
 

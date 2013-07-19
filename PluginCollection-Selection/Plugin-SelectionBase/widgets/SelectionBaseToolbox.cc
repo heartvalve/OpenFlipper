@@ -43,7 +43,7 @@
 
 
 #include "SelectionBaseToolbox.hh"
-#include <QtGui>
+
 
 SelectionBaseToolboxWidget::SelectionBaseToolboxWidget(QWidget *parent)
     : QWidget(parent)

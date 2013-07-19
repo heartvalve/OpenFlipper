@@ -669,7 +669,7 @@ void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, Q
   }
   
   _textureFilename = OpenFlipper::Options::textureDir().path() + 
-      QDir::separator().toAscii() + (globalTextures_.texture(_textureName)).filename();
+      QDir::separator().toLatin1() + (globalTextures_.texture(_textureName)).filename();
   
   QFile f(_textureFilename);
   if(!f.exists()) _textureFilename = "NOT_FOUND";

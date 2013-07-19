@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "Toolbox.hh"
-#include <QtGui>
+
 #include <iostream>
 
 DatacontrolToolboxWidget::DatacontrolToolboxWidget(QWidget* _parent)

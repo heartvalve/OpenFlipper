@@ -41,8 +41,6 @@
 \*===========================================================================*/
 
 
-#include <QtGui>
-
 #include "SlicePlugin.hh"
 
 #include <iostream>

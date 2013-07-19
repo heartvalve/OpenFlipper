@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "postProcessorWidget.hh"
-#include <QtGui>
 #include <QMessageBox>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>

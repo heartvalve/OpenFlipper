@@ -72,7 +72,7 @@ namespace QtWidgets {
 QtCoordFrameDialog::
 QtCoordFrameDialog( QWidget*                     _parent,
 		    SceneGraph::CoordFrameNode*  _node,
-		    Qt::WFlags                   _fl )
+		    Qt::WindowFlags                   _fl )
   
   : QDialog(_parent, _fl),
     node_(_node)

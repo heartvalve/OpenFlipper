@@ -581,27 +581,27 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::VPropHandleT< TriMesh::Point > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
         {
             OpenMesh::VPropHandleT< double > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("unsigned int") )
         {
             OpenMesh::VPropHandleT< unsigned int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("int") )
         {
             OpenMesh::VPropHandleT< int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("bool") )
         {
             OpenMesh::VPropHandleT< bool > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         //please update the doc if you write "skin weights"-property support
 
@@ -609,7 +609,7 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         else if ( dtype == tr("SkinWeights") )
         {
             OpenMesh::VPropHandleT< BaseSkin::SkinWeights > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
 #endif
     }
@@ -618,27 +618,27 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::EPropHandleT< TriMesh::Point > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
         {
             OpenMesh::EPropHandleT< double > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("unsgined int") )
         {
             OpenMesh::EPropHandleT< unsigned int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("int") )
         {
             OpenMesh::EPropHandleT< int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("bool") )
         {
             OpenMesh::EPropHandleT< bool > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
     }
     else if ( filter == PropertyInfo::EF_FACE )
@@ -646,27 +646,27 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::FPropHandleT< TriMesh::Point > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
         {
             OpenMesh::FPropHandleT< double > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("unsigned int") )
         {
             OpenMesh::FPropHandleT< unsigned int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("int") )
         {
             OpenMesh::FPropHandleT< int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("bool") )
         {
             OpenMesh::FPropHandleT< bool > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
     }
     else if ( filter == PropertyInfo::EF_HALFEDGE )
@@ -674,27 +674,27 @@ void OMPropertyModel<MeshT>:: addProperty(QString propName, QString friendlyType
         if ( (dtype == tr("Vec3d")) || (dtype == tr("Vec3f")) )
         {
             OpenMesh::HPropHandleT< TriMesh::Point > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("double") )
         {
             OpenMesh::HPropHandleT< double > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("unsigned int") )
         {
             OpenMesh::HPropHandleT< unsigned int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("int") )
         {
             OpenMesh::HPropHandleT< int > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
         else if ( dtype == tr("bool") )
         {
             OpenMesh::HPropHandleT< bool > prop;
-            mesh->add_property(prop, pname.toAscii().data());
+            mesh->add_property(prop, pname.toStdString());
         }
     }
 

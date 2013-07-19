@@ -93,7 +93,7 @@ Core::
 slotLog(Logtype _type, QString _message) {
   emit externalLog( _type , _message );
   if ( OpenFlipper::Options::logToConsole()  ) {
-    std::string output( _message.toAscii() ) ;
+    std::string output( _message.toLatin1() ) ;
     
     switch (_type) {
       case LOGINFO:

@@ -53,7 +53,7 @@
 
 // -------------------- mview
 #include "Core.hh"
-#include <QtUiTools/QUiLoader>
+#include <QUiLoader>
 
 
 //== IMPLEMENTATION ==========================================================

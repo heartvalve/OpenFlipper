@@ -41,7 +41,8 @@
 \*===========================================================================*/
 
 #include "MoveProps.hh"
-#include <QtGui>
+
+
 
 movePropsWidget::movePropsWidget(int obj, QWidget *parent)
     : QWidget(parent), obj_(obj)

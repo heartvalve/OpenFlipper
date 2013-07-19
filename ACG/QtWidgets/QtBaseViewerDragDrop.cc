@@ -52,6 +52,8 @@
 //== INCLUDES =================================================================
 
 #include "QtBaseViewer.hh"
+#include <QDrag>
+#include <QMimeData>
 
 //== NAMESPACES ===============================================================
 
@@ -67,7 +69,7 @@ void QtBaseViewer::startDrag()
   encodeView(view);
 
   QDrag     * drag = new QDrag( this );
-  QMimeData * mime_data = new QMimeData;
+  QMimeData * mime_data = new QMimeData();
 
   mime_data->setText( view );
   drag->setMimeData( mime_data );

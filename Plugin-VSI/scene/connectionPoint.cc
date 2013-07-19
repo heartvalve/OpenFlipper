@@ -85,7 +85,7 @@ ConnectionPoint::ConnectionPoint (ElementInOut *_e, QGraphicsItem *_parent) :
 
   setBrush (QColor (64,64,64));
 
-  setAcceptsHoverEvents (true);
+  setAcceptHoverEvents (true);
 }
 
 //------------------------------------------------------------------------------
