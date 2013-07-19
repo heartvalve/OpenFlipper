@@ -301,5 +301,7 @@ void PropertyVisPlugin::slotRemoveProperty()
     }
 }
 
-Q_EXPORT_PLUGIN2( propertyvisplugin , PropertyVisPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( propertyvisplugin , PropertyVisPlugin );
+#endif
 

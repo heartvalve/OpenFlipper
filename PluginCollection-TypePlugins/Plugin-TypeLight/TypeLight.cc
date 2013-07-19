@@ -825,5 +825,7 @@ void TypeLightPlugin::updateLights() {
     transVec_ = ACG::Vec3d(0.0);
 }
 
-Q_EXPORT_PLUGIN2( typelightplugin , TypeLightPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typelightplugin , TypeLightPlugin );
+#endif
 

@@ -56,7 +56,11 @@ class SSAOPlugin : public QObject, BaseInterface, RenderInterface, LoggingInterf
     Q_INTERFACES(BaseInterface)
     Q_INTERFACES(RenderInterface)
     Q_INTERFACES(LoggingInterface)
-    
+
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Render-SSAO")
+#endif
+
     
 signals:
   // LoggingInterface

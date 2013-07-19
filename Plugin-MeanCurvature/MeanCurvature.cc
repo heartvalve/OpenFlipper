@@ -41,10 +41,11 @@
 \*===========================================================================*/
 
 
-
-
-
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 #include "MeanCurvature.hh"
 
@@ -159,5 +160,9 @@ void MeanCurvaturePlugin::computeMeanCurvature(MeshT* _mesh) {
 
 }
 
-Q_EXPORT_PLUGIN2( meancurvatureplugin , MeanCurvaturePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( meancurvatureplugin , MeanCurvaturePlugin );
+#endif
+
+
 

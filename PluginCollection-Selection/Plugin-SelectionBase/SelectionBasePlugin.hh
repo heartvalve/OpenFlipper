@@ -91,6 +91,10 @@ Q_INTERFACES(ToolbarInterface)
 Q_INTERFACES(LoadSaveInterface)
 Q_INTERFACES(SelectionInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SelectionBase")
+#endif
+
     public:
 
         /// Default constructor

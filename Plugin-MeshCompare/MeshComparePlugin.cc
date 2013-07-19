@@ -460,7 +460,6 @@ void MeshComparePlugin::visualizeData( const std::vector<double>& _data, double 
 
 }
 
-
-
-Q_EXPORT_PLUGIN2( meshcompareplugin , MeshComparePlugin );
-
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( meshcompareplugin , MeshComparePlugin );
+#endif

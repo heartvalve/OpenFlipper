@@ -89,6 +89,10 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
   Q_INTERFACES(ToolbarInterface)
   Q_INTERFACES(ContextMenuInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-ViewControl")
+#endif
+
   signals:
     //BaseInterface
     void updateView();

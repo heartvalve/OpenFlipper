@@ -279,5 +279,7 @@ void TypeHexahedralMeshPlugin::slot_change_shrinkage() {
     emit updateView();
 }
 
-Q_EXPORT_PLUGIN2( typehexahedralmeshplugin , TypeHexahedralMeshPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typehexahedralmeshplugin , TypeHexahedralMeshPlugin );
+#endif
 

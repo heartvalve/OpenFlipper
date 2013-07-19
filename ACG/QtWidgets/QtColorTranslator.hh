@@ -55,7 +55,10 @@
 
 //== INCLUDES =================================================================
 
+#undef QT_NO_OPENGL
 #include <QGLContext>
+#define QT_NO_OPENGL
+
 #include "../Config/ACGDefines.hh"
 
 //== NAMESPACES ===============================================================

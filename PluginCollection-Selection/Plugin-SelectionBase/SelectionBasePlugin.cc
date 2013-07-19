@@ -1827,4 +1827,8 @@ void SelectionBasePlugin::slotRegisterKeyShortcut(int _key, Qt::KeyboardModifier
 
 //============================================================================================
 
-Q_EXPORT_PLUGIN2(selectionbaseplugin, SelectionBasePlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(selectionbaseplugin, SelectionBasePlugin);
+#endif
+
+

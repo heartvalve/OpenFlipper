@@ -62,6 +62,10 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(BackupInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SimpleSmoother")
+#endif
+
   signals:
     //BaseInterface
     void updateView();

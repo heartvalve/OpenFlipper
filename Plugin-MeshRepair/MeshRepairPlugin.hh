@@ -68,6 +68,10 @@ class MeshRepairPlugin : public QObject, BaseInterface , ToolboxInterface, Backu
     Q_INTERFACES(ScriptInterface)
     Q_INTERFACES(RPCInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-MeshRepair")
+#endif
+
 signals:
 
     void updateView();

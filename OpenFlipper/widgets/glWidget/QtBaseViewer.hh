@@ -64,7 +64,9 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/globjects.hh>
 
-#include <QtOpenGL/QGLFormat>
+#undef QT_NO_OPENGL
+#include <QGLFormat>
+#define QT_NO_OPENGL
 #include <QBoxLayout>
 #include <QtNetwork/QUdpSocket>
 #include <QWheelEvent>

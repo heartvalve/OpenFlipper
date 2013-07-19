@@ -58,7 +58,9 @@
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 
+#undef QT_NO_OPENGL
 #include <QGLWidget>
+#define QT_NO_OPENGL
 
 //== FORWARDDECLARATIONS ======================================================
 

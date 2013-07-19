@@ -84,6 +84,10 @@ class SplatCloudRenderingControlPlugin : public QObject, BaseInterface, LoadSave
   Q_INTERFACES( ViewModeInterface    )
   Q_INTERFACES( LoggingInterface     )
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SplatCloudRenderingControl")
+#endif
+
 signals:
 
   //-- Base Interface --

@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "LightWidget.hh"
-#include <QtGui>
+
 #include <QMessageBox>
 #include <iostream>
 #include <OpenFlipper/common/GlobalOptions.hh>

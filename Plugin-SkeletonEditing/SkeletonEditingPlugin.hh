@@ -39,6 +39,10 @@ class SkeletonEditingPlugin : public QObject, BaseInterface, MouseInterface, Key
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(RPCInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SkeletonEditing")
+#endif
+
   signals:
     // BaseInterface
     void updateView();

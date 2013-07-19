@@ -55,7 +55,9 @@
 #include <OpenFlipper/common/ViewerProperties.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <QGraphicsView>
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 
 

@@ -40,7 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 #include "MovePlugin.hh"
 
@@ -2297,5 +2302,7 @@ void MovePlugin::objectDeleted( int _id ){
 
 //--------------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );
+#endif
 

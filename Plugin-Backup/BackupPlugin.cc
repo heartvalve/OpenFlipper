@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include "BackupPlugin.hh"
 #include <iostream>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -392,5 +398,7 @@ void BackupPlugin::slotRedo(){
 
 //-----------------------------------------------------------------------------
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2( backupplugin , BackupPlugin );
+#endif
 

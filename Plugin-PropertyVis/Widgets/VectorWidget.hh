@@ -44,7 +44,13 @@
 #define VECTOR_WIDGET_HH
 
 #include "ui_VectorWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class VectorWidget : public QWidget, public Ui::VectorWidget
 {

@@ -39,8 +39,13 @@
 *   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
+  
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
-#include <QtGui>
 #include "TopologyPlugin.hh"
 #include <iostream>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -845,5 +850,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
    }
 }
 
-Q_EXPORT_PLUGIN2( topologyplugin , TopologyPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( topologyplugin , TopologyPlugin );
+#endif
 

@@ -93,5 +93,8 @@ void TypeQtWidgetPlugin::objectDeleted(int _id)
 {
   widgets_.erase(_id);
 }
-Q_EXPORT_PLUGIN2( typeqtwidgetplugin , TypeQtWidgetPlugin );
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typeqtwidgetplugin , TypeQtWidgetPlugin );
+#endif
 

@@ -41,7 +41,13 @@
 \*===========================================================================*/
 
 #include "ui_infoWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class InfoDialog : public QDialog, public Ui::InfoWidget
 {

@@ -76,6 +76,10 @@ class TypeBSplineCurvePlugin : public QObject, BaseInterface, TypeInterface, Log
    Q_INTERFACES(LoadSaveInterface)
    Q_INTERFACES(ContextMenuInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypeBSplineCurve")
+#endif
+
   signals:
 
     // Logging Interface

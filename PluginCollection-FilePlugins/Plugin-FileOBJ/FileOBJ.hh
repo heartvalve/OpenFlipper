@@ -89,7 +89,9 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
    Q_INTERFACES(StatusbarInterface)
    Q_INTERFACES(RPCInterface)
    Q_INTERFACES(TextureInterface)
-
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileOBJ")
+#endif
   signals:
     void openedFile( int _id );
     void addEmptyObject( DataType _type, int& _id);

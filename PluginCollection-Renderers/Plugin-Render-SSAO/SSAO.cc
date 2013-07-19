@@ -45,7 +45,9 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#undef QT_NO_OPENGL
 #include <QGLFormat>
+#define QT_NO_OPENGL
 
 // shader debug mode triggers a shader reload after resizing the view window
 //#define SSAO_SHADER_DEBUG_MODE
@@ -734,5 +736,7 @@ QString SSAOPlugin::checkOpenGL() {
 
 }
 
-Q_EXPORT_PLUGIN2( ssaoplugin , SSAOPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( ssaoplugin , SSAOPlugin );
+#endif
 

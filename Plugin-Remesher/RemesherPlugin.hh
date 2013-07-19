@@ -43,7 +43,11 @@
 #ifndef ADVANCEDREMESHERPLUGIN_HH
 #define ADVANCEDREMESHERPLUGIN_HH
 
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
@@ -70,6 +74,9 @@ Q_INTERFACES(RPCInterface)
 Q_INTERFACES(ProcessInterface)
 Q_INTERFACES(ScriptInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Remesher")
+#endif
 
 signals:
   

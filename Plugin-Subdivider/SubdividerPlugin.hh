@@ -70,6 +70,10 @@ class SubdividerPlugin : public QObject, BaseInterface , ToolboxInterface, Loggi
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(BackupInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Subdivider")
+#endif
+
 signals:
   void updateView();
   void updatedObject(int _id, const UpdateType& _type);

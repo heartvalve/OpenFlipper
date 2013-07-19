@@ -45,7 +45,12 @@
 
 #include "ui_textureProperties.hh"
 #include "TextureData.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
 
 #ifdef WITH_QWT
   #include "QwtFunctionPlot.hh"

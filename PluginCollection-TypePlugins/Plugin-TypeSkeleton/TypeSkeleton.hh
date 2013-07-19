@@ -65,6 +65,10 @@ class TypeSkeletonPlugin : public QObject, BaseInterface, LoadSaveInterface, Log
    Q_INTERFACES(TypeInterface)
    Q_INTERFACES(ContextMenuInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypeSkeleton")
+#endif
+
   signals:
     // Logging interface
     void log(Logtype _type, QString _message);

@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 
 #include "FileSkeleton.hh"
@@ -366,6 +372,8 @@ void FileSKLPlugin::saveIniFile( INIFile& _ini ,int _id) {
   }
 }
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filesklplugin , FileSKLPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( filesklplugin , FileSKLPlugin );
 

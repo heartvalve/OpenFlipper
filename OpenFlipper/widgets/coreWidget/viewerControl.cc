@@ -53,6 +53,12 @@
 
 #include "CoreWidget.hh"
 
+#if QT_VERSION > 0x050000
+#include <QtConcurrent>
+#else
+#include <QtCore>
+#endif
+
 #include <ACG/Scenegraph/CoordsysNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>

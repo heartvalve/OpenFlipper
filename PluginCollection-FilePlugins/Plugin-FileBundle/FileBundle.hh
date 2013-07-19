@@ -82,7 +82,9 @@ class FileBundlePlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
   Q_INTERFACES( LoggingInterface  )
   Q_INTERFACES( BaseInterface     )
   Q_INTERFACES( ScriptInterface   )
-
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileBundle")
+#endif
 signals:
 
   // -- File Interface --

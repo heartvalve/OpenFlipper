@@ -81,6 +81,9 @@ class InfoMeshObjectPlugin : public QObject, BaseInterface, InformationInterface
       Q_INTERFACES(LoggingInterface)
       Q_INTERFACES(StatusbarInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-MeshObjectInfo")
+#endif
 
   signals:
     // BaseInterface

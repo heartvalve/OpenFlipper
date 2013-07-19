@@ -281,5 +281,9 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
 }
 
 
-Q_EXPORT_PLUGIN2( smootherplugin , SmootherPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( smootherplugin , SmootherPlugin );
+#endif
+
+
 

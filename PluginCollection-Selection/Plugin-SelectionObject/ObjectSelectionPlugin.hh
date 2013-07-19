@@ -72,6 +72,10 @@ class ObjectSelectionPlugin : public QObject, BaseInterface, KeyInterface, LoadS
     Q_INTERFACES(ScriptInterface)    
     Q_INTERFACES(SelectionInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-SelectionObject")
+#endif
+
 public:
     
     /// Default constructor

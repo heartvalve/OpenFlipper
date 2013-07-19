@@ -67,6 +67,10 @@ class Renderer : public QObject, BaseInterface, RenderInterface, LoggingInterfac
     Q_INTERFACES(RenderInterface)
     Q_INTERFACES(LoggingInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Renderer-Classic")
+#endif
+
 signals:
   // LoggingInterface
   void log(Logtype _type, QString _message);

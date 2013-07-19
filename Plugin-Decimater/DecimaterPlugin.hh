@@ -98,6 +98,9 @@ class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, Logging
   Q_INTERFACES(RPCInterface)
   Q_INTERFACES(LoadSaveInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-")
+#endif
 signals:
 
   // BaseInterface

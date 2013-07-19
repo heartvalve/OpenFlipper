@@ -53,6 +53,10 @@ class LaplaceLengthPlugin : public QObject, BaseInterface, TextureInterface
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(TextureInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Laplace")
+#endif
+
   signals:
 
     void addTexture( QString _textureName , QString _filename , uint dimension );

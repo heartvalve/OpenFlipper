@@ -44,7 +44,13 @@
 #define LOAD_SAVE_WIDGET_HH
 
 #include "ui_LoadSaveWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class LoadSaveWidget : public QWidget, public Ui::LoadSaveWidget
 {

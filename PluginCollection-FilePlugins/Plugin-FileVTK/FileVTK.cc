@@ -40,7 +40,12 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 #include <QPushButton>
@@ -2733,7 +2738,9 @@ void FileVTKPlugin::updateUserOptions() {
     }
 }
 
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filevtkplugin , FileVTKPlugin );
+#endif
 
 
-Q_EXPORT_PLUGIN2( filevtkplugin , FileVTKPlugin );
 

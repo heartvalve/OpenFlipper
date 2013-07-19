@@ -45,7 +45,13 @@
 #include <map>
 #include <string>
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 
 #include <ACG/GL/GLState.hh>
@@ -303,5 +309,7 @@ QWidget* FileOpenVolumeMeshPlugin::loadOptionsWidget(QString _currentFilter) {
 
     return loadOptions_;
 }
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(fileopenvolumemeshplugin, FileOpenVolumeMeshPlugin)
+#endif
 
-Q_EXPORT_PLUGIN2(fileopenvolumemeshplugin, FileOpenVolumeMeshPlugin)

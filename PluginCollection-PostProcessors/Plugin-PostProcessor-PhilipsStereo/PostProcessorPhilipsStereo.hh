@@ -55,6 +55,10 @@ class PostProcessorPhilipsStereoPlugin : public QObject, BaseInterface, PostProc
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(PostProcessorInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorPhilipsStereo")
+#endif
+
   public:
    PostProcessorPhilipsStereoPlugin();
   

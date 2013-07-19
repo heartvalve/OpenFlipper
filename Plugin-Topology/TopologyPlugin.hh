@@ -65,6 +65,10 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(ToolbarInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Topology")
+#endif
+
   signals:
     // BaseInterface
     void updateView();

@@ -89,6 +89,10 @@ class PropertyVisPlugin : public QObject, BaseInterface, LoadSaveInterface, Tool
   Q_INTERFACES(PickingInterface)
   Q_INTERFACES(LoggingInterface)
 
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PropertyVis")
+#endif
+
 signals:
   void updateView();
   void updatedObject(int, const UpdateType&);

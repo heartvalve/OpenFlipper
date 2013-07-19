@@ -41,7 +41,13 @@
 \*===========================================================================*/
 
 #include <ui_lightWidget.hh>
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <ObjectTypes/Light/LightNode.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include "Light.hh"

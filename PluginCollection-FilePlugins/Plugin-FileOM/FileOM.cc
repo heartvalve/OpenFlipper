@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 #include <QPushButton>
@@ -632,4 +638,7 @@ void FileOMPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileOM/Save/FaceNormal",   saveFaceNormal_->isChecked()  );
 }
 
-Q_EXPORT_PLUGIN2( fileomplugin , FileOMPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( fileomplugin , FileOMPlugin );
+#endif
+

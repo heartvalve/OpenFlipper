@@ -44,7 +44,13 @@
 #define DECIMATERTOOLBARWIDGET_HH
 
 #include "ui_decimaterToolbar.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 class DecimaterToolbarWidget : public QWidget, public Ui::DecimaterToolbar
 {

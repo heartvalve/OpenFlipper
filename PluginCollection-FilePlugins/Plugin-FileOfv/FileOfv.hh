@@ -60,7 +60,9 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
-
+#if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-FileOfv")
+#endif
   signals:
     void openedFile( int _id );
     void addEmptyObject( DataType _type, int& _id);

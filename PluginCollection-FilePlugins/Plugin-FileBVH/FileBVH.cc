@@ -40,7 +40,13 @@
 *                                                                           *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 
 #include "FileBVH.hh"
@@ -805,5 +811,7 @@ void FileBVHPlugin::slotLoadDefault() {
 }
 
 //-----------------------------------------------------------------------------------------------------
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( filebvhplugin , FileBVHPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( filebvhplugin , FileBVHPlugin );

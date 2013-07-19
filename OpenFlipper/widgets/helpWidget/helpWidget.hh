@@ -52,7 +52,13 @@
 #define HELPWIDGET_HH_
 
 #include "ui_helpWidget.hh"
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 
 #include <QtHelp>
 #include <QTextDocument>

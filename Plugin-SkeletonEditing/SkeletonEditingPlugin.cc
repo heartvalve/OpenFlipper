@@ -1424,5 +1424,9 @@ void SkeletonEditingPlugin::updateManipulatorPosition(BaseObjectData* _skeletonO
 
 //--------------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( skeletoneditingplugin , SkeletonEditingPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( skeletoneditingplugin , SkeletonEditingPlugin );
+#endif
+
+
 

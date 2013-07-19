@@ -120,5 +120,7 @@ void TypeTriangleMeshPlugin::generateBackup( int _id, QString _name, UpdateType 
 
 //-----------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( typetrianglemeshplugin , TypeTriangleMeshPlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typetrianglemeshplugin , TypeTriangleMeshPlugin );
+#endif
 

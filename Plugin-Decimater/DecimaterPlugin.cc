@@ -50,7 +50,13 @@
 
 //== INCLUDES =================================================================
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <memory>
 
 #include "DecimaterPlugin.hh"
@@ -913,5 +919,6 @@ void DecimaterPlugin::slotUpdateDistance()
   tool_->cbDistance->setChecked (true);
 }
 
-Q_EXPORT_PLUGIN2(DecimaterPlugin , DecimaterPlugin );
-
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(DecimaterPlugin , DecimaterPlugin );
+#endif

@@ -320,4 +320,8 @@ void TypeBSplineCurvePlugin::generateBackup( int _id, QString _name, UpdateType 
 
 //-----------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( typebsplinecurveplugin , TypeBSplineCurvePlugin );
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( typebsplinecurveplugin , TypeBSplineCurvePlugin );
+#endif
+
+

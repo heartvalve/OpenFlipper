@@ -48,9 +48,12 @@
 #include <ACG/Geometry/Types/PlaneT.hh>
 
 #include <QImage>
-#include <QGLWidget>
 #include <QMouseEvent>
- #include<QApplication>
+#include <QApplication>
+
+#undef QT_NO_OPENGL
+#include <QGLWidget>
+#define QT_NO_OPENGL
 
 
 //== NAMESPACES ===============================================================

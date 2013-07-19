@@ -40,7 +40,13 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <QtGui>
+
+#if QT_VERSION >= 0x050000 
+  #include <QtWidgets>
+#else
+  #include <QtGui>
+#endif
+
 #include <QFileInfo>
 #include <QSettings>
 #include <QPushButton>
@@ -813,5 +819,7 @@ void FilePLYPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FilePLY/Save/FaceNormal",  saveFaceNormal_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/FaceColor",   saveFaceColor_->isChecked()  );
 }
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( fileplyplugin , FilePLYPlugin );
+#endif
 
-Q_EXPORT_PLUGIN2( fileplyplugin , FilePLYPlugin );

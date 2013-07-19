@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "VideoCaptureDialog.hh"
-#include <QtGui>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <iostream>

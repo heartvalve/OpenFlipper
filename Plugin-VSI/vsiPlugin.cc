@@ -65,8 +65,6 @@
 #include "parser/input.hh"
 #include "config/dynamicDialog.hh"
 
-Q_EXPORT_PLUGIN2( VsiPlugin , VsiPlugin );
-
 //------------------------------------------------------------------------------
 
 /// Constructor
@@ -280,3 +278,7 @@ bool VsiPlugin::continueBox (QString _message)
 }
 
 //------------------------------------------------------------------------------
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(Vsiplugin,VsiPlugin)
+#endif
