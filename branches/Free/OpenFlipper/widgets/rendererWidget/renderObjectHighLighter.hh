@@ -49,8 +49,6 @@
 #include <QTextEdit>
 #include <QTextDocument>
 
-class QTextDocument;
-
 class RenderObjectHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
