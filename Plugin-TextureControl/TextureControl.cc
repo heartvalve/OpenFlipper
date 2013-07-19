@@ -937,8 +937,8 @@ void TextureControlPlugin::doUpdateTextureOVM ( Texture& _texture, VolumeMeshT& 
       OpenVolumeMesh::VertexPropertyT< double > texture = _mesh.template request_vertex_property<double>(_texture.name().toStdString());
       copyTexture(_texture, _mesh, _obj, texture);
 
-      VolumeMeshDrawModesContainer drawModes;
-      _obj.setObjectDrawMode(drawModes.facesTextured);
+      VolumeMeshDrawModesContainer drawModesVolumeMesh;
+      _obj.setObjectDrawMode(drawModesVolumeMesh.facesTextured);
 
     }
     else if ( _texture.dimension() == 2 )
@@ -951,8 +951,8 @@ void TextureControlPlugin::doUpdateTextureOVM ( Texture& _texture, VolumeMeshT& 
         OpenVolumeMesh::VertexPropertyT< ACG::Vec2d > texture = _mesh.template request_vertex_property<ACG::Vec2d>(_texture.name().toStdString());
         copyTexture(_texture, _mesh, _obj, texture);
 
-        VolumeMeshDrawModesContainer drawModes;
-        _obj.setObjectDrawMode(drawModes.facesTextured);
+        VolumeMeshDrawModesContainer drawModesVolumeMesh;
+        _obj.setObjectDrawMode(drawModesVolumeMesh.facesTextured);
 
     }
     else
@@ -967,7 +967,7 @@ void TextureControlPlugin::doUpdateTextureOVM ( Texture& _texture, VolumeMeshT& 
 void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
 
 #ifdef ENABLE_OPENVLUMEMESH_SUPPORT
-  VolumeMeshDrawModesContainer drawModes;
+  VolumeMeshDrawModesContainer drawModesVolumeMesh;
 #endif
 
   // Only update if we have a relevant draw mode
@@ -978,8 +978,8 @@ void TextureControlPlugin::slotDrawModeChanged(int _viewerId ) {
 
 #ifdef ENABLE_OPENVLUMEMESH_SUPPORT
           ||
-          ( PluginFunctions::drawMode(_viewerId) &= drawModes.facesTextured) ||
-          ( PluginFunctions::drawMode(_viewerId) &= drawModes.facesTexturedShaded)
+          ( PluginFunctions::drawMode(_viewerId) &= drawModesVolumeMesh.facesTextured) ||
+          ( PluginFunctions::drawMode(_viewerId) &= drawModesVolumeMesh.facesTexturedShaded)
 #endif
           )) {
     return;

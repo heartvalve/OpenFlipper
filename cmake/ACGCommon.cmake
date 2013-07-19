@@ -43,7 +43,9 @@ endif()
 
 # read version from file
 macro (acg_get_version)
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION")
+      file (READ "${CMAKE_CURRENT_SOURCE_DIR}/branding/VERSION" _file)
+    elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION")
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}/VERSION" _file)
     else ()
       file (READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" _file)
@@ -182,7 +184,7 @@ add_definitions (-DINCLUDE_TEMPLATES)
 macro (acg_qt4)
   if (NOT QT4_FOUND)
 
-    set (QT_MIN_VERSION ${ARGN})
+    set (QT_MIN_VERSION ${ARGN}) 
 
     find_package (Qt4 COMPONENTS QtCore QtGui )
 
@@ -302,7 +304,7 @@ macro (acg_openmp)
   if (NOT OPENMP_NOTFOUND)
     # Set off OpenMP on Darwin architectures
     # since it causes crashes sometimes
-#    if(NOT APPLE)
+#    if(NOT APPLE)    
         find_package(OpenMP)
       if (OPENMP_FOUND)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
@@ -407,7 +409,7 @@ macro (acg_qt4_automoc moc_SRCS)
 
             add_file_dependencies (${_abs_FILE} ${_moc})
             set (${moc_SRCS} ${${moc_SRCS}} ${_moc})
-
+            
         endif ()
      endif ()
   endforeach ()
@@ -475,7 +477,7 @@ macro (acg_qt4_autouic uic_SRCS)
         set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/ui_${_basename}.hh)
         set (_header ${_basename}.hh)
         set (_source ${_abs_PATH}/${_cbasename}.cc)
-
+        
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${QT_UIC_EXECUTABLE}
             ARGS -o ${_outfile} ${_abs_FILE}
@@ -483,7 +485,7 @@ macro (acg_qt4_autouic uic_SRCS)
 
         add_file_dependencies (${_source} ${_outfile})
         set (${uic_SRCS} ${${uic_SRCS}} ${_outfile})
-
+            
      endif ()
   endforeach ()
 endmacro ()
@@ -536,11 +538,11 @@ macro (acg_qt4_autoqrc qrc_SRCS)
 
         get_filename_component (_basename ${_current_FILE} NAME_WE)
         set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${_basename}.cpp)
-
+        
         add_custom_command (OUTPUT ${_outfile}
             COMMAND ${QT_RCC_EXECUTABLE}
             ARGS -o ${_outfile}  ${_abs_FILE}
-            DEPENDS ${_abs_FILE})
+            DEPENDS ${_abs_FILE}) 
 
         add_file_dependencies (${_source} ${_outfile})
         set (${qrc_SRCS} ${${qrc_SRCS}} ${_outfile})
@@ -648,7 +650,7 @@ function (acg_add_library _target _libtype)
       set (_and_static 1)
     else ()
       set (_and_static 0)
-    endif ()
+    endif ()    
   else ()
     set (_type ${_libtype})
     set (_and_static 0)
@@ -664,9 +666,9 @@ function (acg_add_library _target _libtype)
 
     # set common target properties defined in common.cmake
     acg_set_target_props (${_target}Static)
-
+    
     if (NOT APPLE)
-      set_target_properties (${_target}Static PROPERTIES
+      set_target_properties (${_target}Static PROPERTIES 
                              LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
                             )
     endif ()
@@ -752,10 +754,10 @@ function (acg_add_library _target _libtype)
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}/lib${fullname}.a)
 
   endif ()
-
+ 
 
   # Block installation of libraries by setting ACG_NO_LIBRARY_INSTALL
-  if ( NOT ACG_NO_LIBRARY_INSTALL )
+  if ( NOT ACG_NO_LIBRARY_INSTALL ) 
     if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
       if (${_type} STREQUAL SHARED OR ${_type} STREQUAL STATIC )
         install (TARGETS ${_target}
@@ -801,15 +803,15 @@ function (acg_add_translations _target _languages _sources)
     if (QT5_FOUND)
       #qt5_create_translation(_qm_files ${_sources} ${_new_ts_files})
     elseif (QT4_FOUND)
-      qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
-    endif()
+    qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
+  endif ()
   endif ()
 
   if ( _ts_files )
     if (QT5_FOUND)
       #qt5_add_translation(_qm_files2 ${_ts_files})
     elseif (QT4_FOUND)
-      qt4_add_translation(_qm_files2 ${_ts_files})
+    qt4_add_translation(_qm_files2 ${_ts_files})
     endif()
     list (APPEND _qm_files ${_qm_files2})
   endif ()
@@ -845,7 +847,7 @@ function (generate_qhp_file files_loc plugin_name)
     set(qhp_file "${files_loc}/${plugin_name}.qhp")
     # Read in template file
     file(STRINGS "${CMAKE_SOURCE_DIR}/OpenFlipper/Documentation/QtHelpResources/QtHelpProject.qhp" qhp_template)
-
+    
     # Initialize new project file
     file(WRITE ${qhp_file} "")
     foreach (_line ${qhp_template})
