@@ -53,7 +53,6 @@
 #include <ObjectTypes/Plane/PlaneNode.hh>
 
 #include <qnamespace.h>
-#include <qgl.h>
 #include <QObject>
 
 #include <list>

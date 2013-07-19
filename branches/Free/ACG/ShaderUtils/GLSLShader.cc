@@ -132,7 +132,7 @@ namespace GLSL {
     StringList strlist;
 
     for (QStringList::const_iterator it = source.begin();it != source.end();++it)
-      strlist.push_back(std::string((const char*)it->toAscii()) + '\n');
+      strlist.push_back(std::string((const char*)it->toLatin1()) + '\n');
 
     setSource(strlist);
   }
@@ -543,9 +543,9 @@ namespace GLSL {
       path_file = qApp->applicationDirPath() + QString("/../shader/")
                     + QString(filename);
     } else {
-      path_file = QString::fromAscii(filename);
+      path_file = QString::fromLatin1(filename);
     }
-    std::ifstream iShader(path_file.toAscii());
+    std::ifstream iShader(path_file.toLatin1());
     if (!iShader) {
       std::cout << "ERROR: Could not open file " << path_file.toStdString() << std::endl;
       return GLSL::StringList();

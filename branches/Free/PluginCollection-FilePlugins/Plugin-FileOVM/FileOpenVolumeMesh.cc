@@ -160,7 +160,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
 
             if(compatibility_mode) {
 
-                loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
+                loadMesh((const char*) _filename.toLatin1(), *(obj->mesh()), compatibility_mode,
                          topology_checks);
 
             } else {
@@ -193,7 +193,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
 
             if(compatibility_mode) {
 
-                loadMesh((const char*) _filename.toAscii(), *(obj->mesh()), compatibility_mode,
+                loadMesh((const char*) _filename.toLatin1(), *(obj->mesh()), compatibility_mode,
                          topology_checks);
 
             } else {

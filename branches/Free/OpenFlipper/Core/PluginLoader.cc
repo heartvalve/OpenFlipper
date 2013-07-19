@@ -2089,7 +2089,7 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
     it.next();
 
     /// Skip all signals for function calls
-    if ( checkSignal( plugin, it.name().toAscii() ) )
+    if ( checkSignal( plugin, it.name().toLatin1() ) )
       continue;
 
     info.rpcFunctions.push_back( it.name() );

@@ -121,15 +121,13 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   pluginOptionsLayout = new QVBoxLayout;
   pluginOptions->setLayout( pluginOptionsLayout );
 
-  http = new QHttp(this);
+  networkMan_ = new QNetworkAccessManager(this);
 
   // http specific connections
-  connect(http, SIGNAL(requestFinished(int, bool)),
-        this, SLOT(httpRequestFinished(int, bool)));
-  connect(http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader &)),
-        this, SLOT(readResponseHeader(const QHttpResponseHeader &)));
-  connect(http, SIGNAL(dataReadProgress(int, int)),
-          this, SLOT(updateDataReadProgress(int, int)));
+  connect(networkMan_, SIGNAL(finished(QNetworkReply *)),
+        this, SLOT(httpRequestFinished(QNetworkReply *)));
+  connect(networkMan_,SIGNAL(authenticationRequired(QNetworkReply* , QAuthenticator *)),
+        this,SLOT(authentication(QNetworkReply *, QAuthenticator*)));
 
 
   progressDialog = new QProgressDialog(this);

@@ -117,7 +117,7 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
     // Hide widget
     hide();
 
-    setAcceptsHoverEvents(true);
+    setAcceptHoverEvents(true);
 
     updateParentGeometry();
 }

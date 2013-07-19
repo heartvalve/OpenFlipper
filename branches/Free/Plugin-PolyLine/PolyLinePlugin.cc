@@ -497,7 +497,7 @@ slot_resample_on_edges()
 
     for (; o_it2 != PluginFunctions::objectsEnd(); ++o_it2)
     {
-      std::cerr << "resample " << o_it2->name().toAscii().data() << std::endl;
+      std::cerr << "resample " << o_it2->name().toStdString() << std::endl;
       // decimate polyline
       PluginFunctions::polyLineObject(*o_it2)->line()->resample_on_mesh_edges( *mesh, tbsp );
     }

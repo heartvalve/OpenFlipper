@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "IsotropicRemesherToolbox.hh"
-#include <QtGui>
 
 IsotropicRemesherToolBox::IsotropicRemesherToolBox(QWidget *parent)
     : QWidget(parent)

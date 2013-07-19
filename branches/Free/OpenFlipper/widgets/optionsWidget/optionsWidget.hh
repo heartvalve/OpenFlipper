@@ -49,6 +49,7 @@
 #include "ui_optionsWidget.hh"
 #include <QtGui>
 #include <QStringList>
+#include <QProgressDialog>
 #include <QtNetwork>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
@@ -149,11 +150,11 @@ private:
    // flag indicating if something went wrong and the request has to be aborted
    bool httpRequestAborted;
 
-   // Id of the current request
-   int httpGetId;
 
    // Request variable
-   QHttp *http;
+   QNetworkAccessManager *networkMan_;
+   // current request
+   QNetworkReply* downloadRep_;
 
    // File for http downloads
    QFile *file;
@@ -196,13 +197,13 @@ private:
 private slots:
 
    // This slot is called when a http request has been finished
-   void httpRequestFinished(int requestId, bool error);
-
-   // Parses the response and gives feedback
-   void readResponseHeader(const QHttpResponseHeader &responseHeader);
+   void httpRequestFinished(QNetworkReply *_qnr);
 
    // Updates the progress Dialog while downloading
-   void updateDataReadProgress(int bytesRead, int totalBytes);
+   void updateDataReadProgress(qint64 _bytesReceived, qint64 _bytesTotal);
+
+   /// error occured while downloading
+   void showError(QNetworkReply::NetworkError _error);
 
    // Progress dialog callback for cancel
    void cancelDownload();
@@ -212,6 +213,9 @@ private slots:
    
    // Tracks whether another language has been selected
    void slotTranslationIndexChanged(int);
+
+   /// authentication
+   void authentication  ( QNetworkReply* _reply, QAuthenticator* _authenticator );
 
 private:
    /** After checking for updates this variable will contain a list of filenames for which updates are available

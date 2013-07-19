@@ -298,12 +298,12 @@ void LoadWidget::saveFile(){
   //get filename
   if (!filename.contains(".",Qt::CaseSensitive)){ //check for extension
 
-    int s = selectedFilter().indexOf("*")+1;
-    int e = selectedFilter().indexOf(" ", s);
-    int e2 = selectedFilter().indexOf(")", s);
+    int s = selectedNameFilter().indexOf("*")+1;
+    int e = selectedNameFilter().indexOf(" ", s);
+    int e2 = selectedNameFilter().indexOf(")", s);
     if (e == -1 || e2 < e) e = e2;
 
-    QString ext = selectedFilter().mid(s,e-s);
+    QString ext = selectedNameFilter().mid(s,e-s);
     filename += ext;
   }
 

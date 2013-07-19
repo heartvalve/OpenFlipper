@@ -41,7 +41,10 @@
 \*===========================================================================*/
 
 #include "ui_rendererWidget.hh"
-#include <QtGui>
+#include <QDialog>
+#include <QVector>
+#include <QLabel>
+#include <QFrame>
 
 #include <OpenFlipper/common/RendererInfo.hh>
 

@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "RemesherToolbox.hh"
-#include <QtGui>
+
 
 RemesherToolBox::RemesherToolBox(QWidget *parent)
     : QWidget(parent)

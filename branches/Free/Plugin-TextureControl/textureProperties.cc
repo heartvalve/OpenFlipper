@@ -47,7 +47,6 @@
 
 #include <cfloat>
 
-#include <QtGui>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>

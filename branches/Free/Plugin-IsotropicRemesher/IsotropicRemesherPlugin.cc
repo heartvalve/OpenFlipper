@@ -40,9 +40,6 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-#include <QtGui>
-
 #include "IsotropicRemesherPlugin.hh"
 #include "IsotropicRemesherT.hh"
 

@@ -41,7 +41,6 @@
 \*===========================================================================*/
 
 #include "infoBar.hh"
-#include <QtGui>
 
 InfoBar::InfoBar(QWidget *parent)
     : QWidget(parent)

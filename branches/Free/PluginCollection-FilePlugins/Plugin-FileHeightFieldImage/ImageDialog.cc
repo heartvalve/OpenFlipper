@@ -41,7 +41,7 @@
 \*===========================================================================*/
 
 #include "ImageDialog.hh"
-#include <QtGui>
+
 #include <iostream>
 
 ImageDialog::ImageDialog(QImage _image, QWidget *parent) :

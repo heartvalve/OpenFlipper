@@ -160,7 +160,7 @@ void QtGLViewerLayout::reLayout ()
     if (item->size() != item->preferredSize ())
       item->resize (item->preferredSize ());
     item->resetTransform();
-    item->scale (scale, scale);
+    item->setScale (scale);
   }
 
   wheelX_->setPos (r.left(),

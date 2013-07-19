@@ -372,7 +372,7 @@ void GraphicsScene::mousePressEvent (QGraphicsSceneMouseEvent *_event)
   QGraphicsScene::mousePressEvent (_event);
   selectionStart_ = _event->scenePos ();
 
-  if (itemAt (selectionStart_) != elementArea_ && !_event->isAccepted ())
+  if (itemAt (selectionStart_,QTransform()) != elementArea_ && !_event->isAccepted ())
   {
     if (_event->modifiers () & (Qt::ControlModifier | Qt::ShiftModifier))
       setSelectionArea (p);

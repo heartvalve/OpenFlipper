@@ -320,10 +320,10 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
     switch (additionalUniformsIter.value().first) {
       case GL_FLOAT:
-        _prog->setUniform(additionalUniformsIter.key().toAscii(),additionalUniformsIter.value().second.toFloat());
+        _prog->setUniform(additionalUniformsIter.key().toLatin1(),additionalUniformsIter.value().second.toFloat());
         break;
       case GL_INT:
-        _prog->setUniform(additionalUniformsIter.key().toAscii(),additionalUniformsIter.value().second.toInt());
+        _prog->setUniform(additionalUniformsIter.key().toLatin1(),additionalUniformsIter.value().second.toInt());
         break;
       default:
         std::cerr << "IRenderer Error: Additional Uniform data type not supported" << std::endl;

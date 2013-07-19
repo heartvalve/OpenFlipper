@@ -49,7 +49,7 @@
 //== INCLUDES =================================================================
 
 #include <Qt>
-#include <QtGui>
+
 #include <QSpacerItem>
 #include <QFileDialog>
 

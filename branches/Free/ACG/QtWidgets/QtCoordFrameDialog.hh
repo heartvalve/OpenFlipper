@@ -60,6 +60,9 @@
 #include "../Math/VectorT.hh"
 #include <vector>
 
+#include <QDialog>
+#include <QWidget>
+
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -90,7 +93,7 @@ public:
 
   QtCoordFrameDialog( QWidget* parent,
 		      SceneGraph::CoordFrameNode* _node,
-		      Qt::WFlags fl = 0 );
+		      Qt::WindowFlags fl = Qt::Widget );
 
   ~QtCoordFrameDialog() {}
 

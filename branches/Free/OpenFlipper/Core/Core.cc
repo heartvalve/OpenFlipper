@@ -520,7 +520,7 @@ Core::init() {
     it.next();
 
     /// Skip all signals for function calls
-    if ( checkSignal( this, it.name().toAscii() ) )
+    if ( checkSignal( this, it.name().toLatin1() ) )
       continue;
 
     scriptingFunctions_.push_back( "core." + it.name() );

@@ -42,6 +42,8 @@
 
 #include "FunctionList.hh"
 
+#include <QApplication>
+
 FunctionList::FunctionList(QWidget *parent)
     : QListWidget(parent)
 {

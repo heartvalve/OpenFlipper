@@ -43,7 +43,7 @@
 
 
 #include "SelectionTypeFrame.hh"
-#include <QtGui>
+
 
 SelectionTypeFrameWidget::SelectionTypeFrameWidget(QWidget *parent)
     : QWidget(parent)

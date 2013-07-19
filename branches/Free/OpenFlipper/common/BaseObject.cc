@@ -752,7 +752,7 @@ void BaseObject::dumpTree() {
     std::cerr << "   ";
 
   std::cerr << "Node ";
-  std::cerr << std::string(name().toAscii());
+  std::cerr << std::string(name().toLatin1());
 
   std::cerr << " with id : ";
   std::cerr << id();
