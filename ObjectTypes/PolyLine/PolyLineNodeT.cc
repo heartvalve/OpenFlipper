@@ -149,7 +149,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   {
    
     // draw selection
-    if( polyline_.vertex_selections_available())
+    if( polyline_.vertex_selections_available() && !selectedVertexIndexBuffer_.empty())
     {
       // save old values
       float point_size_old = _state.point_size();
@@ -173,7 +173,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   if (_drawMode & DrawModes::WIREFRAME) {
 
     // draw selection
-    if (polyline_.edge_selections_available()) {
+    if (polyline_.edge_selections_available() && !selectedEdgeIndexBuffer_.empty()) {
       // save old values
       float line_width_old = _state.line_width();
       _state.set_color(Vec4f(1, 0, 0, 1));
