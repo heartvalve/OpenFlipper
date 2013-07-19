@@ -47,9 +47,8 @@
 
 #include <QHash>
 #include <QTextCharFormat>
+#include <QTextDocument>
 #include <QTextEdit>
-
-class QTextDocument;
 
 class Highlighter : public QSyntaxHighlighter
 {
