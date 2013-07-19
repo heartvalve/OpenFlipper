@@ -91,14 +91,14 @@ endif()
 
 if (WIN32)
   # add app icon rc file to windows build
-  acg_add_executable (OpenFlipper WIN32 ${CMAKE_CURRENT_SOURCE_DIR}/CoreApp.rc ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
+  acg_add_executable (${OPENFLIPPER_PRODUCT_STRING} WIN32 ${CMAKE_CURRENT_SOURCE_DIR}/CoreApp.rc ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
   # link to qtmain library to get WinMain function for a non terminal app
-  target_link_libraries (OpenFlipper ${QT_QTMAIN_LIBRARY})
+  target_link_libraries (${OPENFLIPPER_PRODUCT_STRING} ${QT_QTMAIN_LIBRARY})
 elseif (APPLE)
   # generate bundle on mac
-  acg_add_executable (OpenFlipper MACOSX_BUNDLE ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
+  acg_add_executable (${OPENFLIPPER_PRODUCT_STRING} MACOSX_BUNDLE ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
 else ()
-  acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
+  acg_add_executable (${OPENFLIPPER_PRODUCT_STRING} ${uic_targets} ${sources} ${headers} ${moc_targets} ${RC_SRC})
 endif ()
 
 # Mark this build part as building OpenFlippers Core
@@ -157,7 +157,7 @@ endif()
 # ====================================================================================
 
 
-target_link_libraries (OpenFlipper
+target_link_libraries (${OPENFLIPPER_PRODUCT_STRING}
   OpenMeshCore
   OpenMeshTools
   ACG
@@ -175,7 +175,7 @@ if (APPLE)
    # no install needed here, because the whole bundle will be installed in the
    # toplevel CMakeLists.txt
    set_target_properties (
-      OpenFlipper PROPERTIES
+      ${OPENFLIPPER_PRODUCT_STRING} PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
       MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
       MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
@@ -218,7 +218,7 @@ if (APPLE)
 
   endif()
  
-  add_custom_command(TARGET OpenFlipper POST_BUILD                                                              
+  add_custom_command(TARGET ${OPENFLIPPER_PRODUCT_STRING} POST_BUILD                                                              
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${APPLE_BUNDLE_ICON}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"            
   )    
 
@@ -226,7 +226,7 @@ if (APPLE)
   # no install needed here, because the whole bundle will be installed in the
   # toplevel CMakeLists.txt
   set_target_properties (
-      OpenFlipper PROPERTIES
+      ${OPENFLIPPER_PRODUCT_STRING} PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
       MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
       MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
@@ -239,26 +239,26 @@ endif ()
 set (trans_files ${sources})
 list (APPEND trans_files ${ui})
 list (APPEND trans_files ${headers})
-acg_add_translations (OpenFlipper "de_DE" "${trans_files}")
+acg_add_translations (${OPENFLIPPER_PRODUCT_STRING} "de_DE" "${trans_files}")
 
 
 # copy all needed files to "Build" directory to allow a direct execution from it
 # the copy_after_build macro (common.cmake) copies the whole directory without svn files
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Shaders" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Shaders")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Textures" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Textures")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Scripts" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Scripts")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Licenses" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Licenses")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Fonts")
-acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/QtHelpResources" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Shaders" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Shaders")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Textures" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Textures")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Scripts" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Scripts")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Licenses" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Licenses")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Fonts")
+acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_CURRENT_SOURCE_DIR}/../Documentation/QtHelpResources" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
 
 if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
   if ( WIN32 ) 
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/win/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_SOURCE_DIR}/branding/win/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   elseif( APPLE )
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/mac/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_SOURCE_DIR}/branding/mac/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   elseif()
-    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/linux/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+    acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_SOURCE_DIR}/branding/linux/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
   endif()
 endif()
 
@@ -267,11 +267,11 @@ if ( APPLE )
   # we need qt_menu.nib in our resources dir so try to get it
 
  if ( EXISTS /opt/local/lib/Resources/qt_menu.nib )
-  acg_copy_after_build( OpenFlipper "/opt/local/lib/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+  acg_copy_after_build( ${OPENFLIPPER_PRODUCT_STRING} "/opt/local/lib/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  elseif ( EXISTS /usr/bin/qt_menu.nib )
-   acg_copy_after_build( OpenFlipper "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+   acg_copy_after_build( ${OPENFLIPPER_PRODUCT_STRING} "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  elseif ( EXISTS "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" )
-   acg_copy_after_build( OpenFlipper "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+   acg_copy_after_build( ${OPENFLIPPER_PRODUCT_STRING} "/opt/local/libexec/qt4-mac/lib/QtGui.framework/Versions/4/Resources/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
  endif ()
 
  # Copy qt plugins into bundle but omit debug libraries when in release mode and vice versa
@@ -282,7 +282,7 @@ if ( APPLE )
 
      # In release mode, we don't want debug binaries in the bundle as it could cause crashes due to wrong linking or mixing of debug and release
      if ( NOT _file MATCHES ".*debug.*" )
-       add_custom_command(TARGET OpenFlipper POST_BUILD
+       add_custom_command(TARGET ${OPENFLIPPER_PRODUCT_STRING} POST_BUILD
          COMMAND ${CMAKE_COMMAND} -E copy_if_different "${QT_PLUGINS_DIR}/${_file}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins/${_file}"
        )
      endif()
@@ -291,7 +291,7 @@ if ( APPLE )
      
      # In debug mode, we don't want release binaries in the bundle as it could cause crashes due to wrong linking or mixing of debug and release
      if ( _file MATCHES ".*debug.*" )
-       add_custom_command(TARGET OpenFlipper POST_BUILD
+       add_custom_command(TARGET ${OPENFLIPPER_PRODUCT_STRING} POST_BUILD
          COMMAND ${CMAKE_COMMAND} -E copy_if_different "${QT_PLUGINS_DIR}/${_file}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/QtPlugins/${_file}"
        )
      endif()
@@ -344,5 +344,5 @@ endif ()
 
 if ( EXISTS ${CMAKE_SOURCE_DIR}/branding/Icons )
   # Overwrite generic Icons with branded ones.
-  acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+  acg_copy_after_build (${OPENFLIPPER_PRODUCT_STRING} "${CMAKE_SOURCE_DIR}/branding/Icons" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
 endif()
