@@ -302,7 +302,7 @@ public:
   }
 
   /// number of children
-  unsigned int nChildren() const { return children_.size(); }
+  size_t nChildren() const { return children_.size(); }
 
   /** Find a specific node in the list of children.<br>
       This method is designed to convert a node pointer to an iterator

@@ -124,7 +124,7 @@ public:
   void add_color(const ACG::Vec4f& _c) { colors_.push_back(_c); }
 
   /// how many points?
-  unsigned int n_points() const { return points_.size(); }
+  size_t n_points() const { return points_.size(); }
 
   /// clear points
   void clear_points() { points_.clear(); }

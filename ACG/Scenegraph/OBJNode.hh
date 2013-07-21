@@ -118,13 +118,13 @@ public:
 
 
   /// number of vertices
-  unsigned int n_vertices() const { return vertices_.size(); }
+  size_t n_vertices() const { return vertices_.size(); }
   /// number of faces
-  unsigned int n_faces()    const { return faces_.size(); }
+  size_t n_faces()    const { return faces_.size(); }
   /// number of normals
-  unsigned int n_normals()  const { return normals_.size(); }
+  size_t n_normals()  const { return normals_.size(); }
   /// number of texcoords
-  unsigned int n_texcoords()  const { return texCoords_.size(); }
+  size_t n_texcoords()  const { return texCoords_.size(); }
 
 
   /// clear the node
@@ -138,7 +138,7 @@ public:
 
 
   /// add vertex
-  unsigned int add_vertex(const Vec3f& _v)
+  size_t add_vertex(const Vec3f& _v)
   {
     vertices_.push_back(_v);
     return vertices_.size()-1;
@@ -146,14 +146,14 @@ public:
 
 
   /// add triangle
-  unsigned int add_face(const Face& _f)
+  size_t add_face(const Face& _f)
   {
     faces_.push_back(_f);
     return faces_.size()-1;
   }
 
   /// add triangle
-  unsigned int add_face(unsigned int _i0,
+  size_t add_face(unsigned int _i0,
 			unsigned int _i1,
 			unsigned int _i2)
   {
