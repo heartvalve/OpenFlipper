@@ -67,14 +67,14 @@ ColorPlugin::ColorPlugin() : optionsWidget_(0)
   //set default values for colors
 
   backgroundColorDefault_      = ACG::GLState::default_clear_color;
-  backgroundColorPaper_        = OpenMesh::Vec4f(1.00, 1.00, 1.00, 1.0);
-  backgroundColorPresentation_ = OpenMesh::Vec4f(0.0, 0.188, 0.062, 1.0);
+  backgroundColorPaper_        = OpenMesh::Vec4f(1.00f, 1.00f, 1.00f, 1.0f);
+  backgroundColorPresentation_ = OpenMesh::Vec4f(0.0f, 0.188f, 0.062f, 1.0f);
   baseColorDefault_      = ACG::GLState::default_base_color;
-  baseColorPaper_        = OpenMesh::Vec4f(0.00, 0.00, 0.00, 1.0);
-  baseColorPresentation_ = OpenMesh::Vec4f(0.88, 0.88,  0.188, 1.0);
+  baseColorPaper_        = OpenMesh::Vec4f(0.00f, 0.00f, 0.00f, 1.0f);
+  baseColorPresentation_ = OpenMesh::Vec4f(0.88f, 0.88f,  0.188f, 1.0f);
   materialColorDefault_      = ACG::GLState::default_diffuse_color;
-  materialColorPaper_        = OpenMesh::Vec4f(0.12, 0.76, 0.62, 1.0);
-  materialColorPresentation_ = OpenMesh::Vec4f(0.941, 0.439, 0.31, 1.0);
+  materialColorPaper_        = OpenMesh::Vec4f(0.12f, 0.76f, 0.62f, 1.0f);
+  materialColorPresentation_ = OpenMesh::Vec4f(0.941f, 0.439f, 0.31f, 1.0f);
 
   lineWidthDefault_      = 1.0;
   lineWidthPaper_        = 2.0;
