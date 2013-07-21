@@ -108,7 +108,7 @@ public:
     normal_.clear();
   }
 
-  int n_triangles() const { return point_.size() / 3; }
+  size_t n_triangles() const { return point_.size() / 3; }
 
   void triangle( int _i,
 		 ACG::Vec3f & _p0,
