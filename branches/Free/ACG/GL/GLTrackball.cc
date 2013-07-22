@@ -152,7 +152,7 @@ GLTrackball::rotation(int x, int y)
 
       if (fabs(cos_angle) < 1.0) 
       {
-	float angle = 2.0*acos(cos_angle) * 180.0 / M_PI;
+	float angle = float(2.0*acos(cos_angle) * 180.0 / M_PI);
 
 	Vec3f t = glstate_.modelview().transform_point(center_);
 	glstate_.translate(-t[0], -t[1], -t[2], MULT_FROM_LEFT);
@@ -170,23 +170,23 @@ GLTrackball::rotation(int x, int y)
 void 
 GLTrackball::translation(int x, int y)
 {
-  float dx = x - last_point_2D_[0];
-  float dy = y - last_point_2D_[1];
+  float dx = float(x - last_point_2D_[0]);
+  float dy = float(y - last_point_2D_[1]);
 
   float z      = glstate_.modelview().transform_point(center_)[2];
-  float w      = glstate_.viewport_width();
-  float h      = glstate_.viewport_height();
-  float fovy   = glstate_.fovy();
-  float nearpl = glstate_.near_plane();
+  float w      = float(glstate_.viewport_width());
+  float h      = float(glstate_.viewport_height());
+  float fovy   = float(glstate_.fovy());
+  float nearpl = float(glstate_.near_plane());
 
   float aspect = w / h;
-  float top    = tan(fovy/2.0f*M_PI/180.f) * nearpl;
+  float top    = float(tan(fovy/2.0f*M_PI/180.f) * nearpl);
   float right  = aspect*top;
 
   glstate_.translate(-2.0*dx/w*right/nearpl*z, 
-		     2.0*dy/h*top/nearpl*z, 
-		     0.0,
-		     MULT_FROM_LEFT);
+		              2.0*dy/h*top/nearpl*z, 
+		              0.0,
+		              MULT_FROM_LEFT);
 }
 
 
@@ -196,9 +196,9 @@ GLTrackball::translation(int x, int y)
 void 
 GLTrackball::zoom(int /* x */ , int y)
 {
-  float dy = y - last_point_2D_[1];
+  float dy = float(y - last_point_2D_[1]);
   float z  = glstate_.modelview().transform_point(center_)[2];
-  float h  = glstate_.viewport_height();
+  float h  = float(glstate_.viewport_height());
 
   glstate_.translate(0.0,
 		     0.0,
@@ -213,8 +213,8 @@ GLTrackball::zoom(int /* x */ , int y)
 bool
 GLTrackball::map_to_sphere(const Vec2i& _point, Vec3f& _result)
 {
-  float width  = glstate_.viewport_width();
-  float height = glstate_.viewport_height();
+  float width  = float(glstate_.viewport_width());
+  float height = float(glstate_.viewport_height());
   
   if ( (_point[0] >= 0) && (_point[0] <= width) &&
        (_point[1] >= 0) && (_point[1] <= height) ) 
@@ -225,9 +225,9 @@ GLTrackball::map_to_sphere(const Vec2i& _point, Vec3f& _result)
     double siny         = sin(M_PI * y * 0.5);
     double sinx2siny2   = sinx * sinx + siny * siny;
     
-    _result[0] = sinx;
-    _result[1] = siny;
-    _result[2] = sinx2siny2 < 1.0 ? sqrt(1.0 - sinx2siny2) : 0.0;
+    _result[0] = float(sinx);
+    _result[1] = float(siny);
+    _result[2] = sinx2siny2 < 1.0 ? float( sqrt(1.0 - sinx2siny2) ) : 0.0f;
     
     return true;
   }
