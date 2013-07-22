@@ -163,8 +163,8 @@ rotate( Scalar angle, Scalar x, Scalar y, Scalar z,
     return;
   }
    
-  s = sin( angle * ( M_PI /180.) );
-  c = cos( angle * ( M_PI /180.) );
+  s = sin( angle * ( Scalar(M_PI) / Scalar(180.) ) );
+  c = cos( angle * ( Scalar(M_PI) / Scalar(180.) ) );
 
   x /= mag;
   y /= mag;
