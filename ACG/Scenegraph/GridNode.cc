@@ -79,8 +79,8 @@ GridNode(BaseNode* _parent, const std::string& _name)
     autoResize_(false),
     orientation_(XZ_PLANE)
 {
-  baseLineColor_ = Vec3f(0.5, 0.5, 0.5);
-  midLineColor_  = Vec3f(0.3, 0.3, 0.3);
+  baseLineColor_ = Vec3f(0.5f, 0.5f, 0.5f);
+  midLineColor_  = Vec3f(0.3f, 0.3f, 0.3f);
 }
 
 
@@ -140,7 +140,7 @@ GridNode::draw(GLState&  _state  , const DrawModes::DrawMode& /* _drawMode */ )
   glPushAttrib( GL_DEPTH_TEST );
   ACG::GLState::enable( GL_DEPTH_TEST );
 
-  glLineWidth(0.1);
+  glLineWidth(0.1f);
 
   ACG::Vec3d direction1,direction2;
   
@@ -244,12 +244,12 @@ GridNode::draw(GLState&  _state  , const DrawModes::DrawMode& /* _drawMode */ )
     glBegin(GL_LINES);
 
       //red line (x-axis)
-      glColor3f( 0.7, 0.0, 0.0 );
+      glColor3f( 0.7f, 0.0f, 0.0f );
       glVertex(  direction2 * gridSize_ * 0.5 );
       glVertex(  direction1 * gridSize_ + direction2 * gridSize_ * 0.5 );
 
       //blue line (z-axis)
-      glColor3f( 0.0, 0.0, 0.7 );
+      glColor3f( 0.0f, 0.0f, 0.7f );
       glVertex( direction1 * gridSize_ * 0.5 );
       glVertex(  direction1 * 0.5 * gridSize_ + direction2 * gridSize_);
 

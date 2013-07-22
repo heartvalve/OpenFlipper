@@ -94,12 +94,12 @@ class ACGDLLEXPORT LightSourceNode : public BaseNode
       enabled = false;
       fixedPosition = false;
 
-      ambientColor  = Vec4f(0.1,0.1,0.1,1);
-      diffuseColor  = Vec4f(1,1,1,1);
-      specularColor = Vec4f(1,1,1,1);
-      position      = Vec4f(0,0,1,0);
-      realPosition  = Vec4f(0,0,1,0);
-      spotDirection = Vec3f(0,0,-1);
+      ambientColor  = Vec4f(0.1f,0.1f,0.1f,1.0f);
+      diffuseColor  = Vec4f(1.0f,1.0f,1.0f,1.0f);
+      specularColor = Vec4f(1.0f,1.0f,1.0f,1.0f);
+      position      = Vec4f(0.0f,0.0f,1.0f,0.0f);
+      realPosition  = Vec4f(0.0f,0.0f,1.0f,0.0f);
+      spotDirection = Vec3f(0.0f,0.0f,-1.0f);
       spotExponent  = 0;
       spotCutoff    = 180;
 
