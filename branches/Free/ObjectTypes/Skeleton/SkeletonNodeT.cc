@@ -342,16 +342,16 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       // If the vertex is selected, it will be always red
       if ( (*it)->selected() )
       {
-        _state.set_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
-      	_state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
-      	_state.set_specular_color(ACG::Vec4f(1.0, 0.0, 0.0 ,1.0));
+        _state.set_color(ACG::Vec4f(1.0f, 0.0f, 0.0f ,1.0f));
+      	_state.set_diffuse_color(ACG::Vec4f(1.0f, 0.0f, 0.0f ,1.0f));
+      	_state.set_specular_color(ACG::Vec4f(1.0f, 0.0f, 0.0f ,1.0f));
       }
       else {
         // If it is the root joint, it will get some kind of orange color
         // Otherwise the the Base color is used
         if ( (*it)->isRoot() )
         {
-        	ACG::Vec4f root_color = ACG::Vec4f(1.0, 0.66, 0.0 ,1.0);
+        	ACG::Vec4f root_color = ACG::Vec4f(1.0f, 0.66f, 0.0f ,1.0f);
         	_state.set_color(root_color);
         	_state.set_diffuse_color(root_color);
         	_state.set_specular_color(root_color);
@@ -388,11 +388,11 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
       {
         typename SkeletonType::Matrix global = pose->globalMatrix( (*it)->id() );
         NormalizeCoordinateFrame(global);
-        glColor3f(0.8, 0.2, 0.2);
+        glColor3f(0.8f, 0.2f, 0.2f);
         glVertex( global.transform_point(Point(fFrameSize_, 0, 0)) );
-        glColor3f(0.2, 0.8, 0.2);
+        glColor3f(0.2f, 0.8f, 0.2f);
         glVertex( global.transform_point(Point(0, fFrameSize_, 0)) );
-        glColor3f(0.2, 0.2, 0.8);
+        glColor3f(0.2f, 0.2f, 0.8f);
         glVertex( global.transform_point(Point(0, 0, fFrameSize_)) );
       }
       glEnd();
@@ -461,13 +461,13 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
         unsigned int index = (*it)->id();
         typename SkeletonType::Matrix global = pose->globalMatrix(index);
         NormalizeCoordinateFrame(global);
-        glColor3f(0.8, 0.2, 0.2);
+        glColor3f(0.8f, 0.2f, 0.2f);
         glVertex( pose->globalTranslation(index));
         glVertex( global.transform_point(Point(fFrameSize_, 0, 0)) );
-        glColor3f(0.2, 0.8, 0.2);
+        glColor3f(0.2f, 0.8f, 0.2f);
         glVertex( pose->globalTranslation(index));
         glVertex( global.transform_point(Point(0, fFrameSize_, 0)) );
-        glColor3f(0.2, 0.2, 0.8);
+        glColor3f(0.2f, 0.2f, 0.8f);
         glVertex( pose->globalTranslation(index));
         glVertex( global.transform_point(Point(0, 0, fFrameSize_)) );
       }
@@ -493,10 +493,10 @@ void SkeletonNodeT<SkeletonType>::getJointColor( const Vec4f& _baseColor, Vec4f&
   Vec4f hsv;
   RGBtoHSV(_baseColor, hsv);
   
-  hsv[0] += 0.4;
+  hsv[0] += 0.4f;
   if (hsv[0] > 1.0) hsv[0] -= 1.0;
   
-  hsv[1] += 0.1;
+  hsv[1] += 0.1f;
   if (hsv[1] > 1.0) hsv[1] = 1.0;
   
   HSVtoRGB(hsv, _result);
