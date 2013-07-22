@@ -134,9 +134,9 @@ GlutViewer::init()
   // light sources
   glLoadIdentity();
   GLfloat pos[4], col[4];
-  col[0] = col[1] = col[2] = 0.6;
-  pos[3] = 0.0;
-  col[3] = 1.0;
+  col[0] = col[1] = col[2] = 0.6f;
+  pos[3] = 0.0f;
+  col[3] = 1.0f;
 
 #define SET_LIGHT(i,x,y,z) { 			\
   pos[0]=x; pos[1]=y; pos[2]=z;			\
@@ -146,16 +146,16 @@ GlutViewer::init()
   ACG::GLState::enable(GL_LIGHT##i);			\
 }
 
-  SET_LIGHT(0,  0.0,  0.0, 1.0);
-  SET_LIGHT(1, -1.0,  1.0, 0.7);
-  SET_LIGHT(2,  1.0,  1.0, 0.7);
+  SET_LIGHT(0,  0.0f,  0.0f, 1.0f);
+  SET_LIGHT(1, -1.0f,  1.0f, 0.7f);
+  SET_LIGHT(2,  1.0f,  1.0f, 0.7f);
 
 
 
   // projection
-  near_ = 0.1;
-  far_  = 100.0;
-  fovy_ = 45.0;
+  near_ = 0.1f;
+  far_  = 100.0f;
+  fovy_ = 45.0f;
   update_projection();
   glstate_.viewport(0, 0, width_, height_);
   glstate_.translate(0,0,-3);
