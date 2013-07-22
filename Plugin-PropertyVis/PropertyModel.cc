@@ -93,9 +93,9 @@ void PropertyModel::removeProperty(QModelIndexList selectedIndices)
 
     std::sort(deleteIndices.begin(), deleteIndices.end());
 
-    for (int i = deleteIndices.size()-1; i >= 0; i--)
+    for (size_t i = deleteIndices.size()-1; i >= 0; i--)
     {
-        for (int j = currentlyVisualizedIndices.size()-1; j >= 0; j--)
+        for (size_t j = currentlyVisualizedIndices.size()-1; j >= 0; j--)
         {
             if (currentlyVisualizedIndices[j] == deleteIndices[i])
                 //erase so the deleted property will not be revisualized on updateObject
@@ -107,7 +107,7 @@ void PropertyModel::removeProperty(QModelIndexList selectedIndices)
         }
     }
 
-    for (int i = deleteIndices.size()-1; i >= 0; i--){
+    for (size_t i = deleteIndices.size()-1; i >= 0; i--){
         propertyVisualizers.erase(propertyVisualizers.begin() + deleteIndices[i]);
     }
 }
