@@ -246,7 +246,7 @@ class PreloadThread : public QThread
  */
 class PluginInitializationOrder {
     public:
-        int getTypeOrdinal(const QString &name) const {
+        size_t getTypeOrdinal(const QString &name) const {
             const QString basename = QFileInfo(name).baseName();
             if (basename.contains("Plugin-Type"))
                 return 0;
@@ -259,8 +259,8 @@ class PluginInitializationOrder {
 
         }
         bool operator() (const QString &a, const QString &b) const {
-            const int typeA = getTypeOrdinal(a);
-            const int typeB = getTypeOrdinal(b);
+            const size_t typeA = getTypeOrdinal(a);
+            const size_t typeB = getTypeOrdinal(b);
             if (typeA != typeB) { return typeA < typeB; }
             return a < b;
         }
@@ -335,7 +335,7 @@ void Core::loadPlugins()
    * Note: This call is not necessary, anymore. Initialization order
    * is determined later.
    */
-  std::sort(pluginlist.begin(), pluginlist.end(), PluginInitializationOrder());
+  //std::sort(pluginlist.begin(), pluginlist.end(), PluginInitializationOrder());
 
   for ( int i = 0 ; i < dontLoadPlugins.size(); ++i )
     emit log(LOGWARN,tr("Skipping Plugins :\t %1").arg( dontLoadPlugins[i] ) );
@@ -535,7 +535,7 @@ void Core::loadPlugins()
 
   emit pluginsInitialized();
 
-  emit log(LOGOUT,tr("Loaded %n Plugin(s)","",plugins_.size()) );
+  emit log(LOGOUT,tr("Loaded %n Plugin(s)","",int(plugins_.size())) );
 }
 
 /** @brief slot for loading Plugins

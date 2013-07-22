@@ -286,11 +286,11 @@ void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_t
 
       // If a file with the same name already has been saved,
       // rename it.
-      unsigned int c = originalFiles.count(filename);
+      size_t c = originalFiles.count(filename);
       if(c > 1) {
           QFileInfo finfo(filename);
           filename = finfo.absolutePath() + OpenFlipper::Options::dirSeparator();
-          filename += finfo.baseName() + QString("_%1").arg((c-1)) + ".";
+          filename += finfo.baseName() + QString("_%1").arg(c-1) + ".";
           filename += finfo.completeSuffix();
       }
 

@@ -196,9 +196,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     else
     {
       std::vector<float> set (9,0.0);
-      set[0] = 0.299;
-      set[3] = 0.587;
-      set[6] = 0.114;
+      set[0] = 0.299f;
+      set[3] = 0.587f;
+      set[6] = 0.114f;
       OpenFlipper::Options::anaglyphLeftEyeColorMatrix(set);
     }
 

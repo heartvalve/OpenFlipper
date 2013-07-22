@@ -444,7 +444,7 @@ public:
 
   bool load(const char* prog_text)
   {
-    int size=strlen(prog_text);
+    int size = int(strlen(prog_text));
     if(!valid) gen();
     bind();
     glProgramStringARB(target, GL_PROGRAM_FORMAT_ASCII_ARB, size, prog_text);

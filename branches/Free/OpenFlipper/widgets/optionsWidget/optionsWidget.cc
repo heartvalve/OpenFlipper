@@ -424,7 +424,7 @@ void OptionsWidget::updateVersionsTable() {
   }
 
   updateList->clear();
-  updateList->setRowCount( 1 + plugins_.size() );
+  updateList->setRowCount( int(1 + plugins_.size()) );
   updateList->setColumnCount(3);
 
   QStringList header;
