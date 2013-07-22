@@ -105,7 +105,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
     ACG::GLState::disable(GL_LIGHTING);
     ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
     ACG::GLState::vertexPointer(&points_[0]);
-    glDrawArrays(GL_POINTS, 0, points_.size());
+    glDrawArrays(GL_POINTS, 0, int(points_.size()));
   }
 
 
@@ -119,7 +119,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
       ACG::GLState::vertexPointer(&points_[0]);
       ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
       ACG::GLState::normalPointer(&normals_[0]);
-      glDrawArrays(GL_POINTS, 0, points_.size());
+      glDrawArrays(GL_POINTS, 0, int(points_.size()));
     }
   }
 
@@ -134,7 +134,7 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
       ACG::GLState::vertexPointer(&points_[0]);
       ACG::GLState::enableClientState(GL_COLOR_ARRAY);
       ACG::GLState::colorPointer(&colors_[0]);
-      glDrawArrays(GL_POINTS, 0, points_.size());
+      glDrawArrays(GL_POINTS, 0, int(points_.size()));
     } else
       std::cerr << "Mismatch size!" << std::endl;
   }
