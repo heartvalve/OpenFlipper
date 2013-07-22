@@ -177,15 +177,15 @@ public:
   };
 private:
   /// holds the texture types (second) and the stage id (first). if empty, shader does not support textures
-  std::map<unsigned,TextureType> textureTypes_;
+  std::map<size_t,TextureType> textureTypes_;
 
 public:
-  const std::map<unsigned,TextureType>& textureTypes() {return textureTypes_;}
+  const std::map<size_t,TextureType>& textureTypes() {return textureTypes_;}
 
   /** \brief adds a texture type to the shader and enables texturing.
    *
    */
-  void addTextureType(GLenum _type, bool _shadow, unsigned _stage)
+  void addTextureType(GLenum _type, bool _shadow, size_t _stage)
   {
     TextureType t;
     t.type = _type;

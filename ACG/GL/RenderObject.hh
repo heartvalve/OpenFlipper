@@ -242,7 +242,7 @@ struct ACGDLLEXPORT RenderObject
   /**
    * adds a texture to an specific stage and enables texture support in shaderDesc
    */
-  void addTexture(const Texture& _t,const unsigned int _stage)
+  void addTexture(const Texture& _t,const size_t _stage)
   {
     if (GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS < numTextures())
     {
@@ -256,13 +256,13 @@ struct ACGDLLEXPORT RenderObject
   ///clear all textures. Also affected on shaderDesc
   void clearTextures() {textures_.clear(); shaderDesc.clearTextures();}
 
-  const std::map<unsigned,Texture>& textures(){return textures_;}
+  const std::map<size_t,Texture>& textures(){return textures_;}
 
   size_t numTextures()  {return textures_.size();}
 
 private:
   /// holds the textures (second) and the stage id (first)
-  std::map<unsigned,Texture> textures_;
+  std::map<size_t,Texture> textures_;
 public:
 
 
