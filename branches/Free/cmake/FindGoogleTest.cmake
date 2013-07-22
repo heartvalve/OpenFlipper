@@ -90,6 +90,12 @@ else(GTEST_INCLUDE_DIRS AND GTEST_LIBRARIES AND GTEST_MAIN_LIBRARIES)
         "Libraries to link for Google Test automatic main() definition")
 	endif()
 	
+	# Macro required to use google test with vs2012
+	if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*"  )
+	   add_definitions(-D_VARIADIC_MAX=10)
+	endif()
+
+	
     set(GTEST_LIBRARY_DIR ${_GTEST_LIBRARY_DIR} CACHE FILEPATH
       "Library dir containing Google Test libraries")
     mark_as_advanced(GTEST_INCLUDE_DIRS GTEST_LIBRARIES GTEST_MAIN_LIBRARIES GTEST_LIBRARY_DIR )
