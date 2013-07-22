@@ -1220,8 +1220,8 @@ void QtBaseViewer::update_lights()
 
   GLfloat pos[4], col[4];
 
-  col[0] = col[1] = col[2] = 0.7;
-  pos[3] = col[3] = 0.0;
+  col[0] = col[1] = col[2] = 0.7f;
+  pos[3] = col[3] = 0.0f;
 
 #define SET_LIGHT(i,x,y,z) { 			\
     pos[0]=x; pos[1]=y; pos[2]=z;		\
@@ -1231,11 +1231,11 @@ void QtBaseViewer::update_lights()
     ACG::GLState::enable(GL_LIGHT##i);			\
   }
 
-  SET_LIGHT(0,  0.0,  0.0, 1.0);
-  SET_LIGHT(1, -1.0,  1.0, 0.7);
-  SET_LIGHT(2,  1.0,  1.0, 0.7);
+  SET_LIGHT(0,  0.0f,  0.0f, 1.0f);
+  SET_LIGHT(1, -1.0f,  1.0f, 0.7f);
+  SET_LIGHT(2,  1.0f,  1.0f, 0.7f);
 
-  col[0] = col[1] = col[2] = 0.3; col[3] = 1.0;
+  col[0] = col[1] = col[2] = 0.3; col[3] = 1.0f;
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
 
   glPopMatrix();
