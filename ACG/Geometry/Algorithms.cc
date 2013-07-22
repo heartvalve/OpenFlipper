@@ -213,7 +213,7 @@ distPointTriangleSquared( const Vec& _p,
     std::cerr << "distPointTriangleSquared: Degenerated triangle !\n";
     return -1.0;
   }
-  typename Vec::value_type invD = Vec::value_type(1.0) / d;
+  typename Vec::value_type invD = typename Vec::value_type(1.0) / d;
 
   
   // these are not needed for every point, should still perform
