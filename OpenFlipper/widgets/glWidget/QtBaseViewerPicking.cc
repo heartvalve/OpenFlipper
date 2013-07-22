@@ -599,7 +599,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   {
     if (pickCache_ && pickCache_->isBound ())
       pickCache_->release ();
-    return -1;
+    return false;
   }
 
   buffer = new GLubyte[4 * rect.width() * rect.height()];
