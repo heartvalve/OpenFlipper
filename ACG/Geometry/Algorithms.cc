@@ -213,15 +213,15 @@ distPointTriangleSquared( const Vec& _p,
     std::cerr << "distPointTriangleSquared: Degenerated triangle !\n";
     return -1.0;
   }
-  typename Vec::value_type invD = 1.0 / d;
+  typename Vec::value_type invD = Vec::value_type(1.0) / d;
 
   
   // these are not needed for every point, should still perform
   // better with many points against one triangle
   Vec v1v2 = _v2 - _v1;
-  typename Vec::value_type inv_v0v2_2 = 1.0 / v0v2.sqrnorm();
-  typename Vec::value_type inv_v0v1_2 = 1.0 / v0v1.sqrnorm();
-  typename Vec::value_type inv_v1v2_2 = 1.0 / v1v2.sqrnorm();
+  typename Vec::value_type inv_v0v2_2 = typename Vec::value_type(1.0) / v0v2.sqrnorm();
+  typename Vec::value_type inv_v0v1_2 = typename Vec::value_type(1.0) / v0v1.sqrnorm();
+  typename Vec::value_type inv_v1v2_2 = typename Vec::value_type(1.0) / v1v2.sqrnorm();
 
   
   Vec v0p = _p - _v0;
@@ -1173,7 +1173,7 @@ triangleIntersection( const Vec&  _o,
 
     if (det > -0.000001 && det < 0.000001)
         return false;
-    inv_det = 1.0 / det;
+    inv_det = typename Vec::value_type(1.0) / det;
 
     //calculate distance from vert0 to ray origin
     tvec = _o - _v0;

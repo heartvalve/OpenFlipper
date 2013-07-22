@@ -155,7 +155,7 @@ public:
     }
     vertices.unique(); ///todo: does this work with Points?!
 
-    int size = vertices.size();
+    size_t size = vertices.size();
     typename std::list<Point>::iterator it_v;
     it_v = vertices.begin();
     std::advance(it_v, size / 2);
