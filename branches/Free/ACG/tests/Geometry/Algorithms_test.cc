@@ -54,8 +54,8 @@ TEST_F(ALGORITHM_TEST_BASE, triangleIntersection ) {
   ACG::Vec3f p2 ( 0.0,1.0,0.0);
 
   // Shooting ray origin and direction
-  ACG::Vec3f origin( 0.1, 0.1, -1.0);
-  ACG::Vec3f direction( 0.0, 0.0, 1.0);
+  ACG::Vec3f origin( 0.1f, 0.1f, -1.0f);
+  ACG::Vec3f direction( 0.0f, 0.0f, 1.0f);
 
   float distance,u,v;
   bool result = ACG::Geometry::triangleIntersection(origin, direction,
@@ -97,7 +97,7 @@ TEST_F(ALGORITHM_TEST_BASE, triangleIntersection_FlippedTriangleOrientation ) {
   ACG::Vec3f p2 ( 0.0,1.0,0.0);
 
   // Shooting ray origin and direction
-  ACG::Vec3f origin( 0.1, 0.1, -1.0);
+  ACG::Vec3f origin( 0.1f, 0.1f, -1.0f);
   ACG::Vec3f direction( 0.0, 0.0, 1.0);
 
   float distance,u,v;
@@ -140,8 +140,8 @@ TEST_F(ALGORITHM_TEST_BASE, triangleIntersection_NegativeShootingDirection ) {
   ACG::Vec3f p2 ( 0.0,1.0,0.0);
 
   // Shooting ray origin and direction
-  ACG::Vec3f origin( 0.1, 0.1, -1.0);
-  ACG::Vec3f direction( 0.0, 0.0, -1.0);
+  ACG::Vec3f origin( 0.1f, 0.1f, -1.0f);
+  ACG::Vec3f direction( 0.0f, 0.0f, -1.0f);
 
   float distance,u,v;
   bool result = ACG::Geometry::triangleIntersection(origin, direction,
@@ -183,8 +183,8 @@ TEST_F(ALGORITHM_TEST_BASE, triangleIntersection_NegativeShootingDirection_Flipp
   ACG::Vec3f p2 ( 0.0,1.0,0.0);
 
   // Shooting ray origin and direction
-  ACG::Vec3f origin( 0.1, 0.1, -1.0);
-  ACG::Vec3f direction( 0.0, 0.0, -1.0);
+  ACG::Vec3f origin( 0.1f, 0.1f, -1.0f);
+  ACG::Vec3f direction( 0.0f, 0.0f, -1.0f);
 
   float distance,u,v;
   bool result = ACG::Geometry::triangleIntersection(origin, direction,

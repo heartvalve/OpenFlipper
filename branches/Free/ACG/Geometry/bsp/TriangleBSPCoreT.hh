@@ -95,7 +95,7 @@ public: //---------------------------------------------------------------------
 
 
   /// Reserve memory for _n entries
-  void reserve(unsigned int _n) { handles_.reserve(_n); }
+  void reserve(size_t _n) { handles_.reserve(_n); }
   /// Add a handle to the BSP
   void push_back(Handle _h)     { handles_.push_back(_h); ++n_triangles; }
 
