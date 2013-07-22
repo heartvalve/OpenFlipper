@@ -300,7 +300,7 @@ draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
 
     _state.push_modelview_matrix();
     _state.scale(size_);
-    glDrawArrays(GL_QUADS, 0, text_.size() * 4);
+    glDrawArrays(GL_QUADS, 0, int(text_.size() * 4) );
     _state.pop_modelview_matrix();
 
     if (textMode_ == SCREEN_ALIGNED || textMode_ == SCREEN_ALIGNED_STATIC_SIZE) {

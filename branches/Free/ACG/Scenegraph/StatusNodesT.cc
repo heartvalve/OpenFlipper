@@ -424,9 +424,9 @@ draw_points()
 {
   if ( !v_cache_.empty() )
     glDrawElements(GL_POINTS,
-  		             v_cache_.size(),
-		               GL_UNSIGNED_INT,
-		               &v_cache_[0]);
+  		           int( v_cache_.size() ),
+		           GL_UNSIGNED_INT,
+		           &v_cache_[0]);
 }
 
 
@@ -439,10 +439,10 @@ StatusNodeT<Mesh, Mod>::
 draw_edges()
 {
   if ( !e_cache_.empty() )
-    glDrawElements(GL_LINES,
-  		             e_cache_.size(),
-		               GL_UNSIGNED_INT,
-		               &e_cache_[0]);
+    glDrawElements( GL_LINES,
+  		            int(e_cache_.size()),
+		            GL_UNSIGNED_INT,
+                    &e_cache_[0]);
 }
 
 
@@ -461,7 +461,7 @@ draw_halfedges() {
     if ( !he_normals_.empty())
       ACG::GLState::normalPointer(&he_normals_[0]);
 
-    glDrawArrays(GL_LINES, 0, he_points_.size() );
+    glDrawArrays(GL_LINES, 0, int(he_points_.size() ) );
   }
 
 }
@@ -497,7 +497,7 @@ draw_faces(bool _per_vertex)
 
       if ( !f_cache_.empty() )
         glDrawElements(GL_TRIANGLES,
-                       f_cache_.size(),
+                       int(f_cache_.size()),
                        GL_UNSIGNED_INT,
                        &f_cache_[0]);
     }
