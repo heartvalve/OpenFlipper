@@ -390,7 +390,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
       ACG::GLState::enable(GL_POLYGON_OFFSET_FILL);
 
-      glPolygonOffset(0.001, 0.0);
+      glPolygonOffset(0.001f, 0.0f);
       draw_faces(smooth);
 
       glPopAttrib();

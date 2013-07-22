@@ -245,15 +245,15 @@
     // Node showing selection
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
     statusNode_->set_point_size(4.0);
-    statusNode_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
-    statusNode_->set_base_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
+    statusNode_->set_color(ACG::Vec4f(1.0f,0.0f,0.0f,1.0f));
+    statusNode_->set_base_color(ACG::Vec4f(1.0f,0.0f,0.0f,1.0f));
 
     // Node showing modeling region
     areaNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, AreaNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW AreaNode for mesh ");
     areaNode_->set_round_points(true);
     areaNode_->enable_alpha_test(0.5);
     areaNode_->set_point_size(7.0);
-    areaNode_->set_color(ACG::Vec4f(0.4, 0.4, 1.0, 1.0));
+    areaNode_->set_color(ACG::Vec4f(0.4f, 0.4f, 1.0f, 1.0f));
 
     // Node showing handle region
     handleNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, HandleNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW HandleNode for mesh ");
@@ -261,7 +261,7 @@
     handleNode_->enable_alpha_test(0.5);
     handleNode_->set_line_width(2.0);
     handleNode_->set_point_size(7.0);
-    handleNode_->set_color(ACG::Vec4f(0.2, 1.0, 0.2, 1.0));
+    handleNode_->set_color(ACG::Vec4f(0.2f, 1.0f, 0.2f, 1.0f));
 
     // Node showing feature selection
     featureNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, FeatureNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW FeatureNode for mesh ");
@@ -269,8 +269,8 @@
     featureNode_->enable_alpha_test(0.5);
     featureNode_->set_line_width(2.0);
     featureNode_->set_point_size(7.0);
-    featureNode_->set_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
-    featureNode_->set_base_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
+    featureNode_->set_color(ACG::Vec4f(1.0f, 0.2f, 1.0f, 1.0f));
+    featureNode_->set_base_color(ACG::Vec4f(1.0f, 0.2f, 1.0f, 1.0f));
 
     // Link the status nodes to the draw mesh of the mesh below them to reuse its buffers
     if (meshNode_) {

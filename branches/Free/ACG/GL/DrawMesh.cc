@@ -182,7 +182,7 @@ DrawMeshT<Mesh>::rebuild()
     numVerts_ = mesh_.n_vertices();
 
     // read all vertices
-    for (unsigned int i = 0; i < numVerts_; ++i)
+    for (size_t i = 0; i < numVerts_; ++i)
       readVertex(vertices_ + i,
                  mesh_.vertex_handle(i), 
                  (typename Mesh::HalfedgeHandle)(-1), 
