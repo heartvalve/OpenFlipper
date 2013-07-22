@@ -341,7 +341,7 @@ int Core::loadObject( DataType _type, QString _filename) {
   }
 
   // load file with plugins
-  int nPlugins = typeIds.size();
+  size_t nPlugins = typeIds.size();
   if (nPlugins > 0) {
 
     int i = -1;
@@ -351,7 +351,7 @@ int Core::loadObject( DataType _type, QString _filename) {
       // let the user choose the plugin for loading
       if ( OpenFlipper::Options::gui() ) {
         QStringList items;
-        for (int j = 0; j < nPlugins; ++j) {
+        for (size_t j = 0; j < nPlugins; ++j) {
           // only add the plugin name if it does not already exist in the itemlist
           if (items.indexOf(supportedTypes()[typeIds[j]].name) == -1)
             items << supportedTypes()[typeIds[j]].name;
