@@ -352,6 +352,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   //Init Viewer Settings
   wZoomFactor->setValue( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble() );
   wZoomFactorShift->setValue( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble() );
+  invertMouseWheelBox->setChecked( OpenFlipperSettings().value("Core/Mouse/Wheel/Invert").toBool() );
 
   wheelBox->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() );
   
@@ -594,7 +595,8 @@ void OptionsWidget::slotApply() {
   //viewer
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
-  
+  OpenFlipperSettings().setValue("Core/Mouse/Wheel/Invert", invertMouseWheelBox->isChecked());
+
   // Projection settings
   OpenFlipperSettings().setValue("Core/Projection/FOVY", fieldOfView->value());
   OpenFlipperSettings().setValue("Core/Gui/glViewer/minimalSceneSize",minimalSceneSize->value());

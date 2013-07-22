@@ -184,22 +184,30 @@ namespace Viewer {
 
 
     public slots:
-      /// Zoom factor when using mousewheel
+      /// Zoom factor when using mouse wheel
       double wheelZoomFactor() { return wZoomFactor_; };
 
-      /// Zoom factor when using mousewheel and pressing shift
+      /// Zoom factor when using mouse wheel and pressing shift
       double wheelZoomFactorShift() { return wZoomFactorShift_; };
 
-      /// Set zoom factor when using mousewheel
+      /// Set zoom factor when using mouse wheel
       void wheelZoomFactor(double _factor) { wZoomFactor_ = _factor; };
 
-      /// Set zoom factor when using mousewheel and pressing shift
-      void wheelZoomFactorShift(double _factor) { wZoomFactorShift_ = _factor; }; 
+      /// Set zoom factor when using mouse wheel and pressing shift
+      void wheelZoomFactorShift(double _factor) { wZoomFactorShift_ = _factor; };
+
+      /// Invert mouse wheel direction?
+      bool wheelInvert() { return wInvert_; };
+
+      /// Invert mouse wheel direction
+      void wheelInvert(bool _invert) { wInvert_ = _invert; };
 
     private:
       double wZoomFactor_;
 
       double wZoomFactorShift_;
+
+      bool   wInvert_;
 
     /** @} */
 

@@ -900,6 +900,8 @@ bool initializeSettings() {
   if ( ! settings_->contains("Core/Mouse/Wheel/ZoomFactorShift") )
     settings_->setValue("Core/Mouse/Wheel/ZoomFactorShift",0.2);
   
+  if ( ! settings_->contains("Core/Mouse/Wheel/Invert") )
+      settings_->setValue("Core/Mouse/Wheel/Invert",false);
   
   // General Stereo Settings
   if ( ! settings_->contains("Core/Stereo/FocalLength") )
