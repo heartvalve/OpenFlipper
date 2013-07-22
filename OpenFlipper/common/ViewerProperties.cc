@@ -63,6 +63,7 @@ namespace Viewer {
     snapshotCounter_(0),
     wZoomFactor_(1.0),
     wZoomFactorShift_(0.2),
+    wInvert_(false),
     CCWFront_(true),
     backgroundColor_(0.0f,0.0f,0.0f,1.0f),
     locked_(0),

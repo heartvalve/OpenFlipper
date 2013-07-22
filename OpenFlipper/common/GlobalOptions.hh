@@ -136,6 +136,7 @@
 * <b>Mouse Controls</b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
 * * Core/Mouse/Wheel/ZoomFactorShift  Zoom factor used when turning the mouse wheel while shift is pressed (makes zoom slower while shift is pressed)  (double)\n
+* * Core/Mouse/Wheel/Invert           Invert mouse wheel zoom direction  (bool)\n
 *
 * <b>General Stereo Settings</b>\n
 * * Core/Stereo/EyeDistance    Distance between eyes. Defaults to 7 cm (double)\n

@@ -129,6 +129,7 @@ void Core::applyOptions(){
       //wheel zoom factor
       PluginFunctions::viewerProperties(i).wheelZoomFactor( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor",1).toDouble() );
       PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift",0.2).toDouble() );
+      PluginFunctions::viewerProperties(i).wheelInvert( OpenFlipperSettings().value("Core/Mouse/Wheel/Invert",false).toBool() );
     }
 
     //hideToolbox

@@ -1878,10 +1878,17 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
 void glViewer::viewWheelEvent( QWheelEvent* _event)
 {
+
+  // Default mouse wheel factor
   double factor = properties_.wheelZoomFactor();
 
+  // Shift pressed, so we use the smaller factor
   if (_event->modifiers() == Qt::ShiftModifier)
     factor = properties_.wheelZoomFactorShift();
+
+  // Mouse wheel inversion
+  if (properties_.wheelInvert())
+    factor *= -1.0;
 
   if (projectionMode() == PERSPECTIVE_PROJECTION )
   {
