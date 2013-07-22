@@ -137,7 +137,7 @@ void SlicePlugin::updateSlice(){
     eps = tool_->sizeSlider->value() / 100.0;
 
     if (eps == 0.0)
-      eps = 0.01;
+      eps = 0.01f;
 
     if (tool_->radioX->isChecked()){
       normal = ACG::Vec3f(1.0, 0.0, 0.0);
