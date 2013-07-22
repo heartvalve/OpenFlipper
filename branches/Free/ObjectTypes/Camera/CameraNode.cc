@@ -98,9 +98,9 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // Update bounding box data and clipped_ flag
     updateBoundingBoxes(modelview);
 
-    _state.set_base_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
-    _state.set_diffuse_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
-    _state.set_specular_color(ACG::Vec4f(1.0, 1.0, 0.0, 1.0));
+    _state.set_base_color(ACG::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+    _state.set_diffuse_color(ACG::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+    _state.set_specular_color(ACG::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
 
     // Draw camera box
     
@@ -256,9 +256,9 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // Draw right vector
     _state.rotate(90, 0.0, 1.0, 0.0);
 
-    _state.set_base_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
-    _state.set_diffuse_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
-    _state.set_specular_color(ACG::Vec4f(1.0, 0.4, 0.4, 1.0));
+    _state.set_base_color(ACG::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+    _state.set_diffuse_color(ACG::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+    _state.set_specular_color(ACG::Vec4f(1.0f, 0.4f, 0.4f, 1.0f));
 
     cylinder_->setBottomRadius(axis_length/20.0f);
     cylinder_->setTopRadius(axis_length/20.0f);
@@ -274,9 +274,9 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // Draw up vector
     _state.rotate(-90, 1.0, 0.0, 0.0);
 
-    _state.set_base_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
-    _state.set_diffuse_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
-    _state.set_specular_color(ACG::Vec4f(0.4, 1.0, 0.4, 1.0));
+    _state.set_base_color(ACG::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+    _state.set_diffuse_color(ACG::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
+    _state.set_specular_color(ACG::Vec4f(0.4f, 1.0f, 0.4f, 1.0f));
 
     cylinder_->draw(_state, axis_length);
 
@@ -288,9 +288,9 @@ void CameraNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/)
     // Draw viewing direction vector
     _state.rotate(90, 0.0, 1.0, 0.0);
 
-    _state.set_base_color(ACG::Vec4f(0.0, 0.0, 1.0, 1.0));
-    _state.set_diffuse_color(ACG::Vec4f(0.0, 0.0, 1.0, 1.0));
-    _state.set_specular_color(ACG::Vec4f(0.4, 0.4, 1.0, 1.0));
+    _state.set_base_color(ACG::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+    _state.set_diffuse_color(ACG::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
+    _state.set_specular_color(ACG::Vec4f(0.4f, 0.4f, 1.0f, 1.0f));
 
     cylinder_->draw(_state, axis_length);
 

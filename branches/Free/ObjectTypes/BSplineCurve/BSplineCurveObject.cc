@@ -174,7 +174,7 @@ void BSplineCurveObject::init(BSplineCurve* _curve) {
 
   splineCurveNode_ = new ACG::SceneGraph::BSplineCurveNodeT< BSplineCurve >(*splineCurve_, materialNode() , "NEW BSplineCurveNode");
 
-  materialNode()->set_color(ACG::Vec4f(178.0f/255.0, 34.0/255.0, 34.0/255.0, 1.0));
+  materialNode()->set_color(ACG::Vec4f(178.0f/255.0f, 34.0f/255.0f, 34.0f/255.0f, 1.0f));
 }
 
 // ===============================================================================
