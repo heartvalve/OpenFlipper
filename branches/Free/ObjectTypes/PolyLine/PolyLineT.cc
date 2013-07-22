@@ -173,7 +173,7 @@ clear()
 //-----------------------------------------------------------------------------
 
 template <class PointT>
-unsigned int
+size_t
 PolyLineT<PointT>::n_edges() const
 {
   if (n_vertices() == 0)

@@ -334,11 +334,11 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
 
   // texture
-  for (std::map<unsigned,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
+  for (std::map<size_t,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
       iter != _obj->textures().end();++iter)
   {
     //check for valid texture id
-    const unsigned texture_stage = iter->first;
+    const size_t texture_stage = iter->first;
     const RenderObject::Texture tex = iter->second;
     if (!tex.id)
       continue;

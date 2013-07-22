@@ -872,7 +872,7 @@ void ShaderProgGenerator::buildFragmentShader()
   // texture sampler id
   if (desc_.textured())
   {
-    for (std::map<unsigned,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
+    for (std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
         iter != desc_.textureTypes().end(); ++iter)
     {
       QString name = QString("g_Texture%1").arg(iter->first);
@@ -1008,7 +1008,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
   if (desc_.textured())
   {
-    std::map<unsigned,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
+    std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = desc_.textureTypes().begin();
     _code->push_back("vec4 sg_cTex = texture(g_Texture"+QString::number(iter->first)+", out" + inputShader + "TexCoord);");
 
     for (++iter; iter != desc_.textureTypes().end(); ++iter)
@@ -1224,7 +1224,7 @@ QString ShaderGenDesc::toString() const
   resStrm << "\nshaderDesc.shadeMode: " << shadeModeString[shadeMode];
   resStrm << "\nshaderDesc.vertexColors: " << vertexColors;
   resStrm << "\nshaderDesc.textured(): " << textured();
-  for (std::map<unsigned,TextureType>::const_iterator iter = textureTypes_.begin(); iter != textureTypes_.end();++iter)
+  for (std::map<size_t,TextureType>::const_iterator iter = textureTypes_.begin(); iter != textureTypes_.end();++iter)
   {
     resStrm << "\nTexture stage: " << iter->first;
     resStrm << "\nTexture Type: ";

@@ -110,10 +110,10 @@ public:
   void set_closed(const bool _c) { closed_ = _c;}
 
   ///  \brief Get number of vertices
-  unsigned int n_vertices() const { return points_.size(); }
+  size_t n_vertices() const { return points_.size(); }
 
   ///  \brief Get number of edges
-  unsigned int n_edges() const;
+  size_t n_edges() const;
 
   /// \brief Clear the current polyline
   void clear();
