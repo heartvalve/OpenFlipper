@@ -187,7 +187,7 @@ int visibleCount();
 
 /// Get the number of viewers
 DLLEXPORT
-size_t viewers( );
+int viewers( );
 
 /** \brief Disable the core light handling
 *
