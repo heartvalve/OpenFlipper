@@ -666,7 +666,7 @@ private:
   /// OpenMesh object to be rendered
   Mesh& mesh_;
 
-  unsigned int numTris_, numVerts_;
+  size_t numTris_, numVerts_;
 
   /// final index buffer used for rendering
   unsigned int* indices_;
