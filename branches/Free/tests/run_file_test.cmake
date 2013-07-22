@@ -26,6 +26,11 @@ separate_arguments( test_args )
 # Run OpenFlipper with the given script
 # ===================================================
 
+if ( NOT EXISTS ${test_cmd} )
+    message("Unable to find test command : ${test_cmd}")
+    message(SEND_ERROR "Test Executable missing!")
+endif()
+
 # clear previous test results
 if ( EXISTS ${output_test} )
   file(REMOVE ${output_test})
@@ -53,6 +58,11 @@ endif()
 
 if ( WIN32 )
   set(result_checker "${result_checker}.exe")
+endif()
+
+if ( NOT EXISTS ${result_checker} )
+    message("Unable to find result checkr : ${result_checker}")
+    message(SEND_ERROR "Result checker missing!")
 endif()
 
 message( "Executing: ${result_checker} ${output_test} ${test_file_info} " )
