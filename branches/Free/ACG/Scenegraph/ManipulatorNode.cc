@@ -72,10 +72,10 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
-const Vec4f cylinder_color (0.8, 0.4, 0.4, 1.0);
-const Vec4f sphere_color   (0.8, 0.4, 0.4, 1.0);
-const Vec4f select_color   (1.0, 0.1, 0.1, 1.0);
-const float SCALE_CONST  =  5.0;
+const Vec4f cylinder_color (0.8f, 0.4f, 0.4f, 1.0f);
+const Vec4f sphere_color   (0.8f, 0.4f, 0.4f, 1.0f);
+const Vec4f select_color   (1.0f, 0.1f, 0.1f, 1.0f);
+const float SCALE_CONST  =  5.0f;
 
 
 //----------------------------------------------------------------------------
