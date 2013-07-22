@@ -146,7 +146,7 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-size_t viewers( ) {
+int viewers( ) {
   return examiner_widgets_.size();
 }
 
