@@ -68,9 +68,9 @@
 
 //******************************************************************************
 
-const ACG::Vec4f base_color (0.0,0.0,0.5,1.0);
-const ACG::Vec4f source_color (0.5,0.0,0.0,1.0);
-const ACG::Vec4f target_color (0.0,0.5,0.2,1.0);
+const ACG::Vec4f base_color (0.0f,0.0f,0.5f,1.0f);
+const ACG::Vec4f source_color (0.5f,0.0f,0.0f,1.0f);
+const ACG::Vec4f target_color (0.0f,0.5f,0.2f,1.0f);
 
 //******************************************************************************
 
