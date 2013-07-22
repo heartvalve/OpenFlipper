@@ -11,6 +11,11 @@ separate_arguments( test_args )
 # Run OpenFlipper with the given script
 # ===================================================
 
+if ( NOT EXISTS ${test_cmd} )
+    message("Unable to find test command : ${test_cmd}")
+    message(SEND_ERROR "Test Executable missing!")
+endif()
+
 # Execute the process with the given arguments
 # Timeout after 5 minutes
 execute_process(
