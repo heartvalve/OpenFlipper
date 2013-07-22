@@ -153,7 +153,7 @@ void SkeletonObject::init() {
   skeletonNode_->drawMode( ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED | ACG::SceneGraph::DrawModes::POINTS );
   
   //set defaults for the material
-  materialNode()->set_color(ACG::Vec4f(0.654, 0.8, 1.0, 1.0));
+  materialNode()->set_color(ACG::Vec4f(0.654f, 0.8f, 1.0f, 1.0f));
   materialNode()->set_point_size(8.0);
   materialNode()->set_line_width(3.0);
   materialNode()->set_round_points(true);
@@ -173,7 +173,7 @@ void SkeletonObject::init(Skeleton *_pSkeleton)
   skeletonNode_->drawMode( ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED | ACG::SceneGraph::DrawModes::POINTS );
 
   //set defaults for the material
-  materialNode()->set_color(ACG::Vec4f(0.654, 0.8, 1.0, 1.0));
+  materialNode()->set_color(ACG::Vec4f(0.654f, 0.8f, 1.0f, 1.0f));
   materialNode()->set_point_size(8.0);
   materialNode()->set_line_width(3.0);
   materialNode()->set_round_points(true);
