@@ -402,7 +402,7 @@ public:
 
   bool load(const char* prog_text)
   {
-    int size=strlen(prog_text);
+    int size= int(strlen(prog_text));
     if(!valid) gen();
     glLoadProgramNV(target, program, size, (const GLubyte *) prog_text);
     GLint errpos;
