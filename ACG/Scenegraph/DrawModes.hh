@@ -364,7 +364,7 @@ namespace DrawModes {
 
       /** \brief returns the layer count
        */
-      unsigned int getNumLayers() const;
+      size_t getNumLayers() const;
 
       /** \brief returns the property set at layer i
        *
@@ -399,7 +399,7 @@ namespace DrawModes {
       * If this drawMode is a combination of different drawModes, the returned value will be 0.
       * Otherwise the internal flag index will be returned
       */
-      unsigned int getIndex() const;
+      size_t getIndex() const;
 
       /** \brief filter out one drawmode
       *
@@ -437,7 +437,7 @@ namespace DrawModes {
       
       /** \brief Get the number of maximum Modes which could be handled by the current implementation
       */
-      unsigned int maxModes() const;
+      size_t maxModes() const;
       
 
       /** \brief returns the base properties of this draw mode
