@@ -408,7 +408,7 @@ DrawMode DrawMode::operator~( ) const {
 
 
 
-size_t DrawMode::getIndex() const {
+int DrawMode::getIndex() const {
   if ( modeFlags_.count() == 1 ) {
     for ( size_t i = 0 ; i < modeFlags_.size() ; ++i ) 
      if ( modeFlags_[i] ) 

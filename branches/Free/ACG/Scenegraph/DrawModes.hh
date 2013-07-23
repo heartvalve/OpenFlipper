@@ -399,7 +399,7 @@ namespace DrawModes {
       * If this drawMode is a combination of different drawModes, the returned value will be 0.
       * Otherwise the internal flag index will be returned
       */
-      size_t getIndex() const;
+      int getIndex() const;
 
       /** \brief filter out one drawmode
       *
