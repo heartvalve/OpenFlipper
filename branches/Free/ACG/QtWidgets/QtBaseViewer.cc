@@ -1235,7 +1235,7 @@ void QtBaseViewer::update_lights()
   SET_LIGHT(1, -1.0f,  1.0f, 0.7f);
   SET_LIGHT(2,  1.0f,  1.0f, 0.7f);
 
-  col[0] = col[1] = col[2] = 0.3; col[3] = 1.0f;
+  col[0] = col[1] = col[2] = 0.3f; col[3] = 1.0f;
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
 
   glPopMatrix();
