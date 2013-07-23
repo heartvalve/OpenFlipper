@@ -156,8 +156,8 @@ GlutExaminer::setup_scene(const Vec3f& _center, float _radius)
 
   trackball_.set_center(_center);
 
-  near_  = 0.01 * radius_;
-  far_   = 10.0 * radius_;
+  near_  = 0.01f * radius_;
+  far_   = 10.0f * radius_;
   update_projection();
 
   view_all();
@@ -171,7 +171,7 @@ void
 GlutExaminer::view_all()
 {
   ACG::Vec3f t = (-(glstate_.modelview().transform_point(center_))
-		  - Vec3f(0.0, 0.0, 3.0*radius_));
+		  - Vec3f(0.0f, 0.0f, 3.0f*radius_));
   glstate_.translate(t[0], t[1], t[2], MULT_FROM_LEFT);
 }
 
