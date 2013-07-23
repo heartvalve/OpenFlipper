@@ -408,7 +408,7 @@ DrawMode DrawMode::operator~( ) const {
 
 
 
-unsigned int DrawMode::getIndex() const {
+size_t DrawMode::getIndex() const {
   if ( modeFlags_.count() == 1 ) {
     for ( size_t i = 0 ; i < modeFlags_.size() ; ++i ) 
      if ( modeFlags_[i] ) 
@@ -501,11 +501,11 @@ DrawMode::containsAtomicDrawMode( DrawMode _atomicDrawMode) const
  
 //---------------------------------------------------------------------------- 
  
-unsigned int DrawMode::maxModes() const {
+size_t DrawMode::maxModes() const {
   return (modeFlags_.size() );
 }
 
-unsigned int DrawMode::getNumLayers() const {
+size_t DrawMode::getNumLayers() const {
   return layers_.size();
 }
 
