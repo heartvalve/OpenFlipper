@@ -299,7 +299,7 @@ namespace DrawModes {
       *
       * @param _index Index of the new DrawMode
       */
-      DrawMode(unsigned int _index);
+      DrawMode(size_t _index);
       
       /** \brief constructor for ModeFlags. 
       *
@@ -399,7 +399,7 @@ namespace DrawModes {
       * If this drawMode is a combination of different drawModes, the returned value will be 0.
       * Otherwise the internal flag index will be returned
       */
-      int getIndex() const;
+      size_t getIndex() const;
 
       /** \brief filter out one drawmode
       *
