@@ -1965,7 +1965,7 @@ void QtBaseViewer::updatePopupMenu()
     std::string  descr = id.description();
 
     QAction * action = new QAction( descr.c_str(), drawGroup );
-    action->setData( QVariant( id.getIndex() ) );
+    action->setData( QVariant( quint64(id.getIndex() ) ) );
     action->setCheckable( true );
     action->setChecked( curDrawMode_.containsAtomicDrawMode(id) );
     drawMenuActions_.push_back( action );

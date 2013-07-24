@@ -317,7 +317,7 @@ slotItemPressed( QTreeWidgetItem * _item,
           QAction * action = new QAction( descr.c_str(), modeGroup );
           action->setCheckable( true );
           action->setChecked ( currentDrawMode.containsAtomicDrawMode(id ) ) ;
-          action->setData( QVariant( id.getIndex() ) );
+          action->setData( QVariant( quint64(id.getIndex()) ) );
         }
 
         modeMenu_->addActions( modeGroup->actions() );
