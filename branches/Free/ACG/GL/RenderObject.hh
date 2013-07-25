@@ -115,10 +115,10 @@ struct ACGDLLEXPORT RenderObject
 
 
   /// Modelview transform
-  GLMatrixf modelview;
+  GLMatrixd modelview;
 
   /// Projection transform
-  GLMatrixf proj;
+  GLMatrixd proj;
 
 
   //===========================================================================
