@@ -413,10 +413,13 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
     _state.pop_modelview_matrix();
 
     Material localMaterial = *_mat;
-    localMaterial.color(primitives_[i].color);
-    localMaterial.ambientColor(primitives_[i].color);
-    localMaterial.diffuseColor(primitives_[i].color);
-    localMaterial.baseColor(primitives_[i].color);
+    if (setColor_)
+    {
+      localMaterial.color(primitives_[i].color);
+      localMaterial.ambientColor(primitives_[i].color);
+      localMaterial.diffuseColor(primitives_[i].color);
+      localMaterial.baseColor(primitives_[i].color);
+    }
 
     ro.setMaterial(&localMaterial);
 
@@ -424,7 +427,7 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
       case SPHERE:
 
         // Sphere
-        ro.debugName = "glutprimitive.sphere";
+        ro.debugName = (QString("glutprimitive.sphere no %1: ").arg(i)+QString(name().c_str())).toLatin1();
 
         sphere_->addToRenderer(_renderer, &ro, primitives_[i].size);
 
