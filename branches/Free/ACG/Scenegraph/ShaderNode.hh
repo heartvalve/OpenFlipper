@@ -167,8 +167,8 @@ private :
     bool                    initialized;
   };
 
-  std::map< unsigned int, ShaderInfo> shaders;
-  std::map< unsigned int, ShaderInfo> pickShaders;
+  std::map< size_t, ShaderInfo> shaders;
+  std::map< size_t, ShaderInfo> pickShaders;
 };
 
 

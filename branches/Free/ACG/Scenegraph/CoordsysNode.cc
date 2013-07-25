@@ -182,7 +182,7 @@ drawCoordsys( GLState&  _state) {
 void CoordsysNode::drawCoordsys(IRenderer* _renderer, RenderObject* _baseRO)
 {
   // save model view matrix
-  GLMatrixf mModelView = _baseRO->modelview;
+  const GLMatrixd mModelView = _baseRO->modelview;
 
 
   const double arrowLength  = 0.03;

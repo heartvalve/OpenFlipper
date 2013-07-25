@@ -170,8 +170,8 @@ GlutExaminer::setup_scene(const Vec3f& _center, float _radius)
 void 
 GlutExaminer::view_all()
 {
-  ACG::Vec3f t = (-(glstate_.modelview().transform_point(center_))
-		  - Vec3f(0.0f, 0.0f, 3.0f*radius_));
+  ACG::Vec3d t = (-(glstate_.modelview().transform_point(center_))
+		  - Vec3d(0.0f, 0.0f, 3.0f*radius_));
   glstate_.translate(t[0], t[1], t[2], MULT_FROM_LEFT);
 }
 
@@ -182,7 +182,7 @@ GlutExaminer::view_all()
 double 
 GlutExaminer::measure_fps()
 {
-  const Vec3f t = glstate_.modelview().transform_point(center_);
+  const Vec3d t = glstate_.modelview().transform_point(center_);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();

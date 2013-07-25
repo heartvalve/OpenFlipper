@@ -864,7 +864,7 @@ void TranslationManipulatorNode::addManipulatorToRenderer (IRenderer* _renderer,
 {
   _baseRO->culling = false;
 
-  GLMatrixf oldModelview = _baseRO->modelview;
+  GLMatrixd oldModelview = _baseRO->modelview;
 
   //================================================================================================
   // Z-Axis

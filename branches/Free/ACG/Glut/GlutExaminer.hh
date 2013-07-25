@@ -94,7 +94,7 @@ protected:
 protected:
 
   GLTrackball  trackball_;
-  Vec3f        center_;
+  Vec3d        center_;
   float        radius_;
 };
 

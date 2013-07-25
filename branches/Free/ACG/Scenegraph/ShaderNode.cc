@@ -75,7 +75,7 @@ ShaderNode::ShaderNode( BaseNode*            _parent,
 }
 
 ShaderNode::~ShaderNode() {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+  for ( std::map<size_t,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
     if ( it->second.initialized ) {
       
       if ( it->second.program != 0 )
@@ -100,7 +100,7 @@ hasShader( DrawModes::DrawMode _drawmode, bool _pick ) {
     return false;
   }
   
-  std::map<unsigned int,ShaderInfo>::iterator it;
+  std::map<size_t,ShaderInfo>::iterator it;
   
   if ( _pick ) {
     it = pickShaders.find(_drawmode.getIndex());
@@ -121,7 +121,7 @@ hasShader( DrawModes::DrawMode _drawmode, bool _pick ) {
 void
 ShaderNode::enter(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode  )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+  for ( std::map<size_t,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
       it->second.program->use();
     }
@@ -133,7 +133,7 @@ ShaderNode::enter(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode  )
 void
 ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& _drawmode  )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) {
+  for ( std::map<size_t,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) {
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
       it->second.program->use();
     }
@@ -149,7 +149,7 @@ ShaderNode::vertexShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
     return std::string("");
   }
   
-  std::map<unsigned int,ShaderInfo>::iterator it;
+  std::map<size_t,ShaderInfo>::iterator it;
   
   if ( _pick ) {
     it = pickShaders.find(_drawmode.getIndex());
@@ -176,7 +176,7 @@ ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
     return std::string("");
   }
   
-  std::map<unsigned int,ShaderInfo>::iterator it;
+  std::map<size_t,ShaderInfo>::iterator it;
   
   if ( _pick ) {
     it = pickShaders.find(_drawmode.getIndex());
@@ -200,7 +200,7 @@ ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
 
 void ShaderNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it)
+  for ( std::map<size_t,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it)
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
       it->second.program->disable();
 }
@@ -210,7 +210,7 @@ void ShaderNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode
 
 void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& _drawmode )
 {
-  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it)
+  for ( std::map<size_t,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it)
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
       it->second.program->disable();
 }
@@ -227,7 +227,7 @@ getShader( DrawModes::DrawMode _drawmode, bool _pick ) {
     return 0;
   }
   
-  std::map<unsigned int,ShaderInfo>::iterator it;
+  std::map<size_t,ShaderInfo>::iterator it;
   
   if ( _pick ) {
     it = pickShaders.find(_drawmode.getIndex());
@@ -268,7 +268,7 @@ disableShader (DrawModes::DrawMode _drawmode) {
     return;
   }
 
-  unsigned int index = _drawmode.getIndex();
+  size_t index = _drawmode.getIndex();
 
   // Cleanup old shaders for this mode, if they exist
   if ( shaders[index].initialized ) {
@@ -311,7 +311,7 @@ setShader( DrawModes::DrawMode _drawmode ,
   }
 
   disableShader (_drawmode);
-  unsigned int index = _drawmode.getIndex();
+  size_t index = _drawmode.getIndex();
 
   shaders[index].vertexShaderFile   = shaderDir_ + _vertexShader;
   shaders[index].fragmentShaderFile = shaderDir_ + _fragmentShader;
@@ -400,7 +400,7 @@ availableDrawModes() const
 {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
 
-  for ( std::map<unsigned int,ShaderInfo>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
+  for ( std::map<size_t,ShaderInfo>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
     // If the shader for this drawmode is initialized, this node supports the given draw mode.
     // Then we add it to the list of supported draw modes
     if ( it->second.initialized) {
