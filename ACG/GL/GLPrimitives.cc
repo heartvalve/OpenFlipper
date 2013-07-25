@@ -249,8 +249,8 @@ void GLSphere::addToRenderer( IRenderer* _renderer, const RenderObject* _base, f
 {
   RenderObject ro = *_base;
 
-  ro.modelview.translate(_center);
-  ro.modelview.scale(_radius, _radius, _radius);
+  ro.modelview.translate(ACG::Vec3d(_center));
+  ro.modelview.scale((double)_radius, (double)_radius, (double)_radius);
 
   GLPrimitive::addToRenderer(_renderer, &ro);
 }
@@ -444,7 +444,7 @@ void GLCone::addToRenderer(IRenderer* _renderer,
   RenderObject ro = *_base;
 
   // translate
-  ro.modelview.translate(ACG::Vec3f(_center));
+  ro.modelview.translate(ACG::Vec3d(_center));
 
   _upDir.normalize();
 
