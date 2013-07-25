@@ -163,7 +163,7 @@ public:
   void add_color(const Color4f _c);
 
   /// number of points
-  unsigned int n_points() const { return points_.size(); }
+  size_t n_points() const { return points_.size(); }
 
   /**\brief return reference to point vector
    *
