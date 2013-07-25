@@ -450,7 +450,7 @@ void GLCone::addToRenderer(IRenderer* _renderer,
 
   // compute rotation matrix mAlign
   //  such that vBindDir rotates to _upDir
-  ACG::GLMatrixd mAlign;
+  ACG::GLMatrixf mAlign;
   mAlign.identity();
 
   ACG::Vec3f vBindDir(0.0f, 0.0f, 1.0f);

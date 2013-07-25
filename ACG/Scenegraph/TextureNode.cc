@@ -495,7 +495,7 @@ TextureNode::add_texture(const QImage& _image)
   // Generate new texture
   glGenTextures(1, &( textures_.back().id ) );
 
-  activeTexture_ = textures_.size() - 1;
+  activeTexture_ = int(textures_.size() - 1);
 
   // Set the image
   setTextureDataGL(activeTexture_ ,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,texture.bits());
