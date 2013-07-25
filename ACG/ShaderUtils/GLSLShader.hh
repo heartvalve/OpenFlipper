@@ -184,7 +184,9 @@ namespace GLSL {
 
 
        void setUniform(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+	   void setUniform(const char *_name, const ACG::GLMatrixd &_value, bool _transposed = false);
        void setUniformMat3(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+	   void setUniformMat3(const char *_name, const ACG::GLMatrixd &_value, bool _transposed = false);
 
 
        void setUniform(const char *_name, GLint *_values, int _count);
