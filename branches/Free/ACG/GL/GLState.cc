@@ -62,13 +62,13 @@ namespace ACG {
 
 //#define GLSTATE_AVOID_REDUNDANT_GLCALLS
 
-const Vec4f    GLState::default_clear_color(0.0, 0.0, 0.0, 1.0);
-const Vec4f    GLState::default_base_color(0.0, 0.0, 0.0, 1.0);
-const Vec4f    GLState::default_ambient_color(0.2, 0.2, 0.2, 1.0);
-const Vec4f    GLState::default_diffuse_color(0.50, 0.53, 0.6, 1.0);
-const Vec4f    GLState::default_specular_color(0.75, 0.8, 0.85, 1.0);
-const Vec4f    GLState::default_overlay_color(0.0, 0.0, 0.0, 1.0);
-const float    GLState::default_shininess(100.0);
+const Vec4f    GLState::default_clear_color(0.f, 0.f, 0.f, 1.f);
+const Vec4f    GLState::default_base_color(0.f, 0.f, 0.f, 1.f);
+const Vec4f    GLState::default_ambient_color(0.2f, 0.2f, 0.2f, 1.f);
+const Vec4f    GLState::default_diffuse_color(0.5f, 0.53f, 0.6f, 1.f);
+const Vec4f    GLState::default_specular_color(0.75f, 0.8f, 0.85f, 1.f);
+const Vec4f    GLState::default_overlay_color(0.f, 0.f, 0.f, 1.f);
+const float    GLState::default_shininess(100.f);
 
 
 //-----------------------------------------------------------------------------
