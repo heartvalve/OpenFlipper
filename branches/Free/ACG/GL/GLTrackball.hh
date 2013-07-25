@@ -93,7 +93,7 @@ private:
 
 
   GLState&    glstate_;
-  ACG::Vec3f  center_;
+  ACG::Vec3d  center_;
 
   Vec2i       last_point_2D_;
   Vec3f       last_point_3D_;
