@@ -536,9 +536,9 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
 
 
   if (line_mode_ == LineSegmentsMode)
-    ro.glDrawArrays(GL_LINES, 0, points_.size());
+    ro.glDrawArrays(GL_LINES, 0, int( points_.size() ));
   else
-    ro.glDrawArrays(GL_LINE_STRIP, 0, points_.size());
+    ro.glDrawArrays(GL_LINE_STRIP, 0, int(points_.size()) );
 
   _renderer->addRenderObject(&ro);
 
