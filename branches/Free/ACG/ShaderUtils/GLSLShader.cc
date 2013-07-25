@@ -114,7 +114,7 @@ namespace GLSL {
       ++index;
     }
 
-    glShaderSource(this->m_shaderId, source.size(), stringArray, 0);
+    glShaderSource(this->m_shaderId, int(source.size()), stringArray, 0);
 
     delete[] stringArray;
   }
@@ -426,6 +426,20 @@ namespace GLSL {
     checkGLError();
   }
 
+   /** \brief Set 4x4dMatrix uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value Matrix to be set
+   * @param _transposed Is the matrix transposed?
+   */
+  void Program::setUniform( const char *_name, const ACG::GLMatrixd &_value, bool _transposed){
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+    glUniformMatrix4dv(location, 1, _transposed, _value.data());
+    checkGLError();
+  }
+
   /** \brief Set 3x3fMatrix uniform to specified value
    *
    * @param _name  Name of the uniform
@@ -443,6 +457,26 @@ namespace GLSL {
         tmp[i*3+k] = _value.data()[i*4+k];
 
     glUniformMatrix3fv(location, 1, _transposed, tmp);
+    checkGLError();
+  }
+
+   /** \brief Set 3x3dMatrix uniform to specified value
+   *
+   * @param _name  Name of the uniform
+   * @param _value Matrix to be set
+   * @param _transposed Is the matrix transposed?
+   */
+  void Program::setUniformMat3( const char *_name, const ACG::GLMatrixd &_value, bool _transposed){
+    checkGLError();
+    GLint location = glGetUniformLocation(this->m_programId, _name);
+    checkGLError2(_name);
+
+    double tmp[9];
+    for (int i = 0; i < 3; ++i)
+      for (int k = 0; k < 3; ++k)
+        tmp[i*3+k] = _value.data()[i*4+k];
+
+    glUniformMatrix3dv(location, 1, _transposed, tmp);
     checkGLError();
   }
 
