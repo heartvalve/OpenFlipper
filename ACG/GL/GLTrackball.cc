@@ -152,12 +152,12 @@ GLTrackball::rotation(int x, int y)
 
       if (fabs(cos_angle) < 1.0) 
       {
-	float angle = float(2.0*acos(cos_angle) * 180.0 / M_PI);
+	    double angle = 2.0*acos(cos_angle) * 180.0 / M_PI;
 
-	Vec3f t = glstate_.modelview().transform_point(center_);
-	glstate_.translate(-t[0], -t[1], -t[2], MULT_FROM_LEFT);
-	glstate_.rotate(angle, axis[0], axis[1], axis[2], MULT_FROM_LEFT);
-	glstate_.translate( t[0],  t[1],  t[2], MULT_FROM_LEFT);
+	    Vec3d t = glstate_.modelview().transform_point(center_);
+	    glstate_.translate(-t[0], -t[1], -t[2], MULT_FROM_LEFT);
+    	glstate_.rotate(angle, axis[0], axis[1], axis[2], MULT_FROM_LEFT);
+	    glstate_.translate( t[0],  t[1],  t[2], MULT_FROM_LEFT);
       }
     }
   }
@@ -170,18 +170,18 @@ GLTrackball::rotation(int x, int y)
 void 
 GLTrackball::translation(int x, int y)
 {
-  float dx = float(x - last_point_2D_[0]);
-  float dy = float(y - last_point_2D_[1]);
+  double dx     = double(x - last_point_2D_[0]);
+  double dy     = double(y - last_point_2D_[1]);
 
-  float z      = glstate_.modelview().transform_point(center_)[2];
-  float w      = float(glstate_.viewport_width());
-  float h      = float(glstate_.viewport_height());
-  float fovy   = float(glstate_.fovy());
-  float nearpl = float(glstate_.near_plane());
+  double z      = glstate_.modelview().transform_point(center_)[2];
+  double w      = double(glstate_.viewport_width());
+  double h      = double(glstate_.viewport_height());
+  double fovy   = double(glstate_.fovy());
+  double nearpl = double(glstate_.near_plane());
 
-  float aspect = w / h;
-  float top    = float(tan(fovy/2.0f*M_PI/180.f) * nearpl);
-  float right  = aspect*top;
+  double aspect = w / h;
+  double top    = double(tan(fovy/2.0*M_PI/180.0) * nearpl);
+  double right  = aspect*top;
 
   glstate_.translate(-2.0*dx/w*right/nearpl*z, 
 		              2.0*dy/h*top/nearpl*z, 
@@ -196,9 +196,9 @@ GLTrackball::translation(int x, int y)
 void 
 GLTrackball::zoom(int /* x */ , int y)
 {
-  float dy = float(y - last_point_2D_[1]);
-  float z  = glstate_.modelview().transform_point(center_)[2];
-  float h  = float(glstate_.viewport_height());
+  double dy = double(y - last_point_2D_[1]);
+  double z  = glstate_.modelview().transform_point(center_)[2];
+  double h  = double(glstate_.viewport_height());
 
   glstate_.translate(0.0,
 		     0.0,
