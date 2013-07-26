@@ -131,6 +131,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     //RPCInterface
     void pluginExists( QString _pluginName , bool& _exists  );
+    void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
 
     //TextureInterface
     void setTextureMode(QString _textureName, QString _mode, int _id );
