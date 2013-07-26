@@ -114,7 +114,10 @@ int TypeHexahedralMeshPlugin::addEmpty() {
     object->materialNode()->applyProperties(ACG::SceneGraph::MaterialNode::All);
     //object->materialNode()->enable_backface_culling();
 
-    object->materialNode()->set_ambient_color(ACG::Vec4f(1.0, 1.0, 1.0, 1.0));
+    // set the default colors
+    const QColor color = OpenFlipper::Options::defaultColor();
+    const ACG::Vec4f default_color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+    object->materialNode()->set_color(default_color);
 
     // Set rendering props
     if(OpenFlipper::Options::gui()) {
