@@ -1562,9 +1562,6 @@ int FileVTKPlugin::loadObject(QString _filename) {
     return -1;
   }
 
-  bool rpc_ok(false);
-  emit functionExists( "colorplugin" , "setDefaultColor()", rpc_ok ) ;
-
     if ( (forceTriangleMesh_) || (bestType == BMT_TriMesh) ){
 
         // add a triangle mesh
@@ -1595,8 +1592,6 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
             //general stuff
             emit openedFile( object->id() );
-            if (rpc_ok)
-              RPC::callFunction("colorplugin", "setDefaultColor");
 
             PluginFunctions::viewAll();
 
@@ -1638,8 +1633,6 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
             //general stuff
             emit openedFile( object->id() );
-            if (rpc_ok)
-              RPC::callFunction("colorplugin", "setDefaultColor");
 
             PluginFunctions::viewAll();
 
@@ -1682,8 +1675,6 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
             //general stuff
             emit openedFile( object->id() );
-            if (rpc_ok)
-              RPC::callFunction("colorplugin", "setDefaultColor");
 
             PluginFunctions::viewAll();
 
@@ -1726,8 +1717,6 @@ int FileVTKPlugin::loadObject(QString _filename) {
 
             //general stuff
             emit openedFile( object->id() );
-            if (rpc_ok)
-              RPC::callFunction("colorplugin", "setDefaultColor");
 
             PluginFunctions::viewAll();
 

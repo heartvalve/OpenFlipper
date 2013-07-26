@@ -72,6 +72,11 @@ int TypePlanePlugin::addEmpty(){
   QFileInfo f(name);
   object->setName( f.fileName() );
 
+  // set the default colors
+  const QColor color = OpenFlipper::Options::defaultColor();
+  const ACG::Vec4f default_color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+  object->materialNode()->set_color(default_color);
+
   object->update();
 
   object->show();
