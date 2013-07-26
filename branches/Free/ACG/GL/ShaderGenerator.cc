@@ -50,9 +50,6 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
 
 namespace ACG
 {
@@ -429,9 +426,8 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
   {
     desc_ = *_desc;
 
-    // We need at least version 2.0 or higher to support geometry shaders
-    QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-    desc_.geometryShader &= flags.testFlag(QGLFormat::OpenGL_Version_3_2);
+    // We need at least version 3.2 or higher to support geometry shaders
+    desc_.geometryShader &= ACG::openGLVersion(3,2);
 
     loadLightingFunctions();
 
