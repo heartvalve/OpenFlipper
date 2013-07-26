@@ -210,7 +210,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     ACG::GLState::vertexPointer(&ps[0]);
 
     float line_width_old = _state.line_width();
-    _state.set_color( Vec4f(0.8, 0, 0, 1) );
+    _state.set_color( Vec4f(0.8f, 0.f, 0.f, 1.f) );
     _state.set_line_width(1);
 
     int stride = polyline_.vertex_binormals_available() ? 3 : 2;
@@ -222,7 +222,7 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     glEnd();
 
     if (polyline_.vertex_binormals_available()) {
-      _state.set_color( Vec4f(0, 0, 0.8, 1) );
+      _state.set_color( Vec4f(0.f, 0.f, 0.8f, 1.f) );
       glBegin(GL_LINES);
       for (unsigned int i = 0; i < polyline_.n_vertices(); ++i) {
         glArrayElement(stride * i);

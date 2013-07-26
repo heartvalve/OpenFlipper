@@ -97,7 +97,7 @@ class BSplineSurfaceNodeT : public BaseNode
     bspline_selection_draw_mode_(NONE),
     pick_radius_(1.0),
     resolution_(16),
-    controlnet_color_( Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0) ),
+    controlnet_color_( Vec4f(34.f/255.f, 139.f/255.f, 34.f/255.f, 1.f) ),
     controlnet_highlight_color_( Vec4f(1.0f, 1.0f, 1.0f, 1.0f) ),
     surface_color_( Vec4f(178.0f/255.0f, 34.0f/255.0f, 34.0f/255.0f, 1.0f) ),
     surface_highlight_color_( Vec4f(1.0f, 1.0f, 1.0f, 1.0f) ),
