@@ -234,7 +234,7 @@ void SelectionBasePlugin::pluginsInitialized() {
                                        MaterialNode::AlphaTest |
                                        MaterialNode::BackFaceCulling );
                                        
-    sphere_mat_node_->set_color(ACG::Vec4f(1.0, 0.0, 0.0, 0.3));
+    sphere_mat_node_->set_color(ACG::Vec4f(1.f, 0.f, 0.f, 0.3f));
     sphere_mat_node_->enable_blending();
     sphere_mat_node_->disable_alpha_test();
     sphere_mat_node_->enable_backface_culling();
@@ -242,7 +242,7 @@ void SelectionBasePlugin::pluginsInitialized() {
     nodeName = std::string( tr("Selection Base Plugin: Selection Sphere").toUtf8() );
     sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, nodeName);
     sphere_node_->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
-    sphere_node_->get_primitive(0).color = ACG::Vec4f(1.0, 0.0, 0.0,0.3);
+    sphere_node_->get_primitive(0).color = ACG::Vec4f(1.f, 0.f, 0.f,0.3f);
     sphere_node_->hide();
 
     // Line node
