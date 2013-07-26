@@ -140,12 +140,12 @@ void PlaneNode::drawPlane( ACG::GLState&  _state) {
   ACG::GLState::enable (GL_BLEND);
   ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  _state.set_color(ACG::Vec4f( 0.6, 0.15, 0.2, 0.5));
+  _state.set_color(ACG::Vec4f( 0.6f, 0.15f, 0.2f, 0.5f));
   glDrawArrays(GL_QUADS,0,4);
 
 
   //finally the green back side
-  _state.set_color(ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
+  _state.set_color(ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
 
   glDrawArrays(GL_QUADS,4,4);
 
@@ -417,9 +417,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         // Just draw the quads here ( front )
         //---------------------------------------------------
         ro.debugName = (std::string("PlaneNode.plane_front")+name()).c_str();
-        localMaterial.ambientColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
-        localMaterial.diffuseColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
-        localMaterial.specularColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
+        localMaterial.ambientColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
+        localMaterial.diffuseColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
+        localMaterial.specularColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
         ro.setMaterial(&localMaterial);
         ro.glDrawArrays(GL_QUADS, 0, 4);
         _renderer->addRenderObject(&ro);
@@ -428,9 +428,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         // Just draw the quads here ( back )
         //---------------------------------------------------
         ro.debugName = (std::string("PlaneNode.plane_back")+name()).c_str();
-        localMaterial.ambientColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
-        localMaterial.diffuseColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
-        localMaterial.specularColor(ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
+        localMaterial.ambientColor( ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
+        localMaterial.diffuseColor( ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
+        localMaterial.specularColor(ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
         ro.setMaterial(&localMaterial);
         ro.glDrawArrays(GL_QUADS, 4, 4);
         _renderer->addRenderObject(&ro);
