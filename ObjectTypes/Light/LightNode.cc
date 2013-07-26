@@ -76,19 +76,19 @@ LightSource::LightSource()
   enabled_              = false;
   fixedPosition_        = false;
 
-  ambientColor_         = Vec4f(0.1,0.1,0.1,1.0);
-  diffuseColor_         = Vec4f(1.0,1.0,1.0,1.0);
-  specularColor_        = Vec4f(1.0,1.0,1.0,1.0);
+  ambientColor_         = Vec4f(0.1f,0.1f,0.1f,1.f);
+  diffuseColor_         = Vec4f(1.f,1.f,1.f,1.f);
+  specularColor_        = Vec4f(1.f,1.f,1.f,1.f);
   
-  position_             = Vec4f(0.0,0.0,1.0,0.0);
-  realPosition_         = Vec4f(0.0,0.0,1.0,0.0);
+  position_             = Vec4f(0.f,0.f,1.f,0.f);
+  realPosition_         = Vec4f(0.f,0.f,1.f,0.f);
   
   spotDirection_        = Vec3d(0.0,0.0,-1.0);
   realSpotDirection_    = Vec3d(0.0,0.0,-1.0);
   
   // Holds initial light source position
   // converted to camera coordinates
-  initialPosition_      = Vec4f(0.0, 0.0, 0.0, 0.0);
+  initialPosition_      = Vec4f(0.f, 0.f, 0.f, 0.f);
   initialSpotDirection_ = Vec3d(0.0, 0.0, -1.0);
   initialPositionInit_  = false;
   

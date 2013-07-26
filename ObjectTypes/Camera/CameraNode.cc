@@ -16,7 +16,7 @@
 namespace ACG {
 namespace SceneGraph {
 
-#define axis_length 0.1
+const float axis_length = 0.1f;
 
 //== IMPLEMENTATION ==========================================================
 
@@ -422,9 +422,9 @@ void CameraNode::updateBoundingBoxes(GLMatrixd& _modelview) {
         far_half_width_ = far_half_height_ * aspectRatio_;
     }
     
-    OpenMesh::Vec3f e = OpenMesh::Vec3f(modelView_(0,3), modelView_(1,3), modelView_(2,3));
+    OpenMesh::Vec3d e = OpenMesh::Vec3d(modelView_(0,3), modelView_(1,3), modelView_(2,3));
   
-    OpenMesh::Vec3f tmp(std::max(1.41421, half_width_), std::max(1.41421, half_height_), 1.41421);
+    OpenMesh::Vec3d tmp(std::max(1.41421, half_width_), std::max(1.41421, half_height_), 1.41421);
 
     bbmin_ = e - tmp;
     bbmax_ = e + tmp;

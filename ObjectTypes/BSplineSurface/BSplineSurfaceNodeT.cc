@@ -357,7 +357,7 @@ drawSurface(GLState& _state, bool _fill)
     #else
       gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_PARAMETRIC_ERROR);
     #endif
-    gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
+    gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2f);
   }
 
 
@@ -1300,7 +1300,7 @@ draw_textured_nurbs( GLState& /*_state*/)
     gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD,   GLU_PARAMETRIC_ERROR);
   #endif
 
-  gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
+  gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2f);
 
   // get min/max knots of domain defining patch (partition of unity)
   float  minu( knots_m[bsplineSurface_.degree_m()]);
