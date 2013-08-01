@@ -212,7 +212,7 @@ macro (acg_qt5)
     #set (QT_MIN_VERSION ${ARGN})
 
     #for custom installation of qt5, dont use any of these variables
-    set (QT5_INSTALL_PATH "" CACHE String "Path to qt5 lib and include folder")
+    set (QT5_INSTALL_PATH "" CACHE PATH "Path to qt5 lib and include folder")
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
@@ -235,7 +235,7 @@ macro (acg_qt5)
     find_package (Qt5PrintSupport REQUIRED)
     
 
-    set (QT5_FOUND ${Qt5Core_FOUND} AND ${Qt5Declarative} ${Qt5Widgets_FOUND}
+    set (QT5_FOUND ${Qt5Core_FOUND} AND ${Qt5Declarative} AND ${Qt5Widgets_FOUND}
       AND ${Qt5Gui_FOUND} AND ${Qt5OpenGL_FOUND} AND ${Qt5Network_FOUND}
       AND ${Qt5Script_FOUND} AND ${Qt5ScriptTools_FOUND} AND ${Qt5Sql_FOUND}
       AND ${Qt5Xml_FOUND} AND ${Qt5XmlPatterns_FOUND} AND ${Qt5Help_FOUND}
@@ -274,8 +274,9 @@ macro (acg_qt5)
       add_definitions(${Qt5UiTools_DEFINITIONS})
       add_definitions(${Qt5Concurrent_DEFINITIONS})
       add_definitions(${Qt5PrintSupport_DEFINITIONS})
-
+if ( NOT MSVC )
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
 
       set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Declarative_LIBRARIES} ${Qt5Widgets_LIBRARIES}
         ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES}
