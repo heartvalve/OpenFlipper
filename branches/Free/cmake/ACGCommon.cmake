@@ -215,6 +215,21 @@ macro (acg_qt5)
     set (QT5_INSTALL_PATH "" CACHE PATH "Path to qt5 lib and include folder")
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    
+    #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
+    if ( WIN32 )
+      
+      set(WINDOWS_SDK_LIBS "COULD_NOT_FOUND" CACHE PATH "Path to the latest windows sdk libs which includes glu32.lib")
+      if (EXISTS "${WINDOWS_SDK_LIBS}\\glu32.lib")
+          set (WINDOWS_SDK_LIBS ${WINDOWS_SDK_LIBS})
+          set (CMAKE_PREFIX_PATH "${QT5_INSTALL_PATH};${WINDOWS_SDK_LIBS}")
+      else()
+         message( FATAL_ERROR "Could not find glu32.lib in your Windows sdk libs.")
+      endif()
+      
+    endif()#WIN32
+    
+    
 
 
     find_package (Qt5Core REQUIRED)
@@ -274,15 +289,20 @@ macro (acg_qt5)
       add_definitions(${Qt5UiTools_DEFINITIONS})
       add_definitions(${Qt5Concurrent_DEFINITIONS})
       add_definitions(${Qt5PrintSupport_DEFINITIONS})
-if ( NOT MSVC )
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
+      
+      if ( NOT MSVC )
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+      endif()
 
       set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_LIBRARIES} ${Qt5Declarative_LIBRARIES} ${Qt5Widgets_LIBRARIES}
         ${Qt5Gui_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5Script_LIBRARIES} ${Qt5ScriptTools_LIBRARIES} ${Qt5Sql_LIBRARIES}
         ${Qt5Xml_LIBRARIES} ${Qt5XmlPatterns_LIBRARIES} ${Qt5Help_LIBRARIES}
-        ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} ${Qt5PrintSupport_LIBARIES})
+        ${Qt5WebKit_LIBRARIES} ${Qt5UiTools_LIBRARIES} ${Qt5Concurrent_LIBARIES} ${Qt5PrintSupport_LIBRARIES})
+        
+      if (MSVC)
+        set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_QTMAIN_LIBRARIES})
+      endif()
 
       add_definitions(-DQT_NO_OPENGL)
     endif ()
