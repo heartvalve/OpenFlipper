@@ -142,7 +142,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
     // create a new pick cache frambuffer object
     if (!pickCache_)
     {
-      pickCache_ = new QFrameBufferObject (glWidth (), glHeight (), QFrameBufferObject::Depth);
+      pickCache_ = new QFramebufferObject (glWidth (), glHeight (), QFramebufferObject::Depth);
       if (!pickCache_->isValid ())
       {
         pickCacheSupported_ = false;
@@ -541,7 +541,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
     // create a new pick cache frambuffer object
     if (!pickCache_)
     {
-      pickCache_ = new QFrameBufferObject (glWidth (), glHeight (), QFrameBufferObject::Depth);
+      pickCache_ = new QFramebufferObject (glWidth (), glHeight (), QFramebufferObject::Depth);
       if (!pickCache_->isValid ())
       {
         pickCacheSupported_ = false;
