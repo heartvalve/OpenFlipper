@@ -117,8 +117,10 @@ class QtShiftPopupMenu;
 class CursorPainter;
 #if QT_VERSION < 0x050000
 class QGLFramebufferObject;
+class QGLFramebufferObjectFormat;
 #else
 class QOpenGLFramebufferObject;
+class QOpenGLFramebufferObjectFormat;
 #endif
 
 
@@ -810,13 +812,15 @@ private:
   private:
 
 #if QT_VERSION < 0x050000
-    typedef QGLFramebufferObject QFrameBufferObject;
+    typedef QGLFramebufferObjectFormat QFramebufferObjectFormat;
+    typedef QGLFramebufferObject QFramebufferObject;
 #else
-    typedef QOpenGLFramebufferObject QFrameBufferObject;
+    typedef QOpenGLFramebufferObjectFormat QFramebufferObjectFormat;
+    typedef QOpenGLFramebufferObject QFramebufferObject;
 #endif
 
     /// Framebuffer object that holds the pick cache
-    QFrameBufferObject* pickCache_;
+    QFramebufferObject* pickCache_;
 
     /// Should the pick cache be updated
     bool updatePickCache_;

@@ -102,11 +102,18 @@
 #include <QGraphicsWidget>
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
-#include <QGLFramebufferObjectFormat>
 #include <QPainter>
 #include <QPaintEngine>
 
 #include <QImageWriter>
+
+#if QT_VERSION < 0x050000
+  #include <QGLFramebufferObject>
+#else // QT_VERSION > 0x050000
+  #undef QT_NO_OPENGL
+  #include <QOpenGLFramebufferObject>
+  #define QT_NO_OPENGL
+#endif //QT_VERSION < 0x050000
 
 #ifdef max
 #  undef max
@@ -2051,16 +2058,15 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
         glstate_->viewport(0, 0, w, h);
     }
     
-    QGLFramebufferObjectFormat format;
+    QFramebufferObjectFormat format;
     format.setInternalTextureFormat(GL_RGBA);
     format.setTextureTarget(GL_TEXTURE_2D);
     // set the attachments as in the standard rendering
-    format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+    format.setAttachment(QFramebufferObject::CombinedDepthStencil);
     // 16 samples per pixel as we want a nice snapshot. If this is not supported
     // it will fall back to the maximal supported number of samples
     format.setSamples(samples);
-    QGLFramebufferObject fb( w, h, format);
-    
+    QFramebufferObject fb(w,h,format);    
     
     if ( fb.isValid() ){
 
