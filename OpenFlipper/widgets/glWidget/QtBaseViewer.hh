@@ -100,7 +100,6 @@ class QSplitter;
 class QTimer;
 class QImage;
 class QSocketNotifier;
-class QGLFramebufferObject;
 
 
 //== NAMESPACES ===============================================================
@@ -116,6 +115,11 @@ class QGraphicsScene;
 class QtGLViewerLayout;
 class QtShiftPopupMenu;
 class CursorPainter;
+#if QT_VERSION < 0x050000
+class QGLFramebufferObject;
+#else
+class QOpenGLFramebufferObject;
+#endif
 
 
 //== CLASS DEFINITION =========================================================
@@ -805,8 +809,14 @@ private:
 
   private:
 
+#if QT_VERSION < 0x050000
+    typedef QGLFramebufferObject QFrameBufferObject;
+#else
+    typedef QOpenGLFramebufferObject QFrameBufferObject;
+#endif
+
     /// Framebuffer object that holds the pick cache
-    QGLFramebufferObject *pickCache_;
+    QFrameBufferObject* pickCache_;
 
     /// Should the pick cache be updated
     bool updatePickCache_;
