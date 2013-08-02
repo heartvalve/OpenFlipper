@@ -254,6 +254,10 @@ Core::init() {
 
     coreWidget_ = new CoreWidget(viewModes_ , plugins_, coreSlots_);
 
+    spinBoxEventFilter_.registerScrollArea(coreWidget_->getToolboxScrollArea());
+    spinBoxEventFilter_.registerScrollArea(coreWidget_->getToolboxArea());
+    spinBoxEventFilter_.registerScrollArea(coreWidget_->getToolbox());
+
     connect(coreWidget_, SIGNAL(clearAll())           , this, SLOT(clearAll()));
     connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(loadObject()));
     connect(coreWidget_, SIGNAL(addEmptyObjectMenu()) , this, SLOT(slotAddEmptyObjectMenu()));
