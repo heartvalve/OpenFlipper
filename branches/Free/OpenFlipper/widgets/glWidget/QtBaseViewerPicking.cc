@@ -56,7 +56,13 @@
 #include "QtGLGraphicsScene.hh"
 #include "QtGLGraphicsView.hh"
 
-#include <QGLFramebufferObject>
+#if QT_VERSION < 0x050000
+  #include <QGLFrameBufferObject>
+#else // QT_VERSION > 0x050000
+  #undef QT_NO_OPENGL
+  #include <QOpenGLFramebufferObject>
+  #define QT_NO_OPENGL
+#endif //QT_VERSION < 0x050000
 
 //== NAMESPACES ===============================================================
 
@@ -136,7 +142,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
     // create a new pick cache frambuffer object
     if (!pickCache_)
     {
-      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      pickCache_ = new QFrameBufferObject (glWidth (), glHeight (), QFrameBufferObject::Depth);
       if (!pickCache_->isValid ())
       {
         pickCacheSupported_ = false;
@@ -535,7 +541,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
     // create a new pick cache frambuffer object
     if (!pickCache_)
     {
-      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      pickCache_ = new QFrameBufferObject (glWidth (), glHeight (), QFrameBufferObject::Depth);
       if (!pickCache_->isValid ())
       {
         pickCacheSupported_ = false;
