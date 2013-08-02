@@ -490,6 +490,10 @@ public:
 
     QSize defaultIconSize();
 
+    QScrollArea* getToolboxScrollArea() { return toolBoxScroll_; }
+    QWidget* getToolboxArea() { return toolBoxArea_; }
+    SideArea* getToolbox() { return toolBox_; }
+
   public slots:
 
     /// Set application to Fullscreen and back
