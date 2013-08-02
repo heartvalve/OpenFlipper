@@ -57,7 +57,7 @@
 #include "QtGLGraphicsView.hh"
 
 #if QT_VERSION < 0x050000
-  #include <QGLFrameBufferObject>
+  #include <QGLFramebufferObject>
 #else // QT_VERSION > 0x050000
   #undef QT_NO_OPENGL
   #include <QOpenGLFramebufferObject>
