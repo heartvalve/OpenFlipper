@@ -37,12 +37,9 @@ bool SpinBoxEventFilter::eventFilter(QObject *object, QEvent *event) {
 
     if (event->type() != QEvent::Wheel) return QObject::eventFilter(object, event);
 
-    /*
-     * We only need the QWidget-Pointer to check whether object
-     * is contained in scrollAreas, so a static_cast is safe here
-     * (and faster than a dynamic_cast).
-     */
-    if (scrollAreas.find(static_cast<QWidget*>(object)) != scrollAreas.end()) {
+    QWidget *widget = qobject_cast<QWidget*>(object);
+
+    if (scrollAreas.find(widget) != scrollAreas.end()) {
 #ifdef VERBOSE_DEBUGGING_OUTPUT
         std::cout << "Reset isScrolling." << std::endl;
 #endif
@@ -50,7 +47,7 @@ bool SpinBoxEventFilter::eventFilter(QObject *object, QEvent *event) {
         return QObject::eventFilter(object, event);
     }
 
-    if (!isScrolling()) {
+    if (!isScrolling() && widget->isEnabled()) {
 #ifdef VERBOSE_DEBUGGING_OUTPUT
         std::cout << "Not scrolling. Letting wheel event pass." << std::endl;
 #endif
