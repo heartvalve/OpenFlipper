@@ -116,6 +116,7 @@
 
 #include <OpenFlipper/common/FileTypes.hh>
 #include <OpenFlipper/common/InformationPlugins.hh>
+#include "SpinBoxEventFilter.hh"
 
 //== CLASS DEFINITION =========================================================
 
@@ -1462,6 +1463,8 @@ private slots:
     * Checks if the used libraries are consistent
     */
     bool checkLibraryVersions();
+
+    void hookUpEventFilter(QWidget *widget);
   
   
   private :
@@ -1496,6 +1499,8 @@ private slots:
 
     /// If enabled, this timer will block screen refresh if done more then 30 times per second.
     QTimer* redrawTimer_;
+
+    SpinBoxEventFilter spinBoxEventFilter_;
 
 
 };

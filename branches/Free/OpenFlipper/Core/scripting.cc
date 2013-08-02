@@ -267,6 +267,7 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
     }
   }
 
+  spinBoxEventFilter_.hookUpToWidgetTree(_widget);
   plugins_[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
   plugins_[id].toolboxIcons.push_back( 0 );
 
@@ -308,6 +309,7 @@ void Core::addToolbox(QString _name ,QWidget* _widget, QIcon* _icon) {
     }
   }
 
+  spinBoxEventFilter_.hookUpToWidgetTree(_widget);
   plugins_[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
   plugins_[id].toolboxIcons.push_back( _icon );
 
