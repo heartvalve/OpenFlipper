@@ -745,7 +745,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       // note: colored edges are in sysmem, so they are directly bound to the VertexDeclaration
       ro.vertexDecl = drawMesh_->getEdgeColoredVertexDeclaration();
-      ro.glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+      ro.glDrawArrays(GL_LINES, 0, int(mesh_.n_edges() * 2));
 
       // use specular color for lines
       ro.emissive = ro.specular;
@@ -769,7 +769,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       // use specular color for lines
       ro.emissive = ro.specular;
 
-      ro.glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
+      ro.glDrawArrays(GL_LINES, 0, int(mesh_.n_halfedges() * 2));
 
       _renderer->addRenderObject(&ro);
     }  
@@ -819,7 +819,7 @@ draw_lines() {
   if ((enabled_arrays_ & PER_EDGE_COLOR_ARRAY) && (enabled_arrays_ & PER_EDGE_VERTEX_ARRAY))
   {
     // colored edges still slow
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+    glDrawArrays(GL_LINES, 0, int(mesh_.n_edges() * 2));
   }
   else
     drawMesh_->drawLines();
@@ -833,7 +833,7 @@ add_line_RenderObjects(IRenderer* _renderer, const RenderObject* _baseObj) {
   if ((enabled_arrays_ & PER_EDGE_COLOR_ARRAY) && (enabled_arrays_ & PER_EDGE_VERTEX_ARRAY))
   {
     // colored edges still slow
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+    glDrawArrays(GL_LINES, 0, int(mesh_.n_edges() * 2));
   }
   else
     drawMesh_->addLineRenderObjects(_renderer, _baseObj);
@@ -845,7 +845,7 @@ MeshNodeT<Mesh>::
 draw_halfedges() {
   // If we are rendering per edge per vertex attributes, we need to use a seperated vertex buffer!
   if ( enabled_arrays_ & PER_HALFEDGE_VERTEX_ARRAY )
-    glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
+    glDrawArrays(GL_LINES, 0, int(mesh_.n_halfedges() * 2));
   // Something went wrong here!
   else
     std::cerr << "Unable to Draw! halfedge array configuration is invalid!!" << std::endl;
@@ -1082,7 +1082,7 @@ pick_vertices(GLState& _state, bool _front)
       ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
       
       // Draw color picking
-      glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+      glDrawArrays(GL_POINTS, 0, int(mesh_.n_vertices()));
       
       // Disable color array
       ACG::GLState::disableClientState(GL_COLOR_ARRAY);
@@ -1161,7 +1161,7 @@ pick_edges(GLState& _state, bool _front)
       ACG::GLState::vertexPointer(drawMesh_->perEdgeVertexBuffer());
       ACG::GLState::colorPointer(drawMesh_->pickEdgeColorBuffer());
       
-      glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+      glDrawArrays(GL_LINES, 0, int(mesh_.n_edges() * 2));
       
       ACG::GLState::disableClientState(GL_COLOR_ARRAY);
       ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
@@ -1224,7 +1224,7 @@ pick_faces(GLState& _state)
       ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
       ACG::GLState::colorPointer(drawMesh_->pickFaceColorBuffer());
       
-      glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
+      glDrawArrays(GL_TRIANGLES, 0, int(3 * drawMesh_->getNumTris()));
       
       ACG::GLState::disableClientState(GL_COLOR_ARRAY);
       ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
@@ -1287,7 +1287,7 @@ pick_any(GLState& _state)
       ACG::GLState::vertexPointer(drawMesh_->pickFaceVertexBuffer());
       ACG::GLState::colorPointer(drawMesh_->pickAnyFaceColorBuffer());
       
-      glDrawArrays(GL_TRIANGLES, 0, 3 * drawMesh_->getNumTris());
+      glDrawArrays(GL_TRIANGLES, 0, int(3 * drawMesh_->getNumTris()));
     }
     
     ACG::GLState::depthFunc(GL_LEQUAL);
@@ -1298,7 +1298,7 @@ pick_any(GLState& _state)
       ACG::GLState::vertexPointer(drawMesh_->perEdgeVertexBuffer());
       ACG::GLState::colorPointer(drawMesh_->pickAnyEdgeColorBuffer());
     
-      glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+      glDrawArrays(GL_LINES, 0, int(mesh_.n_edges() * 2));
     }
     
     // For this version we load the colors directly not from vbo
@@ -1307,7 +1307,7 @@ pick_any(GLState& _state)
     ACG::GLState::colorPointer(drawMesh_->pickAnyVertexColorBuffer());
     
     // Draw color picking
-    glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+    glDrawArrays(GL_POINTS, 0, int(mesh_.n_vertices()));
     
     ACG::GLState::disableClientState(GL_COLOR_ARRAY);
     ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
