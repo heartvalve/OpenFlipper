@@ -129,8 +129,10 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name, QIcon* 
 
 SideElement::~SideElement ()
 {
-  if (dialog_)
+  if (dialog_) {
+    disconnect(dialog_,SIGNAL(finished(int)),this,SLOT(dialogClosed()));
     dialog_->close ();
+  }
   widget_->setParent (0);
 }
 
