@@ -74,10 +74,8 @@ find_package (GLUT)
 if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
-find_package (OpenMesh)
-if (NOT OPENMESH_FOUND)
-    message (FATAL_ERROR "OpenMesh not found!")
-endif ()
+# OpenMesh is a dependent project (in libs_required) so no finder is needed.
+#find_package (OpenMesh REQUIRED)
 find_package (OpenVolumeMesh)
 if (NOT OPENVOLUMEMESH_FOUND)
     message (FATAL_ERROR "OpenVolumeMesh not found!")
@@ -101,31 +99,6 @@ SET(OPENFLIPPER_TEST_BINARIES ${CMAKE_BINARY_DIR}/tests/testBinaries )
 enable_testing()
 
 # ========================================================================
-# Core Library Components (Except the Core application)
-# ========================================================================
-add_subdirectory (ACG)
-add_subdirectory (OpenFlipper/PluginLib)
-
-# ========================================================================
-# Tests
-# ========================================================================
-add_subdirectory (tests)
-
-# ========================================================================
-# Documentation generators
-# ========================================================================
-
-# Create dirs to make doxygen happy
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc )
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help )
-
-# Add the deocumentation targets
-add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
-add_subdirectory (OpenFlipper/Documentation/DeveloperQtHelpTarget)
-add_subdirectory (OpenFlipper/Documentation/UserTarget)
-add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
-
-# ========================================================================
 # Build all additional libraries
 # ========================================================================
 
@@ -134,10 +107,9 @@ add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
 file (
   GLOB _local_libs_in
   RELATIVE "${CMAKE_SOURCE_DIR}"
-           "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
            "${CMAKE_SOURCE_DIR}/libs_required/*/CMakeLists.txt"
+           "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
 )
-
 
 set( REMAINING_LOCAL_LIBS "" )
 
@@ -185,6 +157,31 @@ foreach (_localLib ${REMAINING_LOCAL_LIBS})
     add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
   endif()
 endforeach ()
+
+# ========================================================================
+# Core Library Components (Except the Core application)
+# ========================================================================
+add_subdirectory (ACG)
+add_subdirectory (OpenFlipper/PluginLib)
+
+# ========================================================================
+# Tests
+# ========================================================================
+add_subdirectory (tests)
+
+# ========================================================================
+# Documentation generators
+# ========================================================================
+
+# Create dirs to make doxygen happy
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc )
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help )
+
+# Add the deocumentation targets
+add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
+add_subdirectory (OpenFlipper/Documentation/DeveloperQtHelpTarget)
+add_subdirectory (OpenFlipper/Documentation/UserTarget)
+add_subdirectory (OpenFlipper/Documentation/UserQtHelpTarget)
 
 # ========================================================================
 # PolyLine extension special case
