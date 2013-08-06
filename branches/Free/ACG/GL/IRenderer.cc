@@ -343,7 +343,7 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
     if (!tex.id)
       continue;
 
-    glActiveTexture(GL_TEXTURE0 +texture_stage);
+    glActiveTexture(GL_TEXTURE0 + (GLenum)texture_stage);
     glBindTexture(iter->second.type, tex.id);
     _prog->setUniform(QString("g_Texture%1").arg(texture_stage).toStdString().c_str(), (int)texture_stage);
   }

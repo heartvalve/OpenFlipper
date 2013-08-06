@@ -1245,7 +1245,7 @@ MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {    
   GLenum prev_depth = _state.depthFunc();
-  unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
+  size_t numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
   
   if ( mesh_.n_vertices() == 0 ) {
     std::cerr << "pick_any: No vertices in Mesh!" << std::endl;
