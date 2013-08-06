@@ -89,7 +89,7 @@ float HaltonColors::halton(int index)
   while (I > 0) {
     int digit = I % base;
     H = H + half * digit;
-    I = inverse_base * (I - digit);
+    I = (int)(inverse_base * (I - digit));
     half *= inverse_base;
   }
   return H;
@@ -160,7 +160,7 @@ ACG::Vec4f HaltonColors::HSL2RGB(double h, double sl, double l)
     }
   }
 
-  return Vec4f(r, g, b, 1.0f);
+  return Vec4f((float)r, (float)g, (float)b, 1.0f);
 }
 
 ACG::Vec4f HaltonColors::get_next_color()
