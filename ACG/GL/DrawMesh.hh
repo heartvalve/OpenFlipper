@@ -680,7 +680,7 @@ private:
   /** used to track mesh changes, that require a full rebuild
     * values directly taken from Mesh template
     */
-  unsigned int prevNumFaces_,prevNumVerts_;
+  size_t prevNumFaces_,prevNumVerts_;
 
 
   // per material/texture subsets
