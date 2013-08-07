@@ -403,7 +403,7 @@ void FileOBJPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
 
       for (typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it)
-        _mesh.property(oldVertexCoords, v_it) =  _mesh.texcoord2D(v_it);
+        _mesh.property(oldVertexCoords, *v_it) =  _mesh.texcoord2D(*v_it);
 
     }
 
@@ -415,7 +415,7 @@ void FileOBJPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
 
       for (typename MeshT::HalfedgeIter he_it = _mesh.halfedges_begin(); he_it != _mesh.halfedges_end(); ++he_it)
-        _mesh.property(oldHalfedgeCoords, he_it) =  _mesh.texcoord2D(he_it);
+        _mesh.property(oldHalfedgeCoords, *he_it) =  _mesh.texcoord2D(*he_it);
 
     }
 }
@@ -520,7 +520,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
         return;
 
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)
-        mesh.property(indexProperty, f_it) = newMapping[ mesh.property(indexProperty, f_it) ];
+        mesh.property(indexProperty, *f_it) = newMapping[ mesh.property(indexProperty, *f_it) ];
 
       backupTextureCoordinates(mesh);
 
@@ -541,7 +541,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
         return;
 
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)
-        mesh.property(indexProperty, f_it) = newMapping[ mesh.property(indexProperty, f_it) ];
+        mesh.property(indexProperty, *f_it) = newMapping[ mesh.property(indexProperty, *f_it) ];
 
       backupTextureCoordinates(mesh);
 
