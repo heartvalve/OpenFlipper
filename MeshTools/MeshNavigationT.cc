@@ -98,13 +98,13 @@ findClosestBoundary(MeshT* _mesh , typename MeshT::VertexHandle _vh){
     queue.pop();
     if (_mesh->property(visited, vh)) continue;
 
-    for (typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it; ++voh_it){
+    for (typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it.is_valid(); ++voh_it){
 
-      if ( _mesh->is_boundary(voh_it) ){
+      if ( _mesh->is_boundary(*voh_it) ){
         _mesh->remove_property(visited);
-        return _mesh->to_vertex_handle(voh_it);
+        return _mesh->to_vertex_handle(*voh_it);
       }else{
-        queue.push( _mesh->to_vertex_handle(voh_it) );
+        queue.push( _mesh->to_vertex_handle(*voh_it) );
       }
     }
     _mesh->property(visited, vh) = true;
