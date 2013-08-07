@@ -366,9 +366,9 @@ void FileVTKPlugin::setNormalsOfDuplicatedVerticesOfOpenMesh(MeshT*& _mesh)
     typename MeshT::VertexIter vend = _mesh->vertices_end();
 
     for(; vit != vend; ++vit) {
-      if ( _mesh->property(originalVertexIdx, vit).is_valid() ) {
+      if ( _mesh->property(originalVertexIdx, *vit).is_valid() ) {
           //copied vertex found
-          _mesh->set_normal( vit, _mesh->normal(_mesh->property (originalVertexIdx, vit) ) );
+          _mesh->set_normal( vit, _mesh->normal(_mesh->property (originalVertexIdx, *vit) ) );
       }
     }
 }
@@ -394,13 +394,13 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
 
     int total_face_vertices = 0;
     for (; fit != end_fit; ++fit) {
-        total_face_vertices += _mesh.valence(fit.handle());
+        total_face_vertices += _mesh.valence(*fit);
     }
     // Write vertex data
     _out << "POINTS " << _mesh.n_vertices() << " float\n";
     for (; vit != end_vit; ++vit) {
         // Write vertex p[0] p[1] p[2]
-        p = _mesh.point(vit.handle());
+        p = _mesh.point(*vit);
         _out << p[0] << " " << p[1] << " " << p[2];
         _out << "\n";
     }
@@ -409,14 +409,14 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
     _out << "POLYGONS "<< _mesh.n_faces() << " " << total_face_vertices << "\n";
     for (fit = _mesh.faces_begin(); fit != end_fit; ++fit) {
         // Write face valence
-        _out << _mesh.valence(fit.handle());
+        _out << _mesh.valence(*fit);
 
         // Get face-vertex iterator
-        fvit = _mesh.fv_iter(fit.handle());
+        fvit = _mesh.fv_iter(*fit);
 
         // Write vertex indices
-        for (;fvit; ++fvit) {
-            _out << " " << fvit.handle().idx();
+        for (;fvit.is_valid(); ++fvit) {
+            _out << " " << fvit->idx();
         }
         _out << "\n";
     }
@@ -432,7 +432,7 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
     if (_mesh.has_face_normals() && (userWriteOptions_ & FileVTKPlugin::FACENORMALS)) {
         _out << "NORMALS faceNormals float\n";
         for (fit = _mesh.faces_begin(); fit != end_fit; ++fit) {
-            n = _mesh.normal(fit.handle());
+            n = _mesh.normal(*fit);
             _out << n[0] << " " << n[1] << " " << n[2];
             _out << "\n";
         }
@@ -445,7 +445,7 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
     if (_mesh.has_vertex_normals() && (userWriteOptions_ & FileVTKPlugin::VERTEXNORMALS)) {
         _out << "NORMALS vertexNormals float\n";
         for (vit = _mesh.vertices_begin(); vit != end_vit; ++vit) {
-            n = _mesh.normal(vit.handle());
+            n = _mesh.normal(*vit);
             _out << n[0] << " " << n[1] << " " << n[2];
             _out << "\n";
         }
@@ -455,7 +455,7 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
     if (_mesh.has_vertex_texcoords2D() && (userWriteOptions_ & FileVTKPlugin::VERTEXTEXCOORDS)) {
         _out << "TEXTURE_COORDINATES vertexTexcoords 2 float\n";
         for (vit = _mesh.vertices_begin(); vit != end_vit; ++vit) {
-            t = _mesh.texcoord2D(vit.handle());
+            t = _mesh.texcoord2D(*vit);
             _out << t[0] << " " << t[1];
             _out << "\n";
         }
@@ -1988,7 +1988,7 @@ int FileVTKPlugin::add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::V
         typename MeshT::VertexIter vit = _mesh->vertices_begin();
         typename MeshT::VertexIter vend = _mesh->vertices_end();
         for(; vit != vend; ++vit) {
-            _mesh->property (originalVertexIdx, vit) = OpenMesh::VertexHandle(-1);
+            _mesh->property (originalVertexIdx, *vit) = OpenMesh::VertexHandle(-1);
         }
     }
 
@@ -2019,8 +2019,8 @@ int FileVTKPlugin::add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::V
     // Mark edges of failed face as non-two-manifold
     if (_mesh->has_edge_status()) {
         typename MeshT::FaceEdgeIter fe_it = _mesh->fe_iter(fh);
-        for (; fe_it; ++fe_it) {
-            _mesh->status(fe_it).set_fixed_nonmanifold(true);
+        for (; fe_it.is_valid(); ++fe_it) {
+            _mesh->status(*fe_it).set_fixed_nonmanifold(true);
         }
     }
 
