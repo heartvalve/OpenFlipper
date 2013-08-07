@@ -139,7 +139,7 @@ void MeanCurvaturePlugin::computeMeanCurvature(MeshT* _mesh) {
   std::vector< typename MeshT::VertexHandle > handles;
   handles.reserve(_mesh->n_vertices());
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
-    handles.push_back( v_it.handle() );
+    handles.push_back( *v_it );
 
   #ifdef USE_OPENMP
     #pragma omp parallel for
