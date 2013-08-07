@@ -208,6 +208,11 @@ private:
     /// pick cells
     void pickCells(GLState& _state, unsigned int _offset);
 
+    /// updates face normals
+    void update_face_normals();
+    /// updates vertex normals
+    void update_vertex_normals();
+
     /// Copy constructor (not used)
     VolumeMeshNodeT(const VolumeMeshNodeT& _rhs);
 
@@ -260,6 +265,9 @@ private:
     DrawModes::DrawMode lastVertexDrawMode_;
 
     PickTarget lastPickTarget_;
+
+    bool face_normals_calculated_;
+    bool vertex_normals_calculated_;
 
 };
 
