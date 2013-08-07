@@ -826,11 +826,11 @@ find_nearest_point( const MeshT&                _mesh,
     typename MeshT::ConstFaceIter cf_end = _mesh.faces_end();
 
     for (; cf_it != cf_end; ++cf_it) {
-      typename MeshT::ConstFaceVertexIter cfv_it = _mesh.cfv_iter(cf_it);
+      typename MeshT::ConstFaceVertexIter cfv_it = _mesh.cfv_iter(*cf_it);
 
-      const typename MeshT::Point& pt0 = _mesh.point(cfv_it);
-      const typename MeshT::Point& pt1 = _mesh.point(++cfv_it);
-      const typename MeshT::Point& pt2 = _mesh.point(++cfv_it);
+      const typename MeshT::Point& pt0 = _mesh.point(*cfv_it);
+      const typename MeshT::Point& pt1 = _mesh.point(*(++cfv_it));
+      const typename MeshT::Point& pt2 = _mesh.point(*(++cfv_it));
 
       typename MeshT::Point ptn;
 
@@ -840,7 +840,7 @@ find_nearest_point( const MeshT&                _mesh,
         d_best = d;
         p_best = ptn;
 
-        fh_best = cf_it.handle();
+        fh_best = *cf_it;
       }
     }
 
@@ -856,9 +856,9 @@ find_nearest_point( const MeshT&                _mesh,
     typename MeshT::FaceHandle fh = _ssearch->nearest(p0).handle;
     typename MeshT::CFVIter fv_it = _mesh.cfv_iter(fh);
 
-    const typename MeshT::Point& pt0 = _mesh.point(fv_it);
-    const typename MeshT::Point& pt1 = _mesh.point(++fv_it);
-    const typename MeshT::Point& pt2 = _mesh.point(++fv_it);
+    const typename MeshT::Point& pt0 = _mesh.point(*fv_it);
+    const typename MeshT::Point& pt1 = _mesh.point(*(++fv_it));
+    const typename MeshT::Point& pt2 = _mesh.point(*(++fv_it));
 
     // project
     d_best = Geometry::distPointTriangleSquared(p0, pt0, pt1, pt2, p_best);
