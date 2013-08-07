@@ -914,32 +914,32 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
     unsigned int i = 0;
     for(typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
 
-        p = _mesh->point(v_it);
+        p = _mesh->point(*v_it);
 
         // Write vertex coords
         ofs << p;
 
         // Write vertex normal coords
         if(vNormals) {
-            n = _mesh->normal(v_it);
+            n = _mesh->normal(*v_it);
             ofs << " " << n;
         }
 
         // Write vertex color
         if(vColors) {
-            c = _mesh->color(v_it);
+            c = _mesh->color(*v_it);
             ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3ui>(c);
         }
 
         // Write vertex texcoord
         if(vTexCoords) {
-            t = _mesh->texcoord2D(v_it);
+            t = _mesh->texcoord2D(*v_it);
             ofs << " " << t;
         }
 
         ofs << "\n";
 
-        vMap.insert(std::pair<typename MeshT::VertexHandle,unsigned int>(v_it, i));
+        vMap.insert(std::pair<typename MeshT::VertexHandle,unsigned int>(*v_it, i));
         ++i;
     }
 
@@ -947,22 +947,22 @@ bool FilePLYPlugin::writeMeshFileAscii(QString _filename, MeshT* _mesh) {
     for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
 
         // Write face valence
-        ofs << _mesh->valence(f_it);
+        ofs << _mesh->valence(*f_it);
 
         // Write vertex indices
-        for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it); fv_it; ++fv_it) {
-            ofs << " " << vMap[fv_it.handle()];
+        for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+            ofs << " " << vMap[*fv_it];
         }
 
         // Write face normal
         if(fNormals) {
-            n = _mesh->normal(f_it);
+            n = _mesh->normal(*f_it);
             ofs << " " << n;
         }
 
         // Write face color
         if(fColors) {
-            c = _mesh->color(f_it);
+            c = _mesh->color(*f_it);
             ofs << " " << OpenMesh::color_cast<OpenMesh::Vec3ui>(c);
         }
 
@@ -1017,7 +1017,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
     int i = 0;
     for(typename MeshT::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it) {
 
-        p = _mesh->point(v_it);
+        p = _mesh->point(*v_it);
 
         // Write coordinates
         writeValue(ofs, (float)p[0]);
@@ -1026,7 +1026,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
 
         // Write normals
         if(vNormals) {
-            n = _mesh->normal(v_it);
+            n = _mesh->normal(*v_it);
 
             // Write coordinates
             writeValue(ofs, (float)n[0]);
@@ -1036,7 +1036,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
 
         // Write colors
         if(vColors) {
-            c = _mesh->color(v_it);
+            c = _mesh->color(*v_it);
 
             v3uc = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
 
@@ -1048,14 +1048,14 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
 
         // Write texture coords
         if(vTexCoords) {
-            t = _mesh->texcoord2D(v_it);
+            t = _mesh->texcoord2D(*v_it);
 
             // Write coordinates
             writeValue(ofs, (uint)t[0]);
             writeValue(ofs, (uint)t[1]);
         }
 
-        vMap.insert(std::pair<typename MeshT::VertexHandle,int>(v_it, i));
+        vMap.insert(std::pair<typename MeshT::VertexHandle,int>(*v_it, i));
         ++i;
     }
 
@@ -1063,16 +1063,16 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
     for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
 
         // Write face valence
-        writeValue(ofs, (uchar)_mesh->valence(f_it));
+        writeValue(ofs, (uchar)_mesh->valence(*f_it));
 
         // Write vertex indices
-        for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it); fv_it; ++fv_it) {
-            writeValue(ofs, vMap[fv_it.handle()]);
+        for(typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+            writeValue(ofs, vMap[*fv_it]);
         }
 
         // Write face normal
         if(fNormals) {
-            n = _mesh->normal(f_it);
+            n = _mesh->normal(*f_it);
 
             // Write coordinates
             writeValue(ofs, (float)n[0]);
@@ -1082,7 +1082,7 @@ bool FilePLYPlugin::writeMeshFileBinary(QString _filename, MeshT* _mesh) {
 
         // Write face color
         if(fColors) {
-            c = _mesh->color(f_it);
+            c = _mesh->color(*f_it);
 
             v3uc = OpenMesh::color_cast<OpenMesh::Vec3uc>(c);
 
@@ -1111,7 +1111,7 @@ void FilePLYPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
 
       for (typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it)
-        _mesh.property(oldVertexCoords, v_it) =  _mesh.texcoord2D(v_it);
+        _mesh.property(oldVertexCoords, *v_it) =  _mesh.texcoord2D(*v_it);
 
     }
 
@@ -1123,7 +1123,7 @@ void FilePLYPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
 
       for (typename MeshT::HalfedgeIter he_it = _mesh.halfedges_begin(); he_it != _mesh.halfedges_end(); ++he_it)
-        _mesh.property(oldHalfedgeCoords, he_it) =  _mesh.texcoord2D(he_it);
+        _mesh.property(oldHalfedgeCoords, *he_it) =  _mesh.texcoord2D(*he_it);
 
     }
 }
