@@ -154,7 +154,7 @@ void RemesherPlugin::computeInitValues() {
 
       for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
 
-        TriMesh::HalfedgeHandle he = mesh->halfedge_handle(e_it, 0);
+        TriMesh::HalfedgeHandle he = mesh->halfedge_handle(*e_it, 0);
 
         ACG::Vec3d vec_e = mesh->point(mesh->to_vertex_handle(he)) - mesh->point(mesh->from_vertex_handle(he));
 
@@ -188,7 +188,7 @@ void RemesherPlugin::computeInitValues() {
 
       for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
 
-        PolyMesh::HalfedgeHandle he = mesh->halfedge_handle(e_it, 0);
+        PolyMesh::HalfedgeHandle he = mesh->halfedge_handle(*e_it, 0);
 
         ACG::Vec3d vec_e = mesh->point(mesh->to_vertex_handle(he)) - mesh->point(mesh->from_vertex_handle(he));
 
@@ -357,9 +357,9 @@ void RemesherPlugin::uniformRemeshing(){
     TriMesh* mesh = PluginFunctions::triMesh(o_it->id());
     if(!mesh) continue;
     for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-      if(mesh->status(e_it).feature()) {
-        mesh->status(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 0))).set_feature(true);
-        mesh->status(mesh->from_vertex_handle(mesh->halfedge_handle(e_it, 0))).set_feature(true);
+      if(mesh->status(*e_it).feature()) {
+        mesh->status(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0))).set_feature(true);
+        mesh->status(mesh->from_vertex_handle(mesh->halfedge_handle(*e_it, 0))).set_feature(true);
       }
     }
 

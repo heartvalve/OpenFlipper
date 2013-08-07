@@ -98,15 +98,15 @@ project_to_reference(typename Mesh::VertexHandle _vh) const
   typename Mesh::CFVIter        fv_it = Base::refmesh_->cfv_iter(fh);
 	  
 
-  const typename Mesh::Point&   p0 = Base::refmesh_->point(fv_it);
-  typename Mesh::Normal         n0 = Base::refmesh_->normal(fv_it);
-  typename Mesh::Scalar         c0 = Base::refmesh_->property(refcurv_, fv_it);
-  const typename Mesh::Point&   p1 = Base::refmesh_->point(++fv_it);
-  typename Mesh::Normal         n1 = Base::refmesh_->normal(fv_it);
-  typename Mesh::Scalar         c1 = Base::refmesh_->property(refcurv_, fv_it);
-  const typename Mesh::Point&   p2 = Base::refmesh_->point(++fv_it);
-  typename Mesh::Normal         n2 = Base::refmesh_->normal(fv_it);
-  typename Mesh::Scalar         c2 = Base::refmesh_->property(refcurv_, fv_it);
+  const typename Mesh::Point&   p0 = Base::refmesh_->point(*fv_it);
+  typename Mesh::Normal         n0 = Base::refmesh_->normal(*fv_it);
+  typename Mesh::Scalar         c0 = Base::refmesh_->property(refcurv_, *fv_it);
+  const typename Mesh::Point&   p1 = Base::refmesh_->point(*(++fv_it));
+  typename Mesh::Normal         n1 = Base::refmesh_->normal(*fv_it);
+  typename Mesh::Scalar         c1 = Base::refmesh_->property(refcurv_, *fv_it);
+  const typename Mesh::Point&   p2 = Base::refmesh_->point(*(++fv_it));
+  typename Mesh::Normal         n2 = Base::refmesh_->normal(*fv_it);
+  typename Mesh::Scalar         c2 = Base::refmesh_->property(refcurv_, *fv_it);
 
 
   // project
@@ -152,7 +152,7 @@ compute_curvature(Mesh& _mesh, OpenMesh::VPropHandleT<Scalar> _ph)
   typename Mesh::VIter  v_it, v_end(_mesh.vertices_end());
 
   for (v_it=_mesh.vertices_begin(); v_it!=v_end; ++v_it)
-    _mesh.property(_ph, v_it) = diffgeo.max_curvature(v_it);
+    _mesh.property(_ph, *v_it) = diffgeo.max_curvature(*v_it);
 }
 
 
