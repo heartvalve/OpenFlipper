@@ -146,15 +146,15 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
           // Copy original positions to backup ( in Vertex property )
           TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-            mesh->property( origPositions, v_it ) = mesh->point(v_it);
+            mesh->property( origPositions, *v_it ) = mesh->point(*v_it);
             // See if at least one vertex has been selected
-            selectionExists |= mesh->status(v_it).selected();
+            selectionExists |= mesh->status(*v_it).selected();
           }
 
           // Do one smoothing step (For each point of the mesh ... )
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
 
-            if(selectionExists && mesh->status(v_it).selected() == false) {
+            if(selectionExists && mesh->status(*v_it).selected() == false) {
               continue;
             }
 
@@ -164,14 +164,14 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
             bool skip = false;
 
             // ( .. for each Outoing halfedge .. )
-            TriMesh::VertexOHalfedgeIter voh_it(*mesh,v_it);
-            for ( ; voh_it; ++voh_it ) {
+            TriMesh::VertexOHalfedgeIter voh_it(*mesh,*v_it);
+            for ( ; voh_it.is_valid(); ++voh_it ) {
                 // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
-                point += mesh->property( origPositions, mesh->to_vertex_handle(voh_it) );
+                point += mesh->property( origPositions, mesh->to_vertex_handle(*voh_it) );
 
                 // Check if the current Halfedge is a boundary halfedge
                 // If it is, abort and keep the current vertex position
-                if ( mesh->is_boundary( voh_it.handle() ) ) {
+                if ( mesh->is_boundary( *voh_it ) ) {
                   skip = true;
                   break;
                 }
@@ -179,11 +179,11 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
             }
 
             // Devide by the valence of the current vertex
-            point /= mesh->valence( v_it );
+            point /= mesh->valence( *v_it );
 
             if ( ! skip ) {
                 // Set new position for the mesh if its not on the boundary
-                mesh->point(v_it) = point;
+                mesh->point(*v_it) = point;
             }
           }
 
@@ -215,15 +215,15 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
          // Copy original positions to backup ( in Vertex property )
          PolyMesh::VertexIter v_it, v_end=mesh->vertices_end();
          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-            mesh->property( origPositions, v_it ) = mesh->point(v_it);
+            mesh->property( origPositions, *v_it ) = mesh->point(*v_it);
             // See if at least one vertex has been selected
-            selectionExists |= mesh->status(v_it).selected();
+            selectionExists |= mesh->status(*v_it).selected();
          }
 
          // Do one smoothing step (For each point of the mesh ... )
          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
 
-            if(selectionExists && mesh->status(v_it).selected() == false) {
+            if(selectionExists && mesh->status(*v_it).selected() == false) {
               continue;
             }
 
@@ -233,14 +233,14 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
             bool skip = false;
 
             // ( .. for each Outoing halfedge .. )
-            PolyMesh::VertexOHalfedgeIter voh_it(*mesh,v_it);
-            for ( ; voh_it; ++voh_it ) {
+            PolyMesh::VertexOHalfedgeIter voh_it(*mesh,*v_it);
+            for ( ; voh_it.is_valid(); ++voh_it ) {
                // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
-               point += mesh->property( origPositions, mesh->to_vertex_handle(voh_it) );
+               point += mesh->property( origPositions, mesh->to_vertex_handle(*voh_it) );
 
                // Check if the current Halfedge is a boundary halfedge
                // If it is, abort and keep the current vertex position
-               if ( mesh->is_boundary( voh_it.handle() ) ) {
+               if ( mesh->is_boundary( *voh_it ) ) {
                   skip = true;
                   break;
                }
@@ -248,11 +248,11 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
             }
 
             // Devide by the valence of the current vertex
-            point /= mesh->valence( v_it );
+            point /= mesh->valence( *v_it );
 
             if ( ! skip ) {
                // Set new position for the mesh if its not on the boundary
-               mesh->point(v_it) = point;
+               mesh->point(*v_it) = point;
             }
          }
 
