@@ -754,9 +754,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 1)).idx());
+                        if(mesh->status(*e_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
                         }
                     }
                     selectHandleVertices(o_it->id(), ids);
@@ -764,9 +764,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 1)).idx());
+                        if(mesh->status(*e_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
                         }
                     }
                     selectHandleVertices(o_it->id(), ids);
@@ -776,9 +776,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 1)).idx());
+                        if(mesh->status(*e_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
                         }
                     }
                     selectModelingVertices(o_it->id(), ids);
@@ -786,9 +786,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::EdgeIter e_it = mesh->edges_begin(); e_it != mesh->edges_end(); ++e_it) {
-                        if(mesh->status(e_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 0)).idx());
-                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(e_it, 1)).idx());
+                        if(mesh->status(*e_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 0)).idx());
+                            ids.push_back(mesh->to_vertex_handle(mesh->halfedge_handle(*e_it, 1)).idx());
                         }
                     }
                     selectModelingVertices(o_it->id(), ids);
@@ -819,9 +819,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(h_it).idx());
+                        if(mesh->status(*h_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
                         }
                     }
                     selectHandleVertices(o_it->id(), ids);
@@ -829,9 +829,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(h_it).idx());
+                        if(mesh->status(*h_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
                         }
                     }
                     selectHandleVertices(o_it->id(), ids);
@@ -841,9 +841,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(h_it).idx());
+                        if(mesh->status(*h_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
                         }
                     }
                     selectModelingVertices(o_it->id(), ids);
@@ -851,9 +851,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin(); h_it != mesh->halfedges_end(); ++h_it) {
-                        if(mesh->status(h_it).selected()) {
-                            ids.push_back(mesh->to_vertex_handle(h_it).idx());
-                            ids.push_back(mesh->from_vertex_handle(h_it).idx());
+                        if(mesh->status(*h_it).selected()) {
+                            ids.push_back(mesh->to_vertex_handle(*h_it).idx());
+                            ids.push_back(mesh->from_vertex_handle(*h_it).idx());
                         }
                     }
                     selectModelingVertices(o_it->id(), ids);
@@ -889,9 +889,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(f_it).selected()) {
-                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(f_it); fv_it; ++fv_it) {
-                                ids.push_back(fv_it.handle().idx());
+                        if(mesh->status(*f_it).selected()) {
+                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+                                ids.push_back(fv_it->idx());
                             }
                         }
                     }
@@ -900,9 +900,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(f_it).selected()) {
-                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(f_it); fv_it; ++fv_it) {
-                                ids.push_back(fv_it.handle().idx());
+                        if(mesh->status(*f_it).selected()) {
+                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+                                ids.push_back(fv_it->idx());
                             }
                         }
                     }
@@ -913,9 +913,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     TriMesh* mesh = PluginFunctions::triMesh(o_it);
                     std::vector<int> ids;
                     for(TriMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(f_it).selected()) {
-                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(f_it); fv_it; ++fv_it) {
-                                ids.push_back(fv_it.handle().idx());
+                        if(mesh->status(*f_it).selected()) {
+                            for(TriMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+                                ids.push_back(fv_it->idx());
                             }
                         }
                     }
@@ -924,9 +924,9 @@ void MeshObjectSelectionPlugin::conversion(const QString& _from, const QString& 
                     PolyMesh* mesh = PluginFunctions::polyMesh(o_it);
                     std::vector<int> ids;
                     for(PolyMesh::FaceIter f_it = mesh->faces_begin(); f_it != mesh->faces_end(); ++f_it) {
-                        if(mesh->status(f_it).selected()) {
-                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(f_it); fv_it; ++fv_it) {
-                                ids.push_back(fv_it.handle().idx());
+                        if(mesh->status(*f_it).selected()) {
+                            for(PolyMesh::FaceVertexIter fv_it = mesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+                                ids.push_back(fv_it->idx());
                             }
                         }
                     }
@@ -1182,7 +1182,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QMouseEvent* _event
             if(object->dataType(DATA_TRIANGLE_MESH)) {
 
                 TriMesh* m = PluginFunctions::triMesh(object);
-                TriMesh::VertexHandle vh = m->fv_iter(m->face_handle(target_idx)).handle();
+                TriMesh::VertexHandle vh = *(m->fv_iter(m->face_handle(target_idx)));
 
                 closestBoundarySelection(m, vh.idx(), _currentType, _deselect);
 
@@ -1192,7 +1192,7 @@ void MeshObjectSelectionPlugin::slotClosestBoundarySelection(QMouseEvent* _event
             } else if(object->dataType(DATA_POLY_MESH)) {
 
                 PolyMesh* m = PluginFunctions::polyMesh(object);
-                PolyMesh::VertexHandle vh = m->fv_iter(m->face_handle(target_idx)).handle();
+                PolyMesh::VertexHandle vh = *(m->fv_iter(m->face_handle(target_idx)));
 
                 closestBoundarySelection(m, vh.idx(), _currentType, _deselect);
 
