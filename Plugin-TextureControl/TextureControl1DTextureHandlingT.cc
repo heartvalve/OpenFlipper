@@ -57,8 +57,8 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   // Keep track of absolute values!
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin() ; v_it != _mesh.vertices_end(); ++v_it) {
 
-      max = std::max( _mesh.property(_texProp,v_it) , max);
-      min = std::min( _mesh.property(_texProp,v_it) , min);
+      max = std::max( _mesh.property(_texProp,*v_it) , max);
+      min = std::min( _mesh.property(_texProp,*v_it) , min);
 
   }
 
@@ -70,13 +70,13 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
 
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
     // Get the value of the property
-    double value = _mesh.property(_texProp, v_it);
+    double value = _mesh.property(_texProp, *v_it);
 
     // Mangle it with the predefined user options (including absolute, clamping, ...)
     value = convert.transform(value);
     
     // Write result to the OpenMesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
-    _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value), float(value) ) );
+    _mesh.set_texcoord2D( *v_it, ACG::Vec2f(float(value), float(value) ) );
   }
 }
 
@@ -91,8 +91,8 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   // Keep track of absolute values!
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin() ; h_it != _mesh.halfedges_end(); ++h_it) {
 
-      max = std::max( _mesh.property(_texProp,h_it) , max);
-      min = std::min( _mesh.property(_texProp,h_it) , min);
+      max = std::max( _mesh.property(_texProp,*h_it) , max);
+      min = std::min( _mesh.property(_texProp,*h_it) , min);
 
   }
 
@@ -104,13 +104,13 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
     // Get the value of the property
-    double value = _mesh.property(_texProp, h_it);
+    double value = _mesh.property(_texProp, *h_it);
     
     // Mangle it with the predefined user options (including absolute, clamping, ...)
     value = convert.transform(value);
     
     // Write result to the OpenMesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
-    _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value), float(value) ) );
+    _mesh.set_texcoord2D( *h_it, ACG::Vec2f(float(value), float(value) ) );
   }
 }
 

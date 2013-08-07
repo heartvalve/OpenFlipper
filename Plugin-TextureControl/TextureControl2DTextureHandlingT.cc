@@ -53,10 +53,10 @@ void TextureControlPlugin::copyTexture ( Texture& /*_texture*/, MeshT& _mesh, Op
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
 
     // Get the value of the property
-    OpenMesh::Vec2d value = _mesh.property(_texProp, v_it);
+    OpenMesh::Vec2d value = _mesh.property(_texProp, *v_it);
     
     // Write result to the openmesh texture coordinates
-    _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
+    _mesh.set_texcoord2D( *v_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
   }
 }
 
@@ -69,10 +69,10 @@ void TextureControlPlugin::copyTexture ( Texture& /*_texture*/, MeshT& _mesh, Op
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
     // Get the value of the property
-    OpenMesh::Vec2d value = _mesh.property(_texProp, h_it);
+    OpenMesh::Vec2d value = _mesh.property(_texProp, *h_it);
 
     // Write result to the openmesh texture coordinates
-    _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
+    _mesh.set_texcoord2D( *h_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
   }
 }
 
