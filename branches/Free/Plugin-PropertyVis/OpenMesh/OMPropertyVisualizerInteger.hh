@@ -68,10 +68,10 @@ protected:
     virtual void removeProperty();
     virtual void duplicateProperty();
 
-    virtual T getValue(OpenMesh::FPropHandleT< T > prop, typename MeshT::FaceIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
-    virtual T getValue(OpenMesh::EPropHandleT< T > prop, typename MeshT::EdgeIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
-    virtual T getValue(OpenMesh::HPropHandleT< T > prop, typename MeshT::HalfedgeIter iter) { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
-    virtual T getValue(OpenMesh::VPropHandleT< T > prop, typename MeshT::VertexIter iter)  { return OMPropertyVisualizer<MeshT>::mesh->property(prop, iter) ; }
+    virtual T getValue(OpenMesh::FPropHandleT< T > prop, typename MeshT::FaceIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, *iter) ; }
+    virtual T getValue(OpenMesh::EPropHandleT< T > prop, typename MeshT::EdgeIter iter)     { return OMPropertyVisualizer<MeshT>::mesh->property(prop, *iter) ; }
+    virtual T getValue(OpenMesh::HPropHandleT< T > prop, typename MeshT::HalfedgeIter iter) { return OMPropertyVisualizer<MeshT>::mesh->property(prop, *iter) ; }
+    virtual T getValue(OpenMesh::VPropHandleT< T > prop, typename MeshT::VertexIter iter)  { return OMPropertyVisualizer<MeshT>::mesh->property(prop, *iter) ; }
 
     virtual QString getPropertyText(unsigned int index);
 

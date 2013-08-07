@@ -79,10 +79,10 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeFaceProp(bool _setDrawMode)
         OMPropertyVisualizer<MeshT>::mesh->request_face_colors();
 
     for (typename MeshT::FaceIter f_it = mesh->faces_begin() ; f_it != mesh->faces_end() ; ++f_it)
-        if ( mesh->property(prop, f_it) )
-            mesh->set_color(f_it, colorTrue);
+        if ( mesh->property(prop, *f_it) )
+            mesh->set_color(*f_it, colorTrue);
         else
-            mesh->set_color(f_it, colorFalse);
+            mesh->set_color(*f_it, colorFalse);
 
     if (_setDrawMode)
         PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FACES_COLORED);
@@ -108,10 +108,10 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeEdgeProp(bool _setDrawMode)
         mesh->request_edge_colors();
 
     for (typename MeshT::EdgeIter e_it = mesh->edges_begin() ; e_it != mesh->edges_end() ; ++e_it)
-        if ( mesh->property(prop, e_it) )
-            mesh->set_color(e_it, colorTrue);
+        if ( mesh->property(prop, *e_it) )
+            mesh->set_color(*e_it, colorTrue);
         else
-            mesh->set_color(e_it, colorFalse);
+            mesh->set_color(*e_it, colorFalse);
 
     if (_setDrawMode)
         PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::EDGES_COLORED);
@@ -136,10 +136,10 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeHalfedgeProp(bool _setDrawMode
         mesh->request_halfedge_colors();
 
     for (typename MeshT::HalfedgeIter he_it = mesh->halfedges_begin() ; he_it != mesh->halfedges_end() ; ++he_it)
-        if ( mesh->property(prop, he_it) )
-            mesh->set_color(he_it, colorTrue);
+        if ( mesh->property(prop, *he_it) )
+            mesh->set_color(*he_it, colorTrue);
         else
-            mesh->set_color(he_it, colorFalse);
+            mesh->set_color(*he_it, colorFalse);
 
     if (_setDrawMode)
         PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::HALFEDGES_COLORED);
@@ -165,10 +165,10 @@ void OMPropertyVisualizerBoolean<MeshT>::visualizeVertexProp(bool _setDrawMode)
         mesh->request_vertex_colors();
 
     for (typename MeshT::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end() ; ++v_it)
-        if ( mesh->property(prop, v_it) )
-            mesh->set_color(v_it, colorTrue);
+        if ( mesh->property(prop, *v_it) )
+            mesh->set_color(*v_it, colorTrue);
         else
-            mesh->set_color(v_it, colorFalse);
+            mesh->set_color(*v_it, colorFalse);
 
     if (_setDrawMode)
         PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_POINTS_COLORED);

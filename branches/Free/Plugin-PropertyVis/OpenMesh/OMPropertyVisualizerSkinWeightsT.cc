@@ -97,7 +97,7 @@ void OMPropertyVisualizerSkinWeights<MeshT>::visualizeVertexProp(bool _setDrawMo
 
     for (typename MeshT::VertexIter v_it = OMPropertyVisualizer<MeshT>::mesh->vertices_begin() ; v_it != OMPropertyVisualizer<MeshT>::mesh->vertices_end() ; ++v_it){
 
-        BaseSkin::SkinWeights weight = OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it);
+        BaseSkin::SkinWeights weight = OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it);
 
         double value = 0.0;
         if ( weight.find( skinWeightsWidget->boneId->value() ) != weight.end() ) {
@@ -108,7 +108,7 @@ void OMPropertyVisualizerSkinWeights<MeshT>::visualizeVertexProp(bool _setDrawMo
         typename MeshT::Color color(value,1.0-value,0.0,1.0);
 
         // set color
-        OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, color);
+        OMPropertyVisualizer<MeshT>::mesh->set_color(*v_it, color);
     }
 
     if (_setDrawMode)

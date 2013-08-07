@@ -117,7 +117,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeFaceProp(bool _setDrawMode)
     for (typename MeshT::FaceIter f_it = OMPropertyVisualizer<MeshT>::mesh->faces_begin() ; f_it != OMPropertyVisualizer<MeshT>::mesh->faces_end() ; ++f_it){
 
         if (range == 0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(f_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*f_it, colorMin);
         else {
 
             double pos = (getValue(prop, f_it) - min) / (double) range;
@@ -148,7 +148,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeFaceProp(bool _setDrawMode)
                 color = randomColor[ getValue(prop, f_it) ];
             }
 
-            OMPropertyVisualizer<MeshT>::mesh->set_color(f_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*f_it, color);
         }
     }
 
@@ -207,7 +207,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeEdgeProp(bool _setDrawMode)
     for (typename MeshT::EdgeIter e_it = OMPropertyVisualizer<MeshT>::mesh->edges_begin() ; e_it != OMPropertyVisualizer<MeshT>::mesh->edges_end() ; ++e_it){
 
         if (range == 0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(e_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*e_it, colorMin);
         else {
 
             double pos = (getValue(prop, e_it) - min) / (double) range;
@@ -238,7 +238,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeEdgeProp(bool _setDrawMode)
                 color = randomColor[ getValue(prop, e_it) ];
             }
 
-            OMPropertyVisualizer<MeshT>::mesh->set_color(e_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*e_it, color);
         }
     }
 
@@ -298,7 +298,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeHalfedgeProp(bool _setDrawM
     for (typename MeshT::HalfedgeIter he_it = OMPropertyVisualizer<MeshT>::mesh->halfedges_begin() ; he_it != OMPropertyVisualizer<MeshT>::mesh->halfedges_end() ; ++he_it){
 
         if (range == 0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(he_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*he_it, colorMin);
         else {
 
             double pos = (getValue(prop, he_it) - min) / (double) range;
@@ -329,7 +329,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeHalfedgeProp(bool _setDrawM
                 color = randomColor[ getValue(prop, he_it) ];
             }
 
-            OMPropertyVisualizer<MeshT>::mesh->set_color(he_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*he_it, color);
         }
     }
 
@@ -388,7 +388,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeVertexProp(bool _setDrawMod
     for (typename MeshT::VertexIter v_it = OMPropertyVisualizer<MeshT>::mesh->vertices_begin() ; v_it != OMPropertyVisualizer<MeshT>::mesh->vertices_end() ; ++v_it){
 
         if (range == 0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*v_it, colorMin);
         else {
 
             double pos = (getValue(prop, v_it) - min) / (double) range;
@@ -421,7 +421,7 @@ void OMPropertyVisualizerInteger<MeshT, T>::visualizeVertexProp(bool _setDrawMod
                 color = randomColor[ getValue(prop, v_it) ];
             }
 
-            OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*v_it, color);
         }
     }
 
