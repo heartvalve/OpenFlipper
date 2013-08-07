@@ -143,7 +143,7 @@ int FileOMPlugin::loadObject(QString _filename) {
             
             // Count number of vertices for the current face
             uint count = 0;
-            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),f_it); fv_it; ++fv_it )
+            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),*f_it); fv_it.is_valid(); ++fv_it )
                 ++count;
             
             // Check if it is a triangle. If not, this is really a poly mesh
@@ -175,7 +175,7 @@ int FileOMPlugin::loadObject(QString _filename) {
             
             // Count number of vertices for the current face
             uint count = 0;
-            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),f_it); fv_it; ++fv_it )
+            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),*f_it); fv_it.is_valid(); ++fv_it )
                 ++count;
             
             // Check if it is a triangle. If not, this is really a poly mesh
@@ -425,7 +425,7 @@ void FileOMPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldVertexCoords, "Original Per Vertex Texture Coords");
 
       for (typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it)
-        _mesh.property(oldVertexCoords, v_it) =  _mesh.texcoord2D(v_it);
+        _mesh.property(oldVertexCoords, *v_it) =  _mesh.texcoord2D(*v_it);
 
     }
 
@@ -437,7 +437,7 @@ void FileOMPlugin::backupTextureCoordinates(MeshT& _mesh) {
         _mesh.add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
 
       for (typename MeshT::HalfedgeIter he_it = _mesh.halfedges_begin(); he_it != _mesh.halfedges_end(); ++he_it)
-        _mesh.property(oldHalfedgeCoords, he_it) =  _mesh.texcoord2D(he_it);
+        _mesh.property(oldHalfedgeCoords, *he_it) =  _mesh.texcoord2D(*he_it);
 
     }
 }
