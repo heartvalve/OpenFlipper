@@ -80,8 +80,8 @@ struct AreaNodeMod
   /// tell status node if the face is marked as modeling area
   static inline bool is_area(const MeshT& _m, typename MeshT::FaceHandle _fh)
   {
-    for (typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it)
-      if (_m.status(cfv_it.handle()).is_bit_set(AREA))
+    for (typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it.is_valid(); ++cfv_it)
+      if (_m.status(*cfv_it).is_bit_set(AREA))
         return true;
 
     return false;
@@ -131,8 +131,8 @@ template< class MeshT >
   static inline bool is_handle(const MeshT& _m, typename MeshT::FaceHandle _fh)
   {
       bool isArea = true;
-      for(typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it) {
-          if(!_m.status(cfv_it.handle()).is_bit_set(HANDLEAREA)) {
+      for(typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it.is_valid(); ++cfv_it) {
+          if(!_m.status(*cfv_it).is_bit_set(HANDLEAREA)) {
               isArea = false;
               break;
           }
@@ -147,8 +147,8 @@ template< class MeshT >
     if (!is_handle(_mesh, _vh))
       return false;
 
-    for (typename MeshT::CVFIter vf_it(_mesh.cvf_iter(_vh)); vf_it; ++vf_it)
-      if (is_handle(_mesh, vf_it))
+    for (typename MeshT::CVFIter vf_it(_mesh.cvf_iter(_vh)); vf_it.is_valid(); ++vf_it)
+      if (is_handle(_mesh, *vf_it))
         return false;
 
     return true;
