@@ -59,7 +59,7 @@ void SkinT<MeshT>::attachSkin()
 
   // backup the default pose
   for(typename MeshT::VertexIter it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it)
-    mesh_->property(propDefaultPose, it) = DefaultPose(mesh_->point(it), mesh_->normal(it));
+    mesh_->property(propDefaultPose, *it) = DefaultPose(mesh_->point(*it), mesh_->normal(*it));
 }
 
 //-----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
   typename MeshT::VertexIter it;
 #ifdef USE_OPENMP
   std::vector< OpenMesh::VertexHandle > vhandles; vhandles.clear(); vhandles.reserve(mesh_->n_vertices());
-  for(it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it){vhandles.push_back(it.handle());}
+  for(it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it){vhandles.push_back(*it);}
   int vhcount = (int) vhandles.size();
   #pragma omp parallel for
   for (int vhindex = 0; vhindex < vhcount; vhindex++)
@@ -223,8 +223,8 @@ void SkinT<MeshT>::releaseSkin()
     typename MeshT::VertexIter it;
     for(it = mesh_->vertices_begin(); it != mesh_->vertices_end(); ++it)
     {
-      mesh_->set_point(it, mesh_->property(propDefaultPose, it).point);
-      mesh_->set_normal(it, mesh_->property(propDefaultPose, it).normal);
+      mesh_->set_point(*it, mesh_->property(propDefaultPose, *it).point);
+      mesh_->set_normal(*it, mesh_->property(propDefaultPose, *it).normal);
     }
     mesh_->remove_property(propDefaultPose);
   }
