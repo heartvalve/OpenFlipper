@@ -83,11 +83,11 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp(bool _setDrawMode)
 
     for (typename MeshT::FaceIter f_it = OMPropertyVisualizer<MeshT>::mesh->faces_begin() ; f_it != OMPropertyVisualizer<MeshT>::mesh->faces_end() ; ++f_it){
         if ( doubleWidget->doubleAbsolute->isChecked() ){
-            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it)));
-            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it)));
+            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it)));
+            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it)));
         } else {
-            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it));
-            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it));
+            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it));
+            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it));
         }
     }
 
@@ -111,10 +111,10 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp(bool _setDrawMode)
     for (typename MeshT::FaceIter f_it = OMPropertyVisualizer<MeshT>::mesh->faces_begin() ; f_it != OMPropertyVisualizer<MeshT>::mesh->faces_end() ; ++f_it){
 
         if (range == 0.0)
-          OMPropertyVisualizer<MeshT>::mesh->set_color(f_it, colorMin);
+          OMPropertyVisualizer<MeshT>::mesh->set_color(*f_it, colorMin);
         else
         {
-            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it);
+            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it);
 
             // absolut value?
             if ( doubleWidget->doubleAbsolute->isChecked())
@@ -134,7 +134,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeFaceProp(bool _setDrawMode)
                 color = (colorMin)*(1.0-t) + (colorMax)*t;
 
               // set color
-            OMPropertyVisualizer<MeshT>::mesh->set_color(f_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*f_it, color);
         }
     }
 
@@ -174,11 +174,11 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp(bool _setDrawMode)
 
     for (typename MeshT::EdgeIter e_it = OMPropertyVisualizer<MeshT>::mesh->edges_begin() ; e_it != OMPropertyVisualizer<MeshT>::mesh->edges_end() ; ++e_it){
         if ( doubleWidget->doubleAbsolute->isChecked() ){
-            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it)));
-            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it)));
+            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it)));
+            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it)));
         } else {
-            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it));
-            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it));
+            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it));
+            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it));
         }
     }
 
@@ -203,10 +203,10 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp(bool _setDrawMode)
     for (typename MeshT::EdgeIter e_it = OMPropertyVisualizer<MeshT>::mesh->edges_begin() ; e_it != OMPropertyVisualizer<MeshT>::mesh->edges_end() ; ++e_it){
 
         if (range == 0.0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(e_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*e_it, colorMin);
         else {
 
-            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it);
+            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it);
 
             // absolut value?
             if ( doubleWidget->doubleAbsolute->isChecked())
@@ -226,7 +226,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeEdgeProp(bool _setDrawMode)
                 color = (colorMin)*(1.0-t) + (colorMax)*t;
 
             // set color
-            OMPropertyVisualizer<MeshT>::mesh->set_color(e_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*e_it, color);
         }
     }
 
@@ -267,11 +267,11 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
 
     for (typename MeshT::HalfedgeIter he_it = OMPropertyVisualizer<MeshT>::mesh->halfedges_begin() ; he_it != OMPropertyVisualizer<MeshT>::mesh->halfedges_end() ; ++he_it){
         if ( doubleWidget->doubleAbsolute->isChecked() ){
-            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it)));
-            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it)));
+            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it)));
+            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it)));
         } else {
-            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it));
-            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it));
+            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it));
+            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it));
         }
     }
 
@@ -295,10 +295,10 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
     for (typename MeshT::HalfedgeIter he_it = OMPropertyVisualizer<MeshT>::mesh->halfedges_begin() ; he_it != OMPropertyVisualizer<MeshT>::mesh->halfedges_end() ; ++he_it){
 
         if (range == 0.0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(he_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*he_it, colorMin);
         else {
 
-            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it);
+            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it);
 
             // absolut value?
             if ( doubleWidget->doubleAbsolute->isChecked())
@@ -319,7 +319,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeHalfedgeProp(bool _setDrawMode)
             }
 
             // set color
-            OMPropertyVisualizer<MeshT>::mesh->set_color(he_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*he_it, color);
         }
     }
     if (_setDrawMode)
@@ -356,11 +356,11 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp(bool _setDrawMode)
 
     for (typename MeshT::VertexIter v_it = OMPropertyVisualizer<MeshT>::mesh->vertices_begin() ; v_it != OMPropertyVisualizer<MeshT>::mesh->vertices_end() ; ++v_it){
         if ( doubleWidget->doubleAbsolute->isChecked() ){
-            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it)));
-            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it)));
+            min = std::min( min, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it)));
+            max = std::max( max, fabs(OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it)));
         } else {
-            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it));
-            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it));
+            min = std::min( min, OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it));
+            max = std::max( max, OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it));
         }
     }
 
@@ -384,10 +384,10 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp(bool _setDrawMode)
     for (typename MeshT::VertexIter v_it = OMPropertyVisualizer<MeshT>::mesh->vertices_begin() ; v_it != OMPropertyVisualizer<MeshT>::mesh->vertices_end() ; ++v_it){
 
         if (range == 0.0)
-            OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, colorMin);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*v_it, colorMin);
         else {
 
-            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it);
+            double v = OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it);
 
             // absolut value?
             if ( doubleWidget->doubleAbsolute->isChecked())
@@ -408,7 +408,7 @@ void OMPropertyVisualizerDouble<MeshT>::visualizeVertexProp(bool _setDrawMode)
             }
 
             // set color
-            OMPropertyVisualizer<MeshT>::mesh->set_color(v_it, color);
+            OMPropertyVisualizer<MeshT>::mesh->set_color(*v_it, color);
         }
     }
 

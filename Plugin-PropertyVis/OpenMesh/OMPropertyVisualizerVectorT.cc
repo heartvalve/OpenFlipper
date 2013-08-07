@@ -85,7 +85,7 @@ void visualizeVectorAsColorForEntity(MeshT *mesh, const ENTITY_IT e_begin, const
     if (!mesh->get_property_handle(prop, propinfo.propName()))
         throw VizException("Getting PropHandle from mesh for selected property failed.");
     for (ENTITY_IT e_it = e_begin; e_it != e_end; ++e_it) {
-        typename MeshT::Point v = mesh->property(prop, e_it).normalized() * .5 + typename MeshT::Point(.5, .5, .5);
+        typename MeshT::Point v = mesh->property(prop, *e_it).normalized() * .5 + typename MeshT::Point(.5, .5, .5);
         mesh->set_color(*e_it, typename MeshT::Color(v[0], v[1], v[2], 1.0));
     }
 }
@@ -209,7 +209,7 @@ void OMPropertyVisualizerVector<MeshT>::visualizeFacePropOnEdges() {
         } else {
             color = degen;
         }
-        _mesh->set_color(e_it, color);
+        _mesh->set_color(*e_it, color);
     }
     PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED | ACG::SceneGraph::DrawModes::EDGES_COLORED);
 }
@@ -233,14 +233,14 @@ template <typename MeshT>
       typename MeshT::Point center(0.0, 0.0, 0.0);
       int vCount = 0;
 
-      for (typename MeshT::FaceVertexIter fv_it(*(OMPropertyVisualizer<MeshT>::mesh),f_it); fv_it; ++fv_it){
+      for (typename MeshT::FaceVertexIter fv_it(*(OMPropertyVisualizer<MeshT>::mesh),*f_it); fv_it.is_valid(); ++fv_it){
         vCount++;
-        center += OMPropertyVisualizer<MeshT>::mesh->point(fv_it.handle());
+        center += OMPropertyVisualizer<MeshT>::mesh->point(*fv_it);
       }
 
       center /= vCount;
 
-      typename MeshT::Point v  = (OMPropertyVisualizer<MeshT>::mesh->property(prop, f_it));
+      typename MeshT::Point v  = (OMPropertyVisualizer<MeshT>::mesh->property(prop, *f_it));
 
       if (vectorWidget->normalize->isChecked() && v.sqrnorm() > 1e-12)
         v.normalize();
@@ -270,13 +270,13 @@ void OMPropertyVisualizerVector<MeshT>::visualizeEdgePropAsStrokes()
 
     for (typename MeshT::EdgeIter e_it = OMPropertyVisualizer<MeshT>::mesh->edges_begin() ; e_it != OMPropertyVisualizer<MeshT>::mesh->edges_end() ; ++e_it){
 
-      typename MeshT::HalfedgeHandle hh = OMPropertyVisualizer<MeshT>::mesh->halfedge_handle( e_it, 0 );
+      typename MeshT::HalfedgeHandle hh = OMPropertyVisualizer<MeshT>::mesh->halfedge_handle( *e_it, 0 );
 
       typename MeshT::VertexHandle vh0 = OMPropertyVisualizer<MeshT>::mesh->from_vertex_handle( hh );
       typename MeshT::VertexHandle vh1 = OMPropertyVisualizer<MeshT>::mesh->to_vertex_handle( hh );
 
       typename MeshT::Point v1 = OMPropertyVisualizer<MeshT>::mesh->point(vh0) + 0.5 * (OMPropertyVisualizer<MeshT>::mesh->point(vh1) - OMPropertyVisualizer<MeshT>::mesh->point(vh0));
-      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, e_it);
+      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, *e_it);
 
       if (vectorWidget->normalize->isChecked() && v.sqrnorm() > 1e-12)
         v.normalize();
@@ -310,7 +310,7 @@ void OMPropertyVisualizerVector<MeshT>::visualizeHalfedgePropAsStrokes()
       typename MeshT::VertexHandle vh1 = OMPropertyVisualizer<MeshT>::mesh->to_vertex_handle( *he_it );
 
       typename MeshT::Point v1 = OMPropertyVisualizer<MeshT>::mesh->point(vh0) + 0.5 * (OMPropertyVisualizer<MeshT>::mesh->point(vh1) - OMPropertyVisualizer<MeshT>::mesh->point(vh0));
-      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, he_it);
+      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, *he_it);
 
       if (vectorWidget->normalize->isChecked() && v.sqrnorm() > 1e-12)
         v.normalize();
@@ -340,8 +340,8 @@ void OMPropertyVisualizerVector<MeshT>::visualizeVertexPropAsStrokes()
 
     for (typename MeshT::VertexIter v_it = OMPropertyVisualizer<MeshT>::mesh->vertices_begin() ; v_it != OMPropertyVisualizer<MeshT>::mesh->vertices_end() ; ++v_it){
 
-      typename MeshT::Point v1 = OMPropertyVisualizer<MeshT>::mesh->point( v_it );
-      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, v_it);
+      typename MeshT::Point v1 = OMPropertyVisualizer<MeshT>::mesh->point( *v_it );
+      typename MeshT::Point v  = OMPropertyVisualizer<MeshT>::mesh->property(prop, *v_it);
 
       if (vectorWidget->normalize->isChecked() && v.sqrnorm() > 1e-12)
         v.normalize();

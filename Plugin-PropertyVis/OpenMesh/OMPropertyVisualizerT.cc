@@ -239,10 +239,10 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fac
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
 
-    for (fh_it = mesh->fh_iter(mesh->face_handle(_face)); fh_it; ++fh_it){
+    for (fh_it = mesh->fh_iter(mesh->face_handle(_face)); fh_it.is_valid(); ++fh_it){
 
         typename MeshT::HalfedgeHandle heh;
-        heh = fh_it.handle();
+        heh = *fh_it;
 
         typename MeshT::VertexHandle v1;
         v1 = mesh->to_vertex_handle(heh);
@@ -257,7 +257,7 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fac
 
         if (temp_dist < dist) {
             dist = temp_dist;
-            closest_h_idx = fh_it.handle().idx();
+            closest_h_idx = fh_it->idx();
         }
 
     }
@@ -276,9 +276,9 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestVertexId(unsigned int _face,
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
 
-    for (fv_it = mesh->fv_iter(mesh->face_handle(_face)); fv_it; ++fv_it){
+    for (fv_it = mesh->fv_iter(mesh->face_handle(_face)); fv_it.is_valid(); ++fv_it){
 
-      p = mesh->point( fv_it.handle() );
+      p = mesh->point( *fv_it );
 
       // Find closest vertex to selection
       vTemp = ACG::Vec3d(p[0], p[1], p[2]);
@@ -286,7 +286,7 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestVertexId(unsigned int _face,
 
       if (temp_dist < dist) {
           dist = temp_dist;
-          closest_v_idx = fv_it.handle().idx();
+          closest_v_idx = fv_it->idx();
       }
 
     }
