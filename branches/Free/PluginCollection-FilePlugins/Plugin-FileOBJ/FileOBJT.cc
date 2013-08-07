@@ -88,7 +88,7 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh, int _objId )
 
   // Prepare materials ( getMaterial handles a list that is set up by this call)
   for (f_it = _mesh.faces_begin(); f_it != f_end; ++f_it){
-    getMaterial(_mesh, f_it.handle(), _objId);
+    getMaterial(_mesh, *f_it, _objId);
   }
 
   //write the materials
@@ -322,10 +322,10 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   if(_mesh.has_halfedge_texcoords2D()) {
       int count = 1;
       for (f_it = _mesh.faces_begin(); f_it != _mesh.faces_end(); ++f_it) {
-          for(fh_it=_mesh.fh_iter(f_it.handle()); fh_it; ++fh_it) {
-              typename MeshT::TexCoord2D t = _mesh.texcoord2D(fh_it.handle());
+          for(fh_it=_mesh.fh_iter(*f_it); fh_it.is_valid(); ++fh_it) {
+              typename MeshT::TexCoord2D t = _mesh.texcoord2D(*fh_it);
               _out << "vt " << t[0] << " " << t[1] << std::endl;
-              vtMap.insert(std::pair<typename MeshT::HalfedgeHandle, int>(fh_it.handle(), count));
+              vtMap.insert(std::pair<typename MeshT::HalfedgeHandle, int>(*fh_it, count));
               count++;
           }
       }
@@ -342,7 +342,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
     if (useMaterial && optionFaceColors) {
 
-        Material& material = getMaterial(_mesh, f_it.handle(), _objId);
+        Material& material = getMaterial(_mesh, *f_it, _objId);
 
         // If we are ina a new material block, specify in the file which material to use
         if(lastMat != material) {
@@ -354,10 +354,10 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     _out << "f";
 
     // Write out face information
-    for(fh_it=_mesh.fh_iter(f_it.handle()); fh_it; ++fh_it) {
+    for(fh_it=_mesh.fh_iter(*f_it); fh_it.is_valid(); ++fh_it) {
 
         // Write vertex index
-        idx = _mesh.to_vertex_handle(fh_it.handle()).idx() + 1;
+        idx = _mesh.to_vertex_handle(*fh_it).idx() + 1;
         _out << " " << idx;
 
         if (!vertexOnly) {
@@ -368,12 +368,12 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
           // Write vertex texture coordinate index
           if ( optionVertexTexCoords && _mesh.has_halfedge_texcoords2D()) {
             // Refer to halfedge texture coordinates
-            typename std::map<typename MeshT::HalfedgeHandle, int>::iterator it = vtMap.find(fh_it.handle());
+            typename std::map<typename MeshT::HalfedgeHandle, int>::iterator it = vtMap.find(*fh_it);
             if(it != vtMap.end())
               _out  << (*it).second;
           } else if (optionVertexTexCoords && !_mesh.has_halfedge_texcoords2D() && _mesh.has_vertex_texcoords2D()) {
             // Refer to vertex texture coordinates
-            typename std::map<typename MeshT::VertexHandle, int>::iterator it = vtMapV.find(_mesh.to_vertex_handle(fh_it.handle()));
+            typename std::map<typename MeshT::VertexHandle, int>::iterator it = vtMapV.find(_mesh.to_vertex_handle(*fh_it));
             if(it != vtMapV.end())
               _out  << (*it).second;
           }

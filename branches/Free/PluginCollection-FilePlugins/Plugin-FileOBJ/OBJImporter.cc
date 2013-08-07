@@ -956,8 +956,8 @@ void OBJImporter::finish() {
 			// Mark edges of failed face as non-two-manifold
 			if (currentTriMesh()->has_edge_status()) {
 				TriMesh::FaceEdgeIter fe_it = currentTriMesh()->fe_iter(fh);
-				for(; fe_it; ++fe_it) {
-					currentTriMesh()->status(fe_it).set_fixed_nonmanifold(true);
+				for(; fe_it.is_valid(); ++fe_it) {
+					currentTriMesh()->status(*fe_it).set_fixed_nonmanifold(true);
 				}
 			}
 		}
@@ -996,8 +996,8 @@ void OBJImporter::finish() {
 			// Mark edges of failed face as non-two-manifold
 			if (currentPolyMesh()->has_edge_status()) {
 				PolyMesh::FaceEdgeIter fe_it = currentPolyMesh()->fe_iter(fh);
-				for(; fe_it; ++fe_it) {
-					currentPolyMesh()->status(fe_it).set_fixed_nonmanifold(true);
+				for(; fe_it.is_valid(); ++fe_it) {
+					currentPolyMesh()->status(*fe_it).set_fixed_nonmanifold(true);
 				}
 			}
 		}
