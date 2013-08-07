@@ -368,7 +368,7 @@ void FileVTKPlugin::setNormalsOfDuplicatedVerticesOfOpenMesh(MeshT*& _mesh)
     for(; vit != vend; ++vit) {
       if ( _mesh->property(originalVertexIdx, *vit).is_valid() ) {
           //copied vertex found
-          _mesh->set_normal( vit, _mesh->normal(_mesh->property (originalVertexIdx, *vit) ) );
+          _mesh->set_normal( *vit, _mesh->normal(_mesh->property (originalVertexIdx, *vit) ) );
       }
     }
 }
