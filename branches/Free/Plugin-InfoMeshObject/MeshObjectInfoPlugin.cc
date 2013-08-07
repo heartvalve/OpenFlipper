@@ -202,13 +202,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(fh);
     QString adjacentVertices;
 
-    if ( fv_it ){
-      adjacentVertices = QString::number( fv_it.handle().idx() );
+    if ( fv_it.is_valid() ){
+      adjacentVertices = QString::number( fv_it->idx() );
       ++fv_it;
     }
 
-    while( fv_it ){
-      adjacentVertices += "; " + QString::number( fv_it.handle().idx() );
+    while( fv_it.is_valid() ){
+      adjacentVertices += "; " + QString::number( fv_it->idx() );
       ++fv_it;
     }
 
@@ -326,13 +326,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     typename MeshT::VertexEdgeIter ve_it = _mesh->ve_iter(vh);
     QString adjacentEdges;
 
-    if ( ve_it ){
-      adjacentEdges = QString::number( ve_it.handle().idx() );
+    if ( ve_it.is_valid() ){
+      adjacentEdges = QString::number( ve_it->idx() );
       ++ve_it;
     }
 
-    while( ve_it ){
-      adjacentEdges += "; " + QString::number( ve_it.handle().idx() );
+    while( ve_it.is_valid() ){
+      adjacentEdges += "; " + QString::number( ve_it->idx() );
       ++ve_it;
     }
 
@@ -387,7 +387,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
   //iterate over all vertices
   for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it){
-    typename MeshT::Point p = _mesh->point( v_it.handle() );
+    typename MeshT::Point p = _mesh->point( *v_it );
     if (p[0] < minX) minX = p[0];
     if (p[0] > maxX) maxX = p[0];
     //sumX += p[0];
@@ -404,10 +404,10 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     int valence = 0;
     typename MeshT::VertexVertexIter vv_it;
 
-    for (vv_it=_mesh->vv_iter( v_it ); vv_it; ++vv_it){
+    for (vv_it=_mesh->vv_iter( *v_it ); vv_it.is_valid(); ++vv_it){
       valence++;
 
-      typename MeshT::Point p2 = _mesh->point( vv_it.handle() );
+      typename MeshT::Point p2 = _mesh->point( *vv_it );
       typename MeshT::Scalar len = (p2 - p).norm();
 
       if (len < minE) minE = len;
@@ -449,13 +449,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
   //iterate over all faces
   for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it){
-    typename MeshT::ConstFaceVertexIter cfv_it = _mesh->cfv_iter(f_it);
+    typename MeshT::ConstFaceVertexIter cfv_it = _mesh->cfv_iter(*f_it);
 
-    typename MeshT::Point v0 = _mesh->point( cfv_it.handle() );
+    typename MeshT::Point v0 = _mesh->point( *cfv_it );
     ++cfv_it;
-    typename MeshT::Point v1 = _mesh->point( cfv_it.handle() );
+    typename MeshT::Point v1 = _mesh->point( *cfv_it );
     ++cfv_it;
-    typename MeshT::Point v2 = _mesh->point( cfv_it.handle() );
+    typename MeshT::Point v2 = _mesh->point( *cfv_it );
 
     float aspect = ACG::Geometry::aspectRatio(v0, v1, v2);
 
@@ -485,11 +485,11 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
     //compute dihedral angles
     typename MeshT::FaceFaceIter ff_it;
-    typename MeshT::Normal n1 = _mesh->normal(f_it);
+    typename MeshT::Normal n1 = _mesh->normal(*f_it);
 
-    for (ff_it = _mesh->ff_iter(f_it); ff_it; ++ff_it){
+    for (ff_it = _mesh->ff_iter(*f_it); ff_it.is_valid(); ++ff_it){
       
-      typename MeshT::Normal n2 = _mesh->normal(ff_it);
+      typename MeshT::Normal n2 = _mesh->normal(*ff_it);
 
       angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(n1) | MathTools::sane_normalized(n2) )));
 
@@ -580,9 +580,9 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
 
-    for (fv_it = _mesh->fv_iter(_mesh->face_handle(_face_idx)); fv_it; ++fv_it){
+    for (fv_it = _mesh->fv_iter(_mesh->face_handle(_face_idx)); fv_it.is_valid(); ++fv_it){
 
-      p = _mesh->point( fv_it.handle() );
+      p = _mesh->point( *fv_it );
 
       // Find closest vertex to selection
       vTemp = ACG::Vec3d(p[0], p[1], p[2]);
@@ -590,7 +590,7 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
 
       if (temp_dist < dist) {
           dist = temp_dist;
-          closest_v_idx = fv_it.handle().idx();
+          closest_v_idx = fv_it->idx();
       }
 
     }
@@ -619,10 +619,10 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
     double x, temp_dist, dist = DBL_MAX;
     int closest_e_handle = 0;
 
-    for (fh_it = _mesh->fh_iter(_mesh->face_handle(_face_idx)); fh_it; ++fh_it){
+    for (fh_it = _mesh->fh_iter(_mesh->face_handle(_face_idx)); fh_it.is_valid(); ++fh_it){
 
-      v1 = _mesh->from_vertex_handle(fh_it);
-      v2 = _mesh->to_vertex_handle(fh_it);
+      v1 = _mesh->from_vertex_handle(*fh_it);
+      v2 = _mesh->to_vertex_handle(*fh_it);
 
       p1 = _mesh->point(v1);
       p2 = _mesh->point(v2);
@@ -639,7 +639,6 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
 
       if (temp_dist < dist) {
           dist = temp_dist;
-          closest_e_handle = _mesh->edge_handle(fh_it.handle()).idx();
       }
     }
 
@@ -762,8 +761,8 @@ void InfoMeshObjectPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max
   mean = 0.0;
   for (; e_it!=e_end; ++e_it)
   {
-    typename MeshT::Scalar len = (_mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 0))) -
-                                  _mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 1)))).norm ();
+    typename MeshT::Scalar len = (_mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(*e_it, 0))) -
+                                  _mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(*e_it, 1)))).norm ();
     if (len < min) min = len;
     if (len > max) max = len;
     mean += len;
