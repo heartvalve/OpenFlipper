@@ -62,8 +62,8 @@ bool MeshObjectSelectionPlugin::deleteSelection(MeshT* _mesh, PrimitiveType _pri
         typename MeshT::VertexIter v_it, v_end=_mesh->vertices_end();
 
         for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-            if(_mesh->status(v_it).selected()) {
-                _mesh->delete_vertex(v_it);
+            if(_mesh->status(*v_it).selected()) {
+                _mesh->delete_vertex(*v_it);
                 changed = true;
             }
         }
@@ -73,8 +73,8 @@ bool MeshObjectSelectionPlugin::deleteSelection(MeshT* _mesh, PrimitiveType _pri
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
 
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it) {
-            if(_mesh->status(e_it).selected()) {
-                _mesh->delete_edge(e_it);
+            if(_mesh->status(*e_it).selected()) {
+                _mesh->delete_edge(*e_it);
                 changed = true;
             }
         }
@@ -84,8 +84,8 @@ bool MeshObjectSelectionPlugin::deleteSelection(MeshT* _mesh, PrimitiveType _pri
         typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
 
         for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
-            if(_mesh->status(f_it).selected()) {
-                _mesh->delete_face(f_it);
+            if(_mesh->status(*f_it).selected()) {
+                _mesh->delete_face(*f_it);
                 changed = true;
             }
         }
@@ -112,10 +112,10 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
     bool                                        a, h;
 
     for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
-        fv_it = _mesh->fv_iter(f_it);
-        v0  = fv_it;
-        v1  = ++fv_it;
-        v2  = ++fv_it;
+        fv_it = _mesh->fv_iter(*f_it);
+        v0  = *(  fv_it);
+        v1  = *(++fv_it);
+        v2  = *(++fv_it);
 
         a =(_mesh->status(v0).is_bit_set(AREA)|| _mesh->status(v1).is_bit_set(AREA)|| _mesh->status(v2).is_bit_set(AREA));
         h =(_mesh->status(v0).is_bit_set(HANDLEAREA)&&
@@ -128,8 +128,8 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
                     _mesh->status(v2).is_bit_set(HANDLEAREA))
                 h = true;
 
-        _mesh->status(f_it).change_bit(AREA,   a);
-        _mesh->status(f_it).change_bit(HANDLEAREA, h);
+        _mesh->status(*f_it).change_bit(AREA    ,   a);
+        _mesh->status(*f_it).change_bit(HANDLEAREA, h);
     }
 }
 
@@ -155,18 +155,18 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
     if(_primitiveType & vertexType_) {
 
         typename MeshT::FaceVertexIter fv_it(*_mesh, fh);
-        typename MeshT::VertexHandle closest = fv_it.handle();
+        typename MeshT::VertexHandle closest = *fv_it;
         typename MeshT::Scalar shortest_distance =(_mesh->point(closest)- _hit_point).sqrnorm();
 
         do {
-            if((_mesh->point(fv_it.handle())- _hit_point).sqrnorm()<shortest_distance) {
-                shortest_distance =(_mesh->point(fv_it.handle())- _hit_point).sqrnorm();
-                closest = fv_it.handle();
+            if((_mesh->point(*fv_it)- _hit_point).sqrnorm()<shortest_distance) {
+                shortest_distance =(_mesh->point(*fv_it)- _hit_point).sqrnorm();
+                closest = *fv_it;
             }
 
             ++fv_it;
 
-        } while(fv_it);
+        } while( fv_it.is_valid() );
 
         _mesh->status(closest).set_selected(!_mesh->status(closest).selected());
 
@@ -186,13 +186,13 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
 
         typename MeshT::Point pp =(typename MeshT::Point)_hit_point;
 
-        for(; fhe_it; ++fhe_it) {
+        for(; fhe_it.is_valid(); ++fhe_it) {
 
-            // typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(fe_it.handle(), 0);
-            // typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle(fe_it.handle(), 1);
+            // typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(*fe_it, 0);
+            // typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle(*fe_it, 1);
 
-            typename MeshT::Point lp0 = _mesh->point(_mesh->to_vertex_handle (fhe_it.handle()));
-            typename MeshT::Point lp1 = _mesh->point(_mesh->from_vertex_handle(fhe_it.handle()));
+            typename MeshT::Point lp0 = _mesh->point(_mesh->to_vertex_handle (*fhe_it));
+            typename MeshT::Point lp1 = _mesh->point(_mesh->from_vertex_handle(*fhe_it));
 
             double dist_new = ACG::Geometry::distPointLineSquared(pp, lp0, lp1);
 
@@ -200,7 +200,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
 
                 // save closest Edge
                 closest_dist = dist_new;
-                closest = fhe_it.handle();
+                closest = *fhe_it;
             }
         }
 
@@ -266,7 +266,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         //reset tagged status
         typename MeshT::VertexIter v_it, v_end(_mesh->vertices_end());
         for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            _mesh->status(v_it).set_tagged(false);
+            _mesh->status(*v_it).set_tagged(false);
 
     }
 
@@ -274,14 +274,14 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         //reset tagged status
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
-            _mesh->status(e_it).set_tagged(false);
+            _mesh->status(*e_it).set_tagged(false);
 
     }
 
     // reset tagged status
     typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
     for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-        _mesh->status(f_it).set_tagged(false);
+        _mesh->status(*f_it).set_tagged(false);
 
     _mesh->status(hitface).set_tagged(true);
 
@@ -291,7 +291,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         _mesh->add_property(checkedProp, "checkedProp");
 
     for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-        _mesh->property(checkedProp, f_it)= false;
+        _mesh->property(checkedProp, *f_it)= false;
 
 
     std::vector<typename MeshT::FaceHandle>   face_handles;
@@ -305,10 +305,10 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         typename MeshT::FaceHandle fh = face_handles.back();
         face_handles.pop_back();
 
-        for(typename MeshT::FaceFaceIter ff_it(*_mesh,fh); ff_it ; ++ff_it) {
+        for(typename MeshT::FaceFaceIter ff_it(*_mesh,fh); ff_it.is_valid() ; ++ff_it) {
 
             // Check if already tagged
-            if(_mesh->status(ff_it).tagged()|| _mesh->property(checkedProp, ff_it))
+            if(_mesh->status(*ff_it).tagged()|| _mesh->property(checkedProp, *ff_it))
                 continue;
 
             // Check which points of the new face lie inside the sphere
@@ -317,15 +317,15 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
             std::vector<typename MeshT::VertexHandle>   vertex_handles;
             std::vector<typename MeshT::EdgeHandle>     edge_handles;
 
-            for(typename MeshT::FaceHalfedgeIter fh_it(*_mesh,ff_it); fh_it; ++fh_it) {
+            for(typename MeshT::FaceHalfedgeIter fh_it(*_mesh,*ff_it); fh_it.is_valid(); ++fh_it) {
 
-                typename MeshT::VertexHandle vh = _mesh->from_vertex_handle(fh_it.handle());
+                typename MeshT::VertexHandle vh = _mesh->from_vertex_handle(*fh_it);
 
                 if((_mesh->point(vh)- _hitpoint).sqrnorm()<= sqr_radius) {
                     vertex_handles.push_back(vh);
 
-                    if((_mesh->point(_mesh->to_vertex_handle(fh_it.handle()))-  _hitpoint).sqrnorm()<= sqr_radius)
-                        edge_handles.push_back(_mesh->edge_handle(fh_it.handle()));
+                    if((_mesh->point(_mesh->to_vertex_handle(*fh_it))-  _hitpoint).sqrnorm()<= sqr_radius)
+                        edge_handles.push_back(_mesh->edge_handle(*fh_it));
 
                 }
 
@@ -352,15 +352,15 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
             if(_primitiveType & faceType_) {
                 if(vertex_handles.size()== fVertices) {
 
-                    _mesh->status(ff_it).set_tagged(true);
+                    _mesh->status(*ff_it).set_tagged(true);
                     tagged = true;
                 }
             }
 
             //if something was tagged also check the 1-ring
             if(tagged) {
-                _mesh->property(checkedProp, ff_it)= true;
-                face_handles.push_back(ff_it.handle());
+                _mesh->property(checkedProp, *ff_it)= true;
+                face_handles.push_back(*ff_it);
             }
         }
     }
@@ -371,29 +371,29 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
     if(_primitiveType & vertexType_) {
         typename MeshT::VertexIter v_it, v_end(_mesh->vertices_end());
         for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            if(_mesh->status(v_it).tagged())
-                _mesh->status(v_it).set_selected(sel);
+            if(_mesh->status(*v_it).tagged())
+                _mesh->status(*v_it).set_selected(sel);
     }
     if(_primitiveType & edgeType_) {
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
 
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
-            if(_mesh->status(e_it).tagged())
-                _mesh->status(e_it).set_selected(sel);
+            if(_mesh->status(*e_it).tagged())
+                _mesh->status(*e_it).set_selected(sel);
     }
     if(_primitiveType & halfedgeType_) {
         typename MeshT::HalfedgeIter he_it, he_end(_mesh->halfedges_end());
 
         for(he_it=_mesh->halfedges_begin(); he_it!=he_end; ++he_it)
-            if(_mesh->status(_mesh->edge_handle(he_it.handle())).tagged())
-                _mesh->status(he_it).set_selected(sel);
+            if(_mesh->status(_mesh->edge_handle(*he_it)).tagged())
+                _mesh->status(*he_it).set_selected(sel);
     }
     if(_primitiveType & faceType_) {
         typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
 
         for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-            if(_mesh->status(f_it).tagged())
-                _mesh->status(f_it).set_selected(sel);
+            if(_mesh->status(*f_it).tagged())
+                _mesh->status(*f_it).set_selected(sel);
     }
 
     _mesh->remove_property(checkedProp);
@@ -419,19 +419,19 @@ bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _sta
     //reset tagged status
     typename MeshT::VertexIter v_it, v_end(_mesh->vertices_end());
     for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-        _mesh->status(v_it).set_tagged(false);
+        _mesh->status(*v_it).set_tagged(false);
 
     //tag all vertices that are projected into region
     for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
 
-        proj = _state.project(_mesh->point(v_it));
+        proj = _state.project(_mesh->point(*v_it));
 
         if(_region->contains(QPoint((int)proj[0], _state.context_height()- (int)proj[1]))) {
             
-            _mesh->status(v_it).set_tagged(true);
+            _mesh->status(*v_it).set_tagged(true);
             rv = true;
             if(_primitiveType & vertexType_) {
-                _mesh->status(v_it).set_selected(!_deselection);
+                _mesh->status(*v_it).set_selected(!_deselection);
             }
         }
     }
@@ -440,16 +440,16 @@ bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _sta
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it) {
             
-            if(_mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 0))).tagged()||
-                    _mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 1))).tagged()) {
+            if(_mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(*e_it, 0))).tagged()||
+                    _mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(*e_it, 1))).tagged()) {
                 
                 if(_primitiveType & edgeType_)
-                    _mesh->status(e_it).set_selected(!_deselection);
+                    _mesh->status(*e_it).set_selected(!_deselection);
 
                 if(_primitiveType & halfedgeType_) {
                     
-                    _mesh->status(_mesh->halfedge_handle(e_it,0)).set_selected(!_deselection);
-                    _mesh->status(_mesh->halfedge_handle(e_it,1)).set_selected(!_deselection);
+                    _mesh->status(_mesh->halfedge_handle(*e_it,0)).set_selected(!_deselection);
+                    _mesh->status(_mesh->halfedge_handle(*e_it,1)).set_selected(!_deselection);
                 }
             }
         }
@@ -460,12 +460,12 @@ bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _sta
         for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
             
             bool select = false;
-            for(typename MeshT::FaceVertexIter fv_it(*_mesh,f_it); fv_it; ++fv_it)
-                if(_mesh->status(fv_it).tagged())
+            for(typename MeshT::FaceVertexIter fv_it(*_mesh,*f_it); fv_it.is_valid(); ++fv_it)
+                if(_mesh->status(*fv_it).tagged())
                     select = true;
 
             if(select)
-                _mesh->status(f_it).set_selected(!_deselection);
+                _mesh->status(*f_it).set_selected(!_deselection);
         }
     }
 
@@ -498,7 +498,7 @@ void MeshObjectSelectionPlugin::closestBoundarySelection(MeshT* _mesh, int _vh, 
 
             typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
             for(v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
-                _mesh->property(visited, v_it)= false;
+                _mesh->property(visited, *v_it)= false;
 
             std::stack<typename MeshT::VertexHandle> stack;
             stack.push(vhBound);
@@ -512,25 +512,25 @@ void MeshObjectSelectionPlugin::closestBoundarySelection(MeshT* _mesh, int _vh, 
                     continue;
 
                 //find outgoing boundary-edges
-                for(typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it; ++voh_it) {
+                for(typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it.is_valid(); ++voh_it) {
                     
-                    if(_mesh->is_boundary(_mesh->edge_handle(voh_it.handle()))) {
+                    if(_mesh->is_boundary(_mesh->edge_handle(*voh_it))) {
                         
-                        stack.push(_mesh->to_vertex_handle(voh_it));
+                        stack.push(_mesh->to_vertex_handle(*voh_it));
 
                         if(_primitiveTypes & edgeType_)
-                            _mesh->status(_mesh->edge_handle(voh_it.handle())).set_selected(!_deselection);
+                            _mesh->status(_mesh->edge_handle(*voh_it)).set_selected(!_deselection);
 
                         if(_primitiveTypes & halfedgeType_) {
-                            typename MeshT::HalfedgeHandle heh = voh_it.handle();
+                            typename MeshT::HalfedgeHandle heh = *voh_it;
                             if(!_mesh->is_boundary(heh))heh = _mesh->opposite_halfedge_handle(heh);
                             _mesh->status(heh).set_selected(!_deselection);
                         }
                     }
 
                     if(_primitiveTypes & faceType_) {
-                        typename MeshT::FaceHandle f1 = _mesh->face_handle(voh_it.handle());
-                        typename MeshT::FaceHandle f2 = _mesh->face_handle(_mesh->opposite_halfedge_handle(voh_it.handle()));
+                        typename MeshT::FaceHandle f1 = _mesh->face_handle(*voh_it);
+                        typename MeshT::FaceHandle f2 = _mesh->face_handle(_mesh->opposite_halfedge_handle(*voh_it));
                         if(f1.is_valid())_mesh->status(f1).set_selected(!_deselection);
                         if(f2.is_valid())_mesh->status(f2).set_selected(!_deselection);
                     }
@@ -569,7 +569,7 @@ void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, doubl
     // reset tagged status
     typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
     for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-        _mesh->status(f_it).set_tagged(false);
+        _mesh->status(*f_it).set_tagged(false);
 
     std::vector<typename MeshT::FaceHandle> face_handles;
 
@@ -587,41 +587,41 @@ void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, doubl
         typename MeshT::FaceHandle fh = face_handles.back();
         face_handles.pop_back();
 
-        for (typename MeshT::FaceFaceIter ff_it(*_mesh,fh) ; ff_it ; ++ff_it) {
+        for (typename MeshT::FaceFaceIter ff_it(*_mesh,fh) ; ff_it.is_valid() ; ++ff_it) {
 
             // Check if already tagged
-            if (_mesh->status(ff_it).tagged())
+            if (_mesh->status(*ff_it).tagged())
                 continue;
 
-            typename MeshT::Point n2 = _mesh->normal(ff_it);
+            typename MeshT::Point n2 = _mesh->normal(*ff_it);
 
             double angle = acos(n1 | n2);
 
             if (angle <= maxAngle) {
-                _mesh->status(ff_it).set_tagged(true);
-                face_handles.push_back(ff_it.handle());
+                _mesh->status(*ff_it).set_tagged(true);
+                face_handles.push_back(*ff_it);
             }
         }
     }
 
     // now select all tagged primitives
     for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
-        if (_mesh->status(f_it).tagged()) {
+        if (_mesh->status(*f_it).tagged()) {
 
             if(_primitiveTypes & vertexType_)
-                for (typename MeshT::FaceVertexIter fv_it(*_mesh,f_it) ; fv_it; ++fv_it)
-                    _mesh->status(fv_it).set_selected(!_deselection);
+                for (typename MeshT::FaceVertexIter fv_it(*_mesh,*f_it) ; fv_it.is_valid(); ++fv_it)
+                    _mesh->status(*fv_it).set_selected(!_deselection);
 
             if(_primitiveTypes & edgeType_)
-                for (typename MeshT::FaceEdgeIter fe_it(*_mesh,f_it) ; fe_it; ++fe_it)
-                    _mesh->status(fe_it).set_selected(!_deselection);
+                for (typename MeshT::FaceEdgeIter fe_it(*_mesh,*f_it) ; fe_it.is_valid(); ++fe_it)
+                    _mesh->status(*fe_it).set_selected(!_deselection);
 
             if(_primitiveTypes & halfedgeType_)
-                for (typename MeshT::FaceHalfedgeIter fhe_it(*_mesh,f_it) ; fhe_it; ++fhe_it)
-                    _mesh->status(fhe_it).set_selected(!_deselection);
+                for (typename MeshT::FaceHalfedgeIter fhe_it(*_mesh,*f_it) ; fhe_it.is_valid(); ++fhe_it)
+                    _mesh->status(*fhe_it).set_selected(!_deselection);
 
             if(_primitiveTypes & faceType_)
-                _mesh->status(f_it).set_selected(!_deselection);
+                _mesh->status(*f_it).set_selected(!_deselection);
         }
     }
 }
@@ -654,10 +654,10 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
         // Initialize vertex tag
         for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
-            _mesh->property(visited, v_it) = false;
+            _mesh->property(visited, *v_it) = false;
 
         // Get some vertex incident to the clicked face
-        typename MeshT::VertexHandle current = _mesh->fv_iter(fh).handle();
+        typename MeshT::VertexHandle current = *(_mesh->fv_iter(fh));
         if(!current.is_valid())
             return;
 
@@ -673,9 +673,9 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
             unprocessed.erase(current);
 
             // Go over all neighbors
-            for(typename MeshT::VertexVertexIter vv_it = _mesh->vv_iter(current); vv_it; ++vv_it) {
-                if(_mesh->property(visited, vv_it) == true) continue;
-                unprocessed.insert(vv_it);
+            for(typename MeshT::VertexVertexIter vv_it = _mesh->vv_iter(current); vv_it.is_valid(); ++vv_it) {
+                if(_mesh->property(visited, *vv_it) == true) continue;
+                unprocessed.insert(*vv_it);
             }
 
         }
@@ -694,7 +694,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
         // Initialize face tag
         for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it)
-            _mesh->property(visited, f_it) = false;
+            _mesh->property(visited, *f_it) = false;
 
 
         typename MeshT::FaceHandle current = fh;
@@ -702,7 +702,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
         std::set<typename MeshT::FaceHandle> unprocessed;
         unprocessed.insert(current);
 
-        typename MeshT::EdgeHandle firstEdge = _mesh->fe_iter(fh).handle();
+        typename MeshT::EdgeHandle firstEdge = *(_mesh->fe_iter(fh));
         if(!firstEdge.is_valid()) return;
         bool selected = _mesh->status(firstEdge).selected();
 
@@ -710,12 +710,12 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
             // Select all edges incident to current face
             current = *unprocessed.begin();
-            for(typename MeshT::FaceHalfedgeIter fh_it = _mesh->fh_iter(current); fh_it; ++fh_it) {
+            for(typename MeshT::FaceHalfedgeIter fh_it = _mesh->fh_iter(current); fh_it.is_valid(); ++fh_it) {
                 if(_primitiveType & halfedgeType_) {
-                    _mesh->status(fh_it.handle()).set_selected(!(_mesh->status(fh_it.handle())).selected());
+                    _mesh->status(*fh_it).set_selected(!(_mesh->status(*fh_it)).selected());
                 }
                 if(_primitiveType & edgeType_) {
-                    _mesh->status(_mesh->edge_handle(fh_it.handle())).set_selected(!selected);
+                    _mesh->status(_mesh->edge_handle(*fh_it)).set_selected(!selected);
                 }
             }
 
@@ -723,9 +723,9 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
             unprocessed.erase(current);
 
             // Go over all neighbors
-            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it; ++ff_it) {
-                if(_mesh->property(visited, ff_it) == true) continue;
-                unprocessed.insert(ff_it);
+            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it.is_valid(); ++ff_it) {
+                if(_mesh->property(visited, *ff_it) == true) continue;
+                unprocessed.insert(*ff_it);
             }
 
         }
@@ -744,7 +744,7 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
         // Initialize face tag
         for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it)
-            _mesh->property(visited, f_it) = false;
+            _mesh->property(visited, *f_it) = false;
 
 
         typename MeshT::FaceHandle current = fh;
@@ -761,9 +761,9 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
             unprocessed.erase(current);
 
             // Go over all neighbors
-            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it; ++ff_it) {
-                if(_mesh->property(visited, ff_it) == true) continue;
-                unprocessed.insert(ff_it);
+            for(typename MeshT::FaceFaceIter ff_it = _mesh->ff_iter(current); ff_it.is_valid(); ++ff_it) {
+                if(_mesh->property(visited, *ff_it) == true) continue;
+                unprocessed.insert(*ff_it);
             }
 
         }
@@ -806,8 +806,8 @@ void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
             _mesh->request_vertex_colors();
 
         for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            if ( _mesh->status(v_it).selected() )
-                _mesh->set_color(v_it, color);
+            if ( _mesh->status(*v_it).selected() )
+                _mesh->set_color(*v_it, color);
     }
 
     if (_primitiveTypes & faceType_) {
@@ -818,8 +818,8 @@ void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
             _mesh->request_face_colors();
 
         for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-            if ( _mesh->status(f_it).selected() )
-                _mesh->set_color(f_it, color);
+            if ( _mesh->status(*f_it).selected() )
+                _mesh->set_color(*f_it, color);
     }
 
     if (_primitiveTypes & edgeType_) {
@@ -830,8 +830,8 @@ void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
             _mesh->request_edge_colors();
 
         for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
-            if ( _mesh->status(e_it).selected() )
-                _mesh->set_color(e_it, color);
+            if ( _mesh->status(*e_it).selected() )
+                _mesh->set_color(*e_it, color);
     }
     
     if (_primitiveTypes & halfedgeType_) {
@@ -842,8 +842,8 @@ void MeshObjectSelectionPlugin::colorizeSelection(MeshT* _mesh,
             _mesh->request_halfedge_colors();
 
         for (h_it=_mesh->halfedges_begin(); h_it!=h_end; ++h_it)
-            if ( _mesh->status(h_it).selected() )
-                _mesh->set_color(h_it, color);
+            if ( _mesh->status(*h_it).selected() )
+                _mesh->set_color(*h_it, color);
     }
 }
 
@@ -873,18 +873,18 @@ void MeshObjectSelectionPlugin::createMeshFromSelection(MeshT& _mesh, MeshT& _ne
 
     //if the vertex belongs to the selection copy it
     if (_primitiveType & vertexType_)
-      copy = _mesh.status(v_it.handle()).selected();
+      copy = _mesh.status(*v_it).selected();
     else if (_primitiveType & edgeType_) {
 
-      for (typename MeshT::VertexOHalfedgeIter voh_it(_mesh, v_it); voh_it; ++voh_it)
-        if (_mesh.status(_mesh.edge_handle(voh_it.handle())).selected()) {
+      for (typename MeshT::VertexOHalfedgeIter voh_it(_mesh, *v_it); voh_it.is_valid(); ++voh_it)
+        if (_mesh.status(_mesh.edge_handle(*voh_it)).selected()) {
           copy = true;
           break;
         }
 
     } else if (_primitiveType & faceType_) {
-      for (typename MeshT::VertexFaceIter vf_it(_mesh, v_it); vf_it; ++vf_it)
-        if (_mesh.status(vf_it.handle()).selected()) {
+      for (typename MeshT::VertexFaceIter vf_it(_mesh, *v_it); vf_it.is_valid(); ++vf_it)
+        if (_mesh.status(*vf_it).selected()) {
           copy = true;
           break;
         }
@@ -892,9 +892,9 @@ void MeshObjectSelectionPlugin::createMeshFromSelection(MeshT& _mesh, MeshT& _ne
 
     //copy it
     if (copy) {
-      _mesh.property(copyHandle, v_it) = _newMesh.add_vertex(_mesh.point(v_it));
+      _mesh.property(copyHandle, *v_it) = _newMesh.add_vertex(_mesh.point(*v_it));
     } else {
-      _mesh.property(copyHandle, v_it) = typename MeshT::VertexHandle(-1);
+      _mesh.property(copyHandle, *v_it) = typename MeshT::VertexHandle(-1);
     }
   }
 
@@ -907,9 +907,9 @@ void MeshObjectSelectionPlugin::createMeshFromSelection(MeshT& _mesh, MeshT& _ne
 
     bool skip = false;
 
-    for (typename MeshT::FaceVertexIter fv_it(_mesh, f_it); fv_it; ++fv_it)
-      if (_mesh.property(copyHandle, fv_it).is_valid())
-        v.push_back(_mesh.property(copyHandle, fv_it));
+    for (typename MeshT::FaceVertexIter fv_it(_mesh, *f_it); fv_it.is_valid(); ++fv_it)
+      if (_mesh.property(copyHandle, *fv_it).is_valid())
+        v.push_back(_mesh.property(copyHandle, *fv_it));
       else {
         skip = true;
         break;
@@ -932,7 +932,7 @@ void MeshObjectSelectionPlugin::selectVerticesByValue(MeshT* _mesh, QString _com
   //first copy vertices
   typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
   for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it) {
-    const typename MeshT::Point p = _mesh->point(v_it);
+    const typename MeshT::Point p = _mesh->point(*v_it);
 
     bool select = false;
 
@@ -952,8 +952,8 @@ void MeshObjectSelectionPlugin::selectVerticesByValue(MeshT* _mesh, QString _com
       select = !select;
 
     // set selection status only if the vertex was previously unselected
-    if ( ! _mesh->status(v_it).selected() )
-      _mesh->status(v_it).set_selected(select);
+    if ( ! _mesh->status(*v_it).selected() )
+      _mesh->status(*v_it).set_selected(select);
 
   }
 

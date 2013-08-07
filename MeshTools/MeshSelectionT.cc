@@ -300,7 +300,7 @@ void convertVertexToEdgeSelection(MeshT* _mesh) {
   for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it) {
 
     if ( _mesh->status( *v_it ).selected() ) {
-      typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(v_it);
+      typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(*v_it);
 
       for (; ohe_iter.is_valid(); ++ohe_iter) {
         // test if both incident vertices are in _vertices
@@ -963,9 +963,9 @@ void selectBoundaryFaces(MeshT* _mesh) {
 
   for (he_it = _mesh->halfedges_begin(); he_it != he_end ; ++he_it)
     if (_mesh->is_boundary(*he_it) ) {
-        for (typename MeshT::VertexFaceIter vf_it(*_mesh ,_mesh->to_vertex_handle(he_it) ) ; vf_it.is_valid() ; ++vf_it)
+        for (typename MeshT::VertexFaceIter vf_it(*_mesh ,_mesh->to_vertex_handle(*he_it) ) ; vf_it.is_valid() ; ++vf_it)
           _mesh->status(*vf_it).set_selected(true);
-        for (typename MeshT::VertexFaceIter vf_it(*_mesh ,_mesh->from_vertex_handle(he_it) ) ; vf_it.is_valid() ; ++vf_it)
+        for (typename MeshT::VertexFaceIter vf_it(*_mesh ,_mesh->from_vertex_handle(*he_it) ) ; vf_it.is_valid() ; ++vf_it)
           _mesh->status(*vf_it).set_selected(true);
     }
 }
@@ -1138,9 +1138,9 @@ void convertFaceToHalfedgeSelection(MeshT* _mesh) {
 
   for ( typename MeshT::FaceIter f_it= _mesh->faces_begin() ; f_it != _mesh->faces_end() ; ++f_it )
     
-    if ( _mesh->status(f_it).selected() ){
+    if ( _mesh->status(*f_it).selected() ){
 
-      typename MeshT::FaceHalfedgeIter fh_iter = _mesh->fh_iter(f_it);
+      typename MeshT::FaceHalfedgeIter fh_iter = _mesh->fh_iter(*f_it);
 
       for (; fh_iter.is_valid(); ++fh_iter)
         _mesh->status(*fh_iter).set_selected(true);

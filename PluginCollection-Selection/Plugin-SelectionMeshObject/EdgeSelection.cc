@@ -339,9 +339,9 @@ IdList MeshObjectSelectionPlugin::convertVertexPairsToEdges(int _id, const IdLis
             TriMesh::VertexHandle vh = TriMesh::VertexHandle(*it);
             if(!vh.is_valid()) continue;
             for(TriMesh::VertexOHalfedgeIter voh_it = mesh->voh_iter(vh);
-                    voh_it; ++voh_it) {
-                if(mesh->to_vertex_handle(voh_it.handle()).idx() == *(it+1)) {
-                    edges.push_back(mesh->edge_handle(voh_it.handle()).idx());
+                    voh_it.is_valid(); ++voh_it) {
+                if(mesh->to_vertex_handle(*voh_it).idx() == *(it+1)) {
+                    edges.push_back(mesh->edge_handle(*voh_it).idx());
                     continue;
                 }
             }
@@ -361,9 +361,9 @@ IdList MeshObjectSelectionPlugin::convertVertexPairsToEdges(int _id, const IdLis
             PolyMesh::VertexHandle vh = PolyMesh::VertexHandle(*it);
             if(!vh.is_valid()) continue;
             for(PolyMesh::VertexOHalfedgeIter voh_it = mesh->voh_iter(vh);
-                    voh_it; ++voh_it) {
-                if(mesh->to_vertex_handle(voh_it.handle()).idx() == *(it+1)) {
-                    edges.push_back(mesh->edge_handle(voh_it.handle()).idx());
+                    voh_it.is_valid(); ++voh_it) {
+                if(mesh->to_vertex_handle(*voh_it).idx() == *(it+1)) {
+                    edges.push_back(mesh->edge_handle(*voh_it).idx());
                     continue;
                 }
             }

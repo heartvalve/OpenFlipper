@@ -88,7 +88,7 @@ findClosestBoundary(MeshT* _mesh , typename MeshT::VertexHandle _vh){
   //init visited property
   typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
   for( v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it )
-    _mesh->property( visited, v_it ) = false;
+    _mesh->property( visited, *v_it ) = false;
 
   std::queue< typename MeshT::VertexHandle > queue;
   queue.push( _vh );
