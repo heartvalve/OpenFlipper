@@ -1444,11 +1444,11 @@ void DrawMeshT<Mesh>::updatePerEdgeBuffers()
   typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
 
-    perEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
-    perEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+    perEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0)));
+    perEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1)));
 
     if (  mesh_.has_edge_colors() ) {
-      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(e_it) ) ;
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(*e_it) ) ;
       perEdgeColorBuf_[ idx ]     = color;
       perEdgeColorBuf_[ idx + 1 ] = color;
     }
@@ -1481,11 +1481,11 @@ void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
   typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
   for (; he_it!=he_end; ++he_it) {
 
-    perHalfedgeVertexBuf_[idx]   = halfedge_point(he_it);
-    perHalfedgeVertexBuf_[idx+1] = halfedge_point(mesh_.prev_halfedge_handle(he_it));
+    perHalfedgeVertexBuf_[idx]   = halfedge_point(*he_it);
+    perHalfedgeVertexBuf_[idx+1] = halfedge_point(mesh_.prev_halfedge_handle(*he_it));
 
     if (  mesh_.has_halfedge_colors() ) {
-      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(he_it) ) ;
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(*he_it) ) ;
       perHalfedgeColorBuf_[ idx ]     = color;
       perHalfedgeColorBuf_[ idx + 1 ] = color;
     }
@@ -1562,7 +1562,7 @@ void DrawMeshT<Mesh>::updatePickingEdges(ACG::GLState& _state,
   typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
 
-    const Vec4uc pickColor =  _state.pick_get_name_color (e_it.handle().idx() + _offset);
+    const Vec4uc pickColor =  _state.pick_get_name_color (e_it->idx() + _offset);
 
     pickEdgeBuf_[idx]    = pickColor;
     pickEdgeBuf_[idx+1]  = pickColor;
@@ -1642,7 +1642,7 @@ void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
   typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it) {
 
-    const Vec4uc pickColor =  _state.pick_get_name_color (e_it.handle().idx() + mesh_.n_faces());
+    const Vec4uc pickColor =  _state.pick_get_name_color (e_it->idx() + mesh_.n_faces());
 
     pickAnyEdgeColBuf_[idx]    = pickColor;
     pickAnyEdgeColBuf_[idx+1]  = pickColor;
