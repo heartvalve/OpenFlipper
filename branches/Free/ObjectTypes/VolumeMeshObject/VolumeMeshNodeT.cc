@@ -108,7 +108,9 @@ VolumeMeshNodeT<VolumeMeshT>::VolumeMeshNodeT(const VolumeMesh& _mesh,
   lastFaceDrawMode_  (DrawModes::NONE),
   lastEdgeDrawMode_  (DrawModes::NONE),
   lastVertexDrawMode_(DrawModes::NONE),
-  lastPickTarget_(PICK_ANYTHING)
+  lastPickTarget_(PICK_ANYTHING),
+  face_normals_calculated_(false),
+  vertex_normals_calculated_(false)
 {
     vertexSelectionBufferManager_.setSelectionOnly(true);
     edgeSelectionBufferManager_.setSelectionOnly(true);
@@ -147,11 +149,9 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
     if (mesh_.n_cells() > 0)
     {
         result |= drawModes_.cellsTransparent;
-
-        if (normalAttrib_.face_normals_available())
-            result |= drawModes_.cellsFlatShaded;
-        if (normalAttrib_.vertex_normals_available())
-            result |= (drawModes_.cellsSmoothShaded | drawModes_.cellsPhongShaded);
+        result |= drawModes_.cellsFlatShaded;
+        result |= drawModes_.cellsSmoothShaded;
+        result |= drawModes_.cellsPhongShaded;
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.cellsColoredPerVertex;
         if (colorAttrib_.halfface_colors_available())
@@ -164,26 +164,24 @@ DrawModes::DrawMode VolumeMeshNodeT<VolumeMeshT>::availableDrawModes() const {
 
     if (mesh_.n_faces() > 0)
     {
-        if (normalAttrib_.face_normals_available())
-            result |= drawModes_.facesFlatShaded;
-        if (normalAttrib_.vertex_normals_available())
-            result |= (drawModes_.facesSmoothShaded | drawModes_.facesPhongShaded);
+        result |= drawModes_.facesFlatShaded;
+        result |= drawModes_.facesSmoothShaded;
+        result |= drawModes_.facesPhongShaded;
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.facesColoredPerVertex;
         if (colorAttrib_.face_colors_available())
             result |= drawModes_.facesColoredPerFace;
         if (texcoordAttrib_.vertex_texcoords_available())
             result |= drawModes_.facesTextured;
-        if (texcoordAttrib_.vertex_texcoords_available() && normalAttrib_.vertex_normals_available())
+        if (texcoordAttrib_.vertex_texcoords_available())
             result |= drawModes_.facesTexturedShaded;
     }
 
     if (mesh_.n_halffaces() > 0)
     {
-        if (normalAttrib_.face_normals_available())
-            result |= drawModes_.halffacesFlatShaded;
-        if (normalAttrib_.vertex_normals_available())
-            result |= (drawModes_.halffacesSmoothShaded | drawModes_.halffacesPhongShaded);
+        result |= drawModes_.halffacesFlatShaded;
+        result |= drawModes_.halffacesSmoothShaded;
+        result |= drawModes_.halffacesPhongShaded;
         if (colorAttrib_.vertex_colors_available())
             result |= drawModes_.halffacesColoredPerVertex;
         if (colorAttrib_.halfface_colors_available())
@@ -613,6 +611,19 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     DrawModes::DrawMode edgeDrawMode   = drawModes_.getFirstEdgeDrawMode(_drawMode);
     DrawModes::DrawMode vertexDrawMode = drawModes_.getFirstVertexDrawMode(_drawMode);
 
+    if (!face_normals_calculated_)
+    {
+        if ( (cellDrawMode & drawModes_.cellsFlatShaded) ||
+             (faceDrawMode & (drawModes_.facesFlatShaded | drawModes_.halffacesFlatShaded  | drawModes_.facesTexturedShaded)) )
+            update_face_normals();
+    }
+    if (!vertex_normals_calculated_)
+    {
+        if ( (cellDrawMode & (drawModes_.cellsSmoothShaded | drawModes_.cellsPhongShaded)) ||
+             (faceDrawMode & (drawModes_.facesSmoothShaded | drawModes_.halffacesSmoothShaded | drawModes_.facesPhongShaded | drawModes_.halffacesPhongShaded)) )
+            update_vertex_normals();
+    }
+
     //the VolumeMeshBufferManager can handle non atomic drawmodes if it consists of one
     // edge based draw mode (except edges on cells) and irregular edges
     edgeDrawMode |= _drawMode & (drawModes_.irregularInnerEdges | drawModes_.irregularOuterEdges);
@@ -983,6 +994,19 @@ void VolumeMeshNodeT<VolumeMeshT>::getRenderObjects(IRenderer* _renderer, GLStat
     DrawModes::DrawMode edgeDrawMode   = drawModes_.getFirstEdgeDrawMode(_drawMode);
     DrawModes::DrawMode vertexDrawMode = drawModes_.getFirstVertexDrawMode(_drawMode);
 
+    if (!face_normals_calculated_)
+    {
+        if ( (cellDrawMode & drawModes_.cellsFlatShaded) ||
+             (faceDrawMode & (drawModes_.facesFlatShaded | drawModes_.halffacesFlatShaded  | drawModes_.facesTexturedShaded)) )
+            update_face_normals();
+    }
+    if (!vertex_normals_calculated_)
+    {
+        if ( (cellDrawMode & (drawModes_.cellsSmoothShaded | drawModes_.cellsPhongShaded)) ||
+             (faceDrawMode & (drawModes_.facesSmoothShaded | drawModes_.halffacesSmoothShaded | drawModes_.facesPhongShaded | drawModes_.halffacesPhongShaded)) )
+            update_vertex_normals();
+    }
+
     //the VolumeMeshBufferManager can handle non atomic drawmodes if it consists of one
     // edge based draw mode (except edges on cells) and irregular edges
     edgeDrawMode |= _drawMode & (drawModes_.irregularInnerEdges | drawModes_.irregularOuterEdges);
@@ -1288,6 +1312,26 @@ void VolumeMeshNodeT<VolumeMeshT>::pickCells(GLState& _state, unsigned int _offs
 
     GLState::disableClientState(GL_COLOR_ARRAY);
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+//----------------------------------------------------------------------------
+
+template<class VolumeMeshT>
+void VolumeMeshNodeT<VolumeMeshT>::update_face_normals()
+{
+    normalAttrib_.update_face_normals();
+    face_normals_calculated_ = true;
+}
+
+//----------------------------------------------------------------------------
+
+template<class VolumeMeshT>
+void VolumeMeshNodeT<VolumeMeshT>::update_vertex_normals()
+{
+    normalAttrib_.update_vertex_normals();
+    vertex_normals_calculated_ = true;
+    //update_vertex_normals will also compute face normals
+    face_normals_calculated_ = true;
 }
 
 //----------------------------------------------------------------------------
