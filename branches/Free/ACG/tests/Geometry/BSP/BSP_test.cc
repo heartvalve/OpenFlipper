@@ -170,7 +170,7 @@ class BSP_CUBE_BASE : public testing::Test {
             Mesh::FIter f_end = mesh_.faces_end();
 
             for (; f_it!=f_end; ++f_it)
-              bsp_->push_back(f_it.handle());
+              bsp_->push_back(*f_it);
 
             bsp_->build(10, 100); //max vertices per leaf 10, max depth 100
 
@@ -460,9 +460,9 @@ TEST_F(BSP_CUBE_BASE, RayIntersectionAboveSurface_DirectionalFunction_1 ) {
     Mesh::FaceVertexIter fv_it =  Mesh::FaceVertexIter(mesh_, rc[0].first);
 
     float distance,u,v;
-    Mesh::Point p1 = mesh_.point(fv_it);
-    Mesh::Point p2 = mesh_.point(++fv_it);
-    Mesh::Point p3 = mesh_.point(++fv_it);
+    Mesh::Point p1 = mesh_.point(*fv_it);
+    Mesh::Point p2 = mesh_.point(*(++fv_it));
+    Mesh::Point p3 = mesh_.point(*(++fv_it));
 
     ACG::Geometry::triangleIntersection(origin,
                                         yDirection,
