@@ -146,7 +146,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
@@ -154,7 +154,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
 
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -292,8 +292,8 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).selected() )
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).selected() )
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
@@ -301,8 +301,8 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).selected() )
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).selected() )
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
@@ -365,17 +365,17 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
     TriMesh::FaceIter f_it  = mesh.faces_begin();
     TriMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
-      if ( mesh.status(f_it).selected() )
+      if ( mesh.status(*f_it).selected() )
       {
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
-          mesh.status(fv_it).set_tagged(true);
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+          mesh.status(*fv_it).set_tagged(true);
       }
 
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() )
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).tagged() )
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
@@ -383,17 +383,17 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
     PolyMesh::FaceIter f_it  = mesh.faces_begin();
     PolyMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
-      if ( mesh.status(f_it).selected() )
+      if ( mesh.status(*f_it).selected() )
       {
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
-          mesh.status(fv_it).set_tagged(true);
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+          mesh.status(*fv_it).set_tagged(true);
       }
 
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() )
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).tagged() )
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
@@ -466,22 +466,22 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     //init tags
     TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      mesh.status(v_it).set_tagged(false);
+      mesh.status(*v_it).set_tagged(false);
 
     TriMesh::EdgeIter e_it  = mesh.edges_begin();
     TriMesh::EdgeIter e_end = mesh.edges_end();
     for (; e_it!=e_end; ++e_it)
-      if ( mesh.status(e_it).selected() )
+      if ( mesh.status(*e_it).selected() )
       {
-        TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+        TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -491,22 +491,22 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     //init tags
     PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      mesh.status(v_it).set_tagged(false);
+      mesh.status(*v_it).set_tagged(false);
 
     PolyMesh::EdgeIter e_it  = mesh.edges_begin();
     PolyMesh::EdgeIter e_end = mesh.edges_end();
     for (; e_it!=e_end; ++e_it)
-      if ( mesh.status(e_it).selected() )
+      if ( mesh.status(*e_it).selected() )
       {
-        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -610,8 +610,8 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it){
-      mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-      mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+      mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
     }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -620,8 +620,8 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it){
-      mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-      mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+      mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
     }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -783,11 +783,11 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).selected() )
+      if ( mesh.status(*v_it).selected() )
       {
         noneSelected = false;
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -796,11 +796,11 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).selected() )
+      if ( mesh.status(*v_it).selected() )
       {
         noneSelected = false;
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -884,22 +884,22 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     //init tags
     TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-        mesh.status(v_it).set_tagged(false);
+        mesh.status(*v_it).set_tagged(false);
 
     TriMesh::FaceIter f_it  = mesh.faces_begin();
     TriMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
-      if ( mesh.status(f_it).selected() )
+      if ( mesh.status(*f_it).selected() )
       {
         noneSelected = false;
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
-          mesh.status(fv_it).set_tagged(true);
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+          mesh.status(*fv_it).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -909,22 +909,22 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     //init tags
     PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-        mesh.status(v_it).set_tagged(false);
+        mesh.status(*v_it).set_tagged(false);
 
     PolyMesh::FaceIter f_it  = mesh.faces_begin();
     PolyMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
-      if ( mesh.status(f_it).selected() )
+      if ( mesh.status(*f_it).selected() )
       {
         noneSelected = false;
-        for(PolyMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
-          mesh.status(fv_it).set_tagged(true);
+        for(PolyMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+          mesh.status(*fv_it).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -1002,24 +1002,24 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     //init tags
     TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-        mesh.status(v_it).set_tagged(false);
+        mesh.status(*v_it).set_tagged(false);
 
     TriMesh::EdgeIter e_it  = mesh.edges_begin();
     TriMesh::EdgeIter e_end = mesh.edges_end();
     for (; e_it!=e_end; ++e_it)
-      if ( mesh.status(e_it).selected() )
+      if ( mesh.status(*e_it).selected() )
       {
         noneSelected = false;
-        TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+        TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -1029,24 +1029,24 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     //init tags
     PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-        mesh.status(v_it).set_tagged(false);
+        mesh.status(*v_it).set_tagged(false);
 
     PolyMesh::EdgeIter e_it  = mesh.edges_begin();
     PolyMesh::EdgeIter e_end = mesh.edges_end();
     for (; e_it!=e_end; ++e_it)
-      if ( mesh.status(e_it).selected() )
+      if ( mesh.status(*e_it).selected() )
       {
         noneSelected = false;
-        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
+        PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).tagged() ){
-        mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      if ( mesh.status(*v_it).tagged() ){
+        mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
+        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT

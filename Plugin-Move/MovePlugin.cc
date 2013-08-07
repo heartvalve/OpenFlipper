@@ -1677,7 +1677,7 @@ void MovePlugin::slotMoveToOrigin() {
           cog = MeshInfo::cog(mesh);
 
         for ( TriMesh::VertexIter v_it = mesh->vertices_begin(); v_it != mesh->vertices_end() ; ++v_it)
-          mesh->set_point(v_it , ( mesh->point(v_it) ) - cog );
+          mesh->set_point(*v_it , ( mesh->point(*v_it) ) - cog );
 
         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
     }
@@ -1689,7 +1689,7 @@ void MovePlugin::slotMoveToOrigin() {
           cog = MeshInfo::cog(mesh);
 
         for ( PolyMesh::VertexIter v_it = mesh->vertices_begin(); v_it != mesh->vertices_end() ; ++v_it)
-          mesh->set_point(v_it , ( mesh->point(v_it) ) - cog );
+          mesh->set_point(*v_it , ( mesh->point(*v_it) ) - cog );
 
         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
 
@@ -1981,14 +1981,14 @@ void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
   for (; v_it!=v_end; ++v_it) {
     
     // transform the mesh vertex
-    _mesh.set_point(v_it,_mat.transform_point(_mesh.point(v_it)));
+    _mesh.set_point(*v_it,_mat.transform_point(_mesh.point(*v_it)));
     
     // transform the vertex normal
-    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(v_it));
+    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(*v_it));
     
     n.normalize();
     
-    _mesh.set_normal(v_it,n);
+    _mesh.set_normal(*v_it,n);
   }
 
   typename MeshT::FaceIter f_it     = _mesh.faces_begin();
@@ -1996,11 +1996,11 @@ void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
   for (; f_it != f_end; ++f_it) {
     
     // transform the face normal
-    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(f_it));
+    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(*f_it));
     
     n.normalize();
     
-    _mesh.set_normal(f_it,n);
+    _mesh.set_normal(*f_it,n);
   }
 }
 
@@ -2058,13 +2058,13 @@ void MovePlugin::unifyBBDiag(MeshT& _mesh )
   // no vertices?
   if( v_it == v_end) return;
 
-  typename MeshT::Point bb_min = _mesh.point(v_it);
-  typename MeshT::Point bb_max = _mesh.point(v_it);
+  typename MeshT::Point bb_min = _mesh.point(*v_it);
+  typename MeshT::Point bb_max = _mesh.point(*v_it);
 
   for(; v_it!=v_end; ++v_it)
   {
-    bb_min.minimize( _mesh.point(v_it));
-    bb_max.maximize( _mesh.point(v_it));
+    bb_min.minimize( _mesh.point(*v_it));
+    bb_max.maximize( _mesh.point(*v_it));
   }
 
   typename MeshT::Point bb_center =  0.5 * (bb_min + bb_max) ;
@@ -2074,7 +2074,7 @@ void MovePlugin::unifyBBDiag(MeshT& _mesh )
   for( v_it = _mesh.vertices_begin(); v_it!=v_end; ++v_it)
   {
 
-     _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
+     _mesh.point(*v_it) = (_mesh.point(*v_it) - bb_center) * scale + bb_center;
   }
 
   _mesh.update_normals();
@@ -2096,13 +2096,13 @@ void MovePlugin::getBB( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  
   // no vertices?
   if( v_it == v_end) return;
 
-  _bb_min = _mesh.point(v_it);
-  _bb_max = _mesh.point(v_it);
+  _bb_min = _mesh.point(*v_it);
+  _bb_max = _mesh.point(*v_it);
 
   for(; v_it!=v_end; ++v_it)
   {
-    _bb_min.minimize( _mesh.point(v_it));
-    _bb_max.maximize( _mesh.point(v_it));
+    _bb_min.minimize( _mesh.point(*v_it));
+    _bb_max.maximize( _mesh.point(*v_it));
   }
 
 
@@ -2125,7 +2125,7 @@ void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb
   typename MeshT::VertexIter v_it;
 
   for( v_it = _mesh.vertices_begin(); v_it!=_mesh.vertices_end(); ++v_it)
-    _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
+    _mesh.point(*v_it) = (_mesh.point(*v_it) - bb_center) * scale + bb_center;
 
   _mesh.update_normals();
 
@@ -2193,17 +2193,17 @@ OpenMesh::Vec3d MovePlugin::getNearestVertex(MeshType* _mesh, uint _fh, OpenMesh
 
     typename MeshType::FaceVertexIter fv_it(*_mesh, fh);
     typename MeshType::Point hitPointP = (typename MeshType::Point) _hitPoint;
-    typename MeshType::Scalar shortest_distance = (_mesh->point(fv_it.handle()) - hitPointP).sqrnorm();
-    typename MeshType::VertexHandle vh = fv_it.handle();
+    typename MeshType::Scalar shortest_distance = (_mesh->point(*fv_it) - hitPointP).sqrnorm();
+    typename MeshType::VertexHandle vh = *fv_it;
 
-    for (; fv_it; ++fv_it) {
+    for (; fv_it.is_valid(); ++fv_it) {
 
         typename MeshType::Scalar tmpdist =
-            (_mesh->point(fv_it.handle()) - hitPointP).sqrnorm();
+            (_mesh->point(*fv_it) - hitPointP).sqrnorm();
 
         if(tmpdist < shortest_distance) {
             shortest_distance = tmpdist;
-            vh = fv_it.handle();
+            vh = *fv_it;
         }
     }
 
@@ -2229,10 +2229,10 @@ OpenMesh::Vec3d MovePlugin::getNearestEdge(MeshType* _mesh, uint _fh, OpenMesh::
     typename MeshType::Point center;
     typename MeshType::Scalar closest_dist(-1);
 
-    for (; fe_it; ++fe_it) {
+    for (; fe_it.is_valid(); ++fe_it) {
 
-        typename MeshType::HalfedgeHandle heh0 = _mesh->halfedge_handle(fe_it.handle(), 0);
-        typename MeshType::HalfedgeHandle heh1 = _mesh->halfedge_handle(fe_it.handle(), 1);
+        typename MeshType::HalfedgeHandle heh0 = _mesh->halfedge_handle(*fe_it, 0);
+        typename MeshType::HalfedgeHandle heh1 = _mesh->halfedge_handle(*fe_it, 1);
 
         typename MeshType::Point lp0 = _mesh->point(_mesh->to_vertex_handle(heh0));
         typename MeshType::Point lp1 = _mesh->point(_mesh->to_vertex_handle(heh1));
@@ -2274,9 +2274,9 @@ OpenMesh::Vec3d MovePlugin::getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::
     typename MeshType::Point cog(0.0,0.0,0.0);
     uint count = 0;
 
-    for (; fv_it; ++fv_it) {
+    for (; fv_it.is_valid(); ++fv_it) {
 
-        cog += _mesh->point(fv_it.handle());
+        cog += _mesh->point(*fv_it);
         ++count;
     }
 
