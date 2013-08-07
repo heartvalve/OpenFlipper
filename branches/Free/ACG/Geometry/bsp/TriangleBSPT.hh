@@ -92,11 +92,11 @@ public:
   inline void points(const Handle _h, Point& _p0, Point& _p1, Point& _p2) const
   {
     typename Mesh::CFVIter fv_it(mesh_.cfv_iter(_h));
-    _p0 = mesh_.point(fv_it);
+    _p0 = mesh_.point(*fv_it);
     ++fv_it;
-    _p1 = mesh_.point(fv_it);
+    _p1 = mesh_.point(*fv_it);
     ++fv_it;
-    _p2 = mesh_.point(fv_it);
+    _p2 = mesh_.point(*fv_it);
   }
 
   Scalar sqrdist(const Handle _h, const Point& _p) const
