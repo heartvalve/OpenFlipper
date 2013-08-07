@@ -134,12 +134,12 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         _out << "\n";
 
         // Write vertex p[0] p[1] p[2]
-        p = _mesh.point(vit.handle());
+        p = _mesh.point(*vit);
         _out << p[0] << " " << p[1] << " " << p[2];
 
         // Write vertex normals
         if(_mesh.has_vertex_normals() && (userWriteOptions_ & OFFImporter::VERTEXNORMAL)) {
-            n = _mesh.normal(vit.handle());
+            n = _mesh.normal(*vit);
             _out << " " << n[0] << " " << n[1] << " " << n[2];
         }
 
@@ -147,13 +147,13 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         // Note: Vertex colors always have only three components.
         // This has to be determined since it can not be read dynamically in binary files.
         if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR)) {
-            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(vit.handle()));
+            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(*vit));
             _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2] << " " << std::showpoint << c[3];
         }
 
         // Write vertex texcoords
         if(_mesh.has_vertex_texcoords2D() && (userWriteOptions_ & OFFImporter::VERTEXTEXCOORDS)) {
-            t = _mesh.texcoord2D(vit.handle());
+            t = _mesh.texcoord2D(*vit);
             _out << " " << t[0] << " " << t[1];
         }
     }
@@ -168,19 +168,19 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         _out << "\n";
 
         // Write face valence
-        _out << _mesh.valence(fit.handle());
+        _out << _mesh.valence(*fit);
 
         // Get face-vertex iterator
-        fvit = _mesh.fv_iter(fit.handle());
+        fvit = _mesh.fv_iter(*fit);
 
         // Write vertex indices
-        for(;fvit; ++fvit) {
-            _out << " " << fvit.handle().idx();
+        for(;fvit.is_valid(); ++fvit) {
+            _out << " " << fvit->idx();
         }
 
         // Write face colors
         if(_mesh.has_face_colors() && (userWriteOptions_ & OFFImporter::FACECOLOR ) ) {
-            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(fit.handle()));
+            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(*fit));
             _out << " " << std::showpoint << c[0] << " " << std::showpoint << c[1] << " " << std::showpoint << c[2];
 
             if(userWriteOptions_ & OFFImporter::COLORALPHA) _out <<  " " << std::showpoint << c[3];
@@ -212,14 +212,14 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
     for(; vit != end_vit; ++vit) {
 
         // Write vertex p[0] p[1] p[2]
-        p = _mesh.point(vit.handle());
+        p = _mesh.point(*vit);
         writeValue(_out, p[0]);
         writeValue(_out, p[1]);
         writeValue(_out, p[2]);
 
         // Write vertex normals
         if(_mesh.has_vertex_normals() && (userWriteOptions_ & OFFImporter::VERTEXNORMAL)) {
-            n = _mesh.normal(vit.handle());
+            n = _mesh.normal(*vit);
             writeValue(_out, n[0]);
             writeValue(_out, n[1]);
             writeValue(_out, n[2]);
@@ -229,7 +229,7 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
         // Note: Vertex colors always have only three components.
         // This has to be determined since it can not be read dynamically in binary files.
         if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR)) {
-            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(vit.handle()));
+            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(*vit));
             writeValue(_out, c[0]);
             writeValue(_out, c[1]);
             writeValue(_out, c[2]);
@@ -237,7 +237,7 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
 
         // Write vertex texcoords
         if(_mesh.has_vertex_texcoords2D() && (userWriteOptions_ & OFFImporter::VERTEXTEXCOORDS)) {
-            t = _mesh.texcoord2D(vit.handle());
+            t = _mesh.texcoord2D(*vit);
             writeValue(_out, t[0]);
             writeValue(_out, t[1]);
         }
@@ -251,14 +251,14 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
     for(; fit != end_fit; ++fit) {
 
         // Write face valence
-        writeValue(_out, _mesh.valence(fit.handle()));
+        writeValue(_out, _mesh.valence(*fit));
 
         // Get face-vertex iterator
-        fvit = _mesh.fv_iter(fit.handle());
+        fvit = _mesh.fv_iter(*fit);
 
         // Write vertex indices
-        for(;fvit; ++fvit) {
-            writeValue(_out, fvit.handle().idx());
+        for(;fvit.is_valid(); ++fvit) {
+            writeValue(_out, fvit->idx());
         }
 
         // Write face colors
@@ -269,7 +269,7 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
             else writeValue(_out, (uint)3);
 
             // Color itself
-            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(fit.handle()));
+            c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(*fit));
             writeValue(_out, c[0]);
             writeValue(_out, c[1]);
             writeValue(_out, c[2]);
