@@ -126,7 +126,7 @@ void LaplaceLengthPlugin::computeLaplaceLength(MeshT* _mesh) {
   std::vector< typename MeshT::VertexHandle > handles;
   handles.reserve(_mesh->n_vertices());
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
-    handles.push_back( v_it.handle() );
+    handles.push_back( *v_it );
 
   #ifdef USE_OPENMP
     #pragma omp parallel for
@@ -135,8 +135,8 @@ void LaplaceLengthPlugin::computeLaplaceLength(MeshT* _mesh) {
     const typename MeshT::VertexHandle handle = handles[i];
 
     ACG::Vec3d laplace(0.0,0.0,0.0);
-    for ( typename MeshT::VertexVertexIter vv_it(*_mesh , handle) ; vv_it ; ++vv_it )
-        laplace += _mesh->point(vv_it) - _mesh->point(handle);
+    for ( typename MeshT::VertexVertexIter vv_it(*_mesh , handle) ; vv_it.is_valid() ; ++vv_it )
+        laplace += _mesh->point(*vv_it) - _mesh->point(handle);
 
     laplace = 1.0 /(double)_mesh->valence(handle) * laplace;
     _mesh->property(laplace_vector_property,handle) = laplace;
@@ -171,7 +171,7 @@ void LaplaceLengthPlugin::computeLaplaceSquaredLength(MeshT* _mesh) {
   std::vector< typename MeshT::VertexHandle > handles;
   handles.reserve(_mesh->n_vertices());
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
-    handles.push_back( v_it.handle() );
+    handles.push_back( *v_it );
 
   #ifdef USE_OPENMP
     #pragma omp parallel for
@@ -180,8 +180,8 @@ void LaplaceLengthPlugin::computeLaplaceSquaredLength(MeshT* _mesh) {
     const typename MeshT::VertexHandle handle = handles[i];
 
     ACG::Vec3d laplace(0.0,0.0,0.0);
-    for ( typename MeshT::VertexVertexIter vv_it(*_mesh , handle) ; vv_it ; ++vv_it )
-        laplace += _mesh->property(laplace_property,vv_it) - _mesh->property(laplace_property,handle);
+    for ( typename MeshT::VertexVertexIter vv_it(*_mesh , handle) ; vv_it.is_valid() ; ++vv_it )
+        laplace += _mesh->property(laplace_property,*vv_it) - _mesh->property(laplace_property,handle);
     laplace = 1.0 /(double)_mesh->valence(handle) * laplace;
     _mesh->property(laplace_squared,handle) = laplace.norm();
   }
