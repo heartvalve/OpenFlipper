@@ -395,8 +395,8 @@ DrawMeshT<Mesh>::convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int 
   	unsigned int nPolyVerts = 0;
 
     // read all vertex indices of this face
-    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )
-      pFaceVerts[nPolyVerts++] = mesh_.to_vertex_handle(hh_it).idx();
+    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it.is_valid(); ++hh_it )
+      pFaceVerts[nPolyVerts++] = mesh_.to_vertex_handle(*hh_it).idx();
 
     //////////////////////////////////////////////////////////////////////////
     // convert to triangles
@@ -498,11 +498,11 @@ DrawMeshT<Mesh>::createBigVertexBuf(Vertex* _dstVertexBuf,
       // find corresponding halfedge and get per face attributes
       typename Mesh::HalfedgeHandle hh;
 
-      for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )
+      for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it.is_valid(); ++hh_it )
       {
-        if (mesh_.to_vertex_handle(hh_it).idx() == vh.idx())
+        if (mesh_.to_vertex_handle(*hh_it).idx() == vh.idx())
         {
-          hh = hh_it;
+          hh = *hh_it;
           break;
         }
       }
@@ -1369,7 +1369,7 @@ unsigned int DrawMeshT<Mesh>::countTris(unsigned int* pMaxVertsOut)
     // count vertices
   	unsigned int nPolyVerts = 0;
 
-    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it; ++hh_it )++nPolyVerts;
+    for (typename Mesh::FaceHalfedgeIter hh_it = mesh_.fh_iter(fh); hh_it.is_valid(); ++hh_it ) ++nPolyVerts;
 
     triCounter += (nPolyVerts - 2);
 
