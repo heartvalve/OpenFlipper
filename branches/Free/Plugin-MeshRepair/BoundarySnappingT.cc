@@ -80,8 +80,8 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
 
   // collect all boundary vertices
   for (typename MeshT::VertexIter v_iter = mesh_.vertices_begin(); v_iter != mesh_.vertices_end(); ++v_iter)
-    if (mesh_.is_boundary(v_iter) && mesh_.status(v_iter).selected())
-      v_boundary.push_back(v_iter);
+    if (mesh_.is_boundary(*v_iter) && mesh_.status(*v_iter).selected())
+      v_boundary.push_back(*v_iter);
 
   //two maps
   // vertexDistMap saves the vertex and his distances as pairs
@@ -147,9 +147,9 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
           //if so, it is not usable
           v_2 = iter->first;
 
-          for(typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_1); vf_iter && v_2.is_valid(); ++vf_iter)
-            for (typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(vf_iter.handle()); fv_iter && v_2.is_valid(); ++fv_iter)
-              if (fv_iter.handle() == v_2)
+          for(typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_1); vf_iter.is_valid() && v_2.is_valid(); ++vf_iter)
+            for (typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(*vf_iter); fv_iter.is_valid() && v_2.is_valid(); ++fv_iter)
+              if (*fv_iter == v_2)
                 v_2 = typename MeshT::VertexHandle();
 
           validPair = v_2.is_valid() && !mesh_.status(v_2).deleted() && mesh_.is_boundary(v_2);
@@ -176,9 +176,9 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
       vertexVertexMap[v_old].erase(v_newIter);
       //save all faces, because faces will be added/deleted
       std::vector<typename MeshT::FaceHandle> faces;
-      for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_old); vf_iter; ++vf_iter)
-        if (!mesh_.status(vf_iter).deleted())
-          faces.push_back(vf_iter);
+      for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_old); vf_iter.is_valid(); ++vf_iter)
+        if (!mesh_.status(*vf_iter).deleted())
+          faces.push_back(*vf_iter);
 
       //replace v_old with v_new by creating new faces with v_new instead of v_old if possible
       for (typename std::vector<typename MeshT::FaceHandle>::iterator f_iter = faces.begin(); f_iter !=faces.end(); ++f_iter)
@@ -189,8 +189,8 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
 
         //get face vertices
         std::vector<typename MeshT::VertexHandle> f_vertices;
-        for(typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(fHandle); fv_iter; ++fv_iter)
-          f_vertices.push_back( fv_iter.handle() );
+        for(typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(fHandle); fv_iter.is_valid(); ++fv_iter)
+          f_vertices.push_back( *fv_iter );
 
         mesh_.delete_face(fHandle,false);
 

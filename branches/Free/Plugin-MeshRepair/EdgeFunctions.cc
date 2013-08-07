@@ -81,16 +81,16 @@ void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _
 
     // Iterate over all edges
     for (e_it = triMesh->edges_begin(); e_it != e_end ; ++e_it) {
-      TriMesh::HalfedgeHandle he = triMesh->halfedge_handle( e_it, 0 );
+      TriMesh::HalfedgeHandle he = triMesh->halfedge_handle( *e_it, 0 );
       TriMesh::Point p1 = triMesh->point( triMesh->from_vertex_handle( he ) );
       TriMesh::Point p2 = triMesh->point( triMesh->to_vertex_handle( he )   );
 
       if ( _larger ) {
         if ( (p1 - p2).norm() > _length)
-          triMesh->status(e_it).set_selected(true);
+          triMesh->status(*e_it).set_selected(true);
       } else {
         if ( (p1 - p2).norm() < _length)
-          triMesh->status(e_it).set_selected(true);
+          triMesh->status(*e_it).set_selected(true);
       }
     }
 
@@ -112,16 +112,16 @@ void MeshRepairPlugin::selectionEdgeLength(int _objectId, double _length, bool _
 
     // Iterate over all edges
     for (e_it = polyMesh->edges_begin(); e_it != e_end ; ++e_it) {
-      PolyMesh::HalfedgeHandle he = polyMesh->halfedge_handle( e_it, 0 );
+      PolyMesh::HalfedgeHandle he = polyMesh->halfedge_handle( *e_it, 0 );
       PolyMesh::Point p1 = polyMesh->point( polyMesh->from_vertex_handle( he ) );
       PolyMesh::Point p2 = polyMesh->point( polyMesh->to_vertex_handle( he )   );
 
       if ( _larger ) {
         if ( (p1 - p2).norm() > _length)
-          polyMesh->status(e_it).set_selected(true);
+          polyMesh->status(*e_it).set_selected(true);
       } else {
         if ( (p1 - p2).norm() < _length)
-          polyMesh->status(e_it).set_selected(true);
+          polyMesh->status(*e_it).set_selected(true);
       }
     }
 
@@ -150,27 +150,27 @@ void MeshRepairPlugin::removeSelectedEdges(int _objectId) {
 
     for (e_it = triMesh->edges_begin(); e_it != e_end; ++e_it) {
 
-      if (!triMesh->status(e_it).deleted() && triMesh->status(e_it).selected()) {
+      if (!triMesh->status(*e_it).deleted() && triMesh->status(*e_it).selected()) {
 
-        const TriMesh::VHandle v0 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 0));
-        const TriMesh::VHandle v1 = triMesh->to_vertex_handle(triMesh->halfedge_handle(e_it, 1));
+        const TriMesh::VHandle v0 = triMesh->to_vertex_handle(triMesh->halfedge_handle(*e_it, 0));
+        const TriMesh::VHandle v1 = triMesh->to_vertex_handle(triMesh->halfedge_handle(*e_it, 1));
 
         const bool boundary0 = triMesh->is_boundary(v0);
         const bool boundary1 = triMesh->is_boundary(v1);
 
         const bool feature0 = triMesh->status(v0).feature();
         const bool feature1 = triMesh->status(v1).feature();
-        const bool featureE = triMesh->status(e_it).feature();
+        const bool featureE = triMesh->status(*e_it).feature();
 
         // Collapsing v1 into vo:
         // collapse is ok, if collapsed vertex is not a feature vertex or the target vertex is a feature
         // and if we collapse along an feature edge or if the collapsed vertex is not a feature
         if ((!boundary1 || boundary0) && (!feature1 || (feature0 && featureE)) && triMesh->is_collapse_ok(
-            triMesh->halfedge_handle(e_it, 0)))
-          triMesh->collapse(triMesh->halfedge_handle(e_it, 0));
+            triMesh->halfedge_handle(*e_it, 0)))
+          triMesh->collapse(triMesh->halfedge_handle(*e_it, 0));
         else if ((!boundary0 || boundary1) && (!feature0 || (feature1 && featureE)) && triMesh->is_collapse_ok(
-            triMesh->halfedge_handle(e_it, 1)))
-          triMesh->collapse(triMesh->halfedge_handle(e_it, 1));
+            triMesh->halfedge_handle(*e_it, 1)))
+          triMesh->collapse(triMesh->halfedge_handle(*e_it, 1));
       }
     }
 
@@ -208,11 +208,11 @@ void MeshRepairPlugin::detectSkinnyTriangleByAngle(int _objectId, double _angle,
     for (e_it = triMesh->edges_begin(); e_it != e_end; ++e_it) {
 
       // Check prerequisites
-      if (!triMesh->status(e_it).deleted() && !triMesh->status(e_it).feature() && triMesh->is_flip_ok(e_it)) {
+      if (!triMesh->status(*e_it).deleted() && !triMesh->status(*e_it).feature() && triMesh->is_flip_ok(*e_it)) {
 
         // For both halfedges
         for (unsigned int h = 0; h < 2; ++h) {
-          TriMesh::HalfedgeHandle hh = triMesh->halfedge_handle(e_it.handle(), h);
+          TriMesh::HalfedgeHandle hh = triMesh->halfedge_handle(*e_it, h);
           const TriMesh::Point& a = triMesh->point(triMesh->from_vertex_handle(hh));
           const TriMesh::Point& b = triMesh->point(triMesh->to_vertex_handle(hh));
           hh = triMesh->next_halfedge_handle(hh);
@@ -223,11 +223,11 @@ void MeshRepairPlugin::detectSkinnyTriangleByAngle(int _objectId, double _angle,
           if (angle < maxAngle) {
 
             // selcet it
-            triMesh->status(e_it).set_selected(true);
+            triMesh->status(*e_it).set_selected(true);
 
             // remove it if requested
             if (_remove)
-              triMesh->flip(e_it);
+              triMesh->flip(*e_it);
           }
         }
       }
@@ -279,12 +279,12 @@ void MeshRepairPlugin::detectFoldover(int _objectId, float _angle) {
       TriMesh::Scalar a, cosa = cos(_angle / 180.0 * M_PI);
 
       for (e_it = mesh->edges_begin(); e_it != e_end; ++e_it) {
-        if (!mesh->is_boundary(e_it)) {
-          a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) | mesh->normal(
-              mesh->face_handle(mesh->halfedge_handle(e_it, 1))));
+        if (!mesh->is_boundary(*e_it)) {
+          a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(*e_it, 0))) | mesh->normal(
+              mesh->face_handle(mesh->halfedge_handle(*e_it, 1))));
 
           if (a < cosa) {
-            mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))). set_selected(true);
+            mesh->status(mesh->edge_handle(mesh->halfedge_handle(*e_it, 0))). set_selected(true);
             ++count;
           }
         }
@@ -305,12 +305,12 @@ void MeshRepairPlugin::detectFoldover(int _objectId, float _angle) {
       PolyMesh::Scalar a, cosa = cos(_angle / 180.0 * M_PI);
 
       for (e_it = mesh->edges_begin(); e_it != e_end; ++e_it) {
-        if (!mesh->is_boundary(e_it)) {
-          a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(e_it, 0))) | mesh->normal(
-              mesh->face_handle(mesh->halfedge_handle(e_it, 1))));
+        if (!mesh->is_boundary(*e_it)) {
+          a = (mesh->normal(mesh->face_handle(mesh->halfedge_handle(*e_it, 0))) | mesh->normal(
+              mesh->face_handle(mesh->halfedge_handle(*e_it, 1))));
 
           if (a < cosa) {
-            mesh->status(mesh->edge_handle(mesh->halfedge_handle(e_it, 0))). set_selected(true);
+            mesh->status(mesh->edge_handle(mesh->halfedge_handle(*e_it, 0))). set_selected(true);
             ++count;
           }
         }

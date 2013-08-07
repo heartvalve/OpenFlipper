@@ -79,22 +79,22 @@ void NonManifoldVertexFixingT<MeshT>::fix()
   for (typename MeshT::VertexIter v_iter = mesh_.vertices_begin(); v_iter != mesh_.vertices_end(); ++v_iter)
   {
     // unmark all faces
-    for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_iter); vf_iter; ++vf_iter)
-      mesh_.property(component,vf_iter.handle()) = 0;
+    for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(*v_iter); vf_iter.is_valid(); ++vf_iter)
+      mesh_.property(component,*vf_iter) = 0;
 
     size_t componentCount = 1;
 
 
     //search and isolate new components
     //shared vertices will be duplicated
-    for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(v_iter); vf_iter; ++vf_iter)
+    for (typename MeshT::VertexFaceIter vf_iter = mesh_.vf_begin(*v_iter); vf_iter.is_valid(); ++vf_iter)
     {
       //get the first face in the component
       std::vector<typename MeshT::FaceHandle> checkNeighbour;
-      if(mesh_.property(component,vf_iter.handle()) == 0)
+      if(mesh_.property(component,*vf_iter) == 0)
       {
-        mesh_.property(component,vf_iter.handle()) = componentCount;
-        checkNeighbour.push_back(vf_iter.handle());
+        mesh_.property(component,*vf_iter) = componentCount;
+        checkNeighbour.push_back(*vf_iter);
       }
 
       // if a reference face was found, a new component exists
@@ -102,7 +102,7 @@ void NonManifoldVertexFixingT<MeshT>::fix()
       typename MeshT::VertexHandle v_new;
       if (componentCount > 1 && !checkNeighbour.empty())
       {
-        typename MeshT::Point p = mesh_.point(v_iter.handle());
+        typename MeshT::Point p = mesh_.point(*v_iter);
         v_new = mesh_.add_vertex(p);
       }
 
@@ -114,19 +114,19 @@ void NonManifoldVertexFixingT<MeshT>::fix()
 
         std::vector<typename MeshT::VertexHandle> f_vertices;
         // get all neighbor faces of face
-        for (typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(face); fv_iter; ++fv_iter)
+        for (typename MeshT::FaceVertexIter fv_iter = mesh_.fv_begin(face); fv_iter.is_valid(); ++fv_iter)
         {
-          f_vertices.push_back(fv_iter.handle());
-          if (fv_iter.handle() != v_iter)
+          f_vertices.push_back(*fv_iter);
+          if (*fv_iter != *v_iter)
           {
             //find the next neighbor face over edge v_iter and fv_iter
             typename MeshT::FaceHandle nf;
-            for (typename MeshT::VertexFaceIter nf_iter = mesh_.vf_begin(v_iter); nf_iter && !nf.is_valid(); ++nf_iter)
+            for (typename MeshT::VertexFaceIter nf_iter = mesh_.vf_begin(*v_iter); nf_iter.is_valid() && !nf.is_valid(); ++nf_iter)
             {
-              if (nf_iter.handle() != face)
-                for (typename MeshT::FaceVertexIter nfv_iter = mesh_.fv_begin(nf_iter); nfv_iter && !nf.is_valid(); ++nfv_iter)
-                  if (nfv_iter.handle() == fv_iter.handle())
-                    nf = nf_iter.handle();
+              if (*nf_iter != face)
+                for (typename MeshT::FaceVertexIter nfv_iter = mesh_.fv_begin(*nf_iter); nfv_iter.is_valid() && !nf.is_valid(); ++nfv_iter)
+                  if (*nfv_iter == *fv_iter)
+                    nf = *nf_iter;
             }
 
             //if such a face was found, it is in the same component as the reference face
@@ -141,7 +141,7 @@ void NonManifoldVertexFixingT<MeshT>::fix()
         //if one face wasn't found in the component = 1 run, then it is a new component, due to split
         if (componentCount > 1 && v_new.is_valid())
         {
-          std::replace(f_vertices.begin(),f_vertices.end(),v_iter.handle(),v_new);
+          std::replace(f_vertices.begin(),f_vertices.end(),*v_iter,v_new);
 
           mesh_.delete_face(face,false);
           mesh_.add_face(f_vertices);

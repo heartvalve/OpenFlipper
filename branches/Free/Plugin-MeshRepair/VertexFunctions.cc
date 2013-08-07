@@ -72,19 +72,19 @@ void MeshRepairPlugin::detectFlatValence3Vertices(int _objectId, double _angle) 
 
     for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it)
     {
-      if (!mesh->status(v_it).deleted() && !mesh->is_boundary(v_it) && mesh->valence(v_it) == 3)
+      if (!mesh->status(*v_it).deleted() && !mesh->is_boundary(*v_it) && mesh->valence(*v_it) == 3)
       {
-        vf_it = mesh->vf_iter(v_it);
-        const TriMesh::Normal& n0 = mesh->normal(vf_it);
-        const TriMesh::Normal& n1 = mesh->normal(++vf_it);
-        const TriMesh::Normal& n2 = mesh->normal(++vf_it);
+        vf_it = mesh->vf_iter(*v_it);
+        const TriMesh::Normal& n0 = mesh->normal(*vf_it);
+        const TriMesh::Normal& n1 = mesh->normal(*(++vf_it));
+        const TriMesh::Normal& n2 = mesh->normal(*(++vf_it));
 
         if ( (n0|n1) > cosangle &&
             (n0|n2) > cosangle &&
             (n1|n2) > cosangle )
         {
 
-          mesh->status(v_it).set_selected(true);
+          mesh->status(*v_it).set_selected(true);
           ++count;
         }
       }
@@ -123,12 +123,12 @@ void MeshRepairPlugin::removeSelectedVal3Vertices(int _objectId) {
     std::vector<TriMesh::VertexHandle> vh(3);
 
     for (v_it = mesh->vertices_begin(); v_it != v_end; ++v_it) {
-      vf_it = mesh->vf_iter(v_it);
-      if ((mesh->status(v_it).selected()) && !mesh->status(v_it).feature() && mesh->valence(v_it) == 3) {
-        for (i = 0, vv_it = mesh->vv_iter(v_it); vv_it; ++vv_it, ++i)
-          vh[2 - i] = vv_it.handle();
+      vf_it = mesh->vf_iter(*v_it);
+      if ((mesh->status(*v_it).selected()) && !mesh->status(*v_it).feature() && mesh->valence(*v_it) == 3) {
+        for (i = 0, vv_it = mesh->vv_iter(*v_it); vv_it.is_valid(); ++vv_it, ++i)
+          vh[2 - i] = *vv_it;
 
-        mesh->delete_vertex(v_it, false);
+        mesh->delete_vertex(*v_it, false);
         mesh->add_face(vh);
 
         ++count;

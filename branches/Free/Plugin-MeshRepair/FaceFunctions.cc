@@ -69,14 +69,14 @@ MeshRepairPlugin::detectTriangleAspect(int _objectId, float _aspect) {
     TriMesh::FEIter fe_it;
 
     for (f_it = mesh->faces_begin(); f_it != f_end; ++f_it) {
-      fv_it = mesh->fv_iter(f_it);
+      fv_it = mesh->fv_iter(*f_it);
 
-      const TriMesh::Point& p0 = mesh->point(fv_it);
-      const TriMesh::Point& p1 = mesh->point(++fv_it);
-      const TriMesh::Point& p2 = mesh->point(++fv_it);
+      const TriMesh::Point& p0 = mesh->point(*fv_it);
+      const TriMesh::Point& p1 = mesh->point(*(++fv_it));
+      const TriMesh::Point& p2 = mesh->point(*(++fv_it));
 
       if (ACG::Geometry::aspectRatio(p0, p1, p2) > _aspect) {
-        mesh->status(f_it).set_selected(true);
+        mesh->status(*f_it).set_selected(true);
         ++count;
       }
     }
