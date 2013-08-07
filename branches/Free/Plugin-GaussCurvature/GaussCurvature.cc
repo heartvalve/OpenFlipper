@@ -141,7 +141,7 @@ void GaussCurvaturePlugin::computeGaussianCurvature( MeshT* _mesh) {
   std::vector<  typename MeshT::VertexHandle > handles;
   handles.reserve(_mesh->n_vertices());
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
-    handles.push_back( v_it.handle() );
+    handles.push_back( *v_it );
 
 
   #pragma omp parallel for
@@ -150,7 +150,7 @@ void GaussCurvaturePlugin::computeGaussianCurvature( MeshT* _mesh) {
 
 #else
   for ( typename MeshT::VertexIter v_it = _mesh->vertices_begin() ; v_it != _mesh->vertices_end(); ++v_it)
-      _mesh->property(gauss,v_it) =  curvature::gauss_curvature(*_mesh,v_it);
+      _mesh->property(gauss,*v_it) =  curvature::gauss_curvature(*_mesh,*v_it);
 #endif
 
 }
