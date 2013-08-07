@@ -278,16 +278,16 @@ void transformHandleVertices(ACG::Matrix4x4d _matrix , MeshT& _mesh) {
     typename MeshT::VertexIter v_end = _mesh.vertices_end();
     for (; v_it != v_end; ++v_it) {
 
-        if(!_mesh.status(v_it).is_bit_set(HANDLEAREA)) continue;
+        if(!_mesh.status(*v_it).is_bit_set(HANDLEAREA)) continue;
 
         // Transform the mesh vertex
-        _mesh.set_point(v_it, _matrix.transform_point(_mesh.point(v_it)));
+        _mesh.set_point(*v_it, _matrix.transform_point(_mesh.point(*v_it)));
 
         // Transform the vertex normal
         if(_mesh.has_vertex_normals()) {
-            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(v_it));
+            typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(*v_it));
             n.normalize();
-            _mesh.set_normal(v_it, n);
+            _mesh.set_normal(*v_it, n);
         }
     }
 
