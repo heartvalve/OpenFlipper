@@ -127,10 +127,10 @@ compute_edge_weights()
 
   for (e_it=mesh_.edges_begin(); e_it!=e_end; ++e_it)
   {
-    heh0   = mesh_.halfedge_handle(e_it, 0);
+    heh0   = mesh_.halfedge_handle(*e_it, 0);
     p0     = &mesh_.point(mesh_.to_vertex_handle(heh0));
 
-    heh1   = mesh_.halfedge_handle(e_it, 1);
+    heh1   = mesh_.halfedge_handle(*e_it, 1);
     p1     = &mesh_.point(mesh_.to_vertex_handle(heh1));
 
     heh2   = mesh_.next_halfedge_handle(heh0);
@@ -145,7 +145,7 @@ compute_edge_weights()
     d1     = (*p1 - *p2).normalize();
     weight += 1.0 / tan(acos(d0|d1));
 
-    mesh_.property(edge_weight_, e_it) = weight;
+    mesh_.property(edge_weight_, *e_it) = weight;
   }
 
 
@@ -169,7 +169,7 @@ compute_area()
 
 
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
-    mesh_.property(area_, v_it) = compute_area(v_it);
+    mesh_.property(area_, *v_it) = compute_area(*v_it);
 
 
   area_computed_ = true;
@@ -196,7 +196,7 @@ compute_area(VertexHandle _vh) const
 
   area = 0.0;
 
-  for (vv_it=mesh_.vv_iter(_vh); vv_it; ++vv_it)
+  for (vv_it=mesh_.vv_iter(_vh); vv_it.is_valid(); ++vv_it)
   {
     heh0 = vv_it.current_halfedge_handle();
     heh1 = mesh_.next_halfedge_handle(heh0);
@@ -275,23 +275,22 @@ compute_gauss_curvature()
   // compute for all non-boundary vertices
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
   {
-    if (!mesh_.is_boundary(v_it))
+    if (!mesh_.is_boundary(*v_it))
     {
       angles = 0.0;
 
-      for (vv_it=mesh_.vv_iter(v_it); vv_it; ++vv_it)
+      for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
       {
-	vv_it2 = vv_it; ++vv_it2;
+        vv_it2 = vv_it; ++vv_it2;
 
-	d0 = (mesh_.point(vv_it)  - mesh_.point(v_it)).normalize();
-	d1 = (mesh_.point(vv_it2) - mesh_.point(v_it)).normalize();
-      
-	cos_angle = std::max(lb, std::min(ub, (d0 | d1)));
-	angles += acos(cos_angle);
+        d0 = (mesh_.point(*vv_it)  - mesh_.point(*v_it)).normalize();
+        d1 = (mesh_.point(*vv_it2) - mesh_.point(*v_it)).normalize();
+
+        cos_angle = std::max(lb, std::min(ub, (d0 | d1)));
+        angles += acos(cos_angle);
       }
 
-      mesh_.property(gauss_curvature_, v_it) = 
-	(2*M_PI-angles) / mesh_.property(area_, v_it);
+      mesh_.property(gauss_curvature_, *v_it) = (2*M_PI-angles) / mesh_.property(area_, *v_it);
     }
   }
 
@@ -299,19 +298,19 @@ compute_gauss_curvature()
   // boundary vertices: get from neighbors
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
   {
-    if (mesh_.is_boundary(v_it))
+    if (mesh_.is_boundary(*v_it))
     {
       curv = count = 0.0;
 
-      for (vv_it=mesh_.vv_iter(v_it); vv_it; ++vv_it)
-	if (!mesh_.is_boundary(vv_it))
-	{
-	  curv += mesh_.property(gauss_curvature_, vv_it);
-	  ++count;
-	}
+      for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
+        if (!mesh_.is_boundary(*vv_it))
+        {
+          curv += mesh_.property(gauss_curvature_, *vv_it);
+          ++count;
+        }
 
       if (count)
-	mesh_.property(gauss_curvature_, v_it) = curv / count;
+	mesh_.property(gauss_curvature_, *v_it) = curv / count;
     }
   }
 }
@@ -346,19 +345,19 @@ compute_mean_curvature()
   // compute for all non-boundary vertices
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
   {
-    if (!mesh_.is_boundary(v_it))
+    if (!mesh_.is_boundary(*v_it))
     {
       umbrella[0] = umbrella[1] = umbrella[2] = 0.0;
 
-      for (vv_it=mesh_.vv_iter(v_it); vv_it; ++vv_it)
+      for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
       {
-	eh        = mesh_.edge_handle(vv_it.current_halfedge_handle());
-	weight    = mesh_.property(edge_weight_, eh);
-	umbrella += (mesh_.point(v_it) - mesh_.point(vv_it)) * weight;
+        eh        = mesh_.edge_handle(vv_it.current_halfedge_handle());
+        weight    = mesh_.property(edge_weight_, eh);
+        umbrella += (mesh_.point(*v_it) - mesh_.point(*vv_it)) * weight;
       }
-    
-      mesh_.property(mean_curvature_, v_it) =
-	umbrella.norm() / (4.0 * mesh_.property(area_, v_it));
+
+      mesh_.property(mean_curvature_, *v_it) =
+          umbrella.norm() / (4.0 * mesh_.property(area_, *v_it));
     }
   }
 
@@ -366,19 +365,19 @@ compute_mean_curvature()
   // boundary vertices: get from neighbors
   for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
   {
-    if (mesh_.is_boundary(v_it))
+    if (mesh_.is_boundary(*v_it))
     {
       curv = count = 0.0;
 
-      for (vv_it=mesh_.vv_iter(v_it); vv_it; ++vv_it)
-	if (!mesh_.is_boundary(vv_it))
-	{
-	  curv += mesh_.property(mean_curvature_, vv_it);
-	  ++count;
-	}
+      for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
+        if (!mesh_.is_boundary(*vv_it))
+        {
+          curv += mesh_.property(mean_curvature_, *vv_it);
+          ++count;
+        }
 
       if (count)
-	mesh_.property(mean_curvature_, v_it) = curv / count;
+        mesh_.property(mean_curvature_, *v_it) = curv / count;
     }
   }
 }
@@ -429,22 +428,22 @@ post_smoothing(unsigned int _iters)
     // compute new value
     for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
     {
-      if (!mesh_.is_boundary(v_it))
+      if (!mesh_.is_boundary(*v_it))
       {
         gc = mc = ww = 0.0;
 
-        for (vv_it=mesh_.vv_iter(v_it); vv_it; ++vv_it)
+        for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
         {
           eh   = mesh_.edge_handle(vv_it.current_halfedge_handle());
           ww  += (w = mesh_.property(edge_weight_, eh));
-          mc  += w * mesh_.property(mean_curvature_,  vv_it);
-          gc  += w * mesh_.property(gauss_curvature_, vv_it);
+          mc  += w * mesh_.property(mean_curvature_,  *vv_it);
+          gc  += w * mesh_.property(gauss_curvature_, *vv_it);
         }
-        
+
         if (ww)
         {
-          mesh_.property(new_mean,  v_it) = mc / ww;
-          mesh_.property(new_gauss, v_it) = gc / ww;
+          mesh_.property(new_mean,  *v_it) = mc / ww;
+          mesh_.property(new_gauss, *v_it) = gc / ww;
         }
       }
     }
@@ -453,13 +452,11 @@ post_smoothing(unsigned int _iters)
     // replace old by new value
     for (v_it=mesh_.vertices_begin(); v_it!=v_end; ++v_it)
     {
-      if (!mesh_.is_boundary(v_it))
+      if (!mesh_.is_boundary(*v_it))
       {
-	mesh_.property(mean_curvature_,  v_it) = 
-	  mesh_.property(new_mean, v_it);
+        mesh_.property(mean_curvature_,  *v_it) =  mesh_.property(new_mean, *v_it);
 
-	mesh_.property(gauss_curvature_,  v_it) = 
-	  mesh_.property(new_gauss, v_it);
+        mesh_.property(gauss_curvature_,  *v_it) = mesh_.property(new_gauss, *v_it);
       }
     }
   }
