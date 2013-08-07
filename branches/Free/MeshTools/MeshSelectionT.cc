@@ -162,7 +162,7 @@ void shrinkVertexSelection(MeshT* _mesh) {
       if ( _mesh->property(temp_shrink,*v_it) ) {
          _mesh->status(*v_it).set_selected( true );
 
-         for ( typename MeshT::VertexVertexIter vv_it(*_mesh,*v_it); vv_it; ++vv_it)
+         for ( typename MeshT::VertexVertexIter vv_it(*_mesh,*v_it); vv_it.is_valid(); ++vv_it)
             if ( ! _mesh->property(temp_shrink,*vv_it) ){
                 _mesh->status(*v_it).set_selected( false );
                 break;
@@ -280,7 +280,7 @@ void convertVertexToEdgeSelection(MeshT* _mesh, const std::vector< int >& _verti
 
     for (; ohe_iter.is_valid(); ++ohe_iter) {
       // test if both incident vertices are in _vertices
-      typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
+      typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(*ohe_iter);
       // search for ovh in _vertices
       for(std::vector<int>::const_iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
         if((*it) == ovh.idx()) {
@@ -992,7 +992,7 @@ void shrinkFaceSelection(MeshT* _mesh) {
          bool boundary = false;
          for ( typename MeshT::FaceVertexIter fv_it(*_mesh,*f_it); fv_it.is_valid() ; ++fv_it) {
             for ( typename MeshT::VertexFaceIter vf_it(*_mesh,*fv_it); vf_it.is_valid() ; ++vf_it) {
-               if ( ! _mesh->property(temp_shrink,vf_it) ) {
+               if ( ! _mesh->property(temp_shrink,*vf_it) ) {
                  boundary = true;
                }
             }
@@ -1026,7 +1026,7 @@ void growFaceSelection(MeshT* _mesh) {
     if ( _mesh->property(temp_grow,*f_it) )
         for ( typename MeshT::FaceVertexIter fv_it(*_mesh,*f_it); fv_it.is_valid() ; ++fv_it)
           for ( typename MeshT::VertexFaceIter vf_it(*_mesh,*fv_it); vf_it.is_valid() ; ++vf_it)
-              _mesh->status(vf_it).set_selected( true );
+              _mesh->status(*vf_it).set_selected( true );
 
   _mesh->remove_property(temp_grow);
 }
