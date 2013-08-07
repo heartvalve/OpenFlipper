@@ -659,11 +659,11 @@ double InfoMeshObjectPlugin::faceArea(int _id, int _faceHandle)
 
     TriMesh::FaceVertexIter fv_it = mesh->fv_iter(fh);
 
-    TriMesh::Point v0 = mesh->point( fv_it.handle() );
+    TriMesh::Point v0 = mesh->point( *fv_it );
     ++fv_it;
-    TriMesh::Point v1 = mesh->point( fv_it.handle() );
+    TriMesh::Point v1 = mesh->point( *fv_it );
     ++fv_it;
-    TriMesh::Point v2 = mesh->point( fv_it.handle() );
+    TriMesh::Point v2 = mesh->point( *fv_it );
 
     return ACG::Geometry::triangleArea( v0, v1, v2 );
 
@@ -686,8 +686,8 @@ double InfoMeshObjectPlugin::faceArea(int _id, int _faceHandle)
 
     std::vector< PolyMesh::Point > vertices;
 
-    for (fv_it = mesh->fv_iter(fh); fv_it; ++fv_it)
-      vertices.push_back( mesh->point( fv_it.handle() ) );
+    for (fv_it = mesh->fv_iter(fh); fv_it.is_valid(); ++fv_it)
+      vertices.push_back( mesh->point( *fv_it ) );
 
 ///TODO implement polygonArea
   emit log(LOGERR,tr("Not implemented yet"));
@@ -734,11 +734,11 @@ double InfoMeshObjectPlugin::aspectRatio(int _id, int _faceHandle)
 
     TriMesh::FaceVertexIter fv_it = mesh->fv_iter(fh);
 
-    TriMesh::Point v0 = mesh->point( fv_it.handle() );
+    TriMesh::Point v0 = mesh->point( *fv_it );
     ++fv_it;
-    TriMesh::Point v1 = mesh->point( fv_it.handle() );
+    TriMesh::Point v1 = mesh->point( *fv_it );
     ++fv_it;
-    TriMesh::Point v2 = mesh->point( fv_it.handle() );
+    TriMesh::Point v2 = mesh->point( *fv_it );
 
     return ACG::Geometry::aspectRatio( v0, v1, v2 );
 
@@ -789,7 +789,7 @@ int InfoMeshObjectPlugin::vertexValence  (int _id, int _vertexHandle)
     int valence = 0;
     TriMesh::VertexVertexIter vv_it;
   
-    for (vv_it=mesh->vv_iter( vh ); vv_it; ++vv_it)
+    for (vv_it=mesh->vv_iter( vh ); vv_it.is_valid(); ++vv_it)
       valence++;
 
     return valence;
@@ -813,7 +813,7 @@ int InfoMeshObjectPlugin::vertexValence  (int _id, int _vertexHandle)
     int valence = 0;
     PolyMesh::VertexVertexIter vv_it;
   
-    for (vv_it=mesh->vv_iter( vh ); vv_it; ++vv_it)
+    for (vv_it=mesh->vv_iter( vh ); vv_it.is_valid(); ++vv_it)
       valence++;
 
     return valence;
