@@ -131,8 +131,8 @@ update_cache()
     typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
 
     for (; v_it != v_end; ++v_it) {
-      bbMin_.minimize(mesh_.point(v_it));
-      bbMax_.maximize(mesh_.point(v_it));
+      bbMin_.minimize(mesh_.point(*v_it));
+      bbMax_.maximize(mesh_.point(*v_it));
     }
 
     invalidGeometry_ = false;
@@ -150,9 +150,9 @@ update_cache()
 
     v_cache_.clear();
     for (; v_it != v_end; ++v_it) {
-      if (Mod::is_vertex_selected(mesh_, v_it.handle())) {
+      if (Mod::is_vertex_selected(mesh_, *v_it)) {
 
-        unsigned int vertexIndex = v_it.handle().idx();
+        unsigned int vertexIndex = v_it->idx();
 
         // use correct index for vbo, if available
         if (drawMesh_)
@@ -178,13 +178,13 @@ update_cache()
 
     e_cache_.clear();
     for (; e_it != e_end; ++e_it) {
-      if (Mod::is_edge_selected(mesh_, e_it)) {
-        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0));
+      if (Mod::is_edge_selected(mesh_, *e_it)) {
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0));
         unsigned int vidx = vh.idx();
 
         e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
 
-        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1));
+        vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1));
         vidx = vh.idx();
 
         e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
@@ -208,17 +208,17 @@ update_cache()
     he_points_.clear();
     he_normals_.clear();
     for (; he_it != he_end; ++he_it) {
-      if (Mod::is_halfedge_selected(mesh_, he_it)) {
+      if (Mod::is_halfedge_selected(mesh_, *he_it)) {
         // add vertices
-        he_points_.push_back(halfedge_point(he_it));
-        he_points_.push_back(halfedge_point(mesh_.prev_halfedge_handle(he_it)));
+        he_points_.push_back(halfedge_point(*he_it));
+        he_points_.push_back(halfedge_point(mesh_.prev_halfedge_handle(*he_it)));
 
         // add normals
         FaceHandle fh;
-        if (!mesh_.is_boundary(he_it))
-          fh = mesh_.face_handle(he_it);
+        if (!mesh_.is_boundary(*he_it))
+          fh = mesh_.face_handle(*he_it);
         else
-          fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
+          fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(*he_it));
 
         he_normals_.push_back(mesh_.normal(fh));
         he_normals_.push_back(mesh_.normal(fh));
@@ -243,18 +243,18 @@ update_cache()
     f_cache_.clear();
     fh_cache_.clear();
     for (; f_it != f_end; ++f_it) {
-      if (Mod::is_face_selected(mesh_, f_it)) {
-        fv_it = mesh_.cfv_iter(f_it);
-        unsigned int vidx = fv_it.handle().idx();
+      if (Mod::is_face_selected(mesh_, *f_it)) {
+        fv_it = mesh_.cfv_iter(*f_it);
+        unsigned int vidx = fv_it->idx();
 
         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
-        vidx = fv_it.handle().idx();
+        vidx = fv_it->idx();
 
         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
-        vidx = fv_it.handle().idx();
+        vidx = fv_it->idx();
 
         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
-        fh_cache_.push_back(f_it);
+        fh_cache_.push_back(*f_it);
       }
     }
 
@@ -270,18 +270,18 @@ update_cache()
         fv_it = mesh_.cfv_iter(*fh_it);
 
         // 1. polygon vertex
-        unsigned int v0 = fv_it.handle().idx();
+        unsigned int v0 = fv_it->idx();
 
         // go to next vertex
         ++fv_it;
-        unsigned int vPrev = fv_it.handle().idx();
+        unsigned int vPrev = fv_it->idx();
 
         // create triangle fans pointing towards v0
-        for (; fv_it; ++fv_it) {
+        for (; fv_it.is_valid(); ++fv_it) {
           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
 
-          vPrev = fv_it.handle().idx();
+          vPrev = fv_it->idx();
           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
         }
       }
@@ -487,9 +487,9 @@ draw_faces(bool _per_vertex)
       glBegin(GL_TRIANGLES);
       for (; fh_it!=fh_end; ++fh_it) {
         glNormal(mesh_.normal(*fh_it));
-        glVertex(mesh_.point(fv_it=mesh_.cfv_iter(*fh_it)));
-        glVertex(mesh_.point(++fv_it));
-        glVertex(mesh_.point(++fv_it));
+        glVertex(mesh_.point(*(fv_it=mesh_.cfv_iter(*fh_it))));
+        glVertex(mesh_.point(*(++fv_it)));
+        glVertex(mesh_.point(*(++fv_it)));
       }
 
       glEnd();
@@ -510,8 +510,8 @@ draw_faces(bool _per_vertex)
       for (; fh_it!=fh_end; ++fh_it) {
         glBegin(GL_POLYGON);
         glNormal(mesh_.normal(*fh_it));
-        for (fv_it=mesh_.cfv_iter(*fh_it); fv_it; ++fv_it)
-          glVertex(mesh_.point(fv_it));
+        for (fv_it=mesh_.cfv_iter(*fh_it); fv_it.is_valid(); ++fv_it)
+          glVertex(mesh_.point(*fv_it));
         glEnd();
       }
 
@@ -519,13 +519,13 @@ draw_faces(bool _per_vertex)
 
       for (; fh_it!=fh_end; ++fh_it) {
         glBegin(GL_POLYGON);
-        for (fv_it=mesh_.cfv_iter(*fh_it); fv_it; ++fv_it) {
-          glNormal(mesh_.normal(fv_it));
+        for (fv_it=mesh_.cfv_iter(*fh_it); fv_it.is_valid(); ++fv_it) {
+          glNormal(mesh_.normal(*fv_it));
 
           if (drawMesh_) // map to vbo index
-            glArrayElement(drawMesh_->mapVertexToVBOIndex(fv_it.handle().idx()));
+            glArrayElement(drawMesh_->mapVertexToVBOIndex(fv_it->idx()));
           else
-            glArrayElement(fv_it.handle().idx());
+            glArrayElement(fv_it->idx());
         }
         glEnd();
       }

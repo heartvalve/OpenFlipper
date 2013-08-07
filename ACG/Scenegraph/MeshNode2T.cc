@@ -1355,8 +1355,8 @@ update_geometry() {
   
   for (; v_it!=v_end; ++v_it)
   {
-    bbMin_.minimize(mesh_.point(v_it));
-    bbMax_.maximize(mesh_.point(v_it));
+    bbMin_.minimize(mesh_.point(*v_it));
+    bbMax_.maximize(mesh_.point(*v_it));
   }
 }
 
