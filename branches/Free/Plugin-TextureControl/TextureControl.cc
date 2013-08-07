@@ -1911,7 +1911,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
       }
       
       for ( TriMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
-        _x.push_back( mesh->property(coordProp,v_it) );
+        _x.push_back( mesh->property(coordProp,*v_it) );
       
     } // end of if vertex based for tri meshes
     else if ( texData->texture(_textureName).type() == HALFEDGEBASED ) 
@@ -1925,7 +1925,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
       }
       
       for ( TriMesh::HalfedgeIter h_it = mesh->halfedges_begin() ; h_it != mesh->halfedges_end(); ++h_it)
-        _x.push_back( mesh->property(coordProp,h_it) );
+        _x.push_back( mesh->property(coordProp,*h_it) );
     } // end of if halfedge based for tri meshes
     
   } // end of if tri mesh
@@ -1944,7 +1944,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
       }
 
       for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
-        _x.push_back( mesh->property(coordProp,v_it) );
+        _x.push_back( mesh->property(coordProp,*v_it) );
     } // end of if vertex based for poly meshes
     else if ( texData->texture(_textureName).type() == HALFEDGEBASED )
     {
@@ -1957,7 +1957,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
       }
 
       for ( PolyMesh::HalfedgeIter h_it = mesh->halfedges_begin() ; h_it != mesh->halfedges_end(); ++h_it)
-        _x.push_back( mesh->property(coordProp,h_it) );
+        _x.push_back( mesh->property(coordProp,*h_it) );
     } // end of if halfedge based for poly meshes
   }// end of if poly mesh
 #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
