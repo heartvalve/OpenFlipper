@@ -388,10 +388,10 @@ bool MeshFixing<MeshT>::fix()
   // add faces
   for (typename MeshT::FaceIter f_it = mesh_.faces_begin(); f_it != mesh_.faces_end(); ++f_it)
   {
-
-    const ACG::Vec3d p0 = mesh_.point( fv_it = mesh_.fv_iter(f_it) );
-    const ACG::Vec3d p1 = mesh_.point(++fv_it);
-    const ACG::Vec3d p2 = mesh_.point(++fv_it);
+    fv_it = mesh_.fv_iter(*f_it);
+    const ACG::Vec3d p0 = mesh_.point( *(fv_it) );
+    const ACG::Vec3d p1 = mesh_.point(*(++fv_it));
+    const ACG::Vec3d p2 = mesh_.point(*(++fv_it));
 
     add_face(p0, p1, p2);
 
