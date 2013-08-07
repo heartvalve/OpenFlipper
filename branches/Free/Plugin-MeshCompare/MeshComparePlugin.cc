@@ -321,7 +321,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
 
   for ( TriMesh::VertexIter v_it = refMesh->vertices_begin() ; v_it != refMesh->vertices_end(); ++ v_it) {
 
-    TriMeshObject::OMTriangleBSP::NearestNeighbor nearest = compBSP->nearest(refMesh->point(v_it));
+    TriMeshObject::OMTriangleBSP::NearestNeighbor nearest = compBSP->nearest(refMesh->point(*v_it));
     TriMesh::FaceHandle closestFace = nearest.handle;
 
     // Remember the maximal distance between the meshes
@@ -334,21 +334,21 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
     // Get the vertices around that face and their properties
     TriMesh::CFVIter fv_it = compMesh->cfv_iter(closestFace);
 
-    const TriMesh::Point& p0 = compMesh->point(fv_it);
-    const TriMesh::Normal n0 = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v0 = fv_it.handle();
+    const TriMesh::Point& p0 = compMesh->point(*fv_it);
+    const TriMesh::Normal n0 = compMesh->normal(*fv_it);
+    const TriMesh::VertexHandle& v0 = *fv_it;
 
-    const TriMesh::Point& p1 = compMesh->point(++fv_it);
-    const TriMesh::Normal n1 = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v1 = fv_it.handle();
+    const TriMesh::Point& p1 = compMesh->point(*(++fv_it));
+    const TriMesh::Normal n1 = compMesh->normal(*fv_it);
+    const TriMesh::VertexHandle& v1 = *fv_it;
 
-    const TriMesh::Point& p2 = compMesh->point(++fv_it);
-    const TriMesh::Normal n2 = compMesh->normal(fv_it);
-    const TriMesh::VertexHandle& v2 = fv_it.handle();
+    const TriMesh::Point& p2 = compMesh->point(*(++fv_it));
+    const TriMesh::Normal n2 = compMesh->normal(*fv_it);
+    const TriMesh::VertexHandle& v2 = *fv_it;
 
     // project original point to current mesh
     TriMesh::Point projectedPoint;
-    ACG::Geometry::distPointTriangle(refMesh->point(v_it), p0, p1, p2, projectedPoint);
+    ACG::Geometry::distPointTriangle(refMesh->point(*v_it), p0, p1, p2, projectedPoint);
 
     // Add the position to the point node
     if (pNode)
@@ -366,7 +366,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
       normal.normalize();
 
       // Compute normal deviation in degrees
-      double normalDeviation = (refMesh->normal(v_it) | normal);
+      double normalDeviation = (refMesh->normal(*v_it) | normal);
 
       if (normalDeviation < -1.0)
         normalDeviation = -1.0;
@@ -388,7 +388,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
                                    compMesh->property(meanComp, v1) * projectedPoint[1] +
                                    compMesh->property(meanComp, v2) * projectedPoint[2];
 
-      const double curvatureDev = fabs(refMesh->property(meanRef, v_it) - curvature);
+      const double curvatureDev = fabs(refMesh->property(meanRef, *v_it) - curvature);
 
       meanCurvatures.push_back(curvatureDev);
 
@@ -402,7 +402,7 @@ void MeshComparePlugin::compare(int _sourceId,int _targetId,bool _computeDist, b
                                   compMesh->property(gaussComp, v1) * projectedPoint[1] +
                                   compMesh->property(gaussComp, v2) * projectedPoint[2];
 
-      const double curvatureDev = fabs(refMesh->property(gaussRef, v_it) - curvature);
+      const double curvatureDev = fabs(refMesh->property(gaussRef, *v_it) - curvature);
 
       gaussCurvatures.push_back(curvatureDev);
 
