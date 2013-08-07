@@ -92,16 +92,16 @@ gauss_curvature(MeshT& _mesh, const typename MeshT::VertexHandle& _vh) {
   typename MeshT::CVOHIter voh_it( _mesh.cvoh_iter(_vh));
   typename MeshT::CVOHIter n_voh_it = voh_it;
 
-  if ( ! voh_it.handle().is_valid() )
+  if ( ! voh_it->is_valid() )
      return 0.0;
    
   // move to next
   ++n_voh_it;
 
-  for(; voh_it; ++voh_it, ++n_voh_it)
+  for(; voh_it.is_valid(); ++voh_it, ++n_voh_it)
   {
-    typename MeshT::Point p1 = _mesh.point(_mesh.to_vertex_handle(   voh_it));
-    typename MeshT::Point p2 = _mesh.point(_mesh.to_vertex_handle( n_voh_it));
+    typename MeshT::Point p1 = _mesh.point(_mesh.to_vertex_handle(   *voh_it));
+    typename MeshT::Point p2 = _mesh.point(_mesh.to_vertex_handle( *n_voh_it));
 
     gauss_curv -= acos(OpenMesh::sane_aarg( ((p1-p0).normalize() | (p2-p0).normalize()) ));
   }
@@ -121,19 +121,19 @@ void discrete_mean_curv_op( const MeshT&                        _m,
 
   typename MeshT::ConstVertexOHalfedgeIter voh_it = _m.cvoh_iter(_vh);
   
-   if ( ! voh_it.handle().is_valid() )
+   if ( ! voh_it->is_valid() )
      return;
    
-  for(; voh_it; ++voh_it)
+  for(; voh_it.is_valid(); ++voh_it)
   {
-    if ( _m.is_boundary( _m.edge_handle( voh_it.handle() ) ) )
+    if ( _m.is_boundary( _m.edge_handle( *voh_it ) ) )
       continue;
     
     const typename MeshT::Point p0 = _m.point( _vh );
-    const typename MeshT::Point p1 = _m.point( _m.to_vertex_handle( voh_it.handle()));
+    const typename MeshT::Point p1 = _m.point( _m.to_vertex_handle( *voh_it));
 //     const typename MeshT::Point p2 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( voh_it.handle())));
-    const typename MeshT::Point p2 = _m.point( _m.from_vertex_handle( _m.prev_halfedge_handle( voh_it.handle())));
-    const typename MeshT::Point p3 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( _m.opposite_halfedge_handle(voh_it.handle()))));
+    const typename MeshT::Point p2 = _m.point( _m.from_vertex_handle( _m.prev_halfedge_handle( *voh_it)));
+    const typename MeshT::Point p3 = _m.point( _m.to_vertex_handle( _m.next_halfedge_handle( _m.opposite_halfedge_handle(*voh_it))));
 
     const REALT alpha = acos( OpenMesh::sane_aarg((p0-p2).normalize() | (p1-p2).normalize()) );
     const REALT beta  = acos( OpenMesh::sane_aarg((p0-p3).normalize() | (p1-p3).normalize()) );
