@@ -262,19 +262,19 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
             TriMesh::FaceVertexIter fv_it(m,fh);
-            TriMesh::VertexHandle closest = fv_it.handle();
+            TriMesh::VertexHandle closest = *fv_it;
             float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
 
             ++fv_it;
-            if ( (m.point(fv_it.handle() ) - hit_point).sqrnorm() < shortest_distance ) {
+            if ( (m.point(*fv_it) - hit_point).sqrnorm() < shortest_distance ) {
               // shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
-               closest = fv_it.handle();
+               closest = *fv_it;
             }
 
             ++fv_it;
-            if ( (m.point(fv_it.handle() ) - hit_point).sqrnorm() < shortest_distance ) {
+            if ( (m.point(*fv_it) - hit_point).sqrnorm() < shortest_distance ) {
                // shortest_distance = (m.point(fv_it.handle() ) - hit_point).sqrnorm();
-               closest = fv_it.handle();
+               closest = *fv_it;
             }
 
 
@@ -369,12 +369,12 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
             PolyMesh::VertexHandle closest;
             float shortest_distance = FLT_MAX;
 
-            for (PolyMesh::FaceVertexIter fv_it(m,fh); fv_it; ++fv_it){
-              float distance = (m.point( fv_it.handle() ) - hit_point).sqrnorm();
+            for (PolyMesh::FaceVertexIter fv_it(m,fh); fv_it.is_valid(); ++fv_it){
+              float distance = (m.point( *fv_it ) - hit_point).sqrnorm();
 
               if (distance < shortest_distance){
                 shortest_distance = distance;
-                closest = fv_it.handle();
+                closest = *fv_it;
               }
             }
 
@@ -607,13 +607,13 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
             TriMesh::FaceEdgeIter fe_it(m,fh);
-            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(*fe_it,0);
 
             const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::EdgeHandle closest_edge = m.edge_handle(e1);
@@ -670,13 +670,13 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
             TriMesh::FaceEdgeIter fe_it(m,fh);
-            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(*fe_it,0);
 
             const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::HalfedgeHandle closest_edge = e1;
@@ -722,9 +722,9 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
            double min_dist = FLT_MAX;
 
            PolyMesh::FaceEdgeIter fe_it(m,fh);
-           for(; fe_it; ++fe_it)
+           for(; fe_it.is_valid(); ++fe_it)
            {
-             PolyMesh::HalfedgeHandle heh = m.halfedge_handle(fe_it.handle(),0);
+             PolyMesh::HalfedgeHandle heh = m.halfedge_handle(*fe_it,0);
              double dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( heh )), m.point(m.from_vertex_handle( heh )));
 
              if( dist < min_dist)
@@ -781,13 +781,13 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
             TriMesh::FaceEdgeIter fe_it(m,fh);
-            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e1 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e2 = m.halfedge_handle(*fe_it,0);
 
             ++fe_it;
-            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(fe_it.handle(),0);
+            TriMesh::HalfedgeHandle e3 = m.halfedge_handle(*fe_it,0);
 
             const double min_dist = ACG::Geometry::distPointLineSquared(hit_point,m.point(m.to_vertex_handle( e1 )), m.point(m.from_vertex_handle( e1 )));
             TriMesh::EdgeHandle closest_edge = m.edge_handle(e1);
@@ -818,7 +818,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
 
         	 std::vector<PolyMesh::HalfedgeHandle> halfEdgeHandles;
         	 //get all edges which belongs to the picked face
-        	 for (;fe_it; ++fe_it)
+        	 for (;fe_it.is_valid(); ++fe_it)
         	 {
         		 halfEdgeHandles.push_back(fe_it.current_halfedge_handle());
         	 }
