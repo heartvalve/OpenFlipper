@@ -184,8 +184,8 @@ typename Mesh::Scalar
 DiffGeoT<Mesh>::
 compute_area(VertexHandle _vh) const
 {
-  typename Mesh::HalfedgeHandle    heh0, heh1, heh2;
-  typename Mesh::VertexVertexIter  vv_it;
+  typename Mesh::HalfedgeHandle    		heh0, heh1, heh2;
+  typename Mesh::VertexOHalfedgeIter  voh_it;
 
   ACG::Vec3d   P, Q, R, PQ, QR, PR;
   double  normPQ, normQR, normPR;
@@ -196,9 +196,9 @@ compute_area(VertexHandle _vh) const
 
   area = 0.0;
 
-  for (vv_it=mesh_.vv_iter(_vh); vv_it.is_valid(); ++vv_it)
+  for (voh_it=mesh_.voh_iter(_vh); voh_it.is_valid(); ++voh_it)
   {
-    heh0 = vv_it.current_halfedge_handle();
+    heh0 = *voh_it;
     heh1 = mesh_.next_halfedge_handle(heh0);
     heh2 = mesh_.next_halfedge_handle(heh1);
 
@@ -334,12 +334,13 @@ compute_mean_curvature()
     compute_area();
 
 
-  typename Mesh::VertexIter        v_it, v_end(mesh_.vertices_end());
-  typename Mesh::VertexVertexIter  vv_it;
-  typename Mesh::Scalar            weight;
-  typename Mesh::Point             umbrella;
-  typename Mesh::EdgeHandle        eh;
-  typename Mesh::Scalar            curv, count;
+  typename Mesh::VertexIter        		v_it, v_end(mesh_.vertices_end());
+  typename Mesh::VertexVertexIter  		vv_it;
+  typename Mesh::VertexOHalfedgeIter  voh_it;
+  typename Mesh::Scalar            		weight;
+  typename Mesh::Point             		umbrella;
+  typename Mesh::EdgeHandle        		eh;
+  typename Mesh::Scalar            		curv, count;
 
 
   // compute for all non-boundary vertices
@@ -349,11 +350,11 @@ compute_mean_curvature()
     {
       umbrella[0] = umbrella[1] = umbrella[2] = 0.0;
 
-      for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
+      for (voh_it=mesh_.voh_iter(*v_it); voh_it.is_valid(); ++voh_it)
       {
-        eh        = mesh_.edge_handle(vv_it.current_halfedge_handle());
+        eh        = mesh_.edge_handle(*voh_it);
         weight    = mesh_.property(edge_weight_, eh);
-        umbrella += (mesh_.point(*v_it) - mesh_.point(*vv_it)) * weight;
+        umbrella += (mesh_.point(*v_it) - mesh_.point(mesh_.to_vertex_handle(*voh_it))) * weight;
       }
 
       mesh_.property(mean_curvature_, *v_it) =
@@ -407,11 +408,11 @@ post_smoothing(unsigned int _iters)
 
 
 
-  typename Mesh::VertexIter        v_it, v_end(mesh_.vertices_end());
-  typename Mesh::VertexVertexIter  vv_it;
-  typename Mesh::Scalar            w, ww;
-  typename Mesh::Scalar            gc, mc;
-  typename Mesh::EdgeHandle        eh;
+  typename Mesh::VertexIter        		v_it, v_end(mesh_.vertices_end());
+  typename Mesh::VertexOHalfedgeIter  voh_it;
+  typename Mesh::Scalar            		w, ww;
+  typename Mesh::Scalar            		gc, mc;
+  typename Mesh::EdgeHandle        		eh;
 
 
 
@@ -432,12 +433,12 @@ post_smoothing(unsigned int _iters)
       {
         gc = mc = ww = 0.0;
 
-        for (vv_it=mesh_.vv_iter(*v_it); vv_it.is_valid(); ++vv_it)
+        for (voh_it=mesh_.voh_iter(*v_it); voh_it.is_valid(); ++voh_it)
         {
-          eh   = mesh_.edge_handle(vv_it.current_halfedge_handle());
+          eh   = mesh_.edge_handle(*voh_it);
           ww  += (w = mesh_.property(edge_weight_, eh));
-          mc  += w * mesh_.property(mean_curvature_,  *vv_it);
-          gc  += w * mesh_.property(gauss_curvature_, *vv_it);
+          mc  += w * mesh_.property(mean_curvature_,  mesh_.to_vertex_handle(*voh_it));
+          gc  += w * mesh_.property(gauss_curvature_, mesh_.to_vertex_handle(*voh_it));
         }
 
         if (ww)
