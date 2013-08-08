@@ -398,7 +398,7 @@ bool OBJImporter::addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH
           fh_iter != currentTriMesh()->fh_end(fh); ++fh_iter)
       {
         //and write the normals to it
-        TriMesh::HalfedgeHandle heh = fh_iter.current_halfedge_handle();
+        TriMesh::HalfedgeHandle heh = *fh_iter;
         TriMesh::VertexHandle vh = currentTriMesh()->to_vertex_handle(heh);
         std::map<TriMesh::VertexHandle,TriMesh::Normal>::iterator iter = storedTriHENormals_.find(vh);
         if (iter != storedTriHENormals_.end())
@@ -449,7 +449,7 @@ bool OBJImporter::addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH
           fh_iter != currentPolyMesh()->fh_end(fh); ++fh_iter)
       {
         //and write the normals to it
-        PolyMesh::HalfedgeHandle heh = fh_iter.current_halfedge_handle();
+        PolyMesh::HalfedgeHandle heh = *fh_iter;
         PolyMesh::VertexHandle vh = currentPolyMesh()->to_vertex_handle(heh);
         std::map<PolyMesh::VertexHandle,PolyMesh::Normal>::iterator iter = storedTriHENormals_.find(vh);
         if (iter != storedTriHENormals_.end())

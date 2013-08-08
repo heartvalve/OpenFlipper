@@ -814,13 +814,13 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
         	 PolyMesh& m = *PluginFunctions::polyMesh(object);
         	 PolyMesh::FaceHandle fh = m.face_handle(target_idx);
 
-        	 PolyMesh::FaceEdgeIter fe_it(m,fh);
+           PolyMesh::FaceHalfedgeIter fh_it(m,fh);
 
         	 std::vector<PolyMesh::HalfedgeHandle> halfEdgeHandles;
         	 //get all edges which belongs to the picked face
-        	 for (;fe_it.is_valid(); ++fe_it)
+           for (;fh_it.is_valid(); ++fh_it)
         	 {
-        		 halfEdgeHandles.push_back(fe_it.current_halfedge_handle());
+             halfEdgeHandles.push_back(*fh_it);
         	 }
 
         	 //search for the nearest edge
