@@ -271,57 +271,6 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   }
 
   //============================================================================================================
-  // Post processor Menu
-  //============================================================================================================
-
-  if ( postProcessorManager().available() > 1 ) {
-    QMenu* postProcessorMenu = new QMenu(tr("Post processors"),_menu);
-    postProcessorMenu->setIcon(QIcon(iconPath+"postprocessors.png"));
-
-    _menu->addMenu(postProcessorMenu);
-
-    // Recreate actionGroup
-    QActionGroup* groupPostProcessor = new QActionGroup( this );
-    groupPostProcessor->setExclusive( true );
-
-    // Get the options action for the currently active postprocessor
-    if( postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() )]->optionsAction != 0 ) {
-      postProcessorMenu->addAction(postProcessorManager()[ postProcessorManager().activeId(PluginFunctions::activeExaminer() ) ]->optionsAction );
-    }
-
-    QAction* showPostProcessorDialog = new QAction(tr("Show post processor manager"),this);
-    connect(showPostProcessorDialog,SIGNAL(triggered()),this,SLOT(slotShowPostProcessorManager()));
-    postProcessorMenu->addAction(showPostProcessorDialog);
-
-    postProcessorMenu->addSeparator();
-
-
-    // Now add the processor chooser
-    for ( unsigned int i = 0 ; i < postProcessorManager().available() ; ++i) {
-
-      // Add a new Action with the postprocessors name
-      QAction * action = new QAction( postProcessorManager()[i]->name, groupPostProcessor );
-      action->setCheckable( true );
-
-      // Check if this processor is currently active
-      if ( postProcessorManager().activeId(PluginFunctions::activeExaminer() ) == i )
-        action->setChecked(true);
-
-      // Remember the id for the processor
-      action->setData(QVariant(i));
-    }
-
-    // Add all new actions from the group to the menu
-    postProcessorMenu->addActions( groupPostProcessor->actions() );
-
-    // Connect signal of group to our managing slot
-    connect( groupPostProcessor , SIGNAL( triggered( QAction * ) ),
-             this               , SLOT( slotPostProcessorMenu( QAction * ) ) );
-
-  }
-
-
-  //============================================================================================================
   // Viewing Direction Menu
   //============================================================================================================
 
@@ -409,6 +358,19 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //====================================================================================================
   // Other Toplevel Action
   //====================================================================================================
+
+  _menu->addSeparator();
+
+  //====================================================================================================
+
+  //============================================================================================================
+  // Post processor Manager
+  //============================================================================================================
+
+  QAction* showPostProcessorDialog = new QAction(tr("Show post processor manager"),this);
+  showPostProcessorDialog->setIcon(QIcon(iconPath+"postprocessors.png"));
+  connect(showPostProcessorDialog,SIGNAL(triggered()),this,SLOT(slotShowPostProcessorManager()));
+  _menu->addAction(showPostProcessorDialog);
 
   _menu->addSeparator();
 

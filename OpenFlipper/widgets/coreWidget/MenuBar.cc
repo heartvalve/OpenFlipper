@@ -335,16 +335,25 @@ void CoreWidget::setupMenuBar()
   slotUpdateRendererMenu();
 
   //============================================================================================================
-  // Global post processor menu
-  //============================================================================================================
-
-  slotUpdatePostProcessorMenu();
-
-  //============================================================================================================
   // Other toplevel actions
   //============================================================================================================
 
   viewMenu_->addSeparator();
+
+  //============================================================================================================
+  // Post processor Manager
+  //============================================================================================================
+
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+  QAction* showPostProcessorDialog = new QAction(tr("Show post processor manager"),this);
+  showPostProcessorDialog->setIcon(QIcon(iconPath+"postprocessors.png"));
+  connect(showPostProcessorDialog,SIGNAL(triggered()),this,SLOT(slotShowPostProcessorManager()));
+  viewMenu_->addAction(showPostProcessorDialog);
+
+  viewMenu_->addSeparator();
+
+  //====================================================================================================
+
 
   QAction* navigationSwitchAction = new QAction( tr("First-person Navigation"), viewMenu_ );
   navigationSwitchAction->setCheckable( true );
