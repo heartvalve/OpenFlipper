@@ -258,7 +258,7 @@ void selectBoundaryVertices(MeshT* _mesh, const typename MeshT::VertexHandle& _v
       continue;
 
     //find outgoing boundary-edges
-    for (typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it; ++voh_it)
+    for (typename MeshT::VertexOHalfedgeIter voh_it(*_mesh,vh); voh_it.is_valid(); ++voh_it)
       if ( _mesh->is_boundary( _mesh->edge_handle( *voh_it ) ) )
         stack.push( _mesh->to_vertex_handle(*voh_it) );
 
