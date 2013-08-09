@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2013 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -40,10 +40,11 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
 #include "PrimitivesGenerator.hh"
 
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include "TetrahedralCuboidGenerator.hh"
+#endif
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <ACG/Geometry/Algorithms.hh>
@@ -100,7 +101,7 @@ void PrimitivesGeneratorPlugin::initializePlugin()
                           QString("Center position,Radius").split(","));
 
   emit setSlotDescription("addTriangulatedCube(Vector, double)",
-                          tr("Generates a cube (ObjectId is returned)"),
+                          tr("Generates a triangular mesh of cube (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
@@ -108,6 +109,19 @@ void PrimitivesGeneratorPlugin::initializePlugin()
                           tr("Generates a triangulated cylinder (ObjectId is returned)")  ,
                           QString("Position,Axis,Radius,Height,Top,Bottom").split(","),
                           QString("Bottom center vertex position,Center axis,radius,height,add top vertex,add bottom vertex").split(","));
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  emit setSlotDescription("addTetrahedralCube(Vector,double)",
+                          tr("Generates a tetrahedral mesh of a cube (ObjectId is returned)"),
+                          QString("Position,Length").split(","),
+                          QString("Center position,Length of each edge").split(","));
+
+  emit setSlotDescription("addTetrahedralCuboid(Vector,Vector,uint,uint,uint)",
+                          tr("Generates a tetrahedral mesh of a cuboid (ObjectId is returned)"),
+                          QString("Position,Lengths,Count,Count,Count").split(","),
+                          QString("Center position,Length of each side,Number of units in x-axis,Number of units in y-axis,Number of units in z-axis").split(","));
+#endif
+
 }
 
 void PrimitivesGeneratorPlugin::pluginsInitialized() {
@@ -150,8 +164,17 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action = primitivesMenu_->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png"));
     whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedron."),"Tetrahedron");
-  }
 
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    action = primitivesMenu_->addAction("Cube (Tetrahedral Mesh)"    ,this,SLOT(addTetrahedralCube()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png"));
+    whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedral Cube."), "Cube");
+
+    action = primitivesMenu_->addAction("Cuboid (Tetrahedral Mesh)"  ,this,SLOT(addTetrahedralCuboid()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cube.png"));
+    whatsThisGen.setWhatsThis(action,tr("Create a Tetrahedral Cuboid."), "Cuboid");
+#endif
+  }
 }
 
 
@@ -182,6 +205,23 @@ int PrimitivesGeneratorPlugin::addPolyMesh() {
 
   return objectId;
 }
+
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+int PrimitivesGeneratorPlugin::addPolyhedralMesh() {
+    int objectId = -1;
+
+    emit addEmptyObject( DATA_POLYHEDRAL_MESH, objectId );
+
+    PolyhedralMeshObject* object;
+    if (!PluginFunctions::getObject(objectId, object) ) {
+        emit log(LOGERR, "Unable to create new PolyhedralMesh object");
+        return -1;
+    }
+
+    return objectId;
+}
+#endif
 
 int PrimitivesGeneratorPlugin::addTetrahedron(const Vector& _position, const double _length) {
 
@@ -218,6 +258,8 @@ int PrimitivesGeneratorPlugin::addTetrahedron(const Vector& _position, const dou
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+
+    PluginFunctions::viewAll();
 
     return newObject;
   }
@@ -276,11 +318,58 @@ int PrimitivesGeneratorPlugin::addTriangulatedCube(const Vector& _position,const
 
     emit updatedObject(newObject,UPDATE_ALL);
 
+    PluginFunctions::viewAll();
+
     return newObject;
   }
 
   return -1;
 }
+
+//========================================================================
+// Tetrahedral cube
+//========================================================================
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+
+int PrimitivesGeneratorPlugin::addTetrahedralCube(const Vector& _position, const double _length)
+{
+    return addTetrahedralCuboid(_position, Vector(_length, _length, _length), 1, 1, 1);
+}
+
+#endif
+
+//========================================================================
+// Tetrahedral Cuboid
+//========================================================================
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+
+int PrimitivesGeneratorPlugin::addTetrahedralCuboid(const Vector& _position,
+        const Vector& _length, const unsigned int  n_x, const unsigned int  n_y, const unsigned int  n_z)
+{
+
+    int object_id = addPolyhedralMesh();
+    PolyhedralMeshObject* object;
+
+    if (!PluginFunctions::getObject(object_id, object)) {
+        return -1;
+    }
+
+    object->setName("Cuboid " + QString::number(object_id));
+
+    TetrahedralCuboidGenerator gen;
+    gen.generate(*(object->mesh()), _position, _length, n_x, n_y, n_z);
+
+    emit updatedObject(object_id, UPDATE_ALL);
+
+    object->setObjectDrawMode(ACG::SceneGraph::DrawModes::getDrawMode("Cells (flat shaded)"));
+    PluginFunctions::viewAll();
+
+    return object_id;
+}
+
+#endif
 
 //========================================================================
 // Cylinder
@@ -425,6 +514,8 @@ int PrimitivesGeneratorPlugin::addTriangulatedCylinder(const Vector& _position,c
 
     emit updatedObject(newObject,UPDATE_ALL);
 
+    PluginFunctions::viewAll();
+
     return object->id();
   }
 
@@ -561,6 +652,8 @@ int PrimitivesGeneratorPlugin::addSphere(const Vector& _position, const double _
 
     emit updatedObject(newObject,UPDATE_ALL);
 
+    PluginFunctions::viewAll();
+
     return object->id();
   }
 
@@ -611,6 +704,8 @@ int PrimitivesGeneratorPlugin::addPyramid(const Vector& _position,const double _
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+
+    PluginFunctions::viewAll();
 
     return newObject;
   }
@@ -715,6 +810,8 @@ int PrimitivesGeneratorPlugin::addIcosahedron(const Vector& _position,const doub
 
     emit updatedObject(newObject,UPDATE_ALL);
 
+    PluginFunctions::viewAll();
+
     return newObject;
   }
 
@@ -766,6 +863,8 @@ int PrimitivesGeneratorPlugin::addOctahedron(const Vector& _position,const doubl
     triMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+
+    PluginFunctions::viewAll();
 
     return newObject;
   }
@@ -838,6 +937,8 @@ int PrimitivesGeneratorPlugin::addDodecahedron(const Vector& _position,const dou
     polyMesh_->update_normals();
 
     emit updatedObject(newObject,UPDATE_ALL);
+
+    PluginFunctions::viewAll();
 
     return newObject;
   }
