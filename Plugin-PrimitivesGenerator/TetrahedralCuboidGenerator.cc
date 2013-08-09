@@ -59,7 +59,7 @@ void TetrahedralCuboidGenerator::add_vertices(Vector const& position, Vector con
 }
 
 void TetrahedralCuboidGenerator::get_cube_vertices(std::size_t i, std::size_t j, std::size_t k,
-        std::vector<OpenVolumeMesh::VertexHandle>& v)
+        std::vector<OpenVolumeMesh::VertexHandle>& v) const
 {
     v[0] = vertices_[k * (size_[0] + 1) * (size_[1] + 1) + j * (size_[0] + 1) + i];
     v[1] = vertices_[k * (size_[0] + 1) * (size_[1] + 1) + j * (size_[0] + 1) + i + 1];
@@ -89,7 +89,7 @@ void TetrahedralCuboidGenerator::add_faces()
 }
 
 void TetrahedralCuboidGenerator::add_cube_type_1_faces(std::size_t i, std::size_t j, std::size_t k,
-        std::vector<OpenVolumeMesh::VertexHandle>& v)
+        std::vector<OpenVolumeMesh::VertexHandle> const& v)
 {
     std::vector<OpenVolumeMesh::VertexHandle> fv(3);
 
@@ -147,7 +147,7 @@ void TetrahedralCuboidGenerator::add_cube_type_1_faces(std::size_t i, std::size_
 }
 
 void TetrahedralCuboidGenerator::add_cube_type_2_faces(std::size_t i, std::size_t j, std::size_t k,
-        std::vector<OpenVolumeMesh::VertexHandle>& v)
+        std::vector<OpenVolumeMesh::VertexHandle> const& v)
 {
     std::vector<OpenVolumeMesh::VertexHandle> fv(3);
 
@@ -222,7 +222,7 @@ void TetrahedralCuboidGenerator::add_cells()
 }
 
 void TetrahedralCuboidGenerator::add_cube_type_1_cells(std::size_t i, std::size_t j, std::size_t k,
-        std::vector<OpenVolumeMesh::VertexHandle>& v)
+        std::vector<OpenVolumeMesh::VertexHandle> const& v)
 {
     std::vector<OpenVolumeMesh::FaceHandle> f(4);
     std::vector<OpenVolumeMesh::HalfFaceHandle> hf(4);
@@ -280,7 +280,7 @@ void TetrahedralCuboidGenerator::add_cube_type_1_cells(std::size_t i, std::size_
 }
 
 void TetrahedralCuboidGenerator::add_cube_type_2_cells(std::size_t i, std::size_t j, std::size_t k,
-        std::vector<OpenVolumeMesh::VertexHandle>& v)
+        std::vector<OpenVolumeMesh::VertexHandle> const& v)
 {
     std::vector<OpenVolumeMesh::FaceHandle> f(4);
     std::vector<OpenVolumeMesh::HalfFaceHandle> hf(4);
