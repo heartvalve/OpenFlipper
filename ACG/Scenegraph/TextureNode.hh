@@ -338,6 +338,12 @@ private:
    * This index is an index to the textures_ vector! Not the GLuint!!
    */
   int activeTexture_;
+
+  /** \brief OpenVolumeMesh DrawModes using textures
+   *
+   * Texturing will be activated for all DrawModes which are combined in this DrawMode
+   */
+  DrawModes::DrawMode open_volume_mesh_texture_draw_modes_;
 };
 
 
