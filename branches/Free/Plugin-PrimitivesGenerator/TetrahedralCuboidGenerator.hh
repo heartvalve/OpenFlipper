@@ -81,20 +81,19 @@ public:
 private:
     void add_vertices(Vector const& position, Vector const& length);
     void get_cube_vertices(std::size_t i, std::size_t j, std::size_t k,
-            std::vector<OpenVolumeMesh::VertexHandle>& v);
+            std::vector<OpenVolumeMesh::VertexHandle>& v) const;
 
     void add_faces();
     void add_cube_type_1_faces(std::size_t i, std::size_t j, std::size_t k,
-            std::vector<OpenVolumeMesh::VertexHandle>& v);
+            std::vector<OpenVolumeMesh::VertexHandle> const& v);
     void add_cube_type_2_faces(std::size_t i, std::size_t j, std::size_t k,
-            std::vector<OpenVolumeMesh::VertexHandle>& v);
+            std::vector<OpenVolumeMesh::VertexHandle> const& v);
 
     void add_cells();
     void add_cube_type_1_cells(std::size_t i, std::size_t j, std::size_t k,
-            std::vector<OpenVolumeMesh::VertexHandle>& v);
-
+            std::vector<OpenVolumeMesh::VertexHandle> const& v);
     void add_cube_type_2_cells(std::size_t i, std::size_t j, std::size_t k,
-            std::vector<OpenVolumeMesh::VertexHandle>& v);
+            std::vector<OpenVolumeMesh::VertexHandle> const& v);
 
     PolyhedralMesh* mesh_;
 
