@@ -137,6 +137,8 @@ void VolumeMeshObject<MeshT>::init() {
     if(OpenFlipper::Options::nogui())
         return;
 
+    VolumeMeshDrawModesContainer drawModes;  // create this object before initializing the textureNode
+
     textureNode_  = new ACG::SceneGraph::TextureNode(materialNode() , "NEW TextureNode for ");
 
     shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode_ , "NEW ShaderNode for ");
@@ -156,7 +158,6 @@ void VolumeMeshObject<MeshT>::init() {
     std::string shaderDirectory = std::string( shaderDir.toUtf8() );
     shaderNode_->setShaderDir( shaderDirectory );
 
-    VolumeMeshDrawModesContainer drawModes;
     if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() )
     {
         shaderNode_->setShader(drawModes.cellsPhongShaded,    "Phong/Vertex.glsl" , "Phong/Fragment.glsl" );
