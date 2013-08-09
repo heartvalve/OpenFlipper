@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
  *                              OpenFlipper                                   *
- *      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+ *      Copyright (C) 2001-2013 by Computer Graphics Group, RWTH Aachen       *
  *                           www.openflipper.org                              *
  *                                                                            *
  *--------------------------------------------------------------------------- *
@@ -51,6 +51,11 @@
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+
 
 class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface {
   Q_OBJECT
@@ -130,9 +135,24 @@ public slots:
   int addDodecahedron(const Vector& _position = Vector(0.0,0.0,0.0),
                       const double _length = 2.0);
 
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  int addTetrahedralCube(const Vector& _position = Vector(0.0,0.0,0.0),
+                         const double _length = 2.0);
+
+  int addTetrahedralCuboid(const Vector& _position = Vector(0.0,0.0,0.0),
+                           const Vector& _length = Vector(4.0,6.0,12.0),
+                           const unsigned int n_x = 5,
+                           const unsigned int n_y = 5,
+                           const unsigned int n_z = 10);
+#endif
+
 private:
   int addTriMesh();
   int addPolyMesh();
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  int addPolyhedralMesh();
+#endif
 
   inline void add_face( int _vh1 , int _vh2, int _vh3 );
 
