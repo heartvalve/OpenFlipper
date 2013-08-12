@@ -635,14 +635,14 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   // point list
   if (points && !v_cache_.empty())
   {
-    ro.glDrawElements(GL_POINTS, v_cache_.size(), GL_UNSIGNED_INT, &v_cache_[0]);
+    ro.glDrawElements(GL_POINTS, static_cast<GLsizei>(v_cache_.size()), GL_UNSIGNED_INT, &v_cache_[0]);
     _renderer->addRenderObject(&ro);
   }
 
   // edge list
   if (edges && !e_cache_.empty())
   {
-    ro.glDrawElements(GL_LINES, e_cache_.size(), GL_UNSIGNED_INT, &e_cache_[0]);
+    ro.glDrawElements(GL_LINES, static_cast<GLsizei>(e_cache_.size()), GL_UNSIGNED_INT, &e_cache_[0]);
     _renderer->addRenderObject(&ro);
   }
 
@@ -651,12 +651,12 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   {
     if (mesh_.is_trimesh()) 
     {
-      ro.glDrawElements(GL_TRIANGLES,  f_cache_.size(), GL_UNSIGNED_INT,  &f_cache_[0]);
+      ro.glDrawElements(GL_TRIANGLES,  static_cast<GLsizei>(f_cache_.size()), GL_UNSIGNED_INT,  &f_cache_[0]);
       _renderer->addRenderObject(&ro);
     }
     else
     {
-      ro.glDrawElements(GL_TRIANGLES,  poly_cache.size(), GL_UNSIGNED_INT,  &poly_cache[0]);
+      ro.glDrawElements(GL_TRIANGLES,  static_cast<GLsizei>(poly_cache.size()), GL_UNSIGNED_INT,  &poly_cache[0]);
       _renderer->addRenderObject(&ro);
     }
   }
@@ -673,7 +673,7 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
     ro.vertexBuffer = 0;
     ro.vertexDecl = &halfedgeVertexDecl_;
 
-    ro.glDrawArrays(GL_LINES, 0, he_points_.size() );
+    ro.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(he_points_.size()) );
     _renderer->addRenderObject(&ro);
   }
 

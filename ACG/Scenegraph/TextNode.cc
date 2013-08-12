@@ -601,7 +601,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.setMaterial(&localMaterial);
 
 
-  ro.glDrawArrays(GL_QUADS, 0, text_.size() * 4);
+  ro.glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(text_.size()) * 4);
   _renderer->addRenderObject(&ro);
 }
 

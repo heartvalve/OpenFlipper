@@ -164,7 +164,7 @@ namespace OpenMesh {
           return sizeof(unsigned int);
         
         value_type::const_iterator it = _v.begin();
-        unsigned int   N     = _v.size();
+        unsigned int   N     = static_cast<unsigned int>(_v.size());
         size_t         bytes = IO::size_of(N);
 
         for(;it!=_v.end(); ++it)
@@ -178,7 +178,7 @@ namespace OpenMesh {
       static size_t store(std::ostream& _os, const value_type& _v, bool _swap=false)
       { 
         value_type::const_iterator it = _v.begin();
-        unsigned int   N     = _v.size();
+        unsigned int   N     = static_cast<unsigned int>(_v.size());
         
         size_t bytes;
         bytes  = IO::store( _os, N, _swap );
@@ -194,7 +194,7 @@ namespace OpenMesh {
 
       static size_t restore( std::istream& _is, value_type& _v, bool _swap=false)
       { 
-        unsigned int   N     = _v.size();
+        unsigned int   N     = static_cast<unsigned int>(_v.size());
 
         size_t bytes;
         bytes  = IO::restore( _is, N, _swap );

@@ -289,7 +289,7 @@ void MaterialPicker::slotMouseEvent(QMouseEvent* _event) {
             materialInfo.key = Qt::Key_unknown;
             if (shortKeyRow_.size() < supportedKeys_)
             {
-              materialInfo.key = Qt::Key_1+shortKeyRow_.size();
+              materialInfo.key = Qt::Key_1+(int)shortKeyRow_.size();
               shortKeyRow_[materialInfo.key] = materialListWidget_->count();
             }
 
@@ -411,19 +411,19 @@ void MaterialPicker::slotKeyEvent(QKeyEvent* _event)
       if (shortKeyRow_.find(key) == shortKeyRow_.end())
         return;
       slotFillMaterialMode();
-      materialListWidget_->setCurrentRow(shortKeyRow_[key]);
+      materialListWidget_->setCurrentRow((int)shortKeyRow_[key]);
     }
   }
 }
 //------------------------------------------------------------------------------
-void MaterialPicker::changeHotKey(const int &_key)
+void MaterialPicker::changeHotKey(const int _key)
 {
   std::map<int,size_t>::iterator iter = shortKeyRow_.find(_key);
 
   if (iter != shortKeyRow_.end())
   {
     //remove old key
-    size_t oldIndex = iter->second;
+    int oldIndex = (int)iter->second;
     QListWidgetItem* oldItem = materialListWidget_->item(oldIndex);
     //remove name
     oldItem->setText( plainName(oldItem->text(),oldIndex) );
@@ -433,7 +433,7 @@ void MaterialPicker::changeHotKey(const int &_key)
   }
 
   //set the new item (save and hint)
-  size_t newIndex = materialListWidget_->currentRow();
+  int newIndex = materialListWidget_->currentRow();
   QListWidgetItem* newItem = materialListWidget_->item(newIndex);
   materialList_[newIndex].key = _key;
 
