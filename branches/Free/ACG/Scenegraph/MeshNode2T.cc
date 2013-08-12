@@ -1032,7 +1032,7 @@ pick_vertices(GLState& _state, bool _front)
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
   v_end(mesh_.vertices_end());
   
-  if (!_state.pick_set_maximum (mesh_.n_vertices())) {
+  if (!_state.pick_set_maximum (static_cast<unsigned>(mesh_.n_vertices()))) {
     omerr() << "MeshNode::pick_vertices: color range too small, " << "picking failed\n";
     return;
   }
@@ -1109,7 +1109,7 @@ pick_edges(GLState& _state, bool _front)
 {  
   GLenum prev_depth = _state.depthFunc();
   
-  if (!_state.pick_set_maximum (mesh_.n_edges())) {
+  if (!_state.pick_set_maximum (static_cast<unsigned>(mesh_.n_edges()))) {
     omerr() << "MeshNode::pick_edges: color range too small, " << "picking failed\n";
     return;
   }
@@ -1194,7 +1194,7 @@ pick_faces(GLState& _state)
   }
   
   if ( mesh_.n_faces() > 0 ) {
-    if (!_state.pick_set_maximum (mesh_.n_faces())) {
+    if (!_state.pick_set_maximum (static_cast<unsigned>(mesh_.n_faces()))) {
       omerr() << "MeshNode::pick_faces: color range too small, " << "picking failed\n";
       return;
     }
@@ -1258,7 +1258,7 @@ pick_any(GLState& _state)
     return;
   }
   
-  if (!_state.pick_set_maximum (numElements))
+  if (!_state.pick_set_maximum (static_cast<unsigned int>(numElements)))
   {
     omerr() << "MeshNode::pick_any: color range too small, " << "picking failed\n";
     return;

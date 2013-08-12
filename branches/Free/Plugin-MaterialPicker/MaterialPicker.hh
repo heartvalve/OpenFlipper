@@ -169,7 +169,7 @@ private slots:
   void createContextMenu(const QPoint& _point);
 
   /// change specified HotKey to current item
-  void changeHotKey(const int &_key);
+  void changeHotKey(const int _key);
 
   void slotMaterialProperties();
 

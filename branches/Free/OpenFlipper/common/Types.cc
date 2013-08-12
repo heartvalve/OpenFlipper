@@ -75,11 +75,11 @@ static std::map< DataType, QString > typeToString;
 
 /** This map maps an dataType name to its id in the types vector
  */
-static std::map< QString , unsigned int > stringToTypeInfo;
+static std::map< QString , size_t > stringToTypeInfo;
 
 /** This map maps an dataType id to its id in the types vector
  */
-static std::map< DataType , unsigned int > typeToTypeInfo;
+static std::map< DataType , size_t > typeToTypeInfo;
 
 static QIcon dummyIcon;
 
@@ -141,7 +141,7 @@ DataType addDataType(QString _name, QString _readableName) {
 /// Get the id of a type with given name
 DataType typeId(QString _name) {
 
-  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+  std::map<QString, size_t>::iterator index = stringToTypeInfo.find( _name );
 
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].type;
@@ -175,7 +175,7 @@ bool typeExists( QString _name ) {
 
 
 /// Return the number of registered types
-uint typeCount() {
+size_t typeCount() {
   return types.size();
 }
 
@@ -192,7 +192,7 @@ std::vector< TypeInfo >::const_iterator typesEnd() {
 /// Get the icon of a given dataType
 QString typeIconName(QString  _name) {
 
-  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+  std::map<QString, size_t>::iterator index = stringToTypeInfo.find( _name );
 
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].iconName;
@@ -203,7 +203,7 @@ QString typeIconName(QString  _name) {
 /// get the icon of a given dataType
 QString typeIconName(DataType _id) {
 
-  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, size_t>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].iconName;
@@ -214,7 +214,7 @@ QString typeIconName(DataType _id) {
 /// get the icon of a given dataType
 QIcon& typeIcon(DataType _id) {
   
-  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, size_t>::iterator index = typeToTypeInfo.find(_id);
   
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].icon;
@@ -226,7 +226,7 @@ QIcon& typeIcon(DataType _id) {
 void setTypeIcon( DataType _id   , QString _icon ) {
 
   if (  OpenFlipper::Options::gui() ) {
-    std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+    std::map<DataType, size_t>::iterator index = typeToTypeInfo.find(_id);
 
     if ( index != typeToTypeInfo.end() ) {
       types[ index->second ].iconName = _icon;
@@ -240,7 +240,7 @@ void setTypeIcon( DataType _id   , QString _icon ) {
 void setTypeIcon( QString  _name , QString _icon ) {
 
   if (  OpenFlipper::Options::gui() ) {
-    std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+    std::map<QString, size_t>::iterator index = stringToTypeInfo.find( _name );
 
     if ( index != stringToTypeInfo.end() ) {
       types[ index->second ].iconName = _icon;
@@ -254,7 +254,7 @@ void setTypeIcon( QString  _name , QString _icon ) {
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
 QString dataTypeName( DataType _id ) {
 
-  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, size_t>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].readableName ;
@@ -267,7 +267,7 @@ QString dataTypeName( DataType _id ) {
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
 QString dataTypeName( QString  _typeName ) {
 
-  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
+  std::map<QString, size_t>::iterator index = stringToTypeInfo.find( _typeName );
 
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].readableName ;
@@ -282,7 +282,7 @@ QString dataTypeName( QString  _typeName ) {
 /// Set the icon for a given dataType
 void setDataTypeName( DataType _id   , QString _name ) {
 
-  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, size_t>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     types[ index->second ].readableName = _name;
@@ -293,7 +293,7 @@ void setDataTypeName( DataType _id   , QString _name ) {
 /// Set the icon for a given dataType
 void setDataTypeName( QString  _typeName , QString _name ) {
 
-  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
+  std::map<QString, size_t>::iterator index = stringToTypeInfo.find( _typeName );
 
   if ( index != stringToTypeInfo.end() )
     types[ index->second ].readableName = _name;

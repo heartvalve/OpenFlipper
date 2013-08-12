@@ -231,7 +231,7 @@ bool typeExists( QString _name );
 * \note Remember that the types are organized in a bitfield!
 */
 DLLEXPORT 
-uint typeCount();
+size_t typeCount();
 
 /** @} */
 

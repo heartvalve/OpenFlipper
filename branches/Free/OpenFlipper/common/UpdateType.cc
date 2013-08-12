@@ -53,11 +53,11 @@ static std::map< UpdateType, QString > updateTypeToString;
 
 /** This map maps an updateType name to its id in the types vector
  */
-static std::map< QString , unsigned int > stringToUpdateTypeInfo;
+static std::map< QString , size_t > stringToUpdateTypeInfo;
 
 /** This map maps an updateType id to its id in the types vector
  */
-static std::map< UpdateType , unsigned int > updateTypeToTypeInfo;
+static std::map< UpdateType , size_t > updateTypeToTypeInfo;
 
 /** This field defines the start id for custom updatetypes.
 */
@@ -224,7 +224,7 @@ void initializeUpdateTypes() {
 UpdateType addUpdateType(QString _name, bool _resetNeeded) {
 
   //first check if it's already available
-  std::map<QString, unsigned int>::iterator index = stringToUpdateTypeInfo.find( _name );
+  std::map<QString, size_t>::iterator index = stringToUpdateTypeInfo.find( _name );
 
   if ( index != stringToUpdateTypeInfo.end() )
     return updateTypes[ index->second ].type;
@@ -246,7 +246,7 @@ UpdateType addUpdateType(QString _name, bool _resetNeeded) {
 /// Get the id of a type with given name
 UpdateType updateType(QString _name) {
 
-  std::map<QString, unsigned int>::iterator index = stringToUpdateTypeInfo.find( _name );
+  std::map<QString, size_t>::iterator index = stringToUpdateTypeInfo.find( _name );
 
   if ( index != stringToUpdateTypeInfo.end() )
     return updateTypes[ index->second ].type;
@@ -274,6 +274,6 @@ QString updateTypeName(UpdateType _id) {
 }
 
 /// Return the number of registered types
-uint updateTypeCount() {
+size_t updateTypeCount() {
   return updateTypes.size();
 }

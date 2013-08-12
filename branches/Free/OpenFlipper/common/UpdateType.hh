@@ -210,7 +210,7 @@ QString updateTypeName(UpdateType _id);
 * iterate over all types. 
 */
 DLLEXPORT 
-uint updateTypeCount();
+size_t updateTypeCount();
 
 /**@}*/
 
