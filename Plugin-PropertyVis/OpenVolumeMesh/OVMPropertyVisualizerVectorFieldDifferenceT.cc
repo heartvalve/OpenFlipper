@@ -93,43 +93,6 @@ class ScalarAssigner {
         const Prop2 &prop2;
 };
 
-
-template<typename MeshT, typename MeshIteratorT>
-class ColorSetIterator {
-    public:
-        typedef std::output_iterator_tag iterator_category;
-        typedef void value_type;
-        typedef void difference_type;
-        typedef void pointer;
-        typedef void reference;
-
-        ColorSetIterator(VolumeMeshObject<MeshT>* object, MeshIteratorT it) : object(object), it(it) {}
-
-        ColorSetIterator &operator=(const ACG::Vec4f &color) {
-            object->colors()[*it] = color;
-            return *this;
-        }
-
-        ColorSetIterator &operator*() {
-            return *this;
-        }
-
-        ColorSetIterator &operator++() {
-            ++it;
-            return *this;
-        }
-
-        ColorSetIterator operator++(int) {
-            ColorSetIterator<MeshT, MeshIteratorT> cpy(*this);
-            ++it;
-            return cpy;
-        }
-
-    private:
-        VolumeMeshObject<MeshT>* object;
-        MeshIteratorT it;
-};
-
 template<typename MeshT, typename IteratorT, typename PropHandle, float (*ScalarFn)(const ACG::Vec3d &, const ACG::Vec3d &)>
 void colorElements(int objectID,
                    PropHandle prop1,
@@ -148,8 +111,9 @@ void colorElements(int objectID,
     VolumeMeshObject<MeshT>* object;
     PluginFunctions::getObject(objectID, object);
 
-    std::transform(scalars.begin(), scalars.end(), ColorSetIterator<MeshT, IteratorT>(object, primitivesBegin),
-                   ACG::ColorCoder(min, max, false));
+    ACG::ColorCoder colCod(min,max,false);
+    for (std::vector<float>::iterator i = scalars.begin(); i != scalars.end(); ++i)
+        object->colors()[*(primitivesBegin++)] = colCod(*i);
 }
 
 }
