@@ -164,6 +164,8 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     QAction*      viewFront_;
     QAction*      viewBack_;
 
+    std::map<QCheckBox*, ACG::SceneGraph::DrawModes::DrawMode> activeCheckboxes;
+
   private slots:
     QString version() { return QString("1.0"); };
 

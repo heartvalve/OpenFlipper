@@ -649,28 +649,39 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
 
   // Collect available draw Modes for this object
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
-  ACG::SceneGraph::traverse( object->baseNode() , actionAvailable);
+  ACG::SceneGraph::traverse( object->primaryNode() , actionAvailable);
   availDrawModes_ = actionAvailable.drawModes();
 
   // Collect available draw Modes for this object
   ACG::SceneGraph::CollectActiveDrawModesAction actionActive;
-  ACG::SceneGraph::traverse( object->baseNode() , actionActive);
+  ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
   activeDrawModes_ = actionActive.drawMode();
 
   std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
   availDrawModeIds =  availDrawModes_.getAtomicDrawModes();
 
+  ACG::SceneGraph::DrawModes::DrawMode globalDrawModes = PluginFunctions::drawMode();
+
+  const bool containsGlobalDM = activeDrawModes_ == ACG::SceneGraph::DrawModes::DEFAULT;
+
+  activeCheckboxes.clear();
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
     ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
     std::string  descr = id.description();
 
     QCheckBox *checkBox = new QCheckBox(QString(descr.c_str()), viewControlMenu_);
-    checkBox->setChecked(activeDrawModes_.containsAtomicDrawMode(id));
+    activeCheckboxes[checkBox] = id;
+    if (activeDrawModes_.containsAtomicDrawMode(id))
+        checkBox->setCheckState(Qt::Checked);
+    else if (containsGlobalDM && globalDrawModes.containsAtomicDrawMode(id))
+        checkBox->setCheckState(Qt::PartiallyChecked);
+    else
+        checkBox->setCheckState(Qt::Unchecked);
     QWidgetAction *checkableAction = new QWidgetAction(drawGroup);
     checkableAction->setText(descr.c_str());
     checkableAction->setDefaultWidget(checkBox);
-    connect(checkBox, SIGNAL(toggled(bool) ), checkableAction, SLOT(trigger() ) );
+    connect(checkBox, SIGNAL( stateChanged(int) ), checkableAction, SLOT(trigger() ) );
   }
 
   viewControlMenu_->addActions( drawGroup->actions() );
@@ -681,6 +692,10 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
 }
 
 void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
+
+  QWidgetAction * const wdgtAction = dynamic_cast<QWidgetAction*>(_action);
+  QCheckBox * const checkbox = wdgtAction ? dynamic_cast<QCheckBox*>(wdgtAction->defaultWidget()) : 0;
+  const bool activateDrawMode = checkbox ? (checkbox->checkState() != Qt::Unchecked) : false;
 
   //======================================================================================
   // Get the mode toggled
@@ -701,23 +716,60 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   //======================================================================================
   // possibly combine draw modes
   //======================================================================================
+  bool useGlobalDrawMode = false;
+  bool contextMenuStaysOpen = false;
   if ( _action->text() != USEGLOBALDRAWMODE ) {
     // As this is not the global draw mode, filter out default as draw mode or it will interfere with the other modes!
     activeDrawModes_.filter(ACG::SceneGraph::DrawModes::DEFAULT);
     
     // If shift is pressed, we combine the modes (and toggle therefore xor)
     // Otherwise we directly take the new mode
-    if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
-      activeDrawModes_.combine(mode);
-    else
-    {
+    if ( qApp->keyboardModifiers() & Qt::ShiftModifier ) {
+        if (activateDrawMode) {
+            activeDrawModes_ |= mode;
+        } else {
+            if (activeDrawModes_ == mode) {
+                activeDrawModes_ = ACG::SceneGraph::DrawModes::DEFAULT;
+                useGlobalDrawMode = true;
+            } else {
+                activeDrawModes_ &= ~mode;
+            }
+        }
+        contextMenuStaysOpen = true;
+    } else {
+      if (activateDrawMode) {
+          activeDrawModes_ = mode ;
+      } else {
+          activeDrawModes_ = ACG::SceneGraph::DrawModes::DEFAULT;
+          useGlobalDrawMode = true;
+      }
       emit hideContextMenu();
-      activeDrawModes_ = mode ;
+    }
+
+    if (activeDrawModes_ == ACG::SceneGraph::DrawModes::DEFAULT) {
+        useGlobalDrawMode = true;
     }
     
   } else {
     // Switch back to global drawmode-> default
     activeDrawModes_ = ACG::SceneGraph::DrawModes::DEFAULT;
+    useGlobalDrawMode = true;
+  }
+
+  if (contextMenuStaysOpen) {
+      typedef std::map<QCheckBox*, ACG::SceneGraph::DrawModes::DrawMode> CBM;
+      ACG::SceneGraph::DrawModes::DrawMode globalDrawModes = PluginFunctions::drawMode();
+      for (CBM::iterator it = activeCheckboxes.begin(), it_end = activeCheckboxes.end(); it != it_end; ++it) {
+          it->first->blockSignals(true);
+          if (activeDrawModes_.containsAtomicDrawMode(it->second)) {
+              it->first->setCheckState(Qt::Checked);
+          } else if (useGlobalDrawMode && globalDrawModes.containsAtomicDrawMode(it->second)) {
+              it->first->setCheckState(Qt::PartiallyChecked);
+          } else {
+              it->first->setCheckState(Qt::Unchecked);
+          }
+          it->first->blockSignals(false);
+      }
   }
 
   //======================================================================================
@@ -729,7 +781,7 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   PluginFunctions::getObject( lastObjectId_, object );
 
   // Set draw Modes for this object ( force it when we do not set the global draw mode, to override global draw mode and force the modes on the nodes )
-  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , _action->text() != USEGLOBALDRAWMODE );
+  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , !useGlobalDrawMode );
   
   
   if ( object )
