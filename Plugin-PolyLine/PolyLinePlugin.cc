@@ -157,6 +157,7 @@ slotMouseEvent( QMouseEvent* _event )
 }
 
 void PolyLinePlugin::slotKeyEvent(QKeyEvent* event) {
+    if (!cur_polyline_obj_ || cur_insert_id_ == -1) return;
     switch (event->key()) {
         case Qt::Key_Return:
             if (PluginFunctions::pickMode() == ("PolyLine") && PluginFunctions::actionMode() == Viewer::PickingMode && mode() == PL_INSERT) {
