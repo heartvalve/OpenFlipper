@@ -1463,6 +1463,7 @@ void DrawMeshT<Mesh>::updatePerEdgeBuffers()
 }
 
 template <class Mesh>
+template<typename Mesh::Normal (DrawMeshT<Mesh>::*NormalLookup)(typename Mesh::FaceHandle)>
 void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
 {
   // Only update buffers if they are invalid
@@ -1478,11 +1479,11 @@ void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
 
   unsigned int idx = 0;
 
-  typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
-  for (; he_it!=he_end; ++he_it) {
+  for (typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
+          he_it != he_end; ++he_it) {
 
-    perHalfedgeVertexBuf_[idx]   = halfedge_point(*he_it);
-    perHalfedgeVertexBuf_[idx+1] = halfedge_point(mesh_.prev_halfedge_handle(*he_it));
+    perHalfedgeVertexBuf_[idx]   = halfedge_point<NormalLookup>(*he_it);
+    perHalfedgeVertexBuf_[idx+1] = halfedge_point<NormalLookup>(mesh_.prev_halfedge_handle(*he_it));
 
     if (  mesh_.has_halfedge_colors() ) {
       const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(*he_it) ) ;
@@ -1498,10 +1499,9 @@ void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
   updateEdgeHalfedgeVertexDeclarations();
 }
 
-template <class Mesh>
-typename Mesh::Point
-DrawMeshT<Mesh>::
-halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
+template<class Mesh>
+template<typename Mesh::Normal (DrawMeshT<Mesh>::*NormalLookup)(typename Mesh::FaceHandle)>
+typename Mesh::Point DrawMeshT<Mesh>::halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
 
   typename Mesh::Point p  = mesh_.point(mesh_.to_vertex_handle  (_heh));
   typename Mesh::Point pp = mesh_.point(mesh_.from_vertex_handle(_heh));
@@ -1510,9 +1510,11 @@ halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
   //  typename Mesh::Point n  = (p-pp)%(pn-p);
   typename Mesh::Point fn;
   if( !mesh_.is_boundary(_heh))
-    fn = mesh_.normal(mesh_.face_handle(_heh));
+    //fn = mesh_.normal(mesh_.face_handle(_heh));
+      fn = (this->*NormalLookup)(mesh_.face_handle(_heh));
   else
-    fn = mesh_.normal(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
+    //fn = mesh_.normal(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
+      fn = (this->*NormalLookup)(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
 
   typename Mesh::Point upd = ((fn%(pn-p)).normalize() + (fn%(p-pp)).normalize()).normalize();
 
@@ -1530,9 +1532,15 @@ halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
 template <class Mesh>
 ACG::Vec3f* DrawMeshT<Mesh>::perHalfedgeVertexBuffer()
 {
-  // Force update of the buffers if required
-  if (updatePerHalfedgeBuffers_)
-    updatePerHalfedgeBuffers();
+ // Force update of the buffers if required
+  if (updatePerHalfedgeBuffers_) {
+      if (mesh_.has_face_normals())
+          updatePerHalfedgeBuffers<&DrawMeshT::cachedNormalLookup>();
+      else if (mesh_.is_trimesh())
+          updatePerHalfedgeBuffers<&DrawMeshT::computedTriMeshNormal>();
+      else
+          updatePerHalfedgeBuffers<&DrawMeshT::computedNormal>();
+  }
   return perHalfedgeVertexBuf_.empty() ? 0 : &(perHalfedgeVertexBuf_[0]); 
 }
 
@@ -1540,8 +1548,14 @@ template <class Mesh>
 ACG::Vec4f* DrawMeshT<Mesh>::perHalfedgeColorBuffer()
 {
   // Force update of the buffers if required
-  if (updatePerHalfedgeBuffers_)
-    updatePerHalfedgeBuffers();
+  if (updatePerHalfedgeBuffers_) {
+      if (mesh_.has_face_normals())
+          updatePerHalfedgeBuffers<&DrawMeshT::cachedNormalLookup>();
+      else if (mesh_.is_trimesh())
+          updatePerHalfedgeBuffers<&DrawMeshT::computedTriMeshNormal>();
+      else
+          updatePerHalfedgeBuffers<&DrawMeshT::computedNormal>();
+  }
   return perHalfedgeColorBuf_.empty() ? 0 : &(perHalfedgeColorBuf_[0]); 
 }
 
