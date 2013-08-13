@@ -816,6 +816,7 @@ public:
   *n
   * The updated buffers are: per edge vertex buffer ( 2 vertices per edge )
   */
+  template<typename Mesh::Normal (DrawMeshT::*NormalLookup)(typename Mesh::FaceHandle)>
   void updatePerHalfedgeBuffers();
 
   /** \brief get a pointer to the per edge vertex buffer
@@ -865,8 +866,31 @@ private:
   *
   * @return
   */
+  template<typename Mesh::Normal (DrawMeshT::*NormalLookup)(typename Mesh::FaceHandle)>
   typename Mesh::Point halfedge_point(const typename Mesh::HalfedgeHandle _heh);
 
+  inline
+  typename Mesh::Normal cachedNormalLookup(typename Mesh::FaceHandle fh) {
+      return mesh_.normal(fh);
+  }
+
+  inline
+  typename Mesh::Normal computedTriMeshNormal(typename Mesh::FaceHandle fh) {
+      typename Mesh::FVIter fv_iter = mesh_.fv_begin(fh);
+      return (mesh_.point(*fv_iter) + mesh_.point(*(++fv_iter)) + mesh_.point(*(++fv_iter))) / 3.0;
+  }
+
+  inline
+  typename Mesh::Normal computedNormal(typename Mesh::FaceHandle fh) {
+      unsigned int count = 0;
+      typename Mesh::Normal normal(0, 0, 0);
+      for (typename Mesh::FVIter fv_it = mesh_.fv_begin(fh), fv_end = mesh_.fv_end(fh); fv_it != fv_end; ++fv_it) {
+          normal += mesh_.point(*fv_it);
+          ++count;
+      }
+      normal /= count;
+      return normal;
+  }
 };
 
 
