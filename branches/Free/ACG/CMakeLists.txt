@@ -104,6 +104,10 @@ if (GTEST_FOUND)
   include_directories(${GTEST_INCLUDE_DIRS} ${OPENMESH_INCLUDE_DIR})
   link_directories ( ${GTEST_LIBRARY_DIR})
 
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+     add_definitions( /D _VARIADIC_MAX=10 )
+  endif()
+
   add_executable (ACG_tests ${TEST_SOURCES})
   set_target_properties(ACG_tests PROPERTIES
   		COMPILE_FLAGS "-UNDEBUG")
