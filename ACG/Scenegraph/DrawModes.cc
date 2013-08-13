@@ -244,7 +244,8 @@ void DrawMode::setDrawModeProperties( const DrawModeProperties& _props )
 }
 
 bool DrawMode::operator==(const DrawMode& _mode) const {
-  return ((modeFlags_ & _mode.modeFlags_).any());
+    return modeFlags_ == _mode.modeFlags_;
+  //return ((modeFlags_ & _mode.modeFlags_).any());
 }
 
 DrawMode & DrawMode::operator =(const DrawMode& _mode) {
