@@ -48,6 +48,7 @@ PolyLinePlugin::PolyLinePlugin() :
         cur_polyline_obj_(0),
         cur_move_id_(-1),
         move_point_ref_(0),
+        create_point_ref_(0),
         cur_merge_id_(-1),
         smart_move_timer_(0),
         cur_smart_move_obj_(0),
@@ -155,7 +156,29 @@ slotMouseEvent( QMouseEvent* _event )
   }
 }
 
+void PolyLinePlugin::slotKeyEvent(QKeyEvent* event) {
+    switch (event->key()) {
+        case Qt::Key_Return:
+            if (PluginFunctions::pickMode() == ("PolyLine") && PluginFunctions::actionMode() == Viewer::PickingMode && mode() == PL_INSERT) {
 
+                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
+
+                if (event->modifiers() & (Qt::ShiftModifier))
+                  cur_polyline_obj_->line()->set_closed(true);
+
+                emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+
+                cur_insert_id_ = -1;
+                cur_polyline_obj_ = 0;
+                create_point_ref_ = 0;
+
+                clearStatusMessage();
+            }
+            break;
+        default:
+            break;
+    }
+}
 //-----------------------------------------------------------------------------
 
 void
@@ -176,7 +199,11 @@ pluginsInitialized()
 {
   // Add the required Picking modes (Hidden, controlled only by the buttons)
   emit addHiddenPickMode("PolyLine");
+  emit setPickModeMouseTracking("PolyLine", true);
   emit addHiddenPickMode( CREATE_CUT_POLYLINE );
+
+  emit registerKey(Qt::Key_Return, Qt::NoModifier, tr("Terminate creation of poly line."), true);
+  emit registerKey(Qt::Key_Return, Qt::ShiftModifier, tr("Terminate creation of poly line and create loop."), true);
   
   // TOOLBAR
   toolbar_ = new QToolBar(tr("PolyLine Editing"));
@@ -726,6 +753,21 @@ void
 PolyLinePlugin::
 me_insert( QMouseEvent* _event )
 {
+    if (_event->type() == QEvent::MouseMove) {
+        if (create_point_ref_) {
+            // Pick position
+            unsigned int node_idx, target_idx;
+            ACG::Vec3d hit_point;
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
+                *create_point_ref_ = (PolyLine::Point) hit_point;
+
+                // update
+                emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY);
+            }
+        }
+        return;
+    }
+
   // Pick position
   unsigned int node_idx, target_idx;
   ACG::Vec3d hit_point;
@@ -748,10 +790,15 @@ me_insert( QMouseEvent* _event )
           cur_polyline_obj_ = PluginFunctions::polyLineObject(obj);
 
           cur_polyline_obj_->materialNode()->set_random_color();
+
+          cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
+
+          emit showStatusMessage(tr("Double click/Enter to terminate poly line. Use with shift to create loop."));
         }
 
         // add new point
         cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
+        create_point_ref_ = &cur_polyline_obj_->line()->points().back();
 
         // update
         emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
@@ -767,12 +814,27 @@ me_insert( QMouseEvent* _event )
           cur_polyline_obj_->line()->set_closed(true);
         }
 
+        if (cur_polyline_obj_->line()->n_vertices() >= 2) {
+            const PolyLine::Point &p1 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 1),
+                    &p2 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 2);
+
+            /*
+             * Remove duplicate created as a move sentinel.
+             */
+            if ((p2 - p1).sqrnorm() < 1e-6) {
+                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
+            }
+        }
+
         // update
         emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 
         // reset current variables
         cur_insert_id_ = -1;
         cur_polyline_obj_ = 0;
+        create_point_ref_ = 0;
+
+        clearStatusMessage();
 
         break;
       }

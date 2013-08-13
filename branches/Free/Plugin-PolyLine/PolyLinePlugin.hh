@@ -31,6 +31,8 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/KeyInterface.hh>
+#include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyLine/PolyLine.hh>
@@ -48,17 +50,27 @@
 
 /** Plugin for PolyLine Support
  */
-class PolyLinePlugin : public QObject, BaseInterface, MouseInterface,
-PickingInterface, ToolboxInterface, LoggingInterface, LoadSaveInterface, ToolbarInterface, ScriptInterface
-{
-  Q_OBJECT
-  Q_INTERFACES(BaseInterface)
+class PolyLinePlugin: public QObject,
+                      BaseInterface,
+                      MouseInterface,
+                      PickingInterface,
+                      ToolboxInterface,
+                      LoggingInterface,
+                      LoadSaveInterface,
+                      ToolbarInterface,
+                      StatusbarInterface,
+                      KeyInterface,
+                      ScriptInterface {
+    Q_OBJECT
+    Q_INTERFACES(BaseInterface)
     Q_INTERFACES(MouseInterface)
     Q_INTERFACES(PickingInterface)
     Q_INTERFACES(ToolboxInterface)
     Q_INTERFACES(LoggingInterface)
     Q_INTERFACES(LoadSaveInterface)
     Q_INTERFACES(ToolbarInterface)
+    Q_INTERFACES(StatusbarInterface)
+    Q_INTERFACES(KeyInterface)
     Q_INTERFACES(ScriptInterface)
 
 #if QT_VERSION >= 0x050000
@@ -75,6 +87,7 @@ signals:
   void addPickMode( const std::string& _mode );
   void addHiddenPickMode( const std::string& _mode );
   void setPickModeToolbar (const std::string& _mode, QToolBar * _toolbar);
+  void setPickModeMouseTracking(const std::string& _mode , bool _mouseTracking);
 
   // LoggingInterface
   void log(Logtype _type, QString _message);
@@ -93,6 +106,9 @@ signals:
   void deleteObject( int _id );
   void addEmptyObject( DataType _type, int& _id);    
 
+  void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+  void showStatusMessage(QString _message, int _timeout = 0);
+  void clearStatusMessage();
 
 private slots :
   // BaseInterface
@@ -101,6 +117,7 @@ private slots :
   void slotEditModeChanged();
 
   void slotMouseEvent( QMouseEvent* _event );
+  void slotKeyEvent(QKeyEvent* _event);
 
   void slotPickModeChanged( const std::string& _mode);
 
@@ -261,6 +278,7 @@ private:
     
     int               cur_move_id_;
     PolyLine::Point*  move_point_ref_;
+    PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
     
     int               cur_merge_id_;
