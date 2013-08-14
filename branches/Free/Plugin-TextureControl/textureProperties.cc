@@ -350,7 +350,7 @@ void texturePropertiesWidget::slotChangeImage()
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open Image"),
                                                   OpenFlipper::Options::currentTextureDirStr(),
-                                                  tr("Images (*.png *.xpm *.jpg, *.tga)"));
+                                                  tr("Images (*.png *.xpm *.jpg *.tga *.tif *.tiff *.bmp);;All Files (*.*)"));
 
   if (QFile(fileName).exists()) {
     QFileInfo fileInfo(fileName);
