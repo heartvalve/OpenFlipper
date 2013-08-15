@@ -67,16 +67,16 @@
 //== CLASS DEFINITION =========================================================
 
 
-SimpleViewer::SimpleViewer(QWidget* _parent) :
+SimpleViewer::SimpleViewer(QWidget* _parent, bool useDefaultSceneGraph) :
   QGraphicsView (_parent),
   props_(-1),
   actionMode_ (Viewer::ExamineMode)
 {
   QGLWidget *share = PluginFunctions::shareGLWidget (); 
   if (!share)
-    initialize (QGLFormat::defaultFormat (), 0);
+    initialize (QGLFormat::defaultFormat (), 0, useDefaultSceneGraph);
   else
-    initialize (share->format(), share);
+    initialize (share->format(), share, useDefaultSceneGraph);
 }
 
 SimpleViewer::~SimpleViewer()
@@ -97,7 +97,7 @@ void SimpleViewer::resizeEvent(QResizeEvent *_event) {
 //=============================================================================
 //=============================================================================
 
-void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidget)
+void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidget, bool useDefaultSceneGraph)
 {
 
   connect (&props_, SIGNAL( getPickMode(std::string&) ),
@@ -125,13 +125,18 @@ void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidge
   mainWidget_->setGeometry (QRect(QPoint(0, 0), size()));
   setFrameStyle(QFrame::NoFrame);
 
-  unsigned int maxPases = 1;
-  ACG::Vec3d bbmin,bbmax;
-  ACG::SceneGraph::analyzeSceneGraph(PluginFunctions::getSceneGraphRootNode(),maxPases,bbmin,bbmax);
-
-  mainWidget_->sceneGraph ( PluginFunctions::getSceneGraphRootNode(), maxPases,bbmin,bbmax,true);
+  if (useDefaultSceneGraph)
+      setSceneGraph(PluginFunctions::getSceneGraphRootNode());
 
   props_.drawMode (OpenFlipper::Options::defaultDrawMode(0));
+}
+
+void SimpleViewer::setSceneGraph(ACG::SceneGraph::BaseNode *rootNode) {
+    unsigned int maxPases = 1;
+    ACG::Vec3d bbmin,bbmax;
+    ACG::SceneGraph::analyzeSceneGraph(rootNode, maxPases, bbmin, bbmax);
+
+    mainWidget_->sceneGraph(rootNode, maxPases, bbmin, bbmax, true);
 }
 
 void SimpleViewer::setActionMode(const Viewer::ActionMode _am)

@@ -786,6 +786,10 @@ private:
     bool fast_pick( const QPoint&  _mousePos,
                     ACG::Vec3d&    _hitPoint );
 
+    ACG::Vec3d unproject(const ACG::Vec3d &pt) {
+        return glstate_->unproject(pt);
+    }
+
   private:
 
     /// pick using colors
