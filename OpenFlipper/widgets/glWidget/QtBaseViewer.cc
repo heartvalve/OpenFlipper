@@ -481,6 +481,7 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
   }
 
   properties_.setPlanes(nearPlane,farPlane);
+  properties_.orthoWidth(_radius);
 
   updateProjectionMatrix();
   updateGL();
@@ -1803,7 +1804,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           
 
           // if start depth is 1, no object was hit when starting translation
-          if ( startDepth_ == 1 ) {
+          if ( startDepth_ == 1 && projectionMode() != ORTHOGRAPHIC_PROJECTION ) {
             double value_x = properties_.sceneRadius() * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
             double value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
             translation = ACG::Vec3d(value_x * factor, -value_y * factor, 0.0);

@@ -83,7 +83,7 @@ class DLLEXPORT SimpleViewer : public QGraphicsView
 
   public:
     /// Constructor
-    SimpleViewer(QWidget* _parent = NULL);
+    SimpleViewer(QWidget* _parent = NULL, bool useDefaultSceneGraph = true);
 
     /// Destructor
     ~SimpleViewer();
@@ -94,13 +94,15 @@ class DLLEXPORT SimpleViewer : public QGraphicsView
     /// Viewer
     glViewer * viewer ();
 
+    void setSceneGraph(ACG::SceneGraph::BaseNode *rootNode);
+
   protected:
     // handle resizes
     virtual void resizeEvent(QResizeEvent *_event);
 
   private:
     // initalisation
-    void initialize (const QGLFormat &_format, QGLWidget *_shareWidget = NULL);
+    void initialize (const QGLFormat &_format, QGLWidget *_shareWidget = NULL, bool useDefaultSceneGraph = true);
 
   private slots:
 
