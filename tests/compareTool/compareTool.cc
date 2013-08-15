@@ -67,7 +67,7 @@ VALUE_DOUBLE=1.0,0.0001
 bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
 
   // maximal allowed double tolerance
-  double tolerance = std::numeric_limits<int>::epsilon();
+  double tolerance = std::numeric_limits<double>::epsilon();
 
   // Check if the reference consists of two colon separated values
   // Second value would specify maximal allowed tolerance
