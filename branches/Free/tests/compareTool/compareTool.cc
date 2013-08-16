@@ -73,10 +73,7 @@ bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
   // Second value would specify maximal allowed tolerance
   QStringList referenceData = _reference.toString().split(';');
   if ( referenceData.size() == 2) {
-    std::cerr << "Tolerance was:" << tolerance << std::endl;
     tolerance = referenceData[1].toDouble();
-    std::cerr << "Tolerance from file:" << tolerance << std::endl;
-
   }
 
 
