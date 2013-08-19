@@ -91,12 +91,12 @@ bool get_boundary(MeshT& _mesh,
         _boundary.push_back(std::pair< VectorT , typename MeshT::VertexHandle > ( (VectorT)_mesh.point(_vh) , _vh )  );
         
         // iterate over all outgoing halfedges of the current vertex to find next one
-        for (typename MeshT::VertexOHalfedgeIter vohe_it(_mesh,_vh); vohe_it ; ++vohe_it) {
+        for (typename MeshT::VertexOHalfedgeIter vohe_it(_mesh,_vh); vohe_it.is_valid() ; ++vohe_it) {
         
           //if vertex is on the boundary use it as the next one (if its not the one, we are comming from)
-          if ( _mesh.is_boundary(vohe_it) && ( _mesh.to_vertex_handle(vohe_it) != last ) ) {
+          if ( _mesh.is_boundary(*vohe_it) && ( _mesh.to_vertex_handle(*vohe_it) != last ) ) {
             last = _vh;
-            _vh = _mesh.to_vertex_handle(vohe_it);
+            _vh = _mesh.to_vertex_handle(*vohe_it);
             break;
            }
         }
