@@ -181,9 +181,11 @@ function (of_print_plugin_stats)
   foreach (_plugin ${PLUGINS_DEPENDENCIES})
     string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
     string (TOUPPER ${_plugin_name} _PLUGIN)
-    acg_format_string (${_plugin_name} ${SPACING} _plugin_name)
-                                                                                     
-    acg_color_message ("  ${_plugin_name}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
+    acg_format_string (${_plugin_name} ${SPACING} _plugin_name_spaced)
+    string(STRIP ${_PLUGIN} _PLUGIN)
+    
+    acg_color_message ("  ${_plugin_name_spaced}: ${_escape}[1;31mNo${_escape}[0m (Missing dependencies :${_${_PLUGIN}_MISSING_DEPS})")
+   
   endforeach ()
   
   message ("")
