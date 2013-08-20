@@ -905,7 +905,6 @@ create_cp_selection_texture(GLState& /*_state*/)
     return;
   
   int texelIdx_u = 0;
-  int texelIdx_v = 0;
   
   for ( int m = 0; m < cp_selection_texture_res_; ++m)
   {
@@ -919,8 +918,8 @@ create_cp_selection_texture(GLState& /*_state*/)
       return; 
 
     // reset texture v coord for every new u coord
-    texelIdx_v = 0;
-      
+    int texelIdx_v = 0;
+
     // iterate over n direction
     for ( int n = 0; n < cp_selection_texture_res_; ++n)
     {
@@ -937,15 +936,15 @@ create_cp_selection_texture(GLState& /*_state*/)
       for (int i = 0; i < degree_m+1; ++i) // degree+1 basis functions (those in the span) contribute
       {
         int idx_m = span_u[0] + i;
-            
+
         for (int j = 0; j < degree_n+1; ++j) // degree+1 basis functions (those in the span) contribute
         {
           int idx_n = span_v[0] + j;
-      
+
           // basis functions sum up to 1. hence, we only have to sum up those with selected control point to get the blending weight
           if (bsplineSurface_.controlpoint_selection(idx_m, idx_n))
             alpha +=   bsplineSurface_.basisFunction( knotvec_m, idx_m, degree_m, u) 
-                     * bsplineSurface_.basisFunction( knotvec_n, idx_n, degree_n, v);
+            * bsplineSurface_.basisFunction( knotvec_n, idx_n, degree_n, v);
         }
       }
 
@@ -960,8 +959,8 @@ create_cp_selection_texture(GLState& /*_state*/)
 
     ++texelIdx_u;
   } // end of u direction iter
-  
-  
+
+
   // debug, output image
 //   b.save("surfaceCPSelectionTexture.png", "PNG");
   
@@ -1010,7 +1009,6 @@ create_knot_selection_texture(GLState& _state)
     return;
   
   int texelIdx_u = 0;
-  int texelIdx_v = 0;
   
   // if a knot is selected, select all knots in the span of this knot, too
   std::vector<bool> selectedKnotSpans_m(numKnots_m, false);  
@@ -1063,7 +1061,7 @@ create_knot_selection_texture(GLState& _state)
     Vec2i interval_m = bsplineSurface_.interval_m(u);
     
     // reset texture v coord for every new u coord
-    texelIdx_v = 0;
+    int texelIdx_v = 0;
     
     for ( int n = 0; n < knot_selection_texture_res_; ++n)
     {

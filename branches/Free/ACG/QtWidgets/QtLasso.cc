@@ -271,15 +271,15 @@ void
 QtLasso::
 create_mask()
 {
-  unsigned int  w, h, size, x, y, xx, yy, i, offset;
+  unsigned int  x, y, xx, yy, i;
   GLubyte       *fbuffer;
   QRgb          rgb, borderRgb;
 
 
   // GL context
-  w = glstate_.viewport_width();
-  h = glstate_.viewport_height();
-  size = w*h;
+  const unsigned int w = glstate_.viewport_width();
+  const unsigned int h = glstate_.viewport_height();
+  const unsigned int size = w*h;
 
 
   // alloc mask
@@ -308,7 +308,7 @@ create_mask()
   // mark lasso pixels
   for (y = 0; y < h; ++y)
   {
-    offset = y*w;
+    const unsigned int offset = y*w;
     for (x = 0; x < w; ++x)
     {
       i = 3*(offset + x);

@@ -91,8 +91,8 @@ void QtBaseViewer::sync_disconnect(const QtBaseViewer* _other)
 
 void QtBaseViewer::sync_send(const GLMatrixd&, const GLMatrixd&)
 {
-  const GLMatrixd m = glstate_->modelview();
-  const GLMatrixd p = glstate_->projection();
+  const GLMatrixd& m = glstate_->modelview();
+  const GLMatrixd& p = glstate_->projection();
 
   QByteArray   datagram;
   QDataStream  out(&datagram, QIODevice::WriteOnly);
