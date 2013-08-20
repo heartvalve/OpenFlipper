@@ -305,11 +305,11 @@ OBJNode::read(const std::string& _filename)
       int component(0), nV(0);
       bool endOfVertex(false);
       char *p0, *p1(s+2);
-      
+
       vIdx.clear();
       tIdx.clear();
 
-    
+
       while(p1)
       {
         p0 = p1;
@@ -317,72 +317,72 @@ OBJNode::read(const std::string& _filename)
         // overwrite next separator
         if (p1)
         {
-	  while (*p1 != '/' && *p1 != '\r' && *p1 != '\n' && 
-		 *p1 != ' ' && *p1 != '\0')
-	    p1++;
-            
-	  // detect end of vertex
-	  if (*p1 != '/') endOfVertex = true;
-        
-	  // replace separator by '\0'
-	  if (*p1 != '\0') 
-	  {
-	    *p1 = '\0';
-	    p1++; // point to next token
-	  }
-	  
-	  // detect end of line and break
-	  if (*p1 == '\0' || *p1 == '\n')
-	    p1 = 0;
+          while (*p1 != '/' && *p1 != '\r' && *p1 != '\n' &&
+              *p1 != ' ' && *p1 != '\0')
+            p1++;
+
+          // detect end of vertex
+          if (*p1 != '/') endOfVertex = true;
+
+          // replace separator by '\0'
+          if (*p1 != '\0')
+          {
+            *p1 = '\0';
+            p1++; // point to next token
+          }
+
+          // detect end of line and break
+          if (*p1 == '\0' || *p1 == '\n')
+            p1 = 0;
         }
 
         if (*p0 != '\0')
         {
-	  switch (component)
-	  {
-	    case 0: vIdx.push_back(atoi(p0)-1); break;
-	    case 1: tIdx.push_back(atoi(p0)-1); break;
-	    case 2: /* ignore vertex normals */ break;
-	  }
+          switch (component)
+          {
+            case 0: vIdx.push_back(atoi(p0)-1); break;
+            case 1: tIdx.push_back(atoi(p0)-1); break;
+            case 2: /* ignore vertex normals */ break;
+          }
 
-	  component++;
+          component++;
 
-	  if (endOfVertex)
-	  {
-	    component = 0;
-	    nV++;
-	    endOfVertex = false;
-	  }
+          if (endOfVertex)
+          {
+            component = 0;
+            nV++;
+            endOfVertex = false;
+          }
         }
       }
 
-      
+
       if (vIdx.size() >= 3)
       {
-	// texture
-	if (vIdx.size() == tIdx.size())
-	{
-	  for (unsigned int i1=1, i2=2; i2 < vIdx.size(); ++i1, ++i2)
-	    faces_.push_back(Face(vIdx[0], vIdx[i1], vIdx[i2],
-				  tIdx[0], tIdx[i1], tIdx[i2]));
-	}
+        // texture
+        if (vIdx.size() == tIdx.size())
+        {
+          for (unsigned int i1=1, i2=2; i2 < vIdx.size(); ++i1, ++i2)
+            faces_.push_back(Face(vIdx[0], vIdx[i1], vIdx[i2],
+                tIdx[0], tIdx[i1], tIdx[i2]));
+        }
 
-	// no texture
-	else
-	{
-	  for (unsigned int i1=1, i2=2; i2 < vIdx.size(); ++i1, ++i2)
-	  {
-	    faces_.push_back(Face(vIdx[0], vIdx[i1], vIdx[i2]));
-	  }
-	}
+        // no texture
+        else
+        {
+          for (unsigned int i1=1, i2=2; i2 < vIdx.size(); ++i1, ++i2)
+          {
+            faces_.push_back(Face(vIdx[0], vIdx[i1], vIdx[i2]));
+          }
+        }
       }
     }
-    
+
 
     s[0]=' ';
   }
 
-  
+
   fclose(in);
 
   update_face_normals();

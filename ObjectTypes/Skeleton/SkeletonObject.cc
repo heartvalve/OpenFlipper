@@ -631,13 +631,12 @@ void SkeletonObject::showMotionPath(bool _visible)
 
         ACG::Vec3d globTrans = ref->localTranslation(child->id());
 
-        //get animation
-        AnimationT<ACG::Vec3d>* animation = 0;
-
-        for (uint a = 0; a < skeleton_->animationCount(); a++){
+        for (unsigned int a = 0; a < skeleton_->animationCount(); a++){
 
           AnimationHandle animHandle = AnimationHandle(a, 0 );
-          animation = skeleton_->animation( animHandle );
+
+          //get animation
+          AnimationT<ACG::Vec3d>* animation = skeleton_->animation( animHandle );
 
           if (animation->name() == "")
             continue;

@@ -759,8 +759,8 @@ template <class PointT>
 template <class MeshT, class SpatialSearchT>
 void
 PolyLineT<PointT>::
-project_to_mesh( const std::vector<MeshT*>     _mesh,
-		           std::vector<SpatialSearchT*>* _ssearch)
+project_to_mesh( const std::vector<MeshT*>&     _mesh,
+		             std::vector<SpatialSearchT*>* _ssearch)
 {
   typename MeshT::FaceHandle fh;
 

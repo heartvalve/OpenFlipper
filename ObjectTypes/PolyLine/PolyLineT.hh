@@ -249,7 +249,7 @@ public:
    * @param _ssearch A spatial search to improve speed
    */
   template <class MeshT, class SpatialSearchT>
-  void project_to_mesh( const std::vector<MeshT*>     _mesh,
+  void project_to_mesh( const std::vector<MeshT*>&    _mesh,
 			                  std::vector<SpatialSearchT*>* _ssearch = 0);
 
   // This Block is used to pull in extended PolyLine features such as integration of

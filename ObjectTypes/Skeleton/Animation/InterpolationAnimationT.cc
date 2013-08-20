@@ -126,12 +126,12 @@ PoseT<PointT>* InterpolationAnimationT<PointT>::pose(unsigned int _iFrame, Pose*
           } else {
             //Find the correct interpolator
             Interpolator* interpolator = NULL;
-            unsigned long min = 0, max = 0;
+            unsigned long min = 0;
             
             uint i;
             for (i=0; i<interpolators_.size(); ++i) {
               min = (i==0 ? 0.0 : calcAbsoluteMaxForInterpolator(i-1) + 1);
-              max = calcAbsoluteMaxForInterpolator(i);
+              const unsigned long max = calcAbsoluteMaxForInterpolator(i);
               if (_iFrame >= min && _iFrame <= max) {
                 interpolator = interpolators_[i];
                 break;
