@@ -38,24 +38,26 @@ PolyLinePlugin::PolyLinePlugin() :
         pickToolbar_(0),
         pickToolBarActions_(0),
         insertAction_(0),
-        insertCircleAction_(0),
         deleteAction_(0),
         moveAction_(0),
         smartMoveAction_(0),
         mergeAction_(0),
         splitAction_(0),
         cutAction_(0),
+        insertCircleAction_(0),
         cur_insert_id_(-1),
         cur_polyline_obj_(0),
         cur_move_id_(-1),
         move_point_ref_(0),
         create_point_ref_(0),
+        createCircle_Active_(false),
         cur_merge_id_(-1),
         smart_move_timer_(0),
         cur_smart_move_obj_(0),
-        planeSelect_(0),
-        createCircle_Active(0)
+        planeSelect_(0)
+
 {
+
 }
 
 
@@ -878,9 +880,9 @@ me_insertCircle(QMouseEvent* _event)
 	ACG::Vec3d hit_point;
 	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point))
 		return;//can't generate a circle in empty space
-	if(_event->type() == QEvent::MouseMove && createCircle_Active) {
+	if(_event->type() == QEvent::MouseMove && createCircle_Active_) {
 		if(!cur_polyline_obj_ || !cur_polyline_obj_->line()) {
-			createCircle_Active = 0;
+			createCircle_Active_ = false;
 			return;
 		}
 
@@ -916,10 +918,10 @@ me_insertCircle(QMouseEvent* _event)
 			mesh->mesh()->request_face_normals();
 		createCircle_Normal = PluginFunctions::viewingDirection();// mesh->mesh()->normal(fh);
 		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-		createCircle_Active = 1;
+		createCircle_Active_ = true;
 	}
 	else if(_event->type() == QEvent::MouseButtonRelease) {
-		createCircle_Active = 0;
+		createCircle_Active_ = false;
 	}
 }
 
