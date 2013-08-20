@@ -279,17 +279,17 @@ private slots:
   void slotTriggerCutPlaneSelect();
   
 private:
-    int              cur_insert_id_;
-    PolyLineObject  *cur_polyline_obj_;
+    int               cur_insert_id_;
+    PolyLineObject   *cur_polyline_obj_;
     
     int               cur_move_id_;
     PolyLine::Point*  move_point_ref_;
     PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
     
-    bool			  createCircle_Active;
-    ACG::Vec3d		  createCircle_Point_;
-    ACG::Vec3d		  createCircle_Normal;
+    bool			        createCircle_Active_;
+    ACG::Vec3d		    createCircle_Point_;
+    ACG::Vec3d		    createCircle_Normal;
 
     int               cur_merge_id_;
     
