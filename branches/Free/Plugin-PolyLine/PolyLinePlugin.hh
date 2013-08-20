@@ -123,6 +123,9 @@ private slots :
 
   void pluginsInitialized();
 
+  bool pick_triangle_mesh( QPoint mPos,
+  						TriMeshObject*& _mesh_object_, TriMesh::FaceHandle& _fh, TriMesh::VertexHandle& _vh, ACG::Vec3d& _hitPoint);
+
 public slots :
 
   void slotEnablePickMode(QString _name);
@@ -132,6 +135,7 @@ public :
   /// Edit Mode of PolyLinePlugin
   enum EditMode { PL_NONE  =0,
                   PL_INSERT=1,
+                  PL_INSERTCIRCLE,
                   PL_DELETE,
                   PL_MOVE,
                   PL_SPLIT,
@@ -176,6 +180,7 @@ private :
 
   // mouse events
   void me_insert    ( QMouseEvent* _event );
+  void me_insertCircle(QMouseEvent* _event );
   void me_delete    ( QMouseEvent* _event );
   void me_move      ( QMouseEvent* _event );
   void me_split     ( QMouseEvent* _event );
@@ -228,6 +233,7 @@ private :
     QAction*      mergeAction_;
     QAction*      splitAction_;
     QAction*      cutAction_;
+    QAction*	  insertCircleAction_;
     
   private slots:
     
@@ -281,6 +287,10 @@ private:
     PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
     
+    bool			  createCircle_Active;
+    ACG::Vec3d		  createCircle_Point_;
+    ACG::Vec3d		  createCircle_Normal;
+
     int               cur_merge_id_;
     
     QTimer*           smart_move_timer_;

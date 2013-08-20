@@ -85,6 +85,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QRadioButton" name="rb_InsertCircle">
+          <property name="text">
+           <string>Insert Circle</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
