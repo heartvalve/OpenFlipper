@@ -629,7 +629,6 @@ CSimpleOptTempl<SOCHAR>::Next()
     m_nLastError    = SO_SUCCESS;
 
     // find the next option
-    SOCHAR cFirst;
     int nTableIdx = -1;
     int nOptIdx = m_nOptionIdx;
     while (nTableIdx < 0 && nOptIdx < m_nLastArg) {
@@ -638,7 +637,7 @@ CSimpleOptTempl<SOCHAR>::Next()
         m_pszOptionArg  = NULL;
 
         // find this option in the options table
-        cFirst = PrepareArg(m_pszOptionText);
+        SOCHAR cFirst = PrepareArg(m_pszOptionText);
         if (m_pszOptionText[0] == (SOCHAR)'-') {
             // find any combined argument string and remove equals sign
             m_pszOptionArg = FindEquals(m_pszOptionText);
