@@ -158,11 +158,10 @@ void Vec3DWidget::fromValue(QString _from)
 void Vec3DWidget::editingFinished ()
 {
   bool ok;
-  float v;
 
   for (int i = 0; i < 3; i++)
   {
-    v = fields_[i]->text ().toFloat (&ok);
+    const float v = fields_[i]->text ().toFloat (&ok);
 
     if (ok)
       current_[i] = v;
