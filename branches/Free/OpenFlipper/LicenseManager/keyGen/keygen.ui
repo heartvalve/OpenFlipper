@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>keyWindow</class>
  <widget class="QMainWindow" name="keyWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>989</width>
-    <height>727</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -21,6 +13,9 @@
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Request data:</string>
+        </property>
+        <property name="buddy">
+         <cstring>requestData</cstring>
         </property>
        </widget>
       </item>
@@ -52,16 +47,36 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1,2">
+      <item>
+       <widget class="QListWidget" name="keyList"/>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Mac Hashes</string>
+          </property>
+          <property name="buddy">
+           <cstring>macHashBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="macHashBox"/>
+        </item>
+       </layout>
+      </item>
       <item>
        <layout class="QFormLayout" name="formLayout">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::ExpandingFieldsGrow</enum>
-        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Filename</string>
+          </property>
+          <property name="buddy">
+           <cstring>fileNameBox</cstring>
           </property>
          </widget>
         </item>
@@ -73,6 +88,9 @@
           <property name="text">
            <string>Core Hash</string>
           </property>
+          <property name="buddy">
+           <cstring>coreHashBox</cstring>
+          </property>
          </widget>
         </item>
         <item row="1" column="1">
@@ -82,6 +100,9 @@
          <widget class="QLabel" name="label_8">
           <property name="text">
            <string>Plugin Hash</string>
+          </property>
+          <property name="buddy">
+           <cstring>pluginHashBox</cstring>
           </property>
          </widget>
         </item>
@@ -93,6 +114,9 @@
           <property name="text">
            <string>Cpu Hash</string>
           </property>
+          <property name="buddy">
+           <cstring>cpuHashBox</cstring>
+          </property>
          </widget>
         </item>
         <item row="3" column="1">
@@ -103,6 +127,9 @@
           <property name="text">
            <string>ProductID</string>
           </property>
+          <property name="buddy">
+           <cstring>productIDBox</cstring>
+          </property>
          </widget>
         </item>
         <item row="4" column="1">
@@ -112,6 +139,9 @@
          <widget class="QLabel" name="label_12">
           <property name="text">
            <string>Signature</string>
+          </property>
+          <property name="buddy">
+           <cstring>signatureBox</cstring>
           </property>
          </widget>
         </item>
@@ -125,19 +155,12 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="label_10">
+        <item row="7" column="1">
+         <widget class="QPushButton" name="generateLocalButton">
           <property name="text">
-           <string>Mac Hashes</string>
+           <string>Generate</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <widget class="QTextEdit" name="macHashBox"/>
         </item>
        </layout>
       </item>
@@ -258,9 +281,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="generateButton">
+     <widget class="QPushButton" name="generateAllButton">
       <property name="text">
-       <string>Generate</string>
+       <string>Generate All</string>
       </property>
      </widget>
     </item>
