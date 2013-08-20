@@ -119,7 +119,7 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
         v2  = *(++fv_it);
 
         const bool a =(_mesh->status(v0).is_bit_set(AREA)|| _mesh->status(v1).is_bit_set(AREA)|| _mesh->status(v2).is_bit_set(AREA));
-        bool h =(_mesh->status(v0).is_bit_set(HANDLEAREA)&&
+        h =(_mesh->status(v0).is_bit_set(HANDLEAREA)&&
                  _mesh->status(v1).is_bit_set(HANDLEAREA)&&
                  _mesh->status(v2).is_bit_set(HANDLEAREA));
 
