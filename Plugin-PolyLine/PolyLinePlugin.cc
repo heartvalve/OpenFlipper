@@ -38,6 +38,7 @@ PolyLinePlugin::PolyLinePlugin() :
         pickToolbar_(0),
         pickToolBarActions_(0),
         insertAction_(0),
+        insertCircleAction_(0),
         deleteAction_(0),
         moveAction_(0),
         smartMoveAction_(0),
@@ -52,7 +53,8 @@ PolyLinePlugin::PolyLinePlugin() :
         cur_merge_id_(-1),
         smart_move_timer_(0),
         cur_smart_move_obj_(0),
-        planeSelect_(0)
+        planeSelect_(0),
+        createCircle_Active(0)
 {
 }
 
@@ -85,6 +87,7 @@ initializePlugin()
   connect(tool_->pb_smooth_project,SIGNAL(clicked() ),this,SIGNAL(updateView()));
 
   connect(tool_->rb_insert, SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
+  connect(tool_->rb_InsertCircle, SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
   connect(tool_->rb_delete, SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
   connect(tool_->rb_move,   SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
   connect(tool_->rb_smart_move, SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
@@ -93,6 +96,7 @@ initializePlugin()
 
   //add icons
   tool_->rb_insert->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_insert.png") );
+  tool_->rb_InsertCircle->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_circle.png") );
   tool_->rb_delete->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_delete.png") );
   tool_->rb_move->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_move.png") );
   tool_->rb_smart_move->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_move.png") );
@@ -126,6 +130,10 @@ slotMouseEvent( QMouseEvent* _event )
     switch (mode()) {
       case PL_INSERT:
         me_insert(_event);
+        break;
+
+      case PL_INSERTCIRCLE:
+        me_insertCircle(_event);
         break;
 
       case PL_DELETE:
@@ -248,6 +256,16 @@ pluginsInitialized()
   insertAction_->setCheckable(true);
   pickToolbar_->addAction(insertAction_);
   
+  insertCircleAction_ = new QAction(tr("Create PolyCircle"), pickToolBarActions_);
+  insertCircleAction_->setStatusTip(tr("Create a new PolyCircle."));
+  insertCircleAction_->setToolTip(tr("Create a new PolyCircle.\n"
+		  	  	  	  	  	  	  	 "<Click> to select the center.\n"
+		  	  	  	  	  	  	  	 "Drag to specify the radius."));
+
+  insertCircleAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"polyline_circle.png") );
+  insertCircleAction_->setCheckable(true);
+  pickToolbar_->addAction(insertCircleAction_);
+
   deleteAction_ = new QAction(tr("Delete PolyLine"), pickToolBarActions_);
   deleteAction_->setStatusTip(tr("Delete a complete PolyLine."));
   deleteAction_->setToolTip(tr( "Delete a complete PolyLine.\n"
@@ -736,6 +754,7 @@ mode()
   if(tool_ )
   {
     if( tool_->rb_insert->isChecked()         ) return PL_INSERT;
+    if( tool_->rb_InsertCircle->isChecked()	  ) return PL_INSERTCIRCLE;
     else if( tool_->rb_delete->isChecked()    ) return PL_DELETE;
     else if( tool_->rb_move->isChecked()      ) return PL_MOVE;
     else if( tool_->rb_split->isChecked()     ) return PL_SPLIT;
@@ -849,6 +868,62 @@ me_insert( QMouseEvent* _event )
 
 //-----------------------------------------------------------------------------
 
+void PolyLinePlugin::
+me_insertCircle(QMouseEvent* _event)
+{
+	ACG::GLState& gl = PluginFunctions::viewerProperties().glState();
+	TriMeshObject* mesh;
+	TriMesh::FaceHandle fh;
+	TriMesh::VertexHandle vh;
+	ACG::Vec3d hit_point;
+	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point))
+		return;//can't generate a circle in empty space
+	if(_event->type() == QEvent::MouseMove && createCircle_Active) {
+		if(!cur_polyline_obj_ || !cur_polyline_obj_->line()) {
+			createCircle_Active = 0;
+			return;
+		}
+
+		ACG::Vec3d n = createCircle_Normal, x0 = createCircle_Point_;
+		double t = ((n | x0) - (n | hit_point)) / (n | n);
+		ACG::Vec3d onPlane = hit_point + t * n, d = onPlane - x0;
+		double r = sqrt(d | d);
+		const unsigned int N = 16;
+		ACG::Quaterniond qRot(n, 2.0 * M_PI / double(N));
+		ACG::Vec3d cPos = onPlane - x0;
+
+		cur_polyline_obj_->line()->clear();
+		for(unsigned int i = 0; i <= N; i++) {
+			ACG::Vec3d screenCoords = gl.project(cPos + x0), p = cPos;
+			QPoint qp((int)screenCoords[0], (int)(gl.viewport_height() - screenCoords[1]));
+			if(pick_triangle_mesh(qp, mesh, fh, vh, p))
+				cur_polyline_obj_->line()->add_point((PolyLine::Point) (p ));
+			cPos = qRot.rotate(cPos);
+		}
+		//cur_polyline_obj_->line()->add_point((PolyLine::Point) onPlane);
+		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+	}
+	else if(_event->type() == QEvent::MouseButtonPress) {
+		emit addEmptyObject(DATA_POLY_LINE, cur_insert_id_);
+		BaseObjectData *obj = 0;
+		PluginFunctions::getObject(cur_insert_id_, obj);
+		obj->target(true);
+		cur_polyline_obj_ = PluginFunctions::polyLineObject(obj);
+		cur_polyline_obj_->materialNode()->set_random_color();
+
+		createCircle_Point_ = hit_point;
+		if(!mesh->mesh()->has_face_normals())
+			mesh->mesh()->request_face_normals();
+		createCircle_Normal = PluginFunctions::viewingDirection();// mesh->mesh()->normal(fh);
+		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+		createCircle_Active = 1;
+	}
+	else if(_event->type() == QEvent::MouseButtonRelease) {
+		createCircle_Active = 0;
+	}
+}
+
+//-----------------------------------------------------------------------------
 
 void
 PolyLinePlugin::
@@ -1293,7 +1368,9 @@ PolyLinePlugin::
 slotPickToolbarAction(QAction* _action) {
   if ( _action == insertAction_ ) {
     tool_->rb_insert->setChecked(true);
-  } else if ( _action == deleteAction_ ) {
+  } else if ( _action == insertCircleAction_ ) {
+	    tool_->rb_InsertCircle->setChecked(true);
+  }  else if ( _action == deleteAction_ ) {
     tool_->rb_delete->setChecked(true);
   } else if ( _action == moveAction_ ) {
     tool_->rb_move->setChecked(true);
@@ -1344,6 +1421,67 @@ slotEnablePickMode(QString _name)
     else if( _name == "SMART_MOVE")
       tool_->rb_smart_move->setChecked(true);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+PolyLinePlugin::
+pick_triangle_mesh( QPoint mPos,
+						TriMeshObject*& _mesh_object_, TriMesh::FaceHandle& _fh, TriMesh::VertexHandle& _vh, ACG::Vec3d& _hitPoint)
+{
+  // invalidate return values
+  _fh = TriMesh::FaceHandle  (-1);
+  _vh = TriMesh::VertexHandle(-1);
+
+  unsigned int target_idx = 0, node_idx = 0;
+  ACG::Vec3d hit_point;
+
+  BaseObjectData* object(0);
+
+  if( PluginFunctions::scenegraphPick( ACG::SceneGraph::PICK_FACE, mPos, node_idx, target_idx, &hit_point ) )
+  {
+    // first check if a sphere was clicked
+    ACG::SceneGraph::BaseNode* root_node(PluginFunctions::getRootNode());
+    ACG::SceneGraph::BaseNode* found_node;
+    found_node = ACG::SceneGraph::find_node(root_node, node_idx);
+
+    if( PluginFunctions::getPickedObject( node_idx, object ) )
+    {
+      if( object->picked( node_idx ) && object->dataType(DATA_TRIANGLE_MESH) )
+      {
+	// get mesh object
+	_mesh_object_ = dynamic_cast<TriMeshObject*>(object);
+
+	// get mesh and face handle
+	TriMesh & m = *PluginFunctions::triMesh(object);
+	_fh = m.face_handle(target_idx);
+
+	TriMesh::FaceVertexIter fv_it(m,_fh);
+	TriMesh::VertexHandle closest = *fv_it;
+	float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
+
+	++fv_it;
+	if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
+	  shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
+	  closest = *fv_it;
+	}
+
+	++fv_it;
+	if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
+	  shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
+	  closest = *fv_it;
+	}
+
+	// stroe closest vh
+	_vh = closest;
+	_hitPoint = hit_point;
+
+	return true;
+      }
+    }
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
