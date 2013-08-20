@@ -46,6 +46,28 @@
 
 #include <ui_keygen.hh>
 
+class KeyGen
+{
+	public:
+		QString name;
+		QString coreHash;
+		QString pluginHash;
+		QString cpuHash;
+		QString productHash;
+		QStringList macHashes;
+		QString requestSig;
+	public:
+		KeyGen(QString n, QString cHash, QString pHash, QString cpHash, QString prHash, QStringList mHashes, QString request);
+		//returns string containing the key
+		QString Generate(QString expiryDate) const;
+		//finds all occurrences of info in messy string
+		bool isValid() const;
+
+		static std::vector<KeyGen> CreateFromMessyString(QString info);
+
+		static QString filterString(QString in);
+};
+
 
 class KeyGenWidget : public QMainWindow, public Ui::keyWindow
 {
@@ -56,6 +78,7 @@ public:
   virtual ~KeyGenWidget();
 
 public slots:
+  void slotGenerateAllButton();
   void slotGenerateButton();
   
   // slot taking license duration and convert to expiration date
@@ -67,12 +90,14 @@ public slots:
   // Split Code based on ;; for broken windows requests
   void slotSplit();
   
+  void handleSelectionChanged(const QItemSelection& selection);
+
 private:
-  bool valid_;
-  
-  QString license_;
-  
-  QString licenseFileName_;
+
+  void toFile(const KeyGen* gen);
+  void setKeyGen(const KeyGen* gen);
+
+  std::vector<KeyGen> keygens_;
 
 };
 

@@ -53,13 +53,117 @@
 
 #include "salt.hh"
 
+KeyGen::KeyGen(QString n, QString cHash, QString pHash, QString cpHash, QString prHash, QStringList mHashes, QString request)
+{
+	name = n;
+	coreHash = cHash;
+	pluginHash = pHash;
+	cpuHash = cpHash;
+	productHash = prHash;
+	macHashes = mHashes;
+	requestSig = request;
+}
+
+bool KeyGen::isValid() const
+{
+        // Get the salts
+        QString saltPre;
+        ADD_SALT_PRE(saltPre);
+        QString saltPost;
+        ADD_SALT_POST(saltPost);
+
+        QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
+        QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+
+        return requestSig == requestSigCheck;
+}
+
+QString KeyGen::Generate(QString expiryDate) const
+{
+	// Get the salts
+	QString saltPre;
+	ADD_SALT_PRE(saltPre);
+	QString saltPost;
+	ADD_SALT_POST(saltPost);
+
+	QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
+	QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+
+	if ( requestSig != requestSigCheck ){
+		return "ERROR";
+	}
+	else{
+		QString license_ = "";
+
+		// Add basic hashes
+		license_ += expiryDate + "\n";
+		license_ += name + "\n";
+		license_ += coreHash + "\n";
+		license_ += pluginHash + "\n";
+		license_ += cpuHash + "\n";
+		license_ += productHash + "\n";
+		license_ += macHashes.join("\n") + "\n";
+
+		QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
+		QString licenseHash = QCryptographicHash::hash ( licenseTmp.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+
+		// Prepend signature
+		license_ = licenseHash + "\n" + license_;
+		return license_;
+	}
+}
+
+QString KeyGen::filterString(QString in) {
+    const QRegExp validChar("[a-f0-9]");
+    QString out; out.reserve(in.size());
+    for (QString::iterator it = in.begin(), it_end = in.end(); it != it_end; ++it) {
+        if (validChar.exactMatch(*it))
+            out.append(*it);
+    }
+    return out;
+}
+
+std::vector<KeyGen> KeyGen::CreateFromMessyString(QString info)
+{
+	const QString dirt = "[\\s;>]*";
+	const QRegExp rx("\\b([\\w-]+)" + dirt + "((?:(?:[a-f0-9]" + dirt + "){40}){6,})\\b");
+	const QRegExp partRe("((?:[a-f0-9]" + dirt + "){40})");
+
+    std::vector<KeyGen> R;
+	int pos = 0;
+	while ((pos = rx.indexIn(info, pos)) != -1) {
+	    QString hashesStr = rx.cap(2);
+        QStringList hashes;
+        int hashPos = 0;
+	    while ((hashPos = partRe.indexIn(hashesStr, hashPos)) != -1) {
+	        hashes.append(filterString(partRe.cap(1)));
+	        hashPos += partRe.matchedLength();
+	    }
+
+	    QStringList macList;
+	    std::copy(hashes.begin() + 4, hashes.end() - 1, std::back_inserter(macList));
+
+		KeyGen K(rx.cap(1),
+		        hashes[0],
+		        hashes[1],
+		        hashes[2],
+		        hashes[3],
+		        macList,
+		        hashes[hashes.count()-1]);
+		R.push_back(K);
+		pos += rx.matchedLength();
+	}
+
+	return R;
+}
+
 KeyGenWidget::KeyGenWidget(QMainWindow *parent)
-    : QMainWindow(parent),
-    valid_(false)
+    : QMainWindow(parent)
 {
   setupUi(this);
-  connect(generateButton,SIGNAL(clicked()),this,SLOT(slotGenerateButton()));
-  
+  connect(generateAllButton,SIGNAL(clicked()),this,SLOT(slotGenerateAllButton()));
+  connect(generateLocalButton,SIGNAL(clicked()),this,SLOT(slotGenerateButton()));
+  connect(keyList->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),this, SLOT(handleSelectionChanged(QItemSelection)));
   
   connect(splitButton,SIGNAL(clicked()),this,SLOT(slotSplit()));
   
@@ -74,6 +178,8 @@ KeyGenWidget::KeyGenWidget(QMainWindow *parent)
   // For security reasons no default span is set here!
   expires->setDate( QDate::currentDate());
   
+  generateLocalButton->setVisible(false);
+  generateAllButton->setVisible(false);
 }
 
 void KeyGenWidget::slotDate() {
@@ -86,105 +192,22 @@ void KeyGenWidget::slotDate() {
 }
 
 void KeyGenWidget::slotAnalyze() {
-  
-  // Convert to text and split to elements
-  QString inputData = requestData->toPlainText();
-  QStringList data = inputData.split('\n',QString::SkipEmptyParts);
-  
-  // This is never a valid request!
-  if ( data.size() < 6 ) {
-    
-    QPalette p = requestData->palette();
-    p.setColor( QPalette::Base, QColor(255,0,0) );
-    requestData->setPalette(p);
-    
-    valid_ = false;
-    
-    return;
-  } else {
-    QPalette p = requestData->palette();
-    p.setColor( QPalette::Base, QColor(255,255,255) );
-    requestData->setPalette(p);
-  }
-  
-  // Get strings
-  QString name        = data[0].simplified();
-  QString coreHash    = data[1].simplified();
-  QString pluginHash  = data[2].simplified();
-  QString cpuHash     = data[3].simplified();
-  QString productHash = data[4].simplified();
-  
-  QStringList macHashes;
-  for ( int i = 5 ; i < data.size() - 1; ++i)
-    macHashes.push_back(data[i].simplified());
-  
-  QString requestSig = data[data.size() - 1].simplified();
+	QString inputData = requestData->toPlainText();
+	keygens_ = KeyGen::CreateFromMessyString(inputData);
 
-  fileNameBox->setText(name);
-  coreHashBox->setText(coreHash);
-  pluginHashBox->setText(pluginHash);
-  cpuHashBox->setText(cpuHash);
-  productIDBox->setText(productHash);
-  
-  macHashBox->setText(macHashes.join("\n"));
-  
-  signatureBox->setText(requestSig);
-  
-  
-  // Get the salts
-  QString saltPre;
-  ADD_SALT_PRE(saltPre);
-  QString saltPost;
-  ADD_SALT_POST(saltPost);
-  
+	keyList->clear();
+	for (std::vector<KeyGen>::const_iterator it = keygens_.begin(), it_end = keygens_.end();
+	        it != it_end; ++it) {
+        QListWidgetItem *newItem = new QListWidgetItem( keyList);
+        newItem->setText(it->name);
+        newItem->setHidden(false);
+        if (!it->isValid())
+            newItem->setTextColor(QColor(255, 0, 0));
+	}
 
-  QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-  QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-  
-  if ( requestSig != requestSigCheck ) {
-    QPalette p = signatureBox->palette();
-    p.setColor( QPalette::Base, QColor(255,0,0) );
-    signatureBox->setPalette(p);
-    
-    valid_ = false;
-    if (! ignoreSigBox->isChecked() )
-      return;
-    
-  } else {
-    QPalette p = signatureBox->palette();
-    p.setColor( QPalette::Base, QColor(0,255,0) );
-    signatureBox->setPalette(p);
-    
-  }
-
-  QString expiryDate = expires->date().toString(Qt::ISODate);
-
-  license_ = "";
-  
-  // Add basic hashes
-  license_ += expiryDate + "\n";
-  license_ += name + "\n";
-  license_ += coreHash + "\n";
-  license_ += pluginHash + "\n";
-  license_ += cpuHash + "\n";
-  license_ += productHash + "\n";
-  license_ += macHashes.join("\n") + "\n";
-  
-  QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-  QString licenseHash = QCryptographicHash::hash ( licenseTmp.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-  
-  // Prepend signature
-  license_ = licenseHash + "\n" + license_;
-  
-  std::cerr << "Full license : \n" << license_.toStdString() << std::endl;
-  
-  // Only set valid, if the the request and the signature boxes match
-  if ( requestSig == requestSigCheck )
-    valid_ = true;
-  
-  licenseFileName_ = name;
+	generateLocalButton->setVisible(false);
+	generateAllButton->setVisible(keygens_.size());
 }
-
 
 void KeyGenWidget::slotSplit() {
   // Get request data
@@ -199,34 +222,57 @@ void KeyGenWidget::slotSplit() {
   
 }
 
+void KeyGenWidget::handleSelectionChanged(const QItemSelection& selection){
+	generateLocalButton->setVisible(false);
+	if(keyList->selectionModel()->selectedIndexes().count())
+	{
+		int i = keyList->selectionModel()->selectedIndexes()[0].row();
+		setKeyGen(&keygens_[i]);
+		generateLocalButton->setVisible(true);
+		generateAllButton->setVisible(true);
+	}
+}
+
 KeyGenWidget::~KeyGenWidget() {
 
 }
 
-
-void KeyGenWidget::slotGenerateButton() {
-
-  if ( ! valid_  ) {
-    if (  ! ignoreSigBox->isChecked( ) ) {
-      std::cerr << "Invalid Request " << std::endl;
-      return;
-    } else {
-      std::cerr << "Invalid Request but overriding!!" << std::endl;
-    }
-  }
-  
+void KeyGenWidget::toFile(const KeyGen* gen)
+{
+	QString licenseFileName_ = gen->name;
   std::cerr << "Writing License file to output : " << licenseFileName_.toStdString() << std::endl;
   QFile outFile(licenseFileName_ + ".lic");
 
   if (!outFile.open(QIODevice::WriteOnly|QIODevice::Text)) {
-    QMessageBox::critical(this,tr("Unable to open file"),tr("Unable to Open output File"));
-    return;
+	  QMessageBox::critical(this,tr("Unable to open file"),tr("Unable to Open output File"));
+	  return;
   }
 
   QTextStream output(&outFile);
-  
-  output << license_;
-
+  output << gen->Generate(expires->date().toString(Qt::ISODate));
   outFile.close();
-  
+}
+
+void KeyGenWidget::setKeyGen(const KeyGen* gen) {
+	fileNameBox->setText(gen->name);
+	coreHashBox->setText(gen->coreHash);
+	pluginHashBox->setText(gen->pluginHash);
+	cpuHashBox->setText(gen->cpuHash);
+	productIDBox->setText(gen->productHash);
+	macHashBox->setText(gen->macHashes.join("\n"));
+	signatureBox->setText(gen->requestSig);
+	generateLocalButton->setEnabled(gen->isValid());
+}
+
+void KeyGenWidget::slotGenerateButton() {
+	if(keyList->selectionModel()->selectedIndexes().count())
+	{
+		int i = keyList->selectionModel()->selectedIndexes()[0].row();
+		toFile(&keygens_[i]);
+	}
+}
+
+void KeyGenWidget::slotGenerateAllButton() {
+  for(unsigned int i = 0; i < keygens_.size(); i++)
+	  toFile(&keygens_[i]);
 }
