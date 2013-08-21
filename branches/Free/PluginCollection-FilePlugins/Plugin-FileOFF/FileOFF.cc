@@ -579,7 +579,6 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     OpenMesh::Vec4i             c4;
     OpenMesh::Vec4f             c4f;
     std::vector<VertexHandle>   vhandles;
-    VertexHandle                vh;
     FaceHandle                  fh;
 
     int objectId = -1;
@@ -632,7 +631,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
         // Always read VERTEX
         _in >> v[0] >> v[1] >> v[2];
 
-        vh = _importer.addVertex(v);
+        const VertexHandle vh = _importer.addVertex(v);
 
         // perhaps read NORMAL
         if ( _importer.hasVertexNormals() ){
@@ -888,7 +887,6 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     float                       alpha = 1.0f;
     OpenMesh::Vec2f             t;
     std::vector<VertexHandle>   vhandles;
-    VertexHandle                vh;
     FaceHandle                  fh;
 
     int objectId = -1;
@@ -927,7 +925,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         readValue(_in, v[1]);
         readValue(_in, v[2]);
 
-        vh = _importer.addVertex(v);
+        const VertexHandle vh = _importer.addVertex(v);
 
         if ( _importer.hasVertexNormals() ) {
             readValue(_in, n[0]);

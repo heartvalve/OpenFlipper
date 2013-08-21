@@ -110,8 +110,6 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
     typename MeshType::FaceVertexIter           fv_it;
     typename MeshType::VertexHandle             v0, v1, v2;
 
-    bool                                        h;
-
     for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
         fv_it = _mesh->fv_iter(*f_it);
         v0  = *(  fv_it);
@@ -119,7 +117,7 @@ void MeshObjectSelectionPlugin::update_regions(MeshType* _mesh) {
         v2  = *(++fv_it);
 
         const bool a =(_mesh->status(v0).is_bit_set(AREA)|| _mesh->status(v1).is_bit_set(AREA)|| _mesh->status(v2).is_bit_set(AREA));
-        h =(_mesh->status(v0).is_bit_set(HANDLEAREA)&&
+        bool h =(_mesh->status(v0).is_bit_set(HANDLEAREA)&&
                  _mesh->status(v1).is_bit_set(HANDLEAREA)&&
                  _mesh->status(v2).is_bit_set(HANDLEAREA));
 

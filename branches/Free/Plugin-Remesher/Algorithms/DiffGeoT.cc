@@ -120,7 +120,7 @@ compute_edge_weights()
 
   typename Mesh::EdgeIter          e_it, e_end(mesh_.edges_end());
   typename Mesh::HalfedgeHandle    heh0, heh1, heh2;
-  const typename Mesh::Point       *p0, *p1, *p2;
+  const typename Mesh::Point       *p2;
   typename Mesh::Point             d0, d1;
   typename Mesh::Scalar            weight;
 
@@ -128,21 +128,21 @@ compute_edge_weights()
   for (e_it=mesh_.edges_begin(); e_it!=e_end; ++e_it)
   {
     heh0   = mesh_.halfedge_handle(*e_it, 0);
-    p0     = &mesh_.point(mesh_.to_vertex_handle(heh0));
+    const typename Mesh::Point& p0 = mesh_.point(mesh_.to_vertex_handle(heh0));
 
     heh1   = mesh_.halfedge_handle(*e_it, 1);
-    p1     = &mesh_.point(mesh_.to_vertex_handle(heh1));
+    const typename Mesh::Point& p1 = mesh_.point(mesh_.to_vertex_handle(heh1));
 
     heh2   = mesh_.next_halfedge_handle(heh0);
     p2     = &mesh_.point(mesh_.to_vertex_handle(heh2));
-    d0     = (*p0 - *p2).normalize();
-    d1     = (*p1 - *p2).normalize();
+    d0     = (p0 - *p2).normalize();
+    d1     = (p1 - *p2).normalize();
     weight = 1.0 / tan(acos(d0|d1));
 
     heh2   = mesh_.next_halfedge_handle(heh1);
     p2     = &mesh_.point(mesh_.to_vertex_handle(heh2));
-    d0     = (*p0 - *p2).normalize();
-    d1     = (*p1 - *p2).normalize();
+    d0     = (p0 - *p2).normalize();
+    d1     = (p1 - *p2).normalize();
     weight += 1.0 / tan(acos(d0|d1));
 
     mesh_.property(edge_weight_, *e_it) = weight;
