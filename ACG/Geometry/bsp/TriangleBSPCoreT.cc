@@ -109,11 +109,11 @@ _build(Node*         _node,
 
   HandleIter it;
   Point p0, p1, p2;
-  bool left, right;
   for (it=_node->begin(); it!=_node->end(); ++it)
   {
     traits_.points(*it, p0, p1, p2);
-    left = right = false;
+
+    /* @TODO Remove this comment block. Replaced by the clause below
 
     if (_node->plane_(p0))  left  = true;
     else                    right = true;
@@ -124,6 +124,11 @@ _build(Node*         _node,
 
     if (left)  lhandles.push_back(*it);
     if (right) rhandles.push_back(*it);
+    */
+
+    if ( _node->plane_(p0)  || _node->plane_(p1)  || _node->plane_(p2)  ) lhandles.push_back(*it);
+    if ( !_node->plane_(p0) || !_node->plane_(p1) || !_node->plane_(p2) ) rhandles.push_back(*it);
+
   }
 
   // check it

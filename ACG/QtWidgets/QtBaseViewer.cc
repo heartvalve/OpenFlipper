@@ -1364,8 +1364,8 @@ void QtBaseViewer::resizeGL(int _w, int _h)
 void QtBaseViewer::encodeView(QString& _view)
 {
   // Get current matrices
-  const ACG::GLMatrixd m = glstate_->modelview();
-  const ACG::GLMatrixd p = glstate_->projection();
+  const ACG::GLMatrixd& m = glstate_->modelview();
+  const ACG::GLMatrixd& p = glstate_->projection();
 
   // Add modelview matrix to output
   _view += QString(VIEW_MAGIC) + "\n";
