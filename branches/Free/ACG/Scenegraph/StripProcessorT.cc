@@ -214,11 +214,11 @@ buildStripsPolyMesh() {
       // build all strips, take best one
       unsigned int best_length = 0;
       unsigned int best_idx    = 0;
-      unsigned int length;
       for (unsigned int i = 0; i < mesh_.valence(f_it) ; ++i)
       {
         buildStripPolyMesh(h[i], experiments[i], faces[i]);
-        if ((length = experiments[i].indexArray.size()) > best_length) {
+        const unsigned int length = experiments[i].indexArray.size();
+        if (length  > best_length) {
             best_length = length;
             best_idx    = i;
         }
@@ -269,12 +269,13 @@ buildStripsTriMesh()
     // build 3 strips, take best one
     unsigned int best_length = 0;
     unsigned int best_idx    = 0;
-    unsigned int length;
 
     for (unsigned int i=0; i<3; ++i)
     {
       buildStripTriMesh(h[i], experiments[i], faces[i]);
-      if ((length = experiments[i].indexArray.size()) > best_length)
+
+      const unsigned int length = experiments[i].indexArray.size()
+      if ( length  > best_length)
       {
         best_length = length;
         best_idx    = i;
