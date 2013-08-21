@@ -270,7 +270,7 @@ ManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   Vec3d         oldPoint3D;
   Vec2i         newPoint2D(_event->pos().x(), _event->pos().y());
   Vec3d         newPoint3D;
-  double        old_axis_hit, new_axis_hit;
+  double        new_axis_hit;
 
 
   switch (_event->type())
@@ -351,6 +351,8 @@ ManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // cylinder clicked  change scaling or change translation
       if(cylinder_clicked_)
       {
+        double old_axis_hit;
+
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 

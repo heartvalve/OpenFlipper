@@ -124,7 +124,9 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
 
   Pose* pose = skeleton_->pose(_hAni);
 
-  int verticesWithoutWeights = 0;
+  #ifndef USE_OPENMP
+    int verticesWithoutWeights = 0;
+  #endif
   
   // for every vertex
   typename MeshT::VertexIter it;
