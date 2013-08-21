@@ -80,8 +80,6 @@ DataType  FileViewPlugin::supportedType() {
 int FileViewPlugin::loadObject(QString _filename) {
 
     // Declare variables
-    int         width = 1;
-    int         height = 1;
     ACG::Vec3d  eye(1.0,1.0,1.0);
     ACG::Vec3d  center(0.0,0.0,0.0);
     ACG::Vec3d  up(1.0,0.0,0.0);
@@ -99,8 +97,8 @@ int FileViewPlugin::loadObject(QString _filename) {
     settings.beginGroup("VIEW");
 
     if(settings.contains("Width") && settings.contains("Height")) {
-        width = settings.value("Width").toInt();
-        height = settings.value("Height").toInt();
+        const int width = settings.value("Width").toInt();
+        const int height = settings.value("Height").toInt();
         std::cerr << "Setting new viewport to " << width << "x" << height << std::endl;
         //e_widthAndHeight = true;
     }
