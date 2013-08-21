@@ -274,7 +274,7 @@ buildStripsTriMesh()
     {
       buildStripTriMesh(h[i], experiments[i], faces[i]);
 
-      const unsigned int length = experiments[i].indexArray.size()
+      const unsigned int length = experiments[i].indexArray.size();
       if ( length  > best_length)
       {
         best_length = length;
