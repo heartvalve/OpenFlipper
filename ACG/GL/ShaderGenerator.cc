@@ -1146,6 +1146,12 @@ void ShaderProgGenerator::setShaderDir( QString _dir )
   shaderDir_ = _dir;
 }
 
+QString ShaderProgGenerator::getShaderDir()
+{
+  return shaderDir_;
+}
+
+
 unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
 {
   if (!_modifier) return 0;

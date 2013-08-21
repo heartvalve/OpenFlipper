@@ -736,6 +736,11 @@ public:
   */
   static void setShaderDir(QString _dir);
 
+  /**
+  Return shader directory path as previosly specified by user
+  */
+  static QString getShaderDir();
+
   /** 
   @param _desc description-set of shader properties.
   @param _modifierFlags bitflag of modifier-IDs that should be used for the generation.

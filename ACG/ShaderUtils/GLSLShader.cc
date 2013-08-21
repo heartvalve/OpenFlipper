@@ -54,6 +54,7 @@
 
 #include "gldebug.h"
 #include "GLSLShader.hh"
+#include <ACG/GL/ShaderGenerator.hh>
 
 #ifdef WIN32
   #ifndef __MINGW32__
@@ -603,6 +604,46 @@ namespace GLSL {
       geometryShader->compile();
     }
     return geometryShader;
+  }
+
+
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile){
+
+    GLSL::Program* result = 0;
+
+    const char* ShaderFiles[2] = {vertexShaderFile, fragmentShaderFile};
+
+    GLSL::Shader* tempShaders[2] = {0};
+
+    for (int i = 0; i < 2; ++i)
+    {
+      QString shaderFile = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(ShaderFiles[i]);
+
+      if (i == 0) // vertex shader
+        tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
+      else // fragment shader
+        tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
+
+      if (!tempShaders[i]) {
+        std::cerr << ShaderFiles[i] << " could not be loaded and compiled" << std::endl;
+        return 0;
+      }
+    }
+
+    // create program
+
+    result = new GLSL::Program();
+    result->attach(tempShaders[0]);
+    result->attach(tempShaders[1]);
+    result->link();
+
+    for (int i = 0; i < 2; ++i)
+      delete tempShaders[i];
+
+    ACG::glCheckErrors();
+
+
+    return result;
   }
 
 }
