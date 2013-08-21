@@ -304,7 +304,7 @@ OBJNode::read(const std::string& _filename)
       std::vector<unsigned int>  vIdx, tIdx;
       int component(0), nV(0);
       bool endOfVertex(false);
-      char *p0, *p1(s+2);
+      char* p1(s+2);
 
       vIdx.clear();
       tIdx.clear();
@@ -312,7 +312,7 @@ OBJNode::read(const std::string& _filename)
 
       while(p1)
       {
-        p0 = p1;
+        char* p0 = p1;
 
         // overwrite next separator
         if (p1)

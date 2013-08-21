@@ -309,6 +309,7 @@ create_mask()
   for (y = 0; y < h; ++y)
   {
     const unsigned int offset = y*w;
+
     for (x = 0; x < w; ++x)
     {
       i = 3*(offset + x);

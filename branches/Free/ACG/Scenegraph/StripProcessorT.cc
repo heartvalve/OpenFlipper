@@ -186,7 +186,6 @@ buildStripsPolyMesh() {
     
     std::vector<Strip>                            experiments; // Three strips to be built. Take longest one after all.
     std::vector< typename Mesh::HalfedgeHandle >  h;           // Three halfedges to start from.
-    unsigned int                                  best_idx, best_length, length;
     std::vector< FaceHandles >                    faces;       // Lists of faces.
     typename FaceHandles::iterator                fh_it, fh_end;
     typename Mesh::FaceIter                       f_it, f_end=mesh_.faces_end();
@@ -213,7 +212,9 @@ buildStripsPolyMesh() {
         h.push_back( fhalfedge_it.handle() );
       
       // build all strips, take best one
-      best_length = best_idx = 0;
+      unsigned int best_length = 0;
+      unsigned int best_idx    = 0;
+      unsigned int length;
       for (unsigned int i = 0; i < mesh_.valence(f_it) ; ++i)
       {
         buildStripPolyMesh(h[i], experiments[i], faces[i]);
@@ -246,7 +247,7 @@ buildStripsTriMesh()
 {    
   Strip                           experiments[3];
   typename Mesh::HalfedgeHandle   h[3];
-  unsigned int                    best_idx, best_length, length;
+
   FaceHandles                     faces[3];
   typename FaceHandles::iterator  fh_it, fh_end;
   typename Mesh::FaceIter         f_it, f_end=mesh_.faces_end();
@@ -266,7 +267,10 @@ buildStripsTriMesh()
     h[2] = mesh_.next_halfedge_handle(h[1]);
 
     // build 3 strips, take best one
-    best_length = best_idx = 0;
+    unsigned int best_length = 0;
+    unsigned int best_idx    = 0;
+    unsigned int length;
+
     for (unsigned int i=0; i<3; ++i)
     {
       buildStripTriMesh(h[i], experiments[i], faces[i]);

@@ -285,11 +285,11 @@ ManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // If the user clicked on the manipulator, remember it
       if ( sphere_clicked_ || cylinder_clicked_)
-         touched_ = true;
+        touched_ = true;
 
       // select only sphere or cylinder
       if(sphere_clicked_ && cylinder_clicked_)
-	cylinder_clicked_ = false;
+        cylinder_clicked_ = false;
 
       oldPoint2D_   = newPoint2D;
       break;
@@ -326,22 +326,22 @@ ManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           if(_event->modifiers() & Qt::ShiftModifier)
           {
 
-             // calculate new cylinder direction
-	     direction_.normalize();
-             newPoint3D.normalize();
-             oldPoint3D.normalize();
+            // calculate new cylinder direction
+            direction_.normalize();
+            newPoint3D.normalize();
+            oldPoint3D.normalize();
 
-             direction_ += newPoint3D - oldPoint3D;
+            direction_ += newPoint3D - oldPoint3D;
 
-	  }
+          }
           // rotate
           else
-	  {
-	    Vec3d axis = oldPoint3D % newPoint3D;
-	    double cos_angle = ( oldPoint3D | newPoint3D );
+          {
+            Vec3d axis = oldPoint3D % newPoint3D;
+            double cos_angle = ( oldPoint3D | newPoint3D );
 
-     	    if (fabs(cos_angle) < 1.0)
-  	      rotate(acos(cos_angle)*180.0/M_PI, axis);
+            if (fabs(cos_angle) < 1.0)
+              rotate(acos(cos_angle)*180.0/M_PI, axis);
           }
         }
         else sphere_clicked_ = false;
@@ -351,30 +351,30 @@ ManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // cylinder clicked  change scaling or change translation
       if(cylinder_clicked_)
       {
-	mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-	mapToCylinder(_state, newPoint2D,  new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
+        mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
         // scale
         if(_event->modifiers() & Qt::ShiftModifier)
         {
-	  scale(1.0 + (new_axis_hit - old_axis_hit) /
-		(cylinder_height_ * SCALE_CONST));
-	}
+          scale(1.0 + (new_axis_hit - old_axis_hit) /
+              (cylinder_height_ * SCALE_CONST));
+        }
 
         // twist
         else if(_event->modifiers() & (Qt::ControlModifier |
-				   Qt::AltModifier))
+            Qt::AltModifier))
         {
-	  rotate( 45.0 * (new_axis_hit-old_axis_hit) / cylinder_height_,
-		  direction_);
+          rotate( 45.0 * (new_axis_hit-old_axis_hit) / cylinder_height_,
+              direction_);
 
-	}
+        }
 
         // translate
         else
-	{
-	  translate(new_axis_hit - old_axis_hit);
-	}
+        {
+          translate(new_axis_hit - old_axis_hit);
+        }
       }
 
       break;
