@@ -240,6 +240,15 @@ namespace GLSL {
   GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name);
   GLSL::PtrGeometryShader ACGDLLEXPORT loadGeometryShader(const char *name);
 
+
+  /** load shaders and create GLSL program if successful
+   *
+   * Shader file paths for this function are assumed to be relative
+   * to the "Shader" directoy as specified in   ShaderProgGenerator::getShaderDir()
+  */
+  GLSL::PtrProgram ACGDLLEXPORT loadProgram(const char *vertexShaderFile,
+                                          const char *fragmentShaderFile);
+
 }
 
 // GLSLSHADER_H
