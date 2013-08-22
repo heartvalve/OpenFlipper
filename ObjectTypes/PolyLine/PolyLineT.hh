@@ -289,12 +289,6 @@ public:
   /// \brief Print information string to cerr
   void print() const;
 
-  /// \brief Load polyline from a file
-  void load( const char* _filename);
-
-  /// \brief Save polyline to a file
-  void save( const char* _filename) const;
-
   //  ############################### Standard Property Handling #############################
 
   // request properties
