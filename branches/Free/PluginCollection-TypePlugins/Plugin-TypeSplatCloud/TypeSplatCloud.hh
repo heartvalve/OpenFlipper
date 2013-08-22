@@ -124,7 +124,7 @@ private slots:
 public:
 
   // standard constructor/destructor
-  TypeSplatCloudPlugin() { }
+  TypeSplatCloudPlugin();
   ~TypeSplatCloudPlugin() { }
 
   //-- Base Interface --
@@ -161,6 +161,9 @@ private:
 
   // erase camera
   void eraseCamera( CameraObject *_cameraObject );
+
+  ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode_;
+  ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode_;
 };
 
 

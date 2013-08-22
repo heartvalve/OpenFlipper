@@ -70,18 +70,16 @@ static const double MIN_CLUSTER_BRIGHTNESS = 0.25;
 
 //== IMPLEMENTATION ==============================================
 
+TypeSplatCloudPlugin::TypeSplatCloudPlugin() {
+}
 
 void TypeSplatCloudPlugin::slotViewChanged()
 {
-  // get drawmodes
-  ACG::SceneGraph::DrawModes::DrawMode splatsDrawMode = ACG::SceneGraph::DrawModes::getDrawMode( "Splats" );
-  ACG::SceneGraph::DrawModes::DrawMode dotsDrawMode   = ACG::SceneGraph::DrawModes::getDrawMode( "Dots"   );
-
-  // if drawmodes don't exist something went wrong
-  if( splatsDrawMode == ACG::SceneGraph::DrawModes::NONE || 
-      dotsDrawMode   == ACG::SceneGraph::DrawModes::NONE )
+  // if drawmodes don't exist we have no object of this type
+  if( splatsDrawMode_ == ACG::SceneGraph::DrawModes::NONE ||
+      dotsDrawMode_   == ACG::SceneGraph::DrawModes::NONE )
   {
-    emit log(LOGERR,tr("Shader DrawModes for SplatCloud not existent!"));
+    //emit log(LOGERR,tr("Shader DrawModes for SplatCloud not existent!"));
     return;
   }
 
@@ -145,10 +143,10 @@ void TypeSplatCloudPlugin::slotViewChanged()
     ShaderNode *shaderNode = PluginFunctions::splatShaderNode( *objIter );
 
     // get standard shaders and picking shaders
-    GLSL::PtrProgram splatsShader     = shaderNode->getShader( splatsDrawMode, false );
-    GLSL::PtrProgram splatsPickShader = shaderNode->getShader( splatsDrawMode, true  );
-    GLSL::PtrProgram dotsShader       = shaderNode->getShader( dotsDrawMode,   false );
-    GLSL::PtrProgram dotsPickShader   = shaderNode->getShader( dotsDrawMode,   true  );
+    GLSL::PtrProgram splatsShader     = shaderNode->getShader( splatsDrawMode_, false );
+    GLSL::PtrProgram splatsPickShader = shaderNode->getShader( splatsDrawMode_, true  );
+    GLSL::PtrProgram dotsShader       = shaderNode->getShader( dotsDrawMode_,   false );
+    GLSL::PtrProgram dotsPickShader   = shaderNode->getShader( dotsDrawMode_,   true  );
 
     // update shader uniforms concerning viewport and depthrange
 
@@ -285,6 +283,10 @@ bool TypeSplatCloudPlugin::registerType()
 
 int TypeSplatCloudPlugin::addEmpty()
 {
+  // Add or get the current draw modes to make sure they exist now
+  splatsDrawMode_ = ACG::SceneGraph::DrawModes::addDrawMode("Splats");
+  dotsDrawMode_   = ACG::SceneGraph::DrawModes::addDrawMode("Dots");
+
   // new object data struct
   SplatCloudObject *object = new SplatCloudObject();
 
