@@ -49,12 +49,13 @@
 
 #pragma once
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/perObjectData.hh>
 #include <ACG/Math/VectorT.hh>
 
 #define CIRCLE_DATA "Circle_Data"
 
-class PolyLineCircleData : public PerObjectData
+class DLLEXPORT PolyLineCircleData : public PerObjectData
 {
 public:
 	ACG::Vec3d circleCenter_;
