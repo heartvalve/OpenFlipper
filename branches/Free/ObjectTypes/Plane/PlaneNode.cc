@@ -301,8 +301,11 @@ addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, A
 
 void PlaneNode::updateVBO()
 {
-  if ( vbo_ )
+  if ( !vbo_ ) {
+    std::cerr << "Generating" << std::endl;
     glGenBuffersARB(1, &vbo_);
+  }
+
   const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
   const ACG::Vec3d normal = (plane_.xDirection % plane_.yDirection).normalized();
 
@@ -327,14 +330,12 @@ void PlaneNode::updateVBO()
       0.0,0.0,0.0,
       (float)-normal[0],(float)-normal[1],(float)-normal[2]};
 
-  // Create buffer for vertex coordinates if necessary
-
-
   // Bind buffer
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
   // Upload to buffer
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData[0], GL_STATIC_DRAW_ARB);
+
 }
 
 void
@@ -351,7 +352,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   // plane_.position represents the center of the plane.
   // Compute the corner position
   const ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
-  const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
+  const ACG::Vec3d xy  = plane_.xDirection + plane_.yDirection;
 
   // translate to corner position and store that in renderer
   _state.push_modelview_matrix();
@@ -363,8 +364,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.depthTest = true;
 
   //if vbo wasn't created, create new one
-  if (vbo_)
+  if (! vbo_) {
     updateVBO();
+  }
 
   // Set the buffers for rendering
   ro.vertexBuffer = vbo_;
