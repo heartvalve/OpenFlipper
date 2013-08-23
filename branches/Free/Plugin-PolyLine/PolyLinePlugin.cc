@@ -26,6 +26,24 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <ACG/Geometry/bsp/BSPImplT.hh>
+
+namespace {
+
+class GlutObjectNode : public ACG::SceneGraph::GlutPrimitiveNode{
+	public:
+		GlutObjectNode(PolyLineObject* L, BaseNode* M, std::string name)
+			: ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, M, name)
+		{
+			line = L;
+		}
+	public:
+		PolyLineObject* line;
+};
+
+
+}
+
 
 //== IMPLEMENTATION ==========================================================
 
@@ -38,26 +56,25 @@ PolyLinePlugin::PolyLinePlugin() :
         pickToolbar_(0),
         pickToolBarActions_(0),
         insertAction_(0),
+        insertCircleAction_(0),
         deleteAction_(0),
         moveAction_(0),
         smartMoveAction_(0),
         mergeAction_(0),
         splitAction_(0),
         cutAction_(0),
-        insertCircleAction_(0),
         cur_insert_id_(-1),
         cur_polyline_obj_(0),
         cur_move_id_(-1),
         move_point_ref_(0),
         create_point_ref_(0),
-        createCircle_Active_(false),
+        createCircle_CurrSelIndex_(-1),
+        moveCircle_SelNode_(0),
         cur_merge_id_(-1),
         smart_move_timer_(0),
         cur_smart_move_obj_(0),
         planeSelect_(0)
-
 {
-
 }
 
 
@@ -95,6 +112,8 @@ initializePlugin()
   connect(tool_->rb_smart_move, SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
   connect(tool_->rb_merge,  SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
   connect(tool_->rb_split,  SIGNAL( clicked() ), this, SLOT( slotEditModeChanged() ));
+
+  connect(tool_->sb_CirclePointNum, SIGNAL(valueChanged(int)), this, SLOT(slot_setCirclePointNum(int)));
 
   //add icons
   tool_->rb_insert->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_insert.png") );
@@ -746,8 +765,9 @@ slot_smart_move_timer()
 }
 
 
-//-----------------------------------------------------------------------------
 
+
+//-----------------------------------------------------------------------------
 
 PolyLinePlugin::EditMode
 PolyLinePlugin::
@@ -767,9 +787,7 @@ mode()
   return PL_NONE;
 }
 
-
 //-----------------------------------------------------------------------------
-
 
 void
 PolyLinePlugin::
@@ -867,61 +885,91 @@ me_insert( QMouseEvent* _event )
   }
 }
 
-
 //-----------------------------------------------------------------------------
 
 void PolyLinePlugin::
 me_insertCircle(QMouseEvent* _event)
 {
-	ACG::GLState& gl = PluginFunctions::viewerProperties().glState();
 	TriMeshObject* mesh;
 	TriMesh::FaceHandle fh;
 	TriMesh::VertexHandle vh;
 	ACG::Vec3d hit_point;
 	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point))
 		return;//can't generate a circle in empty space
-	if(_event->type() == QEvent::MouseMove && createCircle_Active_) {
-		if(!cur_polyline_obj_ || !cur_polyline_obj_->line()) {
-			createCircle_Active_ = false;
+
+	if(_event->type() == QEvent::MouseMove && createCircle_CurrSelIndex_ != -1) {
+		PolyLineObject* L = 0;
+		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
 			return;
-		}
 
-		ACG::Vec3d n = createCircle_Normal, x0 = createCircle_Point_;
-		double t = ((n | x0) - (n | hit_point)) / (n | n);
-		ACG::Vec3d onPlane = hit_point + t * n, d = onPlane - x0;
-		double r = sqrt(d | d);
-		const unsigned int N = 16;
-		ACG::Quaterniond qRot(n, 2.0 * M_PI / double(N));
-		ACG::Vec3d cPos = onPlane - x0;
+		const ACG::Vec3d n = createCircle_Normal_, x0 = createCircle_Point_;
+		const double t = ((n | x0) - (n | hit_point)) / (n | n);
+		const ACG::Vec3d onPlane = hit_point + t * n,  d = onPlane - x0;
+		const double r = d.norm();
+		const ACG::Vec3d mainAxis = (onPlane - x0).normalize(), sideAxis = (mainAxis % n).normalize();
 
-		cur_polyline_obj_->line()->clear();
-		for(unsigned int i = 0; i <= N; i++) {
-			ACG::Vec3d screenCoords = gl.project(cPos + x0), p = cPos;
-			QPoint qp((int)screenCoords[0], (int)(gl.viewport_height() - screenCoords[1]));
-			if(pick_triangle_mesh(qp, mesh, fh, vh, p))
-				cur_polyline_obj_->line()->add_point((PolyLine::Point) (p ));
-			cPos = qRot.rotate(cPos);
-		}
-		//cur_polyline_obj_->line()->add_point((PolyLine::Point) onPlane);
-		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+		PolyLineCircleData* LD = new PolyLineCircleData(x0, n, mainAxis, sideAxis, r, r, mesh->id());
+		L->setObjectData(CIRCLE_DATA, LD);
+		updatePolyEllipse(L, tool_->sb_CirclePointNum->value());
+		updateHandles(L);
 	}
 	else if(_event->type() == QEvent::MouseButtonPress) {
 		emit addEmptyObject(DATA_POLY_LINE, cur_insert_id_);
 		BaseObjectData *obj = 0;
 		PluginFunctions::getObject(cur_insert_id_, obj);
 		obj->target(true);
-		cur_polyline_obj_ = PluginFunctions::polyLineObject(obj);
-		cur_polyline_obj_->materialNode()->set_random_color();
+		PolyLineObject* newLine = PluginFunctions::polyLineObject(obj);
+		newLine->materialNode()->set_random_color();
 
 		createCircle_Point_ = hit_point;
 		if(!mesh->mesh()->has_face_normals())
 			mesh->mesh()->request_face_normals();
-		createCircle_Normal = PluginFunctions::viewingDirection();// mesh->mesh()->normal(fh);
+		createCircle_Normal_ = mesh->mesh()->normal(fh);
 		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-		createCircle_Active_ = true;
+		createCircle_CurrSelIndex_ = newLine->id();
+
+		ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+		ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+		mesh->boundingBox(bbMin, bbMax);
+		const ACG::Vec3d sizeBB((bbMax-bbMin));
+
+		GlutObjectNode* handle0 = new GlutObjectNode(newLine, obj->manipulatorNode(), "N_Handle0");
+		handle0->get_primitive(0).color = ACG::Vec4f(1,0,0,1);
+		handle0->set_size(0.005*sizeBB.norm());
+		handle0->show();
+		handle0->enablePicking(false);
+		handle0->set_position(hit_point);
+		newLine->addAdditionalNode(handle0, name(), "handle0");
+		handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+		GlutObjectNode* handle1 = new GlutObjectNode(newLine, obj->manipulatorNode(), "N_Handle1");
+		handle1->get_primitive(0).color = ACG::Vec4f(0,1,0,1);
+		handle1->set_size(0.005*sizeBB.norm());
+		handle1->show();
+		handle1->enablePicking(true);
+		handle1->set_position(hit_point);
+		newLine->addAdditionalNode(handle1, name(), "handle1");
+		handle1->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+		GlutObjectNode* cenNode = new GlutObjectNode(newLine, obj->manipulatorNode(), "N_Center");
+		cenNode->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
+		cenNode->set_size(0.005*sizeBB.norm());
+		cenNode->show();
+		cenNode->enablePicking(true);
+		cenNode->set_position(hit_point);
+		newLine->addAdditionalNode(cenNode, name(), "circle");
+		cenNode->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+		emit updatedObject(newLine->id(), UPDATE_ALL);
 	}
 	else if(_event->type() == QEvent::MouseButtonRelease) {
-		createCircle_Active_ = false;
+		PolyLineObject* L;
+		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
+			return;
+		ACG::SceneGraph::GlutPrimitiveNode* N;
+		if(L->getAdditionalNode(N, name(), "handle0"))
+			N->enablePicking(true);
+		createCircle_CurrSelIndex_ = -1;
 	}
 }
 
@@ -960,7 +1008,7 @@ void
 PolyLinePlugin::
 me_move( QMouseEvent* _event )
 {
-  // MousePress ? -> get eference point
+  // MousePress ? -> get reference point
   if (_event->type() == QEvent::MouseButtonPress) {
 
     unsigned int node_idx, target_idx;
@@ -968,11 +1016,18 @@ me_move( QMouseEvent* _event )
     // pick
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
 
+      BaseNode* node = find_node( PluginFunctions::getRootNode(), node_idx );
+      GlutObjectNode* glutNode = dynamic_cast<GlutObjectNode*>(node);
+      if(glutNode) {
+        moveCircle_SelNode_        = glutNode;
+        createCircle_CurrSelIndex_ = glutNode->line->id();
+      }
+
       BaseObjectData* obj = 0;
       if (PluginFunctions::getPickedObject(node_idx, obj)) {
         // is picked object polyline?
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-        if (cur_pol) {
+        if (cur_pol && !cur_pol->objectData(CIRCLE_DATA)) {//no vertex dragging on circles!
 
           // Check if we got a line segment or a vertex
           if ( target_idx >= cur_pol->line()->n_vertices() )
@@ -984,32 +1039,66 @@ me_move( QMouseEvent* _event )
           move_point_ref_ = &(cur_pol->line()->point(target_idx));
         }
       }
-
     }
-
   }
 
   // Move ? -> move reference point
-  if (_event->type() == QEvent::MouseMove)
-    if (move_point_ref_ != 0) {
+  if (_event->type() == QEvent::MouseMove){
 
-      unsigned int node_idx, target_idx;
-      ACG::Vec3d hit_point;
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
 
-      // pick
+    if(moveCircle_SelNode_) {
+      if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point) ) {
+
+        PolyLineObject* L;
+        if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
+          return;
+
+        PolyLineCircleData* LD = (PolyLineCircleData*)L->objectData(CIRCLE_DATA);
+        double cr;
+        const double rm = LD->circleMainRadius_, rs = LD->circleSideRadius_;
+        ACG::Vec3d onPlane;
+        const ACG::Vec3d x0 = LD->circleCenter_, n = LD->circleNormal_;
+
+        createCircle_getHitInfo(LD, hit_point, &hit_point, &cr, &onPlane);
+
+        if(!moveCircle_SelNode_->name().compare("N_Center")) {
+          LD->circleCenter_ = hit_point;
+        }
+        else {
+          ACG::Vec3d axisa = (onPlane - x0).normalize();
+          if(!moveCircle_SelNode_->name().compare("N_Handle0")) {
+            ACG::Vec3d axisb = (axisa % n).normalize();
+            LD->circleMainRadius_ = cr;
+            LD->circleMainAxis_ = axisa;
+            LD->circleSideAxis_ = axisb;
+          } else {
+            ACG::Vec3d axisb = (n % axisa).normalize();
+            LD->circleSideRadius_ = cr;
+            LD->circleSideAxis_ = axisa;
+            LD->circleMainAxis_ = axisb;
+          }
+        }
+        updateHandles(L);
+        updatePolyEllipse(L, tool_->sb_CirclePointNum->value());
+      }
+    }
+    else if (move_point_ref_ != 0) {
       if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
         (*move_point_ref_) = (PolyLine::Point) hit_point;
-
         // update
         emit updatedObject(cur_move_id_, UPDATE_GEOMETRY);
       }
     }
+  }
 
   // Release ? -> release reference point
-  if (_event->type() == QEvent::MouseButtonRelease)
-    move_point_ref_ = 0;
-
-
+  if (_event->type() == QEvent::MouseButtonRelease) {
+	  move_point_ref_ = 0;
+	  moveCircle_SelNode_ = 0;
+	  createCircle_CurrSelIndex_ = -1;
+  }
 }
 //-----------------------------------------------------------------------------
 
@@ -1117,9 +1206,7 @@ me_split( QMouseEvent* _event )
 
 }
 
-
 //-----------------------------------------------------------------------------
-
 
 void
 PolyLinePlugin::
@@ -1320,6 +1407,8 @@ me_smart_move( QMouseEvent* _event )
         PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
         if (cur_pol) {
 
+		  cur_polyline_obj_ = cur_pol;
+
           // Check if we got a line segment or a vertex
           if ( target_idx >= cur_pol->line()->n_vertices() )
             return;
@@ -1357,6 +1446,8 @@ me_smart_move( QMouseEvent* _event )
   me_move( _event);
 }
 
+//-----------------------------------------------------------------------------
+
 void
 PolyLinePlugin::
 slotEditModeChanged()
@@ -1364,6 +1455,27 @@ slotEditModeChanged()
   PluginFunctions::pickMode("PolyLine");
   PluginFunctions::actionMode(Viewer::PickingMode);
 }
+
+//-----------------------------------------------------------------------------
+
+void
+PolyLinePlugin::
+updateHandles(PolyLineObject* _lineObject)
+{
+  PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(_lineObject->objectData(CIRCLE_DATA) );
+  GlutObjectNode* H0, *H1, *C;
+  _lineObject->getAdditionalNode(C,  name(), "circle");
+  _lineObject->getAdditionalNode(H0, name(), "handle0");
+  _lineObject->getAdditionalNode(H1, name(), "handle1");
+  if(C)
+    C->set_position(createCircle_getHit(circleData, circleData->circleCenter_));
+  if(H0)
+    H0->set_position(createCircle_getHit(circleData, circleData->circleCenter_ + circleData->circleMainAxis_ * circleData->circleMainRadius_));
+  if(H1)
+    H1->set_position(createCircle_getHit(circleData, circleData->circleCenter_ + circleData->circleSideAxis_ * circleData->circleSideRadius_));
+}
+
+//-----------------------------------------------------------------------------
 
 void 
 PolyLinePlugin::

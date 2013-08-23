@@ -43,6 +43,10 @@
 
 #include <ObjectTypes/Plane/QtPlaneSelect.hh>
 
+#include <ACG/Scenegraph/GlutPrimitiveNode.hh>
+
+#include <ObjectTypes/PolyLine/PolyLineCircleData.hh>
+
 #define CREATE_CUT_POLYLINE "Create Polyline"
 
 //== CLASS DEFINITION =========================================================
@@ -174,18 +178,20 @@ private slots:
 
   void slot_smart_move_timer();
 
+  void slot_setCirclePointNum(int i);
+
 private :
 
   EditMode mode();
 
   // mouse events
-  void me_insert    ( QMouseEvent* _event );
-  void me_insertCircle(QMouseEvent* _event );
-  void me_delete    ( QMouseEvent* _event );
-  void me_move      ( QMouseEvent* _event );
-  void me_split     ( QMouseEvent* _event );
-  void me_merge     ( QMouseEvent* _event );
-  void me_smart_move( QMouseEvent* _event );
+  void me_insert      ( QMouseEvent* _event );
+  void me_insertCircle( QMouseEvent* _event );
+  void me_delete      ( QMouseEvent* _event );
+  void me_move        ( QMouseEvent* _event );
+  void me_split       ( QMouseEvent* _event );
+  void me_merge       ( QMouseEvent* _event );
+  void me_smart_move  ( QMouseEvent* _event );
 
   //===========================================================================
   /** @name ToolBox
@@ -227,13 +233,13 @@ private :
     QActionGroup* pickToolBarActions_;
     
     QAction*      insertAction_;
+    QAction*	  insertCircleAction_;
     QAction*      deleteAction_;
     QAction*      moveAction_;
     QAction*      smartMoveAction_;
     QAction*      mergeAction_;
     QAction*      splitAction_;
     QAction*      cutAction_;
-    QAction*	  insertCircleAction_;
     
   private slots:
     
@@ -287,9 +293,28 @@ private:
     PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
     
-    bool			        createCircle_Active_;
+    int				        createCircle_CurrSelIndex_;
     ACG::Vec3d		    createCircle_Point_;
-    ACG::Vec3d		    createCircle_Normal;
+    ACG::Vec3d		    createCircle_Normal_;
+    ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_;
+
+    bool createCircle_getPointOnMesh(TriMeshObject* _triMeshObject,
+                                     ACG::Vec3d     _center,
+                                     ACG::Vec3d     _pOnPlane,
+                                     ACG::Vec3d     _n,
+                                     ACG::Vec3d*    _pOut);
+
+    bool createCircle_getHitInfo(PolyLineCircleData* _circleData,
+                                 ACG::Vec3d          _hit_Point,
+                                 ACG::Vec3d*         _pOut = 0,
+                                 double*             _r = 0,
+                                 ACG::Vec3d*         _onPlane = 0);
+
+    ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
+
+    void updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount);
+
+    void updateHandles(PolyLineObject* _lineObject);
 
     int               cur_merge_id_;
     
