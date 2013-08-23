@@ -120,11 +120,15 @@ public:
      */
     void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
+    /// Force an update of the vbo data
+    void update();
+
 private:
     void drawPlane(ACG::GLState & _state);
     void drawManipulator(ACG::GLState & _state);
     void drawPlanePick(ACG::GLState & _state);
     void drawManipulatorPick(ACG::GLState & _state);
+
     /// create and update VBO
     void updateVBO();
 
