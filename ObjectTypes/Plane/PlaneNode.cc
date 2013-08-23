@@ -307,12 +307,15 @@ addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, A
   sphere_->addToRenderer(_renderer, _ro, sphereSize, ACG::Vec3f(_pos));
 }
 
+void PlaneNode::update() {
+  updateVBO();
+}
+
 //----------------------------------------------------------------------------
 
 void PlaneNode::updateVBO()
 {
   if ( !vbo_ ) {
-    std::cerr << "Generating" << std::endl;
     glGenBuffersARB(1, &vbo_);
   }
 
