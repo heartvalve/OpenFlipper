@@ -89,6 +89,16 @@ void PlaneNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax)
   _bbMax.maximize( pos1 + xDird);
   _bbMax.maximize( pos1 + yDird);
   _bbMax.maximize( pos1 + xDird + yDird);
+
+  _bbMin.minimize( pos1 );
+  _bbMin.minimize( pos1 + xDird);
+  _bbMin.minimize( pos1 + yDird);
+  _bbMin.minimize( pos1 + xDird + yDird);
+  _bbMax.maximize( pos0 );
+  _bbMax.maximize( pos0 + xDird);
+  _bbMax.maximize( pos0 + yDird);
+  _bbMax.maximize( pos0 + xDird + yDird);
+
 }
 
 //----------------------------------------------------------------------------
