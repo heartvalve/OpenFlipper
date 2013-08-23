@@ -340,6 +340,7 @@ void PlaneNode::updateVBO()
       0.0,0.0,0.0,
       (float)-normal[0],(float)-normal[1],(float)-normal[2]};
 
+
   // Bind buffer
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
@@ -409,9 +410,16 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         // Simulate glPointSize(12) with a sphere
         //---------------------------------------------------
 
+        ro.debugName = "Plane Sphere x";
         addSphereAt(plane_.xDirection,_renderer,_state,&ro);
+
+        ro.debugName = "Plane Sphere y";
         addSphereAt(plane_.yDirection,_renderer,_state,&ro);
+
+        ro.debugName = "Plane Sphere xy";
         addSphereAt(xy,_renderer,_state,&ro);
+
+        ro.debugName = "Plane Sphere 0";
         addSphereAt(ACG::Vec3d(0.0,0.0,0.0),_renderer,_state,&ro);
 
 
@@ -428,7 +436,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( front )
         //---------------------------------------------------
-        ro.debugName = (std::string("PlaneNode.plane_front")+name()).c_str();
+        ro.debugName = "PlaneNode.plane_front ";
         localMaterial.ambientColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
         localMaterial.diffuseColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
         localMaterial.specularColor(ACG::Vec4f(0.6f, 0.15f, 0.2f, 0.5f ));
@@ -439,7 +447,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         //---------------------------------------------------
         // Just draw the quads here ( back )
         //---------------------------------------------------
-        ro.debugName = (std::string("PlaneNode.plane_back")+name()).c_str();
+        ro.debugName = "PlaneNode.plane_back";
         localMaterial.ambientColor( ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
         localMaterial.diffuseColor( ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
         localMaterial.specularColor(ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
