@@ -436,6 +436,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         ro.blendSrc  = GL_SRC_ALPHA;
         ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
 
+        // Enable culling in order to avoid z-fighting artifacts
+        ro.culling = true;
+
         //---------------------------------------------------
         // Just draw the quads here ( front )
         //---------------------------------------------------
