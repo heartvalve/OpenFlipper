@@ -89,7 +89,7 @@ createCircle_getPointOnMesh(TriMeshObject* _triMeshObject, ACG::Vec3d _center, A
 	for(unsigned int j = 0; j < c.size(); j++) {
 		//ACG::Vec3d norAtInt = M->mesh()->normal(c[j].first);
 		ACG::Vec3d p = _pOnPlane + _n * c[j].second, dir = _center - p;
-		double dist = sqrt(dir | dir);
+		const double dist = dir.norm();
 		if(dist < smDist) {
 			smDist = dist;
 			if(_pOut)
@@ -108,7 +108,7 @@ PolyLinePlugin::
 createCircle_getHitInfo(PolyLineCircleData* _circleData, ACG::Vec3d _hit_Point, ACG::Vec3d* _pOut, double* r, ACG::Vec3d* _onPlaneO)
 {
 	ACG::Vec3d n = _circleData->circleNormal_, x0 = _circleData->circleCenter_;
-	double t = ((n | x0) - (n | _hit_Point)) / (n | n);
+	double t = ((n | x0) - (n | _hit_Point)) / n.sqrnorm();
 	ACG::Vec3d onPlane = _hit_Point + t * n,  d = onPlane - x0;
 	if(r)
 		*r = d.norm();

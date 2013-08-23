@@ -903,7 +903,7 @@ me_insertCircle(QMouseEvent* _event)
 			return;
 
 		const ACG::Vec3d n = createCircle_Normal_, x0 = createCircle_Point_;
-		const double t = ((n | x0) - (n | hit_point)) / (n | n);
+		const double t = ((n | x0) - (n | hit_point)) / n.sqrnorm();
 		const ACG::Vec3d onPlane = hit_point + t * n,  d = onPlane - x0;
 		const double r = d.norm();
 		const ACG::Vec3d mainAxis = (onPlane - x0).normalize(), sideAxis = (mainAxis % n).normalize();
@@ -1055,9 +1055,8 @@ me_move( QMouseEvent* _event )
         if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
           return;
 
-        PolyLineCircleData* LD = (PolyLineCircleData*)L->objectData(CIRCLE_DATA);
+        PolyLineCircleData* LD = dynamic_cast<PolyLineCircleData*>(L->objectData(CIRCLE_DATA));
         double cr;
-        const double rm = LD->circleMainRadius_, rs = LD->circleSideRadius_;
         ACG::Vec3d onPlane;
         const ACG::Vec3d x0 = LD->circleCenter_, n = LD->circleNormal_;
 
@@ -1551,47 +1550,44 @@ pick_triangle_mesh( QPoint mPos,
   unsigned int target_idx = 0, node_idx = 0;
   ACG::Vec3d hit_point;
 
-  BaseObjectData* object(0);
+
 
   if( PluginFunctions::scenegraphPick( ACG::SceneGraph::PICK_FACE, mPos, node_idx, target_idx, &hit_point ) )
   {
     // first check if a sphere was clicked
-    ACG::SceneGraph::BaseNode* root_node(PluginFunctions::getRootNode());
-    ACG::SceneGraph::BaseNode* found_node;
-    found_node = ACG::SceneGraph::find_node(root_node, node_idx);
-
+    BaseObjectData* object(0);
     if( PluginFunctions::getPickedObject( node_idx, object ) )
     {
       if( object->picked( node_idx ) && object->dataType(DATA_TRIANGLE_MESH) )
       {
-	// get mesh object
-	_mesh_object_ = dynamic_cast<TriMeshObject*>(object);
+        // get mesh object
+        _mesh_object_ = dynamic_cast<TriMeshObject*>(object);
 
-	// get mesh and face handle
-	TriMesh & m = *PluginFunctions::triMesh(object);
-	_fh = m.face_handle(target_idx);
+        // get mesh and face handle
+        TriMesh & m = *PluginFunctions::triMesh(object);
+        _fh = m.face_handle(target_idx);
 
-	TriMesh::FaceVertexIter fv_it(m,_fh);
-	TriMesh::VertexHandle closest = *fv_it;
-	float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
+        TriMesh::FaceVertexIter fv_it(m,_fh);
+        TriMesh::VertexHandle closest = *fv_it;
+        float shortest_distance = (m.point(closest) - hit_point).sqrnorm();
 
-	++fv_it;
-	if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
-	  shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
-	  closest = *fv_it;
-	}
+        ++fv_it;
+        if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
+          shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
+          closest = *fv_it;
+        }
 
-	++fv_it;
-	if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
-	  shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
-	  closest = *fv_it;
-	}
+        ++fv_it;
+        if ( (m.point(*fv_it ) - hit_point).sqrnorm() < shortest_distance ) {
+          // Unnecessary : shortest_distance = (m.point(*fv_it ) - hit_point).sqrnorm();
+          closest = *fv_it;
+        }
 
-	// stroe closest vh
-	_vh = closest;
-	_hitPoint = hit_point;
+        // stroe closest vh
+        _vh = closest;
+        _hitPoint = hit_point;
 
-	return true;
+        return true;
       }
     }
   }
