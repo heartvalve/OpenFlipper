@@ -707,16 +707,16 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
 void ShaderProgGenerator::buildGeometryShader()
 {
 
-  std::cerr << "TODO : buildGeometryShader" << std::endl;
-
-  delete geometry_;
-
   // Only build a geometry shader if enabled
   if ( !desc_.geometryShader )
     return;
 
-  geometry_  = new ShaderGenerator();
+  std::cerr << "TODO : buildGeometryShader for object\n " << std::endl;
+  desc_.toString();
 
+  delete geometry_;
+
+  geometry_  = new ShaderGenerator();
 
   geometry_->initGeometryShaderIO(&desc_);
 

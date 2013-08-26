@@ -270,7 +270,7 @@ inline bool openGLVersion( const int _major, const int _minor  )  {
   // Read OpenGL Version string
   std::string glVersionString = (const char*)glGetString(GL_VERSION);
 
-  // Use stringstream to pars
+  // Use string stream to parse
   std::istringstream stream;
   stream.str(glVersionString);
 
