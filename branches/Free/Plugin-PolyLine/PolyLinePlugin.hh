@@ -293,27 +293,37 @@ private:
     PolyLine::Point*  create_point_ref_;
     PolyLine::Point   move_point_orig_;
     
-    int				        createCircle_CurrSelIndex_;
+    /// The object which is being modified(created, dragged)
+    int				    createCircle_CurrSelIndex_;
+    /// Use this one to mark the last index to update the number of points
+    int					createCircle_LastSelIndex_;
+    /// Data for creating a circle, center and it's normal
     ACG::Vec3d		    createCircle_Point_;
     ACG::Vec3d		    createCircle_Normal_;
+    /// The handle which is being dragged.
     ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_;
 
+    /// Finds the nearest point on the mesh given a point on the normal plane
     bool createCircle_getPointOnMesh(TriMeshObject* _triMeshObject,
                                      ACG::Vec3d     _center,
                                      ACG::Vec3d     _pOnPlane,
                                      ACG::Vec3d     _n,
                                      ACG::Vec3d*    _pOut);
 
+    /// Calculates common info like point on the mesh, point on the normal plane and the distance from the circle center
     bool createCircle_getHitInfo(PolyLineCircleData* _circleData,
                                  ACG::Vec3d          _hit_Point,
                                  ACG::Vec3d*         _pOut = 0,
                                  double*             _r = 0,
                                  ACG::Vec3d*         _onPlane = 0);
 
+    /// Helper function which returns the point on the mesh or if none could be found the point on the plane
     ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
 
+    /// Generates points for the ellipse, given the PolyLineObject
     void updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount);
 
+    /// updates the center, forward and side handle of the Poly ellipse
     void updateHandles(PolyLineObject* _lineObject);
 
     int               cur_merge_id_;
