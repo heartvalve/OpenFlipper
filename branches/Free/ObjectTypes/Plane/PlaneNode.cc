@@ -145,10 +145,13 @@ void PlaneNode::drawPlane( ACG::GLState&  _state) {
 
   // Remember blending state
   bool blending = _state.blending();
+  bool culling  = _state.isStateEnabled(GL_CULL_FACE);
 
   //then the red front side
   ACG::GLState::enable (GL_BLEND);
   ACG::GLState::blendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  ACG::GLState::enable (GL_CULL_FACE);
 
   _state.set_color(ACG::Vec4f( 0.6f, 0.15f, 0.2f, 0.5f));
   glDrawArrays(GL_QUADS,0,4);
@@ -157,10 +160,13 @@ void PlaneNode::drawPlane( ACG::GLState&  _state) {
   //finally the green back side
   _state.set_color(ACG::Vec4f(0.1f, 0.8f, 0.2f, 0.5f ));
 
-  glDrawArrays(GL_QUADS,4,4);
+  glDrawArrays(GL_QUADS,5,4);
 
   if ( !blending )
     ACG::GLState::disable(GL_BLEND);
+
+  if ( !culling )
+    ACG::GLState::disable(GL_CULL_FACE);
 
   // deactivate vertex arrays after drawing
   _state.disableClientState(GL_VERTEX_ARRAY);
