@@ -87,8 +87,18 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 
   if (_desc->textured())
   {
-    addInput("vec2 inTexCoord");
-    addOutput("vec2 outVertexTexCoord");
+
+    std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = _desc->textureTypes().begin();
+
+    /// TODO Setup for multiple texture coordinates as input
+    if (iter->second.type == GL_TEXTURE_3D) {
+      addInput("vec3 inTexCoord");
+      addOutput("vec3 outVertexTexCoord");
+    } else {
+      addInput("vec2 inTexCoord");
+      addOutput("vec2 outVertexTexCoord");
+    }
+
   }
   if (_desc->vertexColors)
     addInput("vec4 inColor");
@@ -158,8 +168,19 @@ void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
   addOutput("vec4 outGeometryPosCS");
 
   if (_desc->textured()) {
-    addInput("vec2 outVertexTexCoord[]");
-    addOutput("vec2 outGeometryTexCoord");
+
+    std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = _desc->textureTypes().begin();
+
+    /// TODO Setup for multiple texture coordinates as input
+    if (iter->second.type == GL_TEXTURE_3D)
+    {
+      addInput("vec3 outVertexTexCoord[]");
+      addOutput("vec3 outGeometryTexCoord");
+    } else {
+      addInput("vec2 outVertexTexCoord[]");
+      addOutput("vec2 outGeometryTexCoord");
+    }
+
   }
 
 
@@ -202,8 +223,18 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
     inputShader = "Geometry";
 
 
-  if (_desc->textured())
-    addInput("vec2 out"+inputShader+"TexCoord");
+  if (_desc->textured()) {
+
+    std::map<size_t,ShaderGenDesc::TextureType>::const_iterator iter = _desc->textureTypes().begin();
+
+    /// TODO Setup for multiple texture coordinates as input
+    if (iter->second.type == GL_TEXTURE_3D) {
+      addInput("vec3 out"+inputShader+"TexCoord");
+    } else {
+      addInput("vec2 out"+inputShader+"TexCoord");
+    }
+
+  }
 
   addInput("vec4 out"+inputShader+"PosCS");
 
@@ -622,7 +653,14 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   _code->push_back("vec4 sg_vPosPS = g_mWVP * inPosition;");
   _code->push_back("vec4 sg_vPosVS = g_mWV * inPosition;");
   _code->push_back("vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);");
-  _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
+
+  /// TODO Setup for multiple texture coordinates as input
+  if (desc_.textureTypes().begin()->second.type == GL_TEXTURE_3D) {
+    _code->push_back("vec3 sg_vTexCoord = vec3(0.0, 0.0, 0.0);");
+  } else {
+    _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
+  }
+
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
 
   if (desc_.shadeMode != SG_SHADE_UNLIT)
