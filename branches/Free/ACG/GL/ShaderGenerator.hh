@@ -180,7 +180,7 @@ private:
   std::map<size_t,TextureType> textureTypes_;
 
 public:
-  const std::map<size_t,TextureType>& textureTypes() {return textureTypes_;}
+  const std::map<size_t,TextureType>& textureTypes() const {return textureTypes_;}
 
   /** \brief adds a texture type to the shader and enables texturing.
    *
