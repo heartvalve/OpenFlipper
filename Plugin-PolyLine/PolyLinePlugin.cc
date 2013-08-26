@@ -898,8 +898,8 @@ me_insertCircle(QMouseEvent* _event)
 		return;//can't generate a circle in empty space
 
 	if(_event->type() == QEvent::MouseMove && createCircle_CurrSelIndex_ != -1) {
-		PolyLineObject* L = 0;
-		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
+		PolyLineObject* lineObject = 0;
+		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
 			return;
 
 		const ACG::Vec3d n = createCircle_Normal_, x0 = createCircle_Point_;
@@ -908,10 +908,10 @@ me_insertCircle(QMouseEvent* _event)
 		const double r = d.norm();
 		const ACG::Vec3d mainAxis = (onPlane - x0).normalize(), sideAxis = (mainAxis % n).normalize();
 
-		PolyLineCircleData* LD = new PolyLineCircleData(x0, n, mainAxis, sideAxis, r, r, mesh->id());
-		L->setObjectData(CIRCLE_DATA, LD);
-		updatePolyEllipse(L, tool_->sb_CirclePointNum->value());
-		updateHandles(L);
+		PolyLineCircleData* lineData = new PolyLineCircleData(x0, n, mainAxis, sideAxis, r, r, mesh->id());
+		lineObject->setObjectData(CIRCLE_DATA, lineData);
+		updatePolyEllipse(lineObject, tool_->sb_CirclePointNum->value());
+		updateHandles(lineObject);
 	}
 	else if(_event->type() == QEvent::MouseButtonPress) {
 		emit addEmptyObject(DATA_POLY_LINE, cur_insert_id_);
@@ -926,7 +926,7 @@ me_insertCircle(QMouseEvent* _event)
 			mesh->mesh()->request_face_normals();
 		createCircle_Normal_ = mesh->mesh()->normal(fh);
 		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
-		createCircle_CurrSelIndex_ = newLine->id();
+		createCircle_LastSelIndex_ = createCircle_CurrSelIndex_ = newLine->id();
 
 		ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
 		ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
@@ -963,11 +963,11 @@ me_insertCircle(QMouseEvent* _event)
 		emit updatedObject(newLine->id(), UPDATE_ALL);
 	}
 	else if(_event->type() == QEvent::MouseButtonRelease) {
-		PolyLineObject* L;
-		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
+		PolyLineObject* lineObject;
+		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
 			return;
 		ACG::SceneGraph::GlutPrimitiveNode* N;
-		if(L->getAdditionalNode(N, name(), "handle0"))
+		if(lineObject->getAdditionalNode(N, name(), "handle0"))
 			N->enablePicking(true);
 		createCircle_CurrSelIndex_ = -1;
 	}
@@ -1020,7 +1020,7 @@ me_move( QMouseEvent* _event )
       GlutObjectNode* glutNode = dynamic_cast<GlutObjectNode*>(node);
       if(glutNode) {
         moveCircle_SelNode_        = glutNode;
-        createCircle_CurrSelIndex_ = glutNode->line->id();
+        createCircle_LastSelIndex_ = createCircle_CurrSelIndex_ = glutNode->line->id();
       }
 
       BaseObjectData* obj = 0;
@@ -1051,36 +1051,36 @@ me_move( QMouseEvent* _event )
     if(moveCircle_SelNode_) {
       if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point) ) {
 
-        PolyLineObject* L;
-        if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, L))
+        PolyLineObject* lineObject;
+        if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
           return;
 
-        PolyLineCircleData* LD = dynamic_cast<PolyLineCircleData*>(L->objectData(CIRCLE_DATA));
+        PolyLineCircleData* lineData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
         double cr;
         ACG::Vec3d onPlane;
-        const ACG::Vec3d x0 = LD->circleCenter_, n = LD->circleNormal_;
+        const ACG::Vec3d x0 = lineData->circleCenter_, n = lineData->circleNormal_;
 
-        createCircle_getHitInfo(LD, hit_point, &hit_point, &cr, &onPlane);
+        createCircle_getHitInfo(lineData, hit_point, &hit_point, &cr, &onPlane);
 
         if(!moveCircle_SelNode_->name().compare("N_Center")) {
-          LD->circleCenter_ = hit_point;
+        	lineData->circleCenter_ = hit_point;
         }
         else {
           ACG::Vec3d axisa = (onPlane - x0).normalize();
           if(!moveCircle_SelNode_->name().compare("N_Handle0")) {
             ACG::Vec3d axisb = (axisa % n).normalize();
-            LD->circleMainRadius_ = cr;
-            LD->circleMainAxis_ = axisa;
-            LD->circleSideAxis_ = axisb;
+            lineData->circleMainRadius_ = cr;
+            lineData->circleMainAxis_ = axisa;
+            lineData->circleSideAxis_ = axisb;
           } else {
             ACG::Vec3d axisb = (n % axisa).normalize();
-            LD->circleSideRadius_ = cr;
-            LD->circleSideAxis_ = axisa;
-            LD->circleMainAxis_ = axisb;
+            lineData->circleSideRadius_ = cr;
+            lineData->circleSideAxis_ = axisa;
+            lineData->circleMainAxis_ = axisb;
           }
         }
-        updateHandles(L);
-        updatePolyEllipse(L, tool_->sb_CirclePointNum->value());
+        updateHandles(lineObject);
+        updatePolyEllipse(lineObject, tool_->sb_CirclePointNum->value());
       }
     }
     else if (move_point_ref_ != 0) {

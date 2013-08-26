@@ -78,22 +78,22 @@ PolyLinePlugin::
 createCircle_getPointOnMesh(TriMeshObject* _triMeshObject, ACG::Vec3d _center, ACG::Vec3d _pOnPlane, ACG::Vec3d _n, ACG::Vec3d* _pOut)
 {
 	OpenMeshTriangleBSPT<TriMesh>* bsp            = _triMeshObject->requestTriangleBsp();
-	OpenMeshTriangleBSPT<TriMesh>::RayCollision c = bsp->raycollision(_pOnPlane, _n);
+	OpenMeshTriangleBSPT<TriMesh>::RayCollision rayInt = bsp->raycollision(_pOnPlane, _n);
 
-	if(c.empty())
+	if(rayInt.empty())
 		return false;
 
 	int i = -1;
 	double smDist = 10e10;
 
-	for(unsigned int j = 0; j < c.size(); j++) {
-		//ACG::Vec3d norAtInt = M->mesh()->normal(c[j].first);
-		ACG::Vec3d p = _pOnPlane + _n * c[j].second, dir = _center - p;
+	for(unsigned int j = 0; j < rayInt.size(); j++) {
+		ACG::Vec3d norAtInt = _triMeshObject->mesh()->normal(rayInt[j].first);
+		ACG::Vec3d p = _pOnPlane + _n * rayInt[j].second, dir = _center - p;
 		const double dist = dir.norm();
 		if(dist < smDist) {
 			smDist = dist;
 			if(_pOut)
-				*_pOut = p;
+				*_pOut = p;//+ norAtInt * 0.002;//that would fix lines below the surface, but what is the correct scale?
 			i = j;
 		}
 	}
@@ -126,11 +126,11 @@ ACG::Vec3d
 PolyLinePlugin::
 createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point)
 {
-	ACG::Vec3d h, p;
+	ACG::Vec3d pOnMesh, pOnPlane;
 	double r;
-	if(!createCircle_getHitInfo(_circleData, _hit_point, &h, &r, &p))
-		return p;//no point on the mesh was found...
-	else return h;
+	if(!createCircle_getHitInfo(_circleData, _hit_point, &pOnMesh, &r, &pOnPlane))
+		return pOnPlane;//no point on the mesh was found...
+	else return pOnMesh;
 }
 
 //-----------------------------------------------------------------------------
@@ -153,9 +153,11 @@ updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount)
 		double x = (r1 * r2) / sqrt(r2 * r2 + r1 * r1 * tanTheta_i * tanTheta_i);
 		x = ((theta * i) <= M_PI_2 || (theta * i) > (3.0 * M_PI_2)) ? x : -x;
 		const double y = tanTheta_i * x;
-		ACG::Vec3d p(y,0,x);
-		if(createCircle_getHitInfo(lineData, basis.toWorld(p) + lineData->circleCenter_, &p))
-		  _lineObject->line()->add_point(p);
+		ACG::Vec3d pOnMesh;
+		const ACG::Vec3d pOnPlane(y,0,x),//this is in the local coord system!
+						 pInWorld = basis.toWorld(pOnPlane) + lineData->circleCenter_;
+		if(createCircle_getHitInfo(lineData, pInWorld, &pOnMesh))
+		  _lineObject->line()->add_point(pOnMesh);
 	}
 	emit updatedObject(_lineObject->id(), UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 }
@@ -167,7 +169,7 @@ PolyLinePlugin::
 slot_setCirclePointNum(int i)
 {
   PolyLineObject* _lineObject;
-  if(createCircle_CurrSelIndex_ != -1 && PluginFunctions::getObject(createCircle_CurrSelIndex_, _lineObject))
+  if(createCircle_LastSelIndex_ != -1 && PluginFunctions::getObject(createCircle_LastSelIndex_, _lineObject))
     updatePolyEllipse(_lineObject, i);
 }
 
