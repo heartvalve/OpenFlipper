@@ -1722,6 +1722,9 @@ void Core::deleteObject( int _id ){
   // delete it
   delete object;
 
+  // ensure updating the picking buffer
+  updateView();
+
 }
 
 
