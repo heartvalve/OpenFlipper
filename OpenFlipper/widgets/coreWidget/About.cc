@@ -440,6 +440,15 @@ void CoreWidget::showAboutWidget( ) {
     }
   #endif
 
+  QString systemPathVariable = getenv("PATH");
+  aboutWidget_->OpenFlipperAbout->append(tr("System Path:\n ") + systemPathVariable);
+
+#ifndef WIN32
+  QString systemLibraryPathVariable = getenv("LD_LIBRARY_PATH");
+  aboutWidget_->OpenFlipperAbout->append(tr("LD_LIBRARY_PATH:\n ") + systemLibraryPathVariable);
+#endif
+
+
 
   // =====================================================================================
   // OpenGL Renderer/Vendor and version info
