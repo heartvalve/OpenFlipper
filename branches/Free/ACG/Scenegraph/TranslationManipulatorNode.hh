@@ -273,8 +273,8 @@ private:
   void addAxisToRenderer (IRenderer* _renderer, RenderObject* _baseRO, bool _active, int _axis);
 
 
-  bool mapToCylinder (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
-  bool mapToCylinderTop (GLState& _state, const Vec2i& _v2, double& axis_hit, StateUpdates _updateStates = None);
+  bool mapToCylinder (GLState& _state, const Vec2i& _v2, StateUpdates _updateStates = None);
+  bool mapToCylinderTop (GLState& _state, const Vec2i& _v2, StateUpdates _updateStates = None);
 
   bool mapToSphere (GLState& _state, const Vec2i& _v2, Vec3d& _v3, StateUpdates _updateStates = None);
 
