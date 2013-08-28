@@ -110,7 +110,7 @@ GridNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
   if ( orientation_ != NONE) {
     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
-    
+
     _bbMin.minimize(bb_min_);
     _bbMax.maximize(bb_max_);
    }
