@@ -953,7 +953,6 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   Vec3d oldPoint3D;
   Vec2i newPoint2D(_event->pos().x(), _event->pos().y());
   Vec3d newPoint3D;
-  double old_axis_hit, new_axis_hit, new_axis_over;
   bool rot[3], trans[3];
   unsigned int i;
   bool lockOldPoint = false;
@@ -980,10 +979,10 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         element_[Origin].clicked_ = false;
 
       // hit any top ?
-      any_top_clicked_ = mapToCylinderTop(_state, newPoint2D, new_axis_hit, Click);
+      any_top_clicked_ = mapToCylinderTop(_state, newPoint2D, Click);
 
       // hit any axis ?
-      any_axis_clicked_ = mapToCylinder(_state, newPoint2D, new_axis_hit, Click);
+      any_axis_clicked_ = mapToCylinder(_state, newPoint2D, Click);
 
       // hit one of the outer rings ?
       if (mode_ != Resize)
@@ -1080,14 +1079,15 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         else
           element_[Origin].over_ = false;
 
+
         // over any top ?
         if (mode_ != Place) {
-          any_top_over_ = mapToCylinderTop(_state, newPoint2D, new_axis_over, Over);
+          any_top_over_ = mapToCylinderTop(_state, newPoint2D, Over);
         }
 
         // over any axis ?
         if (mode_ != Place) {
-          any_axis_over_ = mapToCylinder(_state, newPoint2D, new_axis_over, Over);
+          any_axis_over_ = mapToCylinder(_state, newPoint2D, Over);
         }
 
         // over one of the outer rings ?
@@ -1197,11 +1197,13 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         touched_ = true;
       }
 
+      double old_axis_hit;
+
       // x axis clicked apply translation along axis
       if (trans[0]) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         // translate
         // Get screen coordinates of current mouse position and unproject them
@@ -1272,8 +1274,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // y axis clicked change translation along axis
       if (trans[1]) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         // translate
         // Get screen coordinates of current mouse position and unproject them
@@ -1345,8 +1347,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // z axis clicked change translation along axis
       if (trans[2]) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         // translate
         // Get screen coordinates of current mouse position and unproject them
@@ -1418,8 +1420,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // x top clicked: rotate around x axis
       if (rot[0] && (activeRotations_ & X_AXIS)) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
         int rotation = 0;
@@ -1466,8 +1468,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // or outer ring on zx axis has been clicked
       if (rot[1] && (activeRotations_ & Y_AXIS)) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
         int rotation = 0;
@@ -1509,8 +1511,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // z top clicked: rotate around z axis
       if (rot[2] && (activeRotations_ & Z_AXIS)) {
 
-        mapToCylinder(_state, oldPoint2D_, old_axis_hit);
-        mapToCylinder(_state, newPoint2D, new_axis_hit);
+        mapToCylinder(_state, oldPoint2D_);
+        mapToCylinder(_state, newPoint2D);
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
 
@@ -1650,7 +1652,6 @@ bool TranslationManipulatorNode::hitOuterSphere( GLState& _state,
 bool
 TranslationManipulatorNode::mapToCylinder( GLState&       _state,
                                            const Vec2i&   _v1,
-                                           double&        _axis_hit,
                                            StateUpdates   _updateStates )
 {
   // Qt -> GL coordinate systems
@@ -1719,7 +1720,6 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
   {
 
     // z axis has been hit
-    _axis_hit = axis_hitX;
     if ( _updateStates == Click)
       element_[XAxis].clicked_ = true;
     else
@@ -1731,7 +1731,6 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
   {
 
     // y axis has been hit
-    _axis_hit = axis_hitY;
     if ( _updateStates == Click)
       element_[YAxis].clicked_ = true;
     else
@@ -1742,14 +1741,12 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
 	           ( axis_hitZ      <= manipulator_height_ ) )
   {
     // x axis has been hit
-    _axis_hit = axis_hitZ;
     if ( _updateStates == Click)
       element_[ZAxis].clicked_ = true;
     else
       element_[ZAxis].over_ = true;
 
-  } else
-	 _axis_hit = 0.0;
+  }
 
   if ( _updateStates == Click)
     return (element_[XAxis].clicked_ || element_[YAxis].clicked_ || element_[ZAxis].clicked_);
@@ -1766,7 +1763,6 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
 bool
 TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
                                               const Vec2i&   _v1,
-                                              double&        _axis_hit,
                                               StateUpdates   _updateStates )
 {
   // Qt -> GL coordinate systems
@@ -1841,7 +1837,6 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
   {
 
     // z top has been hit
-    _axis_hit = axis_hitX;
     if ( _updateStates == Click)
       element_[XTop].clicked_ = true;
     else
@@ -1853,7 +1848,6 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
   {
 
     // y top has been hit
-    _axis_hit = axis_hitY;
     if ( _updateStates == Click)
       element_[YTop].clicked_ = true;
     else
@@ -1865,14 +1859,12 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
   {
 
     // x top has been hit
-    _axis_hit = axis_hitZ;
     if ( _updateStates == Click)
       element_[ZTop].clicked_ = true;
     else
       element_[ZTop].over_ = true;
 
-  } else
-    _axis_hit = 0.0;
+  }
 
   if ( _updateStates == Click)
     return (element_[XTop].clicked_ || element_[YTop].clicked_ || element_[ZTop].clicked_);
