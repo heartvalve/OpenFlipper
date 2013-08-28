@@ -1197,8 +1197,6 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         touched_ = true;
       }
 
-      double old_axis_hit;
-
       // x axis clicked apply translation along axis
       if (trans[0]) {
 
