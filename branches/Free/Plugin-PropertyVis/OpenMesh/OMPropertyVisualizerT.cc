@@ -234,7 +234,6 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fac
 
     int closest_h_idx = 0;
     double dist = DBL_MAX;
-    double temp_dist = 0.0;
 
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
@@ -253,7 +252,7 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestHalfedgeId(unsigned int _fac
 
         // Find closest vertex to selection
         vTemp = ACG::Vec3d(p[0], p[1], p[2]);
-        temp_dist = (vTemp - _hitPoint).length();
+        const double temp_dist = (vTemp - _hitPoint).length();
 
         if (temp_dist < dist) {
             dist = temp_dist;
@@ -271,7 +270,6 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestVertexId(unsigned int _face,
 
     int closest_v_idx = 0;
     double dist = DBL_MAX;
-    double temp_dist = 0.0;
 
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
@@ -282,7 +280,7 @@ unsigned int OMPropertyVisualizer<MeshT>::getClosestVertexId(unsigned int _face,
 
       // Find closest vertex to selection
       vTemp = ACG::Vec3d(p[0], p[1], p[2]);
-      temp_dist = (vTemp - _hitPoint).length();
+      const double temp_dist = (vTemp - _hitPoint).length();
 
       if (temp_dist < dist) {
           dist = temp_dist;
