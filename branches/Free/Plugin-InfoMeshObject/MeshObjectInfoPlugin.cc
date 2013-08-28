@@ -575,7 +575,6 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
 
     int closest_v_idx = 0;
     double dist = DBL_MAX;
-    double temp_dist = 0.0;
 
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
@@ -586,7 +585,7 @@ int InfoMeshObjectPlugin::getClosestVertexInFace(MeshT* _mesh, int _face_idx, AC
 
       // Find closest vertex to selection
       vTemp = ACG::Vec3d(p[0], p[1], p[2]);
-      temp_dist = (vTemp - _hitPoint).length();
+      const double temp_dist = (vTemp - _hitPoint).length();
 
       if (temp_dist < dist) {
           dist = temp_dist;
@@ -615,8 +614,8 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
     typename MeshT::VertexHandle v1, v2;
     typename MeshT::Point p1, p2;
 
-    ACG::Vec3d vp1, vp2, e, g, h;
-    double x, temp_dist, dist = DBL_MAX;
+    ACG::Vec3d vp1, vp2, h;
+    double dist = DBL_MAX;
     int closest_e_handle = 0;
 
     for (fh_it = _mesh->fh_iter(_mesh->face_handle(_face_idx)); fh_it.is_valid(); ++fh_it){
@@ -630,12 +629,11 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
       vp1 = ACG::Vec3d(p1[0], p1[1], p1[2]);
       vp2 = ACG::Vec3d(p2[0], p2[1], p2[2]);
 
-      e = vp2 - vp1;
-      e.normalize();
-      g = _hitPoint - vp1;
-      x = g | e;
+      const ACG::Vec3d e = (vp2 - vp1).normalized();
+      const double g = _hitPoint - vp1;
+      const double x = g | e;
 
-      temp_dist = (_hitPoint - (vp1 + x * e)).length();
+      const double temp_dist = (_hitPoint - (vp1 + x * e)).length();
 
       if (temp_dist < dist) {
           dist = temp_dist;
