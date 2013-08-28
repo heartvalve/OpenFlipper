@@ -110,6 +110,11 @@ QStringList getRecentItems(const QString &propName) {
     return OpenFlipperSettings().value(propName, QStringList()).toStringList();
 }
 
+QString getMostRecentItem(const QString &propName) {
+    QStringList sl = OpenFlipperSettings().value(propName, QStringList()).toStringList();
+    if (sl.empty()) return QString();
+    return sl[0];
+}
 
 }
 }

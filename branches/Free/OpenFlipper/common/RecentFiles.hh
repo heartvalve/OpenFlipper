@@ -96,6 +96,13 @@ namespace Options {
   QStringList getRecentItems(const QString &propName);
 
   /**
+   * Get the most recent item out of a list of recent items.
+   * Returns an empty string if no recent item exists.
+   */
+  DLLEXPORT
+  QString getMostRecentItem(const QString &propName);
+
+  /**
    * Update combo box text. At the same time, store text in recent items list.
    *
    * @param cb The combo box to update.
