@@ -630,7 +630,7 @@ int InfoMeshObjectPlugin::getClosestEdgeInFace(MeshT* _mesh, int _face_idx, cons
       vp2 = ACG::Vec3d(p2[0], p2[1], p2[2]);
 
       const ACG::Vec3d e = (vp2 - vp1).normalized();
-      const double g = _hitPoint - vp1;
+      const ACG::Vec3d g = _hitPoint - vp1;
       const double x = g | e;
 
       const double temp_dist = (_hitPoint - (vp1 + x * e)).length();
