@@ -56,16 +56,12 @@
 namespace PluginFunctions {
 
 
-ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dataType) {
+ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dataType):
+    pos_(0),
+    dataType_(_dataType),
+    restriction_(_restriction)
+{
 
-  // Initialize with invalid pos
-  pos_ = 0;
-
-  // Store the restriction for the operator ( Source/Target )
-  restriction_ = _restriction;
-
-  // Store the requested DataType
-  dataType_ = _dataType;
 
   // Start at the root Node
   BaseObject* currentPos = objectRoot();
@@ -100,11 +96,11 @@ ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dat
   }
 }
 
-ObjectIterator::ObjectIterator(BaseObjectData* pos, IteratorRestriction _restriction , DataType _data)
+ObjectIterator::ObjectIterator(BaseObjectData* pos, IteratorRestriction _restriction , DataType _data) :
+        pos_(pos),
+        dataType_(_data),
+        restriction_(_restriction)
 {
-   restriction_ = _restriction;
-   pos_         = pos;
-   dataType_    = _data;
 };
 
 
