@@ -89,13 +89,19 @@
 
 #ifdef WIN32
   #include "StackWalker/StackWalker.hh"
+  #include <fstream>
 
   class StackWalkerToConsole : public StackWalker
   {
   protected:
 	  virtual void OnOutput(LPCSTR szText)
     	{
-	  	  printf("%s",szText);
+			// Writes crash dump to .OpenFlipper config directory
+			std::ofstream crashFile;
+			QString crashName = OpenFlipper::Options::configDirStr() + QDir::separator() + "CrashDump.txt";
+			crashFile.open(crashName.toStdString(),std::ios::out | std::ios::app);
+			crashFile << szText;
+			crashFile.close();
 	  }
   };
 #endif
