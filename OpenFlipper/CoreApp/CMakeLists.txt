@@ -38,6 +38,12 @@ else (APPLE)
    )
 endif(APPLE)
 
+if (WIN32)
+	SET(WIN_EXTRA_DIRS "../StackWalker" )
+else(WIN32)
+	SET(WIN_EXTRA_DIRS "")
+endif(WIN32)
+
 # source code directories
 set (directories 
   .. 
@@ -62,6 +68,7 @@ set (directories
   ../widgets/stereoSettingsWidget
   ../widgets/postProcessorWidget
   ../widgets/rendererWidget
+  ${WIN_EXTRA_DIRS}
 )
 
 # collect all header,source and ui files

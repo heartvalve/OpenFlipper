@@ -68,64 +68,36 @@
 #include <execinfo.h>
 #endif
 
+#ifdef WIN32
+#ifndef NDEBUG
+#define WIN_GET_DEBUG_CONSOLE
+#endif
+#endif
+
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
 
+#ifdef WIN32
+  #include "StackWalker/StackWalker.hh"
+
+  class StackWalkerToConsole : public StackWalker
+  {
+  protected:
+	  virtual void OnOutput(LPCSTR szText)
+    	{
+	  	  printf("%s",szText);
+	  }
+  };
+#endif
+
 // Includes for windows debugging console
 #ifdef WIN32
+#ifdef WIN_GET_DEBUG_CONSOLE
   #include <fcntl.h>
   #include <io.h>
 #endif
-
-// #ifndef WIN32
-//
-// #include <sys/resource.h>
-//
-// void getSystemInfo() {
-//
-//   struct rusage resource_usage;
-//   if (getrusage(RUSAGE_SELF, &resource_usage))
-//   {
-//     //error - call to getrusage failed - handle itf
-//     std::cerr << "Unable to get process information" << std::endl;
-//   }
-//   else
-//   {
-//     std::cerr << "Got process information" << std::endl;
-//     std::cerr << "Maximum resident size   : " << resource_usage.ru_maxrss << std::endl;
-//     std::cerr << "Shared Memory size      : " << resource_usage.ru_ixrss << std::endl;
-//     std::cerr << "Unshared Data size      : " << resource_usage.ru_idrss << std::endl;
-//     std::cerr << "Unshared Stack size     : " << resource_usage.ru_isrss << std::endl;
-//     std::cerr << "Page faults             : " << resource_usage.ru_majflt << std::endl;
-//     std::cerr << "Block input operations  : " << resource_usage.ru_inblock << std::endl;
-//     std::cerr << "Block output operations : " << resource_usage.ru_oublock << std::endl;
-//
-//
-//     //call successful
-//     //get values for resident set size (ru_idrss)
-//     //swap space is probably not accounted for but thats all what this
-//     //call gives you...
-
-//     struct rusage {
-//         struct timeval ru_utime; /* user time used */
-//         struct timeval ru_stime; /* system time used */
-//         long   ru_minflt;        /* page reclaims */
-//         long   ru_nswap;         /* swaps */
-//         long   ru_msgsnd;        /* messages sent */
-//         long   ru_msgrcv;        /* messages received */
-//         long   ru_nsignals;      /* signals received */
-//         long   ru_nvcsw;         /* voluntary context switches */
-//         long   ru_nivcsw;        /* involuntary context switches */
-//     };
-
-
-//   }
-
-// }
-
-// #endif
-
+#endif
 
 
 enum {OPT_HELP , OPT_STEREO, OPT_BATCH ,OPT_CONSOLE_LOG , OPT_DEBUGGING, OPT_FULLSCREEN,
@@ -199,6 +171,8 @@ void backtrace()
 }
 #endif
 
+
+
 void segfaultHandling (int) {
 
   // prevent infinite recursion if segfaultHandling() causes another segfault
@@ -221,10 +195,18 @@ void segfaultHandling (int) {
 
 #endif
 
+#ifdef WIN32
+  StackWalkerToConsole sw;
+  sw.ShowCallstack();
+
+#endif
+
+
   std::abort();
 }
 
 #ifdef WIN32
+#ifdef WIN_GET_DEBUG_CONSOLE
     void getConsole() {
       //Create a console for this application
       AllocConsole();
@@ -247,6 +229,7 @@ void segfaultHandling (int) {
       *stdin = *CInputHandle;
       setvbuf(stdin, NULL, _IONBF, 0);
     }
+#endif
 #endif
 
 bool openPolyMeshes = false;
@@ -349,11 +332,11 @@ int main(int argc, char **argv)
 
   OpenFlipper::Options::windowTitle(TOSTRING(PRODUCT_STRING)" v" + OpenFlipper::Options::coreVersion());
 
-  #ifdef WIN32
-    #ifndef NDEBUG
-      getConsole();
-    #endif
-  #endif
+#ifdef WIN32
+#ifdef WIN_GET_DEBUG_CONSOLE
+  getConsole();
+#endif
+#endif
 
   if ( !OpenFlipper::Options::nogui() ) {
 
