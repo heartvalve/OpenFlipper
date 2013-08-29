@@ -71,7 +71,7 @@ bool compareDouble(QString _key , QVariant _result, QVariant _reference) {
 
   // Check if the reference consists of two colon separated values
   // Second value would specify maximal allowed tolerance
-  QStringList referenceData = _reference.toString().split(';');
+  QStringList referenceData = _reference.toString().split(':');
   if ( referenceData.size() == 2) {
     tolerance = referenceData[1].toDouble();
   }
