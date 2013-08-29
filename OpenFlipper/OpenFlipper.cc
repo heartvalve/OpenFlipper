@@ -78,6 +78,15 @@
 #include <omp.h>
 #endif
 
+
+/* ==========================================================
+ *
+ * Stackwalker code. Used to get a backtrace if OpenFlipper
+ * crashes under windows
+ *
+ * ==========================================================*/
+
+
 #ifdef WIN32
   #include "StackWalker/StackWalker.hh"
 
@@ -91,6 +100,14 @@
   };
 #endif
 
+
+/* ==========================================================
+ *
+ * Console for Windows to get additional output written via
+ * cerr, cout, ... that is not forwarded to log window
+ *
+ * ==========================================================*/
+
 // Includes for windows debugging console
 #ifdef WIN32
 #ifdef WIN_GET_DEBUG_CONSOLE
@@ -99,6 +116,91 @@
 #endif
 #endif
 
+#ifdef WIN32
+#ifdef WIN_GET_DEBUG_CONSOLE
+    void getConsole() {
+      //Create a console for this application
+      AllocConsole();
+      //Redirect unbuffered STDOUT to the console
+      HANDLE ConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+      int SystemOutput = _open_osfhandle(intptr_t(ConsoleOutput), _O_TEXT);
+      FILE *COutputHandle = _fdopen(SystemOutput, "w" );
+      *stdout = *COutputHandle;
+      setvbuf(stdout, NULL, _IONBF, 0);
+      //Redirect unbuffered STDERR to the console
+      HANDLE ConsoleError = GetStdHandle(STD_ERROR_HANDLE);
+      int SystemError = _open_osfhandle(intptr_t(ConsoleError), _O_TEXT);
+      FILE *CErrorHandle = _fdopen(SystemError, "w" );
+      *stderr = *CErrorHandle;
+      setvbuf(stderr, NULL, _IONBF, 0);
+      //Redirect unbuffered STDIN to the console
+      HANDLE ConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+      int SystemInput = _open_osfhandle(intptr_t(ConsoleInput), _O_TEXT);
+      FILE *CInputHandle = _fdopen(SystemInput, "r" );
+      *stdin = *CInputHandle;
+      setvbuf(stdin, NULL, _IONBF, 0);
+    }
+#endif
+#endif
+
+/* ==========================================================
+ *
+ * Linux function printing a full stack trace to the console
+ *
+ * ==========================================================*/
+#ifndef NO_EXECINFO
+void backtrace()
+{
+  void *addresses[20];
+  char **strings;
+
+  int size = backtrace(addresses, 20);
+  strings = backtrace_symbols(addresses, size);
+  std::cerr << "Stack frames: " << size << std::endl;
+  for(int i = 0; i < size; i++)
+    std::cerr << i << ": " << strings[i] << std::endl;
+  free(strings);
+}
+#endif
+
+/* ==========================================================
+ *
+ * General segfault handler. This function is called if OpenFlipper
+ * crashes
+ *
+ * ==========================================================*/
+void segfaultHandling (int) {
+
+  // prevent infinite recursion if segfaultHandling() causes another segfault
+  std::signal(SIGSEGV, SIG_DFL);
+
+
+  std::cerr << "\n" << std::endl;
+  std::cerr << "\n" << std::endl;
+  std::cerr << "\33[31m" << "=====================================================" << std::endl;
+  std::cerr << "\33[31m" << "OpenFlipper or one of its plugins caused a Segfault." << std::endl;
+  std::cerr << "\33[31m" << "This should not happen,... Sorry :-(" << std::endl;
+  std::cerr << "\33[31m" << "=====================================================" << std::endl;
+  std::cerr << "\n" << std::endl;
+
+  // Linux Handler
+#ifndef NO_EXECINFO
+  std::cerr << "\33[0m"  << "Trying a backtrace to show what happened last: " << std::endl;
+  backtrace();
+
+  std::cerr << "\n" << std::endl;
+  std::cerr << "Backtrace completed, trying to abort now ..." << std::endl;
+#endif
+
+  // Windows handler via StackWalker
+#ifdef WIN32
+  StackWalkerToConsole sw;
+  sw.ShowCallstack();
+#endif
+
+
+  std::abort();
+}
 
 enum {OPT_HELP , OPT_STEREO, OPT_BATCH ,OPT_CONSOLE_LOG , OPT_DEBUGGING, OPT_FULLSCREEN,
       OPT_HIDDDEN_LOGGER , OPT_NOSPLASH ,OPT_HIDDDEN_TOOLBOX , OPT_LOAD_POLYMESHES,
@@ -156,81 +258,9 @@ void showHelp() {
 }
 
 
-#ifndef NO_EXECINFO
-void backtrace()
-{
-  void *addresses[20];
-  char **strings;
-
-  int size = backtrace(addresses, 20);
-  strings = backtrace_symbols(addresses, size);
-  std::cerr << "Stack frames: " << size << std::endl;
-  for(int i = 0; i < size; i++)
-    std::cerr << i << ": " << strings[i] << std::endl;
-  free(strings);
-}
-#endif
 
 
 
-void segfaultHandling (int) {
-
-  // prevent infinite recursion if segfaultHandling() causes another segfault
-  std::signal(SIGSEGV, SIG_DFL);
-
-
-  std::cerr << "\n" << std::endl;
-  std::cerr << "\n" << std::endl;
-  std::cerr << "\33[31m" << "=====================================================" << std::endl;
-  std::cerr << "\33[31m" << "OpenFlipper or one of its plugins caused a Segfault." << std::endl;
-  std::cerr << "\33[31m" << "This should not happen,... Sorry :-(" << std::endl;
-  std::cerr << "\33[31m" << "=====================================================" << std::endl;
-  std::cerr << "\n" << std::endl;
-#ifndef NO_EXECINFO
-  std::cerr << "\33[0m"  << "Trying a backtrace to show what happened last: " << std::endl;
-  backtrace();
-
-  std::cerr << "\n" << std::endl;
-  std::cerr << "Backtrace completed, trying to abort now ..." << std::endl;
-
-#endif
-
-#ifdef WIN32
-  StackWalkerToConsole sw;
-  sw.ShowCallstack();
-
-#endif
-
-
-  std::abort();
-}
-
-#ifdef WIN32
-#ifdef WIN_GET_DEBUG_CONSOLE
-    void getConsole() {
-      //Create a console for this application
-      AllocConsole();
-      //Redirect unbuffered STDOUT to the console
-      HANDLE ConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-      int SystemOutput = _open_osfhandle(intptr_t(ConsoleOutput), _O_TEXT);
-      FILE *COutputHandle = _fdopen(SystemOutput, "w" );
-      *stdout = *COutputHandle;
-      setvbuf(stdout, NULL, _IONBF, 0);
-      //Redirect unbuffered STDERR to the console
-      HANDLE ConsoleError = GetStdHandle(STD_ERROR_HANDLE);
-      int SystemError = _open_osfhandle(intptr_t(ConsoleError), _O_TEXT);
-      FILE *CErrorHandle = _fdopen(SystemError, "w" );
-      *stderr = *CErrorHandle;
-      setvbuf(stderr, NULL, _IONBF, 0);
-      //Redirect unbuffered STDIN to the console
-      HANDLE ConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
-      int SystemInput = _open_osfhandle(intptr_t(ConsoleInput), _O_TEXT);
-      FILE *CInputHandle = _fdopen(SystemInput, "r" );
-      *stdin = *CInputHandle;
-      setvbuf(stdin, NULL, _IONBF, 0);
-    }
-#endif
-#endif
 
 bool openPolyMeshes = false;
 bool remoteControl  = false;
