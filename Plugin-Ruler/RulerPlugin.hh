@@ -55,10 +55,6 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/OptionsInterface.hh>
 
-#include <OpenFlipper/common/Types.hh>
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
-
 #include "Ruler.hh"
 #include "RulerOptions.hh"
 
@@ -91,7 +87,7 @@ public slots:
 
   void slotMouseEvent(QMouseEvent* _event);
 
-
+  void slotViewChanged();
 public:
 
   // OptionsInterface
@@ -122,6 +118,8 @@ private:
 
   //checks if a double click was provided for resetting
   bool dblClickCheck_;
+
+  bool viewupdated_;
 
   ptr::shared_ptr<Ruler> currentRuler_;
 

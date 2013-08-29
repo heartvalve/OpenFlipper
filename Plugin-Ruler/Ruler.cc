@@ -9,6 +9,7 @@ Ruler::Ruler(BaseObjectData* _obj,const QString &_pluginName, unsigned index)
  lineNode_(0),
  textNode_(0),
  textTransformNode_(0),
+ offset_(),
  obj_(_obj)
 {
   points_[0] = points_[1] = ACG::Vec3d(0.0,0.0,0.0);
@@ -89,11 +90,18 @@ void Ruler::updateNodes()
   textNode_->setText(distanceStr.toStdString());
   textNode_->multipassNodeSetActive(8, true);
 
-  //translate and scale text
-  textTransformNode_->loadIdentity();
-  textTransformNode_->translate(Point1);
-  ACG::Vec3d halfDist = distVec/2.f;
-  textTransformNode_->translate(-halfDist);
+  //translate
+  setTextOffset(offset_);
 
   emit updateView();
+}
+
+void Ruler::setTextOffset(const ACG::Vec3d& offset)
+{
+  offset_ = offset;
+  ACG::Vec3d distVec = points_[0] - points_[1];
+  ACG::Vec3d halfDist = distVec/2.f;
+  textTransformNode_->loadIdentity();
+
+  textTransformNode_->translate((points_[0]-halfDist)+offset_);
 }

@@ -65,13 +65,17 @@ public:
   void setPoints(const ACG::Vec3d& _start,const ACG::Vec3d& _end);
   void setStartPoint(const ACG::Vec3d& _start);
   void setEndPoint(const ACG::Vec3d& _end);
+  void setTextOffset(const ACG::Vec3d& offset);
 
   const ACG::Vec3d* points() const{return points_;}
 
   const BaseObject* getBaseObj(){return obj_;}
 
+  float textScale(){return textNode_->lastScale();}
+
 public slots:
 
+  // set text size in pixels
   void setTextSize(const unsigned _size){textNode_->setPixelSize(_size); emit updateView();}
 
 private:
@@ -88,5 +92,6 @@ private:
   ACG::SceneGraph::TransformNode* textTransformNode_;
 
   ACG::Vec3d points_[2];
+  ACG::Vec3d offset_;
   BaseObjectData* obj_;
 };
