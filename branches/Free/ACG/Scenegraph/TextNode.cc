@@ -102,7 +102,8 @@ TextNode( BaseNode*    _parent,
     depthEnabled_(false),
     alwaysOnTop_(_alwaysOnTop),
     blendSrc_(0),
-    blendDest_(0)
+    blendDest_(0),
+    lastScale_(0.f)
 
 {
   updateFont();
@@ -635,6 +636,7 @@ void TextNode::applyScreenAligned(GLState &_state)
     ACG::Vec3d nullUnproj = _state.unproject(nullProj);
     ACG::Vec3d heightUnproj = _state.unproject(nullProj+ACG::Vec3d(0.0,pixelSize_,0.0));
     scale *= heightUnproj.length();
+    lastScale_ = scale;
   }
 
   _state.scale(scale);

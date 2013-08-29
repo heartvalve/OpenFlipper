@@ -158,6 +158,14 @@ public:
   /// sets the font to be used for generating a texture with most characters of the chosen font
   void setFont(const QFont& _font);
 
+  /** \brief returns the scaling factor for screen aligned text the text. returns 0, if textmode is not SCREEN_ALIGNED_STATIC_SIZE
+   *
+   * screen aligned static size text will be scaled up/down in 3d space to achieve the static size in screen space
+   * lastScale returns the last scaling factor where the text was multiplied, to compute e.g. a distance
+   * which is also static in screen space
+   */
+  float lastScale() {return lastScale_;};
+
 protected:
   /**
    * Generates a texture by drawing most characters into one texture.
@@ -236,6 +244,9 @@ private:
 
   /// stores the vertex declaration
   ACG::VertexDeclaration vertexDecl_;
+
+  /// stores the last scaling factor the text computed to SCREEN_ALIGNED_STATIC_SIZE
+  float lastScale_;
 
   /// maps most readable characters to indices for texture coordinate calculation in updateVBO()
   static std::map< char, std::pair<unsigned int, unsigned int> > charToIndex_;

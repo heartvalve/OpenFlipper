@@ -53,6 +53,7 @@ buttonAction_(0),
 pickModeName_("MeasureDistance"),
 lineDrag_(-1),
 dblClickCheck_(false),
+viewupdated_(false),
 optionsWidget_(0),
 textSizeSettingName_(name()+QString("/TextSize"))
 {
@@ -194,11 +195,10 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
     currentRuler_->setPoints(hitPoints[0],hitPoints[1]);
   }
 
-
+///////////////////////Reset/////////////////////////////////
   else if (_event->type() == QEvent::MouseButtonDblClick)
   {//reset
     reset();
-    currentRuler_.reset();
     dblClickCheck_ = true;
   }
   if (dblClickCheck_ && _event->type() == QEvent::MouseButtonRelease)
@@ -208,6 +208,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
 //------------------------------------------------------------------------------
 void RulerPlugin::reset()
 {
+  currentRuler_.reset();
   lineDrag_ = -1;
 }
 //------------------------------------------------------------------------------
@@ -276,6 +277,49 @@ void RulerPlugin::applyOptions()
   if (currentRuler_)
     currentRuler_->setTextSize(textSize);
   OpenFlipperSettings().setValue(textSizeSettingName_,textSize);
+}
+//------------------------------------------------------------------------------
+void RulerPlugin::slotViewChanged()
+{
+
+  if (!currentRuler_)
+    return;
+
+  // check, if this function requested a viewupdate
+  if (viewupdated_)
+  {
+    viewupdated_ = false;
+    return;
+  }
+
+  //compute line direction
+  ACG::Vec3d lineVector = currentRuler_->points()[0] - currentRuler_->points()[1];
+  ACG::Vec3d rightVec = (PluginFunctions::viewingDirection() % -PluginFunctions::upVector()).normalize();
+
+  float cosAngleLineRight = lineVector.normalize() | rightVec;
+  float cosAngleUpLine = PluginFunctions::upVector().normalized() | lineVector.normalized() ;
+
+
+  rightVec *= -0.5f*currentRuler_->textScale();
+  ACG::Vec3d updownVec = PluginFunctions::upVector()*currentRuler_->textScale();
+
+  //compute up/down offset
+  if (cosAngleLineRight > 0.f)
+  {
+    updownVec *= (cosAngleUpLine < 0.f) ? -2.f : 0.5f;
+  }
+  else
+  {
+    updownVec *= (cosAngleUpLine < 0.f) ? 0.5f : -2.0f;
+  }
+
+  // small offset to the right and big offset up/down depending on the line
+  currentRuler_->setTextOffset(rightVec+updownVec);
+
+  viewupdated_ = true;
+  emit updateView();
+
+
 }
 
 #if QT_VERSION < 0x050000
