@@ -64,18 +64,25 @@ KeyGen::KeyGen(QString n, QString cHash, QString pHash, QString cpHash, QString 
 	requestSig = request;
 }
 
+QString KeyGen::computeSignature() const {
+    // Get the salts
+    QString saltPre;
+    ADD_SALT_PRE(saltPre);
+    QString saltPost;
+    ADD_SALT_POST(saltPost);
+
+    QString keyRequest = saltPre + name + coreHash + pluginHash + cpuHash
+            + productHash + macHashes.join("") + saltPost;
+    QString requestSigCheck =
+            QCryptographicHash::hash(keyRequest.toAscii(),
+                                     QCryptographicHash::Sha1).toHex();
+
+    return requestSigCheck;
+}
+
 bool KeyGen::isValid() const
 {
-        // Get the salts
-        QString saltPre;
-        ADD_SALT_PRE(saltPre);
-        QString saltPost;
-        ADD_SALT_POST(saltPost);
-
-        QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
-        QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-
-        return requestSig == requestSigCheck;
+        return requestSig == computeSignature();
 }
 
 QString KeyGen::Generate(QString expiryDate) const
@@ -174,12 +181,46 @@ KeyGenWidget::KeyGenWidget(QMainWindow *parent)
   connect(months,SIGNAL(valueChanged(int)),this,SLOT(slotDate()));
   connect(years ,SIGNAL(valueChanged(int)),this,SLOT(slotDate()));
   
+  /*
+   * Mangle Tab
+   */
+  connect(mangle_pb, SIGNAL(clicked()), this, SLOT(slotMangle()));
+
   // Automatically set expire date to current date
   // For security reasons no default span is set here!
   expires->setDate( QDate::currentDate());
   
   generateLocalButton->setVisible(false);
   generateAllButton->setVisible(false);
+}
+
+void KeyGenWidget::slotMangle() {
+    const QString hardwareHash_raw = hardwareHashDump_te->toPlainText();
+    const QString pluginHashes_raw = pluginHashDump_te->toPlainText();
+
+    const std::vector<KeyGen> hardwareKeygens = KeyGen::CreateFromMessyString(hardwareHash_raw);
+    if (hardwareKeygens.empty()) {
+        QMessageBox::critical(this, tr("Unable to Mangle"), tr("No valid request found in hardware textbox."));
+        return;
+    }
+    KeyGen hardwareKeygen = hardwareKeygens.front();
+
+    std::vector<KeyGen> pluginKeygens = KeyGen::CreateFromMessyString(pluginHashes_raw);
+    if (pluginKeygens.empty()) {
+        QMessageBox::critical(this, tr("Unable to Mangle"), tr("No valid request found in plugins textbox."));
+        return;
+    }
+
+    QString generatedRequest;
+    for (std::vector<KeyGen>::iterator it = pluginKeygens.begin(), it_end = pluginKeygens.end();
+            it != it_end; ++it) {
+
+        it->copyHardwareHashesFrom(hardwareKeygen);
+
+        generatedRequest += it->generateRequest();
+    }
+
+    requestData->setPlainText(generatedRequest);
 }
 
 void KeyGenWidget::slotDate() {

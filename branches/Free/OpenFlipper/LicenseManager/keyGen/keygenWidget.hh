@@ -61,7 +61,24 @@ class KeyGen
 		//returns string containing the key
 		QString Generate(QString expiryDate) const;
 		//finds all occurrences of info in messy string
+		QString computeSignature() const;
 		bool isValid() const;
+
+		void copyHardwareHashesFrom(const KeyGen &rhs) {
+		    cpuHash = rhs.cpuHash;
+		    macHashes = rhs.macHashes;
+		}
+
+		QString generateRequest() {
+		    return QString("%1\n%2\n%3\n%4\n%5\n%6\n%7\n\n")
+		            .arg(name)
+		            .arg(coreHash)
+		            .arg(pluginHash)
+		            .arg(cpuHash)
+		            .arg(productHash)
+		            .arg(macHashes.join("\n"))
+		            .arg(computeSignature());
+		}
 
 		static std::vector<KeyGen> CreateFromMessyString(QString info);
 
@@ -91,6 +108,8 @@ public slots:
   void slotSplit();
   
   void handleSelectionChanged(const QItemSelection& selection);
+
+  void slotMangle();
 
 private:
 
