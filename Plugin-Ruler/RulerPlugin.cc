@@ -198,6 +198,7 @@ void RulerPlugin::slotMouseEvent(QMouseEvent* _event)
   else if (_event->type() == QEvent::MouseButtonDblClick)
   {//reset
     reset();
+    currentRuler_.reset();
     dblClickCheck_ = true;
   }
   if (dblClickCheck_ && _event->type() == QEvent::MouseButtonRelease)
