@@ -87,7 +87,7 @@ public:
               Scalar        _max_edge_length,
               unsigned int  _iters,
               bool          _use_projection = true,
-              Selection     _selection=BaseRemesherT<Mesh>::SELECT_VERTEX);
+              Selection     _selection=BaseRemesherT<Mesh>::VERTEX_SELECTION);
 
 
 
