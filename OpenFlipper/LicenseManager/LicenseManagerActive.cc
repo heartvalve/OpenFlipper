@@ -123,7 +123,7 @@ bool LicenseManager::authenticate() {
                                                               QDir::separator() + "MacOS"+
 							      QDir::separator() + "OpenFlipper");
   #else 
-    QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "bin" + QDir::separator() + "OpenFlipper");
+    QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "bin" + QDir::separator() + TOSTRING(PRODUCT_STRING));
   #endif
 
   if ( ! coreApp.exists() ) {

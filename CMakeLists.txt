@@ -203,6 +203,10 @@ if ( NOT DEFINED OPENFLIPPER_ENABLE_LICENSE_MANAGER )
   set( OPENFLIPPER_ENABLE_LICENSE_MANAGER true CACHE BOOL "Enable or disable license management in all plugins" )
 endif()
 
+if ( NOT DEFINED OPENFLIPPER_ENABLE_LICENSE_KEY_GENERATOR )
+  set( OPENFLIPPER_ENABLE_LICENSE_KEY_GENERATOR true CACHE BOOL "Enable or disable building the license key generators in all plugins" )
+endif()
+
 # ========================================================================
 # Apple Mac Store Flags
 # ========================================================================
