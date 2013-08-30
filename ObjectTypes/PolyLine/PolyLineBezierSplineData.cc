@@ -62,8 +62,6 @@ void PolyLineBezierSplineData::addInterpolatePoint(ACG::Vec3d _pos, ACG::Vec3d _
 bool PolyLineBezierSplineData::finishSpline()
 {
 	Handles_.clear();
-	if(Points_.size() % 2)
-		return false;
 	for(unsigned int i = 0; i < Points_.size() - 1; i++) {
 		const ACG::Vec3d firstPoint = Points_[i].Pos_, sndPoint = Points_[i + 1].Pos_;
 		double r = (firstPoint - sndPoint).norm() / 4.0;
