@@ -1213,11 +1213,15 @@ me_move( QMouseEvent* _event )
           if(!moveCircle_SelNode_->name().compare("N_Handle0")) {
             ACG::Vec3d axisb = (axisa % n).normalize();
             lineData->circleMainRadius_ = cr;
+			if(_event->modifiers() & Qt::ShiftModifier)
+				lineData->circleSideRadius_ = cr;
             lineData->circleMainAxis_ = axisa;
             lineData->circleSideAxis_ = axisb;
           } else {
             ACG::Vec3d axisb = (n % axisa).normalize();
             lineData->circleSideRadius_ = cr;
+			if(_event->modifiers() & Qt::ShiftModifier)
+				lineData->circleMainRadius_ = cr;
             lineData->circleSideAxis_ = axisa;
             lineData->circleMainAxis_ = axisb;
           }
@@ -1248,13 +1252,17 @@ me_move( QMouseEvent* _event )
 				ACG::Vec3d onPlane = cameraPos + t * cameraDir;
 
 				lineData->Handles_[handleIndex] = onPlane;
-				if(handleIndex % 2 == 1 && handleIndex != (int)lineData->Handles_.size()) {
+				if(handleIndex % 2 == 1 && handleIndex != ((int)lineData->Handles_.size() - 1)) {
 					double dist = (lineData->Handles_[handleIndex + 1] - control.Pos_).norm();
+					if(_event->modifiers() & Qt::ShiftModifier)
+						dist = (onPlane - control.Pos_).norm();
 					ACG::Vec3d dir = -(onPlane - control.Pos_).normalize();
 					lineData->Handles_[handleIndex + 1] = control.Pos_ + dir * dist;
 				}
 				if(handleIndex % 2 == 0 && handleIndex) {
 					double dist = (lineData->Handles_[handleIndex - 1] - control.Pos_).norm();
+					if(_event->modifiers() & Qt::ShiftModifier)
+						dist = (onPlane - control.Pos_).norm();
 					ACG::Vec3d dir = -(onPlane - control.Pos_).normalize();
 					lineData->Handles_[handleIndex - 1] = control.Pos_ + dir * dist;
 				}
