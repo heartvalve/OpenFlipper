@@ -70,6 +70,7 @@ namespace Remeshing {
 template <class Mesh>
 class AdaptiveRemesherT : public BaseRemesherT<Mesh>
 {
+  typedef typename BaseRemesherT<Mesh>::Selection Selection;
 public:
 
   typedef BaseRemesherT<Mesh>          Base;
@@ -85,7 +86,8 @@ public:
               Scalar        _min_edge_length,
               Scalar        _max_edge_length,
               unsigned int  _iters,
-              bool          _use_projection = true);
+              bool          _use_projection = true,
+              Selection     _selection=BaseRemesherT<Mesh>::SELECT_VERTEX);
 
 
 
