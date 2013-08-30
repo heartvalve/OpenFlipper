@@ -67,6 +67,7 @@ namespace Remeshing {
 template <class Mesh>
 class UniformRemesherT : public BaseRemesherT<Mesh>
 {
+  typedef typename BaseRemesherT<Mesh>::Selection Selection;
 public:
 
   typedef BaseRemesherT<Mesh>          Base;
@@ -82,13 +83,14 @@ public:
   void remesh(Scalar        _edge_length,
 	      unsigned int  _iters,
 	      unsigned int  _area_iters,
-	      bool          _use_projection = true)
+	      bool          _use_projection = true,
+	      Selection     _selection = BaseRemesherT<Mesh>::VERTEX_SELECTION)
   {
 //     emin_ = 4.0/5.0 * _edge_length;  sqr_emin_ = emin_ * emin_;
 //     emax_ = 4.0/3.0 * _edge_length;  sqr_emax_ = emax_ * emax_;
     emin_ = 0.7 * _edge_length;  sqr_emin_ = emin_ * emin_;
     emax_ = 1.4 * _edge_length;  sqr_emax_ = emax_ * emax_;
-    Base::remesh(_iters, _area_iters, _use_projection);
+    Base::remesh(_iters, _area_iters, _use_projection,_selection);
   }
 
 

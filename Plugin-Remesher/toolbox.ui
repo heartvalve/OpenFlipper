@@ -22,6 +22,15 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices surrounded by the selected face.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Give the selection mode which will be used. If nothing of the specified is selected, the whole mesh will be remeshed. Vertex Selection: Remesh all selected vertices. Face Selection: Remesh all vertices surrounded by the selected face.</string>
+     </property>
+     <property name="whatsThis">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices surrounded by the selected face.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="currentIndex">
       <number>1</number>
      </property>
@@ -75,13 +84,13 @@
          <item row="6" column="1">
           <widget class="QPushButton" name="adaptive_button">
            <property name="toolTip">
-            <string>Start remeshing</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start remeshing&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;A Remeshing Approach to Multiresolution Modeling&lt;/span&gt;&amp;quot; published at Symposium on Geometry Processing 2004 on page 189-196.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="statusTip">
-            <string>Start remeshing</string>
+            <string>Start remeshing Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &quot;A Remeshing Approach to Multiresolution Modeling&quot; published at Symposium on Geometry Processing 2004 on page 189-196.</string>
            </property>
            <property name="whatsThis">
-            <string>Start remeshing</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start remeshing&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;A Remeshing Approach to Multiresolution Modeling&lt;/span&gt;&amp;quot; published at Symposium on Geometry Processing 2004 on page 189-196.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Remesh</string>
@@ -241,6 +250,32 @@
            </property>
           </widget>
          </item>
+         <item row="6" column="0">
+          <widget class="QComboBox" name="adaptive_selection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices which are fully surrounded by selected faces.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string>Give the selection mode which will be used. If nothing of the specified is selected, the whole mesh will be remeshed. Vertex Selection: Remesh all selected vertices. Face Selection: Remesh all vertices which are fully surrounded by selected faces.</string>
+           </property>
+           <property name="whatsThis">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices which are fully surrounded by selected faces.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Vertex Selection</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Face Selection</string>
+            </property>
+           </item>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -285,13 +320,13 @@
          <item row="5" column="1">
           <widget class="QPushButton" name="uniform_button">
            <property name="toolTip">
-            <string>Start remeshing</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start remeshing&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;A Remeshing Approach to Multiresolution Modeling&lt;/span&gt;&amp;quot; published at Symposium on Geometry Processing 2004 on page 189-196.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="statusTip">
-            <string>Start remeshing</string>
+            <string>Start remeshing Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &quot;A Remeshing Approach to Multiresolution Modeling&quot; published at Symposium on Geometry Processing 2004 on page 189-196.</string>
            </property>
            <property name="whatsThis">
-            <string>Start remeshing</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Start remeshing&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Remesher based on an approach presented by Mario Botsch and Leif Kobbelt in &amp;quot;&lt;span style=&quot; font-weight:600;&quot;&gt;A Remeshing Approach to Multiresolution Modeling&lt;/span&gt;&amp;quot; published at Symposium on Geometry Processing 2004 on page 189-196.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Remesh</string>
@@ -415,6 +450,29 @@
            <property name="checked">
             <bool>true</bool>
            </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QComboBox" name="uniform_selection">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices which are fully surrounded by selected faces.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="statusTip">
+            <string>Give the selection mode which will be used. If nothing of the specified is selected, the whole mesh will be remeshed. Vertex Selection: Remesh all selected vertices. Face Selection: Remesh all vertices which are fully surrounded by selected faces.</string>
+           </property>
+           <property name="whatsThis">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give the selection mode which will be used.&lt;/p&gt;&lt;p&gt;If nothing of the specified is selected, the whole mesh will be remeshed.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Vertex Selection: &lt;/span&gt;Remesh all selected vertices.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Face Selection: &lt;/span&gt;Remesh all vertices which are fully surrounded by selected faces.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>Vertex Selection</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Face Selection</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>

@@ -79,12 +79,34 @@ RemesherPlugin::~RemesherPlugin() {
 /// Initialize the plugin
 void RemesherPlugin::pluginsInitialized(){
 
-  emit setSlotDescription("adaptiveRemeshing(int,double,double,double,int,bool)", "Adaptive Remeshing",
+  emit setSlotDescription("adaptiveRemeshing(int,double,double,double,uint,bool)", "Adaptive Remeshing with vertex selection",
                           QString("object_id,error,min_edge_length,max_edge_length,iterations,use_projection").split(","),
                           QString("id of an object,error,minimal target edge length,maximal target edge length,iterations,use projection method").split(","));
-  emit setSlotDescription("uniformRemeshing(int,double,unsigned int,unsigned int,bool)", "Uniform Remeshing",
+  emit setSlotDescription("adaptiveRemeshing(int,double,double,double,uint)", "Adaptive Remeshing with vertex selection and projection method",
+                            QString("object_id,error,min_edge_length,max_edge_length,iterations").split(","),
+                            QString("id of an object,error,minimal target edge length,maximal target edge length,iterations").split(","));
+
+  emit setSlotDescription("adaptiveRemeshingFaceSelection(int,double,double,double,uint,bool)", "Adaptive Remeshing with face selection",
+                              QString("object_id,error,min_edge_length,max_edge_length,iterations,use_projection").split(","),
+                              QString("id of an object,error,minimal target edge length,maximal target edge length,iterations,use projection method").split(","));
+  emit setSlotDescription("adaptiveRemeshingFaceSelection(int,double,double,double,uint)", "Adaptive Remeshing with face selection and projection method",
+                              QString("object_id,error,min_edge_length,max_edge_length,iterations").split(","),
+                              QString("id of an object,error,minimal target edge length,maximal target edge length,iterations").split(","));
+
+
+  emit setSlotDescription("uniformRemeshing(int,double,uint,uint,bool)", "Uniform Remeshing with vertex selection",
                           QString("object_id,edge_length,iterations,area_iterations,use_projection").split(","),
                           QString("id of an object,target edge length,iterations,area iterations,use projection method").split(","));
+  emit setSlotDescription("uniformRemeshing(int,double,uint,uint)", "Uniform Remeshing with vertex selection and projection method",
+                            QString("object_id,edge_length,iterations,area_iterations").split(","),
+                            QString("id of an object,target edge length,iterations,area iterations").split(","));
+
+  emit setSlotDescription("uniformRemeshingFaceSelection(int,double,uint,uint,bool)", "Uniform Remeshing with face selection",
+                            QString("object_id,edge_length,iterations,area_iterations,use_projection").split(","),
+                            QString("id of an object,target edge length,iterations,area iterations,use projection method").split(","));
+  emit setSlotDescription("uniformRemeshingFaceSelection(int,double,uint,uint)", "Uniform Remeshing with face selection and projection method",
+                              QString("object_id,edge_length,iterations,area_iterations").split(","),
+                              QString("id of an object,target edge length,iterations,area iterations").split(","));
 }
 
 // ----------------------------------------------------------------------------------------
@@ -271,8 +293,9 @@ void RemesherPlugin::adaptiveRemeshing() {
     double max_edge = tool_->adaptive_max_edge->value();
     unsigned int iters = tool_->adaptive_iters->text().toInt();
     bool projection = tool_->adaptive_projection->isChecked();
+    bool vertexSelection = (tool_->adaptive_selection->currentIndex() == 0);
 
-    slotAdaptiveRemeshing(o_it->id(), error, min_edge, max_edge, iters, projection);
+    slotAdaptiveRemeshing(o_it->id(), error, min_edge, max_edge, iters, projection,vertexSelection);
 
   }
 }
@@ -284,7 +307,8 @@ void RemesherPlugin::slotAdaptiveRemeshing(int           _objectID,
                                            double        _min_edge_length,
                                            double        _max_edge_length,
                                            unsigned int  _iters,
-                                           bool          _use_projection) {
+                                           bool          _use_projection,
+                                           bool          _vertex_selection) {
     
   operation_ = REMESH_ADAPTIVE;
 
@@ -299,7 +323,9 @@ void RemesherPlugin::slotAdaptiveRemeshing(int           _objectID,
 
       Remeshing::AdaptiveRemesherT<TriMesh> remesher(*mesh, progress_);
 
-      remesher.remesh(_error, _min_edge_length, _max_edge_length, _iters, _use_projection);
+      Remeshing::BaseRemesherT<TriMesh>::Selection selection = (_vertex_selection) ? Remeshing::BaseRemesherT<TriMesh>::VERTEX_SELECTION : Remeshing::BaseRemesherT<TriMesh>::FACE_SELECTION;
+
+      remesher.remesh(_error, _min_edge_length, _max_edge_length, _iters, _use_projection, selection);
 
       mesh->update_normals();
 
@@ -348,6 +374,7 @@ void RemesherPlugin::uniformRemeshing(){
   unsigned int iters      = tool_->uniform_iters->text().toInt();
   unsigned int area_iters = tool_->uniform_area_iters->text().toInt();
   bool projection         = tool_->uniform_projection->isChecked();
+  bool vertex_selection    = (tool_->uniform_selection->currentIndex() == 0);
 
   //read one target objects
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_TRIANGLE_MESH)) ;
@@ -369,7 +396,7 @@ void RemesherPlugin::uniformRemeshing(){
     // on edge flips which are only defined
     // for triangle configurations.
 
-    slotUniformRemeshing(o_it->id(), edge_length, iters, area_iters, projection);
+    slotUniformRemeshing(o_it->id(), edge_length, iters, area_iters, projection,vertex_selection);
   }
 }
 
@@ -379,7 +406,8 @@ void RemesherPlugin::slotUniformRemeshing(int           _objectID,
                                           double        _edge_length,
                                           unsigned int  _iters,
                                           unsigned int  _area_iters,
-                                          bool          _use_projection) {
+                                          bool          _use_projection,
+                                          bool          _vertex_selection) {
     
   operation_ = REMESH_UNIFORM;
 
@@ -394,7 +422,9 @@ void RemesherPlugin::slotUniformRemeshing(int           _objectID,
 
       Remeshing::UniformRemesherT<TriMesh> remesher(*mesh, progress_);
 
-      remesher.remesh(_edge_length, _iters, _area_iters, _use_projection);
+      Remeshing::BaseRemesherT<TriMesh>::Selection selection = (_vertex_selection) ? Remeshing::BaseRemesherT<TriMesh>::VERTEX_SELECTION : Remeshing::BaseRemesherT<TriMesh>::FACE_SELECTION;
+
+      remesher.remesh(_edge_length, _iters, _area_iters, _use_projection, selection);
 
       mesh->update_normals();
 
@@ -439,6 +469,35 @@ void RemesherPlugin::uniformRemeshing(int           _objectID,
                                       bool          _use_projection) {
 
   slotUniformRemeshing(_objectID,_edge_length,_iters,_area_iters,_use_projection);
+  emit updatedObject(_objectID, UPDATE_TOPOLOGY );
+  emit createBackup(_objectID, "Uniform remeshing", UPDATE_TOPOLOGY);
+
+}
+
+// ----------------------------------------------------------------------------------------
+
+void RemesherPlugin::adaptiveRemeshingFaceSelection(int           _objectID,
+                                                    double        _error,
+                                                    double        _min_edge_length,
+                                                    double        _max_edge_length,
+                                                    unsigned int  _iters,
+                                                    bool          _use_projection) {
+
+  slotAdaptiveRemeshing(_objectID,_error,_min_edge_length,_max_edge_length,_iters,_use_projection,false);
+  emit updatedObject(_objectID, UPDATE_TOPOLOGY );
+  emit createBackup(_objectID, "Adaptive remeshing", UPDATE_TOPOLOGY);
+
+}
+
+// ----------------------------------------------------------------------------------------
+
+void RemesherPlugin::uniformRemeshingFaceSelection(int           _objectID,
+                                                   double        _edge_length,
+                                                   unsigned int  _iters,
+                                                   unsigned int  _area_iters,
+                                                   bool          _use_projection) {
+
+  slotUniformRemeshing(_objectID,_edge_length,_iters,_area_iters,_use_projection,false);
   emit updatedObject(_objectID, UPDATE_TOPOLOGY );
   emit createBackup(_objectID, "Uniform remeshing", UPDATE_TOPOLOGY);
 

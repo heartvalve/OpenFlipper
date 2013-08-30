@@ -85,7 +85,7 @@ signals:
   void updatedObject(int _id, const UpdateType& _type);
 
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
-                          QStringList _parameters, QStringList _descriptions);
+                            QStringList _parameters, QStringList _descriptions);
 
   //LoggingInterface:
   void log( Logtype _type, QString _message );
@@ -166,13 +166,15 @@ private slots:
                                double        _min_edge_length,
                                double        _max_edge_length,
                                unsigned int  _iters,
-                               bool          _use_projection = true);
+                               bool          _use_projection = true,
+                               bool          _vertex_selection = true);
 
   void slotUniformRemeshing(int           _objectId,
                             double        _edge_length,
                             unsigned int  _iters,
                             unsigned int  _area_iters,
-                            bool          _use_projection = true);
+                            bool          _use_projection = true,
+                            bool          _vertex_selection = true);
 
 
 //scripting functions
@@ -185,11 +187,24 @@ public slots:
                          unsigned int  _iters,
                          bool          _use_projection = true);
 
+  void adaptiveRemeshingFaceSelection(int           _objectId,
+                                      double        _error,
+                                      double        _min_edge_length,
+                                      double        _max_edge_length,
+                                      unsigned int  _iters,
+                                      bool          _use_projection = true);
+
   void uniformRemeshing(int           _objectId,
                         double        _edge_length,
                         unsigned int  _iters,
                         unsigned int  _area_iters,
                         bool          _use_projection = true);
+
+  void uniformRemeshingFaceSelection(int           _objectId,
+                                     double        _edge_length,
+                                     unsigned int  _iters,
+                                     unsigned int  _area_iters,
+                                     bool          _use_projection = true);
 
 public slots:
   QString version() { return QString("1.0"); };

@@ -231,11 +231,15 @@ void
 BaseRemesherT<Mesh>::
 remesh(unsigned int           _iters,
        unsigned int           _area_iters,
-       bool                   _use_projection) {
+       bool                   _use_projection,
+       Selection              _selection) {
 
     try
     {
-        prepare();
+        if (_selection == VERTEX_SELECTION)
+          prepare_vertex_selection();
+        else if (_selection == FACE_SELECTION)
+          prepare_face_selection();
         remeshh(_iters, _area_iters, _use_projection);
     }
     catch (std::bad_alloc&)
@@ -247,14 +251,12 @@ remesh(unsigned int           _iters,
     cleanup();
 }
 
-
 //-----------------------------------------------------------------------------
-
 
 template <class Mesh>
 void
 BaseRemesherT<Mesh>::
-prepare()
+prepare_vertex_selection()
 {
   typename Mesh::EIter     e_it, e_end;
   typename Mesh::VIter     v_it, v_end;
@@ -281,7 +283,7 @@ prepare()
 
   if (nothing_selected_)
     for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end();
-	 v_it!=v_end; ++v_it)
+   v_it!=v_end; ++v_it)
       mesh_.status(*v_it).set_selected(true);
 
 
@@ -297,10 +299,114 @@ prepare()
     v0 = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0));
     v1 = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1));
     mesh_.status(*e_it).set_locked(mesh_.status(v0).locked() ||
-				  mesh_.status(v1).locked());
+          mesh_.status(v1).locked());
   }
 
 
+
+  // handle feature corners:
+  // lock corner vertices (>2 feature edges) and endpoints
+  // of feature lines (1 feature edge)
+  for (v_it=mesh_.vertices_begin(), v_end=mesh_.vertices_end();
+      v_it!=v_end; ++v_it)
+  {
+    if (mesh_.status(*v_it).feature())
+    {
+      int c=0;
+      for (vh_it=mesh_.cvoh_iter(*v_it); vh_it.is_valid(); ++vh_it)
+        if (mesh_.status(mesh_.edge_handle(*vh_it)).feature())
+          ++c;
+      if (c!=2) mesh_.status(*v_it).set_locked(true);
+    }
+  }
+
+
+
+  // build reference mesh
+  init_reference();
+//   if (emit_progress_)  Progress().step(5);
+
+
+  // add properties
+  mesh_.add_property(valences_);
+  mesh_.add_property(update_);
+  mesh_.add_property(area_);
+}
+
+//-----------------------------------------------------------------------------
+
+
+template <class Mesh>
+void
+BaseRemesherT<Mesh>::
+prepare_face_selection()
+{
+  typename Mesh::EIter     e_it, e_end;
+  typename Mesh::VIter     v_it, v_end;
+  typename Mesh::FIter     f_it, f_end;
+  typename Mesh::CFVIter   fv_it;
+  typename Mesh::CVOHIter  vh_it;
+  typename Mesh::VHandle   v0, v1;
+  typename Mesh::FHandle   f0, f1;
+
+
+  // need vertex and edge status
+  mesh_.request_vertex_status();
+  mesh_.request_edge_status();
+  mesh_.request_face_status();
+
+  // if nothing selected -> select all
+  nothing_selected_ = true;
+  for (f_it = mesh_.faces_begin(), f_end = mesh_.faces_end(); f_it != f_end;
+      ++f_it)
+  {
+    if (mesh_.status(*f_it).selected())
+    {
+      nothing_selected_ = false;
+      break;
+    }
+  }
+
+  if (nothing_selected_)
+    MeshSelection::selectAllFaces(&mesh_);
+
+
+
+  // lock un-selected vertices & edges
+  for (v_it = mesh_.vertices_begin(), v_end = mesh_.vertices_end();
+      v_it != v_end; ++v_it)
+  {
+    bool all_faces_selected = true;
+
+    for (typename Mesh::ConstVertexFaceIter vf_it = mesh_.cvf_iter(*v_it);
+        vf_it.is_valid(); ++vf_it)
+    {
+      if (!mesh_.status(*vf_it).selected())
+      {
+        all_faces_selected = false;
+        break;
+      }
+    }
+    mesh_.status(*v_it).set_locked(!all_faces_selected);
+  }
+
+  for (e_it = mesh_.edges_begin(), e_end = mesh_.edges_end();
+      e_it != e_end; ++e_it)
+  {
+    if (mesh_.is_boundary(*e_it))
+    {
+      mesh_.status(*e_it).set_locked(true);
+    }
+    else
+    {
+      f0 = mesh_.face_handle(mesh_.halfedge_handle(*e_it, 0));
+      f1 = mesh_.face_handle(mesh_.halfedge_handle(*e_it, 1));
+
+      mesh_.status(*e_it).set_locked(!(mesh_.status(f0).selected() && mesh_.status(f1).selected()));
+    }
+  }
+
+  MeshSelection::clearFaceSelection(&mesh_);
 
   // handle feature corners:
   // lock corner vertices (>2 feature edges) and endpoints

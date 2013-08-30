@@ -166,7 +166,8 @@ remesh(Scalar        _error,
        Scalar        _emin,
        Scalar        _emax,
        unsigned int  _iters,
-       bool          _use_projection)
+       bool          _use_projection,
+       Selection     _selection)
 {
   // set thesholds
   error_ = _error;
@@ -174,7 +175,7 @@ remesh(Scalar        _error,
   emax_  = _emax;
 
   // do it
-  Base::remesh(_iters, 0, _use_projection);
+  Base::remesh(_iters, 0, _use_projection, _selection);
 
   // free curvature property (refmesh has been deleted already)
   Base::mesh_.remove_property(curvature_);

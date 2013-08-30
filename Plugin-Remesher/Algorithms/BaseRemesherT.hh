@@ -50,6 +50,12 @@
 #ifndef BASE_REMESHERT_HH
 #define BASE_REMESHERT_HH
 
+/**
+ *  BaseRemesher implements a modified version of a remesher approach presented by Mario Botsch and Leif Kobbelt in
+ *  "A Remeshing Approach to Multiresolution Modeling" published at Symposium on Geometry Processing 2004 p. 189-196
+ *  Paper can found at: http://www.graphics.rwth-aachen.de/publications/0000/37/
+ */
+
 
 //== INCLUDES =================================================================
 
@@ -74,6 +80,12 @@ class BaseRemesherT
 {
 public:
 
+  enum Selection
+  {
+    VERTEX_SELECTION,
+    FACE_SELECTION
+  };
+
   typedef typename Mesh::Scalar        Scalar;
   typedef typename Mesh::Point         Point;
   typedef typename Mesh::EdgeHandle    EdgeHandle;
@@ -85,13 +97,17 @@ public:
 
   void remesh(unsigned int  _iters,
               unsigned int  _area_iters,
-              bool          _use_projection = true);
+              bool          _use_projection = true,
+              Selection     _selection=VERTEX_SELECTION);
 
 
 
 protected:
 
-  void prepare();
+  /// prepare for remeshing only selected vertices (if no vertex was selected, remesh whole mesh)
+  void prepare_vertex_selection();
+  /// prepare for remeshing only vertices which are fully surrounded by selected faces (if no face was selected, remesh whole mesh)
+  void prepare_face_selection();
   void remeshh(unsigned int _iters, unsigned int _aiters, bool _proj);
   void cleanup();
 
