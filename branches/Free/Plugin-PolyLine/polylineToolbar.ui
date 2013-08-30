@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
-    <height>741</height>
+    <width>364</width>
+    <height>821</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -89,6 +89,13 @@
          <widget class="QRadioButton" name="rb_InsertCircle">
           <property name="text">
            <string>Insert Circle</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rb_InsertSpline">
+          <property name="text">
+           <string>RadioButton</string>
           </property>
          </widget>
         </item>
@@ -548,6 +555,27 @@
          <widget class="QSpinBox" name="sb_CirclePointNum">
           <property name="value">
            <number>16</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Points per Segment</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="sb_SplineSegNum">
+          <property name="value">
+           <number>8</number>
           </property>
          </widget>
         </item>
