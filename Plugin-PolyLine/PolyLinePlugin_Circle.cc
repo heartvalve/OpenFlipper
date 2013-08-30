@@ -164,14 +164,5 @@ updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount)
 
 //-----------------------------------------------------------------------------
 
-void
-PolyLinePlugin::
-slot_setCirclePointNum(int i)
-{
-  PolyLineObject* _lineObject;
-  if(createCircle_LastSelIndex_ != -1 && PluginFunctions::getObject(createCircle_LastSelIndex_, _lineObject))
-    updatePolyEllipse(_lineObject, i);
-}
-
 
 

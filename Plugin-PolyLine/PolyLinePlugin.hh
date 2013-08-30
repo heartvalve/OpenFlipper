@@ -46,6 +46,7 @@
 #include <ACG/Scenegraph/GlutPrimitiveNode.hh>
 
 #include <ObjectTypes/PolyLine/PolyLineCircleData.hh>
+#include <ObjectTypes/PolyLine/PolyLineBezierSplineData.hh>
 
 #define CREATE_CUT_POLYLINE "Create Polyline"
 
@@ -140,6 +141,7 @@ public :
   enum EditMode { PL_NONE  =0,
                   PL_INSERT=1,
                   PL_INSERTCIRCLE,
+                  PL_INSERTSPLINE,
                   PL_DELETE,
                   PL_MOVE,
                   PL_SPLIT,
@@ -179,6 +181,7 @@ private slots:
   void slot_smart_move_timer();
 
   void slot_setCirclePointNum(int i);
+  void slot_setSplinePointNum(int i);
 
 private :
 
@@ -187,6 +190,7 @@ private :
   // mouse events
   void me_insert      ( QMouseEvent* _event );
   void me_insertCircle( QMouseEvent* _event );
+  void me_insertSpline( QMouseEvent* _event );
   void me_delete      ( QMouseEvent* _event );
   void me_move        ( QMouseEvent* _event );
   void me_split       ( QMouseEvent* _event );
@@ -234,6 +238,7 @@ private :
     
     QAction*      insertAction_;
     QAction*	  insertCircleAction_;
+    QAction*	  insertSplineAction_;
     QAction*      deleteAction_;
     QAction*      moveAction_;
     QAction*      smartMoveAction_;
@@ -304,66 +309,103 @@ private:
     ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_;
 
     /**
-         * \brief Calculates a point on the mesh.
-         *
-         * Finds the nearest point on the mesh given a point on the normal plane
-         *
-         * @param _triMeshObject The mesh to use
-         * @param _center The center of the ellipse
-         * @param _pOnPlane The projection of the hit point on the plane
-         * @param _n The normal of the ellipse
-         * @param _pOut The point on the mesh if one could be found.
-         * @return True if a point could be found.
-         */
-        bool createCircle_getPointOnMesh(TriMeshObject* _triMeshObject,
-                                         ACG::Vec3d     _center,
-                                         ACG::Vec3d     _pOnPlane,
-                                         ACG::Vec3d     _n,
-                                         ACG::Vec3d*    _pOut);
+	 * \brief Calculates a point on the mesh.
+	 *
+	 * Finds the nearest point on the mesh given a point on the normal plane
+	 *
+	 * @param _triMeshObject The mesh to use
+	 * @param _center The center of the ellipse
+	 * @param _pOnPlane The projection of the hit point on the plane
+	 * @param _n The normal of the ellipse
+	 * @param _pOut The point on the mesh if one could be found.
+	 * @return True if a point could be found.
+	 */
+	bool createCircle_getPointOnMesh(TriMeshObject* _triMeshObject,
+									 ACG::Vec3d     _center,
+									 ACG::Vec3d     _pOnPlane,
+									 ACG::Vec3d     _n,
+									 ACG::Vec3d*    _pOut);
 
-        /*
-         * \brief Calculates common info.
-         *
-         * Calculates common info like point on the mesh, point on the normal plane and the distance from the circle center
-         *
-         * @param _circleData The circle to use.
-         * @param _hit_Point The point which to "project".
-         * @param _pOut (optional)Point on the mesh.
-         * @param _r The distance between circle center and point on the plane.
-         * @param _onPlane Point on the normal plane regarding the hit_point.
-         */
-        bool createCircle_getHitInfo(PolyLineCircleData* _circleData,
-                                     ACG::Vec3d          _hit_Point,
-                                     ACG::Vec3d*         _pOut = 0,
-                                     double*             _r = 0,
-                                     ACG::Vec3d*         _onPlane = 0);
+	/*
+	 * \brief Calculates common info.
+	 *
+	 * Calculates common info like point on the mesh, point on the normal plane and the distance from the circle center
+	 *
+	 * @param _circleData The circle to use.
+	 * @param _hit_Point The point which to "project".
+	 * @param _pOut (optional)Point on the mesh.
+	 * @param _r The distance between circle center and point on the plane.
+	 * @param _onPlane Point on the normal plane regarding the hit_point.
+	 */
+	bool createCircle_getHitInfo(PolyLineCircleData* _circleData,
+								 ACG::Vec3d          _hit_Point,
+								 ACG::Vec3d*         _pOut = 0,
+								 double*             _r = 0,
+								 ACG::Vec3d*         _onPlane = 0);
 
-        /** \brief Returns point on mesh or point on the normal plane.
-         *
-         * Helper function which returns the point on the mesh or if none could be found the point on the plane
-         *
-         * @param _circleData The circle to use.
-         * @param _hit_point The point to "project".
-         *
-         * @return Point on the mesh if one was found or on the normal plane.
-         */
-        ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
+	/** \brief Returns point on mesh or point on the normal plane.
+	 *
+	 * Helper function which returns the point on the mesh or if none could be found the point on the plane
+	 *
+	 * @param _circleData The circle to use.
+	 * @param _hit_point The point to "project".
+	 *
+	 * @return Point on the mesh if one was found or on the normal plane.
+	 */
+	ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
 
-        /*
-         * \brief Generates points for the ellipse.
-         *
-         * @param _lineObject The object to generate points for.
-         * @param _pointCount The number of points to generate.
-         *
-         */
-        void updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount);
+	/*
+	 * \brief Generates points for the ellipse.
+	 *
+	 * @param _lineObject The object to generate points for.
+	 * @param _pointCount The number of points to generate.
+	 *
+	 */
+	void updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount);
 
-        /*
-         * \brief Updates the center, forward and side handle of the Poly ellipse
-         *
-         * @param _lineObject The object containing the handles.
-         */
-        void updateHandles(PolyLineObject* _lineObject);
+	/*
+	 * \brief Updates the center, forward and side handle of the Poly ellipse
+	 *
+	 * @param _lineObject The object containing the handles.
+	 */
+	void updateHandles(PolyLineObject* _lineObject);
+
+	/*
+	 * \brief Generates points for the spline, updates handles.
+	 *
+	 * @param _lineObject The object to generate points for.
+	 * @param _pointCount The number of points to generate.
+	 *
+	 */
+	void updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointsPerSegment);
+
+	/*
+	 * \brief Updates all the handles on the PolyBezier
+	 * @param _lineObject The object to update.
+	 * @param _line the line node containing all the handles
+	 */
+	void updatePolyBezierHandles(PolyLineObject* _lineObject, ACG::SceneGraph::LineNode* _line);
+
+	/*
+	 * \brief Returns the nearest point on the mesh or if none could be found the input.
+	 *
+	 * @param _SplineData The spline which is being used.
+	 * @param _point The input point.
+	 * @param _nor (Optional)Normal at nearest point.
+	 * @return The nearest point on the mesh from _point
+	 */
+	ACG::Vec3d getPointOnMesh(PolyLineBezierSplineData* _SplineData, ACG::Vec3d _point, ACG::Vec3d* _nor = 0);
+
+	/// The index of the currently created spline.
+	int createSpline_CurrSelIndex_;
+	/// Use this one to mark the last index to update the number of points
+	int createSpline_LastSelIndex_;
+    /// The handle which is being dragged.
+    ACG::SceneGraph::GlutPrimitiveNode* moveBezSpline_SelNode_;
+    /// The object which is being moved
+    int moveBezSpline_SelIndex_;
+    /// The index of the control or handle being moved
+    int moveBezSpline_SelSubIndex_;
 
     int               cur_merge_id_;
     
