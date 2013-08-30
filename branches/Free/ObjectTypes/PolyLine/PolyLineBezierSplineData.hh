@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision: 17377 $                                                       *
- *   $Author: moebius $                                                      *
- *   $Date: 2013-08-23 14:42:04 +0200 (Fri, 23 Aug 2013) $                   *
+ *   $Revision$                                                       *
+ *   $Author$                                                      *
+ *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -51,42 +51,51 @@
 
 class DLLEXPORT PolyLineBezierSplineData : public PerObjectData
 {
+
 public:
+
 	struct InterpolatePoint {
-		ACG::Vec3d Pos_;
-		ACG::Vec3d Nor_;
+		ACG::Vec3d position;
+		ACG::Vec3d normal;
 	};
-	std::vector<InterpolatePoint> Points_;
-	std::vector<ACG::Vec3d> Handles_;
-	int MeshIndex_;
+
+	std::vector<InterpolatePoint> points_;
+	std::vector<ACG::Vec3d>       handles_;
+
+
 public:
-	/*
-	 * \brief Creates a new PolyLineBezierSplineData object with no points.
-	 */
-	PolyLineBezierSplineData(int _meshIndex)
-		: MeshIndex_(_meshIndex)
-	{
 
-	}
-	/*
-	 * \brief Adds a point to the end of the list and inserts control points.
+  /** \brief Creates a new PolyLineBezierSplineData object with no points.
+   *
+   */
+  PolyLineBezierSplineData(int _meshIndex);
+
+	/** \brief Return index of the corresponding mesh
 	 *
-	 * @param _pos The location(on the mesh) of the new control point.
-	 * @param _nor The normal at the location.
 	 */
-	void addInterpolatePoint(ACG::Vec3d _pos, ACG::Vec3d _nor);
+	int meshIndex();
 
-	/*
-	 * \brief If possible calculates handles.
+	/** \brief Adds a point to the end of the list and inserts control points.
+	 *
+	 * @param _position The location(on the mesh) of the new control point.
+	 * @param _normal The normal at the location.
+	 */
+	void addInterpolatePoint(ACG::Vec3d _position, ACG::Vec3d _normal);
+
+	/** \brief If possible calculates handles.
 	 *
 	 * @return True if it was possible to create handles.
 	 */
 	bool finishSpline();
 
-	/*
-	 * \brief Retrieves the interpolate point based on the handle.
+	/** \brief Retrieves the interpolate point based on the handle.
 	 *
 	 * @param _handleIndex The index of the handle.
 	 */
 	InterpolatePoint& getInterpolatePoint(unsigned int _handleIndex);
+
+private:
+
+	/// Index of the corresponding mesh
+  int meshIndex_;
 };
