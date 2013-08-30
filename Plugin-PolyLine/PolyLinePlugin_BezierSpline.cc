@@ -56,7 +56,7 @@ PolyLinePlugin::
 getPointOnMesh(PolyLineBezierSplineData* _SplineData, ACG::Vec3d _point, ACG::Vec3d* _nor)
 {
 	TriMeshObject* mesh;
-	if(!PluginFunctions::getObject(_SplineData->MeshIndex_, mesh))
+	if(!PluginFunctions::getObject(_SplineData->meshIndex(), mesh))
 		return _point;
 	OpenMeshTriangleBSPT<TriMesh>* bsp = mesh->requestTriangleBsp();
 	OpenMeshTriangleBSPT<TriMesh>::NearestNeighbor neigh = bsp->nearest(_point);
@@ -77,18 +77,18 @@ updatePolyBezierHandles(PolyLineObject* _lineObject, ACG::SceneGraph::LineNode* 
 	if(!splineData)
 		return;
 	_line->clear();
-	for(unsigned int i = 0; i < splineData->Handles_.size(); i++) {
+	for(unsigned int i = 0; i < splineData->handles_.size(); i++) {
 		ACG::SceneGraph::GlutPrimitiveNode* node = 0;
 		if(_lineObject->getAdditionalNode(node, name(), "handle", i))
-			node->set_position(splineData->Handles_[i]);
+			node->set_position(splineData->handles_[i]);
 		const PolyLineBezierSplineData::InterpolatePoint& control = splineData->getInterpolatePoint(i);
-		_line->add_line(control.Pos_, splineData->Handles_[i]);
+		_line->add_line(control.position, splineData->handles_[i]);
 		_line->add_color(ACG::Vec4f(1,0,0,1));
 	}
-	for(unsigned int i = 0; i < splineData->Points_.size(); i++) {
+	for(unsigned int i = 0; i < splineData->points_.size(); i++) {
 		ACG::SceneGraph::GlutPrimitiveNode* node = 0;
 		if(_lineObject->getAdditionalNode(node, name(), "control", i))
-			node->set_position(splineData->Points_[i].Pos_);
+			node->set_position(splineData->points_[i].position);
 	}
 }
 
@@ -100,10 +100,10 @@ updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointCount)
 	if(!splineData)
 		return;
 	_lineObject->line()->clear();
-	int segCount = (splineData->Points_.size() + splineData->Handles_.size() - 1) / 3, segment = 0;
+	int segCount = (splineData->points_.size() + splineData->handles_.size() - 1) / 3, segment = 0;
 	for(int s = 0; s < segCount; s++) {
-		const ACG::Vec3d a = splineData->Points_[s].Pos_, d = splineData->Points_[s + 1].Pos_,
-						 b = splineData->Handles_[s * 2], c = splineData->Handles_[s * 2 + 1];
+		const ACG::Vec3d a = splineData->points_[s].position, d = splineData->points_[s + 1].position,
+						 b = splineData->handles_[s * 2], c = splineData->handles_[s * 2 + 1];
 		for(unsigned int i = 0; i < _pointCount; i++) {
 			float alpha = float(i) / float(_pointCount);
 			const ACG::Vec3d e = a + (b - a) * alpha, f = c + (d - c) * alpha;

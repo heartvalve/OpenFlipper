@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision: 17373 $                                                       *
- *   $Author: moebius $                                                      *
- *   $Date: 2013-08-22 17:54:51 +0200 (Thu, 22 Aug 2013) $                   *
+ *   $Revision$                                                       *
+ *   $Author$                                                      *
+ *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -51,43 +51,63 @@
 
 #include "PolyLineBezierSplineData.hh"
 
-void PolyLineBezierSplineData::addInterpolatePoint(ACG::Vec3d _pos, ACG::Vec3d _nor)
+PolyLineBezierSplineData::PolyLineBezierSplineData(int _meshIndex)
+: meshIndex_(_meshIndex)
+{
+}
+
+int PolyLineBezierSplineData::meshIndex()
+{
+  return meshIndex_;
+}
+
+void PolyLineBezierSplineData::addInterpolatePoint(ACG::Vec3d _position, ACG::Vec3d _normal)
 {
 	InterpolatePoint p;
-	p.Pos_ = _pos;
-	p.Nor_ = _nor;
-	Points_.push_back(p);
+	p.position = _position;
+	p.normal   = _normal;
+
+	points_.push_back(p);
 }
 
 bool PolyLineBezierSplineData::finishSpline()
 {
-	Handles_.clear();
-	for(unsigned int i = 0; i < Points_.size() - 1; i++) {
-		const ACG::Vec3d firstPoint = Points_[i].Pos_, sndPoint = Points_[i + 1].Pos_;
+	handles_.clear();
+
+	for(unsigned int i = 0; i < points_.size() - 1; i++) {
+
+		const ACG::Vec3d firstPoint = points_[i].position, sndPoint = points_[i + 1].position;
 		double r = (firstPoint - sndPoint).norm() / 4.0;
 		const ACG::Vec3d dir = sndPoint - firstPoint;
-		const ACG::Vec3d ort0 = dir % Points_[i].Nor_, ort1 = dir % Points_[i + 1].Nor_;
-		ACG::Vec3d f0 = ort0 % Points_[i].Nor_, f1 = ort1 % Points_[i + 1].Nor_;
+		const ACG::Vec3d ort0 = dir % points_[i].normal, ort1 = dir % points_[i + 1].normal;
+		ACG::Vec3d f0 = ort0 % points_[i].normal, f1 = ort1 % points_[i + 1].normal;
+
 		ACG::Vec3d near = firstPoint - f0.normalize() * r,
-				   far  = sndPoint + f1.normalize() * r;
-		Handles_.push_back(near);
-		Handles_.push_back(far);
+				       far  = sndPoint   + f1.normalize() * r;
+
+		handles_.push_back(near);
+		handles_.push_back(far);
+
 	}
+
 	//handles will be degenerate up to now
-	for(unsigned int i = 1; i < Handles_.size() - 1; i+=2) {
-		ACG::Vec3d dir = (Handles_[i + 1] - Handles_[i]) / 2.0;
+	for(unsigned int i = 1; i < handles_.size() - 1; i+=2) {
+
+		const ACG::Vec3d dir = (handles_[i + 1] - handles_[i]) / 2.0;
+
 		InterpolatePoint& p = getInterpolatePoint(i);
-		Handles_[i + 1] = p.Pos_ + dir;
-		Handles_[i] = p.Pos_ - dir;
+		handles_[i + 1]     = p.position + dir;
+		handles_[i]         = p.position - dir;
 	}
+
 	return true;
 }
 
 PolyLineBezierSplineData::InterpolatePoint& PolyLineBezierSplineData::getInterpolatePoint(unsigned int _handleIndex)
 {
 	if(!_handleIndex)
-		return Points_[0];
-	else if(_handleIndex == Handles_.size())
-		return Points_.back();
-	else return Points_[(_handleIndex - 1) / 2 + 1];
+		return points_[0];
+	else if(_handleIndex == handles_.size())
+		return points_.back();
+	else return points_[(_handleIndex - 1) / 2 + 1];
 }

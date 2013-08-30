@@ -326,8 +326,7 @@ private:
 									 ACG::Vec3d     _n,
 									 ACG::Vec3d*    _pOut);
 
-	/*
-	 * \brief Calculates common info.
+	/** \brief Calculates common info.
 	 *
 	 * Calculates common info like point on the mesh, point on the normal plane and the distance from the circle center
 	 *
@@ -354,8 +353,7 @@ private:
 	 */
 	ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
 
-	/*
-	 * \brief Generates points for the ellipse.
+	/** \brief Generates points for the ellipse.
 	 *
 	 * @param _lineObject The object to generate points for.
 	 * @param _pointCount The number of points to generate.
@@ -363,15 +361,13 @@ private:
 	 */
 	void updatePolyEllipse(PolyLineObject* _lineObject, unsigned int _pointCount);
 
-	/*
-	 * \brief Updates the center, forward and side handle of the Poly ellipse
+	/** \brief Updates the center, forward and side handle of the Poly ellipse
 	 *
 	 * @param _lineObject The object containing the handles.
 	 */
 	void updateHandles(PolyLineObject* _lineObject);
 
-	/*
-	 * \brief Generates points for the spline, updates handles.
+	/** \brief Generates points for the spline, updates handles.
 	 *
 	 * @param _lineObject The object to generate points for.
 	 * @param _pointCount The number of points to generate.
@@ -379,15 +375,13 @@ private:
 	 */
 	void updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointsPerSegment);
 
-	/*
-	 * \brief Updates all the handles on the PolyBezier
+	/** \brief Updates all the handles on the PolyBezier
 	 * @param _lineObject The object to update.
 	 * @param _line the line node containing all the handles
 	 */
 	void updatePolyBezierHandles(PolyLineObject* _lineObject, ACG::SceneGraph::LineNode* _line);
 
-	/*
-	 * \brief Returns the nearest point on the mesh or if none could be found the input.
+	/** \brief Returns the nearest point on the mesh or if none could be found the input.
 	 *
 	 * @param _SplineData The spline which is being used.
 	 * @param _point The input point.
@@ -400,21 +394,22 @@ private:
 	int createSpline_CurrSelIndex_;
 	/// Use this one to mark the last index to update the number of points
 	int createSpline_LastSelIndex_;
-    /// The handle which is being dragged.
-    ACG::SceneGraph::GlutPrimitiveNode* moveBezSpline_SelNode_;
-    /// The object which is being moved
-    int moveBezSpline_SelIndex_;
-    /// The index of the control or handle being moved
-    int moveBezSpline_SelSubIndex_;
 
-    int               cur_merge_id_;
-    
-    QTimer*           smart_move_timer_;
-    
-    PolyLineObject*   cur_smart_move_obj_;
-    
-    // Plane selection tool
-    QtPlaneSelect*    planeSelect_;
+	/// The handle which is being dragged.
+	ACG::SceneGraph::GlutPrimitiveNode* moveBezSpline_SelNode_;
+	/// The object which is being moved
+	int moveBezSpline_SelIndex_;
+	/// The index of the control or handle being moved
+	int moveBezSpline_SelSubIndex_;
+
+	int               cur_merge_id_;
+
+	QTimer*           smart_move_timer_;
+
+	PolyLineObject*   cur_smart_move_obj_;
+
+	/// Plane selection tool
+	QtPlaneSelect*    planeSelect_;
 
 };
 

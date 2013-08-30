@@ -62,11 +62,14 @@ public:
 	ACG::Vec3d circleNormal_;
 	ACG::Vec3d circleMainAxis_;
 	ACG::Vec3d circleSideAxis_;
-	double circleMainRadius_;
-	double circleSideRadius_;
-	int circleMeshIndex_;
+	double     circleMainRadius_;
+	double     circleSideRadius_;
+	int        circleMeshIndex_;
+
 public:
+
 	PolyLineCircleData(ACG::Vec3d center, ACG::Vec3d normal, ACG::Vec3d mainAxis, ACG::Vec3d sideAxis, double mainR, double sideR, int mesh);
+
 };
 
 
