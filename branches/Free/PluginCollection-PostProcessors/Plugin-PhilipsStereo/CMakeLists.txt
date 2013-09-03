@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin ( DIRS widgets CRC  )
+openflipper_plugin ( INSTALLDATA Shaders DIRS widgets CRC  )

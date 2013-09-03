@@ -81,36 +81,12 @@ class PostProcessorPhilipsStereoPlugin : public QObject, BaseInterface, PostProc
 
     // PostProcessorInterface
     QAction* optionsAction();
-    void postProcess(ACG::GLState* _glstate);
+    void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
 
 
     void slotShowOptionsMenu();
 
   private:
-
-    void updateScenePhilipsStereo(ACG::GLState* _glstate);
-
-  private:
-
-    /// color texture buffer
-    ACG::Texture2D pColorTexture_;
-
-    /// Current width of the color texture buffer
-    int     colorTextureBufferWidth_;
-
-    /// Current height of the color texture buffer
-    int     colorTextureBufferHeight_;
-
-    /// depthStencil texture buffer
-    ACG::Texture2D pDepthStencilTexture_;
-
-    /// Current width of the depthStencil texture buffer
-    int     depthStencilTextureBufferWidth_;
-
-    /// Current height of the depthStencil texture buffer
-    int     depthStencilTextureBufferHeight_;
-
-    bool philipsStereoInitialized_;
 
     GLSL::PtrProgram pProgram_;
 
