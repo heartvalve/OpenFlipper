@@ -165,7 +165,8 @@ glViewer::glViewer( QGraphicsScene* _scene,
   flyAnimationOrthogonal_(0),
   flyAngle_(0.0),
   currentAnimationPos_(0.0),
-  flyMoveBack_(false)
+  flyMoveBack_(false),
+  sceneTexReadBackWidth_(0), sceneTexReadBackHeight_(0)
 {
 
   // widget stuff
@@ -638,6 +639,11 @@ void glViewer::drawScene()
 //
 //  fbo.bind();
 
+  updatePostProcessingBufs(glstate_->viewport_width(),glstate_->viewport_height());
+
+
+//  glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO_);
+
   // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
     drawScene_mono();
@@ -645,11 +651,67 @@ void glViewer::drawScene()
     renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
   }
 
+//  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  if ( postProcessorManager().activeId( properties_.viewerId() ) != 0 ) {
-    postProcessorManager().active( properties_.viewerId() )->plugin->postProcess(glstate_);
+
+
+
+
+
+  // =================================================================================
+  // Post-Processing pipeline
+
+  readBackBuffer(glstate_);
+
+  int numPostProcessors = postProcessorManager().numActive(properties_.viewerId());
+
+//   // DEBUG testing post processor chain
+//   if (numPostProcessors == 1)
+//   {
+//     postProcessorManager().append("Grayscale Postprocessor Plugin", properties_.viewerId());
+//     postProcessorManager().append("Red Postprocessor Plugin", properties_.viewerId());
+// 
+//     numPostProcessors += 2;
+//   }
+
+  // 1st post processing source: back buffer
+  int postProcSrc = 1;
+  PostProcessorInput postProcInput;
+  postProcInput.colorTex_ = sceneTexReadBack_.id();
+  postProcInput.depthTex_ = depthTexReadBack_.id();
+  postProcInput.width     = sceneTexReadBackWidth_;
+  postProcInput.height    = sceneTexReadBackHeight_;
+
+
+  // execute post processing chain with 2 FBOs
+  for (int i = 0; i < numPostProcessors; ++i)  {
+
+    int postProcTarget = 1 - postProcSrc;
+
+    GLuint targetFBO = postProcessFBO_[postProcTarget].getFboID();
+
+    // write to back buffer in last step
+    if (i + 1 == numPostProcessors)
+      targetFBO = 0;
+
+    // apply post processor
+    PostProcessorInfo* proc = postProcessorManager().active( properties_.viewerId(), i );
+    if (proc && proc->plugin)
+      proc->plugin->postProcess(glstate_, postProcInput, targetFBO);
+
+
+    // swap target/source fbo
+    postProcSrc = postProcTarget;
+
+    postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
+    postProcInput.depthTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_DEPTH_ATTACHMENT);
   }
-  
+
+  // =================================================================================
+
+  // unbind vbo for qt log window
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 //  fbo.release();
 //
 //  QRect blitRect(0,0,glstate_->viewport_width(),glstate_->viewport_height());
@@ -2328,6 +2390,88 @@ void glViewer::strafeRight() {
 
         emit viewChanged();
     }
+}
+
+
+void glViewer::readBackBuffer(ACG::GLState* _glstate)
+{
+  int width, height, x, y;
+  _glstate->get_viewport(x, y, width, height);
+
+
+  if (!sceneTexReadBack_.is_valid()) 
+  {
+    // create r8g8b8a8 color texture
+
+    sceneTexReadBack_.enable();
+    sceneTexReadBack_.bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    sceneTexReadBackWidth_ = width;
+    sceneTexReadBackHeight_ = height;
+  }
+
+
+  if (!depthTexReadBack_.is_valid()) 
+  {
+    // create D24S8 texture
+
+    depthTexReadBack_.enable();
+    depthTexReadBack_.bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, width, height, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    sceneTexReadBackWidth_ = width;
+    sceneTexReadBackHeight_ = height;
+  }
+
+
+  // Resize if already exists
+  if (width != sceneTexReadBackWidth_ || height != sceneTexReadBackHeight_) 
+  {
+    sceneTexReadBack_.bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    depthTexReadBack_.bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+    sceneTexReadBackWidth_ = width;
+    sceneTexReadBackHeight_ = height;
+  }
+
+
+  // read back buffer
+  sceneTexReadBack_.bind();
+  glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, width , height, 0);
+
+  depthTexReadBack_.bind();
+  glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, width , height, 0);
+}
+
+
+void glViewer::updatePostProcessingBufs(int _width, int _height)
+{
+  for (int i = 0; i < 2; ++i)
+  {
+    if (!postProcessFBO_[i].getFboID())
+    {
+      postProcessFBO_[i].init();
+
+      postProcessFBO_[i].attachTexture2D(GL_COLOR_ATTACHMENT0, _width, _height, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      postProcessFBO_[i].attachTexture2DDepth(_width, _height);
+    }
+    else
+      postProcessFBO_[i].resize(_width, _height);
+  }
 }
 
 //=============================================================================

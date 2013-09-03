@@ -59,7 +59,8 @@ class PostProcessorDepthImagePlugin : public QObject, BaseInterface, PostProcess
 #endif
 
   public:
-   PostProcessorDepthImagePlugin();
+    PostProcessorDepthImagePlugin();
+    ~PostProcessorDepthImagePlugin();
   
   public :
     QString name() { return (QString("Depth Image Postprocessor Plugin")); };
@@ -71,21 +72,13 @@ class PostProcessorDepthImagePlugin : public QObject, BaseInterface, PostProcess
     
   private slots:
 
-    void updateDepthStencilTextureBuffer(ACG::GLState* _glstate);
-
-    void postProcess(ACG::GLState* _glstate);
+    void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
 
     QString postProcessorName();
 
   private:
-    /// depthStencil texture buffer
-    ACG::Texture2D pDepthStencilTexture_;
-
-    /// Current width of the depthStencil texture buffer
-    int     depthStencilTextureBufferWidth_;
-
-    /// Current height of the depthStencil texture buffer
-    int     depthStencilTextureBufferHeight_;
-
+    
+    /// shader
+    GLSL::Program* shader_;
 };
 

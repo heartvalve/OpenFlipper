@@ -52,6 +52,22 @@
 * Interface for adding global image post processor functions. \ref postProcessorInterfacePage
 */
 
+
+struct PostProcessorInput
+{
+  PostProcessorInput(GLuint colTex = 0, 
+                     GLuint depthTex = 0,
+                     int width = 0,
+                     int height = 0)
+                     : colorTex_(colTex), depthTex_(depthTex), width(width), height(height) {}
+
+  GLuint colorTex_;
+  GLuint depthTex_;
+
+  int width, height;
+};
+
+
 /** \brief Interface to add global image post processor functions from within plugins.
  *
  * \ref postProcessorInterfacePage "Detailed description"
@@ -72,7 +88,7 @@ class PostProcessorInterface {
     /** \brief post processor function
      *
      */
-    virtual void postProcess(ACG::GLState* _glState) {};
+    virtual void postProcess(ACG::GLState* _glState, const PostProcessorInput& _input, GLuint _targetFBO = 0) {};
 
     /** \brief announce name for the postProcessor function
      *
