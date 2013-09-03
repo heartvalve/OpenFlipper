@@ -246,11 +246,11 @@ checkFramebufferStatus()
 {
   GLenum status;
   status = ( GLenum ) glCheckFramebufferStatusEXT( GL_FRAMEBUFFER_EXT );
-  std::cout << "Framebuffer status: " << status << std::endl;
+  //std::cout << "Framebuffer status: " << status << std::endl;
   switch ( status )
   {
     case GL_FRAMEBUFFER_COMPLETE_EXT:
-      std::cout << "Framebuffer ok\n";
+      //std::cout << "Framebuffer ok\n";
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
       std::cout << " Framebuffer incomplete attachment\n";
