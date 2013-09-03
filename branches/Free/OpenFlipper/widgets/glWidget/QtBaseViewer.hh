@@ -1053,8 +1053,10 @@ private:
 
   /** \brief Adjust size of post processor FBO and attachments
    *
+   * @param _width  Buffer width
+   * @param _height Buffer height
    */
-  void updatePostProcessingBufs(int width, int height);
+  void updatePostProcessingBufs(int _width, int _height);
 
 
 
