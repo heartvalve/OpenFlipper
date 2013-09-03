@@ -289,10 +289,9 @@ void PostProcessorManager::setActive(unsigned int _active, int _viewerId ) {
   if ( _viewerId >= (int)activePostProcessors_.size() )
     activePostProcessors_.resize(_viewerId +1 );
 
-  if ( _active <  availablePostProcessors_.size() )
-    activePostProcessors_[_viewerId] = _active;
-  else
-    std::cerr << "Out of range error when setting active post processor" << std::endl;
+  // clear chain and add postprocessor
+  activePostProcessors_[_viewerId].clear();
+  activePostProcessors_[_viewerId].push_back(_active);
 }
 
 void PostProcessorManager::setActive(QString _active, int _id ) {
@@ -309,12 +308,15 @@ void PostProcessorManager::setActive(QString _active, int _id ) {
 
   for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
     if ( availablePostProcessors_[i].name == _active) {
-      activePostProcessors_[_id] = i;
+
+      // clear chain and add postprocessor
+      activePostProcessors_[_id].clear();
+      activePostProcessors_[_id].push_back(i);
     }
 
 }
 
-PostProcessorInfo* PostProcessorManager::active( int _id ) {
+PostProcessorInfo* PostProcessorManager::active( int _id, int _chainIdx ) {
 
   // Temporary viewer with no fixed id, return first post processor
   if ( _id < 0 )
@@ -324,10 +326,13 @@ PostProcessorInfo* PostProcessorManager::active( int _id ) {
    if ( _id >= (int)activePostProcessors_.size() )
      activePostProcessors_.resize(_id +1 );
 
-  return &availablePostProcessors_[activePostProcessors_[_id]];
+   if ( (int)activePostProcessors_[_id].size() <= _chainIdx)
+     return 0;
+
+  return &availablePostProcessors_[activePostProcessors_[_id][_chainIdx]];
 }
 
-unsigned int PostProcessorManager::activeId( int _id ) {
+unsigned int PostProcessorManager::activeId( int _id, int _chainIdx ) {
 
   // Temporary viewer with no fixed id, return first post processor
   if ( _id < 0 )
@@ -337,7 +342,117 @@ unsigned int PostProcessorManager::activeId( int _id ) {
   if ( _id >= (int)activePostProcessors_.size() )
     activePostProcessors_.resize(_id +1 );
 
-  return activePostProcessors_[_id];
+  if ( (int)activePostProcessors_[_id].size() <= _chainIdx)
+    return 0;
+
+  return activePostProcessors_[_id][_chainIdx];
+}
+
+int PostProcessorManager::numActive( int _id ) {
+
+  // Temporary viewer with no fixed id, return first post processor
+  if ( _id < 0 )
+    return 0;
+
+  // Increase vector size
+  if ( _id >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
+
+  return (int)activePostProcessors_[_id].size();
+}
+
+void PostProcessorManager::append( unsigned int _active, int _viewerId ) {
+
+  // Temporary viewer with no fixed id
+  if ( _viewerId < 0 ) {
+    std::cerr << "PostProcessorManager::append illegal viewer id: " << _viewerId << std::endl;
+    return;
+  }
+
+  // Increase vector size
+  if ( _viewerId >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_viewerId +1 );
+
+  if ( _active <  availablePostProcessors_.size() )
+    activePostProcessors_[_viewerId].push_back(_active);
+  else
+    std::cerr << "Out of range error when setting active post processor" << std::endl;
+
+}
+
+void PostProcessorManager::append( QString _active, int _id ) {
+
+  // Temporary viewer with no fixed id
+  if ( _id < 0 ) {
+    std::cerr << "PostProcessorManager::append illegal viewer id: " << _id << std::endl;
+    return;
+  }
+
+  // Increase vector size
+  if ( _id >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _active) {
+      activePostProcessors_[_id].push_back(i);
+    }
+
+}
+
+
+void PostProcessorManager::insert( unsigned int _active, int _chainIdx, int _viewerId ) {
+
+  // Temporary viewer with no fixed id
+  if ( _viewerId < 0 ) {
+    std::cerr << "PostProcessorManager::insert illegal viewer id: " << _viewerId << std::endl;
+    return;
+  }
+
+  // Increase vector size
+  if ( _viewerId >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_viewerId +1 );
+
+  if ( _active <  availablePostProcessors_.size() )
+    activePostProcessors_[_viewerId].insert(activePostProcessors_[_viewerId].begin() + _chainIdx, _active);
+  else
+    std::cerr << "Out of range error when setting active post processor" << std::endl;
+
+}
+
+void PostProcessorManager::insert( QString _active, int _chainIdx, int _id ) {
+
+  // Temporary viewer with no fixed id
+  if ( _id < 0 ) {
+    std::cerr << "PostProcessorManager::insert illegal viewer id: " << _id << std::endl;
+    return;
+  }
+
+  // Increase vector size
+  if ( _id >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
+
+  for ( unsigned int i = 0 ; i < availablePostProcessors_.size() ; ++i)
+    if ( availablePostProcessors_[i].name == _active) {
+      activePostProcessors_[_id].insert(activePostProcessors_[_id].begin() + _chainIdx, i);
+    }
+
+}
+
+void PostProcessorManager::remove( int _id, int _chainIdx ) {
+
+  // Temporary viewer with no fixed id, return first post processor
+  if ( _id < 0 )
+    return;
+
+  // Increase vector size
+  if ( _id >= (int)activePostProcessors_.size() )
+    activePostProcessors_.resize(_id +1 );
+
+  if ( (int)activePostProcessors_[_id].size() <= _chainIdx)
+    return;
+
+  activePostProcessors_[_id].erase(activePostProcessors_[_id].begin() + _chainIdx);
+
 }
 
 
