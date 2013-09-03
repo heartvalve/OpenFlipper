@@ -257,34 +257,94 @@ class DLLEXPORT PostProcessorManager {
     */
     void setActive(unsigned int _active, int _viewerId);
 
-    /** \brief set the active post processor for viewer
+    /** \brief Set the active post processor for viewer
+    *
+    * This will reset the current post processor chain to one
+    * active post processor (the given one)
     *
     * @param _id viewer id
     * @param _active name of the post processor
     */
     void setActive(QString _active, int _id);
 
-    /** \brief Get the current active post processor for viewer
+
+    //===========================================================================
+    /** @name Support for multiple post-processors per viewer
+     * @{ */
+    //===========================================================================
+
+    /** \brief Append the active post processor to the chain for viewer
     *
-    * @param _id ViewerId
-    * @return post processor
+    * @param _viewerId viewer id
+    * @param _active   id of the post processor
     */
-    PostProcessorInfo* active( int _id);
+    void append(unsigned int _active, int _viewerId);
 
+    /** \brief Append the active post processor to the chain for viewer
+    *
+    * @param _id viewer id
+    * @param _active name of the post processor
+    */
+    void append(QString _active, int _id);
 
-    /** \brief Get the id of the active post processor for viewer
+    /** \brief Insert the active post processor to the chain for viewer
+    *
+    * @param _viewerId viewer id
+    * @param _chainIdx Post processor chain index
+    * @param _active   id of the post processor
+    */
+    void insert(unsigned int _active, int _chainIdx, int _viewerId);
+
+    /** \brief Insert the active post processor to the chain for viewer
+    *
+    * @param _active name of the post processor
+    * @param _chainIdx Post processor chain index
+    * @param _id viewer id
+    */
+    void insert(QString _active, int _chainIdx, int _id);
+
+    /** \brief Remove a post processor at the specified chain index
+    *
+    * @param _id viewer id
+    * @param _chainIdx Post processor chain index
+    */
+    void remove(int _id, int _chainIdx);
+
+    /** \brief Get the number of active post processors for viewer
     *
     * @param _id ViewerId
+    * @return PostProcessor count
+    */
+    int numActive( int _id);
+
+    /** @} */
+
+
+
+
+    /** \brief Get the id of the active post processor for viewer at chain index
+    *
+    * @param _id ViewerId
+    * @param _chainIdx Post processor chain index
     * @return post processor id
     */
-    unsigned int activeId( int _id);
+    unsigned int activeId( int _id, int _chainIdx = 0);
+
+    /** \brief Get the current active post processor for viewer at chain index
+    *
+    * @param _id ViewerId
+    * @param _chainIdx Post processor chain index
+    * @return post processor
+    */
+    PostProcessorInfo* active( int _id, int _chainIdx = 0);
+
 
   private:
     /// Vector holding all available  post processors
     std::vector<PostProcessorInfo> availablePostProcessors_;
 
-    /// The currently active post processor id
-    std::vector<unsigned int> activePostProcessors_;
+    /// The currently active post processor chain
+    std::vector<std::vector<unsigned int> > activePostProcessors_;
 };
 
 /// Get an instance of the Post Processor manager
