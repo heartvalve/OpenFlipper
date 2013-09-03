@@ -50,16 +50,22 @@
 
 #include <iostream>
 #include <ACG/GL/GLState.hh>
+#include <ACG/GL/ScreenQuad.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 
-PostProcessorDepthImagePlugin::PostProcessorDepthImagePlugin() :
-depthStencilTextureBufferWidth_(0),
-depthStencilTextureBufferHeight_(0)
+PostProcessorDepthImagePlugin::PostProcessorDepthImagePlugin()
+: shader_(0)
 {
 
+}
+
+
+PostProcessorDepthImagePlugin::~PostProcessorDepthImagePlugin()
+{
+  delete shader_;
 }
 
 QString PostProcessorDepthImagePlugin::postProcessorName() {
@@ -67,101 +73,27 @@ QString PostProcessorDepthImagePlugin::postProcessorName() {
 }
 
 
-
-void PostProcessorDepthImagePlugin::updateDepthStencilTextureBuffer(ACG::GLState* _glstate) {
-
-  if ( !ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ) {
-    std::cerr << "GL_ARB_texture_rectangle not supported! " << std::endl;
-    return;
-  }
-
-  int vp_l, vp_b, vp_w, vp_h;
-  _glstate->get_viewport (vp_l, vp_b, vp_w, vp_h);
-
-  // Does depth stencil texture exist?
-  if (!pDepthStencilTexture_.is_valid()) {
-    // ======================================================================================================
-    // creating an 24-bit depth + 8-bit stencil texture
-    // ======================================================================================================
-
-    pDepthStencilTexture_.enable();
-    pDepthStencilTexture_.bind();
-    GLenum texTarget = GL_TEXTURE_2D;
-    GLenum texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
-    GLenum texFormat = GL_DEPTH_STENCIL_EXT;
-    GLenum texType = GL_UNSIGNED_INT_24_8_EXT;
-    GLenum texFilterMode = GL_NEAREST;
-    glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
-
-    glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
-    glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
-    glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
-
-  }
-
-  // Resize target texture
-  if (_glstate->viewport_width() != depthStencilTextureBufferWidth_ || _glstate->viewport_height() != depthStencilTextureBufferHeight_) {
-
-    // Depth stencil texture
-    pDepthStencilTexture_.bind();
-
-    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, _glstate->viewport_width(), _glstate->viewport_height(), 0,
-        GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-    ACG::GLState::bindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
-
-    depthStencilTextureBufferWidth_  = _glstate->viewport_width();
-    depthStencilTextureBufferHeight_ = _glstate->viewport_height();
-  }
-
-}
-
-
-void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate) {
+void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
 
   // ======================================================================================================
-  // Adjust buffer to correct size
+  // Load shader if needed
   // ======================================================================================================
-  updateDepthStencilTextureBuffer(_glstate);
+  if (!shader_)
+    shader_ = GLSL::loadProgram("ShowDepth/screenquad.glsl", "ShowDepth/depth.glsl");
 
   // ======================================================================================================
-  // Get current viewport size
+  // Bind input texture
   // ======================================================================================================
-  int vp_l, vp_b, vp_w, vp_h;
-  _glstate->get_viewport(vp_l, vp_b, vp_w, vp_h);
+
+  glActiveTexture(GL_TEXTURE0);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, _input.depthTex_);
 
   // ======================================================================================================
-  // Bind depth Stencil texture
+  // Bind output FBO
   // ======================================================================================================
-  pDepthStencilTexture_.enable();
-  pDepthStencilTexture_.bind();
 
-  // ======================================================================================================
-  // Copy depth component of rendered image to texture
-  // ======================================================================================================
-  glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, vp_l, vp_b, vp_w , vp_h, 0);
-
-  // ======================================================================================================
-  // Render plain textured
-  // ======================================================================================================
-  ACG::GLState::disable(GL_LIGHTING);
-  ACG::GLState::disable(GL_COLOR_MATERIAL);
-  ACG::GLState::disable(GL_DEPTH_TEST);
-
-  // ======================================================================================================
-  // Setup orthogonal projection
-  // ======================================================================================================
-  _glstate->push_projection_matrix();
-  _glstate->push_modelview_matrix();
-
-  _glstate->reset_projection();
-  _glstate->reset_modelview();
-
-  // Setup orthogonal projection (remember that we are in a viewport of the current glstate)
-  _glstate->ortho(0, vp_w, 0, vp_h, 0, 1);
-
+  glBindFramebuffer(GL_FRAMEBUFFER, _targetFBO);
 
   // ======================================================================================================
   // Clear rendering buffer
@@ -169,29 +101,29 @@ void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate) {
   _glstate->clearBuffers();
 
   // ======================================================================================================
-  // Render a simple quad (rest is done by the texture)
+  // Setup render states
   // ======================================================================================================
-  glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 0.0f);
-  glVertex2i(0, 0);
-  glTexCoord2f(1.0f, 0.0f);
-  glVertex2i(vp_w, 0);
-  glTexCoord2f(1.0f, 1.0f);
-  glVertex2i(vp_w, vp_h);
-  glTexCoord2f(0.0f, 1.0f);
-  glVertex2i(0, vp_h);
-  glEnd();
 
-  // Disable depth stencil buffer
-  pDepthStencilTexture_.disable();
+  glDepthMask(1);
+  glColorMask(1,1,1,1);
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 
   // ======================================================================================================
-  // Reset projection and modelview
+  // Setup shader
   // ======================================================================================================
-  _glstate->pop_projection_matrix();
-  _glstate->pop_modelview_matrix();
 
+  shader_->use();
+  shader_->setUniform("textureSampler", 0);
 
+  // ======================================================================================================
+  // Execute
+  // ======================================================================================================
+
+  ACG::ScreenQuad::draw(shader_);
+
+  shader_->disable();
 }
 
 #if QT_VERSION < 0x050000

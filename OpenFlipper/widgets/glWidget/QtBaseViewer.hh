@@ -58,6 +58,7 @@
 #include <OpenFlipper/common/ViewerProperties.hh>
 
 #include <ACG/GL/GLState.hh>
+#include <ACG/GL/FBO.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
@@ -100,6 +101,7 @@ class QSplitter;
 class QTimer;
 class QImage;
 class QSocketNotifier;
+struct PostProcessorInput;
 
 
 //== NAMESPACES ===============================================================
@@ -1027,6 +1029,37 @@ private:
     void flyAnimationOrthogonalFinished();
 
   /** @} */
+
+
+
+
+  //===========================================================================
+  /** @name Post Processing
+    * @{ */
+  //===========================================================================
+
+private:
+
+  /// source/target fbo
+  ACG::FBO postProcessFBO_[2];
+
+  /// scene texture (read back from back-buffer)
+  ACG::Texture2D sceneTexReadBack_;
+  ACG::Texture2D depthTexReadBack_;
+  int sceneTexReadBackWidth_, sceneTexReadBackHeight_;
+
+  void readBackBuffer(ACG::GLState* _glstate);
+
+
+  /** \brief Adjust size of post processor FBO and attachments
+   *
+   */
+  void updatePostProcessingBufs(int width, int height);
+
+
+
+  /** @} */
+
 };
 
 
