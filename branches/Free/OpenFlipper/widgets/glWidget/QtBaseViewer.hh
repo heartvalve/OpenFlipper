@@ -1048,6 +1048,7 @@ private:
   ACG::Texture2D depthTexReadBack_;
   int sceneTexReadBackWidth_, sceneTexReadBackHeight_;
 
+  /// read current color and depth texture of the back buffer for further post-processing 
   void readBackBuffer(ACG::GLState* _glstate);
 
 
