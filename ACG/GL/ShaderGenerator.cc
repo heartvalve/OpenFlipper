@@ -1054,7 +1054,10 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
     if (desc_.textureTypes().size() > 1 && desc_.normalizeTexColors)
       _code->push_back("sg_cTex = sg_cTex * 1.0/" + QString::number(desc_.textureTypes().size()) +".0 ;");
 
-    _code->push_back("sg_cColor *= sg_cTex;");
+    if (desc_.shadeMode == SG_SHADE_UNLIT)
+      _code->push_back("sg_cColor += sg_cTex;");
+    else
+      _code->push_back("sg_cColor *= sg_cTex;");
   }
 
   
