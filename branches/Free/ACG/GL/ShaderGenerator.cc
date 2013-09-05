@@ -655,10 +655,13 @@ void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
   _code->push_back("vec3 sg_vNormalVS = vec3(0.0, 1.0, 0.0);");
 
   /// TODO Setup for multiple texture coordinates as input
-  if (desc_.textureTypes().begin()->second.type == GL_TEXTURE_3D) {
-    _code->push_back("vec3 sg_vTexCoord = vec3(0.0, 0.0, 0.0);");
-  } else {
-    _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
+  if (desc_.textured())
+  {
+    if (desc_.textureTypes().begin()->second.type == GL_TEXTURE_3D) {
+      _code->push_back("vec3 sg_vTexCoord = vec3(0.0, 0.0, 0.0);");
+    } else {
+      _code->push_back("vec2 sg_vTexCoord = vec2(0.0, 0.0);");
+    }
   }
 
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
