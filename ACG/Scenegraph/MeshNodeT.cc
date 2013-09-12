@@ -64,6 +64,8 @@
 #include <OpenMesh/Core/System/omstream.hh>
 #include <OpenMesh/Core/Utils/Property.hh>
 
+#include <algorithm>
+
 //== NAMESPACES ==============================================================
 
 
@@ -1848,8 +1850,8 @@ update_pick_buffers ()
     }
   }
 
-  pickVertexBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
-  pickColorBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
+  pickVertexBuf_.resize (std::max (mesh_.n_vertices(), std::max (mesh_.n_edges() * 2, size_t(nfv))));
+  pickColorBuf_.resize (std::max (mesh_.n_vertices(), std::max (mesh_.n_edges() * 2, size_t(nfv))));
 }
 
 //=============================================================================
