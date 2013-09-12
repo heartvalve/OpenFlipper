@@ -747,20 +747,16 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
 
 void ShaderProgGenerator::buildGeometryShader()
 {
-
   // Only build a geometry shader if enabled
   if ( !desc_.geometryShader )
     return;
 
-  std::cerr << "TODO : buildGeometryShader for object\n " << std::endl;
-  desc_.toString();
 
   delete geometry_;
 
   geometry_  = new ShaderGenerator();
 
   geometry_->initGeometryShaderIO(&desc_);
-
 
   geometry_->initDefaultUniforms();
 
@@ -773,34 +769,72 @@ void ShaderProgGenerator::buildGeometryShader()
   }
 
 
-//  initGenDefines(fragment_);
-//
-//
-//
-//  // io
-//
-//  // when to use fragment lights
-//  if (desc_.shadeMode == SG_SHADE_PHONG)
-//  {
-//    for (int i = 0; i < desc_.numLights; ++i)
-//      fragment_->addLight(i, desc_.lightTypes[i]);
-//  }
-//
-//
-
   // assemble main function
-  QStringList mainCode;
+  QStringList mainCode; 
 
-//  addLightingFunctions(&mainCode);
-//
-//
+  // add simple io passthrough mapper
+
+  {
+    mainCode.push_back("void sg_MapIO(const int inIdx)");
+    mainCode.push_back("{");
+
+    mainCode.push_back("gl_Position = gl_in[inIdx].gl_Position;");
+    mainCode.push_back("outGeometryPosCS = outVertexPosCS[inIdx];");
+
+    if (desc_.textured())
+      mainCode.push_back("outGeometryTexCoord = outVertexTexCoord[inIdx];");
+
+    if (desc_.shadeMode == SG_SHADE_GOURAUD ||
+        desc_.shadeMode == SG_SHADE_FLAT    ||
+        desc_.vertexColors)
+      mainCode.push_back("outGeometryColor = outVertexColor[inIdx];");
+
+    if (desc_.shadeMode == SG_SHADE_PHONG) {
+      mainCode.push_back("outGeometryNormal = outVertexNormal[inIdx];");
+      mainCode.push_back("outGeometryPosVS  = outVertexPosVS[inIdx];");
+    }
+
+    mainCode.push_back("}");
+  }
+
   if (!geometryTemplate_.size())
   {
     mainCode.push_back("void main()");
     mainCode.push_back("{");
 
-    addGeometryBeginCode(&mainCode);
-    addGeometryEndCode(&mainCode);
+
+    // num input vertices
+
+    int numInputVerts = 0;
+
+    switch (desc_.geometryShaderInput) {
+      case SG_GEOMETRY_IN_TRIANGLES:
+        numInputVerts = 3;
+        break;
+      case SG_GEOMETRY_IN_LINES:
+        numInputVerts = 2;
+        break;
+      case SG_GEOMETRY_IN_POINTS:
+        numInputVerts = 1;
+        break;
+      default:
+        numInputVerts = 1;
+        break;
+    }
+
+    QString strValNum;
+    strValNum.append(QString("%1").arg(numInputVerts));
+
+    mainCode.push_back(QString("for ( int inIdx = 0; inIdx < ") + strValNum + QString("; ++inIdx ){"));
+
+    mainCode.push_back("sg_MapIO( inIdx );");
+    mainCode.push_back("EmitVertex();");
+
+    mainCode.push_back("}");
+
+
+    mainCode.push_back("EndPrimitive();");
+
 
     mainCode.push_back("}");
   }
@@ -817,7 +851,7 @@ void ShaderProgGenerator::buildGeometryShader()
         // check for SG_ markers
 
         if (it.contains("SG_GEOMETRY_BEGIN"))
-          addFragmentBeginCode(&mainCode);
+          addGeometryBeginCode(&mainCode);
         else
         {
           if (it.contains("SG_GEOMETRY_END"))
@@ -839,37 +873,11 @@ void ShaderProgGenerator::buildGeometryShader()
   geometry_->buildShaderCode(&mainCode);
 }
 
-
 void ShaderProgGenerator::addGeometryBeginCode(QStringList* _code)
 {
-  std::cerr << "TODO : addGeometryBeginCode" << std::endl;
+//  std::cerr << "TODO : addGeometryBeginCode" << std::endl;
 
-//  // support for projective texture mapping
-//  _code->push_back("vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);");
-//
-//  _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
-//
-//  if (desc_.shadeMode == SG_SHADE_GOURAUD ||
-//    desc_.shadeMode == SG_SHADE_FLAT ||
-//    desc_.vertexColors)
-//    _code->push_back("sg_cColor = outColor;");
-//
-//
-//  if (desc_.shadeMode == SG_SHADE_PHONG)
-//  {
-//    _code->push_back("vec4 sg_vPosVS = outPosVS;");
-//    _code->push_back("vec3 sg_vNormalVS = outNormal;");
-//
-//    addLightingCode(_code);
-//  }
-//
-//  if (desc_.textured())
-//  {
-//    _code->push_back("vec4 sg_cTex = texture(g_Texture0, outTexCoord);");
-//    _code->push_back("sg_cColor *= sg_cTex;");
-//  }
-//
-//
+
   // apply modifiers
   for (int i = 0; i < numModifiers_; ++i)
   {
@@ -880,10 +888,6 @@ void ShaderProgGenerator::addGeometryBeginCode(QStringList* _code)
 
 void ShaderProgGenerator::addGeometryEndCode(QStringList* _code)
 {
-  std::cerr << "TODO : addGeometryEndCode" << std::endl;
-
-//  _code->push_back("outFragment = sg_cColor;");
-//
   // apply modifiers
   for (int i = 0; i < numModifiers_; ++i)
   {
@@ -1192,7 +1196,7 @@ void ShaderProgGenerator::setShaderDir( QString _dir )
 
 QString ShaderProgGenerator::getShaderDir()
 {
-  return shaderDir_;
+  return shaderDir_ + QString("/");
 }
 
 
