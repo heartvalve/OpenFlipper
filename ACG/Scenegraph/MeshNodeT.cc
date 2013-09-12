@@ -399,8 +399,8 @@ update_geometry()
 
   for (; v_it!=v_end; ++v_it)
   {
-    bbMin_.minimize(mesh_.point(v_it));
-    bbMax_.maximize(mesh_.point(v_it));
+    bbMin_.minimize(mesh_.point(*v_it));
+    bbMax_.maximize(mesh_.point(*v_it));
   }
 
   if (GLEW_ARB_vertex_buffer_object) {
@@ -435,7 +435,7 @@ update_geometry()
                                      v_end(mesh_.vertices_end());
 
       for ( ; v_it != v_end ; ++v_it )
-        vertices_.push_back( ACG::Vec3f(mesh_.point(v_it)) );
+        vertices_.push_back( ACG::Vec3f(mesh_.point(*v_it)) );
 
 	   if ( !vertices_.empty() ) {
 
@@ -472,7 +472,7 @@ update_geometry()
                                      v_end(mesh_.vertices_end());
 
       for ( ; v_it != v_end ; ++v_it )
-        normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
+        normals_.push_back( ACG::Vec3f(mesh_.normal(*v_it)) );
 
 	  if ( !normals_.empty() ) {
 
@@ -517,9 +517,10 @@ update_topology()
 
       for (; f_it!=f_end; ++f_it)
       {
-	     indices_.push_back((fv_it=mesh_.cfv_iter(f_it)).handle().idx());
-	     indices_.push_back((++fv_it).handle().idx());
-	     indices_.push_back((++fv_it).handle().idx());
+         fv_it = mesh_.cfv_iter( *f_it );
+         indices_.push_back(fv_it->idx()); ++fv_it;
+         indices_.push_back(fv_it->idx()); ++fv_it;
+         indices_.push_back(fv_it->idx());
       }
     }
     catch (...)
@@ -920,10 +921,12 @@ draw_faces(FaceMode _mode)
          glBegin(GL_TRIANGLES);
          for (; f_it!=f_end; ++f_it)
          {
-            glNormal(mesh_.normal(f_it));
-            glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
-            glVertex(mesh_.point(++fv_it));
-            glVertex(mesh_.point(++fv_it));
+            glNormal(mesh_.normal(*f_it));
+
+            fv_it=mesh_.cfv_iter(*f_it);
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it));
          }
          glEnd();
       }
@@ -932,9 +935,9 @@ draw_faces(FaceMode _mode)
          for (; f_it!=f_end; ++f_it)
          {
             glBegin(GL_POLYGON);
-            glNormal(mesh_.normal(f_it));
-            for (fv_it=mesh_.cfv_iter(f_it.handle()); fv_it; ++fv_it)
-               glVertex(mesh_.point(fv_it));
+            glNormal(mesh_.normal(*f_it));
+            for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+               glVertex(mesh_.point(*fv_it));
             glEnd();
          }
       }
@@ -949,10 +952,12 @@ draw_faces(FaceMode _mode)
          glBegin(GL_TRIANGLES);
          for (; f_it!=f_end; ++f_it)
          {
-            glColor(mesh_.color(f_it));
-            glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
-            glVertex(mesh_.point(++fv_it));
-            glVertex(mesh_.point(++fv_it));
+            glColor(mesh_.color(*f_it));
+
+            fv_it=mesh_.cfv_iter(*f_it);
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it));
          }
          glEnd();
       }
@@ -961,9 +966,9 @@ draw_faces(FaceMode _mode)
          for (; f_it!=f_end; ++f_it)
          {
             glBegin(GL_POLYGON);
-            glColor(mesh_.color(f_it));
-            for (fv_it=mesh_.cfv_iter(f_it.handle()); fv_it; ++fv_it)
-               glVertex(mesh_.point(fv_it));
+            glColor(mesh_.color(*f_it));
+            for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+               glVertex(mesh_.point(*fv_it));
             glEnd();
          }
       }
@@ -978,11 +983,13 @@ draw_faces(FaceMode _mode)
          glBegin(GL_TRIANGLES);
          for (; f_it!=f_end; ++f_it)
          {
-            glColor(mesh_.color(f_it));
-            glNormal(mesh_.normal(f_it));
-            glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
-            glVertex(mesh_.point(++fv_it));
-            glVertex(mesh_.point(++fv_it));
+            glColor(mesh_.color(*f_it));
+            glNormal(mesh_.normal(*f_it));
+
+            fv_it=mesh_.cfv_iter(*f_it);
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it)); ++fv_it;
+            glVertex(mesh_.point(*fv_it));
          }
          glEnd();
       }
@@ -991,10 +998,10 @@ draw_faces(FaceMode _mode)
          for (; f_it!=f_end; ++f_it)
          {
             glBegin(GL_POLYGON);
-            glColor(mesh_.color(f_it));
-            glNormal(mesh_.normal(f_it));
-            for (fv_it=mesh_.cfv_iter(f_it.handle()); fv_it; ++fv_it)
-               glVertex(mesh_.point(fv_it));
+            glColor(mesh_.color(*f_it));
+            glNormal(mesh_.normal(*f_it));
+            for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+               glVertex(mesh_.point(*fv_it));
             glEnd();
          }
       }
@@ -1040,10 +1047,11 @@ draw_faces(FaceMode _mode)
           typename Mesh::TexCoord2D tex2d;
           glBegin(GL_TRIANGLES);
           for (; f_it!=f_end; ++f_it) {
-            glNormal(mesh_.normal(f_it));
-            for (fh_it = mesh_.cfh_iter(f_it.handle());fh_it;++fh_it) {
-              point = mesh_.point(mesh_.to_vertex_handle(fh_it));
-              tex2d = mesh_.property(texture_coord_property,fh_it);
+            glNormal(mesh_.normal(*f_it));
+            for (fh_it = mesh_.cfh_iter(*f_it);fh_it.is_valid();++fh_it)
+            {
+              point = mesh_.point(mesh_.to_vertex_handle(*fh_it));
+              tex2d = mesh_.property(texture_coord_property,*fh_it);
               glTexCoord2f(tex2d[0], tex2d[1]);
               glVertex(point);
             }
@@ -1059,7 +1067,7 @@ draw_faces(FaceMode _mode)
 
           for (; f_it!=f_end; ++f_it)
           {
-            int texture = mesh_.property(texture_index_property,f_it);
+            int texture = mesh_.property(texture_index_property,*f_it);
 
             if (texture == -1) ///TODO dont skip the face, draw without texture instead
               continue;
@@ -1094,13 +1102,13 @@ draw_faces(FaceMode _mode)
 
             glBegin(GL_TRIANGLES);
 
-            glNormal(mesh_.normal(f_it));
-            glColor(mesh_.color(f_it.handle()));
+            glNormal(mesh_.normal(*f_it));
+            glColor(mesh_.color(*f_it));
 
-            for (fh_it = mesh_.cfh_iter(f_it.handle());fh_it;++fh_it)
+            for (fh_it = mesh_.cfh_iter(*f_it);fh_it.is_valid();++fh_it)
             {
-              point = mesh_.point(mesh_.to_vertex_handle(fh_it));
-              tex2d = mesh_.property(texture_coord_property,fh_it);
+              point = mesh_.point(mesh_.to_vertex_handle(*fh_it));
+              tex2d = mesh_.property(texture_coord_property,*fh_it);
               glTexCoord2f(tex2d[0], tex2d[1]);
               glVertex(point);
             }
@@ -1158,9 +1166,11 @@ draw_faces(FaceMode _mode)
           glBegin(GL_TRIANGLES);
           for (; f_it!=f_end; ++f_it)
           {
-            glArrayElement((fv_it=mesh_.cfv_iter(f_it)).handle().idx());
-            glArrayElement((++fv_it).handle().idx());
-            glArrayElement((++fv_it).handle().idx());
+
+              fv_it=mesh_.cfv_iter(*f_it);
+               glArrayElement(fv_it->idx()); ++fv_it;
+               glArrayElement(fv_it->idx()); ++fv_it;
+               glArrayElement(fv_it->idx());
           }
           glEnd();
         }
@@ -1170,8 +1180,8 @@ draw_faces(FaceMode _mode)
         for (; f_it!=f_end; ++f_it)
         {
           glBegin(GL_POLYGON);
-          for (fv_it=mesh_.cfv_iter(f_it.handle()); fv_it; ++fv_it)
-            glArrayElement(fv_it.handle().idx());
+          for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+            glArrayElement(fv_it->idx());
           glEnd();
         }
       }
@@ -1298,7 +1308,7 @@ pick_vertices(GLState& _state, bool _front)
     for (; v_it!=v_end; ++v_it, ++idx)
     {
       pickColorBuf_[idx] = _state.pick_get_name_color (idx);
-      pickVertexBuf_[idx] = mesh_.point(v_it);
+      pickVertexBuf_[idx] = mesh_.point(*v_it);
     }
 
     ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
@@ -1318,7 +1328,7 @@ pick_vertices(GLState& _state, bool _front)
     {
       _state.pick_set_name (idx);
       glBegin(GL_POINTS);
-      glVertex(mesh_.point(v_it));
+      glVertex(mesh_.point(*v_it));
       glEnd();
     }
   }
@@ -1386,12 +1396,14 @@ pick_faces(GLState& _state)
     {
       for (; f_it!=f_end; ++f_it)
       {
-        pickColorBuf_[idx]    = _state.pick_get_name_color (f_it.handle().idx());
-        pickColorBuf_[idx+1]  = _state.pick_get_name_color (f_it.handle().idx());
-        pickColorBuf_[idx+2]  = _state.pick_get_name_color (f_it.handle().idx());
-        pickVertexBuf_[idx]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
-        pickVertexBuf_[idx+1] = mesh_.point(++fv_it);
-        pickVertexBuf_[idx+2] = mesh_.point(++fv_it);
+        pickColorBuf_[idx]    = _state.pick_get_name_color (f_it->idx());
+        pickColorBuf_[idx+1]  = _state.pick_get_name_color (f_it->idx());
+        pickColorBuf_[idx+2]  = _state.pick_get_name_color (f_it->idx());
+
+        fv_it=mesh_.cfv_iter(*f_it);
+        pickVertexBuf_[idx]   = mesh_.point(*fv_it); ++fv_it;
+        pickVertexBuf_[idx+1] = mesh_.point(*fv_it); ++fv_it;
+        pickVertexBuf_[idx+2] = mesh_.point(*fv_it);
         idx += 3;
       }
 
@@ -1422,10 +1434,10 @@ pick_faces(GLState& _state)
         first[face] = idx;
 
 
-        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it, ++idx, ++cnt)
+        for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it, ++idx, ++cnt)
         {
-          pickVertexBuf_[idx] = mesh_.point(fv_it);
-          pickColorBuf_[idx] = _state.pick_get_name_color (f_it.handle().idx());
+          pickVertexBuf_[idx] = mesh_.point(*fv_it);
+          pickColorBuf_[idx] = _state.pick_get_name_color (f_it->idx());
         }
         count[face] = cnt;
       }
@@ -1449,12 +1461,14 @@ pick_faces(GLState& _state)
       for (; f_it!=f_end; ++f_it)
       {
         // set index
-        _state.pick_set_name (f_it.handle().idx());
+        _state.pick_set_name (f_it->idx());
 
         glBegin(GL_TRIANGLES);
-        glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
-        glVertex(mesh_.point(++fv_it));
-        glVertex(mesh_.point(++fv_it));
+
+        fv_it=mesh_.cfv_iter(*f_it);
+        glVertex(mesh_.point(*fv_it)); ++fv_it;
+        glVertex(mesh_.point(*fv_it)); ++fv_it;
+        glVertex(mesh_.point(*fv_it));
         glEnd();
       }
     }
@@ -1463,12 +1477,12 @@ pick_faces(GLState& _state)
       for (; f_it!=f_end; ++f_it)
       {
         // set index
-        _state.pick_set_name (f_it.handle().idx());
+        _state.pick_set_name (f_it->idx());
 
         glBegin(GL_POLYGON);
 
-        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
-	       glVertex(mesh_.point(fv_it));
+        for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+           glVertex(mesh_.point(*fv_it));
 
         glEnd();
       }
@@ -1547,10 +1561,10 @@ pick_edges(GLState& _state, bool _front)
 
     for (; e_it!=e_end; ++e_it)
     {
-      pickColorBuf_[idx]    = _state.pick_get_name_color (e_it.handle().idx());
-      pickColorBuf_[idx+1]  = _state.pick_get_name_color (e_it.handle().idx());
-      pickVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
-      pickVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+      pickColorBuf_[idx]    = _state.pick_get_name_color (e_it->idx());
+      pickColorBuf_[idx+1]  = _state.pick_get_name_color (e_it->idx());
+      pickVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0)));
+      pickVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1)));
       idx += 2;
     }
 
@@ -1569,10 +1583,10 @@ pick_edges(GLState& _state, bool _front)
   {
     for (; e_it!=e_end; ++e_it)
     {
-      _state.pick_set_name (e_it.handle().idx());
+      _state.pick_set_name (e_it->idx());
       glBegin(GL_LINES);
-      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0))));
-      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1))));
+      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0))));
+      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1))));
       glEnd();
     }
   }
@@ -1653,12 +1667,14 @@ pick_any(GLState& _state)
     {
       for (; f_it!=f_end; ++f_it)
       {
-        pickColorBuf_[idx]    = _state.pick_get_name_color (f_it.handle().idx());
-        pickColorBuf_[idx+1]  = _state.pick_get_name_color (f_it.handle().idx());
-        pickColorBuf_[idx+2]  = _state.pick_get_name_color (f_it.handle().idx());
-        pickVertexBuf_[idx]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
-        pickVertexBuf_[idx+1] = mesh_.point(++fv_it);
-        pickVertexBuf_[idx+2] = mesh_.point(++fv_it);
+        pickColorBuf_[idx]    = _state.pick_get_name_color (f_it->idx());
+        pickColorBuf_[idx+1]  = _state.pick_get_name_color (f_it->idx());
+        pickColorBuf_[idx+2]  = _state.pick_get_name_color (f_it->idx());
+
+        fv_it=mesh_.cfv_iter(*f_it);
+        pickVertexBuf_[idx]   = mesh_.point(*fv_it); ++fv_it;
+        pickVertexBuf_[idx+1] = mesh_.point(*fv_it); ++fv_it;
+        pickVertexBuf_[idx+2] = mesh_.point(*fv_it);
         idx += 3;
       }
 
@@ -1683,10 +1699,10 @@ pick_any(GLState& _state)
         first[face] = idx;
 
 
-        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it, ++idx, ++cnt)
+        for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it, ++idx, ++cnt)
         {
-          pickVertexBuf_[idx] = mesh_.point(fv_it);
-          pickColorBuf_[idx] = _state.pick_get_name_color (f_it.handle().idx());
+          pickVertexBuf_[idx] = mesh_.point(*fv_it);
+          pickColorBuf_[idx] = _state.pick_get_name_color (f_it->idx());
         }
         count[face] = cnt;
       }
@@ -1710,10 +1726,10 @@ pick_any(GLState& _state)
     idx = 0;
     for (; e_it!=e_end; ++e_it)
     {
-      pickColorBuf_[idx]    = _state.pick_get_name_color (mesh_.n_faces() + e_it.handle().idx());
-      pickColorBuf_[idx+1]  = _state.pick_get_name_color (mesh_.n_faces() + e_it.handle().idx());
-      pickVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
-      pickVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+      pickColorBuf_[idx]    = _state.pick_get_name_color (mesh_.n_faces() + e_it->idx());
+      pickColorBuf_[idx+1]  = _state.pick_get_name_color (mesh_.n_faces() + e_it->idx());
+      pickVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0)));
+      pickVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1)));
       idx += 2;
     }
 
@@ -1735,7 +1751,7 @@ pick_any(GLState& _state)
     for (; v_it!=v_end; ++v_it, ++idx, ++vidx)
     {
       pickColorBuf_[idx] = _state.pick_get_name_color (vidx);
-      pickVertexBuf_[idx] = mesh_.point(v_it);
+      pickVertexBuf_[idx] = mesh_.point(*v_it);
     }
 
     ACG::GLState::vertexPointer (&pickVertexBuf_[0]);
@@ -1754,12 +1770,14 @@ pick_any(GLState& _state)
       for (; f_it!=f_end; ++f_it)
       {
         // set index
-        _state.pick_set_name (f_it.handle().idx());
+        _state.pick_set_name (f_it->idx());
 
         glBegin(GL_TRIANGLES);
-        glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
-        glVertex(mesh_.point(++fv_it));
-        glVertex(mesh_.point(++fv_it));
+
+        fv_it=mesh_.cfv_iter(*f_it);
+        glVertex(mesh_.point(*fv_it)); ++fv_it;
+        glVertex(mesh_.point(*fv_it)); ++fv_it;
+        glVertex(mesh_.point(*fv_it));
         glEnd();
       }
     }
@@ -1768,12 +1786,12 @@ pick_any(GLState& _state)
       for (; f_it!=f_end; ++f_it)
       {
         // set index
-        _state.pick_set_name (f_it.handle().idx());
+        _state.pick_set_name (f_it->idx());
 
         glBegin(GL_POLYGON);
 
-        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
-               glVertex(mesh_.point(fv_it));
+        for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+               glVertex(mesh_.point(*fv_it));
 
         glEnd();
       }
@@ -1791,10 +1809,10 @@ pick_any(GLState& _state)
     // edges
     for (; e_it!=e_end; ++e_it)
     {
-      _state.pick_set_name (mesh_.n_faces() + e_it.handle().idx());
+      _state.pick_set_name (mesh_.n_faces() + e_it->idx());
       glBegin(GL_LINES);
-      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0))));
-      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1))));
+      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0))));
+      glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1))));
       glEnd();
     }
 
@@ -1811,7 +1829,7 @@ pick_any(GLState& _state)
     {
       _state.pick_set_name (vidx);
       glBegin(GL_POINTS);
-      glVertex(mesh_.point(v_it));
+      glVertex(mesh_.point(*v_it));
       glEnd();
     }
   }
@@ -1845,13 +1863,13 @@ update_pick_buffers ()
     typename Mesh::ConstFaceVertexIter  fv_it;
     for (; f_it!=f_end; ++f_it)
     {
-      for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
+        for (fv_it=mesh_.cfv_iter(*f_it); fv_it.is_valid(); ++fv_it)
         nfv++;
     }
   }
 
-  pickVertexBuf_.resize (std::max (mesh_.n_vertices(), std::max (mesh_.n_edges() * 2, size_t(nfv))));
-  pickColorBuf_.resize (std::max (mesh_.n_vertices(), std::max (mesh_.n_edges() * 2, size_t(nfv))));
+  pickVertexBuf_.resize (std::max(mesh_.n_vertices(), std::max(mesh_.n_edges() * 2, size_t(nfv))));
+  pickColorBuf_.resize (std::max(mesh_.n_vertices(), std::max(mesh_.n_edges() * 2, size_t(nfv))));
 }
 
 //=============================================================================
