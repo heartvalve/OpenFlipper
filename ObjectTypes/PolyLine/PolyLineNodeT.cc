@@ -544,9 +544,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
         // The first point is mapped to an additional last point in buffer, so we can
         // just Render one point more to get a closed line
         if ( polyline_.is_closed() )
-          ro.glDrawArrays(GL_LINE_STRIP_ADJACENCY, 0, polyline_.n_vertices() + 1);
+          ro.glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices() + 1);
         else
-          ro.glDrawArrays(GL_LINE_STRIP_ADJACENCY, 0, polyline_.n_vertices());
+          ro.glDrawArrays(GL_LINE_STRIP, 0, polyline_.n_vertices());
 
         _renderer->addRenderObject(&ro);
 
