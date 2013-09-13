@@ -41,43 +41,74 @@
 \*===========================================================================*/
 
 #include "ui_postProcessorWidget.hh"
-  
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
 
+#include <vector>
 
-#include <OpenFlipper/common/RendererInfo.hh>
+#include <QDialog>
+#include <QPoint>
+#include <QStringList>
+class QWidget;
+class QFrame;
+class PostProcessorInfo;
 
 class PostProcessorDialog : public QDialog, public Ui::PostProcessorWidget
 {
   Q_OBJECT
 
+  signals:
+    /// request an update for an specified viewer
+    void updateExaminer(unsigned _viewer);
+
   public:
-    PostProcessorDialog(QWidget *parent = 0);
+    PostProcessorDialog(QWidget *_parent = 0);
 
+    /// return the names of all saved post processors
+    static QStringList getSavedPostProcessorNames(const unsigned _examiner);
 
+    /// append all saved post processors
+    static void loadSavedPostProcessors(const unsigned _examiner);
 
   private slots:
-    /// Show the custom context menu
-    void slotContextMenu(const QPoint& _point);
+    /// Show the custom context menu for activation
+    void slotContextMenuActivate(const QPoint& _point);
+
+    /// Show the custom context menu for deactivation
+    void slotContextMenuDeactivate(const QPoint& _point);
 
     /// Activates the post processor (triggered via the context menu)
     void slotActivatePostProcessor();
 
+    /// Deactivates the current postProcessor
+    void slotDeactivatePostProcessor();
+
+    /// Move the position/ordering of postprocessor in the postprocessor
+    void slotMovePostProcessor(unsigned _from, unsigned _to);
+
+    /// move the selected active postprocessor 1 up
+    void slotMoveUp();
+
+    /// move the selected active postprocessor 1 down
+    void slotMoveDown();
+
+    /// saves active post processor chain
+    void slotSaveActive();
+
   protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *_event);
 
     void showEvent ( QShowEvent * );
 
   private:
+    /// initiaize the window with the post processors of the current examiner
+    void initWindow();
 
-    void update();
+    QFrame* createFrame(const PostProcessorInfo& _pPI);
 
-    std::vector<QLabel*> descriptions_;
-    QVector< QFrame* > frames_;
+    /// holds the examiner id for the window
+    unsigned currentExaminer_;
+
+    /// maps activeRow from activeList (same as chainIdx from RendererInfo) to row from list (same as activeId from RendererInfo) for each viewer
+    std::vector<unsigned> activeRowToRow_;
 
 };
 

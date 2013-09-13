@@ -64,6 +64,9 @@ void CoreWidget::slotShowPostProcessorManager() {
 	  postProcessorDialog_ = new PostProcessorDialog();
 	}
 
+
+	connect(postProcessorDialog_,SIGNAL(updateExaminer(unsigned)),this,SLOT(slotUpdateExaminer(unsigned)));
+
 	postProcessorDialog_->show();
 
 }
