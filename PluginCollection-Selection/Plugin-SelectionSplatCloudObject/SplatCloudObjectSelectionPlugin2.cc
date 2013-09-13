@@ -291,6 +291,10 @@ void SplatCloudObjectSelectionPlugin::splatCloudColorizeSelection( SplatCloud *_
   SplatCloud::Color color( r, g, b ); // drop alpha
 
   unsigned int i, num = _splatCloud->numSplats();
+
+  #ifdef USE_OPENMP
+    #pragma omp parallel for
+  #endif
   for( i=0; i<num; ++i )
   {
     if( _splatCloud->selections( i ) )
