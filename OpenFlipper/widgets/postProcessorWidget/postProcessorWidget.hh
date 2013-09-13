@@ -68,6 +68,10 @@ class PostProcessorDialog : public QDialog, public Ui::PostProcessorWidget
     /// append all saved post processors
     static void loadSavedPostProcessors(const unsigned _examiner);
 
+  public slots:
+    /// refreshes the content of the dialog with current examiner
+    void refresh();
+
   private slots:
     /// Show the custom context menu for activation
     void slotContextMenuActivate(const QPoint& _point);

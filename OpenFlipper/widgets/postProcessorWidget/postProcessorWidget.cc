@@ -71,12 +71,14 @@ PostProcessorDialog::PostProcessorDialog(QWidget *_parent)
   connect(upButton,SIGNAL(clicked()),this,SLOT(slotMoveUp()));
   connect(downButton,SIGNAL(clicked()),this,SLOT(slotMoveDown()));
   connect(saveButton,SIGNAL(clicked()),this,SLOT(slotSaveActive()));
+  connect(refreshButton,SIGNAL(clicked()), this,SLOT(refresh()));
 
   //set icons
   QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
   closeButton->setIcon( QIcon(iconPath + "window-close.png"));
   saveButton->setIcon( QIcon(iconPath + "document-save.png"));
+  refreshButton->setIcon( QIcon(iconPath + "edit-redo.png"));
 
 }
 
@@ -382,4 +384,9 @@ void PostProcessorDialog::loadSavedPostProcessors(const unsigned _examiner)
   {
     postProcessorManager().append(*iter,_examiner);
   }
+}
+
+void PostProcessorDialog::refresh()
+{
+  initWindow();
 }
