@@ -227,7 +227,7 @@ void PostProcessorDialog::slotMovePostProcessor(unsigned _from,unsigned _to)
   //swap postprocessor
   const int chainPos = _from;
   const int activeID = activeRowToRow_[_from];
-  postProcessorManager().remove(currentExaminer_, _from);
+  postProcessorManager().remove(currentExaminer_, chainPos);
   postProcessorManager().insert(activeID,_to,currentExaminer_);
 
   //swap active ID to current chain position map
