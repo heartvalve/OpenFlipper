@@ -1051,6 +1051,8 @@ void CoreWidget::slotActivateExaminer()
     if (examiner == examiner_widgets_[i])
     {
       PluginFunctions::setActiveExaminer (i);
+      if (postProcessorDialog_)
+        postProcessorDialog_->refresh();
       break;
     }
   }
