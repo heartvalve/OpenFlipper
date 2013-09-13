@@ -563,6 +563,9 @@ Core::init() {
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewChanged() ),
                coreWidget_->examiner_widgets_[i], SLOT( updateGL() ) ,Qt::DirectConnection);
 
+      // Set post processor
+      PostProcessorDialog::loadSavedPostProcessors(i);
+
       // ====================================================
       // Set renderer
       // ====================================================

@@ -631,6 +631,9 @@ public:
       /// Show a dialog in which the viewMode can be changed
       void slotViewChangeDialog();
 
+      /// update the content of the specified examiner
+      void slotUpdateExaminer(unsigned _id);
+
     public slots :
       
       /// Set the view Mode to the given Mode

@@ -515,3 +515,8 @@ void CoreWidget::slotApplyStereoSettings(int /*_tmpParam*/) {
         examiner_widgets_[i]->updateGL();
     }
 }
+
+void CoreWidget::slotUpdateExaminer(unsigned _id)
+{
+  examiner_widgets_[_id]->updateGL();
+}
