@@ -599,7 +599,6 @@ template <class Mesh>
 void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, GLState& _state, const DrawModes::DrawMode& _drawMode, const Material* _mat )
 {
   RenderObject ro;
-  ro.initFromState(&_state);
 
   ro.debugName = "MeshNode";
    
@@ -610,6 +609,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
 
     // reset renderobject
+    ro.initFromState(&_state);
     ro.priority = 0;
     ro.depthRange = Vec2f(0.0f, 1.0f);
     ro.depthTest = true; // some previous node disabled depth testing
@@ -668,12 +668,17 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.shaderDesc.numLights = props->lighting() ? 0 : -1;
 
     // TODO: better handling of attribute sources in shader gen
-
     switch (props->lightStage())
     {
-    case DrawModes::LIGHTSTAGE_SMOOTH: ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD; break;;
-    case DrawModes::LIGHTSTAGE_PHONG: ro.shaderDesc.shadeMode = SG_SHADE_PHONG; break;;
-    case DrawModes::LIGHTSTAGE_UNLIT: ro.shaderDesc.shadeMode = SG_SHADE_UNLIT; break;;
+      case DrawModes::LIGHTSTAGE_SMOOTH:
+        ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
+        break;
+      case DrawModes::LIGHTSTAGE_PHONG:
+        ro.shaderDesc.shadeMode = SG_SHADE_PHONG;
+        break;
+      case DrawModes::LIGHTSTAGE_UNLIT:
+        ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
+        break;
     }
 
     if (props->flatShaded())
@@ -692,50 +697,67 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       else
         ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
 
+      // allow wireframe + solid mode
+      ro.depthFunc = GL_LEQUAL;
 
-      add_line_RenderObjects(_renderer, &ro);
+      // use alpha blending for anti-aliasing in combined wireframe + solid mode
+      ro.blending = true;
+      ro.blendSrc = GL_SRC_ALPHA;
+      ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
+
+      // use geometry shaders to simulate line width
+      ro.shaderDesc.geometryShader = true;
+   
+      QString geomTemplate = ShaderProgGenerator::getShaderDir();
+      geomTemplate += "Wireframe/geometry.tpl";
+
+      QString fragTemplate = ShaderProgGenerator::getShaderDir();
+      fragTemplate += "Wireframe/fragment.tpl";
+
+      ro.shaderDesc.geometryTemplateFile = geomTemplate;
+      ro.shaderDesc.fragmentTemplateFile = fragTemplate;
+      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
+      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
+
+      add_face_RenderObjects(_renderer, &ro);
+
+      ro.shaderDesc.geometryShader = false;
+      ro.shaderDesc.geometryTemplateFile = "";
+      ro.shaderDesc.fragmentTemplateFile = "";
     }
 
     if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
     {
-      // First:
-      // Render all faces in background color to initialize z-buffer
-
-      ro.priority = -1; // priority allows sorting for layers
-
       ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
-
-      // color mask = none
-      // depth mask = enabled
-      ro.glColorMask(0,0,0,0);
-      ro.depthTest = true;
-      ro.depthWrite = true;
-      ro.depthFunc = GL_LESS;
-
-      ro.fillMode = GL_FILL;
-
       drawMesh_->disableColors();
 
-      ro.depthRange = Vec2f(0.01f, 1.0f);
+      // use specular color for lines
+      if (_drawMode.isAtomic() )
+        ro.emissive = ro.specular;
+      else
+        ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
+
+      // use shaders to simulate line width
+      ro.shaderDesc.geometryShader = true;
+
+      QString geomTemplate = ShaderProgGenerator::getShaderDir();
+      geomTemplate += "Wireframe/geometry.tpl";
+
+      QString fragTemplate = ShaderProgGenerator::getShaderDir();
+      fragTemplate += "Wireframe/fragment_hidden.tpl";
+
+      ro.shaderDesc.geometryTemplateFile = geomTemplate;
+      ro.shaderDesc.fragmentTemplateFile = fragTemplate;
+      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
+      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
+      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
 
       add_face_RenderObjects(_renderer, &ro);
 
-
-      // Second
-      // Render the lines. All lines not on the front will be skipped in z-test
-      ro.priority = 0; // render after z cullers
-
-      ro.glColorMask(1,1,1,1);
-      ro.depthTest = true;
-      ro.depthWrite = true;
-      ro.depthFunc = GL_LEQUAL;
-
-      ro.depthRange = Vec2f(0.0f, 1.0f);
-
-      // use specular color for lines
-      ro.emissive = ro.specular;
-
-      add_line_RenderObjects(_renderer, &ro);
+      ro.shaderDesc.geometryShader = false;
+      ro.shaderDesc.geometryTemplateFile = "";
+      ro.shaderDesc.fragmentTemplateFile = "";
     }
 
     if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
@@ -750,7 +772,23 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       // use specular color for lines
       ro.emissive = ro.specular;
 
+
+
+      // use shaders to simulate line width
+      ro.shaderDesc.geometryShader = true;
+
+      QString geomTemplate = ShaderProgGenerator::getShaderDir();
+      geomTemplate += "Wireframe/geom_line2quad.tpl";
+
+      ro.shaderDesc.geometryTemplateFile = geomTemplate;
+      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
+      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
+
       _renderer->addRenderObject(&ro);
+
+      ro.shaderDesc.geometryShader = false;
+      ro.shaderDesc.geometryTemplateFile = "";
 
        // skip other edge primitives for this drawmode layer
       continue;
@@ -760,7 +798,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     {
       ro.shaderDesc.shadeMode = SG_SHADE_UNLIT;
 
-      // buffers in sysmem
+      // buffers in system memory
       if (props->colored())
         ro.vertexDecl = drawMesh_->getHalfedgeVertexDeclaration();
       else
@@ -771,7 +809,23 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       ro.glDrawArrays(GL_LINES, 0, int(mesh_.n_halfedges() * 2));
 
+
+
+      // use shaders to simulate line width
+      ro.shaderDesc.geometryShader = true;
+
+      QString geomTemplate = ShaderProgGenerator::getShaderDir();
+      geomTemplate += "Wireframe/geom_line2quad.tpl";
+
+      ro.shaderDesc.geometryTemplateFile = geomTemplate;
+      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
+      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
+
       _renderer->addRenderObject(&ro);
+
+      ro.shaderDesc.geometryShader = false;
+      ro.shaderDesc.geometryTemplateFile = "";
     }  
 
 
@@ -787,7 +841,22 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       {
         // use specular color for lines
         ro.emissive = ro.specular;
+
+        // use shaders to simulate line width
+        ro.shaderDesc.geometryShader = true;
+
+        QString geomTemplate = ShaderProgGenerator::getShaderDir();
+        geomTemplate += "Wireframe/geom_line2quad.tpl";
+
+        ro.shaderDesc.geometryTemplateFile = geomTemplate;
+        ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
+        ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
+        ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
+
         add_line_RenderObjects(_renderer, &ro);
+
+        ro.shaderDesc.geometryShader = false;
+        ro.shaderDesc.geometryTemplateFile = "";
       } break;
     case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
     default: break;
