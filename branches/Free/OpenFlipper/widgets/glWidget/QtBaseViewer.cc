@@ -704,13 +704,15 @@ void glViewer::drawScene()
     postProcSrc = postProcTarget;
 
     postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
-    postProcInput.depthTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_DEPTH_ATTACHMENT);
   }
 
   // =================================================================================
 
   // unbind vbo for qt log window
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
 //  fbo.release();
 //
@@ -2438,9 +2440,11 @@ void glViewer::readBackBuffer(ACG::GLState* _glstate)
   // Resize if already exists
   if (width != sceneTexReadBackWidth_ || height != sceneTexReadBackHeight_) 
   {
+    sceneTexReadBack_.enable();
     sceneTexReadBack_.bind();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
+    depthTexReadBack_.enable();
     depthTexReadBack_.bind();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
@@ -2450,11 +2454,15 @@ void glViewer::readBackBuffer(ACG::GLState* _glstate)
 
 
   // read back buffer
+  sceneTexReadBack_.enable();
   sceneTexReadBack_.bind();
   glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, width , height, 0);
+  sceneTexReadBack_.disable();
 
+  depthTexReadBack_.enable();
   depthTexReadBack_.bind();
   glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, width , height, 0);
+  depthTexReadBack_.disable();
 }
 
 
