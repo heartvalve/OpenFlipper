@@ -90,10 +90,13 @@ public:
   /** \brief Draw a 2D texture to screen
   *
   * Useful for debugging, copying a texture..
-  * @param _prog GLSL shader to bind attribute id's if needed. Pass null-pointer for fixed function rendering
+  *
+  * @param _texture Texture that should be bound when drawing the quad
+  * @param _offset  Offset passed to the uniform called offset in the shader
+  * @param _size    Size passed to the uniform called size in the shader
   */ 
-  static void drawTexture2D(GLuint _texture, const Vec2f& offset = Vec2f(0.0f, 0.0f),
-                                           const Vec2f& size = Vec2f(1.0f, 1.0f));
+  static void drawTexture2D(GLuint _texture, const Vec2f& _offset = Vec2f(0.0f, 0.0f),
+                                             const Vec2f& _size   = Vec2f(1.0f, 1.0f));
 
 private:
 

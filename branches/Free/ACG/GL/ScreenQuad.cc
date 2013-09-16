@@ -160,7 +160,7 @@ void ScreenQuad::intDraw (GLSL::Program* _prog)
     decl_->deactivateFixedFunction();
 }
 
-void ScreenQuad::drawTexture2D( GLuint _texture, const Vec2f& offset /*= Vec2f(0.0f, 0.0f)*/, const Vec2f& size /*= Vec2f(1.0f, 1.0f)*/ )
+void ScreenQuad::drawTexture2D( GLuint _texture, const Vec2f& _offset /*= Vec2f(0.0f, 0.0f)*/, const Vec2f& _size /*= Vec2f(1.0f, 1.0f)*/ )
 {
   ScreenQuad& quad = instance();
 
@@ -178,8 +178,8 @@ void ScreenQuad::drawTexture2D( GLuint _texture, const Vec2f& offset /*= Vec2f(0
 
     quad.texDrawProg_->setUniform("Tex", 0); // texslot 0
 
-    quad.texDrawProg_->setUniform("offset", offset);
-    quad.texDrawProg_->setUniform("size", size);
+    quad.texDrawProg_->setUniform("offset", _offset);
+    quad.texDrawProg_->setUniform("size", _size);
 
 
     quad.intDraw(quad.texDrawProg_);
