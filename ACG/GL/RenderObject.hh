@@ -55,6 +55,7 @@
 
 namespace GLSL{
   class Program;
+  class UniformPool;
 }
 
 namespace ACG
@@ -99,11 +100,14 @@ namespace SceneGraph {
 */
 struct ACGDLLEXPORT RenderObject
 {
+  friend class IRenderer;
+
   /** default constructor
    *   set all members to 0
    *   keep renderobject a POD to avoid possible problems
    */
   RenderObject();
+
 
   /** \brief Priority to allow sorting of objects
    *
@@ -350,11 +354,22 @@ public:
    * @param _value       QVariant encapsuled value of the type
    *
    */
-  void addUniformValue(QString _uniformName, unsigned int _dataType, QVariant _value) {
-    additionalUniforms_[_uniformName] = QPair<unsigned int, QVariant>( _dataType, _value );
-  }
+  void setUniform(const char *_name, GLint _value);
+  void setUniform(const char *_name, GLfloat _value);
+  void setUniform(const char *_name, const ACG::Vec2f &_value);
+  void setUniform(const char *_name, const ACG::Vec3f &_value);
+  void setUniform(const char *_name, const ACG::Vec4f &_value);
 
-  QMap<QString, QPair<unsigned int, QVariant> > additionalUniforms_;
+
+  void setUniform(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+  void setUniformMat3(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+
+
+  void setUniform(const char *_name, GLint *_values, int _count);
+  void setUniform(const char *_name, GLfloat *_values, int _count);
+
+private:
+  GLSL::UniformPool* uniformPool;
 };
 
 //=============================================================================

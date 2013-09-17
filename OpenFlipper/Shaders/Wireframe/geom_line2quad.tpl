@@ -1,12 +1,10 @@
 // template file for shader generator
 
-
+uniform float lineWidth;
+uniform vec2 screenSize;
 
 void main()
 {
-  const float lineWidth = 0.005;
-  const vec2 screenSize = vec2(1.0, 1.0);
-
   // start/end points of line
   vec4 p0 = gl_in[0].gl_Position;
   vec4 p1 = gl_in[1].gl_Position;

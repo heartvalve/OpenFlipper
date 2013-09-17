@@ -94,7 +94,6 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
 
     p->internalFlags_ = 0;
 
-
     // precompile shader
     ACG::ShaderCache::getInstance()->getProgram(&p->shaderDesc);
 
@@ -111,7 +110,11 @@ void IRenderer::collectRenderObjects( ACG::GLState* _glState, ACG::SceneGraph::D
   numLights_ = 0; // reset light counter
 
   // flush render objects
-  // clear() may actually free memory, resulting in capacity = 0
+  for (size_t i = 0; i < renderObjects_.size(); ++i)
+  {
+    delete renderObjects_[i].uniformPool;
+    renderObjects_[i].uniformPool = 0;
+  }
   renderObjects_.resize(0);
 
 
@@ -315,23 +318,8 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
 
   // Additional Uniforms defined in the render Object
-  for ( QMap<QString, QPair<unsigned int, QVariant> >::iterator additionalUniformsIter = _obj->additionalUniforms_.begin();
-      additionalUniformsIter != _obj->additionalUniforms_.end(); ++additionalUniformsIter ) {
-
-    switch (additionalUniformsIter.value().first) {
-      case GL_FLOAT:
-        _prog->setUniform(additionalUniformsIter.key().toLatin1(),additionalUniformsIter.value().second.toFloat());
-        break;
-      case GL_INT:
-        _prog->setUniform(additionalUniformsIter.key().toLatin1(),additionalUniformsIter.value().second.toInt());
-        break;
-      default:
-        std::cerr << "IRenderer Error: Additional Uniform data type not supported" << std::endl;
-        break;
-    }
-
-  }
-
+  if ( _obj->uniformPool )
+    _obj->uniformPool->bind(_prog);
 
   // texture
   for (std::map<size_t,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
