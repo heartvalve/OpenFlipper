@@ -72,6 +72,9 @@ QString PostProcessorDepthImagePlugin::postProcessorName() {
   return QString("Show Depth Image");
 }
 
+QString PostProcessorDepthImagePlugin::checkOpenGL() {
+  return QString("");
+}
 
 void PostProcessorDepthImagePlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
 

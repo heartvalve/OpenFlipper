@@ -83,8 +83,9 @@ class PostProcessorPhilipsStereoPlugin : public QObject, BaseInterface, PostProc
     QAction* optionsAction();
     void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
 
-
     void slotShowOptionsMenu();
+
+    QString checkOpenGL();
 
   private:
 

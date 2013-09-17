@@ -72,6 +72,9 @@ QString PostProcessorGrayscalePlugin::postProcessorName() {
   return QString("Grayscale");
 }
 
+QString PostProcessorGrayscalePlugin::checkOpenGL() {
+  return QString("");
+}
 
 
 void PostProcessorGrayscalePlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {

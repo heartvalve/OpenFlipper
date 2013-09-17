@@ -76,6 +76,8 @@ class PostProcessorDepthImagePlugin : public QObject, BaseInterface, PostProcess
 
     QString postProcessorName();
 
+    QString checkOpenGL();
+
   private:
     
     /// shader

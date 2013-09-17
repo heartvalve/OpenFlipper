@@ -77,6 +77,8 @@ class PostProcessorGrayscalePlugin : public QObject, BaseInterface, PostProcesso
 
     QString postProcessorName();
 
+    QString checkOpenGL();
+
   private:
 
     /// shader
