@@ -181,8 +181,9 @@ RenderObject::RenderObject()
   alpha(1.0f), shininess(100.0f),
   
   debugID(0), debugName(0),
-  internalFlags_(0)
+  internalFlags_(0),
 
+  uniformPool(0)
 {
 
   // set modelview and proj to identity
@@ -361,6 +362,78 @@ void RenderObject::setGeometryShaderInputFromDrawCall(GLenum _mode) {
       break;
   }
 
+}
+
+void RenderObject::setUniform( const char *_name, GLint _value )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value);
+}
+
+void RenderObject::setUniform( const char *_name, GLfloat _value )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value);
+}
+
+void RenderObject::setUniform( const char *_name, const ACG::Vec2f &_value )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value);
+}
+
+void RenderObject::setUniform( const char *_name, const ACG::Vec3f &_value )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value);
+}
+
+void RenderObject::setUniform( const char *_name, const ACG::Vec4f &_value )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value);
+}
+
+void RenderObject::setUniform( const char *_name, const ACG::GLMatrixf &_value, bool _transposed /*= false*/ )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value, _transposed);
+}
+
+void RenderObject::setUniformMat3( const char *_name, const ACG::GLMatrixf &_value, bool _transposed /*= false*/ )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _value, _transposed);
+}
+
+void RenderObject::setUniform( const char *_name, GLint *_values, int _count )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _values, _count);
+}
+
+void RenderObject::setUniform( const char *_name, GLfloat *_values, int _count )
+{
+  if (!uniformPool)
+    uniformPool = new GLSL::UniformPool();
+
+  uniformPool->setUniform(_name, _values, _count);
 }
 
 

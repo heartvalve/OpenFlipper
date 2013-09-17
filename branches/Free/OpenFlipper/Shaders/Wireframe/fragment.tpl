@@ -2,6 +2,7 @@
 
 in vec3 outGeometryBary;
 
+uniform float lineWidth;
 
 float edgeFactor()
 {
@@ -9,7 +10,7 @@ float edgeFactor()
   // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
   
   vec3 d = fwidth(outGeometryBary);
-  vec3 a3 = smoothstep(vec3(0.0), d*1.5, outGeometryBary);
+  vec3 a3 = smoothstep(vec3(0.0), d*lineWidth, outGeometryBary);
   return min(min(a3.x, a3.y), a3.z);
 }
 

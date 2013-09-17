@@ -720,6 +720,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
       ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
 
+      ro.setUniform("lineWidth", _state.line_width());
+
       add_face_RenderObjects(_renderer, &ro);
 
       ro.shaderDesc.geometryShader = false;
@@ -753,6 +755,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
       ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
 
+      ro.setUniform("lineWidth", _state.line_width());
+
       add_face_RenderObjects(_renderer, &ro);
 
       ro.shaderDesc.geometryShader = false;
@@ -784,6 +788,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
       ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
       ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
+
+      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+      ro.setUniform("lineWidth", _state.line_width());
 
       _renderer->addRenderObject(&ro);
 
@@ -822,6 +829,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
       ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
 
+      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+      ro.setUniform("lineWidth", _state.line_width());
+
       _renderer->addRenderObject(&ro);
 
       ro.shaderDesc.geometryShader = false;
@@ -852,6 +862,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
         ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
         ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
+
+        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+        ro.setUniform("lineWidth", _state.line_width());
 
         add_line_RenderObjects(_renderer, &ro);
 
