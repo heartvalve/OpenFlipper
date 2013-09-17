@@ -1975,8 +1975,9 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
       QMetaObject::invokeMethod(plugin,"checkOpenGL", Qt::DirectConnection,   Q_RETURN_ARG(QString,openGLCheck) ) ;
 
       if ( openGLCheck != "" ) {
-        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities in Plugin") + rendererNameString + " !");
+        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities in Renderer Plugin ") + rendererNameString + " !");
         emit log(LOGERR,openGLCheck);
+        return;
       }
 
       // Check if it already exists and add it if not.
@@ -1986,9 +1987,6 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
       } else {
         emit log(LOGERR,tr("Error: Renderer Plugin %1 already exists").arg(rendererNameString));
       }
-
-
-
 
       // Retrieve and store renderer information
       if ( rendererInfo != 0) {
@@ -2029,6 +2027,16 @@ void Core::loadPlugin(const QString& _filename,const bool _silent, QString& _lic
 
       // Get the name of the PostProcessor
       QMetaObject::invokeMethod(plugin,"postProcessorName", Qt::DirectConnection,   Q_RETURN_ARG(QString,postProcessorNameString) ) ;
+
+      // Let the plugin check its OpenGL support requirements
+      QString openGLCheck = "";
+      QMetaObject::invokeMethod(plugin,"checkOpenGL", Qt::DirectConnection,   Q_RETURN_ARG(QString,openGLCheck) ) ;
+
+      if ( openGLCheck != "" ) {
+        emit log(LOGERR,tr("Error: Insufficient OpenGL capabilities in post processor Plugin ") + postProcessorNameString + " !");
+        emit log(LOGERR,openGLCheck);
+        return;
+      }
 
       // Check if it already exists and add it if not.
       PostProcessorInfo* postProcessorInfo = 0;
