@@ -687,7 +687,7 @@ Core::init() {
     if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
         splash_->raise();
         splash_->showMessage(tr("Ready."), Qt::AlignBottom | Qt::AlignLeft , Qt::white);
-        QTimer::singleShot(2000, this, SLOT(finishSplash()));
+        finishSplash();
     }
 
     // start checking for scenegraph changes
