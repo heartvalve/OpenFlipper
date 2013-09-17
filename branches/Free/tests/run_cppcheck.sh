@@ -15,7 +15,7 @@ cppcheck  --xml  \
           --enable=performance \
           --enable=portability \
           --enable=information \
-          --enable=missingInclude -j4 \
+          --enable=missingInclude -j2 \
           . 2> cppcheck-result.xml
 
 
