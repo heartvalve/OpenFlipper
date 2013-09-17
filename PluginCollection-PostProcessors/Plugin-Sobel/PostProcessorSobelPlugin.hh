@@ -77,6 +77,8 @@ class PostProcessorSobelPlugin : public QObject, BaseInterface, PostProcessorInt
 
     QString postProcessorName();
 
+    QString checkOpenGL();
+
   private:
 
     /// shader

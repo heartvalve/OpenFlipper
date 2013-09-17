@@ -78,6 +78,10 @@ QAction* PostProcessorPhilipsStereoPlugin::optionsAction() {
  return action;
 }
 
+QString PostProcessorPhilipsStereoPlugin::checkOpenGL() {
+  return QString("");
+}
+
 //-----------------------------------------------------------------------------
 
 void  PostProcessorPhilipsStereoPlugin::slotShowOptionsMenu() {

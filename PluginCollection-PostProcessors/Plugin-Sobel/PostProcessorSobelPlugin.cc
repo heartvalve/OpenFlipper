@@ -72,6 +72,9 @@ QString PostProcessorSobelPlugin::postProcessorName() {
   return QString("Sobel");
 }
 
+QString PostProcessorSobelPlugin::checkOpenGL() {
+  return QString("");
+}
 
 
 void PostProcessorSobelPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
