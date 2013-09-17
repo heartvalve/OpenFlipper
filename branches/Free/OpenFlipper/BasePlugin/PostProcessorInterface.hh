@@ -106,6 +106,42 @@ class PostProcessorInterface {
      */
     virtual QAction* optionsAction() { return 0; };
 
+  private slots:
+
+    /** \brief Check OpenGL capabilities
+     *
+     * This function has to be implemented and checks, if all required OpenGL extensions are available.
+     * If this is not the case, the plugin will be refused by the core to avoid crashes due to insufficient
+     * OpenGL support.
+     *
+     * You can get the version information in the following way:
+     *
+     * \code
+     *
+     * // Get version and check
+     * QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+     * if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_1) )
+     *   return QString("Insufficient OpenGL Version! OpenGL 2.1 or higher required");
+     *
+     * //Get OpenGL extensions
+     * QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+     *
+     * // Collect missing extension
+     * QString missing = "";
+     *
+     * if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
+     *   missing += "Missing Extension GL_ARB_vertex_buffer_object\n";
+     *
+     * if ( !glExtensions.contains("GL_ARB_vertex_program") )
+     *   missing += "Missing Extension GL_ARB_vertex_program\n";
+     *
+     * return missing;
+     * \endcode
+     *
+     * @return Return an empty string if everything is fine, otherwise return, what features are missing.
+     */
+    virtual QString checkOpenGL() = 0;
+
 };
 
 /** \page postProcessorInterfacePage Post Processor Interface
