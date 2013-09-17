@@ -221,7 +221,7 @@ namespace GLSL {
 
       /** @} */
 
-
+      GLuint getProgramId();
 
     private:
 
@@ -233,6 +233,101 @@ namespace GLSL {
   typedef const Program* PtrConstProgram;
 
   //--------------------------------------------------------------------------
+
+  /** \brief GLSL uniform pool
+  *
+  * A uniform pool collects values for shader uniforms
+  */
+  class ACGDLLEXPORT UniformPool {
+
+  public:
+    UniformPool();
+    virtual ~UniformPool();
+
+    void bind(PtrProgram _prog) const;
+    void bind(GLuint _prog) const;
+
+    void setUniform(const char *_name, GLint _value);
+    void setUniform(const char *_name, GLfloat _value);
+    void setUniform(const char *_name, const ACG::Vec2f &_value);
+    void setUniform(const char *_name, const ACG::Vec3f &_value);
+    void setUniform(const char *_name, const ACG::Vec4f &_value);
+
+
+    void setUniform(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+    void setUniformMat3(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
+
+
+    void setUniform(const char *_name, GLint *_values, int _count);
+    void setUniform(const char *_name, GLfloat *_values, int _count);
+
+
+    void addPool(const UniformPool& _src);
+
+
+  private:
+    struct UniformBase {
+      std::string id;
+
+
+      UniformBase() {}
+      virtual ~UniformBase() {}
+
+      virtual void bind(GLuint _progID) const {}
+    };
+
+    struct UniformVec : public UniformBase {
+      ACG::Vec4f val;
+
+      bool integer; // int/float flag
+      int size;
+
+      void bind(GLuint _progID) const;
+    };
+
+
+    struct UniformMat : UniformBase {
+      ACG::Matrix4x4f val;
+
+      bool transposed;
+      int size;
+
+      void bind(GLuint _progID) const;
+    };
+
+    struct UniformBuf : public UniformBase {
+      float* val;
+      
+      bool integer;
+      int size;
+      
+      UniformBuf();
+      ~UniformBuf();
+
+      void bind(GLuint _progID) const;
+    };
+
+
+    typedef std::list<UniformBase*> UniformList;
+    typedef UniformList::iterator UniformListIt;
+    
+    /// list of uniform params
+    UniformList pool_;
+
+  private:
+
+    UniformListIt findEntry(std::string _name);
+
+    void addVec(const UniformVec& _vec);
+    void addMatrix(const UniformMat& _mat);
+    void addBuf(const char *_name, void *_values, int _count, bool _integer);
+  };
+
+  typedef UniformPool* PtrUniformPool;
+  typedef const UniformPool* PtrConstUniformPool;
+
+  //--------------------------------------------------------------------------
+
 
   GLSL::StringList ACGDLLEXPORT loadShader(const char *filename);
 
