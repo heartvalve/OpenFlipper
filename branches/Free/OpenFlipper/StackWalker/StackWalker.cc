@@ -239,7 +239,6 @@ DWORD64
 
 static void MyStrCpy(char* szDest, size_t nMaxDestSize, const char* szSrc)
 {
-  if (nMaxDestSize <= 0) return;
   if (strlen(szSrc) < nMaxDestSize)
   {
     strcpy_s(szDest, nMaxDestSize, szSrc);
@@ -658,7 +657,7 @@ private:
     pGMI = (tGMI) GetProcAddress( hPsapi, "GetModuleInformation" );
     if ( (pEPM == NULL) || (pGMFNE == NULL) || (pGMBN == NULL) || (pGMI == NULL) )
     {
-      // we couldn´t find all functions
+      // we couldn't find all functions
       FreeLibrary(hPsapi);
       return FALSE;
     }
