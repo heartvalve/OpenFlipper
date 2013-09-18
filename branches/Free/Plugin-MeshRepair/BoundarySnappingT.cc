@@ -139,8 +139,6 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
         typename MeshT::VertexHandle v_2;
         std::vector<std::pair<typename MeshT::VertexHandle,double> >& verticesInRange = vertexVertexMap[v_1];
 
-        bool validPair = false;
-
         for (typename std::vector<std::pair<typename MeshT::VertexHandle,double> >::iterator iter = verticesInRange.begin(); iter != verticesInRange.end(); ++iter)
         {
           //check if v_2 shares a face with v_1
@@ -152,7 +150,7 @@ void BoundarySnappingT<MeshT>::snap(double _epsilon)
               if (*fv_iter == v_2)
                 v_2 = typename MeshT::VertexHandle();
 
-          validPair = v_2.is_valid() && !mesh_.status(v_2).deleted() && mesh_.is_boundary(v_2);
+          const bool validPair = v_2.is_valid() && !mesh_.status(v_2).deleted() && mesh_.is_boundary(v_2);
 
           //if v_2 is valid, save it, or erase it if not, because v_2 will not be valid in the future
           if (validPair && iter->second <= min)
