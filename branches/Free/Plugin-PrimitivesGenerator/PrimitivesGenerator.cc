@@ -358,8 +358,7 @@ int PrimitivesGeneratorPlugin::addTetrahedralCuboid(const Vector& _position,
 
     object->setName("Cuboid " + QString::number(object_id));
 
-    TetrahedralCuboidGenerator gen;
-    gen.generate(*(object->mesh()), _position, _length, n_x, n_y, n_z);
+    TetrahedralCuboidGenerator gen(*(object->mesh()), _position, _length, n_x, n_y, n_z);
 
     emit updatedObject(object_id, UPDATE_ALL);
 

@@ -337,10 +337,14 @@ void TetrahedralCuboidGenerator::add_cube_type_2_cells(std::size_t i, std::size_
     mesh_->add_cell(hf);
 }
 
-void TetrahedralCuboidGenerator::generate(PolyhedralMesh& mesh, Vector const& position,
-        Vector const& length, unsigned const n_x, unsigned const n_y, unsigned const n_z)
+TetrahedralCuboidGenerator::TetrahedralCuboidGenerator(PolyhedralMesh& mesh,
+                                                            Vector const& position,
+                                                            Vector const& length,
+                                                            unsigned const n_x,
+                                                            unsigned const n_y,
+                                                            unsigned const n_z) :
+  mesh_(&mesh)
 {
-    mesh_ = &mesh;
     mesh_->clear();
 
     size_[0] = n_x;

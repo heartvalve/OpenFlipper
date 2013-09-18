@@ -75,8 +75,8 @@ inline bool operator<(SortedFace const& f1, SortedFace const& f2)
 class TetrahedralCuboidGenerator
 {
 public:
-    void generate(PolyhedralMesh& mesh, Vector const& position, Vector const& length,
-            unsigned const n_x, unsigned const n_y, unsigned const n_z);
+    TetrahedralCuboidGenerator(PolyhedralMesh& mesh, Vector const& position, Vector const& length,
+                                    unsigned const n_x, unsigned const n_y, unsigned const n_z);
 
 private:
     void add_vertices(Vector const& position, Vector const& length);
