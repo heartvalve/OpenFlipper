@@ -346,22 +346,49 @@ public:
 
   /** Used by the draw functions. Sets the correct input primitive type for the geometry shader.
    *
+   * @param _mode Which primitive mode? GL_POINTS, ...
    */
   void setGeometryShaderInputFromDrawCall(GLenum _mode);
 
-  /** \brief set values for uniforms
+  /** \brief set values for int uniforms
    *
    * @param _uniformName Name of uniform in shader
-   * @param _dataType    Type of value (GL_INT, GL_FLOAT)
-   * @param _value       QVariant encapsuled value of the type
+   * @param _value       value of the type
    *
    */
   void setUniform(const char *_name, GLint _value);
-  void setUniform(const char *_name, GLfloat _value);
-  void setUniform(const char *_name, const ACG::Vec2f &_value);
-  void setUniform(const char *_name, const ACG::Vec3f &_value);
-  void setUniform(const char *_name, const ACG::Vec4f &_value);
 
+  /** \brief set values for float uniforms
+     *
+     * @param _uniformName Name of uniform in shader
+     * @param _value       value of the type
+     *
+     */
+  void setUniform(const char *_name, GLfloat _value);
+
+  /** \brief set values for Vec2f uniforms
+   *
+   * @param _uniformName Name of uniform in shader
+   * @param _value       value of the type
+   *
+   */
+  void setUniform(const char *_name, const ACG::Vec2f &_value);
+
+  /** \brief set values for Vec3f uniforms
+   *
+   * @param _uniformName Name of uniform in shader
+   * @param _value       value of the type
+   *
+   */
+  void setUniform(const char *_name, const ACG::Vec3f &_value);
+
+  /** \brief set values for Vec4f uniforms
+   *
+   * @param _uniformName Name of uniform in shader
+   * @param _value       value of the type
+   *
+   */
+  void setUniform(const char *_name, const ACG::Vec4f &_value);
 
   void setUniform(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
   void setUniformMat3(const char *_name, const ACG::GLMatrixf &_value, bool _transposed = false);
