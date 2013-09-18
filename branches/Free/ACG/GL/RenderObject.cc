@@ -181,9 +181,7 @@ RenderObject::RenderObject()
   alpha(1.0f), shininess(100.0f),
   
   debugID(0), debugName(0),
-  internalFlags_(0),
-
-  uniformPool_(0)
+  internalFlags_(0)
 {
 
   // set modelview and proj to identity
@@ -196,6 +194,10 @@ RenderObject::RenderObject()
   proj = modelview;
 
   colorWriteMask[0] = colorWriteMask[1] = colorWriteMask[2] = colorWriteMask[3] = 1;
+}
+
+RenderObject::~RenderObject() {
+  uniformPool_.clear();
 }
 
 void RenderObject::executeImmediateMode()
@@ -366,74 +368,47 @@ void RenderObject::setGeometryShaderInputFromDrawCall(GLenum _mode) {
 
 void RenderObject::setUniform( const char *_name, GLint _value )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value);
+  uniformPool_.setUniform(_name, _value);
 }
 
 void RenderObject::setUniform( const char *_name, GLfloat _value )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value);
+  uniformPool_.setUniform(_name, _value);
 }
 
 void RenderObject::setUniform( const char *_name, const ACG::Vec2f &_value )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value);
+  uniformPool_.setUniform(_name, _value);
 }
 
 void RenderObject::setUniform( const char *_name, const ACG::Vec3f &_value )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value);
+  uniformPool_.setUniform(_name, _value);
 }
 
 void RenderObject::setUniform( const char *_name, const ACG::Vec4f &_value )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value);
+  uniformPool_.setUniform(_name, _value);
 }
 
 void RenderObject::setUniform( const char *_name, const ACG::GLMatrixf &_value, bool _transposed /*= false*/ )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value, _transposed);
+  uniformPool_.setUniform(_name, _value, _transposed);
 }
 
 void RenderObject::setUniformMat3( const char *_name, const ACG::GLMatrixf &_value, bool _transposed /*= false*/ )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _value, _transposed);
+  uniformPool_.setUniform(_name, _value, _transposed);
 }
 
 void RenderObject::setUniform( const char *_name, GLint *_values, int _count )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _values, _count);
+  uniformPool_.setUniform(_name, _values, _count);
 }
 
 void RenderObject::setUniform( const char *_name, GLfloat *_values, int _count )
 {
-  if (!uniformPool_)
-    uniformPool_ = new GLSL::UniformPool();
-
-  uniformPool_->setUniform(_name, _values, _count);
+  uniformPool_.setUniform(_name, _values, _count);
 }
 
 

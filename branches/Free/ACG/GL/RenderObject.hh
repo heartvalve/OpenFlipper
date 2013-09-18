@@ -108,6 +108,8 @@ struct ACGDLLEXPORT RenderObject
    */
   RenderObject();
 
+  virtual ~RenderObject();
+
 
   /** \brief Priority to allow sorting of objects
    *
@@ -369,7 +371,7 @@ public:
   void setUniform(const char *_name, GLfloat *_values, int _count);
 
 private:
-  GLSL::UniformPool* uniformPool_;
+  GLSL::UniformPool uniformPool_;
 };
 
 //=============================================================================
