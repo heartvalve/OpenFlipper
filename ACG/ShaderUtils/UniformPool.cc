@@ -158,7 +158,9 @@ namespace GLSL {
         case 3: glUniform3iv(location, 1, (GLint*)val.data()); break;
         case 4: glUniform4iv(location, 1, (GLint*)val.data()); break;
 
-        default: std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
+        default:
+          std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
+          break;
       }
     }
     else{
@@ -168,7 +170,9 @@ namespace GLSL {
         case 3: glUniform3fv(location, 1, val.data()); break;
         case 4: glUniform4fv(location, 1, val.data()); break;
 
-        default: std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
+        default:
+          std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
+          break;
       }
     }
 
@@ -203,7 +207,9 @@ namespace GLSL {
 
       case 4: glUniformMatrix4fv(location, 1, transposed, val.data()); break;
 
-      default: std::cerr << "UniformPool::UniformMat : invalid size "  << size << std::endl;
+      default:
+        std::cerr << "UniformPool::UniformMat : invalid size "  << size << std::endl;
+        break;
     }
 
     checkGLError2(id.c_str());
