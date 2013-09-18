@@ -64,7 +64,14 @@ namespace GLSL {
   class ACGDLLEXPORT UniformPool {
 
   public:
+    /** \brief Constructor
+    */
     UniformPool();
+
+    /** \brief Copy Constructor
+    */
+    UniformPool(const UniformPool& _pool);
+
     virtual ~UniformPool();
 
     void bind(PtrProgram _prog) const;

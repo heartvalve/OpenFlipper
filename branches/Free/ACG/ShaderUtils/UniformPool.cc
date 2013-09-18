@@ -59,10 +59,15 @@ namespace GLSL {
   // Uniform Pool
   //--------------------------------------------------------------------------
 
-  /** \brief Constructor
-  */
+
   UniformPool::UniformPool(){
   }
+
+
+  UniformPool::UniformPool(const UniformPool& _pool) {
+    addPool(_pool);
+  }
+
 
   /** \brief Destructor
   */
