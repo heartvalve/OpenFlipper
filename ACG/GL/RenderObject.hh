@@ -46,6 +46,7 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/Math/GLMatrixT.hh>
 #include <ACG/GL/ShaderGenerator.hh>
+#include <ACG/ShaderUtils/UniformPool.hh>
 
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/Scenegraph/MaterialNode.hh>
@@ -55,7 +56,6 @@
 
 namespace GLSL{
   class Program;
-  class UniformPool;
 }
 
 namespace ACG
@@ -369,7 +369,7 @@ public:
   void setUniform(const char *_name, GLfloat *_values, int _count);
 
 private:
-  GLSL::UniformPool* uniformPool;
+  GLSL::UniformPool* uniformPool_;
 };
 
 //=============================================================================

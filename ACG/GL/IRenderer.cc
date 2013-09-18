@@ -112,8 +112,8 @@ void IRenderer::collectRenderObjects( ACG::GLState* _glState, ACG::SceneGraph::D
   // flush render objects
   for (size_t i = 0; i < renderObjects_.size(); ++i)
   {
-    delete renderObjects_[i].uniformPool;
-    renderObjects_[i].uniformPool = 0;
+    delete renderObjects_[i].uniformPool_;
+    renderObjects_[i].uniformPool_ = 0;
   }
   renderObjects_.resize(0);
 
@@ -318,8 +318,8 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
 
   // Additional Uniforms defined in the render Object
-  if ( _obj->uniformPool )
-    _obj->uniformPool->bind(_prog);
+  if ( _obj->uniformPool_ )
+    _obj->uniformPool_->bind(_prog);
 
   // texture
   for (std::map<size_t,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
