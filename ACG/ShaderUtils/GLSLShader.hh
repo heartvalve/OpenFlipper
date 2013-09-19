@@ -40,8 +40,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-#ifndef GLSLSHADER_HH
-#define GLSLSHADER_HH
+#ifndef GLSLSHADER_H
+#define GLSLSHADER_H
 
 //==============================================================================
 
@@ -252,4 +252,4 @@ namespace GLSL {
 
 }
 
-#endif // GLSLSHADER_HH
+#endif // GLSLSHADER_H
