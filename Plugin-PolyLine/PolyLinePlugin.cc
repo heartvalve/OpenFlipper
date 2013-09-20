@@ -147,7 +147,7 @@ initializePlugin()
   //add icons
   tool_->rb_insert->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_insert.png") );
   tool_->rb_InsertCircle->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_circle.png") );
-  tool_->rb_InsertSpline->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_circle.png") );
+  tool_->rb_InsertSpline->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_bezier.png") );
   tool_->rb_delete->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_delete.png") );
   tool_->rb_move->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_move.png") );
   tool_->rb_smart_move->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "polyline_move.png") );
@@ -326,7 +326,7 @@ pluginsInitialized()
   insertSplineAction_->setToolTip(tr("Create a new PolySpline.\n"
 		  	  	  	  	  	  	  	 "<Click> to select the points."));
 
-  insertSplineAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"polyline_circle.png") );
+  insertSplineAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"polyline_bezier.png") );
   insertSplineAction_->setCheckable(true);
   pickToolbar_->addAction(insertSplineAction_);
 
