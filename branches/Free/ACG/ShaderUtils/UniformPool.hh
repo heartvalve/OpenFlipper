@@ -116,10 +116,16 @@ namespace GLSL {
       virtual void bind(GLuint _progID) const {}
     };
 
-    struct UniformVec : public UniformBase {
+    struct UniformVecf : public UniformBase {
       ACG::Vec4f val;
+      int size;
 
-      bool integer; // int/float flag
+      void bind(GLuint _progID) const;
+    };
+
+    // separate float int vector because sizeof(int) != sizeof(float) for some compilers
+    struct UniformVeci : public UniformBase {
+      ACG::Vec4f val;
       int size;
 
       void bind(GLuint _progID) const;
@@ -158,7 +164,8 @@ namespace GLSL {
 
     UniformListIt findEntry(std::string _name);
 
-    void addVec(const UniformVec& _vec);
+    void addVecf(const UniformVecf& _vec);
+    void addVeci(const UniformVeci& _vec);
     void addMatrix(const UniformMat& _mat);
     void addBuf(const char *_name, void *_values, int _count, bool _integer);
   };
