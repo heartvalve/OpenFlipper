@@ -130,13 +130,17 @@ namespace GLSL {
     for (UniformList::const_iterator it = _src.pool_.begin(); it != _src.pool_.end(); ++it){
 
       // determine type
-      const UniformVec* pVec = dynamic_cast<const UniformVec*>(*it);
+      const UniformVecf* pVecf = dynamic_cast<const UniformVecf*>(*it);
+      const UniformVeci* pVeci = dynamic_cast<const UniformVeci*>(*it);
       const UniformMat* pMat = dynamic_cast<const UniformMat*>(*it);
       const UniformBuf* pBuf = dynamic_cast<const UniformBuf*>(*it);
 
       // add to our list
-      if (pVec)
-        addVec(*pVec);
+      if (pVecf)
+        addVecf(*pVecf);
+
+      if (pVeci)
+        addVeci(*pVeci);
 
       else if (pMat)
         addMatrix(*pMat);
@@ -147,38 +151,43 @@ namespace GLSL {
   }
 
 
-  /** \brief Bind uniform vector to shader
+  /** \brief Bind uniform float vector to shader
   *
   * @param _progID  GL Program ID
   */
-  void UniformPool::UniformVec::bind( GLuint _progID ) const {
+  void UniformPool::UniformVecf::bind( GLuint _progID ) const {
     checkGLError2("prev opengl error");
     GLint location = glGetUniformLocation(_progID, id.c_str());
     checkGLError2(id.c_str());
 
-    if (integer){
-      switch (size){
+    switch (size){
+      case 1: glUniform1fv(location, 1, val.data()); break;
+      case 2: glUniform2fv(location, 1, val.data()); break;
+      case 3: glUniform3fv(location, 1, val.data()); break;
+      case 4: glUniform4fv(location, 1, val.data()); break;
+
+      default: std::cerr << "UniformPool::UniformVecf : invalid size "  << size << std::endl;
+    }
+
+    checkGLError2(id.c_str());
+  }
+
+  /** \brief Bind uniform int vector to shader
+  *
+  * @param _progID  GL Program ID
+  */
+  void UniformPool::UniformVeci::bind( GLuint _progID ) const {
+    checkGLError2("prev opengl error");
+    GLint location = glGetUniformLocation(_progID, id.c_str());
+    checkGLError2(id.c_str());
+
+    switch (size){
         case 1: glUniform1iv(location, 1, (GLint*)val.data()); break;
         case 2: glUniform2iv(location, 1, (GLint*)val.data()); break;
         case 3: glUniform3iv(location, 1, (GLint*)val.data()); break;
         case 4: glUniform4iv(location, 1, (GLint*)val.data()); break;
 
-        default:
-          std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
-          break;
-      }
-    }
-    else{
-      switch (size){
-        case 1: glUniform1fv(location, 1, val.data()); break;
-        case 2: glUniform2fv(location, 1, val.data()); break;
-        case 3: glUniform3fv(location, 1, val.data()); break;
-        case 4: glUniform4fv(location, 1, val.data()); break;
-
-        default:
-          std::cerr << "UniformPool::UniformVec : invalid size "  << size << std::endl;
-          break;
-      }
+        default: std::cerr << "UniformPool::UniformVeci : invalid size "  << size << std::endl;
     }
 
     checkGLError2(id.c_str());
@@ -253,34 +262,67 @@ namespace GLSL {
     delete [] val;
   }
 
+  
   /** \brief Add or update a vector type uniform in pool
   *
   * @param _vec uniform specifier
   */
-  void UniformPool::addVec( const UniformVec& _vec ) {
+  void UniformPool::addVecf( const UniformVecf& _vec ) {
     // look for existing uniform in pool
     UniformListIt it = findEntry(_vec.id);
 
     // storage address of uniform
-    UniformVec* dst = 0;
+    UniformVecf* dst = 0;
 
     if ( it == pool_.end() ){
       // create new entry
-      dst = new UniformVec;
+      dst = new UniformVecf;
       pool_.push_back(dst);
     }
     else{
       // use existing entry
-      dst = dynamic_cast<UniformVec*>( *it );
+      dst = dynamic_cast<UniformVecf*>( *it );
 
       if (!dst)
-        std::cerr << "UniformPool::addVec type of " << _vec.id << " incorrect." << std::endl;
+        std::cerr << "UniformPool::addVecf type of " << _vec.id << " incorrect." << std::endl;
     }
 
     if (dst) {
       // update data
       dst->id = _vec.id;
-      dst->integer = _vec.integer;
+      dst->size = _vec.size;
+      dst->val = _vec.val;
+    }
+
+  }
+
+  /** \brief Add or update a vector type uniform in pool
+  *
+  * @param _vec uniform specifier
+  */
+  void UniformPool::addVeci( const UniformVeci& _vec ) {
+    // look for existing uniform in pool
+    UniformListIt it = findEntry(_vec.id);
+
+    // storage address of uniform
+    UniformVeci* dst = 0;
+
+    if ( it == pool_.end() ){
+      // create new entry
+      dst = new UniformVeci;
+      pool_.push_back(dst);
+    }
+    else{
+      // use existing entry
+      dst = dynamic_cast<UniformVeci*>( *it );
+
+      if (!dst)
+        std::cerr << "UniformPool::addVeci type of " << _vec.id << " incorrect." << std::endl;
+    }
+
+    if (dst) {
+      // update data
+      dst->id = _vec.id;
       dst->size = _vec.size;
       dst->val = _vec.val;
     }
@@ -366,8 +408,6 @@ namespace GLSL {
   }
 
 
-  
-  
   /** \brief Set int uniform to specified value
   *
   * @param _name  Name of the uniform
@@ -375,14 +415,13 @@ namespace GLSL {
   */
   void UniformPool::setUniform( const char *_name, GLint _value ) {
     // create uniform descriptor
-    UniformVec tmp;
+    UniformVeci tmp;
     tmp.id = _name;
-    tmp.integer = true;
     tmp.size = 1;
-    tmp.val[0] = *((float*)&_value);
+    tmp.val[0] = _value;
 
     // add/update in pool
-    addVec(tmp);
+    addVeci(tmp);
   }
 
   /** \brief Set float uniform to specified value
@@ -392,14 +431,13 @@ namespace GLSL {
   */
   void UniformPool::setUniform( const char *_name, GLfloat _value ) {
     // create uniform descriptor
-    UniformVec tmp;
+    UniformVecf tmp;
     tmp.id = _name;
-    tmp.integer = false;
     tmp.size = 1;
     tmp.val[0] = _value;
 
     // add/update in pool
-    addVec(tmp);
+    addVecf(tmp);
   }
 
   /** \brief Set vec2 uniform to specified value
@@ -409,15 +447,14 @@ namespace GLSL {
   */
   void UniformPool::setUniform( const char *_name, const ACG::Vec2f &_value ) {
     // create uniform descriptor
-    UniformVec tmp;
+    UniformVecf tmp;
     tmp.id = _name;
-    tmp.integer = false;
     tmp.size = 2;
     tmp.val[0] = _value[0];
     tmp.val[1] = _value[1];
 
     // add/update in pool
-    addVec(tmp);
+    addVecf(tmp);
   }
 
   /** \brief Set vec3 uniform to specified value
@@ -427,16 +464,15 @@ namespace GLSL {
   */
   void UniformPool::setUniform( const char *_name, const ACG::Vec3f &_value ) {
     // create uniform descriptor
-    UniformVec tmp;
+    UniformVecf tmp;
     tmp.id = _name;
-    tmp.integer = false;
     tmp.size = 3;
     tmp.val[0] = _value[0];
     tmp.val[1] = _value[1];
     tmp.val[2] = _value[2];
 
     // add/update in pool
-    addVec(tmp);
+    addVecf(tmp);
   }
 
   /** \brief Set vec4 uniform to specified value
@@ -446,14 +482,13 @@ namespace GLSL {
   */
   void UniformPool::setUniform( const char *_name, const ACG::Vec4f &_value ) {
     // create uniform descriptor
-    UniformVec tmp;
+    UniformVecf tmp;
     tmp.id = _name;
-    tmp.integer = false;
     tmp.size = 4;
     tmp.val = _value;
 
     // add/update in pool
-    addVec(tmp);
+    addVecf(tmp);
   }
 
   /** \brief Set 4x4fMatrix uniform to specified value
