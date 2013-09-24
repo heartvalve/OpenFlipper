@@ -143,7 +143,7 @@ void SkinT<MeshT>::deformSkin(const AnimationHandle &_hAni, Method _method)
     #ifdef USE_OPENMP
       const OpenMesh::VertexHandle currentVertexH = vhandles[vhindex];
     #else
-      const OpenMesh::VertexHandle currentVertexH = it.handle();
+      const OpenMesh::VertexHandle currentVertexH = *it;
     #endif
 
     // based on its position in the default pose
