@@ -161,12 +161,22 @@ namespace GLSL {
     checkGLError2(id.c_str());
 
     switch (size){
-      case 1: glUniform1fv(location, 1, val.data()); break;
-      case 2: glUniform2fv(location, 1, val.data()); break;
-      case 3: glUniform3fv(location, 1, val.data()); break;
-      case 4: glUniform4fv(location, 1, val.data()); break;
+      case 1:
+        glUniform1fv(location, 1, val.data());
+        break;
+      case 2:
+        glUniform2fv(location, 1, val.data());
+        break;
+      case 3:
+        glUniform3fv(location, 1, val.data());
+        break;
+      case 4:
+        glUniform4fv(location, 1, val.data());
+        break;
 
-      default: std::cerr << "UniformPool::UniformVecf : invalid size "  << size << std::endl;
+      default:
+        std::cerr << "UniformPool::UniformVecf : invalid size "  << size << std::endl;
+        break;
     }
 
     checkGLError2(id.c_str());
@@ -182,12 +192,22 @@ namespace GLSL {
     checkGLError2(id.c_str());
 
     switch (size){
-        case 1: glUniform1iv(location, 1, (GLint*)val.data()); break;
-        case 2: glUniform2iv(location, 1, (GLint*)val.data()); break;
-        case 3: glUniform3iv(location, 1, (GLint*)val.data()); break;
-        case 4: glUniform4iv(location, 1, (GLint*)val.data()); break;
+        case 1:
+          glUniform1iv(location, 1, (GLint*)val.data());
+          break;
+        case 2:
+          glUniform2iv(location, 1, (GLint*)val.data());
+          break;
+        case 3:
+          glUniform3iv(location, 1, (GLint*)val.data());
+          break;
+        case 4:
+          glUniform4iv(location, 1, (GLint*)val.data());
+          break;
 
-        default: std::cerr << "UniformPool::UniformVeci : invalid size "  << size << std::endl;
+        default:
+          std::cerr << "UniformPool::UniformVeci : invalid size "  << size << std::endl;
+          break;
     }
 
     checkGLError2(id.c_str());
@@ -365,11 +385,11 @@ namespace GLSL {
   /** \brief Add or update an array type uniform in pool
   *
   * @param _name Uniform name
-  * @param _value array data
+  * @param _values array data
   * @param _count array size (in dwords)
   * @param _integer integer/float array
   */
-  void UniformPool::addBuf( const char *_name, void *_values, int _count, bool _integer ) {
+  void UniformPool::addBuf( const char* _name, void* _values, int _count, bool _integer ) {
     // look for existing uniform in pool
     UniformListIt it = findEntry(_name);
 
