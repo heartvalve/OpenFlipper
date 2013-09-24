@@ -369,8 +369,8 @@ private:
 
 	/** \brief Generates points for the spline, updates handles.
 	 *
-	 * @param _lineObject The object to generate points for.
-	 * @param _pointCount The number of points to generate.
+	 * @param _lineObject       The object to generate points for.
+	 * @param _pointsPerSegment The number of points per segment.
 	 *
 	 */
 	void updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointsPerSegment);
