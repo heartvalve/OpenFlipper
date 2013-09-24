@@ -48,6 +48,7 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
+#include <string>
 
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GLState.hh>
@@ -259,6 +260,16 @@ namespace GLSL {
   void Program::link() {
     glLinkProgram(this->m_programId);
     checkGLError2("link program failed");
+
+    GLint status = GL_FALSE;
+    glGetProgramiv(this->m_programId, GL_LINK_STATUS, &status);
+    if ( !status ){
+      GLint InfoLogLength = 0;
+      glGetProgramiv(this->m_programId, GL_INFO_LOG_LENGTH, &InfoLogLength);
+      std::string errorlog(InfoLogLength,'\0');
+      glGetShaderInfoLog(this->m_programId, InfoLogLength, NULL, &errorlog[0]);
+      std::cerr << "program link error: " << errorlog << std::endl;
+    }
   }
 
   /** \brief Enables the program object for using.
