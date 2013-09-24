@@ -352,7 +352,7 @@ public:
 
   /** \brief set values for int uniforms
    *
-   * @param _uniformName Name of uniform in shader
+   * @param _name        Name of uniform in shader
    * @param _value       value of the type
    *
    */
@@ -360,7 +360,7 @@ public:
 
   /** \brief set values for float uniforms
      *
-     * @param _uniformName Name of uniform in shader
+     * @param _name        Name of uniform in shader
      * @param _value       value of the type
      *
      */
@@ -368,7 +368,7 @@ public:
 
   /** \brief set values for Vec2f uniforms
    *
-   * @param _uniformName Name of uniform in shader
+   * @param _name        Name of uniform in shader
    * @param _value       value of the type
    *
    */
@@ -376,7 +376,7 @@ public:
 
   /** \brief set values for Vec3f uniforms
    *
-   * @param _uniformName Name of uniform in shader
+   * @param _name        Name of uniform in shader
    * @param _value       value of the type
    *
    */
@@ -384,7 +384,7 @@ public:
 
   /** \brief set values for Vec4f uniforms
    *
-   * @param _uniformName Name of uniform in shader
+   * @param _name        Name of uniform in shader
    * @param _value       value of the type
    *
    */

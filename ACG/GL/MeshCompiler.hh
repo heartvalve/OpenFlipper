@@ -183,20 +183,30 @@ public:
   void setVertices(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
 
   /** set input normals
+   *
+   * @param _num Number of normals
+   * @param _data Pointer to normals data
+   * @param _stride Difference in bytes between two normals positions in _data. Default value 0 indicates a tight float3 position array without any other data or memory alignment.
+   * @param _internalCopy Memory optimization flag: select true if the provided data address is only temporarily valid. Otherwise an internal copy must be made.
   */
   void setNormals(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
 
   /** set input texture coords
+   *
+   * @param _num Number of texture coords
+   * @param _data Pointer to texture coord data
+   * @param _stride Difference in bytes between two texture coordinate positions in _data. Default value 0 indicates a tight float3 position array without any other data or memory alignment.
+   * @param _internalCopy Memory optimization flag: select true if the provided data address is only temporarily valid. Otherwise an internal copy must be made.
   */
   void setTexCoords(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
 
   /** Set custom input attribute.
   *
   * Alternatively allocates an internal buffer only, such that data can be provided via setAttrib().
-  * @param _attrIdx Attribute id from VertexDeclaration
-  * @param _num Number of attributes
-  * @param _data Input data buffer, may be null to only 
-  * @param _stride Offset difference in bytes to the next attribute in _data. Default value 0 indicates no data alignment/memory packing.
+  * @param _attrIdx      Attribute id from VertexDeclaration
+  * @param _num          Number of attributes
+  * @param _data         Input data buffer, may be null to only
+  * @param _stride       Offset difference in bytes to the next attribute in _data. Default value 0 indicates no data alignment/memory packing.
   * @param _internalCopy Create an internal buffer and make a copy _data
   */
   void setAttribVec(int _attrIdx, int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
@@ -234,7 +244,7 @@ public:
 * @{ */
 //===========================================================================  
 
-  /** Set number of faces and indices if known by user
+  /** \brief Set number of faces and indices if known by user
    *
    * User may give a rough estimate of face/index count. 
    * A more accurate estimation improves efficiency: too low numbers result in performance hit, too high numbers in memory consumption
@@ -244,7 +254,7 @@ public:
   void setNumFaces(const int _numFaces, const int _numIndices);
 
 
-  /** Set index buffer for a triangle mesh.
+  /** \brief Set index buffer for a triangle mesh.
    *
    * This should only be used if the input vertex buffer is interleaved already.
    * @param _numTris Number of triangles.
@@ -253,7 +263,7 @@ public:
    */
   void setIndexBufferInterleaved(int _numTris, int _indexSize, const void* _indices);
 
-  /** Set vertex ids per triangle.
+  /** \brief Set vertex ids per triangle.
    *
    * @param _i Face ID
    * @param _v0 1st vertex id
@@ -262,7 +272,7 @@ public:
    */
   void setFaceVerts(int _i, int _v0, int _v1, int _v2);
 
-  /** Set vertex ids per face.
+  /** \brief Set vertex ids per face.
    *
    * @param _i Face id
    * @param _faceSize Size of face, ie. number of vertices of face
@@ -270,7 +280,7 @@ public:
    */
   void setFaceVerts(int _i, int _faceSize, int* _v);
 
-  /** Set normal ids per triangle.
+  /** \brief Set normal ids per triangle.
    *
    * @param _i Face ID
    * @param _v0 1st normal id
@@ -279,7 +289,7 @@ public:
    */
   void setFaceNormals(int _i, int _v0, int _v1, int _v2);
   
-  /** Set normal ids per face.
+  /** \brief Set normal ids per face.
    *
    * @param _i Face id
    * @param _faceSize Size of face, ie. number of vertices of face
@@ -287,7 +297,7 @@ public:
    */
   void setFaceNormals(int _i, int _faceSize, int* _v);
 
-  /** Set texcoord ids per triangle.
+  /** \brief Set texcoord ids per triangle.
    *
    * @param _i Face ID
    * @param _v0 1st texcoord id
@@ -296,7 +306,7 @@ public:
    */
   void setFaceTexCoords(int _i, int _v0, int _v1, int _v2);
 
-  /** Set texcoord ids per face.
+  /** \brief Set texcoord ids per face.
    *
    * @param _i Face id
    * @param _faceSize Size of face, ie. number of vertices of face
@@ -305,7 +315,7 @@ public:
   void setFaceTexCoords(int _i, int _faceSize, int* _v);
 
 
-  /** Set attribute ids per triangle.
+  /** \brief Set attribute ids per triangle.
    *
    * @param _i Face id
    * @param _v0 1st element id
@@ -315,12 +325,12 @@ public:
    */
   void setFaceAttrib(int _i, int _v0, int _v1, int _v2, int _attrID);
 
-  /** Set attribute ids per face.
+  /** \brief Set attribute ids per face.
    *
-   * @param _i Face id
+   * @param _i        Face id
    * @param _faceSize Size of face, ie. number of vertices of face
-   * @param _v Element ids
-   * @param _attrID Which attribute: index of VertexDeclaration element array
+   * @param _v        Element ids
+   * @param _attrID   Which attribute: index of VertexDeclaration element array
    */
   void setFaceAttrib(int _i, int _faceSize, int* _v, int _attrID);
 
@@ -333,11 +343,11 @@ public:
 //===========================================================================  
 
 
-  /** Specify face groups.
+  /** \brief Specify face groups.
    *
    * Faces with the same group ID will be chunked together in the sorting process.
    * This feature may be used for material/texture subsets.
-   * @param _i Face ID
+   * @param _i       Face ID
    * @param _groupID Custom group ID
    */
   void setFaceGroup(int _i, int _groupID);
@@ -353,13 +363,38 @@ public:
     unsigned int startFace; // index into sorted list of faces
   };
 
-  /// get subset ID of a group
+  /** \brief get subset ID of a group
+   *
+   * @param _groupID Id of the group
+   * @return Subset Id
+   */
   int findGroupSubset(int _groupID);
 
+  /** \brief Get Face Group of the given face
+   *
+   * @param _faceID Id of the face
+   * @return Group Id
+   */
   int getFaceGroup(int _faceID) const;
+
+  /** \brief Get Group Id of the triangle
+   *
+   * @param _triID Id of the triangle
+   * @return Group of the triangle
+   */
   int getTriGroup(int _triID) const;
 
+  /** \brief Get the number of subsets
+   *
+   * @return Number of subsets
+   */
   int getNumSubsets() const {return (int)subsets_.size();}
+
+  /** \brief get a specific subset
+   *
+   * @param _i  Id of the subset
+   * @return    The subset
+   */
   const Subset* getSubset(int _i) const;
 
 
@@ -371,7 +406,7 @@ public:
 //===========================================================================  
 
 
-  /* \brief Build vertex + index buffer.
+  /** \brief Build vertex + index buffer.
    * 
    * @param _optimizeVCache Reorder faces for optimized vcache usage. Low performance hit on build() execution time
    * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. High performance hit on execution time
@@ -379,7 +414,7 @@ public:
   void build(bool _optimizeVCache = true, bool _needPerFaceAttribute = false);
 
 
-  /* \brief Get vertex buffer ready for rendering.
+  /** \brief Get vertex buffer ready for rendering.
    * 
    * Query final vertex buffer data.
    * Support vertex buffer batch uploads.
@@ -389,7 +424,7 @@ public:
   */
   void getVertexBuffer(void* _dst, const int _offset = 0, const int _range = -1);
 
-  /* Get index buffer ready for rendering.
+  /** Get index buffer ready for rendering.
   */
   int* getIndexBuffer() const {return indices_;}
 
@@ -401,8 +436,11 @@ public:
   */
   int getNumFaces() const;
 
-  /** Get size of input face
-  */
+  /** \brief Get size of input face
+   *
+   * @param _i Index
+   * @return Size
+   */
   inline int getFaceSize(const int _i) const
   {
     return faceSize_[_i];
