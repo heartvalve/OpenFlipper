@@ -132,6 +132,8 @@ class FileSTLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QLabel*    savePrecisionLabel_;
     QSpinBox*  savePrecision_;
 
+    QCheckBox* loadFaceNormal_;
+
     QPushButton* saveDefaultButton_;
     QPushButton* loadDefaultButton_;
 };
