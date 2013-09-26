@@ -81,7 +81,6 @@ acg_drop_templates (sources)
 
 # genereate uic and moc targets
 if (QT5_FOUND)
-  set(CMAKE_AUTOMOC ON)
   acg_qt5_autouic (uic_targets ${ui})
   acg_qt5_automoc (moc_targets ${headers})
 else ()
