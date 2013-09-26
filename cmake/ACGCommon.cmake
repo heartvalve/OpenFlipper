@@ -212,12 +212,23 @@ macro (acg_qt5)
     #set (QT_MIN_VERSION ${ARGN})
 
     #for custom installation of qt5, dont use any of these variables
-    set (QT5_INSTALL_PATH "" CACHE PATH "Path to qt5 directory which contains lib and include folder")
+    set (QT5_INSTALL_PATH "" CACHE PATH "Path to Qt5 directory which contains lib and include folder")
+	if (EXISTS ${QT5_INSTALL_PATH})
+		if (NOT EXISTS "${QT5_INSTALL_PATH}/include")
+			message( FATAL_ERROR "Could not find Qt5 include directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
+		endif()
+		if (NOT EXISTS "${QT5_INSTALL_PATH}/lib")
+			message( FATAL_ERROR "Could not find Qt5 lib directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
+		endif()
+	else()
+		message( FATAL_ERROR "The Given QT5_INSTALL_PATH does not exists")
+	endif()
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+	
 	set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
 	set (QT_RCC_EXECUTABLE "${QT5_INSTALL_PATH}/bin/rcc" CACHE PATH "Path to the rcc executable")
-    
+	
     #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
     if ( WIN32 )
       
