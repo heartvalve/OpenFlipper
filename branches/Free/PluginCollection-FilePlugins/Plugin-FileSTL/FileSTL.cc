@@ -68,6 +68,7 @@ FileSTLPlugin::FileSTLPlugin() :
         saveBinary_(0),
         savePrecisionLabel_(0),
         savePrecision_(0),
+        loadFaceNormal_(0),
         saveDefaultButton_(0),
         loadDefaultButton_(0)
 
@@ -118,8 +119,18 @@ int FileSTLPlugin::loadObject(QString _filename) {
 
         object->mesh()->request_face_normals();
 
+        bool loadNormals( (loadFaceNormal_ && loadFaceNormal_->isChecked()) ||
+                          (!loadFaceNormal_ && OpenFlipperSettings().value("FileSTL/Load/FaceNormal", true).toBool())
+            );
+
         // load file
-        bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename );
+        OpenMesh::IO::Options opt;
+        // load face normals from the stl file if requested
+        if (loadNormals) {
+          opt += OpenMesh::IO::Options::FaceNormal;
+        }
+
+        bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
         if (!ok)
         {
             std::cerr << "Plugin FileSTL : Read error for stl mesh.\n";
@@ -128,7 +139,15 @@ int FileSTLPlugin::loadObject(QString _filename) {
 
         }
 
-        object->mesh()->update_normals();
+        // only calculate the face normals if they are not read from the file
+        if (!loadNormals || !opt.face_has_normal())
+          object->mesh()->update_normals();
+        else {
+          if (object->mesh()->has_vertex_normals())
+            object->mesh()->update_vertex_normals();
+          if (object->mesh()->has_halfedge_normals())
+            object->mesh()->update_halfedge_normals();
+        }
 
         object->update();
         object->show();
@@ -235,6 +254,11 @@ QWidget* FileSTLPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
 
+        loadFaceNormal_ = new QCheckBox("Load Face Normals");
+        layout->addWidget(loadFaceNormal_);
+
+        loadFaceNormal_->setChecked( OpenFlipperSettings().value("FileSTL/Load/FaceNormal",true).toBool()  );
+
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
 
@@ -249,6 +273,7 @@ QWidget* FileSTLPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
 //-----------------------------------------------------------------------------------------------------
 
 void FileSTLPlugin::slotLoadDefault() {
+  OpenFlipperSettings().setValue( "FileSTL/Load/FaceNormal",   loadFaceNormal_->isChecked()  );
   OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
