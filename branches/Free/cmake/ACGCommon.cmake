@@ -215,7 +215,7 @@ macro (acg_qt5)
     set (QT5_INSTALL_PATH "" CACHE PATH "Path to qt5 directory which contains lib and include folder")
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-	set (QT_PLUGINS_DIR ${QT5_INSTALL_PATH}"\\plugins" CACHE PATH "")
+	set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
     
     #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
     if ( WIN32 )
