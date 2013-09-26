@@ -99,7 +99,7 @@
 			// Writes crash dump to .OpenFlipper config directory
 			std::ofstream crashFile;
 			QString crashName = OpenFlipper::Options::configDirStr() + QDir::separator() + "CrashDump.txt";
-			crashFile.open(crashName.toAscii(),std::ios::out | std::ios::app);
+			crashFile.open(crashName.toLatin1(),std::ios::out | std::ios::app);
 			crashFile << szText;
 			crashFile.close();
 	  }
