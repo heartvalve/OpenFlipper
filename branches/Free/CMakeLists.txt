@@ -1,5 +1,4 @@
 cmake_minimum_required (VERSION 2.8.4)
-cmake_policy(SET CMP0020 NEW)
 
 if (NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type selected, default to Release")
