@@ -19,7 +19,7 @@ if ( BLOCK_IN_SOURCE_BUILD )
 endif()
 
 # allow only Debug and Release builds
-set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+set (CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
 mark_as_advanced (CMAKE_CONFIGURATION_TYPES)
 
 # set Debus as default build target
@@ -227,6 +227,7 @@ macro (acg_qt5)
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 	
 	set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
+	set (QT_BINARY_DIR "${QT5_INSTALL_PATH}/bin" CACHE PATH "Qt5 binary Directory")
 	set (QT_RCC_EXECUTABLE "${QT5_INSTALL_PATH}/bin/rcc" CACHE PATH "Path to the rcc executable")
 	
     #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
@@ -318,6 +319,9 @@ macro (acg_qt5)
       endif()
 
       add_definitions(-DQT_NO_OPENGL)
+	  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+		add_definitions(-DQT_NO_DEBUG)
+	  endif()
     endif ()
 
     #endif ()
