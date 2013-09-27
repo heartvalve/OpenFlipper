@@ -68,13 +68,12 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
-
 template <class Mesh, class Mod>
 StatusNodeT<Mesh, Mod>::
 StatusNodeT( const Mesh&         _mesh,
              BaseNode*           _parent,
              const std::string&  _name )
-  : MaterialNode(_parent, _name), mesh_(_mesh),
+  : BaseClass(_parent, _name), mesh_(_mesh),
   drawMesh_(NULL),
   bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
   bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX),
@@ -84,8 +83,8 @@ StatusNodeT( const Mesh&         _mesh,
   edgeIndexInvalid_(true),
   faceIndexInvalid_(true)
 {
-  set_line_width(3);
-  set_point_size(5);
+  this->set_line_width(3);
+  this->set_point_size(5);
 }
 
 
@@ -150,7 +149,7 @@ update_cache()
 
     v_cache_.clear();
     for (; v_it != v_end; ++v_it) {
-      if (Mod::is_vertex_selected(mesh_, *v_it)) {
+      if (this->is_vertex_selected(mesh_, *v_it)) {
 
         unsigned int vertexIndex = v_it->idx();
 
@@ -178,7 +177,7 @@ update_cache()
 
     e_cache_.clear();
     for (; e_it != e_end; ++e_it) {
-      if (Mod::is_edge_selected(mesh_, *e_it)) {
+      if (this->is_edge_selected(mesh_, *e_it)) {
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0));
         unsigned int vidx = vh.idx();
 
@@ -208,7 +207,7 @@ update_cache()
     he_points_.clear();
     he_normals_.clear();
     for (; he_it != he_end; ++he_it) {
-      if (Mod::is_halfedge_selected(mesh_, *he_it)) {
+      if (this->is_halfedge_selected(mesh_, *he_it)) {
         // add vertices
         he_points_.push_back(halfedge_point(*he_it));
         he_points_.push_back(halfedge_point(mesh_.prev_halfedge_handle(*he_it)));
@@ -243,7 +242,7 @@ update_cache()
     f_cache_.clear();
     fh_cache_.clear();
     for (; f_it != f_end; ++f_it) {
-      if (Mod::is_face_selected(mesh_, *f_it)) {
+      if (this->is_face_selected(mesh_, *f_it)) {
         fv_it = mesh_.cfv_iter(*f_it);
         unsigned int vidx = fv_it->idx();
 
@@ -318,16 +317,16 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 			       DrawModes::SOLID_PHONG_SHADED |
 			       DrawModes::SOLID_TEXTURED_SHADED ));
 
-  bool points = ((drawMode() == DrawModes::DEFAULT) |
+  bool points = ((this->drawMode() == DrawModes::DEFAULT) |
 		 (_drawMode & DrawModes::POINTS));
 
-  bool edges = ((drawMode() == DrawModes::DEFAULT) |
+  bool edges = ((this->drawMode() == DrawModes::DEFAULT) |
 		 (_drawMode & DrawModes::WIREFRAME));
 
-  bool halfedges = ((drawMode() == DrawModes::DEFAULT) |
+  bool halfedges = ((this->drawMode() == DrawModes::DEFAULT) |
 		    (_drawMode & DrawModes::WIREFRAME));
 
-  bool faces = ((drawMode() == DrawModes::DEFAULT) |
+  bool faces = ((this->drawMode() == DrawModes::DEFAULT) |
 		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
 
 
@@ -585,16 +584,16 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
 			       DrawModes::SOLID_TEXTURED_SHADED |
 			       DrawModes::POINTS_SHADED ));
 
-  bool points = ((drawMode() == DrawModes::DEFAULT) |
+  bool points = ((this->drawMode() == DrawModes::DEFAULT) |
     (_drawMode & DrawModes::POINTS));
 
-  bool edges = ((drawMode() == DrawModes::DEFAULT) |
+  bool edges = ((this->drawMode() == DrawModes::DEFAULT) |
     (_drawMode & DrawModes::WIREFRAME));
 
-  bool halfedges = ((drawMode() == DrawModes::DEFAULT) |
+  bool halfedges = ((this->drawMode() == DrawModes::DEFAULT) |
     (_drawMode & DrawModes::WIREFRAME));
 
-  bool faces = ((drawMode() == DrawModes::DEFAULT) |
+  bool faces = ((this->drawMode() == DrawModes::DEFAULT) |
     (_drawMode & DrawModes::SOLID_FLAT_SHADED));
 
   RenderObject ro;

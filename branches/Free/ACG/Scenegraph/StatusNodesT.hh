@@ -72,11 +72,99 @@
 //== NAMESPACES ===============================================================
 
 
+template<class Mod>
+class StatusNodes_ModTraits {
+    public:
+        enum {
+            StaticUsage = true
+        };
+};
+
 namespace ACG {
 namespace SceneGraph {
 
 
 //== CLASS DEFINITION =========================================================
+
+template<class Mesh, class Mod, const bool StaticUsage> class StatusNodeBaseT;
+
+template<class Mesh, class Mod>
+
+class StatusNodeBaseT<Mesh, Mod, true> : public MaterialNode {
+    public:
+        StatusNodeBaseT(BaseNode* _parent, const std::string&  _name) :
+            MaterialNode(_parent, _name) {}
+
+        virtual ~StatusNodeBaseT() {}
+
+    protected:
+        bool is_vertex_selected(
+                const Mesh &mesh, typename Mesh::VertexHandle vh) {
+            return Mod::is_vertex_selected(mesh, vh);
+        }
+
+        bool is_halfedge_selected(
+                const Mesh &mesh, typename Mesh::HalfedgeHandle heh) {
+            return Mod::is_halfedge_selected(mesh, heh);
+        }
+
+        bool is_edge_selected(const Mesh &mesh, typename Mesh::EdgeHandle eh) {
+            return Mod::is_edge_selected(mesh, eh);
+        }
+
+        bool is_face_selected(const Mesh &mesh, typename Mesh::FaceHandle fh) {
+            return Mod::is_face_selected(mesh, fh);
+        }
+};
+
+template<class Mesh, class Mod>
+class StatusNodeBaseT<Mesh, Mod, false> : public MaterialNode {
+
+    public:
+        StatusNodeBaseT(BaseNode* _parent, const std::string&  _name) :
+            MaterialNode(_parent, _name), modInstance(0) {}
+
+        virtual ~StatusNodeBaseT() {
+            delete modInstance;
+        }
+
+        /**
+         * Provide the actual instance of the Mod. Transfers ownership.
+         *
+         * @param mod A Mod instance. Has to be created with new. Ownership
+         * will be assumed and it will be deleted with delete.
+         */
+        void provideModInstance(Mod *mod) {
+            delete modInstance;
+            modInstance = mod;
+        }
+
+    protected:
+        bool is_vertex_selected(
+                const Mesh &mesh, typename Mesh::VertexHandle vh) {
+            assert(modInstance);
+            return modInstance->is_vertex_selected(mesh, vh);
+        }
+
+        bool is_halfedge_selected(
+                const Mesh &mesh, typename Mesh::HalfedgeHandle heh) {
+            assert(modInstance);
+            return modInstance->is_halfedge_selected(mesh, heh);
+        }
+
+        bool is_edge_selected(const Mesh &mesh, typename Mesh::EdgeHandle eh) {
+            assert(modInstance);
+            return modInstance->is_edge_selected(mesh, eh);
+        }
+
+        bool is_face_selected(const Mesh &mesh, typename Mesh::FaceHandle fh) {
+            assert(modInstance);
+            return modInstance->is_face_selected(mesh, fh);
+        }
+
+    protected:
+        Mod *modInstance;
+};
 
 
 /** \class StatusNodeT StatusNodesT.hh <ACG/Scenegraph/StatusNodesT.hh>
@@ -85,9 +173,11 @@ namespace SceneGraph {
  *
  *             **/
 template <class Mesh, class Mod>
-class StatusNodeT : public MaterialNode
+class StatusNodeT :
+        public StatusNodeBaseT<Mesh, Mod, ::StatusNodes_ModTraits<Mod>::StaticUsage>
 {
 public:
+  typedef StatusNodeBaseT<Mesh, Mod, ::StatusNodes_ModTraits<Mod>::StaticUsage> BaseClass;
 
   /// constructor
   StatusNodeT( const Mesh&         _mesh,
@@ -95,7 +185,7 @@ public:
                const std::string&  _name   = "<StatusNode>" );
 
   /// destructor
-  ~StatusNodeT() {}
+  virtual ~StatusNodeT() {}
 
   ACG_CLASSNAME(StatusNode);
 
