@@ -173,6 +173,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
             emit scriptInfo("selectVertices(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
         else
             emit scriptInfo("unselectVertices(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
+        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
     }
 
     //Edge Selection
@@ -213,6 +214,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
                 emit scriptInfo("selectEdges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest_eh.idx())+ "])");
             else
                 emit scriptInfo("unselectEdges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest_eh.idx())+ "])");
+            emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
         } else {
             _mesh->status(closest).set_selected(!_mesh->status(closest).selected());
 
@@ -220,6 +222,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
                 emit scriptInfo("selectHalfedges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
             else
                 emit scriptInfo("unselectHalfedges(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(closest.idx())+ "])");
+            emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
         }
     }
 
@@ -231,6 +234,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
             emit scriptInfo("selectFaces(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(fh.idx())+ "])");
         else
             emit scriptInfo("unselectFaces(ObjectId(" + QString::number(_objectId) + ") , [" + QString::number(fh.idx())+ "])");
+        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
     }
 }
 
@@ -247,6 +251,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
  */
 template <class MeshT>
 void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh ,
+                                                     int                   _objectId ,
                                                      int                   _target_idx ,
                                                      typename MeshT::Point _hitpoint,
                                                      double                _radius,
@@ -372,6 +377,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
             if(_mesh->status(*v_it).tagged())
                 _mesh->status(*v_it).set_selected(sel);
+        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
     }
     if(_primitiveType & edgeType_) {
         typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
@@ -379,6 +385,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
             if(_mesh->status(*e_it).tagged())
                 _mesh->status(*e_it).set_selected(sel);
+        emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
     }
     if(_primitiveType & halfedgeType_) {
         typename MeshT::HalfedgeIter he_it, he_end(_mesh->halfedges_end());
@@ -386,6 +393,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         for(he_it=_mesh->halfedges_begin(); he_it!=he_end; ++he_it)
             if(_mesh->status(_mesh->edge_handle(*he_it)).tagged())
                 _mesh->status(*he_it).set_selected(sel);
+        emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
     }
     if(_primitiveType & faceType_) {
         typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
@@ -393,6 +401,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
         for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
             if(_mesh->status(*f_it).tagged())
                 _mesh->status(*f_it).set_selected(sel);
+        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
     }
 
     _mesh->remove_property(checkedProp);
@@ -410,7 +419,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
  * @return true, if something was selected
  */
 template<class MeshT>
-bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegion *_region,
+bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, int _objectId, ACG::GLState& _state, QRegion *_region,
                                                 PrimitiveType _primitiveType, bool _deselection) {
     ACG::Vec3d proj;
     bool rv = false;
@@ -467,6 +476,15 @@ bool MeshObjectSelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _sta
                 _mesh->status(*f_it).set_selected(!_deselection);
         }
     }
+
+    if(_primitiveType & vertexType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
+    if(_primitiveType & edgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
+    if(_primitiveType & halfedgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
+    if(_primitiveType & faceType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
 
     return rv;
 }
@@ -562,8 +580,9 @@ void MeshObjectSelectionPlugin::closestBoundarySelection(MeshT* _mesh, int _vh, 
  * @param _deselection true if primitives should be deselected
  */
 template<class MeshT>
-void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, double _maxAngle,
-                                                   PrimitiveType _primitiveTypes, bool _deselection) {
+void MeshObjectSelectionPlugin::floodFillSelection(
+        MeshT* _mesh, int _objectId, uint _fh, double _maxAngle,
+        PrimitiveType _primitiveTypes, bool _deselection) {
 
     // reset tagged status
     typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
@@ -607,22 +626,36 @@ void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, doubl
     for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it) {
         if (_mesh->status(*f_it).tagged()) {
 
-            if(_primitiveTypes & vertexType_)
+            if(_primitiveTypes & vertexType_) {
                 for (typename MeshT::FaceVertexIter fv_it(*_mesh,*f_it) ; fv_it.is_valid(); ++fv_it)
                     _mesh->status(*fv_it).set_selected(!_deselection);
+            }
 
-            if(_primitiveTypes & edgeType_)
+            if(_primitiveTypes & edgeType_) {
                 for (typename MeshT::FaceEdgeIter fe_it(*_mesh,*f_it) ; fe_it.is_valid(); ++fe_it)
                     _mesh->status(*fe_it).set_selected(!_deselection);
+            }
 
-            if(_primitiveTypes & halfedgeType_)
+            if(_primitiveTypes & halfedgeType_) {
                 for (typename MeshT::FaceHalfedgeIter fhe_it(*_mesh,*f_it) ; fhe_it.is_valid(); ++fhe_it)
                     _mesh->status(*fhe_it).set_selected(!_deselection);
+            }
 
-            if(_primitiveTypes & faceType_)
+            if(_primitiveTypes & faceType_) {
                 _mesh->status(*f_it).set_selected(!_deselection);
+            }
         }
     }
+
+
+    if(_primitiveTypes & vertexType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
+    if(_primitiveTypes & edgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
+    if(_primitiveTypes & halfedgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
+    if(_primitiveTypes & faceType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
 }
 
 //***********************************************************************************
@@ -635,7 +668,9 @@ void MeshObjectSelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh, doubl
  * @param _primitiveType primitive types to be selected
  */
 template<class MeshT>
-void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType) {
+void MeshObjectSelectionPlugin::componentsMeshSelection(
+        MeshT* _mesh, int _objectId, uint _fh, ACG::Vec3d& _hit_point,
+        PrimitiveType _primitiveType) {
 
     typename MeshT::FaceHandle fh = _mesh->face_handle(_fh);
 
@@ -769,6 +804,14 @@ void MeshObjectSelectionPlugin::componentsMeshSelection(MeshT* _mesh, uint _fh, 
 
         _mesh->remove_property(visited);
     }
+    if(_primitiveType & vertexType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
+    if(_primitiveType & edgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
+    if(_primitiveType & halfedgeType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
+    if(_primitiveType & faceType_)
+        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
 }
 
 //***********************************************************************************
