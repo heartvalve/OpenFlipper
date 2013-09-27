@@ -471,26 +471,29 @@ private:
 
     /// Use the event to paint selection with a sphere
     template<typename MeshT>
-    void paintSphereSelection(MeshT* _mesh, int _target_idx, typename MeshT::Point _hitpoint,
-                              double _radius, PrimitiveType _primitiveTypes, bool _deselection);
+    void paintSphereSelection(MeshT* _mesh, int _objectId, int _target_idx,
+            typename MeshT::Point _hitpoint, double _radius,
+            PrimitiveType _primitiveTypes, bool _deselection);
     
     /// Surface volume selection tool
     template<class MeshT>
-    bool volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegion *_region,
-                         PrimitiveType _primitiveTypes, bool _deselection);
+    bool volumeSelection(MeshT* _mesh, int _objectId, ACG::GLState& _state,
+            QRegion *_region, PrimitiveType _primitiveTypes, bool _deselection);
 
     /// Select all entities that are incident to closest boundary
     template<class MeshT>
-    void closestBoundarySelection(MeshT* _mesh, int _vh, PrimitiveType _primitiveTypes, bool _deselection);
+    void closestBoundarySelection(MeshT* _mesh, int _vh,
+            PrimitiveType _primitiveTypes, bool _deselection);
     
     /// Select all entities that are connected (and do not exceed the maximum dihedral angle)
     template<class MeshT>
-    void floodFillSelection(MeshT* _mesh, uint _fh, double _maxAngle,
-                            PrimitiveType _primitiveTypes, bool _deselection);
+    void floodFillSelection(MeshT* _mesh, int _objectId, uint _fh,
+            double _maxAngle, PrimitiveType _primitiveTypes, bool _deselection);
 
     /// Connected component mesh selection
     template<typename MeshT>
-    void componentsMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _hit_point, PrimitiveType _primitiveType);
+    void componentsMeshSelection(MeshT* _mesh, int _objectId, uint _fh,
+            ACG::Vec3d& _hit_point, PrimitiveType _primitiveType);
                             
     /// Colorize the selection
     template<class MeshT>

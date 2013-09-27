@@ -1153,9 +1153,9 @@ void MeshObjectSelectionPlugin::slotSphereSelection(QMouseEvent* _event, double 
         if (PluginFunctions::getPickedObject(node_idx, object)) {
 
             if (object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH)) {
-                paintSphereSelection(PluginFunctions::triMesh(object), target_idx, hit_point, _radius, _currentType, _deselect);
+                paintSphereSelection(PluginFunctions::triMesh(object), object->id(), target_idx, hit_point, _radius, _currentType, _deselect);
             } else if (object->picked(node_idx) && object->dataType(DATA_POLY_MESH)) {
-                paintSphereSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _radius, _currentType, _deselect);
+                paintSphereSelection(PluginFunctions::polyMesh(object), object->id(), target_idx, hit_point, _radius, _currentType, _deselect);
             }
 
             emit updatedObject(object->id(), UPDATE_SELECTION);
@@ -1229,7 +1229,10 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QMouseEvent* _event, doub
                     if(PluginFunctions::getPickedObject(node_idx, object)) {
 
                         if(object->dataType(DATA_TRIANGLE_MESH)) {
-                            floodFillSelection(PluginFunctions::triMesh(object), target_idx, _maxAngle, _currentType, _deselect);
+                            floodFillSelection(
+                                    PluginFunctions::triMesh(object),
+                                    object->id(), target_idx, _maxAngle,
+                                    _currentType, _deselect);
                             emit updatedObject(object->id(), UPDATE_SELECTION);
                             emit  createBackup(object->id(), "FloodFill Selection", UPDATE_SELECTION);
                         }
@@ -1244,7 +1247,10 @@ void MeshObjectSelectionPlugin::slotFloodFillSelection(QMouseEvent* _event, doub
                     if(PluginFunctions::getPickedObject(node_idx, object) ) {
 
                         if(object->dataType(DATA_POLY_MESH)) {
-                            floodFillSelection(PluginFunctions::polyMesh(object), target_idx, _maxAngle, _currentType, _deselect);
+                            floodFillSelection(
+                                    PluginFunctions::polyMesh(object),
+                                    object->id(), target_idx, _maxAngle,
+                                    _currentType, _deselect);
                             emit updatedObject(object->id(), UPDATE_SELECTION);
                             emit  createBackup(object->id(), "FloodFill Selection", UPDATE_SELECTION);
                         }
@@ -1279,7 +1285,8 @@ void MeshObjectSelectionPlugin::slotComponentsSelection(QMouseEvent* _event, Sel
             if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_TRIANGLE_MESH)) {
-                    componentsMeshSelection(PluginFunctions::triMesh(object), target_idx, hit_point, _currentType);
+                    componentsMeshSelection(PluginFunctions::triMesh(object),
+                            object->id(), target_idx, hit_point, _currentType);
                 }
             }
         } else if (object->dataType() == DATA_POLY_MESH) {
@@ -1287,7 +1294,8 @@ void MeshObjectSelectionPlugin::slotComponentsSelection(QMouseEvent* _event, Sel
             if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
 
                 if (object->dataType(DATA_POLY_MESH)) {
-                    componentsMeshSelection(PluginFunctions::polyMesh(object), target_idx, hit_point, _currentType);
+                    componentsMeshSelection(PluginFunctions::polyMesh(object),
+                            object->id(), target_idx, hit_point, _currentType);
                 }
             }
         }
@@ -1811,12 +1819,12 @@ bool SelectVolumeAction::operator()(BaseNode* _node) {
         if (object->dataType(DATA_TRIANGLE_MESH)) {
 
             TriMesh* m = PluginFunctions::triMesh(object);
-            selected = plugin_->volumeSelection(m, state_, &region_, type_, deselection_);
+            selected = plugin_->volumeSelection(m, object->id(), state_, &region_, type_, deselection_);
 
         } else if(object->dataType(DATA_POLY_MESH)) {
 
             PolyMesh* m = PluginFunctions::polyMesh(object);
-            selected = plugin_->volumeSelection(m, state_, &region_, type_, deselection_);
+            selected = plugin_->volumeSelection(m, object->id(), state_, &region_, type_, deselection_);
         }
 
         if (selected){
