@@ -105,6 +105,8 @@
 
 #include <OpenFlipper/common/RendererInfo.hh>
 
+#include <OpenFlipper/widgets/messageBox/StaysOnTopMessageBox.hh>
+
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
 
@@ -607,12 +609,7 @@ Core::init() {
       emit log(LOGERR,tr("The build in renderer is only a very limited one and is missing many features!"));
       emit log(LOGERR,tr("You should build and use the other renderers!"));
 
-      QMessageBox msgBox;
-      msgBox.setWindowFlags(msgBox.windowFlags() | Qt::WindowStaysOnTopHint); //show messagebox before the splash screen
-      msgBox.setText("No external plugin renderers available!");
-      msgBox.setInformativeText("The build in renderer is only a very limited one and is missing many features.\nYou should build and use the other free renderers shipped with OpenFlipper.");
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.exec();
+      StaysOnTopMessageBox::warning(0,tr( "No external plugin renderers available!"),tr("The build in renderer is only a very limited one and is missing many features.\nYou should build and use the other free renderers shipped with OpenFlipper."));
     }
 
   }
@@ -1915,13 +1912,13 @@ bool Core::checkOpenGLCapabilities()  {
     std::cerr << message.toStdString() << std::endl;
     
     
-    QMessageBox::StandardButton button = QMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message,QMessageBox::Abort|QMessageBox::Ignore , QMessageBox::Abort);
+    QMessageBox::StandardButton button = StaysOnTopMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message,QMessageBox::Abort|QMessageBox::Ignore , QMessageBox::Abort);
     
     // Unsafe operation, so quit the application
     if ( button == QMessageBox::Abort )
       exitFailure();
     else 
-      QMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
+      StaysOnTopMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
     
     
     
@@ -1932,7 +1929,7 @@ bool Core::checkOpenGLCapabilities()  {
         
     std::cerr << message.toStdString() << std::endl;
     
-    QMessageBox::warning ( 0, tr( "Detected possible problems!"),message );
+    StaysOnTopMessageBox::warning ( 0, tr( "Detected possible problems!"),message );
     
   }
   #ifndef NDEBUG
