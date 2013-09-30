@@ -1915,13 +1915,13 @@ bool Core::checkOpenGLCapabilities()  {
     std::cerr << message.toStdString() << std::endl;
     
     
+    finishSplash();
     QMessageBox::StandardButton button = StaysOnTopMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message,QMessageBox::Abort|QMessageBox::Ignore , QMessageBox::Abort);
     
     // Unsafe operation, so quit the application
     if ( button == QMessageBox::Abort )
       exitFailure();
     else {
-      finishSplash();
       StaysOnTopMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
     }
     
