@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH achen       *
+*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
