@@ -605,6 +605,7 @@ Core::init() {
 
     // Warn the user in the log and via messagebox, that he is using the build in renderer only
     if ( renderManager().available() == 1 ) {
+      finishSplash();
       emit log(LOGERR,tr("No external plugin renderers available!"));
       emit log(LOGERR,tr("The build in renderer is only a very limited one and is missing many features!"));
       emit log(LOGERR,tr("You should build and use the other renderers!"));
@@ -1824,7 +1825,8 @@ bool Core::checkLibraryVersions()  {
     std::cerr << message.toStdString() << std::endl;
     
     if ( OpenFlipper::Options::gui() ) {
-      QMessageBox::critical ( 0, tr( "Library incompatibilities found!"),message );
+      finishSplash();
+      StaysOnTopMessageBox::critical ( 0, tr( "Library incompatibilities found!"),message );
     }
     
     // Unsafe operation, so quit the application
@@ -1839,7 +1841,8 @@ bool Core::checkLibraryVersions()  {
     std::cerr << message.toStdString() << std::endl;
     
     if ( OpenFlipper::Options::gui() ) {
-      QMessageBox::warning ( 0, tr( "Library incompatibilities found!"),message );
+      finishSplash();
+      StaysOnTopMessageBox::warning ( 0, tr( "Library incompatibilities found!"),message );
     }
     
   }
@@ -1917,12 +1920,15 @@ bool Core::checkOpenGLCapabilities()  {
     // Unsafe operation, so quit the application
     if ( button == QMessageBox::Abort )
       exitFailure();
-    else 
+    else {
+      finishSplash();
       StaysOnTopMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
+    }
     
     
     
   } else if ( warn ) {
+    finishSplash();
     QString message = tr("Warning! Automatic system environment checks discovered some possible problems!\n\n");
     message += tr("The following checks failed:\n\n");
     message += missing;
