@@ -59,7 +59,7 @@ if (UNIX)
   list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-DINCLUDE_TEMPLATES" )
   list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-DINCLUDE_TEMPLATES" )
   list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-DINCLUDE_TEMPLATES" )
-  
+
   # add our standard flags for Template inclusion
   list(APPEND ADDITIONAL_C_DEBUG_FLAGS            "-DINCLUDE_TEMPLATES" )
   list(APPEND ADDITIONAL_C_RELEASE_FLAGS          "-DINCLUDE_TEMPLATES" )
@@ -102,13 +102,13 @@ if (UNIX)
    
     IF ( APPLE  )
       # Skip unused parameters as it has to be used for the documentation via doxygen and the interfaces
-      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" "-Wno-non-virtual-dtor" "-Wno-unused-parameter" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" "-Wno-non-virtual-dtor" "-Wno-unused-parameter" "-Wno-variadic-macros" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     elseif ("${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1}" MATCHES ".*clang")
-      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wextra" "-Wno-non-virtual-dtor" "-Wno-unused-parameter" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wextra" "-Wno-non-virtual-dtor" "-Wno-unused-parameter" "-Wno-variadic-macros" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ELSEIF ( CMAKE_SYSTEM MATCHES "SunOS*" )
       set ( COMPILER_WARNINGS "" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ELSE ()
-      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" "-Wextra" "-Wno-variadic-macros" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
     ENDIF()
 
   endif ( NOT COMPILER_WARNINGS )
