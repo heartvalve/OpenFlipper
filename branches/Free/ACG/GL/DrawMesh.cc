@@ -1482,8 +1482,20 @@ void DrawMeshT<Mesh>::updatePerHalfedgeBuffers()
   for (typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
           he_it != he_end; ++he_it) {
 
-    perHalfedgeVertexBuf_[idx]   = halfedge_point<NormalLookup>(*he_it);
-    perHalfedgeVertexBuf_[idx+1] = halfedge_point<NormalLookup>(mesh_.prev_halfedge_handle(*he_it));
+    typename Mesh::HalfedgeHandle next_heh     = mesh_.next_halfedge_handle(*he_it);
+    typename Mesh::HalfedgeHandle previous_heh = mesh_.prev_halfedge_handle(*he_it);
+
+    if (mesh_.is_valid_handle(next_heh) && mesh_.is_valid_handle(previous_heh))
+    {
+        perHalfedgeVertexBuf_[idx]   = halfedge_point<NormalLookup>(*he_it);
+        perHalfedgeVertexBuf_[idx+1] = halfedge_point<NormalLookup>(previous_heh);
+    }
+    else
+    {
+        // Cannot compute shifted vertex positions. Use original vertex positions instead.
+        perHalfedgeVertexBuf_[idx  ] = mesh_.point(mesh_.to_vertex_handle(*he_it));
+        perHalfedgeVertexBuf_[idx+1] = mesh_.point(mesh_.from_vertex_handle(*he_it));
+    }
 
     if (  mesh_.has_halfedge_colors() ) {
       const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(*he_it) ) ;
