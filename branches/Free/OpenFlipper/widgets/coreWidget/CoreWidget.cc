@@ -238,6 +238,12 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   delete test;
 
+#if QT_VERSION >= 0x050000
+  // request the highest OpenGL version
+  // QT 5 should gracefully provide the next highest available version
+  format.setVersion(4,3);
+#endif
+
   glWidget_ = new QGLWidget(format,0);
   PluginFunctions::shareGLWidget (glWidget_);
 
