@@ -157,6 +157,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
   pickCache_(0),
   updatePickCache_(true),
   pickCacheSupported_(true),
+  constrainedRotationAxis_(std::numeric_limits<double>::quiet_NaN(), 0, 0),
   clickEvent_(QEvent::MouseButtonPress, QPoint (), Qt::NoButton, Qt::NoButton, Qt::NoModifier),
   properties_(_properties),
   glstate_(0),
@@ -1467,7 +1468,7 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
   glScene_->update ();
 
   // right button pressed => popup menu (ignore here)
-  if (_e->button() != Qt::RightButton )
+  if (allowConstrainedRotation() || _e->button() != Qt::RightButton )
   {
     switch (properties_.actionMode())
     {
@@ -1807,7 +1808,9 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           }
       }
 
-      lastPoint_hitSphere_ = mapToSphere(lastPoint2D_ = pos, lastPoint3D_);
+      lastPoint_hitSphere_ = mapToSphere(pos, lastPoint3D_);
+      lastPoint2D_ = pos;
+      std::cout << "Set lastPoint2D_ to " << pos.x() << ", " << pos.y() << std::endl;
       isRotating_ = true;
       timer_->stop();
 
@@ -1826,7 +1829,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           factor = properties_.wheelZoomFactorShift();
 
       // mouse button should be pressed
-      if (_event->buttons() & (Qt::LeftButton | Qt::MidButton)) {
+      if (_event->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton)) {
         QPoint newPoint2D = pos;
 
         ACG::Vec3d newPoint3D;
@@ -1918,9 +1921,46 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
             lastRotationAxis_ = axis;
             lastRotationAngle_ = angle;
+        } else if (allowConstrainedRotation() && (_event->buttons() & Qt::RightButton)) {
+            //ACG::Vec3d axis(constrainedRotationAxis_);
+            //double angle(0.0);
+
+            if (lastPoint_hitSphere_) {
+
+                const QPoint dragVector = newPoint2D - lastPoint2D_;
+                const double dragLength = dragVector.y();
+                        //ACG::Vec2d(dragVector.x(), dragVector.y()).norm();
+                const double angle = -dragLength * factor;
+
+                /*
+                {
+                    makeCurrent();
+                    const ACG::Vec3d center =
+                            properties_.trackballCenter();
+                    const ACG::Vec3d t =
+                            startViewMatrix_.transform_point(center);
+                    glstate_->set_modelview(startViewMatrix_);
+                    glstate_->translate(-t[0], -t[1], -t[2],
+                            ACG::MULT_FROM_LEFT);
+                    glstate_->rotate(angle,
+                            constrainedRotationAxis_[0],
+                            constrainedRotationAxis_[1],
+                            constrainedRotationAxis_[2],
+                            ACG::MULT_FROM_LEFT);
+                    glstate_->translate(t[0], t[1], t[2],
+                            ACG::MULT_FROM_LEFT);
+                }
+                */
+                ACG::Vec3d center(glWidth()/2.0, glHeight()/2.0);
+                rotate(constrainedRotationAxis_, angle, unproject(center));
+
+                lastRotationAxis_ = constrainedRotationAxis_;
+                lastRotationAngle_ = angle;
+            }
         }
 
         lastPoint2D_ = newPoint2D;
+        std::cout << "Set lastPoint2D_ to " << newPoint2D.x() << ", " << newPoint2D.y() << std::endl;
         lastPoint3D_ = newPoint3D;
         lastPoint_hitSphere_ = newPoint_hitSphere;
 
