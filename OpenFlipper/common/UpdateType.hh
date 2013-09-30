@@ -79,6 +79,11 @@ class DLLEXPORT UpdateType {
     /// Check if this update contains the given UpdateType
     bool contains( const UpdateType& _type ) const;
     
+    friend std::ostream &operator<< (
+            std::ostream &os, const UpdateType &type) {
+        return os << type.type_;
+    }
+
   protected:
     UpdateTypeSet type_;
 };
