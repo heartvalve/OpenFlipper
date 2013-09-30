@@ -470,35 +470,53 @@ void CoreWidget::showAboutWidget( ) {
   if ( flags.testFlag(QGLFormat::OpenGL_Version_4_0) )
     openGLQtVersion += tr("4.0 or higher") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_3))
-    openGLQtVersion += tr("3.3 or higher") ;
+    openGLQtVersion += tr("3.3") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_2))
-    openGLQtVersion += tr("3.2 or higher") ;
+    openGLQtVersion += tr("3.2") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_1))
-    openGLQtVersion += tr("3.1 or higher") ;
+    openGLQtVersion += tr("3.1") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
-    openGLQtVersion += tr("3.0 or higher") ;
+    openGLQtVersion += tr("3.0") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
-    openGLQtVersion += tr("3.0 or higher") ;
+    openGLQtVersion += tr("3.0") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_2_1))
-    openGLQtVersion += tr("2.1 or higher" );
+    openGLQtVersion += tr("2.1" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_2_0))
-    openGLQtVersion += tr("2.0 or higher" );
+    openGLQtVersion += tr("2.0" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_1_5))
-    openGLQtVersion += tr("1.5 or higher" );
+    openGLQtVersion += tr("1.5" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_1_4))
-    openGLQtVersion += tr("1.4 or higher" );
+    openGLQtVersion += tr("1.4" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_1_3))
-    openGLQtVersion += tr("1.3 or higher" );
+    openGLQtVersion += tr("1.3" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_1_2))
-    openGLQtVersion += tr("1.2 or higher" );
+    openGLQtVersion += tr("1.2" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_1_1))
-    openGLQtVersion += tr("1.1 or higher" );
+    openGLQtVersion += tr("1.1" );
   else
     openGLQtVersion += tr("Version:\tUNKNOWN!" );
 
   aboutWidget_->OpenFlipperAbout->append(openGLQtVersion);
 
   aboutWidget_->OpenFlipperAbout->append("\n");
+
+  const QGLContext* context = QGLContext::currentContext();
+  if (context) {
+    QString openGLprofile = tr("Qt reports the OpenGL profile:\t");
+    QGLFormat::OpenGLContextProfile profile = context->format().profile();
+    if (profile == QGLFormat::NoProfile)
+      openGLprofile += tr("no profile");
+    else if (profile == QGLFormat::CoreProfile)
+      openGLprofile += tr("Core profile");
+    else if (profile == QGLFormat::CompatibilityProfile)
+      openGLprofile += tr("Compatibility profile");
+    else
+      openGLprofile += tr("unknown profile");
+
+    aboutWidget_->OpenFlipperAbout->append(openGLprofile);
+    aboutWidget_->OpenFlipperAbout->append("\n");
+  }
+
 
   QString openGLVendor = tr("GL reports Vendor:\t\t");
   openGLVendor += QString((const char*)glGetString(GL_VENDOR));
