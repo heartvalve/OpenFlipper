@@ -1810,7 +1810,6 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
       lastPoint_hitSphere_ = mapToSphere(pos, lastPoint3D_);
       lastPoint2D_ = pos;
-      std::cout << "Set lastPoint2D_ to " << pos.x() << ", " << pos.y() << std::endl;
       isRotating_ = true;
       timer_->stop();
 
@@ -1960,7 +1959,6 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         }
 
         lastPoint2D_ = newPoint2D;
-        std::cout << "Set lastPoint2D_ to " << newPoint2D.x() << ", " << newPoint2D.y() << std::endl;
         lastPoint3D_ = newPoint3D;
         lastPoint_hitSphere_ = newPoint_hitSphere;
 
