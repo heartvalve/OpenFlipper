@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH achen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -90,7 +90,7 @@
 
 #include <vector>
 #include <string>
-
+#include <limits>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -850,6 +850,19 @@ private:
   void allowRotation( bool _mode ) { allowRotation_ = _mode; };
   bool allowRotation() { return allowRotation_; };
 
+  void allowConstrainedRotation(const ACG::Vec3d &axis) {
+      constrainedRotationAxis_ = axis;
+  }
+  bool allowConstrainedRotation() {
+      return constrainedRotationAxis_[0] == constrainedRotationAxis_[0];
+  }
+  const ACG::Vec3d &getConstrainedRotationAxis() {
+      return constrainedRotationAxis_;
+  }
+  void disallowConstrainedRotation() {
+      constrainedRotationAxis_[0] = std::numeric_limits<double>::quiet_NaN();
+  }
+
   private slots:
 
     void slotAnimation();
@@ -887,6 +900,7 @@ private:
 
     // animation stuff
     ACG::Vec3d                   lastRotationAxis_;
+    ACG::Vec3d                   constrainedRotationAxis_;
     double                       lastRotationAngle_;
     QTime                        lastMoveTime_;
     QTimer*                      timer_;
@@ -895,6 +909,7 @@ private:
     QTimer                       clickTimer_;
     QTime                        clickTime_;
     QMouseEvent                  clickEvent_;
+
 
     /** @} */
 
