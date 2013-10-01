@@ -593,8 +593,8 @@ void OptionsWidget::slotApply() {
     OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 2);
   
   //viewer
-  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
-  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
+  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->value());
+  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->value());
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/Invert", invertMouseWheelBox->isChecked());
 
   // Projection settings
