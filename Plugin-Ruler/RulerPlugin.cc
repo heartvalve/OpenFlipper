@@ -285,13 +285,6 @@ void RulerPlugin::slotViewChanged()
   if (!currentRuler_)
     return;
 
-  // check, if this function requested a viewupdate
-  if (viewupdated_)
-  {
-    viewupdated_ = false;
-    return;
-  }
-
   //compute line direction
   ACG::Vec3d lineVector = currentRuler_->points()[0] - currentRuler_->points()[1];
   ACG::Vec3d rightVec = (PluginFunctions::viewingDirection() % -PluginFunctions::upVector()).normalize();
@@ -315,9 +308,6 @@ void RulerPlugin::slotViewChanged()
 
   // small offset to the right and big offset up/down depending on the line
   currentRuler_->setTextOffset(rightVec+updownVec);
-
-  viewupdated_ = true;
-  emit updateView();
 
 
 }
