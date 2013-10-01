@@ -58,10 +58,21 @@ QString Renderer::checkOpenGL()
 {
   // Get version and check
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_0) )
-    return QString("Insufficient OpenGL Version! OpenGL 2.0 or higher required");
+  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
 
-  return "";
+  // Check extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  QString missing("");
+  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
+    missing += "GL_ARB_vertex_buffer_object extension missing\n";
+
+#ifndef __APPLE__
+  if ( !glExtensions.contains("GL_ARB_vertex_program") )
+    missing += "GL_ARB_vertex_program extension missing\n";
+#endif
+
+  return missing;
 }
 
 #if QT_VERSION < 0x050000

@@ -61,6 +61,12 @@
 
 #include <QCursor>
 
+// QT_NO_OPENGL currently has to be undefined first in QT5 because of QT5 and GLEW conflicts
+#undef QT_NO_OPENGL
+#include <QGLFormat>
+#define QT_NO_OPENGL
+
+
 PostProcessorPhilipsStereoPlugin::PostProcessorPhilipsStereoPlugin():
   pProgram_(0),
   settingsWidget_(0)
@@ -79,7 +85,17 @@ QAction* PostProcessorPhilipsStereoPlugin::optionsAction() {
 }
 
 QString PostProcessorPhilipsStereoPlugin::checkOpenGL() {
-  return QString("");
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
+
+  // Check extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  QString missing("");
+  if ( !glExtensions.contains("GL_ARB_texture_rectangle") )
+    missing += "GL_ARB_texture_rectangle extension missing\n";
+
+  return missing;
 }
 
 //-----------------------------------------------------------------------------
@@ -130,11 +146,6 @@ void  PostProcessorPhilipsStereoPlugin::slotShowOptionsMenu() {
 //-----------------------------------------------------------------------------
 
 void PostProcessorPhilipsStereoPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
-
-  if ( !ACG::checkExtensionSupported("GL_ARB_texture_rectangle") ) {
-    std::cerr << "GL_ARB_texture_rectangle not supported! " << std::endl;
-    return;
-  }
 
   // load shader if needed
   if (!pProgram_)
