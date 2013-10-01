@@ -56,6 +56,10 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+// QT_NO_OPENGL currently has to be undefined first in QT5 because of QT5 and GLEW conflicts
+#undef QT_NO_OPENGL
+#include <QGLFormat>
+#define QT_NO_OPENGL
 
 PostProcessorSobelPlugin::PostProcessorSobelPlugin() :
 shader_(0)
@@ -73,6 +77,10 @@ QString PostProcessorSobelPlugin::postProcessorName() {
 }
 
 QString PostProcessorSobelPlugin::checkOpenGL() {
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
+
   return QString("");
 }
 

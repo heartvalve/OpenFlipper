@@ -720,7 +720,26 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
 
 QString DepthPeeling::checkOpenGL()
 {
-  return QString("");
+  // Get version and check
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
+
+  // Check extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  QString missing("");
+  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
+    missing += "GL_ARB_vertex_buffer_object extension missing\n";
+
+#ifndef __APPLE__
+  if ( !glExtensions.contains("GL_ARB_vertex_program") )
+    missing += "GL_ARB_vertex_program extension missing\n";
+#endif
+
+  if ( !glExtensions.contains("GL_ARB_occlusion_query") )
+    missing += "GL_ARB_occlusion_query extension missing\n";
+
+  return missing;
 }
 
 void DepthPeeling::addRenderObject( RenderObject* _renderObject )

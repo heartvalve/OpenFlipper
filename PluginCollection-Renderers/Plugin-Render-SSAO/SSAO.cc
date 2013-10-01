@@ -713,27 +713,29 @@ void SSAOPlugin::render(ACG::GLState* _glState, Viewer::ViewerProperties& _prope
 
 QString SSAOPlugin::checkOpenGL() {
 
-  // TODO: Correctly configure the following requirements!
-
   // Get version and check
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( ! flags.testFlag(QGLFormat::OpenGL_Version_2_0) )
-    return QString("Insufficient OpenGL Version! OpenGL 2.0 or higher required");
+  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
 
-  //Get OpenGL extensions
+  // Check extensions
   QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  QString missing("");
+  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
+    missing += "GL_ARB_vertex_buffer_object extension missing\n";
 
-  // Collect missing extension
-  QString missing = "";
+#ifndef __APPLE__
+  if ( !glExtensions.contains("GL_ARB_vertex_program") )
+    missing += "GL_ARB_vertex_program extension missing\n";
+#endif
 
-//  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
-//    missing += "Missing Extension GL_ARB_vertex_buffer_object\n";
-//
-//  if ( !glExtensions.contains("GL_ARB_vertex_program") )
-//    missing += "Missing Extension GL_ARB_vertex_program\n";
+  if ( !glExtensions.contains("GL_ARB_texture_float") )
+    missing += "GL_ARB_texture_float extension missing\n";
+
+  if ( !glExtensions.contains("GL_EXT_framebuffer_object") )
+    missing += "GL_EXT_framebuffer_object extension missing\n";
 
   return missing;
-
 }
 
 #if QT_VERSION < 0x050000
