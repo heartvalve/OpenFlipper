@@ -570,7 +570,9 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   }
 
   ro.culling = false;
+  //ro.alphaTest = true;
   ro.blending = true;
+  ro.alpha = 0.f;
 
   ro.blendSrc = GL_SRC_ALPHA;
   ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
@@ -595,12 +597,11 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   ACG::SceneGraph::Material localMaterial;
 
-  localMaterial.baseColor(ACG::Vec4f(1.0, 1.0, 1.0, 1.0 ));
-  localMaterial.ambientColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
-  localMaterial.diffuseColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
-  localMaterial.specularColor(ACG::Vec4f(0.0, 0.0, 0.0, 1.0 ));
+  localMaterial.baseColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.0 ));
+  localMaterial.ambientColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.0 ));
+  localMaterial.diffuseColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.0 ));
+  localMaterial.specularColor(ACG::Vec4f(0.0, 0.0, 0.0, 0.0 ));
   ro.setMaterial(&localMaterial);
-
 
   ro.glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(text_.size()) * 4);
   _renderer->addRenderObject(&ro);
