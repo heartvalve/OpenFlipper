@@ -445,7 +445,7 @@ updateVBO() {
 
 #ifdef WIN32
 	metricWidth += leftBearing + rightBearing;
-#else
+#elif QT_VERSION < 0x050000
     // QFontMetrics does not seem to always give the correct width
     // therefore we add a margin so that characters are not cut off
     if (leftBearing + rightBearing < 0.1*maxFontWidth_) {
