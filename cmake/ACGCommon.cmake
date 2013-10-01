@@ -318,7 +318,6 @@ macro (acg_qt5)
         set (QT_LIBRARIES ${QT_LIBRARIES} ${Qt5Core_QTMAIN_LIBRARIES})
       endif()
 
-      add_definitions(-DQT_NO_OPENGL)
 	  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		add_definitions(-DQT_NO_DEBUG)
 	  endif()
