@@ -263,7 +263,7 @@ pick(GLState& _state, PickTarget _target)
   //disabled right now because of rendering artifacts.
   //This probably doesn't make sense anyways since the lines are drawn as cylinders and therefore have a width
   // glDepthRange(0.0,0.99)
-  
+
   switch (_target)
   {
     case PICK_VERTEX:
@@ -283,7 +283,9 @@ pick(GLState& _state, PickTarget _target)
     case PICK_ANYTHING:
     {
       _state.pick_set_maximum (polyline_.n_vertices() + n_end);
-      pick_vertices( _state);
+
+      if (drawMode() & DrawModes::POINTS)
+          pick_vertices( _state);
       pick_edges( _state, polyline_.n_vertices());
       break;
     }
