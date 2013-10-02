@@ -191,6 +191,32 @@ void VolumeMeshSelectionPlugin::updateSlotDescriptions() {
 
 //==============================================================================================
 
+bool VolumeMeshSelectionPlugin::vertexTypeActive() {
+  SelectionInterface::PrimitiveType t = 0u;
+  emit getActivePrimitiveType(t);
+  return (t & vertexType_) > 0;
+}
+
+bool VolumeMeshSelectionPlugin::edgeTypeActive() {
+  SelectionInterface::PrimitiveType t = 0u;
+  emit getActivePrimitiveType(t);
+  return (t & edgeType_) > 0;
+}
+
+bool VolumeMeshSelectionPlugin::faceTypeActive() {
+  SelectionInterface::PrimitiveType t = 0u;
+  emit getActivePrimitiveType(t);
+  return (t & faceType_) > 0;
+}
+
+bool VolumeMeshSelectionPlugin::cellTypeActive() {
+  SelectionInterface::PrimitiveType t = 0u;
+  emit getActivePrimitiveType(t);
+  return (t & cellType_) > 0;
+}
+
+//==============================================================================================
+
 void VolumeMeshSelectionPlugin::slotSelectionOperation(QString _operation) {
 
     SelectionInterface::PrimitiveType type = 0u;

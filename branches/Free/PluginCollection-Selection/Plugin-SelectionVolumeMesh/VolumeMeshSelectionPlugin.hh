@@ -176,6 +176,20 @@ public slots:
     /** @name Scriptable slots
     * @{ */
     //===========================================================================
+
+    /// Is vertex type active? (for use in plugins that need mesh selection)
+    bool vertexTypeActive();
+
+    /// Is vertex type active? (for use in plugins that need mesh selection)
+    bool edgeTypeActive();
+
+    /// Is face type active? (for use in plugins that need mesh selection)
+    bool faceTypeActive();
+
+    /// Is cell type active? (for use in plugins that need mesh selection)
+    bool cellTypeActive();
+
+    //===========================================================================
     
     /// Select all vertices of a volume mesh
     void selectAllVertices(int _objectId);
