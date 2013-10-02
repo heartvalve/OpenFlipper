@@ -51,6 +51,12 @@
 #endif
 #include <MeshTools/MeshFunctions.hh>
 
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
 
 /** \brief Set Descriptions for Scripting Slots
  *
@@ -837,6 +843,39 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     }
   #endif
 
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((HexahedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_it  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].selected() )
+      {
+        noneSelected = false;
+        mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+        normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((PolyhedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_it  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].selected() )
+      {
+        noneSelected = false;
+        mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+        normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+  }
+#endif
+
   if (noneSelected)
     return false;
 
@@ -951,6 +990,69 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
       if ( mesh.status(v_it).tagged() ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      }
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  if ( object->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((HexahedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::FaceIter f_it  = mesh.faces_begin();
+    OpenVolumeMesh::FaceIter f_end = mesh.faces_end();
+    for (; f_it!=f_end; ++f_it)
+      if ( statusAttrib[*f_it].selected() )
+      {
+        noneSelected = false;
+        for (OpenVolumeMesh::HalfFaceVertexIter hfv_it = mesh.hfv_iter(mesh.halfface_handle(*f_it,0)); hfv_it.valid(); ++hfv_it)
+            statusAttrib[*hfv_it].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType( DATA_POLYHEDRAL_MESH ) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((PolyhedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::FaceIter f_it  = mesh.faces_begin();
+    OpenVolumeMesh::FaceIter f_end = mesh.faces_end();
+    for (; f_it!=f_end; ++f_it)
+      if ( statusAttrib[*f_it].selected() )
+      {
+        noneSelected = false;
+        for (OpenVolumeMesh::HalfFaceVertexIter hfv_it = mesh.hfv_iter(mesh.halfface_handle(*f_it,0)); hfv_it.valid(); ++hfv_it)
+            statusAttrib[*hfv_it].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
       }
   }
 #endif
@@ -1078,6 +1180,72 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
       }
   }
 #endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  if ( object->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((HexahedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::EdgeIter e_it  = mesh.edges_begin();
+    OpenVolumeMesh::EdgeIter e_end = mesh.edges_end();
+    for (; e_it!=e_end; ++e_it)
+      if ( statusAttrib[*e_it].selected() )
+      {
+        noneSelected = false;
+        OpenVolumeMesh::OpenVolumeMeshEdge e(mesh.edge(*e_it));
+        statusAttrib[e.from_vertex()].set_tagged(true);
+        statusAttrib[e.to_vertex()].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  if ( object->dataType( DATA_POLYHEDRAL_MESH ) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((PolyhedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::EdgeIter e_it  = mesh.edges_begin();
+    OpenVolumeMesh::EdgeIter e_end = mesh.edges_end();
+    for (; e_it!=e_end; ++e_it)
+      if ( statusAttrib[*e_it].selected() )
+      {
+        noneSelected = false;
+        OpenVolumeMesh::OpenVolumeMeshEdge e(mesh.edge(*e_it));
+        statusAttrib[e.from_vertex()].set_tagged(true);
+        statusAttrib[e.to_vertex()].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+
+  }
+#endif
   
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
@@ -1111,6 +1279,111 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
 
   return true;
 }
+
+//------------------------------------------------------------------------------
+
+/** \brief transform cell selection
+ *
+ * @param _objectId id of an object
+ * @param _matrix transformation matrix
+ *
+ * @return returns true if selected elements were transformed
+ */
+bool MovePlugin::transformCellSelection( int _objectId , Matrix4x4 _matrix ){
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,tr("transform : unable to get object") );
+    return false;
+  }
+
+  bool noneSelected = true;
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  if ( object->dataType( DATA_HEXAHEDRAL_MESH ) ) {
+
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((HexahedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::CellIter c_it  = mesh.cells_begin();
+    OpenVolumeMesh::CellIter c_end = mesh.cells_end();
+    for (; c_it!=c_end; ++c_it)
+      if ( statusAttrib[*c_it].selected() )
+      {
+        noneSelected = false;
+        for (OpenVolumeMesh::CellVertexIter cv_it = mesh.cv_iter(*c_it); cv_it.valid(); ++cv_it)
+            statusAttrib[*cv_it].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType( DATA_POLYHEDRAL_MESH ) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((PolyhedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_begin  = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+
+    //init tags
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+        statusAttrib[*v_it].set_tagged(false);
+
+    OpenVolumeMesh::CellIter c_it  = mesh.cells_begin();
+    OpenVolumeMesh::CellIter c_end = mesh.cells_end();
+    for (; c_it!=c_end; ++c_it)
+      if ( statusAttrib[*c_it].selected() )
+      {
+        noneSelected = false;
+        for (OpenVolumeMesh::CellVertexIter cv_it = mesh.cv_iter(*c_it); cv_it.valid(); ++cv_it)
+            statusAttrib[*cv_it].set_tagged(true);
+      }
+
+    for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it!=v_end; ++v_it)
+      if ( statusAttrib[*v_it].tagged() )
+      {
+          mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      }
+  }
+#endif
+
+  if (noneSelected)
+    return false;
+
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
+
+  QString matString;
+  for (int i=0; i < 4; i++)
+    for (int j=0; j < 4; j++)
+      matString += " , " + QString::number( _matrix(i,j) );
+
+  matString = matString.right( matString.length()-3 );
+
+  emit scriptInfo( "transformCellSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
+
+  // Create backup if there was a change
+  // the backup is only created when the slot is called via scripting (sender == 0)
+  if ( !_matrix.is_identity() && (sender() == 0) )
+    emit createBackup(_objectId, "Transformation of Cell Selection");
+
+  return true;
+}
+
 
 //------------------------------------------------------------------------------
 

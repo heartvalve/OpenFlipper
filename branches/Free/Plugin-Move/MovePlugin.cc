@@ -76,6 +76,14 @@
 #include <ObjectTypes/Skeleton/Helper/SkeletonTransform.hh>
 #endif
 
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+#include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+#include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
+#endif
+
 /** \brief Default Constructor
  *
  */
@@ -555,6 +563,16 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   } else  if  ( object->dataType()  == DATA_SKELETON ) {
     transformSkeleton(mat , *PluginFunctions::skeleton(object) );
 #endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  } else  if  ( object->dataType()  == DATA_HEXAHEDRAL_MESH ) {
+    HexahedralMeshObject* obj = PluginFunctions::hexahedralMeshObject(object);
+    transformVolumeMesh(mat , *obj->mesh() , obj->normals() );
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  } else  if  ( object->dataType()  == DATA_POLYHEDRAL_MESH ) {
+    PolyhedralMeshObject* obj = PluginFunctions::polyhedralMeshObject(object);
+    transformVolumeMesh(mat , *obj->mesh() , obj->normals() );
+#endif
   } else  if  ( object->dataType()  == DATA_PLANE ) {
     PluginFunctions::plane(object)->transform(mat);
   } else {
@@ -593,6 +611,9 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d _mat, int _id, QEvent::Type _type
     }
     if (selectionType_ & EDGE) {
       transformedSelected_ = transformEdgeSelection( _id , _mat );
+    }
+    if (selectionType_ & CELL) {
+      transformedSelected_ = transformCellSelection( _id , _mat );
     }
 
     emit updatedObject(_id, UPDATE_GEOMETRY);
@@ -1338,12 +1359,20 @@ void MovePlugin::slotMoveManipToCOG() {
 	if (  object->manipulatorNode()->visible() ){
 
 	    if ( object->dataType( DATA_TRIANGLE_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::triMesh(object)) );
+            object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::triMesh(object)) );
 	    else if ( object->dataType( DATA_POLY_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::polyMesh(object)) );
+            object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::polyMesh(object)) );
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-	    else if ( object->dataType( DATA_TSPLINE_MESH ) )
-	    object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::tsplineMesh(object)) );
+        else if ( object->dataType( DATA_TSPLINE_MESH ) )
+            object->manipulatorNode()->set_center( MeshInfo::cog(PluginFunctions::tsplineMesh(object)) );
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+        else if ( object->dataType( DATA_HEXAHEDRAL_MESH ) )
+            object->manipulatorNode()->set_center( cogVolumeMesh(*PluginFunctions::hexahedralMesh(object)) );
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+        else if ( object->dataType( DATA_POLYHEDRAL_MESH ) )
+            object->manipulatorNode()->set_center( cogVolumeMesh(*PluginFunctions::polyhedralMesh(object)) );
 #endif
 
 	    updateManipulatorDialog();
@@ -1417,10 +1446,18 @@ void MovePlugin::slotRotate() {
 			    transformMesh(m, (*PluginFunctions::triMesh(object)));
 
 			  if (object->dataType(DATA_POLY_MESH))
-			    transformMesh(m, (*PluginFunctions::polyMesh(object)));
+                transformMesh(m, (*PluginFunctions::polyMesh(object)));
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-			  if (object->dataType(DATA_TSPLINE_MESH))
-			    transformMesh(m, (*PluginFunctions::tsplineMesh(object)));
+              if (object->dataType(DATA_TSPLINE_MESH))
+                transformMesh(m, (*PluginFunctions::tsplineMesh(object)));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+              if (object->dataType(DATA_HEXAHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+              if (object->dataType(DATA_POLYHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
 #endif
 			}
 			else if (PluginFunctions::pickMode() == "MoveSelection")
@@ -1431,10 +1468,13 @@ void MovePlugin::slotRotate() {
 			  }
 			  if (selectionType_ & FACE) {
 			    transformFaceSelection(object->id(), m);
-			  }
-			  if (selectionType_ & EDGE) {
-			    transformEdgeSelection(object->id(), m);
-			  }
+              }
+              if (selectionType_ & EDGE) {
+                transformEdgeSelection(object->id(), m);
+              }
+              if (selectionType_ & CELL) {
+                transformCellSelection(object->id(), m);
+              }
 			}
 
       // move all other targets without manipulator
@@ -1455,6 +1495,14 @@ void MovePlugin::slotRotate() {
               if (o_it->dataType(DATA_TSPLINE_MESH))
                 transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
 #endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+              if (object->dataType(DATA_HEXAHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+              if (object->dataType(DATA_POLYHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+#endif
             }
             else if (PluginFunctions::pickMode() == "MoveSelection")
             {
@@ -1467,6 +1515,9 @@ void MovePlugin::slotRotate() {
               }
               if (selectionType_ & EDGE) {
                 transformEdgeSelection(o_it->id(), m);
+              }
+              if (selectionType_ & CELL) {
+                transformCellSelection(o_it->id(), m);
               }
             }
 
@@ -1553,6 +1604,14 @@ void MovePlugin::slotScale() {
 	      if (object->dataType(DATA_TSPLINE_MESH))
 	        transformMesh(m,  (*PluginFunctions::tsplineMesh(object)));
 	#endif
+    #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          if (object->dataType(DATA_HEXAHEDRAL_MESH))
+            transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+    #endif
+    #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+          if (object->dataType(DATA_POLYHEDRAL_MESH))
+            transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+    #endif
 			}
 			else if (PluginFunctions::pickMode() == "MoveSelection")
 			{
@@ -1565,7 +1624,10 @@ void MovePlugin::slotScale() {
 			  }
 			  if (selectionType_ & EDGE) {
 			    transformEdgeSelection(object->id(), m);
-			  }
+              }
+              if (selectionType_ & CELL) {
+                transformCellSelection(object->id(), m);
+              }
       }
 
       // move all other targets without manipulator
@@ -1586,6 +1648,14 @@ void MovePlugin::slotScale() {
               if (o_it->dataType(DATA_TSPLINE_MESH))
                 transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
 #endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+              if (object->dataType(DATA_HEXAHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+              if (object->dataType(DATA_POLYHEDRAL_MESH))
+                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+#endif
             }
             else if (PluginFunctions::pickMode() == "MoveSelection")
             {
@@ -1598,6 +1668,9 @@ void MovePlugin::slotScale() {
               }
               if (selectionType_ & EDGE) {
                 transformEdgeSelection(o_it->id(), m);
+              }
+              if (selectionType_ & CELL) {
+                transformCellSelection(o_it->id(), m);
               }
             }
 
@@ -1662,6 +1735,22 @@ void MovePlugin::slotMoveToOrigin() {
           vertexCount += double(mesh.n_vertices());
         }
 #endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+        if ( o_it->dataType( DATA_HEXAHEDRAL_MESH )) {
+          HexahedralMesh& mesh = *PluginFunctions::hexahedralMesh(*o_it);
+          cog += cogVolumeMesh(mesh) * double(mesh.n_vertices());
+          vertexCount += double(mesh.n_vertices());
+        }
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+        if ( o_it->dataType( DATA_POLYHEDRAL_MESH )) {
+          PolyhedralMesh& mesh = *PluginFunctions::polyhedralMesh(*o_it);
+          cog += cogVolumeMesh(mesh) * double(mesh.n_vertices());
+          vertexCount += double(mesh.n_vertices());
+        }
+#endif
       }
 
       cog = cog / vertexCount;
@@ -1709,6 +1798,38 @@ void MovePlugin::slotMoveToOrigin() {
 
     }
 #endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+    if ( o_it->dataType( DATA_HEXAHEDRAL_MESH )) {
+        HexahedralMesh& mesh = *PluginFunctions::hexahedralMesh(*o_it);
+
+        if ( !useCommonCOG )
+          cog = cogVolumeMesh(mesh);
+
+        for ( OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
+          mesh.set_vertex(*v_it , mesh.vertex(*v_it) - cog );
+
+        o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+
+    }
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+    if ( o_it->dataType( DATA_POLYHEDRAL_MESH )) {
+        PolyhedralMesh& mesh = *PluginFunctions::polyhedralMesh(*o_it);
+
+        if ( !useCommonCOG )
+          cog = cogVolumeMesh(mesh);
+
+        for ( OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
+          mesh.set_vertex(*v_it , mesh.vertex(*v_it) - cog );
+
+        o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+
+    }
+#endif
+
+
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
 
     updateManipulatorDialog();
@@ -1759,10 +1880,29 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
           bb_min.minimize(bb_min_tmp);
           bb_max.maximize(bb_max_tmp);
         }
+
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
         if ( o_it->dataType( DATA_TSPLINE_MESH )) {
           TSplineMesh& mesh = *PluginFunctions::tsplineMesh(*o_it);
           getBB(mesh,bb_min_tmp,bb_max_tmp);
+          bb_min.minimize(bb_min_tmp);
+          bb_max.maximize(bb_max_tmp);
+        }
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+        if ( o_it->dataType( DATA_HEXAHEDRAL_MESH )) {
+          HexahedralMesh& mesh = *PluginFunctions::hexahedralMesh(*o_it);
+          getBBVolumeMesh(mesh,bb_min_tmp,bb_max_tmp);
+          bb_min.minimize(bb_min_tmp);
+          bb_max.maximize(bb_max_tmp);
+        }
+#endif
+
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+        if ( o_it->dataType( DATA_POLYHEDRAL_MESH )) {
+          PolyhedralMesh& mesh = *PluginFunctions::polyhedralMesh(*o_it);
+          getBBVolumeMesh(mesh,bb_min_tmp,bb_max_tmp);
           bb_min.minimize(bb_min_tmp);
           bb_max.maximize(bb_max_tmp);
         }
@@ -1782,6 +1922,14 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
       else if ( o_it->dataType( DATA_TSPLINE_MESH ) )
         unifyBBDiag(*PluginFunctions::tsplineMesh(*o_it),bb_min,bb_max);
 #endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+      else if ( o_it->dataType( DATA_HEXAHEDRAL_MESH ) )
+        unifyBBDiagVolumeMesh(*PluginFunctions::hexahedralMesh(*o_it),(PluginFunctions::hexahedralMeshObject(*o_it)->normals()),bb_min,bb_max);
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+      else if ( o_it->dataType( DATA_POLYHEDRAL_MESH ) )
+        unifyBBDiagVolumeMesh(*PluginFunctions::polyhedralMesh(*o_it),(PluginFunctions::polyhedralMeshObject(*o_it)->normals()),bb_min,bb_max);
+#endif
     } else {
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         unifyBBDiag(*PluginFunctions::triMesh(*o_it));
@@ -1790,6 +1938,14 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
       else if ( o_it->dataType( DATA_TSPLINE_MESH ) )
         unifyBBDiag(*PluginFunctions::tsplineMesh(*o_it));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+      else if ( o_it->dataType( DATA_HEXAHEDRAL_MESH ) )
+        unifyBBDiagVolumeMesh(*PluginFunctions::hexahedralMesh(*o_it),(PluginFunctions::hexahedralMeshObject(*o_it)->normals()));
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+      else if ( o_it->dataType( DATA_POLYHEDRAL_MESH ) )
+        unifyBBDiagVolumeMesh(*PluginFunctions::polyhedralMesh(*o_it),(PluginFunctions::polyhedralMeshObject(*o_it)->normals()));
 #endif
     }
 
@@ -2043,6 +2199,133 @@ void MovePlugin::transformSkeleton( ACG::Matrix4x4d _mat , Skeleton& _skeleton  
 
 #endif
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+/** \brief Transform a volume mesh with the given transformation matrix
+ *
+ * Note: The normals have to be transformed with the inverse
+ * transposed transformation matrix in order to yield correct results
+ *
+ * @param _mat transformation matrix
+ * @param _mesh the mesh
+ * @param _normalAttrib the normal attribute
+ */
+template< typename VolumeMeshT >
+void MovePlugin::transformVolumeMesh(ACG::Matrix4x4d _mat , VolumeMeshT& _mesh , OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib )
+{
+  // Get the inverse matrix of the transformation for the normals
+  ACG::Matrix4x4d invTranspMat = _mat;
+
+  // Build inverse transposed matrix of _mat
+  invTranspMat.invert();
+  invTranspMat.transpose();
+
+  OpenVolumeMesh::VertexIter v_begin = _mesh.vertices_begin();
+  OpenVolumeMesh::VertexIter v_end   = _mesh.vertices_end();
+
+  // transform the mesh vertices
+  for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it != v_end; ++v_it)
+    _mesh.set_vertex(*v_it, _mat.transform_point(_mesh.vertex(*v_it)));
+
+  // transform the vertex normals
+  for (OpenVolumeMesh::VertexIter v_it = v_begin; v_it != v_end; ++v_it)
+    _normalAttrib[*v_it] = invTranspMat.transform_vector(_normalAttrib[*v_it]).normalized();
+
+
+  // transform the face normals
+  OpenVolumeMesh::FaceIter f_begin = _mesh.faces_begin();
+  OpenVolumeMesh::FaceIter f_end   = _mesh.faces_end();
+  for (OpenVolumeMesh::FaceIter f_it = f_begin; f_it != f_end; ++f_it)
+    _normalAttrib[*f_it] = invTranspMat.transform_vector(_normalAttrib[*f_it]).normalized();
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief Calculate center of gravity of a volume mesh
+ *
+ * @param _mesh the mesh
+ */
+template< typename VolumeMeshT >
+ACG::Vec3d MovePlugin::cogVolumeMesh( VolumeMeshT& _mesh )
+{
+    ACG::Vec3d cog = ACG::Vec3d(0.0,0.0,0.0);
+    OpenVolumeMesh::VertexIter v_it  = _mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = _mesh.vertices_end();
+    for (; v_it!=v_end; ++v_it)
+      cog += _mesh.vertex(*v_it);
+
+    return cog/(double)_mesh.n_vertices();
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief get bounding box diagonal of a volume mesh
+ *
+ * @param _mesh the mesh
+ * @param _bb_min Lower left corner of bounding box
+ * @param _bb_max Upper right corner of bounding box
+ */
+template< typename VolumeMeshT >
+void MovePlugin::getBBVolumeMesh( VolumeMeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max)
+{
+    OpenVolumeMesh::VertexIter v_it  = _mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = _mesh.vertices_end();
+
+    // no vertices?
+    if( v_it == v_end) return;
+
+    _bb_min = _mesh.vertex(*v_it);
+    _bb_max = _mesh.vertex(*v_it);
+
+    for(; v_it!=v_end; ++v_it)
+    {
+      _bb_min.minimize( _mesh.vertex(*v_it));
+      _bb_max.maximize( _mesh.vertex(*v_it));
+    }
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief scale mesh to have a boundingboxdiagonal of one
+ *
+ * @param _mesh the mesh
+ * @param _normalAttrib the normal attribute
+ */
+template< typename VolumeMeshT >
+void MovePlugin::unifyBBDiagVolumeMesh(VolumeMeshT& _mesh, OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib)
+{
+    // no vertices?
+    if( _mesh.n_vertices() == 0) return;
+
+    ACG::Vec3d bb_min, bb_max;
+    getBBVolumeMesh( _mesh, bb_min, bb_max );
+
+    unifyBBDiagVolumeMesh( _mesh, _normalAttrib, bb_min, bb_max );
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief Scales object such that bounding box diagonal has unit length
+ *
+ * @param _mesh the mesh
+ * @param _normalAttrib the normal attribute
+ * @param _bb_min Lower left corner of bounding box
+ * @param _bb_max Upper right corner of bounding box
+ */
+template< typename VolumeMeshT >
+void MovePlugin::unifyBBDiagVolumeMesh( VolumeMeshT& _mesh, OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max )
+{
+    ACG::Vec3d bb_center =  0.5 * (_bb_min + _bb_max) ;
+
+    double scale = 1.0/(_bb_max-_bb_min).norm();
+
+    for( OpenVolumeMesh::VertexIter v_it = _mesh.vertices_begin(); v_it!=_mesh.vertices_end(); ++v_it)
+      _mesh.set_vertex(*v_it, (_mesh.vertex(*v_it) - bb_center) * scale + bb_center);
+
+    _normalAttrib.update_vertex_normals();
+}
+
+#endif
+
 //------------------------------------------------------------------------------
 
 /** \brief scale mesh to have a boundingboxdiagonal of one
@@ -2146,9 +2429,12 @@ void MovePlugin::updateSelectionType() {
     bool functionExistsMeshF;
     emit functionExists("meshobjectselection", "faceTypeActive()", functionExistsMeshF);
 
+    bool connected = false;
+    selectionType_ = 0u;
+
     if(functionExistsMeshV && functionExistsMeshE && functionExistsMeshF) {
 
-        selectionType_ = 0u;
+        connected = true;
 
         // Make RPC call
         if(RPC::callFunctionValue<bool>("meshobjectselection", "vertexTypeActive")) {
@@ -2161,7 +2447,39 @@ void MovePlugin::updateSelectionType() {
             selectionType_ |= FACE;
         }
 
-    } else {
+    }
+
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    bool functionExistsVolumeMeshV;
+    emit functionExists("volumemeshselection", "vertexTypeActive()", functionExistsVolumeMeshV);
+    bool functionExistsVolumeMeshE;
+    emit functionExists("volumemeshselection", "edgeTypeActive()", functionExistsVolumeMeshE);
+    bool functionExistsVolumeMeshF;
+    emit functionExists("volumemeshselection", "faceTypeActive()", functionExistsVolumeMeshF);
+    bool functionExistsVolumeMeshC;
+    emit functionExists("volumemeshselection", "cellTypeActive()", functionExistsVolumeMeshC);
+
+    if ( functionExistsVolumeMeshV && functionExistsVolumeMeshE && functionExistsVolumeMeshF && functionExistsVolumeMeshC) {
+
+        connected = true;
+
+        // Make RPC call
+        if(RPC::callFunctionValue<bool>("volumemeshselection", "vertexTypeActive")) {
+            selectionType_ |= VERTEX;
+        }
+        if(RPC::callFunctionValue<bool>("volumemeshselection", "edgeTypeActive")) {
+            selectionType_ |= EDGE;
+        }
+        if(RPC::callFunctionValue<bool>("volumemeshselection", "faceTypeActive")) {
+            selectionType_ |= FACE;
+        }
+        if(RPC::callFunctionValue<bool>("volumemeshselection", "cellTypeActive")) {
+            selectionType_ |= CELL;
+        }
+    }
+#endif
+
+    if (!connected) {
         emit log(LOGWARN, tr("Unable to connect to Selection-Plugin. MoveSelection will work on vertices only."));
         selectionType_ = VERTEX;
     }
