@@ -1,5 +1,8 @@
 // template file for shader generator
 
+layout(lines) in;
+layout(triangle_strip, max_vertices = 4) out;
+
 uniform float lineWidth;
 uniform vec2 screenSize;
 

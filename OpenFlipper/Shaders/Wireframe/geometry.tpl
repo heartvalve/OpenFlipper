@@ -1,5 +1,8 @@
 // template file for shader generator
 
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
+
 // send barycentric coords to fragment
 out vec3 outGeometryBary;
 

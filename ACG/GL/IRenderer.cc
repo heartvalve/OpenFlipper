@@ -239,11 +239,6 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   glDisableClientState(GL_INDEX_ARRAY);
 
 
-  // size of a rendered point is set in vertex-shader via gl_PointSize
-  #ifndef __APPLE__
-    glEnable(GL_PROGRAM_POINT_SIZE_ARB);
-  #endif
-
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -334,8 +329,6 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
     glBindTexture(iter->second.type, tex.id);
     _prog->setUniform(QString("g_Texture%1").arg(texture_stage).toStdString().c_str(), (int)texture_stage);
   }
-
-  _prog->setUniform("g_PointSize", 5.0f);
 
 
   // lights

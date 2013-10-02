@@ -115,7 +115,7 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 
 
   if (_desc->shadeMode == SG_SHADE_FLAT)
-    if (_desc->geometryShader)
+    if (!_desc->geometryTemplateFile.isEmpty())
       strColorOut = "vec4 outVertexColor";
     else {
       // Bypass the output setter, as we have to set that directly with the flat.
@@ -131,38 +131,6 @@ void ShaderGenerator::initVertexShaderIO(const ShaderGenDesc* _desc)
 }
 
 void ShaderGenerator::initGeometryShaderIO(const ShaderGenDesc* _desc) {
-
-  // Define input of the geometry shader
-  switch (_desc->geometryShaderInput) {
-    case SG_GEOMETRY_IN_TRIANGLES: // 3 points of the triangle
-      addStringToList("layout(triangles)", &inputs_, "", " in;");
-      break;
-    case SG_GEOMETRY_IN_TRIANGLES_ADJACENCY: // 6 points (defining 3 triangles , one before, current, one after)
-      addStringToList("layout(triangles_adjacency)", &inputs_, "", " in;");
-      break;
-    case SG_GEOMETRY_IN_LINES: // 2 Points describing the line
-      addStringToList("layout(lines)", &inputs_, "", " in;");
-      break;
-    case SG_GEOMETRY_IN_LINES_ADJACENCY: // 4 points ( 1 before, middle two defining line, last one
-      addStringToList("layout(lines_adjacency)", &inputs_, "", " in;");
-      break;
-    case SG_GEOMETRY_IN_POINTS: // Single points
-      addStringToList("layout(points)", &inputs_, "", " in;");
-      break;
-  }
-
-  // Define output of geometry shader
-  switch (_desc->geometryShaderOutput) {
-    case SG_GEOMETRY_OUT_TRIANGLE_STRIP:
-      addStringToList("layout(triangle_strip, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
-      break;
-    case SG_GEOMETRY_OUT_LINE_STRIP:
-      addStringToList("layout(line_strip, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
-      break;
-    case SG_GEOMETRY_OUT_POINTS:
-      addStringToList("layout(points, max_vertices = "+ QString::number(_desc->geometryShaderMaxOutputPrimitives)+ ")", &outputs_, "", " out;");
-      break;
-  }
 
   addInput("vec4 outVertexPosCS[]");
   addOutput("vec4 outGeometryPosCS");
@@ -219,7 +187,7 @@ void ShaderGenerator::initFragmentShaderIO(const ShaderGenDesc* _desc)
 
   QString inputShader = "Vertex";
 
-  if ( _desc->geometryShader )
+  if ( !_desc->geometryTemplateFile.isEmpty() )
     inputShader = "Geometry";
 
 
@@ -458,7 +426,8 @@ ShaderProgGenerator::ShaderProgGenerator(const ShaderGenDesc* _desc,
     desc_ = *_desc;
 
     // We need at least version 3.2 or higher to support geometry shaders
-    desc_.geometryShader &= ACG::openGLVersion(3,2);
+    if ( !ACG::openGLVersion(3,2) )
+      desc_.geometryTemplateFile.clear();
 
     loadLightingFunctions();
 
@@ -568,8 +537,6 @@ void ShaderProgGenerator::buildVertexShader()
 
   vertex_->initDefaultUniforms();
 
-  vertex_->addUniform("float g_PointSize");
-
 
   // apply i/o modifiers
   for (int i = 0; i < numModifiers_; ++i)
@@ -648,7 +615,6 @@ void ShaderProgGenerator::buildVertexShader()
 void ShaderProgGenerator::addVertexBeginCode(QStringList* _code)
 {
   // size in pixel of rendered point-lists, set by user via uniform
-  _code->push_back("gl_PointSize = g_PointSize;");
 
   _code->push_back("vec4 sg_vPosPS = g_mWVP * inPosition;");
   _code->push_back("vec4 sg_vPosVS = g_mWV * inPosition;");
@@ -748,7 +714,7 @@ int ShaderProgGenerator::checkForIncludes(QString _str, ShaderGenerator* _gen, Q
 void ShaderProgGenerator::buildGeometryShader()
 {
   // Only build a geometry shader if enabled
-  if ( !desc_.geometryShader )
+  if ( desc_.geometryTemplateFile.isEmpty() )
     return;
 
 
@@ -797,103 +763,20 @@ void ShaderProgGenerator::buildGeometryShader()
     mainCode.push_back("}");
   }
 
-  if (!geometryTemplate_.size())
+
+  // interpret loaded shader template:
+  //  import #includes
+  QString it;
+  foreach(it,geometryTemplate_)
   {
-    mainCode.push_back("void main()");
-    mainCode.push_back("{");
-
-
-    // num input vertices
-
-    int numInputVerts = 0;
-
-    switch (desc_.geometryShaderInput) {
-      case SG_GEOMETRY_IN_TRIANGLES:
-        numInputVerts = 3;
-        break;
-      case SG_GEOMETRY_IN_LINES:
-        numInputVerts = 2;
-        break;
-      case SG_GEOMETRY_IN_POINTS:
-        numInputVerts = 1;
-        break;
-      default:
-        numInputVerts = 1;
-        break;
-    }
-
-    QString strValNum;
-    strValNum.append(QString("%1").arg(numInputVerts));
-
-    mainCode.push_back(QString("for ( int inIdx = 0; inIdx < ") + strValNum + QString("; ++inIdx ){"));
-
-    mainCode.push_back("sg_MapIO( inIdx );");
-    mainCode.push_back("EmitVertex();");
-
-    mainCode.push_back("}");
-
-
-    mainCode.push_back("EndPrimitive();");
-
-
-    mainCode.push_back("}");
-  }
-  else
-  {
-    // interpret loaded shader template:
-    //  import #includes and replace SG_GEOMETRY_BEGIN/END markers
-    QString it;
-    foreach(it,geometryTemplate_)
+    if (!checkForIncludes(it, geometry_, getPathName(geometryShaderFile_)))
     {
-      if (!checkForIncludes(it, geometry_, getPathName(geometryShaderFile_)))
-      {
-        // str line is no include directive
-        // check for SG_ markers
-
-        if (it.contains("SG_GEOMETRY_BEGIN"))
-          addGeometryBeginCode(&mainCode);
-        else
-        {
-          if (it.contains("SG_GEOMETRY_END"))
-            addGeometryEndCode(&mainCode);
-          else
-          {
-            // no SG marker
-            mainCode.push_back(it);
-          }
-        }
-
-      }
-
-
+      // str line is no include directive
+      mainCode.push_back(it);
     }
-
   }
 
   geometry_->buildShaderCode(&mainCode);
-}
-
-void ShaderProgGenerator::addGeometryBeginCode(QStringList* _code)
-{
-//  std::cerr << "TODO : addGeometryBeginCode" << std::endl;
-
-
-  // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyGeometryBeginCode(_code);
-  }
-}
-
-void ShaderProgGenerator::addGeometryEndCode(QStringList* _code)
-{
-  // apply modifiers
-  for (int i = 0; i < numModifiers_; ++i)
-  {
-    if (usage_ & (1 << i))
-      modifiers_[i]->modifyGeometryEndCode(_code);
-  }
 }
 
 
@@ -1023,7 +906,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
 
   QString inputShader = "Vertex";
 
-  if ( desc_.geometryShader )
+  if ( !desc_.geometryTemplateFile.isEmpty() )
     inputShader = "Geometry";
 
   // support for projective texture mapping
