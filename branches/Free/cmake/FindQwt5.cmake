@@ -7,8 +7,6 @@
 #    - the Qwt .lib is where the other LIBs for Qt are (QT_DIR\lib) or in the path
 #
 # Qwt5_INCLUDE_DIR - where to find qwt.h if Qwt
-# Qwt5_Qt5_LIBRARY - The Qwt5 library linked against Qt5 (if it exists)#
-# Qwt5_Qt5_LIBRARY_DIR
 # Qwt5_Qt4_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)#
 # Qwt5_Qt4_LIBRARY_DIR
 # Qwt5_Qt3_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)
@@ -34,6 +32,8 @@ ELSEIF(NOT QT5_FOUND AND NOT QT4_FOUND)
 ENDIF()
 
 IF( QT5_FOUND )
+
+  message (WARNING "Qwt5 is not compatible with QT5! Use Qwt6 instead.")
 
 ELSEIF( QT4_FOUND )
     if ( CMAKE_GENERATOR MATCHES "Visual Studio 9*" )
