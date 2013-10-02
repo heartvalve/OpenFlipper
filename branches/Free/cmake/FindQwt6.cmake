@@ -30,23 +30,42 @@ if (EXISTS "${QWT6_INCLUDE_DIR}/qwt_global.h")
   if (NOT QWT6_VERSION_FOUND)
     message(WARNING "Qwt is not version 6")
   endif()
-else()
-  message(WARNING "Could not find qwt_global.h")
 endif()
 
 if (QWT6_VERSION_FOUND)
-  find_library(QWT6_LIBRARY NAMES qwt
-    PATHS
-    "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
-    "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0\\lib"
-    "c:\\libs\\Qwt-6.1.0\\lib"
-    "c:\\libs\\Qwt-6.0.2\\lib"
-    "c:\\libs\\qwt-6.0.1\\lib"
-    /usr/local/qwt/lib
-    /opt/local/lib
-    /usr/local/lib
-    /usr/lib
-    )
+  if (WIN32)
+    find_library(QWT6_LIBRARY_RELEASE NAMES qwt
+      PATHS
+      "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
+      "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0\\lib"
+      "c:\\libs\\Qwt-6.1.0\\lib"
+      "c:\\libs\\Qwt-6.0.2\\lib"
+      "c:\\libs\\qwt-6.0.1\\lib"
+      )
+    find_library(QWT6_LIBRARY_DEBUG NAMES qwtd
+      PATHS
+      "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
+      "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0\\lib"
+      "c:\\libs\\Qwt-6.1.0\\lib"
+      "c:\\libs\\Qwt-6.0.2\\lib"
+      "c:\\libs\\qwt-6.0.1\\lib"
+      )
+
+    set (
+      QWT6_LIBRARY
+      "optimized;${QWT6_LIBRARY_RELEASE};debug;${QWT6_LIBRARY_DEBUG}" CACHE
+      STRING "QWT6 Libraries"
+      )
+# MACOS and LINUX
+  else()
+    find_library(QWT6_LIBRARY NAMES qwt
+      PATHS
+      /usr/local/qwt/lib
+      /opt/local/lib
+      /usr/local/lib
+      /usr/lib
+      )
+  endif()
 
   set(QWT6_LIBRARIES ${QWT6_LIBRARY} )
   set(QWT6_INCLUDE_DIRS ${QWT6_INCLUDE_DIR} )
