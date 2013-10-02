@@ -46,7 +46,7 @@ void FilePolyLinePlugin::loadPolyLine(PolyLineObject* lineObject,  const char* _
   // read points
   for(int i=0; i<num_points; ++i)
   {
-    typename PolyLine::Point::value_type x,y,z;
+    PolyLine::Point::value_type x,y,z;
     fin >> x;
     fin >> y;
     fin >> z;
