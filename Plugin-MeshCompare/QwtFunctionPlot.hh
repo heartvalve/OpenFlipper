@@ -78,6 +78,8 @@
 #include <ACG/QtWidgets/QwtHistogramm.hh>
 #include <vector>
 
+#include <QDialog>
+
 //== FORWARDDECLARATIONS ======================================================
 
 //== NAMESPACES ===============================================================

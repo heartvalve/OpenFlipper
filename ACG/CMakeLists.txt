@@ -59,13 +59,25 @@ set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR}
 
 set(ADDITIONAL_LINK_LIBRARIES "" )
 
-find_package(Qwt5)
+# use Qwt6 for QT5
+if (NOT FORCE_QT4 AND QT5_FOUND)
+  find_package(Qwt6)
 
-if(Qwt5_Qt4_FOUND)
-  add_definitions(-DWITH_QWT)
-  set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
-  set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
+  if (QWT6_FOUND)
+    add_definitions(-DWITH_QWT)
+    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${QWT6_INCLUDE_DIRS} )
+    set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${QWT6_LIBRARIES})
+  endif()
+else()
+  find_package(Qwt5)
+
+  if(Qwt5_Qt4_FOUND)
+    add_definitions(-DWITH_QWT)
+    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${Qwt5_INCLUDE_DIR} )
+    set(ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${Qwt5_Qt4_LIBRARY})
+  endif()
 endif()
+
 
 find_package( Freetype)
 if (NOT FREETYPE_FOUND)

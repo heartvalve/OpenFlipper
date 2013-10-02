@@ -72,6 +72,8 @@
 #include <qwt_scale_engine.h>
 #include <qwt_plot_marker.h>
 
+#include <QDialog>
+
 // qmake users have to include pc
 #include <ui_QwtFunctionPlotBase.hh>
 
