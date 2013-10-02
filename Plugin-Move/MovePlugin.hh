@@ -67,6 +67,10 @@
   #include <ObjectTypes/Skeleton/Skeleton.hh>
 #endif
 
+#ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+#include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
+#endif
+
 #include "MoveToolbar.hh"
 #include "MoveProps.hh"
 #include "MoveObjectMarker.hh"
@@ -98,6 +102,7 @@ public:
   static const SelectionType VERTEX = 1;
   static const SelectionType EDGE   = 2;
   static const SelectionType FACE   = 4;
+  static const SelectionType CELL   = 8;
 
   signals:
     // BaseInterface
@@ -341,6 +346,28 @@ public:
     void transformSkeleton( ACG::Matrix4x4d _mat , Skeleton& _skeleton );
     #endif
 
+    #ifdef ENABLE_OPENVOLUMEMESH_SUPPORT
+    /// Transform a volume mesh with the given transformation matrix
+    template< typename VolumeMeshT >
+    void transformVolumeMesh(ACG::Matrix4x4d _mat , VolumeMeshT& _mesh , OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib );
+
+    /// Calculate center of gravity of a volume mesh
+    template< typename VolumeMeshT >
+    ACG::Vec3d cogVolumeMesh( VolumeMeshT& _mesh );
+
+    /// get bounding box diagonal of a volume mesh
+    template< typename VolumeMeshT >
+    void getBBVolumeMesh( VolumeMeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
+
+    /// scale volume mesh to have a boundingboxdiagonal of one
+    template< typename VolumeMeshT >
+    void unifyBBDiagVolumeMesh(VolumeMeshT& _mesh, OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib);
+
+    /// Scales volume mesh such that bounding box diagonal has unit length
+    template< typename VolumeMeshT >
+    void unifyBBDiagVolumeMesh( VolumeMeshT& _mesh, OpenVolumeMesh::NormalAttrib<VolumeMeshT>& _normalAttrib, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
+    #endif
+
     /** Get the Matrix of the last active Manipulator ( Identity if not found or hidden Manipulator )
       *
       * @param _reset reset the transformation matrix of the manipulator to identity)
@@ -492,6 +519,9 @@ public slots :
 
   /// transform current selection of an Object by a given matrix
   bool transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
+
+  /// transform current selection of an Object by a given matrix
+  bool transformCellSelection( int _objectId , Matrix4x4 _matrix );
 
   /// Transform handle region using the given transformation matrix
   void transformHandleRegion(int _objectId, Matrix4x4 _matrix);
