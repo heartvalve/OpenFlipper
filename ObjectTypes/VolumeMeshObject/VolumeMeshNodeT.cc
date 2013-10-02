@@ -606,6 +606,10 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     glGetBooleanv(GL_TEXTURE_2D,  &texturing);
     const Vec4f oldColor = _state.color();
 
+    // ignore two sided lighting setting and turn it off
+    GLboolean lightModel = _state.twosided_lighting();
+    _state.set_twosided_lighting(false);
+
     DrawModes::DrawMode cellDrawMode   = drawModes_.getFirstCellDrawMode(_drawMode);
     DrawModes::DrawMode faceDrawMode   = drawModes_.getFirstFaceDrawMode(_drawMode);
     DrawModes::DrawMode edgeDrawMode   = drawModes_.getFirstEdgeDrawMode(_drawMode);
@@ -684,6 +688,8 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
         ACG::GLState::disable(GL_TEXTURE_2D);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, texmode);
     _state.set_color(oldColor);
+
+    _state.set_twosided_lighting(lightModel);
 }
 
 
