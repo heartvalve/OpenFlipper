@@ -51,7 +51,7 @@
 
 #include "PolyLineCircleData.hh"
 
-PolyLineCircleData::PolyLineCircleData(ACG::Vec3d center, ACG::Vec3d normal, ACG::Vec3d mainAxis, ACG::Vec3d sideAxis, double mainR, double sideR, int mesh)
+PolyLineCircleData::PolyLineCircleData(ACG::Vec3d center, ACG::Vec3d normal, ACG::Vec3d mainAxis, ACG::Vec3d sideAxis, double mainR, double sideR, unsigned int mesh)
 		: circleMeshIndex_(mesh)
 {
 	circleCenter_ = center;

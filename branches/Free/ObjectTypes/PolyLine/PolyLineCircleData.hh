@@ -40,13 +40,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*
-* PolyLine_CircleData.h
- *
- *  Created on: Aug 22, 2013
- *      Author: hhergeth
- */
-
 #pragma once
 
 #include <OpenFlipper/common/GlobalDefines.hh>
@@ -58,17 +51,16 @@
 class DLLEXPORT PolyLineCircleData : public PerObjectData
 {
 public:
-	ACG::Vec3d circleCenter_;
-	ACG::Vec3d circleNormal_;
-	ACG::Vec3d circleMainAxis_;
-	ACG::Vec3d circleSideAxis_;
-	double     circleMainRadius_;
-	double     circleSideRadius_;
-	int        circleMeshIndex_;
+	ACG::Vec3d      circleCenter_;
+	ACG::Vec3d      circleNormal_;
+	ACG::Vec3d      circleMainAxis_;
+	ACG::Vec3d      circleSideAxis_;
+	double          circleMainRadius_;
+	double          circleSideRadius_;
+	unsigned int    circleMeshIndex_;
 
 public:
-
-	PolyLineCircleData(ACG::Vec3d center, ACG::Vec3d normal, ACG::Vec3d mainAxis, ACG::Vec3d sideAxis, double mainR, double sideR, int mesh);
+	PolyLineCircleData(ACG::Vec3d center, ACG::Vec3d normal, ACG::Vec3d mainAxis, ACG::Vec3d sideAxis, double mainR, double sideR, unsigned int mesh);
 
 };
 

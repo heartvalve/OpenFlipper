@@ -61,19 +61,15 @@ public:
 
 	std::vector<InterpolatePoint> points_;
 	std::vector<ACG::Vec3d>       handles_;
-
+    /// Index of the corresponding mesh
+	unsigned int meshIndex_;
 
 public:
 
   /** \brief Creates a new PolyLineBezierSplineData object with no points.
    *
    */
-  PolyLineBezierSplineData(int _meshIndex);
-
-	/** \brief Return index of the corresponding mesh
-	 *
-	 */
-	int meshIndex();
+  PolyLineBezierSplineData(unsigned int _meshIndex);
 
 	/** \brief Adds a point to the end of the list and inserts control points.
 	 *
@@ -93,9 +89,4 @@ public:
 	 * @param _handleIndex The index of the handle.
 	 */
 	InterpolatePoint& getInterpolatePoint(unsigned int _handleIndex);
-
-private:
-
-	/// Index of the corresponding mesh
-  int meshIndex_;
 };

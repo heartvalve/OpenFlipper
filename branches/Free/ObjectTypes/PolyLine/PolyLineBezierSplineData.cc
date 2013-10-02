@@ -51,14 +51,9 @@
 
 #include "PolyLineBezierSplineData.hh"
 
-PolyLineBezierSplineData::PolyLineBezierSplineData(int _meshIndex)
+PolyLineBezierSplineData::PolyLineBezierSplineData(unsigned int _meshIndex)
 : meshIndex_(_meshIndex)
 {
-}
-
-int PolyLineBezierSplineData::meshIndex()
-{
-  return meshIndex_;
 }
 
 void PolyLineBezierSplineData::addInterpolatePoint(ACG::Vec3d _position, ACG::Vec3d _normal)
