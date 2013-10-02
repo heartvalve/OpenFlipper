@@ -53,7 +53,7 @@ void FileOpenVolumeMeshPlugin::loadMesh(const char* _filename, MeshT& _mesh, boo
     bool edges_in_file = false;
 
     typedef typename MeshT::PointT Vertex;
-    _mesh.clear();
+    _mesh.clear(false);
 
     std::ifstream iff(_filename, std::ios::in);
 

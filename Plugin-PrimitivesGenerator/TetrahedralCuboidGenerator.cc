@@ -345,7 +345,7 @@ TetrahedralCuboidGenerator::TetrahedralCuboidGenerator(PolyhedralMesh& mesh,
                                                             unsigned const n_z) :
   mesh_(&mesh)
 {
-    mesh_->clear();
+    mesh_->clear(false);
 
     size_[0] = n_x;
     size_[1] = n_y;
