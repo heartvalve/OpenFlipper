@@ -56,7 +56,7 @@ PolyLinePlugin::
 getPointOnMesh(PolyLineBezierSplineData* _SplineData, ACG::Vec3d _point, ACG::Vec3d* _nor)
 {
 	TriMeshObject* mesh;
-	if(!PluginFunctions::getObject(_SplineData->meshIndex(), mesh))
+	if(!PluginFunctions::getObject(_SplineData->meshIndex_, mesh))
 		return _point;
 	OpenMeshTriangleBSPT<TriMesh>* bsp = mesh->requestTriangleBsp();
 	OpenMeshTriangleBSPT<TriMesh>::NearestNeighbor neigh = bsp->nearest(_point);
@@ -97,14 +97,17 @@ PolyLinePlugin::
 updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointCount)
 {
 	PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(_lineObject->objectData(BEZSPLINE_DATA));
-	if(!splineData)
-		return;
+	TriMeshObject* mesh;
+	if(!splineData || !PluginFunctions::getObject(splineData->meshIndex_, mesh))
+		return;//no mesh -> do nothing
 	_lineObject->line()->clear();
-	int segCount = (splineData->points_.size() + splineData->handles_.size() - 1) / 3, segment = 0;
-	for(int s = 0; s < segCount; s++) {
+	unsigned int segCount = (splineData->points_.size() + splineData->handles_.size() - 1) / 3;
+	for(unsigned int s = 0; s < segCount; s++) {
 		const ACG::Vec3d a = splineData->points_[s].position, d = splineData->points_[s + 1].position,
 						 b = splineData->handles_[s * 2], c = splineData->handles_[s * 2 + 1];
-		for(unsigned int i = 0; i < _pointCount; i++) {
+		//the last segment will get one more point to close the spline
+		unsigned int n = (s != segCount - 1) ? _pointCount : (_pointCount + 1);
+		for(unsigned int i = 0; i < n; i++) {
 			float alpha = float(i) / float(_pointCount);
 			const ACG::Vec3d e = a + (b - a) * alpha, f = c + (d - c) * alpha;
 			ACG::Vec3d g = e + (f - e) * alpha;
