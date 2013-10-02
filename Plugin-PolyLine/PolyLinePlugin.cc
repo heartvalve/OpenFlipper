@@ -93,6 +93,8 @@ PolyLinePlugin::PolyLinePlugin() :
         createCircle_CurrSelIndex_(-1),
         createCircle_LastSelIndex_(-1),
         moveCircle_SelNode_(0),
+        moveCircle_IsLocked(false),
+        moveCircle_IsFloating(false),
         createSpline_CurrSelIndex_(-1),
         createSpline_LastSelIndex_(-1),
         moveBezSpline_SelNode_(0),
@@ -808,7 +810,24 @@ slot_smart_move_timer()
 }
 
 
-
+void
+PolyLinePlugin::slotObjectUpdated( int _identifier )
+{
+    PolyLineObject* lineObject = 0;
+    if(!PluginFunctions::getObject(_identifier, lineObject))
+        return;
+    PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
+    PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
+    GlutPrimitiveNode* H = 0, *C = 0;
+    lineObject->getAdditionalNode(C,  name(), "circle");
+    lineObject->getAdditionalNode(H, name(), "control", 0);
+    if(circleData && !C) {
+        createCircle_createUI(_identifier);
+    }
+    else if(splineData && !H) {
+        createSpline_createUI(_identifier);
+    }
+}
 
 //-----------------------------------------------------------------------------
 
@@ -932,94 +951,189 @@ me_insert( QMouseEvent* _event )
 //-----------------------------------------------------------------------------
 
 void PolyLinePlugin::
+createCircle_createUI(int _polyLineObjectID)
+{
+    PolyLineObject* lineObject;
+    if (!PluginFunctions::getObject(_polyLineObjectID, lineObject) || !lineObject->objectData(CIRCLE_DATA))
+        return;
+    PolyLineCircleData* lineData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
+
+    double rad = 0.0;
+    TriMeshObject* mesh;
+    if(PluginFunctions::getObject(lineData->circleMeshIndex_, mesh)) {
+        //use the size of the mesh to compute the handle radii
+        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+        mesh->boundingBox(bbMin, bbMax);
+        rad = 0.005*(bbMax-bbMin).norm();
+    }
+    else {
+        //use the circle radius to guess the handle radii
+        double r = std::max(lineData->circleMainRadius_, lineData->circleSideRadius_);
+        rad = r / 25.0;
+    }
+
+    GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Handle0");
+    handle0->get_primitive(0).color = ACG::Vec4f(1,0,0,1);
+    handle0->set_size(rad);
+    handle0->show();
+    handle0->enablePicking(true);
+    handle0->set_position(lineData->circleCenter_ + lineData->circleMainAxis_ * lineData->circleMainRadius_);
+    lineObject->addAdditionalNode(handle0, name(), "handle0");
+    handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+    GlutPrimitiveNode* handle1 = new GlutPrimitiveNode(lineObject, "N_Handle1");
+    handle1->get_primitive(0).color = ACG::Vec4f(0,1,0,1);
+    handle1->set_size(rad);
+    handle1->show();
+    handle1->enablePicking(true);
+    handle1->set_position(lineData->circleCenter_ + lineData->circleSideAxis_ * lineData->circleSideRadius_);
+    lineObject->addAdditionalNode(handle1, name(), "handle1");
+    handle1->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+    GlutPrimitiveNode* cenNode = new GlutPrimitiveNode(lineObject, "N_Center");
+    cenNode->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
+    cenNode->set_size(rad);
+    cenNode->show();
+    cenNode->enablePicking(true);
+    cenNode->set_position(lineData->circleCenter_);
+    lineObject->addAdditionalNode(cenNode, name(), "circle");
+    cenNode->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+    lineObject->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    emit updatedObject(lineObject->id(), UPDATE_ALL);
+}
+
+void PolyLinePlugin::
 me_insertCircle(QMouseEvent* _event)
 {
 	TriMeshObject* mesh;
 	TriMesh::FaceHandle fh;
 	TriMesh::VertexHandle vh;
 	ACG::Vec3d hit_point;
-	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point))
-		return;//can't generate a circle in empty space
+	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point) && _event->type() != QEvent::MouseButtonRelease)
+	    return;//can't generate a circle in empty space
 
 	if(_event->type() == QEvent::MouseMove && createCircle_CurrSelIndex_ != -1) {
 		PolyLineObject* lineObject = 0;
-		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
+		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject) || !lineObject->objectData(CIRCLE_DATA))
 			return;
+        PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
 
-		const ACG::Vec3d n = createCircle_Normal_, x0 = createCircle_Point_;
+		const ACG::Vec3d n = circleData->circleNormal_, x0 = circleData->circleCenter_;
 		const double t = ((n | x0) - (n | hit_point)) / n.sqrnorm();
 		const ACG::Vec3d onPlane = hit_point + t * n,  d = onPlane - x0;
-		const double r = d.norm();
-		const ACG::Vec3d mainAxis = (onPlane - x0).normalize(), sideAxis = (mainAxis % n).normalize();
 
-		PolyLineCircleData* lineData = new PolyLineCircleData(x0, n, mainAxis, sideAxis, r, r, mesh->id());
-		lineObject->setObjectData(CIRCLE_DATA, lineData);
+        circleData->circleMainAxis_ = (onPlane - x0).normalize();
+        circleData->circleSideRadius_  = circleData->circleMainRadius_ = d.norm();
+        circleData->circleSideAxis_ = (circleData->circleMainAxis_ % n).normalize();
+
 		updatePolyEllipse(lineObject, tool_->sb_CirclePointNum->value());
 		updateHandles(lineObject);
 	}
-	else if(_event->type() == QEvent::MouseButtonPress) {
-		emit addEmptyObject(DATA_POLY_LINE, cur_insert_id_);
+	else if(_event->type() == QEvent::MouseButtonPress && createCircle_CurrSelIndex_ == -1) {
+		int new_line_id;
+	    emit addEmptyObject(DATA_POLY_LINE, new_line_id);
 		BaseObjectData *obj = 0;
-		PluginFunctions::getObject(cur_insert_id_, obj);
+		PluginFunctions::getObject(new_line_id, obj);
 		obj->target(true);
 		PolyLineObject* newLine = PluginFunctions::polyLineObject(obj);
 		newLine->materialNode()->set_random_color();
-		newLine->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
 
-		createCircle_Point_ = hit_point;
 		if(!mesh->mesh()->has_face_normals())
 			mesh->mesh()->request_face_normals();
-		createCircle_Normal_ = mesh->mesh()->normal(fh);
-		emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+
+        PolyLineCircleData* lineData = new PolyLineCircleData(hit_point, mesh->mesh()->normal(fh), ACG::Vec3d(), ACG::Vec3d(), 0, 0, mesh->id());
+        newLine->setObjectData(CIRCLE_DATA, lineData);
+
+		emit updatedObject(new_line_id, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 		createCircle_LastSelIndex_ = createCircle_CurrSelIndex_ = newLine->id();
 		createSpline_LastSelIndex_ = -1;
-
-		ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
-		ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-		mesh->boundingBox(bbMin, bbMax);
-		const ACG::Vec3d sizeBB((bbMax-bbMin));
-
-		GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(newLine, "N_Handle0");
-		handle0->get_primitive(0).color = ACG::Vec4f(1,0,0,1);
-		handle0->set_size(0.005*sizeBB.norm());
-		handle0->show();
-		handle0->enablePicking(false);
-		handle0->set_position(hit_point);
-		newLine->addAdditionalNode(handle0, name(), "handle0");
-		handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-
-		GlutPrimitiveNode* handle1 = new GlutPrimitiveNode(newLine, "N_Handle1");
-		handle1->get_primitive(0).color = ACG::Vec4f(0,1,0,1);
-		handle1->set_size(0.005*sizeBB.norm());
-		handle1->show();
-		handle1->enablePicking(true);
-		handle1->set_position(hit_point);
-		newLine->addAdditionalNode(handle1, name(), "handle1");
-		handle1->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-
-		GlutPrimitiveNode* cenNode = new GlutPrimitiveNode(newLine, "N_Center");
-		cenNode->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
-		cenNode->set_size(0.005*sizeBB.norm());
-		cenNode->show();
-		cenNode->enablePicking(true);
-		cenNode->set_position(hit_point);
-		newLine->addAdditionalNode(cenNode, name(), "circle");
-		cenNode->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-
-		emit updatedObject(newLine->id(), UPDATE_ALL);
 	}
-	else if(_event->type() == QEvent::MouseButtonRelease) {
-		PolyLineObject* lineObject;
-		if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
-			return;
-		ACG::SceneGraph::GlutPrimitiveNode* N;
-		if(lineObject->getAdditionalNode(N, name(), "handle0"))
-			N->enablePicking(true);
+	else if(_event->type() == QEvent::MouseButtonRelease ) {
+	    PolyLineObject* lineObject;
+		if(PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
+		{
+            ACG::SceneGraph::GlutPrimitiveNode* N;
+            if(lineObject->getAdditionalNode(N, name(), "handle0"))
+                N->enablePicking(true);
+		}
 		createCircle_CurrSelIndex_ = -1;
 	}
 }
 
 //-----------------------------------------------------------------------------
+
+void PolyLinePlugin::
+createSpline_createUI(int _polyLineObjectID)
+{
+    PolyLineObject* lineObject;
+    if (!PluginFunctions::getObject(_polyLineObjectID, lineObject) || !lineObject->objectData(BEZSPLINE_DATA))
+        return;
+    PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
+
+    double rad = 0.0;
+    TriMeshObject* mesh;
+    if(PluginFunctions::getObject(splineData->meshIndex_, mesh)) {
+        //use the size of the mesh to compute the handle radii
+        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+        mesh->boundingBox(bbMin, bbMax);
+        rad = 0.005*(bbMax-bbMin).norm();
+    }
+    else {
+        //use the size of the spline to guess the handle radii
+        ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+        ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+        for(unsigned int i = 0; i < splineData->points_.size(); i++) {
+            bbMin =  bbMin.minimize(splineData->points_[i].position);
+            bbMax =  bbMax.maximize(splineData->points_[i].position);
+        }
+        rad = (bbMax-bbMin).norm() / 25.0;
+    }
+
+    GlutLineNode* lineN = new GlutLineNode(lineObject, "N_Line");
+    lineN->show();
+    lineN->enablePicking(false);
+    lineObject->addAdditionalNode(lineN, name(), "line");
+    lineN->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    for(unsigned int i = 0; i < splineData->points_.size(); i++) {
+        GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Control", i);
+        handle0->get_primitive(0).color = ACG::Vec4f(0,1,0,1);
+        handle0->set_size(rad);
+        handle0->show();
+        handle0->set_position(splineData->points_[i].position);
+        handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+        handle0->enablePicking(true);
+        lineObject->addAdditionalNode(handle0, name(), "control", i);
+    }
+
+    for(unsigned int i = 0; i < splineData->handles_.size(); i++) {
+        const PolyLineBezierSplineData::InterpolatePoint& control = splineData->getInterpolatePoint(i);
+        const ACG::Vec3d hndlPos = splineData->handles_[i], ctrlPos = control.position;
+
+        GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Handle", i);
+        handle0->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
+        handle0->set_size(rad * 0.75);
+        handle0->show();
+        handle0->enablePicking(true);
+        handle0->set_position(hndlPos);
+        lineObject->addAdditionalNode(handle0, name(), "handle", i);
+        handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+        GlutLineNode* lineN;
+        if(lineObject->getAdditionalNode(lineN,  name(), "line")) {
+            lineN->add_line(ctrlPos, hndlPos);
+            lineN->add_color(ACG::Vec4f(1,0,0,1));
+        }
+    }
+    updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
+    lineObject->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+    emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
+}
 
 void PolyLinePlugin::
 me_insertSpline(QMouseEvent* _event)
@@ -1081,11 +1195,11 @@ me_insertSpline(QMouseEvent* _event)
 	  handle0->show();
 	  handle0->set_position(insert_Point);
 	  handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-		handle0->enablePicking(false);
-		lineObject->addAdditionalNode(handle0, name(), "control", splineData->points_.size());
+	  handle0->enablePicking(false);
+	  lineObject->addAdditionalNode(handle0, name(), "control", splineData->points_.size());
 
-		emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
-		splineData->addInterpolatePoint(insert_Point, nor);
+	  emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
+	  splineData->addInterpolatePoint(insert_Point, nor);
 
 	}
 	if(_event->type() == QEvent::MouseButtonDblClick) {
@@ -1162,19 +1276,71 @@ me_delete( QMouseEvent* _event )
 
 //-----------------------------------------------------------------------------
 
+namespace {
+
+bool me_GetMeshHit(QMouseEvent* _event, ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_, ACG::Vec3d& _hit_point, unsigned int& _node_idx, unsigned int& _targetIdx)
+{
+    unsigned int ndx;
+    moveCircle_SelNode_->enablePicking(false);
+    bool hasHit = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), ndx, _targetIdx, &_hit_point);
+    moveCircle_SelNode_->enablePicking(true);
+    BaseObjectData* obj;
+    //if there is no current mesh use the newly found
+    if(hasHit && PluginFunctions::getPickedObject(ndx, obj) && _node_idx == std::numeric_limits<unsigned int>::max())
+        _node_idx = obj->id();
+    return hasHit;
+}
+
+void me_UpdateCircleData(ACG::Vec3d _hit_point, ACG::Vec3d _onPlane, ACG::Vec3d _nor, ACG::SceneGraph::GlutPrimitiveNode* _moveCircle_SelNode_, PolyLineCircleData* _lineData, bool _isShift)
+{
+    if(!_moveCircle_SelNode_->name().compare("N_Center"))
+    {
+         _lineData->circleNormal_ = _nor;
+         _lineData->circleCenter_ = _hit_point;
+         _lineData->circleSideAxis_ = (_lineData->circleMainAxis_ % _lineData->circleNormal_).normalize();
+         _lineData->circleMainAxis_ = (_lineData->circleNormal_ % _lineData->circleSideAxis_).normalize();
+    }
+    else
+    {
+        const double cr = (_onPlane - _lineData->circleCenter_).norm();
+        const ACG::Vec3d axisa = (_onPlane - _lineData->circleCenter_).normalize();
+        if (!_moveCircle_SelNode_->name().compare("N_Handle0")) {
+            const ACG::Vec3d axisb = (axisa % _lineData->circleNormal_).normalize();
+            _lineData->circleMainRadius_ = cr;
+
+            if (_isShift)
+                _lineData->circleSideRadius_ = cr;
+
+            _lineData->circleMainAxis_ = axisa;
+            _lineData->circleSideAxis_ = axisb;
+        } else {
+            const ACG::Vec3d axisb = (_lineData->circleNormal_ % axisa).normalize();
+            _lineData->circleSideRadius_ = cr;
+
+            if (_isShift)
+                _lineData->circleMainRadius_ = cr;
+
+            _lineData->circleSideAxis_ = axisa;
+            _lineData->circleMainAxis_ = axisb;
+        }
+    }
+}
+}
 
 void
 PolyLinePlugin::
 me_move( QMouseEvent* _event )
 {
+  if((_event->modifiers() & Qt::AltModifier) != Qt::AltModifier && moveCircle_IsLocked)//alt was pressed but it isn't anymore
+        moveCircle_IsLocked = moveCircle_IsFloating = false;
+
   // MousePress ? -> get reference point
   if (_event->type() == QEvent::MouseButtonPress) {
 
     unsigned int node_idx, target_idx;
     ACG::Vec3d hit_point;
-    // pick
+    // this is for picking the handles on a circle or spline
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point)) {
-
       BaseNode* node = find_node( PluginFunctions::getRootNode(), node_idx );
       GlutPrimitiveNode* glutNode = dynamic_cast<GlutPrimitiveNode*>(node);
 
@@ -1191,90 +1357,112 @@ me_move( QMouseEvent* _event )
           moveBezSpline_SelSubIndex_ = glutNode->index;
         }
       }
+    }
+    //this is for picking the normal poly lines
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(), node_idx, target_idx, &hit_point)) {
+        BaseObjectData* obj = 0;
+        if (PluginFunctions::getPickedObject(node_idx, obj)) {
+          // is picked object polyline?
+          PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
+          if (cur_pol && !cur_pol->objectData(CIRCLE_DATA) && !cur_pol->objectData(BEZSPLINE_DATA)) {//no vertex dragging on circles!
 
-      BaseObjectData* obj = 0;
-      if (PluginFunctions::getPickedObject(node_idx, obj)) {
-        // is picked object polyline?
-        PolyLineObject* cur_pol = PluginFunctions::polyLineObject(obj);
-        if (cur_pol && !cur_pol->objectData(CIRCLE_DATA) && !cur_pol->objectData(BEZSPLINE_DATA)) {//no vertex dragging on circles!
+            // Check if we got a line segment or a vertex
+            if ( target_idx >= cur_pol->line()->n_vertices() )
+              return;
 
-          // Check if we got a line segment or a vertex
-          if ( target_idx >= cur_pol->line()->n_vertices() )
-            return;
+            // save references
+            cur_move_id_ = cur_pol->id();
 
-          // save references
-          cur_move_id_ = cur_pol->id();
-
-          move_point_ref_ = &(cur_pol->line()->point(target_idx));
+            move_point_ref_ = &(cur_pol->line()->point(target_idx));
+          }
         }
-      }
     }
   }
 
   // Move ? -> move reference point
   if (_event->type() == QEvent::MouseMove){
-
-    unsigned int node_idx, target_idx;
-    ACG::Vec3d hit_point;
-
-    if(moveCircle_SelNode_) {
-
-      if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point) ) {
-
+    if (moveCircle_SelNode_) {
         PolyLineObject* lineObject;
-        if(!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
-          return;
-
+        if (!PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject) || !lineObject->objectData(CIRCLE_DATA))
+            return;
         PolyLineCircleData* lineData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
-        double cr;
-        ACG::Vec3d onPlane;
-        const ACG::Vec3d x0 = lineData->circleCenter_, n = lineData->circleNormal_;
+        ACG::Vec3d hit_point;
+        unsigned int target_idx;
+        bool hasHit = me_GetMeshHit(_event, moveCircle_SelNode_, hit_point, lineData->circleMeshIndex_, target_idx);
+        if(lineData->circleMeshIndex_ == std::numeric_limits<unsigned int>::max()) return;
+        if(!moveCircle_IsLocked && hasHit) {
+            moveCircle_IsFloating = false;
+            ACG::Vec3d x0 = lineData->circleCenter_, n = lineData->circleNormal_;
+            ACG::Vec3d onMesh = hit_point;
+            double t = ((n | x0) - (n | onMesh)) / n.sqrnorm();
+            ACG::Vec3d onPlane = onMesh + t * n;
+            TriMeshObject* mesh;
+            if (!PluginFunctions::getObject(lineData->circleMeshIndex_, mesh))
+                return;
 
-        createCircle_getHitInfo(lineData, hit_point, &hit_point, &cr, &onPlane);
-
-        if(!moveCircle_SelNode_->name().compare("N_Center")) {
-          lineData->circleCenter_ = hit_point;
+            me_UpdateCircleData(onMesh, onPlane, mesh->mesh()->normal(mesh->mesh()->face_handle(target_idx)), moveCircle_SelNode_, lineData, (_event->modifiers() & Qt::ShiftModifier) == Qt::ShiftModifier);
+            if (!moveCircle_SelNode_->name().compare("N_Center")) {
+                moveCircle_LastHitPos_ = onMesh;
+                if((_event->modifiers() & Qt::AltModifier) == Qt::AltModifier) {
+                    moveCircle_IsLocked = true;
+                    moveCircle_LastHitNor_ = lineData->circleNormal_;
+                }
+            }
         }
-        else {
-          ACG::Vec3d axisa = (onPlane - x0).normalize();
-          if(!moveCircle_SelNode_->name().compare("N_Handle0")) {
-            ACG::Vec3d axisb = (axisa % n).normalize();
-            lineData->circleMainRadius_ = cr;
+        else
+        {
+            moveCircle_IsFloating = true;
+            ACG::Vec3d cameraPos, cameraDir;
+            int l,b,w,h;
+            PluginFunctions::viewerProperties(0).glState().get_viewport(l,b,w,h);
+            PluginFunctions::viewerProperties(0).glState().viewing_ray(_event->pos().x(), h - 1 - _event->pos().y(), cameraPos, cameraDir);
+            //intersect the camera ray with a plane located at moveCircle_LastHitPos_ facing moveCircle_LastHitNor_
+            const ACG::Vec3d x0 = !moveCircle_SelNode_->name().compare("N_Center") ? moveCircle_LastHitPos_ : lineData->circleCenter_,
+                             //the side handles can only be moved on the normal plane
+                             n = !moveCircle_SelNode_->name().compare("N_Center") ? (moveCircle_IsLocked ? moveCircle_LastHitNor_ : PluginFunctions::viewingDirection())
+                                                                                  : lineData->circleNormal_;
+            const double t = ((x0 | n) - (cameraPos | n)) / (cameraDir | n);
+            const ACG::Vec3d onPlane = cameraPos + cameraDir * t;
 
-            if(_event->modifiers() & Qt::ShiftModifier)
-              lineData->circleSideRadius_ = cr;
+            me_UpdateCircleData(onPlane, onPlane, n, moveCircle_SelNode_, lineData, (_event->modifiers() & Qt::ShiftModifier) == Qt::ShiftModifier);
 
-            lineData->circleMainAxis_ = axisa;
-            lineData->circleSideAxis_ = axisb;
-          } else {
-            ACG::Vec3d axisb = (n % axisa).normalize();
-            lineData->circleSideRadius_ = cr;
-
-            if(_event->modifiers() & Qt::ShiftModifier)
-              lineData->circleMainRadius_ = cr;
-
-            lineData->circleSideAxis_ = axisa;
-            lineData->circleMainAxis_ = axisb;
-          }
         }
         updateHandles(lineObject);
         updatePolyEllipse(lineObject, tool_->sb_CirclePointNum->value());
+    }
+    else if(moveBezSpline_SelNode_) {
+      PolyLineObject* lineObject;
+      if(!PluginFunctions::getObject(moveBezSpline_SelIndex_, lineObject) || !lineObject->objectData(BEZSPLINE_DATA))
+          return;
+      PolyLineBezierSplineData* lineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
+      ACG::Vec3d hit_point;
+      unsigned int target_idx;
+      bool hasHit = me_GetMeshHit(_event, moveBezSpline_SelNode_, hit_point, lineData->meshIndex_, target_idx);
+      if(lineData->meshIndex_ == std::numeric_limits<unsigned int>::max()) return;
+      if(!moveBezSpline_SelNode_->name().compare("N_Control") && hasHit) {
+        TriMeshObject* mesh;
+        if (!PluginFunctions::getObject(lineData->meshIndex_, mesh))
+            return;
+        ACG::Vec3d onMesh = hit_point, onMeshNor = mesh->mesh()->normal(mesh->mesh()->face_handle(target_idx));
+        int controlIndex = moveBezSpline_SelSubIndex_;
+        ACG::Vec3d oldPos = moveBezSpline_SelNode_->get_position();
+        moveBezSpline_SelNode_->set_position(onMesh);
+        lineData->points_[controlIndex].position = onMesh;
+        lineData->points_[controlIndex].normal   = onMeshNor;
+        if(controlIndex) {
+            int handleIndex = 2 * controlIndex - 1;
+            ACG::Vec3d dir = lineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
+            ACG::Vec3d point = forw + onMesh;
+            lineData->handles_[handleIndex] = point;
+        }
+        if(controlIndex != ((int)lineData->points_.size() - 1)) {
+            int handleIndex = 2 * controlIndex;
+            ACG::Vec3d dir = lineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
+            ACG::Vec3d point = forw + onMesh;
+            lineData->handles_[handleIndex] = point;
+        }
       }
-
-    } else if(moveBezSpline_SelNode_) {
-
-      if(PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point) ) {
-
-        PolyLineObject* lineObject;
-        if(!PluginFunctions::getObject(moveBezSpline_SelIndex_, lineObject))
-          return;
-
-        GlutLineNode* lineN;
-        if(!lineObject->getAdditionalNode(lineN, name(), "line", 0))
-          return;
-
-        PolyLineBezierSplineData* lineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
-        if(!moveBezSpline_SelNode_->name().compare("N_Handle")) {
+      else if(!moveBezSpline_SelNode_->name().compare("N_Handle")) {
           int handleIndex = moveBezSpline_SelSubIndex_;
           const PolyLineBezierSplineData::InterpolatePoint& control = lineData->getInterpolatePoint(handleIndex);
           //we don't use the mesh location but instead the location on the normal plane!
@@ -1300,33 +1488,16 @@ me_move( QMouseEvent* _event )
             ACG::Vec3d dir = -(onPlane - control.position).normalize();
             lineData->handles_[handleIndex - 1] = control.position + dir * dist;
           }
-			}
-			else if(!moveBezSpline_SelNode_->name().compare("N_Control")) {
-				ACG::Vec3d onMeshNor;
-				ACG::Vec3d onMesh = getPointOnMesh(lineData, hit_point, &onMeshNor);
-				int controlIndex = moveBezSpline_SelSubIndex_;
-				ACG::Vec3d oldPos = moveBezSpline_SelNode_->get_position();
-				moveBezSpline_SelNode_->set_position(onMesh);
-				lineData->points_[controlIndex].position = onMesh;
-				lineData->points_[controlIndex].normal   = onMeshNor;
-				if(controlIndex) {
-					int handleIndex = 2 * controlIndex - 1;
-					ACG::Vec3d dir = lineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
-					ACG::Vec3d point = forw + onMesh;
-					lineData->handles_[handleIndex] = point;
-				}
-				if(controlIndex != ((int)lineData->points_.size() - 1)) {
-					int handleIndex = 2 * controlIndex;
-					ACG::Vec3d dir = lineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
-					ACG::Vec3d point = forw + onMesh;
-					lineData->handles_[handleIndex] = point;
-				}
-			}
-			updatePolyBezierHandles(lineObject, lineN);
-			updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
-    	}
+      }
+      GlutLineNode* lineN;
+      if(!lineObject->getAdditionalNode(lineN, name(), "line", 0))
+        return;
+      updatePolyBezierHandles(lineObject, lineN);
+      updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
     }
     else if (move_point_ref_ != 0) {
+        ACG::Vec3d hit_point;
+        unsigned int node_idx, target_idx;
       if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &hit_point)) {
         (*move_point_ref_) = (PolyLine::Point) hit_point;
         // update
@@ -1337,11 +1508,24 @@ me_move( QMouseEvent* _event )
 
   // Release ? -> release reference point
   if (_event->type() == QEvent::MouseButtonRelease) {
-	  move_point_ref_ = 0;
-	  moveCircle_SelNode_ = 0;
-	  createCircle_CurrSelIndex_ = -1;
-	  moveBezSpline_SelNode_ = 0;
-	  moveBezSpline_SelIndex_ = -1;
+      if((_event->modifiers() & Qt::AltModifier) != Qt::AltModifier) {
+          //in case we are not dragging the center and not pressing alt -> project to mesh
+         // if(moveCircle_SelNode_ && moveCircle_SelNode_->name().compare("N_Center"))
+              moveCircle_IsLocked = moveCircle_IsFloating = false;
+          PolyLineObject* lineObject;
+          if (PluginFunctions::getObject(createCircle_CurrSelIndex_, lineObject))
+          {
+              PolyLineCircleData* lineData = dynamic_cast<PolyLineCircleData*>(lineObject->objectData(CIRCLE_DATA));
+              moveCircle_IsLocked = false;
+              updateHandles(lineObject);
+              updatePolyEllipse(lineObject, tool_->sb_CirclePointNum->value());
+          }
+      }
+      move_point_ref_ = 0;
+      moveCircle_SelNode_ = 0;
+      createCircle_CurrSelIndex_ = -1;
+      moveBezSpline_SelNode_ = 0;
+      moveBezSpline_SelIndex_ = -1;
   }
 }
 //-----------------------------------------------------------------------------
@@ -1711,12 +1895,14 @@ updateHandles(PolyLineObject* _lineObject)
   _lineObject->getAdditionalNode(C,  name(), "circle");
   _lineObject->getAdditionalNode(H0, name(), "handle0");
   _lineObject->getAdditionalNode(H1, name(), "handle1");
+  ACG::Vec3d h0 = circleData->circleCenter_ + circleData->circleMainAxis_ * circleData->circleMainRadius_,
+             h1 = circleData->circleCenter_ + circleData->circleSideAxis_ * circleData->circleSideRadius_;
   if(C)
-    C->set_position(createCircle_getHit(circleData, circleData->circleCenter_));
+      C->set_position(circleData->circleCenter_);
   if(H0)
-    H0->set_position(createCircle_getHit(circleData, circleData->circleCenter_ + circleData->circleMainAxis_ * circleData->circleMainRadius_));
+      H0->set_position(moveCircle_IsFloating ? h0 : createCircle_getHit(circleData, h0));
   if(H1)
-    H1->set_position(createCircle_getHit(circleData, circleData->circleCenter_ + circleData->circleSideAxis_ * circleData->circleSideRadius_));
+      H1->set_position(moveCircle_IsFloating ? h1 : createCircle_getHit(circleData, h1));
 }
 
 void

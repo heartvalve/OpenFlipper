@@ -183,6 +183,8 @@ private slots:
   void slot_setCirclePointNum(int i);
   void slot_setSplinePointNum(int i);
 
+  virtual void slotObjectUpdated( int _identifier );
+
 private :
 
   EditMode mode();
@@ -302,11 +304,13 @@ private:
     int				    createCircle_CurrSelIndex_;
     /// Use this one to mark the last index to update the number of points
     int					createCircle_LastSelIndex_;
-    /// Data for creating a circle, center and it's normal
-    ACG::Vec3d		    createCircle_Point_;
-    ACG::Vec3d		    createCircle_Normal_;
     /// The handle which is being dragged.
     ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_;
+    ///The last valid hit on the mesh
+    ACG::Vec3d          moveCircle_LastHitPos_;
+    ACG::Vec3d          moveCircle_LastHitNor_;
+    bool                moveCircle_IsLocked;
+    bool                moveCircle_IsFloating;
 
     /**
 	 * \brief Calculates a point on the mesh.
@@ -353,6 +357,18 @@ private:
 	 */
 	ACG::Vec3d createCircle_getHit(PolyLineCircleData* _circleData, ACG::Vec3d _hit_point);
 
+public slots:
+	/* \brief Creates the UI elements for the poly line(asserting it has circle data)
+	 *
+	 */
+	void createCircle_createUI(int _polyLineObjectID);
+
+	/* \brief Creates the UI elements for the poly line(asserting it has spline data)
+	 *
+	 */
+	void createSpline_createUI(int _polyLineObjectID);
+
+private:
 	/** \brief Generates points for the ellipse.
 	 *
 	 * @param _lineObject The object to generate points for.
