@@ -617,6 +617,8 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
+    ro.shaderDesc.geometryTemplateFile = "";
+    ro.shaderDesc.fragmentTemplateFile = "";
 
     // ------------------------
     // 1. setup drawMesh based on property source
@@ -706,7 +708,6 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
 
       // use geometry shaders to simulate line width
-      ro.shaderDesc.geometryShader = true;
    
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
       geomTemplate += "Wireframe/geometry.tpl";
@@ -716,17 +717,10 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
       ro.shaderDesc.fragmentTemplateFile = fragTemplate;
-      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
-      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
-      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
 
       ro.setUniform("lineWidth", _state.line_width());
 
       add_face_RenderObjects(_renderer, &ro);
-
-      ro.shaderDesc.geometryShader = false;
-      ro.shaderDesc.geometryTemplateFile = "";
-      ro.shaderDesc.fragmentTemplateFile = "";
     }
 
     if (props->primitive()  == DrawModes::PRIMITIVE_HIDDENLINE)
@@ -741,8 +735,6 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
         ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
 
       // use shaders to simulate line width
-      ro.shaderDesc.geometryShader = true;
-
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
       geomTemplate += "Wireframe/geometry.tpl";
 
@@ -751,17 +743,11 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
       ro.shaderDesc.fragmentTemplateFile = fragTemplate;
-      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_TRIANGLES;
-      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
-      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 3;
 
       ro.setUniform("lineWidth", _state.line_width());
 
       add_face_RenderObjects(_renderer, &ro);
 
-      ro.shaderDesc.geometryShader = false;
-      ro.shaderDesc.geometryTemplateFile = "";
-      ro.shaderDesc.fragmentTemplateFile = "";
     }
 
     if (props->colored() && props->primitive()  == DrawModes::PRIMITIVE_EDGE)
@@ -779,23 +765,15 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
 
       // use shaders to simulate line width
-      ro.shaderDesc.geometryShader = true;
-
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
       geomTemplate += "Wireframe/geom_line2quad.tpl";
 
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
-      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
-      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
-      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
 
       ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
       ro.setUniform("lineWidth", _state.line_width());
 
       _renderer->addRenderObject(&ro);
-
-      ro.shaderDesc.geometryShader = false;
-      ro.shaderDesc.geometryTemplateFile = "";
 
        // skip other edge primitives for this drawmode layer
       continue;
@@ -819,23 +797,15 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
 
       // use shaders to simulate line width
-      ro.shaderDesc.geometryShader = true;
-
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
       geomTemplate += "Wireframe/geom_line2quad.tpl";
 
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
-      ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
-      ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
-      ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
 
       ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
       ro.setUniform("lineWidth", _state.line_width());
 
       _renderer->addRenderObject(&ro);
-
-      ro.shaderDesc.geometryShader = false;
-      ro.shaderDesc.geometryTemplateFile = "";
     }  
 
 
@@ -846,30 +816,44 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
     switch (props->primitive())
     {
-    case DrawModes::PRIMITIVE_POINT: add_point_RenderObjects(_renderer, &ro); break;
+    case DrawModes::PRIMITIVE_POINT:
+      {
+        // use specular color for points
+        if (_drawMode.isAtomic() )
+          ro.emissive = ro.specular;
+        else
+          ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
+
+        // use shaders to simulate line width
+        QString geomTemplate = ShaderProgGenerator::getShaderDir();
+        geomTemplate += "PointSize/geometry.tpl";
+
+        QString fragTemplate = ShaderProgGenerator::getShaderDir();
+        fragTemplate += "PointSize/fragment.tpl";
+
+        ro.shaderDesc.geometryTemplateFile = geomTemplate;
+        ro.shaderDesc.fragmentTemplateFile = fragTemplate;
+
+        ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+        ro.setUniform("pointSize", _mat->pointSize());
+
+        add_point_RenderObjects(_renderer, &ro);
+      } break;
     case DrawModes::PRIMITIVE_EDGE:
       {
         // use specular color for lines
         ro.emissive = ro.specular;
 
         // use shaders to simulate line width
-        ro.shaderDesc.geometryShader = true;
-
         QString geomTemplate = ShaderProgGenerator::getShaderDir();
         geomTemplate += "Wireframe/geom_line2quad.tpl";
 
         ro.shaderDesc.geometryTemplateFile = geomTemplate;
-        ro.shaderDesc.geometryShaderInput = SG_GEOMETRY_IN_LINES;
-        ro.shaderDesc.geometryShaderOutput = SG_GEOMETRY_OUT_TRIANGLE_STRIP;
-        ro.shaderDesc.geometryShaderMaxOutputPrimitives = 4;
 
         ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
         ro.setUniform("lineWidth", _state.line_width());
 
         add_line_RenderObjects(_renderer, &ro);
-
-        ro.shaderDesc.geometryShader = false;
-        ro.shaderDesc.geometryTemplateFile = "";
       } break;
     case DrawModes::PRIMITIVE_POLYGON: add_face_RenderObjects(_renderer, &ro); break;
     default: break;

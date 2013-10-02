@@ -202,18 +202,6 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
   if (a->textured() != b->textured())
     return -1;
 
-  if (a->geometryShader != b->geometryShader)
-    return -1;
-
-  if (a->geometryShaderInput != b->geometryShaderInput)
-      return -1;
-
-  if (a->geometryShaderOutput != b->geometryShaderOutput)
-        return -1;
-
-  if (a->geometryShaderMaxOutputPrimitives != b->geometryShaderMaxOutputPrimitives)
-        return -1;
-
   if (_a->strFragmentTemplate != _b->strFragmentTemplate)
     return -1;
 

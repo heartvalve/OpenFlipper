@@ -302,7 +302,6 @@ public:
     indexOffset = first;
     numIndices = count;
 
-    setGeometryShaderInputFromDrawCall(mode);
   }
 
   void glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
@@ -312,7 +311,6 @@ public:
     indexType = type;
 
     sysmemIndexBuffer = indices;
-    setGeometryShaderInputFromDrawCall(mode);
   }
 
   void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
@@ -343,12 +341,6 @@ public:
   /** Returns a text representation of the RenderObject for debugging purposes.
   */
   QString toString() const;
-
-  /** Used by the draw functions. Sets the correct input primitive type for the geometry shader.
-   *
-   * @param _mode Which primitive mode? GL_POINTS, ...
-   */
-  void setGeometryShaderInputFromDrawCall(GLenum _mode);
 
   /** \brief set values for int uniforms
    *
