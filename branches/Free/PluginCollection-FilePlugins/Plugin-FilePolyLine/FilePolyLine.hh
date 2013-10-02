@@ -37,6 +37,10 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
     void emptyObjectAdded( int _id );
 
+    //RPC Interface
+    void pluginExists(QString _pluginName, bool &_exists);
+    void functionExists(QString _pluginName, QString _functionName, bool &_exists);
+
   private slots:
 
     void fileOpened( int /*_id*/ ){};
@@ -47,6 +51,9 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
     void noguiSupported( ) {} ;
 
     void initializePlugin();
+
+    void loadPolyLine(PolyLineObject* lineObject,  const char* _filename);
+    void savePolyLine(PolyLineObject* lineObject,  const char* _filename);
 
   public :
 
