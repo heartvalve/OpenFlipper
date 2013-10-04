@@ -68,6 +68,7 @@ set (directories
   ../widgets/stereoSettingsWidget
   ../widgets/postProcessorWidget
   ../widgets/rendererWidget
+  ../widgets/filePicker 
   ${WIN_EXTRA_DIRS}
 )
 
