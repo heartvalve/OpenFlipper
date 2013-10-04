@@ -1950,7 +1950,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
                             ACG::MULT_FROM_LEFT);
                 }
                 */
-                ACG::Vec3d center(glWidth()/2.0, glHeight()/2.0);
+                ACG::Vec3d center(glWidth()/2.0, glHeight()/2.0, 0);
                 rotate(constrainedRotationAxis_, angle, unproject(center));
 
                 lastRotationAxis_ = constrainedRotationAxis_;
