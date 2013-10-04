@@ -83,6 +83,7 @@ set (directories
   ../INIFile
   ../widgets/glWidget
   ../publicWidgets/objectSelectionWidget
+  ../widgets/filePicker 
 )
 
 # collect all header,source and ui files

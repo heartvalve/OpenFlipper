@@ -14,7 +14,7 @@
 #include <QPushButton>
 #include <OpenFlipper/common/RecentFiles.hh>
 
-class FilePicker : public QWidget {
+class DLLEXPORT FilePicker : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QString recent_files_ini_key
                READ recent_files_ini_key
