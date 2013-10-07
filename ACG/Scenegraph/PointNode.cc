@@ -54,6 +54,7 @@
 #include "PointNode.hh"
 #include "../Utils/StopWatch.hh"
 #include "../GL/gl.hh"
+#include <ACG/GL/IRenderer.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -144,6 +145,68 @@ draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
   ACG::GLState::disableClientState(GL_NORMAL_ARRAY);
   ACG::GLState::disableClientState(GL_COLOR_ARRAY);
+}
+
+void 
+PointNode::
+getRenderObjects( IRenderer* _renderer, GLState& _state , const DrawModes::DrawMode& _drawMode , const Material* _mat )
+{
+  if (points_.empty())
+    return;
+
+  // setup RenderObject
+  RenderObject ro;
+  ro.debugName = "PointNode";
+
+
+  // define vertex format
+  // buffer address may change so do this every frame
+
+  vertexDecl_.clear();
+  vertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_POSITION, &points_[0]);
+  if (!normals_.empty())
+    vertexDecl_.addElement(GL_DOUBLE, 3, VERTEX_USAGE_NORMAL, &normals_[0]);
+  if (!colors_.empty())
+    vertexDecl_.addElement(GL_FLOAT, 4, VERTEX_USAGE_COLOR, &colors_[0]);
+
+  vertexDecl_.setVertexStride(0);
+
+  ro.vertexDecl = &vertexDecl_;
+
+  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
+  {
+    const DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
+
+    if (props->primitive() == DrawModes::PRIMITIVE_POINT)
+    {
+      // reset renderobject
+      ro.initFromState(&_state);
+      ro.setMaterial(_mat);
+      ro.setupShaderGenFromDrawmode(props);
+
+      ro.priority = 0;
+      ro.depthTest = true;
+      ro.depthWrite = true;
+      ro.depthFunc = GL_LESS;
+
+      // use pointsize shader
+      QString geomTemplate = ShaderProgGenerator::getShaderDir();
+      geomTemplate += "PointSize/geometry.tpl";
+
+      QString fragTemplate = ShaderProgGenerator::getShaderDir();
+      fragTemplate += "PointSize/fragment.tpl";
+
+      ro.shaderDesc.geometryTemplateFile = geomTemplate;
+      ro.shaderDesc.fragmentTemplateFile = fragTemplate;
+
+      // shader uniforms
+      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+      ro.setUniform("pointSize", _mat->pointSize());
+
+      ro.glDrawArrays(GL_POINTS, 0, (GLsizei)points_.size());
+      _renderer->addRenderObject(&ro);
+    }
+  }
 }
 
 
