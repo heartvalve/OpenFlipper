@@ -26,20 +26,20 @@ void main()
   vec2 offset = lineNormal * lineWidth;
 
   sg_MapIO(0); // default IO mapping
-  gl_Position = vec4( (p0 + offset) * p0.w / screenSize, p0.z, p0.w);
+  gl_Position = vec4( (p0.xy + offset) * p0.w / screenSize, p0.z, p0.w);
   EmitVertex();
   
   sg_MapIO(0); // default IO mapping
-  gl_Position = vec4( (p0 - offset) * p0.w / screenSize, p0.z, p0.w);
+  gl_Position = vec4( (p0.xy - offset) * p0.w / screenSize, p0.z, p0.w);
   EmitVertex();
   
   
   sg_MapIO(1); // default IO mapping
-  gl_Position = vec4( (p1 + offset) * p1.w / screenSize, p1.z, p1.w);
+  gl_Position = vec4( (p1.xy + offset) * p1.w / screenSize, p1.z, p1.w);
   EmitVertex();
   
   sg_MapIO(1); // default IO mapping
-  gl_Position = vec4( (p1 - offset) * p1.w / screenSize, p1.z, p1.w);
+  gl_Position = vec4( (p1.xy - offset) * p1.w / screenSize, p1.z, p1.w);
   EmitVertex();
   
   EndPrimitive();

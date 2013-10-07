@@ -58,6 +58,7 @@
 
 #include "BaseNode.hh"
 #include "DrawModes.hh"
+#include <ACG/GL/VertexDeclaration.hh>
 #include <vector>
 
 //== NAMESPACES ===============================================================
@@ -111,6 +112,9 @@ public:
   /// draw points and normals
   void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
+  /// draw points and normals via renderer plugin
+  void getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawMode&  _drawMode , const Material* _mat);
+
   /// reserve mem for _np points and _nn normals
   void reserve(unsigned int _np, unsigned int _nn, unsigned int _nc) {
     points_.reserve(_np); normals_.reserve(_nn); colors_.reserve(_nc);
@@ -147,6 +151,8 @@ private:
   
   PointVector  points_, normals_;
   ColorVector  colors_;
+
+  VertexDeclaration vertexDecl_;
 };
 
 
