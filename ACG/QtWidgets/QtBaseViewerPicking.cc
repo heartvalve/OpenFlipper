@@ -92,6 +92,10 @@ bool QtBaseViewer::pick( SceneGraph::PickTarget _pickTarget,
     GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
                   nameBuffer[ NAME_STACK_SIZE ];
 
+    // Initialize Namebuffer
+    nameBuffer[0] = 0;
+    nameBuffer[1] = 0;
+
     const GLMatrixd&  modelview  = glstate_->modelview();
     const GLMatrixd&  projection = glstate_->projection();
 
