@@ -431,6 +431,10 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
                 nameBuffer[ NAME_STACK_SIZE ];
 
+  // Initialize name buffer (This value is never used afterwards)
+  nameBuffer[0] = 0;
+  nameBuffer[1] = 0;
+
   const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
   const ACG::GLMatrixd&  projection = properties_.glState().projection();
 
