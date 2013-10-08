@@ -725,8 +725,8 @@ void DepthPeelingPlugin::generatePeelingShaders(GLSL::StringList* _strVertexShad
       }
     }
   }
-  else // wireframe: no shading necessary
-    _strFragmentShaderOut->push_back("  vec4 color = vec4(1.0, 1.0, 1.0, gl_FrontMaterial.diffuse.a);\n");
+  else // wireframe:
+    _strFragmentShaderOut->push_back("  vec4 color = VColor;\n");
 
   for (unsigned int i = 0; i < sizeof(szFragmentShaderEnd) / sizeof(char*); ++i)
   {
