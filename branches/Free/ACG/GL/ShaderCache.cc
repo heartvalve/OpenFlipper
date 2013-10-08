@@ -56,6 +56,7 @@
 #include <QTextStream>
 
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/GLError.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
 
 namespace ACG

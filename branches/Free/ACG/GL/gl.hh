@@ -296,19 +296,6 @@ inline bool openGLVersion( const int _major, const int _minor  )  {
 }
 
 
-/** Nice wrapper that outputs all current OpenGL errors to std::cerr.
-    If no error is present nothing is printed.
-**/
-inline void glCheckErrors()
-{
-  GLenum error;
-  while ((error = glGetError()) != GL_NO_ERROR)
-  {
-    std::cerr << "GL error: " << gluErrorString(error) << std::endl;
-  }
-}
-
-
 //=============================================================================
 }  // namespace ACG
 //=============================================================================
