@@ -1331,7 +1331,7 @@ void
 PolyLinePlugin::
 me_move( QMouseEvent* _event )
 {
-  if((_event->modifiers() & Qt::AltModifier) != Qt::AltModifier && moveCircle_IsLocked)//alt was pressed but it isn't anymore
+  if((_event->modifiers() & Qt::ShiftModifier) != Qt::ShiftModifier && moveCircle_IsLocked)//alt was pressed but it isn't anymore
         moveCircle_IsLocked = moveCircle_IsFloating = false;
 
   // MousePress ? -> get reference point
@@ -1403,7 +1403,7 @@ me_move( QMouseEvent* _event )
             me_UpdateCircleData(onMesh, onPlane, mesh->mesh()->normal(mesh->mesh()->face_handle(target_idx)), moveCircle_SelNode_, lineData, (_event->modifiers() & Qt::ShiftModifier) == Qt::ShiftModifier);
             if (!moveCircle_SelNode_->name().compare("N_Center")) {
                 moveCircle_LastHitPos_ = onMesh;
-                if((_event->modifiers() & Qt::AltModifier) == Qt::AltModifier) {
+                if((_event->modifiers() & Qt::ShiftModifier) == Qt::ShiftModifier) {
                     moveCircle_IsLocked = true;
                     moveCircle_LastHitNor_ = lineData->circleNormal_;
                 }
@@ -1508,7 +1508,7 @@ me_move( QMouseEvent* _event )
 
   // Release ? -> release reference point
   if (_event->type() == QEvent::MouseButtonRelease) {
-      if((_event->modifiers() & Qt::AltModifier) != Qt::AltModifier) {
+      if((_event->modifiers() & Qt::ShiftModifier) != Qt::ShiftModifier) {
           //in case we are not dragging the center and not pressing alt -> project to mesh
          // if(moveCircle_SelNode_ && moveCircle_SelNode_->name().compare("N_Center"))
               moveCircle_IsLocked = moveCircle_IsFloating = false;
