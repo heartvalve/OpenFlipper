@@ -42,7 +42,7 @@
 
 #include <iostream>
 
-#include "gldebug.h"
+#include <ACG/GL/GLError.hh>
 #include "UniformPool.hh"
 
 #ifdef WIN32

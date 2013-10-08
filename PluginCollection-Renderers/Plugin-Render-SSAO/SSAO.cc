@@ -44,6 +44,7 @@
 #include "SSAO.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <ACG/GL/GLError.hh>
 
 #undef QT_NO_OPENGL
 #include <QGLFormat>

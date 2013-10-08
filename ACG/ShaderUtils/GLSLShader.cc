@@ -52,8 +52,8 @@
 
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GLState.hh>
+#include <ACG/GL/GLError.hh>
 
-#include "gldebug.h"
 #include "GLSLShader.hh"
 #include <ACG/GL/ShaderGenerator.hh>
 

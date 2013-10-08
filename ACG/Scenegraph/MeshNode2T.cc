@@ -53,6 +53,7 @@
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 #include <ACG/GL/DrawMesh.hh>
+#include <ACG/GL/GLError.hh>
 
 //== NAMESPACES ===============================================================
 

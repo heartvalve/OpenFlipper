@@ -54,6 +54,7 @@
 
 #include "ScreenQuad.hh"
 #include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/GLError.hh>
 
 //== NAMESPACES ===============================================================
 

@@ -53,6 +53,7 @@
 
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/GLState.hh>
+#include <ACG/GL/GLError.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/Scenegraph/MaterialNode.hh>
 

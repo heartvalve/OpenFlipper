@@ -12,6 +12,7 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/GLError.hh>
 
 using namespace ACG;
 

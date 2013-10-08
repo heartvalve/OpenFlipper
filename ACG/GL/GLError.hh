@@ -34,25 +34,77 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
+ *   $Revision: 10745 $                                                         *
+ *   $Author: moebius $                                                      *
+ *   $Date: 2011-01-26 10:23:50 +0100 (Wed, 26 Jan 2011) $                   *
  *                                                                           *
 \*===========================================================================*/
 
 
 //=============================================================================
 //
-// GluError - IMPLEMENTATION
+// GLError
 //
 //=============================================================================
 
-#include "GluError.hh"
-#include <iostream>
 
-void nurbsErrorCallback(GLenum errorCode)
+#ifndef ACGGLERROR_H
+#define ACGGLERROR_H
+
+//=============================================================================
+//
+// Includes
+//
+//=============================================================================
+
+#include <ACG/GL/gl.hh>
+#include <ACG/Config/ACGDefines.hh>
+
+//=============================================================================
+//
+// Macros
+//
+//=============================================================================
+
+#ifndef NDEBUG
+#define checkGLError() \
+    { int error; if ( (error = glGetError()) != GL_NO_ERROR ) std::cout << "GLError " << __FILE__ << ":" << __LINE__ << " - " << error << std::endl; }
+
+#define checkGLError2(str) \
+    { int error; if ( (error = glGetError()) != GL_NO_ERROR ) std::cout << "GLError " << __FILE__ << ":" << __LINE__ << " - " << error << " - " << str <<std::endl; }
+
+#else
+
+#define checkGLError()
+#define checkGLError2(str)
+
+#endif
+
+//=============================================================================
+namespace ACG {
+//=============================================================================
+
+/** Nice wrapper that outputs all current OpenGL errors to std::cerr.
+    If no error is present nothing is printed.
+**/
+inline void glCheckErrors()
+{
+  GLenum error;
+  while ((error = glGetError()) != GL_NO_ERROR)
+  {
+    std::cerr << "GL error: " << gluErrorString(error) << std::endl;
+  }
+}
+
+inline void nurbsErrorCallback(GLenum errorCode)
 {
   const GLubyte *estring;
   estring = gluErrorString(errorCode);
   std::cerr << "Nurbs Error: " << estring << std::endl;;
-};
+}
+
+//=============================================================================
+}  // namespace ACG
+//=============================================================================
+#endif //ACGGLERROR_H defined
+//=============================================================================

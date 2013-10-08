@@ -44,6 +44,8 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/Light/LightNode.hh>
 
+#include <ACG/GL/GLError.hh>
+
 #undef QT_NO_OPENGL
 #include <QGLFormat>
 #define QT_NO_OPENGL

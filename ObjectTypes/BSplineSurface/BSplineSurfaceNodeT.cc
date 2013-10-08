@@ -54,7 +54,7 @@
 
 #include "BSplineSurfaceNodeT.hh"
 #include <ACG/GL/gl.hh>
-#include <ACG/GL/GluError.hh>
+#include <ACG/GL/GLError.hh>
 #include <ACG/Utils/VSToolsT.hh>
 #include <vector>
 
