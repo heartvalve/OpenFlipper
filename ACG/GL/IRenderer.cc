@@ -509,11 +509,17 @@ void IRenderer::dumpRenderObjectsToFile(const char* _fileName, ACG::RenderObject
 }
 
 
-QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, bool _outputShaders ) {
+QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, bool _outputShaders, std::vector<ACG::ShaderModifier*>* _modifiers) {
 
   QString objectString;
 
   QTextStream outStrm(&objectString);
+  std::vector<ACG::ShaderModifier*>::iterator it;
+  unsigned int usage = 0;
+  if (_modifiers) {
+    for (it = _modifiers->begin(); it != _modifiers->end(); ++it)
+      usage |= (*it)->getID();
+  }
   for (int i = 0; i < getNumRenderObjects(); ++i)
   {
     if (_list) {
@@ -528,7 +534,10 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
         outStrm << _list[i]->shaderDesc.toString();
 
-        ShaderProgGenerator progGen(&(_list[i]->shaderDesc));
+        ShaderProgGenerator progGen(&(_list[i]->shaderDesc), usage);
+
+        if (!usage)
+          progGen.generateShaders();
 
         outStrm << "\n---------------------vertex-shader--------------------\n\n";
         for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
@@ -563,7 +572,10 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
         outStrm << renderObjects_[i].shaderDesc.toString();
 
-        ShaderProgGenerator progGen(&(renderObjects_[i].shaderDesc));
+        ShaderProgGenerator progGen(&(renderObjects_[i].shaderDesc), usage);
+
+        if (!usage)
+          progGen.generateShaders();
 
         outStrm << "\n---------------------vertex-shader--------------------\n\n";
         for (int i = 0; i < progGen.getVertexShaderCode().size(); ++i)
