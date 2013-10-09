@@ -58,8 +58,9 @@
 #include "MeshNodeT.hh"
 #include "ShaderNode.hh"
 #include "DrawModes.hh"
-#include "../GL/gl.hh"
-#include "../GL/ColorTranslator.hh"
+#include <ACG/GL/gl.hh>
+#include <ACG/GL/GLError.hh>
+#include <ACG/GL/ColorTranslator.hh>
 
 #include <OpenMesh/Core/System/omstream.hh>
 #include <OpenMesh/Core/Utils/Property.hh>
