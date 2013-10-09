@@ -101,6 +101,9 @@ TextNode( BaseNode*    _parent,
     cullFaceEnabled_(false),
     depthEnabled_(false),
     alwaysOnTop_(_alwaysOnTop),
+    alphaTest_(false),
+    alphaTestValue_(0.5f),
+    alphaTestFunc_(GL_GREATER),
     blendSrc_(0),
     blendDest_(0),
     lastScale_(0.f)
@@ -234,7 +237,7 @@ createMap() {
 
 void
 TextNode::
-enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
+enter(GLState& _state, const DrawModes::DrawMode& /*_drawmode*/) {
   if (text_.empty())
     return;
 
@@ -243,6 +246,9 @@ enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
   texture2dEnabled_ = glIsEnabled(GL_TEXTURE_2D);
   blendEnabled_ = glIsEnabled(GL_BLEND);
   depthEnabled_ = glIsEnabled(GL_DEPTH_TEST);
+  alphaTest_ = glIsEnabled(GL_ALPHA_TEST);
+  if (alphaTest_)
+    ACG::GLState::getAlphaFunc(&alphaTestFunc_, &alphaTestValue_);
 
   glGetIntegerv(GL_BLEND_SRC, &blendSrc_);
   glGetIntegerv(GL_BLEND_DST, &blendDest_);
@@ -251,6 +257,8 @@ enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
   ACG::GLState::disable(GL_CULL_FACE);
   ACG::GLState::enable(GL_TEXTURE_2D);
   ACG::GLState::enable(GL_BLEND);
+  ACG::GLState::enable(GL_ALPHA_TEST);
+  ACG::GLState::alphaFunc(GL_GREATER, 0.2);
   ACG::GLState::blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (alwaysOnTop_)
     ACG::GLState::disable(GL_DEPTH_TEST);
@@ -278,6 +286,10 @@ leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/) {
     ACG::GLState::enable(GL_DEPTH_TEST);
   else
     ACG::GLState::disable(GL_DEPTH_TEST);
+  if (!alphaTest_)
+    ACG::GLState::disable(GL_ALPHA_TEST);
+  else
+    ACG::GLState::alphaFunc(alphaTestFunc_, alphaTestValue_);
 
   ACG::GLState::blendFunc(blendSrc_, blendDest_);
 }
@@ -570,7 +582,6 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   }
 
   ro.culling = false;
-  //ro.alphaTest = true;
   ro.blending = true;
   ro.alpha = 0.f;
 

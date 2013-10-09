@@ -236,6 +236,15 @@ private:
   /// stores if text should be drawn always on top
   bool alwaysOnTop_;
 
+  /// stores if the alpha test was enabled
+  bool alphaTest_;
+
+  /// stores the alpha value used for alpha test
+  float alphaTestValue_;
+
+  /// stores alpha test comparison function
+  GLenum alphaTestFunc_;
+
   /// stores the sfactor parameter of glBlendFunc on entering TextNode
   GLint blendSrc_;
 
