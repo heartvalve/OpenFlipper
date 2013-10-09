@@ -104,6 +104,12 @@ void NormalRenderer::initializePlugin()
   ACG::ShaderProgGenerator::setShaderDir(OpenFlipper::Options::shaderDirStr());
 }
 
+QString NormalRenderer::renderObjectsInfo(bool _outputShaderInfo) {
+  std::vector<ACG::ShaderModifier*> modifiers;
+  modifiers.push_back(&NormalFragmentModifier::instance);
+  return dumpCurrentRenderObjectsToString(&sortedObjects_[0], _outputShaderInfo, &modifiers);
+}
+
 void NormalRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
 {
   // collect renderobjects + prepare OpenGL state

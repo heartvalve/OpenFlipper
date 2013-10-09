@@ -713,13 +713,15 @@ public:
 
   bool hasGeometryShader() { return !desc_.geometryTemplateFile.isEmpty(); };
 
+  /** \brief Generates the shader code
+  */
+  void generateShaders();
+
 private:
 
   /** \brief Loads external shader templates
   */
   void loadShaderTemplateFromFile();
-
-  void generateShaders();
 
   void buildVertexShader();
   void buildGeometryShader();
