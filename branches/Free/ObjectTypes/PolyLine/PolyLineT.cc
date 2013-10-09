@@ -62,6 +62,7 @@
 
 #include <cfloat>
 #include <ACG/Geometry/Algorithms.hh>
+#include <ACG/Utils/VSToolsT.hh>
 
 #ifndef WIN32
 #include <cstdlib>
@@ -176,10 +177,10 @@ template <class PointT>
 size_t
 PolyLineT<PointT>::n_edges() const
 {
-  if (n_vertices() == 0)
+  if (n_vertices() <= 1)
     return 0;
   else
-    return points_.size() - 1 + (unsigned int) closed_;
+    return n_vertices() - 1 + (unsigned int) closed_;
 }
 
 
@@ -413,6 +414,111 @@ length() const
 
   return l;
 }
+
+
+//-----------------------------------------------------------------------------
+
+
+template <class PointT>
+typename PolyLineT<PointT>::Point
+PolyLineT<PointT>::
+position(const Scalar _t) const
+{
+  assert(_t >=0.0 && _t<=1.0);
+  return position_arclength(_t*this->length());
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+template <class PointT>
+typename PolyLineT<PointT>::Point
+PolyLineT<PointT>::
+position_arclength(const Scalar _t) const
+{
+  // handle degenerate polyline cases
+  if(this->n_vertices() < 2)
+  {
+    if(this->n_vertices() == 1)
+      return this->front();
+    else
+    {
+      std::cerr << "Warning: called position_arclength on emptu PolyLine!!!" << std::endl;
+      return Point(0,0,0);
+    }
+  }
+
+  // return beginning of curve for negative parameter value
+  if(_t < 0.0)
+    return this->front();
+
+  unsigned int nv = this->n_vertices();
+  unsigned int ne = this->n_edges();
+
+  Scalar l = 0;
+
+  for(unsigned int i=0; i<ne; ++i)
+  {
+    Scalar dl = (points_[(i+1)%nv]-points_[i]).norm();
+
+    if(l <= _t && _t <= (l+dl))
+    {
+      Scalar tl = (_t-l)/dl;
+      if(!std::isfinite(tl))
+        tl = 0.0;
+      return (tl*points_[(i+1)%nv] + (1.0-tl)*points_[i]);
+    }
+
+    l += dl;
+  }
+
+  // return end of curve for too large parameter values
+  if(!closed_)
+    return this->back();
+  else
+    return this->front();
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+template <class PointT>
+void
+PolyLineT<PointT>::
+resample_arclength_uniform(const unsigned int _n)
+{
+  unsigned int n = std::max((unsigned int)(2),_n);
+  Scalar l = this->length();
+
+  // add new polyline with similar properties
+  PolyLineT<PointT> new_pl = *this;
+  // copy first point
+  new_pl.resize(n);
+  new_pl.copy_vertex_complete(*this, 0, 0);
+
+  if(!closed_)
+  {
+    Scalar s = l/Scalar(n-1);
+    for(unsigned int i=1; i<n-1; ++i)
+      new_pl.point(i) = this->position_arclength(i*s);
+  }
+  else
+  {
+    Scalar s = l/Scalar(n);
+    for(unsigned int i=1; i<n; ++i)
+    new_pl.point(i) = this->position_arclength(i*s);
+  }
+
+  // copy last point
+  if(!closed_)
+    new_pl.copy_vertex_complete(*this, std::max(int(0),int(this->n_vertices())-1), std::max(int(0),int(new_pl.n_vertices())-1));
+
+  // update polyline
+  *this = new_pl;
+}
+
 
 //-----------------------------------------------------------------------------
 

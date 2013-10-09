@@ -169,6 +169,33 @@ public:
    */
   Scalar length() const;
 
+  /** \brief Provide linear paremterization of the polyline in [0,1]
+   *
+   * @param _t parameter value in [0,1]
+   *
+   * @return point positioned at parameter value _t
+   */
+  Point position(const Scalar _t) const;
+
+  /** \brief Same as position but with an arclength parameterization in [0,length()]
+   *
+   * \note invalid parameter positions are projected to [0,length()]
+   *
+   * @param _t parameter value in [0,length()]
+   *
+   * @return point positioned at parameter value _t
+   */
+  Point position_arclength(const Scalar _t) const;
+
+  /** \brief Perform an uniform arclength resampling while maintaining the start and end point
+   *
+   * \note invalid number of samples are projected by n = max(2,n)
+   *
+   * @param _n number of sample points in [2,infinity]
+   *
+   */
+  void resample_arclength_uniform(const unsigned int _n);
+
   /** \brief Subdivide polyline
    *
    * Subdivides segments until the longest interval in the line is smaller than the given value
