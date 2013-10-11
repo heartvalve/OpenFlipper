@@ -294,8 +294,10 @@ void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_t
           filename += finfo.completeSuffix();
       }
 
+
       // check if we have an extension for the object
-      if (QFileInfo(filename).suffix() == "") {
+      const QString suffix = QFileInfo(filename).suffix();
+      if (suffix == "" || !allFilters.contains(suffix)) {
 
         if (!applyToAll) {
 
