@@ -324,7 +324,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
 
   // draw points
   //
-  if (_drawMode == DrawModes::POINTS)
+  if (_drawMode & DrawModes::POINTS)
   {
     Vec4f jointColor;
     getJointColor(_state.diffuse_color(), jointColor);
@@ -403,22 +403,22 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
 
   // draw bones
   //
-  if ( (_drawMode == DrawModes::WIREFRAME)
-    || (_drawMode == DrawModes::SOLID_FLAT_SHADED)
-    || (_drawMode == DrawModes::SOLID_FACES_COLORED)
-    || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
+  if ( (_drawMode & DrawModes::WIREFRAME)
+    || (_drawMode & DrawModes::SOLID_FLAT_SHADED)
+    || (_drawMode & DrawModes::SOLID_FACES_COLORED)
+    || (_drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
   {
     
     Vec4f baseColor = _state.ambient_color();
     
-    if ( (_drawMode == DrawModes::SOLID_FLAT_SHADED)
-      || (_drawMode == DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ){
+    if ( (_drawMode & DrawModes::SOLID_FLAT_SHADED)
+      || (_drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ){
 
       ACG::GLState::shadeModel(GL_FLAT);
       ACG::GLState::enable(GL_LIGHTING);
     }
     
-    if (_drawMode == DrawModes::SOLID_FACES_COLORED)
+    if (_drawMode & DrawModes::SOLID_FACES_COLORED)
       ACG::GLState::shadeModel(GL_FLAT);
     
     
