@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>939</width>
-    <height>527</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTextBrowser" name="textBrowser"/>
+    <layout class="QVBoxLayout" name="textBrowserLayout"/>
    </item>
    <item>
     <widget class="QCheckBox" name="showShadersBox">
