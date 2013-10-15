@@ -34,78 +34,124 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 15910 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2012-12-05 12:53:39 +0100 (Mi, 05 Dez 2012) $                     *
+*   $Revision: 12438 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2011-09-22 17:16:17 +0200 (Thu, 22 Sep 2011) $                     *
 *                                                                            *
 \*===========================================================================*/
 
-#include "rendererObjectWidget.hh"
+#ifndef TEXTBROWSERWIDGET_HH
+#define TEXTBROWSERWIDGET_HH
 
-#if QT_VERSION >= 0x050000
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
+#include <QPlainTextEdit>
+#include <QObject>
 
-#include <QMessageBox>
+#include <vector>
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/common/GlobalOptions.hh>
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+class TextBrowserSideArea;
 
 
-RendererObjectWidget::RendererObjectWidget(QWidget *parent)
-    : QDialog(parent),
-      highlighter_(0),
-      textBrowser_(0)
+class TextBrowserWidget : public QPlainTextEdit
 {
-  setupUi(this);
+    Q_OBJECT
 
-  connect(closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+  private:
+    enum FoldType {
+      SHADER,
+      RENDEROBJECT
+    };
 
-  //set icons
-  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+    struct Fold {
+      Fold() :
+        start(-1),
+        end(-1),
+        folded(false),
+        type(SHADER)
+      {}
 
-  closeButton->setIcon( QIcon(iconPath + "window-close.png"));
+      Fold(int _start, int _end, FoldType _type) :
+        start(_start),
+        end(_end),
+        folded(false),
+        type(_type)
+      {}
 
-  textBrowser_ = new TextBrowserWidget(this);
-  textBrowserLayout->addWidget(textBrowser_);
+      bool contains (int n) const {
+        return (start <= n) && (n <= end);
+      }
 
-  highlighter_ = new RenderObjectHighlighter( textBrowser_->document() );
+      // start positition in the document
+      int start;
+      // end positition in the document
+      int end;
+      bool folded;
+      FoldType type;
+    };
 
-  connect(showShadersBox,SIGNAL(clicked()),this,SLOT(update()));
-}
 
-void RendererObjectWidget::closeEvent(QCloseEvent *event)
+  public:
+    TextBrowserWidget(QWidget *parent = 0);
+
+    void sideAreaPaintEvent(QPaintEvent *event);
+    int sideAreaWidth();
+
+  protected:
+    void resizeEvent(QResizeEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent* e);
+
+  private slots:
+    void updateTextBrowserSideAreaWidth();
+    void updateTextBrowserSideArea(const QRect &, int);
+    void foldAll();
+    void unfoldAll();
+    void fold(Fold& _fold);
+    void unfold(Fold& _fold);
+    void toggleFold(int _position);
+    void updateFolds();
+    /** \brief get the _fold corresponding to the document _position
+     * @param _position position in the document
+     * @param _fold    fold in folds_ at the position if found
+     *
+     * \return true if fold was found (otherwise false is returned)
+     */
+    bool getFold(int _position, Fold& _fold);
+
+  private:
+    TextBrowserSideArea* sideArea_;
+    static QString const startRenderObjectTag_;
+    static QString const startVertexShaderTag_;
+    static QString const endVertexShaderTag_;
+    static QString const startGeometryShaderTag_;
+    static QString const endGeometryShaderTag_;
+    static QString const startFragmentShaderTag_;
+    static QString const endFragmentShaderTag_;
+
+    std::vector<Fold> folds_;
+    /// maps positions in the document to indices in folds_
+    std::map<int, size_t> blockPosToFold_;
+};
+
+
+class TextBrowserSideArea : public QWidget
 {
-  event->accept();
-  accept();
-}
+  public:
+    TextBrowserSideArea(TextBrowserWidget* _textBrowser) :
+      QWidget(_textBrowser),
+      textBrowser_(_textBrowser)
+  {}
+
+    QSize sizeHint() const {
+      return QSize(textBrowser_->sideAreaWidth(), 0);
+    }
+
+  protected:
+    void paintEvent(QPaintEvent *event) {
+      textBrowser_->sideAreaPaintEvent(event);
+    }
+
+  private:
+    TextBrowserWidget* textBrowser_;
+};
 
 
-void RendererObjectWidget::showEvent ( QShowEvent * ) {
-  update();
-}
-
-void RendererObjectWidget::update()
-{
-  RendererInfo* renderer = renderManager().active(PluginFunctions::activeExaminer());
-
-  textBrowser_->clear();
-
-  if ( renderer ) {
-    textBrowser_->insertPlainText(tr("Current renderer: ") + renderer->name +"\n");
-    textBrowser_->insertPlainText(tr("Description:      ") + renderer->description +"\n");
-    textBrowser_->insertPlainText(tr("Version:          ") + renderer->version + "\n" );
-    textBrowser_->insertPlainText("\n" );
-
-    //TODO: Flag for shader output activate/deactivate
-    if (  renderManager().activeId(PluginFunctions::activeExaminer()) != 0 )
-      textBrowser_->insertPlainText(renderer->plugin->renderObjectsInfo(showShadersBox->isChecked()));
-
-  } else {
-    textBrowser_->insertPlainText("Unable to get renderer!");
-  }
-}
-
+#endif // TEXTBROWSERWIDGET_HH

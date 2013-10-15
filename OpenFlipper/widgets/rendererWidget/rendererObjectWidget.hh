@@ -45,6 +45,7 @@
 
 #include <OpenFlipper/common/RendererInfo.hh>
 #include "renderObjectHighLighter.hh"
+#include "TextBrowserWidget.hh"
 
 class RendererObjectWidget : public QDialog, public Ui::RendererObjectWidget
 {
@@ -64,6 +65,6 @@ class RendererObjectWidget : public QDialog, public Ui::RendererObjectWidget
 
   private:
     RenderObjectHighlighter* highlighter_;
-
+    TextBrowserWidget* textBrowser_;
 };
 
