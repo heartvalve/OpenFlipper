@@ -88,7 +88,7 @@ private slots:
 
     void slotKeyEvent(QKeyEvent* _event);
 
-    void slotObjectUpdated(int _identifier);
+    void slotObjectUpdated(int _identifier, const UpdateType & _type);
 
     void objectDeleted(int _identifier);
 

@@ -151,7 +151,10 @@ void TypeHexahedralMeshPlugin::slotKeyEvent(QKeyEvent* _event) {
 
 //----------------------------------------------------------------------------
 
-void TypeHexahedralMeshPlugin::slotObjectUpdated(int _identifier) {
+void TypeHexahedralMeshPlugin::slotObjectUpdated(int _identifier, const UpdateType& _type) {
+
+    if( !_type.contains(UPDATE_ALL) && !_type.contains(UPDATE_GEOMETRY))
+        return;
 
     PlaneObject* pobj;
     if (PluginFunctions::getObject(_identifier, pobj))
