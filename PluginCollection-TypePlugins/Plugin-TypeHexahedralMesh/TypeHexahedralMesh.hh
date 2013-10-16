@@ -84,7 +84,7 @@ signals:
 private slots:
 
     // BaseInterface
-    void slotObjectUpdated(int _identifier);
+    void slotObjectUpdated(int _identifier, const UpdateType& _type);
     void objectDeleted(int _identifier);
     void noguiSupported() {}
     void pluginsInitialized();
