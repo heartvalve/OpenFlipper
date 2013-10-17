@@ -138,6 +138,12 @@ void Core::setViewMode(QString _viewMode){
 
 //-----------------------------------------------------------------------------
 
+QString Core::getCurrentViewMode() {
+  return OpenFlipper::Options::currentViewMode();
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::setViewModeIcon(QString _mode, QString _iconName){
 
   if ( OpenFlipper::Options::gui() ){
