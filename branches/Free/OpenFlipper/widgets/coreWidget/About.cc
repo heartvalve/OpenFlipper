@@ -646,10 +646,60 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================    
   aboutWidget_->OpenFlipperAbout->append("\n");
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
-  aboutWidget_->OpenFlipperAbout->append(tr("Compiler Version Info:"));
+  aboutWidget_->OpenFlipperAbout->append(tr("Compiler Info:"));
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   aboutWidget_->OpenFlipperAbout->append( OpenFlipper::Options::compilerInfo() );
   
+  QString definitions;
+
+  // Trying to check some defines:
+  #ifdef WIN32
+    definitions += "WIN32 ";
+  #endif
+
+  #ifdef WIN64
+    definitions += "WIN64 ";
+  #endif
+
+  #ifdef DLL
+    definitions += "DLL ";
+  #endif
+
+
+  #ifdef APPLE
+    definitions += "APPLE ";
+  #endif
+
+  #ifdef ARCH_DARWIN
+    definitions += "ARCH_DARWIN ";
+  #endif
+
+  #ifdef INCLUDE_TEMPLATES
+    definitions += "INCLUDE_TEMPLATES ";
+  #endif
+
+  #ifdef DEBUG
+    definitions += "DEBUG ";
+  #endif
+
+  #ifdef NDEBUG
+    definitions += "NDEBUG ";
+  #endif
+
+  #ifdef QT_NO_OPENGL
+    definitions += "QT_NO_OPENGL ";
+  #endif
+
+  #ifdef OPENMP
+    definitions += "OPENMP ";
+  #endif
+
+  #ifdef USE_OPENMP
+    definitions += "USE_OPENMP ";
+  #endif
+
+  aboutWidget_->OpenFlipperAbout->append( tr("Definitions (incomplete):\n") + definitions );
+
   // =====================================================================================
   // List the currently registered data types
   // =====================================================================================
