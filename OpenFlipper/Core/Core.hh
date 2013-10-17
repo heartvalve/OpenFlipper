@@ -1222,6 +1222,9 @@ private slots:
     /// Set the active ViewMode
     void setViewMode(QString _viewMode);
 
+    /// Get current view mode
+    QString getCurrentViewMode();
+
     /// Set the icon of a viewMode
     void setViewModeIcon(QString _mode, QString _iconName);
     
