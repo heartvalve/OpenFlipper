@@ -811,7 +811,7 @@ slot_smart_move_timer()
 
 
 void
-PolyLinePlugin::slotObjectUpdated( int _identifier )
+PolyLinePlugin::slotObjectUpdated( int _identifier, const UpdateType &_type )
 {
     PolyLineObject* lineObject = 0;
     if(!PluginFunctions::getObject(_identifier, lineObject))
