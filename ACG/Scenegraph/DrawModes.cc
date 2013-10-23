@@ -557,9 +557,9 @@ bool DrawMode::checkConsistency() const
 
   // points-mode in bitflag => point layer expected
 
-  if (*this & DrawModes::POINTS ||
-      *this & DrawModes::POINTS_COLORED ||
-      *this & DrawModes::POINTS_SHADED)
+  if ((*this & DrawModes::POINTS) ||
+      (*this & DrawModes::POINTS_COLORED) ||
+      (*this & DrawModes::POINTS_SHADED))
   {
     int pointsLayer = 0;
     for (unsigned int k = 0; k < layers_.size(); ++k)

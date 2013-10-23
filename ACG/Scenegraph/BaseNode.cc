@@ -100,7 +100,10 @@ BaseNode(BaseNode* _parent, BaseNode* _child, std::string _name)
     parent_(_parent),
     name_(_name),
     status_(Active),
-    drawMode_(DrawModes::DEFAULT)
+    drawMode_(DrawModes::DEFAULT),
+    pickingEnabled_(true),
+    dirty_ (false),
+    traverseMode_ (BaseNode::NodeFirst)
 {
   assert(_parent != 0 && _child != 0);
 
