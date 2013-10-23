@@ -183,7 +183,7 @@ private slots:
   void slot_setCirclePointNum(int i);
   void slot_setSplinePointNum(int i);
 
-  virtual void slotObjectUpdated( int _identifier );
+  virtual void slotObjectUpdated( int _identifier, const UpdateType &_type );
 
 private :
 
