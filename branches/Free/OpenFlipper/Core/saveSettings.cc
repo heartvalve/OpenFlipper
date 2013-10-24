@@ -54,8 +54,10 @@
 #include <QFileDialog>
 #include <QGroupBox>
 #include <QBoxLayout>
+#include <QMultiMap>
 
 #include <set>
+#include <map>
 
 /// Save Settings (slot is called from CoreWidget's File-Menu)
 void Core::saveSettings(){
@@ -194,11 +196,11 @@ void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_t
     // Store saved file's original names (in order to get number of duplicates)
     std::multiset<QString> originalFiles;
 
-    QString extension("");
-    bool applyToAll = false;
+    // Store default extensions per type
+    std::map<DataType,QString> defaultExtensions;
     // get the supported extensions for when no extension is given
-    QStringList allFilters;
-    std::vector<fileTypes> types = supportedTypes();
+    QMultiMap<DataType,QString> allFilters; // type -> supported extension
+    const std::vector<fileTypes>& types = supportedTypes();
     for (int i=0; i < (int)types.size(); i++) {
       QString filters = types[i].saveFilters;
 
@@ -214,24 +216,22 @@ void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_t
           continue;
 
         found = true;
-        allFilters.append(separateFilters[filterId]);
+        allFilters.insert(types[i].type,separateFilters[filterId]);
       }
 
       if (!found)
-        allFilters.append( filters );
+        allFilters.insert(types[i].type,filters);
     }
-
-    allFilters.removeDuplicates();
-    allFilters.sort();
 
     // create a dialog to set extensions if none are given once
     QDialog extensionDialog(coreWidget_, Qt::Dialog);
     QGridLayout extensionLayout;
-    QCheckBox extensionCheckBox("Apply extension to all Objects without preset extensions");
+    const QString extensionCheckBoxPrefixString = "Apply extension to all Objects without preset extensions with DataType: ";
+    QCheckBox extensionCheckBox;
     QComboBox extensionComboBox;
     QDialogButtonBox extensionButtons(QDialogButtonBox::Ok);
     QDialogButtonBox::connect(&extensionButtons, SIGNAL(accepted()), &extensionDialog, SLOT(accept()));
-    extensionComboBox.addItems(allFilters);
+    //extensionComboBox.addItems(allFilters);
     extensionLayout.addWidget(&extensionComboBox);
     extensionLayout.addWidget(&extensionCheckBox);
     extensionLayout.addWidget(&extensionButtons);
@@ -294,32 +294,60 @@ void Core::saveSettings(QString complete_name, bool is_saveObjectInfo, bool is_t
           filename += finfo.completeSuffix();
       }
 
+      // check if the name of the object specifies already the extension
+      bool extInName = false;
+      for (QMultiMap<DataType,QString>::const_iterator e_it = allFilters.begin(); e_it != allFilters.end(); ++e_it)
+      {
+        // suffix is the same as one extension and
+        extInName = e_it.key().contains(o_it->dataType()) && e_it.value() == QString("*.")+QFileInfo(filename).suffix();
+        if (extInName)
+          break;
+      }
 
-      // check if we have an extension for the object
-      const QString suffix = QFileInfo(filename).suffix();
-      if (suffix == "" || !allFilters.contains(suffix)) {
+      if (!extInName)
+      {
+        // search for the default data type
+        std::map<DataType,QString>::const_iterator defaultExtIt = defaultExtensions.find(o_it->dataType());
+        bool useDefault = defaultExtIt != defaultExtensions.end();
+        QString extension = (useDefault) ? defaultExtIt->second : "";
 
-        if (!applyToAll) {
+        // if no default extension for the datatype was given, request one
+        if (!useDefault)
+        {
+          // present only those filters, which support the type
+          QStringList supportedFilters;
+          for (QMultiMap<DataType,QString>::const_iterator it = allFilters.begin(); it != allFilters.end() ; ++it)
+          {
+            if (it.key().contains(o_it->dataType()))
+              supportedFilters.append(it.value());
+          }
 
-          extensionDialog.move(coreWidget_->width()/2 - extensionDialog.width(),
-                               coreWidget_->height()/2 - extensionDialog.height());
-
+          extensionComboBox.clear();
+          extensionComboBox.addItems(supportedFilters);
           extensionDialog.setWindowTitle("Please specify a file extension for " + o_it->name());
+          extensionCheckBox.setText(extensionCheckBoxPrefixString + typeName(o_it->dataType()));
+          extensionDialog.move(coreWidget_->width()/2 - extensionDialog.width(),
+                        coreWidget_->height()/2 - extensionDialog.height());
 
-          if (extensionDialog.exec() && !allFilters.isEmpty()) {
-            if (extensionCheckBox.isChecked())
-              applyToAll = true;
+          if (extensionDialog.exec() && !supportedFilters.isEmpty())
+          {
             extension = extensionComboBox.currentText();
             extension = QFileInfo(extension).suffix();
             filename += "." + extension;
-          } else {
+            if (extensionCheckBox.isChecked())
+              defaultExtensions[o_it->dataType()] = extension;
+
+          } else
+          {
             emit log(LOGERR, tr("Unabel to save %1. No extension specified.").arg(o_it->name()));
             continue;
           }
-        } else {
+        } else
+        {
           filename += "." + extension;
         }
       }
+
 
       // decide whether to use saveObject or saveObjectTo
       if ( !QFile(filename).exists() || !is_askOverwrite )
