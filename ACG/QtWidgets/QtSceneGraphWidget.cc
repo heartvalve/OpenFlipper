@@ -548,6 +548,16 @@ void QtSceneGraphWidget::expandAll() {
     resizeColumnToContents(0);
 }
 
+void QtSceneGraphWidget::updateAll() {
+
+    if(rootNode_) {
+        update(rootNode_);
+        QTreeWidget::expandAll();
+    }
+
+    resizeColumnToContents(0);
+}
+
 //-----------------------------------------------------------------------------
 
 void 
@@ -639,9 +649,11 @@ QtSceneGraphDialog( QWidget* _parent,
     // Add buttons to hbox layout
     QPushButton* expAll = new QPushButton("Expand all");
     QPushButton* collAll = new QPushButton("Collapse all");
+    QPushButton* updAll = new QPushButton("Update all");
     
     butLayout->addWidget(expAll);
     butLayout->addWidget(collAll);
+    butLayout->addWidget(updAll);
     
   l->addWidget(buttons);
   l->addWidget(sgw_);
@@ -653,6 +665,7 @@ QtSceneGraphDialog( QWidget* _parent,
        
   connect(expAll, SIGNAL(pressed()), sgw_, SLOT(expandAll()));
   connect(collAll, SIGNAL(pressed()), sgw_, SLOT(collapseAll()));
+  connect(updAll, SIGNAL(pressed()), sgw_, SLOT(updateAll()));
 }
 
 
