@@ -90,27 +90,27 @@ class DLLEXPORT DataType  {
     DataType();
     DataType(const unsigned int& _i);
     
-    bool operator!=( const unsigned int& _i );
-    bool operator!=( const DataType& _i );
+    bool operator!=( const unsigned int& _i ) const;
+    bool operator!=( const DataType& _i ) const;
     
-    bool operator==( const unsigned int& _i );
-    bool operator==(  const DataType& _i );
+    bool operator==( const unsigned int& _i ) const;
+    bool operator==(  const DataType& _i ) const;
     
     DataType& operator=( const unsigned int& _i );
     DataType& operator=( const DataType& _i );
     
-    bool operator<( const unsigned int& _i );
+    bool operator<( const unsigned int& _i ) const;
     bool operator<( const DataType& _i ) const;
     
     DataType& operator|=( const unsigned int& _i );
     DataType& operator|=( const DataType& _i );    
     
-    bool operator&( const unsigned int& _i );
+    bool operator&( const unsigned int& _i ) const;
     bool operator&( const DataType& _i ) const;
 
     DataType operator!();
     
-    bool contains( const DataType& _i );
+    bool contains( const DataType& _i ) const;
     
     DataType operator|( const DataType& _i ) const;
 
@@ -125,7 +125,7 @@ class DLLEXPORT DataType  {
     unsigned int value() const;
       
     /// Return the name of this type as text
-    QString name();
+    QString name() const;
  
   private:
     unsigned int field;
