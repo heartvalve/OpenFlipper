@@ -207,6 +207,26 @@ DrawMode::DrawMode(ModeFlagSet _flags) :
   layers_[0] = DrawModeProperties();
 }
 
+DrawMode DrawMode::getFromDescription(std::string _description)
+{
+    DrawMode val;
+    bool found = false;
+    std::istringstream f(_description);
+    std::string s;
+    while (std::getline(f, s, '+')) {
+        VecDrawModes::const_iterator modeIter, modeEnd( registeredDrawModes_.end() );
+            for( modeIter = registeredDrawModes_.begin();  modeIter != modeEnd;  ++modeIter ) {
+                if(modeIter->name() == s) {
+                    val |= modeIter->id();
+                    found = true;
+                }
+            }
+    }
+    if(!found)
+        return DEFAULT;
+    else return val;
+}
+
 DrawMode::operator bool() const {
   return( modeFlags_ != NONE.modeFlags_ );
 }
