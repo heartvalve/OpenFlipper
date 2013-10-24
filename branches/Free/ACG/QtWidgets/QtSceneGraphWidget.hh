@@ -239,6 +239,8 @@ private:
   
     void expandAll();
 
+    void updateAll();
+
   public: 
 
     /** \brief Add a node widget handler
