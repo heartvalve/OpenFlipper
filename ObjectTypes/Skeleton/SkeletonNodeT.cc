@@ -408,9 +408,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
     || (_drawMode & DrawModes::SOLID_FACES_COLORED)
     || (_drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) )
   {
-    
-    Vec4f baseColor = _state.ambient_color();
-    
+
     if ( (_drawMode & DrawModes::SOLID_FLAT_SHADED)
       || (_drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ){
 
@@ -437,6 +435,7 @@ void SkeletonNodeT<SkeletonType>::draw(GLState& _state, const DrawModes::DrawMod
         continue;
 
       //select joint color
+      Vec4f baseColor = _state.ambient_color();
       glColor4fv( &baseColor[0] );
 
       Vec3d parentPos = pose->globalTranslation(parent->id());
@@ -841,6 +840,8 @@ void SkeletonNodeT<SkeletonType>::getRenderObjects(IRenderer* _renderer,
         ro.setupShaderGenFromDrawmode(props);
 
         ro.setMaterial(_mat);
+        ACG::Vec4f baseColor = _state.ambient_color();
+        ro.emissive = ACG::Vec3f(baseColor[0],baseColor[1],baseColor[2]);
 
         // draw the bones
         for(it = skeleton_.begin(); it != skeleton_.end(); ++it) {
