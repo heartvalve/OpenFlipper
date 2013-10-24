@@ -314,21 +314,21 @@ DataType::DataType(const unsigned int& _i):
 
 //===========================================
 
-bool DataType::operator!=( const unsigned int& _i ) { 
+bool DataType::operator!=( const unsigned int& _i ) const{
   return (_i != field); 
 }
 
-bool DataType::operator!=( const DataType& _i ) {
+bool DataType::operator!=( const DataType& _i ) const{
   return (field != _i.field); 
 }    
 
 //===========================================
 
-bool DataType::operator==( const unsigned int& _i ) {
+bool DataType::operator==( const unsigned int& _i ) const {
   return (_i == field); 
 }
 
-bool DataType::operator==(  const DataType& _i ) {
+bool DataType::operator==(  const DataType& _i ) const{
   return (_i.field == field); 
 }
 
@@ -346,7 +346,7 @@ DataType& DataType::operator=( const DataType& _i ) {
 
 //===========================================
 
-bool DataType::operator<( const unsigned int& _i ) {
+bool DataType::operator<( const unsigned int& _i ) const {
   return (field < _i); 
 }
 
@@ -356,7 +356,7 @@ bool DataType::operator<( const DataType& _i ) const {
 
 //===========================================
 
-bool DataType::operator&( const unsigned int& _i ) {
+bool DataType::operator&( const unsigned int& _i ) const {
   return (field & _i); 
 }
 
@@ -374,7 +374,7 @@ DataType DataType::operator!() {
 
 //===========================================
 
-bool DataType::contains( const DataType& _i ){
+bool DataType::contains( const DataType& _i )const{
   //its not magic
   return ( (_i.field & field) == _i.field);
 }
@@ -416,7 +416,7 @@ unsigned int DataType::value() const {
   return( field );
 }
 
-QString DataType::name() {
+QString DataType::name() const {
   return typeName(field);
 }
 
