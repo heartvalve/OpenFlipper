@@ -310,6 +310,12 @@ namespace DrawModes {
       */      
       DrawMode( ModeFlagSet _flags );
 
+      /* \brief Returns a registered draw mode based on the description passed or if none could be found the default one.
+       *
+       * @param _description A description created by description().
+       */
+      static DrawMode getFromDescription(std::string _description);
+
 
       //===========================================================================
       /** @name Operators
