@@ -198,10 +198,8 @@ int TypeSkeletonPlugin::addEmpty(){
   QFileInfo f(name);
   object->setName( f.fileName() );
 
-  // set the default colors
-  const QColor color = OpenFlipper::Options::defaultColor();
-  const ACG::Vec4f default_color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
-  object->materialNode()->set_color(default_color);
+  // set the default color
+  object->materialNode()->set_color(ACG::Vec4f(0.654f, 0.8f, 1.0f, 1.0f));
 
   object->update();
 
