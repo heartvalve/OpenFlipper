@@ -58,6 +58,8 @@
 #include <vector>
 #include <iostream>
 #include <ACG/Config/ACGDefines.hh>
+#include <OpenMesh/Core/Utils/PropertyManager.hh>
+#include <OpenMesh/Core/Utils/Property.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -148,16 +150,16 @@ public:
   const std::vector<Point>& points() const { return points_;}
 
   /// \brief Get first point of the polyline ( no range check!!!)
-  Point& front()       { return points_[0];}
+  Point& front()       { return points_.front();}
 
   /// \brief Get first point of the polyline ( no range check!!!)
-  const Point& front() const { return points_[0];}
+  const Point& front() const { return points_.front();}
 
   /// \brief Get last point of the polyline ( no range check!!!)
-  Point& back()       { return points_[n_vertices()-1];}
+  Point& back()       { return points_.back();}
 
   /// \brief Get last point of the polyline ( no range check!!!)
-  const Point& back() const { return points_[n_vertices()-1];}
+  const Point& back() const { return points_.back();}
 
   /// \brief get the i-th oriented edge vector
   Point edge_vector(unsigned int _i) const 
@@ -278,6 +280,25 @@ public:
   template <class MeshT, class SpatialSearchT>
   void project_to_mesh( const std::vector<MeshT*>&    _mesh,
 			                  std::vector<SpatialSearchT*>* _ssearch = 0);
+
+  /**
+   * Indicates whether the entire poly line lies on
+   * the same connected component of the supplied mesh.
+   */
+  template <class MeshT, class SpatialSearchT>
+  bool on_multiple_components(MeshT &_mesh,
+                              SpatialSearchT &_ssearch);
+
+  /**
+   * Splits the poly line up into multiple poly lines
+   * each of which lie entirely on one connected component
+   * of the supplied mesh. There will be small gap between
+   * the new poly lines.
+   */
+  template <class MeshT, class SpatialSearchT>
+  void split_into_one_per_component(MeshT &_mesh,
+                                    SpatialSearchT &_ssearch,
+                                    std::vector<PolyLineT> &out_polylines);
 
   // This Block is used to pull in extended PolyLine features such as integration of
   // a PolyLine into a Mesh. Currently this code is not included in the free version.
@@ -438,6 +459,29 @@ private:
 			                      typename MeshT::FaceHandle &_fh,
 			                      SpatialSearchT *            _ssearch = 0,
 			                      double*                     _dbest   = 0);
+
+  /**
+   * Assuming component is a property manager that has been initialized
+   * using mark_components(), return the number of the component of the
+   * face pt gets projected to using _ssearch.
+   */
+  template<class MeshT, class SpatialSearchT>
+  unsigned int component_of(
+          const OpenMesh::PropertyManager<
+              OpenMesh::FPropHandleT<unsigned int>,
+              MeshT> &component,
+          const PointT &pt,
+          SpatialSearchT &_ssearch);
+
+  /**
+   * Enumerate connected components of the property manager's mesh
+   * and assign each face its component's number using the property manager.
+   */
+  template <class MeshT>
+  void mark_components(
+          OpenMesh::PropertyManager<
+              OpenMesh::FPropHandleT<unsigned int>,
+              MeshT> &component);
 
 
   template <class PropT>
