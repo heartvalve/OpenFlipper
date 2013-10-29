@@ -57,6 +57,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <stack>
 
 #include "PolyLineT.hh"
 
@@ -1838,6 +1839,190 @@ total_gaussian_curvature()
   }
   // return total gaussian curvature
   return (2.0 * M_PI - gcurv);
+}
+
+template <class PointT>
+template <class MeshT>
+void PolyLineT<PointT>::mark_components(
+        OpenMesh::PropertyManager<
+            OpenMesh::FPropHandleT<unsigned int>,
+            MeshT> &component) {
+
+    MeshT &mesh = component.getMesh();
+
+    for (typename MeshT::FaceIter
+            f_it = mesh.faces_begin(), f_end = mesh.faces_end();
+            f_it != f_end; ++f_it) {
+        component[*f_it] = 0;
+    }
+
+    unsigned int current_component = 0;
+    for (typename MeshT::FaceIter f_it = mesh.faces_begin(),
+            f_end = mesh.faces_end(); f_it != f_end; ++f_it) {
+
+        if (component[*f_it] != 0)
+            continue;
+
+        ++current_component;
+
+        /*
+         * Flood fill component.
+         */
+        std::stack<typename MeshT::FaceHandle> dfs;
+        dfs.push(*f_it);
+
+        while (!dfs.empty()) {
+            const typename MeshT::FaceHandle fh = dfs.top(); dfs.pop();
+
+            component[fh] = current_component;
+
+            /*
+             * Visit neighbors, push them onto stack if they
+             * haven't been visited yet.
+             */
+            for (typename MeshT::FFIter ff_it = mesh.ff_begin(fh),
+                    ff_end = mesh.ff_end(fh); ff_it != ff_end; ++ff_it) {
+
+                if (component[*ff_it] == 0)
+                    dfs.push(*ff_it);
+            }
+        }
+    }
+    std::cout << "\x1b[33mmark_components: Mesh has " << current_component
+            << " components.\x1b[0m" << std::endl;
+
+}
+
+template <class PointT>
+template<class MeshT, class SpatialSearchT>
+unsigned int PolyLineT<PointT>::component_of(
+        const OpenMesh::PropertyManager<
+            OpenMesh::FPropHandleT<unsigned int>,
+            MeshT> &component,
+        const PointT &pt,
+        SpatialSearchT &_ssearch) {
+
+    typename MeshT::FaceHandle fh;
+    find_nearest_point(component.getMesh(), pt, fh, _ssearch);
+//#ifndef NDEBUG
+//    std::cout << "Point(" << pt << ") on fh " << fh.idx() << std::endl;
+//#endif
+    return component[fh];
+}
+
+template <class PointT>
+template <class MeshT, class SpatialSearchT>
+bool PolyLineT<PointT>::
+on_multiple_components(MeshT &_mesh,
+                       SpatialSearchT &_ssearch) {
+
+    if (points_.empty()) return false;
+
+    OpenMesh::PropertyManager<OpenMesh::FPropHandleT<unsigned int>, MeshT>
+        component(_mesh,
+                  "component.on_multiple_components.objecttypes.polyline"
+                  ".i8.informatik.rwth-aachen.de");
+
+
+    mark_components(component);
+
+    const unsigned int first_component =
+            component_of(component, points_.front(), _ssearch);
+
+    for (typename std::vector<PointT>::iterator pt_it = ++points_.begin(),
+            pt_end = points_.end(); pt_it != pt_end; ++pt_it) {
+
+        if (first_component != component_of(component, *pt_it, _ssearch))
+            return true;
+    }
+
+    return false;
+}
+
+template <class PointT>
+template <class MeshT, class SpatialSearchT>
+void PolyLineT<PointT>::
+split_into_one_per_component(MeshT &_mesh,
+                             SpatialSearchT &_ssearch,
+                             std::vector<PolyLineT> &out_polylines) {
+
+    if (points_.size() < 2) return;
+
+    OpenMesh::PropertyManager<OpenMesh::FPropHandleT<unsigned int>, MeshT>
+        component(_mesh,
+                  "component.split_into_one_per_component.objecttypes.polyline"
+                  ".i8.informatik.rwth-aachen.de");
+
+    mark_components(component);
+
+    PolyLineT<PointT> current_polyLine;
+    current_polyLine.add_point(points_.front());
+    unsigned int current_component =
+            component_of(component, points_.front(), _ssearch);
+
+    for (typename std::vector<PointT>::iterator pt_it = ++points_.begin(),
+            pt_end = points_.end(); pt_it != pt_end; ++pt_it) {
+
+        /*
+         * The easy case: next point is on the same component as
+         * the previous one.
+         */
+        const unsigned int next_comp = component_of(component, *pt_it, _ssearch);
+        if (next_comp == current_component) {
+            current_polyLine.add_point(*pt_it);
+            continue;
+        }
+
+        /*
+         * The hard case: next point is on different component
+         * than the previous one.
+         */
+
+        PointT p0 = current_polyLine.back();
+        const PointT p1 = *pt_it;
+        unsigned int comp = next_comp;
+
+        do {
+            const double dist = (p0 - p1).norm();
+            double lastIn = 0;
+            double firstOut = 1;
+
+            /*
+             * Perform binary search to determine reasonable lastIn and firstOut.
+             */
+            static const double EPSILON = 1e-12;
+            while ((firstOut - lastIn) * dist > EPSILON) {
+                const double new_pos = .5 * (lastIn + firstOut);
+                const PointT new_pt = p0 * (1.0 - new_pos) + p1 * new_pos;
+                const unsigned int new_comp =
+                        component_of(component, new_pt, _ssearch);
+
+                if (new_comp == current_component) {
+                    lastIn = new_pos;
+                } else {
+                    firstOut = new_pos;
+                    comp = new_comp;
+                }
+            }
+
+            if (lastIn != 0)
+                current_polyLine.add_point(p0 * (1.0 - lastIn) + p1 * lastIn);
+            if (current_polyLine.n_vertices() >= 2)
+                out_polylines.push_back(current_polyLine);
+            current_polyLine.clear();
+            current_polyLine.add_point(p0 * (1.0 - firstOut) + p1 * firstOut);
+            current_component = comp;
+
+            // Update
+            p0 = p0 * (1.0 - firstOut) + p1 * firstOut;
+        } while (comp != next_comp);
+
+        if (current_polyLine.back() != *pt_it)
+            current_polyLine.add_point(*pt_it);
+    }
+
+    if (current_polyLine.n_vertices() >= 2)
+        out_polylines.push_back(current_polyLine);
 }
 
 //=============================================================================
