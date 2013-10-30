@@ -476,22 +476,24 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
         
         if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
             
+          TriMesh* mesh = triObj->mesh();
+
             if (saveBinary_->isChecked())
                 opt += OpenMesh::IO::Options::Binary;
             
-            if (saveVertexNormal_->isChecked())
+            if (saveVertexNormal_->isChecked() && mesh->has_vertex_normals())
                 opt += OpenMesh::IO::Options::VertexNormal;
             
-            if (saveVertexTexCoord_->isChecked())
+            if (saveVertexTexCoord_->isChecked() && (mesh->has_vertex_texcoords1D() || mesh->has_vertex_texcoords2D() || mesh->has_vertex_texcoords3D()))
                 opt += OpenMesh::IO::Options::VertexTexCoord;
             
-            if (saveVertexColor_->isChecked())
+            if (saveVertexColor_->isChecked() && mesh->has_vertex_colors())
                 opt += OpenMesh::IO::Options::VertexColor;
             
-            if (saveFaceColor_->isChecked())
+            if (saveFaceColor_->isChecked() && mesh->has_face_colors())
                 opt += OpenMesh::IO::Options::FaceColor;
             
-            if (saveFaceNormal_->isChecked())
+            if (saveFaceNormal_->isChecked() && mesh->has_face_normals())
                 opt += OpenMesh::IO::Options::FaceNormal;
             
         }
