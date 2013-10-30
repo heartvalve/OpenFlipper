@@ -227,7 +227,7 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _normal      The normal
     */
     template <typename MeshT>
-    void addCellNormal(MeshT*& _mesh, CellType _cell, OpenMesh::Vec3d _normal);
+    void addCellNormal(MeshT*& _mesh,const CellType& _cell, OpenMesh::Vec3d _normal);
 
     /** \brief Adds a tetra cell to the mesh. (Does nothing, yet)
     *
@@ -975,9 +975,10 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _spec Line containing the POLYGONS header
     * @param _in   Textstream (after reading the POLYGONS header)
     * @param _mesh Mesh to work on
+    * @param _cells returns cell descriptions
     */
     template <typename MeshT>
-    bool loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mesh);
+    bool loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells);
 
     /** \brief Helper function for loadMeshPolygons() that takes care of adding non-manifold faces
     *
@@ -996,9 +997,10 @@ class FileVTKPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     * @param _spec Line containing the TRIANGLE_STRIPS header
     * @param _in   Textstream (after reading the TRIANGLE_STRIPS header)
     * @param _mesh Mesh to work on
+    * @param _cells returns the Cell descriptions
     */
     template <typename MeshT>
-    bool loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh);
+    bool loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells);
 
     /** \brief Reads unstructured grid data from the stream and adds it to the mesh
     *
