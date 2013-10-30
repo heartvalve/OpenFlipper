@@ -308,7 +308,7 @@ void FileVTKPlugin::addFaceNormalToOpenMesh(MeshT _mesh, quint32 _index, OpenMes
 }
 
 template <typename MeshT>
-void FileVTKPlugin::addCellNormal(MeshT*& _mesh, CellType _cell, OpenMesh::Vec3d _normal)
+void FileVTKPlugin::addCellNormal(MeshT*& _mesh,const CellType& _cell, OpenMesh::Vec3d _normal)
 {
     if ((_cell.type <= 4) || (_cell.type >= 10))
     {
@@ -1891,7 +1891,7 @@ bool FileVTKPlugin::loadMeshLines(QString _spec,QTextStream& _in,MeshT*& _mesh) 
 }
 
 template <typename MeshT>
-bool FileVTKPlugin::loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mesh) {
+bool FileVTKPlugin::loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells) {
     std::cerr << "loadMeshPolygons" << std::endl;
 
     bool ok = true;
@@ -1947,7 +1947,11 @@ bool FileVTKPlugin::loadMeshPolygons(QString _spec,QTextStream& _in,MeshT*& _mes
         }
 
         if ( _in.status() == QTextStream::Ok ) {
-            addFace(_mesh, indices);
+            CellType cell;
+            cell.type = 7; // VTK_POLYGON
+            cell.indices = indices;
+            cell.index = addFace(_mesh, indices);
+            _cells.push_back(cell);
         } else {
             emit log(LOGERR,tr("Read corrupted face data!"));
 
@@ -2029,7 +2033,7 @@ int FileVTKPlugin::add_non_manifold_face(MeshT*& _mesh, std::vector< OpenMesh::V
 
 
 template <typename MeshT>
-bool FileVTKPlugin::loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh) {
+bool FileVTKPlugin::loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*& _mesh, std::vector<CellType>& _cells) {
   std::cerr << "loadMeshTriangleStrips" << std::endl;
 
   bool ok = true;
@@ -2095,10 +2099,16 @@ bool FileVTKPlugin::loadMeshTriangleStrips(QString _spec,QTextStream& _in,MeshT*
 
       if ( _in.status() == QTextStream::Ok ) {
         // TODO : handle non manifold cases!
-        if ( i % 2 == 0 )
-          addFace(_mesh, indices[i],indices[i-1],indices[i-2]);
-        else
-          addFace(_mesh, indices[i],indices[i-2],indices[i-1]);
+        CellType cell;
+        cell.type = 6; //VTK_TRIANGLE_STRIP
+        cell.indices.resize(3);
+        cell.indices[0] = indices[i];
+        cell.indices[1] = indices[i-1];
+        cell.indices[2] = indices[i-2];
+        if ( i % 2 != 0 )
+          std::swap(cell.indices[1],cell.indices[2]);
+        cell.index = addFace(_mesh, cell.indices);
+        _cells.push_back(cell);
       } else {
         emit log(LOGERR,tr("Read corrupted face data!"));
         return false;
@@ -2535,9 +2545,9 @@ bool FileVTKPlugin::loadMesh(QTextStream& _in,MeshT*& _mesh, Dataset _type){
     } else if ( line.contains("LINES") ) {
       ok = loadMeshLines(line,_in,_mesh);
     } else if ( line.contains("POLYGONS") ) {
-      ok = loadMeshPolygons(line,_in,_mesh);
+      ok = loadMeshPolygons(line,_in,_mesh, cells);
     } else if ( line.contains("TRIANGLE_STRIPS") ) {
-      ok = loadMeshTriangleStrips(line,_in,_mesh);
+      ok = loadMeshTriangleStrips(line,_in,_mesh, cells);
     } else if ( line.contains("CELL") ) {
       ok = loadMeshCells(line,_in,_mesh, cells);
     } else  if ( line.contains("NORMALS") ) {
