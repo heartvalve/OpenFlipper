@@ -115,18 +115,23 @@ IF(Poco_INCLUDE_DIR)
     SET(Poco_FOUND 1)
   ENDIF(EXISTS "${Poco_INCLUDE_DIR}")
 
-  FIND_LIBRARY(Poco_LIBRARY_DIR NAMES PocoFoundation PocoFoundationd  PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+  IF ( NOT Poco_LIBRARY_DIR )
+    FIND_LIBRARY(Poco_LIBRARY_DIR NAMES PocoFoundation PocoFoundationd  PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
 
-    # Look in other places.
-    ${Poco_INCLUDE_DIR}
-    ${POCO_DIR_SEARCH}
+      # Look in other places.
+      ${Poco_INCLUDE_DIR}
+      ${POCO_DIR_SEARCH}
 
-    # Help the user find it if we cannot.
-    DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
-  )
-  GET_FILENAME_COMPONENT(Poco_LIBRARY_DIR ${Poco_LIBRARY_DIR} PATH)
+      # Help the user find it if we cannot.
+      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
+    )
+    GET_FILENAME_COMPONENT(Poco_LIBRARY_DIR ${Poco_LIBRARY_DIR} PATH)
+  endif()
+  
   IF(Poco_INCLUDE_DIR)
     SET(Poco_LIBRARY_DIRS ${Poco_LIBRARY_DIR})
+	
+	message(" Poco_LIBRARY_DIRS1 : ${Poco_LIBRARY_DIRS}")
 
     # Look for the poco binary path.
     SET(Poco_BINARY_DIR ${Poco_INCLUDE_DIR})
@@ -136,6 +141,9 @@ IF(Poco_INCLUDE_DIR)
   ENDIF(Poco_INCLUDE_DIR)
 
 ENDIF(Poco_INCLUDE_DIR)
+
+message(" Poco_LIBRARY_DIR: ${Poco_LIBRARY_DIR}")
+message(" Poco_LIBRARY_DIRS: ${Poco_LIBRARY_DIRS}")
 
 IF(NOT Poco_FOUND)
   IF(NOT Poco_FIND_QUIETLY)
