@@ -130,13 +130,15 @@ IF(Poco_INCLUDE_DIR)
   endif()
   
   IF(Poco_INCLUDE_DIR)
-    SET(Poco_LIBRARY_DIRS ${Poco_LIBRARY_DIR} CACHE PATH "All Poco Library Dirs")
+    
 	
     # Look for the poco binary path.
     SET(Poco_BINARY_DIR ${Poco_INCLUDE_DIR})
     IF(Poco_BINARY_DIR AND EXISTS "${Poco_BINARY_DIR}")
+
       SET(Poco_BINARY_DIRS ${Poco_BINARY_DIR}/bin)
-      list(APPEND Poco_LIBRARY_DIRS ${Poco_BINARY_DIR} )
+	  SET(Poco_LIBRARY_DIRS "${Poco_BINARY_DIR}/bin" CACHE PATH "All Poco Library Dirs")
+	  
     ENDIF(Poco_BINARY_DIR AND EXISTS "${Poco_BINARY_DIR}")
 
   ENDIF(Poco_INCLUDE_DIR)
