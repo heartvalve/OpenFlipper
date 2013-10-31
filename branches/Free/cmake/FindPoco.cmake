@@ -49,6 +49,11 @@ SET(POCO_LIBRARY_DIR_MESSAGE "Set the Poco_LIBRARY_DIR cmake cache entry to the 
 SET(POCO_DIR_SEARCH $ENV{POCO_ROOT})
 IF(POCO_DIR_SEARCH)
   FILE(TO_CMAKE_PATH ${POCO_DIR_SEARCH} POCO_DIR_SEARCH)
+ELSE(POCO_DIR_SEARCH)
+  SET(POCO_DIR_SEARCH ${POCO_ROOT})
+  IF(POCO_DIR_SEARCH)
+    FILE(TO_CMAKE_PATH ${POCO_DIR_SEARCH} POCO_DIR_SEARCH)
+  ENDIF(POCO_DIR_SEARCH)
 ENDIF(POCO_DIR_SEARCH)
 
 
@@ -83,7 +88,7 @@ SET(SUFFIX_FOR_LIBRARY_PATH
 #
 # Look for an installation.
 #
-FIND_PATH(Poco_INCLUDE_DIR NAMES Foundation/include/Poco/AbstractCache.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
+FIND_PATH(Poco_INCLUDE_DIR NAMES Poco/AbstractCache.h Foundation/include/Poco/AbstractCache.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
 
   # Look in other places.
   ${POCO_DIR_SEARCH}
@@ -105,22 +110,29 @@ IF(Poco_INCLUDE_DIR)
       ${Poco_INCLUDE_DIR}/Net/include
       ${Poco_INCLUDE_DIR}/Util/include
       ${Poco_INCLUDE_DIR}/XML/include
+      ${Poco_INCLUDE_DIR}/Zip/include
     )
     SET(Poco_FOUND 1)
   ENDIF(EXISTS "${Poco_INCLUDE_DIR}")
 
-  FIND_LIBRARY(Poco_LIBRARY_DIR NAMES PocoFoundation PocoFoundationd  PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+  IF ( NOT Poco_LIBRARY_DIR )
+    FIND_LIBRARY(Poco_LIBRARY_DIR_TMP NAMES PocoFoundation PocoFoundationd  PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
 
-    # Look in other places.
-    ${Poco_INCLUDE_DIR}
-    ${POCO_DIR_SEARCH}
+      # Look in other places.
+      ${Poco_INCLUDE_DIR}
+      ${POCO_DIR_SEARCH}
 
-    # Help the user find it if we cannot.
-    DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
-  )
-  GET_FILENAME_COMPONENT(Poco_LIBRARY_DIR ${Poco_LIBRARY_DIR} PATH)
+      # Help the user find it if we cannot.
+      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
+    )
+    GET_FILENAME_COMPONENT(Poco_LIBRARY_DIR_PATH ${Poco_LIBRARY_DIR_TMP} PATH)
+    SET( Poco_LIBRARY_DIR ${Poco_LIBRARY_DIR_PATH} CACHE PATH "Poco library dir path" )
+  endif()
+  
   IF(Poco_INCLUDE_DIR)
-    SET(Poco_LIBRARY_DIRS ${Poco_LIBRARY_DIR} CACHE PATH "Path containing the libraries "  )
+    SET(Poco_LIBRARY_DIRS ${Poco_LIBRARY_DIR} CACHE PATH "All Poco Library Dirs")
+	
+	message(" Poco_LIBRARY_DIRS1 : ${Poco_LIBRARY_DIRS}")
 
     # Look for the poco binary path.
     SET(Poco_BINARY_DIR ${Poco_INCLUDE_DIR})
@@ -130,6 +142,9 @@ IF(Poco_INCLUDE_DIR)
   ENDIF(Poco_INCLUDE_DIR)
 
 ENDIF(Poco_INCLUDE_DIR)
+
+message(" Poco_LIBRARY_DIR: ${Poco_LIBRARY_DIR}")
+message(" Poco_LIBRARY_DIRS: ${Poco_LIBRARY_DIRS}")
 
 IF(NOT Poco_FOUND)
   IF(NOT Poco_FIND_QUIETLY)
