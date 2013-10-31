@@ -83,7 +83,7 @@ SET(SUFFIX_FOR_LIBRARY_PATH
 #
 # Look for an installation.
 #
-FIND_PATH(Poco_INCLUDE_DIR NAMES Foundation/include/Poco/AbstractCache.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
+FIND_PATH(Poco_INCLUDE_DIR NAMES Poco/AbstractCache.h Foundation/include/Poco/AbstractCache.h PATH_SUFFIXES ${SUFFIX_FOR_INCLUDE_PATH} PATHS
 
   # Look in other places.
   ${POCO_DIR_SEARCH}
