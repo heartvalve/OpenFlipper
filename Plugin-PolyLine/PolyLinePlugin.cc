@@ -1000,8 +1000,6 @@ createCircle_createUI(int _polyLineObjectID)
     lineObject->addAdditionalNode(cenNode, name(), "circle");
     cenNode->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 
-    lineObject->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
-
     emit updatedObject(lineObject->id(), UPDATE_ALL);
 }
 
@@ -1046,6 +1044,7 @@ me_insertCircle(QMouseEvent* _event)
 
         PolyLineCircleData* lineData = new PolyLineCircleData(hit_point, mesh->mesh()->normal(fh), ACG::Vec3d(), ACG::Vec3d(), 0, 0, mesh->id());
         newLine->setObjectData(CIRCLE_DATA, lineData);
+        newLine->setObjectDrawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
 
 		emit updatedObject(new_line_id, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 		createCircle_LastSelIndex_ = createCircle_CurrSelIndex_ = newLine->id();
@@ -1121,7 +1120,7 @@ createSpline_createUI(int _polyLineObjectID)
         handle0->enablePicking(true);
         handle0->set_position(hndlPos);
         lineObject->addAdditionalNode(handle0, name(), "handle", i);
-        handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+        //handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 
         GlutLineNode* lineN;
         if(lineObject->getAdditionalNode(lineN,  name(), "line")) {
@@ -1130,7 +1129,6 @@ createSpline_createUI(int _polyLineObjectID)
         }
     }
     updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
-    lineObject->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
 
     emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
 }

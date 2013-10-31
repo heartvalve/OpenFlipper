@@ -76,7 +76,7 @@ public:
   void modifyFragmentEndCode(QStringList* _code)
   {
     _code->push_back("#ifdef SG_NORMALS");
-    _code->push_back("outFragment = vec4(fragNormal,1.0);");
+    _code->push_back("outFragment = vec4(fragNormal.x/2.0+0.5,fragNormal.y/2.0+0.5,fragNormal.z/2.0+0.5,1.0);");
     _code->push_back("#endif ");
   }
 

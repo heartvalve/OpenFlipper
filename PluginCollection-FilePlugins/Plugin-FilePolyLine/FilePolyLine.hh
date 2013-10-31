@@ -51,10 +51,6 @@ class FilePolyLinePlugin : public QObject, BaseInterface, FileInterface, LoadSav
     void noguiSupported( ) {} ;
 
     void initializePlugin();
-
-    void loadPolyLine(PolyLineObject* lineObject,  const char* _filename);
-    void savePolyLine(PolyLineObject* lineObject,  const char* _filename);
-
   public :
 
      ~FilePolyLinePlugin() {};
