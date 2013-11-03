@@ -23,6 +23,7 @@
 #include <ACG/Scenegraph/ManipulatorNode.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
@@ -894,6 +895,9 @@ me_insert( QMouseEvent* _event )
 
           cur_polyline_obj_->materialNode()->set_random_color();
 
+          cur_polyline_obj_->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
+          cur_polyline_obj_->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME|ACG::SceneGraph::DrawModes::POINTS_SHADED);
+
           cur_polyline_obj_->line()->add_point((PolyLine::Point) hit_point);
 
           emit showStatusMessage(tr("Double click/Enter to terminate poly line. Use with shift to create loop."));
@@ -921,12 +925,14 @@ me_insert( QMouseEvent* _event )
             const PolyLine::Point &p1 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 1),
                     &p2 = cur_polyline_obj_->line()->point(cur_polyline_obj_->line()->n_vertices() - 2);
 
-            /*
-             * Remove duplicate created as a move sentinel.
-             */
-            if ((p2 - p1).sqrnorm() < 1e-6) {
-                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
-            }
+            // comment by David on removal: choosing an absolute epsilon here is not possible because we don't know anything
+            // about the scale of the scene!!!
+//            /*
+//             * Remove duplicate created as a move sentinel.
+//             */
+//            if ((p2 - p1).sqrnorm() < 1e-6) {
+//                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
+//            }
         }
 
         // update
@@ -1038,6 +1044,8 @@ me_insertCircle(QMouseEvent* _event)
 		obj->target(true);
 		PolyLineObject* newLine = PluginFunctions::polyLineObject(obj);
 		newLine->materialNode()->set_random_color();
+
+		newLine->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
 
 		if(!mesh->mesh()->has_face_normals())
 			mesh->mesh()->request_face_normals();
@@ -1167,6 +1175,8 @@ me_insertSpline(QMouseEvent* _event)
 	    obj->target(true);
 	    PolyLineObject* newLine = PluginFunctions::polyLineObject(obj);
 	    newLine->materialNode()->set_random_color();
+	    newLine->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
+
 	    newLine->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
 	    emit updatedObject(createSpline_CurrSelIndex_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 
@@ -1583,6 +1593,9 @@ me_split( QMouseEvent* _event )
             PolyLineObject* pol_obj2 = PluginFunctions::polyLineObject(obj2);
 
             pol_obj2->materialNode()->set_random_color();
+
+            pol_obj2->line()->set_vertex_radius(cur_pol->line()->vertex_radius());
+            pol_obj2->lineNode()->drawMode(cur_pol->lineNode()->drawMode());
 
             cur_pol->line()->split(target_idx, *(pol_obj2->line()));
 
