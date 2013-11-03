@@ -137,11 +137,12 @@ void PolyLinePlugin::updatePolyEllipse(PolyLineObject* _lineObject, unsigned int
         return;//if there is no mesh available do not try to recreate the circle
 
     const double theta = 2.0 * M_PI / double(_pointCount);
-    _pointCount += tool_->rb_CloseCircle->isChecked() ? 0 : -1;
+    //   _pointCount += tool_->rb_CloseCircle->isChecked() ? 0 : -1;
     const double r2 = lineData->circleMainRadius_, r1 = lineData->circleSideRadius_;
     const Onb basis(lineData);
 
     _lineObject->line()->clear();
+    _lineObject->line()->set_closed(tool_->rb_CloseCircle->isChecked());
 
     for (unsigned int i = 0; i <= _pointCount; i++) {
         const double tanTheta_i = tan(theta * i);
@@ -156,6 +157,7 @@ void PolyLinePlugin::updatePolyEllipse(PolyLineObject* _lineObject, unsigned int
         else if(createCircle_getHitInfo(lineData, pInWorld, &pOnMesh))
             _lineObject->line()->add_point(pOnMesh);
     }
+
     emit updatedObject(_lineObject->id(), UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 }
 
