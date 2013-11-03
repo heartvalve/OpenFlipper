@@ -2024,7 +2024,14 @@ split_into_one_per_component(MeshT &_mesh,
     }
 
     if (current_polyLine.n_vertices() >= 2)
-        out_polylines.push_back(current_polyLine);
+      out_polylines.push_back(current_polyLine);
+
+    // hack! if no splitting return original polyline
+    if(out_polylines.size() <= 1)
+    {
+      out_polylines.clear();
+      out_polylines.push_back(*this);
+    }
 }
 
 //=============================================================================
