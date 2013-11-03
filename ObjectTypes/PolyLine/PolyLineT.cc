@@ -87,6 +87,8 @@ template <class PointT>
 PolyLineT<PointT>::
   PolyLineT( bool _closed )
     : closed_(_closed),
+      vertex_radius_(0.01),
+      edge_radius_(0.01),
       ref_count_vnormals_(0),
       ref_count_vbinormals_(0),
       ref_count_vcolors_(0),

@@ -33,6 +33,10 @@ void PolyLineObjectSerializer::serialize(std::ostream& _stream) {
     fout << current_point[2] << std::endl;
     }
 
+    fout << "VERTEXRADIUS" << std::endl << _polyLine.vertex_radius() << std::endl;
+    fout << "EDGERADIUS" << std::endl << _polyLine.edge_radius() << std::endl;
+
+
     // ###########################
     // Write properties(unsigned int)CircleType
 
@@ -142,7 +146,19 @@ void PolyLineObjectSerializer::deserialize(std::istream& _stream) {
     {
       token = "-";
       fin >> token;
-      if(token == "VVHANDLES")
+      if(token == "VERTEXRADIUS")
+      {
+        double r;
+        fin >> r;
+        _polyLine.set_vertex_radius(r);
+      }
+      else if(token == "EDGERADIUS")
+      {
+        double r;
+        fin >> r;
+        _polyLine.set_edge_radius(r);
+      }
+      else if(token == "VVHANDLES")
       {
         if(!_polyLine.vertex_vhandles_available()) _polyLine.request_vertex_vhandles();
         for(unsigned int i=0; i<_polyLine.n_vertices(); ++i)
@@ -211,6 +227,7 @@ void PolyLineObjectSerializer::deserialize(std::istream& _stream) {
       }
       else if(token != "") break; //eat up empty lines
     }
+
 }
 
 

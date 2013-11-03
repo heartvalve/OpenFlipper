@@ -337,6 +337,19 @@ public:
   /// \brief Print information string to cerr
   void print() const;
 
+  /// \brief get ball-radius of vertices
+  Scalar vertex_radius() const { return vertex_radius_;}
+
+  /// \brief set ball-radius of vertices
+  void set_vertex_radius(const Scalar _r) { vertex_radius_ = _r;}
+
+  /// \brief get cylinder-radius of edges
+  Scalar edge_radius() const { return edge_radius_;}
+
+  /// \brief set cylinder-radius of edges
+  void set_edge_radius(const Scalar _r) { edge_radius_ = _r;}
+
+
   //  ############################### Standard Property Handling #############################
 
   // request properties
@@ -522,6 +535,12 @@ private:
 
   /// \brief Connect first and last point?
   bool closed_;
+
+  /// \brief ball-radius of vertices
+  Scalar vertex_radius_;
+
+  /// \brief cylinder-radius of edges
+  Scalar edge_radius_;
 
   // ############################### Standard Property Handling #############################
 
