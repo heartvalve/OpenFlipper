@@ -75,7 +75,8 @@ PolyLineNodeT<PolyLine>::PolyLineNodeT(PolyLine& _pl, BaseNode* _parent, std::st
         BaseNode(_parent, _name),
         polyline_(_pl),
         vbo_(0),
-        updateVBO_(true)
+        updateVBO_(true),
+        sphere_(0)
 {
   drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
 
@@ -104,7 +105,7 @@ DrawModes::DrawMode
 PolyLineNodeT<PolyLine>::
 availableDrawModes() const
 {
-  return (DrawModes::WIREFRAME | DrawModes::POINTS);
+  return (DrawModes::WIREFRAME | DrawModes::POINTS | DrawModes::POINTS_SHADED);
 }
 
 
@@ -167,7 +168,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     glDrawArrays(GL_POINTS,0,polyline_.n_vertices());
     
   }
-
 
   // draw line segments
   if (_drawMode & DrawModes::WIREFRAME) {
@@ -238,6 +238,34 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 
   //Disable the vertex array
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
+
+  // draw vertices as spheres
+  if (_drawMode & DrawModes::POINTS_SHADED)
+  {
+    // create sphere if not yet done
+    if(!sphere_)
+      sphere_ = new GLSphere(10,10);
+
+    if( polyline_.vertex_selections_available())
+    {
+      for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+      {
+        if(polyline_.vertex_selected(i))
+          _state.set_color( Vec4f(1,0,0,1) );
+        else
+          _state.set_color( color );
+
+        sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
+      }
+    }
+    else
+    {
+      _state.set_color( color );
+      for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+        sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
+    }
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -286,6 +314,10 @@ pick(GLState& _state, PickTarget _target)
 
       if (drawMode() & DrawModes::POINTS)
           pick_vertices( _state);
+
+      if (drawMode() & DrawModes::POINTS_SHADED)
+          pick_spheres( _state);
+
       pick_edges( _state, polyline_.n_vertices());
       break;
     }
@@ -328,6 +360,27 @@ pick_vertices( GLState& _state )
   
   
   glPointSize(point_size_old);
+}
+
+
+//----------------------------------------------------------------------------
+
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+pick_spheres( GLState& _state )
+{
+  if(!sphere_)
+    sphere_ = new GLSphere(10,10);
+
+  _state.pick_set_name(0);
+
+  for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+  {
+    _state.pick_set_name (i);
+    sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
+  }
 }
 
 

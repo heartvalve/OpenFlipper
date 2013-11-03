@@ -62,6 +62,7 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/GLPrimitives.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -128,6 +129,7 @@ public:
 private:
 
   void pick_vertices( GLState& _state );
+  void pick_spheres ( GLState& _state );
   void pick_edges( GLState& _state, unsigned int _offset);
 
   /// Copy constructor (not used)
@@ -162,6 +164,9 @@ private:
 
   /// Flag to trigger update of vbo
   bool updateVBO_;
+
+  /// Sphere for VertexSphere DrawMode
+  GLSphere* sphere_;
 };
 
 
