@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>PolyLineToolbar</class>
  <widget class="QWidget" name="PolyLineToolbar">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>364</width>
-    <height>821</height>
-   </rect>
-  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
@@ -554,7 +546,7 @@
         <item>
          <widget class="QSpinBox" name="sb_CirclePointNum">
           <property name="value">
-           <number>16</number>
+           <number>48</number>
           </property>
          </widget>
         </item>
@@ -575,7 +567,7 @@
         <item>
          <widget class="QSpinBox" name="sb_SplineSegNum">
           <property name="value">
-           <number>8</number>
+           <number>16</number>
           </property>
          </widget>
         </item>
