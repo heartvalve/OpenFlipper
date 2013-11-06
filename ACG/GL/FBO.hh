@@ -52,6 +52,12 @@ public:
   /// function to generate the framebuffer object
   void init();
 
+  /// enable/disable multisampling
+  void setMultisampling(GLsizei _samples, GLboolean _fixedsamplelocations = GL_TRUE);
+
+  /// get number of samples
+  GLsizei getMultisamplingCount() const {return samples_;}
+
   /// function to attach a texture to fbo
   void attachTexture2D( GLenum _attachment,
     GLsizei _width, GLsizei _height, 
@@ -60,8 +66,9 @@ public:
     GLint _minFilter = GL_NEAREST,
     GLint _magFilter = GL_NEAREST);
 
+
   /// function to attach a texture to fbo
-  void attachTexture2D( GLenum _attachment, GLuint _texture );
+  void attachTexture2D( GLenum _attachment, GLuint _texture, GLenum _target = GL_TEXTURE_2D );
 
   /// function to attach a depth-buffer texture to fbo (using GL_DEPTH_ATTACHMENT)
   void attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _internalFmt = GL_DEPTH_COMPONENT32, GLenum _format = GL_DEPTH_COMPONENT );
@@ -79,7 +86,13 @@ public:
   GLuint getFboID();
 
   /// resize function (if textures created by this class)
-  void resize(GLsizei _width, GLsizei _height);
+  void resize(GLsizei _width, GLsizei _height, bool _forceResize = false);
+
+  /// get width of fbo texture
+  GLsizei width() const {return width_;}
+
+  /// get height of fbo texture
+  GLsizei height() const {return height_;}
   
   /// bind the fbo and sets it as rendertarget
   bool bind();
@@ -102,11 +115,17 @@ private:
   GLuint stencilbuffer_;
 
   /// attached textures
-  std::map<GLenum, GLuint> attachments_; // key: attachment index
+  typedef std::map<GLenum, std::pair<GLuint, GLenum> > AttachmentList;
+  AttachmentList attachments_; // key: attachment index,  value: <tex_id, target>
 
   struct RenderTexture
   {
+    // opengl buf id
     GLuint id;
+
+    // GL_TEXTURE_2D, GL_TEXTURE_2D_MULTISAMPLE..
+    GLenum target;
+
     GLenum internalFormat, format;
   };
   /// textures created by this class
@@ -114,6 +133,16 @@ private:
 
   /// width and height of render textures
   GLsizei width_, height_;
+
+  /// sample count if multisampling
+  GLsizei samples_;
+
+  /// enable fixed sample location if multisampling
+  GLboolean fixedsamplelocation_;
+
+
+  /// handle of previously bound fbo
+  GLuint prevFbo_;
 };
 
 

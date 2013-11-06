@@ -250,9 +250,6 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
 void IRenderer::finishRenderingPipeline()
 {
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glDrawBuffer(GL_BACK);
-
   glDepthMask(1);
   glColorMask(1,1,1,1);
 

@@ -61,6 +61,8 @@
 #include <ACG/Scenegraph/CoordsysNode.hh>
 #include <ACG/Scenegraph/SceneGraphAnalysis.hh>
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/GLError.hh>
+#include <ACG/GL/FBO.hh>
 
 #include <iostream>
 #include <string>
@@ -166,8 +168,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
   flyAnimationOrthogonal_(0),
   flyAngle_(0.0),
   currentAnimationPos_(0.0),
-  flyMoveBack_(false),
-  sceneTexReadBackWidth_(0), sceneTexReadBackHeight_(0)
+  flyMoveBack_(false)
 {
 
   // widget stuff
@@ -636,76 +637,64 @@ void glViewer::drawScene()
 //  }
 
 
-//  QGLFramebufferObject fbo( glstate_->viewport_width(),glstate_->viewport_height(),QGLFramebufferObject::CombinedDepthStencil );
-//
-//  fbo.bind();
-
-  updatePostProcessingBufs(glstate_->viewport_width(),glstate_->viewport_height());
-
-
-//  glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO_);
-
   // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
     drawScene_mono();
   } else {
     renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
   }
-
-//  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-
-
+  checkGLError();
 
 
   // =================================================================================
   // Post-Processing pipeline
 
-  readBackBuffer(glstate_);
 
-  int numPostProcessors = postProcessorManager().numActive(properties_.viewerId());
+  const int numPostProcessors = postProcessorManager().numActive(properties_.viewerId());
 
-//   // DEBUG testing post processor chain
-//   if (numPostProcessors == 1)
-//   {
-//     postProcessorManager().append("Grayscale Postprocessor Plugin", properties_.viewerId());
-//     postProcessorManager().append("Red Postprocessor Plugin", properties_.viewerId());
-// 
-//     numPostProcessors += 2;
-//   }
-
-  // 1st post processing source: back buffer
-  int postProcSrc = 1;
-  PostProcessorInput postProcInput;
-  postProcInput.colorTex_ = sceneTexReadBack_.id();
-  postProcInput.depthTex_ = depthTexReadBack_.id();
-  postProcInput.width     = sceneTexReadBackWidth_;
-  postProcInput.height    = sceneTexReadBackHeight_;
+  if (numPostProcessors)
+  {
+    GLuint backbufferFbo = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&backbufferFbo);
 
 
-  // execute post processing chain with 2 FBOs
-  for (int i = 0; i < numPostProcessors; ++i)  {
+    updatePostProcessingBufs(glstate_->viewport_width(),glstate_->viewport_height());
 
-    int postProcTarget = 1 - postProcSrc;
+    readBackBuffer(glstate_);
 
-    GLuint targetFBO = postProcessFBO_[postProcTarget].getFboID();
+    // 1st post processing source: active fbo
+    int postProcSrc = 1;
+    PostProcessorInput postProcInput;
 
-    // write to back buffer in last step
-    if (i + 1 == numPostProcessors)
-      targetFBO = 0;
+    postProcInput.colorTex_ = readBackFbo_.getAttachment(GL_COLOR_ATTACHMENT0);
+    postProcInput.depthTex_ = readBackFbo_.getAttachment(GL_DEPTH_ATTACHMENT);
+    postProcInput.width     = readBackFbo_.width();
+    postProcInput.height    = readBackFbo_.height();
 
-    // apply post processor
-    PostProcessorInfo* proc = postProcessorManager().active( properties_.viewerId(), i );
-    if (proc && proc->plugin)
-      proc->plugin->postProcess(glstate_, postProcInput, targetFBO);
+    // execute post processing chain with 2 FBOs
+    for (int i = 0; i < numPostProcessors; ++i)  {
+
+      int postProcTarget = 1 - postProcSrc;
+
+      GLuint targetFBO = postProcessFBO_[postProcTarget].getFboID();
+
+      // write to back buffer in last step
+      if (i + 1 == numPostProcessors)
+        targetFBO = backbufferFbo;
+
+      // apply post processor
+      PostProcessorInfo* proc = postProcessorManager().active( properties_.viewerId(), i );
+      if (proc && proc->plugin)
+        proc->plugin->postProcess(glstate_, postProcInput, targetFBO);
 
 
-    // swap target/source fbo
-    postProcSrc = postProcTarget;
+      // swap target/source fbo
+      postProcSrc = postProcTarget;
 
-    postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
+      postProcInput.colorTex_ = postProcessFBO_[postProcSrc].getAttachment(GL_COLOR_ATTACHMENT0);
+    }
   }
+  
 
   // =================================================================================
 
@@ -2118,7 +2107,7 @@ void glViewer::applyProperties() {
 
   // Make sure the right buffer is used in non stereo setup
   makeCurrent();
-  ACG::GLState::drawBuffer(GL_BACK);
+  ACG::GLState::drawBuffer(ACG::GLState::getFramebufferDraw() ? GL_COLOR_ATTACHMENT0 : GL_BACK);
 
   // Required for stereo toggling
   updateProjectionMatrix ();
@@ -2166,17 +2155,18 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     format.setTextureTarget(GL_TEXTURE_2D);
     // set the attachments as in the standard rendering
     format.setAttachment(QFramebufferObject::CombinedDepthStencil);
+//    format.setAttachment(QFramebufferObject::CombinedDepthStencil);
     // 16 samples per pixel as we want a nice snapshot. If this is not supported
     // it will fall back to the maximal supported number of samples
     format.setSamples(samples);
     QFramebufferObject fb(w,h,format);    
-    
+
     if ( fb.isValid() ){
 
       const GLuint prevFbo = ACG::GLState::getFramebufferDraw();
 
-      ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT,fb.handle());
       makeCurrent();
+      ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, fb.handle());
       
       // Turn alpha on if demanded
       ACG::Vec4f backColorBak;
@@ -2197,16 +2187,24 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       }
       
       backColorBak = properties()->backgroundColor();
+
       newBack = ACG::Vec4f(backColorBak[0], backColorBak[1], backColorBak[2], (_alpha ? 0.0f : 1.0f));
       properties()->backgroundColor(newBack);
+
       glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-      
+
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      glEnable(GL_MULTISAMPLE);
       paintGL();
       glFinish();
 
+      glDisable(GL_MULTISAMPLE);
+
+
       ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, prevFbo);
       
+
       // Reset alpha settings
       if(_alpha)
           properties()->backgroundColor(backColorBak);
@@ -2219,8 +2217,9 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
               node->show();
           }
       }
-      
-      _image = fb.toImage().copy(0, 0, w, h);
+
+
+       _image = fb.toImage().copy(0, 0, w, h);
     }
     
     if(_width != 0 || _height != 0) {
@@ -2435,88 +2434,37 @@ void glViewer::strafeRight() {
 
 void glViewer::readBackBuffer(ACG::GLState* _glstate)
 {
-  int width, height, x, y;
-  _glstate->get_viewport(x, y, width, height);
+  GLint curFbo = 0;
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
 
+  ACG::GLState::bindFramebuffer(GL_READ_FRAMEBUFFER, curFbo);
+  ACG::GLState::bindFramebuffer(GL_DRAW_FRAMEBUFFER, readBackFbo_.getFboID());
 
-  if (!sceneTexReadBack_.is_valid()) 
-  {
-    // create r8g8b8a8 color texture
+  glBlitFramebuffer(0, 0, readBackFbo_.width(), readBackFbo_.height(), 
+    0, 0, readBackFbo_.width(), readBackFbo_.height(), 
+    GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
-    sceneTexReadBack_.enable();
-    sceneTexReadBack_.bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+  checkGLError();
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    sceneTexReadBackWidth_ = width;
-    sceneTexReadBackHeight_ = height;
-  }
-
-
-  if (!depthTexReadBack_.is_valid()) 
-  {
-    // create D24S8 texture
-
-    depthTexReadBack_.enable();
-    depthTexReadBack_.bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8_EXT, width, height, 0, GL_DEPTH_STENCIL_EXT, GL_UNSIGNED_INT_24_8_EXT, 0);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    sceneTexReadBackWidth_ = width;
-    sceneTexReadBackHeight_ = height;
-  }
-
-
-  // Resize if already exists
-  if (width != sceneTexReadBackWidth_ || height != sceneTexReadBackHeight_) 
-  {
-    sceneTexReadBack_.enable();
-    sceneTexReadBack_.bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-    depthTexReadBack_.enable();
-    depthTexReadBack_.bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-
-    sceneTexReadBackWidth_ = width;
-    sceneTexReadBackHeight_ = height;
-  }
-
-
-  // read back buffer
-  sceneTexReadBack_.enable();
-  sceneTexReadBack_.bind();
-  glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, width , height, 0);
-  sceneTexReadBack_.disable();
-
-  depthTexReadBack_.enable();
-  depthTexReadBack_.bind();
-  glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, width , height, 0);
-  depthTexReadBack_.disable();
+  ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER, curFbo);
 }
 
 
 void glViewer::updatePostProcessingBufs(int _width, int _height)
 {
-  for (int i = 0; i < 2; ++i)
-  {
-    if (!postProcessFBO_[i].getFboID())
-    {
-      postProcessFBO_[i].init();
+  ACG::FBO* fbos[] = {postProcessFBO_, postProcessFBO_ + 1, &readBackFbo_};
 
-      postProcessFBO_[i].attachTexture2D(GL_COLOR_ATTACHMENT0, _width, _height, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
-      postProcessFBO_[i].attachTexture2DDepth(_width, _height);
+  for (int i = 0; i < 3; ++i)
+  {
+    if (!fbos[i]->getFboID())
+    {
+      fbos[i]->init();
+
+      fbos[i]->attachTexture2D(GL_COLOR_ATTACHMENT0, _width, _height, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      fbos[i]->attachTexture2DDepth(_width, _height, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL);
     }
     else
-      postProcessFBO_[i].resize(_width, _height);
+      fbos[i]->resize(_width, _height);
   }
 }
 
