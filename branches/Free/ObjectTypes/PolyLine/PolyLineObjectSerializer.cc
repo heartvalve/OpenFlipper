@@ -42,47 +42,54 @@ void PolyLineObjectSerializer::serialize(std::ostream& _stream) {
 
     if(_polyLine.vertex_vhandles_available())
     {
-    fout << "VVHANDLES" << std::endl;
-    for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
-      fout << _polyLine.vertex_vhandle(i) << std::endl;
+      fout << "VVHANDLES" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+        fout << _polyLine.vertex_vhandle(i) << std::endl;
     }
 
     if(_polyLine.vertex_ehandles_available())
     {
-    fout << "VEHANDLES" << std::endl;
-    for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
-      fout << _polyLine.vertex_ehandle(i) << std::endl;
+      fout << "VEHANDLES" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+        fout << _polyLine.vertex_ehandle(i) << std::endl;
     }
 
     if(_polyLine.vertex_fhandles_available())
     {
-    fout << "VFHANDLES" << std::endl;
-    for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
-      fout << _polyLine.vertex_fhandle(i) << std::endl;
+      fout << "VFHANDLES" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+        fout << _polyLine.vertex_fhandle(i) << std::endl;
+    }
+
+    if(_polyLine.vertex_scalars_available())
+    {
+      fout << "VSCALARS" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+        fout << _polyLine.vertex_scalar(i) << std::endl;
     }
 
     if(_polyLine.vertex_normals_available())
     {
-    fout << "VNORMALS" << std::endl;
-    for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
-    {
-      const PolyLine::Point& current_vnormal = _polyLine.vertex_normal(i);
-      fout << current_vnormal[0] << " ";
-      fout << current_vnormal[1] << " ";
-      fout << current_vnormal[2] << std::endl;
-    }
+      fout << "VNORMALS" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+      {
+        const PolyLine::Point& current_vnormal = _polyLine.vertex_normal(i);
+        fout << current_vnormal[0] << " ";
+        fout << current_vnormal[1] << " ";
+        fout << current_vnormal[2] << std::endl;
+      }
     }
 
     if(_polyLine.vertex_binormals_available())
     {
-    fout << "VBINORMALS" << std::endl;
-    for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
-    {
-      const PolyLine::Point& current_bnormal = _polyLine.vertex_binormal(i);
-      fout << current_bnormal[0] << " ";
-      fout << current_bnormal[1] << " ";
-      fout << current_bnormal[2] << std::endl;
-    }
+      fout << "VBINORMALS" << std::endl;
+      for( unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+      {
+        const PolyLine::Point& current_bnormal = _polyLine.vertex_binormal(i);
+        fout << current_bnormal[0] << " ";
+        fout << current_bnormal[1] << " ";
+        fout << current_bnormal[2] << std::endl;
+      }
     }
 
     PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(instance->objectData(CIRCLE_DATA));
@@ -98,16 +105,16 @@ void PolyLineObjectSerializer::serialize(std::ostream& _stream) {
 
     PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(instance->objectData(BEZSPLINE_DATA));
     if(splineData) {
-        fout << "SPLINEDATA" << std::endl;
-        fout << (unsigned int)splineData->points_.size() << std::endl;
-        for(unsigned int i = 0; i < splineData->points_.size(); i++) {
-            fout << splineData->points_[i].normal << std::endl;
-            fout << splineData->points_[i].position << std::endl;
-        }
-        fout << (unsigned int)splineData->handles_.size() << std::endl;
-        for(unsigned int i = 0; i < splineData->handles_.size(); i++)
-            fout << splineData->handles_[i] << std::endl;
-        fout << std::endl;
+      fout << "SPLINEDATA" << std::endl;
+      fout << (unsigned int)splineData->points_.size() << std::endl;
+      for(unsigned int i = 0; i < splineData->points_.size(); i++) {
+        fout << splineData->points_[i].normal << std::endl;
+        fout << splineData->points_[i].position << std::endl;
+      }
+      fout << (unsigned int)splineData->handles_.size() << std::endl;
+      for(unsigned int i = 0; i < splineData->handles_.size(); i++)
+        fout << splineData->handles_[i] << std::endl;
+      fout << std::endl;
     }
 }
 
@@ -175,6 +182,12 @@ void PolyLineObjectSerializer::deserialize(std::istream& _stream) {
         if(!_polyLine.vertex_fhandles_available()) _polyLine.request_vertex_fhandles();
         for(unsigned int i=0; i<_polyLine.n_vertices(); ++i)
           fin >> _polyLine.vertex_fhandle(i);
+      }
+      else if(token == "VSCALARS")
+      {
+        if(!_polyLine.vertex_scalars_available()) _polyLine.request_vertex_scalars();
+        for(unsigned int i=0; i<_polyLine.n_vertices(); ++i)
+          fin >> _polyLine.vertex_scalar(i);
       }
       else if(token == "VNORMALS")
       {
