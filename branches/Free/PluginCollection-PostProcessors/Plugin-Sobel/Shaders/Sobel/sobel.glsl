@@ -31,4 +31,5 @@ void main()
        color_vertical   += abs(texture2D(textureSampler, coord_tr)      - texture2D(textureSampler, coord_br));     
        
   oColor = color_horizontal + color_vertical;
+  oColor.a = 1.0;
 }

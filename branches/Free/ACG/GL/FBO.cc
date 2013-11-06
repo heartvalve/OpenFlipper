@@ -8,6 +8,7 @@
 
 #include "FBO.hh"
 #include "GLState.hh"
+#include "GLError.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -19,7 +20,7 @@ namespace ACG
 
 
 FBO::FBO()
-: fbo_(0), depthbuffer_(0), stencilbuffer_(0), width_(0), height_(0)
+: fbo_(0), depthbuffer_(0), stencilbuffer_(0), width_(0), height_(0), samples_(0), fixedsamplelocation_(GL_TRUE), prevFbo_(0)
 {
 }
 
@@ -69,13 +70,15 @@ init()
 
 void
 FBO::
-attachTexture2D( GLenum _attachment, GLuint _texture )
+attachTexture2D( GLenum _attachment, GLuint _texture, GLenum _target )
 {
   // bind fbo
   bind();
 
   // add texture to frame buffer object
-  glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, _attachment, GL_TEXTURE_2D, _texture, 0 );
+  glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, _attachment, _target, _texture, 0 );
+
+  checkGLError();
 
   // check status
   checkFramebufferStatus();
@@ -84,7 +87,7 @@ attachTexture2D( GLenum _attachment, GLuint _texture )
   unbind();
 
   // track texture id
-  attachments_[_attachment] = _texture;
+  attachments_[_attachment] = std::pair<GLuint, GLenum>(_texture, _target);
 }
 
 //-----------------------------------------------------------------------------
@@ -95,32 +98,41 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   GLuint texID;
   glGenTextures(1, &texID);
 
+  GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 
   // store texture id in internal array
   RenderTexture intID;
   intID.id = texID;
   intID.internalFormat = _internalFmt;
   intID.format = _format;
+  intID.target = target;
   internalTextures_.push_back(intID);
 
 
   // specify texture
-  glBindTexture(GL_TEXTURE_2D, texID);
+  glBindTexture(target, texID);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrapMode);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrapMode);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _minFilter);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _magFilter);
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
+  if (!samples_)
+  {
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, _magFilter);
+    glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
+  }
+  else
+    glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
+
+  checkGLError();
 
   width_ = _width;
   height_ = _height;
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(target, 0);
 
   // attach
-  attachTexture2D(_attachment, texID);
+  attachTexture2D(_attachment, texID, target);
 }
 
 //-----------------------------------------------------------------------------
@@ -131,32 +143,41 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   GLuint texID;
   glGenTextures(1, &texID);
 
+  GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+
   // store texture id in internal array
   RenderTexture intID;
   intID.id = texID;
   intID.internalFormat = _internalFmt;
   intID.format = _format;
+  intID.target = target;
   internalTextures_.push_back(intID);
 
 
   // specify texture
-  glBindTexture(GL_TEXTURE_2D, texID);
+  glBindTexture(target, texID);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
+  if (!samples_)
+  {
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
+  }
+  else
+    glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
 
+  checkGLError();
 
   width_ = _width;
   height_ = _height;
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(target, 0);
 
   // attach
-  attachTexture2D(GL_DEPTH_ATTACHMENT, texID);
+  attachTexture2D(GL_DEPTH_ATTACHMENT, texID, target);
 }
 
 //-----------------------------------------------------------------------------
@@ -222,6 +243,9 @@ bind()
   if ( !fbo_ )
     return false;
 
+  // save previous fbo id
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&prevFbo_);
+
   // bind framebuffer object
   ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, fbo_ );
 
@@ -235,7 +259,7 @@ FBO::
 unbind()
 {
   //set to normal rendering
-  ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, 0 );
+  ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, prevFbo_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -285,28 +309,52 @@ checkFramebufferStatus()
 
 GLuint FBO::getAttachment( GLenum _attachment )
 {
-  return attachments_[_attachment];
+  return attachments_[_attachment].first;
 }
 
 //-----------------------------------------------------------------------------
 
-void FBO::resize( GLsizei _width, GLsizei _height )
+void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 {
-  if (_width != width_ ||_height != height_)
+  if (_width != width_ ||_height != height_ || _forceResize)
   {
+    bool reattachTextures = false;
 
     // resize every texture stored in internal array
     for (size_t i = 0; i < internalTextures_.size(); ++i)
     {
       RenderTexture* rt = &internalTextures_[i];
 
-      glBindTexture(GL_TEXTURE_2D, rt->id);
-      glTexImage2D(GL_TEXTURE_2D, 0, rt->internalFormat, _width, _height, 0, rt->format, GL_FLOAT, 0);
+      // check if we have to convert to multisampling
+      if (rt->target != GL_TEXTURE_2D_MULTISAMPLE && samples_ > 0)
+      {
+        rt->target = GL_TEXTURE_2D_MULTISAMPLE;
+        reattachTextures = true;
+      }
+
+
+      glBindTexture(rt->target, rt->id);
+
+      if (!samples_)
+        glTexImage2D(rt->target, 0, rt->internalFormat, _width, _height, 0, rt->format, rt->format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
+      else
+        glTexImage2DMultisample(rt->target, samples_, rt->internalFormat, _width, _height, fixedsamplelocation_);
     }
 
     // store new size
     width_ = _width;
     height_ = _height;
+
+
+
+    if (reattachTextures)
+    {
+      for (AttachmentList::iterator it = attachments_.begin(); it != attachments_.end(); ++it)
+      {
+        attachTexture2D( it->first, it->second.first, it->second.second );
+      }
+    }
+
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -317,6 +365,26 @@ void FBO::resize( GLsizei _width, GLsizei _height )
 GLuint FBO::getFboID()
 {
   return fbo_;
+}
+
+void FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*= GL_TRUE*/ )
+{
+  // clamp sample count to max supported
+  GLint maxSamples;
+  glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+
+  if (_samples > maxSamples) _samples = maxSamples;
+
+  // issue texture reloading when params changed
+  bool reloadTextures = (samples_ != _samples || fixedsamplelocation_ != _fixedsamplelocations);
+    
+  samples_ = _samples;
+  fixedsamplelocation_ = _fixedsamplelocations;
+
+
+  // force a texture reloading to apply new multisampling
+  if (reloadTextures)
+    resize(width_, height_, true);
 }
 
 

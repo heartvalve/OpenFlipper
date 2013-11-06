@@ -1059,9 +1059,7 @@ private:
   ACG::FBO postProcessFBO_[2];
 
   /// scene texture (read back from back-buffer)
-  ACG::Texture2D sceneTexReadBack_;
-  ACG::Texture2D depthTexReadBack_;
-  int sceneTexReadBackWidth_, sceneTexReadBackHeight_;
+  ACG::FBO readBackFbo_;
 
   /// read current color and depth texture of the back buffer for further post-processing 
   void readBackBuffer(ACG::GLState* _glstate);
