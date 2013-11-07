@@ -98,7 +98,12 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   GLuint texID;
   glGenTextures(1, &texID);
 
+#ifdef __APPLE__
+  GLenum target = GL_TEXTURE_2D;
+#else
   GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+#endif // __APPLE__
+
 
   // store texture id in internal array
   RenderTexture intID;
@@ -115,6 +120,12 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
   glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
 
+
+#ifdef __APPLE__
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, _magFilter);
+  glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
+#else
   if (!samples_)
   {
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
@@ -123,7 +134,9 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   }
   else
     glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
+#endif // __APPLE__
 
+  
   checkGLError();
 
   width_ = _width;
@@ -143,7 +156,11 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   GLuint texID;
   glGenTextures(1, &texID);
 
+#ifdef __APPLE__
+  GLenum target = GL_TEXTURE_2D;
+#else
   GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+#endif // __APPLE__
 
   // store texture id in internal array
   RenderTexture intID;
@@ -160,6 +177,11 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+#ifdef __APPLE__
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
+#else
   if (!samples_)
   {
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -168,6 +190,8 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   }
   else
     glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
+#endif // __APPLE__
+
 
   checkGLError();
 
@@ -325,20 +349,27 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
     {
       RenderTexture* rt = &internalTextures_[i];
 
+#ifndef __APPLE__
       // check if we have to convert to multisampling
       if (rt->target != GL_TEXTURE_2D_MULTISAMPLE && samples_ > 0)
       {
         rt->target = GL_TEXTURE_2D_MULTISAMPLE;
         reattachTextures = true;
       }
-
+#endif // __APPLE__
 
       glBindTexture(rt->target, rt->id);
 
+
+#ifdef __APPLE__
+      glTexImage2D(rt->target, 0, rt->internalFormat, _width, _height, 0, rt->format, rt->format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
+#else
       if (!samples_)
         glTexImage2D(rt->target, 0, rt->internalFormat, _width, _height, 0, rt->format, rt->format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
       else
         glTexImage2DMultisample(rt->target, samples_, rt->internalFormat, _width, _height, fixedsamplelocation_);
+#endif // __APPLE__
+
     }
 
     // store new size
