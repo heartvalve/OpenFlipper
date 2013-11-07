@@ -214,7 +214,7 @@ void OBJImporter::addUsedVertices(int _groupId) {
 
         // add all vertices to the mesh
 
-        if(usedVertices_.size() <= (unsigned int)_groupId) return;
+        if(usedVertices_.size() <= static_cast<size_t>(_groupId)) return;
 
         for(std::map<int, VertexHandle>::const_iterator it = usedVertices_[_groupId].begin();
                 it != usedVertices_[_groupId].end(); ++it) {
@@ -238,7 +238,7 @@ void OBJImporter::addUsedVertices(int _groupId) {
 
         //add all vertices to the mesh
 
-        if(usedVertices_.size() <= (unsigned int)currentObject()) return;
+        if(usedVertices_.size() <= static_cast<size_t>(_groupId)) return;
 
         for(std::map<int, VertexHandle>::const_iterator it = usedVertices_[_groupId].begin();
                 it != usedVertices_[_groupId].end(); ++it) {
