@@ -236,7 +236,7 @@ template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::drawCells(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
 
-    ACG::GLState::depthRange(0.035, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     cellsBufferManager_.setOptionsFromDrawMode(_drawMode);
     GLState::bindBuffer(GL_ARRAY_BUFFER, cellsBufferManager_.getBuffer());
@@ -299,7 +299,7 @@ template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::drawFaces(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
 
-    ACG::GLState::depthRange(0.035, 1.0);
+    ACG::GLState::depthRange(0.01, 1.0);
 
     //faces are drawn from both sides, halffaces only when facing the camera
     //however, if we only draw the boundary, we draw halffaces from both sides so we can see them
@@ -393,7 +393,7 @@ void VolumeMeshNodeT<VolumeMeshT>::drawFaces(GLState& _state, const DrawModes::D
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::drawEdges(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
-    ACG::GLState::depthRange(0.03, 1.0);
+    ACG::GLState::depthRange(0.0, 1.0);
 
     edgesBufferManager_.setDefaultColor(_state.specular_color());
     edgesBufferManager_.setOptionsFromDrawMode(_drawMode);
@@ -431,8 +431,6 @@ void VolumeMeshNodeT<VolumeMeshT>::drawEdges(GLState& _state, const DrawModes::D
 
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
-    ACG::GLState::depthRange(0.0, 1.0);
-
 }
 
 template<class VolumeMeshT>
@@ -443,7 +441,7 @@ void VolumeMeshNodeT<VolumeMeshT>::drawVertices(GLState& _state, const DrawModes
     GLState::enableClientState(GL_VERTEX_ARRAY);
     GLState::vertexPointer(3, GL_FLOAT, verticesBufferManager_.getStride(), reinterpret_cast<GLvoid*>(0));
 
-    GLState::depthRange(0.005,1.0);
+    GLState::depthRange(0.0,1.0);
 
     if (_drawMode & ( drawModes_.verticesColored ))
     {
@@ -469,7 +467,6 @@ void VolumeMeshNodeT<VolumeMeshT>::drawVertices(GLState& _state, const DrawModes
 
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
-    GLState::depthRange(0.0,1.0);
 }
 
 template<class VolumeMeshT>
@@ -521,13 +518,11 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
     GLState::vertexPointer(3, GL_FLOAT, 0, 0);
     glDrawArrays(GL_POINTS, 0, vertexSelectionBufferManager_.getNumOfVertices());
 
-    GLState::depthRange(0.025,1.0);
-
     GLState::bindBuffer(GL_ARRAY_BUFFER, edgeSelectionBufferManager_.getBuffer());
     GLState::vertexPointer(3, GL_FLOAT, 0, 0);
     glDrawArrays(GL_LINES, 0, edgeSelectionBufferManager_.getNumOfVertices());
 
-    GLState::depthRange(0.035,1.0);
+    GLState::depthRange(0.01,1.0);
 
     GLState::bindBuffer(GL_ARRAY_BUFFER, faceSelectionBufferManager_.getBuffer());
     GLState::vertexPointer(3, GL_FLOAT, 0, 0);
@@ -536,6 +531,8 @@ void VolumeMeshNodeT<VolumeMeshT>::drawSelection(GLState& _state, const DrawMode
     GLState::bindBuffer(GL_ARRAY_BUFFER, cellSelectionBufferManager_.getBuffer());
     GLState::vertexPointer(3, GL_FLOAT, 0, 0);
     glDrawArrays(GL_TRIANGLES, 0, cellSelectionBufferManager_.getNumOfVertices());
+
+    GLState::depthRange(0.0,1.0);
 
     _state.set_color(_state.base_color());
 
@@ -714,7 +711,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getCellRenderObjects(IRenderer* _renderer, GL
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
-    ro.depthRange = Vec2f(0.035f, 1.0f);
+    ro.depthRange = Vec2f(0.01f, 1.0f);
 
     if (_drawMode & (drawModes_.cellsColoredPerCell | drawModes_.cellsColoredPerFace | drawModes_.cellsColoredPerHalfface | drawModes_.cellsColoredPerVertex))
     {
@@ -778,7 +775,7 @@ void VolumeMeshNodeT<VolumeMeshT>::getFaceRenderObjects(IRenderer* _renderer, GL
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
-    ro.depthRange = Vec2f(0.035f, 1.0f);
+    ro.depthRange = Vec2f(0.01f, 1.0f);
 
     facesBufferManager_.setOptionsFromDrawMode(_drawMode);
 
@@ -841,8 +838,6 @@ void VolumeMeshNodeT<VolumeMeshT>::getEdgeRenderObjects(IRenderer* _renderer, GL
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
 
-    ro.depthRange = Vec2f(0.03f, 1.0f);
-
     edgesBufferManager_.setDefaultColor(_state.specular_color());
     edgesBufferManager_.setOptionsFromDrawMode(_drawMode);
 
@@ -892,8 +887,6 @@ void VolumeMeshNodeT<VolumeMeshT>::getVertexRenderObjects(IRenderer* _renderer, 
     ro.shaderDesc.clearTextures();
 
     ro.shaderDesc.shadeMode = SG_SHADE_GOURAUD;
-
-    ro.depthRange = Vec2f(0.005f, 1.0f);
 
     verticesBufferManager_.setDefaultColor(_state.specular_color());
     verticesBufferManager_.setOptionsFromDrawMode(_drawMode);
@@ -966,18 +959,19 @@ void VolumeMeshNodeT<VolumeMeshT>::getSelectionRenderObjects(IRenderer* _rendere
     cellSelectionBufferManager_.enableCellPrimitives();
 
     ro.depthRange = Vec2f(0.0f,1.0f);
+
     ro.vertexBuffer = vertexSelectionBufferManager_.getBuffer();
     ro.vertexDecl = vertexSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_POINTS, 0, vertexSelectionBufferManager_.getNumOfVertices());
     _renderer->addRenderObject(&ro);
 
-    ro.depthRange = Vec2f(0.025f, 1.0f);
     ro.vertexBuffer = edgeSelectionBufferManager_.getBuffer();
     ro.vertexDecl = edgeSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_LINES, 0, edgeSelectionBufferManager_.getNumOfVertices());
     _renderer->addRenderObject(&ro);
 
-    ro.depthRange = Vec2f(0.03f, 1.0f);
+    ro.depthRange = Vec2f(0.01f, 1.0f);
+
     ro.vertexBuffer = faceSelectionBufferManager_.getBuffer();
     ro.vertexDecl = faceSelectionBufferManager_.getVertexDeclaration();
     ro.glDrawArrays(GL_TRIANGLES, 0, faceSelectionBufferManager_.getNumOfVertices());
@@ -1044,13 +1038,12 @@ void VolumeMeshNodeT<VolumeMeshT>::getRenderObjects(IRenderer* _renderer, GLStat
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::pick(GLState& _state, PickTarget _target) {
 
+    GLState::depthRange(0.01, 1.0);
     if (lastCellDrawMode_)
     {
         //draw cells so the user cannot pick invisible stuff
-        glDepthRange(0.01, 1.0);
 
         GLState::bindBuffer(GL_ARRAY_BUFFER, cellsBufferManager_.getBuffer());
-
         GLState::enableClientState(GL_VERTEX_ARRAY);
         GLState::vertexPointer(3, GL_FLOAT, cellsBufferManager_.getStride(), reinterpret_cast<GLvoid*>(0));
 
@@ -1064,13 +1057,11 @@ void VolumeMeshNodeT<VolumeMeshT>::pick(GLState& _state, PickTarget _target) {
 
         _state.set_color(bc);
         GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
-        glDepthRange(0.0, 1.0);
     }
 
     if (lastFaceDrawMode_)
     {
         //draw faces so the user cannot pick invisible stuff
-        glDepthRange(0.01, 1.0);
 
         GLState::bindBuffer(GL_ARRAY_BUFFER, facesBufferManager_.getBuffer());
         GLState::enableClientState(GL_VERTEX_ARRAY);
@@ -1086,10 +1077,11 @@ void VolumeMeshNodeT<VolumeMeshT>::pick(GLState& _state, PickTarget _target) {
 
         _state.set_color(bc);
         GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
-        glDepthRange(0.0, 1.0);
     }
 
     GLenum oldDepthFunc = _state.depthFunc();
+
+    GLState::depthRange(0.0, 1.0);
 
     _state.set_depthFunc(GL_LEQUAL);
 
@@ -1184,7 +1176,6 @@ void VolumeMeshNodeT<VolumeMeshT>::pickVertices(GLState& _state) {
     vertexPickBufferManager_.enablePickColors();
 
 
-    _state.depthRange(0.0f,1.0f);
 
     GLState::bindBuffer(GL_ARRAY_BUFFER, vertexPickBufferManager_.getPickBuffer(_state, 0));
 
@@ -1207,7 +1198,6 @@ void VolumeMeshNodeT<VolumeMeshT>::pickVertices(GLState& _state) {
     GLState::disableClientState(GL_COLOR_ARRAY);
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
 
-    _state.depthRange(0.0f,1.00f);
 }
 
 //----------------------------------------------------------------------------
@@ -1223,8 +1213,6 @@ void VolumeMeshNodeT<VolumeMeshT>::pickEdges(GLState& _state, unsigned int _offs
 
     edgePickBufferManager_.enablePickColors();
     edgePickBufferManager_.disableNormals();
-
-    _state.depthRange(0.005f,1.00f);
 
     GLState::bindBuffer(GL_ARRAY_BUFFER, edgePickBufferManager_.getPickBuffer(_state, _offset));
 
@@ -1246,8 +1234,6 @@ void VolumeMeshNodeT<VolumeMeshT>::pickEdges(GLState& _state, unsigned int _offs
 
     GLState::disableClientState(GL_COLOR_ARRAY);
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
-
-    _state.depthRange(0.0f,1.00f);
 
 }
 
@@ -1278,11 +1264,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pickFaces(GLState& _state, unsigned int _offs
     GLState::shadeModel(GL_SMOOTH);
     GLState::disable(GL_LIGHTING);
 
-    _state.depthRange(0.01f,1.00f);
-
     glDrawArrays(GL_TRIANGLES, 0, facePickBufferManager_.getNumOfVertices());
-
-    _state.depthRange(0.0f,1.00f);
 
     GLState::disableClientState(GL_COLOR_ARRAY);
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1309,12 +1291,7 @@ void VolumeMeshNodeT<VolumeMeshT>::pickCells(GLState& _state, unsigned int _offs
     GLState::shadeModel(GL_SMOOTH);
     GLState::disable(GL_LIGHTING);
 
-
-    _state.depthRange(0.01f,1.00f);
-
     glDrawArrays(GL_TRIANGLES, 0, cellPickBufferManager_.getNumOfVertices());
-
-    _state.depthRange(0.0f,1.00f);
 
     GLState::disableClientState(GL_COLOR_ARRAY);
     GLState::bindBuffer(GL_ARRAY_BUFFER, 0);
