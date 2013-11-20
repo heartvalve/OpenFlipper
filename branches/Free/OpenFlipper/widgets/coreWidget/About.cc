@@ -71,6 +71,11 @@
   #include <sys/sysctl.h>
 #endif
 
+//== Defines =================================================================
+
+#define GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX   0x9048
+#define GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX 0x9049
+
 //== IMPLEMENTATION ==========================================================
 
 void CoreWidget::addAboutInfo(QString _text, QString _tabName ) {
@@ -170,10 +175,10 @@ void CoreWidget::showAboutWidget( ) {
 
     // Output to widget
     aboutWidget_->OpenFlipperAbout->append(tr("Physical Memory:\t")+ QString::number(ms.ullAvailPhys/1024/1024) + "MB/"+ 
-                                                                     QString::number(ms.ullTotalPhys/1024/1024) + "MB used ("+
+                                                                     QString::number(ms.ullTotalPhys/1024/1024) + "MB free ("+
                                                                      QString::number(ms.dwMemoryLoad) + "%)");   
     aboutWidget_->OpenFlipperAbout->append(tr("Pagefile Memory:\t")+ QString::number(ms.ullAvailPageFile/1024/1024) + "MB/"
-                                                                   + QString::number(ms.ullTotalPageFile/1024/1024) + "MB used");   
+                                                                   + QString::number(ms.ullTotalPageFile/1024/1024) + "MB free");
 
  
   #elif defined ARCH_DARWIN 
@@ -558,11 +563,22 @@ void CoreWidget::showAboutWidget( ) {
   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,  &getBuffer[0] );
   aboutWidget_->OpenFlipperAbout->append(tr("Maximum supported texture image units(GL_MAX_TEXTURE_IMAGE_UNITS):\t") + QString::number(getBuffer[0]) );
 
+  // Check extension for NVIDIA memory information
+  if ( glExtensions.contains("GL_NVX_gpu_memory_info") ) {
+    // get total memory on gpu
+    GLint total_mem_kb = 0;
+    glGetIntegerv(GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &total_mem_kb);
+
+    aboutWidget_->OpenFlipperAbout->append(tr("GPU Memory (Total available):\t\t") + QString::number(total_mem_kb /1024) + " MB" );
+
+    // get currently available memory on gpu
+    GLint cur_avail_mem_kb = 0;
+    glGetIntegerv(GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &cur_avail_mem_kb);
+
+    aboutWidget_->OpenFlipperAbout->append(tr("GPU Memory (Currently available):\t") + QString::number(cur_avail_mem_kb / 1024) + " MB" );
+  }
 
 
-
-
-  
   // =====================================================================================
   // glu Information
   // =====================================================================================
