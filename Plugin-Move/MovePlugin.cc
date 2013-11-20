@@ -994,59 +994,66 @@ movePropsWidget* MovePlugin::getDialogFromButton(QPushButton* _but) {
  */
 void MovePlugin::slotSetPosition() {
 
-    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
-    movePropsWidget* pW = getDialogFromButton(but);
-    if(pW == 0) return;
+  QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+  movePropsWidget* pW = getDialogFromButton(but);
+  if(pW == 0) return;
 
-    TriMesh::Point newpos;
+  TriMesh::Point newpos;
 
-    bool ok = false;
-    newpos[0] =  (pW->nposx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate")); return; }
-    newpos[1] =  (pW->nposy->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
-    newpos[2] =  (pW->nposz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
+  bool ok = false;
+  newpos[0] =  (pW->nposx->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate")); return; }
+  newpos[1] =  (pW->nposy->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
+  newpos[2] =  (pW->nposz->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
-    BaseObjectData* object;
-    if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-	if (  object->manipulatorNode()->visible() ) {
-        // Compute translation vector
-	    ACG::Vec3d translation = newpos;
-        translation -= object->manipulatorNode()->center();
-        object->manipulatorNode()->set_center(newpos);
-        // Stuff it into transformation matrix
-        ACG::GLMatrixd m;
-        m.identity();
-        m.translate(translation);
-        if (PluginFunctions::pickMode() == "Move")
-        {
-          // ...and transform mesh
-          if(object->dataType() == DATA_TRIANGLE_MESH)
-            transformMesh(m, *PluginFunctions::triMesh(object));
-          else if(object->dataType() == DATA_POLY_MESH)
-            transformMesh(m, *PluginFunctions::polyMesh(object));
+  BaseObjectData* object;
+  if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
+    if (  object->manipulatorNode()->visible() ) {
+      // Compute translation vector
+      ACG::Vec3d translation = newpos;
+      translation -= object->manipulatorNode()->center();
+      object->manipulatorNode()->set_center(newpos);
+      // Stuff it into transformation matrix
+      ACG::GLMatrixd m;
+      m.identity();
+      m.translate(translation);
+      if (PluginFunctions::pickMode() == "Move")
+      {
+        // ...and transform mesh
+        if(object->dataType() == DATA_TRIANGLE_MESH)
+          transformMesh(m, *PluginFunctions::triMesh(object));
+        else if(object->dataType() == DATA_POLY_MESH)
+          transformMesh(m, *PluginFunctions::polyMesh(object));
+
+        // Create backup
+        emit createBackup(object->id(), "Object Translation");
+
+      }
+      else if (PluginFunctions::pickMode() == "MoveSelection")
+      {
+        updateSelectionType();
+        if (selectionType_ & VERTEX) {
+          transformVertexSelection(object->id(), m);
         }
-        else if (PluginFunctions::pickMode() == "MoveSelection")
-        {
-          updateSelectionType();
-          if (selectionType_ & VERTEX) {
-            transformVertexSelection(object->id(), m);
-          }
-          if (selectionType_ & FACE) {
-            transformFaceSelection(object->id(), m);
-          }
-          if (selectionType_ & EDGE) {
-            transformEdgeSelection(object->id(), m);
-          }
+        if (selectionType_ & FACE) {
+          transformFaceSelection(object->id(), m);
         }
-        
+        if (selectionType_ & EDGE) {
+          transformEdgeSelection(object->id(), m);
+        }
 
-        emit updatedObject(object->id(), UPDATE_GEOMETRY);
+        // Create backup
+        emit createBackup(object->id(), "Translation of selection");
+      }
+
+
+      emit updatedObject(object->id(), UPDATE_GEOMETRY);
     }
-	updateManipulatorDialog();
-	emit updateView();
-    }
+    updateManipulatorDialog();
+    emit updateView();
+  }
 }
 
 
@@ -1202,37 +1209,6 @@ void MovePlugin::slotTranslation() {
     translation[2] =  (pW->translationZ->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
-//	// Apply to All Target Objects
-//	if ( pW->targetObjects->isChecked() ) {
-//
-//		int manipcount = 0; // Check how many of the target meshes have an visible manipulator
-//		int targets = 0; // Count the number of target meshes
-//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it) {
-//			++targets;
-//			if ( ! o_it->manipulatorNode()->hidden() ) {
-//				++ manipcount;
-//			}
-//		}
-//
-//		if (manipcount == 0 ) // No manipulator -> no translation
-//		return;
-//
-//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-//				o_it != PluginFunctions::objectsEnd(); ++o_it) {
-//			if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
-//				if ( o_it->manipulatorNode()->hidden() )
-//				continue;
-//			}
-//
-//			translate( o_it->id() , translation );
-//
-//			o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation );
-//			emit createBackup(o_it->id(),"Translation");
-//			emit updatedObject(o_it->id());
-//		}
-//
-//	}
-
     BaseObjectData* object = 0;
     PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
 
@@ -1244,7 +1220,12 @@ void MovePlugin::slotTranslation() {
 
         if (PluginFunctions::pickMode() == "Move")
         {
+
           translate(object->id(), translation);
+
+          // Create backup
+          emit createBackup(object->id(), "Translation of Object");
+
         }
         else if (PluginFunctions::pickMode() == "MoveSelection")
         {
@@ -1258,10 +1239,11 @@ void MovePlugin::slotTranslation() {
           if (selectionType_ & EDGE) {
             translateEdgeSelection(object->id(), translation);
           }
+          emit createBackup(object->id(), "Translation of selection");
         }
 
 
-        emit createBackup(object->id(), "Translation");
+
         emit updatedObject(object->id(), UPDATE_GEOMETRY);
 
 
@@ -1272,7 +1254,12 @@ void MovePlugin::slotTranslation() {
                != PluginFunctions::objectsEnd(); ++o_it) {
             if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
               if (PluginFunctions::pickMode() == "Move") {
+
                 translate(o_it->id(), translation);
+
+                // Create backup
+                emit createBackup(o_it->id(), "Translation of object");
+
               } else if (PluginFunctions::pickMode() == "MoveSelection") {
                 updateSelectionType();
                 if (selectionType_ & VERTEX) {
@@ -1284,9 +1271,11 @@ void MovePlugin::slotTranslation() {
                 if (selectionType_ & EDGE) {
                   translateEdgeSelection(o_it->id(), translation);
                 }
+
+                emit createBackup(o_it->id(), "Translation of selection");
               }
 
-              emit createBackup(o_it->id(), "Translation");
+
               emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
             }
           }
@@ -1391,74 +1380,57 @@ void MovePlugin::slotMoveManipToCOG() {
  */
 void MovePlugin::slotRotate() {
 
-    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
-    movePropsWidget* pW = getDialogFromButton(but);
-    if(pW == 0) return;
+  QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+  movePropsWidget* pW = getDialogFromButton(but);
+  if(pW == 0) return;
 
-    TriMesh::Point axis;
-    double angle;
+  TriMesh::Point axis;
+  double angle;
 
-    bool ok = false;
-    axis[0] =  (pW->rotx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
-    axis[1] =  (pW->roty->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
-    axis[2] =  (pW->rotz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
+  bool ok = false;
+  axis[0] =  (pW->rotx->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
+  axis[1] =  (pW->roty->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
+  axis[2] =  (pW->rotz->text()).toDouble(&ok);
+  if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
-    angle =  (pW->rotAngle->text()).toDouble(&ok);
-    if ( !ok ) {  emit log(LOGERR,tr("Wrong Format for Angle")); return; }
+  angle =  (pW->rotAngle->text()).toDouble(&ok);
+  if ( !ok ) {  emit log(LOGERR,tr("Wrong Format for Angle")); return; }
 
-//     if ( pW->targetObjects->isChecked() ) {
-// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-// 		if (  o_it->manipulatorNode()->hidden() )
-// 		continue;
-// 		o_it->manipulatorNode()->rotate(  angle,axis);
-//
-// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
-// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-//
-// 		if (o_it->dataType( DATA_POLY_MESH ) )
-// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-//
-// 		o_it->manipulatorNode()->loadIdentity();
-// 		updateManipulatorDialog();
-//
-// 		emit createBackup(o_it->id(),"Rotation");
-// 		emit updatedObject(o_it->id());
-// 	}
-//     } else {
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
+  if (object != 0) {
+    if (object->manipulatorNode()->visible() && (object->target() || !allTargets_)) {
 
+      object->manipulatorNode()->rotate(angle, axis);
 
-        BaseObjectData* object = 0;
-        PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
-	if (object != 0) {
-		if (object->manipulatorNode()->visible() && (object->target()
-				|| !allTargets_)) {
+      ACG::Matrix4x4d m = getLastManipulatorMatrix(true);
 
-			object->manipulatorNode()->rotate(angle, axis);
+      if (PluginFunctions::pickMode() == "Move")
+      {
+        if (object->dataType(DATA_TRIANGLE_MESH))
+          transformMesh(m, (*PluginFunctions::triMesh(object)));
 
-			ACG::Matrix4x4d m = getLastManipulatorMatrix(true);
+        if (object->dataType(DATA_POLY_MESH))
+          transformMesh(m, (*PluginFunctions::polyMesh(object)));
 
-			if (PluginFunctions::pickMode() == "Move")
-			{
-			  if (object->dataType(DATA_TRIANGLE_MESH))
-			    transformMesh(m, (*PluginFunctions::triMesh(object)));
+        #ifdef ENABLE_TSPLINEMESH_SUPPORT
+          if (object->dataType(DATA_TSPLINE_MESH))
+            transformMesh(m, (*PluginFunctions::tsplineMesh(object)));
+        #endif
+        #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+          if (object->dataType(DATA_HEXAHEDRAL_MESH))
+            transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+        #endif
+        #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+          if (object->dataType(DATA_POLYHEDRAL_MESH))
+            transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+        #endif
 
-			  if (object->dataType(DATA_POLY_MESH))
-                transformMesh(m, (*PluginFunctions::polyMesh(object)));
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
-              if (object->dataType(DATA_TSPLINE_MESH))
-                transformMesh(m, (*PluginFunctions::tsplineMesh(object)));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
-              if (object->dataType(DATA_HEXAHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
-              if (object->dataType(DATA_POLYHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
-#endif
+        // Create backup
+        emit createBackup(object->id(), "Rotation of object");
+
 			}
 			else if (PluginFunctions::pickMode() == "MoveSelection")
 			{
@@ -1468,21 +1440,25 @@ void MovePlugin::slotRotate() {
 			  }
 			  if (selectionType_ & FACE) {
 			    transformFaceSelection(object->id(), m);
-              }
-              if (selectionType_ & EDGE) {
-                transformEdgeSelection(object->id(), m);
-              }
-              if (selectionType_ & CELL) {
-                transformCellSelection(object->id(), m);
-              }
+			  }
+			  if (selectionType_ & EDGE) {
+			    transformEdgeSelection(object->id(), m);
+			  }
+			  if (selectionType_ & CELL) {
+			    transformCellSelection(object->id(), m);
+			  }
+
+			  // Create backup
+			  emit createBackup(object->id(), "Rotation of selection");
 			}
 
       // move all other targets without manipulator
       if(allTargets_) {
 
-        for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
-             != PluginFunctions::objectsEnd(); ++o_it) {
-          if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) { // If it has its own manipulator active, dont move it
+        for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
+          // If it has its own manipulator active, don't move it
+          if ((o_it->id() != object->id()) && !o_it->manipulatorNode()->draw_manipulator()) {
 
             if (PluginFunctions::pickMode() == "Move")
             {
@@ -1491,18 +1467,21 @@ void MovePlugin::slotRotate() {
 
               if (o_it->dataType(DATA_POLY_MESH))
                 transformMesh(m, (*PluginFunctions::polyMesh(o_it)));
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
-              if (o_it->dataType(DATA_TSPLINE_MESH))
-                transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
-              if (object->dataType(DATA_HEXAHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
-              if (object->dataType(DATA_POLYHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
-#endif
+              #ifdef ENABLE_TSPLINEMESH_SUPPORT
+                if (o_it->dataType(DATA_TSPLINE_MESH))
+                  transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
+              #endif
+              #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+                if (object->dataType(DATA_HEXAHEDRAL_MESH))
+                  transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+              #endif
+              #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+                if (object->dataType(DATA_POLYHEDRAL_MESH))
+                  transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+              #endif
+
+              // Create backup
+              emit createBackup(o_it->id(), "Rotation of object");
             }
             else if (PluginFunctions::pickMode() == "MoveSelection")
             {
@@ -1519,9 +1498,11 @@ void MovePlugin::slotRotate() {
               if (selectionType_ & CELL) {
                 transformCellSelection(o_it->id(), m);
               }
+
+              // Create backup
+              emit createBackup(o_it->id(), "Rotation of selection");
             }
 
-            emit createBackup(o_it->id(), "Translation");
             emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
           }
         }
@@ -1530,7 +1511,6 @@ void MovePlugin::slotRotate() {
 
       updateManipulatorDialog();
 
-      emit createBackup(object->id(), "Rotation");
       emit updatedObject(object->id(), UPDATE_GEOMETRY);
 
     }
@@ -1563,27 +1543,6 @@ void MovePlugin::slotScale() {
     scale[2] =  (pW->scalez->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,tr("Wrong Format for factor 3")); return; }
 
-//    if ( pW->targetObjects->isChecked() ) {
-// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-// 		if (  o_it->manipulatorNode()->hidden() )
-// 		continue;
-// 		o_it->manipulatorNode()->scale(  scale);
-//
-// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
-// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-//
-// 		if (o_it->dataType( DATA_POLY_MESH ) )
-// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-//
-// 		o_it->manipulatorNode()->loadIdentity();
-// 		updateManipulatorDialog();
-//
-// 		emit createBackup(o_it->id(),"Scaling");
-// 		emit updatedObject(o_it->id());
-// 	}
-//     } else {
-
-
         BaseObjectData* object = 0;
         PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
 	if (object != 0) {
@@ -1600,19 +1559,22 @@ void MovePlugin::slotScale() {
 	        transformMesh(m,(*PluginFunctions::triMesh(object)));
 	      if (object->dataType(DATA_POLY_MESH))
 	        transformMesh(m, (*PluginFunctions::polyMesh(object)));
-	#ifdef ENABLE_TSPLINEMESH_SUPPORT
-	      if (object->dataType(DATA_TSPLINE_MESH))
-	        transformMesh(m,  (*PluginFunctions::tsplineMesh(object)));
-	#endif
-    #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+	      #ifdef ENABLE_TSPLINEMESH_SUPPORT
+	        if (object->dataType(DATA_TSPLINE_MESH))
+	          transformMesh(m,  (*PluginFunctions::tsplineMesh(object)));
+	      #endif
+        #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
           if (object->dataType(DATA_HEXAHEDRAL_MESH))
             transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
-    #endif
-    #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+       #endif
+       #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
           if (object->dataType(DATA_POLYHEDRAL_MESH))
             transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
-    #endif
-			}
+       #endif
+
+       // Create backup
+       emit createBackup(object->id(), "Scaling of object");
+		}
 			else if (PluginFunctions::pickMode() == "MoveSelection")
 			{
 			  updateSelectionType();
@@ -1624,11 +1586,14 @@ void MovePlugin::slotScale() {
 			  }
 			  if (selectionType_ & EDGE) {
 			    transformEdgeSelection(object->id(), m);
-              }
-              if (selectionType_ & CELL) {
-                transformCellSelection(object->id(), m);
-              }
-      }
+			  }
+			  if (selectionType_ & CELL) {
+			    transformCellSelection(object->id(), m);
+			  }
+
+			  // Create backup
+			  emit createBackup(object->id(), "Scaling of selection");
+			}
 
       // move all other targets without manipulator
       if(allTargets_) {
@@ -1644,18 +1609,21 @@ void MovePlugin::slotScale() {
 
               if (o_it->dataType(DATA_POLY_MESH))
                 transformMesh(m, (*PluginFunctions::polyMesh(o_it)));
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
-              if (o_it->dataType(DATA_TSPLINE_MESH))
-                transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
-              if (object->dataType(DATA_HEXAHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
-#endif
-#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
-              if (object->dataType(DATA_POLYHEDRAL_MESH))
-                transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
-#endif
+              #ifdef ENABLE_TSPLINEMESH_SUPPORT
+                if (o_it->dataType(DATA_TSPLINE_MESH))
+                  transformMesh(m, (*PluginFunctions::tsplineMesh(o_it)));
+              #endif
+              #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+                if (object->dataType(DATA_HEXAHEDRAL_MESH))
+                  transformVolumeMesh(m, (*PluginFunctions::hexahedralMesh(object)), (PluginFunctions::hexahedralMeshObject(object)->normals()));
+              #endif
+              #ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+                if (object->dataType(DATA_POLYHEDRAL_MESH))
+                  transformVolumeMesh(m, (*PluginFunctions::polyhedralMesh(object)), (PluginFunctions::polyhedralMeshObject(object)->normals()));
+              #endif
+
+              // Create backup
+              emit createBackup(o_it->id(), "Scaling of object");
             }
             else if (PluginFunctions::pickMode() == "MoveSelection")
             {
@@ -1672,9 +1640,11 @@ void MovePlugin::slotScale() {
               if (selectionType_ & CELL) {
                 transformCellSelection(o_it->id(), m);
               }
+
+              // Create backup
+              emit createBackup(o_it->id(), "Scaling of selection");
             }
 
-            emit createBackup(o_it->id(), "Translation");
             emit updatedObject(o_it->id(), UPDATE_GEOMETRY);
           }
         }
