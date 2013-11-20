@@ -152,18 +152,28 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
 
   if (mainMemBar_) {
 
-    struct sysinfo sys_info;
+    // Main Memory information
+    #ifdef WIN32 //Windows
 
-    sysinfo(&sys_info);
+    #elif defined ARCH_DARWIN // Apple
 
-    // Unit in bytes ; /1024 -> KB ; /1024 MB
-    unsigned long totalRamMB = sys_info.totalram / 1024 /1024 * sys_info.mem_unit;
+    #else // Linux
 
-    // Unit in bytes ; /1024 -> KB ; /1024 MB
-    unsigned long freeRamMB  = sys_info.freeram / 1024 / 1024 * sys_info.mem_unit;
 
-    mainMemBar_->setRange(  0 , totalRamMB  );
-    mainMemBar_->setValue( totalRamMB-freeRamMB);
+      struct sysinfo sys_info;
+
+      sysinfo(&sys_info);
+
+      // Unit in bytes ; /1024 -> KB ; /1024 MB
+      unsigned long totalRamMB = sys_info.totalram / 1024 /1024 * sys_info.mem_unit;
+
+      // Unit in bytes ; /1024 -> KB ; /1024 MB
+      unsigned long freeRamMB  = sys_info.freeram / 1024 / 1024 * sys_info.mem_unit;
+
+      mainMemBar_->setRange(  0 , totalRamMB  );
+      mainMemBar_->setValue( totalRamMB-freeRamMB);
+
+    #endif
   }
 }
 
