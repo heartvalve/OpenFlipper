@@ -195,9 +195,6 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
                    QString::number( _vector[0] ) + " , " +
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
-                   
-  // Create backup
-  emit createBackup(_objectId, "Translation");
 }
 
 
@@ -271,9 +268,6 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
                    
-  // Create backup
-  emit createBackup(_objectId, "Translation");
-
 }
 
 
@@ -344,9 +338,6 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
                    QString::number( _vector[0] ) + " , " +
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
-                   
-  // Create backup
-  emit createBackup(_objectId, "Translation of Selection");
 }
 
 
@@ -445,8 +436,6 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
 
-  // Create backup
-  emit createBackup(_objectId, "Translation of Selection");
 }
 
 
@@ -566,8 +555,6 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
 
-  // Create backup
-  emit createBackup(_objectId, "Translation of Selection");
 }
 //------------------------------------------------------------------------------
 
@@ -597,7 +584,7 @@ void MovePlugin::transformHandleRegion(int _objectId, Matrix4x4 _matrix) {
 
 //------------------------------------------------------------------------------
 
-/** \brief tranform an object
+/** \brief transform an object
  *
  * @param _objectId object id
  * @param _matrix transformation matrix
@@ -668,10 +655,6 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
-  
-  // Create backup if there was a change
-  if (!_matrix.is_identity())
-    emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -760,9 +743,6 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup if there was a change
-  if (!_matrix.is_identity())
-    emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -889,11 +869,6 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformVertexSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
-
-  // Create backup if there was a change
-  // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) )
-    emit createBackup(_objectId, "Transformation of Vertex Selection");
 
   return true;
 }
@@ -1071,11 +1046,6 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transformFaceSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup if there was a change
-  // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) )
-    emit createBackup(_objectId, "Transformation of Face Selection");
-
   return true;
 }
 
@@ -1272,11 +1242,6 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transformEdgeSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup if there was a change
-  // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) )
-    emit createBackup(_objectId, "Transformation of Edge Selection");
-
   return true;
 }
 
@@ -1375,11 +1340,6 @@ bool MovePlugin::transformCellSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformCellSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
-
-  // Create backup if there was a change
-  // the backup is only created when the slot is called via scripting (sender == 0)
-  if ( !_matrix.is_identity() && (sender() == 0) )
-    emit createBackup(_objectId, "Transformation of Cell Selection");
 
   return true;
 }
