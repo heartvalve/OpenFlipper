@@ -50,8 +50,7 @@
 #elif defined ARCH_DARWIN
 #else
 #include <sys/sysinfo.h>
-//
-/////Info class returned by sysinfo
+//Info class returned by sysinfo
 //struct sysinfo {
 //  long uptime;              /* Sekunden seit dem letzten Systemstart */
 //  unsigned long loads[3];   /* 1, 5 und 15 minütige Systemlast */
@@ -67,8 +66,6 @@
 //  unsigned int mem_unit;    /* Größe der Speichereinheit in Byte */
 //  char _f[20-2*sizeof(long)-sizeof(int)]; /* Auffüllung auf 64 bytes */
 //};
-//
-
 #endif
 
 #define GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX   0x9048
