@@ -607,6 +607,11 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     GLboolean lightModel = _state.twosided_lighting();
     _state.set_twosided_lighting(false);
 
+    bool clientStateEnabledVertexArray   = GLState::isClientStateEnabled(GL_VERTEX_ARRAY);
+    bool clientStateEnabledColorArray    = GLState::isClientStateEnabled(GL_COLOR_ARRAY);
+    bool clientStateEnabledNormalArray   = GLState::isClientStateEnabled(GL_NORMAL_ARRAY);
+    bool clientStateEnabledTexCoordArray = GLState::isClientStateEnabled(GL_TEXTURE_COORD_ARRAY);
+
     DrawModes::DrawMode cellDrawMode   = drawModes_.getFirstCellDrawMode(_drawMode);
     DrawModes::DrawMode faceDrawMode   = drawModes_.getFirstFaceDrawMode(_drawMode);
     DrawModes::DrawMode edgeDrawMode   = drawModes_.getFirstEdgeDrawMode(_drawMode);
@@ -687,6 +692,27 @@ void VolumeMeshNodeT<VolumeMeshT>::draw(GLState& _state, const DrawModes::DrawMo
     _state.set_color(oldColor);
 
     _state.set_twosided_lighting(lightModel);
+
+    if (clientStateEnabledVertexArray)
+        GLState::enableClientState(GL_VERTEX_ARRAY);
+    else
+        GLState::disableClientState(GL_VERTEX_ARRAY);
+
+    if (clientStateEnabledColorArray)
+        GLState::enableClientState(GL_COLOR_ARRAY);
+    else
+        GLState::disableClientState(GL_COLOR_ARRAY);
+
+    if (clientStateEnabledNormalArray)
+        GLState::enableClientState(GL_NORMAL_ARRAY);
+    else
+        GLState::disableClientState(GL_NORMAL_ARRAY);
+
+    if (clientStateEnabledTexCoordArray)
+        GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+    else
+        GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
+
 }
 
 
@@ -1038,6 +1064,12 @@ void VolumeMeshNodeT<VolumeMeshT>::getRenderObjects(IRenderer* _renderer, GLStat
 template<class VolumeMeshT>
 void VolumeMeshNodeT<VolumeMeshT>::pick(GLState& _state, PickTarget _target) {
 
+    // save state
+    bool clientStateEnabledVertexArray   = GLState::isClientStateEnabled(GL_VERTEX_ARRAY);
+    bool clientStateEnabledColorArray    = GLState::isClientStateEnabled(GL_COLOR_ARRAY);
+    bool clientStateEnabledNormalArray   = GLState::isClientStateEnabled(GL_NORMAL_ARRAY);
+    bool clientStateEnabledTexCoordArray = GLState::isClientStateEnabled(GL_TEXTURE_COORD_ARRAY);
+
     GLState::depthRange(0.01, 1.0);
     if (lastCellDrawMode_)
     {
@@ -1136,6 +1168,27 @@ void VolumeMeshNodeT<VolumeMeshT>::pick(GLState& _state, PickTarget _target) {
     _state.set_depthFunc(oldDepthFunc);
 
     lastPickTarget_ = _target;
+
+    // restore state
+    if (clientStateEnabledVertexArray)
+        GLState::enableClientState(GL_VERTEX_ARRAY);
+    else
+        GLState::disableClientState(GL_VERTEX_ARRAY);
+
+    if (clientStateEnabledColorArray)
+        GLState::enableClientState(GL_COLOR_ARRAY);
+    else
+        GLState::disableClientState(GL_COLOR_ARRAY);
+
+    if (clientStateEnabledNormalArray)
+        GLState::enableClientState(GL_NORMAL_ARRAY);
+    else
+        GLState::disableClientState(GL_NORMAL_ARRAY);
+
+    if (clientStateEnabledTexCoordArray)
+        GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
+    else
+        GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
 
 }
 
