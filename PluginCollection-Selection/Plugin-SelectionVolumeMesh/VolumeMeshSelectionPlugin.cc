@@ -126,10 +126,13 @@ void VolumeMeshSelectionPlugin::pluginsInitialized() {
                            iconPath + SHEET_SELECTION, cellType_, sheetSelectionHandle_);
 
     allSupportedTypes_ = vertexType_ | edgeType_ | faceType_ | cellType_;
+    floodFillSupportedTypes_ = vertexType_ | edgeType_ | faceType_;
 
     // Determine, which selection modes are requested
-    emit
-    showToggleSelectionMode(environmentHandle_, true, allSupportedTypes_);
+    emit showToggleSelectionMode(environmentHandle_, true, allSupportedTypes_);
+
+    emit showVolumeLassoSelectionMode(environmentHandle_, true, allSupportedTypes_);
+    emit showFloodFillSelectionMode(environmentHandle_, true, floodFillSupportedTypes_);
 
     // Define vertex operations
     QStringList vertexOperations;
@@ -220,22 +223,114 @@ bool VolumeMeshSelectionPlugin::cellTypeActive() {
 void VolumeMeshSelectionPlugin::slotSelectionOperation(QString _operation) {
 
     SelectionInterface::PrimitiveType type = 0u;
-    emit
-    getActivePrimitiveType(type);
+    emit getActivePrimitiveType(type);
 
     if((type & allSupportedTypes_) == 0)
         return;
 
     // Test if operation should be applied to target objects only
     bool targetsOnly = false;
-    emit
-    targetObjectsOnly(targetsOnly);
+    emit targetObjectsOnly(targetsOnly);
     PluginFunctions::IteratorRestriction restriction = (targetsOnly ? PluginFunctions::TARGET_OBJECTS
                                                                     : PluginFunctions::ALL_OBJECTS);
 
-    /*
-     * TODO: Complete this function for all supported types
-     */
+    if (_operation == V_SELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                selectAllVertices(o_it->id());
+        }
+    } else if (_operation == V_DESELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deselectAllVertices(o_it->id());
+        }
+    } else if (_operation == V_INVERT) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                invertVertexSelection(o_it->id());
+        }
+    } else if (_operation == V_DELETE) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteSelectedVertices(o_it->id());
+        }
+    } else if (_operation == E_SELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                selectAllEdges(o_it->id());
+        }
+    } else if (_operation == E_DESELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deselectAllEdges(o_it->id());
+        }
+    } else if (_operation == E_INVERT) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                invertEdgeSelection(o_it->id());
+        }
+    } else if (_operation == E_DELETE) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteSelectedEdges(o_it->id());
+        }
+    } else if (_operation == F_SELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                selectAllFaces(o_it->id());
+        }
+    } else if (_operation == F_DESELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deselectAllFaces(o_it->id());
+        }
+    } else if (_operation == F_INVERT) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                invertFaceSelection(o_it->id());
+        }
+    } else if (_operation == F_DELETE) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteSelectedFaces(o_it->id());
+        }
+    } else if (_operation == C_SELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                selectAllCells(o_it->id());
+        }
+    } else if (_operation == C_DESELECT_ALL) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deselectAllCells(o_it->id());
+        }
+    } else if (_operation == C_INVERT) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                invertCellSelection(o_it->id());
+        }
+    } else if (_operation == C_DELETE) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_POLYHEDRAL_MESH | DATA_HEXAHEDRAL_MESH));
+                o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible())
+                deleteSelectedCells(o_it->id());
+        }
+    }
 }
 
 //==============================================================================================
@@ -369,6 +464,122 @@ void VolumeMeshSelectionPlugin::slotToggleSelection(QMouseEvent* _event,
             emit updatedObject(object->id(), UPDATE_SELECTION);
         }
     }
+}
+
+//==============================================================================================
+
+void VolumeMeshSelectionPlugin::slotVolumeLassoSelection(QMouseEvent* _event,
+        PrimitiveType _currentType, bool _deselect)
+{
+    if ((_currentType & allSupportedTypes_) == 0) return;
+
+    if (_event->type() == QEvent::MouseButtonPress)
+    {
+        volumeLassoPoints_.append(_event->pos());
+        return;
+    }
+    else if (_event->type() == QEvent::MouseButtonDblClick)
+    {
+        ACG::GLState &state = PluginFunctions::viewerProperties().glState();
+        bool updateGL = state.updateGL();
+        state.set_updateGL (false);
+
+        QPolygon p(volumeLassoPoints_);
+        QRegion region = QRegion(p);
+
+        SelectVolumeAction action(region, this, _currentType, _deselect, state);
+        ACG::SceneGraph::traverse (PluginFunctions::getRootNode(), action);
+
+        state.set_updateGL(updateGL);
+
+        // Clear lasso points
+        volumeLassoPoints_.clear();
+    }
+}
+
+void VolumeMeshSelectionPlugin::slotFloodFillSelection(QMouseEvent* _event,
+        double _maxAngle, PrimitiveType _currentType, bool _deselect)
+{
+    // Return if none of the currently active types is handled by this plugin
+    if ((_currentType & floodFillSupportedTypes_) == 0)
+        return;
+
+    unsigned int node_idx, target_idx;
+    ACG::Vec3d hit_point;
+
+    // pick Anything to find all possible objects
+    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
+                                        _event->pos(), node_idx, target_idx, &hit_point))
+    {
+        BaseObjectData* object = 0;
+
+        if (PluginFunctions::getPickedObject(node_idx, object))
+        {
+            if (object->dataType() == DATA_POLYHEDRAL_MESH)
+            {
+                if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE,
+                            _event->pos(), node_idx, target_idx, &hit_point))
+                {
+                    if (PluginFunctions::getPickedObject(node_idx, object))
+                    {
+                        if (object->dataType(DATA_POLYHEDRAL_MESH))
+                        {
+                            floodFillSelection(PluginFunctions::polyhedralMesh(object),
+                                    target_idx, _maxAngle, _currentType, _deselect);
+
+                            emit updatedObject(object->id(), UPDATE_SELECTION);
+                        }
+                    }
+                }
+            }
+            else if(object->dataType() == DATA_HEXAHEDRAL_MESH)
+            {
+                if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE,
+                            _event->pos(), node_idx, target_idx, &hit_point))
+                {
+                    if(PluginFunctions::getPickedObject(node_idx, object) )
+                    {
+                        if(object->dataType(DATA_HEXAHEDRAL_MESH))
+                        {
+                            floodFillSelection(PluginFunctions::hexahedralMesh(object),
+                                    target_idx, _maxAngle, _currentType, _deselect);
+
+                            emit updatedObject(object->id(), UPDATE_SELECTION);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                emit log(LOGERR, tr("floodFillSelection: Unsupported dataType"));
+            }
+        }
+    }
+}
+
+/// Traverse the scenegraph and call the selection function for all mesh nodes
+bool SelectVolumeAction::operator()(BaseNode* _node)
+{
+    BaseObjectData* object = 0;
+    if (PluginFunctions::getPickedObject(_node->id(), object))
+    {
+        bool selected = false;
+        if (object->dataType(DATA_POLYHEDRAL_MESH))
+        {
+            PolyhedralMesh* m = PluginFunctions::polyhedralMesh(object);
+            selected = plugin_->volumeSelection(m, state_, &region_, type_, deselection_);
+
+        } else if(object->dataType(DATA_HEXAHEDRAL_MESH)) {
+
+            HexahedralMesh* m = PluginFunctions::hexahedralMesh(object);
+            selected = plugin_->volumeSelection(m, state_, &region_, type_, deselection_);
+        }
+
+        if (selected){
+            emit plugin_->updatedObject(object->id(), UPDATE_SELECTION);
+        }
+    }
+    return true;
 }
 
 //==============================================================================================

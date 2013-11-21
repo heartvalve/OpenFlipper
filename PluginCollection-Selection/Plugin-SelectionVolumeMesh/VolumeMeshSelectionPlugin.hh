@@ -86,6 +86,8 @@ public:
     /// Default destructor
     ~VolumeMeshSelectionPlugin();
     
+    friend class SelectVolumeAction;
+
 signals:
 
     // BaseInterface
@@ -107,8 +109,11 @@ signals:
     void registerType(QString _handleName, DataType _type);
     void addPrimitiveType(QString _handleName, QString _name, QString _icon, SelectionInterface::PrimitiveType& _typeHandle);
     void addSelectionOperations(QString _handleName, QStringList _operationsList, QString _category, SelectionInterface::PrimitiveType _type = 0u);
+
     void showToggleSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+
     void showVolumeLassoSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
+    void showFloodFillSelectionMode(QString _handleName, bool _show, SelectionInterface::PrimitiveType _associatedTypes);
     void addCustomSelectionMode(QString _handleName, QString _modeName, QString _description, QString _icon,
            SelectionInterface::PrimitiveType _associatedTypes, QString& _customIdentifier);
 
@@ -132,6 +137,9 @@ private slots:
     // SelectionInterface
     void slotSelectionOperation(QString _operation);
     void slotToggleSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+
+    void slotVolumeLassoSelection(QMouseEvent* _event, SelectionInterface::PrimitiveType _currentType, bool _deselect);
+    void slotFloodFillSelection(QMouseEvent* _event, double _maxAngle, SelectionInterface::PrimitiveType _currentType, bool _deselect);
     void slotCustomSelection(QMouseEvent *_event, SelectionInterface::PrimitiveType _currentType, QString _customIdentifier, bool _deselect);
 
     void slotLoadSelection(const INIFile& _file);
@@ -311,6 +319,15 @@ public slots:
     //===========================================================================
 
 private:
+    /// Surface volume selection tool
+    template<class MeshT>
+    bool volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegion *_region,
+                         PrimitiveType _primitiveTypes, bool _deselection);
+
+    /// Select all entities that are connected (and do not exceed the maximum dihedral angle)
+    template<class MeshT>
+    void floodFillSelection(MeshT* _mesh, uint _fh, double _maxAngle,
+                            PrimitiveType _primitiveTypes, bool _deselection);
 
     // Get orthogonal orientation of neighboring cell
     unsigned char getOrthogonalOrientationOfNeighborCell(const OpenVolumeMesh::CellHandle& _ch1,
@@ -334,6 +351,7 @@ private:
     PrimitiveType cellType_;
     
     PrimitiveType allSupportedTypes_;
+    PrimitiveType floodFillSupportedTypes_;
     
     /// Keep volume lasso points
     QVector<QPoint> volumeLassoPoints_;
@@ -346,6 +364,38 @@ private:
     /** @} */
 
 };
+
+/// Traverse the scenegraph and call the selection function for all mesh nodes
+class SelectVolumeAction
+{
+public:
+    SelectVolumeAction(QRegion&_region, VolumeMeshSelectionPlugin* _plugin,
+            unsigned int _type, bool _deselection, ACG::GLState& _state)
+        : state_(_state)
+        , region_(_region)
+        , plugin_(_plugin)
+        , type_(_type)
+        , deselection_(_deselection)
+    {
+    }
+
+    void enter(BaseNode* /*_node*/) {}
+    void leave(BaseNode* /*_node*/) {}
+
+    bool operator()(BaseNode* _node);
+
+private:
+    ACG::GLState&               state_;
+    QRegion&                    region_;
+    VolumeMeshSelectionPlugin*  plugin_;
+    unsigned int                type_;
+    bool                        deselection_;
+};
+//=============================================================================
+#if defined(INCLUDE_TEMPLATES) && !defined(VOLUMEMESHSELECTIONPLUGINT_CC)
+#define VOLUMEMESHSELECTIONPLUGINT_TEMPLATES
+#include "VolumeMeshSelectionPluginT.cc"
+#endif
 
 //=============================================================================
 #endif // VOLUMEMESHSELECTIONPLUGIN_HH defined
