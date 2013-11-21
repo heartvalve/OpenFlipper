@@ -1097,9 +1097,9 @@ unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
   if (numModifiers_ == 32) 
     return 0;
 
-  modifiers_[numModifiers_++] = _modifier;
+  _modifier->modifierID_ = (unsigned int)(1 << numModifiers_);
 
-  _modifier->modifierID_ = (unsigned int)numModifiers_;
+  modifiers_[numModifiers_++] = _modifier;
   return _modifier->modifierID_;
 }
 
