@@ -55,6 +55,7 @@
 //== INCLUDES =================================================================
 
 #include "BaseObjectCore.hh"
+#include "BaseObject.hh"
 #include "Types.hh"
 #include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -73,6 +74,11 @@ static ObjectManager objectManager_;
  * the counter is incremented and a new objectId given to the object. DONT TOUCH IT.
  */
 static int idGenerator = 1;
+
+/** Static member for no object initialization
+ *
+ */
+int BaseObject::NOOBJECT = -1;
 
 BaseObject::BaseObject(const BaseObject& _object) :
   QObject(),

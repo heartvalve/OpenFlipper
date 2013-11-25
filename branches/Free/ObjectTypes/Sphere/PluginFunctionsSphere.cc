@@ -63,7 +63,7 @@ namespace PluginFunctions {
 
 bool getObject(  int _identifier , SphereObject*& _object ) {
   
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
@@ -78,7 +78,7 @@ bool getObject(  int _identifier , SphereObject*& _object ) {
 
 SphereObject* sphereObject( int _objectId ) {
   
-  if ( _objectId == -1 ) {
+  if ( _objectId == BaseObject::NOOBJECT ) {
     return 0;
   }
   

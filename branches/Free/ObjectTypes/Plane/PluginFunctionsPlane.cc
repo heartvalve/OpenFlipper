@@ -61,7 +61,7 @@ namespace PluginFunctions {
 
 bool getObject(  int _identifier , PlaneObject*& _object ) {
   
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
@@ -104,7 +104,7 @@ PlaneObject* planeObject( BaseObjectData* _object ) {
 }
 
 PlaneObject* planeObject( int _objectId ) {
-  if ( _objectId == -1 ) {
+  if ( _objectId == BaseObject::NOOBJECT ) {
     return 0;
   }
 

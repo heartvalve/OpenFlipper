@@ -93,7 +93,7 @@ bool getTargetMeshes( std::vector<HexahedralMesh*>& _meshes  )
 
 bool getObject( int _identifier, HexahedralMeshObject*& _object ) {
 
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
