@@ -53,13 +53,20 @@ ELSE( WIN32 )
     add_definitions( -DHAVE_CSTDDEF )
 
    
-   # set optional path to HSL Solver
+   # set optional path to HSL Solver for dynamic usage
    find_path(IPOPT_HSL_LIBRARY_DIR 
              NAMES libhsl.so
                    libhsl.dylib
              PATHS "$ENV{IPOPT_HSL_LIBRARY_PATH}"
                    "$ENV{HOME}/opt/HSL/lib"
    )
+
+   # find HSL library for fixed linking of solvers   
+   find_library( IPOPT_HSL_LIBRARY 
+                 coinhsl
+                 PATHS "$ENV{IPOPT_HOME}/lib"
+                       "/usr/lib" )   
+   
    
    IF( IPOPT_HSL_LIBRARY_DIR)
      IF( NOT IPOPT_FIND_QUIETLY )
@@ -72,9 +79,13 @@ ELSE( WIN32 )
    
    set(IPOPT_INCLUDE_DIRS "${IPOPT_INCLUDE_DIR}" )
    set(IPOPT_LIBRARIES "${IPOPT_LIBRARY}" )
+   
+   IF(IPOPT_HSL_LIBRARY)
+     LIST( APPEND IPOPT_LIBRARIES "${IPOPT_HSL_LIBRARY}")   
+   ENDIF(IPOPT_HSL_LIBRARY)
 
    include(FindPackageHandleStandardArgs)
-   # handle the QUIETLY and REQUIRED arguments and set LIBCPLEX_FOUND to TRUE
+   # handle the QUIETLY and REQUIRED arguments and set LIBIPOPT_FOUND to TRUE
    # if all listed variables are TRUE
    find_package_handle_standard_args(IPOPT  DEFAULT_MSG
                                      IPOPT_LIBRARY IPOPT_INCLUDE_DIR)
