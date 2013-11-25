@@ -64,7 +64,7 @@ namespace PluginFunctions {
 
 bool getObject(  int _identifier , QtWidgetObject*& _object ) {
 
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }

@@ -60,7 +60,7 @@ namespace PluginFunctions {
 // ===============================================================================
 
 bool getObject(  int _identifier , SkeletonObject*& _object ) {
-  if  (_identifier == -1)
+  if  (_identifier == BaseObject::NOOBJECT)
     return false;
 
   // Get object by using the map accelerated plugin function

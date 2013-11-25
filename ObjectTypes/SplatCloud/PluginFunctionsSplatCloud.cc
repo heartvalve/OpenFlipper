@@ -72,7 +72,7 @@ namespace PluginFunctions {
 
 bool getObject( int _identifier, SplatCloudObject *&_object )
 {
-  if( _identifier == -1 )
+  if( _identifier == BaseObject::NOOBJECT )
   {
     _object = 0;
     return false;
@@ -169,7 +169,7 @@ SplatCloudObject* splatCloudObject( BaseObjectData *_object )
 
 SplatCloudObject* splatCloudObject(  int _objectId ) {
 
-  if  (_objectId == -1)
+  if  (_objectId == BaseObject::NOOBJECT)
     return 0;
 
   // Get object by using the map accelerated plugin function

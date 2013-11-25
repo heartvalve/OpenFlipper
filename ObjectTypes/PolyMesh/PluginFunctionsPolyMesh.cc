@@ -86,7 +86,7 @@ bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
 
 bool getObject(  int _identifier , PolyMeshObject*& _object ) {
 
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
@@ -101,7 +101,7 @@ bool getObject(  int _identifier , PolyMeshObject*& _object ) {
 
 bool getMesh(  int _identifier , PolyMesh*& _mesh ) {
 
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _mesh = 0;
     return false;
   }
@@ -159,7 +159,7 @@ PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
 
 PolyMeshObject* polyMeshObject( int _objectId ) {
   
-  if  (_objectId == -1)
+  if  (_objectId == BaseObject::NOOBJECT)
     return 0;
   
   // Get object by using the map accelerated plugin function

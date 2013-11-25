@@ -101,6 +101,10 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
     virtual ~BaseObject();
 
+    /** predefined handle which is returned when objects are not found or not initialized.
+     */
+    static int NOOBJECT;
+
   //===========================================================================
   /** @name Object Identification
    * @{ */

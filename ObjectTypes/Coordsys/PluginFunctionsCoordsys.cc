@@ -61,7 +61,7 @@ namespace PluginFunctions {
 
 bool getObject(  int _identifier , CoordsysObject*& _object ) {
   
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
@@ -96,7 +96,7 @@ CoordsysObject* coordsysObject( BaseObjectData* _object ) {
 }
 
 CoordsysObject* coordsysObject( int _objectId ) {
-  if ( _objectId == -1 ) {
+  if ( _objectId == BaseObject::NOOBJECT ) {
     return 0;
   }
 

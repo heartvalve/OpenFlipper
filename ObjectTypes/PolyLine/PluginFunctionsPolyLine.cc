@@ -92,7 +92,7 @@ bool getTargetPolylines( std::vector<PolyLine*>& _polylines  )
 
 bool getObject(  int _identifier , PolyLineObject*& _object ) {
   
-  if ( _identifier == -1 ) {
+  if ( _identifier == BaseObject::NOOBJECT ) {
     _object = 0;
     return false;
   }
@@ -127,7 +127,7 @@ PolyLineObject* polyLineObject( BaseObjectData* _object ) {
 
 PolyLineObject* polyLineObject( int _objectId ) {
   
-  if  (_objectId == -1)
+  if  (_objectId == BaseObject::NOOBJECT)
     return 0;
   
   // Get object by using the map accelerated plugin function
