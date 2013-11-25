@@ -330,6 +330,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
 
 
+  // force shaded selections
+  shaded = true;
+
   GLenum prev_depth = _state.depthFunc();
   
   ACG::GLState::depthFunc(GL_LEQUAL);
@@ -349,6 +352,9 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
     // disable unwanted attributes from drawmesh vbo
     ACG::GLState::disableClientState(GL_COLOR_ARRAY);
     ACG::GLState::disableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    ACG::GLState::disable(GL_TEXTURE_2D);
+    ACG::GLState::bindTexture(GL_TEXTURE_2D, 0);
   }
   else
   {
@@ -634,15 +640,43 @@ void StatusNodeT<Mesh, Mod>::getRenderObjects(IRenderer* _renderer,
   // point list
   if (points && !v_cache_.empty())
   {
+    // use shaders to simulate line width
+    QString geomTemplate = ShaderProgGenerator::getShaderDir();
+    geomTemplate += "PointSize/geometry.tpl";
+
+    QString fragTemplate = ShaderProgGenerator::getShaderDir();
+    fragTemplate += "PointSize/fragment.tpl";
+
+    ro.shaderDesc.geometryTemplateFile = geomTemplate;
+    ro.shaderDesc.fragmentTemplateFile = fragTemplate;
+
+    ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+    ro.setUniform("pointSize", _mat->pointSize());
+
     ro.glDrawElements(GL_POINTS, static_cast<GLsizei>(v_cache_.size()), GL_UNSIGNED_INT, &v_cache_[0]);
     _renderer->addRenderObject(&ro);
+
+    ro.shaderDesc.geometryTemplateFile = "";
+    ro.shaderDesc.fragmentTemplateFile = "";
   }
 
   // edge list
   if (edges && !e_cache_.empty())
   {
+    // use shaders to simulate line width
+    QString geomTemplate = ShaderProgGenerator::getShaderDir();
+    geomTemplate += "Wireframe/geom_line2quad.tpl";
+
+    ro.shaderDesc.geometryTemplateFile = geomTemplate;
+
+    ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+    ro.setUniform("lineWidth", _state.line_width());
+
     ro.glDrawElements(GL_LINES, static_cast<GLsizei>(e_cache_.size()), GL_UNSIGNED_INT, &e_cache_[0]);
     _renderer->addRenderObject(&ro);
+
+    ro.shaderDesc.geometryTemplateFile = "";
+    ro.shaderDesc.fragmentTemplateFile = "";
   }
 
 
