@@ -150,8 +150,9 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
 
   if (mainMemBar_) {
 
-    unsigned long totalRamMB = 0;
-    unsigned long freeRamMB  = 0;
+    unsigned long totalRamMB   = 0;
+    unsigned long freeRamMB    = 0;
+    unsigned long bufferRamMB  = 0;
 
     // Main Memory information
     #ifdef WIN32 //Windows
@@ -172,13 +173,16 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
       struct sysinfo sys_info;
       sysinfo(&sys_info);
 
+
+
       // Unit in bytes ; /1024 -> KB ; /1024 MB
-      totalRamMB = sys_info.totalram / 1024 / 1024 * sys_info.mem_unit;
-      freeRamMB  = sys_info.freeram  / 1024 / 1024 * sys_info.mem_unit;
+      totalRamMB  = sys_info.totalram  / 1024 / 1024 * sys_info.mem_unit;
+      freeRamMB   = sys_info.freeram   / 1024 / 1024 * sys_info.mem_unit;
+      bufferRamMB = sys_info.bufferram / 1024 / 1024 * sys_info.mem_unit; // Buffers get freed, if we don't have enough free ram
     #endif
 
     mainMemBar_->setRange(  0 , totalRamMB  );
-    mainMemBar_->setValue( totalRamMB-freeRamMB);
+    mainMemBar_->setValue( totalRamMB-freeRamMB-bufferRamMB);
   }
 }
 
