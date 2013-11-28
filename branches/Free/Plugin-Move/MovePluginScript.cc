@@ -85,12 +85,28 @@ void MovePlugin::setDescriptions(){
   emit setSlotDescription("transform(int,Matrix4x4)",tr("transform object by given matrix."),
                           QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
 
-  emit setSlotDescription("transform(int,idList,Matrix4x4)",tr("transform vertices by given matrix."),
+  emit setSlotDescription("transform(int,IdList,Matrix4x4)",tr("transform vertices by given matrix."),
                           QString(tr("objectId,VertexHandles,Matrix")).split(","),
                           QString(tr("ID of an object, List of vertex handles, transformation matrix")).split(","));
 
   emit setSlotDescription("transformSelection(int,Matrix4x4)",tr("transform current selection of an object by given matrix."),
                           QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
+
+  emit setSlotDescription("transformCellSelection(int,Matrix4x4)",tr("transform selected cells by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","),
+                          QString(tr("ID of an object, transformation matrix")).split(","));
+
+  emit setSlotDescription("transformVertexSelection(int,Matrix4x4)",tr("transform selected vertices by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","),
+                          QString(tr("ID of an object, transformation matrix")).split(","));
+
+  emit setSlotDescription("transformFaceSelection(int,Matrix4x4)",tr("transform selected faces by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","),
+                          QString(tr("ID of an object, transformation matrix")).split(","));
+
+  emit setSlotDescription("transformEdgeSelection(int,Matrix4x4)",tr("transform selected edges by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","),
+                          QString(tr("ID of an object, transformation matrix")).split(","));
 
   emit setSlotDescription("setManipulatorPosition(int,Vector)",tr("Set the position of the manipulator."),
                           QString(tr("objectId,Position")).split(","), QString(tr("ID of an object, 3D point")).split(","));
@@ -174,20 +190,40 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
 
   }
 #endif
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        line.point(i) = line.point(i)  + _vector; 
-    }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : translate BSplineCurve" << std::endl;
-    }
-  #endif
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+      line.point(i) = line.point(i)  + _vector; 
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
+
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it)
+      mesh.set_vertex(*v_it, mesh.vertex(*v_it) + _vector );
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it)
+      mesh.set_vertex(*v_it, mesh.vertex(*v_it) + _vector );
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : translate BSplineCurve" << std::endl;
+  }
+#endif
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -242,24 +278,43 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
     }
    }
 #endif
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    const int max = line.n_vertices();
+    
+    for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
+      if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
+        line.point( _vHandles[i] ) = line.point( _vHandles[i] )  + _vector; 
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
 
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      const int max = line.n_vertices();
-      
-      for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
-        if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
-          line.point( _vHandles[i] ) = line.point( _vHandles[i] )  + _vector; 
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    for (unsigned int i = 0; i < _vHandles.size(); ++i) {
+      OpenVolumeMesh::VertexHandle v(_vHandles[i]);
+      mesh.set_vertex(v, mesh.vertex(v) + _vector );
     }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    for (unsigned int i = 0; i < _vHandles.size(); ++i) {
+      OpenVolumeMesh::VertexHandle v(_vHandles[i]);
+      mesh.set_vertex(v, mesh.vertex(v) + _vector );
     }
-  #endif
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : translate BSplineCurve" << std::endl;
+  }
+#endif
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -286,14 +341,18 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
     return;
   }
 
+  bool noneSelected = true;
+
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
     TriMesh::VertexIter v_it  = mesh.vertices_begin();
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(*v_it).selected() )
+      if ( mesh.status(*v_it).selected() ) {
+        noneSelected = false;
         mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
+      }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
@@ -301,8 +360,10 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
     PolyMesh::VertexIter v_it  = mesh.vertices_begin();
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(*v_it).selected() )
+      if ( mesh.status(*v_it).selected() ) {
+        noneSelected = false;
         mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
+      }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
@@ -311,26 +372,60 @@ void MovePlugin::translateVertexSelection( int _objectId , Vector _vector) {
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
     TSplineMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it)
-      if ( mesh.status(v_it).selected() )
+      if ( mesh.status(v_it).selected() ) {
+        noneSelected = false;
         mesh.set_point(v_it,mesh.point(v_it) + _vector );
+      }
   }
 #endif
-  
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        if ( line.vertex_selection(i) )
-          line.point(i) = line.point(i)  + _vector; 
-    }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : translate BSplineCurve" << std::endl;
-    }
-  #endif
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+      if ( line.vertex_selection(i) ) {
+        noneSelected = false;
+        line.point(i) = line.point(i)  + _vector; 
+      }
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
+
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((HexahedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it)
+      if (statusAttrib[*v_it].selected()) {
+        noneSelected = false;
+        mesh.set_vertex(*v_it, mesh.vertex(*v_it) + _vector );
+      }
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::StatusAttrib& statusAttrib = ((PolyhedralMeshObject*)object)->status();
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it)
+      if (statusAttrib[*v_it].selected()) {
+        noneSelected = false;
+        mesh.set_vertex(*v_it, mesh.vertex(*v_it) + _vector );
+      }
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : translate BSplineCurve" << std::endl;
+  }
+#endif
+
+  if (noneSelected)
+    return;
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -356,20 +451,31 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
     return;
   }
 
+  bool noneSelected = true;
+
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
+
+    // clear tags
+    TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(*v_it).set_tagged(false);
+
     TriMesh::FaceIter f_it  = mesh.faces_begin();
     TriMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(*f_it).selected() )
       {
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+          noneSelected = false;
           mesh.status(*fv_it).set_tagged(true);
+        }
       }
 
-    TriMesh::VertexIter v_it  = mesh.vertices_begin();
-    TriMesh::VertexIter v_end = mesh.vertices_end();
+    if (noneSelected)
+      return;
+
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() )
         mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
@@ -377,17 +483,26 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
     PolyMesh&  mesh  = (*PluginFunctions::polyMesh(object));
+
+    // clear tags
+    PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(*v_it).set_tagged(false);
+
     PolyMesh::FaceIter f_it  = mesh.faces_begin();
     PolyMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(*f_it).selected() )
       {
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it)
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
+          noneSelected = false;
           mesh.status(*fv_it).set_tagged(true);
+        }
       }
 
-    PolyMesh::VertexIter v_it  = mesh.vertices_begin();
-    PolyMesh::VertexIter v_end = mesh.vertices_end();
+    if (noneSelected)
+      return;
+
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() )
         mesh.set_point(*v_it,mesh.point(*v_it) + _vector );
@@ -396,17 +511,26 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
+
+    // clear tags
+    TSplineMesh::VertexIter v_it, v_end( mesh.vertices_end() );
+    for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
+      mesh.status(*v_it).set_tagged(false);
+
     TSplineMesh::FaceIter f_it  = mesh.faces_begin();
     TSplineMesh::FaceIter f_end = mesh.faces_end();
     for (; f_it!=f_end; ++f_it)
       if ( mesh.status(f_it).selected() )
       {
-        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it)
+        for(TriMesh::FVIter fv_it = mesh.fv_iter(f_it); fv_it; ++fv_it) {
+          noneSelected = false;
           mesh.status(fv_it).set_tagged(true);
+        }
       }
 
-    TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
-    TSplineMesh::VertexIter v_end = mesh.vertices_end();
+    if (noneSelected)
+      return;
+
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).tagged() )
         mesh.set_point(v_it,mesh.point(v_it) + _vector );
@@ -419,8 +543,13 @@ void MovePlugin::translateFaceSelection( int _objectId , Vector _vector) {
       PolyLine& line = (* PluginFunctions::polyLine(object) );
 
       for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        if ( line.vertex_selection(i) )
+        if ( line.vertex_selection(i) ) {
+          noneSelected = false;
           line.point(i) = line.point(i)  + _vector;
+        }
+
+      if (noneSelected)
+        return;
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -454,11 +583,13 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     return;
   }
 
+  bool noneSelected = true;
+
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
 
-    //init tags
+    // clear tags
     TriMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       mesh.status(*v_it).set_tagged(false);
@@ -468,11 +599,15 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(*e_it).selected() )
       {
+        noneSelected = false;
         TriMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
+
+    if (noneSelected)
+      return;
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
@@ -483,7 +618,7 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
 
     PolyMesh&  mesh  = (*PluginFunctions::polyMesh(object));
 
-    //init tags
+    // clear tags
     PolyMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       mesh.status(*v_it).set_tagged(false);
@@ -493,11 +628,15 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(*e_it).selected() )
       {
+        noneSelected = false;
         PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( *e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
+
+    if (noneSelected)
+      return;
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
@@ -509,7 +648,7 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
 
-    //init tags
+    // clear tags
     TSplineMesh::VertexIter v_it, v_end( mesh.vertices_end() );
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       mesh.status(v_it).set_tagged(false);
@@ -519,11 +658,15 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
     for (; e_it!=e_end; ++e_it)
       if ( mesh.status(e_it).selected() )
       {
+        noneSelected = false;
         PolyMesh::HalfedgeHandle hh = mesh.halfedge_handle( e_it, 0 );
 
         mesh.status( mesh.from_vertex_handle( hh ) ).set_tagged(true);
         mesh.status( mesh.to_vertex_handle( hh ) ).set_tagged(true);
       }
+
+    if (noneSelected)
+      return;
 
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).tagged() ){
@@ -538,8 +681,13 @@ void MovePlugin::translateEdgeSelection( int _objectId , Vector _vector) {
       PolyLine& line = (* PluginFunctions::polyLine(object) );
 
       for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        if ( line.vertex_selection(i) )
+        if ( line.vertex_selection(i) ) {
+          noneSelected = false;
           line.point(i) = line.point(i)  + _vector;
+        }
+
+      if (noneSelected)
+        return;
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -618,7 +766,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -629,21 +777,46 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     }
   }
 #endif
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+      line.point(i) = _matrix.transform_point( line.point(i) ); 
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
 
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        line.point(i) = _matrix.transform_point( line.point(i) ); 
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it) {
+      mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+      normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
     }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    OpenVolumeMesh::VertexIter v_it = mesh.vertices_begin();
+    OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
+    for (; v_it != v_end; ++v_it) {
+      mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
+      normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
     }
-  #endif
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : transform BSplineCurve" << std::endl;
+  }
+#endif
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -660,7 +833,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
 
 //------------------------------------------------------------------------------
 
-/** \brief Tranform a set of vertex handles
+/** \brief Transform a set of vertex handles
  *
  * @param _objectId id of an object
  * @param _vHandles list of vertex handles
@@ -677,8 +850,6 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
-    TriMesh::VertexIter v_it  = mesh.vertices_begin();
-    TriMesh::VertexIter v_end = mesh.vertices_end();
 
     for (uint i=0; i < _vHandles.size(); i++){
       TriMesh::VertexHandle vh( _vHandles[i] );
@@ -689,8 +860,6 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
 
     PolyMesh&  mesh  = (*PluginFunctions::polyMesh(object));
-    PolyMesh::VertexIter v_it  = mesh.vertices_begin();
-    PolyMesh::VertexIter v_end = mesh.vertices_end();
 
     for (uint i=0; i < _vHandles.size(); i++){
       PolyMesh::VertexHandle vh( _vHandles[i] );
@@ -699,11 +868,9 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
-    TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
-    TSplineMesh::VertexIter v_end = mesh.vertices_end();
 
     for (uint i=0; i < _vHandles.size(); i++){
       TSplineMesh::VertexHandle vh( _vHandles[i] );
@@ -712,25 +879,48 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     }
    }
 #endif
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    const int max = line.n_vertices();
+    
+    for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
+      if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
+        line.point( _vHandles[i] ) = _matrix.transform_point( line.point( _vHandles[i] ) ); 
+    
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
 
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      const int max = line.n_vertices();
-      
-      for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
-        if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
-          line.point( _vHandles[i] ) = _matrix.transform_point( line.point( _vHandles[i] ) ); 
-      
+    HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<HexahedralMesh>& normalAttrib = ((HexahedralMeshObject*)object)->normals();
+    for (unsigned int i = 0; i < _vHandles.size(); ++i) {
+      OpenVolumeMesh::VertexHandle v(_vHandles[i]);
+      mesh.set_vertex(v, _matrix.transform_point ( mesh.vertex(v) ) );
+      normalAttrib[v] = _matrix.transform_vector( normalAttrib[v] );
     }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+  }
+#endif
+#ifdef ENABLE_OPENVOLUMEMESH_POLYHEDRAL_SUPPORT
+  else if ( object->dataType(DATA_POLYHEDRAL_MESH) ) {
+
+    PolyhedralMesh& mesh = (*PluginFunctions::polyhedralMesh(object));
+    OpenVolumeMesh::NormalAttrib<PolyhedralMesh>& normalAttrib = ((PolyhedralMeshObject*)object)->normals();
+    for (unsigned int i = 0; i < _vHandles.size(); ++i) {
+      OpenVolumeMesh::VertexHandle v(_vHandles[i]);
+      mesh.set_vertex(v, _matrix.transform_point ( mesh.vertex(v) ) );
+      normalAttrib[v] = _matrix.transform_vector( normalAttrib[v] );
     }
-  #endif
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : transform BSplineCurve" << std::endl;
+  }
+#endif
 
   emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
@@ -804,25 +994,23 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       }
    }
 #endif
-  
-  #ifdef ENABLE_POLYLINE_SUPPORT
-    else if ( object->dataType(DATA_POLY_LINE) ) {
-      
-      PolyLine& line = (* PluginFunctions::polyLine(object) );
-      
-      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
-        if ( line.vertex_selection(i) ) {
-          noneSelected = false;
-          line.point(i) = _matrix.transform_point( line.point(i) );
-        }
-    }
-  #endif
-  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
-    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-      std::cerr << "Todo : transform BSplineCurve" << std::endl;
-    }
-  #endif
-
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if ( object->dataType(DATA_POLY_LINE) ) {
+    
+    PolyLine& line = (* PluginFunctions::polyLine(object) );
+    
+    for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+      if ( line.vertex_selection(i) ) {
+        noneSelected = false;
+        line.point(i) = _matrix.transform_point( line.point(i) );
+      }
+  }
+#endif
+#ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+  else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+    std::cerr << "Todo : transform BSplineCurve" << std::endl;
+  }
+#endif
 #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
   else if ( object->dataType(DATA_HEXAHEDRAL_MESH) ) {
     HexahedralMesh& mesh = (*PluginFunctions::hexahedralMesh(object));
