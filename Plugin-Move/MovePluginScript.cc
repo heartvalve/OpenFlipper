@@ -745,6 +745,10 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     return;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
@@ -752,7 +756,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     TriMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it){
       mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-      mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+      mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
     }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -762,7 +766,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     PolyMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it){
       mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-      mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+      mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
     }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -773,7 +777,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     TSplineMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it!=v_end; ++v_it){
       mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-      mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+      mesh.set_normal(v_it, normalMatrix.transform_vector( mesh.normal(v_it) ) );
     }
   }
 #endif
@@ -795,7 +799,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it != v_end; ++v_it) {
       mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-      normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
     }
   }
 #endif
@@ -808,7 +812,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     OpenVolumeMesh::VertexIter v_end = mesh.vertices_end();
     for (; v_it != v_end; ++v_it) {
       mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-      normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+      normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
     }
   }
 #endif
@@ -847,6 +851,10 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     return;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     TriMesh&  mesh  = (*PluginFunctions::triMesh(object));
@@ -854,7 +862,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     for (uint i=0; i < _vHandles.size(); i++){
       TriMesh::VertexHandle vh( _vHandles[i] );
       mesh.set_point (vh, _matrix.transform_point ( mesh.point(vh) ) );
-      mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
+      mesh.set_normal(vh, normalMatrix.transform_vector( mesh.normal(vh) ) );
     }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -864,7 +872,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     for (uint i=0; i < _vHandles.size(); i++){
       PolyMesh::VertexHandle vh( _vHandles[i] );
       mesh.set_point (vh, _matrix.transform_point ( mesh.point(vh) ) );
-      mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
+      mesh.set_normal(vh, normalMatrix.transform_vector( mesh.normal(vh) ) );
     }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -875,7 +883,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     for (uint i=0; i < _vHandles.size(); i++){
       TSplineMesh::VertexHandle vh( _vHandles[i] );
       mesh.set_point (vh, _matrix.transform_point ( mesh.point(vh) ) );
-      mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
+      mesh.set_normal(vh, normalMatrix.transform_vector( mesh.normal(vh) ) );
     }
    }
 #endif
@@ -900,7 +908,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     for (unsigned int i = 0; i < _vHandles.size(); ++i) {
       OpenVolumeMesh::VertexHandle v(_vHandles[i]);
       mesh.set_vertex(v, _matrix.transform_point ( mesh.vertex(v) ) );
-      normalAttrib[v] = _matrix.transform_vector( normalAttrib[v] );
+      normalAttrib[v] = normalMatrix.transform_vector( normalAttrib[v] );
     }
   }
 #endif
@@ -912,7 +920,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     for (unsigned int i = 0; i < _vHandles.size(); ++i) {
       OpenVolumeMesh::VertexHandle v(_vHandles[i]);
       mesh.set_vertex(v, _matrix.transform_point ( mesh.vertex(v) ) );
-      normalAttrib[v] = _matrix.transform_vector( normalAttrib[v] );
+      normalAttrib[v] = normalMatrix.transform_vector( normalAttrib[v] );
     }
   }
 #endif
@@ -952,6 +960,10 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     return false;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
@@ -963,7 +975,7 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       {
         noneSelected = false;
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -976,7 +988,7 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       {
         noneSelected = false;
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -990,7 +1002,7 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       {
         noneSelected = false;
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+        mesh.set_normal(v_it, normalMatrix.transform_vector( mesh.normal(v_it) ) );
       }
    }
 #endif
@@ -1023,7 +1035,7 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       {
         noneSelected = false;
         mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-        normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+        normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
   }
 #endif
@@ -1039,7 +1051,7 @@ bool MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
       {
         noneSelected = false;
         mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-        normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+        normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
   }
 #endif
@@ -1078,6 +1090,10 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     return false;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
@@ -1101,7 +1117,7 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -1126,7 +1142,7 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -1152,7 +1168,7 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).tagged() ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+        mesh.set_normal(v_it, normalMatrix.transform_vector( mesh.normal(v_it) ) );
       }
   }
 #endif
@@ -1183,7 +1199,7 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
 
   }
@@ -1215,7 +1231,7 @@ bool MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
   }
 #endif
@@ -1254,6 +1270,10 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     return false;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   bool noneSelected = true;
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
@@ -1279,7 +1299,7 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
 
   } else if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -1306,7 +1326,7 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(*v_it).tagged() ){
         mesh.set_point (*v_it, _matrix.transform_point ( mesh.point(*v_it) ) );
-        mesh.set_normal(*v_it, _matrix.transform_vector( mesh.normal(*v_it) ) );
+        mesh.set_normal(*v_it, normalMatrix.transform_vector( mesh.normal(*v_it) ) );
       }
   }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -1334,7 +1354,7 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     for (v_it=mesh.vertices_begin(); v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).tagged() ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
-        mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
+        mesh.set_normal(v_it, normalMatrix.transform_vector( mesh.normal(v_it) ) );
       }
   }
 #endif
@@ -1366,7 +1386,7 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
 
   }
@@ -1399,7 +1419,7 @@ bool MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
 
   }
@@ -1449,6 +1469,10 @@ bool MovePlugin::transformCellSelection( int _objectId , Matrix4x4 _matrix ){
     return false;
   }
 
+  Matrix4x4 normalMatrix = _matrix;
+  normalMatrix.invert();
+  normalMatrix.transpose();
+
   bool noneSelected = true;
 
 #ifdef ENABLE_OPENVOLUMEMESH_HEXAHEDRAL_SUPPORT
@@ -1478,7 +1502,7 @@ bool MovePlugin::transformCellSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
 
   }
@@ -1510,7 +1534,7 @@ bool MovePlugin::transformCellSelection( int _objectId , Matrix4x4 _matrix ){
       if ( statusAttrib[*v_it].tagged() )
       {
           mesh.set_vertex(*v_it, _matrix.transform_point ( mesh.vertex(*v_it) ) );
-          normalAttrib[*v_it] = _matrix.transform_vector( normalAttrib[*v_it] );
+          normalAttrib[*v_it] = normalMatrix.transform_vector( normalAttrib[*v_it] );
       }
   }
 #endif
