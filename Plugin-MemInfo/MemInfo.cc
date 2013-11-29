@@ -126,8 +126,16 @@ void MemInfoPlugin::pluginsInitialized() {
 
 }
 
+MemInfoPlugin::MemInfoPlugin():
+    gpuMemBar_(NULL),
+    mainMemBar_(NULL),
+    updateTimer_(NULL)
+{
+
+}
+
 MemInfoPlugin::~MemInfoPlugin() {
-  delete(updateTimer_);
+  delete updateTimer_;
 }
 
 void MemInfoPlugin::nvidiaMemoryInfoUpdate() {

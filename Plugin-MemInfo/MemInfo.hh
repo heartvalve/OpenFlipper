@@ -66,7 +66,7 @@ class MemInfoPlugin: public QObject, BaseInterface, LoggingInterface, StatusbarI
   void addWidgetToStatusbar(QWidget* _widget);
 
 public:
-
+  MemInfoPlugin();
   ~MemInfoPlugin();
 
   // BaseInterface
