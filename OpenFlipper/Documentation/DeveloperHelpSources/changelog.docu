@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 16997 )</b>
+- <b>OpenFlipper 1.4 ( ?? , 17874 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -25,6 +25,7 @@
              - Fixed standard rendering pipeline to use the basecolor now (emmisive)
              - Renamed the basecolor functions in the core to defaultColor
              - Support for Geometry shader
+	     - created a GLError header file under ACG/GL/ that holds all current GL error checking functions and macros
          - Geometry/BSP
              - Removed dependency from bsp to OpenFlipper (not required and causes unnecessary linking)
              - Added directional BSP ray shooting including unit tests
@@ -88,6 +89,10 @@
              - Modification: Changed Show Hide Toolbar key to N
              - Added Renderer Info and Postprocessor Info widgets to check the new renderers
              - Moved fov mouse wheel to ctrl key + wheel.
+             - Updated Splash screen
+	     - Spin boxes and the like don't steal mouse wheel focus when scrolling anymore.
+	     - Added post processor manager
+	     - Fixed logger performance issue
          - Help Browser:
              - Unregister old doc files correctly
              - Fixed startpage for windows
@@ -104,6 +109,9 @@
              - Removed unused blending flag
              - Moved cursor painter to ViewerProperties
              - Modified ViewerProperties to allow setting near and far plane via one function only.
+	     - fix crash when picking an object that has just been removed
+	     - Postprocessor pipeline
+	     - Fixed snapshot function
          - About Dialog
              - Display more information about the OpenGL and Shader Versions
          - Fix: Don't create icons, when no gui is available
@@ -142,6 +150,7 @@
          - Plane
              - Get rid of immidiate mode when rendering
              - Update buffers only when necessary
+	     - Fixed bounding box computation for plane
          - PolyLine
              - Added function to create circles
              - Follow new color spec in polyline nodes
@@ -152,6 +161,8 @@
          - VolumeMesh
              - Added draw mode for colored vertices
              - Phong rendering
+	     - Single texture support
+	     - Fixed client states which were not reset by the VolumeMeshNode
      - <b>Plugins</b> 
          - Backup 
              - Fix: Now the signal aboutToRestore is also correctly emitted in slotUndo()
@@ -187,6 +198,8 @@
              - Fixed reading of some binary files, which were not opened correctly
              - fix: alphacolor per face is saved only once
              - fix: removed spaces in OFF Header
+	 - File PolyLine
+	     - Added backwards compatible load/save for bezier and circle poly lines.
          - File VTK
              - Added open volume mesh support for vtk reader
              - VTK files with polydata will be loaded correctly now and not loaded like e.g structed points
@@ -199,6 +212,8 @@
              - Added Plugin-InfoVolumeMeshObject. Only very limited support.
          - Material Picker
              - New Plugin to store and set materials on objects
+	 - MemInfo
+	     - New Plugin showing memory usage
          - MeshRepair
              - Fix: flip orientation does not produce holes anymore
              - New snap boundary function 
@@ -210,6 +225,13 @@
              - Added scripting function for the transformation of handle vertices.
              - fixed a problem with applying the manipulator transformation to all targets
              - moveSelection should now only store backups if elements were actually selected and transformed
+	     - Move plugin extension to support volume meshes.
+	     - Don't create automatic backups in Move scripting functions ( Moved up to the slots triggered via ui), as the calling plugins should create the backups.
+	     - transform normals with the invers transposed of the transform matrix
+	 - PolyLine
+	     - Polyline circles
+	     - Added PolyyCircle metadata
+	     - Added bezier polyline functions.
          - Primitives Generator
              - Added cylinder generator (with scriptable parameters) 
              - Add size and position parameters to all add** slot and script functions
@@ -226,11 +248,14 @@
                  - Multiple properties can be selected (multiple toolboxes appear) and combined.
                  - Documentation has been added.
              - plugin is now informed about object deletion
-             - 
+         - Remesher
+	     - remeshing with face selection (code provided by Vladimir Chalupecky. thanks)
+	     - switch selection face/vertex selection in gui and add scriptfunctions
          - Render DepthPeeling
              - Fixed shader not working correctly on mac
          - Ruler Plugin
              - Some function and class change for better readability and multi ruler support
+	     - Double click now removes ruler.
          - Scripting Plugin
              - The filename of the script is now no longer saved when a script is executed.
              - fixed a bug where using the VSI plugin could cause an accidental overwrite of the previously saved script
@@ -242,6 +267,9 @@
              - Fixed bug in selection plugin when switching between halfedge and edge selection with sphere
              - Use Mousewheel + shift to grow or shrink selections
              - Implemented scripting interface for closest boundary selection.
+	     - Emitting correct update types for primitive selections.
+	 - SelectionVolumeMesh
+	     - adds lasso and floodfill selectionmode for OVM
          - Skeletal Animation
              - Speedup Skeletal Animation Plugin by only caching skeletons.
          - Type PolyLine
@@ -251,6 +279,8 @@
          - ViewControl
              - Feature to check and disable modeling areas seperatly
              - Implemented the setEyePosition function for the ViewControl plugin
+	     - Added sceneradius function
+	     - Improved behavior of visualization mode selection.
          - VSI 
              - Moved VsiMetadata for move into move plugin
              - Added scripting functions to modify the scenegraph matrix
@@ -269,6 +299,12 @@
          - Added documentation about core keys
          - Removed example path from doxyfiles for user documentation
          - Added colored point rendering stuff.
+     - <b>License management
+	 - License manager now parses any number of license requests out of garbled junk.
+	 - Added function to keygen that allows mangling new plugin fingerprints into existing hardware hashes.
+         - Added cmake option to build license key generators independently of license manager.
+     - <b>Debugging</b>
+	 - Integrated debugging via Stackwalker on window ( Writes CrashDump.txt to OpenFlipper Home directory)
      - <b>Build system</b>
          - Default to release build type by default
          - Added plugin collections to cleanup directory structure
@@ -284,6 +320,8 @@
          - fixbundle is no longer called automatically on mac.
          - Identify clang in the compiler settings
          - Improved branding support
+	 - Basic Qt5 compatibility and finders
+	 - Removed obsolete ftemplate-depth, as the defaults should be fine
 
 - <b>OpenFlipper 1.3 ( 2012.07.16 , 15046 )</b>
      - <b>ACG</b>
