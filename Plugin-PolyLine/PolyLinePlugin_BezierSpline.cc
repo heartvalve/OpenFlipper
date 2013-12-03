@@ -98,8 +98,9 @@ updatePolyBezierSpline(PolyLineObject* _lineObject, unsigned int _pointCount)
 {
 	PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(_lineObject->objectData(BEZSPLINE_DATA));
 	TriMeshObject* mesh;
-	if(!splineData || !PluginFunctions::getObject(splineData->meshIndex_, mesh))
+	if(!splineData || !PluginFunctions::getObject(splineData->meshIndex_, mesh)) {
 		return;//no mesh -> do nothing
+	}
 	_lineObject->line()->clear();
 	unsigned int segCount = (splineData->points_.size() + splineData->handles_.size() - 1) / 3;
 	for(unsigned int s = 0; s < segCount; s++) {

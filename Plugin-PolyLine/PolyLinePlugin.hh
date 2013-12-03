@@ -34,6 +34,7 @@
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
+#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyLine/PolyLine.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
@@ -65,7 +66,8 @@ class PolyLinePlugin: public QObject,
                       ToolbarInterface,
                       StatusbarInterface,
                       KeyInterface,
-                      ScriptInterface {
+                      ScriptInterface,
+                      ContextMenuInterface {
     Q_OBJECT
     Q_INTERFACES(BaseInterface)
     Q_INTERFACES(MouseInterface)
@@ -77,6 +79,7 @@ class PolyLinePlugin: public QObject,
     Q_INTERFACES(StatusbarInterface)
     Q_INTERFACES(KeyInterface)
     Q_INTERFACES(ScriptInterface)
+    Q_INTERFACES(ContextMenuInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PolyLine")
@@ -115,6 +118,9 @@ signals:
   void showStatusMessage(QString _message, int _timeout = 0);
   void clearStatusMessage();
 
+  //ContextMenuInterface
+  void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type );
+
 private slots :
   // BaseInterface
   void initializePlugin();
@@ -131,6 +137,7 @@ private slots :
   bool pick_triangle_mesh( QPoint mPos,
   						TriMeshObject*& _mesh_object_, TriMesh::FaceHandle& _fh, TriMesh::VertexHandle& _vh, ACG::Vec3d& _hitPoint);
 
+  void slotUpdateContextMenu(int objectId);
 public slots :
 
   void slotEnablePickMode(QString _name);
@@ -146,7 +153,8 @@ public :
                   PL_MOVE,
                   PL_SPLIT,
                   PL_MERGE,
-                  PL_SMART_MOVE };
+                  PL_SMART_MOVE,
+                  PL_COPY_PASTE };
 
   /// default constructor
   PolyLinePlugin();
@@ -185,6 +193,9 @@ private slots:
 
   virtual void slotObjectUpdated( int _identifier, const UpdateType &_type );
 
+  void slot_duplicate();
+  void slot_instanciate();
+  void finishSpline();
 private :
 
   EditMode mode();
@@ -311,6 +322,21 @@ private:
     ACG::Vec3d          moveCircle_LastHitNor_;
     bool                moveCircle_IsLocked;
     bool                moveCircle_IsFloating;
+
+    QAction*            copyPaste_Action_;
+    int                 copyPaste_ObjectId_;
+    int                 copyPaste_ActionType_;
+    int                 copyPaste_NewObjectId_;
+    std::vector<ACG::Vec3d> copyPaste_RelativePoints_;
+    QPoint              copyPaste_LastMouse;
+
+    /*
+     * \brief Handles the mouse event during a copy paste event
+     *
+     * Determines wether duplicate or instanciate is happening and performs the
+     * action, ending the mode.
+     */
+    void me_copyPasteMouse(QMouseEvent* _event);
 
     /**
 	 * \brief Calculates a point on the mesh.

@@ -96,6 +96,10 @@ PolyLinePlugin::PolyLinePlugin() :
         moveCircle_SelNode_(0),
         moveCircle_IsLocked(false),
         moveCircle_IsFloating(false),
+        copyPaste_Action_(0),
+        copyPaste_ObjectId_(-1),
+        copyPaste_ActionType_(-1),
+        copyPaste_NewObjectId_(-1),
         createSpline_CurrSelIndex_(-1),
         createSpline_LastSelIndex_(-1),
         moveBezSpline_SelNode_(0),
@@ -174,6 +178,8 @@ void
 PolyLinePlugin::
 slotMouseEvent( QMouseEvent* _event )
 {
+  copyPaste_LastMouse = _event->pos();
+
   // control modifier is reserved for selcting target
   if (_event->modifiers() & (Qt::ControlModifier))
     return;
@@ -214,6 +220,10 @@ slotMouseEvent( QMouseEvent* _event )
         me_smart_move(_event);
         break;
 
+      case PL_COPY_PASTE:
+          me_copyPasteMouse(_event);
+        break;
+
       default:
         break;
     }
@@ -223,23 +233,26 @@ slotMouseEvent( QMouseEvent* _event )
 }
 
 void PolyLinePlugin::slotKeyEvent(QKeyEvent* event) {
-    if (!cur_polyline_obj_ || cur_insert_id_ == -1) return;
     switch (event->key()) {
         case Qt::Key_Return:
-            if (PluginFunctions::pickMode() == ("PolyLine") && PluginFunctions::actionMode() == Viewer::PickingMode && mode() == PL_INSERT) {
+            if (PluginFunctions::pickMode() == ("PolyLine") && PluginFunctions::actionMode() == Viewer::PickingMode) {
+                if(mode() == PL_INSERT && cur_polyline_obj_ && cur_insert_id_ != -1) {
+                    cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
 
-                cur_polyline_obj_->line()->delete_point(cur_polyline_obj_->line()->n_vertices() - 1);
+                    if (event->modifiers() & (Qt::ShiftModifier))
+                      cur_polyline_obj_->line()->set_closed(true);
 
-                if (event->modifiers() & (Qt::ShiftModifier))
-                  cur_polyline_obj_->line()->set_closed(true);
+                    emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
 
-                emit updatedObject(cur_insert_id_, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+                    cur_insert_id_ = -1;
+                    cur_polyline_obj_ = 0;
+                    create_point_ref_ = 0;
 
-                cur_insert_id_ = -1;
-                cur_polyline_obj_ = 0;
-                create_point_ref_ = 0;
-
-                clearStatusMessage();
+                    clearStatusMessage();
+                }
+                else if(mode() == PL_INSERTSPLINE) {
+                    finishSpline();
+                }
             }
             break;
         default:
@@ -385,6 +398,11 @@ pluginsInitialized()
   planeSelect_ = new QtPlaneSelect( PluginFunctions::viewerProperties().glState() );
   connect( planeSelect_, SIGNAL( signalTriggerCut( ) ), this, SLOT( slotTriggerCutPlaneSelect() ) );
   connect( planeSelect_, SIGNAL( updateViewProxy( ) ), this, SIGNAL( updateView() ) );
+
+  //create copy paste action in context menu
+  copyPaste_Action_ = new QAction("Duplicate", 0);
+  connect(copyPaste_Action_,SIGNAL(triggered() ),this,SLOT(slot_duplicate()));
+  emit addContextMenuItem(copyPaste_Action_ , DATA_POLY_LINE , CONTEXTOBJECTMENU );
 }
 
 //------------------------------------------------------------------------------
@@ -810,6 +828,7 @@ slot_smart_move_timer()
   emit updateView();
 }
 
+//-----------------------------------------------------------------------------
 
 void
 PolyLinePlugin::slotObjectUpdated( int _identifier, const UpdateType &_type )
@@ -836,6 +855,9 @@ PolyLinePlugin::EditMode
 PolyLinePlugin::
 mode()
 {
+  if(copyPaste_ObjectId_ != -1 && copyPaste_ActionType_ != -1)//no matter what tool is selected
+      return PL_COPY_PASTE;
+
   if(tool_ )
   {
     if( tool_->rb_insert->isChecked()         ) return PL_INSERT;
@@ -1006,8 +1028,10 @@ createCircle_createUI(int _polyLineObjectID)
     lineObject->addAdditionalNode(cenNode, name(), "circle");
     cenNode->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 
-    emit updatedObject(lineObject->id(), UPDATE_ALL);
+    emit updatedObject(_polyLineObjectID, UPDATE_ALL);
 }
+
+//-----------------------------------------------------------------------------
 
 void PolyLinePlugin::
 me_insertCircle(QMouseEvent* _event)
@@ -1070,7 +1094,7 @@ me_insertCircle(QMouseEvent* _event)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//-------------------------------------------OpenFLipper/BasePlugin/----------------------------------
 
 void PolyLinePlugin::
 createSpline_createUI(int _polyLineObjectID)
@@ -1128,7 +1152,7 @@ createSpline_createUI(int _polyLineObjectID)
         handle0->enablePicking(true);
         handle0->set_position(hndlPos);
         lineObject->addAdditionalNode(handle0, name(), "handle", i);
-        //handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+        handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
 
         GlutLineNode* lineN;
         if(lineObject->getAdditionalNode(lineN,  name(), "line")) {
@@ -1138,7 +1162,59 @@ createSpline_createUI(int _polyLineObjectID)
     }
     updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
 
-    emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
+    emit updatedObject(_polyLineObjectID, UPDATE_ALL);
+}
+
+void
+PolyLinePlugin::
+finishSpline()
+{
+    PolyLineObject* lineObject = 0;
+
+    if(!PluginFunctions::getObject(createSpline_CurrSelIndex_, lineObject))
+        return;
+
+    GlutPrimitiveNode* control = 0;
+    PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
+
+    TriMeshObject* mesh;
+    if(!PluginFunctions::getObject(splineData->meshIndex_, mesh))
+        return;
+
+    ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+    ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+    mesh->boundingBox(bbMin, bbMax);
+    const ACG::Vec3d sizeBB((bbMax-bbMin));
+
+    if(splineData->finishSpline()) {
+        for(unsigned int i = 0; i < splineData->points_.size(); i++) {
+            lineObject->getAdditionalNode(control, name(), "control", i);
+            control->enablePicking(true);
+        }
+        for(unsigned int i = 0; i < splineData->handles_.size(); i++) {
+            const PolyLineBezierSplineData::InterpolatePoint& control = splineData->getInterpolatePoint(i);
+            const ACG::Vec3d hndlPos = splineData->handles_[i], ctrlPos = control.position;
+
+            GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Handle", i);
+            handle0->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
+            handle0->set_size(0.004*sizeBB.norm());
+            handle0->show();
+            handle0->enablePicking(true);
+            handle0->set_position(hndlPos);
+            lineObject->addAdditionalNode(handle0, name(), "handle", i);
+            handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
+
+            GlutLineNode* lineN;
+            if(lineObject->getAdditionalNode(lineN,  name(), "line")) {
+                lineN->add_line(ctrlPos, hndlPos);
+                lineN->add_color(ACG::Vec4f(1,0,0,1));
+            }
+
+            emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
+        }
+        updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
+        createSpline_CurrSelIndex_ = -1;
+    }
 }
 
 void PolyLinePlugin::
@@ -1153,10 +1229,10 @@ me_insertSpline(QMouseEvent* _event)
 	if(!pick_triangle_mesh(_event->pos(), mesh, fh, vh, hit_point))
 		return;//can't generate a circle in empty space
 
-	ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
-	ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-	mesh->boundingBox(bbMin, bbMax);
-	const ACG::Vec3d sizeBB((bbMax-bbMin));
+    ACG::Vec3d bbMin( FLT_MAX, FLT_MAX, FLT_MAX);
+    ACG::Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+    mesh->boundingBox(bbMin, bbMax);
+    const ACG::Vec3d sizeBB((bbMax-bbMin));
 
 	if(!mesh->mesh()->has_face_normals())
 		mesh->mesh()->request_face_normals();
@@ -1211,46 +1287,7 @@ me_insertSpline(QMouseEvent* _event)
 
 	}
 	if(_event->type() == QEvent::MouseButtonDblClick) {
-
-		PolyLineObject* lineObject = 0;
-
-		if(!PluginFunctions::getObject(createSpline_CurrSelIndex_, lineObject))
-			return;
-
-		GlutPrimitiveNode* control = 0;
-		PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
-
-		for(unsigned int i = 0; i < splineData->points_.size(); i++) {
-			lineObject->getAdditionalNode(control, name(), "control", i);
-			control->enablePicking(true);
-		}
-
-		if(splineData->finishSpline()) {
-
-			for(unsigned int i = 0; i < splineData->handles_.size(); i++) {
-				const PolyLineBezierSplineData::InterpolatePoint& control = splineData->getInterpolatePoint(i);
-				const ACG::Vec3d hndlPos = splineData->handles_[i], ctrlPos = control.position;
-
-				GlutPrimitiveNode* handle0 = new GlutPrimitiveNode(lineObject, "N_Handle", i);
-				handle0->get_primitive(0).color = ACG::Vec4f(0,0,1,1);
-				handle0->set_size(0.004*sizeBB.norm());
-				handle0->show();
-				handle0->enablePicking(true);
-				handle0->set_position(hndlPos);
-				lineObject->addAdditionalNode(handle0, name(), "handle", i);
-				handle0->drawMode(ACG::SceneGraph::DrawModes::SOLID_FLAT_SHADED);
-
-				GlutLineNode* lineN;
-				if(lineObject->getAdditionalNode(lineN,  name(), "line")) {
-					lineN->add_line(ctrlPos, hndlPos);
-					lineN->add_color(ACG::Vec4f(1,0,0,1));
-				}
-
-				emit updatedObject(createSpline_CurrSelIndex_, UPDATE_ALL);
-			}
-			updatePolyBezierSpline(lineObject, tool_->sb_SplineSegNum->value());
-			createSpline_CurrSelIndex_ = -1;
-		}
+	    finishSpline();
 	}
 }
 
@@ -1289,9 +1326,11 @@ namespace {
 bool me_GetMeshHit(QMouseEvent* _event, ACG::SceneGraph::GlutPrimitiveNode* moveCircle_SelNode_, ACG::Vec3d& _hit_point, unsigned int& _node_idx, unsigned int& _targetIdx)
 {
     unsigned int ndx;
-    moveCircle_SelNode_->enablePicking(false);
+    if(moveCircle_SelNode_)
+        moveCircle_SelNode_->enablePicking(false);
     bool hasHit = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), ndx, _targetIdx, &_hit_point);
-    moveCircle_SelNode_->enablePicking(true);
+    if(moveCircle_SelNode_)
+        moveCircle_SelNode_->enablePicking(true);
     BaseObjectData* obj;
     //if there is no current mesh use the newly found
     if(hasHit && PluginFunctions::getPickedObject(ndx, obj) && _node_idx == std::numeric_limits<unsigned int>::max())
@@ -1446,7 +1485,8 @@ me_move( QMouseEvent* _event )
       ACG::Vec3d hit_point;
       unsigned int target_idx;
       bool hasHit = me_GetMeshHit(_event, moveBezSpline_SelNode_, hit_point, lineData->meshIndex_, target_idx);
-      if(lineData->meshIndex_ == std::numeric_limits<unsigned int>::max()) return;
+      if(lineData->meshIndex_ == std::numeric_limits<unsigned int>::max())
+          return;
       if(!moveBezSpline_SelNode_->name().compare("N_Control") && hasHit) {
         TriMeshObject* mesh;
         if (!PluginFunctions::getObject(lineData->meshIndex_, mesh))
@@ -1916,6 +1956,8 @@ updateHandles(PolyLineObject* _lineObject)
       H1->set_position(moveCircle_IsFloating ? h1 : createCircle_getHit(circleData, h1));
 }
 
+//-----------------------------------------------------------------------------
+
 void
 PolyLinePlugin::
 slot_setCirclePointNum(int i)
@@ -1924,6 +1966,8 @@ slot_setCirclePointNum(int i)
   if(createCircle_LastSelIndex_ != -1 && PluginFunctions::getObject(createCircle_LastSelIndex_, _lineObject))
     updatePolyEllipse(_lineObject, i);
 }
+
+//-----------------------------------------------------------------------------
 
 void
 PolyLinePlugin::
@@ -2058,6 +2102,155 @@ pick_triangle_mesh( QPoint mPos,
 
 //-----------------------------------------------------------------------------
 
+void
+PolyLinePlugin::
+slotUpdateContextMenu(int objectId)
+{
+    copyPaste_ObjectId_ = objectId;
+    copyPaste_Action_->setVisible(pickToolbar_->isVisible());
+}
+
+void
+PolyLinePlugin::
+me_copyPasteMouse(QMouseEvent* _event)
+{
+    //get the object
+    PolyLineObject* oldObj, *newObj;
+    if(copyPaste_ObjectId_ == -1 || !PluginFunctions::getObject(copyPaste_ObjectId_, oldObj) || !PluginFunctions::getObject(copyPaste_NewObjectId_, newObj))
+    {
+        //something went wrong, leave the copying mode
+        copyPaste_ObjectId_ = copyPaste_ActionType_ - 1;
+    }
+    //determine the world pos
+    unsigned int target_idx = 0, node_idx = 0;
+    ACG::Vec3d hit_point;
+    if( PluginFunctions::scenegraphPick( ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx, target_idx, &hit_point ) ) {
+        if(copyPaste_ActionType_ == 1) {//duplicate
+            //object being duplicated
+            PolyLineCircleData* oldCircleData = dynamic_cast<PolyLineCircleData*>(oldObj->objectData(CIRCLE_DATA));
+            PolyLineBezierSplineData* oldSplineData = dynamic_cast<PolyLineBezierSplineData*>(oldObj->objectData(BEZSPLINE_DATA));
+            //newly created object
+            PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(newObj->objectData(CIRCLE_DATA));
+            PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(newObj->objectData(BEZSPLINE_DATA));
+
+            if(oldCircleData) {
+                BaseNode* node = find_node( PluginFunctions::getRootNode(), node_idx );
+                GlutPrimitiveNode* glutNode = dynamic_cast<GlutPrimitiveNode*>(node);
+                if(glutNode)//the hit_point is on the center handle
+                    me_GetMeshHit(_event, glutNode, hit_point, circleData->circleMeshIndex_, target_idx);
+
+                circleData-> circleCenter_ = hit_point;
+                updatePolyEllipse(newObj, tool_->sb_CirclePointNum->value());
+                updateHandles(newObj);
+            }
+            else if(oldSplineData) {
+                for(int i = 0; i < (int)splineData->points_.size(); i++) {
+                    ACG::Vec3d onMeshNor, oldPos = splineData->points_[i].position;
+                    ACG::Vec3d onMesh = getPointOnMesh(splineData, copyPaste_RelativePoints_[i] + hit_point, &onMeshNor);
+                    splineData->points_[i].position = onMesh;
+                    splineData->points_[i].normal   = onMeshNor;
+                    if(i) {
+                        int handleIndex = 2 * i - 1;
+                        ACG::Vec3d dir = splineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
+                        ACG::Vec3d point = forw + onMesh;
+                        splineData->handles_[handleIndex] = point;
+                    }
+                    if(i != ((int)splineData->points_.size() - 1)) {
+                        int handleIndex = 2 * i;
+                        ACG::Vec3d dir = splineData->handles_[handleIndex] - oldPos, side = dir % onMeshNor, forw = (onMeshNor % side).normalize() * dir.norm();
+                        ACG::Vec3d point = forw + onMesh;
+                        splineData->handles_[handleIndex] = point;
+                    }
+                }
+                GlutLineNode* lineN;
+                if(!newObj->getAdditionalNode(lineN, name(), "line", 0))
+                  return;
+                updatePolyBezierHandles(newObj, lineN);
+                updatePolyBezierSpline(newObj, tool_->sb_SplineSegNum->value());
+            }
+            else {
+                for(size_t i = 0; i < newObj->line()->n_vertices(); i++)
+                    newObj->line()->point(i) = hit_point + copyPaste_RelativePoints_[i];
+                emit updatedObject(newObj->id(), UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+            }
+
+            //place the circle here and exit the copy paste state
+            if(_event->type() == QEvent::MouseButtonPress) {
+                copyPaste_ActionType_ = copyPaste_ObjectId_ = -1;
+            }
+        }
+        else if(copyPaste_ActionType_ == 2) {//instanciate
+
+        }
+    }
+}
+
+void
+PolyLinePlugin::
+slot_duplicate()
+{
+    PolyLineObject* obj;
+    if(copyPaste_ObjectId_ == -1 || !PluginFunctions::getObject(copyPaste_ObjectId_, obj))
+        return;
+    //set mode for mouse move event
+    unsigned int target_idx = 0, node_idx = 0;
+    ACG::Vec3d hit_point;
+    //determine the world coordinate of the mouse
+    QPoint mPos = copyPaste_LastMouse;
+    if( PluginFunctions::scenegraphPick( ACG::SceneGraph::PICK_ANYTHING, mPos, node_idx, target_idx, &hit_point ) ) {
+        copyPaste_ActionType_ = 1;
+
+        PolyLineCircleData* circleData = dynamic_cast<PolyLineCircleData*>(obj->objectData(CIRCLE_DATA));
+        PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(obj->objectData(BEZSPLINE_DATA));
+
+        //create the new object
+        int new_line_id;
+        emit addEmptyObject(DATA_POLY_LINE, new_line_id);
+        BaseObjectData *newObj = 0;
+        PluginFunctions::getObject(new_line_id, newObj);
+        obj->target(true);
+        PolyLineObject* newLine = PluginFunctions::polyLineObject(newObj);
+        newLine->materialNode()->set_random_color();
+        newLine->line()->set_vertex_radius(PluginFunctions::sceneRadius()*0.012);
+        copyPaste_RelativePoints_.clear();
+        if(circleData) {
+            PolyLineCircleData* newData = new PolyLineCircleData(*circleData);//use a new instance!
+            newLine->setObjectData(CIRCLE_DATA, newData);
+            newLine->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+            createCircle_createUI(new_line_id);
+        }
+        else if(splineData) {
+            PolyLineBezierSplineData* newData = new PolyLineBezierSplineData(*splineData);
+            newLine->setObjectData(BEZSPLINE_DATA, newData);
+            createSpline_createUI(new_line_id);
+            newLine->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
+
+            for(size_t i = 0; i < newData->points_.size(); i++)
+                copyPaste_RelativePoints_.push_back(newData->points_[i].position - hit_point);
+        }
+        else {
+            newLine->lineNode()->drawMode(ACG::SceneGraph::DrawModes::WIREFRAME|ACG::SceneGraph::DrawModes::POINTS_SHADED);
+            newLine->line()->set_vertex_radius(obj->line()->vertex_radius());
+            for(size_t i = 0; i < obj->line()->n_vertices(); i++) {
+                newLine->line()->add_point(obj->line()->point(i));
+                copyPaste_RelativePoints_.push_back(obj->line()->point(i) - hit_point);
+            }
+        }
+        emit updatedObject(new_line_id, UPDATE_GEOMETRY | UPDATE_TOPOLOGY);
+        copyPaste_NewObjectId_ = new_line_id;
+    }
+}
+
+void
+PolyLinePlugin::
+slot_instanciate()
+{
+    PolyLineObject* obj;
+    if(copyPaste_ObjectId_ == -1 || !PluginFunctions::getObject(copyPaste_ObjectId_, obj))
+        return;
+    copyPaste_ActionType_ = 2;
+    //set mode for mouse move event
+}
 
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( PolyLinePlugin , PolyLinePlugin );

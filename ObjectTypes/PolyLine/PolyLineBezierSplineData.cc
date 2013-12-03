@@ -67,9 +67,12 @@ void PolyLineBezierSplineData::addInterpolatePoint(ACG::Vec3d _position, ACG::Ve
 
 bool PolyLineBezierSplineData::finishSpline()
 {
+    if(points_.size() < 2)
+        return false;
+
 	handles_.clear();
 
-	for(unsigned int i = 0; i < points_.size() - 1; i++) {
+	for(unsigned int i = 0; i + 1 < points_.size(); i++) {
 
 		const ACG::Vec3d firstPoint = points_[i].position, sndPoint = points_[i + 1].position;
 		double r = (firstPoint - sndPoint).norm() / 4.0;
@@ -86,7 +89,7 @@ bool PolyLineBezierSplineData::finishSpline()
 	}
 
 	//handles will be degenerate up to now
-	for(unsigned int i = 1; i < handles_.size() - 1; i+=2) {
+	for(unsigned int i = 1; i + 1 < handles_.size(); i += 2) {
 
 		const ACG::Vec3d dir = (handles_[i + 1] - handles_[i]) / 2.0;
 
