@@ -89,7 +89,7 @@ class DLLEXPORT PolyLineObject : public BaseObjectData {
      * \note Do not call this function yourself to avoid unnecessary overhead(the core will call it when it is required)
      */
     virtual void update(UpdateType _type = UPDATE_ALL );
-    
+
   private:
     PolyLine*           line_;
     
