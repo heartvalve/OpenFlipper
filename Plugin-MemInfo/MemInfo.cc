@@ -88,7 +88,7 @@ void MemInfoPlugin::pluginsInitialized() {
   // NVIDIA cards
   if ( glExtensions.contains("GL_NVX_gpu_memory_info") ) {
 
-    //emit log(LOGINFO,"NVIDIA card Memory info supported, installing gpu memory monitor into status bar");
+//    emit log(LOGINFO,"NVIDIA card Memory info supported, installing gpu memory monitor into status bar");
 
     gpuMemBar_= new QProgressBar();
     gpuMemBar_->setFixedWidth(260);
@@ -108,7 +108,7 @@ void MemInfoPlugin::pluginsInitialized() {
 
   #else // Linux and Windows
 
-    //emit log(LOGINFO,"Linux Main Memory monitoring supported, installing main memory monitor into status bar");
+ //   emit log(LOGINFO,"Main Memory monitoring supported, installing main memory monitor into status bar");
 
     mainMemBar_= new QProgressBar();
     mainMemBar_->setFixedWidth(260);
@@ -171,7 +171,7 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
       // Get the info
       GlobalMemoryStatusEx(&ms);
 
-      totalRamMB = ms.ullAvailPhys/1024/1024;
+	  totalRamMB = ms.ullTotalPhys/1024/1024;
       freeRamMB  = ms.ullAvailPhys/1024/1024;
 
     #elif defined ARCH_DARWIN // Apple
