@@ -319,12 +319,26 @@ macro (acg_qt5)
       endif()
 
 	  add_definitions(-DQT_NO_OPENGL)
-	  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-		add_definitions(-DQT_NO_DEBUG)
-	  endif()
-    endif ()
 
-    #endif ()
+	  #adding QT_NO_DEBUG to all release modes. 
+	  #  Note: for multi generators like msvc you cannot set this definition depending of
+	  #  the current build type, because it may change in the future inside the ide and not via cmake
+	  if (MSVC_IDE)
+	    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+	    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+		
+		set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+	    set(CMAKE_CXX_FLAGS_MINSITEREL "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+		
+		set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+	    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELEASE} /DQT_NO_DEBUG")
+	  else(MSVC_IDE)
+	    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+	      add_definitions(-DQT_NO_DEBUG)
+	    endif()
+      endif(MSVC_IDE)
+
+    endif ()
 endmacro ()
 
 # unsets the given variable
