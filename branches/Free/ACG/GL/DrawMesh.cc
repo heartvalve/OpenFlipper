@@ -177,16 +177,19 @@ DrawMeshT<Mesh>::rebuild()
       numVerts_ = mesh_.n_vertices();
       vertices_ = new Vertex[numVerts_];
       verticesTmp_ = new Vertex[numVerts_];
+      invVertexMap_ = new unsigned int[mesh_.n_vertices()];
     }
 
     numVerts_ = mesh_.n_vertices();
 
     // read all vertices
-    for (size_t i = 0; i < numVerts_; ++i)
+    for (size_t i = 0; i < numVerts_; ++i) {
       readVertex(vertices_ + i,
                  mesh_.vertex_handle(i), 
                  (typename Mesh::HalfedgeHandle)(-1), 
                  (typename Mesh::FaceHandle)(-1));
+      invVertexMap_[i] = i;
+    }
 
     createVBO();
 
