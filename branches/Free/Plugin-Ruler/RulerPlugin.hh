@@ -119,8 +119,6 @@ private:
   //checks if a double click was provided for resetting
   bool dblClickCheck_;
 
-  bool viewupdated_;
-
   ptr::shared_ptr<Ruler> currentRuler_;
 
   RulerOptions* optionsWidget_;

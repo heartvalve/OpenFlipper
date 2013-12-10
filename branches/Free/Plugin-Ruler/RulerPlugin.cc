@@ -53,7 +53,6 @@ buttonAction_(0),
 pickModeName_("MeasureDistance"),
 lineDrag_(-1),
 dblClickCheck_(false),
-viewupdated_(false),
 optionsWidget_(0),
 textSizeSettingName_(name()+QString("/TextSize"))
 {
