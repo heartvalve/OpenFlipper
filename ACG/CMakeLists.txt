@@ -49,7 +49,7 @@ if (NOT OPENMESH_FOUND)
     message (FATAL_ERROR "OpenMesh not found!")
 endif ()
 
-set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR}
+set(INCLUDE_DIRS ${OPENMESH_INCLUDE_DIRS}
                  ${CMAKE_CURRENT_SOURCE_DIR}
                  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
                  ${CMAKE_CURRENT_BINARY_DIR}
@@ -124,7 +124,7 @@ if (GTEST_FOUND)
   set_target_properties(ACG_tests PROPERTIES
   		COMPILE_FLAGS "-UNDEBUG")
   target_link_libraries(ACG_tests
-        ${GTEST_LIBRARIES} ${OPENMESH_LIBRARY}
+        ${GTEST_LIBRARIES} ${OPENMESH_LIBRARIES}
   )
 
   add_test(AllTestsIn_ACG_tests ACG_tests)
@@ -191,8 +191,7 @@ endif ()
 # display results
 acg_print_configure_header (ACG "ACG")
 
-target_link_libraries ( ACG  OpenMeshCore
-                             OpenMeshTools
+target_link_libraries ( ACG  ${OPENMESH_LIBRARIES}
                              ${QT_LIBRARIES}
                              ${OPENGL_LIBRARIES}
                              ${GLEW_LIBRARY}
