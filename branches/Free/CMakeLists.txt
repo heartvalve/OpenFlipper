@@ -79,8 +79,15 @@ find_package (GLUT)
 if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
+
+# using the internal openmesh delivered by the svn repo (default) or use some external installation
+set (USE_INTERNAL_OPENMESH ON CACHE BOOL "Use and build internal version of OpenMesh found in libs_required")
+
 # OpenMesh is a dependent project (in libs_required) so no finder is needed.
-#find_package (OpenMesh REQUIRED)
+if (NOT USE_INTERNAL_OPENMESH)
+  find_package (OpenMesh REQUIRED)
+endif()
+
 find_package (OpenVolumeMesh)
 if (NOT OPENVOLUMEMESH_FOUND)
     message (FATAL_ERROR "OpenVolumeMesh not found!")
@@ -131,7 +138,9 @@ foreach (_localLib ${_local_libs_in})
       add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
     endif()
   else()
-    LIST(APPEND REMAINING_LOCAL_LIBS ${_localLib})
+    if ( NOT "${_localLib}" MATCHES OpenMesh OR USE_INTERNAL_OPENMESH)
+      LIST(APPEND REMAINING_LOCAL_LIBS ${_localLib})
+    endif()
   endif()
 endforeach ()
 
@@ -182,7 +191,7 @@ add_subdirectory (tests)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc )
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help )
 
-# Add the deocumentation targets
+# Add the documentation targets
 add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
 add_subdirectory (OpenFlipper/Documentation/DeveloperQtHelpTarget)
 add_subdirectory (OpenFlipper/Documentation/UserTarget)

@@ -2,7 +2,7 @@ include (ACGCommon)
 
 include_directories (
   ..
-  ${OPENMESH_INCLUDE_DIR}
+  ${OPENMESH_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -176,8 +176,7 @@ endif()
 
 
 target_link_libraries (${OPENFLIPPER_PRODUCT_STRING}
-  OpenMeshCore
-  OpenMeshTools
+  ${OPENMESH_CORE_LIBRARIES}
   ACG
   OpenFlipperPluginLib
   ${QT_LIBRARIES}
