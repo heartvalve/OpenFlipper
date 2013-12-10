@@ -186,6 +186,11 @@ macro (acg_qt4)
 
     set (QT_MIN_VERSION ${ARGN}) 
 
+    if(POLICY CMP0020)
+      # Automatically link Qt executables to qtmain target on Windows
+      cmake_policy(SET CMP0020 NEW)
+    endif(POLICY CMP0020)
+
     find_package (Qt4 COMPONENTS QtCore QtGui )
 
     set (QT_USE_QTOPENGL 1)
@@ -207,6 +212,11 @@ macro (acg_qt4)
 endmacro ()
 
 macro (acg_qt5)
+
+   if(POLICY CMP0020)
+     # Automatically link Qt executables to qtmain target on Windows
+     cmake_policy(SET CMP0020 NEW)
+   endif(POLICY CMP0020)
   #if (NOT QT5_FOUND)
 
     #set (QT_MIN_VERSION ${ARGN})
