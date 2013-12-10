@@ -157,9 +157,9 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   glGenTextures(1, &texID);
 
 #ifdef GL_ARB_texture_multisample
-  GLenum target = GL_TEXTURE_2D;
-#else
   GLenum target = samples_ ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+#else
+  GLenum target = GL_TEXTURE_2D;
 #endif // GL_ARB_texture_multisample
 
   // store texture id in internal array
