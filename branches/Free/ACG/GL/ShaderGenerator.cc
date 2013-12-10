@@ -807,16 +807,23 @@ void ShaderProgGenerator::buildFragmentShader()
         case GL_TEXTURE_2D: type = "sampler2D"; break;
         case GL_TEXTURE_3D: type = "sampler3D"; break;
         case GL_TEXTURE_CUBE_MAP: type = "samplerCube​"; break;
-#if !defined(ARCH_DARWIN)
-        case GL_TEXTURE_RECTANGLE: type = "sampler2DRect"; break;
-        case GL_TEXTURE_BUFFER: type = "samplerBuffer​"; break;
-        case GL_TEXTURE_1D_ARRAY: type = "sampler1DArray"; break;
-        case GL_TEXTURE_2D_ARRAY: type = "sampler2DArray"; break;
-        case GL_TEXTURE_CUBE_MAP_ARRAY: type = "samplerCubeArray"; break;
+#ifdef GL_ARB_texture_rectangle //ARCH_DARWIN doesn't support all texture defines with all xcode version (xcode 5.0 seems to support all)
+        case GL_TEXTURE_RECTANGLE_ARB: type = "sampler2DRect"; break;
+#endif
+#ifdef GL_ARB_texture_buffer_object
+        case GL_TEXTURE_BUFFER_ARB: type = "samplerBuffer​"; break;
+#endif
+#ifdef GL_EXT_texture_array
+        case GL_TEXTURE_1D_ARRAY_EXT: type = "sampler1DArray"; break;
+        case GL_TEXTURE_2D_ARRAY_EXT: type = "sampler2DArray"; break;
+#endif
+#ifdef GL_ARB_texture_cube_map_array
+        case GL_TEXTURE_CUBE_MAP_ARRAY_ARB: type = "samplerCubeArray"; break;
+#endif
+#ifdef GL_ARB_texture_multisample
         case GL_TEXTURE_2D_MULTISAMPLE: type = "sampler2DMS"; break;
         case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: type = "sampler2DMSArray​"; break;
-#endif //defined(ARCH_DARWIN)
-
+#endif
         default: std::cerr << "Texture Type not supported "<< iter->second.type << std::endl; break;
       }
       // todo: check if texture type supports shadowtype
@@ -1167,16 +1174,23 @@ QString ShaderGenDesc::toString() const
         case GL_TEXTURE_2D: resStrm << "GL_TEXTURE_2D"; break;
         case GL_TEXTURE_3D: resStrm << "GL_TEXTURE_3D"; break;
         case GL_TEXTURE_CUBE_MAP: resStrm << "GL_TEXTURE_CUBE_MAP​"; break;
-#if !defined(ARCH_DARWIN)
-        case GL_TEXTURE_RECTANGLE: resStrm << "GL_TEXTURE_RECTANGLE"; break;
-        case GL_TEXTURE_BUFFER: resStrm << "GL_TEXTURE_BUFFER​"; break;
-        case GL_TEXTURE_1D_ARRAY: resStrm << "GL_TEXTURE_1D_ARRAY"; break;
-        case GL_TEXTURE_2D_ARRAY: resStrm << "GL_TEXTURE_2D_ARRAY"; break;
-        case GL_TEXTURE_CUBE_MAP_ARRAY: resStrm << "GL_TEXTURE_CUBE_MAP_ARRAY"; break;
+#ifdef GL_ARB_texture_rectangle //ARCH_DARWIN doesn't support all texture defines with all xcode version (xcode 5.0 seems to support all)
+        case GL_TEXTURE_RECTANGLE_ARB: resStrm << "GL_TEXTURE_RECTANGLE"; break;
+#endif
+#ifdef GL_ARB_texture_buffer_object
+        case GL_TEXTURE_BUFFER_ARB: resStrm << "GL_TEXTURE_BUFFER​"; break;
+#endif
+#ifdef GL_EXT_texture_array
+        case GL_TEXTURE_1D_ARRAY_EXT: resStrm << "GL_TEXTURE_1D_ARRAY"; break;
+        case GL_TEXTURE_2D_ARRAY_EXT: resStrm << "GL_TEXTURE_2D_ARRAY"; break;
+#endif
+#ifdef GL_ARB_texture_cube_map_array
+        case GL_TEXTURE_CUBE_MAP_ARRAY_ARB: resStrm << "GL_TEXTURE_CUBE_MAP_ARRAY"; break;
+#endif
+#ifdef GL_ARB_texture_multisample
         case GL_TEXTURE_2D_MULTISAMPLE: resStrm << "GL_TEXTURE_2D_MULTISAMPLE"; break;
         case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: resStrm << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY​"; break;
-#endif //defined(ARCH_DARWIN)
-
+#endif
         default: std::cerr << "Texture Type with number "<< iter->second.type << " on stage "<< iter->first << " is not supported "  << std::endl; break;
     }
 
