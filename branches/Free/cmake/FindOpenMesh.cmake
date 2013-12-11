@@ -5,6 +5,7 @@
 # OPENMESH_FOUND           - system has OPENMESH
 # OPENMESH_INCLUDE_DIRS    - the OPENMESH include directories
 # OPENMESH_LIBRARIES       - Link these to use OPENMESH
+# OPENMESH_LIBRARY_DIR     - directory where the libraries are included
 #
 # Copyright 2013 Computer Graphics Group, RWTH Aachen University
 # Authors: Jan Möbius <moebius@cs.rwth-aachen.de>
@@ -58,9 +59,13 @@ IF (NOT OPENMESH_FOUND)
     "C:/Program Files/OpenMesh 3.0"
     "C:/Program Files/OpenMesh 2.4.1"
     "C:/Program Files/OpenMesh 2.4"
+    "C:/Program Files/OpenMesh 2.0/include"
     "C:/libs/OpenMesh 3.0"
     "C:/libs/OpenMesh 2.4.1"
     "C:/libs/OpenMesh 2.4"
+
+    /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/include
+    /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/lib/OpenMesh/
   )
 
   FIND_PATH (OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
@@ -83,6 +88,7 @@ IF (NOT OPENMESH_FOUND)
     PATH ${SEARCH_PATHS} 
     PATH_SUFFIXES lib lib64)
 
+#select configuration depending on platform (optimized... on windows)
   include(SelectLibraryConfigurations)
   select_library_configurations( OPENMESH_TOOLS )
   select_library_configurations( OPENMESH_CORE )
@@ -90,9 +96,19 @@ IF (NOT OPENMESH_FOUND)
   set(OPENMESH_LIBRARIES ${OPENMESH_CORE_LIBRARY} ${OPENMESH_TOOLS_LIBRARY} )
   set(OPENMESH_INCLUDE_DIRS ${OPENMESH_INCLUDE_DIR} )
 
+#checks, if OPENMESH was found and sets OPENMESH_FOUND if so
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(OpenMesh  DEFAULT_MSG
                                     OPENMESH_CORE_LIBRARY OPENMESH_TOOLS_LIBRARY OPENMESH_INCLUDE_DIR)
-   
-  mark_as_advanced(OPENMESH_INCLUDE_DIR OPENMESH_CORE_LIBRARY_RELEASE OPENMESH_CORE_LIBRARY_DEBUG OPENMESH_TOOLS_LIBRARY_RELEASE OPENMESH_TOOLS_LIBRARY_DEBUG)
+ 
+#sets the library dir 
+  if ( OPENMESH_CORE_LIBRARY_RELEASE )
+    get_filename_component(_OPENMESH_LIBRARY_DIR ${OPENMESH_CORE_LIBRARY_RELEASE} PATH)
+  else( OPENMESH_CORE_LIBRARY_RELEASE )
+    get_filename_component(_OPENMESH_LIBRARY_DIR ${OPENMESH_CORE_LIBRARY_DEBUG} PATH)
+  endif( OPENMESH_CORE_LIBRARY_RELEASE )
+  set (OPENMESH_LIBRARY_DIR "${_OPENMESH_LIBRARY_DIR}" CACHE PATH "The directory where the OpenMesh libraries can be found.")
+  
+ 
+  mark_as_advanced(OPENMESH_INCLUDE_DIR OPENMESH_CORE_LIBRARY_RELEASE OPENMESH_CORE_LIBRARY_DEBUG OPENMESH_TOOLS_LIBRARY_RELEASE OPENMESH_TOOLS_LIBRARY_DEBUG OPENMESH_LIBRARY_DIR)
 endif()
