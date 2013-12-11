@@ -63,6 +63,7 @@ IF (NOT OPENMESH_FOUND)
     "C:/libs/OpenMesh 3.0"
     "C:/libs/OpenMesh 2.4.1"
     "C:/libs/OpenMesh 2.4"
+    "${OPENMESH_LIBRARY_DIR}"
 
     /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/include
     /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/lib/OpenMesh/
@@ -72,20 +73,20 @@ IF (NOT OPENMESH_FOUND)
     PATHS ${SEARCH_PATHS}
     PATH_SUFFIXES include)
 
-  FIND_LIBRARY(OPENMESH_CORE_LIBRARY_RELEASE NAMES OpenMeshCore 
-    PATH ${SEARCH_PATHS} 
+  FIND_LIBRARY(OPENMESH_CORE_LIBRARY_RELEASE NAMES OpenMeshCore
+    PATHS ${SEARCH_PATHS}
     PATH_SUFFIXES lib lib64)
 
   FIND_LIBRARY(OPENMESH_CORE_LIBRARY_DEBUG NAMES OpenMeshCored 
-    PATH ${SEARCH_PATHS} 
+    PATHS ${SEARCH_PATHS}
     PATH_SUFFIXES lib lib64)
 
-  FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_RELEASE NAMES OpenMeshTools 
-    PATH ${SEARCH_PATHS} 
+  FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_RELEASE NAMES OpenMeshTools
+    PATHS ${SEARCH_PATHS}
     PATH_SUFFIXES lib lib64)
 
-  FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_DEBUG NAMES OpenMeshToolsd 
-    PATH ${SEARCH_PATHS} 
+  FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_DEBUG NAMES OpenMeshToolsd
+    PATHS ${SEARCH_PATHS}
     PATH_SUFFIXES lib lib64)
 
 #select configuration depending on platform (optimized... on windows)
