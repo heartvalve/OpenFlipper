@@ -21,7 +21,7 @@ else (NITE2_INCLUDE_DIR AND NITE2_LIBRARY)
           )
 
   find_library( NITE2_LIBRARY 
-              NITE2
+              NiTE2
               PATHS 
 			  /usr/local/OpenNI-Linux-x64-2.2/NiTE-Linux-x64-2.2/Redist 
 			  "C:/Program Files/PrimeSense/NiTE2/Lib" 
