@@ -506,6 +506,7 @@ int defaultViewingDirection(int _viewer){
       return OpenFlipperSettings().value(entry,PluginFunctions::VIEW_TOP).toInt();
     default:
       std::cerr << "defaultViewingDirection: illegal viewer id: " << _viewer << std::endl;
+      break;
   }
 
   return PluginFunctions::VIEW_FREE;
@@ -531,6 +532,7 @@ bool defaultLockRotation( int _viewer ) {
       return OpenFlipperSettings().value(entry,true).toBool();
     default:
       std::cerr << "defaultViewingDirection: illegal viewer id: " << _viewer << std::endl;
+      break;
   }
 
   return false;
