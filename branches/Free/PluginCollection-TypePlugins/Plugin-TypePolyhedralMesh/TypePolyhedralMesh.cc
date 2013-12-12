@@ -47,7 +47,14 @@
 
 TypePolyhedralMeshPlugin::TypePolyhedralMeshPlugin() :
 render_switch_(NULL),
-translucency_factor_action_(NULL)
+translucency_factor_action_(NULL),
+optionsWidget_(NULL),
+scalingFactorSpinBox_(NULL),
+translucencyFactorSpinBox_(NULL),
+renderBoundaryCheckBox_(NULL),
+scalingFactorSettingName_(name() + QString("/CellScalingFactor")),
+translucencyFactorSettingName_(name() + QString("/TranslucencyFactor")),
+renderBoundarySettingName_(name() + QString("/RenderBoundaryOnly"))
 {
 }
 
@@ -78,7 +85,7 @@ void TypePolyhedralMeshPlugin::pluginsInitialized() {
     render_switch_ = new QAction(tr("Render Boundary Only"), this);
     render_switch_->setStatusTip(tr("Render Boundary Only"));
     render_switch_->setCheckable(true);
-    render_switch_->setChecked(false);
+    render_switch_->setChecked(OpenFlipperSettings().value(renderBoundarySettingName_, false).toBool());
     connect(render_switch_, SIGNAL( triggered() ), this, SLOT( switchRendering() ));
     menu->addAction(render_switch_);
 
@@ -122,14 +129,15 @@ int TypePolyhedralMeshPlugin::addEmpty() {
     // Set rendering props
     if(OpenFlipper::Options::gui())
     {
-        object->meshNode()->set_scaling(0.8);
+        object->meshNode()->set_scaling(OpenFlipperSettings().value(scalingFactorSettingName_, 0.8).toDouble());
+        object->meshNode()->set_translucency_factor(OpenFlipperSettings().value(translucencyFactorSettingName_, 0.1f).toFloat());
         object->update();
 
         object->show();
     }
 
 
-    emit log(LOGINFO, object->getObjectinfo());
+    // emit log(LOGINFO, object->getObjectinfo());
 
     emit emptyObjectAdded(object->id());
 
@@ -218,7 +226,8 @@ void TypePolyhedralMeshPlugin::setTranslucencyFactor() {
         double factor = QInputDialog::getDouble(0, tr("Set translucency factor"), tr("Factor [0, 1]:"), val,
                 0.0, 1.0, 2, &ok);
 
-        polyMeshObject->meshNode()->set_translucency_factor((float)factor);
+        if (ok)
+            polyMeshObject->meshNode()->set_translucency_factor(static_cast<float>(factor));
     }
 }
 
@@ -272,10 +281,61 @@ void TypePolyhedralMeshPlugin::slot_change_shrinkage() {
         double scale = QInputDialog::getDouble(0, tr("Set singularity scaling for cell shrinkage"), tr("Size * :"), val,
                 0.0, 1.0, 2, &ok);
 
-        PluginFunctions::polyhedralMeshObject(*o_it)->meshNode()->set_scaling(scale);
-
-        emit updatedObject((*o_it)->id(), UPDATE_GEOMETRY);
+        if (ok) {
+            PluginFunctions::polyhedralMeshObject(*o_it)->meshNode()->set_scaling(scale);
+            emit updatedObject((*o_it)->id(), UPDATE_GEOMETRY);
+        }
     }
+}
+
+//------------------------------------------------------------------------------
+
+bool TypePolyhedralMeshPlugin::initializeOptionsWidget(QWidget*& _widget)
+{
+    if (!optionsWidget_) {
+
+        optionsWidget_ = new QWidget;
+        QFormLayout* layout = new QFormLayout;
+
+        scalingFactorSpinBox_ = new QDoubleSpinBox;
+        scalingFactorSpinBox_->setRange(0.0, 1.0);
+        scalingFactorSpinBox_->setDecimals(2);
+        scalingFactorSpinBox_->setSingleStep(0.01);
+
+        translucencyFactorSpinBox_ = new QDoubleSpinBox;
+        translucencyFactorSpinBox_->setRange(0.0, 1.0);
+        translucencyFactorSpinBox_->setDecimals(2);
+        translucencyFactorSpinBox_->setSingleStep(0.01);
+
+        renderBoundaryCheckBox_ = new QCheckBox(tr("Render boundary only"), optionsWidget_);
+
+        layout->addRow(new QLabel(tr("Default cell scaling factor")), scalingFactorSpinBox_);
+        layout->addRow(new QLabel(tr("Default translucency factor")), translucencyFactorSpinBox_);
+        layout->addRow(renderBoundaryCheckBox_);
+
+        optionsWidget_->setLayout(layout);
+    }
+
+    double scalingFactor = OpenFlipperSettings().value(scalingFactorSettingName_, 0.8).toDouble();
+    double translucencyFactor = OpenFlipperSettings().value(translucencyFactorSettingName_, 0.1).toDouble();
+    bool renderBoundary = OpenFlipperSettings().value(renderBoundarySettingName_, false).toBool();
+
+    scalingFactorSpinBox_->setValue(scalingFactor);
+    translucencyFactorSpinBox_->setValue(translucencyFactor);
+    renderBoundaryCheckBox_->setChecked(renderBoundary);
+
+    _widget = optionsWidget_;
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void TypePolyhedralMeshPlugin::applyOptions()
+{
+    OpenFlipperSettings().setValue(scalingFactorSettingName_, scalingFactorSpinBox_->value());
+    OpenFlipperSettings().setValue(translucencyFactorSettingName_, translucencyFactorSpinBox_->value());
+    OpenFlipperSettings().setValue(renderBoundarySettingName_, renderBoundaryCheckBox_->isChecked());
 }
 
 #if QT_VERSION < 0x050000

@@ -53,8 +53,9 @@
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/OptionsInterface.hh>
 
-class TypePolyhedralMeshPlugin : public QObject, BaseInterface, LoadSaveInterface, TypeInterface, KeyInterface, LoggingInterface, ContextMenuInterface {
+class TypePolyhedralMeshPlugin : public QObject, BaseInterface, LoadSaveInterface, TypeInterface, KeyInterface, LoggingInterface, ContextMenuInterface, OptionsInterface {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
 Q_INTERFACES(LoadSaveInterface)
@@ -62,6 +63,7 @@ Q_INTERFACES(TypeInterface)
 Q_INTERFACES(KeyInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(ContextMenuInterface)
+Q_INTERFACES(OptionsInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-TypePolyhedralMesh")
@@ -98,7 +100,13 @@ private slots:
 
     void setTranslucencyFactor();
 
+    // OptionsInterface
+    void applyOptions();
+
 public:
+
+    // OptionsInterface
+    bool initializeOptionsWidget(QWidget*& _widget);
 
     ~TypePolyhedralMeshPlugin() {
     }
@@ -134,6 +142,16 @@ private:
     QAction* render_switch_;
 
     QAction* translucency_factor_action_;
+
+private: // Options
+
+    QWidget* optionsWidget_;
+    QDoubleSpinBox* scalingFactorSpinBox_;
+    QDoubleSpinBox* translucencyFactorSpinBox_;
+    QCheckBox* renderBoundaryCheckBox_;
+    const QString scalingFactorSettingName_;
+    const QString translucencyFactorSettingName_;
+    const QString renderBoundarySettingName_;
 };
 
 #endif //TYPEPOLYHEDRALMESH_HH
