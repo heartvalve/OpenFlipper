@@ -992,6 +992,7 @@ CoreWidget::setViewerLayout(int _idx) {
         break;
       default:
         emit log(LOGERR,tr("Requested illegal multiview mode!"));
+        break;
     }
 
     viewerLayoutBox_->setCurrentIndex(_idx);
