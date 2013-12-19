@@ -179,7 +179,6 @@ DrawMeshT<Mesh>::rebuild()
       verticesTmp_ = new Vertex[numVerts_];
       invVertexMap_ = new unsigned int[mesh_.n_vertices()];
     }
-
     numVerts_ = mesh_.n_vertices();
 
     // read all vertices
@@ -192,7 +191,7 @@ DrawMeshT<Mesh>::rebuild()
     }
 
     createVBO();
-
+    rebuild_ = REBUILD_NONE;
     return;
   }
 
@@ -1058,7 +1057,10 @@ template <class Mesh>
 void DrawMeshT<Mesh>::updateGPUBuffers()
 {
   // rebuild if necessary
-  if (!numTris_ || ! numVerts_ || !subsets_) rebuild_ = REBUILD_FULL;
+  if ((!numTris_ && mesh_.n_faces())|| ! numVerts_ || (!subsets_ && mesh_.n_faces()))
+  {
+    rebuild_ = REBUILD_FULL;
+  }
 
   if (bVBOinHalfedgeNormalMode_ != halfedgeNormalMode_) rebuild_ = REBUILD_FULL;
 
@@ -1070,7 +1072,9 @@ void DrawMeshT<Mesh>::updateGPUBuffers()
       createVBO();
   }
   else
+  {
     rebuild();
+  }
 }
 
 
