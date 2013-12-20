@@ -53,7 +53,7 @@
 /** This set of defines maps the pointer namespaces to the namespace ptr depending on
  *  the current architecture and compilers.
  */
-#if (__cplusplus >= 201103L)
+#if ( (__cplusplus >= 201103L)  || (__STDC_VERSION__ >= 201112L) )
    // C++11:
    #include <memory>
    namespace ptr = std;
