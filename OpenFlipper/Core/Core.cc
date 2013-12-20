@@ -1646,7 +1646,7 @@ void Core::setDescriptions(){
   emit setSlotDescription("saveSettings()", tr("Show the dialog to save the current setting. (only works if GUI is available)"),QStringList(), QStringList());
   emit setSlotDescription("saveSettings(QString, bool, bool, bool, bool, bool, bool)", tr("Save the current setting to the supplied file."),
                           QStringList(tr("filePath,is_saveObjectInfo,is_targetOnly,is_saveAll,is_askOverwrite,is_saveProgramSettings,is_savePluginSettings").split(",")),
-                          QStringList(tr("Path of the file to save the settings to.;Save objects in current setting.;Restrict to targeted objects.;<no idea what this parameter does>;Prompt before overwriting files that already exist (gui mode only).;Save "TOSTRING(PRODUCT_NAME)" program settings.;Save plugin settings.").split(";")));
+                          QStringList(tr("Path of the file to save the settings to.;Save objects in current setting.;Restrict to targeted objects.;<no idea what this parameter does>;Prompt before overwriting files that already exist (gui mode only).;Save " TOSTRING( PRODUCT_NAME ) " program settings.;Save plugin settings.").split(";")));
   //load slots
   emit setSlotDescription("loadObject()", tr("Show the dialog to load an object. (only works if GUI is available)"),QStringList(), QStringList());
   emit setSlotDescription("loadObject(QString)", tr("Load an object specified in file filename. This automatically determines which file plugin to use."),
