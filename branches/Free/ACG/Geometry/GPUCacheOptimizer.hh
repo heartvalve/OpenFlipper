@@ -203,8 +203,8 @@ protected:
 
 	struct Opt_Vertex
 	{
-		Opt_Vertex(): iCachePos(-1), fScore(0.0f), iNumTrisTotal(0), iNumTrisLeft(0), pTris(0) {}
-		~Opt_Vertex() {delete [] pTris;}
+		// Opt_Vertex(): iCachePos(-1), fScore(0.0f), iNumTrisTotal(0), iNumTrisLeft(0), pTris(0) {}
+		// ~Opt_Vertex() {delete [] pTris;}
 
 		int iCachePos;
 		float fScore;

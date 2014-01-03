@@ -334,26 +334,40 @@ void GPUCacheOptimizer::Opt_Vertex::RemoveTriFromList(unsigned int tri)
 GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsigned int NumTris, unsigned int NumVerts, unsigned int IndexSize, const void *pIndices)
 : GPUCacheOptimizer(NumTris, NumVerts, IndexSize, pIndices)
 {
+  // optimization notes:
+  //  - expensive call to RemoveTriFromList(pV->pTris[m]) costs 30-40% of total run-time
+  //  - cache unfriendly layout of Opt_Vertex: high read/write access cost to Opt_vertex data
+
 	if (NumVerts < 3 || !NumTris) return;
 
 	Opt_Vertex* pVerts = new Opt_Vertex[NumVerts];
-	Opt_Tris* pTris = new Opt_Tris[NumTris];
+	Opt_Tris*   pTris  = new Opt_Tris[NumTris];
+
+	// OPTIMIZATION: memset vs constructor initialization: memset - 400 ms,  constructor - 770 ms (at 10 mil vertices)
+	memset(pVerts, 0, sizeof(Opt_Vertex) * NumVerts);
 
 	// build adjacency, same start as in forsyth class
-
 	for (unsigned int i = 0; i < NumTris; ++i)
 	{
-		// copy vertex indices of this tri
-		Opt_Tris* pThisTri = pTris + i;
+    // copy vertex indices of this tri
+    Opt_Tris* pThisTri = pTris + i;
 
-		for (int k = 0; k < 3; ++k)
-		{
-			pThisTri->v[k] = GetIndex(i * 3 + k);
-			
-			// count # tris per vertex
-			++pVerts[pThisTri->v[k]].iNumTrisTotal;
-		}		
+		// copy vertex indices of this tri
+    for (unsigned int k = 0; k < 3; ++k)
+    {
+
+      const unsigned int idx = GetIndex(i * 3 + k);
+      pThisTri->v[k] = idx;
+
+      // count # tris per vertex
+      ++pVerts[idx].iNumTrisTotal;
+    }
 	}
+
+	// OPTIMIZATION: allocate one buffer for the complete vertex adjacency list (instead of allocating a new buffer for each vertex)
+	const unsigned int vertexTriAdjBufSize   = NumTris * 3;
+	unsigned int vertexTriAdjBufOffset       = 0;
+	unsigned int* vertexTriAdjBuf            = new unsigned int[vertexTriAdjBufSize];
 
 	// create list of tris per vertex
 	for (unsigned int i = 0; i < NumTris; ++i)
@@ -362,7 +376,10 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsig
 		for (int k = 0; k < 3; ++k)
 		{
 			Opt_Vertex* pV = pVerts + pTris[i].v[k];
-			if (!pV->pTris) pV->pTris = new unsigned int[pV->iNumTrisTotal];
+			if (!pV->pTris) {
+			  pV->pTris = vertexTriAdjBuf + vertexTriAdjBufOffset;
+			  vertexTriAdjBufOffset += pV->iNumTrisTotal;
+			}
 
 			// abuse <numTrisLeft> as temporal up counter 
 			// (automatically sums to numTris, exactly what we want)
@@ -383,7 +400,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsig
 	RingStack DeadEndVertexStack(128);
 
 
-	int f = 0; // arbitrary starting index (vertex)
+	int f          = 0; // arbitrary starting index (vertex)
 	int iTimeStamp = CacheSize + 1;
 	unsigned int i = 1; // cursor
 
@@ -412,16 +429,19 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsig
 				for (int k = 0; k < 3; ++k)
 				{
 					// push to cache
-					//					DeadEndVertexStack.push_back(pT->v[k]);
-					DeadEndVertexStack.push(pT->v[k]);
+				  const unsigned int v = pT->v[k];
+				  //         DeadEndVertexStack.push_back(pT->v[k]);
+				  DeadEndVertexStack.push(v);
 
 					// insert
-					N.push_back(pT->v[k]);
+				  N.push_back(v);
 
-					pVerts[pT->v[k]].RemoveTriFromList(pV->pTris[m]);
+				  Opt_Vertex* adjV = pVerts + v;
 
-					if (iTimeStamp - pVerts[pT->v[k]].iCachePos > (int)CacheSize)
-						pVerts[pT->v[k]].iCachePos = iTimeStamp++;
+				  adjV->RemoveTriFromList(pV->pTris[m]);
+
+				  if (iTimeStamp - adjV->iCachePos > (int)CacheSize)
+				    adjV->iCachePos = iTimeStamp++;
 				}
 				pT->bAdded = 1;
 			}
@@ -461,7 +481,7 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsig
 				{
 					//					unsigned int d = DeadEndVertexStack.back();
 					//					DeadEndVertexStack.pop_back();
-					unsigned int d = DeadEndVertexStack.pop();
+					const unsigned int d = DeadEndVertexStack.pop();
 
 					if (pVerts[d].iNumTrisLeft > 0)
 						n = d;
@@ -482,6 +502,8 @@ GPUCacheOptimizerTipsify::GPUCacheOptimizerTipsify(unsigned int CacheSize, unsig
 	// debugging purpose
 	// 	int capac = N.capacity();
 	// 	capac = DeadEndVertexStack.capacity();
+
+	delete [] vertexTriAdjBuf;
 
 	delete [] pVerts;
 	delete [] pTris;
