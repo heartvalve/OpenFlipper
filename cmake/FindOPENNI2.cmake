@@ -33,6 +33,11 @@ else (OPENNI2_INCLUDE_DIR AND OPENNI2_LIBRARY)
     set(OPENNI2_INCLUDE_DIRS ${OPENNI2_INCLUDE_DIR} )
 	set(OPENNI2_LIBRARIES ${OPENNI2_LIBRARY} )
 	mark_as_advanced(OPENNI2_INCLUDE_DIR OPENNI2_LIBRARY)
+
+    #sets the library dir 
+    get_filename_component(_OPENNI2_LIBRARY_DIR ${OPENNI2_LIBRARY} PATH)
+    set (OPENNI2_LIBRARY_DIR "${_OPENNI2_LIBRARY_DIR}" CACHE PATH "The directory where the OpenNI2 libraries can be found.")
+
   
   endif(OPENNI2_INCLUDE_DIR AND OPENNI2_LIBRARY)
 
