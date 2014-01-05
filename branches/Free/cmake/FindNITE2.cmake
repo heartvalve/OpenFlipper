@@ -33,6 +33,11 @@ else (NITE2_INCLUDE_DIR AND NITE2_LIBRARY)
     set(NITE2_INCLUDE_DIRS ${NITE2_INCLUDE_DIR} )
 	set(NITE2_LIBRARIES ${NITE2_LIBRARY} )
 	mark_as_advanced(NITE2_INCLUDE_DIR NITE2_LIBRARY)
+
+    #sets the library dir 
+    get_filename_component(_NITE2_LIBRARY_DIR ${NITE2_LIBRARY} PATH)
+    set (NITE2_LIBRARY_DIR "${_NITE2_LIBRARY_DIR}" CACHE PATH "The directory where the Nite2 libraries can be found.")
+
   
   endif(NITE2_INCLUDE_DIR AND NITE2_LIBRARY)
 
