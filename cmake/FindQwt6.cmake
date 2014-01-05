@@ -67,6 +67,11 @@ if (QWT6_VERSION_FOUND)
       )
   endif()
 
+  #sets the library dir 
+  get_filename_component(_QWT6_LIBRARY_DIR ${QWT6_LIBRARY} PATH)
+  set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR}" CACHE PATH "The directory where the QWT6 libraries can be found.")
+
+
   set(QWT6_LIBRARIES ${QWT6_LIBRARY} )
   set(QWT6_INCLUDE_DIRS ${QWT6_INCLUDE_DIR} )
 endif()
