@@ -521,6 +521,9 @@ void CoreWidget::viewerSnapshotDialog() {
   
   SnapshotDialog dialog(suggest, true, w, h, 0);
 
+  if (!ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE)
+      dialog.metaData_storeMatInfo_cb->setVisible(false);
+
   bool ok = dialog.exec();
 
   if (ok){
@@ -543,6 +546,14 @@ void CoreWidget::viewerSnapshotDialog() {
                 dialog.metaData_comments_targetedOnly_cb->isChecked()).join("\n");
     }
 
+    QString materials;
+    if (ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE &&
+            dialog.metaData_storeMatInfo_cb->isChecked()) {
+        materials = PluginFunctions::collectObjectMaterials(
+                dialog.metaData_comments_visibleOnly_cb->isChecked(),
+                dialog.metaData_comments_targetedOnly_cb->isChecked()).join("\n");
+    }
+
     //now take the snapshot
     switch ( baseLayout_->mode() ){
 
@@ -557,6 +568,8 @@ void CoreWidget::viewerSnapshotDialog() {
 
         if (!comments.isEmpty())
             finalImage.setText("Mesh Comments", comments);
+        if (!materials.isEmpty())
+            finalImage.setText("Mesh Materials", materials);
         if (dialog.metaData_storeView_cb->isChecked()) {
             QSize window_size;
             if (isMaximized())
