@@ -151,6 +151,7 @@ void MemInfoPlugin::nvidiaMemoryInfoUpdate() {
 
     gpuMemBar_->setRange(  0 , total_mem_kb/1024 );
     gpuMemBar_->setValue( (total_mem_kb-cur_avail_mem_kb)/1024);
+    setProgressBarStyleSheet(gpuMemBar_);
   }
 }
 
@@ -191,9 +192,28 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
 
     mainMemBar_->setRange(  0 , totalRamMB  );
     mainMemBar_->setValue( totalRamMB-freeRamMB-bufferRamMB);
+    setProgressBarStyleSheet(mainMemBar_);
   }
 }
 
+
+void MemInfoPlugin::setProgressBarStyleSheet(QProgressBar* _bar)
+{
+  const int val = _bar->value();
+  const int maxVal = _bar->maximum();
+  
+  // red starts with 50% mem alloc with 0 and is 1 at 100% mem alloc
+  double redPerc = (val > 0.5*maxVal) ? 2.0*(val-0.5*maxVal) : 0.0;
+  const unsigned red = 255.0*redPerc/maxVal;
+  std::cout << red << std::endl;
+  const unsigned green = 255-red;
+  const unsigned blue = 0;
+
+  //save color in a 32bit integer
+  const unsigned color = (red<<16)+(green<<8)+blue;
+  _bar->setStyleSheet(QString(" QProgressBar { border: 2px solid grey; border-radius: 2px; text-align: center; } QProgressBar::chunk {background-color: #%1; width: 1px;}").arg(color,0,16));
+  
+}
 
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( meminfoplugin , MemInfoPlugin );
