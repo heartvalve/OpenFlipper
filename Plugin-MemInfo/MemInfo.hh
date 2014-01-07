@@ -88,6 +88,9 @@ private slots:
 
 private:
 
+  /// Sets the Qt Stylesheet for the progress bars
+  void setProgressBarStyleSheet(QProgressBar* _bar);
+
   /// Status bar for GPU memory
   QProgressBar* gpuMemBar_;
 
