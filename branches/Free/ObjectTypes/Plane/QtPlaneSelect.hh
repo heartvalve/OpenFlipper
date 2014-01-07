@@ -90,6 +90,7 @@ class DLLEXPORT QtPlaneSelect : public QObject
     signals:
         void signalTriggerCut( );
         void updateViewProxy();
+        void nodeVisChangedProxy(int _id);
 
 
     /*******************************************************************************
@@ -117,6 +118,7 @@ class DLLEXPORT QtPlaneSelect : public QObject
 
     private:
         Plane plane_;
+        void setPlaneAndSize(const ACG::Vec3d& _sourcePoint3D,const ACG::Vec3d& _target2D);
 };
 
 

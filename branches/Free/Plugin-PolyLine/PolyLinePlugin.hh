@@ -90,6 +90,7 @@ signals:
   // BaseInterface
   void updateView();
   void updatedObject(int _identifier, const UpdateType& _type);
+  void nodeVisibilityChanged(int _id);
 
   // PickingInterface
   void addPickMode( const std::string& _mode );
