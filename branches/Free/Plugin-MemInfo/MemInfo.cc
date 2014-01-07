@@ -44,6 +44,7 @@
 
 #include "MemInfo.hh"
 #include <ACG/GL/gl.hh>
+#include <QtGlobal>
 
 // Main Memory information
 #ifdef WIN32
@@ -203,13 +204,13 @@ void MemInfoPlugin::setProgressBarStyleSheet(QProgressBar* _bar)
   const int maxVal = _bar->maximum();
   
   // red starts with 50% mem alloc with 0 and is 1 at 100% mem alloc
-  double redPerc = (val > 0.5*maxVal) ? 2.0*(val-0.5*maxVal) : 0.0;
-  const unsigned red = 255.0*redPerc/maxVal;
-  const unsigned green = 255-red;
-  const unsigned blue = 0;
+  float redPerc = (val > 0.5f*maxVal) ? 2.f*(val-0.5f*maxVal) : 0.f;
+  const quint32 red = 255.f*redPerc/maxVal;
+  const quint32 green = 255u-red;
+  const quint32 blue = 0u;
 
   //save color in a 32bit integer
-  const unsigned color = (red<<16)+(green<<8)+blue;
+  const quint32 color = (red<<16)+(green<<8)+blue;
   _bar->setStyleSheet(QString(" QProgressBar { border: 2px solid grey; border-radius: 2px; text-align: center; } QProgressBar::chunk {background-color: #%1; width: 1px;}").arg(color,0,16));
   
 }
