@@ -205,7 +205,6 @@ void MemInfoPlugin::setProgressBarStyleSheet(QProgressBar* _bar)
   // red starts with 50% mem alloc with 0 and is 1 at 100% mem alloc
   double redPerc = (val > 0.5*maxVal) ? 2.0*(val-0.5*maxVal) : 0.0;
   const unsigned red = 255.0*redPerc/maxVal;
-  std::cout << red << std::endl;
   const unsigned green = 255-red;
   const unsigned blue = 0;
 
