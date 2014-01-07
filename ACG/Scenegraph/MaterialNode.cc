@@ -58,6 +58,11 @@
 
 #include <cstdio>
 
+#ifdef ENABLE_QJSON
+#include <QJson/Serializer>
+#include <QJson/Parser>
+#endif
+
 //== NAMESPACES ===============================================================
 
 namespace ACG {
@@ -77,6 +82,7 @@ static inline Vec4f vl2col(const QVariantList &vl) {
 }
 
 QString Material::serializeToJson() const {
+#ifdef ENABLE_QJSON
     QVariantMap matMap;
 
     matMap["baseColor"] = col2vl(baseColor_);
@@ -99,19 +105,21 @@ QString Material::serializeToJson() const {
     matMap["backfaceCulling"] = backfaceCulling_;
     matMap["multiSampling"] = multiSampling_;
 
-    //QJson::Serializer serializer;
-    //QByteArray bytes = serializer.serialize(matMap);
-    //return QString::fromUtf8(bytes.constData(), bytes.size());
-
+    QJson::Serializer serializer;
+    QByteArray bytes = serializer.serialize(matMap);
+    return QString::fromUtf8(bytes.constData(), bytes.size());
+#else
     return QString("<No suitable serializer at the moment. Sorry.>");
+#endif
 }
 
 void Material::deserializeFromJson(const QString &json) {
-    //QJson::Parser parser;
-    //bool ok;
-    //QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
-    //if (!ok) return;
-    QVariantMap matMap;
+#ifdef ENABLE_QJSON
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
+    if (!ok) return;
+    //QVariantMap matMap;
 
     if (matMap.contains("baseColor")) baseColor_ = vl2col(matMap["baseColor"].toList());
     if (matMap.contains("ambientColor")) ambientColor_ = vl2col(matMap["ambientColor"].toList());
@@ -132,6 +140,7 @@ void Material::deserializeFromJson(const QString &json) {
     if (matMap.contains("colorMaterial")) colorMaterial_ = matMap["colorMaterial"].toBool();
     if (matMap.contains("backfaceCulling")) backfaceCulling_ = matMap["backfaceCulling"].toBool();
     if (matMap.contains("multiSampling")) multiSampling_ = matMap["multiSampling"].toBool();
+#endif
 }
 
 MaterialNode::MaterialNode( BaseNode*            _parent,
