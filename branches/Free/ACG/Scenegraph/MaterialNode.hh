@@ -66,7 +66,6 @@ namespace SceneGraph {
 
 //== CLASS DEFINITION =========================================================
 
-
 /** \class Material
 
     Class to store the properties of a material.
@@ -77,6 +76,14 @@ class ACGDLLEXPORT Material {
   friend class MaterialNode;
   
 public:
+    enum ClassProperties {
+#ifdef ENABLE_QJSON
+        CP_JSON_SERIALIZABLE = 1
+#else
+        CP_JSON_SERIALIZABLE = 0
+#endif
+    };
+
     /// Default constructor
     Material() :
         baseColor_(GLState::default_base_color),
