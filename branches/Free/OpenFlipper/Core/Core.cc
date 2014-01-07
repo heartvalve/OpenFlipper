@@ -1667,6 +1667,14 @@ void Core::setDescriptions(){
                           QString(tr("Toolbox Entry name,Widget,Icon")).split(","),
                           QString(tr("Name of the new widget in the toolbox,Pointer to the new widget,Pointer to icon")).split(","));
 
+  emit setSlotDescription("serializeMaterialProperties(int)", tr("Serialize and return the material properties of the supplied object."),
+                          QString(tr("ObjectId")).split(","),
+                          QString(tr("ID of the object")).split(","));
+
+  emit setSlotDescription("deserializeMaterialProperties(int, QString)", tr("Deserialize the supplied material properties into the supplied object."),
+                          QString(tr("ObjectId, SerializedProps")).split(","),
+                          QString(tr("ID of the object,The serialized material properties.")).split(","));
+
   emit setSlotDescription("addViewModeToolboxes(QString,QString)", tr("Set toolboxes for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Toolbox List")).split(","),
                           QString(tr("Name of the Viewmode,seperated list of toolboxes visible in this viewmode")).split(","));
@@ -1727,6 +1735,44 @@ void Core::deleteObject( int _id ){
   // ensure updating the picking buffer
   updateView();
 
+}
+
+void Core::deserializeMaterialProperties(int _objId, QString props) {
+    if ( _objId == -1 ) return;
+
+    BaseObject* object = objectRoot_->childExists(_objId);
+
+    if (!object || object == objectRoot_) {
+        std::cerr << "No such object." << std::endl;
+        return;
+    }
+
+    BaseObjectData* o = dynamic_cast<BaseObjectData *>(object);
+    if (!o || !o->materialNode())  {
+        std::cerr << "No suitable object found." << std::endl;
+        return;
+    }
+
+    o->materialNode()->material().deserializeFromJson(props);
+}
+
+QString Core::serializeMaterialProperties(int _objId) {
+    if ( _objId == -1 ) return QString();
+
+    BaseObject* object = objectRoot_->childExists(_objId);
+
+    if (!object || object == objectRoot_) {
+        std::cerr << "No such object." << std::endl;
+        return QString();
+    }
+
+    BaseObjectData* o = dynamic_cast<BaseObjectData *>(object);
+    if (!o || !o->materialNode())  {
+        std::cerr << "No suitable object found." << std::endl;
+        return QString();
+    }
+
+    return o->materialNode()->material().serializeToJson();
 }
 
 

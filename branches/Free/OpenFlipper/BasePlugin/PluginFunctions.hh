@@ -390,6 +390,11 @@ void setDefaultViewObjectMarker (ViewObjectMarker *_marker);
 DLLEXPORT
 QStringList collectObjectComments(bool visibleOnly, bool targetedOnly);
 
+/** Collect and return serialized materials of all meshes.
+ */
+DLLEXPORT
+QStringList collectObjectMaterials(bool visibleOnly, bool targetedOnly);
+
 /// Get the default ViewObjectMarker
 DLLEXPORT
 ViewObjectMarker* defaultViewObjectMarker ();

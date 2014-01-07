@@ -1119,4 +1119,26 @@ QStringList collectObjectComments(bool visibleOnly, bool targetedOnly) {
     return result;
 }
 
+QStringList collectObjectMaterials(bool visibleOnly, bool targetedOnly) {
+    if (!ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE)
+        return QStringList();
+
+    QStringList result;
+    for (ObjectIterator o_it(targetedOnly ? TARGET_OBJECTS : ALL_OBJECTS, DATA_ALL) ; o_it != objectsEnd(); ++o_it) {
+
+        if (visibleOnly && !o_it->visible()) continue;
+
+        QString materialStr(QObject::tr("<not available>"));
+        if (!o_it->materialNode())
+            materialStr = QObject::tr("<not available: materialNode == null>");
+        else
+            materialStr = o_it->materialNode()->material().serializeToJson();
+
+        if (!result.empty())
+            result.last().append(QString::fromUtf8(","));
+        result.append(QString::fromUtf8("\"%1\": %2").arg(o_it->name()).arg(materialStr));
+    }
+    return result;
+}
+
 } // End namespace PluginFunctions
