@@ -49,7 +49,20 @@ if (QWT6_VERSION_FOUND)
       "c:\\libs\\Qwt-6.1.0\\lib"
       "c:\\libs\\Qwt-6.0.2\\lib"
       "c:\\libs\\qwt-6.0.1\\lib"
-      )
+  
+    )
+
+    #sets the library dirs
+    if ( QWT6_LIBRARY_RELEASE )
+      get_filename_component(_QWT6_LIBRARY_DIR_RELEASE ${QWT6_LIBRARY_RELEASE} PATH)
+      set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR_RELEASE}" CACHE PATH "The directory where the QWT6 libraries can be found.")
+    endif()
+
+    #sets the library dirs
+    if ( QWT6_LIBRARY_DEBUG )
+      get_filename_component(_QWT6_LIBRARY_DIR_DEBUG ${QWT6_LIBRARY_DEBUG} PATH)
+      set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR_DEBUG}" CACHE PATH "The directory where the QWT6 libraries can be found.")
+    endif()                                                                                                                      
 
     set (
       QWT6_LIBRARY
@@ -65,12 +78,12 @@ if (QWT6_VERSION_FOUND)
       /usr/local/lib
       /usr/lib
       )
+
+    #sets the library dir 
+    get_filename_component(_QWT6_LIBRARY_DIR ${QWT6_LIBRARY} PATH)
+    set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR}" CACHE PATH "The directory where the QWT6 libraries can be found.")
+
   endif()
-
-  #sets the library dir 
-  get_filename_component(_QWT6_LIBRARY_DIR ${QWT6_LIBRARY} PATH)
-  set (QWT6_LIBRARY_DIR "${_QWT6_LIBRARY_DIR}" CACHE PATH "The directory where the QWT6 libraries can be found.")
-
 
   set(QWT6_LIBRARIES ${QWT6_LIBRARY} )
   set(QWT6_INCLUDE_DIRS ${QWT6_INCLUDE_DIR} )
