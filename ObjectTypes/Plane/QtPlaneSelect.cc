@@ -141,51 +141,25 @@ void QtPlaneSelect::slotMouseEvent(QMouseEvent* event)
 
         if ( planeNode_ == 0 ) {
           planeNode_ = new PlaneNode(plane_,PluginFunctions::getRootNode(),"PolyLine generation Plane"  );
-          planeNode_->hide();
         }
 
-        ACG::Vec3d sourcePoint3Dd(sourcePoint3D);
-        plane_.setPlane(sourcePoint3Dd,ACG::Vec3d(1.0,0.0,0.0));
-        plane_.setSize(PluginFunctions::sceneRadius(),PluginFunctions::sceneRadius());
+        setPlaneAndSize(sourcePoint3D,ACG::Vec3d(event->pos().x(), height-event->pos().y()-1.0, 0.0));
 
-        emit updateViewProxy( );
+        planeNode_->show();
+        emit nodeVisChangedProxy(planeNode_->id());
 
         nodeIdx_   = node_idx;
         targetIdx_ = target_idx;
-      }
-    } break;
 
+
+        emit updateViewProxy( );
+      }
+    }break;
     case QEvent::MouseMove:
       {
           if( isDragging )
           {
-              ACG::Vec3d source2D = glState.project( sourcePoint3D );
-              ACG::Vec3d target2D(event->pos().x(), height-event->pos().y()-1, 0);
-
-              source2D[2] = 0;
-
-
-              ACG::Vec3d diff = source2D - target2D;
-              //diff.normalize( );  <- this is bad
-              ACG::Vec3d ortho(-diff[1], diff[0], 0 );
-
-              ACG::Vec3d left = glState.unproject( source2D+ortho*10 + ACG::Vec3d(0,0,0) );
-              ACG::Vec3d right= glState.unproject( source2D-ortho*10 + ACG::Vec3d(0,0,0) );
-
-              ACG::Vec3d leftvec = left-sourcePoint3D;
-              leftvec.normalize( );
-              ACG::Vec3d rightvec = right-sourcePoint3D;
-              rightvec.normalize( );
-
-              normal = cross( rightvec, leftvec );
-              normal.normalize( );
-
-              ACG::Vec3d sourcePoint3Df(sourcePoint3D);
-              ACG::Vec3d normald(normal);
-              plane_.setPlane(sourcePoint3Df,normald);
-              plane_.setSize(PluginFunctions::sceneRadius(),PluginFunctions::sceneRadius());
-
-              planeNode_->show();
+            setPlaneAndSize(sourcePoint3D,ACG::Vec3d(event->pos().x(), height-event->pos().y()-1.0, 0.0));
 
               emit updateViewProxy( );
           }
@@ -214,6 +188,36 @@ void QtPlaneSelect::slotMouseEvent(QMouseEvent* event)
   }
 
 
+}
+
+
+void QtPlaneSelect::setPlaneAndSize(const ACG::Vec3d& _sourcePoint3D,const ACG::Vec3d& _target2D)
+{
+
+  ACG::Vec3d source2D = glState.project( _sourcePoint3D );
+
+  source2D[2] = 0;
+
+
+  ACG::Vec3d diff = source2D - _target2D;
+  //diff.normalize( );  <- this is bad
+  ACG::Vec3d ortho(-diff[1], diff[0], 0 );
+
+  ACG::Vec3d left = glState.unproject( source2D+ortho*10 + ACG::Vec3d(0,0,0) );
+  ACG::Vec3d right= glState.unproject( source2D-ortho*10 + ACG::Vec3d(0,0,0) );
+
+  ACG::Vec3d leftvec = left-sourcePoint3D;
+  leftvec.normalize( );
+  ACG::Vec3d rightvec = right-sourcePoint3D;
+  rightvec.normalize( );
+
+  normal = cross( rightvec, leftvec );
+  normal.normalize( );
+
+  ACG::Vec3d sourcePoint3Df(sourcePoint3D);
+  ACG::Vec3d normald(normal);
+  plane_.setPlane(sourcePoint3Df,normald);
+  plane_.setSize(PluginFunctions::sceneRadius(),PluginFunctions::sceneRadius());
 }
 
 

@@ -398,6 +398,7 @@ pluginsInitialized()
   planeSelect_ = new QtPlaneSelect( PluginFunctions::viewerProperties().glState() );
   connect( planeSelect_, SIGNAL( signalTriggerCut( ) ), this, SLOT( slotTriggerCutPlaneSelect() ) );
   connect( planeSelect_, SIGNAL( updateViewProxy( ) ), this, SIGNAL( updateView() ) );
+  connect( planeSelect_, SIGNAL( nodeVisChangedProxy(int) ), this, SIGNAL(nodeVisibilityChanged(int) ) );
 
   //create copy paste action in context menu
   copyPaste_Action_ = new QAction("Duplicate", 0);
