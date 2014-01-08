@@ -211,7 +211,7 @@ void MemInfoPlugin::setProgressBarStyleSheet(QProgressBar* _bar)
 
   //save color in a 32bit integer
   const quint32 color = (red<<16)+(green<<8)+blue;
-  _bar->setStyleSheet(QString(" QProgressBar { border: 2px solid grey; border-radius: 2px; text-align: center; } QProgressBar::chunk {background-color: #%1; width: 1px;}").arg(color,0,16));
+  _bar->setStyleSheet(QString(" QProgressBar { border: 2px solid grey; border-radius: 2px; text-align: center; } QProgressBar::chunk {background-color: #%1; width: 1px;}").arg(color,6,16,QChar('0')));
   
 }
 
