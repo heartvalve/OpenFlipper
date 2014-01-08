@@ -63,7 +63,8 @@ else( WIN32 )
                       NAMES libcholmod.so 
                       PATHS /usr/lib 
                             /usr/lib64 
-                            /usr/local/lib )
+                            /usr/local/lib
+			    /usr/lib/x86_64-linux-gnu )
 
 
    ENDIF(APPLE)
