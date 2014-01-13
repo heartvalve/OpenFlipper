@@ -1120,7 +1120,7 @@ QStringList collectObjectComments(bool visibleOnly, bool targetedOnly) {
 }
 
 QStringList collectObjectMaterials(bool visibleOnly, bool targetedOnly) {
-    if (!ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE)
+    if (!ACG::SceneGraph::Material::support_json_serialization())
         return QStringList();
 
     QStringList result;
