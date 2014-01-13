@@ -57,10 +57,14 @@
 
 #include "BaseNode.hh"
 #include <string>
+#include <QVariantMap>
 
 //== NAMESPACES ===============================================================
 
 namespace ACG {
+
+QVariantMap json_to_variant_map(QString json);
+
 namespace SceneGraph {
 
 
@@ -76,14 +80,6 @@ class ACGDLLEXPORT Material {
   friend class MaterialNode;
   
 public:
-    enum ClassProperties {
-#ifdef ENABLE_QJSON
-        CP_JSON_SERIALIZABLE = 1
-#else
-        CP_JSON_SERIALIZABLE = 0
-#endif
-    };
-
     /// Default constructor
     Material() :
         baseColor_(GLState::default_base_color),
@@ -131,8 +127,10 @@ public:
         backfaceCulling_(_m.backfaceCulling_),
         multiSampling_(_m.multiSampling_) {};
 
+    static bool support_json_serialization();
     QString serializeToJson() const;
     void deserializeFromJson(const QString &json);
+    void deserializeFromVariantMap(const QVariantMap &matMap);
         
     /** \brief Set color based on _c
      *

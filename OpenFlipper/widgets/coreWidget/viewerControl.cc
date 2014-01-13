@@ -521,7 +521,7 @@ void CoreWidget::viewerSnapshotDialog() {
   
   SnapshotDialog dialog(suggest, true, w, h, 0);
 
-  if (!ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE)
+  if (!ACG::SceneGraph::Material::support_json_serialization())
       dialog.metaData_storeMatInfo_cb->setVisible(false);
 
   bool ok = dialog.exec();
@@ -547,7 +547,8 @@ void CoreWidget::viewerSnapshotDialog() {
     }
 
     QString materials;
-    if (ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE &&
+    if (ACG::SceneGraph::Material::support_json_serialization() &&
+    //if (ACG::SceneGraph::Material::CP_JSON_SERIALIZABLE &&
             dialog.metaData_storeMatInfo_cb->isChecked()) {
         materials = PluginFunctions::collectObjectMaterials(
                 dialog.metaData_comments_visibleOnly_cb->isChecked(),

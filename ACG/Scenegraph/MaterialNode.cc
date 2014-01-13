@@ -65,20 +65,48 @@
 
 //== NAMESPACES ===============================================================
 
+namespace {
+
+enum ClassProperties {
+#ifdef ENABLE_QJSON
+    CP_JSON_SERIALIZABLE = 1
+#else
+    CP_JSON_SERIALIZABLE = 0
+#endif
+};
+
+inline QVariantList col2vl(const ACG::Vec4f &col) {
+    return QVariantList() << col[0] << col[1] << col[2] << col[3];
+}
+
+inline ACG::Vec4f vl2col(const QVariantList &vl) {
+    if (vl.size() < 4) return ACG::Vec4f();
+    return ACG::Vec4f(vl[0].toFloat(), vl[1].toFloat(), vl[2].toFloat(), vl[3].toFloat());
+}
+
+} /* anonymous namespace */
+
 namespace ACG {
+
+QVariantMap json_to_variant_map(QString json) {
+#ifdef ENABLE_QJSON
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
+    if (!ok) return QVariantMap();
+    return matMap;
+#else
+    return QVariantMap();
+#endif
+}
+
 namespace SceneGraph {
 
 
 //== IMPLEMENTATION ==========================================================
 
-
-static inline QVariantList col2vl(const Vec4f &col) {
-    return QVariantList() << col[0] << col[1] << col[2] << col[3];
-}
-
-static inline Vec4f vl2col(const QVariantList &vl) {
-    if (vl.size() < 4) return Vec4f();
-    return Vec4f(vl[0].toFloat(), vl[1].toFloat(), vl[2].toFloat(), vl[3].toFloat());
+bool Material::support_json_serialization() {
+    return CP_JSON_SERIALIZABLE;
 }
 
 QString Material::serializeToJson() const {
@@ -113,14 +141,7 @@ QString Material::serializeToJson() const {
 #endif
 }
 
-void Material::deserializeFromJson(const QString &json) {
-#ifdef ENABLE_QJSON
-    QJson::Parser parser;
-    bool ok;
-    QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
-    if (!ok) return;
-    //QVariantMap matMap;
-
+void Material::deserializeFromVariantMap(const QVariantMap &matMap) {
     if (matMap.contains("baseColor")) baseColor_ = vl2col(matMap["baseColor"].toList());
     if (matMap.contains("ambientColor")) ambientColor_ = vl2col(matMap["ambientColor"].toList());
     if (matMap.contains("diffuseColor")) diffuseColor_ = vl2col(matMap["diffuseColor"].toList());
@@ -140,6 +161,15 @@ void Material::deserializeFromJson(const QString &json) {
     if (matMap.contains("colorMaterial")) colorMaterial_ = matMap["colorMaterial"].toBool();
     if (matMap.contains("backfaceCulling")) backfaceCulling_ = matMap["backfaceCulling"].toBool();
     if (matMap.contains("multiSampling")) multiSampling_ = matMap["multiSampling"].toBool();
+}
+
+void Material::deserializeFromJson(const QString &json) {
+#ifdef ENABLE_QJSON
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap matMap = parser.parse(json.toUtf8(), &ok).toMap();
+    if (!ok) return;
+    deserializeFromVariantMap(matMap);
 #endif
 }
 
