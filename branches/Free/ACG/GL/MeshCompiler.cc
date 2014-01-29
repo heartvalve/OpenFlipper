@@ -745,7 +745,6 @@ void MeshCompiler::forceUnsharedFaceVertex()
       if (sharedVertices[v0])
         continue;
 
-      const int pos0 = getInputIndex(faceID, v0, inputIDPos_);
       const int vertexID0 = getInputIndexSplit(faceID, v0);
 
       if (vertexID0 >= numInitialVerts || VertexUsed[vertexID0])
@@ -1900,7 +1899,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
           {
             fprintf(file, "error: vertex %i is referenced by %i faces: ", i, VertexRefs[i].size());
 
-            for (std::map<int, int>::iterator it = VertexRefs[i].begin(); it != VertexRefs[i].end(); it++)
+            for (std::map<int, int>::iterator it = VertexRefs[i].begin(); it != VertexRefs[i].end(); ++it)
               fprintf(file, "%d, ", it->first);
 
             fprintf(file, "\n");
@@ -2256,8 +2255,8 @@ void MeshCompiler::dbgdumpObj(const char* _filename) const
 void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
 {
   const int nVerts = (inputIDPos_ >= 0) ? input_[inputIDPos_].count : 0;
-  const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
-  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
+//  const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
+//  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
 
   
 
@@ -2942,7 +2941,7 @@ size_t MeshCompiler::getMemoryUsage(bool _printConsole) const
   forceUnsharedVertex() has been modified and no longer requires a face-face adjacency list, which was the biggest memory buffer allocated by build()
   */
 
-  int byteToMB = 1024 * 1024;
+
   size_t usage = faceStart_.size() * 4;
   usage += faceSize_.size() * 1;
   usage += faceData_.size() * 4;
@@ -2978,6 +2977,7 @@ size_t MeshCompiler::getMemoryUsage(bool _printConsole) const
 
   if (_printConsole)
   {
+    const int byteToMB = 1024 * 1024;
 
     std::cout << "faceStart_: " << sizeof(std::pair<int, unsigned char>) << std::endl;
 
@@ -3083,7 +3083,7 @@ void MeshCompiler::prepareData()
 
 
   // build internal face-offset table for storing interleaved index buffer
-  int curOffset = 0;
+
   int minFaceSize = 99999999;
   for (int i = 0; i < numFaces_; ++i)
   {
@@ -3095,6 +3095,8 @@ void MeshCompiler::prepareData()
   
   if (minFaceSize < (int)maxFaceSize_)
   {
+    int curOffset = 0;
+
     // internal face-offset buffer required for mesh processing
     faceStart_.resize(numFaces_, -1);
     faceSize_.resize(numFaces_, 0);
