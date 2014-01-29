@@ -110,33 +110,6 @@ link_directories (
 )
 
 #===================================================================
-# Setting up the unit tests
-#===================================================================
-find_package(GoogleTest)
-if (GTEST_FOUND)
-  enable_testing()
-  file(GLOB_RECURSE TEST_SOURCES tests/*.cc)
-  set(TESTED_SOURCES
-        Algorithm/DBSCANT.cc
-     )
-  include_directories(${GTEST_INCLUDE_DIRS} ${OPENMESH_INCLUDE_DIR})
-  link_directories ( ${GTEST_LIBRARY_DIR})
-
-  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
-     add_definitions( /D _VARIADIC_MAX=10 )
-  endif()
-
-  add_executable (ACG_tests ${TEST_SOURCES})
-  set_target_properties(ACG_tests PROPERTIES
-  		COMPILE_FLAGS "-UNDEBUG")
-  target_link_libraries(ACG_tests
-        ${GTEST_LIBRARIES} ${OPENMESH_LIBRARIES}
-  )
-
-  add_test(AllTestsIn_ACG_tests ACG_tests)
-endif(GTEST_FOUND)
-
-#===================================================================
 # ACG Library setup
 #===================================================================
 
@@ -203,3 +176,31 @@ target_link_libraries ( ACG  ${OPENMESH_LIBRARIES}
                              ${GLEW_LIBRARY}
                              ${GLUT_LIBRARIES}
                              ${ADDITIONAL_LINK_LIBRARIES} )
+
+
+#===================================================================
+# Setting up the unit tests
+#===================================================================
+find_package(GoogleTest)
+if (GTEST_FOUND)
+  enable_testing()
+  file(GLOB_RECURSE TEST_SOURCES tests/*.cc)
+  set(TESTED_SOURCES
+        Algorithm/DBSCANT.cc
+     )
+  include_directories(${GTEST_INCLUDE_DIRS} ${OPENMESH_INCLUDE_DIR})
+  link_directories ( ${GTEST_LIBRARY_DIR})
+
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+     add_definitions( /D _VARIADIC_MAX=10 )
+  endif()
+
+  add_executable (ACG_tests ${TEST_SOURCES})
+  set_target_properties(ACG_tests PROPERTIES
+  		COMPILE_FLAGS "-UNDEBUG")
+  target_link_libraries(ACG_tests
+        ${GTEST_LIBRARIES} ${OPENMESH_LIBRARIES} ACG
+  )
+
+  add_test(AllTestsIn_ACG_tests ACG_tests)
+endif(GTEST_FOUND)
