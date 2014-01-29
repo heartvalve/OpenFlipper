@@ -185,8 +185,13 @@ void DrawMeshT<Mesh>::getMeshPropertyType( Prop _propData, GLuint* _outType, int
 template<class Mesh>
 class DrawMeshFaceInput : public MeshCompilerFaceInput
 {
+
 public:
-  Mesh mesh_;
+
+  DrawMeshFaceInput(Mesh& _mesh) :
+  mesh_(_mesh)
+  {
+  };
 
   // map[attrID] -> use per halfedge/vertex attribute (true/false)
   std::vector<int> attributeStoredPerHalfedge_;
@@ -330,6 +335,8 @@ public:
     return adj_it->idx();
   }
 
+private:
+  Mesh& mesh_;
 };
 
 
@@ -482,9 +489,7 @@ DrawMeshT<Mesh>::rebuild()
 
 
   // pass face data to mesh compiler
-
-  DrawMeshFaceInput<Mesh> faceInput;
-  faceInput.mesh_ = mesh_;
+  DrawMeshFaceInput<Mesh> faceInput(mesh_);
   faceInput.attributeStoredPerHalfedge_.resize(meshComp_->getVertexDeclaration()->getNumElements(), 0);
   faceInput.attributeStoredPerHalfedge_[attrIDPos]  = 0;
   faceInput.attributeStoredPerHalfedge_[attrIDNorm] = ( (halfedgeNormalMode_ && mesh_.has_halfedge_normals()) ? 1 : 0 );
