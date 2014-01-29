@@ -63,8 +63,8 @@
 #include <ACG/Config/ACGDefines.hh>
 
 #include <ACG/GL/GLState.hh>
-
 #include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/MeshCompiler.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -230,7 +230,7 @@ public:
 
   unsigned int getNumTris() const {return numTris_;}
   unsigned int getNumVerts() const {return numVerts_;}
-  unsigned int getNumSubsets() const {return numSubsets_;}
+  unsigned int getNumSubsets() const {return meshComp_->getNumSubsets();}
 
 
   /** \brief measures the size in bytes of allocated memory.
@@ -316,24 +316,6 @@ private:
   void rebuild();
 
 
-  /** \brief Convert from halfedge data structure to triangle index list
-   *
-   * \note Only operates on indices
-   *
-   * @param _dstIndexBuf pointer to the resulting index buffer
-   * @param _maxFaceVertexCount maximum number of vertices per face seen in mesh
-   * @return number of triangles,  also fills triToFaceMap
-   */
-  unsigned int convertToTriangleMesh(unsigned int* _dstIndexBuf, unsigned int _maxFaceVertexCount);
-
-  /** \brief create the big 3 * NumTris vertex buffer
-   *
-   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
-   * @param _dstVertexMap [out] pointer to the resulting vertex map
-   * @param _indexBuf [in] pointer to the original index buffer, which is not needed anymore after this call
-   */
-  void createBigVertexBuf(Vertex* _dstVertexBuf, unsigned int* _dstVertexMap, const unsigned int* _indexBuf);
-
   /** \brief reads a vertex from mesh_ and write it to _pDst
    *
    * @param _pDst [out] pointer to the resulting vertex
@@ -346,69 +328,17 @@ private:
                   const typename Mesh::HalfedgeHandle _hh,
                   const typename Mesh::FaceHandle     _fh);
 
-  /** \brief
+  /** \brief return a vertex color from mesh
    *
+   * @param _vh mesh vertex handle
    */
-  void removeIsolatedVerts();
+  unsigned int getVertexColor(const typename Mesh::VertexHandle   _vh);
 
-  /** \brief minimize the big vertex buffer
+  /** \brief return a face color from mesh
    *
-   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
-   * @param _srcVertexBuf [in] pointer to the big vertex buffer
-   * @param _dstIndexBuf [out] pointer to the resutling index buffer
-   * @param _dstVertexMap [out] pointer to the resulting vertex map (new -> old vertex)
-   * @param _srcVertexMap [in] pointer to the previously used vertex map (new -> old vertex)
-   * @param _duplicatesMap [out] maps from a duplicate vertex to it's first occurrence (OpenMesh vertex indices)
-   * @return new number of vertices
+   * @param _fh mesh face handle
    */
-  unsigned int weldVertices(Vertex*             _dstVertexBuf,
-                            const Vertex*       _srcVertexBuf,
-                            unsigned int*       _dstIndexBuf,
-                            unsigned int*       _dstVertexMap,
-                            const unsigned int* _srcVertexMap,
-                            std::list< std::pair<unsigned int, unsigned int> >& _duplicatesMap);
-
-  /** \brief sort triangles by material id
-   *
-   *
-   * also creates subsets: subsets_
-   *
-   * _dstIndexBuf and _srcIndexBuf must be different!
-   *
-   * @param _dstIndexBuf [out] pointer to the resulting index buffer
-   * @param _srcIndexBuf [in] pointer to the index buffer about to be sorted
-   */
-  void sortTrisByMaterial(unsigned int* _dstIndexBuf, const unsigned int* _srcIndexBuf);
-
-  /** \brief GPU cache optimization
-   *
-   * _dstIndexBuf == _srcIndexBuf allowed (inplace operation)
-   * tris are optimized based on subsets
-   * SortTrisByMaterial must be called prior!!
-   * also maintains triToFaceMap_
-   *
-   * @param _dstIndexBuf [out] pointer to the resulting index buffer
-   * @param _srcIndexBuf [in] pointer to the unoptimized index buffer
-   */
-  void optimizeTris(unsigned int* _dstIndexBuf, unsigned int* _srcIndexBuf);
-
-  /** \brief optimize vertex layout
-   *
-   * for best results, call this after optimizeTris
-   * also maintains vertexMap_,
-   * NOTE: _srcVertexMap is invalid after this call
-   * _srcVertexBuf != _dstVertexBuf!!
-   *
-   * @param _dstVertexBuf [out] pointer to the resulting vertex buffer
-   * @param _srcVertexBuf [in] pointer to the source vertex buffer
-   * @param _inOutIndexBuf [in, out] pointer to the index buffer, altered by this function
-   * @param _srcVertexMap [in] pointer to the vertex map (new -> old vertex)
-   */
-  void optimizeVerts(Vertex*             _dstVertexBuf,
-                     const Vertex*       _srcVertexBuf,
-                     unsigned int*       _inOutIndexBuf,
-                     const unsigned int* _srcVertexMap);
-
+  unsigned int getFaceColor(const typename Mesh::FaceHandle   _vh);
 
   /** \brief  eventually update vertex and index buffers
    *
@@ -646,11 +576,12 @@ private:
    * returns the number of tris after triangulation of this mesh
    * if needed, also returns the highest number of vertices of a face
    *
-   * @param _pOutMaxPolyVerts
+   * @param _pOutMaxPolyVerts max face size
+   * @param _pOutNumIndices   total number of indices
    *
    * @return  number of triangles
   */
-  unsigned int countTris(unsigned int* _pOutMaxPolyVerts = 0);
+  unsigned int countTris(unsigned int* _pOutMaxPolyVerts = 0, unsigned int* _pOutNumIndices = 0);
 
   /** \brief get the texture index of a triangle
    *
@@ -661,10 +592,32 @@ private:
    */
   int getTextureIDofTri(unsigned int _tri);
 
+  /** \brief get the texture index of a face
+   *
+   *
+   *  @param _tri Face index (-1 if not available)
+   *
+   *  @return Face index of a triangle
+   */
+  int getTextureIDofFace(unsigned int _face);
+
+  /** \brief get the data type of a mesh property
+   *
+   *
+   *  @param _prop mesh property data
+   *  @param _outType [out] data type i.e. GL_FLOAT, GL_DOUBLE
+   *  @param _outSize [out] number of atoms in range 1..4
+   *  @param _outStride [out] size in bytes
+   */
+  template<class Prop>
+  void getMeshPropertyType(Prop _propData, GLuint* _outType, int* _outSize, int* _outStride);
+
 private:
 
   /// OpenMesh object to be rendered
   Mesh& mesh_;
+
+  MeshCompiler* meshComp_;
 
   size_t numTris_, numVerts_;
 
@@ -682,10 +635,6 @@ private:
     */
   size_t prevNumFaces_,prevNumVerts_;
 
-
-  // per material/texture subsets
-  unsigned int numSubsets_;
-  Subset* subsets_;
 
   GLuint vbo_,
          ibo_;
@@ -717,14 +666,6 @@ private:
   int bVBOinHalfedgeNormalMode_;
 
 
-  /** remapping for faster mesh change updates
-   *  maps from triangle index to Mesh::FaceHandle::idx
-   */
-  unsigned int* triToFaceMap_;
-
-  /// vertex index in vbo -> original OpenMesh halfedge index
-  unsigned int* vertexMap_;
-
   /** inverse vertex map: original OpenMesh vertex index -> one vertex index in vbo
       this map is ambiguous and only useful for per vertex attributes rendering i.e. lines!
   */
@@ -752,7 +693,6 @@ private:
   // temporal buffer allocations to avoid memory requests while updating
   //========================================================================
 
-  unsigned int* indicesTmp_;
   Vertex* verticesTmp_;
 
   //========================================================================
@@ -891,8 +831,15 @@ private:
       normal /= count;
       return normal;
   }
-};
 
+  typename Mesh::HalfedgeHandle mapToHalfedgeHandle(int _vertexId);
+
+  void initMeshCompiler();
+
+  template<class Prop>
+  void setMeshCompilerInput(int _attrIdx, Prop _propData, int _num);
+
+};
 
 
 //=============================================================================

@@ -6,9 +6,9 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
-
 
 namespace ACG{
 
@@ -54,24 +54,17 @@ mesh.compile(FLAG_OPTIMIZE | FLAG_COMPUTE_TANGENTS | FLAG_STATIC)
 */
 
 
-MeshCompiler::AdjacencyList::AdjacencyList()
-: start(0), count(0), buf(0), bufSize(0), num(0)
-{}
-
-MeshCompiler::AdjacencyList::~AdjacencyList()
-{
-  delete [] start;
-  delete [] buf;
-}
+MeshCompilerVertexCompare MeshCompiler::defaultVertexCompare;
 
 void MeshCompiler::AdjacencyList::init( int n )
 {
   delete [] start;
   delete [] buf;
+  delete [] count;
 
   num = n;
-  start = new int[2 * n];
-  count = start + n;
+  start = new int[n];
+  count = new unsigned char[n];
 
   buf   = 0; // unknown buffer length
 
@@ -79,10 +72,10 @@ void MeshCompiler::AdjacencyList::init( int n )
   memset(start, -1, n * sizeof(int));
 
   // reset count
-  memset(count, 0, n * sizeof(int));  
+  memset(count, 0, n * sizeof(unsigned char));  
 }
 
-int MeshCompiler::AdjacencyList::getAdj( int i, int k ) const
+int MeshCompiler::AdjacencyList::getAdj( const int i, const int k ) const
 {
   int cnt = count[i];
   assert(k < cnt);
@@ -94,217 +87,138 @@ int MeshCompiler::AdjacencyList::getAdj( int i, int k ) const
   return buf[st + k];
 }
 
-int MeshCompiler::AdjacencyList::getCount( int i ) const
+int MeshCompiler::AdjacencyList::getCount( const int i ) const
 {
   return count[i];
 }
 
+void MeshCompiler::AdjacencyList::clear()
+{
+  num = 0;
+  delete [] start; start = 0;
+  delete [] buf; buf = 0;
+  delete [] count; count = 0;
+  bufSize = 0;
+}
+
+
 
 void MeshCompiler::computeAdjacency()
 {
-  // count total number of adjacency entries
-  // to pack everthing in a single tightly packed buffer
-
   const int numVerts = input_[inputIDPos_].count;
 
-  adjacencyVert_.init(numVerts);
-
-  // count # adjacent faces per vertex
-  for (int i = 0; i < numFaces_; ++i)
-  {
-    int nCorners = getFaceSize(i);
-
-    for (int k = 0; k < nCorners; ++k)
-    {
-      int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
-
-      adjacencyVert_.count[vertex]++;
-    }
-  }
-
-
-  // count num of needed entries
-  int nCounter = 0;
-
-  for (int i = 0; i < numVerts; ++i)
-  {
-    adjacencyVert_.start[i] = nCounter; // save start indices
-
-    nCounter += adjacencyVert_.count[i];
-
-    adjacencyVert_.count[i] = 0; // count gets recomputed in next step
-  }
-
-  // alloc memory
-  adjacencyVert_.buf = new int[nCounter];
-  adjacencyVert_.bufSize = nCounter;
-
-  // build adjacency list
-  for (int i = 0; i < numFaces_; ++i)
-  {
-    int nCorners = getFaceSize(i);
-
-    for (int k = 0; k < nCorners; ++k)
-    {
-      int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
-      int adjIdx = adjacencyVert_.start[vertex] + adjacencyVert_.count[vertex]++;
-
-      adjacencyVert_.buf[ adjIdx ] = i;
-    }
-  }
-
-
   // ==============================================================
-  // compute face -> face adjacency
+  // compute vertex -> face adjacency
 
-  adjacencyFace_.init(numFaces_);
+  // count total number of adjacency entries
+  // store adj entries in a single tightly packed buffer
 
-  // std::map too slow for complete face adjacency computation
-//  std::map<int, int> faceMap;
-
-  // OPtimization: use per face-flag instead of std::map to do redundancy check
-  std::vector<int> faceMap2(numFaces_, -1);
-
-  std::list<int> faceAdjTmp;
-
-  // 1st - count # adjacent faces per face
-  // make use of vertex adjacency list
-  
-  nCounter = 0; // counts # adjacency entries needed
-
-  for (int i = 0; i < numFaces_; ++i)
+  // check if user provided adjacency information
+  if (faceInput_->getVertexAdjCount(0) < 0 && adjacencyVert_.bufSize <= 0)
   {
-    const int nCorners = getFaceSize(i);
+    adjacencyVert_.init(numVerts);
 
-    int faceAdjCount = 0;
-
-    for (int k = 0; k < nCorners; ++k)
+    // count # adjacent faces per vertex
+    for (int i = 0; i < numFaces_; ++i)
     {
-      int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+      int nCorners = getFaceSize(i);
 
-      // walk adjacency list to find neighboring faces
-      int adjCount = adjacencyVert_.count[vertex];
-      for (int q = 0; q < adjCount; ++q)
+      for (int k = 0; k < nCorners; ++k)
       {
-        int adjFace = adjacencyVert_.getAdj(vertex, q);
+        //        int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+        int vertex = getInputIndex(i, k, inputIDPos_);
 
-        // add to map, taking care of duplicate entries
-        if (adjFace != i)
-        {
-          //          faceMap[adjFace] = 1; // optimized code below
-          if (faceMap2[adjFace] != 1)
-          {
-            faceAdjCount++;
-            faceAdjTmp.push_back(adjFace);
-            faceMap2[adjFace] = 1;
-          }
-        }
-
+        adjacencyVert_.count[vertex]++;
       }
     }
 
-    // save count and start index
-    adjacencyFace_.start[i] = nCounter;
-    adjacencyFace_.count[i] = faceAdjCount;
 
-    nCounter += faceAdjCount;
+    // count num of needed entries
+    int nCounter = 0;
 
-
-    for (std::list<int>::iterator it = faceAdjTmp.begin(); it != faceAdjTmp.end(); ++it)
+    for (int i = 0; i < numVerts; ++i)
     {
-      faceMap2[*it] = -1;
+      adjacencyVert_.start[i] = nCounter; // save start indices
+
+      nCounter += adjacencyVert_.count[i];
+
+      adjacencyVert_.count[i] = 0; // count gets recomputed in next step
     }
 
-    faceAdjTmp.clear();
+    // alloc memory
+    adjacencyVert_.buf = new int[nCounter];
+    adjacencyVert_.bufSize = nCounter;
 
-//    faceMap.clear();
-  }
-
-
-
-  // 2nd - build adjacency list
-
-  // alloc
-  adjacencyFace_.buf = new int[nCounter];
-  adjacencyFace_.bufSize = nCounter;
-
-  nCounter = 0;
-
-  for (int i = 0; i < numFaces_; ++i)
-  {
-    int nCorners = getFaceSize(i);
-
-    nCounter = 0;
-
-    for (int k = 0; k < nCorners; ++k)
+    // build adjacency list
+    for (int i = 0; i < numFaces_; ++i)
     {
-      int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+      int nCorners = getFaceSize(i);
 
-      // walk adjacency list to find neighboring faces
-      const int adjCount = adjacencyVert_.count[vertex];
-      for (int q = 0; q < adjCount; ++q)
+      for (int k = 0; k < nCorners; ++k)
       {
-        int adjFace = adjacencyVert_.getAdj(vertex, q);
+        //        int vertex = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+        int vertex = getInputIndex(i, k, inputIDPos_);
+        int adjIdx = adjacencyVert_.start[vertex] + adjacencyVert_.count[vertex]++;
 
-        // add to map, taking care of duplicate entries
-        if (adjFace != i)
-        {
-//          faceMap[adjFace] = 1; // optimized code below
-          if (faceMap2[adjFace] != 1)
-          {
-            int adjIdx = adjacencyFace_.start[i];
-            adjIdx += nCounter++;
-
-            adjacencyFace_.buf[adjIdx] = adjFace;
-          }
-
-          faceMap2[adjFace] = 1;
-        }
+        adjacencyVert_.buf[ adjIdx ] = i;
       }
     }
 
-    /// unoptimized code
+    //////////////////////////////////////////////////////////////////////////
+    // debug version:
+    // dump computed and external adjacency for comparison
+//     dbgdumpAdjList("dbg_adjacency_mc.txt");
 // 
-//     for (std::map<int, int>::iterator it = faceMap.begin(); it != faceMap.end(); ++it)
+//     if (faceInput_->getVertexAdjCount(0) >= 0)
 //     {
-//       assert(nCounter < adjacencyFace_.count[i]);
-//       assert(adjacencyFace_.start[i] >= 0);
+//       FILE* file = 0;
+//       file = fopen("dbg_adjacency_ext.txt", "wt");
 // 
-//       int adjIdx = adjacencyFace_.start[i];
-//       adjIdx += nCounter++;
+//       if (file)
+//       {
+//         fprintf(file, "vertex-adjacency: \n");
+//         for (int i = 0; i < input_[inputIDPos_].count; ++i)
+//         {
+//           // sorting the adjacency list for easy comparison of adjacency input
+//           int count = faceInput_->getVertexAdjCount(i);
 // 
-//       adjacencyFace_.buf[adjIdx] = it->first;
+//           std::vector<int> sortedList(count);
+//           for (int k = 0; k < count; ++k)
+//             sortedList[k] = faceInput_->getVertexAdjFace(i, k);
+// 
+//           std::sort(sortedList.begin(), sortedList.end());
+// 
+//           for (int k = 0; k < count; ++k)
+//             fprintf(file, "adj[%d][%d] = %d\n", i, k, sortedList[k]);
+//         }
+// 
+// 
+//         fclose(file);
+//       }
 //     }
-
-//    faceMap.clear();
-
-    // optimized code, replacing faceMap.clear() :
-    for (int k = 0; k < adjacencyFace_.getCount(i); ++k)
-    {
-      faceMap2[adjacencyFace_.getAdj(i, k)] = -1;
-    }
-
+    
   }
+    
 }
 
 
-void MeshCompiler::setVertices( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/ )
+void MeshCompiler::setVertices( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/, GLuint _fmt, int _elementSize )
 {
-  setAttribVec(inputIDPos_, _num, _data, _stride, _internalCopy);
+  setAttribVec(inputIDPos_, _num, _data, _stride, _internalCopy, _fmt, _elementSize);
 }
 
-void MeshCompiler::setNormals( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/ )
+void MeshCompiler::setNormals( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/, GLuint _fmt, int _elementSize )
 {
-  setAttribVec(inputIDNorm_, _num, _data, _stride, _internalCopy);
+  setAttribVec(inputIDNorm_, _num, _data, _stride, _internalCopy, _fmt, _elementSize);
 }
 
-void MeshCompiler::setTexCoords( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/ )
+void MeshCompiler::setTexCoords( int _num, const void* _data, int _stride, bool _internalCopy /*= false*/, GLuint _fmt, int _elementSize )
 {
-  setAttribVec(inputIDTexC_, _num, _data, _stride, _internalCopy);
+  setAttribVec(inputIDTexC_, _num, _data, _stride, _internalCopy, _fmt, _elementSize);
 }
 
 
-void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _stride, bool _internalCopy /*= false*/)
+void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _stride, bool _internalCopy /*= false*/, GLuint _fmt, int _elementSize)
 {
   if (_attrIdx < 0)
     return;
@@ -319,6 +233,7 @@ void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _
 
   if (_internalCopy)
   {
+    delete [] inbuf->internalBuf;
     inbuf->internalBuf = new char[size * _num];
     inbuf->data = inbuf->internalBuf;
 
@@ -343,10 +258,247 @@ void MeshCompiler::setAttribVec(int _attrIdx, int _num, const void* _data, int _
     delete [] inbuf->internalBuf;
     inbuf->internalBuf = 0;
   }
+
+
+  inbuf->fmt = _fmt;
+  inbuf->elementSize = _elementSize;
 }
 
+void MeshCompiler::WeldList::add(const int _face, const int _corner)
+{
+  const int stride = meshComp->getVertexDeclaration()->getVertexStride();
+
+  // pointer address to vertex data
+  char* vtx0 = workBuf + stride * list.size();
+  char* vtx1 = workBuf;
+
+  // query vertex data
+  meshComp->getInputFaceVertexData(_face, _corner, vtx0);
+
+  bool matched = false;
+
+  // search for same vertex that is referenced already
+//   for ( std::list< WeldListEntry >::iterator it = list.begin();
+//     it != list.end() && !matched; ++it )
+  for (size_t i = 0; i < list.size() && !matched; ++i)
+  {
+    WeldListEntry* it = &list[i];
+    // query referenced vertex data
+//    meshComp->getInputFaceVertexData(it->refFaceId, it->refCornerId, vtx1);
+
+    // compare vertices
+    if (cmpFunc->equalVertex(vtx0, vtx1, meshComp->getVertexDeclaration()))
+    {
+      // found duplicate vertex
+      // -> remap index data s.t. only one these two vertices is referenced
+
+      WeldListEntry e;
+      e.faceId = _face; e.cornerId = _corner;
+      e.refFaceId = it->refFaceId; e.refCornerId = it->refCornerId;
+
+      list.push_back(e);
+
+      matched = true;
+    }
+
+    vtx1 += stride;
+  }
+
+  // unreferenced vertex
+  if (!matched)
+  {
+    WeldListEntry e;
+    e.faceId = _face; e.cornerId = _corner;
+    e.refFaceId = _face; e.refCornerId = _corner;
+
+    list.push_back(e);
+  }
+
+}
+
+void MeshCompiler::weldVertices()
+{
+  const int numVerts = input_[inputIDPos_].count;
+
+  // clear weld map
+  vertexWeldMapFace_.resize(numIndices_, -1);
+  vertexWeldMapCorner_.resize(numIndices_, 0xff);
+
+  // alloc buffer to query vertex data
+  int maxAdjCount = 0;
+  for (int i = 0; i < numVerts; ++i)
+  {
+    const int n = getAdjVertexFaceCount(i);
+    maxAdjCount = std::max(n, maxAdjCount);
+  }
+
+  // OPTIMIZATION: Now the vertex compare buffer works as a vertex cache, storing interpreted vertex data.
+  //  Thus, each vertex has to be interpreted only once ( when it gets inserted into the welding list )
+  char* vtxCompBuf = new char[decl_.getVertexStride() * (maxAdjCount + 1)];
+
+  WeldList weldList;
+  weldList.meshComp = this;
+  weldList.cmpFunc = vertexCompare_;
+  weldList.workBuf = vtxCompBuf;
+
+  weldList.list.reserve(maxAdjCount);
+
+  for (int i = 0; i < numVerts; ++i)
+  {
+    // OPTIMIZATION: Moved constructor/destructor of WeldList out of for-loop
+    // Create welding list for each vertex.
+    weldList.list.clear();
+
+    // Search for candidates in adjacent faces
+    for (int k = 0; k < getAdjVertexFaceCount(i); ++k)
+    {
+      const int adjFace = getAdjVertexFace(i, k);
+
+      // find corner id of adj face
+      int adjCornerId = -1;
+      for (int m = 0; m < getFaceSize(adjFace); ++m)
+      {
+//        int adjVertex = faceInput_->getSingleFaceAttr(adjFace, m, inputIDPos_);
+        const int adjVertex = getInputIndex(adjFace, m, inputIDPos_);
+        
+        if (adjVertex == i)
+        {
+          adjCornerId = m;
+          break;
+        }
+      }
+
+      assert(adjCornerId != -1);
 
 
+      // check for existing entry
+      const int weldMapOffset = getInputFaceOffset(adjFace) + adjCornerId;
+      
+      if (vertexWeldMapFace_[weldMapOffset] >= 0)
+        continue; // skip
+
+      weldList.add(adjFace, adjCornerId);
+    }
+
+
+    // apply local WeldList of a vertex to global weld map
+
+//     for (std::list< WeldListEntry >::iterator it = weldList.list.begin();
+//       it != weldList.list.end();  ++ it)
+    for (size_t e = 0; e < weldList.list.size(); ++e)
+    {
+      const WeldListEntry* it = &weldList.list[e];
+      const int weldMapOffset = getInputFaceOffset(it->faceId) + it->cornerId;
+
+      if (vertexWeldMapFace_[weldMapOffset] >= 0)
+        continue; // skip
+
+      // store in map
+      vertexWeldMapFace_[weldMapOffset] = it->refFaceId;
+      vertexWeldMapCorner_[weldMapOffset] = it->refCornerId;
+    }
+  }
+
+
+  // -------------------------------------------------------------
+  // Alternative method that avoids iterating over adjacency list at cost of higher memory load
+  // Could not measure any noticeable difference in run-time performance.
+// 
+//   std::vector< std::vector< std::pair<int,int> > > VertexColMap;
+//   VertexColMap.resize(numVerts);
+// 
+//   for (int i = 0; i < numVerts; ++i)
+//     VertexColMap[i].reserve( getAdjVertexFaceCount(i) );
+// 
+//   for (int i = 0; i < numFaces_; ++i)
+//   {
+//     for (int k = 0; k < getFaceSize(i); ++k)
+//     {
+//       int v = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+// 
+//       VertexColMap[v].push_back( std::pair<int,int>(i,k) );
+//     }
+//   }
+// 
+//   for (int i = 0; i < numVerts; ++i)
+//   {
+//     // Create welding list for each vertex.
+//     WeldList weldList;
+//     weldList.meshComp = this;
+//     weldList.cmpFunc = vertexCompare_;
+//     weldList.workBuf = vtxCompBuf;
+// 
+//     for (int k = 0; k < VertexColMap[i].size(); ++k)
+//       weldList.add(VertexColMap[i][k].first, VertexColMap[i][k].second);
+// 
+//     // apply local WeldList of a vertex to global weld map
+// 
+// //     for (std::list< WeldListEntry >::iterator it = weldList.list.begin();
+// //       it != weldList.list.end();  ++ it)
+//     for (size_t e = 0; e < weldList.list.size(); ++e)
+//     {
+//       const WeldListEntry* it = &weldList.list[e];
+//       const int weldMapOffset = getInputFaceOffset(it->faceId) + it->cornerId;
+// 
+// //      if (vertexWeldMap_[weldMapOffset].first >= 0)
+//       if (vertexWeldMapFace_[weldMapOffset] >= 0)
+//         continue; // skip
+// 
+//       // store in map
+// //      vertexWeldMap_[weldMapOffset] = std::pair<int, int> ( it->refFaceId, it->refCornerId );
+//       vertexWeldMapFace_[weldMapOffset] = it->refFaceId;
+//       vertexWeldMapCorner_[weldMapOffset] = it->refCornerId;
+//     }
+//   }
+//   // -------------------------------------------------------------
+
+
+  // fix incomplete welding map (isolated vertices)
+  fixWeldMap();
+
+  delete [] vtxCompBuf;
+}
+
+void MeshCompiler::fixWeldMap()
+{
+  for (int i = 0; i < numFaces_; ++i)
+  {
+    const int fsize = getFaceSize(i);
+    for (int k = 0; k < fsize; ++k)
+    {
+      const int weldMapOffset = getInputFaceOffset(i) + k;
+
+      if (vertexWeldMapFace_[weldMapOffset] < 0)
+      {
+        vertexWeldMapFace_[weldMapOffset] = i;
+        vertexWeldMapCorner_[weldMapOffset] = k;
+      }
+    }
+  }
+}
+
+void MeshCompiler::findIsolatedVertices()
+{
+  const int nVerts = input_[inputIDPos_].count;
+
+  numIsolatedVerts_ = 0;
+  // For each vertex check if there exists a reference in the splitting list. We have found an isolated vertex if there is no reference.
+  //  Checking the vertex-face adjacency count is also possible to detect isolated vertices.
+
+  for (int i = 0; i < nVerts; ++i)
+  {
+    if (splitter_->isIsolated(i))
+      ++numIsolatedVerts_;
+  }
+
+  isolatedVertices_.clear();
+  isolatedVertices_.reserve(numIsolatedVerts_);
+  for (int i = 0; i < nVerts; ++i)
+  {
+    if (splitter_->isIsolated(i))
+      isolatedVertices_.push_back(i);
+  }
+}
 
 void MeshCompiler::splitVertices()
 {
@@ -380,22 +532,31 @@ void MeshCompiler::splitVertices()
 
   */
 
-  // build internal face-offset table for storing interleaved index buffer
-  int curOffset = 0;
-  for (int i = 0; i < numFaces_; ++i)
+  const int numPositions = input_[inputIDPos_].count;
+
+  // estimate number of splits
+  int estimatedSplitCount = 0;
+
+  for (int i = 0; i < numAttributes_; ++i)
   {
-    faceStart_[i] = curOffset;
+    if (i != inputIDPos_)
+    {
+      if (input_[i].count > numPositions)
+      {
+        const int diff = input_[i].count - numPositions;
 
-    int fsize = getFaceSize(i);
-    curOffset += fsize;
-
-    maxFaceCorners_ = std::max((int)maxFaceCorners_, fsize);
+        estimatedSplitCount = diff * ( (estimatedSplitCount > 0) ? estimatedSplitCount : 1);
+      }
+    }
   }
+
+  estimatedSplitCount = int(float(estimatedSplitCount) * 1.2f);
 
   delete splitter_;
   splitter_ = new VertexSplitter(decl_.getNumElements(),
-                                 input_[inputIDPos_].count,
-                                 adjacencyVert_.bufSize);
+                                 numPositions,
+                                 numPositions + estimatedSplitCount,
+                                 0.0f);
 
   faceBufSplit_.resize(numIndices_, -1);
 
@@ -409,16 +570,62 @@ void MeshCompiler::splitVertices()
     {
       int vertex[16];
 
-      getInputFaceVertex(i, k, vertex);
+
+      getInputFaceVertex_Welded(i, k, vertex);
 
       // split vertices by index data only
       // value of position, normal etc. are not considered
-      int idx = splitter_->split(vertex);
+      const int idx = splitter_->split(vertex);
 
       // handle index storage
       setInputIndexSplit(i, k, idx);
     }
   }
+
+
+  // Fix splitting list if there are isolated vertices in between.
+  // Isolated vertices currently occupy spots in in the interleaved vertex buffer.
+  // -> Remove them from the vbo.
+  findIsolatedVertices();
+
+  if (numIsolatedVerts_ > 0)
+  {
+    // create table that stores how many isolated vertices have been encountered up to each vertex
+    std::vector<int> IsoFix(numPositions, 0);
+
+    int fixIndex = 0;
+    for (int i = 0; i < numPositions; ++i)
+    {
+      if (splitter_->isIsolated(i))
+        fixIndex--;
+
+      IsoFix[i] = fixIndex;
+    }
+
+    numDrawVerts_ = 0;
+
+    // apply index fixing table
+    for (int i = 0; i < numFaces_; ++i)
+    {
+      const int fsize = getFaceSize(i);
+      for (int k = 0; k < fsize; ++k)
+      {
+        // get vertex position id
+        int vertex[16];
+        getInputFaceVertex_Welded(i, k, vertex);
+
+        // fix interleaved index
+        int idx = getInputIndexSplit(i, k);
+        idx += IsoFix[vertex[0]];
+        setInputIndexSplit(i, k, idx);
+      }
+    }
+  }
+
+
+//  assert(numDrawVerts_ == splitter_->numVerts);
+
+// std::cout << "VertexSplitter: num splits: " << (splitter_->numVerts - input_[inputIDPos_].count) <<" num resizes " << splitter_->dbg_numResizes << std::endl;
 }
 
 
@@ -436,51 +643,116 @@ void MeshCompiler::forceUnsharedFaceVertex()
 
 
   std::vector<int> sharedVertices;
-  sharedVertices.resize(maxFaceCorners_);
+  sharedVertices.resize(maxFaceSize_);
 
   std::vector<int> tmpFaceVerts; // used for face rotation-swap
-  tmpFaceVerts.resize(maxFaceCorners_);
+  tmpFaceVerts.resize(maxFaceSize_);
 
   faceRotCount_.resize(numFaces_, 0);
+
+  int numInitialVerts = numDrawVerts_;
+  char* VertexUsed = new char[numDrawVerts_];
+  memset(VertexUsed, 0, sizeof(char) * numDrawVerts_);
 
   for (int faceID = 0; faceID < numFaces_; ++faceID)
   {
     const int numCorners = getFaceSize(faceID);
-    const int numAdj = adjacencyFace_.getCount(faceID);
-
+    
     // reset shared list
-    memset(&sharedVertices[0], 0, sizeof(int) * maxFaceCorners_);
+    memset(&sharedVertices[0], 0, sizeof(int) * maxFaceSize_);
     int numShared = 0;
 
-    for (int k = 0; k < numAdj; ++k)
+//     const int numAdj = getAdjFaceFaceCount(faceID);
+//     for (int k = 0; k < numAdj; ++k)
+//     {
+//       const int adjFaceID = getAdjFaceFace(faceID, k);
+//       const int adjFaceSize = getFaceSize(adjFaceID);
+// 
+//       assert(adjFaceID >= 0);
+//       assert(adjFaceID < numFaces_);
+// 
+//       for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
+//       {
+//         if (sharedVertices[v0])
+//           continue;
+// 
+//         const int vertexID0 = getInputIndexSplit(faceID, v0);
+// 
+//         for (int v1 = 0; v1 < adjFaceSize; ++v1)
+//         {
+//           const int vertexID1 = getInputIndexSplit(adjFaceID, v1);
+// 
+//           if (vertexID0 == vertexID1)
+//           {
+//             if (!sharedVertices[v0])
+//             {
+//               sharedVertices[v0] = true;
+//               ++numShared;
+//               break;
+//             }
+//           }
+//         }
+//       }
+//     }
+
+//     for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
+//     {
+//       if (sharedVertices[v0])
+//         continue;
+// 
+//       const int pos0 = getInputIndex(faceID, v0, inputIDPos_);
+//       const int vertexID0 = getInputIndexSplit(faceID, v0);
+// 
+//       if (VertexUsed[vertexID0])
+//       {
+//         sharedVertices[v0] = true;
+//         ++numsh
+//       }
+// 
+//       // walk adjacency list of each vertex to find neighboring faces
+//       const int adjCount = getAdjVertexFaceCount(pos0);
+//       for (int q = 0; q < adjCount && !sharedVertices[v0]; ++q)
+//       {
+//         const int adjFaceID = getAdjVertexFace(pos0, q);
+// 
+//         if (adjFaceID != faceID)
+//         {
+//           const int adjFaceSize = getFaceSize(adjFaceID);
+// 
+//           for (int v1 = 0; v1 < adjFaceSize; ++v1)
+//           {
+//             const int vertexID1 = getInputIndexSplit(adjFaceID, v1);
+// 
+//             int pos1 = getInputIndex(adjFaceID, v1, inputIDPos_);
+// 
+//             if (vertexID0 == vertexID1)
+//             {
+//               if (!sharedVertices[v0])
+//               {
+//                 sharedVertices[v0] = true;
+//                 ++numShared;
+//                 break;
+//               }
+//             }
+//           }
+// 
+//         }
+//       }
+//     }
+
+    for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
     {
-      int adjFaceID = adjacencyFace_.getAdj(faceID, k);
+      if (sharedVertices[v0])
+        continue;
 
-      assert(adjFaceID >= 0);
-      assert(adjFaceID < numFaces_);
+      const int pos0 = getInputIndex(faceID, v0, inputIDPos_);
+      const int vertexID0 = getInputIndexSplit(faceID, v0);
 
-      for (int v0 = 0; v0 < numCorners && numShared < numCorners; ++v0)
+      if (vertexID0 >= numInitialVerts || VertexUsed[vertexID0])
       {
-        if (sharedVertices[v0])
-          continue;
-
-        int vertexID0 = getInputIndexSplit(faceID, v0);
-
-        for (int v1 = 0; v1 < getFaceSize(adjFaceID); ++v1)
-        {
-          int vertexID1 = getInputIndexSplit(adjFaceID, v1);
-
-          if (vertexID0 == vertexID1)
-          {
-            if (!sharedVertices[v0])
-            {
-              sharedVertices[v0] = true;
-              ++numShared;
-            }
-          }
-        }
+        sharedVertices[v0] = true;
+        ++numShared;
       }
-
     }
 
 
@@ -489,9 +761,9 @@ void MeshCompiler::forceUnsharedFaceVertex()
       // worst-case: all vertices shared with neighbors
 
       // add split vertex to end of vertex buffer, which is used exclusively by the current face
-      // current vertex count is stored in splitter_->numVerts
+      // current vertex count is stored in numDrawVerts_
 
-      setInputIndexSplit(faceID, 0, splitter_->numVerts++);
+      setInputIndexSplit(faceID, 0, numDrawVerts_);
     }
     else if (sharedVertices[0])
     {
@@ -514,7 +786,11 @@ void MeshCompiler::forceUnsharedFaceVertex()
       for (; rotCount < numCorners; ++rotCount)
       {
         if (!sharedVertices[rotCount % numCorners])
+        {
+          if (tmpFaceVerts[rotCount] < numInitialVerts)
+            VertexUsed[tmpFaceVerts[rotCount]] = 1;
           break;
+        }
       }
 
       assert(rotCount < numCorners);
@@ -527,18 +803,56 @@ void MeshCompiler::forceUnsharedFaceVertex()
       for (int i = 0; i < numCorners; ++i)
         setInputIndexSplit(faceID, (i + rotCount)%numCorners, tmpFaceVerts[i]);
     }
-    // best-case: unshared vertex at corner 0
+    else
+    {
+      // best-case: unshared vertex at corner 0
+      const int idx = getInputIndexSplit(faceID, 0);
+      if (idx < numInitialVerts)
+        VertexUsed[idx] = 1;
+    }
 
   }
 
+  delete [] VertexUsed;
+
 }
 
-void MeshCompiler::getInputFaceVertex( int i, int j, int* _out ) const
+void MeshCompiler::getInputFaceVertex( const int _face, const int _corner, int* _out ) const
 {
   for (unsigned int k = 0; k < decl_.getNumElements(); ++k)
-    _out[k] = getInputIndex(i, j, k);
+    _out[k] = getInputIndex(_face, _corner, k);
 }
 
+void MeshCompiler::getInputFaceVertex_Welded( int i, int j, int* _out ) const
+{
+  int face = i;
+  int corner = j;
+
+  // apply welding map if available
+  if (!vertexWeldMapFace_.empty())
+  {
+    const int offset = getInputFaceOffset(i);
+
+    face = vertexWeldMapFace_[offset + j];
+    corner = vertexWeldMapCorner_[offset + j];
+  }
+
+  for (unsigned int k = 0; k < decl_.getNumElements(); ++k)
+    _out[k] = getInputIndex(face, corner, k);
+}
+
+void MeshCompiler::getInputFaceVertexData( int _faceId, int _corner, void* _out ) const
+{
+  for (int i = 0; i < numAttributes_; ++i)
+  {
+    const VertexElement* el = decl_.getElement(i);
+
+//    int idx = faceInput_->getSingleFaceAttr(_faceId, _corner, i);
+    int idx = getInputIndex(_faceId, _corner, i);
+
+    input_[i].getElementData(idx, (char*)_out + (size_t)el->pointer_, el);
+  }
+}
 
 
 
@@ -560,8 +874,13 @@ MeshCompiler::MeshCompiler(const VertexDeclaration& _decl)
   indices_ = 0;
 
   numDrawVerts_ = 0;
+  numIsolatedVerts_ = 0;
 
-  maxFaceCorners_ = 0;
+  maxFaceSize_ = 0;
+  constantFaceSize_ = false;
+
+  provokingVertex_ = -1;
+  provokingVertexSetByUser_ = false;
 
   // search for convenient attribute indices
   numAttributes_ = decl_.getNumElements();
@@ -579,6 +898,10 @@ MeshCompiler::MeshCompiler(const VertexDeclaration& _decl)
     default: break;
     }
   }
+
+
+  vertexCompare_ = &defaultVertexCompare;
+
 }
 
 MeshCompiler::~MeshCompiler()
@@ -594,21 +917,16 @@ MeshCompiler::~MeshCompiler()
 }
 
 
-int MeshCompiler::getInputIndex( const int _face, const int _corner, const int _attrId ) const
-{
-  return faceInput_->getSingleFaceAttr(_face, _corner, _attrId);
-}
-
 int MeshCompiler::getInputIndexOffset( const int _face, const int _corner, const bool _rotation ) const
 {
   assert(_face >= 0);
   assert(_face < numFaces_);
 
-  int baseIdx = faceStart_.empty() ? maxFaceCorners_ * _face : faceStart_[_face];
+  const int baseIdx = faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face];
 //  int fsize = faceCorners_.empty() ? maxFaceCorners_ : faceCorners_[_face];
-  int fsize = getFaceSize(_face);
+  const int fsize = getFaceSize(_face);
 
-  int rotCount = faceRotCount_.empty() && _rotation ? 0 : faceRotCount_[_face];
+  const int rotCount = faceRotCount_.empty() && _rotation ? 0 : faceRotCount_[_face];
 
 
   assert(baseIdx >= 0);
@@ -622,7 +940,7 @@ int MeshCompiler::getInputIndexOffset( const int _face, const int _corner, const
 
 void MeshCompiler::setInputIndexSplit( const int _face, const int _corner, const int _val )
 {
-  int offset = getInputIndexOffset(_face, _corner);
+  const int offset = getInputIndexOffset(_face, _corner);
 
   // keep track of number of vertices after splitting process
   if (_val >= numDrawVerts_)
@@ -633,7 +951,7 @@ void MeshCompiler::setInputIndexSplit( const int _face, const int _corner, const
 
 int MeshCompiler::getInputIndexSplit( const int _face, const int _corner ) const
 {
-  int offset = getInputIndexOffset(_face, _corner);
+  const int offset = getInputIndexOffset(_face, _corner);
 
   return faceBufSplit_[offset];
 }
@@ -696,12 +1014,18 @@ MeshCompiler::VertexSplitter::VertexSplitter(int _numAttribs,
   if (_numWorstCase <= 0)
     _numWorstCase = int(float(_numVerts) * (_estBufferIncrease + 1.0f));
 
-  int maxCount = (_numAttribs + 1) * _numWorstCase;
+  const int maxCount = (_numAttribs + 1) * (_numWorstCase + 1);
 
   // alloc split list and invalidate
 //   splits = new int[maxCount];
 //   memset(splits, -1, maxCount * sizeof(int) );
+//  splits.resize(_numWorstCase, -1);
   splits.resize(maxCount, -1);
+
+//    numVerts = 0;
+  
+  dbg_numResizes = 0;
+  dbg_numSplits = 0;
 }
 
 
@@ -726,6 +1050,8 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
 
     // mark as referenced (next = this)
     setNext(pos, pos);
+//         setNext(pos, numVerts);
+//         pos = numVerts++;
   }
   else
   {
@@ -734,21 +1060,23 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
     int bSearchSplit = 1;
 
     // search vertex in split list
-    while (pos >= 0&& bSearchSplit)
+    while (pos >= 0 && bSearchSplit)
     {
       // is vertex already in split list?
       if (!memcmp(vertex, getAttribs(pos), numAttribs * sizeof(int)))
       {
         // found! reuse index
+//        return next < pos ? next : pos;
         return pos;
       }
       else
       {
         next = getNext(pos);
         
+        if (next < 0) break;    // end of list
+//        if (next <= pos) break; // avoid loop
         if (next == pos) break; // avoid loop
 
-        if (next < 0) break;    // end of list
         pos = next;             // go to next entry
       }
     }
@@ -761,6 +1089,8 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
     setAttribs(newID, vertex);
 
     pos = newID;
+
+    ++dbg_numSplits;
   }
 
   return pos;
@@ -768,55 +1098,70 @@ int MeshCompiler::VertexSplitter::split(int* vertex)
 
 
 
-int MeshCompiler::VertexSplitter::getNext(int id)
+int MeshCompiler::VertexSplitter::getNext(const int id)
 {
   assert(id >= 0);
 
-  int entryIdx = id * (1 + numAttribs);
+  const int entryIdx = id * (1 + numAttribs);
 
   // need more space?
   if (entryIdx >= (int)splits.size())
+  {
     splits.resize(entryIdx + numAttribs * 100, -1);
+    ++dbg_numResizes;
+  }
 
   return splits[entryIdx];
 }
 
-void MeshCompiler::VertexSplitter::setNext(int id, int next)
+void MeshCompiler::VertexSplitter::setNext(const int id, const int next)
 {
   assert(id >= 0);
   
-  int entryIdx = id * (1 + numAttribs);
+  const int entryIdx = id * (1 + numAttribs);
 
   // need more space?
   if (entryIdx >= (int)splits.size())
+  {
     splits.resize(entryIdx + numAttribs * 100, -1);
+    ++dbg_numResizes;
+  }
 
   splits[entryIdx] = next;
 }
 
-int* MeshCompiler::VertexSplitter::getAttribs(int id)
+int* MeshCompiler::VertexSplitter::getAttribs(const int id)
 {
   assert(id >= 0);
 
-  int entryIdx = id * (1 + numAttribs) + 1;
+  const int entryIdx = id * (1 + numAttribs) + 1;
 
   // need more space?
   if (entryIdx + numAttribs >= (int)splits.size())
+  {
     splits.resize(entryIdx + numAttribs * 100, -1);
+    ++dbg_numResizes;
+  }
 
   return &splits[0] + entryIdx;
 }
 
-void MeshCompiler::VertexSplitter::setAttribs( int id, int* attr )
+void MeshCompiler::VertexSplitter::setAttribs( const int id, int* attr )
 {
   memcpy(getAttribs(id), attr, numAttribs * sizeof(int));
+}
+
+bool MeshCompiler::VertexSplitter::isIsolated( const int vertexPosID )
+{
+  return getNext(vertexPosID) < 0;
 }
 
 
 
 MeshCompiler::VertexElementInput::VertexElementInput()
 : internalBuf(0), data(0),
-  count(0), stride(0), attrSize(0)
+  count(0), stride(0), attrSize(0),
+  fmt(0), elementSize(-1)
 {
 }
 
@@ -855,9 +1200,9 @@ void MeshCompiler::triangulate()
   for (int sortFaceID = 0; sortFaceID < numFaces_; ++sortFaceID)
   {
     // get original face id
-    int faceID = faceSortMap_.empty() ? sortFaceID : faceSortMap_[sortFaceID];
+    const int faceID = faceSortMap_.empty() ? sortFaceID : faceSortMap_[sortFaceID];
 
-    int faceSize = getFaceSize(faceID);
+    const int faceSize = getFaceSize(faceID);
 
     // save face index mapping
     triToSortFaceMap_[triCounter++] = sortFaceID;
@@ -876,6 +1221,24 @@ void MeshCompiler::triangulate()
       triIndexBuffer_[indexCounter++] = getInputIndexSplit(faceID, k-1);
       triIndexBuffer_[indexCounter++] = getInputIndexSplit(faceID, k);
     }
+
+  }
+
+
+  // rotate tris such that the unshared face vertex is at the wanted provoking position of each triangle
+
+  if (provokingVertex_ >= 0)
+  {
+    for (int i  = 0; i < numTris_; ++i)
+    {
+      for (int k = 0; k < 3 - provokingVertex_; ++k)
+      {
+        const int tmp =  triIndexBuffer_[i*3];
+        triIndexBuffer_[i*3] = triIndexBuffer_[i*3 + 1];
+        triIndexBuffer_[i*3 + 1] = triIndexBuffer_[i*3 + 2];
+        triIndexBuffer_[i*3 + 2] = tmp;
+      }
+    }
   }
 
 
@@ -892,9 +1255,9 @@ void MeshCompiler::triangulate()
 
   for (int i = 0; i < numTris; ++i)
   {
-    int faceID = mapTriToInputFace(i);
+    const int faceID = mapTriToInputFace(i);
 
-    int faceGroup = getFaceGroup(faceID);
+    const int faceGroup = getFaceGroup(faceID);
     Subset* sub = &subsets_[findGroupSubset(faceGroup)];
 
     ++sub->numTris;
@@ -925,7 +1288,7 @@ void MeshCompiler::sortFacesByGroup()
   // initialize GroupIDs map
   for (int face = 0; face < numFaces_; ++face)
   {
-    int texID = getFaceGroup(face);
+    const int texID = getFaceGroup(face);
 
     if (GroupIDs.find(texID) == GroupIDs.end())
       GroupIDs[texID] = face;
@@ -969,7 +1332,7 @@ void MeshCompiler::sortFacesByGroup()
       // - create face sorting map:  map[sortFaceID] = faceID
       for (int k = it->second; k < numFaces_; ++k)
       {
-        int texID = getFaceGroup(k);
+        const int texID = getFaceGroup(k);
 
         if (texID == subsets_[i].id)
         {
@@ -1001,7 +1364,7 @@ void MeshCompiler::optimize()
     const unsigned int StartTri = pSubset->startIndex/3;
     for (unsigned int k = 0; k < pSubset->numTris; ++k)
     {
-      unsigned int SrcTri = copt.GetTriangleMap()[k];
+      const unsigned int SrcTri = copt.GetTriangleMap()[k];
       triOptMap_[k + StartTri] = SrcTri + StartTri;
     }
 
@@ -1013,13 +1376,13 @@ void MeshCompiler::optimize()
 
   GPUCacheOptimizer::OptimizeVertices(numTris_, numDrawVerts_, 4, indices_, vertexOptMap);
 
-  // apply vertexOptMap on index buffer
+  // apply vertexOptMap to index buffer
 
   for (int i = 0; i < numTris_ * 3; ++i)
     indices_[i] = vertexOptMap[indices_[i]];
 
 
-  // apply opt-map on current vertex-map
+  // apply opt-map to current vertex-map
 
   for (int i = 0; i < numFaces_; ++i)
   {
@@ -1045,9 +1408,12 @@ void MeshCompiler::optimize()
 
 
 
-void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
+void MeshCompiler::build(bool _weldVertices, bool _optimizeVCache, bool _needPerFaceAttribute, bool _keepIsolatedVertices)
 {
-  // array allocation/copy data/validation check etc.
+  // track memory report for profiling/debugging
+  const bool dbg_MemProfiling = false;
+
+  // array allocation/copy data/validation checks etc.
   prepareData();
 
   /*
@@ -1067,22 +1433,61 @@ void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
   faceBufSplit_ should not be used directly,
   use get/setInputIndexSplit for the mapping between interleaved indices and face vertices.
   */
-  
-  // Adjacency info can be used to predict the split count [optional]
-  if (_needPerFaceAttribute)
+
+  if (_weldVertices)
+  {
+    if (dbg_MemProfiling)
+      std::cout << "computing adjacency.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
     computeAdjacency();
+
+    if (dbg_MemProfiling)
+      std::cout << "vertex welding.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
+    weldVertices();
+
+    // delete adjacency list (high memory cost)
+    adjacencyVert_.clear();
+  }
  
+  if (dbg_MemProfiling)
+    std::cout << "vertex splitting.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
   splitVertices();
+
+  if (dbg_MemProfiling)
+    std::cout << "splitting done.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
+  // delete splitting and welding map ( high mem cost and is no longer needed after splitting )
+  {
+    delete splitter_; splitter_ = 0;
+
+    {
+      std::vector< int > emptyVec;
+      vertexWeldMapFace_.swap(emptyVec);
+    } {
+      std::vector< unsigned char > emptyVec;
+      vertexWeldMapCorner_.swap(emptyVec);
+    }
+  }
 
   if (_needPerFaceAttribute)
   {
-    // The first vertex of each face shall not be referenced by any other face.
+    if (dbg_MemProfiling)
+      std::cout << "force unshared vertex.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
+    // The provoking vertex of each face shall not be referenced by any other face.
     // This vertex can then be used to store per-face data
     
+    // default provoking position 2
+    if (provokingVertex_ < 0)
+      provokingVertex_ = 2;
+    
+    provokingVertex_ = provokingVertex_ % 3;
+
     // Adjacency info needed here
     forceUnsharedFaceVertex();
   }
-
   
   /*
   2. step
@@ -1094,6 +1499,8 @@ void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
    triIndexBuffer_  (updated)
    triToSortFaceMap_      (updated)
   */
+  if (dbg_MemProfiling)
+    std::cout << "sorting by mat.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
   sortFacesByGroup();
 
 
@@ -1121,6 +1528,8 @@ void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
     vertexBuffer[dstID].normal = inputVerts_[vertexAttribs[NORMAL]];
     ...
   */
+  if (dbg_MemProfiling)
+    std::cout << "triangulate.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
   triangulate();
 
 
@@ -1140,12 +1549,50 @@ void MeshCompiler::build(bool _optimizeVCache, bool _needPerFaceAttribute)
    triOptMap
   */
   if (_optimizeVCache)
+  {
+    if (dbg_MemProfiling)
+      std::cout << "optimizing.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
     optimize();
+  }
   else if (!triIndexBuffer_.empty())
-    indices_ = &triIndexBuffer_[0];
+  {
+    indices_ = new int[triIndexBuffer_.size()];
+    memcpy(indices_, &triIndexBuffer_[0], triIndexBuffer_.size() * sizeof(int));
+  }
 
-  createVertexMap();
+  if (dbg_MemProfiling)
+    std::cout << "creating maps.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
 
+  // delete temporary tri index buffer (use indices_ instead)
+  {
+    std::vector< int > emptyVec;
+    triIndexBuffer_.swap(emptyVec);
+  }
+
+  createVertexMap(_keepIsolatedVertices);
+  createFaceMap();
+
+  // delete intermediate mappings
+  {
+    std::vector< int > emptyVec;
+    triToSortFaceMap_.swap(emptyVec);
+  } {
+    std::vector< int > emptyVec;
+    triOptMap_.swap(emptyVec);
+  } {
+    std::vector< int > emptyVec;
+    faceSortMap_.swap(emptyVec);
+  }
+
+  if (dbg_MemProfiling)
+    std::cout << "finished.., memusage = " << (getMemoryUsage() /(1024 * 1024)) << std::endl;
+
+
+  // debugging
+//   dbgdump("../../../dbg_meshcomp.txt");
+//   dbgdumpObj("../../../dbg_meshcomp.obj");
+//   dbgVerify("../../../dbg_maps.txt");
 }
 
 
@@ -1170,7 +1617,7 @@ void MeshCompiler::setAttrib( int _attrIdx, int _v, const void* _data )
 
 
 
-int MeshCompiler::mapTriToInputFace( int _tri )
+int MeshCompiler::mapTriToInputFace( const int _tri ) const
 {
   assert(_tri >= 0);
   assert(_tri < numTris_);
@@ -1191,7 +1638,7 @@ int MeshCompiler::getFaceGroup( int _faceID ) const
   if (faceGroupIDs_.empty())
     return -1;
 
-  return faceGroupIDs_[_faceID];
+  return (int)faceGroupIDs_[_faceID];
 }
 
 int MeshCompiler::findGroupSubset( int _groupID )
@@ -1204,7 +1651,311 @@ const MeshCompiler::Subset* MeshCompiler::getSubset( int _i ) const
   return &subsets_[_i];
 }
 
+std::string MeshCompiler::vertexToString( const void* v ) const
+{
+  std::stringstream str;
 
+  for (int i = 0; i < (int)decl_.getNumElements(); ++i)
+  {
+    const VertexElement* el = decl_.getElement(i);
+
+    str << el->shaderInputName_ << " [";
+
+    const char* data = (const char*)v + (size_t)el->pointer_;
+
+    switch ( el->type_ )
+    {
+    case GL_DOUBLE:
+      {
+        const double* d0 = (const double*)data;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+           str << d0[k] << ", ";
+      } break;
+
+
+    case GL_FLOAT:
+      {
+        const float* f0 = (const float*)data;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+          str << f0[k] << ", ";
+      } break;
+
+    case GL_INT:
+    case GL_UNSIGNED_INT:
+      {
+        const int* i0 = (const int*)data;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+          str << i0[k] << ", ";
+      } break;
+
+    case GL_SHORT:
+    case GL_UNSIGNED_SHORT:
+      {
+        const short* i0 = (const short*)data;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+          str << i0[k] << ", ";
+      } break;
+
+    case GL_BYTE:
+    case GL_UNSIGNED_BYTE:
+      {
+        const char* i0 = (const char*)data;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+          str << ((int)i0[k]) << ", ";
+      } break;
+
+    default: std::cerr << "MeshCompiler: vertexToString() unknown type: " << el->type_ << std::endl;
+    }
+
+
+    str << "] ";
+
+  }
+
+  return str.str();
+}
+
+bool MeshCompiler::dbgVerify(const char* _filename) const
+{
+  int numTotalErrors = 0;
+
+  FILE* file = 0;
+
+  if (_filename)
+    file = fopen(_filename, "wt");
+
+  if (file || !_filename)
+  {
+
+    // ---------------------------------------------------------------------------------------
+
+    int numErrors = 0;
+
+    // check draw_tri <-> face
+    if (file)
+      fprintf(file, "checking draw_tri <-> face mapping ..\n");
+
+    for (int face = 0; face < getNumFaces(); ++face)
+    {
+      int numTrisOfFace = 0;
+      mapToDrawTriID(face, 0, &numTrisOfFace);
+
+      for (int k = 0; k < numTrisOfFace; ++k)
+      {
+        int tri = mapToDrawTriID(face, k, 0);
+
+        int dbg_face = mapToOriginalFaceID(tri);
+        if (face != dbg_face)
+        {
+          if (file)
+            fprintf(file, "error: face %i -> (numTris: %i,  tri %i -> face %i)\n", face, numTrisOfFace, tri, dbg_face);
+          ++numErrors;
+        }
+      }
+    }
+
+    if (file)
+      fprintf(file, "%i errors found\n\n", numErrors);
+    numTotalErrors += numErrors;
+
+    // ---------------------------------------------------------------------------------------
+
+    // check input (face, corner) -> vertex id
+    if (file)
+      fprintf(file, "checking (face, corner) -> vbo by comparing vertex data ..\n");
+    numErrors = 0;
+
+    char* vtxCmpData = new char[decl_.getVertexStride() * 2];
+
+    for (int face = 0; face < getNumFaces(); ++face)
+    {
+      int fsize = getFaceSize(face);
+
+      for (int k = 0; k < fsize; ++k)
+      {
+        char* v0 = vtxCmpData;
+        char* v1 = vtxCmpData + decl_.getVertexStride();
+
+        memset(v0, 0, decl_.getVertexStride());
+        memset(v1, 0, decl_.getVertexStride());
+
+        // get input vertex
+        getInputFaceVertexData(face, k, v0);
+
+        // get output vertex
+        int vertex = mapToDrawVertexID(face, k);
+        getVertex(vertex, v1);
+
+        if (!vertexCompare_->equalVertex(v0, v1, &decl_))
+        {
+          std::string vertexData0 = vertexToString(v0);
+          std::string vertexData1 = vertexToString(v1);
+
+          if (file)
+            fprintf(file, "error: (face %i, corner %i) -> vertex %i : %s != %s\n", face, k, vertex, vertexData0.c_str(), vertexData1.c_str());
+
+          ++numErrors;
+        }
+      }
+    }
+
+    if (file)
+      fprintf(file, "%i errors found\n\n", numErrors);
+    numTotalErrors += numErrors;
+
+    numErrors = 0;
+
+    // ---------------------------------------------------------------------------------------
+
+    // check vertex id -> input (face, corner)
+    if (file)
+      fprintf(file, "checking vbo -> (face, corner) by comparing vertex data ..\n");
+    numErrors = 0;
+
+    for (int vertex = 0; vertex < getNumVertices(); ++vertex)
+    {
+      int face = 0, corner = 0;
+      int posID = mapToOriginalVertexID(vertex, face, corner);
+
+      char* v0 = vtxCmpData;
+      char* v1 = vtxCmpData + decl_.getVertexStride();
+
+      memset(v0, 0, decl_.getVertexStride());
+      memset(v1, 0, decl_.getVertexStride());
+
+      // get output vertex
+      getVertex(vertex, v0);
+
+      // get input vertex
+      if (face >= 0)
+        getInputFaceVertexData(face, corner, v1);
+      else
+      {
+        // isolated vertex
+        for (int i = 0; i < decl_.getNumElements(); ++i)
+        {
+          const VertexElement* el = decl_.getElement(i);
+          input_[i].getElementData(posID, (char*)v1 + (size_t)el->pointer_, el);
+        }
+      }
+
+      if (!vertexCompare_->equalVertex(v0, v1, &decl_))
+      {
+        std::string vertexData0 = vertexToString(v0);
+        std::string vertexData1 = vertexToString(v1);
+
+        if (file)
+          fprintf(file, "error: vertex %i -> (face %i, corner %i): %s != %s\n", vertex, face, corner, vertexData0.c_str(), vertexData1.c_str());
+        ++numErrors;
+      }
+    }
+
+    if (file)
+      fprintf(file, "%i errors found\n\n", numErrors);
+    numTotalErrors += numErrors;
+
+    numErrors = 0;
+
+    delete [] vtxCmpData;
+
+
+    // -----------------------------------------------------------
+
+    // check unshared vertex
+    if (provokingVertex_ >= 0)
+    {
+      if (file)
+        fprintf(file, "checking unshared per face vertices ..\n");
+
+      std::vector< std::map<int, int> > VertexRefs;
+      VertexRefs.resize(getNumVertices());
+
+      for (int face = 0; face < numFaces_; ++face)
+      {
+        int nTris = 0;
+        mapToDrawTriID(face, 0, &nTris);
+
+        for (int k = 0; k < nTris; ++k)
+        {
+          int tri = mapToDrawTriID(face, k, 0);
+
+          int faceVertex = getIndex(tri * 3 + provokingVertex_);
+
+          VertexRefs[faceVertex][face] = 1;
+        }
+
+      }
+
+
+      for (int i = 0; i < getNumVertices(); ++i)
+      {
+        if (VertexRefs[i].size() > 1)
+        {
+          if (file)
+          {
+            fprintf(file, "error: vertex %i is referenced by %i faces: ", i, VertexRefs[i].size());
+
+            for (std::map<int, int>::iterator it = VertexRefs[i].begin(); it != VertexRefs[i].end(); it++)
+              fprintf(file, "%d, ", it->first);
+
+            fprintf(file, "\n");
+          }
+          ++numErrors;
+        }
+      }
+
+      if (file)
+        fprintf(file, "%i errors found\n\n", numErrors);
+      numTotalErrors += numErrors;
+
+      numErrors = 0;
+
+
+      // -----------------------------------------------------------
+      // check face group sorting
+
+      if (file)
+        fprintf(file, "checking face group sorting ..\n");
+
+      for (int i = 0; i < getNumSubsets(); ++i)
+      {
+        const ACG::MeshCompiler::Subset* sub = getSubset(i);
+
+        for (int k = 0; k < (int)sub->numTris; ++k)
+        {
+          int faceID = mapToOriginalFaceID(sub->startIndex/3 + k);
+          int grID = getFaceGroup(faceID);
+
+          if (grID != sub->id)
+          {
+            if (file)
+              fprintf(file, "error: face %d with group-id %d was mapped to subset-group %d", faceID, grID, sub->id);
+
+            ++numErrors;
+          }
+
+        }
+      }
+
+      if (file)
+        fprintf(file, "%i errors found\n\n", numErrors);
+      numTotalErrors += numErrors;
+
+      numErrors = 0;
+
+    }
+    
+    if (file)
+      fclose(file);
+  }
+
+  return numTotalErrors == 0;
+}
 
 void MeshCompiler::dbgdump(const char* _filename) const
 {
@@ -1225,8 +1976,26 @@ void MeshCompiler::dbgdump(const char* _filename) const
 
     fprintf(file, "faces %d\nindices %d\n", numFaces_, numIndices_);
 
+    if (!vertexWeldMapFace_.empty())
+    {
+      for (int i = 0; i < numFaces_; ++i)
+      {
+        for (int k = 0; k < getFaceSize(i); ++k)
+        {
+          int face = vertexWeldMapFace_[getInputFaceOffset(i) + k];
+          int corner = vertexWeldMapCorner_[getInputFaceOffset(i) + k];
+          fprintf(file, "vertexWeldMap_[%d, %d] = [%d, %d]\n", i, k, face, corner);
+        }
+      }
+    }
+
     for (size_t i = 0; i < faceBufSplit_.size(); ++i)
       fprintf(file, "faceBufSplit_[%d] = %d\n", (int)i, faceBufSplit_[i]);
+
+    fprintf(file, "\n\n");
+
+    for (size_t i = 0; i < faceRotCount_.size(); ++i)
+      fprintf(file, "faceRotCount_[%d] = %d\n", (int)i, faceRotCount_[i]);
 
     fprintf(file, "\n\n");
 
@@ -1267,9 +2036,20 @@ void MeshCompiler::dbgdump(const char* _filename) const
 
     fprintf(file, "\n\n");
 
-    for (std::map<int, int>::const_iterator it = subsetIDMap_.begin();
-      it != subsetIDMap_.end(); ++it)
-      fprintf(file, "subsetIDMap[%d] = %d\n", it->first, it->second);
+    for (int i = 0; i < numFaces_; ++i)
+    {
+        for (int k = 0; k < getFaceSize(i); ++k)
+          fprintf(file, "mapToDrawVertexID[%d, %d] = %d\n", i, k, mapToDrawVertexID(i, k));
+    }
+
+    fprintf(file, "\n\n");
+
+    for (int i = 0; i < getNumVertices(); ++i)
+    {
+      int f, c;
+      mapToOriginalVertexID(i, f, c);
+      fprintf(file, "mapToOriginalVertexID[%d] = [%d, %d]\n", i, f, c);
+    }
 
     fprintf(file, "\n\n");
 
@@ -1278,10 +2058,24 @@ void MeshCompiler::dbgdump(const char* _filename) const
 
     fprintf(file, "\n\n");
 
-    fprintf(file, "adjacencyFace\n");
-    adjacencyFace_.dbgdump(file);
-
     fprintf(file, "\n\n");
+
+
+    for (int i = 0; i < numFaces_; ++i)
+    {
+        for (int k = 0; k < getFaceSize(i); ++k)
+        {
+          char vtx[128];
+          getInputFaceVertexData(i, k, vtx);
+
+          float* pos = (float*)vtx;
+          float* uv = (float*)(vtx + 12);
+          float* n = (float*)(vtx + 12 + 8);
+
+          fprintf(file, "data[%d, %d] = (%f %f %f) (%f %f) (%f %f %f)\n", i, k, pos[0],pos[1],pos[2], uv[0],uv[1], n[0],n[1],n[2]);
+
+        }
+    }
 
     fclose(file);
   }
@@ -1300,12 +2094,107 @@ void MeshCompiler::AdjacencyList::dbgdump(FILE* file) const
   }
 }
 
-void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst) const
+void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, const VertexElement* _desc) const
 {
-  assert(_idx >= 0);
-  assert(_idx < count);
+  // attribute data not set by user, skip
+  if (count == 0 || !data)
+  {
+    memset(_dst, 0, attrSize);
+    return;
+  }
 
-  memcpy(_dst, data + (size_t)(_idx * stride), attrSize);
+  //   assert(_idx >= 0);
+  //   assert(_idx < count);
+
+  if (_idx < 0 || _idx >= count)
+  {
+    memset(_dst, 0, attrSize);
+    return;
+  }
+
+  const char* dataAdr = data + (size_t)(_idx * stride);
+
+  if (fmt == 0 || elementSize == -1 || fmt == _desc->type_)
+    memcpy(_dst, dataAdr, attrSize);
+  else
+  {
+    // typecast data to format in vertex buffer
+    int data_i[4] = {0,0,0,0};    // data in integer fmt
+    double data_d[4]; // data in floating point
+
+    // read data
+    for (int i = 0; i < elementSize; ++i)
+    {
+      switch (fmt)
+      {
+      case GL_FLOAT:  data_d[i] = ((const float*)dataAdr)[i];  break;
+      case GL_DOUBLE: data_d[i] = ((const double*)dataAdr)[i];  break;
+      
+      case GL_UNSIGNED_INT:
+      case GL_INT:    data_i[i] = ((const int*)dataAdr)[i];  break;
+      
+      case GL_UNSIGNED_SHORT:
+      case GL_SHORT:  data_i[i] = ((const short*)dataAdr)[i];  break;
+
+      case GL_UNSIGNED_BYTE:
+      case GL_BYTE:  data_i[i] = ((const short*)dataAdr)[i];  break;
+
+      default: std::cerr << "MeshCompiler: unknown data format - " << fmt << std::endl; break;
+      }
+    }
+
+
+    // zero mem
+    memset(_dst, 0, attrSize);
+
+    // typecast data
+    if (fmt == GL_FLOAT || fmt == GL_DOUBLE)
+    {
+      for (int i = 0; i < (int)_desc->numElements_ && i < (int)elementSize; ++i)
+      {
+        switch (_desc->type_)
+        {
+        case GL_FLOAT: ((float*)_dst)[i] = (float)data_d[i]; break;
+        case GL_DOUBLE: ((double*)_dst)[i] = (double)data_d[i]; break;
+        
+        case GL_UNSIGNED_INT:
+        case GL_INT: ((int*)_dst)[i] = (int)data_d[i]; break;
+
+        case GL_UNSIGNED_BYTE:
+        case GL_BYTE: ((char*)_dst)[i] = (char)data_d[i]; break;
+
+        case GL_UNSIGNED_SHORT:
+        case GL_SHORT: ((short*)_dst)[i] = (short)data_d[i]; break;
+
+        default: break;
+        }
+      }
+    }
+    else
+    {
+      for (int i = 0; i < (int)_desc->numElements_ && i < (int)elementSize; ++i)
+      {
+        switch (_desc->type_)
+        {
+        case GL_FLOAT: ((float*)_dst)[i] = (float)data_i[i]; break;
+        case GL_DOUBLE: ((double*)_dst)[i] = (double)data_i[i]; break;
+
+        case GL_UNSIGNED_INT:
+        case GL_INT: ((int*)_dst)[i] = (int)data_i[i]; break;
+
+        case GL_UNSIGNED_BYTE:
+        case GL_BYTE: ((char*)_dst)[i] = (char)data_i[i]; break;
+
+        case GL_UNSIGNED_SHORT:
+        case GL_SHORT: ((short*)_dst)[i] = (short)data_i[i]; break;
+
+        default: break;
+        }
+      }
+    }
+
+
+  }
 }
 
 
@@ -1363,6 +2252,358 @@ void MeshCompiler::dbgdumpObj(const char* _filename) const
   }
 }
 
+
+void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
+{
+  const int nVerts = (inputIDPos_ >= 0) ? input_[inputIDPos_].count : 0;
+  const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
+  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
+
+  
+
+  FILE* file = 0;
+
+  file = fopen(_filename, "wt");
+
+  if (file)
+  {
+    // write vertex data
+
+    for (int i = 0; i < nVerts; ++i)
+    {
+      float pos[16];
+      const VertexElement* el = decl_.getElement(inputIDPos_);
+      input_[inputIDPos_].getElementData(i, pos, el);
+
+      fprintf(file, "v %f %f %f\n", pos[0], pos[1], pos[2]);
+    }
+
+    if (inputIDTexC_ >= 0)
+    {
+      float pos[16];
+      const VertexElementInput* vei = &input_[inputIDTexC_];
+      const VertexElement* el = decl_.getElement(inputIDTexC_);
+
+      for (int i = 0; i < vei->count; ++i)
+      {
+        vei->getElementData(i, pos, el);
+        fprintf(file, "vt %f %f\n", pos[0], pos[1]);
+      }
+    }
+
+
+    if (inputIDNorm_ >= 0)
+    {
+      float pos[16];
+      const VertexElementInput* vei = &input_[inputIDNorm_];
+      const VertexElement* el = decl_.getElement(inputIDNorm_);
+
+      for (int i = 0; i < vei->count; ++i)
+      {
+        vei->getElementData(i, pos, el);
+        fprintf(file, "vn %f %f %f\n", pos[0], pos[1], pos[2]);
+      }
+    }
+
+
+    // write face data
+
+    for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+    {
+      std::string strLine = "f ";
+
+      int size = faceInput_->getFaceSize(i);
+
+      char tmp[0xff];
+      for (int k = 0; k < size; ++k)
+      {
+        if (inputIDNorm_>=0 && inputIDTexC_>=0)
+          sprintf(tmp, "%d/%d/%d ", faceInput_->getSingleFaceAttr(i, k, inputIDPos_) + 1,
+          faceInput_->getSingleFaceAttr(i, k, inputIDTexC_) + 1,
+          faceInput_->getSingleFaceAttr(i, k, inputIDNorm_) + 1);
+        else if (inputIDNorm_ >= 0)
+          sprintf(tmp, "%d//%d ", faceInput_->getSingleFaceAttr(i, k, inputIDPos_) + 1, faceInput_->getSingleFaceAttr(i, k, inputIDNorm_) + 1);
+        else if (inputIDTexC_ >= 0)
+          sprintf(tmp, "%d/%d ", faceInput_->getSingleFaceAttr(i, k, inputIDPos_) + 1, faceInput_->getSingleFaceAttr(i, k, inputIDTexC_) + 1);
+        else
+          sprintf(tmp, "%d ", faceInput_->getSingleFaceAttr(i, k, inputIDPos_) + 1);
+
+        strLine += tmp;
+      }
+
+      fprintf(file, "%s\n", strLine.c_str());
+    }
+
+    fclose(file);
+  }
+
+}
+
+
+void MeshCompiler::dbgdumpInputBin( const char* _filename, bool _seperateFiles ) const
+{
+  const int nVerts = (inputIDPos_ >= 0) ? input_[inputIDPos_].count : 0;
+  const int nNormals = (inputIDNorm_ >= 0) ? input_[inputIDNorm_].count : 0;
+  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
+
+  if (!_seperateFiles)
+  {
+    /*
+    simple binary format (can be used for profiling and testing with large meshes):
+
+    int numFaces,
+      numVerts,
+      numNormals,
+      numTexCoords,
+      faceBufSize
+
+    -------------------------
+
+    int faceSize[numFaces];
+    int faceData[attribute][faceBufSize];
+
+    -------------------------
+
+    float3 verts[numVerts];
+    float2 texc[numTexCoords];
+    float3 normals[numNormals];
+
+    -------------------------
+
+    adjacency chunks: vertex + face
+  
+    int num, bufsize;
+    int* offset[num];
+    uchar* count[num];
+    int* buf[bufsize];
+
+    */
+
+
+    FILE* file = 0;
+
+    file = fopen(_filename, "wb");
+
+    if (file)
+    {
+      const int nFaces = faceInput_->getNumFaces();
+      fwrite(&nFaces, 4, 1, file);
+
+      fwrite(&nVerts, 4, 1, file);
+      fwrite(&nNormals, 4, 1, file);
+      fwrite(&nTexC, 4, 1, file);
+
+      int faceBufSize = 0;
+
+      for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+        faceBufSize += faceInput_->getFaceSize(i);
+
+      fwrite(&faceBufSize, 4, 1, file);
+
+      // write face data
+
+      for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+      {
+        int fsize = faceInput_->getFaceSize(i);
+        fwrite(&fsize, 4, 1, file);
+      }
+
+      for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+      {
+        for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+        {
+          int idx = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+          fwrite(&idx, 4, 1, file);
+        }
+      }
+
+      if (inputIDTexC_ >= 0)
+      {
+        for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+        {
+          for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+          {
+            int idx = faceInput_->getSingleFaceAttr(i, k, inputIDTexC_);
+            fwrite(&idx, 4, 1, file);
+          }
+        }
+      }
+
+      if (inputIDNorm_ >= 0)
+      {
+        for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+        {
+          for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+          {
+            int idx = faceInput_->getSingleFaceAttr(i, k, inputIDNorm_);
+            fwrite(&idx, 4, 1, file);
+          }
+        }
+      }
+
+      // write vertex data
+
+    
+      for (int i = 0; i < nVerts; ++i)
+      {
+        float pos[16];
+        const VertexElement* el = decl_.getElement(inputIDPos_);
+        input_[inputIDPos_].getElementData(i, pos, el);
+
+        fwrite(pos, 4, 3, file);
+      }
+
+      if (inputIDTexC_ >= 0)
+      {
+        float pos[16];
+        const VertexElementInput* vei = &input_[inputIDTexC_];
+        const VertexElement* el = decl_.getElement(inputIDTexC_);
+
+        for (int i = 0; i < vei->count; ++i)
+        {
+          vei->getElementData(i, pos, el);
+          fwrite(pos, 4, 2, file);
+        }
+      }
+
+
+      if (inputIDNorm_ >= 0)
+      {
+        float pos[16];
+        const VertexElementInput* vei = &input_[inputIDNorm_];
+        const VertexElement* el = decl_.getElement(inputIDNorm_);
+
+        for (int i = 0; i < vei->count; ++i)
+        {
+          vei->getElementData(i, pos, el);
+          fwrite(pos, 4, 3, file);
+        }
+      }
+    
+
+      // write adjacency
+
+      fwrite(&adjacencyVert_.num, 4, 1, file);
+      fwrite(&adjacencyVert_.bufSize, 4, 1, file);
+
+      fwrite(adjacencyVert_.start, 4, adjacencyVert_.num, file);
+      fwrite(adjacencyVert_.count, 1, adjacencyVert_.num, file);
+      fwrite(adjacencyVert_.buf, 4, adjacencyVert_.bufSize, file);
+
+      fclose(file);
+    }
+
+  }
+  else
+  {
+    // dump data to separate files
+    FILE* file = fopen("../mesh_fsize.bin", "wb");
+
+    for (int i = 0; i < numFaces_; ++i)
+    {
+      unsigned char fsize = (unsigned char)faceInput_->getFaceSize(i);
+      fwrite(&fsize, 1, 1, file);
+    }
+
+    fclose(file);
+
+    file = fopen("../mesh_fdata_pos.bin", "wb");
+
+    for (int i = 0; i < numFaces_; ++i)
+    {
+      for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+      {
+        int idx = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+        fwrite(&idx, 4, 1, file);
+      }
+    }
+
+    fclose(file);
+
+    if (inputIDTexC_ >= 0)
+    {
+      file = fopen("../mesh_fdata_texc.bin", "wb");
+
+      for (int i = 0; i < numFaces_; ++i)
+      {
+        for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+        {
+          int idx = faceInput_->getSingleFaceAttr(i, k, inputIDTexC_);
+          fwrite(&idx, 4, 1, file);
+        }
+      }
+
+      fclose(file);
+    }
+
+    if (inputIDNorm_ >= 0)
+    {
+      file = fopen("../mesh_fdata_norm.bin", "wb");
+
+      for (int i = 0; i < numFaces_; ++i)
+      {
+        for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
+        {
+          int idx = faceInput_->getSingleFaceAttr(i, k, inputIDNorm_);
+          fwrite(&idx, 4, 1, file);
+        }
+      }
+
+      fclose(file);
+    }
+
+    // write vertex data
+
+    file = fopen("../mesh_vdata_pos.bin", "wb");
+    for (int i = 0; i < nVerts; ++i)
+    {
+      float pos[16];
+      const VertexElement* el = decl_.getElement(inputIDPos_);
+      input_[inputIDPos_].getElementData(i, pos, el);
+
+      fwrite(pos, 4, 3, file);
+    }
+    fclose(file);
+
+    if (inputIDTexC_ >= 0)
+    {
+      file = fopen("../mesh_vdata_texc.bin", "wb");
+
+      float pos[16];
+      const VertexElementInput* vei = &input_[inputIDTexC_];
+      const VertexElement* el = decl_.getElement(inputIDTexC_);
+
+      for (int i = 0; i < vei->count; ++i)
+      {
+        vei->getElementData(i, pos, el);
+        fwrite(pos, 4, 2, file);
+      }
+
+      fclose(file);
+    }
+
+
+    if (inputIDNorm_ >= 0)
+    {
+      file = fopen("../mesh_vdata_norm.bin", "wb");
+
+      float pos[16];
+      const VertexElementInput* vei = &input_[inputIDNorm_];
+      const VertexElement* el = decl_.getElement(inputIDNorm_);
+
+      for (int i = 0; i < vei->count; ++i)
+      {
+        vei->getElementData(i, pos, el);
+        fwrite(pos, 4, 3, file);
+      }
+
+      fclose(file);
+    }
+  }
+
+}
+
+
 void MeshCompiler::setFaceVerts( int _i, int _numEdges, int* _v )
 {
   setFaceAttrib(_i, _numEdges, _v, inputIDPos_);
@@ -1397,28 +2638,32 @@ void MeshCompiler::setFaceTexCoords( int _i, int _v0, int _v1, int _v2 )
   setFaceAttrib(_i, 3, tmp, inputIDTexC_);
 }
 
-
-int MeshCompiler::getNumTriangles() const
-{
-  return numTris_;
-}
-
 void MeshCompiler::getVertex( int _id, void* _out ) const
 {
-  int faceID = vertexMap_[_id].first;
+  int faceID, cornerID;
+  int posID = mapToOriginalVertexID(_id, faceID, cornerID);
 
-  // revert face rotation here to get the correct input vertex
-  int frot = faceRotCount_.empty() ? 0 : faceRotCount_[faceID];
-  int cornerID = vertexMap_[_id].second - frot;
-  if (cornerID < 0) cornerID += getFaceSize(faceID);
-
-  for (int i = 0; i < numAttributes_; ++i)
+  if (faceID >= 0)
   {
-    const VertexElement* el = decl_.getElement(i);
+    // read connnected vertex
+    for (int i = 0; i < numAttributes_; ++i)
+    {
+      const VertexElement* el = decl_.getElement(i);
 
-    int idx = faceInput_->getSingleFaceAttr(faceID, cornerID, i);
+      int idx = getInputIndex(faceID, cornerID, i);
 
-    input_[i].getElementData(idx, (char*)_out + (size_t)el->pointer_);
+      input_[i].getElementData(idx, (char*)_out + (size_t)el->pointer_, el);
+    }
+  }
+  else
+  {
+    // isolated vertex
+
+    for (int i = 0; i < numAttributes_; ++i)
+    {
+      const VertexElement* el = decl_.getElement(i);
+      input_[i].getElementData(posID, (char*)_out + (size_t)el->pointer_, el);
+    }
   }
 }
 
@@ -1429,16 +2674,37 @@ int MeshCompiler::getIndex( int _i ) const
   return indices_[_i];
 }
 
-void MeshCompiler::createVertexMap()
+void MeshCompiler::createVertexMap(bool _keepIsolatedVerts)
 {
-  vertexMap_.resize(numDrawVerts_, std::pair<int, int>(-1, -1));
+  // the current vertex buffer does not contain any isolated vertices
+  // -> add them to end of buffer if required
+  const int offsetIso = numDrawVerts_;
+  if (_keepIsolatedVerts)
+    numDrawVerts_ += numIsolatedVerts_; // keep
+  else
+    numIsolatedVerts_ = 0; // delete isolated vertices
+
+  vertexMapFace_.resize(numDrawVerts_, -1);
+  vertexMapCorner_.resize(numDrawVerts_, 0xff);
 
   for (int i = 0; i < numFaces_; ++i)
   {
     for (int k = 0; k < getFaceSize(i); ++k)
     {
       int vertexID = getInputIndexSplit(i, k);
-      vertexMap_[vertexID] = std::pair<int, int>(i, k);
+//      vertexMap_[vertexID] = std::pair<int, unsigned char>(i, (unsigned char)k);
+      vertexMapFace_[vertexID] = i;
+      vertexMapCorner_[vertexID] = (unsigned char)k;
+    }
+  }
+
+  if (_keepIsolatedVerts)
+  {
+    // add isolated verts to end of map
+    for (int i = 0; i < numIsolatedVerts_; ++i)
+    {
+      assert(vertexMapFace_[offsetIso + i] < 0);
+      vertexMapFace_[offsetIso + i] = isolatedVertices_[i];
     }
   }
 
@@ -1446,8 +2712,13 @@ void MeshCompiler::createVertexMap()
 #ifdef _DEBUG
   for (int i = 0; i < numDrawVerts_; ++i)
   {
-    if (vertexMap_[i].first < 0 ||
-      vertexMap_[i].second < 0)
+    if (i < offsetIso)
+    {
+      if (vertexMapFace_[i] < 0 ||
+        vertexMapCorner_[i] == 0xff)
+        std::cerr << "mesh-assembler: vertexMap error at index: " << i << std::endl;
+    }
+    else if (vertexMapFace_[i] < 0)
       std::cerr << "mesh-assembler: vertexMap error at index: " << i << std::endl;
   }
 #endif // _DEBUG
@@ -1457,6 +2728,48 @@ void MeshCompiler::createVertexMap()
 
 void MeshCompiler::createFaceMap()
 {
+  // -------------------------------
+  // create tri -> face map
+
+  triToFaceMap_.resize(numTris_, -1);
+  for (int i = 0; i < numTris_; ++i)
+  {
+    int faceID = i;
+    if (!triOptMap_.empty())
+      faceID = triOptMap_[faceID];
+
+    if (!triToSortFaceMap_.empty())
+      faceID = triToSortFaceMap_[faceID];
+
+    if (!faceSortMap_.empty())
+      faceID = faceSortMap_[faceID];
+
+    triToFaceMap_[i] = faceID;
+  }
+
+
+  // -------------------------------
+  // create face -> tri map
+
+  // create offset table
+  if (!constantFaceSize_)
+  {
+    faceToTriMapOffset_.resize(numTris_, -1);
+
+    int offset = 0;
+    for (int i = 0; i < numFaces_; ++i)
+    {
+      faceToTriMapOffset_[i] = offset;
+
+      // # tris of face
+      int fsize = getFaceSize(i);
+      offset += fsize - 2;
+    }
+  }
+  else
+    faceToTriMapOffset_.clear();
+
+  // create face -> tri map
   faceToTriMap_.resize(numTris_, -1); 
 
   for (int i = 0; i < numTris_; ++i)
@@ -1464,12 +2777,12 @@ void MeshCompiler::createFaceMap()
     int faceID = mapToOriginalFaceID(i);
 
     // offset into lookup table
-    int offset = faceStart_.empty() ? faceID * maxFaceCorners_ : faceStart_[faceID];
+    int offset = constantFaceSize_ ? (faceID * (maxFaceSize_ - 2)) : faceToTriMapOffset_[faceID];
 
     int triNo = 0;
 
     // search for free entry
-    while (faceToTriMap_[offset + triNo] == -1)
+    while (faceToTriMap_[offset + triNo] != -1 && triNo + offset < numTris_)
       ++triNo;
 
     assert(triNo < getFaceSize(faceID) - 2);
@@ -1489,16 +2802,27 @@ void MeshCompiler::dbgdumpAdjList( const char* _filename ) const
   if (file)
   {
     fprintf(file, "vertex-adjacency: \n");
-    adjacencyVert_.dbgdump(file);
+    for (int i = 0; i < input_[inputIDPos_].count; ++i)
+    {
+      // sorting the adjacency list for easy comparison of adjacency input
+      int count = getAdjVertexFaceCount(i);
 
-    fprintf(file, "face-adjacency: \n");
-    adjacencyFace_.dbgdump(file);
+      std::vector<int> sortedList(count);
+      for (int k = 0; k < count; ++k)
+        sortedList[k] = getAdjVertexFace(i, k);
+
+      std::sort(sortedList.begin(), sortedList.end());
+
+      for (int k = 0; k < count; ++k)
+        fprintf(file, "adj[%d][%d] = %d\n", i, k, sortedList[k]);
+    }
+
 
     fclose(file);
   }
 }
 
-void MeshCompiler::setFaceGroup( int _i, int _groupID )
+void MeshCompiler::setFaceGroup( int _i, short _groupID )
 {
   if ((int)faceGroupIDs_.size() <= std::max(numFaces_,_i))
     faceGroupIDs_.resize(std::max(numFaces_,_i+1), -1);
@@ -1508,40 +2832,74 @@ void MeshCompiler::setFaceGroup( int _i, int _groupID )
 
 void MeshCompiler::getVertexBuffer( void* _dst, const int _offset /*= 0*/, const int _range /*= -1*/ )
 {
-  int batchSize = _range < 0 ? numDrawVerts_ - _offset : _range;
+  int batchSize = _range;
+
+  // clamp batch size
+  if ((_range < 0) || (_offset + batchSize > numDrawVerts_))
+    batchSize = numDrawVerts_ - _offset;
 
   char* bdst = (char*)_dst;
 
   for (int i = 0; i < batchSize; ++i)
   {
-    getVertex(i, bdst + decl_.getVertexStride() * i);
+    getVertex(i + _offset, bdst + decl_.getVertexStride() * i);
   }
 }
 
 int MeshCompiler::mapToOriginalFaceID( const int _i ) const
 {
-  int faceID = _i;
-  if (!triOptMap_.empty())
-    faceID = triOptMap_[faceID];
+//   int faceID = _i;
+//   if (!triOptMap_.empty())
+//     faceID = triOptMap_[faceID];
+// 
+//   if (!triToSortFaceMap_.empty())
+//     faceID = triToSortFaceMap_[faceID];
+// 
+//   if (!faceSortMap_.empty())
+//     faceID = faceSortMap_[faceID];
+// 
+//   return faceID;
 
-  if (!triToSortFaceMap_.empty())
-    faceID = triToSortFaceMap_[faceID];
-
-  if (!faceSortMap_.empty())
-    faceID = faceSortMap_[faceID];
-
-  return faceID;
+  return triToFaceMap_[_i];
 }
 
-void MeshCompiler::mapToOriginalVertexID( const int _i, int& _faceID, int& _cornerID ) const
+int MeshCompiler::mapToOriginalVertexID( const int _i, int& _faceID, int& _cornerID ) const
 {
-  _faceID = vertexMap_[_i].first;
-  _cornerID = vertexMap_[_i].second;
+  int positionID = -1;
+
+  if (_i < numDrawVerts_ - numIsolatedVerts_)
+  {
+    // connected vertex
+    _faceID = vertexMapFace_[_i];
+
+    // revert face rotation here to get the correct input vertex
+    int frot = faceRotCount_.empty() ? 0 : faceRotCount_[_faceID];
+
+    _cornerID = vertexMapCorner_[_i] - frot;
+    if (_cornerID < 0) _cornerID += getFaceSize(_faceID);
+  }
+  else
+  {
+    // isolated vertex: vertexMap stores input position id instead of face
+    positionID = vertexMapFace_[_i];
+
+    _faceID = -1;
+    _cornerID = -1;
+  }
+
+  return positionID;
 }
 
 int MeshCompiler::mapToDrawVertexID( const int _faceID, const int _cornerID ) const
 {
-  return getInputIndexSplit(_faceID, _cornerID);
+  // apply face rotation
+  const int fsize = getFaceSize(_faceID);
+  const int frot = faceRotCount_.empty() ? 0 : faceRotCount_[_faceID];
+
+  int rotCorner = _cornerID + frot;
+  if (rotCorner >= fsize) rotCorner -= fsize;
+
+  return getInputIndexSplit(_faceID, rotCorner);
 }
 
 int MeshCompiler::mapToDrawTriID( const int _faceID, const int _k /*= 0*/, int* _numTrisOut /*= 0*/ ) const
@@ -1550,65 +2908,151 @@ int MeshCompiler::mapToDrawTriID( const int _faceID, const int _k /*= 0*/, int* 
   assert(_k < fsize - 2);
 
   if (_numTrisOut)
-    *_numTrisOut = fsize;
+    *_numTrisOut = fsize - 2;
 
-  int offset = faceStart_.empty() ? _faceID * maxFaceCorners_ : faceStart_[_faceID];
+  int offset = constantFaceSize_ ? (_faceID * (maxFaceSize_ - 2)) : faceToTriMapOffset_[_faceID];
 
   return faceToTriMap_[offset + _k];
 }
 
-size_t MeshCompiler::getMemoryUsage() const
+size_t MeshCompiler::getMemoryUsage(bool _printConsole) const
 {
-  size_t usage = faceStart_.size() * 4;
-  usage += faceSize_.size() * 2;
+  /*
+  Short evaluation of memory footprint (version at 27.12.13)
 
-  usage += faceGroupIDs_.size() * 4;
-  
+  Memory consumption was measured with xyzrgb_dragon.ply from the Stanford repository (7.2 mil tris, 3.6 mil verts).
+   Options used for build(): welding - true, optimize - true, require per face attributes - true,
+   Adjacency information was generated by MeshCompiler.
+   Input data by user: 275 mb (indices, float3 positions, float3 normals)
+
+  Breakdown of memory footprint in build():
+  1. 467 mb - adjacency lists ( vertex-face list 98 mb, face-face list 369 mb)
+  2. 103 mb - vertex weld map
+  3.  82 mb - each of: faceBufSplit_, indices_
+  4.  51 mb - vertexMap
+  5.  41 mb - splitter_
+  6.  27 mb - each of: faceToTriMap_, triToFaceMap_, faceSortMap_, ... ie. any per face map
+  7.  13 mb - faceGroupIds
+  8.   6 mb - faceRotCount
+
+  Peak memory load: 563 mb after computing face-face adjacency for forceUnsharedVertex() (adjacency lists and faceBufSplit_ were allocated at that time)
+  Final memory load: 292 mb measured after build(), mem allocations: [faceGroupIds, faceBufSplit, vertexMap, faceToTriMap, triToFaceMap, indices]
+
+  Update: (12.01.14)
+  forceUnsharedVertex() has been modified and no longer requires a face-face adjacency list, which was the biggest memory buffer allocated by build()
+  */
+
+  int byteToMB = 1024 * 1024;
+  size_t usage = faceStart_.size() * 4;
+  usage += faceSize_.size() * 1;
+  usage += faceData_.size() * 4;
+  usage += faceGroupIDs_.size() * 2;
   usage += faceBufSplit_.size() * 4;
-  usage += faceRotCount_.size() * 4;
+  usage += faceRotCount_.size() * 1;
   usage += faceSortMap_.size() * 4;
+
   usage += triIndexBuffer_.size() * 4;
   
   usage += subsetIDMap_.size() * sizeof(Subset);
 
+  usage += vertexWeldMapFace_.size() * 5;
 
-  usage += adjacencyVert_.bufSize;
-  usage += adjacencyFace_.bufSize;
+  usage += adjacencyVert_.bufSize * 4; // buf
+  usage += adjacencyVert_.num * 4; // start
+  usage += adjacencyVert_.num * 1; // count
+
 
   if (splitter_)
     usage += splitter_->splits.size() * 4;
 
   usage += triToSortFaceMap_.size() * 4;
   usage += triOptMap_.size() * 4;
-  usage += vertexMap_.size() * 8;
+  usage += vertexMapFace_.size() * 5;
   usage += faceToTriMap_.size() * 4;
+  usage += faceToTriMapOffset_.size() * 4;
+  usage += triToFaceMap_.size() * 4;
 
   usage += numTris_ * 3 * 4; // indices_
+
+
+
+  if (_printConsole)
+  {
+
+    std::cout << "faceStart_: " << sizeof(std::pair<int, unsigned char>) << std::endl;
+
+    std::cout << "faceStart_: " << faceStart_.size() * 4 / byteToMB << std::endl;
+    std::cout << "faceSize_: " << faceSize_.size() * 1 / byteToMB << std::endl;
+    std::cout << "faceData_: " << faceData_.size() * 4 / byteToMB << std::endl;
+    std::cout << "faceGroupIDs_: " << faceGroupIDs_.size() * 2 / byteToMB << std::endl;
+    std::cout << "faceBufSplit_: " << faceBufSplit_.size() * 4 / byteToMB << std::endl;
+    std::cout << "faceRotCount_: " << faceRotCount_.size() * 1 / byteToMB << std::endl;
+
+    std::cout << "faceSortMap_: " << faceSortMap_.size() * 4 / byteToMB << std::endl;
+
+    std::cout << "triIndexBuffer_: " << triIndexBuffer_.size() * 4 / byteToMB << std::endl;
+
+    std::cout << "vertexWeldMap_: " << vertexWeldMapFace_.size() * 5 / byteToMB << std::endl;
+
+    std::cout << "adjacencyVert_: buf = " << adjacencyVert_.bufSize * 4 / byteToMB <<
+      ", offset = " << adjacencyVert_.num * 4 / byteToMB <<
+      ", count = "  << adjacencyVert_.num * 1 / byteToMB << std::endl;
+
+    if (splitter_)
+      std::cout << "splitter_: " << splitter_->splits.size() * 4 / byteToMB << std::endl;
+
+    std::cout << "triToSortFaceMap_: " << triToSortFaceMap_.size() *  4 / byteToMB << std::endl;
+    std::cout << "triOptMap_: " << triOptMap_.size() *  4 / byteToMB << std::endl;
+    std::cout << "vertexMap_: " << vertexMapFace_.size() * 5 / byteToMB << std::endl;
+    std::cout << "faceToTriMapOffset_: " << faceToTriMapOffset_.size() * 4 / byteToMB << std::endl;
+    std::cout << "faceToTriMap_: " << faceToTriMap_.size() * 4 / byteToMB << std::endl;
+    std::cout << "triToFaceMap_: " << triToFaceMap_.size() * 4 / byteToMB << std::endl;
+
+
+    std::cout << "indices_: " << 3 * numTris_ * 4 / byteToMB << std::endl;
+
+  }
+
 
   return usage;
 }
 
 std::string MeshCompiler::checkInputData() const
 {
+  if (!faceInput_)
+    return "Error: no face input data present\n";
+
   std::stringstream strm;
 
   int faceV[16];
 
-  for (int i = 0; i < numFaces_; ++i)
+  for (int a = 0; a < numAttributes_; ++a)
   {
+    if (input_[a].count <= 0)
+      strm << "Warning: input buffer is not initialized: buffer id " << a << "\n";
+  }
+
+  for (int i = 0; i < faceInput_->getNumFaces(); ++i)
+  {
+    if (faceInput_->getFaceSize(i) > 0xff)
+      strm << "Error: face size too big: face " << i << ", size " << faceInput_->getFaceSize(i) << " must not exceed 255\n";
+
     std::map<int, int> facePositions;
 
-    for (int k = 0; k < getFaceSize(i); ++k)
+    for (int k = 0; k < faceInput_->getFaceSize(i); ++k)
     {
       getInputFaceVertex(i, k, faceV);
 
       for (int a = 0; a < numAttributes_; ++a)
       {
-        // index boundary check
-        if (faceV[a] >= input_[a].count)
-          strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << " >= buffer size (" << input_[a].count << ")\n";
-        if (faceV[a] < 0)
-          strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << "\n";
+        if (input_[a].count > 0)
+        {
+          // index boundary check
+          if (faceV[a] >= input_[a].count)
+            strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << " >= buffer size (" << input_[a].count << ")\n";
+          if (faceV[a] < 0)
+            strm << "Error: input index (face/corner/attribute: " << i << "/" << k << "/" << a << ") invalid: " << faceV[a] << "\n";
+        }
       }
 
       if (numAttributes_)
@@ -1616,11 +3060,11 @@ std::string MeshCompiler::checkInputData() const
     }
 
     // degenerate check
-    if ((int)facePositions.size() != getFaceSize(i))
+    if ((int)facePositions.size() != faceInput_->getFaceSize(i))
       strm << "Warning: degenerate face " << i << "\n";
 
     // empty face
-    if (!getFaceSize(i))
+    if (!faceInput_->getFaceSize(i))
       strm << "Warning: empty face " << i << "\n";
   }
 
@@ -1637,15 +3081,91 @@ void MeshCompiler::prepareData()
   for (int i = numFaces_-1; i >= 0 && !faceInput_->getFaceSize(i); --i)
     --numFaces_;
 
-  // internal face-offset buffer required for mesh processing
-  faceStart_.resize(numFaces_, -1);
-  faceSize_.resize(numFaces_, 0);
 
+  // build internal face-offset table for storing interleaved index buffer
+  int curOffset = 0;
+  int minFaceSize = 99999999;
   for (int i = 0; i < numFaces_; ++i)
   {
-    faceSize_[i] = (short)faceInput_->getFaceSize(i);
-    numIndices_ += faceSize_[i];
+    const int fsize = faceInput_->getFaceSize(i);
+
+    maxFaceSize_ = std::max((int)maxFaceSize_, fsize);
+    minFaceSize  = std::min(minFaceSize, fsize);
   }
+  
+  if (minFaceSize < (int)maxFaceSize_)
+  {
+    // internal face-offset buffer required for mesh processing
+    faceStart_.resize(numFaces_, -1);
+    faceSize_.resize(numFaces_, 0);
+
+    for (int i = 0; i < numFaces_; ++i)
+    {
+      faceSize_[i] = (unsigned char)faceInput_->getFaceSize(i);
+      faceStart_[i] = curOffset;
+      curOffset += faceSize_[i];
+    }
+
+    if (numIndices_ <= 0)
+      numIndices_ = curOffset;
+  }
+  else
+  {
+    constantFaceSize_ = true;
+    numIndices_ = maxFaceSize_ * numFaces_;
+  }
+
+
+  // reset mappings from previous builds()
+  triOptMap_.clear();
+  triToSortFaceMap_.clear();
+  faceSortMap_.clear();
+
+  faceToTriMap_.clear();
+  faceToTriMapOffset_.clear();
+
+  triToFaceMap_.clear();
+  vertexMapFace_.clear();
+  vertexMapCorner_.clear();
+
+  faceBufSplit_.clear();
+  faceRotCount_.clear();
+
+  isolatedVertices_.clear();
+  numIsolatedVerts_ = 0;
+
+  if (!provokingVertexSetByUser_)
+    provokingVertex_ = -1;
+
+
+//   faceData_.resize(numIndices_ * numAttributes_);
+// 
+//   for (int i = 0; i < numFaces_; ++i)
+//   {
+//     int offs = getInputFaceOffset(i);
+//     int fsize = getFaceSize(i);
+//     
+//     for (int k = 0; k < fsize; ++k)
+//     {
+//       for (int m = 0; m < numAttributes_; ++m)
+//       {
+//         faceData_[(offs + k) * numAttributes_ + m] = faceInput_->getSingleFaceAttr(i, k, m);
+//       }
+//     }
+//   }
+
+#ifdef _DEBUG
+  for (int i = 0; i < numFaces_; ++i)
+  {
+    for (int k = 0; k < getFaceSize(i); ++k)
+    {
+      int v0 = faceInput_->getSingleFaceAttr(i, k, inputIDPos_);
+      int v1 = getInputIndex(i, k, inputIDPos_);
+
+      assert(v0 == v1);
+    }
+  }
+#endif // _DEBUG
 }
 
 void MeshCompiler::setFaceInput( MeshCompilerFaceInput* _faceInput )
@@ -1687,6 +3207,21 @@ int MeshCompiler::getNumFaces() const
   return numFaces_;
 }
 
+void MeshCompiler::setProvokingVertex( int _v )
+{
+  provokingVertex_ = _v;
+  provokingVertexSetByUser_ = true;
+}
+
+int MeshCompiler::getAdjVertexFaceCount( int _vertexID ) const
+{
+  return adjacencyVert_.num ? adjacencyVert_.getCount(_vertexID) : faceInput_->getVertexAdjCount(_vertexID);
+}
+
+int MeshCompiler::getAdjVertexFace( int _vertexID, int _k ) const
+{
+  return adjacencyVert_.num ? adjacencyVert_.getAdj(_vertexID, _k) : faceInput_->getVertexAdjFace(_vertexID, _k);
+}
 
 void MeshCompilerDefaultFaceInput::dbgWriteToObjFile(FILE* _file, int _posAttrID, int _normalAttrID, int _texcAttrID)
 {
@@ -1729,19 +3264,17 @@ bool MeshCompilerDefaultFaceInput::getFaceAttr( int _faceID, int _attrID, int* _
   return true;
 }
 
-int MeshCompilerDefaultFaceInput::getSingleFaceAttr( int _faceID, int _faceCorner, int _attrID )
+int MeshCompilerDefaultFaceInput::getSingleFaceAttr( const int _faceID, const int _faceCorner, const int _attrID ) const
 {
-  int offset = faceOffset_[_faceID];
+  // Offset + _faceCorner
+  const int pos = faceOffset_[_faceID] + _faceCorner;
   assert(_faceCorner < getFaceSize(_faceID));
 
 
   if (faceData_[_attrID].empty())
-  {
-    // try to use index from base vertex element (usually position)
-    return faceData_[0][offset + _faceCorner];
-  }
+    return -1;
 
-  return faceData_[_attrID][offset + _faceCorner];
+  return faceData_[_attrID][pos];
 }
 
 void MeshCompilerDefaultFaceInput::setFaceData( int _faceID, int _size, int* _data, int _attrID /*= 0*/ )
@@ -1791,7 +3324,7 @@ void MeshCompilerDefaultFaceInput::setFaceData( int _faceID, int _size, int* _da
   }
 }
 
-int MeshCompilerFaceInput::getSingleFaceAttr( int _faceID, int _faceCorner, int _attrID )
+int MeshCompilerFaceInput::getSingleFaceAttr( const int _faceID, const int _faceCorner, const int _attrID )  const
 {
   const int fsize = getFaceSize(_faceID);
 
@@ -1816,6 +3349,111 @@ int MeshCompilerFaceInput::getSingleFaceAttr( int _faceID, int _faceCorner, int 
 
   return retVal;
 }
+
+
+bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, const VertexDeclaration* _decl )
+{
+  assert(_decl);
+  assert(v0);
+  assert(v1);
+
+  const double d_eps = 1e-4;
+  const float f_eps = 1e-4f;
+
+  const int nElements = (int)_decl->getNumElements();
+  for (int i = 0; i < nElements; ++i)
+  {
+    const VertexElement* el = _decl->getElement(i);
+
+
+    const char* el_0 = (const char*)v0 + (size_t)el->pointer_;
+    const char* el_1 = (const char*)v1 + (size_t)el->pointer_;
+
+    switch ( el->type_ )
+    {
+    case GL_DOUBLE:
+      {
+        const double* d0 = (const double*)el_0;
+        const double* d1 = (const double*)el_1;
+
+        double diff = 0.0;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+          diff += abs(d0[k] - d1[k]);
+
+        if (diff > d_eps)
+          return false;
+
+      } break;
+
+
+    case GL_FLOAT:
+      {
+        const float* f0 = (const float*)el_0;
+        const float* f1 = (const float*)el_1;
+
+        float diff = 0.0;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+        {
+          // sign-bit manipulation vs. fabsf  - no significant performance difference
+//           float e = f0[k] - f1[k];
+//           int e_abs = *((int*)(&e)) & 0x7FFFFFFF;
+//           diff += *((float*)&e_abs);
+
+          diff += fabsf(f0[k] - f1[k]);
+        }
+
+        if (diff > f_eps)
+          return false;
+      } break;
+
+    case GL_INT:
+    case GL_UNSIGNED_INT:
+      {
+        const int* i0 = (const int*)el_0;
+        const int* i1 = (const int*)el_1;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+        {
+          if (i0[k] != i1[k])
+            return false;
+        }
+      } break;
+
+    case GL_SHORT:
+    case GL_UNSIGNED_SHORT:
+      {
+        const short* i0 = (const short*)el_0;
+        const short* i1 = (const short*)el_1;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+        {
+          if (i0[k] != i1[k])
+            return false;
+        }
+      } break;
+
+    case GL_BYTE:
+    case GL_UNSIGNED_BYTE:
+      {
+        const char* i0 = (const char*)el_0;
+        const char* i1 = (const char*)el_1;
+
+        for (int k = 0; k < (int)el->numElements_; ++k)
+        {
+          if (i0[k] != i1[k])
+            return false;
+        }
+      } break;
+
+    default: std::cerr << "MeshCompiler: equalVertex() comparision not implemented for type: " << el->type_ << std::endl;
+    }
+  }
+
+  return true;
+}
+
 
 
 

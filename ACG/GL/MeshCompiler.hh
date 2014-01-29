@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <string>
 
+#include <ACG/GL/gl.hh>
+
 /*
 
 Mesh buffer assembler:
@@ -78,7 +80,7 @@ usage
 
 namespace ACG{
 
-class MeshCompilerFaceInput
+class ACGDLLEXPORT MeshCompilerFaceInput
 {
   // face data input interface
   // allows flexible and memory efficient face data input
@@ -87,18 +89,18 @@ public:
   MeshCompilerFaceInput(){}
   virtual ~MeshCompilerFaceInput(){}
 
-  virtual int getNumFaces() = 0;
+  virtual int getNumFaces() const = 0;
 
   /** Get total number of indices in one attribute channel.
    *
    * i.e. total number of position indices of the whole mesh
   */
-  virtual int getNumIndices() = 0;
+  virtual int getNumIndices() const = 0;
 
   /** Get number of vertices per face.
    * @param _faceID face index
   */
-  virtual int getFaceSize(int _faceID) const = 0;
+  virtual int getFaceSize(const int _faceID) const = 0;
 
   /** Get a single vertex-index entry of a face.
    *
@@ -107,7 +109,7 @@ public:
    * @param _attrID attribute channel 
    * @return index-data if successful, -1 otherwise
   */
-  virtual int getSingleFaceAttr(int _faceID, int _faceCorner, int _attrID);
+  virtual int getSingleFaceAttr(const int _faceID, const int _faceCorner, const int _attrID) const;
 
   /** Get an index buffer of a face for a specific attribute channel.
    * @param _faceID face index
@@ -115,30 +117,48 @@ public:
    * @param _out pointer to output buffer, use getFaceSize(_faceID) to get the size needed to store face data
    * @return true if successful, false otherwise
   */
-  virtual bool getFaceAttr(int _faceID, int _attrID, int* _out) {return false;}
+  virtual bool getFaceAttr(const int _faceID, const int _attrID, int* _out) const {return false;}
 
   /** Get an index buffer of a face for a specific attribute channel.
    * @param _faceID face index
    * @param _attrID attribute channel
    * @return array data of size "getFaceSize(_faceID)", allowed to return 0 when array data not permanently available in memory
   */
-  virtual int* getFaceAttr(int _faceID, int _attrID) {return 0;}
+  virtual int* getFaceAttr(const int _faceID, const int _attrID) const {return 0;}
+
+
+  // Adjacency information can be provided if it has been generated already.
+  // Otherwise it will be generated on the fly when needed, which might be time consuming.
+
+  /** Get the number of adjacent faces for a vertex.
+   * @param _vertexID vertex index
+   * @return number of adjacent faces, return -1 if adjacency information unavailable
+  */
+  virtual int getVertexAdjCount(const int _vertexID) const {return -1;}
+
+  /** Get the index of an adjacent face for a vertex.
+   * @param _vertexID vertex index
+   * @param _k adjacency list entry in range [0, .., adjCount - 1]
+   * @return face id of adjacent face, return -1 if adjacency information is available
+  */
+  virtual int getVertexAdjFace(const int _vertexID, const int _k) const {return -1;}
+
 };
 
-class MeshCompilerDefaultFaceInput : public MeshCompilerFaceInput
+class ACGDLLEXPORT MeshCompilerDefaultFaceInput : public MeshCompilerFaceInput
 {
 public:
   MeshCompilerDefaultFaceInput(int _numFaces, int _numIndices);
   virtual ~MeshCompilerDefaultFaceInput(){}
 
-  int getNumFaces() {return numFaces_;}
-  int getNumIndices() {return numIndices_;}
+  int getNumFaces() const  {return numFaces_;}
+  int getNumIndices() const {return numIndices_;}
 
-  int getFaceSize(int _faceID) const {return faceSize_[_faceID];}
+  int getFaceSize(const int _faceID) const {return faceSize_[_faceID];}
 
-  int getSingleFaceAttr(int _faceID, int _faceCorner, int _attrID);
+  int getSingleFaceAttr(const int _faceID, const int _faceCorner, const int _attrID) const;
 
-  bool getFaceAttr(int _faceID, int _attrID, int* _out);
+  bool getFaceAttr(const int _faceID, const int _attrID, int* _out);
 
   void dbgWriteToObjFile(FILE* _file, int _posAttrID = 0, int _normalAttrID = -1, int _texcAttrID = -1);
 
@@ -160,7 +180,15 @@ protected:
 
 };
 
-class MeshCompiler
+
+class ACGDLLEXPORT MeshCompilerVertexCompare
+{
+public:
+
+  virtual bool equalVertex(const void* v0, const void* v1, const VertexDeclaration* _decl);
+};
+
+class ACGDLLEXPORT MeshCompiler
 {
 public:
 
@@ -179,8 +207,10 @@ public:
    * @param _data Pointer to vertex data
    * @param _stride Difference in bytes between two vertex positions in _data. Default value 0 indicates a tight float3 position array without any other data or memory alignment.
    * @param _internalCopy Memory optimization flag: select true if the provided data address is only temporarily valid. Otherwise an internal copy must be made.
+   * @param _fmt data format of one element (must be set if input data does not match vertex declaration)
+   * @param _elementSize number of elements per attribute (i.e. 3 for vec3 ..,  -1 if unknown)
   */
-  void setVertices(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
+  void setVertices(int _num, const void* _data, int _stride = 0, bool _internalCopy = false, GLuint _fmt = 0, int _elementSize = -1);
 
   /** set input normals
    *
@@ -188,8 +218,10 @@ public:
    * @param _data Pointer to normals data
    * @param _stride Difference in bytes between two normals positions in _data. Default value 0 indicates a tight float3 position array without any other data or memory alignment.
    * @param _internalCopy Memory optimization flag: select true if the provided data address is only temporarily valid. Otherwise an internal copy must be made.
+   * @param _fmt data format of one element (must be set if input data does not match vertex declaration)
+   * @param _elementSize number of elements per attribute (i.e. 3 for vec3 ..,  -1 if unknown)
   */
-  void setNormals(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
+  void setNormals(int _num, const void* _data, int _stride = 0, bool _internalCopy = false, GLuint _fmt = 0, int _elementSize = -1);
 
   /** set input texture coords
    *
@@ -197,8 +229,10 @@ public:
    * @param _data Pointer to texture coord data
    * @param _stride Difference in bytes between two texture coordinate positions in _data. Default value 0 indicates a tight float3 position array without any other data or memory alignment.
    * @param _internalCopy Memory optimization flag: select true if the provided data address is only temporarily valid. Otherwise an internal copy must be made.
+   * @param _fmt data format of one element (must be set if input data does not match vertex declaration)
+   * @param _elementSize number of elements per attribute (i.e. 3 for vec3 ..,  -1 if unknown)
   */
-  void setTexCoords(int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
+  void setTexCoords(int _num, const void* _data, int _stride = 0, bool _internalCopy = false, GLuint _fmt = 0, int _elementSize = -1);
 
   /** Set custom input attribute.
   *
@@ -208,8 +242,10 @@ public:
   * @param _data         Input data buffer, may be null to only
   * @param _stride       Offset difference in bytes to the next attribute in _data. Default value 0 indicates no data alignment/memory packing.
   * @param _internalCopy Create an internal buffer and make a copy _data
+  * @param _fmt data format of one element (must be set if input data does not match vertex declaration)
+  * @param _elementSize number of elements per attribute (i.e. 3 for vec3 ..,  -1 if unknown)
   */
-  void setAttribVec(int _attrIdx, int _num, const void* _data, int _stride = 0, bool _internalCopy = false);
+  void setAttribVec(int _attrIdx, int _num, const void* _data, int _stride = 0, bool _internalCopy = false, GLuint _fmt = 0, int _elementSize = -1);
 
   /** set one single vertex
       setVertices with internalCopy = true must be called before
@@ -350,7 +386,7 @@ public:
    * @param _i       Face ID
    * @param _groupID Custom group ID
    */
-  void setFaceGroup(int _i, int _groupID);
+  void setFaceGroup(int _i, short _groupID);
 
   // subset/group management
   struct Subset
@@ -408,10 +444,27 @@ public:
 
   /** \brief Build vertex + index buffer.
    * 
-   * @param _optimizeVCache Reorder faces for optimized vcache usage. Low performance hit on build() execution time
-   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. High performance hit on execution time
+   * @param _weldVertices Compare vertices and attempt to eliminate duplicates. High computation cost
+   * @param _optimizeVCache Reorder faces for optimized vcache usage. High computation cost
+   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. Low computation cost
+   * @param _keepIsolatedVertices Isolated vertices should not be discarded in the output vertex buffer
   */
-  void build(bool _optimizeVCache = true, bool _needPerFaceAttribute = false);
+  void build(bool _weldVertices = false, bool _optimizeVCache = true, bool _needPerFaceAttribute = false, bool _keepIsolatedVertices = false);
+
+  /** Get number of vertices in final buffer.
+  */
+  int getNumVertices() const {return numDrawVerts_;}
+
+  /** See glProvokingVertex()
+   *
+   * Specifiy the vertex to be used as the source of data for flat shading.
+   * The default value is 2, meaning that the last vertex of each triangle will be used.
+   * setProvokingVertex() must be called prior to build(), if a different provoking vertex is desired.
+   * Additionally build() has to set its _needPerFaceAttribute parameter to true to enable provoking vertices.
+   *
+   * @param _v triangle vertex where the provoking vertex should be stored [0, 1, 2]
+   */
+  void setProvokingVertex(int _v);
 
 
   /** \brief Get vertex buffer ready for rendering.
@@ -430,7 +483,7 @@ public:
 
   /** Get number of triangles in final buffer.
   */
-  int getNumTriangles() const;
+  int getNumTriangles() const {return numTris_;}
 
   /** Get number of input faces.
   */
@@ -443,8 +496,12 @@ public:
    */
   inline int getFaceSize(const int _i) const
   {
-    return faceSize_[_i];
+    return faceSize_.empty() ? maxFaceSize_ : faceSize_[_i];
   }
+
+  /** Get Vertex declaration.
+  */
+  const VertexDeclaration* getVertexDeclaration() const {return &decl_;}
 
   /** Get vertex in final draw vertex buffer.
   */
@@ -470,8 +527,9 @@ public:
    * @param _i Vertex ID in draw buffer
    * @param _faceID [out] Face ID in face input buffer
    * @param _cornerID [out] Corner of face corresponding to vertex.
+   * @return Position ID in input buffer
   */
-  void mapToOriginalVertexID(const int _i, int& _faceID, int& _cornerID) const;
+  int mapToOriginalVertexID(const int _i, int& _faceID, int& _cornerID) const;
 
   /** Mapping from draw tri id -> input face id
    *
@@ -508,7 +566,7 @@ public:
 
 private:
 
-  // compute adjacency information: vertex -> neighboring faces, face -> neighboring faces
+  // compute adjacency information: vertex -> neighboring faces (, face -> neighboring faces [removed] )
   void computeAdjacency();
 
   // convert per-face vertices to unique ids
@@ -522,18 +580,40 @@ private:
       j: corner index
       _out: output vertex (index for each attribute)
   */
-  void getInputFaceVertex(int _face, int _corner, int* _out) const;
+  void getInputFaceVertex(const int _face, const int _corner, int* _out) const;
 
-  int getInputIndex(const int _face, const int _corner, const int _attrId) const;
+  /** i: face index
+      j: corner index
+      _out: output vertex (index for each attribute) post welding operation
+  */
+  void getInputFaceVertex_Welded(int _face, int _corner, int* _out) const;
+
+  /** i: face index
+      j: corner index
+      _out: output vertex address (vertex data)
+  */
+  void getInputFaceVertexData(int _face, int _corner, void* _out) const;
+
+
+  inline int getInputIndex( const int& _face, const int& _corner, const int& _attrId ) const
+  {
+    return faceInput_->getSingleFaceAttr(_face, _corner, _attrId);
+
+    // alternatively avoid virtual function call at cost of higher memory overhead ( could not confirm any run-time difference )
+    // to use this, uncomment code in prepareData() that initializes faceData_ array as well
+//    return faceData_[(getInputFaceOffset(_face) + _corner) * numAttributes_ + _attrId];
+  }
+
 
 private:
 
   // ====================================================
   // input data
 
+
   // vertex buffer input
 
-  struct VertexElementInput 
+  struct ACGDLLEXPORT VertexElementInput 
   {
     VertexElementInput();
     ~VertexElementInput();
@@ -558,8 +638,14 @@ private:
 
     // vertex data access
 
+    /// element data format
+    GLuint fmt;
+
+    /// number of ints/floats/bytes per element 
+    int elementSize;
+
     /// read a vertex element
-    void getElementData(int _idx, void* _dst) const;
+    void getElementData(int _idx, void* _dst, const VertexElement* _desc) const;
   };
   
   // input vertex data
@@ -579,23 +665,27 @@ private:
   int   numFaces_, 
         numIndices_;
   std::vector<int>  faceStart_;    // start position in buf for each face
-  std::vector<short> faceSize_;    // face size, copy of faceInput_->getFaceSize() for better performance
-  size_t   maxFaceCorners_;           // max(faceCorners_)
-  std::vector<int>  faceGroupIDs_; // group id for each face (optional input)
+  std::vector<unsigned char> faceSize_;    // face size, copy of faceInput_->getFaceSize() for better performance
+  std::vector<int> faceData_;
+  size_t   maxFaceSize_;           // max(faceSize_)
+  bool  constantFaceSize_;
+  std::vector<short>  faceGroupIDs_; // group id for each face (optional input)
   int   curFaceInputPos_;          // current # indices set by user
 
   MeshCompilerFaceInput* faceInput_;   // face data input interface
   bool deleteFaceInputeData_;       // delete if face input data internally created
 
-
-  std::vector<int>  faceBufSplit_; // index buffer for the interleaved vertex buffer
-  std::vector<int>  faceRotCount_; // # rotation ccw face rotation applied, handled internally by getInputIndexOffset
+  std::vector<int>  faceBufSplit_; // mapping from (faceID, cornerID) to interleaved vertex id after splitting
+  std::vector<unsigned char>  faceRotCount_; // # ccw rotations per face, handled internally by getInputIndexOffset
   std::vector<int>  faceSortMap_;  // face IDs sorted by group; maps sortFaceID -> FaceID
+  int               provokingVertex_; // provoking vertex of each triangle
+  bool              provokingVertexSetByUser_; // was the provoking vertex selected by user or set to default?
 
   int   numTris_;
   std::vector<int>  triIndexBuffer_; // triangulated index buffer with interleaved vertices
 
-
+  // IDs of isolated vertices: index into input position buffer
+  std::vector<int>  isolatedVertices_;
 
   // face grouping with subsets for per-face materials
   int     numSubsets_;
@@ -604,17 +694,25 @@ private:
 
   // =====================================================
 
-  struct AdjacencyList 
+  struct ACGDLLEXPORT AdjacencyList 
   {
-    AdjacencyList();
-    ~AdjacencyList();
+    AdjacencyList()
+      : start(0), count(0), buf(0), bufSize(0), num(0) {}
+    ~AdjacencyList()
+    {
+      delete [] start;
+      delete [] buf;
+      delete [] count;
+    }
 
     void init(int n);
     int  getAdj(int i, int k) const;
     int  getCount(int i) const;
 
+    void clear();
+
     int* start;   // index to adjacency buffer
-    int* count;   // # of adjacent faces
+    unsigned char* count;   // # of adjacent faces
     int* buf;     // adjacency data
     int  bufSize; // size of buf
     int  num;     // # adjacency entries
@@ -625,12 +723,43 @@ private:
   // adjacency list: vertex -> faces
   AdjacencyList adjacencyVert_;
 
-  // adjacency: face -> faces
-  AdjacencyList adjacencyFace_;
+  // adjacency access interface (choosing between user input / self generated data)
+  int getAdjVertexFaceCount(int _vertexID) const;
+  int getAdjVertexFace(int _vertexID, int _k) const;
 
 
+  struct WeldListEntry
+  {
+    int faceId;
+    unsigned char cornerId;
+    
+    int refFaceId;
+    unsigned char refCornerId;
+  };
 
-  struct VertexSplitter 
+  struct ACGDLLEXPORT WeldList
+  {
+    void add(const int _face, const int _corner);
+
+    std::vector< WeldListEntry > list;
+
+    MeshCompiler* meshComp;
+    MeshCompilerVertexCompare* cmpFunc;
+
+    char* workBuf;
+  };
+
+
+  static MeshCompilerVertexCompare defaultVertexCompare;
+  MeshCompilerVertexCompare* vertexCompare_;
+
+  // mapping from <faceId, faceCornerId> -> <weldFaceId, weldFaceCorner>
+//  std::vector< std::pair<int, unsigned char> > vertexWeldMap_;   // std::pair<int, unsigned char> gets padded to 8 bytes
+  std::vector< int > vertexWeldMapFace_;
+  std::vector< unsigned char > vertexWeldMapCorner_;
+
+
+  struct ACGDLLEXPORT VertexSplitter 
   {
     // worst case split: num entries in vertex adj list
     // estBufferIncrease: if numWorstCase == 0, then we estimate an increase in vertex buffer by this percentage
@@ -643,6 +772,9 @@ private:
 
     /// returns a unique index for a vertex-attribute combination
     int split(int* vertex);
+
+    /// check if vertex is isolated with a complete splitting list
+    bool isIsolated(const int vertexPosID);
 
     int  numAttribs;
 
@@ -664,10 +796,14 @@ private:
     std::vector<int> splits;
 
     // split list access
-    int  getNext(int id);
-    int* getAttribs(int id);
-    void setNext(int id, int next);
-    void setAttribs(int id, int* attr);
+    int  getNext(const int id);
+    int* getAttribs(const int id);
+    void setNext(const int id, const int next);
+    void setAttribs(const int id, int* attr);
+
+    // debugging metrics
+    int dbg_numResizes;
+    int dbg_numSplits;
   };
 
   VertexSplitter*  splitter_;
@@ -682,11 +818,17 @@ private:
   /// maps from optimized tri ID to unoptimized tri ID
   std::vector<int> triOptMap_;
 
-  /// vertex index in vbo -> input (face id, corner id) pair
-  std::vector<std::pair<int, int> > vertexMap_;
+  /// vertex index in vbo -> input (face id, corner id) pair , also inverse of faceBufSplit_
+//  std::vector<std::pair<int, unsigned char> > vertexMap_; // sizeof( std::pair<int, unsigned char> ) = 8!!
+  std::vector< int > vertexMapFace_;
+  std::vector< unsigned char > vertexMapCorner_;
 
   /// input face index -> output tri index
   std::vector<int> faceToTriMap_;
+  std::vector<int> faceToTriMapOffset_; 
+
+  /// output tri index -> input face index
+  std::vector<int> triToFaceMap_;
 
   // =====================================================
 
@@ -694,6 +836,9 @@ private:
 
   /// # vertices in vbo
   int numDrawVerts_;
+
+  /// # isolated vertices
+  int numIsolatedVerts_;
 
   /// index buffer
   int*  indices_;
@@ -705,17 +850,30 @@ private:
 
   void setInputIndexSplit(const int _face, const int _corner, const int _val);
 
-  int mapTriToInputFace(int _tri);
+  int mapTriToInputFace(const int _tri) const;
 
   int getInputIndexOffset(const int _face, const int _corner, const bool _rotation = true) const;
 
+  inline int getInputFaceOffset(const int _face) const
+  {
+    return faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face];
+  }
 
   /// build() preparation
   void prepareData();
 
+  // find isolated vertices
+  void findIsolatedVertices();
+
   // make sure each face has one vertex id without any references by neighboring faces
   // split vertices when necessary
   void forceUnsharedFaceVertex();
+
+  // eliminate duplicate attribute entries
+  void weldVertices();
+
+  // fix incomplete welding map if mesh contains isolated vertices
+  void fixWeldMap();
 
   // convert n-poly -> tris (triangle fans)
   void triangulate();
@@ -727,7 +885,7 @@ private:
   void optimize();
 
   // create vertex mapping: input id <-> final buffer id
-  void createVertexMap();
+  void createVertexMap(bool _keepIsolatedVerts);
 
   // create face mapping: input id <-> final tri id
   void createFaceMap();
@@ -741,11 +899,24 @@ public:
   /// dump mesh in wavefront obj format
   void dbgdumpObj(const char* _filename) const;
 
+  /// dump input mesh to binary file format
+  void dbgdumpInputBin(const char* _filename, bool _seperateFiles = false) const;
+
+  /// dump input mesh to wavefront obj format
+  void dbgdumpInputObj(const char* _filename) const;
+
   /// dump adjacency list to text file
   void dbgdumpAdjList(const char* _filename) const;
 
+  /// test correctness of input <-> output id mappings, unshared per face vertex.. logs errors in file
+  bool dbgVerify(const char* _filename) const;
+
+  /// interpret vertex data according declaration and write to string
+  std::string vertexToString(const void* v) const;
+
   /// return memory consumption in bytes
-  size_t getMemoryUsage() const;
+  /// @param _printConsole print detailed memory costs to command console
+  size_t getMemoryUsage(bool _printConsole = true) const;
 
   /// check for errors in input data
   std::string checkInputData() const;
