@@ -1837,7 +1837,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
       else
       {
         // isolated vertex
-        for (int i = 0; i < decl_.getNumElements(); ++i)
+        for (unsigned int i = 0; i < decl_.getNumElements(); ++i)
         {
           const VertexElement* el = decl_.getElement(i);
           input_[i].getElementData(posID, (char*)v1 + (size_t)el->pointer_, el);
