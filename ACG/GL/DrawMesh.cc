@@ -489,13 +489,13 @@ DrawMeshT<Mesh>::rebuild()
 
 
   // pass face data to mesh compiler
-  DrawMeshFaceInput<Mesh> faceInput(mesh_);
-  faceInput.attributeStoredPerHalfedge_.resize(meshComp_->getVertexDeclaration()->getNumElements(), 0);
-  faceInput.attributeStoredPerHalfedge_[attrIDPos]  = 0;
-  faceInput.attributeStoredPerHalfedge_[attrIDNorm] = ( (halfedgeNormalMode_ && mesh_.has_halfedge_normals()) ? 1 : 0 );
-  faceInput.attributeStoredPerHalfedge_[attrIDTexC] = ( mesh_.has_halfedge_texcoords2D() ? 1 : 0);
+  DrawMeshFaceInput<Mesh>* faceInput = new DrawMeshFaceInput<Mesh>(mesh_);
+  faceInput->attributeStoredPerHalfedge_.resize(meshComp_->getVertexDeclaration()->getNumElements(), 0);
+  faceInput->attributeStoredPerHalfedge_[attrIDPos]  = 0;
+  faceInput->attributeStoredPerHalfedge_[attrIDNorm] = ( (halfedgeNormalMode_ && mesh_.has_halfedge_normals()) ? 1 : 0 );
+  faceInput->attributeStoredPerHalfedge_[attrIDTexC] = ( mesh_.has_halfedge_texcoords2D() ? 1 : 0);
 
-  meshComp_->setFaceInput(&faceInput);
+  meshComp_->setFaceInput(faceInput);
 
   // set textures
   for (int i = 0; i < mesh_.n_faces(); ++i)
