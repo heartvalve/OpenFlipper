@@ -326,8 +326,6 @@ public:
   {
     const typename Mesh::VertexHandle vh =  mesh_.vertex_handle(_vertexID);
 
-    int counter = 0;
-
     // read all vertex indices of this face
     typename Mesh::ConstVertexFaceIter adj_it = mesh_.cvf_iter(vh);
     for (int i = 0; adj_it.is_valid() && i < _k; ++adj_it, ++i);
@@ -458,13 +456,6 @@ DrawMeshT<Mesh>::rebuild()
     rebuild_ = REBUILD_NONE;
     return;
   }
-
-
-  int n_v = mesh_.n_vertices();
-  int n_e = mesh_.n_edges();
-  int n_f = mesh_.n_faces();
-  int n_h = mesh_.n_halfedges();
-
 
   // full rebuild:
   delete meshComp_;
@@ -1760,7 +1751,6 @@ typename Mesh::HalfedgeHandle ACG::DrawMeshT<Mesh>::mapToHalfedgeHandle(int _ver
 {
   // map to halfedge handle+
   int faceId, cornerId;
-  int posID = meshComp_->mapToOriginalVertexID(_vertexId, faceId, cornerId);
 
   if (faceId >= 0)
   {
