@@ -548,6 +548,7 @@ DrawMeshT<Mesh>::rebuild()
 
 
   // get vertex buffer
+  numTris_ = meshComp_->getNumTriangles();
   numVerts_ = meshComp_->getNumVertices();
 
   delete [] vertices_;
