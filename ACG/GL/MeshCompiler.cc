@@ -1660,13 +1660,13 @@ std::string MeshCompiler::vertexToString( const void* v ) const
 
     str << el->shaderInputName_ << " [";
 
-    const char* data = (const char*)v + (size_t)el->pointer_;
+    const void* data = static_cast<const char*>(v) + (size_t)el->pointer_;
 
     switch ( el->type_ )
     {
     case GL_DOUBLE:
       {
-        const double* d0 = reinterpret_cast<const double*>(data);
+        const double* d0 = static_cast<const double*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
            str << d0[k] << ", ";
@@ -1675,7 +1675,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
 
     case GL_FLOAT:
       {
-        const float* f0 = reinterpret_cast<const float*>(data);
+        const float* f0 = static_cast<const float*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << f0[k] << ", ";
@@ -1684,7 +1684,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_INT:
     case GL_UNSIGNED_INT:
       {
-        const int* i0 = reinterpret_cast<const int*>(data);
+        const int* i0 = static_cast<const int*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << i0[k] << ", ";
@@ -1693,7 +1693,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_SHORT:
     case GL_UNSIGNED_SHORT:
       {
-        const short* i0 = reinterpret_cast<const short*>(data);
+        const short* i0 = static_cast<const short*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << i0[k] << ", ";
@@ -1702,7 +1702,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_BYTE:
     case GL_UNSIGNED_BYTE:
       {
-        const char* i0 = reinterpret_cast<const char*>(data);
+        const char* i0 = static_cast<const char*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << ((int)i0[k]) << ", ";
