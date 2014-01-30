@@ -2111,7 +2111,7 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
     return;
   }
 
-  const char* dataAdr = data + (size_t)(_idx * stride);
+  const void* dataAdr = static_cast<const char*>(data) + (size_t)(_idx * stride);
 
   if (fmt == 0 || elementSize == -1 || fmt == _desc->type_)
     memcpy(_dst, dataAdr, attrSize);
@@ -2126,17 +2126,17 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
     {
       switch (fmt)
       {
-      case GL_FLOAT:  data_d[i] = (reinterpret_cast<const float*>(dataAdr))[i];  break;
-      case GL_DOUBLE: data_d[i] = (reinterpret_cast<const double*>(dataAdr))[i];  break;
+      case GL_FLOAT:  data_d[i] = (static_cast<const float*>(dataAdr))[i];  break;
+      case GL_DOUBLE: data_d[i] = (static_cast<const double*>(dataAdr))[i];  break;
       
       case GL_UNSIGNED_INT:
-      case GL_INT:    data_i[i] = (reinterpret_cast<const int*>(dataAdr))[i];  break;
+      case GL_INT:    data_i[i] = (static_cast<const int*>(dataAdr))[i];  break;
       
       case GL_UNSIGNED_SHORT:
-      case GL_SHORT:  data_i[i] = (reinterpret_cast<const short*>(dataAdr))[i];  break;
+      case GL_SHORT:  data_i[i] = (static_cast<const short*>(dataAdr))[i];  break;
 
       case GL_UNSIGNED_BYTE:
-      case GL_BYTE:  data_i[i] = (reinterpret_cast<const short*>(dataAdr))[i];  break;
+      case GL_BYTE:  data_i[i] = (static_cast<const short*>(dataAdr))[i];  break;
 
       default: std::cerr << "MeshCompiler: unknown data format - " << fmt << std::endl; break;
       }
