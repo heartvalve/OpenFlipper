@@ -194,13 +194,25 @@ if (GTEST_FOUND)
   if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
      add_definitions( /D _VARIADIC_MAX=10 )
   endif()
-
+ 
   add_executable (ACG_tests ${TEST_SOURCES})
+
+  set(OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  # run tests in build directory of OF
+  if ( ${PROJECT_NAME} MATCHES "OpenFlipper" AND WIN32)
+    set(OUT_DIR  ${CMAKE_BINARY_DIR}/Build)
+  endif()
+
   set_target_properties(ACG_tests PROPERTIES
-  		COMPILE_FLAGS "-UNDEBUG")
+    COMPILE_FLAGS "-UNDEBUG"
+    RUNTIME_OUTPUT_DIRECTORY ${OUT_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUT_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUT_DIR}
+  )
+  
   target_link_libraries(ACG_tests
         ${GTEST_LIBRARIES} ${OPENMESH_LIBRARIES} ACG
   )
-
-  add_test(AllTestsIn_ACG_tests ACG_tests)
+  
+  add_test(NAME AllTestsIn_ACG_tests COMMAND ${OUT_DIR}/ACG_tests)
 endif(GTEST_FOUND)
