@@ -3368,15 +3368,15 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     const VertexElement* el = _decl->getElement(i);
 
 
-    const char* el_0 = (const char*)v0 + (size_t)el->pointer_;
-    const char* el_1 = (const char*)v1 + (size_t)el->pointer_;
+    const void* el_0 = static_cast<const char*>(v0) + (size_t)el->pointer_;
+    const void* el_1 = static_cast<const char*>(v1) + (size_t)el->pointer_;
 
     switch ( el->type_ )
     {
     case GL_DOUBLE:
       {
-        const double* d0 = reinterpret_cast<const double*>(el_0);
-        const double* d1 = reinterpret_cast<const double*>(el_1);
+        const double* d0 = static_cast<const double*>(el_0);
+        const double* d1 = static_cast<const double*>(el_1);
 
         double diff = 0.0;
 
@@ -3391,8 +3391,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
 
     case GL_FLOAT:
       {
-        const float* f0 = reinterpret_cast<const float*>(el_0);
-        const float* f1 = reinterpret_cast<const float*>(el_1);
+        const float* f0 = static_cast<const float*>(el_0);
+        const float* f1 = static_cast<const float*>(el_1);
 
         float diff = 0.0;
 
@@ -3413,8 +3413,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_INT:
     case GL_UNSIGNED_INT:
       {
-        const int* i0 = reinterpret_cast<const int*>(el_0);
-        const int* i1 = reinterpret_cast<const int*>(el_1);
+        const int* i0 = static_cast<const int*>(el_0);
+        const int* i1 = static_cast<const int*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
@@ -3426,8 +3426,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_SHORT:
     case GL_UNSIGNED_SHORT:
       {
-        const short* i0 = reinterpret_cast<const short*>(el_0);
-        const short* i1 = reinterpret_cast<const short*>(el_1);
+        const short* i0 = static_cast<const short*>(el_0);
+        const short* i1 = static_cast<const short*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
@@ -3439,8 +3439,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_BYTE:
     case GL_UNSIGNED_BYTE:
       {
-        const char* i0 = reinterpret_cast<const char*>(el_0);
-        const char* i1 = reinterpret_cast<const char*>(el_1);
+        const char* i0 = static_cast<const char*>(el_0);
+        const char* i1 = static_cast<const char*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
