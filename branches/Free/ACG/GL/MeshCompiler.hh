@@ -586,13 +586,13 @@ private:
       j: corner index
       _out: output vertex (index for each attribute) post welding operation
   */
-  void getInputFaceVertex_Welded(int _face, int _corner, int* _out) const;
+  void getInputFaceVertex_Welded(const int _face, const int _corner, int* _out) const;
 
   /** i: face index
       j: corner index
       _out: output vertex address (vertex data)
   */
-  void getInputFaceVertexData(int _face, int _corner, void* _out) const;
+  void getInputFaceVertexData(const int _face, const int _corner, void* _out) const;
 
 
   inline int getInputIndex( const int& _face, const int& _corner, const int& _attrId ) const
