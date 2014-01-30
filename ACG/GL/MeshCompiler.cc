@@ -822,7 +822,7 @@ void MeshCompiler::getInputFaceVertex( const int _face, const int _corner, int* 
     _out[k] = getInputIndex(_face, _corner, k);
 }
 
-void MeshCompiler::getInputFaceVertex_Welded( int i, int j, int* _out ) const
+void MeshCompiler::getInputFaceVertex_Welded( const int i, const int j, int* _out ) const
 {
   int face = i;
   int corner = j;
@@ -840,14 +840,14 @@ void MeshCompiler::getInputFaceVertex_Welded( int i, int j, int* _out ) const
     _out[k] = getInputIndex(face, corner, k);
 }
 
-void MeshCompiler::getInputFaceVertexData( int _faceId, int _corner, void* _out ) const
+void MeshCompiler::getInputFaceVertexData( const int _faceId, const int _corner, void* _out ) const
 {
   for (int i = 0; i < numAttributes_; ++i)
   {
     const VertexElement* el = decl_.getElement(i);
 
 //    int idx = faceInput_->getSingleFaceAttr(_faceId, _corner, i);
-    int idx = getInputIndex(_faceId, _corner, i);
+    const int idx = getInputIndex(_faceId, _corner, i);
 
     input_[i].getElementData(idx, (char*)_out + (size_t)el->pointer_, el);
   }
@@ -1666,7 +1666,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     {
     case GL_DOUBLE:
       {
-        const double* d0 = (const double*)data;
+        const double* d0 = reinterpret_cast<const double*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
            str << d0[k] << ", ";
@@ -1675,7 +1675,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
 
     case GL_FLOAT:
       {
-        const float* f0 = (const float*)data;
+        const float* f0 = reinterpret_cast<const float*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << f0[k] << ", ";
@@ -1684,7 +1684,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_INT:
     case GL_UNSIGNED_INT:
       {
-        const int* i0 = (const int*)data;
+        const int* i0 = reinterpret_cast<const int*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << i0[k] << ", ";
@@ -1693,7 +1693,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_SHORT:
     case GL_UNSIGNED_SHORT:
       {
-        const short* i0 = (const short*)data;
+        const short* i0 = reinterpret_cast<const short*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << i0[k] << ", ";
@@ -1702,7 +1702,7 @@ std::string MeshCompiler::vertexToString( const void* v ) const
     case GL_BYTE:
     case GL_UNSIGNED_BYTE:
       {
-        const char* i0 = (const char*)data;
+        const char* i0 = reinterpret_cast<const char*>(data);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
           str << ((int)i0[k]) << ", ";
@@ -2126,17 +2126,17 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
     {
       switch (fmt)
       {
-      case GL_FLOAT:  data_d[i] = ((const float*)dataAdr)[i];  break;
-      case GL_DOUBLE: data_d[i] = ((const double*)dataAdr)[i];  break;
+      case GL_FLOAT:  data_d[i] = (reinterpret_cast<const float*>(dataAdr))[i];  break;
+      case GL_DOUBLE: data_d[i] = (reinterpret_cast<const double*>(dataAdr))[i];  break;
       
       case GL_UNSIGNED_INT:
-      case GL_INT:    data_i[i] = ((const int*)dataAdr)[i];  break;
+      case GL_INT:    data_i[i] = (reinterpret_cast<const int*>(dataAdr))[i];  break;
       
       case GL_UNSIGNED_SHORT:
-      case GL_SHORT:  data_i[i] = ((const short*)dataAdr)[i];  break;
+      case GL_SHORT:  data_i[i] = (reinterpret_cast<const short*>(dataAdr))[i];  break;
 
       case GL_UNSIGNED_BYTE:
-      case GL_BYTE:  data_i[i] = ((const short*)dataAdr)[i];  break;
+      case GL_BYTE:  data_i[i] = (reinterpret_cast<const short*>(dataAdr))[i];  break;
 
       default: std::cerr << "MeshCompiler: unknown data format - " << fmt << std::endl; break;
       }
@@ -3375,8 +3375,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     {
     case GL_DOUBLE:
       {
-        const double* d0 = (const double*)el_0;
-        const double* d1 = (const double*)el_1;
+        const double* d0 = reinterpret_cast<const double*>(el_0);
+        const double* d1 = reinterpret_cast<const double*>(el_1);
 
         double diff = 0.0;
 
@@ -3391,8 +3391,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
 
     case GL_FLOAT:
       {
-        const float* f0 = (const float*)el_0;
-        const float* f1 = (const float*)el_1;
+        const float* f0 = reinterpret_cast<const float*>(el_0);
+        const float* f1 = reinterpret_cast<const float*>(el_1);
 
         float diff = 0.0;
 
@@ -3413,8 +3413,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_INT:
     case GL_UNSIGNED_INT:
       {
-        const int* i0 = (const int*)el_0;
-        const int* i1 = (const int*)el_1;
+        const int* i0 = reinterpret_cast<const int*>(el_0);
+        const int* i1 = reinterpret_cast<const int*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
@@ -3426,8 +3426,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_SHORT:
     case GL_UNSIGNED_SHORT:
       {
-        const short* i0 = (const short*)el_0;
-        const short* i1 = (const short*)el_1;
+        const short* i0 = reinterpret_cast<const short*>(el_0);
+        const short* i1 = reinterpret_cast<const short*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
@@ -3439,8 +3439,8 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
     case GL_BYTE:
     case GL_UNSIGNED_BYTE:
       {
-        const char* i0 = (const char*)el_0;
-        const char* i1 = (const char*)el_1;
+        const char* i0 = reinterpret_cast<const char*>(el_0);
+        const char* i1 = reinterpret_cast<const char*>(el_1);
 
         for (int k = 0; k < (int)el->numElements_; ++k)
         {
