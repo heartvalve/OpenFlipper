@@ -733,8 +733,8 @@ DrawMeshT<Mesh>::createVBO()
   {
     // use per face normals
 
-    if (!verticesTmp_)
-      verticesTmp_ = new Vertex[numVerts_];
+    delete [] verticesTmp_;
+    verticesTmp_ = new Vertex[numVerts_];
 
     memcpy(verticesTmp_, vertices_, sizeof(Vertex) * numVerts_);
 
