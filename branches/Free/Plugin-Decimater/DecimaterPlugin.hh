@@ -191,14 +191,16 @@ private :
   std::vector< ptr::shared_ptr<DecimaterInit> > decimater_objects_;
   QIcon* toolIcon_;
 
-private slots:
+public slots:
 
   /// decimating called from button in toolbox
   void slot_decimate();
 
   /// init called from button in toolbox
   void slot_initialize();
+  void slot_initialize_object(int obj_id, bool clear = false);
 
+private slots:
   /// roundness slider - spinbox sync
   void slotUpdateRoundness(int    _value);
   void slotUpdateRoundness(double _value);
@@ -219,6 +221,9 @@ private slots:
   void slotMixedCounterValueChanged(double);
   void slotMixedSliderValueChanged(int);
   void slotDisableDecimation();
+
+private:
+  void initialize_object(BaseObjectData *obj);
 
 //===========================================================================
 /** @name Scripting Functions

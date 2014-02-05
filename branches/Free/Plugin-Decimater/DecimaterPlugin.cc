@@ -236,6 +236,8 @@ void DecimaterPlugin::slotUpdateAspectRatio(double _value)
   tool_->cbAspectRatio->setChecked (true);
 }
 //-----------------------------------------------------------------------------
+
+
 /** \brief Init called by toolbox
  *
  */
@@ -250,19 +252,26 @@ void DecimaterPlugin::slot_initialize()
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
       o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
+	  initialize_object(*o_it);
+
+  }
+  tool_->pbDecimate->setEnabled(true);
+}
+
+void DecimaterPlugin::initialize_object(BaseObjectData *obj) {
     //initialize
-    TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
+    TriMeshObject* object = PluginFunctions::triMeshObject(obj);
 
     if ( object == 0 )
       emit log(LOGWARN , tr("Unable to get object"));
 
-    DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( o_it->objectData(DECIMATER) );
+    DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( obj->objectData(DECIMATER) );
 
-    TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+    TriMesh* mesh = PluginFunctions::triMesh(obj);
 
     if (decimater == 0){
       decimater = new DecimaterInfo();
-      o_it->setObjectData(DECIMATER, decimater);
+      obj->setObjectData(DECIMATER, decimater);
     }
 
     // constraint handles for decimation
@@ -381,16 +390,28 @@ void DecimaterPlugin::slot_initialize()
     // Initialize the decimater
     if( ! decimater_object->initialize() ){
       emit log(LOGWARN, tr("Decimater could not be initialized"));
-      continue;
+      return;
     }
 
     decInit->decimater = decimater_object;
-    decInit->objId = o_it->id();
+    decInit->objId = obj->id();
 
     decimater_objects_.push_back(decInit);
-  }
-  tool_->pbDecimate->setEnabled(true);
 }
+
+void DecimaterPlugin::slot_initialize_object(int obj_id, bool clear) {
+	if (clear)
+		decimater_objects_.clear();
+
+	BaseObjectData *obj = 0;
+	PluginFunctions::getObject(obj_id, obj);
+	if (!obj) return;
+
+	initialize_object(obj);
+
+	tool_->pbDecimate->setEnabled(true);
+}
+
 //-----------------------------------------------------------------------------
 /** \brief Decimation called by toolbox
  *
