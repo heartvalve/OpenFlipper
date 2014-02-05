@@ -664,13 +664,14 @@ private:
 
   int   numFaces_, 
         numIndices_;
-  std::vector<int>  faceStart_;    // start position in buf for each face
-  std::vector<unsigned char> faceSize_;    // face size, copy of faceInput_->getFaceSize() for better performance
-  std::vector<int> faceData_;
-  size_t   maxFaceSize_;           // max(faceSize_)
-  bool  constantFaceSize_;
-  std::vector<short>  faceGroupIDs_; // group id for each face (optional input)
-  int   curFaceInputPos_;          // current # indices set by user
+
+  std::vector<int>           faceStart_;         // start position in buf for each face
+  std::vector<unsigned char> faceSize_;          // face size, copy of faceInput_->getFaceSize() for better performance
+  std::vector<int>           faceData_;
+  size_t                     maxFaceSize_;       // max(faceSize_)
+  bool                       constantFaceSize_;
+  std::vector<short>         faceGroupIDs_;      // group id for each face (optional input)
+  int                        curFaceInputPos_;   // current # indices set by user
 
   MeshCompilerFaceInput* faceInput_;   // face data input interface
   bool deleteFaceInputeData_;       // delete if face input data internally created
