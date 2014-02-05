@@ -42,14 +42,8 @@
 
 #include <QtGui>
 
-#include <QFileInfo>
-
 #include "ComponentsPlugin.hh"
 
-#include <iostream>
-
-#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#include <OpenFlipper/common/GlobalOptions.hh>
 #include <MeshTools/MeshInfoT.hh>
 
 const char *SPLIT_COMPONENTS = "SplitComponents";

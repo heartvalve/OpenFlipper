@@ -44,7 +44,7 @@
 
 #include "ComponentsPlugin.hh"
 #include <iostream>
-#include <queue>
+#include <vector>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
