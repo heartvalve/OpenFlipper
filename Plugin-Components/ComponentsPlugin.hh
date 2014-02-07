@@ -72,7 +72,7 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
   signals:
     // BaseInterface
     void updateView();
-    void updatedObject(int _identifier, const UpdateType _type);
+    void updatedObject(int _identifier, const UpdateType& _type);
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
 
@@ -85,7 +85,7 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
     void getToolBar( QString _name, QToolBar*& _toolbar);
 
     // PickingInterface
-    void addPickMode( const std::string _mode );
+    void addPickMode( const std::string& _mode)
 
     //ScriptInterface
     void scriptInfo( QString _functionName );

@@ -92,7 +92,6 @@ IdList ComponentsPlugin::splitComponents( int _objectId  ) {
         int components = MeshInfo::componentCount( mesh );
 
         //create empty meshes
-        std::vector< TriMesh* > newMeshes;
         IdList newIDs;
 
         newIDs.push_back( _objectId );
@@ -157,7 +156,6 @@ IdList ComponentsPlugin::splitComponents( int _objectId  ) {
         int components = MeshInfo::componentCount( mesh );
 
         //create empty meshes
-        std::vector< PolyMesh* > newMeshes;
         std::vector< int > newIDs;
 
         if (components == 1){
