@@ -85,7 +85,7 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
     void getToolBar( QString _name, QToolBar*& _toolbar);
 
     // PickingInterface
-    void addPickMode( const std::string& _mode)
+    void addPickMode( const std::string& _mode);
 
     //ScriptInterface
     void scriptInfo( QString _functionName );
