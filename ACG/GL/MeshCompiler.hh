@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdio>
 #include <string>
+#include <fstream>
 
 #include <ACG/GL/gl.hh>
 
@@ -496,7 +497,7 @@ public:
    */
   inline int getFaceSize(const int _i) const
   {
-    return faceSize_.empty() ? maxFaceSize_ : faceSize_[_i];
+    return int(faceSize_.empty() ? maxFaceSize_ : faceSize_[_i]);
   }
 
   /** Get Vertex declaration.
@@ -718,7 +719,8 @@ private:
     int  bufSize; // size of buf
     int  num;     // # adjacency entries
 
-    void dbgdump(FILE* file) const;
+//    void dbgdump(FILE* file) const;
+    void dbgdump(std::ofstream& file) const;
   };
 
   // adjacency list: vertex -> faces
@@ -857,7 +859,7 @@ private:
 
   inline int getInputFaceOffset(const int _face) const
   {
-    return faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face];
+    return int(faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face]);
   }
 
   /// build() preparation
