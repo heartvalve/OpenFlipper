@@ -139,7 +139,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
 }
 
 
-
+/*
 template<class Mesh>
 template<class Prop>
 void DrawMeshT<Mesh>::getMeshPropertyType( Prop _propData, GLuint* _outType, int* _outSize, int* _outStride )
@@ -180,6 +180,7 @@ void DrawMeshT<Mesh>::getMeshPropertyType( Prop _propData, GLuint* _outType, int
   if (_outStride)
     *_outStride = (fmt == GL_DOUBLE ? 8 : 4) * size;
 }
+*/
 
 
 template<class Mesh>
