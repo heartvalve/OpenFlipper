@@ -921,7 +921,7 @@ int MeshCompiler::getInputIndexOffset( const int _face, const int _corner, const
   assert(_face >= 0);
   assert(_face < numFaces_);
 
-  const int baseIdx = faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face];
+  const int baseIdx = int(faceStart_.empty() ? maxFaceSize_ * _face : faceStart_[_face]);
 //  int fsize = faceCorners_.empty() ? maxFaceCorners_ : faceCorners_[_face];
   const int fsize = getFaceSize(_face);
 
@@ -1294,7 +1294,7 @@ void MeshCompiler::sortFacesByGroup()
   }
 
   // alloc subset array
-  numSubsets_ = GroupIDs.size();
+  numSubsets_ = int(GroupIDs.size());
   subsets_.resize(numSubsets_);
 
   if (numSubsets_ > 1)
@@ -1723,10 +1723,10 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 {
   int numTotalErrors = 0;
 
-  FILE* file = 0;
+  std::ofstream file;
 
   if (_filename)
-    file = fopen(_filename, "wt");
+    file.open(_filename);
 
   if (file || !_filename)
   {
@@ -1736,8 +1736,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
     int numErrors = 0;
 
     // check draw_tri <-> face
-    if (file)
-      fprintf(file, "checking draw_tri <-> face mapping ..\n");
+    if (file.is_open())
+      file <<  "checking draw_tri <-> face mapping ..\n";
 
     for (int face = 0; face < getNumFaces(); ++face)
     {
@@ -1751,22 +1751,22 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
         int dbg_face = mapToOriginalFaceID(tri);
         if (face != dbg_face)
         {
-          if (file)
-            fprintf(file, "error: face %i -> (numTris: %i,  tri %i -> face %i)\n", face, numTrisOfFace, tri, dbg_face);
+          if (file.is_open())
+            file << "error: face " << face << " -> (numTris: " << numTrisOfFace << ",  tri " << tri << " -> face " << dbg_face << ")\n";
           ++numErrors;
         }
       }
     }
 
-    if (file)
-      fprintf(file, "%i errors found\n\n", numErrors);
+    if (file.is_open())
+      file << numErrors << " errors found\n\n";
     numTotalErrors += numErrors;
 
     // ---------------------------------------------------------------------------------------
 
     // check input (face, corner) -> vertex id
-    if (file)
-      fprintf(file, "checking (face, corner) -> vbo by comparing vertex data ..\n");
+    if (file.is_open())
+      file <<  "checking (face, corner) -> vbo by comparing vertex data ..\n";
     numErrors = 0;
 
     char* vtxCmpData = new char[decl_.getVertexStride() * 2];
@@ -1796,15 +1796,15 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
           std::string vertexData1 = vertexToString(v1);
 
           if (file)
-            fprintf(file, "error: (face %i, corner %i) -> vertex %i : %s != %s\n", face, k, vertex, vertexData0.c_str(), vertexData1.c_str());
+            file << "error: (face " << face << ", corner " << k << ") -> vertex " << vertex << ": " << vertexData0.c_str() << " != "<< vertexData1.c_str() << "\n";
 
           ++numErrors;
         }
       }
     }
 
-    if (file)
-      fprintf(file, "%i errors found\n\n", numErrors);
+    if (file.is_open())
+      file << numErrors << " errors found\n\n";
     numTotalErrors += numErrors;
 
     numErrors = 0;
@@ -1812,8 +1812,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
     // ---------------------------------------------------------------------------------------
 
     // check vertex id -> input (face, corner)
-    if (file)
-      fprintf(file, "checking vbo -> (face, corner) by comparing vertex data ..\n");
+    if (file.is_open())
+      file <<  "checking vbo -> (face, corner) by comparing vertex data ..\n";
     numErrors = 0;
 
     for (int vertex = 0; vertex < getNumVertices(); ++vertex)
@@ -1849,13 +1849,13 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
         std::string vertexData1 = vertexToString(v1);
 
         if (file)
-          fprintf(file, "error: vertex %i -> (face %i, corner %i): %s != %s\n", vertex, face, corner, vertexData0.c_str(), vertexData1.c_str());
+          file << "error: vertex " << vertex << " -> (face " << face << ", corner " << corner << "): " << vertexData0.c_str() << " != " << vertexData1.c_str() << "\n";
         ++numErrors;
       }
     }
 
-    if (file)
-      fprintf(file, "%i errors found\n\n", numErrors);
+    if (file.is_open())
+      file << numErrors << " errors found\n\n";
     numTotalErrors += numErrors;
 
     numErrors = 0;
@@ -1868,8 +1868,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
     // check unshared vertex
     if (provokingVertex_ >= 0)
     {
-      if (file)
-        fprintf(file, "checking unshared per face vertices ..\n");
+      if (file.is_open())
+        file <<  "checking unshared per face vertices ..\n";
 
       std::vector< std::map<int, int> > VertexRefs;
       VertexRefs.resize(getNumVertices());
@@ -1897,19 +1897,19 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
         {
           if (file)
           {
-            fprintf(file, "error: vertex %i is referenced by %i faces: ", i, VertexRefs[i].size());
+            file << "error : vertex " << i << " is referenced by " << VertexRefs[i].size() << " faces: ";
 
             for (std::map<int, int>::iterator it = VertexRefs[i].begin(); it != VertexRefs[i].end(); ++it)
-              fprintf(file, "%d, ", it->first);
+              file << it->first << ", ";
 
-            fprintf(file, "\n");
+            file << "\n";
           }
           ++numErrors;
         }
       }
 
-      if (file)
-        fprintf(file, "%i errors found\n\n", numErrors);
+      if (file.is_open())
+        file << numErrors << " errors found\n\n";
       numTotalErrors += numErrors;
 
       numErrors = 0;
@@ -1918,8 +1918,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
       // -----------------------------------------------------------
       // check face group sorting
 
-      if (file)
-        fprintf(file, "checking face group sorting ..\n");
+      if (file.is_open())
+        file << "checking face group sorting ..\n";
 
       for (int i = 0; i < getNumSubsets(); ++i)
       {
@@ -1932,8 +1932,8 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
           if (grID != sub->id)
           {
-            if (file)
-              fprintf(file, "error: face %d with group-id %d was mapped to subset-group %d", faceID, grID, sub->id);
+            if (file.is_open())
+              file <<  "error: face " << faceID << " with group-id " << grID << " was mapped to subset-group " << sub->id << "\n";
 
             ++numErrors;
           }
@@ -1941,16 +1941,16 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
         }
       }
 
-      if (file)
-        fprintf(file, "%i errors found\n\n", numErrors);
+      if (file.is_open())
+        file << numErrors << " errors found\n\n";
       numTotalErrors += numErrors;
 
       numErrors = 0;
 
     }
     
-    if (file)
-      fclose(file);
+    if (file.is_open())
+      file.close();
   }
 
   return numTotalErrors == 0;
@@ -1958,22 +1958,19 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
 void MeshCompiler::dbgdump(const char* _filename) const
 {
-  FILE* file = 0;
-  
-  file = fopen(_filename, "wt");
+  std::ofstream file;
+  file.open(_filename);
 
-  if (file)
+  if (file.is_open())
   {
     for (int i = 0; i < numAttributes_; ++i)
     {
       const VertexElementInput* inp = input_ + i;
-      fprintf(file, "attribute[%d]: internalbuf 0x%p, data 0x%p, count %d, stride %d, attrSize %d\n",
-        i,  inp->internalBuf, inp->data, inp->count, inp->stride, inp->attrSize);
+      file << "attribute[" << i << "]: internalbuf " << inp->internalBuf << ", data " << inp->data << ", count " << inp->count << ", stride " << inp->stride << ", attrSize " << inp->attrSize << "\n";
     }
 
-    fprintf(file, "\n\n");
-
-    fprintf(file, "faces %d\nindices %d\n", numFaces_, numIndices_);
+    file << "\n\n";
+    file << "faces " << numFaces_ << "\nindices " << numIndices_ << "\n";
 
     if (!vertexWeldMapFace_.empty())
     {
@@ -1983,81 +1980,71 @@ void MeshCompiler::dbgdump(const char* _filename) const
         {
           int face = vertexWeldMapFace_[getInputFaceOffset(i) + k];
           int corner = vertexWeldMapCorner_[getInputFaceOffset(i) + k];
-          fprintf(file, "vertexWeldMap_[%d, %d] = [%d, %d]\n", i, k, face, corner);
+          file << "vertexWeldMap_[" << i <<", "<<k<<"] = ["<<face<<", "<<corner<<"]\n";
         }
       }
     }
 
     for (size_t i = 0; i < faceBufSplit_.size(); ++i)
-      fprintf(file, "faceBufSplit_[%d] = %d\n", (int)i, faceBufSplit_[i]);
+      file << "faceBufSplit_["<<i<<"] = "<<faceBufSplit_[i]<<"\n";
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (size_t i = 0; i < faceRotCount_.size(); ++i)
-      fprintf(file, "faceRotCount_[%d] = %d\n", (int)i, faceRotCount_[i]);
+      file << "faceRotCount_["<<i<<"] = "<<int(faceRotCount_[i])<<"\n";
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (size_t i = 0; i < faceGroupIDs_.size(); ++i)
-      fprintf(file, "faceGroupIDs_[%d] = %d\n", (int)i, faceGroupIDs_[i]);
+      file << "faceGroupIDs_["<<i<<"] = "<<faceGroupIDs_[i]<<"\n";
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (size_t i = 0; i < faceSortMap_.size(); ++i)
-      fprintf(file, "faceSortMap_[%d] = %d\n", (int)i, faceSortMap_[i]);
+      file << "faceSortMap_["<<i<<"] = "<<faceSortMap_[i]<<"\n";
 
-    fprintf(file, "\n\n");
-    
-    for (size_t i = 0; i < faceSortMap_.size(); ++i)
-      fprintf(file, "faceSortMap_[%d] = %d\n", (int)i, faceSortMap_[i]);
-
-
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (size_t i = 0; i < triIndexBuffer_.size()/3; ++i)
-      fprintf(file, "tri[%d] = %d %d %d\n", (int)i, triIndexBuffer_[i*3], triIndexBuffer_[i*3+1], triIndexBuffer_[i*3+2]);
+      file << "tri["<<i<<"] = "<<triIndexBuffer_[i*3+1]<<" "<<triIndexBuffer_[i*3+1]<<" "<<triIndexBuffer_[i*3+2]<<"\n";
 
-
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (size_t i = 0; i < subsets_.size(); ++i)
     {
       const Subset* sub = &subsets_[i];
-      fprintf(file, "subset[%d]: id %d, startIndex %d, numTris %d, numFaces %d, startFace %d\n", 
-        (int)i, sub->id, sub->startIndex, sub->numTris, sub->numFaces, sub->startFace);
+      file <<"subset["<<i<<"]: id "<<sub->id<<", startIndex "<<sub->startIndex<<", numTris "<<sub->numTris<<", numFaces "<<sub->numFaces<<", startFace "<<sub->startFace<<"\n";
     }
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (std::map<int, int>::const_iterator it = subsetIDMap_.begin();
       it != subsetIDMap_.end(); ++it)
-      fprintf(file, "subsetIDMap[%d] = %d\n", it->first, it->second);
+      file << "subsetIDMap["<<it->first<<"] = "<<it->second<<"\n";
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (int i = 0; i < numFaces_; ++i)
     {
-        for (int k = 0; k < getFaceSize(i); ++k)
-          fprintf(file, "mapToDrawVertexID[%d, %d] = %d\n", i, k, mapToDrawVertexID(i, k));
+      for (int k = 0; k < getFaceSize(i); ++k)
+        file <<"mapToDrawVertexID["<<i<<", "<<k<<"] = "<<mapToDrawVertexID(i, k)<<"\n";
     }
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
     for (int i = 0; i < getNumVertices(); ++i)
     {
       int f, c;
       mapToOriginalVertexID(i, f, c);
-      fprintf(file, "mapToOriginalVertexID[%d] = [%d, %d]\n", i, f, c);
+      file <<"mapToOriginalVertexID["<<i<<"] = ["<<f<<", "<<c<<"]\n";
     }
 
-    fprintf(file, "\n\n");
-
-    fprintf(file, "adjacencyVert\n");
+    file << "\n\nadjacencyVert\n";
     adjacencyVert_.dbgdump(file);
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
-    fprintf(file, "\n\n");
+    file << "\n\n";
 
 
     for (int i = 0; i < numFaces_; ++i)
@@ -2071,24 +2058,23 @@ void MeshCompiler::dbgdump(const char* _filename) const
           float* uv = (float*)(vtx + 12);
           float* n = (float*)(vtx + 12 + 8);
 
-          fprintf(file, "data[%d, %d] = (%f %f %f) (%f %f) (%f %f %f)\n", i, k, pos[0],pos[1],pos[2], uv[0],uv[1], n[0],n[1],n[2]);
-
+          file << "data["<<i<<", "<<k<<"] = ("<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<") ("<<uv[0]<<" "<<uv[1]<<") ("<<n[0]<<" "<<n[1]<<" "<<n[2]<<")\n";
         }
     }
 
-    fclose(file);
+    file.close();
   }
 }
 
 
-void MeshCompiler::AdjacencyList::dbgdump(FILE* file) const
+void MeshCompiler::AdjacencyList::dbgdump(std::ofstream& file) const
 {
-  if (file)
+  if (file.is_open())
   {
     for (int i = 0; i < num; ++i)
     {
       for (int k = 0; k < getCount(i); ++k)
-        fprintf(file, "adj[%d][%d] = %d\n", i, k, getAdj(i, k));
+        file << "adj["<<i<<"]["<<k<<"] = "<<getAdj(i,k)<<"\n";
     }
   }
 }
@@ -2199,11 +2185,10 @@ void MeshCompiler::VertexElementInput::getElementData(int _idx, void* _dst, cons
 
 void MeshCompiler::dbgdumpObj(const char* _filename) const
 {
-  FILE* file = 0;
+  std::ofstream file;
+  file.open(_filename);
 
-  file = fopen(_filename, "wt");
-
-  if (file)
+  if (file.is_open())
   {
     for (int i = 0; i < numDrawVerts_; ++i)
     {
@@ -2214,19 +2199,19 @@ void MeshCompiler::dbgdumpObj(const char* _filename) const
       if (inputIDPos_ >= 0)
       {
         float* pos = vertex + (size_t)decl_.getElement(inputIDPos_)->pointer_ / 4;
-        fprintf(file, "v %f %f %f\n", pos[0], pos[1], pos[2]);
+        file << "v "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<"\n";
       }
 
       if (inputIDNorm_ >= 0)
       {
         float* pos = vertex + (size_t)decl_.getElement(inputIDNorm_)->pointer_ / 4;
-        fprintf(file, "vn %f %f %f\n", pos[0], pos[1], pos[2]);
+        file << "vn "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<"\n";
       }
 
       if (inputIDTexC_ >= 0)
       {
         float* pos = vertex  + (size_t)decl_.getElement(inputIDTexC_)->pointer_ / 4;
-        fprintf(file, "vt %f %f\n", pos[0], pos[1]);
+        file << "vt "<<pos[0]<<" "<<pos[1]<<"\n";
       }
     }
 
@@ -2234,20 +2219,17 @@ void MeshCompiler::dbgdumpObj(const char* _filename) const
     for (int i = 0; i < numTris_; ++i)
     {
       if (!inputIDTexC_ && !inputIDNorm_)
-        fprintf(file, "f %d %d %d\n", indices_[i*3]+1, indices_[i*3+1]+1, indices_[i*3+2]+1);
+        file << "f "<<indices_[i*3]+1<<" "<<indices_[i*3+1]+1<<" "<<indices_[i*3+2]+1<<"\n";
 
       else if (!inputIDTexC_)
-        fprintf(file, "f %d/%d %d/%d %d/%d\n", indices_[i*3]+1,indices_[i*3]+1, indices_[i*3+1]+1,indices_[i*3+1]+1, indices_[i*3+2]+1,indices_[i*3+2]+1);
+        file << "f "<<indices_[i*3]+1<<"/"<<indices_[i*3]+1<<" "<<indices_[i*3+1]+1<<"/"<<indices_[i*3+1]+1<<" "<<indices_[i*3+2]+1<<"/"<<indices_[i*3+2]+1<<"\n";
 
       else
-        fprintf(file, "f %d/%d/%d %d/%d/%d %d/%d/%d\n",
-                indices_[i*3]+1,indices_[i*3]+1,indices_[i*3]+1,
-                indices_[i*3+1]+1,indices_[i*3+1]+1,indices_[i*3+1]+1, 
-                indices_[i*3+2]+1,indices_[i*3+2]+1,indices_[i*3+2]+1);
+        file << "f "<<indices_[i*3]+1<<"/"<<indices_[i*3]+1<<"/"<<indices_[i*3]+1<<" "<<indices_[i*3+1]+1<<"/"<<indices_[i*3+1]+1<<"/"<<indices_[i*3+1]+1<<" "<<indices_[i*3+2]+1<<"/"<<indices_[i*3+2]+1<<"/"<<indices_[i*3+2]+1<<"\n";
     }
 
 
-    fclose(file);
+    file.close();
   }
 }
 
@@ -2259,12 +2241,10 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
 //  const int nTexC = (inputIDTexC_ >= 0) ? input_[inputIDTexC_].count : 0;
 
   
+  std::ofstream file;
+  file.open(_filename);
 
-  FILE* file = 0;
-
-  file = fopen(_filename, "wt");
-
-  if (file)
+  if (file.is_open())
   {
     // write vertex data
 
@@ -2274,7 +2254,7 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
       const VertexElement* el = decl_.getElement(inputIDPos_);
       input_[inputIDPos_].getElementData(i, pos, el);
 
-      fprintf(file, "v %f %f %f\n", pos[0], pos[1], pos[2]);
+      file << "v "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<"\n";
     }
 
     if (inputIDTexC_ >= 0)
@@ -2286,7 +2266,7 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
       for (int i = 0; i < vei->count; ++i)
       {
         vei->getElementData(i, pos, el);
-        fprintf(file, "vt %f %f\n", pos[0], pos[1]);
+        file << "vt "<<pos[0]<<" "<<pos[1]<<"\n";
       }
     }
 
@@ -2300,7 +2280,7 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
       for (int i = 0; i < vei->count; ++i)
       {
         vei->getElementData(i, pos, el);
-        fprintf(file, "vn %f %f %f\n", pos[0], pos[1], pos[2]);
+        file << "vn "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<"\n";
       }
     }
 
@@ -2330,10 +2310,10 @@ void MeshCompiler::dbgdumpInputObj( const char* _filename ) const
         strLine += tmp;
       }
 
-      fprintf(file, "%s\n", strLine.c_str());
+      file << strLine.c_str() << "\n";
     }
 
-    fclose(file);
+    file.close();
   }
 
 }
