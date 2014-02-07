@@ -54,7 +54,9 @@ const char *BIGGEST_COMPONENT = "ComponentsPluginBiggestComponent";
 /** \brief Constructor
  *
  */
-ComponentsPlugin::ComponentsPlugin() {}
+ComponentsPlugin::ComponentsPlugin():
+    splitAction_(NULL),
+    biggestAction_(NULL){}
 
 /*******************************************************************************
         BaseInterface implementation
