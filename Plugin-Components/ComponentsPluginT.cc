@@ -50,15 +50,7 @@
 
 //------------------------------------------------------------------------------
 
-/** \brief Split mesh into components
- *
- * This function will split an arbitrary component out of a mesh.
- * It takes a copy of the original mesh.
- *
- * @param _mesh the original mesh
- * @param _copy original mesh copy with identical topology and geometry
- *              the copy will contain one component of the original mesh.
- */
+
 template< class MeshT >
 void
 ComponentsPlugin::splitComponent( MeshT*   _mesh, MeshT* _copy){
@@ -173,7 +165,7 @@ ComponentsPlugin::selectBiggestComponent( MeshT*   _mesh){
 
 template< class MeshT >
 void
-ComponentsPlugin::isolateBiggestComponent( MeshT*   _mesh)
+ComponentsPlugin::deleteUnselectedFaces( MeshT*   _mesh)
 {
   for (typename MeshT::FaceIter fIter = _mesh->faces_begin(); fIter != _mesh->faces_end(); ++fIter)
   {
