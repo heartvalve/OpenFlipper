@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.0 ( 2014/02/12 , 18160 )</b>
+- <b>OpenFlipper 2.0 ( ?? , 18160 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
