@@ -1753,7 +1753,7 @@ typename Mesh::HalfedgeHandle ACG::DrawMeshT<Mesh>::mapToHalfedgeHandle(int _ver
 {
   // map to halfedge handle+
   int faceId, cornerId;
-  int posID = meshComp_->mapToOriginalVertexID(_vertexId, faceId, cornerId);
+  meshComp_->mapToOriginalVertexID(_vertexId, faceId, cornerId);
 
   if (faceId >= 0)
   {
