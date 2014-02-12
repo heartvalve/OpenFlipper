@@ -174,9 +174,22 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
 
    public slots:
 
-      /// Split a mesh into components
+
+     /** \brief Splits the object into components
+      *
+      * i.e. creates ( number of components) new meshes and deletes the old mesh
+      *
+      * @param _objectId id of the target object
+      */
       IdList splitComponents( int _objectId  );
 
+
+      /** \brief Gets the biggest connected component of a mesh
+       *
+       * i.e. deletes all components except the one with the maximal number of faces
+       *
+       * @param _objId id of the target object
+       */
       void biggestComponent(int _objId);
 
    public slots:

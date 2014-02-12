@@ -62,12 +62,6 @@ void ComponentsPlugin::setDescriptions(){
 
 //------------------------------------------------------------------------------
 
-/** \brief splits the object into components
- *
- * i.e. creates (#components) new meshes and deletes the old mesh
- *
- * @param _objectId id of the target object
- */
 IdList ComponentsPlugin::splitComponents( int _objectId  ) {
 
   // get object
