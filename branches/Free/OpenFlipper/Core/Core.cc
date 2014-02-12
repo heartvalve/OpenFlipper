@@ -1737,7 +1737,7 @@ void Core::deleteObject( int _id ){
 
 }
 
-void Core::deserializeMaterialProperties(int _objId, QString props) {
+void Core::deserializeMaterialProperties(int _objId, QString _props) {
     if ( _objId == -1 ) return;
 
     BaseObject* object = objectRoot_->childExists(_objId);
@@ -1753,7 +1753,7 @@ void Core::deserializeMaterialProperties(int _objId, QString props) {
         return;
     }
 
-    o->materialNode()->material().deserializeFromJson(props);
+    o->materialNode()->material().deserializeFromJson(_props);
 }
 
 QString Core::serializeMaterialProperties(int _objId) {
