@@ -338,7 +338,7 @@ private:
    *
    * @param _fh mesh face handle
    */
-  unsigned int getFaceColor(const typename Mesh::FaceHandle   _vh);
+  unsigned int getFaceColor(const typename Mesh::FaceHandle   _fh);
 
   /** \brief  eventually update vertex and index buffers
    *
@@ -594,17 +594,15 @@ private:
 
   /** \brief get the texture index of a face
    *
-   *
-   *  @param _tri Face index (-1 if not available)
-   *
-   *  @return Face index of a triangle
+   *  @param _face Face index
+   *  @return Face Texture id of face
    */
   int getTextureIDofFace(unsigned int _face);
 
   /** \brief get the data type of a mesh property
    *
    *
-   *  @param _prop mesh property data
+   *  @param _propData  mesh property data
    *  @param _outType [out] data type i.e. GL_FLOAT, GL_DOUBLE
    *  @param _outSize [out] number of atoms in range 1..4
    *  @param _outStride [out] size in bytes
