@@ -57,12 +57,13 @@
 
 /** \brief Save an object
  *
- * get object with given id, find a plugin to save dataType, save!
- *  (existing files will be overwritten)
+ * Get object with given id, find a plugin to save dataType, save
+ *
+ * \note Existing files will be overwritten
  *
  * @param _id       Id of the object that should be saved
  * @param _filename Filename to save to
- * @return Successful?
+ * @return Successful
  */
 bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
