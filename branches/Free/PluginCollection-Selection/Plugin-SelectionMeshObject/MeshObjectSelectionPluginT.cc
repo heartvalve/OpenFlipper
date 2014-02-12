@@ -243,6 +243,7 @@ void MeshObjectSelectionPlugin::toggleMeshSelection(int _objectId, MeshT* _mesh,
 /** \brief paint selection with a sphere
  *
  * @param _mesh          a mesh
+ * @param _objectId      object id to work on
  * @param _target_idx    handle of the face that was hit by the mouse picking
  * @param _hitpoint      point where the mouse picking hit
  * @param _radius        Radius of the selection sphere
@@ -412,6 +413,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
 /** \brief Select all primitves that are projected to the given region
  *
  * @param _mesh a mesh
+ * @param _objectId      object id to work on
  * @param _state current gl state
  * @param _region region
  * @param _primitiveType primitive types to be selected
@@ -574,6 +576,7 @@ void MeshObjectSelectionPlugin::closestBoundarySelection(MeshT* _mesh, int _vh, 
 /** \brief Select all primitves of a planar region surrounding the faceHandle
  *
  * @param _mesh a mesh
+ * @param _objectId object id to work on
  * @param _fh handle of the face that was picked
  * @param _maxAngle the maximum dihedral angle over which the flood fill selection passes
  * @param _primitiveTypes the currently active primitive types
@@ -662,9 +665,10 @@ void MeshObjectSelectionPlugin::floodFillSelection(
 
 /** \brief Select a complete connected component
  *
- * @param _mesh a mesh
- * @param _fh handle of the face that was picked
- * @param _hit_point point that was picked
+ * @param _mesh          a mesh
+ * @param _ objectId     Object Id to work on
+ * @param _fh            handle of the face that was picked
+ * @param _hit_point     point that was picked
  * @param _primitiveType primitive types to be selected
  */
 template<class MeshT>
