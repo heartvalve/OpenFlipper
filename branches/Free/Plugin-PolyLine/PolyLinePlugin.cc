@@ -1175,7 +1175,7 @@ finishSpline()
     if(!PluginFunctions::getObject(createSpline_CurrSelIndex_, lineObject))
         return;
 
-    GlutPrimitiveNode* control = 0;
+
     PolyLineBezierSplineData* splineData = dynamic_cast<PolyLineBezierSplineData*>(lineObject->objectData(BEZSPLINE_DATA));
 
     TriMeshObject* mesh;
@@ -1188,10 +1188,14 @@ finishSpline()
     const ACG::Vec3d sizeBB((bbMax-bbMin));
 
     if(splineData->finishSpline()) {
+
+        GlutPrimitiveNode* control = 0;
+
         for(unsigned int i = 0; i < splineData->points_.size(); i++) {
             lineObject->getAdditionalNode(control, name(), "control", i);
             control->enablePicking(true);
         }
+
         for(unsigned int i = 0; i < splineData->handles_.size(); i++) {
             const PolyLineBezierSplineData::InterpolatePoint& control = splineData->getInterpolatePoint(i);
             const ACG::Vec3d hndlPos = splineData->handles_[i], ctrlPos = control.position;
