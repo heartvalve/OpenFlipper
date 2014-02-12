@@ -1587,7 +1587,7 @@
      - Bugfixes
 
 
- - <b>OpenFlipper 1.0 RC3 ( 07.10.2009)</b>
+- <b>OpenFlipper 1.0 RC3 ( 07.10.2009)</b>
      - Switch to cmake
      - Creation of Windows and MacOS Installer files
      - Bugfixes
@@ -1597,4 +1597,5 @@
 
 - <b>OpenFlipper 1.0 RC1 ( 03.27.2009 )</b>
   - Initial Release
+
 */
