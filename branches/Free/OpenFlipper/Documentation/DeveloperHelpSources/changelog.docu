@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 1.4 ( ?? , 17874 )</b>
+- <b>OpenFlipper 2.0 ( 2014/02/12 , 18160 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
          - Interface: Renamed and extended functions to block scenegraph updates. OpenFlipper::Options::loadingSettings replaced by 
@@ -47,12 +47,15 @@
          - Math
              - Dual Quaternion: New operator to access dual quaternion elements sequentially
              - Dual Quaternion: Made interpolate function a template to allow other vector types than std::vector
+	 - MeshNode
+	     - New MeshCompiler and DrawMesh versions with improved speed and less memory overhead
          - Scenegraph:
              - translationManipulator: Added support for render objects 
              - Added functions for new rendering interface, replacing the opengl standard pipeline
              - StatusNodes can now use the buffers of a drawmesh (reuse them to use less memory and faster rendering)
              - PolyLineNode: Implementation of new rendering interface
              - ManipulatorNode : manipulatorMoved should now only be emitted for manipulator objects that were actually touched
+	     - MaterialNode: Added optional JSON-Serialization of materials if QJson is available.
          - Shader Utils
              - Added functions to bind and get Fragment data locations
          - Unittests
@@ -156,6 +159,7 @@
              - Follow new color spec in polyline nodes
              - Fixed picking through object when using polyline interaction.
              - Fixed polyline merge crash, when picked object is not a poly line
+ 	     - Cloning capabilities
          - Skeleton
              - Added include guard to AnimationHandle class
          - VolumeMesh
@@ -170,6 +174,8 @@
              - Added Vector4 Scripting datatype
              - VSI Meta data for color plugin
              - Scripting functions to set object color
+	 - Components
+	     - New plugin in Free branch to split mesh into separate components
          - Datacontrol
              - Added context menu item to copy material to targeted objects.
              - Speedup: Accellerate Treeitem lookup for child by a map. This should speedup large object count handling significantly.
@@ -306,6 +312,8 @@
      - <b>Debugging</b>
 	 - Integrated debugging via Stackwalker on window ( Writes CrashDump.txt to OpenFlipper Home directory)
      - <b>Build system</b>
+	 - Cmake switch to use external OpenMesh
+	 - New finders for openni and nite
          - Default to release build type by default
          - Added plugin collections to cleanup directory structure
          - Extract library path for glut on windows
