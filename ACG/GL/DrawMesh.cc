@@ -490,7 +490,7 @@ DrawMeshT<Mesh>::rebuild()
   meshComp_->setFaceInput(faceInput);
 
   // set textures
-  for (int i = 0; i < mesh_.n_faces(); ++i)
+  for (unsigned int i = 0; i < mesh_.n_faces(); ++i)
     meshComp_->setFaceGroup(i, getTextureIDofFace(i));
 
   // pass vertex data to mesh compiler
