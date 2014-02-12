@@ -941,8 +941,18 @@ private slots:
     /// Get object id from filename
     int getObjectId(QString _filename);
 
-    void deserializeMaterialProperties(int _objId, QString props);
+    /** \brief Serialize material properties
+     *
+     * @param _objId  Id of the object where the material should be deserialized into
+     * @param _props   A QString containing the serialized material
+     */
+    void deserializeMaterialProperties(int _objId, QString _props);
 
+    /** \brief Serialize material properties
+     *
+     * @param _objId  Id of the object where the material should be serialized
+     * @return A Qstring containing the serialized material
+     */
     QString serializeMaterialProperties(int _objId);
 
   /** @} */
