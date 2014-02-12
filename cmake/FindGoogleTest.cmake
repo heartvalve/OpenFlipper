@@ -60,8 +60,8 @@ else(GTEST_INCLUDE_DIRS AND GTEST_LIBRARIES AND GTEST_MAIN_LIBRARIES)
       NO_DEFAULT_PATH )
     find_library(_GTEST_MAIN_LIBRARY gtest_main
       PATHS
-      /ACG/acgdev/gcc-4.7-x86_64/gtest/lib
       ~/sw/gtest/lib
+      /ACG/acgdev/gcc-4.7-x86_64/gtest/lib
       /opt/local/lib
       /usr/local/lib
       /usr/include
