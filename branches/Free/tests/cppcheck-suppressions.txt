@@ -33,3 +33,6 @@ redundantAssignment:libs_required/OpenMesh/Doc/Tutorial/09-persistence/fill_prop
 unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:81
 unnecessaryForwardDeclaration:OpenFlipper/common/BaseObjectData.hh:87
 redundantAssignment:OpenFlipper/LicenseManager/LicenseManagerActive.cc:310
+
+// Missing includes
+missingInclude:*
