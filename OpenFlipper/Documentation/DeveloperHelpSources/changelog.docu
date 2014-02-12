@@ -305,7 +305,7 @@
          - Added documentation about core keys
          - Removed example path from doxyfiles for user documentation
          - Added colored point rendering stuff.
-     - <b>License management
+     - <b>License management</b>
 	 - License manager now parses any number of license requests out of garbled junk.
 	 - Added function to keygen that allows mangling new plugin fingerprints into existing hardware hashes.
          - Added cmake option to build license key generators independently of license manager.
