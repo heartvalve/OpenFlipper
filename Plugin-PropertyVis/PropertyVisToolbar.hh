@@ -60,6 +60,12 @@ public:
     setupUi(this);
   }
   
+  virtual QSize minimumSizeHint() const {
+      QSize result = QWidget::minimumSizeHint();
+      result.setWidth(0);
+      return result;
+  }
+
   signals:
     void widgetShown();
         
