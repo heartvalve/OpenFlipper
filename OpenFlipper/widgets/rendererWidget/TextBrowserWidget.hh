@@ -108,11 +108,12 @@ class TextBrowserWidget : public QPlainTextEdit
     void unfold(Fold& _fold);
     void toggleFold(int _position);
     void updateFolds();
+
     /** \brief get the _fold corresponding to the document _position
-     * @param _position position in the document
-     * @param _fold    fold in folds_ at the position if found
      *
-     * \return true if fold was found (otherwise false is returned)
+     * @param _position position in the document
+     * @param _fold     fold in folds at the position if found
+     * @return          true if fold was found (otherwise false is returned)
      */
     bool getFold(int _position, Fold& _fold);
 
