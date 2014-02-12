@@ -221,11 +221,11 @@ void ComponentsPlugin::biggestComponent(int _objId)
   if ( obj->dataType(DATA_TRIANGLE_MESH) )
   {
     selectBiggestComponent(PluginFunctions::triMesh(obj));
-    isolateBiggestComponent(PluginFunctions::triMesh(obj));
+    deleteUnselectedFaces(PluginFunctions::triMesh(obj));
   }
   else if ( obj->dataType(DATA_POLY_MESH) )
   {
     selectBiggestComponent(PluginFunctions::polyMesh(obj));
-    isolateBiggestComponent(PluginFunctions::polyMesh(obj));
+    deleteUnselectedFaces(PluginFunctions::polyMesh(obj));
   }
 }

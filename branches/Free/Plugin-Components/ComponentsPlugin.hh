@@ -133,6 +133,7 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
 //===========================================================================
 
   private slots:
+
     /// Split into Components Button was hit
     void slotSplitComponentsButton();
     
@@ -155,15 +156,36 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
   * @{ */
 //===========================================================================
 
-  /// Split mesh into components
+  /** \brief Split mesh into components
+   *
+   * This function will split an arbitrary component out of a mesh.
+   * It takes a copy of the original mesh.
+   *
+   * @param _mesh the original mesh
+   * @param _copy original mesh copy with identical topology and geometry
+   *              the copy will contain one component of the original mesh.
+   */
   template< class MeshT >
   void splitComponent( MeshT*   _mesh, MeshT* _copy);
 
+  /** \brief Select the biggest component of the mesh
+   *
+   * This function will select the component of the mesh which has the most faces
+   *
+   * @param _mesh the mesh to work on
+   */
   template< class MeshT >
   void selectBiggestComponent( MeshT*   _mesh);
 
+  /** \brief Deletes all faces of a mesh that are not selected
+   *
+   * Use selectBiggestcomponent first to select the biggest component.
+   * Than use this function to remove all other parts of the mesh.
+   *
+   * @param _mesh the mesh to work on
+   */
   template< class MeshT >
-  void isolateBiggestComponent( MeshT*   _mesh);
+  void deleteUnselectedFaces( MeshT*   _mesh);
 
 /** @} */
 
@@ -192,10 +214,10 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
        */
       void biggestComponent(int _objId);
 
+/** @} */
+
    public slots:
       QString version() { return QString("1.0"); };
-
-/** @} */
 
    private:
       /// set scripting slot descriptions
