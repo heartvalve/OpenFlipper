@@ -265,7 +265,7 @@ public:
    *
    * @param _list          Pointer to a list of render objects used for output (defaults to unsorted internal list)
    * @param _outputShaders Output the shaders used for the objects?
-   * @param _modifier Pointer to vector of registered ShaderModifier
+   * @param _modifiers     Pointer to vector of registered ShaderModifier
    * @return Render object data in a QString
    */
   virtual QString dumpCurrentRenderObjectsToString(ACG::RenderObject** _list = 0, bool _outputShaders = false, std::vector<ACG::ShaderModifier*>* _modifiers = 0);
