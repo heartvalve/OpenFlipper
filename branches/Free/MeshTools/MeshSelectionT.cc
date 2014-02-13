@@ -895,7 +895,7 @@ void convertHalfedgeToFaceSelection(MeshT* _mesh) {
 
 template< typename MeshT >
 inline
-void selectFaces(MeshT* _mesh, const IdList& _faces) {
+void selectFaces(MeshT* _mesh, const std::vector< int >& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )
@@ -909,7 +909,7 @@ void selectFaces(MeshT* _mesh, const IdList& _faces) {
 
 template< typename MeshT >
 inline
-void unselectFaces(MeshT* _mesh, const IdList& _faces) {
+void unselectFaces(MeshT* _mesh, const std::vector< int >& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )

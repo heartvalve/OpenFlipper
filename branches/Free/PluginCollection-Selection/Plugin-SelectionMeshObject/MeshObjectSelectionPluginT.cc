@@ -666,7 +666,7 @@ void MeshObjectSelectionPlugin::floodFillSelection(
 /** \brief Select a complete connected component
  *
  * @param _mesh          a mesh
- * @param _ objectId     Object Id to work on
+ * @param _objectId      Object Id to work on
  * @param _fh            handle of the face that was picked
  * @param _hit_point     point that was picked
  * @param _primitiveType primitive types to be selected
