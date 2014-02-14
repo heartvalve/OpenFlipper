@@ -270,7 +270,7 @@ private:
 
 	void MakeAbstract(){}
 
-	// simple and fast fixed size stack used in tipsify implementation
+	/// Simple and fast fixed size stack used in tipsify implementation
 	struct RingStack
 	{
 	private:
@@ -286,12 +286,34 @@ private:
 		}
 
 	public:
-		RingStack(unsigned int _uiSize) : uiStart(0), uiLen(0), uiSize(_uiSize)
-		{ pStack = new unsigned int[uiSize];}
+		RingStack(unsigned int _uiSize) :
+		  uiStart(0),
+		  uiLen(0),
+		  uiSize(_uiSize)
+    {
+      pStack = new unsigned int[uiSize];
+    }
+
+    RingStack(const RingStack& _other)
+    {
+      // Copy meta data
+      uiSize  = _other.uiSize;
+      uiLen   = _other.uiLen;
+      uiStart = _other.uiStart;
+
+      // Create empty storage
+      pStack = new unsigned int[uiSize];
+
+      // Copy storage from original to current storage
+      for (unsigned int  i = 0 ; i < uiSize; ++i )
+        pStack[i] = _other.pStack[i];
+
+    }
+
 		~RingStack() {delete [] pStack;}
 
-		unsigned int length() const {return uiLen;} // current stack length
-		unsigned int size() const {return uiSize;} // reserved stack size i.e. maximum length
+		unsigned int length() const {return uiLen;} ///< current stack length
+		unsigned int size() const {return uiSize;}  ///< reserved stack size i.e. maximum length
 
 		inline void push(unsigned int v)
 		{
