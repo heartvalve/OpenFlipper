@@ -1,60 +1,53 @@
-if (PETSC_INCLUDE_DIRS)
+IF (PETSC_INCLUDE_DIRS)
   # Already in cache, be silent
   SET(PETSC_FIND_QUIETLY TRUE)
-endif(PETSC_INCLUDE_DIRS)
+ENDIF (PETSC_INCLUDE_DIRS)
 
-if (WIN32)
-   find_path(PETSC_INCLUDE_DIR NAMES petsc.h
-     PREFIXES SRC
-     PATHS
-     "C:\\libs\\gurobi45"
-     ${PETSC_DIR}/include
-   )
+SET (PETSC_HEADER "petsc.h")
+SET (PETSC_LIB_OPT "petsc")
+SET (PETSC_LIB_DBG "${PETSC_LIB_OPT}")
+IF (WIN32)
+    SET (PETSC_LIB_OPT "SuperLU")
+    SET (PETSC_LIB_DBG "SuperLUd")
+ELSEIF (APPLE)
+    SET (PETSC_HEADER "gurobi_c++.h")
+    SET (PETSC_LIB_OPT "SuperLU")
+    SET (PETSC_LIB_DBG "SuperLU")
+ENDIF (WIN32)
 
-   find_library( PETSC_LIBRARY_RELEASE 
-                 SuperLU
-                 PATHS "C:\\libs\\gurobi45\\lib" )
-   find_library( PETSC_LIBRARY_DEBUG
-                   SuperLUd
-                   PATHS "C:\\libs\\gurobi45\\lib" )
+FIND_PATH(PETSC_INCLUDE_DIR NAMES ${PETSC_HEADER}
+    PATHS
+    /usr/local/include/petsc
+    /usr/local/include
+    /usr/include/petsc
+    /usr/include
+    "C:\\libs\\gurobi45"
+    ${PETSC_DIR}/include
+    "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
+    ${PETSC_INCLUDE_PATH}
+)
 
+SET(PETSC_LIBRARY_DIR NOTFOUND CACHE PATH "The directory where the petsc library resides.")
+FIND_LIBRARY( PETSC_LIBRARY_DEBUG
+    NAMES ${PETSC_LIB_DBG}
+    PATHS
+    ${PETSC_LIBRARY_DIR}
+    "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
+    )
+FIND_LIBRARY( PETSC_LIBRARY_RELEASE
+    NAMES ${PETSC_LIB_OPT}
+    PATHS
+    ${PETSC_LIBRARY_DIR}
+    "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
+    )
+INCLUDE (FindPackageHandleStandardArgs)
 
-   set ( PETSC_LIBRARY "optimized;${PETSC_LIBRARY_RELEASE};debug;${PETSC_LIBRARY_DEBUG}" CACHE  STRING "PETSC Libraries" )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Petsc DEFAULT_MSG PETSC_LIBRARY_DEBUG PETSC_LIBRARY_RELEASE PETSC_INCLUDE_DIR)
 
-ELSEIF(APPLE)
-
-   find_path(PETSC_INCLUDE_DIR NAMES gurobi_c++.h
-	     PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40"
-	     	   ${PETSC_INCLUDE_PATH}
-            )
-
-   find_library( PETSC_LIBRARY 
-                 SuperLU
-                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/gurobi40")
-
-ELSE( WIN32 )
-   find_path(PETSC_INCLUDE_DIR1 NAMES petsc.h
-     PATHS "$ENV{PETSC_DIR}/include"
-     ${PETSC_INCLUDE_DIR1}
-   )
-
-   find_path(PETSC_INCLUDE_DIR2 NAMES petscconf.h
-     PATHS "$ENV{PETSC_DIR}/$ENV{PETSC_ARCH}/include"
-     ${PETSC_INCLUDE_DIR2}
-   )
-
-#   MESSAGE(STATUS "$ENV{PETSC_HOME}/include")
-   IF(PETSC_INCLUDE_DIR1 AND PETSC_INCLUDE_DIR2)
-      SET(PETSC_FOUND TRUE)
-      SET(PETSC_INCLUDE_DIRS "${PETSC_INCLUDE_DIR1};${PETSC_INCLUDE_DIR2}")
-      SET(PETSC_LIBRARY_DIR "$ENV{PETSC_DIR}/$ENV{PETSC_ARCH}/lib" CACHE PATH "Path to PETSC Library")
-      SET(PETSC_LIBRARY "petsc" CACHE STRING "PETSC Libraries")  
-    ELSE(PETSC_INCLUDE_DIR1 AND PETSC_INCLUDE_DIR2)
-      SET(PETSC_FOUND FALSE)
-      SET(PETSC_INCLUDE_DIR ${PETSC_INCLUDE_DIR})
-    ENDIF(PETSC_INCLUDE_DIR1 AND PETSC_INCLUDE_DIR2)
-
-   #find_library( PETSC_LIBRARY 
-    #             gurobi
-     #            PATHS "${PETSC_HOME}/lib" )
-ENDIF()
+IF (PETSC_FOUND)
+    SET(PETSC_LIBRARIES "${PETSC_LIBRARY}")
+    SET(PETSC_INCLUDE_DIRS "${PETSC_INCLUDE_DIR}")
+    SET( PETSC_LIBRARY
+        debug ${PETSC_LIBRARY_DEBUG}
+        release ${PETSC_LIBRARY_RELEASE} )
+ENDIF (PETSC_FOUND)
