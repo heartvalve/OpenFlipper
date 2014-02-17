@@ -1,7 +1,14 @@
-
+#ifndef SHININESS
 #define SHININESS g_vMaterial.x
+#endif
+
+#ifndef TRANSPARENCY
 #define TRANSPARENCY g_vMaterial.y
+#endif
+
+#ifndef ALPHA
 #define ALPHA g_vMaterial.y
+#endif
 
 vec3 LitPointLight(vec3 vPosition,
 				   vec3 vNormal,

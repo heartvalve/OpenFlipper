@@ -647,6 +647,27 @@ public:
   */
   virtual void modifyFragmentEndCode(QStringList* _code) {}
 
+  /** \brief Modify the default lighting code of the shader generator.
+   *
+   *  Refer to the generation structure (\ref ShaderGenerator_page )
+   *  to see where your code is added and which variables you can modify.
+   *  Use
+   *  \code
+   *    _code->push_back("...");
+   *  \endcode
+   *  to insert your code here.
+   * @param _code string list of shader code.
+   * @param _lightId light index,  use g_vLightDir_{_lightId}, etc. in shader code to use light parameters
+   * @param _lightType light type: point, spot or directional light
+  */
+  virtual void modifyLightingCode(QStringList* _code, int _lightId, ShaderGenLightType _lightType) {}
+
+  /** \brief Specify whether this modifier replaces or extends the default lighting code.
+   *
+   * @return return false if this modifier modifies an alredy computed lighting color, return true if this modifier replaces the default lighting color
+  */
+  virtual bool replaceDefaultLightingCode() {return false;}
+
   /** \brief Returns the modifier ID
    *
    * @return Id of the modifier
@@ -702,8 +723,17 @@ public:
   */
   const QStringList& getFragmentShaderCode();
 
+  
+  /** \brief Get the number of active modifiers.
+  */
+  int getNumActiveModifiers() const;
 
-  /** \brief Shader modifiers has to be registered before it can be used.
+  /** \brief Get active modfiers for this program.
+  */
+  ShaderModifier* getActiveModifier(int _i);
+
+
+  /** \brief Shader modifiers have to be registered before they can be used.
              They also must remain allocated for the rest of the applications runtime.
              Use a combination of modifier-IDs in the constructor of ShaderProgGen to active them.
   @param _modifier address of a modifier implementation
@@ -742,6 +772,10 @@ private:
   /** \brief Adds lighting function calls to code
    */
   void addLightingCode(QStringList* _code);
+
+  /** \brief Calls lighting modifier for each light
+   */
+  void modifyLightingCode(QStringList* _code, ShaderModifier* _modifier);
 
   /// returns path to _strFileName without last slash
   QString getPathName(QString _strFileName);
