@@ -643,6 +643,7 @@ public:
    *    _code->push_back("...");
    *  \endcode
    *  to insert your code here.
+   *
    * @param _code string list of shader code.
   */
   virtual void modifyFragmentEndCode(QStringList* _code) {}
@@ -656,6 +657,7 @@ public:
    *    _code->push_back("...");
    *  \endcode
    *  to insert your code here.
+   *
    * @param _code string list of shader code.
    * @param _lightId light index,  use g_vLightDir_{_lightId}, etc. in shader code to use light parameters
    * @param _lightType light type: point, spot or directional light
@@ -664,7 +666,7 @@ public:
 
   /** \brief Specify whether this modifier replaces or extends the default lighting code.
    *
-   * @return return false if this modifier modifies an alredy computed lighting color, return true if this modifier replaces the default lighting color
+   * @return return false if this modifier modifies an already computed lighting color, return true if this modifier replaces the default lighting color
   */
   virtual bool replaceDefaultLightingCode() {return false;}
 
