@@ -55,6 +55,7 @@
 
 
 #include "gl.hh"
+#include <ACG/Config/ACGDefines.hh>
 #include <ACG/Math/VectorT.hh>
 
 
