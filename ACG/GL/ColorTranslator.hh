@@ -55,7 +55,7 @@
 
 
 #include "gl.hh"
-#include "../Math/VectorT.hh"
+#include <ACG/Math/VectorT.hh>
 
 
 //== NAMESPACES ===============================================================
