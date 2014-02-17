@@ -79,9 +79,15 @@ void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
 {
   // do some more checks for error detection
   if (!_renderObject->vertexDecl)
-    std::cout << "error: missing vertex declaration" << std::endl;
+    std::cout << "error: missing vertex declaration in renderobject: " << _renderObject->debugName << std::endl;
   else
   {
+    if (!_renderObject->depthWrite && 
+        !_renderObject->colorWriteMask[0] && !_renderObject->colorWriteMask[1] &&
+        !_renderObject->colorWriteMask[2] && !_renderObject->colorWriteMask[3])
+      std::cout << "warning: depth write and color write disabled in renderobject: " << _renderObject->debugName << std::endl;
+
+
     renderObjects_.push_back(*_renderObject);
 
 

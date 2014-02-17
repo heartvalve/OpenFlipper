@@ -122,7 +122,16 @@ void ScreenQuad::init ()
 
 
   if (!texDrawProg_)
+  {
+    // save active program
+    GLint curProg = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &curProg);
+
     texDrawProg_ = GLSL::loadProgram("ScreenQuad/screenquad.glsl", "ScreenQuad/tex2D.glsl");
+
+    // restore active program
+    glUseProgram(curProg);
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -351,14 +351,14 @@ void ShaderGenerator::buildShaderCode(QStringList* _pMainCode)
   foreach(it, genDefines_)
     code_.push_back(it);
 
-  // provide imports
-  foreach(it, imports_)
-    code_.push_back(it);
-
   // IO
   addIOToCode(inputs_);
   addIOToCode(outputs_);
   addIOToCode(uniforms_);
+
+  // provide imports
+  foreach(it, imports_)
+    code_.push_back(it);
 
   // main function
   foreach(it, (*_pMainCode))
@@ -917,6 +917,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
     inputShader = "Geometry";
 
   // support for projective texture mapping
+  _code->push_back("vec4 sg_vPosCS = out" + inputShader + "PosCS;");
   _code->push_back("vec2 sg_vScreenPos = out" + inputShader + "PosCS.xy / out" + inputShader + "PosCS.w * 0.5 + vec2(0.5, 0.5);");
 
   _code->push_back("vec4 sg_cColor = vec4(g_cEmissive, ALPHA);");
@@ -933,6 +934,7 @@ void ShaderProgGenerator::addFragmentBeginCode(QStringList* _code)
   {
     _code->push_back("vec4 sg_vPosVS = out" + inputShader + "PosVS;");
     _code->push_back("vec3 sg_vNormalVS = out" + inputShader + "Normal;");
+
 
     addLightingCode(_code);
   }
@@ -979,35 +981,83 @@ void ShaderProgGenerator::addFragmentEndCode(QStringList* _code)
 
 void ShaderProgGenerator::addLightingCode(QStringList* _code)
 {
-  QString buf;
-  
-  for (int i = 0; i < desc_.numLights; ++i)
+
+  ShaderModifier* lightingModifier = 0;
+
+  // check if any modifier replaces the default lighting function
+  for (int i = 0; i < numModifiers_ && !lightingModifier; ++i)
   {
-    ShaderGenLightType lgt = desc_.lightTypes[i];
+    if (usage_ & (1 << i))
+      if (modifiers_[i]->replaceDefaultLightingCode())
+        lightingModifier = modifiers_[i];
+  }
 
+  if (!lightingModifier)
+  {
+    // default lighting code:
 
-    switch (lgt)
+    QString buf;
+
+    for (int i = 0; i < desc_.numLights; ++i)
     {
-    case SG_LIGHT_DIRECTIONAL:
-      buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d);", i, i, i, i);
-      break;
+      ShaderGenLightType lgt = desc_.lightTypes[i];
 
-    case SG_LIGHT_POINT:
-      buf.sprintf("sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d);", i, i, i, i, i);
-      break;
+      switch (lgt)
+      {
+      case SG_LIGHT_DIRECTIONAL:
+        buf.sprintf("sg_cColor.xyz += LitDirLight(sg_vPosVS.xyz, sg_vNormalVS, g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d);", i, i, i, i);
+        break;
 
-    case SG_LIGHT_SPOT:
-      buf.sprintf("sg_cColor.xyz += LitSpotLight(sg_vPosVS.xyz,  sg_vNormalVS,  g_vLightPos_%d,  g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d,  g_vLightAngleExp_%d);", i, i, i, i, i, i, i);
-      break;
+      case SG_LIGHT_POINT:
+        buf.sprintf("sg_cColor.xyz += LitPointLight(sg_vPosVS.xyz, sg_vNormalVS,  g_vLightPos_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d);", i, i, i, i, i);
+        break;
 
-    default: break;
+      case SG_LIGHT_SPOT:
+        buf.sprintf("sg_cColor.xyz += LitSpotLight(sg_vPosVS.xyz,  sg_vNormalVS,  g_vLightPos_%d,  g_vLightDir_%d,  g_cLightAmbient_%d,  g_cLightDiffuse_%d,  g_cLightSpecular_%d,  g_vLightAtten_%d,  g_vLightAngleExp_%d);", i, i, i, i, i, i, i);
+        break;
+
+      default: break;
+      }
+
+      _code->push_back(buf);
     }
 
-    _code->push_back(buf);
+    // modify lighting color afterwards
+
+    for (int i = 0; i < numModifiers_; ++i)
+    {
+      if (usage_ & (1 << i))
+        modifyLightingCode(_code, modifiers_[i]);
+    }
+  }
+  else
+  {
+    // there exists a lighting modifier that completely replaces the default lighting shader
+    modifyLightingCode(_code, lightingModifier);
+
+
+    // apply remaining modifiers that do not replace the complete lighting code
+
+    for (int i = 0; i < numModifiers_; ++i)
+    {
+      if (usage_ & (1 << i) && lightingModifier != modifiers_[i])
+        modifyLightingCode(_code, modifiers_[i]);
+    }
   }
 
 }
 
+void ShaderProgGenerator::modifyLightingCode( QStringList* _code, ShaderModifier* _modifier )
+{
+  if (!_modifier) return;
+
+  for (int i = 0; i < desc_.numLights; ++i)
+  {
+    ShaderGenLightType lgt = desc_.lightTypes[i];
+
+    _modifier->modifyLightingCode(_code, i, lgt);
+  }
+}
 
 
 void ShaderProgGenerator::addLightingFunctions(QStringList* _code)
@@ -1108,6 +1158,35 @@ unsigned int ShaderProgGenerator::registerModifier( ShaderModifier* _modifier )
 
   modifiers_[numModifiers_++] = _modifier;
   return _modifier->modifierID_;
+}
+
+ShaderModifier* ShaderProgGenerator::getActiveModifier( int _i )
+{
+  // search active modifiers
+  int counter = 0;
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+    {
+      if (counter++ == _i)
+        return modifiers_[i];
+    }
+  }
+
+  // invalid _i
+  return 0;
+}
+
+int ShaderProgGenerator::getNumActiveModifiers() const
+{
+  // count modifiers
+  int numActive = 0;
+  for (int i = 0; i < numModifiers_; ++i)
+  {
+    if (usage_ & (1 << i))
+      ++numActive;
+  }
+  return numActive;
 }
 
 
