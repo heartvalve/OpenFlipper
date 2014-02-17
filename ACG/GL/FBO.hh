@@ -21,6 +21,7 @@
 #include <map>
 #include <vector>
 
+#include <ACG/Config/ACGDefines.hh>
 #include <ACG/GL/gl.hh>
 
 //== FORWARDDECLARATIONS ======================================================
