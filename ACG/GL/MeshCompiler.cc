@@ -2051,14 +2051,11 @@ void MeshCompiler::dbgdump(const char* _filename) const
     {
         for (int k = 0; k < getFaceSize(i); ++k)
         {
-          char vtx[128];
+          float vtx[32];
           getInputFaceVertexData(i, k, vtx);
 
-          float* pos = (float*)vtx;
-          float* uv = (float*)(vtx + 12);
-          float* n = (float*)(vtx + 12 + 8);
-
-          file << "data["<<i<<", "<<k<<"] = ("<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<") ("<<uv[0]<<" "<<uv[1]<<") ("<<n[0]<<" "<<n[1]<<" "<<n[2]<<")\n";
+          //                                    pos[0]       pos[1]       pos[2]          uv[0]        uv[1]          n[0]         n[1]         n[2]
+          file << "data["<<i<<", "<<k<<"] = ("<<vtx[0]<<" "<<vtx[1]<<" "<<vtx[2]<<") ("<<vtx[3]<<" "<<vtx[4]<<") ("<<vtx[5]<<" "<<vtx[6]<<" "<<vtx[7]<<")\n";
         }
     }
 
