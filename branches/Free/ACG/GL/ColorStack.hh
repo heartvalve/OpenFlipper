@@ -56,8 +56,7 @@
 
 #include <vector>
 
-#include "ACG/GL/gl.hh"
-#include "../Math/VectorT.hh"
+#include <ACG/Math/VectorT.hh>
 #include "ColorTranslator.hh"
 
 

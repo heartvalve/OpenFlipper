@@ -55,10 +55,7 @@
 
 //== INCLUDES =================================================================
 
-
-#include "../Config/ACGDefines.hh"
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-
 
 //== NAMESPACES ===============================================================
 
