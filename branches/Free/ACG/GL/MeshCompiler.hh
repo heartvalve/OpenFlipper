@@ -240,7 +240,7 @@ public:
   * Alternatively allocates an internal buffer only, such that data can be provided via setAttrib().
   * @param _attrIdx      Attribute id from VertexDeclaration
   * @param _num          Number of attributes
-  * @param _data         Input data buffer, may be null to only
+  * @param _data         Input data buffer, may be null to only allocate an internal buffer
   * @param _stride       Offset difference in bytes to the next attribute in _data. Default value 0 indicates no data alignment/memory packing.
   * @param _internalCopy Create an internal buffer and make a copy _data
   * @param _fmt data format of one element (must be set if input data does not match vertex declaration)
@@ -248,13 +248,13 @@ public:
   */
   void setAttribVec(int _attrIdx, int _num, const void* _data, int _stride = 0, bool _internalCopy = false, GLuint _fmt = 0, int _elementSize = -1);
 
-  /** set one single vertex
-      setVertices with internalCopy = true must be called before
-      to have an effect
+  /** Set single custom input attributes.
+  *
+  * An internal buffer for the requested attribute must be allocated before using this function. See setAttribVec()
+  * @param _attrIdx      Attribute id from VertexDeclaration
+  * @param _v            Buffer id of the single attribute
+  * @param _data         attribute data
   */
-  void setVertex(int _v, float* _f);
-  void setVertex(int _v, float _x, float _y, float _z, float _w);
-
   void setAttrib(int _attrIdx, int _v, const void* _data);
 
 /** @} */  
