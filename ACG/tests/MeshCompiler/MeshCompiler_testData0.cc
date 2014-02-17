@@ -6894,7 +6894,10 @@ void MeshCompilerTest_GetInput0(MeshTestData* input_) {
 
   input_->fsize_ = raw_fsize0;
   input_->fdata_pos = (int*)raw_fdata_pos0;
-  input_->vdata_pos = reinterpret_cast<float*>(raw_vdata_pos0);
+
+  // First cast to void* to make cppcheck happy and show, that we know what we are doing here!
+  void* tmp = reinterpret_cast<void*>(raw_vdata_pos0);
+  input_->vdata_pos = reinterpret_cast<float*>(tmp);
 }
 
 
