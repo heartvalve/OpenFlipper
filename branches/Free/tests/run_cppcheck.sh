@@ -9,7 +9,6 @@ cppcheck  --xml  \
           --force \
           -UDOXY_IGNORE_THIS \
           --suppress=unusedPrivateFunction \
-          --suppress=missingInclude  \
           --suppress=ConfigurationNotChecked \
           --suppressions-list=tests/cppcheck-suppressions.txt \
           --enable=style \
