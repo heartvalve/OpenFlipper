@@ -383,19 +383,19 @@ public:
   void release_edge_selections()   { release_prop( ref_count_eselections_, eselections_);}
 
   // property availability
-  bool vertex_normals_available()    const {return bool(ref_count_vnormals_);}
-  bool vertex_binormals_available()  const {return bool(ref_count_vbinormals_);}
-  bool vertex_colors_available()     const {return bool(ref_count_vcolors_);}
-  bool vertex_scalars_available()    const {return bool(ref_count_vscalars_);}
-  bool vertex_selections_available() const {return bool(ref_count_vselections_);}
-  bool vertex_vhandles_available() const {return bool(ref_count_vvhandles_);}
-  bool vertex_ehandles_available() const {return bool(ref_count_vehandles_);}
-  bool vertex_fhandles_available() const {return bool(ref_count_vfhandles_);}
+  bool vertex_normals_available()    const {return (ref_count_vnormals_    != 0 ); }
+  bool vertex_binormals_available()  const {return (ref_count_vbinormals_  != 0 ); }
+  bool vertex_colors_available()     const {return (ref_count_vcolors_     != 0 ); }
+  bool vertex_scalars_available()    const {return (ref_count_vscalars_    != 0 ); }
+  bool vertex_selections_available() const {return (ref_count_vselections_ != 0 ); }
+  bool vertex_vhandles_available()   const {return (ref_count_vvhandles_   != 0 ); }
+  bool vertex_ehandles_available()   const {return (ref_count_vehandles_   != 0 ); }
+  bool vertex_fhandles_available()   const {return (ref_count_vfhandles_   != 0 ); }
 
-  bool edge_normals_available()    const {return bool(ref_count_enormals_);}
-  bool edge_colors_available()     const {return bool(ref_count_ecolors_);}
-  bool edge_scalars_available()    const {return bool(ref_count_escalars_);}
-  bool edge_selections_available() const {return bool(ref_count_eselections_);}
+  bool edge_normals_available()      const {return (ref_count_enormals_    != 0 ); }
+  bool edge_colors_available()       const {return (ref_count_ecolors_     != 0 ); }
+  bool edge_scalars_available()      const {return (ref_count_escalars_    != 0 ); }
+  bool edge_selections_available()   const {return (ref_count_eselections_ != 0 ); }
 
   // property access ( no range or availability check! )
         Point& vertex_normal(unsigned int _i)       { return vnormals_[_i];}
