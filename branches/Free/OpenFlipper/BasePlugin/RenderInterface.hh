@@ -157,6 +157,12 @@ class RenderInterface {
      */
     virtual QString renderObjectsInfo(bool _outputShaderInfo) { return QString("Render object inforation not implemented in this plugin"); };
 
+    
+    /** \brief Reload any renderer specific shaders
+     *
+     * This function allows the plugin to reload any renderer specific shaders.
+     */
+    virtual void reloadShaders() {  };
 
 
 };
