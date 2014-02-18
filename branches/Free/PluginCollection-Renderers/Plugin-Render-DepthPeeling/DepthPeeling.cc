@@ -13,6 +13,7 @@
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/VertexDeclaration.hh>
 #include <ACG/GL/GLError.hh>
+#include <ACG/GL/ScreenQuad.hh>
 
 using namespace ACG;
 
@@ -155,8 +156,7 @@ PeelDualInitModifier PeelDualInitModifier::instance;
 // =================================================
 
 DepthPeeling::DepthPeeling()
-: screenQuadVBO_(0), screenQuadDecl_(0),
-peelBlend_(0), peelFinal_(0), peelDepthCopy_(0), peelQueryID_(0),
+ : peelBlend_(0), peelFinal_(0), peelDepthCopy_(0), peelQueryID_(0),
 peelBlendDual_(0), peelFinalDual_(0)
 {
 }
@@ -178,6 +178,11 @@ void DepthPeeling::initializePlugin()
 
 void DepthPeeling::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties)
 {
+  // debugging utilities
+//   if (!dbgProg_)
+//     dbgProg_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/dbg_shader.glsl");
+
+
   // collect renderobjects
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
 
@@ -237,10 +242,12 @@ void DepthPeeling::renderFrontPeeling(ACG::GLState* _glState,
   {
     // depth peeling code
 
-    // ensure correct rendertarget size
-    updateViewerResources(0, _properties.viewerId(), _glState->viewport_width(), _glState->viewport_height());
+    // make sure shaders and occlusion query are initialized
+    initDepthPeeling();
 
+    // resize fbo as necessary
     ViewerResources* viewRes = &viewerRes_[_properties.viewerId()];
+    viewRes->resize(false, (unsigned int)_glState->viewport_width(), (unsigned int)_glState->viewport_height());
 
 
     // MRT:
@@ -379,7 +386,7 @@ void DepthPeeling::renderFrontPeeling(ACG::GLState* _glState,
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, curr->colorTex);
 
-      drawProjQuad(peelBlend_);
+      ACG::ScreenQuad::draw(peelBlend_);
 
 
       glDisable(GL_BLEND);
@@ -418,7 +425,7 @@ void DepthPeeling::renderFrontPeeling(ACG::GLState* _glState,
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, viewRes->peelBlendTex_);
 
-    drawProjQuad(peelFinal_);
+    ACG::ScreenQuad::draw(peelFinal_);
 
     ACG::glCheckErrors();
 
@@ -461,10 +468,12 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
   {
     // depth peeling code
 
-    // ensure correct rendertarget size
-    updateViewerResources(1, _properties.viewerId(), _glState->viewport_width(), _glState->viewport_height());
+    // make sure shaders and occlusion query are initialized
+    initDualDepthPeeling();
 
+    // resize fbo as necessary
     ViewerResources* viewRes = &viewerRes_[_properties.viewerId()];
+    viewRes->resize(true, (unsigned int)_glState->viewport_width(), (unsigned int)_glState->viewport_height());
 
 
     // enable color/depth write access
@@ -473,7 +482,8 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
 
 
     // clear render targets
-    glBindFramebuffer(GL_FRAMEBUFFER, viewRes->dualFbo_);
+//    viewRes->dualFboACG_->bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, viewRes->dualFbo_->getFboID());
 
     const GLenum depthTarget = GL_COLOR_ATTACHMENT0; // stores (-minDepth, maxDepth)
     const GLenum colorTargets[] = {GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
@@ -577,9 +587,13 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
         //  outDepth -> depth
         //  outBackColor -> back
 
-        if (peelProg->getFragDataLocation("outFragment") != 1 ||
-            peelProg->getFragDataLocation("outDepth") != 0 ||
-            peelProg->getFragDataLocation("outBackColor") != 2)
+        int locOutFrag = peelProg->getFragDataLocation("outFragment");
+        int locOutDepth = peelProg->getFragDataLocation("outDepth");
+        int locOutBackColor = peelProg->getFragDataLocation("outBackColor");
+
+        if (locOutFrag != 1 ||
+            locOutDepth != 0 ||
+            locOutBackColor != 2)
         {
           // linking is slow; only link if necessary
           peelProg->bindFragDataLocation(1, "outFragment");
@@ -627,7 +641,7 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
       peelBlendDual_->use();
       peelBlendDual_->setUniform("BlendTex", 0);
       
-      drawProjQuad(peelBlendDual_);
+      ACG::ScreenQuad::draw(peelBlendDual_);
 
       glEndQuery(GL_SAMPLES_PASSED_ARB);
 
@@ -678,7 +692,9 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, viewRes->dualFrontTex_[currID]);
 
-    drawProjQuad(peelFinalDual_);
+//    drawProjQuad(peelFinalDual_);
+    ACG::ScreenQuad::draw(peelFinalDual_);
+
 
     peelFinalDual_->disable();
 
@@ -792,54 +808,15 @@ DepthPeeling::ViewerResources::ViewerResources()
   memset(dualBackTex_, 0, sizeof(dualBackTex_));
 }
 
-void DepthPeeling::updateViewerResources(bool _dualPeeling,
-                                         int _viewerId,
-                                         unsigned int _newWidth,
-                                         unsigned int _newHeight)
+
+void DepthPeeling::ViewerResources::resize(bool _dualPeeling, unsigned int _width, unsigned int _height)
 {
-  if (_dualPeeling)
-    initDualDepthPeeling();
-  else
-    initDepthPeeling();
-
-  // allocate opengl resources
-
-  // screenquad
-  if (!screenQuadDecl_)
-  {
-    screenQuadDecl_ = new VertexDeclaration();
-    screenQuadDecl_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-  }
-
-  if (!screenQuadVBO_)
-  {
-    float quad[] = 
-    {
-      -1.0f, -1.0f, -1.0f, 
-      1.0f, -1.0f, -1.0f,
-      1.0f,  1.0f, -1.0f,
-      -1.0f,  1.0f, -1.0f
-    };
-
-    glGenBuffers(1, &screenQuadVBO_);
-
-    glBindBuffer(GL_ARRAY_BUFFER, screenQuadVBO_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
-
-    ACG::glCheckErrors();
-  }
-
-
-  if (!_newWidth || !_newHeight) return;
-
-  ViewerResources* view = &viewerRes_[_viewerId];
-
-  if (view->glHeight_ == _newHeight &&
-    view->glWidth_  == _newWidth)
+  if (glHeight_ == _height &&
+    glWidth_  == _width)
     return;
 
-  view->glWidth_ = _newWidth;
-  view->glHeight_ = _newHeight;
+  glWidth_ = _width;
+  glHeight_ = _height;
 
   // update depth peeling textures
 
@@ -847,7 +824,7 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
   {
     for (int i = 0; i < 2; ++i)
     {
-      PeelLayer* dst = view->peelTargets_ + i;
+      PeelLayer* dst = peelTargets_ + i;
 
       if (!dst->colorTex)
         glGenTextures(1, &dst->colorTex);
@@ -870,7 +847,7 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _newWidth, _newHeight, 0, GL_RGBA, GL_FLOAT, 0);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_FLOAT, 0);
 
 
       glBindTexture(GL_TEXTURE_2D, dst->depthBuf);
@@ -881,7 +858,7 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, _newWidth, _newHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, _width, _height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
 
       glBindTexture(GL_TEXTURE_2D, dst->depthTex);
@@ -892,7 +869,7 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, _newWidth, _newHeight, 0, GL_R, GL_FLOAT, 0);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, _width, _height, 0, GL_R, GL_FLOAT, 0);
 
       ACG::glCheckErrors();
 
@@ -915,12 +892,12 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
     }
 
 
-    if (!view->peelBlendTex_)
-      glGenTextures(1, &view->peelBlendTex_);
+    if (!peelBlendTex_)
+      glGenTextures(1, &peelBlendTex_);
 
-    if (view->peelBlendTex_)
+    if (peelBlendTex_)
     {
-      glBindTexture(GL_TEXTURE_2D, view->peelBlendTex_);
+      glBindTexture(GL_TEXTURE_2D, peelBlendTex_);
 
       // clamp, point filter
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -928,19 +905,19 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _newWidth, _newHeight, 0, GL_RGBA, GL_FLOAT, 0);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_FLOAT, 0);
 
     }
 
-    if (!view->peelBlendFbo_)
+    if (!peelBlendFbo_)
     {
-      glGenFramebuffers(1, &view->peelBlendFbo_);
+      glGenFramebuffers(1, &peelBlendFbo_);
 
-      glBindFramebuffer(GL_FRAMEBUFFER, view->peelBlendFbo_);
+      glBindFramebuffer(GL_FRAMEBUFFER, peelBlendFbo_);
 
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, view->peelBlendTex_, 0);
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, view->peelTargets_[0].depthTex, 0);
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, view->peelTargets_[0].depthBuf, 0);
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, peelBlendTex_, 0);
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, peelTargets_[0].depthTex, 0);
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, peelTargets_[0].depthBuf, 0);
 
       GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
       if(fboStatus != GL_FRAMEBUFFER_COMPLETE)
@@ -951,150 +928,49 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
   {
     // dual peeling render targets
 
-    if (!view->dualDepthTex_[0])
-      glGenTextures(2, view->dualDepthTex_);
-
-    if (!view->dualFrontTex_[0]) 
-      glGenTextures(2, view->dualFrontTex_);
-
-    if (!view->dualBackTex_[0]) 
-      glGenTextures(2, view->dualBackTex_);
-
-    if (!view->dualBlendTex_) 
-      glGenTextures(1, &view->dualBlendTex_);
-
-    for (int i = 0; i < 2; ++i)
-    {
-      // depth texture
-      glBindTexture(GL_TEXTURE_2D, view->dualDepthTex_[i]);
-
-      // texture access: clamped
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-      // filter: none
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RG32F, view->glWidth_, view->glHeight_, 0, GL_RGB, GL_FLOAT, 0);
-
-
-      ACG::glCheckErrors();
-
-
-      // front color texture
-      glBindTexture(GL_TEXTURE_2D, view->dualFrontTex_[i]);
-
-      // texture access: clamped
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-      // filter: none
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, view->glWidth_, view->glHeight_, 0, GL_RGBA, GL_FLOAT, 0);
-
-
-      ACG::glCheckErrors();
-
-
-      // back color texture
-      glBindTexture(GL_TEXTURE_2D, view->dualBackTex_[i]);
-
-      // texture access: clamped
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-      // filter: none
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, view->glWidth_, view->glHeight_, 0, GL_RGBA, GL_FLOAT, 0);
-
-      ACG::glCheckErrors();
-    }
-
-
-    // back color-blend texture
-    glBindTexture(GL_TEXTURE_2D, view->dualBlendTex_);
-
-    // texture access: clamped
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    // filter: none
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, view->glWidth_, view->glHeight_, 0, GL_RGB, GL_FLOAT, 0);
-
-    ACG::glCheckErrors();
-
-
-
     // fbo
-    if (!view->dualFbo_)
+    if (!dualFbo_)
     {
-      glGenFramebuffersEXT(1, &view->dualFbo_);
+      dualFbo_ = new ACG::FBO();
 
-      glBindFramebufferEXT(GL_FRAMEBUFFER, view->dualFbo_);
+      dualFbo_->init();
 
-      // color_attachment order:
-      // depth0, front_color0, back_color0,   depth1, front_color1, back_color1,    back_color_blend
-
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, view->dualDepthTex_[0], 0);
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, view->dualFrontTex_[0], 0);
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, view->dualBackTex_[0], 0);
+      // texture formats:
+      //  depth textures: store (min,max) depth as float2
+      //  front+back color textures: store (r,g,b,a) colors as R8G8B8A8
+      //  color blending and accumulation texture: (r,g,b) color as R8G8B8X8
       
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, view->dualDepthTex_[1], 0);
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, view->dualFrontTex_[1], 0);
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, view->dualBackTex_[1], 0);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT0, glWidth_, glHeight_, GL_RG32F, GL_RGB, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT1, glWidth_, glHeight_, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT2, glWidth_, glHeight_, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 
-      glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT6, GL_TEXTURE_2D, view->dualBlendTex_, 0);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT3, glWidth_, glHeight_, GL_RG32F, GL_RGB, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT4, glWidth_, glHeight_, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT5, glWidth_, glHeight_, GL_RGBA, GL_RGBA, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 
-      GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-      if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
-        printf("DualDepthPeeling: fbo failed to initialize : 0x%X\n", fboStatus);
+      dualFbo_->attachTexture2D(GL_COLOR_ATTACHMENT6, glWidth_, glHeight_, GL_RGB, GL_RGB, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+
+      dualDepthTex_[0] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT0);
+      dualDepthTex_[1] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT3);
+
+      dualFrontTex_[0] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT1);
+      dualFrontTex_[1] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT4);
+
+      dualBackTex_[0] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT2);
+      dualBackTex_[1] = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT5);
+
+      dualBlendTex_ = dualFbo_->getAttachment(GL_COLOR_ATTACHMENT6);
+
+
+      dualFbo_->checkFramebufferStatus();
 
       ACG::glCheckErrors();
     }
+    else
+      dualFbo_->resize(glWidth_, glHeight_);
 
   }
   
-
-
-
-  // debugging utilities
-/*
-  if (!dbgProg_)
-  {
-    const char* ShaderFiles[] = 
-    {
-      "DepthPeeling/screenquad.glsl",
-      "DepthPeeling/dbg_shader.glsl",
-    };
-
-    GLSL::Shader* tempShaders[2] = {0};
-
-    for (int i = 0; i < 2; ++i)
-    {
-      QString shaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString(ShaderFiles[i]);
-
-      if (i == 0) 
-        tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
-      else 
-        tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
-
-      if (!tempShaders[i]) {
-        log(LOGERR, QString(ShaderFiles[i]) + QString(" could not be loaded and compiled"));
-        return;
-      }
-    }
-
-    dbgProg_ = new GLSL::Program();
-    dbgProg_->attach(tempShaders[0]);
-    dbgProg_->attach(tempShaders[1]);
-    dbgProg_->link();
-  }
-*/  
-
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -1102,58 +978,22 @@ void DepthPeeling::updateViewerResources(bool _dualPeeling,
 }
 
 
-
 void DepthPeeling::initDepthPeeling()
 {
+  // check if already initialized
+  if (peelBlend_ && peelFinal_ && peelQueryID_)
+    return;
+
   // register shader modifiers
   ShaderProgGenerator::registerModifier(&PeelInitModifier::instance);
   ShaderProgGenerator::registerModifier(&PeelLayerModifier::instance);
 
-  const char* ShaderFiles[] = 
-  {
-    "DepthPeeling/screenquad.glsl",
-    "DepthPeeling/blend.glsl",
-    "DepthPeeling/final.glsl",
-  };
-
-  GLSL::Shader* tempShaders[3] = {0};
-
-  for (int i = 0; i < 3; ++i)
-  {
-    QString shaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString(ShaderFiles[i]);
-
-    if (i == 0) // screenquad is a vertex shader
-      tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
-    else // "blend", "final" are fragment shaders
-      tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
-
-    if (!tempShaders[i]) {
-      log(LOGERR, QString(ShaderFiles[i]) + QString(" could not be loaded and compiled"));
-      return;
-    }
-  }
-
-
-  // create programs
-
+  // load intermediate blending and final shader
   if (!peelBlend_)
-  {
-    peelBlend_ = new GLSL::Program();
-    peelBlend_->attach(tempShaders[0]);
-    peelBlend_->attach(tempShaders[1]);
-    peelBlend_->link();
-  }
+    peelBlend_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/blend.glsl");
 
   if (!peelFinal_)
-  {
-    peelFinal_ = new GLSL::Program();
-    peelFinal_->attach(tempShaders[0]);
-    peelFinal_->attach(tempShaders[2]);
-    peelFinal_->link();
-  }
-
-  for (int i = 0; i < 3; ++i)
-    delete tempShaders[i];
+    peelFinal_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/final.glsl");
 
   // occ query id
   if (!peelQueryID_)
@@ -1162,59 +1002,22 @@ void DepthPeeling::initDepthPeeling()
   ACG::glCheckErrors();
 }
 
-
-
 void DepthPeeling::initDualDepthPeeling()
 {
+  // check if already initialized
+  if (peelBlendDual_ && peelFinalDual_ && peelQueryID_)
+    return;
+
   // register shader modifiers
   ShaderProgGenerator::registerModifier(&PeelDualInitModifier::instance);
   ShaderProgGenerator::registerModifier(&PeelDualLayerModifier::instance);
 
-  const char* ShaderFiles[] = 
-  {
-    "DepthPeeling/screenquad.glsl",
-    "DepthPeeling/blend_dual.glsl",
-    "DepthPeeling/final_dual.glsl",
-  };
-
-  GLSL::Shader* tempShaders[3] = {0};
-
-  for (int i = 0; i < 3; ++i)
-  {
-    QString shaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + QString(ShaderFiles[i]);
-
-    if (i == 0) // screenquad is a vertex shader
-      tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
-    else // "blend", "final" are fragment shaders
-      tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
-
-    if (!tempShaders[i]) {
-      log(LOGERR, QString(ShaderFiles[i]) + QString(" could not be loaded and compiled"));
-      return;
-    }
-  }
-
-
-  // create programs
-
+  // load intermediate blending and final shader
   if (!peelBlendDual_)
-  {
-    peelBlendDual_ = new GLSL::Program();
-    peelBlendDual_->attach(tempShaders[0]);
-    peelBlendDual_->attach(tempShaders[1]);
-    peelBlendDual_->link();
-  }
+    peelBlendDual_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/blend_dual.glsl");
 
   if (!peelFinalDual_)
-  {
-    peelFinalDual_ = new GLSL::Program();
-    peelFinalDual_->attach(tempShaders[0]);
-    peelFinalDual_->attach(tempShaders[2]);
-    peelFinalDual_->link();
-  }
-
-  for (int i = 0; i < 3; ++i)
-    delete tempShaders[i];
+    peelFinalDual_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/final_dual.glsl");
 
   // occ query id
   if (!peelQueryID_)
@@ -1222,21 +1025,6 @@ void DepthPeeling::initDualDepthPeeling()
 
   ACG::glCheckErrors();
 }
-
-
-void DepthPeeling::drawProjQuad(GLSL::Program* _prog)
-{
-  glBindBuffer(GL_ARRAY_BUFFER, screenQuadVBO_);
-  screenQuadDecl_->activateShaderPipeline(_prog);
-
-  glPolygonMode(GL_FRONT, GL_FILL);
-
-  glDrawArrays(GL_QUADS, 0, 4);
-
-  screenQuadDecl_->deactivateShaderPipeline(_prog);
-}
-
-
 
 // 
 // void DepthPeeling::dbgDrawTex( GLuint _texID )
