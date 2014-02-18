@@ -55,7 +55,7 @@ void main()
 //  fragD.x *= fragD.x;
   
 //  oColor = -fragD.xxxx;
-  
+
   // write depth in case any future post-processors require scene depth information
   gl_FragDepth = texture2D(samplerDepth, vTexCoord).x;
 }

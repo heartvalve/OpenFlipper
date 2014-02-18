@@ -193,7 +193,7 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
 
   // clear depth texture
   glDrawBuffer(GL_COLOR_ATTACHMENT1);
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
   // clear scene color
@@ -245,7 +245,13 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   // enable color/depth write access
   glDepthMask(1);
   glColorMask(1,1,1,1);
-  glDisable(GL_DEPTH_TEST);
+
+  // note: using glDisable(GL_DEPTH_TEST) not only disables depth testing,
+  //  but actually discards any write operations to the depth buffer.
+  // However, we can provide scene depth for further post-processing. 
+  //   -> Enable depth testing with func=always
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_ALWAYS);
   glDisable(GL_BLEND);
 
   // setup composition shader
@@ -265,6 +271,9 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   ACG::ScreenQuad::draw(progOutline_);
 
   progOutline_->disable();
+
+  // reset depth func to opengl default
+  glDepthFunc(GL_LESS);
   
   ACG::glCheckErrors();
 
