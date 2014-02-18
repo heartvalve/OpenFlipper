@@ -1,5 +1,19 @@
 /*! \page changelog Changelog
 
+- <b>OpenFlipper 2.1 ( ?/?/? , 18217 )</b>
+     - <b>ACG</b>
+	- GL
+	     - Shader Generator: Extension to replace lightingcode
+	     - Shader Generator: Add comments to shaders to keep track of input files used to compose shaders
+	     - Support shininess in lighting code
+     - <b>Plugins</b>
+         - Depth Peeling
+	     - Code refactoring and cleanup
+         - Toon Shader
+	     - Added new renderer plugin for toon shading
+     - <b>Documentation</b>
+         - Raised Doxygen version of files to 1.8.6
+
 - <b>OpenFlipper 2.0 ( 2014/02/13 , 18180 )</b>
      - <b>Significant interface changes and Bugfixes</b>
          - Interface: Don't use allow addEmpty in FileInterface anymore (deprecated long time ago and basically unused! The type plugins handle this signal anyway.)
