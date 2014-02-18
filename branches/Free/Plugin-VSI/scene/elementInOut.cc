@@ -52,6 +52,8 @@
 #include "../parser/element.hh"
 #include "../parser/context.hh"
 
+#include <iostream>
+
 //== NAMESPACES ===============================================================
 namespace VSI {
 
@@ -87,6 +89,17 @@ ElementInOut::ElementInOut (InOut *_io, SceneElement *_parent):
   typeText_->setHorizontalStretch (true);
   descText_->setHorizontalStretch (true);
 }
+
+
+ElementInOut::ElementInOut(const ElementInOut& _orig) :
+  io_(NULL),
+  element_(NULL),
+  conn_(NULL),
+  typeText_(NULL),
+  descText_(NULL)
+{
+  std::cerr << "Illegal use of copy constructor in class ElementInOut, which is not implemented yet!" << std::endl;
+};
 
 //------------------------------------------------------------------------------
 
