@@ -62,7 +62,7 @@
 namespace ACG
 {
 
-//#define SG_DEBUG_OUTPUT
+#define SG_DEBUG_OUTPUT
 
 ShaderCache::ShaderCache()
 {
@@ -217,6 +217,12 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
     return memcmp(a->lightTypes, b->lightTypes, a->numLights * sizeof(ShaderGenLightType));
 
   return 0; // false
+}
+
+
+void ACG::ShaderCache::clearCache()
+{
+  cache_.clear();
 }
 
 
