@@ -84,10 +84,10 @@ TextureNode::TextureNode( BaseNode*            _parent,
         last_mipmapping_status_(true),
         mipmapping_(true),
         activeTexture_(-1),
-        open_volume_mesh_texture_draw_modes_()
+        open_volume_mesh_texture_draw_modes_(DrawModes::getDrawMode("Faces (textured)") | DrawModes::getDrawMode("Faces (textured and shaded)") )
 {
-    open_volume_mesh_texture_draw_modes_  = DrawModes::getDrawMode("Faces (textured)");
-    open_volume_mesh_texture_draw_modes_ |= DrawModes::getDrawMode("Faces (textured and shaded)");
+//    open_volume_mesh_texture_draw_modes_  = DrawModes::getDrawMode("Faces (textured)");
+//    open_volume_mesh_texture_draw_modes_ |= DrawModes::getDrawMode("Faces (textured and shaded)");
 }
 
 
