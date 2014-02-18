@@ -89,6 +89,10 @@ public:
    * @return The program (Either from cache or newly compiled and linked)
    */
   GLSL::Program* getProgram(const ShaderGenDesc* _desc, unsigned int _usage = 0);
+  
+  /** \brief Delete all cached shaders
+   */
+  void clearCache();
 
 protected:
   ShaderCache();
