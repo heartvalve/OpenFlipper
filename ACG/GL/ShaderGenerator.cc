@@ -376,6 +376,12 @@ void ShaderGenerator::addIncludeFile(QString _fileName)
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream fileStream(&file);
+    
+    // track source of include files in shader comment
+    
+    imports_.push_back("// ==============================================================================");
+    imports_.push_back(QString("// ShaderGenerator - begin of imported file: ") + _fileName);
+    
 
     while (!fileStream.atEnd())
     {
@@ -383,6 +389,13 @@ void ShaderGenerator::addIncludeFile(QString _fileName)
 
       imports_.push_back(tmpLine.simplified());
     }
+    
+    
+    // mark end of include file in comment
+    
+    imports_.push_back(QString("// ShaderGenerator - end of imported file #include \"") + _fileName);
+    imports_.push_back("// ==============================================================================");
+    
   }
 
 }
@@ -468,9 +481,18 @@ void ShaderProgGenerator::loadStringListFromFile(QString _fileName, QStringList*
 void ShaderProgGenerator::loadLightingFunctions()
 {
   if (lightingCode_.size()) return;
+  
+  QString fileName = shaderDir_ + QDir::separator() + QString(LIGHTING_CODE_FILE);
 
+  lightingCode_.push_back("// ==============================================================================");
+  lightingCode_.push_back(QString("// ShaderGenerator - default lighting functions imported from file: ") + fileName);
+  
+  
   // load shader code from file
-  loadStringListFromFile(shaderDir_ + QDir::separator() + QString(LIGHTING_CODE_FILE), &lightingCode_);
+  loadStringListFromFile(fileName, &lightingCode_);
+  
+  lightingCode_.push_back(QString("// ShaderGenerator - end of default lighting functions"));
+  lightingCode_.push_back("// ==============================================================================");
 }
 
 
