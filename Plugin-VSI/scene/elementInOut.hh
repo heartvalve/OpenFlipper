@@ -106,12 +106,16 @@ class ElementInOut {
     bool validConnection (ElementInOut *_e);
 
     /// InOut context object
-    InOut *inOut () const { return io_; };
+    InOut* inOut () const { return io_; };
 
     /// Scene element
-    SceneElement *element () { return element_; };
+    SceneElement* element() { return element_; };
 
   private:
+
+    /// Private copy constructor to avoid accidental copy
+    ElementInOut( const ElementInOut& _orig );
+
     InOut *io_;
     SceneElement *element_;
 
