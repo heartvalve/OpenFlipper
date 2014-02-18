@@ -45,6 +45,7 @@
 
 
 #include <ACG/GL/IRenderer.hh>
+#include <ACG/GL/FBO.hh>
 
 class DepthPeeling : public QObject, BaseInterface, RenderInterface, LoggingInterface, ACG::IRenderer
 {
@@ -106,15 +107,6 @@ private:
   void renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
 
 
-
-  /// draw a projected quad in [-1, -1] - [1, 1] range
-  void drawProjQuad(GLSL::Program* _prog);
-
-  /// vbo containing a quad in projection space
-  GLuint screenQuadVBO_;
-  ACG::VertexDeclaration* screenQuadDecl_;
-
-
   // single layer depth peeling
   struct PeelLayer
   {
@@ -155,6 +147,9 @@ private:
   {
     ViewerResources();
 
+    // resize textures
+    void resize(bool _dualPeeling, unsigned int _width, unsigned int _height);
+
     /// viewer window width
     unsigned int glWidth_;
 
@@ -178,7 +173,8 @@ private:
     GLuint dualFrontTex_[2]; // rgba: color of front-peeled layer
     GLuint dualBackTex_[2];  // rgba: color of back-peeled layer
     GLuint dualBlendTex_;    // rgb:  color accumulation buffer
-    GLuint dualFbo_; // targets: {depth0, front0, back0,  depth1, front1, back1,  blend}
+
+    ACG::FBO* dualFbo_; // targets: {depth0, front0, back0,  depth1, front1, back1,  blend}
   };
 
   /// Allocate framebuffers and load shaders for depth-peeling.
@@ -186,9 +182,6 @@ private:
 
   /// Allocate framebuffers and load shaders for dual-depth-peeling.
   void initDualDepthPeeling();
-
-  /// Change viewport size for allocated rendertargets.
-  void updateViewerResources(bool _dualPeeling, int _viewerId, unsigned int _newWidth, unsigned int _newHeight);
 
   /**
   * Stores framebuffer resources for each viewport.
