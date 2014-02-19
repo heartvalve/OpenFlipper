@@ -17,6 +17,7 @@ find_path( GMM_INCLUDE_DIR
                  /usr/include
                  /usr/local/include
                  ~/sw/gmm-4.1/include
+		 "c:\\libs\\gmm-4.2\\include"
 		 "c:\\libs\\gmm-4.1\\include"
                  "c:\\libs\\gmm-3.0\\include"
 		 ${PROJECT_SOURCE_DIR}/MacOS/Libs/gmm-3.1/include
