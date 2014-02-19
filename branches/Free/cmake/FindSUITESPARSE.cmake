@@ -18,8 +18,22 @@ ENDIF (SUITESPARSE_INCLUDE_DIRS)
 if( WIN32 )
    # Find cholmod part of the suitesparse library collection
 
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x32/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
+  endif()
+ 
+
    FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
-              PATHS "C:\\libs\\win32\\SuiteSparse\\Include"  )
+              PATHS "C:\\libs\\win32\\SuiteSparse\\Include"
+         	    "${VS_SEARCH_PATH}"
+	      PATH_SUFFIXES suitesparse-4.2.1/include/suitesparse
+		      )
 
    # Add cholmod include directory to collection include directories
    IF ( CHOLMOD_INCLUDE_DIR )
@@ -30,7 +44,9 @@ if( WIN32 )
    # find path suitesparse library
    FIND_PATH( SUITESPARSE_LIBRARY_DIRS 
 	         amd.lib
-               PATHS "C:\\libs\\win32\\SuiteSparse\\libs" )
+               PATHS "C:\\libs\\win32\\SuiteSparse\\libs" 
+                     "${VS_SEARCH_PATH}"
+               PATH_SUFFIXES suitesparse-4.2.1/lib64 )
 
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIRS )
