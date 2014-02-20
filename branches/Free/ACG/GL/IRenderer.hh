@@ -248,6 +248,20 @@ protected:
   */
   virtual void finishRenderingPipeline();
 
+  /** \brief Save current Fbo configuration (fbo id + viewport)
+  */
+  virtual void saveInputFbo();
+
+  /** \brief Restore previously saved input Fbo configuration (fbo id + viewport)
+  */
+  virtual void restoreInputFbo();
+
+  /** \brief Clear input Fbo.
+   *
+   * Clears color and depth buffer of input Fbo (using a scissor test to only clear viewport area).
+  */
+  virtual void clearInputFbo(const ACG::Vec4f& clearColor);
+
   //=========================================================================
   // Debugging
   //=========================================================================
@@ -293,6 +307,16 @@ protected:
   /// sorted list of renderobjects (sorted in rendering order)
   std::vector<ACG::RenderObject*> sortedObjects_;
 
+
+  /// previous fbo
+  GLint prevFbo_;
+
+  /// previous viewport
+  GLint prevViewport_[4];
+
+  /// flag indicating a that saveCurrentFbo() has been called prior restoreFbo()
+  bool prevFboSaved_;
+  
 };
 
 
