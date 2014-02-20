@@ -95,6 +95,10 @@ private slots:
   QString checkOpenGL();
 
 
+private:
+
+  void computeProjStereo(ACG::GLState* _glState, Viewer::ViewerProperties& _properties,
+    ACG::GLMatrixd* _outLeft, ACG::GLMatrixd* _outRight);
 
 };
 
