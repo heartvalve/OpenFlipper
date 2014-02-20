@@ -43,7 +43,7 @@ if( WIN32 )
 
    # find path suitesparse library
    FIND_PATH( SUITESPARSE_LIBRARY_DIRS 
-	         amd.lib
+	       NAMES amd.lib libamd.lib
                PATHS "C:\\libs\\win32\\SuiteSparse\\libs" 
                      "${VS_SEARCH_PATH}"
                PATH_SUFFIXES suitesparse-4.2.1/lib64 )
