@@ -115,13 +115,6 @@ void NormalRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _p
   // collect renderobjects + prepare OpenGL state
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
 
-
-  // clear back buffer
-  ACG::Vec4f clearColor = _properties.backgroundColor();
-  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
   // render every object
   for (int i = 0; i < getNumRenderObjects(); ++i) {
 
@@ -133,8 +126,6 @@ void NormalRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _p
   // restore common opengl state
   // log window remains hidden otherwise
   finishRenderingPipeline();
-
-//  dumpRenderObjectsToFile("../../dump_ro.txt", &sortedObjects_[0]);
 }
 
 QString NormalRenderer::checkOpenGL()
