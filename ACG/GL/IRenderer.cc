@@ -66,8 +66,12 @@ namespace ACG
 {
 
 IRenderer::IRenderer()
-: numLights_(0), renderObjects_(0)
+: numLights_(0), renderObjects_(0), prevFbo_(0), prevFboSaved_(false)
 {
+  prevViewport_[0] = 0;
+  prevViewport_[1] = 0;
+  prevViewport_[2] = 0;
+  prevViewport_[3] = 0;
 }
 
 
@@ -250,6 +254,9 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glDepthMask(GL_TRUE);
+
+  // save active fbo and viewport
+  saveInputFbo();
 }
 
 
@@ -263,6 +270,72 @@ void IRenderer::finishRenderingPipeline()
 
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+  // Renderer check:
+  // Print a warning if the currently active fbo / viewport is not the same as the saved fbo.
+  // Restore previously to previous fbo and viewport if not done already.
+
+  GLint curFbo;
+  GLint curViewport[4];
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
+  glGetIntegerv(GL_VIEWPORT, curViewport);
+  
+  if (curFbo != prevFbo_)
+  {
+    std::cout << "warning: input and output fbo are not the same in renderer implementation" << std::endl;
+    restoreInputFbo();
+  }
+
+  if (curViewport[0] != prevViewport_[0] ||
+    curViewport[1] != prevViewport_[1] ||
+    curViewport[2] != prevViewport_[2] ||
+    curViewport[3] != prevViewport_[3])
+  {
+    std::cout << "warning: input and output viewport are not the same in renderer implementation" << std::endl;
+    restoreInputFbo();
+  }
+}
+
+
+void IRenderer::saveInputFbo()
+{
+  // save active fbo
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &prevFbo_);
+  glGetIntegerv(GL_VIEWPORT, prevViewport_);
+  prevFboSaved_ = true;
+}
+
+void IRenderer::restoreInputFbo()
+{
+  if (prevFboSaved_)
+  {
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFbo_);
+    glDrawBuffer(prevFbo_ == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
+    glViewport(prevViewport_[0], prevViewport_[1], prevViewport_[2], prevViewport_[3]);
+    prevFboSaved_ = false;
+  }
+}
+
+void IRenderer::clearInputFbo( const ACG::Vec4f& clearColor )
+{
+  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
+
+  // glClear will affect the whole back buffer, not only the area in viewport.
+  // Temporarily use glScissor to only clear the viewport area in the back buffer.
+  if (!prevFboSaved_)
+  {
+    GLint oldViewport[4];
+    glGetIntegerv(GL_VIEWPORT, oldViewport);
+    glScissor(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+  }
+  else
+    glScissor(prevViewport_[0], prevViewport_[1], prevViewport_[2], prevViewport_[3]);
+
+  glEnable(GL_SCISSOR_TEST);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // disable scissors again, draw calls only affect the area in glViewport anyway
+  glDisable(GL_SCISSOR_TEST);
 }
 
 
@@ -605,6 +678,7 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
 
   return objectString;
 }
+
 
 
 } // namespace ACG end
