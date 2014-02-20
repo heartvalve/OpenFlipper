@@ -636,6 +636,16 @@ void glViewer::drawScene()
 //
 //  }
 
+  // Clear back buffer here:
+  // Render plugins do not have to worry about using scissor test for clearing their viewports later on.
+  glClearColor(properties_.backgroundColor()[0], properties_.backgroundColor()[1], properties_.backgroundColor()[2], 1.0f);
+  GLint curViewport[4];
+  glGetIntegerv(GL_VIEWPORT, curViewport);
+  glScissor(curViewport[0], curViewport[1], curViewport[2], curViewport[3]);
+  glEnable(GL_SCISSOR_TEST);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glDisable(GL_SCISSOR_TEST);
+
 
   // Check if we use build in default renderer
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
