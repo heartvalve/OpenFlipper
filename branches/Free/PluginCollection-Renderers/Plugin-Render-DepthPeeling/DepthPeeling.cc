@@ -187,14 +187,6 @@ void DepthPeeling::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
 
 
-  // clear back buffer
-  ACG::Vec4f clearColor = _properties.backgroundColor();
-  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-
-
 
 //  renderFrontPeeling(_glState, _properties);
   renderDualPeeling(_glState, _properties);
@@ -209,8 +201,6 @@ void DepthPeeling::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   // restore common opengl state
   // log window remains hidden otherwise
   finishRenderingPipeline();
-
-//  dumpRenderObjectsToText("../../dump_ro.txt", &sortedObjects_[0]);
 }
 
 
@@ -483,6 +473,7 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
 
     // clear render targets
 //    viewRes->dualFboACG_->bind();
+    glViewport(0, 0, _glState->viewport_width(), _glState->viewport_height());
     glBindFramebuffer(GL_FRAMEBUFFER, viewRes->dualFbo_->getFboID());
 
     const GLenum depthTarget = GL_COLOR_ATTACHMENT0; // stores (-minDepth, maxDepth)
@@ -657,11 +648,7 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
 //}
 
     // Final pass: combine accumulated front and back colors
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDrawBuffer(GL_BACK);
-
-    glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    restoreInputFbo();
 
     glDepthMask(1);
     glColorMask(1,1,1,1);
