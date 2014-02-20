@@ -71,6 +71,8 @@ public slots:
   QString version() { return QString("1.0"); };
   QString renderObjectsInfo(bool _outputShaderInfo);
 
+  QAction* optionsAction();
+
 private slots:
 
   //BaseInterface

@@ -160,26 +160,12 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   // add this constant to render menu when available
   const float numShades = 2.0f;
 
-
   // collect renderobjects + prepare OpenGL state
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
-
-
-  // clear back buffer
-  ACG::Vec4f clearColor = _properties.backgroundColor();
-  glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-  // save active fbo
-  GLint curFbo = 0;
-  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &curFbo);
-
 
   // init/update fbos
   ViewerResources* viewRes = &viewerRes_[_properties.viewerId()];
   viewRes->resize(_glState->viewport_width(), _glState->viewport_height());
-
 
   // --------------------------------------------------
   // 1st pass: draw scene to intermediate fbo
@@ -191,6 +177,8 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   // bind fbo for scene + depth tex
   viewRes->scene_->bind();
 
+  glViewport(0, 0, _glState->viewport_width(), _glState->viewport_height());
+
   // clear depth texture
   glDrawBuffer(GL_COLOR_ATTACHMENT1);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -198,6 +186,7 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
 
   // clear scene color
   glDrawBuffer(GL_COLOR_ATTACHMENT0);
+  ACG::Vec4f clearColor = _properties.backgroundColor();
   glClearColor(clearColor[0], clearColor[1], clearColor[2], 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -239,8 +228,8 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
     progOutline_ = GLSL::loadProgram(OUTLINE_VERTEXSHADER_FILE, OUTLINE_FRAGMENTSHADER_FILE);
 
   // restore previous fbo
-  glBindFramebuffer(GL_FRAMEBUFFER, curFbo);
-  glDrawBuffer(curFbo == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
+  restoreInputFbo();
+
 
   // enable color/depth write access
   glDepthMask(1);
@@ -300,6 +289,16 @@ QString ToonRenderer::checkOpenGL() {
 #endif
 
   return missing;
+}
+
+
+QAction* ToonRenderer::optionsAction()
+{
+//   QDialog* optionDlg = new QDialog(0, 0);
+// 
+//   optionDlg->show();
+
+  return 0;
 }
 
 void ToonRenderer::ViewerResources::resize( int _newWidth, int _newHeight ) {
