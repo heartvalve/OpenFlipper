@@ -340,12 +340,11 @@ void DepthPeeling::renderFrontPeeling(ACG::GLState* _glState,
     // since the front layer is already initialized in
     // depth buffer 0 and we want to extract the second one now
 
-    int currID = 0;
     for (int pass = 1; pass < maxPeelCount_; ++pass)
     {
-      currID = pass & 1;
-      int prevID = 1 - currID;
-      int bufID = currID * 2;
+      const int currID = pass & 1;
+      const int prevID = 1 - currID;
+      const int bufID = currID * 2;
 
       // peeling MRT slots:
       //  RT0 - color
@@ -581,8 +580,8 @@ void DepthPeeling::renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerPrope
     for (int pass = 1; 1 && pass < maxPeelCount_; ++pass)
     {
       currID = pass & 1;
-      int prevID = 1 - currID;
-      int bufID = currID * 3;
+      const int prevID = 1 - currID;
+      const int bufID = currID * 3;
 
       GLenum targetBuffer[3];
       targetBuffer[0] = GL_COLOR_ATTACHMENT0 + bufID;
