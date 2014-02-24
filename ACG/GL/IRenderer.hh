@@ -271,8 +271,9 @@ protected:
   /** \brief Clear input Fbo.
    *
    * Clears color and depth buffer of input Fbo (using a scissor test to only clear viewport area).
+   * @param _clearColor clear color
   */
-  virtual void clearInputFbo(const ACG::Vec4f& clearColor);
+  virtual void clearInputFbo(const ACG::Vec4f& _clearColor);
 
   //=========================================================================
   // Other Convenience
@@ -283,12 +284,14 @@ protected:
   /** \brief Copy texture to depth buffer
    *
    * Copies depth values from a texture to the input depth buffer.
-   * These are changes made to the OpenGL state, which are not restored upon return:
+   * These are the changes made to the OpenGL state, which are not restored upon return:
    * - active texture stage is 0 with _depthTex bound
    * - internal shader program active
    * - internal screen quad vbo active
    * - filling mode is set to glPolygonMode(GL_FRONT, GL_FILL)
    *
+   * @param _depthTex texture containing depth values
+   * @param _scale scaling factor for the depth values from _depthTex
   */
   virtual void copyDepthToBackBuffer(GLuint _depthTex, float _scale = 1.0f);
 
