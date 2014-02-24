@@ -108,9 +108,6 @@ private:
   /// peel the scene with dual depth peeling, two layers per pass
   void renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
 
-  /// copies a texture containing depth values to the back buffer depth channel
-  void copyDepthsToInput(GLuint _depthTex, float _sign = 1.0f);
-
   /// mode: 0 -> front to back peeling,  1 -> dual peeling
   int peelMode_;
 
@@ -132,10 +129,6 @@ private:
   /// dual depth peeling shaders
   GLSL::Program* peelBlendDual_;
   GLSL::Program* peelFinalDual_;
-
-
-  /// shader copies depth of the first front layer to the back buffer
-  GLSL::Program* depthCopy_;
 
 
   /// Collection of framebuffers for each viewport

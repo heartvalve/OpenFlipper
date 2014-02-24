@@ -157,7 +157,7 @@ PeelDualInitModifier PeelDualInitModifier::instance;
 
 DepthPeeling::DepthPeeling()
  : peelMode_(1), copyFrontDepth_(1), maxPeelCount_(20), peelBlend_(0), peelFinal_(0), peelQueryID_(0),
-peelBlendDual_(0), peelFinalDual_(0), depthCopy_(0)
+peelBlendDual_(0), peelFinalDual_(0)
 {
 }
 
@@ -965,7 +965,7 @@ void DepthPeeling::ViewerResources::resize(bool _dualPeeling, unsigned int _widt
 void DepthPeeling::initDepthPeeling()
 {
   // check if already initialized
-  if (peelBlend_ && peelFinal_ && peelQueryID_ && depthCopy_)
+  if (peelBlend_ && peelFinal_ && peelQueryID_)
     return;
 
   // register shader modifiers
@@ -983,16 +983,13 @@ void DepthPeeling::initDepthPeeling()
   if (!peelQueryID_)
     glGenQueries(1, &peelQueryID_);
 
-  if (!depthCopy_)
-    depthCopy_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/depth_copy.glsl");
-
   ACG::glCheckErrors();
 }
 
 void DepthPeeling::initDualDepthPeeling()
 {
   // check if already initialized
-  if (peelBlendDual_ && peelFinalDual_ && peelQueryID_ && depthCopy_)
+  if (peelBlendDual_ && peelFinalDual_ && peelQueryID_)
     return;
 
   // register shader modifiers
@@ -1010,37 +1007,9 @@ void DepthPeeling::initDualDepthPeeling()
   if (!peelQueryID_)
     glGenQueries(1, &peelQueryID_);
 
-  if (!depthCopy_)
-    depthCopy_ = GLSL::loadProgram("DepthPeeling/screenquad.glsl", "DepthPeeling/depth_copy.glsl");
-
   ACG::glCheckErrors();
 }
 
-void DepthPeeling::copyDepthsToInput( GLuint _depthTex, float _sign )
-{
-  restoreInputFbo();
-
-  depthCopy_->use();
-
-  depthCopy_->setUniform("DepthTex", 0);
-  depthCopy_->setUniform("DepthSign", _sign);
-
-  // write to depth buffer only
-  glColorMask(0,0,0,0);
-  glDepthMask(1);
-
-  // depth test enabled + pass always 
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_ALWAYS);
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _depthTex);
-
-  ACG::ScreenQuad::draw(depthCopy_);
-
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-}
 
 // 
 // void DepthPeeling::dbgDrawTex( GLuint _texID )
