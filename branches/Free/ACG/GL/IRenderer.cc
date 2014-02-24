@@ -318,11 +318,11 @@ void IRenderer::saveActiveFbo( GLint* _outFboId, GLint* _outViewport ) const
   glGetIntegerv(GL_VIEWPORT, _outViewport);
 }
 
-void IRenderer::restoreFbo( GLint _fboId, const GLint* _viewport ) const
+void IRenderer::restoreFbo( GLint _fboId, const GLint* _outViewport ) const
 {
   glBindFramebuffer(GL_FRAMEBUFFER, _fboId);
   glDrawBuffer(_fboId == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
-  glViewport(_viewport[0], _viewport[1], _viewport[2], _viewport[3]);
+  glViewport(_outViewport[0], _outViewport[1], _outViewport[2], _outViewport[3]);
 }
 
 void IRenderer::clearInputFbo( const ACG::Vec4f& clearColor )

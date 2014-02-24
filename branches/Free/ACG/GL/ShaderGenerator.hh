@@ -509,7 +509,7 @@ private:
  *   public:
  *     void modifyVertexEndCode(QStringList* _code) {
  *       _code->push_back("// Vertex End Code Modifier begin");
- *       _code->push_back("<Some glsl code>  ");
+ *       _code->push_back("< Some glsl code >  ");
  *       _code->push_back("// Vertex End Code Modifier end");
  *     }
  *
@@ -524,7 +524,7 @@ private:
  *   public:
  *     void modifyVertexEndCode(QStringList* _code) {
  *       _code->push_back("// Vertex End Code Modifier 2 begin");
- *       _code->push_back("<Some glsl code>  ");
+ *       _code->push_back("< Some glsl code >  ");
  *       _code->push_back("// Vertex End Code Modifier 2 end");
  *     }
  *
@@ -625,9 +625,11 @@ public:
    * Refer to the generation structure (\ref ShaderGenerator_page ) to see where
    * your code is added and which variables you can modify.
    * Use
+   *
    * \code
    *   _code->push_back("...");
    * \endcode
+   *
    * to insert your code here
    *
    * @param _code string list of shader code.
@@ -639,9 +641,11 @@ public:
    *  Refer to the generation structure (\ref ShaderGenerator_page )
    *  to see where your code is added and which variables you can modify.
    *  Use
+   *
    *  \code
    *    _code->push_back("...");
    *  \endcode
+   *
    *  to insert your code here.
    *
    * @param _code string list of shader code.
@@ -652,14 +656,17 @@ public:
    *
    *  Refer to the generation structure (\ref ShaderGenerator_page )
    *  to see where your code is added and which variables you can modify.
+   *
    *  Use
+   *
    *  \code
    *    _code->push_back("...");
    *  \endcode
+   *
    *  to insert your code here.
    *
-   * @param _code string list of shader code.
-   * @param _lightId light index,  use g_vLightDir_{_lightId}, etc. in shader code to use light parameters
+   * @param _code      string list of shader code.
+   * @param _lightId   light index,  use g_vLightDir_{_lightId}, etc. in shader code to use light parameters
    * @param _lightType light type: point, spot or directional light
   */
   virtual void modifyLightingCode(QStringList* _code, int _lightId, ShaderGenLightType _lightType) {}

@@ -263,10 +263,10 @@ protected:
   virtual void saveActiveFbo(GLint* _outFboId, GLint* _outViewport) const;
 
   /** \brief Restore a previously saved input Fbo configuration (fbo id + viewport)
-   * @param _outFboId pointer to address receiving the currently active fbo id
+   * @param _fboId pointer to address receiving the currently active fbo id
    * @param _outViewport [in] pointer to address of 4 GLint values receiving the currently active viewport
   */
-  virtual void restoreFbo(GLint _fboId, const GLint* _viewport) const;
+  virtual void restoreFbo(GLint _fboId, const GLint* _outViewport) const;
 
   /** \brief Clear input Fbo.
    *
