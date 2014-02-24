@@ -81,6 +81,7 @@ public slots:
 
   QString renderObjectsInfo(bool _outputShaderInfo) { return dumpCurrentRenderObjectsToString(&sortedObjects_[0],_outputShaderInfo); };
 
+  QAction* optionsAction();
 
 private slots:
 
@@ -95,6 +96,7 @@ private slots:
 
   QString checkOpenGL();
 
+  void slotModeChanged( QAction *  );
 
 
 private:
@@ -106,32 +108,22 @@ private:
   /// peel the scene with dual depth peeling, two layers per pass
   void renderDualPeeling(ACG::GLState* _glState, Viewer::ViewerProperties& _properties);
 
+  /// copies a texture containing depth values to the back buffer depth channel
+  void copyDepthsToInput(GLuint _depthTex, float _sign = 1.0f);
 
-  // single layer depth peeling
-  struct PeelLayer
-  {
-    /// target framebuffer for colorTex and depthBuf
-    GLuint fbo;
+  /// mode: 0 -> front to back peeling,  1 -> dual peeling
+  int peelMode_;
 
-    /// color rendertarget
-    GLuint colorTex;
-    /// hardware depth buffer
-    GLuint depthBuf;
-    /// depth-buffer rendertarget
-    GLuint depthTex; // encountered gpu-model specific problems when reading from depthBuf directly
-  };
+  bool copyFrontDepth_;
+
+  /// max peel count
+  int maxPeelCount_;
 
   /// blends one depth-layer into the current scene target
   GLSL::Program* peelBlend_;
 
   /// final copy into back-buffer
   GLSL::Program* peelFinal_;
-
-  /** 
-  Copy depth-texture of first layer into hardware z-buffer.
-  This is needed for post-processing or renderobjects with low priority.
-  */
-  GLSL::Program* peelDepthCopy_;
 
   /// occlusion query determining end of peeling (last layer)
   GLuint peelQueryID_;
@@ -142,28 +134,34 @@ private:
   GLSL::Program* peelFinalDual_;
 
 
+  /// shader copies depth of the first front layer to the back buffer
+  GLSL::Program* depthCopy_;
+
+
   /// Collection of framebuffers for each viewport
   struct ViewerResources
   {
     ViewerResources();
+    ~ViewerResources();
 
     // resize textures
     void resize(bool _dualPeeling, unsigned int _width, unsigned int _height);
 
     /// viewer window width
-    unsigned int glWidth_;
+    unsigned int width_;
 
     /// viewer window height
-    unsigned int glHeight_;
+    unsigned int height_;
 
 
-    // depth peeling textures
+    // single layer depth peeling textures (front to back peeling)
+    //  ping-pong buffer for (depth, front) targets
+    GLuint singleDepthTex_[2]; // float1: minDepth
+    GLuint singleFrontTex_[2]; // rgba: color of front-peeled layer
+    GLuint singleBlendTex_;    // rgba: color accumulation buffer
 
-    /// ping pong between two consecutive layers
-    PeelLayer peelTargets_[2];
+    ACG::FBO* singleFbo_; // targets: {depth0, front0,  depth1, front1, blend}
 
-    GLuint peelBlendTex_;
-    GLuint peelBlendFbo_;
 
 
 
