@@ -301,7 +301,7 @@ void main()
   // make sure to use #ifdef #endif if you make use of conditional inputs such as normals, texcoords..
   // end of customized code
   // -------------------------------------------------------------------------
-  
+
   gl_Position = sv_vPosPS;
   outPosCS = sg_vPosPS;
 
@@ -332,7 +332,7 @@ void main()
 
   // compute screen-projected coordinates, useful for various post-processing effects
   vec2 sg_vScreenPos = outPosCS.xy / outPosCS.w * 0.5 + vec2(0.5, 0.5);
-  
+
   vec4 sg_cColor = vec4(g_cEmisive, ALPHA);
 
 #if vertex-lighting
@@ -384,7 +384,7 @@ public:
   /** \brief Adds fitting vertex shader io for a given description
   */
   void initVertexShaderIO(const ShaderGenDesc* _desc);
-  
+
   /** \brief Adds fitting vertex shader io for a given description
   */
   void initGeometryShaderIO(const ShaderGenDesc* _desc);
@@ -666,7 +666,7 @@ public:
    *  to insert your code here.
    *
    * @param _code      string list of shader code.
-   * @param _lightId   light index,  use g_vLightDir_{_lightId}, etc. in shader code to use light parameters
+   * @param _lightId   light index, use g_vLightDir__{_lightId}, etc. in shader code to use light parameters
    * @param _lightType light type: point, spot or directional light
   */
   virtual void modifyLightingCode(QStringList* _code, int _lightId, ShaderGenLightType _lightType) {}
