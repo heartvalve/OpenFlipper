@@ -59,14 +59,14 @@
 
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/ShaderCache.hh>
-
+#include <ACG/GL/ScreenQuad.hh>
 
 
 namespace ACG
 {
 
 IRenderer::IRenderer()
-: numLights_(0), renderObjects_(0), prevFbo_(0), prevFboSaved_(false)
+: numLights_(0), renderObjects_(0), prevFbo_(0), prevFboSaved_(false), depthCopyShader_(0)
 {
   prevViewport_[0] = 0;
   prevViewport_[1] = 0;
@@ -77,6 +77,7 @@ IRenderer::IRenderer()
 
 IRenderer::~IRenderer()
 {
+  delete depthCopyShader_;
 }
 
 void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
@@ -300,20 +301,28 @@ void IRenderer::finishRenderingPipeline()
 void IRenderer::saveInputFbo()
 {
   // save active fbo
-  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &prevFbo_);
-  glGetIntegerv(GL_VIEWPORT, prevViewport_);
+  saveActiveFbo(&prevFbo_, prevViewport_);
   prevFboSaved_ = true;
 }
 
 void IRenderer::restoreInputFbo()
 {
   if (prevFboSaved_)
-  {
-    glBindFramebuffer(GL_FRAMEBUFFER, prevFbo_);
-    glDrawBuffer(prevFbo_ == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
-    glViewport(prevViewport_[0], prevViewport_[1], prevViewport_[2], prevViewport_[3]);
-    prevFboSaved_ = false;
-  }
+    restoreFbo(prevFbo_, prevViewport_);
+}
+
+void IRenderer::saveActiveFbo( GLint* _outFboId, GLint* _outViewport ) const
+{
+  // save active fbo
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, _outFboId);
+  glGetIntegerv(GL_VIEWPORT, _outViewport);
+}
+
+void IRenderer::restoreFbo( GLint _fboId, const GLint* _viewport ) const
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, _fboId);
+  glDrawBuffer(_fboId == 0 ? GL_BACK : GL_COLOR_ATTACHMENT0);
+  glViewport(_viewport[0], _viewport[1], _viewport[2], _viewport[3]);
 }
 
 void IRenderer::clearInputFbo( const ACG::Vec4f& clearColor )
@@ -679,6 +688,69 @@ QString IRenderer::dumpCurrentRenderObjectsToString(ACG::RenderObject** _list, b
   return objectString;
 }
 
+void IRenderer::copyDepthToBackBuffer( GLuint _depthTex, float _scale /*= 1.0f*/ )
+{
+  if (!_depthTex) return;
+
+  if (!depthCopyShader_)
+    depthCopyShader_ = GLSL::loadProgram("ScreenQuad/screenquad.glsl", "ScreenQuad/depth_copy.glsl");
+
+
+  if (depthCopyShader_)
+  {
+    // save important opengl states
+    GLint curFbo;
+    GLint curViewport[4];
+    saveActiveFbo(&curFbo, curViewport);
+
+    GLboolean colorMask[4], depthMask;
+    glGetBooleanv(GL_COLOR_WRITEMASK, colorMask);
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
+
+    GLboolean depthTestEnable;
+    GLint depthFunc;
+    glGetBooleanv(GL_DEPTH_TEST, &depthTestEnable);
+    glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
+
+    // write to depth buffer of input fbo
+    restoreInputFbo();
+
+    depthCopyShader_->use();
+    depthCopyShader_->setUniform("offset", ACG::Vec2f(0.0f, 0.0f));
+    depthCopyShader_->setUniform("size", ACG::Vec2f(1.0f, 1.0f));
+    depthCopyShader_->setUniform("DepthTex", 0); // depth tex at texture slot 0
+    depthCopyShader_->setUniform("DepthSign", _scale);
+
+    // write to depth buffer only, disable writing to color buffer
+    glColorMask(0,0,0,0);
+    glDepthMask(1);
+
+    // depth test enabled + pass always 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _depthTex);
+
+    ACG::ScreenQuad::draw(depthCopyShader_);
+
+
+    // restore important opengl states
+
+    restoreFbo(curFbo, curViewport);
+
+    glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
+    glDepthMask(depthMask);
+
+    if (!depthTestEnable)
+      glDisable(GL_DEPTH_TEST);
+
+    if (depthFunc != GL_ALWAYS)
+      glDepthFunc(depthFunc);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
+}
 
 
 } // namespace ACG end
