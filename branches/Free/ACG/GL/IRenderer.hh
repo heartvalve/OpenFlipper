@@ -248,19 +248,50 @@ protected:
   */
   virtual void finishRenderingPipeline();
 
-  /** \brief Save current Fbo configuration (fbo id + viewport)
+  /** \brief Save input Fbo configuration (fbo id + viewport)
   */
   virtual void saveInputFbo();
 
-  /** \brief Restore previously saved input Fbo configuration (fbo id + viewport)
+  /** \brief Restore the previously saved input Fbo configuration (fbo id + viewport)
   */
   virtual void restoreInputFbo();
+
+  /** \brief Save active Fbo configuration (fbo id + viewport)
+   * @param _outFboId [out] pointer to address receiving the currently active fbo id
+   * @param _outViewport [out] pointer to address of 4 GLint values receiving the currently active viewport
+  */
+  virtual void saveActiveFbo(GLint* _outFboId, GLint* _outViewport) const;
+
+  /** \brief Restore a previously saved input Fbo configuration (fbo id + viewport)
+   * @param _outFboId pointer to address receiving the currently active fbo id
+   * @param _outViewport [in] pointer to address of 4 GLint values receiving the currently active viewport
+  */
+  virtual void restoreFbo(GLint _fboId, const GLint* _viewport) const;
 
   /** \brief Clear input Fbo.
    *
    * Clears color and depth buffer of input Fbo (using a scissor test to only clear viewport area).
   */
   virtual void clearInputFbo(const ACG::Vec4f& clearColor);
+
+  //=========================================================================
+  // Other Convenience
+  //=========================================================================
+
+protected:
+
+  /** \brief Copy texture to depth buffer
+   *
+   * Copies depth values from a texture to the input depth buffer.
+   * These are changes made to the OpenGL state, which are not restored upon return:
+   * - active texture stage is 0 with _depthTex bound
+   * - internal shader program active
+   * - internal screen quad vbo active
+   * - filling mode is set to glPolygonMode(GL_FRONT, GL_FILL)
+   *
+  */
+  virtual void copyDepthToBackBuffer(GLuint _depthTex, float _scale = 1.0f);
+
 
   //=========================================================================
   // Debugging
@@ -316,7 +347,9 @@ protected:
 
   /// flag indicating a that saveCurrentFbo() has been called prior restoreFbo()
   bool prevFboSaved_;
-  
+
+  /// shader copies depth of the first front layer to the back buffer
+  GLSL::Program* depthCopyShader_;
 };
 
 
