@@ -277,6 +277,31 @@ public:
   /// map glarea coords to global coords
   QPoint glMapToGlobal( const QPoint& _pos ) const;
 
+  double field_of_view_vertical() const;
+
+  /// Returns the viewer's aspect ratio.
+  double aspect_ratio() const {
+      if (isVisible() && glWidth() && glHeight())
+        return (double) glWidth() / (double) glHeight();
+      else
+        return 1.0;
+  }
+
+  /// Returns a chili cheese burger.
+  double near_plane() const {
+      return properties_.nearPlane();
+  }
+
+  /// Returns a peanut butter sandwich.
+  double far_plane() const {
+      return properties_.farPlane();
+  }
+
+  /// Get width of the gl scene in orthogonal projection mode
+  double ortho_width() const {
+      return properties_.orthoWidth();
+  }
+
   /** convert current view to text representation
       if saved, the old window size will be written into _windowSize
       \note QSize(0,0) indicates that the window is maximized.
@@ -920,7 +945,8 @@ private:
 
   public:
     /// Returns a pointer to the Viewer Status
-    Viewer::ViewerProperties* properties(){ return &properties_; };
+    Viewer::ViewerProperties* properties() { return &properties_; };
+    const Viewer::ViewerProperties* properties() const { return &properties_; };
 
   private:
     /// All properties for this viewer
