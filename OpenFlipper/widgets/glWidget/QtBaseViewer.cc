@@ -409,7 +409,6 @@ void glViewer::setFOVY(double _fovy) {
   updateProjectionMatrix();
 }
 
-
 void glViewer::updateProjectionMatrix()
 {
   if( projectionUpdateLocked_ )
@@ -419,34 +418,23 @@ void glViewer::updateProjectionMatrix()
 
   glstate_->reset_projection();
 
+  const double aspect = this->aspect_ratio();
   // In stereo mode we have to use a perspective matrix
   if ( projectionMode_ == PERSPECTIVE_PROJECTION)
   {
-    double aspect;
-
-    if (isVisible() && glWidth() && glHeight())
-      aspect = (double) glWidth() / (double) glHeight();
-    else
-      aspect = 1.0;
 
     // Get fovy
-    double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() + fovyModifier_;
+    const double fovy = this->field_of_view_vertical();
 
     glstate_->perspective(fovy, (GLdouble) aspect,
-                          properties_.nearPlane(), properties_.farPlane());
+                          near_plane(), far_plane());
   }
   else
   {
-    double aspect;
 
-    if (isVisible() && glWidth() && glHeight())
-      aspect = (double) glWidth() / (double) glHeight();
-    else
-      aspect = 1.0;
-
-    glstate_->ortho( -properties_.orthoWidth(), properties_.orthoWidth(),
-                     -properties_.orthoWidth()/aspect, properties_.orthoWidth()/aspect,
-                      properties_.nearPlane(), properties_.farPlane() );
+    glstate_->ortho( -ortho_width(), ortho_width(),
+                     -ortho_width() / aspect, ortho_width() / aspect,
+                     near_plane(), far_plane() );
   }
 
 }
@@ -1377,6 +1365,12 @@ QPoint glViewer::glMapToGlobal( const QPoint& _pos ) const {
   QPoint p (f.x(), f.y());
   return scene()->views().front()->mapToGlobal(p);
 }
+
+double glViewer::field_of_view_vertical() const {
+    return OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble()
+            + fovyModifier_;
+}
+
 
 //-----------------------------------------------------------------------------
 
