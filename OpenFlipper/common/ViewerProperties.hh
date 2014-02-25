@@ -382,6 +382,7 @@ namespace Viewer {
     public:
       /// Get the glState of the Viewer
       ACG::GLState& glState() { return (*glState_); };
+      const ACG::GLState& glState() const { return (*glState_); };
 
       void setglState(ACG::GLState* _glState) { glState_ = _glState; };
 
