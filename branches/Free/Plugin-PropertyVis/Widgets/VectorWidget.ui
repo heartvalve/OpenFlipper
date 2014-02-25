@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>VectorWidget</class>
  <widget class="QWidget" name="VectorWidget">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>437</width>
-    <height>198</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Property Visualization</string>
   </property>
@@ -24,11 +16,19 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="vectors_edges_rb">
+          <property name="text">
+           <string>Color Edges According
+ to Angle btw. Vectors</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">vector_buttonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="0" column="0">
          <widget class="QRadioButton" name="vectors_strokes_rb">
           <property name="text">
            <string>Strokes</string>
@@ -41,21 +41,20 @@
           </attribute>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QRadioButton" name="vectors_colors_rb">
           <property name="text">
-           <string>Colors</string>
+           <string>Encode as RGB</string>
           </property>
           <attribute name="buttonGroup">
            <string notr="true">vector_buttonGroup</string>
           </attribute>
          </widget>
         </item>
-        <item>
-         <widget class="QRadioButton" name="vectors_edges_rb">
+        <item row="1" column="1">
+         <widget class="QRadioButton" name="vectors_length_color_rb">
           <property name="text">
-           <string>Color Edges According
- to Angle btw. Vectors</string>
+           <string>Length as Color</string>
           </property>
           <attribute name="buttonGroup">
            <string notr="true">vector_buttonGroup</string>
@@ -150,6 +149,12 @@
          </property>
          <item>
           <widget class="QDoubleSpinBox" name="vectors_edges_alpha">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="prefix">
             <string>α = </string>
            </property>
@@ -169,12 +174,6 @@
          </item>
          <item>
           <widget class="QLabel" name="label_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="text">
             <string>≤</string>
            </property>
@@ -182,6 +181,12 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="vectors_edges_beta">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="prefix">
             <string>β = </string>
            </property>
@@ -228,8 +233,16 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>vectors_strokes_rb</tabstop>
+  <tabstop>vectors_colors_rb</tabstop>
+  <tabstop>vectors_edges_rb</tabstop>
+  <tabstop>vectors_length_color_rb</tabstop>
+  <tabstop>normalize</tabstop>
   <tabstop>scale</tabstop>
   <tabstop>scaleBox</tabstop>
+  <tabstop>lineColor</tabstop>
+  <tabstop>vectors_edges_alpha</tabstop>
+  <tabstop>vectors_edges_beta</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -240,12 +253,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>224</x>
-     <y>1313</y>
+     <x>172</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>1316</y>
+     <x>324</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>
@@ -256,12 +269,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>86</x>
-     <y>1250</y>
+     <x>122</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>29</x>
-     <y>1328</y>
+     <x>63</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -272,12 +285,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>1403</y>
+     <x>88</x>
+     <y>86</y>
     </hint>
     <hint type="destinationlabel">
-     <x>31</x>
-     <y>1425</y>
+     <x>65</x>
+     <y>209</y>
     </hint>
    </hints>
   </connection>
