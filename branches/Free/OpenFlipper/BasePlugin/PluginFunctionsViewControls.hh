@@ -330,6 +330,11 @@ void orthographicProjection( int _viewer = ALL_VIEWERS );
 DLLEXPORT
 void setFOVY( double _fovy );
 
+/** \brief Get field of view angle
+ */
+DLLEXPORT
+double fovy(int _viewer = ACTIVE_VIEWER);
+
 /** \brief Switch to perspective Projection
  *
  * @param _viewer Id of the viewer to use.

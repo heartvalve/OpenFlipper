@@ -851,6 +851,22 @@ ACG::Vec3d upVector(int _viewer) {
   return viewerProperties().glState().up();
 }
 
+/** \brief Get field of view angle
+ */
+DLLEXPORT
+double fovy(int _viewer) {
+    if ( _viewer == ACTIVE_VIEWER ) {
+      return viewerProperties(activeExaminer_).glState().fovy();
+    } else if ( _viewer == ALL_VIEWERS )
+      std::cerr << "Please select viewer to get fovy!" << std::endl;
+    else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+      return viewerProperties(_viewer).glState().fovy();
+    else
+      std::cerr << "Requested illegal viewer for fovy!!" << std::endl;
+
+    return viewerProperties().glState().fovy();
+}
+
 void setViewObjectMarker(ViewObjectMarker * _marker)
 {
   for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
