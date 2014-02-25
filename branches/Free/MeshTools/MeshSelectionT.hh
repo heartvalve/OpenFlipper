@@ -276,6 +276,11 @@ template< typename MeshT >
 inline
 void invertEdgeSelection(MeshT* _mesh);
 
+/// Invert Edge selection
+template< typename MeshT >
+inline
+void growEdgeSelection(MeshT* _mesh);
+
 /// Select all boundary edges of a mesh
 template< typename MeshT >
 void selectBoundaryEdges(MeshT* _mesh);
