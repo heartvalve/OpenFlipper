@@ -57,6 +57,7 @@
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
 #include <stack>
+#include <set>
 //== NAMESPACES ===============================================================
 
 namespace MeshSelection {
@@ -568,6 +569,35 @@ void invertEdgeSelection(MeshT* _mesh) {
 
   for (e_it = _mesh->edges_begin(); e_it != e_end ; ++e_it)
     _mesh->status(*e_it).set_selected( ! _mesh->status(*e_it).selected());
+}
+
+//=========================================================
+
+template<typename MeshT>
+inline
+void growEdgeSelection(MeshT* _mesh) {
+    std::set<typename MeshT::EdgeHandle> selectedEhs;
+    for (typename MeshT::EdgeIter e_it = _mesh->edges_begin(), e_end = _mesh->edges_end();
+            e_it != e_end; ++e_it) {
+
+        if (!_mesh->status(*e_it).selected()) continue;
+
+        const typename MeshT::HalfedgeHandle he = _mesh->halfedge_handle(*e_it, 0);
+        const typename MeshT::VertexHandle vhs[] = { _mesh->from_vertex_handle(he),
+                                                     _mesh->to_vertex_handle(he) };
+
+        for (int i = 0; i < 2; ++i) {
+            for (typename MeshT::VertexEdgeIter ve_it = _mesh->ve_begin(vhs[i]), ve_end = _mesh->ve_end(vhs[i]);
+                    ve_it != ve_end; ++ve_it) {
+
+                selectedEhs.insert(ve_it.handle());
+            }
+        }
+
+    }
+
+    for (typename std::set<typename MeshT::EdgeHandle>::const_iterator it = selectedEhs.begin(); it != selectedEhs.end(); ++it)
+        _mesh->status(*it).set_selected(true);
 }
 
 //=========================================================
