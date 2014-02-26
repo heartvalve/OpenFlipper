@@ -564,7 +564,7 @@ DrawMeshT<Mesh>::rebuild()
     if (hh.is_valid())
     {
       vertices_[i].vcol = getVertexColor(mesh_.to_vertex_handle(hh));
-      vertices_[i].fcol = getFaceColor(mesh_.face_handle(hh));
+      vertices_[i].fcol = 0;
     }
     else
     {
@@ -574,6 +574,25 @@ DrawMeshT<Mesh>::rebuild()
       vertices_[i].vcol = getVertexColor( mesh_.vertex_handle(posID) );
       vertices_[i].fcol = 0;
     }
+  }
+
+  // copy face colors to provoking id
+  
+  for (int i = 0; i < (int)numTris_; ++i)
+  {
+    const int provokingId = meshComp_->getProvokingVertex();
+
+    assert(provokingId >= 0 && provokingId < 3);
+    
+    int idx = meshComp_->getIndex(i*3+provokingId);
+
+    int faceId = meshComp_->mapToOriginalFaceID(i);
+    unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+
+    // debug check
+    assert(vertices_[idx].fcol == 0 || vertices_[idx].fcol == fcolor);
+
+    vertices_[idx].fcol = fcolor;
   }
 
   //////////////////////////////////////////////////////////////////////////

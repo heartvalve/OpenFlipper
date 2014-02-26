@@ -3202,6 +3202,56 @@ int MeshCompiler::getAdjVertexFace( int _vertexID, int _k ) const
   return adjacencyVert_.num ? adjacencyVert_.getAdj(_vertexID, _k) : faceInput_->getVertexAdjFace(_vertexID, _k);
 }
 
+bool MeshCompiler::isTriangleMesh() const
+{
+  return maxFaceSize_ == 3;
+}
+
+bool MeshCompiler::isFaceEdge( const int _triID, const int _edge ) const
+{
+  assert(_edge >= 0);
+  assert(_edge < 3);
+
+  if (maxFaceSize_ <= 3) return true;
+
+  // brute force: search for triangle edge in input face
+
+  const int faceID = mapToOriginalFaceID(_triID);
+  const int fsize = getFaceSize(faceID);
+
+  // get all draw vertices of face
+  std::vector<int> FaceVerts(fsize);
+
+  for (int i = 0; i < fsize; ++i)
+    FaceVerts[i] = mapToDrawVertexID(faceID, i);
+
+  int edgeStart = -1;
+  int edgeEnd = -1;
+
+  switch (_edge)
+  {
+  case 0: edgeStart = 0; edgeEnd = 1; break;
+  case 1: edgeStart = 1; edgeEnd = 2; break;
+  case 2: edgeStart = 2; edgeEnd = 0; break;
+  default: break;
+  }
+
+  // access index buffer of triangle
+  edgeStart = getIndex(_triID * 3 + edgeStart);
+  edgeEnd = getIndex(_triID * 3 + edgeEnd);
+
+  // search for edge in face vertices
+  for (int e = 0; e < fsize; ++e)
+  {
+    if (FaceVerts[e] == edgeStart && FaceVerts[(e+1)%fsize] == edgeEnd)
+      return true;
+    if (FaceVerts[e] == edgeEnd && FaceVerts[(e+1)%fsize] == edgeStart)
+      return true;
+  }
+
+  return false;
+}
+
 void MeshCompilerDefaultFaceInput::dbgWriteToObjFile(FILE* _file, int _posAttrID, int _normalAttrID, int _texcAttrID)
 {
   for (int i = 0; i < numFaces_; ++i)
