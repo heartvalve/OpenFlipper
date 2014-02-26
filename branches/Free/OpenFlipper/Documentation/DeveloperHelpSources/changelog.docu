@@ -1,18 +1,50 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 18217 )</b>
+- <b>OpenFlipper 2.1 ( ?/?/? , 18273 )</b>
      - <b>ACG</b>
 	- GL
 	     - Shader Generator: Extension to replace lightingcode
 	     - Shader Generator: Add comments to shaders to keep track of input files used to compose shaders
 	     - Support shininess in lighting code
+	- IRenderer
+	     - Additional functions to make sure, the fbos are handled correctly
+	     - Convenience functions added
+	     	- save/restoreActiveFbo(fboId, viewport)
+                - copyDepthToBackBuffer(tex, scale)
+	- MeshCompiler and DrawMesh
+	     - Fix for face colors on wrong faces by Christopher.
+	- ShaderGenerator
+	     - Write source location of shader input files as comments into code
+	- ShaderCache
+	     - Added clear function
+        - Uniform Pool
+             - fix wrong storage type for integer uniforms
+        - Mesh Tools
+	     - Added function to grow edge selections.
+     - <b>Core</b>
+        - Interface
+	     - PluginFunctions: Added fovy function.
+	     - ViewerProperties: Added const accessor for glState.
+        - QtBaseViewer
+             - Cleaned up QtBaseViewer code a bit.
+	     - Let the glwidget do the buffer clearing, not the renderers (simplified renderer plugins)
      - <b>Plugins</b>
          - Depth Peeling
 	     - Code refactoring and cleanup
+             - Front to back peeling back to work
+             - User can switch between dual peeling and front to back peeling via options menu
+             - Post-processor support: Output of front depth layers in hardware depth buffer
+	 - Shader Pipeline
+	     - Stereo support and new buffer handling in shader pipeline renderer
          - Toon Shader
 	     - Added new renderer plugin for toon shading
+	 - Plugin-PropertyViz
+	     - Added new vector viz mode.
      - <b>Documentation</b>
          - Raised Doxygen version of files to 1.8.6
+	 - Added documentation for shader generator
+         - update docu in ACG IRenderer.hh
+         - Strange parser error in doxygen fixed
 
 - <b>OpenFlipper 2.0 ( 2014/02/13 , 18180 )</b>
      - <b>Significant interface changes and Bugfixes</b>
