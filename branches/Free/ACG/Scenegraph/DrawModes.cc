@@ -758,20 +758,6 @@ const DrawMode& addDrawMode( const std::string & _name , bool _propertyBased)
 
 //----------------------------------------------------------------------------
 
-
-ACGDLLEXPORT
-const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties)
-{
-  const DrawMode& drawmode = addDrawMode( _name , true );
-
-  getDrawMode(_name).setDrawModeProperties(_properties);
-
-  return drawmode;
-}
-
-//----------------------------------------------------------------------------
-
-
 const DrawMode& getDrawMode( const std::string & _name )
 {
   // check if mode exists
