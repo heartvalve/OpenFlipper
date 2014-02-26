@@ -758,6 +758,27 @@ const DrawMode& addDrawMode( const std::string & _name , bool _propertyBased)
 
 //----------------------------------------------------------------------------
 
+ACGDLLEXPORT
+const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties)
+{
+  const DrawMode& drawmode = addDrawMode( _name , true );
+
+  // Get the internal DrawMode
+  VecDrawModes::iterator modeIter, modeEnd( registeredDrawModes_.end() );
+
+  for( modeIter = registeredDrawModes_.begin(); modeIter != modeEnd; ++modeIter ) {
+    if( _name == modeIter->name() ) {
+      modeIter->properties() = _properties;
+      return drawmode;
+    }
+  }
+
+  return drawmode;
+}
+
+//----------------------------------------------------------------------------
+
+
 const DrawMode& getDrawMode( const std::string & _name )
 {
   // check if mode exists
