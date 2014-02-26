@@ -467,6 +467,12 @@ public:
    */
   void setProvokingVertex(int _v);
 
+  /** See glProvokingVertex()
+   *
+   * @return provoking vertex id
+   */
+  int getProvokingVertex() const {return provokingVertex_;}
+
 
   /** \brief Get vertex buffer ready for rendering.
    * 
@@ -562,6 +568,27 @@ public:
 /** @} */  
 
 
+//===========================================================================
+/** @name Triangulation properties
+* @{ */
+//===========================================================================  
+
+  /** Test if the input mesh consists of triangles only.
+  */
+  bool isTriangleMesh() const;
+
+  /** Test if a triangle edge is a face edge from the input buffer.
+   *
+   * When a convex n-poly is subdivided into (n-2) triangles, new edges are created which do not exist in the input mesh.
+   * This function identifies if an edge was already existant in the input mesh or added during triangulation.
+   * @param _triID triangle ID in draw buffer
+   * @param _edge edge of triangle, edge ordering: v0-v1, v1-v2, v2-v0
+   * @return true if the edge is an edge from an input face, false otherwise
+  */
+  bool isFaceEdge(const int _triID, const int _edge) const;
+
+
+/** @} */  
 
 
 

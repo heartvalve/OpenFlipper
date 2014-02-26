@@ -174,6 +174,9 @@ public:
   */
   GLuint getIBO();
 
+  /** \brief get mesh compiler used to create the draw mesh
+  */
+  MeshCompiler* getMeshCompiler() {return meshComp_;}
 
   /** \brief get vertex declaration used for per-vertex color rendering
   */
