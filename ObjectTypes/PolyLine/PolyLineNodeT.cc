@@ -65,10 +65,6 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
-
-
-
-
 /// Constructor
 template <class PolyLine>
 PolyLineNodeT<PolyLine>::PolyLineNodeT(PolyLine& _pl, BaseNode* _parent, std::string _name) :
@@ -77,9 +73,22 @@ PolyLineNodeT<PolyLine>::PolyLineNodeT(PolyLine& _pl, BaseNode* _parent, std::st
         vbo_(0),
         updateVBO_(true),
         sphere_(0)
-{
-  drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
 
+{
+
+  // Initialize our local draw mode references
+  POINTS_SPHERES = DrawModes::DrawMode(ACG::SceneGraph::DrawModes::addDrawMode("Points (as Spheres)",
+                                                                               ACG::SceneGraph::DrawModes::DrawModeProperties(ACG::SceneGraph::DrawModes::PRIMITIVE_POLYGON,
+                                                                               ACG::SceneGraph::DrawModes::LIGHTSTAGE_SMOOTH,
+                                                                               ACG::SceneGraph::DrawModes::NORMAL_PER_VERTEX)));
+
+  POINTS_SPHERES_SCREEN = DrawModes::DrawMode(ACG::SceneGraph::DrawModes::addDrawMode("Points (as Spheres, constant screen size)",
+                                                                               ACG::SceneGraph::DrawModes::DrawModeProperties(ACG::SceneGraph::DrawModes::PRIMITIVE_POLYGON,
+                                                                               ACG::SceneGraph::DrawModes::LIGHTSTAGE_SMOOTH,
+                                                                               ACG::SceneGraph::DrawModes::NORMAL_PER_VERTEX)));;
+
+  // Initial default draw mode
+  drawMode(DrawModes::WIREFRAME | DrawModes::POINTS );
 }
 
 //----------------------------------------------------------------------------
@@ -105,7 +114,7 @@ DrawModes::DrawMode
 PolyLineNodeT<PolyLine>::
 availableDrawModes() const
 {
-  return (DrawModes::WIREFRAME | DrawModes::POINTS | DrawModes::POINTS_SHADED);
+  return (DrawModes::WIREFRAME | DrawModes::POINTS | POINTS_SPHERES | POINTS_SPHERES_SCREEN );
 }
 
 
@@ -239,8 +248,8 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
   //Disable the vertex array
   ACG::GLState::disableClientState(GL_VERTEX_ARRAY);
 
-  // draw vertices as spheres
-  if (_drawMode & DrawModes::POINTS_SHADED)
+  // draw vertices as spheres, using the radius given in the polyline
+  if (_drawMode & POINTS_SPHERES)
   {
     // create sphere if not yet done
     if(!sphere_)
@@ -265,6 +274,48 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
         sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
     }
   }
+
+  // draw vertices as spheres with constant size on screen
+  if (_drawMode & POINTS_SPHERES_SCREEN)
+  {
+    // create sphere if not yet done
+    if(!sphere_)
+      sphere_ = new GLSphere(10,10);
+
+    // precompute desired radius of projected sphere
+    double r = 0.5*_state.point_size()/double(_state.viewport_height())*2.0*_state.near_plane()*tan(0.5*_state.fovy());
+    r /= _state.near_plane();
+
+    if( polyline_.vertex_selections_available())
+    {
+      for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+      {
+        if(polyline_.vertex_selected(i))
+          _state.set_color( Vec4f(1,0,0,1) );
+        else
+          _state.set_color( color );
+
+        // compute radius in 3D
+        const Vec3d p = (Vec3d)polyline_.point(i) - _state.eye();
+        const double l = (p|_state.viewing_direction());
+        sphere_->draw(_state, r*l, (Vec3f)polyline_.point(i));
+      }
+    }
+    else
+    {
+      _state.set_color( color );
+      for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+      {
+        // compute radius in 3D
+        const Vec3d p = (Vec3d)polyline_.point(i) - _state.eye();
+        const double l = (p|_state.viewing_direction());
+        sphere_->draw(_state, r*l, (Vec3f)polyline_.point(i));
+      }
+
+    }
+  }
+
+
 
 }
 
@@ -315,7 +366,7 @@ pick(GLState& _state, PickTarget _target)
       if (drawMode() & DrawModes::POINTS)
           pick_vertices( _state);
 
-      if (drawMode() & DrawModes::POINTS_SHADED)
+      if (drawMode() & POINTS_SPHERES)
           pick_spheres( _state);
 
       pick_edges( _state, polyline_.n_vertices());

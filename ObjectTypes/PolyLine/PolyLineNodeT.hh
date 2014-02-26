@@ -167,6 +167,12 @@ private:
 
   /// Sphere for VertexSphere DrawMode
   GLSphere* sphere_;
+
+  /// This defines a local point spheres draw mode for all polyLine nodes
+  DrawModes::DrawMode POINTS_SPHERES;
+
+  /// This defines a local point spheres draw mode for all polyLine nodes with constant screen size
+  DrawModes::DrawMode POINTS_SPHERES_SCREEN;
 };
 
 
