@@ -613,6 +613,22 @@ namespace DrawModes {
   ACGDLLEXPORT
   const DrawMode& addDrawMode( const std::string & _name, bool _propertyBased = false);
 
+  /** \brief Add a custom property based DrawMode.
+   *
+   * The id of the new draw mode is returned. If it already exists, the id of the existing one
+   * is returned.
+   *
+   * \note If the DrawMode already exists, the properties will be applied to the existing mode!!
+   *
+   * Property based draw modes consist of various flags, which define which primitives and
+   * additional information are send to the gpu.
+   *
+   * @param _name       Name of the draw mode to add
+   * @param _properties Properties of the drawmode
+   * @return Id of the new draw mode
+  */
+  ACGDLLEXPORT
+  const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties);
 
   /** \brief Get a custom DrawMode.
    *

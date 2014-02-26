@@ -756,6 +756,18 @@ const DrawMode& addDrawMode( const std::string & _name , bool _propertyBased)
   return registeredDrawModes_[ registeredDrawModes_.size() - 1 ].id();
 }
 
+//----------------------------------------------------------------------------
+
+
+ACGDLLEXPORT
+const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties)
+{
+  const DrawMode& drawmode = addDrawMode( _name , true );
+
+  getDrawMode(_name).setDrawModeProperties(_properties);
+
+  return drawmode;
+}
 
 //----------------------------------------------------------------------------
 
