@@ -125,7 +125,7 @@ namespace GLSL {
 
     // separate float int vector because sizeof(int) != sizeof(float) for some compilers
     struct UniformVeci : public UniformBase {
-      ACG::Vec4f val;
+      ACG::Vec4i val;
       int size;
 
       void bind(GLuint _progID) const;
