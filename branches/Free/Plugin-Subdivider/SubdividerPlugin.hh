@@ -106,17 +106,46 @@ private slots:
   /// Make plugin available in no-GUI mode
   void noguiSupported( ) {} ;
   
-  void slotSubdivideUniform();
+  void slotSubdivideUniformButton();
 
-  void slotSimpleSubdivide();
+  void slotSimpleSubdivideButton();
 
 public slots:
 
-  /// Scripting slot for subdivision
-  void subdivide(int _objectId, QString _algorithm , int _steps);
+  /** \brief Scripting slot for subdivision
+   *
+   * Supported algorithm are:
+   *
+   * Polymeshes:
+   * - catmullClark
+   *
+   * Triangle Meshes:
+   * - loop
+   * - sqrt3
+   * - interpolating_sqrt3
+   * - modifiedButterfly
+   *
+   * @param _objectId      Object to work on
+   * @param _algorithm     String describing the algorithm to use
+   * @param _steps         Number of iterations
+   * @param _update_points Update original point locations
+   */
+  void subdivide(int _objectId, QString _algorithm , int _steps, bool _update_points = true);
   
-  /// Scripting slot for the simple subdivision algorithms
-  void simpleSubdivide(int _objectId, QString _algorithm , int _steps, double _parameter);
+  /** \brief Scripting slot for the simple subdivision algorithms
+   *
+   * Supported algorithm are:
+   *
+   * Triangle meshes:
+   * - longest (Split all edges in descending order until all edges are shorter than given maximal edge length)
+   *
+   * @param _objectId      Object to work on
+   * @param _algorithm     String describing the algorithm to use
+   * @param _steps         Number of iterations
+   * @param _parameter     Additional parameter depending on the algorithm (usually the maximal edge length in the final mesh)
+   * @param _update_points Update original point locations
+   */
+  void simpleSubdivide(int _objectId, QString _algorithm , int _steps, double _parameter, bool _update_points = true);
 
 
 public :
