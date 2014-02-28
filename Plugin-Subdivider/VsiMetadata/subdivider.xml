@@ -17,9 +17,14 @@
         <max>1000</max>
         <precision>1</precision>
      </input>
+     <input name="update" type="Bool" external="false">
+        <short>Update original points</short>
+        <long>Update original points</long>
+        <default>true</default>
+      </input>
     </inputs>
     <code>
-      subdivider.subdivide([input="obj"],"loop",[input="steps"]);
+      subdivider.subdivide([input="obj"],"loop",[input="steps"],[input="update"]);
     </code>
   </element>
   <element name="sqrt3_subdivider">
@@ -40,9 +45,14 @@
         <max>1000</max>
         <precision>1</precision>
      </input>
+     <input name="update" type="Bool" external="false">
+        <short>Update original points</short>
+        <long>Update original points</long>
+        <default>true</default>
+      </input>
     </inputs>
     <code>
-      subdivider.subdivide([input="obj"],"sqrt3",[input="steps"]);
+      subdivider.subdivide([input="obj"],"sqrt3",[input="steps"],[input="update"]);
     </code>
   </element>
   <element name="interpolating_sqrt3_subdivider">
@@ -63,9 +73,14 @@
         <max>1000</max>
         <precision>1</precision>
      </input>
+     <input name="update" type="Bool" external="false">
+        <short>Update original points</short>
+        <long>Update original points</long>
+        <default>true</default>
+      </input>     
     </inputs>
     <code>
-      subdivider.subdivide([input="obj"],"interpolating_sqrt3",[input="steps"]);
+      subdivider.subdivide([input="obj"],"interpolating_sqrt3",[input="steps"],[input="update"]);
     </code>
   </element>  
   <element name="modifiedButterfly_subdivider">
@@ -86,9 +101,47 @@
         <max>1000</max>
         <precision>1</precision>
      </input>
+     <input name="update" type="Bool" external="false">
+        <short>Update original points</short>
+        <long>Update original points</long>
+        <default>true</default>
+      </input>     
     </inputs>
     <code>
-      subdivider.subdivide([input="obj"],"modifiedButterfly",[input="steps"]);
+      subdivider.subdivide([input="obj"],"modifiedButterfly",[input="steps"],[input="update"]);
     </code>
-  </element>      
+  </element>     
+     <element name="longestEdgeSplit_subdivider">
+    <category>Algorithms</category>
+    <short>Subdivider(Longest edge split)</short>
+    <long>Very simple algorithm splitting all edges longer than the given length, starting at the longest one.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="steps" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of subdivision steps</long>
+        <default>1</default>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+     </input>
+     <input name="max_length" type="Number">
+        <short>Maximal edge length</short>
+        <long>Maximal edge length in the final mesh</long>
+        <default>1.0</default>
+      </input>       
+     <input name="update" type="Bool" external="false">
+        <short>Update original points</short>
+        <long>Update original points</long>
+        <default>true</default>
+      </input>     
+    </inputs>
+    <code>
+      subdivider.simpleSubdivide([input="obj"],"longest",[input="steps"],[input="max_length"],[input="update"]);
+    </code>
+  </element>  
 </OpenFlipper>
