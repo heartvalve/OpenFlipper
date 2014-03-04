@@ -482,6 +482,20 @@ public:
   unsigned int getMemoryUsage();
     
 
+
+private:
+
+  // poly edge buffer used for wireframe/hiddenline rendering with barycentric interpolation in geometry shader
+  GLuint polyEdgeBuf_;
+
+  // size in bytes of the poly edge buffer
+  int polyEdgeBufSize_;
+
+  // texture object for polyEdgeBuf
+  GLuint polyEdgeBufTex_;
+
+
+  void updatePolyEdgeBuf();
 };
 
 

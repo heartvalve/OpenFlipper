@@ -248,7 +248,7 @@ struct ACGDLLEXPORT RenderObject
   /**
    * adds a texture to an specific stage and enables texture support in shaderDesc
    */
-  void addTexture(const Texture& _t,const size_t _stage)
+  void addTexture(const Texture& _t,const size_t _stage, bool _addToShaderGen = true)
   {
     if (GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS < numTextures())
     {
@@ -256,7 +256,8 @@ struct ACGDLLEXPORT RenderObject
       return;
     }
     textures_[_stage] = _t;
-    shaderDesc.addTextureType(_t.type,_t.shadow,_stage);
+    if (_addToShaderGen)
+      shaderDesc.addTextureType(_t.type,_t.shadow,_stage);
   }
 
   ///clear all textures. Also affected on shaderDesc

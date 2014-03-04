@@ -3,7 +3,6 @@
 in vec3 outGeometryBary;
 
 uniform float lineWidth;
-uniform vec4 bkColor;
 
 float edgeFactor()
 {
@@ -18,8 +17,18 @@ float edgeFactor()
 void main()
 {
   SG_FRAGMENT_BEGIN
+    
+  float t = 1-edgeFactor();
 
-  sg_cColor.xyz = mix(bkColor, sg_cColor.xyz, 1-edgeFactor());
+  // use alpha blending to fade out
+  sg_cColor.a = t;
+  
+  // without alpha blending:
+//  sg_cColor.xyz *= t; //mix(vec3(0.0), sg_cColor.xyz, t);
+
+  // discard pixels inside face
+  if (t < 0.1)
+    discard;
     
   SG_FRAGMENT_END
 }

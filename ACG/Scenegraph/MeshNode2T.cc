@@ -88,7 +88,10 @@ MeshNodeT(Mesh&        _mesh,
   anyPickingBaseIndex_(0),
   perFaceTextureIndexAvailable_(false),
   perFaceTextureCoordsAvailable_(false),
-  textureMap_(0)
+  textureMap_(0),
+  polyEdgeBuf_(0),
+  polyEdgeBufSize_(0),
+  polyEdgeBufTex_(0)
 {
  
   /// \todo : Handle vbo not supported
@@ -618,8 +621,9 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     ro.depthFunc = GL_LESS;
     ro.setMaterial(_mat);
 
-    ro.shaderDesc.geometryTemplateFile = "";
-    ro.shaderDesc.fragmentTemplateFile = "";
+    ro.shaderDesc.vertexTemplateFile = ""; //QString(props->vertexShader().c_str());
+    ro.shaderDesc.geometryTemplateFile = ""; //QString(props->geometryShader().c_str());
+    ro.shaderDesc.fragmentTemplateFile = ""; //QString(props->fragmentShader().c_str());
 
     // ------------------------
     // 1. setup drawMesh based on property source
@@ -711,14 +715,41 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       // use geometry shaders to simulate line width
    
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geometry.tpl";
+      geomTemplate += "Wireframe/geometry_wire.tpl";
 
       QString fragTemplate = ShaderProgGenerator::getShaderDir();
-      fragTemplate += "Wireframe/fragment.tpl";
+      fragTemplate += "Wireframe/fragment_wire.tpl";
+
+#ifdef GL_ARB_texture_buffer_object
+      if (!drawMesh_->getMeshCompiler()->isTriangleMesh())
+      {
+        // use modified shader for npoly meshes
+        // the shader can identify non-face edges with the poly edge buffer
+        updatePolyEdgeBuf();
+
+        if (polyEdgeBufTex_)
+        {
+          geomTemplate = ShaderProgGenerator::getShaderDir();
+          geomTemplate += "Wireframe/geometry_npoly_wire.tpl";
+
+          fragTemplate = ShaderProgGenerator::getShaderDir();
+          fragTemplate += "Wireframe/fragment_npoly_wire.tpl";
+
+          RenderObject::Texture roTex;
+          roTex.id = polyEdgeBufTex_;
+          roTex.type = GL_TEXTURE_BUFFER;
+
+          // bind poly edge buffer to texture stage 2
+          ro.setUniform("polyEdgeBuffer", 2);
+          ro.addTexture(roTex, 2, false);
+        }
+      }
+#endif
 
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
       ro.shaderDesc.fragmentTemplateFile = fragTemplate;
 
+      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
       ro.setUniform("lineWidth", _state.line_width());
 
       add_face_RenderObjects(_renderer, &ro);
@@ -737,15 +768,44 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
 
       // use shaders to simulate line width
       QString geomTemplate = ShaderProgGenerator::getShaderDir();
-      geomTemplate += "Wireframe/geometry.tpl";
+      geomTemplate += "Wireframe/geometry_hidden.tpl";
 
       QString fragTemplate = ShaderProgGenerator::getShaderDir();
       fragTemplate += "Wireframe/fragment_hidden.tpl";
 
+#ifdef GL_ARB_texture_buffer_object
+      if (!drawMesh_->getMeshCompiler()->isTriangleMesh())
+      {
+        // use modified shader for npoly meshes
+        // the shader can identify non-face edges with the poly edge buffer
+        updatePolyEdgeBuf();
+
+        if (polyEdgeBufTex_)
+        {
+          geomTemplate = ShaderProgGenerator::getShaderDir();
+          geomTemplate += "Wireframe/geometry_npoly_hidden.tpl";
+
+          fragTemplate = ShaderProgGenerator::getShaderDir();
+          fragTemplate += "Wireframe/fragment_npoly_hidden.tpl";
+
+          RenderObject::Texture roTex;
+          roTex.id = polyEdgeBufTex_;
+          roTex.type = GL_TEXTURE_BUFFER;
+
+          // bind poly edge buffer to texture stage 2
+          ro.setUniform("polyEdgeBuffer", 2);
+          ro.addTexture(roTex, 2, false);
+        }
+      }
+#endif
+
+
       ro.shaderDesc.geometryTemplateFile = geomTemplate;
       ro.shaderDesc.fragmentTemplateFile = fragTemplate;
 
+      ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
       ro.setUniform("lineWidth", _state.line_width());
+      ro.setUniform("bkColor", _state.clear_color());
 
       add_face_RenderObjects(_renderer, &ro);
 
@@ -819,11 +879,14 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
     {
     case DrawModes::PRIMITIVE_POINT:
       {
-        // use specular color for points
-        if (_drawMode.isAtomic() )
-          ro.emissive = ro.specular;
-        else
-          ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
+        if (ro.shaderDesc.shadeMode == SG_SHADE_UNLIT)
+        {
+          // use specular color for points
+          if (_drawMode.isAtomic() )
+            ro.emissive = ro.specular;
+          else
+            ro.emissive = OpenMesh::color_cast<ACG::Vec3f>(_state.overlay_color());
+        }
 
         // use shaders to simulate line width
         QString geomTemplate = ShaderProgGenerator::getShaderDir();
@@ -1514,6 +1577,79 @@ DrawMeshT<Mesh>*
 MeshNodeT<Mesh>::getDrawMesh()
 {
   return drawMesh_;
+}
+
+
+template<class Mesh>
+void MeshNodeT<Mesh>::updatePolyEdgeBuf()
+{
+
+#ifdef GL_ARB_texture_buffer_object
+  MeshCompiler* mc = drawMesh_->getMeshCompiler();
+  if (mc && !mc->isTriangleMesh())
+  {
+    // create/update the poly-edge buffer
+    if (!polyEdgeBuf_)
+      glGenBuffers(1, &polyEdgeBuf_);
+
+    const int nTris = mc->getNumTriangles();
+
+    const int newBufSize = (nTris/2+1);
+
+    if (polyEdgeBufSize_ != newBufSize)
+    {
+      glBindBuffer(GL_TEXTURE_BUFFER, polyEdgeBuf_);
+
+      // The poly-edge buffer is a texture buffer that stores one byte for each triangle, which encodes triangle edge properties.
+      // An inner edge is an edge that was added during the triangulation of a n-poly, 
+      // whereas outer edges are edges that already exist in the input mesh object.
+      // This information is used in the wireframe/hiddenline geometry shader to identify edges, which should not be rendered.
+      // Buffer storage:
+      // each triangle uses 3 bits to mark edges as visible or hidden
+      //  outer edge -> bit = 1 (visible)
+      //  inner edge -> bit = 0 (hidden)
+      // each byte can store edges for two triangles and the remaining 2 bits are left unused
+
+      polyEdgeBufSize_ = newBufSize;
+      unsigned char* polyEdgeBufData = new unsigned char[newBufSize];
+      
+      // set zero
+      memset(polyEdgeBufData, 0, newBufSize);
+
+      // build buffer
+      for (int i = 0; i < nTris; ++i)
+      {
+        int byteidx = i>>1;
+        int bitidx = (i&1) * 3;
+
+        for (int k = 0; k < 3; ++k)
+          if (mc->isFaceEdge(i, k))
+            polyEdgeBufData[byteidx] += 1 << (k + bitidx);
+      }
+
+      glBufferData(GL_TEXTURE_BUFFER, polyEdgeBufSize_, polyEdgeBufData, GL_STATIC_DRAW);
+
+
+      delete [] polyEdgeBufData;
+      polyEdgeBufData = 0;
+
+      // create texture object for the texture buffer
+
+      if (!polyEdgeBufTex_)
+      {
+        glGenTextures(1, &polyEdgeBufTex_);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_BUFFER, polyEdgeBufTex_);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_R8UI, polyEdgeBuf_);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }
+
+      ACG::glCheckErrors();
+    }
+  }
+#endif
 }
 
 
