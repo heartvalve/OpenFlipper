@@ -79,7 +79,29 @@ template< class Mesh> class SmartTaggerHT;
 //== CLASS DEFINITION =========================================================
 
 
-//template <class Mesh, class EPHandle, class EHandle>
+/** \brief Smart Tagger
+ *
+ * A tagger class to be used on OpenMesh. It provides an O(1) reset function for the property.
+ * - Smarttagging for vertices:  SmartTaggerVT;
+ * - Smarttagging for edges:     SmartTaggerET;
+ * - Smarttagging for faces:     SmartTaggerFT;
+ * - Smarttagging for halfedges: SmartTaggerHT;
+ *
+ * Usage:
+ *
+ * \code
+ * SmartTaggerVT< MeshType >* tagger = new SmartTaggerVT< MeshType > (mesh_);
+ *
+ * // Reset tagged flag on all vertices
+ * tagger.untag_all();
+ *
+ * // Check if something is tagged
+ * bool tag = tagger.is_tagged(vh);
+ *
+ * // Set tagged:
+ * tagger.set_tag(vh);
+ * \endcode
+ */
 template <class Mesh, class EHandle, class EPHandle>
 class SmartTaggerT
 {
@@ -91,20 +113,44 @@ public:
   /// Destructor
   ~SmartTaggerT();
 
-  // untag all elements
+  /** \brief untag all elements
+   *
+   */
   inline void untag_all();
 
-  // untag all elements and set new tag_range
+  /** \brief untag all elements and set new tag_range
+   *
+   * @param _new_tag_range  New tag range of the tagger
+   */
   inline void untag_all( const unsigned int _new_tag_range);
   
-  // set tag to a value in [0..tag_range]
+  /** \brief set tag to a value in [0..tag_range]
+   *
+   * @param _eh  Edge handle for the tag
+   * @param _tag Tag value
+   */
   inline void         set_tag  ( const EHandle _eh, unsigned int _tag = 1);
-  // get tag value in range [0..tag_range]
+
+  /** \brief get tag value in range [0..tag_range]
+   *
+   * @param _eh  Edge handle for the tag
+   * @return Current tag value at that edge
+   */
   inline unsigned int get_tag  ( const EHandle _eh) const;
-  // overloaded member for boolean tags
+
+  /** \brief  overloaded member for boolean tags
+   *
+   * @param _eh Edge handle for the tag
+   * @return Current tag value at that edge
+   */
   inline bool         is_tagged( const EHandle _eh) const;
 
-  // set new tag range and untag_all
+  /** \brief set new tag range and untag_all
+   *
+   * Set new tag range and reset tagger
+   *
+   * @param _tag_range  New tag range of the tagger
+   */
   inline void         set_tag_range( const unsigned int _tag_range);
   
 protected:
