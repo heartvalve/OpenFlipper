@@ -19,7 +19,7 @@ void main()
 {
   SG_FRAGMENT_BEGIN
 
-  sg_cColor.xyz = mix(bkColor, sg_cColor.xyz, 1-edgeFactor());
+  sg_cColor.xyz = mix(bkColor.xyz, sg_cColor.xyz, 1-edgeFactor());
     
   SG_FRAGMENT_END
 }
