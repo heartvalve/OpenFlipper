@@ -49,7 +49,7 @@
 
 #include "Widgets/IntegerWidget.hh"
 
-#include <ACG/Utils/ColorGenerator.hh>
+#include <ACG/Utils/HuePartitioningColors.hh>
 
 #include <iostream>
 
@@ -85,7 +85,7 @@ protected:
     T mNumericLimitMax;
     T mNumericLimitMin;
 
-    ACG::ColorGenerator mColorGenerator;
+    ACG::HuePartitioningColors mColorGenerator;
 
 };
 
