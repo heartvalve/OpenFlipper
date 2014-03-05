@@ -26,9 +26,14 @@ void main()
   // without alpha blending:
 //  sg_cColor.xyz *= t; //mix(vec3(0.0), sg_cColor.xyz, t);
 
+  gl_FragDepth = gl_FragCoord.z;
+
   // discard pixels inside face
   if (t < 0.1)
-    discard;
-    
-  SG_FRAGMENT_END
+  {
+    gl_FragDepth = 1.0;
+//    discard; // depth write after discard might depend on gpu driver
+  }
+  
+  SG_FRAGMENT_END  
 }

@@ -1,25 +1,17 @@
-// template file for shader generator
+// wireframe shader for tri meshes
+// emits screen quads for edges
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices = 3) out;
+layout(triangle_strip, max_vertices = 12) out;
 
-// send barycentric coords to fragment
-out vec3 outGeometryBary;
+uniform float lineWidth;
+uniform vec2 screenSize;
+
+#include "createEdgeQuad.glsl"
 
 void main()
 {
-
-  sg_MapIO(0); // IO mapping provided by ShaderGen, send vertex 0
-  outGeometryBary = vec3(1, 0, 0);
-  EmitVertex();
-  
-  sg_MapIO(1); // IO mapping provided by ShaderGen, send vertex 1
-  outGeometryBary = vec3(0, 1, 0);
-  EmitVertex();
-  
-  sg_MapIO(2); // IO mapping provided by ShaderGen, send vertex 2
-  outGeometryBary = vec3(0, 0, 1);
-  EmitVertex();
-  
-  EndPrimitive();
+  createEdgeQuad(0,1, screenSize, lineWidth);
+  createEdgeQuad(1,2, screenSize, lineWidth);
+  createEdgeQuad(2,0, screenSize, lineWidth);
 }
