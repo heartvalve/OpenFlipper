@@ -56,6 +56,7 @@
 #include <ACG/Math/VectorT.hh>
 #include "../Config/ACGDefines.hh"
 
+#include "ColorGenerator.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -69,15 +70,18 @@ namespace ACG {
  independent of the number of colors required.
  Simply instantiate and use get_next_color().
 */
-class ACGDLLEXPORT HaltonColors {
+class ACGDLLEXPORT HaltonColors : public ColorGenerator {
 
 public:
 
   /// Default constructor
   HaltonColors(int skip = 250);
 
-  /// Generate the next color
+  /// Generate the next color (legacy method)
   ACG::Vec4f get_next_color();
+
+  /// Generate the next color
+  virtual ACG::Vec4f generateNextColor();
 
 private:
 
