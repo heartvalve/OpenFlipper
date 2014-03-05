@@ -1,5 +1,7 @@
 // modified hiddenline shader that works for n-poly faces
 
+#include "createEdgeQuad.glsl"
+
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 15) out;
 
@@ -11,8 +13,6 @@ uniform float lineWidth;
 uniform vec2 screenSize;
 
 out float outGeometryHidden;
-
-#include "createEdgeQuad.glsl"
 
 void main()
 {
