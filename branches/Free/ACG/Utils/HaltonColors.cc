@@ -163,12 +163,16 @@ ACG::Vec4f HaltonColors::HSL2RGB(double h, double sl, double l)
   return Vec4f((float)r, (float)g, (float)b, 1.0f);
 }
 
+ACG::Vec4f HaltonColors::generateNextColor() {
+    float h = random_interval(0, 0.0f , 0.9f ); // 0.9 instead of 1.0 to suppress natural bias towards red
+    float s = random_interval(1, 0.40f, 0.80f); // saturation between 40% and 80%
+    float l = random_interval(2, 0.30f, 0.60f); // lightness between 30% and 60%
+    return HSL2RGB(h, s, l);
+}
+
 ACG::Vec4f HaltonColors::get_next_color()
 {
-  float h = random_interval(0, 0.0f , 0.9f ); // 0.9 instead of 1.0 to suppress natural bias towards red
-  float s = random_interval(1, 0.40f, 0.80f); // saturation between 40% and 80%
-  float l = random_interval(2, 0.30f, 0.60f); // lightness between 30% and 60%
-  return HSL2RGB(h, s, l);
+    return generateNextColor();
 }
 
 
