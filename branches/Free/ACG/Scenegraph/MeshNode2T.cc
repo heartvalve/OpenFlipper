@@ -721,7 +721,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       fragTemplate += "Wireframe/fragment_wire.tpl";
 
 #ifdef GL_ARB_texture_buffer_object
-      if (!drawMesh_->getMeshCompiler()->isTriangleMesh())
+      if (!mesh_.is_trimesh())
       {
         // use modified shader for npoly meshes
         // the shader can identify non-face edges with the poly edge buffer
@@ -774,7 +774,7 @@ void ACG::SceneGraph::MeshNodeT<Mesh>::getRenderObjects( IRenderer* _renderer, G
       fragTemplate += "Wireframe/fragment_hidden.tpl";
 
 #ifdef GL_ARB_texture_buffer_object
-      if (!drawMesh_->getMeshCompiler()->isTriangleMesh())
+      if (!mesh_.is_trimesh())
       {
         // use modified shader for npoly meshes
         // the shader can identify non-face edges with the poly edge buffer
