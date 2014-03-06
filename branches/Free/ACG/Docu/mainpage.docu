@@ -18,5 +18,6 @@ If you build OpenFlipper, the library will be automatically build and integrated
 \li \subpage pickingDocumentation
 \li \subpage NonFixedPipelinePage
 \li \subpage ShaderGenPage
+\li \subpage TutorialRenderer
 
 */
