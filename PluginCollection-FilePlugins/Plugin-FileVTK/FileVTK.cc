@@ -413,7 +413,7 @@ bool FileVTKPlugin::writeASCIIDataOfOpenMesh(std::ostream& _out, MeshT& _mesh ) 
     typename MeshT::FaceIter end_fit = _mesh.faces_end();
     typename MeshT::FaceVertexIter fvit;
 
-    int total_face_vertices = 0;
+    int total_face_vertices = _mesh.n_faces();
     for (; fit != end_fit; ++fit) {
         total_face_vertices += _mesh.valence(*fit);
     }
