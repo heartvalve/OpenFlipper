@@ -188,15 +188,6 @@ target_link_libraries (${OPENFLIPPER_PRODUCT_STRING}
 )
 
 if (APPLE)
-   # create bundle in "Build" directory and set icon
-   # no install needed here, because the whole bundle will be installed in the
-   # toplevel CMakeLists.txt
-   set_target_properties (
-      ${OPENFLIPPER_PRODUCT_STRING} PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
-      MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
-      MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
-   )
 
    if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
 
@@ -244,11 +235,14 @@ if (APPLE)
   # toplevel CMakeLists.txt
   set_target_properties (
       ${OPENFLIPPER_PRODUCT_STRING} PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
+       
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/"
+      RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Build/"
+      RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Build/"
       MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
       MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
       MACOSX_BUNDLE_INFO_PLIST ${APPLE_INFO_PLIST}
-  )
+  )  
 
 endif ()
 
