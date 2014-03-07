@@ -5,6 +5,7 @@
 #  Poco_INCLUDE_DIRS - the path to where the poco include files are.
 #  Poco_LIBRARY_DIRS - The path to where the poco library files are.
 #  Poco_BINARY_DIRS - The path to where the poco dlls are.
+#  Poco_LIBRARIES - All libraries
 
 # ----------------------------------------------------------------------------
 # If you have installed Poco in a non-standard location.
@@ -115,8 +116,28 @@ IF(Poco_INCLUDE_DIR)
     SET(Poco_FOUND 1)
   ENDIF(EXISTS "${Poco_INCLUDE_DIR}")
 
+  set( Poco_LIBRARIES "") #reset
+  IF ( NOT Poco_LIBRARIES )
+    FIND_LIBRARY(Poco_LIBRARY_Zip NAMES PocoZip PocoZipd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+      # Look in other places.
+      ${Poco_INCLUDE_DIR}
+      ${POCO_DIR_SEARCH}
+      # Help the user find it if we cannot.
+      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
+    )
+  FIND_LIBRARY(Poco_LIBRARY_Found NAMES PocoFoundation PocoFoundationd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+      # Look in other places.
+      ${Poco_INCLUDE_DIR}
+      ${POCO_DIR_SEARCH}
+      # Help the user find it if we cannot.
+      DOC "The ${POCO_LIBRARY_PATH_DESCRIPTION}"
+    )
+  set( Poco_LIBRARIES     "${Poco_LIBRARY_Found};${Poco_LIBRARY_Zip}" CACHE FILEPATH "Poco libraries names" FORCE )
+
+  endif()
+
   IF ( NOT Poco_LIBRARY_DIR )
-    FIND_LIBRARY(Poco_LIBRARY_DIR_TMP NAMES PocoFoundation PocoFoundationd  PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
+    FIND_LIBRARY(Poco_LIBRARY_DIR_TMP NAMES PocoFoundation PocoFoundationd PocoZip PocoZipd PATH_SUFFIXES ${SUFFIX_FOR_LIBRARY_PATH} PATHS
 
       # Look in other places.
       ${Poco_INCLUDE_DIR}
@@ -155,3 +176,6 @@ IF(NOT Poco_FOUND)
   ENDIF(NOT Poco_FIND_QUIETLY)
 ENDIF(NOT Poco_FOUND)
 
+IF(NOT Poco_FIND_QUIETLY)
+  message( ${Poco_INCLUDE_DIR} + " and lib dir " + ${Poco_LIBRARY_DIR} + " poco found " + ${Poco_FOUND})
+ENDIF(NOT Poco_FIND_QUIETLY)
