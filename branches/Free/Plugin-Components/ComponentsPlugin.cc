@@ -76,6 +76,10 @@ void ComponentsPlugin::initializePlugin() {
  */
 void ComponentsPlugin::pluginsInitialized()
 {
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
+
   setDescriptions();
 
   emit addPickMode( SPLIT_COMPONENTS );
