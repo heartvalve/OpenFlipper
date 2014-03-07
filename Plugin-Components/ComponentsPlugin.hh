@@ -109,6 +109,7 @@ class ComponentsPlugin : public QObject, BaseInterface, MouseInterface, PickingI
 
     // BaseInterface
     void initializePlugin();
+    void noguiSupported(){};
     void pluginsInitialized();
 
     // PickingInterface
