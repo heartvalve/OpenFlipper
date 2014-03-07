@@ -21,7 +21,7 @@ if( TetGenLib_INCLUDE_DIR )
   message( Found TetGenLib_INCLUDE_DIR: ${TetGenLib_INCLUDE_DIR})
   find_library(
     TetGenLib_LIBRARY
-    NAMES tetgen
+    NAMES tetgen tet
     PATHS ${TetGenLib_TMP_PATHS}/TetGen/lib/)
   
   if( TetGenLib_LIBRARY )
