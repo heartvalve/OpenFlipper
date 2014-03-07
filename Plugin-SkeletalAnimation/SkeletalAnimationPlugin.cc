@@ -672,6 +672,18 @@ void SkeletalAnimationPlugin::slotMethodChanged(int _index)
 //------------------------------------------------------------------------------
 
 /**
+ * @brief Helper Class for UpdateUI. assigns a bool value and set it to "true". after leaving the scope, set it to false
+ *
+ */
+class GuiUpdatingScopeGuard
+{
+  bool& v_;
+public:
+  GuiUpdatingScopeGuard(bool &_in):v_{_in}{v_ = true;}
+  ~GuiUpdatingScopeGuard(){v_ = false;}
+};
+
+/**
  * @brief Called when the active object changes and the interface needs to be updated
  */
 void SkeletalAnimationPlugin::UpdateUI()
@@ -679,7 +691,7 @@ void SkeletalAnimationPlugin::UpdateUI()
   if(bGuiUpdating_)	// gui updates object -> object is updated so gui gets updated -> loop forever
     return;
 
-  bGuiUpdating_ = true;
+  GuiUpdatingScopeGuard guard(bGuiUpdating_);
 
   if( ! activeSkeletons_.empty() )
   {
@@ -748,8 +760,6 @@ void SkeletalAnimationPlugin::UpdateUI()
     pToolbox_->pbClearSkins->setEnabled(false);
     pToolbox_->skinningBox->setTitle(tr("Attached Skins"));
   }
-
-  bGuiUpdating_ = false;
 }
 
 //------------------------------------------------------------------------------
