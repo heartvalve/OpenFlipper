@@ -47,6 +47,7 @@
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/ScreenQuad.hh>
 #include <ACG/GL/GLError.hh>
+#include <ACG/QtWidgets/QtColorChooserButton.hh>
 
 #undef QT_NO_OPENGL
 #include <QGLFormat>
@@ -129,7 +130,7 @@ CelShadingModifier CelShadingModifier::instance;
 // =================================================
 
 ToonRenderer::ToonRenderer() 
-  : progOutline_(0)
+  : progOutline_(0), paletteSize_(2.0f), outlineCol_(0.0f, 0.0f, 0.0f)
 {
   ACG::ShaderProgGenerator::registerModifier(&CelShadingModifier::instance);
 }
@@ -156,9 +157,6 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   // - Restriction of the number of lighting intensity levels
   // - in shader: l dot n is quantized based on the number of allowed shading tones.
   // currently a constant sized step function is used to quantize the intensity
-
-  // add this constant to render menu when available
-  const float numShades = 2.0f;
 
   // collect renderobjects + prepare OpenGL state
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
@@ -214,7 +212,7 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
       prog->link();
 
     prog->use();
-    prog->setUniform("g_celPaletteSize", numShades);
+    prog->setUniform("g_celPaletteSize", paletteSize_);
 
     renderObject(sortedObjects_[i], prog);
   }
@@ -249,6 +247,7 @@ void ToonRenderer::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pro
   progOutline_->setUniform("samplerDepth", 1);
   progOutline_->setUniform("texcoordOffset", ACG::Vec2f(1.0f / float(viewRes->scene_->width()), 1.0f / float(viewRes->scene_->height()) ));
   progOutline_->setUniform("clipPlanes", ACG::Vec2f(_glState->near_plane(), _glState->far_plane()));
+  progOutline_->setUniform("outlineColor", outlineCol_);
 
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, viewRes->scene_->getAttachment(GL_COLOR_ATTACHMENT1));
@@ -294,11 +293,55 @@ QString ToonRenderer::checkOpenGL() {
 
 QAction* ToonRenderer::optionsAction()
 {
-//   QDialog* optionDlg = new QDialog(0, 0);
-// 
-//   optionDlg->show();
+  QAction * action = new QAction("Toon Renderer Options" , this );
 
-  return 0;
+  connect(action,SIGNAL(triggered( bool )),this,SLOT(actionDialog( bool )));
+
+  return action;
+}
+
+void ToonRenderer::actionDialog( bool )
+{
+  //generate widget
+  QDialog* optionsDlg = new QDialog();
+  QVBoxLayout* layout = new QVBoxLayout();
+  layout->setAlignment(Qt::AlignTop);
+
+  QColor curColor;
+  curColor.setRgbF(outlineCol_[0],outlineCol_[1],outlineCol_[2]);
+
+  QLabel* label = new QLabel(tr("Palette Size [0, 10]:"));
+  layout->addWidget(label);
+  
+  QSlider* paletteSizeSlider = new QSlider(Qt::Horizontal);
+  paletteSizeSlider->setRange(0, 1000);
+  paletteSizeSlider->setValue(int(paletteSize_ * 100.0));
+  paletteSizeSlider->setTracking(true);
+  layout->addWidget(paletteSizeSlider);
+
+  QtColorChooserButton* outlineColorBtn = new QtColorChooserButton("Outline Color");
+  layout->addWidget(outlineColorBtn);
+
+  outlineColorBtn->setColor( curColor );
+
+  optionsDlg->setLayout(layout);
+
+
+  connect(paletteSizeSlider, SIGNAL(sliderMoved(int)), this, SLOT(paletteSizeChanged(int)));
+  connect(outlineColorBtn, SIGNAL(colorChanged(QColor)), this, SLOT(outlineColorChanged(QColor)));
+
+
+  optionsDlg->show();
+}
+
+void ToonRenderer::paletteSizeChanged( int _val ) {
+  paletteSize_ = float(_val) / 100.0f;
+}
+
+void ToonRenderer::outlineColorChanged( QColor _col ) {
+  outlineCol_[0] = _col.redF();
+  outlineCol_[1] = _col.greenF();
+  outlineCol_[2] = _col.blueF();
 }
 
 void ToonRenderer::ViewerResources::resize( int _newWidth, int _newHeight ) {

@@ -4,6 +4,7 @@ uniform sampler2D samplerScene;
 uniform sampler2D samplerDepth;
 
 uniform vec2 clipPlanes;
+uniform vec3 outlineColor;
 
 in vec2 vTexCoord;
 out vec4 oColor;
@@ -44,7 +45,7 @@ void main()
   vec4 color_scene = texture2D(samplerScene, vTexCoord);
   
   
-  oColor = vec4(color_scene.xyz * edge_factor, color_scene.w);
+  oColor = vec4(mix(outlineColor.xyz, color_scene.xyz, edge_factor), color_scene.w);
   
 //  oColor = vec4(edge_factor, edge_factor, edge_factor, 1.0);
   

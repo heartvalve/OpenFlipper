@@ -87,12 +87,22 @@ private slots:
   QString checkOpenGL();
 
 
+  void actionDialog( bool );
+  void paletteSizeChanged( int );
+  void outlineColorChanged( QColor );
+
 private:
 
   void loadShader();
 
   /// outline shader: multiply scene color with edge factor derived from edges in depth buffer
   GLSL::Program* progOutline_;
+
+  /// size of cel shading palette
+  float paletteSize_;
+
+  /// outline color
+  ACG::Vec3f outlineCol_;
 
   /// Collection of fbos for each viewport
   struct ViewerResources
