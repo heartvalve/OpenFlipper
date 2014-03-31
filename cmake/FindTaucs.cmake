@@ -32,7 +32,8 @@ ELSE(WIN32)
     ELSE (APPLE)
 
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
-                  PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
+                  PATHS ~/sw/taucs-2.2.new/include 
+			/ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
                  )
 
     ENDIF(APPLE)
@@ -58,7 +59,8 @@ IF(TAUCS_INCLUDE_DIR )
     ELSE (APPLE)
  	   FIND_LIBRARY( TAUCS_LIBRARY
         	          NAMES taucs 
-                	  PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+                	  PATHS ~/sw/taucs-2.2.new/lib
+				/ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
 	               )
     ENDIF( APPLE)
   ENDIF(WIN32)
