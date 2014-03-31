@@ -32,7 +32,7 @@ vec3 LitPointLight(vec3 vPosition,
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
  
 	// specular
-	vec3 h = normalize(vLightDir - normalize(vPosition)); // half vector between light and view direction
+	vec3 h = normalize(vLightDir - vec3(0,0,-1)); // half vector between light and view direction
 	float hdotn = max(dot(h, vNormal), 0.0);
 	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
 	
@@ -59,7 +59,7 @@ vec3 LitDirLight(vec3 vPosition,
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
 
 	// specular
-	vec3 h = normalize(vLightDir - normalize(vPosition)); // half vector between light and view direction
+	vec3 h = normalize(vLightDir - vec3(0,0,-1)); // half vector between light and view direction
 	float hdotn = max(dot(h, vNormal), 0.0);
 	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
 
@@ -92,7 +92,7 @@ vec3 LitSpotLight(vec3 vPosition,
 	cLight += ldotn * cLightDiffuse * g_cDiffuse;
 
 	// specular
-	vec3 h = normalize(vLightDir - normalize(vPosition)); // half vector between light and view direction
+	vec3 h = normalize(vLightDir - vec3(0,0,-1)); // half vector between light and view direction
 	float hdotn = max(dot(h, vNormal), 0.0);
 	cLight += (pow(hdotn, SHININESS) * cLightSpecular) * g_cSpecular;
 

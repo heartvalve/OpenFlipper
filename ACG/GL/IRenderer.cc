@@ -565,13 +565,41 @@ void IRenderer::renderObject(ACG::RenderObject* _obj,
 void IRenderer::addLight(const LightData& _light)
 {
   if (numLights_ < SG_MAX_SHADER_LIGHTS)
-    lights_[numLights_++] = _light;
+  {
+    lights_[numLights_] = _light;
+
+    // normalize direction
+    if (_light.ltype != SG_LIGHT_POINT)
+      lights_[numLights_].dir.normalize();
+
+    ++numLights_;
+  }
 }
 
 
 int IRenderer::getNumRenderObjects() const
 {
   return renderObjects_.size();
+}
+
+
+int IRenderer::getNumLights() const
+{
+  return numLights_;
+}
+
+
+ACG::RenderObject* IRenderer::getRenderObject( int i )
+{
+  if (sortedObjects_.empty())
+    return &renderObjects_[i];
+  
+  return sortedObjects_[i];
+}
+
+IRenderer::LightData* IRenderer::getLight( int i )
+{
+  return &lights_[i];
 }
 
 
