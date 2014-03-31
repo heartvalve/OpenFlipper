@@ -43,6 +43,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QString>
+#include <QFileInfo>
 
 #include <iostream>
 #include <cassert>
@@ -574,6 +575,38 @@ namespace GLSL {
     while (!iShader.eof()) {
       std::string strLine;
       std::getline(iShader, strLine);
+
+      // check for includes
+      QString qstrLine = strLine.c_str();
+      if (qstrLine.contains("#include")) {
+
+        // try to load included file
+        QString strIncludeFile = qstrLine.remove("#include ").remove('\"').remove('<').remove('>').trimmed();
+        QFileInfo loadedShaderFile(path_file);
+        QString includePath = loadedShaderFile.absolutePath();
+
+        if (strIncludeFile.isEmpty())
+          std::cout << "wrong include syntax: " << strLine.c_str() << std::endl;
+        else {
+          QString fullPathToIncludeFile = includePath + QDir::separator() + strIncludeFile;
+
+          std::ifstream iInclude(fullPathToIncludeFile.toLatin1());
+          if (!iInclude) {
+            std::cout << "ERROR: Could not open file " << fullPathToIncludeFile.toStdString() << std::endl;
+          }  else {
+            // append included file
+            while (!iInclude.eof()) {
+              std::getline(iInclude, strLine);
+              strLine += "\n";
+              shaderSource.push_back(strLine);
+            }
+          }
+        }
+
+        strLine = "";
+      }
+
+
       strLine += "\n";
       shaderSource.push_back(strLine);
     }
