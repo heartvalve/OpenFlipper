@@ -74,6 +74,9 @@ Compute distance based filter weights for multi-sampled OpenGL texture.
 This can be used for reading from multisampled render targets.
 */
 
+
+#ifdef GL_ARB_texture_multisample
+
 class ACGDLLEXPORT MSFilterWeights
 {
 public:
@@ -106,6 +109,7 @@ private:
   std::vector<float> weights_;
 };
 
+#endif // GL_ARB_texture_multisample
 
 //=============================================================================
 } // namespace ACG
