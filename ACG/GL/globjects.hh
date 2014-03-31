@@ -57,6 +57,7 @@
 
 // GL
 #include <ACG/GL/gl.hh>
+#include <ACG/GL/GLState.hh>
 
 // C++
 #include <iostream>
@@ -187,17 +188,22 @@ public:
 
   virtual ~Texture() { del(); }
 
-  void bind()
+
+  void bind(GLenum _unit)
   {
     if(!valid) gen();
-    activate();
+    activate(_unit);
     ACG::GLState::bindTexture(target, texture);
   }
-  
-  void activate()
+
+  void activate(GLenum _unit)
   {
-    if (unit != GL_NONE) ACG::GLState::activeTexture(unit);
+    if (_unit != GL_NONE) ACG::GLState::activeTexture(_unit);
   }
+
+  void bind() {  bind(unit); }
+
+  void activate() {  activate(unit);  }
 
   void parameter(GLenum pname, GLint i)
   {
@@ -247,6 +253,7 @@ public:
   
   GLuint id() const { return texture; }
   
+  void setUnit(GLenum u) {unit = u;}
   GLenum getUnit() const { return unit; }
 
 private:
@@ -331,6 +338,58 @@ class TextureRectangleNV : public Texture
 public:
   TextureRectangleNV(GLenum u=GL_NONE)
     : Texture(GL_TEXTURE_RECTANGLE_NV, u) {}
+};
+
+#endif
+
+
+#if defined(GL_ARB_texture_buffer_object)
+
+class TextureBuffer : public Texture
+{
+public:
+  TextureBuffer(GLenum u=GL_NONE)
+    : Texture(GL_TEXTURE_BUFFER, u), buffer_(0), bufferSize_(0) {}
+
+  ~TextureBuffer()
+  {
+    if (buffer_)
+      glDeleteBuffers(1, &buffer_);
+  }
+
+  // _size  size in bytes of buffer data
+  // _data  buffer data
+  // _internalFormat format of buffer - http://www.opengl.org/sdk/docs/man3/xhtml/glTexBuffer.xml
+  // _usage buffer usage hint - https://www.opengl.org/sdk/docs/man3/xhtml/glBufferData.xml
+  void setBufferData(int _size, const void* _data, GLenum _internalFormat, GLenum _usage = GL_STATIC_DRAW)
+  {
+    // setup buffer object
+    if (!buffer_)
+      glGenBuffers(1, &buffer_);
+
+    glBindBuffer(GL_TEXTURE_BUFFER, buffer_);
+    glBufferData(GL_TEXTURE_BUFFER, _size, _data, _usage);
+
+
+    // bind buffer to texture
+    if (getUnit() == GL_NONE)
+      setUnit(GL_TEXTURE0);
+
+    bind();
+    
+    glTexBuffer(GL_TEXTURE_BUFFER, _internalFormat, buffer_);
+
+    bufferSize_ = _size;
+  }
+
+  int getBufferSize() const {return bufferSize_;}
+  
+  GLuint getBufferId() const {return buffer_;}
+
+private:
+
+  int bufferSize_;
+  GLuint buffer_;
 };
 
 #endif
