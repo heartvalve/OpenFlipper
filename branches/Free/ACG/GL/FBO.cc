@@ -356,6 +356,17 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       {
         rt->target = GL_TEXTURE_2D_MULTISAMPLE;
         reattachTextures = true;
+
+        glDeleteTextures(1, &rt->id);
+        glGenTextures(1, &rt->id);
+      }
+      else if (rt->target == GL_TEXTURE_2D_MULTISAMPLE && samples_ == 0)
+      {
+        rt->target = GL_TEXTURE_2D;
+        reattachTextures = true;
+
+        glDeleteTextures(1, &rt->id);
+        glGenTextures(1, &rt->id);
       }
 #endif // GL_ARB_texture_multisample
 
@@ -366,12 +377,35 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       if (!samples_)
         glTexImage2D(rt->target, 0, rt->internalFormat, _width, _height, 0, rt->format, rt->format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
       else
-        glTexImage2DMultisample(rt->target, samples_, rt->internalFormat, _width, _height, fixedsamplelocation_);
+      {
+        // Resizing directly by calling glTexImage2DMultisample leads to corrupted memory and weird runtime behaviour.
+        // Workaround: delete and alloc texture buffer manually and reattach to fbo.
+        // Maybe caused by unfinished render jobs or opengl driver bug
 
+        glDeleteTextures(1, &rt->id);
+        glGenTextures(1, &rt->id);
+        glBindTexture(rt->target, rt->id);
+        glTexImage2DMultisample(rt->target, samples_, rt->internalFormat, _width, _height, fixedsamplelocation_);
+        reattachTextures = true;
+      }
 #else
       glTexImage2D(rt->target, 0, rt->internalFormat, _width, _height, 0, rt->format, rt->format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
 #endif // GL_ARB_texture_multisample
 
+    }
+
+    // resize depth renderbuffer
+    if (depthbuffer_)
+    {
+      glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthbuffer_);
+      glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
+    }
+
+    // resize stencil renderbuffer
+    if (stencilbuffer_)
+    {
+      glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, stencilbuffer_);
+      glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX, _width, _height);
     }
 
     // store new size
@@ -406,7 +440,7 @@ void FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*
   GLint maxSamples;
   glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
 
-  if (_samples > maxSamples) _samples = maxSamples;
+  if (_samples >= maxSamples) _samples = maxSamples - 1;
 
   // issue texture reloading when params changed
   bool reloadTextures = (samples_ != _samples || fixedsamplelocation_ != _fixedsamplelocations);
