@@ -61,6 +61,8 @@ namespace ACG {
 
 //== CLASS IMPLEMENTATION =========================================================
 
+#ifdef GL_ARB_texture_multisample
+
 
 MSFilterWeights::MSFilterWeights(int _numSamples) : numSamples_(_numSamples) {
 
@@ -101,6 +103,7 @@ void MSFilterWeights::asTextureBuffer( TextureBuffer& out ) {
 
 //=============================================================================
 
+#endif // GL_ARB_texture_multisample
 
 
 } // namespace ACG
