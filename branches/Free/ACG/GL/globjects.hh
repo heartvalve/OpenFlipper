@@ -136,7 +136,7 @@ public:
     if(!valid) gen();
     glBufferDataARB(target, size, data, usage);
   }
-  
+
   // Upload a subset of the buffer data
   void uploadSubData(GLuint _offset, GLuint _size, const GLvoid* _data ) {
     glBufferSubDataARB(target, _offset, _size, _data);
@@ -146,7 +146,7 @@ public:
   {
     return ((char*)NULL + _offset);
   }
-  
+
 private:
 
   void gen() { glGenBuffersARB(1, &vbo); if(vbo > 0u) valid = true; }
@@ -250,9 +250,9 @@ public:
   void gen() { glGenTextures(1, &texture); valid = (texture > 0u ? true : valid); }
 
   bool is_valid() const { return valid; }
-  
+
   GLuint id() const { return texture; }
-  
+
   void setUnit(GLenum u) {unit = u;}
   GLenum getUnit() const { return unit; }
 
@@ -349,7 +349,7 @@ class TextureBuffer : public Texture
 {
 public:
   TextureBuffer(GLenum u=GL_NONE)
-    : Texture(GL_TEXTURE_BUFFER, u), buffer_(0), bufferSize_(0) {}
+    : Texture(GL_TEXTURE_BUFFER, u), bufferSize_(0), buffer_(0) {}
 
   ~TextureBuffer()
   {
@@ -376,14 +376,14 @@ public:
       setUnit(GL_TEXTURE0);
 
     bind();
-    
+
     glTexBuffer(GL_TEXTURE_BUFFER, _internalFormat, buffer_);
 
     bufferSize_ = _size;
   }
 
   int getBufferSize() const {return bufferSize_;}
-  
+
   GLuint getBufferId() const {return buffer_;}
 
 private:
