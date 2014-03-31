@@ -323,8 +323,17 @@ public:
   //=========================================================================
 protected:
 
-  /// Get the number of current light sources
+  /// Get the number of collected render objects sources
   int getNumRenderObjects() const;
+
+  /// Get the number of current light sources
+  int getNumLights() const;
+
+  /// Get render objects in the sorted list by index
+  ACG::RenderObject* getRenderObject(int i);
+
+  /// Get light by index
+  LightData* getLight(int i);
 
 protected:
 
