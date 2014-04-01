@@ -1,8 +1,11 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 18273 )</b>
+- <b>OpenFlipper 2.1 ( ?/?/? , 18405 )</b>
      - <b>ACG</b>
 	- GL
+             - DrawModes: Convenience function to add property based drawmodes. refs 1895
+             - Rendering: Fix for wireframe/hiddenline on poly meshes.
+	     - Rendering: unified edge rendering for triangle and poly meshes refs 
 	     - Shader Generator: Extension to replace lightingcode
 	     - Shader Generator: Add comments to shaders to keep track of input files used to compose shaders
 	     - Support shininess in lighting code
@@ -11,16 +14,28 @@
 	     - Convenience functions added
 	     	- save/restoreActiveFbo(fboId, viewport)
                 - copyDepthToBackBuffer(tex, scale)
+             - Fix specular lighting of directional lights in the shader pipeline
+        - MeshNode
+             - Fixed 0 pointer deref in meshnode. Closes 2048
 	- MeshCompiler and DrawMesh
 	     - Fix for face colors on wrong faces by Christopher.
 	- ShaderGenerator
+             - Add support for #include in ACG shader load function
 	     - Write source location of shader input files as comments into code
 	- ShaderCache
 	     - Added clear function
+        - Tools
+             - Unified color generator interfaces.
+             - workaround for memory corruption, when a multisampled FBO is resized
+             - New TextureBuffer class in ACG for opengl texture buffers
+             - ACG Textures can now be bound to any texture slot by passing the texture unit to bind()
+             - Add filter weight computation for reading from multisampled textures
         - Uniform Pool
              - fix wrong storage type for integer uniforms
         - Mesh Tools
 	     - Added function to grow edge selections.
+        - Documentation
+             - Renderer tutorial
      - <b>Core</b>
         - Interface
 	     - PluginFunctions: Added fovy function.
@@ -29,17 +44,32 @@
              - Cleaned up QtBaseViewer code a bit.
 	     - Let the glwidget do the buffer clearing, not the renderers (simplified renderer plugins)
      - <b>Plugins</b>
+         - Components
+             - Add nogui support
          - Depth Peeling
 	     - Code refactoring and cleanup
              - Front to back peeling back to work
              - User can switch between dual peeling and front to back peeling via options menu
              - Post-processor support: Output of front depth layers in hardware depth buffer
+         - File-VTK
+             - fix wrong count in the POLYGONS header (Thanks to Vladimir Chalupecky for the patch)
+         - PropertyViz
+             - Added new vector viz mode.
+         - Renderer Toon
+             - Add options dialog for toon renderer
 	 - Shader Pipeline
 	     - Stereo support and new buffer handling in shader pipeline renderer
+         - Skeletal Animation
+             - ui updating fix refs 2046
+	 - Subdivider
+             - Sripting slots don't use ui anymore ( Thanks to  Vladimir Chalupecky for the patch)
+             - Added more user output to inform on errors or unsupported algorithms.
+             - Fixed slot descriptions ( the subdivider is not a smoother ;-) )
+             - Updated Vsi xml
          - Toon Shader
 	     - Added new renderer plugin for toon shading
-	 - Plugin-PropertyViz
-	     - Added new vector viz mode.
+     - <b>Build System</b>
+         - set debug/release output_dir for mac with bundles enabled closes 1993
      - <b>Documentation</b>
          - Raised Doxygen version of files to 1.8.6
 	 - Added documentation for shader generator
