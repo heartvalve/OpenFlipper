@@ -1027,7 +1027,12 @@ template <class Mesh>
 unsigned int DrawMeshT<Mesh>::mapVertexToVBOIndex(unsigned int _v)
 {
   if (_v < mesh_.n_vertices())
-    return invVertexMap_[_v];
+  {
+    if (invVertexMap_)
+      return invVertexMap_[_v];
+    else //if mesh is a point cloud
+      return _v;
+  }
 
   return (unsigned int)-1;
 }
