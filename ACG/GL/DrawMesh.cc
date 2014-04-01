@@ -1156,7 +1156,7 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
     RenderObject ro = *_baseObj;
     bindBuffersToRenderObject(&ro);
 
-    if (_textureMap && _baseObj->shaderDesc.textured())
+    if (_baseObj->shaderDesc.textured())
     {
       // textured mode
 
@@ -1164,14 +1164,28 @@ void ACG::DrawMeshT<Mesh>::addTriRenderObjects(IRenderer* _renderer, const Rende
       {
         const MeshCompiler::Subset* sub = meshComp_->getSubset(i);
 
-        if ( _textureMap->find(sub->id) == _textureMap->end() ) {
-          std::cerr << "Illegal texture index ... trying to access " << sub->id << std::endl;
-        }
-        else
+        if ( _textureMap )
         {
+          if ( _textureMap->find(sub->id) == _textureMap->end() ) {
+            std::cerr << "Illegal texture index ... trying to access " << sub->id << std::endl;
+          }
+          else
+          {
+            RenderObject::Texture tex;
+            tex.type = GL_TEXTURE_2D;
+            tex.id = (*_textureMap)[sub->id];
+            ro.addTexture(tex,0);
+          }
+        }
+        else // no texture map specified, use whatever texture is currently bound to the first texture stage
+        {
+          glActiveTexture(GL_TEXTURE0);
+          GLint textureID = 0;
+          glGetIntegerv(GL_TEXTURE_BINDING_2D, &textureID);
+
           RenderObject::Texture tex;
           tex.type = GL_TEXTURE_2D;
-          tex.id = (*_textureMap)[sub->id];
+          tex.id = textureID;
           ro.addTexture(tex,0);
         }
 
