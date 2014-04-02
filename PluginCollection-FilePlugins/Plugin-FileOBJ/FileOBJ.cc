@@ -1186,17 +1186,23 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
   }
 
-  // we have only read points so far and no faces
-  // treat them as a polymesh
-  if (keyWrd == "v" && faceCount == 0 && currentVertexCount != 0 && !inGroup) {
-    _importer.setCurrentGroup(0);
-    _importer.forceMeshType( OBJImporter::POLYMESH );
-    vhandles.clear();
-    for (int i = 0; i < currentVertexCount; ++i)
-      vhandles.push_back(i);
 
-    _importer.addFace(vhandles);
-    faceCount++;
+  //checks, if an object with a specified type was added. if not, point cloud was read
+  bool isType = faceCount != 0;
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  isType = isType || curveCount != 0;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  isType = isType || surfaceCount != 0;
+#endif
+
+  // we have only read points so far and no faces or modes
+  // treat them as a polymesh
+  if (isType && currentVertexCount != 0 ) {
+    _importer.forceMeshType( OBJImporter::POLYMESH ); //actually it is a pointcloud
+    if (!inGroup)
+      _importer.setCurrentGroup(0);
   }
 }
 
