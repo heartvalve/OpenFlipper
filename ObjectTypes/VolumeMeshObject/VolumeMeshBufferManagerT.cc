@@ -1010,8 +1010,7 @@ bool VolumeMeshBufferManager<VolumeMesh>::texCoordsNeedRebuild()
             (mVertexSize    != mCurrentVertexSize)    ||
             (mNumOfVertices != mCurrentNumOfVertices) ||
             (mPrimitiveMode != mCurrentPrimitiveMode) ||
-            (mTexCoordOffset!= mCurrentTexCoordOffset)||
-            (mTexCoordMode  != mTexCoordMode);
+            (mTexCoordOffset!= mCurrentTexCoordOffset);
 }
 
 /**
