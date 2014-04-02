@@ -159,7 +159,7 @@ public:
 
   int getSingleFaceAttr(const int _faceID, const int _faceCorner, const int _attrID) const;
 
-  bool getFaceAttr(const int _faceID, const int _attrID, int* _out);
+  bool getFaceAttr(const int _faceID, const int _attrID, int* _out) const;
 
   void dbgWriteToObjFile(FILE* _file, int _posAttrID = 0, int _normalAttrID = -1, int _texcAttrID = -1);
 

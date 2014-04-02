@@ -3282,7 +3282,7 @@ void MeshCompilerDefaultFaceInput::dbgWriteToObjFile(FILE* _file, int _posAttrID
   }
 }
 
-bool MeshCompilerDefaultFaceInput::getFaceAttr( int _faceID, int _attrID, int* _out )
+bool MeshCompilerDefaultFaceInput::getFaceAttr( int _faceID, int _attrID, int* _out ) const
 {
   int offset = faceOffset_[_faceID];
   int fsize = faceSize_[_faceID];
