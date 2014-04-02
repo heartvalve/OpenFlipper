@@ -54,7 +54,8 @@ public:
   void init();
 
   /// enable/disable multisampling
-  void setMultisampling(GLsizei _samples, GLboolean _fixedsamplelocations = GL_TRUE);
+  /// returns the MSAA sample count of the fbo, which might not be equal to the requested _samples count but you'll get something close
+  GLsizei setMultisampling(GLsizei _samples, GLboolean _fixedsamplelocations = GL_TRUE);
 
   /// get number of samples
   GLsizei getMultisamplingCount() const {return samples_;}

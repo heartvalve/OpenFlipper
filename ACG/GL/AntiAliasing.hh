@@ -44,13 +44,13 @@
 
 //=============================================================================
 //
-//  OpenGL MultiSampling
+//  Helper classes for Anti-Aliasing of render targets
 //
 //=============================================================================
 
 
-#ifndef MS_FILTERWEIGHTS_HH
-#define MS_FILTERWEIGHTS_HH
+#ifndef ANTI_ALIASING_HH
+#define ANTI_ALIASING_HH
 
 
 //== INCLUDES =================================================================
@@ -69,9 +69,20 @@ namespace ACG {
 
 //== CLASS DEFINITION =========================================================
 
+
 /*
-Compute distance based filter weights for multi-sampled OpenGL texture.
-This can be used for reading from multisampled render targets.
+OpenGL MSAA:
+
+A post-processing fragment shader has to be compute colors per sample rather than per pixel for full MSAA.
+Sample values are then weighted by filter weights to obtain the final pixel value.
+
+Filter weights can be computed with several methods, for example:
+ - distance based filter weights (computed with MSFilterWeights)
+ - constant filter weights: 1/numSamples
+
+Recommended resources on implementing MSAA with render to texture:
+ http://diaryofagraphicsprogrammer.blogspot.com/2009/06/multisample-anti-aliasing.html
+ http://www.humus.name/index.php?page=3D&ID=81
 */
 
 
@@ -111,8 +122,13 @@ private:
 
 #endif // GL_ARB_texture_multisample
 
+// maybe add:
+// - automatic generation of MSAA variants of a post processing fragment shader
+// - blitting of multisampled render buffers
+// - downsampling of supersampled FBOs
+
 //=============================================================================
 } // namespace ACG
 //=============================================================================
-#endif // MS_FILTERWEIGHTS_HH defined
+#endif // ANTI_ALIASING_HH defined
 //=============================================================================
