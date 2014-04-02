@@ -991,7 +991,6 @@ void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
     activeDrawModes_ = mode ;
 
   PluginFunctions::setDrawMode( activeDrawModes_ );
-  slotUpdateGlobalDrawMenu();
 }
 
 
