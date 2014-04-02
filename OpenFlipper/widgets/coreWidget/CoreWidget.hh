@@ -984,6 +984,9 @@ public:
     /// Draw Menu for per Viewer Draw Modes
     QMenu* viewerDrawMenu_;
 
+    /// owns all the checkboxes of viewerDrawMenu_
+    QWidget* viewerDrawMenuWidget_;
+
     /// Menu which holds the context menu entries for
     /// the coordsys node if invisible
     QMenu* coordSysMenu_;

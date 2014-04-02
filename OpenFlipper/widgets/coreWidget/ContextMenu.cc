@@ -834,6 +834,11 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
     connect(viewerDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
   }
 
+  if (viewerDrawMenuWidget_) {
+    delete viewerDrawMenuWidget_;
+  }
+  viewerDrawMenuWidget_ = new QWidget(viewerDrawMenu_);
+
   // Collect available draw modes
   // Single pass action, draw modes independent from multipass rendering
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
@@ -855,7 +860,7 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
     ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
     std::string  descr =  id.description();
 
-    QCheckBox *checkBox = new QCheckBox(QString(descr.c_str()), viewerDrawMenu_);
+    QCheckBox *checkBox = new QCheckBox(QString(descr.c_str()), viewerDrawMenuWidget_);
     checkBox->setChecked(activeDrawModes.containsAtomicDrawMode(id));
     QWidgetAction *checkableAction = new QWidgetAction(drawGroupViewer_);
     checkableAction->setText(descr.c_str());
