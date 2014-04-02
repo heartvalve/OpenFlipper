@@ -61,9 +61,6 @@ init()
 
   // check status
   checkFramebufferStatus();
-
-  // unbind fbo
-  unbind();
 }
 
 //-----------------------------------------------------------------------------
@@ -218,7 +215,11 @@ addDepthBuffer( GLuint _width, GLuint _height )
   glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthbuffer_);
 
   // malloc
+#ifdef GL_ARB_texture_multisample
+  glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_DEPTH_COMPONENT, _width, _height);
+#else
   glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
+#endif
 
   // attach to framebuffer object
   if ( bind() )
@@ -244,7 +245,11 @@ addStencilBuffer( GLuint _width, GLuint _height )
   glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, stencilbuffer_);
 
   // malloc
+#ifdef GL_ARB_texture_multisample
+  glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_STENCIL_INDEX, _width, _height);
+#else
   glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX, _width, _height);
+#endif
 
   // attach to framebuffer object
   if ( bind() )
@@ -265,14 +270,18 @@ bool
 FBO::
 bind()
 {
-  if ( !fbo_ )
-    return false;
-
   // save previous fbo id
   glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&prevFbo_);
 
+  if ( !fbo_ )
+    init();
+
+  if ( !fbo_)
+    return false;
+
   // bind framebuffer object
   ACG::GLState::bindFramebuffer( GL_FRAMEBUFFER_EXT, fbo_ );
+
 
   return true;
 }
@@ -322,6 +331,9 @@ checkFramebufferStatus()
     case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
       std::cout << "Framebuffer incomplete, missing read buffer\n";
       break;
+    case 0x8D56: // GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE
+      std::cout << "Framebuffer incomplete, attached images must have same multisample count\n";
+      break;
     default:
       std::cout << "Unhandled case\n";
       break;
@@ -344,6 +356,7 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
   if (_width != width_ ||_height != height_ || _forceResize)
   {
     bool reattachTextures = false;
+    bool detachedAlready = false;
 
     // resize every texture stored in internal array
     for (size_t i = 0; i < internalTextures_.size(); ++i)
@@ -370,7 +383,30 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       }
 #endif // GL_ARB_texture_multisample
 
+      if (reattachTextures && !detachedAlready)
+      {
+        // temporarily remove all attachments from the fbo
+//         bind();
+// 
+//         for (AttachmentList::iterator it = attachments_.begin(); it != attachments_.end(); ++it)
+//           glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, it->first, GL_TEXTURE_2D, 0, 0 );
+// 
+//         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, 0);
+//         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, 0);
+// 
+//         detachedAlready = true;
+
+        // .. too much trouble, highly dependent on driver implementation
+        // just delete the fbo and start from scratch
+        if (fbo_)
+          glDeleteFramebuffersEXT(1, &fbo_);
+        glGenFramebuffersEXT(1, &fbo_);
+
+        detachedAlready = true;
+      }
+
       glBindTexture(rt->target, rt->id);
+
 
 
 #ifdef GL_ARB_texture_multisample
@@ -398,15 +434,30 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
     if (depthbuffer_)
     {
       glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthbuffer_);
+#ifdef GL_ARB_texture_multisample
+      glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_DEPTH_COMPONENT, _width, _height);
+#else
       glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
+#endif
+
+      // check status
+      checkFramebufferStatus();
     }
 
     // resize stencil renderbuffer
     if (stencilbuffer_)
     {
       glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, stencilbuffer_);
+#ifdef GL_ARB_texture_multisample
+      glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_STENCIL_INDEX, _width, _height);
+#else
       glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX, _width, _height);
+#endif
+
+      // check status
+      checkFramebufferStatus();
     }
+
 
     // store new size
     width_ = _width;
@@ -420,7 +471,20 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       {
         attachTexture2D( it->first, it->second.first, it->second.second );
       }
+
+      // reattach render buffers
+      bind();
+
+      if (depthbuffer_)
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthbuffer_);
+
+      if (stencilbuffer_)
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, stencilbuffer_);
+
+      unbind();
     }
+
+    
 
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -441,6 +505,23 @@ void FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*
   glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
 
   if (_samples >= maxSamples) _samples = maxSamples - 1;
+
+  // gpu driver might cause crash on calling glTexImage2DMultisample if _samples is not a power of 2
+  // -> avoid by seeking to next native MSAA sample-count
+  
+  if (_samples)
+  {
+    int safeSampleCount = 1;
+
+    while (safeSampleCount < _samples)
+      safeSampleCount *= 2;
+
+    while (safeSampleCount >= maxSamples)
+      safeSampleCount /= 2;
+    
+    _samples = safeSampleCount;
+  }
+
 
   // issue texture reloading when params changed
   bool reloadTextures = (samples_ != _samples || fixedsamplelocation_ != _fixedsamplelocations);
