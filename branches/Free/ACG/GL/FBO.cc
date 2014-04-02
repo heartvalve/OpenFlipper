@@ -439,9 +439,6 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 #else
       glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
 #endif
-
-      // check status
-      checkFramebufferStatus();
     }
 
     // resize stencil renderbuffer
@@ -453,9 +450,6 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 #else
       glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_STENCIL_INDEX, _width, _height);
 #endif
-
-      // check status
-      checkFramebufferStatus();
     }
 
 
@@ -478,8 +472,12 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       if (depthbuffer_)
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthbuffer_);
 
+      checkFramebufferStatus();
+
       if (stencilbuffer_)
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, stencilbuffer_);
+
+      checkFramebufferStatus();
 
       unbind();
     }
@@ -498,7 +496,7 @@ GLuint FBO::getFboID()
   return fbo_;
 }
 
-void FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*= GL_TRUE*/ )
+GLsizei FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*= GL_TRUE*/ )
 {
   // clamp sample count to max supported
   GLint maxSamples;
@@ -533,6 +531,8 @@ void FBO::setMultisampling( GLsizei _samples, GLboolean _fixedsamplelocations /*
   // force a texture reloading to apply new multisampling
   if (reloadTextures)
     resize(width_, height_, true);
+
+  return _samples;
 }
 
 

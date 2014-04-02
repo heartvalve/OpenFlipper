@@ -323,7 +323,7 @@ public:
   //=========================================================================
 protected:
 
-  /// Get the number of collected render objects sources
+  /// Get the number of collected render objects
   int getNumRenderObjects() const;
 
   /// Get the number of current light sources
