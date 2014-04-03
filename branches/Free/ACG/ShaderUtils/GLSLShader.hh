@@ -219,6 +219,7 @@ namespace GLSL {
       void use();
       void disable();
       bool isActive();
+      bool isLinked();
 
       /** @} */
 
@@ -228,6 +229,8 @@ namespace GLSL {
 
       std::list<PtrConstShader> m_linkedShaders;
       GLint m_programId;
+
+      GLint m_linkStatus;
   };
 
   typedef Program* PtrProgram;
