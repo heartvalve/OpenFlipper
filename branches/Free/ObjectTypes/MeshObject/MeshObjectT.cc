@@ -230,13 +230,14 @@
        if ( shader == 0 ) {
          std::cerr << "Unable to get shader for shader mode" << std::endl;
        } else {
-         shader->use();
-
-         shader->setUniform("ward_specular" , 0.5f);
-         shader->setUniform("ward_diffuse"  , 3.0f);
-         shader->setUniform("ward_alpha"    , 0.2f);
-
-         shader->disable();
+         // avoid crash on intel graphics
+//          shader->use();
+// 
+//          shader->setUniform("ward_specular" , 0.5f);
+//          shader->setUniform("ward_diffuse"  , 3.0f);
+//          shader->setUniform("ward_alpha"    , 0.2f);
+// 
+//          shader->disable();
        }
 
      } else
