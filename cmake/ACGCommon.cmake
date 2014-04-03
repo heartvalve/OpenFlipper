@@ -437,6 +437,8 @@ endmacro ()
 # generate moc targets for sources in list
 macro (acg_qt4_automoc moc_SRCS)
   qt4_get_moc_flags (_moc_INCS)
+  
+  list(REMOVE_DUPLICATES _moc_INCS)
 
   set (_matching_FILES )
   foreach (_current_FILE ${ARGN})
@@ -480,6 +482,8 @@ endmacro ()
 # generate moc targets for sources in list
 macro (acg_qt5_automoc moc_SRCS)
   qt5_get_moc_flags (_moc_INCS)
+  
+  list(REMOVE_DUPLICATES _moc_INCS)
 
   set (_matching_FILES )
   foreach (_current_FILE ${ARGN})
