@@ -72,6 +72,9 @@ IRenderer::IRenderer()
   prevViewport_[1] = 0;
   prevViewport_[2] = 0;
   prevViewport_[3] = 0;
+
+  // set global ambient scale to default OpenGL value
+  globalLightModelAmbient_ = ACG::Vec3f(0.2f, 0.2f, 0.2f);
 }
 
 
@@ -258,6 +261,12 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
   // save active fbo and viewport
   saveInputFbo();
+
+
+  // get global ambient factor
+  GLfloat lightModelAmbient[4];
+  glGetFloatv(GL_LIGHT_MODEL_AMBIENT, lightModelAmbient);
+  globalLightModelAmbient_ = ACG::Vec3f(lightModelAmbient[0], lightModelAmbient[1], lightModelAmbient[2]);
 }
 
 
@@ -388,9 +397,13 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
 
 
   // material
+  
+  // modify the emissive color such that it also contains the global ambient light model
+  ACG::Vec3f emissiveA = _obj->emissive + globalLightModelAmbient_ * _obj->ambient;
+  _prog->setUniform("g_cEmissive", emissiveA);
+
   _prog->setUniform("g_cDiffuse", _obj->diffuse);
   _prog->setUniform("g_cAmbient", _obj->ambient);
-  _prog->setUniform("g_cEmissive", _obj->emissive);
   _prog->setUniform("g_cSpecular", _obj->specular);
 
   ACG::Vec4f materialParams(_obj->shininess, _obj->alpha, 0.0f, 0.0f);
