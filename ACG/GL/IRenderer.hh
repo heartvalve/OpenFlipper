@@ -335,6 +335,10 @@ protected:
   /// Get light by index
   LightData* getLight(int i);
 
+
+  /// Get global ambient light contribution from GL_LIGHT_MODEL_AMBIENT
+  const ACG::Vec3f& getGlobalAmbientScale() const {return globalLightModelAmbient_;}
+
 protected:
 
   /// Number of Lights
@@ -342,6 +346,10 @@ protected:
 
   /// Light sources ( Filled by addLight() )
   LightData lights_[SG_MAX_SHADER_LIGHTS];
+
+  /// ambient color scale for global light:
+  ///  this is set via glLightModel(GL_LIGHT_MODEL_AMBIENT, scale)
+  ACG::Vec3f globalLightModelAmbient_;
 
   /// array of renderobjects, filled by addRenderObject()
   std::vector<ACG::RenderObject> renderObjects_;
