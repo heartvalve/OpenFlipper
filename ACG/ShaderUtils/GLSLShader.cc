@@ -197,7 +197,7 @@ namespace GLSL {
 
   /** \brief Creates a new GLSL program object.
   */
-  Program::Program() {
+  Program::Program() : m_programId(0), m_linkStatus(GL_FALSE) {
     if ( !ACG::openGLVersion(2,0) ) {
       std::cerr << "Shaders not supported with OpenGL Version less than 2.0" << std::endl;
       return;
@@ -261,7 +261,7 @@ namespace GLSL {
   void Program::link() {
     glLinkProgram(this->m_programId);
     checkGLError2("link program failed");
-
+    
     GLint status = GL_FALSE;
     glGetProgramiv(this->m_programId, GL_LINK_STATUS, &status);
     if ( !status ){
@@ -271,13 +271,18 @@ namespace GLSL {
       glGetShaderInfoLog(this->m_programId, InfoLogLength, NULL, &errorlog[0]);
       std::cerr << "program link error: " << errorlog << std::endl;
     }
+
+    m_linkStatus = status;
   }
 
   /** \brief Enables the program object for using.
   */
   void Program::use() {
-    ACG::GLState::useProgram(this->m_programId);
-    checkGLError2("use program failed");
+    if (m_linkStatus)
+    {
+      ACG::GLState::useProgram(this->m_programId);
+      checkGLError2("use program failed");
+    }
   }
 
   /** \brief Resets to standard rendering pipeline
@@ -293,6 +298,12 @@ namespace GLSL {
     GLint programId;
     glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
     return programId == this->m_programId;
+  }
+
+  /** \brief Returns if the program object has been succesfully linked.
+  */
+  bool Program::isLinked() {
+    return m_linkStatus != GL_FALSE;
   }
 
   /** \brief Returns opengl id
