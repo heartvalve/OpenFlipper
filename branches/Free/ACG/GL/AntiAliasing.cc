@@ -85,9 +85,18 @@ MSFilterWeights::MSFilterWeights(int _numSamples) : numSamples_(_numSamples) {
   //  http://www.opengl.org/sdk/docs/man3/xhtml/glGetMultisample.xml
   Vec2f texelCenter(0.5f, 0.5f);
 
+  // query sample count of currently bound fbo to avoid error on calling glGetMultisample
+  int fboSamples = 0;
+  glGetIntegerv(GL_SAMPLES, &fboSamples);
+
+
   for (int i = 0; i < _numSamples; ++i) {
     GLfloat val[2];
-    glGetMultisamplefv(GL_SAMPLE_POSITION, i, val);
+
+    if (i < fboSamples)
+      glGetMultisamplefv(GL_SAMPLE_POSITION, i, val);
+    else
+      val[0] = val[1] = 0.5f; // maybe output warning here
     
     Vec2f samplePosition(val[0], val[1]);
 
