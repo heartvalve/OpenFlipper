@@ -364,6 +364,16 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       RenderTexture* rt = &internalTextures_[i];
 
 #ifdef GL_ARB_texture_multisample
+
+      // find attachment
+      GLenum attachmentID = 0;
+
+      for (AttachmentList::iterator it = attachments_.begin(); it != attachments_.end(); ++it)
+      {
+        if (rt->id == it->second.first)
+          attachmentID = it->first;
+      }
+
       // check if we have to convert to multisampling
       if (rt->target != GL_TEXTURE_2D_MULTISAMPLE && samples_ > 0)
       {
@@ -372,6 +382,9 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 
         glDeleteTextures(1, &rt->id);
         glGenTextures(1, &rt->id);
+
+        // update attachment map
+        attachments_[attachmentID] = std::pair<GLuint, GLenum>(rt->id, rt->target);
       }
       else if (rt->target == GL_TEXTURE_2D_MULTISAMPLE && samples_ == 0)
       {
@@ -380,6 +393,9 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 
         glDeleteTextures(1, &rt->id);
         glGenTextures(1, &rt->id);
+
+        // update attachment map
+        attachments_[attachmentID] = std::pair<GLuint, GLenum>(rt->id, rt->target);
       }
 #endif // GL_ARB_texture_multisample
 
@@ -403,6 +419,12 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
         glGenFramebuffersEXT(1, &fbo_);
 
         detachedAlready = true;
+
+        if (depthbuffer_)
+        {
+          glDeleteRenderbuffers(1, &depthbuffer_);
+          glGenRenderbuffers(1, &depthbuffer_);
+        }
       }
 
       glBindTexture(rt->target, rt->id);
@@ -461,16 +483,13 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 
     if (reattachTextures)
     {
-      for (AttachmentList::iterator it = attachments_.begin(); it != attachments_.end(); ++it)
-      {
-        attachTexture2D( it->first, it->second.first, it->second.second );
-      }
-
       // reattach render buffers
       bind();
 
       if (depthbuffer_)
+      {
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthbuffer_);
+      }
 
       checkFramebufferStatus();
 
@@ -480,6 +499,12 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
       checkFramebufferStatus();
 
       unbind();
+
+      // reattach color targets     
+      for (AttachmentList::iterator it = attachments_.begin(); it != attachments_.end(); ++it)
+      {
+        attachTexture2D( it->first, it->second.first, it->second.second );
+      }
     }
 
     
