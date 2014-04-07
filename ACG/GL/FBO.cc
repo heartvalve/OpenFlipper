@@ -114,13 +114,12 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   // specify texture
   glBindTexture(target, texID);
 
-  glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
-  glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
-
 
 #ifdef GL_ARB_texture_multisample
   if (!samples_)
   {
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, _magFilter);
     glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
@@ -128,6 +127,8 @@ void FBO::attachTexture2D( GLenum _attachment, GLsizei _width, GLsizei _height, 
   else
     glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
 #else
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, _wrapMode);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, _wrapMode);
   glTexParameteri(target, GL_TEXTURE_MIN_FILTER, _minFilter);
   glTexParameteri(target, GL_TEXTURE_MAG_FILTER, _magFilter);
   glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, GL_FLOAT, 0);
@@ -171,12 +172,12 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
   // specify texture
   glBindTexture(target, texID);
 
-  glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 #ifdef GL_ARB_texture_multisample
   if (!samples_)
   {
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
@@ -185,6 +186,8 @@ void FBO::attachTexture2DDepth( GLsizei _width, GLsizei _height, GLuint _interna
     glTexImage2DMultisample(target, samples_, _internalFmt, _width, _height, fixedsamplelocation_);
 
 #else
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexImage2D(target, 0, _internalFmt, _width, _height, 0, _format, _format == GL_DEPTH_STENCIL ? GL_UNSIGNED_INT_24_8 : GL_FLOAT, 0);
@@ -422,8 +425,8 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
 
         if (depthbuffer_)
         {
-          glDeleteRenderbuffers(1, &depthbuffer_);
-          glGenRenderbuffers(1, &depthbuffer_);
+          glDeleteRenderbuffersEXT(1, &depthbuffer_);
+          glGenRenderbuffersEXT(1, &depthbuffer_);
         }
       }
 
@@ -457,7 +460,10 @@ void FBO::resize( GLsizei _width, GLsizei _height, bool _forceResize )
     {
       glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthbuffer_);
 #ifdef GL_ARB_texture_multisample
-      glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_DEPTH_COMPONENT, _width, _height);
+      if (samples_)
+        glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples_, GL_DEPTH_COMPONENT, _width, _height);
+      else
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
 #else
       glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, _width, _height);
 #endif
