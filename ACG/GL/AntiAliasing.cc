@@ -53,13 +53,25 @@
 
 #include <ACG/GL/AntiAliasing.hh>
 #include <ACG/Math/VectorT.hh>
+#include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/ScreenQuad.hh>
+
+
+//== DEFINES ==================================================================
+
+// shader files
+#define MSAA_SCREENQUAD_SHADER "ScreenQuad/screenquad.glsl"
+#define MSAA_NEAREST_SHADER "MSAA/sample_nearest.glsl"
+#define MSAA_LINEAR_SHADER "MSAA/sample_linear.glsl"
+
+
 
 //== NAMESPACES ===============================================================
 
 namespace ACG {
 
 
-//== CLASS IMPLEMENTATION =========================================================
+//== CLASS IMPLEMENTATION =====================================================
 
 #ifdef GL_ARB_texture_multisample
 
@@ -102,6 +114,113 @@ void MSFilterWeights::asTextureBuffer( TextureBuffer& out ) {
 }
 
 //=============================================================================
+
+
+
+
+//=============================================================================
+
+
+MSTextureSampler::MSTextureSampler() : shaderNearest_(0), shaderLinear_(0) {
+}
+
+
+MSTextureSampler::~MSTextureSampler() {
+  delete shaderNearest_;
+  delete shaderLinear_;
+}
+
+MSTextureSampler& MSTextureSampler::instance() {
+  static MSTextureSampler singleton;
+  return singleton;
+}
+
+//=============================================================================
+
+void MSTextureSampler::init() {
+  if (!shaderNearest_)
+    shaderNearest_ = GLSL::loadProgram(MSAA_SCREENQUAD_SHADER, MSAA_NEAREST_SHADER);
+
+  if (!shaderLinear_)
+    shaderLinear_ = GLSL::loadProgram(MSAA_SCREENQUAD_SHADER, MSAA_LINEAR_SHADER);
+}
+
+//=============================================================================
+
+void MSTextureSampler::filterMSAATexture_Nearest( GLuint _texture, int _samples, const float* _weights /*= 0*/ ) {
+
+  MSTextureSampler& sampler = instance();
+
+  // load shader
+  if (!sampler.shaderNearest_)
+    sampler.init();
+
+  GLSL::Program* shader = sampler.shaderNearest_;
+
+  if (!shader)
+    return;
+  
+
+  shader->use();
+
+  // offset and scale of screenquad
+  shader->setUniform("offset", Vec2f(0.0f, 0.0f));
+  shader->setUniform("size", Vec2f(1.0f, 1.0f));
+  
+  // sample count and filter weights
+  shader->setUniform("numSamples", _samples);
+
+  // bind multisampled texture to slot 0
+  shader->setUniform("inputTex", 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _texture);
+
+  // run texture filter
+  ScreenQuad::draw(shader);
+
+  shader->disable();
+}
+
+//=============================================================================
+
+void MSTextureSampler::filterMSAATexture_Linear( GLuint _texture, int _samples, const float* _weights /*= 0*/ ) {
+
+  MSTextureSampler& sampler = instance();
+
+  // load shader
+  if (!sampler.shaderLinear_)
+    sampler.init();
+
+  GLSL::Program* shader = sampler.shaderLinear_;
+
+  if (!shader)
+    return;
+
+
+  shader->use();
+
+  // offset and scale of screenquad
+  shader->setUniform("offset", Vec2f(0.0f, 0.0f));
+  shader->setUniform("size", Vec2f(1.0f, 1.0f));
+
+  // sample count and filter weights
+  shader->setUniform("numSamples", _samples);
+
+  // bind multisampled texture to slot 0
+  shader->setUniform("inputTex", 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, _texture);
+
+  // run texture filter
+  ScreenQuad::draw(shader);
+
+  shader->disable();
+}
+
+
+//=============================================================================
+
+
 
 #endif // GL_ARB_texture_multisample
 
