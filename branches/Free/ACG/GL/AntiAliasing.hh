@@ -62,6 +62,14 @@
 // C++
 #include <vector>
 
+
+//== FORWARD DECLARATIONS =====================================================
+
+namespace GLSL{
+  class Program;
+}
+
+
 //== NAMESPACES ===============================================================
 
 namespace ACG {
@@ -73,12 +81,17 @@ namespace ACG {
 /*
 OpenGL MSAA:
 
-A post-processing fragment shader has to be compute colors per sample rather than per pixel for full MSAA.
-Sample values are then weighted by filter weights to obtain the final pixel value.
+A post-processing fragment shader has to compute colors per sample rather than per pixel for full MSAA.
+Sample values are then weighted by filter weights to obtain a final pixel color.
 
 Filter weights can be computed with several methods, for example:
  - distance based filter weights (computed with MSFilterWeights)
  - constant filter weights: 1/numSamples
+
+However, a faster approach can be used where the MSAA texture is filtered onto a regular texture first, 
+followed by executing post processing shaders on that regular texture.
+While this is not a correct MSAA implementation, it can give something close at better performance.
+-> MSTextureSampler can be used to filter a MSAA texture onto a regular texture
 
 Recommended resources on implementing MSAA with render to texture:
  http://diaryofagraphicsprogrammer.blogspot.com/2009/06/multisample-anti-aliasing.html
@@ -122,9 +135,54 @@ private:
 
 #endif // GL_ARB_texture_multisample
 
+
+
+
+//== CLASS DEFINITION =========================================================
+
+
+// This class performs multisampling on MSAA textures and writes the result to the currently bound FBO.
+
+#ifdef GL_ARB_texture_multisample
+
+class ACGDLLEXPORT MSTextureSampler
+{
+public:
+
+  ~MSTextureSampler();
+
+
+  // nearest point filtering of a MSAA texture, recommended when the target FBO has the same size as the input texture
+  static void filterMSAATexture_Nearest(GLuint _texture, int _samples, const float* _weights = 0);
+
+  // bilinear filtering of a MSAA texture
+  static void filterMSAATexture_Linear(GLuint _texture, int _samples, const float* _weights = 0);
+
+private:
+
+  MSTextureSampler();
+
+
+  void init();
+
+  // singleton instance
+  static MSTextureSampler& instance();
+
+
+  TextureBuffer filterWeights_;
+
+  // sampling shaders for nearest and bilinear texture filtering
+  GLSL::Program* shaderNearest_;
+  GLSL::Program* shaderLinear_;
+};
+
+#endif // GL_ARB_texture_multisample
+
+
+
 // maybe add:
-// - automatic generation of MSAA variants of a post processing fragment shader
 // - blitting of multisampled render buffers
+// - automatic generation of MSAA variants of a post processing fragment shader
 // - downsampling of supersampled FBOs
 
 //=============================================================================
