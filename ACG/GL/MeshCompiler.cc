@@ -3408,7 +3408,7 @@ bool MeshCompilerVertexCompare::equalVertex( const void* v0, const void* v1, con
         double diff = 0.0;
 
         for (int k = 0; k < (int)el->numElements_; ++k)
-          diff += abs(d0[k] - d1[k]);
+          diff += fabs(d0[k] - d1[k]);
 
         if (diff > d_eps)
           return false;
