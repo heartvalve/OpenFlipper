@@ -18,14 +18,22 @@ FIND_PATH( TetGenLib_INCLUDE_DIR tetgen.h
   HINTS ${TetGenLib_TMP_PATHS}/TetGen/include/)
 
 if( TetGenLib_INCLUDE_DIR )
-  message( Found TetGenLib_INCLUDE_DIR: ${TetGenLib_INCLUDE_DIR})
+  
+  if(NOT TetGenLib_FIND_QUIETLY)
+    message( Found TetGenLib_INCLUDE_DIR: ${TetGenLib_INCLUDE_DIR})
+  endif()
+
   find_library(
     TetGenLib_LIBRARY
     NAMES tetgen tet
     PATHS ${TetGenLib_TMP_PATHS}/TetGen/lib/)
   
   if( TetGenLib_LIBRARY )
-    message( Found TetGenLib_LIBRARY: ${TetGenLib_LIBRARY})
+
+    if(NOT TetGenLib_FIND_QUIETLY)
+      message( Found TetGenLib_LIBRARY: ${TetGenLib_LIBRARY})
+    endif()
+
     set(TetGenLib_LIBRARY_DIR "")
     get_filename_component(TetGenLib_LIBRARY_DIR ${TetGenLib_LIBRARY} PATH)
     # Set uncached variables as per standard.
@@ -34,7 +42,7 @@ if( TetGenLib_INCLUDE_DIR )
     set(TetGenLib_LIBRARY ${TetGenLib_LIBRARY})
   endif(TetGenLib_LIBRARY)
 endif(TetGenLib_INCLUDE_DIR)
-message( FOUnd TETGEN ${TetGenLib_FOUND})
+#message( FOUnd TETGEN ${TetGenLib_FOUND})
 	    
 if(TetGenLib_FOUND)
   if(NOT TetGenLib_FIND_QUIETLY)
