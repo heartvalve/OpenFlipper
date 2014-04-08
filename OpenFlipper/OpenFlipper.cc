@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2014 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -166,6 +166,7 @@ void backtrace()
   for(int i = 0; i < size; i++)
     std::cerr << i << ": " << strings[i] << std::endl;
   free(strings);
+
 }
 #endif
 
@@ -204,6 +205,14 @@ void segfaultHandling (int) {
   sw.ShowCallstack();
 #endif
 
+
+  std::cerr << "Trying to get additional information (This might fail if the memory is corrupted)." << std::endl;
+
+  if (OpenFlipper::Options::gui()) {
+    for ( unsigned int i = 0 ; i <  4 ; ++i) {
+      std::cerr << "DrawMode Viewer "<<  i << " " << PluginFunctions::drawMode(i).description() << std::endl;
+    }
+  }
 
   std::abort();
 }
