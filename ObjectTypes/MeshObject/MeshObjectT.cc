@@ -221,27 +221,6 @@
     else
       std::cerr << "Shader Files for Phong not found!" << std::endl;
 
-     if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
-
-       shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER, "Ward/Vertex.glsl" , "Ward/Fragment.glsl" );
-
-       // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
-       GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
-       if ( shader == 0 ) {
-         std::cerr << "Unable to get shader for shader mode" << std::endl;
-       } else {
-         // avoid crash on intel graphics
-//          shader->use();
-// 
-//          shader->setUniform("ward_specular" , 0.5f);
-//          shader->setUniform("ward_diffuse"  , 3.0f);
-//          shader->setUniform("ward_alpha"    , 0.2f);
-// 
-//          shader->disable();
-       }
-
-     } else
-       std::cerr << "Shader Files for Ward not found!!" << std::endl;
 
     // Node showing selection
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
