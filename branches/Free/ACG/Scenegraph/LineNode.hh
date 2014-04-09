@@ -220,6 +220,8 @@ protected:
 
   ACG::VertexDeclaration vertexDecl_;
 
+  std::string lineNodeName_;
+
 };
 
 
