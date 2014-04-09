@@ -131,6 +131,9 @@ private slots:
    /// Clear OpenFlipper INI
    void slotClearINI();
 
+   /// Clear the Shader Cache
+   void slotReloadShaders();
+
 protected:
    void showEvent ( QShowEvent * event );
 

@@ -50,6 +50,7 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <ACG/GL/ShaderCache.hh>
 
 #include <QColorDialog>
 #include <QMessageBox>
@@ -70,6 +71,9 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
   connect(updateButton,SIGNAL(clicked()),this,SLOT(slotGetUpdates()));
   updateButton->setEnabled(false);
+
+  // Files
+  connect(pbReloadShaders,SIGNAL(clicked()),this,SLOT(slotReloadShaders()));
 
   // Viewer Settings
   connect( restrictFPS, SIGNAL(toggled(bool)), FPS, SLOT(setEnabled(bool)) );
@@ -268,6 +272,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   //Files
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
   maxRecentBox->setValue( OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
+  rbReloadShaders->setChecked(OpenFlipperSettings().value("Core/File/ReloadShaders",false).toBool()) ;
 
   // UI settings
   toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool() ? 0 : 1));
@@ -574,7 +579,8 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Log/logFile",logFile->text());
 
   OpenFlipperSettings().setValue("Core/File/MaxRecent",maxRecentBox->value() ) ;
-
+  OpenFlipperSettings().setValue("Core/File/ReloadShaders",rbReloadShaders->isChecked() ) ;
+  ACG::ShaderCache::getInstance()->setTimeCheck(rbReloadShaders->isChecked());
   
   // Toolbox orientation
   OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
@@ -938,4 +944,9 @@ void OptionsWidget::slotClearINI() {
                              tr("The changes will take effect after next restart."));
     
     OpenFlipper::Options::deleteIniFile(true);
+}
+
+void OptionsWidget::slotReloadShaders()
+{
+  ACG::ShaderCache::getInstance()->clearCache();
 }

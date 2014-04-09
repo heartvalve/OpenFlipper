@@ -67,6 +67,7 @@
 #include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
 
 #include <ACG/Scenegraph/SceneGraphAnalysis.hh>
+#include <ACG/GL/ShaderCache.hh>
 
 // -------------------- Qt event Includes
 #include <QEvent>
@@ -379,6 +380,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   centerWidget_->setLayout(baseLayout_);
 
+
+  ACG::ShaderCache::getInstance()->setTimeCheck(OpenFlipperSettings().value("Core/File/ReloadShaders",false).toBool());
 
   // ======================================================================
   // Setup dragging for examiner widget
