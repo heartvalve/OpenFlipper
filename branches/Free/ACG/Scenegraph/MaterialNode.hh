@@ -229,7 +229,7 @@ public:
     void disableAlphaTest() { alphaTest_ = false; }
 
     /// Return state of Alpha test
-    bool alphaTest() { return alphaTest_; };
+    bool alphaTest() const { return alphaTest_; };
     
     /// Enable Multisampling
     void enableMultisampling() {
@@ -242,7 +242,7 @@ public:
     }
 
     /// Get state of multisampling
-    bool multiSampling() {
+    bool multiSampling() const {
       return multiSampling_;
     }
 
@@ -254,10 +254,10 @@ public:
     ///get current alpha value for alpha_test
     float alphaValue() const { return alphaClip_; };
 
-    bool blending() { return blending_; };
+    bool blending() const { return blending_; };
 
-    GLenum blendingParam1() { return blendParam1_; };
-    GLenum blendingParam2() { return blendParam2_; };
+    GLenum blendingParam1() const { return blendParam1_; };
+    GLenum blendingParam2() const { return blendParam2_; };
 
     /// enable blending with Parameters (_p1, _p2)
     void enableBlending(GLenum _p1 = GL_SRC_ALPHA,
@@ -266,7 +266,7 @@ public:
     /// disable blending
     void disableBlending() { blending_ = false; }
 
-    bool backfaceCulling() { return backfaceCulling_; };
+    bool backfaceCulling() const { return backfaceCulling_; };
 
     /// enable backface culling (not active by default, see applyProperties)
     void enableBackfaceCulling() { backfaceCulling_ = true; }
