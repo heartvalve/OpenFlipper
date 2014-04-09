@@ -120,7 +120,7 @@ public:
      */
     void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
-    /// Force an update of the vbo data
+    /// updates the plane before the next render call
     void update();
 
 private:
@@ -139,6 +139,8 @@ private:
 
     /// VBO used to render the plane
     unsigned int vbo_;
+    
+    bool vboNeedsUpdate_;
 
     ACG::VertexDeclaration vertexDecl_;
 

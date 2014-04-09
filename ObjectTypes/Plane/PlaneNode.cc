@@ -53,7 +53,9 @@ PlaneNode::PlaneNode(Plane& _plane, BaseNode *_parent, std::string _name)
 :BaseNode(_parent, _name),
  plane_(_plane),
  vbo_(0),
+ vboNeedsUpdate_(true),//not initialized, so we need an update
  sphere_(0)
+
 {
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_NORMAL);
@@ -286,7 +288,7 @@ Plane& PlaneNode::getPlane()
 void PlaneNode::setPlane(Plane plane)
 {
     plane_ = plane;
-    updateVBO();
+    update();
 }
 
 //----------------------------------------------------------------------------
@@ -314,13 +316,22 @@ addSphereAt(ACG::Vec3d _pos, ACG::IRenderer* _renderer, ACG::GLState&  _state, A
 }
 
 void PlaneNode::update() {
-  updateVBO();
+    //update the plane in the next renderstep
+    //if the old renderer is used, nothing to do here
+    //if the new, shader based renderer is used, we have to update the vbo
+    //  this is done at the next render call
+    
+    //this method prevents, that the vbo is created, if we don't use a shader based renderer
+    vboNeedsUpdate_ = true;
 }
 
 //----------------------------------------------------------------------------
 
 void PlaneNode::updateVBO()
 {
+  if (!vboNeedsUpdate_)
+    return;
+
   if ( !vbo_ ) {
     glGenBuffersARB(1, &vbo_);
   }
@@ -356,6 +367,8 @@ void PlaneNode::updateVBO()
   // Upload to buffer
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData[0], GL_STATIC_DRAW_ARB);
 
+  // VBO is updated for the new renderer
+  vboNeedsUpdate_ = false;
 }
 
 void
@@ -383,10 +396,7 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   // Render with depth test enabled
   ro.depthTest = true;
 
-  //if vbo wasn't created, create new one
-  if (! vbo_) {
-    updateVBO();
-  }
+  updateVBO();
 
   // Set the buffers for rendering
   ro.vertexBuffer = vbo_;
