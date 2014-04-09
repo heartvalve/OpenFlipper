@@ -44,6 +44,7 @@
 
 
 #include <list>
+#include <QDateTime>
 #include <ACG/Config/ACGDefines.hh>
 #include <ACG/GL/ShaderGenerator.hh>
 
@@ -94,6 +95,12 @@ public:
    */
   void clearCache();
 
+  /** \brief enable or disable checking of the time step of each file
+   *
+   */
+  void setTimeCheck(bool _on){timeCheck_ = _on;}
+  bool getTimeCheck(){return timeCheck_;}
+
 protected:
   ShaderCache();
 
@@ -107,7 +114,14 @@ protected:
     QString strVertexTemplate;
     QString strGeometryTemplate;
     QString strFragmentTemplate;
+
+    QDateTime vertexFileLastMod;
+    QDateTime geometryFileLastMod;
+    QDateTime fragmentFileLastMod;
   };
+
+  /// \brief Returns true, if the shaders have the timestamp
+  bool compareTimeStamp(const CacheEntry* _a, const CacheEntry* _b);
 
   /// \brief Returns true, if the shaders are not equal
   int compareShaderGenDescs(const CacheEntry* _a, const CacheEntry* _b);
@@ -115,6 +129,7 @@ protected:
 
   typedef std::list<std::pair<CacheEntry, GLSL::Program*> > CacheList;
   CacheList cache_;
+  bool timeCheck_;
 };
 
 

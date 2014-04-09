@@ -64,7 +64,9 @@ namespace ACG
 
 #define SG_DEBUG_OUTPUT
 
-ShaderCache::ShaderCache()
+ShaderCache::ShaderCache():
+    cache_(),
+    timeCheck_(false)
 {
 }
 
@@ -94,19 +96,35 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   newEntry.usage = _usage;
 
   if (!_desc->fragmentTemplateFile.isEmpty())
+  {
     newEntry.strFragmentTemplate = _desc->fragmentTemplateFile;
+    newEntry.fragmentFileLastMod = QFileInfo(newEntry.strFragmentTemplate).lastModified();
+  }
 
   if (!_desc->geometryTemplateFile.isEmpty())
+  {
       newEntry.strGeometryTemplate = _desc->geometryTemplateFile;
+      newEntry.geometryFileLastMod = QFileInfo(newEntry.strGeometryTemplate).lastModified();
+  }
 
   if (!_desc->vertexTemplateFile.isEmpty())
+  {
     newEntry.strVertexTemplate = _desc->vertexTemplateFile;
+    newEntry.vertexFileLastMod = QFileInfo(newEntry.strVertexTemplate).lastModified();
+  }
+
+  CacheList::iterator oldCache = cache_.end();
 
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
   {
     // If the shaders are equal, we return the cached entry
     if (!compareShaderGenDescs(&it->first, &newEntry))
-      return it->second;
+    {
+      if ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry))
+        oldCache = it;
+      else
+        return it->second;
+    }
   }
 
   // glsl program not in cache, generate shaders
@@ -176,16 +194,39 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   prog->link();
   glCheckErrors();
 
+  if (oldCache != cache_.end())
+  {
+    if (!prog->isLinked())
+    {
+      return oldCache->second;
+    }
+    else
+    {
+      cache_.erase(oldCache);
+    }
+  }
+
   cache_.push_back(std::pair<CacheEntry, GLSL::Program*>(newEntry, prog));
 
   return prog;
 }
 
-
-
-int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEntry* _b )
+bool ACG::ShaderCache::compareTimeStamp(const CacheEntry* _a, const CacheEntry* _b)
 {
-  if (_a->usage != _b->usage) 
+  if (_a->vertexFileLastMod != _b->vertexFileLastMod)
+    return false;
+
+  if (_a->geometryFileLastMod != _b->geometryFileLastMod)
+    return false;
+
+  if (_a->fragmentFileLastMod != _b->fragmentFileLastMod)
+    return false;
+  return true;
+}
+
+int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEntry* _b)
+{
+  if (_a->usage != _b->usage)
     return -1;
 
   const ShaderGenDesc* a = &_a->desc;
