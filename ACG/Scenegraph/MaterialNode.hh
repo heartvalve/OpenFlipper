@@ -252,7 +252,7 @@ public:
     }
 
     ///get current alpha value for alpha_test
-    float alphaValue(){ return alphaClip_; };
+    float alphaValue() const { return alphaClip_; };
 
     bool blending() { return blending_; };
 
