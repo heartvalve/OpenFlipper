@@ -218,6 +218,7 @@ void QtPlaneSelect::setPlaneAndSize(const ACG::Vec3d& _sourcePoint3D,const ACG::
   ACG::Vec3d normald(normal);
   plane_.setPlane(sourcePoint3Df,normald);
   plane_.setSize(PluginFunctions::sceneRadius(),PluginFunctions::sceneRadius());
+  planeNode_->update();
 }
 
 
