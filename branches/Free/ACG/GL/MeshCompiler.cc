@@ -3058,6 +3058,13 @@ void MeshCompiler::prepareData()
   for (int i = numFaces_-1; i >= 0 && !faceInput_->getFaceSize(i); --i)
     --numFaces_;
 
+  // update size of each attribute (necessary for correct handling of missing input buffers)
+  for (unsigned int i = 0; i < decl_.getNumElements(); ++i)
+  {
+    int attrSize = (int)VertexDeclaration::getElementSize(decl_.getElement(i));
+    assert(input_[i].attrSize <= 0 || input_[i].attrSize == attrSize);
+    input_[i].attrSize = attrSize;
+  }
 
   // build internal face-offset table for storing interleaved index buffer
 
