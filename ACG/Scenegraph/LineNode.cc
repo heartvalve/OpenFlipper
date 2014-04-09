@@ -71,7 +71,8 @@ LineNode::LineNode( LineMode     _mode,
    draw_always_on_top (false),
    prev_depth_(GL_LESS),
    vbo_(0),
-   updateVBO_(true)
+   updateVBO_(true),
+   lineNodeName_("")
 {
   drawMode(DrawModes::WIREFRAME);
 }
@@ -511,11 +512,21 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
   ro.initFromState(&_state);
   ro.setMaterial(_mat);
 
-  ro.debugName = (std::string("LineNode: ")+name()).c_str();
+  lineNodeName_ = std::string("LineNode: ")+name();
+  ro.debugName = lineNodeName_.c_str();
 
   // draw after scene-meshes
   if (draw_always_on_top)
+  {
     ro.priority = 1;
+    ro.depthTest = false;
+    ro.depthWrite = false;
+  }
+  else
+  {
+    ro.depthTest = true;
+    ro.depthWrite = true;
+  }
 
   //set blending
   if ((line_mode_ == LineSegmentsMode) && (points_.size()/2 == colors4f_.size()))
