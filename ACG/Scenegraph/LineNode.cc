@@ -525,6 +525,15 @@ getRenderObjects(IRenderer* _renderer, GLState&  _state , const DrawModes::DrawM
     ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
   }
 
+  // simulate line width via quad extrusion in geometry shader
+  QString geomTemplate = ShaderProgGenerator::getShaderDir();
+  geomTemplate += "Wireframe/geom_line2quad.tpl";
+
+  ro.shaderDesc.geometryTemplateFile = geomTemplate;
+
+  ro.setUniform("screenSize", Vec2f((float)_state.viewport_width(), (float)_state.viewport_height()));
+  ro.setUniform("lineWidth", _state.line_width());
+
   createVBO();
   ro.vertexBuffer = vbo_;
   // vertexDecl is defined in createVBO
