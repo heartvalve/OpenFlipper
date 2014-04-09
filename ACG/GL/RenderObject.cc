@@ -162,6 +162,10 @@ void RenderObject::setMaterial( const SceneGraph::Material* _mat )
   }
   shininess = _mat->shininess();
   alpha = _mat->diffuseColor()[3];
+
+  // material node sets the alpha test function to GL_GREATER
+  alphaFunc = GL_GREATER;
+  alphaRef = _mat->alphaValue();
 }
 
 
@@ -175,6 +179,7 @@ RenderObject::RenderObject()
   culling(true), blending(false), alphaTest(false),
   depthTest(true), depthWrite(true),
   fillMode(GL_FILL), depthFunc(GL_LESS), 
+  alphaFunc(GL_ALWAYS), alphaRef(0.0f),
   blendSrc(GL_SRC_ALPHA), blendDest(GL_ONE_MINUS_SRC_ALPHA),
   depthRange(0.0f, 1.0f), 
 
@@ -289,6 +294,8 @@ QString RenderObject::toString() const
     << "\ndepthRange: [" << depthRange[0] << ", " << depthRange[1] << "]"
     << "\ncolorWriteMask: " << colorWriteMask[0] << ", " << colorWriteMask[1] << ", "<< colorWriteMask[2] << ", "<< colorWriteMask[2];
 
+  resultStrm << "\nalphaFunc: " << depthFunString[alphaFunc - GL_NEVER]
+    << "\nalphaRef: " << alphaRef;
 
   resultStrm << "\ndiffuse: [" << diffuse[0] << ", " << diffuse[1] << ", " << diffuse[2] << "]";
   resultStrm << "\nambient: [" << ambient[0] << ", " << ambient[1] << ", " << ambient[2] << "]";
