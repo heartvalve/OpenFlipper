@@ -1199,7 +1199,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
   // we have only read points so far and no faces or modes
   // treat them as a polymesh
-  if (isType && currentVertexCount != 0 ) {
+  if (!isType && currentVertexCount != 0 ) {
     _importer.forceMeshType( OBJImporter::POLYMESH ); //actually it is a pointcloud
     if (!inGroup)
       _importer.setCurrentGroup(0);
