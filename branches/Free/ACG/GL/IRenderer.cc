@@ -483,7 +483,10 @@ void IRenderer::bindObjectRenderStates(ACG::RenderObject* _obj)
     glDisable(GL_BLEND);
 
   if (_obj->alphaTest)
+  {
     glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(_obj->alphaFunc, _obj->alphaRef);
+  }
   else
     glDisable(GL_ALPHA_TEST);
 

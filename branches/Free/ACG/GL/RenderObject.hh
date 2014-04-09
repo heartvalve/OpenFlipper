@@ -103,8 +103,8 @@ struct ACGDLLEXPORT RenderObject
   friend class IRenderer;
 
   /** default constructor
-   *   set all members to 0
-   *   keep renderobject a POD to avoid possible problems
+   *   set all members to OpenGL default values
+   *   keep renderobject a POD to avoid possible problems (update: it's not anymore, nevermind then..)
    */
   RenderObject();
 
@@ -201,9 +201,14 @@ struct ACGDLLEXPORT RenderObject
 
   GLboolean colorWriteMask[4]; // {r,g,b,a},  default: all true
 
-//  GLenum shadeModel; // GL_FACE, GL_SMOOTH   obsolute in shader pipeline
+//  GLenum shadeModel; // GL_FACE, GL_SMOOTH   obsolete in shader pipeline
   GLenum depthFunc;  //!< GL_LESS, GL_LEQUAL, GL_GREATER ..
 
+  // alpha testing function
+  GLenum alphaFunc; //!< GL_LESS, GL_LEQUAL, GL_GREATER ..
+  float alphaRef; // reference value for alpha function
+
+  // alpha blending
   GLenum blendSrc, blendDest; //!< glBlendFunc: GL_SRC_ALPHA, GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA ...
 
   Vec2f depthRange; //!< glDepthRange: (znear, zmax)
@@ -317,6 +322,12 @@ public:
   void glColorMask(GLboolean r, GLboolean g, GLboolean b, GLboolean a)
   {
     colorWriteMask[0] = r; colorWriteMask[1] = g; colorWriteMask[2] = b; colorWriteMask[3] = a;
+  }
+
+  void glAlphaFunc(GLenum func, float ref)
+  {
+    alphaFunc = func;
+    alphaRef = ref;
   }
   
   /** \brief Initializes a RenderObject instance.
