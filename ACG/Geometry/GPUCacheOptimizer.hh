@@ -64,6 +64,10 @@ namespace ACG {
 
 class ACGDLLEXPORT GPUCacheOptimizer
 {
+private:
+  // copy ops are private to prevent copying
+  GPUCacheOptimizer(const GPUCacheOptimizer&);            // no implementation
+  GPUCacheOptimizer& operator=(const GPUCacheOptimizer&); // no implementation
 public:
 
 	/** \brief constructor
