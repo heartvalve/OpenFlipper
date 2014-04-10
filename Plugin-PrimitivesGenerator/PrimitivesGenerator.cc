@@ -70,37 +70,42 @@ PrimitivesGeneratorPlugin::~PrimitivesGeneratorPlugin()
 
 void PrimitivesGeneratorPlugin::initializePlugin()
 {
-  emit setSlotDescription("addTetrahedron(Vector, double)",
+  emit setSlotDescription("addTetrahedron(Vector,double)",
                           tr("Generates a tetrahedron (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
-  emit setSlotDescription("addIcosahedron(Vector, double)",
+  emit setSlotDescription("addIcosahedron(Vector,double)",
                           tr("Generates an icosahedron (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
-  emit setSlotDescription("addPyramid(Vector, double)",
+  emit setSlotDescription("addPyramid(Vector,double)",
                           tr("Generates a pyramid (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
-  emit setSlotDescription("addOctahedron(Vector, double)",
+  emit setSlotDescription("addOctahedron(Vector,double)",
                           tr("Generates an octahedron (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
-  emit setSlotDescription("addDodecahedron(Vector, double)",
+  emit setSlotDescription("addDodecahedron(Vector,double)",
                           tr("Generates a dodecahedron (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
 
-  emit setSlotDescription("addSphere(Vector, double)",
-                          tr("Generates a sphere (ObjectId is returned)"),
+  emit setSlotDescription("addSphere(Vector,double)",
+                          tr("Generates a triangulated sphere with all vertical lines connected to the poles (ObjectId is returned)"),
                           QString("Position, Radius").split(","),
                           QString("Center position,Radius").split(","));
 
-  emit setSlotDescription("addTriangulatedCube(Vector, double)",
+  emit setSlotDescription("addSubdivisionSphere(Vector,double)",
+                          tr("Generates a triangulated sphere by subdivision without poles. (ObjectId is returned)"),
+                          QString("Position, Radius").split(","),
+                          QString("Center position,Radius").split(","));
+
+  emit setSlotDescription("addTriangulatedCube(Vector,double)",
                           tr("Generates a triangular mesh of cube (ObjectId is returned)"),
                           QString("Position,Length").split(","),
                           QString("Center position,Length of each edge").split(","));
@@ -157,9 +162,13 @@ void PrimitivesGeneratorPlugin::pluginsInitialized() {
     action = primitivesMenu_->addAction("Cylinder (Triangle Mesh)"       ,this,SLOT(addTriangulatedCylinder()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_cylinder.png"));
 
-    action = primitivesMenu_->addAction("Sphere",this,SLOT(addSphere()));
+    action = primitivesMenu_->addAction("Sphere (Poles,Triangle Mesh)",this,SLOT(addSphere()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png"));
-    whatsThisGen.setWhatsThis(action,tr("Create a Sphere. "),"Sphere");
+    whatsThisGen.setWhatsThis(action,tr("Create a Sphere. All vertical lines connect to poles) "),"Sphere");
+
+    action = primitivesMenu_->addAction("Sphere (Subdivision,Triangle Mesh)",this,SLOT(addSubdivisionSphere()));
+    action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_sphere.png"));
+    whatsThisGen.setWhatsThis(action,tr("Create a Sphere. No poles due to Subdivision) "),"Sphere");
 
     action = primitivesMenu_->addAction("Tetrahedron",this,SLOT(addTetrahedron()));
     action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"primitive_tetrahedron.png"));
@@ -654,6 +663,54 @@ int PrimitivesGeneratorPlugin::addSphere(const Vector& _position, const double _
     PluginFunctions::viewAll();
 
     return object->id();
+  }
+
+
+}
+
+//------------------------------------------------------------------------
+
+int PrimitivesGeneratorPlugin::addSubdivisionSphere(const Vector& _position, const double _radius)
+{
+
+  // Create the underlying octahedron
+  int newObject = addOctahedron(_position,_radius);
+
+  TriMeshObject* object;
+  if (!PluginFunctions::getObject(newObject, object)) {
+    emit log(LOGERR, "Unable to create new Object");
+    return -1;
+  } else {
+    object->setName( "Sphere " + QString::number(newObject) );
+
+    triMesh_ = object->mesh();
+
+    // Number of subdivision iterations for the sphere
+    const size_t subdivisionSteps = 4;
+
+    for (size_t i = 0 ; i < subdivisionSteps; ++i) {
+
+      // Call the subdivision algorithm
+      RPC::callFunction("subdivider", "subdivide", newObject, QString("loop"), 1, false);
+
+      // Reposition vertices onto sphere
+      for (TriMesh::VertexIter v_it = triMesh_->vertices_begin(); v_it != triMesh_->vertices_end(); ++v_it) {
+        TriMesh::Point p = triMesh_->point(*v_it);
+        p -= _position;
+        p = _radius * p.normalize() + _position;
+        triMesh_->set_point(*v_it, p);
+      }
+    }
+
+    // Make sure that the normals are fine
+    triMesh_->update_normals();
+
+    emit updatedObject(newObject, UPDATE_ALL);
+
+    PluginFunctions::viewAll();
+
+    return newObject;
+
   }
 
 

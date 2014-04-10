@@ -47,6 +47,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
@@ -57,12 +58,13 @@
 #endif
 
 
-class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface {
+class PrimitivesGeneratorPlugin: public QObject, BaseInterface, LoggingInterface, MenuInterface, LoadSaveInterface, RPCInterface {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(MenuInterface)
   Q_INTERFACES(LoadSaveInterface)
+  Q_INTERFACES(RPCInterface)
 
 #if QT_VERSION >= 0x050000
   Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PrimitiveGenerator")
@@ -115,6 +117,9 @@ public slots:
                               const bool   _bottom   = true);
 
   int addSphere(const Vector& _position = Vector(0.0,0.0,0.0),
+                const double _radius = 1.0);
+
+  int addSubdivisionSphere(const Vector& _position = Vector(0.0,0.0,0.0),
                 const double _radius = 1.0);
 
   int addTetrahedron(const Vector& _position = Vector(0.0,0.0,0.0),
