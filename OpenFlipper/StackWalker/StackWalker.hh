@@ -51,6 +51,10 @@ typedef unsigned long SIZE_T, *PSIZE_T;
 class StackWalkerInternal;  // forward
 class StackWalker
 {
+private:
+  // copy ops are private to prevent copying
+  StackWalker(const StackWalker&);            // no implementation
+  StackWalker& operator=(const StackWalker&); // no implementation
 public:
   typedef enum StackWalkOptions
   {
