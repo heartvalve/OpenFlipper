@@ -15,7 +15,7 @@ ENDIF (TetGenLib_INCLUDE_DIR)
 set(TetGenLib_TMP_PATHS /home/zimmer/projects/libs/)
 
 FIND_PATH( TetGenLib_INCLUDE_DIR tetgen.h
-  HINTS ${TetGenLib_TMP_PATHS}/TetGen/include/)
+  PATHS ${TetGenLib_TMP_PATHS}/TetGen/include/)
 
 if( TetGenLib_INCLUDE_DIR )
   
@@ -25,7 +25,7 @@ if( TetGenLib_INCLUDE_DIR )
 
   find_library(
     TetGenLib_LIBRARY
-    NAMES tetgen tet
+    NAMES tet tetgen
     PATHS ${TetGenLib_TMP_PATHS}/TetGen/lib/)
   
   if( TetGenLib_LIBRARY )
