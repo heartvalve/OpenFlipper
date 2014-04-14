@@ -83,13 +83,24 @@ public:
   static ShaderCache* getInstance();
 
 
-  /** \brief Query a program from cache
+  /** \brief Query a dynamically generated program from cache
    *
    * @param _desc  Shader description
-   * @param _usage Additional usage identifier
+   * @param _usage Additional usage identifier (combination of shader modifier ids)
    * @return The program (Either from cache or newly compiled and linked)
    */
   GLSL::Program* getProgram(const ShaderGenDesc* _desc, unsigned int _usage = 0);
+
+  /** \brief Query a static shader program from cache
+   *
+   * Can be used to load a shader and have external changes automatically applied by the timestamp watchdog.
+   * However, the program should be queried every time before using the program as it may have been deleted and recompiled in the meantime.
+   *
+   * @param _vertexShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @param _fragmentShaderFile relative (from shader directory) or absolute filename of vertex shader
+   * @return The program (Either from cache or newly compiled and linked)
+   */
+  GLSL::Program* getProgram(const char* _vertexShaderFile, const char* _fragmentShaderFile);
   
   /** \brief Delete all cached shaders
    */
@@ -128,7 +139,12 @@ protected:
 
 
   typedef std::list<std::pair<CacheEntry, GLSL::Program*> > CacheList;
+  
+  /// cache containing dynamic shaders from ShaderProgGenerator
   CacheList cache_;
+
+  /// cache containing static shaders loaded from files (separate from dynamic cache to reduce access time)
+  CacheList cacheStatic_;
   bool timeCheck_;
 };
 

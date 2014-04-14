@@ -62,10 +62,11 @@
 namespace ACG
 {
 
-#define SG_DEBUG_OUTPUT
+//#define SG_DEBUG_OUTPUT
 
 ShaderCache::ShaderCache():
     cache_(),
+    cacheStatic_(),
     timeCheck_(false)
 {
 }
@@ -74,6 +75,9 @@ ShaderCache::~ShaderCache()
 {
   // free all glsl programs in cache
   for (CacheList::iterator it = cache_.begin(); it != cache_.end();  ++it)
+    delete it->second;
+
+  for (CacheList::iterator it = cacheStatic_.begin(); it != cacheStatic_.end();  ++it)
     delete it->second;
 }
 
@@ -85,7 +89,7 @@ ShaderCache* ACG::ShaderCache::getInstance()
 
 
 //***********************************************************************
-// TODO implement binary search eventually
+// TODO implement binary search eventually (if cache access is getting too slow)
 // - modify compareShaderGenDescs s.t. it defines an order
 // or generate a hash key from ShaderGenDesc
 
@@ -135,7 +139,7 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
     static int counter = 0;
 
     char fileName[0x100];
-    sprintf(fileName, "../../shader_%02d.glsl", counter++);
+    sprintf(fileName, "../../../shader_%02d.glsl", counter++);
 
     QFile fileOut(fileName);
     if (fileOut.open(QFile::WriteOnly | QFile::Truncate))
@@ -211,6 +215,53 @@ GLSL::Program* ACG::ShaderCache::getProgram( const ShaderGenDesc* _desc, unsigne
   return prog;
 }
 
+GLSL::Program* ACG::ShaderCache::getProgram( const char* _vertexShaderFile, const char* _fragmentShaderFile )
+{
+  CacheEntry newEntry;
+  newEntry.usage = 0;
+  
+  // store filenames and timestamps in new entry
+  newEntry.strFragmentTemplate = _fragmentShaderFile;
+  newEntry.fragmentFileLastMod = QFileInfo(_fragmentShaderFile).lastModified();
+
+  newEntry.strVertexTemplate = _vertexShaderFile;
+  newEntry.vertexFileLastMod = QFileInfo(_vertexShaderFile).lastModified();
+
+  CacheList::iterator oldCache = cacheStatic_.end();
+
+  for (CacheList::iterator it = cacheStatic_.begin(); it != cacheStatic_.end();  ++it)
+  {
+    // If the shaders are equal, we return the cached entry
+    if (!compareShaderGenDescs(&it->first, &newEntry))
+    {
+      if ( timeCheck_ && !compareTimeStamp(&it->first, &newEntry))
+        oldCache = it;
+      else
+        return it->second;
+    }
+  }
+
+  GLSL::Program* prog = GLSL::loadProgram(_vertexShaderFile, _fragmentShaderFile);
+  glCheckErrors();
+
+  if (oldCache != cacheStatic_.end())
+  {
+    if (!prog->isLinked())
+    {
+      delete prog;
+      return oldCache->second;
+    }
+    else
+    {
+      cacheStatic_.erase(oldCache);
+    }
+  }
+
+  cacheStatic_.push_back(std::pair<CacheEntry, GLSL::Program*>(newEntry, prog));
+
+  return prog;
+}
+
 bool ACG::ShaderCache::compareTimeStamp(const CacheEntry* _a, const CacheEntry* _b)
 {
   if (_a->vertexFileLastMod != _b->vertexFileLastMod)
@@ -264,6 +315,7 @@ int ACG::ShaderCache::compareShaderGenDescs( const CacheEntry* _a, const CacheEn
 void ACG::ShaderCache::clearCache()
 {
   cache_.clear();
+  cacheStatic_.clear();
 }
 
 
