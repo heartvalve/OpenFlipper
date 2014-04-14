@@ -15,18 +15,19 @@ IF (NOT APPLE )
 	# Look for the header file.
 	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
         	                   PATHS /usr/include
-        	                   ../../External/include
-                                 "C:/libs/CGAL-3.6/include"
-								 "C:/Program Files/CGAL-3.5/include"
-                                 "C:/Programme/CGAL-3.5/include"
-                                 "C:/libs/CGAL-3.5/include"
-                	             "C:/Program Files/CGAL-3.4/include"
-                                 "C:/Programme/CGAL-3.4/include"
-                                 "C:/libs/CGAL-3.4/include"
-								 "C:/Programme/CGAL-3.9/include"
-								 "C:/Program Files/CGAL-3.9/include"
-								 "C:/Program Files (x86)/CGAL-3.9/include"
-	                             ${module_file_path}/../../../External/include)
+        	                         ../../External/include
+					 $ENV{CGAL_DIR}/include
+                                         "C:/libs/CGAL-3.6/include"
+   				         "C:/Program Files/CGAL-3.5/include"
+                                         "C:/Programme/CGAL-3.5/include"
+                                         "C:/libs/CGAL-3.5/include"
+                	                 "C:/Program Files/CGAL-3.4/include"
+                                         "C:/Programme/CGAL-3.4/include"
+                                         "C:/libs/CGAL-3.4/include"
+					 "C:/Programme/CGAL-3.9/include"
+					 "C:/Program Files/CGAL-3.9/include"
+					 "C:/Program Files (x86)/CGAL-3.9/include"
+	                                 ${module_file_path}/../../../External/include )
 ELSE( NOT APPLE)
 	# Look for the header file.
 	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
