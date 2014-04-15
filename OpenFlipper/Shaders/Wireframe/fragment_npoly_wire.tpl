@@ -9,4 +9,6 @@ void main()
   
   
   SG_FRAGMENT_END
+
+  gl_FragDepth = gl_FragCoord.z * 0.9998;
 }
