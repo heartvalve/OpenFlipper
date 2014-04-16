@@ -154,6 +154,14 @@ void DataControlPlugin::pluginsInitialized() {
   connect (copyMaterial, SIGNAL( triggered() ), this, SLOT ( slotCopyMaterialToTargeted() ));
   emit addContextMenuItem(copyMaterial , DATA_ALL , CONTEXTOBJECTMENU);
 
+  QAction* copyMaterialToClipboard = new QAction(tr("Copy Material Properties to Clipboard"), 0);
+  connect (copyMaterialToClipboard, SIGNAL( triggered() ), this, SLOT ( slotCopyMaterialToClipboard() ));
+  emit addContextMenuItem(copyMaterialToClipboard , DATA_ALL , CONTEXTOBJECTMENU);
+
+  QAction* pasteMaterialFromClipboard = new QAction(tr("Paste Material Properties from Clipboard"), 0);
+  connect (pasteMaterialFromClipboard, SIGNAL( triggered() ), this, SLOT ( slotPasteMaterialFromClipboard() ));
+  emit addContextMenuItem(pasteMaterialFromClipboard , DATA_ALL , CONTEXTOBJECTMENU);
+
   PluginFunctions::setDefaultViewObjectMarker (&objectMarker);
   PluginFunctions::setViewObjectMarker (&objectMarker);
   

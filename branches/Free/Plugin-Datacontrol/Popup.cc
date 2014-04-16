@@ -277,6 +277,8 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             action->setIcon(icon);
 
             menu.addAction(tr("Copy Material Properties to Targeted Objects"), this, SLOT ( slotCopyMaterialToTargeted() ));
+            menu.addAction(tr("Copy Material Properties to Clipboard"), this, SLOT ( slotCopyMaterialToClipboard() ));
+            menu.addAction(tr("Paste Material Properties from Clipboard"), this, SLOT ( slotPasteMaterialFromClipboard() ));
 
             menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
 
@@ -476,6 +478,87 @@ void DataControlPlugin::slotCopyMaterialToTargeted() {
               materialNode->material() = sourceMaterial;
           }
       }
+
+      emit updateView();
+    }
+}
+
+void DataControlPlugin::slotCopyMaterialToClipboard() {
+    BaseObject* item = 0;
+
+    //check if it was called from object contextMenu or from the toolBox
+    QAction* action = dynamic_cast< QAction* > ( sender() );
+
+    if ( action ){
+      bool ok = false;
+
+      int id = action->data().toInt(&ok);
+
+      if ( ok && id > 0 )
+        PluginFunctions::getObject(id,item);
+    }
+
+    if ( item == 0 ){
+      // the slot was called from toolbox
+      QItemSelectionModel* selection = view_->selectionModel();
+
+      // Get all selected rows
+      QModelIndexList indexList = selection->selectedRows ( 0 );
+      int selectedRows = indexList.size();
+      if (selectedRows == 1){
+        int id = model_->itemId( indexList[0] );
+
+        if ( id > 0 )
+          PluginFunctions::getObject(id,item);
+      }
+    }
+
+    if ( item != 0 ){
+
+      BaseObjectData* itemData = dynamic_cast< BaseObjectData* > (item);
+      const ACG::SceneGraph::Material &sourceMaterial = itemData->materialNode()->material();
+
+      const QString materialJson = sourceMaterial.serializeToJson();
+      QApplication::clipboard()->setText(materialJson);
+    }
+}
+
+void DataControlPlugin::slotPasteMaterialFromClipboard() {
+    BaseObject* item = 0;
+
+    //check if it was called from object contextMenu or from the toolBox
+    QAction* action = dynamic_cast< QAction* > ( sender() );
+
+    if ( action ){
+      bool ok = false;
+
+      int id = action->data().toInt(&ok);
+
+      if ( ok && id > 0 )
+        PluginFunctions::getObject(id,item);
+    }
+
+    if ( item == 0 ){
+      // the slot was called from toolbox
+      QItemSelectionModel* selection = view_->selectionModel();
+
+      // Get all selected rows
+      QModelIndexList indexList = selection->selectedRows ( 0 );
+      int selectedRows = indexList.size();
+      if (selectedRows == 1){
+        int id = model_->itemId( indexList[0] );
+
+        if ( id > 0 )
+          PluginFunctions::getObject(id,item);
+      }
+    }
+
+    if ( item != 0 ){
+
+      BaseObjectData* itemData = dynamic_cast< BaseObjectData* > (item);
+      ACG::SceneGraph::Material &destMaterial = itemData->materialNode()->material();
+
+      destMaterial.deserializeFromJson(QApplication::clipboard()->text());
 
       emit updateView();
     }
