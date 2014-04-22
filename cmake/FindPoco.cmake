@@ -84,6 +84,7 @@ SET(SUFFIX_FOR_LIBRARY_PATH
  poco-1.2.1/lib/Linux/i686
  lib
  lib/Linux/i686
+ lib64
 )
 
 #
