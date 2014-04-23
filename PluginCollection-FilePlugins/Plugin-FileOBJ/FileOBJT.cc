@@ -242,7 +242,6 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   bool optionFaceColors      = false;
   bool optionVertexNormals   = false;
   bool optionVertexTexCoords = false;
-  bool optionColorAlpha      = false;
   bool optionTextures        = false;
   bool optionCopyTextures    = false;
   bool optionCreateTexFolder = false;
@@ -257,7 +256,6 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     optionTextures        = saveTextures_->isChecked();
     optionCopyTextures    = saveCopyTextures_->isChecked();
     optionCreateTexFolder = saveCreateTexFolder_->isChecked();
-    optionColorAlpha      = saveAlpha_->isChecked();
     _out.precision(savePrecision_->value());
   };
   // \TODO Fetch options from ini states if dialog box is not available
