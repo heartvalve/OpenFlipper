@@ -2839,6 +2839,15 @@ int MeshCompiler::mapToOriginalFaceID( const int _i ) const
   return triToFaceMap_[_i];
 }
 
+const int* MeshCompiler::mapToOriginalFaceIDPtr() const
+{
+  if (triToFaceMap_.empty())
+    return 0;
+  else 
+    return &triToFaceMap_[0];
+}
+
+
 int MeshCompiler::mapToOriginalVertexID( const int _i, int& _faceID, int& _cornerID ) const
 {
   int positionID = -1;

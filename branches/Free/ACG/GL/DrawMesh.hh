@@ -65,6 +65,8 @@
 #include <ACG/GL/GLState.hh>
 #include <ACG/GL/IRenderer.hh>
 #include <ACG/GL/MeshCompiler.hh>
+#include <ACG/GL/globjects.hh>
+#include <ACG/ShaderUtils/GLSLShader.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -173,6 +175,11 @@ public:
   /** \brief get opengl index buffer id
   */
   GLuint getIBO();
+
+  /** \brief get index type of index buffer
+  */
+  GLenum getIndexType() const {return indexType_;}
+  
 
   /** \brief get mesh compiler used to create the draw mesh
   */
@@ -409,6 +416,46 @@ public:
     }
   };
 
+
+  /**  \brief Optimized rendering of vertex picking ids with a shader
+   *
+   * @param _mvp model view projection transformation
+   * @param _pickOffset base picking id of the first vertex
+   */
+  void drawPickingVertices_opt(const GLMatrixf& _mvp, int _pickOffset);
+
+
+  /**  \brief Check if optimized vertex picking is supported
+   *
+   */
+  bool supportsPickingVertices_opt();
+
+  /**  \brief Update color picking array for the shader implementation
+   *
+   * @param _state
+   */
+  void updatePickingVertices_opt(ACG::GLState& _state);
+
+#ifdef GL_ARB_texture_buffer_object
+
+  TextureBuffer* pickVertexMap_opt(){
+    if ( pickVertexMapTBO_.is_valid() )
+      return &pickVertexMapTBO_;
+    else {
+      std::cerr << "Illegal request to pickVertexMap_opt when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
+
+#endif // GL_ARB_texture_buffer_object
+
+
+  /** \brief get an index buffer mapping from openmesh vertices to drawmesh vbo vertices
+  *
+  * @return index buffer object (UNSIGNED_INT), might be 0 if the openmesh object is a point cloud
+  */
+  GLuint pickVertexIBO_opt() {return pickVertexIBO_;} // does not work
+
 private:
 
   /// The vertex buffer used for vertex picking
@@ -417,6 +464,22 @@ private:
   std::vector< ACG::Vec4uc > pickVertColBuf_;
 
 
+#ifdef GL_ARB_texture_buffer_object
+  // map from vbo vertex id to openmesh vertex id
+  TextureBuffer pickVertexMapTBO_;
+#endif // GL_ARB_texture_buffer_object
+
+  // map from openmesh vertex to vbo vertex id
+  GLuint pickVertexIBO_;
+
+  // vertex picking shader
+  GLSL::Program* pickVertexShader_;
+
+
+  // selected shader picking method:
+  //  0 -> use texturebuffer which maps from vbo id to openmesh vertex id
+  //  1 -> draw with indexbuffer mapping from openmesh vertex id to vbo vertex
+  int pickVertexMethod_;
 
 public:
 
@@ -448,10 +511,32 @@ public:
     }
   }
 
+
+  /**  \brief Optimized rendering of edge picking ids with a shader
+   *
+   * @param _mvp model view projection transformation
+   * @param _pickOffset base picking id of the first edge
+   */
+  void drawPickingEdges_opt(const GLMatrixf& _mvp, int _pickOffset);
+
+
+  /**  \brief Check if optimized face picking is supported
+   *
+   */
+  bool supportsPickingEdges_opt();
+
+  /**  \brief Update color picking array for the shader implementation
+   *
+   * @param _state
+   */
+  void updatePickingEdges_opt(ACG::GLState& _state );
+
 private:
 
   std::vector< ACG::Vec4uc > pickEdgeBuf_;
 
+  // edge picking shader
+  GLSL::Program* pickEdgeShader_;
 
 
 public:
@@ -496,11 +581,50 @@ public:
     }
   }
 
+  /**  \brief Optimized rendering of face picking ids with a shader
+   *
+   * @param _mvp model view projection transformation
+   * @param _pickOffset base picking id of the first face
+   */
+  void drawPickingFaces_opt(const GLMatrixf& _mvp, int _pickOffset);
+
+
+  /**  \brief Check if optimized face picking is supported
+   *
+   */
+  bool supportsPickingFaces_opt();
+
+  /**  \brief Update color picking array for the shader implementation
+   *
+   * @param _state
+   */
+  void updatePickingFaces_opt(ACG::GLState& _state );
+
+#ifdef GL_ARB_texture_buffer_object
+
+  TextureBuffer* pickFaceTriangleMap_opt(){
+    if ( pickFaceTriToFaceMapTBO_.is_valid() )
+      return &pickFaceTriToFaceMapTBO_;
+    else {
+      std::cerr << "Illegal request to pickFaceTriangleMap_opt when buffer is empty!" << std::endl;
+      return 0;
+    }
+  }
+#endif
+
 private:
 
+  // unoptimized picking buffers
   std::vector< ACG::Vec3f > pickFaceVertexBuf_;
   std::vector< ACG::Vec4uc > pickFaceColBuf_;
 
+#ifdef GL_ARB_texture_buffer_object
+  // optimized picking with shaders: maps from triangle id in draw vbo to face id in openmesh
+  TextureBuffer pickFaceTriToFaceMapTBO_;
+#endif // GL_ARB_texture_buffer_object
+
+  /// optimized face picking shader
+  GLSL::Program* pickFaceShader_;
 
 public:
   /** \brief Call this function to update the color picking array
@@ -562,6 +686,24 @@ public:
       return 0;
     }
   }
+
+  /**  \brief Optimized rendering of any picking ids with a shader
+   *
+   * @param _mvp model view projection transformation
+   * @param _pickOffset base picking id of the first element
+   */
+  void drawPickingAny_opt(const GLMatrixf& _mvp, int _pickOffset);
+
+  /**  \brief Check if optimized any picking is supported
+   *
+   */
+  bool supportsPickingAny_opt();
+
+  /**  \brief Update color picking array for the shader implementation
+   *
+   * @param _state
+   */
+  void updatePickingAny_opt(ACG::GLState& _state );
 
 private:
 

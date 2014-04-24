@@ -47,6 +47,7 @@
 #include "DrawMesh.hh"
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 #include <ACG/GL/VertexDeclaration.hh>
+#include <ACG/GL/ShaderCache.hh>
 #include <cassert>
 #include <cmath>
 #include <vector>
@@ -134,6 +135,13 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
   vertexDeclEdgeCol_ = new VertexDeclaration;
   vertexDeclHalfedgeCol_ = new VertexDeclaration;
   vertexDeclHalfedgePos_ = new VertexDeclaration;
+
+  pickVertexIBO_ = 0;
+  pickVertexMethod_ = 1;
+  pickVertexShader_ = 0;
+
+  pickFaceShader_ = 0;
+  pickEdgeShader_ = 0;
 
   createVertexDeclarations();
 }
@@ -508,28 +516,10 @@ DrawMeshT<Mesh>::rebuild()
   if (mesh_.has_halfedge_texcoords2D())
     meshComp_->setTexCoords(mesh_.n_halfedges(), mesh_.htexcoords2D(), 8, false, GL_FLOAT, 2);
 
+  // add more requested custom attribtues to mesh compiler here..
 
-/*
-  setMeshCompilerInput(attrIDPos, mesh_.points(), mesh_.n_vertices());
-  
-  // normals
-  if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
-    setMeshCompilerInput(attrIDNorm, mesh_.vertex_normals(), mesh_.n_vertices());
-  else if (halfedgeNormalMode_ &&  mesh_.has_halfedge_normals())
-    setMeshCompilerInput(attrIDNorm, mesh_.property(mesh_.halfedge_normals_pph()).data(), mesh_.n_halfedges());
 
-  if (mesh_.has_halfedge_texcoords2D())
-  {
-    setMeshCompilerInput(attrIDTexC, mesh_.htexcoords2D(), mesh_.n_halfedges());
-// 
-//     GLuint fmtN = 0;
-//     int sizeN = 0, strideN = 0;
-//     getMeshPropertyType(mesh_.htexcoords2D(), &fmtN, &sizeN, &strideN);
-// 
-//     meshComp_->setTexCoords(mesh_.n_halfedges(), mesh_.htexcoords2D(), strideN, false, fmtN, sizeN);
-  }
-*/
-
+  // compile draw buffers
   meshComp_->build(true, true, true, true);
 
 
@@ -897,6 +887,7 @@ DrawMeshT<Mesh>::~DrawMeshT(void)
   if (vbo_) glDeleteBuffersARB(1, &vbo_);
   if (ibo_) glDeleteBuffersARB(1, &ibo_);
   if (lineIBO_) glDeleteBuffersARB(1, &lineIBO_);
+  if (pickVertexIBO_) glDeleteBuffersARB(1, &pickVertexIBO_);
 }
 
 
@@ -1337,6 +1328,157 @@ void DrawMeshT<Mesh>::updatePickingVertices(ACG::GLState& _state,
 }
 
 
+template <class Mesh>
+void DrawMeshT<Mesh>::updatePickingVertices_opt(ACG::GLState& _state)
+{
+  // Make sure, the face buffers are up to date before generating the picking data!
+  if (!numVerts_ && mesh_.n_vertices())
+  {
+    rebuild_ = REBUILD_FULL;
+    rebuild();
+  }
+
+#ifndef GL_ARB_texture_buffer_object
+  pickVertexMethod_ = 1; // no texture buffers supported during compilation
+#endif
+
+  if (numVerts_)
+  {
+    // upload vbo id->openmesh id lookup-table to texture buffer
+
+    if (pickVertexMethod_ == 0)
+    {
+#ifdef GL_ARB_texture_buffer_object
+
+      std::vector<int> forwardMap(numVerts_, 0);
+
+      for (int i = 0; i < (int)numVerts_; ++i)
+      {
+        int vboIdx = mapVertexToVBOIndex(i);
+        if (vboIdx >= 0)
+          forwardMap[vboIdx] = i;
+      }
+      pickVertexMapTBO_.setBufferData(sizeof(int) * numVerts_, &forwardMap[0], GL_R32I, GL_STATIC_DRAW);
+
+#endif // GL_ARB_texture_buffer_object
+
+    }
+    else
+    {
+      // Another method: draw with index buffer, which contains the mapping from openmesh vertex id to drawmesh vbo vertex.
+      // problem with this: gl_VertexID is affected by index buffer and thus represents the drawmesh vbo ids
+      // -> use gl_PrimitiveID instead, which represents the openmesh vertex id
+      if (invVertexMap_)
+      {
+        if (!pickVertexIBO_)
+          glGenBuffersARB(1, &pickVertexIBO_);
+
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, pickVertexIBO_);
+        glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(int) * mesh_.n_vertices(), invVertexMap_, GL_STATIC_DRAW);
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+      }
+
+    }
+  }
+}
+
+
+template <class Mesh>
+bool ACG::DrawMeshT<Mesh>::supportsPickingVertices_opt()
+{
+  // load and compile picking shader
+
+  // load once directly from files:
+//   if (!pickVertexShader_)
+//   {
+//     if (pickVertexMethod_ == 0)
+//       pickVertexShader_ = GLSL::loadProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl");
+//     else
+//       pickVertexShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+//   }
+
+  // load from cache
+  if (pickVertexMethod_ == 0)
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/pick_vertices_vs.glsl", "Picking/pick_vertices_fs.glsl");
+  else
+    pickVertexShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+
+  // check link status
+  return pickVertexShader_ && pickVertexShader_->isLinked();
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::drawPickingVertices_opt( const GLMatrixf& _mvp, int _pickOffset )
+{
+  // optimized version which computes picking ids in the shader
+
+  /*
+  pickVertexMethod_
+   0: - create a textureBuffer containing the mapping from vbo id to openmesh vertex id
+      - draw point list of the main vbo and read texture map in the vertex shader
+      - computation in vertex shader via gl_VertexID
+      -> required mem: 4 bytes per vertex in draw vbo
+      -> # vertex transforms: vertex count in draw vbo
+
+   1: - create index buffer containing the mapping from openmesh vertex id to vbo id
+         (not required for point-clouds)
+      - draw point list with index buffer
+      - computation in fragment shader via gl_PrimitiveID
+      -> required mem: nothing for point-clouds, otherwise 4 bytes per vertex in openmesh
+      -> # vertex transforms: vertex count in openmesh
+
+      method 1 is probably more efficient overall
+  */
+
+  // test support by loading and compiling picking shader
+  if (!supportsPickingVertices_opt())
+    return;
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, getVBO());
+  
+  if (pickVertexMethod_ == 1)
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, pickVertexIBO_opt());
+
+  // setup picking shader
+  pickVertexShader_->use();
+  getVertexDeclaration()->activateShaderPipeline(pickVertexShader_);
+
+  pickVertexShader_->setUniform("pickVertexOffset", _pickOffset);
+
+  if (pickVertexMethod_ == 0)
+  {
+    pickVertexShader_->setUniform("vboToInputMap", 0);
+#ifdef GL_ARB_texture_buffer_object
+    pickVertexMap_opt()->bind(GL_TEXTURE0);
+#endif
+  }
+
+  pickVertexShader_->setUniform("mWVP", _mvp);
+
+  // draw call
+  if (pickVertexMethod_ == 0)
+    glDrawArrays(GL_POINTS, 0, getNumVerts());
+  else
+  {
+    if (pickVertexIBO_opt())
+      glDrawElements(GL_POINTS, mesh_.n_vertices(), GL_UNSIGNED_INT, 0);
+    else
+      glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+  }
+
+  // restore gl state      
+  getVertexDeclaration()->deactivateShaderPipeline(pickVertexShader_);
+  pickVertexShader_->disable();
+
+  // unbind draw buffers
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+  if (pickVertexMethod_ == 1)
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+
 
 template <class Mesh>
 void DrawMeshT<Mesh>::updatePerEdgeBuffers()
@@ -1512,6 +1654,77 @@ void DrawMeshT<Mesh>::updatePickingEdges(ACG::GLState& _state,
 
 
 
+template <class Mesh>
+void DrawMeshT<Mesh>::updatePickingEdges_opt(ACG::GLState& _state )
+{
+  // Make sure, the face buffers are up to date before generating the picking data!
+  if (!numTris_ && mesh_.n_faces())
+  {
+    rebuild_ = REBUILD_FULL;
+    rebuild();
+  }
+
+  // nothing else to do, optimized edge picking method has no memory overhead
+}
+
+
+template <class Mesh>
+bool ACG::DrawMeshT<Mesh>::supportsPickingEdges_opt()
+{
+  // load and compile picking shader
+  //  its the same shader as for vertex picking with reordered index buffer
+//   if (!pickEdgeShader_)
+//     pickEdgeShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+
+  pickEdgeShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_vertices_fs2.glsl");
+
+  // check link status
+  return pickEdgeShader_ && pickEdgeShader_->isLinked();
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::drawPickingEdges_opt( const GLMatrixf& _mvp, int _pickOffset )
+{
+  // optimized version which computes picking ids in the shader
+
+  /* optimization :
+  - reuse draw vbo of drawmesh and line index buffer (which is used for wireframe mode)
+     the line index buffer stores all edges in the same order as they appear in openmesh
+  - use edge id of openmesh as gl_PrimitiveID in fragment shader to compute the picking id
+  
+  -> no rendering from sysmem buffers
+  -> no maintenance/update of picking colors required
+  -> no additional memory allocation
+  */
+
+  // test support by loading and compiling picking shader
+  if (!supportsPickingEdges_opt())
+    return;
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, getVBO());
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIBO_);
+
+  // setup picking shader (same shader as in vertex picking)
+  pickEdgeShader_->use();
+  getVertexDeclaration()->activateShaderPipeline(pickEdgeShader_);
+
+  pickEdgeShader_->setUniform("pickVertexOffset", _pickOffset);
+  pickEdgeShader_->setUniform("mWVP", _mvp);
+
+  // draw call
+  glDrawElements(GL_LINES, mesh_.n_edges() * 2, indexType_, 0);
+
+  // restore gl state      
+  getVertexDeclaration()->deactivateShaderPipeline(pickEdgeShader_);
+  pickEdgeShader_->disable();
+
+  // unbind draw buffers
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+
 
 
 
@@ -1560,6 +1773,114 @@ void DrawMeshT<Mesh>::updatePickingFaces(ACG::GLState& _state )
 
 
 }
+
+
+
+template <class Mesh>
+void DrawMeshT<Mesh>::updatePickingFaces_opt(ACG::GLState& _state )
+{
+  // Make sure, the face buffers are up to date before generating the picking data!
+  if (!numTris_ && mesh_.n_faces())
+  {
+    rebuild_ = REBUILD_FULL;
+    rebuild();
+  }
+
+#ifdef GL_ARB_texture_buffer_object
+  if (meshComp_ && meshComp_->getNumTriangles())
+  {
+    // upload tri->face lookup-table to texture buffer
+    pickFaceTriToFaceMapTBO_.setBufferData(sizeof(int) * meshComp_->getNumTriangles(), meshComp_->mapToOriginalFaceIDPtr(), GL_R32I, GL_STATIC_DRAW);
+  }
+#endif // GL_ARB_texture_buffer_object
+
+}
+
+
+template <class Mesh>
+bool ACG::DrawMeshT<Mesh>::supportsPickingFaces_opt()
+{
+#ifndef GL_ARB_texture_buffer_object
+  return 0;
+#endif
+
+  // load and compile picking shader
+//   if (!pickFaceShader_)
+//     pickFaceShader_ = GLSL::loadProgram("Picking/vertex.glsl", "Picking/pick_face.glsl");
+
+  pickFaceShader_ = ShaderCache::getInstance()->getProgram("Picking/vertex.glsl", "Picking/pick_face.glsl");
+
+  // check link status
+  return pickFaceShader_ && pickFaceShader_->isLinked();
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::drawPickingFaces_opt( const GLMatrixf& _mvp, int _pickOffset )
+{
+  // optimized version which computes picking ids in the shader
+
+  /* optimization idea:
+  - reuse draw buffers of drawmesh
+  - create lookup table which maps from draw triangle id to openmesh face id (stored in textureBuffer)
+  - get base offset of face picking: pickFaceOffset = _state.pick_get_name_color(0)
+  - render with following fragment shader, which computes face picking ids on the fly:
+
+  uniform int pickFaceOffset;
+  uniform isamplerBuffer triangleToFaceMap;
+
+  out int outPickID; // if possible to write integer. otherwise, convert to ubyte4 or sth.
+
+  void main()
+  {
+    // map from triangle id to face id
+    int faceID = texelFetch(triangleToFaceMap, gl_PrimitiveID);
+
+    outPickID = pickFaceOffset + faceID;
+    // maybe the integer id has to be converted to a vec4 color here, not sure
+  }
+
+  -> no rendering from sysmem buffers
+  -> no maintenance/update of picking colors required
+  -> lower memory footprint: 4 bytes per triangle
+
+  keep old approach to stay compatible on systems which do not support texture buffers or integer arithmetic in shaders
+  */
+
+  // test support by loading and compiling picking shader
+  if (!supportsPickingFaces_opt())
+    return;
+
+  // reuse cache optimized draw buffers
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, getVBO());
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, getIBO());
+
+  // setup picking shader
+  pickFaceShader_->use();
+  getVertexDeclaration()->activateShaderPipeline(pickFaceShader_);
+
+  pickFaceShader_->setUniform("pickFaceOffset", _pickOffset);
+  pickFaceShader_->setUniform("triToFaceMap", 0);
+
+#ifdef GL_ARB_texture_buffer_object
+  pickFaceTriangleMap_opt()->bind(GL_TEXTURE0);
+#endif
+
+  pickFaceShader_->setUniform("mWVP", _mvp);
+
+  // draw call
+  glDrawElements(GL_TRIANGLES, getNumTris() * 3, getIndexType(), 0);
+
+  // restore gl state      
+  getVertexDeclaration()->deactivateShaderPipeline(pickFaceShader_);
+  pickFaceShader_->disable();
+
+  // unbind draw buffers
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+
 
 
 template <class Mesh>
@@ -1636,6 +1957,46 @@ void DrawMeshT<Mesh>::updatePickingAny(ACG::GLState& _state )
   }
 }
 
+
+
+template <class Mesh>
+void DrawMeshT<Mesh>::updatePickingAny_opt(ACG::GLState& _state )
+{
+  updatePickingFaces_opt(_state);
+  updatePickingEdges_opt(_state);
+  updatePickingVertices_opt(_state);
+  
+  // optimized any picking does not require separate picking buffers
+}
+
+template <class Mesh>
+bool ACG::DrawMeshT<Mesh>::supportsPickingAny_opt()
+{
+  return supportsPickingFaces_opt() && supportsPickingEdges_opt() && supportsPickingVertices_opt();
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::drawPickingAny_opt( const GLMatrixf& _mvp, int _pickOffset )
+{
+  // optimized version which computes picking ids in the shader
+
+  /* optimization:
+    draw picking ids of faces, edges and vertices with appropriate offsets
+  */
+
+  // test support by loading and compiling picking shader
+  if (!supportsPickingAny_opt())
+    return;
+
+  drawPickingFaces_opt(_mvp, _pickOffset);
+
+  ACG::GLState::depthFunc(GL_LEQUAL);
+
+  drawPickingEdges_opt(_mvp, _pickOffset + mesh_.n_faces());
+  
+  drawPickingVertices_opt(_mvp, _pickOffset + mesh_.n_faces() + mesh_.n_edges());
+}
 
 template <class Mesh>
 void

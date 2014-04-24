@@ -147,6 +147,8 @@ public:
     return ((char*)NULL + _offset);
   }
 
+  GLuint id() const {return vbo;}
+
 private:
 
   void gen() { glGenBuffersARB(1, &vbo); if(vbo > 0u) valid = true; }
