@@ -145,10 +145,18 @@ update_cache()
      */
     if (drawMesh_) drawMesh_->getVBO();
 
-    typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
+    typename Mesh::ConstVertexIter v_it(mesh_.vertices_sbegin()), v_begin(mesh_.vertices_sbegin()), v_end(mesh_.vertices_end());
 
-    v_cache_.clear();
-    for (; v_it != v_end; ++v_it) {
+    // Optimization: get rid of slow push_back() by precounting the number of selected elements
+    int numSel = 0;
+    for (v_it = v_begin; v_it != v_end; ++v_it)
+      if (this->is_vertex_selected(mesh_, *v_it)) 
+        ++numSel;
+
+    v_cache_.resize(numSel);
+    int offset = 0;
+
+    for (v_it = v_begin; v_it != v_end; ++v_it) {
       if (this->is_vertex_selected(mesh_, *v_it)) {
 
         unsigned int vertexIndex = v_it->idx();
@@ -157,7 +165,7 @@ update_cache()
         if (drawMesh_)
           vertexIndex = drawMesh_->mapVertexToVBOIndex(vertexIndex);
 
-        v_cache_.push_back(vertexIndex);
+        v_cache_[offset++] = vertexIndex;
       }
     }
 
@@ -172,21 +180,29 @@ update_cache()
      */
     if (drawMesh_) drawMesh_->getVBO();
 
-    typename Mesh::ConstEdgeIter e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
+    typename Mesh::ConstEdgeIter e_it(mesh_.edges_sbegin()), e_begin(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
     typename Mesh::VertexHandle vh;
 
-    e_cache_.clear();
-    for (; e_it != e_end; ++e_it) {
+    // Optimization: get rid of slow push_back() by precounting the number of selected elements
+    int numSel = 0;
+    for (e_it = e_begin; e_it != e_end; ++e_it)
+      if (this->is_edge_selected(mesh_, *e_it)) 
+        ++numSel;
+
+    e_cache_.resize(numSel * 2);
+    int offset = 0;
+
+    for (e_it = e_begin; e_it != e_end; ++e_it) {
       if (this->is_edge_selected(mesh_, *e_it)) {
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 0));
         unsigned int vidx = vh.idx();
 
-        e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
+        e_cache_[offset++] = drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx;
 
         vh = mesh_.to_vertex_handle(mesh_.halfedge_handle(*e_it, 1));
         vidx = vh.idx();
 
-        e_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
+        e_cache_[offset++] = drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx;
       }
     }
 
@@ -202,15 +218,23 @@ update_cache()
      */
     if (drawMesh_) drawMesh_->getVBO();
 
-    typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
+    typename Mesh::ConstHalfedgeIter he_it(mesh_.halfedges_sbegin()), he_begin(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
 
-    he_points_.clear();
-    he_normals_.clear();
-    for (; he_it != he_end; ++he_it) {
+    // Optimization: get rid of slow push_back() by precounting the number of selected elements
+    int numSel = 0;
+    for (he_it = he_begin; he_it != he_end; ++he_it)
+      if (this->is_halfedge_selected(mesh_, *he_it)) 
+        ++numSel;
+
+    he_points_.resize(numSel * 2);
+    he_normals_.resize(numSel * 2);
+    int offset = 0;
+
+    for (he_it = he_begin; he_it != he_end; ++he_it) {
       if (this->is_halfedge_selected(mesh_, *he_it)) {
         // add vertices
-        he_points_.push_back(halfedge_point(*he_it));
-        he_points_.push_back(halfedge_point(mesh_.prev_halfedge_handle(*he_it)));
+        he_points_[offset] = (halfedge_point(*he_it));
+        he_points_[offset+1] = (halfedge_point(mesh_.prev_halfedge_handle(*he_it)));
 
         // add normals
         FaceHandle fh;
@@ -219,8 +243,10 @@ update_cache()
         else
           fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(*he_it));
 
-        he_normals_.push_back(mesh_.normal(fh));
-        he_normals_.push_back(mesh_.normal(fh));
+        he_normals_[offset] = (mesh_.normal(fh));
+        he_normals_[offset+1] = (mesh_.normal(fh));
+
+        offset += 2;
       }
     }
 
@@ -236,36 +262,65 @@ update_cache()
      */
     if (drawMesh_) drawMesh_->getVBO();
 
-    typename Mesh::ConstFaceIter f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
+    typename Mesh::ConstFaceIter f_it(mesh_.faces_sbegin()), f_begin(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
     typename Mesh::ConstFaceVertexIter fv_it;
 
-    f_cache_.clear();
-    fh_cache_.clear();
-    for (; f_it != f_end; ++f_it) {
+    // Optimization: get rid of slow push_back() by precounting the number of selected elements
+    int numSel = 0;
+    for (f_it = f_begin; f_it != f_end; ++f_it)
+      if (this->is_face_selected(mesh_, *f_it)) 
+        ++numSel;
+
+    f_cache_.resize(numSel * 3);
+    fh_cache_.resize(numSel);
+    int offset = 0;
+
+    for (f_it = f_begin; f_it != f_end; ++f_it) {
       if (this->is_face_selected(mesh_, *f_it)) {
         fv_it = mesh_.cfv_iter(*f_it);
         unsigned int vidx = fv_it->idx();
 
-        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+//         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+//         vidx = fv_it->idx();
+// 
+//         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+//         vidx = fv_it->idx();
+// 
+//         f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
+//         fh_cache_.push_back(*f_it);
+
+        f_cache_[offset*3] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
         vidx = fv_it->idx();
 
-        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
+        f_cache_[offset*3+1] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx); ++fv_it;
         vidx = fv_it->idx();
 
-        f_cache_.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
-        fh_cache_.push_back(*f_it);
+        f_cache_[offset*3+2] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vidx) : vidx);
+        fh_cache_[offset] = (*f_it);
+
+        ++offset;
       }
     }
 
 
     if (!mesh_.is_trimesh()) {
       // triangulate poly-list
-      poly_cache.resize(0);
 
       typename std::vector<FaceHandle>::const_iterator fh_it(fh_cache_.begin()), fh_end(fh_cache_.end());
       typename Mesh::CFVIter fv_it;
 
-      for (; fh_it != fh_end; ++fh_it) {
+      // Optimization: get rid of slow push_back() by precounting the number of triangles
+      int numTris = 0;
+      for (fh_it = fh_cache_.begin(); fh_it != fh_end; ++fh_it){
+        fv_it = mesh_.cfv_iter(*fh_it);
+        for (; fv_it.is_valid(); ++fv_it)
+          ++numTris;
+      }
+
+      poly_cache.resize(numTris*3);
+      offset = 0;
+
+      for (fh_it = fh_cache_.begin(); fh_it != fh_end; ++fh_it) {
         fv_it = mesh_.cfv_iter(*fh_it);
 
         // 1. polygon vertex
@@ -277,11 +332,16 @@ update_cache()
 
         // create triangle fans pointing towards v0
         for (; fv_it.is_valid(); ++fv_it) {
-          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
-          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
+//           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
+//           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
+// 
+//           vPrev = fv_it->idx();
+//           poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
+          poly_cache[offset++] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(v0) : v0);
+          poly_cache[offset++] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
 
           vPrev = fv_it->idx();
-          poly_cache.push_back(drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
+          poly_cache[offset++] = (drawMesh_ ? drawMesh_->mapVertexToVBOIndex(vPrev) : vPrev);
         }
       }
     }

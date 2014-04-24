@@ -545,7 +545,11 @@ public:
   */
   int mapToOriginalFaceID(const int _triID) const;
 
-
+  /** Get pointer to the lookup table mapping from tri id -> input face id
+   *
+   * @return ptr to address of lookup table with size getNumTriangles()
+  */
+  const int* mapToOriginalFaceIDPtr() const;
 
   /** Mapping from input vertex id -> draw vertex id
    *
