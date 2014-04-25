@@ -150,15 +150,18 @@ void DataControlPlugin::pluginsInitialized() {
   connect (material, SIGNAL( triggered() ), this, SLOT ( slotMaterialProperties() ));
   emit addContextMenuItem(material , DATA_ALL , CONTEXTOBJECTMENU);
 
-  QAction* copyMaterial = new QAction(tr("Copy Material Properties to Targeted Objects"), 0);
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-copyToTargets-material.png");
+  QAction* copyMaterial = new QAction(icon, tr("Copy Material Properties to Targeted Objects"), 0);
   connect (copyMaterial, SIGNAL( triggered() ), this, SLOT ( slotCopyMaterialToTargeted() ));
   emit addContextMenuItem(copyMaterial , DATA_ALL , CONTEXTOBJECTMENU);
 
-  QAction* copyMaterialToClipboard = new QAction(tr("Copy Material Properties to Clipboard"), 0);
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-copy-material.png");
+  QAction* copyMaterialToClipboard = new QAction(icon, tr("Copy Material Properties to Clipboard"), 0);
   connect (copyMaterialToClipboard, SIGNAL( triggered() ), this, SLOT ( slotCopyMaterialToClipboard() ));
   emit addContextMenuItem(copyMaterialToClipboard , DATA_ALL , CONTEXTOBJECTMENU);
 
-  QAction* pasteMaterialFromClipboard = new QAction(tr("Paste Material Properties from Clipboard"), 0);
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-paste-material.png");
+  QAction* pasteMaterialFromClipboard = new QAction(icon, tr("Paste Material Properties from Clipboard"), 0);
   connect (pasteMaterialFromClipboard, SIGNAL( triggered() ), this, SLOT ( slotPasteMaterialFromClipboard() ));
   emit addContextMenuItem(pasteMaterialFromClipboard , DATA_ALL , CONTEXTOBJECTMENU);
 
