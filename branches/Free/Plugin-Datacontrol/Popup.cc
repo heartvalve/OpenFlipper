@@ -276,9 +276,17 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
             action->setIcon(icon);
 
-            menu.addAction(tr("Copy Material Properties to Targeted Objects"), this, SLOT ( slotCopyMaterialToTargeted() ));
-            menu.addAction(tr("Copy Material Properties to Clipboard"), this, SLOT ( slotCopyMaterialToClipboard() ));
-            menu.addAction(tr("Paste Material Properties from Clipboard"), this, SLOT ( slotPasteMaterialFromClipboard() ));
+            action = menu.addAction(tr("Copy Material Properties to Targeted Objects"), this, SLOT ( slotCopyMaterialToTargeted() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-copyToTargets-material.png");
+            action->setIcon(icon);
+
+            action = menu.addAction(tr("Copy Material Properties to Clipboard"), this, SLOT ( slotCopyMaterialToClipboard() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-copy-material.png");
+            action->setIcon(icon);
+
+            action = menu.addAction(tr("Paste Material Properties from Clipboard"), this, SLOT ( slotPasteMaterialFromClipboard() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-paste-material.png");
+            action->setIcon(icon);
 
             menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
 
