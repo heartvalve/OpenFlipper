@@ -349,6 +349,10 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
   
   // compute the manipulator size modifier based on the mouse wheel change
   manip_size_modifier_ = manip_size_modifier_ - (float)_event->delta() / 120.0 * 0.1;
+
+  //dont scroll into negative sizes
+  if (manip_size_modifier_ < 0.0)
+    manip_size_modifier_ = 0.0;
   
   // Resize all manipulators based on the modifier on all objects
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)

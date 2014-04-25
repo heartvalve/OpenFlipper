@@ -152,10 +152,15 @@ public:
   /// Get current direction of z-Axis in world coordinates
   Vec3d directionZ() const;
 
-  /// set cylindersize  (height + radius)
-  void set_size( double _size) { set_manipulator_height_ = _size;
-                                 set_manipulator_radius_ = _size/10.0;
-                                 setDirty (); }
+  /// set cylindersize  (height + radius). _size parameter has to be greater than zero
+  void set_size( double _size) {
+    if (_size > 0.0)
+    {
+      set_manipulator_height_ = _size;
+      set_manipulator_radius_ = _size/10.0;
+      setDirty ();
+    }
+  }
 
   /// get cylindersize
   double size() const { return set_manipulator_height_; }
