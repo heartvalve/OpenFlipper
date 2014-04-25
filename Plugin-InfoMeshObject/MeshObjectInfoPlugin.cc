@@ -554,7 +554,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
   info_->setWindowFlags(info_->windowFlags() | Qt::WindowStaysOnTopHint);
 
-  info_->adjustSize();
+
   info_->show();
 }
 
