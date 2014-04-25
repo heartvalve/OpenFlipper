@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>730</width>
-    <height>1008</height>
+    <width>739</width>
+    <height>1047</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -522,6 +522,12 @@
            </item>
            <item>
             <widget class="QLabel" name="label_2">
+             <property name="minimumSize">
+              <size>
+               <width>200</width>
+               <height>220</height>
+              </size>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -1594,14 +1600,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>closestVertexLabel</zorder>
-        <zorder>vertexHandle</zorder>
-        <zorder>closestEdgeLabel</zorder>
-        <zorder>edgeHandle</zorder>
-        <zorder>closestFaceLabel</zorder>
-        <zorder>faceHandle</zorder>
-        <zorder>adjacentVertexLabel</zorder>
-        <zorder>adjVertexHandles</zorder>
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
