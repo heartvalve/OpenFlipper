@@ -10,6 +10,12 @@
     <height>1047</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>739</width>
+    <height>1047</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Object Information</string>
   </property>
