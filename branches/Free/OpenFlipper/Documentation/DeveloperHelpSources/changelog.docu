@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 18405 )</b>
+- <b>OpenFlipper 2.1 ( ?/?/? , 18550 )</b>
      - <b>ACG</b>
 	- GL
              - DrawModes: Convenience function to add property based drawmodes. refs 1895
@@ -9,21 +9,41 @@
 	     - Shader Generator: Extension to replace lightingcode
 	     - Shader Generator: Add comments to shaders to keep track of input files used to compose shaders
 	     - Support shininess in lighting code
+             - improve MSAA support in FBO
+             - rename MSFilterWeights file to AntiAliasing
+             - documentation update in FBO, AntiAliasing, IRenderer
+             - check link status before calling glUseProgram refs #2064
+             - fix resizing of msaa fbos
+             - update msaa helper utils
+             - FBO: init texparams only for non msaa textures to avoid glerrors
 	- IRenderer
 	     - Additional functions to make sure, the fbos are handled correctly
 	     - Convenience functions added
 	     	- save/restoreActiveFbo(fboId, viewport)
                 - copyDepthToBackBuffer(tex, scale)
              - Fix specular lighting of directional lights in the shader pipeline
+             - add setting for alpha testing function in render objects refs #398
+             - compute size of attributes for missing input buffers refs #2069
+        - Line Node
+             - use quad extrusion shader in line node to control the width refs #1305
         - MeshNode
              - Fixed 0 pointer deref in meshnode. Closes 2048
+             - RenderObjects of the MeshNode: fetch texture bound to opengl slot 0, if no textureMap was specified refs #2050
+             - apply small depth offset in wireframe shaders refs #2081
+             - optimized picking in meshnode (via shaders)
 	- MeshCompiler and DrawMesh
 	     - Fix for face colors on wrong faces by Christopher.
+             - const correctness in mesh compiler refs #2060
 	- ShaderGenerator
              - Add support for #include in ACG shader load function
 	     - Write source location of shader input files as comments into code
 	- ShaderCache
 	     - Added clear function
+             - add function which compares shader files with the last modified timestamp
+             - Add support to query static shader programs from the shader cache
+        - Shader Pipeline
+             - Shader based pipeline takes the global ambient light into account now.
+             - Lighting in fixed function and shader pipeline should be unified now.
         - Tools
              - Unified color generator interfaces.
              - workaround for memory corruption, when a multisampled FBO is resized
@@ -37,26 +57,50 @@
         - Documentation
              - Renderer tutorial
      - <b>Core</b>
+        - General
+             - Output more information on crash
+             - Disallow copy construction of Stackwalker
         - Interface
 	     - PluginFunctions: Added fovy function.
 	     - ViewerProperties: Added const accessor for glState.
+             - remove double updating of menubar it fixed crash on macos refs #2036
+        - UI
+             - add gui elements for shader timestemp function (see options -> files) and reload shaders
         - QtBaseViewer
              - Cleaned up QtBaseViewer code a bit.
 	     - Let the glwidget do the buffer clearing, not the renderers (simplified renderer plugins)
      - <b>Plugins</b>
          - Components
              - Add nogui support
+         - Datacontrol
+             - Allow copy and pasting of materials (Requires json support)
          - Depth Peeling
 	     - Code refactoring and cleanup
              - Front to back peeling back to work
              - User can switch between dual peeling and front to back peeling via options menu
              - Post-processor support: Output of front depth layers in hardware depth buffer
+         - File-OBJ
+             - fix: load pointclouds from obj files doesn't insert a face anymore refs #1995
          - File-VTK
              - fix wrong count in the POLYGONS header (Thanks to Vladimir Chalupecky for the patch)
+         - Info Meshobject
+             - set minimum size of the bounding box image closes #2121
+             - set minimum size for the whole window refs #2121
+             - adjust size of dialog after setting all the variables
+             - add scrollbar
+             - reduces base height closes #2121
+         - Move
+             - no crash, if the manipulator is sized too small
+         - Primitives
+             - Added Sphere generator based on subdivision (Thanks to Vladimir Chalupecky for the original patch). closes #2041
          - PropertyViz
              - Added new vector viz mode.
+         - Remesher
+             - Fix cppcheck warning in Remesher
          - Renderer Toon
              - Add options dialog for toon renderer
+         - Selection MeshObject
+	     - patch for lasso selection of point clouds, mapping function is correct refs #2056
 	 - Shader Pipeline
 	     - Stereo support and new buffer handling in shader pipeline renderer
          - Skeletal Animation
@@ -68,8 +112,24 @@
              - Updated Vsi xml
          - Toon Shader
 	     - Added new renderer plugin for toon shading
+     - <b>Data Types</b>
+         - Plane Object
+             - update plane for the new renderer
+             - deferred updating and creation of the plane vbo it fixes gpu crash on mac refs #1896
+         - Mesh Object
+             - avoid initialization of ward shader, which might cause trouble on intel graphics refs #2064
+             - remove old ward shader refs #2068
+         - VolumeMesh Object
+             - Fixed issue #2061 -> Comparison of boolean to itself.
      - <b>Build System</b>
          - set debug/release output_dir for mac with bundles enabled closes 1993
+         - enable stacktrace for macos refs #2055
+         - remove duplicates in the argument list of moc closes #2062
+         - Find tetgen quietly, Prefer global 1.5 version of tetgen
+         - Get cgal path from environment variable
+         - Find 64 bit poco dir
+         - Strange glut include fixed
+ 
      - <b>Documentation</b>
          - Raised Doxygen version of files to 1.8.6
 	 - Added documentation for shader generator
