@@ -128,9 +128,10 @@ public:
 
 private:
 
-  void pick_vertices( GLState& _state );
-  void pick_spheres ( GLState& _state );
-  void pick_edges( GLState& _state, unsigned int _offset);
+  void pick_vertices       ( GLState& _state );
+  void pick_spheres        ( GLState& _state );
+  void pick_spheres_screen ( GLState& _state );
+  void pick_edges          ( GLState& _state, unsigned int _offset);
 
   /// Copy constructor (not used)
   PolyLineNodeT(const PolyLineNodeT& _rhs);
