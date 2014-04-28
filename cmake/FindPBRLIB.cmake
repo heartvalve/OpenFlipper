@@ -1,0 +1,27 @@
+# - Try to find PBRLIB
+# Once done this will define
+#  
+#  PBRLIB_FOUND        - system has PBRLIB
+#  PBRLIB_INCLUDE_DIRS - the PBRLIB include directory
+#  PBRLIB_LIBRARY_DIR  - where the libraries are
+#  PBRLIB_LIBRARY      - Link these to use PBRLIB
+#   
+IF (PBRLIB_INCLUDE_DIRS)
+  # Already in cache, be silent
+  SET(PBRLIB_FIND_QUIETLY TRUE)
+ENDIF (PBRLIB_INCLUDE_DIRS)
+
+FIND_PATH( PBRLIB_INCLUDE_DIRS PBRLib/SplatCloud/SplatData.hh
+           PATHS "${CMAKE_SOURCE_DIR}/libs/PBRLib/src" )
+
+add_definitions (-DPBRLIBDLL -DUSEPBRLIB )
+
+IF (PBRLIB_INCLUDE_DIRS)
+  SET(PBRLIB_FOUND TRUE)
+  SET( PBRLIB_LIBRARY_DIR "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}" )
+  SET( PBRLIB_LIBRARY "PBRLib")
+  list (APPEND PBRLIB_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/libs/PBRLib/src")
+ELSE ( PBRLIB_INCLUDE_DIRS)
+  SET( PBRLIB_FOUND FALSE )
+  SET( PBRLIB_LIBRARY_DIR )
+ENDIF (PBRLIB_INCLUDE_DIRS)
