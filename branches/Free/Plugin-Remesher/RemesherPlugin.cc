@@ -187,7 +187,7 @@ void RemesherPlugin::computeInitValues() {
         TriMesh::FaceHandle fh2 = mesh->face_handle(mesh->opposite_halfedge_handle(he));
 
         // Boundary halfedge?
-        if ( !fh2.is_valid() || !fh2.is_valid() )
+        if ( !fh1.is_valid() || !fh2.is_valid() )
           continue;
 
         TriMesh::Normal n1 = mesh->normal(fh1);
@@ -221,7 +221,7 @@ void RemesherPlugin::computeInitValues() {
         PolyMesh::FaceHandle fh2 = mesh->face_handle(mesh->opposite_halfedge_handle(he));
 
         // Boundary halfedge?
-        if ( !fh2.is_valid() || !fh2.is_valid() )
+        if ( !fh1.is_valid() || !fh2.is_valid() )
           continue;
 
         PolyMesh::Normal n1 = mesh->normal(fh1);
