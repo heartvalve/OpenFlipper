@@ -274,7 +274,6 @@ draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
         sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
     }
   }
-
   // draw vertices as spheres with constant size on screen
   if (_drawMode & POINTS_SPHERES_SCREEN)
   {
@@ -348,7 +347,15 @@ pick(GLState& _state, PickTarget _target)
     case PICK_VERTEX:
     {
       _state.pick_set_maximum (polyline_.n_vertices());
-      pick_vertices( _state);
+      if (drawMode() & DrawModes::POINTS)
+          pick_vertices( _state);
+
+      if (drawMode() & POINTS_SPHERES)
+          pick_spheres( _state);
+
+      if (drawMode() & POINTS_SPHERES_SCREEN)
+          pick_spheres_screen( _state);
+
       break;
     }
 
@@ -368,6 +375,9 @@ pick(GLState& _state, PickTarget _target)
 
       if (drawMode() & POINTS_SPHERES)
           pick_spheres( _state);
+
+      if (drawMode() & POINTS_SPHERES_SCREEN)
+          pick_spheres_screen( _state);
 
       pick_edges( _state, polyline_.n_vertices());
       break;
@@ -431,6 +441,36 @@ pick_spheres( GLState& _state )
   {
     _state.pick_set_name (i);
     sphere_->draw(_state, polyline_.vertex_radius(), (Vec3f)polyline_.point(i));
+  }
+}
+
+//----------------------------------------------------------------------------
+
+
+template <class PolyLine>
+void
+PolyLineNodeT<PolyLine>::
+pick_spheres_screen( GLState& _state )
+{
+  if(!sphere_)
+    sphere_ = new GLSphere(10,10);
+
+  _state.pick_set_name(0);
+
+  // precompute desired radius of projected sphere
+  double r = 0.5*_state.point_size()/double(_state.viewport_height())*2.0*_state.near_plane()*tan(0.5*_state.fovy());
+  r /= _state.near_plane();
+
+  for(unsigned int i=0; i<polyline_.n_vertices(); ++i)
+  {
+    _state.pick_set_name (i);
+    // compute radius in 3D
+    const Vec3d p = (Vec3d)polyline_.point(i) - _state.eye();
+    double l = (p|_state.viewing_direction());
+    sphere_->draw(_state, r*l, (Vec3f)polyline_.point(i));
+
+//    ToFix: _state does still not provide the near_plane in picking mode!!!
+//    std::cerr << "radius in picking: " << r*l << std::endl;
   }
 }
 
