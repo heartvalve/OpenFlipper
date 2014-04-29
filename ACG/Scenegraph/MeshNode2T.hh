@@ -61,6 +61,7 @@
 #include "BaseNode.hh"
 #include <vector>
 #include <ACG/GL/DrawMesh.hh>
+#include <ACG/ShaderUtils/GLSLShader.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -351,7 +352,7 @@ private:
 
   /// Index of the first vertex in vertexpicking
   unsigned int vertexPickingBaseIndex_;
-  
+
 /** @} */
   
 
@@ -393,6 +394,7 @@ private:
   
   /// Index of the first face in facepicking
   unsigned int facePickingBaseIndex_;  
+
 
 /** @} */
 

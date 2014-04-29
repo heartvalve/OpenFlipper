@@ -187,6 +187,9 @@ RenderObject::RenderObject()
   specular(0.0f, 0.0f, 0.0f), emissive(0.05f, 0.05f, 0.05f),
   alpha(1.0f), shininess(100.0f),
   
+  inZPrePass(true),
+  depthMapUniformName(0),
+
   debugID(0), debugName(0),
   internalFlags_(0)
 {
@@ -304,6 +307,11 @@ QString RenderObject::toString() const
 
   resultStrm << "\nshininess: " << shininess;
   resultStrm << "\nalpha: " << alpha;
+
+
+  resultStrm << "\ninZPrePass: " << inZPrePass;
+  resultStrm << "\ndepthMapUniformName: " << depthMapUniformName;
+
 
   resultStrm << "\ninternalFlags: " << internalFlags_;
 

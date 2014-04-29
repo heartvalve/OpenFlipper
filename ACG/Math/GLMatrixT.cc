@@ -431,6 +431,161 @@ inverse_ortho(Scalar left, Scalar right,
 
 //-----------------------------------------------------------------------------
 
+template<typename Scalar> 
+VectorT<Scalar, 2>
+  GLMatrixT<Scalar>::
+  extract_planes_perspective() const
+{
+  Scalar a = (*this)(2,2);
+  Scalar b = (*this)(2,3);
+
+  return VectorT<Scalar, 2>(b / (-1.0 + a), b / (1.0 + a));
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename Scalar> 
+VectorT<Scalar, 2>
+  GLMatrixT<Scalar>::
+  extract_planes_ortho() const
+{
+  Scalar a = (*this)(2,2);
+  Scalar b = (*this)(2,3);
+
+  return VectorT<Scalar, 2>((1.0 + b) / a, (-1.0 + b) / a);
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename Scalar> 
+bool
+  GLMatrixT<Scalar>::
+  isPerspective() const
+{
+  // check if matrix matches the pattern of frustum()
+
+  // expect at least 5 nonzeros
+  const int nnz = 5;
+
+  // nonzero entries
+  const int nze[] = 
+  {
+    0,0,
+    1,1,
+    2,2,
+    2,3,
+    3,2
+  };
+
+  // expect at least 9 zeros
+  const int nz = 9;
+
+  // zero entries
+  const int ze[] =
+  {
+    0,1,
+    0,3,
+    1,0,
+    1,3,
+    2,0,
+    2,1,
+    3,0,
+    3,1,
+    3,3,
+  };
+  
+  for (int i = 0; i < nnz; ++i)
+  {
+    if ( checkEpsilon( (*this)(nze[i*2],nze[i*2+1]) ) )
+      return false;
+  }
+
+  // expect -1 at (3,2)
+  if ( !checkEpsilon( (*this)(3,2) + 1.0 ) )
+    return false;
+
+  // check rest for zero
+  for (int i = 0; i < nz; ++i)
+  {
+    if ( !checkEpsilon( (*this)(ze[i*2],ze[i*2+1]) ) )
+      return false;
+  }
+
+  return true; 
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename Scalar> 
+bool
+  GLMatrixT<Scalar>::
+  isOrtho() const
+{
+  // check if matrix matches the pattern of ortho()
+
+  // expect at least 5 nonzeros (diagonal) and m(2,3)
+
+  for (int i = 0; i < 3; ++i)
+  {
+    if ( checkEpsilon( (*this)(i,i) ) )
+      return false;
+  }
+
+  // expect 1 at (3,3)
+  if ( !checkEpsilon( (*this)(3,3) - 1.0 ) )
+    return false;
+
+  // m(2,3) must be nonzero
+  if ( checkEpsilon( (*this)(2,3) ) )
+    return false;
+
+
+  // expect at least 9 zeros
+  const int nz = 9;
+
+  // zero entries
+  const int ze[] =
+  {
+    0,1,
+    0,2,
+    1,0,
+    1,2,
+    2,0,
+    2,1,
+    3,0,
+    3,1,
+    3,2,
+  };
+
+  // check rest for zero (except last column)
+  for (int i = 0; i < nz; ++i)
+  {
+    if ( !checkEpsilon( (*this)(ze[i*2],ze[i*2+1]) ) )
+      return false;
+  }
+
+  return true; 
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename Scalar> 
+VectorT<Scalar, 2>
+  GLMatrixT<Scalar>::
+  extract_planes() const
+{
+  if (isPerspective())
+    return extract_planes_perspective();
+
+  if (isOrtho())
+    return extract_planes_ortho();
+
+  // return invalid planes
+  return VectorT<Scalar,2>(1.0, -1.0);
+}
+
+//-----------------------------------------------------------------------------
+
 
 #undef MAT
 #undef M

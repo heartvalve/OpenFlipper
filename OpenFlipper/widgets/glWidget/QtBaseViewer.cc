@@ -63,6 +63,7 @@
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GLError.hh>
 #include <ACG/GL/FBO.hh>
+#include <ACG/GL/IRenderer.hh>
 
 #include <iostream>
 #include <string>
@@ -639,7 +640,15 @@ void glViewer::drawScene()
   if ( renderManager().activeId( properties_.viewerId() ) == 0 ) {
     drawScene_mono();
   } else {
-    renderManager().active( properties_.viewerId() )->plugin->render(glstate_,properties_);
+    RenderInterface* renderPlugin = renderManager().active( properties_.viewerId() )->plugin;
+
+    // eventually set viewer id in IRenderer
+    ACG::IRenderer* shaderRenderPlugin = dynamic_cast<ACG::IRenderer*>(renderPlugin);
+
+    if (shaderRenderPlugin)
+      shaderRenderPlugin->setViewerID( properties_.viewerId() );
+
+    renderPlugin->render(glstate_,properties_);
   }
   checkGLError();
 

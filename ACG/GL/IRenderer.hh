@@ -63,6 +63,7 @@ namespace ACG
 // forward declaration
 class VertexDeclaration;
 class GLState;
+class FBO;
 
 namespace SceneGraph {
   namespace DrawModes {
@@ -133,6 +134,11 @@ protected:
    *  - collecting renderobjects ( collectRenderObjects() )
    *  - sorting renderobjects ( sortRenderObjects() )
    *  - resetting OpenGL state machine for shader-based rendering
+   *
+   * @param _glState pointer to glstate
+   * @param _drawMode default drawmode
+   * @param _scenegraphRoot root node of scenegraph
+   * @param _viewerID viewport id (ie. ViewerProperties::viewerId())
   */
   virtual void prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot);
 
@@ -232,6 +238,7 @@ protected:
    */
   virtual void drawObject(ACG::RenderObject* _obj);
 
+
   //=========================================================================
   // Restore OpenGL State
   //=========================================================================
@@ -295,6 +302,36 @@ protected:
   */
   virtual void copyDepthToBackBuffer(GLuint _depthTex, float _scale = 1.0f);
 
+  
+  /** \brief Render the depth map of the scene.
+   *
+   * When setting up a shader of a render-object, a scenegraph node can use the depth map for custom rendering techniques.
+   * If at least one render object calls this function, the depth map is later rendered before the scene pass.
+   * and bound to the shader of an renderobject in bindObjectUniforms according to the provided "depthMapUniformName".
+   * Depth Map format: GL_TEXTURE_2D, GL_R32F, depth value = gl_FragCoord.z
+   * This function is automatically called in prepareRenderingPipeline() when required.
+   * 
+   * @param _viewerID id of viewport, 
+   * @param _width viewport width
+   * @param _height viewport height
+  */
+  virtual void renderDepthMap(int _viewerID, int _width, int _height);
+
+
+  //=========================================================================
+  // Internal shader modifiers
+  //=========================================================================
+protected:
+
+  // depth map modifier: writes gl_FragCoord.z to red color channel
+  class DepthMapPass : public ShaderModifier
+  {
+  public:
+    void modifyFragmentEndCode(QStringList* _code);
+
+    static DepthMapPass instance;
+  };
+
 
   //=========================================================================
   // Debugging
@@ -339,8 +376,23 @@ protected:
   /// Get global ambient light contribution from GL_LIGHT_MODEL_AMBIENT
   const ACG::Vec3f& getGlobalAmbientScale() const {return globalLightModelAmbient_;}
 
-protected:
 
+  //=========================================================================
+  // Internally called by OpenFlipper core
+  //=========================================================================
+public:
+
+  /** \brief Set currently active viewer id
+   *
+   * If the scenegraph makes use of the z-prepass feature and the application uses multiple viewports,
+   * the currently active viewport should be set prior rendering.
+   * Otherwise, this function can be ignored.
+   *
+   * @param _viewerID  unique id of the current viewport (i.e. ViewerProperties::viewerID() )
+   */
+  void setViewerID(int _viewerID);
+
+protected:
   /// Number of Lights
   int numLights_;
 
@@ -358,6 +410,18 @@ protected:
   /// sorted list of renderobjects (sorted in rendering order)
   std::vector<ACG::RenderObject*> sortedObjects_;
 
+  /**
+   * Stores fbo containing a depth map for each viewport.
+   * The depth map is computed in a z-prepass if at least one RenderObject makes use of the scene depth map.
+   * (optional convenience feature)
+   */
+  std::map<int, ACG::FBO*> depthMaps_;
+
+  /// true if at least one renderobject requires a scene depthmap, false otherwise
+  bool depthMapUsed_;
+
+  /// currently active viewer ID as specified in prepareRenderObjects()
+  int curViewerID_;
 
   /// previous fbo
   GLint prevFbo_;

@@ -83,6 +83,7 @@ class ShaderGenDesc
 
 public:
   ShaderGenDesc() :
+    version(150),
     numLights(0),
     shadeMode(SG_SHADE_UNLIT),
     vertexColors(false),
@@ -99,21 +100,30 @@ public:
 
   //In case, something crashes with the light types, try this hammer ;-)
 //  const ShaderGenDesc& operator= (const ShaderGenDesc& _rhs) {
-//
+// 
+//    version = _rhs.version;
+// 
 //    numLights                         = _rhs.numLights;
-//
+// 
 //    std::copy(_rhs.lightTypes,_rhs.lightTypes+SG_MAX_SHADER_LIGHTS,lightTypes);
 //    textureTypes_ = _rhs.textureTypes_;
-//
+// 
 //    shadeMode                         = _rhs.shadeMode;
 //    vertexColors                      = _rhs.vertexColors;
 //    vertexTemplateFile                = _rhs.vertexTemplateFile;
 //    geometryTemplateFile              = _rhs.geometryTemplateFile;
 //    fragmentTemplateFile              = _rhs.fragmentTemplateFile;
-//
+// 
+//    textureTypes_ = _rhs.textureTypes_;
+// 
 //    return *this;
 //  }
 
+  // glsl version, i.e. 130, 150, 330 etc.
+  // Versions before 130 are not supported (deprecated "varying", "ftransform".. stuff)
+  // Specification of each version available on http://www.opengl.org/registry/
+  // default: 150 (OpenGL 3.2, supports geometry shaders, msaa samplers, gl_PrimitiveID )
+  int version;
 
   int numLights;
   ShaderGenLightType lightTypes[SG_MAX_SHADER_LIGHTS];
@@ -377,6 +387,10 @@ public:
   ShaderGenerator();
   virtual ~ShaderGenerator();
 
+  /** \brief Set glsl version
+  */
+  void setGLSLVersion(int _version);
+
   /** \brief Imports another shader, same as \#include
   */
   void addIncludeFile(QString _fileName);
@@ -460,6 +474,21 @@ public:
   */
   void saveToFile(const char* _fileName);
 
+
+  /** \brief Perform name matching of outputs and inputs between two shader stages.
+   *
+   * IO of this shader (for instance fragment-shader) and its previous shader (for instance vertex shader) require matching names.
+   * Example: The vertex shader has an output "out vec3 outVertexNormal", 
+   *          then this function simply adds the input "in vec3 outVertexNormal" to the current shader (either a geometry or fragment shader).
+   *          If this is a geometry shader, _passToNextStage should be set to true so that "out vec3 outGeometryNormal" is also added to the outputs.
+   *
+   * @param _previousShaderStage shader of the previous stage, which should have all outputs setup already
+   * @param _passToNextStage all outputs of the previous shader stage are passed to the next stage (should be false for fragment shader for instance)
+   * @param _inputPrefix name prefix of inputs to this shader (only necessary if _passToNextStage is true)
+   * @param _outputPrefix name prefix of outputs of this shader (only necessary if _passToNextStage is true)
+  */
+  void matchInputs(ShaderGenerator& _previousShaderStage, bool _passToNextStage, QString _inputPrefix = "outVertex", QString _outputPrefix = "outGeometry");
+
 private:
 
   /** aborts, if string already present
@@ -479,7 +508,7 @@ private:
   /// glsl code imports (with \#include )
   QStringList imports_;
 
-  QString version_;
+  int version_;
 
   QStringList inputs_;
   QStringList outputs_;
@@ -494,7 +523,7 @@ private:
  * A shader modifier can modify uniforms, in/outputs
  * and glsl code of vertex and fragment shaders.
  * This is useful for global effects like shadow mapping
- * and depth peeling, where only a little changes in code are necessary.
+ * and depth peeling, where only little changes in code are necessary.
  *
  * Usage:
  *  -# Derive a new subclass of ShaderModifier and implement necessary modify functions.

@@ -113,7 +113,7 @@ struct ACGDLLEXPORT RenderObject
 
   /** \brief Priority to allow sorting of objects
    *
-   * The renderer sorts objects based on priority from high to low before rendering.
+   * The renderer sorts objects based on priority in ascending order before rendering.
    *
    * \note negative values allowed
    */
@@ -222,6 +222,28 @@ struct ACGDLLEXPORT RenderObject
 
   float alpha,
         shininess;
+
+
+  /** \brief Specify whether this object should be rendered in a z-prepass
+   *
+   * The renderer might do a z-prepass for some rendering techniques.
+   * You can control whether an object should be taken into account for a z-prepass or not.
+   * For instance, scene objects should be rendered in the z-prepass, but overlays (coordsys, selection stuff..) should not.
+   *
+   * default: true
+   */
+  bool inZPrePass;
+
+  /** \brief Uniform name of the depth map in the used shader
+   *
+   * If a shader used by this object requires a depth map of the scene, you can specify the name of the texture sampler uniform used here.
+   * This depth map is automatically computed in a z-prepass of the scene later in the renderer and assigned to the shader.
+   * It will be a 2D texture storing the values of the depth buffer (gl_FragCoord.z) in GL_TEXTURE_2D, GL_R32F format.
+   * Should be set to 0 if the used shader does not require a depth map.
+   *
+   * default: 0
+   */
+  const char* depthMapUniformName;
 
 
   /** \brief Texture to be used

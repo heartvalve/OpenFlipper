@@ -488,6 +488,35 @@ public:
   */
   int* getIndexBuffer() const {return indices_;}
 
+  /** \brief Get index buffer with adjacency information ready for rendering.
+   *
+   * This index buffer can be used to render in GL_TRIANGLES_ADJACENCY mode.
+   * It contains the opposite vertex id of adjacent triangles for each edge of the triangle.
+   * Each triangle requires 6 indices:
+   *  0 - first vertex of triangle
+   *  1 - opposite vertex to first edge of adjacent triangle
+   *  2 - second vertex of triangle
+   *  3 - opposite vertex to second edge of adjacent triangle
+   *  4 - third vertex of triangle
+   *  5 - opposite vertex to third edge of adjacent triangle
+   *
+   *  5___4___3
+   *  \  /\  /
+   *   \/__\/
+   *   0\  /2
+   *     \/
+   *      1
+   *
+   *
+   * TODO:
+   *  - check correctness of internal adjacency computation
+   *  - add option to let user provide edge-triangle adjaceny list (should be fast and easy with openmesh)
+   *
+   * @param _dst [out] Pointer to memory address where the 32bit index buffer should be copied to. Must have size of at least 6 * numTris * 4 bytes
+   * @param _borderIndex index to use for border edges (missing adjacent triangles)
+  */
+  void getIndexAdjBuffer(void* _dst, const int _borderIndex = -1);
+
   /** Get number of triangles in final buffer.
   */
   int getNumTriangles() const {return numTris_;}

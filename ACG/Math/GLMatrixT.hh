@@ -255,6 +255,20 @@ public:
 
 
 
+  /// extract near and far clipping planes from a perspective projection matrix
+  VectorT<Scalar, 2> extract_planes_perspective() const;
+
+  /// extract near and far clipping planes from an orthographic projection matrix
+  VectorT<Scalar, 2> extract_planes_ortho() const;
+
+  /// check if the matrix is a perspective projection matrix
+  bool isPerspective() const;
+
+  /// check if the matrix is an orthographic projection matrix
+  bool isOrtho() const;
+
+  /// detect type of projection matrix and extract near and far clipping planes
+  VectorT<Scalar, 2> extract_planes() const;
 
   //----------------------------------------------------- overloaded operators 
 
