@@ -1968,13 +1968,17 @@ void GLState::drawBuffers(GLsizei _n, const GLenum* _bufs)
 /// get current framebuffer of a target
 GLuint GLState::getFramebufferDraw()
 {
-  return stateStack_.back().framebuffers_[0];
+  GLint curfbo;
+  glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (GLint*)&curfbo);
+  return curfbo;
 }
 
 /// get current framebuffer of a target
 GLuint GLState::getFramebufferRead()
 {
-  return stateStack_.back().framebuffers_[1];
+  GLint curfbo;
+  glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, (GLint*)&curfbo);
+  return curfbo;
 }
 
 void GLState::bindFramebuffer(GLenum _target, GLuint _framebuffer)

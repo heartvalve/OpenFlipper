@@ -65,7 +65,8 @@ ShaderModifier* ShaderProgGenerator::modifiers_[32] = {0};
 
 ShaderGenerator::ShaderGenerator()
 {
-  version_ = "#version 150"; 
+//  version_ = "#version 150"; 
+  version_ = 150;
 }
 
 ShaderGenerator::~ShaderGenerator()
@@ -343,7 +344,10 @@ void ShaderGenerator::addIOToCode(const QStringList& _cmds)
 
 void ShaderGenerator::buildShaderCode(QStringList* _pMainCode)
 {
-  code_.push_back(version_);
+  QString glslversion;
+  glslversion.sprintf("#version %d", version_);
+
+  code_.push_back(glslversion);
 
   // provide defines
   QString it;
@@ -422,6 +426,42 @@ const QStringList& ShaderGenerator::getShaderCode()
   return code_;
 }
 
+void ShaderGenerator::setGLSLVersion( int _version )
+{
+  version_ = _version;
+}
+
+void ShaderGenerator::matchInputs(ShaderGenerator& _previousShaderStage,
+  bool _passToNextStage,
+  QString _inputPrefix, 
+  QString _outputPrefix)
+{
+  QString it;
+  foreach(it, _previousShaderStage.outputs_)
+  {
+    QString input = it;
+
+    QString outKeyword = "out ";
+    QString inKeyword = "in  ";
+
+    // replace first occurrence of "out" with "in"
+    input.replace(input.indexOf(outKeyword), outKeyword.size(), inKeyword);
+
+    // add to input list with duplicate check
+    addStringToList(input, &inputs_);
+
+    if (_passToNextStage)
+    {
+      // replace prefixes of in/outputs to avoid name collision
+
+      QString output = input;
+      output.replace(output.indexOf(_inputPrefix), _inputPrefix.size(), _outputPrefix);
+
+      // add to output list with duplicate check
+      addStringToList(output, &outputs_);
+    }
+  }
+}
 
 
 
@@ -552,7 +592,7 @@ void ShaderProgGenerator::buildVertexShader()
   delete vertex_;
 
   vertex_  = new ShaderGenerator();
-
+  vertex_->setGLSLVersion(desc_.version);
 
 //  vertex_->initDefaultVertexShaderIO();
   vertex_->initVertexShaderIO(&desc_);
@@ -743,6 +783,7 @@ void ShaderProgGenerator::buildGeometryShader()
   delete geometry_;
 
   geometry_  = new ShaderGenerator();
+  geometry_->setGLSLVersion(desc_.version);
 
   geometry_->initGeometryShaderIO(&desc_);
 
@@ -782,6 +823,8 @@ void ShaderProgGenerator::buildGeometryShader()
       mainCode.push_back("outGeometryPosVS  = outVertexPosVS[inIdx];");
     }
 
+    mainCode.push_back("gl_PrimitiveID = gl_PrimitiveIDIn;");
+
     mainCode.push_back("}");
   }
 
@@ -807,6 +850,7 @@ void ShaderProgGenerator::buildFragmentShader()
   delete fragment_;
 
   fragment_  = new ShaderGenerator();
+  fragment_->setGLSLVersion(desc_.version);
 
 
   fragment_->initFragmentShaderIO(&desc_);

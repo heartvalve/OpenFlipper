@@ -60,13 +60,14 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/ShaderCache.hh>
 #include <ACG/GL/ScreenQuad.hh>
+#include <ACG/GL/FBO.hh>
 
 
 namespace ACG
 {
 
 IRenderer::IRenderer()
-: numLights_(0), renderObjects_(0), prevFbo_(0), prevFboSaved_(false), depthCopyShader_(0)
+: numLights_(0), renderObjects_(0), depthMapUsed_(false), curViewerID_(0), prevFbo_(0), prevFboSaved_(false), depthCopyShader_(0)
 {
   prevViewport_[0] = 0;
   prevViewport_[1] = 0;
@@ -81,6 +82,10 @@ IRenderer::IRenderer()
 IRenderer::~IRenderer()
 {
   delete depthCopyShader_;
+
+  // free depth map fbos
+  for (std::map<int, ACG::FBO*>::iterator it = depthMaps_.begin(); it != depthMaps_.end(); ++it)
+    delete it->second;
 }
 
 void IRenderer::addRenderObject(ACG::RenderObject* _renderObject)
@@ -224,7 +229,6 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   if (renderObjects_.empty())
     return;
 
-
   // ==========================================================
   // Sort renderable objects based on their priority
   // ==========================================================
@@ -267,6 +271,20 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   GLfloat lightModelAmbient[4];
   glGetFloatv(GL_LIGHT_MODEL_AMBIENT, lightModelAmbient);
   globalLightModelAmbient_ = ACG::Vec3f(lightModelAmbient[0], lightModelAmbient[1], lightModelAmbient[2]);
+
+
+  // search list of render object for objects requiring the scene depth map
+  bool requiresSceneDepths = false;
+
+  for (size_t i = 0; i < numRenderObjects; ++i)
+  {
+    if (sortedObjects_[i]->depthMapUniformName)
+      requiresSceneDepths = true;
+  }
+
+  // render scene depth map
+  if (requiresSceneDepths)
+    renderDepthMap(curViewerID_, _glState->viewport_width(), _glState->viewport_height());
 }
 
 
@@ -283,7 +301,7 @@ void IRenderer::finishRenderingPipeline()
 
   // Renderer check:
   // Print a warning if the currently active fbo / viewport is not the same as the saved fbo.
-  // Restore previously to previous fbo and viewport if not done already.
+  // Restore to previous fbo and viewport if not done already.
 
   GLint curFbo;
   GLint curViewport[4];
@@ -414,7 +432,13 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
   if ( !_obj->uniformPool_.empty() )
     _obj->uniformPool_.bind(_prog);
 
-  // texture
+  // textures:
+
+  // maybe consider using bindless textures some time in the future
+  // to get rid of the old and problematic glActiveTexture(), glBindTexture() state machine usage:
+  // https://www.opengl.org/registry/specs/ARB/bindless_texture.txt
+
+  int maxTextureStage = 0;
   for (std::map<size_t,RenderObject::Texture>::const_iterator iter = _obj->textures().begin();
       iter != _obj->textures().end();++iter)
   {
@@ -427,6 +451,20 @@ void IRenderer::bindObjectUniforms( ACG::RenderObject* _obj, GLSL::Program* _pro
     glActiveTexture(GL_TEXTURE0 + (GLenum)texture_stage);
     glBindTexture(iter->second.type, tex.id);
     _prog->setUniform(QString("g_Texture%1").arg(texture_stage).toStdString().c_str(), (int)texture_stage);
+
+    maxTextureStage = std::max(maxTextureStage, (int)texture_stage);
+  }
+
+
+  // scene depth texture
+  if (_obj->depthMapUniformName)
+  {
+    // bind to (hopefully) unused texture stage
+    int depthMapSlot = maxTextureStage + 1;
+
+    _prog->setUniform(_obj->depthMapUniformName, depthMapSlot);
+    glActiveTexture(GL_TEXTURE0 + depthMapSlot);
+    glBindTexture(GL_TEXTURE_2D, depthMaps_[curViewerID_]->getAttachment(GL_COLOR_ATTACHMENT0));
   }
 
 
@@ -795,6 +833,111 @@ void IRenderer::copyDepthToBackBuffer( GLuint _depthTex, float _scale /*= 1.0f*/
     glBindTexture(GL_TEXTURE_2D, 0);
   }
 }
+
+
+// depth map computation with a modifier
+
+IRenderer::DepthMapPass IRenderer::DepthMapPass::instance;
+
+void IRenderer::DepthMapPass::modifyFragmentEndCode(QStringList* _code)
+{
+  _code->push_back("outFragment = gl_FragCoord.zzzz;");
+}
+
+void IRenderer::renderDepthMap(int _viewerID, int _width, int _height)
+{
+  ACG::FBO* fbo = depthMaps_[_viewerID];
+
+  // setup fbo for depth map
+  if (!fbo)
+  {
+    fbo = depthMaps_[_viewerID] = new ACG::FBO();
+
+    fbo->bind();
+    fbo->attachTexture2D(GL_COLOR_ATTACHMENT0, _width, _height, GL_R32F, GL_RED);
+    fbo->addDepthBuffer(_width, _height);
+  }
+  else
+  {
+    fbo->bind();
+    fbo->resize(_width, _height);
+  }
+
+  // make sure modifier is registered
+  ACG::ShaderProgGenerator::registerModifier(&DepthMapPass::instance);
+
+  /* note: 
+    It is possible to directly read the depth buffer if it was attached as a texture.
+    Then, we would disable the color write mask and just write to the depth buffer in this function.
+
+    However, doing this has shown that the actual depth values written to the depth buffer highly depend on the gpu driver.
+    Or, at least sampling from a texture with format GL_DEPTH_COMPONENT returns driver dependent values.
+    For instance, in the amd-gl driver sampling the depth texture returns the value of gl_FragDepth (as expected).
+    But in the nvidia driver, sampling directly from the depth buffer returns something different!
+
+    Therefore we render the value of gl_FragDepth to a custom floating-point texture bound to a color slot in order to get driver independent behavior.
+  */
+
+  fbo->bind();
+  glDrawBuffer(GL_COLOR_ATTACHMENT0);
+  glViewport(0, 0, _width, _height);
+
+  // set depth to max
+  glColorMask(1,1,1,1);
+  glDepthMask(1);
+
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // render z-prepass
+  for (int i = 0; i < getNumRenderObjects(); ++i)
+  {
+    RenderObject* obj = getRenderObject(i);
+
+    if (obj->inZPrePass)
+    {
+      // apply depth map modifier to get the depth pass shader
+      GLSL::Program* depthPassShader = ShaderCache::getInstance()->getProgram(&obj->shaderDesc, DepthMapPass::instance);
+
+      // temporarily prevent read/write access to the same texture (the depth map)
+      const char* depthMapUniformName = obj->depthMapUniformName;
+      obj->depthMapUniformName = 0;
+
+      if (depthMapUniformName)
+      {
+        depthPassShader->use();
+        depthPassShader->setUniform(depthMapUniformName, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }
+
+      // we are interested in the depth value only, so temporarily modify the write mask to allow writing to the red channel
+      // (for instance, an object might not write a color value, but a depth value)
+      const GLboolean redWriteMask = obj->colorWriteMask[0];
+      obj->colorWriteMask[0] = obj->depthWrite;
+
+      renderObject(obj, depthPassShader);
+
+      // reset modified render object states
+      obj->depthMapUniformName = depthMapUniformName;
+      obj->colorWriteMask[0]= redWriteMask;
+    }
+  }
+
+  // restore input fbo state
+
+  fbo->unbind();
+
+  restoreInputFbo();
+}
+
+
+void IRenderer::setViewerID(int _viewerID)
+{
+  curViewerID_ = _viewerID;
+}
+
+
 
 
 } // namespace ACG end

@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+//#include <unordered_map> // requires c++0x
+#include <QHash>  // alternative to unordered_map
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 
@@ -2820,6 +2822,84 @@ void MeshCompiler::getVertexBuffer( void* _dst, const int _offset /*= 0*/, const
   {
     getVertex(i + _offset, bdst + decl_.getVertexStride() * i);
   }
+}
+
+struct MeshCompiler_EdgeTriMapKey
+{
+  int e0, e1;
+
+  MeshCompiler_EdgeTriMapKey(int a, int b)
+    : e0(std::min(a,b)), e1(std::max(a,b)) {}
+
+  bool operator ==(const MeshCompiler_EdgeTriMapKey& k) const
+  {
+    return e0 == k.e0 && e1 == k.e1;
+  }
+};
+
+/* // requires c++0x
+struct MeshCompiler_EdgeTriMapKey_Hash
+{
+  std::size_t operator()(const MeshCompiler_EdgeTriMapKey& k) const
+  {
+    return ((std::hash<int>()(k.e0) << 1) ^ std::hash<int>()(k.e1)) >> 1;
+  }
+};
+*/
+
+uint MeshCompiler_EdgeTriMapKey_Hash(const MeshCompiler_EdgeTriMapKey& k)
+{
+  return ((qHash(k.e0) << 1) ^ qHash(k.e1)) >> 1;
+}
+
+
+void MeshCompiler::getIndexAdjBuffer(void* _dst, const int _borderIndex /* = -1 */)
+{
+  return; // not implemented with QHash;
+/*
+  int* idst = (int*)_dst;
+
+  for (int i = 0; i < getNumTriangles(); ++i)
+  {
+    // initialize all triangles
+    idst[i*6] = getIndex(i*3);
+    idst[i*6+2] = getIndex(i*3+1);
+    idst[i*6+4] = getIndex(i*3+2);
+    
+    idst[i*6+1] = _borderIndex;
+    idst[i*6+3] = _borderIndex;
+    idst[i*6+5] = _borderIndex;
+  }
+
+  // adjacency mapping: edge -> triangle
+  //  edge e0-e1 key: (min(e0,e1), max(e0,e1))
+  std::unordered_map<MeshCompiler_EdgeTriMapKey, int, MeshCompiler_EdgeTriMapKey_Hash> edgeTriAdjMap;
+
+  // count number of edges
+  for (int i = 0; i < getNumTriangles(); ++i)
+  {
+    int* tri = idst + i*6;
+
+    // edges: 01, 12, 20
+    for (int e = 0; e < 3; ++e)
+    {
+      MeshCompiler_EdgeTriMapKey edge( getIndex(i*3 + e), getIndex(i*3 + (e%3)) );
+
+      std::unordered_map<MeshCompiler_EdgeTriMapKey, int, MeshCompiler_EdgeTriMapKey_Hash>::iterator it = edgeTriAdjMap.find(edge);
+
+      if (it != edgeTriAdjMap.end())
+      {
+        // found pair of adjacent triangles for edges:
+        //  this triangle: i
+        //  adjacent triangle: it->second
+
+        tri[2*e + 1] = it->second;
+      }
+      else
+        edgeTriAdjMap[edge] = i; // adjacent triangle not found -> insert reference to current tri
+    }
+  }
+*/
 }
 
 int MeshCompiler::mapToOriginalFaceID( const int _i ) const

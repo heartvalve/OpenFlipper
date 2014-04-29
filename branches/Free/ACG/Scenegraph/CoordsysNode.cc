@@ -448,7 +448,7 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
 
   ro.depthTest = true;
   ro.depthWrite = true;
-
+  ro.inZPrePass = false;
 
   if ( mode_ == SCREENPOS ) {
 
