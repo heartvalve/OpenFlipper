@@ -192,6 +192,24 @@ namespace GLSL {
   GeometryShader::~GeometryShader() {}
 
   //--------------------------------------------------------------------------
+  // Tessellation-Control shader
+  //--------------------------------------------------------------------------
+
+#ifdef GL_ARB_tessellation_shader
+
+  TessControlShader::TessControlShader() : Shader(GL_TESS_CONTROL_SHADER) {}
+  TessControlShader::~TessControlShader() {}
+
+  //--------------------------------------------------------------------------
+  // Tessellation-Evaluation shader
+  //--------------------------------------------------------------------------
+
+  TessEvaluationShader::TessEvaluationShader() : Shader(GL_TESS_EVALUATION_SHADER) {}
+  TessEvaluationShader::~TessEvaluationShader() {}
+
+#endif // GL_ARB_tessellation_shader
+
+  //--------------------------------------------------------------------------
   // Shader program object
   //--------------------------------------------------------------------------
 
@@ -668,45 +686,98 @@ namespace GLSL {
   }
 
 
-  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile){
+  /** \brief Loads, compiles and installs a new tessellation control shader.
+  */
+  GLSL::PtrShader loadTessControlShader(const char *name) {
+    GLSL::PtrShader shader = 0;
+#ifdef GL_ARB_tessellation_shader
+    StringList src = loadShader(name);
 
-    GLSL::Program* result = 0;
-
-    const char* ShaderFiles[2] = {vertexShaderFile, fragmentShaderFile};
-
-    GLSL::Shader* tempShaders[2] = {0};
-
-    for (int i = 0; i < 2; ++i)
-    {
-      QString shaderFile = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(ShaderFiles[i]);
-
-      if (i == 0) // vertex shader
-        tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
-      else // fragment shader
-        tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
-
-      if (!tempShaders[i]) {
-        std::cerr << ShaderFiles[i] << " could not be loaded and compiled" << std::endl;
-        return 0;
-      }
+    if (!src.empty()) {
+      shader = GLSL::PtrTessControlShader(new GLSL::PtrTessControlShader());
+      shader->setSource(src);
+      shader->compile();
     }
-
-    // create program
-
-    result = new GLSL::Program();
-    result->attach(tempShaders[0]);
-    result->attach(tempShaders[1]);
-    result->link();
-
-    for (int i = 0; i < 2; ++i)
-      delete tempShaders[i];
-
-    ACG::glCheckErrors();
-
-
-    return result;
+#endif // GL_ARB_tessellation_shader
+    return shader;
   }
 
+  /** \brief Loads, compiles and installs a new tessellation evaluation shader.
+  */
+  GLSL::PtrShader loadTessEvaluationShader(const char *name) {
+    GLSL::PtrShader shader = 0;
+#ifdef GL_ARB_tessellation_shader
+    StringList src = loadShader(name);
+
+    if (!src.empty()) {
+      shader = GLSL::PtrTessEvaluationShader(new GLSL::PtrTessEvaluationShader());
+      shader->setSource(src);
+      shader->compile();
+    }
+#endif // GL_ARB_tessellation_shader
+    return shader;
+  }
+
+
+
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile,
+    const char *tessControlShaderFile,
+    const char *tessEvaluationShaderFile,
+    const char *geometryShaderFile,
+    const char *fragmentShaderFile){
+
+      GLSL::Program* result = 0;
+
+      const int numShaders = 5;
+      const char* ShaderFiles[numShaders] = {vertexShaderFile, tessControlShaderFile, tessEvaluationShaderFile, geometryShaderFile, fragmentShaderFile};
+      GLSL::Shader* tempShaders[numShaders] = {0};
+
+      for (int i = 0; i < numShaders; ++i) {
+        QString shaderFile = ACG::ShaderProgGenerator::getShaderDir() + QDir::separator() + QString(ShaderFiles[i]);
+
+        if (i == 0) // vertex shader
+          tempShaders[i] = GLSL::loadVertexShader(shaderFile.toUtf8());
+        else if (i == 1 && tessControlShaderFile) // tesscontrol shader
+          tempShaders[i] = GLSL::loadTessControlShader(shaderFile.toUtf8());
+        else if (i == 2 && tessEvaluationShaderFile) // tesseval shader
+          tempShaders[i] = GLSL::loadTessEvaluationShader(shaderFile.toUtf8());
+        else if (i == 3 && geometryShaderFile) // geometry shader
+          tempShaders[i] = GLSL::loadGeometryShader(shaderFile.toUtf8());
+        else if (i == 4) // fragment shader
+          tempShaders[i] = GLSL::loadFragmentShader(shaderFile.toUtf8());
+
+        if (!tempShaders[i] && ShaderFiles[i]) {
+          std::cerr << ShaderFiles[i] << " could not be loaded and compiled" << std::endl;
+          return 0;
+        }
+      }
+
+      // create program
+
+      result = new GLSL::Program();
+      for (int i = 0; i < numShaders; ++i)
+        if (tempShaders[i])
+          result->attach(tempShaders[i]);
+      result->link();
+
+      for (int i = 0; i < numShaders; ++i)
+        delete tempShaders[i];
+
+      ACG::glCheckErrors();
+
+
+      return result;
+  }
+
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *geometryShaderFile, const char *fragmentShaderFile){
+
+    return loadProgram(vertexShaderFile, 0, 0, geometryShaderFile, fragmentShaderFile);
+  }
+
+
+  GLSL::PtrProgram loadProgram(const char *vertexShaderFile, const char *fragmentShaderFile){
+    return loadProgram(vertexShaderFile, 0, fragmentShaderFile);
+  }
 }
 
 
