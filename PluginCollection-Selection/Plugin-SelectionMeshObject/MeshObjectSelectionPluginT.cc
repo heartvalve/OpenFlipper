@@ -259,153 +259,115 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
                                                      PrimitiveType         _primitiveType,
                                                      bool                  _deselection) {
 
-    float sqr_radius = _radius * _radius;
-    typename MeshT::FaceHandle hitface = _mesh->face_handle(_target_idx);
 
-    if(!hitface.is_valid())
-        return;
-    
-    // initialize everything
+  const float sqr_radius = _radius * _radius;
 
-    if(_primitiveType & vertexType_) {
-        //reset tagged status
-        typename MeshT::VertexIter v_it, v_end(_mesh->vertices_end());
-        for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            _mesh->status(*v_it).set_tagged(false);
+  // select or deselect primitives
+  const bool sel = !_deselection;
+
+  std::set< typename MeshT::FaceHandle > visited;
+
+  typename MeshT::FaceHandle hitface = _mesh->face_handle(_target_idx);
+
+  if(!hitface.is_valid())
+    return;
+
+  visited.insert(hitface);
+
+
+  std::vector<typename MeshT::FaceHandle>   face_handles;
+  face_handles.reserve(50);
+  face_handles.push_back(hitface);
+
+
+  // find primitives to be selected
+  while(!face_handles.empty()) {
+    typename MeshT::FaceHandle fh = face_handles.back();
+    visited.insert(fh);
+    face_handles.pop_back();
+
+
+    // Check how many points of the new face lie inside the sphere
+    unsigned int fVertices = 0;
+
+    // Test the halfedges of this face:
+    std::vector<typename MeshT::EdgeHandle> edge_handles;
+
+    for(typename MeshT::FaceHalfedgeIter fh_it(*_mesh,fh); fh_it.is_valid(); ++fh_it) {
+
+      const typename MeshT::VertexHandle vh = _mesh->from_vertex_handle(*fh_it);
+
+      if((_mesh->point(vh) - _hitpoint).sqrnorm() <= sqr_radius) {
+
+        // Select one vertex here, the other vertex will be selected on one of the other halfedges
+        if(_primitiveType & vertexType_)
+          _mesh->status(vh).set_selected(sel);
+
+
+        if((_mesh->point(_mesh->to_vertex_handle(*fh_it))-  _hitpoint).sqrnorm()<= sqr_radius)
+          edge_handles.push_back(_mesh->edge_handle(*fh_it));
+
+        fVertices++;
+      }
 
     }
 
-    if( (_primitiveType & edgeType_) || ( _primitiveType & halfedgeType_ )) {
-        //reset tagged status
-        typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
-        for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
-            _mesh->status(*e_it).set_tagged(false);
 
-    }
-
-    // reset tagged status
-    typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
-    for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-        _mesh->status(*f_it).set_tagged(false);
-
-    _mesh->status(hitface).set_tagged(true);
-
-    //add an additional property
-    OpenMesh::FPropHandleT<bool> checkedProp;
-    if(!_mesh->get_property_handle(checkedProp,"checkedProp"))
-        _mesh->add_property(checkedProp, "checkedProp");
-
-    for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-        _mesh->property(checkedProp, *f_it)= false;
+    if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_)) {
 
 
-    std::vector<typename MeshT::FaceHandle>   face_handles;
-    face_handles.reserve(50);
-    face_handles.push_back(hitface);
-
-
-    // find primitives to be selected
-
-    while(!face_handles.empty()) {
-        typename MeshT::FaceHandle fh = face_handles.back();
-        face_handles.pop_back();
-
-        for(typename MeshT::FaceFaceIter ff_it(*_mesh,fh); ff_it.is_valid() ; ++ff_it) {
-
-            // Check if already tagged
-            if(_mesh->status(*ff_it).tagged()|| _mesh->property(checkedProp, *ff_it))
-                continue;
-
-            // Check which points of the new face lie inside the sphere
-            uint fVertices = 0;
-
-            std::vector<typename MeshT::VertexHandle>   vertex_handles;
-            std::vector<typename MeshT::EdgeHandle>     edge_handles;
-
-            for(typename MeshT::FaceHalfedgeIter fh_it(*_mesh,*ff_it); fh_it.is_valid(); ++fh_it) {
-
-                typename MeshT::VertexHandle vh = _mesh->from_vertex_handle(*fh_it);
-
-                if((_mesh->point(vh)- _hitpoint).sqrnorm()<= sqr_radius) {
-                    vertex_handles.push_back(vh);
-
-                    if((_mesh->point(_mesh->to_vertex_handle(*fh_it))-  _hitpoint).sqrnorm()<= sqr_radius)
-                        edge_handles.push_back(_mesh->edge_handle(*fh_it));
-
-                }
-
-                fVertices++;
-            }
-
-            //check what has to be tagged
-            bool tagged = false;
-
-            if(_primitiveType & vertexType_) {
-                for(uint i=0; i <vertex_handles.size(); i++)
-                    _mesh->status(vertex_handles[i]).set_tagged(true);
-
-                if( ! vertex_handles.empty() )
-                  tagged = true;
-            }
-            if( (_primitiveType & edgeType_) || (_primitiveType & halfedgeType_)) {
-                for(uint i=0; i <edge_handles.size(); i++)
-                    _mesh->status(edge_handles[i]).set_tagged(true);
-
-                if( !edge_handles.empty() )
-                  tagged = true;
-            }
-            if(_primitiveType & faceType_) {
-                if(vertex_handles.size()== fVertices) {
-
-                    _mesh->status(*ff_it).set_tagged(true);
-                    tagged = true;
-                }
-            }
-
-            //if something was tagged also check the 1-ring
-            if(tagged) {
-                _mesh->property(checkedProp, *ff_it)= true;
-                face_handles.push_back(*ff_it);
-            }
+      for( size_t i=0; i < edge_handles.size(); i++) {
+        if  (_primitiveType & halfedgeType_) {
+          _mesh->status( _mesh->halfedge_handle(edge_handles[i],0) ).set_selected(sel) ;
+          _mesh->status( _mesh->halfedge_handle(edge_handles[i],1) ).set_selected(sel) ;
         }
+
+        if (_primitiveType & edgeType_)
+          _mesh->status(edge_handles[i]).set_selected(sel);
+      }
+
     }
 
-    // select all tagged primitives
-    bool sel = !_deselection;
-
-    if(_primitiveType & vertexType_) {
-        typename MeshT::VertexIter v_it, v_end(_mesh->vertices_end());
-        for(v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
-            if(_mesh->status(*v_it).tagged())
-                _mesh->status(*v_it).set_selected(sel);
-        emit updatedObject(_objectId, UPDATE_SELECTION_VERTICES);
-    }
-    if(_primitiveType & edgeType_) {
-        typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
-
-        for(e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
-            if(_mesh->status(*e_it).tagged())
-                _mesh->status(*e_it).set_selected(sel);
-        emit updatedObject(_objectId, UPDATE_SELECTION_EDGES);
-    }
-    if(_primitiveType & halfedgeType_) {
-        typename MeshT::HalfedgeIter he_it, he_end(_mesh->halfedges_end());
-
-        for(he_it=_mesh->halfedges_begin(); he_it!=he_end; ++he_it)
-            if(_mesh->status(_mesh->edge_handle(*he_it)).tagged())
-                _mesh->status(*he_it).set_selected(sel);
-        emit updatedObject(_objectId, UPDATE_SELECTION_HALFEDGES);
-    }
     if(_primitiveType & faceType_) {
-        typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
 
-        for(f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
-            if(_mesh->status(*f_it).tagged())
-                _mesh->status(*f_it).set_selected(sel);
-        emit updatedObject(_objectId, UPDATE_SELECTION_FACES);
+      // If all vertices of the face are inside the sphere, we can select the face as well
+      if( _mesh->valence(fh ) == fVertices) {
+        _mesh->status(fh).set_selected(sel);
+      }
     }
 
-    _mesh->remove_property(checkedProp);
+    //if something was tagged also check the 1-ring
+    if( fVertices > 0) {
+
+      // _mesh->property(checkedProp, *ff_it)= true;
+      for(typename MeshT::FaceFaceIter ff_it(*_mesh,fh); ff_it.is_valid(); ++ff_it) {
+        if ( visited.count(*ff_it) == 0 )
+          face_handles.push_back(*ff_it);
+      }
+
+    }
+
+  }
+
+  // Collect all updates into one update call
+  UpdateType update(UPDATE_NONE);
+
+  if(_primitiveType & vertexType_)
+    update |= UPDATE_SELECTION_VERTICES;
+
+
+  if(_primitiveType & edgeType_)
+    update |= UPDATE_SELECTION_EDGES;
+
+  if(_primitiveType & halfedgeType_)
+    update |= UPDATE_SELECTION_HALFEDGES;
+
+  if(_primitiveType & faceType_)
+    update |=  UPDATE_SELECTION_FACES;
+
+  // Run the update
+  emit updatedObject(_objectId, update);
+
 }
 
 //***********************************************************************************
