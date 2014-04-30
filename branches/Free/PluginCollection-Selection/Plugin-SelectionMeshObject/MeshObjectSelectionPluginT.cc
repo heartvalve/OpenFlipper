@@ -265,6 +265,7 @@ void MeshObjectSelectionPlugin::paintSphereSelection(MeshT*                _mesh
   // select or deselect primitives
   const bool sel = !_deselection;
 
+  // TODO:: replace with unordered set if c++11 is our standard
   std::set< typename MeshT::FaceHandle > visited;
 
   typename MeshT::FaceHandle hitface = _mesh->face_handle(_target_idx);
