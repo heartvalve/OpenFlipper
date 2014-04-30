@@ -94,6 +94,9 @@ class DLLEXPORT UpdateType {
  *
  */
 
+/// Empty update for empty initialization of update type
+const UpdateType UPDATE_NONE( UpdateTypeSet(0)  );
+
 /// Identifier for all updates
 const UpdateType UPDATE_ALL(              UpdateTypeSet(1)       );
 
