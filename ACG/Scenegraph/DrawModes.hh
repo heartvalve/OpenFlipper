@@ -478,6 +478,15 @@ namespace DrawModes {
        */
       bool checkConsistency() const;
 
+
+      /** \brief search for layer with specified primitive
+       *
+       * @param _type primitive type
+       * @return layer id if layer exists, -1 otherwise
+       */
+      int getLayerIndexByPrimitive(DrawModePrimitive _type) const;
+
+
     private:
       ModeFlagSet modeFlags_;
 
