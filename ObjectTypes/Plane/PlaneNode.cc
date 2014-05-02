@@ -367,6 +367,9 @@ void PlaneNode::updateVBO()
   // Upload to buffer
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, vboSize * sizeof(float), &vboData[0], GL_STATIC_DRAW_ARB);
 
+  // Unbind
+  ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+
   // VBO is updated for the new renderer
   vboNeedsUpdate_ = false;
 }
