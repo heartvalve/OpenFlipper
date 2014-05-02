@@ -220,6 +220,7 @@ private:
 
   /// buffer of vertex coordinates and texture coordinates of the quads
   std::vector<GLfloat> vertexBuffer_;
+  size_t oldVboSize_;
 
   /// stores if GL_BLEND was enabled on entering TextNode
   bool blendEnabled_;
