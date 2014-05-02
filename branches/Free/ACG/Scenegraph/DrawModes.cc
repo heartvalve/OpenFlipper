@@ -552,6 +552,16 @@ bool DrawMode::removeLayer( unsigned int _i )
   return false;
 }
 
+bool DrawMode::removeLayer( const DrawModeProperties* _prop )
+{
+  int layerId = getLayerIndex(_prop);
+
+  if (layerId >= 0)
+    return removeLayer((unsigned int)layerId);
+
+  return false;
+}
+
 const DrawModeProperties* DrawMode::getDrawModeProperties() const
 {
   return getLayer(0);
@@ -611,6 +621,15 @@ int DrawMode::getLayerIndex( const DrawModeProperties* _prop ) const
   return -1;
 }
 
+int DrawMode::getLayerIndexByPrimitive( DrawModePrimitive _type ) const
+{
+  for (unsigned int i = 0; i < layers_.size(); ++i)
+  {
+    if ( layers_[i].primitive() == _type )
+      return (int)i;
+  }
+  return -1;
+}
 
 //----------------------------------------------------------------------------
 
