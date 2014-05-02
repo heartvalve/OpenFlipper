@@ -57,6 +57,7 @@
 #include <ACG/Utils/NumLimitsT.hh>
 #include <ACG/Utils/VSToolsT.hh>
 #include <cmath>
+#include <ACG/Math/GLMatrixT.hh>
 
 
 #ifdef max
@@ -168,6 +169,118 @@ triangleAreaSquared( const Vec& _v0,
 		     const Vec& _v2 )
 {
   return 0.25 * ((_v1-_v0)%(_v2-_v0)).sqrnorm();
+}
+
+//-----------------------------------------------------------------------------
+template<typename Scalar>
+bool edgeConvexPolygonIntersection(std::vector<VectorT<Scalar,3> > _polygon_points,
+                                   VectorT<Scalar,3> _v0,
+                                   VectorT<Scalar,3> _v1,
+                                   VectorT<Scalar,3> &_result)
+{
+  if(_polygon_points.size() < 3)
+  {
+    return false;
+  }
+
+  // compute center of gravity
+  VectorT<Scalar,3> cog(0.0);
+  for(size_t i = 0; i<_polygon_points.size(); i++)
+  {
+    cog += _polygon_points[i];
+  }
+  cog /= ((Scalar)_polygon_points.size());
+
+  //get face normal
+  VectorT<Scalar,3> n = ( _polygon_points[0] - cog )%(_polygon_points[1] - cog );
+
+  size_t c = 1;
+  while(!n[0] & !n[1] & !n[2])
+  {
+    n = ( _polygon_points[c] - cog )%(_polygon_points[(c+1)%_polygon_points.size()] - cog );
+    c++;
+    if(c == _polygon_points.size()+1)
+    {
+      std::cerr << "warning: no valid normal found \n";
+      return false;
+    }
+  }
+  n = n.normalize();
+
+  if(n.norm() <= 0.01)
+  {
+    std::cerr << "warning: no valid normal found normal"<< n<<" norm "<<n.norm()<< "  \n";
+  }
+
+  //compute rotation to xy plane
+  VectorT<Scalar,3> z(0.0, 0.0, 1.0);
+  VectorT<Scalar,3> axis(0.0, 0.0, 0.0);
+  Scalar angle = 0.0;
+  bool rotation = rotationOfTwoVectors(n, z, axis, angle, true);
+
+  GLMatrixT<Scalar> R;
+  R.identity();
+  if(angle != 0.0)
+  {
+    R.rotate(angle, axis);
+  }
+
+  //rotate all points to xy plane
+  std::vector<VectorT<Scalar,2> > rotated_points;
+  for(size_t i = 0; i<_polygon_points.size(); i++)
+  {
+    VectorT<Scalar,3> new_point_3 = _polygon_points[i] - cog;
+    VectorT<Scalar,4> new_point_4(new_point_3[0], new_point_3[1], new_point_3[2], 0);
+    new_point_4 = R*new_point_4;
+    rotated_points.push_back(VectorT<Scalar,2>(new_point_4[0], new_point_4[1]));
+  }
+
+  //compute ray plane intersection
+  Scalar d = n|cog;
+  if((n|(_v1 - _v0)) == 0.0)
+  {
+    //        if((n|_v0)-d <= 0.00000001)
+    //        {
+    //            std::cerr << __FUNCTION__ << " parallel to face "<< d<<"\n";
+    //            _result = _v0;
+    //            return true;
+    //        }
+    return false;
+  }
+
+  Scalar alpha = (d - (n|_v0))/(n|(_v1 - _v0));
+  _result = _v0 + alpha*(_v1 - _v0);
+
+  //returns false if not on edge _v0, _v1
+  if(alpha > 1.0 || alpha < 0.0)
+  {
+    return false;
+  }
+
+  VectorT<Scalar,4> rotated_result(_result[0] - cog[0], _result[1] - cog[1], _result[2] - cog[2], 0);
+  rotated_result = R*rotated_result;
+  //std::cerr <<" angle "<< angle <<" normal "<< n <<"result  "<<_result<<" alpha "<<alpha<< " rot res "<< rotated_result<<"in plane: "<<((_result|n) - d)<<"\n";
+  VectorT<Scalar,2> intersect(rotated_result[0], rotated_result[1]);
+
+  //compare normal direction to intersection
+  size_t points_count = rotated_points.size();
+  for(size_t i = 0; i<points_count; i++)
+  {
+    VectorT<Scalar,2> e = rotated_points[((i+1)%points_count)] - rotated_points[i];
+    VectorT<Scalar,2> n_e(e[1], -e[0]);
+    VectorT<Scalar,2> mid_e = 0.5 * (rotated_points[((i+1)%points_count)] + rotated_points[i]);
+    VectorT<Scalar,2> cmp0 =  - mid_e;
+    VectorT<Scalar,2> cmp1 = intersect - mid_e;
+    int sgn0 = ((n_e|cmp0) < 0 )? -1 : ((n_e|cmp0) > 0);
+    int sgn1 = ((n_e|cmp1) < 0 )? -1 : ((n_e|cmp1) > 0);
+
+    if(sgn1 != sgn0 && sgn1 != 0)
+    {
+      return false;
+    }
+  }
+  return true;
+
 }
 
 

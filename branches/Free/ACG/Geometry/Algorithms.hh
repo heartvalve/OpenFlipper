@@ -51,6 +51,7 @@
 
 #include <cfloat>
 #include <ACG/Math/VectorT.hh>
+#include <vector>
 
 
 namespace ACG {
@@ -94,6 +95,24 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
 {
   return sqrt(circumRadiusSquared(_v0, _v1, _v2, _v3));
 }
+
+/** \brief Get intersection point of a ray and a convex polygon
+ *
+ * Gets two vertices, _v0 and _v1, and a convex polygon defined by its vertices stored in _polygon_points
+ * Computes the intersection point of the ray defined by _v0 and _v1
+ * and stores it to _result
+ * Returns true if the intersection point lies inside the polygon
+ *
+ * @param _v0 The first vertex of a ray
+ * @param _v1 The second vertex if a ray
+ * @param _polygon_points vector of the points bounding the polygon
+ * @param _result contains the intersection point after the computation
+ */
+template<typename Scalar>
+bool edgeConvexPolygonIntersection(std::vector<VectorT<Scalar,3> > _polygon_points,
+                                   VectorT<Scalar,3> _v0,
+                                   VectorT<Scalar,3> _v1,
+                                   VectorT<Scalar,3> &_result);
 
 
 /** \brief Get rotation axis and signed angle of rotation between two vectors
