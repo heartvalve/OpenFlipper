@@ -96,6 +96,7 @@ TextNode( BaseNode*    _parent,
     textMode_(_textMode),
     vbo_(0),
     vertexBuffer_(0),
+    oldVboSize_(0),
     blendEnabled_(false),
     texture2dEnabled_(false),
     cullFaceEnabled_(false),
@@ -520,7 +521,21 @@ updateVBO() {
     glGenBuffers(1, &vbo_);
 
   ACG::GLState::bindBuffer(GL_ARRAY_BUFFER, vbo_);
-  glBufferData(GL_ARRAY_BUFFER, vertexBuffer_.size() * sizeof(GLfloat), &vertexBuffer_[0], GL_DYNAMIC_DRAW);
+
+  if (oldVboSize_ != vertexBuffer_.size())
+  {
+    glBufferDataARB( GL_ARRAY_BUFFER_ARB, vertexBuffer_.size() * sizeof(GLfloat), 0, GL_DYNAMIC_DRAW_ARB );
+    oldVboSize_ = vertexBuffer_.size();
+  }
+
+    // get pointer to VBO memory
+  GLfloat *data = reinterpret_cast<GLfloat*>(glMapBufferARB( GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB ));
+
+  std::copy(vertexBuffer_.begin(), vertexBuffer_.end(), data);
+
+  glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+
+  ACG::GLState::bindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 }
 
 
