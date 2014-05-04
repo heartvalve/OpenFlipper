@@ -8,7 +8,7 @@ if (GUROBI_INCLUDE_DIR)
   # in cache already
   set(GUROBI_FOUND TRUE)
   set(GUROBI_INCLUDE_DIRS "${GUROBI_INCLUDE_DIR}" )
-  set(GUROBI_LIBRARIES "${GUROBI_LIBRARY};${GUROBI_CXX_LIBRARY}" )
+  set(GUROBI_LIBRARIES "${GUROBI_CXX_LIBRARY};${GUROBI_LIBRARY}" )
 else (GUROBI_INCLUDE_DIR)
 
 find_path(GUROBI_INCLUDE_DIR 
@@ -46,7 +46,7 @@ find_library( GUROBI_CXX_LIBRARY
               )
 
 set(GUROBI_INCLUDE_DIRS "${GUROBI_INCLUDE_DIR}" )
-set(GUROBI_LIBRARIES "${GUROBI_LIBRARY};${GUROBI_CXX_LIBRARY}" )
+set(GUROBI_LIBRARIES "${GUROBI_CXX_LIBRARY};${GUROBI_LIBRARY}" )
 
 # use c++ headers as default
 # set(GUROBI_COMPILER_FLAGS "-DIL_STD" CACHE STRING "Gurobi Compiler Flags")
@@ -55,7 +55,7 @@ include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBCPLEX_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(GUROBI  DEFAULT_MSG
-                                  GUROBI_LIBRARY GUROBI_CXX_LIBRARY GUROBI_INCLUDE_DIR)
+                                  GUROBI_CXX_LIBRARY GUROBI_LIBRARY GUROBI_INCLUDE_DIR)
 
 mark_as_advanced(GUROBI_INCLUDE_DIR GUROBI_LIBRARY GUROBI_CXX_LIBRARY)
 
