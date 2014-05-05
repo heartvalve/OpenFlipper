@@ -195,7 +195,7 @@ bool edgeConvexPolygonIntersection(std::vector<VectorT<Scalar,3> > _polygon_poin
   VectorT<Scalar,3> n = ( _polygon_points[0] - cog )%(_polygon_points[1] - cog );
 
   size_t c = 1;
-  while(!n[0] & !n[1] & !n[2])
+  while((std::fabs(n[0])<1e-30) & (std::fabs(n[1])<1e-30) & (std::fabs(n[2])<1e-30))
   {
     n = ( _polygon_points[c] - cog )%(_polygon_points[(c+1)%_polygon_points.size()] - cog );
     c++;
@@ -220,7 +220,9 @@ bool edgeConvexPolygonIntersection(std::vector<VectorT<Scalar,3> > _polygon_poin
 
   GLMatrixT<Scalar> R;
   R.identity();
-  if(angle != 0.0)
+
+  //set to 0.0 if isnan in rotation function or if not set at all
+  if((angle != 0.0) && rotation)
   {
     R.rotate(angle, axis);
   }
