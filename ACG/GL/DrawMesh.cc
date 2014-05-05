@@ -1698,6 +1698,9 @@ void ACG::DrawMeshT<Mesh>::drawPickingEdges_opt( const GLMatrixf& _mvp, int _pic
   -> no additional memory allocation
   */
 
+  if (!numTris_)
+    return;
+
   // test support by loading and compiling picking shader
   if (!supportsPickingEdges_opt())
     return;
@@ -1846,6 +1849,9 @@ void ACG::DrawMeshT<Mesh>::drawPickingFaces_opt( const GLMatrixf& _mvp, int _pic
 
   keep old approach to stay compatible on systems which do not support texture buffers or integer arithmetic in shaders
   */
+
+  if (!numTris_)
+    return;
 
   // test support by loading and compiling picking shader
   if (!supportsPickingFaces_opt())
