@@ -177,6 +177,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
             }
 
             obj->setFromFileName(_filename);
+            obj->setName(obj->filename());
 
             // Compute face normals
             emit updatedObject(obj->id(), UPDATE_ALL);
@@ -209,6 +210,7 @@ int FileOpenVolumeMeshPlugin::loadObject(QString _filename) {
                 }
             }
             obj->setFromFileName(_filename);
+            obj->setName(obj->filename());
 
             // Compute face normals
             emit updatedObject(obj->id(), UPDATE_ALL);
