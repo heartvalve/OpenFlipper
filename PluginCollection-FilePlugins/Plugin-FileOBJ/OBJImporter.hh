@@ -316,7 +316,7 @@ class OBJImporter
 
     // Store vertices of invalid faces due to non-manifold
     // configurations.
-    std::vector< OMVHandles > invalidFaces_;
+    std::vector< std::vector< OMVHandles > > invalidFaces_;
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
     /// maps each counted curve to a group id
