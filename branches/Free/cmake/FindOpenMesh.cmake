@@ -7,7 +7,7 @@
 # OPENMESH_LIBRARIES       - Link these to use OPENMESH
 # OPENMESH_LIBRARY_DIR     - directory where the libraries are included
 #
-# Copyright 2013 Computer Graphics Group, RWTH Aachen University
+# Copyright 2014 Computer Graphics Group, RWTH Aachen University
 # Authors: Jan Möbius <moebius@cs.rwth-aachen.de>
 #          Hans-Christian Ebke <ebke@cs.rwth-aachen.de>
 #
