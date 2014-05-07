@@ -382,7 +382,7 @@ bool OBJImporter::addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH
     //remember all new faces
     if(!fh.is_valid()) {
       // Store non-manifold face
-      invalidFaces_.push_back(_outTriVertices);
+      invalidFaces_[currentGroup_].push_back(_outTriVertices);
 
     } else {
       // Store recently added face
@@ -436,7 +436,7 @@ bool OBJImporter::addFace(const VHandles& _indices, OpenMesh::FaceHandle &_outFH
 
     if(!fh.is_valid()) {
       // Store non-manifold face
-      invalidFaces_.push_back(_outPolyVertices);
+      invalidFaces_[currentGroup_].push_back(_outPolyVertices);
     } else {
       addedFacePoly_ = fh;
 
@@ -856,6 +856,7 @@ int OBJImporter::addGroup(const QString& _groupName) {
         groupNames_.push_back(group);
         vertexMapTri_.push_back(std::map<int,TriMesh::VertexHandle>());
         vertexMapPoly_.push_back(std::map<int,TriMesh::VertexHandle>());
+        invalidFaces_.push_back(std::vector< OMVHandles >());
         addedFacesTri_.push_back(std::vector< TriMesh::FaceHandle>());
 
         triMeshes_.push_back(NULL);
@@ -920,15 +921,15 @@ void OBJImporter::finish() {
 
 	// Duplicate vertices of non-manifold faces
 	// and add them as new isolated face
-	if(invalidFaces_.empty()) return;
+	if(invalidFaces_[currentGroup_].empty()) return;
 
 	if (isTriangleMesh(currentObject())) {
 
 		// Handle triangle meshes
 		if ( !currentTriMesh() ) return;
 
-		for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
-				it != invalidFaces_.end(); ++it) {
+		for(std::vector<OMVHandles>::iterator it = invalidFaces_[currentGroup_].begin();
+				it != invalidFaces_[currentGroup_].end(); ++it) {
 
 			OMVHandles& vhandles = *it;
 
@@ -967,8 +968,8 @@ void OBJImporter::finish() {
 		// Handle Polymeshes
 		if ( !currentPolyMesh() ) return;
 
-		for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
-				it != invalidFaces_.end(); ++it) {
+		for(std::vector<OMVHandles>::iterator it = invalidFaces_[currentGroup_].begin();
+				it != invalidFaces_[currentGroup_].end(); ++it) {
 
 			OMVHandles& vhandles = *it;
 
@@ -1004,7 +1005,7 @@ void OBJImporter::finish() {
 	}
 
 	// Clear faces
-	invalidFaces_.clear();
+	invalidFaces_[currentGroup_].clear();
 }
 
 //-----------------------------------------------------------------------------
