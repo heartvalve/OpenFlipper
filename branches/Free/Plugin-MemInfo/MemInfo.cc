@@ -69,6 +69,10 @@
 //};
 #endif
 
+#if PROCPS_ENABLED
+#include "procps/sysinfo.h"
+#endif
+
 #define GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX   0x9048
 #define GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX 0x9049
 
@@ -177,7 +181,11 @@ void MemInfoPlugin::cpuMemoryInfoUpdate() {
       freeRamMB  = ms.ullAvailPhys/1024/1024;
 
     #elif defined ARCH_DARWIN // Apple
-
+    #elif PROCPS_ENABLED
+      meminfo();
+      totalRamMB = kb_main_total / 1024;
+      freeRamMB = kb_main_free / 1024;
+      bufferRamMB = (kb_main_buffers + kb_main_cached) / 1024;
     #else // Linux
 
       struct sysinfo sys_info;
