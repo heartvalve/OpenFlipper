@@ -15,7 +15,9 @@ ENDIF (COMISO_INCLUDE_DIR)
 
 # Find CoMISo config file
 FIND_PATH( COMISO_INCLUDE_DIR CoMISo/Config/config.hh
-           PATHS "${CMAKE_SOURCE_DIR}/libs/" "${CMAKE_SOURCE_DIR}/../" )
+           PATHS "${CMAKE_SOURCE_DIR}"
+                 "${CMAKE_SOURCE_DIR}/libs/" 
+                 "${CMAKE_SOURCE_DIR}/../" )
 
 if ( COMISO_INCLUDE_DIR )
 
