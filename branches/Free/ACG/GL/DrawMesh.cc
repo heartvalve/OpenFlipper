@@ -123,7 +123,6 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    textureMode_(1), bVBOinHalfedgeTexMode_(1),
    halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
    invVertexMap_(0),
-   verticesTmp_(0),
    textureIndexPropertyName_("Not Set"),
    perFaceTextureCoordinatePropertyName_("Not Set"),
    updatePerEdgeBuffers_(1),
@@ -368,11 +367,9 @@ DrawMeshT<Mesh>::rebuild()
     {
       delete [] invVertexMap_; invVertexMap_ = 0;
       delete [] vertices_; vertices_ = 0;
-      delete [] verticesTmp_; verticesTmp_ = 0;
 
       numVerts_ = mesh_.n_vertices();
       vertices_ = new Vertex[numVerts_];
-      verticesTmp_ = new Vertex[numVerts_];
     }
     numVerts_ = mesh_.n_vertices();
 
@@ -734,39 +731,67 @@ DrawMeshT<Mesh>::createVBO()
 
   ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
 
-  if (!flatMode_ && textureMode_)
+  // toggle between normal source and texcoord source
+  // (per vertex, per halfedge, per face)
+
+  if (flatMode_ && meshComp_)
   {
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
-    bVBOinFlatMode_ = 0;
+    for (unsigned int i = 0; i < numTris_; ++i)
+    {
+      int faceId = meshComp_->mapToOriginalFaceID(i);
+
+      // get face normal
+      ACG::Vec3d n = mesh_.normal(mesh_.face_handle(faceId));
+
+      // store face normal in last tri vertex
+      for (unsigned int k = 0; k < 3; ++k)
+      {
+        int idx = meshComp_->getIndex(i*3 + 2);
+        vertices_[idx].n[k] = n[k];
+      }
+    }
+    bVBOinFlatMode_ = 1;
   }
   else
   {
-    // use per face normals
-
-    delete [] verticesTmp_;
-    verticesTmp_ = new Vertex[numVerts_];
-
-    memcpy(verticesTmp_, vertices_, sizeof(Vertex) * numVerts_);
-
-    if (flatMode_)
+    for (unsigned int i = 0; i < numVerts_; ++i)
     {
-      for (unsigned int i = 0; i < numTris_; ++i)
+      typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
+
+      // get halfedge normal
+
+      if (hh.is_valid())
       {
-        int faceId = meshComp_->mapToOriginalFaceID(i);
+        ACG::Vec3d n;
+        if (halfedgeNormalMode_ == 1 && mesh_.has_halfedge_normals())
+          n = mesh_.normal( hh );
+        else
+          n = mesh_.normal( mesh_.to_vertex_handle(hh) );
 
-        // get face normal
-        ACG::Vec3d n = mesh_.normal(mesh_.face_handle(faceId));
-
-        // store face normal in last tri vertex
-        for (unsigned int k = 0; k < 3; ++k)
-        {
-          int idx = meshComp_->getIndex(i*3 + 2);
-          verticesTmp_[idx].n[k] = n[k];
-        }
+        for (int k = 0; k < 3; ++k)
+          vertices_[i].n[k] = n[k];
       }
-      bVBOinFlatMode_ = 1;
+      else
+      {
+        // isolated vertex
+        int posID = i;
+
+        int f_id, c_id;
+        if (meshComp_)
+          posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+
+        for (int k = 0; k < 3; ++k)
+          vertices_[i].tex[k] = mesh_.normal( mesh_.vertex_handle(posID) )[k];
+      }
     }
-    if (!textureMode_)
+
+    bVBOinFlatMode_ = 0;
+  }
+
+  if (textureMode_ == 0)
+  {
+    // per vertex texcoords
+    if (mesh_.has_vertex_texcoords2D())
     {
       for (unsigned int i = 0; i < numVerts_; ++i)
       {
@@ -776,24 +801,61 @@ DrawMeshT<Mesh>::createVBO()
         {
           // copy texcoord
           for (int k = 0; k < 2; ++k)
-            verticesTmp_[i].tex[k] = mesh_.texcoord2D( mesh_.to_vertex_handle(hh) )[k];
+            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.to_vertex_handle(hh) )[k];
         }
         else
         {
           // isolated vertex
+          int posID = i;
+
           int f_id, c_id;
-          int posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+          if (meshComp_)
+            posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
 
           for (int k = 0; k < 2; ++k)
-            verticesTmp_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
         }
       }
-      bVBOinHalfedgeTexMode_ = 0;
     }
-
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), verticesTmp_, GL_STATIC_DRAW_ARB);
-
+    
+    bVBOinHalfedgeTexMode_ = 0;
   }
+  else
+  {
+    if (mesh_.has_vertex_texcoords2D() || mesh_.has_halfedge_texcoords2D())
+    {
+      // per halfedge texcoords
+      for (unsigned int i = 0; i < numVerts_; ++i)
+      {
+        typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
+
+        if (hh.is_valid())
+        {
+          // copy texcoord
+          if (mesh_.has_halfedge_texcoords2D())
+            for (int k = 0; k < 2; ++k)
+              vertices_[i].tex[k] = mesh_.texcoord2D( hh )[k];
+        }
+        else if (mesh_.has_vertex_texcoords2D())
+        {
+          // isolated vertex
+          int posID = i;
+
+          int f_id, c_id;
+          if (meshComp_)
+            posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+
+          for (int k = 0; k < 2; ++k)
+            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+        }
+      }
+    }
+    
+    bVBOinHalfedgeTexMode_ = 1;
+  }
+
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
+
 
   ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
@@ -873,8 +935,6 @@ template <class Mesh>
 DrawMeshT<Mesh>::~DrawMeshT(void)
 {
   delete [] vertices_;
-  delete [] verticesTmp_;
-//  delete [] m_pVerticesC;
 
   delete [] invVertexMap_;
 
@@ -902,9 +962,6 @@ unsigned int DrawMeshT<Mesh>::getMemoryUsage(bool _printReport)
 
   // vertex buffer
   if (vertices_)
-    sysBufSize += sizeof(Vertex) * numVerts_;
-
-  if (verticesTmp_)
     sysBufSize += sizeof(Vertex) * numVerts_;
 
   
@@ -2156,9 +2213,11 @@ VertexDeclaration* ACG::DrawMeshT<Mesh>::getVertexDeclaration()
 template<class Mesh>
 typename Mesh::HalfedgeHandle ACG::DrawMeshT<Mesh>::mapToHalfedgeHandle(int _vertexId)
 {
-  // map to halfedge handle+
-  int faceId, cornerId;
-  meshComp_->mapToOriginalVertexID(_vertexId, faceId, cornerId);
+  int faceId = -1, cornerId = -1;
+
+  // map to halfedge handle
+  if (meshComp_)
+    meshComp_->mapToOriginalVertexID(_vertexId, faceId, cornerId);
 
   if (faceId >= 0)
   {
@@ -2184,6 +2243,48 @@ void ACG::DrawMeshT<Mesh>::setMeshCompilerInput( int _attrIdx, Prop _propData, i
   getMeshPropertyType(_propData, &fmt, &size, &stride);
 
   meshComp_->setAttribVec(_attrIdx, _num, _propData, stride, false, fmt, size);
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeVertexElement( void* _dstBuf, unsigned int _vertex, unsigned int _stride, unsigned int _elementOffset, unsigned int _elementSize, const void* _elementData )
+{
+  // byte offset
+  unsigned int offset = _vertex * _stride + _elementOffset;
+
+  // write address
+  char* dst = static_cast<char*>(_dstBuf) + offset;
+
+  // copy
+  memcpy(dst, _elementData, _elementSize);
+}
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeNormal( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec3d& _n )
+{
+  // store float3 normal
+  float f3[3] = {float(_n[0]), float(_n[1]), float(_n[2])};
+
+  writeVertexElement(_dstBuf, _vertex, _stride, 12, 12, f3);
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeTexcoord( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec2f& _uv )
+{
+  // store float3 normal
+  float f2[3] = {_uv[0], _uv[1]};
+
+  writeVertexElement(_dstBuf, _vertex, _stride, 12+12, 8, f2);
+}
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeVertexProperty( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const VertexElement* _elementDesc, const ACG::Vec3f& _propf3 )
+{
+  unsigned int elementSize = VertexDeclaration::getElementSize(_elementDesc);
+
+  writeVertexElement(_dstBuf, _vertex, _stride, _elementDesc->getByteOffset(), elementSize, _propf3.data());
 }
 
 
