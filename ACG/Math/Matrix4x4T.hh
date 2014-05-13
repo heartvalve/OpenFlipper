@@ -114,7 +114,11 @@ public:
   /// assignment from other matrix type
   template<typename otherScalar>
   inline Matrix4x4T<Scalar>& operator=(const Matrix4x4T<otherScalar>& _rhs) {
-    std::copy(_rhs.data(),_rhs.data()+16,mat_);
+    // produces warning C4244 on msvc (implicit cast double to float)
+//    std::copy(_rhs.data(),_rhs.data()+16,mat_);
+    for (int i = 0; i < 16; ++i)
+      mat_[i] = Scalar(_rhs.data()[i]);
+
     return *this;
   }
 
