@@ -233,15 +233,25 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   // Sort renderable objects based on their priority
   // ==========================================================
 
-  const size_t numRenderObjects = getNumRenderObjects();
+  const size_t numRenderObjects = getNumRenderObjects(),
+    numOverlayObjects = getNumOverlayObjects();
 
   // sort for priority
   if (sortedObjects_.size() < numRenderObjects)
     sortedObjects_.resize(numRenderObjects);
 
+  if (overlayObjects_.size() < numOverlayObjects)
+    overlayObjects_.resize(numOverlayObjects);
+
   // init sorted objects array
-  for (size_t i = 0; i < numRenderObjects; ++i)
-    sortedObjects_[i] = &renderObjects_[i];
+  size_t sceneObjectOffset = 0, overlayObjectOffset = 0;
+  for (size_t i = 0; i < renderObjects_.size(); ++i)
+  {
+    if (renderObjects_[i].overlay)
+      overlayObjects_[overlayObjectOffset++] = &renderObjects_[i];
+    else
+      sortedObjects_[sceneObjectOffset++] = &renderObjects_[i];
+  }
 
   sortRenderObjects();
 
@@ -276,9 +286,9 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
   // search list of render object for objects requiring the scene depth map
   bool requiresSceneDepths = false;
 
-  for (size_t i = 0; i < numRenderObjects; ++i)
+  for (size_t i = 0; i < renderObjects_.size(); ++i)
   {
-    if (sortedObjects_[i]->depthMapUniformName)
+    if (renderObjects_[i].depthMapUniformName)
       requiresSceneDepths = true;
   }
 
@@ -289,8 +299,56 @@ void IRenderer::prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph
 
 
 
-void IRenderer::finishRenderingPipeline()
+void IRenderer::finishRenderingPipeline(bool _drawOverlay)
 {
+  if (_drawOverlay)
+  {
+    const int numOverlayObj = getNumOverlayObjects();
+    // two-pass overlay rendering:
+    // 1. clear depth buffer at pixels of overlay objects
+    // 2. render overlay with correct depth-testing
+
+    // 1. pass: clear depth to max value at overlay footprint
+    for (int i = 0; i < numOverlayObj; ++i)
+    {
+      RenderObject* obj = getOverlayRenderObject(i);
+
+      if (obj->depthTest && obj->depthFunc != GL_ALWAYS)
+      {
+        float depthMax = 1.0f;
+
+        if (obj->depthFunc == GL_GREATER || obj->depthFunc == GL_GEQUAL)
+          depthMax = 0.0f;
+
+        // save depth setting of renderobject
+        Vec2f depthRange = obj->depthRange;
+        bool depthWrite = obj->depthWrite;
+        GLenum depthFunc = obj->depthFunc;
+
+        // reset depth to maximal distance by using depth range
+        obj->depthRange = Vec2f(depthMax, depthMax);
+        obj->depthWrite = true;
+        obj->depthFunc = GL_ALWAYS;
+
+        renderObject(obj);
+
+        // restore depth setting
+        obj->depthRange = depthRange;
+        obj->depthWrite = depthWrite;
+        obj->depthFunc = depthFunc;
+      }
+
+    }
+
+    // 2. render overlay with correct depth-testing
+    for (int i = 0; i < numOverlayObj; ++i)
+    {
+      RenderObject* obj = getOverlayRenderObject(i);
+      renderObject(obj);
+    }
+
+  }
+
   glDepthMask(1);
   glColorMask(1,1,1,1);
 
@@ -377,7 +435,10 @@ void IRenderer::clearInputFbo( const ACG::Vec4f& clearColor )
 
 void IRenderer::sortRenderObjects()
 {
-  qsort(&sortedObjects_[0], getNumRenderObjects(), sizeof(ACG::RenderObject*), cmpPriority);
+  if (!sortedObjects_.empty())
+    qsort(&sortedObjects_[0], getNumRenderObjects(), sizeof(ACG::RenderObject*), cmpPriority);
+  if (!overlayObjects_.empty())
+  qsort(&overlayObjects_[0], getNumOverlayObjects(), sizeof(ACG::RenderObject*), cmpPriority);
 }
 
 
@@ -584,10 +645,11 @@ void IRenderer::drawObject(ACG::RenderObject* _obj)
 
 void IRenderer::renderObject(ACG::RenderObject* _obj, 
                                       GLSL::Program* _prog,
-                                      bool _constRenderStates)
+                                      bool _constRenderStates,
+                                      unsigned int _shaderModifiers)
 {
   // select shader from cache
-  GLSL::Program* prog = _prog ? _prog : ACG::ShaderCache::getInstance()->getProgram(&_obj->shaderDesc);
+  GLSL::Program* prog = _prog ? _prog : ACG::ShaderCache::getInstance()->getProgram(&_obj->shaderDesc, _shaderModifiers);
 
 
   bindObjectVBO(_obj, prog);
@@ -633,9 +695,23 @@ void IRenderer::addLight(const LightData& _light)
 
 int IRenderer::getNumRenderObjects() const
 {
-  return renderObjects_.size();
+  int n = 0;
+  for (size_t i = 0; i < renderObjects_.size(); ++i)
+    if (!renderObjects_[i].overlay)
+      ++n;
+
+  return n;
 }
 
+int IRenderer::getNumOverlayObjects() const
+{
+  int n = 0;
+  for (size_t i = 0; i < renderObjects_.size(); ++i)
+    if (renderObjects_[i].overlay)
+      ++n;
+
+  return n;
+}
 
 int IRenderer::getNumLights() const
 {
@@ -649,6 +725,14 @@ ACG::RenderObject* IRenderer::getRenderObject( int i )
     return &renderObjects_[i];
   
   return sortedObjects_[i];
+}
+
+ACG::RenderObject* IRenderer::getOverlayRenderObject( int i )
+{
+  if (overlayObjects_.empty())
+    return &renderObjects_[i];
+
+  return overlayObjects_[i];
 }
 
 IRenderer::LightData* IRenderer::getLight( int i )

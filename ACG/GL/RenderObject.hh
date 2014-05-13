@@ -119,6 +119,19 @@ struct ACGDLLEXPORT RenderObject
    */
   int priority;
 
+  /** \brief Layer based rendering
+   *
+   * The renderer currently supports two layers:
+   *  - scene layer
+   *  - overlay layer
+   *
+   * Usually a render plugin operates on the scene layer only and
+   * overlayed objects are rendered on top of the result.
+   * For instance, meshes are rendered in the scene layer while coordsys objects are overlayed.
+   *
+   * \note default = false
+   */
+  bool overlay;
 
   /// Modelview transform
   GLMatrixd modelview;
