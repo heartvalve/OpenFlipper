@@ -171,6 +171,7 @@ void RenderObject::setMaterial( const SceneGraph::Material* _mat )
 
 RenderObject::RenderObject()
 : priority(0),
+  overlay(false),
   modelview(GLMatrixf(ACG::Vec3f(1.0,0.0,0.0),ACG::Vec3f(0.0,1.0,0.0),ACG::Vec3f(0.0,0.0,1.0))),
   proj(modelview),
   vertexBuffer(0), indexBuffer(0), sysmemIndexBuffer(0),

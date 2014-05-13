@@ -196,8 +196,10 @@ protected:
    *
    * Optionally render-states may not be changed, in case depth-peeling or
    * similar global shader operations may require a fixed state setting.
+   *
+   * Shader modifiers can be combined and applied to this pass.
    */
-  virtual void renderObject(ACG::RenderObject* _obj, GLSL::Program* _prog = 0, bool _constRenderStates = false);
+  virtual void renderObject(ACG::RenderObject* _obj, GLSL::Program* _prog = 0, bool _constRenderStates = false, unsigned int _shaderModifiers = 0);
 
   /** \brief Binding VBOs (First state function)
    *
@@ -246,14 +248,15 @@ protected:
 protected:
 
 
-  /** \brief Reset OpenGL state
+  /** \brief Draw overlay objects and reset OpenGL state
    *
+   * Optionally renders overlay objects.
    * Resets critical OpenGL states to default to prevent crashes.
    * - deactivate framebuffer
    * - disable shaders
    * - disable vbo
   */
-  virtual void finishRenderingPipeline();
+  virtual void finishRenderingPipeline(bool _drawOverlay = true);
 
   /** \brief Save input Fbo configuration (fbo id + viewport)
   */
@@ -360,14 +363,20 @@ public:
   //=========================================================================
 protected:
 
-  /// Get the number of collected render objects
+  /// Get the number of collected render objects (not including overlay objects)
   int getNumRenderObjects() const;
+
+  /// Get the number of render objects in the overlay (for instance objects from coordsys are overlayed)
+  int getNumOverlayObjects() const;
 
   /// Get the number of current light sources
   int getNumLights() const;
 
-  /// Get render objects in the sorted list by index
+  /// Get render objects in the sorted list by index (not including overlay objects)
   ACG::RenderObject* getRenderObject(int i);
+
+  /// Get render objects in the sorted list by index (only overlay objects)
+  ACG::RenderObject* getOverlayRenderObject(int i);
 
   /// Get light by index
   LightData* getLight(int i);
@@ -407,8 +416,11 @@ protected:
   std::vector<ACG::RenderObject> renderObjects_;
 
 
-  /// sorted list of renderobjects (sorted in rendering order)
+  /// sorted list of renderobjects without overlay objects (sorted in rendering order)
   std::vector<ACG::RenderObject*> sortedObjects_;
+
+  /// sorted list of overlay-only renderobjects (sorted in rendering order)
+  std::vector<ACG::RenderObject*> overlayObjects_;
 
   /**
    * Stores fbo containing a depth map for each viewport.

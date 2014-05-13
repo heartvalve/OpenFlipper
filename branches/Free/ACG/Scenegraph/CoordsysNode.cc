@@ -449,6 +449,7 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
   ro.depthTest = true;
   ro.depthWrite = true;
   ro.inZPrePass = false;
+  ro.overlay = true;
 
   if ( mode_ == SCREENPOS ) {
 
@@ -502,33 +503,16 @@ void CoordsysNode::getRenderObjects( IRenderer* _renderer, GLState& _state, cons
 
 
 
-    // clear the depth buffer behind the coordsys
-    ro.priority = -4;
-    ro.depthRange = Vec2f(1.0f, 1.0f);
-    ro.depthFunc = GL_ALWAYS;
-
-    drawCoordsys(_renderer, &ro);
-
-
     // regrab of transforms needed, drawCoordsys overwrites this
     ro.modelview = _state.modelview();
 
-    ro.priority = -3;
+    ro.priority = 3;
     ro.depthRange = Vec2f(0.0f, 1.0f);
     ro.depthFunc = GL_LESS;
 
     // draw coordsys
     drawCoordsys(_renderer, &ro);
 
-    // set depth buffer to 0 so that nothing can paint over cordsys
-    ro.modelview  = _state.modelview();
-    ro.priority   = -2;
-    ro.depthRange = Vec2f(0.0, 0.0);
-    ro.depthFunc  = GL_ALWAYS;
-    ro.glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
-
-    // Koordinatensystem zeichnen
-    drawCoordsys(_renderer, &ro);
 
     // Projection reload
     _state.pop_projection_matrix();
