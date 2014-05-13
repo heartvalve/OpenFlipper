@@ -80,28 +80,13 @@ namespace ACG {
 
 /** \brief Mesh Drawing Class
  *
- * Functional description:
- *
- * This class prepares the OpenMesh object for efficient rendering.
- * This is done in the function Rebuild() :
- *   1. Triangulation to guarantee a triangle mesh  (ConvertToTriangleMesh)
- *   2. Create a big 3*NumTris vertex buffer, so that each triangle has it's own 3 vertices
- *   3. Minimize this Vertex Buffer so that each vertex is unique
- *   4. Fix for Flat-Shading mode:
- *       OpenGL does not support Face-Normal generation on the fly, so we have to guarantee
- *       that the last vertex of each triangle is not shared with any other triangle.
- *       If flat shading is enabled, we need to update the vertex buffer and store the face normal
- *       for each triangle in this unshared vertex.
- *   5. Sort triangles by material:
- *       To minimize state OpenGL state changes and draw calls, triangles are sorted by material.
- *       This information is stored in Subsets
- *   6. GPU-Cache-Optimization:
- *       Optimize triangles for each subset for efficient gpu vertex cache usage.
- *       After that reorder vertices to avoid big gpu-memory jumps when reading in vertices
- *   while processing maintain the following maps:
- *     vertex index in the final vertex buffer -> halfedge index in OpenMesh  (vertexMap_)
- *     triangle index in the final index buffer -> face index in OpenMesh  (triToFaceMap_)
+ * This class creates a new mesh for efficient rendering based on an OpenMesh object.
+ * DrawMesh also supports optimized picking and toggling between vertex/halfedge/face normals and vertex/halfedge texcoords.
+ * 
+ * It is not recommended to use this class if the input mesh does not implement an OpenMesh kernel.
+ * Instead, MeshCompiler can be used directly to build the vertex and index buffer.
  */
+
 template <class Mesh>
 class DrawMeshT
 {
@@ -832,13 +817,6 @@ private:
 
 
   //========================================================================
-  // internal processing
-  // temporal buffer allocations to avoid memory requests while updating
-  //========================================================================
-
-  Vertex* verticesTmp_;
-
-  //========================================================================
   // texture handling
   //========================================================================
 
@@ -857,6 +835,20 @@ private:
   * If this is invalid, then the strip processor will ignore per face textures during processing.
   */
   std::string perFaceTextureCoordinatePropertyName_;
+
+
+private:
+  //========================================================================
+  // write functions for flexible vertex format
+
+  void writeVertexElement(void* _dstBuf, unsigned int _vertex, unsigned int _stride, unsigned int _elementOffset, unsigned int _elementSize, const void* _elementData);
+
+  void writeNormal(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec3d& _n);
+
+  void writeTexcoord(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec2f& _uv);
+
+
+  void writeVertexProperty(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const VertexElement* _elementDesc, const ACG::Vec3f& _propf3);
 
 
 public:

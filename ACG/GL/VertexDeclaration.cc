@@ -55,6 +55,20 @@ namespace ACG
 {
 
 
+unsigned int VertexElement::getByteOffset() const
+{
+  // union cast instead of reinterpret_cast for cross-platform compatibility
+  union ptr2uint
+  {
+    unsigned long u;
+    const void* p;
+  } offset;
+
+  offset.p = pointer_;
+
+  return static_cast<unsigned int>(offset.u);
+}
+
 VertexDeclaration::VertexDeclaration()
 : vertexStride_(0), strideUserDefined_(0)
 {

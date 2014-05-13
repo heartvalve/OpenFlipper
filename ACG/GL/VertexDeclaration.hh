@@ -80,6 +80,10 @@ struct VertexElement
   VERTEX_USAGE usage_;          //!< position, normal, shader input ..
   const char* shaderInputName_; //!< set shader input name, if usage_ = VERTEX_USAGE_USER_DEFINED otherwise this is set automatically, if usage_ != VERTEX_USAGE_USER_DEFINED
   const void* pointer_;         //!< Offset in bytes to the first instance of this element in vertex buffer; Or address to vertex data in system memory
+
+  /*! interpret pointer_ as byte offset
+  */
+  unsigned int getByteOffset() const;
 };
 
 /** \brief Class to define the layout of a vertex element
