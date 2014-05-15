@@ -19,22 +19,23 @@ ENDIF (ASSIMP_INCLUDE_DIRS)
 
 if( WIN32 )
 
- if ( CMAKE_CL_64 )
-   SET( DIRSUFFIX "x32" )
- else ()
+ if ( CMAKE_GENERATOR MATCHES ".*Win64" )
    SET( DIRSUFFIX "x64" )
+ else ()
+   SET( DIRSUFFIX "x86" )
  endif()
 
  FIND_LIBRARY( ASSIMP_LIBRARY
-               NAMES libassimp.lib
+               NAMES assimp
 	       PATH_SUFFIXES ${DIRSUFFIX}
                PATHS "C:/libs/assimp/lib" 
-		     "C:/Program Files/Assimp/lib"
+	             "C:/Program Files/Assimp/lib"
                )  
+
 
  GET_FILENAME_COMPONENT( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY} PATH ) 
 
- SET( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY}/../../bin/${DIRSUFFIX}/ )
+ SET( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY_DIR}/../../bin/${DIRSUFFIX}/ CACHE PATH "Path to the DLLs")
  
 else (WIN32)
 
