@@ -4,6 +4,7 @@
 #  ASSIMP_FOUND        - system has ASSIMP
 #  ASSIMP_INCLUDE_DIR  - the ASSIMP include directory
 #  ASSIMP_LIBRARY      - Link these to use ASSIMP
+#  ASSIMP_LIBRARY_DIR  - Directory where the library is found 
 #   
 
 IF (ASSIMP_INCLUDE_DIRS)
@@ -13,14 +14,28 @@ ENDIF (ASSIMP_INCLUDE_DIRS)
 
  # Find the headers
  FIND_PATH( ASSIMP_INCLUDE_DIR assimp/scene.h
-            PATHS /usr/include  )
+            PATHS /usr/include 
+                  "C:/Program Files/Assimp/include" )
 
 if( WIN32 )
+
+ if ( CMAKE_CL_64 )
+   SET( DIRSUFFIX "x32" )
+ else ()
+   SET( DIRSUFFIX "x64" )
+ endif()
+
  FIND_LIBRARY( ASSIMP_LIBRARY
                NAMES libassimp.lib
-               PATHS "C:/libs/assimp/lib" )  
+	       PATH_SUFFIXES ${DIRSUFFIX}
+               PATHS "C:/libs/assimp/lib" 
+		     "C:/Program Files/Assimp/lib"
+               )  
 
  GET_FILENAME_COMPONENT( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY} PATH ) 
+
+ SET( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY}/../../bin/${DIRSUFFIX}/ )
+ 
 else (WIN32)
 
  FIND_LIBRARY( ASSIMP_LIBRARY
