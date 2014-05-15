@@ -3,6 +3,7 @@ cppcheck  --xml  \
           --quiet \
           -i libs_required/OpenMesh/src/OpenMesh \
           -i libs_required/OpenMesh/src/OpenVolumeMesh \
+          -i Plugin-MemInfo/procps \
           -i build-release \
           -i build-debug \
           -i .svn \
