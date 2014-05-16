@@ -1099,13 +1099,17 @@ void glViewer::encodeView(QString& _view, const QSize& _windowSize /*= QSize()*/
 
   // add gl width/height, current projection Mode and the ortho mode width to output
   _view += QString::number(_windowSize.width()) + " " +  QString::number(_windowSize.height()) + " "  + QString::number(_splitterWidth)+ " " + QString::number(projectionMode_) + " " + QString::number(properties_.orthoWidth()) + "\n";
+
+  // Add viewer size
+  _view += QString::fromUtf8("%1 %2\n").arg(size().width()).arg(size().height());
 }
 
 
 //----------------------------------------------------------------------------
 
 
-bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, int* _splitterWidth /*= NULL*/)
+bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/,
+        int* _splitterWidth /*= NULL*/, QSize *_viewportSize)
 {
   if (_view.left(sizeof(COPY_PASTE_VIEW_START_STRING)-1) != QString(COPY_PASTE_VIEW_START_STRING))
   {
@@ -1124,7 +1128,7 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, i
   int            pMode;
 
   // New version
-  if ( split.size() == 37 ) {
+  if ( split.size() >= 37 ) {
 
     //*********************************************************
     // Parse the components
@@ -1162,6 +1166,10 @@ bool glViewer::decodeView(const QString& _view, QSize *_windowSize /*= NULL*/, i
     //*********************************************************
     pMode =  split[35].toInt();
     properties_.orthoWidth( split[36].toDouble() );
+
+    if (_viewportSize && split.size() >= 39) {
+        *_viewportSize = QSize(split[37].toInt(), split[38].toInt());
+    }
 
   } else if ( split.size() == 36 )  { // Old Version
 
