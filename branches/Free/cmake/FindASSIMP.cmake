@@ -25,10 +25,24 @@ if( WIN32 )
    SET( DIRSUFFIX "x86" )
  endif()
 
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 10.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2010/x32/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x32/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2013/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
+  endif()
+
+
  FIND_LIBRARY( ASSIMP_LIBRARY
                NAMES assimp
 	       PATH_SUFFIXES ${DIRSUFFIX}
-               PATHS "C:/libs/assimp/lib" 
+               PATHS "C:/libs/assimp/lib"
+                     "${VS_SEARCH_PATH}assimp" 
 	             "C:/Program Files/Assimp/lib"
                )  
 
