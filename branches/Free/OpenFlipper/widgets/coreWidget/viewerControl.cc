@@ -896,7 +896,9 @@ void CoreWidget::slotSetViewAndWindowGeometry(QString view) {
 
     QSize windowSize(0, 0);
     int splitterWidth = 0;
-    examiner_widgets_[viewerId]->decodeView (view, &windowSize, &splitterWidth);
+    QSize viewportSize(0, 0);
+    examiner_widgets_[viewerId]->decodeView (
+            view, &windowSize, &splitterWidth, &viewportSize);
 
     if (windowSize.height() != 0 && windowSize.width() != 0) {
         if (windowSize.width() < 0) {
@@ -925,6 +927,29 @@ void CoreWidget::slotSetViewAndWindowGeometry(QString view) {
             splitter_sizes[1-primary_idx] -= diff;
         }
         toolSplitter_->setSizes(splitter_sizes);
+    }
+
+    /*
+     * Viewport size has precedence. Manipulate window size so that the
+     * viewport size is matched exactly.
+     */
+    if (viewportSize.width() > 0 && viewportSize.height() > 0) {
+        const QSize cur_viewport_size = examiner_widgets_[viewerId]->size().toSize();
+        std::cout << "Stored viewport size is " << viewportSize.width()
+                << " x " << viewportSize.height() << ". Actual size is"
+                << cur_viewport_size.width() << " x "
+                << cur_viewport_size.height() << "." <<  std::endl;
+
+        if (cur_viewport_size != viewportSize) {
+            std::cerr << "Stored viewport size is " << viewportSize.width()
+                    << " x " << viewportSize.height() << ". Actual size is"
+                    << cur_viewport_size.width() << " x "
+                    << cur_viewport_size.height()
+                    << ". Trying to adjust." << std::endl;
+
+            QSize diff = viewportSize - cur_viewport_size;
+            resize(size() + diff);
+        }
     }
 }
 

@@ -316,7 +316,8 @@ public:
       \note QSize(0,0) indicates that the window was maximized.
       \note _splitterWidth is -1 if no splitterWidth was saved
    */
-  bool decodeView(const QString& _view, QSize *_windowSize = NULL, int* _toolBarWidth = NULL);
+  bool decodeView(const QString& _view, QSize *_windowSize = NULL,
+          int* _toolBarWidth = NULL, QSize *_viewportSize = NULL);
 
   /// initialize modelview matrix to identity
   void initModelviewMatrix();
