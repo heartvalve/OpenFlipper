@@ -37,12 +37,19 @@ if( WIN32 )
     SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
   endif()
 
+ # Find the headers
+ FIND_PATH( ASSIMP_INCLUDE_DIR assimp/scene.h
+            PATHS /usr/include 
+                  "${VS_SEARCH_PATH}assimp/include"
+                  "C:/Program Files/Assimp/include" )
+
+
 
  FIND_LIBRARY( ASSIMP_LIBRARY
                NAMES assimp
 	       PATH_SUFFIXES ${DIRSUFFIX}
                PATHS "C:/libs/assimp/lib"
-                     "${VS_SEARCH_PATH}assimp" 
+                     "${VS_SEARCH_PATH}assimp/lib" 
 	             "C:/Program Files/Assimp/lib"
                )  
 
@@ -52,6 +59,12 @@ if( WIN32 )
  SET( ASSIMP_LIBRARY_DIR ${ASSIMP_LIBRARY_DIR}/../../bin/${DIRSUFFIX}/ CACHE PATH "Path to the DLLs")
  
 else (WIN32)
+
+ # Find the headers
+ FIND_PATH( ASSIMP_INCLUDE_DIR assimp/scene.h
+            PATHS /usr/include 
+                  "C:/Program Files/Assimp/include" )
+
 
  FIND_LIBRARY( ASSIMP_LIBRARY
                NAMES assimp
