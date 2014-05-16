@@ -349,6 +349,10 @@ void Core::setView(QString view) {
     coreWidget_->slotSetView(view);
 }
 
+void Core::setViewAndWindowGeometry(QString view) {
+    coreWidget_->slotSetViewAndWindowGeometry(view);
+}
+
 //=============================================================================
 //== Script Special Functions =================================================
 //=============================================================================

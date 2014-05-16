@@ -924,6 +924,9 @@ public:
     /// Set the supplied serialized view
     void slotSetView( QString view );
 
+    /// Set the supplied serialized view
+    void slotSetViewAndWindowGeometry( QString view );
+
     /// Copy view from the last active examiner
     void slotCopyView( );
 
