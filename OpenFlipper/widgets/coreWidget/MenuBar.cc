@@ -407,6 +407,7 @@ void CoreWidget::setupMenuBar()
   snapShotAction->setStatusTip( tr("Take a snapshot from all viewers."));
   snapShotAction->setWhatsThis( tr("Viewer Snapshot<br><br>"
                                    "Take a snapshot of all viewers at once."));
+  snapShotAction->setShortcut (Qt::Key_F2);
   connect( snapShotAction,SIGNAL( triggered() ), this, SLOT( viewerSnapshotDialog() ) );
   viewMenu_->addAction( snapShotAction);
 
