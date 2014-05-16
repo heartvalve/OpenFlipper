@@ -574,9 +574,9 @@ void CoreWidget::viewerSnapshotDialog() {
         if (dialog.metaData_storeView_cb->isChecked()) {
             QSize window_size;
             if (isMaximized())
-              window_size = QSize(0,0);
+              window_size = QSize(-width(), -height());
             else
-              window_size = QSize (width(),height());
+              window_size = QSize (width(), height());
 
             int splitter_size = 0;
             if (OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool())
@@ -889,6 +889,43 @@ void CoreWidget::slotPasteView( ) {
 
 void CoreWidget::slotSetView( QString view ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionSetView(view);
+}
+
+void CoreWidget::slotSetViewAndWindowGeometry(QString view) {
+    const unsigned int viewerId = PluginFunctions::activeExaminer();
+
+    QSize windowSize(0, 0);
+    int splitterWidth = 0;
+    examiner_widgets_[viewerId]->decodeView (view, &windowSize, &splitterWidth);
+
+    if (windowSize.height() != 0 && windowSize.width() != 0) {
+        if (windowSize.width() < 0) {
+            windowSize *= -1;
+            showNormal();
+            resize(windowSize);
+            showMaximized();
+        } else {
+            showNormal();
+            resize(windowSize);
+        }
+    }
+
+    if (splitterWidth > 0) {
+        QList<int> splitter_sizes = toolSplitter_->sizes();
+        if (splitter_sizes.size() < 2) {
+            std::cerr << "The tool splitter has less than two children. This "
+                    "shouldn't happen." << std::endl;
+        } else {
+            const size_t primary_idx = OpenFlipperSettings().value(
+                    "Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool()
+                    ? 1 : 0;
+
+            const int diff = splitterWidth - splitter_sizes[primary_idx];
+            splitter_sizes[primary_idx] += diff;
+            splitter_sizes[1-primary_idx] -= diff;
+        }
+        toolSplitter_->setSizes(splitter_sizes);
+    }
 }
 
 void CoreWidget::slotPasteViewAndWindow()
