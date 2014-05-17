@@ -81,6 +81,8 @@
 #define E_BOUNDARY      "Select Boundary Edges"
 #define E_COLORIZE      "Colorize selected Edges"
 #define E_COPYSELECTION "Create mesh from Edge Selection"
+#define E_TRACE_PATH    "Trace Edge Path"
+
 // Halfedges
 #define HE_SELECT_ALL   "Select All Halfedges"
 #define HE_CLEAR        "Clear Halfedge Selection"
@@ -201,6 +203,7 @@ void MeshObjectSelectionPlugin::pluginsInitialized() {
     edgeOperations.append(E_BOUNDARY);
     edgeOperations.append(E_COLORIZE);
     edgeOperations.append(E_COPYSELECTION);
+    edgeOperations.append(E_TRACE_PATH);
     
     // Define halfedge operations
     QStringList hedgeOperations;
@@ -546,6 +549,13 @@ void MeshObjectSelectionPlugin::slotSelectionOperation(QString _operation) {
       for ( unsigned int i = 0 ; i < objects.size() ; ++i)
         createMeshFromSelection(objects[i],edgeType_);
 
+    } else if (_operation == E_TRACE_PATH) {
+        for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            if (o_it->visible()) {
+                traceEdgePath(o_it->id(), .9);
+            }
+        }
     } else if(_operation == HE_SELECT_ALL) {
         // Select all edges
         for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_ALL)); 
