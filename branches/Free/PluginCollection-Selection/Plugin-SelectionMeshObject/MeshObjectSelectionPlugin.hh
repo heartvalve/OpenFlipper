@@ -367,6 +367,9 @@ public slots:
     /// Colorize the edge selection
     void colorizeEdgeSelection(int objectId, int r, int g, int b, int a);
 
+    /// Trace Edge Path
+    void traceEdgePath(int objectId, double threshold);
+
     //==========================================
     // HALFEDGE OPERATIONS
     //==========================================

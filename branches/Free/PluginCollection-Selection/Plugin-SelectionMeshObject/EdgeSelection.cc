@@ -397,3 +397,79 @@ void MeshObjectSelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g
 
     emit updatedObject(object->id(), UPDATE_COLOR);
 }
+
+namespace {
+
+template<class MeshT>
+inline bool edgeSelected(MeshT &mesh, typename MeshT::HalfedgeHandle he) {
+    return mesh.status(mesh.edge_handle(he)).selected();
+}
+template<class MeshT>
+void traceEdgePath(MeshT &mesh, double threshold) {
+    typedef typename MeshT::HalfedgeIter HEIt;
+    typedef typename MeshT::VOHIter VOHIter;
+    typedef typename MeshT::HalfedgeHandle HEH;
+
+    for (HEIt he_it = mesh.halfedges_begin(), he_end = mesh.halfedges_end();
+            he_it != he_end; ++he_it) {
+        if (edgeSelected(mesh, *he_it)) {
+
+            HEH current_he = *he_it;
+
+            for (bool tracing = true; tracing;) {
+                const typename MeshT::Normal cur_vec =
+                        mesh.calc_edge_vector(current_he).normalized();
+                const HEH back_out_he = mesh.opposite_halfedge_handle(current_he);
+                HEH best_out_he;
+                double best_alignment = -std::numeric_limits<double>::infinity();
+                const typename MeshT::VertexHandle to_vtx =
+                        mesh.to_vertex_handle(current_he);
+
+                for (VOHIter voh_it = mesh.voh_begin(to_vtx),
+                        voh_end = mesh.voh_end(to_vtx);
+                        voh_it != voh_end; ++voh_it) {
+                    if (*voh_it == back_out_he) continue;
+                    if (edgeSelected(mesh, *voh_it)) {
+                        tracing = false;
+                        break;
+                    }
+                    const typename MeshT::Normal next_vec =
+                            mesh.calc_edge_vector(*voh_it).normalized();
+                    if (best_alignment < (cur_vec | next_vec)) {
+                        best_alignment = (cur_vec | next_vec);
+                        best_out_he = *voh_it;
+                    }
+                }
+                if (tracing && best_alignment > threshold) {
+                    current_he = best_out_he;
+                    mesh.status(mesh.edge_handle(current_he)).set_selected(true);
+                } else {
+                    tracing = false;
+                }
+            }
+        }
+    }
+}
+}
+
+void MeshObjectSelectionPlugin::traceEdgePath(int objectId, double threshold) {
+    BaseObjectData* object;
+    if ( ! PluginFunctions::getObject(objectId,object) ) {
+        emit log(LOGERR,"traceEdgePath: unable to get object" );
+        return;
+    }
+
+    if ( object->dataType() == DATA_TRIANGLE_MESH ) {
+        ::traceEdgePath(*PluginFunctions::triMesh(object), threshold);
+    } else if ( object->dataType() == DATA_POLY_MESH ) {
+        ::traceEdgePath(*PluginFunctions::polyMesh(object), threshold);
+    } else {
+        emit log(LOGERR,"traceEdgePath: Unsupported object Type" );
+        return;
+    }
+
+    emit scriptInfo(QString::fromUtf8("traceEdgePath(ObjectId(%1), %2)")
+        .arg(objectId).arg(threshold));
+
+    emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
+}
