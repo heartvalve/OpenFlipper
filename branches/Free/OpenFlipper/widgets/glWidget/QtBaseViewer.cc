@@ -627,7 +627,8 @@ void glViewer::drawScene()
 
   // Clear back buffer here:
   // Render plugins do not have to worry about using scissor test for clearing their viewports later on.
-  glClearColor(properties_.backgroundColor()[0], properties_.backgroundColor()[1], properties_.backgroundColor()[2], 1.0f);
+  glClearColor(properties_.backgroundColor()[0], properties_.backgroundColor()[1],
+		  properties_.backgroundColor()[2], properties_.backgroundColor()[3]);
   GLint curViewport[4];
   glGetIntegerv(GL_VIEWPORT, curViewport);
   glScissor(curViewport[0], curViewport[1], curViewport[2], curViewport[3]);
@@ -1006,8 +1007,6 @@ void glViewer::paintGL()
 
   if (!properties_.updateLocked())
   {
-    ACG::Vec4f clear_color;
-
     properties_.lockUpdate();
 
     glPushAttrib (GL_ALL_ATTRIB_BITS);
