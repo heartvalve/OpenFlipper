@@ -100,7 +100,8 @@ PolyLineT<PointT>::
       ref_count_enormals_(0),
       ref_count_ecolors_(0),
       ref_count_escalars_(0),
-      ref_count_eselections_(0)
+      ref_count_eselections_(0),
+      ref_count_epreimage_direction_(0)
 {
 }
 
@@ -131,6 +132,7 @@ PolyLineT<PointT>::
   ecolors_     = _line.ecolors_;
   escalars_    = _line.escalars_;
   eselections_ = _line.eselections_;
+  epreimage_direction_ = _line.epreimage_direction_;
 
   // property reference counter
   ref_count_vnormals_    = _line.ref_count_vnormals_;
@@ -146,6 +148,7 @@ PolyLineT<PointT>::
   ref_count_ecolors_     = _line.ref_count_ecolors_;
   ref_count_escalars_    = _line.ref_count_escalars_;
   ref_count_eselections_ = _line.ref_count_eselections_;
+  ref_count_epreimage_direction_ = _line.ref_count_epreimage_direction_;
 }
 
 //-----------------------------------------------------------------------------
@@ -172,6 +175,7 @@ clear()
   ecolors_.clear();
   escalars_.clear();
   eselections_.clear();
+  epreimage_direction_.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -224,8 +228,8 @@ resize( unsigned int _n)
       ecolors_.resize( _n);
     if( edge_scalars_available())
       escalars_.resize( _n);
-    if( edge_selections_available())
-      eselections_.resize( _n);
+    if( edge_preimage_directions_available())
+      epreimage_direction_.resize( _n);
   }
   else
   {
@@ -282,6 +286,10 @@ add_point(const Point& _p)
 
   if( edge_selections_available())
     eselections_.push_back(false);
+
+  if( edge_preimage_directions_available())
+    epreimage_direction_.push_back(Point(0,0,0));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -332,6 +340,9 @@ insert_point(int _idx, const Point& _p)
 
   if( edge_selections_available())
     eselections_.insert(eselections_.begin()+_idx, false);
+
+  if( edge_preimage_directions_available())
+    epreimage_direction_.insert(epreimage_direction_.begin()+_idx, Point(0,0,0));
 }
 
 
@@ -385,6 +396,9 @@ delete_point(int _idx)
 
   if( edge_selections_available())
     eselections_.erase(eselections_.begin()+_idx);
+
+  if( edge_preimage_directions_available())
+    epreimage_direction_.erase(epreimage_direction_.begin()+_idx);
 }
 
 

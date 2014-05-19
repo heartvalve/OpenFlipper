@@ -366,6 +366,7 @@ public:
   void request_edge_colors()       { request_prop( ref_count_ecolors_    , ecolors_ );}
   void request_edge_scalars()      { request_prop( ref_count_escalars_   , escalars_);}
   void request_edge_selections()   { request_prop( ref_count_eselections_, eselections_);}
+  void request_preimage_directions()   { request_prop( ref_count_epreimage_direction_, epreimage_direction_);}
 
   // release properties
   void release_vertex_normals()    { release_prop( ref_count_vnormals_   , vnormals_);}
@@ -381,6 +382,7 @@ public:
   void release_edge_colors()       { release_prop( ref_count_ecolors_    , ecolors_ );}
   void release_edge_scalars()      { release_prop( ref_count_escalars_   , escalars_);}
   void release_edge_selections()   { release_prop( ref_count_eselections_, eselections_);}
+  void release_preimage_directions()   { release_prop( ref_count_epreimage_direction_, epreimage_direction_);}
 
   // property availability
   bool vertex_normals_available()    const {return (ref_count_vnormals_    != 0 ); }
@@ -396,6 +398,7 @@ public:
   bool edge_colors_available()       const {return (ref_count_ecolors_     != 0 ); }
   bool edge_scalars_available()      const {return (ref_count_escalars_    != 0 ); }
   bool edge_selections_available()   const {return (ref_count_eselections_ != 0 ); }
+  bool edge_preimage_directions_available()   const {return (ref_count_epreimage_direction_ != 0 ); }
 
   // property access ( no range or availability check! )
         Point& vertex_normal(unsigned int _i)       { return vnormals_[_i];}
@@ -433,6 +436,9 @@ public:
 
         unsigned char& edge_selection(unsigned int _i)       {return eselections_[_i];}
   const unsigned char& edge_selection(unsigned int _i) const {return eselections_[_i];}
+
+        Point & preimage_direction(unsigned int _i)       { return epreimage_direction_[_i];}
+  const Point & preimage_direction(unsigned int _i) const { return epreimage_direction_[_i];}
 
   // ############################### SelectionWrappers  ############################
   
@@ -558,6 +564,7 @@ private:
   std::vector<Point>  ecolors_;
   std::vector<Scalar> escalars_;
   std::vector<unsigned char>   eselections_;
+  std::vector<Point>  epreimage_direction_;
 
 
   // property reference counter
@@ -574,6 +581,7 @@ private:
   unsigned int ref_count_ecolors_;
   unsigned int ref_count_escalars_;
   unsigned int ref_count_eselections_;
+  unsigned int ref_count_epreimage_direction_;
 };
 
 

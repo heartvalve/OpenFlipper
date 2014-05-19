@@ -22,6 +22,7 @@ void PolyLineObjectSerializer::serialize(std::ostream& _stream) {
     //std::cerr << "write " << _filename << std::endl;
     std::cerr << "#points: " << _polyLine.n_vertices() << std::endl;
 
+    fout.precision(14);
 
     // write each point
     for(unsigned int i=0; i< _polyLine.n_vertices(); ++i)
