@@ -2221,9 +2221,28 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
 
       glDisable(GL_MULTISAMPLE);
 
+      //Qt FrameBuffer "toImage" function returns QImage::Format_ARGB32_Premultiplied. not desired
+      QFramebufferObjectFormat tempFormat;
+      tempFormat.setInternalTextureFormat(GL_RGBA);
+      tempFormat.setTextureTarget(GL_TEXTURE_2D);
+      QGLFramebufferObject temp(w,h, tempFormat);
+      if (format.samples() != 0)
+      {
+        //cannot directly read from a multisampled framebuffer.
+        //create new one without sampling and read from it
+        QRect rect(QPoint(0, 0), QSize(w,h));
 
+        QFramebufferObject::blitFramebuffer(&temp, rect, &fb, rect);
+        ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, temp.handle());
+      }
+
+      //get the framebuffer data
+      _image = QImage(w,h,QImage::Format_ARGB32);
+      glReadPixels(0,0,w,h,GL_BGRA,GL_UNSIGNED_INT_8_8_8_8_REV,reinterpret_cast<void*>(_image.bits()));
+      _image = _image.mirrored(false,true);//convert from opengl to qt coordinates
+
+      //cleanup
       ACG::GLState::bindFramebuffer(GL_FRAMEBUFFER_EXT, prevFbo);
-      
 
       // Reset alpha settings
       if(_alpha)
@@ -2239,7 +2258,6 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       }
 
 
-       _image = fb.toImage().copy(0, 0, w, h);
     }
     
     if(_width != 0 || _height != 0) {
