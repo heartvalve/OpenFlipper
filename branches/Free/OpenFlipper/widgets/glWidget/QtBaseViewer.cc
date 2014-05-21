@@ -2225,7 +2225,7 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       QFramebufferObjectFormat tempFormat;
       tempFormat.setInternalTextureFormat(GL_RGBA);
       tempFormat.setTextureTarget(GL_TEXTURE_2D);
-      QGLFramebufferObject temp(w,h, tempFormat);
+      QFramebufferObject temp(w,h, tempFormat);
       if (format.samples() != 0)
       {
         //cannot directly read from a multisampled framebuffer.
