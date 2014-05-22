@@ -61,8 +61,6 @@
 
 //=============================================================================
 
-#define DRAW_MESH_VERTEX_CMP_EPSILON 1e-4f
-
 // print a memory usage report each draw call
 //#define DEBUG_MEM_USAGE
 
@@ -85,26 +83,7 @@ DrawMeshT<Mesh>::Vertex::Vertex()
 
 //  tan[3] = 0.0f;
 
-  fcol = vcol = 0xFFFFFFFF;
-}
-
-template <class Mesh>
-int DrawMeshT<Mesh>::Vertex::equals(const Vertex& r)
-{
-  float f = 0.0f; // difference
-  for (int i = 0; i < 3; ++i)
-  {
-    f += fabsf(r.pos[i] - pos[i]);
-    f += fabsf(r.n[i] - n[i]);
-//    f += fabsf(r.tan[i] - tan[i]);
-
-    if (i < 2)
-      f += fabsf(r.tex[i] - tex[i]);
-  }
-
-//  f += fabsf(r.tan[3] - tan[3]);
-
-  return (vcol == r.vcol && fcol == r.fcol) && (f < DRAW_MESH_VERTEX_CMP_EPSILON);
+  col = 0xFFFFFFFF; // white
 }
 
 template <class Mesh>
@@ -119,6 +98,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    lineIBO_(0),
    indexType_(0),
    colorMode_(1),
+   curVBOColorMode_(1),
    flatMode_(0), bVBOinFlatMode_(0),
    textureMode_(1), bVBOinHalfedgeTexMode_(1),
    halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
@@ -128,8 +108,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    updatePerEdgeBuffers_(1),
   updatePerHalfedgeBuffers_(1)
 {
-  vertexDeclVCol_ = new VertexDeclaration;
-  vertexDeclFCol_ = new VertexDeclaration;
+  vertexDecl_ = new VertexDeclaration;
 
   vertexDeclEdgeCol_ = new VertexDeclaration;
   vertexDeclHalfedgeCol_ = new VertexDeclaration;
@@ -465,7 +444,7 @@ DrawMeshT<Mesh>::rebuild()
 
   // full rebuild:
   delete meshComp_;
-  meshComp_ = new MeshCompiler(*vertexDeclFCol_);
+  meshComp_ = new MeshCompiler(*vertexDecl_);
 
 
   // search for convenient attribute indices
@@ -505,10 +484,10 @@ DrawMeshT<Mesh>::rebuild()
   meshComp_->setVertices(mesh_.n_vertices(), mesh_.points(), 24, false, GL_DOUBLE, 3);
   
   // normals
-  if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
-    meshComp_->setNormals(mesh_.n_vertices(), mesh_.vertex_normals(), 24, false, GL_DOUBLE, 3);
-  else if (halfedgeNormalMode_ &&  mesh_.has_halfedge_normals())
+  if (mesh_.has_halfedge_normals())
     meshComp_->setNormals(mesh_.n_halfedges(), mesh_.property(mesh_.halfedge_normals_pph()).data(), 24, false, GL_DOUBLE, 3);
+  else if (mesh_.has_vertex_normals())
+    meshComp_->setNormals(mesh_.n_vertices(), mesh_.vertex_normals(), 24, false, GL_DOUBLE, 3);
 
   if (mesh_.has_halfedge_texcoords2D())
     meshComp_->setTexCoords(mesh_.n_halfedges(), mesh_.htexcoords2D(), 8, false, GL_FLOAT, 2);
@@ -549,38 +528,65 @@ DrawMeshT<Mesh>::rebuild()
     typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
 
     if (hh.is_valid())
-    {
-      vertices_[i].vcol = getVertexColor(mesh_.to_vertex_handle(hh));
-      vertices_[i].fcol = 0;
-    }
+      vertices_[i].col = getVertexColor(mesh_.to_vertex_handle(hh));
     else
     {
       // isolated vertex
       int f_id, c_id;
       int posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
-      vertices_[i].vcol = getVertexColor( mesh_.vertex_handle(posID) );
-      vertices_[i].fcol = 0;
+      vertices_[i].col = getVertexColor( mesh_.vertex_handle(posID) );
     }
   }
 
+  // vbo stores per vertex colors
+  curVBOColorMode_ = 1; 
+
   // copy face colors to provoking id
-  
-  for (int i = 0; i < (int)numTris_; ++i)
+  if (colorMode_ == 2)
   {
     const int provokingId = meshComp_->getProvokingVertex();
-
     assert(provokingId >= 0 && provokingId < 3);
-    
-    int idx = meshComp_->getIndex(i*3+provokingId);
 
-    int faceId = meshComp_->mapToOriginalFaceID(i);
-    unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+    for (int i = 0; i < (int)numTris_; ++i)
+    {
+      int idx = meshComp_->getIndex(i*3+provokingId);
 
+      int faceId = meshComp_->mapToOriginalFaceID(i);
+      unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+
+      vertices_[idx].col = fcolor;
+    }
+
+#ifdef _DEBUG
     // debug check
-    assert(vertices_[idx].fcol == 0 || vertices_[idx].fcol == fcolor);
 
-    vertices_[idx].fcol = fcolor;
+    for (int i = 0; i < (int)numTris_; ++i)
+    {
+      int idx = meshComp_->getIndex(i*3+provokingId);
+
+      int faceId = meshComp_->mapToOriginalFaceID(i);
+      unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+
+      if (vertices_[idx].col != fcolor)
+      {
+        std::cout << "warning: possibly found provoking vertex shared by more than one face, writing report to ../../meshcomp_provoking.txt" << std::endl;
+
+        // could also be caused by multi-threading, where one thread calls rebuild() 
+        // and the other thread updates face colors between previous for-loop and debug-check
+
+        // check for errors
+        meshComp_->dbgVerify("../../meshcomp_provoking.txt");
+        
+        break; // verify and dump report only once
+      }
+    }
+#endif // _DEBUG
+
+    curVBOColorMode_ = colorMode_;
   }
+
+
+ 
 
   //////////////////////////////////////////////////////////////////////////
   // copy to GPU
@@ -649,10 +655,10 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
     //byteCol[col] |= 0xFF << 24; // if no alpha channel
   }
 
- _pV->vcol = byteCol[0];
-//  _pV->vcol = 0xFFFF0000; // blue,  debug
- _pV->fcol = byteCol[1];
-//  pV->fcol = 0xFF00FF00; // green, debug
+  if (colorMode_ != 2)
+    _pV->col = byteCol[0]; // vertex colors
+  else
+    _pV->col = byteCol[1]; // face colors
 }
 
 template <class Mesh>
@@ -854,6 +860,49 @@ DrawMeshT<Mesh>::createVBO()
     bVBOinHalfedgeTexMode_ = 1;
   }
 
+  if (colorMode_ && colorMode_ != curVBOColorMode_)
+  {
+    if (colorMode_ == 1)
+    {
+      // use vertex colors
+
+      for (int i = 0; i < (int)numVerts_; ++i)
+      {
+        typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
+
+        if (hh.is_valid())
+          vertices_[i].col = getVertexColor(mesh_.to_vertex_handle(hh));
+        else
+        {
+          // isolated vertex
+          int f_id, c_id;
+          int posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+          vertices_[i].col = getVertexColor( mesh_.vertex_handle(posID) );
+        }
+      }
+    }
+    else if (colorMode_ == 2)
+    {
+      // use face colors
+
+      const int provokingId = meshComp_->getProvokingVertex();
+      assert(provokingId >= 0 && provokingId < 3);
+
+      for (int i = 0; i < (int)numTris_; ++i)
+      {
+        int idx = meshComp_->getIndex(i*3+provokingId);
+
+        int faceId = meshComp_->mapToOriginalFaceID(i);
+        unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
+
+        vertices_[idx].col = fcolor;
+      }
+    }
+
+    // vbo colors updated
+    curVBOColorMode_ = colorMode_;
+  }
+
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
 
 
@@ -938,8 +987,7 @@ DrawMeshT<Mesh>::~DrawMeshT(void)
 
   delete [] invVertexMap_;
 
-  delete vertexDeclFCol_;
-  delete vertexDeclVCol_;
+  delete vertexDecl_;
   delete vertexDeclEdgeCol_;
   delete vertexDeclHalfedgeCol_;
   delete vertexDeclHalfedgePos_;
@@ -1047,7 +1095,7 @@ void DrawMeshT<Mesh>::updateGPUBuffers()
   // to update normals
   if (rebuild_ == REBUILD_NONE)
   {
-    if (bVBOinFlatMode_ != flatMode_ || bVBOinHalfedgeTexMode_ != textureMode_)
+    if (bVBOinFlatMode_ != flatMode_ || bVBOinHalfedgeTexMode_ != textureMode_ || (colorMode_ && curVBOColorMode_ != colorMode_))
       createVBO();
   }
   else
@@ -1095,11 +1143,7 @@ void DrawMeshT<Mesh>::bindBuffers()
   // prepare color mode
   if (colorMode_)
   {
-    if (colorMode_ == 1)
-      ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
-    else
-      ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)36);
-
+    ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
     ACG::GLState::enableClientState(GL_COLOR_ARRAY);
   }
 
@@ -1133,14 +1177,7 @@ void DrawMeshT<Mesh>::bindBuffersToRenderObject(RenderObject* _obj)
   _obj->indexType = indexType_;
 
   // assign correct vertex declaration
-  _obj->vertexDecl = vertexDeclVCol_;
-
-  // prepare color mode
-  if (colorMode_)
-  {
-    if (colorMode_ != 1)
-      _obj->vertexDecl = vertexDeclFCol_;
-  }
+  _obj->vertexDecl = vertexDecl_;
 }
 
 template <class Mesh>
@@ -2156,20 +2193,12 @@ DrawMeshT<Mesh>::perFaceTextureIndexAvailable() {
 template <class Mesh>
 void ACG::DrawMeshT<Mesh>::createVertexDeclarations()
 {
-  vertexDeclVCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-  vertexDeclVCol_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
-  vertexDeclVCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
-  vertexDeclVCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR);
+  vertexDecl_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
+  vertexDecl_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
+  vertexDecl_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
+  vertexDecl_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR);
 
-  // VertexDeclaration computes a stride of 36 automatically
-  // force 40 bytes instead!
-  vertexDeclVCol_->setVertexStride(sizeof(Vertex)); // pad for Vertex::fcol
-
-
-  vertexDeclFCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
-  vertexDeclFCol_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD, 12);
-  vertexDeclFCol_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL, 20);
-  vertexDeclFCol_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR, 36);
+  vertexDecl_->setVertexStride(sizeof(Vertex)); // eventually add padding
 }
 
 
@@ -2206,7 +2235,7 @@ void ACG::DrawMeshT<Mesh>::updateEdgeHalfedgeVertexDeclarations()
 template <class Mesh>
 VertexDeclaration* ACG::DrawMeshT<Mesh>::getVertexDeclaration()
 {
-  return  vertexDeclVCol_;
+  return vertexDecl_;
 }
 
 

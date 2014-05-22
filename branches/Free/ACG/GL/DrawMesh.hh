@@ -93,7 +93,7 @@ class DrawMeshT
 private:
 
 #pragma pack(push, 1)
-  /// full precision vertex, 40 bytes w/o tangent
+  /// full precision vertex, 36 bytes w/o tangent
   struct Vertex
   {
     Vertex();
@@ -103,13 +103,13 @@ private:
     float n[3];   /*!< normal vector */
 //    float tan[4]; /*!< tangent vector + parity */
 
-    unsigned int vcol; /*!<  per vertex color */
-    unsigned int fcol; /*!<  per face color */
+    unsigned int col; /*!< color */
 
-    int equals(const Vertex& r);
+//     unsigned int vcol; /*!<  per vertex color */
+//     unsigned int fcol; /*!<  per face color */
   };
 
-  /// compressed vertex, 22 bytes
+  /// compressed vertex, 18 bytes
   struct VertexC
   {
     unsigned short pos[3];
@@ -117,8 +117,7 @@ private:
     unsigned int n;
 //    unsigned int tan;
 
-    unsigned int vcol;
-    unsigned int fcol;
+    unsigned int col;
   };
 #pragma pack(pop)
 
@@ -775,6 +774,10 @@ private:
 
   /// Color Mode: 0: none, 1: per vertex,  else: per face
   int colorMode_;
+
+  /// Color Mode of vbo
+  int curVBOColorMode_;
+
   /// flat / smooth shade mode toggle
   int flatMode_;
 
@@ -801,10 +804,7 @@ private:
 
 
   /// vertex buffer layout declaration with per vertex colors
-  VertexDeclaration* vertexDeclVCol_;
-
-  /// vertex buffer layout declaration with per face colors
-  VertexDeclaration* vertexDeclFCol_;
+  VertexDeclaration* vertexDecl_;
 
   /// vertex buffer layout declaration with per edge colors
   VertexDeclaration* vertexDeclEdgeCol_;
