@@ -7,8 +7,16 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-//#include <unordered_map> // requires c++0x
+
+#ifdef USE_OPENMP
+#include <omp.h>
+#endif
+
+#ifdef ACG_MC_USE_STL_HASH
+#include <unordered_map> // requires c++0x
+#else
 #include <QHash>  // alternative to unordered_map
+#endif // ACG_MC_USE_STL_HASH
 
 #include <ACG/Geometry/GPUCacheOptimizer.hh>
 
@@ -1616,6 +1624,13 @@ void MeshCompiler::setAttrib( int _attrIdx, int _v, const void* _data )
   memcpy(inbuf->internalBuf + (size_t)(_v * inbuf->stride), _data, inbuf->attrSize);
 }
 
+int MeshCompiler::getNumInputAttributes( int _attrIdx ) const
+{
+  assert (_attrIdx >= 0);
+  assert(_attrIdx < int(decl_.getNumElements()));
+
+  return input_[_attrIdx].count;
+}
 
 
 int MeshCompiler::mapTriToInputFace( const int _tri ) const
@@ -1951,6 +1966,7 @@ bool MeshCompiler::dbgVerify(const char* _filename) const
 
     }
     
+
     if (file.is_open())
       file.close();
   }
@@ -2835,9 +2851,22 @@ struct MeshCompiler_EdgeTriMapKey
   {
     return e0 == k.e0 && e1 == k.e1;
   }
+
+  bool operator <(const MeshCompiler_EdgeTriMapKey& k) const
+  {
+    if (e0 < k.e0)
+      return true;
+
+    if (e0 > k.e0)
+      return false;
+
+    return e1 < k.e1;
+  }
 };
 
-/* // requires c++0x
+
+#ifdef ACG_MC_USE_STL_HASH
+// requires c++0x
 struct MeshCompiler_EdgeTriMapKey_Hash
 {
   std::size_t operator()(const MeshCompiler_EdgeTriMapKey& k) const
@@ -2845,21 +2874,19 @@ struct MeshCompiler_EdgeTriMapKey_Hash
     return ((std::hash<int>()(k.e0) << 1) ^ std::hash<int>()(k.e1)) >> 1;
   }
 };
-*/
-
-uint MeshCompiler_EdgeTriMapKey_Hash(const MeshCompiler_EdgeTriMapKey& k)
+#else
+uint qHash(const MeshCompiler_EdgeTriMapKey& k)
 {
-  return ((qHash(k.e0) << 1) ^ qHash(k.e1)) >> 1;
+  return ((::qHash(k.e0) << 1) ^ ::qHash(k.e1)) >> 1;
 }
+#endif // ACG_MC_USE_STL_HASH
 
 
 void MeshCompiler::getIndexAdjBuffer(void* _dst, const int _borderIndex /* = -1 */)
 {
-  return; // not implemented with QHash;
-/*
   int* idst = (int*)_dst;
 
-  for (int i = 0; i < getNumTriangles(); ++i)
+  for (int i = 0; i < numTris_; ++i)
   {
     // initialize all triangles
     idst[i*6] = getIndex(i*3);
@@ -2871,36 +2898,379 @@ void MeshCompiler::getIndexAdjBuffer(void* _dst, const int _borderIndex /* = -1 
     idst[i*6+5] = _borderIndex;
   }
 
-  // adjacency mapping: edge -> triangle
-  //  edge e0-e1 key: (min(e0,e1), max(e0,e1))
-  std::unordered_map<MeshCompiler_EdgeTriMapKey, int, MeshCompiler_EdgeTriMapKey_Hash> edgeTriAdjMap;
+  // map from edge -> adjacent tris
+  QHash<MeshCompiler_EdgeTriMapKey, std::pair<int, int> > EdgeAdjMap;
 
-  // count number of edges
-  for (int i = 0; i < getNumTriangles(); ++i)
+  for (int i = 0; i < numTris_; ++i)
   {
-    int* tri = idst + i*6;
+    // get input positions of triangle
+    int PosIdx[3];
 
-    // edges: 01, 12, 20
+    for (int k = 0; k < 3; ++k)
+    {
+      int faceId, cornerId;
+      PosIdx[k] = mapToOriginalVertexID(getIndex(i*3+k), faceId, cornerId);
+    }
+
+    // build edge->triangle adjacency map
     for (int e = 0; e < 3; ++e)
     {
-      MeshCompiler_EdgeTriMapKey edge( getIndex(i*3 + e), getIndex(i*3 + (e%3)) );
+      MeshCompiler_EdgeTriMapKey edge( PosIdx[e], PosIdx[(e+1)%3] );
 
-      std::unordered_map<MeshCompiler_EdgeTriMapKey, int, MeshCompiler_EdgeTriMapKey_Hash>::iterator it = edgeTriAdjMap.find(edge);
+      QHash< MeshCompiler_EdgeTriMapKey, std::pair<int, int> >::iterator itKey;
 
-      if (it != edgeTriAdjMap.end())
-      {
-        // found pair of adjacent triangles for edges:
-        //  this triangle: i
-        //  adjacent triangle: it->second
+      itKey = EdgeAdjMap.find(edge);
 
-        tri[2*e + 1] = it->second;
-      }
+      if (itKey == EdgeAdjMap.end())
+        EdgeAdjMap[edge] = std::pair<int, int>(i, -1);
       else
-        edgeTriAdjMap[edge] = i; // adjacent triangle not found -> insert reference to current tri
+        itKey.value().second = i;
     }
+
   }
+
+  // use edge->triangle adjacency map to build index buffer with adjacency
+  for (QHash< MeshCompiler_EdgeTriMapKey, std::pair<int, int> >::iterator it = EdgeAdjMap.begin(); it != EdgeAdjMap.end(); ++it)
+  {
+    // two adjacent tris of current edge
+    int Tris[2] = {it.value().first, it.value().second};
+
+    // get input positions of triangles
+    int PosIdx[6];
+
+    for (int k = 0; k < 3; ++k)
+    {
+      int faceId, cornerId;
+
+      PosIdx[k] = mapToOriginalVertexID(getIndex(Tris[0]*3+k), faceId, cornerId);
+
+      if (Tris[1] >= 0)
+        PosIdx[3+k] = mapToOriginalVertexID(getIndex(Tris[1]*3+k), faceId, cornerId);
+    }
+
+
+    // find edge and opposite corner wrt. to adjacent tris
+
+    int TriEdges[2] = {-1,-1};
+    int TriOppositeVerts[2] = {-1,-1};
+
+    for (int e = 0; e < 3; ++e)
+    {
+      MeshCompiler_EdgeTriMapKey edge0( PosIdx[e], PosIdx[(e+1)%3] );
+
+      if (edge0 == it.key())
+      {
+        TriEdges[0] = e;
+        TriOppositeVerts[1] = (e+2)%3;
+      }
+    }
+
+    if (Tris[1] >= 0)
+    {
+      for (int e = 0; e < 3; ++e)
+      {
+        MeshCompiler_EdgeTriMapKey edge1( PosIdx[3 + e], PosIdx[3 + ((e+1)%3)] );
+
+        if (edge1 == it.key())
+        {
+          TriEdges[1] = e;
+          TriOppositeVerts[0] = (e+2)%3;
+        }
+      }
+    }
+
+    // store adjacency in buffer
+
+    for (int i = 0; i < 2; ++i)
+    {
+      if (Tris[i] >= 0)
+      {
+        int e = TriEdges[i];
+
+        // opposite vertex
+        int ov = _borderIndex;
+
+        if (TriOppositeVerts[i] >= 0 && Tris[(i+1)%2] >= 0)
+          ov = getIndex(Tris[(i+1)%2]*3 + TriOppositeVerts[i]);
+
+        idst[Tris[i] * 6 + e*2 + 1] = ov;
+      }
+    }
+
+  }
+
+  return;
+
+  /*
+
+  // alternative algorithm without hashing with multi threading
+  // in case hashing method is too slow, the following unfinished implementation can be completed
+
+  // requires vertex-face adjacency
+
+  computeAdjacency();
+
+#ifdef  USE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int i = 0; i < numFaces_; ++i)
+  {
+    const int fsize = getFaceSize(i);
+
+    // for each edge of current face
+    for (int e = 0; e < fsize; ++e)
+    {
+      int vertexId = getInputIndex(i, e, inputIDPos_);
+
+      MeshCompiler_EdgeTriMapKey edge( getInputIndex(i, e, inputIDPos_), 
+        getInputIndex(i, (e+1)%fsize, inputIDPos_) );
+
+
+      int numAdjFaces = adjacencyVert_.getCount(vertexId);
+
+      // search for adjacent tri with shared edge
+      for (int a = 0; a < numAdjFaces; ++a)
+      {
+        int adjFaceID = adjacencyVert_.getAdj(vertexId, a);
+
+        const int adjFaceSize = getFaceSize(adjFaceID);
+
+        // for each edge of adjacent face
+        for (int ae = 0; ae < adjFaceSize; ++ae)
+        {
+          // get start/end indices of adjacent half-edge
+          MeshCompiler_EdgeTriMapKey adjEdge( getInputIndex(adjFaceID, ae, inputIDPos_), 
+            getInputIndex(adjFaceID, (ae+1)%adjFaceSize, inputIDPos_) );
+
+          // check whether this is the same edge
+          if (adjEdge == edge)
+          {
+            // find these half-edges in output mesh
+
+
+
+
+          }
+        }
+      }
+
+    }
+
+
+    // add adjacency for newly inserted edges (triangulation of n-polys)
+
+  }
+
+  // delete adjacency list since its no longer needed
+  adjacencyVert_.clear();
+
 */
 }
+
+void MeshCompiler::getIndexAdjBuffer_MT(void* _dst, const int _borderIndex /* = -1 */)
+{
+  // alternative algorithm without hashing, but with multi-threading support
+
+  // compute vertex-position -> triangle adjacency
+  //  vertex-position: unsplit position IDs of input mesh
+  //  triangles:  triangles in output mesh after build()
+
+  const int numVerts = input_[inputIDPos_].count;
+  AdjacencyList outputVertexTriAdj;
+
+  outputVertexTriAdj.init(numVerts);
+
+  // count # adjacent tris per vertex
+  for (int i = 0; i < numTris_; ++i)
+  {
+    int faceID, cornerID;
+
+    for (int k = 0; k < 3; ++k)
+    {
+      int vertex = getIndex(i * 3 + k);
+      int posID = mapToOriginalVertexID(vertex, faceID, cornerID);
+
+      outputVertexTriAdj.count[posID]++;
+    }
+  }
+
+  // count num of needed entries
+  int nCounter = 0;
+
+  for (int i = 0; i < numVerts; ++i)
+  {
+    outputVertexTriAdj.start[i] = nCounter; // save start indices
+
+    nCounter += outputVertexTriAdj.count[i];
+
+    outputVertexTriAdj.count[i] = 0; // count gets recomputed in next step
+  }
+
+  // alloc memory
+  outputVertexTriAdj.buf = new int[nCounter];
+  outputVertexTriAdj.bufSize = nCounter;
+
+  // build adjacency list
+  for (int i = 0; i < numTris_; ++i)
+  {
+    int faceID, cornerID;
+
+    for (int k = 0; k < 3; ++k)
+    {
+      int vertex = getIndex(i * 3 + k);
+      int posID = mapToOriginalVertexID(vertex, faceID, cornerID);
+
+      int adjIdx = outputVertexTriAdj.start[posID] + outputVertexTriAdj.count[posID]++;
+
+      outputVertexTriAdj.buf[ adjIdx ] = i;
+    }
+  }
+
+
+  // assemble index buffer
+
+  int* idst = (int*)_dst;
+
+  for (int i = 0; i < numTris_; ++i)
+  {
+    // initialize all triangles
+    idst[i*6] = getIndex(i*3);
+    idst[i*6+2] = getIndex(i*3+1);
+    idst[i*6+4] = getIndex(i*3+2);
+
+    idst[i*6+1] = _borderIndex;
+    idst[i*6+3] = _borderIndex;
+    idst[i*6+5] = _borderIndex;
+  }
+
+#ifdef USE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int vertexID = 0; vertexID < numVerts; ++vertexID)
+  {
+    const int numAdjTris = outputVertexTriAdj.getCount(vertexID);
+
+
+    for (int adjID0 = 0; adjID0 < numAdjTris; ++adjID0)
+    {
+      const int triID0 = outputVertexTriAdj.getAdj(vertexID, adjID0);
+
+      int TriPos0[3];
+      for (int k = 0; k < 3; ++k)
+      {
+        int faceid, cornerid;
+        TriPos0[k] = mapToOriginalVertexID( getIndex(triID0*3+k), faceid, cornerid );
+      }
+
+      for (int adjID1 = adjID0+1; adjID1 < numAdjTris; ++adjID1) //for (int triID1 = 0; triID1 < numTris_; ++triID1)
+      {
+        const int triID1 = outputVertexTriAdj.getAdj(vertexID, adjID1);
+
+        int TriPos1[3];
+        for (int k = 0; k < 3; ++k)
+        {
+          int faceid, cornerid;
+          TriPos1[k] = mapToOriginalVertexID( getIndex(triID1*3+k), faceid, cornerid );
+        }
+
+        // find shared edge
+        for (int e0 = 0; e0 < 3; ++e0)
+        {
+          MeshCompiler_EdgeTriMapKey edge0(TriPos0[e0], TriPos0[(e0+1)%3]);
+
+          for (int e1 = 0; e1 < 3; ++e1)
+          {
+            MeshCompiler_EdgeTriMapKey edge1(TriPos1[e1], TriPos1[(e1+1)%3]);
+
+            if (edge0 == edge1)
+            {
+              // found shared edge
+
+              int oppVertex0 = getIndex( triID1*3 + ((e1+2)%3) );
+              int oppVertex1 = getIndex( triID0*3 + ((e0+2)%3) );
+
+              idst[triID0*6 + e0*2 +1] = oppVertex0;
+              idst[triID1*6 + e1*2 + 1] = oppVertex1;
+            }
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+}
+
+void MeshCompiler::getIndexAdjBuffer_BruteForce( void* _dst, const int _borderIndex /*= -1*/ )
+{
+
+  int* idst = (int*)_dst;
+
+  for (int i = 0; i < numTris_; ++i)
+  {
+    // initialize all triangles
+    idst[i*6] = getIndex(i*3);
+    idst[i*6+2] = getIndex(i*3+1);
+    idst[i*6+4] = getIndex(i*3+2);
+
+    idst[i*6+1] = _borderIndex;
+    idst[i*6+3] = _borderIndex;
+    idst[i*6+5] = _borderIndex;
+  }
+
+  // build brute-force adjacency list and compare -- O(n^2)
+#ifdef USE_OPENMP
+#pragma omp parallel for
+#endif
+  for (int triID0 = 0; triID0 < numTris_; ++triID0)
+  {
+    int TriPos0[3];
+    for (int k = 0; k < 3; ++k)
+    {
+      int faceid, cornerid;
+      TriPos0[k] = mapToOriginalVertexID( getIndex(triID0*3+k), faceid, cornerid );
+    }
+
+    for (int triID1 = triID0 + 1; triID1 < numTris_; ++triID1)
+    {
+      int TriPos1[3];
+      for (int k = 0; k < 3; ++k)
+      {
+        int faceid, cornerid;
+        TriPos1[k] = mapToOriginalVertexID( getIndex(triID1*3+k), faceid, cornerid );
+      }
+
+      // find shared edge
+      for (int e0 = 0; e0 < 3; ++e0)
+      {
+        MeshCompiler_EdgeTriMapKey edge0(TriPos0[e0], TriPos0[(e0+1)%3]);
+
+        for (int e1 = 0; e1 < 3; ++e1)
+        {
+          MeshCompiler_EdgeTriMapKey edge1(TriPos1[e1], TriPos1[(e1+1)%3]);
+
+          if (edge0 == edge1)
+          {
+            // found shared edge
+
+            int oppVertex0 = getIndex( triID1*3 + ((e1+2)%3) );
+            int oppVertex1 = getIndex( triID0*3 + ((e0+2)%3) );
+
+            idst[triID0*6 + e0*2 +1] = oppVertex0;
+            idst[triID1*6 + e1*2 + 1] = oppVertex1;
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+}
+
 
 int MeshCompiler::mapToOriginalFaceID( const int _i ) const
 {
@@ -2942,6 +3312,8 @@ int MeshCompiler::mapToOriginalVertexID( const int _i, int& _faceID, int& _corne
 
     _cornerID = vertexMapCorner_[_i] - frot;
     if (_cornerID < 0) _cornerID += getFaceSize(_faceID);
+
+    positionID = getInputIndex(_faceID, _cornerID, inputIDPos_);
   }
   else
   {
