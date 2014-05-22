@@ -257,6 +257,13 @@ public:
   */
   void setAttrib(int _attrIdx, int _v, const void* _data);
 
+
+  /** Get number of attributes in an input buffer
+  * 
+  * @param _attrIdx Attribute id from VertexDeclaration
+  */
+  int getNumInputAttributes(int _attrIdx) const;
+
 /** @} */  
 
 
@@ -491,8 +498,8 @@ public:
   /** \brief Get index buffer with adjacency information ready for rendering.
    *
    * This index buffer can be used to render in GL_TRIANGLES_ADJACENCY mode.
-   * It contains the opposite vertex id of adjacent triangles for each edge of the triangle.
-   * Each triangle requires 6 indices:
+   * For each triangle, it contains the 3 neighboring triangles with a shared edge in addition to the triangle vertices.
+   * Each triangle stores 6 indices:
    *  0 - first vertex of triangle
    *  1 - opposite vertex to first edge of adjacent triangle
    *  2 - second vertex of triangle
@@ -508,14 +515,23 @@ public:
    *      1
    *
    *
-   * TODO:
-   *  - check correctness of internal adjacency computation
-   *  - add option to let user provide edge-triangle adjaceny list (should be fast and easy with openmesh)
    *
    * @param _dst [out] Pointer to memory address where the 32bit index buffer should be copied to. Must have size of at least 6 * numTris * 4 bytes
    * @param _borderIndex index to use for border edges (missing adjacent triangles)
   */
   void getIndexAdjBuffer(void* _dst, const int _borderIndex = -1);
+
+  /** \brief Slow brute-force version of getIndexAdjBuffer
+   * 
+   * Computes index buffer with adjacency information, but uses a much simpler algorithm.
+   * Runtime = O(n^2), but this can be used to verify the result of getIndexAdjBuffer.
+   * Results from brute-force and optimized algorithm must be equal for meshes where no edge is shared by more than two triangles.
+   *
+   * @param _dst [out] Pointer to memory address where the 32bit index buffer should be copied to. Must have size of at least 6 * numTris * 4 bytes
+   * @param _borderIndex index to use for border edges (missing adjacent triangles)
+  */
+  void getIndexAdjBuffer_BruteForce(void* _dst, const int _borderIndex = -1);
+
 
   /** Get number of triangles in final buffer.
   */
@@ -952,6 +968,15 @@ private:
 
   // create face mapping: input id <-> final tri id
   void createFaceMap();
+
+  /** \brief Multi-threaded version of getIndexAdjBuffer
+   * 
+   * Uses a multi-threaded method based on the vertex-triangle adjacency list to compute the index buffer with adjacency.
+   *
+   * @param _dst [out] Pointer to memory address where the 32bit index buffer should be copied to. Must have size of at least 6 * numTris * 4 bytes
+   * @param _borderIndex index to use for border edges (missing adjacent triangles)
+  */
+  void getIndexAdjBuffer_MT(void* _dst, const int _borderIndex = -1);
 
 public:
   // debugging tools
