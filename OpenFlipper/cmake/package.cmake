@@ -191,7 +191,6 @@ if (WIN32)
   elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )	 
     SET(REDISTRIBUTABLE_FILE "${CMAKE_SOURCE_DIR}/win/VS2013/vcredist_x86.exe")
   endif()
-  endif()
   
   # append dll's to installed package
    if (EXISTS "${REDISTRIBUTABLE_FILE}")
