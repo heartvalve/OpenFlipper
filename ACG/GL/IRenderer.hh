@@ -138,7 +138,6 @@ protected:
    * @param _glState pointer to glstate
    * @param _drawMode default drawmode
    * @param _scenegraphRoot root node of scenegraph
-   * @param _viewerID viewport id (ie. ViewerProperties::viewerId())
   */
   virtual void prepareRenderingPipeline(ACG::GLState* _glState, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ACG::SceneGraph::BaseNode* _scenegraphRoot);
 
