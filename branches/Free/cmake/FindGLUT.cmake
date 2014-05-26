@@ -36,7 +36,8 @@ IF (WIN32)
     PATHS  ${GLUT_ROOT_PATH}/include 
            "C:/libs/glut-3.7/include"
            "${VS_SEARCH_PATH}/freeglut-2.8.1/include" )
-  FIND_LIBRARY( GLUT_glut_LIBRARY NAMES glut32 glut 
+
+  FIND_LIBRARY( GLUT_glut_LIBRARY NAMES glut32 glut freeglut
     PATHS
     ${OPENGL_LIBRARY_DIR}
     ${GLUT_ROOT_PATH}/Release
