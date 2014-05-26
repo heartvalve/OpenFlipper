@@ -15,7 +15,7 @@ ENDIF (TAUCS_INCLUDE_DIR)
 IF(WIN32)
       find_package(CGAL)
 	if (NOT CGAL_FOUND)
-	  message(FATAL_ERROR "CGAL not found .. required to use taucs!")
+	  message(STATUS "CGAL not found .. required to use taucs!")
 	endif()
 	 
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h

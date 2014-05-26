@@ -21,14 +21,27 @@
 #  License text for the above reference.)
 
 IF (WIN32)
+
+  if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2012/x32/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*Win64" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2013/x64/")
+  elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )
+    SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
+  endif()
+
   FIND_PATH( GLUT_INCLUDE_DIR NAMES GL/glut.h 
     PATHS  ${GLUT_ROOT_PATH}/include 
-           "C:/libs/glut-3.7/include" )
+           "C:/libs/glut-3.7/include"
+           "${VS_SEARCH_PATH}/freeglut-2.8.1/include" )
   FIND_LIBRARY( GLUT_glut_LIBRARY NAMES glut32 glut 
     PATHS
     ${OPENGL_LIBRARY_DIR}
     ${GLUT_ROOT_PATH}/Release
     "C:/libs/glut-3.7/lib"
+    "${VS_SEARCH_PATH}/freeglut-2.8.1/lib"
     )
 
   GET_FILENAME_COMPONENT( GLUT_LIBRARY_DIR ${GLUT_glut_LIBRARY} PATH ) 
