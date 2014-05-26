@@ -223,16 +223,18 @@ macro (acg_qt5)
 
     #for custom installation of qt5, dont use any of these variables
     set (QT5_INSTALL_PATH "" CACHE PATH "Path to Qt5 directory which contains lib and include folder")
-	if (EXISTS ${QT5_INSTALL_PATH})
-		if (NOT EXISTS "${QT5_INSTALL_PATH}/include")
-			message( FATAL_ERROR "Could not find Qt5 include directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
-		endif()
-		if (NOT EXISTS "${QT5_INSTALL_PATH}/lib")
-			message( FATAL_ERROR "Could not find Qt5 lib directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
-		endif()
-	else()
-		message( FATAL_ERROR "The Given QT5_INSTALL_PATH does not exists")
-	endif()
+ 
+    if (EXISTS ${QT5_INSTALL_PATH})
+#		if (NOT EXISTS "${QT5_INSTALL_PATH}/include")
+#			message( FATAL_ERROR "Could not find Qt5 include directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
+#		endif()
+#		if (NOT EXISTS "${QT5_INSTALL_PATH}/lib")
+#			message( FATAL_ERROR "Could not find Qt5 lib directory. Please set QT5_INSTALL_PATH to the directory which contains Qt5 lib and include folder.")
+#		endif()
+    else()
+ 	message( FATAL_ERROR "The Given QT5_INSTALL_PATH does not exists")
+    endif()
+
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 	
@@ -253,9 +255,6 @@ macro (acg_qt5)
       
     endif()#WIN32
     
-    
-
-
     find_package (Qt5Core REQUIRED)
     find_package (Qt5Declarative REQUIRED)
     find_package (Qt5Widgets REQUIRED)
