@@ -16,7 +16,8 @@ find_path( EIGEN3_INCLUDE_DIR
                  /usr/local/include
                  /usr/local/include/eigen3/
                  /opt/local/include/eigen3/
-                 "c:\\libs\\Eigen-3.2.1\\include"
+                 "c:\\libs\\Eigen-3.2.1"
+				 "c:\\libs\\Eigen-3.2.1\\include"
                  "c:\\libs\\Eigen-3.2\\include"
                  "c:\\libs\\eigen3\\include"
 		 "c:\\libs\\eigen\\include"
