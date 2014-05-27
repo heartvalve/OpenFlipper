@@ -454,7 +454,7 @@ public:
    * 
    * @param _weldVertices Compare vertices and attempt to eliminate duplicates. High computation cost
    * @param _optimizeVCache Reorder faces for optimized vcache usage. High computation cost
-   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. The first referenced vertex of each face can be used to store per-face data. Low computation cost
+   * @param _needPerFaceAttribute User wants to set per-face attributes in draw vertex buffer. Per-face data can be stored in the provoking vertex of each face. Low computation cost
    * @param _keepIsolatedVertices Isolated vertices should not be discarded in the output vertex buffer
   */
   void build(bool _weldVertices = false, bool _optimizeVCache = true, bool _needPerFaceAttribute = false, bool _keepIsolatedVertices = false);
@@ -469,6 +469,7 @@ public:
    * The default value is 2, meaning that the last vertex of each triangle will be used.
    * setProvokingVertex() must be called prior to build(), if a different provoking vertex is desired.
    * Additionally build() has to set its _needPerFaceAttribute parameter to true to enable provoking vertices.
+   * The provoking vertex of a face is a vertex, which is not shared with any other face in the mesh.
    *
    * @param _v triangle vertex where the provoking vertex should be stored [0, 1, 2]
    */
