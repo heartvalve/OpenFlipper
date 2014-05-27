@@ -886,9 +886,11 @@ DrawMeshT<Mesh>::createVBO()
         // isolated vertex
         int posID = i;
 
-        int f_id, c_id;
-        if (meshComp_)
+
+        if (meshComp_) {
+          int f_id, c_id;
           posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+        }
 
 //         for (int k = 0; k < 3; ++k)
 //           vertices_[i].tex[k] = mesh_.normal( mesh_.vertex_handle(posID) )[k];
@@ -921,9 +923,10 @@ DrawMeshT<Mesh>::createVBO()
           // isolated vertex
           int posID = i;
 
-          int f_id, c_id;
-          if (meshComp_)
+          if (meshComp_) {
+            int f_id, c_id;
             posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+          }
 
 //           for (int k = 0; k < 2; ++k)
 //             vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
@@ -962,9 +965,11 @@ DrawMeshT<Mesh>::createVBO()
           // isolated vertex
           int posID = i;
 
-          int f_id, c_id;
-          if (meshComp_)
+
+          if (meshComp_) {
+            int f_id, c_id;
             posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
+          }
 
 //           for (int k = 0; k < 2; ++k)
 //             vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
