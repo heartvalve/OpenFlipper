@@ -94,31 +94,31 @@ private:
 
 #pragma pack(push, 1)
   /// full precision vertex, 36 bytes w/o tangent
-  struct Vertex
-  {
-    Vertex();
-
-    float pos[3]; /*!< Position */
-    float tex[2]; /*!< per halfedge texture coordinates */
-    float n[3];   /*!< normal vector */
-//    float tan[4]; /*!< tangent vector + parity */
-
-    unsigned int col; /*!< color */
-
-//     unsigned int vcol; /*!<  per vertex color */
-//     unsigned int fcol; /*!<  per face color */
-  };
-
-  /// compressed vertex, 18 bytes
-  struct VertexC
-  {
-    unsigned short pos[3];
-    unsigned short u, v;
-    unsigned int n;
-//    unsigned int tan;
-
-    unsigned int col;
-  };
+//   struct Vertex
+//   {
+//     Vertex();
+// 
+//     float pos[3]; /*!< Position */
+//     float tex[2]; /*!< per halfedge texture coordinates */
+//     float n[3];   /*!< normal vector */
+// //    float tan[4]; /*!< tangent vector + parity */
+// 
+//     unsigned int col; /*!< color */
+// 
+// //     unsigned int vcol; /*!<  per vertex color */
+// //     unsigned int fcol; /*!<  per face color */
+//   };
+// 
+//   /// compressed vertex, 18 bytes
+//   struct VertexC
+//   {
+//     unsigned short pos[3];
+//     unsigned short u, v;
+//     unsigned int n;
+// //    unsigned int tan;
+// 
+//     unsigned int col;
+//   };
 #pragma pack(pop)
 
   struct Subset
@@ -169,7 +169,7 @@ public:
   */
   MeshCompiler* getMeshCompiler() {return meshComp_;}
 
-  /** \brief get vertex declaration used for per-vertex color rendering
+  /** \brief get vertex declaration of the current vbo layout
   */
   VertexDeclaration* getVertexDeclaration();
 
@@ -301,6 +301,33 @@ public:
   */
   int perFaceTextureIndexAvailable();
 
+
+  enum PropertySource
+  {
+    PROPERTY_SOURCE_VERTEX = 0,
+    PROPERTY_SOURCE_HALFEDGE,
+    PROPERTY_SOURCE_FACE,
+  };
+
+  /** \brief Add custom elements to the vertex layout
+  *
+  * @param _propertyName name id of property in OpenMesh
+  * @param _source source of property, ie per vertex, per face or per halfedge
+  */
+  void addVertexElement( const std::string& _propertyName, PropertySource _source = PROPERTY_SOURCE_VERTEX );
+
+  /** \brief Scan vertex layout from vertex shader
+  *
+  * Scans a vertex shader for inputs and tries to get the matching properties from OpenMesh.
+  * The name of the input attribute in the shader has to match the property name in OpenMesh.
+  * Per halfedge properties are preferred over per vertex properties when available.
+  * Per face properties are used if the attribute is qualified as "flat" in the shader.
+  *
+  * @param _vertexShaderFile filename of vertex shader (or vertex shader template)
+  * @return true if all requested properties are available, false otherwise
+  */
+  bool scanVertexShaderForInput( const std::string& _vertexShaderFile );
+
 private:
   // processing pipeline:
 
@@ -310,14 +337,14 @@ private:
   void rebuild();
 
 
-  /** \brief reads a vertex from mesh_ and write it to _pDst
+  /** \brief reads a vertex from mesh_ and write it to vertex buffer
    *
-   * @param _pDst [out] pointer to the resulting vertex
+   * @param _vertex target vertex id in vbo
    * @param _vh mesh vertex handle to read from
    * @param _hh corresponding halfedge handle of this vertex
    * @param _fh corresponding face handle of this vertex
    */
-  void readVertex(Vertex*                             _pDst,
+  void readVertex(unsigned int                    _vertex,
                   const typename Mesh::VertexHandle   _vh,
                   const typename Mesh::HalfedgeHandle _hh,
                   const typename Mesh::FaceHandle     _fh);
@@ -352,7 +379,7 @@ private:
   /** \brief creates all vertex declarations needed for deferred draw call renderer
    *
    */
-  void createVertexDeclarations();
+  void createVertexDeclaration();
 
 public:
   // color picking
@@ -751,8 +778,10 @@ private:
   /// final index buffer used for rendering
   unsigned int* indices_;
 
-  /// final vertex buffer used for rendering
-  Vertex* vertices_;
+  /** final vertex buffer used for rendering
+    * raw byte array, use write__() functions for access
+    */
+  std::vector<char> vertices_;
 
   /// hint on what to rebuild
   unsigned int rebuild_;
@@ -817,6 +846,44 @@ private:
 
 
   //========================================================================
+  // flexible vertex layout
+  //========================================================================
+
+
+  struct VertexProperty 
+  {
+    // get property from vertex, face or halfedge array
+    PropertySource source_;
+
+    /// property name in openmesh
+    std::string name_;
+
+    /// input name id in vertex shader
+    std::string vertexShaderInputName_;
+
+    /// property type as stored in openmesh
+    VertexElement sourceType_;
+
+    /// property type as stored in vbo
+    VertexElement destType_;
+
+    /// memory address of property data
+    const void* propDataPtr_;
+
+    /// element id in vertex declaration
+    int declElementID_;
+  };
+  
+  /// fixed vertex elements:
+  const size_t offsetPos_,
+    offsetNormal_,
+    offsetTexc_,
+    offsetColor_;
+
+  /// additional optional elements
+  std::vector<VertexProperty> additionalElements_;
+
+  //========================================================================
   // texture handling
   //========================================================================
 
@@ -843,12 +910,17 @@ private:
 
   void writeVertexElement(void* _dstBuf, unsigned int _vertex, unsigned int _stride, unsigned int _elementOffset, unsigned int _elementSize, const void* _elementData);
 
-  void writeNormal(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec3d& _n);
+  void writePosition(unsigned int _vertex, const ACG::Vec3d& _p);
 
-  void writeTexcoord(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec2f& _uv);
+  void writeNormal(unsigned int _vertex, const ACG::Vec3d& _n);
 
+  void writeTexcoord(unsigned int _vertex, const ACG::Vec2f& _uv);
 
-  void writeVertexProperty(void* _dstBuf, unsigned int _vertex, unsigned int _stride, const VertexElement* _elementDesc, const ACG::Vec3f& _propf3);
+  void writeColor(unsigned int _vertex, unsigned int _color);
+
+  void writeVertexProperty(unsigned int _vertex, const VertexElement* _elementDesc, const ACG::Vec4f& _propf);
+
+  void writeVertexProperty(unsigned int _vertex, const VertexElement* _elementDesc, const ACG::Vec4d& _propd);
 
 
 public:
