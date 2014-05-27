@@ -238,9 +238,8 @@ macro (acg_qt5)
     set (CMAKE_PREFIX_PATH  ${QT5_INSTALL_PATH})
     set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 	
-	set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
-	set (QT_BINARY_DIR "${QT5_INSTALL_PATH}/bin" CACHE PATH "Qt5 binary Directory")
-	set (QT_RCC_EXECUTABLE "${QT5_INSTALL_PATH}/bin/rcc" CACHE PATH "Path to the rcc executable")
+    set (QT_PLUGINS_DIR "${QT5_INSTALL_PATH}/plugins" CACHE PATH "")
+    set (QT_BINARY_DIR "${QT5_INSTALL_PATH}/bin" CACHE PATH "Qt5 binary Directory")
 	
     #glu32.lib is needed by qt5 opengl version. it cannot find it by itself so we help qt
     if ( WIN32 )
@@ -633,10 +632,7 @@ macro (acg_qt5_autoqrc qrc_SRCS)
         get_filename_component (_basename ${_current_FILE} NAME_WE)
         set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${_basename}.cpp)
 
-        add_custom_command (OUTPUT ${_outfile}
-            COMMAND ${QT_RCC_EXECUTABLE}
-            ARGS -o ${_outfile}  ${_abs_FILE}
-            DEPENDS ${_abs_FILE})
+        qt5_add_resources( ${_outfile}  ${_abs_FILE}  )
 
         add_file_dependencies (${_source} ${_outfile})
         set (${qrc_SRCS} ${${qrc_SRCS}} ${_outfile})
