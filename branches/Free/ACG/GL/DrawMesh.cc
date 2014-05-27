@@ -68,30 +68,29 @@
 namespace ACG
 {
 
-template <class Mesh>
-DrawMeshT<Mesh>::Vertex::Vertex()
-{
-  for (int i = 0; i < 3; ++i)
-  {
-    pos[i] = 0.0f;
-    n[i] = 0.0f;
-//    tan[i] = 0.0f;
-
-    if (i < 2)
-      tex[i] = 0.0f;
-  }
-
-//  tan[3] = 0.0f;
-
-  col = 0xFFFFFFFF; // white
-}
+// template <class Mesh>
+// DrawMeshT<Mesh>::Vertex::Vertex()
+// {
+//   for (int i = 0; i < 3; ++i)
+//   {
+//     pos[i] = 0.0f;
+//     n[i] = 0.0f;
+// //    tan[i] = 0.0f;
+// 
+//     if (i < 2)
+//       tex[i] = 0.0f;
+//   }
+// 
+// //  tan[3] = 0.0f;
+// 
+//   col = 0xFFFFFFFF; // white
+// }
 
 template <class Mesh>
 DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
 :  mesh_(_mesh),
    meshComp_(0),
    numTris_(0), numVerts_(0),
-   vertices_(0),
    rebuild_(REBUILD_NONE),
    prevNumFaces_(0), prevNumVerts_(0),
    vbo_(0), ibo_(0),
@@ -103,6 +102,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
    textureMode_(1), bVBOinHalfedgeTexMode_(1),
    halfedgeNormalMode_(0), bVBOinHalfedgeNormalMode_(0),
    invVertexMap_(0),
+   offsetPos_(0), offsetNormal_(20), offsetTexc_(12), offsetColor_(32),
    textureIndexPropertyName_("Not Set"),
    perFaceTextureCoordinatePropertyName_("Not Set"),
    updatePerEdgeBuffers_(1),
@@ -121,7 +121,7 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
   pickFaceShader_ = 0;
   pickEdgeShader_ = 0;
 
-  createVertexDeclarations();
+  createVertexDeclaration();
 }
 
 
@@ -339,22 +339,51 @@ DrawMeshT<Mesh>::rebuild()
     return;
   }
 
+
+
+  // --------------------------------------------
+  // debug - request properties
+/*
+  if (additionalElements_.empty() && mesh_._get_hprop("inTangent"))
+  {
+    //     VertexProperty tmp;
+    //     tmp.name_ = "inTangent";
+    //     tmp.source_ = 0;
+    // 
+    //     additionalElements_.push_back(tmp);
+
+//    scanVertexShaderForInput( "c:/dbg/nm_VS.tpl" );
+    scanVertexShaderForInput( "/home/tenter/dbg/nm_VS.tpl" );
+  }
+*/
+  // --------------------------------------------
+
+  // check if vertex layout has been updated by user
+  bool updateVertexLayout = false;
+
+  if (vertexDecl_ && vertexDecl_->getNumElements() != 4 + additionalElements_.size())
+    updateVertexLayout = true;
+
+  if (!vertexDecl_)
+    updateVertexLayout = true;
+
+  // update layout declaration
+  createVertexDeclaration();
+
   // support for point clouds:
   if (mesh_.n_vertices() && mesh_.n_faces() == 0)
   {
     if (mesh_.n_vertices() > numVerts_)
     {
-      delete [] invVertexMap_; invVertexMap_ = 0;
-      delete [] vertices_; vertices_ = 0;
-
-      numVerts_ = mesh_.n_vertices();
-      vertices_ = new Vertex[numVerts_];
+      delete [] invVertexMap_; 
+      invVertexMap_ = 0;
     }
     numVerts_ = mesh_.n_vertices();
+    vertices_.resize(numVerts_ * vertexDecl_->getVertexStride());
 
     // read all vertices
     for (size_t i = 0; i < numVerts_; ++i)
-      readVertex(vertices_ + i,
+      readVertex(i,
                  mesh_.vertex_handle(i), 
                  (typename Mesh::HalfedgeHandle)(-1), 
                  (typename Mesh::FaceHandle)(-1));
@@ -433,7 +462,7 @@ DrawMeshT<Mesh>::rebuild()
         vh = mesh_.vertex_handle(posID);
       }
 
-      readVertex(vertices_ + i, vh, hh, fh);
+      readVertex(i, vh, hh, fh);
     }
 
     createVBO();
@@ -441,6 +470,7 @@ DrawMeshT<Mesh>::rebuild()
     rebuild_ = REBUILD_NONE;
     return;
   }
+
 
   // full rebuild:
   delete meshComp_;
@@ -471,6 +501,15 @@ DrawMeshT<Mesh>::rebuild()
   faceInput->attributeStoredPerHalfedge_[attrIDNorm] = ( (halfedgeNormalMode_ && mesh_.has_halfedge_normals()) ? 1 : 0 );
   faceInput->attributeStoredPerHalfedge_[attrIDTexC] = ( mesh_.has_halfedge_texcoords2D() ? 1 : 0);
 
+  // index source for custom attributes
+  for (size_t i = 0; i < additionalElements_.size(); ++i)
+  {
+    const VertexProperty* prop = &additionalElements_[i];
+
+    if (prop->declElementID_ >= 0)
+      faceInput->attributeStoredPerHalfedge_[prop->declElementID_] = (prop->source_ == PROPERTY_SOURCE_HALFEDGE) ? 1 : 0;
+  }
+
   meshComp_->setFaceInput(faceInput);
 
   // set textures
@@ -493,6 +532,43 @@ DrawMeshT<Mesh>::rebuild()
     meshComp_->setTexCoords(mesh_.n_halfedges(), mesh_.htexcoords2D(), 8, false, GL_FLOAT, 2);
 
   // add more requested custom attribtues to mesh compiler here..
+
+  for (size_t i = 0; i < additionalElements_.size(); ++i)
+  {
+    VertexProperty* propDesc = &additionalElements_[i];
+
+    if (propDesc->declElementID_ >= 0)
+    {
+      const VertexElement* el = vertexDecl_->getElement((unsigned int)propDesc->declElementID_);
+
+      if (el->usage_ == VERTEX_USAGE_SHADER_INPUT)
+      {
+        // get openmesh property handle
+        OpenMesh::BaseProperty* baseProp = 0;
+        
+        switch (propDesc->source_)
+        {
+        case PROPERTY_SOURCE_VERTEX: baseProp = mesh_._get_vprop(propDesc->name_); break;
+        case PROPERTY_SOURCE_FACE: baseProp = mesh_._get_fprop(propDesc->name_); break;
+        case PROPERTY_SOURCE_HALFEDGE: baseProp = mesh_._get_hprop(propDesc->name_); break;
+        default: baseProp = mesh_._get_vprop(propDesc->name_); break;
+        }
+
+        if (baseProp)
+        {
+          int numAttribs = baseProp->n_elements();
+          int attribStride = baseProp->element_size();
+          const void* attribData = propDesc->propDataPtr_; 
+
+          meshComp_->setAttribVec( propDesc->declElementID_, numAttribs, attribData );
+        }
+        
+
+      }
+    }
+
+    
+  }
 
 
   // compile draw buffers
@@ -518,24 +594,27 @@ DrawMeshT<Mesh>::rebuild()
   numTris_ = meshComp_->getNumTriangles();
   numVerts_ = meshComp_->getNumVertices();
 
-  delete [] vertices_;
-  vertices_ = new Vertex[numVerts_];
-  meshComp_->getVertexBuffer(vertices_);
+  vertices_.resize(numVerts_ * vertexDecl_->getVertexStride());
+  meshComp_->getVertexBuffer(&vertices_[0]);
 
   // copy colors
   for (int i = 0; i < (int)numVerts_; ++i)
   {
     typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
 
+    unsigned int col = 0;
+
     if (hh.is_valid())
-      vertices_[i].col = getVertexColor(mesh_.to_vertex_handle(hh));
+      col = getVertexColor(mesh_.to_vertex_handle(hh));
     else
     {
       // isolated vertex
       int f_id, c_id;
       int posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
-      vertices_[i].col = getVertexColor( mesh_.vertex_handle(posID) );
+      col = getVertexColor( mesh_.vertex_handle(posID) );
     }
+
+    writeColor(i, col);
   }
 
   // vbo stores per vertex colors
@@ -554,7 +633,7 @@ DrawMeshT<Mesh>::rebuild()
       int faceId = meshComp_->mapToOriginalFaceID(i);
       unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
 
-      vertices_[idx].col = fcolor;
+      writeColor(idx, fcolor);
     }
 
 #ifdef _DEBUG
@@ -567,7 +646,9 @@ DrawMeshT<Mesh>::rebuild()
       int faceId = meshComp_->mapToOriginalFaceID(i);
       unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
 
-      if (vertices_[idx].col != fcolor)
+      unsigned int storedColor = *(unsigned int*)(&vertices_[idx * vertexDecl_->getVertexStride() + offsetColor_]);
+
+      if (storedColor != fcolor)
       {
         std::cout << "warning: possibly found provoking vertex shared by more than one face, writing report to ../../meshcomp_provoking.txt" << std::endl;
 
@@ -604,7 +685,7 @@ DrawMeshT<Mesh>::rebuild()
 
 template <class Mesh>
 void
-DrawMeshT<Mesh>::readVertex(Vertex* _pV,
+DrawMeshT<Mesh>::readVertex(unsigned int _vertex,
                             const typename Mesh::VertexHandle _vh,
                             const typename Mesh::HalfedgeHandle _hh,
                             const typename Mesh::FaceHandle _fh)
@@ -612,35 +693,36 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
   static const typename Mesh::HalfedgeHandle invalidHEH(-1);
   static const typename Mesh::FaceHandle     invalidFH(-1);
 
-  for (int m = 0; m < 3; ++m)
+
+  ACG::Vec3d n(0.0, 0.0, 1.0);
+  ACG::Vec2f texc(0.0f, 0.0f);
+  unsigned int col(0);
+
+  // read normal
+  if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
+    n = mesh_.normal(_vh);
+  else if (halfedgeNormalMode_ &&  mesh_.has_halfedge_normals() && _hh != invalidHEH)
+    n = mesh_.normal(_hh);
+
+  // read texcoord
+  if (mesh_.has_halfedge_texcoords2D())
   {
-    _pV->pos[m] = mesh_.point(_vh)[m];
-
-    if (halfedgeNormalMode_ == 0 && mesh_.has_vertex_normals())
-      _pV->n[m] = mesh_.normal(_vh)[m];
-    else if (halfedgeNormalMode_ && 
-      mesh_.has_halfedge_normals() && _hh != invalidHEH)
-      _pV->n[m] = mesh_.normal(_hh)[m];
-    else _pV->n[m] = 0.0f;
-
-    if (m < 2)
-    {
-      if (mesh_.has_halfedge_texcoords2D())
-      {
-        if (_hh != invalidHEH)
-          _pV->tex[m] = mesh_.texcoord2D(_hh)[m];
-      }
-      else _pV->tex[m] = 0.0f;
-    }
+    if (_hh != invalidHEH && textureMode_ == 1)
+      texc = mesh_.texcoord2D(_hh);
+    else if (mesh_.has_vertex_texcoords2D())
+      texc = mesh_.texcoord2D(_vh);
   }
-  
-  // per face & per vertex color
+  else if (mesh_.has_vertex_texcoords2D())
+    texc = mesh_.texcoord2D(_vh);
+
+  // read per face or per vertex color
   unsigned int byteCol[2];
   for (int col = 0; col < 2; ++col)
   {
     Vec4uc vecCol(255, 255, 255, 255);
 
-    if (col == 0 && mesh_.has_vertex_colors()) vecCol = OpenMesh::color_cast<Vec4uc, typename Mesh::Color>(mesh_.color(_vh));
+    if (col == 0 && mesh_.has_vertex_colors()) 
+      vecCol = OpenMesh::color_cast<Vec4uc, typename Mesh::Color>(mesh_.color(_vh));
     if (_fh != invalidFH)
     {
       if (col == 1 && mesh_.has_face_colors() && _fh.idx() >= 0) 
@@ -656,9 +738,28 @@ DrawMeshT<Mesh>::readVertex(Vertex* _pV,
   }
 
   if (colorMode_ != 2)
-    _pV->col = byteCol[0]; // vertex colors
+    col = byteCol[0]; // vertex colors
   else
-    _pV->col = byteCol[1]; // face colors
+    col = byteCol[1]; // face colors
+
+
+  // store vertex attributes in vbo
+  writePosition(_vertex, mesh_.point(_vh));
+  writeNormal(_vertex, n);
+  writeTexcoord(_vertex, texc);
+  writeColor(_vertex, col);
+  
+
+  // read/write custom attributes
+
+  for (size_t i = 0; i < additionalElements_.size(); ++i)
+  {
+    std::cout << "not implemented!" << std::endl;
+
+
+  }
+
+  
 }
 
 template <class Mesh>
@@ -750,11 +851,13 @@ DrawMeshT<Mesh>::createVBO()
       ACG::Vec3d n = mesh_.normal(mesh_.face_handle(faceId));
 
       // store face normal in last tri vertex
-      for (unsigned int k = 0; k < 3; ++k)
+//      for (unsigned int k = 0; k < 3; ++k)
       {
-        int idx = meshComp_->getIndex(i*3 + 2);
-        vertices_[idx].n[k] = n[k];
+        int idx = meshComp_->getIndex(i*3 + meshComp_->getProvokingVertex());
+//        vertices_[idx].n[k] = n[k];
+        writeNormal(idx, n);
       }
+
     }
     bVBOinFlatMode_ = 1;
   }
@@ -774,8 +877,9 @@ DrawMeshT<Mesh>::createVBO()
         else
           n = mesh_.normal( mesh_.to_vertex_handle(hh) );
 
-        for (int k = 0; k < 3; ++k)
-          vertices_[i].n[k] = n[k];
+//         for (int k = 0; k < 3; ++k)
+//           vertices_[i].n[k] = n[k];
+        writeNormal(i, n);
       }
       else
       {
@@ -786,8 +890,9 @@ DrawMeshT<Mesh>::createVBO()
         if (meshComp_)
           posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
 
-        for (int k = 0; k < 3; ++k)
-          vertices_[i].tex[k] = mesh_.normal( mesh_.vertex_handle(posID) )[k];
+//         for (int k = 0; k < 3; ++k)
+//           vertices_[i].tex[k] = mesh_.normal( mesh_.vertex_handle(posID) )[k];
+        writeNormal(i, mesh_.normal( mesh_.vertex_handle(posID) ));
       }
     }
 
@@ -806,8 +911,10 @@ DrawMeshT<Mesh>::createVBO()
         if (hh.is_valid())
         {
           // copy texcoord
-          for (int k = 0; k < 2; ++k)
-            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.to_vertex_handle(hh) )[k];
+//           for (int k = 0; k < 2; ++k)
+//             vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.to_vertex_handle(hh) )[k];
+
+          writeTexcoord(i, mesh_.texcoord2D( mesh_.to_vertex_handle(hh) ) );
         }
         else
         {
@@ -818,8 +925,11 @@ DrawMeshT<Mesh>::createVBO()
           if (meshComp_)
             posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
 
-          for (int k = 0; k < 2; ++k)
-            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+//           for (int k = 0; k < 2; ++k)
+//             vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+
+          writeTexcoord(i, mesh_.texcoord2D( mesh_.vertex_handle(posID) ) );
+
         }
       }
     }
@@ -839,8 +949,13 @@ DrawMeshT<Mesh>::createVBO()
         {
           // copy texcoord
           if (mesh_.has_halfedge_texcoords2D())
-            for (int k = 0; k < 2; ++k)
-              vertices_[i].tex[k] = mesh_.texcoord2D( hh )[k];
+          {
+//             for (int k = 0; k < 2; ++k)
+//               vertices_[i].tex[k] = mesh_.texcoord2D( hh )[k];
+
+            writeTexcoord(i, mesh_.texcoord2D( hh ) );
+          }
+
         }
         else if (mesh_.has_vertex_texcoords2D())
         {
@@ -851,8 +966,11 @@ DrawMeshT<Mesh>::createVBO()
           if (meshComp_)
             posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
 
-          for (int k = 0; k < 2; ++k)
-            vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+//           for (int k = 0; k < 2; ++k)
+//             vertices_[i].tex[k] = mesh_.texcoord2D( mesh_.vertex_handle(posID) )[k];
+
+          writeTexcoord(i, mesh_.texcoord2D( mesh_.vertex_handle(posID) ) );
+
         }
       }
     }
@@ -870,15 +988,19 @@ DrawMeshT<Mesh>::createVBO()
       {
         typename Mesh::HalfedgeHandle hh = mapToHalfedgeHandle(i);
 
+        unsigned int col;
+
         if (hh.is_valid())
-          vertices_[i].col = getVertexColor(mesh_.to_vertex_handle(hh));
+          col = getVertexColor(mesh_.to_vertex_handle(hh));
         else
         {
           // isolated vertex
           int f_id, c_id;
           int posID = meshComp_->mapToOriginalVertexID(i, f_id, c_id);
-          vertices_[i].col = getVertexColor( mesh_.vertex_handle(posID) );
+          col = getVertexColor( mesh_.vertex_handle(posID) );
         }
+
+        writeColor(i, col);
       }
     }
     else if (colorMode_ == 2)
@@ -895,7 +1017,8 @@ DrawMeshT<Mesh>::createVBO()
         int faceId = meshComp_->mapToOriginalFaceID(i);
         unsigned int fcolor = getFaceColor(mesh_.face_handle(faceId));
 
-        vertices_[idx].col = fcolor;
+//        vertices_[idx].col = fcolor;
+        writeColor(idx, fcolor);
       }
     }
 
@@ -903,7 +1026,8 @@ DrawMeshT<Mesh>::createVBO()
     curVBOColorMode_ = colorMode_;
   }
 
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * sizeof(Vertex), vertices_, GL_STATIC_DRAW_ARB);
+  if (!vertices_.empty())
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB, numVerts_ * vertexDecl_->getVertexStride(), &vertices_[0], GL_STATIC_DRAW_ARB);
 
 
   ACG::GLState::bindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
@@ -983,8 +1107,6 @@ DrawMeshT<Mesh>::createIBO()
 template <class Mesh>
 DrawMeshT<Mesh>::~DrawMeshT(void)
 {
-  delete [] vertices_;
-
   delete [] invVertexMap_;
 
   delete vertexDecl_;
@@ -1009,8 +1131,8 @@ unsigned int DrawMeshT<Mesh>::getMemoryUsage(bool _printReport)
   sysBufSize += meshComp_->getMemoryUsage();
 
   // vertex buffer
-  if (vertices_)
-    sysBufSize += sizeof(Vertex) * numVerts_;
+  if (!vertices_.empty())
+    sysBufSize += vertexDecl_->getVertexStride() * numVerts_;
 
   
   
@@ -1063,7 +1185,7 @@ unsigned int DrawMeshT<Mesh>::getMemoryUsage(bool _printReport)
     gpuBufSize += numTris_ * 3 * (indexType_ == GL_UNSIGNED_INT ? 4 : 2);
 
   if (vbo_)
-    gpuBufSize += numVerts_ * sizeof(Vertex);
+    gpuBufSize += numVerts_ * vertexDecl_->getVertexStride();
 
   if (_printReport)
   {
@@ -1143,19 +1265,19 @@ void DrawMeshT<Mesh>::bindBuffers()
   // prepare color mode
   if (colorMode_)
   {
-    ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), (char*)32);
+    ACG::GLState::colorPointer(4, GL_UNSIGNED_BYTE, vertexDecl_->getVertexStride(), (char*)offsetColor_);
     ACG::GLState::enableClientState(GL_COLOR_ARRAY);
   }
 
   // vertex decl
-  ACG::GLState::vertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+  ACG::GLState::vertexPointer(3, GL_FLOAT, vertexDecl_->getVertexStride(), (char*)offsetPos_);
   ACG::GLState::enableClientState(GL_VERTEX_ARRAY);
 
   glClientActiveTexture(GL_TEXTURE0);
-  ACG::GLState::texcoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)12);
+  ACG::GLState::texcoordPointer(2, GL_FLOAT, vertexDecl_->getVertexStride(), (char*)offsetTexc_);
   ACG::GLState::enableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  ACG::GLState::normalPointer(GL_FLOAT, sizeof(Vertex), (char*)20);
+  ACG::GLState::normalPointer(GL_FLOAT, vertexDecl_->getVertexStride(), (char*)offsetNormal_);
   ACG::GLState::enableClientState(GL_NORMAL_ARRAY);
 
 //  ACG::GLState::normalPointerEXT(3, GL_FLOAT, sizeof(Vertex), (char*)(20));  // ACG::GLState::normalPointerEXT crashes sth. in OpenGL
@@ -2191,14 +2313,95 @@ DrawMeshT<Mesh>::perFaceTextureIndexAvailable() {
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::createVertexDeclarations()
+void ACG::DrawMeshT<Mesh>::createVertexDeclaration()
 {
+  vertexDecl_->clear();
+
   vertexDecl_->addElement(GL_FLOAT, 3, VERTEX_USAGE_POSITION);
   vertexDecl_->addElement(GL_FLOAT, 2, VERTEX_USAGE_TEXCOORD);
   vertexDecl_->addElement(GL_FLOAT, 3, VERTEX_USAGE_NORMAL);
   vertexDecl_->addElement(GL_UNSIGNED_BYTE, 4, VERTEX_USAGE_COLOR);
 
-  vertexDecl_->setVertexStride(sizeof(Vertex)); // eventually add padding
+  for (size_t i = 0; i < additionalElements_.size(); ++i)
+  {
+    VertexProperty* prop = &additionalElements_[i];
+
+    // invalidate detected type
+    prop->sourceType_.numElements_ = 0;
+    prop->sourceType_.pointer_ = 0;
+    prop->sourceType_.type_ = 0;
+    prop->sourceType_.shaderInputName_ = 0;
+    prop->sourceType_.usage_ = VERTEX_USAGE_SHADER_INPUT;
+    prop->propDataPtr_ = 0;
+    prop->declElementID_ = -1;
+
+    // get property handle in openmesh by name
+    OpenMesh::BaseProperty* baseProp = 0;
+
+    switch (prop->source_)
+    {
+    case PROPERTY_SOURCE_VERTEX: baseProp = mesh_._get_vprop(prop->name_); break;
+    case PROPERTY_SOURCE_FACE: baseProp = mesh_._get_fprop(prop->name_); break;
+    case PROPERTY_SOURCE_HALFEDGE: baseProp = mesh_._get_hprop(prop->name_); break;
+    default: baseProp = mesh_._get_vprop(prop->name_); break;
+    }
+
+    // rtti - detect type of property from openmesh via dynamic_cast
+    typedef OpenMesh::PropertyT< float > Prop1f;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 2> > PropVec2f;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 3> > PropVec3f;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 4> > PropVec4f;
+
+    typedef OpenMesh::PropertyT< double > Prop1d;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 2> > PropVec2d;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 3> > PropVec3d;
+    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 4> > PropVec4d;
+
+    Prop1f* p1f = dynamic_cast<Prop1f*>(baseProp);
+    PropVec2f* p2f = dynamic_cast<PropVec2f*>(baseProp);
+    PropVec3f* p3f = dynamic_cast<PropVec3f*>(baseProp);
+    PropVec4f* p4f = dynamic_cast<PropVec4f*>(baseProp);
+
+    Prop1d* p1d = dynamic_cast<Prop1d*>(baseProp);
+    PropVec2d* p2d = dynamic_cast<PropVec2d*>(baseProp);
+    PropVec3d* p3d = dynamic_cast<PropVec3d*>(baseProp);
+    PropVec4d* p4d = dynamic_cast<PropVec4d*>(baseProp);
+
+    if (p1f || p1d) prop->sourceType_.numElements_ = 1;
+    else if (p2f || p2d) prop->sourceType_.numElements_ = 2;
+    else if (p3f || p3d) prop->sourceType_.numElements_ = 3;
+    else if (p4f || p4d) prop->sourceType_.numElements_ = 4;
+
+    if (p1f || p2f || p3f || p4f)
+      prop->sourceType_.type_ = GL_FLOAT;
+    else if (p1d || p2d || p3d || p4d)
+      prop->sourceType_.type_ = GL_DOUBLE;
+
+
+    // get memory address of property data
+    //  maybe there is a better way to get the buffer via OpenMesh::BaseProperty
+    if (p1f) prop->propDataPtr_ = p1f->data();
+    if (p2f) prop->propDataPtr_ = p2f->data();
+    if (p3f) prop->propDataPtr_ = p3f->data();
+    if (p4f) prop->propDataPtr_ = p4f->data();
+    if (p1d) prop->propDataPtr_ = p1d->data();
+    if (p2d) prop->propDataPtr_ = p2d->data();
+    if (p3d) prop->propDataPtr_ = p3d->data();
+    if (p4d) prop->propDataPtr_ = p4d->data();
+
+
+    prop->sourceType_.shaderInputName_ = prop->name_.c_str();
+
+
+    // should have same type in vbo
+    prop->destType_ = prop->sourceType_;
+
+    prop->destType_.shaderInputName_ = prop->vertexShaderInputName_.c_str();
+
+    prop->declElementID_ = int(vertexDecl_->getNumElements());
+
+    vertexDecl_->addElement(&prop->destType_);
+  }
 }
 
 
@@ -2289,32 +2492,190 @@ void ACG::DrawMeshT<Mesh>::writeVertexElement( void* _dstBuf, unsigned int _vert
 }
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::writeNormal( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec3d& _n )
+void ACG::DrawMeshT<Mesh>::writePosition( unsigned int _vertex, const ACG::Vec3d& _n )
+{
+  // store float3 position
+  float f3[3] = {float(_n[0]), float(_n[1]), float(_n[2])};
+
+  writeVertexElement(&vertices_[0], _vertex, vertexDecl_->getVertexStride(), 0, 12, f3);
+}
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeNormal( unsigned int _vertex, const ACG::Vec3d& _n )
 {
   // store float3 normal
   float f3[3] = {float(_n[0]), float(_n[1]), float(_n[2])};
 
-  writeVertexElement(_dstBuf, _vertex, _stride, 12, 12, f3);
+  writeVertexElement(&vertices_[0], _vertex, vertexDecl_->getVertexStride(), offsetNormal_, 12, f3);
 }
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::writeTexcoord( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const ACG::Vec2f& _uv )
+void ACG::DrawMeshT<Mesh>::writeTexcoord( unsigned int _vertex, const ACG::Vec2f& _uv )
 {
-  // store float3 normal
-  float f2[3] = {_uv[0], _uv[1]};
+  writeVertexElement(&vertices_[0], _vertex, vertexDecl_->getVertexStride(), offsetTexc_, 8, _uv.data());
+}
 
-  writeVertexElement(_dstBuf, _vertex, _stride, 12+12, 8, f2);
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::writeColor( unsigned int _vertex, unsigned int _color )
+{
+  writeVertexElement(&vertices_[0], _vertex, vertexDecl_->getVertexStride(), offsetColor_, 4, &_color);
 }
 
 
 template <class Mesh>
-void ACG::DrawMeshT<Mesh>::writeVertexProperty( void* _dstBuf, unsigned int _vertex, unsigned int _stride, const VertexElement* _elementDesc, const ACG::Vec3f& _propf3 )
+void ACG::DrawMeshT<Mesh>::writeVertexProperty( unsigned int _vertex, const VertexElement* _elementDesc, const ACG::Vec4f& _propf )
 {
   unsigned int elementSize = VertexDeclaration::getElementSize(_elementDesc);
 
-  writeVertexElement(_dstBuf, _vertex, _stride, _elementDesc->getByteOffset(), elementSize, _propf3.data());
+  writeVertexElement(&vertices_[0], _vertex, vertexDecl_->getVertexStride(), _elementDesc->getByteOffset(), elementSize, _propf.data());
 }
+
+
+
+template <class Mesh>
+void ACG::DrawMeshT<Mesh>::addVertexElement( const std::string& _propertyName, PropertySource _source )
+{
+  // check if element has already been requested before
+
+  for (size_t i = 0; i < additionalElements_.size(); ++i)
+  {
+    if (additionalElements_[i].name_ == _propertyName)
+    {
+      additionalElements_[i].source_ = _source;
+
+      return;
+    }
+  }
+
+
+  // request new property
+  VertexProperty prop;
+
+  prop.name_ = _propertyName;
+  prop.source_ = _source;
+  prop.vertexShaderInputName_ = _propertyName;
+  // rest of property desc is initialized later in createVertexDeclaration()
+
+  additionalElements_.push_back(prop);
+}
+
+
+template <class Mesh>
+bool ACG::DrawMeshT<Mesh>::scanVertexShaderForInput( const std::string& _vertexShaderFile )
+{
+  bool success = true;
+
+  std::ifstream file;
+
+  file.open(_vertexShaderFile.c_str(), std::ios_base::in);
+
+  if (file.is_open())
+  {
+    while (!file.eof())
+    {
+      char line[0xff];
+
+      file.getline(line, 0xff);
+
+      // get rid of whitespaces at begin/end, and internal padding
+      QString strLine = line;
+      strLine = strLine.simplified();
+
+      // pattern matching for vertex input attributes
+      if (!strLine.startsWith("//") && !strLine.startsWith("*/"))
+      {
+
+        if (strLine.startsWith("in ") || strLine.contains(" in "))
+        {
+          // extract 
+          int semIdx = strLine.indexOf(';');
+
+
+          if (semIdx >= 0)
+          {
+            // property name = string before semicolon without whitespace
+            
+            // remove parts after semicolon
+            QString strName = strLine;
+            strName.remove(semIdx, strName.length());
+
+            strName = strName.simplified();
+
+            // property name = string between last whitespace and last character
+            int lastWhite = strName.lastIndexOf(' ');
+            
+            if (lastWhite >= 0)
+            {
+              strName.remove(0, lastWhite);
+
+              strName = strName.simplified();
+
+              // check for reserved input attributes
+              if (strName != "inPosition" &&
+                  strName != "inTexCoord" &&
+                  strName != "inNormal" &&
+                  strName != "inColor")
+              {
+                // custom property
+
+                std::string propName = strName.toStdString();
+
+                // choose property source
+                PropertySource src = PROPERTY_SOURCE_VERTEX;
+
+                if (strLine.contains("flat "))
+                {
+                  // per face attribute
+                  src = PROPERTY_SOURCE_FACE;
+
+                  if (!mesh_._get_fprop(propName))
+                    src = PROPERTY_SOURCE_VERTEX; // face source not available, try vertex next..
+                }
+
+                if (src == PROPERTY_SOURCE_VERTEX)
+                {
+                  if (!mesh_._get_vprop(propName))
+                    src = PROPERTY_SOURCE_HALFEDGE; // vertex source not available, try halfedge next..
+                }
+
+                // prefer halfedge props over vertex props
+                if (src == PROPERTY_SOURCE_VERTEX)
+                {
+                  if ( mesh_._get_hprop(propName) && src == PROPERTY_SOURCE_VERTEX)
+                    src = PROPERTY_SOURCE_HALFEDGE;
+                }
+
+                // error output if property does not exist
+                if (src == PROPERTY_SOURCE_HALFEDGE && !mesh_._get_hprop(propName))
+                {
+                  std::cerr << "DrawMesh error - requested property " << propName << " does not exist" << std::endl;
+                  success = false;
+                }
+                else
+                {
+                  addVertexElement(propName, src);
+                }
+
+              }
+
+            }
+          }
+
+
+        }
+
+      }
+
+    }
+
+
+  }
+
+  return success;
+}
+
+
 
 
 }
