@@ -85,19 +85,19 @@ else()
 endif()
 
 
-find_package( Freetype)
-if (NOT FREETYPE_FOUND)
-  message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
-else (NOT FREETYPE_FOUND)
-  find_package (FTGL)
-  if (NOT FTGL_FOUND)
-    message (MESSAGE "FTGL not found! Disabled ftgl support!")
-  else ()
-    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
-    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )
-  endif ()
-
-endif ()
+#find_package( Freetype)
+#if (NOT FREETYPE_FOUND)
+#  message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
+#else (NOT FREETYPE_FOUND)
+#  find_package (FTGL)
+#  if (NOT FTGL_FOUND)
+#    message (MESSAGE "FTGL not found! Disabled ftgl support!")
+#  else ()
+#    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR_freetype2} ${FREETYPE_INCLUDE_DIR_ft2build} )
+#    set( ADDITIONAL_LINK_LIBRARIES ${ADDITIONAL_LINK_LIBRARIES} ${FTGL_LIBS} ${FREETYPE_LIBRARIES} )
+#  endif ()
+#
+#endif ()
 
 include_directories (
   ..
