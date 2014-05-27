@@ -62,7 +62,7 @@ else ()
 endif ()
 
 acg_openmp ()
-acg_ftgl ()
+#acg_ftgl ()
 
 # check for OpenGL, GLEW and GLUT as our required dependencies
 find_package (OpenGL)
