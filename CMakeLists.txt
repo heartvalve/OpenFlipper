@@ -258,7 +258,7 @@ if (WIN32 )
   # workaround for VS2018 where the OpenMP vcomp90.dll seems to be missing from the path
   if ( CMAKE_GENERATOR MATCHES "^Visual Studio 9.*" )
     INCLUDE(InstallRequiredSystemLibraries)
-    set ( OMP_PATH "${MSVC90_REDIST_DIR}/${CMAKE_MSVC_ARCH}/Microsoft.VC90.OPENMP/" )
+    set ( OMP_PATH "${MSVC90_REDIST_DIR}/${CMAKE_MSVC_ARCH}/Microsoft.VC90.OPENMP/;${MSVC90_REDIST_DIR}/Debug_NonRedist/${CMAKE_MSVC_ARCH}/Microsoft.VC90.DebugOpenMP/" )
   endif()
 
   # prepare bundle generation cmake file and add a build target for it
