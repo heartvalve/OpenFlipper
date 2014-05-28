@@ -5,6 +5,23 @@
 #  QWT6_LIBRARIES - The libraries needed to use Qwt6
 #  QWT6_DEFINITIONS - Compiler switches required for using Qwt6
 
+
+
+if ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*Win64" )
+  SET(VS_SEARCH_PATH "c:/libs/vs2012/x64/")
+elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 11.*" )
+  SET(VS_SEARCH_PATH "c:/libs/vs2012/x32/")
+elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*Win64" )
+  SET(VS_SEARCH_PATH "c:/libs/vs2013/x64/")
+elseif ( CMAKE_GENERATOR MATCHES "^Visual Studio 12.*" )
+  SET(VS_SEARCH_PATH "c:/libs/vs2013/x32/")
+else ()
+  SET(VS_SEARCH_PATH "")
+endif()
+
+
+
+
 find_path(QWT6_INCLUDE_DIR qwt.h
                PATHS ${QT_INCLUDE_DIR}
                /usr/local/qwt/include
@@ -12,6 +29,7 @@ find_path(QWT6_INCLUDE_DIR qwt.h
                /opt/local/include
                /opt/local/include/qwt
                /usr/include
+               "${VS_SEARCH_PATH}/qwt-6.1.0"
                c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0
                c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2
                c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.1
@@ -36,6 +54,7 @@ if (QWT6_VERSION_FOUND)
   if (WIN32)
     find_library(QWT6_LIBRARY_RELEASE NAMES qwt
       PATHS
+      "${VS_SEARCH_PATH}/qwt-6.1.0/lib"
       "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
       "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0\\lib"
       "c:\\libs\\Qwt-6.1.0\\lib"
@@ -44,6 +63,7 @@ if (QWT6_VERSION_FOUND)
       )
     find_library(QWT6_LIBRARY_DEBUG NAMES qwtd
       PATHS
+      "${VS_SEARCH_PATH}/qwt-6.1.0/lib"
       "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.0.2\\lib"
       "c:\\libs\\${SEARCHPATH}\\x32\\Qwt-6.1.0\\lib"
       "c:\\libs\\Qwt-6.1.0\\lib"
