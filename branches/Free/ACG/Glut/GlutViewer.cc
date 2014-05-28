@@ -230,7 +230,6 @@ void GlutViewer::keyboard(int key, int /* x */ , int /* y */ )
   switch (key) {
     case 27: {
       exit(0);
-      break;
     }
 
     case GLUT_KEY_F12: {
