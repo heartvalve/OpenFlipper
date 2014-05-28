@@ -148,6 +148,11 @@ slot_smooth()
     // Get triangle mesh
     TriMesh* mesh = PluginFunctions::triMesh(*o_it);
     
+    if ( mesh == NULL ) {
+      emit log(LOGERR, "Unable to get mesh from object( Only Triangle Meshes supported)");
+      return;
+    }
+
     if (data == 0){
       data = new SmootherObject();
       o_it->setObjectData(SMOOTHER, data);
@@ -219,9 +224,7 @@ slot_smooth()
     
     jobDescription +=  ") " + QString::number(tool_->sB_iter->value()) + " iterations";
 
-    if (mesh != 0)
-//      mesh->garbage_collection();
-      mesh->update_normals();
+    mesh->update_normals();
 
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
     emit createBackup(o_it->id(), "Smoothing", UPDATE_GEOMETRY );
@@ -266,6 +269,11 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
     // Get triangle mesh
     TriMesh* mesh = PluginFunctions::triMesh(object);
     
+    if ( mesh == NULL ) {
+      emit log(LOGERR, "Unable to get mesh from object( Only Triangle Meshes supported)");
+      return;
+    }
+
     if (data == 0){
       data = new SmootherObject();
       object->setObjectData(SMOOTHER, data);
@@ -325,10 +333,7 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
     jobDescription +=  ") " + QString::number(_iterations) + " iterations";
     
-    if (mesh != 0) {
-      mesh->garbage_collection();
-      mesh->update_normals();
-    }
+    mesh->update_normals();
 
     emit updatedObject( object->id(), UPDATE_GEOMETRY );
 

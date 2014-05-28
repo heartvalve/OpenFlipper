@@ -499,10 +499,10 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
             TriMesh& m = *PluginFunctions::triMesh(object);
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
 
-            emit( log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
-                                              QString::number(m.normal(fh)[0]) + "," +
-                                              QString::number(m.normal(fh)[1]) + "," +
-                                              QString::number(m.normal(fh)[2]) + ") ") );
+            emit log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
+                                             QString::number(m.normal(fh)[0]) + "," +
+                                             QString::number(m.normal(fh)[1]) + "," +
+                                             QString::number(m.normal(fh)[2]) + ") ") ;
 
             TriMesh::VertexHandle vh = m.add_vertex(hit_point);
             m.split(fh,vh);
@@ -518,10 +518,10 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
            PolyMesh& m = *PluginFunctions::polyMesh(object);
            PolyMesh::FaceHandle fh = m.face_handle(target_idx);
 
-           emit( log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
-               QString::number(m.normal(fh)[0]) + "," +
-               QString::number(m.normal(fh)[1]) + "," +
-               QString::number(m.normal(fh)[2]) + ") ") );
+           emit log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
+                                            QString::number(m.normal(fh)[0]) + "," +
+                                            QString::number(m.normal(fh)[1]) + "," +
+                                            QString::number(m.normal(fh)[2]) + ") ") ;
 
            PolyMesh::VertexHandle vh = m.add_vertex(hit_point);
            m.split(fh,vh);
@@ -557,10 +557,10 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
          if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH)  ) {
             TriMesh& m = *PluginFunctions::triMesh(object);
             TriMesh::FaceHandle fh = m.face_handle(target_idx);
-            emit( log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
-                                   QString::number(m.normal(fh)[0]) + "," +
-                                   QString::number(m.normal(fh)[1]) + "," +
-                                   QString::number(m.normal(fh)[2]) + ") ") );
+            emit log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
+                                             QString::number(m.normal(fh)[0]) + "," +
+                                             QString::number(m.normal(fh)[1]) + "," +
+                                             QString::number(m.normal(fh)[2]) + ") ") ;
 
             m.delete_face(fh);
             m.garbage_collection();
@@ -569,10 +569,10 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
          if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH)  ) {
             PolyMesh& m = *PluginFunctions::polyMesh(object);
             PolyMesh::FaceHandle fh = m.face_handle(target_idx);
-            emit( log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
-                       QString::number(m.normal(fh)[0]) + "," +
-                       QString::number(m.normal(fh)[1]) + "," +
-                       QString::number(m.normal(fh)[2]) + ") ") );
+            emit log(LOGOUT,"Picked Face " + QString::number(fh.idx()) + ", normal (" +
+                                             QString::number(m.normal(fh)[0]) + "," +
+                                             QString::number(m.normal(fh)[1]) + "," +
+                                             QString::number(m.normal(fh)[2]) + ") ") ;
 
             m.delete_face(fh);
             m.garbage_collection();
@@ -804,7 +804,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
 
             m.split(closest_edge,hit_point);
 
-            emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
+            emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx() ));
 
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
@@ -839,7 +839,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
 
         	 m.split(closest_edge,hit_point);
 
-        	 emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
+        	 emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()) );
 
         	 emit updatedObject(object->id(), UPDATE_TOPOLOGY);
         	 emit updateView();

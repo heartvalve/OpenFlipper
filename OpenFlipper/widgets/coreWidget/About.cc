@@ -482,8 +482,6 @@ void CoreWidget::showAboutWidget( ) {
     openGLQtVersion += tr("3.1") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
     openGLQtVersion += tr("3.0") ;
-  else if (flags.testFlag(QGLFormat::OpenGL_Version_3_0))
-    openGLQtVersion += tr("3.0") ;
   else if (flags.testFlag(QGLFormat::OpenGL_Version_2_1))
     openGLQtVersion += tr("2.1" );
   else if (flags.testFlag(QGLFormat::OpenGL_Version_2_0))
