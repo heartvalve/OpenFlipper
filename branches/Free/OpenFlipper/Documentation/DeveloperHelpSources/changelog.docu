@@ -1,13 +1,17 @@
 /*! \page changelog Changelog
 
-- <b>OpenFlipper 2.1 ( ?/?/? , 18550 )</b>
+- <b>OpenFlipper 2.1 ( ?/?/? , 18744 )</b>
      - <b>ACG</b>
+        - Algorithms
+             - EdgeConvexPolygonIntersection added to Algorithms
+        - Drawmesh
+             - new feature: flexible vertex layout in drawmesh
+             - Remove second copy of vertex buffer, preparation for flexible vertex layout
+             - remove face-colors from drawmesh vertex format
 	- GL
              - DrawModes: Convenience function to add property based drawmodes. refs 1895
              - Rendering: Fix for wireframe/hiddenline on poly meshes.
 	     - Rendering: unified edge rendering for triangle and poly meshes refs 
-	     - Shader Generator: Extension to replace lightingcode
-	     - Shader Generator: Add comments to shaders to keep track of input files used to compose shaders
 	     - Support shininess in lighting code
              - improve MSAA support in FBO
              - rename MSFilterWeights file to AntiAliasing
@@ -16,6 +20,9 @@
              - fix resizing of msaa fbos
              - update msaa helper utils
              - FBO: init texparams only for non msaa textures to avoid glerrors
+             - GLMatrix: extraction of clipping planes in a projection matrix
+             - GLSL::Shader: add suppport for tessellation shaders
+             - Add convenience functions to property layers of DrawMode
 	- IRenderer
 	     - Additional functions to make sure, the fbos are handled correctly
 	     - Convenience functions added
@@ -24,6 +31,8 @@
              - Fix specular lighting of directional lights in the shader pipeline
              - add setting for alpha testing function in render objects refs #398
              - compute size of attributes for missing input buffers refs #2069
+             - Renderobjects can request a depth map of the scene, which is optionally rendered in a z-prepass
+             - new feature: scene layer and overlay layer with RenderObjects
         - Line Node
              - use quad extrusion shader in line node to control the width refs #1305
         - MeshNode
@@ -31,12 +40,17 @@
              - RenderObjects of the MeshNode: fetch texture bound to opengl slot 0, if no textureMap was specified refs #2050
              - apply small depth offset in wireframe shaders refs #2081
              - optimized picking in meshnode (via shaders)
+             - disable optimized face,edge picking for point clouds refs #2139
 	- MeshCompiler and DrawMesh
 	     - Fix for face colors on wrong faces by Christopher.
              - const correctness in mesh compiler refs #2060
+             - implemented GL_TRIANGLES_ADJACENCY mode in meshcompiler
 	- ShaderGenerator
              - Add support for #include in ACG shader load function
 	     - Write source location of shader input files as comments into code
+             - ShaderGen: control glsl version in shader descriptor
+             - Extension to replace lightingcode
+             - Add comments to shaders to keep track of input files used to compose shaders
 	- ShaderCache
 	     - Added clear function
              - add function which compares shader files with the last modified timestamp
@@ -60,15 +74,20 @@
         - General
              - Output more information on crash
              - Disallow copy construction of Stackwalker
+             - Improved view decoding
         - Interface
 	     - PluginFunctions: Added fovy function.
 	     - ViewerProperties: Added const accessor for glState.
              - remove double updating of menubar it fixed crash on macos refs #2036
+             - Added setViewAndWindowGeometry to core scripting functions.            
         - UI
              - add gui elements for shader timestemp function (see options -> files) and reload shaders
+             - Added F2 shortcut for Viewer Snapshot
         - QtBaseViewer
              - Cleaned up QtBaseViewer code a bit.
 	     - Let the glwidget do the buffer clearing, not the renderers (simplified renderer plugins)
+             - Fixed opaque rendering of background for screenshots with alpha channel
+             - fix snapshot output format for transparent objects
      - <b>Plugins</b>
          - Components
              - Add nogui support
@@ -81,6 +100,7 @@
              - Post-processor support: Output of front depth layers in hardware depth buffer
          - File-OBJ
              - fix: load pointclouds from obj files doesn't insert a face anymore refs #1995
+             - fix grouping with non manifold geometry closes #2130
          - File-VTK
              - fix wrong count in the POLYGONS header (Thanks to Vladimir Chalupecky for the patch)
          - Info Meshobject
@@ -89,6 +109,8 @@
              - adjust size of dialog after setting all the variables
              - add scrollbar
              - reduces base height closes #2121
+         - MemInfo
+             - Added better measurement of free memory for Linux platforms.
          - Move
              - no crash, if the manipulator is sized too small
          - Primitives
@@ -97,10 +119,13 @@
              - Added new vector viz mode.
          - Remesher
              - Fix cppcheck warning in Remesher
+             - Fixed boundary errors in Remesher 
          - Renderer Toon
              - Add options dialog for toon renderer
          - Selection MeshObject
 	     - patch for lasso selection of point clouds, mapping function is correct refs #2056
+             - Simplified sphere mesh selection code closes #2129 
+             - Added trace edge path function
 	 - Shader Pipeline
 	     - Stereo support and new buffer handling in shader pipeline renderer
          - Skeletal Animation
@@ -116,6 +141,8 @@
          - Plane Object
              - update plane for the new renderer
              - deferred updating and creation of the plane vbo it fixes gpu crash on mac refs #1896
+         - PolyLine
+             - Added preimage handling to polylines
          - Mesh Object
              - avoid initialization of ward shader, which might cause trouble on intel graphics refs #2064
              - remove old ward shader refs #2068
@@ -129,9 +156,12 @@
          - Get cgal path from environment variable
          - Find 64 bit poco dir
          - Strange glut include fixed
- 
+         - Added pbr lib finder
+         - Windows packaging support for VS2013 redistributable
+         - Qt5: Fixed RCC Resource compiler problems (wrong path!)
+         - Don't use ftgl anymore and don't warn 
      - <b>Documentation</b>
-         - Raised Doxygen version of files to 1.8.6
+         - Raised Doxygen version of files to 1.8.7
 	 - Added documentation for shader generator
          - update docu in ACG IRenderer.hh
          - Strange parser error in doxygen fixed
