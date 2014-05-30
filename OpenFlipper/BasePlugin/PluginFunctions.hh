@@ -666,8 +666,7 @@ DLLEXPORT
 QString getSaveFileName(const QString &configProperty,
                         QWidget * parent = 0, const QString & caption = QString(),
                         const QString & defaultDir = QString(), const QString & filter = QString(),
-                        QString * selectedFilter = 0, QFileDialog::Options options = 0,
-                        const QString & defaultSuffix = QString());
+                        QString * selectedFilter = 0, QFileDialog::Options options = 0);
 
 }
 
