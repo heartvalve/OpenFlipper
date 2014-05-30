@@ -1114,14 +1114,33 @@ QString getOpenFileName(const QString &configProperty,
 QString getSaveFileName(const QString &configProperty,
                         QWidget * parent, const QString & caption,
                         const QString & defaultDir, const QString & filter,
-                        QString * selectedFilter, QFileDialog::Options options) {
+                        QString * selectedFilter, QFileDialog::Options options,
+                        const QString & defaultSuffix) {
 
     const QString dir = OpenFlipperSettings().value(configProperty, defaultDir).toString();
-    const QString result = QFileDialog::getSaveFileName(parent, caption, dir,
-                                                        filter, selectedFilter, options);
-    if (result.length())
+
+    /*
+     * We don't use this convenience wrapper any more since it
+     * prevents us from setting the default suffix.
+     *
+     * const QString result = QFileDialog::getSaveFileName(
+     *     parent, caption, dir, filter, selectedFilter, options);
+     */
+
+    QFileDialog dialog(parent, caption, dir, filter);
+    dialog.setOptions(options);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    if (selectedFilter && !selectedFilter->isEmpty())
+        dialog.selectNameFilter(*selectedFilter);
+    dialog.setDefaultSuffix(defaultSuffix);
+    if (dialog.exec() == QDialog::Accepted) {
+        if (selectedFilter)
+            *selectedFilter = dialog.selectedNameFilter();
+        QString result = dialog.selectedFiles().value(0);
         OpenFlipperSettings().setValue(configProperty, result);
-    return result;
+        return result;
+    }
+    return QString();
 }
 
 QStringList collectObjectComments(bool visibleOnly, bool targetedOnly) {
