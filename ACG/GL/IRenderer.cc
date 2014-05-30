@@ -159,7 +159,6 @@ void IRenderer::traverseRenderableNodes( ACG::GLState* _glState, ACG::SceneGraph
   if (_node)
   {
     ACG::SceneGraph::BaseNode::StatusMode status(_node->status());
-    bool process_children(status != ACG::SceneGraph::BaseNode::HideChildren);
 
     ACG::SceneGraph::DrawModes::DrawMode nodeDM = _node->drawMode();
 
@@ -184,7 +183,8 @@ void IRenderer::traverseRenderableNodes( ACG::GLState* _glState, ACG::SceneGraph
       if (_node->status() != ACG::SceneGraph::BaseNode::HideNode)
         _node->getRenderObjects(this, *_glState, nodeDM, _mat);
 
-      if (process_children)
+      // Process children?
+      if (status != ACG::SceneGraph::BaseNode::HideChildren)
       {
 
         ACG::SceneGraph::BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());

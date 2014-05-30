@@ -426,7 +426,7 @@ QPoint mapToLocal( const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapFromGlobal(_point);
 }
 
-void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode , int _viewer) {
+void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode& , int _viewer) {
 
   if ( _viewer == ACTIVE_VIEWER )
     viewerProperties(activeExaminer()).drawMode(_mode);

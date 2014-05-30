@@ -139,11 +139,13 @@ traverse( BaseNode* _node, Action& _action )
   if (_node)
   {
     BaseNode::StatusMode status(_node->status());
-    bool process_children(status != BaseNode::HideChildren);
+
 
     // If the subtree is hidden, ignore this node and its children while rendering
     if (status != BaseNode::HideSubtree)
     {
+
+      bool process_children(status != BaseNode::HideChildren);
 
       // If the node itself is hidden, ignore it but continue with its children
       if (_node->status() != BaseNode::HideNode)
@@ -206,55 +208,57 @@ template <class Action>
 void
 traverse_multipass ( BaseNode* _node, Action& _action, const unsigned int& _pass )
 {
-  
-    // Process node if it exists
-    if (_node) {
-        BaseNode::StatusMode status(_node->status());
-        bool process_children(status != BaseNode::HideChildren);
 
-        // If the subtree is hidden, ignore this node and its children while rendering
-        if (status != BaseNode::HideSubtree) {
+  // Process node if it exists
+  if (_node) {
+    BaseNode::StatusMode status(_node->status());
 
-            // Executes this nodes enter function (if available and active in multipass)
-            if ( _node->multipassStatusActive(_pass) ) {
-              if_has_enter(_action, _node);
-            }
 
-            // If the node itself is hidden, don't call the action on it.
-            // Additionally check if rendering order is node first. otherwise, we will call it after the children.
-            // And check if it should be called in this rendering pass.
-            if ( (_node->status() != BaseNode::HideNode )  && ( _node->traverseMode() & BaseNode::NodeFirst ) && _node->multipassNodeActive(_pass))
-                process_children &= _action(_node);
+    // If the subtree is hidden, ignore this node and its children while rendering
+    if (status != BaseNode::HideSubtree) {
 
-            if (process_children) {
+      bool process_children(status != BaseNode::HideChildren);
 
-                BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+      // Executes this nodes enter function (if available and active in multipass)
+      if ( _node->multipassStatusActive(_pass) ) {
+        if_has_enter(_action, _node);
+      }
 
-                // Process all children
-                for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-                    if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
-                        traverse_multipass(*cIt, _action, _pass);
+      // If the node itself is hidden, don't call the action on it.
+      // Additionally check if rendering order is node first. otherwise, we will call it after the children.
+      // And check if it should be called in this rendering pass.
+      if ( (_node->status() != BaseNode::HideNode )  && ( _node->traverseMode() & BaseNode::NodeFirst ) && _node->multipassNodeActive(_pass))
+        process_children &= _action(_node);
 
-                // Process all children which are second pass
-                for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-                    if ((*cIt)->traverseMode() & BaseNode::SecondPass)
-                        traverse_multipass(*cIt, _action, _pass);
+      if (process_children) {
 
-            }
+        BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
 
-            
-            // If we are in childrenfirst node, the children have been painted andwe now check, if we can draw this node.
-            // If its hidden, ignore it.
-            // If it should not be rendered in this pass, ignore it too.
-            if ( (_node->traverseMode() & BaseNode::ChildrenFirst ) && (_node->status() != BaseNode::HideNode) && _node->multipassNodeActive(_pass) )
-                _action(_node);
+        // Process all children
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse_multipass(*cIt, _action, _pass);
 
-            // Call the leave function of the node (if available and active in multipass).
-            if ( _node->multipassStatusActive(_pass) )
-              if_has_leave(_action, _node);
+        // Process all children which are second pass
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse_multipass(*cIt, _action, _pass);
 
-        } // if (status != BaseNode::HideSubtree)
-    } // if(node_)
+      }
+
+
+      // If we are in childrenfirst node, the children have been painted andwe now check, if we can draw this node.
+      // If its hidden, ignore it.
+      // If it should not be rendered in this pass, ignore it too.
+      if ( (_node->traverseMode() & BaseNode::ChildrenFirst ) && (_node->status() != BaseNode::HideNode) && _node->multipassNodeActive(_pass) )
+        _action(_node);
+
+      // Call the leave function of the node (if available and active in multipass).
+      if ( _node->multipassStatusActive(_pass) )
+        if_has_leave(_action, _node);
+
+    } // if (status != BaseNode::HideSubtree)
+  } // if(node_)
 }
 
 

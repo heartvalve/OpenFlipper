@@ -1021,7 +1021,7 @@ updatePerFaceBuffers() {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
             const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty,fhe_it);
             
-            if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
+            if (        mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
               continue;
             } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ) == cvh ) {

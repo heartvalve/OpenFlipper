@@ -778,7 +778,7 @@ const DrawMode& addDrawMode( const std::string & _name , bool _propertyBased)
 //----------------------------------------------------------------------------
 
 ACGDLLEXPORT
-const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties)
+const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties& _properties)
 {
   const DrawMode& drawmode = addDrawMode( _name , true );
 

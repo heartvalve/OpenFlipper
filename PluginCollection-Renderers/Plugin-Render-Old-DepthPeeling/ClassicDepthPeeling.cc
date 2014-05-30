@@ -331,7 +331,6 @@ void DepthPeelingPlugin::traverseLightNodes( BaseNode* _node)
   if (_node)
   {
     BaseNode::StatusMode status(_node->status());
-    bool process_children(status != BaseNode::HideChildren);
 
     // If the subtree is hidden, ignore this node and its children while rendering
     if (status != BaseNode::HideSubtree)
@@ -371,7 +370,8 @@ void DepthPeelingPlugin::traverseLightNodes( BaseNode* _node)
         }
       }
 
-      if (process_children)
+      // Process children?
+      if (status != BaseNode::HideChildren)
       {
 
         BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
@@ -914,10 +914,11 @@ DepthPeelingPlugin::traverseDraw( BaseNode* _node, Action& _action, ACG::SceneGr
   // Process node if it exists
   if (_node) {
     BaseNode::StatusMode status(_node->status());
-    bool process_children(status != BaseNode::HideChildren);
 
     // If the subtree is hidden, ignore this node and its children while rendering
     if (status != BaseNode::HideSubtree) {
+
+      bool process_children(status != BaseNode::HideChildren);
 
       // Executes this nodes enter function (if available and active in multipass)
       if ( _node->multipassStatusActive(_pass) ) {

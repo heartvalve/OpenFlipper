@@ -637,7 +637,7 @@ namespace DrawModes {
    * @return Id of the new draw mode
   */
   ACGDLLEXPORT
-  const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties _properties);
+  const DrawMode& addDrawMode( const std::string & _name, const DrawModeProperties& _properties);
 
   /** \brief Get a custom DrawMode.
    *
