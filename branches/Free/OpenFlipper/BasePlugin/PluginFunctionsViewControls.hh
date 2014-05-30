@@ -356,7 +356,7 @@ void perspectiveProjection( int _viewer = ALL_VIEWERS );
  * @param _mode New drawmode of the given viewer
  */
 DLLEXPORT
-void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode , int _viewer = ALL_VIEWERS);
+void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode& _mode , int _viewer = ALL_VIEWERS);
 
 /** \brief Get the current draw Mode of a Viewer
  *
