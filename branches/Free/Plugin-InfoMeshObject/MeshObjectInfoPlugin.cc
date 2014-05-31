@@ -454,13 +454,13 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it){
     typename MeshT::ConstFaceVertexIter cfv_it = _mesh->cfv_iter(*f_it);
 
-    typename MeshT::Point v0 = _mesh->point( *cfv_it );
+    const typename MeshT::Point v0 = _mesh->point( *cfv_it );
     ++cfv_it;
-    typename MeshT::Point v1 = _mesh->point( *cfv_it );
+    const typename MeshT::Point v1 = _mesh->point( *cfv_it );
     ++cfv_it;
-    typename MeshT::Point v2 = _mesh->point( *cfv_it );
+    const typename MeshT::Point v2 = _mesh->point( *cfv_it );
 
-    float aspect = ACG::Geometry::aspectRatio(v0, v1, v2);
+    const float aspect = ACG::Geometry::aspectRatio(v0, v1, v2);
 
     if (aspect < minA) minA = aspect;
     if (aspect > maxA) maxA = aspect;
@@ -488,12 +488,11 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
     //compute dihedral angles
     typename MeshT::FaceFaceIter ff_it;
-    typename MeshT::Normal n1 = _mesh->normal(*f_it);
+    const typename MeshT::Normal n1 = _mesh->normal(*f_it);
 
-    unsigned int valence = 0;
     for (ff_it = _mesh->ff_iter(*f_it); ff_it.is_valid(); ++ff_it){
       
-      typename MeshT::Normal n2 = _mesh->normal(*ff_it);
+      const typename MeshT::Normal n2 = _mesh->normal(*ff_it);
 
       angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(n1) | MathTools::sane_normalized(n2) )));
 
@@ -501,8 +500,9 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
       if (angle > maxD) maxD = angle;
       sumD += angle;
       numD ++;
-      ++valence;
     }
+
+    const unsigned int valence = _mesh->valence(*f_it);
     minFValence = std::min(minFValence, valence);
     maxFValence = std::max(maxFValence, valence);
     sumFValence += valence;
@@ -518,7 +518,8 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
 
   info_->faceValenceMin->setText(trUtf8("%1").arg(minFValence));
   info_->faceValenceMax->setText(trUtf8("%1").arg(maxFValence));
-  info_->faceValenceMean->setText(trUtf8("%1").arg(sumFValence / _mesh->n_faces()));
+  info_->faceValenceMean->setText(trUtf8("%1").arg(
+          static_cast<float>(sumFValence) / _mesh->n_faces()));
   
   // Only one face or no face -> don't output angles 
   if ( _mesh->n_faces() > 1 ) {
