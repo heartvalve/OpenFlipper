@@ -446,6 +446,9 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   float minD = FLT_MAX;
   float sumD = 0.0;
   int numD = 0;
+  unsigned int maxFValence = -std::numeric_limits<float>::infinity();
+  unsigned int minFValence = std::numeric_limits<float>::infinity();
+  size_t sumFValence = 0;
 
   //iterate over all faces
   for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it){
@@ -487,6 +490,7 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
     typename MeshT::FaceFaceIter ff_it;
     typename MeshT::Normal n1 = _mesh->normal(*f_it);
 
+    unsigned int valence = 0;
     for (ff_it = _mesh->ff_iter(*f_it); ff_it.is_valid(); ++ff_it){
       
       typename MeshT::Normal n2 = _mesh->normal(*ff_it);
@@ -497,7 +501,11 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
       if (angle > maxD) maxD = angle;
       sumD += angle;
       numD ++;
+      ++valence;
     }
+    minFValence = std::min(minFValence, valence);
+    maxFValence = std::max(maxFValence, valence);
+    sumFValence += valence;
   }
 
   info_->aspectMin->setText( QString::number(minA,'f') );
@@ -508,6 +516,9 @@ void InfoMeshObjectPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _
   info_->angleMean->setText( "-" );
   info_->angleMax->setText( QString::number(maxI,'f')  );
 
+  info_->faceValenceMin->setText(trUtf8("%1").arg(minFValence));
+  info_->faceValenceMax->setText(trUtf8("%1").arg(maxFValence));
+  info_->faceValenceMean->setText(trUtf8("%1").arg(sumFValence / _mesh->n_faces()));
   
   // Only one face or no face -> don't output angles 
   if ( _mesh->n_faces() > 1 ) {
