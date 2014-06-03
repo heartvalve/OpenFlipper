@@ -91,6 +91,14 @@ bool getObject( int _identifier, PolyhedralMeshObject*& _object );
 DLLEXPORT
 PolyhedralMesh* polyhedralMesh( BaseObjectData* _object );
 
+/** \brief Get a PolyhedralMesh from an object id.
+ *
+ * @param _identifier Identifier of the object. If its a PolyhedralMesh mesh, the function will return the pointer to the mesh
+ *                    otherwise 0
+ */
+DLLEXPORT
+PolyhedralMesh* polyhedralMesh( int _identifier );
+
 /** \brief Cast an BaseObject to an PolyhedralMeshObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is
