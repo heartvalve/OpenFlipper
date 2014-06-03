@@ -91,6 +91,14 @@ bool getObject( int _identifier, HexahedralMeshObject*& _object );
 DLLEXPORT
 HexahedralMesh* hexahedralMesh( BaseObjectData* _object );
 
+/** \brief Get a HexahedralMesh from an object id.
+ *
+ * @param _identifier Identifier of the object. If its a HexahedralMesh mesh, the function will return the pointer to the mesh
+ *                    otherwise 0
+ */
+DLLEXPORT
+HexahedralMesh* hexahedralMesh( int _identifier );
+
 /** \brief Cast an BaseObject to an HexahedralMeshObject if possible
  *
  * @param _object The object should be of type BaseDataObject. If the content is

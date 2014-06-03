@@ -120,6 +120,15 @@ PolyhedralMesh* polyhedralMesh( BaseObjectData* _object ) {
     return 0;
 }
 
+PolyhedralMesh* polyhedralMesh( int _identifier ) {
+  PolyhedralMeshObject* object = polyhedralMeshObject(_identifier);
+
+   if ( object == 0)
+     return 0;
+   else
+     return object->mesh();
+}
+
 
 PolyhedralMeshObject* polyhedralMeshObject( BaseObjectData* _object ) {
   if ( ! _object->dataType(DATA_POLYHEDRAL_MESH) )

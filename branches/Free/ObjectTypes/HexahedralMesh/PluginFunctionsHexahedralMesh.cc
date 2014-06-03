@@ -120,6 +120,15 @@ HexahedralMesh* hexahedralMesh( BaseObjectData* _object ) {
     return 0;
 }
 
+HexahedralMesh* hexahedralMesh( int _identifier ) {
+  HexahedralMeshObject* object = hexahedralMeshObject(_identifier);
+
+   if ( object == 0)
+     return 0;
+   else
+     return object->mesh();
+}
+
 
 HexahedralMeshObject* hexahedralMeshObject( BaseObjectData* _object ) {
   if ( ! _object->dataType(DATA_HEXAHEDRAL_MESH) )
