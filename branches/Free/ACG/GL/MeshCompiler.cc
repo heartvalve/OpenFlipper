@@ -546,6 +546,7 @@ void MeshCompiler::splitVertices()
 
   // estimate number of splits
   int estimatedSplitCount = 0;
+  int numDifferentInputCounts = 0;
 
   for (int i = 0; i < numAttributes_; ++i)
   {
@@ -555,12 +556,53 @@ void MeshCompiler::splitVertices()
       {
         const int diff = input_[i].count - numPositions;
 
-        estimatedSplitCount = diff * ( (estimatedSplitCount > 0) ? estimatedSplitCount : 1);
+        if (diff > 0)
+        {
+          estimatedSplitCount = std::max(diff, estimatedSplitCount);
+          ++numDifferentInputCounts;
+        }
       }
     }
   }
 
-  estimatedSplitCount = int(float(estimatedSplitCount) * 1.2f);
+  if (numDifferentInputCounts > 1)
+  {
+    // estimation probably too small, increase by 20 %
+    estimatedSplitCount = int(float(estimatedSplitCount) * 1.2f);
+  }
+
+  assert(estimatedSplitCount >= 0);
+
+  // worst case: each vertex can be used by only one face
+  //  clamp estimation-count accordingly
+
+  int maxSplitCount = 0;
+
+  if (numIndices_ > 0)
+  {
+    if (numIndices_ > numPositions)
+      maxSplitCount = numIndices_ - numPositions;
+  }
+  else
+  {
+    // numIndices_ is unknown
+    int sumFaceSize = 0;
+
+    if (constantFaceSize_)
+      sumFaceSize = numFaces_ * maxFaceSize_;
+    else
+    {
+      for (int i = 0; i < numFaces_; ++i)
+        sumFaceSize += getFaceSize(i);
+    }
+
+    if (sumFaceSize > numPositions)
+      maxSplitCount = sumFaceSize - numPositions;
+  }
+
+  estimatedSplitCount = std::min(estimatedSplitCount, maxSplitCount);
+
+//  std::cout << "estimated split count: " << estimatedSplitCount << std::endl;
 
   delete splitter_;
   splitter_ = new VertexSplitter(decl_.getNumElements(),
@@ -591,6 +633,10 @@ void MeshCompiler::splitVertices()
       setInputIndexSplit(i, k, idx);
     }
   }
+
+
+//  std::cout << "actual split count: " << (numDrawVerts_ - numPositions) << std::endl;
+
 
 
   // Fix splitting list if there are isolated vertices in between.
