@@ -2735,9 +2735,9 @@ void DrawMeshT<Mesh>::dumpObj(const char* _filename) const
         // ptr to vertex
         const char* v = &vertices_[i * vertexDecl_->getVertexStride()];
 
-        const float* pos = reinterpret_cast<const float*>(v + offsetPos_);
-        const float* n = reinterpret_cast<const float*>(v + offsetNormal_);
-        const float* texc = reinterpret_cast<const float*>(v + offsetTexc_);
+        const float* pos = reinterpret_cast<const float*>((const void*)(v + offsetPos_));
+        const float* n = reinterpret_cast<const float*>((const void*)(v + offsetNormal_));
+        const float* texc = reinterpret_cast<const float*>((const void*)(v + offsetTexc_));
 //        unsigned int col = *reinterpret_cast<const unsigned int*>(v + offsetColor_);
 
         switch (attrId)
