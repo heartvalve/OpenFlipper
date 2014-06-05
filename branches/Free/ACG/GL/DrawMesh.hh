@@ -92,35 +92,6 @@ class DrawMeshT
 {
 private:
 
-#pragma pack(push, 1)
-  /// full precision vertex, 36 bytes w/o tangent
-//   struct Vertex
-//   {
-//     Vertex();
-// 
-//     float pos[3]; /*!< Position */
-//     float tex[2]; /*!< per halfedge texture coordinates */
-//     float n[3];   /*!< normal vector */
-// //    float tan[4]; /*!< tangent vector + parity */
-// 
-//     unsigned int col; /*!< color */
-// 
-// //     unsigned int vcol; /*!<  per vertex color */
-// //     unsigned int fcol; /*!<  per face color */
-//   };
-// 
-//   /// compressed vertex, 18 bytes
-//   struct VertexC
-//   {
-//     unsigned short pos[3];
-//     unsigned short u, v;
-//     unsigned int n;
-// //    unsigned int tan;
-// 
-//     unsigned int col;
-//   };
-#pragma pack(pop)
-
   struct Subset
   {
     int  materialID;
@@ -758,13 +729,33 @@ private:
   /** \brief get the data type of a mesh property
    *
    *
-   *  @param _propData  mesh property data
+   *  @param _prop  mesh property
    *  @param _outType [out] data type i.e. GL_FLOAT, GL_DOUBLE
    *  @param _outSize [out] number of atoms in range 1..4
-   *  @param _outStride [out] size in bytes
+   *  @return address of property data
    */
-  template<class Prop>
-  void getMeshPropertyType(Prop _propData, GLuint* _outType, int* _outSize, int* _outStride);
+  const void* getMeshPropertyType(OpenMesh::BaseProperty* _prop, GLuint* _outType, unsigned int* _outSize) const;
+
+  /** \brief test mesh property for type T
+   *
+   * Test whether property is of type T (eg float) or is a vector of type T.
+   * Property vectors up to size 4 are supported (native vertex properties).
+   * 
+   *  @param _prop  mesh property
+   *  @param _outSize [out] number of atoms in range 1..4,  set to 0 if test failed
+   *  @return address of property data, 0 if test failed
+   */
+  template<class T>
+  const void* testMeshPropertyTypeT(const OpenMesh::BaseProperty* _prop, unsigned int* _outSize) const;
+
+
+public:
+
+  /** \brief dump current vertex/index buffer to wavefront obj
+   *
+   * @param _filename file name of obj file
+  */
+  void dumpObj(const char* _filename) const;
 
 private:
 
@@ -1040,11 +1031,6 @@ private:
   }
 
   typename Mesh::HalfedgeHandle mapToHalfedgeHandle(int _vertexId);
-
-  void initMeshCompiler();
-
-  template<class Prop>
-  void setMeshCompilerInput(int _attrIdx, Prop _propData, int _num);
 
 };
 

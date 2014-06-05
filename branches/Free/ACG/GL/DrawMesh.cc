@@ -124,49 +124,145 @@ DrawMeshT<Mesh>::DrawMeshT(Mesh& _mesh)
   createVertexDeclaration();
 }
 
-
-/*
 template<class Mesh>
-template<class Prop>
-void DrawMeshT<Mesh>::getMeshPropertyType( Prop _propData, GLuint* _outType, int* _outSize, int* _outStride )
+template<class T>
+const void* DrawMeshT<Mesh>::testMeshPropertyTypeT( const OpenMesh::BaseProperty* _prop, unsigned int* _outSize ) const
 {
-  std::string tid = typeid( _propData ).name();
+  if (_outSize)
+    *_outSize = 0;
+  const void* dataPtr = 0;
 
-  GLuint fmt = 0;
-  int size = 0;
+  // rtti - detect type of property from openmesh via dynamic_cast
+  typedef OpenMesh::PropertyT< T > Prop1;
+  typedef OpenMesh::PropertyT< OpenMesh::VectorT<T, 1> > PropVec1;
+  typedef OpenMesh::PropertyT< OpenMesh::VectorT<T, 2> > PropVec2;
+  typedef OpenMesh::PropertyT< OpenMesh::VectorT<T, 3> > PropVec3;
+  typedef OpenMesh::PropertyT< OpenMesh::VectorT<T, 4> > PropVec4;
 
-  if (sscanf(tid.c_str(), "class OpenMesh::VectorT<float,%i> const *", &size) == 1)
-    fmt = GL_FLOAT;
-  else if (sscanf(tid.c_str(), "class OpenMesh::VectorT<double,%i> const *", &size) == 1)
-    fmt = GL_DOUBLE;
-  else if (sscanf(tid.c_str(), "class OpenMesh::VectorT<int,%i> const *", &size) == 1)
-    fmt = GL_INT;
-  else if (sscanf(tid.c_str(), "class OpenMesh::VectorT<unsigned int,%i> const *", &size) == 1)
-    fmt = GL_UNSIGNED_INT;
-  else if (!strcmp(tid.c_str(), "int const *"))
+  const Prop1* p1 = dynamic_cast<const Prop1*>(_prop);
+  const PropVec1* pv1 = dynamic_cast<const PropVec1*>(_prop);
+  const PropVec2* pv2 = dynamic_cast<const PropVec2*>(_prop);
+  const PropVec3* pv3 = dynamic_cast<const PropVec3*>(_prop);
+  const PropVec4* pv4 = dynamic_cast<const PropVec4*>(_prop);
+  
+  if (p1 || pv1)
   {
-    fmt = GL_INT;
-    size = 1;
+    if (_outSize)
+      *_outSize = 1;
+//    dataPtr = p1 ? p1->data() : pv1->data();
+    if (p1)
+      dataPtr = p1->data();
+    else
+      dataPtr = pv1->data();
   }
-  else
+  else if (pv2)
   {
-    std::cerr << "DrawMesh: unknown typeid of property: " << tid << std::endl;
-
-    // random guess
-    fmt = GL_DOUBLE;
-    size = 3;
+    if (_outSize)
+      *_outSize = 2;
+    dataPtr = pv2->data();
   }
+  else if (pv3)
+  {
+    if (_outSize)
+      *_outSize = 3;
+    dataPtr = pv3->data();
+  }
+  else if (pv4)
+  {
+    if (_outSize)
+      *_outSize = 4;
+    dataPtr = pv4->data();
+  }
+
+  return dataPtr;
+}
+
+
+template<class Mesh>
+const void* DrawMeshT<Mesh>::getMeshPropertyType( OpenMesh::BaseProperty* _prop, GLuint* _outType, unsigned int* _outSize ) const
+{
+  const void* dataPtr = 0;
+
+  // try float
+  dataPtr = testMeshPropertyTypeT<float>(_prop, _outSize);
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_FLOAT;
+    return dataPtr;
+  }
+
+  // try byte
+  dataPtr = testMeshPropertyTypeT<char>(_prop, _outSize);
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_BYTE;
+    return dataPtr;
+  }
+
+  // try ubyte
+  dataPtr = testMeshPropertyTypeT<unsigned char>(_prop, _outSize);
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_UNSIGNED_BYTE;
+    return dataPtr;
+  }
+
+  // try double
+  dataPtr = testMeshPropertyTypeT<double>(_prop, _outSize);
+
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_DOUBLE;
+    return dataPtr;
+  }
+
+  // try int
+  dataPtr = testMeshPropertyTypeT<int>(_prop, _outSize);
+
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_INT;
+    return dataPtr;
+  }
+
+  // try uint
+  dataPtr = testMeshPropertyTypeT<unsigned int>(_prop, _outSize);
+
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_UNSIGNED_INT;
+    return dataPtr;
+  }
+
+  // try short
+  dataPtr = testMeshPropertyTypeT<short>(_prop, _outSize);
+
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_SHORT;
+    return dataPtr;
+  }
+
+  // try ushort
+  dataPtr = testMeshPropertyTypeT<unsigned short>(_prop, _outSize);
+
+  if (dataPtr)
+  {
+    if (_outType) *_outType = GL_UNSIGNED_SHORT;
+    return dataPtr;
+  }
+
+
+  // unknown data type
+  if (_outSize)
+    *_outSize = 0;
 
   if (_outType)
-    *_outType = fmt;
+    *_outType = 0;
 
-  if (_outSize)
-    *_outSize = size;
-
-  if (_outStride)
-    *_outStride = (fmt == GL_DOUBLE ? 8 : 4) * size;
+  return 0;
 }
-*/
+
 
 
 template<class Mesh>
@@ -344,7 +440,7 @@ DrawMeshT<Mesh>::rebuild()
   // --------------------------------------------
   // debug - request properties
 /*
-  if (additionalElements_.empty() && mesh_._get_hprop("inTangent"))
+  if (additionalElements_.empty() && (mesh_._get_hprop("inTangent") || mesh_._get_vprop("inTangent")))
   {
     //     VertexProperty tmp;
     //     tmp.name_ = "inTangent";
@@ -358,14 +454,8 @@ DrawMeshT<Mesh>::rebuild()
 */
   // --------------------------------------------
 
-  // check if vertex layout has been updated by user
-  bool updateVertexLayout = false;
+  // todo: check if vertex layout has been changed and eventually force a full rebuild
 
-  if (vertexDecl_ && vertexDecl_->getNumElements() != 4 + additionalElements_.size())
-    updateVertexLayout = true;
-
-  if (!vertexDecl_)
-    updateVertexLayout = true;
 
   // update layout declaration
   createVertexDeclaration();
@@ -557,7 +647,6 @@ DrawMeshT<Mesh>::rebuild()
         if (baseProp)
         {
           int numAttribs = baseProp->n_elements();
-          int attribStride = baseProp->element_size();
           const void* attribData = propDesc->propDataPtr_; 
 
           meshComp_->setAttribVec( propDesc->declElementID_, numAttribs, attribData );
@@ -678,8 +767,6 @@ DrawMeshT<Mesh>::rebuild()
   bVBOinHalfedgeNormalMode_ = halfedgeNormalMode_;
 
   rebuild_ = REBUILD_NONE;
-
-  // picking buffers update
 }
 
 
@@ -2351,61 +2438,25 @@ void ACG::DrawMeshT<Mesh>::createVertexDeclaration()
     default: baseProp = mesh_._get_vprop(prop->name_); break;
     }
 
-    // rtti - detect type of property from openmesh via dynamic_cast
-    typedef OpenMesh::PropertyT< float > Prop1f;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 2> > PropVec2f;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 3> > PropVec3f;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<float, 4> > PropVec4f;
-
-    typedef OpenMesh::PropertyT< double > Prop1d;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 2> > PropVec2d;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 3> > PropVec3d;
-    typedef OpenMesh::PropertyT< OpenMesh::VectorT<double, 4> > PropVec4d;
-
-    Prop1f* p1f = dynamic_cast<Prop1f*>(baseProp);
-    PropVec2f* p2f = dynamic_cast<PropVec2f*>(baseProp);
-    PropVec3f* p3f = dynamic_cast<PropVec3f*>(baseProp);
-    PropVec4f* p4f = dynamic_cast<PropVec4f*>(baseProp);
-
-    Prop1d* p1d = dynamic_cast<Prop1d*>(baseProp);
-    PropVec2d* p2d = dynamic_cast<PropVec2d*>(baseProp);
-    PropVec3d* p3d = dynamic_cast<PropVec3d*>(baseProp);
-    PropVec4d* p4d = dynamic_cast<PropVec4d*>(baseProp);
-
-    if (p1f || p1d) prop->sourceType_.numElements_ = 1;
-    else if (p2f || p2d) prop->sourceType_.numElements_ = 2;
-    else if (p3f || p3d) prop->sourceType_.numElements_ = 3;
-    else if (p4f || p4d) prop->sourceType_.numElements_ = 4;
-
-    if (p1f || p2f || p3f || p4f)
-      prop->sourceType_.type_ = GL_FLOAT;
-    else if (p1d || p2d || p3d || p4d)
-      prop->sourceType_.type_ = GL_DOUBLE;
+    // detect data type of property
+    prop->propDataPtr_ = getMeshPropertyType(baseProp, &prop->sourceType_.type_, &prop->sourceType_.numElements_);
 
 
-    // get memory address of property data
-    //  maybe there is a better way to get the buffer via OpenMesh::BaseProperty
-    if (p1f) prop->propDataPtr_ = p1f->data();
-    if (p2f) prop->propDataPtr_ = p2f->data();
-    if (p3f) prop->propDataPtr_ = p3f->data();
-    if (p4f) prop->propDataPtr_ = p4f->data();
-    if (p1d) prop->propDataPtr_ = p1d->data();
-    if (p2d) prop->propDataPtr_ = p2d->data();
-    if (p3d) prop->propDataPtr_ = p3d->data();
-    if (p4d) prop->propDataPtr_ = p4d->data();
+    if (prop->propDataPtr_)
+    {
+      prop->sourceType_.shaderInputName_ = prop->name_.c_str();
 
+      // should have same type in vbo
+      prop->destType_ = prop->sourceType_;
 
-    prop->sourceType_.shaderInputName_ = prop->name_.c_str();
+      prop->destType_.shaderInputName_ = prop->vertexShaderInputName_.c_str();
 
+      prop->declElementID_ = int(vertexDecl_->getNumElements());
 
-    // should have same type in vbo
-    prop->destType_ = prop->sourceType_;
-
-    prop->destType_.shaderInputName_ = prop->vertexShaderInputName_.c_str();
-
-    prop->declElementID_ = int(vertexDecl_->getNumElements());
-
-    vertexDecl_->addElement(&prop->destType_);
+      vertexDecl_->addElement(&prop->destType_);
+    }
+    else
+      std::cerr << "Could not detect data type of property " << prop->name_ << std::endl;
   }
 }
 
@@ -2469,17 +2520,6 @@ typename Mesh::HalfedgeHandle ACG::DrawMeshT<Mesh>::mapToHalfedgeHandle(int _ver
   }
   else
     return typename Mesh::HalfedgeHandle(-1);
-}
-
-template<class Mesh>
-template<class Prop>
-void ACG::DrawMeshT<Mesh>::setMeshCompilerInput( int _attrIdx, Prop _propData, int _num )
-{
-  GLuint fmt = 0;
-  int size = 0, stride = 0;
-  getMeshPropertyType(_propData, &fmt, &size, &stride);
-
-  meshComp_->setAttribVec(_attrIdx, _num, _propData, stride, false, fmt, size);
 }
 
 
@@ -2680,6 +2720,48 @@ bool ACG::DrawMeshT<Mesh>::scanVertexShaderForInput( const std::string& _vertexS
   return success;
 }
 
+template<class Mesh>
+void DrawMeshT<Mesh>::dumpObj(const char* _filename) const
+{
+  std::ofstream file;
+  file.open(_filename);
+
+  if (file.is_open())
+  {
+    for (int attrId = 0; attrId < 3; ++attrId)
+    {
+      for (int i = 0; i < numVerts_; ++i)
+      {
+        // ptr to vertex
+        const char* v = &vertices_[i * vertexDecl_->getVertexStride()];
+
+        const float* pos = reinterpret_cast<const float*>(v + offsetPos_);
+        const float* n = reinterpret_cast<const float*>(v + offsetNormal_);
+        const float* texc = reinterpret_cast<const float*>(v + offsetTexc_);
+//        unsigned int col = *reinterpret_cast<const unsigned int*>(v + offsetColor_);
+
+        switch (attrId)
+        {
+        case 0: file << "v "<<pos[0]<<" "<<pos[1]<<" "<<pos[2]<<"\n"; break;
+        case 1: file << "vt "<<texc[0]<<" "<<texc[1]<<"\n"; break;
+        case 2: file << "vn "<<n[0]<<" "<<n[1]<<" "<<n[2]<<"\n"; break;
+        default: break;
+        }
+      }
+    }
+
+
+    for (int i = 0; i < numTris_; ++i)
+    {
+      // ptr to triangle
+      const int* tri = meshComp_->getIndexBuffer() + i*3;
+
+      file << "f "<<tri[0]+1<<"/"<<tri[0]+1<<"/"<<tri[0]+1<<" "<<tri[1]+1<<"/"<<tri[1]+1<<"/"<<tri[1]+1<<" "<<tri[2]+1<<"/"<<tri[2]+1<<"/"<<tri[2]+1<<"\n";
+    }
+
+    file.close();
+  }
+}
 
 
 
