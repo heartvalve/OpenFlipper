@@ -888,6 +888,9 @@ private:
   void disallowConstrainedRotation() {
       constrainedRotationAxis_[0] = std::numeric_limits<double>::quiet_NaN();
   }
+  void invalidatePickCache() {
+      updatePickCache_ = true;
+  }
 
   private slots:
 

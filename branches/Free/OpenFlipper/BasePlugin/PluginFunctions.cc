@@ -1176,4 +1176,10 @@ QStringList collectObjectMaterials(bool visibleOnly, bool targetedOnly) {
     return result;
 }
 
+void invalidatePickCaches() {
+    for(size_t i = 0; i < examiner_widgets_.size(); ++i) {
+        examiner_widgets_[i]->invalidatePickCache();
+    }
+}
+
 } // End namespace PluginFunctions

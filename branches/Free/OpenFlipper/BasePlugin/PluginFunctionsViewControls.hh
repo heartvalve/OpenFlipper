@@ -437,6 +437,9 @@ void viewerSnapshot(int _viewer, QImage& _image, int _width = 0, int _height = 0
 
 /** @} */
 
+DLLEXPORT
+void invalidatePickCaches();
+
 }
 
 #endif //PLUGINFUNCTIONS_HH
