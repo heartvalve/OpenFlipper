@@ -808,7 +808,6 @@ FILE_PATTERNS          = *.c \
                          *.inc \
                          *.m \
                          *.mm \
-                         *.dox \
                          *.C \
                          *.CC \
                          *.C++ \
@@ -831,7 +830,6 @@ FILE_PATTERNS          = *.c \
                          *.xpm \
                          *.docu \
                          *.userdoc \
-                         *.dox \
                          *.qhcp
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
