@@ -655,12 +655,13 @@ QString getOpenFileName(const QString &configProperty,
  * @param defaultDir If the property doesn't exist yet, defaultDir is used
  *                   as the initial location.
  *
- * @param parent       Parent qt widget
- * @param caption      Caption of the dialog
- * @param defaultDir   Default directory when dialog is shown
- * @param filter       name filters
+ * @param parent         Parent qt widget
+ * @param caption        Caption of the dialog
+ * @param defaultDir     Default directory when dialog is shown
+ * @param filter         name filters
  * @param selectedFilter currently selected filter
- * @param options      filedialog options
+ * @param options        file dialog options
+ * @param defaultSuffix  Optional default suffix used in the dialog
  */
 DLLEXPORT
 QString getSaveFileName(const QString &configProperty,
