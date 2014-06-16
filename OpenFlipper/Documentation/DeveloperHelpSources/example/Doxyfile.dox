@@ -124,7 +124,6 @@ FILE_PATTERNS          = *.c \
                          *.inc \
                          *.m \
                          *.mm \
-                         *.dox \
                          *.C \
                          *.CC \
                          *.C++ \
