@@ -188,7 +188,7 @@ to appear with a fancy icon, we just have to call ViewModeInterface::defineViewM
   emit defineViewModeIcon("My Custom View Mode", "myIconFile.png");
 \endcode
 
-\section Usage
+\section view_mode_interface_usage Usage
 To use the ViewModeInterface:
 <ul>
 <li> include ViewModeInterface.hh in your plugins header file

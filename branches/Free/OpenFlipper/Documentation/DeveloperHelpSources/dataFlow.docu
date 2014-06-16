@@ -1,6 +1,6 @@
 /** \page dataFlow Dataflow
  * 
- * \section quickref Quick references
+ * \section quickref_dataflow Quick references
  * - \ref startup
  * - \ref loadSettings
  * - \ref saveSettings

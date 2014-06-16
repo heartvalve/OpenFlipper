@@ -96,7 +96,7 @@ The security Interface can be used to add a license management to your plugin. W
 plugins will only start, if a valid license is available. The license is bound to a machine
 (Processor,network,...) and expires after a specified date.
 
-\section Usage
+\section security_interface_usage Usage
 To use this interface do the following steps:
 
 \subsection license_includes Includes
