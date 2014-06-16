@@ -43,6 +43,11 @@ TODO: OpenFlipper Scripting and examples.
      can be found here:
        \subpage scripting_vector_type
 
+  \section scripting_vector4dtype 
+     The Vector4d data type is corresponding to the Vec4d type in C++. It is mostly used for colors. Details
+     can be found here:
+       \subpage scripting_vector_type_4d
+
   \section scripting_matrixtype Matrix data type
      The Matrix4x4T type used in the C++ code is mapped to the scripting language. Details
      can be found here:

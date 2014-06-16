@@ -30,7 +30,8 @@ The following datatypes are available in OpenFlipper:
   \image html type_coordsys_thumb.png
 - \subpage CameraType "Camera"
   \image html type_camera_thumb.png
-
+- \subpage QtWidgetType "Qt Widgets"
+  
 A description on how new data types can be added to OpenFlipper can be found here: \subpage datatypes_adding_custom
 
 */
