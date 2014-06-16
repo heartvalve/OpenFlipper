@@ -75,7 +75,7 @@ in the reference pose to global coordinates in another pose. If the global matri
 
 Functions to access the unified matrices of a pose are defined in the \ref UnifiedMatrices "Unified Matrices section".
 
-\section Skeleton Tutorial 1: Simple Skeletal Animation
+\section skeleton_tutorial_1 Skeleton Tutorial 1: Simple Skeletal Animation
 
 This section shows and explains a sample code to construct a simple skeletal animation. Images from the resulting animation are shown
 below:
@@ -187,7 +187,7 @@ and after the animation is constructed we have to inform OpenFlipper about the c
   PluginFunctions::viewAll();
 \endcode
 
-\section Skeleton Tutorial 2: Skinning
+\section skeleton_tutorial_2 Skeleton Tutorial 2: Skinning
 
 In this tutorial we extend the first tutorial by adding a mesh which deforms with the rotation of the skeleton. For simplicity we just
 construct a mesh without faces. Additionally, the skin weights for the points of the mesh are also computed using a very simple method

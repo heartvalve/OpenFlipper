@@ -46,7 +46,7 @@
              - const correctness in mesh compiler refs #2060
              - implemented GL_TRIANGLES_ADJACENCY mode in meshcompiler
 	- ShaderGenerator
-             - Add support for #include in ACG shader load function
+             - Add support for include statement in ACG shader load function
 	     - Write source location of shader input files as comments into code
              - ShaderGen: control glsl version in shader descriptor
              - Extension to replace lightingcode

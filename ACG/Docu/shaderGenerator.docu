@@ -46,7 +46,7 @@ The following naming conventions for uniforms, stage input/output and local vari
 Modifiers and templates can not actually control any shader code provided by the ShaderGenerator, 
 but they can add additional code lines that may overwrite or extend the results of the generated code.
 
-\section shaderUniforms Default defines
+\section shaderDefines Default defines
 
 The ShaderGenerator writes the current configuration given in ShaderGenDesc to a shader with the help of defines.
 These defines in the generated shader reflect the state of the active ShaderGenDesc.
@@ -74,8 +74,6 @@ Additionally the light setup is passed to the shader with the following defines.
 #define SG_NUM_LIGHTS N  // N = numLights
 #define SG_LIGHT_TYPE_X Y // type of light X where X = 0,...,N-1 and  Y = SG_LIGHT_DIRECTIONAL,SG_LIGHT_POINT,SG_LIGHT_SPOT
 \endcode
-
-
 
 
 \section shaderUniforms Default uniforms
