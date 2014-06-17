@@ -22,6 +22,7 @@ IF (DOXYGEN_FOUND)
  
   # Remove directory with temporary html files after build
   #add_custom_command(TARGET doc-DeveloperQtHelp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove_directory ${developer_html_doc_dir})
+  message("developer: remove ${developer_html_doc_dir}")
 
   # On apple we take the whole directory, so we don't need this extra install command
   if ( NOT APPLE )  
