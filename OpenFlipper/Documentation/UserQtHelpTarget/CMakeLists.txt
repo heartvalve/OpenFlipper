@@ -19,11 +19,7 @@ IF (DOXYGEN_FOUND)
   # Function defaults to current dir and adds a dependency to the global doc target
   acg_create_doc_target( doc-UserQtHelp )
   
-  # Remove temporary html files after buily
-  add_custom_command(TARGET doc-UserQtHelp POST_BUILD COMMAND ${CMAKE_COMMAND} -E remove_directory ${user_html_doc_dir})
-  message("Post build : remove ${user_html_doc_dir}")
-
-    # On apple we take the whole directory, so we don't need this extra install command
+  # On apple we take the whole directory, so we don't need this extra install command
   if ( NOT APPLE ) 
     # install the UserHelp on install
     # This will also install the plugin User Documentations
